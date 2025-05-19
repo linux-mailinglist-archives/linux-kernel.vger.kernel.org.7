@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-654624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DC5ABCA6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3771ABCA69
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 102AC7A5E21
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:54:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E08DF7A55A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4950C21D590;
-	Mon, 19 May 2025 21:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B6021CC56;
+	Mon, 19 May 2025 21:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ntGxqPwa"
-Received: from sonic301-21.consmr.mail.sg3.yahoo.com (sonic301-21.consmr.mail.sg3.yahoo.com [106.10.242.84])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="o6ru5tmV"
+Received: from sonic303-22.consmr.mail.sg3.yahoo.com (sonic303-22.consmr.mail.sg3.yahoo.com [106.10.242.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEEB21CA12
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 21:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.242.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A470F21C19F
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 21:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.242.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747691715; cv=none; b=RjAkD4PtRBalgY6HB4v7S16DLdu4QvKEddf68o7WLjCC0ebIUjVMB+/82dMjVMGd9hx4/RMmYw6ha+1NjJa4uI4GhbM5dueXpKib/FVB8eO4VN4ytzehn1FaYtTeikuGGBbvSEiurzvTPIdw9ek/yRmx2Pn8EDWN+rkSs6Bnz5c=
+	t=1747691713; cv=none; b=eVdkGBjgQ/YR4HtKcqJLCsIAKOVo0VFqp/6TE1bm759EXnHO7Y7k1Co5T9cK9HTiOqcolG/DSoyzkCCFsvre/nzrMuuZUQnoJgIoBvgfd8GG4CSf3zrHqgBiXxqtUiKZ9ncuD0uJjp9pjpB4UapzO8Eo+2Z8xAnx33UTJFF+4nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747691715; c=relaxed/simple;
-	bh=VnWtcu9GjO13r3KTcKEA/bmkf7yWd8AYnyw3keeoBLI=;
+	s=arc-20240116; t=1747691713; c=relaxed/simple;
+	bh=VlAtTkui2OE/Rj3vmwWMNBwi/G2Hq8iTTDWWq8Dwb2Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z3Xsgf3DbbaEaiM8EzBAaqH6XMWWLgJD9IH49NShs5JLekaPmh8W7KVCJEH1AHGqW2APq6jdho6E6K6PCxEJhnBGnZ1YqVLL9NIw4WIkbJH0xIae0p03308QHI1ztS/COqpGhJb4Ogfpib3+Ycp+t0lifqN9xLIDgmHJf+XdL5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=ntGxqPwa; arc=none smtp.client-ip=106.10.242.84
+	 MIME-Version; b=J1a7p1g7TbJVTt9QlxiYInQzKObUFoxMzQgzrolAiwsjebUmZOn1wxmSdW85wM0o8FsgOyDJxsGt3a6HBlUYFVa56LCGfxugbmHwgnlwHBv9u0crKOXE91nGYLmZRH5G0l2BlF4qwsmeSEHsDmR6mg6kBpAhbeL1t7IZddDKUmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=o6ru5tmV; arc=none smtp.client-ip=106.10.242.39
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747691705; bh=CNXIfVzGs0mPuKs8M5Xro7DY8VpDsozEboIFHWbCTtc=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=ntGxqPwaWHvxlKAd74za+VXanccZMmSXwfiPhJ2gZVJXD0+fpDes6eGu015LkW9Lo41nn+BiCZljmy33wmk83m8/DOzCPEckZesjg1SRodNyL8rqHFwSKKcatyN+cv4y0PQqfhXiLOKkeehGHnKQ1eRcAgrxeWEuzlAnl/iaiPNVKUYqNjXCGJMXq9faAjoqe6hFvZUsp0sV8ZKBKfNyM1GKKEQ29sL0v9UMOiQxsa5NdyNXs4ooBMm7Y5Jte/Q5MqM6/92Hm3kQMVK72qQ/lQpBJSyRcnPWJ7igOV1cTDlhbAy3m9YAnpSJCdbbHL6KxeBbN3VBVOBqosNy1Lgldg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747691705; bh=b9uwRaDzi6ate8fj/BtEzYXMfI6oantlZ0nJWly2kaC=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=CiSrgudIy/9rIyeIL6+t7pcE2aSOnqxEx2tZJ+grcuKdfYJRP8m6iBgC+ygxVdsAwEIPEJ4gjOONK71we/h/iye0QLqC9zScBv4lyihsXWe8AMFRplTZUHk4oCKiYz/SUcaK7777HJ7wIxu05/XX1XoMh/xf4adqDu0r/MWkCNd/Ph5ryTaBANl3btht1i5eaS/biNIGyB21RuQmjKq+YzsKfu/FEpix7mh7sZMAPpRpIohqW/zo98lo8VaShzlV5HpNL9LLJ2TdBo5pi2bI5gcrdHWkrTv+lnXzMDrm3qEMrRY1d/X62wTDLeHCGXq6lxdASC6sHEwgf+II2EwDoQ==
-X-YMail-OSG: HcNTSSYVM1nqJjfYiWwLqz1rIJwMZn6Dvwbcvd.eIdY1HWvOOhJUJPW976j7Q9s
- kv0e9.8V8bVxtBc4K1FzofRZhvzKbne39ihOAT9MlYWppVKICRiVKn19fAqdDIA34dW19zWamC9R
- gBS5sjOdjjX_dqEjTRJKXi1Q81hBgWqkycSrn2RMEfUaL59Q_ihY_Js2Adbx1O7HB7FiYMJ330ME
- osKYFtlJG9Yu9zLi71U.tfhZFBIXGFl_29THh8ihEmm.PNCuOMPsaaqsaMtD9RGNeZ9St5A0u6RS
- TFu2Wad2F6XN689XMM3caaEiO87.snGDTQx1_xVJSRQBMtf3JAT1D5260IzMn8alQwLDZCtVMGrm
- T.wzohoSoImgC_tJfzLO7gXGjiRgOi8BoKn.Ic_gg7Yro_xy0nhDlKUwP9LKtFs3MZd5eXpMaxCb
- SAXYAMcNTT5Lbx0zFkjThBx6UOFFiGUidKVOATxVxec.cNIJqDTFu.mgkSJZAlt4O5J9KtlYiwd7
- 32HL5HYzdD501AVmWLSQyLA4WRQHz0T.voWxdiV4jANKTiXERLL5ysK.OyQhYnmYPlIhhyTL.T.o
- I0isNfpPwc3byqmBrl0vyP0odBE.cZX0ygDwGNOgPBfDscviaH8nLFB6q3lF9ZqqlzyS6nA32yNC
- .4tVGlthn3b7knrXscDoFphJ_iiy2STdWHAGGFM2Ldp73BjsFZvcuT9ewdnbO..2R98qDXiKSVc.
- JS7unzUu2shcl1Aew8NC.RqHVdrY94.aaTY57dD21uT0ZRGeV9IProItaoWV30dxragpoXVLdUvs
- GQbRR0ViskmNvAHiEAMbq0smr1tLfwTPzqX66CuNB9.xlwZmfy2oJzA.GAl7rJxQH3O.naoIkj9F
- iS1KhNMrwcoMCz921PCkvbQIn.dcXwuXYgI1qLvqj1wAWWiGo9IcjllqueNop_WucGohWLMvmKxQ
- 2.kjvNiH2TTPaEaXJ6TARCyHvK_MBpXUOIHrE8CcojOyQj4ew.MCRuL_HJgtZjIkIMHqgnshAme_
- qR5mA7NlIz3eLPehy6VueGpDQdZ65MseTu2Y6b3PaL3awWu_ihLh1mNRMS4Y93N9C_ARpu.apLXs
- PkbmybSPm5Odr6yq3Ga67_Qcztl2KrGJZMue3iM63QOgKzKyrZMuBtQndpMqRK396CfuiTvCWuXN
- ZjQPK71LjJh5ekeg8.XI332CDnXaAs.0xYPu5_wV6sZi3VYmZ61LqPLQlnhxzFoegoqrLct4zclt
- W6E58oWW2MfgFljQE8yoSi5nrIGKzsGvOsuAM1PSoeU3iOqtGzeNpsIq36RN7gfmyf1B1hksRaEE
- Xtt.7Zd3iIuWS8y6ItHgdIn.6MfOS6HPD3NNB_E2oCpyIt.4ixuoQCt9NlendPU1DYgGc10x516b
- FR8Y57AvsfCKhk8868KkWaGdzcE7V_fE33zx5OdJ0e_ePY9AeAXCvtQPj_KNddyS_E8qJJYvMErB
- A3jMfeWfZZ2AQEWmd_MAqJF9mFlUy0bB4aEMwwx9mJM579hnr0M98ozbtKxJfbz5Vy.PguDJaw3I
- i1qUzyWtth7fiTEmhSWI9IrjB3I79ihINInpk74PTvwJ0m5zYF_Jt0grdV3YFWf9EGfCn_OTfVrJ
- 7pA442bRX8mwnQBBfqM1I7QHs7OgmX9mm1k5SwY_RcltGjs6ccD0uieRLFiFdJ1VOYWUiAA0mI6l
- H5A3_lXY7RRoFAf3w3D8194CRFwW6eyags7NVRcW95iup.uyBnmUJuIGN5_bjy2WBrsaI.n9emUV
- kbJWnOBYW3N_3okyQOOFCVEQvV5PE5.H2Rpt1gX2DBHdNfhD64yR0h5n.wsqvZsW1G6G68Y2vbeT
- v3DfyNLCLcCjPloQJtzjxYmC5PD8xpwQw0NMqWb1vFcBjcsTuwnf.DOBijrxxlNqdlwYhU08zuuk
- Ni6j9BxWhQ12fZnuNLI72qqylgYIRCFLsEsrQ089uZq.aGNbrjrkqmPFvwsHlofbs4CKxRpC5.et
- 7h9RbiD_G1Q54d0wW6p6PvwCeboYk12HmkkU1MpcSqAi8rC0LmgtTJ9wF9PvfogfTFxklYTdNw4z
- _0Q31NHfuDX41dGTx6sGe_tI6quNZF.d4TfT0hEPx9me7.F9tYUkmVeDoXAVGMxV3GXJLTk.lZXF
- 623C9CDWokSA81Bzni.5zKFjnHW4Pw7nSWQwICkf_LVPcGGJ5IAaYFkzcE75WHZUTRlbF26IZNzp
- FarMoHnC9riVxbQLRZeQkWxEQDv3r8iyHVgYT.vC6pDjz_.pYunzEkTYbhpEPNZ.KdAoxq5QiYlc
- yihPO6cO._rl3L3TdAnt0Z4zgUC6jGYIliB1WlcwTuspJ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747691704; bh=ooiFODwM/51nuWtn5tsBmkyc2AA1PeL5txGvUP6Gu3o=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=o6ru5tmVDtn0h4vntacN2GOvrcsGnRQiuf/1pJ8IfNpbRJonMdqSXzIhsB+ijrJYcezLZrbu4uFqwn9FMLXThCYNvezNfngoCrgf+DmatXTWXYtoI3W491O3cj3Xtp/CGA073MuU4kue8G4FucQU9Jx6IkpPlB5oPWOey2CyxZ/ae/8tZanec7xUUYO+UIaMbAldshI/xuJOi1h5D+AtBF/K2250rD9cSkKrqH/Ec2iFj8xZQFJO6QG8S40tiwoXLd2b+GOIXThfHGtFDLiQLVvTwmvLAw0E7O6DZndQViyfIVGokcWqI6tnfnJoKsk5QW2LLqraDtejAXfoEj9ktQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747691704; bh=OBQBK1Q/99V6aZZi7s7ZQ5DB3zd8X5A2rJm1P6cwFtp=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=gT8oH1Biga9w/nHUL2jXBFByeYTk/OqL72wlLvbgDf6L+D8PvsYh7zjWU9+Ony5wMi+RkNoj2bFAS/2epsKHUlvKwwnzmZ5WqBHfLEC2vVtvmN0bg8HCdLEBvV5J1VCJwv6lp0BPzICErJrBUWh8bNVVHj8/jws9AEalDH/zdMme9TlkdpkK/F+98pna1qevPArq/vJ8P2EJjwhFHfB3GPZz1vRjo61F0DZ26jsMkzvpOLzU9xNULrHWP6J9E4d3oDgAr/V/MazPYbAFFJ/FiNuuiTpStQqDuSeWWdXiRMf+7rNcqMjr8tkJt27fbhLekKuEkNXtZ720lEBAMxIBzg==
+X-YMail-OSG: xpybelAVM1n1igeB8MFDXGgfvTLZXdrn7MRELj_k2M_Th0fCrOB3t7UXoE54Fev
+ DAE3GJ3Ay2q_s_nDiABysk6NLm.z4l22SgC.8DFwVPO.RF8ff8TVHXX8syIUbzV9.nvJ58.kM8WY
+ aepsQ4zzdkghOf7lRM_2r1Fkhm6RrQOJcz22sDL04N_MABgRFVGa4Gnf0CZ2jPMTHJkIlwQ88.bo
+ 8JmSjhjC0VsSHc7Qp05kD05fjP8RglsGFqTHij1exyO5Let2ww5_VKf3h9PSiF23uh_QynJjzn.Q
+ Vq.NVOsC48t0uYPvZRlt3hhTvn1asxYezbrNT9ATPy9ztpTDf8fMtbjg543hudhi.ycFPyDGK.nb
+ qOSpgFEEn9KAhLjoHCLz1Y3qopvPLLZGzD.4l9ta4cnaytuwWsjhEC8NCVhYuC44jttpsaF5W3s7
+ cFVpABriNxNId.G_vYGxA8dka4Mmka66sBxovLWYhPWP5hT6IoigN_K5rbFrQTm3i8hjZ3ibJHla
+ rSA.jwpL1lpCZk7NfK8qevO_FmmJPxGeCGrffIdPEfrtVR2uEGFYDrDuZJMwq5JtTZMVsV6_rJrv
+ UlM__pOwgoEQjkuL0TBgAleKTzAsa2mBqsviFofjb5_RihqkYC8uwZD4iW0shITw_NdISYOa_5fj
+ 9Py_uKqgiZk6LT_UluL3844d59pETmHDVlYHmQwntfe9ukYZh6DDchziQq6Z.qEtvgwInraS7hLW
+ u2r6OCdMpNpK39EXJXQ0h3wd1H3cu.FBjyCahHDcMlTm3qW2.2LCBOKRczGbDKj2GHH7p_SFJwjt
+ 9M0dwomlrVpKGLW.5EA4SijRbF8XMrQZeBjvfvH9Pd46.8PzxjHAJm8_CjIoKTBTTyHCcbUiESLV
+ YG_MGAQc4VpifLOoatQ8bBADatlu8rud6LAbACAPnr7KGw17HhejnRAVsdOxdBbM2Buk822QvXUe
+ expqLa1PeAQds01Szqqq1HShXZ7v98Ur5AkcITCqxriSYiJGQN3PYbrDab.QHoNG3E7NvVhjRe3k
+ Y4YdP1cE8hmnDmSXRZaiehq5Ae6tZGPQT_8uL7SV2rDBn7ZBn4i0qfPzalE2Y51kR21lrpZ.pz6_
+ OwQ_btnF4Xh.e0p.ZFjbPS7shA_U.nek2FeyAI0smIZ9smo3ca3TuJSQWXdYi0Fs9Tl.0b_FXZBB
+ KzfPR_ZxUjOq6ynF48LsCz2DrNGpjUuqAA6VIh9moWFHwDs.ORaA3mdc6SMwEOMl0mSXZbohJgLU
+ e9VapyWMd5ZkjV6inPy86ls8MU3FYsWSG2feF3LJvvCghqk5MscY34UksBfCxM1QAuJjaAH9.KMy
+ 3rjN0JtbXw1X.lEYFf9Gy6wjTukULx4m4dmlIalbe1LszwnWiTErwfyExp8IT3vtI3vHeJGpK0fY
+ NAEyYzTg0Pk7S1B_tJhZQ0hyTaKw2RB5BfGC.natrTtpMzRl7NJabSVXkYyRx9bj33e.i3mm5tXQ
+ ACiacOBTysvnIKQB1OZU1z0iU8_SNdU8kBGYmJVFMSbBMpJb3m42A2GJ7xqj074IyARC5Na8diqW
+ .p229u7jcTRjzn3rbLJhicUx_mlFSZISzg..SOdASB5_csqvhliQpN57_UX3ApeAmePR1ivauqPT
+ G4tYJL_TL0aLHo221htSpVtnWCbaF8KXovqrhJo.5deeEIW6_lHjWbxoW.yJSKILjmUSTQVe600D
+ oU0YvbC65rKTY72fRkEM1CbSJ1narlcYA.PB0XjsRSjwJkNvPAZbaEp4GY1nqM4bmdR2s9SdjiNd
+ BopxpdS3w4azm0lxLV80v_51JB2ngIsLBxyaASCet5ihgQJP8thF9.M22wrpyaC0XSqJvPEImIyr
+ Sg6TSJ7pYAikfVB6Qx80b2aKVDayyDu_G88GnsfHtY.XbCnS5cl5GiyeeG8LN3j2DKjntUvS6hee
+ AnJnz3zo1qB.DHVPpo0Tst4Lq0qfuf4AWfB5krOs5HYCnMMXOpd_vSzY8anQsBa1.tqGl3NULRrp
+ b68.8UZkr83SwCuTU8CqvMtCfcBwqtlInhcSpM36tyT1htlXChhUYhvBmc.69QuYEpe7fokOXYEQ
+ Tq_IOOJysCIov9srgKK_ZlyZS7EOYcNJBmVHYoqUVSIyYWpGDf050mRa7MIjs0SG37Nkn6NAn7ku
+ IkZVNjfMCmF54mc2eQ1EtMymDML6bQ0FZmLyEnPhxF2zHj14luLxMoSeYSmy2mzbCUpScAyBrLEc
+ Lu5lZuQp9TxdByecpdp8Hrwl7aY4nmyFcNSopRdj8EX021T82Ubh2sgrSFwC1k2ojMy9ZloOJvOB
+ lUs_Ard4nBY_eAt4oKsLTVxRRfxrlRGHPX.Zpcp5eFEOvVA--
 X-Sonic-MF: <sumanth.gavini@yahoo.com>
-X-Sonic-ID: e9acd945-97ed-44ce-8a73-75c147043df2
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.sg3.yahoo.com with HTTP; Mon, 19 May 2025 21:55:05 +0000
+X-Sonic-ID: 2c753556-03ef-4979-a145-0a7275fc660b
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.sg3.yahoo.com with HTTP; Mon, 19 May 2025 21:55:04 +0000
 Received: by hermes--production-gq1-74d64bb7d7-rstz2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d5fa22a8ec8900100267a57050f58b0c;
-          Mon, 19 May 2025 21:55:00 +0000 (UTC)
+          Mon, 19 May 2025 21:55:02 +0000 (UTC)
 From: Sumanth Gavini <sumanth.gavini@yahoo.com>
 To: cw00.choi@samsung.com,
 	krzk@kernel.org,
-	myungjoo.ham@samsung.com
+	lee@kernel.org
 Cc: Sumanth Gavini <sumanth.gavini@yahoo.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/5] extcon: extcon-max77693: Correct Samsung "Electronics" spelling in copyright headers
-Date: Mon, 19 May 2025 14:54:42 -0700
-Message-ID: <20250519215452.138389-3-sumanth.gavini@yahoo.com>
+Subject: [PATCH v2 3/5] mfd: maxim: Correct Samsung "Electronics" spelling in copyright headers
+Date: Mon, 19 May 2025 14:54:43 -0700
+Message-ID: <20250519215452.138389-4-sumanth.gavini@yahoo.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250519215452.138389-1-sumanth.gavini@yahoo.com>
 References: <20250519215452.138389-1-sumanth.gavini@yahoo.com>
@@ -89,26 +89,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix the misspelling in extcon-max77693 driver
+Fix the misspelling of 'Electronics' in MFD driver copyright headers.
 
 Signed-off-by: Sumanth Gavini <sumanth.gavini@yahoo.com>
 ---
- drivers/extcon/extcon-max77693.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/mfd/max14577-private.h | 2 +-
+ include/linux/mfd/max14577.h         | 2 +-
+ include/linux/mfd/max77686-private.h | 2 +-
+ include/linux/mfd/max77686.h         | 2 +-
+ include/linux/mfd/max77693-private.h | 2 +-
+ include/linux/mfd/max77693.h         | 2 +-
+ include/linux/mfd/max8997.h          | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/extcon/extcon-max77693.c b/drivers/extcon/extcon-max77693.c
-index 2c567e0b7b7f..ab49ee6b5b2b 100644
---- a/drivers/extcon/extcon-max77693.c
-+++ b/drivers/extcon/extcon-max77693.c
+diff --git a/include/linux/mfd/max14577-private.h b/include/linux/mfd/max14577-private.h
+index a21374f8ad26..dd51a37fa37f 100644
+--- a/include/linux/mfd/max14577-private.h
++++ b/include/linux/mfd/max14577-private.h
 @@ -2,7 +2,7 @@
- //
- // extcon-max77693.c - MAX77693 extcon driver to support MAX77693 MUIC
- //
--// Copyright (C) 2012 Samsung Electrnoics
-+// Copyright (C) 2012 Samsung Electronics
- // Chanwoo Choi <cw00.choi@samsung.com>
+ /*
+  * max14577-private.h - Common API for the Maxim 14577/77836 internal sub chip
+  *
+- * Copyright (C) 2014 Samsung Electrnoics
++ * Copyright (C) 2014 Samsung Electronics
+  * Chanwoo Choi <cw00.choi@samsung.com>
+  * Krzysztof Kozlowski <krzk@kernel.org>
+  */
+diff --git a/include/linux/mfd/max14577.h b/include/linux/mfd/max14577.h
+index 8b3ef891ba42..0fda5c2e745a 100644
+--- a/include/linux/mfd/max14577.h
++++ b/include/linux/mfd/max14577.h
+@@ -2,7 +2,7 @@
+ /*
+  * max14577.h - Driver for the Maxim 14577/77836
+  *
+- * Copyright (C) 2014 Samsung Electrnoics
++ * Copyright (C) 2014 Samsung Electronics
+  * Chanwoo Choi <cw00.choi@samsung.com>
+  * Krzysztof Kozlowski <krzk@kernel.org>
+  *
+diff --git a/include/linux/mfd/max77686-private.h b/include/linux/mfd/max77686-private.h
+index ea635d12a741..e6b8b4014dc0 100644
+--- a/include/linux/mfd/max77686-private.h
++++ b/include/linux/mfd/max77686-private.h
+@@ -2,7 +2,7 @@
+ /*
+  * max77686-private.h - Voltage regulator driver for the Maxim 77686/802
+  *
+- *  Copyright (C) 2012 Samsung Electrnoics
++ *  Copyright (C) 2012 Samsung Electronics
+  *  Chiwoong Byun <woong.byun@samsung.com>
+  */
  
- #include <linux/devm-helpers.h>
+diff --git a/include/linux/mfd/max77686.h b/include/linux/mfd/max77686.h
+index d0fb510875e6..7c4624acd1db 100644
+--- a/include/linux/mfd/max77686.h
++++ b/include/linux/mfd/max77686.h
+@@ -2,7 +2,7 @@
+ /*
+  * max77686.h - Driver for the Maxim 77686/802
+  *
+- *  Copyright (C) 2012 Samsung Electrnoics
++ *  Copyright (C) 2012 Samsung Electronics
+  *  Chiwoong Byun <woong.byun@samsung.com>
+  *
+  * This driver is based on max8997.h
+diff --git a/include/linux/mfd/max77693-private.h b/include/linux/mfd/max77693-private.h
+index c324d548619e..8e7c35b5ea1c 100644
+--- a/include/linux/mfd/max77693-private.h
++++ b/include/linux/mfd/max77693-private.h
+@@ -2,7 +2,7 @@
+ /*
+  * max77693-private.h - Voltage regulator driver for the Maxim 77693
+  *
+- *  Copyright (C) 2012 Samsung Electrnoics
++ *  Copyright (C) 2012 Samsung Electronics
+  *  SangYoung Son <hello.son@samsung.com>
+  *
+  * This program is not provided / owned by Maxim Integrated Products.
+diff --git a/include/linux/mfd/max77693.h b/include/linux/mfd/max77693.h
+index c67c16ba8649..8e77ebeb7cf1 100644
+--- a/include/linux/mfd/max77693.h
++++ b/include/linux/mfd/max77693.h
+@@ -2,7 +2,7 @@
+ /*
+  * max77693.h - Driver for the Maxim 77693
+  *
+- *  Copyright (C) 2012 Samsung Electrnoics
++ *  Copyright (C) 2012 Samsung Electronics
+  *  SangYoung Son <hello.son@samsung.com>
+  *
+  * This program is not provided / owned by Maxim Integrated Products.
+diff --git a/include/linux/mfd/max8997.h b/include/linux/mfd/max8997.h
+index 5c2cc1103437..fb36e1386069 100644
+--- a/include/linux/mfd/max8997.h
++++ b/include/linux/mfd/max8997.h
+@@ -2,7 +2,7 @@
+ /*
+  * max8997.h - Driver for the Maxim 8997/8966
+  *
+- *  Copyright (C) 2009-2010 Samsung Electrnoics
++ *  Copyright (C) 2009-2010 Samsung Electronics
+  *  MyungJoo Ham <myungjoo.ham@samsung.com>
+  *
+  * This driver is based on max8998.h
 -- 
 2.43.0
 
