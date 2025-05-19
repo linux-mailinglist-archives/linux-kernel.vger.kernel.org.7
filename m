@@ -1,40 +1,44 @@
-Return-Path: <linux-kernel+bounces-653966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4300ABC15E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:53:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3287CABC040
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF7D57A23AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:52:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF10818959EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE86C283FD7;
-	Mon, 19 May 2025 14:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6FE284B52;
+	Mon, 19 May 2025 14:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Ka8twIly"
-Received: from mail-m32107.qiye.163.com (mail-m32107.qiye.163.com [220.197.32.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA43284B33
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 14:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.107
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ffyDfyS6"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7AD284693;
+	Mon, 19 May 2025 14:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747666385; cv=none; b=B9y1hMeL8YRhykG+UVCW4zX2jlmmGS5Z8H/PW8OHNmWgWA59IH707MMqkBlVHBmjEZckTv8CIfm8qF0Jxj7SvqLH1f4jRAmhA0tEUE9ohXPBGQHH/eb5wODQXigS9u6pErSFdHhPP8nFLt+zCrr+BO8a3RhtZ5raLGUmzVXibxU=
+	t=1747663465; cv=none; b=UoDB4R5wVcU+YSVFWePeILmOHxRyFm+6P37EPPZPbM+5AXDLeCmeKWz6RiRWFKFIScPk4CS+ATsxtuPpk0cAjSJXoU/PN9cXKhLmKtplCK7E5l4KxsUoIC5IOQwp3z8gcNyHUwThPU97Anu4xhkUwMILk3KJxXLP5354S3IvRtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747666385; c=relaxed/simple;
-	bh=WmI7AxznM9GYrbjWx0YCMnqw7/PHuW0zL01AhL4/OVU=;
+	s=arc-20240116; t=1747663465; c=relaxed/simple;
+	bh=tWfvXwhAdZ5gTeptiPE9Fe1/fwx01QSqHBxpZlGmt+0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MB9l47fpwNGRRs+mLQH7tVaFTZ0YMddvG4VD22sDDHsuHA2X54KoFObxmeJVBgeSmfRny0d91wdohLsS33JCAVdoupXAO22sEMSnH373LIHxQOHWZt+1IH21Zk9OFpW7OUq6yFTWxSPQlqEcHnaUdpTw5omCPimI/5++/pF7YkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Ka8twIly; arc=none smtp.client-ip=220.197.32.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-2-entmail-virt205.gy.ntes [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1587f7efd;
-	Mon, 19 May 2025 14:56:29 +0800 (GMT+08:00)
-Message-ID: <632f9f4d-ec0f-4512-a153-d2abfd9f6841@rock-chips.com>
-Date: Mon, 19 May 2025 14:56:03 +0800
+	 In-Reply-To:Content-Type; b=u8Y0U1Jk6RCi1JGSoyWHWGoS1mt/baZA/yw2IRzW54rNebOohfkdrLh4o2oMY9oySQHE9Ik72f6slL7//XOuGf+pOOOQgTicrv7LmcW2eCa1YQFj1Ja9HU4jfs/etECxGj97ihlUvJEyS7to2A5I44CEZKCXjj6Nqx50mGe3eNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ffyDfyS6; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=w5WmlRLBiaSyBNP62+3UzxDW04RPKWnE0s58YY3pWoQ=;
+	b=ffyDfyS6/Sye1aNzIMf3Rx+icmkqMACwSvMovxfXiCqUcshMSAj2jMlfuSZsev
+	gAmwPb9UkhuPFKi/JpZYmTQc5Q+8vznlWOfCvc/HkjtUW7/LPi9MypWEq0lB0WLK
+	/oEOp9B38hEVClJZn8sjuuRjKWO0fYiwynfMwHWFHFaYc=
+Received: from [192.168.71.93] (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wC3T8srOitoOT5PCg--.21492S2;
+	Mon, 19 May 2025 22:03:24 +0800 (CST)
+Message-ID: <f3033cfb-6a70-4fa3-bf06-ee79517ef740@163.com>
+Date: Mon, 19 May 2025 22:03:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,167 +46,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] dt-bindings: display: rockchip: Convert
- cdn-dp-rockchip.txt to yaml
-To: Krzysztof Kozlowski <krzk@kernel.org>, Chaoyi Chen <kernel@airkyi.com>,
- Sandy Huang <hjc@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Dragan Simic <dsimic@manjaro.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250519012632.94-1-kernel@airkyi.com>
- <20250519012632.94-3-kernel@airkyi.com>
- <20a565da-296c-4920-b962-e9de9af464d9@kernel.org>
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <20a565da-296c-4920-b962-e9de9af464d9@kernel.org>
+Subject: Re: [PATCH 3/4] PCI/AER: Expose AER panic state via
+ pci_aer_panic_enabled()
+To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ bhelgaas@google.com, tglx@linutronix.de, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, mahesh@linux.ibm.com
+Cc: oohall@gmail.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ Hans Zhang <hans.zhang@cixtech.com>
+References: <20250516165518.125495-1-18255117159@163.com>
+ <20250516165518.125495-4-18255117159@163.com>
+ <6d946767-aa61-441d-965b-115e415bfd4f@linux.intel.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <6d946767-aa61-441d-965b-115e415bfd4f@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUoaHlZOQk1KQxlMSktIH0lWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a96e754661603aekunm1587f7efd
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PAg6LBw5FzE0Ii4jMSsLPxlL
-	MxAKCzpVSlVKTE9MTUhMTEJNQk1JVTMWGhIXVRgTGhQCElUYEx4VOwkUGBBWGBMSCwhVGBQWRVlX
-	WRILWUFZTkNVSUlVTFVKSk9ZV1kIAVlBT01NSTcG
-DKIM-Signature:a=rsa-sha256;
-	b=Ka8twIlywrsVRoj8joZuMcW3eNbHX7gY7ch+iU1OHqX+6+7zslvXArine9mFteoTl/apcyN/gJRi0rs4lA8aCiHKEcxuT/dJ7AIfildpe4TLr1kzqyGoOPdKAdnX7qs7DB+0IGfmX/oWgPABuzmw66/CvdowapfJaSyrpYJzR+0=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=eU+WAthWlgyCACOPm0qsanWlkKCLEJIXdLnn+HPfHms=;
-	h=date:mime-version:subject:message-id:from;
-
-Hi Krzysztof,
-
-On 2025/5/19 14:16, Krzysztof Kozlowski wrote:
-> On 19/05/2025 03:26, Chaoyi Chen wrote:
->> +maintainers:
->> +  - Andy Yan <andy.yan@rock-chip.com>
->> +  - Heiko Stuebner <heiko@sntech.de>
->> +  - Sandy Huang <hjc@rock-chips.com>
->> +
->> +allOf:
->> +  - $ref: /schemas/sound/dai-common.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - const: rockchip,rk3399-cdn-dp
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    items:
->> +      - description: DP core work clock
->> +      - description: APB clock
->> +      - description: SPDIF interface clock
->> +      - description: GRF clock
->> +
->> +  clock-names:
->> +    items:
->> +      - const: core-clk
->> +      - const: pclk
->> +      - const: spdif
->> +      - const: grf
->> +
->> +  extcon:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> +    items:
->> +      maxItems: 1
->> +    maxItems: 2
-> Instead of this, list the items. Old binding said only "specifier", so
-> this is technically a change, which should be explained in commit msg.
-
-Will fix in v5.
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wC3T8srOitoOT5PCg--.21492S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGr1kGr4DZw1rXrWrKrWfKrg_yoW5GF1DpF
+	WrJa4UArW8GFy8WFZ7Z3W8ZFyrZ3s7tryrArWxG3y8uFnxA3WrJF93AFyUWFn7Xr4DuF1a
+	yF1jyrnxGF45taDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UBrWwUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwlSo2grOTwcZgAAsL
 
 
->
->> +    description:
->> +      List of phandle to the extcon device providing the cable state for the DP PHY.
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  phys:
->> +    items:
->> +      maxItems: 1
->> +    maxItems: 2
->> +    description: |
->> +      List of phandle to the PHY device for DP output.
->> +      RK3399 have two DP-TPYEC PHY, specifying one PHY which want to use,
->> +      or specify two PHYs here to let the driver determine which PHY to use.
->
-> You do not allow one phy, so your description is not accurate. OTOH,
-> original binding did not allow two phandles, so that's another change in
-> the binding. You need to document all changes done to the binding in the
-> commit msg.
 
-Oh, the original binding example use two phandles. I think only one PHY 
-can also pass the dtb check here, or maybe I'm missing something else?
+On 2025/5/17 12:07, Sathyanarayanan Kuppuswamy wrote:
+> 
+> On 5/16/25 9:55 AM, Hans Zhang wrote:
+>> From: Hans Zhang <hans.zhang@cixtech.com>
+>>
+>> Add pci_aer_panic_enabled() to check if aer_panic is enabled system-wide.
+>> Export the function for use in error recovery logic.
+>>
+>> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+>> ---
+>>   drivers/pci/pci.h      |  2 ++
+>>   drivers/pci/pcie/aer.c | 12 ++++++++++++
+>>   2 files changed, 14 insertions(+)
+>>
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index 8ddfc1677eeb..f92928dadc6a 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -959,6 +959,7 @@ static inline void 
+>> of_pci_remove_host_bridge_node(struct pci_host_bridge *bridge
+>>   #ifdef CONFIG_PCIEAER
+>>   void pci_no_aer(void);
+>>   void pci_aer_panic(void);
+>> +bool pci_aer_panic_enabled(void);
+>>   void pci_aer_init(struct pci_dev *dev);
+>>   void pci_aer_exit(struct pci_dev *dev);
+>>   extern const struct attribute_group aer_stats_attr_group;
+>> @@ -970,6 +971,7 @@ void pci_restore_aer_state(struct pci_dev *dev);
+>>   #else
+>>   static inline void pci_no_aer(void) { }
+>>   static inline void pci_aer_panic(void) { }
+>> +static inline bool pci_aer_panic_enabled(void) { return false; }
+>>   static inline void pci_aer_init(struct pci_dev *d) { }
+>>   static inline void pci_aer_exit(struct pci_dev *d) { }
+>>   static inline void pci_aer_clear_fatal_status(struct pci_dev *dev) { }
+>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+>> index fa51fb8a5fe7..4fd7db90b77c 100644
+>> --- a/drivers/pci/pcie/aer.c
+>> +++ b/drivers/pci/pcie/aer.c
+>> @@ -125,6 +125,18 @@ void pci_aer_panic(void)
+>>       pcie_aer_panic = true;
+>>   }
+>> +/**
+>> + * pci_aer_panic_enabled() - Are AER panic enabled system-wide?
+>> + *
+>> + * Return: true if AER panic has not been globally disabled through 
+>> ACPI FADT,
+>> + * PCI bridge quirks, or the "pci=aer_panic" kernel command-line option.
+> 
+> I don't think we have code to disable it via ACPI FADT or PCI bridge quirks
+> currently, right? If yes, just list what is currently supported.
+> 
 
+Dear Sathyanarayanan,
 
->
+Thank you very much for your reply. You're right. If this series of 
+patches is supported in the discussion, I will remove the comment "ACPI 
+FADT, PCI bridge quirks" in the next version.
+
+Best regards,
+Hans
+
+>> + */
+>> +bool pci_aer_panic_enabled(void)
+>> +{
+>> +    return pcie_aer_panic;
+>> +}
+>> +EXPORT_SYMBOL(pci_aer_panic_enabled);
 >> +
->> +  ports:
->> +    $ref: /schemas/graph.yaml#/properties/ports
->> +
->> +    properties:
->> +      port@0:
->> +        $ref: /schemas/graph.yaml#/properties/port
->> +        description: Input of the CDN DP
->> +        properties:
->> +          endpoint@0:
->> +            description: Connection to the VOPB
->> +          endpoint@1:
->> +            description: Connection to the VOPL
->> +      port@1:
->> +        $ref: /schemas/graph.yaml#/properties/port
->> +        description: Output of the CDN DP
->> +
->> +    required:
->> +      - port@0
->> +      - port@1
->> +
->> +  power-domains:
->> +    maxItems: 1
->> +
->> +  resets:
->> +    maxItems: 4
->> +
->> +  reset-names:
->> +    items:
->> +      - const: spdif
->> +      - const: dptx
->> +      - const: apb
->> +      - const: core
->> +
->> +  rockchip,grf:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description:
->> +      Phandle to GRF register to control HPD.
->> +
->> +  "#sound-dai-cells":
->> +    const: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - clock-names
->> +  - interrupts
->> +  - phys
->> +  - ports
->> +  - resets
->> +  - reset-names
->> +  - rockchip,grf
->
-> sound-dai-cells was a required property.
->
-Okay, will add in v5.
+>>   bool pci_aer_available(void)
+>>   {
+>>       return !pcie_aer_disable && pci_msi_enabled();
+> 
 
 
