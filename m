@@ -1,202 +1,211 @@
-Return-Path: <linux-kernel+bounces-653434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C94CABB9AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:41:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE14EABB9B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDAFD7A00E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:37:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 556843B93E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2164526E15C;
-	Mon, 19 May 2025 09:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0A726D4DC;
+	Mon, 19 May 2025 09:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="7LqVAirJ"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2051.outbound.protection.outlook.com [40.107.243.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VrSSE7Fw"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098E14317D;
-	Mon, 19 May 2025 09:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747646643; cv=fail; b=VbXInc8UA8gqg4d2zPvBXlItz2EOgAtwFo1ZsmPH9X9f5OK/S3/Rc6rzhq+IupAzCbN6HYXCZnp/pSXOCQRQkh4Wcc4MbozAdg6WUXMl/TCZGn5fLldbizKF+nkOofCo683y2qdsdDk1SxSCZBMHRiRvrH82GIMqIEum6PyoX80=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747646643; c=relaxed/simple;
-	bh=EEbEv7KJnCxOimXUjaFy6R7s0kOmrgyizAr6EwWmzGU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=b1rb1CxxDtAfg9y6qIkq1WnqaDHpUsxyA3WPmIkDonGJjRbQUwCfGQnB25IaAAlGcZRqPV6v+No61klncqIUikeU/881B/Hq0mvIV4s72/xRSV77QeZMPJiBKv+xh2SfDYDTDK2RrxKF94RxOc2wYpuPW2P8Cm6drNGZvpiQqZA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=7LqVAirJ; arc=fail smtp.client-ip=40.107.243.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yh7jq6IRTEJ/yv5AtKZ6nLpDEgp0/0HYmawAP9ZzHBVpArrP5e/S3C2jeehhfn5ciIdE+3r6FCx2UnJj1h6GHDiD8Eih83igtOdaESCGc/U9nTcSApHU6/dKm6wzfbWfP4NTO9WtqHjyiQxElCnzCAvFU95ngOLNTNFVHIT6AQ/FyEIr/ZZCLoSr1Eq/6x/Gk7Kl5a1C1nNwRs1wOL/DrybgS7eIOfNhzvwcPzvelHEopB/sLpCRlyO+Qy8aGmT4CY9ZofW1d/lTuYup91+GkOukQ3R8ssNBdr30rXIIt5TLtkIcWdaRYBSXuyymTqwVa5eGEltwKJMcufMp69RV+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EEbEv7KJnCxOimXUjaFy6R7s0kOmrgyizAr6EwWmzGU=;
- b=RBcHXTa7edcCxmQVFAswl9O531Q2ywp1+Mfkxg9K9j2hhoGAbaAHEt6hizSeF6FfE6ejKap23qk+vmkIjeyndvPx8qjQoVbziG0JqfpYkjcaiN0sdSo/oW38pyXGjWmFkaXUvzdIGVDA9SNj5dnPxvR6Kz6FrxbJ6gI+Pt3aZWv4ZOj8WniVsXMTefW4x9rUyPquGd4eLGEJvBIaRLBeV6g0ahVtRuoEk/q01ShePSf84ClOr+EDdEJnUPG8npx14CT78oIrynRusArreNI8sZMVRcY/3NNtfWaMK086Gvy+ovpNOMHRLZ3rE7DlhQvXEQ1uguxR5jErZwnt251R2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EEbEv7KJnCxOimXUjaFy6R7s0kOmrgyizAr6EwWmzGU=;
- b=7LqVAirJY9DsYy+sVMB/ppW693/SQSsJiBWvw50CeZURjlC2I9NuYB1p3X1b2T9ks0CeXX+UJCaCAP11Pcz7yo/x2WKlUOg72MswJpcnHg8yGVhb/cUWoK0HGeR/rKhG4A+m0lsVLF/P3HUaaWh/oewaoOMGaqxSWwuuTYdutHua3HhOP08hv3ewBjDkLO7ML0tOcjILChCv8sS8nHwi3Ev26dnQOyF+2N2Cqj+qfkYPb+TOUZPcM4i58BTPqyWE/leI8qiYW7rq5lzFTMrSnudPimpgVLDo+ytHAc164dRbtFVkfGWsdbaqIPI0rxDK0OsUyo5LZ8CKnouR8EjFhQ==
-Received: from DM6PR11MB3209.namprd11.prod.outlook.com (2603:10b6:5:55::29) by
- SN7PR11MB7566.namprd11.prod.outlook.com (2603:10b6:806:34d::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8746.30; Mon, 19 May 2025 09:23:57 +0000
-Received: from DM6PR11MB3209.namprd11.prod.outlook.com
- ([fe80::18d6:e93a:24e4:7924]) by DM6PR11MB3209.namprd11.prod.outlook.com
- ([fe80::18d6:e93a:24e4:7924%3]) with mapi id 15.20.8746.030; Mon, 19 May 2025
- 09:23:57 +0000
-From: <Thangaraj.S@microchip.com>
-To: <kuba@kernel.org>
-CC: <andrew+netdev@lunn.ch>, <Bryan.Whitehead@microchip.com>,
-	<davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <edumazet@google.com>,
-	<UNGLinuxDriver@microchip.com>
-Subject: Re: [PATCH v1 net] net: lan743x: Restore SGMII CTRL register on
- resume
-Thread-Topic: [PATCH v1 net] net: lan743x: Restore SGMII CTRL register on
- resume
-Thread-Index: AQHbxhdD34wCQBQKWkedyDcav/M+M7PV64oAgAPGsgA=
-Date: Mon, 19 May 2025 09:23:56 +0000
-Message-ID: <067713e1ebaf303fe4aefb9c29cc7e1b70cd722a.camel@microchip.com>
-References: <20250516035719.117960-1-thangaraj.s@microchip.com>
-	 <20250516164010.49dd5e8b@kernel.org>
-In-Reply-To: <20250516164010.49dd5e8b@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR11MB3209:EE_|SN7PR11MB7566:EE_
-x-ms-office365-filtering-correlation-id: 824e0b75-e794-4426-b30d-08dd96b6e1a6
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?TUxTOHpnVC96eHJoRVcyUTFJU0U0UjZqOWsrR1V1OUczU0Q3QXFhNS9pRUlV?=
- =?utf-8?B?ekRnSVF5a1hIUEQyV1JhWUErdW1RQnhZZHh4anRub0RZUG1Mdy9wUURvdzZt?=
- =?utf-8?B?QVl4Sy9WSUJBTkZXd2RRYjYvdFk4Rk1IRGZ6djVoMmQyYThtZ3Q3YS8yU0JJ?=
- =?utf-8?B?WjZWeEhvcmNVRnh0OEY0cWs5eHpHcDN3Y09pRTBjcndSUzh5SmZmRkIwL3FO?=
- =?utf-8?B?OEN0Wkw3RUczcWJLMXhWTCtocDk2cUJsS2tkSEkvQ2oreGRYQStuc3JPZGIr?=
- =?utf-8?B?Tm1idUk1ZWozTTVqc3poU1U0SHoxMTBmTnc0a0RGeGZGNDliQ2ovVWkvRG4r?=
- =?utf-8?B?bDN3VzNuRCtsaHJ4cHlhOTJZT1oyQ0RVR1JaSXR6amtPRCtISEwwT2FLQnEv?=
- =?utf-8?B?MFJLeHVrMmdBTkdLbnZwOFZlYVZ2aWVhUkRVVE9qMlpOcDJTQ0lVWU5EMFV0?=
- =?utf-8?B?eHVRWndtZU1SK0JhdUxUYk5ZTTRsSTNWbnRiUjZSUHQzaWVxSFkxLzRremhS?=
- =?utf-8?B?Y2ZQM0RrVklZWVMxVmxVMHl5aXl1K1VrVUFkM2pleWxqNzJjRVFvWjZEYktQ?=
- =?utf-8?B?S25jOC8yS3ZGOG9xUTR5QVBJMHk0Sml6ZVpsN2g2MWlSb2FtUmFKNmdRUGgx?=
- =?utf-8?B?NGRueVNyQkRHRDlwVXcwcTZqNnFpRTFwUTVtcmsxZ2ZIMVRGQmNSbXFYclBR?=
- =?utf-8?B?VEdKb2dVT051YjJRNER2T3dIY2NVbWRzdmYxOTVzRzdXeGszN1JGWUN1ZlRX?=
- =?utf-8?B?c1lwQlVzb3IxSzZOS2NzZGZaWEkxY2NOOERaY0llZTVqRDdhZjBvRjFBc0l2?=
- =?utf-8?B?ZHA3dDh5QTZTc2RQZis0aWs5Zlh3WERCVHExb0tvYy9rc2lzTFlGMUxVSVgy?=
- =?utf-8?B?Z05RWC8zOUFjYVR3L3BjbGIwMHdWV0oyMy83YWVFWTlBLzh0Rlh1WTBJM2J6?=
- =?utf-8?B?c09VRWFBcGI4NHFUdHltdFVYc0Y1Nm5ZNGd1OWlRUDJrZ2xPWUZ0WExYWjFt?=
- =?utf-8?B?OVlnTWg3SGcxSHdXS3M5OTlqK1VaeG9XTFhCTGRBa0ZmbnpvMHMxTC9RcU55?=
- =?utf-8?B?R0lZVHlPekR0amNTV2dwcnFrSlQyeG9XcFRKdmU1N1hDc21MVExveDJpc1I5?=
- =?utf-8?B?Ym1ISVhySWNPTVhuaG4wVlJoblpQOGN0WXZEYTRjb1Bxa241djE0NDQ5SU9E?=
- =?utf-8?B?bDR6bkxVV3ZtQ2xzcElaRlZiMU5jc21Kd3R1YXl3eTJqeGVWY0tDdlNKcTdH?=
- =?utf-8?B?TkdFem40SXg2R3RrY1dYclI2Q1hqS3E3ZW1qQ0VkbXFKVmJkQ0pzdlc1TGRS?=
- =?utf-8?B?bkdEVXV1dyt5VGQ1Ui9HZDZzSTRLOVEwZUp1STVPWGpVSGRNUUhLTGxIblY1?=
- =?utf-8?B?YUNhNlJjZkROdEZPSHVuT0ZrUmpNL0I1WUlCdVZscXNiaUo0Z3MvUDNjd0Vo?=
- =?utf-8?B?UlE0TzFIemVBR3lwcmduVzljWlpRdExtNnkyN2JiQ1REUUR0Qm5qREVLNlJW?=
- =?utf-8?B?eE0xYm9jRFJtcVdxUk9GWjltVzVZekJiNU5mdmJlTlVrME5iOFFtYzFXeHNU?=
- =?utf-8?B?eUxKU2lxNkdYYWMvbk9XMmtzcTEvYzIySjBOZUhUZ2RxYlM3Nkp1RzNycGt1?=
- =?utf-8?B?VklyMlBnRjNLazVRSUVFZjZ0QjlIRzBHRytzQjBBcWZPYkVkaXRtQmRjRzdk?=
- =?utf-8?B?WUpld1hMOHpLOWxFQTMxVUI4WEJoVDZIM1RaejcrcElCSTdqd3h6Q3c0ZVlH?=
- =?utf-8?B?U3k2bjdqQ29IdkpQSEUza1VybGFabTQ0NlJFWXpqU1NycS8xUjV1UU1TVkEy?=
- =?utf-8?B?Mi9pU0g1NTM3cDg2aGQ1blg5UEFOQTdMVDMrcTM2VTluL3d2OTQrM2FKd056?=
- =?utf-8?B?eHhYMGR3U0lZWStlRHFFMjJOTUwrVkljdFMwbkZaTTB0Ukw3b0E4cjBuTU5M?=
- =?utf-8?B?STB6akxrTHM3WGZoUXZyVVNnamlHTk03YS93VWhEc0RtU01VZmt3RGpObVM0?=
- =?utf-8?Q?loEtA62XujSJZOp8gkJt9YcZLp+B5w=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB3209.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VHFhOG56Z3BBdVc3UFlPMUlSc3NIQUVlZUZaUkM1L08xZG54dlJXaDV0b0RF?=
- =?utf-8?B?RFppWUpzNGJ0dUw0bmVFaGx6SFBhb3hvMDFRK2h1clVBVW85NGk3a0tXRUo3?=
- =?utf-8?B?NWlPaWdBcjRqaGNvQVNpYlBmbXdCdkt5cHNBd3grOW0wU3QwS1dvRUpvUklD?=
- =?utf-8?B?cUhIb0NqNU5wQnVPcjUvYWZ1WTNWdmluaFlURTlncXpna0YxWUR0ZitsWlRh?=
- =?utf-8?B?R3NFQWlBTitBNCtkTjlXY0ZCVU5YcTJOL0tQWGlpVXRsMXU0R3VzcEFZMXo5?=
- =?utf-8?B?aGdQbXRIRzJZNHIyT0xDRmNCRTgyUzkzbllFZTBJMXQwSUVZTUptaUo2OVUr?=
- =?utf-8?B?aVZLSDI0Y3B5cEVOVmg0anNZUGJ0ZWowMHZpUmI5MmNnNVEwUU91cGxITmR6?=
- =?utf-8?B?M3gzSjBCM2ZHZkJMWlpuQnFDVHpjVTZHQkY0TXgrK3pGZ1RGc1NGNGpJbDNh?=
- =?utf-8?B?aUE1WXU5V2hlVHRoVEF4blkrbWIwZ3piWk9LalNMUVBTNVBzcC82cEQ1clor?=
- =?utf-8?B?Z1FWT2dRWDFweWhRS3NrYTk5cHFub1JnZXhnSklBTElvRjB0SGJDRlJDc1RL?=
- =?utf-8?B?TDhCemNuc3FraDdzYXEzMWZkQ0FHZ28raG04Y2x5T0Z5NXU0Y1hNYzlMcWo1?=
- =?utf-8?B?TWhUNjRkaHRwUXcwSkhtZzg3WXJySGFoU2RUS3ppZDlVS1E5TVZlQ0RHc0R4?=
- =?utf-8?B?V1h2YWhIcUJoQkpnMVRwZkpQMXNwV1VFMkwyUUhaWUV2M1J1d3lUWWhSaHVG?=
- =?utf-8?B?a0VGZHJ1NDJKM1FBVFNNdGtlSnZ2WnJ2TytvUnZMV2dwektGcGRMNVF6MkMy?=
- =?utf-8?B?bkxmc3A0N2FJdXlLT29xaU1MakNMMXVaaUlXOU8yMEVHTDhPWkJ1TUpMRVJs?=
- =?utf-8?B?bHlNMWI2WVp3aW9POCtLWGRQZFc5b0F4eno0NDVaNXIxWjZ3YnBnYS9zR3hK?=
- =?utf-8?B?NGtxL2xOMDlnVVFxQnZyOUhoS082Q3BwTEptSzcvRlZuR2Z1WTJKRzltKzBC?=
- =?utf-8?B?WEtjQWV3ODR4YTlXMERiQjEwa0tHM2h2RVBveERZQTI5ZUVVK004RWh1R1ZP?=
- =?utf-8?B?azBwOFVFSEtBYThDR2VKaUJXVHN4MGluZWE5Z1htVzBIMGl6RDcyNm1CeTdR?=
- =?utf-8?B?bkRIdS9YMVZiWHZHMktDV2lWNHkxZWwyY05Dd2szMVNqZ3FQbkxsTmdTZVl4?=
- =?utf-8?B?SjBod05GY3dzVW14S2hXTDV0MDgrTmhLalVPRVRPSG0zZldobzFoT0lvVE81?=
- =?utf-8?B?YW9yMW5VNEdKcDY1MTAySE9rTktFM3hqVXhXazExNjJvTU5DR1EzNGpCMmZ0?=
- =?utf-8?B?U0dYRVk0UGlVTU5zc1dJYlBvYTc3TWdZM1EzeDhRZEpYS2N3dEtMRHArb1VU?=
- =?utf-8?B?VWM5M01LNVdhL3ZzYUtKdy9HeXJYdEpQZkhhMEtDMHlkdzdqT0VIZWN3bnZS?=
- =?utf-8?B?U0JVUDQ0eElPMkhaQWF5aVRuZGc4cGZrS3d3SVBrT25XdGJyb2JadjVsdy9S?=
- =?utf-8?B?RkVKQ2RDSXd6SUxIRThjSjBBTWtUaHZsYldjeEsvcTduYU1pcGhoVnkyQUxP?=
- =?utf-8?B?QjAxR3Q2TzRXZ0oxSDZiWlQ3dWMvazlTUEY2a1JoUkE3MGs3NmRJQkIvbm42?=
- =?utf-8?B?VFFGTWU2TFBpYUJrNENzYVUyeGl4YktWMDlXOHREUkhQWlVvMWdMTFF2bUF6?=
- =?utf-8?B?bk05MVRCS255dHRyWWV0OU1vOUtacUpwbzRWNmF5elVRNmZWYk9HZ0ZZc1Ri?=
- =?utf-8?B?dU12NVozNVZKU0hxSy9KVmJqZDdvdEwwT3RuS1g4S0hMb08yRzRJRk5Ua3Q5?=
- =?utf-8?B?clpoZEZJeGk4Ti8zdDI4OWxId0dlSXFxbXpnNzYwZlM2RFdCL3VMdkY4K3ps?=
- =?utf-8?B?Z2M4Z21pV3l5WVV5WGV3a3I3RTdvUHhJMEZvOXFacVVqZ3V6SDZUcDZIUisz?=
- =?utf-8?B?WDBxSVFIS1B2NEVHYVEzT1BlZnBrWWlHMXJtYkhMZlZLNGc3ajlOOWxJaG8w?=
- =?utf-8?B?YTl0b2JMOUNzYlltQTZqRG0rcFF2QzRHZ2UycmtIY3lEeTBtQnFWSGxFYzBj?=
- =?utf-8?B?QTZRVVE2bTJjcWJEc0dXOTJDVHIzNCtlbWJZRWM2Q29jVEtYMTVneXk0d2RW?=
- =?utf-8?B?WVFWUHdHd0dtZmwxMzlDSzArMWVaYzFzZys2VTF1aHREMXIrUHdNeUNJQ2I0?=
- =?utf-8?B?L1E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <091F122B0EDC5240A1F740DED440E269@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E6D1C700D;
+	Mon, 19 May 2025 09:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747646781; cv=none; b=qH5PZEZTqhBvpzPHJBvgMA14Y6TngQzFwJLAk+sFepPF9f5lbguVwp4eMhG7ipK0gXAv9ghgfKc7qbvIv5CTUDnHLXNEjGWgbHgdTSkXLJMfXktj/6V+jDuyJ0+Gm4coSP2y7T2Xq11Ndl5R75/Hf2qM2yMOGCriNFY0rpmb7SU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747646781; c=relaxed/simple;
+	bh=qC08lU7xZHju3fiXKtcFgwzB0nAIU8FpltPGEFX7uXE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BbsEnlvjHH4WORa+7O4L7MOFw6tE4dsmpxnHnRFo6BreHxNgGwtBgmE3agsxz4SmjjRPhMzM1BL2MHR08i27AXnagDZCotaOtkYZrCQVhiWzeMKZpq+WdLjoingPQZmo3McnlPkWYzQqQ1JRHY54nOK0aiFGY4U7mWo8htzBkO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VrSSE7Fw; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-af5085f7861so2672910a12.3;
+        Mon, 19 May 2025 02:26:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747646778; x=1748251578; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Asy1WUWIQLYQEaitmMDflq2qUpTALFO8TCo/y+sY1lo=;
+        b=VrSSE7Fw0PzWtgnMi83PJ0tekLq15MlpxSIWrpoLBCekMppRftADjWXl6XjidlI+IR
+         ay8AbY9RvJhdny4dGVUQa2k77/lUWMuGPjjjnOWjLntKL/gCxhmiyeq+6xrUb4t+EwNz
+         amlGmulBBJ4QZxIUo+LQNADdomASecz7r1l+i8R4sBMuvovny1YBYRGUjug6taNq9R6W
+         oZ7+DVPTJmDpPCAdPyKV/PI1JwQfxPeuY6CbexSB79BxxQLH7l4jCMuOwryL/oxmdn6c
+         u6yYZgaV7bKl52f1NfY89qVd3W0ot8c+x6X5+9Jr2R1YP9/RpkrfaRh5B0Khj62MR4Jy
+         Mfng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747646778; x=1748251578;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Asy1WUWIQLYQEaitmMDflq2qUpTALFO8TCo/y+sY1lo=;
+        b=DwvP0ubF5ckLevCwxi8iBAV0r34iu5OpAcRPK/wb+r+KNtId5WyzkklU1T2i3lRhhx
+         PZQRi3aVYWzny8Be9/zXy/98HXtWdn5oN3QtgwhY+3nhdbzaGxp2NEkhu/LR6SdUBnXZ
+         ijOLHWlUgUxUrHd+08Ai0RZ+4wWoBffZweD91V06foIVIYXODd6TExxLcx4SFG3M9Qri
+         M61vehDCwyigSsr/B3fXoXGend47ZrGZHJus5knm3g5QT6k6UHE3jHwQ/gy6u6nZ3zvk
+         9bEMeFoYpDqbv4U0vZGkSt3bh9HMlZ2wPcCRlmAc46KMKhEdlVT1Wve+eo1vhE0OjU7A
+         0FcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSqAV1sjFDzNQwV+92mBEYHNIK50d4pwUMmTpPUvLj1cOOJVUBt94kGBMt4wpLtT80cSbChbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2JSDvAoP6gq84yOfZTpN0Cj4KYKPv7jsvdd0MuXRhYCCXcrsU
+	qvDKzkZggZmxfcyh9vcFVJkrv6KXR5sG1RvWW3cbbobPP0fFQpKsoN2h
+X-Gm-Gg: ASbGncsX9vTd65hsSlE1Gn/3SroxjFS/UV18ILvc+onhAhjwpcuD+OjFy1VbCxvMtzx
+	N7VF8I3/Gdxt4BbQI63y8VoTTGoZt/UfRNZsLF1o+ziH6TbGjp5W8I9NsUDuP3VvSleJPqF4QZT
+	TVmwN1q7x1rNP+wyXvYKBj7HmB0qYo3DRj/H4E/qnfEZmj52QwaOSoE1OnrLzWDp1VMvtDWufgR
+	PRrGq1LCkCa9aHNknacFf3nn4nkXhjJZNBjTx0mtQcEoVIjB7gBt48XOSeF/JZRBFdCqnTIU8lc
+	RIo7+/wp9YtJOOakCA5fkrcBeuhUhu63gHL27toF3F8plyrHHJTM2nh11IT5G8qmAcJX6o4ScZp
+	xN/o=
+X-Google-Smtp-Source: AGHT+IGIDhMQe6eQf6jjqtfEsQKpB13xxHIOF3DYrNUhHik/vum5ZWdTsFTghx7xgKgAl6fYYemdtw==
+X-Received: by 2002:a17:902:ecd2:b0:224:2384:5b40 with SMTP id d9443c01a7336-231de31b3dbmr187668735ad.24.1747646777725;
+        Mon, 19 May 2025 02:26:17 -0700 (PDT)
+Received: from pc-lmm.company.local ([210.184.73.204])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4e97dcesm55540675ad.121.2025.05.19.02.26.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 May 2025 02:26:17 -0700 (PDT)
+From: limingming3 <limingming890315@gmail.com>
+X-Google-Original-From: limingming3 <limingming3@lixiang.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	limingming3@lixiang.com
+Subject: [PATCH] sched/eevdf: avoid pick_eevdf() returns NULL
+Date: Mon, 19 May 2025 17:25:39 +0800
+Message-ID: <20250519092540.3932826-1-limingming3@lixiang.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB3209.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 824e0b75-e794-4426-b30d-08dd96b6e1a6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 May 2025 09:23:57.0209
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xTkHy5k9IuG9HnKV8MJ4z7prs71P9nuV13NrbIuf/jvoleBGScPyYCrlICJ895/H0JHp1EBxveHjTCkds4lc1LDMQWTrxNl1XHRLudkAmtc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7566
+Content-Transfer-Encoding: 8bit
 
-SGkgSmFrdWIsDQpPbiBGcmksIDIwMjUtMDUtMTYgYXQgMTY6NDAgLTA3MDAsIEpha3ViIEtpY2lu
-c2tpIHdyb3RlOg0KPiBFWFRFUk5BTCBFTUFJTDogRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4g
-YXR0YWNobWVudHMgdW5sZXNzIHlvdQ0KPiBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUNCj4gDQo+
-IE9uIEZyaSwgMTYgTWF5IDIwMjUgMDk6Mjc6MTkgKzA1MzAgVGhhbmdhcmFqIFNhbXluYXRoYW4g
-d3JvdGU6DQo+ID4gU0dNSUlfQ1RSTCByZWdpc3Rlciwgd2hpY2ggc3BlY2lmaWVzIHRoZSBhY3Rp
-dmUgaW50ZXJmYWNlLCB3YXMgbm90DQo+ID4gcHJvcGVybHkgcmVzdG9yZWQgd2hlbiByZXN1bWlu
-ZyBmcm9tIHN1c3BlbmQuIFRoaXMgbGVkIHRvIGluY29ycmVjdA0KPiA+IGludGVyZmFjZSBzZWxl
-Y3Rpb24gYWZ0ZXIgcmVzdW1lIHBhcnRpY3VsYXJseSBpbiBzY2VuYXJpb3MNCj4gPiBpbnZvbHZp
-bmcNCj4gPiB0aGUgRlBHQS4NCj4gPiANCj4gPiBUbyBmaXggdGhpczoNCj4gPiAtIE1vdmUgdGhl
-IFNHTUlJX0NUUkwgc2V0dXAgb3V0IG9mIHRoZSBwcm9iZSBmdW5jdGlvbi4NCj4gPiAtIEluaXRp
-YWxpemUgdGhlIHJlZ2lzdGVyIGluIHRoZSBoYXJkd2FyZSBpbml0aWFsaXphdGlvbiBoZWxwZXIN
-Cj4gPiBmdW5jdGlvbiwNCj4gPiB3aGljaCBpcyBjYWxsZWQgZHVyaW5nIGJvdGggZGV2aWNlIGlu
-aXRpYWxpemF0aW9uIGFuZCByZXN1bWUuDQo+ID4gDQo+ID4gVGhpcyBlbnN1cmVzIHRoZSBpbnRl
-cmZhY2UgY29uZmlndXJhdGlvbiBpcyBjb25zaXN0ZW50bHkgcmVzdG9yZWQNCj4gPiBhZnRlcg0K
-PiA+IHN1c3BlbmQvcmVzdW1lIGN5Y2xlcy4NCj4gDQo+IElzIHRoZXJlIGEgcmVhc29uIHlvdSdy
-ZSBub3QgQ0NpbmcgUmFqdSBMYWtrYXJhanUgb24gdGhpcz8NCj4gSGF2aW5nIGEgcmV2aWV3IHRh
-ZyBmcm9tIHRoZSBhdXRob3Igb2YgdGhlIGNoYW5nZSB1bmRlciBGaXhlcw0KPiBpcyBhbHdheXMg
-Z3JlYXQuDQpUaGFua3MgZm9yIHBvaW50aW5nIHRoaXMgb3V0Lg0KUmFqdSBMYWtrYXJhanUgaXMg
-bm8gbG9uZ2VyIHdpdGggdGhlIGNvbXBhbnksIGFuZCBhcyBJIGFtIGN1cnJlbnRseW1hbmFnaW5n
-IHRoaXMgZHJpdmVyLCBJIGhhdmUgbm90IGluY2x1ZGVkIGhpbSBpbiB0aGUgQ0MuDQoNClRoYW5r
-cywNClRoYW5nYXJhaiBTYW15bmF0aGFuDQoNCg0K
+pick_eevdf() may return NULL, which would triggers NULL pointer
+dereference and crash when best and curr are both NULL.
+
+There are two cases when curr would be NULL:
+	1) curr is NULL when enter pick_eevdf
+	2) we set it to NUll when curr is not on_rq or eligible.
+
+And when we went to the best = curr flow, the se should never be NULL,
+So when best and curr are both NULL, we'd better set best = se to avoid
+return NULL.
+
+Below crash is what I encounter very low probability on our server and
+I have not reproduce it, and I also found other people feedback some
+similar crash on lore. So believe the issue is really exit.
+
+<1>[    8.607396] Unable to handle kernel NULL pointer dereference at virtual address 00000000000000a0
+<1>[    8.607399] Mem abort info:
+<1>[    8.607400]   ESR = 0x0000000096000004
+<1>[    8.607401]   EC = 0x25: DABT (current EL), IL = 32 bits
+<1>[    8.607402]   SET = 0, FnV = 0
+<1>[    8.607403]   EA = 0, S1PTW = 0
+<1>[    8.607403]   FSC = 0x04: level 0 translation fault
+<1>[    8.607404] Data abort info:
+<1>[    8.607404]   ISV = 0, ISS = 0x00000004
+<1>[    8.607404]   CM = 0, WnR = 0
+<1>[    8.607405] user pgtable: 4k pages, 48-bit VAs, pgdp=000000011efef000
+<1>[    8.607406] [00000000000000a0] pgd=0000000000000000, p4d=0000000000000000
+<0>[    8.607409] Internal error: Oops: 0000000096000004 [#1] PREEMPT_RT SMP
+<4>[    8.607412] Modules linked in: tegradisp(O) sch_ingress xt_tcpudp iptable_filter 8021q garp mrp um_heap(O) nvhost_isp5(O) spidev nvhost_vi5(O) bridge nvhost_nvcsi_t194(O) tegra_capture_isp(O) tegra210_adma stp llc nvhost_capture(O) tegra_aconnect watchdog_tegra_t18x(O) spi_tegra114 tegra_camera(O) v4l2_dv_timings v4l2_fwnode v4l2_async videobuf2_dma_contig tegra_drm(O) cpuidle_tegra_auto(O) nvhost_nvcsi(O) nvhost_nvdla(O) tegra_camera_platform(O) drm_dp_aux_bus camchar(O) capture_ivc(O) cec videobuf2_v4l2 camera_diagnostics(O) snd_soc_tegra_virt_t210ref_pcm(O) drm_display_helper videobuf2_memops rtcpu_debug(O) snd_soc_tegra210_virt_alt_adsp(O) videobuf2_common drm_kms_helper videodev nvadsp(O) cdi_mgr(O) nvhost_pva(O) cdi_pwm(O) isc_mgr(O) sha3_ce isc_pwm(O) sha3_generic cdi_dev(O) sha512_ce lm90 snd_soc_tegra210_virt_alt_admaif(O) tegra_bpmp_thermal sha512_arm64 tegra_hv_vcpu_yield(O) tegra_hv_pm_ctl(O) cam_fsync(O) cdi_gpio(O) ukl(O) isc_dev(O) mc tegra_camera_rtcpu(O)
+<4>[    8.607458]  board_id_driver(O) tegra_fsicom(O) isc_gpio(O) ivc_bus(O) hsp_mailbox_client(O) nvhwpm(O) host1x_nvhost(O) nvgpu(O) mc_utils(O) nvmap(O) hvc_sysfs(O) tegra_nvvse_cryptodev(O) tegra_hv_vse_safety(O) host1x_fence(O) host1x(O) nvsciipc(O) userspace_ivc_mempool(O) ivc_cdev(O) logger(O) drm fuse ip_tables x_tables nvme nvme_core hashed_ecid(O) oak_pci(O) nvethernet(O) nvpps(O) tegra_bpmp(O) tegra_vblk(O) li_osdump(O) tegra_hv_vblk_oops(O)
+<4>[    8.607479] CPU: 9 PID: 1300 Comm: R000000007400 Tainted: G        W  O       6.1.119-rt45-prod-rt-tegra #1
+<4>[    8.607481] Hardware name: p3960-0010 (DT)
+<4>[    8.607482] pstate: 224000c5 (nzCv daIF +PAN -UAO +TCO -DIT -SSBS BTYPE=--)
+<4>[    8.607483] pc : pick_next_task_fair+0x98/0x490
+<4>[    8.607490] lr : pick_next_task_fair+0x98/0x490
+<4>[    8.607490] sp : ffff800021bdb1b0
+<4>[    8.607491] x29: ffff800021bdb1b0 x28: ffff0000836205c0 x27: 0000000000001000
+<4>[    8.607492] x26: d8e0d16df7b8e848 x25: ffff000e881b6dc0 x24: ffff000e881b6dc0
+<4>[    8.607494] x23: ffff800021bdb268 x22: ffff000e881b6d40 x21: ffff000083620000
+<4>[    8.607495] x20: ffff000e881b6dc0 x19: ffff000e881b6d40 x18: 00000000000005c8
+<4>[    8.607496] x17: 0000000000000000 x16: ffffd16df7896b40 x15: 0000000000000000
+<4>[    8.607497] x14: 0000000000000014 x13: ffff800021bdba90 x12: ffff0000b052f300
+<4>[    8.607498] x11: 00000000c425686b x10: 00000002010a4ab3 x9 : ffffd16df6ca7778
+<4>[    8.607499] x8 : ffff800021bdb390 x7 : 0000000000000000 x6 : 0000000000000002
+<4>[    8.607500] x5 : 0000000000000003 x4 : 0000000000000003 x3 : 0ab3e2bc8934c987
+<4>[    8.607501] x2 : ffff000085241ec0 x1 : 0abe8499696457cc x0 : 0000000000000000
+<4>[    8.607503] Call trace:
+<4>[    8.607503]  pick_next_task_fair+0x98/0x490
+<4>[    8.607505]  __schedule+0x16c/0x870
+<4>[    8.607511]  schedule_rtlock+0x28/0x60
+<4>[    8.607513]  rtlock_slowlock_locked+0x3a0/0xcf0
+<4>[    8.607515]  rt_spin_lock+0xb0/0xe0
+<4>[    8.607516]  __wake_up_common_lock+0x68/0xe0
+<4>[    8.607519]  __wake_up_sync_key+0x28/0x50
+<4>[    8.607520]  sock_def_readable+0x48/0xa0
+<4>[    8.607523]  __udp_enqueue_schedule_skb+0x158/0x2e0
+<4>[    8.607527]  udp_queue_rcv_one_skb+0x1f8/0x6f0
+<4>[    8.607529]  udp_queue_rcv_skb+0x64/0x290
+<4>[    8.607531]  __udp4_lib_rcv+0x654/0x980
+<4>[    8.607532]  udp_rcv+0x28/0x40
+<4>[    8.607533]  ip_protocol_deliver_rcu+0x40/0x1d0
+<4>[    8.607538]  ip_local_deliver_finish+0x84/0xe0
+<4>[    8.607540]  ip_local_deliver+0x84/0x130
+<4>[    8.607542]  ip_rcv+0x78/0x150
+<4>[    8.607544]  __netif_receive_skb_one_core+0x60/0xb0
+<4>[    8.607548]  __netif_receive_skb+0x20/0x80
+<4>[    8.607549]  process_backlog+0xcc/0x1a0
+<4>[    8.607551]  __napi_poll.constprop.0+0x40/0x230
+<4>[    8.607552]  net_rx_action+0x13c/0x310
+<4>[    8.607553]  handle_softirqs.isra.0+0x118/0x3a0
+<4>[    8.607556]  __local_bh_enable_ip+0x8c/0x110
+<4>[    8.607556]  netif_rx+0xf4/0x1d0
+<4>[    8.607558]  dev_loopback_xmit+0x88/0x170
+<4>[    8.607559]  ip_mc_finish_output+0x7c/0x180
+<4>[    8.607561]  ip_mc_output+0x338/0x350
+<4>[    8.607562]  ip_send_skb+0x58/0x130
+<4>[    8.607563]  udp_send_skb+0x11c/0x3d0
+<4>[    8.607564]  udp_sendmsg+0x794/0x9d0
+<4>[    8.607566]  inet_sendmsg+0x4c/0xa0
+<4>[    8.607568]  __sock_sendmsg+0x64/0x80
+<4>[    8.607572]  __sys_sendto+0x114/0x170
+<4>[    8.607573]  __arm64_sys_sendto+0x30/0x50
+<4>[    8.607575]  invoke_syscall+0x50/0x140
+<4>[    8.607579]  el0_svc_common.constprop.0+0x4c/0x110
+<4>[    8.607581]  do_el0_svc+0x2c/0x90
+<4>[    8.607583]  el0_svc+0x2c/0xa0
+<4>[    8.607585]  el0t_64_sync_handler+0x124/0x130
+<4>[    8.607586]  el0t_64_sync+0x190/0x194
+<0>[    8.607589] Code: 97fff1ee 37000200 aa1403e0 97ffddc7 (f9405014)
+<4>[    8.607596] ---[ end trace 0000000000000000 ]---
+
+Signed-off-by: limingming3 <limingming3@lixiang.com>
+---
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 0fb9bf995a47..7fd867d6b62d 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -978,7 +978,7 @@ static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq)
+ 	}
+ found:
+ 	if (!best || (curr && entity_before(curr, best)))
+-		best = curr;
++		best = curr ? curr : se;
+ 
+ 	return best;
+ }
+-- 
+2.48.1
+
 
