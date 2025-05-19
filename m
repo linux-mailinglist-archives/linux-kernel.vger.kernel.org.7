@@ -1,221 +1,201 @@
-Return-Path: <linux-kernel+bounces-653009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14765ABB369
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 04:40:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F51DABB362
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 04:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 029C6188A31E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 02:40:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 640C016777E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 02:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C864F1DE2A7;
-	Mon, 19 May 2025 02:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B081DEFE8;
+	Mon, 19 May 2025 02:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QPVaCCM3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="V6uk0Ltl"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013031.outbound.protection.outlook.com [40.107.44.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F431C9DC6;
-	Mon, 19 May 2025 02:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747622423; cv=none; b=P1i3KNevQvY7L8EABT09PjCSJWQhOSXcuzZOHCfzagwY90OQCkWcPh51ZwFi5ALe5A1BHs20GTeE+Y/gWfqo5g/jdKVO3EP30FfvyXkv9WpYeLt6cV8dbQLlhw2tqStJlabwRznLzHPpyYw7+LjENcc9Wz8jReM/KVhZ04cFyJg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747622423; c=relaxed/simple;
-	bh=ePRNQ6U3OVkGRddknbUFGYPgzi3krex/eUxPMOk4TLg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lin4OpvN1QKcONlrfpnjjidhvDPHGtl9yuwEMUbr3V7GDB5hCfN5aNA/yCSX+7wOPiGZb6lc2BrrS6GEG5ELGARlIHbZhAQaTXQ2yaEjoKkgs5PK60LQ8VCFDjPmnpW9Air8cTakENaGJ6nmQuTd51ZwXZR7qIOHDPAqPfFjfUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QPVaCCM3; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747622421; x=1779158421;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ePRNQ6U3OVkGRddknbUFGYPgzi3krex/eUxPMOk4TLg=;
-  b=QPVaCCM3QJzY5XNLku5AQ+r3/pPXaA5QSrvzx+Y6X7kIuJNfgXKrARSX
-   NO7fSFS5M/8jj8QMlTl/ZUYkUIon/ifmsBngE5JY4peqU6YG9/Ra2RVkh
-   WnNlgjhdi7BVk9aaPF2GurMiFruOLGGlvWewowqEosCYgqfJVQRO0/wh9
-   C381h0EWR7vspH23d+09FJKLtFUeuqUc/lPKJmNN2rHQgINkFKuchmsxw
-   ZHR1KqgHE/4r9x7E3P20SxGl7oE1EgKZXOF9dB7KedVXpVk0UXgDPdqFc
-   pwC+kEfSer73a0bGcnfOKdGRSesnno+LAIqULEXnGdNA8wYGH1vsGhJeK
-   Q==;
-X-CSE-ConnectionGUID: 5tHhmLMUS3aACoe8NSkA4g==
-X-CSE-MsgGUID: c5F+PrPuQo6hBf08sD9zkQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11437"; a="53183550"
-X-IronPort-AV: E=Sophos;i="6.15,299,1739865600"; 
-   d="scan'208";a="53183550"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2025 19:40:19 -0700
-X-CSE-ConnectionGUID: Hley6XJfTauLnyjDbBl/wA==
-X-CSE-MsgGUID: pcG+fH3wSt+Xhb5am6bYkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,299,1739865600"; 
-   d="scan'208";a="139732973"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2025 19:40:17 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: reinette.chatre@intel.com,
-	rick.p.edgecombe@intel.com,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53376A94F;
+	Mon, 19 May 2025 02:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.31
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747622330; cv=fail; b=rZ0kTmdGD5zUv1Qw1wXftvSW/Es+cn5+BfV8l7BhdgNdBIO4CVN4wiNcSXXqZooeuPsmgqzVK4QcWQKjIQpQqs7a3omNxk31R58X1bTlDRsivlG1yP3QG6QZGQTSJWqrVajCRIeVbvybbRb/hwMQqL7zsIvH0jhxm6CGJM6fUHk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747622330; c=relaxed/simple;
+	bh=dW/MN8NOk44sIChSHB8BPyJ8pheRs6ulkhwFlqoMQHA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JsgUiBi+42qs6Wf+gcU5vtWNNkWs0eTlWE4lxDGe5oU+58TNpSIIdFTwRvmE1e34AkCgS3KFlga8ac+WuqU0vK9kPQ9fyN/yHmG4NaO9YnO7rM0nYj0fLxXyOHWLT7N+hLIdJIPodlwnzyf0KPhT3pcNWLGvgkPRJm41xyxWoLk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=V6uk0Ltl; arc=fail smtp.client-ip=40.107.44.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Sp/cPXGgzIJM1utzVoPYRa/EHhAKY/Jg6Lp8cTeyakWaU1YtQFT7orx14D1pIdU2HtcbtlEAACjWk2SFU/EF5gcfVBBgVLLYDZMIfVrhUPI+pucJE8jqvoLQxXX28vHG6RX9Wg1DCXsjZ/Spu9OWOjE3TpHAjEHnabvrR8kERV25VMamE23Esc+oX0vO8OW35bqm9sZ4SgpLwUm3XzDGCYC264m+uAi+BRwFNElcxk0Cj3cMOqBj2Xp5cONar2e12lOea6R8RKvqZot4ROZar9MJ4d78IZrjHq6v5AQY9p5mh6Aq1m3uhsLlhIv12UpYowIytZave2BQir7rsAWwMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dW/MN8NOk44sIChSHB8BPyJ8pheRs6ulkhwFlqoMQHA=;
+ b=DMlCBvqEkTnTlPMOqLKo46HBGjmSAtRAWHhoM7AwT0gxOn6CUYcuteJYLKQAXDJxGrByiZkH9RYMWpSuk6AFdp1ZcgCbP/Lsu/WiF1NFn4L90hLm7E9d0GRXkoZPXhNNT2zmtYuDARc6tFUw3w6PHMj4TTAkS8t7uJJPVrb+kRZ6cAL8eCVcmV9RZgP6c087hTpwLX3CzzywLmhZ/jV9GdHvZuNqur5iaA3zjY1JRx1lAPfidlfaIET9bcoz0wAt/3PlclcR0WMwoli1m6qbbIGtB2iWz/IfxJE0mT9keYUckI6O2caDl5Ovl63uPc9r/DN5mK228b/OcmYyHU6SdQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dW/MN8NOk44sIChSHB8BPyJ8pheRs6ulkhwFlqoMQHA=;
+ b=V6uk0Ltl1gTfIySvhC3y1BYji4ZRjWwR4O/7RWbo6fnNpU5sMgM5di4tvtQnrM2XPMtGnn+m1n4Zbps1SfkSPgS8EqQHfcOm8u5N3QBSM9yJB5iAud4WUKoEsdJ3cyg1c8915ZYp8BYenMNZu75ersGWrp956Wm+sxlwzMSF1Ofr/KQQF+5w2bWQLKGo0g9C/LcoT480aq2VOBaSUX5TQ2hqXJOaalcKoD1SpP9ZIesdpz9jNz+4ZShJyVNIUfjG7To7iKRRa3XKLz5XOjNWuGZB+LiC/AcBeEYk6u4G6kXwH8nl5Gdshbxb1a1tpTdOhONSh6csPD2tjJFqzIiSdA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB6273.apcprd06.prod.outlook.com (2603:1096:820:ec::10)
+ by TYZPR06MB5025.apcprd06.prod.outlook.com (2603:1096:400:1cb::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Mon, 19 May
+ 2025 02:38:41 +0000
+Received: from KL1PR06MB6273.apcprd06.prod.outlook.com
+ ([fe80::9d21:d819:94e4:d09]) by KL1PR06MB6273.apcprd06.prod.outlook.com
+ ([fe80::9d21:d819:94e4:d09%7]) with mapi id 15.20.8746.030; Mon, 19 May 2025
+ 02:38:41 +0000
+From: Huan Tang <tanghuan@vivo.com>
+To: bvanassche@acm.org
+Cc: James.Bottomley@HansenPartnership.com,
+	alim.akhtar@samsung.com,
+	angelogioacchino.delregno@collabora.com,
+	avri.altman@wdc.com,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 2/2] KVM: selftests: Test prefault memory with concurrent memslot removal
-Date: Mon, 19 May 2025 10:38:15 +0800
-Message-ID: <20250519023815.30384-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250519023613.30329-1-yan.y.zhao@intel.com>
-References: <20250519023613.30329-1-yan.y.zhao@intel.com>
+	linux-mediatek@lists.infradead.org,
+	linux-scsi@vger.kernel.org,
+	luhongfei@vivo.com,
+	manivannan.sadhasivam@linaro.org,
+	martin.petersen@oracle.com,
+	matthias.bgg@gmail.com,
+	opensource.kernel@vivo.com,
+	peter.wang@mediatek.com,
+	quic_nguyenb@quicinc.com,
+	tanghuan@vivo.com,
+	wenxing.cheng@vivo.com
+Subject: Re: Re: [PATCH v2] ufs: core: Add HID support
+Date: Mon, 19 May 2025 10:38:33 +0800
+Message-Id: <20250519023833.343-1-tanghuan@vivo.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <88718b2f-0583-4444-8bf0-7ecf9a45329c@acm.org>
+References: <88718b2f-0583-4444-8bf0-7ecf9a45329c@acm.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR03CA0089.apcprd03.prod.outlook.com
+ (2603:1096:4:7c::17) To KL1PR06MB6273.apcprd06.prod.outlook.com
+ (2603:1096:820:ec::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6273:EE_|TYZPR06MB5025:EE_
+X-MS-Office365-Filtering-Correlation-Id: bba04c92-e6bb-4105-087b-08dd967e4432
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?noj8WP2VNDibyWgNKrGQ/JDclntmDi8oDl45WqV19GpUZI3p4V8WVBRDXofY?=
+ =?us-ascii?Q?TmTTBve0+jlepksWkNnVMJO7fglmvM+6PSJ9Z7z32Q5lLd9NfFb9b/uImOcU?=
+ =?us-ascii?Q?r1CieuTRe9PDZc8jpmWyRNxVpHMa9qiAV0EY2M5IzP9vSKkcnxeIuBc2JM2T?=
+ =?us-ascii?Q?D0zinHx5kJpdA6NbhP+gJdDuDBhOX31U5oVt5m3QEwhHhOYCYiiq4ZTlpTUc?=
+ =?us-ascii?Q?qCXooeSo6kDozXtGww2LUU+aN2BZN0+g8N5h2VcJzRPpgzjHNwakF8PLvPd9?=
+ =?us-ascii?Q?OejOCrbNjy6OD2GRxu/o80aIUUEQmgaBx6Vu3XMpkQ8e+VAqcYl+254jhlKl?=
+ =?us-ascii?Q?BLtFNQCsjMUxy65PpnSadShne+nxcFy80VBQ8SzpvQybMvpIx4MsegBN4x9a?=
+ =?us-ascii?Q?nd0XtQK/hyPUUtkEyPegq/99uomQiP/TFPAhmLlzadWRKcTlKG9oKFCriMxC?=
+ =?us-ascii?Q?0NNBCSjECQF0Tw5ZoeEOlL0ABSb/K3A1qEP3aDkqn8ypARpCUIJQGnt8MvNG?=
+ =?us-ascii?Q?qqlAWghfi0TE/brozDW4b5r4RXP66zgAxNV3TZQojldm8wz1nQVgO9dr6HwU?=
+ =?us-ascii?Q?PWyrq9h8tv4wGmthj2zAqT1iBrlK87GvLT8Fhad80+SsqUWYVTvYyV1ykixk?=
+ =?us-ascii?Q?GZu+vb50qJmOLivxnZiOPp5DfOk+3wj/FVBXaIKIx3HHkYJEVGNQQWcyBCzD?=
+ =?us-ascii?Q?uv+5BvQBPBEzuZLzXPUMzoMmeN9CSOnJ2t5vHRDZSmEqiobsq8ngM3AFnSAY?=
+ =?us-ascii?Q?rNEbCYi/fwg3nI2uZMw7FOr6E/1OxNKyHO8zJWUYJZwR/fjM5kSB0f8bEXS+?=
+ =?us-ascii?Q?ZrvpuLhcjo/Q2m895Sbc6W9AhtNKukCFO2MD/P03Fvqgdv1VtTzdUe95ugCZ?=
+ =?us-ascii?Q?yoJ6G7JzgAF5gyuiEUqyC6NvKGWBAmrartoAz0XOizHSiwwkictfbuBMBTJF?=
+ =?us-ascii?Q?EFGYUrCryb/ZdzF3MTPd4KXJWjJoXyBKtJYo43iEzcDUOKZz7KY1m0y7Dlju?=
+ =?us-ascii?Q?dQws9DJohWrLH6RIVU97Qdlu6JUezzB0Ctm28TA6rBLdgrcBEFKmMg36dK+p?=
+ =?us-ascii?Q?LmMiYxRO3vfv70caX+1L01ouCTJtW4vE6BTAJgKiF0G7X8pKJGTE6iwukUCJ?=
+ =?us-ascii?Q?U7RAUAGJb/ZTTpn2ySiEF9xaOvOS8qnr9Tp9UssESMoTz8/7ZEiHNcW+SH6i?=
+ =?us-ascii?Q?JaCLz31BrPY7Kxrtn89ixBOT5d6gp15xHQxYpQWr6y+taCdLZP7zg0jOpdVl?=
+ =?us-ascii?Q?6yP3XZbOBTWk87uLvd7GWxIJ62PT0isp5LGDcgQF3e1/HN1RLHCh8cGKa3Ci?=
+ =?us-ascii?Q?r17IrBssLQjNDloMTmUiVMd4vvNpraxAb/Z4CNP25NDu24JLDG4RWlQP/V/z?=
+ =?us-ascii?Q?qHfLQUPz3oGIpaKPF3n8fvyD2kMhrXvQKUaJ42odyF6x9klu9o4z87VH79tO?=
+ =?us-ascii?Q?N6kZv4ulQALQpiWH3vdfvMeYhc/+pGHNhxHHPEjIBxaqpjW7hvHbmeUA10/A?=
+ =?us-ascii?Q?jWvg58JnytW2pKc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6273.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7Oxijtk6olMHojo3JdQmTvrMYdztjpTPAmRvxK5RabnHrViKlka0KtjO28ZJ?=
+ =?us-ascii?Q?kWLzy5KDQrUSIrnAqGMUf2r9UsPKPoQ/nXhksAemC3doarbf/2VQUYfpjX3g?=
+ =?us-ascii?Q?lnd4ZqM2VJe0vhvCB15NZ2U3agcW1Esxi9cMhqWctXetYjlVnyN/htXzuEis?=
+ =?us-ascii?Q?ez2S6v8vpe36BoWxOrlljKHSy1PTHHUFxKv3QXP3XaxUUxUr4vBby66yQTLl?=
+ =?us-ascii?Q?fZUxtkZ5c9BAdzKqAZ5pB3XRS0TAQDsZK9crC3SG1m13joAy+dYBJpnh3B2G?=
+ =?us-ascii?Q?LUq+rpraeJdeIrX5bs5Q4/Fq5x8zUnorGnAnKsWdjWscMr0T49DIhtbS8Exb?=
+ =?us-ascii?Q?F5Kuc3VIfzLDroRs7K2QrtB2YmXYjfFdS+fUF72rYCAoBnV1uHyW8B5tewks?=
+ =?us-ascii?Q?t0qDBBRV97/uRrk4KOhTFn2M/UKad5QZgiYyOweq5yebMwLRyrMI/XcN8V6t?=
+ =?us-ascii?Q?HqieYtLyT/SxIx9L1lBywfc/3jmefpoOQPCCGABQNTzpQAmw1iq6RSW7ZxEx?=
+ =?us-ascii?Q?AhW1Apia1bvORdCMePgVuZEp2WL0zQMyEpegS2HU1nurgIPnqBhbYNBM4P/B?=
+ =?us-ascii?Q?rz5wRagtZjMpNz3TwAZ8nQ8DCUs+rM5DopeqBRnnYXm6Ikn6TCeNIloJPCun?=
+ =?us-ascii?Q?a10ymQO0c+z69nPj2FOkL1CGuOqkixjF5x6XEz4HV37tpK2TOVqcSwprMLsE?=
+ =?us-ascii?Q?WTXo1mt5VU3Du2pczfrNLwmUsQpHsXT26r+F+7fATniHf+2y/f6Z477DQLVW?=
+ =?us-ascii?Q?k7hJ12EbKNFQGnfeHDBEvI5/Af6UUriYgwKBJegCRjiPlBrNGCNm24ro1odr?=
+ =?us-ascii?Q?GdsOBAY6/rSnew1QS1xrCDqIRPMBPEF8VG1ETrVxMBqMO319tPK1tMaPr0Or?=
+ =?us-ascii?Q?4oPZ67Ro2K+5zNsdC1zDbLU/XTJPOloHBUDf+43s4+DQ5oePKTc9lsTpH2k/?=
+ =?us-ascii?Q?QMMZhUqfp1DT23xkrIVjegqO55I6KKm5mf++5cpP3f1fPCNTFTvBX6AUSVW/?=
+ =?us-ascii?Q?mSyB3NNvjly5rlcFcpeX10/u7QdG+u+7E7rVKojNCK2z1uSPunoCcWyhAtjX?=
+ =?us-ascii?Q?/bOmNWoxi4zSP69ktWZWdQWMjGRAYo2OEa3HeGWkF7u5iH4qHgsJLK2R2lBo?=
+ =?us-ascii?Q?aWqtkgyaP6NQunNeYOC2Qv53txxHqJNa+LYP7IfUliRLnsOnLNCU7nHsddXH?=
+ =?us-ascii?Q?6OquggMzEqjX27Hlw2QQZ4NQQLXVWnzdrX5R35lKZ/xUM8BLu1a75eJi78LV?=
+ =?us-ascii?Q?7YLpGc4nlfNzKkm+1FtDibUWQs+NBj8oSp1P0e06yCvoGC9413UHazXuNdKh?=
+ =?us-ascii?Q?fzJTp0ThWpbhblH5EC+zgEndsEa2CukGO4tO/EKfCeEfvHLzxuNMiiI9S1xW?=
+ =?us-ascii?Q?nQeyxQXUJbqiw8Pz8I17L1KFFgpLmJaodyX5TNHVH2i/BF4/SqvQtrFthjkk?=
+ =?us-ascii?Q?BqWvqYA/RlhYAR9IwKYV8WIDNdJE2VSHbItDCHkmECO2KXJlZrhQGxbKqPRx?=
+ =?us-ascii?Q?rTd2M2+HCxCR/aomVM/TEZJxOo4DwoPN8bSoEF1JCqxmo2W/uihyj8uElKwR?=
+ =?us-ascii?Q?widWBK0mzvoc8+HVoBJUZnpYlqV2YBbUvHudNJp4?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bba04c92-e6bb-4105-087b-08dd967e4432
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6273.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2025 02:38:41.3547
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kbi731w1LXw4hPpfBRHtLa+T4MoCXRfz59BIrGcXxqKUz7s+0ZIgcITaDA+WODrwwHdbH+l1crMyRizXa4mV+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5025
 
-Add a new test case in pre_fault_memory_test to run vm_mem_region_delete()
-concurrently with ioctl KVM_PRE_FAULT_MEMORY. Both of them should complete.
-
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- .../selftests/kvm/pre_fault_memory_test.c     | 82 +++++++++++++++----
- 1 file changed, 67 insertions(+), 15 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/pre_fault_memory_test.c b/tools/testing/selftests/kvm/pre_fault_memory_test.c
-index 0350a8896a2f..c82dfc033a7b 100644
---- a/tools/testing/selftests/kvm/pre_fault_memory_test.c
-+++ b/tools/testing/selftests/kvm/pre_fault_memory_test.c
-@@ -10,12 +10,16 @@
- #include <test_util.h>
- #include <kvm_util.h>
- #include <processor.h>
-+#include <pthread.h>
- 
- /* Arbitrarily chosen values */
- #define TEST_SIZE		(SZ_2M + PAGE_SIZE)
- #define TEST_NPAGES		(TEST_SIZE / PAGE_SIZE)
- #define TEST_SLOT		10
- 
-+static bool prefault_ready;
-+static bool delete_thread_ready;
-+
- static void guest_code(uint64_t base_gpa)
- {
- 	volatile uint64_t val __used;
-@@ -30,16 +34,41 @@ static void guest_code(uint64_t base_gpa)
- 	GUEST_DONE();
- }
- 
--static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa, u64 size,
--			     u64 left)
-+static void *remove_slot_worker(void *data)
-+{
-+	struct kvm_vcpu *vcpu = (struct kvm_vcpu *)data;
-+
-+	WRITE_ONCE(delete_thread_ready, true);
-+
-+	while (!READ_ONCE(prefault_ready))
-+		cpu_relax();
-+
-+	vm_mem_region_delete(vcpu->vm, TEST_SLOT);
-+
-+	WRITE_ONCE(delete_thread_ready, false);
-+	return NULL;
-+}
-+
-+static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 base_gpa, u64 offset,
-+			     u64 size, u64 left, bool private, bool remove_slot)
- {
- 	struct kvm_pre_fault_memory range = {
--		.gpa = gpa,
-+		.gpa = base_gpa + offset,
- 		.size = size,
- 		.flags = 0,
- 	};
- 	u64 prev;
- 	int ret, save_errno;
-+	pthread_t remove_thread;
-+
-+	if (remove_slot) {
-+		pthread_create(&remove_thread, NULL, remove_slot_worker, vcpu);
-+
-+		while (!READ_ONCE(delete_thread_ready))
-+			cpu_relax();
-+
-+		WRITE_ONCE(prefault_ready, true);
-+	}
- 
- 	do {
- 		prev = range.size;
-@@ -51,16 +80,35 @@ static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa, u64 size,
- 			    ret < 0 ? "failure" : "success");
- 	} while (ret >= 0 ? range.size : save_errno == EINTR);
- 
--	TEST_ASSERT(range.size == left,
--		    "Completed with %lld bytes left, expected %" PRId64,
--		    range.size, left);
--
--	if (left == 0)
--		__TEST_ASSERT_VM_VCPU_IOCTL(!ret, "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
--	else
--		/* No memory slot causes RET_PF_EMULATE. it results in -ENOENT. */
--		__TEST_ASSERT_VM_VCPU_IOCTL(ret && save_errno == ENOENT,
-+	if (remove_slot) {
-+		/*
-+		 * ENOENT is expected if slot removal is performed earlier or
-+		 * during KVM_PRE_FAULT_MEMORY;
-+		 * On rare condition, ret could be 0 if KVM_PRE_FAULT_MEMORY
-+		 * completes earlier than slot removal.
-+		 */
-+		__TEST_ASSERT_VM_VCPU_IOCTL((ret && save_errno == ENOENT) || !ret,
- 					    "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
-+
-+		pthread_join(remove_thread, NULL);
-+		WRITE_ONCE(prefault_ready, false);
-+
-+		vm_userspace_mem_region_add(vcpu->vm, VM_MEM_SRC_ANONYMOUS,
-+					    base_gpa, TEST_SLOT, TEST_NPAGES,
-+					    private ? KVM_MEM_GUEST_MEMFD : 0);
-+	} else {
-+		TEST_ASSERT(range.size == left,
-+			    "Completed with %lld bytes left, expected %" PRId64,
-+			    range.size, left);
-+
-+		if (left == 0)
-+			__TEST_ASSERT_VM_VCPU_IOCTL(!ret, "KVM_PRE_FAULT_MEMORY",
-+						    ret, vcpu->vm);
-+		else
-+			/* No memory slot causes RET_PF_EMULATE. it results in -ENOENT. */
-+			__TEST_ASSERT_VM_VCPU_IOCTL(ret && save_errno == ENOENT,
-+						    "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
-+	}
- }
- 
- static void __test_pre_fault_memory(unsigned long vm_type, bool private)
-@@ -97,9 +145,13 @@ static void __test_pre_fault_memory(unsigned long vm_type, bool private)
- 
- 	if (private)
- 		vm_mem_set_private(vm, guest_test_phys_mem, TEST_SIZE);
--	pre_fault_memory(vcpu, guest_test_phys_mem, SZ_2M, 0);
--	pre_fault_memory(vcpu, guest_test_phys_mem + SZ_2M, PAGE_SIZE * 2, PAGE_SIZE);
--	pre_fault_memory(vcpu, guest_test_phys_mem + TEST_SIZE, PAGE_SIZE, PAGE_SIZE);
-+
-+	pre_fault_memory(vcpu, guest_test_phys_mem, 0, SZ_2M, 0, private, true);
-+	pre_fault_memory(vcpu, guest_test_phys_mem, 0, SZ_2M, 0, private, false);
-+	pre_fault_memory(vcpu, guest_test_phys_mem, SZ_2M, PAGE_SIZE * 2, PAGE_SIZE,
-+			 private, false);
-+	pre_fault_memory(vcpu, guest_test_phys_mem, TEST_SIZE, PAGE_SIZE, PAGE_SIZE,
-+			 private, false);
- 
- 	vcpu_args_set(vcpu, 1, guest_test_virt_mem);
- 	vcpu_run(vcpu);
--- 
-2.43.2
-
+Hi bart sir,=0D
+=0D
+Thank you for your comments and guidance=EF=BC=81=0D
+The v3 patch=EF=BC=9A=0D
+https://lore.kernel.org/all/20250519022912.292-1-tanghuan@vivo.com/=0D
+=0D
+> All HID sysfs attributes occur in the "ufs_hid" directory and have a=0D
+> "hid_" prefix. That's two times "hid". Please remove the "hid_" prefix=0D
+> from the sysfs attribute names since it is redundant.=0D
+OK! It has been modified in the v3 patch.=0D
+=0D
+> Isn't the prefix "ufs_" in "ufs_hid" redundant since this sysfs group=0D
+> occurs under a UFS host controller directory?=0D
+OK! It has been modified in the v3 patch.=0D
+=0D
+> Regarding the name of this sysfs group, "ufs" occurs twice in that=0D
+> name (ufs_sysfs_ufs_hid_group). Please make sure that "ufs" only occurs=0D
+> once in that sysfs group name.=0D
+OK! It has been modified in the v3 patch.=0D
+=0D
+> Please merge ufs_sysfs_ufs_hid_group into ufs_sysfs_groups, remove the=0D
+> new sysfs_create_group() call and add a visibility callback in=0D
+> ufs_sysfs_ufs_hid_group that only makes the attributes in this group=0D
+> visible if hba->dev_info.hid_sup =3D=3D true.=0D
+OK! It has been modified in the v3 patch.=0D
+=0D
+Thanks=0D
+Huan=0D
+=0D
+=0D
 
