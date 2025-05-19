@@ -1,52 +1,53 @@
-Return-Path: <linux-kernel+bounces-653379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F6F1ABB84C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:08:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F602ABB814
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96CB73B4B23
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:08:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D04A1890BA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF24F26C382;
-	Mon, 19 May 2025 09:07:42 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D5026B97E;
+	Mon, 19 May 2025 09:02:25 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED9126E16A;
-	Mon, 19 May 2025 09:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AF71EB5FC;
+	Mon, 19 May 2025 09:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747645662; cv=none; b=Vbx0hbdmnd364nYspQq2/VzTDeuUqi513oAWN01dym5TKQkuLrXEePfFPjaD9igxz2jKQFupsO3tb6ZA68HLSWWUEjDaUW0nE01chr3bJSEorjjIatwNScZBJfXVe2Lr/uoswBgxwlYCvOiRV4OjX56EckloVMDj9EgGl5eic30=
+	t=1747645345; cv=none; b=UYAr6GoGK1HL0VPIy7fSZiI9Oq+ogcdZx5K7G4u9Qt1yufzVv6NXYO2sXRKwrTk8SWg2WWbaOTK4nesWsNZjTx9HdcvFI1CkcPAd5n0O7Qt7oPfVb95yS0XrBLfsUt5rwXyPWkfvShyLp29k5mUEla3Xt2RQTF7jAihOI6x6Y5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747645662; c=relaxed/simple;
-	bh=11/1wu26fy3F+Wu9zvLz9z6WBxzZn2rsxyOQYMgPKkw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fpILk7QHx+cNDC8wbJPrrSJ8PRghsxypShOfqUAxTUL/So5Nyf5BLQb/HRnsHS5hROD9C0IKaB8hGIPfERzG8y/WqoB+Lu6e5/c4I8bguHFe7DAFjB//MQZbgznLKNHhAlx2Z+RNf1U6SmvBjMzz4LQOta4IKuqVy7d6X4gXV/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7D0B11A0692;
-	Mon, 19 May 2025 10:57:59 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4492C1A069A;
-	Mon, 19 May 2025 10:57:59 +0200 (CEST)
-Received: from lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com (lsvm11u0000395.swis.ap-northeast-2.aws.nxp.com [10.52.9.99])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 43F121800097;
-	Mon, 19 May 2025 16:57:58 +0800 (+08)
-From: Joseph Guo <qijian.guo@nxp.com>
-To: Bastien Nocera <hadess@hadess.net>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org (open list:GOODIX TOUCHSCREEN),
-	linux-kernel@vger.kernel.org (open list)
-Cc: qijian.guo@nxp.com
-Subject: [PATCH] input: goodix: add poll mode for goodix touchscreen
-Date: Mon, 19 May 2025 17:57:43 +0900
-Message-Id: <20250519085744.3116042-1-qijian.guo@nxp.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747645345; c=relaxed/simple;
+	bh=srN6BUQ0VvPk4Z6SW0hcqEYtKWEqPnMzxwlMFbHRIO0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gIaLmGqSemsh1amZ285o5IfacCf2t+4TmQLDyo9s6XP8cHHGhbZ3Je71fi7Wg5S8M1anPaAU17sqgdYE8bjJk+yU1eHTkdRMC47ptg3XcGrwwIkmOXa7Xr502iqSxqedyX7ljts4TBrVGXaOWNbgV2y9j9SyzxnrXNh7a4H0SKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowACn4yWR8ypoWoNsAQ--.11038S2;
+	Mon, 19 May 2025 17:02:10 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: saeedm@nvidia.com,
+	leon@kernel.org,
+	tariqt@nvidia.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] net: mlx5: vport: Add error handling in mlx5_query_nic_vport_qkey_viol_cntr()
+Date: Mon, 19 May 2025 17:01:47 +0800
+Message-ID: <20250519090147.1894-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,172 +55,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-CM-TRANSID:zQCowACn4yWR8ypoWoNsAQ--.11038S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr4rJw13Cr4rXFyDAry3XFb_yoW8Ar45pF
+	47tr97XrykJa4Fv3WUuFWrZr4ru3ykCa409a4xt343Xr4qyr4DAr45AF9FgrWUurWUKrZa
+	yrsFy3ZxAFn8C37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_GFWl42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
+	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU8CJmUUUUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCREHA2gqs4j-5wAAs9
 
-goodix touchscreen only support interrupt mode by default.
-Some panels like waveshare panel which is widely used on raspeberry pi
-don't have interrupt pins and only work on i2c poll mode.
-The waveshare panel 7inch panel use goodix gt911 touchscreen chip.
+The function mlx5_query_nic_vport_qkey_viol_cntr() calls the function
+mlx5_query_nic_vport_context() but does not check its return value. This
+could lead to undefined behavior if the query fails. A proper
+implementation can be found in mlx5_nic_vport_query_local_lb().
 
-Update goodix touchscreen to support both interrupt and poll mode.
+Add error handling for mlx5_query_nic_vport_context(). If it fails, free
+the out buffer via kvfree() and return error code.
 
-Signed-off-by: Joseph Guo <qijian.guo@nxp.com>
+Fixes: 9efa75254593 ("net/mlx5_core: Introduce access functions to query vport RoCE fields")
+Cc: stable@vger.kernel.org # v4.5
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 ---
- drivers/input/touchscreen/goodix.c | 69 +++++++++++++++++++++++++++---
- drivers/input/touchscreen/goodix.h |  4 ++
- 2 files changed, 67 insertions(+), 6 deletions(-)
+v2: Remove redundant reassignment. Fix RCT.
 
-diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-index aaf79ac50004..87991b56494d 100644
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -47,6 +47,7 @@
- #define RESOLUTION_LOC		1
- #define MAX_CONTACTS_LOC	5
- #define TRIGGER_LOC		6
-+#define POLL_INTERVAL_MS		17	/* 17ms = 60fps */
+ drivers/net/ethernet/mellanox/mlx5/core/vport.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
- /* Our special handling for GPIO accesses through ACPI is x86 specific */
- #if defined CONFIG_X86 && defined CONFIG_ACPI
-@@ -497,6 +498,23 @@ static void goodix_process_events(struct goodix_ts_data *ts)
- 	input_sync(ts->input_dev);
- }
-
-+static void goodix_ts_irq_poll_timer(struct timer_list *t)
-+{
-+	struct goodix_ts_data *ts = from_timer(ts, t, timer);
-+
-+	schedule_work(&ts->work_i2c_poll);
-+	mod_timer(&ts->timer, jiffies + msecs_to_jiffies(POLL_INTERVAL_MS));
-+}
-+
-+static void goodix_ts_work_i2c_poll(struct work_struct *work)
-+{
-+	struct goodix_ts_data *ts = container_of(work,
-+			struct goodix_ts_data, work_i2c_poll);
-+
-+	goodix_process_events(ts);
-+	goodix_i2c_write_u8(ts->client, GOODIX_READ_COOR_ADDR, 0);
-+}
-+
- /**
-  * goodix_ts_irq_handler - The IRQ handler
-  *
-@@ -523,16 +541,50 @@ static irqreturn_t goodix_ts_irq_handler(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
-
-+static void goodix_enable_irq(struct goodix_ts_data *ts)
-+{
-+	if (ts->client->irq) {
-+		enable_irq(ts->client->irq);
-+	} else {
-+		ts->timer.expires = jiffies + msecs_to_jiffies(POLL_INTERVAL_MS);
-+		add_timer(&ts->timer);
-+	}
-+}
-+
-+static void goodix_disable_irq(struct goodix_ts_data *ts)
-+{
-+	if (ts->client->irq) {
-+		disable_irq(ts->client->irq);
-+	} else {
-+		del_timer(&ts->timer);
-+		cancel_work_sync(&ts->work_i2c_poll);
-+	}
-+}
-+
- static void goodix_free_irq(struct goodix_ts_data *ts)
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/vport.c b/drivers/net/ethernet/mellanox/mlx5/core/vport.c
+index 0d5f750faa45..ded086ffe8ac 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/vport.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/vport.c
+@@ -519,19 +519,22 @@ int mlx5_query_nic_vport_qkey_viol_cntr(struct mlx5_core_dev *mdev,
  {
--	devm_free_irq(&ts->client->dev, ts->client->irq, ts);
-+	if (ts->client->irq) {
-+		devm_free_irq(&ts->client->dev, ts->client->irq, ts);
-+	} else {
-+		del_timer(&ts->timer);
-+		cancel_work_sync(&ts->work_i2c_poll);
-+	}
+ 	u32 *out;
+ 	int outlen = MLX5_ST_SZ_BYTES(query_nic_vport_context_out);
++	int ret;
+ 
+ 	out = kvzalloc(outlen, GFP_KERNEL);
+ 	if (!out)
+ 		return -ENOMEM;
+ 
+-	mlx5_query_nic_vport_context(mdev, 0, out);
++	ret = mlx5_query_nic_vport_context(mdev, 0, out);
++	if (ret)
++		goto out;
+ 
+ 	*qkey_viol_cntr = MLX5_GET(query_nic_vport_context_out, out,
+ 				   nic_vport_context.qkey_violation_counter);
+-
++out:
+ 	kvfree(out);
+ 
+-	return 0;
++	return ret;
  }
-
- static int goodix_request_irq(struct goodix_ts_data *ts)
- {
--	return devm_request_threaded_irq(&ts->client->dev, ts->client->irq,
--					 NULL, goodix_ts_irq_handler,
--					 ts->irq_flags, ts->client->name, ts);
-+	if (ts->client->irq) {
-+		return devm_request_threaded_irq(&ts->client->dev, ts->client->irq,
-+						 NULL, goodix_ts_irq_handler,
-+						 ts->irq_flags, ts->client->name, ts);
-+	} else {
-+		INIT_WORK(&ts->work_i2c_poll,
-+			  goodix_ts_work_i2c_poll);
-+		timer_setup(&ts->timer, goodix_ts_irq_poll_timer, 0);
-+		if (ts->irq_pin_access_method == IRQ_PIN_ACCESS_NONE)
-+			goodix_enable_irq(ts);
-+		return 0;
-+	}
- }
-
- static int goodix_check_cfg_8(struct goodix_ts_data *ts, const u8 *cfg, int len)
-@@ -1420,6 +1472,11 @@ static void goodix_ts_remove(struct i2c_client *client)
- {
- 	struct goodix_ts_data *ts = i2c_get_clientdata(client);
-
-+	if (!client->irq) {
-+		del_timer(&ts->timer);
-+		cancel_work_sync(&ts->work_i2c_poll);
-+	}
-+
- 	if (ts->load_cfg_from_disk)
- 		wait_for_completion(&ts->firmware_loading_complete);
- }
-@@ -1435,7 +1492,7 @@ static int goodix_suspend(struct device *dev)
-
- 	/* We need gpio pins to suspend/resume */
- 	if (ts->irq_pin_access_method == IRQ_PIN_ACCESS_NONE) {
--		disable_irq(client->irq);
-+		goodix_disable_irq(ts);
- 		return 0;
- 	}
-
-@@ -1479,7 +1536,7 @@ static int goodix_resume(struct device *dev)
- 	int error;
-
- 	if (ts->irq_pin_access_method == IRQ_PIN_ACCESS_NONE) {
--		enable_irq(client->irq);
-+		goodix_enable_irq(ts);
- 		return 0;
- 	}
-
-diff --git a/drivers/input/touchscreen/goodix.h b/drivers/input/touchscreen/goodix.h
-index 87797cc88b32..132e49d66324 100644
---- a/drivers/input/touchscreen/goodix.h
-+++ b/drivers/input/touchscreen/goodix.h
-@@ -56,6 +56,7 @@
- #define GOODIX_ID_MAX_LEN			4
- #define GOODIX_CONFIG_MAX_LENGTH		240
- #define GOODIX_MAX_KEYS				7
-+#define GOODIX_NAME_MAX_LEN			38
-
- enum goodix_irq_pin_access_method {
- 	IRQ_PIN_ACCESS_NONE,
-@@ -91,6 +92,7 @@ struct goodix_ts_data {
- 	enum gpiod_flags gpiod_rst_flags;
- 	char id[GOODIX_ID_MAX_LEN + 1];
- 	char cfg_name[64];
-+	char name[GOODIX_NAME_MAX_LEN];
- 	u16 version;
- 	bool reset_controller_at_probe;
- 	bool load_cfg_from_disk;
-@@ -104,6 +106,8 @@ struct goodix_ts_data {
- 	u8 main_clk[GOODIX_MAIN_CLK_LEN];
- 	int bak_ref_len;
- 	u8 *bak_ref;
-+	struct timer_list timer;
-+	struct work_struct work_i2c_poll;
- };
-
- int goodix_i2c_read(struct i2c_client *client, u16 reg, u8 *buf, int len);
---
-2.34.1
+ EXPORT_SYMBOL_GPL(mlx5_query_nic_vport_qkey_viol_cntr);
+ 
+-- 
+2.42.0.windows.2
 
 
