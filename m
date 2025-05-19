@@ -1,380 +1,112 @@
-Return-Path: <linux-kernel+bounces-653619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20DC6ABBBDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:02:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1935AABBBE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD4DF3BF174
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:01:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C88117D3F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4817E274656;
-	Mon, 19 May 2025 11:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963C32749F5;
+	Mon, 19 May 2025 11:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Wlxapirx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="lDnEexXp"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECCA274646;
-	Mon, 19 May 2025 11:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747652488; cv=none; b=j8vzzVMJUEiDnZ6U06U5L/rx/0zKtioqz0YYmGNEUEUHXgvegV8uzWjniZf01o2bvsT2Dsvang4+M2UPvGrqjRckPWF1UW3sicwgdfJWHvcwP5luTYHQ45x1mSujXiVO3mP6fzta6SrQnE6V0tHEowbgkG7EmucWXuKtfPWYqGU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747652488; c=relaxed/simple;
-	bh=IjYVJR6A5AlcSL7/PYDXKuxygN9nfZh0tJvtn3W041E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=chmN0DpiuFNViBp/3WvC+ZkjtgWGbK1f/lUZ9MpFiwHFS6ESsw9KQyQY505WjP2VXy2bkwcjAjYctY2b3SLqlgaVtoCuZuLyF447I+E37sNF+EUaprbrgOkuy5PioHZyxian4IYBwI6iBLiUULqbsq0rqkuIHzVH2QL8zyvYHe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Wlxapirx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54J9rXeW013665;
-	Mon, 19 May 2025 11:01:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Iah9hrJHCDUP0/MtMapsSsmGJYGXI2S0zdY/TE+1Ja0=; b=WlxapirxKStRQ0CU
-	Kqi9chzdNSr9JLBeqR9cD0P7G/sZ8NL5xh0ufXX0k+jHSJCaimC1EDp6Bpy7YSXd
-	bFEIRD3hn0voIN0/bWu5GxGEOrFLgtbYuGO2Le0au9wsWA3UO3ozmiauWiNLNYFk
-	OyQxDIQljz2DcJ3tM1fnRn3Vh8regrw9rD+jhOui5P4tfaNGZUgq8AJ6+HmfprAZ
-	KR/pfR/Kp1pzMdESkFcXOwPh7VP0Ug8ynRagQPxjzr2F7wRw9SOq5hPLgNpJ9EAU
-	ftladsXeutJNiYqVTT45LGYoSRzxHJVFiKE432K1Aw8xvVa7hZ7TTH4/j58XOmNY
-	afPWCg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46pjkym6yn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 May 2025 11:01:06 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54JB15jA000572
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 May 2025 11:01:05 GMT
-Received: from [10.204.66.147] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 19 May
- 2025 04:00:58 -0700
-Message-ID: <38a94e78-9793-455b-a5ab-6283d397b759@quicinc.com>
-Date: Mon, 19 May 2025 16:30:55 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CE726F475;
+	Mon, 19 May 2025 11:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747652517; cv=pass; b=KIEV4bsnU2MrS40p8c/a6GQZ4cO0pq94ZkC3Wk+523JEEjksmOpY/7XVsO+FsxmVSexyD+oYks6/XB9yxh4gWfgPzne/CMc+F6sfkEScE8RlPOb5aEJf+Lnsc8j+zvV/dXt0smV8t29E3eZaqI9B+8f6C3nsnIjhqL3d9vrSRPo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747652517; c=relaxed/simple;
+	bh=161YKafeuZNBBRQedRWPgSGczjQQFeXjckeJgSUb4Ug=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=kSUM5F7QxV5IlNqTWr3HVAqwoHqfw2VAkwxJ9yDfav3bPAu/k5lNGg825Ix8+bgHoqBxPLddWy9ifDEMxC4+IhcouSs4BZXQmEdQcThSGChj+of4gueu6zhLxZ0tzX2h3fHFWXm55h8A4IyHIgtywFYodtGOUbAih7Oypakk4N8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=lDnEexXp; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1747652492; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Hha3soeWmrR5sI8lj0Pn1aptnlszujnHw0dutzRMR2pwtTpS1r5LAUiKrAhBBga6SQzy4LvRF2MxQGXQK4jXwkfnWCnbdoxp9TZPGplF9n0BTZIINF+c5kJB60+vlccgctooSj7RWpMZjsFL6/QCpui0hyShQwYVUB1A5B9nNrU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1747652492; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=161YKafeuZNBBRQedRWPgSGczjQQFeXjckeJgSUb4Ug=; 
+	b=RJshY1k1c4WSV+I/EJDUsBrMBJFNY1tDM+hw4YsAau9ad/62/VkAhaJTQvQ5se0OPGNN3xLEoaq7jA8oH+7u26hDjcSt0HRnD4mYfAZon1FWxh/Yn717XYBLzGsvKGeJLu7nqWn8T5RbbiS+kAwBCEsqK2dXSmPmrLybAbZ2nsY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747652492;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=161YKafeuZNBBRQedRWPgSGczjQQFeXjckeJgSUb4Ug=;
+	b=lDnEexXpJYXQtOW357EOXaSUc62BOfwx8fr7qwLDSwUTIvy+lbZkqHUbOpYm9fpI
+	GPNjsr3HZ93/k2zPYcOZOcWY9yakCYwmh7TaoqRyvvXN5Op3HOk+tNJuF62VJWbBpoH
+	IfCBuXbj21ey9knQ6/QVh7QID0FP7x4D+I7TFAZI=
+Received: by mx.zohomail.com with SMTPS id 1747652490961168.45082575803247;
+	Mon, 19 May 2025 04:01:30 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/2] arm64: dts: qcom: sa8775p: add Display Serial
- Interface device nodes
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Ayushi Makhija
-	<amakhija@qti.qualcomm.com>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>,
-        <sean@poorly.run>, <marijn.suijten@somainline.org>,
-        <andersson@kernel.org>, <robh@kernel.org>, <robh+dt@kernel.org>,
-        <krzk+dt@kernel.org>, <konradybcio@kernel.org>, <conor+dt@kernel.org>,
-        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
-        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <quic_abhinavk@quicinc.com>, <quic_rajeevny@quicinc.com>,
-        <quic_vproddut@quicinc.com>, <quic_jesszhan@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250513102611.1456868-1-amakhija@qti.qualcomm.com>
- <20250513102611.1456868-2-amakhija@qti.qualcomm.com>
- <tjp2pfescczqikbu2tzylx4ecb3n6trixvhbdwbpz6y4jc52wk@fmkdxrelun3i>
-Content-Language: en-US
-From: Ayushi Makhija <quic_amakhija@quicinc.com>
-In-Reply-To: <tjp2pfescczqikbu2tzylx4ecb3n6trixvhbdwbpz6y4jc52wk@fmkdxrelun3i>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8LTf_VQoCDtmaPxjUq9vX-GUUDl8pAb9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDEwNCBTYWx0ZWRfXxqOg2YalcgRH
- TT03EolMFqjqCg1TbA6QU3dsXbkaEyZsaJVH0UjKoeUBX6IVf8aD02hBw5zRPzpR640ETy5Ncu/
- uaa9zekbZgiwtmI3fVlrGggg057QRStP4q/c4Z7Wi7Oc9WiuQRtKIdlOggQa+IfyYYI3Mr+RtaI
- AoU2rh0C5yHKYucKUXVZF7g3+WNwaaP74cVLzZ9x/KRi76P74g1Tox/8keyzItYn+w4JrolTaOz
- yukIdvQjuU3w1Y8HQ0I0MX3s9PljPmylomL2JZeEsFTG2EqTqP7d/UGTidk1TybC4C8lGVpgp9v
- 5YnL6jOEHakQcqFHY+SYZJ+d4L4/zWdtuuUNAd5s3IT5E3VKZv7IHuvKn83JXZhte3LUz/j9ns+
- nPlJOuSJGvWh0iHmERQoj9BT0Ucs8HNmpYYnwId0DRkK4PXx1ETAgzGEc2kpnI1uhBU334gb
-X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=682b0f72 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=h_Z4th-CkySu1llfNFIA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 8LTf_VQoCDtmaPxjUq9vX-GUUDl8pAb9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-19_04,2025-05-16_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 mlxlogscore=999 adultscore=0
- phishscore=0 mlxscore=0 priorityscore=1501 suspectscore=0 malwarescore=0
- impostorscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505190104
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [PATCH v3] rust: regulator: add a bare minimum regulator
+ abstraction
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <8517D6F0-C1A2-4E38-8E62-57DCCD5E58D4@collabora.com>
+Date: Mon, 19 May 2025 08:01:15 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A0008125-1FE6-4B95-8188-9DEA67F68942@collabora.com>
+References: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
+ <D9YXK1J1XO37.JVILKENRKYXD@nvidia.com>
+ <498AB71C-58EF-487E-8D9B-C7C113862948@collabora.com>
+ <D9ZQUUA4FLXD.19MJI9HD48EMZ@nvidia.com>
+ <8517D6F0-C1A2-4E38-8E62-57DCCD5E58D4@collabora.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: Apple Mail (2.3826.500.181.1.5)
+X-ZohoMailClient: External
 
-On 5/19/2025 6:31 AM, Dmitry Baryshkov wrote:
-> On Tue, May 13, 2025 at 03:56:10PM +0530, Ayushi Makhija wrote:
->> From: Ayushi Makhija <quic_amakhija@quicinc.com>
->>
->> Add device tree nodes for the DSI0 and DSI1 controllers
->> with their corresponding PHYs found on Qualcomm SA8775P SoC.
->>
->> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
->> Reviewed-by: Dmitry Baryshkov <lumag@kernel.org>
->> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->> ---
->>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 186 +++++++++++++++++++++++++-
->>  1 file changed, 185 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> index 5bd0c03476b1..f8777f17d24a 100644
->> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> @@ -6,6 +6,7 @@
->>  
->>  #include <dt-bindings/interconnect/qcom,icc.h>
->>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/clock/qcom,dsi-phy-28nm.h>
->>  #include <dt-bindings/clock/qcom,rpmh.h>
->>  #include <dt-bindings/clock/qcom,sa8775p-dispcc.h>
->>  #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
->> @@ -4034,6 +4035,22 @@ dpu_intf4_out: endpoint {
->>  							remote-endpoint = <&mdss0_dp1_in>;
->>  						};
->>  					};
->> +
->> +					port@2 {
->> +						reg = <2>;
->> +
->> +						dpu_intf1_out: endpoint {
->> +							remote-endpoint = <&mdss0_dsi0_in>;
->> +						};
->> +					};
->> +
->> +					port@3 {
->> +						reg = <3>;
->> +
->> +						dpu_intf2_out: endpoint {
->> +							remote-endpoint = <&mdss0_dsi1_in>;
->> +						};
->> +					};
->>  				};
->>  
->>  				mdss0_mdp_opp_table: opp-table {
->> @@ -4061,6 +4078,170 @@ opp-650000000 {
->>  				};
->>  			};
->>  
->> +			mdss0_dsi0: dsi@ae94000 {
->> +				compatible = "qcom,sa8775p-dsi-ctrl", "qcom,mdss-dsi-ctrl";
->> +				reg = <0x0 0x0ae94000 0x0 0x400>;
->> +				reg-names = "dsi_ctrl";
->> +
->> +				interrupt-parent = <&mdss0>;
->> +				interrupts = <4>;
->> +
->> +				clocks = <&dispcc0 MDSS_DISP_CC_MDSS_BYTE0_CLK>,
->> +					 <&dispcc0 MDSS_DISP_CC_MDSS_BYTE0_INTF_CLK>,
->> +					 <&dispcc0 MDSS_DISP_CC_MDSS_PCLK0_CLK>,
->> +					 <&dispcc0 MDSS_DISP_CC_MDSS_ESC0_CLK>,
->> +					 <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
->> +					 <&gcc GCC_DISP_HF_AXI_CLK>;
->> +				clock-names = "byte",
->> +					      "byte_intf",
->> +					      "pixel",
->> +					      "core",
->> +					      "iface",
->> +					      "bus";
->> +				assigned-clocks = <&dispcc0 MDSS_DISP_CC_MDSS_BYTE0_CLK_SRC>,
->> +						  <&dispcc0 MDSS_DISP_CC_MDSS_PCLK0_CLK_SRC>;
->> +				assigned-clock-parents = <&mdss0_dsi0_phy DSI_BYTE_PLL_CLK>,
->> +							 <&mdss0_dsi0_phy DSI_PIXEL_PLL_CLK>;
->> +				phys = <&mdss0_dsi0_phy>;
->> +
->> +				operating-points-v2 = <&dsi0_opp_table>;
->> +				power-domains = <&rpmhpd SA8775P_MMCX>;
->> +
->> +				#address-cells = <1>;
->> +				#size-cells = <0>;
->> +
->> +				status = "disabled";
->> +
->> +				ports {
->> +					#address-cells = <1>;
->> +					#size-cells = <0>;
->> +
->> +					port@0 {
->> +						reg = <0>;
->> +
->> +						mdss0_dsi0_in: endpoint {
->> +							remote-endpoint = <&dpu_intf1_out>;
->> +						};
->> +					};
->> +
->> +					port@1 {
->> +						reg = <1>;
->> +
->> +						mdss0_dsi0_out: endpoint{ };
->> +					};
->> +				};
->> +
->> +				dsi0_opp_table: opp-table {
-> 
-> mdss_dsi_opp_table: opp-table {}
-> 
->> +					compatible = "operating-points-v2";
->> +
->> +					opp-358000000 {
-> 
-> Is there only one entry? Usually there are several.
-> 
+Minor correction:
 
-Hi Dmitry,
 
-Thanks, for the review.
+> This is explicitly not supported, because (given the current code) why =
+should it be?
+>=20
+> If you want a given regulator to be enabled, just make sure you have
+> Regulator<Enabled> in your kernel::types::Either container.
+>=20
+> You don't need a counter either: Regulator<Enabled> has a count of =
+one, and
+> when that goes out of scope, it's decremented.
 
-In the IP catalog Clock documentation of SA8775P, the same DSI clock frequency (358Mhz)
-is mentioned for all the voltage corners (svs_l1, nom, turbo and turbo_l1).
-That's why I kept the single entry opp-358000000 for 358Mhz and selected lowest voltage corner svs_l1.
- 
-I will address rest of the comments in next version of series.
+Regulator<Enabled> has a +1 on the count. The actual underlying count is =
+unknown.
 
-Thanks,
-Ayushi
+=E2=80=94 Daniel
 
->> +						opp-hz = /bits/ 64 <358000000>;
->> +						required-opps = <&rpmhpd_opp_svs_l1>;
->> +					};
->> +				};
->> +			};
->> +
->> +			mdss0_dsi0_phy: phy@ae94400 {
->> +				compatible = "qcom,sa8775p-dsi-phy-5nm";
->> +				reg = <0x0 0x0ae94400 0x0 0x200>,
->> +				      <0x0 0x0ae94600 0x0 0x280>,
->> +				      <0x0 0x0ae94900 0x0 0x27c>;
->> +				reg-names = "dsi_phy",
->> +					    "dsi_phy_lane",
->> +					    "dsi_pll";
->> +
->> +				#clock-cells = <1>;
->> +				#phy-cells = <0>;
->> +
->> +				clocks = <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
->> +					 <&rpmhcc RPMH_CXO_CLK>;
->> +				clock-names = "iface", "ref";
->> +
->> +				status = "disabled";
->> +			};
->> +
->> +			mdss0_dsi1: dsi@ae96000 {
->> +				compatible = "qcom,sa8775p-dsi-ctrl", "qcom,mdss-dsi-ctrl";
->> +				reg = <0x0 0x0ae96000 0x0 0x400>;
->> +				reg-names = "dsi_ctrl";
->> +
->> +				interrupt-parent = <&mdss0>;
->> +				interrupts = <5>;
->> +
->> +				clocks = <&dispcc0 MDSS_DISP_CC_MDSS_BYTE1_CLK>,
->> +					 <&dispcc0 MDSS_DISP_CC_MDSS_BYTE1_INTF_CLK>,
->> +					 <&dispcc0 MDSS_DISP_CC_MDSS_PCLK1_CLK>,
->> +					 <&dispcc0 MDSS_DISP_CC_MDSS_ESC1_CLK>,
->> +					 <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
->> +					 <&gcc GCC_DISP_HF_AXI_CLK>;
->> +				clock-names = "byte",
->> +					      "byte_intf",
->> +					      "pixel",
->> +					      "core",
->> +					      "iface",
->> +					      "bus";
->> +				assigned-clocks = <&dispcc0 MDSS_DISP_CC_MDSS_BYTE1_CLK_SRC>,
->> +						  <&dispcc0 MDSS_DISP_CC_MDSS_PCLK1_CLK_SRC>;
->> +				assigned-clock-parents = <&mdss0_dsi1_phy DSI_BYTE_PLL_CLK>,
->> +							 <&mdss0_dsi1_phy DSI_PIXEL_PLL_CLK>;
->> +				phys = <&mdss0_dsi1_phy>;
->> +
->> +				operating-points-v2 = <&dsi1_opp_table>;
->> +				power-domains = <&rpmhpd SA8775P_MMCX>;
->> +
->> +				#address-cells = <1>;
->> +				#size-cells = <0>;
->> +
->> +				status = "disabled";
->> +
->> +				ports {
->> +					#address-cells = <1>;
->> +					#size-cells = <0>;
->> +
->> +					port@0 {
->> +						reg = <0>;
->> +
->> +						mdss0_dsi1_in: endpoint {
->> +							remote-endpoint = <&dpu_intf2_out>;
->> +						};
->> +					};
->> +
->> +					port@1 {
->> +						reg = <1>;
->> +
->> +						mdss0_dsi1_out: endpoint { };
->> +					};
->> +				};
->> +
->> +				dsi1_opp_table: opp-table {
-> 
-> You don't need a second DSI OPP table.
-> 
->> +					compatible = "operating-points-v2";
->> +
->> +					opp-358000000 {
->> +						opp-hz = /bits/ 64 <358000000>;
->> +						required-opps = <&rpmhpd_opp_svs_l1>;
->> +					};
->> +				};
->> +			};
->> +
->> +			mdss0_dsi1_phy: phy@ae96400 {
->> +				compatible = "qcom,sa8775p-dsi-phy-5nm";
->> +				reg = <0x0 0x0ae96400 0x0 0x200>,
->> +				      <0x0 0x0ae96600 0x0 0x280>,
->> +				      <0x0 0x0ae96900 0x0 0x27c>;
->> +				reg-names = "dsi_phy",
->> +					    "dsi_phy_lane",
->> +					    "dsi_pll";
->> +
->> +				#clock-cells = <1>;
->> +				#phy-cells = <0>;
->> +
->> +				clocks = <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
->> +					 <&rpmhcc RPMH_CXO_CLK>;
->> +				clock-names = "iface", "ref";
->> +
->> +				status = "disabled";
->> +			};
->> +
->>  			mdss0_dp0_phy: phy@aec2a00 {
->>  				compatible = "qcom,sa8775p-edp-phy";
->>  
->> @@ -4267,7 +4448,10 @@ dispcc0: clock-controller@af00000 {
->>  				 <&sleep_clk>,
->>  				 <&mdss0_dp0_phy 0>, <&mdss0_dp0_phy 1>,
->>  				 <&mdss0_dp1_phy 0>, <&mdss0_dp1_phy 1>,
->> -				 <0>, <0>, <0>, <0>;
->> +				 <&mdss0_dsi0_phy DSI_BYTE_PLL_CLK>,
->> +				 <&mdss0_dsi0_phy DSI_PIXEL_PLL_CLK>,
->> +				 <&mdss0_dsi1_phy DSI_BYTE_PLL_CLK>,
->> +				 <&mdss0_dsi1_phy DSI_PIXEL_PLL_CLK>;
->>  			power-domains = <&rpmhpd SA8775P_MMCX>;
->>  			#clock-cells = <1>;
->>  			#reset-cells = <1>;
->> -- 
->> 2.34.1
->>
-> 
 
 
