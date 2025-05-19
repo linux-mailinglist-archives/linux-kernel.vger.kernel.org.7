@@ -1,85 +1,128 @@
-Return-Path: <linux-kernel+bounces-653686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E17ABBCE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:45:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD56ABBCE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08CF73A67B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:45:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96EF53AAFC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BE424503F;
-	Mon, 19 May 2025 11:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A012275103;
+	Mon, 19 May 2025 11:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="HgxQcn55"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RKfZD/ME"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB231714B3;
-	Mon, 19 May 2025 11:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B651720FAB1;
+	Mon, 19 May 2025 11:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747655114; cv=none; b=dU292PNBl0/LcrBXbWHHFB6minge/PAeDI1vFUtaTnWE9JODlhuhO7yoy02aPn1bLyhtS9jRk/z/r07qQV5uDjwDBwvDfwUrzYq8PnkiF0Ar6U/0Of5G4q1Z9XLf8EU8cKGZLtkyNhKGD3g3sBQMAgjc2tUp2Zqu4EAumVlpxiY=
+	t=1747655214; cv=none; b=Bre41J3bkSbCp7u5RYhgkUKYVYd+SBPCfxlg0cyHzmDKsbdWRadypMgbCWympjYEPVtHjaxgBoY9S3GFii3bo9sJc2uTc8yDnlESWvC8eF5jqciMhxGOJ6rMkdkVKhNY8e9c2LMmzN78sl4NsN0Wb56q49lgdcVN63s9BrzaXLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747655114; c=relaxed/simple;
-	bh=//y/ewFwK3+P6K/VtcuEDULsYjMnHbZpJURZ2u9sFRA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sdpiR5EUfLFpi/ILGOXVV2GsryFWDJuSjp+Gg49HpKWUNI+q8VU/ZSdV74uLI+FFMTK/c0/k16TtFbTvef8qJ+f79egadTfGMhala7/wKFcrSNNKH6Z1NuljeiN+TRAWlcLE40myiwT+2e4RBvMoAlcBuTMcgKUlWQjNwhIp28E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=HgxQcn55; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3F09E41086
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1747655112; bh=9lINbBbTmIKTG8eNObFCf37E2v9kYcGZFOY+2A4xoRU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=HgxQcn551KrLQSFmvbOJ/cZq01qzF99L4I4asmdZ76tKjp/dL7Z988owwved0b/eS
-	 W14BH5S6xZfRIbqCU4pM5mTziAdd66nw1GGoSeiVFTsJCidm0C3gO/CBl8hWJbxfzv
-	 f12gqVPiD5kdVZPgvwwBDCBh6DdULd7KIfov+dcOrGuFNVykprgOS6yY5PPOjIbbXS
-	 QB0IjoeQOXIIrAEpgODiNWIi8Pkn4bTlvEfdMHIids00jXJ47vDkWRzDY97kaZPfHm
-	 weE8BeT8+Y6aq3LAa6G3CMfBQFLyTrR1JtFrllZxDRS1GrQrmCdcR/K0Amljzf0P1t
-	 5BK2EJVgv6HAw==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 3F09E41086;
-	Mon, 19 May 2025 11:45:10 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org, Andrew
- Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Tom
- Zanussi <tzanussi@gmail.com>
-Subject: Re: [PATCH] Docs: relay: editing cleanups
-In-Reply-To: <20250512023233.107582-1-rdunlap@infradead.org>
-References: <20250512023233.107582-1-rdunlap@infradead.org>
-Date: Mon, 19 May 2025 05:45:07 -0600
-Message-ID: <87bjrokenw.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1747655214; c=relaxed/simple;
+	bh=nm3LGyLWXkhbDyn1AMc/CsG+dk7eWxFfEtG6Iw41JEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X1awj4TsbJUTSfYUvIdUoV0qmTr8G4qYuoaWkyASErIS3YtXl+kzmbVL2G6UZliW0LscqlXMXzdr4UOJZhj75oh6rUX+PIWTWYxsCo+r6lyfZMkHbKm+R32cTUPJ+yedbb92Tvp30Sp9xiFDF9dFdx3CDXT36V92jOSt11zcehw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RKfZD/ME; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C2BC4CEE4;
+	Mon, 19 May 2025 11:46:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747655214;
+	bh=nm3LGyLWXkhbDyn1AMc/CsG+dk7eWxFfEtG6Iw41JEw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RKfZD/MEIRGj1GsuB9XtVfAjscYwafEzajAL9B2eQW6b1Xx1pNw77ZH152otjyovi
+	 eFbYWglEUohrfwvbCVUgI8cl2admXBDn8cMY943b/Xjye/RfiVoyD3KGt4qFi27189
+	 U85hoo/qhAkYizhX05t9a7DMe/1yzm36wqAQJV+divrV3rp0jowK06+If4v/HPOLFq
+	 8j4+8KqiBOOwT8F/TrqUUjns1iD2uQ8/yTutN1pDK9RSHTDYfRiXng/ECcWXJO1LZW
+	 WZVIxoeoZuwyAz590YTJqLbtyb+K+OEc/u4RUOU1ePWoN/Kdf3e9rVjslBKJquP6Rc
+	 yHtNym1FAVNxA==
+Date: Mon, 19 May 2025 12:46:48 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3] rust: regulator: add a bare minimum regulator
+ abstraction
+Message-ID: <8229a161-52b8-4265-8296-8f1ac49bab62@sirena.org.uk>
+References: <20250513-topics-tyr-regulator-v3-1-4cc2704dfec6@collabora.com>
+ <D9YXK1J1XO37.JVILKENRKYXD@nvidia.com>
+ <D9Z3R4EYAXV9.211IFNRTOPM6O@kernel.org>
+ <D9Z4XGQ2QHXA.2H5X1NZ5IZECC@nvidia.com>
+ <aCnQo15SbhXZ9Fln@finisterre.sirena.org.uk>
+ <D9ZCD8D6J5QW.14H6VM9LQ5R2Z@kernel.org>
+ <a1a6b2f8-af42-4942-ab62-678e37381d08@sirena.org.uk>
+ <DA03MG3VURVI.37CBV5WEEKJSH@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="AJrHgbJohquwKjgK"
+Content-Disposition: inline
+In-Reply-To: <DA03MG3VURVI.37CBV5WEEKJSH@kernel.org>
+X-Cookie: We have ears, earther...FOUR OF THEM!
 
-Randy Dunlap <rdunlap@infradead.org> writes:
 
-> Cleanup some punctuation, capital letter, and a missing word
-> in relay.rst.
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: linux-doc@vger.kernel.org
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Tom Zanussi <tzanussi@gmail.com>
-> ---
->  Documentation/filesystems/relay.rst |   26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
+--AJrHgbJohquwKjgK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Applied, thanks,
+On Mon, May 19, 2025 at 01:25:56PM +0200, Benno Lossin wrote:
+> On Mon May 19, 2025 at 11:56 AM CEST, Mark Brown wrote:
 
-jon
+> > No.  You should not leak any refcount, the per consumer refcount
+> > duplicates what's being done for the regulator as a whole, one should
+> > never be incremented or decremented without the other (but there may be
+> > multiple consumers to choose from).
+
+> What stops the last `regulator_put` to also call `regulator_disable` a
+> correct number of times?
+
+We obviously could but the regulator API defaults to not doing anything
+unless explicitly told to since getting things wrong can physically
+damage the system.  We've no idea if just disabling the regulator would
+be safe at this point so we just don't touch anything and complain about
+it.
+
+> What are the kinds of problems that one could encounter when not calling
+> `regulator_disable` before `regulator_put` or if `regulator_enable` was
+> never called to begin with?
+
+If you don't disable the regulator you've just leaked a reference which
+is obviously a problem.
+
+--AJrHgbJohquwKjgK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgrGicACgkQJNaLcl1U
+h9CAeQf/WC1/S9s8A8jbmFO+CtRWGyHJNcH0Rl6Rv+Of6S6Nvgo15YL4q+5X7uUX
+tGORWpDkcmlQK6Z1bVXsckg9RMpLEV0ZpbonPzrPu10trGvbIkn0Y4vTWMY3AxMN
+/sTndl4n71+oxgUz3axaBsyoXFCnQZNJZ7kQbFjfgXHEDyOaSZTi+6O3D5SpYAzl
+4ipc4gkY915zi3zPcgteORTn0urGiJt71mqRvBq5mPn2mjXbuscDDqa2DNdWD9yY
+ReqvzwMz7Aqf1uMKevMViuGJ5S3ZZTMJqAlCGKUIgDJFcN0vO83uehYqpUBcra0I
+2T3SvuLRPU9XU3/DkyE3iVIKlq834g==
+=nTet
+-----END PGP SIGNATURE-----
+
+--AJrHgbJohquwKjgK--
 
