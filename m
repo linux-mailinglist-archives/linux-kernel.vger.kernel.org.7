@@ -1,230 +1,79 @@
-Return-Path: <linux-kernel+bounces-653752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA110ABBDEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:33:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41632ABBDED
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66001189F075
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:33:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6A2C3AE4A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D0F27933C;
-	Mon, 19 May 2025 12:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D1C27874D;
+	Mon, 19 May 2025 12:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qslu6fkt"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bo1Y0PW3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510ED27817D
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 12:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6045F278155;
+	Mon, 19 May 2025 12:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747657948; cv=none; b=XDeZ4QtOtlNIj0P91PW+2H7mbFyCFlme986fNIizWFUI4wzxiOTZPjguGFXMYUeGA3ULq3d0RP5qRiI2oHamYQ5VhWUTW/md5hd+KGcdUn0LLIi253Vmzf6kpSqz/2XYUxIjSFeoR2FWkyGClnAnUeGJpmgGQqRBgfip8cOgNAE=
+	t=1747657934; cv=none; b=uj2ZYEa9P9D6P4EzOa++d4h/1ffWyt+LlcofIQ1beuq5ai3YfsGEXd60HX8V4IxcIdfrXdmtkspIte011p0k9rC9TthRk7GleDwIOhjfKbhksZadUk140Y0tq1kZ9oBqSbV87KRl2j3FvNII6Qzc2jMKn79v0+tahQeuK5354S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747657948; c=relaxed/simple;
-	bh=OG5kN+zFwm6jMpsyyhiXOa0Gh5embl2VyNBsO29c1Uw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pd6XWq6s1ESIQd2pIXdjVq5H9YFGEZTyG3YZ/ofh8NimrprWteh5B2f3mWDAIkFG3k75TJQrCZ7RPg2D/ooQOWqzGhAWZhWOhTMqnRIW9Uy2Cd9aKxsCW8PVlqGAvFZxrqIdRqxlvpmRwjACQa+6DLe+rH74MHTKbqjzzdK9LeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qslu6fkt; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e7b8673ff36so1846289276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 05:32:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747657945; x=1748262745; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IPwRNXOWl24GFO+rgmgF+qLJpM89plODyl58iZqW/T4=;
-        b=qslu6fkt8+cqeUlphmNM8i2rLTXoqVzWGUKirH0G5eEpD1FEbRfNAj+iSPiRJimanB
-         G/uKFpGKW6mzKuVSuqfJXMdLYu8nceRf558kGtfwk+4xJW+IS57tAWLXQnfSOcaFhLXw
-         0otFIJsD/JQGg7y0IUTawKMB47xkaJrc28Kz5yTvKJJR4iRtvbxZVyIAVhYm4V7ZVtpr
-         HxwZLICBDfmFE5lQ0VrlyYEsyM90yZCpeNlf2Q95r0G5g+wnPn1w/3jELPSxbx6Kc+Y6
-         6dxgHMky4UiMWJ7afBOAokg89BlLjmcdWiGU+tIsiaJDsnjWS94KZdAnE/9cktXYda9U
-         VzZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747657945; x=1748262745;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IPwRNXOWl24GFO+rgmgF+qLJpM89plODyl58iZqW/T4=;
-        b=Sr1SwKyUNnnwlQb/K9fy6sIBRNwPqQGqwE8j1KYoT99ojgqFwAUTFCm2n/pidsbgY3
-         a6lij3XQBAOQY1Hbk/yWgo7iHOYP2Zxbh9Drjfs5CJwRKAUOS4zv7FUtKTm0s/8kALZF
-         xbFuE/lFbcYNgNpgCPrBJX3VENnbgplNAToj3NRX3yn7l+N5mKRBo4Tr+CTUFTp5EkNO
-         5ru5PrktwRKqofZFY/Du+VvY5fwhZuR63rHpOI8BEaD5RZvJbHgW9vHmMqSAiTCQkt2t
-         mpFIAy9SiKk6tDrHfk8RqqeJK1Pc35r6jb1eLbKDq+PFZQVDbsKud5Gwt3oTXLyrZq/Y
-         YxtA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8ooLE12/CXOfcvntTt4zup7JWlDgVwxNqDC8OQeJK5P2MvM6eWNF6zhhKMW3odrJErJqIY8RYPAjAkQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE1xehrMNXBgws3pX1toNBwyy3LTWc0Jk2np37EStbNAC+U6ZG
-	JQ6B+6O8nN6FtFE1ZfWt4jvg9CPXBlPgSY08LNLE5nOgoZKuqkjVpnCmZ48blxjnYGrrGzgQrCx
-	6EGkAn9+PlsYi7BGoBASEt0BA0/lhysG241I3RcsoMuuaHZbW0/KuqLk=
-X-Gm-Gg: ASbGncuvBBXZ20cW/qTflsNA3/6Z4GJwjthk5o1JCQhESAqhXTKHzN6aehOIddt86z5
-	tWrxG515gKJwcBAAMIxebUzSI7MmnkWF9VulOKisVWVQfvhTUbbBKX562KTAcyhJaa9KSpBUKYS
-	hOAHjYy1TnSQvteFY2eeUG/boc+4kZDESrWQ==
-X-Google-Smtp-Source: AGHT+IHEFdLHniAqxHZG4kqnpVrKvVBNypE6W6kV8LKivZdut35hNYYXEIT1Ua0XVeMkAptb/2GMnLOxiQxqeaEooXo=
-X-Received: by 2002:a05:6902:1887:b0:e7b:8dd2:b136 with SMTP id
- 3f1490d57ef6-e7b8dd2b339mr8889269276.32.1747657945346; Mon, 19 May 2025
- 05:32:25 -0700 (PDT)
+	s=arc-20240116; t=1747657934; c=relaxed/simple;
+	bh=HoUHAxsmz0lVERwzrMNPRR2kgRH7kTLlbZ6PpdDPuHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=drECoXdtg2OdJfGmNdQUJID34YriZTxyf91rR8cxsnZTjizfy3vvAGUQOwuu6W8s7pXUsv+PzT+dF58A1lezkH7xybURV5wLIr3lNrJzyQsaGm1zPD89UV6dnyMzDlnc+hS3mb+WYbj885SlmX0EXgQtB4N8x85IydpbeO/OHis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bo1Y0PW3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF66FC4CEF0;
+	Mon, 19 May 2025 12:32:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747657933;
+	bh=HoUHAxsmz0lVERwzrMNPRR2kgRH7kTLlbZ6PpdDPuHw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bo1Y0PW3xzzj9/Nf4BKw+IflPjrSFhX3grLA1qD0eUvvIDWdbziWWlktiAY0H4THb
+	 +am8I8u9EisrBdHux1//DxJ+P+8Jcwbtr5KNol/UeWaNY26ksHADBoIEfQvLV6QWPt
+	 C4/XlGwHBcaEVAGtYPyYy3gNhYClTaiRUj0wM0F0=
+Date: Mon, 19 May 2025 14:32:10 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Bharat Agrawal <bharat.agrawal@ansys.com>
+Cc: "hughd@google.com" <hughd@google.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"rientjes@google.com" <rientjes@google.com>,
+	"zhangyiru3@huawei.com" <zhangyiru3@huawei.com>,
+	"liuzixian4@huawei.com" <liuzixian4@huawei.com>,
+	"mhocko@suse.com" <mhocko@suse.com>,
+	"wuxu.wu@huawei.com" <wuxu.wu@huawei.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"legion@kernel.org" <legion@kernel.org>
+Subject: Re: mlock ulimits for SHM_HUGETLB
+Message-ID: <2025051946-ransack-number-e5e7@gregkh>
+References: <SJ2PR01MB8345DF192742AC4DB3D2CBB78E9CA@SJ2PR01MB8345.prod.exchangelabs.com>
+ <SJ2PR01MB834515EA00BD7C362A77972F8E9CA@SJ2PR01MB8345.prod.exchangelabs.com>
+ <2025051914-bounding-outscore-4d50@gregkh>
+ <SJ2PR01MB834507D46F44F65980FE09668E9CA@SJ2PR01MB8345.prod.exchangelabs.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250516203121.3736379-1-jm@ti.com>
-In-Reply-To: <20250516203121.3736379-1-jm@ti.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 19 May 2025 14:31:49 +0200
-X-Gm-Features: AX0GCFu5LdKL-XO3AKJ_vFo9TR_8O6ABPngDS_Z20Tf3MyzVBm9WfnLA56qznbQ
-Message-ID: <CAPDyKFrxLbkP_En_XL+AypEGygm+gMVLiAoz+AZLg_i4CrhXBw@mail.gmail.com>
-Subject: Re: [PATCH v6] mmc: sdhci_am654: Add SDHCI_QUIRK2_SUPPRESS_V1P8_ENA
- quirk to am62 compatible
-To: Judith Mendez <jm@ti.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Josua Mayer <josua@solid-run.com>, 
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nishanth Menon <nm@ti.com>, Francesco Dolcini <francesco@dolcini.it>, 
-	Hiago De Franco <hiagofranco@gmail.com>, Moteen Shah <m-shah@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SJ2PR01MB834507D46F44F65980FE09668E9CA@SJ2PR01MB8345.prod.exchangelabs.com>
 
-On Fri, 16 May 2025 at 22:31, Judith Mendez <jm@ti.com> wrote:
->
-> Add a new struct for platform data for the ti,am62-sdhci compatible to
-> apply additional quirks, namely "SDHCI_QUIRK2_SUPPRESS_V1P8_ENA", to
-> host controllers with am62 compatible.
->
-> Note, the fix was originally introduced by commit 941a7abd4666
-> ("mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch") but was
-> found to be applied too broadly and had to be reverted.
->
-> This fixes MMC init failures seen across am62x boards.
->
-> Fixes: ac5a41b472b4 ("Revert "mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch"")
-> Fixes: 941a7abd4666 ("mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch")
-> Cc: stable@vger.kernel.org
-> Suggested-by: Nishanth Menon <nm@ti.com>
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+On Mon, May 19, 2025 at 12:04:58PM +0000, Bharat Agrawal wrote:
+> Thanks Greg for the response. RHEL has not been very helpful. I'm not looking to ask for patches because of the old versions.
+> These messages appear in production runs, raising concerns about possible failures. Thus, the question is: Can they be ignored safely?
 
-Applied for fixes, thanks!
+Again, you are paying them for support for this, please use them, there
+is nothing that the community can do to help out here, sorry.
 
-Kind regards
-Uffe
-
-
-> ---
-> Changes since v5:
-> - Drop sdhci_am62_4bit_pdata
-> - Pick Adrians tag
-> - Add note to commit message
->
-> Tested on am62x SK, am64x EVM and am64x SK. Tested-bys are welcome
->
-> Link to v5:
-> https://lore.kernel.org/linux-mmc/20250514002513.1179186-1-jm@ti.com/
-> Link to v4:
-> https://lore.kernel.org/linux-mmc/20250424180036.1541568-1-jm@ti.com/
-> Link to v3 RESEND:
-> https://lore.kernel.org/linux-mmc/8678d284-db12-451a-b789-2b75f9932f9f@ti.com
-> Link to v2:
-> https://lore.kernel.org/linux-mmc/20250417182652.3521104-1-jm@ti.com/
-> Link to v1:
-> https://lore.kernel.org/linux-mmc/20250407222702.2199047-1-jm@ti.com/
-> ---
->  drivers/mmc/host/sdhci_am654.c | 35 +++++++++++++++++++++++++++++++++-
->  1 file changed, 34 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-> index f75c31815ab0..73385ff4c0f3 100644
-> --- a/drivers/mmc/host/sdhci_am654.c
-> +++ b/drivers/mmc/host/sdhci_am654.c
-> @@ -155,6 +155,7 @@ struct sdhci_am654_data {
->         u32 tuning_loop;
->
->  #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
-> +#define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
->  };
->
->  struct window {
-> @@ -166,6 +167,7 @@ struct window {
->  struct sdhci_am654_driver_data {
->         const struct sdhci_pltfm_data *pdata;
->         u32 flags;
-> +       u32 quirks;
->  #define IOMUX_PRESENT  (1 << 0)
->  #define FREQSEL_2_BIT  (1 << 1)
->  #define STRBSEL_4_BIT  (1 << 2)
-> @@ -356,6 +358,29 @@ static void sdhci_j721e_4bit_set_clock(struct sdhci_host *host,
->         sdhci_set_clock(host, clock);
->  }
->
-> +static int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc, struct mmc_ios *ios)
-> +{
-> +       struct sdhci_host *host = mmc_priv(mmc);
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
-> +       int ret;
-> +
-> +       if ((sdhci_am654->quirks & SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) &&
-> +           ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
-> +               if (!IS_ERR(mmc->supply.vqmmc)) {
-> +                       ret = mmc_regulator_set_vqmmc(mmc, ios);
-> +                       if (ret < 0) {
-> +                               pr_err("%s: Switching to 1.8V signalling voltage failed,\n",
-> +                                      mmc_hostname(mmc));
-> +                               return -EIO;
-> +                       }
-> +               }
-> +               return 0;
-> +       }
-> +
-> +       return sdhci_start_signal_voltage_switch(mmc, ios);
-> +}
-> +
->  static u8 sdhci_am654_write_power_on(struct sdhci_host *host, u8 val, int reg)
->  {
->         writeb(val, host->ioaddr + reg);
-> @@ -650,6 +675,12 @@ static const struct sdhci_am654_driver_data sdhci_j721e_4bit_drvdata = {
->         .flags = IOMUX_PRESENT,
->  };
->
-> +static const struct sdhci_am654_driver_data sdhci_am62_4bit_drvdata = {
-> +       .pdata = &sdhci_j721e_4bit_pdata,
-> +       .flags = IOMUX_PRESENT,
-> +       .quirks = SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA,
-> +};
-> +
->  static const struct soc_device_attribute sdhci_am654_devices[] = {
->         { .family = "AM65X",
->           .revision = "SR1.0",
-> @@ -872,7 +903,7 @@ static const struct of_device_id sdhci_am654_of_match[] = {
->         },
->         {
->                 .compatible = "ti,am62-sdhci",
-> -               .data = &sdhci_j721e_4bit_drvdata,
-> +               .data = &sdhci_am62_4bit_drvdata,
->         },
->         { /* sentinel */ }
->  };
-> @@ -906,6 +937,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
->         pltfm_host = sdhci_priv(host);
->         sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
->         sdhci_am654->flags = drvdata->flags;
-> +       sdhci_am654->quirks = drvdata->quirks;
->
->         clk_xin = devm_clk_get(dev, "clk_xin");
->         if (IS_ERR(clk_xin)) {
-> @@ -940,6 +972,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
->                 goto err_pltfm_free;
->         }
->
-> +       host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
->         host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
->
->         pm_runtime_get_noresume(dev);
->
-> base-commit: 8566fc3b96539e3235909d6bdda198e1282beaed
-> --
-> 2.49.0
->
+greg k-h
 
