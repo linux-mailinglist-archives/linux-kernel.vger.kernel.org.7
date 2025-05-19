@@ -1,136 +1,146 @@
-Return-Path: <linux-kernel+bounces-653206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57CC4ABB628
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:29:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D46ABB62C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9FD188621C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 07:29:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4BC6188BDA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 07:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B44266565;
-	Mon, 19 May 2025 07:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34928267396;
+	Mon, 19 May 2025 07:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="aBNBTtc+"
-Received: from esa2.hc1455-7.c3s2.iphmx.com (esa2.hc1455-7.c3s2.iphmx.com [207.54.90.48])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XOwuvj5c"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCC91DA5F;
-	Mon, 19 May 2025 07:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.90.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21DB2673A3
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 07:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747639763; cv=none; b=Lo6Ya17hv7KJITuQZQvs+Uia9fuEYnnQjSZackDH6Y1aCp47JtBwd8vEyK2DgtQPRgCZWTvKpwJrEgzTebxxxuTmLRdlYnHUSeRMQT9dhA70DFIo0vYlIgGW4uKXvOXCBvKDE07/167xcjxQaImr82/ffb3Vfut1/k7DEAmRYU4=
+	t=1747639807; cv=none; b=hXn1qoeMAK/5C5rsjUL6P75VQq0VH/PEE56nw6liNLDSmU6BMhnTpipO43Sqj/JHtHiJxqjQ/sUBHyTNnC/SUDGDFo6sff1edB0gl7aHHGTulyCcq8lK/Lgdl9Q/yiHZxqcJtbPBjlt+FXbXFyIJk4hYccWn2UyEuniMNeUuHAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747639763; c=relaxed/simple;
-	bh=iH+nmmU4D2Q00jNKLdtiGfpOSOS2rVBXD5mlABm6pso=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=jrJ0g0feV1gJaJqSyV4qgq74gti/i3ig3gI4i0jCYNOvUc83D/1bhXnnNbpEwMMXZcxXadd/lImQZX60kYcVWvI3SqCbyohfe2bY2oYrbEKt/Lvs/yFO5Lr6eY3YpmNvVMTjgfvOhCRbMei1VDqHcZ73lxBAh0uCn9/Z2vi0aTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=aBNBTtc+; arc=none smtp.client-ip=207.54.90.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1747639762; x=1779175762;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=iH+nmmU4D2Q00jNKLdtiGfpOSOS2rVBXD5mlABm6pso=;
-  b=aBNBTtc+MHiSTumhPcxLUiVBgU+E5KxLI09oXOiPdRilF8t2aAairZK7
-   4ndZsiXUY96NCHTirQkmnL7B7eWscuB3dT3q+XR/SnB1at3BRx1JLpcMz
-   +MbCS6FKXr4d6sbwk9QyKNIJDrsFMuHRn9OpgH8hp1cO/rtHGnbbBJsD1
-   Ca+ZqtYt0yMHJdif0ch1hLaPsnEZXf7Q1KMS1Jiz1TIm7zJsSf+YGzfLK
-   MJ9zzRH+y0VadaRAUsMkUYZWywmsbCHGC3f+avMtOXRWt0ndGI4BAUYay
-   wwoHkfcLP0Hk16fDIcCQnbcucT1fD/z0Qq0A2qoJsWltrACmDI4iIts+Y
-   w==;
-X-CSE-ConnectionGUID: cGY1z9TzRq+UqnqKSUyfEA==
-X-CSE-MsgGUID: 5wJRuWrdT7acLME9mSHw6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11437"; a="199874952"
-X-IronPort-AV: E=Sophos;i="6.15,300,1739804400"; 
-   d="scan'208";a="199874952"
-Received: from unknown (HELO oym-r3.gw.nic.fujitsu.com) ([210.162.30.91])
-  by esa2.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 16:28:11 +0900
-Received: from oym-m1.gw.nic.fujitsu.com (oym-nat-oym-m1.gw.nic.fujitsu.com [192.168.87.58])
-	by oym-r3.gw.nic.fujitsu.com (Postfix) with ESMTP id 3AC98C2260;
-	Mon, 19 May 2025 16:28:08 +0900 (JST)
-Received: from oym-om4.fujitsu.com (oym-om4.o.css.fujitsu.com [10.85.58.164])
-	by oym-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id 0C513D88D0;
-	Mon, 19 May 2025 16:28:08 +0900 (JST)
-Received: from sm-arm-grace07.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
-	by oym-om4.fujitsu.com (Postfix) with ESMTP id B038A4005AE54;
-	Mon, 19 May 2025 16:28:07 +0900 (JST)
-From: Shinji Nomoto <fj5851bi@fujitsu.com>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shinji Nomoto <fj5851bi@fujitsu.com>
-Subject: [PATCH] doc: hwmon: acpi_power_meter: Add information about enabling the power capping feature.
-Date: Mon, 19 May 2025 16:27:44 +0900
-Message-ID: <20250519072756.1512244-1-fj5851bi@fujitsu.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1747639807; c=relaxed/simple;
+	bh=8DQrGW3fNond81i8XUM1ng5L2vDaVpermOep4R9MteE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MgFZprtGQgcYxI3wCEhjXWpyGiINwvNAG/CURSYldNpXESQ8tmG/b8KIDKuMVBAIbefH6Wwrf1URQ+gOZxkGHhKiOebsSvKV9CP2420kCc5in0X6hko8kR0tVO3YoO0SrAvaadcZiFrBT4dytQ7Dde9BewYyQkUpQk4PTFdwJIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XOwuvj5c; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747639803;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=joHJ7VkBkFOgihuRaFy1ry6ubQhRRYbdaHEDufKQwd0=;
+	b=XOwuvj5cvxrk7xqsCyQYZYYOE/Fm5CixgSiOfRPrCXA6qFKJ1hfBrFLvq0PLSubjd6FUeG
+	heVGkl8eQ6ii2Bky12LmtdzzvkC/kqKBNzRwMDwl2i7mbIn5hoJxGoUicBo/dhsVnmcWQT
+	lX2jfhU5sKBL/RTD1T7jzZ+SriOQP/A=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-471-hgsoXBe2MkK8yW3JTd5Dlg-1; Mon, 19 May 2025 03:30:02 -0400
+X-MC-Unique: hgsoXBe2MkK8yW3JTd5Dlg-1
+X-Mimecast-MFC-AGG-ID: hgsoXBe2MkK8yW3JTd5Dlg_1747639801
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-442cdf07ad9so23587935e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 00:30:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747639801; x=1748244601;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=joHJ7VkBkFOgihuRaFy1ry6ubQhRRYbdaHEDufKQwd0=;
+        b=grAl9wmnpSwjvKWIO/66RX9SS+EEy2onpw3dvdPrYsrxmTKNQhzuv9djG7W8J/jijr
+         NBEBbKGWfy7s4HQaH3Ze6Y5bhwsbfvzC5jfNsFJ0JT1TBj2VRduSWdoleMUti8LTXPgq
+         vx7Gq0m/yZQ+xwwAakfk+nigAA9eR4c0HJztV2afnBoUS+RaORdQduEOLpN/CNlFWR3C
+         QG5053A9ZbZMdegruOIWjPscqOccqwzsp5t5QLBCS6BKCE538mfgjMA0RL9glO8wl2qW
+         P9OD2usXOtk9CBPZcuCGGyIeZ44BS/js5vE8XTyDgCCCWHTzhHctH22dLnVawmK59dHj
+         zKuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6dEFBjJ+gYaxsTReU62AC3AH52/s4/09SPZHQq/7D7TUS/I6blZMthD9djeo/s4OhSgeSYqJ8PAc9b70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAYwSp3eO9YXBHFq1+RUPtYNCzipM/xzWsKgt3AEbxPaIdxMCs
+	P0xPXM6wk5ohtCYjf8RSVLFeHrQhq+6uNHDfT6G2OfUn++Sj54yWXRg2N+LsdDbJfINaqDa/fwI
+	iS56ixMyBpjFp0YGnIk/P7ZO9+53+6Ca5VGZT61U7cKUkdDUOCOAEAbN0bbYKyOsDaA==
+X-Gm-Gg: ASbGncubFtAQ9fneZptNiIKGK+BytunDt0tqLezeDt30l1yGHAcOzxXbqCwWqmeTOFJ
+	wArduUaChF3MvUgvbPJkKQYYCjDJTcW4su+lO0qrT24ZUY7ui1IdJTUVeD2j+W34o3p6OwaHsMP
+	wvhYTpGTL4l0ngKGW6VIKftnUoRdvaIKSWhaxEpY325AFst04LBO3RvE1I2MUA+H+xxxZ56KZxp
+	oFLuaxD+hG6OL1uGs1RliwffdNzqM/ZHtG3HMJZhb94DVhdm/s3ROjq0Bad4BwyMbMieTF+INm/
+	YyRIxVaxNWY4yvuqGKc=
+X-Received: by 2002:a05:600c:468a:b0:43d:47e:3205 with SMTP id 5b1f17b1804b1-442fefee29dmr92666385e9.11.1747639801120;
+        Mon, 19 May 2025 00:30:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG2Y4WKeNu3TbKYtE/Els3B0YLR831MXjCS7lvm9kYztKB54r+MlAwo8fTOt0TbLPAwQD5Dqg==
+X-Received: by 2002:a05:600c:468a:b0:43d:47e:3205 with SMTP id 5b1f17b1804b1-442fefee29dmr92666045e9.11.1747639800739;
+        Mon, 19 May 2025 00:30:00 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:244f:5710::f39? ([2a0d:3344:244f:5710::f39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f9053b4dsm156471475e9.4.2025.05.19.00.29.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 May 2025 00:30:00 -0700 (PDT)
+Message-ID: <71d0fbf8-00f7-4e0b-819d-d0b6efb01f03@redhat.com>
+Date: Mon, 19 May 2025 09:29:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] vmxnet3: correctly report gso type for UDP tunnels
+To: Jakub Kicinski <kuba@kernel.org>, Ronak Doshi <ronak.doshi@broadcom.com>
+Cc: netdev@vger.kernel.org, Guolin Yang <guolin.yang@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, open list <linux-kernel@vger.kernel.org>
+References: <20250513210504.1866-1-ronak.doshi@broadcom.com>
+ <20250515070250.7c277988@kernel.org>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250515070250.7c277988@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-To enable the power capping feature of the acpi_power_meter driver on
-systems other than IBM products, you must explicitly specify
-the force_cap_on module parameter.
+On 5/15/25 4:02 PM, Jakub Kicinski wrote:
+> On Tue, 13 May 2025 21:05:02 +0000 Ronak Doshi wrote:
+>> +				skb->encapsulation = 1;
+>>  			}
+>>  			WARN_ON_ONCE(!(gdesc->rcd.tcp || gdesc->rcd.udp) &&
+>>  				     !(le32_to_cpu(gdesc->dword[0]) &
+>> @@ -1465,6 +1466,7 @@ vmxnet3_rx_csum(struct vmxnet3_adapter *adapter,
+>>  			if ((le32_to_cpu(gdesc->dword[0]) &
+>>  				     (1UL << VMXNET3_RCD_HDR_INNER_SHIFT))) {
+>>  				skb->csum_level = 1;
+>> +				skb->encapsulation = 1;
+> 
+> IIRC ->encapsulation means that ->inner.. fields are valid, no?
+> And I don't see you setting any of these.
+> 
+> Paolo, please keep me honest, IIUC you have very recent and very
+> relevant experience with virtio.
 
-Add information to the documentation about enabling the power capping
-feature with this driver, including the above, to improve user convenience.
+Yes. Specifically the GSO code expect the inner headers to be set,
+otherwise the segmentation will yield quite wrong results.
 
-Signed-off-by: Shinji Nomoto <fj5851bi@fujitsu.com>
----
- Documentation/hwmon/acpi_power_meter.rst | 25 +++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+Note that reproducing the issue requires a quite specific setup, i.e.
+bridging (or tc redirecting) the ingress traffic from an
+UDP-tunnel-HW-GRO enabled device into an egress device not supporting
+tx-udp_tnl-segmentation.
 
-diff --git a/Documentation/hwmon/acpi_power_meter.rst b/Documentation/hwmon/acpi_power_meter.rst
-index 8628c1161015..334054afc498 100644
---- a/Documentation/hwmon/acpi_power_meter.rst
-+++ b/Documentation/hwmon/acpi_power_meter.rst
-@@ -37,9 +37,16 @@ arbitrary strings that ACPI provides with the meter.  The measures/ directory
- contains symlinks to the devices that this meter measures.
- 
- Some computers have the ability to enforce a power cap in hardware.  If this is
--the case, the `power[1-*]_cap` and related sysfs files will appear.  When the
--average power consumption exceeds the cap, an ACPI event will be broadcast on
--the netlink event socket and a poll notification will be sent to the
-+the case, the `power[1-*]_cap` and related sysfs files will appear.
-+For information on enabling the power cap feature, refer to the description
-+of the "force_on_cap" option in the "Module Parameters" chapter.
-+To use the power cap feature properly, you need to set appropriate value
-+(in microWatts) to the `power[1-*]_cap` sysfs files.
-+The value must be within the range between the minimum value at `power[1-]_cap_min`
-+and the maximum value at `power[1-]_cap_max (both in microWatts)`.
-+
-+When the average power consumption exceeds the cap, an ACPI event will be
-+broadcast on the netlink event socket and a poll notification will be sent to the
- appropriate `power[1-*]_alarm` file to indicate that capping has begun, and the
- hardware has taken action to reduce power consumption.  Most likely this will
- result in reduced performance.
-@@ -52,3 +59,15 @@ follows:
- `power[1-*]_cap` will be notified if the firmware changes the power cap.
- `power[1-*]_interval` will be notified if the firmware changes the averaging
- interval.
-+
-+Module Parameters
-+-----------------
-+
-+* force_cap_on: bool
-+                        Forcefully enable the power capping feature to specify
-+                        the upper limit of the system's power consumption.
-+
-+                        By default, the driver's power capping feature is only
-+                        enabled on IBM products.
-+                        Therefore, on other systems that support power capping,
-+                        you will need to use the option to enable it.
--- 
-2.43.0
+If otherwise the traffic goes into the UDP tunnel rx path, such
+processing will set the needed field correctly and no issue could/should
+be observed AFAICS.
+
+@Ronak: I think the problem pre-exists this specific patch, but since
+you are fixing the relevant offload, I think it should be better to
+address the problem now.
+
+Thanks,
+
+Paolo
+
+
+
 
 
