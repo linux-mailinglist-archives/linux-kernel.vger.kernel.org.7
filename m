@@ -1,281 +1,275 @@
-Return-Path: <linux-kernel+bounces-653943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E14EABC103
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:39:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0FDCABC10E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 929F51B61F12
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:40:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DA7C7A0474
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B62284666;
-	Mon, 19 May 2025 14:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A446284666;
+	Mon, 19 May 2025 14:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jy9D0lPg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vmRrO4bu"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8724E283C9C
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 14:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503CD27C145
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 14:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747665587; cv=none; b=WOTlQG/OqM49HoldwY1sOCFb08WNP1hBGTwVPJ153Rv8873ZLtZ/GchgbjqZKAmd/dNfIVb6XJU7uEuMieZ2HOyrcQaS+PeIXvpz9cwV3YHY9+5A1F2/NGK54dEFlY2EZUyWQEpeBZsYRVe/BZTwkOmIPbeXDGPUcqOagyTi9QQ=
+	t=1747665629; cv=none; b=jpcP9v5xCX8uJwQuAgCTVUJWamL0/faw/oHHG9krKdKENsCvXmwqp2V9y06hFmotIsGYqpeSpnHe6w07oj7PAUMtqkgGjOMBNSJGa/dUeBr59HrjbIR7+XvJSOWM6qAkyWc7jt3dS+EBxatCb+FFvMgTZ75bXbzD3xwVecDW9eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747665587; c=relaxed/simple;
-	bh=+V7WOgOUwarlINW6PsgOogxA5QOqBpaFl1gd/bF/jN4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gmrq96+dI6ogPeIqgmVizziYWjzgm7s11Hf2tunVjy+N99Gt7HoTBneslzqwCGaZhN+jGTTRzHEwlpzERPY33m40VcmiYHK+C1QoaSehprWyPx6P7i670TNT9Fb+kI7kR4aPAOPnri2BN2chwSpWnYT9uVztZ/GWSSZFaw0k/NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jy9D0lPg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747665584;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fc1XxKKHBxhSvqtmcE/i6SWy2w5XcBTE8wKwLKGtMi4=;
-	b=Jy9D0lPg+WLg/uJLTux5wxtKPoGqouJhy3ZAi1EeXRVgKdYUGXf0VVagcJXZT9Z/GWZPTB
-	3XJboR7TSLxDV7NZOVOvnQ6Jftq5hCl0gGb2sUMzib0N9cyeEN58gQ/7H1KPdoV/a4l3vO
-	czIV7KU61ZkqiTpUy3iovJtr7epxv4U=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-298-EdDlhYoaPPWKoIH84TwSKA-1; Mon, 19 May 2025 10:39:42 -0400
-X-MC-Unique: EdDlhYoaPPWKoIH84TwSKA-1
-X-Mimecast-MFC-AGG-ID: EdDlhYoaPPWKoIH84TwSKA_1747665580
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a376da334dso305809f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 07:39:41 -0700 (PDT)
+	s=arc-20240116; t=1747665629; c=relaxed/simple;
+	bh=rH7mSy6p/UZxneRb0uvBUYWeTgasHAWB1L8BSsc7Y98=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cQMyyDD9ewPAZLPFu/C1WFDhJs42MgYjBRIMjJozMFrgDo9OG/nTiAoNxuMtpsQzCByHjPVWTWFfmTwGfRJY7UZf1tmjmHXw6eNfT8WnvA8GFEtaRn13/JB6qi0hpxV9myzLGnjd0LccxR5jjErTKU998WO8Xcx8rm6BwAtgkjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vmRrO4bu; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e7b962a1518so1176253276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 07:40:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747665626; x=1748270426; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nR9qA2TvUhjAo0p0Wu7gCQQJQdEUudGGwhv8dj3Lu70=;
+        b=vmRrO4bue181kt/eozrOWv1xo/Xe3y54Po3F2vfXyneVsAbhjGBeCb+YHDTWFMXu4n
+         /GuuIBSWW+XdZybkoxwiso9Hc9Z75kpb/FNhodpqXNaW5wNvECuJXBAUgsvPbhWW69B1
+         NbFBX5NIJoCFmMnJLtLMRbqJ5tYFRPvDkcdRuwvOLO/Z6VJKsLRTP89iuubm3t671qas
+         OsPMBk1Kw6e9q3EU56i2pbvchMwXdrY6CBMyXBNZBTUW4aypZRhCITvEda3twNuUw8mU
+         mkV3GXuIE/4O78VuYoD2evJgesfHqsab8T7e2DRjINCKH4XlVY+EaviE+B29lV7KrFlg
+         ND1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747665580; x=1748270380;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fc1XxKKHBxhSvqtmcE/i6SWy2w5XcBTE8wKwLKGtMi4=;
-        b=N6dXmnOAf/WYm9nd5GFTepjw+rorj8mXbBNHDslEVhDXDz8jdzYVNFt4a899bRa3R1
-         pUBSOBUatS1C4ECdWefriHrAarj66+lsg4Ghc2cTvo/G17j1Mv4kDK+r5cDdtrF/FJwD
-         VUAZzISlGsXtIIL06hb35NVjBXL2ZJxzUP8F5SOgLBnDG8MAFqDA5vHWQlhiMRQjeb8h
-         StzEwgwLRgV832BGY41qaAJPYe/RCjLT+lqlFq8uteqMN4N/qVVMMWOQrEVaqbX0Adb9
-         yRoGt67vOs5u2WZiEaMTyXo1NhpXcwou0FPO4/3GGjEQp/G7OH6IzHR+Ly96XxAIgFSF
-         NeKg==
-X-Gm-Message-State: AOJu0YxW6gTLwrPyXw9BPeJJ89Z1WYR19be1s+U7DX8TTkl3Mmc0yWL0
-	FknEwlgZW8NRXbLCrifNmAI5Y7mAawwVT4QFI4Fna+pfKIuw0k+yMFbd04d69fNSu/7fTMUZfaS
-	H0E9oylN1DWIk2s9OpH2sBAsGTPjWBbASREDkBpcsYcOHzGtUHVTckEHdmlkqondHaQ==
-X-Gm-Gg: ASbGnctrfHw6UEHpMMxh+Yh/uyDX+vzaa8aHFoycnzFyPy2iU2iORzoje+69RHH/T5o
-	EpTF3lOFyJ4+0n+h2OllCiKnlHPAOTtGckjbcRpMS8Cwc/OkskfQ/plpV8WWBVu58Ybtf8ZIPjS
-	6I1itHtlPuwPx/MeXOtfB6qqL258KdwIkBN3jv0NKmXW8S81MdxeUYwzMvkyhMX6M1777MR2vKG
-	W6eynMJ/BvTIfUcRXG/YGhvzdZrQPt8eUKknZIBapT/VuxSAvHQr6hSB+ThhBgFPOXJprJbGtmb
-	0g9s+ZE9oCto9bJ4hKYGAP8UpCZpx/uZjwBeAjv468X/ErWs6rAXNS7/8PLhPpGv2yqxe+u3DAc
-	8PMTqxqJ81O5qfhf4zDua5uSJaI3wIe44cWA96uY=
-X-Received: by 2002:a05:6000:3111:b0:3a3:75fa:a0f6 with SMTP id ffacd0b85a97d-3a375faa340mr1893632f8f.50.1747665580206;
-        Mon, 19 May 2025 07:39:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGbb+jxiMxPn0A7K1u6APHY87dcAiZht4gZaL68Kpwpnj/fmNBc4lbu//e0WBBsOYAYluLMg==
-X-Received: by 2002:a05:6000:3111:b0:3a3:75fa:a0f6 with SMTP id ffacd0b85a97d-3a375faa340mr1893594f8f.50.1747665579708;
-        Mon, 19 May 2025 07:39:39 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca8cf66sm12807961f8f.87.2025.05.19.07.39.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 May 2025 07:39:39 -0700 (PDT)
-Message-ID: <85fd0566-30c8-4e1e-8ce9-5b5bb4f1fa84@redhat.com>
-Date: Mon, 19 May 2025 16:39:38 +0200
+        d=1e100.net; s=20230601; t=1747665626; x=1748270426;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nR9qA2TvUhjAo0p0Wu7gCQQJQdEUudGGwhv8dj3Lu70=;
+        b=BZKeefY9o3UO99BUhixnKilPABIb3JkxJYrQuo5XeryMMxO5ElVcZWp+vJkEyQ9rBs
+         bKofWJs1efGZby5ohH2p0qV4a+tm2D6wBxnPFWvFhNjBq4W9+iNKawQwBmFvR9IN0YRc
+         FuySXiOWOCSk78Fot99nWq6rtJ2YI1E5uBIaqkoUcu+zlcmPW/Q39vqDnPQfcGqh0V4M
+         lN6SeW1u3Hzd7BrQO/liS6MwKpgHQG5zyJs3gVo1Fri5+IfgUpe8odWp5IdQ4UVq/JQC
+         DIweeAvV9pa3UcLbEz7zLxeMMasrCCCAz+gCeLdSUG8tNifZ7sOoM+rBY6P9m+hI19Ms
+         LdbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUuF024ea1Ho0euoDO1kA0mRshg1gStR/hD21yUKnt1qnJEaiIulkCgV8pTJu31qbE8PvGMsXACr7qZJmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEokDTd43FLIK/E3nr38+R+yHUhdjpYRpOT+Io6hHMCoSnZhRg
+	H2o8RrfN0B4B+Ky8z8uDJ5lOXzTIPDlwiPqkiYB1oNPS+ehZHPLmu3u2kbIY4DBZ+FlA4caQEIw
+	kudkSALlVjQOW6UKFmsCv5pHFFCNgeofbtux/EUAgOw==
+X-Gm-Gg: ASbGncu8CavUhtifjmqqG0A6C8gJ7rG7YbpOl4PQm8tcuDRPNk1t3SrF8GnqNiKMn3g
+	ll/hamx5ubSPuxxh4Gd2Tl6mWIFeKg8dT6OxoVHswoQxUBZm4WrjXM0C8gnb/VlEeZyWwNjwbqF
+	U6P5ibRq20bM098KaCxrbgCs1kbFqGI5nW1w==
+X-Google-Smtp-Source: AGHT+IH8qk2ueLJXAPfHp5CUgGKJqL27jCDTEcZZ/Z2xIhtpa6CoyOq3g3PJegrRumYN6CXvNBgDTdJaa2//XqfYZlQ=
+X-Received: by 2002:a05:6902:12c7:b0:e7b:3788:78a6 with SMTP id
+ 3f1490d57ef6-e7b6a412047mr18064288276.48.1747665626144; Mon, 19 May 2025
+ 07:40:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] mm/memory_hotplug: PG_offline_skippable for
- offlining memory blocks with PageOffline pages
-To: Zi Yan <ziy@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- virtualization@lists.linux.dev, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Oscar Salvador
- <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>
-References: <20250514111544.1012399-1-david@redhat.com>
- <20250514111544.1012399-2-david@redhat.com>
- <7E5BD96D-971F-4AFC-AC09-503310BE8E68@nvidia.com>
- <fb12fab1-f2df-4b4f-ae83-1b45e2a7d6bd@redhat.com>
- <0F0BB46A-F7C2-40BE-A045-C65525956D52@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <0F0BB46A-F7C2-40BE-A045-C65525956D52@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250507160056.11876-1-hiagofranco@gmail.com> <20250507160056.11876-4-hiagofranco@gmail.com>
+ <CAPDyKFrHD1hVCfOK-JV5FJM+Cd9DoKKZGKcC94fxx6_9Bsri1g@mail.gmail.com>
+ <20250508202826.33bke6atcvqdkfa4@hiago-nb> <CAPDyKFr3yF=yYZ=Xo5FicvSbDPOTx7+fMwc8dMCLYKPBMEtCKA@mail.gmail.com>
+ <20250509191308.6i3ydftzork3sv5c@hiago-nb> <20250512045613.GB31197@nxa18884-linux>
+In-Reply-To: <20250512045613.GB31197@nxa18884-linux>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 19 May 2025 16:39:50 +0200
+X-Gm-Features: AX0GCFuzwvmBFpPVm7uHOWrhDiGdyjOO1BUzNOe_b1ksrA1mW-H30PaJUA1Wruo
+Message-ID: <CAPDyKFqLMEOEnGDRE-1OUi8o8eVd4_oYPH4heu=WFQ8+4s+3-w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: add power mode check for
+ remote core attachment
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Hiago De Franco <hiagofranco@gmail.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Bjorn Andersson <andersson@kernel.org>, Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
+	Fabio Estevam <festevam@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 12 May 2025 at 05:46, Peng Fan <peng.fan@oss.nxp.com> wrote:
+>
+> On Fri, May 09, 2025 at 04:13:08PM -0300, Hiago De Franco wrote:
+> >On Fri, May 09, 2025 at 12:37:02PM +0200, Ulf Hansson wrote:
+> >> On Thu, 8 May 2025 at 22:28, Hiago De Franco <hiagofranco@gmail.com> wrote:
+> >> >
+> >> > Hello,
+> >> >
+> >> > On Thu, May 08, 2025 at 12:03:33PM +0200, Ulf Hansson wrote:
+> >> > > On Wed, 7 May 2025 at 18:02, Hiago De Franco <hiagofranco@gmail.com> wrote:
+> >> > > >
+> >> > > > From: Hiago De Franco <hiago.franco@toradex.com>
+> >> > > >
+> >> > > > When the remote core is started before Linux boots (e.g., by the
+> >> > > > bootloader), the driver currently is not able to attach because it only
+> >> > > > checks for cores running in different partitions. If the core was kicked
+> >> > > > by the bootloader, it is in the same partition as Linux and it is
+> >> > > > already up and running.
+> >> > > >
+> >> > > > This adds power mode verification through the SCU interface, enabling
+> >> > > > the driver to detect when the remote core is already running and
+> >> > > > properly attach to it.
+> >> > > >
+> >> > > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> >> > > > Suggested-by: Peng Fan <peng.fan@nxp.com>
+> >> > > > ---
+> >> > > > v2: Dropped unecessary include. Removed the imx_rproc_is_on function, as
+> >> > > > suggested.
+> >> > > > ---
+> >> > > >  drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
+> >> > > >  1 file changed, 13 insertions(+)
+> >> > > >
+> >> > > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> >> > > > index 627e57a88db2..9b6e9e41b7fc 100644
+> >> > > > --- a/drivers/remoteproc/imx_rproc.c
+> >> > > > +++ b/drivers/remoteproc/imx_rproc.c
+> >> > > > @@ -949,6 +949,19 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
+> >> > > >                         if (of_property_read_u32(dev->of_node, "fsl,entry-address", &priv->entry))
+> >> > > >                                 return -EINVAL;
+> >> > > >
+> >> > > > +                       /*
+> >> > > > +                        * If remote core is already running (e.g. kicked by
+> >> > > > +                        * the bootloader), attach to it.
+> >> > > > +                        */
+> >> > > > +                       ret = imx_sc_pm_get_resource_power_mode(priv->ipc_handle,
+> >> > > > +                                                               priv->rsrc_id);
+> >> > > > +                       if (ret < 0)
+> >> > > > +                               dev_err(dev, "failed to get power resource %d mode, ret %d\n",
+> >> > > > +                                       priv->rsrc_id, ret);
+> >> > > > +
+> >> > > > +                       if (ret == IMX_SC_PM_PW_MODE_ON)
+> >> > > > +                               priv->rproc->state = RPROC_DETACHED;
+> >> > > > +
+> >> > > >                         return imx_rproc_attach_pd(priv);
+> >> > >
+> >> > > Why is it important to potentially set "priv->rproc->state =
+> >> > > RPROC_DETACHED" before calling imx_rproc_attach_pd()?
+> >> > >
+> >> > > Would it be possible to do it the other way around? First calling
+> >> > > imx_rproc_attach_pd() then get the power-mode to know if
+> >> > > RPROC_DETACHED should be set or not?
+> >> > >
+> >> > > The main reason why I ask, is because of how we handle the single PM
+> >> > > domain case. In that case, the PM domain has already been attached
+> >> > > (and powered-on) before we reach this point.
+> >> >
+> >> > I am not sure if I understood correcly, let me know if I missed
+> >> > something. From my understanding in this case it does not matter, since
+> >> > the RPROC_DETACHED will only be a flag to trigger the attach callback
+> >> > from rproc_validate(), when rproc_add() is called inside
+> >> > remoteproc_core.c.
+> >>
+> >> Okay, I see.
+> >>
+> >> To me, it sounds like we should introduce a new genpd helper function
+> >> instead. Something along the lines of this (drivers/pmdomain/core.c)
+> >>
+> >> bool dev_pm_genpd_is_on(struct device *dev)
+> >> {
+> >>         struct generic_pm_domain *genpd;
+> >>         bool is_on;
+> >>
+> >>         genpd = dev_to_genpd_safe(dev);
+> >>         if (!genpd)
+> >>                 return false;
+> >>
+> >>         genpd_lock(genpd);
+> >>         is_on = genpd_status_on(genpd);
+> >>         genpd_unlock(genpd);
+> >>
+> >>         return is_on;
+> >> }
+> >>
+> >> After imx_rproc_attach_pd() has run, we have the devices that
+> >> correspond to the genpd(s). Those can then be passed as in-parameters
+> >> to the above function to get the power-state of their PM domains
+> >> (genpds). Based on that, we can decide if priv->rproc->state should be
+> >> to RPROC_DETACHED or not. Right?
+> >
+> >Got your idea, I think it should work yes, I am not so sure how. From
+> >what I can see these power domains are managed by
+> >drivers/pmdomain/imx/scu-pd.c and by enabling the debug messages I can
+> >see the power mode is correct when the remote core is powered on:
+> >
+> >[    0.317369] imx-scu-pd system-controller:power-controller: cm40-pid0 : IMX_SC_PM_PW_MODE_ON
+> >
+> >and powered off:
+> >
+> >[    0.314953] imx-scu-pd system-controller:power-controller: cm40-pid0 : IMX_SC_PM_PW_MODE_OFF
+> >
+> >But I cannot see how to integrate this into the dev_pm_genpd_is_on() you
+> >proposed. For a quick check, I added this function and it always return
+> >NULL at dev_to_genpd_safe(). Can you help me to understand this part?
+>
+> Ulf's new API dev_pm_genpd_is_on needs to run after power domain attached.
 
->>> Some thoughts after reading the related code:
->>>
->>> offline_pages() is a little convoluted, since it has two steps to make
->>> sure a range of memory can be offlined:
->>> 1. start_isolate_page_range() checks unmovable (maybe not migratable
->>> is more precise) pages using has_unmovable_pages(), but leaves unmovable
->>> PageOffline() page handling to the driver;
->>
->> Right, it's best-effort. For ZONE_MOVABLE we're skipping the checks completely.
->>
->> I was wondering for a longer time that -- with the isolate flag being a separate bit soon :) -- we could simply isolate the whole range, and then fail if we stumble over
-> 
-> Talking about that, I will need your input on my change to move_pfn_range_to_zone()
-> in online_pages()[1]. Making MIGRATE_ISOLATE a separate bit means if you isolate
-> a pageblock without a migratetype, unisolating it will give an unpredictable
-> migratetype.
+Correct, but you need to provide the correct "dev" to it. See my other
+reply to Hiago.
 
-Sorry for my late reply on that. I think, the rule should be that you 
-initialize the migratetype once, before any isolation+un-isolation.
+>
+> But if run after power domain attached, there is no API to know whether
+> M4 is kicked by bootloader or now.
 
-So that should only require care when adding new pageblocks (memory 
-hotplug).
+As long as you have multiple PM domains attached for a device, genpd
+will *not* power on the PM domain(s).
 
-> 
-> [1] https://lore.kernel.org/linux-mm/20250509200111.3372279-3-ziy@nvidia.com/
-> 
->> an unmovable page during migration. That is, get rid of has_unmovable_pages() entirely. Un-doing the isolation would then properly preserve the migratetype -- no harm done?
->>
->> Certainly worth a look. What do you think about that?
-> 
-> In principle, the method should work and simplifies the code. But it suffers more
-> penalty (pages are migrated) when an unmovable page is encountered after the
-> isolation, since before nothing will be migrated. To mitigate this,
-> we probably would want some retry mechanism. For example, register a callback
-> to each unmovable page and once the unmovable page is deallocated,
-> alloc_contig_range() can move forward progress.
+Genpd does a power-on in the single PM domain case (for legacy
+reasons), but that should not be a problem here, right?
 
-I was wondering if we could make the isolation code a  bit simpler. For 
-example, set all involved pageblocks isolated. If any is already 
-isolated, we can easily back off.
+So what am I missing?
 
-Once all are isolated, we could do the has_unmovable_pages() on the 
-whole range, not a single pageblock.
+>
+> Even imx_rproc_attach_pd has a check for single power domain, but I just
+> give a look again on current i.MX8QM/QX, all are using two power domain
+> entries.
+>
+> >
+> >>
+> >> In this way we don't need to export unnecessary firmware functions
+> >> from firmware/imx/misc.c, as patch1/3 does.
+>
+>
+> I think still need to export firmware API. My idea is
+> 1. introduce a new firmware API and put under firmware/imx/power.c
+> 2. Use this new firmware API in imx_rproc.c
+> 3. Replace scu-pd.c to use this new firmware API.
+>
+> Or
+> 1. Export the API in scu-pd.c
+> 2. Use the API in imx_rproc.c
+>
+> With approach two, you need to handle them in three trees in one patchset:
+> imx/pd/rproc.
+>
+> With approach one, you need to handle two trees in one patchset: imx/rproc tree,
+> then after done, pd tree
+>
+> Regards,
+> Peng
+> >>
+> >> If you think it can work, I can help to cook a formal patch for the
+> >> above helper that you can fold into your series. Let me know.
+> >>
+> >> >
+> >> > With that we can correcly attach to the remote core running, which was
+> >> > not possible before, where the function returns at "return
+> >> > imx_rproc_attach_pd(priv);" with the RPROC_OFFLINE state to
+> >> > rproc_validate().
+> >>
+> >> I see, thanks for clarifying!
+> >>
+> >> Kind regards
+> >> Uffe
+> >
+> >Thank you!
+> >Hiago.
 
-Then we could start migrating.
-
-I think the "issue" is, once we drop the zone lock, pages that are 
-getting freed end up on the MIGRATE_ISOLATE list -- and I think we also 
-must have moved the free pages already to the proper MIGRATE_ISOLATE 
-list before we drop the zone lock.
-
-So the possible cleanups might be limited.
-
-> 
->>
->>> 2. scan_movable_pages() and do_migrate_range() migrate pages and handle
->>> different types of PageOffline() pages.
->>
->> Right, migrate what we can, skip these special once, and bail out on any others (at least in this patch, patch #2 restores the pre-virtio-mem behavior).
->>
->>>
->>> It might make the logic cleaner if start_isolate_page_range() can
->>> have a callback to allow driver to handle PageOffline() pages.
->>
->> We have to identify them repeadetly, so start_isolate_page_range() would not be sufficient. Also, callbacks are rather tricky for the case where we cannot really stabilize the page.
-> 
-> During start_isolate_page_range(), all pageblocks are isolated, so
-> free pages cannot be used by anyone else, meaning no new PageOffline()
-> pages or any other unmovable pages, right?
-
-Yes, that is correct. Pages (incl. PageOffline) pages could get freed 
-back to the buddy.
-
-But we don't want to store per-page callbacks either way.
-
-What would work is a new notifier chain (protected by RCU etc), that we 
-can ask for each PageOffline page.
-
-Not sure I prefer that of the approach here that is significantly 
-simpler -- and we do have the spare bit for PageOffline pages in the new 
-memdec world (for PageOffline, we'll probably need 2/3 flags in the long 
-run).
-
-> 
->>
->>>
->>> Hmm, Skippable PageOffline() pages are virtio-mem specific, I wonder
->>> why offline_pages() takes care of them. Shouldn't virtio-mem driver
->>> handle them?
->>> I also realize that the two steps in offline_pages()> are very similar to alloc_contig_range() and virtio-mem is using
->>> alloc_contig_range(). I wonder if the two steps in offline_pages()
->>> can be abstracted out and shared with virtio-mem.Yes, offline_pages()> operates at memory section granularity, different from the granularity,
->>> pageblock size, of alloc_contig_range() used in virtio-mem, but
->>> both are trying to check unmovable pages and migrate movable pages.
->>
->> Not sure I get completely what you mean. virtio-mem really wants to use alloc_contig_range() to allocate ranges it wants to unplug, because it will fail fast and allows for smaller ranges.
->>
->> offline_pages() is primarily also about offlining the memory section, which virtio-mem must do in order to remove the Linux memory block.
-> 
-> To clarify, I mean the steps of start_isolate_page_range(), scan_movable_pages(),
-> do_migrate_range(), dissolve_free_hugetlb_folios() and test_pages_isolated() in
-> offline_pages() is very similar to the steps of start_isolate_page_range(),
-> __alloc_contig_migrate_range(), replace_free_hugepage_folios(),
-> and test_pages_isolate() in alloc_contig_range(). So I wonder if a common
-> function routine can be shared.
-
-Ah, yes, I had the same idea a couple of years back, but never got to it.
-
-There are subtle differences (e.g., memory offlining keeps retrying and 
-is allowed to dissolve free hugetlb folios), but these could likely be 
-modified using a parameter (similar to how we already special-case 
-offlining).
-
-
-Thanks!
-
--- 
-Cheers,
-
-David / dhildenb
-
+Kind regards
+Uffe
 
