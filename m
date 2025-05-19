@@ -1,103 +1,71 @@
-Return-Path: <linux-kernel+bounces-653167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41072ABB5B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:11:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF121ABB5C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E3F73BA78E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 07:10:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D3151884B55
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 07:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8240269D18;
-	Mon, 19 May 2025 07:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9F92673AF;
+	Mon, 19 May 2025 07:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GLHIaZW4"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hjmWEAJ/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D012676FF
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 07:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4379D2586E0;
+	Mon, 19 May 2025 07:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747638494; cv=none; b=L2CL8Tv2iIYxGci3/J/gD9+v0v8TQ0vkdSpWZdNJKQfeqDPUHxTirCJB8DNgUo7tApekqDU1te8DhcMiUZOfTxqd9jxe3yQP3EroUImRXtd+wozN3TO+C6d+TYZrtEIDlkzmymgEPq0b3AKna/VjLpVjRRcEB5C9yHTTRDgighM=
+	t=1747638553; cv=none; b=XqOD/nHGxEDXbxT/2EM/2GaKDhI8p6cg8UWq2K9JL5ceWaRFLY0NouBNeiTPXCBjIjsew2RQ7cOfwG3U2F33ySrNVhkmF1WEmetT8Pyy1GhN+gSkng1vJF470+HKb15mR807ttNlTBu2WqQyD3Lt+sX9nooavbQLXDucrdoWYao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747638494; c=relaxed/simple;
-	bh=pQyWID0prpRf3gQUWpov9tb2xD6qKVQjIcoV8giEDhQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tVSfbKfx7fd1p3Yf4WnacK2zsObMC6o9wEezzRshWJgp32XXzCzp4sQ413AWythhS3jtJ1smlpsPSCLX0IBNZ1ixbPeYSK5g8X7WbhFiuBKfkOUcb9FB1m7tGae9EOrd/3DhtbSY8nx/qpcQV+FTKL00a8G+cROrJNM5qmRXVDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GLHIaZW4; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-306bf444ba2so3844117a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 00:08:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747638492; x=1748243292; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8sWesAb8GctBh29etQ8vM8G+6YOZQngZ5ZA5hsC5Ces=;
-        b=GLHIaZW4tjW1cgUhlfGjhqsby+2mFd2bgK6W/6exNDP1NzGf1wwoCIQHbBBFx/8rjr
-         HvVkWPll4hNQ7k/a7kSx7umBV0omvRdm1l8NhBQMf6KoWBQ0kvA7A9eAkBTbDhYJixDD
-         OK/Eac/MoshP4UolY2FfG6ZKO/oEy9n+2Ow1SIMvuYs+fuMfJG/5U+Gyx+EcPGcyX4EB
-         1r+F9cgZGu3vBJN7BAvjQot692zJp6aFj6KaZGwsH2FPA5gSTqNbFzB15wc4WOKWlHsF
-         kQPEVzyafNWltn6UAJiptGGZm3tODGzyqO8ofgjdJHqSJHFC9iqbA2TCrNzVpXm7K1qU
-         m0DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747638492; x=1748243292;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8sWesAb8GctBh29etQ8vM8G+6YOZQngZ5ZA5hsC5Ces=;
-        b=XtS+Bj8kJv7twIu5g+ESrL0iAPLYIUYl4GJpb097U3SM9PuCnoa6eNV/bFC3IB1Myw
-         /6muXcOEASuxD/dbqAtcxfUl94A+nAaqeoVHHkFbHDGuvFaCivF2Egi1FxujydfXM0IV
-         cFPySNtmNi5a+/Vc11jp6RtM3ULXjEiX2bV1icgDoOPGXrN3wMXSJYirvC377P9kpyI0
-         SO8CD3AQf9TtqxQXxPerKbL3nHu5BGYAlk9RZTtApfdcbPJMCN9qYElQW1TI4LcMh7A0
-         qwHEXQOarUygtwpmFyk0oroJiyTNJwhS//1BKCFOGq+EG7RJFA2uz0Vmv3Be4LIIvpDq
-         eOiw==
-X-Forwarded-Encrypted: i=1; AJvYcCXIG3l0m8uNCyt/OuIYLxC95+IGl4GVFUeINTuDerqNttbBfStyTWr7H36LeUCDF/FOHmixosE92ol8yHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKpY9+jqWe3Wf02vxzq0O60z3wltXu4JfqslnaLJat26z2NkwW
-	ECaPhwCcsL/sVF5zA93pMb/bD6qg6KHDvP/qe7fWD5wHLXMs1W0iZUR0/mSlRQ==
-X-Gm-Gg: ASbGncuOqWnra7J04TQNsqmA2hzmXu8jOXVWMHeBPOsotEJGBkhZ81Sy4EV/0VB76sQ
-	X5cYorkPkgUcbn3FlR4/IjlcVP01s8Oh7sEVzpS5T6BU5+DYVUfv8TdKRebgY8QWu+kvP/FEaRn
-	0lL5hOkjQZmAICSIbMEX6v/7qp/STjQoE+dEz7a7Cg8mHEZwbM4Bwn7+CRUS0BC8k0j+nNrIV7z
-	jrP8BbvOCSpvs0o61ruLGujUUsxX4R+EzFoSIbuQg8zQ97JP2RkxZAB4oEIrviO/Xef9hmNRKtH
-	RLbJJ0oB98mPPhvnmgwwmexVPi1Z+Jp2fRMBUirp5zSBv0bZ3pTbDbLaDHrnLeUXg3l3kw==
-X-Google-Smtp-Source: AGHT+IGqbYDQNVakoHdggMT98Fn1F+E21285CGJezIFSeBUKgUkfyMh775fMoUPoeCPtwgYke5SWjQ==
-X-Received: by 2002:a17:90b:574c:b0:2f1:2fa5:1924 with SMTP id 98e67ed59e1d1-30e7d5b6f64mr16025077a91.26.1747638491891;
-        Mon, 19 May 2025 00:08:11 -0700 (PDT)
-Received: from Barrys-MBP.hub ([118.92.138.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e7b2dc8ebsm6009284a91.43.2025.05.19.00.08.04
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 19 May 2025 00:08:11 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: ryncsn@gmail.com
-Cc: akpm@linux-foundation.org,
-	baohua@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	bhe@redhat.com,
-	chrisl@kernel.org,
-	david@redhat.com,
-	hannes@cmpxchg.org,
-	hughd@google.com,
-	kaleshsingh@google.com,
-	kasong@tencent.com,
+	s=arc-20240116; t=1747638553; c=relaxed/simple;
+	bh=YPfaHyzVc1GkjxTfsXefHKSQnQddmr9nsMn8mGq/bRQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qJRt8pjjU2/Z2MhWVblSiTCG0cR6vItUVpxde6ONDoFVMJX2Ynfs3pfpMict4MxFNeiFg4iymuJOexlqOsfXKLDhBh3SapLH2fiP4LvSN/3/hZ/omP6kOT1L5D611LWh4iekm2iHqnXsqil45iIMX1bfpcTCZneJedw/fuIZZjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hjmWEAJ/; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747638552; x=1779174552;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YPfaHyzVc1GkjxTfsXefHKSQnQddmr9nsMn8mGq/bRQ=;
+  b=hjmWEAJ/Uv1a705WKLVbdv70Hzm2Xw5j6AN5b/kCE/o3ZjAdsboHv8Ws
+   nJsyaHGca6NdWJzo0THc9zBQ1moz6vh46bigTIditk44ZIhVopSvT2370
+   liJkG9SXSynbO55wLjcbRpaGRRhd0NYtA7FMLjyUWdIZRIKeOx3aBBIQ3
+   0BiuvaiT3KotefuEfz4Yve1DXZIwA/Jt5/nnAovcIM1BVdrJaBkqZD4Kc
+   D9QWpBaufZ+bq9Lsj22voCqxB3sGZe/3jnMIRG4cyuV0s2CNPvwSKONG3
+   N7Iy5qx/cMFELcIcCII8FeIVt9bCX0/LdROtUu/crtyWIKLGe+E3TQrGe
+   w==;
+X-CSE-ConnectionGUID: bF4HhNGFTKWChFJ7R/wX3g==
+X-CSE-MsgGUID: gmC6gUSwQGeKMFOP+T21fQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11437"; a="59752787"
+X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
+   d="scan'208";a="59752787"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 00:09:05 -0700
+X-CSE-ConnectionGUID: WJQM+OVRTFawgrmKBv9J9w==
+X-CSE-MsgGUID: i62RG5J6TaKO3DrGxXPPKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
+   d="scan'208";a="170321353"
+Received: from rzhang1-mobl7.sh.intel.com ([10.238.6.124])
+  by fmviesa001.fm.intel.com with ESMTP; 19 May 2025 00:09:02 -0700
+From: Zhang Rui <rui.zhang@intel.com>
+To: rafael.j.wysocki@intel.com
+Cc: zhangn1985@outlook.com,
+	daniel.lezcano@linaro.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	nphamcs@gmail.com,
-	ryan.roberts@arm.com,
-	shikemeng@huaweicloud.com,
-	tim.c.chen@linux.intel.com,
-	willy@infradead.org,
-	ying.huang@linux.alibaba.com,
-	yosryahmed@google.com
-Subject: Re: [PATCH 11/28] mm, swap: clean up and consolidate helper for mTHP swapin check
-Date: Mon, 19 May 2025 19:08:01 +1200
-Message-Id: <20250519070801.2588-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20250514201729.48420-12-ryncsn@gmail.com>
-References: <20250514201729.48420-12-ryncsn@gmail.com>
+	linux-pm@vger.kernel.org
+Subject: [PATCH] thermal: intel: x86_pkg_temp_thermal: Fix bogus trip temperature
+Date: Mon, 19 May 2025 15:09:01 +0800
+Message-ID: <20250519070901.1031233-1-rui.zhang@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,56 +74,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-> From: Kairui Song <kasong@tencent.com>
+The tj_max value obtained from the Intel TCC library are in Celsius,
+whereas the thermal subsystem operates in milli-Celsius.
+This discrepancy leads to incorrect trip temperature calculations.
 
+Fix bogus trip temperature by converting tj_max to milli-Celsius Unit.
 
-> -static bool can_swapin_thp(struct vm_fault *vmf, pte_t *ptep, int nr_pages)
-> +static bool can_swapin_thp(struct vm_fault *vmf, pte_t *ptep,
-> +			   unsigned long addr, unsigned int nr_pages)
+Fixes: 8ef0ca4a177d ("Merge back other thermal control material for 6.3.")
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Reported-by: zhang ning <zhangn1985@outlook.com>
+Closes: https://lore.kernel.org/all/TY2PR01MB3786EF0FE24353026293F5ACCD97A@TY2PR01MB3786.jpnprd01.prod.outlook.com/
+Tested-by: zhang ning <zhangn1985@outlook.com>
+---
+Commit 983eb370cb87 ("thermal/x86_pkg_temp_thermal: Use Intel TCC
+library") converts tj_max to use the standard API without switching the
+Unit, which is a bug. This was mitigated by the next commit 58374a3970a0
+("thermal/x86_pkg_temp_thermal: Add support for handling dynamic tjmax")
+which uses the Celsius tj_max for failure check only.
 
-> +	if (unlikely(addr < max(addr & PMD_MASK, vmf->vma->vm_start) ||
-> +		     addr_end > pmd_addr_end(addr, vmf->vma->vm_end)))
+This may confuse the maintainer and the bug was introduced by commit
+8ef0ca4a177d ("Merge back other thermal control material for 6.3."),
+when addressing the conflicts with commit d3ecaf17b586
+("thermal/drivers/intel: Use generic thermal_zone_get_trip() function").
+---
+ drivers/thermal/intel/x86_pkg_temp_thermal.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/thermal/intel/x86_pkg_temp_thermal.c b/drivers/thermal/intel/x86_pkg_temp_thermal.c
+index 4894a26b1e4e..3fc679b6f11b 100644
+--- a/drivers/thermal/intel/x86_pkg_temp_thermal.c
++++ b/drivers/thermal/intel/x86_pkg_temp_thermal.c
+@@ -330,6 +330,7 @@ static int pkg_temp_thermal_device_add(unsigned int cpu)
+ 	tj_max = intel_tcc_get_tjmax(cpu);
+ 	if (tj_max < 0)
+ 		return tj_max;
++	tj_max *= 1000;
+ 
+ 	zonedev = kzalloc(sizeof(*zonedev), GFP_KERNEL);
+ 	if (!zonedev)
+-- 
+2.43.0
 
-> @@ -4731,27 +4732,18 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  	page_idx = 0;
->  	address = vmf->address;
->  	ptep = vmf->pte;
-> +
->  	if (folio_test_large(folio) && folio_test_swapcache(folio)) {
-> -		int nr = folio_nr_pages(folio);
-> +		unsigned long nr = folio_nr_pages(folio);
->  		unsigned long idx = folio_page_idx(folio, page);
-> -		unsigned long folio_start = address - idx * PAGE_SIZE;
-> -		unsigned long folio_end = folio_start + nr * PAGE_SIZE;
-> -		pte_t *folio_ptep;
-> -		pte_t folio_pte;
-> +		unsigned long folio_address = address - idx * PAGE_SIZE;
-> +		pte_t *folio_ptep = vmf->pte - idx;
->  
-> -		if (unlikely(folio_start < max(address & PMD_MASK, vma->vm_start)))
-> -			goto check_folio;
-
-We are handling a corner case a large folio is remapped to an unaligned address.
-For example,
-
-A 64KiB mTHP at address:  XGB + 2MB +4KB,
-
-Its start address will be XGB + 2MB - 60KB which is another PMD.
-
-The previous code will return false; now your can_swapin_thp() will return true
-as you are using XGB + 2MB - 60KB as the argument "addr" in can_swapin_thp().
-
-> -		if (unlikely(folio_end > pmd_addr_end(address, vma->vm_end)))
-> -			goto check_folio;
-> -
-> -		folio_ptep = vmf->pte - idx;
-> -		folio_pte = ptep_get(folio_ptep);
-> -		if (!pte_same(folio_pte, pte_move_swp_offset(vmf->orig_pte, -idx)) ||
-> -		    swap_pte_batch(folio_ptep, nr, folio_pte) != nr)
-> +		if (!can_swapin_thp(vmf, folio_ptep, folio_address, nr))
-
-
-Thanks
-Barry
 
