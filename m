@@ -1,158 +1,232 @@
-Return-Path: <linux-kernel+bounces-653835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35819ABBF41
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:34:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C3BABBF4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ADF0188E13C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:34:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 162127A60AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958E127A10C;
-	Mon, 19 May 2025 13:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D792519B3CB;
+	Mon, 19 May 2025 13:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O1NtbhJ/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NldOBOOB"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935DA26A1B1
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 13:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1DF27A104;
+	Mon, 19 May 2025 13:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747661660; cv=none; b=ua2P4pH7JAQE1bAPCLbiLj/bA1tRD9OBTCazb0jPLA5+qEgC1asg8kS++38bVCSVkCQVwE0fB6S8EmfxhyAE7BUzjrXuU1INBUF0Ti8ARSZieq+J4/SOqYFudRptlsNSmKBYhSnLvYFiJMPDFfbSPyOxH+ffELsFKY7wejW0nsc=
+	t=1747661688; cv=none; b=qX1pl4EOfY8RFQkBelMwHTIxAl4PZtL9F6tjaiBLuyVkhPvqg3VbyN5AxuUu1EzWwOOh8GW3oDQHAwUTlleq4sRW76Sz2zFaSsV5JSehI/XOfPbd7bqgo9ChgVpPZQT5UHLKj8K9SfdXms2UDgpVyaagweFxZREGs+6oqoMM2Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747661660; c=relaxed/simple;
-	bh=kB4yL39ixK2E/W6GBCz5xywTTmFgLjwXfZpiDkAKENE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DSGaDH9cXWHofJLQR5gxab60PMDQXZwabgjIZOPT0DuK6WStuhzZLe2H3xHFcqbyvCbwMSPaNjiKaI6e4KbNzwL6aripA4ORR1u3GVn6gczYn9dLWHVrieDN3eO+k9nZiGQuLVBajmVXPVmSDh9J/Q2/AdVsfTXuIxWqb0KGb80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O1NtbhJ/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54J7GhJa023299
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 13:34:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=xpmZsdGXKdiDzFuBCCBP+7+8
-	PxMeQZauDmsiloV3TR8=; b=O1NtbhJ/GamIerrMd57QzpuD9042qlBgDo7/1kzz
-	+CansZR7/m8qmUEUuG4zbrstnGg2HTZoxpq6wuwePFsUmhOUJgkADAaiovVCHgm4
-	AKOM9yvbv96aITgFZ1jtoUgxanO32fQjl8ahQ1LqR5wdRwoS0uW0S1cB/cpBLW/d
-	QXmZJdyDxnzxjTecFkYNyGixuQPIngctCCt8dcouIKi6SREUaR5w/VQjfFlrzt9Y
-	JsQmNG5m41PiDS2jiwnBFhjDSjQ3gZjBWReKWJn96tPmcLpNHPXcytBURly3Gphg
-	7uvK141Fv/8rDGkLT0EJVQt0tsvAlwkhrXXQ/8YUtw4+Og==
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46r041s2cf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 13:34:18 +0000 (GMT)
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3dc67719da8so15785375ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 06:34:18 -0700 (PDT)
+	s=arc-20240116; t=1747661688; c=relaxed/simple;
+	bh=JkXYknsH9G+IMhmWbFMsgkLG6DOpL4QOe9VrCDJdFAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R9BuLXh5wIoCeF/1C9xv0yaZLQw4jzdgXlnyTHW2+ZGPsALEw258yv2OVIse1JJp4Yo/bcU1o5ltcoLnJwUjIO/CIDTIkqQWC6MCtlAATeT53xHdEZtd/1iYJqno0Dq0zdzlKv/hcd0W465YVSXopxHIR89HEetKaDdrYaLm3b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NldOBOOB; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-306b6ae4fb2so3538702a91.3;
+        Mon, 19 May 2025 06:34:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747661685; x=1748266485; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=FvE4A2cw590agEzQovwE0tUSTFl/A03UnoB9ran5osw=;
+        b=NldOBOOBMXqsw4c443hsrk5EIUhhrY5arYiI9GZDnjFnlE/ow4I6l6Ol4RYq5PO8T1
+         qjBZhG4ztX5MoVhCdbo2GoOrGgnkamFLjZ2ihjaCCvQWNDpRKnb7GQ2P+VFmWxmbqyR/
+         mAYMVAjLmbovITAZJLEfDKcTX3RBW526tfgiv1+6Xkx/5xq5sTR3XRoO3HGy230OJL/E
+         3nw6KHJUhNKoIPwITzzjo/fXF3/2w/RB7vjim5lnKxjNuY0k6V8Qncg8y5sPi4DGZveD
+         uWBFjNCpLEedfubWYvtGg9cFZZKUwPrKPprzAC2vSMf+4Db09Pf6MXuVNBYbzutk6BGy
+         DwiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747661657; x=1748266457;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1747661685; x=1748266485;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xpmZsdGXKdiDzFuBCCBP+7+8PxMeQZauDmsiloV3TR8=;
-        b=grVvl5PdeHhej/eDtmYrVAT7K+2fDl0od7XFK9xcQxw03ZWcFipkni8TO3W9V+viUp
-         O2mA6fPdDIkYAx2kA/q26B8bxvSqaa3ViakcZlu/5fPERJcSQHuSbSDa0XsBLwjxJn5D
-         mvXJd7laLXI9d31Z1SLh92PD2v5Ulm2peoXZMAZgVoXPvCgcnhsZcONum4gvvs578woz
-         e+ygLCLSQx8m1A6w7M9pSiYL659msKplpJQvwsLKRELyBZgTLCec8YS+yf7ekC62kFaR
-         vkHfizaxIrnImwEuquIj2eaFc0kkzQS5oCjRIfpFlpAIyeku8iZaKPrcTXVLhTV6Opwi
-         VW8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXgjk2p+e83VLMoIZMTntPEabcG9nFnanSb4vBEvXj0tszUH8/ZuRWyTTc4FswaxVzh8IXpZ1CmB3trE9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxorxD3bgJvHuhkLIzHhzfToFwZqprixOBt6dV59hUBDGgyY1pA
-	WftYns8FskcVTrEArfhkrChJ1JK0KOcJ0u2/gAobF7+5tRsptnpMOxrSmVvrLV3ZmeldTsuMPYy
-	RiadZjdkmE0VMZUgVkd/6dG669wInD+1AzKqNeRQws37nJNAcBmy8cWRZSEpm8dp/eO0=
-X-Gm-Gg: ASbGncsd0OpyR2NURzuSb5EA0pf8xv0fzizOXlyBRyjgaOSmwC9X9Fd6TIF9m7OQSm2
-	r0kx6GMYvx38bAxuIPjR/QGuhIzKYqaH/Jt84ZTgdvmJvXfAsQ9QClH76rll26xcvetUaPf67Kt
-	Evm4QvARsvciPM5/uaG9cQsH4Boj4kjzkeVg15wbVOSa5G4DTkEjWtWmmuI4i9mXfXjm64VrHu/
-	goKQ+JCA7meez70kzcog/nLmStTcQdOILYuWOMq6xzIjXBuK2wo45dbEbw+217EYmo2pwNkuU+D
-	GbVQH6n0M6C4xKf+85hDTdHV1b2wWRTWgWUwQ/8tc8aJRqtzkGniTvmor0k0VCyEbCKrOPYsk5w
-	=
-X-Received: by 2002:a05:6e02:2407:b0:3d6:cd54:ba53 with SMTP id e9e14a558f8ab-3db857c0338mr107675075ab.22.1747661657350;
-        Mon, 19 May 2025 06:34:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGcs1xC9T+Wm6LLSGkClHv/8oharNk5wTXGyZpzjQtEoc2B8cCPX68CXbbZPZLfmwEF7MSPLQ==
-X-Received: by 2002:a05:6e02:2407:b0:3d6:cd54:ba53 with SMTP id e9e14a558f8ab-3db857c0338mr107674705ab.22.1747661656964;
-        Mon, 19 May 2025 06:34:16 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e701831bsm1869971e87.156.2025.05.19.06.34.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 06:34:16 -0700 (PDT)
-Date: Mon, 19 May 2025 16:34:14 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-Cc: srinivas.kandagatla@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-        gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
-        linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
-        dri-devel@lists.freedesktop.org, arnd@arndb.de, stable@kernel.org
-Subject: Re: [PATCH v1 5/5] misc: fastrpc: Add missing unmapping
- user-requested remote heap
-Message-ID: <7ogkoxsowpd2x5qmjog4qx5eu4eiinvtnyjz5hfufgna2hz7na@oxzmowlnelxb>
-References: <20250513042825.2147985-1-ekansh.gupta@oss.qualcomm.com>
- <20250513042825.2147985-6-ekansh.gupta@oss.qualcomm.com>
- <22uccyp5m2szry7bpitqcav5nlvwch5eqh4mdacfedidgrnyhx@vsjobngwdkmb>
- <dc67df54-2a19-4318-acd4-b96b8549b64d@oss.qualcomm.com>
+        bh=FvE4A2cw590agEzQovwE0tUSTFl/A03UnoB9ran5osw=;
+        b=clwRfiZEj7PACIEq/tpcsu4jnSQ3iA2KwwxfM6AmYhzi242koCBVammC0V8o2UlA8j
+         lSE7nIfxiIDPPR6aX1OdIOlxWU16qM65kBhjPsq4H5gMR5bqsUW+vB7wHYJ+CS+HfKmp
+         qSEjyE6CdpiL4ZNFYwSWtf6ec9dN/ikmZVc2QjGOWrcdoA7Mf5xhmRBfHrKhObvxZoSI
+         g0+svo1DXBzPqKwDU4gY6eSBJt0uuGnO5akyxpPgzFEhGDYrJJYshPaL8UbCrO6k+tTV
+         q/9cDKCMM2L/h/Z6PXUNXygXlHeozjOVQU12S/jiGfpMyX2RX0HsWphbkvtWFfi8v2YE
+         /C1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUD/w0WonrFf2cRuak4eyQWw6WgJvd/WnFLO46Vanls133AFB0uR3NHIFtpYPqTs6rHyeXeWU6I7ZV/EaS3JfM=@vger.kernel.org, AJvYcCVreMTkTgBDePVB9rB4TWCQLTyUz3FMiHRU5YeAlqLLQ48TG8+JQVJ1wqQ20I2ph0U4s5bpuD75eGxFGMDh@vger.kernel.org, AJvYcCXpHGApsaE4H8JeA7wausSWb+eSYDICKbPi923QoOowBjQoP2jxzq6kNGt2urQf248jB/95xj5OcF+w@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOqCp4i9Jq/5J19rlIDvmvF6LYOVHKvY5RHN7fHyYRuR0mTE+T
+	IFdnZ1GZYClsms8PcXfhoV0o9WSpwvcnqJoHaAYpLabKqauqlTuqARhPneAT8JeK
+X-Gm-Gg: ASbGncuv3QgwgHUd3P+Wn+RbQI5q1RhC81mvQqM+jtnJFbM7S1R2S8LfIeEe91HnfaD
+	WV2ZMuLrmqPyOT/DxSyY8oub5byqdeMgIuNqqx6IcVuLWhMB5hI1sY/VK0kNQKGnr104abnViGj
+	Q/k5qzq3XJO4zMTEVesX362zB3DrEP6/2VfeW2mPbtoH4bJyBMnAFrBH2TtC6yvknfmP3fJpfT5
+	9x0GPmh4oykyjCvbcXu8g1b7Ts8OTw4odqkZiRnyvNa9zUylAk4Si9VIpVa9F4RB560kd+0Nh4B
+	nt7S8W/SOG//pwUlSN4R5rqk5r9oHXVrZNHNZyC2gREMOMvRgXi41UQanaiJKfWdea1yKq/VO4/
+	bUlj6oiKITKdE6uJygyEMZY7wB0xElZVhXh0=
+X-Google-Smtp-Source: AGHT+IG/tHQ1B/seZBFpCh/ROov9eDFFT+Qef5knQYJHpO/bLkQu97BUCidxFZOhNI+ebAl6FAZC9w==
+X-Received: by 2002:a17:90b:2f08:b0:2ee:d63f:d8f with SMTP id 98e67ed59e1d1-30e7d52b830mr17674248a91.13.1747661685226;
+        Mon, 19 May 2025 06:34:45 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e6af9d586sm7558836a91.11.2025.05.19.06.34.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 May 2025 06:34:44 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <f74dbbcb-1628-4280-92e8-d89823a3a318@roeck-us.net>
+Date: Mon, 19 May 2025 06:34:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dc67df54-2a19-4318-acd4-b96b8549b64d@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDEyNiBTYWx0ZWRfXysT9Ru5Momkd
- 1YysKRRhAgqEPTMU1cc+UTnH+/4GPwFh5uJr/yaEBB+qnFdndVzwvbi2qyZhKZMJxsza7+42PWs
- SirV00KVowA2REUzjoe8aKA7giwmcA0HFItL62PWWVzHgYFoaQNejdJBUwL4sWT0isCg96oN71A
- zHlwJ1klPVm1SlxfvjwZ3jyj4LNVrbe7nwJRIGnJ9QKYPPCoLhdJwxnH05S6iOk5V09c+wkcRML
- 9UdnHsHBpgQQ5y+owVRlSYGYySknKMGc+nc2NzHrnYdqLySSAUX1QQ13Wsr98weqWoWZsU9gfy4
- /efew0Naf4RmhhP2iR9uhMrMK/Y0DscaGq3pkyIrc80QRQrxL6wTJM0i2MP3U1ru/v2ssh7X3E+
- ewRXo6AhU9l3/MlAhomEH646nBxCgExBArtr9PqaXQXS4GiCHtODXwnMsxJG2QNW+zfiz3pa
-X-Proofpoint-ORIG-GUID: 4ALC6eSiRzWCyziv0xtL0tpbPavXhSCE
-X-Proofpoint-GUID: 4ALC6eSiRzWCyziv0xtL0tpbPavXhSCE
-X-Authority-Analysis: v=2.4 cv=HIjDFptv c=1 sm=1 tr=0 ts=682b335a cx=c_pps
- a=knIvlqb+BQeIC/0qDTJ88A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=jo6cr0NhVVvRSACVVboA:9
- a=CjuIK1q_8ugA:10 a=8vIIu0IPYQVSORyX1RVL:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-19_05,2025-05-16_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0 clxscore=1015
- bulkscore=0 suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- impostorscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505070000 definitions=main-2505190126
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] clocksource/drivers/timer-vt8500: Prepare for
+ watchdog functionality
+To: Alexey Charkov <alchark@gmail.com>, kernel test robot <lkp@intel.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Wim Van Sebroeck
+ <wim@linux-watchdog.org>, oe-kbuild-all@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org
+References: <20250515-vt8500-timer-updates-v3-3-2197a1b062bd@gmail.com>
+ <202505180911.hDevFA1N-lkp@intel.com>
+ <CABjd4YwJgZiq9_jKGa70GaxaW8TT=JuwDioU6jH=J_O=t+QT8w@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <CABjd4YwJgZiq9_jKGa70GaxaW8TT=JuwDioU6jH=J_O=t+QT8w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 19, 2025 at 04:28:34PM +0530, Ekansh Gupta wrote:
+On 5/19/25 04:34, Alexey Charkov wrote:
+> On Sun, May 18, 2025 at 5:24 AM kernel test robot <lkp@intel.com> wrote:
+>>
+>> Hi Alexey,
+>>
+>> kernel test robot noticed the following build warnings:
+>>
+>> [auto build test WARNING on 92a09c47464d040866cf2b4cd052bc60555185fb]
+>>
+>> url:    https://github.com/intel-lab-lkp/linux/commits/Alexey-Charkov/dt-bindings-timer-via-vt8500-timer-Convert-to-YAML/20250516-025729
+>> base:   92a09c47464d040866cf2b4cd052bc60555185fb
+>> patch link:    https://lore.kernel.org/r/20250515-vt8500-timer-updates-v3-3-2197a1b062bd%40gmail.com
+>> patch subject: [PATCH v3 3/4] clocksource/drivers/timer-vt8500: Prepare for watchdog functionality
+>> config: loongarch-randconfig-r123-20250517 (https://download.01.org/0day-ci/archive/20250518/202505180911.hDevFA1N-lkp@intel.com/config)
+>> compiler: loongarch64-linux-gcc (GCC) 14.2.0
+>> reproduce: (https://download.01.org/0day-ci/archive/20250518/202505180911.hDevFA1N-lkp@intel.com/reproduce)
+>>
+>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <lkp@intel.com>
+>> | Closes: https://lore.kernel.org/oe-kbuild-all/202505180911.hDevFA1N-lkp@intel.com/
+>>
+>> sparse warnings: (new ones prefixed by >>)
+>>>> drivers/clocksource/timer-vt8500.c:201:51: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *platform_data @@     got void [noderef] __iomem *static [assigned] [toplevel] regbase @@
+>>     drivers/clocksource/timer-vt8500.c:201:51: sparse:     expected void *platform_data
+>>     drivers/clocksource/timer-vt8500.c:201:51: sparse:     got void [noderef] __iomem *static [assigned] [toplevel] regbase
+>>
+>> vim +201 drivers/clocksource/timer-vt8500.c
+>>
+>>     175
+>>     176  /*
+>>     177   * This probe gets called after the timer is already up and running. This will create
+>>     178   * the watchdog device as a child since the registers are shared.
+>>     179   */
+>>     180  static int vt8500_timer_probe(struct platform_device *pdev)
+>>     181  {
+>>     182          struct platform_device *vt8500_watchdog_device;
+>>     183          struct device *dev = &pdev->dev;
+>>     184          int ret;
+>>     185
+>>     186          if (!sys_timer_ch) {
+>>     187                  dev_info(dev, "Not enabling watchdog: only one irq was given");
+>>     188                  return 0;
+>>     189          }
+>>     190
+>>     191          if (!regbase)
+>>     192                  return dev_err_probe(dev, -ENOMEM,
+>>     193                          "Timer not initialized, cannot create watchdog");
+>>     194
+>>     195          vt8500_watchdog_device = platform_device_alloc("vt8500-wdt", -1);
+>>     196          if (!vt8500_watchdog_device)
+>>     197                  return dev_err_probe(dev, -ENOMEM,
+>>     198                          "Failed to allocate vt8500-wdt");
+>>     199
+>>     200          /* Pass the base address as platform data and nothing else */
+>>   > 201          vt8500_watchdog_device->dev.platform_data = regbase;
 > 
+> Frankly, given that this driver only applies to VT8500 (which is ARM
+> based), the warning appears a bit overzealous. After all, on ARM MMIO
+> addresses are in the same physical address space as normal memory
+> addresses, and furthermore this platform_data is never dereferenced
+> directly anyway.
+
+Guess we'll need AI compilers in the future to help them know that.
+I for my part would argue that "this warning can be ignored" is the
+source of many problems flying under the radar.
+
 > 
-> On 5/19/2025 4:22 PM, Dmitry Baryshkov wrote:
-> > On Tue, May 13, 2025 at 09:58:25AM +0530, Ekansh Gupta wrote:
-> >> User request for remote heap allocation is supported using ioctl
-> >> interface but support for unmap is missing. This could result in
-> >> memory leak issues. Add unmap user request support for remote heap.
-> > Can this memory be in use by the remote proc?
-> Remote heap allocation request is only intended for audioPD. Other PDs
-> running on DSP are not intended to use this request.
-
-'Intended'. That's fine. I asked a different question: _can_ it be in
-use? What happens if userspace by mistake tries to unmap memory too
-early? Or if it happens intentionally, at some specific time during
-work.
-
-> >
-> >> Fixes: 532ad70c6d449 ("misc: fastrpc: Add mmap request assigning for static PD pool")
-> >> Cc: stable@kernel.org
-> >> Signed-off-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-> >> ---
-> >>  drivers/misc/fastrpc.c | 62 ++++++++++++++++++++++++++++++++++--------
-> >>  1 file changed, 51 insertions(+), 11 deletions(-)
-> >>
+> I could silence the warning either by more aggressive casting or by
+> wrapping the pointer into some struct, but both of those sound a bit
+> overreaching. Would appreciate guidance from the list on how to best
+> approach this.
 > 
 
--- 
-With best wishes
-Dmitry
+First of all, I am quite sure that using platform drivers for this is the
+wrong approach to start with. This seems to be a perfect candidate for
+an auxiliary driver.
+
+Second, I do consider passing an iomem pointer as platform data to be
+inherently unsafe. I would very much prefer either passing a regmap
+pointer or, if that doesn't work, a data structure.
+
+Guenter
+
 
