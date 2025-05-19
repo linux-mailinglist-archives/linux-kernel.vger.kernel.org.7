@@ -1,182 +1,147 @@
-Return-Path: <linux-kernel+bounces-653721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A18AABBD84
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:16:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288FCABBD88
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC81417CCB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:16:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A01F517D19C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEAF27702A;
-	Mon, 19 May 2025 12:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D11627703E;
+	Mon, 19 May 2025 12:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="I0vycz/6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="JAHkrCh1"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442B61F4CA6
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 12:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C111714B3;
+	Mon, 19 May 2025 12:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747656979; cv=none; b=hQ7zV8bzhvn2Qsy90fwkRc++g5sohyT6AUejH+kOmppU7zyUKUbVqdIzvZHMEdt9f+ksgSbtFWC1kqN7nJugVp1xowRTTW0Hg8rgRdj0zUQ5/P60zVKPkTV275v8ksbwtHpqLnfPHOgKoNEOnfuKwVkXLaWyQqMv+0XzstMmJzU=
+	t=1747657016; cv=none; b=e41IusY5QYYEagZ54SedyRn9+gvcjuzpf0xgenL2/i/NX4Fac/24Rhyg/vBJ5ZfT0kOj7hZSEElwddyXOMzvmx+v3goUf9FmmVFCHJT7tgKsOWwvzisQbczilY+ajLUJcKCr+C80+XmT0L5IVVrOMB5nsKPDDj/TqvIdFnwNVzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747656979; c=relaxed/simple;
-	bh=u4G4v/3QWDx7UFXsSJeLbnLzxethnDdnhnF/yuDl88A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pDWwOEuNdfgVY8Mpg7iAcpMvmSkYt4GEzBcrHuPAFdB5EwqwgsK91rdjHel3xb9ligMRODiFQ2/c+B2KxGpQns8+7Dj2OL9DSoCMQgjMasyvShDl5NiejbKpYb5hyyaTxkEX/zzQdFYVYqKUUdh2La8PmFmjySWUBuquBP7Lms4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=I0vycz/6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54J9j7OB023329
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 12:16:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	u4G4v/3QWDx7UFXsSJeLbnLzxethnDdnhnF/yuDl88A=; b=I0vycz/65xIbhlSZ
-	HzJdZQqIWkMD+AWh9lNYeHIMQpSisW3Q51HE6Lm9ZvXoo6XmZD3R4DmHVqPWBlhV
-	V9E2kysF9y2xZm4yBj7nZbyAHwghU4cq/9Zd3cN5Vva2r2crxry/NWsZse6PV+rL
-	JTNM5R//ur4WxUPn3AIK7iAZF254iPPzzqPWen2N9e79Yf4htVsZbDoyWzYGqK4+
-	2T4lyb0EGkIpLiaRcCrWPqC6vGehKRbtw8oVQg52a7bdR3mHsowDjO1dtBAbBGPf
-	26RA+2sIxpYKiPb3+SCJTXfUres6F7mVVzA0qM+c288fvq2+/nzwovk+/wEbeA52
-	qJkv+w==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46r29d0d7n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 12:16:17 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2320ffaa4a9so30728525ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 05:16:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747656976; x=1748261776;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u4G4v/3QWDx7UFXsSJeLbnLzxethnDdnhnF/yuDl88A=;
-        b=eyJHyDclAJ1HjG/4ihF2UnsYt97aJ/8j+pY/7ZI0vLpvgqkaHjChXq3wVPgcY6vd+z
-         meuz4a9o3J0Jx/ZxEq+cHgHd+EdJT71n3bsdRsrPehoPHG2SwP3uT0OLlO0pNmotFATY
-         NVtlnbT4jISoqIWHZxpHhSbCt4r9DJR40hXuUgkeWea9Y7xHhlV4g+tr6Xw6raduIxHk
-         J3/WWwPams/Yde3B50W3FrqsQY4vbhOot74veHdd9WvVUrHrHJXkD4GrVC4tWiBrVlne
-         aF28Cooenw1khS1CwP2KBIfWFXBJ8rnWDVKOlwt+yoXeO2j+aPYk9cSkWY37kGbD0P6f
-         hXYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMr+JepudJ6RJkGTccnuq/eHwnbsuvsonb8+KCQ9v2zRZuvqrx+YrY1bKY8Suxq7fWRqgRbCLds89PCVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4ocYDwCuCmrm+CYKxYNL+rYd4tbdQQjg4FjkCTm+YMMc55mlJ
-	X/MbtrLvhUbUSphTRfH7ZOjhFojLkWVNFYYWXfWGVsBF89mRzXNOafOgPA0vW7OeoQJO9M3v51n
-	7XxJvfOrmPOC5NA3qsJBJ/hvp76z84cqwfsOqipnEyhuIZLJzrWzUD2f0Hivddu9beRTH1yUkfR
-	cXu+S3Is8lfsfygmXiY3shMc1vs08txLobIX6QfdVBNg==
-X-Gm-Gg: ASbGncsHI7/S7SB0JD7i9vJqajrrACgVQkRko5WYP5G1UMaAftbECGyiMU9lEeykop2
-	q+KLcuFq1e0rYsRFyBKEXSck0B1f4WsLeOWIOIzNPylJzyUy4y0ZOWbh4aItNw7W6V5OzlA==
-X-Received: by 2002:a17:902:e801:b0:231:7f29:bda0 with SMTP id d9443c01a7336-231de5b0ba7mr160018185ad.52.1747656976187;
-        Mon, 19 May 2025 05:16:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEHd8pbYGLE6SycYb8UZ6wrWsr0sYw3IPLE+tXeV+ix6q6M438C0T4/cbceiUfp/qjiHUeu+4uzOdIUmRTLGKQ=
-X-Received: by 2002:a17:902:e801:b0:231:7f29:bda0 with SMTP id
- d9443c01a7336-231de5b0ba7mr160017815ad.52.1747656975770; Mon, 19 May 2025
- 05:16:15 -0700 (PDT)
+	s=arc-20240116; t=1747657016; c=relaxed/simple;
+	bh=DOkKNp4l7AMqnBeiOcr0K3qq8IbXhMNaPz7rbisR8PA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=c2jI1fYe+U7DjT+3LZA2L8I6lG1EoIRj4EwVkUoGFZMSTDpKDCcJUeOyn9yPWAw+vKh/XhOXE1JcITIaLlBxKEmF9NiPbCXzCCAigwfJ8S2SCDl3mBvVLVqejtlaJExOGxBRNjIXVIuPybyIEWEDZNCTR5WlccVd3COjqg5UtIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=JAHkrCh1; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 54JCGH6b8937724, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1747656977; bh=DOkKNp4l7AMqnBeiOcr0K3qq8IbXhMNaPz7rbisR8PA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=JAHkrCh1B7t7YOkle2atNXaWGpNSth9zm/SRBlzZuGMwYJgusYPPyz86RJe+rligI
+	 Oyj58Wn2hoQF7J8G52tkLR1mnOZan0mAjyj0lSoZA+BRo4mHaXsN9hUssQsPg3jBMy
+	 mXYFoiq5JF9a/1nRjzKtgIBIr+h3J2KBYUzAXmPTeaH+SXtcpGO4ZAoKTFSzUPodua
+	 FTWb+iFyD/SLXet4XzhfB0T36veNAt3i0cpCY7b9BIlY4Y0nQhIx+NxAJ91q4kGwQm
+	 zbDCud5AIBz1YekqughpEHaZvrh8d2Lo5Nri5RcLvBKRCt86xxjxgGQOsmPKU/sJ5v
+	 NWIfr6xOzk1ag==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 54JCGH6b8937724
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 19 May 2025 20:16:17 +0800
+Received: from RTEXMBS05.realtek.com.tw (172.21.6.98) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 19 May 2025 20:16:17 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 19 May 2025 20:16:11 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
+ RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
+ 15.01.2507.035; Mon, 19 May 2025 20:16:11 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: "kuba@kernel.org" <kuba@kernel.org>
+CC: "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com"
+	<edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "horms@kernel.org"
+	<horms@kernel.org>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Larry Chiu
+	<larry.chiu@realtek.com>, Joe Damato <jdamato@fastly.com>
+Subject: RE: [PATCH net-next v2] rtase: Use min() instead of min_t()
+Thread-Topic: [PATCH net-next v2] rtase: Use min() instead of min_t()
+Thread-Index: AQHbtawdSIC/HJstr0OxTEOUNg41/rPaAlkA
+Date: Mon, 19 May 2025 12:16:11 +0000
+Message-ID: <bb78d791abe34d9cbac30e75e7bec373@realtek.com>
+References: <20250425063429.29742-1-justinlai0215@realtek.com>
+In-Reply-To: <20250425063429.29742-1-justinlai0215@realtek.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250514-update_phy-v2-0-d4f319221474@quicinc.com>
- <20250514-update_phy-v2-2-d4f319221474@quicinc.com> <8ba99df8-012b-4883-af6a-970dd9f877f6@linaro.org>
- <f5e1510f-3496-4f5e-b093-623d3b4be428@oss.qualcomm.com> <CAMyL0qPH2r8oXOrNp3jF-nBJCRCZzJr8rYrHn+Yp0MHR0Wy-vw@mail.gmail.com>
- <bpc4tsp4kghqohoxm42qls7gzd5me7xrpodmazyhpvjjlkkay2@paoq5zygczdd>
-In-Reply-To: <bpc4tsp4kghqohoxm42qls7gzd5me7xrpodmazyhpvjjlkkay2@paoq5zygczdd>
-From: Mrinmay Sarkar <mrinmay.sarkar@oss.qualcomm.com>
-Date: Mon, 19 May 2025 17:46:04 +0530
-X-Gm-Features: AX0GCFvgmiM69A2CqrAIbnHrTDa4cVJKrTijAb5UUN_qj4VtV9AOkvTBIyXtUYc
-Message-ID: <CAMyL0qNQWN1ORReZu3wrw_Ex+nAmAJxhTMCt4Jw6PyEN4tEtGQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: sa8775p: Remove max link speed
- property for PCIe EP
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, krishna.chundru@oss.qualcomm.com,
-        quic_vbadigan@quicinc.com, quic_nayiluri@quicinc.com,
-        quic_ramkri@quicinc.com, quic_nitegupt@quicinc.com,
-        Mrinmay Sarkar <quic_msarkar@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDExNSBTYWx0ZWRfX5kKGnEYGidfN
- u/UBKBc8UH0cD1X/WOjb5dEvx1s8UNNnXJ2bjqnxd1s45zKbYi2UimEVy6sCZLv7WxTaHb7R7Ln
- PGxga0kwUMJ63cSz37pb5uwbpEaE1htF6B+tVs1VyErVztSaYpkkSOiDCE0rII7U9XWDmZ9pBIq
- fpc2PpSbon1PweNSEvYObmBy23aeJr2IHnYVybhvdLr69ne4om6Lhxl+g3JhSV+Wn9gtAHDj09c
- 4WxeHhqYf+dbzkTGiT7unMShub6YcOWZAjJ2bUsrfoxBMAAzlzeInpyYYNo/zzKr5Msz8q+An/q
- 9vf0aNjJIgtNPnfRPZ8uu5jSwJ8j+zKtpZLp6mw9yfLGgXh9csW8Dexj3id2gvUQYVxsf+SCCm3
- Cd9XA5mWYGJirdugQAkptq60yYsw+c3OdYxgyVxgdunIF+uT8X2dza7lPpJtaEJN3eZscDMk
-X-Proofpoint-GUID: VW0wlzBXTZoQ2reeV4X2roTyINuPXcwt
-X-Authority-Analysis: v=2.4 cv=KLdaDEFo c=1 sm=1 tr=0 ts=682b2111 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10
- a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=12gvMKcd2kyX8A_DGUMA:9
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: VW0wlzBXTZoQ2reeV4X2roTyINuPXcwt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-19_05,2025-05-16_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 spamscore=0
- phishscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0
- suspectscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505190115
 
-On Sat, May 17, 2025 at 3:33=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@oss.qualcomm.com> wrote:
->
-> On Fri, May 16, 2025 at 03:59:02PM +0530, Mrinmay Sarkar wrote:
-> > On Fri, May 16, 2025 at 2:30=E2=80=AFPM Konrad Dybcio
-> > <konrad.dybcio@oss.qualcomm.com> wrote:
-> > >
-> > > On 5/14/25 6:38 PM, neil.armstrong@linaro.org wrote:
-> > > > On 14/05/2025 13:37, Mrinmay Sarkar wrote:
-> > > >> From: Mrinmay Sarkar <mrinmay.sarkar@oss.qualcomm.com>
-> > > >>
-> > > >> The maximum link speed was previously restricted to Gen3 due to th=
-e
-> > > >> absence of Gen4 equalization support in the driver.
-> > > >>
-> > > >> Add change to remove max link speed property, Since Gen4 equalizat=
-ion
-> > > >> support has already been added into the driver.
-> > > >
-> > > > Which driver, PHY or Controller ?
-> > >
-> > > Controller, see
-> > >
-> > > 09483959e34d ("PCI: dwc: Add support for configuring lane equalizatio=
-n presets")
-> >
-> > Yes, this patch is helping to solve gen4 stability issue.
-> > >
-> > > and commits around it
-> > >
-> > > does this change depends on the patch 1 PHY settings update ?
-> > >
-> > > That I'm curious about too, but I would guesstimate no
-> > >
-> > this change doesn't depends on the patch 1 PHY settings update
->
-> Then what has changed, as previously it was documented to have stability
-> issues.
->
-Actually this controller change is solving the stability issue with
-gen4: "PCI: qcom: Add equalization settings for 16.0 GT/s"
-https://lore.kernel.org/linux-pci/20240911-pci-qcom-gen4-stability-v7-3-743=
-f5c1fd027@linaro.org/
-
-Thanks,
-Mrinmay
+> -----Original Message-----
+> From: Justin Lai <justinlai0215@realtek.com>
+> Sent: Friday, April 25, 2025 2:34 PM
+> To: kuba@kernel.org
+> Cc: davem@davemloft.net; edumazet@google.com; pabeni@redhat.com;
+> andrew+netdev@lunn.ch; linux-kernel@vger.kernel.org;
+> netdev@vger.kernel.org; horms@kernel.org; Ping-Ke Shih
+> <pkshih@realtek.com>; Larry Chiu <larry.chiu@realtek.com>; Justin Lai
+> <justinlai0215@realtek.com>; Joe Damato <jdamato@fastly.com>
+> Subject: [PATCH net-next v2] rtase: Use min() instead of min_t()
+>=20
+> Use min() instead of min_t() to avoid the possibility of casting to the
+> wrong type.
+>=20
+> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+> Reviewed-by: Joe Damato <jdamato@fastly.com>
+> ---
+> v1 -> v2:
+> - Remove the Fixes tag.
+> ---
+>  drivers/net/ethernet/realtek/rtase/rtase_main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> index 6251548d50ff..8c902eaeb5ec 100644
+> --- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> +++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> @@ -1983,7 +1983,7 @@ static u16 rtase_calc_time_mitigation(u32 time_us)
+>  	u8 msb, time_count, time_unit;
+>  	u16 int_miti;
+>=20
+> -	time_us =3D min_t(int, time_us, RTASE_MITI_MAX_TIME);
+> +	time_us =3D min(time_us, RTASE_MITI_MAX_TIME);
+>=20
+>  	msb =3D fls(time_us);
+>  	if (msb >=3D RTASE_MITI_COUNT_BIT_NUM) {
+> @@ -2005,7 +2005,7 @@ static u16 rtase_calc_packet_num_mitigation(u16
+> pkt_num)
+>  	u8 msb, pkt_num_count, pkt_num_unit;
+>  	u16 int_miti;
+>=20
+> -	pkt_num =3D min_t(int, pkt_num, RTASE_MITI_MAX_PKT_NUM);
+> +	pkt_num =3D min(pkt_num, RTASE_MITI_MAX_PKT_NUM);
+>=20
+>  	if (pkt_num > 60) {
+>  		pkt_num_unit =3D RTASE_MITI_MAX_PKT_NUM_IDX;
 > --
-> With best wishes
-> Dmitry
+> 2.34.1
+
+Hi reviewers,
+
+I apologize for the interruption, I would like to ask why this patch is
+rejected on patchwork.
+
+Justin
 
