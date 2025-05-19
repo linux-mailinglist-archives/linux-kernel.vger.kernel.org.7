@@ -1,348 +1,668 @@
-Return-Path: <linux-kernel+bounces-654140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E48ABC44C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:21:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A15EABC446
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 969101883972
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:20:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FC867A5D89
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C138328A3FA;
-	Mon, 19 May 2025 16:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4318F28934B;
+	Mon, 19 May 2025 16:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QL1YDF5F"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YmqO4Oa8"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0157E28A1E3
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5A8286D79
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747671462; cv=none; b=trRcoWEaSaF59Ko0opteniGoNpxh8E/wAgszC5uNS7l2GEtxozs2g1i98eXDmVBGPrOkSxhTbUl83ElywHutmpHk9MQKu7YdxPcPWu/zPbm3hrpLJaEfNj637mQ8vCVEJGYYaWQBZ4UUueauFwL9eiy9slsRVY6e4slihI9BJrY=
+	t=1747671445; cv=none; b=VE7LdVEpNYRldGponQlFX3u/YC1G2xMKtPMzFaKkWrmrdEGER/qFQ12zJDaSgi/81xC05FamsQXw/t4s8yEHHr1Oi2TdEtYsQx7xfdER0Itsi4MJ5NfZhKpdFEkLS8hTw00LotLxyhHfVaqyDmwLsocqNGgEey+XmqRL+02NmT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747671462; c=relaxed/simple;
-	bh=rHUxzB2Bwi+2jlKp4urPGDKcCylqhDAV9PHNICkE1AM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ebUKIRXbmJsu/t3DBfJ5CS3JxTrTu2jSnOz6r5Raci648zKO0JcJErWI8BEz3UIG86RD2u5wrXUltfgQ00MS5qlj5+B3/ovB5IZoK6UIUBADaQpBd1N9WQfXfHHXKidJDC1z5eBafLdkDboKytpKmExHwItiMVEOW69Uh+JQu8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QL1YDF5F; arc=none smtp.client-ip=209.85.128.73
+	s=arc-20240116; t=1747671445; c=relaxed/simple;
+	bh=Grx/nxWS7DPAeTUM7skjp3Lvq/Xtt87P+m9AM4q8rKE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KonVdGijkhCmKsrmeNfmyWFIYlppzir5Q/CAiVshWT/otUAgh8dXv0+pkmYVVeDpzo3Xl3+fmWgj18mZ62IuHoXRD9ikVlvjxQ0QrHu4+IBCZeMN1tU5jmQOBUJY0gsFotXzCerWBSvVSLdjK6kSHAs0kOUwKgReZBZm61TPC64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YmqO4Oa8; arc=none smtp.client-ip=209.85.166.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43d734da1a3so25195425e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:17:40 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3da76aea6d5so455465ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:17:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747671459; x=1748276259; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zRmZrCz4QpMiECwxwWyXnnAcIyfbi3oIrpsYNgBmqlI=;
-        b=QL1YDF5FRrVyQG5Mqn5MfgOfwsLL+ZL01joP1us5ZT8X7nMCzh+JCNji/cYMSUhu1a
-         XqMOs4RSeuxqkASbtkVFIAqyDzzSqZ4trkHIfmJ+KSGN80jsYZPxkUouoq3osUGfIb8k
-         C3ZX5S2UXrtoP6JzlzNsUGJp7WlLtaw9v08i2wfTgm8+gr+D2L/f0eIyBQ2aVfxkpb/L
-         xIRfh4Yltpnhc9k/QRLbukvTDSS3IEBSXQn/8urA0zuqY0WsIjPvB4wuu41ppipvRPpc
-         PyDLQULIHtDrM9DaxHBO+x7zCa0xkAIfNUjoQWY6mETBQLT7vRWqG5+ccpA1CUfb7MJD
-         Oy0Q==
+        d=google.com; s=20230601; t=1747671443; x=1748276243; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rins45p9wqlcxhKua7Kw7fUdA0oz0U8sEewToOoywgw=;
+        b=YmqO4Oa87w+sXN+BFh9sMQlIE8Qa+yReio7EALeO0c0hXFrojXGNDmwLB6O9gMWcQy
+         wSnDWoA7Uo1caPTVvau+9j7Ci8t9vTKxS+4Tu5YvigR6CB8DH7E9Lk/PqzVWTuJxOVmR
+         EyIjFPmLKTs17Fd0FFOWjpbID2LcBmThKsgSOv5wCOQht+yPQyOcSSTBvQeXJzxQwi1e
+         fTRPjRb3r2dDNS+Dy/86OjKMzCjCgzj1in1EZ1yV2IaXOdMHR0jbmZlnnDltsk/AltKD
+         KST5dmlJWZMfJJzzsF6Cm5JJTVGpotgYyJvRO0BjSfzx6uPIJdBaXLf0/JRHIvjFaL8Q
+         Rupw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747671459; x=1748276259;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zRmZrCz4QpMiECwxwWyXnnAcIyfbi3oIrpsYNgBmqlI=;
-        b=GEr/ejoh2xoY1Ui2Sw4+FYjwcjtOPq2NJ8IBCNZ0ynuQZPYxvhW7hkENNzGaYPtEAD
-         Wbo/rUwXez/WDFuyRsnbhCYPSjW55DwawMLOOsZi01tVyyI+YuSXDETc4+yhCOTParGd
-         u3x2jjaLxgVRiaMAMgjfnlu8lN27HeKgCGNNKE+df3rMp4w9mwr1Tnr4O/0gdrMbbE0z
-         GiizXwwbh17CCG4A0itV22nfjHw1+wa6Xv5TaJE6x0dZcNP+0vwztH7zrT+HohPzoqys
-         oQ82bQuVlSTroX1aXBMfGbymdnOnLmOI9YUodWCpHL1XAjny1sVok6X70Fwo+Iukfgdp
-         mXzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyEsLUaId0TSt6GCfWKbXCsLYVShEyFhUFYpChRA/ylp9aUTdn52UOoWHu/9+pAA7EeKkYailZfZ+6Vjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+lNOmbQLaANCk2aIKDnDoPai8TLHnIONn2jkGz2AEfKKhA6Y3
-	MqYSu4C8SmxjmFhtuQfhDP78wO5nY/AVo7DgNfBZ+9TPzebJOsVOvJ6kkEeJ/TNGGp1RxA==
-X-Google-Smtp-Source: AGHT+IFyBZQy4NfRKtT3XwWN6zobbmN0oZUd8mI/AD9F82y7coNWR9BSlEwIZv+kecL0Ld+zemnMy6w=
-X-Received: from wmdd3.prod.google.com ([2002:a05:600c:a203:b0:445:1cd2:5e5f])
- (user=bqe job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:a46:b0:442:dc6f:2f11
- with SMTP id 5b1f17b1804b1-442ff032533mr80126215e9.25.1747671459299; Mon, 19
- May 2025 09:17:39 -0700 (PDT)
-Date: Mon, 19 May 2025 16:17:05 +0000
-In-Reply-To: <20250519161712.2609395-1-bqe@google.com>
+        d=1e100.net; s=20230601; t=1747671443; x=1748276243;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rins45p9wqlcxhKua7Kw7fUdA0oz0U8sEewToOoywgw=;
+        b=TPMU4gXNsLGboYFz5G72zgRw5w7bhTebx4dV6ZUyp39949mWELYMtpjTWr4907s7kd
+         KUE/t2RoVT2FCC11m1qaNwjwktya806OwVopTg5MAqCpks+o92r+TAtXEkH+iPPE0gtQ
+         7eHb77l/99d/1zYNHTLAsFIuKEANdcQ28D9j9iMPkbX07NXdhXetpmaSGQ1ZfvVaGbsu
+         88Gl3yw6dDFTUrGWgaB/RbzJP6ewjzIZf51qrIJ5Hl+UPZod4Xaz4CB3WG4fOq1HGPoF
+         K8F5CoJ9JrabzbWhWlbMs4lm/8TYUx8bakoSzuxxYx/k0wJ3SlcF+6mw+ZU450uZbY+W
+         Ch2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVrLR+E6K1BZ46Pa6PbTTUTIc25nb7HU+VD8UwIrlGVV1tu6dHHzpCW1narC/Ufxah8n49Cg4bdrvHH5Ts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyBdvvNwdN9euH2SgK3Sz3cm36FD/KuQn/7rich0XwdtKvRMmZ
+	cr9RzlTfQoRrOvFEsSa4Xs6YM+CW7nGIBcUTjD3EyioQNWkcE3Pill75uDXqT0mTFlIT1RVDV6V
+	rWiEC13riLrNYiOIfJUneK+qO6j/GRKigE2ZPrW/w
+X-Gm-Gg: ASbGnctoB4aF83kpStQyV3DkWNTZoUKYFbG8s7NQBsHAuGbcDvSjUyIasIzgzbScX3X
+	DrJPmJAM/V8YF8RzUsgJAnt9kyYiH1JP/KbzQjm8FhzhWBChWHr7+FsgaMKs1mLY/6HJQhoeAt2
+	yJTCvNHLp5BW5TCC8XWdyk4ThKh7gJwCN5wBkA7wxfaa2jirL7vn275tK1cyTu/Q==
+X-Google-Smtp-Source: AGHT+IHfgu3bU5wgEqRylIasp6Gn3Vp9m3dEcqPHRlaCl3301MPDu9770XsmdX7g+hSJnKqrbj7c+3DrokG55MPdbBs=
+X-Received: by 2002:a05:6e02:180c:b0:3d9:36bd:8c59 with SMTP id
+ e9e14a558f8ab-3dc5e6150e2mr5486965ab.9.1747671442120; Mon, 19 May 2025
+ 09:17:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250519161712.2609395-1-bqe@google.com>
-X-Mailer: git-send-email 2.49.0.1101.gccaa498523-goog
-Message-ID: <20250519161712.2609395-6-bqe@google.com>
-Subject: [PATCH v8 5/5] rust: add dynamic ID pool abstraction for bitmap
-From: Burak Emir <bqe@google.com>
-To: Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>
-Cc: Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
+MIME-Version: 1.0
+References: <20250512210912.274362-1-thomas.falcon@intel.com>
+ <CAP-5=fWqMzqtvxaqz21z53U0jDOyTuH-X2op4kgs6KLa7Pr7Jw@mail.gmail.com> <466021998b86b3a139f0003178fd47d98c7f2684.camel@intel.com>
+In-Reply-To: <466021998b86b3a139f0003178fd47d98c7f2684.camel@intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 19 May 2025 09:17:10 -0700
+X-Gm-Features: AX0GCFsmieOcUL6adh4Ultb0ZpChHOuD5qQZEKoJVq43Xq67yyjNIQyZMMn5WvI
+Message-ID: <CAP-5=fVYsXqjbgoA_bxiWN1eX_ZwPEreSVFBLX-_0bwct9GThA@mail.gmail.com>
+Subject: Re: [PATCH] perf record: Usability enhancement for Auto Counter Reload
+To: "Falcon, Thomas" <thomas.falcon@intel.com>
+Cc: "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "acme@kernel.org" <acme@kernel.org>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "Hunter, Adrian" <adrian.hunter@intel.com>, 
+	"namhyung@kernel.org" <namhyung@kernel.org>, "jolsa@kernel.org" <jolsa@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is a port of the Binder data structure introduced in commit
-15d9da3f818c ("binder: use bitmap for faster descriptor lookup") to
-Rust.
+On Wed, May 14, 2025 at 11:05=E2=80=AFAM Falcon, Thomas <thomas.falcon@inte=
+l.com> wrote:
+>
+> On Tue, 2025-05-13 at 08:31 -0700, Ian Rogers wrote:
+> > On Mon, May 12, 2025 at 2:09=E2=80=AFPM Thomas Falcon <thomas.falcon@in=
+tel.com> wrote:
+> > >
+> > > The Auto Counter Reload (ACR)[1] feature is used to track the
+> > > relative rates of two or more perf events, only sampling
+> > > when a given threshold is exceeded. This helps reduce overhead
+> > > and unnecessary samples. However, enabling this feature
+> > > currently requires setting two parameters:
+> > >
+> > >  -- Event sampling period ("period")
+> > >  -- acr_mask, which determines which events get reloaded
+> > >     when the sample period is reached.
+> > >
+> > > For example, in the following command:
+> > >
+> > > perf record -e "{cpu_atom/branch-misses,period=3D200000,\
+> > > acr_mask=3D0x2/ppu,cpu_atom/branch-instructions,period=3D1000000,\
+> > > acr_mask=3D0x3/u}" -- ./mispredict
+> > >
+> > > The goal is to limit event sampling to cases when the
+> > > branch miss rate exceeds 20%. If the branch instructions
+> > > sample period is exceeded first, both events are reloaded.
+> > > If branch misses exceed their threshold first, only the
+> > > second counter is reloaded, and a sample is taken.
+> > >
+> > > To simplify this, provide a new =E2=80=9Cratio-to-prev=E2=80=9D event=
+ term
+> > > that works alongside the period event option or -c option.
+> > > This would allow users to specify the desired relative rate
+> > > between events as a ratio, making configuration more intuitive.
+> > >
+> > > With this enhancement, the equivalent command would be:
+> > >
+> > > perf record -e "{cpu_atom/branch-misses/ppu,\
+> > > cpu_atom/branch-instructions,period=3D1000000,ratio_to_prev=3D5/u}" \
+> > > -- ./mispredict
+> > >
+> > > or
+> > >
+> > > perf record -e "{cpu_atom/branch-misses/ppu,\
+> > > cpu_atom/branch-instructions,ratio-to-prev=3D5/u}" -c 1000000 \
+> > > -- ./mispredict
+> >
+> > Thanks Thomas. I'm wondering if ratio-to-prev should be a generic term
+> > such that periods can be set as a ratio of each on non-Intel?
+> >
+> > > [1] https://lore.kernel.org/lkml/20250327195217.2683619-1-kan.liang@l=
+inux.intel.com/
+> > >
+> > > Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
+> > >
+> > > ---
+> > >  tools/perf/Documentation/intel-acr.txt |  45 +++++++++++
+> > >  tools/perf/Documentation/perf-list.txt |   2 +
+> > >  tools/perf/arch/x86/util/evsel.c       | 100 +++++++++++++++++++++++=
++-
+> > >  tools/perf/util/evsel.c                |   2 +
+> > >  tools/perf/util/evsel_config.h         |   1 +
+> > >  tools/perf/util/parse-events.c         |  10 +++
+> > >  tools/perf/util/parse-events.h         |   3 +-
+> > >  tools/perf/util/parse-events.l         |   1 +
+> > >  tools/perf/util/pmu.c                  |   3 +-
+> > >  9 files changed, 164 insertions(+), 3 deletions(-)
+> > >  create mode 100644 tools/perf/Documentation/intel-acr.txt
+> > >
+> > > diff --git a/tools/perf/Documentation/intel-acr.txt b/tools/perf/Docu=
+mentation/intel-acr.txt
+> > > new file mode 100644
+> > > index 000000000000..db835c769e1c
+> > > --- /dev/null
+> > > +++ b/tools/perf/Documentation/intel-acr.txt
+> > > @@ -0,0 +1,45 @@
+> > > +Intel Auto Counter Reload Support
+> > > +---------------------------------
+> > > +Support for Intel Auto Counter Reload in perf tools
+> > > +
+> > > +Auto counter reload provides a means for software to specify to hard=
+ware
+> > > +that certain counters, if supported, should be automatically reloade=
+d
+> > > +upon overflow of chosen counters. By taking a sample only if the rat=
+e of
+> > > +one event exceeds some threshold relative to the rate of another eve=
+nt,
+> > > +this feature enables software to sample based on the relative rate o=
+f
+> > > +two or more events. To enable this, the user must provide a sample p=
+eriod
+> > > +term and a bitmask ("acr_mask") for each relevant event specifying t=
+he
+> > > +counters in an event group to reload if the event's specified sample
+> > > +period is exceeded.
+> > > +
+> > > +For example, if the user desires to measure a scenario when IPC > 2,
+> > > +the event group might look like the one below:
+> > > +
+> > > +       perf record -e {cpu_atom/instructions,period=3D200000,acr_mas=
+k=3D0x2/, \
+> > > +       cpu_atom/cycles,period=3D100000,acr_mask=3D0x3/} -- true
+> > > +
+> > > +In this case, if the "instructions" counter exceeds the sample perio=
+d of
+> > > +200000, the second counter, "cycles", will be reset and a sample wil=
+l be
+> > > +taken. If "cycles" is exceeded first, both counters in the group wil=
+l be
+> > > +reset. In this way, samples will only be taken for cases where IPC >=
+ 2.
+> >
+> > Could this definition include the meaning of acr_mask? I can see that
+> > the 2 periods create an IPC of 2, but I can't see why the acr_mask
+> > needs to be 2 and 3.
+>
+> Hi Ian, thanks for reviewing. I will include an explanation for the acr m=
+ask in a new version.
+>
+> >
+> > > +
+> > > +ratio-to-prev Event Term
+> > > +------------------------
+> > > +To simplify this, an event term "ratio-to-prev" is provided which is=
+ used
+> > > +alongside the sample period term n or the -c/--count option. This wo=
+uld
+> > > +allow users to specify the desired relative rate between events as a
+> > > +ratio.
+> >
+> > Should there be an opposite ratio-to-next?
+> >
+> > > +
+> > > +The command above would then become
+> > > +
+> > > +       perf record -e {cpu_atom/instructions/, \
+> > > +       cpu_atom/cycles,period=3D100000,ratio-to-prev=3D0.5/} -- true
+> > > +
+> > > +ratio-to-prev is the ratio of the event using the term relative
+> > > +to the previous event in the group, which will always be 1,
+> > > +for a 1:0.5 or 2:1 ratio.
+> > > +
+> > > +To sample for IPC < 2 for example, the events need to be reordered:
+> > > +
+> > > +       perf record -e {cpu_atom/cycles/, \
+> > > +       cpu_atom/instructions,period=3D200000,ratio-to-prev=3D2.0/} -=
+- true
+> >
+> > We allow "software" events in groups with hardware events. The current
+> > list of software events is in perf_pmu__is_software and contains a few
+> > surprises like "msr":
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
+t.git/tree/tools/perf/util/pmu.c?h=3Dperf-tools-next#n2134
+> > presumably ratio-to-prev should apply to the previous event in the
+> > list that is on the same PMU?
+>
+> Yes, that's right.
+>
+> >
+> > > diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Docu=
+mentation/perf-list.txt
+> > > index 8914f12d2b85..ba809fa1e8c6 100644
+> > > --- a/tools/perf/Documentation/perf-list.txt
+> > > +++ b/tools/perf/Documentation/perf-list.txt
+> > > @@ -376,6 +376,8 @@ Support raw format:
+> > >  . '--raw-dump [hw|sw|cache|tracepoint|pmu|event_glob]', shows the ra=
+w-dump of
+> > >    a certain kind of events.
+> > >
+> > > +include::intel-acr.txt[]
+> > > +
+> > >  SEE ALSO
+> > >  --------
+> > >  linkperf:perf-stat[1], linkperf:perf-top[1],
+> > > diff --git a/tools/perf/arch/x86/util/evsel.c b/tools/perf/arch/x86/u=
+til/evsel.c
+> > > index 3dd29ba2c23b..b93dbbed2c8e 100644
+> > > --- a/tools/perf/arch/x86/util/evsel.c
+> > > +++ b/tools/perf/arch/x86/util/evsel.c
+> > > @@ -1,7 +1,9 @@
+> > >  // SPDX-License-Identifier: GPL-2.0
+> > >  #include <stdio.h>
+> > >  #include <stdlib.h>
+> > > +#include "util/evlist.h"
+> > >  #include "util/evsel.h"
+> > > +#include "util/evsel_config.h"
+> > >  #include "util/env.h"
+> > >  #include "util/pmu.h"
+> > >  #include "util/pmus.h"
+> > > @@ -89,6 +91,97 @@ int arch_evsel__hw_name(struct evsel *evsel, char =
+*bf, size_t size)
+> > >                          event_name);
+> > >  }
+> > >
+> > > +static void evsel__apply_ratio_to_prev(struct evsel *evsel,
+> > > +                               struct perf_event_attr *attr,
+> > > +                               const char *buf)
+> > > +{
+> > > +       struct perf_event_attr *prev_attr =3D NULL;
+> > > +       struct evsel *evsel_prev =3D NULL;
+> > > +       struct evsel *leader =3D evsel__leader(evsel);
+> > > +       struct evsel *pos;
+> > > +       const char *name =3D "acr_mask";
+> > > +       int evsel_idx =3D 0;
+> > > +       __u64 ev_mask, pr_ev_mask;
+> > > +       double rtp;
+> > > +
+> > > +       rtp =3D strtod(buf, NULL);
+> > > +       if (rtp <=3D 0) {
+> > > +               pr_err("Invalid ratio-to-prev value %lf\n", rtp);
+> >
+> > It would be nice to fail this early during parsing so that we can
+> > identify the part of the parse string that is invalid. I'm guessing it
+> > is this way because the parse_events__term_val_type are either an
+> > integer or a string.
+>
+> Thanks, that does sound better. I'll look into that for v2.
+>
+> >
+> > > +               return;
+> > > +       }
+> > > +       if (evsel =3D=3D evsel__leader(evsel)) {
+> > > +               pr_err("Invalid use of ratio-to-prev term without pre=
+ceding element in group\n");
+> >
+> > I'm wondering how we can prevent this happening due to event
+> > reordering in parse_events__sort_events_and_fix_groups:
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
+t.git/tree/tools/perf/util/parse-events.c?h=3Dperf-tools-next#n2095
+> >
+>
+> Is there a way for a user to force a specific event order? Or avoid event=
+ reordering?
 
-Like drivers/android/dbitmap.h, the ID pool abstraction lets
-clients acquire and release IDs. The implementation uses a bitmap to
-know what IDs are in use, and gives clients fine-grained control over
-the time of allocation. This fine-grained control is needed in the
-Android Binder. We provide an example that release a spinlock for
-allocation and unit tests (rustdoc examples).
+Sorry for the delay in replying to this, There isn't a way to avoid
+event reordering in part as it is a property of how the parsing works.
+I can give a bit of a back story on why there is event reordering.
+Initially events were reordered for uncore PMUs. On my alderlake I
+have uncore_imc_free_running_0 and uncore_imc_free_running_1 and they
+have the events data_read and data_write. If I grouped the events
+like:
+```
+$ perf stat -e '{data_read,data_write}' -a sleep 1
+```
+then at parse time the evlist will be
+{uncore_imc_0/data_read/,uncore_imc_1/data_read/,uncore_imc_0/data_write/,u=
+ncore_imc_1/data_write/}.
+It isn't allowed to have events for different PMUs within the same
+group, and we also want to group the uncore_imc_0/data_write/ event
+with the uncore_imc_0/data_read/ event (and similarly for
+uncore_imc_1). There was previous logic that I rewrote as
+parse_events__sort_events_and_fix_groups that fixed issues like
+software events, but I also used it to fix the perf metric events. The
+perf metric events on performance cores require the slots event to
+come first and to be in a group with it. For metrics we pretty much
+grab events in the order they are in the metric and then try to
+program them in a group. There were proposals to provide an event
+order with metrics so they could be programmed properly somehow, but
+then what about uncore, etc. What we have is messy, but the messiness
+comes about from perf metric events and uncore, it somewhat works well
+for metrics as they needn't worry at all about event order and
+grouping.
 
-The implementation is not aware that the underlying Bitmap abstraction
-handles lengths below BITS_PER_LONG without allocation.
+Thanks,
+Ian
 
-Suggested-by: Alice Ryhl <aliceryhl@google.com>
-Suggested-by: Yury Norov <yury.norov@gmail.com>
-Signed-off-by: Burak Emir <bqe@google.com>
----
- MAINTAINERS            |   1 +
- rust/kernel/id_pool.rs | 201 +++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs     |   1 +
- 3 files changed, 203 insertions(+)
- create mode 100644 rust/kernel/id_pool.rs
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 943d85ed1876..bc95d98f266b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4134,6 +4134,7 @@ R:	Yury Norov <yury.norov@gmail.com>
- S:	Maintained
- F:	lib/find_bit_benchmark_rust.rs
- F:	rust/kernel/bitmap.rs
-+F:	rust/kernel/id_pool.rs
- 
- BITOPS API
- M:	Yury Norov <yury.norov@gmail.com>
-diff --git a/rust/kernel/id_pool.rs b/rust/kernel/id_pool.rs
-new file mode 100644
-index 000000000000..8f07526bb580
---- /dev/null
-+++ b/rust/kernel/id_pool.rs
-@@ -0,0 +1,201 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+// Copyright (C) 2025 Google LLC.
-+
-+//! Rust API for an ID pool backed by a `Bitmap`.
-+
-+use crate::alloc::{AllocError, Flags};
-+use crate::bitmap::Bitmap;
-+
-+/// Represents a dynamic ID pool backed by a `Bitmap`.
-+///
-+/// Clients acquire and release IDs from zero bits in a bitmap.
-+///
-+/// The ID pool can grow or shrink as needed. It has been designed
-+/// to support the scenario where users need to control the time
-+/// of allocation of a new backing bitmap, which may require release
-+/// of locks.
-+/// These operations then, are verified to determine if the grow or
-+/// shrink is sill valid.
-+///
-+/// # Examples
-+///
-+/// Basic usage
-+///
-+/// ```
-+/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+/// use kernel::id_pool::IdPool;
-+///
-+/// let mut pool = IdPool::new(64, GFP_KERNEL)?;
-+/// for i in 0..64 {
-+///   assert_eq!(i, pool.acquire_next_id(i).ok_or(ENOSPC)?);
-+/// }
-+///
-+/// pool.release_id(23);
-+/// assert_eq!(23, pool.acquire_next_id(0).ok_or(ENOSPC)?);
-+///
-+/// assert_eq!(None, pool.acquire_next_id(0));  // time to realloc.
-+/// let resizer = pool.grow_alloc().alloc(GFP_KERNEL)?;
-+/// pool.grow(resizer);
-+///
-+/// assert_eq!(pool.acquire_next_id(0), Some(64));
-+/// # Ok::<(), Error>(())
-+/// ```
-+///
-+/// Releasing spinlock to grow the pool
-+///
-+/// ```no_run
-+/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+/// use kernel::sync::{new_spinlock, SpinLock};
-+/// use kernel::id_pool::IdPool;
-+///
-+/// fn get_id_maybe_alloc(guarded_pool: &SpinLock<IdPool>) -> Result<usize, AllocError> {
-+///   let mut pool = guarded_pool.lock();
-+///   loop {
-+///     match pool.acquire_next_id(0) {
-+///       Some(index) => return Ok(index),
-+///       None => {
-+///         let alloc_request = pool.grow_alloc();
-+///         drop(pool);
-+///         let resizer = alloc_request.alloc(GFP_KERNEL)?;
-+///         pool = guarded_pool.lock();
-+///         pool.grow(resizer)
-+///       }
-+///     }
-+///   }
-+/// }
-+/// ```
-+pub struct IdPool {
-+    map: Bitmap,
-+}
-+
-+/// Returned when the `IdPool` should change size.
-+pub struct AllocRequest {
-+    nbits: usize,
-+}
-+
-+/// Contains an allocated `Bitmap` for resizing `IdPool`.
-+pub struct PoolResizer {
-+    new: Bitmap,
-+}
-+
-+impl AllocRequest {
-+    /// Allocates a new `Bitmap` for `IdPool`.
-+    pub fn alloc(&self, flags: Flags) -> Result<PoolResizer, AllocError> {
-+        let new = Bitmap::new(self.nbits, flags)?;
-+        Ok(PoolResizer { new })
-+    }
-+}
-+
-+impl IdPool {
-+    /// Constructs a new `[IdPool]`.
-+    #[inline]
-+    pub fn new(nbits: usize, flags: Flags) -> Result<Self, AllocError> {
-+        let map = Bitmap::new(nbits, flags)?;
-+        Ok(Self { map })
-+    }
-+
-+    /// Returns how many IDs this pool can currently have.
-+    #[inline]
-+    pub fn len(&self) -> usize {
-+        self.map.len()
-+    }
-+
-+    /// Returns an [`AllocRequest`] if the [`IdPool`] can be shrunk, [`None`] otherwise.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+    /// use kernel::id_pool::{AllocRequest, IdPool};
-+    ///
-+    /// let mut pool = IdPool::new(1024, GFP_KERNEL)?;
-+    /// let alloc_request = pool.shrink_alloc().ok_or(AllocError)?;
-+    /// let resizer = alloc_request.alloc(GFP_KERNEL)?;
-+    /// pool.shrink(resizer);
-+    /// assert_eq!(pool.len(), kernel::bindings::BITS_PER_LONG as usize);
-+    /// # Ok::<(), AllocError>(())
-+    /// ```
-+    #[inline]
-+    pub fn shrink_alloc(&self) -> Option<AllocRequest> {
-+        let len = self.map.len();
-+        if len <= bindings::BITS_PER_LONG as usize {
-+            return None;
-+        }
-+        /*
-+         * Determine if the bitmap can shrink based on the position of
-+         * its last set bit. If the bit is within the first quarter of
-+         * the bitmap then shrinking is possible. In this case, the
-+         * bitmap should shrink to half its current size.
-+         */
-+        match self.map.last_bit() {
-+            Some(bit) => {
-+                if bit < (len >> 2) {
-+                    Some(AllocRequest { nbits: len >> 1 })
-+                } else {
-+                    None
-+                }
-+            }
-+            None => Some(AllocRequest {
-+                nbits: bindings::BITS_PER_LONG as usize,
-+            }),
-+        }
-+    }
-+
-+    /// Shrinks pool by using a new `Bitmap`, if still possible.
-+    #[inline]
-+    pub fn shrink(&mut self, mut resizer: PoolResizer) {
-+        // Verify that shrinking is still possible. The `resizer`
-+        // bitmap might have been allocated without locks, so this call
-+        // could now be outdated. In this case, drop `resizer` and move on.
-+        if let Some(AllocRequest { nbits }) = self.shrink_alloc() {
-+            if nbits <= resizer.new.len() {
-+                resizer.new.copy_and_extend(&self.map);
-+                self.map = resizer.new;
-+                return;
-+            }
-+        }
-+    }
-+
-+    /// Returns an `AllocRequest` for growing this `IdPool`.
-+    #[inline]
-+    pub fn grow_alloc(&self) -> AllocRequest {
-+        AllocRequest {
-+            nbits: self.map.len() << 1,
-+        }
-+    }
-+
-+    /// Grows pool by using a new `Bitmap`, if still necessary.
-+    #[inline]
-+    pub fn grow(&mut self, mut resizer: PoolResizer) {
-+        // `resizer` bitmap might have been allocated without locks,
-+        // so this call could now be outdated. In this case, drop
-+        // `resizer` and move on.
-+        if resizer.new.len() <= self.map.len() {
-+            return;
-+        }
-+
-+        resizer.new.copy_and_extend(&self.map);
-+        self.map = resizer.new;
-+    }
-+
-+    /// Acquires a new ID by finding and setting the next zero bit in the
-+    /// bitmap. Upon success, returns its index. Otherwise, returns `None`
-+    /// to indicate that a `grow_alloc` is needed.
-+    #[inline]
-+    pub fn acquire_next_id(&mut self, offset: usize) -> Option<usize> {
-+        match self.map.next_zero_bit(offset) {
-+            res @ Some(nr) => {
-+                self.map.set_bit(nr);
-+                res
-+            }
-+            None => None,
-+        }
-+    }
-+
-+    /// Releases an ID.
-+    #[inline]
-+    pub fn release_id(&mut self, id: usize) {
-+        self.map.clear_bit(id);
-+    }
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 8c4161cd82ac..d7def807900a 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -54,6 +54,7 @@
- #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
- pub mod firmware;
- pub mod fs;
-+pub mod id_pool;
- pub mod init;
- pub mod io;
- pub mod ioctl;
--- 
-2.49.0.1101.gccaa498523-goog
-
+> > > +               return;
+> > > +       }
+> > > +       if (!evsel->pmu->is_core) {
+> > > +               pr_err("Event using ratio-to-prev term must have a co=
+re PMU\n");
+> >
+> > Would a stronger test here be the same PMU?
+>
+> The previous check should make sure that the events are in the same group=
+, which implies that they
+> are either from the same PMU or a SW event. This check then covers the SW=
+ event and non-core PMU
+> case.
+>
+> >
+> > > +               return;
+> > > +       }
+> > > +       if (!perf_pmu__has_format(evsel->pmu, name)) {
+> > > +               pr_err("'%s' does not have acr_mask format support\n"=
+, evsel->pmu->name);
+> > > +               return;
+> > > +       }
+> > > +       if (perf_pmu__format_type(evsel->pmu, name) !=3D
+> > > +                       PERF_PMU_FORMAT_VALUE_CONFIG2) {
+> > > +               pr_err("'%s' does not have acr_mask format support\n"=
+, evsel->pmu->name);
+> >
+> > I wonder if the acr_mask support could be in an
+> > arch_evsel__apply_ratio_to_prev and the non-acr_mask stuff be generic?
+> > If nothing else this would aid testing.
+> >
+> > > +               return;
+> > > +       }
+> > > +       if (attr->freq) {
+> > > +               pr_err("Event period term or count (-c) must be set w=
+hen using ratio-to-prev term.\n");
+> > > +               return;
+> > > +       }
+> > > +
+> > > +       evsel_prev =3D evsel__prev(evsel);
+> > > +       if (!evsel_prev) {
+> > > +               pr_err("Previous event does not exist.\n");
+> > > +               return;
+> > > +       }
+> > > +
+> > > +       prev_attr =3D &evsel_prev->core.attr;
+> > > +
+> > > +       prev_attr->sample_period =3D (__u64)(attr->sample_period / rt=
+p);
+> > > +       prev_attr->freq =3D 0;
+> > > +       evsel__reset_sample_bit(evsel_prev, PERIOD);
+> > > +
+> > > +       for_each_group_evsel(pos, leader) {
+> > > +               if (pos =3D=3D evsel)
+> > > +                       break;
+> > > +               evsel_idx++;
+> > > +       }
+> > > +
+> > > +       /*
+> > > +        * acr_mask (config2) is calculated using the event's index i=
+n
+> > > +        * the event group. The first event will use the index of the
+> > > +        * second event as its mask (e.g., 0x2), indicating that the
+> > > +        * second event counter will be reset and a sample taken for
+> > > +        * the first event if its counter overflows. The second event
+> > > +        * will use the mask consisting of the first and second bits
+> > > +        * (e.g., 0x3), meaning both counters will be reset if the
+> > > +        * second event counter overflows.
+> > > +        */
+> > > +
+> > > +       ev_mask =3D 1ull << evsel_idx;
+> > > +       pr_ev_mask =3D 1ull << (evsel_idx - 1);
+> > > +
+> > > +       prev_attr->config2 =3D ev_mask;
+> > > +       attr->config2 =3D ev_mask | pr_ev_mask;
+> > > +}
+> > > +
+> > > +static void intel__post_evsel_config(struct evsel *evsel,
+> > > +                             struct perf_event_attr *attr)
+> > > +{
+> > > +       struct evsel_config_term *term;
+> > > +       struct list_head *config_terms =3D &evsel->config_terms;
+> > > +       const char *rtp_buf =3D NULL;
+> > > +
+> > > +       list_for_each_entry(term, config_terms, list) {
+> > > +               if (term->type =3D=3D EVSEL__CONFIG_TERM_RATIO_TO_PRE=
+V) {
+> > > +                       rtp_buf =3D term->val.str;
+> > > +                       evsel__apply_ratio_to_prev(evsel, attr, rtp_b=
+uf);
+> > > +               }
+> > > +       }
+> > > +}
+> > > +
+> > >  static void ibs_l3miss_warn(void)
+> > >  {
+> > >         pr_warning(
+> > > @@ -101,7 +194,12 @@ void arch__post_evsel_config(struct evsel *evsel=
+, struct perf_event_attr *attr)
+> > >         struct perf_pmu *evsel_pmu, *ibs_fetch_pmu, *ibs_op_pmu;
+> > >         static int warned_once;
+> > >
+> > > -       if (warned_once || !x86__is_amd_cpu())
+> > > +       if (!x86__is_amd_cpu()) {
+> > > +               intel__post_evsel_config(evsel, attr);
+> > > +               return;
+> > > +       }
+> > > +
+> > > +       if (warned_once)
+> > >                 return;
+> > >
+> > >         evsel_pmu =3D evsel__find_pmu(evsel);
+> > > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> > > index b60461e16804..5028232afeb7 100644
+> > > --- a/tools/perf/util/evsel.c
+> > > +++ b/tools/perf/util/evsel.c
+> > > @@ -1189,6 +1189,8 @@ static void evsel__apply_config_terms(struct ev=
+sel *evsel,
+> > >                         break;
+> > >                 case EVSEL__CONFIG_TERM_CFG_CHG:
+> > >                         break;
+> > > +               case EVSEL__CONFIG_TERM_RATIO_TO_PREV:
+> > > +                       break;
+> > >                 default:
+> > >                         break;
+> > >                 }
+> > > diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel_c=
+onfig.h
+> > > index af52a1516d0b..26c69d9ce788 100644
+> > > --- a/tools/perf/util/evsel_config.h
+> > > +++ b/tools/perf/util/evsel_config.h
+> > > @@ -28,6 +28,7 @@ enum evsel_term_type {
+> > >         EVSEL__CONFIG_TERM_AUX_ACTION,
+> > >         EVSEL__CONFIG_TERM_AUX_SAMPLE_SIZE,
+> > >         EVSEL__CONFIG_TERM_CFG_CHG,
+> > > +       EVSEL__CONFIG_TERM_RATIO_TO_PREV,
+> > >  };
+> > >
+> > >  struct evsel_config_term {
+> > > diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-e=
+vents.c
+> > > index 7297ca3a4eec..4ea8d4ffabdb 100644
+> > > --- a/tools/perf/util/parse-events.c
+> > > +++ b/tools/perf/util/parse-events.c
+> > > @@ -806,6 +806,7 @@ const char *parse_events__term_type_str(enum pars=
+e_events__term_type term_type)
+> > >                 [PARSE_EVENTS__TERM_TYPE_RAW]                   =3D "=
+raw",
+> > >                 [PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE]          =3D "=
+legacy-cache",
+> > >                 [PARSE_EVENTS__TERM_TYPE_HARDWARE]              =3D "=
+hardware",
+> > > +               [PARSE_EVENTS__TERM_TYPE_RATIO_TO_PREV]         =3D "=
+ratio-to-prev",
+> > >         };
+> > >         if ((unsigned int)term_type >=3D __PARSE_EVENTS__TERM_TYPE_NR=
+)
+> > >                 return "unknown term";
+> > > @@ -855,6 +856,7 @@ config_term_avail(enum parse_events__term_type te=
+rm_type, struct parse_events_er
+> > >         case PARSE_EVENTS__TERM_TYPE_RAW:
+> > >         case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+> > >         case PARSE_EVENTS__TERM_TYPE_HARDWARE:
+> > > +       case PARSE_EVENTS__TERM_TYPE_RATIO_TO_PREV:
+> > >         default:
+> > >                 if (!err)
+> > >                         return false;
+> > > @@ -982,6 +984,9 @@ do {                                             =
+                              \
+> > >                         return -EINVAL;
+> > >                 }
+> > >                 break;
+> > > +       case PARSE_EVENTS__TERM_TYPE_RATIO_TO_PREV:
+> > > +               CHECK_TYPE_VAL(STR);
+> > > +               break;
+> > >         case PARSE_EVENTS__TERM_TYPE_DRV_CFG:
+> > >         case PARSE_EVENTS__TERM_TYPE_USER:
+> > >         case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+> > > @@ -1109,6 +1114,7 @@ static int config_term_tracepoint(struct perf_e=
+vent_attr *attr,
+> > >         case PARSE_EVENTS__TERM_TYPE_RAW:
+> > >         case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+> > >         case PARSE_EVENTS__TERM_TYPE_HARDWARE:
+> > > +       case PARSE_EVENTS__TERM_TYPE_RATIO_TO_PREV:
+> > >         default:
+> > >                 if (err) {
+> > >                         parse_events_error__handle(err, term->err_ter=
+m,
+> > > @@ -1233,6 +1239,9 @@ do {                                           =
+                   \
+> > >                         ADD_CONFIG_TERM_VAL(AUX_SAMPLE_SIZE, aux_samp=
+le_size,
+> > >                                             term->val.num, term->weak=
+);
+> > >                         break;
+> > > +               case PARSE_EVENTS__TERM_TYPE_RATIO_TO_PREV:
+> > > +                       ADD_CONFIG_TERM_STR(RATIO_TO_PREV, term->val.=
+str, term->weak);
+> > > +                       break;
+> > >                 case PARSE_EVENTS__TERM_TYPE_USER:
+> > >                 case PARSE_EVENTS__TERM_TYPE_CONFIG:
+> > >                 case PARSE_EVENTS__TERM_TYPE_CONFIG1:
+> > > @@ -1297,6 +1306,7 @@ static int get_config_chgs(struct perf_pmu *pmu=
+, struct parse_events_terms *head
+> > >                 case PARSE_EVENTS__TERM_TYPE_RAW:
+> > >                 case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+> > >                 case PARSE_EVENTS__TERM_TYPE_HARDWARE:
+> > > +               case PARSE_EVENTS__TERM_TYPE_RATIO_TO_PREV:
+> > >                 default:
+> > >                         break;
+> > >                 }
+> > > diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-e=
+vents.h
+> > > index e176a34ab088..a9de95dd337a 100644
+> > > --- a/tools/perf/util/parse-events.h
+> > > +++ b/tools/perf/util/parse-events.h
+> > > @@ -80,7 +80,8 @@ enum parse_events__term_type {
+> > >         PARSE_EVENTS__TERM_TYPE_RAW,
+> > >         PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE,
+> > >         PARSE_EVENTS__TERM_TYPE_HARDWARE,
+> > > -#define        __PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE=
+_HARDWARE + 1)
+> > > +       PARSE_EVENTS__TERM_TYPE_RATIO_TO_PREV,
+> > > +#define        __PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE=
+_RATIO_TO_PREV + 1)
+> > >  };
+> > >
+> > >  struct parse_events_term {
+> > > diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-e=
+vents.l
+> > > index 7ed86e3e34e3..49fe1811fe68 100644
+> > > --- a/tools/perf/util/parse-events.l
+> > > +++ b/tools/perf/util/parse-events.l
+> > > @@ -335,6 +335,7 @@ aux-output          { return term(yyscanner, PARS=
+E_EVENTS__TERM_TYPE_AUX_OUTPUT); }
+> > >  aux-action             { return term(yyscanner, PARSE_EVENTS__TERM_T=
+YPE_AUX_ACTION); }
+> > >  aux-sample-size                { return term(yyscanner, PARSE_EVENTS=
+__TERM_TYPE_AUX_SAMPLE_SIZE); }
+> > >  metric-id              { return term(yyscanner, PARSE_EVENTS__TERM_T=
+YPE_METRIC_ID); }
+> > > +ratio-to-prev          { return term(yyscanner, PARSE_EVENTS__TERM_T=
+YPE_RATIO_TO_PREV); }
+> > >  cpu-cycles|cycles                              { return hw_term(yysc=
+anner, PERF_COUNT_HW_CPU_CYCLES); }
+> > >  stalled-cycles-frontend|idle-cycles-frontend   { return hw_term(yysc=
+anner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
+> > >  stalled-cycles-backend|idle-cycles-backend     { return hw_term(yysc=
+anner, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
+> > > diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+> > > index d08972aa461c..8b5b5a6adb29 100644
+> > > --- a/tools/perf/util/pmu.c
+> > > +++ b/tools/perf/util/pmu.c
+> > > @@ -1470,7 +1470,7 @@ static int pmu_config_term(const struct perf_pm=
+u *pmu,
+> > >                         break;
+> > >                 case PARSE_EVENTS__TERM_TYPE_USER: /* Not hardcoded. =
+*/
+> > >                         return -EINVAL;
+> > > -               case PARSE_EVENTS__TERM_TYPE_NAME ... PARSE_EVENTS__T=
+ERM_TYPE_HARDWARE:
+> > > +               case PARSE_EVENTS__TERM_TYPE_NAME ... PARSE_EVENTS__T=
+ERM_TYPE_RATIO_TO_PREV:
+> > >                         /* Skip non-config terms. */
+> > >                         break;
+> > >                 default:
+> > > @@ -1852,6 +1852,7 @@ int perf_pmu__for_each_format(struct perf_pmu *=
+pmu, void *state, pmu_format_call
+> > >                 "aux-output",
+> > >                 "aux-action=3D(pause|resume|start-paused)",
+> > >                 "aux-sample-size=3Dnumber",
+> > > +               "ratio-to-prev=3Dstring",
+> > >         };
+> > >         struct perf_pmu_format *format;
+> > >         int ret;
+> >
+> > Some places I think testing can be added are:
+> > * The event parsing test:
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
+t.git/tree/tools/perf/tests/parse-events.c?h=3Dperf-tools-next#n2143
+> > * The perf record test:
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
+t.git/tree/tools/perf/tests/shell/record.sh?h=3Dperf-tools-next
+> >
+>
+> Thanks, I'll look into adding more testing here.
+>
+> > I wonder for if acr_mask is present (or ratio-to-prev) then
+> > arch_evsel__must_be_in_group should return true:
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
+t.git/tree/tools/perf/arch/x86/util/evsel.c?h=3Dperf-tools-next#n63
+> > this is used to force topdown events into groups, so perhaps we can do
+> > similar forcing and make the use of the {} for the group optional (or
+> > fixed by the tool).
+>
+> Thanks, this might be an answer to my previous question.
+>
+> Thanks, Tom
+> >
+> > Thanks,
+> > Ian
+> >
+> > > --
+> > > 2.48.1
+> > >
+>
 
