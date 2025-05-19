@@ -1,164 +1,139 @@
-Return-Path: <linux-kernel+bounces-653715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31594ABBD56
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:07:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6FDABBD5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06CD93B893D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:06:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7606917C8C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81AF27703E;
-	Mon, 19 May 2025 12:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08AF7276054;
+	Mon, 19 May 2025 12:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JdCRGhaE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dKgPAbYx"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99371276047;
-	Mon, 19 May 2025 12:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB992750EB
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 12:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747656416; cv=none; b=Rxkt7+GpikLW601PhuNzQ959HzqtiyFfmegKl1fvezkJ1fM5UJJwxMi/X5l8j0pMKxBLGfNq9rtxpsj6ChUe3lGeUIXidP9DFbsSFmj+I6a2ZQt7PXqCNpFcEc7Hrawy0KBZwAzQVD65XU13nm+II8B4QAIuaurNW4YCkYL+8rQ=
+	t=1747656609; cv=none; b=nzqA2d6JvZ1l2zQNtic1BPW6GDsV6X2ARfdAVco0AkhUX/aZuJS/AmYQ1eDp6ls9KLjEiNYjhIOEWZdLFqACgGl0ANgTh6ZByysLWtU0+xcOMkx1eLRnVDv870CRpMjR9Bm2Aom3u32hSEgf65IrP8Ym51N0y5JzXQe93oVLLoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747656416; c=relaxed/simple;
-	bh=X9JYOmBZRRIrcEoIxM35PaaiyYlkP8TFD/KMSQVTS0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nSJxyhKj4UczyZvSOeKuVvQgQPmZXzcRdS+K5mmN4V3lKKpHKLl2QIC0VCxvRfNERQqv6EAMl9oHZpdjD6xM2PTG2g73XsspcdvXop+/WH0KCZoGW4N9WZDwbOTnRPtX4m4lYCidGM2SM+dwHTPB2GNP60c9zaoi1xURvfeFZTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JdCRGhaE; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747656415; x=1779192415;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=X9JYOmBZRRIrcEoIxM35PaaiyYlkP8TFD/KMSQVTS0U=;
-  b=JdCRGhaEn+qI5doIMAOdkK0za+kEkIfrP8JdhCuUHib+5Zy1cJhOLby0
-   gtnGpWi68AnCrpxljfa3tGYGIF6LvWDc87kmR9j+8xoLUbc7jDalbXFHW
-   QsHe1k6dWhj4xmgheqLsboyUME2sDZ6bwymPNUIGq6ThSds2CrEuuBpOj
-   cDGImTriG7+F4UVsOOdSOHo05afZRfYHejrP5mypqeyb3gsMenT6Qim4L
-   j7nAOoMDr520kZ81eN/KLsF9D0yAxdpcL8GBDbzHsSM7hMB4vc57N2OOa
-   wW/zBoAvwvv2Ii4vWueLeWTvPCOupbvrJH2E33X9phy8kmoUSZ6vkh2Kk
-   g==;
-X-CSE-ConnectionGUID: Y8/IPI4FQa2Sc3Pzp539bA==
-X-CSE-MsgGUID: C2t87Q/vSEGvo4wlFQyPTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="53225182"
-X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
-   d="scan'208";a="53225182"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 05:06:54 -0700
-X-CSE-ConnectionGUID: WMsdqKWhTEWrSxf4sLI6yQ==
-X-CSE-MsgGUID: iTaMPZPKSmWRJ7+uxsle8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
-   d="scan'208";a="144112208"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 05:06:38 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uGzGL-000000031iT-3wdP;
-	Mon, 19 May 2025 15:06:33 +0300
-Date: Mon, 19 May 2025 15:06:33 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 05/26] bus: simple-pm-bus: Populate child nodes at
- probe
-Message-ID: <aCseyW1iZgZNZNqd@smile.fi.intel.com>
-References: <20250507071315.394857-1-herve.codina@bootlin.com>
- <20250507071315.394857-6-herve.codina@bootlin.com>
- <aBy_aBkC7NpicXho@smile.fi.intel.com>
- <20250519135818.01db3341@bootlin.com>
+	s=arc-20240116; t=1747656609; c=relaxed/simple;
+	bh=x5MdkypAjAqC6VVdaSVvm9ZhVBug5otYm1hx1SGsbBs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MrBBX1F1iy1u3T1oAV6RyDKRDQImHatuH2XFZUEe5z8GPb3yiHP+g/V4tVPogjiw5JqWoXcy6EVg/58TKD2NKx3R9mlPdFacbT6Rx88o64nSU46YyabgWi/cm696ODekAvTLLJ3FclXEYi+NOIvjyq1NJlB+3teI9pqdboMDnAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dKgPAbYx; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e7c5d4709caso780306276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 05:10:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747656606; x=1748261406; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Ujcjzl2OsuY9ii/H7l8DqEgEiJqH4rk4ZJIB8igbgM=;
+        b=dKgPAbYxMpPfPF5XbaZlJc1plGmb9UJ13h8aDCpjairyrABw3vm4yx/9feBhFwtCic
+         Z13oUG0vvCkCPfLRMj3c4deDiwPDvgKn/oFrISkFXM7EmdI44btu3R/jPR92Udh48sHP
+         1CbrwAvki+LpIZsyZYkj5ScY/eQLvyzyoTSJN8s8NBlXv3wTUERfj8Quzr/fUXoOvXSo
+         /9+ePd/I+a/7MR9tJrDDAUXtT98rlkFj+U1I7qn6NT/0MmXRQaXaTDlDGr09jEMR3Y5b
+         U15UHjT/1HYn5iWXdSlWMUiXSxC7rxbno8yUHn/WiKNEt2Ai/R/RzxfQ/KXgwRkDFpEJ
+         QIEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747656606; x=1748261406;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/Ujcjzl2OsuY9ii/H7l8DqEgEiJqH4rk4ZJIB8igbgM=;
+        b=qFCYPaLCkSRqmxpxqt2Gfrtp++QhG0SlN0WCEYoe4dmS4ipQiCQXRve2Y3K34tYWnN
+         keoFhoy2zD3D2grE2CES0Olipy5RfOTCme/5St7jh2PTNJC57JQR6ILCKiKNSJsLt9M/
+         bYimrE7KS689OdjkD2X+LrWhs8N7RqaCUv0Y+LevQixRX5cCrqohuBovbg9M8Hu1/Gmq
+         y1I319QfkJlP5aXAsFqP3IK09TVuyLhlhR2P0CTHN4rCwPGWfQ5YJvCLKtLVJZJeEOei
+         vtvlG+KUqRc5Mj+NAydOlwoDpDMDKLf41Mu9JwQ8LLlBxP6beWvlzRqN6vudnZJ/3MM3
+         ewtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsQva+spO9Kva1gMstt5qa/JL9f8g97zAfm7lhrRiGFlRE0uhxOsxlUi3XNsfBCvKGmvdTQkWAW7KmQgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykOY83ub42PFYxrjmlkDVFA0Jy58AjJji+eMo7QBybTs1xOu8N
+	I9SXj8s5xGKdhF0OgqC0ad8Fznh/5+w+b9MpkxwSlO+6rwNYHvWtO/mGAtIO6PLyNVuKVZiZWXD
+	SDTU09CAUkPrWfNq6OWQvrPui08rb66mCYNBIJ29K3A==
+X-Gm-Gg: ASbGncuJ/2/9AYMVKdVx1nxN4Fz2tqC9IS0T1yRIM25t0/80ardyAUq3s5iL9MD54FP
+	M9hvVF5XvMdf5eDBswejYoqduv112WTQPPEa9Kk/Kk7zPMU2krI2x/JKj2xfHWrtdlRFXv3yQ6+
+	M6dh7lweQO23qQalKmLz9pM1ypLSt/g1uToF5poLfiPzhv
+X-Google-Smtp-Source: AGHT+IEOp/4OAlCuuRfUfbvowUG/jmX/8U9R9YSNLFHxK1XdonfCvP/aN1Pa67AHy8pc66Zut/uLaetRuELGnBxAxw4=
+X-Received: by 2002:a05:6902:1a41:b0:e7b:9525:292c with SMTP id
+ 3f1490d57ef6-e7b95252a90mr7684525276.32.1747656605714; Mon, 19 May 2025
+ 05:10:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250519135818.01db3341@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250516092716.3918-1-victorshihgli@gmail.com> <20250516092716.3918-2-victorshihgli@gmail.com>
+In-Reply-To: <20250516092716.3918-2-victorshihgli@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 19 May 2025 14:09:29 +0200
+X-Gm-Features: AX0GCFsKEuxWZEXyX5oP7nQDpYMiMx4_qRZXMZhQ_k_JThJteCMW8xB2bXrBelM
+Message-ID: <CAPDyKFrKRw2kOQ9Gq=eCmm0N24hSEamNeCWGzC6X-Qg33ad-gw@mail.gmail.com>
+Subject: Re: [PATCH V1 1/2] mmc: core: Adjust some error messages for SD
+ UHS-II cards
+To: Victor Shih <victorshihgli@gmail.com>
+Cc: adrian.hunter@intel.com, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, benchuanggli@gmail.com, 
+	HL.Liu@genesyslogic.com.tw, Greg.tu@genesyslogic.com.tw, 
+	Ben Chuang <ben.chuang@genesyslogic.com.tw>, 
+	Victor Shih <victor.shih@genesyslogic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, May 19, 2025 at 01:58:18PM +0200, Herve Codina wrote:
-> On Thu, 8 May 2025 17:27:52 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Wed, May 07, 2025 at 09:12:47AM +0200, Herve Codina wrote:
+On Fri, 16 May 2025 at 11:27, Victor Shih <victorshihgli@gmail.com> wrote:
+>
+> From: Victor Shih <victor.shih@genesyslogic.com.tw>
+>
+> Adjust some error messages to debug mode to avoid causing
+> misunderstanding it is an error.
+>
+> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+> ---
+>  drivers/mmc/core/sd_uhs2.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/core/sd_uhs2.c b/drivers/mmc/core/sd_uhs2.c
+> index 1c31d0dfa961..58c4cef37f7c 100644
+> --- a/drivers/mmc/core/sd_uhs2.c
+> +++ b/drivers/mmc/core/sd_uhs2.c
+> @@ -36,6 +36,10 @@
+>  #include "sd_ops.h"
+>  #include "mmc_ops.h"
+>
+> +#define DRIVER_NAME "sd_uhs2"
+> +#define DBG(f, x...) \
+> +       pr_debug(DRIVER_NAME " [%s()]: " f, __func__, ## x)
+> +
 
-...
+We don't need a macro for this, just use a pr_debug() below instead.
 
-> > >  		if (of_property_match_string(np, "compatible", match->compatible) == 0)  
-> > 
-> > Side note, there is an fwnode_is_device_compatible() API for such cases. And IIRC
-> > there is also OF variant of it.
-> 
-> fwnode_device_is_compatible() checked for all compatible string. I mean, if
-> we have compatible = "foo,custom-bus", "simple-bus";
-> fwnode_device_is_compatible() checking against "simple-bus" returns true.
-> 
-> Here, we want "simple-bus" as the first position in the compatible string.
-> In other word, we want to match the more specific compatible string as
-> mentioned in the comment.
+>  #define UHS2_WAIT_CFG_COMPLETE_PERIOD_US  (1 * 1000)
+>  #define UHS2_WAIT_CFG_COMPLETE_TIMEOUT_MS 100
+>
+> @@ -91,8 +95,8 @@ static int sd_uhs2_phy_init(struct mmc_host *host)
+>
+>         err = host->ops->uhs2_control(host, UHS2_PHY_INIT);
+>         if (err) {
+> -               pr_err("%s: failed to initial phy for UHS-II!\n",
+> -                      mmc_hostname(host));
+> +               DBG("%s: failed to initial phy for UHS-II!\n",
+> +                   mmc_hostname(host));
+>         }
+>
+>         return err;
+> --
+> 2.43.0
+>
 
-I admit I'm not an expert in DT, but why is the compatibility position
-dependent?
-
-...
-
-> > > +	if (pdev->dev.of_node)  
-> > 
-> > Why do you need this check? AFAICS it dups the one the call has already in it.
-> 
-> of_platform_populate() was called only if an OF node is present.
-> I want to call of_platform_depopulate() on removal also only if an OF node
-> is present.
-> 
-> I don't see the other call that duplicated this check.
-> 
-> Can you clarify?
-
-The of_...() is already NULL-aware (AFAICS), why do you need the duplicated
-check?
-
-> > > +		of_platform_depopulate(&pdev->dev);  
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Kind regards
+Uffe
 
