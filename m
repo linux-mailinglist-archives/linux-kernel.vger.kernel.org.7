@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-653466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 182B5ABBA08
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE17ABBA14
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C745189A306
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:46:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A9541B65302
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C502701BE;
-	Mon, 19 May 2025 09:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B418270EC1;
+	Mon, 19 May 2025 09:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ExbS2gRR"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kKKAZkPI"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB93426FA7E
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4553270561
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747647770; cv=none; b=Ab8aZk0eYmr8ZfBl4iAPzNjzZ9yup9jwHm5YrUg9NGiS0qigId4sNPGFckUO3aPNMyJvxehu3i2nH8sSE/YzFT2Sn7maXdj9pA9GHBGfxAOUeo7NLi6onadYSSsGIaE4MTJE0vY9YzlYfFgvMqwU65K9Eze+6VY4YhawgYDN5cI=
+	t=1747647780; cv=none; b=qH8XnmbZu+4sLME9kqy3KjHN4lcnCqH89ERsCV6yDWHoqFqq4Om5D6aORUXLl7BG17H8iLZar3W7r5UWO8USBfx/W0XuX6Q9FgH4wot6J7y56LsVPrqwzZ9+zgB+WQq6ejU2vpeQMSK2r0167p5UArea61MrOXAdsBNCn8tsA64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747647770; c=relaxed/simple;
-	bh=LW6uUZFGqD1UyYUFU68Xi6WQWlLczbA/2FzJMIC0YvA=;
+	s=arc-20240116; t=1747647780; c=relaxed/simple;
+	bh=MfTQ3eSGE1lsQsEKDfhk3n4vHJQjv6X96tSeWcGlv9o=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cWe+P5HIteXVd4bPwuNY3U+Zvfb2Dm2Y+TU34J6zRp07BwuD4yw+E90EK4g/n0851osBE9CSbIE8AlHw8c4haZ+k6YGhcbe9TAKxwyte4FeuL7T2qiPPT2Q1CDaQkJcSJz1tyLGprYhIlA+sw5OOpWJRESvwqIbJ1E8Q1PXv/mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ExbS2gRR; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=JdQsgdJLGqfLPE6VecDH2bYUZV7dQknh1Bmshq4G5F4KPkviVAvX3H1LBr3xqca17GI62omuZOKnMIX7cwseLHwXbqzHaNGbBKsR0UQiXt8x6YVwl77WRc45jYHPm/5fTcnuwd3XCFCdxgh/xlTg0RyVOJzFrbzYLb/ljnNVcrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kKKAZkPI; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54J7Ggk1023276
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:42:48 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54J7GiGJ023369
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:42:57 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qaEhlMZNRK2NLwdfwilZTHaAPGsfv+pU1e/jm5Z+ob0=; b=ExbS2gRR+sO6HL9d
-	j9rfgQ5wlpGb0F82HJE006JlxlF+RTyNz7lYfsH3p4v+klgFFW7Qbi7UHWbX/+17
-	C2DmOvkRrwK6LSo0hsTAy+fHZasoC7n6XF3JagCfnsEhkFX9IRyt23d73+N/phGd
-	dfnpE7QAWwYSKt9rw/cXWQv6A5QXcLDah7GzhSVYHK8R4IAYonjD/8CgRsZLcXBt
-	VOCoscgIOrvXEGQdhU5ZshNzITpSgE4JHVWlkKoSOfUp0xgNL1X09QMjf49Fm3vf
-	mCVSx5lS1+7yf3g4ZDNh1OJto0E52EyFisDBQxPN2gqCkKez/xlgW0Qd4BTotZ4w
-	UcdpRA==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46r041rdqn-1
+	J1/73SEf4ytXoZ1yrIlcLZ+v5wHcPMuVTgw0lx2XQTo=; b=kKKAZkPI6RNDjmuv
+	H7XiYRa14vGzrsv8xoWeuBl5p9PkYLjXZjfgj2farMRVSOKTrJvtAcSUOyZIA2Tk
+	gr5SDApVc0yZ0cBJOS7SeY6oPQ2zdxwlhpK+ovGFSxvdjNjQCp2yQlZvREG2nawD
+	FhG+siBqr34WwgYXCOik3NDK7Vhr+FWyQEbvuqCOabyK6CPzTJTSXuoO9u+NZ1j9
+	gDskj05FmwZrVo3Q2wxMs2/6QkIJ6cW0LTb3BL1mSP03wku10Glv4rib8/lB9PTX
+	bx7UU6sw14ByggecxvDtPmriXj7Yzje8EdBnYEVYZEwptYv8/jjYGF11UOUi9P4d
+	bknKNg==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46r041rdrd-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:42:47 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b16b35ea570so4148425a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 02:42:47 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:42:57 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7425efba1a3so3867657b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 02:42:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747647767; x=1748252567;
+        d=1e100.net; s=20230601; t=1747647776; x=1748252576;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qaEhlMZNRK2NLwdfwilZTHaAPGsfv+pU1e/jm5Z+ob0=;
-        b=TncmDU82+eUYO4p0OGhpKJgzd+FAduQmqc5LPJxGvHeMLqoeQdzGvbq+lPxpwGP39M
-         SPlg1NU1qlOmQUNTl2VtEtP64BHsMTj9pTweoZJC1tFt1qlZ0GlwkAsra5URYCU3qnkP
-         lK+CzppMaaf2xnGXyteM6Jqx1OKvhGTZXbA9dQdNyFDg0xnNvh/y665S3+dLsPxaj4oK
-         EyMXF+1oB54xMIlxJZRmmD4pOqwVQGMIVQfNalrviHM1UcTYHOmPvlj3y2fnn60WoVW9
-         StY304pCAX0loztBMLrfjgSZha5OPrzh+3i0FIOsf4VaNYy+5ArcxJsvSYjHA9vawrzf
-         RRhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFe0qKfmgbuk7TtnjZtjaBZsOIsKJWksgVSDIB/I042M84p7H5GKfexHkmDR6DkjYEVGGa6ZrzxvcVof4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKHKvIt+XC372lxn7hag0M6UcJs8fntteloEpsU4Nmw7Au6Paj
-	+NckA0/AyY63NrfMFAfYl9M6Yj9Q24X5A+TptPJiQX5na2rgNZUdnhIOKhlu+s0hrhK7CFfZ6vU
-	6U7IWr5dNn2yy4Zoz06zp0+h860l4hVAR9mnfYclt4GwdvWi5ZERclE5Y3CO5K6HzBjk=
-X-Gm-Gg: ASbGncuet2PfBbx8/LpPmMBHbTyVAEa6TQut1AXEzehuhsy6FijqeeV/PYfOeEVVsFB
-	b0CnKd9BxHrFMDccDO7AU4oI+da1+xbP3Wnh1X+aFKfBk7qoTgqiPybhnyj4IGvnJtjstZaqkAj
-	QPAZQpFmwMYdBkAPiUTWsv4DYNh9+QMtaLSyAF2Qxvr1egWjs1WVDHUIrj1nyIfPblfOUAiU/6F
-	x+oG8YWdD50cZfPTu7Xcs6vjE2kEnK1osqs7YVDJ1pb3gdc1c6Kfxzhn4H8LT5KJDnuw5BqooOt
-	Zw2EuBQcw2FZLd3IiiorlJ5t4HxwaSkt5+COx9ocqx4s2wA=
-X-Received: by 2002:a05:6a20:2d21:b0:1f5:8eec:e516 with SMTP id adf61e73a8af0-216219c83c7mr20960863637.32.1747647767007;
-        Mon, 19 May 2025 02:42:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHPivW2uuHer/futXB6CATvxy78IsEmfKwkUhEBc2jqHppm0UtJRVQovLwVfQwoCRtaYVtxaA==
-X-Received: by 2002:a05:6a20:2d21:b0:1f5:8eec:e516 with SMTP id adf61e73a8af0-216219c83c7mr20960821637.32.1747647766601;
-        Mon, 19 May 2025 02:42:46 -0700 (PDT)
+        bh=J1/73SEf4ytXoZ1yrIlcLZ+v5wHcPMuVTgw0lx2XQTo=;
+        b=o2APBo5Hc2wn6GUJQU3cdeHykqKQkgxrwuLKiXCm9AqvKYSOWQc9T4jc8cE/Le50m+
+         DJquI78odsAaxnea8hIJom/9fngR/MuUhtkl3NcB2aH4apovZtsd/X4fAwYyEliN4NqN
+         QshM8yl1YTuc31c9himPJ0iNPdmMDc7RTRAQZRMpoWCcYgcm6P1hj6IpkSLoWy3Cbr2t
+         8NRaXjKEyciQ96R2nRzaAEuyDO/0lXs9lfcdsh53SacB/abcBen5kgV36kQv42DZCzJ2
+         pzeL8xSI7fs6aeGzMB4C71ipgBy9HPhbCIeaLRtrgAN/Sx9k8hxqHnFqkMCGbH57qOYt
+         Ldrg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHYN1UAwF1bk9/lKlRfRFl2rG1Ardv4ypex06aalkIb/SJpUpiRIrHUh7ANf6XNM367q1mIplAhDsXvTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaCXsutujMCQV8ksBBzMJ6vI2cl18AlSEG0XROiKKz3ERNUI+O
+	fEZaEvMqJ5tJivHaDWv55kY5ucur6LstuZLyFLC6KOd4vsriyzZZjDmE7AgaBeNZUOD6igcFIHg
+	amvni9E02zCLHnOFHpEKA5mEpmIrxBYTJ13G6c7sFSMi+/NIkiYUD1PKkliArLkmMuw8=
+X-Gm-Gg: ASbGnctdWSqzvn9p97b5pFEVBnWGUMrQ0vcb8jlA1L6nUQnOZFuq6MV/nyFb6qNyeDm
+	nsJ+6yfi4OdmaHeasVruqY/7fzSEr+4E2hFkkte1duOqccBW+r9HkXqqkzfncFbWYnw94OxLjJr
+	ALNbk0XroAfFSHGVGRYqErUaPGSlNBS5RK5rBSlM9DJ91SXQlGhnyz2RpD7EyvWpRg2/Pui+Lex
+	Lcap0JYoiyBzbSaWiQWfW5kQhv4C5Va40pgk9MOh2SXRA04MH/HqK6ibEVxC8NXCB9fJ/l6EHW+
+	q+8edfUz/lRBT0d++m6/FaQrHs2GKmXKV7lFetUgvyefnNo=
+X-Received: by 2002:a05:6a00:ac1:b0:736:3ea8:4813 with SMTP id d2e1a72fcca58-742a99fab76mr15619566b3a.2.1747647776266;
+        Mon, 19 May 2025 02:42:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6FoWtfS3J3KvBeQkijcvhEZQEo0F73rDNyaSDtfdrDQW3C1qk8ZesN/i6Mh3j6GEYFvr+HA==
+X-Received: by 2002:a05:6a00:ac1:b0:736:3ea8:4813 with SMTP id d2e1a72fcca58-742a99fab76mr15619544b3a.2.1747647775854;
+        Mon, 19 May 2025 02:42:55 -0700 (PDT)
 Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a97398f8sm5809092b3a.78.2025.05.19.02.42.41
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a97398f8sm5809092b3a.78.2025.05.19.02.42.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 02:42:46 -0700 (PDT)
+        Mon, 19 May 2025 02:42:51 -0700 (PDT)
 From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Date: Mon, 19 May 2025 15:12:16 +0530
-Subject: [PATCH v3 03/11] PCI/ASPM: Return enabled ASPM states as part of
- pcie_aspm_enabled()
+Date: Mon, 19 May 2025 15:12:17 +0530
+Subject: [PATCH v3 04/11] PCI/ASPM: Clear aspm_disable as part of
+ __pci_enable_link_state()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,7 +91,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250519-mhi_bw_up-v3-3-3acd4a17bbb5@oss.qualcomm.com>
+Message-Id: <20250519-mhi_bw_up-v3-4-3acd4a17bbb5@oss.qualcomm.com>
 References: <20250519-mhi_bw_up-v3-0-3acd4a17bbb5@oss.qualcomm.com>
 In-Reply-To: <20250519-mhi_bw_up-v3-0-3acd4a17bbb5@oss.qualcomm.com>
 To: Bjorn Helgaas <bhelgaas@google.com>,
@@ -112,86 +112,58 @@ Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
         Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747647743; l=2254;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747647743; l=1002;
  i=krishna.chundru@oss.qualcomm.com; s=20230907; h=from:subject:message-id;
- bh=LW6uUZFGqD1UyYUFU68Xi6WQWlLczbA/2FzJMIC0YvA=;
- b=CeH1rqozNMSAmO9N8S8eg5Dl36biG9HcHhnJfMpzs/VU2cnmb7kh/fdVzeA1DzlaweGbH0UQg
- KwlHYmQmjGXABbM8yXmUPJRmsh+iFpFd/GgRSJ5Np41KR2CV1JFVSLP
+ bh=MfTQ3eSGE1lsQsEKDfhk3n4vHJQjv6X96tSeWcGlv9o=;
+ b=Yem+nDFvzc6dsaIOAR4b6zXLoldPziYHuM1lIowV7FV6LiFHouh58R4R3CqoekwHVIv/w/HTI
+ vxXIWwGg9BDBlBKkBDVhf2SY+qlPn4lRdA9jAvQfk0MP/izsfcAVMWG
 X-Developer-Key: i=krishna.chundru@oss.qualcomm.com; a=ed25519;
  pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDA5MSBTYWx0ZWRfX4FMh+WkBwvKs
- LuTGV3/lVgNqMbRZWbD51G6vo8Tk2CWg2+8mXZcnFwvzqT04styagdIN1fTp8Cs60ZCY5sOQLBn
- Hi2CSB2MzZmW6s7NxIyB1xfRyBgqAPqQZ0Op7L1ixUwP3jbOlUW+rgmqqZYHwTz3RHX68H3n7Ih
- ps+gnv1IL9jBLAC5MN0QZjaOsN7n0ChZAayJrRFYQfxquVtBNdlkXwL6pKID5hO4zVnfEcTEbh7
- R05JUA3CJbPATevM0hIThXty77wS3g9zHJbovzHj0ysKkUlge5rCaxt3SWX1ygDQAeyN5Npc+Jl
- ZdKnoVaX4oaaYR0YnaF2iR5g9cmetfxojBN2LOMnmk4xxFmz69KPugy7quuBoiD8swaHV6fvLrF
- 9U3MHMoWfpOoO5ss3AjLJRYvA6YePMkgvbtLlpLkk+popACFo/CovwdcdC0Tzphx8cotW5gH
-X-Proofpoint-ORIG-GUID: a5LHzzZRk52pV4L9RJOX3dWMGHA-t0OI
-X-Proofpoint-GUID: a5LHzzZRk52pV4L9RJOX3dWMGHA-t0OI
-X-Authority-Analysis: v=2.4 cv=HIjDFptv c=1 sm=1 tr=0 ts=682afd17 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=wuQQqu7ThqwHlQwkt1oA:9
- a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDA5MSBTYWx0ZWRfX0CJsnxJVvB2V
+ PohJIdN1drFNxiKTEsmVzHIVp10NxTjMaRDnVq/GizWPPO2RIwRso90ZbzV6LCpvev+zHO3SJE0
+ i6EhB3ifpVoKwfJPAovByFhFEVebNQssVI+9BDp6MQZMqgrV3enHa4DGbrAFJDzapcpppAt2d3i
+ k7hYTeMIGwavlKr6CDpYdeX7YCj7U59wBbEsc+cPG+r91m5u1OD9CsGFvPNzOcQ+7TWT/uYKWFw
+ cUkMepdBrhjBjDcpw+n1jjNVIVkghAxHzVnP66mSCETgbnNemICBmjK/qoJWZgR/vB+z6MKI4oP
+ ahuKMNfVgqolwnmG3LkG1pnGtSiWBqJ477jU8ncxeFEj9pn6htDDnDeh0HT8NHxI/8LU/preavy
+ Pf6I3mBn8kyXgg91JeZuawL/PRYvV1O3284+kZFsobv3OoHllGXrsPifSDaHCbh2JJrXc+04
+X-Proofpoint-ORIG-GUID: 71WZY1h0s-vb--c_Yb-DFTTXBMAQHruT
+X-Proofpoint-GUID: 71WZY1h0s-vb--c_Yb-DFTTXBMAQHruT
+X-Authority-Analysis: v=2.4 cv=HIjDFptv c=1 sm=1 tr=0 ts=682afd21 cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=JOcJ30pghDwnvxMqNTgA:9
+ a=QEXdDO2ut3YA:10 a=ZXulRonScM0A:10 a=2VI0MkxyNR6bbpdq8BZq:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-19_04,2025-05-16_03,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  phishscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0 clxscore=1015
  bulkscore=0 suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- impostorscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
+ impostorscore=0 mlxlogscore=977 classifier=spam authscore=0 authtc=n/a
  authcc= route=outbound adjust=0 reason=mlx scancount=1
  engine=8.19.0-2505070000 definitions=main-2505190091
 
-PCIe ASPM states can be also controlled by userspace using exposed sysfs
-entries, if drivers wants to disable and enable ASPM at runtime they
-need to know enabled states for correctly enabling them back.
-
-So return the enabled aspm states as part of pcie_aspm_enabled().
+If a driver wants to enable ASPM back after disabling ASPM for some
+usecase, it is not being enabled properly because of the aspm_disable
+flag is not getting cleared. This flag is being properly when aspm
+is controlled by sysfs.
 
 Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
 ---
- drivers/pci/pcie/aspm.c | 4 +++-
- include/linux/pci.h     | 4 ++--
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ drivers/pci/pcie/aspm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-index 29fcb0689a918f9cb123691e1680de5a1af2c115..94324fc0d3e650cd3ca2c0bb8c1895ca7e647b9d 100644
+index 94324fc0d3e650cd3ca2c0bb8c1895ca7e647b9d..0f858ef86111b43328bc7db01e6493ce67178458 100644
 --- a/drivers/pci/pcie/aspm.c
 +++ b/drivers/pci/pcie/aspm.c
-@@ -1555,8 +1555,10 @@ module_param_call(policy, pcie_aspm_set_policy, pcie_aspm_get_policy,
-  * is deallocated only when the last child of the bridge (i.e., @pdev or a
-  * sibling) is removed, and the caller should be holding a reference to
-  * @pdev, so this should be safe.
-+ *
-+ * Return: Enabled ASPM states
-  */
--bool pcie_aspm_enabled(struct pci_dev *pdev)
-+int pcie_aspm_enabled(struct pci_dev *pdev)
- {
- 	struct pcie_link_state *link = pcie_aspm_get_link(pdev);
+@@ -1453,6 +1453,7 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
+ 		down_read(&pci_bus_sem);
+ 	mutex_lock(&aspm_lock);
+ 	link->aspm_default = pci_calc_aspm_enable_mask(state);
++	link->aspm_disable &= ~state;
+ 	pcie_config_aspm_link(link, policy_to_aspm_state(link));
  
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 7eb0856ba0ed20bd1336683b68add124c7483902..ce9d0812a61c2337ba533ef246393a0101e617ee 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1849,7 +1849,7 @@ int pci_enable_link_state(struct pci_dev *pdev, int state);
- int pci_enable_link_state_locked(struct pci_dev *pdev, int state);
- void pcie_no_aspm(void);
- bool pcie_aspm_support_enabled(void);
--bool pcie_aspm_enabled(struct pci_dev *pdev);
-+int pcie_aspm_enabled(struct pci_dev *pdev);
- #else
- static inline int pci_disable_link_state(struct pci_dev *pdev, int state)
- { return 0; }
-@@ -1861,7 +1861,7 @@ static inline int pci_enable_link_state_locked(struct pci_dev *pdev, int state)
- { return 0; }
- static inline void pcie_no_aspm(void) { }
- static inline bool pcie_aspm_support_enabled(void) { return false; }
--static inline bool pcie_aspm_enabled(struct pci_dev *pdev) { return false; }
-+static inline int pcie_aspm_enabled(struct pci_dev *pdev) { return false; }
- #endif
- 
- #ifdef CONFIG_PCIEAER
+ 	link->clkpm_default = (state & PCIE_LINK_STATE_CLKPM) ? 1 : 0;
 
 -- 
 2.34.1
