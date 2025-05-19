@@ -1,143 +1,130 @@
-Return-Path: <linux-kernel+bounces-654724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE772ABCBB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 01:47:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30280ABCBBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 01:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D20FF8C15DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:47:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E868C263E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D11321E092;
-	Mon, 19 May 2025 23:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C391F221277;
+	Mon, 19 May 2025 23:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cbppcEK3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p79LCThA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA2A4B1E5E;
-	Mon, 19 May 2025 23:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20575220F52;
+	Mon, 19 May 2025 23:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747698443; cv=none; b=sDpLxVEItZPcIhiQwQ+BrXOf48Uzyd4DAO50VM9VGgAFyAWCGiMzsnDDEw/hh1IjG8/OytMiXfa1HQ5eQQtHUaiVC7yMfVx080vBusik2CueFgtO6gMr4S74cRjhQdkRiYGqeMAY315r8KgzA82Yk7pmoDgFnZsalKFuBmbeWFw=
+	t=1747698531; cv=none; b=k9qiDdvwF/Lr7JdjDUB36le+5WV93NE1975ZFZSb98ZPZ8NsYIbgaEdCvjE1elykXF9kySUfnqfTcfNrl2AapIT061FObYXZICzx6hhvTsOE65yi06srArKyno6L9wEmqwSy9XALVxYty46bVVv05OfqAup19BvglW8PHVtQSXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747698443; c=relaxed/simple;
-	bh=2BXuPy0dtOIAjcn43s0b9leWNNf00rEj6dxgDnly9m4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sGVXkxyJXLTLhVCt8ClKEOdRry+N5HiZAr7r0I8hnUzXacn/MWuRf+FuGT7A/1HLqCdI0dtc/TJVBQeKqMut6SPhXygnA7tlF65dk3KGqKYFBX84MRqVCoyFs9wTtEHc6eNicN0tZnsSwOYQVK5ewW5AFBT1PyvR03qO7HupSAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cbppcEK3; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747698441; x=1779234441;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2BXuPy0dtOIAjcn43s0b9leWNNf00rEj6dxgDnly9m4=;
-  b=cbppcEK3+rUbm7/vy1WG0LI3QtNbdPT4jPj0Hs8WY6g8r6We+ddxlFS+
-   POcl0GpJ+3rR3NajGbknedhJLNFWE3pbF9sZoHT6Lqz3fOgb3QV8SPb9o
-   yKi3NGzXxaa6r4vJ7qMBUr5UiogsXv6LFd7hDfO0nvbOt9FuEqEYFZ0KJ
-   D5UIYj9JIgQ1sr/lFpn5sGQ4fjMM4HOzmtovc0eJRI5NMF4erMaBOHqYF
-   HfJTgk8yl8EaQVIMG8I9KlulvavQJ5B/awl47eqyQ+UTcI03D0F87PlrU
-   Z3nfYxnAJIYU1WhMz57wnMQ2kplsX2HpaPUY+9unE3sJhTnydBtd+xyLx
-   w==;
-X-CSE-ConnectionGUID: 3LpQVSMpQcyoMbYahtBJNA==
-X-CSE-MsgGUID: c6O9nxykTJaRNqOU24OqSQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="52245871"
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="52245871"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 16:47:19 -0700
-X-CSE-ConnectionGUID: QWIh/uQRSY+1nhDqJrlsaw==
-X-CSE-MsgGUID: OwcPBSk6TZS2d7dRiA+p6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="139421077"
-Received: from mdroper-mobl2.amr.corp.intel.com (HELO [10.124.221.39]) ([10.124.221.39])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 16:47:18 -0700
-Message-ID: <2889da2a-5cda-4a78-9457-864276c92410@linux.intel.com>
-Date: Mon, 19 May 2025 16:47:17 -0700
+	s=arc-20240116; t=1747698531; c=relaxed/simple;
+	bh=LMijej7gFtPDNBIOlBJu1tJ8zpVTvJVhOg0iGAqbUB4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=qfe+xLTB4hqy9/KQ5fy655WWQ4/ZlpfwoyJ67uRAvSeMKofVuaRs2k02YOEuQ1ARdAdJp+F6CszdH1s69Yhi0QDBj8ynCEhqMPrNcm3UchqhCKX3P1QdVtQ2pmyIBRf8uFLddzcsonR9gOc4QSMbyKOMXEGiNrkFjUHxoMS09JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p79LCThA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E71C4C4CEE4;
+	Mon, 19 May 2025 23:48:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747698530;
+	bh=LMijej7gFtPDNBIOlBJu1tJ8zpVTvJVhOg0iGAqbUB4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=p79LCThAtnHz+EDt53BzdMUN6qagFtutqFTVD3F35ZSzCJxO0VXbNLV03KoUCdtjq
+	 /LMV73wPmUxo48wg9Y8XWztyKz9KR6oLY+bg+j00yRPj+LK2bDu6I2H9UPrjfVYP70
+	 /jmOmTkQ3tju7Ur4CPiWXTkBkbZX4kpsQr/EA6y1aa36SHyC3yt+zZhMj2x200cZTR
+	 bp/nqglcL5VuHI20xid+S+OA822wfZFdC9IBrj6qvRMM5XdFOcUsToGOpz7/9S9PoF
+	 WVP0X3YH9kZGMPQ7VpQCp0DRqHue528ouTn6ZkNeUjn0Wxtg42NdDKNwknkyWrI5Yo
+	 tXULjqg5FexNA==
+Date: Tue, 20 May 2025 08:48:45 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ x86@kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song
+ <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo
+ <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, David Laight
+ <David.Laight@ACULAB.COM>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
+ <thomas@t-8ch.de>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCHv2 perf/core 01/22] uprobes: Remove breakpoint in
+ unapply_uprobe under mmap_write_lock
+Message-Id: <20250520084845.6388479dd18658d2c2598953@kernel.org>
+In-Reply-To: <20250515121121.2332905-2-jolsa@kernel.org>
+References: <20250515121121.2332905-1-jolsa@kernel.org>
+	<20250515121121.2332905-2-jolsa@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 04/16] PCI/AER: Extract bus/dev/fn in
- aer_print_port_info() with PCI_BUS_NUM(), etc
-To: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
-Cc: Jon Pan-Doh <pandoh@google.com>,
- Karolina Stolarek <karolina.stolarek@oracle.com>,
- Martin Petersen <martin.petersen@oracle.com>,
- Ben Fuller <ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>,
- Anil Agrawal <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Lukas Wunner <lukas@wunner.de>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>,
- Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
- Terry Bowman <terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>
-References: <20250519213603.1257897-1-helgaas@kernel.org>
- <20250519213603.1257897-5-helgaas@kernel.org>
-Content-Language: en-US
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20250519213603.1257897-5-helgaas@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Thu, 15 May 2025 14:10:58 +0200
+Jiri Olsa <jolsa@kernel.org> wrote:
 
-On 5/19/25 2:35 PM, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
->
-> Use PCI_BUS_NUM(), PCI_SLOT(), PCI_FUNC() to extract the bus number,
-> device, and function number directly from the Error Source ID.  There's no
-> need to shift and mask it explicitly.
->
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Currently unapply_uprobe takes mmap_read_lock, but it might call
+> remove_breakpoint which eventually changes user pages.
+> 
+> Current code writes either breakpoint or original instruction, so
+> it can probably go away with that, but with the upcoming change that
+> writes multiple instructions on the probed address we need to ensure
+> that any update to mm's pages is exclusive.
+> 
+
+So, this is a bugfix, right?
+
+Thanks,
+
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 > ---
+>  kernel/events/uprobes.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 84ee7b590861..257581432cd8 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -483,7 +483,7 @@ static int __uprobe_write_opcode(struct vm_area_struct *vma,
+>   * @opcode_vaddr: the virtual address to store the opcode.
+>   * @opcode: opcode to be written at @opcode_vaddr.
+>   *
+> - * Called with mm->mmap_lock held for read or write.
+> + * Called with mm->mmap_lock held for write.
+>   * Return 0 (success) or a negative errno.
+>   */
+>  int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+> @@ -1464,7 +1464,7 @@ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
+>  	struct vm_area_struct *vma;
+>  	int err = 0;
+>  
+> -	mmap_read_lock(mm);
+> +	mmap_write_lock(mm);
+>  	for_each_vma(vmi, vma) {
+>  		unsigned long vaddr;
+>  		loff_t offset;
+> @@ -1481,7 +1481,7 @@ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
+>  		vaddr = offset_to_vaddr(vma, uprobe->offset);
+>  		err |= remove_breakpoint(uprobe, vma, vaddr);
+>  	}
+> -	mmap_read_unlock(mm);
+> +	mmap_write_unlock(mm);
+>  
+>  	return err;
+>  }
+> -- 
+> 2.49.0
+> 
 
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-
->   drivers/pci/pcie/aer.c | 7 +++----
->   1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index b8494ccd935b..dc8a50e0a2b7 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -736,14 +736,13 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
->   static void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info,
->   				const char *details)
->   {
-> -	u8 bus = info->id >> 8;
-> -	u8 devfn = info->id & 0xff;
-> +	u16 source = info->id;
->   
->   	pci_info(dev, "%s%s error message received from %04x:%02x:%02x.%d%s\n",
-
-Since it is used in many places in PCI driver, may be define
-
-#define PCI_ADDR_FMT "%04x:%02x:%02x.%d"
-
->   		 info->multi_error_valid ? "Multiple " : "",
->   		 aer_error_severity_string[info->severity],
-> -		 pci_domain_nr(dev->bus), bus, PCI_SLOT(devfn),
-> -		 PCI_FUNC(devfn), details);
-> +		 pci_domain_nr(dev->bus), PCI_BUS_NUM(source),
-> +		 PCI_SLOT(source), PCI_FUNC(source), details);
->   }
->   
->   #ifdef CONFIG_ACPI_APEI_PCIEAER
 
 -- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
