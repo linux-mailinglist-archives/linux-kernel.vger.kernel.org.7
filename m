@@ -1,58 +1,85 @@
-Return-Path: <linux-kernel+bounces-654340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7060AABC724
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 20:24:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D5F8ABC72D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 20:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EFD417F601
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:24:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86E0317FF65
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA33288C18;
-	Mon, 19 May 2025 18:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6675C289361;
+	Mon, 19 May 2025 18:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l+LWGzHw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y6lvPNNq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C932857C4;
-	Mon, 19 May 2025 18:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0476288C36
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 18:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747679073; cv=none; b=BBScI/T/gM0lbdH7laIsjOOPZYM/evpAA29rd7ib7dJ7HT38h+Yd6Z3e1tJ5cCt5GpBfan3AkRnlvGwcU3/8fd/l69sIRihTU6lXRFwFKBIE6nX/e8HB0qO3rlU900OfeDT3go6B49UCGzE1TOPUGRM+xApRDiKhS3bkX8JBbfA=
+	t=1747679081; cv=none; b=s0L/+oxGXcAaudz5vp3+egOAS5xOny5y6BZtOkUnQoM0VUFNG3S2vvurhfHd1IiK9W1dx+IOEYai58ZHXJP+wdQjT/6Ja+LvBuUpqhkaOx18+4LJ3TaL72UPIHxbwRcV7sftLqt9qs128nE11THcpoWjbgYVd7dGuVR0jOt+nz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747679073; c=relaxed/simple;
-	bh=1KXAzjMSe/ri37+m07NJN/eRVwd604m2Fdfu1XxKbZE=;
+	s=arc-20240116; t=1747679081; c=relaxed/simple;
+	bh=zODQJ+gfcrilN03WjGcUAu4boM+3PSv8QTSOVYptZ6g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aNNzoJFQWkMR+zM0KwsHm73HajmQidWVtkrt/AS7+bhLEi4aSuwPm7V+R6uz9EGR8s7im3CkIjqueznlD/AeH5amOq2kl5AL03QsA9xhYXNk4ozILaMm7drBHdFTUws7CYYgszpPGoQKwHjn3gU2qBvKjK+sQjopQcnJNAtwbok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l+LWGzHw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A402CC4CEE4;
-	Mon, 19 May 2025 18:24:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747679073;
-	bh=1KXAzjMSe/ri37+m07NJN/eRVwd604m2Fdfu1XxKbZE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l+LWGzHwPLt9tuDO2OcldxtSI5ZY3J8HPzrk0cPNCGCz6dcAEu2vQfDlzMOAjU1Ls
-	 VjTCWQlsOiSydSXIjojXyUgFyOijsOk4u4Sy9ZHQm58p4drcySd3SdMnf2YsSv3/Mv
-	 AHRCjp4VqAzvufFY3qJgxWtYWybUTut7PVTjp7CdNAqvfMCzBQhE0qAUzFtHw+z9ZJ
-	 kAxVQ0HRFoWe0RRjMUNqDiNrXBhB+8HjRPNNLRYLL/PrXzxxsFsEtYOVpKy9A6GDpG
-	 hB44nxs98KijGU7OowwfGML52gsiHF7vPf8rILBu6vgC+2SvmiqkSXP/7bxzY0vFjv
-	 NvluuWmqBIrTA==
-Date: Mon, 19 May 2025 21:24:29 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Elena Reshetova <elena.reshetova@intel.com>
-Cc: dave.hansen@intel.com, seanjc@google.com, kai.huang@intel.com,
-	linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, asit.k.mallick@intel.com,
-	vincent.r.scarlata@intel.com, chongc@google.com,
-	erdemaktas@google.com, vannapurve@google.com,
-	dionnaglaze@google.com, bondarn@google.com, scott.raynor@intel.com
-Subject: Re: [PATCH v5 4/5] x86/sgx: Implement ENCLS[EUPDATESVN]
-Message-ID: <aCt3XZ0m40wuA9bU@kernel.org>
-References: <20250519072603.328429-1-elena.reshetova@intel.com>
- <20250519072603.328429-5-elena.reshetova@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QgtyIzkEqryDK2t9kJpxffsGv6kucLdoumHRlPcxCWxYNTLlQSipsQAdUxhPbwFaPjc7IVpyT8ZSyPqNdIaDo3D2cf6OVGpFhLd1Zv3Wiiw3Dv0eV2iweIqD9o9a5kEUQ8M8S69+/IdMOxLRJC6L7UI8m3x2vn++ye496/og5wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y6lvPNNq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747679078;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DwZrRO5XdVcCnNCASbgARVUpoWm49PR/IxoUUvG62P0=;
+	b=Y6lvPNNqXT1Fx89s70hAWv1zNHx3adR9Xt+XC5N5IsmV+9Gnk0AF3xQCtYnerhLDtjexQn
+	uOzD7AmkDMZIKDC+Z2ZJkWfRmljJX6JEITucm/Lq4NvNkJ9usy9pukxaRReU/J0QHImNTf
+	LVMLyEngqi93TiZPKNtlPbnCnD7pqPQ=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-115-4-T4n4L9NPyVBHyd4B2lQw-1; Mon,
+ 19 May 2025 14:24:37 -0400
+X-MC-Unique: 4-T4n4L9NPyVBHyd4B2lQw-1
+X-Mimecast-MFC-AGG-ID: 4-T4n4L9NPyVBHyd4B2lQw_1747679076
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E099F180036F;
+	Mon, 19 May 2025 18:24:35 +0000 (UTC)
+Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (unknown [10.6.23.247])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4FE15180035C;
+	Mon, 19 May 2025 18:24:35 +0000 (UTC)
+Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (localhost [127.0.0.1])
+	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.18.1/8.17.1) with ESMTPS id 54JIOX1o159136
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 19 May 2025 14:24:33 -0400
+Received: (from bmarzins@localhost)
+	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.18.1/8.18.1/Submit) id 54JIOVOQ159135;
+	Mon, 19 May 2025 14:24:31 -0400
+Date: Mon, 19 May 2025 14:24:31 -0400
+From: Benjamin Marzinski <bmarzins@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Kevin Wolf <kwolf@redhat.com>, Martin Wilck <mwilck@suse.com>,
+        dm-devel@lists.linux.dev, hreitz@redhat.com, mpatocka@redhat.com,
+        snitzer@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] dm mpath: Interface for explicit probing of active
+ paths
+Message-ID: <aCt3X8CmPTMq6T5k@redhat.com>
+References: <20250429165018.112999-1-kwolf@redhat.com>
+ <47dd225b433b0df585a25084a2e793344eeda239.camel@suse.com>
+ <aCIRUwt5BueQmlMZ@redhat.com>
+ <d51d6f85b5728648fe9c584f9cb3acee12c4873f.camel@suse.com>
+ <cc2ec011cf286cb5d119f2378ecbd7b818e46769.camel@suse.com>
+ <aCW95f8RGpLJZwSA@redhat.com>
+ <aCbUcdew393RZIkV@infradead.org>
+ <aCdifWdCQCR3Nqb0@redhat.com>
+ <aCrCYbvOJs44Kj5a@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,142 +88,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250519072603.328429-5-elena.reshetova@intel.com>
+In-Reply-To: <aCrCYbvOJs44Kj5a@infradead.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Mon, May 19, 2025 at 10:24:30AM +0300, Elena Reshetova wrote:
-> The SGX attestation architecture assumes a compromise
-> of all running enclaves and cryptographic assets
-> (like internal SGX encryption keys) whenever a microcode
-> update affects SGX. To mitigate the impact of this presumed
-> compromise, a new supervisor SGX instruction: ENCLS[EUPDATESVN],
-> is introduced to update SGX microcode version and generate
-> new cryptographic assets in runtime after SGX microcode update.
+On Sun, May 18, 2025 at 10:32:17PM -0700, Christoph Hellwig wrote:
+> On Fri, May 16, 2025 at 12:06:21PM -0400, Benjamin Marzinski wrote:
+> > I've run into SCSI arrays that always act like they were called with the
+> > ALL_TG_PT flag set (or perhaps they were just configured that way, I
+> > never could get a straight answer about that).
 > 
-> EUPDATESVN requires that SGX memory to be marked as "unused"
-> before it will succeed. This ensures that no compromised enclave
-> can survive the process and provides an opportunity to generate
-> new cryptographic assets.
+> Hmm, that's pretty strange.
 > 
-> Add the method to perform ENCLS[EUPDATESVN].
+> > libmpathpersist accepts
+> > this flag, and only sends one registration per initiator & target device
+> > when it's set, instead of one per initator & target port.
 > 
-> Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
-> ---
->  arch/x86/kernel/cpu/sgx/encls.h |  5 +++
->  arch/x86/kernel/cpu/sgx/main.c  | 57 +++++++++++++++++++++++++++++++++
->  2 files changed, 62 insertions(+)
+> With "this flag" you mean ALL_TG_PT?
+
+Yes.
+
 > 
-> diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-> index 99004b02e2ed..d9160c89a93d 100644
-> --- a/arch/x86/kernel/cpu/sgx/encls.h
-> +++ b/arch/x86/kernel/cpu/sgx/encls.h
-> @@ -233,4 +233,9 @@ static inline int __eaug(struct sgx_pageinfo *pginfo, void *addr)
->  	return __encls_2(EAUG, pginfo, addr);
->  }
->  
-> +/* Attempt to update CPUSVN at runtime. */
-> +static inline int __eupdatesvn(void)
-> +{
-> +	return __encls_ret_1(EUPDATESVN, "");
-> +}
->  #endif /* _X86_ENCLS_H */
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index 80d565e6f2ad..fd71e2ddca59 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -15,6 +15,7 @@
->  #include <linux/sysfs.h>
->  #include <linux/vmalloc.h>
->  #include <asm/sgx.h>
-> +#include <asm/archrandom.h>
->  #include "driver.h"
->  #include "encl.h"
->  #include "encls.h"
-> @@ -917,6 +918,62 @@ EXPORT_SYMBOL_GPL(sgx_set_attribute);
->  /* Counter to count the active SGX users */
->  static atomic64_t sgx_usage_count;
->  
-> +/**
-> + * sgx_updatesvn() - Attempt to call ENCLS[EUPDATESVN]
-> + * If EPC is empty, this instruction attempts to update CPUSVN to the
-> + * currently loaded microcode update SVN and generate new
-> + * cryptographic assets.sgx_updatesvn() Most of the time, there will
+> > dm-multipath
+> > currently doesn't have the knowledge necessary to figure out which
+> > devices it needs to send reservations to, even if the kernel PR API
+> > supported this.
+> > 
+> > But I supposed it could just send the registration normally down one
+> > path and if that works, it could just ignore the existing key when it
+> > sends the registration down all the other paths.
+> 
+> We could add support for a similar flag to the kernel PR API.  The
+> problem is to figure out how to discover support for it.  What does
+> the library do for that currently?
+>
 
-Is there something wrong here in the text? It looks malformed.
+libmpathpersist knows which scsi path devices map to the same Initiator,
+but different target ports. When ALL_TG_PT is set, it only sends one
+registration command to each group, instead of sending one to each path
+device (like when ALL_TG_TP isn't set). If it sent a registration to
+every SCSI device on these arrays that act like ALL_TG_PT is always set,
+it would get reservation conflicts when sending the command to devices
+using ports after the first, since they would already have a registered
+key. That's why I mentioned the posibility of using Register and
+Ignore, which doesn't care if there's a key already registered.
 
-> + * be no update and that's OK.
-> + *
-> + * Return:
-> + * 0: Success, not supported or run out of entropy
-> + */
-> +static int sgx_update_svn(void)
-> +{
-> +	int ret;
-> +
-> +	/*
-> +	 * If EUPDATESVN is not available, it is ok to
-> +	 * silently skip it to comply with legacy behavior.
-> +	 */
-> +	if (!X86_FEATURE_SGX_EUPDATESVN)
-> +		return 0;
-> +
-> +	for (int i = 0; i < RDRAND_RETRY_LOOPS; i++) {
-> +		ret = __eupdatesvn();
-> +
-> +		/* Stop on success or unexpected errors: */
-> +		if (ret != SGX_INSUFFICIENT_ENTROPY)
-> +			break;
-> +	}
-> +
-> +	/*
-> +	 * SVN either was up-to-date or SVN update failed due
-> +	 * to lack of entropy. In both cases, we want to return
-> +	 * 0 in order not to break sgx_(vepc_)open. We dont expect
-> +	 * SGX_INSUFFICIENT_ENTROPY error unless underlying RDSEED
-> +	 * is under heavy pressure.
-> +	 */
-> +	if ((ret == SGX_NO_UPDATE) || (ret == SGX_INSUFFICIENT_ENTROPY))
-	
-	if (ret == SGX_NO_UPDATE || ret == SGX_INSUFFICIENT_ENTROPY)
+I don't think it would take much work for the Kernel API to support
+ALL_TG_PT, if the SCSI implementation just passed the flag down to the
+device. The problem really only exists for things like dm-multipath,
+that are composed of a number of different devices that all point to the
+same underlying Target LUN. To handle this without relying on something
+like Register and Ignore, It would need to be able to group all the
+devices that come from the same initiator but different target ports
+together, and only send a registration to one device per group. This
+takes more SCSI specific knowledge than it currently has, or really
+wants to have.
 
-> +		return 0;
-> +
-> +	if (!ret) {
-> +		/*
-> +		 * SVN successfully updated.
-> +		 * Let users know when the update was successful.
-> +		 */
+-Ben
 
-This comment is like as useless as an inline comment can ever possibly
-be. Please, remove it.
-
-> +		pr_info("SVN updated successfully\n");
-
-Let's not add this either in the scope of this patch set.
-
-> +		return 0;
-> +	}
-
-Since you parse error codes already, I don't understand why deal with
-the success case in the middle of doing that.
-
-More consistent would be (not also the use of unlikely()):
-
-	if (ret == SGX_NO_UPDATE || ret == SGX_INSUFFICIENT_ENTROPY)
-		return 0;
-
-	/*
-	 * EUPDATESVN was called when EPC is empty, all other error
-	 * codes are unexpected.
-	 */
-	if (unlikely(ret)) {
-		ENCLS_WARN(ret, "EUPDATESVN");
-		return ret;
-	}
-		
-	return 0;
-}
-
-This is how I would rewrite the tail of this function.
-
-BR, Jarkko
 
