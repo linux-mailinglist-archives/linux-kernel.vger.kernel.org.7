@@ -1,53 +1,81 @@
-Return-Path: <linux-kernel+bounces-653026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF59ABB3AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 05:41:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B76D9ABB3B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 05:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AD6F1892E79
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 03:41:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6EC1895806
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 03:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FFC1E7C23;
-	Mon, 19 May 2025 03:41:28 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176FE13C9A3;
+	Mon, 19 May 2025 03:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqEzVKZK"
+Received: from mail-qv1-f67.google.com (mail-qv1-f67.google.com [209.85.219.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3119E1AA1D2;
-	Mon, 19 May 2025 03:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3154171D2
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 03:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747626087; cv=none; b=Z3dPTXrHY9fA4A7GMIe/3LQLs9obPW27QPRa2G6R5rsqmAUyc9muZIgcov0nyjGt+CN/vzUlN0UR36kgwc7tICHkZ8Txw7R23wgRAl9pJUSu6BqoNxvmq+Sf6OP8+WQnHUuKDOiRR05Eq/ss0ZfTkF7uThO2WrUoUBANNslbA+0=
+	t=1747626536; cv=none; b=mhocQVc4/mi5PQuUC2mLJhcpq+/WHtfeNYRshUIcSNRYs2RlPHOy/dxfUHEOlcScdKcXaTqOBR5fuuEACnr30aQ9746fDw0hbRBrPLiyHLZlofrIwredv25Hl/xBmShOwgDenkIVlwXrouAGRRueuKur754u23VaJ8yn2W49UJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747626087; c=relaxed/simple;
-	bh=YLy0bIxUyBEJ4MsErB/HNh/nkpkd4n4QESqkZKSikzQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QsbMbJNrUnFGe+JukLUwMPHmkD8smO5JEnjdr4NqbIneXSYBqr97surTokoczp8IHVmppeKptL1Xn8jMWjXEod9EkxxrNjxpbLEsECs4DuSIKlN9J7utz5cBPf6ERinBCembg7m5snEKCa1nwfm/g9W6h7SWHndDBhDe6Ppcy+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowABXw8JNqCpoWNs_AQ--.48942S2;
-	Mon, 19 May 2025 11:41:03 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: saeedm@nvidia.com,
-	leon@kernel.org,
-	tariqt@nvidia.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] net: mlx5: vport: Add error handling in mlx5_query_nic_vport_qkey_viol_cntr()
-Date: Mon, 19 May 2025 11:40:43 +0800
-Message-ID: <20250519034043.1247-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1747626536; c=relaxed/simple;
+	bh=gfUNnnnOl9QDR9aF705w1osP9tRPXHLGsUiMHi7TKRg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mkL7vGs2Bchj5QuKyIrtBVy8cyKF27dlLD2tPBGp5KZRlV87D04zfPM1xe5y25KnREpr5TOH5ZQ4aQy1XiljJE4e4OQARRJSB9JTHl9y7tM8ehtaIUK/3TD0PLmW1oRGNd0FONnuCIprPzB/UnsoXMw5bAaCnUWtEtOfEw5cDWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqEzVKZK; arc=none smtp.client-ip=209.85.219.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f67.google.com with SMTP id 6a1803df08f44-6f8cda1ca6dso5928176d6.3
+        for <linux-kernel@vger.kernel.org>; Sun, 18 May 2025 20:48:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747626533; x=1748231333; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6CiQjDVJ9nq0tDv4zpvgUbL0B4wUpcB1kqM07f0SJEQ=;
+        b=AqEzVKZKfLf7HNgr/FIK83dLjt8aTj0ttgWwZtifh33dBitWn+RsWvAXnc6QhO2ldj
+         7PgtvKzKGgMFOfjrkXC+eQ9rrmsUBwvRA6RkaxXIOdEDQ2p+rVlRCFRxACpcRoL82PeW
+         uj8Js0NihNa/uQ7CI+Mz0kO8kkoiWFcCzNfZhPKIlXA5szDLoVr4HHY6ecdRyyKf4NXD
+         creasbXaREjaMTJh63KAtOoGdqeMDw6S0xaxdKKVUdjfRZ6avfD6w2hpzE7rIiMpGE+k
+         Qta/8j340Chs1txCyZot1cJkovYqi2E7szAZpjdSupzpVwr8+NEiHeYjJQJTo/NOb5M7
+         4x1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747626533; x=1748231333;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6CiQjDVJ9nq0tDv4zpvgUbL0B4wUpcB1kqM07f0SJEQ=;
+        b=IJ21Yi1b3GfGmRXElnpjlGD6vF9zYwiXW/FoR6pMuHiuVWmCWutaKuRkZRW9fAja6/
+         ZRoAH8s+bdbvh5N20F7ZIi8GfquW2/l+A/s1cA5yNvVEHvw96yt5O/ycL7LJi4priop+
+         jyj9uZD/t3cZfzsaYcMdZHvwUSMxyRolW3g9jRHdlZT3aNe/egKMYiEHn+iDTX13+RBL
+         XkL2J73/hvQJmrEsRXLVmjCrYplqlNH7Y7ZCPyy3a6zA4YsKHxqrW4N4YBIEyN6NelsK
+         +BNPKOxgEQQXMtn6LaRpvzvckbR18nrpoXRgwdSR9XX8RpKwOp/AUL/zSmb5c7x4inc9
+         uKFA==
+X-Gm-Message-State: AOJu0YxN/Qm8rsnviqZhByVffMjdc4Mx3axO7iptgkvvSExaOjN90InI
+	4U6fzRUeAIN8x2VFsb0ybDQ97aolD7P1zbpaCm6Ql4lWyfoKSjGim2lnD7sZfAB6O/5AFGvG
+X-Gm-Gg: ASbGncsC1pGHghEZcBBkMkXpqke1tOv7RmpH0uEKdqLdvFUR3kxIAwqkdUpypafvX57
+	4PiuRmlRheov7KXGyhZCkkhj0QMcBXxUu4OXXWT2ukZm7HtDK7tM1lxft+8AvhiK1gs2h3FqiFQ
+	U63LtTW1HRDJZ50etM1TOUlt6ZXTxG6Dy28ugFdj6llO9ebKU1wkPFa0ImTtxw1ukhfDqf5CzWg
+	VdBknsKABS3319uPZHPDc06zOBT6Mvfjlys7kjRU21jNwjwlLMDifGqeZnQarTcCxoK1ngJM4zG
+	4bgup3IFG/MU7TXKJtcj0k2Hxx16Q+IVtEH1ypQRGYIhwGkrWGU=
+X-Google-Smtp-Source: AGHT+IHTxVVuJijd6lxpzISN4OHiLXiIboN/8FxOEMfwkGh+9xa40u7V/NKpPTuWBIUVz3Lx3jqlvg==
+X-Received: by 2002:a05:6214:410:b0:6e8:fcc6:35b6 with SMTP id 6a1803df08f44-6f8b0847db8mr192819116d6.2.1747626533298;
+        Sun, 18 May 2025 20:48:53 -0700 (PDT)
+Received: from biancapradeep.lan ([2605:a601:a630:6300::8])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f8b0988e08sm50692756d6.125.2025.05.18.20.48.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 May 2025 20:48:52 -0700 (PDT)
+From: Bojanala Hithashri <bojanalahithashri@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	trivial@kernel.org
+Cc: Bojanala Hithashri <bojanalahithashri@gmail.com>
+Subject: [PATCH] Spell fix Documenation/watchdog/mlx-wdt.rst
+Date: Sun, 18 May 2025 23:47:52 -0400
+Message-ID: <20250519034823.158936-1-bojanalahithashri@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,73 +83,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABXw8JNqCpoWNs_AQ--.48942S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr4ruF45tFy7Aw48Ww47CFg_yoW8AF4DpF
-	47tr93XrykJa40v3WjkFWrZrs5CrWku3W09a4xt34fXr4qyr4DAr45AF9FgrWUurW8trZa
-	yr42y3ZxCF98C37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
-	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
-	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
-	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
-	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAUHA2gqdptmMwACs1
 
-The function mlx5_query_nic_vport_qkey_viol_cntr() calls the functuion
-mlx5_query_nic_vport_context() but does not check its return value. This
-could lead to undefined behavior if the query fails. A proper
-implementation can be found in mlx5_nic_vport_query_local_lb().
-
-Add error handling for mlx5_query_nic_vport_context(). If it fails, free
-the out buffer via kvfree() and return error code.
-
-Fixes: 9efa75254593 ("net/mlx5_core: Introduce access functions to query vport RoCE fields")
-Cc: stable@vger.kernel.org # v4.5
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+Spell fix for mlx-wdt.rst Document
 ---
- drivers/net/ethernet/mellanox/mlx5/core/vport.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ Documentation/watchdog/mlx-wdt.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/vport.c b/drivers/net/ethernet/mellanox/mlx5/core/vport.c
-index 0d5f750faa45..276b162ccf18 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/vport.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/vport.c
-@@ -518,20 +518,23 @@ int mlx5_query_nic_vport_qkey_viol_cntr(struct mlx5_core_dev *mdev,
- 					u16 *qkey_viol_cntr)
- {
- 	u32 *out;
--	int outlen = MLX5_ST_SZ_BYTES(query_nic_vport_context_out);
-+	int ret, outlen = MLX5_ST_SZ_BYTES(query_nic_vport_context_out);
+diff --git a/Documentation/watchdog/mlx-wdt.rst b/Documentation/watchdog/mlx-wdt.rst
+index 35e690dea9db..3778f85d1ba4 100644
+--- a/Documentation/watchdog/mlx-wdt.rst
++++ b/Documentation/watchdog/mlx-wdt.rst
+@@ -48,7 +48,7 @@ which is optional.
+ Watchdog can be started during a probe, in this case it will be
+ pinged by watchdog core before watchdog device will be opened by
+ user space application.
+-Watchdog can be initialised in nowayout way, i.e. oncse started
++Watchdog can be initialised in nowayout way, i.e. once started
+ it can't be stopped.
  
- 	out = kvzalloc(outlen, GFP_KERNEL);
- 	if (!out)
- 		return -ENOMEM;
- 
--	mlx5_query_nic_vport_context(mdev, 0, out);
-+	ret = mlx5_query_nic_vport_context(mdev, 0, out);
-+	if (ret)
-+		goto out;
- 
- 	*qkey_viol_cntr = MLX5_GET(query_nic_vport_context_out, out,
- 				   nic_vport_context.qkey_violation_counter);
--
-+	ret = 0;
-+out:
- 	kvfree(out);
- 
--	return 0;
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(mlx5_query_nic_vport_qkey_viol_cntr);
- 
+ This mlx-wdt driver supports both HW watchdog implementations.
 -- 
-2.42.0.windows.2
+2.47.0
 
 
