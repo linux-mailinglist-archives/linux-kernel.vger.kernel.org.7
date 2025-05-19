@@ -1,159 +1,142 @@
-Return-Path: <linux-kernel+bounces-654025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81C24ABC270
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:29:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F25AABC276
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 170083AF8BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:29:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E2DB17DE8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66150286400;
-	Mon, 19 May 2025 15:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CBE2857DF;
+	Mon, 19 May 2025 15:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9wV45dK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XmzRytd+"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7B1280001;
-	Mon, 19 May 2025 15:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE5627CCDA
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 15:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747668579; cv=none; b=CfMHZz3VEG3os75RFchmuW6OADmEtzMQK+xRPzpu4D/co+RoooDXukznrRMXr+hqk+2hzxfr0BcukexhJoJipq3VOXfXpyBH6OYeidkXS/QvT7ipoTNwdwCUHz0TL7s/FwAuuNUPbWUDYnnzzVD5TuQKUAqkouJihxT9l5CkWOI=
+	t=1747668628; cv=none; b=E4SGMyv7SkWrU5ESiLjUwxR/UvIsXEJe4/tY5CrBex2sr3PzQhg8ucnHyrB3g/HvhR76eqITzoc4XZXyNRZR2AV+sTTxyzEPjHdtHNqZu4CZcLyDTLebEsdzNs+/zBT1LdjbJh2HwIFBlUzZzK2DhdQknwa8kiZ+buDX3O5o6co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747668579; c=relaxed/simple;
-	bh=uCCRHVYmLHnVIHIfW2LIcrxaWMtn8F9W0Bsnsn29gCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TKF0+0GYpimng6+QM95dvM+sTAcaatfWjQjWEepO/Zmms9s/pKubhFE28s+uz6FXWUjG9KAozohMerSNQ3EIn/Ejut1AxufIhD6nG61o9oxyXmtA5weMuv60xztnhAfsSotRoFJKXCCDnC3q+2zirDxLbUZggLZM3sS3vtfdY84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9wV45dK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00CD7C4CEE4;
-	Mon, 19 May 2025 15:29:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747668579;
-	bh=uCCRHVYmLHnVIHIfW2LIcrxaWMtn8F9W0Bsnsn29gCc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u9wV45dKUYE6L1fQRHxtUR36FqYI06U10ckeN/TAvNwUd8uL55aN/sYGth9BlQ1tz
-	 iCdSue1+RZ3TESlRVsbhkKWJegIKlrslAFKyU/1k+B2HDWwP8Tndvb52/6B85MY5Mp
-	 iI1JXaNewFI51TbuMGDEiKsVg4ZmEhMUm16UUVbTPACYdk+meH+ZnhSl6hK7B4ibow
-	 aTn6P53qMqqX0h5bDY9WpdDlTEcNaNE7uLHhuVNUJkm3EHqWWzupB42/4diyz4BIgz
-	 uVqgReW0I4qRcguFbhstsFBGOhymzWeEhe5nv2Sz6Wx1HbdtHISmI2nRuZ0EGPX70y
-	 n6TluvsQ00wPg==
-Date: Mon, 19 May 2025 10:29:37 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, x86@kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>, devicetree@vger.kernel.org,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Chris Oo <cho@microsoft.com>, linux-hyperv@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>
-Subject: Re: [PATCH v3 06/13] dt-bindings: reserved-memory: Wakeup Mailbox
- for Intel processors
-Message-ID: <20250519152937.GA2227051-robh@kernel.org>
-References: <20250503191515.24041-1-ricardo.neri-calderon@linux.intel.com>
- <20250503191515.24041-7-ricardo.neri-calderon@linux.intel.com>
- <20250504-original-leopard-of-vigor-5702ef@kuoka>
- <20250506051610.GC25533@ranerica-svr.sc.intel.com>
- <20250506-pompous-meaty-crane-97efce@kuoka>
- <20250507032339.GA27243@ranerica-svr.sc.intel.com>
- <20250512153224.GA3377771-robh@kernel.org>
- <20250513221456.GA2794@ranerica-svr.sc.intel.com>
- <20250514154248.GA2375202-robh@kernel.org>
- <20250515035338.GA4955@ranerica-svr.sc.intel.com>
+	s=arc-20240116; t=1747668628; c=relaxed/simple;
+	bh=fkFlVu+qSZ4MV+nfcuRKYA58hJOKW9NoQdJAOOm99X8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LKAsTfdUlEKNkudtMxgtUYkvUbFGO9TWsI+P7bJEPEfOfAWfO9giNZ4YurxgaWJFMzLcBUQ6VY4sd3FwAlGB/ABDEJUTH4PWwLhcdbzIoN3j2yKf2/jEkc+Cen9Tho6cE95FMCYstFD+kt/OoKhKzKS9TXYsUG0/hmGzN75MVCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XmzRytd+; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e7ba2583e10so953811276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 08:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747668626; x=1748273426; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UM2NB/3HzJ5wj1PBg1WB1WKrV42DeuPH6QHE0a8NqcQ=;
+        b=XmzRytd+L4/IlpaDayuRgYNjy0i1IfKXzXmq/qMQ3BPtcYcvZAyfexxWLAoj1KjsBO
+         NpqamhT0gPAkbKNDc7HExgLx5O5yZAId5ss3I6vog4Iq4pXBbFZmWBpHkL+LuQmANOSV
+         kHdf97KUDV5RYrBmRbkmPykP85HauwOK7Iubjdtso6VFtMZfcma+kuQLuAKhyt85+vhI
+         NmGDcEBPHwYbASvkI4Fimsz4Ut1KeELgw1r+f7lsHbGWKBdXPPV6PJN23KmcEbKWc48x
+         Oe0OdZOgs3s6DTo0rcKe3mjLrqT3CmDk1cC5XWadLcq6+nw504qAAL5I7sJogYob2BlD
+         ZAqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747668626; x=1748273426;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UM2NB/3HzJ5wj1PBg1WB1WKrV42DeuPH6QHE0a8NqcQ=;
+        b=IEHHQQ8Kyst3aXfry4rhbTVPFoUbNeD4KHuHILF40gFRbkD3xqayCwmlYPxcuK1AS5
+         WpPkVBC2vV5FklsFVl3j3Zb0Jf42aKrI1wIiPemxE8BdAdr0yjhWvBN4BEUXxuBwYSHS
+         h1DaoNk0Lr4cDuku7skS1I012voxQnei4gDmWM/BpuBieI72iDAUMJgJA88RXecQbJ8+
+         5bAOigd0SSAqlX/JQRr9XetgJzDMVTTUd5Q4mf0sh89kHpQbNaMaM39ZIQMRfg12jDdx
+         s+SkqFTqFx3pcjJnaO0OgyUvxwOBj7M1VZLa1VA9+r2fu/Y1azliQrKZlQ/tiyUeOhOD
+         2abQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzSKX9P/IVEyTPJyixiYuChfNRoZJ3/r6CvcwzLi13eOcopHeJ9O3O2xosh5zmBb9RG+zsVxlNQmMG5ok=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1PwqkFyN1BSNZljNSTH8wNnb0JC3u3+mQ3joQcSr6V8nVJKnb
+	iegFE/jEwReIiw07o+YyzCFarNfVtOC4O7++LAdHogfJmuyFH1jyXRPJw8QNXhBzFTWLEsV6lpG
+	P7VNk8VcGHEuf2aOJoN48AeoFPdiZc3VQfTL3q3r+3T0IcQhfbRokj/P6N90=
+X-Gm-Gg: ASbGncuDPXvTYUz4J1qPLKoc6Pb3Tkrfcw9Czh3OA0CXomfxDvXcg24oRngJvZ2aF2r
+	hi17FiwbWok2UOMvpEJEKXGgD+KYgpsfDbn33Bg9vfSysoihuk3EvDJ3m0COd45JDX6xm7jiMEu
+	H7mw3d/Defu+PUB7+DMfk3Fl2Dpb/Np2fPObHOhnaXuuqWJEW0E8Q3Rgo1gXCkRh36aY0=
+X-Google-Smtp-Source: AGHT+IF4G7XKufk4nKQ8/07FV1dIbOJlzIo1f6O8lwRhNg1kWPvrBzIucmkiFgVls4GQsyRXFfqMSh2hVWS2Mb/gx44=
+X-Received: by 2002:a05:6902:2087:b0:e7b:6714:3d0f with SMTP id
+ 3f1490d57ef6-e7b6b204794mr15500391276.24.1747668625365; Mon, 19 May 2025
+ 08:30:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250515035338.GA4955@ranerica-svr.sc.intel.com>
+References: <20250516215422.2550669-1-seanjc@google.com> <20250516215422.2550669-4-seanjc@google.com>
+ <fb0580d9-103f-4aa1-94ae-c67938460d71@redhat.com> <aCsz_wF7g1gku3GU@google.com>
+In-Reply-To: <aCsz_wF7g1gku3GU@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Mon, 19 May 2025 11:29:47 -0400
+X-Gm-Features: AX0GCFsM8QgcC3jY-eb-hlQUgXu5GT_l4kCZow784OctLf01TP57u4_QRZ8uz5E
+Message-ID: <CADrL8HXSde+EeLD2UsDNkxAxdmKomEA1XqdDuF4iFaksiZUHLw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] KVM: x86/mmu: Defer allocation of shadow MMU's
+ hashed page list
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Vipin Sharma <vipinsh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 14, 2025 at 08:53:38PM -0700, Ricardo Neri wrote:
-> On Wed, May 14, 2025 at 10:42:48AM -0500, Rob Herring wrote:
-> > On Tue, May 13, 2025 at 03:14:56PM -0700, Ricardo Neri wrote:
-> > > On Mon, May 12, 2025 at 10:32:24AM -0500, Rob Herring wrote:
-> > > > On Tue, May 06, 2025 at 08:23:39PM -0700, Ricardo Neri wrote:
-> > > > > On Tue, May 06, 2025 at 09:10:22AM +0200, Krzysztof Kozlowski wrote:
-> > > > > > On Mon, May 05, 2025 at 10:16:10PM GMT, Ricardo Neri wrote:
-> > > > > > > > If this is a device, then compatibles specific to devices. You do not
-> > > > > > > > get different rules than all other bindings... or this does not have to
-> > > > > > > > be binding at all. Why standard reserved-memory does not work for here?
-> > > > > > > > 
-> > > > > > > > Why do you need compatible in the first place?
-> > > > > > > 
-> > > > > > > Are you suggesting something like this?
-> > > > > > > 
-> > > > > > > reserved-memory {
-> > > > > > > 	# address-cells = <2>;
-> > > > > > > 	# size-cells = <1>;
-> > > > > > > 
-> > > > > > > 	wakeup_mailbox: wakeupmb@fff000 {
-> > > > > > > 		reg = < 0x0 0xfff000 0x1000>
-> > > > > > > 	}
-> > > > > > > 
-> > > > > > > and then reference to the reserved memory using the wakeup_mailbox
-> > > > > > > phandle?
-> > > > > > 
-> > > > > > Yes just like every other, typical reserved memory block.
-> > > > > 
-> > > > > Thanks! I will take this approach and drop this patch.
-> > > > 
-> > > > If there is nothing else to this other than the reserved region, then 
-> > > > don't do this. Keep it like you had. There's no need for 2 nodes.
-> > > 
-> > > Thank you for your feedback!
-> > > 
-> > > I was planning to use one reserved-memory node and inside of it a child
-> > > node to with a `reg` property to specify the location and size of the
-> > > mailbox. I would reference to that subnode from the kernel code.
-> > > 
-> > > IIUC, the reserved-memory node is only the container and the actual memory
-> > > regions are expressed as child nodes.
-> > > 
-> > > I had it like that before, but with a `compatible` property that I did not
-> > > need.
-> > > 
-> > > Am I missing anything?
-> > 
-> > Without a compatible, how do you identify which reserved region is the 
-> > wakeup mailbox?
-> 
-> I thought using a phandle to the wakeup_mailbox. Then I realized that the
-> device nodes using the mailbox would be CPUs. They would need a `memory-
-> region` property. This does not look right to me.
+On Mon, May 19, 2025 at 9:37=E2=80=AFAM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Sat, May 17, 2025, Paolo Bonzini wrote:
+> > On 5/16/25 23:54, Sean Christopherson wrote:
+> > > +   /*
+> > > +    * Write mmu_page_hash exactly once as there may be concurrent re=
+aders,
+> > > +    * e.g. to check for shadowed PTEs in mmu_try_to_unsync_pages(). =
+ Note,
+> > > +    * mmu_lock must be held for write to add (or remove) shadow page=
+s, and
+> > > +    * so readers are guaranteed to see an empty list for their curre=
+nt
+> > > +    * mmu_lock critical section.
+> > > +    */
+> > > +   WRITE_ONCE(kvm->arch.mmu_page_hash, h);
+> >
+> > Use smp_store_release here (unlike READ_ONCE(), it's technically incorr=
+ect
+> > to use WRITE_ONCE() here!),
+>
+> Can you elaborate why?  Due to my x86-centric life, my memory ordering kn=
+owledge
+> is woefully inadequate.
 
-That doesn't really make sense unless it's a memory region per CPU.
+The compiler must be prohibited from reordering stores preceding this
+WRITE_ONCE() to after it.
 
+In reality, the only stores that matter will be from within
+kvcalloc(), and the important bits of it will not be inlined, so it's
+unlikely that the compiler would actually do such reordering. But it's
+nonetheless allowed. :) barrier() is precisely what is needed to
+prohibit this; smp_store_release() on x86 is merely barrier() +
+WRITE_ONCE().
 
-> > Before you say node name, those are supposed to be 
-> > generic though we failed to enforce anything for /reserved-memory child 
-> > nodes.
-> 
-> I see. Thanks for preventing me from doing this.
-> 
-> Then the `compatible` property seems the way to go after all.
-> 
-> This what motivated this patch in the first place. On further analysis,
-> IIUC, defining bindings and schema is not needed, IMO, since the mailbox
-> is already defined in the ACPI spec. No need to redefine.
+Semantically, smp_store_release() is what you mean to write, as Paolo
+said. We're not really *only* preventing torn accesses, we also need
+to ensure that any threads that read kvm->arch.mmu_page_hash can
+actually use that result (i.e., that all the stores from the
+kvcalloc() are visible). This sounds a little bit weird for x86 code,
+but compiler reordering is still a possibility.
 
-You lost me...
+And I also agree with what Paolo said about smp_load_acquire(). :)
 
-You don't need to redefine the layout of the memory region as that's 
-defined already somewhere, but you do need to define where it is for DT. 
-And for that, you need a compatible. Do you know where it is in this 
-case? 
+Thanks Paolo. Please correct me if I'm wrong above.
 
-Rob
+> > with a remark that it pairs with kvm_get_mmu_page_hash().  That's both =
+more
+> > accurate and leads to a better comment than "write exactly once".
+>
 
