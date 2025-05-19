@@ -1,115 +1,201 @@
-Return-Path: <linux-kernel+bounces-654057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0372CABC322
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:51:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D31AABC2D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73DEF4A2EC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:51:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D503D4A1278
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD622882BA;
-	Mon, 19 May 2025 15:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A425A286401;
+	Mon, 19 May 2025 15:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TxrQWBwp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iypG6fD/"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432D9286888;
-	Mon, 19 May 2025 15:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E933EA63;
+	Mon, 19 May 2025 15:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747669837; cv=none; b=msq0qmJQnmXYGVaxCufxsNBRwsm5B5nEgXhlC+/DA0yRr9L90Js7b00Nb6e0p2GOSelUZI3YkHx4SNjV2d2foS7mzW/0QzY2qd70W3kUx6qH0BJeNb6KDa6vRv5XLFPFH2jQnbccGuQX2AYXsgjRyf2DMPxmEaVKSEOl384Qlx4=
+	t=1747669663; cv=none; b=XAFTRmp2z/PMwS1EkCkdD/mZJd+w4v4d+EMINm7yG2eiTTreUMg4B3lKJganu6O+m13zERITApCw5fLn21FeEst2grJdXvm+D10t9Il2yMNcAMyNb7q42zu1RWwHI1IxWori/QORY53nciUgxgoKJ5ynhhBB2WS6shdIxvjRGxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747669837; c=relaxed/simple;
-	bh=SbfybxeRa2xIWz0oHLGf8Yvut8GFTIY8+BPlypFLWTU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FwysY27X6zqqWEna4lUUUKCBpNzCWAWOBFRyaHSVd6aspUCYwRJ0/nIbPGnarggT4ZZEwMOKArss0BUfv++Pz30JByFvPceICV58MEUuMXEOHc6N3ed7E02TOWikXYkIqeA3leUmxlrsum8Rw+J1aSNuOSZTqXfG7O5H1ihvqVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TxrQWBwp; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747669836; x=1779205836;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=SbfybxeRa2xIWz0oHLGf8Yvut8GFTIY8+BPlypFLWTU=;
-  b=TxrQWBwp1c+BNF/Vy4DbqPlbi3T1y37UKTY2LPr4Dqe+j62ZK3wbAXME
-   R1O2P05XAW3qTmUPcp7PLACFhbBwnuLxQxfLhznzuCR1JVasXoYBw5xb2
-   X5lZ3fG7+biha4XF9JCrYIER7VUub/9S9vlyl7Azei+/Lf7tE2rJPHyWS
-   P0Mvo58GuxXIjTKPHgpt01KLx1lfd3B/XuAGQnoUwgyyMZ3Q0D40gYX4P
-   VoH6GoGFkgNX48lY6ioRan2J/WUhXMZW+RKKUPtSgNFBDFsm4V9euirze
-   EpQXc0uQoo4YLhw/YTGDPz1nsG+tHjvX9uL3/yG8Bmia0XaKX+mdcv+89
-   A==;
-X-CSE-ConnectionGUID: pczvm9ohR3GNE7VglLDqng==
-X-CSE-MsgGUID: a5Dp314ZQhGpEF8OO1yDgw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="49480083"
-X-IronPort-AV: E=Sophos;i="6.15,301,1739865600"; 
-   d="scan'208";a="49480083"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 08:50:34 -0700
-X-CSE-ConnectionGUID: wckLsARXQYeOsU1mU0Bc2g==
-X-CSE-MsgGUID: 0ZynUHDmStqIIbmp7lMygQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,301,1739865600"; 
-   d="scan'208";a="144405903"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 19 May 2025 08:50:32 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 7EF6526B; Mon, 19 May 2025 18:50:30 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v2 3/3] media: atomisp: Remove no more used macros from math_support.h
-Date: Mon, 19 May 2025 18:46:49 +0300
-Message-ID: <20250519155028.526453-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250519155028.526453-1-andriy.shevchenko@linux.intel.com>
-References: <20250519155028.526453-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1747669663; c=relaxed/simple;
+	bh=/AZJxc+ojypuP0EsmURDqeGd/HDPv50Ce64UuZuYrkI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dC73xatl9OOKWrEuopB2BjWL8NuOhfLQKk0QVTzc4y/GFHHwGsZC1cDjCsorhv7DS4xai4KP4OHYstzur2+4/t+/b6N5NW3uM4nprJCQJt4cWPl0Qn4oZoh/7sHdij2hflz3/XLKeawMHv+Jggww51rbrFASKz1Mo/ri+HRtRcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iypG6fD/; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3105ef2a06cso44410121fa.2;
+        Mon, 19 May 2025 08:47:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747669659; x=1748274459; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/AZJxc+ojypuP0EsmURDqeGd/HDPv50Ce64UuZuYrkI=;
+        b=iypG6fD/dsVGD2eM8E+a6h0/C3AXrK6WyD+Ny2xf07Oy8iIBbRlSodCcod9qVz8XfN
+         /9UBrraSLH3IqhdpqQeRQgGcSnTtf10DbAtzzHM5n16URbJcTutU7zIm5FQVPeOMXeog
+         IBTmDkaC3lLp/g3wlaTaUoDLak39ZWYipSw0o7gIHwYsJWpKABGMOW1N8KELQiX3AIkR
+         0L7Hu7E0DCor6jDq1vAidIa3Pg6eYRJ2puw6+AQYEUigG0iTZsTSAD2mQNTgpVxuZnU4
+         2oUG8X7pqv0b1SXgv8ezWE/XeUu/WiSBXPssWv6zNPGC3t+G3YXHpIR6EgEnWb0cegcR
+         hDcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747669659; x=1748274459;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/AZJxc+ojypuP0EsmURDqeGd/HDPv50Ce64UuZuYrkI=;
+        b=U1CuKJOrQwhzGzDCE1Nwoz8vhsfWUFmUlfXNuzK4wdcHymfjV1fOjqO9OX2NH/7PP/
+         QjS0RRr+ZMzYSoaFPqurRWW3G9klAAwA6vDAFOWGoqzLwoGDF3fGsmjG4BY11fDCjR0p
+         nIXdjagTUOAo1nvXGdBlGvTXeP+msh/8B4IBroAmrLgUiAaUjh6sk8kyXfdIhBcEVBSS
+         +Tvy7BBzfsYRsGOlRk76igCobifUlP2MeA0vgQrXzsyEDeiosMgEbJzv0WmVGvZT4poR
+         RrG99uo/pxI0H6UagIe9IkZAFWHF60J3VKdtGsk8b5Oaw4V+SPctypIoB2cmsXNQriRH
+         FCOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULBXbKva1d8M4+3gd8j+EDTSnw8rDc+7dswLsV33PyEQNmiLZWxIoVylnlw0WCvtavsGGcQ5igPANblVo=@vger.kernel.org, AJvYcCUOY4oHUFt8EkA+jLYWTUZlUjvnKff1jf09UjyAhBu0LwGvRpnWXA5c0/Zns62saOfGJrSeD8rWxpZz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9VoSHxjFQZFAgNBJrrWrOO1DD2za0hPUPacG/6szZuSkbOOHW
+	/dcxwxlczdfn2ND1KjrwUDEQTxxdGLsgTYeQYH2eGKwWBfDD60boIu5sQ9ISLeuc6NXupTGaB2Q
+	KdMwbDTwFHdyEKDxxCONJ8ZAINgLM/U0=
+X-Gm-Gg: ASbGncuW68TdOnvPBtauRr1u8qFUBXwZrdm8+6fln1uTb8dNwlCruLtL4quG8Lii0I5
+	osAf4BcaIMochxprs3P0RfHE3rRrfpjUX8FVs7upG2X7jidx7a35SeSgM3d2eVuO6s6UNDGfmxy
+	rMOGArvBdkv+IFQIIrPQLF7b5aMees4LkxedGPMjh/fMOL5ncoahljnIzZqF5yJbpEsqA=
+X-Google-Smtp-Source: AGHT+IEXfEy9vlHFT2MUxdk6nm8iEqVbd6HoLEED3ANOzuyjvL0sZ1nvnEFDTLCVjF0H+H9Pwfdg52FYwXFYs5IgYG4=
+X-Received: by 2002:a05:651c:304c:b0:30b:b987:b6a7 with SMTP id
+ 38308e7fff4ca-32807602735mr36330441fa.0.1747669658849; Mon, 19 May 2025
+ 08:47:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250516033908.7386-1-shawn2000100@gmail.com> <e87a80d9-9603-4d27-99a7-a34eeda8c6f5@linux.intel.com>
+In-Reply-To: <e87a80d9-9603-4d27-99a7-a34eeda8c6f5@linux.intel.com>
+From: =?UTF-8?B?6Zmz5a2Q5r2U?= <shawn2000100@gmail.com>
+Date: Mon, 19 May 2025 23:47:27 +0800
+X-Gm-Features: AX0GCFtK9wy_mLe68iUQ-E7fyZFHE60wHy8e1Ql_5ZfLvwLm1x8pPvozJBFkk2o
+Message-ID: <CAPwXWsCuMDTYwfSodKsrV1MZCtmLrM380ziQFdhcpTt9r+_gxQ@mail.gmail.com>
+Subject: Re: [PATCH v3] usb: xhci: Set avg_trb_len = 8 for EP0 during Address
+ Device Command
+To: Mathias Nyman <mathias.nyman@linux.intel.com>, =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>
+Cc: mathias.nyman@intel.com, gregkh@linuxfoundation.org, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, jay.chen@siemens.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After recent cleanups the few macros become unused. Remove them.
+Hi Micha=C5=82 and Mathias,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Thank you for the thoughtful feedback and review.
+
+> Only the xHC internal firmware could crash or misbehave from that.
+
+Yes, precisely. The potential crash or division-by-zero would happen
+within the internal firmware of certain host controllers, rather than
+in the Linux kernel itself.
+I'll make this clearer in the commit description as well.
+
+> The rest of ep0 tx_info is zero, so this could be =3D instead of |=3D.
+
+Agreed, I'll update the next revision of this patch to use '=3D' instead
+of '|=3D' for clarity and correctness.
+
 ---
- .../media/atomisp/pci/hive_isp_css_include/math_support.h    | 5 -----
- 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/staging/media/atomisp/pci/hive_isp_css_include/math_support.h b/drivers/staging/media/atomisp/pci/hive_isp_css_include/math_support.h
-index 6d45d0d8d060..2cb5c986790a 100644
---- a/drivers/staging/media/atomisp/pci/hive_isp_css_include/math_support.h
-+++ b/drivers/staging/media/atomisp/pci/hive_isp_css_include/math_support.h
-@@ -10,14 +10,9 @@
- /* Override the definition of max/min from Linux kernel */
- #include <linux/minmax.h>
- 
--/* force a value to a lower even value */
--#define EVEN_FLOOR(x)        ((x) & ~1)
--
- #define CEIL_DIV(a, b)       (((b) != 0) ? ((a) + (b) - 1) / (b) : 0)
- #define CEIL_MUL(a, b)       (CEIL_DIV(a, b) * (b))
--#define CEIL_MUL2(a, b)      (((a) + (b) - 1) & ~((b) - 1))
- #define CEIL_SHIFT(a, b)     (((a) + (1 << (b)) - 1) >> (b))
--#define CEIL_SHIFT_MUL(a, b) (CEIL_SHIFT(a, b) << (b))
- 
- /*
-  * For SP and ISP, SDK provides the definition of OP_std_modadd.
--- 
-2.47.2
+> I'd skip the 'compliance with spec..' part as spec is a bit unclear on th=
+is
+issue.
 
+Sure, I will modify the commit message accordingly.
+
+As noted, there is a subtle contradiction between two sections of the
+xHCI 1.2 specification:
+- Section 4.8.2 "Endpoint Context Initialization" states that all
+fields of an Input Endpoint Context data structure (including the
+Reserved fields) shall be initialized to 0.
+- Section 6.2.3 "Endpoint Context" (p.453) specifies that the Average
+TRB Length field shall be greater than =E2=80=980=E2=80=99, and further not=
+es (p.454):
+=E2=80=9CSoftware shall set Average TRB Length to =E2=80=988=E2=80=99 for c=
+ontrol endpoints.=E2=80=9D
+
+Strictly setting all fields to 0 during initialization conflicts with
+the explicit recommendation that avg_trb_len should be set to 8 for
+control endpoints. In practice, setting avg_trb_len =3D 0 is meaningless
+for the hardware/firmware, as it defeats the purpose of the field,
+which is used for transfer calculations and validation.
+
+Motivation / Real-world context:
+I am developing a custom Virtual xHC hardware platform that strictly
+follows the xHCI specification and its recommendations.
+During validation, we found that enumeration fails and a parameter
+error (TRB Completion Code =3D 5) is reported if avg_trb_len for EP0 is
+not set to 8 as recommended by Section 6.2.3.
+This behavior aligns with the spec's intent and highlights the
+importance of setting a meaningful, non-zero value for avg_trb_len,
+even in virtualized or emulated environments.
+
+Therefore, this patch is intended to better align Linux xHCI host
+controller driver behavior with the recommendation in Section 6.2.3,
+and to improve robustness and interoperability with both current and
+future xHCI implementations=E2=80=94real or virtual=E2=80=94that may enforc=
+e spec
+recommendations more strictly.
+
+Thanks again for your feedback. I'll prepare and submit a v4 patch
+shortly, incorporating your suggestions.
+Let me know if you have further questions or suggestions.
+
+Best regards,
+Jay Chen
+
+On Mon, May 19, 2025 at 9:14=E2=80=AFPM Mathias Nyman
+<mathias.nyman@linux.intel.com> wrote:
+>
+> On 16.5.2025 6.39, Jay Chen wrote:
+> > According to the xHCI 1.2 spec (Section 6.2.3, p.454), the Average
+> > TRB Length (avg_trb_len) for control endpoints should be set to 8.
+>
+> Maybe add here "But section 4.8.2 "Endpoint Context Initialization"
+> states that all fields of an Input Endpoint Context data structure
+> (including the Reserved fields) shall be initialized to 0
+> > > Currently, during the Address Device Command, EP0's avg_trb_len remai=
+ns 0,
+> > which may cause some xHCI hardware to reject the Input Context, resulti=
+ng
+> > in device enumeration failures. In extreme cases, using a zero avg_trb_=
+len
+> > in calculations may lead to division-by-zero errors and unexpected syst=
+em
+> > crashes.
+>
+> Would be good to specify here which exact hardware requires avg_trb_len t=
+o be
+> set before the 'Address Device Command'. This way we can later create a
+> quirk for it in case it turns out other existing controllers can't handle=
+ it.
+>
+> So far it seems other hosts can handle it well, and quirks may not be nee=
+ded
+> at all. Thanks to Micha=C5=82 for testing.
+>
+> Thanks
+> Mathias
+>
+> >
+> > This patch sets avg_trb_len to 8 for EP0 in
+> > xhci_setup_addressable_virt_dev(), ensuring compliance with the spec
+> > and improving compatibility across various host controller implementati=
+ons.
+>
+> I'd skip the 'compliance with spec..' part as spec is a bit unclear on th=
+is
+> issue.
+>
+> Thanks
+> Mathias
+>
 
