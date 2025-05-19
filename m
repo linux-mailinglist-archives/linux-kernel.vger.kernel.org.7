@@ -1,117 +1,163 @@
-Return-Path: <linux-kernel+bounces-653755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30114ABBDFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:36:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A4DCABBE06
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 14:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA7A3AB8DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:35:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E3C67A504D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE9727877E;
-	Mon, 19 May 2025 12:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC641278E7B;
+	Mon, 19 May 2025 12:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QWZAF9mz"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nU7+x1Mi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0AE27876C
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 12:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550B126D4E3;
+	Mon, 19 May 2025 12:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747658142; cv=none; b=ure9e0PYR6jPfTfJiVuRbwZcdMhL4StdOsaJLmwbn9+fphLaDg2h15laYxiYXGKdQEDF4Q0EhKguPSF5vHCNcbGYnSu1g1VjF5PFj5/g0ugrMzx3MgHQG7WQVLlE/g7Nmz7f8OuDxnXxGuGdhR6U3Eep68SZwtTtcQVrsMqIDAs=
+	t=1747658243; cv=none; b=NqnRsxuPBhoPKsiqPL4if+HYw4ePtA315gpgh1ezWzVfWZ089v2CG85j384tYPnvPxtiZtskYSZVD+d+WbMGWXfU/7/73OhQ+VS1cz495lapfsX2fVc4IQFh/xqEBlsjpWi3jkJp/hig+IpyoLkAsAOsC4Fj64qGzS2UI9ZYKQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747658142; c=relaxed/simple;
-	bh=h/jHKw3kD1UoLZdhvu9N8CX7eVHnHrwSEacWRDnO27c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E8Odub9/cETl9OzRGASHofEdvoaQ/NIOkfBQCaGGCzMjGL/JGVzvI/Dgvg47lcKHQ+d37E5w1g1AeVdD5Z2WRvhSDSB58XBYSsvG3tHcGtZ4zgRTDa0cGcu4kkKnG6GJWuItQ+t7CiK1CnF2lnTt3fs5ncb1UEk45nt9/gXFXuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QWZAF9mz; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ad1b94382b8so796667766b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 05:35:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747658139; x=1748262939; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jaqnelmhXDMJ9MVU43vitj0wc6YSbcEgfnfp1MR4UNk=;
-        b=QWZAF9mz6/OFydTa06zC4q6DYcEoelDrhUQqn2IYfcypSTiQYP6MURflYZNa9ZpyH+
-         xkqC52LDP+7+tifGMw7LyeYOMvmNaJTIEtn7LFeWSXwFbljSaxP9vExt3we0hvbIJ6KT
-         klp24sA2wC7+RGAm+7nAztxOe5Mz6pYnH97yjW3op/bEEbm6VcR25GsaxTOgw4hqigs8
-         FxQCtneal0T3eoK8iUhmBYDijvIQALlwJcyqceNMZrQSDHeGspk3ZA0vM61SBBeb6AyX
-         e3IdJmfvOWj0dT+71OXoOfB3mbetYoO7iCDQhJgTRuX6liUXMEIseT42Xf7H2RXV/Wj+
-         ijwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747658139; x=1748262939;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jaqnelmhXDMJ9MVU43vitj0wc6YSbcEgfnfp1MR4UNk=;
-        b=WOl0z5mwVCBecSl2IlZ8300+8CY8igwPxMJWdtfVTdI0e+Fm5R1AJEv7nHVU+cOrPi
-         CEJGklw2zGj8nrTVF8Xy+hgZWo44foEiA9uaV9PIjg4dd8AVjFmtcinVBhNpvSrj6v+E
-         8ik5HNJzKAU2kJ80TWKVB270kDh523IVKQjo27/g9XHlFQL2mZovqyWInQxlQojAlI5C
-         lTKWmgM+KzJ3wY0tJCgT8+mVZg8JaIlyrTuz3RY+f0mvY8MHiLqGFQ4D54s7ZH9ySx/e
-         iLGGL1V92ontp/c9LErP4A3fRQaxiGuCYI2UAxwLdWqFZlb6EZfP4SzPmdkYUjKHeZZ7
-         EMyw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+1rO2VTscf2NdXSLFUO/LQdNZakIfKQv9KcPryZsYCBqnv4f+wuG6qdkBjM0rTa7xC+LEhdoZOQrWtfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybFT6jPChMMmFN28gyLFVJLbSLJpomjZOeHA2jFeM7kfs7btRf
-	/Cyg3D6DhGRUDZhC1mYcdmBaI10bAIJNQRD59SiHTA5Jee6lOcC+xTKIK+FIC3SBK6WVgiqZMU/
-	rRbCFyuv1niflHmyEgYmT51pyT1ARzdHgvdKf920uMQ==
-X-Gm-Gg: ASbGncuSCWfaA+kqCwrg0BeTXZZfuRMAWktrsTpDgM+3Y1b0f8FssjoFmdmHfwk6D0L
-	8qDNK83z2rAIyG0MnZaG+qCL7oUxIzzrbWwJlhc9J4OE90Vc0dbe36LKRNxLGX/ZcOTRM6RLhZn
-	LsaS7EBkfFrfVL1kz2npFHZnm6wvDBOjEn3TOFEqQjgc3BUhYf/Az5fqhG3Wuk0w==
-X-Google-Smtp-Source: AGHT+IF4eIqhtrc+6I57JtzN8T69+0a5kBByXRsTt5Vgm1fGY3uwK3UwQBXHYFy3TDCpoGVeZtntfDbE3hCBM0igRZg=
-X-Received: by 2002:a17:907:60d6:b0:ad5:211e:8cff with SMTP id
- a640c23a62f3a-ad52d5ba7b7mr1057424266b.37.1747658139023; Mon, 19 May 2025
- 05:35:39 -0700 (PDT)
+	s=arc-20240116; t=1747658243; c=relaxed/simple;
+	bh=OPb24WSHEv+e9i6+TiE/kgAU14z58rgNG8YvtfGAmNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Twvzz3RrcEXHh2EJQUCMcpLNiATOqDimN6QGRmS1PKh3JcXR3xVCrrYXU713VCRbjO1zaEOudUx8aWESvwcEx6xZEWIpNKsxpQKMI7RQemFL+p3MEHnaTtyc8PV+d0tZMPDmuGUbIIGdqh2xlyO2LGYNsdUR6RcgtyW+2l6iUsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nU7+x1Mi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 966CEC4CEF0;
+	Mon, 19 May 2025 12:37:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747658243;
+	bh=OPb24WSHEv+e9i6+TiE/kgAU14z58rgNG8YvtfGAmNM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nU7+x1MiVYMZ4adC2o5Djg/3jXiEFeTCWeX7Rn+txQz+GbF5B/UN/7zSXdV5R6gva
+	 jAriXBxj66W3nHTbhU2o5gpl4AjgznmNecIOy736OR52dlBfTScUwbeLPNu3LGfDgB
+	 Q3fjLLbSGh1z6hvOItfvN9ToITZkokb5cFpHyBrrOLF4+bAAUChcnqubGYJMnd1G6I
+	 kh2xODkRFCWkKWhF9WznwH8/POJu+QcxKXDAI6GLiFq2DG4pWkxJJ6WodUe9f2jsN9
+	 SR1v3HQEMnZGDh+CpEJ8Q6mLB25PjIrmFDzmAj9HeJYjmbVmOZhwrVrOZzNLAG4uVz
+	 XqWGPPE8DoBmg==
+Date: Mon, 19 May 2025 13:37:19 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alejandro Enrique <alejandroe1@geotab.com>
+Cc: Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] riscv: dts: sophgo: add zfh for sg2042
+Message-ID: <20250519-dining-tumbling-ff005fcdae03@spud>
+References: <20250514-ubx-m9-v1-0-193973a4f3ca@geotab.com>
+ <20250514-ubx-m9-v1-1-193973a4f3ca@geotab.com>
+ <20250514-saggy-shifter-e4ac7152f823@spud>
+ <CAN=L63qsjEAvfocgP0tGrpe-x6Rx1gvTAkPE9i99Ai2zJj6ssA@mail.gmail.com>
+ <20250515-varying-swan-31ca63615b43@spud>
+ <CAN=L63oc7a6+_e+nhiyCkttX-TSbcjcwBmSzPsSk94m1ebGt4w@mail.gmail.com>
+ <20250516-unfasten-submersed-e854fc9a0142@spud>
+ <CAN=L63phSnssXs1p2HXhf08HMaHCE80EgMZQR0vPqhME2tknBQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250519092540.3932826-1-limingming3@lixiang.com> <20250519093857.GC24938@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250519093857.GC24938@noisy.programming.kicks-ass.net>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 19 May 2025 14:35:26 +0200
-X-Gm-Features: AX0GCFtwAPx-On4jvEu1RgfjZ7x8W6B4v1YRjdYURF1h2r811b2tPgdoSKyBZn0
-Message-ID: <CAKfTPtB-fjPH+=EBbeZvvWvOdbecVJvPzmNB2sQrAM4H0gL8Dw@mail.gmail.com>
-Subject: Re: [PATCH] sched/eevdf: avoid pick_eevdf() returns NULL
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: limingming3 <limingming890315@gmail.com>, mingo@redhat.com, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, limingming3@lixiang.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="1sJ959amROs/zspS"
+Content-Disposition: inline
+In-Reply-To: <CAN=L63phSnssXs1p2HXhf08HMaHCE80EgMZQR0vPqhME2tknBQ@mail.gmail.com>
 
-On Mon, 19 May 2025 at 11:39, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Mon, May 19, 2025 at 05:25:39PM +0800, limingming3 wrote:
-> > pick_eevdf() may return NULL, which would triggers NULL pointer
-> > dereference and crash when best and curr are both NULL.
-> >
-> > There are two cases when curr would be NULL:
-> >       1) curr is NULL when enter pick_eevdf
-> >       2) we set it to NUll when curr is not on_rq or eligible.
-> >
-> > And when we went to the best = curr flow, the se should never be NULL,
-> > So when best and curr are both NULL, we'd better set best = se to avoid
-> > return NULL.
-> >
-> > Below crash is what I encounter very low probability on our server and
-> > I have not reproduce it, and I also found other people feedback some
-> > similar crash on lore. So believe the issue is really exit.
->
-> If you've found those emails, you'll also have found me telling them
-> this is the wrong fix.
->
-> This (returning NULL) can only happen when the internal state is
-> broken. Ignoring the NULL will then hide the actual problem.
->
-> Can you reproduce on the latest kernels?, 6.1 is so old I don't even
-> remember what's in there.
 
-Wasn't eevdf merhged in v6.6 ?
+--1sJ959amROs/zspS
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, May 16, 2025 at 05:00:50PM +0200, Alejandro Enrique wrote:
+> On Fri, May 16, 2025 at 4:01=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
+rote:
+> >
+> > On Fri, May 16, 2025 at 12:23:35PM +0200, Alejandro Enrique wrote:
+> > > On Thu, May 15, 2025 at 5:02=E2=80=AFPM Conor Dooley <conor@kernel.or=
+g> wrote:
+> > > >
+> > > > On Wed, May 14, 2025 at 06:53:25PM +0200, Alejandro Enrique wrote:
+> > > > > On Wed, May 14, 2025 at 5:49=E2=80=AFPM Conor Dooley <conor@kerne=
+l.org> wrote:
+> > > > >
+> > > > > > On Wed, May 14, 2025 at 01:55:54PM +0200, Alejandro Enrique via=
+ B4 Relay
+> > > > > > wrote:
+> > > > > > > From: Alejandro Enrique <alejandroe1@geotab.com>
+> > > > > > >
+> > > > > > > Add compatible for u-blox NEO-9M GPS module.
+> > > > > > >
+> > > > > > > Signed-off-by: Alejandro Enrique <alejandroe1@geotab.com>
+> > > > > > > ---
+> > > > > > >  Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml | =
+1 +
+> > > > > > >  1 file changed, 1 insertion(+)
+> > > > > > >
+> > > > > > > diff --git a/Documentation/devicetree/bindings/gnss/u-blox,ne=
+o-6m.yaml
+> > > > > > b/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
+> > > > > > > index
+> > > > > > 7d4b6d49e5eea2201ac05ba6d54b1c1721172f26..cf5ff051b9ab03e5bfed8=
+156a72170965929bb7e
+> > > > > > 100644
+> > > > > > > --- a/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.ya=
+ml
+> > > > > > > +++ b/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.ya=
+ml
+> > > > > > > @@ -22,6 +22,7 @@ properties:
+> > > > > > >        - u-blox,neo-6m
+> > > > > > >        - u-blox,neo-8
+> > > > > > >        - u-blox,neo-m8
+> > > > > > > +      - u-blox,neo-m9
+> > > > > >
+> > > > > > No match data in the driver, why is a fallback not sufficient?
+> > > > > >
+> > > > >
+> > > > > I added the match data in the driver in the PATCH 2/2 of this ser=
+ies
+> > > > > in the same fashion as previously supported modules.
+> > > >
+> > > > Did you? When I looked, there was just a compatible and no match da=
+ta.
+> > >
+> > > You are right. I just added a compatible string, no match data. Sorry,
+> > > I was not following.
+> > > I just added the neo-m9 compatible the same way the neo-6m was previo=
+usly
+> > > added.
+> > >
+> > > What do you mean by using a fallback? Using one of the existent
+> > > compatibles (none have match data) or adding a new fallback
+> > > compatible, something like just "u-blox,neo"?
+> >
+> > Falling back to one of the existing ones, like neo-m8.
+>=20
+> That is perfectly possible. I added the new compatible string based
+> on what was previously done for the neo-6m one.
+> https://lore.kernel.org/lkml/20190401115616.21337-5-megous@megous.com/
+>=20
+> If that is not a good approach I think this series can be discarded alrea=
+dy.
+
+If you did use a fallback, you still need to modify the binding to
+permit it, so there'd be a different v2 rather than throwing it away.
+
+--1sJ959amROs/zspS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaCsl/wAKCRB4tDGHoIJi
+0nhvAP4mRo7x0fJA+I3lYEavYP/JBhtUg/TLe3db/kEtTqrw8AEA7OVlgKjS0Zid
+urR1jOv2BUN9YCgHf5y9WSQJp4CNKgU=
+=jT3w
+-----END PGP SIGNATURE-----
+
+--1sJ959amROs/zspS--
 
