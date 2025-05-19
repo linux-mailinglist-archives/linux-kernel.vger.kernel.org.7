@@ -1,107 +1,88 @@
-Return-Path: <linux-kernel+bounces-653834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37703ABBF3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:34:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6441AABBF42
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 15:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAA073AB711
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:33:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55864188FD6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E8527817D;
-	Mon, 19 May 2025 13:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BvMMk+AX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E846926A1B1
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 13:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FFE279901;
+	Mon, 19 May 2025 13:34:32 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284C6198845;
+	Mon, 19 May 2025 13:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747661633; cv=none; b=uHTJb84kf+rKxmkMCa3ioSouxNnExtDSDdE76bLLPyiNYeLvw/zGUvrK4apxF+73cRUEEkrN6WRWhY3KXthnYXrx4YsWwcqYEZf6j7vZ86OJyROGI1cOjNNWeZfwib/j6XYlrMyaK2zii0asdACIACbTECT1BDepQx08lRyNzYg=
+	t=1747661671; cv=none; b=CYEeOkVGz8C8miek4KPPupiLtr1hfmWSEdRoOi9ABbOyE6xsFpPRYv62wwetz8iHlaCLENBrxo39oU2Em/l4Cw3B3w/v2AIJqHxmX2vj29ToG54ZU5TBAwaHOUlX7uTG8wM+bIqxX3ZeOnktScHWEyouIKo/PAR4MwO5b0AUkS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747661633; c=relaxed/simple;
-	bh=NZYT7Njq17fWYjY0NP0+YaRVjRNL5pkH6vBEdJFJE0I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GCJX1cFsSdUBnilPMlVQlg0WV17PNv58il7ug0fEAYbamf5DYr4e3Hq+BqfQz/PVK2IWROTOmgeqZdgOq2to2E168sXI1k1hXKmbKKw6RyCRGAnKJ15X8KbTDlKbxZPACllfnwCVSUck4ews7Gonvj5f1QmXtIHTkatsQM36g78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BvMMk+AX; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747661632; x=1779197632;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=NZYT7Njq17fWYjY0NP0+YaRVjRNL5pkH6vBEdJFJE0I=;
-  b=BvMMk+AXTO+MIW5Qw1k6yCsOIuD36AmcFwgnX3W7j4MqAVYF0SWjwXLS
-   VCh+ngtG1R6vsa+VizuLcPSgSds7n/IxKYp0rThkQgNfAONtC49uqFlNa
-   gqgqAtgTnvbHinYky8hePx+RhcIi0OFyPkqwLa5g4lmDgmoynfbMY0i4y
-   md2QS/6a0RerREUvS3FpMd4oYqylRBrVRRQ+3O9PR1X6kqTERxoUxzubD
-   gdJvCo3jJNTMxMlZsbE2Uwtmv6ueAYRECqCx7DXg4NM5RoAus7qCJt2ok
-   5x9JyqAobwi/xN4SuqV1tEPomMatnk/MhMVp25lnxcNfF7oiF0E0SXxgs
-   Q==;
-X-CSE-ConnectionGUID: y3XRopkWSIyEzZ8nTpxvfA==
-X-CSE-MsgGUID: H2YpsXW1RiKscnKoT+XJLQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="49699749"
-X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
-   d="scan'208";a="49699749"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 06:33:51 -0700
-X-CSE-ConnectionGUID: VWCidQf0QYCHPMwfd+W9fw==
-X-CSE-MsgGUID: EnzbFS6pR+KtxAQgB7QBdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
-   d="scan'208";a="140388293"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 19 May 2025 06:33:48 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id DFFD1256; Mon, 19 May 2025 16:33:46 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Abhishek Tamboli <abhishektamboli9@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1747661671; c=relaxed/simple;
+	bh=n/9A2G/oHDSTF9Zj/vCc5RLl1lY8WVggwR4DunaeIvA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gFXWgN+0AJtMRVh/ur4iHNHhc584TG4FNhVcNIf0m8xI5+GSXMPDmTEcTzNfBJE8iP1HFPDB87uUwT//ZIinIjOj3wROanxpraTiEKaL7iTrLNaL7bAyR4fYws9g3vvH5Rvz1BTLlpl2A01/foy7BJnFhkeZ70zR0slK20NUtCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: mrwcX8wBS7uvk6TIOkQe1w==
+X-CSE-MsgGUID: W8IhL62/S1SCzO44BXBuZQ==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 19 May 2025 22:34:22 +0900
+Received: from rz-ub2404.betafive.net (unknown [10.226.93.44])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4CCE2427BD1A;
+	Mon, 19 May 2025 22:34:15 +0900 (JST)
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Paul Barker <paul.barker.ct@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Paul Barker <paul@pbarker.dev>,
+	netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Subject: [PATCH v1 1/1] drm/panel: ili9341: Remove unused member from struct ili9341
-Date: Mon, 19 May 2025 16:33:45 +0300
-Message-ID: <20250519133345.257138-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+Subject: [PATCH] MAINTAINERS: Drop myself to reviewer for ravb driver
+Date: Mon, 19 May 2025 13:33:51 +0000
+Message-ID: <20250519133354.6564-1-paul.barker.ct@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-struct device *dev from struct ili9341 is not used anywhere, remove it.
+Maintenance of the ravb driver will be handled by Niklas for now. I
+still intend to review patches, and will be using my own email address
+going forward.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 ---
- drivers/gpu/drm/panel/panel-ilitek-ili9341.c | 1 -
- 1 file changed, 1 deletion(-)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-index ff39f5dd4097..2b5bd83933e3 100644
---- a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-+++ b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
-@@ -173,7 +173,6 @@ struct ili9341_config {
- };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 20e07e61a148..9d64b1fc5180 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20908,8 +20908,8 @@ F:	Documentation/devicetree/bindings/i2c/renesas,iic-emev2.yaml
+ F:	drivers/i2c/busses/i2c-emev2.c
  
- struct ili9341 {
--	struct device *dev;
- 	const struct ili9341_config *conf;
- 	struct drm_panel panel;
- 	struct gpio_desc *reset_gpio;
+ RENESAS ETHERNET AVB DRIVER
+-M:	Paul Barker <paul.barker.ct@bp.renesas.com>
+ M:	Niklas Söderlund <niklas.soderlund@ragnatech.se>
++R:	Paul Barker <paul@pbarker.dev>
+ L:	netdev@vger.kernel.org
+ L:	linux-renesas-soc@vger.kernel.org
+ S:	Maintained
 -- 
-2.47.2
+2.43.0
 
 
