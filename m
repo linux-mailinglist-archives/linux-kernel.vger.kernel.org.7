@@ -1,130 +1,83 @@
-Return-Path: <linux-kernel+bounces-654727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30280ABCBBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 01:49:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748CAABCBB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 01:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E868C263E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:49:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 679637A339F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C391F221277;
-	Mon, 19 May 2025 23:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D962206A4;
+	Mon, 19 May 2025 23:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p79LCThA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JfTUfceC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20575220F52;
-	Mon, 19 May 2025 23:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F9F4B1E5E;
+	Mon, 19 May 2025 23:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747698531; cv=none; b=k9qiDdvwF/Lr7JdjDUB36le+5WV93NE1975ZFZSb98ZPZ8NsYIbgaEdCvjE1elykXF9kySUfnqfTcfNrl2AapIT061FObYXZICzx6hhvTsOE65yi06srArKyno6L9wEmqwSy9XALVxYty46bVVv05OfqAup19BvglW8PHVtQSXk=
+	t=1747698528; cv=none; b=Fg3OORQcQoj4ppo0pmC+QFG9UAulEV0hL5eJ+FGeQjXXCvNxwHY50NxYyk76Y/8oLJE5IXgC5PVRIFQOrTYeiH5ZNJBmYJEbUOzqR5RHJHoubgrfxFLcCFxgclshD0Yj3iNSireYC3dSYOOmdOhTgph2SqaTMGbzfsyIFxXX2Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747698531; c=relaxed/simple;
-	bh=LMijej7gFtPDNBIOlBJu1tJ8zpVTvJVhOg0iGAqbUB4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=qfe+xLTB4hqy9/KQ5fy655WWQ4/ZlpfwoyJ67uRAvSeMKofVuaRs2k02YOEuQ1ARdAdJp+F6CszdH1s69Yhi0QDBj8ynCEhqMPrNcm3UchqhCKX3P1QdVtQ2pmyIBRf8uFLddzcsonR9gOc4QSMbyKOMXEGiNrkFjUHxoMS09JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p79LCThA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E71C4C4CEE4;
-	Mon, 19 May 2025 23:48:46 +0000 (UTC)
+	s=arc-20240116; t=1747698528; c=relaxed/simple;
+	bh=KY1eMq/GYCaPfzTkzeeKII/x7ctTj9mKeTjTe1ksYQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cDqTlc2CdnSOVVBZEEK2iH1oU6cyeR6FrQo5k+I7Jdsre1YRgWmLvnP/ceiDPQz5oehVEcPZ2yUoCJQ5cc7UiodnzhjOcYyftLnKfhwLDPUAWp88buUqkfCx1In8rBh8A4vBzddjCQzS4HnBWdxJclrcWukBBGKU3TFN1E+yYI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JfTUfceC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3110DC4CEED;
+	Mon, 19 May 2025 23:48:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747698530;
-	bh=LMijej7gFtPDNBIOlBJu1tJ8zpVTvJVhOg0iGAqbUB4=;
+	s=k20201202; t=1747698527;
+	bh=KY1eMq/GYCaPfzTkzeeKII/x7ctTj9mKeTjTe1ksYQE=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=p79LCThAtnHz+EDt53BzdMUN6qagFtutqFTVD3F35ZSzCJxO0VXbNLV03KoUCdtjq
-	 /LMV73wPmUxo48wg9Y8XWztyKz9KR6oLY+bg+j00yRPj+LK2bDu6I2H9UPrjfVYP70
-	 /jmOmTkQ3tju7Ur4CPiWXTkBkbZX4kpsQr/EA6y1aa36SHyC3yt+zZhMj2x200cZTR
-	 bp/nqglcL5VuHI20xid+S+OA822wfZFdC9IBrj6qvRMM5XdFOcUsToGOpz7/9S9PoF
-	 WVP0X3YH9kZGMPQ7VpQCp0DRqHue528ouTn6ZkNeUjn0Wxtg42NdDKNwknkyWrI5Yo
-	 tXULjqg5FexNA==
-Date: Tue, 20 May 2025 08:48:45 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- x86@kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song
- <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo
- <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, David Laight
- <David.Laight@ACULAB.COM>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
- <thomas@t-8ch.de>, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCHv2 perf/core 01/22] uprobes: Remove breakpoint in
- unapply_uprobe under mmap_write_lock
-Message-Id: <20250520084845.6388479dd18658d2c2598953@kernel.org>
-In-Reply-To: <20250515121121.2332905-2-jolsa@kernel.org>
-References: <20250515121121.2332905-1-jolsa@kernel.org>
-	<20250515121121.2332905-2-jolsa@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=JfTUfceCoa6lkj7bKXecnZoPZPki2zZjT0xTf1jakn8U9GrVa0efdOwsbV1YblNdL
+	 +/hQYHBNtG8Eel3jwrPlnDZBhIVlatLBuxGMoEJu9jYPjm8Xb/hPdojjLo4VtINz8j
+	 hJ3vFKFxQwnrvQIhTEsaImnzW5voGbmZjPPkaZAh3ev8lgLbj9u77cabFlgncuM1d3
+	 E0fekisSWd1Iv9F8QdGd8EfXxdiZnLPLCtMiMw7S2wtajmeQ8vEq1T37wrgASJkoRb
+	 yIgldeav/X7arKnYC73NjPGoBz2ritOrQiO54ljTzTo2ZpyxpBD9ARxshS2RM7KIYH
+	 QXQ/yLQwbZHSw==
+Date: Mon, 19 May 2025 16:48:46 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, Ilias
+ Apalodimas <ilias.apalodimas@linaro.org>, Neal Cardwell
+ <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, David Ahern
+ <dsahern@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Shuah Khan
+ <shuah@kernel.org>, sdf@fomichev.me, ap420073@gmail.com, praan@google.com,
+ shivajikant@google.com
+Subject: Re: [PATCH net-next v1 5/9] net: devmem: ksft: add ipv4 support
+Message-ID: <20250519164846.40cd01e4@kernel.org>
+In-Reply-To: <20250519023517.4062941-6-almasrymina@google.com>
+References: <20250519023517.4062941-1-almasrymina@google.com>
+	<20250519023517.4062941-6-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 15 May 2025 14:10:58 +0200
-Jiri Olsa <jolsa@kernel.org> wrote:
+On Mon, 19 May 2025 02:35:13 +0000 Mina Almasry wrote:
+> +    addr = cfg.addr_v[ipver]
+> +    if ipver == "6":
+> +        addr = "[" + addr + "]"
 
-> Currently unapply_uprobe takes mmap_read_lock, but it might call
-> remove_breakpoint which eventually changes user pages.
-> 
-> Current code writes either breakpoint or original instruction, so
-> it can probably go away with that, but with the upcoming change that
-> writes multiple instructions on the probed address we need to ensure
-> that any update to mm's pages is exclusive.
-> 
+You want baddr ?
 
-So, this is a bugfix, right?
+https://web.git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/tools/testing/selftests/drivers/net/lib/py/env.py#n155
 
-Thanks,
+In general you should use cfg.addr, cfg.addr_remote and self.addr_ipver 
+if you don't care about what IP version env provides.
 
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  kernel/events/uprobes.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 84ee7b590861..257581432cd8 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -483,7 +483,7 @@ static int __uprobe_write_opcode(struct vm_area_struct *vma,
->   * @opcode_vaddr: the virtual address to store the opcode.
->   * @opcode: opcode to be written at @opcode_vaddr.
->   *
-> - * Called with mm->mmap_lock held for read or write.
-> + * Called with mm->mmap_lock held for write.
->   * Return 0 (success) or a negative errno.
->   */
->  int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
-> @@ -1464,7 +1464,7 @@ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
->  	struct vm_area_struct *vma;
->  	int err = 0;
->  
-> -	mmap_read_lock(mm);
-> +	mmap_write_lock(mm);
->  	for_each_vma(vmi, vma) {
->  		unsigned long vaddr;
->  		loff_t offset;
-> @@ -1481,7 +1481,7 @@ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
->  		vaddr = offset_to_vaddr(vma, uprobe->offset);
->  		err |= remove_breakpoint(uprobe, vma, vaddr);
->  	}
-> -	mmap_read_unlock(mm);
-> +	mmap_write_unlock(mm);
->  
->  	return err;
->  }
-> -- 
-> 2.49.0
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+If you want to test specifically v4 or v6 they should be separate test
+cases (doesn't sound like that's your intention here tho)
 
