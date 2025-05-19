@@ -1,165 +1,138 @@
-Return-Path: <linux-kernel+bounces-654137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BEA2ABC449
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:20:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48DCBABC43F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B32818837B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:20:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD371B64846
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6D2286D7B;
-	Mon, 19 May 2025 16:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vdYjXcTD"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1DB289820
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23862288C23;
+	Mon, 19 May 2025 16:17:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60A9288C21;
+	Mon, 19 May 2025 16:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747671458; cv=none; b=Rpl5InhOVlx1c5DwuaMggmBSly7D7+duSR2LWj4+ABr+FJi8UtGOQtO0+/ewkvabCkxOxKTPqSeJ42E6oGcdz7WUd8lRuLYRnPmur0SF+G59WaaAGhWaYklPuSoOkf9j3xv1u8Ke+IlxuW+iV2lXgRr+hg9tECY6QxfXEY55MAI=
+	t=1747671431; cv=none; b=JeogPziBlrAZqfK4FaFO/rC9Qt6N/YCbBn7LJRiBYPw/UBVFWyWcAmyPb4EsFPkAy7n+Me3uaHh7SWXTUCCtJ+LuhmfwZQ2kg2+aDJKMDVVvK9NQZYlDjiv0X1i8MMzCMywkND0bhaG7d3a8/htNv3yppQM1eLBmMgeI5FptJ9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747671458; c=relaxed/simple;
-	bh=9OXo2mm4zTvrDpEWPXsdwUcmAvEmqVu3gp27qTaR1DA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Ly6puZB1MDpIUKVNuGj5ziz8leS7778E/jl+d+UcK/eODpvs5+DbA/VX8vNfC/mkWkO/4PLnJLFZEIaFEFIKjN62ScGehIl6xwjjMSxuOwvsgnr0RMfSofKLDSULe3imUNHPij+QdiU9kYnJJRW+0mp2iTohlJxsQPZoFe41atE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vdYjXcTD; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-442ffaa7dbeso4019665e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:17:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747671454; x=1748276254; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xi3xovkHr/TA/Q9MkIz3HdK8OZ1bO8szRf5CN1p75gk=;
-        b=vdYjXcTDDISeVsfBvQTVFrw8dCJH31nmCkVZOhA02GrxuIYxGZJ0jxbPIoEIxxmyey
-         VGw7lyGicVNsi9gTU69xcew4pQKtyQy/C8piB5f9x1z+d0Xw9dbIKpqlmqFkk7qXfpcb
-         IBEZCfQolmlYcoAdxDQrIW/rqrutw2ulEs1hck2iiCL/3CbvnoOZ7osCzETzTE8zw4zG
-         O3NMyVI9TIu83npYJvYbG/8wECMVk9pHrCD/Nbjgqa+1hyK4whGjfVBSVELXfcC51pKw
-         QM1mWKt0JXI4Peo1adCVRmDLyDwLmO+Tn4L2tyUvfJ5L8U5lYcj2xUlzvcnHhYWaf82M
-         OsxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747671454; x=1748276254;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xi3xovkHr/TA/Q9MkIz3HdK8OZ1bO8szRf5CN1p75gk=;
-        b=UlqjezIxaU4jO4Dk3oiUA+0v5zBDoVsR+Qp8qMRzaQt3ThMJYCUep6OVkF9LN4ren3
-         PiaLu7pnqPEMk4ZOEcEf04g/iiBA08YRD8+HXtv8hpFDR9B6VcYHMyGMZoEDjkXjeo+c
-         ibfvwdm0TNGKDOeeyZAMkRX9DdUuzYw1h2H9tUI9jPygEZTCb7pYsxNhDZO49d1Ib6ys
-         Ol0Xpi5EtiD2LdxqAXb8FrqQd9+EmgzX3wLMXD8DweyNY5jTMCfmCGENpqYgZrmrql3q
-         p3O+HTdcMo/hyvEn68yZASFWh6aCGAV9xmEx8/XiarxDtBZ1QhHmCtG2D+dNs3S+e6DL
-         5QPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ3iW3nIkSH2mStEoadXt+E1xmqIGYm6bHzy/snAr6coF3DP7Sp7V2+/qEDP0RAv0k8aYwwklVA4eMsmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUtJvAjJkDIM+rwwKqD7wTC3yar66rFnUkF4QWRmbe58DueMfp
-	wstQ7ha7m2fnl+XRNpJHkyAnD3k6rLBtrwaps+Iegb9RXsuh6zaMGaXC1MavPQlTWMQQ4A==
-X-Google-Smtp-Source: AGHT+IEDywwP0TbHb8rwq4xsvkZ8rXPn0wk9YIEpc/zYAcY8JgnR07Gpr6ugUtORaX2FrzcOWh/6rQc=
-X-Received: from wmbay27.prod.google.com ([2002:a05:600c:1e1b:b0:442:dd0d:556b])
- (user=bqe job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:4688:b0:43d:2230:300f
- with SMTP id 5b1f17b1804b1-442fd5a160amr147107165e9.0.1747671453952; Mon, 19
- May 2025 09:17:33 -0700 (PDT)
-Date: Mon, 19 May 2025 16:17:02 +0000
-In-Reply-To: <20250519161712.2609395-1-bqe@google.com>
+	s=arc-20240116; t=1747671431; c=relaxed/simple;
+	bh=UNbvV6wmNjcbacGds8xFAjj2VpWeSkjDPtLp3906aSk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SdVss8Zc0M7eaRVVtAoZT5S2EBjICTtLM9EStnCGgcGfvX4KpGR9mKPnDbxLTLHrmOala85/x4ShF3CmVCBA4NGxjSgW5v0NS2xBc6vn4RPT3BlfTJW4qqnmaAWtWJ99i1gX8qBPe2uJHJkF5HwuaQB23zU0zGhiNioqzC0flO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09C361655;
+	Mon, 19 May 2025 09:16:56 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8161B3F5A1;
+	Mon, 19 May 2025 09:17:07 -0700 (PDT)
+Date: Mon, 19 May 2025 17:17:02 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Will Deacon <will@kernel.org>
+Cc: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	john.ogness@linutronix.de,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 17/22] arm64: mm: Add page fault trace points
+Message-ID: <aCtZfiU8bgkSAgLh@J2N7QTR9R3>
+References: <cover.1745999587.git.namcao@linutronix.de>
+ <554038c996662282df8a9d0482ef06f8d44fccc5.1745999587.git.namcao@linutronix.de>
+ <20250516140449.GB13612@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250519161712.2609395-1-bqe@google.com>
-X-Mailer: git-send-email 2.49.0.1101.gccaa498523-goog
-Message-ID: <20250519161712.2609395-3-bqe@google.com>
-Subject: [PATCH v8 2/5] rust: add bindings for bitops.h
-From: Burak Emir <bqe@google.com>
-To: Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>
-Cc: Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250516140449.GB13612@willie-the-truck>
 
-Makes atomic set_bit and clear_bit inline functions as well as the
-non-atomic variants __set_bit and __clear_bit available to Rust.
-Adds a new MAINTAINERS section BITOPS API BINDINGS [RUST].
+On Fri, May 16, 2025 at 03:04:50PM +0100, Will Deacon wrote:
+> On Wed, Apr 30, 2025 at 01:02:32PM +0200, Nam Cao wrote:
+> > Add page fault trace points, which are useful to implement RV monitor which
+> > watches page faults.
+> > 
+> > Signed-off-by: Nam Cao <namcao@linutronix.de>
+> > ---
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > ---
+> >  arch/arm64/mm/fault.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+> > index ef63651099a9..e3f096b0dffd 100644
+> > --- a/arch/arm64/mm/fault.c
+> > +++ b/arch/arm64/mm/fault.c
+> > @@ -44,6 +44,9 @@
+> >  #include <asm/tlbflush.h>
+> >  #include <asm/traps.h>
+> >  
+> > +#define CREATE_TRACE_POINTS
+> > +#include <trace/events/exceptions.h>
+> > +
+> >  struct fault_info {
+> >  	int	(*fn)(unsigned long far, unsigned long esr,
+> >  		      struct pt_regs *regs);
+> > @@ -559,6 +562,11 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
+> >  	if (kprobe_page_fault(regs, esr))
+> >  		return 0;
+> >  
+> > +	if (user_mode(regs))
+> > +		trace_page_fault_user(addr, regs, esr);
+> > +	else
+> > +		trace_page_fault_kernel(addr, regs, esr);
+> 
+> Why is this after kprobe_page_fault()?
 
-Suggested-by: Alice Ryhl <aliceryhl@google.com>
-Suggested-by: Yury Norov <yury.norov@gmail.com>
-Signed-off-by: Burak Emir <bqe@google.com>
-Acked-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
----
- MAINTAINERS            |  5 +++++
- rust/helpers/bitops.c  | 23 +++++++++++++++++++++++
- rust/helpers/helpers.c |  1 +
- 3 files changed, 29 insertions(+)
- create mode 100644 rust/helpers/bitops.c
+The kprobe_page_fault() gunk is doing something quite different, and is
+poorly named. That's trying to fixup the PC (and some other state) to
+hide kprobe details from the fault handling logic when an out-of-line
+copy of an instruction somehow triggers a fault.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 86cae0ca5287..04d6727e944c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4141,6 +4141,11 @@ F:	include/linux/bitops.h
- F:	lib/test_bitops.c
- F:	tools/*/bitops*
- 
-+BITOPS API BINDINGS [RUST]
-+M:	Yury Norov <yury.norov@gmail.com>
-+S:	Maintained
-+F:	rust/helpers/bitops.c
-+
- BLINKM RGB LED DRIVER
- M:	Jan-Simon Moeller <jansimon.moeller@gmx.de>
- S:	Maintained
-diff --git a/rust/helpers/bitops.c b/rust/helpers/bitops.c
-new file mode 100644
-index 000000000000..1fe9e3b23a39
---- /dev/null
-+++ b/rust/helpers/bitops.c
-@@ -0,0 +1,23 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/bitops.h>
-+
-+void rust_helper___set_bit(unsigned int nr, unsigned long *addr)
-+{
-+	__set_bit(nr, addr);
-+}
-+
-+void rust_helper___clear_bit(unsigned int nr, unsigned long *addr)
-+{
-+	__clear_bit(nr, addr);
-+}
-+
-+void rust_helper_set_bit(unsigned int nr, volatile unsigned long *addr)
-+{
-+	set_bit(nr, addr);
-+}
-+
-+void rust_helper_clear_bit(unsigned int nr, volatile unsigned long *addr)
-+{
-+	clear_bit(nr, addr);
-+}
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index 92721d165e35..4de8ac390241 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -8,6 +8,7 @@
-  */
- 
- #include "bitmap.c"
-+#include "bitops.c"
- #include "blk.c"
- #include "bug.c"
- #include "build_assert.c"
--- 
-2.49.0.1101.gccaa498523-goog
+Logically, that *should* happen before the tracepoints, and shouldn't be
+moved later. For other reasons it needs to be even earlier in the fault
+handling flow, and is currently far too late, but that only ends up
+mattering int he presence of other kernel bugs. For now I think it
+should stay where it is.
 
+More details below, for the curious and/or deranged.
+
+The kprobe_page_fault() gunk is trying to fix up the case where an
+instruction has been kprobed, an out-of-line copy of that instruction is
+being stepped, and the out-of-line instruction has triggered a fault.
+When that happens, kprobe_page_fault() tries to reset the faulting PC
+and DAIF such that it looks like the fault was taken from the original
+PC of the probed instruction.
+
+The real logic for that happens in kprobe_fault_handler(), which adjusts
+the values in pt_regs, but does not handle the live DAIF value. It also
+doesn't handle the PMR when pNMI is in use. Due to this, the fault
+handler can run with DAIF bits masked unexpectedly, and a subsequent
+exception return *could* go wrong.
+
+Luckily all code with an extable entry has been blacklisted for kprobes
+since commit:
+
+  888b3c8720e0a403 ("arm64: Treat all entry code as non-kprobe-able")
+
+... so we should only get here if there's another kernel bug that causes
+an unmarked dereference of a faulting address, in which case we're
+likely to BUG() anyway.
+
+The real fix would be to hoist this out to the arm64 entry code (and
+handle similar for other EL1 exceptions), and get rid of all the
+__kprobes annotations inthe fault code.
+
+Mark.
 
