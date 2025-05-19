@@ -1,182 +1,141 @@
-Return-Path: <linux-kernel+bounces-654198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13577ABC52C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 19:05:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D6DABC533
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 19:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B949F1B6275B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:05:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A45E1679EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB19A28853A;
-	Mon, 19 May 2025 17:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F6F288535;
+	Mon, 19 May 2025 17:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tAP6QcQy"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="TDYGuEm2"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957992874F8
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 17:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420ED278E42;
+	Mon, 19 May 2025 17:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747674290; cv=none; b=bxDqUO4d8u+NmSuUQ6+idVCsQTLCom+UPogK4t7/fLDTGgjibbksJ9c8UUhrmNWhKA0ymnR7MbYpjBurnGSl39Wc/KebS495/vfXIYbx5dICERzh1DRKpAS/xgoci/kxAVWghqlHp5rzuhISKHKlxusUk9J2hfVWaHneQ2reHUY=
+	t=1747674367; cv=none; b=eJOZtoT/XQFc91d6IebhlrA5UqJRlXJuvo2w2FnSm5NkMNpoHMptxFtztO5KXE9Su4CPYyeI91fvT5QswdAdQHaIBvUBK5+gtIPB/BbLyVygmbrwlOEXJMq+71hKFj10AdpdJy1l4E+5xC/7SLH0BzGbgY4PDNk5GBzS+g6Dl30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747674290; c=relaxed/simple;
-	bh=01w4XwT5rgnUWhWg7mruXsUD7XvOWhDH57c8K7bFTHk=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=j6KHWvTM2pNMiS5NFVXY3LCWtRMiOsh0VDLkjvGEgl3+K7TVx+zMUgEls/hxM6IUjabhXaz5t0eQy28jgNEAYfzQ3JYYNI/PxSjtNr0hgTnAC8wphZD+YIu93CXpdFmHZcvFm93ibDw0GzeXHMcYCHP+KZA2TKfWBhrT+ULFrls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tAP6QcQy; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7370e73f690so5731152b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747674287; x=1748279087; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Goq4u7JwRNa/mNKgeJWxWxL3A/olzwx0SUya3IskYzo=;
-        b=tAP6QcQyorM6ILuTPiWEtFgc55dmE/x61zd0zl8Rr/6nErXk5aTErWRTxxpXl+TRSE
-         J12tNE6OYfFw1mb+ku4VvOllKsehlJmluZFzLwhOGHPTc5G1R2htLAgpsBvb3UrpLsR2
-         ffOjInJMm040HZ9Hx6KmVDpx7Na9f67xB26CVdcDeyvKDXgckUbHYavdZIN1H3vM7MTQ
-         FGT8ZOEEv73w1fmfBDiRVt3JL6MayuHzHji4UqEG8VI4GmgJUO9NpwtWU3pmQetheK5X
-         FOwWmI5bSFNd029woHzG3ijz/eDd3+RnI2bqf0uX0wzh3Clmgg160bOE0TIr7uCFITxB
-         7Zhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747674287; x=1748279087;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Goq4u7JwRNa/mNKgeJWxWxL3A/olzwx0SUya3IskYzo=;
-        b=Z6FixVQRMPWHe6RkIDJ6JoZ5ebqA5b/atcZK7gTsNoAVL6QG7f2FPtGHAqaGvRx6HX
-         TW5cprqNHnCQrv9ukrIVyLiG2MS4+czc2jYcy4nr5PnC210z6YSttCWeGb284T3kjH4v
-         7CAt13BJKLXjZOVm9N9NKZX/R0rjt52Rd2fuwvcWZXAtBNBhPzK7q6dTRDLXWkCXJdwO
-         /W0b19SvU2sSm67Txn1ZtNxk0OLsaeH0MSsYAYBw9gfSOLswf/iuyZAjtd8gFl9G6IxQ
-         GVnMpUtUo5j4HUSKxELrR0aYCJ33SydcNIZAH1xv/Mnm/PpE2IZGOo4tEmddyUNiOxc3
-         ktyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ+nkXbOgPyKXCwWrMlcI51tmBU//OL1x2KJ9/HWGzKV1RtZrAETeX/rcwpjTLCUdjnAa0bTaGzGf/iRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOCh6Gim3KUvc2RoNNd5ghqPNwUhQysGgX441OzK8mkcl0h1Ec
-	MIaB/N4GEd4stt4L8Kn8gxkz7CCt6IpeVPm/zhvWj0PbFDUANKa0xGEtejb37eWVbynJxP78U3N
-	WXQLnsddckyT6mAlt5pzhjhpe1w==
-X-Google-Smtp-Source: AGHT+IFMPwogMPOLeEVsy9zVVtiGIXpX7XWCAue2qkIgrW2Gtgg1AnNlznNb/LyQz+ITtedo/7pWya9Uw1d88i2rcQ==
-X-Received: from pfbbo8.prod.google.com ([2002:a05:6a00:e88:b0:740:b0f1:1ede])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:3a14:b0:740:67ce:1d8b with SMTP id d2e1a72fcca58-742a97b7a1bmr20111944b3a.7.1747674286740;
- Mon, 19 May 2025 10:04:46 -0700 (PDT)
-Date: Mon, 19 May 2025 10:04:45 -0700
-In-Reply-To: <diqzjz7azkmf.fsf@ackerleytng-ctop.c.googlers.com> (message from
- Ackerley Tng on Wed, 23 Apr 2025 13:30:16 -0700)
+	s=arc-20240116; t=1747674367; c=relaxed/simple;
+	bh=MZFRrNTk6ViWc/ChOfN0rfaLCkD0DjAwZcW6S1HSzPs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mU/qA+yP7sPlWd+pu7GGLlnst4sIMfu9YyLvRdyNcqkissRpzguLbG7TY1hRt4ddMuFbE/oaEnMR9KSn/m0YMlIxPC9A8poK1rID+reArrJh6p5Zxq4f6Xpui/aoXirqlfO5V76cRqXqnkAjtExuhxibxtGJxsqwEbLLeiZ4MC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=TDYGuEm2; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 54JH51I01806864
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 19 May 2025 10:05:02 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 54JH51I01806864
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1747674303;
+	bh=ts02ww6rWZGYsDbofaKTTtQ1Jg1+MlPMrtXd6RLkuKk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=TDYGuEm2xJdqKpSk9HUb6mLJjH8QfE3z/oRA2V/xIDKmePX33e93goxahOmGQ2I3j
+	 tYmxL9ORcxAW+J0TECixYkLKG+VvUkIVrFR7yvt59YT3tr5smdcmQgUS0uVOC96Mkn
+	 sSYguCgZWvX68kWJfDpbLo49PiSKPGTK5KTXUuFPqjsw2DvpSrIN0U0mJhhDP8pDR3
+	 tivIbhQZNZ0T9EUyoseNddg/rbQq/eIVkdiejdUHd5BnnDJ3tTJPUqPT6EH/5Qi9t1
+	 GvaCx74S+pp94gbDUxJgdUmfAktr9DJqlgg4T78CgXwPWy65LB1zIctvM/IzjBuafK
+	 1u5AG60T+DDfw==
+Message-ID: <3486006e-f1ad-4ed2-bdb5-5d39c04c2691@zytor.com>
+Date: Mon, 19 May 2025 10:05:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <diqz8qmsfs5u.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [PATCH 3/5] KVM: gmem: Hold filemap invalidate lock while
- allocating/preparing folios
-From: Ackerley Tng <ackerleytng@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: yan.y.zhao@intel.com, michael.roth@amd.com, kvm@vger.kernel.org, 
-	linux-coco@lists.linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	jroedel@suse.de, thomas.lendacky@amd.com, pbonzini@redhat.com, 
-	seanjc@google.com, vbabka@suse.cz, amit.shah@amd.com, 
-	pratikrajesh.sampat@amd.com, ashish.kalra@amd.com, liam.merwick@oracle.com, 
-	david@redhat.com, vannapurve@google.com, quic_eberman@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/3] x86/msr: Convert a native_wrmsr() use to
+ native_wrmsrq()
+From: Xin Li <xin@zytor.com>
+To: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-acpi@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        peterz@infradead.org, jgross@suse.com, boris.ostrovsky@oracle.com,
+        rafael@kernel.org, lenb@kernel.org
+References: <20250512084552.1586883-1-xin@zytor.com>
+ <20250512084552.1586883-4-xin@zytor.com>
+Content-Language: en-US
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20250512084552.1586883-4-xin@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Ackerley Tng <ackerleytng@google.com> writes:
+On 5/12/2025 1:45 AM, Xin Li (Intel) wrote:
+> Convert a native_wrmsr() use to native_wrmsrq() to zap meaningless type
+> conversions when a u64 MSR value is splitted into two u32.
+> 
+> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+> ---
+>   arch/x86/coco/sev/core.c | 7 +------
+>   1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+> index ff82151f7718..b3ce6fc8b62d 100644
+> --- a/arch/x86/coco/sev/core.c
+> +++ b/arch/x86/coco/sev/core.c
+> @@ -282,12 +282,7 @@ static inline u64 sev_es_rd_ghcb_msr(void)
+>   
+>   static __always_inline void sev_es_wr_ghcb_msr(u64 val)
+>   {
+> -	u32 low, high;
+> -
+> -	low  = (u32)(val);
+> -	high = (u32)(val >> 32);
+> -
+> -	native_wrmsr(MSR_AMD64_SEV_ES_GHCB, low, high);
+> +	native_wrmsrq(MSR_AMD64_SEV_ES_GHCB, val);
+>   }
+>   
+>   static int vc_fetch_insn_kernel(struct es_em_ctxt *ctxt,
 
-> Yan Zhao <yan.y.zhao@intel.com> writes:
->
->> On Fri, Mar 14, 2025 at 05:20:21PM +0800, Yan Zhao wrote:
->>> This patch would cause host deadlock when booting up a TDX VM even if huge page
->>> is turned off. I currently reverted this patch. No further debug yet.
->> This is because kvm_gmem_populate() takes filemap invalidation lock, and for
->> TDX, kvm_gmem_populate() further invokes kvm_gmem_get_pfn(), causing deadlock.
->>
->> kvm_gmem_populate
->>   filemap_invalidate_lock
->>   post_populate
->>     tdx_gmem_post_populate
->>       kvm_tdp_map_page
->>        kvm_mmu_do_page_fault
->>          kvm_tdp_page_fault
->> 	   kvm_tdp_mmu_page_fault
->> 	     kvm_mmu_faultin_pfn
->> 	       __kvm_mmu_faultin_pfn
->> 	         kvm_mmu_faultin_pfn_private
->> 		   kvm_gmem_get_pfn
->> 		     filemap_invalidate_lock_shared
->> 	
->> Though, kvm_gmem_populate() is able to take shared filemap invalidation lock,
->> (then no deadlock), lockdep would still warn "Possible unsafe locking scenario:
->> ...DEADLOCK" due to the recursive shared lock, since commit e918188611f0
->> ("locking: More accurate annotations for read_lock()").
->>
->
-> Thank you for investigating. This should be fixed in the next revision.
->
+Just noticed that this patch doesn't apply to tip/x86/core, I will send
+it as a separate one.
 
-This was not fixed in v2 [1], I misunderstood this locking issue.
-
-IIUC kvm_gmem_populate() gets a pfn via __kvm_gmem_get_pfn(), then calls
-part of the KVM fault handler to map the pfn into secure EPTs, then
-calls the TDX module for the copy+encrypt.
-
-Regarding this lock, seems like KVM'S MMU lock is already held while TDX
-does the copy+encrypt. Why must the filemap_invalidate_lock() also be
-held throughout the process?
-
-If we don't have to hold the filemap_invalidate_lock() throughout, 
-
-1. Would it be possible to call kvm_gmem_get_pfn() to get the pfn
-   instead of calling __kvm_gmem_get_pfn() and managing the lock in a
-   loop?
-
-2. Would it be possible to trigger the kvm fault path from
-   kvm_gmem_populate() so that we don't rebuild the get_pfn+mapping
-   logic and reuse the entire faulting code? That way the
-   filemap_invalidate_lock() will only be held while getting a pfn.
-
-[1] https://lore.kernel.org/all/cover.1747264138.git.ackerleytng@google.com/T/
-
->>> > @@ -819,12 +827,16 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
->>> >  	pgoff_t index = kvm_gmem_get_index(slot, gfn);
->>> >  	struct file *file = kvm_gmem_get_file(slot);
->>> >  	int max_order_local;
->>> > +	struct address_space *mapping;
->>> >  	struct folio *folio;
->>> >  	int r = 0;
->>> >  
->>> >  	if (!file)
->>> >  		return -EFAULT;
->>> >  
->>> > +	mapping = file->f_inode->i_mapping;
->>> > +	filemap_invalidate_lock_shared(mapping);
->>> > +
->>> >  	/*
->>> >  	 * The caller might pass a NULL 'max_order', but internally this
->>> >  	 * function needs to be aware of any order limitations set by
->>> > @@ -838,6 +850,7 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
->>> >  	folio = __kvm_gmem_get_pfn(file, slot, index, pfn, &max_order_local);
->>> >  	if (IS_ERR(folio)) {
->>> >  		r = PTR_ERR(folio);
->>> > +		filemap_invalidate_unlock_shared(mapping);
->>> >  		goto out;
->>> >  	}
->>> >  
->>> > @@ -845,6 +858,7 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
->>> >  		r = kvm_gmem_prepare_folio(kvm, file, slot, gfn, folio, max_order_local);
->>> >  
->>> >  	folio_unlock(folio);
->>> > +	filemap_invalidate_unlock_shared(mapping);
->>> >  
->>> >  	if (!r)
->>> >  		*page = folio_file_page(folio, index);
->>> > -- 
->>> > 2.25.1
->>> > 
->>> > 
-
+Thanks!
+     Xin
 
