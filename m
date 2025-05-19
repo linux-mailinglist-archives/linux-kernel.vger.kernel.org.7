@@ -1,139 +1,91 @@
-Return-Path: <linux-kernel+bounces-654148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EFAABC473
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:26:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DFABABC483
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D13E77A3AAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:22:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F7E3189EF1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFC6286D6B;
-	Mon, 19 May 2025 16:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0540D286D64;
+	Mon, 19 May 2025 16:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZxVfgp2"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C75286410;
-	Mon, 19 May 2025 16:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="g7Os8QVe"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A56D13B5A9;
+	Mon, 19 May 2025 16:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747671788; cv=none; b=eN1QGWEAJjNovCeEJvM67ie0xHEXfPwCSS3967GAsk40EmD7oZeOUGQzp2l83M7Koi7jNp/hjWSJd8UWt79C0fKFgqsxyAdvXrgBJT8cKUsqIveh7meF2+TZsWop4WLXl7CGtA9B85Pc/8r6ieBHyHGp7PTHMSnlbPim/oqFW+c=
+	t=1747672237; cv=none; b=JTmu2ptFwCrnZFpO14his/5HT/OD/L1uVzcG2Y4N4S6LrVvNRMVVy2m8ODnRmr3lrAL1CUy3ZdCIsYWzS4ESeHqGNFlCt6NuIqNt7iyaCB4kD+07q9qUglcx7bBIYNW+50LPjD7CctNsNRsA8Wqzm/y90Sod7KNaMrQCgqH2f7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747671788; c=relaxed/simple;
-	bh=yoLcLLMfUq+oIbdeG+lgM/suMocyB+BzY0AGIpG2I6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=axCEfKcIxM7tD0H5Na44lMAzw/6dj3FV+whSjtN4SVQ3Ei0DtBh6bthFvPx8PBHte1Pk+g1n3f/2aWF2/moEv/U9xn6zJcGwSU7S+bgLUHYmgVtHbbUyW/flrwxV+9fgPXAg6g3hrfF74bhorkOeVSv7DWceARx8XvKCviBq1IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZxVfgp2; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-30ea7770bd2so3074683a91.0;
-        Mon, 19 May 2025 09:23:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747671786; x=1748276586; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NbXUILecFZqM1QNrDc/94P68oIZz2J/rCibArTJ2XQ8=;
-        b=UZxVfgp2o4u4/dlwGAGelXQHys7a5jEcZ15t0oFTHfxvfk+MvTsqLWMn5rQVOX+spA
-         FGEHDDnKKLfVodGWoPTFYo9rii9CHfR/okEygQU3JpQShdbzUq3D2t/tFHRSmwcm2hrx
-         hLwWZV9iPUGWWHQMg1UNrvMFO/5i0a3ntA6HHnHNYPGkCdGlX6uX1mpR+CVAfoEALVkz
-         XLnbySRcwYl857W29lC+l3sj59qbdlbQXyWwYLEgDiTaYfdzKlmlQFd4c2e65B1uriUI
-         9m6sZi1ceD/+NsP3uIeZ7uanbrj8FF4/69foJ52Wku26bnT8Aj8kVfFaAS/iN3xpVctC
-         koqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747671786; x=1748276586;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NbXUILecFZqM1QNrDc/94P68oIZz2J/rCibArTJ2XQ8=;
-        b=oV4IDT4gqPrc5kX0GX0MynTVBKwDDXyNcxTbI3uYMkrzcFBlCeziQIHutedQeMY8Ic
-         VnotwxXAGkvfdRlMVVqAczdoqz8qQMnv74EUX+tk1zaepVhz1kEiLaXTs547LuqI4XSb
-         PzKf4wBcLO1zUHQLJ76I1q+ZNa+MItlm/5IKAkJtzYJ1qiy5gVT+OTCzHbX1oLoGEqGx
-         RyWRsOFcAKqi6VaVTBdUW6hgM/GZ0LhHN6D5wViolboQLwYh8W7ojI8X2Fh0O6zE7bwh
-         +Wew0puWHG0lEgtM6BNHzPt58smQsNvj30i4k4r8XZ5pciBh8xBGgsVw3KKupm92T20M
-         1qBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfyYStVMN3d8rdxk1cxzG405uSSI7zkC0aPz9m1K2xwi5DOTM4+H/pAqHvMpwBUXBCuSC0McKS/w1WKQ==@vger.kernel.org, AJvYcCXIKb+kk5RdJ2zt90uikQPnxYJfLzgwPT4Y1rVvZaugYFUDJno+XOaLOzzv3Xq2oTaHp2+e8bsfaOJKIMGf@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMCNEEyl5jSwstrYwVOpJn/WFZK6JsZ6IL2BRIqeNrq7I9GGHv
-	Q+kwFQc/SHNJQ63W+/Z9GAdl90R4kfhgVWhpFWvnl8puYKEfXvpuP0I4
-X-Gm-Gg: ASbGncvixe2L3UCePigy95fjAsrq25jCcnymeSJaJif60qeM/Mbe9LnOwiMSL+RFS+E
-	E7duEeBSxPHcdCdXljUA0w4jInNSyuUMkPBvb0LCKvAxr13wJUtwQyBviOUhL20WK7KUNMH6ZP+
-	RRJWvX867fwK2LhdOl7DXLIoga30EcSzYhAqQc8E5XcHUDDHVvoNwpyv+K63EwV478rNs7v1hb6
-	zGFaQDXCaoKYNJzvYTWk+21dHilEz29/rxCUb+2U6WkCSGTWD0XlDwzsBfSKulyfYm1LBZNKBoA
-	RqrnDj0T7kueKYF+tBM5sLupbdUgbwm3HJY5xeCG25abVDBiOQ==
-X-Google-Smtp-Source: AGHT+IHprM+8PN4JrIjf6mE6Iwiw0Z+YfhCyzCdw3//7JM4PwiCVoQ7+1bWhkBTrFoiKg2+S6zo7jg==
-X-Received: by 2002:a17:90b:4a50:b0:301:98fc:9b5a with SMTP id 98e67ed59e1d1-30e7d500953mr20100588a91.6.1747671785910;
-        Mon, 19 May 2025 09:23:05 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:e134:a6aa:27:6156])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30ef3c50c31sm2549387a91.45.2025.05.19.09.23.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 09:23:05 -0700 (PDT)
-Date: Mon, 19 May 2025 09:23:03 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Joseph Guo <qijian.guo@nxp.com>
-Cc: Bastien Nocera <hadess@hadess.net>, 
-	Hans de Goede <hdegoede@redhat.com>, "open list:GOODIX TOUCHSCREEN" <linux-input@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] input: goodix: add poll mode for goodix touchscreen
-Message-ID: <t6umftlzqhpiwtq3oi2xgtmmvxc7o4ab2bjxqywvwrp25jpi5a@vlryb74pcvxi>
-References: <20250519085744.3116042-1-qijian.guo@nxp.com>
+	s=arc-20240116; t=1747672237; c=relaxed/simple;
+	bh=2Af1XbfqiXmdqDTBK/s5PrxMtPCjQZrdKyRpyxcOonQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=EJK8nCjAE/kunj0mCWYXSaQKyfZLDVZe90I0SgCwITTFfZrvogqk0xpci/902XZMfQTuKSvUDjqb0XiSeC+9Zv3J+a9C83Cs/D8tMHaiLWX+olx62zbh7PhR48Xiab05lu9rhnZxRYql6r15MYYM8kvcXulyygeUkRT2HnJLKaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=g7Os8QVe reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=sAzTA48n/eYJNSrWoAOWU7Sy/2yJF9yIhP5DF6ozIVs=; b=g
+	7Os8QVe16OpkcKGj3G9+lkyzfYy9mCTJCWpnG49oJqGNPqHnAOBLCP3WhleF2Vdm
+	71D+CD/AtvCELOVxY1a7I/75qFvPGNEci5xUEMJ2FJt0L7UeOLlYkl0wq+OGjsxm
+	rOu+kVDJkuHSPVrANXQYPFXIGgfIyy9tEcUh5A1jAY=
+Received: from 00107082$163.com ( [111.35.189.95] ) by
+ ajax-webmail-wmsvr-40-100 (Coremail) ; Tue, 20 May 2025 00:30:00 +0800
+ (CST)
+Date: Tue, 20 May 2025 00:30:00 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Suren Baghdasaryan" <surenb@google.com>
+Cc: mcgrof@kernel.org, petr.pavlu@suse.com, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] module: release codetag section when module load fails
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <CAJuCfpEeo2qKcyan9BnYGvEaYeso24wQT1eX-CxnBkjbEuY7sg@mail.gmail.com>
+References: <20250518101212.19930-1-00107082@163.com>
+ <CAJuCfpEeo2qKcyan9BnYGvEaYeso24wQT1eX-CxnBkjbEuY7sg@mail.gmail.com>
+X-NTES-SC: AL_Qu2fBfqcvUor5iidY+kXn0oTju85XMCzuv8j3YJeN500siTO0zsPZm9tA0XZ986TCwWhoAiWXQFt5/h2VrZ9YIlMxtpkHqIAt5CIvGGC0YnG
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250519085744.3116042-1-qijian.guo@nxp.com>
+Message-ID: <3e1bf257.c0a6.196e961769d.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZCgvCgD3X0OJXCto4hIIAA--.48605W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqA1SqmgrVgYIBwABsA
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Hi Joseph,
-
-On Mon, May 19, 2025 at 05:57:43PM +0900, Joseph Guo wrote:
-> goodix touchscreen only support interrupt mode by default.
-> Some panels like waveshare panel which is widely used on raspeberry pi
-> don't have interrupt pins and only work on i2c poll mode.
-> The waveshare panel 7inch panel use goodix gt911 touchscreen chip.
-> 
-> Update goodix touchscreen to support both interrupt and poll mode.
-> 
-> Signed-off-by: Joseph Guo <qijian.guo@nxp.com>
-> ---
->  drivers/input/touchscreen/goodix.c | 69 +++++++++++++++++++++++++++---
->  drivers/input/touchscreen/goodix.h |  4 ++
->  2 files changed, 67 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-> index aaf79ac50004..87991b56494d 100644
-> --- a/drivers/input/touchscreen/goodix.c
-> +++ b/drivers/input/touchscreen/goodix.c
-> @@ -47,6 +47,7 @@
->  #define RESOLUTION_LOC		1
->  #define MAX_CONTACTS_LOC	5
->  #define TRIGGER_LOC		6
-> +#define POLL_INTERVAL_MS		17	/* 17ms = 60fps */
-> 
->  /* Our special handling for GPIO accesses through ACPI is x86 specific */
->  #if defined CONFIG_X86 && defined CONFIG_ACPI
-> @@ -497,6 +498,23 @@ static void goodix_process_events(struct goodix_ts_data *ts)
->  	input_sync(ts->input_dev);
->  }
-> 
-> +static void goodix_ts_irq_poll_timer(struct timer_list *t)
-> +{
-> +	struct goodix_ts_data *ts = from_timer(ts, t, timer);
-> +
-> +	schedule_work(&ts->work_i2c_poll);
-> +	mod_timer(&ts->timer, jiffies + msecs_to_jiffies(POLL_INTERVAL_MS));
-> +}
-
-Why are you not suing the existing polling infrastructure
-(input_setup_polling())?
-
-Thanks.
-
--- 
-Dmitry
+CkF0IDIwMjUtMDUtMjAgMDA6MDM6MTYsICJTdXJlbiBCYWdoZGFzYXJ5YW4iIDxzdXJlbmJAZ29v
+Z2xlLmNvbT4gd3JvdGU6Cj5PbiBTdW4sIE1heSAxOCwgMjAyNSBhdCAzOjEy4oCvQU0gRGF2aWQg
+V2FuZyA8MDAxMDcwODJAMTYzLmNvbT4gd3JvdGU6Cj4+Cj4+IFdoZW4gbW9kdWxlIGxvYWQgZmFp
+bGVkIGFmdGVyIG1lbW9yeSBmb3IgY29kZXRhZyBzZWN0aW9ucyByZWFkeSwKPgo+bml0OiBzL3Jl
+YWR5L2lzIHJlYWR5Cj4KPj4gY29kZXRhZyBzZWN0aW9uIG1lbW9yeSB3YXMgbm90IHByb3Blcmx5
+IHJlbGVhc2VkLiBUaGlzCj4+IGNhdXNlcyBtZW1vcnkgbGVhaywgYW5kIGlmIG5leHQgbW9kdWxl
+IGxvYWQgaGFwcGVucyB0byBnb3QgdGhlCj4KPm5pdDogcy9oYXBwZW5zIHRvIGdvdC9oYXBwZW5z
+IHRvIGdldAo+CgpUaGFua3MsIEkgd2lsbCBzZW5kIG5ldyB2ZXJzaW9uLgo+Cj4+IHNhbWUgbW9k
+dWxlIGFkZHJlc3MsIGNvZGV0YWcgbWF5IHBpY2sgdGhlIHVuaW5pdGlhbGl6ZWQgc2VjdGlvbgo+
+PiB3aGVuIG1hbmlwdWxhdGluZyB0YWdzIGR1cmluZyBtb2R1bGUgdW5sb2FkLCBhbmQgbGVhZCB0
+bwo+PiAidW5hYmxlIHRvIGhhbmRsZSBwYWdlIGZhdWx0IiBCVUcuCj4+Cj4+IENsb3NlczogaHR0
+cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUwNTE2MTMxMjQ2LjYyNDQtMS0wMDEwNzA4MkAx
+NjMuY29tLwo+PiBTaWduZWQtb2ZmLWJ5OiBEYXZpZCBXYW5nIDwwMDEwNzA4MkAxNjMuY29tPgo+
+Cj5BY2tlZC1ieTogU3VyZW4gQmFnaGRhc2FyeWFuIDxzdXJlbmJAZ29vZ2xlLmNvbT4KPgo+PiAt
+LS0KPj4gIGtlcm5lbC9tb2R1bGUvbWFpbi5jIHwgMSArCj4+ICAxIGZpbGUgY2hhbmdlZCwgMSBp
+bnNlcnRpb24oKykKPj4KPj4gZGlmZiAtLWdpdCBhL2tlcm5lbC9tb2R1bGUvbWFpbi5jIGIva2Vy
+bmVsL21vZHVsZS9tYWluLmMKPj4gaW5kZXggYTI4NTlkYzNlZWE2Li41YzZhYjIwMjQwYTYgMTAw
+NjQ0Cj4+IC0tLSBhL2tlcm5lbC9tb2R1bGUvbWFpbi5jCj4+ICsrKyBiL2tlcm5lbC9tb2R1bGUv
+bWFpbi5jCj4+IEBAIC0yODI5LDYgKzI4MjksNyBAQCBzdGF0aWMgdm9pZCBtb2R1bGVfZGVhbGxv
+Y2F0ZShzdHJ1Y3QgbW9kdWxlICptb2QsIHN0cnVjdCBsb2FkX2luZm8gKmluZm8pCj4+ICB7Cj4+
+ICAgICAgICAgcGVyY3B1X21vZGZyZWUobW9kKTsKPj4gICAgICAgICBtb2R1bGVfYXJjaF9mcmVl
+aW5nX2luaXQobW9kKTsKPj4gKyAgICAgICBjb2RldGFnX2ZyZWVfbW9kdWxlX3NlY3Rpb25zKG1v
+ZCk7Cj4+Cj4+ICAgICAgICAgZnJlZV9tb2RfbWVtKG1vZCk7Cj4+ICB9Cj4+IC0tCj4+IDIuMzku
+Mgo+Pgo=
 
