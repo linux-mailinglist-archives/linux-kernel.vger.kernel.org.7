@@ -1,103 +1,110 @@
-Return-Path: <linux-kernel+bounces-653113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8355ABB502
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:19:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 549C8ABB4E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C22C3B8921
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 06:18:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A718F3B291B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 06:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D992244672;
-	Mon, 19 May 2025 06:18:27 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F481F30A2;
+	Mon, 19 May 2025 06:15:17 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E30223DC4;
-	Mon, 19 May 2025 06:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0628722D79A
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 06:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747635507; cv=none; b=Dn+pAgMe6tpOga2gok8+yP3nce9IYqgSPlQRazrIqChBdyiyJB7M9fAmVNeRQn6T30noUaUbvsdb1LM4zDR83PPbBH3QH4fFWtpwV2oMjVd6OqkzVGoy0dVIjgk50TawwkNoaQfytQim8BfKhixmvWqNoSallFsBZr8e7QacWcA=
+	t=1747635317; cv=none; b=EU2wqH48AQTo4boHaU5HmH/83bsYEp4UTl9j+9titnlLZj0LxSexyJmkLanJ7tUBVnrZdtSSS59oNLFscSRoXproFR2zpntB3Sa68iACi8mDTvOZnUe+LiiyrEBRZV0+WigX2dvEYO6BvzmX3Hc6JxLBepFO+fJzQc7VyWcHYU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747635507; c=relaxed/simple;
-	bh=WdK/IunRAu6EOkZjU4kmntcNy4q62UNAiPE7MDyl/SQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T2FEmDcW+0Nd9Z777hnCD+t2JWgKhSaOtbWSpCnjAGGdYwHMek6F6Fu10lU43Rw+GLgPFojG+qTbCw+B2wwGKc2g2f0pZqaZ0egCoNuLTnqIPZHrOiniRes+R07OymzIbZSF8ipxaFGb2qXsdPFjOPvrz4/0o7aAqAioI1A3eJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowABHlvEozSpovL9OAQ--.12640S2;
-	Mon, 19 May 2025 14:18:16 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: gregkh@linuxfoundation.org,
-	stern@rowland.harvard.edu,
-	krzysztof.kozlowski@linaro.org,
-	snovitoll@gmail.com,
-	amardeep.rai@intel.com,
-	r.kannappan@intel.com
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] usb: core: config: Use USB API functions rather than constants
-Date: Mon, 19 May 2025 14:13:17 +0800
-Message-Id: <20250519061317.724602-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1747635317; c=relaxed/simple;
+	bh=e4mwkhaSG13KH4Tu5SY1Pl6xBlf9FXkb/l5SV71/QL0=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=qqTUHJRnUbI6fM/eQLb32DmJtc8t+ZK2+167svao8WMG8Rqtb8KWUB1wIF02Zs3m8hjwc/4f0/uTIKkElebpEi4GMcOELVspkVzw3818maC1e/f+2d3QD3qn5o9UfbSo6Qnc3i21c3V8m8J55KFGtbleJWUCq91py3o1kbWPDLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4b16qB4jgzz51SZC;
+	Mon, 19 May 2025 14:15:02 +0800 (CST)
+Received: from njy2app08.zte.com.cn ([10.40.13.206])
+	by mse-fl2.zte.com.cn with SMTP id 54J6EiEQ088657;
+	Mon, 19 May 2025 14:14:44 +0800 (+08)
+	(envelope-from jiang.kun2@zte.com.cn)
+Received: from mapi (njy2app08[null])
+	by mapi (Zmail) with MAPI id mid204;
+	Mon, 19 May 2025 14:14:46 +0800 (CST)
+Date: Mon, 19 May 2025 14:14:46 +0800 (CST)
+X-Zmail-TransId: 2b00682acc56065-088af
+X-Mailer: Zmail v1.0
+Message-ID: <20250519141446635ihK4D1-JvptKANb816_Kz@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowABHlvEozSpovL9OAQ--.12640S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfur1UJr4ktr4fCFy7GFg_yoWfKrb_Ga
-	yj9r4DuF9ruFyIkr1jvw4S9rW0k3WavFn7ZF1Fq3sxAFyjq39rZFWxJFW8J3WxZa4jyFyD
-	GFy2krn8u3WxWjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbV8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
-	6r1q6r43MxkIecxEwVAFwVW8AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
-	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
-	1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-	IIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
-	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
-	DU0xZFpf9x0JUSFAJUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Mime-Version: 1.0
+From: <jiang.kun2@zte.com.cn>
+To: <yang.yang29@zte.com.cn>
+Cc: <bbonev@devuan.org>, <linux-kernel@vger.kernel.org>,
+        <bsingharora@gmail.com>, <jiang.kun2@zte.com.cn>,
+        <xu.xin16@zte.com.cn>, <akpm@linux-foundation.org>,
+        <wang.yaxin@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4IG5leHRdIHRhc2tzdGF0OiBhZGQgZXhwbGFpbiBhYm91dCB4eHhfZGVsYXlfbWluL21heCBhbmQgYWRqdXN0CiBpbmRlbnRhdGlvbg==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 54J6EiEQ088657
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 682ACC66.001/4b16qB4jgzz51SZC
 
-Use the function usb_endpoint_num() rather than constants.
+From: Wang Yaxin <wang.yaxin@zte.com.cn>
 
-The Coccinelle semantic patch is as follows:
+add explain about xxx_delay_min/max and adjust indentation.
 
-@@ struct usb_endpoint_descriptor *epd; @@
-
-- (epd->bEndpointAddress & \(USB_ENDPOINT_NUMBER_MASK\|0x0f\))
-+ usb_endpoint_num(epd)
-
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
+Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
 ---
- drivers/usb/core/config.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/uapi/linux/taskstats.h | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/core/config.c b/drivers/usb/core/config.c
-index 13bd4ec4ea5f..fc0cfd94cbab 100644
---- a/drivers/usb/core/config.c
-+++ b/drivers/usb/core/config.c
-@@ -307,7 +307,7 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno,
- 		goto skip_to_next_endpoint_or_interface_descriptor;
- 	}
- 
--	i = d->bEndpointAddress & USB_ENDPOINT_NUMBER_MASK;
-+	i = usb_endpoint_num(d);
- 	if (i == 0) {
- 		dev_notice(ddev, "config %d interface %d altsetting %d has an "
- 		    "invalid descriptor for endpoint zero, skipping\n",
+diff --git a/include/uapi/linux/taskstats.h b/include/uapi/linux/taskstats.h
+index d71aa022b2ef..62e2d7f65298 100644
+--- a/include/uapi/linux/taskstats.h
++++ b/include/uapi/linux/taskstats.h
+@@ -207,6 +207,12 @@ struct taskstats {
+ 	/* v15: add Delay max and Delay min */
+
+ 	/* v16: move Delay max and Delay min to the end of taskstat */
++	/*
++	 *
++	 * xxx_delay_max is the max number of delay values recorded
++	 * xxx_delay_min is the min number of delay values recorded
++	 *
++	 */
+ 	__u64	cpu_delay_max;
+ 	__u64	cpu_delay_min;
+
+@@ -225,11 +231,11 @@ struct taskstats {
+ 	__u64	compact_delay_max;
+ 	__u64	compact_delay_min;
+
+-	__u64    wpcopy_delay_max;
+-	__u64    wpcopy_delay_min;
++	__u64	wpcopy_delay_max;
++	__u64	wpcopy_delay_min;
+
+-	__u64    irq_delay_max;
+-	__u64    irq_delay_min;
++	__u64	irq_delay_max;
++	__u64	irq_delay_min;
+ };
+
+
 -- 
 2.25.1
-
 
