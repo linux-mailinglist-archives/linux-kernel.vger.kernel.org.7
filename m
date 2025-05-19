@@ -1,193 +1,164 @@
-Return-Path: <linux-kernel+bounces-654258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CAA5ABC5EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 19:51:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D88ABC68B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 19:59:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDDBA3A41D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:50:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 167F917D636
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F280A288C16;
-	Mon, 19 May 2025 17:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c2vW3R9q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C56189F3B;
-	Mon, 19 May 2025 17:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9472288CAC;
+	Mon, 19 May 2025 17:56:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02981288C22;
+	Mon, 19 May 2025 17:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747677066; cv=none; b=o/h6M5nnZsC/WD9pALvm4wWWrr4JOhTbqSRnL+/iOTJ5rUi+c8QUE/BT3Ckj9fl0h6naXqXEJtxxOp6XC0pv0inRjT//2TbUiVr7IFo6sOq7eWeL3Xc5S13gJJKWUz27Qlhp8vHuXhn0/pQV6za5dZOLjcB8fK4tZpQJgIOEkfc=
+	t=1747677397; cv=none; b=M3oAzh1a+ariCwZu99riD7zGiJCDinMRKw3sy3Svtjt5P8+x3yipwcfI0gjuaJGCgBBT186ea/TtBtpMm60WWOjRtWrThf4sO+bVpslV3ayIHoxkrLjObGUTYx8cpK7z72VASF5bVjCtFXM1hfLbUZAj6+HRiClDXrhKyXMa2pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747677066; c=relaxed/simple;
-	bh=nKa4bHZyPQdUF/i6uNjxZLF1LDuKJHocPAQdDgqVICc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RZNSgLhrsXEVntGTzEGeWtI1+olX9L2WR1vhG6SFRfxii6y3yAPjSTMkaiWrD406YPQwBgK0fe2KixXuMMxNsPqjJMX6tiomxgFTlmgHM68ixmMttp3ld179bmxg9tulbrse8ZWiF39VAhil0MKiRDyb1+GBHrTjJromPjxEgkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c2vW3R9q; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747677064; x=1779213064;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nKa4bHZyPQdUF/i6uNjxZLF1LDuKJHocPAQdDgqVICc=;
-  b=c2vW3R9q3OVSmv9NpuNm7etcX9c5Qg/YrfWQqdZcJVT5TT3QN3I2wiFZ
-   9NCD9ZqauKYP654TNDkPCAMI6OApe0WPAVf5z3uceDEBOZRmU5LmmYEkb
-   Tr3XGvV6Qp9qRoSmMvK+1VbmbAesLs3csPHwpQ98kakBSMAdk3oaKSOmW
-   I62/Q9QI94F1SUAtMGnVTycAIooq5jhKKnjxgnNxlrNcHFqYs9XiDCQVt
-   sx+vR1j6fBQ798y8H8nUVpJaN5Haj6RoFCnVTy8+eSdGsjfcj7uV/8p+3
-   9+i32vT8iGDJAG/eDyIDQ4TJJzwvF/T0OynYtSgu/bHX4i7g32F0aC2hY
-   Q==;
-X-CSE-ConnectionGUID: RBbbY0eRRQyuyz7V38bRiQ==
-X-CSE-MsgGUID: uetXqAtRTkay86FK0Q0I8A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="49493458"
-X-IronPort-AV: E=Sophos;i="6.15,301,1739865600"; 
-   d="scan'208";a="49493458"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 10:51:03 -0700
-X-CSE-ConnectionGUID: glWSRu+/T1+fFYiMbL4DLA==
-X-CSE-MsgGUID: FwYFkZhNQ1+Ss/Cy0nueLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,301,1739865600"; 
-   d="scan'208";a="170471752"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 10:51:03 -0700
-Date: Mon, 19 May 2025 10:56:06 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, x86@kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>, devicetree@vger.kernel.org,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Chris Oo <cho@microsoft.com>, linux-hyperv@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>
-Subject: Re: [PATCH v3 06/13] dt-bindings: reserved-memory: Wakeup Mailbox
- for Intel processors
-Message-ID: <20250519175606.GA9693@ranerica-svr.sc.intel.com>
-References: <20250503191515.24041-7-ricardo.neri-calderon@linux.intel.com>
- <20250504-original-leopard-of-vigor-5702ef@kuoka>
- <20250506051610.GC25533@ranerica-svr.sc.intel.com>
- <20250506-pompous-meaty-crane-97efce@kuoka>
- <20250507032339.GA27243@ranerica-svr.sc.intel.com>
- <20250512153224.GA3377771-robh@kernel.org>
- <20250513221456.GA2794@ranerica-svr.sc.intel.com>
- <20250514154248.GA2375202-robh@kernel.org>
- <20250515035338.GA4955@ranerica-svr.sc.intel.com>
- <20250519152937.GA2227051-robh@kernel.org>
+	s=arc-20240116; t=1747677397; c=relaxed/simple;
+	bh=Zs/nbbQkpFkK2+5T4O2nV9SlVAVPhYOtOGVPwHibqgo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e7UeTtZakRqX75EQGBR1mn9FCAkW1FUSqRMj+xjSNKudHtW8/dHKEFGy5Sq4BwQlcV6ajzJMM++U2VeRuwkIUhFNV40WmMEvFR/7o+59HU5CExqdTH9/RZMEel9yfu+8xgliFoMWLPeMJwwb0X5SvSSNhALJMtGQyjQ2V0ceLHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22C5015A1;
+	Mon, 19 May 2025 10:56:22 -0700 (PDT)
+Received: from [10.57.50.157] (unknown [10.57.50.157])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2FFCA3F5A1;
+	Mon, 19 May 2025 10:56:32 -0700 (PDT)
+Message-ID: <624d1add-c421-4782-9cbc-5cc8f1c0ce51@arm.com>
+Date: Mon, 19 May 2025 18:56:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250519152937.GA2227051-robh@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 22/43] KVM: arm64: Validate register access for a Realm
+ VM
+Content-Language: en-GB
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
+ <aneesh.kumar@kernel.org>
+References: <20250416134208.383984-1-steven.price@arm.com>
+ <20250416134208.383984-23-steven.price@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250416134208.383984-23-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 19, 2025 at 10:29:37AM -0500, Rob Herring wrote:
-> On Wed, May 14, 2025 at 08:53:38PM -0700, Ricardo Neri wrote:
-> > On Wed, May 14, 2025 at 10:42:48AM -0500, Rob Herring wrote:
-> > > On Tue, May 13, 2025 at 03:14:56PM -0700, Ricardo Neri wrote:
-> > > > On Mon, May 12, 2025 at 10:32:24AM -0500, Rob Herring wrote:
-> > > > > On Tue, May 06, 2025 at 08:23:39PM -0700, Ricardo Neri wrote:
-> > > > > > On Tue, May 06, 2025 at 09:10:22AM +0200, Krzysztof Kozlowski wrote:
-> > > > > > > On Mon, May 05, 2025 at 10:16:10PM GMT, Ricardo Neri wrote:
-> > > > > > > > > If this is a device, then compatibles specific to devices. You do not
-> > > > > > > > > get different rules than all other bindings... or this does not have to
-> > > > > > > > > be binding at all. Why standard reserved-memory does not work for here?
-> > > > > > > > > 
-> > > > > > > > > Why do you need compatible in the first place?
-> > > > > > > > 
-> > > > > > > > Are you suggesting something like this?
-> > > > > > > > 
-> > > > > > > > reserved-memory {
-> > > > > > > > 	# address-cells = <2>;
-> > > > > > > > 	# size-cells = <1>;
-> > > > > > > > 
-> > > > > > > > 	wakeup_mailbox: wakeupmb@fff000 {
-> > > > > > > > 		reg = < 0x0 0xfff000 0x1000>
-> > > > > > > > 	}
-> > > > > > > > 
-> > > > > > > > and then reference to the reserved memory using the wakeup_mailbox
-> > > > > > > > phandle?
-> > > > > > > 
-> > > > > > > Yes just like every other, typical reserved memory block.
-> > > > > > 
-> > > > > > Thanks! I will take this approach and drop this patch.
-> > > > > 
-> > > > > If there is nothing else to this other than the reserved region, then 
-> > > > > don't do this. Keep it like you had. There's no need for 2 nodes.
-> > > > 
-> > > > Thank you for your feedback!
-> > > > 
-> > > > I was planning to use one reserved-memory node and inside of it a child
-> > > > node to with a `reg` property to specify the location and size of the
-> > > > mailbox. I would reference to that subnode from the kernel code.
-> > > > 
-> > > > IIUC, the reserved-memory node is only the container and the actual memory
-> > > > regions are expressed as child nodes.
-> > > > 
-> > > > I had it like that before, but with a `compatible` property that I did not
-> > > > need.
-> > > > 
-> > > > Am I missing anything?
-> > > 
-> > > Without a compatible, how do you identify which reserved region is the 
-> > > wakeup mailbox?
-> > 
-> > I thought using a phandle to the wakeup_mailbox. Then I realized that the
-> > device nodes using the mailbox would be CPUs. They would need a `memory-
-> > region` property. This does not look right to me.
+On 16/04/2025 14:41, Steven Price wrote:
+> The RMM only allows setting the GPRS (x0-x30) and PC for a realm
+> guest. Check this in kvm_arm_set_reg() so that the VMM can receive a
+> suitable error return if other registers are written to.
 > 
-> That doesn't really make sense unless it's a memory region per CPU.
-
-Agreed.
-
+> The RMM makes similar restrictions for reading of the guest's registers
+> (this is *confidential* compute after all), however we don't impose the
+> restriction here. This allows the VMM to read (stale) values from the
+> registers which might be useful to read back the initial values even if
+> the RMM doesn't provide the latest version. For migration of a realm VM,
+> a new interface will be needed so that the VMM can receive an
+> (encrypted) blob of the VM's state.
 > 
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Changes since v5:
+>   * Upper GPRS can be set as part of a HOST_CALL return, so fix up the
+>     test to allow them.
+> ---
+>   arch/arm64/kvm/guest.c | 40 ++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 40 insertions(+)
 > 
-> > > Before you say node name, those are supposed to be 
-> > > generic though we failed to enforce anything for /reserved-memory child 
-> > > nodes.
-> > 
-> > I see. Thanks for preventing me from doing this.
-> > 
-> > Then the `compatible` property seems the way to go after all.
-> > 
-> > This what motivated this patch in the first place. On further analysis,
-> > IIUC, defining bindings and schema is not needed, IMO, since the mailbox
-> > is already defined in the ACPI spec. No need to redefine.
-> 
-> You lost me...
-> 
-> You don't need to redefine the layout of the memory region as that's 
-> defined already somewhere,
+> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+> index 2196979a24a3..ff0306650b39 100644
+> --- a/arch/arm64/kvm/guest.c
+> +++ b/arch/arm64/kvm/guest.c
+> @@ -73,6 +73,24 @@ static u64 core_reg_offset_from_id(u64 id)
+>   	return id & ~(KVM_REG_ARCH_MASK | KVM_REG_SIZE_MASK | KVM_REG_ARM_CORE);
+>   }
+>   
+> +static bool kvm_realm_validate_core_reg(u64 off)
+> +{
+> +	/*
+> +	 * Note that GPRs can only sometimes be controlled by the VMM.
+> +	 * For PSCI only X0-X6 are used, higher registers are ignored (restored
+> +	 * from the REC).
+> +	 * For HOST_CALL all of X0-X30 are copied to the RsiHostCall structure.
+> +	 * For emulated MMIO X0 is always used.
+> +	 */
+> +	switch (off) {
+> +	case KVM_REG_ARM_CORE_REG(regs.regs[0]) ...
+> +	     KVM_REG_ARM_CORE_REG(regs.regs[30]):
 
-Great!
+May be add :
 
-> but you do need to define where it is for DT. 
-> And for that, you need a compatible. Do you know where it is in this 
-> case?
+	/* PC can only be set before the Realm is ACTIVATED */
 
-The compatible is not defined anywhere yet. Is a DT schema needed to
-document it? If yes, I am usure what to put in the description. We tried
-to not redefine the mailbox and refer to the ACPI spec. That was a NAK
-from Krzysztof [1].
+Either ways:
 
-Thanks and BR,
-Ricardo
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-[1]. https://lore.kernel.org/r/624e1985-7dd2-4abe-a918-78cb43556967@kernel.org
+
+> +	case KVM_REG_ARM_CORE_REG(regs.pc):
+> +		return true;
+> +	}
+> +	return false;
+> +}
+> +
+>   static int core_reg_size_from_offset(const struct kvm_vcpu *vcpu, u64 off)
+>   {
+>   	int size;
+> @@ -783,12 +801,34 @@ int kvm_arm_get_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
+>   	return kvm_arm_sys_reg_get_reg(vcpu, reg);
+>   }
+>   
+> +/*
+> + * The RMI ABI only enables setting some GPRs and PC. The selection of GPRs
+> + * that are available depends on the Realm state and the reason for the last
+> + * exit.  All other registers are reset to architectural or otherwise defined
+> + * reset values by the RMM, except for a few configuration fields that
+> + * correspond to Realm parameters.
+> + */
+> +static bool validate_realm_set_reg(struct kvm_vcpu *vcpu,
+> +				   const struct kvm_one_reg *reg)
+> +{
+> +	if ((reg->id & KVM_REG_ARM_COPROC_MASK) == KVM_REG_ARM_CORE) {
+> +		u64 off = core_reg_offset_from_id(reg->id);
+> +
+> +		return kvm_realm_validate_core_reg(off);
+> +	}
+> +
+> +	return false;
+> +}
+> +
+>   int kvm_arm_set_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
+>   {
+>   	/* We currently use nothing arch-specific in upper 32 bits */
+>   	if ((reg->id & ~KVM_REG_SIZE_MASK) >> 32 != KVM_REG_ARM64 >> 32)
+>   		return -EINVAL;
+>   
+> +	if (kvm_is_realm(vcpu->kvm) && !validate_realm_set_reg(vcpu, reg))
+> +		return -EINVAL;
+> +
+>   	switch (reg->id & KVM_REG_ARM_COPROC_MASK) {
+>   	case KVM_REG_ARM_CORE:	return set_core_reg(vcpu, reg);
+>   	case KVM_REG_ARM_FW:
+
 
