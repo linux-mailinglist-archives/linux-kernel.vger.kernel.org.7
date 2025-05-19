@@ -1,116 +1,145 @@
-Return-Path: <linux-kernel+bounces-653119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95AE0ABB512
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:27:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F03ABB515
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EC157A58D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 06:26:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B60E03B5115
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 06:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4396245007;
-	Mon, 19 May 2025 06:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9209D245028;
+	Mon, 19 May 2025 06:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dDGSci3L"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+VhVPnu"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A02524468E;
-	Mon, 19 May 2025 06:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E666244E8C;
+	Mon, 19 May 2025 06:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747636065; cv=none; b=SODsbg3MWr6CoP0xG7FIOan7rt8a+p2D1vviFwXIny61ZhQlzxm3urwimnjtxXF5pZHVaJxLaDDexOk+72VVWpEwTDzl3hFfVCOSegzbzLq+M6h5OI+v+8YQfxuNTDxpIDcFtdOdV23ODTD6CjVkU6kY/h2Z57fY8HupR7rPY2s=
+	t=1747636080; cv=none; b=qWKpL/5/lQmMGV4s4i1cxxE8CrnpnmKk/78ANouTsROT4VOcYkYWqAas7SARTGMyb3FMn3dYHnW2sA61qotrblFGWFJsaYtTHUWCZqwHD7JATzaaT1PcwU3T/QJPHlITNT58MrVTt6n+fBEAF7Om8OdLviw2ZTU99Wd30tTlbcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747636065; c=relaxed/simple;
-	bh=05be7fLfzW+Lkh9/B6CDCkEvJrnVcJV+48VP51XW+4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HQOJncN4Le6bj5892TZPut7AR2WVyhMXLbnfLVoRv2HqXGaccO23pH74/qPw9btzEL/wifvI4FKpcXrQ66e+nBpuQ9H+eufQiPlMFeftPiPo+JJxQqtANdB4gJYfoep5Qeou1C3bg7OdrpXW7nsQOtXqiYxWOoLHDelR9klWj34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dDGSci3L; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747636064; x=1779172064;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=05be7fLfzW+Lkh9/B6CDCkEvJrnVcJV+48VP51XW+4I=;
-  b=dDGSci3L0NxJ6+0HS5/VT4r0p3H0vHaH6SGvrp6ZHtgzzgqKcivfo4Yc
-   rDkZmL4T9EsM0Yp5/5SWbkjiOZ4HqqsZkv+RftgT6VKdkZKLADRpPg17l
-   hra4dMx9fM35Bkr14/m5VhczfjgnLnYlB5vYCyO4MfG754dHG69FnSNUI
-   MxPE3JcA+ScjOIR7xgBPa682cuRWI5/aNLsgpPHVrYC1d+jRkb+/WI+yy
-   URLQP/64uJXt5i7viZNjUTy9NklF1D7a2oljkm+Nb0BDF0TxCxuIvR/WW
-   0HqdFTPSWzNnoRwUWXkU0lHFXpBj5whuTietw7lry1EIn2pvmmaBTE4rC
-   A==;
-X-CSE-ConnectionGUID: 3W948e2hQwSCWUOv9wUs0g==
-X-CSE-MsgGUID: ZoSeOeUKRnSwZVf+RXL+Ng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11437"; a="49503810"
-X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
-   d="scan'208";a="49503810"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2025 23:27:42 -0700
-X-CSE-ConnectionGUID: UK5odDNjSF+5FI6KHpYkxA==
-X-CSE-MsgGUID: KP5sPoGBQVKkqbLHSlAehg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
-   d="scan'208";a="170313674"
-Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.73.217]) ([10.247.73.217])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2025 23:27:38 -0700
-Message-ID: <12093d3c-ca0a-46fd-950e-6af1448ee079@linux.intel.com>
-Date: Mon, 19 May 2025 14:27:36 +0800
+	s=arc-20240116; t=1747636080; c=relaxed/simple;
+	bh=hwm8WBOYDHtDa9VLp9WuAR1DlNYMdyOk8vi1d//7JHA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rHGj10L7/Gu5ll4Ol9HMkd/XJ5ORiCS3HVnMj4b3mmEIkWKK0+Xv1v+rrLCPX8mvRmlvgGyzD1PAQGsitkayczzy1mSSB0rrGPPkc3mP4HJ1638xAfWQ7K/6++dRFUNvensxgFy2S+Sn+vMG9c6rX0PExY9gc28jRs+mo2la4MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+VhVPnu; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-601f278369bso578670a12.1;
+        Sun, 18 May 2025 23:27:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747636076; x=1748240876; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pXsyUMIQ0XIOxEd0HgUN3xKydqhCFVjspZ5Sh+H499A=;
+        b=f+VhVPnummHbpNX+xL4dpxie8Z5TmgD9P8uxm4NaNfbYtx3uU/zAbNFACGXar7jf75
+         9lFJGQbQZe1CR8vPg+0jS4RoBRC7mXE4lxRTS+Y5lPCtM5SDAI8YvtIWlore588a2IHC
+         oloKIyALwfZKr4J2dRfTLGTaA4RRqiHam85c4r6uR/ZILgt0mP83EC0WTolOiWP1Ijbs
+         +PEMKw0L/ivOuY/2B3G3dMMS2skkYYT6mhlHGvlycMz2jFRBB45JMRPk6nez8DE9rreJ
+         RURMLVAZFlZZ1r92HQbinpnqSRQVZa0qap46n3BXejvKFv1e4pLWpmPJdnCcAXkZKsr9
+         n7Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747636076; x=1748240876;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pXsyUMIQ0XIOxEd0HgUN3xKydqhCFVjspZ5Sh+H499A=;
+        b=TlYezZTb4eIk1sFJDdBufso8Zy5y0gGsOD7UfqgWh76MXSYUOuubIsnFbuKnQS2LCx
+         UvJix+Bf6lKrGhg0nuHzqSNvz+ZyzlF/nk+yWpJ6rETGQ5GvJTcJQVmavGTur2ZTxXI/
+         MwFLZA5DXCdsvAjtv6eaqp9ALjugUefMAzCpqkHd1cofVG9aDqVi/dsJHgYoSZV0LDaa
+         FcchSKbgwqoil/WdaWWFrcr6d4WFkDCf+uViazmXRItmXPgWOLezvWYqmhQWn0TYgPbJ
+         P5rME5QdYR9s03nNMWh3rmB/fsnf8GkXAwRGEV+vrY0HRXBHSgsL2SjePY0d8jtu8WL/
+         ranQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3ddJi6wzjvJXKogdXrdTWiEnveXnGmC0v0SoHKh1G0mYwMfxsrtWFW5fxv4N1rqRpIGoSKNEfv8F8ldaXUBMY@vger.kernel.org, AJvYcCWd1oR05C2oI+HdKY2LBVG7P3LXYLnK0NoeuFjiQCiMQSUS2/c9Xm3R9IdgSCO80cNEo5djShXc2V43967t@vger.kernel.org, AJvYcCWkdQi0C4INOJJWnI9gOknYgW3oUcDQXMCVB6JzMRovgU9L0QQH/Ygi32YO95Kx4MfQZ4D5aI2aoXOE7Xwj@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuhKJiu/JqmKp2t6UOndTRzEWAKQoac5arRtId0n0ua/NPUQMx
+	WNyZ/7pOqYCdVyW3BsLBEaEcRRCWkJ3NevOPxaEJOx6+3ou8h90Y4xP0ZYCmLEpN/QllUrBNbIO
+	Odn20o7GV2XSDX7x3kPPu91GHeAhBHflrQNdUQSpHKW+s
+X-Gm-Gg: ASbGnctN4BRDoCJ55P5ieoHBwgEW4RVGyKWlsMJQzAOlZXTG9G0xOEpTPw7V+bPpn+7
+	BAb1GqQ2ehIPe40v95UHEtgP5N16ttPmT5nQNc9IWRlcu1zex6uBrojuP4JnW2DTJi9IGrlLZeb
+	OyDDIn+jFnr7CYLRWPFCyTCQTXGqmxRDcS
+X-Google-Smtp-Source: AGHT+IEDUGdgd57hqnJhmZWzmyJSlXQ/w0VUAPyqIuTv14bUuodHWsKKgLnu9TTSlwd8jxOtmZrz2M5cZBf+28PzXn0=
+X-Received: by 2002:a17:907:72c3:b0:ad1:e4e9:6b4f with SMTP id
+ a640c23a62f3a-ad52d53c8f3mr1061862966b.36.1747636076129; Sun, 18 May 2025
+ 23:27:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH iwl-next v2 8/8] igc: SW pad preemptible frames for
- correct mCRC calculation
-To: Simon Horman <horms@kernel.org>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, intel-wired-lan@lists.osuosl.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
- Chwee-Lin Choong <chwee.lin.choong@intel.com>
-References: <20250514042945.2685273-1-faizal.abdul.rahim@linux.intel.com>
- <20250514042945.2685273-9-faizal.abdul.rahim@linux.intel.com>
- <20250516094336.GH1898636@horms.kernel.org>
-Content-Language: en-US
-From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
-In-Reply-To: <20250516094336.GH1898636@horms.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250515073449.346774-2-chenlinxuan@uniontech.com>
+ <CAOQ4uxja322ZuOaHm2rLU1mPsqHsuSbAe=0g5Rc_oh=DmBcn0Q@mail.gmail.com> <CAC1kPDOyYyvvkJr3yX=j4JE3q-jQwUN7tdkOG55HFjy6wE+DeA@mail.gmail.com>
+In-Reply-To: <CAC1kPDOyYyvvkJr3yX=j4JE3q-jQwUN7tdkOG55HFjy6wE+DeA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 19 May 2025 08:27:45 +0200
+X-Gm-Features: AX0GCFsI_4JCzy0ZlWJFvPfBfY100MDbfqho3Xa_8QBQqEKLjBdq0aUYVA8ZMK0
+Message-ID: <CAOQ4uxh9Zyorcox8UHH-nhZig_gmV=YDqX=mizSe6tftXwt_Dw@mail.gmail.com>
+Subject: Re: [PATCH] selftests: Add functional test for the abort file in fusectl
+To: Chen Linxuan <chenlinxuan@uniontech.com>
+Cc: Shuah Khan <shuah@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, zhanjun@uniontech.com, 
+	niecheng1@uniontech.com, wentao@uniontech.com, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, May 19, 2025 at 7:58=E2=80=AFAM Chen Linxuan <chenlinxuan@uniontech=
+.com> wrote:
+>
+> On Thu, May 15, 2025 at 6:27=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
+m> wrote:
+> >
+> > On Thu, May 15, 2025 at 9:35=E2=80=AFAM Chen Linxuan <chenlinxuan@union=
+tech.com> wrote:
+> > >
+> > > +       ret =3D read(test_fd, path_buf, sizeof(path_buf));
+> > > +       ASSERT_LT(ret, 0);
+> >
+> > Nice!
+> > I guess you could also verify errno =3D=3D ENOTCONN or whatever it is
+> > in this case.
+>
+> I am currently facing two issues:
+>
+> 1. I am not sure about the exact functions of max_background and
+> congestion_threshold. I have prepared a patch that adds documentation
+> for these two fields, which can be found here:
+> https://lore.kernel.org/all/20250514061703.483505-2-chenlinxuan@uniontech=
+.com/
 
+It may be a bit challenging to design a test that does deterministic
+readahead, because there is usually no contract for readahead,
+so not sure.
 
-On 16/5/2025 5:43 pm, Simon Horman wrote:
-> On Wed, May 14, 2025 at 12:29:45AM -0400, Faizal Rahim wrote:
->> From: Chwee-Lin Choong <chwee.lin.choong@intel.com>
->>
->> A hardware-padded frame transmitted from the preemptible queue
->> results in an incorrect mCRC computation by hardware, as the
->> padding bytes are not included in the mCRC calculation.
->>
->> To address this, manually pad frames in preemptible queues to a
->> minimum length of 60 bytes using skb_padto() before transmission.
->> This ensures that the hardware includes the padding bytes in the
->> mCRC computation, producing a correct mCRC value.
->>
->> Signed-off-by: Chwee-Lin Choong <chwee.lin.choong@intel.com>
->> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-> 
-> Hi Faizal, all,
-> 
-> Perhaps it would be best to shuffle this patch within this series
-> so that it appears before the patches that add pre-emption support.
-> That way, when the are added the bug isn't present.
-> 
+>
+> 2. How should I test the "waiting" file? My current idea is to have my
+> FUSE daemon stay in a state where it does not respond to requests, and
+> then use some form of inter-process communication (maybe a Unix
+> socket?) to make it resume working. I am not sure if there is a better
+> approach.
 
-Makes sense, will update. Thanks!
+This is a good approach that several selftests use.
+
+Looking at the bigger picture, your work to improve documentation and
+selftest coverage for fuse is very welcome! so I will add some wider
+context comments.
+
+One small nit: please rename the test subdir to filesystems/fuse rather
+than filesystems/fusectl, so that more fuse selftests could be added later.
+
+For the long run, I would consider a very minimal single threaded
+fuse server implementation that does not rely on libfuse for fuse selftests=
+,
+because the selftest should not rely on the libfuse version installed on
+the development system and also testing low level protocol issues
+would require this anyway.
+But this is not a requirement for this first test.
+
+Thanks,
+Amir.
 
