@@ -1,52 +1,97 @@
-Return-Path: <linux-kernel+bounces-653178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B79ABB5D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:15:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52DA9ABB5F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3D3177C5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 07:13:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D91E1898661
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 07:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99632676F3;
-	Mon, 19 May 2025 07:09:49 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F5926656D;
+	Mon, 19 May 2025 07:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nkLRKO5V";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gK/kmJUq";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nkLRKO5V";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gK/kmJUq"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E7B26658F;
-	Mon, 19 May 2025 07:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062D3265CD3
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 07:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747638589; cv=none; b=t3TZg5P8mif94dXvi7IiZrirdFWZMW0TjxbZoco5MB+uXoYHjYzH8p2duWMSXXOxDQ6WOMtCwr+lM8lIt/pyK96o4o0LnbqGKnWuRFWknlYA5FTbYaOwr1bO90UjjVq3bPeCwCjgTSq8u1cpiJd8KgEReUegFrN6NENiaj7UyNQ=
+	t=1747638833; cv=none; b=ix/R37/nhsvgBwEqkBBLnIGep1akxUJN9ENFDQ0j3OiX+r4SBb9/oWUw03AFneM33F3LneV484cQZBkEJYcGM7NFaZeGH2mFFCWKUXwhJlqXcVOqArLwI6yu/xLVvf+9tDUQMHwLxY0CybKmmkqjeLkLPIAKx4HF2TIcmD5zdlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747638589; c=relaxed/simple;
-	bh=BqaEOXA8aeltNjMxATYKo6Qrwtnb7mFiJst0GZK6Nic=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AqAFZB4M+tHGJ9JLO2V2cUEpM2wNP5yZXX8DoJQR5tFPtayuPgoe8dLWcB+i6TDeia8AUu79aAulcoyUIvFPkBOmfKVgQqKDr8SxXVEr+M2fZnztv0ClN1ONakAt4m1+X0dzVFxCuVJ944Pi5K6/5EFp/9rLZuRArc3r0IvyI84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4b18372qTWz27hm0;
-	Mon, 19 May 2025 15:10:27 +0800 (CST)
-Received: from kwepemk500012.china.huawei.com (unknown [7.202.194.97])
-	by mail.maildlp.com (Postfix) with ESMTPS id 27C69140258;
-	Mon, 19 May 2025 15:09:39 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemk500012.china.huawei.com (7.202.194.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 19 May 2025 15:09:38 +0800
-From: Bowen Yu <yubowen8@huawei.com>
-To: <rafael@kernel.org>, <viresh.kumar@linaro.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <zhanjie9@hisilicon.com>,
-	<jonathan.cameron@huawei.com>, <lihuisong@huawei.com>,
-	<zhenglifeng1@huawei.com>, <yubowen8@huawei.com>, <cenxinghai@h-partners.com>
-Subject: [PATCH] cpufreq: Update sscanf() to kstrtouint()
-Date: Mon, 19 May 2025 15:09:38 +0800
-Message-ID: <20250519070938.931396-1-yubowen8@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1747638833; c=relaxed/simple;
+	bh=02WXJ2e8nA1m8WxpiEMjKR6s0y9GjQ3QRKT5VE7jbsI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OThzSjK81m67rUxjOWbOrHRDrqkVCBozn0wd8oFjHM2c9xq8ZbTzFyHURYAMdrvN24NDgCeSafpgVo/U2GBngU7D/6ZdLmnGTo8zWDxz3M6ksJ7qQiPwRcN+X6jr9Qm6FvWNjFi9nBw8TUSvcnhfrbCvnwkd8smCcPleFjdlTP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nkLRKO5V; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gK/kmJUq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nkLRKO5V; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gK/kmJUq; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 16D86201F5;
+	Mon, 19 May 2025 07:13:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747638830; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=41Ev+vXHsAlb6sUce4V4iL7xMCren5QpN4AM1XVCMxQ=;
+	b=nkLRKO5VAA8+WH5Oo51570Xz7riWN8ZERdTzGvyBnFnQErP33CEkV3BuBnlgIhO9M9teT8
+	IRaTE3qU1mo5BVTDLi968m/kK2bQRinqrm13/2nvgAFA6LAcHJRzHnsNI0r0t8HhkedSPT
+	rVY9jxg6pgTuOGiGn2pU59faW81j6U4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747638830;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=41Ev+vXHsAlb6sUce4V4iL7xMCren5QpN4AM1XVCMxQ=;
+	b=gK/kmJUqkyEwAqVD4dr+GHzwN4khEuv6j3JUBy28P0kJeYqT/jJmdNdJKkODgfGXzT+V+B
+	HVsvLWBtfGrH6RCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=nkLRKO5V;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="gK/kmJUq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747638830; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=41Ev+vXHsAlb6sUce4V4iL7xMCren5QpN4AM1XVCMxQ=;
+	b=nkLRKO5VAA8+WH5Oo51570Xz7riWN8ZERdTzGvyBnFnQErP33CEkV3BuBnlgIhO9M9teT8
+	IRaTE3qU1mo5BVTDLi968m/kK2bQRinqrm13/2nvgAFA6LAcHJRzHnsNI0r0t8HhkedSPT
+	rVY9jxg6pgTuOGiGn2pU59faW81j6U4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747638830;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=41Ev+vXHsAlb6sUce4V4iL7xMCren5QpN4AM1XVCMxQ=;
+	b=gK/kmJUqkyEwAqVD4dr+GHzwN4khEuv6j3JUBy28P0kJeYqT/jJmdNdJKkODgfGXzT+V+B
+	HVsvLWBtfGrH6RCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CCD061372E;
+	Mon, 19 May 2025 07:13:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 74HgLy3aKmgzTgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 19 May 2025 07:13:49 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: gregkh@linuxfoundation.org,
+	hdegoede@redhat.com,
+	arvidjaar@gmail.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	stable@vger.kernel.org
+Subject: [PATCH] dummycon: Trigger redraw when switching consoles with deferred takeover
+Date: Mon, 19 May 2025 09:10:13 +0200
+Message-ID: <20250519071026.11133-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,38 +99,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemk500012.china.huawei.com (7.202.194.97)
+X-Rspamd-Action: no action
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 16D86201F5
+X-Spam-Score: -2.01
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[linuxfoundation.org,redhat.com,gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:url,suse.de:email,suse.de:mid,suse.de:dkim];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
 
-In store_scaling_setspeed(), sscanf is still used to read to sysfs.
-Newer kstrtox provide more features including overflow protection,
-better errorhandling and allows for other systems of numeration. It
-is therefore better to update sscanf() to kstrtouint().
+Signal vt subsystem to redraw console when switching to dummycon
+with deferred takeover enabled. Makes the console switch to fbcon
+and displays the available output.
 
-Signed-off-by: Bowen Yu <yubowen8@huawei.com>
+With deferred takeover enabled, dummycon acts as the placeholder
+until the first output to the console happens. At that point, fbcon
+takes over. If the output happens while dummycon is not active, it
+cannot inform fbcon. This is the case if the vt subsystem runs in
+graphics mode.
+
+A typical graphical boot starts plymouth, a display manager and a
+compositor; all while leaving out dummycon. Switching to a text-mode
+console leaves the console with dummycon even if a getty terminal
+has been started.
+
+Returning true from dummycon's con_switch helper signals the vt
+subsystem to redraw the screen. If there's output available dummycon's
+con_putc{s} helpers trigger deferred takeover of fbcon, which sets a
+display mode and displays the output. If no output is available,
+dummycon remains active.
+
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reported-by: Andrei Borzenkov <arvidjaar@gmail.com>
+Closes: https://bugzilla.suse.com/show_bug.cgi?id=1242191
+Tested-by: Andrei Borzenkov <arvidjaar@gmail.com>
+Fixes: 83d83bebf401 ("console/fbcon: Add support for deferred console takeover")
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: linux-fbdev@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: <stable@vger.kernel.org> # v4.19+
 ---
- drivers/cpufreq/cpufreq.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/video/console/dummycon.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index be727da0be4d..0c842edd1a76 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -920,9 +920,9 @@ static ssize_t store_scaling_setspeed(struct cpufreq_policy *policy,
- 	if (!policy->governor || !policy->governor->store_setspeed)
- 		return -EINVAL;
+diff --git a/drivers/video/console/dummycon.c b/drivers/video/console/dummycon.c
+index 139049368fdc..afb8e4d2fc34 100644
+--- a/drivers/video/console/dummycon.c
++++ b/drivers/video/console/dummycon.c
+@@ -85,6 +85,12 @@ static bool dummycon_blank(struct vc_data *vc, enum vesa_blank_mode blank,
+ 	/* Redraw, so that we get putc(s) for output done while blanked */
+ 	return true;
+ }
++
++static bool dummycon_switch(struct vc_data *vc)
++{
++	/* Redraw, so that we get putc(s) for output done while switched away */
++	return true;
++}
+ #else
+ static void dummycon_putc(struct vc_data *vc, u16 c, unsigned int y,
+ 			  unsigned int x) { }
+@@ -95,6 +101,10 @@ static bool dummycon_blank(struct vc_data *vc, enum vesa_blank_mode blank,
+ {
+ 	return false;
+ }
++static bool dummycon_switch(struct vc_data *vc)
++{
++	return false;
++}
+ #endif
  
--	ret = sscanf(buf, "%u", &freq);
--	if (ret != 1)
--		return -EINVAL;
-+	ret = kstrtouint(buf, 0, &freq);
-+	if (ret)
-+		return ret;
+ static const char *dummycon_startup(void)
+@@ -124,11 +134,6 @@ static bool dummycon_scroll(struct vc_data *vc, unsigned int top,
+ 	return false;
+ }
  
- 	policy->governor->store_setspeed(policy, freq);
- 
+-static bool dummycon_switch(struct vc_data *vc)
+-{
+-	return false;
+-}
+-
+ /*
+  *  The console `switch' structure for the dummy console
+  *
 -- 
-2.33.0
+2.49.0
 
 
