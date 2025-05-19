@@ -1,130 +1,110 @@
-Return-Path: <linux-kernel+bounces-653572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51DB5ABBB3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:35:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683C7ABBB43
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED0491739A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:35:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70DAB189310C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A8F26A081;
-	Mon, 19 May 2025 10:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF11427464D;
+	Mon, 19 May 2025 10:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="i31B5qxi"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="ZiOo8jr1"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20C24C92
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C254C92
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747650951; cv=none; b=UKhwi77XLEXEmLql6KPUoCQZjyOfg+RNBjLRSH7Wbk9gvKZrqpHaGlzHW93hugJi4ww4fbgIBxwyjM6CZPstLJ1qulk0pQHabvLeCtuGOheBkYGF0f2syOoXzubkd9h501hAXe9OKgWSFdlIwjMfFlHsIpbyzFnmYw+tCVUWJC8=
+	t=1747651074; cv=none; b=JC+d2zFsSKM0XwLXBJpKN4bI7OxnxrI44gCvNVb7VIFO1NN9iYSfz1/Z5xAEtPPsgjXHvLDjIdaxPqGMrOE9od356Lov647BwB3ZgAKMovYC+GGCV//3dEjGOyCI3HGRxRw4TZmyFImmP4xx6ltFWnQ0g0fiX0y43y0v0bEVkKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747650951; c=relaxed/simple;
-	bh=jtB7PHlQfSBY3IYgiJFF4EXqqJieedjKydBtE/22bS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a9ZIBTs8ba8aNZ+dFhnHMAEI6vVqCNWzwkaZ0CRvYTqhHQBu1TCZt2SvbJWv7HzJbtUABGpvwe+WYfUB6+ESV8zRP69MEuyvVn0MYrDciLVdf/8oAmosq7XfIcvExrWrjuhu5fwermh5Tavi+RDswjeB6lU0CpgdLXKgvjlN67k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=i31B5qxi; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1747650947;
-	bh=jtB7PHlQfSBY3IYgiJFF4EXqqJieedjKydBtE/22bS0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i31B5qxibamcvqdrVJ599/69s9CrJ0SXjU1hObfJQEuCm8NTZEKYSV7ywgLxRgZ/2
-	 3faSMVr6V+aYuhHZlSkjUD8KP8OSCnDAlJqna6cftQ93xAfAUw/p84vRpO7zwH+rhK
-	 Hm3I0VHHnQ/e+si5+mdgwYKCspcyL/kl13HJiVhtWYHYYIxo236ipGfvKMn4U7GYiV
-	 IM1hW2X1rWgoq5WAeGRt3oSMAc3zDg9HHT3k18KJblucbbwXMp0RP3wip9ech+2u+0
-	 LKPc8QQOgCpyZljlTEPmuaqB8DEPT/bRedG91LVNwvtP5wAgU75aEV+9+OMaoqQWzz
-	 NOlIUPMdqbDUw==
-Received: from [192.168.1.90] (unknown [82.76.59.134])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1773717E0F47;
-	Mon, 19 May 2025 12:35:47 +0200 (CEST)
-Message-ID: <7ce1a2d1-f4cb-4975-be24-b47e184ce1a8@collabora.com>
-Date: Mon, 19 May 2025 13:35:46 +0300
+	s=arc-20240116; t=1747651074; c=relaxed/simple;
+	bh=uLUsUinTMdjmLW5wpU4q/NnLHv21b+lbzGHwrlwL4dk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IqKMME3RSASNhQk1ays8Lfl3QoyE+adCb0Ogn/rC9oUWGfBjj/Zr9M4fToHQML+ReoX633fJWQiUeNpl/AyWit7AFn7JSwNcGy3eaZpipU3CjGtOQInQ+wW0vimyd3Df/+tejjRG+slsvPSkEeANYjn0TsceB+hJg3nqqI7AxHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=ZiOo8jr1; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-476ac73c76fso62527491cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 03:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar.org; s=google; t=1747651071; x=1748255871; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uLUsUinTMdjmLW5wpU4q/NnLHv21b+lbzGHwrlwL4dk=;
+        b=ZiOo8jr17u6jnVDGpiqO/C0Ldqxp0nyMkchr/GZ4mdrx2X6HJDPS/ZKmSr3EmeO1GM
+         I0j+5OGebQ5DM6GjOLPgD6Ud0Eld1qEHyPkpepTGKImivF8KtZTwLYXgsV3+Vdzxlcw5
+         VF79hQ7g4tMA1FKzHhLKP/IJ4mkbPM0iSPCe5hg+WDpw5Z/k75DyxB9ZQX9ubUKi5QB+
+         RT63IEJPsIY4sbmy0hlRvojwq87VPFF8Ge7Pfqv/j8Fndu7GujyJFY6Ur07aKkD393+z
+         7LSBNMVr7uNtA9yBpnW9CGMzIS+zfIwLDsUIBKEAguzp0Gzqr9d8lPw1BPFBc/EzXfUJ
+         iuHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747651071; x=1748255871;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uLUsUinTMdjmLW5wpU4q/NnLHv21b+lbzGHwrlwL4dk=;
+        b=rKd0v0s6WBLslKPYLPWaB+ZF+VuFfqsb8imL6m2x1jSVUucr2WpXxw6bna0ahW+lUI
+         UCLGGcFL+1WWDefNaL8YQRrkdtia4GmrMhsaIYBsdl9/E7aXK/CSjisgVU3zxtKoeS3z
+         DbiY7W8S8actk1aOUDnhLf1Wo8i/9NuZO25Fn2vhZujJW3VCS4OpQIX9wjnO/Ba9wEVz
+         umkcEgtsyjtvbpT5EWzt034Mn5dQNFpa6gBLio/WVJL6zMu2X2bRycJYQ7mVootwmaYU
+         f7w18qTVlLOhAFv4KODAl1eN+KZHP7zMFp7FRJWo5nrWj1ueKxFxYk5wiyZIhhpNHZZg
+         jcrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpkBofgZGSq+T5XVy5Tq3gWViLMblbz+OZapc87/h1m/+n+BL/mFqd6ZR3JxT8OejVu6XAi3ripf1kJlU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo7TGZL4V3xEEiGsrY0OLMRhwisV5DbxEg6zM0ju1zXcdc01Ci
+	Dufvq0EWRCNkennQcqoCJYGJwlTc6cdfJ8yNXcOkB1qUZ+sW6cNCQcXt2wdZgogx+VR25Cd7NmV
+	XhRaLcqO80DXuhOBQVJ0VpxPUwBG60iRm+u5/CgUDxQ==
+X-Gm-Gg: ASbGncsTc7oPsmPGbWZLy5x4x+qUCRoqeCSk2lQwVyFTyxDDHzgIiqaDPeejAvMJT2l
+	RKoIvqS+1KKUlYHgs3ZieQ++yJPgz95eTXwwCCzSevzxItw4VslCWUkh46Ya70twhFSEnOb64QX
+	m/6mh8tfxcXn6BRihDYwl5nWE9HZ5gk+w=
+X-Google-Smtp-Source: AGHT+IHpoUyld3bWH/ccuYhs5XzdWrCcsdpq7tt7nhCOmlUkWwsRYL1EjQOis7dWQLywSekRjLeCOO/84Vo4YpYBUNY=
+X-Received: by 2002:a05:622a:343:b0:480:7147:1998 with SMTP id
+ d75a77b69052e-494ae3d017bmr155270341cf.22.1747651070647; Mon, 19 May 2025
+ 03:37:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 14/23] drm/tests: hdmi: Add macro to support EDEADLK
- handling
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Dmitry Baryshkov <lumag@kernel.org>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250425-hdmi-conn-yuv-v4-0-5e55e2aaa3fa@collabora.com>
- <20250425-hdmi-conn-yuv-v4-14-5e55e2aaa3fa@collabora.com>
- <20250519-sturdy-cyan-mouse-6bd0f1@houat>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <20250519-sturdy-cyan-mouse-6bd0f1@houat>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250514050340.1418448-1-vignesh.raman@collabora.com>
+In-Reply-To: <20250514050340.1418448-1-vignesh.raman@collabora.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Mon, 19 May 2025 11:37:39 +0100
+X-Gm-Features: AX0GCFseuNxg2cyB31Kw8bdxaPv3D0EAGzhfq8OnlO6TTPxanjeFtSt3PM_LQL0
+Message-ID: <CAPj87rMR9C4bgZBPhu=Pm7E-kqszt=GPQdnt4tCn_8-QqQAx=w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] drm/ci: mesa uprev and python-artifacts fixes
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
+	helen.fornazier@gmail.com, airlied@gmail.com, simona.vetter@ffwll.ch, 
+	robdclark@gmail.com, guilherme.gallo@collabora.com, 
+	sergi.blanch.torne@collabora.com, valentine.burley@collabora.com, 
+	lumag@kernel.org, dmitry.baryshkov@oss.qualcomm.com, 
+	quic_abhinavk@quicinc.com, mripard@kernel.org, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/19/25 10:22 AM, Maxime Ripard wrote:
-> Hi,
-> 
-> On Fri, Apr 25, 2025 at 01:27:05PM +0300, Cristian Ciocaltea wrote:
->> In preparation to improve error handling throughout all test cases,
->> introduce a macro to check for EDEADLK and automate the restart of the
->> atomic sequence.
->>
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->>  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
->> index c8969ee6518954ab4496d3a4398f428bf4104a36..c8bb131d63ea6d0c9e166c8d9ba5e403118cd9f1 100644
->> --- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
->> +++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
->> @@ -224,6 +224,16 @@ drm_kunit_helper_connector_hdmi_init(struct kunit *test,
->>  				test_edid_hdmi_1080p_rgb_max_200mhz);
->>  }
->>  
->> +#define drm_kunit_atomic_restart_on_deadlock(ret, state, ctx, start) do {	\
->> +	if (ret == -EDEADLK) {							\
->> +		if (state)							\
->> +			drm_atomic_state_clear(state);				\
->> +		ret = drm_modeset_backoff(ctx);					\
->> +		if (!ret)							\
->> +			goto start;						\
->> +	}									\
->> +} while (0)
->> +
-> 
-> I'm not sure here either, for pretty much the same reason. As far as
-> locking goes, I really think we should prefer something explicit even if
-> it means a bit more boilerplate.
-> 
-> If you still want to push this forward though, this has nothing to do
-> with kunit so it should be made a common helper. 
+Hi Vignesh,
 
-Ack.
+On Wed, 14 May 2025 at 06:04, Vignesh Raman <vignesh.raman@collabora.com> wrote:
+> The python-artifacts job has a timeout of 10 minutes, which causes
+> build failures as it was unable to clone the repository within the
+> specified limits. Set GIT_DEPTH to 10 to speed up cloning and avoid
+> build failures due to timeouts when fetching the full repository.
+>
+> The current s3cp stopped working after the migration. Update to the
+> latest mesa and ci-templates to get s3cp working again and adapt to
+> recent changes in mesa-ci.
 
-> I do think it should be
-> done in a separate series though. Ever-expanding series are a nightmare,
-> both to contribute and to review :)
+I thought I already did this, sorry; the series is:
+Acked-by: Daniel Stone <daniels@collabora.com>
 
-Indeed, let me take this separately.
-
-If you agree, I'd prefer to drop EDEADLK handling from the new tests as
-well, to allow sorting this out for all in a consistent manner.
-
-Thanks,
-Cristian
+Cheers,
+Daniel
 
