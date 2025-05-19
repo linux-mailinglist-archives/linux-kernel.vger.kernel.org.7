@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-653342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C053ABB7C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:48:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8F86ABB7C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9691888D87
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:45:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 661053AF930
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 08:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF57269808;
-	Mon, 19 May 2025 08:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B701EA7D2;
+	Mon, 19 May 2025 08:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ruo60tw3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UmRVvjCg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F93A210FB
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 08:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4E2267B9F;
+	Mon, 19 May 2025 08:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747644160; cv=none; b=eg+kYfYGkI3q9gswCBJec/nE5FNRWLCHJr5V/j4a8ST+NSJ1GC9CmQxHxcveBXqWr5em7XyCb/TOIJS4bClC5TIa+8JWnQcYMH9CWnAsUTYZdq8p8iLUTR7r1vnKwIXMmBWD1//fLOv2OdBFkoDzdT3AsWu8v1jINqGCAwt04O4=
+	t=1747644211; cv=none; b=mXNRdLZ3eIRdVpJLdQySS6wKQdgJ+xdBnD8n/IjfSpj/yBGNZTh8+JADxG1aI5N76QllxnRPP1OUxUqrTlcTLeGE06cjYRE0Al7gDGJCoTevfwgpBJ1ixILGjBiLH28v1IPB6bAm9Dcef7l5riQ3Xvx62qCYri/5Imbk81fkyYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747644160; c=relaxed/simple;
-	bh=+03kt9iwtLbG5099ncvcgBRXBcr3CMG+xuHJpXjVv8E=;
+	s=arc-20240116; t=1747644211; c=relaxed/simple;
+	bh=ZOT0C0K0vPz9f06+lIVOOzuxP0Ka7pZHBD9bPzHiIx0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dnh35PbGlpm/GOUBM+Nh74y9Wq4z7pSs4AtWXRgPXWVlfDr3ggBpkpfgV2R2jf+8ocVyegUlOrLHUPe/Vv1IePq0o80WCEsy0xiyQTngS9PZOb4VLN31YW1a0L5QpIkgqscu57lwsVAa3nluqImoyKzvUQpB8Q2S7wCJAPuXhNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ruo60tw3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE772C4CEE4;
-	Mon, 19 May 2025 08:42:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iu0i4DtG7uYDGKpayRJ5CJo4RSYf7FwiK43OCYktoCOZjlOG0kBEZ9ewGIr419nYuMsL/ppyaeGE1R7O9N3naKN4UyI0XMK4m4G4PDw4FJoALrYkmSxxX4jotkgATl3C2CqXxwLnvBkxx86tfkVfaiTBV0yDHc/vlmdDMmrcoVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UmRVvjCg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C3A6C4CEE4;
+	Mon, 19 May 2025 08:43:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747644160;
-	bh=+03kt9iwtLbG5099ncvcgBRXBcr3CMG+xuHJpXjVv8E=;
+	s=k20201202; t=1747644210;
+	bh=ZOT0C0K0vPz9f06+lIVOOzuxP0Ka7pZHBD9bPzHiIx0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ruo60tw34zleKTt4jpUqfFIJ3YMcB6k/v+uuq3cOv/rMDR3RnaOVZyEtJ4734/L3E
-	 +EkCePqWJBJHrJQPrIlBrQtPFSyt9DGBzarHT4rYTGE06RNeUuufcGFHLYxV8p9Ecw
-	 Un2quvG4Yg/hYIB1CoTUlveWIZno3351Jfk0Qvi2PRhIyPFO1lcSsrk9VpOxnrCgjv
-	 QJ7F99dUA6Zphj32joniv6FSThYfSMeDX5Xl+myxNH1711W+EI9gQJ+h9Hr14wD5eB
-	 I7X0FyI0VfAIzJKW/CwMDSl9J2VAtx1mFE7aDhsnD2mWywA9WIGm49Uzfk7dHXHe8V
-	 cBYQ72jCr/LZw==
-Date: Mon, 19 May 2025 10:42:37 +0200
+	b=UmRVvjCgl5wYhy2TDehbZ/hmlXluy2bVk24nSycH7kLGPj39FqYMztARpvCnlRQIp
+	 /pWZI7pKYGPZ4qH6AG6hPG45IzKXVaT07tVG6z8GnzMJeLmDjcYbBo0c7OlCpD9ewa
+	 sddYOAVCDeDzsJBum3oIUX5l1PPyOT+nTWh/3BKInEyhGEry1W8/rkHnzLoMDIm7wP
+	 A1EQBElwa2FIQgTN0AKmNDVQUx3Qt+C+oeeJ0PhLtsJ6C0OJ33ByfOUS4WkRUiJtqp
+	 ikHmua/hlYQWDJ58eiZSaacjvLl6hx2qwxBkgRnx1eFRv2JRNg3cP0KVdhJws92wTc
+	 2RZBFEQzyr9dQ==
+Date: Mon, 19 May 2025 10:43:27 +0200
 From: Maxime Ripard <mripard@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, kernel@collabora.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 23/23] drm/tests: hdmi: Add test for unsupported
- RGB/YUV420 mode
-Message-ID: <20250519-classy-millipede-of-competence-4bb6ad@houat>
-References: <20250425-hdmi-conn-yuv-v4-0-5e55e2aaa3fa@collabora.com>
- <20250425-hdmi-conn-yuv-v4-23-5e55e2aaa3fa@collabora.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org, 
+	Eric Auger <eric.auger@redhat.com>, David Airlie <airlied@redhat.com>, 
+	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Simona Vetter <simona@ffwll.ch>, "open list:VIRTIO GPU DRIVER" <virtualization@lists.linux.dev>, 
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/virtio: implement virtio_gpu_shutdown
+Message-ID: <20250519-crazy-wisteria-mule-ef8e28@houat>
+References: <20250507082821.2710706-1-kraxel@redhat.com>
+ <urpxto3fgvwoe4hob2aukggeop4bcsyb7m5wflgru4c3otd6rq@aktopqufgxom>
+ <iptz2uxajkl3l62piqu6tq5pembbmqho667otbaj7nneh5vk3r@sxdvm7e57nae>
+ <20250518175332-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,102 +62,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="itn5qs25mfwdt27d"
+	protocol="application/pgp-signature"; boundary="owfohtpihfpfbao7"
 Content-Disposition: inline
-In-Reply-To: <20250425-hdmi-conn-yuv-v4-23-5e55e2aaa3fa@collabora.com>
+In-Reply-To: <20250518175332-mutt-send-email-mst@kernel.org>
 
 
---itn5qs25mfwdt27d
+--owfohtpihfpfbao7
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 23/23] drm/tests: hdmi: Add test for unsupported
- RGB/YUV420 mode
+Subject: Re: [PATCH] drm/virtio: implement virtio_gpu_shutdown
 MIME-Version: 1.0
 
-Hi,
-
-On Fri, Apr 25, 2025 at 01:27:14PM +0300, Cristian Ciocaltea wrote:
-> Provide a test to verify that if both driver and screen support RGB and
-> YUV420 formats, drm_atomic_helper_connector_hdmi_check() cannot succeed
-> when trying to set a mode unsupported by the display.
+On Sun, May 18, 2025 at 05:53:59PM -0400, Michael S. Tsirkin wrote:
+> On Tue, May 13, 2025 at 12:18:44PM +0200, Gerd Hoffmann wrote:
+> > > > diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm=
+/virtio/virtgpu_drv.c
+> > > > index e32e680c7197..71c6ccad4b99 100644
+> > > > --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
+> > > > +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
+> > > > @@ -130,10 +130,10 @@ static void virtio_gpu_remove(struct virtio_d=
+evice *vdev)
+> > > > =20
+> > > >  static void virtio_gpu_shutdown(struct virtio_device *vdev)
+> > > >  {
+> > > > -	/*
+> > > > -	 * drm does its own synchronization on shutdown.
+> > > > -	 * Do nothing here, opt out of device reset.
+> > > > -	 */
+> > > > +	struct drm_device *dev =3D vdev->priv;
+> > > > +
+> > > > +	/* stop talking to the device */
+> > > > +	drm_dev_unplug(dev);
+> > >=20
+> > > I'm not necessarily opposed to using drm_dev_unplug() here, but it's
+> > > still pretty surprising to me. It's typically used in remove, not
+> > > shutdown. The typical helper to use at shutdown is
+> > > drm_atomic_helper_shutdown.
+> > >=20
+> > > So if the latter isn't enough or wrong, we should at least document w=
+hy.
+> >=20
+> > The intention of this is to make sure the driver stops talking to the
+> > device (as the comment already says).
+> >=20
+> > There are checks in place in the virt queue functions which will make
+> > sure the driver will not try place new requests in the queues after
+> > drm_dev_unplug() has been called.  Which why I decided to implement it
+> > that way.
+> >=20
+> > drm_atomic_helper_shutdown() tears down all outputs according to the
+> > documentation.  Which is something different.  I don't think calling
+> > drm_atomic_helper_shutdown() will do what I need here.  Calling it in
+> > addition to drm_dev_unplug() might make sense, not sure.
+> >=20
+> > Suggestions are welcome.
+> >=20
+> > take care,
+> >   Gerd
 >=20
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 66 ++++++++++++++++=
-++++++
->  1 file changed, 66 insertions(+)
 >=20
-> diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers=
-/gpu/drm/tests/drm_hdmi_state_helper_test.c
-> index d79084cfb516b69c4244098c0767d604ad02f2c3..6337a1c52b86810c638f446c4=
-995e7ee63dbc084 100644
-> --- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-> +++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-> @@ -1622,6 +1622,71 @@ static void drm_test_check_driver_unsupported_fall=
-back_yuv420(struct kunit *test
->  	drm_modeset_acquire_fini(&ctx);
->  }
-> =20
-> +/*
-> + * Test that if a driver and screen supports RGB and YUV420 formats, but=
- the
-> + * chosen mode cannot be supported by the screen, we end up with unsucce=
-ssful
-> + * fallback attempts.
-> + */
-> +static void drm_test_check_display_unsupported_fallback_rgb_yuv420(struc=
-t kunit *test)
-> +{
-> +	struct drm_atomic_helper_connector_hdmi_priv *priv;
-> +	struct drm_modeset_acquire_ctx ctx;
-> +	struct drm_crtc_state *crtc_state;
-> +	struct drm_atomic_state *state;
-> +	struct drm_display_info *info;
-> +	struct drm_display_mode *preferred, *unsupported_mode;
-> +	struct drm_connector *conn;
-> +	struct drm_device *drm;
-> +	struct drm_crtc *crtc;
-> +	int ret;
-> +
-> +	priv =3D drm_kunit_helper_connector_hdmi_init_with_edid_funcs(test,
-> +				BIT(HDMI_COLORSPACE_RGB) |
-> +				BIT(HDMI_COLORSPACE_YUV420),
-> +				10,
-> +				&dummy_connector_hdmi_funcs,
-> +				test_edid_hdmi_4k_rgb_yuv420_dc_max_340mhz);
-> +	KUNIT_ASSERT_NOT_NULL(test, priv);
-> +
-> +	drm =3D &priv->drm;
-> +	crtc =3D priv->crtc;
-> +	conn =3D &priv->connector;
-> +	info =3D &conn->display_info;
-> +	KUNIT_ASSERT_TRUE(test, info->is_hdmi);
-> +	KUNIT_ASSERT_TRUE(test, conn->ycbcr_420_allowed);
-> +
-> +	preferred =3D find_preferred_mode(conn);
-> +	KUNIT_ASSERT_NOT_NULL(test, preferred);
-> +
-> +	unsupported_mode =3D drm_kunit_display_mode_from_cea_vic(test, drm, 96);
-> +	KUNIT_ASSERT_NOT_NULL(test, unsupported_mode);
+> I suggest adding comments in code explaining why it's approriate here.
+> Want to try?
 
-I'm not sure what this one is supposed to test. If the mode is
-unsupported by the screen, it will be for both YUV and RGB, right? So
-what are we testing here?
+Yes, that would be great
 
 Maxime
 
---itn5qs25mfwdt27d
+--owfohtpihfpfbao7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaCru/QAKCRAnX84Zoj2+
-dpkPAX9GdEFrGMnaPgHsQYafngD7rrP1g7XAmzcFOpgFYItZhI1qolmUM49ckdRB
-yBw98JEBfjSASo48jnLPA51hoO+zrUdLQpRH8EB3d50j+yyodfMb5jxLo1SqUfCF
-Y6qeLcFhyw==
-=4oAs
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaCrvLwAKCRAnX84Zoj2+
+dgnnAX41YH5MdklVDoci3LCBdtMOwNXiHuO4oHPW3spALAh+ceP1tjWrDivp1KWs
+HIHscPgBgLrrA1SdGDzvZnHluVFSvh0V6BWTaFk5wrcnF3tCW2hOXdbJLnN3ocJI
+Jbo2yI9kOQ==
+=36F7
 -----END PGP SIGNATURE-----
 
---itn5qs25mfwdt27d--
+--owfohtpihfpfbao7--
 
