@@ -1,181 +1,141 @@
-Return-Path: <linux-kernel+bounces-653666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82971ABBC8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:36:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E92ABBC87
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 13:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C58B817D951
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:35:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8A633B1575
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 11:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8A62749C8;
-	Mon, 19 May 2025 11:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005B4275110;
+	Mon, 19 May 2025 11:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lWxwDhC2"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ARPAoil1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C074275115;
-	Mon, 19 May 2025 11:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463EC274FCD;
+	Mon, 19 May 2025 11:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747654517; cv=none; b=XP4aKBSTg04NK5e47usdIsI9GtVnUjKc0Ovqtqf4jMcYVhk3dH+pOrts7Kapr4DyQNEUdyqTdOTJ705yOMHd7XbbaWoSykqJiCrC+bcXtKAzqm7i4gJ2iZ1FzMTUJ2WIaAsJw5jmoyS3kQch2NljIcBGfJyJ2bg/V/+oU3Qv8H8=
+	t=1747654507; cv=none; b=UcE6mBwZ4fdBf9ZmdYs56zQfUPGLemEqg95CA/yHQXshfpBeQNPnHg3BbMO+LEhgRLhYAci9KgvcZkRE7DMCd0nQuH+64uJDk0CWXtS37FmcXHwBUdswKcPo7E+SEisbQowexo/LNLYhLAW588Rq8DmMV1Wn1it0ywWcGZO7Xds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747654517; c=relaxed/simple;
-	bh=TOTn8GFmhX74x/VZ2DHWF88Fswebwu1oTEvmpmvzOAY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DaxIsZ8mxfKoyqWiizyBiu+QZqOoO0qHenAV+Kf6yZKoFSOG/jX9Dlie07/fNLZWUvEdfUZW5aAG0G8fvmy3toUsOprw9xFSOlmqoVouW4+q+TP35MIYDSayesAwxYk96Jj7PCNYdfJGvAygR1bUfZbS+0aq0juT+ib9KKF9t40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lWxwDhC2; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-476ae781d21so43456921cf.3;
-        Mon, 19 May 2025 04:35:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747654514; x=1748259314; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cvMGf5g2weozdIFZo63Xax4wmIQw1PPebi0s+41OCrs=;
-        b=lWxwDhC204VijYY/wvQtFkSoQ6NkKMP88L6rUz9cYBugm4qUg/L1+RqquX1FHgNiUE
-         T6dBa1oUFvq7wRNjfStHZJNUvkSuKbEeOhBUc0l1VJ4wmwKRiw9pgUXeYh2SlxEfztKF
-         Pg42p1FRUuLP7VinvmTe8/uIty4p3Wt/270i1uLdeRIMULduK+YObCoj5sxcM5ps1tRn
-         avev0UjvQnpP9NzEIeSV4+si+h/CLz/6y+PqwC5ysSwpeJkIwPLmuaq2HrUmhtsn06hz
-         wTkVcqavOu4+jXl2gEKgwiIXSz+c/JLngwQ994RHA0DaWbHBv8WXHU2HB7DZQFdvmOY/
-         Ar9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747654514; x=1748259314;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cvMGf5g2weozdIFZo63Xax4wmIQw1PPebi0s+41OCrs=;
-        b=TrMmqb+oenfY+8yZAAq14ssCtvt5xssRw4AyI/7CnHEHGPRN1znBI4VYp0ZRAsB4cd
-         ldR1UALa4c9PPScXloY+xv2+Nb78RRYQXB42yJSzmDQDARc890D5gbvrVyLE0mndyFHs
-         MlrngkKoEKnaWHMrYQlvEDzAsLtPmLZKJng6LF2yLe5eK9lxjyTNWt5AC4HMiCATn38i
-         nLHo+FM6X7fOMg4t1rtNqOQd3OOshQt7U6QZVFWgbZkzVI3SLRzWS6xtm8SjOnEzTNFn
-         XyCxubE8SoLsbj/0fPcwfvhWIKiQlTwMLyBto8q89/Zv2LX4T1W2qW8hLfgiM/jUkjtL
-         FIsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUICz7bz6NeYGkH/YJiaKtW4EPRuzdAuQKz2pQyyZL+dRcY8r7Jn4wPSg7YUxZVvv61kypW2BF8y6teGe1D@vger.kernel.org, AJvYcCWVNOYEVctcX5uKtU+TDOkSpf5JlD2bcBU/9LUGbBobdNrjXb542AAx6F8IzCuVYG6J+TgLXILpP96r7LXkz54=@vger.kernel.org, AJvYcCXWwVFqEvsoWGC9QLy8eTIfxOy/h05Spqd8j92H6cN13wn4x1QOjaMh+hOXQ74I6lPvryWi2vBUJu5T@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJH3zp2HtZxljyEgDuJfwU5Y6B3eYBfP915eFuaRARa1scWS8y
-	kZ19C16DOf3FTUBwydgChKNnekgV598GGLod4IeF3LVawh+UhnvpleHKLIk94XMsXTB+/ny3+fT
-	hxBbWp6aMUJ5+OwYn7Qz3yabyPm2rCVs9krAT
-X-Gm-Gg: ASbGncswhSzKPxgyeKfxUwMnPYlwKlWqx2RpYvJDzQ+J889avDJjuA7Y/2q+gw1c+St
-	qiSdMcTAaVRQNVyWTtZRKRuZnC1Iei/mgOend+81GL9Hc+bK5X6eFEta6WFMvjgDIMU29yoZKVn
-	cBmFnpP3iE8daKF6xJBB/cNYCZFH5ZklFeLKW9445y/0UeK06tsyo56np8vhyEr30=
-X-Google-Smtp-Source: AGHT+IG8voR8X2h42Gvzm1hYVSaBNVOszaGXju3Wj3QHsFtLKDEveorvqw8YGPS+So3ZB6nWZgvBoo5R7KUB95DaVlk=
-X-Received: by 2002:a05:622a:59c3:b0:476:9474:9b73 with SMTP id
- d75a77b69052e-494b0939a78mr192684461cf.42.1747654503905; Mon, 19 May 2025
- 04:35:03 -0700 (PDT)
+	s=arc-20240116; t=1747654507; c=relaxed/simple;
+	bh=AWPQKMivdFQ6QmrVDoYacp12BqW2VCLe3IzFWlx64xM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Jm4yvwHHZRL3lPL5kO2nQjsnHlQSaSF0fE1d2m6PUTSnucwHUpO7/0oVLg8crwLS+RAIyi7Lv+O8qGmoj9NMmb+eKxz2fyor2rJMZtF25Bfx54ixLiCw7FJZdLL8UN6wShfjzJLj7TRI+V6C0oSMm6eHpVDxY60CIVhCBgpDVR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ARPAoil1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7039CC4CEE4;
+	Mon, 19 May 2025 11:35:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747654506;
+	bh=AWPQKMivdFQ6QmrVDoYacp12BqW2VCLe3IzFWlx64xM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=ARPAoil1c3u/sCK9+f+i48JmtcFrCNOMjZ6ahQ/YV4lHg3OLLaN6VBASpD2BNL/nn
+	 m/JTsTiEBQYZqejNrOIPrAJzGrjaiKAZrVW9x3+8tUYf/kjADGOCAlZb4EueHQqzzM
+	 n5bFO40gnwgq7xHiZsMFYwzyRKmSFL6GjQRwOuMmVRpZP3SMmx7d3ryLvUSUdGVj9+
+	 oJEsalgbnnggpqNAaLqNA9zCToPpwZYrwsWG8ft9ICn8Nn/ANbxhhzV/hEyYR8XIWN
+	 wooCesYp61Z3hQcFBI3PYDJTAAsfwkymlvT0LzoQ/AlVt71QgKse+J3pQRqWu7AvoX
+	 H/TFzFrT3uCNQ==
+Date: Mon, 19 May 2025 06:35:04 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515-vt8500-timer-updates-v3-3-2197a1b062bd@gmail.com> <202505180911.hDevFA1N-lkp@intel.com>
-In-Reply-To: <202505180911.hDevFA1N-lkp@intel.com>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Mon, 19 May 2025 15:34:59 +0400
-X-Gm-Features: AX0GCFuiDlrcWsgaEaNmFJ8EIQjE8OcrTnIsT4xwkYdG39zHB1uMjrH0T6Jryxc
-Message-ID: <CABjd4YwJgZiq9_jKGa70GaxaW8TT=JuwDioU6jH=J_O=t+QT8w@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] clocksource/drivers/timer-vt8500: Prepare for
- watchdog functionality
-To: kernel test robot <lkp@intel.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Oded Gabbay <ogabbay@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Jeff Hugo <jeff.hugo@oss.qualcomm.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+ Simona Vetter <simona@ffwll.ch>, linux-rockchip@lists.infradead.org, 
+ linux-doc@vger.kernel.org
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+In-Reply-To: <20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net>
+References: <20250516-6-10-rocket-v3-0-7051ac9225db@tomeuvizoso.net>
+ <20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net>
+Message-Id: <174742024812.3649303.12389396177218408388.robh@kernel.org>
+Subject: Re: [PATCH v3 01/10] dt-bindings: npu: rockchip,rknn: Add bindings
 
-On Sun, May 18, 2025 at 5:24=E2=80=AFAM kernel test robot <lkp@intel.com> w=
-rote:
->
-> Hi Alexey,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on 92a09c47464d040866cf2b4cd052bc60555185fb]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Alexey-Charkov/dt-=
-bindings-timer-via-vt8500-timer-Convert-to-YAML/20250516-025729
-> base:   92a09c47464d040866cf2b4cd052bc60555185fb
-> patch link:    https://lore.kernel.org/r/20250515-vt8500-timer-updates-v3=
--3-2197a1b062bd%40gmail.com
-> patch subject: [PATCH v3 3/4] clocksource/drivers/timer-vt8500: Prepare f=
-or watchdog functionality
-> config: loongarch-randconfig-r123-20250517 (https://download.01.org/0day-=
-ci/archive/20250518/202505180911.hDevFA1N-lkp@intel.com/config)
-> compiler: loongarch64-linux-gcc (GCC) 14.2.0
-> reproduce: (https://download.01.org/0day-ci/archive/20250518/202505180911=
-.hDevFA1N-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202505180911.hDevFA1N-lkp=
-@intel.com/
->
-> sparse warnings: (new ones prefixed by >>)
-> >> drivers/clocksource/timer-vt8500.c:201:51: sparse: sparse: incorrect t=
-ype in assignment (different address spaces) @@     expected void *platform=
-_data @@     got void [noderef] __iomem *static [assigned] [toplevel] regba=
-se @@
->    drivers/clocksource/timer-vt8500.c:201:51: sparse:     expected void *=
-platform_data
->    drivers/clocksource/timer-vt8500.c:201:51: sparse:     got void [noder=
-ef] __iomem *static [assigned] [toplevel] regbase
->
-> vim +201 drivers/clocksource/timer-vt8500.c
->
->    175
->    176  /*
->    177   * This probe gets called after the timer is already up and runni=
-ng. This will create
->    178   * the watchdog device as a child since the registers are shared.
->    179   */
->    180  static int vt8500_timer_probe(struct platform_device *pdev)
->    181  {
->    182          struct platform_device *vt8500_watchdog_device;
->    183          struct device *dev =3D &pdev->dev;
->    184          int ret;
->    185
->    186          if (!sys_timer_ch) {
->    187                  dev_info(dev, "Not enabling watchdog: only one ir=
-q was given");
->    188                  return 0;
->    189          }
->    190
->    191          if (!regbase)
->    192                  return dev_err_probe(dev, -ENOMEM,
->    193                          "Timer not initialized, cannot create wat=
-chdog");
->    194
->    195          vt8500_watchdog_device =3D platform_device_alloc("vt8500-=
-wdt", -1);
->    196          if (!vt8500_watchdog_device)
->    197                  return dev_err_probe(dev, -ENOMEM,
->    198                          "Failed to allocate vt8500-wdt");
->    199
->    200          /* Pass the base address as platform data and nothing els=
-e */
->  > 201          vt8500_watchdog_device->dev.platform_data =3D regbase;
 
-Frankly, given that this driver only applies to VT8500 (which is ARM
-based), the warning appears a bit overzealous. After all, on ARM MMIO
-addresses are in the same physical address space as normal memory
-addresses, and furthermore this platform_data is never dereferenced
-directly anyway.
+On Fri, 16 May 2025 18:53:15 +0200, Tomeu Vizoso wrote:
+> Add the bindings for the Neural Processing Unit IP from Rockchip.
+> 
+> v2:
+> - Adapt to new node structure (one node per core, each with its own
+>   IOMMU)
+> - Several misc. fixes from Sebastian Reichel
+> 
+> v3:
+> - Split register block in its constituent subblocks, and only require
+>   the ones that the kernel would ever use (Nicolas Frattaroli)
+> - Group supplies (Rob Herring)
+> - Explain the way in which the top core is special (Rob Herring)
+> 
+> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  .../bindings/npu/rockchip,rknn-core.yaml           | 162 +++++++++++++++++++++
+>  1 file changed, 162 insertions(+)
+> 
 
-I could silence the warning either by more aggressive casting or by
-wrapping the pointer into some struct, but both of those sound a bit
-overreaching. Would appreciate guidance from the list on how to best
-approach this.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Best regards,
-Alexey
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.yaml: properties:reg-names: 'oneOf' conditional failed, one must be fixed:
+	[{'const': 'pc'}, {'const': 'cna'}, {'const': 'core'}] is too long
+	[{'const': 'pc'}, {'const': 'cna'}, {'const': 'core'}] is too short
+	False schema does not allow 3
+	1 was expected
+	3 is greater than the maximum of 2
+	hint: "minItems" is only needed if less than the "items" list length
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdab0000 (rockchip,rk3588-rknn-core-top): compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3588-rknn-core-top', 'rockchip,rknn-core-top'] is too long
+	'rockchip,rk3588-rknn-core-top' is not one of ['rockchip,rk3588-rknn-core']
+	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdab0000 (rockchip,rk3588-rknn-core-top): reg: [[0, 4255842304, 0, 36864]] is too short
+	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdac0000 (rockchip,rk3588-rknn-core): compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3588-rknn-core', 'rockchip,rknn-core'] is too long
+	'rockchip,rk3588-rknn-core' is not one of ['rockchip,rk3588-rknn-core-top']
+	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdac0000 (rockchip,rk3588-rknn-core): reg: [[0, 4255907840, 0, 36864]] is too short
+	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
