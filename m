@@ -1,236 +1,277 @@
-Return-Path: <linux-kernel+bounces-654228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14690ABC59D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 19:30:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E27ABC5A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 19:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F163A7B8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D24B1B644E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 17:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C569F288C89;
-	Mon, 19 May 2025 17:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D2D288C10;
+	Mon, 19 May 2025 17:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aYgt9dz7"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2084.outbound.protection.outlook.com [40.107.212.84])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JTg+RvBc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD4B288C24;
-	Mon, 19 May 2025 17:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747675805; cv=fail; b=dCKoOgiboUNxkLe8qxfXYbVUoDjeOyetP+9onC6jZz0P/oX6ZSPNZ+lVBG3ziTgpvhzGiB8wgyirqcrhfietUdqFISOrZfetGUnXLmrGVolKyi7/Aziyb8qMmIg4PLJ8ue9pdhsQ5DN5vbJEpVv2vQLDcXE5ybu4uXWPlmz+7wM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747675805; c=relaxed/simple;
-	bh=pkQ928uzlLl2fS3brP69lBeB9vS+boj+V7MOY6scZKo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IOpUwNtjVx4DT5v0CVXcMW0yPkeHhebWBsK+JMgkB5Co8/WVyoqWjYQNk/2HH6X9TCyABH9pBkPTahdVS0Y45/ZmBlTBrzyUE+OUwchVbzs2/1JOu9F/qevcOzCLtCMKK/+nw9XEuZNNe6bHX8Lyjf2EB6BaqnhLY3ADx0YEvdI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aYgt9dz7; arc=fail smtp.client-ip=40.107.212.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lartnJqxmyMkZpYnexNVRlqpwcGo5OZiNcZlGJtvq84k/SxszgivKF5Vxai2qxT86WCo8se+izUnpACORKCBZZKkm5oUdTHiAFCXnYLN7da/flGcM/N/U0jRc4iLEbg6oCeyDsnpsjHKuBgjvU3OpuA6FfyUeuqMT1Q8Bm0fl2kkZpVBQ0WqcJ1OSM7P7GIKlJVWnZc5itlnnZITdRtKe/X7rYFcxZVgzwoqgv2BFOQFBLd1QiYD5l51Er/ZuXRkpnlp0DwK22zmkbPExLP2vLryjv+Xjm2LNiVdEK0EK5VxCYUduxuoCKgW4sn2p6nFksW5cmGz30wzOs9kDxje5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/ZBt/EyxRCnDcnDjgRPHdoPRtjbInXMzzI4lnO+exY8=;
- b=G8CoU/r7NBodeZD4O4xjq8gBsPzG6/5fmNTJi+nKH591kYSLoKlzRwJmvhkPKFzbd/Iavnxsvjsx+/5nyEaJnbQUJTagrWkzx4MYLwPzw6aQ7xdSN66EL7BC3aUFrfYjafAkI6pirEXWWSSgP/6ya7u1Z+8OMU7lPYCVDnT9KJYoai73GTSmnWpwMe+zdg8/O1qEky1+tSjZddLxveM3tz3Yka9Z30/afx1gJS/nbwiajk1PyeZfXRk4g7Z9qNmJLQfIYI3wiL7QTC3lLrDwnS+dqhGDMkunqX+tWba682jWXXQbKjag7auc/qfaULrDPS9j9/30gM/8Rs+dqasgHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/ZBt/EyxRCnDcnDjgRPHdoPRtjbInXMzzI4lnO+exY8=;
- b=aYgt9dz7Ut1w7zTpHsvm6KI5a2Jh6ougUciGw3hhDZdX/c4MMIgB+7rgnw0FwDHVJQkNKn8l3c1WOPUsCNS+7HwnE6shg1DHphCqWo1nW4zhStfoWdDY+cq0jSEssTtypp2uT0b00wdwiSPq5eqTcHJ7jcSzZ5SlhZrnuZwguvE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA1PR12MB6043.namprd12.prod.outlook.com (2603:10b6:208:3d5::20)
- by DS7PR12MB5958.namprd12.prod.outlook.com (2603:10b6:8:7d::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Mon, 19 May
- 2025 17:30:01 +0000
-Received: from IA1PR12MB6043.namprd12.prod.outlook.com
- ([fe80::73e4:a06a:f737:e9be]) by IA1PR12MB6043.namprd12.prod.outlook.com
- ([fe80::73e4:a06a:f737:e9be%4]) with mapi id 15.20.8746.029; Mon, 19 May 2025
- 17:30:00 +0000
-Message-ID: <0019943c-44c4-4dae-a175-8a5bdc02f017@amd.com>
-Date: Mon, 19 May 2025 22:59:49 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 11/23] iommufd/viommu: Add IOMMUFD_CMD_HW_QUEUE_ALLOC
- ioctl
-To: Jason Gunthorpe <jgg@nvidia.com>, Nicolin Chen <nicolinc@nvidia.com>
-Cc: kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
- bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
- thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
- shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
- peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
- praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-kselftest@vger.kernel.org, patches@lists.linux.dev, mochs@nvidia.com,
- alok.a.tiwari@oracle.com
-References: <cover.1746757630.git.nicolinc@nvidia.com>
- <f52937c027e2fd25d76bc47f4965ba46f82c77c0.1746757630.git.nicolinc@nvidia.com>
- <20250515160620.GJ382960@nvidia.com>
-Content-Language: en-US
-From: Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <20250515160620.GJ382960@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN3PR01CA0006.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:95::10) To IA1PR12MB6043.namprd12.prod.outlook.com
- (2603:10b6:208:3d5::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E702288C9C;
+	Mon, 19 May 2025 17:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747675845; cv=none; b=YJ1PaqhVEje3bDNwTvsYd4ONreP6lhJmf119VKReNcsrVErFKEylegZ3d78jvRR2e2dc2qEjbFJgw6AHjZMcHgB1Ld7m/C2ZpchujVfGAf5i0n8Do12KBj5pOOBEaoapcxPgpINvKVUtDpxsZPtBuJ376RY0klLxUVwpZojg5HI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747675845; c=relaxed/simple;
+	bh=445sPrJ0OISg9BTwHpJqzeGDnex13qUpJTleh2di2JI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CWcS3g6zIlnNUx26Fx/mc6EdZnRSNL7rcwlZ6W01eK9KqyP/lS8qbAXzwGi1CUfUl3U8GztSpAlpQs25Xe3g9Xk4JGrceU8fv1cL6ElpEJvW2fhAZ2y5aFEXPznZXfa8wb1/+fw8eicUocEMzkgOCbtLo06GDjpRXB6QuNqLeoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JTg+RvBc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 427FBC4CEED;
+	Mon, 19 May 2025 17:30:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747675843;
+	bh=445sPrJ0OISg9BTwHpJqzeGDnex13qUpJTleh2di2JI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JTg+RvBczj4vy+Lx8ePGBs6s9RsaDm7gAipItAzNfUI2IUO4Rhn3mqP54GF+DsMDR
+	 FkFh7mZwwvCj/Z/PiHoaD5NcYlfPUNiOgyxHu4agOB8/To1IHrawZCV/TnraKdTvP/
+	 BSbUl3Z6+P2JfDMrdKiOUffVx5wdAWHCNx6jLEd9MeDSaIqWMfbFs2XbvsOg+gEhMB
+	 rmSye9Ty/GUN4q/cCWXkm/m/QeNPnDrVo/nPN49npVHy35QOff3Y8k1UV+vAR0rSUr
+	 IACav5/YF8qDmLT70v3q35QwoKRDQ0mL9viEyTLYBq9q8H0vOaBhQJhKTH6OhO8ESE
+	 jxHPRNQ/aYDsg==
+From: Eric Biggers <ebiggers@kernel.org>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ayush Jain <Ayush.Jain3@amd.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: [PATCH v2] x86/fpu: Fix irq_fpu_usable() to return false during CPU onlining
+Date: Mon, 19 May 2025 10:29:54 -0700
+Message-ID: <20250519172954.13015-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB6043:EE_|DS7PR12MB5958:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ea3bd95-e20f-4b45-263c-08dd96fac83b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bHNYWGRaL1dBWDVUcnplUTNMZUExdEROcGc5b3o4T01MYTMyS2lqeWJ3V0Zs?=
- =?utf-8?B?KzVPVVN3M0VYd2NxK3lIcEF1VjdsZ3E0N2xIZjFBT0RNN2hqRENmMVJrTE5Y?=
- =?utf-8?B?TkIwZDMrVCtUblU3eVBDWlJHaUFZRWRxQmkwcWRoSHZENEp2ZHhORjlzQTIv?=
- =?utf-8?B?QWM5eE55TjR0Y1B5cXlsZkZBYlVFellEQUlCSndXUEM0VStrMXI4V0xOdEpv?=
- =?utf-8?B?cWtPQ3VyNEdmbXdJZVY5R29NMGp0aTN6emhLbElnSnoxVGFtZCt6dnMxRURS?=
- =?utf-8?B?c3dpVUl6L1IydHh3SFcwVWxnUVZaandxTDlkMTVuQWpkc3ZFeXhtdG9LUFlN?=
- =?utf-8?B?b2FPTE0wamJuNGsvblBtSDQyWEtIdDFkbldsYkNCRjEwY1ZnNzRRV2cwZmJv?=
- =?utf-8?B?NnZoSWlSUnZCVks5M2RJQkZLQTd5Zm5JVXhORHdSRm5DOFRRVHZoelNGTmcv?=
- =?utf-8?B?eXc5WVRFQTN6bk1JYkVTd1hIbytyQ3poZFNnak50WnJkVWtHNmx5dnlmTTRV?=
- =?utf-8?B?VGdDd1NoNGNSN2M4Wjd5dWFpMEtKNnJlOWFubU12WDlndnVZSGpYbW9KdGJM?=
- =?utf-8?B?cFRZZEwxSTM1K1J4Y1Y0eXNMUEZxbHE4dnpJb3FUbThMd0QzaG5QN1lRZ3la?=
- =?utf-8?B?VjU0VlB3anRGOW5GM2UrUmlSTFRrK0VCNmxXVUZRZVdKU24rTzd5T0FDdXVm?=
- =?utf-8?B?K1Y3eGVWNWxmQmFTdnhuaXpkY205VlZnOW9vRjJFWUtsRER1cUNFcFRWUDNo?=
- =?utf-8?B?Q2QvZDZadEgyaWQ2eG5NSXFKMVpsVGpyenp6enlHWmpJa3Z1c2piczhsQUtJ?=
- =?utf-8?B?N0dxekVmYitPellXeWlsdnJyTm9hSXllM3dtT3RpQzZaTnJPOXpQVkNwdUJ1?=
- =?utf-8?B?TUtxTEcwb1dlTklKQ3E1ZU8xZThaNGZqUDBsYi9MM2FGVk50NnVJanp1eWJY?=
- =?utf-8?B?MGVkdjZpQjlwbTJXL0JHK3RHRk1BckNKdnZPMkxnVFFFait2eEhLOTRzUzZC?=
- =?utf-8?B?ZkJkZGRvZldoL1VaOEtHanZacWRsMnk4cGdGT0toYzlUUERYcmxZMXJGb3k4?=
- =?utf-8?B?VTh5Rk5NME00dlRTcUprQkxkT2gyZ0FCRmdFNERiQ0ZTa2lueFgwUFFsVEdK?=
- =?utf-8?B?d094QmFJQlh4djY3alNEdTNqNXJNYjRJbzhoa2t0QVNub0NPQ3NOOU1pK2Qw?=
- =?utf-8?B?MEtBSE5VdGdNV21rWGxkbjczcC9aNlNURzB6Y0xiWEZUR1dCdDhwUG5LNmRx?=
- =?utf-8?B?OTRkUXM3RW05TTdGOXNGdGM0aHlZWG5EZjkvOFdDMVFDZ3VYZGpUd2VVTUIx?=
- =?utf-8?B?bElWdmE1VnNZbDQ5NWhNd2RtYVIyRjBWbDRLSllXZFVnL0h1U0JVRys1eHlU?=
- =?utf-8?B?NDNNek9RclNhWlA0WW1CNWdST1dpU2Yzb0crMWNOUy91Q1hOVUJwQ0gxQ3VY?=
- =?utf-8?B?R01TdUtKVVBPK2tRU0hNUWhFZEpqc1hRb05leExocmRaNGNmQ2gxWE9Oa2hx?=
- =?utf-8?B?elNITldWOUJMTWRKMmQ1MFJQQXdweEloWVpFQS9iL1lGZWR6dWY1S1ZqM1pt?=
- =?utf-8?B?WXpQMi9sVE9uWW9EMHFpdDZOcmYyZ05kdFhiZnBUT0pNZXFTWHJpa05qeVlo?=
- =?utf-8?B?MG5JQjh1WFV5a1REVjljNnV5MU5xUE9QTDdiejNCV1MxT20zYmFnLzJHQXBV?=
- =?utf-8?B?L2JxaHptdWVDR2FTRUJEM25ma3owbzIwS3JZcG1WN1pPZ2xTS051TWt5ZUNY?=
- =?utf-8?B?RTFjbjB2aVFBZ1E1WWdWUGxKdWZKN3hka2xuMU1vKy8rbmwvUlZLMDY2RWF1?=
- =?utf-8?B?N0NKam16RFhBcTcwTVU4WldDN25wZ0xSbHVMTUh1VldLaGlFanlERUZSZW8y?=
- =?utf-8?B?OWdrQlFjNmNhRFhvdXB3aWM4b3RqbGp5YUo3OTdyM1F2dzhEakFSNU9EbVIy?=
- =?utf-8?Q?HFNxKSOpUyY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6043.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZlVTVVZGSmNuWEp2U29zRkQ4NW1VTlN1NWlhb2RENlpTc0U2TGdWcTB3YThS?=
- =?utf-8?B?aDN1dmZwZWpIRjd6ZVc0Wm10QjVFanBsaGVVVkgzeFFNUlBxT3BicHFGRlFr?=
- =?utf-8?B?VDBIZVNTT0JsNHpNRDhOcnNNQnpHWWRQZ2x6bHVxUWlkNjdZM2hROGExM2lj?=
- =?utf-8?B?OWFObWx5SnNtWXFzN3VGQm9tZ2hLbHZMTVNVVCtPWTczdmhxVmlNNml1OFYw?=
- =?utf-8?B?OE9RVVpBNDh5UUdwL3ovVmliREx0OVlVK0ZtMzF4WTA1RWdlY2p6K25HV0hO?=
- =?utf-8?B?WDBma2ZPTGp6d2Z3VFh2T1BTdEwwb3JpS2NyTjFpREJDZnZybUZWS2lOaUZn?=
- =?utf-8?B?Qm95L3ZLaklaNWFlY0N5UmJxVUpQR1RqUFVtZU1sUkQ1ZzA2dFl2SUNlK2RD?=
- =?utf-8?B?ZDR0Q2xCaHF1TjliWXNZeVRVM2Rkb1pRK3Q2Njk3UDZQbWZoMjByRm9hUEZs?=
- =?utf-8?B?OTliQmdlK3VOeDQ4WjNJczVvd2hCT1pPUVczalc0UFdFK1FZWTZLQURTM3NU?=
- =?utf-8?B?c0hsTk5PaUZrUWExOXM2R1lyY005Yyt6T0lVN3lUY2srdGN0UFg5RU1lM2pG?=
- =?utf-8?B?M256RTF4K2d3VTlJMnlIYjlVaGs0cVBKUDBDQnFreFdyZUdiNkV2S3AwT0Qr?=
- =?utf-8?B?cGN1Z1VVNEdLV21oYlR6eG5HZnVKazhLU002OVNrQmw0Y0Zwd0FOMGZFalhp?=
- =?utf-8?B?SWVYUFdQN1dVZXFJWW94ZnpxUzhzazZCU2EyR2d1dE1ZWitNc3hvckJqY1dJ?=
- =?utf-8?B?ajR0M001c09IdkEwMk5nQmhDTFZsbE0weUVTek9LdWZ3bzdhWlNmT3NNUnFi?=
- =?utf-8?B?dTBJNmFYVS9aV1gwdVpCRDJ2RFZsbm9PNGhiKzdIZjJPdXVLYVZJdlVId1dD?=
- =?utf-8?B?R2EyODFNL1hUK0orVDQ3ZjVBY2MxMG8rbk1hM0VtelhhTzRkOFdoWkloUUpJ?=
- =?utf-8?B?aHlndlAvNnVZcUxSS04xT0RNT3h6VWVLanNLWmpNaHFxazE5WmdTazcrWi9F?=
- =?utf-8?B?Y0cvekdBTkRxY3lpakdJYVZFUVJXZ3d3RGlCMDArWTFKa01nOG9wSDhEZDha?=
- =?utf-8?B?M2JuZjA2L1UrazI4aDE5Z245eHEvSGtSbTQxcEdXWWlaUFg4MFNibGZlMzdU?=
- =?utf-8?B?M2Nlb1hpMlpCelB1RTNDNGtTMktMZHJPR0JyNkRicFVoZXBvVnYxbFdONkR2?=
- =?utf-8?B?SnZ3MXRxYnNqT0xLY3lhQVNaWlZ0TlpQSitXVjZ2VEtVQzZNWGdOdmRaU1M2?=
- =?utf-8?B?Q3NIUmlvK2l0Unp1c1IvYmg4RHM4Y0cySmNyQ09oSzZzMlNBL3d0QzdyQWhR?=
- =?utf-8?B?UUR0TmxNQWNReEVTRWhsMVp4RGNmM3VreWs2eWRJNmVNcnpyWUlHQUpuOVQ3?=
- =?utf-8?B?WGluOUt2cHpXZG1qRmVFY2U4U29JeXdCdFVHTTUvQ0pyVTU5NThTMlpXdzhB?=
- =?utf-8?B?K3N2SklIN3RtY0g5a1JCcHREMlVYNVc1bVdONXpLQVI4K1ZibE1BLytnT052?=
- =?utf-8?B?bWx1aWMxSGhXNms0WkhITlBuWkhjUUJDOG8zYlNVSjZCWE9jS3BoRTJjRTlO?=
- =?utf-8?B?TFVzNjg3K3U1Q0wrVUw5ZWtZWnZhQUhJbGJTN1VsTnNKRXoyQTRmY0p6MFly?=
- =?utf-8?B?N1B1TkttcFhjQW0zTU5xbndueEdkbmkyWUNYSXZmaHJGaXEvd0xVbHNFdG5a?=
- =?utf-8?B?UEJrNVFqbHZNV3I1Q01PQ3dBN2s1cVVDZFZJVEphUjRsQ0hBbnd2RkV0QWZr?=
- =?utf-8?B?dFlJTTlXMDBYRXlhMjMrQVAzR2tlWlJ4ZEdBUTk3b2c3VE9vRkxBRkhsTkF4?=
- =?utf-8?B?NG1TZU5kTnNyUDk0K3RpeFREM3lRVzdkRXdCZlVEdkpUZ1pQSlpUUjF1U253?=
- =?utf-8?B?N0h2Y211Z3dXWUM0emFjSlVEaHFHOFJLTXVwYnpoUVpCdG54RTFmSCtaR3NV?=
- =?utf-8?B?enhrWldLNjB0dytiV3pyQnBhakFwWjlwZFJHanFHSllvNFFKVFZ4UmZ0dEpE?=
- =?utf-8?B?SWIrUEVQOHkzME83OGZwTk5Tbkp6YXhhYjNoMVBpTkxobG5tM2w1S1JVUnl6?=
- =?utf-8?B?MmlzOUluTk9DdjZWOWNrMlNDKzB5T0hpTi9OaU5JdmJBeFZtajlOckgvbVNw?=
- =?utf-8?Q?82bC0Rk53kj/FTbWLA4Sy2uhi?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ea3bd95-e20f-4b45-263c-08dd96fac83b
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6043.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2025 17:30:00.5698
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yXlSg1fIMcA04p5d9JPsy2kr8/ENKw+5PuTvYWzDxYzkHIims7b48o/YmBEaboEptY17MkrjBDs3H8/osA6bqQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5958
+Content-Transfer-Encoding: 8bit
 
-Jason, Nicolin, Kevin,
+From: Eric Biggers <ebiggers@google.com>
 
+irq_fpu_usable() incorrectly returned true before the FPU is
+initialized.  The x86 CPU onlining code can call sha256() to checksum
+AMD microcode images, before the FPU is initialized.  Since sha256()
+recently gained a kernel-mode FPU optimized code path, a crash occurred
+in kernel_fpu_begin_mask() during hotplug CPU onlining.
 
-On 5/15/2025 9:36 PM, Jason Gunthorpe wrote:
-> On Thu, May 08, 2025 at 08:02:32PM -0700, Nicolin Chen wrote:
->> +/**
->> + * struct iommu_hw_queue_alloc - ioctl(IOMMU_HW_QUEUE_ALLOC)
->> + * @size: sizeof(struct iommu_hw_queue_alloc)
->> + * @flags: Must be 0
->> + * @viommu_id: Virtual IOMMU ID to associate the HW queue with
->> + * @type: One of enum iommu_hw_queue_type
->> + * @index: The logical index to the HW queue per virtual IOMMU for a multi-queue
->> + *         model
->> + * @out_hw_queue_id: The ID of the new HW queue
->> + * @base_addr: Base address of the queue memory in guest physical address space
->> + * @length: Length of the queue memory in the guest physical address space
->> + *
->> + * Allocate a HW queue object for a vIOMMU-specific HW-accelerated queue, which
->> + * allows HW to access a guest queue memory described by @base_addr and @length.
->> + * Upon success, the underlying physical pages of the guest queue memory will be
->> + * pinned to prevent VMM from unmapping them in the IOAS until the HW queue gets
->> + * destroyed.
-> 
-> Do we have way to make the pinning optional?
-> 
-> As I understand AMD's system the iommu HW itself translates the
-> base_addr through the S2 page table automatically, so it doesn't need
-> pinned memory and physical addresses but just the IOVA.
+(The crash did not occur during boot-time CPU onlining, since the
+optimized sha256() code is not enabled until subsys_initcalls run.)
 
-Correct. HW will translate GPA -> SPA automatically using below information.
+Fix this by making irq_fpu_usable() return false before fpu__init_cpu()
+has run.  To do this without adding any additional overhead to
+irq_fpu_usable(), replace the existing per-CPU bool in_kernel_fpu with
+kernel_fpu_allowed which tracks both initialization and usage rather
+than just usage.  The initial state is false; FPU initialization sets it
+to true; kernel-mode FPU sections toggle it to false and then back to
+true; and CPU offlining restores it to the initial state of false.
 
-AMD IOMMU need special device ID to setup with  GPA -> SPA mapping per VM.
-and its programmed in VF Control BAR (VFCntlMMIO Offset {16’b[GuestID],
-6’b01_0000} Guest Miscellaneous Control Register). IOMMU HW will use this
-address for GPA to SPA translation for buffers like command buffer.
+Fixes: 11d7956d526f ("crypto: x86/sha256 - implement library instead of shash")
+Reported-by: Ayush Jain <Ayush.Jain3@amd.com>
+Closes: https://lore.kernel.org/r/20250516112217.GBaCcf6Yoc6LkIIryP@fat_crate.local
+Tested-by: Ayush Jain <Ayush.Jain3@amd.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
 
-So HW will use Base address (GPA), head/tail pointer to get the offset from
-Base. Then it will use GPA -> SPA translation.
+v2:
+  - Add WARN_ON_FPU when kernel_fpu_allowed has unexpected value in
+    fpu__init_cpu() or cpu_disable_common().  Since WARN_ON_FPU is
+    defined in fpu/internal.h which should not be included by smpboot.c,
+    made cpu_disable_common() call a new function fpu__disable_cpu().
+  - Added Tested-by.
 
+ arch/x86/include/asm/fpu/api.h |  1 +
+ arch/x86/kernel/fpu/core.c     | 34 +++++++++++++++++++++-------------
+ arch/x86/kernel/fpu/init.c     | 13 +++++++++++++
+ arch/x86/kernel/fpu/internal.h |  2 ++
+ arch/x86/kernel/smpboot.c      |  6 ++++++
+ 5 files changed, 43 insertions(+), 13 deletions(-)
 
-> 
-> Perhaps for this reason the pinning should be done with a function
-> call from the driver?
+diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
+index 8e6848f55dcdb..2983acd95f5de 100644
+--- a/arch/x86/include/asm/fpu/api.h
++++ b/arch/x86/include/asm/fpu/api.h
+@@ -116,10 +116,11 @@ extern void fpu_reset_from_exception_fixup(void);
+ /* Boot, hotplug and resume */
+ extern void fpu__init_cpu(void);
+ extern void fpu__init_system(void);
+ extern void fpu__init_check_bugs(void);
+ extern void fpu__resume_cpu(void);
++extern void fpu__disable_cpu(void);
+ 
+ #ifdef CONFIG_MATH_EMULATION
+ extern void fpstate_init_soft(struct swregs_state *soft);
+ #else
+ static inline void fpstate_init_soft(struct swregs_state *soft) {}
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 948b4f5fad99c..ea138583dd92a 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -42,12 +42,15 @@ struct fpu_state_config fpu_user_cfg __ro_after_init;
+  * Represents the initial FPU state. It's mostly (but not completely) zeroes,
+  * depending on the FPU hardware format:
+  */
+ struct fpstate init_fpstate __ro_after_init;
+ 
+-/* Track in-kernel FPU usage */
+-static DEFINE_PER_CPU(bool, in_kernel_fpu);
++/*
++ * Track FPU initialization and kernel-mode usage. 'true' means the FPU is
++ * initialized and is not currently being used by the kernel:
++ */
++DEFINE_PER_CPU(bool, kernel_fpu_allowed);
+ 
+ /*
+  * Track which context is using the FPU on the CPU:
+  */
+ DEFINE_PER_CPU(struct fpu *, fpu_fpregs_owner_ctx);
+@@ -70,19 +73,22 @@ bool irq_fpu_usable(void)
+ {
+ 	if (WARN_ON_ONCE(in_nmi()))
+ 		return false;
+ 
+ 	/*
+-	 * In kernel FPU usage already active?  This detects any explicitly
+-	 * nested usage in task or softirq context, which is unsupported.  It
+-	 * also detects attempted usage in a hardirq that has interrupted a
+-	 * kernel-mode FPU section.
++	 * Return false in the following cases:
++	 *
++	 * - FPU is not yet initialized. This can happen only when the call is
++	 *   coming from CPU onlining, for example for microcode checksumming.
++	 * - The kernel is already using the FPU, either because of explicit
++	 *   nesting (which should never be done), or because of implicit
++	 *   nesting when a hardirq interrupted a kernel-mode FPU section.
++	 *
++	 * The single boolean check below handles both cases:
+ 	 */
+-	if (this_cpu_read(in_kernel_fpu)) {
+-		WARN_ON_FPU(!in_hardirq());
++	if (!this_cpu_read(kernel_fpu_allowed))
+ 		return false;
+-	}
+ 
+ 	/*
+ 	 * When not in NMI or hard interrupt context, FPU can be used in:
+ 	 *
+ 	 * - Task context except from within fpregs_lock()'ed critical
+@@ -437,13 +443,14 @@ void kernel_fpu_begin_mask(unsigned int kfpu_mask)
+ {
+ 	if (!irqs_disabled())
+ 		fpregs_lock();
+ 
+ 	WARN_ON_FPU(!irq_fpu_usable());
+-	WARN_ON_FPU(this_cpu_read(in_kernel_fpu));
+ 
+-	this_cpu_write(in_kernel_fpu, true);
++	/* Toggle kernel_fpu_allowed to false: */
++	WARN_ON_FPU(!this_cpu_read(kernel_fpu_allowed));
++	this_cpu_write(kernel_fpu_allowed, false);
+ 
+ 	if (!(current->flags & (PF_KTHREAD | PF_USER_WORKER)) &&
+ 	    !test_thread_flag(TIF_NEED_FPU_LOAD)) {
+ 		set_thread_flag(TIF_NEED_FPU_LOAD);
+ 		save_fpregs_to_fpstate(x86_task_fpu(current));
+@@ -459,13 +466,14 @@ void kernel_fpu_begin_mask(unsigned int kfpu_mask)
+ }
+ EXPORT_SYMBOL_GPL(kernel_fpu_begin_mask);
+ 
+ void kernel_fpu_end(void)
+ {
+-	WARN_ON_FPU(!this_cpu_read(in_kernel_fpu));
++	/* Toggle kernel_fpu_allowed back to true: */
++	WARN_ON_FPU(this_cpu_read(kernel_fpu_allowed));
++	this_cpu_write(kernel_fpu_allowed, true);
+ 
+-	this_cpu_write(in_kernel_fpu, false);
+ 	if (!irqs_disabled())
+ 		fpregs_unlock();
+ }
+ EXPORT_SYMBOL_GPL(kernel_fpu_end);
+ 
+diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
+index 6bb3e35c40e24..c581a3e452dfd 100644
+--- a/arch/x86/kernel/fpu/init.c
++++ b/arch/x86/kernel/fpu/init.c
+@@ -49,10 +49,23 @@ static void fpu__init_cpu_generic(void)
+  */
+ void fpu__init_cpu(void)
+ {
+ 	fpu__init_cpu_generic();
+ 	fpu__init_cpu_xstate();
++
++	/* Start allowing kernel-mode FPU: */
++	WARN_ON_FPU(this_cpu_read(kernel_fpu_allowed));
++	this_cpu_write(kernel_fpu_allowed, true);
++}
++
++/*
++ * Stop allowing kernel-mode FPU. Called when a CPU is brought offline:
++ */
++void fpu__disable_cpu(void)
++{
++	WARN_ON_FPU(!this_cpu_read(kernel_fpu_allowed));
++	this_cpu_write(kernel_fpu_allowed, false);
+ }
+ 
+ static bool __init fpu__probe_without_cpuid(void)
+ {
+ 	unsigned long cr0;
+diff --git a/arch/x86/kernel/fpu/internal.h b/arch/x86/kernel/fpu/internal.h
+index 975de070c9c98..9782152d609c7 100644
+--- a/arch/x86/kernel/fpu/internal.h
++++ b/arch/x86/kernel/fpu/internal.h
+@@ -2,10 +2,12 @@
+ #ifndef __X86_KERNEL_FPU_INTERNAL_H
+ #define __X86_KERNEL_FPU_INTERNAL_H
+ 
+ extern struct fpstate init_fpstate;
+ 
++DECLARE_PER_CPU(bool, kernel_fpu_allowed);
++
+ /* CPU feature check wrappers */
+ static __always_inline __pure bool use_xsave(void)
+ {
+ 	return cpu_feature_enabled(X86_FEATURE_XSAVE);
+ }
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index d7d61b3de2bf6..cf42a7632dd49 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1186,10 +1186,16 @@ void cpu_disable_common(void)
+ {
+ 	int cpu = smp_processor_id();
+ 
+ 	remove_siblinginfo(cpu);
+ 
++	/*
++	 * Stop allowing kernel-mode FPU. This is needed so that if the CPU is
++	 * brought online again, the initial state is not allowed:
++	 */
++	fpu__disable_cpu();
++
+ 	/* It's now safe to remove this processor from the online map */
+ 	lock_vector_lock();
+ 	remove_cpu_from_maps(cpu);
+ 	unlock_vector_lock();
+ 	fixup_irqs();
 
-We still need to make sure memory allocated for page is present in memory so
-that IOMMU HW can access it.
-
-Pinning at the time of guest boot is enough here -OR- do we need to increase
-reference in queue_alloc() path ?
-
--Vasant
-
+base-commit: 3ee84e3dd88e39b55b534e17a7b9a181f1d46809
+-- 
+2.49.0
 
 
