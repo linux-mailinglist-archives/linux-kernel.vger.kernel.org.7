@@ -1,221 +1,228 @@
-Return-Path: <linux-kernel+bounces-654155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBCEDABC48E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:32:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6428DABC4F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 18:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F1F3BF33A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:32:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E80CE7A1451
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 16:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3410B288529;
-	Mon, 19 May 2025 16:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756D92882D5;
+	Mon, 19 May 2025 16:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="qMuSiPbi"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013042.outbound.protection.outlook.com [52.101.127.42])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L3IWVzl4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92994287509;
-	Mon, 19 May 2025 16:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747672325; cv=fail; b=U7VAVtnPlC8YFeSHDLeKJsVF/R65gGgG8iIx6QNLpAcgD4ROd0xhg3G32H5QMIzksCgDV3kM2S+naDUcCJBymaOUvF+8NxvvQNak5niSyiPnOmXjU1/2QbqTmypJHYO/1jv+mjfB+4a+XQfzePR/cNS4Acx6+GrsRN3xUQls3zc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747672325; c=relaxed/simple;
-	bh=i42GsSuNuvP1aLmp3TW5ib5M08Qb7s+6i5htW1ywy7k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Y+Hf6fX0SOQglwmmjPcGD76cCKKHzCc397RAKHs2NZ8kmdLe4nkWNAtG1L5iIXQEBks2fANgWEqrM3f8RsMNLbVBI8CFTkEcx0vwGIaXPgUEB1XLAApe4xhC5NqovLgb1yuOh2Y3mj21ZdvoXWhuKyNDFNyNbTRdqAFY3drxEQE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=qMuSiPbi; arc=fail smtp.client-ip=52.101.127.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FE7BcCJZxS9yuh9L2oGf1Wbje9pw3bauA3XYAsiENwafuIk1inFmG+KDNeKYdmuwbjAlWZ2t/eouR9IEgDg0OYV8ssgOW3h8lyWsjFIRAdjuM1+Yq7IrNUZtKpCVYSEbvzAP1UrhpBIilLVbUWefPoIMkZUeUaONi8xO1S7YeeTS0TnO7uKeza0yVu2VaRKr+VJcmBoMFbttlsUaELxo+PPDLP4h0N9jSXq1qfVzN75QeI4Uft3Qb106D+yinC+DpIBdNzVTwORsQ9kLQ5z8FROre+Npzs7AbLO33CjMWyFmLZz8RLT6zWAgCTpZ4Fc8xCBT0+onLVs/fhk1tpRGEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I4DxMMmWQnVc5zzchMYl8+vtCkz3OstMDvL44sl5MjY=;
- b=LEuLK9jzO5cDltItq0+TM7d5ZI3XdKRo//orhRg27V04yfVVzAcX8y9XtX8VpPFlm1zi+MwdD5+Fezdeg7qPeaT3HO8Xd7QXWNkXSCmGqwZnl/ylbRP+KcBFWh5psYvyu5l2AtF227oEmR6lZMk0N4Drs25UPWLJzFXrrm19rnCeit65m7cyP1n6iiMd2JFOmwx3imrCzc+E5WJxj5b6G8+UAYFdM6G6dl+7PCxA6NMm0ZXXSTHaix1AQN4fXwmCSXWqB/WBZg0AvEfxiCDryylEo+3NgosmY+lrbi3YZ7aRJIoGXFHZhwHJ7xry6xk0/h8zEkXD8JzTzYrXSiJzug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I4DxMMmWQnVc5zzchMYl8+vtCkz3OstMDvL44sl5MjY=;
- b=qMuSiPbiSyCkLzX5261txrMGNJ4H/sQt1tBp/Kxc0FlwWZryZJKJGGub7ockaaUJYBcBwADWluzH7rHGKW6sOUr88zQTT94PVhBAzKExGFC/mMOYjhbPxF30bYGmEoqeVZIUcdyUsuaZgLhg1YZzogQlbkbzuvwhXc6jFn18ZA1U+YwduBTEHf5FQnufdM0c1qIvBrixz11xmxJeBYKTsm+9BJ59afwpkOCeU6i4X7D5IiigjOSdKlAnA4PKKbTMwPqt4q7W2jkDo9n+mx+q0u/gEFKK9N2EM8w7nyL2nTBFlWQ4cYyhWu/oaY1UJeSOmVUg0DrB/WzGJ8I/OEveuQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by JH0PR06MB7029.apcprd06.prod.outlook.com (2603:1096:990:71::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Mon, 19 May
- 2025 16:31:58 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535%5]) with mapi id 15.20.8722.027; Mon, 19 May 2025
- 16:31:58 +0000
-From: Yangtao Li <frank.li@vivo.com>
-To: slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de,
-	Yangtao Li <frank.li@vivo.com>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] hfs: fix to update ctime after rename
-Date: Mon, 19 May 2025 10:52:13 -0600
-Message-Id: <20250519165214.1181931-3-frank.li@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250519165214.1181931-1-frank.li@vivo.com>
-References: <20250519165214.1181931-1-frank.li@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0221.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c5::7) To SEZPR06MB5269.apcprd06.prod.outlook.com
- (2603:1096:101:78::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027AD7FD
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747673592; cv=none; b=jayi9BfxKxQc1tu5wfsME7YU+AQKVL1oxMCY4PXRvCdVE4Xq8GkkyJ4IWiz5A0EnwRGL554J5jvoGyL0INWBr6aUmoDt006Jq0Oaa8jjvCS7Y1dGAoFqBwsODANlbzMEVzKprwkwDw3RvxBmyIB6eNzEsheL5T0lSkuSJ+7bvI4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747673592; c=relaxed/simple;
+	bh=k+WX/VGR+GLyTcXpjgk0GiZP4ydVVhFRDfjsBGYfPvs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gUwKJiOxdz30KEzoHU6WHL6SrqtCSsJpur3zyeknynzZJypWc3umuSPLgA632X2q7qMeFoYgxMRZB73lA0Q5neFmUqrbS5vqfUOmf9oZuBmfvbkBB9sfesUj4rx/rBtmDJbnmmVdtbdBCLPfac34FA2WFUVe1vLdW1+WOPbxUiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L3IWVzl4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54JA5L2F013378
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:53:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mb4xLfXZNKPtfn9wmLcWyrskW+Yx8ILVuk5MPBj/GR8=; b=L3IWVzl42QPTsvqb
+	hCmT8q7X/25zGTL2aMN3lLVLS1K+IxsKT4F7nzx1yTuXlqM8kfS1lduqhVdTM8zd
+	zoxRxc3BmMrj5J5K6gchQzCskuPmr8cJE3MTxbODocuzCeZXFKj9jOZfmVNXvqES
+	FTQNY+sbyk04EXbf6GtGO/42+UCcNjgJCz7Qw6O9rnWcPrpbykvUiMtpkKTraTZY
+	itQuSPzRKAelUHUuv8LckKQ+gayHYEZC2Oo6QYkeGcBNmQ8RhIv6OdoStXYqskSg
+	OqGKk3qdP+cCkzYT4hPq10ybt6c+hRZ8wX7AUEtX0i1t2Sy54uiTs4sCDfGcYKiv
+	cijs5A==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46pjm4mymc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 16:53:09 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6f8d8f77d4fso22283556d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 09:53:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747673589; x=1748278389;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mb4xLfXZNKPtfn9wmLcWyrskW+Yx8ILVuk5MPBj/GR8=;
+        b=pGTRM0rySlhYVaqSyL1Wg+oCXx8ij5wsBXiYPiECvyQFGDkt+c6m9fbhCElpkBLGiU
+         y1L2ZJ2jPMQTx1gCvi13zESWFAitb2OgnZzSMrMzEf/irJRAPMRZb11kfQ2TRRd7IFxk
+         aCtHttn3SCtghoT7L2cSusJvIrt6360paDCef/adLPrnHfheSHBY5504dqh5UZX7cEcr
+         PfTMX8zSyQe40M9u+RDAyPDzsTRbiQY7nj8qebmZOCdMNn4GezqrLZKV+A7L/tntYOdw
+         lqsEI7lez//bpAr4ZXneiXgpJRRMaoxoQ8LWgoY6gCduTTgh0dvNHZwnj8MwEjs3bq3w
+         5Ktg==
+X-Forwarded-Encrypted: i=1; AJvYcCX86tuH/7pKn44pcp44Zxi+e5TtSlSsQET/AH6Ipn08NODvF1T2CiBVkCdmMotQe3Oz2IdNuPAX8N8K2LA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw19N51u+xOSbuZ2eo3pYuYkk7KsNm7N4d9gvt6n5BvCyABiu5T
+	VqtOPICQHaoUSWCcaiMwtc7VEpOiwYdFCQvdj8kHpC3oCcZOjCOFn9mt+GDdx9sMoVVEgXFRZR5
+	SwmgIxyVCAURZNtdBV7oV1Qn4iL3gkct7Uu5GvPw+5Xny8WwguEal9LovzsfSzivIra4=
+X-Gm-Gg: ASbGncv69VFNcZxtl3a/66Ln+BOGZfD6wpQbtlVTMv9AbFA49VCUYBFZcai0zt+yJYR
+	GNhvEtvV8DX5ejH+GJOh/zlIg8iU+hocZEBElb4muYQyNiZZaOHDOlTFxE+0taZeP7ToTVX37zk
+	WtmUOdWKgUBBKznHaT92o+XXXpWGSXw439LRKjCFbV+pH98SW58dwUNXorKwHfdUGbdPskI/PbM
+	TI4X0Tmg3YvKcUhWZgdJaZJsdmmxinm4vQkYZFUzCSI+yFoR62tixPA9zFcGnBPQGolprKUi5Dq
+	/BUHYXNcMfiOqV2zXFj38sd1Ay7j2mqa2GlwiaGQXeP7vD4VhwSPYxnFCLTEzmzcVai+
+X-Received: by 2002:a05:6214:405:b0:6f5:3e46:63eb with SMTP id 6a1803df08f44-6f8b0833007mr195921946d6.13.1747673588591;
+        Mon, 19 May 2025 09:53:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHvIqC4SYEoxg7ld+LNMo4kHLPjNfRWk0GWcdCnLzJRTGyDzMhLlP7Cr3xiD3OkNvOQg+196A==
+X-Received: by 2002:a05:6214:405:b0:6f5:3e46:63eb with SMTP id 6a1803df08f44-6f8b0833007mr195921246d6.13.1747673587898;
+        Mon, 19 May 2025 09:53:07 -0700 (PDT)
+Received: from [10.153.41.224] (176-93-133-115.bb.dnainternet.fi. [176.93.133.115])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e702da4dsm1935650e87.202.2025.05.19.09.53.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 May 2025 09:53:06 -0700 (PDT)
+Message-ID: <7d7f1712-b037-4f47-96a3-e57a13b58295@oss.qualcomm.com>
+Date: Mon, 19 May 2025 19:53:05 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|JH0PR06MB7029:EE_
-X-MS-Office365-Filtering-Correlation-Id: fda2339c-8c34-461e-da71-08dd96f2acd6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|1800799024|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0G3JDQNuE2iVlZcsYb93CU5oXRy+LPMWB1uQS6WrJPOOWxeLgrVgOq8qQj1S?=
- =?us-ascii?Q?qfKSHPhwvXf2htjqUXvLTjkQdojyNW+QknoB8oM+kHVB9dkos+RFNrPbX5K4?=
- =?us-ascii?Q?SSzIaNz/V3fGIhb/JjavvbYsufw+DuF6RZuurSX0KvJbHyoRSd5IWqzRdje0?=
- =?us-ascii?Q?8LbKQ+SoYQbVWvJir9wAGPVtKYgngIOFqv2RZ9v5SYA8ZHFg13tEMISaRH5m?=
- =?us-ascii?Q?BoCnfLRfRjm1u0rdvs3Tp+iOe4jBDLNyG6Kcvp0XWZpbO3TeyWgvgBQim+bh?=
- =?us-ascii?Q?7MDOlN7lkmi722iq/WOXGV2xvN35UXbivSxg2dkf3AbYzHSNV1aztNRiJbn0?=
- =?us-ascii?Q?yqFRhD0ivV/7skq15RHEYKA3OOKs0DlcuXwve2XsYIPNY49468rdoD7wuShI?=
- =?us-ascii?Q?lSYutioe5GAslA//qO/BBWyBSgwn74LYk6cjkRlPZ305sfmFekRz2R3uu1Vx?=
- =?us-ascii?Q?HGisHgRzKPm5hqK1VnXEMlV8QgcMy5FFl0kWeKBYRH/Aovp8P2aGSS6m1VDT?=
- =?us-ascii?Q?CTlowXvRc4sUSlbf+gQoajspWxaLJN2c2IvGWfqf7fDN+t59NJW6nXazXDhH?=
- =?us-ascii?Q?RPp6zwAzC3RSy4fUVX4RN2E64yNYMyRU7vdbKGJ1HYFkQf3M38LI4q1Unj2O?=
- =?us-ascii?Q?erSisob2pUqcpQayrVTJoVc7NDG+CAcHlwP5CsbFVow54q/Kg7y5rMChDw17?=
- =?us-ascii?Q?xAGc7Z8x9nL5XBzNDz3FT+ocqdUprGXy9oXFG2LcPTSIm1gDDbJ45SwSShue?=
- =?us-ascii?Q?AsUmh0Ndw3Xj+SvGdAdElQ5BoaKGHMBqAI9p4kpdVpQqtQ/pYhFJDiTsfuOj?=
- =?us-ascii?Q?yal8DqK+MxN3AUHua1bW+VOk8zLTA/Alc/bcfH76J3g1Mk2n90Ib5Ji8yDNA?=
- =?us-ascii?Q?BNiZw4DTR90NXJGdf6mp9dekUnV+8JAesgYBaJ1dawD/e7r8xzZzGgXMvcRC?=
- =?us-ascii?Q?mkWq7Kj/9jG3z7iV83XNRCmTz/kkFuuI54gl4oVF4/5jYF2MjU7BP4ikoNHh?=
- =?us-ascii?Q?0qfpJR9alYLaNftc0ADUOIY9kRxjwRVKmnQhdqYZe6RYBX3e7hRqOmC3gfX7?=
- =?us-ascii?Q?sGq2wss4Fa1R0n+gt/X0QiPQ7WhylOrMQ2uB5Fdu+hyJVd24TC3pxf6c0An9?=
- =?us-ascii?Q?Cnc3tDtJep0qfMZzvCBLIxsif8JTpIHNwJKp8+wEsv5w4WGQUx6h0GM+9kEO?=
- =?us-ascii?Q?/MEgYuCxSIFDCMBxHxZzDG89noqor7XEqnooYMfzqzzQ8CCE6WuAk8G1GbK6?=
- =?us-ascii?Q?6m0itUaAZYKl87VcKSc3WSzLlbiEnTra0/fBFZ3XMnpJxCotnjP92co0H1AD?=
- =?us-ascii?Q?+uf9Q2ZdspKyNBUHkSwiT5TUv0qquhoQZURKaa0zSRfXuBwSCNAIrJkY3j+1?=
- =?us-ascii?Q?fPv7HH2dAj8WGw4T5ig+w09RrxVsoVwBsB53M4NGiiaNL7jiSAy5a2Tlr9q3?=
- =?us-ascii?Q?4Y59igTncNWec3F0RJIrDMHSzBH3ahvfyQTyR1ZHhbbTjxnM1w04ag=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?20mGLRSLrp2d+KtEEslvINHXCGbvW+AOpUrOKzz3zrDHiNVsgFKjBrTb8osy?=
- =?us-ascii?Q?1UFBY/s8T9JNMSyDrtRLbv7S4PUANcyRFAHpIvGAJfwjwrCe6W+DZH1RD4/J?=
- =?us-ascii?Q?lmkenAzN2SIk02WjdKWfny+nr+mvyQYbHtrXJAB/Cf+sbuW8JUVjkNgVka3Z?=
- =?us-ascii?Q?4Sv8RR2eREkVRJdnoTMmrH1cpSvKTHAfuqjPjvImbIw1wOfjXeehqSiRTd/F?=
- =?us-ascii?Q?gmght/riCUL7xbUShD3QVakYKr+BF8hYIRo3hkF6ZXhqIIgfdNOYhTiVAvCU?=
- =?us-ascii?Q?sSuZn2cL6Kv5LKIZOpCOrENJ/x2pFVI5YmH7m5xERcEPEKlXKRS9dWEK1FV4?=
- =?us-ascii?Q?FJbrUotprb5lY8zGah+o3ikaqtQWbdLyO7fQ4QnuyOvwdTa1Z1QjbmiznzcX?=
- =?us-ascii?Q?0u4aZi2emKwG58hxgXOKQUUoMuG8u+NayN77MSmLZabItBIQUV9jcAn5pSgp?=
- =?us-ascii?Q?NTjZRebOXFCZ9l4BX1qqgVMNDGvrnqY0eVHYDiWN8OArfoCYkRrd5ZyOfpQs?=
- =?us-ascii?Q?Nb4qwNoRfao3AOlhPAgFKNrwyAnnydXRYHU2KgI1CXT/MAlKmffIRyJYogh2?=
- =?us-ascii?Q?EV7BNbjuV0MDud988HcIXIFkmqUgFEzS70N1mWsl8s/VlMF4T20ldz8IRVW7?=
- =?us-ascii?Q?VFBDCLmXpDJBcaXBTpnp/MKnnsNVc1QOJ2zZ6uXJOKhULEDGqA9LQ51wCryh?=
- =?us-ascii?Q?6PGNIF5e23AHlyivp3feNRNVvSz7JyOvpybmRHuuWCfe27acIFDruhJoLaBX?=
- =?us-ascii?Q?P/WHEzhgopvZ0Vxpb0rT0iI5i2mUm7maGM6QWZRmtW3Q4fR6X0DSjpxDtjz2?=
- =?us-ascii?Q?1n4zupTp3jID9yteZFiYKju9U6dPAkY1cj6I5aSCXI4ErXQX/7a5noHzhPCL?=
- =?us-ascii?Q?nNAa7EhgdHxkVIKpRGxwb0xAn5kjJVbDYVGe33zawML9JIe/Krr8VvwlrnPd?=
- =?us-ascii?Q?YQhQFFxDLc4LMkkISdUvC88Pkxk8Mo+xz/1SGFj9/bxcVAAG9hstUXWSXWhA?=
- =?us-ascii?Q?4SDlKEjSX1XXjP6kSRyvrvNxVgKWKdF6O4iW7ndsx5Pi2tT3dH2S66fnYfmI?=
- =?us-ascii?Q?stPkg/EwsCa3Sbup1JxJaar61H4Fo8ezqAJmpxnagEpmdDytcDJ/SXcY5j3I?=
- =?us-ascii?Q?O4kkLbDcXThCmIDMyD9p2iRTnJIFVSbWRt94YPEfaYcsdwm7RhG0jaIzmFVx?=
- =?us-ascii?Q?P3ewhoGeA1ttWcByEQFmqILQfbRKMOnpq2DIZoMyk3FUvcT81uJbGg8INw1L?=
- =?us-ascii?Q?jHwgbTj2bIx2EBlsJ47XbVRlKLUEDy7SyfAtbkQg5yDxkKhxR973aS1xg6D9?=
- =?us-ascii?Q?AFKfSuA8HpEVEYhv2VnDyQ7LkeoUh1uybLxt19uOx2134nwYE09VP0I01NvE?=
- =?us-ascii?Q?l2XVxZ2WOxAdb/HXiCHPwIn9GD4k/FADPJ+QVJ1ibNYpaHv6Hu2Dd/LW7YBC?=
- =?us-ascii?Q?qHtjbEBUiuBiMSAssHpN4Wjq2oW7vLS76tlxazG9RtKN2/Hz1RdACbvSh0bU?=
- =?us-ascii?Q?yQmqVZIWkFam38Sk90nx9yLj5vCH6/o9Whkobn9SFIKze37k98xXVLkE8MSH?=
- =?us-ascii?Q?czIRYvWU1NpdU25B120sN8EhAdTCNQdNWkoJSo7J?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fda2339c-8c34-461e-da71-08dd96f2acd6
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2025 16:31:58.5984
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gqJfQe9wIA/B/xjmUG6j4fBHSL3YJ3f8tj/xQTsTzC2A2CGufhx0+q7FLKp0S32VBD410pk9YsDMK4JJ3d7rJA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB7029
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 21/24] drm/msm/dpu: Implement 10-bit color alpha for
+ v12.0 DPU
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Clark <robdclark@chromium.org>, linux-clk@vger.kernel.org,
+        Srinivas Kandagatla <srini@kernel.org>
+References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
+ <20250430-b4-sm8750-display-v5-21-8cab30c3e4df@linaro.org>
+ <ygd6givaigkmypmaufpeidkqauoujcndm2xemi5pm5zue6ou7j@zonusie3tuap>
+ <b4dace94-afa1-4910-b77d-20de08b5a6b9@quicinc.com>
+Content-Language: en-US
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+In-Reply-To: <b4dace94-afa1-4910-b77d-20de08b5a6b9@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: f4lIykW8Oga2dP66NNsACSeL5eCEGygn
+X-Authority-Analysis: v=2.4 cv=C4bpyRP+ c=1 sm=1 tr=0 ts=682b61f5 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=wJfVPMc1y4yLOrLMgEZDyw==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
+ a=QqOX20ToenTIRIA7GcIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=OIgjcC2v60KrkQgK7BGD:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: f4lIykW8Oga2dP66NNsACSeL5eCEGygn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDE1NiBTYWx0ZWRfX8oKNPDQnUV3P
+ z6AowpNp9+1yTLZFro1B1g9aQ2Dw1+o2Fr6Kd69QEg/uY0h/tzmy+sHmex4gC1IFbCMaJKJu/vD
+ xZm0jFCpsqABmSlj3uXx/Rr/9D0/j2M9mQ4zbJthXEybs5+7opJqhrTUs5/SiPl9jkT6udcoPsq
+ wqZF04GFLXiJZ35wDmZ1KsK7BbHbiVAjTrSsu432ZwsQTaFKStpILK3+paQLNjR1t6N5SVH/G9t
+ vzZ23cP4mj7Kw4PNIZHOpoQGem/QjJwnZAlLqYvwGsf3+S9cGfxbq5NhFWIk8wYORYyA4XQzg34
+ KkGwLngAfGZV+2SBRjHyTc0WwogNtq99BsNFIbPBv1+ZVIviJ38KHp7h/5sux0KMM7lFOXCvpMu
+ SnhEJF5Fgbt7B4YfBZRXh08MoybHbC5l/SUDGB3Nho6PFiSW6+5z7Cv9E5h8fRBk4Tcm1c8l
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-19_07,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 impostorscore=0 adultscore=0
+ mlxlogscore=999 spamscore=0 lowpriorityscore=0 phishscore=0 mlxscore=0
+ bulkscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505190156
 
-Similar to hfsplus, let's update file ctime after the rename operation
-in hfs_rename().
+On 19/05/2025 19:49, Abhinav Kumar wrote:
+> 
+> 
+> On 5/5/2025 5:24 AM, Dmitry Baryshkov wrote:
+>> On Wed, Apr 30, 2025 at 03:00:51PM +0200, Krzysztof Kozlowski wrote:
+>>> v12.0 DPU on SM8750 comes with 10-bit color alpha.  Add register
+>>> differences and new implementations of setup_alpha_out(),
+>>> setup_border_color() and setup_blend_config().
+>>>
+>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>
+>>> ---
+>>>
+>>> Changes in v4:
+>>> 1. Lowercase hex, use spaces for define indentation
+>>> 2. _dpu_crtc_setup_blend_cfg(): pass mdss_ver instead of ctl
+>>>
+>>> Changes in v3:
+>>> 1. New patch, split from previous big DPU v12.0.
+>>> ---
+>>>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  | 19 ++++---
+>>>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c | 84 ++++++++++++++++++++ 
+>>> +++++++++--
+>>>   2 files changed, 94 insertions(+), 9 deletions(-)
+>>>
+>>> @@ -175,12 +246,19 @@ struct dpu_hw_mixer *dpu_hw_lm_init(struct 
+>>> drm_device *dev,
+>>>       c->idx = cfg->id;
+>>>       c->cap = cfg;
+>>>       c->ops.setup_mixer_out = dpu_hw_lm_setup_out;
+>>> -    if (mdss_ver->core_major_ver >= 4)
+>>> +    if (mdss_ver->core_major_ver >= 12)
+>>> +        c->ops.setup_blend_config = 
+>>> dpu_hw_lm_setup_blend_config_combined_alpha_v12;
+>>> +    else if (mdss_ver->core_major_ver >= 4)
+>>>           c->ops.setup_blend_config = 
+>>> dpu_hw_lm_setup_blend_config_combined_alpha;
+>>>       else
+>>>           c->ops.setup_blend_config = dpu_hw_lm_setup_blend_config;
+>>> -    c->ops.setup_alpha_out = dpu_hw_lm_setup_color3;
+>>> -    c->ops.setup_border_color = dpu_hw_lm_setup_border_color;
+>>> +    if (mdss_ver->core_major_ver < 12) {
+>>> +        c->ops.setup_alpha_out = dpu_hw_lm_setup_color3;
+>>> +        c->ops.setup_border_color = dpu_hw_lm_setup_border_color;
+>>> +    } else {
+>>> +        c->ops.setup_alpha_out = dpu_hw_lm_setup_color3_v12;
+>>> +        c->ops.setup_border_color = dpu_hw_lm_setup_border_color_v12;
+>>> +    }
+>>
+>> I tried picking up these patches, and choked on this one. This heavility
+>> depends on the DPU fetures bits rework patchset (mentioned in the cover
+>> letter, it's fine), but granted the lack of the reviews / updates on
+>> that patchset I can neither apply this patch (and its dependencies) nor
+>> steer Krzysztof away from basing on that patchset (this patch provides a
+>> perfect example of why that series is useful and correct).
+>>
+>> Abhinav, could you please continue reviewing that patch series?
+>>
+> 
+> I think we could have continued this series on top of the current 
+> feature bits model and I thought we were doing that based on #linux-arm- 
+> msm chats in Feb between you and me. Not sure what happened there.
 
-W/O patch(xfstest generic/003):
+I'm also not so sure. Krzysztof has been posting it on top of the 
+feature-removal series, so be it. Let's see, how many patches of that 
+series would be acceptable in the end and decide the fate of this series 
+afterwards.
 
- +ERROR: access time has not been updated after accessing file1 first time
- +ERROR: access time has not been updated after accessing file2
- +ERROR: access time has changed after modifying file1
- +ERROR: change time has not been updated after changing file1
- +ERROR: access time has not been updated after accessing file3 second time
- +ERROR: access time has not been updated after accessing file3 third time
+> 
+> Regarding the review, myself and Jessica have discussed this last week 
+> and Jessica will take over the review of that series and please work 
+> with addressing the comments provided there by her.
 
-W/ patch(xfstest generic/003):
+Ack
 
- +ERROR: access time has not been updated after accessing file1 first time
- +ERROR: access time has not been updated after accessing file2
- +ERROR: access time has changed after modifying file1
- +ERROR: access time has not been updated after accessing file3 second time
- +ERROR: access time has not been updated after accessing file3 third time
-
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
----
- fs/hfs/dir.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
-
-diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
-index 86a6b317b474..756ea7b895e2 100644
---- a/fs/hfs/dir.c
-+++ b/fs/hfs/dir.c
-@@ -284,6 +284,7 @@ static int hfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 		      struct dentry *old_dentry, struct inode *new_dir,
- 		      struct dentry *new_dentry, unsigned int flags)
- {
-+	struct inode *inode = d_inode(old_dentry);
- 	int res;
- 
- 	if (flags & ~RENAME_NOREPLACE)
-@@ -296,14 +297,16 @@ static int hfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 			return res;
- 	}
- 
--	res = hfs_cat_move(d_inode(old_dentry)->i_ino,
--			   old_dir, &old_dentry->d_name,
-+	res = hfs_cat_move(inode->i_ino, old_dir, &old_dentry->d_name,
- 			   new_dir, &new_dentry->d_name);
--	if (!res)
--		hfs_cat_build_key(old_dir->i_sb,
--				  (btree_key *)&HFS_I(d_inode(old_dentry))->cat_key,
--				  new_dir->i_ino, &new_dentry->d_name);
--	return res;
-+	if (res)
-+		return res;
-+
-+	hfs_cat_build_key(old_dir->i_sb, (btree_key *)&HFS_I(inode)->cat_key,
-+			  new_dir->i_ino, &new_dentry->d_name);
-+	inode_set_ctime_current(inode);
-+	mark_inode_dirty(inode);
-+	return 0;
- }
- 
- const struct file_operations hfs_dir_operations = {
 -- 
-2.48.1
-
+With best wishes
+Dmitry
 
