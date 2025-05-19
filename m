@@ -1,85 +1,141 @@
-Return-Path: <linux-kernel+bounces-653183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A4BABB5F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:16:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6434ABB602
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50755171481
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 07:14:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A2F0176962
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 07:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2C2267B98;
-	Mon, 19 May 2025 07:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E9B2676DA;
+	Mon, 19 May 2025 07:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="PX90FY8z"
-Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTELbrBI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852D62676C5
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 07:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821EF266581;
+	Mon, 19 May 2025 07:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747638792; cv=none; b=bcEMbcHrIRTeBr4yqFQ3XhM9wSt9mSplLQqTr6j90L3Ix8tp7RDnb3fin5vpDD34+V63WSfHP/vQiqb3OjIGYN7ADleL6pkoEDxrKNqJcb/RUBjzH0mL0kvanw3YWpzfTzkDyaKy8nMuOH2N+xCv0DVlSKi1vqbNwUl5Ul5MZDQ=
+	t=1747639093; cv=none; b=GIacchmcwptzpGh4hE2+MdiLlO4CIj2p/9vY5TKvXGNdsk/54JTddcRP+XI2RHZMbPdb8CfhRSdIJcsQh5l9WaJeWYYJUNW29Xan0F2Rk46obkTIMar4CADyPNud3e/TLBCp36ulPHCTnQbi18rH8jTDFm+55PtssDNG2a67u4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747638792; c=relaxed/simple;
-	bh=5PSPujJPG48u6PFHHlkEp3/dz5ORXJhq2E5Ljt+9HX4=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hXiq3BusD/pNvpGsDb2JeQ276dybXTxz8rq/qsoRXJuMlhjS5GBAsSUc1x8W2ulUqE6haNFkQOQNBq5Ijld63pkZENmF1P3dkOk/2Kw7PzwiYrs/M0cLvCSSxWGQ1TjzGFfkSrqvUgehZEf6+EFyoQmn2R4s/IgBRehDNnEGt50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=PX90FY8z; arc=none smtp.client-ip=188.165.51.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1747638775; x=1747897975;
-	bh=5PSPujJPG48u6PFHHlkEp3/dz5ORXJhq2E5Ljt+9HX4=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=PX90FY8zwOSwE0Xhnqk7mDQGgAdK78VepGvYG3MmlQVk8OBswGR4sUAk/LTomFgvK
-	 KkrmKXL0VUp2wmZZog9AlITJbdn/Pi5HgN/ut1WbmY9MHOq9DB7Z2qu4kdFCbrOVvg
-	 gK60nxwQxoE4/r3Mnv1QkVvv2oQp3dLXHTFJ5PPTKR8bh7kH1Gi3M2jmc1QudqtZKi
-	 4nV9BMvf5JNgXlwFuFrBbMSMDxqbtXapAj4HVqENtj6G6SPZGHYqS3LciRvlhDf8Kg
-	 IfSG9/3zqg3MidKD79ZrzKdvrukSyuuxMsFVcgQOvVz7dIntX4MCtPMBXVQiYucjYm
-	 pcJN3oD0i2IVA==
-Date: Mon, 19 May 2025 07:12:51 +0000
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Turritopsis Dohrnii Teo En Ming <teo.en.ming@protonmail.com>
-Cc: "ceo@teo-en-ming-corp.com" <ceo@teo-en-ming-corp.com>
-Subject: Apps/tools to check for damage/degradation/bad sectors to device storage in Android (Linux) phones
-Message-ID: <j4CVo-8hhrBnJ7fEDZYaUYMAHrOAS1sz9TWl6AB6ocfq2RknqFAxx_o849N5hoZL9B5s64ve0tYu-GvBbsS0UZ0odJwyivHny9F81Q_nO0I=@protonmail.com>
-Feedback-ID: 39510961:user:proton
-X-Pm-Message-ID: 772ae81a9e3555b14a875364b49c5bce869cfaa4
+	s=arc-20240116; t=1747639093; c=relaxed/simple;
+	bh=AWPQKMivdFQ6QmrVDoYacp12BqW2VCLe3IzFWlx64xM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=OcyV32eukvXsHlw7J9SriniLhgdRcZAGX1HjrnPumhvJydBttKlhKu3z15ZznMHEtRuC36bQa1KefmooDA3t/AmNSSK99ZcadurlNpG6a+Nw/IbboNqihdDA1ih/ElJwADNVImPJ+63g3cBjBT1WufUthiEjx+g8kDPwLJTN/eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTELbrBI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C78C4CEE4;
+	Mon, 19 May 2025 07:18:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747639092;
+	bh=AWPQKMivdFQ6QmrVDoYacp12BqW2VCLe3IzFWlx64xM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=VTELbrBISofftmki5GL5K5nGm+lxjdgs5GkfKNFZ1DAL4fqNFwwJw0MioLwU5rfp9
+	 jA4zz2b+jc/kOXPU0fsIJSOpw+7Wc1oST5tlUCfG/CttzNA0AAp/1yi6IElOjtRWQB
+	 +vhtQhkCWpr8ak7UayLarOZHSfQcOgC4h7XoqvRDhVfVoxGtHUmQxXklmq/uP1MUv6
+	 Xd2PRMxocR0bYmpVo3j9QuAvctorvp4ItO4+m5qmiMHs7Exoedc+kgGAjuyF4/5l/r
+	 gcSS7pO8DmFlMmRsBiZQaag6LaONO6UszngnZtBA3XwzYY7f5qZv8yfoXvMFcVVvwK
+	 qUB0be5VuahNw==
+Date: Mon, 19 May 2025 02:18:10 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Oded Gabbay <ogabbay@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Jeff Hugo <jeff.hugo@oss.qualcomm.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+ Simona Vetter <simona@ffwll.ch>, linux-rockchip@lists.infradead.org, 
+ linux-doc@vger.kernel.org
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+In-Reply-To: <20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net>
+References: <20250516-6-10-rocket-v3-0-7051ac9225db@tomeuvizoso.net>
+ <20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net>
+Message-Id: <174742024812.3649303.12389396177218408388.robh@kernel.org>
+Subject: Re: [PATCH v3 01/10] dt-bindings: npu: rockchip,rknn: Add bindings
 
-Subject: Apps/tools to check for damage/degradation/bad sectors to device s=
-torage in Android (Linux) phones
 
-Good day from Singapore,
+On Fri, 16 May 2025 18:53:15 +0200, Tomeu Vizoso wrote:
+> Add the bindings for the Neural Processing Unit IP from Rockchip.
+> 
+> v2:
+> - Adapt to new node structure (one node per core, each with its own
+>   IOMMU)
+> - Several misc. fixes from Sebastian Reichel
+> 
+> v3:
+> - Split register block in its constituent subblocks, and only require
+>   the ones that the kernel would ever use (Nicolas Frattaroli)
+> - Group supplies (Rob Herring)
+> - Explain the way in which the top core is special (Rob Herring)
+> 
+> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  .../bindings/npu/rockchip,rknn-core.yaml           | 162 +++++++++++++++++++++
+>  1 file changed, 162 insertions(+)
+> 
 
-May I know what are the apps or tools to check for damage/degradation/bad s=
-ectors to device storage in Android (Linux) phones?
+My bot found errors running 'make dt_binding_check' on your patch:
 
-I can't find any in Google Play Store.
+yamllint warnings/errors:
 
-Please advise.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.yaml: properties:reg-names: 'oneOf' conditional failed, one must be fixed:
+	[{'const': 'pc'}, {'const': 'cna'}, {'const': 'core'}] is too long
+	[{'const': 'pc'}, {'const': 'cna'}, {'const': 'core'}] is too short
+	False schema does not allow 3
+	1 was expected
+	3 is greater than the maximum of 2
+	hint: "minItems" is only needed if less than the "items" list length
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdab0000 (rockchip,rk3588-rknn-core-top): compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3588-rknn-core-top', 'rockchip,rknn-core-top'] is too long
+	'rockchip,rk3588-rknn-core-top' is not one of ['rockchip,rk3588-rknn-core']
+	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdab0000 (rockchip,rk3588-rknn-core-top): reg: [[0, 4255842304, 0, 36864]] is too short
+	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdac0000 (rockchip,rk3588-rknn-core): compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3588-rknn-core', 'rockchip,rknn-core'] is too long
+	'rockchip,rk3588-rknn-core' is not one of ['rockchip,rk3588-rknn-core-top']
+	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/npu/rockchip,rknn-core.example.dtb: npu-core@fdac0000 (rockchip,rk3588-rknn-core): reg: [[0, 4255907840, 0, 36864]] is too short
+	from schema $id: http://devicetree.org/schemas/npu/rockchip,rknn-core.yaml#
 
-Thank you.
+doc reference errors (make refcheckdocs):
 
-Regards,
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250516-6-10-rocket-v3-1-7051ac9225db@tomeuvizoso.net
 
-Mr. Turritopsis Dohrnii Teo En Ming
-Targeted Individuals in Singapore
-GIMP =3D Government-Induced Medical Problems
-19 May 2025 Monday 3.11 PM
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
+pip3 install dtschema --upgrade
 
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
