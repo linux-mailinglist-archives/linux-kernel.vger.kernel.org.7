@@ -1,80 +1,186 @@
-Return-Path: <linux-kernel+bounces-654628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BFC8ABCA75
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:57:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2127FABCA79
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 23:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7893F3B360E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:56:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 202787A8B8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 21:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6D021ADC9;
-	Mon, 19 May 2025 21:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HHtJsK+R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3867261D;
-	Mon, 19 May 2025 21:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D135921B9D3;
+	Mon, 19 May 2025 21:57:51 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0017261D;
+	Mon, 19 May 2025 21:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747691829; cv=none; b=JDiC2bPGP+DM/45R6D8yE5m9Y1i803gHORiXpX2ulmVfMHiowkOIScgV7IyatGx+OP6055kJTq2blDO3ntRaxnvHop4doz1SBolt1zGRVuUaGxbeXURbMpTG/+Ly3vYEu3xBRS55U1KhGRXmrI6a/OkYgIGRnNuViRcRQCiFYo4=
+	t=1747691871; cv=none; b=PeskeiTXfjSu8KR9/cLgyMmAq+lml0wdRkp5fInX5Fz8i6e8FRFJvsg4oJe52FfITO56x41I4oC4BQaUltyGeZ3qe/6i8YopK/c+ZD/42ptCy/kc5MKKgLYqimW5BrvLprdLhoBYBMZdGHQBEry3ON4OZXHxn0cDveGSzTBfPek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747691829; c=relaxed/simple;
-	bh=ZeBADbgjqCbeV4qiUwHj2UBJegbkKLZfRH6vnT5Y4Lw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Dq8h/B2sNmHtgmBeW6EYF3XAYVnFV22ZneAru5OdDwXT5xJ2MKgjVr6Ij8L4kciEr4BwzahTVr0sqxbPqk4yl3X7NqtYW/VWh+y2MOMAC9mpnjAigMAtpWP39F2yt0ZyQC3RWlpK070kwzZDLxSfUpD+WA72xqmQ9uOW8vMRtIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HHtJsK+R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6781FC4CEE4;
-	Mon, 19 May 2025 21:57:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1747691828;
-	bh=ZeBADbgjqCbeV4qiUwHj2UBJegbkKLZfRH6vnT5Y4Lw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HHtJsK+RLMuovnA+1zIaX1T+Nubjt/fvfRkEnuEMq/a9tnLriePLsaWnUdNMj70uE
-	 pLC9U9S6jkIgYDrvOgwi8w4MdngRPzNsdkZ+JzUy3IcKDiNr5obX+l1XuU4lvNrGKN
-	 PF7aNDOTaxUrc0oniLm7Le4iAalq0AJpdFwnIdtM=
-Date: Mon, 19 May 2025 14:57:07 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
- <jack@suse.cz>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil
- Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Pedro Falcato
- <pfalcato@suse.de>, Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou
- <chengming.zhou@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/4] mm: prevent KSM from completely breaking VMA
- merging
-Message-Id: <20250519145707.8f9189a6f845be89d13f6afa@linux-foundation.org>
-In-Reply-To: <2be98bcf-abf5-4819-86d4-74d57cac1fcd@lucifer.local>
-References: <cover.1747431920.git.lorenzo.stoakes@oracle.com>
-	<418d3edbec3a718a7023f1beed5478f5952fc3df.1747431920.git.lorenzo.stoakes@oracle.com>
-	<e5d0b98f-6d9c-4409-82cd-7d23dc7c3bda@redhat.com>
-	<2be98bcf-abf5-4819-86d4-74d57cac1fcd@lucifer.local>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1747691871; c=relaxed/simple;
+	bh=SeaZ/79UXnQ9W+1Fb4RO4ybPcFFQeXuWQkq+UdynrxU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bWHc3IT2+7m7RPvjWFwdxP7QKjY8nMiVU9ZzA8OiDtpmHV+zLiTA0U+BgWlEC2ZCo0K0xd0pyXOsHzO6BTx/U+GfMjkeCoz6K9BLlbQuWQLdOfeJ0z9gn2lfhYZfhixqAFqXbHoItMJp/xixyW1rCm333tXY0Vczv6gJd/vliTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: NAVLYW99TlSnBwIjWoyCFA==
+X-CSE-MsgGUID: iKCGXRcOTxeHgNzm7uNQIg==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 20 May 2025 06:57:47 +0900
+Received: from superbuilder.administration.lan (unknown [10.226.92.3])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E619840B3E4E;
+	Tue, 20 May 2025 06:57:43 +0900 (JST)
+From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+To: thierry.bultel@linatsea.fr
+Cc: linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org,
+	paul.barker.ct@bp.renesas.com,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] dt-bindings: pinctrl: add compatible for Renesas RZ/T2H
+Date: Mon, 19 May 2025 23:57:31 +0200
+Message-ID: <20250519215734.577053-2-thierry.bultel.yh@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250519215734.577053-1-thierry.bultel.yh@bp.renesas.com>
+References: <20250519215734.577053-1-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 19 May 2025 19:52:00 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+Document RZ/T2H (a.k.a r9a09g077) pinctrl
 
-> > CCing stable is likely not a good idea at this point (and might be rather
-> > hairy).
-> 
-> We should probably underline to Andrew not to add one :>) but sure can add.
+Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+---
+ .../bindings/pinctrl/renesas,pfc.yaml         | 59 +++++++++++++------
+ include/dt-bindings/pinctrl/rzt2h-pinctrl.h   | 23 ++++++++
+ 2 files changed, 65 insertions(+), 17 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/rzt2h-pinctrl.h
 
-Thank deity for that.
-
-I'll await v2, thanks.  It might be helpful to cc Stefan Roesch on that?
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
+index cfe004573366..6d6f97daad17 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
+@@ -29,6 +29,7 @@ properties:
+       - renesas,pfc-r8a774b1    # RZ/G2N
+       - renesas,pfc-r8a774c0    # RZ/G2E
+       - renesas,pfc-r8a774e1    # RZ/G2H
++      - renesas,pfc-r9a09g077   # RZ/T2H
+       - renesas,pfc-r8a7778     # R-Car M1
+       - renesas,pfc-r8a7779     # R-Car H1
+       - renesas,pfc-r8a7790     # R-Car H2
+@@ -74,27 +75,41 @@ properties:
+   power-domains:
+     maxItems: 1
+ 
+-allOf:
+-  - $ref: pinctrl.yaml#
+-
+ required:
+   - compatible
+   - reg
+ 
+-if:
+-  properties:
+-    compatible:
+-      enum:
+-        - renesas,pfc-r8a73a4
+-        - renesas,pfc-r8a7740
+-        - renesas,pfc-sh73a0
+-then:
+-  required:
+-    - interrupts-extended
+-    - gpio-controller
+-    - '#gpio-cells'
+-    - gpio-ranges
+-    - power-domains
++allOf:
++  - $ref: pinctrl.yaml#
++  - if:
++      properties:
++        compatible:
++          enum:
++            - renesas,pfc-r8a73a4
++            - renesas,pfc-r8a7740
++            - renesas,pfc-sh73a0
++    then:
++      required:
++        - interrupts-extended
++        - gpio-controller
++        - '#gpio-cells'
++        - gpio-ranges
++        - power-domains
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,pfc-r9a09g077
++    then:
++      required:
++        - gpio-controller
++        - '#gpio-cells'
++        - gpio-ranges
++      properties:
++        reg:
++          items:
++            - description: base address of register block 0
++            - description: base address of register block 1
+ 
+ additionalProperties:
+   anyOf:
+@@ -194,3 +209,13 @@ examples:
+                     power-source = <3300>;
+             };
+     };
++
++  - |
++    pinctrl: pinctrl@812c0000 {
++            compatible = "renesas,pfc-r9a09g077";
++            reg = <0x802c0000 0x2000>,
++                  <0x812c0000 0x2000>;
++            gpio-controller;
++            #gpio-cells = <2>;
++            gpio-ranges = <&pinctrl 0 0 287>;
++    };
+diff --git a/include/dt-bindings/pinctrl/rzt2h-pinctrl.h b/include/dt-bindings/pinctrl/rzt2h-pinctrl.h
+new file mode 100644
+index 000000000000..7842783fdb7a
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/rzt2h-pinctrl.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * This header provides constants for Renesas RZ/T2H family pinctrl bindings.
++ *
++ * Copyright (C) 2025 Renesas Electronics Corp.
++ *
++ */
++
++#ifndef __DT_BINDINGS_RZT2H_PINCTRL_H
++#define __DT_BINDINGS_RZT2H_PINCTRL_H
++
++#define RZT2H_PINS_PER_PORT	8
++
++/*
++ * Create the pin index from its bank and position numbers and store in
++ * the upper 16 bits the alternate function identifier
++ */
++#define RZT2H_PORT_PINMUX(b, p, f)	((b) * RZT2H_PINS_PER_PORT + (p) | ((f) << 16))
++
++/* Convert a port and pin label to its global pin index */
++#define RZT2H_GPIO(port, pin)	((port) * RZT2H_PINS_PER_PORT + (pin))
++
++#endif /* __DT_BINDINGS_RZT2H_PINCTRL_H */
+-- 
+2.43.0
 
 
