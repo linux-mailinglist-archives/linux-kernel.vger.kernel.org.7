@@ -1,75 +1,107 @@
-Return-Path: <linux-kernel+bounces-653241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6451CABB67F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:57:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F60ABB6A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 09:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D523B3A7A3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 07:57:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1B63ABCF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 07:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1591266B52;
-	Mon, 19 May 2025 07:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XEx1JWHI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D64426981A;
+	Mon, 19 May 2025 07:58:22 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDB21A23A4
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 07:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFD01C700D;
+	Mon, 19 May 2025 07:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747641452; cv=none; b=M4jr9Md+coLkfKwdlLwVdR3lwJ40+MfrrYBfWIo4dZJDdpZWYFcUqgQBVvExO6A8ok3O4KxcRx3YxZpbA0GLrG6/FR2mJxGQxOUQhXWYwF+yxXtrU5uqepc1RDbudCC5vaPZYNLTJyUGHjue3+sp/zdVObWarpxitgvjOxwKhr0=
+	t=1747641501; cv=none; b=eTOs4nYjr8rpFnzdfa5Kq5T4dZ2icpwsP3Dsg2kmghyrr58OXzEXhjD9ypVA5QQXlexxR+gUouUl23WaXmytPP9kh5X4FvqWpoKVkITKfAwnXNYgYQYmnaeAqbnAe6+MdtGJ3HEZHPri8Zfhbqbiq5BbC1csT7fJkiIx6Rh8RKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747641452; c=relaxed/simple;
-	bh=6jEukY665h7yREmNG3UGbrdCx0ti2EK1VaLCfuhZWIg=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=ipm6ElAH47X3s3HJ+g0qky8G/tub2WRmUdj8lR8CGgomuQdCr5igTDJAzNIP5ER8Ca85DDSLqEb3EEGYgjknPbZL2yNgevC7TR9dY+XT3RfhMt1BebqUBKBPv5uLP7kR55zyBSFoNjCy6MQ7tBvrLFv1HDcuiwG1ifR/lkXj9g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XEx1JWHI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0DE5C4CEED;
-	Mon, 19 May 2025 07:57:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747641450;
-	bh=6jEukY665h7yREmNG3UGbrdCx0ti2EK1VaLCfuhZWIg=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=XEx1JWHI5ZE2eGJOd8r6HyNbrcaSqE42hELy1SHfxn5S9fraG6npi00Sq4BPwqWtd
-	 1VCsiSxMHKTOgsTZrLjw8DYHg1iNksKb56GroOpmmweGL7lkC6BLFkffeCDcjrGj/L
-	 6dIMwLj/ESN7+7oxRzIK8nJQ0mD28lt1YmOTDvPliiK4xm3Ppn/qzXg146CplVe08+
-	 anMQTt9LCqwzEKiT6GRxmD0y+GxEcp+AaaI3Yq+4pz/F4wRt9qf4JOt2ziBaSi+itD
-	 Ks9hVTyjlwhS5YcxndJQ+oQwBwvQ+v4wV7w6OAGFTUjRfeiF3PP2XEg4oNaUl0A/BS
-	 KOPRJ3w/7/pHQ==
-Message-ID: <c3d962eb46e2f217f8b2efe5dd7fbefb@kernel.org>
-Date: Mon, 19 May 2025 07:57:27 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Cristian Ciocaltea" <cristian.ciocaltea@collabora.com>
-Subject: Re: [PATCH v4 17/23] drm/tests: hdmi: Provide EDID supporting
- 4K@30Hz with YUV420 only
-In-Reply-To: <20250425-hdmi-conn-yuv-v4-17-5e55e2aaa3fa@collabora.com>
-References: <20250425-hdmi-conn-yuv-v4-17-5e55e2aaa3fa@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, kernel@collabora.com, linux-kernel@vger.kernel.org, "Dave
- Stevenson" <dave.stevenson@raspberrypi.com>, "David Airlie" <airlied@gmail.com>, "Dmitry
- Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Dmitry Baryshkov" <lumag@kernel.org>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>, "Simona
- Vetter" <simona@ffwll.ch>, "Thomas Zimmermann" <tzimmermann@suse.de>
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1747641501; c=relaxed/simple;
+	bh=k3uRIi+NLpJ8L/7EC7biQGu+wIBKDStDWXY/3PIMjEI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aQQzIFFmL1VmfAsYPLtUO6pkw6eXfwAw5Z1XfHgj+Xgo6dcFMeq8JFL5HD+XjaSIpg1Al/Bqc4gs1Pik34GrgVO3B+aoGUbd2RfnWpcAWDdG+VGMNxp4tylq2wzB7tplT0aTAwjKtfuHfbOz3arrVc6Z8JnSfPSczxAKt+vY2As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowAD3OSyN5Cpo+2NoAQ--.9967S2;
+	Mon, 19 May 2025 15:58:06 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: srinivas.kandagatla@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] ASoC: qcom: sdm845: Add error handling in sdm845_slim_snd_hw_params()
+Date: Mon, 19 May 2025 15:57:39 +0800
+Message-ID: <20250519075739.1458-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAD3OSyN5Cpo+2NoAQ--.9967S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7XF15KF4UWFWfKF18Xw47Jwb_yoWkXrX_Kw
+	1Fg3s5XFWj9FW7Ary8G3yayFZ7uFWxZw4qywn2qr47Jr15Aas5CFW2yFs3ur1fury09Fy5
+	Crn8Z3yfKr1xZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbTkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrw
+	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
+	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
+	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxK
+	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
+	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUfrcfUUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCREHA2gqs4i0oQABsx
 
-On Fri, 25 Apr 2025 13:27:08 +0300, Cristian Ciocaltea wrote:
-> Create a test EDID advertising the following capabilities:
-> 
-> Max resolution:
-> - 1920x1080@60Hz with RGB, YUV444, YUV422
-> - 3840x2160@30Hz with YUV420 only
-> 
-> [ ... ]
+The function sdm845_slim_snd_hw_params() calls the functuion
+snd_soc_dai_set_channel_map() but does not check its return
+value. A proper implementation can be found in msm_snd_hw_params().
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
+Add error handling for snd_soc_dai_set_channel_map(). If the
+function fails and it is not a unsupported error, return the
+error code immediately.
 
-Thanks!
-Maxime
+Fixes: 5caf64c633a3 ("ASoC: qcom: sdm845: add support to DB845c and Lenovo Yoga")
+Cc: stable@vger.kernel.org # v5.6
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ sound/soc/qcom/sdm845.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
+index a479d7e5b7fb..314ff68506d9 100644
+--- a/sound/soc/qcom/sdm845.c
++++ b/sound/soc/qcom/sdm845.c
+@@ -91,6 +91,10 @@ static int sdm845_slim_snd_hw_params(struct snd_pcm_substream *substream,
+ 		else
+ 			ret = snd_soc_dai_set_channel_map(cpu_dai, tx_ch_cnt,
+ 							  tx_ch, 0, NULL);
++		if (ret != 0 && ret != -ENOTSUPP) {
++			dev_err(rtd->dev, "failed to set cpu chan map, err:%d\n", ret);
++			return ret;
++		}
+ 	}
+ 
+ 	return 0;
+-- 
+2.42.0.windows.2
+
 
