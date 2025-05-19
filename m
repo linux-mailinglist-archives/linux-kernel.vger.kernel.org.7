@@ -1,290 +1,161 @@
-Return-Path: <linux-kernel+bounces-653585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104ADABBB5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:43:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56CB1ABBB62
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0680A18970B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:43:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50AD8189741C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF012741DD;
-	Mon, 19 May 2025 10:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D36272E57;
+	Mon, 19 May 2025 10:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZY0D3jiw"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DLg+rtqU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C6F1A5BA3;
-	Mon, 19 May 2025 10:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0EC3D561
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747651415; cv=none; b=OqOkRhpTny/a84WqtIh4qSEhiP1xC5HOVjbVOqHEYOzlkJTOk2Kk2H4mF6Ti57SSLibi7Zut7bfvY1b7+bSZP2gSLOtlB0U3Fl5N1NAlzA7gaYuxY/aIk66+txNxMIjFskegPTi18v9lKHjzgHiH4IefdIOz6uIb3ibZ4608R4k=
+	t=1747651497; cv=none; b=hhtx97Rfd16tHPdspHY4/X9NFaTJD1E4L49f7tsruyMNmDSxE16bphcp4eVJRxAJ4EJxmE20tY2X1SuA1s2RSBcpuS1AT3I8FvLeP1FcXYs2sPzpx6tlPvzshZwfNZ1ndsd3j40XQaNMEKbVjmnec/+MMDBeqs9YPhnDJ+ijC6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747651415; c=relaxed/simple;
-	bh=5DZJQH9f+EDCNfMqJwWp25Moj1Eypz5H0FohbsMrH8M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rMTTyfI9/+CN9q4YV7CtPIuvZzeClcQTZko3GtPV41osfyqsy2a7a4cD5WKBclrV8IhVq3eozS9GIWegF7uBDZKi+FLHaeB9pnF6V+9EmovJH4hN3kbnQtkpPkwK3OalFiPkUIlvobq7dfN7ULIN3nL82JCMuKNaHtSkNahtjss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZY0D3jiw; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ad55d6aeb07so250985066b.0;
-        Mon, 19 May 2025 03:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747651411; x=1748256211; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YQM7iljAqtUi8QBWa7n8hdQ0xpGaEntDhRn6guivn0Q=;
-        b=ZY0D3jiwGwMTgyl+FMFYQcF21bm92SlMB/HJEgwP6x7p6ZKePS9RyRYi0Qa4/IpY60
-         KdMq3rJQiJ8RWSapMYZqhUrRN3Q91yENRmNgADO7HC4wgHoxT/8Vq+U8hc9/sjY11gfw
-         Vh4GogU5QRhFZiNXrrp6EoK1nrBDXEkxoSRllMfVXSuohagxWyATHako32VMGg9XgC/5
-         8Yn2eZRKivlvzwJjNyd+8IFJdZxThHhy4rsR/3amAT8l1Z4ClyCChxlh4MDRRU42FhIb
-         tVUjxPffcbLa55PjmxT9CYnMLJA5zW+GwPjovpVPLzMGgscw6sqE/uqzHrHg0PUiMt65
-         UlKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747651411; x=1748256211;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YQM7iljAqtUi8QBWa7n8hdQ0xpGaEntDhRn6guivn0Q=;
-        b=GmF9fO1qWaMiFGtO9mWlFWPks9Ftt73CsJ7cDNeSbGtKtJRSDAi0h9av28pRH7FcsK
-         pMSspthNnIiR8DZuT8Tspz+UMK/LAdPaSYFt7/OYRC04ifhMKvwSjLhlB2pXJOmhvKo6
-         AAxD7pCpSeJH842nuUJkXGVs/lhfppAOa771K5HJqmP3PRQ3o446IbMd2S6WshhEamHe
-         /QnMrRvvR6KR3h4txUZgK4utCSpSqg3LDkVmIe087w5zukkaQ4d4cpSixMmdOG1LNW0U
-         e6wPdz+fo3ya2Q5jgYPnmeE+zcbn1j8OMJY5QyWWjDVYj5TSe+zsd2UpyL62jG+Fmpl3
-         EP2Q==
-X-Gm-Message-State: AOJu0YwrKoitW61/PXg6+JgJRckikEPTswexoZG5NTcTRyQc0M7uVGXk
-	9szk6WviwjUsPa+lrPoNG8LE7pQL6I0SdN61KF+6eE6Mwp3cjEzdGJ/bx42W8cSn
-X-Gm-Gg: ASbGncvF2WZAXHkS3vqjof/sTafqF3sJjIEJcTSHFW6t1KBAD+e2Tn03oA7aAtd5LyU
-	p4cthSngaUcPJpF+3mPfk8fHAE2S3DPTLSGWNsdD2FH+P1fiJgXQzRbSTewKP4wElmzkILSOTfr
-	QlIf5qjzTqpTwiefxYVj1wlLn+LT0nC9uL+w8+7sXo/G3UFLog4dik/yi5bo95ycLSoD+S1500M
-	gNj0eOTM15Lw6wKH+NS9dgPnsgAaw7lZt9De3DC5Al/S6XC3mukFui488/m7ov0xg9e0gCoJGUj
-	sKLYfdItsZHTRfNof7yaZzoJe//9BewrIqXYUTq0J/zrIGZDNznKclj1T+Z+ye8xnKflkFedpQ8
-	9EZlTDXFjT3g=
-X-Google-Smtp-Source: AGHT+IEQvL/8apnFGoJ+7YEnVzq8HintJc/e15UdD76320QhiHZWBMWwA6zkp3+FowBYXIBiBCd3MQ==
-X-Received: by 2002:a17:906:c14d:b0:ad2:26f0:a76 with SMTP id a640c23a62f3a-ad536b7f1d2mr1047148166b.13.1747651399879;
-        Mon, 19 May 2025 03:43:19 -0700 (PDT)
-Received: from localhost.localdomain ([102.164.100.0])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d498909sm566682766b.126.2025.05.19.03.43.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 03:43:19 -0700 (PDT)
-From: monderasdor@gmail.com
-To: linux-ide@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] ahci: enhance error handling and resource management in ahci_init_one
-Date: Mon, 19 May 2025 03:43:04 -0700
-Message-ID: <20250519104304.1828-1-monderasdor@gmail.com>
-X-Mailer: git-send-email 2.49.0.windows.1
+	s=arc-20240116; t=1747651497; c=relaxed/simple;
+	bh=gaeeg4AZ+lnFMTRX9LYEB5rgp1XvsIMBR3topG8ZD4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E2L6spu6CqkrK78YtlmLOt1Rmbtlk22pym7NpJoCbEND8XqQwDQWOGKNABSuA4hYbSezUPReyqEdNeg5vsgVqbb0E1zdaJ0gzOL6bV1fPl9xBeYk3qw94ii0A6gmp+9VOrpBGIhkjyrDlgMNQORFrJ7xY7+pcurrUdwpLyFOIlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DLg+rtqU; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747651496; x=1779187496;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gaeeg4AZ+lnFMTRX9LYEB5rgp1XvsIMBR3topG8ZD4g=;
+  b=DLg+rtqUW6oWbcfz3neLPCqSPsAMcLYf//w/Zb2Fnd1vwdpPoMj3CThv
+   oeT88bRYJlzA4j0i6nuQw7VkJnLZ3BsJquffYWN2el+x6PQ72/XWjwqU3
+   HpQ8VDPtl0TnlI1H0z7nf/arESyq+RvFgtbDxhhItrDIDwBAo3Oyxeph9
+   ilRAKTqNsTOrB9VdF5q4wLt+oDQn47VwcmPs6GJEbwbpZ4u75Zg9wPzkw
+   LbES/B7Exy0U2A5hgoxanWCqJKgZG2h3RzXooZO0p1raPIKgmRpYd0wYu
+   uL1zAYioHH80KTm2cY3lfxXhQ3SiUUXvOmb3M8r0JR/L/IWgzSooPgHft
+   g==;
+X-CSE-ConnectionGUID: e/oOcomLTFqblZ753ZiiaQ==
+X-CSE-MsgGUID: B0/4Yf42S2OETX6hlVo2KQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11437"; a="72052719"
+X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
+   d="scan'208";a="72052719"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 03:44:55 -0700
+X-CSE-ConnectionGUID: 93unAF41QoqD8Rv98q8pCQ==
+X-CSE-MsgGUID: zeaOZt91Suu/XqNIkeU2+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
+   d="scan'208";a="139177306"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 03:44:53 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uGxzG-00000002zP1-07li;
+	Mon, 19 May 2025 13:44:50 +0300
+Date: Mon, 19 May 2025 13:44:49 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: gregkh@linuxfoundation.org, david.m.ertman@intel.com,
+	ira.weiny@intel.com, lee@kernel.org,
+	mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] driver core: auxiliary bus: Introduce auxiliary
+ device resource management
+Message-ID: <aCsLoWtIdfR5a2YS@smile.fi.intel.com>
+References: <20250514122432.4019606-1-raag.jadav@intel.com>
+ <20250514122432.4019606-2-raag.jadav@intel.com>
+ <aCSOYRJXaiJpch6u@smile.fi.intel.com>
+ <aCXjltG40x9mJ25U@black.fi.intel.com>
+ <aCXm566Uyyh45MZD@smile.fi.intel.com>
+ <aCeP4l1VOVfhtQ09@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aCeP4l1VOVfhtQ09@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Problem:
-The current implementation of ahci_init_one has several issues with error handling
-and resource management. It lacks proper error cleanup paths, doesn't initialize
-pointers to NULL, and has inconsistent error handling patterns throughout the code.
-This can lead to resource leaks and make debugging initialization failures difficult.
+On Fri, May 16, 2025 at 10:20:02PM +0300, Raag Jadav wrote:
+> On Thu, May 15, 2025 at 04:06:47PM +0300, Andy Shevchenko wrote:
+> > On Thu, May 15, 2025 at 03:52:38PM +0300, Raag Jadav wrote:
+> > > On Wed, May 14, 2025 at 03:36:49PM +0300, Andy Shevchenko wrote:
+> > > > On Wed, May 14, 2025 at 05:54:31PM +0530, Raag Jadav wrote:
 
-Solution:
-This patch enhances the error handling and resource management in ahci_init_one by:
-- Adding comprehensive error checking with descriptive error messages
-- Improving error propagation through return codes
-- Adding proper error cleanup paths for all resource allocations
-- Initializing pointers to NULL to prevent use-after-free bugs
-- Implementing proper cleanup of allocated resources in error paths
-- Adding more descriptive error messages for all failure points
-- Including error codes in log messages for better diagnostics
-- Adding warning messages for potential system issues
-- Improving code structure with proper error handling paths
-- Adding proper error return labels
-- Making code more maintainable with consistent error handling patterns
+...
 
-Technical Details:
-- Added proper initialization of pointers (hpriv, host, mmio) to NULL
-- Added error cleanup paths with proper resource release
-- Improved error messages to include specific error codes
-- Added proper error handling for all resource allocation failures
-- Added proper cleanup of allocated resources in error paths
-- Improved code organization with clear error handling paths
-- Added proper error return labels for better code flow
+> > > > > +int auxiliary_get_irq_optional(struct auxiliary_device *auxdev, unsigned int num)
+> > > > > +{
+> > > > > +	struct resource *r;
+> > > > > +	int ret = -ENXIO;
+> > > > > +
+> > > > > +	r = auxiliary_get_resource(auxdev, IORESOURCE_IRQ, num);
+> > > > > +	if (!r)
+> > > > > +		goto out;
+> > > > > +
+> > > > > +	/*
+> > > > > +	 * The resources may pass trigger flags to the irqs that need to be
+> > > > > +	 * set up. It so happens that the trigger flags for IORESOURCE_BITS
+> > > > > +	 * correspond 1-to-1 to the IRQF_TRIGGER* settings.
+> > > > > +	 */
+> > > > > +	if (r->flags & IORESOURCE_BITS) {
+> > > > > +		struct irq_data *irqd;
+> > > > > +
+> > > > > +		irqd = irq_get_irq_data(r->start);
+> > > > > +		if (!irqd)
+> > > > > +			goto out;
+> > > > > +		irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
+> > > > > +	}
+> > > > > +
+> > > > > +	ret = r->start;
+> > > > > +	if (WARN(!ret, "0 is an invalid IRQ number\n"))
+> > > > > +		ret = -EINVAL;
+> > > > > +out:
+> > > > > +	return ret;
+> > > > > +}
+> > > > 
+> > > > Please, do not inherit the issues that the respective platform device API has.
+> > > > And after all, why do you need this? What's wrong with plain fwnode_irq_get()?
+> > > 
+> > > Can you please elaborate? Are we expecting fwnode to be supported by auxiliary
+> > > device?
+> > 
+> > Platform IRQ getter is legacy for the board files, but it has support for fwnode.
+> > Why do you need to inherit all that legacy? What's the point?
+> 
+> This is just to abstract get_resource(IRQ) which has been carved up by the
+> parent device. And since this is an auxiliary child device, I'm not sure if
+> we have a firmware to work with.
 
-Signed-off-by: Alexander Roman monderasdor@gmail.com
----
-drivers/ata/ahci.c | 150 ++++++++++++++++++++++++++++++-----------------------
-1 file changed, 85 insertions(+), 65 deletions(-)
+To make get_resource() work, someone has to add those resources to the list.
+The question is, why do we need this for AUX devices? Are you expecting
+several IRQs to be dedicated for several devices (no sharing)? If now, why
+is the fwnode version of IRQ getter not enough?
 
-diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -1611,460 +1611,555 @@ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent) {
-     struct ahci_host_priv *hpriv = NULL;
-     struct ata_host *host = NULL;
-     void __iomem *mmio = NULL;
-+    int n_ports, i, rc = -ENOMEM;
--    int n_ports, i, rc;
-     u32 tmp, cap, port_map;
-     u32 saved_cap;
-     struct device *dev = &pdev->dev;
+> Please correct me if I've misunderstood your question.
 
-     VPRINTK("ahci_init_one enter\n");
+For the memory and port resources it might be indeed needed to have a split.
+But then, since it's a lot of the copy from platform code, I would expect
+the common library for both rather than reinventing the wheel. To achieve
+that one might need to abstract away from the certain device container when
+handling resources (no platform_device nor auxiliary_device). Would that
+approach work?
 
-+    /* acquire resources with proper error handling */
--    /* acquire resources */
-     rc = pcim_enable_device(pdev);
-     if (rc) {
-+        dev_err(dev, "Failed to enable PCI device: %d\n", rc);
-+        goto err_out;
--        return rc;
-     }
+-- 
+With Best Regards,
+Andy Shevchenko
 
-     rc = pcim_iomap_regions(pdev, 1 << AHCI_PCI_BAR_STANDARD, DRV_NAME);
-     if (rc) {
-+        dev_err(dev, "Failed to map PCI regions: %d\n", rc);
-+        goto err_out;
--        return rc;
-     }
-     mmio = pcim_iomap_table(pdev)[AHCI_PCI_BAR_STANDARD];
-+    if (!mmio) {
-+        dev_err(dev, "Failed to get mmio table\n");
-+        rc = -ENOMEM;
-+        goto err_out;
-+    }
 
-     rc = pci_alloc_irq_vectors(pdev, 1, AHCI_MAX_PORTS, PCI_IRQ_ALL_TYPES);
-     if (rc < 0) {
-+        dev_err(dev, "Failed to allocate IRQ vectors: %d\n", rc);
-+        goto err_out;
--        return rc;
-     }
-
-+    /* allocate and initialize host private data */
-     hpriv = devm_kzalloc(dev, sizeof(*hpriv), GFP_KERNEL);
-     if (!hpriv) {
-+        dev_err(dev, "Failed to allocate host private data\n");
-+        goto err_out;
--        return -ENOMEM;
-     }
-
-     hpriv->mmio = mmio;
-     hpriv->flags = (unsigned long)ent->driver_data;
-     hpriv->irq = pdev->irq;
-
-+    /* apply board quirks */
-     if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
-+        rc = ahci_intel_pcs_quirk(pdev, hpriv);
-+        if (rc) {
-+            dev_err(dev, "Failed to apply Intel PCS quirk: %d\n", rc);
-+            goto err_out;
-+        }
--        ahci_intel_pcs_quirk(pdev, hpriv);
-     }
-
-+    /* apply port map mask if present */
-     ahci_get_port_map_mask(dev, hpriv);
-
-+    /* save initial config */
-     rc = ahci_pci_save_initial_config(pdev, hpriv);
-     if (rc) {
-+        dev_err(dev, "Failed to save initial configuration: %d\n", rc);
-+        goto err_out;
--        return rc;
-     }
-
-+    /* prepare host */
-     cap = hpriv->cap;
-     saved_cap = cap;
-     port_map = hpriv->port_map;
-     n_ports = ahci_calc_n_ports(cap, port_map);
-
-     host = ata_host_alloc_pinfo(dev, ahci_port_info + ent->driver_data, n_ports);
-     if (!host) {
-+        dev_err(dev, "Failed to allocate ATA host\n");
-+        goto err_out;
--        return -ENOMEM;
-     }
-
-     host->private_data = hpriv;
-
-+    /* configure DMA masks */
-     rc = ahci_configure_dma_masks(pdev, hpriv);
-     if (rc) {
-+        dev_err(dev, "Failed to configure DMA masks: %d\n", rc);
-+        goto err_host;
--        return rc;
-     }
-
-+    /* initialize adapter */
-     ahci_pci_init_controller(host);
-     rc = ahci_reset_controller(host);
-     if (rc) {
-+        dev_err(dev, "Failed to reset controller: %d\n", rc);
-+        goto err_host;
--        return rc;
-     }
-
-+    /* apply fixups for broken systems */
-     if (ahci_broken_system_poweroff(pdev)) {
-+        dev_err(dev, "WARNING: System may need to power cycle after shutdown\n");
--        dev_info(dev, "quirky BIOS, skipping spindown on poweroff\n");
-     }
-
-+    /* configure LPM policy */
-     for (i = 0; i < n_ports; i++) {
-         ahci_update_initial_lpm_policy(host->ports[i]);
-     }
-
-+    /* apply platform-specific workarounds */
-     if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
-+        rc = ahci_intel_pcs_quirk(pdev, hpriv);
-+        if (rc) {
-+            dev_err(dev, "Failed to apply Intel PCS quirk: %d\n", rc);
-+            goto err_host;
-+        }
--        ahci_intel_pcs_quirk(pdev, hpriv);
-     }
-
-+    /* apply Apple MCP89 workaround */
-     if (is_mcp89_apple(pdev)) {
-+        rc = ahci_mcp89_apple_enable(pdev);
-+        if (rc) {
-+            dev_err(dev, "Failed to enable MCP89 Apple: %d\n", rc);
-+            goto err_host;
-+        }
--        ahci_mcp89_apple_enable(pdev);
-     }
-
-+    /* apply Acer SA5-271 workaround */
-     acer_sa5_271_workaround(hpriv, pdev);
-
-+    /* initialize and enable interrupts */
-     ahci_init_irq(pdev, n_ports, hpriv);
-     ahci_pci_enable_interrupts(host);
-
-+    /* print information */
-     ahci_pci_print_info(host);
-
-+    /* register with libata */
-     rc = ata_host_activate(host, hpriv->irq, ahci_interrupt, IRQF_SHARED,
-+                        &ahci_sht);
--                        &ahci_sht);
-     if (rc) {
-+        dev_err(dev, "Failed to activate ATA host: %d\n", rc);
-+        goto err_host;
--        return rc;
-     }
-
-     return 0;
-
-+err_host:
-+    if (host)
-+        ata_host_detach(host);
-+err_out:
-+    return rc;
--    return 0;
- }
 
