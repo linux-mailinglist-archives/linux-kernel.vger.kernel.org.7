@@ -1,219 +1,101 @@
-Return-Path: <linux-kernel+bounces-653567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-653569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95EA6ABBB2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:34:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D5CABBB2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 12:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88C323AE65E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:32:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F4B918842C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 May 2025 10:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496C81373;
-	Mon, 19 May 2025 10:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FC526FA74;
+	Mon, 19 May 2025 10:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ccvvlwY8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ahtPnSJ/"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D539B27CCE3
-	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26351F17E8
+	for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 10:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747650499; cv=none; b=Qbyi6v+Mzt6lYWhgkE3wFOGb/ZDsI70DAn6foZ30fpwFfy+3Q4uPuPhuCvQC5NIAhyHB4/Nuuh5s/7Cc5LkvLFtAIYwSUYxEQaPwAsoWxxSRasSwZvbcmYCbHIOpmHeeaF+xEc481dXmc+BZWcgRhUbFu8ubaInI4HuXXcCIb0A=
+	t=1747650859; cv=none; b=IdMZsJU8y9Szrd4uCK6OdDhLLN2q5dYTORHlLKTnV+KtI1bnai5/xV3/VXwDed3YVYKoUCt5MYJd4VohzFezRL09OAcQyLwfuqvAbrb8W13muU0xzLxUhkZ8XZdcFNIcUn9PIrTBPA3NykaclOz6Qk/oEwx9mNLEEeogToRnsio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747650499; c=relaxed/simple;
-	bh=Glz7ny8NQrojQyboF9JsjHRU80A8deyle6w4EYZ5zyM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FIRxMMqPhB7LOw45+TmuHQR+to9K84gm8D9QI5++atVitn9KQzqrf8d2l8Cxw6yxffwlyAEXf4kPFmbTR4ZIlC04L8iNd+O1cfeNshoGuGVR9pwq3hRZahpskxe2zcv/VZKQU1ZhSoEYVBxunAjgqV/oGUCfbKc1wsOWjTJKmF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ccvvlwY8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747650496;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2XPurQ6z4VsgTQPK3kgi30mDqS6+qhr1GgY7wHAfY/c=;
-	b=ccvvlwY8dl/jq14rUnbu6+5GNY9lkA/OHIrLhhPDXMJ8F/W4gyHuMFiEeTM/cOxfhUrVtp
-	X2zThBfApRW247cjxgJsl0DqbZDe8ZM0zG6+ltIkj7PS9SAX9SnV/AusgLRYdZawgeqM/x
-	/zl4YzhFdcwFffTgBMi/5/RVo0xT4ZM=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-534-M6clf1G9NguYlPWDRJ04Aw-1; Mon, 19 May 2025 06:28:15 -0400
-X-MC-Unique: M6clf1G9NguYlPWDRJ04Aw-1
-X-Mimecast-MFC-AGG-ID: M6clf1G9NguYlPWDRJ04Aw_1747650494
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d007b2c79so33984795e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 03:28:15 -0700 (PDT)
+	s=arc-20240116; t=1747650859; c=relaxed/simple;
+	bh=OCiXCgXTsdRzlcaZtWeBhlKDQeWUe+XaeEuHpx1+3FE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p/d48yiIzp5em1YUy1zkpKK8QDG1VDdHE+MwhPUAYD/pmAPgLj1ygs0wAjGQh3ixqRTZlgEi6U+6/LLCHs/VJ4OqVvlWA8KST4PC84IBbq8xdOibBiJnrqvutkHsSZesgL12DV9cq1od7KsiM+pxi8iQGHP4vL0pGU4xtF9RwAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ahtPnSJ/; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ad563b69908so168513766b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 03:34:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1747650854; x=1748255654; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OCiXCgXTsdRzlcaZtWeBhlKDQeWUe+XaeEuHpx1+3FE=;
+        b=ahtPnSJ/Gc1ZTkiBUqsk9zNazJ3dOZXidTo+KO5ZxwHMK94OTuRYK8qSteP39a3ElU
+         eRLLPo87GjdqptTPhEQXCSa/nxoJRzcNoXKxzc8kN1D1AGSJPTMLspsmkA+e+P1jHXwe
+         khCwJiHEOR0hGahag+CxmDvNEh1N/UZBOasRuLsGAHn4p9/GqtvHz5lwpvNkGL8/b2Hi
+         Xwg8joQWcW1hw/DNiex3aac0bGEZ2YdarTWsPKLGbgV5XnC0g0zuwZAyt8z9LUgcvXeT
+         JjbkDdFKRCWmHlXYmBfBSmD7GSOSmtAblrQbzURH9d+JlCOUIChd/u5acZVGo1lF4bvD
+         C1ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747650494; x=1748255294;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2XPurQ6z4VsgTQPK3kgi30mDqS6+qhr1GgY7wHAfY/c=;
-        b=IjIsl+cT+3LLmwaGrsaFEL304EdopbXdBibxO6xO42xI9nGYu1Erxkdj2V+44Wh6hF
-         PGKXEbS8fYHH0YU7JqeOV60ymnd3YQUuhgw/gipA/zfXYDZW8R9SyXYRxEnlEe7lAx/8
-         gpT01t684T8pXmbFd6u/wpmJgYsqIQqQl7PjFnsgozAAg21JFiN9NuMDGcprabfhkSBN
-         USfV3RR5ffnukAk58xREHE6/5xq6LYSP2sb5XyFqRgzhtxnNF5CMqTJMA5Dahd0S5FBH
-         NaY1fJfcS0CQIBlRyLw87CJ2g33a54TJtQYrTZM5KTpS3y51zAfLCm3TsOAF58t28sR1
-         iyyA==
-X-Gm-Message-State: AOJu0YwDxtpaWEp4zPTb35phMEGsLIl3WzOH4NBLvO39fjXEJqKASBvU
-	aFWHkOc3IHAF5BdCMsAisJWtxNSG4H5I7H5AeH6OchsXguIpgJd1XgeBjJ66y256T653yIL1eCb
-	/KP2yDEyrotLELLtEYxz51nVyZsYSKxCe5eYffGyW7VrUMzfiU+4asrAhuFAS892ymA==
-X-Gm-Gg: ASbGncuujk4b5ic5ex2HXg/nhR4IVN7gDZchPhB2WqZmb0rScTQAKI6CpEifJD67HVc
-	5nj1XC26zLsJbr/12NCFNf5uR4SzH0J5sHbqrvZEMI9bbEeXfjHxIEi1avzvlyoMluCybkDqmFU
-	0iXZevZ8Nau3taoE8NujbSLqv1fgsffPjNUfstayV0SIRozDI6f5fiUAddE7/qllRlIg9P52EuX
-	cs0X2Jd58SJ01qIxaYuzVbeGftV3acnbFmKWc7n3TCKWm5czVQsI70bhUHsh6ukLVeYMExmBjq4
-	cBNXMRTpZylp1QhWaRDTm8o6gSQTEcBfOv+qjA==
-X-Received: by 2002:a05:600c:a00b:b0:43c:ed61:2c26 with SMTP id 5b1f17b1804b1-442fd6313d2mr130831185e9.17.1747650494211;
-        Mon, 19 May 2025 03:28:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEmerFbIYeUlpq4trqMuAPoGFQ564+5/ovpfNjLErAG+OVI2RQw++iJWr2ZOv2hJcOHiNj30A==
-X-Received: by 2002:a05:600c:a00b:b0:43c:ed61:2c26 with SMTP id 5b1f17b1804b1-442fd6313d2mr130830905e9.17.1747650493866;
-        Mon, 19 May 2025 03:28:13 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f39ef8c7sm202303115e9.38.2025.05.19.03.28.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 03:28:13 -0700 (PDT)
-Message-ID: <5f1365f2cd84597fd3547544fcceab5c79682624.camel@redhat.com>
-Subject: Re: [RFC PATCH v2 10/12] rv: Retry when da monitor detects race
- conditions
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>, Tomas Glozar <tglozar@redhat.com>, Juri
- Lelli <jlelli@redhat.com>
-Date: Mon, 19 May 2025 12:28:12 +0200
-In-Reply-To: <20250519090626.zjiYgUGW@linutronix.de>
-References: <20250514084314.57976-1-gmonaco@redhat.com>
-	 <20250514084314.57976-11-gmonaco@redhat.com>
-	 <20250519090626.zjiYgUGW@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
+        d=1e100.net; s=20230601; t=1747650854; x=1748255654;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OCiXCgXTsdRzlcaZtWeBhlKDQeWUe+XaeEuHpx1+3FE=;
+        b=MrJC90A1q0ituuwK9RR3QabNH/zStWxJ87AhrSUuVIOD3gjom4o51LngXTYr0/iH5G
+         EEVx5GwBEKe6mfRODAOjfkVEu6XzIS2ooVeokWiDLYldtEMg6DNdAVPIfg5938hh4aMW
+         o7GF4M5K9ns/tetfnTg7osDQSOqonk2G5hJAXtVSKbXfPW2ugTjp9O9Tsuo/lQuCNXJt
+         3lW6Gwerz3GsCJ9ZEl5iSoSCFlzduevyTTGY/JJCXxI32jwJV3XoPewSjz6Vq2E3pzHI
+         FOXwOyoXJORkIJCyvOYczEHzrARQ0k/XD6sgAimHshlLz+u/km6HyVXc7beJUcMA1lCM
+         96jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtGTL0Bi7HFdaIp691IDeWlmOtz8nEiEa9wFjpk9u10BbsaACmHqlxZ7woyBAo+xWQ5e5eD2/0YqCNnH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5k45MeeEtQIcAYPquq2Ll8RB9CENeNFKUrTrqOkBzGXHU05vO
+	nGYk2S8DpcU76GH++wXpRN8YfckI1WvxT7KqJdImKxu7SZRTFEx3T+rjKyxYyhTPzGi76BcuNne
+	rzXKEVD847TUwdtuFU+xnulYmYeB+1iRZCoS0p4HTgw==
+X-Gm-Gg: ASbGnctbnr4vAuXBouBxmtqfTEwBBj/sttbHnQro/PYGf9kbrqqBVojhtHS5/WF1mTT
+	/MgvvAhO9fZt9ZvLNYHO7RIGHa6jqf/klC6qm/sb09yUfgEwMXQphss/NHedl/Mx0MUDK1qb2Vc
+	O6I0Rx6sANo2dQSVVuUzAN1LPJ5NnMLjQ=
+X-Google-Smtp-Source: AGHT+IFDp8A2zyqmQfoHj5jH3cPFOL82cfvhbT89hIH6TA5DLkVoMIRPLMREfOyoE29O/ZDFknRlG6y9JUGlUCAi8RU=
+X-Received: by 2002:a17:907:3e16:b0:ad2:3fa9:7511 with SMTP id
+ a640c23a62f3a-ad536dce687mr1138427866b.41.1747650854046; Mon, 19 May 2025
+ 03:34:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250514131240.3343747-1-neelx@suse.com> <3c08a5d6-bf17-4a74-a889-b1658a2a75d1@wdc.com>
+ <ad599778-43c1-49ae-9662-ecd5b79292ca@wdc.com>
+In-Reply-To: <ad599778-43c1-49ae-9662-ecd5b79292ca@wdc.com>
+From: Daniel Vacek <neelx@suse.com>
+Date: Mon, 19 May 2025 12:34:03 +0200
+X-Gm-Features: AX0GCFvyJrl471zarGWZbjYduBBOoR_Tqci57jCpNqeeLfhsT5ctT_BHaSCe-gw
+Message-ID: <CAPjX3FdLkt1DCmKkZDQvHOauGE1m3dgjP_3Jt-kHq7FDpjOzBA@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: btrfs_backref_link_edge() cleanup
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 14 May 2025 at 17:48, Johannes Thumshirn
+<Johannes.Thumshirn@wdc.com> wrote:
+>
+> On 14.05.25 17:47, Johannes Thumshirn wrote:
+> > Looks good,
+> > Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> >
+>
+> Hit sent too early sorry, I'd also mention in the changelog that it
+> isn't used outside of backref.c so it can be made static.
 
-
-On Mon, 2025-05-19 at 11:06 +0200, Nam Cao wrote:
-> On Wed, May 14, 2025 at 10:43:12AM +0200, Gabriele Monaco wrote:
-> > -static inline
-> > void										\
-> > -da_monitor_set_state_##name(struct da_monitor *da_mon, enum
-> > states_##name state)		\
-> > +static inline
-> > bool										\
-> > +da_monitor_set_state_##name(struct da_monitor *da_mon, enum
-> > states_##name prev_state,		\
-> > +			=C2=A0=C2=A0=C2=A0 enum states_##name
-> > state)						\
-> > =C2=A0{							=09
-> > 				\
-> > -	da_mon->curr_state =3D
-> > state;								\
-> > +	return try_cmpxchg(&da_mon->curr_state, &prev_state,
-> > state);				\
-> > =C2=A0}							=09
-> > 				\
->=20
-> This is a very thin wrapper. Should we just call try_cmpxchg()
-> directly?
-
-Mmh, right, at this point the wrapper does nothing but making the code
-more obscure, will do.
-
->=20
-> > =C2=A0static inline
-> > bool										\
-> > =C2=A0da_event_##name(struct da_monitor *da_mon, enum events_##name
-> > event)				\
-> > =C2=A0{							=09
-> > 				\
-> > -	type curr_state =3D
-> > da_monitor_curr_state_##name(da_mon);					\
-> > -	type next_state =3D model_get_next_state_##name(curr_state,
-> > event);			\
-> > +	bool
-> > changed;										\
-> > +	type curr_state,
-> > next_state;								\
-> > =C2=A0							=09
-> > 				\
-> > -	if (next_state !=3D INVALID_STATE)
-> > {							\
-> > -		da_monitor_set_state_##name(da_mon,
-> > next_state);				\
-> > +	for (int i =3D 0; i < MAX_DA_RETRY_RACING_EVENTS; i++)
-> > {					\
-> > +		curr_state =3D
-> > da_monitor_curr_state_##name(da_mon);				\
->=20
-> For the follow-up iterations (i > 0), it is not necessary to read
-> curr_state again here, we already have its value from try_cmpxchg()
-> below.
-
-Yeah good point.
-
->=20
-> Also, thinking about memory barrier hurts my main, but I'm not
-> entirely
-> sure if reading curr_state without memory barrier here is okay.
->=20
-
-I guess we are on the same boat here. I couldn't really understand how
-much of a barrier is the try_cmpxchg imposing (if any), but didn't see
-any noticeable difference adding an explicit smp write barrier to pair
-with the READ_ONCE in da_monitor_curr_state, so straight assumed we can
-do without it.
-But I definitely appreciate opinions on this.
-
-> How about something like below?
->=20
-> curr_state =3D da_monitor_curr_state_##name(da_mon);
-> for (int i =3D 0; i < MAX_DA_RETRY_RACING_EVENTS; i++) {
-> 	next_state =3D model_get_next_state_##name(curr_state, event);
-> 	if (next_state =3D=3D INVALID_STATE)
-> 		break;
-> 	if (try_cmpxchg(&da_mon->curr_state, &curr_state,
-> next_state))
-> 		break;
-> }
->=20
-
-Yeah, that's neater.
-
-> Furthermore, it is possible to replace for(...) with while (1)? I
-> don't
-> think we can have a live lock, because if we fail to do
-> try_cmpxchg(),
-> the "other guy" surely succeed.
->=20
-
-Mmh, although definitely unlikely, I'm thinking of a case in which the
-event starts on one CPU and at the same time we see events in IRQ and=20
-on another CPU, let's say continuously. Nothing forbids that between
-any two consecutive try_cmpxchg another CPU/context changes the next
-state (making the local try_cmpxchg fail).
-In practice I've never seen it going on the second iteration, as the
-critical section is really tiny, but I'm not sure we can guarantee this
-never happens.
-Or am I missing something?
-
-Thanks,
-Gabriele
-
+Yeah, that could be mentioned explicitly.
 
