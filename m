@@ -1,121 +1,149 @@
-Return-Path: <linux-kernel+bounces-654871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA83ABCDE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 05:42:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4EA6ABCDF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 05:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7337F1897732
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 03:43:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E60F3189B24D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 03:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EB71C8FB5;
-	Tue, 20 May 2025 03:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CD6258CC7;
+	Tue, 20 May 2025 03:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="Z9u2ixnI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dJIdq+s7"
-Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qjHiZHeB"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABD73594C;
-	Tue, 20 May 2025 03:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413EF255227
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 03:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747712569; cv=none; b=IdTRXJY1i3he3YWsq4jeMltoWMPHzJwBM6FNtSppJbO4pR4cfHf6SM6K0pMYDIdhevMW9ornwI/Rc5e2JCbJ+nQRAuOaGh6mGE/3Iad5cVYE/girdeqF0ZATONiiB1CLR+5FtUjFXzxU835ciG55qZHNF8iSNtzkKKGEdfjwAHs=
+	t=1747712737; cv=none; b=fU9bpayApHFGU/x8dQYFYOq5MyEoWvncIFoF8qdkiO6XK60XRf0CXoorgl8n7x6Ywli1Jtq/vFC9xtdY1Fp84TiDGCscPDVzI+u56LNeqBE0ssfklHl534onroxQzmWQ3d2PW9TW4/vtOh1Mu0ZY3zqOwaau0KAcNs0MJdGMHpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747712569; c=relaxed/simple;
-	bh=oLyCXWWUMKIsSeoPo6Z6kNZwKj7A0fJXyb8s8tWPUlU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=HS3N1dx9C6++JkJPRSXhB5F19SxkmS2ORKpVzRTi9mKFXQ8Or0eUSRPpmLU80iLuhs31fUaYboeSBA1d1UOjYXIt3HyWW/MimF9Zc9sWMssclsjOWh0NeIwpxo6GHeZXpaN+dLxiuXSGPuLax+Rez9sOFS+Uh+t0ZZxOXIL+SOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=Z9u2ixnI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dJIdq+s7; arc=none smtp.client-ip=103.168.172.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailflow.phl.internal (Postfix) with ESMTP id F229A200311;
-	Mon, 19 May 2025 23:42:45 -0400 (EDT)
-Received: from phl-frontend-02 ([10.202.2.161])
-  by phl-compute-06.internal (MEProxy); Mon, 19 May 2025 23:42:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1747712565; x=1747719765; bh=ypLGYSRPxg
-	zJ/f1t6oKhgJlVNaEgTfXoS9qN+1k4YEk=; b=Z9u2ixnI0fxOltK49MQux2neXq
-	WqEkfepenD5IsFmdCE2WAWOKf9MAL9qzwWl88GSw3qLv08ZRWFZehV5ucdR3MSc4
-	w6FQW9rhycI5ZqhllQXNQMJ8hD9G8NgeEXY+/pjg7BFwoD0sb90p2Amq+ztvtgHa
-	vr54ADkXQ10UnX3PFhZuJtWAyBnBVYNdYrZnZUqH2aS3EqbXE7usOIg43veMXS2q
-	vZa2q68k/7Rq9aEExn69NfLO05j0pKpf60Fc+TxRdAWNKMAfCr/qpeYEE3wT4W/U
-	jxVColg4os+Qsjlr9n+0x3ZH4iuudbzPSPAZRwUQ4ovVOJTd5gBD1HP4fEsA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1747712565; x=1747719765; bh=ypLGYSRPxgzJ/f1t6oKhgJlVNaEgTfXoS9q
-	N+1k4YEk=; b=dJIdq+s72I84Knx5Sd7Q1d9OGNszwxORc1n6yUuvv5w0fO8mPK9
-	y5z/maIOksNBPqtGPrZdmE7xdAOdKxfW+xYacPARcwZ0Iqr1DzhOmd/XTtXzFJt3
-	218yRA+DSGBHJsS4L3OMB5LdCwLIKwln4O1YDclMArS3fnp3i99d0NO9wL6MDc7i
-	eZhswum3TyzY6doUgM0a/4ADZ9lo8g8vdeTV13C1ESFab/sOLff1KhrSpei92wOs
-	ISyfghOpEf3G9X8nPySGW9c0dMdLhZayRbVJDfrT4OBNvqk3JKd3EzkqS+9bLBsK
-	gWXJ7+dbBmzlUm/KKpRYxNJ86u22UImmmhg==
-X-ME-Sender: <xms:NforaMFLB9foMQmJ7eU3WrB8-DGaFO9AVvH_q8JQBg5LbGjU3WMtwQ>
-    <xme:NforaFXDDJgYyFmcNSNBbSKKGS9dgTBg_xEp6hd-bESOUNE2Dt_pFeGYQKRxYjQQX
-    lfERAvwGgPw44tC3LQ>
-X-ME-Received: <xmr:NforaGLhqfQRnUFC72ptqfvqq7a-ND9hzVD0umrEQpQg0lChlwVwblaisCmr0WrzSOSs-d1I5Q08Di7kP2dSD11xGXBGOUv79URn_YxKiY3wqfONnw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefvdefvddtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmneetughnkfguqdgfufdqffettdelucdlfedttddmnecujfgu
-    rhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefpihgtohhlrghsuc
-    frihhtrhgvuceonhhitghosehflhhugihnihgtrdhnvghtqeenucggtffrrghtthgvrhhn
-    pefgvedvhfefueejgefggfefhfelffeiieduvdehffduheduffekkefhgeffhfefveenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihgtohes
-    fhhluhignhhitgdrnhgvthdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouh
-    htpdhrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheplhhinhhugidqshgvrhhirghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:NforaOFuDtR8uz0ZC3TE8Ngkh4EDl8rm4GGKWrXCohQcLRoB84PBgQ>
-    <xmx:NforaCUgc9NWjI5TlIWWFyVthcHwrFR7CAH3S4dvID_V36ilJVh-WA>
-    <xmx:NforaBOK6K9rjgkL3QI6h6nOJL9yBYFi1w8UhT4mv8gMCCEwIuE36Q>
-    <xmx:NforaJ1tMQj0PFL0WZuH6-n9WcmHsQklrh3Sugp3hezAKEb4lcyiUg>
-    <xmx:NforaAgTP0BEiPeT0TfcE5c1A0KKR790toPpTszwI0sfqrtfSNHocQKG>
-Feedback-ID: i58514971:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 19 May 2025 23:42:45 -0400 (EDT)
-Received: from xanadu (xanadu.lan [192.168.1.120])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 0F7E911B007A;
-	Mon, 19 May 2025 23:42:45 -0400 (EDT)
-Date: Mon, 19 May 2025 23:42:44 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: Jiri Slaby <jirislaby@kernel.org>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] vt: add VT_GETCONSIZECSRPOS to retrieve console
- size and cursor position
-In-Reply-To: <a5463522-1fa8-4ede-aec9-73f8a0aee196@kernel.org>
-Message-ID: <508npq7p-46or-n703-3725-r5649qno371q@syhkavp.arg>
-References: <20250514194710.6709-1-nico@fluxnic.net> <20250514194710.6709-3-nico@fluxnic.net> <8fb2c16f-0e9b-402d-a7f2-4881de8c7bd9@kernel.org> <3o3q5896-8540-nro6-534o-307nn81r7r5r@syhkavp.arg> <a5463522-1fa8-4ede-aec9-73f8a0aee196@kernel.org>
+	s=arc-20240116; t=1747712737; c=relaxed/simple;
+	bh=pSLJ1rZIha38+8POfxQCiqbGsguN4H2Sh1CVTbSw91I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HEI1Wj3kUZrQGkRxKGa1R1D03VVBKrPcKrFb/lCKcO/p28uFcNnlfabm1+qfKpVk9pHjcJ03V+2j7HIJpkjOpmCqusFAZP19CI7/7RgXz8yNuVnrRi8gcdkbDNSUJbuzjhWdZUpeMjXEKiImbwYAMy6yz13q8a8CzwrAOT04mZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qjHiZHeB; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-442f9043f56so27549955e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 20:45:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747712733; x=1748317533; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pSLJ1rZIha38+8POfxQCiqbGsguN4H2Sh1CVTbSw91I=;
+        b=qjHiZHeBr4rHb2gs6rRQd1+ZAbfhoEZN6nqB40QUopNICXGDooz9J+rPkBS4LMoF01
+         jqsr4TVHsWHj08t07uT0XM+XpPSHGjK3pZlh7h8NZ/dsRBOJHFGjPsRUIYno1d6P5yHU
+         SxCTUHYKlWFdMAx27ApmfMDejtmJshXLcW9GOt3RXNHcRnLF42PdlDws3eSAGC3qMFXO
+         /wKfEx2HFJG8N3fxhbT9dhGkWWxNH9fy9B0YryHA8nyq/liQPbuldorFOiTUUmldzNIV
+         YDthFA30ESnEbOjaEDkTUsNpHEhyf/rGmGBcsKvnjMPKNyJ24CC4eI2LxR5kRmhjjDo1
+         2G6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747712733; x=1748317533;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pSLJ1rZIha38+8POfxQCiqbGsguN4H2Sh1CVTbSw91I=;
+        b=LuUV8K4OYUy4u6TXBvYOJtW8oUHT2hwsqDGUApUDGEZA1B6ygSSTTpCu2ldHhBPV+2
+         N5zCJp5iBb9FPum1d+8KavzLAaCy/VuIfrOWoe06WDzxmdxnLt/z/nE8XPrGqYQrM1lE
+         ryZmDEhV05LwEvNWl8wZa+lvhFptCgbsooK7CSkG8mTxAbvuT5tfBvmSoIqpsO14uvAQ
+         wed2IgWJ2Ud2p9LZVRmkyk/e9oGrIpOqMRiTK1/3ly5KRVTKTDrrdpGdCC1v0wwlqOt+
+         r/imAOk/f9HT2ZnCnJ799mXdp8/KOKHdAOybILR3lkDTrcfeCB9cr2dnmFq7XTXwHXCU
+         OwHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUz1Yq3x52+OCCTBPgMyQN/1EuNfxRsgZMCSwOpIos5Rcui1A2QvlbKHTFb1O+YM/x7IwoM5p31iH057KY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCYPfqreSR4ep78Swo9ADumbM301G2PH5L1bbK6Vne9bhlCvOT
+	/QOFKVShSJ/TuBWeaWpXg09g2djuimgjhNfcU86k3B1SIezKQ6EqyFU3XwKNS/7K/sdrvMZ8LG4
+	X/K5mVbZYVvszukKuZF8K/5bgh3kEUAGTStOWUzjM
+X-Gm-Gg: ASbGncu5yntXfCV88HotZTe/7mCJQCOjGJWmuUOWyszgxWYYZrp7lAMbM7efYuktH6g
+	6s1/R8h1r2bNWd5KvMSYdg7yYtfQron/+0gUCyo/z2cAl+9MGSOVneK43dxGJS6my1+SPc2m10G
+	RxmQqysnqxDLbTQnHgJPTdxRDKljbg35Bgm/6zO+PIcHOGNoKIiwvHP5s=
+X-Google-Smtp-Source: AGHT+IH8X/lJ5SeG8ewqqxxZERoQQnwUa1MU2iPSatle46HsAaG76FaPHlefDAeshLx+mBj3URO2i+G7GCmIVG0QtwE=
+X-Received: by 2002:a05:600c:5008:b0:442:f482:c429 with SMTP id
+ 5b1f17b1804b1-442fd622da0mr145614735e9.8.1747712733218; Mon, 19 May 2025
+ 20:45:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250519161712.2609395-1-bqe@google.com> <20250519161712.2609395-6-bqe@google.com>
+ <CAG48ez2WdxXVCzVsAPeQWgso3ZBQS_Xm+9D1FLBx6UHFV1bGHQ@mail.gmail.com>
+ <682bc528.c80a0220.13f632.9ec0@mx.google.com> <aCvTYHMtuWZZizn9@yury>
+In-Reply-To: <aCvTYHMtuWZZizn9@yury>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 19 May 2025 20:45:20 -0700
+X-Gm-Features: AX0GCFu4IaYlIifThAaursLttYT-OL_DniGPILfakLeQhGk7HXmTN9249JTNHlI
+Message-ID: <CAH5fLggwSjBYyDAzsnOSdu-kb6Pq8bLPNcHgE84n9vT0HpQdkQ@mail.gmail.com>
+Subject: Re: [PATCH v8 5/5] rust: add dynamic ID pool abstraction for bitmap
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Jann Horn <jannh@google.com>, Burak Emir <bqe@google.com>, 
+	Kees Cook <kees@kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, 
+	Carlos Llamas <cmllamas@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 16 May 2025, Jiri Slaby wrote:
+On Mon, May 19, 2025 at 5:57=E2=80=AFPM Yury Norov <yury.norov@gmail.com> w=
+rote:
+>
+> + Carlos Llamas
+>
+> On Mon, May 19, 2025 at 04:56:21PM -0700, Boqun Feng wrote:
+> > On Tue, May 20, 2025 at 12:51:07AM +0200, Jann Horn wrote:
+> > > On Mon, May 19, 2025 at 6:20=E2=80=AFPM Burak Emir <bqe@google.com> w=
+rote:
+> > > > This is a port of the Binder data structure introduced in commit
+> > > > 15d9da3f818c ("binder: use bitmap for faster descriptor lookup") to
+> > > > Rust.
+> > >
+> > > Stupid high-level side comment:
+> > >
+> > > That commit looks like it changed a simple linear rbtree scan (which
+> > > is O(n) with slow steps) into a bitmap thing. A more elegant option
+> > > might have been to use an augmented rbtree, reducing the O(n) rbtree
+> > > scan to an O(log n) rbtree lookup, just like how finding a free area
+> >
+> > I think RBTree::cursor_lower_bound() [1] does exactly what you said
+> >
+> > [1]: https://rust.docs.kernel.org/kernel/rbtree/struct.RBTree.html#meth=
+od.cursor_lower_bound
+>
+> Alice mentioned before that in many cases the whole pool of IDs will
+> fit into a single machine word if represented as bitmap. If that holds,
+> bitmaps will win over any other data structure that I can imagine.
+>
+> For very large ID pools, the algorithmic complexity will take over,
+> for sure. On the other hand, the 15d9da3f818ca explicitly mentions
+> that it switches implementation to bitmaps for performance reasons.
+>
+> Anyways, Burak and Alice, before we move forward, can you tell if you
+> ran any experiments with data structures allowing logarithmic lookup,
+> like rb-tree? Can you maybe measure at which point rb-tree lookup will
+> win over find_bit as the size of pool growth?
+>
+> Can you describe how the existing dbitmap is used now? What is the
+> typical size of ID pools? Which operation is the bottleneck? Looking
+> forward, are there any expectations about ID pools size in future?
 
-> On 15. 05. 25, 18:02, Nicolas Pitre wrote:
-> > So I think that such a change, if it is to happen,
-> > should be done for the whole file at once and in a separate patch.
-> 
-> Let me bite the bullet and send something. (Likely on Mon -- now queued up in
-> my queue for build tests).
+Generally, an Android phone will have around 3 processes with a large
+ID pool (thousands of IDs), and essentially all other processes have a
+very small number of IDs (less than 10). The large pools are typically
+the same size as the number of concurrently running processes on the
+device. The bitmap was added to the C driver to deal with perf issues
+that came from doing linear lookups on the rbtree for the large pools
+while holding a spinlock, and it did solve those perf issues.
 
-Do you have that patch ready? I'd be happy to rebase my changes on top 
-of it and adapt them to follow the file's latest code style.
-
-
-Nicolas
+Alice
 
