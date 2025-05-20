@@ -1,102 +1,128 @@
-Return-Path: <linux-kernel+bounces-655717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 216A4ABDAB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:00:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2695ABDAB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 944508C20AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:58:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 778421BA5898
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA04122D7A8;
-	Tue, 20 May 2025 13:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A27243378;
+	Tue, 20 May 2025 14:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XD0hY/0x"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ffPB7CiV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF9D1922ED;
-	Tue, 20 May 2025 13:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A590CEEDE;
+	Tue, 20 May 2025 14:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747749542; cv=none; b=Vx0EBHPm7XaHK6lcBhqhia3KhBnqDphR6JtmBaOebcy//T1tNmQoJdSiLn1JQ9M4ETTKOLpe2O2ne3gULjVcJ21Ko+j26mCAi20QPkdXRuDLJ8U5nydrGe4MxO1upmRiuiKWo7kgu2dP/rARUeziiTfiH1Lm6pvPDWlsTNKSEWE=
+	t=1747749627; cv=none; b=L/92UzOh9JNIaxFKulL4JakVw0CBumwNnbADkowWmrgd0lTadID3T1weIjw7RUTZK+CyDLd/xmMY0dCRNQHsMJMg47xmZajnL5gLiCXMEAx0KzDyq8y4Urs3eH7QlP1pZ3VXSOliDyn/0xMzLWZ1jDgW5XTv+md5n51OfXXqwSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747749542; c=relaxed/simple;
-	bh=uaL3tXekQSCiZAEamoaB96XYGC12T39WNSFkxf278EQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UeV0feXlxPjsEP/Nb/OOwNtiECj5CQmQdhSDbA2o7rw9JvOq7nYtca0buWjbrRBnoAw0T8vu2KpuHcRPbo/9zX4jIKzeNx6TvxMR2vgQbSwU9DhWo4zIQdhkKNZRzw+4gEIvaYfV0BmtgoG6k9zZzSWm4HnfJz5wMJjoUKFE7iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XD0hY/0x; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 694C240E01CF;
-	Tue, 20 May 2025 13:58:57 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id gmyly0Mbye-Y; Tue, 20 May 2025 13:58:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1747749534; bh=Fr+ncuQTrtwHZ5KRy8blcvlPV5o2RWHJd88R0Jibixk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XD0hY/0xSbFlhr4I/QecaGoa8U9qxwI8vAIqiQQ2JhLiTwgKIw1cxx49Q7B/NJzIC
-	 aDBgTDkRPFvrSl0fA0Zh68V8dzCEnZrmUn5kaC5sEui5Tn4e48dMEaucDD83qVY4RU
-	 dAcL2lO2tGUMd32WxRyl2rVywQGz/SPjqcC0EFWQHamsXCu/a2pyeHzMbpEERz/glT
-	 qeyf7o/KFdOyAQF7KomNTlSF+sYggBzQ0H+yT0yUJdm5nuA/XP4SQKbDsTtAg4Gqo6
-	 zFVKEpLxpyAm9jnq77+SqjJzjdaKVs1quT5LJReQ63hbrnYPxeeGFT36558FIwqvBb
-	 DaZVjxTRwBpk0iKnRSzSspJqg3cgraRc6QTptU+jXiRrBcUaJryu31525Oz0KLO3gG
-	 elLYT7czqaMDpk8qdXTXGdxsVdvXH4Sos6fgkjK7BZIPr6R2ymPAY0dtQFaty+dgxS
-	 2DxqZksmngEB2WIqoz5fjRLq6nDYgnQKJcWfO9v1D5Ojr9q4pW57qV/lm5UB2z59ZE
-	 AJ9KB2Glq7ToYVIfbuZ+vf3ks3deem+qGlj3Xo1ERy6Br1sZ8IdXIyuhB3SJTXSvdn
-	 cVYluyfuIuOhotBu2wSbOgJNpHV859xdGGEVgWhXLi+UHrCnTxGuRjtCMe/fDRfbIm
-	 7rawHYdQVFnUegOXipEuts3o=
-Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C9CDE40E0192;
-	Tue, 20 May 2025 13:58:44 +0000 (UTC)
-Date: Tue, 20 May 2025 15:58:36 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>,
-	Dionna Amalie Glaze <dionnaglaze@google.com>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [RFT PATCH v3 05/21] x86/sev: Move GHCB page based HV
- communication out of startup code
-Message-ID: <20250520135836.GLaCyKjLdd12W4YXcn@fat_crate.local>
-References: <20250512190834.332684-23-ardb+git@google.com>
- <20250512190834.332684-28-ardb+git@google.com>
- <20250520113849.GKaCxpyVy-7N6bih-r@fat_crate.local>
- <CAMj1kXEikRCP4TyNWWQh7wKErr9YKAe3cCbPw8XMuXLVkr2S_g@mail.gmail.com>
+	s=arc-20240116; t=1747749627; c=relaxed/simple;
+	bh=CPYEn7+xChTDmwQcUBPa5EjvOPTYgNzqRqlEyGR3lDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=hMqAchcGMcvrOCFCiaIcQwuSo05+RJEy7gJUrtO+dDCUDsnCgTTL0PzWa/mhfg5zUVstsceMSg+odwivMzmrrfEl22bh3/LnuZYg9ki9g4za6l2WaHLyQwK2MKNVrh+TitFEIRXR3QPqSdkHEnT4CenffKPzWLOOz61PdHZg1PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ffPB7CiV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3487EC4CEE9;
+	Tue, 20 May 2025 14:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747749627;
+	bh=CPYEn7+xChTDmwQcUBPa5EjvOPTYgNzqRqlEyGR3lDc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ffPB7CiVwC4HtUFlXvhAIB/covrTJ6Us+dGTk69bT5m/HmOCpD8EgqkI0PkQ/ZLcv
+	 NvepHGKYlC73SlNb941W2kXBNMa5M+xwm5xYZstiELC2NpJiP1CVRXtNCnJ/x4+LKj
+	 KOl8ClYfjbmqCrB/mBnGMMFMCqGOMyc+Dp4348Us2duDz/vItGlTIqpg8OzKh1jERg
+	 IcdBWsu/0OMZCdj3j7jPar/onFomqjy7eMFPvRsArwzLSlaC77I3XtBKFYaEOV7IBz
+	 6VD7Zskq5FutS/JgPbVmdYdYnaePKFEOCqlbKxwZEsHhWuY5gPn4DRKxmtNEE4Np+c
+	 ylk6UrsLTBMBQ==
+Date: Tue, 20 May 2025 09:00:25 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: linux-pci@vger.kernel.org, Jon Pan-Doh <pandoh@google.com>,
+	Karolina Stolarek <karolina.stolarek@oracle.com>,
+	Martin Petersen <martin.petersen@oracle.com>,
+	Ben Fuller <ben.fuller@oracle.com>,
+	Drew Walton <drewwalton@microsoft.com>,
+	Anil Agrawal <anilagrawal@meta.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Sargun Dhillon <sargun@meta.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Kai-Heng Feng <kaihengf@nvidia.com>,
+	Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v6 02/16] PCI/DPC: Log Error Source ID only when valid
+Message-ID: <20250520140025.GA1291490@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXEikRCP4TyNWWQh7wKErr9YKAe3cCbPw8XMuXLVkr2S_g@mail.gmail.com>
+In-Reply-To: <e37c5f7f-3460-4f58-892f-39faf88a8e9c@linux.intel.com>
 
-On Tue, May 20, 2025 at 01:49:35PM +0200, Ard Biesheuvel wrote:
-> OK. In that case, it will be implemented in the startup code then, and
-> exported to the rest of the core kernel via a PIC alias.
+On Mon, May 19, 2025 at 04:15:56PM -0700, Sathyanarayanan Kuppuswamy wrote:
+> On 5/19/25 2:35 PM, Bjorn Helgaas wrote:
+> > From: Bjorn Helgaas <bhelgaas@google.com>
+> > 
+> > DPC Error Source ID is only valid when the DPC Trigger Reason indicates
+> > that DPC was triggered due to reception of an ERR_NONFATAL or ERR_FATAL
+> > Message (PCIe r6.0, sec 7.9.14.5).
+> > 
+> > When DPC was triggered by ERR_NONFATAL (PCI_EXP_DPC_STATUS_TRIGGER_RSN_NFE)
+> > or ERR_FATAL (PCI_EXP_DPC_STATUS_TRIGGER_RSN_FE) from a downstream device,
+> > log the Error Source ID (decoded into domain/bus/device/function).  Don't
+> > print the source otherwise, since it's not valid.
+> > 
+> > For DPC trigger due to reception of ERR_NONFATAL or ERR_FATAL, the dmesg
+> > logging changes:
+> > 
+> >    - pci 0000:00:01.0: DPC: containment event, status:0x000d source:0x0200
+> >    - pci 0000:00:01.0: DPC: ERR_FATAL detected
+> >    + pci 0000:00:01.0: DPC: containment event, status:0x000d, ERR_FATAL received from 0000:02:00.0
+> > 
+> > and when DPC triggered for other reasons, where DPC Error Source ID is
+> > undefined, e.g., unmasked uncorrectable error:
+> > 
+> >    - pci 0000:00:01.0: DPC: containment event, status:0x0009 source:0x0200
+> >    - pci 0000:00:01.0: DPC: unmasked uncorrectable error detected
+> >    + pci 0000:00:01.0: DPC: containment event, status:0x0009: unmasked uncorrectable error detected
+> > 
+> > Previously the "containment event" message was at KERN_INFO and the
+> > "%s detected" message was at KERN_WARNING.  Now the single message is at
+> > KERN_WARNING.
+> 
+> Since we are handling Uncorrectable errors, why not use pci_err?
 
-Right, let's try that for now - we'll see how it all settles with time and
-whether we have to stick it into a internal header eventually.
+Sounds reasonable to me.  I would do it in a separate patch because
+the point of this one is to avoid logging junk when Error Source ID is
+not valid.
 
-Thx.
+> > +		pci_warn(pdev, "containment event, status:%#06x, %s received from %04x:%02x:%02x.%d\n",
+> > +			 status,
+> 
+> I see the BDF extraction and format code in many places in the PCI
+> drivers. May be a common macro will make it more readable.
 
--- 
-Regards/Gruss,
-    Boris.
+Good idea.  Not sure how to implement it, so I put that on my TODO
+list for now.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> > +			 (reason == PCI_EXP_DPC_STATUS_TRIGGER_RSN_FE) ?
+> > +				"ERR_FATAL" : "ERR_NONFATAL",
+> > +			 pci_domain_nr(pdev->bus), PCI_BUS_NUM(source),
+> > +			 PCI_SLOT(source), PCI_FUNC(source));
 
