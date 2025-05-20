@@ -1,118 +1,101 @@
-Return-Path: <linux-kernel+bounces-655588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BABADABD85A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:43:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2277BABD864
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 989E17A54EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:42:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCB157B2701
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870F91A314C;
-	Tue, 20 May 2025 12:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCDC1FFC5D;
+	Tue, 20 May 2025 12:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E3NJTIyN"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PXf7YfxV"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D465833F6
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 12:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411281A314C;
+	Tue, 20 May 2025 12:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747745030; cv=none; b=PNJXlryVm4z7OOox0NTIquCz7ztHxd0c7+jkDZASClZYJUlFA+XD7FGiFcrG1ASK0ddkDSlAqZsNNo/wNR399vWpEEgzqGwRVxjZuU04CMRhCbqRw8HWkVV9+4RhZ7A2Z9diwO50y0RJ7pOT0n3vtHfE61x9YMKyL0/mrHp4yGc=
+	t=1747745110; cv=none; b=RC0hrIY27DBcAM2/xsJop9DDYiVCofBepStLaaPU+Em9o5dxr/asDU/35xGCLq1e9MKssVELeYZgs7HGtE04D9BxJiZkkaBnQVuXrwP28gnbi+f6ZjPmlpRyCv4ldZEK7iAe4FPk73Uw8YpdWTNxMAIsItjgqR1mnPmkgofpheU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747745030; c=relaxed/simple;
-	bh=bQs2TS4LPEr8WtgwzfQ7lEcvHvSlnCr21QVr4ndNmdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q5vI37IwdV77welOt/C7J8uZA86EEvkIkP83T52Amq5+20rnifAv2sn6PLFS/IcVFJSBufYKLQG0xh0Lar3fc9yvOcz1OiakO2JFa9wQxPhiYTX1Br/duoToiShl4RLduzhvxvwaIO34XqRLZonSvXr8lWG8desTz+UpcXBhpGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E3NJTIyN; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 20 May 2025 08:43:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747745025;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DlzUwipsgVlhh6jWRN3VNzJZUIXouswKqdaADWLb+qA=;
-	b=E3NJTIyNU0rWA5+i8XfNlcvvAZTzIHAxLCdO4dPdrLjZUjNU6P6iBfgNaHoYLUnRW56Q47
-	uq5XhqaqeXxgFxwJdwz2bgMu/p8TuTUqo9k3fA4OH8Mn4FI/5Ajb3UcOeLI40pQBJlA+b4
-	zoDdfhYZ+aj+nKKcXOVtLCsi2QwOoUI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 0/6] overlayfs + casefolding
-Message-ID: <gdvg6zswvq4zjzo6vntggoacrgxxh33zmejo72yusp7aqkqzic@kaibexik7lvh>
-References: <20250520051600.1903319-1-kent.overstreet@linux.dev>
- <CAOQ4uxg8p2Kg0BKrU4NSUzLVVLWcW=vLaw4kJkVR1Q-LyRbRXA@mail.gmail.com>
- <osbsqlzkc4zttz4gxa25exm5bhqog3tpyirsezcbcdesaucd7g@4sltqny4ybnz>
- <CAOQ4uxjUC=1MinjDCOfY5t89N3ga6msLmpVXL1p23qdQax6fSg@mail.gmail.com>
+	s=arc-20240116; t=1747745110; c=relaxed/simple;
+	bh=/Bu5JoeggmmYsgYMlQJvoiHTFaiR1GhV3A0BYsQYMaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rMv/w33ocn9fZrsGkBSGPujlvPM6tdR7CZs92lZ2LVzPS4nKADrtVjUqH0kqF8lo0BS8Y/+170vo95fHXgN2l7GC8OPfHb1kwkjrMeuiSxZ0RvjaZ4ZC77tch1488JKTn7IC7S03XXhRIaUikdf3ERMv8jAQEOHK4oyQXJBZiOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PXf7YfxV; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1747745101;
+	bh=mg6aKkZQLTEQjbbwlb5kNbIkwBaVOTUMSjCEbpPqIcs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=PXf7YfxVtdGpsC2nh54hcxK0eKz4a7QgPNBRigRwVE2BH3l3ftsZuv/+do4sL5Uqw
+	 ztWRRlHQ0pJUHxVkq4gFJDXjBtkSART9/Oea7FtMgZA6AY1kSCx/iU4rxM2tSGAiD8
+	 O4kKZG5ZPtkJc+X6tGeNITOB0N1599i1W0MAUE6IrMH0njCEw2ZeK3RBE1cUu2O7Pp
+	 dPpEFAxUGraWo+9627YMLOlA9//ukuFI+sgkK9lKJOe6jwavHdaaZgucHR/UXvGnfS
+	 hjrSOme/KwEwP8mikpM458eBp7/Vmkg62OY+E1mNk+iHsCb4NwMXQjXF2+R38BnVo9
+	 oOscSjSsGTsiA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4b1vQj5kxPz4wcd;
+	Tue, 20 May 2025 22:45:01 +1000 (AEST)
+Date: Tue, 20 May 2025 22:45:00 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Herbert Xu <herbert@gondor.apana.org.au>, Linux Crypto List
+ <linux-crypto@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the crypto tree
+Message-ID: <20250520224500.4d3b7d16@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjUC=1MinjDCOfY5t89N3ga6msLmpVXL1p23qdQax6fSg@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; boundary="Sig_/e70/c5jrQ7WqOkCmO5/3iiu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, May 20, 2025 at 02:40:07PM +0200, Amir Goldstein wrote:
-> On Tue, May 20, 2025 at 2:25 PM Kent Overstreet
-> <kent.overstreet@linux.dev> wrote:
-> >
-> > On Tue, May 20, 2025 at 10:05:14AM +0200, Amir Goldstein wrote:
-> > > On Tue, May 20, 2025 at 7:16 AM Kent Overstreet
-> > > <kent.overstreet@linux.dev> wrote:
-> > > >
-> > > > This series allows overlayfs and casefolding to safely be used on the
-> > > > same filesystem by providing exclusion to ensure that overlayfs never
-> > > > has to deal with casefolded directories.
-> > > >
-> > > > Currently, overlayfs can't be used _at all_ if a filesystem even
-> > > > supports casefolding, which is really nasty for users.
-> > > >
-> > > > Components:
-> > > >
-> > > > - filesystem has to track, for each directory, "does any _descendent_
-> > > >   have casefolding enabled"
-> > > >
-> > > > - new inode flag to pass this to VFS layer
-> > > >
-> > > > - new dcache methods for providing refs for overlayfs, and filesystem
-> > > >   methods for safely clearing this flag
-> > > >
-> > > > - new superblock flag for indicating to overlayfs & dcache "filesystem
-> > > >   supports casefolding, it's safe to use provided new dcache methods are
-> > > >   used"
-> > > >
-> > >
-> > > I don't think that this is really needed.
-> > >
-> > > Too bad you did not ask before going through the trouble of this implementation.
-> > >
-> > > I think it is enough for overlayfs to know the THIS directory has no
-> > > casefolding.
-> >
-> > overlayfs works on trees, not directories...
-> 
-> I know how overlayfs works...
-> 
-> I've explained why I don't think that sanitizing the entire tree is needed
-> for creating overlayfs over a filesystem that may enable casefolding
-> on some of its directories.
+--Sig_/e70/c5jrQ7WqOkCmO5/3iiu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-So, you want to move error checking from mount time, where we _just_
-did a massive API rework so that we can return errors in a way that
-users will actually see them - to open/lookup, where all we have are a
-small fixed set of error codes?
+Hi all,
+
+Commit
+
+  d9f88adbf117 ("Revert "crypto: powerpc/poly1305 - Add SIMD fallback"")
+
+is missing a Signed-off-by from its author and committer.
+
+Reverts are commits as well and so deserve reasonable commit messages
+and Signed-off-by tags.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/e70/c5jrQ7WqOkCmO5/3iiu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgseUwACgkQAVBC80lX
+0GxXMwf/Vjk6VdxnikXK9Yzh0gy75Bq1oLd6B8yLoG7+6g7URHg2N9KEpD0kM/W8
+QS/f4IllXfP2xWmPX+uGjL3FmZQQY6rTHArUj8CsVMPGTx/zuFZNnkSkdsKRndE4
+QLdiNSz0ZNOu2oD613FaORmuKPI93r9zv5XRNNBVaRu3uIEW7IdrjXPRiFUSGUyl
+yfncHm+hXPxHWlkJIfSKETl+ggu8pZ1AwRaihkikvd/QrrEkpPhtuULeqSSYYZ3C
+wPkXUrSSaIyATHcbeXuk085XRKDlFkyK1OEz6Z8ebWcDJssC39E1ml43nCSrElqv
+SzewNAX8oq/S24SUL+UNUEjsnBX0Dg==
+=is5l
+-----END PGP SIGNATURE-----
+
+--Sig_/e70/c5jrQ7WqOkCmO5/3iiu--
 
