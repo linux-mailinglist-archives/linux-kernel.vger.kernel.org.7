@@ -1,131 +1,115 @@
-Return-Path: <linux-kernel+bounces-656356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 226EAABE4C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:34:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8D0ABE4CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C327C17B043
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:34:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9850D1BA5DE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EF328C2D8;
-	Tue, 20 May 2025 20:34:26 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837DF288C3B;
+	Tue, 20 May 2025 20:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hE9MMpv9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D0A2836B9
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 20:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1751A83FB
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 20:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747773266; cv=none; b=G5fvtVwMehgvO0dxOZe2la+XfEPSgplWxjLUcH0zoZekK4P8o4HC5CrnjzseskOnnXCmeMLl9w7aRp+AG0uPP4vizqfsNK0Ubzjmj4XCTF+YCl4TvBNBUTwZ/4tmF2CqYEsPU8V1+0id46gqOx7rHiMocCVANxFivugiy6p4+4I=
+	t=1747773357; cv=none; b=lzRYB2ESjlvUPmytnzqEIkm+61pcg44FScdlbRF6EEyQZzouUwL8h53XgfrsWUuu4dd5JPRjt/LvSrwHGASiOYwV+HgNc8IFAlxzh/8pQMJqoGlWkJ35XJivlxK5IHXu/Aaxr0EXYTJ4Roy3B//RA8x6iyH9pWDaUzUXwvAS1nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747773266; c=relaxed/simple;
-	bh=ZAKqfEk5wNkSxchE2mlMppcXllbhtMFBGsoAzbBLQxA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jqmV85kikY+owCUPJd03sQ5si7qusPNkhqYaRc5yQmG91Bu4pqSSEXRPYPYrbSYEhKXWxKTP6iZDVO3UVBsp92SELIlhyamrJpLD7hpjGOs/Vc5tN8XoCJr9FKVRo8nbO3i3aaRf4EaxBwhd/jop30W1MwoTifAxHM/8gI9TCvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1uHTcK-000000007yU-3VQB;
-	Tue, 20 May 2025 16:31:16 -0400
-Message-ID: <1debe11314379cd767c5f75131e81eed70670b91.camel@surriel.com>
-Subject: Re: [RFC v2 7/9] x86/mm: Introduce Remote Action Request
-From: Rik van Riel <riel@surriel.com>
-To: Nadav Amit <nadav.amit@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open
- list:MEMORY MANAGEMENT"	 <linux-mm@kvack.org>, the arch/x86 maintainers
- <x86@kernel.org>, 	kernel-team@meta.com, Dave Hansen
- <dave.hansen@linux.intel.com>, luto@kernel.org, 	peterz@infradead.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar	 <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"	 <hpa@zytor.com>, Yu-cheng
- Yu <yu-cheng.yu@intel.com>
-Date: Tue, 20 May 2025 16:31:16 -0400
-In-Reply-To: <4009A0C6-CE5C-4197-9F48-3805059C214E@gmail.com>
-References: <20250520010350.1740223-1-riel@surriel.com>
-	 <20250520010350.1740223-8-riel@surriel.com>
-	 <4A879001-E213-4239-9D25-CDA8EC3E2CD9@gmail.com>
-	 <6a3290319031cd68a383e416f53aa7549bac9407.camel@surriel.com>
-	 <4009A0C6-CE5C-4197-9F48-3805059C214E@gmail.com>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1747773357; c=relaxed/simple;
+	bh=hoRNaQROXGMjoQox5Fl7SM7y/j9+wcdpaGUWZxAPYnk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XXIZfOGm2efPo2g+XjfNcPb830Y3YKft8/T3CWx+5/aCECHaoM0MpkNBPuBpmhA/zUizwrRZ7a4nwFeqUz2NRpm4IYdxIADXDFYfSlGyBfYtmeTU/DUfc7jgw+nGXhkyHAZZhgUIon4p3rhaHmDHjzJMTkS6ZluikCmpxlPDVZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hE9MMpv9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747773354;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NO8oGu6BBzAIRzurOJsErK2DO6TkffZnW5F3dfhXfcg=;
+	b=hE9MMpv91BpKyRvQi9T755I9tRcKA46ptDoFG4vLJ1/4S6YZYQHR3JX8yzSxILBk6WJcZ2
+	jUYlNy17WULIb4teUeumi3/VdUh7Ow0sNxmHojVcQ0WCATcPMSemQWpPKtkS7ZbxgMU2AL
+	eCvNx0xVTkosA+sag7AToo1Gr9c7KSk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-594-67tb9bU-Mt2jMzkEZR9Xxg-1; Tue,
+ 20 May 2025 16:35:51 -0400
+X-MC-Unique: 67tb9bU-Mt2jMzkEZR9Xxg-1
+X-Mimecast-MFC-AGG-ID: 67tb9bU-Mt2jMzkEZR9Xxg_1747773349
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B1E1195608A;
+	Tue, 20 May 2025 20:35:49 +0000 (UTC)
+Received: from chopper.redhat.com (unknown [10.22.64.128])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5545C19560AD;
+	Tue, 20 May 2025 20:35:46 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v4 0/4] rust: drm: gem: More (and final) cleanup
+Date: Tue, 20 May 2025 16:35:26 -0400
+Message-ID: <20250520203542.1391548-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, 2025-05-20 at 23:26 +0300, Nadav Amit wrote:
->=20
-> > On 20 May 2025, at 16:00, Rik van Riel <riel@surriel.com> wrote:
-> >=20
-> > > Putting aside the rest of the code, I see you don=E2=80=99t call
-> > > should_flush_tlb().
-> > > I think it is worth mentioning in commit log or comment the
-> > > rationale
-> > > behind
-> > > it (and maybe benchmarks to justify it).
-> > >=20
-> > >=20
-> > The long term plan here is to simply have the originating
-> > CPU included in the cpumask, and have it send a RAR
-> > request to itself.
->=20
-> That=E2=80=99s unrelated. I was referring to considering supporting
-> some sort of lazy TLB to eliminate sending RAR to cores that
-> do not care about it. Is there a cost of RAR to more cores than
-> needed? My guess is that there is one, and maybe in such cases
-> you would want actual IPI and special handling.
+Look mom, no generic soup!
 
-For RAR, I suspect the big cost is waking up
-CPUs in idle states, and waiting for them to
-wake up.
+Anyway - this is just the last of the cleanup stuff I ended up while
+working on cleaning up the gem shmem patch series. It:
 
-One possibility may be to change leave_mm()
-to have an argument to set some flag that
-the RAR code can read to see whether or
-not to send a RAR interrupt to that CPU,
-even if it is in the cpumask.
+* Simplifies the use of generics
+* Adds a type alias for some very long type names
+* Moves stuff around to enable a feature Asahi originally intended to
+  support with these bindings - driver private gem objects.
 
-I don't think we can use the exact same
-should_flush_tlb() logic, because the
-tlb_gen is not updated by a RAR flush,
-and the should_flush_tlb() logic is
-somewhat intertwined with the tlb_gen
-logic.
+Applies on top of nova/nova-next:
+  https://gitlab.freedesktop.org/drm/nova/-/tree/nova-next
 
---=20
-All Rights Reversed.
+Lyude Paul (4):
+  rust: drm: gem: Simplify use of generics
+  rust: drm: gem: Add DriverFile type alias
+  rust: drm: gem: Drop Object::SIZE
+  rust: drm: gem: Support driver-private GEM object types
+
+ drivers/gpu/drm/nova/driver.rs |   4 +-
+ drivers/gpu/drm/nova/gem.rs    |   9 ++-
+ rust/kernel/drm/device.rs      |  17 ++---
+ rust/kernel/drm/driver.rs      |   5 +-
+ rust/kernel/drm/gem/mod.rs     | 110 ++++++++++++++++-----------------
+ 5 files changed, 72 insertions(+), 73 deletions(-)
+
+
+base-commit: 276c53c66e032c8e7cc0da63555f2742eb1afd69
+-- 
+2.49.0
+
 
