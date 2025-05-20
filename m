@@ -1,123 +1,157 @@
-Return-Path: <linux-kernel+bounces-655059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE73CABD022
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:16:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C8AABD02E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9C431B66CED
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 07:16:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37D554A36E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 07:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6096225D208;
-	Tue, 20 May 2025 07:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6043925D537;
+	Tue, 20 May 2025 07:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gvTl/w2w"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VIHV3IEn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22A515E8B;
-	Tue, 20 May 2025 07:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79C92571CA;
+	Tue, 20 May 2025 07:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747725371; cv=none; b=oml/f93yc8rkjKVieE7yL4stEoDgwIgnPTJgqrFjPFJtVLBCiarkGOd62d1lORf1P8WofJfyrRhaBMWfpSh9Zewn9kZyMVHBwuK6G8W8qDU2EcZ5YlaccsA2XCDgZEbUJuZXZV8SVqncIesO/N6+nd/JliKoKgh+OYcUXbS9/xk=
+	t=1747725533; cv=none; b=PTVnPZEflMHE67969jVuj+1EqIi9nDGMy7ds6CifsJIZmwziG1bsS1wmWIuoBg+dKEXUJPur7bq73cs1SWdqXJwH9edCpA4Nv+Dr8NCgBDm0LbchPpjFmq6ZG/6kaB7nhW9QBdgdIovjOBwX1W+CG99hh6UzubY3LK+j1Y+d/8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747725371; c=relaxed/simple;
-	bh=64nSeznQ/80kI+TqqvrHQheS4AVHuJSHiUdaas+H0vQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I96OM57U7npA2eqOFahsRaILiSCSHfnAQm5yFhqmGolauqSTN5jr7DCoCLb9Vv4IFagNXO9d3Ja0IYS9CST/nwzJiaLsTYsptu+5AyHlJBoQfRuoKyPYRPH3rXVNvmJgyoCWP/HGN1eQWUj8FJQbzrU2pCcj3a079weyZ1x8xmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gvTl/w2w; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-acbb85ce788so1073315566b.3;
-        Tue, 20 May 2025 00:16:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747725368; x=1748330168; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dDIRhWdKVMpUu59ujm96cXSr76HpSQ4ZrAeN1Auu11g=;
-        b=gvTl/w2wdlDybYmfvU13lSRNZPeyAb4DEtZLlfvC5/TX6IH33Z8lwpVEE1XqmLV+wC
-         6aRxgYl9/YRbGCBnrmnG7MOCYORpNO38iPlYQkmwaWIGqEyMKYSw5Fef+0A6/ZE309SD
-         iC1K3s5IA7T1+k58nulHjJJ1QYhKwIknEFwQTMMY6mDELYrgicR0P9RxnlJ0ncsEqt2V
-         VPwvK7Kzcq1QBYN3OWngaYD/XE1WMjHvJ9TYw03WIaIfSCAXZl3Xlr8zdGri/Kg+tAId
-         XcFiWj6tRALV6sBMbKAue3hF2DkbMRXKDXi2jf9zrGVDtKMgiti3QQHz2sknCS5o8iy5
-         /wVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747725368; x=1748330168;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dDIRhWdKVMpUu59ujm96cXSr76HpSQ4ZrAeN1Auu11g=;
-        b=XtFA/wau7J8IpmeVBpi6LwZGLbAN1FKFGJrKihQFpAKuKXCajzZa19cG0nmQy2dRdO
-         AbhohQX1uHlCQfTgiumhXyONfYz9uBDmvoe4d7maUnAnVfRfXzF3/Sw4QUTK79+JWOdU
-         /Mzlj3qKPh4aZ/uEihPc0qU9eLGgfxquaZi6EjP+9U/wacHImZrDsVd2DnOUxfp34i5x
-         b94g61k4v0YQqny8WCVuKFVMG52xxBlcKTTkOFaup/zJ+G6b39FqY6AkA0D3rMc5Omyf
-         auiULMDU2PFuFBXIuoFa7bGIP89LH8XIFnAdNgzQhaV4FS8aAWTE45ClolCJwT1BxVc6
-         xtRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxYdfQX937rzd2MSiNrNia8Nk56CHdxjJo78KanXcNXIW+py7HB0dk8/OJ8DZvrOPk/8SoCCtdTtoZldYo@vger.kernel.org, AJvYcCWyuKUzHeHlbWp+sx4cmy6k1l7vpzOjbohx0HkcFFlwmWXXApm58aZ5KDrMW26wqP1w8SUoTCGfLyiMmg==@vger.kernel.org, AJvYcCXosmAn/VMG4GtjiUmBH759mdzNiLO7HelDcGkZu3k2x1Zk4+udCPIX/owyZ+zIaODLr11xVicW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxats+M+64qKMfS/IqrE9JjdPITo/ZkwmzKJezQ2OE0p8Pm+7y3
-	JuiBME/MyDeMqTvR0SwbPgbfOYS3e++vw5P8YRvYk+Hsq0CsqWXBV+YfjPGspA/x
-X-Gm-Gg: ASbGncsPCC6lvjpB8YyR6TYSHr6Q6O0+tviSVdKIb6dl7s6/1b7Ad5N/yEq3JkXvYEP
-	e1BkZPvFlF2FW49rTEMBz/1bxVSJ3MP+a+WoH5cDUdhttO/wsOO0mRsueRPhiTHAzkSwqfy635c
-	+NvqphNrG0Pheyp5o/zaAW5eMn6HRSNyYDIitXS3sa6izso/YRVzXYIdzZBeQDxQJeN7V/eFzcP
-	O1zbTCfvtdRsD9CaBVqjzlKRXMj5KTpXXQwJQWTL5hoaIXspcQD8WIo87qe092JxEPJfGvBxC7X
-	R1SZu3wKigNM7KURnYAw/qeYTSvLEOLHo2/jCM0R8GkJJoiErwUv6wmZ6X7a7fxh3qdLHDv69FD
-	wLKE2vNHk
-X-Google-Smtp-Source: AGHT+IHVOlAW6lgxwfSXJ2mOzRf4cxrSKL/D38SFAUPj/n/z1oZNclDU9+lGnv4dlctwse3NYQjUmA==
-X-Received: by 2002:a17:907:1b0f:b0:ad5:5293:f236 with SMTP id a640c23a62f3a-ad55293f282mr1046955066b.3.1747725368115;
-        Tue, 20 May 2025 00:16:08 -0700 (PDT)
-Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d4c9e62sm685303466b.155.2025.05.20.00.16.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 00:16:06 -0700 (PDT)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id 7942BBE2DE0; Tue, 20 May 2025 09:16:05 +0200 (CEST)
-Date: Tue, 20 May 2025 09:16:05 +0200
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Christian Hesse <list@eworm.de>
-Cc: Roland Clobus <rclobus@rclobus.nl>, Lizhi Xu <lizhi.xu@windriver.com>,
-	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	1106070@bugs.debian.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [6.12.y regression] loosetup: failed to set up loop device:
- Invalid argument after 184b147b9f7f ("loop: Add sanity check for
- read/write_iter")
-Message-ID: <aCwsNSEoxfs4DOvi@eldamar.lan>
-References: <3a333f27-6810-4313-8910-485df652e897@rclobus.nl>
- <aCwZy6leWNvr7EMd@eldamar.lan>
- <20250520083438.295e415a@leda.eworm.net>
+	s=arc-20240116; t=1747725533; c=relaxed/simple;
+	bh=0dgpHM6X5ylXIfc/EcEGibieH0olYU53fdjUR+UZzG0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BKzHGZG1mxXcZ8Uo8/63uaLrPlufSkDWxUElaHK3lfykZ7NcA+emQxVuoLsBOPGxOxX7MmMRs6nnPrKlpIG7Iqrj1AlmrxIFwyUzwi/71LpplTsRUSWMPH1MjwlYOeBLZE+aDbEIxeB/Me0MFiNDtBdyKrMbkgL23q8+0A/yzws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VIHV3IEn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 742FAC4CEE9;
+	Tue, 20 May 2025 07:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747725532;
+	bh=0dgpHM6X5ylXIfc/EcEGibieH0olYU53fdjUR+UZzG0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VIHV3IEnVoIZr59y520JyK1rDWYem9zcOuYv+W7yr2vZpklL0JQkgvherUZwr6v7n
+	 nHX1oOIpkaJg0eoTOKvrl0PRY486zrZjrtFAV430NT5ktpAjmqAAVVteq7DyZr8iq+
+	 dsLSbYA39nxk18DwCaiPAZUqmPbK2hTJPa7eE5Ia3dkcdB86Alg93Ck79evVkyPgMV
+	 zxCCId2RDQ0vz60xAe/D/Wcabw19XCk7w5dV5YUjbbVZ8BRBiC/fZsFGd9mZV34NO+
+	 f5TYhWfRiRz3MMPziD5jg+RyZGFc28jmY7Z63QxECAN8q5M0jL2wPu4Wk7Aham9TFE
+	 iLzrccnjGcicg==
+Message-ID: <8c6d37bb-8e07-4e44-bef1-f4376b54b853@kernel.org>
+Date: Tue, 20 May 2025 09:18:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250520083438.295e415a@leda.eworm.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 1/3] dt-bindings: mmc: qcom: Document level shifter
+ flag for SD card
+To: Sarthak Garg <quic_sartgarg@quicinc.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Bhupesh Sharma <bhupesh.sharma@linaro.org>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, quic_cang@quicinc.com,
+ quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
+ quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
+ quic_nitirawa@quicinc.com, quic_sachgupt@quicinc.com,
+ quic_bhaskarv@quicinc.com, quic_narepall@quicinc.com, kernel@quicinc.com
+References: <20241107080505.29244-1-quic_sartgarg@quicinc.com>
+ <20241107080505.29244-2-quic_sartgarg@quicinc.com>
+ <qffggh2ld2cw7d3eqwaerzicerhvdqojwsasherx7dgoda42b7@bigsjxr6vtao>
+ <ba49151a-e32d-438d-8a2a-50840368a87c@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <ba49151a-e32d-438d-8a2a-50840368a87c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-H Christian,
-
-On Tue, May 20, 2025 at 08:34:38AM +0200, Christian Hesse wrote:
-> Salvatore Bonaccorso <carnil@debian.org> on Tue, 2025/05/20 07:57:
-> > In Debian Roland Clobus reported a regression with setting up loop
-> > devices from a backing squashfs file lying on read-only mounted target
-> > directory from a iso.
-> > 
-> > The original report is at:
-> > https://bugs.debian.org/1106070
+On 20/05/2025 08:58, Sarthak Garg wrote:
 > 
-> We are suffering the same for Arch Linux. Already reported here:
 > 
-> https://lore.kernel.org/all/20250519175640.2fcac001@leda.eworm.net/
+> On 11/7/2024 3:29 PM, Krzysztof Kozlowski wrote:
+>> On Thu, Nov 07, 2024 at 01:35:03PM +0530, Sarthak Garg wrote:
+>>> Introduce a flag to indicate if the Qualcomm platform has a level
+>>> shifter for SD cards. With level shifter addition some extra delay is
+>>> seen on RX data path leading to CRC errors. To compensate these delays
+>>> and avoid CRC errors below things needs to be done:
+>>>
+>>> 1) Enable tuning for SDR50 mode
+>>> 2) Limit HS mode frequency to 37.5MHz from 50MHz
+>>>
+>>> Add this flag for all targets with a level shifter to handle these
+>>> issues for SD card.
+>>>
+>>> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+>>> ---
+>>>   Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 3 +++
+>>>   1 file changed, 3 insertions(+)
+>>>
+>>
+>> This wasn't tested, so just short review - platform means SoC usually,
+>> so this looks SoC specific, thus implied by compatible.
+>>  > Best regards,
+>> Krzysztof
+>>
+> 
+> Sure will redesign this logic and use compatible in patch V2.
 
-Sorry missed that one! Ack, so let's continue in that thread (worth
-looping in the regressions list though?)
+Hi, I hope you are well and that was just some mishap, but I cannot help
+but notice that you received review within two hours after posting
+patch, but now you responded to my review after 6 months.
 
-Regards,
-Salvatore
+Sometimes I really consider reviewing at the end of 2 weeks - the usual
+maximum time frame.
+
+Best regards,
+Krzysztof
 
