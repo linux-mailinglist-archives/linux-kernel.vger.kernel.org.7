@@ -1,175 +1,197 @@
-Return-Path: <linux-kernel+bounces-655130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB11ABD145
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:00:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFD74ABD14A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 514DD8A5A59
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:00:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B2857A4749
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B78254878;
-	Tue, 20 May 2025 08:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C78425D8F7;
+	Tue, 20 May 2025 08:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="aKbU4aXS"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DCD4B1E72
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 08:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d5rdZPjk"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6E321A43C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 08:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747728055; cv=none; b=cvVgeVCGYwzd1CaKCoZrbkH4SKhVj14IPtWzWGacCKTsjd12fiGN79rABf8YVmq8m0v4GQ7rSm0lygr9MfjxwDm5cbSvp14q3/VraurqOHWW5usgeJt9EVSI7qo7YboNqTGoPHH26QtzcxK53VTQRczLCLA6JoO2S9Jd3Le/OtI=
+	t=1747728157; cv=none; b=hbpkBj1sr93VEV4Jb75aQKypP6+MMdsKYXvYfH8xyRSnii51vlejiVJzkfI0I92ZtC31mKdygUOcveUF9EzBqN38/bNJfAylOXpPWCpjJ1z9LSKwm9c+2um/gCPAIae6/dXKsuSVvBSB9yCHRBAzPhzDkFS8pT+p8r97NyKdTYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747728055; c=relaxed/simple;
-	bh=gamE24NGoQejusYkup+I5Ji1a0mX4DUH/gytuYEL4Kk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Hiva8hVUXrs0ogXcrF/ySJ2sOX4b6MePHG5mUPDmzRzMHkJZoYQ0yzZVUvoZ9/7KYLaB9mmOyAyZkXGg1efXaHah7YPF+D8kqFWYTV5nqWB2Rop37dFqSgmqNYRrmsLIZhESfLpJukAc6Tv7Z4/vHCP1xqQCt1WxjnVUmwdBfu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=aKbU4aXS; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=t9
-	1xLNzhSyKaUPe8nvM+uV+kqDwLnPCNYZZUO0q5FJ4=; b=aKbU4aXSlrUWK2LLEe
-	VA+aulr/2SddWVis/G6dZSThJ53NZ61i9A/5utGy9gl7P7T13WEJKbx/XD92dAfE
-	tMpVHbEQMV0p7zd7bu+cxVG1QymPG3AFgS7v5cPY39Tyb4Co+V0fXgeoa7TUEFZv
-	liIUYq7u+zW8hC9+Ipxd1LWRo=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wAn5Tt7NixoSfCGCg--.55132S2;
-	Tue, 20 May 2025 15:59:57 +0800 (CST)
-From: oushixiong1025@163.com
-To: Xinliang Liu <xinliang.liu@linaro.org>
-Cc: Tian Tao <tiantao6@hisilicon.com>,
-	Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Yongqin Liu <yongqin.liu@linaro.org>,
-	John Stultz <jstultz@google.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Baihan Li <libaihan@huawei.com>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Yongbang Shi <shiyongbang@huawei.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Shixiong Ou <oushixiong@kylinos.cn>
-Subject: [PATCH] drm/hisilicon: Fix a NULL pointer access when hibmc_load failed
-Date: Tue, 20 May 2025 15:59:48 +0800
-Message-Id: <20250520075948.399272-1-oushixiong1025@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1747728157; c=relaxed/simple;
+	bh=v0KA+Ia6AKLTU6vaxhYFy9TsgIMQZTdhfRc8XyOtvG0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jL7xOvRByUbUmVX2pYPoPyaT8c/K0xcM3AXcs3iuJEIK8t8JXu1f1fhswyYFmbyQ4dRc67xQAaPgjB5pjsl09dK51of2s05doc+BxC8wsJea9VS9X7C9UtOmtE/EXLdWFs/pzsU4Zt0g1mZ0cjR2W/iDaCx15Uji2/Yauo5smb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d5rdZPjk; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5fff0cf071aso1231113a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 01:02:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747728154; x=1748332954; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=c0WaLeySgYJ3O4eOM3NclXyBzpxZhxIahw3cOzvf6Vc=;
+        b=d5rdZPjkXRWE2vyO887xUiScc7JGPf4qvpfra/QKMtF2+C3v80gV3P6E29TsjX8grn
+         7NWNXp810IjgIVHDzy8adst8cqF2qxgrGKzJu9O3c0zIrf4olQtWXuDVAsRFgT8MbtKa
+         JKDm5qtjOJj0tKyZlUf9QvgTjXWNsmu5mC2GxMQfwqWavXWAhoEoF+Q2ZE5zg7do2nOl
+         8mS5kR5f16y0BPVZavTT4pn1szXJqh0d9PX0cl0JwmMSL9+Er90awk67Z3zxkbZSqj9q
+         BIuJFHa4yl4hiLZiK9lt++oFsXqE75C4bI8bT5Vs5z8np0ik4AWYgrt+Pxg+NKbTXgaf
+         l/Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747728154; x=1748332954;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c0WaLeySgYJ3O4eOM3NclXyBzpxZhxIahw3cOzvf6Vc=;
+        b=HICbo37otdZlZkDHoSvC5r4LviVSGd9QeF+RiVwk+zTens0/t1ugWIs1AUf5Ukew0n
+         HKvLJJY6ocfjuv9gOY5lo4CviHT+EsZhQO3Q0Qfx4iL3p2umXRqghoxq7bmQW/9mevJq
+         ASbSfIMc/GIoUeYhLdwLV+2HiSH5oALpLQESIXr259fX6O2cPkeO/7f25d2HZyHILy8a
+         Do6vYFkgNWc3RNU2lgjKHigAFfR964BXDWAtW6unLz8oGsMKCo95zbj4YCNjikU4CW6y
+         fxp2wK/XmT66TCokh7lIqWlBS6Ejg0iXbcjtqAbSCWzCW0Q956rTKIbp+aZisp1slQjM
+         DMcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXINme3uhMSNOgfKMYp1WWAVGrUy2av+WGOfpAWAXIJUF8lM/3zsafaqiPzW79L/2eitjgAr+8tPKmqxL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmasHvC780ennrL6GDfqQfWwNCIpxixjdD8kQTRzbqYmFjyZBi
+	r8c18fCekyMhHfGjbuHSon3FX486Z4roYCARp8PcdAdyd9gymKzvm/5jl70bVdxK8YI=
+X-Gm-Gg: ASbGncuijYjqpvj7GRHl6cPmXcgOZ2az1pSyaBWpe/gYJ/qIA544y31bJEq1si48hA2
+	dBNI6O4/HvmAXeZ9aUwqfjEjcOxoOqDihwu/RPH4/EFhPvqoaCdDMD72P+WOAKABqfvVtopHqkb
+	tXOErmD9DxdTkjDe+44aRdLnDZL0QkUqJu6i1qpBxVMnl+fbrRXw12OO92M4bMYFkRYBrE2oKBw
+	GpAG6ewmLlKI9UFQx3MyjVPEbMRY3XUIHOjnTG/H2M5Wz/LXS47wIVF08iSalbi9/IhNQnG7/bF
+	t1IqpShsstAMY5zamB9DWGbd1G0YqnB0UhnOvYFGw9JyRQsKWO4AXLERaoHI6zBcUajuGWEXRHk
+	UruN98g==
+X-Google-Smtp-Source: AGHT+IGYkquSWyvlBeDuSbtHciwIcdkDkgm9sqwNT3vXUqO/eRvOX01n68zYbfiscV6GoL35v0UdXg==
+X-Received: by 2002:a17:907:2ce7:b0:ad5:28f5:fe2b with SMTP id a640c23a62f3a-ad52d4ce281mr455191366b.8.1747728154224;
+        Tue, 20 May 2025 01:02:34 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.223.125])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d047ce3sm689389966b.21.2025.05.20.01.02.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 May 2025 01:02:33 -0700 (PDT)
+Message-ID: <190100e7-8a59-4cf3-8434-bcb6292cacb2@linaro.org>
+Date: Tue, 20 May 2025 10:02:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAn5Tt7NixoSfCGCg--.55132S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGF1UuF45Kr1kCr17Xr1kKrg_yoW5Zw15pF
-	47XFWakr4vq393JF45JrW09an8Ca1ava429Fn2y3s3ur4qkr1DXr18trW8GF1rJrWkJas5
-	ZF4xGw4UZr1DZw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jSlksUUUUU=
-X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXBtTD2gsLiHUmAAAsc
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] media: qcom: camss: vfe: Stop spamming logs with
+ version
+To: Johan Hovold <johan@kernel.org>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250429180828.950219-4-krzysztof.kozlowski@linaro.org>
+ <aBHQejn_ksLyyUm1@hovoldconsulting.com>
+ <3e34ce09-1207-4dba-bff8-38c01cad9b78@linaro.org>
+ <4d942a6c-cbff-41ac-af8b-12a1ff5181aa@linaro.org>
+ <883eb54a-fcaf-443c-a4d7-e1278fd43f5a@linaro.org>
+ <ea9f570c-b135-4a98-91ea-ceeb2f48a0e5@linaro.org>
+ <aCw09Vci12txhYj-@hovoldconsulting.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <aCw09Vci12txhYj-@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Shixiong Ou <oushixiong@kylinos.cn>
+On 20/05/2025 09:53, Johan Hovold wrote:
+> On Tue, May 20, 2025 at 08:06:22AM +0200, Krzysztof Kozlowski wrote:
+>> On 30/04/2025 10:33, Krzysztof Kozlowski wrote:
+>>> On 30/04/2025 10:30, Bryan O'Donoghue wrote:
+>>>> On 30/04/2025 09:19, Krzysztof Kozlowski wrote:
+>>>>> If anyone wants to know it and cannot deduce from compatible, then add
+>>>>> debugfs interface.
+>>>>
+>>>> dev_dbg(); isn't too offensive really IMO but if it really bothers you 
+>>>> switching to debugfs would be fine.
+>>>
+>>> Yes, please. Dmesg should be only contain issues or some useful
+>>> debugging data. Probe success is not useful. It duplicates sysfs and
+>>> tracing. Version of hardware - well, I am sure it duplicates the compatible.
+>>
+>> To recall: kernel coding style is also clear here:
+>> "When drivers are working properly they are quiet,"
+> 
+> That's clear and well known (or should be).
+> 
+>> and kernel debugging guide as well:
+>> "In almost all cases the debug statements shouldn't be upstreamed, as a
+>> working driver is supposed to be silent."
+> 
+> But this is a very recent addition and questionable when read in
+> isolation since debug statements are not printed by default. The
+> preceding sentences do qualify this:
+> 
+> 	Permanent debug statements have to be useful for a developer to
 
-[WHY]
-If Calling hibmc_mm_init() failed in hibmc_load(), the hibmc_unload()
-will access a NULL pointer, as it don't call ww_mutex_init() to
-initialize mode_config.connection_mutex but try to lock it when
-calling drm_atomic_helper_shutdown().
+Keyword here: useful ------------------------^^^^^^^^^^
 
-[   50.939211][  0] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000018
-	......
-[   51.149882][  0] Call trace:
-[   51.152750][  0]  ww_mutex_lock+0xf0/0x1e0
-[   51.156829][  0]  drm_modeset_lock+0x184/0x2c0
-[   51.161254][  0]  drm_modeset_lock_all_ctx+0x98/0x188
-[   51.166284][  0]  drm_atomic_helper_shutdown+0xa4/0x128
-[   51.171487][  0]  hibmc_unload+0x50/0x2f0
-[   51.175479][  0]  hibmc_load+0x5d8/0x888
-[   51.179386][  0]  drm_dev_register+0x280/0x558
-[   51.183811][  0]  drm_get_pci_dev+0x140/0x3c8
-[   51.188150][  0]  hibmc_pci_probe+0x148/0x190
-[   51.192489][  0]  local_pci_probe+0xc4/0x180
-[   51.196742][  0]  pci_device_probe+0x328/0x530
-[   51.201167][  0]  really_probe+0x498/0x9a0
-[   51.205248][  0]  driver_probe_device+0x224/0x308
-[   51.209932][  0]  device_driver_attach+0xec/0x128
-[   51.214616][  0]  __driver_attach+0x144/0x280
-[   51.218955][  0]  bus_for_each_dev+0x120/0x1a0
-[   51.223380][  0]  driver_attach+0x48/0x60
-[   51.227372][  0]  bus_add_driver+0x328/0x578
-[   51.231625][  0]  driver_register+0x148/0x398
-[   51.235965][  0]  __pci_register_driver+0x15c/0x1c8
-[   51.240823][  0]  hibmc_init+0x2c/0x34
-[   51.244557][  0]  do_one_initcall+0xc8/0x4a8
-[   51.248810][  0]  kernel_init_freeable+0x678/0x75c
-[   51.253582][  0]  kernel_init+0x18/0x128
-[   51.257489][  0]  ret_from_fork+0x10/0x18
+> 	troubleshoot driver misbehavior. Judging that is a bit more of
+> 	an art than a science...
+> 
+>> So I really do not get why this driver deserved exception. Nevertheless
+>> I think we agreed that these logs can go away, thus I just sent a v2
+>> with a bit extended commit msg.
+> 
+> Spamming the logs as the driver currently does is clearly broken and
+> should be fixed. Keeping a hw version dev_dbg() is generally perfectly
+> fine, though.
+My main argument, expressed in the commit msg to which no one objected,
+is that this debug is 100% useless: deducible from the compatible,
+always known upfront, always the same.
 
-[HOW]
-Do not call drm_atomic_helper_shutdown() if drmm_mode_config_init() failed.
-
-Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
----
- drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-index 768b97f9e74a..8edc83db2afb 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-@@ -323,29 +323,29 @@ static int hibmc_load(struct drm_device *dev)
- 
- 	ret = hibmc_hw_init(priv);
- 	if (ret)
--		goto err;
-+		goto err_return;
- 
- 	ret = drmm_vram_helper_init(dev, pci_resource_start(pdev, 0),
- 				    pci_resource_len(pdev, 0));
- 	if (ret) {
- 		drm_err(dev, "Error initializing VRAM MM; %d\n", ret);
--		goto err;
-+		goto err_return;
- 	}
- 
- 	ret = hibmc_kms_init(priv);
- 	if (ret)
--		goto err;
-+		goto err_return;
- 
- 	ret = drm_vblank_init(dev, dev->mode_config.num_crtc);
- 	if (ret) {
- 		drm_err(dev, "failed to initialize vblank: %d\n", ret);
--		goto err;
-+		goto err_unload;
- 	}
- 
- 	ret = hibmc_msi_init(dev);
- 	if (ret) {
- 		drm_err(dev, "hibmc msi init failed, ret:%d\n", ret);
--		goto err;
-+		goto err_unload;
- 	}
- 
- 	/* reset all the states of crtc/plane/encoder/connector */
-@@ -353,8 +353,9 @@ static int hibmc_load(struct drm_device *dev)
- 
- 	return 0;
- 
--err:
-+err_unload:
- 	hibmc_unload(dev);
-+err_return:
- 	drm_err(dev, "failed to initialize drm driver: %d\n", ret);
- 	return ret;
- }
--- 
-2.17.1
-
+Best regards,
+Krzysztof
 
