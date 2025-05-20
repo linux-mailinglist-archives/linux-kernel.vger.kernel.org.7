@@ -1,90 +1,112 @@
-Return-Path: <linux-kernel+bounces-656170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06A13ABE27E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:21:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 479F9ABE289
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D8E91BC167F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:21:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EF424C2447
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94418270570;
-	Tue, 20 May 2025 18:18:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F642280A55;
+	Tue, 20 May 2025 18:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bETjMq0N"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D85280A33
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 18:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3FE280008
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 18:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747765086; cv=none; b=Lqj3EBGwJxUbcIdU6K6qAOdYUan2q5VjEoNARhevTf3U34pTcei60LNNWldkMrhHKPcJ0zgM++4uT5qchQ2yCxD24SipajrqprlvOJruW9FZhT4NNAr8+fZfkCVjM/ZhvVmqVmxqmHZzZkoUASINlcJbqNc58jTbDuVbL2BO7xM=
+	t=1747765328; cv=none; b=SPj7B+XcaUGcMGIn2g3hSz6+5c7VUarOjrX4/BZHu9vfs+8uhkWKZ79pSYDZSqGRTRJPqjHk8+JCYX+AXK7JJf6iP6P08WO+UZF6nm7qKdZ8qcb+rKm1vhm66E+9gJ+Eoxm4ZhB+7Vj/5ulxBT7paBMenh4qqZ6Iwnjrsgk0Xds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747765086; c=relaxed/simple;
-	bh=VwZEuoMNwZrEk53NaHcuMXlypeiTHQxbfLfDbcCg2is=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QF+DXkHdXZFOVffDj7ZhOtuOhLitaNTCFdzNpW0TdudR5DJsRalRENSxq9KSkpNFC2CkvW5z+quW712ixHVeZDiO4SjCKjxb16ErwR5hX/NzSldsN3LO9pzGOG9qAG2kEQT5AwJT1Fj4j+ClImHwylX5hn0VnRM2+aDYaNkG88Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-861d6e340e2so514106239f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 11:18:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747765084; x=1748369884;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kz3fMhLhUr4UywHSrROR0nSmPNcWcTC/GVXI5xlm1mk=;
-        b=CwIktO+vKtg7ew4qBZGji09cbitiNfu1Ssk0qtlNEvwACaDKjVkZZoFslUNBxmMoPp
-         ayD4H/StGXZksRzEy1g1CLJtxRLXwWmUe4IZWJHAJ1rIpuGFAM9TetRR1oR29wLxHuWS
-         ldfeMWlVyBCnjuTLz9F/tJhvx+aNaSh7syG588HPQmDMlrzgb5iW4hrTcWtRprodrwqu
-         8Lkwg6flOGTqDlkBw/oITPdVhc1nhRoVcjMlwF05hc7xB+nUoogLRKxpIykWKPnhkTvb
-         zEFzIeEt2THW87lywNqCQ2pbQQas4H67I5oUhRs2O0fjA2a8HFEEryI76jBw0XbsaXJf
-         0zpg==
-X-Forwarded-Encrypted: i=1; AJvYcCW18OiZIBHc+xcKwoOMkRqdXG8QRMo6Z4gVR19CW8Pig4CxBb0PjZ4JqP1mwJ6yXlK9a6Ipoe4DOeSVcdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG9tmtCSjEkoP7CWgwj1rP9UuiZNgkzkkSXOG82c0Qt6pIGMzq
-	OrdmrgIzhPUXS6Pc73hKvrX7BirnfAvq+YPHCK8ahRhwyKY/sK5wCh3Y4HzwpFS9ymB0Ypk6y9A
-	n4G14nrB1BsfflsOx+t8Whs8ok/3B866N15EPy3s/dTi7hOfKJukFvsrwiSA=
-X-Google-Smtp-Source: AGHT+IGA43rDwi+YTetDFxJCxhATL/2pM2yY6PsaSQzQ1maeiT3JzsgHswocrz31lttVRNWZFnxo1qtnjpL7ZazuuEQ2a0EPHWLo
+	s=arc-20240116; t=1747765328; c=relaxed/simple;
+	bh=m4sHC2ioZAb64/cUCBsTQaCvS5uxQBAT9kNBqe/0RBQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HgZ017OTPlXCJDunX/9VrReygo5cK0CMYxfhBmpB1VKrVMzYA6DKasJ0w5jrIlWhX9FHRPtf+zwn8lQqYhTvYY/MQZ56/RG3m1qVXCmNVij1kWNvIHXPGCOByxP+VCER+/0wGfPSJRbaAXhexlDKh2+6fIsR27Gyi8tis9M0qmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bETjMq0N; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747765325;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XroMdzJgXjsY6oKfDQ1D1PKCN2nDrCD9DIs6odFzCFw=;
+	b=bETjMq0N7XFskx87TFAgy0OnJR/64QiELfApcQMbwYSh1Mh0zf16LNXxEfQ/aRtOpQxeQG
+	VDWqoZ9DvRl585EIca58vxTAaIBNZNR8YLZWLnJczc7JQE7zeBQiF6e02D1t552FRlYI+o
+	eaoma4dmJDcUV6JcQfCc+nnqmXFnqE0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-304-WhckBVWBN12h4cBgMZiCfg-1; Tue,
+ 20 May 2025 14:21:59 -0400
+X-MC-Unique: WhckBVWBN12h4cBgMZiCfg-1
+X-Mimecast-MFC-AGG-ID: WhckBVWBN12h4cBgMZiCfg_1747765317
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8711D180045B;
+	Tue, 20 May 2025 18:21:57 +0000 (UTC)
+Received: from chopper.redhat.com (unknown [10.22.88.70])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 18880180045B;
+	Tue, 20 May 2025 18:21:53 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v3 0/4] rust: drm: gem: More (and final) cleanup
+Date: Tue, 20 May 2025 14:19:11 -0400
+Message-ID: <20250520182144.1313262-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:da43:0:b0:86a:2523:a9fc with SMTP id
- ca18e2360f4ac-86a2523ab62mr1508655739f.0.1747765083742; Tue, 20 May 2025
- 11:18:03 -0700 (PDT)
-Date: Tue, 20 May 2025 11:18:03 -0700
-In-Reply-To: <aCy60X1I2XaRyo18@mini-arch>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <682cc75b.050a0220.ade60.09c1.GAE@google.com>
-Subject: Re: [syzbot] [net?] BUG: sleeping function called from invalid
- context in team_change_rx_flags
-From: syzbot <syzbot+b191b5ccad8d7a986286@syzkaller.appspotmail.com>
-To: andrew@lunn.ch, davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jiri@resnulli.us, kuba@kernel.org, kuniyu@amazon.com, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	stfomichev@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Hello,
+Look mom, no generic soup!
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Anyway - this is just the last of the cleanup stuff I ended up while
+working on cleaning up the gem shmem patch series. It simplifies the use
+of generics and also adds a type alias for some very long types
+currently in use. Also, drop one unused constant I noticed.
 
-Reported-by: syzbot+b191b5ccad8d7a986286@syzkaller.appspotmail.com
-Tested-by: syzbot+b191b5ccad8d7a986286@syzkaller.appspotmail.com
+Applies on top of nova/nova-next:
+  https://gitlab.freedesktop.org/drm/nova/-/tree/nova-next
 
-Tested on:
+Lyude Paul (4):
+  rust: drm: gem: Simplify use of generics
+  rust: drm: gem: Add DriverFile type alias
+  rust: drm: gem: Drop Object::SIZE
+  rust: drm: Use gem::BaseDriverObject in driver::Driver
 
-commit:         9e89db3d Merge tag 'linux-can-fixes-for-6.15-20250520'..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=158f32d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c3f0e807ec5d1268
-dashboard link: https://syzkaller.appspot.com/bug?extid=b191b5ccad8d7a986286
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=116b32d4580000
+ drivers/gpu/drm/nova/driver.rs |   4 +-
+ drivers/gpu/drm/nova/gem.rs    |   9 ++-
+ rust/kernel/drm/device.rs      |  17 +++---
+ rust/kernel/drm/driver.rs      |   5 +-
+ rust/kernel/drm/gem/mod.rs     | 108 +++++++++++++++------------------
+ 5 files changed, 70 insertions(+), 73 deletions(-)
 
-Note: testing is done by a robot and is best-effort only.
+
+base-commit: 276c53c66e032c8e7cc0da63555f2742eb1afd69
+-- 
+2.49.0
+
 
