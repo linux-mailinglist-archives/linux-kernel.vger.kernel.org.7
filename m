@@ -1,134 +1,167 @@
-Return-Path: <linux-kernel+bounces-655781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC09FABDCF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:31:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B642FABDD00
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A8BE8C5921
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:25:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 273B88C65C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD7D2472BC;
-	Tue, 20 May 2025 14:20:50 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B81A248F4E;
+	Tue, 20 May 2025 14:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rU5ssl0o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1FD1CAA79
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 14:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62DA2907;
+	Tue, 20 May 2025 14:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747750850; cv=none; b=h1rgqHGuOUZBeMS3HTm8gb48orIbdzsDpfcfnwg6BUUsB6+ARlHPYSKWChYlX6oCe01ftJ7ZJ30rGDCWLkbuAxMDSwVGuoFFboJyEYiUf4tkTkGzZxwvrkzcJAVPUaJfyEOx9NzP0r3D5tvLAzCVwZgXJJaPAw/mGpn5K7zi5r4=
+	t=1747750876; cv=none; b=MV4m6Ve4WVyM6dTnUOLeDL+p1X7KC/siBvply1Mp/uLdcCvczK9w1cxsbEF33WrD/QnxoOOYl7cgWtkJ1eedLk4SbhcBYSBvcJE3jOkLdi4i8GBRwSTgglmGLcwEFsVFko9I/Lg+QtQjb+A6KaZya+U5t+Bv+yjvKE7hN2aRZVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747750850; c=relaxed/simple;
-	bh=Va5qoeMEVdGv0YapZun5gFjoj2QQybjvFlAWerI0i/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hCAzDyDy37R7pinrTZ4JWMN9PM93Mz/28XhJrvg9s2JOS1koqp7nkoSUrn20VqF9LMddBnFK50CnxcPVgId1iopOfSy/99vgm9B7EZ9Pboxdoqr/m6dwrSaKvC4JTSNVqm3ktEv52hRHCW1bBhCnq9sP9t+gCYa2HDYHDUQ7ey0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from [2601:18c:8180:83cc:5a47:caff:fe78:8708] (helo=fangorn)
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1uHNpc-000000002GA-2mBp;
-	Tue, 20 May 2025 10:20:36 -0400
-Date: Tue, 20 May 2025 10:20:36 -0400
-From: Rik van Riel <riel@surriel.com>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, kernel-team@meta.com, dave.hansen@linux.intel.com,
- luto@kernel.org, mingo@redhat.com, bp@alien8.de, peterz@infradead.org,
- nadav.amit@gmail.com
-Subject: [PATCH] x86/mm: fix race between flush_tlb_func and idle task
- leave_mm
-Message-ID: <20250520102036.5d61f565@fangorn>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1747750876; c=relaxed/simple;
+	bh=KubO1CN0cU7o39gPvS/zjAe4RGBlujJ7735E92PJluk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=rNOqkl2hBmtfUpyG64ObTtPcLF49iRz4eptV4Hya1xKXPtEx11aM5/XSm2J5E40YDOEAyRSSO5pdle0QVmOafedFjxXYXmfFjXipM1Isxnb5U2mo1kBj1KlvE2bNbYp+6LZapYURoow4SAQIDLashVOCnNYrgpbC0YQLULbHzIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rU5ssl0o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80716C4CEEB;
+	Tue, 20 May 2025 14:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747750874;
+	bh=KubO1CN0cU7o39gPvS/zjAe4RGBlujJ7735E92PJluk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=rU5ssl0o/icooknJ+V0VLF0QrTzQlME5sLQCs6lH/lEu1SNKh9yHPTLxxrIYDnvqG
+	 P2ybIatUaHLJ1DIl+pLWpXdeaokUAbBUYS4TM64YZ11s6MnCjOmmTB7mAaVW4H2lDu
+	 2+5Nm5bMQkwAgZIlYvcJCrzAF8c97spGVd994c4JAKDBlc3HyGuHexQBN9RYva7R39
+	 J13iEjIcZJDkgg1yKOC0lQyr6uTUa+TSRNCkJtJWCsyO+TGoLOQ2sSVSpfPQ7iKvk2
+	 bktQXT267hlYsa5UgXfPj/e63H/tO8jwtrMbiWV9No2IK12fUZ/+jnFHEb+nCgv+i9
+	 ouNjOFWBVT2NA==
+Date: Tue, 20 May 2025 09:21:13 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: linux-pci@vger.kernel.org, Jon Pan-Doh <pandoh@google.com>,
+	Karolina Stolarek <karolina.stolarek@oracle.com>,
+	Martin Petersen <martin.petersen@oracle.com>,
+	Ben Fuller <ben.fuller@oracle.com>,
+	Drew Walton <drewwalton@microsoft.com>,
+	Anil Agrawal <anilagrawal@meta.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Sargun Dhillon <sargun@meta.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Kai-Heng Feng <kaihengf@nvidia.com>,
+	Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v6 03/16] PCI/AER: Consolidate Error Source ID logging in
+ aer_print_port_info()
+Message-ID: <20250520142113.GA1292100@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Sender: riel@surriel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9ac2bb02-974f-4952-b069-1bcc94682d89@linux.intel.com>
 
-There is a tiny race window between flush_tlb_func() and the call to
-leave_mm() from cpuidle_enter_state() in the idle task.
+On Mon, May 19, 2025 at 04:39:19PM -0700, Sathyanarayanan Kuppuswamy wrote:
+> On 5/19/25 2:35 PM, Bjorn Helgaas wrote:
+> > From: Bjorn Helgaas <bhelgaas@google.com>
+> > 
+> > Previously we decoded the AER Error Source ID in two places.  Consolidate
+> > them so both places use aer_print_port_info().  Add a "details" parameter
+> > so we can add a note when we didn't find any downstream devices with errors
+> > logged in their AER Capability.
+> > 
+> > When we didn't read any error details from the source device, we logged two
+> > messages: one in aer_isr_one_error() and another in find_source_device().
+> > Since they both contain the same information, only log the first one when
+> > when find_source_device() has found error details.
+> /s/when//
 
-The race happens when a CPU goes idle, through enter_lazy_tlb(),
-while the process on the CPU is transitioning to a global ASID.
+Fixed, thanks!
 
-If the TLB flush IPI arrives between the call to enter_lazy_tlb(),
-and the CPU actually going idle, the mm_needs_global_asid()
-branch in flush_tlb_func() will switch the CPU to the global
-ASID, and return with the CPU no longer in lazy TLB mode.
+> > -	pci_info(dev, "%s%s error message received from %04x:%02x:%02x.%d\n",
+> > +	pci_info(dev, "%s%s error message received from %04x:%02x:%02x.%d%s\n",
+> 
+> Instead of relying on the callers, why not add a space before details here?
 
-If the system then selects a deeper idle state, the warning in
-leave_mm() will trigger.
+Could, but I don't like adding an extra space at the end of the line
+when the caller passes "".  The extra space could make the line wrap
+unnecessarily.
 
-This race has not been observed with only the INVLPGB code running
-on several thousand hosts over several weeks, but it's showing up
-several times a minute in my tests with the RAR code.
+> >   		 info->multi_error_valid ? "Multiple " : "",
+> >   		 aer_error_severity_string[info->severity],
+> >   		 pci_domain_nr(dev->bus), bus, PCI_SLOT(devfn),
+> > -		 PCI_FUNC(devfn));
+> > +		 PCI_FUNC(devfn), details);
+> >   }
+> >   #ifdef CONFIG_ACPI_APEI_PCIEAER
+> > @@ -926,13 +927,13 @@ static bool find_source_device(struct pci_dev *parent,
+> >   	else
+> >   		pci_walk_bus(parent->subordinate, find_device_iter, e_info);
+> > +	/*
+> > +	 * If we didn't find any devices with errors logged in the AER
+> > +	 * Capability, just print the Error Source ID from the Root Port or
+> > +	 * RCEC that received an ERR_* Message.
+> > +	 */
+> >   	if (!e_info->error_dev_num) {
+> > -		u8 bus = e_info->id >> 8;
+> > -		u8 devfn = e_info->id & 0xff;
+> > -
+> > -		pci_info(parent, "found no error details for %04x:%02x:%02x.%d\n",
+> > -			 pci_domain_nr(parent->bus), bus, PCI_SLOT(devfn),
+> > -			 PCI_FUNC(devfn));
+> > +		aer_print_port_info(parent, e_info, " (no details found)");
+> >   		return false;
+> >   	}
+> >   	return true;
+> > @@ -1297,10 +1298,11 @@ static void aer_isr_one_error(struct aer_rpc *rpc,
+> >   			e_info.multi_error_valid = 1;
+> >   		else
+> >   			e_info.multi_error_valid = 0;
+> > -		aer_print_port_info(pdev, &e_info);
+> 
+> Instead of printing the error information in find_source_device() (a helper function), I think it be better to print it here (the error handler). source_found = find_source_device(pdev, &e_info); aer_print_port_info(pdev, &e_info, source_found? "" : "(no details found) " );
+> 
+> if (source_found) aer_process_err_devices(&e_info)
 
-Avoid the race by moving the .is_lazy test to before the global ASID
-test in flush_tlb_func().
+Great idea, thanks!  That looks much nicer.
 
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Fixes: 4afeb0ed1753 x86/mm: Enable broadcast TLB invalidation for multi-threaded processes
-Cc: stable@kernel.org
----
- arch/x86/mm/tlb.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 3feb6ae2b678..9010bcfdfc20 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -1150,6 +1150,20 @@ static void flush_tlb_func(void *info)
- 	if (unlikely(loaded_mm == &init_mm))
- 		return;
- 
-+	if (this_cpu_read(cpu_tlbstate_shared.is_lazy)) {
-+		/*
-+		 * We're in lazy mode.  We need to at least flush our
-+		 * paging-structure cache to avoid speculatively reading
-+		 * garbage into our TLB.  Since switching to init_mm is barely
-+		 * slower than a minimal flush, just switch to init_mm.
-+		 *
-+		 * This should be rare, with native_flush_tlb_multi() skipping
-+		 * IPIs to lazy TLB mode CPUs.
-+		 */
-+		switch_mm_irqs_off(NULL, &init_mm, NULL);
-+		return;
-+	}
-+
- 	/* Reload the ASID if transitioning into or out of a global ASID */
- 	if (mm_needs_global_asid(loaded_mm, loaded_mm_asid)) {
- 		switch_mm_irqs_off(NULL, loaded_mm, NULL);
-@@ -1168,20 +1182,6 @@ static void flush_tlb_func(void *info)
- 	VM_WARN_ON(is_dyn_asid(loaded_mm_asid) && loaded_mm->context.ctx_id !=
- 		   this_cpu_read(cpu_tlbstate.ctxs[loaded_mm_asid].ctx_id));
- 
--	if (this_cpu_read(cpu_tlbstate_shared.is_lazy)) {
--		/*
--		 * We're in lazy mode.  We need to at least flush our
--		 * paging-structure cache to avoid speculatively reading
--		 * garbage into our TLB.  Since switching to init_mm is barely
--		 * slower than a minimal flush, just switch to init_mm.
--		 *
--		 * This should be rare, with native_flush_tlb_multi() skipping
--		 * IPIs to lazy TLB mode CPUs.
--		 */
--		switch_mm_irqs_off(NULL, &init_mm, NULL);
--		return;
--	}
--
- 	if (is_dyn_asid(loaded_mm_asid))
- 		local_tlb_gen = this_cpu_read(cpu_tlbstate.ctxs[loaded_mm_asid].tlb_gen);
- 
--- 
-2.47.1
-
-
+> > -		if (find_source_device(pdev, &e_info))
+> > +		if (find_source_device(pdev, &e_info)) {
+> > +			aer_print_port_info(pdev, &e_info, "");
+> >   			aer_process_err_devices(&e_info);
+> > +		}
+> >   	}
+> >   	if (e_src->status & PCI_ERR_ROOT_UNCOR_RCV) {
+> > @@ -1316,10 +1318,10 @@ static void aer_isr_one_error(struct aer_rpc *rpc,
+> >   		else
+> >   			e_info.multi_error_valid = 0;
+> > -		aer_print_port_info(pdev, &e_info);
+> > -
+> > -		if (find_source_device(pdev, &e_info))
+> > +		if (find_source_device(pdev, &e_info)) {
+> > +			aer_print_port_info(pdev, &e_info, "");
+> >   			aer_process_err_devices(&e_info);
+> > +		}
+> >   	}
+> >   }
+> 
+> -- 
+> Sathyanarayanan Kuppuswamy
+> Linux Kernel Developer
+> 
 
