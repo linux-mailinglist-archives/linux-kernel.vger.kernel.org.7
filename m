@@ -1,172 +1,231 @@
-Return-Path: <linux-kernel+bounces-654957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EDD3ABCEF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:06:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDE2ABCF01
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BED8E16BC45
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24DF13A55FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E983625C829;
-	Tue, 20 May 2025 06:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF0025CC50;
+	Tue, 20 May 2025 06:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PMfinU2X"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="KZQ4LcS3"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F052571D8
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 06:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB6E1DB124;
+	Tue, 20 May 2025 06:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747721188; cv=none; b=spQs8Px0CivDh6DIfROpzo6DHgRQhunx1J+2hZXfUSSXibQ8CftTfl55JgQKB3x8JmZuRtjCtGl4L5gC5a3FTDSGUcj7E5ehBIx2qXQzSsNccdjSq7L/6aZ64uVV+8VaVAhwPU5i7DBhH+V0dGZZKwkhmvdAgZrM9EdIZt0i/+A=
+	t=1747721418; cv=none; b=lyZFrWZtZJZOO4q+kmKRStO7lhoRYiRLg/1/ADWGaWjbTzDdNFN9cdYksF4nCWUXPSqcGBkzQkmuFZKObWT541Q3722EW3FhufUTng44ehm8SVwzGILm86mJMVT3JEzNrtvNK3cDtE83Kpk0Up9FoqG/o53bHkinneyaR9YAiBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747721188; c=relaxed/simple;
-	bh=qe8n9yr/KVnjJYZeRg6hmqa/SikELRxG8dHd3eSVhZI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jcsi8k3tU66AgiTADhKIx20z0+dDB1+Eq/VMaz0pOGwsBJZb19vu+lW4NZp7qNMsC8bs13Q6VRh69t47pqP40fITXVU6/d59VkNY+ZzpyYVlewR5fylp5IR+Y8SPH7EdiM5SUe8A0e4kZHzisUGN8tm5MNfqitZ612IMcdPbYGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PMfinU2X; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-601df382301so333013a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 23:06:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747721184; x=1748325984; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=H03K4o3BUXm9W7hTlzbRFAT1v6NSvYBisQhPrDY8gOQ=;
-        b=PMfinU2XOcRhTnsg1kTQyHyfpT0VAq2vtPeNV5eqqOo4XvWjS2YQDGRNvKVDkhxbDa
-         /QtKTpuwQ/6fVVcqM8zl84hDsGTnpOkitMr7V05zGW60lYtMvXjP45ZzgdCSLfCFkx6Y
-         TF62tH6RuFr2zG18c8sRfFaM+lqfhCk3O5zSQOS7aSRTya6ESRE5+47h9TGDeCzNxGKL
-         IKIToR8MDttgCVgOIvONXTYarVq+w2vwZXLqQL6IjuAPATq7Nzaq2NoseDFzINU2/DzY
-         7aZsglS9FU0G8zMmh39dz4OtYvfw46RR9YMIIIUwijEOYQcmVS9skZ0XzfE7/YOHp+OX
-         Wtng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747721185; x=1748325985;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H03K4o3BUXm9W7hTlzbRFAT1v6NSvYBisQhPrDY8gOQ=;
-        b=qAJhnTc1vy1Pd1BrYlV7IK4Hl7aMRx9MgTPzCzhtBZCPT+zzAksnuDCJp5l93btg0V
-         Svl1A54lRWfQ4bX8O/PLjugRVdREGiepvG2if1lw6mKOHR95e3CtOigf0Clk9jOdqTk7
-         n+9PL3dKiA7r4/qwXIZrbKRno7LrtXwFydVm9DdG3oUKF2xqDYTr4TyLW5Q1/OOPgBSS
-         VfXlsT5gVXmZMyNRGT3r/d3YdPcCAmDxjlt5JpYeLyBdr7pAMIsmp2U3geZzoqOh3Afb
-         Upglc7vFV+GKUGQG8z/hqR+4K4iBsk8GcBE1w4mMGTIY5bhGgUaDbKQyLdqkRZ4ESyS6
-         33/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXmt7ECU7UFz8dPXFsqXqEu7RaSook/m85ZpvOfGZDGVOvoxSQA2JTiQc3dvDircq8AoC4u4Dm8ncCJFGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzW+tstUBIuMXUZAxaEqxtNeYov7NpsC0ZPmG4Jke7DoXBu71v
-	thxpC7LlobH6xJGGM1ExBasDJyFQ8eKWBxLaNem7gh+fLj34dVpwqEtyr3waZutdBiU=
-X-Gm-Gg: ASbGncvd+Ce/X01Ft3sroycoM8ebdhf3XOiEUTC8lAZHHYAxYysHJ0jK6fx2Yihfz8L
-	umsMItVJ2EPfl8VuRN4vndiaT9gwjek0G9ogl4dlKeBRXqc94+45XGhGtUbIY42D4MbKXC7G80x
-	FLCjNd8x+csl9ZwCzetw10F8jPr/k3S+tz+NT9A764mYG/y4Bcwgn9m2ehDt7366/w9uzAgFwm5
-	alB799rr0IzAKb2xL+gKN1jBwYjIe9un+sAp/Pt6ouVhISV+KnnDCSd/1TavRG10DEkQS8BQO3u
-	mLTZ26jGT+0YVOndZKWairVpzTdEjiOZtt+fnYK0ZpbiyrmyDLpjkJ8S1uit0zhxYAS47sMMAzY
-	e5b2n/A==
-X-Google-Smtp-Source: AGHT+IErREImXkZaxZPD9c5bEjI6k02z9QlHLE+XJwiq21FXcDHZilxrUPaPqcafWlQVzP6Iz3U2jQ==
-X-Received: by 2002:a05:6402:27c9:b0:602:14f8:9a29 with SMTP id 4fb4d7f45d1cf-60214f89df6mr176328a12.2.1747721184593;
-        Mon, 19 May 2025 23:06:24 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6005ae3953esm6728582a12.73.2025.05.19.23.06.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 May 2025 23:06:23 -0700 (PDT)
-Message-ID: <ea9f570c-b135-4a98-91ea-ceeb2f48a0e5@linaro.org>
-Date: Tue, 20 May 2025 08:06:22 +0200
+	s=arc-20240116; t=1747721418; c=relaxed/simple;
+	bh=5F3dDItauTYHudAvONgsRxNKYrhpGJJLwRjmNywRbRQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jbZKFh/U8IctfM6f7Y+plw7vwVYdu+269Wn01zQoRwgQKvTYxUbOkr+aRzxTKn30h+VTmRtgpJHn1UdV8axs7ZUrOaUQ0PHA858L04U5ous6d4GAVoxBfdtr4tFGEXZao4f6XG2YfmSiZC47zBycgPgKuAiyDu6fsLgG+W1anQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=KZQ4LcS3; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54JM4oa5011988;
+	Mon, 19 May 2025 23:10:03 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=Do35XLd5RGV6NCIHo8nqtBU
+	tOevhNsdBsCJJFl+4BOg=; b=KZQ4LcS31OBP6iJR2pAlxRCauBKKCnn6JZjXBkn
+	gkAx0Tjc6elcObYTgZXzFuFqiZcqDo264dJeHaRmVSpL5JyFTmnVq+sFmKV7AnmQ
+	yQkHcqoLdyKw88jv9ZopCD+CzmL7dNuVdw9tWKr3k8sXckRHkGryPM0tIBALeLPl
+	BTuj7HfOHPUHprlKHNROLk9OA6mH8u4X8VspPThir8lgRIVAK8Is1YOeiix58lRx
+	MNCr1J4Autf0jxBaVc2LkPjNqsJywcXyAqjiTGpQga7VMtIwoBdrtf+vyB7xvW9L
+	XVyzccDZ8W8HNNewnRBVMbIjpFP1Muwh/+t56a3zvnzgrwA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46rd3u0qby-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 May 2025 23:10:03 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 19 May 2025 23:10:02 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 19 May 2025 23:10:02 -0700
+Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with ESMTP id A3C3C3F7061;
+	Mon, 19 May 2025 23:09:57 -0700 (PDT)
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Hariprasad Kelam <hkelam@marvell.com>,
+        Sunil Goutham
+	<sgoutham@marvell.com>,
+        Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya
+	<gakula@marvell.com>,
+        Jerin Jacob <jerinj@marvell.com>,
+        Subbaraya Sundeep
+	<sbhatta@marvell.com>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Subject: [net-next] octeontx2-af: NPC: Clear Unicast rule on nixlf detach
+Date: Tue, 20 May 2025 11:39:52 +0530
+Message-ID: <20250520060952.1080092-1-hkelam@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] media: qcom: camss: vfe: Stop spamming logs with
- version
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Johan Hovold <johan@kernel.org>
-Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250429180828.950219-4-krzysztof.kozlowski@linaro.org>
- <aBHQejn_ksLyyUm1@hovoldconsulting.com>
- <3e34ce09-1207-4dba-bff8-38c01cad9b78@linaro.org>
- <4d942a6c-cbff-41ac-af8b-12a1ff5181aa@linaro.org>
- <883eb54a-fcaf-443c-a4d7-e1278fd43f5a@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <883eb54a-fcaf-443c-a4d7-e1278fd43f5a@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: K8YM7B7X9Q_vVpFn4_q2aX_z-Y4FFD7K
+X-Proofpoint-ORIG-GUID: K8YM7B7X9Q_vVpFn4_q2aX_z-Y4FFD7K
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDA0OSBTYWx0ZWRfX37V6lxgYlwKM yBgb0BoN3qh/d6x+juJUEqe30t95hOSaL3dWdMbm1OULrWY6cv9iJR1TXkCo/cMJzpnkaf1h1bb KbVWboCoTeLHBvdz5h507R/fTd9uWZSzLk4HG5d6IgCGcEK4uNG6EVkR+i0XuSGb4ZaoDpfEydU
+ ljiAlSTyFEPS7zVOvEYJyQFfqrIfolO52OKsxa0M9A8qKBY7Dh3vvvIypRMG+l9o6+IjTwo7bTe TY3Z/yBwUGMSRbBgotBaHFoRutVY02SRQKWFhV932JxJelhGJpkbatUAcQuRxxhglLHXTHcZ/IS TtAQEmH22eEvzHOgAZrzQky72ap77EfQvncmsAK6dtXCvphr0rIxCX+7AUuhCGuO+izxjmPvp3y
+ kE4PBrV12DzZ+HHQQeuTWoTKO+ti6HgGHalXbBTzb2tlFNhQzGuPoMJcxMfw6BwbM/Nha+cn
+X-Authority-Analysis: v=2.4 cv=f7NIBPyM c=1 sm=1 tr=0 ts=682c1cbb cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=WfLIaZI_07ispqDUzUwA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_03,2025-05-16_03,2025-03-28_01
 
-On 30/04/2025 10:33, Krzysztof Kozlowski wrote:
-> On 30/04/2025 10:30, Bryan O'Donoghue wrote:
->> On 30/04/2025 09:19, Krzysztof Kozlowski wrote:
->>> If anyone wants to know it and cannot deduce from compatible, then add
->>> debugfs interface.
->>
->> dev_dbg(); isn't too offensive really IMO but if it really bothers you 
->> switching to debugfs would be fine.
-> 
-> Yes, please. Dmesg should be only contain issues or some useful
-> debugging data. Probe success is not useful. It duplicates sysfs and
-> tracing. Version of hardware - well, I am sure it duplicates the compatible.
+The AF driver assigns reserved MCAM entries (for unicast, broadcast,
+etc.) based on the NIXLF number. When a NIXLF is detached, these entries
+are disabled.
 
-To recall: kernel coding style is also clear here:
-"When drivers are working properly they are quiet,"
-and kernel debugging guide as well:
-"In almost all cases the debug statements shouldn't be upstreamed, as a
-working driver is supposed to be silent."
+For example,
 
-So I really do not get why this driver deserved exception. Nevertheless
-I think we agreed that these logs can go away, thus I just sent a v2
-with a bit extended commit msg.
+         PF           NIXLF
+        --------------------
+         PF0             0
+         SDP-VF0         1
 
-Best regards,
-Krzysztof
+If the user unbinds both PF0 and SDP-VF0 interfaces and then binds them in
+reverse order
+
+         PF            NIXLF
+        ---------------------
+         SDP-VF0         0
+         PF0             1
+
+In this scenario, the PF0 unicast entry is getting corrupted because
+the MCAM entry contains stale data (SDP-VF0 ucast data)
+
+This patch resolves the issue by clearing the unicast MCAM entry during
+NIXLF detach
+
+Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
+---
+ .../net/ethernet/marvell/octeontx2/af/rvu.c   |  6 ++-
+ .../net/ethernet/marvell/octeontx2/af/rvu.h   |  2 +
+ .../ethernet/marvell/octeontx2/af/rvu_npc.c   | 40 +++++++++++++++++--
+ 3 files changed, 43 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+index 511eb5b2a2d4..19a5f0da4c7f 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+@@ -1393,8 +1393,6 @@ static void rvu_detach_block(struct rvu *rvu, int pcifunc, int blktype)
+ 	if (blkaddr < 0)
+ 		return;
+ 
+-	if (blktype == BLKTYPE_NIX)
+-		rvu_nix_reset_mac(pfvf, pcifunc);
+ 
+ 	block = &hw->block[blkaddr];
+ 
+@@ -1407,6 +1405,10 @@ static void rvu_detach_block(struct rvu *rvu, int pcifunc, int blktype)
+ 		if (lf < 0) /* This should never happen */
+ 			continue;
+ 
++		if (blktype == BLKTYPE_NIX) {
++			rvu_nix_reset_mac(pfvf, pcifunc);
++			rvu_npc_clear_ucast_entry(rvu, pcifunc, lf);
++		}
+ 		/* Disable the LF */
+ 		rvu_write64(rvu, blkaddr, block->lfcfg_reg |
+ 			    (lf << block->lfshift), 0x00ULL);
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+index 147d7f5c1fcc..48f66292ad5c 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+@@ -994,6 +994,8 @@ void rvu_npc_get_mcam_entry_alloc_info(struct rvu *rvu, u16 pcifunc,
+ void rvu_npc_get_mcam_counter_alloc_info(struct rvu *rvu, u16 pcifunc,
+ 					 int blkaddr, int *alloc_cnt,
+ 					 int *enable_cnt);
++void rvu_npc_clear_ucast_entry(struct rvu *rvu, int pcifunc, int nixlf);
++
+ bool is_npc_intf_tx(u8 intf);
+ bool is_npc_intf_rx(u8 intf);
+ bool is_npc_interface_valid(struct rvu *rvu, u8 intf);
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
+index 6296a3cdabbb..da15bb451178 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
+@@ -1107,6 +1107,7 @@ void npc_enadis_default_mce_entry(struct rvu *rvu, u16 pcifunc,
+ static void npc_enadis_default_entries(struct rvu *rvu, u16 pcifunc,
+ 				       int nixlf, bool enable)
+ {
++	struct rvu_pfvf *pfvf = rvu_get_pfvf(rvu, pcifunc);
+ 	struct npc_mcam *mcam = &rvu->hw->mcam;
+ 	int index, blkaddr;
+ 
+@@ -1115,9 +1116,12 @@ static void npc_enadis_default_entries(struct rvu *rvu, u16 pcifunc,
+ 		return;
+ 
+ 	/* Ucast MCAM match entry of this PF/VF */
+-	index = npc_get_nixlf_mcam_index(mcam, pcifunc,
+-					 nixlf, NIXLF_UCAST_ENTRY);
+-	npc_enable_mcam_entry(rvu, mcam, blkaddr, index, enable);
++	if (npc_is_feature_supported(rvu, BIT_ULL(NPC_DMAC),
++				     pfvf->nix_rx_intf)) {
++		index = npc_get_nixlf_mcam_index(mcam, pcifunc,
++						 nixlf, NIXLF_UCAST_ENTRY);
++		npc_enable_mcam_entry(rvu, mcam, blkaddr, index, enable);
++	}
+ 
+ 	/* Nothing to do for VFs, on platforms where pkt replication
+ 	 * is not supported
+@@ -3570,3 +3574,33 @@ int rvu_mbox_handler_npc_mcam_entry_stats(struct rvu *rvu,
+ 
+ 	return 0;
+ }
++
++void rvu_npc_clear_ucast_entry(struct rvu *rvu, int pcifunc, int nixlf)
++{
++	struct npc_mcam *mcam = &rvu->hw->mcam;
++	struct rvu_npc_mcam_rule *rule;
++	int ucast_idx, blkaddr;
++
++	blkaddr = rvu_get_blkaddr(rvu, BLKTYPE_NPC, 0);
++	if (blkaddr < 0)
++		return;
++
++	ucast_idx = npc_get_nixlf_mcam_index(mcam, pcifunc,
++					     nixlf, NIXLF_UCAST_ENTRY);
++
++	npc_enable_mcam_entry(rvu, mcam, blkaddr, ucast_idx, false);
++
++	npc_set_mcam_action(rvu, mcam, blkaddr, ucast_idx, 0);
++
++	npc_clear_mcam_entry(rvu, mcam, blkaddr, ucast_idx);
++
++	mutex_lock(&mcam->lock);
++	list_for_each_entry(rule, &mcam->mcam_rules, list) {
++		if (rule->entry == ucast_idx) {
++			list_del(&rule->list);
++			kfree(rule);
++			break;
++		}
++	}
++	mutex_unlock(&mcam->lock);
++}
+-- 
+2.34.1
+
 
