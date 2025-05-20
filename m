@@ -1,131 +1,86 @@
-Return-Path: <linux-kernel+bounces-655014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B8CABCF98
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:43:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3CFABCF8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8587C1B67EB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:43:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E45733AA603
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFFE25F792;
-	Tue, 20 May 2025 06:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A0225D20F;
+	Tue, 20 May 2025 06:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NaiqgnuF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/EF+EBc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7882D25D1F4
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 06:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4565125B676;
+	Tue, 20 May 2025 06:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747723316; cv=none; b=HHgID8sItI4Ai56nNm5UdL7pyvhhNRa2CvF3nP6T4TCdXTzaZfcoceCHtg6tiGvz0wvBfrSdeMgCk5v8QOJE4uWUGzat3nhwAb+mOwXAvgAVyJOgex8dHNb6vYDejbOunLEe74Sw8K/NIZ6OaDG2IcEgEO7JIPAJNx6ePFlyndY=
+	t=1747723301; cv=none; b=cY8vtXJEDzNzu2CVKBVY5iBE22pALCWicwLjb3ijin5uRkqzKl2V2XP6UWILQ2SeacdXSLPUtlj67K3+y/cU6lEx0RQlYaZyEgCFy1hms8erUnrPZ9vcFT+nZHSoQsv1lFGbk2/ihRTNTxKThjNis9ktDU/0nugN2v7bv2+3vaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747723316; c=relaxed/simple;
-	bh=U1Hyh++FbbQjcYY3cPFX1njwwCp4wpvVjBJyLtaysnA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Mv6/8yUKRYu9b9rNhMoIFYoQrKpWQxn4wKNtFdzBKc98Kvsqj7THbcBDL7f3QX6mAITtJph6WBm3yrf2c/YETRQCEvSdwvOuM3nhRat9A3q+JguCnZNlyKsRt+CjC4wCK9w3xGUDWHD+HF9MoOvxu8upkUqgWpAPFmkcm+xGNww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NaiqgnuF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09B40C4CEF9;
-	Tue, 20 May 2025 06:41:56 +0000 (UTC)
+	s=arc-20240116; t=1747723301; c=relaxed/simple;
+	bh=/+NmpADkpF28JD+36C3Yf9JbclVHgqFpN3rsbxacxKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NTTugkVwPF4KaGGY/5hY6tpxeKSCszuqgHmS65gk4dCHnhN/bJP2UcAg91Z+psMmCqlAhHAVFm2myQ3P60fyQA6HMpkk3/BENICt6iL5efMGjTWZ0dOsU251Cs9wOUXq0iv73ULogmt05MSj3CEwDNnRmArM0ZgKlEj/Rqhb9yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/EF+EBc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17991C4CEE9;
+	Tue, 20 May 2025 06:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747723316;
-	bh=U1Hyh++FbbQjcYY3cPFX1njwwCp4wpvVjBJyLtaysnA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NaiqgnuF7EVtx3XYo4baUObbsrvrxP2SK+vzcx3LuzBLItA3x8c9i7ypkRGoFwFaQ
-	 VEO9QttakkvrYLBWCUKfwhfrSZazMvXEK0xV3GXg0a1ywExDR4sxuwuCNuCwsDVi0L
-	 Z47Xx2FSnNf72Ta3pOaRPIUiKdKPXuzyfN0M41RWsDEnIWleRkoBrIlYJ4WFUw6+HW
-	 ziQlNLbrjbTcFqD3CI9PMp6I/r+tRHCNgyacqVV6Jjhfb5aJGX7sIMFaGtVls+KTfU
-	 L/2YHjeymJtKAJtEo1BL1gxoT2Z6NmWsVl5mFVXDkaIHsq1kZy2qWYcDULCvxMXnfZ
-	 2Iooa4lDCiATA==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uHGfi-00000005quC-0iPR;
-	Tue, 20 May 2025 08:41:54 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>,
-	"Michael S . Tsirkin" <mst@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	qemu-arm@nongnu.org,
-	qemu-devel@nongnu.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Dongjiu Geng <gengdongjiu1@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v9 19/20] docs: hest: add new "etc/acpi_table_hest_addr" and update workflow
+	s=k20201202; t=1747723300;
+	bh=/+NmpADkpF28JD+36C3Yf9JbclVHgqFpN3rsbxacxKE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q/EF+EBc/zb4Z6w+u2Rf9Feuw/oLYntUWhq62CLbjKFajcvseQEQfJsvG5ZIQkyK4
+	 MpFAHtYg12VMs3sJiWRL40ZPjsBEEgCvwllLw9Ow6GVfYdMHmtx5+iI1q758exi5fJ
+	 7Xpz7qRR/wOMvUEL9XRVSAzugm1CpK2euYAdE8GxNc7M66yzk3MdSD/GvCqWFAB2fu
+	 hx/t6b3LuNqUIGyihLwxZgKrQxh7nCejdT6JMVOkqCdar14ZRHUscfSht5HLp9Pn/y
+	 kJHNfvEC66bTE1OGFRqml0lyIpOOCMI3odglaa7I3vT5L4K7jhB/xKOo6UboJaRNGX
+	 g1GUYjVFY9b5A==
 Date: Tue, 20 May 2025 08:41:38 +0200
-Message-ID: <030d9db1b72fa639493ff879991cfdfdbbb53b95.1747722973.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1747722973.git.mchehab+huawei@kernel.org>
-References: <cover.1747722973.git.mchehab+huawei@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Pop Ioan Daniel <pop.ioan-daniel@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>, Dragos Bogdan <dragos.bogdan@analog.com>, 
+	Antoniu Miclaus <antoniu.miclaus@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
+	Tobias Sperling <tobias.sperling@softing.com>, Marcelo Schmitt <marcelo.schmitt@analog.com>, 
+	Alisa-Dariana Roman <alisadariana@gmail.com>, Ramona Alexandra Nechita <ramona.nechita@analog.com>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] dt-bindings: iio: adc: add ad7405
+Message-ID: <20250520-marvellous-taipan-of-agility-c8a7f6@kuoka>
+References: <20250519140220.81489-1-pop.ioan-daniel@analog.com>
+ <20250519140220.81489-5-pop.ioan-daniel@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250519140220.81489-5-pop.ioan-daniel@analog.com>
 
-While the HEST layout didn't change, there are some internal
-changes related to how offsets are calculated and how memory error
-events are triggered.
+On Mon, May 19, 2025 at 05:02:12PM GMT, Pop Ioan Daniel wrote:
+> Add devicetree bindings for ad7405/adum770x family.
+> 
+> Signed-off-by: Pop Ioan Daniel <pop.ioan-daniel@analog.com>
+> ---
+> no changes in v4.
 
-Update specs to reflect such changes.
+And v3, v2, v1?
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Reviewed-by: Igor Mammedov <imammedo@redhat.com>
----
- docs/specs/acpi_hest_ghes.rst | 28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
+What about tag? Can you start using b4, so such problems won't repeat
+plus you will have appropriate cover letter with changelog and links?
 
-diff --git a/docs/specs/acpi_hest_ghes.rst b/docs/specs/acpi_hest_ghes.rst
-index c3e9f8d9a702..3d1b85d74b70 100644
---- a/docs/specs/acpi_hest_ghes.rst
-+++ b/docs/specs/acpi_hest_ghes.rst
-@@ -89,12 +89,21 @@ Design Details
-     addresses in the "error_block_address" fields with a pointer to the
-     respective "Error Status Data Block" in the "etc/hardware_errors" blob.
- 
--(8) QEMU defines a third and write-only fw_cfg blob which is called
--    "etc/hardware_errors_addr". Through that blob, the firmware can send back
--    the guest-side allocation addresses to QEMU. The "etc/hardware_errors_addr"
--    blob contains a 8-byte entry. QEMU generates a single WRITE_POINTER command
--    for the firmware. The firmware will write back the start address of
--    "etc/hardware_errors" blob to the fw_cfg file "etc/hardware_errors_addr".
-+(8) QEMU defines a third and write-only fw_cfg blob to store the location
-+    where the error block offsets, read ack registers and CPER records are
-+    stored.
-+
-+    Up to QEMU 9.2, the location was at "etc/hardware_errors_addr", and
-+    contains a GPA for the beginning of "etc/hardware_errors".
-+
-+    Newer versions place the location at "etc/acpi_table_hest_addr",
-+    pointing to the GPA of the HEST table.
-+
-+    Using above mentioned 'fw_cfg' files, the firmware can send back the
-+    guest-side allocation addresses to QEMU. They contain a 8-byte entry.
-+    QEMU generates a single WRITE_POINTER command for the firmware. The
-+    firmware will write back the start address of either "etc/hardware_errors"
-+    or HEST table at the corresponding fw_cfg file.
- 
- (9) When QEMU gets a SIGBUS from the kernel, QEMU writes CPER into corresponding
-     "Error Status Data Block", guest memory, and then injects platform specific
-@@ -105,8 +114,5 @@ Design Details
-      kernel, on receiving notification, guest APEI driver could read the CPER error
-      and take appropriate action.
- 
--(11) kvm_arch_on_sigbus_vcpu() uses source_id as index in "etc/hardware_errors" to
--     find out "Error Status Data Block" entry corresponding to error source. So supported
--     source_id values should be assigned here and not be changed afterwards to make sure
--     that guest will write error into expected "Error Status Data Block" even if guest was
--     migrated to a newer QEMU.
-+(11) kvm_arch_on_sigbus_vcpu() report RAS errors via a SEA notifications,
-+     when a SIGBUS event is triggered.
--- 
-2.49.0
+Best regards,
+Krzysztof
 
 
