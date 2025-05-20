@@ -1,329 +1,332 @@
-Return-Path: <linux-kernel+bounces-656542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5CAABE7A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:53:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7D8ABE77D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE45018888D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:53:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44E003A62DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5498826C38F;
-	Tue, 20 May 2025 22:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C38A255240;
+	Tue, 20 May 2025 22:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g6UJslnb"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8wyhnMY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A752673BF;
-	Tue, 20 May 2025 22:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A485E219A80;
+	Tue, 20 May 2025 22:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747781454; cv=none; b=bpT5sN3Qgq9FnG5tD9qYz8GQf3MAGkEv5EHnnlfT5jomjBCX6ZRzEVLeUezoS2vqI83bGd1W3CE0eiCabXRqTdtKFBtiM3yXZS4OYqTU7Fg2GHm8fVhMRgx0DRhVygafy94MSG5+o3VXGS9ysE3z11+gUUSR+p4du4zxM37lrT8=
+	t=1747781410; cv=none; b=jGrFX1JIYo4gVnUyvGTB+E7YF2vAqgKdf9BudVTV3Rd9uYQxgQfqtEh9pPcj8HDaXx8ct+qurj0fYgqM/eZm9rZfUogWi1w/CccaRJvzQcj/HxmHsR0IliqzrlMHOUINm/Bip5IdVadPrdLmcgNcil6GjoEvOy12BjGbRa7wPxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747781454; c=relaxed/simple;
-	bh=h8H53WstQAHtKB7BqisUydwF30h1NlWHqWKS0j9d0QU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=trwxpYIOeLAm4zmDW7w3RcHQM2eeogvWbReiycSmdJvdAeL2P4m9SUesouiiTIRKzOu9JFKW+Km5S0xxxpnol0jWZRyWLvuVnbm8qn3m10ObH4CJVx9u11v6XVywNkwnUJKt7zpDGPhD4nEj2QWrdynZKV1VCbYHRHatKRQ4DdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g6UJslnb; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a361c8a830so690402f8f.0;
-        Tue, 20 May 2025 15:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747781450; x=1748386250; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DgqBxuRnRBCBlpgOJitYe+JYUaYesgoujNN7Mj4ZDPA=;
-        b=g6UJslnbp8hn+eIZ+6OBvLLuvpgyPVtPcV8/gLIfDTT+gUjT/PjG+8fozBtUTvugRO
-         IUFLibXkp5IyuFgWB7qatlG4X2ttE3Wvt/yEHuvxIPUutHjgm8fbNpCZQBxm7epvp6Dd
-         NAuKvvZMmTG4mnfq/42iu3nK0myGrOSVVA1jLGBGmR6nev0Nc/kMjeL4TvyQTE8hjTWy
-         27Fjyc9BdSj+lqMFoTpTc/PzxcO1Q4QfV7gL+Nn8//7UcLIvrW3Wx0MyiuBjmtP8B6GI
-         ianlAaACi10fBxt0MbtvIYQ3Hrw6j9qwvD7AvO8R3bXEaKMPpqdtVblz9Glaz9oddhcs
-         2akQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747781450; x=1748386250;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DgqBxuRnRBCBlpgOJitYe+JYUaYesgoujNN7Mj4ZDPA=;
-        b=AgrkdtKDsoa17xcBLYZbbG5xYVp6aQj+qrZk7XplwEXttGfzgie6RSPJsPicZ7QiyZ
-         DHkFIFtNWPTVuzHkZ6+7Ps3TPzuIy0xUNewimxgOAHy8RpprdQiJNALvqEsfTCygLO+1
-         VxK7dGw6tPyoasg651Cm8LA/zJP6le2c7lNbY+vt7/HZCmZItwLEDoqwZqXbcBi6gJtL
-         naPFh4cR3O2tmzFs03gd84CN+IjROkvctMnivIBOPNCii1cCHAgUHhfFZAOGg1O1wuzP
-         bzsCc6hTdjWK5B0edZuC66YPg+u1mSAAnVbKF3pCA2HN11aHQtB0t5HWJMzcgmCuXRR+
-         Fjww==
-X-Forwarded-Encrypted: i=1; AJvYcCUhKP89ns8DN5zSH/XXAWmB0OmZAuOLu5VBUbx1LJfocpkX2sy2OmHmGAEcOnVb57jskX8nEYI+Q3A=@vger.kernel.org, AJvYcCVDjboxbOpsERGZUT4r8YwbnFirre+FZJK3r9z/Yn0gISnXohYBYypGq7QyWGe5P7tKSw+x4v1uPqzdePq2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCKJ05rKeoMtKBFuvx03ACsZPkh5yDpHMK+508ppXMm+a8WyJW
-	Ia3NekFRsAP5K5YWGXFqMUdgkjzJguk0TuMKrtLz5rp3hDJ8wEaB45yJ
-X-Gm-Gg: ASbGnculd/4l6fwSNp87r1kT6ZCggQrYwfTX7j5W6fq3sG9LOj4ll+FhAIWFCT/d7bg
-	ZdQix91rPysZ7iJu6YO8ivscT2jnehCKd2e5c3jrycw1z6m+lIUorTYaUO522vDHKw/DChQ0R1Z
-	2Bndgtbl8s9tfKkX9O+UlMQ2p2zcIj7DqzV6eInwiIMjmHx8s9VGrnpIg65ZYwHpz1eh+nJ8YNq
-	2g1I8lHcqXuFT/6XfTg/9ISS5zBkrYjWxhWErkVHEXuipPAGOX1rt4QBm3J59w22WaaiKy0RL64
-	7RBLCbqkJC6Tfj0WX3sKdUDongXOZUkPz7sOi+zdNX7OHAFCoPHLWAr8P09K7Tz/hc3wzPfbjnG
-	3m8HQqtUHpe24j20iC0n6aA==
-X-Google-Smtp-Source: AGHT+IFZWkOLTMpe0Rj7vle3YfkxL6BFvV+5p7cLKDL/YHH1BkvaOgfAZtFa1Vjfpd0zhglBmFtixw==
-X-Received: by 2002:a05:6000:1445:b0:3a3:7be3:d0f3 with SMTP id ffacd0b85a97d-3a37be3d3eamr1224286f8f.14.1747781450175;
-        Tue, 20 May 2025 15:50:50 -0700 (PDT)
-Received: from localhost.localdomain (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca4d105sm18101588f8f.11.2025.05.20.15.50.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 15:50:49 -0700 (PDT)
-From: Lothar Rubusch <l.rubusch@gmail.com>
-To: jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org,
-	corbet@lwn.net,
-	lucas.p.stankus@gmail.com,
-	lars@metafoo.de,
-	Michael.Hennerich@analog.com,
-	l.rubusch@gmail.com
-Cc: linux-iio@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 12/12] docs: iio: add ADXL313 accelerometer
-Date: Tue, 20 May 2025 22:50:07 +0000
-Message-Id: <20250520225007.10990-13-l.rubusch@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250520225007.10990-1-l.rubusch@gmail.com>
-References: <20250520225007.10990-1-l.rubusch@gmail.com>
+	s=arc-20240116; t=1747781410; c=relaxed/simple;
+	bh=1u9LvhcaOTRd24ql7ud9/uRq8uX/ET3DmN6DwGlD20k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uSLWca2mP7TWUVyMEHzUy0dYb8NAYv/JxZxXFruE6zQ4n1kJvB54+hg9X2m+XFDL/FkwnEwZ9FgXefBOzSSgqSSPJr2rmJP6wut6i49z5wlDK81dHOw6MC1gmIkGYVYid0CBENGwgkhjBnjRyy7ngjimotJk7EllrfzXmliXo04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8wyhnMY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3476C4CEE9;
+	Tue, 20 May 2025 22:50:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747781409;
+	bh=1u9LvhcaOTRd24ql7ud9/uRq8uX/ET3DmN6DwGlD20k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O8wyhnMYLHA+w1I6e2yBl+GrfhCu3uhYqgMZdD6q6Kn6YMCDg8EujS/qPKoLM6ely
+	 R67k3HejOtKkUNX3cM3b/9XGyjwq2optLdKxGdKcy73Z606SlY5Der/NV3KucUZ5Jm
+	 AZiLQjuba8+iuG5+FMoaqm+Ra7Bg9C0Xsofl+nfQ9IqzcyIwd+nyZ3BPce7oodV5oQ
+	 iTwYzlOZJZvu1DOB+f4QvNMsqQp+W90YY6SA0q/v71lefDBEDnursvI1P+YNbT+fyM
+	 nWCxCGgwjn56r+Zlw6qy4PM4L5IJUzZadBrrq+AwHvmbo5NXsMyeHAfgmsNhoW/SI+
+	 KiAEz/DVZHVeA==
+Date: Tue, 20 May 2025 15:50:07 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
+Subject: Re: [RFC/PATCH] perf report: Support latency profiling in
+ system-wide mode
+Message-ID: <aC0HH45JCBTchZMc@google.com>
+References: <aBmvmmRKpeVd6aT3@google.com>
+ <CACT4Y+bm4gCO_sGvEkxLQfw8JyrWvCzqV_H5h+oebt8kk1_Hwg@mail.gmail.com>
+ <aBm1x2as1fraHXHz@google.com>
+ <CACT4Y+aiU-dHVgTKEpyJtn=RUUyYJp8U5BjyWSOHm6b2ODp9cA@mail.gmail.com>
+ <aBvwFPRwA2LVQJkO@google.com>
+ <CACT4Y+YacgzrUL1uTqxkPOjQm6ryn2R_nPs8dgnrP_iKA9yasQ@mail.gmail.com>
+ <aCdo6Vz2MVv3N0kk@google.com>
+ <CACT4Y+YHxXjCU2jySTUO5kH=xC8scdzTTuP2qEBc5zMber44Aw@mail.gmail.com>
+ <aCveO4qQGy03ow5p@google.com>
+ <CACT4Y+YdnQebkGTQJ9yhLs2j12WBYk2ReiBAq5cE+wtu1RRU5A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+YdnQebkGTQJ9yhLs2j12WBYk2ReiBAq5cE+wtu1RRU5A@mail.gmail.com>
 
-Add documentation for the ADXL313 accelerometer driver.
+On Tue, May 20, 2025 at 08:45:51AM +0200, Dmitry Vyukov wrote:
+> On Tue, 20 May 2025 at 03:43, Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Mon, May 19, 2025 at 08:00:49AM +0200, Dmitry Vyukov wrote:
+> > > On Fri, 16 May 2025 at 18:33, Namhyung Kim <namhyung@kernel.org> wrote:
+> > > >
+> > > > Hello,
+> > > >
+> > > > Sorry for the delay.
+> > > >
+> > > > On Thu, May 08, 2025 at 02:24:08PM +0200, Dmitry Vyukov wrote:
+> > > > > On Thu, 8 May 2025 at 01:43, Namhyung Kim <namhyung@kernel.org> wrote:
+> > > > > >
+> > > > > > On Tue, May 06, 2025 at 09:40:52AM +0200, Dmitry Vyukov wrote:
+> > > > > > > On Tue, 6 May 2025 at 09:10, Namhyung Kim <namhyung@kernel.org> wrote:
+> > > > > > > > > > > Where does the patch check that this mode is used only for system-wide profiles?
+> > > > > > > > > > > Is it that PERF_SAMPLE_CPU present only for system-wide profiles?
+> > > > > > > > > >
+> > > > > > > > > > Basically yes, but you can use --sample-cpu to add it.
+> > > > > > > > >
+> > > > > > > > > Are you sure? --sample-cpu seems to work for non-system-wide profiles too.
+> > > > > > > >
+> > > > > > > > Yep, that's why I said "Basically".  So it's not 100% guarantee.
+> > > > > > > >
+> > > > > > > > We may disable latency column by default in this case and show warning
+> > > > > > > > if it's requested.  Or we may add a new attribute to emit sched-switch
+> > > > > > > > records only for idle tasks and enable the latency report only if the
+> > > > > > > > data has sched-switch records.
+> > > > > > > >
+> > > > > > > > What do you think?
+> > > > > > >
+> > > > > > > Depends on what problem we are trying to solve:
+> > > > > > >
+> > > > > > > 1. Enabling latency profiling for system-wide mode.
+> > > > > > >
+> > > > > > > 2. Switch events bloating trace too much.
+> > > > > > >
+> > > > > > > 3. Lost switch events lead to imprecise accounting.
+> > > > > > >
+> > > > > > > The patch mentions all 3 :)
+> > > > > > > But I think 2 and 3 are not really specific to system-wide mode.
+> > > > > > > An active single process profile can emit more samples than a
+> > > > > > > system-wide profile on a lightly loaded system.
+> > > > > >
+> > > > > > True.  But we don't need to care about lightly loaded systems as they
+> > > > > > won't cause problems.
+> > > > > >
+> > > > > >
+> > > > > > > Similarly, if we rely on switch events for system-wide mode, then it's
+> > > > > > > equally subject to the lost events problem.
+> > > > > >
+> > > > > > Right, but I'm afraid practically it'll increase the chance of lost
+> > > > > > in system-wide mode.  The default size of the sample for system-wide
+> > > > > > is 56 byte and the size of the switch is 48 byte.  And the default
+> > > > > > sample frequency is 4000 Hz but it cannot control the rate of the
+> > > > > > switch.  I saw around 10000 Hz of switches per CPU on my work env.
+> > > > > >
+> > > > > > >
+> > > > > > > For problem 1: we can just permit --latency for system wide mode and
+> > > > > > > fully rely on switch events.
+> > > > > > > It's not any worse than we do now (wrt both profile size and lost events).
+> > > > > >
+> > > > > > This can be an option and it'd work well on lightly loaded systems.
+> > > > > > Maybe we can just try it first.  But I think it's better to have an
+> > > > > > option to make it work on heavily loaded systems.
+> > > > > >
+> > > > > > >
+> > > > > > > For problem 2: yes, we could emit only switches to idle tasks. Or
+> > > > > > > maybe just a fake CPU sample for an idle task? That's effectively what
+> > > > > > > we want, then your current accounting code will work w/o any changes.
+> > > > > > > This should help wrt trace size only for system-wide mode (provided
+> > > > > > > that user already enables CPU accounting for other reasons, otherwise
+> > > > > > > it's unclear what's better -- attaching CPU to each sample, or writing
+> > > > > > > switch events).
+> > > > > >
+> > > > > > I'm not sure how we can add the fake samples.  The switch events will be
+> > > > > > from the kernel and we may add the condition in the attribute.
+> > > > > >
+> > > > > > And PERF_SAMPLE_CPU is on by default in system-wide mode.
+> > > > > >
+> > > > > > >
+> > > > > > > For problem 3: switches to idle task won't really help. There can be
+> > > > > > > lots of them, and missing any will lead to wrong accounting.
+> > > > > >
+> > > > > > I don't know how severe the situation will be.  On heavily loaded
+> > > > > > systems, the idle task won't run much and data size won't increase.
+> > > > > > On lightly loaded systems, increased data will likely be handled well.
+> > > > > >
+> > > > > >
+> > > > > > > A principled approach would be to attach a per-thread scheduler
+> > > > > > > quantum sequence number to each CPU sample. The sequence number would
+> > > > > > > be incremented on every context switch. Then any subset of CPU should
+> > > > > > > be enough to understand when a task was scheduled in and out
+> > > > > > > (scheduled in on the first CPU sample with sequence number N, and
+> > > > > > > switched out on the last sample with sequence number N).
+> > > > > >
+> > > > > > I'm not sure how it can help.  We don't need the switch info itself.
+> > > > > > What's needed is when the CPU was idle, right?
+> > > > >
+> > > > > I mean the following.
+> > > > > Each sample has a TID.
+> > > > > We add a SEQ field, which is per-thread and is incremented after every
+> > > > > rescheduling of the thread.
+> > > > >
+> > > > > When we see the last sample for (TID,SEQ), we pretend there is SCHED
+> > > > > OUT event for this thread at this timestamp. When we see the first
+> > > > > sample for (TID,SEQ+1), we pretend there is SCHED IN event for this
+> > > > > thread at this timestamp.
+> > > > >
+> > > > > These SCHED IN/OUT events are not injected by the kernel. We just
+> > > > > pretend they happen for accounting purposes. We may actually
+> > > > > materialize them in the perf tool, or me may just update parallelism
+> > > > > as if they happen.
+> > > >
+> > > > Thanks for the explanation.  But I don't think it needs the SEQ and
+> > > > SCHED IN/OUT generated from it to track lost records.  Please see below.
+> > > >
+> > > > >
+> > > > > With this scheme we can lose absolutely any subset of samples, and
+> > > > > still get very precise accounting. When we lose samples, the profile
+> > > > > of course becomes a bit less precise, but the effect is local and
+> > > > > recoverable.
+> > > > >
+> > > > > If we lose the last/first event for (TID,SEQ), then we slightly
+> > > > > shorten/postpone the thread accounting in the process parallelism
+> > > > > level. If we lose a middle (TID,SEQ), then parallelism is not
+> > > > > affected.
+> > > >
+> > > > I'm afraid it cannot check parallelism by just seeing the current thread.
+> > > > I guess it would need information from other threads even if it has same
+> > > > SEQ.
+> > >
+> > > Yes, we still count parallelism like you do in this patch, we just use
+> > > the SEQ info instead of CPU numbers and explicit switch events.
+> >
+> > I mean after record lost, let's say
+> >
+> >   t1: SAMPLE for TID 1234, seq 10  (parallelism = 4)
+> >   t2: LOST
+> >   t3: SAMPLE for TID 1234, seq 10  (parallelism = ?)
+> >
+> > I don't think we can continue to use parallelism of 4 after LOST even if
+> > it has the same seq because it cannot know if other threads switched on
+> > other CPUs.  Then do we need really the seq?
+> 
+> I do not understand the problem you describe.
+> We just keep updating parallelism according to the algorithm I
+> described. It works fine in the presence of lost events.
 
-Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
----
- Documentation/iio/adxl313.rst | 196 ++++++++++++++++++++++++++++++++++
- Documentation/iio/index.rst   |   1 +
- 2 files changed, 197 insertions(+)
- create mode 100644 Documentation/iio/adxl313.rst
+Do you think it's ok to use 4 if seq is the same?  I'm afraid it'd be
+inaccurate.
 
-diff --git a/Documentation/iio/adxl313.rst b/Documentation/iio/adxl313.rst
-new file mode 100644
-index 000000000000..8c4e2d141594
---- /dev/null
-+++ b/Documentation/iio/adxl313.rst
-@@ -0,0 +1,196 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===============
-+ADXL313 driver
-+===============
-+
-+This driver supports Analog Device's ADXL313 on SPI/I2C bus.
-+
-+1. Supported devices
-+====================
-+
-+* `ADXL313 <https://www.analog.com/ADXL313>`_
-+
-+The ADXL313is a low noise density, low power, 3-axis accelerometer with
-+selectable measurement ranges. The ADXL313 supports the ±0.5 g, ±1 g, ±2 g and
-+±4 g ranges.
-+
-+2. Device attributes
-+====================
-+
-+Accelerometer measurements are always provided.
-+
-+Temperature data are also provided. This data can be used to monitor the
-+internal system temperature or to improve the temperature stability of the
-+device via calibration.
-+
-+Each IIO device, has a device folder under ``/sys/bus/iio/devices/iio:deviceX``,
-+where X is the IIO index of the device. Under these folders reside a set of
-+device files, depending on the characteristics and features of the hardware
-+device in questions. These files are consistently generalized and documented in
-+the IIO ABI documentation.
-+
-+The following tables show the adxl313 related device files, found in the
-+specific device folder path ``/sys/bus/iio/devices/iio:deviceX``.
-+
-++---------------------------------------------------+----------------------------------------------------------+
-+| 3-Axis Accelerometer related device files         | Description                                              |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_scale                                    | Scale for the accelerometer channels.                    |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_x_calibbias                              | Calibration offset for the X-axis accelerometer channel. |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_x_raw                                    | Raw X-axis accelerometer channel value.                  |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_y_calibbias                              | y-axis acceleration offset correction                    |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_y_raw                                    | Raw Y-axis accelerometer channel value.                  |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_z_calibbias                              | Calibration offset for the Z-axis accelerometer channel. |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_z_raw                                    | Raw Z-axis accelerometer channel value.                  |
-++---------------------------------------------------+----------------------------------------------------------+
-+
-++---------------------------------------+----------------------------------------------+
-+| Miscellaneous device files            | Description                                  |
-++---------------------------------------+----------------------------------------------+
-+| name                                  | Name of the IIO device.                      |
-++---------------------------------------+----------------------------------------------+
-+| in_accel_sampling_frequency           | Currently selected sample rate.              |
-++---------------------------------------+----------------------------------------------+
-+| in_accel_sampling_frequency_available | Available sampling frequency configurations. |
-++---------------------------------------+----------------------------------------------+
-+
-+Channels processed values
-+-------------------------
-+
-+A channel value can be read from its _raw attribute. The value returned is the
-+raw value as reported by the devices. To get the processed value of the channel,
-+apply the following formula:
-+
-+.. code-block:: bash
-+
-+        processed value = (_raw + _offset) * _scale
-+
-+Where _offset and _scale are device attributes. If no _offset attribute is
-+present, simply assume its value is 0.
-+
-+The ADXL313 driver offers data for a single types of channels, the table below
-+shows the measurement units for the processed value, which are defined by the
-+IIO framework:
-+
-++-------------------------------------+---------------------------+
-+| Channel type                        | Measurement unit          |
-++-------------------------------------+---------------------------+
-+| Acceleration on X, Y, and Z axis    | Meters per Second squared |
-++-------------------------------------+---------------------------+
-+
-+Usage examples
-+--------------
-+
-+Show device name:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat name
-+        adxl313
-+
-+Show accelerometer channels value:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_raw
-+        2
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_y_raw
-+        -57
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_z_raw
-+        2
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_scale
-+        0.009576806
-+
-+- X-axis acceleration = in_accel_x_raw * in_accel_scale = 0.0191536 m/s^2
-+- Y-axis acceleration = in_accel_y_raw * in_accel_scale = -0.5458779 m/s^2
-+- Z-axis acceleration = in_accel_z_raw * in_accel_scale = 0.0191536 m/s^2
-+
-+Set calibration offset for accelerometer channels. Note, the calibration will be
-+rounded according to the graduation of LSB units:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_calibbias
-+        0
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 50 > in_accel_x_calibbias
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_calibbias
-+        48
-+
-+Set sampling frequency:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_sampling_frequency
-+        100.000000
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_sampling_frequency_available
-+        6.250000 12.500000 25.000000 50.000000 100.000000 200.000000 400.000000 800.000000 1600.000000 3200.000000
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 400 > in_accel_sampling_frequency
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_sampling_frequency
-+        400.000000
-+
-+3. Device buffers
-+=================
-+
-+This driver supports IIO buffers.
-+
-+All devices support retrieving the raw acceleration measurements using buffers.
-+
-+Usage examples
-+--------------
-+
-+Select channels for buffer read:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_accel_x_en
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_accel_y_en
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_accel_z_en
-+
-+Set the number of samples to be stored in the buffer:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 10 > buffer/length
-+
-+Enable buffer readings:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > buffer/enable
-+
-+Obtain buffered data:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> hexdump -C /dev/iio\:device0
-+        ...
-+        000000d0  01 fc 31 00 c7 ff 03 fc  31 00 c7 ff 04 fc 33 00  |..1.....1.....3.|
-+        000000e0  c8 ff 03 fc 32 00 c5 ff  ff fc 32 00 c7 ff 0a fc  |....2.....2.....|
-+        000000f0  30 00 c8 ff 06 fc 33 00  c7 ff 01 fc 2f 00 c8 ff  |0.....3...../...|
-+        00000100  02 fc 32 00 c6 ff 04 fc  33 00 c8 ff 05 fc 33 00  |..2.....3.....3.|
-+        00000110  ca ff 02 fc 31 00 c7 ff  02 fc 30 00 c9 ff 09 fc  |....1.....0.....|
-+        00000120  35 00 c9 ff 08 fc 35 00  c8 ff 02 fc 31 00 c5 ff  |5.....5.....1...|
-+        00000130  03 fc 32 00 c7 ff 04 fc  32 00 c7 ff 02 fc 31 00  |..2.....2.....1.|
-+        00000140  c7 ff 08 fc 30 00 c7 ff  02 fc 32 00 c5 ff ff fc  |....0.....2.....|
-+        00000150  31 00 c5 ff 04 fc 31 00  c8 ff 03 fc 32 00 c8 ff  |1.....1.....2...|
-+        00000160  01 fc 31 00 c7 ff 05 fc  31 00 c3 ff 04 fc 31 00  |..1.....1.....1.|
-+        00000170  c5 ff 04 fc 30 00 c7 ff  03 fc 31 00 c9 ff 03 fc  |....0.....1.....|
-+        ...
-+
-+See ``Documentation/iio/iio_devbuf.rst`` for more information about how buffered
-+data is structured.
-+
-+4. IIO Interfacing Tools
-+========================
-+
-+See ``Documentation/iio/iio_tools.rst`` for the description of the available IIO
-+interfacing tools.
-diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
-index 2d6afc5a8ed5..c106402a91f7 100644
---- a/Documentation/iio/index.rst
-+++ b/Documentation/iio/index.rst
-@@ -31,6 +31,7 @@ Industrial I/O Kernel Drivers
-    adis16475
-    adis16480
-    adis16550
-+   adxl313
-    adxl380
-    bno055
-    ep93xx_adc
--- 
-2.39.5
+> 
+> 
+> > > > Also postpone thread accounting can be complex.  I think it should wait
+> > > > for all other threads to get a sample.  Maybe some threads exited and
+> > > > lost too.
+> > >
+> > > Yes, in order to understand what's the last event for (TID,SEQ) we
+> > > need to look ahead and find the event (TID,SEQ+1). The easiest way to
+> > > do it would be to do 2 passes over the trace. That's the cost of
+> > > saving trace space + being resilient to lost events.
+> > >
+> > > Do you see any other issues with this scheme besides requiring 2 passes?
+> >
+> > Well.. 2 pass itself can be a problem due to slowness it'd bring.  Some
+> > people complain about the speed of perf report as of now.
+> 
+> Is trace processing CPU-bound or memory-bound? If it's CPU-bound, then
+> the second pass may be OK-ish, since we will need minimal CPU
+> processing during the first pass.
+
+It depends on the size of data, but I guess it's CPU-bound in most cases.
+
+> 
+> 
+> > I think we can simply reset the parallelism in all processes after LOST
+> > and set current process to the idle task.  It'll catch up as soon as it
+> > sees samples from all CPUs.
+> 
+> I guess we can approximate parallelism as you described here:
+> 
+> > Hmm.. ok.  Maybe we can save the timestamp of the last sample on each
+> > CPU and clear the current thread after some period (2x of given freq?).
+> 
+> We probably don't need to do anything special for lost events in this
+> scheme at all. If the gap caused by lost events is tiny, then we
+> consider nothing happened. If the gap is large enough, then we
+> consider the CPU as idle for the duration of the gap. Either way it
+> will be handled on common grounds.
+
+How do you know if it's tiny?  Do you mean the seq remains after lost?
+
+> 
+> But tuning of these heuristics + testing and verification may be a bit
+> of a problem. I would hate to end up with a tool which I won't trust.
+> 
+> Here:
+> "after some period (2x of given freq?)"
+> do you mean 2x average/median period, or 1/2 average/median period?
+> (2x freq is 1/2 period)
+
+Oh, sorry.  It's 2x period.
+
+> 
+> Ideally, we consider a CPU idle after 1/2 period after it switched to
+> the idle task and we stop receiving samples.
+> But on the other hand, we don't want to consider it constantly
+> becoming idle, when it's just doing normal sampling with the normal
+> period...
+> 
+> So ideally the algorithm should be something like:
+> let's say average/median sampling period is P
+> we got last sample for CPU X at time T
+> if by time T+2P we have not seen any other sample on CPU X, then
+> consider CPU X idle since T+0.5P
+> 
+> But this would also require either 2 passes over the data, or some
+> kind of look ahead similar to the algo I proposed...
+
+I think we can do it in 1 pass.  For each sample,
+
+  for_each_cpu(cpu) {
+      if (current[cpu]->last_timestamp + 2*period < sample->timestamp) {
+          if (current[cpu]->thread != idle) {
+              current[cpu]->thread->parallelism--;
+              current[cpu]->thread = idle;
+	  }
+      }
+  }
+
+  leader = machine__findnew_thread(machine, sample->pid);
+  current[sample->cpu]->last_timestamp = sample->timestamp;
+
+  if (current[sample->cpu]->thread != leader) {
+      if (current[sample->cpu]->thread != idle)
+          current[sample->cpu]->thread->parallelism--;
+      
+      current[sample->cpu]->thread = leader;
+      leader->parallelism++;
+  }
+
+  sample->parallelism = leader->parallelism;
+
+> 
+> Also, do we take the median period? or average? do we update it over
+> time (say, if CPU freq changes)? do we count it globally, or per CPU
+> (in case CPUs run at different freqs)?
+
+Oh, perf tools use default frequency of 4000 Hz.  Maybe we can use this
+only for the frequency mode which means user didn't use -c option or
+similar in the event description.
+
+Thanks,
+Namhyung
 
 
