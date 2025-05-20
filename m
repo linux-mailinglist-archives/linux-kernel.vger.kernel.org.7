@@ -1,156 +1,194 @@
-Return-Path: <linux-kernel+bounces-655723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B827BABDB1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:06:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DFAABDB1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDD253B7FFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:01:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 044A24A38BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBB124503E;
-	Tue, 20 May 2025 14:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138E0247296;
+	Tue, 20 May 2025 14:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJEaKcSX"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H7x5e5mJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D93819F137
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 14:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC86E24728A;
+	Tue, 20 May 2025 14:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747749714; cv=none; b=ODHbm7NdW1bmG5AxFDAUw6rx6aY/uPrXWfe+PcxiTNjyH/cRXt/rlDw0xKF0wrmgmOPX7pylUB114mBbHktqGOjZSXkyDMQ8QWoQBEe957sIZwL72kqH7EQIe4tChzU2Q1ryN/FMZcmrMHASE5LStTRTsyubJDhFpaYSZyDtg/M=
+	t=1747749722; cv=none; b=t8abUY6P2j5XInj3j1iXJLkyVuITsQqGdoBt2wGQ4WWS6cJ4ml+zo6riA1DSLW/O07QgD95IxjPA1w/d3q2L7z5eClmX+isT2A2GdvwZAtkh9klPJkPN7H3z+cuvql7ldyTjZch9NjynZGjHGH/js+ySLQpQXaLrqTxRSkGLAbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747749714; c=relaxed/simple;
-	bh=Uq2OjYZIAwXGcKxfVxUqOz+LEZTbzNoiTVuTAioXdMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QyiWHJJfx4vwKJb+iOIWGPYYBhZ9Haj1WxwSpLI2vrJGr12zv+Lyb3HfJjVneo+/u0SKi+u4Biq+djJEO+jDrNh/JE7JWB6z5SlMqOLZ5Z2q7LRGA3ZIxrz7/AbkgXjffn75rFZlfyCh0gxOc1WD7GBPw9qLWP2/tdnf/py8hmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJEaKcSX; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ad51ef2424bso824282566b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 07:01:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747749711; x=1748354511; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PV1FL/a31fFF87tKpEa3eS5r97RWRD8TAOaHpu3NmaI=;
-        b=JJEaKcSXp6e+hbOViQ19n+lM5VdDdoyaYu8+xGpSvCHj0nJVB1TVcRSc4u+FBLEa+J
-         w85Me7FPYorSGK8zhwzAetdBUXlm4VDlWHJs9uQtKzZXSOo9jJWl4B4Gm124ehI2AhFq
-         VA+7XKJ/9flv7KIZ9eW+EECo83RpuquqcHpFHY8SDVDkVvk6sYrx3WeVC9UmHUORLZKu
-         B/V2M4YCkg07luu+oDivRtwwCKgeN4d8v89SiFD1vD0SprxG1SPYd6ErpAZaZ5vjWluo
-         5a46r6i/I5t2dehPlnLB0MMpmreKtzqXkEJPOtsRIupAVG10LxVCrJ9iN4PJmkN7bOoo
-         NCHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747749711; x=1748354511;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PV1FL/a31fFF87tKpEa3eS5r97RWRD8TAOaHpu3NmaI=;
-        b=t9K4tmUnaY+LIB5hpTBXznr+vOrLB/PSqwIUjdTsbAFJotXt61Ixe5yKBprGjdiDAO
-         vCOC8bXeI/vSra2dvIALOqQRPItv4YBq/2Iafi6IndtikwkjIOZYDcyBy4hf32UuW/Cq
-         ar7TknOpvy5lZDsS9QXYHn7srhQQmqAfauSCtAsYkrO7y18PMC4CIwJZAYX2lcvbdbC/
-         T0BlOstN6yPwIRFrDwNWPBWGXd+JcBCe2aUEhXvDdq/BK2K7qReR+2douVQSFewHvcON
-         GaIC6nD9LhD97A6X3Jm5MEFQ/7UcRsdtOVnV3hZCY3QIhSRx3+qfnbg4h3MZ6flVD3Yv
-         6xWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXseM6tnMY3Ps2X3hXsr1+hOzDn2/JE8oui/ychEwnIrqDfkb0I87Ny3reQ4K/f69Js2dFKzolUjzC38jc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAv1rTHq7Cy/nG8kkW1OPF+3nc315zfrrfTN5RzidqTpna/m5a
-	2i3Idd5njq9E+aCzBcrU6yZKyoXAJ0AdgZjzUyz6Rd25P+GwVrzKWZ7m
-X-Gm-Gg: ASbGncvBp2s9ftRKx0ZfoQGoGHM0BJAk1kad0sLXRBatJK5Tda9bo3RNTAAbvPwsJH5
-	dzEVptlrvgQjLH8y3mvIECez8lkOSoBpfYy27AQxhVEz39QgxQ81JsZqt6rJGXcd8enee7/VZri
-	5jjfZc/Kj0IBqwBwKZ9/RInshGy3GO3lDS8hHHhj5TpbG/TZ2MEAPBRvn5RMMF4HPv9kAtbdZIX
-	idn9Dez1i0oAttQ/bUnoUzaqr+jYCDyHBYXgSgKvXBW7m3cfvnZLXiz/LHanZM6BZ+cQUFatpeW
-	jXxasNcgB+PBOW8oZ1UMzK7DaDcfCiwVg9qtUh0qhF+eKs7wuE3e5rkHSKmgpC3DA2YERjXdjKT
-	TB0+GXjagA5EvuXtBiLBASjq2
-X-Google-Smtp-Source: AGHT+IHYDfOBB6XOAPFWgeSvqBqbLUR4EmvrA6HlSBGcoEyDnSyMz9RMu73gKqe3sYbMbufPdTMBXQ==
-X-Received: by 2002:a17:907:3e82:b0:ad4:f5ee:3c0 with SMTP id a640c23a62f3a-ad52d49b412mr1830301766b.16.1747749710121;
-        Tue, 20 May 2025 07:01:50 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:1c0a:f3ac:4087:51c8? ([2620:10d:c092:500::7:66a9])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d06bc66sm731573466b.46.2025.05.20.07.01.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 May 2025 07:01:49 -0700 (PDT)
-Message-ID: <89553e3b-48a2-4867-a082-5a530620c427@gmail.com>
-Date: Tue, 20 May 2025 15:01:48 +0100
+	s=arc-20240116; t=1747749722; c=relaxed/simple;
+	bh=iygAvbmKh6dIuYS33fv3jjQnxcbHrBReM73qTZx4BJ4=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gj4oA1vvbvvoZzU4GTeJ4wcO+S0RqgzOpuxg1nm9r9Z4/yFXkuuou/gIhRXsPW1IX1UXogA11820VCxAXab3k+m0UCPuUnb7jyQT35N8KcCRtflrxN+822qCLgsQmjNoY7rgFddOSSBnTVrTgTE4ZkLxLFx7Yj9zzFiVSJ6RuTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H7x5e5mJ; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747749720; x=1779285720;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=iygAvbmKh6dIuYS33fv3jjQnxcbHrBReM73qTZx4BJ4=;
+  b=H7x5e5mJnNYb6l6C9qjZ7kUP+P3PVtRWrqFwV6WEH3CUvU/lISnprx6E
+   2xG3NS/UaL0PW22i8xjSCuYa4XO5hvPKk97H2Idt2mHDtPABVlTWd3yXZ
+   eJkvQRQniErZTTxs3yyCewn2sEh7X/kfisQ0x5S6jGV02yakueMF4HI3V
+   ATTGLDxmVb96mgOsp9EJl2FbNqnNuM61iDa3cxMv6wxhyEgc6O+aBpEsG
+   PhwRPAi8SVUgk8UI+b8fVHHishexKKuNYu1EFbIJZ8CfiR9uWQy9H7X5m
+   mWeJjQZX0V0Rl+SMCQN2GhSz5i4ECnDh/9sulq9VDmC/2Un/rMia6slxE
+   g==;
+X-CSE-ConnectionGUID: +myJu97yRJeKx+lHZfvmGw==
+X-CSE-MsgGUID: XIf7ncS8QOWj4x0DraYaHg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49669673"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="49669673"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 07:01:59 -0700
+X-CSE-ConnectionGUID: 44P5hnxsQ+GNkjwKcwFHTQ==
+X-CSE-MsgGUID: n5hyRiSRSlSt5qEwKiZyQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="139586729"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.235])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 07:01:57 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 20 May 2025 17:01:53 +0300 (EEST)
+To: "David E. Box" <david.e.box@linux.intel.com>
+cc: LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
+    srinivas.pandruvada@linux.intel.com, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, tony.luck@intel.com, 
+    xi.pardee@linux.intel.com, Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH 07/15] platform/x86/intel/vsec: Add new Discovery
+ feature
+In-Reply-To: <20250430212106.369208-8-david.e.box@linux.intel.com>
+Message-ID: <56f56bdd-80be-d140-1b9b-6c1d75df252f@linux.intel.com>
+References: <20250430212106.369208-1-david.e.box@linux.intel.com> <20250430212106.369208-8-david.e.box@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm: slub: allocate slab object extensions
- non-contiguously
-To: Andrew Morton <akpm@linux-foundation.org>, surenb@google.com
-Cc: hannes@cmpxchg.org, shakeel.butt@linux.dev, vlad.wing@gmail.com,
- linux-mm@kvack.org, kent.overstreet@linux.dev, linux-kernel@vger.kernel.org,
- kernel-team@meta.com
-References: <20250520122547.1317050-1-usamaarif642@gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <20250520122547.1317050-1-usamaarif642@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
+On Wed, 30 Apr 2025, David E. Box wrote:
 
-
-On 20/05/2025 13:25, Usama Arif wrote:
-> When memory allocation profiling is running on memory bound services,
-> allocations greater than order 0 for slab object extensions can fail,
-> for e.g. zs_handle zswap slab which will be 512 objsperslab x 16 bytes
-> per slabobj_ext (order 1 allocation). Use kvcalloc to improve chances
-> of the allocation being successful.
+> Add the PCIe VSEC ID for new Intel Platform Monitoring Technology
+> Capability Discovery feature. Discovery provides detailed information for
+> the various Intel VSEC features. Also make the driver a supplier for
+> TPMI and Telemetry drivers which will use the information.
 > 
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> Reported-by: Vlad Poenaru <vlad.wing@gmail.com>
-> Closes: https://lore.kernel.org/all/17fab2d6-5a74-4573-bcc3-b75951508f0a@gmail.com/
+> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
 > ---
->  mm/slub.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/platform/x86/intel/vsec.c | 26 ++++++++++++++++++++++++--
+>  include/linux/intel_vsec.h        |  4 +++-
+>  2 files changed, 27 insertions(+), 3 deletions(-)
 > 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index dc9e729e1d26..bf43c403ead2 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -1989,7 +1989,7 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
->  	gfp &= ~OBJCGS_CLEAR_MASK;
->  	/* Prevent recursive extension vector allocation */
->  	gfp |= __GFP_NO_OBJ_EXT;
-> -	vec = kcalloc_node(objects, sizeof(struct slabobj_ext), gfp,
-> +	vec = kvcalloc_node(objects, sizeof(struct slabobj_ext), gfp,
->  			   slab_nid(slab));
->  	if (!vec) {
->  		/* Mark vectors which failed to allocate */
+> diff --git a/drivers/platform/x86/intel/vsec.c b/drivers/platform/x86/intel/vsec.c
+> index 5374abef0b48..e3ec17a53e62 100644
+> --- a/drivers/platform/x86/intel/vsec.c
+> +++ b/drivers/platform/x86/intel/vsec.c
+> @@ -65,6 +65,9 @@ static const char *intel_vsec_name(enum intel_vsec_id id)
+>  	case VSEC_ID_TPMI:
+>  		return "tpmi";
+>  
+> +	case VSEC_ID_DISCOVERY:
+> +		return "discovery";
+> +
+>  	default:
+>  		return NULL;
+>  	}
+> @@ -83,6 +86,8 @@ static bool intel_vsec_supported(u16 id, unsigned long caps)
+>  		return !!(caps & VSEC_CAP_SDSI);
+>  	case VSEC_ID_TPMI:
+>  		return !!(caps & VSEC_CAP_TPMI);
+> +	case VSEC_ID_DISCOVERY:
+> +		return !!(caps & VSEC_CAP_DISCOVERY);
+>  	default:
+>  		return false;
+>  	}
+> @@ -140,6 +145,8 @@ static bool vsec_driver_present(int cap_id)
+>  		return IS_ENABLED(CONFIG_INTEL_SDSI);
+>  	case VSEC_CAP_TPMI:
+>  		return IS_ENABLED(CONFIG_INTEL_TPMI);
+> +	case VSEC_CAP_DISCOVERY:
+> +		return IS_ENABLED(CONFIG_INTEL_PMT_DISCOVERY);
+>  	default:
+>  		return false;
+>  	}
+> @@ -392,6 +399,9 @@ static int get_cap_id(u32 header_id, unsigned long *cap_id)
+>  	case VSEC_ID_TPMI:
+>  		*cap_id = ilog2(VSEC_CAP_TPMI);
+>  		break;
+> +	case VSEC_ID_DISCOVERY:
+> +		*cap_id = ilog2(VSEC_CAP_DISCOVERY);
+> +		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -677,14 +687,26 @@ static const struct intel_vsec_platform_info mtl_info = {
+>  	.caps = VSEC_CAP_TELEMETRY,
+>  };
+>  
+> +static const struct vsec_feature_dependency oobmsm_deps[] = {
+> +	{
+> +		.feature = VSEC_CAP_TELEMETRY,
+> +		.supplier_bitmap = VSEC_CAP_DISCOVERY
 
-I forgot the freeing part, This will need the below fixlet as well.
-I will add it to the next revision if there is another one,
-otherwise it can be folded into this one. Thanks!
+Missing a comma.
 
+> +	},
+> +};
+> +
+>  /* OOBMSM info */
+>  static const struct intel_vsec_platform_info oobmsm_info = {
+> -	.caps = VSEC_CAP_TELEMETRY | VSEC_CAP_SDSI | VSEC_CAP_TPMI,
+> +	.caps = VSEC_CAP_TELEMETRY | VSEC_CAP_SDSI | VSEC_CAP_TPMI |
+> +		VSEC_CAP_DISCOVERY,
+> +	.deps = oobmsm_deps,
+> +	.num_deps = ARRAY_SIZE(oobmsm_deps),
+>  };
+>  
+>  /* DMR OOBMSM info */
+>  static const struct intel_vsec_platform_info dmr_oobmsm_info = {
+> -	.caps = VSEC_CAP_TELEMETRY | VSEC_CAP_TPMI,
+> +	.caps = VSEC_CAP_TELEMETRY | VSEC_CAP_TPMI | VSEC_CAP_DISCOVERY,
+> +	.deps = oobmsm_deps,
+> +	.num_deps = ARRAY_SIZE(oobmsm_deps),
+>  };
+>  
+>  /* TGL info */
+> diff --git a/include/linux/intel_vsec.h b/include/linux/intel_vsec.h
+> index 71067afaca99..a07796d7d43b 100644
+> --- a/include/linux/intel_vsec.h
+> +++ b/include/linux/intel_vsec.h
+> @@ -16,7 +16,8 @@
+>  #define VSEC_CAP_CRASHLOG	BIT(3)
+>  #define VSEC_CAP_SDSI		BIT(4)
+>  #define VSEC_CAP_TPMI		BIT(5)
+> -#define VSEC_FEATURE_COUNT	6
+> +#define VSEC_CAP_DISCOVERY	BIT(6)
+> +#define VSEC_FEATURE_COUNT	7
+>  
+>  /* Intel DVSEC offsets */
+>  #define INTEL_DVSEC_ENTRIES		0xA
+> @@ -33,6 +34,7 @@ enum intel_vsec_id {
+>  	VSEC_ID_TELEMETRY	= 2,
+>  	VSEC_ID_WATCHER		= 3,
+>  	VSEC_ID_CRASHLOG	= 4,
+> +	VSEC_ID_DISCOVERY	= 12,
+>  	VSEC_ID_SDSI		= 65,
+>  	VSEC_ID_TPMI		= 66,
+>  };
+> 
 
-commit fa48eab7faddfdb94faa80a1575ac1840919071e (HEAD -> prctl_huge_v3)
-Author: Usama Arif <usamaarif642@gmail.com>
-Date:   Tue May 20 14:58:10 2025 +0100
-
-    mm: slub: change slab_obj_exts freeing to kvfree
-    
-    This is to match the kvmalloc.
-    
-    Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-
-diff --git a/mm/slub.c b/mm/slub.c
-index 97cb3d9e8d00..2245e8d8fffb 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2045,7 +2045,7 @@ static noinline void free_slab_obj_exts(struct slab *slab)
-         * the extension for obj_exts is expected to be NULL.
-         */
-        mark_objexts_empty(obj_exts);
--       kfree(obj_exts);
-+       kvfree(obj_exts);
-        slab->obj_exts = 0;
- }
- 
+-- 
+ i.
 
 
