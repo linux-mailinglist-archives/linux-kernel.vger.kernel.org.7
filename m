@@ -1,231 +1,127 @@
-Return-Path: <linux-kernel+bounces-655774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D404ABDCB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:27:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4203ABDD14
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 037358C2D2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:22:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B864E6D29
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F182F27A931;
-	Tue, 20 May 2025 14:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1708525334A;
+	Tue, 20 May 2025 14:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XiSHIfOB"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C48QBauZ"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D85726B2CC;
-	Tue, 20 May 2025 14:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B962505C7;
+	Tue, 20 May 2025 14:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747750614; cv=none; b=LV3yBZYl8F+kGuwoxrfYVGjMNZRpMZtDm8P8Qa/oM9LJRlg+WBBsIelcsFAzr3NEGoJaHWWo4i8ZDqY7OCWmUGoh8ZfbsxHu8HCk1UKunWIgwilwzhDPQRsi4bO32Tt4R1ebvjNlk6m2ugHAYH9rYfay9c3jNKlsEU5bXolCmXA=
+	t=1747750685; cv=none; b=KiZ427tURaURtUtzhiqs34c5vz5S39cJ2cmtrm2LjesY6rqAqK77TkBSMNrqG7pF+Z4og4TbZc1VynQmT/ezUGPNdv8K8/QI6viiT6dPZtMs77IHHLzTVnnoD+t3mGXjkCeSmVtra7qy9D4H7imxllnQz2KBVKIaCGNOqFvz/3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747750614; c=relaxed/simple;
-	bh=gkT4V1A9YIzLoquF17ziKdUbQs45WRMfVuzK5FJTRPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i2Ko3RaIJmE5JU4ojY69IODnb6jv5PxtE7w6deefx+sj7lXpxxYqZxRDegG3N3YBphU0QNgiyLPE/8KPoM4cKmV57sEfIrxTRINlvbBNZtRk1bdQQ2vdsgwmPGSDb39ZndpP0ppuJp0CMT+PSd/YgDpzi8pvy9cmzWd0UEDsO2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XiSHIfOB; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (179.218-130-109.adsl-dyn.isp.belgacom.be [109.130.218.179])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 270AF2EC;
-	Tue, 20 May 2025 16:16:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1747750590;
-	bh=gkT4V1A9YIzLoquF17ziKdUbQs45WRMfVuzK5FJTRPQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XiSHIfOBd0ZZ7snWo+U0XvacrEZtosU6cHhiXHV+0l4j2Hx1G+IWahP4Qf6Qbt0My
-	 H8uXsO7Rzya0Z7HQCu6TRnNmB9oy7RbIuoXQKbXhXPkUeRMecW/LgrSuOP6bbx2KH6
-	 hY75ZMWkXf+6FQhx2Rjch9li0k+z1JGYmzhJMUw8=
-Date: Tue, 20 May 2025 16:16:45 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v5 05/12] drm: renesas: rz-du: mipi_dsi: Use VCLK for
- HSFREQ calculation
-Message-ID: <20250520141645.GE13321@pendragon.ideasonboard.com>
-References: <20250512182330.238259-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250512182330.238259-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1747750685; c=relaxed/simple;
+	bh=n5HLSG+HZfhC0Gthpz8JGBNHOZuHr52+38rD1o9D0lw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NM3Jl0A6+Dy08KznMrzXK1ZitkT1hqIZrHG6reTOrhkLmIQye1ieveNhdEvQ5SUgrEWKFHL/cKQjIRvUYIq6/dvCSuomO7UxB99yRkIQPGbR4uaRqvChsE2T/1e9kFe2IPAm+VUxwErf6bfBBgOrVc95izVaGn0l0geFqAp1cao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C48QBauZ; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-30ecc762cb7so2412931a91.1;
+        Tue, 20 May 2025 07:18:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747750683; x=1748355483; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cV/OQIV8ztouckrklGIhTFHAEbzSsaIMTwiOmhCaP08=;
+        b=C48QBauZAzvrCEkx9l9IdUtN9txVIgO1SUMxsplEgmS1Ey/qSGy0NTPZEEnHgkFxJk
+         bvgZsLKUsh9Cm9UYvhcw2GOkHIuB9ks+tlgdtlMxY5v4pRM/ncRS3ewcbmskbGi1dCKs
+         s0lYtG/P1MyjzJ/9RvlpmqoeiLyp3EBiqAOA6xAAGFg0AQOknybKV1N82ZdQFL+m/OCO
+         Rb/NkA5QPyuqyTBvkQKgr1qAohyV/DamIT7mQLzx666IJFT9u81n1AVAiuSRmUBf6GXH
+         Fs8gUcdXbrSQQFmHojmvC04ga3m7tCNjhyFkZVNcnRmHOFC+nZOMxY49ZBReuUOnXOxt
+         oZ9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747750683; x=1748355483;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cV/OQIV8ztouckrklGIhTFHAEbzSsaIMTwiOmhCaP08=;
+        b=CFZaAQfS+mreCd1AvpwtZeHKRMHg2UmW0yjpb1Q/dNrARnbk7i6g8Wn6Lb6PwDnazY
+         KJsVEjm/W6PTOeuVKR6H0dMCKla5JDxIKs+Tb3g7Gudjcyo87IFVNfhDkr5Oo5nDrEqM
+         uVvAr+6Zg2MgeMQG8f/mz2YVhIxZOjs2X6pdTjPa448l6SdVQpdj8hNqJReB96OPS8gS
+         adAcpfGyN0TbexaKz0RUuobFUV1KvaaOeX9asdgB/UEPrKb+KPI2gLD1QnC1TpbeqwvX
+         rYT0nPYFaHFECQqlulbdOVEDAsWSL78WUl45oP4LFwFomOtOLWOuB6FNfTDmCoHitnId
+         vqYA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7qkQymgs+ybvWbHDcE2NizxQnajoVRswb5PeveFCyyaaIU/53zREzwa901x5Ium9gQsloS31bef1Jeq0=@vger.kernel.org, AJvYcCXfMpcnLsIa3ABzriOoP8ixG/+0jbSWzey5ZvnLVgd0Fgq5JaLZdmYiJQFC0+8keRwdUXCwXRde@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFWCDJwMdRd+NODQwgSmZF6rqSysdqbdqMb4ks0yQRStGS6gkI
+	4+7w+P0+NfsmX7W6UHsnEJ8x5tGiNZl+hWCZwGoWQ/LW3AQgq/p2YX2rxboLa4FhlOiKbfXLD12
+	+0LAFwDKlDKfu3oNhSxrE47WQajUK5Fs=
+X-Gm-Gg: ASbGncuY2+QcIsQzy8nPKRh8ElAr03ekGwXdJPEuuOKImwjQCK7N22GjafhA2mxrURa
+	sYkBqB9RxU//ZkUWs4bddqxEDtUr8bainIIRIOlnCX7++/1AgHnHr62NpJj3GmVw6r8rWxkT/Ik
+	AiKn9i7mqwkA6LFsoICUPNKqy6j00NM7SD9lY=
+X-Google-Smtp-Source: AGHT+IHop0vmNJRZlUx6caCyeoeYe6BDnYX4Gm7Du+V6bm/RRJ8NWj0JlPUUEXPwgVB01rPgXJlziSg6bf/mQEtweI4=
+X-Received: by 2002:a17:90b:2f03:b0:302:fc48:4f0a with SMTP id
+ 98e67ed59e1d1-30e7d6d17e6mr25420919a91.0.1747750683051; Tue, 20 May 2025
+ 07:18:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250512182330.238259-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250519153735.66940-1-aha310510@gmail.com> <aCyAcbNqKRlPnadx@hoboy.vegasvil.org>
+In-Reply-To: <aCyAcbNqKRlPnadx@hoboy.vegasvil.org>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Tue, 20 May 2025 23:17:54 +0900
+X-Gm-Features: AX0GCFtcL76npAhxQUeiUE6yEiaTCAtDhflj2Ax0XR2OXCJwmO4Pk_G2kOAmp3A
+Message-ID: <CAO9qdTHe1bR=c6dn4WEDsVZS8pRtf9FsMMQXNFVV_DT0wm_FVw@mail.gmail.com>
+Subject: Re: [PATCH] ptp: remove ptp->n_vclocks check logic in ptp_vclock_in_use()
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, yangbo.lu@nxp.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
+Richard Cochran <richardcochran@gmail.com> wrote:
+>
+> On Tue, May 20, 2025 at 12:37:35AM +0900, Jeongjun Park wrote:
+>
+> > diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
+> > index 35a5994bf64f..0ae9f074fc52 100644
+> > --- a/drivers/ptp/ptp_clock.c
+> > +++ b/drivers/ptp/ptp_clock.c
+> > @@ -412,9 +412,8 @@ static int unregister_vclock(struct device *dev, vo=
+id *data)
+> >
+> >  int ptp_clock_unregister(struct ptp_clock *ptp)
+> >  {
+> > -     if (ptp_vclock_in_use(ptp)) {
+> > +     if (ptp_vclock_in_use(ptp))
+> >               device_for_each_child(&ptp->dev, NULL, unregister_vclock)=
+;
+> > -     }
+> >
+> >       ptp->defunct =3D 1;
+> >       wake_up_interruptible(&ptp->tsev_wq);
+>
+> This hunk is not related to the subject of the patch.  Please remove it.
+>
+> Thanks,
+> Richard
+>
 
-On Mon, May 12, 2025 at 07:23:23PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Update the RZ/G2L MIPI DSI driver to calculate HSFREQ using the actual
-> VCLK rate instead of the mode clock. The relationship between HSCLK and
-> VCLK is:
-> 
->     vclk * bpp <= hsclk * 8 * lanes
-> 
-> Retrieve the VCLK rate using `clk_get_rate(dsi->vclk)`, ensuring that
-> HSFREQ accurately reflects the clock rate set in hardware, leading to
-> better precision in data transmission.
-> 
-> Additionally, use `DIV_ROUND_CLOSEST_ULL` for a more precise division
-> when computing `hsfreq`. Also, update unit conversions to use correct
-> scaling factors for better clarity and correctness.
-> 
-> Since `clk_get_rate()` returns the clock rate in Hz, update the HSFREQ
-> threshold comparisons to use Hz instead of kHz to ensure correct behavior.
-> 
-> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v4->v5:
-> - Added dev_info() to print the VCLK rate if it doesn't match the
->   requested rate.
-> - Added Reviewed-by tag from Biju
-> 
-> v3->v4:
-> - Used MILLI instead of KILO
-> 
-> v2->v3:
-> - No changes
-> 
-> v1->v2:
-> - No changes
-> ---
->  .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 30 +++++++++++--------
->  1 file changed, 18 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> index c5f698cd74f1..3f6988303e63 100644
-> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> @@ -8,6 +8,7 @@
->  #include <linux/delay.h>
->  #include <linux/io.h>
->  #include <linux/iopoll.h>
-> +#include <linux/math.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_graph.h>
-> @@ -15,6 +16,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/reset.h>
->  #include <linux/slab.h>
-> +#include <linux/units.h>
->  
->  #include <drm/drm_atomic.h>
->  #include <drm/drm_atomic_helper.h>
-> @@ -199,7 +201,7 @@ static int rzg2l_mipi_dsi_dphy_init(struct rzg2l_mipi_dsi *dsi,
->  	/* All DSI global operation timings are set with recommended setting */
->  	for (i = 0; i < ARRAY_SIZE(rzg2l_mipi_dsi_global_timings); ++i) {
->  		dphy_timings = &rzg2l_mipi_dsi_global_timings[i];
-> -		if (hsfreq <= dphy_timings->hsfreq_max)
-> +		if (hsfreq <= (dphy_timings->hsfreq_max * MILLI))
+While working on the patch, I noticed an unnecessary pair of braces in
+ptp_clock_unregister() and included their removal in the patch. Since
+you=E2=80=99ve pointed out that this isn=E2=80=99t the right approach, I=E2=
+=80=99ll fix it
+immediately and send over the v2 patch.
 
-No need for the inner parentheses.
-
->  			break;
->  	}
->  
-> @@ -258,7 +260,7 @@ static void rzg2l_mipi_dsi_dphy_exit(struct rzg2l_mipi_dsi *dsi)
->  static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
->  				  const struct drm_display_mode *mode)
->  {
-> -	unsigned long hsfreq;
-> +	unsigned long hsfreq, vclk_rate;
->  	unsigned int bpp;
->  	u32 txsetr;
->  	u32 clstptsetr;
-> @@ -269,6 +271,12 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
->  	u32 golpbkt;
->  	int ret;
->  
-> +	ret = pm_runtime_resume_and_get(dsi->dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	clk_set_rate(dsi->vclk, mode->clock * MILLI);
-> +
->  	/*
->  	 * Relationship between hsclk and vclk must follow
->  	 * vclk * bpp = hsclk * 8 * lanes
-> @@ -280,13 +288,11 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
->  	 * hsclk(bit) = hsclk(byte) * 8 = hsfreq
->  	 */
->  	bpp = mipi_dsi_pixel_format_to_bpp(dsi->format);
-> -	hsfreq = (mode->clock * bpp) / dsi->lanes;
-> -
-> -	ret = pm_runtime_resume_and_get(dsi->dev);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	clk_set_rate(dsi->vclk, mode->clock * 1000);
-> +	vclk_rate = clk_get_rate(dsi->vclk);
-> +	if (vclk_rate != mode->clock * MILLI)
-> +		dev_info(dsi->dev, "Requested vclk rate %lu, actual %lu mismatch\n",
-> +			 mode->clock * MILLI, vclk_rate);
-
-There's a high risk that the requested rate won't be achieved exactly.
-Do we really want to print a non-debug message to the kernel log every
-time ?
-
-> +	hsfreq = DIV_ROUND_CLOSEST_ULL(vclk_rate * bpp, dsi->lanes);
-
-I doubt DIV_ROUND_CLOSEST_ULL() will make any difference in practice
-given that you can't have more than 4 lanes, but that's fine.
-
->  
->  	ret = rzg2l_mipi_dsi_dphy_init(dsi, hsfreq);
->  	if (ret < 0)
-> @@ -304,12 +310,12 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
->  	 * - data lanes: maximum 4 lanes
->  	 * Therefore maximum hsclk will be 891 Mbps.
->  	 */
-> -	if (hsfreq > 445500) {
-> +	if (hsfreq > 445500000) {
->  		clkkpt = 12;
->  		clkbfht = 15;
->  		clkstpt = 48;
->  		golpbkt = 75;
-> -	} else if (hsfreq > 250000) {
-> +	} else if (hsfreq > 250000000) {
->  		clkkpt = 7;
->  		clkbfht = 8;
->  		clkstpt = 27;
-> @@ -753,7 +759,7 @@ static int rzg2l_mipi_dsi_probe(struct platform_device *pdev)
->  	 * mode->clock and format are not available. So initialize DPHY with
->  	 * timing parameters for 80Mbps.
->  	 */
-> -	ret = rzg2l_mipi_dsi_dphy_init(dsi, 80000);
-> +	ret = rzg2l_mipi_dsi_dphy_init(dsi, 80000000);
->  	if (ret < 0)
->  		goto err_phy;
->  
-
--- 
 Regards,
 
-Laurent Pinchart
+Jeongjun Park
 
