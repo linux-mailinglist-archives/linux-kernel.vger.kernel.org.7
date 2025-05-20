@@ -1,175 +1,146 @@
-Return-Path: <linux-kernel+bounces-654922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0808AABCE91
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 07:21:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD31DABCEA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 07:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9675017D5DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 05:21:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E118F189B640
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 05:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86CB25B1D3;
-	Tue, 20 May 2025 05:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C0B2566F9;
+	Tue, 20 May 2025 05:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGp2JMhA"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b="VdGuVQ/G"
+Received: from mail.ptr1337.dev (mail.ptr1337.dev [202.61.224.105])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE78EEC8;
-	Tue, 20 May 2025 05:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA0219259F;
+	Tue, 20 May 2025 05:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.224.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747718508; cv=none; b=ZXzb78WV4XBTCpRE4yyjW0lx2hWvyE/ZVySWqOSWSzzoSQzA/KeipxBzd0vBO5xbyNuXxaMBb4btud2dH030fQv8idjUvE6QE33CkM6TUqrgx6jtaU5in9OKBX1TLxM0zAzGcNOhyVaDvq/3N7/dsFxay0qKTmBUOjsd7tVUxJg=
+	t=1747719128; cv=none; b=LI+3RoJBTnLi7hroGA0qZbcsfPsEcXdm5EZyOMt2mGc2u9WEmZxFFiZ78UMBUZkxiHSJB7GU7DN914E3HCx05GjYkVg5B/EFoxJ8nTDCE/FGbsvj/5YkEn94a8jX2fvwLED0dYi8S2C5bLmfYz1Tghef+Fop7ZAmVlelIfr7KC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747718508; c=relaxed/simple;
-	bh=eMt3R1ymDEphmp1/MbbU6HGsAiI3N5XIYd5VgPLk8zU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fRntLCLhryuQAqjHmwWqQ9HrJMgAIRYzaZrk02ZPkGhrnFZiUMkCKPBYoyOqa4ge2Q7Q3lsuNdvRwtpJ2EeTqZeg6cScAyZwVPooLe2bykcan9v09JZHm8MLBP90P6MKH8jv+pv4cR7mZFBG31neM9o0hiB7ahaILIpLygFJ4NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BGp2JMhA; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4769f3e19a9so35619771cf.0;
-        Mon, 19 May 2025 22:21:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747718505; x=1748323305; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=5DazShLOET04NjbcBbV/+7zX6OeCHdiDpgI5bLFBJC4=;
-        b=BGp2JMhAfGCuaQvSrsuANPqGpI49IJQIwRChoidZd/m20YrDfWFnQU9ogfh4YuYmbi
-         2P4qgV+0TvT1D7Sq2aVfCs9c0bpxc1Rq7SvuQnx/ZXYDWgt9U+ATqaaaeA0XPv+RmDyb
-         C1u7yXzdw0/ktjKaMpfXfQ+HCEeSkrOoKGFqIAPSDgU911Raf1WakHV/I5KdffS6beKV
-         E70QqqN+SSUftSnnpRWYh1DLsOaTI9A5reFDKoPY4/NZ15Y3osQwFCWiG/YDAgMdf38C
-         b5Ouxi9h/UQ7bwwztKlF+JnZNIHHJw9URQg7zm1LOGkXGco9o5EHpFHDTo22K+J8lxg8
-         iDsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747718505; x=1748323305;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5DazShLOET04NjbcBbV/+7zX6OeCHdiDpgI5bLFBJC4=;
-        b=M1QLnM+rpZmkJQNOO2nwn+k+QTDiRX3qZKocon49nn+XgPylnSf9niUv+kZ3OlBawA
-         2ae3/M9ROZM1UqSaigSYo5+2hN6FL/0wPkQM1RUmAk/01cbVP/FJjz/g2Og/qFdAOo3Z
-         hSbFf+PKa5r+VgO/QnKTs67V3YyToAOphE1CugZQ8aXVij2sMQF1FJm3aAEjdN0Gco4S
-         Cjpg5sDluy4O4iEiCzIwmgyucNJa6rqTIg+RtXLIsQXCzodX5bYwGhakg4z/Q//tDXDW
-         vdmwDDygzKSIZOwY/2sKCcBuKcvV/neWKVRRYizHFuTJMEs45LleUyYr25tv59JL2R53
-         Nfog==
-X-Forwarded-Encrypted: i=1; AJvYcCV4QAC4swjpfTBRmxAnjmt7Kotv/1ueJgfhAnHew3H5L+h5T1i5kT02d2iXt8k0OQFochSOWgeglZy24Mxq@vger.kernel.org, AJvYcCVDBU3HRkhZhxo04X/EpfNBmColfqIk3Xz6tVjFAk9btj96sCVdH7hdLxAtor+dFSTjJZ07N6s0udLB8bkr/u4=@vger.kernel.org, AJvYcCVu8GEjfZl8CQ4H91txFD0XY3Jj0kGarFdRxOk/3I4hVU+M4M/AX8zE271Iz2LsYBdUXy8kBgIB8jTL9f5ucEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJNrN9kDiGG1UvLwMtrZoQRJotLpgfoGGHe6rdGowP28IqtzOw
-	fWpIsS1tcbnN5mM6GwOLmKGmgVOLmn1GmbrhxNcF2MtxpR73SMcHWT0h
-X-Gm-Gg: ASbGncvmMDUGrQ9JQYl97VX2vdKCHKNhdExQwiWlnr5XGjx2eT5f+vHlzy9pKXCtaRo
-	kLmImC+hJHhGlZcJoifim/s0g4i3hxC+sP0iiwtEVMz672Xk0VQn6xefSmeAWK+eX0N1QPOK0yj
-	sDscs4K230OkYL2ixVuw4GwufGdZaaKzKfxREgDvkyVZefajdGMnNA1zbbVVGSsikQGiNOlpbTX
-	fQXpKjAxSl+JmPBII+D3OCKW9B74EbmbtgodiGB4RXxq1aL7PvOwDPz1GwAuyt4UNixeIgUFy2a
-	AT03KxqFwE5wdXENrmuqMQkBnsfgXk1BD9mKG5B8NWCTjZZR62HfDwSQu78e+qrThF1pa+mw1/L
-	4rDLR3QkwmdRO1AC73ZoSbYgE405jxdgupQZiwgcDsw==
-X-Google-Smtp-Source: AGHT+IHuvScXl/XtbQcvu5t+umcjUvECwlv7yyBXTCTW1QOH5ko+4BAvMBX/n4Kqn3YgRXTt7fZ+cQ==
-X-Received: by 2002:a05:622a:4c8a:b0:489:7daf:c237 with SMTP id d75a77b69052e-494ae494085mr278788711cf.45.1747718505279;
-        Mon, 19 May 2025 22:21:45 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494ae445b99sm67958821cf.48.2025.05.19.22.21.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 22:21:44 -0700 (PDT)
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 317C41200068;
-	Tue, 20 May 2025 01:21:44 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Tue, 20 May 2025 01:21:44 -0400
-X-ME-Sender: <xms:aBEsaLIy616ouUPY9idg1FDDA9Ae4Pd3vXTv0XH49Xt8j7EJ9jJggQ>
-    <xme:aBEsaPKdvhmto9bTgr5EAcEMvA4GJcO-iWH9oaX0OKYPIPV2Mbg2O5QtYVU3ExVtt
-    U0oWgkefUl0_kIpkw>
-X-ME-Received: <xmr:aBEsaDsEiaaQVwzMMx1BiQ2qlhNXCMO9GokpN4FqFqeqjcnQv3gAI-ZE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefvdefgedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
-    tdejnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
-    hilhdrtghomheqnecuggftrfgrthhtvghrnhepvefghfeuveekudetgfevudeuudejfeel
-    tdfhgfehgeekkeeigfdukefhgfegleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhn
-    rghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpe
-    epghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduledp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglh
-    gvrdgtohhmpdhrtghpthhtohepjhgrnhhnhhesghhoohhglhgvrdgtohhmpdhrtghpthht
-    ohepsghqvgesghhoohhglhgvrdgtohhmpdhrtghpthhtohephihurhihrdhnohhrohhvse
-    hgmhgrihhlrdgtohhmpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehlihhnuhigsehrrghsmhhushhvihhllhgvmhhovghsrdgukhdprhgtphhtth
-    hopehvihhrvghshhdrkhhumhgrrheslhhinhgrrhhordhorhhgpdhrtghpthhtohepohhj
-    vggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesgh
-    hmrghilhdrtghomh
-X-ME-Proxy: <xmx:aBEsaEY7a1fWMlI2-49VS2Az0O2_fQPYw1rNQFkFd9xn34OX6t_c3Q>
-    <xmx:aBEsaCbltCQDGqToOXn1q25o8CSVQiRux-JPFx11AaK-q537T246qw>
-    <xmx:aBEsaIBR1NqU50qE-O0j0xUeBKGx5vQCUym9At6cgIH8e2KQqTSeIQ>
-    <xmx:aBEsaAZFPYLp2ES064XUniOuZGvdw7hdiDruVrkGot387Hem8fZReg>
-    <xmx:aBEsaGqUUl4fKBzgGdgWPYEtxPw4BaCFour8zByh2bSf3u4gV0ydL4Vy>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 20 May 2025 01:21:43 -0400 (EDT)
-Date: Mon, 19 May 2025 22:21:42 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Jann Horn <jannh@google.com>, Burak Emir <bqe@google.com>,
-	Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v8 5/5] rust: add dynamic ID pool abstraction for bitmap
-Message-ID: <aCwRZlkBWekRmDg7@Mac.home>
-References: <20250519161712.2609395-1-bqe@google.com>
- <20250519161712.2609395-6-bqe@google.com>
- <CAG48ez2WdxXVCzVsAPeQWgso3ZBQS_Xm+9D1FLBx6UHFV1bGHQ@mail.gmail.com>
- <682bc528.c80a0220.13f632.9ec0@mx.google.com>
- <CAH5fLghNJYjxPFUc2E4-2pJpGT5umUr1EJstZvs88ox3MsXDGQ@mail.gmail.com>
+	s=arc-20240116; t=1747719128; c=relaxed/simple;
+	bh=v4q0Gk8P5oFHzr7Kz+il+G+hoCCYfCJwrgES5RPGDhM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=taEArpAbF8+RDqUcQWDZF4dZzSFtHmo3XRv7Q28HkS3eLtwC5JNrmworwKJJl4VCmq49rTvVRHkAd0k6eKZCybNVjMBj+d50xSLkIsGKSU7fAZyUwenkyy4aVi3EVpw/+eAwQ+KFlf/Ue7VdhBlHgwlTptN+IBLMuGHt2WJk2p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org; spf=pass smtp.mailfrom=cachyos.org; dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b=VdGuVQ/G; arc=none smtp.client-ip=202.61.224.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cachyos.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CEF9C2839B9;
+	Tue, 20 May 2025 07:22:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cachyos.org; s=dkim;
+	t=1747718550; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=FDyLwH77vg3CASVyQv8HrTOuhW5BbUUEY0GojGOfT9s=;
+	b=VdGuVQ/GW/N3jorqXQYofNoumohsvZ8E2lw/od1w4WVTp3oo9LoZ6O582RGLbAQAKRZbGD
+	/ePXlI7jNr2ZoBUQZXDQSIh3Qmhc75wXortexycOkHM2a64R18dlsERdrEN+Gf6ucdse4L
+	UsZ2GjLtQn1r8e0lsvaNvnIGjq8QZtpoqu9hpa2oXSqoIbisJSB08OSgrSdXiwa3n6F+Lz
+	V+IP0jmonLqd/GneN4zH8tl6n7qbAwMBsjufZbpfYrxAS3pYnzcsvQ0zbTZHvijkCPWn64
+	5OcpZuKRuWnSgK9KpSCQh39hPvHNcCxvcEdXLkrJV7yMNDdZnW8E2MAHJlvRVA==
+Message-ID: <a2db22a3-6d66-481d-9432-b38b83e17183@cachyos.org>
+Date: Tue, 20 May 2025 13:22:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLghNJYjxPFUc2E4-2pJpGT5umUr1EJstZvs88ox3MsXDGQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] kbuild: distributed build support for Clang ThinLTO
+To: xur@google.com, Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas.schier@linux.dev>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Alice Ryhl <aliceryhl@google.com>, Sami Tolvanen <samitolvanen@google.com>,
+ "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+ Rafael Aquini <aquini@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Stafford Horne <shorne@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Teresa Johnson <tejohnson@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20250507205504.2017028-1-xur@google.com>
+Content-Language: en-US
+From: Eric Naim <dnaim@cachyos.org>
+In-Reply-To: <20250507205504.2017028-1-xur@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, May 19, 2025 at 08:46:37PM -0700, Alice Ryhl wrote:
-> On Mon, May 19, 2025 at 4:56 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> >
-> > On Tue, May 20, 2025 at 12:51:07AM +0200, Jann Horn wrote:
-> > > On Mon, May 19, 2025 at 6:20 PM Burak Emir <bqe@google.com> wrote:
-> > > > This is a port of the Binder data structure introduced in commit
-> > > > 15d9da3f818c ("binder: use bitmap for faster descriptor lookup") to
-> > > > Rust.
-> > >
-> > > Stupid high-level side comment:
-> > >
-> > > That commit looks like it changed a simple linear rbtree scan (which
-> > > is O(n) with slow steps) into a bitmap thing. A more elegant option
-> > > might have been to use an augmented rbtree, reducing the O(n) rbtree
-> > > scan to an O(log n) rbtree lookup, just like how finding a free area
-> >
-> > I think RBTree::cursor_lower_bound() [1] does exactly what you said
+Hi Rong Xu,
+
+On 5/8/25 04:55, xur@google.com wrote:
+> From: Rong Xu <xur@google.com>
 > 
-> We need the smallest ID without a value, not the smallest ID in use.
+> Add distributed ThinLTO build support for the Linux kernel.
+> This new mode offers several advantages: (1) Increased
+> flexibility in handling user-specified build options.
+> (2) Improved user-friendliness for developers. (3) Greater
+> convenience for integrating with objtool and livepatch.
+> 
+> Note that "distributed" in this context refers to a term
+> that differentiates in-process ThinLTO builds by invoking
+> backend compilation through the linker, not necessarily
+> building in distributed environments.
+> 
+> Distributed ThinLTO is enabled via the
+> `CONFIG_LTO_CLANG_THIN_DIST` Kconfig option. For example:
+>  > make LLVM=1 defconfig
+>  > scripts/config -e LTO_CLANG_THIN_DIST
+>  > make LLVM=1 oldconfig
+>  > make LLVM=1 vmlinux -j <..>
+> 
+> The implementation changes the top-level Makefile with a
+> macro for generating `vmlinux.o` for distributed ThinLTO
+> builds. It uses the existing Kbuild infrastructure to
+> perform two recursive passes through the subdirectories.
+> The first pass generates LLVM IR object files, similar to
+> in-process ThinLTO. Following the thin-link stage, a second
+> pass compiles these IR files into the final native object
+> files. The build rules and actions for this two-pass process
+> are primarily implemented in `scripts/Makefile.build`.
+> 
+> Currently, this patch focuses on building the main kernel
+> image (`vmlinux`) only. Support for building kernel modules
+> using this method is planned for a subsequent patch.
+> 
+> Tested on the following arch: x86, arm64, loongarch, and
+> riscv.
+> 
+> Some implementation details can be found here:
+> https://discourse.llvm.org/t/rfc-distributed-thinlto-build-for-kernel/85934
+> 
+> Signed-off-by: Rong Xu <xur@google.com>
+> ---
+> Changelog since v1:
+> - Updated the description in arch/Kconfig based on feedback
+>   from Nathan Chancellor
+> - Revised file suffixes: .final_o -> .o.thinlto.native, and
+>   .final_a -> .a.thinlto.native
+> - Updated list of ignored files in .gitignore
+> ---
+>  .gitignore                        |  2 ++
+>  MAINTAINERS                       |  5 +++
+>  Makefile                          | 40 ++++++++++++++++++++---
+>  arch/Kconfig                      | 19 +++++++++++
+>  scripts/Makefile.build            | 52 +++++++++++++++++++++++++++---
+>  scripts/Makefile.lib              |  7 +++-
+>  scripts/Makefile.vmlinux_o        | 16 +++++++---
+>  scripts/Makefile.vmlinux_thinlink | 53 +++++++++++++++++++++++++++++++
+>  scripts/head-object-list.txt      |  1 +
+>  9 files changed, 180 insertions(+), 15 deletions(-)
+>  create mode 100644 scripts/Makefile.vmlinux_thinlink
 > 
 
-Ok, but it shouldn't be hard to write a Rust function that search that,
-right? My point was mostly the Rust rbtree binding can do O(log n)
-search. I have no idea about "even so, should we try something like Jann
-suggested". And I think your other reply basically says no.
+I noticed that both Makefile.autofdo and Makefile.propeller add extra linker flags when building with ThinLTO. Did you miss updating that or is the omission there intentional? 
 
+-- 
 Regards,
-Boqun
-
-> Alice
+  Eric
 
