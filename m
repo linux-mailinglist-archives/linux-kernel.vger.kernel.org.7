@@ -1,149 +1,166 @@
-Return-Path: <linux-kernel+bounces-655885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 150E2ABDEC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:22:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64EBAABDEF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1827D8C2A19
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:21:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 844914C67D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18D025E451;
-	Tue, 20 May 2025 15:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3CE2609E5;
+	Tue, 20 May 2025 15:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TCzYOyEK"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uqCvZKEO"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5177E2609F7;
-	Tue, 20 May 2025 15:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FAE25FA11
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 15:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747754484; cv=none; b=laUU+TwnKkpbl7JSMWhJjAeD4nOOc+arBzIm+XCvoTzEGhzpR0gw2CWQ/VF7z1NmVp2TCwWOojkyAMDi38BCIHXz/kW8vr5VWCuzx35MUkAg6Il8EqS4Ib1WZtp0eJ32uZPX2Z129LUaDVY9kzbCp+sspu7MVDKPD5w6Vum1wpY=
+	t=1747754509; cv=none; b=bt0s8rZAUXWYI54QR3NXoriE+5+WMsJ3+CLebVMeIDYG2SO8Z/B0cwarmPznAbJznZ8COKbGk5a0ZV7hYf+UhTawN7x9cACHodx5WejYZJB8wOhvHi8agLWnk1DwKNQ0ZVAwLqL5FmICj0vxcJaFWV8dVtf/g9lKAEowS5RDgnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747754484; c=relaxed/simple;
-	bh=z5P7CONT1ywGaof5hgEJNdVhBVbo2agcMGUmL6IeqjY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HaUmTFUHnXh8jGfMBTqejZHPiIdB/dxkvz17nTv7rroJn06cWG9gZxg1SI7Z/bkKEq8NaR1RBBmpkV8bcLzz+UNIQHRThgyrpFsuOAq7yq9KJxQQ/kTlhSxxEz6KDT9YZZoP38nSva/8lUrPvZZYUMtjhPLJHAxio05bpUw/1uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TCzYOyEK; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 23C5C42E81;
-	Tue, 20 May 2025 15:21:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747754474;
+	s=arc-20240116; t=1747754509; c=relaxed/simple;
+	bh=7OCZHxgMoJZyWqUhO+LWO9/SK6u4vZjyPe4ldhYTx50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tFAeq2oF/fi2R/j+Oirjj5wCwhCn3NYXTo9KNAnT3xvM/RUkxLe0tZ6VnOwiEAhFd3e5jMC4n3Y2o1NRb1zFhUEVgBWmZRcq1RdA6CAdhgCO/s/MS852jc7C97gTnfs0bxLVmIk16bWW6lGxu7F1xlk4lnAe4s9kaHkKO/qW4YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uqCvZKEO; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 20 May 2025 11:21:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747754494;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=MGyH80hKA3CxqDOT/ua8xdpa3Pj377K183xum/RA554=;
-	b=TCzYOyEKQ984Ooen127OdWcxXhPoHo9DPpo46TqW4elbi0SZl+rikIxKRQsiif9LnhoTSN
-	4sZJQpv58c4LFUhOGmr6XykuGbzaGVwfx20Pk0MVVRDkgNFpx/B2yv5n9JvGLUO3+iCvDL
-	9LxjxS4WIpL7MchUfwZaZTJrkvxl3J8/x51n4uARAnqOICfnsfmGapdOC+fwmtWHl5XXYP
-	iHmtAgSa7+JudsLVWree2NRrcrd6/33QHJUAeQ+xXAWgp2yZRlYDbktg0gpj0/islY9mtX
-	uZ/f982CP+F3CMWOUPXpiAzo1lthQIgukM8OqKzLV9WRReHcstZiPJj2Rq9WuQ==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-Date: Tue, 20 May 2025 17:21:11 +0200
-Subject: [PATCH] MIPS: CPS: Optimise delay CPU calibration for SMP
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8A+4/WHQPGtTkhCxwLscoAmpmTmaNbybMHYotBWdP2A=;
+	b=uqCvZKEOgLQo6BEl1w2WBr/iTYWGhrTLCXX/YdRIiVzEWHD7gojgAgQ6YwB55iDzMomDpX
+	kpyAZWUCrzRPp2h/QT4F698F9SkkSZDeoTux2L/Jd7AGsJhreFnkL91gXRw9QJNjRDnEBG
+	N4IO8CKTo0hikMtMxPM1oWgp4FcE43w=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 0/6] overlayfs + casefolding
+Message-ID: <ztuodbbng5rgwft2wtmrbugwo3v5zgrseykhlv5w4aqysgnd6b@ef56vn7iwamn>
+References: <20250520051600.1903319-1-kent.overstreet@linux.dev>
+ <CAOQ4uxg8p2Kg0BKrU4NSUzLVVLWcW=vLaw4kJkVR1Q-LyRbRXA@mail.gmail.com>
+ <osbsqlzkc4zttz4gxa25exm5bhqog3tpyirsezcbcdesaucd7g@4sltqny4ybnz>
+ <CAOQ4uxjUC=1MinjDCOfY5t89N3ga6msLmpVXL1p23qdQax6fSg@mail.gmail.com>
+ <gdvg6zswvq4zjzo6vntggoacrgxxh33zmejo72yusp7aqkqzic@kaibexik7lvh>
+ <CAOQ4uxg9sKC_8PLARkN6aB3E_U62_S3kfnBuRbAvho9BNzGAsQ@mail.gmail.com>
+ <rkbkjp7xvefmtutkwtltyd6xch2pbw47x5czx6ctldemus2bvj@2ukfdmtfjjbw>
+ <CAOQ4uxgOM83u1SOd4zxpDmWFsGvrgqErKRwea=85_drpF6WESA@mail.gmail.com>
+ <7sa3ouxmocenlbh3r3asraedbbr6svljroyml3dpcoerhamwmy@gb32bhm4jqvh>
+ <CAOQ4uxjHiorTwddK98mb60VOY8zNqnyWvW=+Uz-Sn6-Sm3PUfQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250520-smp_calib-v1-1-cd04f0a78648@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAOadLGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDUyMD3eLcgvjkxJzMJF2zFGMDA8tUwzTTJEsloPqCotS0zAqwWdGxtbU
- AdaG1vFsAAAA=
-X-Change-ID: 20250520-smp_calib-6d3009e1f5b9
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-mips@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gregory CLEMENT <gregory.clement@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdehieculddtuddrgeefvddrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkffvvefosehtkeertdertdejnecuhfhrohhmpefirhgvghhorhihucevnffgoffgpffvuceoghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvdehheejveelgefgleffgfejudfgudeludeutdfhleeiudevffegueelkeffudfhnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemudgvhehfmehfjeehheemvghftgekmeejiegtvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemudgvhehfmehfjeehheemvghftgekmeejiegtvgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepledprhgtphhtthhopehtrgiffhhikhdrsggrhihouhhksehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhrt
- ghpthhtohepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhigqdhmihhpshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvlhgrughimhhirhdrkhhonhgurhgrthhivghvsehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggv
-X-GND-Sasl: gregory.clement@bootlin.com
+In-Reply-To: <CAOQ4uxjHiorTwddK98mb60VOY8zNqnyWvW=+Uz-Sn6-Sm3PUfQ@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On MIPS architecture with CPS-based SMP support, all CPU cores in the
-same cluster run at the same frequency since they share the same L2
-cache, requiring a fixed CPU/L2 cache ratio.
+On Tue, May 20, 2025 at 05:13:37PM +0200, Amir Goldstein wrote:
+> On Tue, May 20, 2025 at 4:44 PM Kent Overstreet
+> <kent.overstreet@linux.dev> wrote:
+> >
+> > On Tue, May 20, 2025 at 04:33:14PM +0200, Amir Goldstein wrote:
+> > > On Tue, May 20, 2025 at 4:12 PM Kent Overstreet
+> > > > Amir, you've got two widely used filesystem features that conflict and
+> > > > can't be used on the same filesystem.
+> > > >
+> > > > That's _broken_.
+> > >
+> > > Correct.
+> > >
+> > > I am saying that IMO a smaller impact (and less user friendly) fix is more
+> > > appropriate way to deal with this problem.
+> >
+> > Less user friendly is an understatement.
+> >
+> > Obscure errors that only get reported via overloaded standard error
+> > codes is a massive problem today, for _developers_ - have you never had
+> > a day of swearing over trying to track down where in a massive subsystem
+> > an -EINVAL is coming from?
+> >
+> > It's even worse for end users that don't know to check the dmesg log.
+> >
+> > And I support my code, so these would turn into bug reports coming
+> > across my desk - no thanks; I already get enough weird shit from other
+> > subsystems that I have to look at and at least triage.
+> >
+> > > > Users hate partitioning just for separate /boot and /home, having to
+> > > > partition for different applications is horrible. And since overlay fs
+> > > > is used under the hood by docker, and casefolding is used under the hood
+> > > > for running Windows applications, this isn't something people can
+> > > > predict in advance.
+> > >
+> > > Right, I am not expecting users to partition by application,
+> > > but my question was this:
+> > >
+> > > When is overlayfs created over a subtree that is only partially case-folded?
+> > >
+> > > Obviously, docker would create overlayfs on parts of the fs
+> > > and smbd/cygwin could create a case folder subtree on another
+> > > part of the fs.
+> > > I just don't see a common use case when these sections overlap.
+> >
+> > Today, you cannot user docker and casefolding on _different parts of_
+> > the same filesystem.
+> >
+> > So yees, today users do have to partition by application, or only use
+> > one feature or the other.
+> >
+> 
+> Didn't say there was no problem.
+> 
+> Argued that your fix is a big gun and not worth the added complexity.
+> 
+> Let's see what Miklos thinks.
+> 
+> > This isn't about allowing casefolding and overlayfs to fix on the same
+> > subtree, that would be a bigger project.
+> >
+> > > Perhaps I am wrong (please present real world use cases),
+> > > but my claim is that this case is not common enough and therefore,
+> > > a suboptimal EIO error from lookup is good enough to prevert crossing
+> > > over into the case folded zone by mistake, just as EIO on lookup is
+> > > enough to deal with the unsupported use case of modifying
+> > > overlayfs underlying layers with overlay is mounted.
+> > >
+> > > BTW, it is not enough to claim that there is no case folding for the
+> > > entire subtree to allow the mount.
+> > > For overlayfs to allow d_hash()/d_compare() fs must claim that
+> > > these implementations are the default implementation in all subtree
+> > > or at least that all layers share the same implementation.
+> >
+> 
+> Nevermind. Misread patch 6.
 
-This allows to implement calibrate_delay_is_known(), which will return
-0 (triggering calibration) only for the primary CPU of each
-cluster. For other CPUs, we can simply reuse the value from their
-cluster's primary CPU core.
+Since you were asking for use cases - docker & related are pretty widely
+used for deploying things that are "unwieldy" within the normal packgae
+manager ecosystem - and wine is case study #1 in that, where these days
+people want to ship a specific version of wine with applications being
+emulated (that's been tested with that application).
 
-With the introduction of this patch, a configuration running 32 cores
-spread across two clusters sees a significant reduction in boot time
-by approximately 600 milliseconds.
+But wine wants casefolding, so - hapless user deploys docker image where
+casefolding is enabled _but only on the subdir that holds Windows data_,
+not the whole image.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
----
- arch/mips/kernel/smp-cps.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Docker mounts the image, but then everything explodes when you try to
+use it with what look to the user like impenetrable IO errors.
 
-diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
-index 02bbd7ecd1b9557003186b9d3d98ae17eac5eb9f..93e01b90b4a21323c7629350211083a81eb549d4 100644
---- a/arch/mips/kernel/smp-cps.c
-+++ b/arch/mips/kernel/smp-cps.c
-@@ -40,6 +40,7 @@ static u64 core_entry_reg;
- static phys_addr_t cps_vec_pa;
- 
- struct cluster_boot_config *mips_cps_cluster_bootcfg;
-+struct cpumask __cpu_primary_cluster_mask __read_mostly;
- 
- static void power_up_other_cluster(unsigned int cluster)
- {
-@@ -225,6 +226,7 @@ static void __init cps_smp_setup(void)
- 		if (mips_cm_revision() >= CM_REV_CM3_5)
- 			power_up_other_cluster(cl);
- 
-+		cpumask_set_cpu(nvpes, &__cpu_primary_cluster_mask);
- 		ncores = mips_cps_numcores(cl);
- 		for (c = 0; c < ncores; c++) {
- 			core_vpes = core_vpe_count(cl, c);
-@@ -281,6 +283,24 @@ static void __init cps_smp_setup(void)
- #endif /* CONFIG_MIPS_MT_FPAFF */
- }
- 
-+unsigned long calibrate_delay_is_known(void)
-+{
-+	int i, this_cpu = smp_processor_id(), primary_cpu_cluster = 0;
-+
-+	/* The calibration has to be done on the primary CPU of the cluster */
-+	if (cpumask_test_cpu(this_cpu, &__cpu_primary_cluster_mask))
-+		return 0;
-+
-+	/* Look for the primary CPU of the cluster this CPU belongs to */
-+	for_each_cpu(i, &__cpu_primary_cluster_mask) {
-+		/* we reach the next cluster */
-+		if (i > this_cpu)
-+			break;
-+		primary_cpu_cluster = i;
-+	}
-+	return cpu_data[primary_cpu_cluster].udelay_val;
-+}
-+
- static void __init cps_prepare_cpus(unsigned int max_cpus)
- {
- 	unsigned int nclusters, ncores, core_vpes, c, cl, cca;
-
----
-base-commit: 3b3704261e851e25983860e4c352f1f73786f4ab
-change-id: 20250520-smp_calib-6d3009e1f5b9
-
-Best regards,
--- 
-Grégory CLEMENT, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+That's a bad day for someone, or more likely a lot of someones.
 
