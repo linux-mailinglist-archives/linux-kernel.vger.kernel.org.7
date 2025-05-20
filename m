@@ -1,112 +1,90 @@
-Return-Path: <linux-kernel+bounces-654862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69452ABCDCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 05:20:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7321ABCDC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 05:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D32C4A15D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 03:20:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE9FF3B858C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 03:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5234925A2B1;
-	Tue, 20 May 2025 03:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788622586EE;
+	Tue, 20 May 2025 03:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="VOg79n2N"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGZpmJlr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7BE257451;
-	Tue, 20 May 2025 03:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC70A257AF9;
+	Tue, 20 May 2025 03:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747711214; cv=none; b=YH7g6Z506Uf+U7XnJMq0YtD2iVoXiyDgRi18mPvh+B+Gz3Bf9hZZgA/8FnCZX3WgVgpXAtjwJZu6iOwBY1XEU9SWukZsoKaK4TiV523eRUd8JLFNvuzjQFklRTP/69zpMiLEHlPMLbS6n1vk8wqYtH5YWnlUCCQvHExs+klK/s4=
+	t=1747711212; cv=none; b=qfydSefkFLU5/zHsZJ135HWgfpcwO2Hlo9WbfVQVB4NouE7hZwZYLNieNIyRo69nDKhI2vyCS7MskHJEak9TstZfCMJs1tQ7iP2UUcKbz7NIgQlIlcNcrHJq0Nzr0Dzddqchj1MqbtTchi1NGaR0wCwRq1dQL4hAIk087ek711U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747711214; c=relaxed/simple;
-	bh=VKH7KRryI4ktofS9C7UuxsXcayJGKdrDWZTcnz1iCV8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fTHXDvtaz2kmz+pJdOpf3zvxjhukFkPFNxOv+V0MlQVgqS5YSVhvq//VSpKzb9ZEBTijDFqR4IZFTWRTGFdZoZJWg/kgT6/NsKhQiuY3sgwIS2HNhBVpD45OgETccWKLo8dQMqrM8Ozeg6y64Xf/L4gWkCM+fpkbqPaXptVKtCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=VOg79n2N; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 54K3JglR61991624, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1747711182; bh=VKH7KRryI4ktofS9C7UuxsXcayJGKdrDWZTcnz1iCV8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=VOg79n2NWp3+9ktcKp9gtbrYjJUIk53irYbowRSnVHj9Ux8pIM2POAFnWSdpPZ8He
-	 QwbfGXyJoVDyWu2aMSLTfTyCLTeaCpChYYUQjfr2c8+VRAC1B3WoL9TEbbDWzT15Pr
-	 AIWgLgP0UnfM2ymQUE2ymcgcj6V1vup9/PfnhCUVd6VwdoNkZKkxb0TrT6kB3beEm/
-	 RKFX2pIcOqk96VElM0nQ06TPkV2UlmQd/kzhCUGWlY+krnYzQX5IQkBu6+xs8yS1Lc
-	 asJXJOxgPng6U42lBO2qp6HzQ9zOuebgyRcAS+SAm4kyur6U/3Hu8r2M1IZPnmC9aX
-	 FmDhcEXtd+Slg==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 54K3JglR61991624
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 May 2025 11:19:42 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 20 May 2025 11:19:42 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 20 May 2025 11:19:42 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
- RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
- 15.01.2507.035; Tue, 20 May 2025 11:19:41 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com"
-	<edumazet@google.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "horms@kernel.org"
-	<horms@kernel.org>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Larry Chiu
-	<larry.chiu@realtek.com>, Joe Damato <jdamato@fastly.com>
-Subject: RE: [PATCH net-next v2] rtase: Use min() instead of min_t()
-Thread-Topic: [PATCH net-next v2] rtase: Use min() instead of min_t()
-Thread-Index: AQHbtawdSIC/HJstr0OxTEOUNg41/rPaAlkAgAAn8wCAAAG8AIAA1A0g
-Date: Tue, 20 May 2025 03:19:41 +0000
-Message-ID: <73c27a5a4c814a5a9cdf6319314f8480@realtek.com>
-References: <20250425063429.29742-1-justinlai0215@realtek.com>
-	<bb78d791abe34d9cbac30e75e7bec373@realtek.com>
-	<20250519153218.0036db7f@kernel.org> <20250519153830.112e1e0a@kernel.org>
-In-Reply-To: <20250519153830.112e1e0a@kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS01.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1747711212; c=relaxed/simple;
+	bh=4NJFK9l8EDUJ9nC3w848koeWn+lxPfhikyvdEaeMeus=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=iHEA1kkDvo4NfWeHBQBr+XzMk85zi0NzyWucGTpJtUpeGEl0Vb3daln2itG5ahKb5x+Uarnk5H6hdn202skGzEtKqO2qGln46MQkXQuDK2NQUq9k1P77ptCqHMf/cziHdW4RtS7KcrQCaW2Eo2hWjtZYc8OPnen+2xp86nZHN2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGZpmJlr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B63CC4CEF1;
+	Tue, 20 May 2025 03:20:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747711212;
+	bh=4NJFK9l8EDUJ9nC3w848koeWn+lxPfhikyvdEaeMeus=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=WGZpmJlrR4a+zRQpTZM32/DKg0KjS4d3UQfLcrfOxHXW7a1nwL8f0wNS652OmLoyU
+	 KYQo2ZCB+wet5GtHz91rvm1ycQbJG2q8sPeybvGTHL0j6now95UGnhc+4tHd7LgDjW
+	 ctWOKl4tXegQq9ktEIjV4JEk5QdoZJfTnzPfWuXVixDVpNO4T/ArL97KPL947/3WqK
+	 N9SvH4nHcyxv7N9lT+P8JtuZd7LTQGiCDSXL06SYSxdKeWvpc9OtHgrtAfSGLQ7Wqk
+	 y8g9bF3/50UiOBtj8UYiyv6y3VTKvbCrCmzG8HawlHJjDJS48bvbnbhVYtEkKhC3ob
+	 roSGOrdEZZrkw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D35380AA70;
+	Tue, 20 May 2025 03:20:49 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] selftests: drv-net: Fix "envirnoments" to "environments"
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174771124799.1146050.18144156324943651513.git-patchwork-notify@kernel.org>
+Date: Tue, 20 May 2025 03:20:47 +0000
+References: <20250516225156.1122058-1-sumanth.gavini@yahoo.com>
+In-Reply-To: <20250516225156.1122058-1-sumanth.gavini@yahoo.com>
+To: Sumanth Gavini <sumanth.gavini@yahoo.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org, willemb@google.com,
+ petrm@nvidia.com, sdf@fomichev.me, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> On Mon, 19 May 2025 15:32:18 -0700 Jakub Kicinski wrote:
-> > On Mon, 19 May 2025 12:16:11 +0000 Justin Lai wrote:
-> > > I apologize for the interruption, I would like to ask why this patch
-> > > is rejected on patchwork.
-> >
-> > Hm, unclear, sorry about that.
->=20
-> It doesn't apply, perhaps that's why? Please rebase and repost.
+Hello:
 
-Hi Jakub,
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Thank you for your reply. I will rebase and repost.
+On Fri, 16 May 2025 15:51:48 -0700 you wrote:
+> Fix misspelling reported by codespell
+> 
+> Signed-off-by: Sumanth Gavini <sumanth.gavini@yahoo.com>
+> ---
+>  tools/testing/selftests/drivers/net/lib/py/env.py | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Justin
+Here is the summary with links:
+  - selftests: drv-net: Fix "envirnoments" to "environments"
+    https://git.kernel.org/netdev/net-next/c/c6a957d06791
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
