@@ -1,238 +1,193 @@
-Return-Path: <linux-kernel+bounces-655410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F1E4ABD553
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:42:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE06EABD55E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74AEE1888929
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:42:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ED231B61C41
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11262270ED8;
-	Tue, 20 May 2025 10:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E99027511E;
+	Tue, 20 May 2025 10:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="APsi/QlC"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yp0bVz6p"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89ED426A1D0;
-	Tue, 20 May 2025 10:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F7027932A
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747737699; cv=none; b=e9hrKtHbIK0427/iCCU0S53Go1NM51aSj1Bo7/Rq9O6jyoJJIISsebtVTGq6iMmNXEfIGihbLOYUK3Zw+iWCy7maD834/jbkqUAYtX6hOBkWi1ObrARMz8Zz+22ma+u9Zyc0Tr7K39rxRIuj1KloyKVWIKeetA36WGfdMsKpe8Y=
+	t=1747737719; cv=none; b=P2zymnlanKsIOH6yunb2NZtBHOgh32WcMiWZb17js1n9lV1WEK1CV0F8zOAVWDwQZwCqRCp8mvserCUspFdCH+asZgmaxuHWHXl69DWIAzST2C2iJ6m92EfhQNz5kjLA5/z99sYKWCnXVRNGM74QZiNje2GwHSuCkaUPbSFOsoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747737699; c=relaxed/simple;
-	bh=n4h2V5SmzC1ZUjo2G15VA0dTRIrQmh9K6r8Km3mbPFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U0aw3q5girSyyMgR4kSn3oqWvLfB4Ai+9n2tw6BVQTju2+Qbo7kAxpdyhWx0ZBmW3ickbq+41Ln+IR4HUseryiAvumhcuZ28BK6bemQSDmcNWih0f0CVwpwfZJAQqJ8I4aEyl+lpvzl6L0SAsujNHHHx0jDlvf5WhR5fJKH6I0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=APsi/QlC; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54K66oeT012174;
-	Tue, 20 May 2025 10:41:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=6z3YaGeUGXxa1hAtSSbZLPaCRXs+zn
-	8KwizU32tRIQM=; b=APsi/QlCTU4l4q0gPgrTX8S46FwT92o43UUjRl/p8tutsK
-	5fnbcZiY+vy3u5IiN5QV2eZRAaWWY5RdxL/d8djhXEwJWpuhlc/jYhVh5P3Z/KuZ
-	C2ZrEbATf6wJFL6OY3DkjOYCT+mougcWjtXoCLrE0KmhS4VMa98Mcak+3BwgBldm
-	HcR4FWmyufEDaLebe0LSTmPeK3QWbmfcFq4bMGRfO8plEKctu9dhZ+KI2GXnDzaH
-	5mpXy7Q00Tu9QZ+vWF/M3Lm1XdaYqIM7qsYNQUobBHFNq3YaZv8ELXr0i8EJVYoD
-	LHNaF8bzAAoBA+mQWB5Qb4niZtwgB2TUTxr+G2jg==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46rab73gua-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 May 2025 10:41:18 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54K9mCSu013843;
-	Tue, 20 May 2025 10:41:18 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 46q4stbmak-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 May 2025 10:41:18 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54KAfGZb56230184
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 May 2025 10:41:16 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 711242008C;
-	Tue, 20 May 2025 10:41:16 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8DCF820082;
-	Tue, 20 May 2025 10:41:13 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.28.45])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 20 May 2025 10:41:13 +0000 (GMT)
-Date: Tue, 20 May 2025 16:11:11 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
-        libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 1/8] ext4: make ext4_mpage_readpages() support large
- folios
-Message-ID: <aCxcRwFnmd4uspB0@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <20250512063319.3539411-1-yi.zhang@huaweicloud.com>
- <20250512063319.3539411-2-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1747737719; c=relaxed/simple;
+	bh=5+DdnQrD8Jm7ALCp3LsrdVZBmTTMhmvX4Okxp7+4aZE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gt6GlpcgzWWhw0q7PMWinEZMn1ajsp5Fqh+Wu2wcVZdeLMJ7CxwtxnuU5qdWqYJSTjRMQ8TJH+mnhRjFUHo4ZHrOlZ2noUt2LZp10vOBySMUGaWxqnoIYZiF5ROvO8DZyz2HVCMqWxPyqdNV07orK9nLWZluSaUKFKeoSYgLb5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Yp0bVz6p; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43eed325461so31616405e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 03:41:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747737716; x=1748342516; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=syvU+98K4794Raf3X6G+lZLkSQNhm8MB57r88GVHtjY=;
+        b=Yp0bVz6pNBShaMjr51z6Hvxj2vjqyeYm/5rAZ+3/RwIOpiY2VKLh6mj+JvhGNWhJYc
+         BnSAkAEyijMAfiDsNlZv6CdKf7lWrTeQDy1bvt0JxsphVlISCefCnCrec4lbvgwDG6bs
+         XOixVbnTt+9XPIIB59neoAhjYi1NkuxOuu7SYXGZCvcywwYBAsxRlzMrszAyqqF2dD6O
+         LV1U4O/2DaY9AiUJG36HVYhjuppVcFbkpk9oKLrJZ52mml8T1F3+wbZ7/vuAWXV0In3S
+         kVyzeG1V926ts0p/FU+yAilgvdZYUY0eavd6mZ+OXt3p2X9NMhgoDUbPPjI8XXrjg1AP
+         MwsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747737716; x=1748342516;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=syvU+98K4794Raf3X6G+lZLkSQNhm8MB57r88GVHtjY=;
+        b=Dv9JDr59EX+Y+Gc4O/PBg2qRdlOMmGbHpnwT2zWdXVJFWFAhWQ3eCEP/xDW27s2VsZ
+         3QCVksjUdzQUdNotevXNT5MUmNbAKM/GO0gfayzSS9EqRaBzrwUSdC+Sf7LiMpJFSX9q
+         W9L/9dOialZ1WGfa9wt7s+XgcVabIQV5BBUY13C/sjgAgV+QPiwPyWuHJQsgqSK5n5GU
+         7Ka0KpAWmGvROMml4WTJiPIwFE+tFuuEPFGK2s80pL7vANd4UgY0aLK/EDNtzVqnh6BL
+         tvUJqLGfFDTzSC36fakh/HjMfWiICfT1qdrGKJuNsTPan6uVTreJdbVu+cGcESKu+CX+
+         2hzA==
+X-Gm-Message-State: AOJu0YxB4mKEVGiBGb3lMX6zb1CUHSS2rovABWoTIeKB+6L4qCbiM/uU
+	+k3E6whNgsPFptHWFoYl8A1/QBdzxD2RYaAOtq9r4iNxTxON4ZUi57o4YWjmp6dIeuxw5atGEa3
+	TYbZQgOxDHndxkCAC4VkDvgD2oUnYhwzC88BSsB4sw/P9D9Pl9EuOqJVh62Mthy+MNd1jSsXEjP
+	XNFZ2VOqOnWOo6OTIioIfCAivj1wdGYcFRbQ==
+X-Google-Smtp-Source: AGHT+IHkTafgnDTkldvnfKXwrHhcaDnjGVxDAfPbmXSQMWezNOea/JqGoCUrkPujtq4FH7yTvRedyn+j
+X-Received: from wmbei7.prod.google.com ([2002:a05:600c:3f07:b0:442:e9ed:dccc])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:19c8:b0:43d:abd:ad0e
+ with SMTP id 5b1f17b1804b1-442ff000bf6mr117767795e9.18.1747737716491; Tue, 20
+ May 2025 03:41:56 -0700 (PDT)
+Date: Tue, 20 May 2025 12:41:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250512063319.3539411-2-yi.zhang@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=ELgG00ZC c=1 sm=1 tr=0 ts=682c5c4f cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8 a=SBqxFbGtptZprEQTPsgA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: 5FYHLFZHSHYO_S6Zx8kpGKpu0PkVlUc-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDA4NyBTYWx0ZWRfXwga7VT/JcKBI +3Y8W6jejft/1F2EGPMNV/YlwLLV+j2LcJhNeBb8csgT7k1FOKyyBq4L4bmmx635K3vFVSdwSEN qUivof6L3o0KGYzG56nog243QsFDiTqwDmx2wKGFtxXWkxJgLM92Qy/Hiq5prsIveZ98hd1/ka1
- pnzcJjPWVQOxSshkICeg2TssQ1JoZFMdev8a8wX82I7jSVU1Lm7mCQpW8n6FSWO5efUcUr0IGLR JqJCPRy70w6Fp2Leu2pNBdugGheK7Em3iQ8JQV9qaukLy4YaD7P83KVXUFM4tzoQgBTyyYxmJLd aX0bhKrPr3daPXyeoRflPv8Z2wQqOHFK6NAxXawh83LJgpI8GSNaKJdm4IhC//2RrLgqWCNPj8m
- R9c3oAHfxKEDRR+3rRpd+0UJCnV3kPXpbRLsF0lM489IGHEJWXYdkkNJ6gLyC9XiUgSTyR8k
-X-Proofpoint-GUID: 5FYHLFZHSHYO_S6Zx8kpGKpu0PkVlUc-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-20_04,2025-05-16_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=948
- adultscore=0 lowpriorityscore=0 spamscore=0 bulkscore=0 suspectscore=0
- phishscore=0 priorityscore=1501 impostorscore=0 mlxscore=0 malwarescore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505200087
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4847; i=ardb@kernel.org;
+ h=from:subject; bh=aHOyYap++8M1FZ4FuojjmVoeUUIngzDbPEyELQnz7z8=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIUMnJuVcyFGbAG77t+8XvzXjaE97vpBptte+Qyuzjb+EV
+ nLOCgnuKGVhEONgkBVTZBGY/ffdztMTpWqdZ8nCzGFlAhnCwMUpABNpy2f4w2cY+ugZL1fYIj5t
+ wWn5Ymmq+k52Zy9JLpzO99q55uRMaYb/7ryP53Pd47kjbL30TVK21M4Ols0u+/PmnzLlYT2n+s6 UFQA=
+X-Mailer: git-send-email 2.49.0.1101.gccaa498523-goog
+Message-ID: <20250520104138.2734372-9-ardb+git@google.com>
+Subject: [PATCH v5 0/7] x86: Robustify pgtable_l5_enabled()
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Brian Gerst <brgerst@gmail.com>, 
+	"Kirill A. Shutemov" <kirill@shutemov.name>, Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, May 12, 2025 at 02:33:12PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> ext4_mpage_readpages() currently assumes that each folio is the size of
-> PAGE_SIZE. Modify it to atomically calculate the number of blocks per
-> folio and iterate through the blocks in each folio, which would allow
-> for support of larger folios.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+From: Ard Biesheuvel <ardb@kernel.org>
 
-Going through this path is pretty confusing. I'm not sure why we keep
-falling back to full folio read in case of mixed or non continuous mappings.
-Seems like there's some read amplification here. 
+This is a follow-up to the discussion at [0], broken out of that series
+so we can progress while the SEV changes are being reviewed and tested.
 
-Regardless, the changes here look okay to me.
+The current implementation of pgtable_l5_enabled() is problematic
+because it has two implementations, and source files need to opt into
+the correct one if they contain code that might be called very early.
+Other related global pseudo-constants exist that assume different values
+based on the number of paging levels, and it is hard to reason about
+whether or not all memory mapping and page table code is guaranteed to
+observe consistent values of all of these at all times during the boot.
+Case in point: currently, KASAN needs to be disabled during alternatives
+patching because otherwise, it will reliably produce false positive
+reports due to such inconsistencies.
 
-Feel free to add:
+This revision of the series still provides a single implementation of
+pgtable_l5_enabled(), but no longer based on cpu_feature_enabled(), for
+a number of reasons:
+- fiddling with the early CPU feature detection code is not risk-free,
+  and may cause regressions that are difficult to debug;
+- Boris objected to the use of a separate capability flag, and using the
+  existing one is trickier, as it gets set and cleared during the boot
+  by the feature detection code a couple of times, even if 5-level
+  paging is not in use
+- by their very nature, manipulations of level 4 and level 5 page
+  tables occur rarely compared to lower levels, so it is not obvious
+  that the code patching in cpu_feature_enabled() is needed.
 
-Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+So instead, collapse the various 5-level paging related global variables
+into a single byte wide pgdir_shift variable, and move it into the cache
+hot per-CPU section where it can be accessed cheaply. Set it from asm
+code so C will always see the same value, and derive
+pgtable_l5_enabled() and PTRS_PER_P4D from it directly, ensuring that
+all these quantities are always mutually consistent.
 
-Thanks,
-ojaswin
-> ---
->  fs/ext4/readpage.c | 28 +++++++++++++++++-----------
->  1 file changed, 17 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-> index 5d3a9dc9a32d..f329daf6e5c7 100644
-> --- a/fs/ext4/readpage.c
-> +++ b/fs/ext4/readpage.c
-> @@ -227,24 +227,30 @@ int ext4_mpage_readpages(struct inode *inode,
->  	int length;
->  	unsigned relative_block = 0;
->  	struct ext4_map_blocks map;
-> -	unsigned int nr_pages = rac ? readahead_count(rac) : 1;
-> +	unsigned int nr_pages, folio_pages;
->  
->  	map.m_pblk = 0;
->  	map.m_lblk = 0;
->  	map.m_len = 0;
->  	map.m_flags = 0;
->  
-> -	for (; nr_pages; nr_pages--) {
-> +	nr_pages = rac ? readahead_count(rac) : folio_nr_pages(folio);
-> +	for (; nr_pages; nr_pages -= folio_pages) {
->  		int fully_mapped = 1;
-> -		unsigned first_hole = blocks_per_page;
-> +		unsigned int first_hole;
-> +		unsigned int blocks_per_folio;
->  
->  		if (rac)
->  			folio = readahead_folio(rac);
-> +
-> +		folio_pages = folio_nr_pages(folio);
->  		prefetchw(&folio->flags);
->  
->  		if (folio_buffers(folio))
->  			goto confused;
->  
-> +		blocks_per_folio = folio_size(folio) >> blkbits;
-> +		first_hole = blocks_per_folio;
->  		block_in_file = next_block =
->  			(sector_t)folio->index << (PAGE_SHIFT - blkbits);
->  		last_block = block_in_file + nr_pages * blocks_per_page;
-> @@ -270,7 +276,7 @@ int ext4_mpage_readpages(struct inode *inode,
->  					map.m_flags &= ~EXT4_MAP_MAPPED;
->  					break;
->  				}
-> -				if (page_block == blocks_per_page)
-> +				if (page_block == blocks_per_folio)
->  					break;
->  				page_block++;
->  				block_in_file++;
-> @@ -281,7 +287,7 @@ int ext4_mpage_readpages(struct inode *inode,
->  		 * Then do more ext4_map_blocks() calls until we are
->  		 * done with this folio.
->  		 */
-> -		while (page_block < blocks_per_page) {
-> +		while (page_block < blocks_per_folio) {
->  			if (block_in_file < last_block) {
->  				map.m_lblk = block_in_file;
->  				map.m_len = last_block - block_in_file;
-> @@ -296,13 +302,13 @@ int ext4_mpage_readpages(struct inode *inode,
->  			}
->  			if ((map.m_flags & EXT4_MAP_MAPPED) == 0) {
->  				fully_mapped = 0;
-> -				if (first_hole == blocks_per_page)
-> +				if (first_hole == blocks_per_folio)
->  					first_hole = page_block;
->  				page_block++;
->  				block_in_file++;
->  				continue;
->  			}
-> -			if (first_hole != blocks_per_page)
-> +			if (first_hole != blocks_per_folio)
->  				goto confused;		/* hole -> non-hole */
->  
->  			/* Contiguous blocks? */
-> @@ -315,13 +321,13 @@ int ext4_mpage_readpages(struct inode *inode,
->  					/* needed? */
->  					map.m_flags &= ~EXT4_MAP_MAPPED;
->  					break;
-> -				} else if (page_block == blocks_per_page)
-> +				} else if (page_block == blocks_per_folio)
->  					break;
->  				page_block++;
->  				block_in_file++;
->  			}
->  		}
-> -		if (first_hole != blocks_per_page) {
-> +		if (first_hole != blocks_per_folio) {
->  			folio_zero_segment(folio, first_hole << blkbits,
->  					  folio_size(folio));
->  			if (first_hole == 0) {
-> @@ -367,11 +373,11 @@ int ext4_mpage_readpages(struct inode *inode,
->  
->  		if (((map.m_flags & EXT4_MAP_BOUNDARY) &&
->  		     (relative_block == map.m_len)) ||
-> -		    (first_hole != blocks_per_page)) {
-> +		    (first_hole != blocks_per_folio)) {
->  			submit_bio(bio);
->  			bio = NULL;
->  		} else
-> -			last_block_in_bio = first_block + blocks_per_page - 1;
-> +			last_block_in_bio = first_block + blocks_per_folio - 1;
->  		continue;
->  	confused:
->  		if (bio) {
-> -- 
-> 2.46.1
-> 
+If pgtable_l5_enabled() requires more optimization, we can consider
+alternatives, runtime constants, etc. but whether this is actually
+necessary is TBD. Suggestions welcome for (micro-)benchmarks that
+illustrate the perf delta.
+
+Build and boot tested using QEMU with LA57 emulation.
+
+Changes since v4:
+- Add patch to fix MAX_PHYSMEM_BITS (and drop an occurrence of
+  pgtable_l5_enabled())
+- Re-order the changes and split across more patches so any potential
+  performance hit is bisectable.
+
+Changes since v3:
+- Drop asm-offsets patch which has been merged already
+- Rebase onto tip/x86/core which now carries some related changes by
+  Kirill
+- Avoid adding new instances of '#ifdef CONFIG_X86_5LEVEL' where
+  possible, as it is going to be removed soon
+- Move cap override arrays straight to __ro_after_init
+- Drop KVM changes entirely - they were wrong and unnecessary
+- Drop the new "la57_hw" capability flag for now - we can always add it
+  later if there is a need.
+
+Changes since v2:
+- Drop first patch which has been merged
+- Rename existing "la57" CPU flag to "la57_hw" and use "la57" to
+  indicate that 5 level paging is being used
+- Move memset() out of identify_cpu()
+- Make set/clear cap override arrays ro_after_init
+- Split off asm-offsets update
+
+[0] https://lore.kernel.org/all/20250504095230.2932860-28-ardb+git@google.com/
+
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Kirill A. Shutemov <kirill@shutemov.name>
+Cc: Borislav Petkov <bp@alien8.de>
+
+Ard Biesheuvel (7):
+  x86/mm: Decouple MAX_PHYSMEM_BITS from LA57 state
+  x86/mm: Use a single cache hot per-CPU variable to record pgdir_shift
+  x86/mm: Define PTRS_PER_P4D in terms of pgdir_shift()
+  x86/mm: Derive pgtable_l5_enabled() from pgdir_shift()
+  x86/boot: Drop USE_EARLY_PGTABLE_L5 definitions
+  x86/boot: Drop 5-level paging related global variable
+  x86/boot: Remove KASAN workaround for 4/5 level paging switch
+
+ arch/x86/boot/compressed/misc.h         |  8 +++---
+ arch/x86/boot/compressed/pgtable_64.c   | 10 --------
+ arch/x86/boot/startup/map_kernel.c      | 18 +------------
+ arch/x86/boot/startup/sme.c             |  9 -------
+ arch/x86/include/asm/page_64_types.h    |  2 +-
+ arch/x86/include/asm/pgtable_64_types.h | 27 ++++++++------------
+ arch/x86/include/asm/sparsemem.h        |  2 +-
+ arch/x86/kernel/alternative.c           | 12 ---------
+ arch/x86/kernel/cpu/common.c            |  3 ---
+ arch/x86/kernel/head64.c                |  9 -------
+ arch/x86/kernel/head_64.S               |  5 ++++
+ arch/x86/mm/kasan_init_64.c             |  3 ---
+ arch/x86/mm/pgtable.c                   |  4 +++
+ 13 files changed, 26 insertions(+), 86 deletions(-)
+
+
+base-commit: 54c2c688cd9305bdbab4883b9da6ff63f4deca5d
+-- 
+2.49.0.1101.gccaa498523-goog
+
 
