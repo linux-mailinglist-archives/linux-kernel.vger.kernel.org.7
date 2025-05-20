@@ -1,175 +1,171 @@
-Return-Path: <linux-kernel+bounces-656294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43AD7ABE417
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:52:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ED44ABE41D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 884077B58AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:51:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 160D11BC2753
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D89283142;
-	Tue, 20 May 2025 19:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73155283147;
+	Tue, 20 May 2025 19:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KTYOeZvH"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eymqlKOO"
+Received: from mail-qk1-f201.google.com (mail-qk1-f201.google.com [209.85.222.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C869281352
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 19:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3361628467A
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 19:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747770752; cv=none; b=T0u4eiA4BRjzmFEg4u5COzlhYoin/9Cri+3qmKtRwzYgLeWZJALdcBdwOQqV8Dum/wkJsDoJ8ndwo50Vvhnj1XTMVJGLlb/1oWS/r9LgqjI3efSz5coXhfsaPIsYxbMvMEsCLdtgRs8+a4V3fRLcawb4VgeIAL68fQQlPQa9+pk=
+	t=1747770781; cv=none; b=sy5/t88b6tVfj+gz5xee26Lp0RMCPRHVIp9rBKKQ4/hTuKGD9eL5NpIh0NKfbt5zaGun6DC9732fiX+PPFoM8lyDgU93+VNAsOVgG0RG2HlHpweMNBy24du40207M/TiY0xJyLuSC1k+ssPYFoMAbrd7UQOTOVq8R7Apj4pfyrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747770752; c=relaxed/simple;
-	bh=fhwrc1tbFQioZ+O75VVgYeJFQo/oxLMljz6u/pC7sPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EBif8dPXMbm2SLT/JZjU4KbHAD7lAKAlfaHHPoXPyKQNlSjPmJRdG3e+O3WDGrRPKCJsUunijWJOKyx1qVEiGGtEzUZAxtrmiYPqVhVtJiMxwtOBdMvKdtymsQwQ2kXukrjItPEdo5WeXN520Ig+m5QUBa+s2sthCP1klDwD0t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KTYOeZvH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54KGhrlf009577
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 19:52:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=YFL2XC8qzId5Dd6D3sundaqd
-	2zkC9xDf5x4zzleSYqI=; b=KTYOeZvHmpbm0b1biMqZxWJQBdNnXPFYO9mTYhsT
-	YPWuEUZ78DJEGA//OB9ZmFNK4J008bld10zwULWTbl5EwKlw9y3RyLVMPixW/vCo
-	WxZaBXkqaa42wX11EirEuqi1VUen5YAMEl7+P5zwo7SxUqo0scO2tC/foTx5AMWm
-	G0+4iT2ibWXTylRobSarSg9/5ivuAv7ywshzMgrDTsrppE/rGpOv4Hzu3aw7UlCi
-	aSGrkcA5LHta2RWzukcQajKrbb9JchY4ETBoD9GDOOSbnVLIg693gmlLhMHSXYVt
-	ZnU+vIE28wKqHw4XDzG+85Xw3j0cNT8CbzF+UVbiUZ/GIw==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf0gfxx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 19:52:30 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c5e28d0cc0so996913085a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 12:52:30 -0700 (PDT)
+	s=arc-20240116; t=1747770781; c=relaxed/simple;
+	bh=2JkxPTkRCF2ZFpW2d9Eif34bSfjAooXPglJI4C8IIgg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=juoNDyP/p8f0UVArepCCiZVemxkR/dLbvdSmbIWuqci5YqxOf91vQIyYyO6DfbRsFwsnw4QQvts1WO/etU0xbTCTD+AF/RY5wd0AbQBCRPOCvujd/fpbbg4EWccpJX/yG1qeyldBISha+uYFLY+aomboxHryn+UmkGr4CoAkK8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eymqlKOO; arc=none smtp.client-ip=209.85.222.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com
+Received: by mail-qk1-f201.google.com with SMTP id af79cd13be357-7c54e7922a1so1327797885a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 12:52:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747770778; x=1748375578; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SXpn/WaKau4zA3cRgecqqkvTjBRhcHkLh1EPrEXBv6w=;
+        b=eymqlKOO+siVXXvklcmDD0ZVGl92JDJn4oYVPfitIsURCXv0VpD25caCPZsqoZdy72
+         Vl33zNkbPnsMmyU+wonEFV1jfddBKZ2QwbkkK4s8vN2qDAnxg7pbaImMivfdO1aOt9KH
+         mfqtKPEX+2XbvFsQFdzIMS03YVYv6sZlMO9HnVHrGgitNoBhXRA5L96kTfDNcXJesjdr
+         uiC/lW4Aetq+xWuHz8Ji//uPJ7prQLYJjKgnvRZFNBNf6xtXTIA+GgBR3aOkXcanPzBz
+         4neLltEND29ZlhHESOyDh870/7cKzNdhAtLnj88tcEFlwlUuRRkXc5yYA89C6599i+Pn
+         8tpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747770749; x=1748375549;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YFL2XC8qzId5Dd6D3sundaqd2zkC9xDf5x4zzleSYqI=;
-        b=D/8qbGE1Jqubq2a/+2MOd/nMhNOsjLUCax8Em72CoKrAWbOvpqt/kMS2qjDrEng+PP
-         EBx6UDmfeK/DChZDXZVwmWzgem3VIjMeFU4pZE5Z2vJajvqEeIzvmk+hMP8YSfqBtiXJ
-         rLK60oW4CYGnoOcg/HTf6L4W5Dq4Whkrnhec9d96gxrSAiLAxIR2r0xE4tIuxmqWmpwH
-         5GoYcu/9lRy/MLuWuS7KfOxz3xBulonFS0wLCOOa0QqZT6aMdqTnZVRY/fbK0cVtnRGu
-         kwBu4M0AQQNhEEHFbW0An4x1OqqVWscoCIc0uH94bhGHKfM/0QlqK5zVo+P7Rfiteop1
-         Iihw==
-X-Forwarded-Encrypted: i=1; AJvYcCUF7+Ko7JYpt9Wy5mXZcQbq7InB6K5+VS2fmo2asIQd8y54mYzuYbVefZe0EMKQ5xwreytiQAJyXQ73qJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPL7O89Um0OplY9cX0i/SlAw2dgOjVB9y4d/HUag7EJNJsMbEb
-	qsSCqTjvoANEnCGEtvzBl/fWYALX2T7dJaflCWyHbdKO3tiv4+b4yJhw0U61YjcLO1R2xNCjkzk
-	12t3lCXJKJzP+PuNPVcCQBA/EBqLKT8e9IkFgj5gv5J97WDaE+2Pcd0y/SNJgnvGOXoM=
-X-Gm-Gg: ASbGncsPZrrQqJqJqID9W2+ljmP37A0ZXxXACfQZs5h2Vj/dJYmquUCRDmXlpOBdAoa
-	sN6BdK7aXVZIDbM6xK3SssKCL1bilkE06KuOsDuuUpENSkTSfy/9YUBP8/Jq+TG/oAQfOEjY2+/
-	R254kupuMIUFHSeWy3Gxwo7yY+5hSiTtEK0camkTKNQTi+nSDG9R8C0DHQ7aBDj6caPg3CXzRou
-	VUMZzMrjKHAPEwDf3uC5VGc77gASvh+Ba9ZIKfjTfmeNAOnoJTYnT1zW8t0YJmSEveUacWYZqlG
-	B54hO/Y02xByIu/v2KlIT7W02/Y3qrNW3f0a+k3fX8uQ8mvhHYSoAQd54rRp86s/GzkRztq79VY
-	=
-X-Received: by 2002:a05:620a:4248:b0:7c5:94e0:cafb with SMTP id af79cd13be357-7cd467ac226mr3064508285a.48.1747770748626;
-        Tue, 20 May 2025 12:52:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFEldE9RxymngN0SkiNE/w7R4kBGpcHXriCXVbNFCA/wbxlYIebBJIZ4sUG/sX2j3pgpIKH5w==
-X-Received: by 2002:a05:620a:4248:b0:7c5:94e0:cafb with SMTP id af79cd13be357-7cd467ac226mr3064501685a.48.1747770748082;
-        Tue, 20 May 2025 12:52:28 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e6f1637dsm2462421e87.35.2025.05.20.12.52.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 12:52:27 -0700 (PDT)
-Date: Tue, 20 May 2025 22:52:25 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: vincent.knecht@mailoo.org, Robert Foss <rfoss@kernel.org>,
-        Todor Tomov <todor.too@gmail.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        =?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH 4/4] arm64: dts: qcom: msm8939: Add camss and cci
-Message-ID: <ggx6kzto3qy2blhr5yiqhy37wmgs7c2hvvp4wyfuf4iclk3bkj@7masdrxeaddf>
-References: <20250520-camss-8x39-vbif-v1-0-a12cd6006af9@mailoo.org>
- <20250520-camss-8x39-vbif-v1-4-a12cd6006af9@mailoo.org>
- <ba201739-36ac-4586-99a6-bc96dbf4b0e9@linaro.org>
+        d=1e100.net; s=20230601; t=1747770778; x=1748375578;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SXpn/WaKau4zA3cRgecqqkvTjBRhcHkLh1EPrEXBv6w=;
+        b=MYAfo+ViJ7KUkGN1+AbjK/RG0Uwgsjoyil3ZpCdp+JpdG0REQSMidd0bPE63+bljWC
+         xLPdCBxj4o7HrwJBU/KQ2Z2cnl471hH/ZPXaGoxy+6HnU2xda29d34H7djIg5Pem5GYy
+         c32ZoPUn7En01ZAFGCo6j7ehxlx5QpeceQTHkqhzBlhf+ejyThuyg4109LZ10236wBKO
+         4Ce5sO3Jx8cBDQdx/HcRS9bfIcZ7konCBELZNMuNX2Vjf9JRrwGFRFb5wplGKin3yA9y
+         f/WlIamiHxVLlcRFpTMNPrsKmKyuZxwcB3jdHQxCj/MUX9SlFSwLmFK0Slk1uf0UeSSO
+         YsWA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7DEzAgRR4ApR25Wib4zHNPEhbK01P0gLRdDGzu0ia0YLe7wMdfRmA1t+Xn4op4RZ0urHXXj6ZPXdpZMU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcC1G+OsoX0uiBMC7QO6JZpGjXEf7cTq2pf1X5x8fFUCAYAZ83
+	B9aVM1wZUYI+6sn9xXA8fm/ar4ScV1SUguDXlOrM6CKn85QL0tM4vhN6t1lNNLOatAh0mSjduQv
+	kog==
+X-Google-Smtp-Source: AGHT+IGMDiv33WBWbSNW1H6Xv/IdXq/dfRT9Dy0t/jTHyqfUZS7qemkc9kBCYcIkb4w/Wkju9zwFy4xIsA==
+X-Received: from qkpn19.prod.google.com ([2002:a05:620a:2953:b0:7ce:becb:f27d])
+ (user=rmoar job=prod-delivery.src-stubby-dispatcher) by 2002:a05:620a:372b:b0:7c5:a2f8:e6e4
+ with SMTP id af79cd13be357-7cd47f46587mr2375350485a.29.1747770778122; Tue, 20
+ May 2025 12:52:58 -0700 (PDT)
+Date: Tue, 20 May 2025 19:52:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ba201739-36ac-4586-99a6-bc96dbf4b0e9@linaro.org>
-X-Proofpoint-GUID: UMqVZvC1LsIVMm4Z1XqWpJ20zgfFqZDU
-X-Authority-Analysis: v=2.4 cv=J/Sq7BnS c=1 sm=1 tr=0 ts=682cdd7e cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=TqukyxIwAAAA:8 a=ngZlcTqnKCSXXy_N_KUA:9 a=CjuIK1q_8ugA:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=e_wvXvRcY2B3oMitRgDS:22
-X-Proofpoint-ORIG-GUID: UMqVZvC1LsIVMm4Z1XqWpJ20zgfFqZDU
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDE2MCBTYWx0ZWRfX3Ai1bfXCWjU+
- Kzu9+PjkIUaXWwPFjZljpDz+/MBCI3uBf8QgybdBPFbUoxdy6KWDgMzlXxAFIrYAOnyO0kOZJiD
- ygjdRCVls/iuBosIkWp4w3KFgF++js2Rlum1FvK6lty6DGuTUlZ9wUrherJKRhzLsocQIwMeqfd
- YPzJvHgbaDuCX0R8xuR7M3FF/ygbrjehxeWQk3wZTI0K6t9+UvYb8gpDH18ODHU2JvwCJMeNUrc
- FA5uykAbhWQQTXFfpjoJz3LFTPa2+jrl7wkaLMHCzLuLVG8+/9p/AQe856OF9BsDAC+a/WFGiqz
- YOCE8e7OxMV8Raetj49KHOZZw25sjUSUD7LClM68Pdx8KpImifhZBaf45nvt5QJxbk7hCoX6ZG1
- KWc4rbRqvSlKvnS672qvP0/U8ufO1xNMJnrPRWF//ylGpOPhdPuvNBjkCNNZp4vK6jgXAZFO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-20_09,2025-05-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 clxscore=1015 mlxlogscore=787 suspectscore=0 spamscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 impostorscore=0
- lowpriorityscore=0 malwarescore=0 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505160000 definitions=main-2505200160
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.1112.g889b7c5bd8-goog
+Message-ID: <20250520195252.2235050-1-rmoar@google.com>
+Subject: [PATCH v2] Documentation: kunit: improve example on testing static functions
+From: Rae Moar <rmoar@google.com>
+To: davidgow@google.com, brendan.higgins@linux.dev, skhan@linuxfoundation.org
+Cc: dlatypov@google.com, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Rae Moar <rmoar@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 20, 2025 at 10:30:30PM +0300, Vladimir Zapolskiy wrote:
-> Hello Vincent.
-> 
-> On 5/20/25 21:39, Vincent Knecht via B4 Relay wrote:
-> > From: Vincent Knecht <vincent.knecht@mailoo.org>
-> > 
-> > Add the camera subsystem and CCI used to interface with cameras on the
-> > Snapdragon 615.
-> > 
-> > Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
-> > ---
-> >   arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi |   4 +
-> >   arch/arm64/boot/dts/qcom/msm8939.dtsi        | 152 +++++++++++++++++++++++++++
-> 
-> Please split SoC specific changes from the board specific ones into
-> separate patches.
-> 
-> >   2 files changed, 156 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi
-> > index adb96cd8d643e5fde1ac95c0fc3c9c3c3efb07e8..659d127b1bc3570d137ca986e4eacf600c183e5e 100644
-> > --- a/arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi
-> > @@ -11,6 +11,10 @@
-> >   #include "msm8939.dtsi"
-> >   #include "pm8916.dtsi"
-> > +&camss {
-> > +	vdda-supply = <&pm8916_l2>;
-> > +};
-> > +
-> 
-> What is the benefit of enabling CAMSS on a board without any sensors
-> connected to the SoC? Likely the board specific change has to be removed.
+The documentation on testing static functions using the KUnit macros
+VISIBLE_IF_KUNIT and EXPORT_SYMBOL_IF_KUNIT is lacking clarity and
+missing key steps in the example. This has caused bugs and confusion
+among developers.
 
-This is not a board, it's a PMIC-related include file which just wires
-the supplies.
+Improve wording of description and add missing steps to the example.
+This entails adding the "#include <kunit/visibility.h>" line and the
+"MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");" line. Both of which
+were missing from the original example and key to exposing static
+functions.
 
+Reviewed-by: David Gow <davidgow@google.com>
+Signed-off-by: Rae Moar <rmoar@google.com>
+---
+Changes from v1 to v2:
+- Add quotes around EXPORTED_FOR_KUNIT_TESTING to change it to be a
+  string
+
+ Documentation/dev-tools/kunit/usage.rst | 38 +++++++++++++++++++------
+ 1 file changed, 30 insertions(+), 8 deletions(-)
+
+diff --git a/Documentation/dev-tools/kunit/usage.rst b/Documentation/dev-tools/kunit/usage.rst
+index 22955d56b379..066ecda1dd98 100644
+--- a/Documentation/dev-tools/kunit/usage.rst
++++ b/Documentation/dev-tools/kunit/usage.rst
+@@ -670,28 +670,50 @@ with ``kunit_remove_action``.
+ Testing Static Functions
+ ------------------------
+ 
+-If we do not want to expose functions or variables for testing, one option is to
+-conditionally export the used symbol. For example:
++If you want to test static functions without exposing those functions outside of
++testing, one option is conditionally export the symbol. When KUnit is enabled,
++the symbol is exposed but remains static otherwise. To use this method, follow
++the template below.
+ 
+ .. code-block:: c
+ 
+-	/* In my_file.c */
++	/* In the file containing functions to test "my_file.c" */
+ 
+-	VISIBLE_IF_KUNIT int do_interesting_thing();
++	#include <kunit/visibility.h>
++	#include <my_file.h>
++	...
++	VISIBLE_IF_KUNIT int do_interesting_thing()
++	{
++	...
++	}
+ 	EXPORT_SYMBOL_IF_KUNIT(do_interesting_thing);
+ 
+-	/* In my_file.h */
++	/* In the header file "my_file.h" */
+ 
+ 	#if IS_ENABLED(CONFIG_KUNIT)
+ 		int do_interesting_thing(void);
+ 	#endif
+ 
+-Alternatively, you could conditionally ``#include`` the test file at the end of
+-your .c file. For example:
++	/* In the KUnit test file "my_file_test.c" */
++
++	#include <kunit/visibility.h>
++	#include <my_file.h>
++	...
++	MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
++	...
++	// Use do_interesting_thing() in tests
++
++For a full example, see this `patch <https://lore.kernel.org/all/20221207014024.340230-3-rmoar@google.com/>`_
++where a test is modified to conditionally expose static functions for testing
++using the macros above.
++
++As an **alternative** to the method above, you could conditionally ``#include``
++the test file at the end of your .c file. This is not recommended but works
++if needed. For example:
+ 
+ .. code-block:: c
+ 
+-	/* In my_file.c */
++	/* In "my_file.c" */
+ 
+ 	static int do_interesting_thing();
+ 
+
+base-commit: c2493384e8110d5a4792fff4b9d46e47b78ea10a
 -- 
-With best wishes
-Dmitry
+2.49.0.1112.g889b7c5bd8-goog
+
 
