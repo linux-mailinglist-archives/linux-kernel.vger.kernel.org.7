@@ -1,83 +1,126 @@
-Return-Path: <linux-kernel+bounces-655501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD95ABD694
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:18:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D409CABD6CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B5648A0D87
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:18:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12B417D675
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871C726FD84;
-	Tue, 20 May 2025 11:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="I2HxntDq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF5027B51C;
+	Tue, 20 May 2025 11:28:30 +0000 (UTC)
+Received: from ni.piap.pl (ni.piap.pl [195.187.100.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB0F20C038;
-	Tue, 20 May 2025 11:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22FC27815B;
+	Tue, 20 May 2025 11:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.187.100.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747739923; cv=none; b=XdNwtfkW5HyREqQZEC4WlN3IqKtxTetuRsyUNYpYcjbKfg0y6xuXiQFOK7vAfQGZvMfnuf21XY9+a9GDpWveEHhPHISbhstCoJvtS81gh4TiOHWEipxDLwBNQKhRx8gGC9YEdZsWRtNLOke0upmSbw5r3Bk9wO4ZjzL065tnwhg=
+	t=1747740510; cv=none; b=fE8mvdZQqmfZQ3MaJ2c5fhYpmnECiAPjPl29ST3zUwfUEEnSnHihgfUa0j08rMprEx4tBb3psaECXAb9OKEeAXISWJL1IO9BIy8nYe1u9ouZlPYkDuJb1x4HrlgnZs0xDfruwWUbe/rYC22k2M+rl19giCReVzi1pru0tYO0pDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747739923; c=relaxed/simple;
-	bh=qjYvdvfya/ilgDwMe8hIoPpTxDFUOlZyCkJtQZaKTVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VP3Y0vCP9NYgrjIN5n+veEooBgq1IHWa45nCTW5lJ4WyP0PnJAdbvxPhGA1fzOfA1hEjeUAl2Jk5enwTx5r05O4uiFAaZ9nsNWuGkHCI0tpLQGUd++ofvCN48jX0TmkpCBj7IH/tV+Lm1K4OZvd09veBxWE0hezRzaq7lycI3j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=I2HxntDq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C29CC4CEE9;
-	Tue, 20 May 2025 11:18:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747739920;
-	bh=qjYvdvfya/ilgDwMe8hIoPpTxDFUOlZyCkJtQZaKTVs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I2HxntDqMnDxdlcyjmxyLHFLDg6rgXYZKChTiKXcZIkPOXGpwDNUEAtI6FIT0399u
-	 cQIKl9y7us9c7ymMZKOpcBnSobJJRVc956jMIwfsKnWNQwrNJdi6KZWEF4tx69rbRp
-	 W+/G4yKroxaoPrVy0viEDtdksqrJqzGBAKq49bbI=
-Date: Tue, 20 May 2025 13:18:37 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: jianqi.ren.cn@windriver.com
-Cc: stable@vger.kernel.org, paul@paul-moore.com,
-	stephen.smalley.work@gmail.com, eparis@parisplace.org,
-	selinux@vger.kernel.org, cgzones@googlemail.com,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.1.y] selinux: avoid dereference of garbage after mount
- failure
-Message-ID: <2025052025-alias-sublime-c6b0@gregkh>
-References: <20250512014400.3326099-1-jianqi.ren.cn@windriver.com>
+	s=arc-20240116; t=1747740510; c=relaxed/simple;
+	bh=rh9L2o/yrA2qFrgP2BkiU/biAuRHzdA3ItNyQQZiNHY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WprgwAzOBmG2BGBsJht9zPHu77D8wUotxiSRbIEaqTHp6tb+dzxcglSw/t98zAZ/dv2BO44TErJNiGAuevb8HN0hLL2zlS6mie8NO1JWUUzCXIdopT4KSrahne3AMYgt+OUaa9pFlPDWBd70obs9n/MCQvN0bJP694NRHOGlvZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl; spf=pass smtp.mailfrom=piap.pl; arc=none smtp.client-ip=195.187.100.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piap.pl
+Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
+	by ni.piap.pl (Postfix) with ESMTPS id 6D479C405A49;
+	Tue, 20 May 2025 13:19:12 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl 6D479C405A49
+From: =?utf-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,  Shawn Guo
+ <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
+  Pengutronix Kernel Team <kernel@pengutronix.de>,  Fabio Estevam
+ <festevam@gmail.com>,  linux-media@vger.kernel.org,  imx@lists.linux.dev,
+  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i.MX8 ISI crossbar: simplify a couple of error messages
+In-Reply-To: <20250509091549.GD28896@pendragon.ideasonboard.com> (Laurent
+	Pinchart's message of "Fri, 9 May 2025 11:15:49 +0200")
+References: <m3plgi9pwu.fsf@t19.piap.pl>
+	<20250509091549.GD28896@pendragon.ideasonboard.com>
+Sender: khalasa@piap.pl
+Date: Tue, 20 May 2025 13:19:12 +0200
+Message-ID: <m3sekz8r7z.fsf@t19.piap.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250512014400.3326099-1-jianqi.ren.cn@windriver.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 12, 2025 at 09:44:00AM +0800, jianqi.ren.cn@windriver.com wrote:
-> From: Christian Göttsche <cgzones@googlemail.com>
-> 
-> commit 37801a36b4d68892ce807264f784d818f8d0d39b upstream.
-> 
-> In case kern_mount() fails and returns an error pointer return in the
-> error branch instead of continuing and dereferencing the error pointer.
-> 
-> While on it drop the never read static variable selinuxfs_mount.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 0619f0f5e36f ("selinux: wrap selinuxfs state")
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
-> Signed-off-by: He Zhe <zhe.he@windriver.com>
-> ---
-> Verified the build test
+Hi Laurent,
 
-No you did not :(
+Laurent Pinchart <laurent.pinchart@ideasonboard.com> writes:
 
+> The goal was indeed to save memory.
+>
+>> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-crossbar.c
+>> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-crossbar.c
+>> @@ -352,9 +352,8 @@ static int mxc_isi_crossbar_enable_streams(struct v4=
+l2_subdev *sd,
+>>                                                sink_streams);
+>>               if (ret) {
+>>                       dev_err(xbar->isi->dev,
+>> -                             "failed to %s streams 0x%llx on '%s':%u: %=
+d\n",
+>> -                             "enable", sink_streams, remote_sd->name,
+>> -                             remote_pad, ret);
+>> +                             "failed to enable streams 0x%llx on '%s':%=
+u: %d\n",
+>> +                             sink_streams, remote_sd->name, remote_pad,=
+ ret);
+>>                       mxc_isi_crossbar_gasket_disable(xbar, sink_pad);
+>>                       return ret;
+>>               }
+>> @@ -392,9 +391,8 @@ static int mxc_isi_crossbar_disable_streams(struct v=
+4l2_subdev *sd,
+>>                                                 sink_streams);
+>>               if (ret)
+>>                       dev_err(xbar->isi->dev,
+>> -                             "failed to %s streams 0x%llx on '%s':%u: %=
+d\n",
+>> -                             "disable", sink_streams, remote_sd->name,
+>> -                             remote_pad, ret);
+>> +                             "failed to disable streams 0x%llx on '%s':=
+%u: %d\n",
+>> +                             sink_streams, remote_sd->name, remote_pad,=
+ ret);
+
+It appears the current code saves (in my default build) 8 bytes of
+memory, at the cost of readability and inability to search with grep:
+
+Current:
+Name          Size      File off
+.text         00000bf4  00000040
+.data         00000000  00000c34
+.rodata.str1.8 000001b8 00000c38
+__jump_table  00000030  00000df0
+.rodata       000001b8  00000e20
+
+With patch:
+Name          Size      File off
+.text         00000bd4  00000040
+.data         00000000  00000c14
+.rodata.str1.8 000001e0 00000c18
+__jump_table  00000030  00000df8
+.rodata       000001b8  00000e28
+
+Built as a module it doesn't even save that - the number of pages stays
+the same.
+
+Just FYI.
+--=20
+Krzysztof "Chris" Ha=C5=82asa
+
+Sie=C4=87 Badawcza =C5=81ukasiewicz
+Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
+Al. Jerozolimskie 202, 02-486 Warszawa
 
