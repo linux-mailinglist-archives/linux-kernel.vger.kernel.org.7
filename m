@@ -1,123 +1,112 @@
-Return-Path: <linux-kernel+bounces-654859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D6F6ABCDC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 05:19:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69452ABCDCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 05:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C0EC4A1931
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 03:19:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D32C4A15D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 03:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61006257AF3;
-	Tue, 20 May 2025 03:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5234925A2B1;
+	Tue, 20 May 2025 03:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g0NoqhUn"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="VOg79n2N"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439041D90C8
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 03:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7BE257451;
+	Tue, 20 May 2025 03:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747711184; cv=none; b=LBtgj+GCp6s0CQOCYF3rrNRWJb0w1rjEWdV7RWXBr+wuBirwk6oRh9ervYoBWvlNkLa1BLnxm8fjSJ2WbUW+1QSYQqJb/bCyd3+GqLjgPGCxpce8HHetGcCV2xo6QguGdwCoD9JlbnHYdEVTa/j1VHfQ6bpRuleNEwOc3Xix7A8=
+	t=1747711214; cv=none; b=YH7g6Z506Uf+U7XnJMq0YtD2iVoXiyDgRi18mPvh+B+Gz3Bf9hZZgA/8FnCZX3WgVgpXAtjwJZu6iOwBY1XEU9SWukZsoKaK4TiV523eRUd8JLFNvuzjQFklRTP/69zpMiLEHlPMLbS6n1vk8wqYtH5YWnlUCCQvHExs+klK/s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747711184; c=relaxed/simple;
-	bh=NDPpV1xvpyuZxHMe0p10Oi9N+7ASFh/SDwtJ1hhLYeo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O7S77HOX7v8iDbMCPVWf2eyjMdLuTm/36Iyfed9zq3lKOjrUWG/oZvUPN9k9rpMesiUpvltC5UVjupcDxbOztr8EnhgWyHqhLth3PlKIsDGPyqRW4lo13xsIVGZU8JGnSkKKMv2x/U1yobGE0iHCo4zYashyX0Ww8Fx7QLMDl1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g0NoqhUn; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-48b7747f881so851061cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 20:19:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747711182; x=1748315982; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1VGauyFOCMgAWhV/W7j3JC1R4Th1f9X6u3MqqBt70+s=;
-        b=g0NoqhUngdTRiiAkwnilhGRVAx7Phi/Qv9OFhhOMhuHuOlcHGX2jrJGwOYrt7P421U
-         kyVm1AZGYkqwqyZk6iGVgdkPPS69GVVp8FviB+P56P5LgtLxsfpicVi65Xskai2Z6ort
-         agYFotIuWamY5E56wGEBAtZw61osv1JpOHMxkxHRSh/2NvsZT53TR5i9zJuPki1B66hq
-         LpxDSRqamNdpl/bhKD5uluEEeS8XoESF4wGm+Pca7kEZDqXjhtTTgn27cP/P7GKHidbp
-         a+zEg2dRyI5I0RRawx96HrrxgQgY37YVq9zvN5Ex2p2A73jhql/bHlnEN+Khhz0lJNbn
-         AfbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747711182; x=1748315982;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1VGauyFOCMgAWhV/W7j3JC1R4Th1f9X6u3MqqBt70+s=;
-        b=XD4d+nkd8qjz1whht1z5bCJmQafsPgiUe/nTWmCLnA7FTrz5jOlSyR5t8j0XiPRvX+
-         KyG+z/1UwTwcHiAHPcgvQUteF1OsCaSasmO5M9DBO9uE/glaEmzZv8VSreZ6SmPt67ww
-         TNXcCThep+B3tAMOjZBbJqHJuKeziMh6lg0uJgZN/WadIeQEke7put5HVuFxSNT1x/LT
-         1WlhhSLf2IKP+g9uSivcc2eme811VLVjPY3z/P1QlnWG715PHd2R5KDtZ/ImK8nsTG1j
-         iUbd3JpZCszjf5Rl3yqGNywEVdX9dY2t2udXNpeapk4rMeRu+/2UE5N/f76hipewfbDc
-         HuoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAzE9bCCnniquQnvmom6rmCYQ0UZz80OcTfQvrUbglcETsAo7xSGRXdxJAdG/2MNUWyGOUye4GL+ZFRb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuVBKlEcUQDKROxGR3t3Eg7u0p3pgdgUWApGgIrLCH7IpWrpre
-	hNo8ch5hdnHcIprRhfg6i8N35v6I7ZWYNORqxGHPj+lFl34LNesevm0K+7JuhaTwgbHjsYCBN2W
-	B30Rj3fxCPKCxiO/yvBboj6u29sFnQIsx1b4SoKHc
-X-Gm-Gg: ASbGnctd9VrJDroo3Pu0f1KXB1WnPCsFBE2qPNHFYkgPf22Zjzlvn+06Y6Ua6MMJQ10
-	MRTnhSDxt8f+hYOFfmOHPekXVXditYHDzOI6zKv15k8go7CKbJQQxUzuPVH5mLiT43hFU0qguD7
-	PdAWq3umeEWUMgUDxqyj3XkhHM/U7bJDcV/sBBZ4FwNQ==
-X-Google-Smtp-Source: AGHT+IELLH4JpHLhpKxY3tQYC8FVfzVS2kqKQfXnDSC7er1tvpq61D5fA6upHVA64U8+LafOJgYYdmIlh11hFLGBGC8=
-X-Received: by 2002:ac8:5a08:0:b0:47d:4e8a:97f0 with SMTP id
- d75a77b69052e-4960136a0a5mr8641821cf.29.1747711181704; Mon, 19 May 2025
- 20:19:41 -0700 (PDT)
+	s=arc-20240116; t=1747711214; c=relaxed/simple;
+	bh=VKH7KRryI4ktofS9C7UuxsXcayJGKdrDWZTcnz1iCV8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=fTHXDvtaz2kmz+pJdOpf3zvxjhukFkPFNxOv+V0MlQVgqS5YSVhvq//VSpKzb9ZEBTijDFqR4IZFTWRTGFdZoZJWg/kgT6/NsKhQiuY3sgwIS2HNhBVpD45OgETccWKLo8dQMqrM8Ozeg6y64Xf/L4gWkCM+fpkbqPaXptVKtCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=VOg79n2N; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 54K3JglR61991624, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1747711182; bh=VKH7KRryI4ktofS9C7UuxsXcayJGKdrDWZTcnz1iCV8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=VOg79n2NWp3+9ktcKp9gtbrYjJUIk53irYbowRSnVHj9Ux8pIM2POAFnWSdpPZ8He
+	 QwbfGXyJoVDyWu2aMSLTfTyCLTeaCpChYYUQjfr2c8+VRAC1B3WoL9TEbbDWzT15Pr
+	 AIWgLgP0UnfM2ymQUE2ymcgcj6V1vup9/PfnhCUVd6VwdoNkZKkxb0TrT6kB3beEm/
+	 RKFX2pIcOqk96VElM0nQ06TPkV2UlmQd/kzhCUGWlY+krnYzQX5IQkBu6+xs8yS1Lc
+	 asJXJOxgPng6U42lBO2qp6HzQ9zOuebgyRcAS+SAm4kyur6U/3Hu8r2M1IZPnmC9aX
+	 FmDhcEXtd+Slg==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 54K3JglR61991624
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 20 May 2025 11:19:42 +0800
+Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 20 May 2025 11:19:42 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 20 May 2025 11:19:42 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
+ RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
+ 15.01.2507.035; Tue, 20 May 2025 11:19:41 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com"
+	<edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "horms@kernel.org"
+	<horms@kernel.org>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Larry Chiu
+	<larry.chiu@realtek.com>, Joe Damato <jdamato@fastly.com>
+Subject: RE: [PATCH net-next v2] rtase: Use min() instead of min_t()
+Thread-Topic: [PATCH net-next v2] rtase: Use min() instead of min_t()
+Thread-Index: AQHbtawdSIC/HJstr0OxTEOUNg41/rPaAlkAgAAn8wCAAAG8AIAA1A0g
+Date: Tue, 20 May 2025 03:19:41 +0000
+Message-ID: <73c27a5a4c814a5a9cdf6319314f8480@realtek.com>
+References: <20250425063429.29742-1-justinlai0215@realtek.com>
+	<bb78d791abe34d9cbac30e75e7bec373@realtek.com>
+	<20250519153218.0036db7f@kernel.org> <20250519153830.112e1e0a@kernel.org>
+In-Reply-To: <20250519153830.112e1e0a@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS01.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250517000739.5930-1-surenb@google.com> <20250519155145.8378a397a755c1cc5a3e2d4e@linux-foundation.org>
- <CAJuCfpGgwkAVZJJ-ffLdkBfmggm3=d+Z450matW=TzeQZJ=LDQ@mail.gmail.com> <20250519172132.c46b910bc10857c706866357@linux-foundation.org>
-In-Reply-To: <20250519172132.c46b910bc10857c706866357@linux-foundation.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 19 May 2025 20:19:30 -0700
-X-Gm-Features: AX0GCFuqHoqawVHSUaBVZiij8BVnGoTTfac-et9p6bCnpwkiQGBflm_UZad3Dk0
-Message-ID: <CAJuCfpGAVwRxCA-fdmH_MxD47CPdBD5iFGgEhHpqLAcfLMUX1A@mail.gmail.com>
-Subject: Re: [PATCH 1/1] alloc_tag: allocate percpu counters for module tags dynamically
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kent.overstreet@linux.dev, 00107082@163.com, dennis@kernel.org, 
-	tj@kernel.org, cl@gentwo.org, pasha.tatashin@soleen.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-On Mon, May 19, 2025 at 5:21=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Mon, 19 May 2025 16:13:28 -0700 Suren Baghdasaryan <surenb@google.com>=
- wrote:
->
-> > > > Fixes: 0db6f8d7820a ("alloc_tag: load module tags into separate con=
-tiguous memory")
-> > > > Reported-by: David Wang <00107082@163.com>
-> > > > Closes: https://lore.kernel.org/all/20250516131246.6244-1-00107082@=
-163.com/
-> > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > > ---
-> > > >  include/linux/alloc_tag.h | 12 ++++++
-> > > >  include/linux/codetag.h   |  8 ++--
-> > > >  include/linux/percpu.h    |  4 --
-> > > >  lib/alloc_tag.c           | 87 +++++++++++++++++++++++++++++++----=
-----
-> > > >  lib/codetag.c             |  5 ++-
-> > > >  5 files changed, 88 insertions(+), 28 deletions(-)
-> > >
-> > > Should we backport this fix into -stable kernels?  I'm thinking yes.
+> On Mon, 19 May 2025 15:32:18 -0700 Jakub Kicinski wrote:
+> > On Mon, 19 May 2025 12:16:11 +0000 Justin Lai wrote:
+> > > I apologize for the interruption, I would like to ask why this patch
+> > > is rejected on patchwork.
 > >
-> > Yes, I should have CC'ed stable. The patch this one is fixing was
-> > first introduced in 6.13. I just tried and it applies cleanly to
-> > stable linux-6.13.y and linux-6.14.y.
-> > Should I forward this email to stable or send a separate patch to them?
->
-> I added cc:stable to the mm.git copy so all is OK.  That's the usual
-> workflow.
+> > Hm, unclear, sorry about that.
+>=20
+> It doesn't apply, perhaps that's why? Please rebase and repost.
 
-Perfect. Thanks!
+Hi Jakub,
+
+Thank you for your reply. I will rebase and repost.
+
+Thanks,
+Justin
 
