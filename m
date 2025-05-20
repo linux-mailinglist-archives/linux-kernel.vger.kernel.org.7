@@ -1,260 +1,142 @@
-Return-Path: <linux-kernel+bounces-656364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF47ABE4E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:37:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D2BABE4E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0E1B3AFDED
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:37:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9973A7A62B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABC528DF51;
-	Tue, 20 May 2025 20:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E8228C854;
+	Tue, 20 May 2025 20:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X4OgE11w"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eJ0BMXIo"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5932A28D8CA;
-	Tue, 20 May 2025 20:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5822128C5C0
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 20:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747773382; cv=none; b=scaKQQq27aQiaoNlgqSBx8dWa7IYjbS90/BFk7RLp/785aOrtUO3GksBAUVD+wzU33GWvr4nKDA2QUu6Y2UwcT4t2jwYAK1a4zNWev44dmu/6fdoU5W3GANlEWw1BQYYdT8AL4NgHts+fTFwymkjYmiTHC0Pfna0UhszYi092W8=
+	t=1747773393; cv=none; b=jDG+ZsDCFMYxI/hyqyendalveYau1zFCcPdhKVi5F4nfj9ScoAAW2x0elCf0X+jCqrjERKLPfshw9qyF/ONT4+5mEzn9/uV9Jerj6eOIwF0gynK/OnFJkZvXM8i/+Y2q3YOk2tnkYAbpkG61eT/npzaKTfeG2wlsQQjydesA1rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747773382; c=relaxed/simple;
-	bh=BpT/h0vYVM/F7Qu3OnVojwEelU9Q3/KKLsVzvM8EYjc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U0HLNqxyofNbaLTvQUZsXu1dihMVSHyEXDM3QkyvO9i0eHZFuNnpYniq1bgbLmjyaMauTRtxeauWiGym38CPcC5g8i1Kc+wc5KMJTwMmr4FxRSivEmNRR1pMjpwGOFRSxQbbOWaR4x05nVAMv+ifZrNsARkmW6TVc6kJMCIspLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X4OgE11w; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22e033a3a07so62200235ad.0;
-        Tue, 20 May 2025 13:36:21 -0700 (PDT)
+	s=arc-20240116; t=1747773393; c=relaxed/simple;
+	bh=ZKfsnzKjHWRvUGjeYrgiENx6pawfGlJOEUf65hQxSqs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Vrf+mtznQVTyherxJ2QbT4KPdSXm1Y2QYePyrrlOyGAwF0iGh8YQjn9CVGKnAv/RUI6vzejGu4rzygw+f0NupoxNAXAyOZ+7So3gzItTO3UspJFLoIrbZFormv43nR/vk6hTQ9iy/BdXLuO2agbQc+39eG2LOm8537hKcA0Ns00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eJ0BMXIo; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2371b50cabso6298008a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 13:36:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747773380; x=1748378180; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jCeM+ec5B4gH6tk0fEnypFNTVZat6T1JxRuML0u4Z8U=;
-        b=X4OgE11wIVAJ3sMCkW/jiN7DY51oFZi+t4XvJ4JTcuazjOXy/k2sfa17vg4Y4YM/wf
-         NwGZydMJ9c5RleXwnteuNrfi0bj0IsPNHK6ZkHIcGUmWLDedwCfSqhuGW3t5lt9x3qmk
-         gM1OpYngj5X7gFPV8njPAa2Xhk5rNIvgjd1Vms4WoZ0gZXPDe4YmRA/TN780iwbZ2dV8
-         4Ml51vGAcInVtTHV+eag8YsEUT2Rmi4GDeSMSXe/tqFpQUtsWZ+pEuFL9XZikJ/Xd0ja
-         ZdOr+S3HxqOmQmWOR6+nJ9jPYrBLFTkqLuYgUSpYn1gZ/UijlcscpGjqFp/xeFwTBupV
-         ZTZQ==
+        d=google.com; s=20230601; t=1747773390; x=1748378190; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NikUqd8YUJYJZVQ9NNWuumuHYhTthKmVTkOJEDEId4g=;
+        b=eJ0BMXIoRkkjyt9enk90GhZdOAd60XB7FknBFhErmP28/fKyBCrdsP3V0HvRDZL+6P
+         W+eYep8StJ51XP6xLNekeht8MSkDqd3L4z0SEzHqgddIkAgQiR0kRgt+ERRbVsHfTH+R
+         KfhCWrhEuTygkJ+LmC/q+pPby/jxNs1PRd6cDbNjJEcettnNb7CmrxbJODi9p9XBK8lZ
+         aXWcBKRoaz32gQm4MCIS3jjZWMhI66Sj/ItL2/xG3ErUDyRhF/OE8Ih79R4njhgnmYKG
+         M2e6V3xKVXUMMOPnFiBLLuEQ4/uEsMM1+JIMSqBxwjx0RZrwXb7u6J9Nf79A91OJuGwU
+         uQ8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747773380; x=1748378180;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jCeM+ec5B4gH6tk0fEnypFNTVZat6T1JxRuML0u4Z8U=;
-        b=GJk0q+8f81cqVVUtEu1PXN150y4/qqVIFjBFJVd9uVxvXaGQNalbxUh2/ryMOSHgmu
-         Fe7AT6Av6Zv9tNIhh5L5y9I+YBalA+JgmHGLQBEa81qHnGyGVm/eiufhlSsMd1pMvd4k
-         kgg/nb+S/uFsSuoG3NmeC3BYsNKQsnEF07/KzCLeP7K2D7ujJifsMiOrK6JnZTp7+HLA
-         bj7btpBxIZ1yqSmQeNIenxlzbwUvUngBWCkHsZnb8Ss1dEy8ME47IH61tfeBGesxkiSM
-         4QtosZRxw9UTx62ds7nPoXT3KikajFmvUPL2DY1PsTmgNSfZ0njbeWHiu6+c//b/nGNX
-         rpaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuyPAEqLEP6WkK19t2clgTac8MMkoHs8DkP0l5mGOKM++F38IORGD1dFZhQbx7xEVIPfx9tnMWXtchpdA=@vger.kernel.org, AJvYcCX3Yp2WikiilciWobUi6uWXI1uEPE4FndNOPoX/NSc0xziYWdzUOSHaKZwxWiwJdtxSRVI9CRxrwaJMbA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlnKCOmCsMqtL8ZMQevvErugsqimccRudQ33zzB3wiD4huB6B4
-	t+npbYJD7oUwPMUkl4MUgcOcl1X3wOvtRvB2mxRtxSmgFngMDT5HGBWAAJmW
-X-Gm-Gg: ASbGnctnEjs4fk8neLD/kwIUkj14na7jrLEVXjwtrSXYccp65lOqIhELydDimm2SJAA
-	kVicJK372o1NQDJspsowxvO0CEuLgcRRnEVMeR+8ixpPOOLGwMOsyecpMQi+ABV7w4zcGeu/N4t
-	104cRmksGYJ6NK3q7aofSVEjAYShAK6ZjdWK7iG3l+Da6oPUB2JZeEU7d46u0W17NtTaYXF0pzN
-	ItgIVq0Q1TWenwvmZ+MWNmicnAYqk6dv0bOt2Kxkx5zdvdx+j30LUm6ulEobxvAH4DMFEfBZ3bP
-	6KK5Vv18xgjHA8HxY4xWEiJ+xXFrK91LQqM7lP+Z2cOCHH5l7U4nD8E0kemv21FRtDuyHHClJ+L
-	mdnQ6I+c6skiz
-X-Google-Smtp-Source: AGHT+IHZAUIjrGWx7MHglWxuwcEk9khRmWgUQFYbF5wFZSXKA6EsR94YaJWuTX/WLyK6xZKL0cxykw==
-X-Received: by 2002:a17:902:d483:b0:232:17d8:486 with SMTP id d9443c01a7336-23217d81153mr195813465ad.22.1747773380107;
-        Tue, 20 May 2025 13:36:20 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-231d4ebba01sm80212605ad.208.2025.05.20.13.36.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 13:36:19 -0700 (PDT)
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	skalluru@marvell.com,
-	manishc@marvell.com,
-	andrew+netdev@lunn.ch,
-	michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com,
-	ajit.khaparde@broadcom.com,
-	sriharsha.basavapatna@broadcom.com,
-	somnath.kotur@broadcom.com,
-	anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	tariqt@nvidia.com,
-	saeedm@nvidia.com,
-	louis.peens@corigine.com,
-	shshaikh@marvell.com,
-	GR-Linux-NIC-Dev@marvell.com,
-	ecree.xilinx@gmail.com,
-	horms@kernel.org,
-	dsahern@kernel.org,
-	ruanjinjie@huawei.com,
-	mheib@redhat.com,
-	stfomichev@gmail.com,
-	linux-kernel@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org,
-	linux-rdma@vger.kernel.org,
-	oss-drivers@corigine.com,
-	linux-net-drivers@amd.com,
-	leon@kernel.org
-Subject: [PATCH net-next 3/3] Revert "bnxt_en: bring back rtnl_lock() in the bnxt_open() path"
-Date: Tue, 20 May 2025 13:36:14 -0700
-Message-ID: <20250520203614.2693870-4-stfomichev@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250520203614.2693870-1-stfomichev@gmail.com>
-References: <20250520203614.2693870-1-stfomichev@gmail.com>
+        d=1e100.net; s=20230601; t=1747773390; x=1748378190;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NikUqd8YUJYJZVQ9NNWuumuHYhTthKmVTkOJEDEId4g=;
+        b=Dqjaqz1QC3+JKpWvbyfT5BtoV833LBzoRncTsuAvsII2dzDp8OLqhQtp9FnlT4N4k4
+         r+fS2BhsurjkQ5eYb3W1II8yO4I4u1+BUUMDRFoc5TiU1JyLabTbmqp9uDGybd9G7cOt
+         w1qKGYTSSUxrzxQNp6hCjEqAq9zyUPouyvUaop1Kf+ZdvYM5ixE+zbDu/mXy5rnUOi7P
+         hLNYtf2iqN3jnfI+ldT2CfEu9EEKmx6zID0XYS5zYpSiTMug6jFCajXHGDbx6KDfHP1S
+         tRbK8OMZEz4o6V9Xdjf79Lm/5Lsz9aQ63EE/NFLAqy2Ixzsj9LXwMEJ9sbdFy//WjlTt
+         aPNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuUPBhvDn1j1gAfZmo4dKUSwz0+TqPdCY3oPz4klRl9La/iJu9DIEZfU0yy4eLIyCQx9RcJWHGHbNKT2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqKPGR+AJ8IlKoXaI1LNyR/yvc7ZMNd0+A92Ht6rlpjdMDIlbH
+	deqrszz8ymxfXuYYLBrjurm27dHe9Mztyy3Yr0gRg4FPcpoV42J5ErXd2l1+ZV4Q1jLGFjWGPa3
+	l372DOA==
+X-Google-Smtp-Source: AGHT+IHP6rysVOKSkISEgr29agj9TpppemjJvlT6UOUwgsn7uAspuzrIU/dBu0EIRPFTBgRjNvR+rZRe+h0=
+X-Received: from pjbph15.prod.google.com ([2002:a17:90b:3bcf:b0:2f9:dc36:b11])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3d44:b0:30e:7d09:2a7
+ with SMTP id 98e67ed59e1d1-30e83107ed7mr28064460a91.14.1747773390587; Tue, 20
+ May 2025 13:36:30 -0700 (PDT)
+Date: Tue, 20 May 2025 13:36:29 -0700
+In-Reply-To: <d270ff32-7763-40d5-a4dc-3970383571dc@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250404193923.1413163-1-seanjc@google.com> <20250404193923.1413163-31-seanjc@google.com>
+ <d270ff32-7763-40d5-a4dc-3970383571dc@redhat.com>
+Message-ID: <aCznzZ-SN4Pf_htE@google.com>
+Subject: Re: [PATCH 30/67] KVM: VMX: Stop walking list of routing table
+ entries when updating IRTE
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>, 
+	Lu Baolu <baolu.lu@linux.intel.com>, kvm@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Maxim Levitsky <mlevitsk@redhat.com>, 
+	Joao Martins <joao.m.martins@oracle.com>, David Matlack <dmatlack@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-This reverts commit 325eb217e41fa14f307c7cc702bd18d0bb38fe84.
+On Tue, Apr 08, 2025, Paolo Bonzini wrote:
+> On 4/4/25 21:38, Sean Christopherson wrote:
+> > Now that KVM provides the to-be-updated routing entry, stop walking the
+> > routing table to find that entry.  KVM, via setup_routing_entry() and
+> > sanity checked by kvm_get_msi_route(), disallows having a GSI configured
+> > to trigger multiple MSIs, i.e. the for-loop can only process one entry.
+> > 
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >   arch/x86/kvm/vmx/posted_intr.c | 100 +++++++++++----------------------
+> >   1 file changed, 33 insertions(+), 67 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/vmx/posted_intr.c b/arch/x86/kvm/vmx/posted_intr.c
+> > index 00818ca30ee0..786912cee3f8 100644
+> > --- a/arch/x86/kvm/vmx/posted_intr.c
+> > +++ b/arch/x86/kvm/vmx/posted_intr.c
+> > @@ -268,78 +268,44 @@ int vmx_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+> >   		       unsigned int host_irq, uint32_t guest_irq,
+> >   		       struct kvm_kernel_irq_routing_entry *new)
+> >   {
+> > -	struct kvm_kernel_irq_routing_entry *e;
+> > -	struct kvm_irq_routing_table *irq_rt;
+> > -	bool enable_remapped_mode = true;
+> >   	struct kvm_lapic_irq irq;
+> >   	struct kvm_vcpu *vcpu;
+> >   	struct vcpu_data vcpu_info;
+> > -	bool set = !!new;
+> > -	int idx, ret = 0;
+> >   	if (!vmx_can_use_vtd_pi(kvm))
+> >   		return 0;
+> > -	idx = srcu_read_lock(&kvm->irq_srcu);
+> > -	irq_rt = srcu_dereference(kvm->irq_routing, &kvm->irq_srcu);
+> > -	if (guest_irq >= irq_rt->nr_rt_entries ||
+> > -	    hlist_empty(&irq_rt->map[guest_irq])) {
+> > -		pr_warn_once("no route for guest_irq %u/%u (broken user space?)\n",
+> > -			     guest_irq, irq_rt->nr_rt_entries);
+> > -		goto out;
+> > -	}
+> > -
+> > -	hlist_for_each_entry(e, &irq_rt->map[guest_irq], link) {
+> > -		if (e->type != KVM_IRQ_ROUTING_MSI)
+> > -			continue;
+> > -
+> > -		WARN_ON_ONCE(new && memcmp(e, new, sizeof(*new)));
+> 
+> Alternatively, if you want to keep patches 28/29 separate, you could add
+> this WARN_ON_ONCE to avic.c in the exact same place after checking e->type
+> -- not so much for asserting purposes, but more to document what's going on
+> for the reviewer.
 
-udp_tunnel infra doesn't need RTNL, should be safe to get back
-to only netdev instance lock.
+FWIW, AVIC already has the same WARN, they were both added by "KVM: x86: Pass new
+routing entries and irqfd when updating IRTEs".
 
-Cc: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: Stanislav Fomichev <stfomichev@gmail.com>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 36 +++++------------------
- 1 file changed, 7 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index a3dadde65b8d..1da208c36572 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -14055,28 +14055,13 @@ static void bnxt_unlock_sp(struct bnxt *bp)
- 	netdev_unlock(bp->dev);
- }
- 
--/* Same as bnxt_lock_sp() with additional rtnl_lock */
--static void bnxt_rtnl_lock_sp(struct bnxt *bp)
--{
--	clear_bit(BNXT_STATE_IN_SP_TASK, &bp->state);
--	rtnl_lock();
--	netdev_lock(bp->dev);
--}
--
--static void bnxt_rtnl_unlock_sp(struct bnxt *bp)
--{
--	set_bit(BNXT_STATE_IN_SP_TASK, &bp->state);
--	netdev_unlock(bp->dev);
--	rtnl_unlock();
--}
--
- /* Only called from bnxt_sp_task() */
- static void bnxt_reset(struct bnxt *bp, bool silent)
- {
--	bnxt_rtnl_lock_sp(bp);
-+	bnxt_lock_sp(bp);
- 	if (test_bit(BNXT_STATE_OPEN, &bp->state))
- 		bnxt_reset_task(bp, silent);
--	bnxt_rtnl_unlock_sp(bp);
-+	bnxt_unlock_sp(bp);
- }
- 
- /* Only called from bnxt_sp_task() */
-@@ -14084,9 +14069,9 @@ static void bnxt_rx_ring_reset(struct bnxt *bp)
- {
- 	int i;
- 
--	bnxt_rtnl_lock_sp(bp);
-+	bnxt_lock_sp(bp);
- 	if (!test_bit(BNXT_STATE_OPEN, &bp->state)) {
--		bnxt_rtnl_unlock_sp(bp);
-+		bnxt_unlock_sp(bp);
- 		return;
- 	}
- 	/* Disable and flush TPA before resetting the RX ring */
-@@ -14125,7 +14110,7 @@ static void bnxt_rx_ring_reset(struct bnxt *bp)
- 	}
- 	if (bp->flags & BNXT_FLAG_TPA)
- 		bnxt_set_tpa(bp, true);
--	bnxt_rtnl_unlock_sp(bp);
-+	bnxt_unlock_sp(bp);
- }
- 
- static void bnxt_fw_fatal_close(struct bnxt *bp)
-@@ -15017,17 +15002,15 @@ static void bnxt_fw_reset_task(struct work_struct *work)
- 		bp->fw_reset_state = BNXT_FW_RESET_STATE_OPENING;
- 		fallthrough;
- 	case BNXT_FW_RESET_STATE_OPENING:
--		while (!rtnl_trylock()) {
-+		while (!netdev_trylock(bp->dev)) {
- 			bnxt_queue_fw_reset_work(bp, HZ / 10);
- 			return;
- 		}
--		netdev_lock(bp->dev);
- 		rc = bnxt_open(bp->dev);
- 		if (rc) {
- 			netdev_err(bp->dev, "bnxt_open() failed during FW reset\n");
- 			bnxt_fw_reset_abort(bp, rc);
- 			netdev_unlock(bp->dev);
--			rtnl_unlock();
- 			goto ulp_start;
- 		}
- 
-@@ -15047,7 +15030,6 @@ static void bnxt_fw_reset_task(struct work_struct *work)
- 			bnxt_dl_health_fw_status_update(bp, true);
- 		}
- 		netdev_unlock(bp->dev);
--		rtnl_unlock();
- 		bnxt_ulp_start(bp, 0);
- 		bnxt_reenable_sriov(bp);
- 		netdev_lock(bp->dev);
-@@ -15996,7 +15978,7 @@ static int bnxt_queue_start(struct net_device *dev, void *qmem, int idx)
- 		   rc);
- 	napi_enable_locked(&bnapi->napi);
- 	bnxt_db_nq_arm(bp, &cpr->cp_db, cpr->cp_raw_cons);
--	netif_close(dev);
-+	bnxt_reset_task(bp, true);
- 	return rc;
- }
- 
-@@ -16812,7 +16794,6 @@ static int bnxt_resume(struct device *device)
- 	struct bnxt *bp = netdev_priv(dev);
- 	int rc = 0;
- 
--	rtnl_lock();
- 	netdev_lock(dev);
- 	rc = pci_enable_device(bp->pdev);
- 	if (rc) {
-@@ -16857,7 +16838,6 @@ static int bnxt_resume(struct device *device)
- 
- resume_exit:
- 	netdev_unlock(bp->dev);
--	rtnl_unlock();
- 	bnxt_ulp_start(bp, rc);
- 	if (!rc)
- 		bnxt_reenable_sriov(bp);
-@@ -17023,7 +17003,6 @@ static void bnxt_io_resume(struct pci_dev *pdev)
- 	int err;
- 
- 	netdev_info(bp->dev, "PCI Slot Resume\n");
--	rtnl_lock();
- 	netdev_lock(netdev);
- 
- 	err = bnxt_hwrm_func_qcaps(bp);
-@@ -17041,7 +17020,6 @@ static void bnxt_io_resume(struct pci_dev *pdev)
- 		netif_device_attach(netdev);
- 
- 	netdev_unlock(netdev);
--	rtnl_unlock();
- 	bnxt_ulp_start(bp, err);
- 	if (!err)
- 		bnxt_reenable_sriov(bp);
--- 
-2.49.0
-
+That said, I agree that squashing 28/29 is the way to go, especially since I didn't
+isolate the changes for VMX (I've no idea why I did for SVM but not VMX).
 
