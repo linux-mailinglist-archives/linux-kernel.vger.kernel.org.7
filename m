@@ -1,91 +1,148 @@
-Return-Path: <linux-kernel+bounces-654861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2C99ABCDCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 05:20:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC20ABCDD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 05:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0668B1B64B52
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 03:20:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F06068A2131
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 03:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A32258CF7;
-	Tue, 20 May 2025 03:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BDC257ACF;
+	Tue, 20 May 2025 03:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQs3MICB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bL1jQTW2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01845258CC9;
-	Tue, 20 May 2025 03:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77157256C60;
+	Tue, 20 May 2025 03:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747711214; cv=none; b=t3KP/hUu83L+gWwgMUwNn80qOXI3ZQvI9nxeQqkAF+NojSVbFx5zZIgp3s3DAXH1Qd18OI/roRGcsLwdaVT+7V8YBnbn36j0i4hATi2cpYrqN2/GrvPM2ZrZgBQAFyo5ORUADNLtZXZHJLVHBLjvVayeuE9o5u6Bq0HOzpEPqV8=
+	t=1747711401; cv=none; b=TAYTZmnQmmNC5EBW4EXGVgfe3UDFiSNbW6YFN5HF1y4kNJrZn9QKak5JkTY1vBXzeyBb0Xz4Iuu7n9Jt5chRF7PHTGvDMKdOwK4jgaevMXYuko/Lny3JlAVELCrXMS5ZdxSKTdrNMY0hbkKeviBMVKF8JAYo/txElHZv6y+AVOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747711214; c=relaxed/simple;
-	bh=Dc4AFUtanuz400vhxPYk3mbW1obhtagdapOQGbYMT1w=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=AVUQISBJk+BOrnJFML9Tgqe7j7qWj6Tmfg3LnDpi+WE4D7YhgxQRQoSFOiQk1L1EcmISKzPotOaI7Yu6yfOh/Cv5mqiX8sf5HBSpoKq2T+dkxO6ekqeZYwLnRU71KAXSDDD7wWcJaJgkWMHWJYSJM+COcNYIv5HVKynVHcOKats=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bQs3MICB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AC00C4CEE4;
-	Tue, 20 May 2025 03:20:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747711213;
-	bh=Dc4AFUtanuz400vhxPYk3mbW1obhtagdapOQGbYMT1w=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=bQs3MICBsii5kz7CD5Vscd5l0Oag5UuSiCOnA9dYOHaXDEzIygYrWqoBUPj26MA0p
-	 UO+f5Y6ZxaxJ+ccIxQjGoVAgzi91bprygw+YvDhD2L+P+9VLps25Uu/aZHM4d15h1e
-	 Q6whY5f1SoOCzhkg7NOaNlmiBJKbhvd+Tbsze1f+sQWD89hG6rqdfgm5N8DNckaDpq
-	 PQpWHEZyG0lvFYEWgE+gJwkr7AE+l2/2uUAbV5HUp2gGMDaGtwSNj4A835gZ3JS0iV
-	 +2Sj3rYFRe65uwhGpxGNLtFaH4HKGO5BLZxL8vClloTTfbP9gQuHNKhsNE3e76QFYy
-	 6nDF926MI8JXQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADC88380AA70;
-	Tue, 20 May 2025 03:20:50 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1747711401; c=relaxed/simple;
+	bh=085HP7XPilFAqMffUta5x9Z+kE/97G6V4mggr3IBiuE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VS2ZcYYG5bVMsg5OUGd6d4soyxsprfibI6/pBUbfhMFUkHI8+i1DqGWzSCsXIObv3G7qxUnbONA8oztlreNQQINPZb6JIOv28UTyYuyvJC3FWg3We2JzTm/A7MWZLmgnd5dJDmjZyyvrSQm2zTWEAy5RKWZhqCOZc9xSVwICGzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bL1jQTW2; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747711400; x=1779247400;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=085HP7XPilFAqMffUta5x9Z+kE/97G6V4mggr3IBiuE=;
+  b=bL1jQTW2vhUE2HKlb2xdFajj3IPsog84DX27urgr/agM7T0BENhezVOV
+   Ox+l6+8HPUYEtajj71DX/+HcuCZImmRrMAr7VO0K8u5fpZPbPLyB24JVg
+   N/DczRZXtqFGcj5woaCuQgMBLIJkUWia0+fOKFDkDJgoL3Rk+QpAG4kk5
+   m3hlnmPEK8SkXmEefsLYlM9XgRcUP0AyYtN4+FKgFTCpH9FIiyQbehv9R
+   l6AP44xrheh5H8Rp0E4nBChAVCBjfm0j/zJXaZnLAUtDrBNwqdzfmMbvV
+   Kkl8dpOw531I9orqKNCw3KXKmS76UHF5zGKZmiMaUJqdSw1iuLcoqmbLi
+   g==;
+X-CSE-ConnectionGUID: efESiNA4RXiwhkluJ2gB1g==
+X-CSE-MsgGUID: DUNidpCcSkqHdfVczSmbxg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="49765905"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="49765905"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 20:23:17 -0700
+X-CSE-ConnectionGUID: 4BCxmwICTFGDp8jqz2FZ8w==
+X-CSE-MsgGUID: 0tKkvGx6SbOIwqDZv62iGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="139289141"
+Received: from mdroper-mobl2.amr.corp.intel.com (HELO [10.124.221.39]) ([10.124.221.39])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 20:23:15 -0700
+Message-ID: <bcc3f629-7ada-4ec0-bcb1-92760583c9c1@linux.intel.com>
+Date: Mon, 19 May 2025 20:23:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v1 0/1] queue_api: reduce risk of name collision over
- txq
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174771124949.1146050.11012119455080440521.git-patchwork-notify@kernel.org>
-Date: Tue, 20 May 2025 03:20:49 +0000
-References: <cover.1747559621.git.gur.stavi@huawei.com>
-In-Reply-To: <cover.1747559621.git.gur.stavi@huawei.com>
-To: Gur Stavi <gur.stavi@huawei.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 12/16] PCI/AER: Make all pci_print_aer() log levels
+ depend on error type
+To: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
+Cc: Jon Pan-Doh <pandoh@google.com>,
+ Karolina Stolarek <karolina.stolarek@oracle.com>,
+ Martin Petersen <martin.petersen@oracle.com>,
+ Ben Fuller <ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>,
+ Anil Agrawal <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Lukas Wunner <lukas@wunner.de>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney" <paulmck@kernel.org>,
+ Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+ Oliver O'Halloran <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>,
+ Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
+ Terry Bowman <terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>
+References: <20250519213603.1257897-1-helgaas@kernel.org>
+ <20250519213603.1257897-13-helgaas@kernel.org>
+Content-Language: en-US
+From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+In-Reply-To: <20250519213603.1257897-13-helgaas@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+On 5/19/25 2:35 PM, Bjorn Helgaas wrote:
+> From: Karolina Stolarek <karolina.stolarek@oracle.com>
+>
+> Some existing logs in pci_print_aer() log with error severity by default.
+> Convert them to depend on error type (consistent with rest of AER logging).
+>
+> Link: https://lore.kernel.org/r/20250321015806.954866-3-pandoh@google.com
+> Signed-off-by: Karolina Stolarek <karolina.stolarek@oracle.com>
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
 
-On Sun, 18 May 2025 13:00:53 +0300 you wrote:
-> Rename local variable in macros from txq to _txq.
-> When macro parameter get_desc is expended it is likely to have a txq
-> token that refers to a different txq variable at the caller's site.
-> 
-> Gur Stavi (1):
->   queue_api: reduce risk of name collision over txq
-> 
-> [...]
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-Here is the summary with links:
-  - [net-next,v1,1/1] queue_api: reduce risk of name collision over txq
-    https://git.kernel.org/netdev/net-next/c/84b21e61ebd6
+>   drivers/pci/pcie/aer.c | 16 +++++++++++-----
+>   1 file changed, 11 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index 73b03a195b14..06a7dda20846 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -788,15 +788,21 @@ void pci_print_aer(struct pci_dev *dev, int aer_severity,
+>   	layer = AER_GET_LAYER_ERROR(aer_severity, status);
+>   	agent = AER_GET_AGENT(aer_severity, status);
+>   
+> -	pci_err(dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n", status, mask);
+> +	aer_printk(info.level, dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n",
+> +		   status, mask);
+>   	__aer_print_error(dev, &info);
+> -	pci_err(dev, "aer_layer=%s, aer_agent=%s\n",
+> -		aer_error_layer[layer], aer_agent_string[agent]);
+> +	aer_printk(info.level, dev, "aer_layer=%s, aer_agent=%s\n",
+> +		   aer_error_layer[layer], aer_agent_string[agent]);
+>   
+>   	if (aer_severity != AER_CORRECTABLE)
+> -		pci_err(dev, "aer_uncor_severity: 0x%08x\n",
+> -			aer->uncor_severity);
+> +		aer_printk(info.level, dev, "aer_uncor_severity: 0x%08x\n",
+> +			   aer->uncor_severity);
+>   
+> +	/*
+> +	 * pcie_print_tlp_log() uses KERN_ERR, but we only call it when
+> +	 * tlp_header_valid is set, and info.level is always KERN_ERR in
+> +	 * that case.
+> +	 */
+>   	if (tlp_header_valid)
+>   		pcie_print_tlp_log(dev, &aer->header_log, dev_fmt("  "));
+>   }
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Sathyanarayanan Kuppuswamy
+Linux Kernel Developer
 
 
