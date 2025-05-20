@@ -1,204 +1,145 @@
-Return-Path: <linux-kernel+bounces-655392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC921ABD536
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:36:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D177ABD509
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11994C3CB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:33:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1036F7B4BC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613842741B1;
-	Tue, 20 May 2025 10:32:23 +0000 (UTC)
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7343826D4E0;
+	Tue, 20 May 2025 10:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="erLGK5Vb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E155726A0F6;
-	Tue, 20 May 2025 10:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6453826B085;
+	Tue, 20 May 2025 10:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747737142; cv=none; b=iRozr56YYV+te4X8c8j8N9JnSkoRnlFmdLdwG+AUksQ80MZC2tNnhzXLKK1ogIx2QPPeWce8hFcjyTXO9yci2EHakUI4o0glAUomDBPkf2pnNP83yLnALSf2Xc/DypUIXMWEJhFWgAUyaQ2VEWVPbT/HumlGEigTT3eWuMmqY/A=
+	t=1747737165; cv=none; b=hpPsISQapk0zIoJjON+fanY68FDn8pxbhkxzBoVQmNyYfNOTjqGR/mh5efYUyr6IqjcrjpMNRUjXcySuuXnUkqNNrai7nzbnMRJryvG5zUf5towJYOOiLcYD88JLi6X5aAxtPHWcAluYOlvdPUoJ+Cd0ZRBZ3YHDt1ht/z+rzFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747737142; c=relaxed/simple;
-	bh=Pq1ftI00kBkDlSWEq6rlyruRH9SImrSn0nEiC5X6xTo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=GIHd8cfuexkIw7A7Z7n1Yj9CzyDawWIBWfmkk2TQ8+LYjDLlLQjrLEbr9oTf+p/RvwlmxJZEs9NGbYsPgNMJFlgCq5OCm7RMRBoYIPVdUfPRjIG0FArJ2ZVZ9aFKehAfPPI2XWYwKkHNVjhBPDrt3MwvPiEACnPMN+phJ/N37eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4b1rTR5QMzz9sNt;
-	Tue, 20 May 2025 12:32:11 +0200 (CEST)
+	s=arc-20240116; t=1747737165; c=relaxed/simple;
+	bh=jSrPTsUdiYGaIXTDtmHfRKOVo6dm+izWDCI+NqHxcFQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=haZTlO9vxDIJd0h/Nyw8h0/Z7h0a9SQLmw4J9s4eREIJDnZXblQiWe8EDACDXLh6wrXvnSAEdk5rbNsZV4x1B2OiAvcrJEa8Z1HVG9F9parmMKUhwBQZmNc3xBDmPgGZxMpDHM8YgkZ6KDMakFquTidM1/zv3sKYaO9b2UKBoto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=erLGK5Vb; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747737164; x=1779273164;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=jSrPTsUdiYGaIXTDtmHfRKOVo6dm+izWDCI+NqHxcFQ=;
+  b=erLGK5VbWP4FLpqa4N/vwBoft52HSKECwmrbw71ddAKVHUpFk3+xOS/a
+   5eXRnt+SrJM8gmTOQmSAtwSPWfTJ8iZkvoI35QUYoQndHU+pAgGUKvvoa
+   ik5Weuyw7iuvSEIQZEr/7j0WSOoTgjExwVqMp3FYNmU7fVxXhHGO4JuE8
+   MGJIWPq/e/28/ZMF6zHhnepOyu1RF/qqCY+Yax5bI9Vpgyn/T+bbyyZBZ
+   cLvxO1jddNxzTxLgw4BvigLgdL5lsAbtpOdFhe714+ujgCpoRUyuXhxSZ
+   JAZjAPlUNKFvKvgtH97yKRY9Hx/ydRBvRbdXRUvRBkQgnyf2BfoNDWzNK
+   Q==;
+X-CSE-ConnectionGUID: Omumm2kRT8m7w94eHoDxjA==
+X-CSE-MsgGUID: c+uVwU7PReiqEewno8JqeQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="48917709"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="48917709"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 03:32:43 -0700
+X-CSE-ConnectionGUID: /yTSjeFFQ7iKO4HR0N18Dw==
+X-CSE-MsgGUID: d0Ajj8wcR9+ZmqYffBY8BQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="162956622"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.235])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 03:32:36 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 20 May 2025 13:32:32 +0300 (EEST)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: linux-pci@vger.kernel.org, Jon Pan-Doh <pandoh@google.com>, 
+    Karolina Stolarek <karolina.stolarek@oracle.com>, 
+    Martin Petersen <martin.petersen@oracle.com>, 
+    Ben Fuller <ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>, 
+    Anil Agrawal <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>, 
+    Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>, 
+    Lukas Wunner <lukas@wunner.de>, 
+    Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+    Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
+    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+    Oliver O'Halloran <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>, 
+    Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>, 
+    Terry Bowman <terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>, 
+    Dave Jiang <dave.jiang@intel.com>, LKML <linux-kernel@vger.kernel.org>, 
+    linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v6 04/16] PCI/AER: Extract bus/dev/fn in aer_print_port_info()
+ with PCI_BUS_NUM(), etc
+In-Reply-To: <20250519213603.1257897-5-helgaas@kernel.org>
+Message-ID: <cf21c493-7430-fbbe-54c0-77305f5af14b@linux.intel.com>
+References: <20250519213603.1257897-1-helgaas@kernel.org> <20250519213603.1257897-5-helgaas@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 20 May 2025 12:32:05 +0200
-Message-Id: <DA0X3RE11LJI.3GDSU2DK09HQ0@buenzli.dev>
-Cc: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v4 6/9] rust: device: Add bindings for reading device
- properties
-From: "Remo Senekowitsch" <remo@buenzli.dev>
-To: "Benno Lossin" <lossin@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Saravana Kannan" <saravanak@google.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Dirk Behme" <dirk.behme@de.bosch.com>
-References: <20250504173154.488519-1-remo@buenzli.dev>
- <20250504173154.488519-7-remo@buenzli.dev>
- <DA0TDQ2DPTRX.1T9O4NZEME2JX@kernel.org>
-In-Reply-To: <DA0TDQ2DPTRX.1T9O4NZEME2JX@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323328-699488453-1747737152=:936"
 
-On Tue May 20, 2025 at 9:37 AM CEST, Benno Lossin wrote:
-> On Sun May 4, 2025 at 7:31 PM CEST, Remo Senekowitsch wrote:
->> +/// Implemented for all integers that can be read as properties.
->> +///
->> +/// This helper trait is needed on top of the existing [`Property`]
->> +/// trait to associate the integer types of various sizes with their
->> +/// corresponding `fwnode_property_read_*_array` functions.
->> +pub trait PropertyInt: Copy {
->> +    /// # Safety
->> +    ///
->> +    /// Callers must uphold the same safety invariants as for the vario=
-us
->> +    /// `fwnode_property_read_*_array` functions.
->> +    unsafe fn read_array_from_fwnode_property(
->> +        fwnode: *const bindings::fwnode_handle,
->> +        propname: *const ffi::c_char,
->> +        val: *mut Self,
->> +        nval: usize,
->> +    ) -> ffi::c_int;
->
-> I really, really dislike that this trait has to have an unsafe function
-> with all those raw pointer inputs.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-What is the concrete problem with that? Or is it just "not pretty"?
-(I'm fine with making it prettier, just making sure I understand
-correctly.)
+--8323328-699488453-1747737152=:936
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
->> +}
->> +// This macro generates implementations of the traits `Property` and
->> +// `PropertyInt` for integers of various sizes. Its input is a list
->> +// of pairs separated by commas. The first element of the pair is the
->> +// type of the integer, the second one is the name of its corresponding
->> +// `fwnode_property_read_*_array` function.
->> +macro_rules! impl_property_for_int {
->> +    ($($int:ty: $f:ident),* $(,)?) =3D> { $(
->> +        impl PropertyInt for $int {
->> +            unsafe fn read_array_from_fwnode_property(
->> +                fwnode: *const bindings::fwnode_handle,
->> +                propname: *const ffi::c_char,
->> +                val: *mut Self,
->> +                nval: usize,
->> +            ) -> ffi::c_int {
->> +                // SAFETY: The safety invariants on the trait require
->> +                // callers to uphold the invariants of the functions
->> +                // this macro is called with.
->> +                unsafe {
->> +                    bindings::$f(fwnode, propname, val.cast(), nval)
->> +                }
->> +            }
->> +        }
->> +    )* };
->> +}
->> +impl_property_for_int! {
->> +    u8: fwnode_property_read_u8_array,
->> +    u16: fwnode_property_read_u16_array,
->> +    u32: fwnode_property_read_u32_array,
->> +    u64: fwnode_property_read_u64_array,
->> +    i8: fwnode_property_read_u8_array,
->> +    i16: fwnode_property_read_u16_array,
->> +    i32: fwnode_property_read_u32_array,
->> +    i64: fwnode_property_read_u64_array,
->> +}
->> +/// # Safety
->> +///
->> +/// Callers must ensure that if `len` is non-zero, `out_param` must be
->> +/// valid and point to memory that has enough space to hold at least
->> +/// `len` number of elements.
->> +unsafe fn read_array_out_param<T: PropertyInt>(
->> +    fwnode: &FwNode,
->> +    name: &CStr,
->> +    out_param: *mut T,
->> +    len: usize,
->> +) -> ffi::c_int {
->> +    // SAFETY: `name` is non-null and null-terminated.
->> +    // `fwnode.as_raw` is valid because `fwnode` is valid.
->> +    // `out_param` is valid and has enough space for at least
->> +    // `len` number of elements as per the safety requirement.
->> +    unsafe {
->> +        T::read_array_from_fwnode_property(fwnode.as_raw(), name.as_cha=
-r_ptr(), out_param, len)
->> +    }
->> +}
->
-> Why does this function exist? It doesn't do anything and just delegates
-> the call to `T::read_array_from_fwnode_property`.
+On Mon, 19 May 2025, Bjorn Helgaas wrote:
 
-It's used in three places. Taking Rust references as input reduces the
-safety requirements the callers must uphold. But I guess it's a small
-benefit, I can remove it.
+> From: Bjorn Helgaas <bhelgaas@google.com>
+>=20
+> Use PCI_BUS_NUM(), PCI_SLOT(), PCI_FUNC() to extract the bus number,
+> device, and function number directly from the Error Source ID.  There's n=
+o
+> need to shift and mask it explicitly.
+>=20
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  drivers/pci/pcie/aer.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index b8494ccd935b..dc8a50e0a2b7 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -736,14 +736,13 @@ void aer_print_error(struct pci_dev *dev, struct ae=
+r_err_info *info)
+>  static void aer_print_port_info(struct pci_dev *dev, struct aer_err_info=
+ *info,
+>  =09=09=09=09const char *details)
+>  {
+> -=09u8 bus =3D info->id >> 8;
+> -=09u8 devfn =3D info->id & 0xff;
+> +=09u16 source =3D info->id;
+> =20
+>  =09pci_info(dev, "%s%s error message received from %04x:%02x:%02x.%d%s\n=
+",
+>  =09=09 info->multi_error_valid ? "Multiple " : "",
+>  =09=09 aer_error_severity_string[info->severity],
+> -=09=09 pci_domain_nr(dev->bus), bus, PCI_SLOT(devfn),
+> -=09=09 PCI_FUNC(devfn), details);
+> +=09=09 pci_domain_nr(dev->bus), PCI_BUS_NUM(source),
+> +=09=09 PCI_SLOT(source), PCI_FUNC(source), details);
+>  }
+> =20
+>  #ifdef CONFIG_ACPI_APEI_PCIEAER
+>=20
 
-> This feels like you're dragging the C interface through the lower layers
-> of your Rust abstractions, which I wouldn't do. I also looked a bit at
-> the C code and saw this comment in `driver/base/property.c:324`:
->
->      * It's recommended to call fwnode_property_count_u8() instead of cal=
-ling
->      * this function with @val equals %NULL and @nval equals 0.
->
-> That probably holds also for the other functions, so maybe we should do
-> that instead? (although `fwnode_property_count_u8` just delegates and
-> calls with `fwnode_property_read_u8_array`...)
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-Yeah, I saw that too. The original implementation is from Rob. I assume
-the recommendation is for users, maybe for clarity and readability of
-the code. These Rust abstractions are pretty low level, so I thought
-it's probably fine.
+--=20
+ i.
 
-> How about we do it like this:
->
->     pub trait PropertyInt: Copy + Sized + private::Sealed {
->         /// ...
->         ///
->         /// Returns a reference to `out` containing all written elements.
->         fn read<'a>(
->             fwnode: &FwNode,
->             name: &CStr,
->             out: &'a mut [MaybeUninit<Self>],
->         ) -> Result<&'a mut [Self]>;
->
->         fn length(fwnode: &FwNode, name: &CStr) -> Result<usize>;
->     }
->
-> And then have a macro to implement it on all the integers.
-
-I think I tried to make the macro as small as possible and use regular
-generics on top, because I was concerned people would be put off by big
-complicated macros. I'm fine with moving the actual trait implementation
-into the macro body, seems reasonable.
-
-But still, I'm not sure why we're trying to make the PropertyInt trait's
-interface pretty or rusty. It's not supposed to be used, implemented or
-in any way interacted with outside this module. It's just a low-level
-building block to make some functions generic, giving users type
-inference.
-
-Best regards,
-Remo
+--8323328-699488453-1747737152=:936--
 
