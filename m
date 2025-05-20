@@ -1,141 +1,118 @@
-Return-Path: <linux-kernel+bounces-655038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BAE5ABCFD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:49:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6378ABCFBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 383F318847DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:49:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D0451884A53
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8087F25CC7B;
-	Tue, 20 May 2025 06:49:24 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CDD25B693;
+	Tue, 20 May 2025 06:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LcxCljz8"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB805258CE5;
-	Tue, 20 May 2025 06:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1716425C831
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 06:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747723764; cv=none; b=TP3qvNMtx6fR3eJ33sNfotmLJbS5/c4LuxG5TZq6RBIx1NFbLxMMDkQYMGN5tMbCY7aa1r+NsPy2yJqumIsVJhg9Wnt7BCcEqovjILqvHN/nkEdPu8mXG+8kFh7aKR3VHGCtmRXDJh3BsNsc4K/zJHAzz8DmntztlV78eb1NhRY=
+	t=1747723548; cv=none; b=IQLDX1raov2l+JyEoDxXqVRsA4Fx5COac/5N0RyYgu6sxwe3kzjIhSYyTpsASysr1d+myHvmx/YDhltmQUHal0OuEZ57HNV9+RHh4cI0ntyDrzgpSwHroFno/VWBFB2cQDgwXssuGMbYOq2Xd8NHsfN4K4jXV9NLEQmLuC2rkNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747723764; c=relaxed/simple;
-	bh=6HHMQFl34N/CVnYTjfqtDcxyMzJz93t3zxhG+8i3ls0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tx2JS3Ybw1muzCevycjaddjjvV3IG78CCkQvOaDtbD3bmS0QCu5TUXLdCl4D2Qub4Iv45B6DEcvQM7S8rwpakIaQCWR/ZpzlBM7X+h24kt3lFU46jo7Iu8Cv1HK/hX7KmJ0/D4AB3WOvLd85BJkCygyfvG0glbn2aD1vtbLXgx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4b1lXG1Xt3zKHMbR;
-	Tue, 20 May 2025 14:49:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B842E1A0B7E;
-	Tue, 20 May 2025 14:49:16 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgD3W2DoJSxo9fzPMw--.47626S4;
-	Tue, 20 May 2025 14:49:14 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: mpatocka@redhat.com,
-	zdenek.kabelac@gmail.com,
-	song@kernel.org,
-	yukuai3@huawei.com
-Cc: linux-raid@vger.kernel.org,
-	dm-devel@lists.linux.dev,
+	s=arc-20240116; t=1747723548; c=relaxed/simple;
+	bh=P8d/IuXP++zCB6Blh67Pa80slPlhVjST05vmIgCy2lk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AbPhDFw0wZnJ1JsG7Tzln2HHFVei3IcWoBWdEjOMORwJugR7FZNDXMpc2GMotD1fcedureY++4wG7Q6LzzAJvcB8fiV8rUf9oi4EQ8D3I3o6qeo3Xb/EmBNa8v8lOgQTCVECz42aRrzPigtGqgSFLlaXr8aKvWYO7q4y7pphlLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LcxCljz8; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a064a3e143so2815365f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 23:45:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1747723544; x=1748328344; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SAMPdzl2AAvyOPiCE2elPcygqsOszaH6ctA4iqiXgBw=;
+        b=LcxCljz8a/UzA+aCnxbcMBhAzOGRRhjZVlkbi5tG/z066zJm5d4/ArUWEMFn9PJOkx
+         FgcuOrVWLNn3piKqEFctdYMSAOHOotgop5WDFO9HnzzQRRwA3scv94ooTJkHZMrmsu2z
+         NRkrRpF/WsnvEqdvbvYIS4TXeSfPIfYS+u5aqKmDSbNDqkmMbVKmUXyJI2euhyBi0VYL
+         +6fejcMZi/OFCC/nA2U7CbBaTaSw7BBM6TKJIPMVhVdAxbXPqEdGXrAt110DGnRGW573
+         Q3k+LcuJO4fzoz5odiwJ64qbAnlh9Wru4UHZjATz/U6VrnyIL/KQ/wBt8DVeK2YDYCG8
+         YUSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747723544; x=1748328344;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SAMPdzl2AAvyOPiCE2elPcygqsOszaH6ctA4iqiXgBw=;
+        b=MpjYTnj2k4NWXfo6BU5EvYrZehf46XtNGCH/lT+PFXgyWfZ6kxovJyZNwcFgDt20Ke
+         8rUAuysvy7O740HVecIcn0u5QqUwBTOeL1tz6XHysfhu1WFilSjfhzu2A9WLvHKQ+ZwJ
+         VEZsUX3TBzjtatbreoJPBJk9phWeie+Xk4xhw9gDclcaNrdOinRXnkpfDzqyglMQ1fmk
+         jTrsAaW5++tdJY8Sb/VKGPpJexYAM0CO6j1YpMMqWt08aphwKQsChmZVAYT/lgR+sgpZ
+         12wZbtuEAYnQnY3yqdJXFOji/OJYWX3d2Mnsumr19OOGxF51LXMNwbeVCM2FW8j8t+Ax
+         KubA==
+X-Forwarded-Encrypted: i=1; AJvYcCVv4yM9bp+0lX/sVXA8ITaeJFdsK+ksUkjcN+79Z9gVIDA9v5PZMdUm3HYPz8gc5BzH0u9U/3tEuT2jzrU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVEDRSCGqnKYqfaanDA+lu94AWIeybNMDq85OSS5ufLfqHAngv
+	oRTGrCzKo5VfZbn74RcIfD7HvO7qpdj7XBx6gSNL5myA1Av10KoTsou8D1RA+O6+2W8=
+X-Gm-Gg: ASbGncsuuNAah/bNkw+939rzk118YOBG0VfVXiH/fIR00nilE4pKkI42jWl1aLN8oDz
+	xPmDpAty1K0v3o1bID6j/mjCKydAs2q31WdZrP7Wc767VforeCXD5S7pYo6g8fI6TcSR0ZSfQ4h
+	Ua51c71QQ4omK5p25kaDCkKSQiaDHcE/SfXHDDuiPfeYDu3YMsEIB5R32ka2Pq+355eBvL0QoXo
+	qhEEJqr74ZKn7oJ9g6iIamdJF/adul8j++J3tax8lXHNPva0IFie0QZ+nUXzXZ4wWKlglhfH6Wj
+	wttSyhaDXF7M6ggIOHMXHqeEU+MERtpK5Yfa5+DOmCip0jjXqCGn
+X-Google-Smtp-Source: AGHT+IH4cIKivXXpB58yg2kOD6SRNlcLlJhLLGF+B9dpXs2VRqbmf/U9Mj+4c+Rz8jNw/vz9uz6gpg==
+X-Received: by 2002:a05:6000:186d:b0:3a3:6b0c:a8a3 with SMTP id ffacd0b85a97d-3a36b0ca9b1mr6519169f8f.17.1747723544128;
+        Mon, 19 May 2025 23:45:44 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8de1:6e0a:4ae4:1cd5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a365bc0b5esm11585660f8f.9.2025.05.19.23.45.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 May 2025 23:45:43 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH] md/raid1,raid10: don't handle read ahead error
-Date: Tue, 20 May 2025 14:44:25 +0800
-Message-Id: <20250520064425.1726564-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH 0/3] gpio: fix Kconfig issues
+Date: Tue, 20 May 2025 08:45:42 +0200
+Message-ID: <174772354096.8700.10357878300665068417.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250519-gpio-irq-kconfig-fixes-v1-0-fe6ba1c6116d@linaro.org>
+References: <20250519-gpio-irq-kconfig-fixes-v1-0-fe6ba1c6116d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3W2DoJSxo9fzPMw--.47626S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ww1xGw4UWr1ruFy8tr4xJFb_yoW8uFy5pa
-	9rCFyavr98Kw1UJrnrXrW7ZayrG3W3tFW5CF95A3yrZa4avrW3AF4DKFZFgr4DJF4fWa42
-	vF4qgr47GFy5XFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Yu Kuai <yukuai3@huawei.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Read ahead IO can fail early in the driver, even if the storage medium
-is fine, hence record badblocks or remove the disk from array does not
-make sense.
 
-This problem if found by lvm2 test lvcreate-large-raid, where dm-zero
-will fail read ahead IO directly.
+On Mon, 19 May 2025 13:10:40 +0200, Bartosz Golaszewski wrote:
+> This fixes two issues with the current immutable irqchip rework
+> signalled by the build bot.
+> 
+> 
 
-Reported-and-tested-by: Mikulas Patocka <mpatocka@redhat.com>
-Closes: https://lore.kernel.org/all/34fa755d-62c8-4588-8ee1-33cb1249bdf2@redhat.com/
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/raid1.c  | 11 +++++++----
- drivers/md/raid10.c |  3 +++
- 2 files changed, 10 insertions(+), 4 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 657d481525be..2e4e9de2cfd7 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -373,14 +373,17 @@ static void raid1_end_read_request(struct bio *bio)
- 	 */
- 	update_head_pos(r1_bio->read_disk, r1_bio);
- 
--	if (uptodate)
-+	if (uptodate) {
- 		set_bit(R1BIO_Uptodate, &r1_bio->state);
--	else if (test_bit(FailFast, &rdev->flags) &&
--		 test_bit(R1BIO_FailFast, &r1_bio->state))
-+	} else if (test_bit(FailFast, &rdev->flags) &&
-+		   test_bit(R1BIO_FailFast, &r1_bio->state)) {
- 		/* This was a fail-fast read so we definitely
- 		 * want to retry */
- 		;
--	else {
-+	} else if (bio->bi_opf & REQ_RAHEAD) {
-+		/* don't handle readahead error, which can fail at anytime. */
-+		uptodate = 1;
-+	} else {
- 		/* If all other devices have failed, we want to return
- 		 * the error upwards rather than fail the last device.
- 		 * Here we redefine "uptodate" to mean "Don't want to retry"
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index dce06bf65016..4d51aaf3b39b 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -399,6 +399,9 @@ static void raid10_end_read_request(struct bio *bio)
- 		 * wait for the 'master' bio.
- 		 */
- 		set_bit(R10BIO_Uptodate, &r10_bio->state);
-+	} else if (bio->bi_opf & REQ_RAHEAD) {
-+		/* don't handle readahead error, which can fail at anytime. */
-+		uptodate = 1;
- 	} else {
- 		/* If all other devices that store this block have
- 		 * failed, we want to return the error upwards rather
+[1/3] gpio: pxa: select GPIOLIB_IRQCHIP
+      https://git.kernel.org/brgl/linux/c/e2d9a7ead8ffbf562c4f38d3115f98d1933e360a
+[2/3] gpio: mpc8xxx: select GPIOLIB_IRQCHIP
+      https://git.kernel.org/brgl/linux/c/8da238b15cf5eb8a8dd318bd47e4d6050f5ca5d0
+[3/3] gpiolib: remove unneeded #ifdef
+      https://git.kernel.org/brgl/linux/c/274fd5fe911956cdebeeed65981b7182d57c2773
+
+Best regards,
 -- 
-2.39.2
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
