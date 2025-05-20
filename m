@@ -1,267 +1,428 @@
-Return-Path: <linux-kernel+bounces-655346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E81EABD43F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:10:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2DECABD4C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 491AA3BE3DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:10:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A6FA8A67C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F201826A1B9;
-	Tue, 20 May 2025 10:10:12 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409F426AA9E;
+	Tue, 20 May 2025 10:27:40 +0000 (UTC)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28231268C69;
-	Tue, 20 May 2025 10:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6219526A1CC;
+	Tue, 20 May 2025 10:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747735812; cv=none; b=MmtWwH1hoO5D1NvkdfVf2YiTJNkI1JdFuxgBYWqFFWg422WBPVZq99/m0ZycOYG0s+1ijSiUIU2eJcP/0xTFW2tb2VzXmKEieOCGc7xM2gsAbA6hijb5JMi7UePDWBEhh/n6w3KU30ffAc+kmNJnFODpCccn7/JOiRtP/Rr8fTo=
+	t=1747736859; cv=none; b=ZQ5mDs1vRilaK7GBK92FxAB6pZgmrtzzwH64mz3sIpGplcWgQ+pgDouOqkjPtKiWejmK+VNM/8W9sn+PIoF7ydln6RNtF4RPB1wL/VUI6M505eFWXMUJHnj5IgF9eNFXGiCjmNAGDn6znCQL5XFXB13wU7NZt3Yv55Kp29mAxSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747735812; c=relaxed/simple;
-	bh=NIJOsgpmFlRPd6ETFHI8eH+EVzr0cFAcuSkaFkRg5hw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RRfdKW2Pppvd6Ph9zF73G9c1ihl8Frjmb8Ydwy7puCLFzRjvINVXzMo+/L6zYgP+do236YXSDKnOXT5HqS6QDjo8EdM5qBaQu682hSpXRFKbDKI3kfyJofEkNe2nU+rbLHzVd/mhHy4H9MWMDuA16Yo/HigBgvzlPoVAm1HZKbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b1qyz68Bwz6GDCL;
-	Tue, 20 May 2025 18:09:15 +0800 (CST)
-Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
-	by mail.maildlp.com (Postfix) with ESMTPS id AFC5D1402F7;
-	Tue, 20 May 2025 18:10:05 +0800 (CST)
-Received: from china (10.220.118.114) by frapeml500005.china.huawei.com
- (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 20 May
- 2025 12:09:53 +0200
-From: Gur Stavi <gur.stavi@huawei.com>
-To: Gur Stavi <gur.stavi@huawei.com>, Fan Gong <gongfan1@huawei.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
-	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
-	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
- Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
-	<shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>, Lee Trager
-	<lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh
-	<sumang@marvell.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, Joe
- Damato <jdamato@fastly.com>, Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>
-Subject: [PATCH net-next v17 0/1] net: hinic3: Add a driver for Huawei 3rd gen NIC
-Date: Tue, 20 May 2025 13:26:58 +0300
-Message-ID: <cover.1747736586.git.gur.stavi@huawei.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1747736859; c=relaxed/simple;
+	bh=6mxLF+fY/K5SeVg2UY7bVTArO057srKI+V5ZNScuYzg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=t+12okaxrNT/xzVjHMBPBrOQ3K5/5vkMVZfgwgyYov5GliqOY0H5onoV2Qom2u+26S0i0NfHsJ/0cvicmsMT93ZctFW4KYT7zFtgevUB/zBEgn4fSJ/ZEoQ9phyp5frCn09yAUKpV+6nPT5bYMfwVDFtZoDn2xlpKMIJZb0o9r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-443a787bd14so22906925e9.1;
+        Tue, 20 May 2025 03:27:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747736856; x=1748341656;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+gLe0I37lfp8+VYdv4GvyXGqk7LE/D8X5AGQ6ueKR7M=;
+        b=tHJTj+HZZ1jUyNep7gPlMTxfNUzDJmayPGFQuq6XzA/gpi4Nod+TVvsX+58Vxt8Gha
+         Dd5+l6McwRgx987/j6btQTDhdf3wQwQWupergHp6WMpVl7jVF97zLl02lwfn9n9rWEU/
+         gTTonHmxRDDbaCkXLciha5jlLjS/UNJ4cY4FJcIkpbUSV3+Jj2NvpYWQPHpUczX3Ozes
+         VLgEzn125xPeI5QbzHu1m1gSyvTNSrdK4R83njNiYkO48OaB80HX7z5Q6cHOsac6wIYn
+         8bOdGlGwXoEsp8jzvdWnhnGkKsEeoG7ZYcBNwrdR0bYi57nzcIaIAlrozyR4+W1zKGs7
+         10Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbDZ/NHN9r5IpM0TTWINXCJU8YlLwE2hbsnO1rIEDicUfnLbRD7x+sm9U3M9YPZbz1hVgt6o2fu8U=@vger.kernel.org, AJvYcCVcrEEGM/MhSMfC35gxoJ/Hbs0+8N4uxQkP1hznrpDt7xLuZY2dLaIU6AiYUb42F3QloWIwFZv1BSd9jew=@vger.kernel.org, AJvYcCWc4/Q2RVSKL12g5BDb5nf8MPiIlArQy4a/HfPx4Hmr/suRmlvbYdbQdpYtgecKQUjmGM1b4UDqzzp8GgYP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlwi3l6b47faynSc9Y7TyQWE7TMeijQVqyGlX/FIRRo98ejpDF
+	D3LrVUJIz41mChcMaMuO67tIOS5OgwmQz6qOV7ZUlAlFjpL/X3gPLWSAhBr/Y2qB
+X-Gm-Gg: ASbGncu4bmndEXnPTwuIGzhkNlrWysTEBh5dsAchy3fp9O57RYAn97spsha6jwg6Hdo
+	m9ZwwlJjiK9n8RHBM81fWZ1/8YlKOrSPXxHUUuvQQ7bKW7l7aznCUYIVQdrC8RblTvoI2wW9kuC
+	Q29Damds6yh0H4Y2kpVfjbmNRJ1U9ektCioFA1IB0b1Scw3PgtXRJdxqMIoujpFqih5YjlMjzQQ
+	smTMNZzVK/CJNGbhnSb2gY9h5vHFh4Qu+AdIb88hoDvEJlx2xdtbzpx46f0VPiF5ix1wYlfhcGV
+	UDur2C3l/WEQr5V3cHNaXOW8dfP3FbS3HufCPYYzsknoiJoFupi9iVkIXBjbl5O+9bJMdGNRwnY
+	gMiMX6usJlw==
+X-Google-Smtp-Source: AGHT+IH4v1K2qNWy/6eplteJr85a35IjQ4KWOcchT/u5GVjvoFl82aOl4lAorHAclFQbqZ7TgO5zCg==
+X-Received: by 2002:a05:600c:c1c8:10b0:441:d228:3a07 with SMTP id 5b1f17b1804b1-442f8524304mr120968585e9.13.1747736855438;
+        Tue, 20 May 2025 03:27:35 -0700 (PDT)
+Received: from [10.42.0.1] (cst-prg-46-162.cust.vodafone.cz. [46.135.46.162])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f73d3defsm24680025e9.18.2025.05.20.03.27.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 03:27:35 -0700 (PDT)
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Tue, 20 May 2025 12:26:59 +0200
+Subject: [PATCH v5 06/10] accel/rocket: Add IOCTL for BO creation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- frapeml500005.china.huawei.com (7.182.85.13)
+Message-Id: <20250520-6-10-rocket-v5-6-18c9ca0fcb3c@tomeuvizoso.net>
+References: <20250520-6-10-rocket-v5-0-18c9ca0fcb3c@tomeuvizoso.net>
+In-Reply-To: <20250520-6-10-rocket-v5-0-18c9ca0fcb3c@tomeuvizoso.net>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+ Jeff Hugo <jeff.hugo@oss.qualcomm.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
+ Tomeu Vizoso <tomeu@tomeuvizoso.net>
+X-Mailer: b4 0.14.2
 
-This is the 1/3 patch of the patch-set described below.
+This uses the SHMEM DRM helpers and we map right away to the CPU and NPU
+sides, as all buffers are expected to be accessed from both.
 
-The patch-set contains driver for Huawei's 3rd generation HiNIC
-Ethernet device that will be available in the future.
+v2:
+- Sync the IOMMUs for the other cores when mapping and unmapping.
 
-This is an SRIOV device, designed for data centers.
-Initially, the driver only supports VFs.
+v3:
+- Make use of GPL-2.0-only for the copyright notice (Jeff Hugo)
 
-Following the discussion over RFC01, the code will be submitted in
-separate smaller patches where until the last patch the driver is
-non-functional. The RFC02 submission contains overall view of the entire
-driver but every patch will be posted as a standalone submission.
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+---
+ drivers/accel/rocket/Makefile        |   3 +-
+ drivers/accel/rocket/rocket_device.c |   4 ++
+ drivers/accel/rocket/rocket_device.h |   2 +
+ drivers/accel/rocket/rocket_drv.c    |   7 +-
+ drivers/accel/rocket/rocket_gem.c    | 131 +++++++++++++++++++++++++++++++++++
+ drivers/accel/rocket/rocket_gem.h    |  26 +++++++
+ include/uapi/drm/rocket_accel.h      |  44 ++++++++++++
+ 7 files changed, 215 insertions(+), 2 deletions(-)
 
-Changes:
+diff --git a/drivers/accel/rocket/Makefile b/drivers/accel/rocket/Makefile
+index abdd75f2492eaecf8bf5e78a2ac150ea19ac3e96..4deef267f9e1238c4d8bd108dcc8afd9dc8b2b8f 100644
+--- a/drivers/accel/rocket/Makefile
++++ b/drivers/accel/rocket/Makefile
+@@ -5,4 +5,5 @@ obj-$(CONFIG_DRM_ACCEL_ROCKET) := rocket.o
+ rocket-y := \
+ 	rocket_core.o \
+ 	rocket_device.o \
+-	rocket_drv.o
++	rocket_drv.o \
++	rocket_gem.o
+diff --git a/drivers/accel/rocket/rocket_device.c b/drivers/accel/rocket/rocket_device.c
+index 97e32d19a1b4a36177b8039b67b4892887daa880..ee81810dd171ef1cdb1582c1bbe5099c669e42cc 100644
+--- a/drivers/accel/rocket/rocket_device.c
++++ b/drivers/accel/rocket/rocket_device.c
+@@ -4,6 +4,7 @@
+ #include <linux/array_size.h>
+ #include <linux/clk.h>
+ #include <linux/dev_printk.h>
++#include <linux/mutex.h>
+ 
+ #include "rocket_device.h"
+ 
+@@ -21,10 +22,13 @@ int rocket_device_init(struct rocket_device *rdev)
+ 	if (err)
+ 		return err;
+ 
++	mutex_init(&rdev->iommu_lock);
++
+ 	return 0;
+ }
+ 
+ void rocket_device_fini(struct rocket_device *rdev)
+ {
++	mutex_destroy(&rdev->iommu_lock);
+ 	rocket_core_fini(&rdev->cores[0]);
+ }
+diff --git a/drivers/accel/rocket/rocket_device.h b/drivers/accel/rocket/rocket_device.h
+index 55f4da252cfbd1f102c56e5009472deff59aaaec..2e22aa2b95252a2850a40c3271a91cb3aca578ae 100644
+--- a/drivers/accel/rocket/rocket_device.h
++++ b/drivers/accel/rocket/rocket_device.h
+@@ -14,6 +14,8 @@ struct rocket_device {
+ 
+ 	struct clk_bulk_data clks[2];
+ 
++	struct mutex iommu_lock;
++
+ 	struct rocket_core *cores;
+ 	unsigned int num_cores;
+ };
+diff --git a/drivers/accel/rocket/rocket_drv.c b/drivers/accel/rocket/rocket_drv.c
+index d1a1be32760feed864db86963b9942f1e37b17eb..685499537a0a8a206452b745ff23f9ff170b35db 100644
+--- a/drivers/accel/rocket/rocket_drv.c
++++ b/drivers/accel/rocket/rocket_drv.c
+@@ -6,6 +6,7 @@
+ #include <drm/drm_gem.h>
+ #include <drm/drm_ioctl.h>
+ #include <drm/drm_of.h>
++#include <drm/rocket_accel.h>
+ #include <linux/array_size.h>
+ #include <linux/clk.h>
+ #include <linux/component.h>
+@@ -15,6 +16,7 @@
+ #include <linux/pm_runtime.h>
+ 
+ #include "rocket_drv.h"
++#include "rocket_gem.h"
+ 
+ static int
+ rocket_open(struct drm_device *dev, struct drm_file *file)
+@@ -43,6 +45,8 @@ rocket_postclose(struct drm_device *dev, struct drm_file *file)
+ static const struct drm_ioctl_desc rocket_drm_driver_ioctls[] = {
+ #define ROCKET_IOCTL(n, func) \
+ 	DRM_IOCTL_DEF_DRV(ROCKET_##n, rocket_ioctl_##func, 0)
++
++	ROCKET_IOCTL(CREATE_BO, create_bo),
+ };
+ 
+ DEFINE_DRM_ACCEL_FOPS(rocket_accel_driver_fops);
+@@ -52,9 +56,10 @@ DEFINE_DRM_ACCEL_FOPS(rocket_accel_driver_fops);
+  * - 1.0 - initial interface
+  */
+ static const struct drm_driver rocket_drm_driver = {
+-	.driver_features	= DRIVER_COMPUTE_ACCEL,
++	.driver_features	= DRIVER_COMPUTE_ACCEL | DRIVER_GEM,
+ 	.open			= rocket_open,
+ 	.postclose		= rocket_postclose,
++	.gem_create_object	= rocket_gem_create_object,
+ 	.ioctls			= rocket_drm_driver_ioctls,
+ 	.num_ioctls		= ARRAY_SIZE(rocket_drm_driver_ioctls),
+ 	.fops			= &rocket_accel_driver_fops,
+diff --git a/drivers/accel/rocket/rocket_gem.c b/drivers/accel/rocket/rocket_gem.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..8a8a7185daac4740081293aae6945c9b2bbeb2dd
+--- /dev/null
++++ b/drivers/accel/rocket/rocket_gem.c
+@@ -0,0 +1,131 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/* Copyright 2024-2025 Tomeu Vizoso <tomeu@tomeuvizoso.net> */
++
++#include <drm/drm_device.h>
++#include <drm/drm_utils.h>
++#include <drm/rocket_accel.h>
++#include <linux/dma-mapping.h>
++#include <linux/iommu.h>
++
++#include "rocket_device.h"
++#include "rocket_gem.h"
++
++static void rocket_gem_bo_free(struct drm_gem_object *obj)
++{
++	struct rocket_device *rdev = to_rocket_device(obj->dev);
++	struct rocket_gem_object *bo = to_rocket_bo(obj);
++	struct sg_table *sgt;
++
++	drm_WARN_ON(obj->dev, bo->base.pages_use_count > 1);
++
++	mutex_lock(&rdev->iommu_lock);
++
++	sgt = drm_gem_shmem_get_pages_sgt(&bo->base);
++
++	/* Unmap this object from the IOMMUs for cores > 0 */
++	for (unsigned int core = 1; core < rdev->num_cores; core++) {
++		struct iommu_domain *domain = iommu_get_domain_for_dev(rdev->cores[core].dev);
++		size_t unmapped = iommu_unmap(domain, sgt->sgl->dma_address, bo->size);
++
++		drm_WARN_ON(obj->dev, unmapped != bo->size);
++	}
++
++	/* This will unmap the pages from the IOMMU linked to core 0 */
++	drm_gem_shmem_free(&bo->base);
++
++	mutex_unlock(&rdev->iommu_lock);
++}
++
++static const struct drm_gem_object_funcs rocket_gem_funcs = {
++	.free = rocket_gem_bo_free,
++	.print_info = drm_gem_shmem_object_print_info,
++	.pin = drm_gem_shmem_object_pin,
++	.unpin = drm_gem_shmem_object_unpin,
++	.get_sg_table = drm_gem_shmem_object_get_sg_table,
++	.vmap = drm_gem_shmem_object_vmap,
++	.vunmap = drm_gem_shmem_object_vunmap,
++	.mmap = drm_gem_shmem_object_mmap,
++	.vm_ops = &drm_gem_shmem_vm_ops,
++};
++
++struct drm_gem_object *rocket_gem_create_object(struct drm_device *dev, size_t size)
++{
++	struct rocket_gem_object *obj;
++
++	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
++	if (!obj)
++		return ERR_PTR(-ENOMEM);
++
++	obj->base.base.funcs = &rocket_gem_funcs;
++
++	return &obj->base.base;
++}
++
++int rocket_ioctl_create_bo(struct drm_device *dev, void *data, struct drm_file *file)
++{
++	struct drm_rocket_create_bo *args = data;
++	struct rocket_device *rdev = to_rocket_device(dev);
++	struct drm_gem_shmem_object *shmem_obj;
++	struct rocket_gem_object *rkt_obj;
++	struct drm_gem_object *gem_obj;
++	struct sg_table *sgt;
++	int ret;
++
++	shmem_obj = drm_gem_shmem_create(dev, args->size);
++	if (IS_ERR(shmem_obj))
++		return PTR_ERR(shmem_obj);
++
++	gem_obj = &shmem_obj->base;
++	rkt_obj = to_rocket_bo(gem_obj);
++
++	rkt_obj->size = args->size;
++	rkt_obj->offset = 0;
++
++	ret = drm_gem_handle_create(file, gem_obj, &args->handle);
++	drm_gem_object_put(gem_obj);
++	if (ret)
++		goto err;
++
++	mutex_lock(&rdev->iommu_lock);
++
++	/* This will map the pages to the IOMMU linked to core 0 */
++	sgt = drm_gem_shmem_get_pages_sgt(shmem_obj);
++	if (IS_ERR(sgt)) {
++		ret = PTR_ERR(sgt);
++		goto err_unlock;
++	}
++
++	/* Map the pages to the IOMMUs linked to the other cores, so all cores can access this BO */
++	for (unsigned int core = 1; core < rdev->num_cores; core++) {
++		ret = iommu_map_sgtable(iommu_get_domain_for_dev(rdev->cores[core].dev),
++					sgt->sgl->dma_address,
++					sgt,
++					IOMMU_READ | IOMMU_WRITE);
++		if (ret < 0 || ret < args->size) {
++			drm_err(dev, "failed to map buffer: size=%d request_size=%u\n",
++				ret, args->size);
++			ret = -ENOMEM;
++			goto err_unlock;
++		}
++
++		/* iommu_map_sgtable might have aligned the size */
++		rkt_obj->size = ret;
++
++		dma_sync_sgtable_for_device(rdev->cores[core].dev, shmem_obj->sgt,
++					    DMA_BIDIRECTIONAL);
++	}
++
++	mutex_unlock(&rdev->iommu_lock);
++
++	args->offset = drm_vma_node_offset_addr(&gem_obj->vma_node);
++	args->dma_address = sg_dma_address(shmem_obj->sgt->sgl);
++
++	return 0;
++
++err_unlock:
++	mutex_unlock(&rdev->iommu_lock);
++err:
++	drm_gem_shmem_object_free(gem_obj);
++
++	return ret;
++}
+diff --git a/drivers/accel/rocket/rocket_gem.h b/drivers/accel/rocket/rocket_gem.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..41497554366961cfe18cf6c7e93ab1e4e5dc1886
+--- /dev/null
++++ b/drivers/accel/rocket/rocket_gem.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/* Copyright 2024-2025 Tomeu Vizoso <tomeu@tomeuvizoso.net> */
++
++#ifndef __ROCKET_GEM_H__
++#define __ROCKET_GEM_H__
++
++#include <drm/drm_gem_shmem_helper.h>
++
++struct rocket_gem_object {
++	struct drm_gem_shmem_object base;
++
++	size_t size;
++	u32 offset;
++};
++
++struct drm_gem_object *rocket_gem_create_object(struct drm_device *dev, size_t size);
++
++int rocket_ioctl_create_bo(struct drm_device *dev, void *data, struct drm_file *file);
++
++static inline
++struct  rocket_gem_object *to_rocket_bo(struct drm_gem_object *obj)
++{
++	return container_of(to_drm_gem_shmem_obj(obj), struct rocket_gem_object, base);
++}
++
++#endif
+diff --git a/include/uapi/drm/rocket_accel.h b/include/uapi/drm/rocket_accel.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..95720702b7c4413d72b89c1f0f59abb22dc8c6b3
+--- /dev/null
++++ b/include/uapi/drm/rocket_accel.h
+@@ -0,0 +1,44 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Copyright © 2024 Tomeu Vizoso
++ */
++#ifndef __DRM_UAPI_ROCKET_ACCEL_H__
++#define __DRM_UAPI_ROCKET_ACCEL_H__
++
++#include "drm.h"
++
++#if defined(__cplusplus)
++extern "C" {
++#endif
++
++#define DRM_ROCKET_CREATE_BO			0x00
++
++#define DRM_IOCTL_ROCKET_CREATE_BO		DRM_IOWR(DRM_COMMAND_BASE + DRM_ROCKET_CREATE_BO, struct drm_rocket_create_bo)
++
++/**
++ * struct drm_rocket_create_bo - ioctl argument for creating Rocket BOs.
++ *
++ */
++struct drm_rocket_create_bo {
++	/** Input: Size of the requested BO. */
++	__u32 size;
++
++	/** Output: GEM handle for the BO. */
++	__u32 handle;
++
++	/**
++	 * Output: DMA address for the BO in the NPU address space.  This address
++	 * is private to the DRM fd and is valid for the lifetime of the GEM
++	 * handle.
++	 */
++	__u64 dma_address;
++
++	/** Output: Offset into the drm node to use for subsequent mmap call. */
++	__u64 offset;
++};
++
++#if defined(__cplusplus)
++}
++#endif
++
++#endif /* __DRM_UAPI_ROCKET_ACCEL_H__ */
 
-RFC V01: https://lore.kernel.org/netdev/cover.1730290527.git.gur.stavi@huawei.com
-
-RFC V02: https://lore.kernel.org/netdev/cover.1733990727.git.gur.stavi@huawei.com
-* Reduce overall line of code by removing optional functionality.
-* Break down into smaller patches.
-
-PATCH 01 V01: https://lore.kernel.org/netdev/cover.1734599672.git.gur.stavi@huawei.com
-* Documentation style and consistency fixes (from Bjorn Helgaas)
-* Use ipoll instead of custom code (from Andrew Lunn)
-* Move dev_set_drvdata up in initialization order (from Andrew Lunn)
-* Use netdev's max_mtu, min_mtu (from Andrew Lunn)
-* Fix variable 'xxx' set but not used warnings (from Linux patchwork)
-
-PATCH 01 V02: https://lore.kernel.org/netdev/cover.1735206602.git.gur.stavi@huawei.com
-* Add comment regarding usage of random MAC. (Andrew Lunn)
-* Add COMPILE_TEST to Kconfig (Jakub Kicinski)
-
-PATCH 01 V03: https://lore.kernel.org/netdev/cover.1735735608.git.gur.stavi@huawei.com
-* Rephrase Kconfig comment (Jakub Kicinski)
-* Kconfig: add 'select AUXILIARY_BUS' (Kernel test robot)
-* ARCH=um: missing include 'net/ip6_checksum.h' (Kernel test robot)
-
-PATCH 01 V04: https://lore.kernel.org/netdev/cover.1737013558.git.gur.stavi@huawei.com
-* Improve naming consistency, missing hinic3 prefixes (Suman Ghosh)
-* Change hinic3_remove_func to void (Suman Ghosh)
-* Add adev_event_unregister (Suman Ghosh)
-* Add comment for service types enum (Suman Ghosh)
-
-PATCH 01 V05: https://lore.kernel.org/netdev/cover.1740312670.git.gur.stavi@huawei.com
-* Fix signed-by signatures (Przemek Kitszel)
-* Expand initials in documentation (Przemek Kitszel)
-* Update copyright messages to 2025 (Przemek Kitszel)
-* Sort filenames in makefile (Przemek Kitszel)
-* Sort include statements (Przemek Kitszel)
-* Reduce padding in irq allocation struct (Przemek Kitszel)
-* Replace memset of zero with '= {}' init (Przemek Kitszel)
-* Revise mbox API to avoid using same pointer twice (Przemek Kitszel)
-* Use 2 underscores for header file ifdef guards (Przemek Kitszel)
-* Remove 'Intelligent' from Kconfig (Przemek Kitszel)
-* Documentation, fix line length mismatch to header (Simon Horman)
-
-PATCH 01 V06: https://lore.kernel.org/netdev/cover.1740487707.git.gur.stavi@huawei.com
-* Add hinic3 doc to device_drivers/ethernet TOC (Jakub Kicinski)
-
-PATCH 01 V07: https://lore.kernel.org/netdev/cover.1741069877.git.gur.stavi@huawei.com
-* Remove unneeded conversion to bool (Jakub Kicinski)
-* Use net_prefetch and net_prefetchw (Joe Damato)
-* Push IRQ coalescing and rss alloc/free to later patch (Joe Damato)
-* Pull additional rx/tx/napi code from next patch (Joe Damato)
-
-PATCH 01 V08: https://lore.kernel.org/netdev/cover.1741247008.git.gur.stavi@huawei.com
-* Fix build warning following pulling napi code from later patch (patchwork)
-* Add missing net/gro.h include for napi_gro_flush (patchwork)
-
-PATCH 01 V09: https://lore.kernel.org/netdev/cover.1742202778.git.gur.stavi@huawei.com
-* Maintain non-error paths in the main flow (Simon Horman)
-* Rename Pcie to PCIe in debug messages (Simon Horman)
-* Remove do-nothing goto label (Simon Horman)
-* Remove needless override of error value (Simon Horman)
-
-PATCH 01 V10: https://lore.kernel.org/netdev/cover.1744286279.git.gur.stavi@huawei.com
-* Poll Tx before polling Rx (Jakub Kicinski)
-* Use napi_complete_done instead of napi_complete (Jakub Kicinski)
-* Additional napi conformance fixes.
-* Rename goto labels according to target rather than source (Jakub Kicinski)
-* Call netif_carrier_off before register_netdev (Jakub Kicinski)
-
-PATCH 01 V11: https://lore.kernel.org/netdev/cover.1745221384.git.gur.stavi@huawei.com
-* Delete useless fallback to 32 bit DMA (Jakub Kicinski)
-
-PATCH 01 V12: https://lore.kernel.org/netdev/cover.1745411775.git.gur.stavi@huawei.com
-* Remove unneeded trailing coma (Christophe JAILLET)
-* Use kcalloc for array allocations (Christophe JAILLET)
-* Use existing goto label, avoid duplicating code (Christophe JAILLET)
-
-PATCH 01 V13: https://lore.kernel.org/netdev/cover.1746519748.git.gur.stavi@huawei.com
-* Use page_pool for rx buffers (Jakub Kicinski)
-* Wrap lines at 80 chars (Jakub Kicinski)
-* Consistency: rename buff to buf
-* Remove unneeded numeric suffixes: UL, ULL, etc.
-
-PATCH 01 V14: https://lore.kernel.org/netdev/cover.1746689795.git.gur.stavi@huawei.com
-* Use proper api for rx frag allocation (Jakub Kicinski)
-* Use napi_alloc_skb instead of netdev_alloc_skb_ip_align (Jakub Kicinski)
-
-PATCH 01 V15: https://lore.kernel.org/netdev/cover.1747556339.git.gur.stavi@huawei.com
-* For tx, Use wake/stop macros from netdev_queues.h (Jakub Kicinski)
-* Remove some internal flags
-
-PATCH 01 V16: https://lore.kernel.org/netdev/cover.1747640393.git.gur.stavi@huawei.com
-* Fix unused-but-set-variable warning (kernel test robot)
-* In get_used function, add READ_ONCE for work queue producer/consumer indices.
-
-PATCH 01 V17:
-* Remove minus sign from NETDEV_TX_BUSY (Jakub Kicinski)
-
-Fan Gong (1):
-  hinic3: module initialization and tx/rx logic
-
- .../device_drivers/ethernet/huawei/hinic3.rst | 137 ++++
- .../device_drivers/ethernet/index.rst         |   1 +
- MAINTAINERS                                   |   7 +
- drivers/net/ethernet/huawei/Kconfig           |   1 +
- drivers/net/ethernet/huawei/Makefile          |   1 +
- drivers/net/ethernet/huawei/hinic3/Kconfig    |  20 +
- drivers/net/ethernet/huawei/hinic3/Makefile   |  21 +
- .../ethernet/huawei/hinic3/hinic3_common.c    |  53 ++
- .../ethernet/huawei/hinic3/hinic3_common.h    |  27 +
- .../ethernet/huawei/hinic3/hinic3_hw_cfg.c    |  25 +
- .../ethernet/huawei/hinic3/hinic3_hw_cfg.h    |  53 ++
- .../ethernet/huawei/hinic3/hinic3_hw_comm.c   |  32 +
- .../ethernet/huawei/hinic3/hinic3_hw_comm.h   |  13 +
- .../ethernet/huawei/hinic3/hinic3_hw_intf.h   | 113 +++
- .../net/ethernet/huawei/hinic3/hinic3_hwdev.c |  24 +
- .../net/ethernet/huawei/hinic3/hinic3_hwdev.h |  81 +++
- .../net/ethernet/huawei/hinic3/hinic3_hwif.c  |  21 +
- .../net/ethernet/huawei/hinic3/hinic3_hwif.h  |  58 ++
- .../net/ethernet/huawei/hinic3/hinic3_irq.c   |  62 ++
- .../net/ethernet/huawei/hinic3/hinic3_lld.c   | 414 +++++++++++
- .../net/ethernet/huawei/hinic3/hinic3_lld.h   |  21 +
- .../net/ethernet/huawei/hinic3/hinic3_main.c  | 354 +++++++++
- .../net/ethernet/huawei/hinic3/hinic3_mbox.c  |  16 +
- .../net/ethernet/huawei/hinic3/hinic3_mbox.h  |  15 +
- .../net/ethernet/huawei/hinic3/hinic3_mgmt.h  |  13 +
- .../huawei/hinic3/hinic3_mgmt_interface.h     | 105 +++
- .../huawei/hinic3/hinic3_netdev_ops.c         |  78 ++
- .../ethernet/huawei/hinic3/hinic3_nic_cfg.c   | 233 ++++++
- .../ethernet/huawei/hinic3/hinic3_nic_cfg.h   |  41 ++
- .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |  82 +++
- .../ethernet/huawei/hinic3/hinic3_nic_io.c    |  21 +
- .../ethernet/huawei/hinic3/hinic3_nic_io.h    | 120 ++++
- .../huawei/hinic3/hinic3_queue_common.c       |  68 ++
- .../huawei/hinic3/hinic3_queue_common.h       |  54 ++
- .../net/ethernet/huawei/hinic3/hinic3_rx.c    | 341 +++++++++
- .../net/ethernet/huawei/hinic3/hinic3_rx.h    |  90 +++
- .../net/ethernet/huawei/hinic3/hinic3_tx.c    | 670 ++++++++++++++++++
- .../net/ethernet/huawei/hinic3/hinic3_tx.h    | 135 ++++
- .../net/ethernet/huawei/hinic3/hinic3_wq.c    |  29 +
- .../net/ethernet/huawei/hinic3/hinic3_wq.h    |  76 ++
- 40 files changed, 3726 insertions(+)
- create mode 100644 Documentation/networking/device_drivers/ethernet/huawei/hinic3.rst
- create mode 100644 drivers/net/ethernet/huawei/hinic3/Kconfig
- create mode 100644 drivers/net/ethernet/huawei/hinic3/Makefile
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_common.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_common.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hw_intf.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hwif.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_hwif.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_lld.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_lld.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_main.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_mbox.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_mbox.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_mgmt.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_mgmt_interface.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_nic_io.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_nic_io.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_queue_common.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_queue_common.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_rx.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_rx.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_tx.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_tx.h
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_wq.c
- create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_wq.h
-
-
-base-commit: b8fa067c4a76e9a28f2003a50ff9b60f00b11168
 -- 
-2.45.2
+2.49.0
 
 
