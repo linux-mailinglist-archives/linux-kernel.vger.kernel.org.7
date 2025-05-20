@@ -1,210 +1,205 @@
-Return-Path: <linux-kernel+bounces-655952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A27ABDFAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:56:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A400AABDFAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD7284C0313
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:55:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D72A3A8377
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F83262D29;
-	Tue, 20 May 2025 15:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02140266EEA;
+	Tue, 20 May 2025 15:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G9c8keaC"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TWop25BO"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39F225178C;
-	Tue, 20 May 2025 15:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3B02638A2
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 15:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747756509; cv=none; b=dl+mNsrzVFBgCVA/qOTUlXj0LXeCJqNMFVOL6KLvp6z+xWAuadwxixECgVrkGu05bGQmwa0Q0onR0DwXW1rHkdDIfINHoc+o27ARRajiDAm5EoJa/kuaV0gO92wDvImZNAqxEaO+/gnaKNoN3G9dEG63di5DQYs9hpP3Pl/peao=
+	t=1747756589; cv=none; b=CN4MmX2W7dJpNiw/4bjirKbL/+dDJPpj+bE8Z9pMutnjyTRmi9S89IeoJgPZKHpzgT6o9ZK23nfgVM6k9MFK+IdYGzew+S68MwnU5VL2CphzfQ5D96BbQymUPaUlDUwbImmxI+Ep7euQyaVRM9RJGDcH7MZ6iJ32NB1PXVfvzoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747756509; c=relaxed/simple;
-	bh=FYxaZIFYiSlSkrrsjnZzOBg9yth/DKqMvh6hwwlrvac=;
+	s=arc-20240116; t=1747756589; c=relaxed/simple;
+	bh=ER3NJ5O3PAzpO1IEIeCsXoWaX/vAGysVFXgbd71q+b4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ThOElcdWW6532OIviAohr3zDFL8ZyHUBo2Kpp9UUX9SwNSpeuYtz9CxNLkGGTUvEhK7FEK2YnteTaydCxFvygHayIaOWl6lhngem189KmnKtDQPOkYJ7FR6D+TiNGwVhzQfQW1Dpf/SR7l5u74O7JHFF4oEeIKuoQw+SW0F8bAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G9c8keaC; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3da73df6c4eso48540465ab.0;
-        Tue, 20 May 2025 08:55:07 -0700 (PDT)
+	 To:Cc:Content-Type; b=H5BrsS3Ps5T2IgJXBQYfZaQE2QmM02nCmezU5lEix2bQs2mlUY193DrUWzHyMOpZrvdji2BsVJLcMoX+Gmj8Hgu761edr1N4FHZCkz3R4F2IPkEUViTMJgAdZCKMHx1DL2cCXeDo9p2q0saNz8+HOZRZhccO+PRN9lyA80EXp5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TWop25BO; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-231f61dc510so782285ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 08:56:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747756507; x=1748361307; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747756587; x=1748361387; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QsfE5Ws7A5y4XkBVdsDW8KUKRVAk9/PTVUELtxrBWGA=;
-        b=G9c8keaC7+amk3Kpblrqk7hVEtgAfEgC9B+dvOZiCa2ATMhoKYPjKRF5cH5eMIo7I2
-         E7gNmzp5SW/MKL8gzvyYE3x2+N1GJhlPYw/UaiiX6IHFHfq7HQEaTeHdvKtKqhSRdT6/
-         XJx6y4uZLHrQebqXHewEB2YHAIzXi6+i09LSbzTM/gljDwNWRDuIt3O7vXFGvMQAaXuH
-         PuDvSQv8MDXqlCinl8IiyyfHZaowE1CUKhHutEBDaIiYtNLoFf3SOgt10TQ0p6pUoDKD
-         /I43ObHxmk4Yx4o3SN6PaAVJj6Q96w0jx6AEbkxUgce65EUn3OvKfIKybNr8cWUWWRz4
-         1g+w==
+        bh=ER3NJ5O3PAzpO1IEIeCsXoWaX/vAGysVFXgbd71q+b4=;
+        b=TWop25BOFRU5dDKeS9QPoeYFABHBraSn+G7kag80qs/4iEXRJpEPfcnJuTCiGwAeIR
+         Qm6+HnqesJaDiS/0z9LMmaE3H0BO+9fKzpqR7kXxoNLw1rRdKhQyPLmiB0UNN1AtvZC1
+         kyFfkxRS8mVT1AQQOtaLk7hDnuGKfzhCHC3oNHwGAeaPsYCPW25QHNa9DaV9O7W9zCKz
+         YVNaFDlEYva5qIBlB1PpbXlbmcmVBkRk5BpGkZRso+5vQhuCalGQzFL80rrvk6UZ9yJa
+         eTYz2D8eVa68gJEGyDanmY3s/ASkBRbM6t8GHb0qCTmbW59jZCIXMTkwXp/GZYQIQCur
+         KLCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747756507; x=1748361307;
+        d=1e100.net; s=20230601; t=1747756587; x=1748361387;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QsfE5Ws7A5y4XkBVdsDW8KUKRVAk9/PTVUELtxrBWGA=;
-        b=YRJ459K6XngIa7m8xUCgMaIDGl6scR9/Cya6TsfjaM5JAqiiwaWoyfgME1aS3UZc7g
-         eeNEmd5JbJq5AfuChuwDSIdufJcrLAYCWk2EOxGGAFpAFAnJn6IMIQeG/n1Hy78gJDTX
-         rooUnyiI8h6gYkg/B9ggTyvuotxeErkJ1Oj1stCRlrOYmT9sL3q+qCxqDMfRk6kU4iZn
-         OiCNhn7u0dyLaSD/gJxKYPr9cGn0BJk5+udVD9l2RMzqPjaX2CALCgMzJc/c1zJOpIv1
-         9k0IpQllt0Mq7dv89F0f6Oi0Qf/wrnvwjoHy8J/qGgJOgSYujzknB2MdmSHQTy6kQTRV
-         lsMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVX98JQjijjCtIg/jqa5VVyzKXsWA+F2kLqpKwvYp5DMqHxb1a7rocnbayRcC7BkyVr4OZaSJw8c/bpPnaG@vger.kernel.org, AJvYcCVmXkKMRHIGNiMP3uQDJTX08co0lt20bivVTM2pKroP7pozmemBHA0JtLRcycaIPTHTz0kF8f75UX/mL1Yu@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUzCIrBFxlwntuU+1AtNHijN95R3HaWGs60cfPljd9CPFxF8qP
-	YFbReRRXvII8IDhpJaZh8bXwJS8vHTpU0VtcedMas29uPapczahoJSSAAtaSWYvvyMTo90frb/I
-	PZmZ32aRtt25AQKvwB8ApNsAzIX/11iop1Q==
-X-Gm-Gg: ASbGnct1wlRSiTf3hBrSTol3A2wavxYbpIrnLbxZ+ww8ekHepzOaCnw4JMQWFqPUA37
-	IRoCILZMsrzeVRnYU6SlW5i0v3qophvp6Taz62Qo/Tf6Xi3V5Kmyw0Gj1QU2iA0IAHFHe0ISF6F
-	KhC628ku+1wPPDQDB5qyS1wfB6T9MepJShYsveU7ups+I6O5k84mXI260U3u3K/Ac=
-X-Google-Smtp-Source: AGHT+IFhLr1++r1gjYcEo/FgI0W3OZZ8mTrCTZfvNmuvRbd7YcTCPIl0/iL0jILe3yB2gSChaKoPV9tO234fgVqUVIQ=
-X-Received: by 2002:a05:6e02:1745:b0:3d9:36a8:3d98 with SMTP id
- e9e14a558f8ab-3db84296deemr208995435ab.2.1747756505533; Tue, 20 May 2025
- 08:55:05 -0700 (PDT)
+        bh=ER3NJ5O3PAzpO1IEIeCsXoWaX/vAGysVFXgbd71q+b4=;
+        b=YRxaiYp817mo0La17ROWz4gOXAQFImDrJgP4kuZcSYIUnqcQ9uAXBRBnpy/rjUWMQR
+         DBQE0YVG7S8ue+yp8d1kr+kGWqPwa1o9xeCOQq0of6/WcXMbMbs8Sq4Lz9qlKvu3/dLb
+         9cRucIJQk5JhpaoZcbgYVcWspsMT9MKF0/NDA9y2piL2RImeebzSVntSZJNBuxUSjDK4
+         hw2cerjUbab2Xo4fw5EHPbJ5UmhRQ2PydHp7ehUxDqGoDExedxqS1od4P4+egRSfkavc
+         PTQ9354o3gcBNMkoqLZrIZhtwQFLgxc8SV4xxFF0Yg4E9zWbtWf31BSrimMWrdqs8Axt
+         h+aw==
+X-Forwarded-Encrypted: i=1; AJvYcCX76AYOopMBfA2dN8BfmKuV1Ca2YeWgYFT1xrysYN+8F94PN5zIKypQjYrdY9PXbNxNEA/pdO2MY4z/5n4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhD+uAiKGlzbcPfIR9gtGq+tZJ1SjrFxILltpPgEpEbzTZQJZ8
+	QdzjWuOZFyey1eaIzKJylIzJEUYAqROXaMHxL5sdsmfQs64GEabnuzgQSG2DRfNUAO/zyQQEJK6
+	Ekqvt41wSRRiJTwRoAtIEIOIx9VYwJAM9kaHq59gD
+X-Gm-Gg: ASbGnct7x8j0qGIpifxUmq3mPlDb1PzP6PpMbfP8iiHKfWVoRUw2SbRw7+UjUNCefxM
+	4zljp2GnEfpyjK+367ddShp8sSHBdMzWt0slOKo15LxzcYaTrjN1tZVu4JG8JR0ea5iOJNHSsN9
+	rWxFry69nDF9iIo6/Ci33sT6PDWqoPAAQL+ta/fw841WLDEnlo1kQ5mHRK2dj4n/lPS27NVg==
+X-Google-Smtp-Source: AGHT+IE3UoafRXp4fFTWsfLrSpxZrXhZFQX6aCH6gZeuLrfBVPCauhB9DuTu6AnjgBWc6z7HnULlUjYmKw4eAcPInfc=
+X-Received: by 2002:a17:903:11c8:b0:21d:dca4:21ac with SMTP id
+ d9443c01a7336-231ffd0e31cmr8019275ad.6.1747756586623; Tue, 20 May 2025
+ 08:56:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250519175348.11924-1-robdclark@gmail.com> <20250519175348.11924-3-robdclark@gmail.com>
- <aCwx_9KIc9QBd7_0@pollux>
-In-Reply-To: <aCwx_9KIc9QBd7_0@pollux>
-From: Rob Clark <robdclark@gmail.com>
-Date: Tue, 20 May 2025 08:54:53 -0700
-X-Gm-Features: AX0GCFstOcmcGHOhFOrI3CrX7srdksd9YcxyBYxwwonSJJrqAmG4Xy5DWrOKG6Y
-Message-ID: <CAF6AEGs6_ZgBpKwe7weZWUppCZ87Y6wOt9RsF68hsJO-VpeiJA@mail.gmail.com>
-Subject: Re: [PATCH v5 02/40] drm/gpuvm: Allow VAs to hold soft reference to BOs
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-arm-msm@vger.kernel.org, Connor Abbott <cwabbott0@gmail.com>, 
-	Rob Clark <robdclark@chromium.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	open list <linux-kernel@vger.kernel.org>
+References: <20250519161712.2609395-1-bqe@google.com> <20250519161712.2609395-6-bqe@google.com>
+ <CAG48ez2WdxXVCzVsAPeQWgso3ZBQS_Xm+9D1FLBx6UHFV1bGHQ@mail.gmail.com>
+ <682bc528.c80a0220.13f632.9ec0@mx.google.com> <CAH5fLghNJYjxPFUc2E4-2pJpGT5umUr1EJstZvs88ox3MsXDGQ@mail.gmail.com>
+ <aCwRZlkBWekRmDg7@Mac.home> <CAH5fLgj1NVodPy-95CFUygGO7WC0siNEKSyEhgLvpX-1zMXErQ@mail.gmail.com>
+ <aCx77cCum_b-IR4H@Mac.home> <CAH5fLgjqj7binVaLDh7Pc7SVKDM-XrYDEDj7GYBX_MnjHgufFg@mail.gmail.com>
+ <aCyB4z23VP-3Hmor@Mac.home>
+In-Reply-To: <aCyB4z23VP-3Hmor@Mac.home>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 20 May 2025 17:55:47 +0200
+X-Gm-Features: AX0GCFs0RrSQrNlKygeYsUjA_mLlWNKtB4CI8gjUfxmH7vR_28jbNDCMVUE1uVM
+Message-ID: <CAG48ez32gxwdmQ63XWB8Dz4b5seH7tOhY0yREC=34ubTHZ5VOg@mail.gmail.com>
+Subject: Re: [PATCH v8 5/5] rust: add dynamic ID pool abstraction for bitmap
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Burak Emir <bqe@google.com>, 
+	Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 20, 2025 at 12:40=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
- wrote:
->
-> On Mon, May 19, 2025 at 10:51:25AM -0700, Rob Clark wrote:
-> > From: Rob Clark <robdclark@chromium.org>
-> >
-> > Eases migration for drivers where VAs don't hold hard references to
-> > their associated BO, avoiding reference loops.
-> >
-> > In particular, msm uses soft references to optimistically keep around
-> > mappings until the BO is distroyed.  Which obviously won't work if the
-> > VA (the mapping) is holding a reference to the BO.
-> >
-> > By making this a per-VM flag, we can use normal hard-references for
-> > mappings in a "VM_BIND" managed VM, but soft references in other cases,
-> > such as kernel-internal VMs (for display scanout, etc).
-> >
-> > Cc: Danilo Krummrich <dakr@kernel.org>
-> > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > ---
-> >  drivers/gpu/drm/drm_gpuvm.c | 37 ++++++++++++++++++++++++++++++++-----
-> >  include/drm/drm_gpuvm.h     | 19 +++++++++++++++++--
-> >  2 files changed, 49 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-> > index 1e89a98caad4..892b62130ff8 100644
-> > --- a/drivers/gpu/drm/drm_gpuvm.c
-> > +++ b/drivers/gpu/drm/drm_gpuvm.c
-> > @@ -1125,6 +1125,8 @@ __drm_gpuvm_prepare_objects(struct drm_gpuvm *gpu=
-vm,
-> >       LIST_HEAD(extobjs);
-> >       int ret =3D 0;
-> >
-> > +     WARN_ON(gpuvm->flags & DRM_GPUVM_VA_WEAK_REF);
->
-> No, here and below, please don't scatter WARN_ON() calls in various code =
-paths
-> for this hack.
-
-I do prefer WARN_ON()s to make it clear what is or is not proper
-usage, but if you really don't want them I can remove them.
-
-> This won't ever be a valid and supported mode, please keep the diff as sm=
-all as
-> possible.
->
-> <snip>
->
-> > diff --git a/include/drm/drm_gpuvm.h b/include/drm/drm_gpuvm.h
-> > index 2a9629377633..652e0fb66413 100644
-> > --- a/include/drm/drm_gpuvm.h
-> > +++ b/include/drm/drm_gpuvm.h
-> > @@ -205,10 +205,25 @@ enum drm_gpuvm_flags {
-> >        */
-> >       DRM_GPUVM_RESV_PROTECTED =3D BIT(0),
-> >
-> > +     /**
-> > +      * @DRM_GPUVM_VA_WEAK_REF:
-> > +      *
-> > +      * Flag indicating that the &drm_gpuva (or more correctly, the
-> > +      * &drm_gpuvm_bo) only holds a weak reference to the &drm_gem_obj=
-ect.
-> > +      * This mode is intended to ease migration to drm_gpuvm for drive=
-rs
-> > +      * where the GEM object holds a referece to the VA, rather than t=
-he
-> > +      * other way around.
-> > +      *
-> > +      * In this mode, drm_gpuvm does not track evicted or external obj=
-ects.
-> > +      * It is intended for legacy mode, where the needed objects are a=
-ttached
-> > +      * to the command submission ioctl, therefore this tracking is un=
-needed.
-> > +      */
-> > +     DRM_GPUVM_VA_WEAK_REF =3D BIT(1),
->
-> As mentioned in v4, I do *not* agree with making this a valid and support=
-ed
-> mode. If at all, it should be an exception for MSM, i.e.
-> DRM_GPUVM_MSM_LEGACY_QUIRK with an explicit approval from Dave / Sima [1]=
-.
-
-I can rename it if you really insist, but "legacy" implies it is
-something that will go away.
-
-Unfortunately there is too much map/unmap cost for things like
-pageflip, so the VM related to scanout will continue to use this mode
-forever, even if all of the userspace related VMs are not using this
-flag.  If I could opportunistically keep around a mapping while using
-gpuvm as it is "intended", I would.  But I don't see how that can work
-when the VMA/VM_BO holds a reference to the GEM object.
-
-> It invalidates the whole design and makes a lot of functions fundamentall=
+On Tue, May 20, 2025 at 3:21=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
+> On Tue, May 20, 2025 at 06:05:52AM -0700, Alice Ryhl wrote:
+> > On Tue, May 20, 2025 at 5:56=E2=80=AFAM Boqun Feng <boqun.feng@gmail.co=
+m> wrote:
+> > >
+> > > On Tue, May 20, 2025 at 05:42:51AM -0700, Alice Ryhl wrote:
+> > > > On Mon, May 19, 2025 at 10:21=E2=80=AFPM Boqun Feng <boqun.feng@gma=
+il.com> wrote:
+> > > > >
+> > > > > On Mon, May 19, 2025 at 08:46:37PM -0700, Alice Ryhl wrote:
+> > > > > > On Mon, May 19, 2025 at 4:56=E2=80=AFPM Boqun Feng <boqun.feng@=
+gmail.com> wrote:
+> > > > > > >
+> > > > > > > On Tue, May 20, 2025 at 12:51:07AM +0200, Jann Horn wrote:
+> > > > > > > > On Mon, May 19, 2025 at 6:20=E2=80=AFPM Burak Emir <bqe@goo=
+gle.com> wrote:
+> > > > > > > > > This is a port of the Binder data structure introduced in=
+ commit
+> > > > > > > > > 15d9da3f818c ("binder: use bitmap for faster descriptor l=
+ookup") to
+> > > > > > > > > Rust.
+> > > > > > > >
+> > > > > > > > Stupid high-level side comment:
+> > > > > > > >
+> > > > > > > > That commit looks like it changed a simple linear rbtree sc=
+an (which
+> > > > > > > > is O(n) with slow steps) into a bitmap thing. A more elegan=
+t option
+> > > > > > > > might have been to use an augmented rbtree, reducing the O(=
+n) rbtree
+> > > > > > > > scan to an O(log n) rbtree lookup, just like how finding a =
+free area
+> > > > > > >
+> > > > > > > I think RBTree::cursor_lower_bound() [1] does exactly what yo=
+u said
+> > > > > >
+> > > > > > We need the smallest ID without a value, not the smallest ID in=
+ use.
+> > > > > >
+> > > > >
+> > > > > Ok, but it shouldn't be hard to write a Rust function that search=
+ that,
+> > > > > right? My point was mostly the Rust rbtree binding can do O(log n=
+)
+> > > > > search. I have no idea about "even so, should we try something li=
+ke Jann
+> > > > > suggested". And I think your other reply basically says no.
+> > > >
+> > > > We would need to store additional data in the r/b tree to know whet=
+her
+> > > > to go left or right, so it would be somewhat tricky. We don't have =
+an
+> > >
+> > > Hmm... I'm confused, I thought you can implement a search like that b=
 y
-> invalid to call, which is well demonstrated by all the WARN_ON() calls th=
-is
-> patch attempts to add.
-
-I think of it more as adding a different mode of operation.  One
-where, perhaps some functions of gpuvm are not available, but that is
-fine because they are also unneeded in that mode of operation.  Hence
-the WARN_ON()s to make that clear.
-
-BR,
--R
-
-> > +
-> >       /**
-> >        * @DRM_GPUVM_USERBITS: user defined bits
-> >        */
-> > -     DRM_GPUVM_USERBITS =3D BIT(1),
-> > +     DRM_GPUVM_USERBITS =3D BIT(2),
-> >  };
+> > > doing what RBTree::raw_entry() does except that when Ordering::Equal =
+you
+> > > always go left or right (depending on whether you want to get an unus=
+ed
+> > > ID less or greater than a key value), i.e. you always search until yo=
+u
+> > > get an Vacant entry. Why do you need store additional data for that?
+> > > Maybe I'm missing something here?
+> >
+> > Let's say you're at the root node of an r/b tree, and you see that the
+> > root node has id 17, the left node has id 8, and the right node has id
+> > 25. Do you go left or right?
+> >
 >
-> [1] https://lore.kernel.org/dri-devel/aCb-72KH-NrzvGXy@pollux/
+> I went to check what commit 15d9da3f818c actually did and I understand
+> what you mean now ;-) In your case, the rbtree cannot have nodes with
+> the same key. If Jann can provide the O(log n) search that could help in
+> this case, I'm happy to learn about it ;-)
+
+Linux has the concept of an "augmented rbtree", where you can stuff
+extra information into the rbtree to keep track of things like "how
+big is the biggest gap between objects in this subtree". This is how
+the MM subsystem used to find free space in the virtual address space
+before the maple tree refactor, a complicated example is here:
+
+finding a free region (by looking at vm_area_struct::rb_subtree_gap to
+decide whether to go left or right; this is made complicated here
+because they have more search constraints):
+https://elixir.bootlin.com/linux/v4.19.325/source/mm/mmap.c#L1841
+
+But that requires an "augmented rbtree" where the rbtree code calls
+back into callbacks for updating the subtree gap; the MM code has its
+gap update here:
+https://elixir.bootlin.com/linux/v4.19.325/source/mm/mmap.c#L261
+
+And associates that with VMA trees through this macro magic that would
+probably be a terrible fit for Rust code:
+https://elixir.bootlin.com/linux/v4.19.325/source/mm/mmap.c#L400
+
+As Alice said, this is probably not a great fit for Rust code. As she
+said, an xarray or maple tree would have this kind of gap search
+built-in, which would be nicer here. But if you're trying to do
+insertions while holding your own outer spinlocks, I think they would
+be hard (or impossible?) to use.
+
+If you managed to avoid broad use of spinlocks, that might make it
+much easier to use xarrays or maple trees (and that would also allow
+you to make the bitmap API much simpler).
 
