@@ -1,645 +1,158 @@
-Return-Path: <linux-kernel+bounces-656186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E520ABE2A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:27:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88165ABE2B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E0E33A4739
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:27:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DB354C2A74
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B242283123;
-	Tue, 20 May 2025 18:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A4027FD65;
+	Tue, 20 May 2025 18:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="i13jiIcJ"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UeBWhHii"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882B4280022;
-	Tue, 20 May 2025 18:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C8524E4C4;
+	Tue, 20 May 2025 18:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747765611; cv=none; b=DY6Q37J5kkxLTNKXVcg8mqDtSEUDyKn8ihxXyurzvk/EtH0nE0Wt1xyNrNX8BCXYjW/ocnfn4+7SeE0QApHYLu8qSqbyYnZuBflxIaTek8GHf6/SpY4Vm+o/FBNI/gB5Z5jHDQE6JvrF1Cf8zonIYAPJh3I0iEU4is7hpuLVVyc=
+	t=1747765689; cv=none; b=GTX+y92OVWjwwqKxVFsmZ7dHtvHEibbpvCY6O9aYYeFTIY7NwHvPn8rOBrC3XKIYYn45A/QW2eS+7yo4AbujOwCaZqU0ltEvL/L/HkSDjtWSzJsNgmrFCN3AGlFoxG/X1iqFHJcivwLppsBGPewd667T5UAAxyvAyYgjeObL8PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747765611; c=relaxed/simple;
-	bh=7G7knEMDM2BR9yJazMkifdLuXZQCVruXdyXe+zeUSQg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CQZQOl78zQNg/PoBXILyH7VngfMfJthvy0C0V+rBOHOX6xJEaEY/H/5yGgTdfL5UD9Lsmh2ExI5PWRz3IcZvLDf119iUPL8ZJl1CuiOK9urJQ4izos2uAPni2Noj2aU3ZWaJfjYdex3H2ecURXZ4Anh4MZZTFcPP//U/XOYDuzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=i13jiIcJ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54KH6wSM024366;
-	Tue, 20 May 2025 18:26:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=xt78iCBNIo6IyS4/5
-	e1S2qjPDrzylj+Hb34VIPCztaI=; b=i13jiIcJmtMFD9D4edb3a5YH0hHHo9duu
-	S2PHPSFFgoxT3Yi5YlVP2y8sAVfwezLunkKASczQfq4YW0pM3wbQ9QIGin8bpCkx
-	+vnEycvUL9F0nTdyVY7SjA31rg/SUV/MktmIqAB0FK1I+4nm6YgNRvwGTOTtnpi7
-	CWI9TTuicKCozPipsd6vLDVXO/O55TtiDeN3HC1g34s81FlHDu6U68FgRyczs8fq
-	fwRc3DOTMMOjgKsGrffewx994GaF286Z4vVCmpNmxnCCJOc7k8UJ5+kj8G1I9FJA
-	YFTHqkbr3KRLQHO8L2JRrbRAYeQHHeWGEQeT1b0oEW2LKEGynKdWg==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46rwut8c1w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 May 2025 18:26:46 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54KGriNJ015444;
-	Tue, 20 May 2025 18:26:46 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 46rwnn8d2r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 May 2025 18:26:45 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54KIQgQ660490004
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 May 2025 18:26:42 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4356D20040;
-	Tue, 20 May 2025 18:26:42 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C06E620049;
-	Tue, 20 May 2025 18:26:41 +0000 (GMT)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 20 May 2025 18:26:41 +0000 (GMT)
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org, frankja@linux.ibm.com,
-        borntraeger@de.ibm.com, seiden@linux.ibm.com, nsg@linux.ibm.com,
-        nrb@linux.ibm.com, david@redhat.com, hca@linux.ibm.com,
-        agordeev@linux.ibm.com, svens@linux.ibm.com, gor@linux.ibm.com,
-        schlameuss@linux.ibm.com
-Subject: [PATCH v2 5/5] KVM: s390: simplify and move pv code
-Date: Tue, 20 May 2025 20:26:39 +0200
-Message-ID: <20250520182639.80013-6-imbrenda@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250520182639.80013-1-imbrenda@linux.ibm.com>
-References: <20250520182639.80013-1-imbrenda@linux.ibm.com>
+	s=arc-20240116; t=1747765689; c=relaxed/simple;
+	bh=rCJXx8gGWF7Y/yykzx37aKd3ZjPKtf4V2UOvUxBbtsI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EqEXCKqQdIMRIneDwKAv4stm1Mp9Cdj8maQc1L9n2lWneGcMah3Gz+GDJeRXy8jh8rmt1xsZNmvOjZDkksbC/4R5vQchYs3VJd6JyQpWJOW/BKmLMmCzHLVo15xyDw8CUNFR8Td9lGMwkjpagAjwYH7f5QBuxOiXyf7mOajorZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UeBWhHii; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-231fc83a33aso33680325ad.0;
+        Tue, 20 May 2025 11:28:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747765687; x=1748370487; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=HYInFiFPI9ndfR/4cO64UxKvCIOi5HU+gdUwzbowEbw=;
+        b=UeBWhHiizri+zU3J3Gydos+r+6C1mNppVFZI8YYV0wW2yWp+LtOcq9GN61RB51vh40
+         3ErKm2wHO0rd7iBC5I0qyX3UkYmI1j0CUY/uXVuDh8X0QzuTPEHC+00GhZMJ5o3LRC0x
+         f9wfrlnCDGIMSfUEAZS6bJGhZ8U5p43Zkix6veigWBJMvuDteCV2pxzSjK8dJgiqENPy
+         ArnhLTym+Shp/a6R2F5rQH/FAL/Pzlh2hS+mn5zOWicEZhmSgs0dOvySXY1qHMBhl8CA
+         MmQPcQwgvKcZIvAtUxWvWyCahxYXiii2eiOkUmF1vPB9byYSFgb2rtdy7XLIf6dwcdku
+         ZhKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747765687; x=1748370487;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HYInFiFPI9ndfR/4cO64UxKvCIOi5HU+gdUwzbowEbw=;
+        b=HcCX3U1F1i3ECsB2/CCw4unpHK0fYgMt12rh4lnlCoWizpgbnw5MfyDZjLIb5CITwy
+         GdvP/dONMeCglHNoVwW4KY2wkAq9hEIt4HKi0GZbocbaid2GzzXsZxWR2z+YdbFY1Npw
+         N83lj7DoADeeiRxbn9r9ocNU8MrB+R56szdRvBie5f2fMemXUbcB1KvPkZFkzehUZyDq
+         eU4oprdJemW2Ckb6a788JH21fzUPTQ5uHSMLDNG+Rh4pHjE9SDQVk2yIzqYy5LHmqMhG
+         W9HoUKZ37Afsc/PBYNRLPs1MkrfvHBEPWinm4jy6ZSlv2elBmjZzV4dKU+1YJovq78qj
+         enuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmKiQx3KipuHM2sv+xJCq2QT+a5j1fzF7zX4ZIFXGowg8CL1TDBcLghqS/BQp+yHhVFJOl8jo8zGkczv4=@vger.kernel.org, AJvYcCVM3wylb2NdCHoaP+37s9uqSFV50zRJ404/n95LxTE6L528JzkETegqKnvuOpgzHUvLMti/Vauq@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW+JQ8BIdaGAZuZcguCZupxDV1mPIQ23ga6nXZxPgWxIdfnfB1
+	6tw8tC5ZoZWSmsXgm1mgBadwHWBzHzG/JDG704z0C5rAM0FJ29KB8QMB
+X-Gm-Gg: ASbGncuNf8MrlNPTZ4XpgLVDanFYaBV5GOoKOPvOEyNLvEhSFOz7Lk+mr0cR0yvkbra
+	+qFzfzeNqD0d1+wWuJHk3xcp4uW5HyGSLA4n2Gktwc842Ta6+WUOFiEWMsnhZIcAHnX66EQDXtz
+	Da4MTaQZwxeLbCIymRsId5ru4j7AOWqfPlZQK808VE1+ZuIM/c1qtGKwFheTNCZtvLJGya5e86F
+	ETJZGyBdeql9O64HCoy9z53GuYPx2+yubxhFTfv7aRflB1SBeRrBMibZ62Aptm7CTmgcZOrVZ7P
+	Fo45vqp0OATRwJMHnvd4+4GhIf0t/3el2ritgY3aBVuJSlgQzuaKH/0UHxYDxzE1AGenU/brisg
+	q1uc=
+X-Google-Smtp-Source: AGHT+IESgy/nLH7exbpBEzHU43OET4g19jrvnZakgXDIKVS9FFM9QSYBQYvYluFSIMlc73WVOzRMtw==
+X-Received: by 2002:a17:902:ce8f:b0:223:fdac:2e4 with SMTP id d9443c01a7336-231de3515a6mr222440185ad.1.1747765687367;
+        Tue, 20 May 2025 11:28:07 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4b04a52sm79864825ad.91.2025.05.20.11.28.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 May 2025 11:28:06 -0700 (PDT)
+Message-ID: <ce477b83-57b8-49a3-b924-73b644832b06@gmail.com>
+Date: Tue, 20 May 2025 11:28:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: SPixc7BH-m3_laRKJGkj3zDS6hYjCk9d
-X-Proofpoint-GUID: SPixc7BH-m3_laRKJGkj3zDS6hYjCk9d
-X-Authority-Analysis: v=2.4 cv=MMRgmNZl c=1 sm=1 tr=0 ts=682cc966 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=20KFwNOVAAAA:8 a=7_jnfmalSeIvgFZyEUQA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDE1MCBTYWx0ZWRfXzX16UVd6s/z8 sYbPZhxqZn1xE+5blCA2yzEeW8nl6dSMhag4OKR+TsMmH5Ez6grP+hcPpC4MBjNMZIX4fcPbXvT tOmn1udMktajrN38f8ikvhKNwCbK8EJmI+V1uFNQV1ipS8KD8bysYNF2GieE0TjafwPI0ZRzuuR
- LKNPNKALaW1pDZ736sQRVd0XALU/NSsxuiI0S1cDrndpMjH+UiDiMPR/twDLEymiR9vCRsLhE0i EWurlq4o83Yw3svhFng39EjEELwcXt/YHgslPArCKACL/rtMb7GtNAKpOJkTb9Q7Y+kfdn/xeHL 5gpIA3qa5DvJNtEwp3wzieZ8J3tElfJGSVW1xXWF+HUfI32LsoZY+/mxMj96Yg8ZAjBIfJVITmy
- 9cehg/c3G9lHaOP/NJ9Q8317W+MJDXblVttx7yiEHNd6ZsDslhsqyPNX+Pr6FU375qf/NFCG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-20_08,2025-05-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- adultscore=0 priorityscore=1501 mlxlogscore=999 impostorscore=0
- malwarescore=0 mlxscore=0 lowpriorityscore=0 spamscore=0 phishscore=0
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505200150
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 00/97] 6.1.140-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250520125800.653047540@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250520125800.653047540@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-All functions in kvm/gmap.c fit better in kvm/pv.c instead.
-Move and rename them appropriately, then delete the now empty
-kvm/gmap.c and kvm/gmap.h.
+On 5/20/25 06:49, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.140 release.
+> There are 97 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 22 May 2025 12:57:37 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.140-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
----
- arch/s390/kernel/uv.c     |  12 ++--
- arch/s390/kvm/Makefile    |   2 +-
- arch/s390/kvm/gaccess.c   |   3 +-
- arch/s390/kvm/gmap-vsie.c |   1 -
- arch/s390/kvm/gmap.c      | 121 --------------------------------------
- arch/s390/kvm/gmap.h      |  39 ------------
- arch/s390/kvm/intercept.c |  10 +---
- arch/s390/kvm/kvm-s390.c  |   5 +-
- arch/s390/kvm/kvm-s390.h  |  42 +++++++++++++
- arch/s390/kvm/pv.c        |  61 ++++++++++++++++++-
- arch/s390/kvm/vsie.c      |  19 +++++-
- 11 files changed, 133 insertions(+), 182 deletions(-)
- delete mode 100644 arch/s390/kvm/gmap.c
- delete mode 100644 arch/s390/kvm/gmap.h
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-index 9a5d5be8acf4..644c110287c4 100644
---- a/arch/s390/kernel/uv.c
-+++ b/arch/s390/kernel/uv.c
-@@ -135,7 +135,7 @@ int uv_destroy_folio(struct folio *folio)
- {
- 	int rc;
- 
--	/* See gmap_make_secure(): large folios cannot be secure */
-+	/* Large folios cannot be secure */
- 	if (unlikely(folio_test_large(folio)))
- 		return 0;
- 
-@@ -184,7 +184,7 @@ int uv_convert_from_secure_folio(struct folio *folio)
- {
- 	int rc;
- 
--	/* See gmap_make_secure(): large folios cannot be secure */
-+	/* Large folios cannot be secure */
- 	if (unlikely(folio_test_large(folio)))
- 		return 0;
- 
-@@ -403,15 +403,15 @@ EXPORT_SYMBOL_GPL(make_hva_secure);
- 
- /*
-  * To be called with the folio locked or with an extra reference! This will
-- * prevent gmap_make_secure from touching the folio concurrently. Having 2
-- * parallel arch_make_folio_accessible is fine, as the UV calls will become a
-- * no-op if the folio is already exported.
-+ * prevent kvm_s390_pv_make_secure() from touching the folio concurrently.
-+ * Having 2 parallel arch_make_folio_accessible is fine, as the UV calls will
-+ * become a no-op if the folio is already exported.
-  */
- int arch_make_folio_accessible(struct folio *folio)
- {
- 	int rc = 0;
- 
--	/* See gmap_make_secure(): large folios cannot be secure */
-+	/* Large folios cannot be secure */
- 	if (unlikely(folio_test_large(folio)))
- 		return 0;
- 
-diff --git a/arch/s390/kvm/Makefile b/arch/s390/kvm/Makefile
-index f0ffe874adc2..9a723c48b05a 100644
---- a/arch/s390/kvm/Makefile
-+++ b/arch/s390/kvm/Makefile
-@@ -8,7 +8,7 @@ include $(srctree)/virt/kvm/Makefile.kvm
- ccflags-y := -Ivirt/kvm -Iarch/s390/kvm
- 
- kvm-y += kvm-s390.o intercept.o interrupt.o priv.o sigp.o
--kvm-y += diag.o gaccess.o guestdbg.o vsie.o pv.o gmap.o gmap-vsie.o
-+kvm-y += diag.o gaccess.o guestdbg.o vsie.o pv.o gmap-vsie.o
- 
- kvm-$(CONFIG_VFIO_PCI_ZDEV_KVM) += pci.o
- obj-$(CONFIG_KVM) += kvm.o
-diff --git a/arch/s390/kvm/gaccess.c b/arch/s390/kvm/gaccess.c
-index f6fded15633a..e23670e1949c 100644
---- a/arch/s390/kvm/gaccess.c
-+++ b/arch/s390/kvm/gaccess.c
-@@ -16,9 +16,10 @@
- #include <asm/gmap.h>
- #include <asm/dat-bits.h>
- #include "kvm-s390.h"
--#include "gmap.h"
- #include "gaccess.h"
- 
-+#define GMAP_SHADOW_FAKE_TABLE 1ULL
-+
- /*
-  * vaddress union in order to easily decode a virtual address into its
-  * region first index, region second index etc. parts.
-diff --git a/arch/s390/kvm/gmap-vsie.c b/arch/s390/kvm/gmap-vsie.c
-index a6d1dbb04c97..56ef153eb8fe 100644
---- a/arch/s390/kvm/gmap-vsie.c
-+++ b/arch/s390/kvm/gmap-vsie.c
-@@ -22,7 +22,6 @@
- #include <asm/uv.h>
- 
- #include "kvm-s390.h"
--#include "gmap.h"
- 
- /**
-  * gmap_find_shadow - find a specific asce in the list of shadow tables
-diff --git a/arch/s390/kvm/gmap.c b/arch/s390/kvm/gmap.c
-deleted file mode 100644
-index 6d8944d1b4a0..000000000000
---- a/arch/s390/kvm/gmap.c
-+++ /dev/null
-@@ -1,121 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Guest memory management for KVM/s390
-- *
-- * Copyright IBM Corp. 2008, 2020, 2024
-- *
-- *    Author(s): Claudio Imbrenda <imbrenda@linux.ibm.com>
-- *               Martin Schwidefsky <schwidefsky@de.ibm.com>
-- *               David Hildenbrand <david@redhat.com>
-- *               Janosch Frank <frankja@linux.vnet.ibm.com>
-- */
--
--#include <linux/compiler.h>
--#include <linux/kvm.h>
--#include <linux/kvm_host.h>
--#include <linux/pgtable.h>
--#include <linux/pagemap.h>
--
--#include <asm/lowcore.h>
--#include <asm/gmap.h>
--#include <asm/uv.h>
--
--#include "gmap.h"
--
--/**
-- * gmap_make_secure() - make one guest page secure
-- * @gmap: the guest gmap
-- * @gaddr: the guest address that needs to be made secure
-- * @uvcb: the UVCB specifying which operation needs to be performed
-- *
-- * Context: needs to be called with kvm->srcu held.
-- * Return: 0 on success, < 0 in case of error.
-- */
--int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb)
--{
--	struct kvm *kvm = gmap->private;
--	unsigned long vmaddr;
--
--	lockdep_assert_held(&kvm->srcu);
--
--	vmaddr = gfn_to_hva(kvm, gpa_to_gfn(gaddr));
--	if (kvm_is_error_hva(vmaddr))
--		return -EFAULT;
--	return make_hva_secure(gmap->mm, vmaddr, uvcb);
--}
--
--int gmap_convert_to_secure(struct gmap *gmap, unsigned long gaddr)
--{
--	struct uv_cb_cts uvcb = {
--		.header.cmd = UVC_CMD_CONV_TO_SEC_STOR,
--		.header.len = sizeof(uvcb),
--		.guest_handle = gmap->guest_handle,
--		.gaddr = gaddr,
--	};
--
--	return gmap_make_secure(gmap, gaddr, &uvcb);
--}
--
--/**
-- * __gmap_destroy_page() - Destroy a guest page.
-- * @gmap: the gmap of the guest
-- * @page: the page to destroy
-- *
-- * An attempt will be made to destroy the given guest page. If the attempt
-- * fails, an attempt is made to export the page. If both attempts fail, an
-- * appropriate error is returned.
-- *
-- * Context: must be called holding the mm lock for gmap->mm
-- */
--static int __gmap_destroy_page(struct gmap *gmap, struct page *page)
--{
--	struct folio *folio = page_folio(page);
--	int rc;
--
--	/*
--	 * See gmap_make_secure(): large folios cannot be secure. Small
--	 * folio implies FW_LEVEL_PTE.
--	 */
--	if (folio_test_large(folio))
--		return -EFAULT;
--
--	rc = uv_destroy_folio(folio);
--	/*
--	 * Fault handlers can race; it is possible that two CPUs will fault
--	 * on the same secure page. One CPU can destroy the page, reboot,
--	 * re-enter secure mode and import it, while the second CPU was
--	 * stuck at the beginning of the handler. At some point the second
--	 * CPU will be able to progress, and it will not be able to destroy
--	 * the page. In that case we do not want to terminate the process,
--	 * we instead try to export the page.
--	 */
--	if (rc)
--		rc = uv_convert_from_secure_folio(folio);
--
--	return rc;
--}
--
--/**
-- * gmap_destroy_page() - Destroy a guest page.
-- * @gmap: the gmap of the guest
-- * @gaddr: the guest address to destroy
-- *
-- * An attempt will be made to destroy the given guest page. If the attempt
-- * fails, an attempt is made to export the page. If both attempts fail, an
-- * appropriate error is returned.
-- *
-- * Context: may sleep.
-- */
--int gmap_destroy_page(struct gmap *gmap, unsigned long gaddr)
--{
--	struct page *page;
--	int rc = 0;
--
--	mmap_read_lock(gmap->mm);
--	page = gfn_to_page(gmap->private, gpa_to_gfn(gaddr));
--	if (page)
--		rc = __gmap_destroy_page(gmap, page);
--	kvm_release_page_clean(page);
--	mmap_read_unlock(gmap->mm);
--	return rc;
--}
-diff --git a/arch/s390/kvm/gmap.h b/arch/s390/kvm/gmap.h
-deleted file mode 100644
-index c8f031c9ea5f..000000000000
---- a/arch/s390/kvm/gmap.h
-+++ /dev/null
-@@ -1,39 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/*
-- *  KVM guest address space mapping code
-- *
-- *    Copyright IBM Corp. 2007, 2016, 2025
-- *    Author(s): Martin Schwidefsky <schwidefsky@de.ibm.com>
-- *               Claudio Imbrenda <imbrenda@linux.ibm.com>
-- */
--
--#ifndef ARCH_KVM_S390_GMAP_H
--#define ARCH_KVM_S390_GMAP_H
--
--#define GMAP_SHADOW_FAKE_TABLE 1ULL
--
--int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb);
--int gmap_convert_to_secure(struct gmap *gmap, unsigned long gaddr);
--int gmap_destroy_page(struct gmap *gmap, unsigned long gaddr);
--struct gmap *gmap_shadow(struct gmap *parent, unsigned long asce, int edat_level);
--
--/**
-- * gmap_shadow_valid - check if a shadow guest address space matches the
-- *                     given properties and is still valid
-- * @sg: pointer to the shadow guest address space structure
-- * @asce: ASCE for which the shadow table is requested
-- * @edat_level: edat level to be used for the shadow translation
-- *
-- * Returns 1 if the gmap shadow is still valid and matches the given
-- * properties, the caller can continue using it. Returns 0 otherwise, the
-- * caller has to request a new shadow gmap in this case.
-- *
-- */
--static inline int gmap_shadow_valid(struct gmap *sg, unsigned long asce, int edat_level)
--{
--	if (sg->removed)
--		return 0;
--	return sg->orig_asce == asce && sg->edat_level == edat_level;
--}
--
--#endif
-diff --git a/arch/s390/kvm/intercept.c b/arch/s390/kvm/intercept.c
-index b4834bd4d216..c7908950c1f4 100644
---- a/arch/s390/kvm/intercept.c
-+++ b/arch/s390/kvm/intercept.c
-@@ -16,13 +16,11 @@
- #include <asm/irq.h>
- #include <asm/sysinfo.h>
- #include <asm/uv.h>
--#include <asm/gmap.h>
- 
- #include "kvm-s390.h"
- #include "gaccess.h"
- #include "trace.h"
- #include "trace-s390.h"
--#include "gmap.h"
- 
- u8 kvm_s390_get_ilen(struct kvm_vcpu *vcpu)
- {
-@@ -546,7 +544,7 @@ static int handle_pv_uvc(struct kvm_vcpu *vcpu)
- 			  guest_uvcb->header.cmd);
- 		return 0;
- 	}
--	rc = gmap_make_secure(vcpu->arch.gmap, uvcb.gaddr, &uvcb);
-+	rc = kvm_s390_pv_make_secure(vcpu->kvm, uvcb.gaddr, &uvcb);
- 	/*
- 	 * If the unpin did not succeed, the guest will exit again for the UVC
- 	 * and we will retry the unpin.
-@@ -654,10 +652,8 @@ int kvm_handle_sie_intercept(struct kvm_vcpu *vcpu)
- 		break;
- 	case ICPT_PV_PREF:
- 		rc = 0;
--		gmap_convert_to_secure(vcpu->arch.gmap,
--				       kvm_s390_get_prefix(vcpu));
--		gmap_convert_to_secure(vcpu->arch.gmap,
--				       kvm_s390_get_prefix(vcpu) + PAGE_SIZE);
-+		kvm_s390_pv_convert_to_secure(vcpu->kvm, kvm_s390_get_prefix(vcpu));
-+		kvm_s390_pv_convert_to_secure(vcpu->kvm, kvm_s390_get_prefix(vcpu) + PAGE_SIZE);
- 		break;
- 	default:
- 		return -EOPNOTSUPP;
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 10cfc047525d..d5ad10791c25 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -53,7 +53,6 @@
- #include "kvm-s390.h"
- #include "gaccess.h"
- #include "pci.h"
--#include "gmap.h"
- 
- #define CREATE_TRACE_POINTS
- #include "trace.h"
-@@ -4976,7 +4975,7 @@ static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
- 		 * previous protected guest. The old pages need to be destroyed
- 		 * so the new guest can use them.
- 		 */
--		if (gmap_destroy_page(vcpu->arch.gmap, gaddr)) {
-+		if (kvm_s390_pv_destroy_page(vcpu->kvm, gaddr)) {
- 			/*
- 			 * Either KVM messed up the secure guest mapping or the
- 			 * same page is mapped into multiple secure guests.
-@@ -4998,7 +4997,7 @@ static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
- 		 * guest has not been imported yet. Try to import the page into
- 		 * the protected guest.
- 		 */
--		rc = gmap_convert_to_secure(vcpu->arch.gmap, gaddr);
-+		rc = kvm_s390_pv_convert_to_secure(vcpu->kvm, gaddr);
- 		if (rc == -EINVAL)
- 			send_sig(SIGSEGV, current, 0);
- 		if (rc != -ENXIO)
-diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
-index f8c32527c4e4..855f0980dc78 100644
---- a/arch/s390/kvm/kvm-s390.h
-+++ b/arch/s390/kvm/kvm-s390.h
-@@ -323,6 +323,9 @@ int kvm_s390_pv_dump_stor_state(struct kvm *kvm, void __user *buff_user,
- 				u64 *gaddr, u64 buff_user_len, u16 *rc, u16 *rrc);
- int kvm_s390_pv_dump_complete(struct kvm *kvm, void __user *buff_user,
- 			      u16 *rc, u16 *rrc);
-+int kvm_s390_pv_destroy_page(struct kvm *kvm, unsigned long gaddr);
-+int kvm_s390_pv_convert_to_secure(struct kvm *kvm, unsigned long gaddr);
-+int kvm_s390_pv_make_secure(struct kvm *kvm, unsigned long gaddr, void *uvcb);
- 
- static inline u64 kvm_s390_pv_get_handle(struct kvm *kvm)
- {
-@@ -334,6 +337,41 @@ static inline u64 kvm_s390_pv_cpu_get_handle(struct kvm_vcpu *vcpu)
- 	return vcpu->arch.pv.handle;
- }
- 
-+/**
-+ * __kvm_s390_pv_destroy_page() - Destroy a guest page.
-+ * @page: the page to destroy
-+ *
-+ * An attempt will be made to destroy the given guest page. If the attempt
-+ * fails, an attempt is made to export the page. If both attempts fail, an
-+ * appropriate error is returned.
-+ *
-+ * Context: must be called holding the mm lock for gmap->mm
-+ */
-+static inline int __kvm_s390_pv_destroy_page(struct page *page)
-+{
-+	struct folio *folio = page_folio(page);
-+	int rc;
-+
-+	/* Large folios cannot be secure. Small folio implies FW_LEVEL_PTE. */
-+	if (folio_test_large(folio))
-+		return -EFAULT;
-+
-+	rc = uv_destroy_folio(folio);
-+	/*
-+	 * Fault handlers can race; it is possible that two CPUs will fault
-+	 * on the same secure page. One CPU can destroy the page, reboot,
-+	 * re-enter secure mode and import it, while the second CPU was
-+	 * stuck at the beginning of the handler. At some point the second
-+	 * CPU will be able to progress, and it will not be able to destroy
-+	 * the page. In that case we do not want to terminate the process,
-+	 * we instead try to export the page.
-+	 */
-+	if (rc)
-+		rc = uv_convert_from_secure_folio(folio);
-+
-+	return rc;
-+}
-+
- /* implemented in interrupt.c */
- int kvm_s390_handle_wait(struct kvm_vcpu *vcpu);
- void kvm_s390_vcpu_wakeup(struct kvm_vcpu *vcpu);
-@@ -413,6 +451,10 @@ void kvm_s390_vsie_gmap_notifier(struct gmap *gmap, unsigned long start,
- 				 unsigned long end);
- void kvm_s390_vsie_init(struct kvm *kvm);
- void kvm_s390_vsie_destroy(struct kvm *kvm);
-+int gmap_shadow_valid(struct gmap *sg, unsigned long asce, int edat_level);
-+
-+/* implemented in gmap-vsie.c */
-+struct gmap *gmap_shadow(struct gmap *parent, unsigned long asce, int edat_level);
- 
- /* implemented in sigp.c */
- int kvm_s390_handle_sigp(struct kvm_vcpu *vcpu);
-diff --git a/arch/s390/kvm/pv.c b/arch/s390/kvm/pv.c
-index 22c012aa5206..14c330ec8ceb 100644
---- a/arch/s390/kvm/pv.c
-+++ b/arch/s390/kvm/pv.c
-@@ -17,7 +17,6 @@
- #include <linux/sched/mm.h>
- #include <linux/mmu_notifier.h>
- #include "kvm-s390.h"
--#include "gmap.h"
- 
- bool kvm_s390_pv_is_protected(struct kvm *kvm)
- {
-@@ -33,6 +32,64 @@ bool kvm_s390_pv_cpu_is_protected(struct kvm_vcpu *vcpu)
- }
- EXPORT_SYMBOL_GPL(kvm_s390_pv_cpu_is_protected);
- 
-+/**
-+ * kvm_s390_pv_make_secure() - make one guest page secure
-+ * @kvm: the guest
-+ * @gaddr: the guest address that needs to be made secure
-+ * @uvcb: the UVCB specifying which operation needs to be performed
-+ *
-+ * Context: needs to be called with kvm->srcu held.
-+ * Return: 0 on success, < 0 in case of error.
-+ */
-+int kvm_s390_pv_make_secure(struct kvm *kvm, unsigned long gaddr, void *uvcb)
-+{
-+	unsigned long vmaddr;
-+
-+	lockdep_assert_held(&kvm->srcu);
-+
-+	vmaddr = gfn_to_hva(kvm, gpa_to_gfn(gaddr));
-+	if (kvm_is_error_hva(vmaddr))
-+		return -EFAULT;
-+	return make_hva_secure(kvm->mm, vmaddr, uvcb);
-+}
-+
-+int kvm_s390_pv_convert_to_secure(struct kvm *kvm, unsigned long gaddr)
-+{
-+	struct uv_cb_cts uvcb = {
-+		.header.cmd = UVC_CMD_CONV_TO_SEC_STOR,
-+		.header.len = sizeof(uvcb),
-+		.guest_handle = kvm_s390_pv_get_handle(kvm),
-+		.gaddr = gaddr,
-+	};
-+
-+	return kvm_s390_pv_make_secure(kvm, gaddr, &uvcb);
-+}
-+
-+/**
-+ * kvm_s390_pv_destroy_page() - Destroy a guest page.
-+ * @kvm: the guest
-+ * @gaddr: the guest address to destroy
-+ *
-+ * An attempt will be made to destroy the given guest page. If the attempt
-+ * fails, an attempt is made to export the page. If both attempts fail, an
-+ * appropriate error is returned.
-+ *
-+ * Context: may sleep.
-+ */
-+int kvm_s390_pv_destroy_page(struct kvm *kvm, unsigned long gaddr)
-+{
-+	struct page *page;
-+	int rc = 0;
-+
-+	mmap_read_lock(kvm->mm);
-+	page = gfn_to_page(kvm, gpa_to_gfn(gaddr));
-+	if (page)
-+		rc = __kvm_s390_pv_destroy_page(page);
-+	kvm_release_page_clean(page);
-+	mmap_read_unlock(kvm->mm);
-+	return rc;
-+}
-+
- /**
-  * struct pv_vm_to_be_destroyed - Represents a protected VM that needs to
-  * be destroyed
-@@ -638,7 +695,7 @@ static int unpack_one(struct kvm *kvm, unsigned long addr, u64 tweak,
- 		.tweak[0] = tweak,
- 		.tweak[1] = offset,
- 	};
--	int ret = gmap_make_secure(kvm->arch.gmap, addr, &uvcb);
-+	int ret = kvm_s390_pv_make_secure(kvm, addr, &uvcb);
- 	unsigned long vmaddr;
- 	bool unlocked;
- 
-diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
-index a78df3a4f353..13a9661d2b28 100644
---- a/arch/s390/kvm/vsie.c
-+++ b/arch/s390/kvm/vsie.c
-@@ -23,7 +23,6 @@
- #include <asm/facility.h>
- #include "kvm-s390.h"
- #include "gaccess.h"
--#include "gmap.h"
- 
- enum vsie_page_flags {
- 	VSIE_PAGE_IN_USE = 0,
-@@ -68,6 +67,24 @@ struct vsie_page {
- 	__u8 fac[S390_ARCH_FAC_LIST_SIZE_BYTE];	/* 0x0800 */
- };
- 
-+/**
-+ * gmap_shadow_valid() - check if a shadow guest address space matches the
-+ *                       given properties and is still valid
-+ * @sg: pointer to the shadow guest address space structure
-+ * @asce: ASCE for which the shadow table is requested
-+ * @edat_level: edat level to be used for the shadow translation
-+ *
-+ * Returns 1 if the gmap shadow is still valid and matches the given
-+ * properties, the caller can continue using it. Returns 0 otherwise; the
-+ * caller has to request a new shadow gmap in this case.
-+ */
-+int gmap_shadow_valid(struct gmap *sg, unsigned long asce, int edat_level)
-+{
-+	if (sg->removed)
-+		return 0;
-+	return sg->orig_asce == asce && sg->edat_level == edat_level;
-+}
-+
- /* trigger a validity icpt for the given scb */
- static int set_validity_icpt(struct kvm_s390_sie_block *scb,
- 			     __u16 reason_code)
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-2.49.0
-
+Florian
 
