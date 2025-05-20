@@ -1,123 +1,192 @@
-Return-Path: <linux-kernel+bounces-655886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B575ABDEF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:27:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6946EABDEF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F1EB4C5F43
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:22:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E159D4C56F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D9025DAE0;
-	Tue, 20 May 2025 15:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F8818DB29;
+	Tue, 20 May 2025 15:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eCM8v5H/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="PN/xGAA4"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC082580F7;
-	Tue, 20 May 2025 15:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12AC2505AA;
+	Tue, 20 May 2025 15:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747754504; cv=none; b=HJJmV/fpjzgn1Epgyqo3N1RwFK78A60MfcY2V8qSTPLy9pN9lv30gJ+BmeKMfoALXi5rRAcQ5ha5yiUYvgMnm4XAjzHbfOkyVnB/xew90WAZxrikYLSAh3WxLwsEg+q38d9AryIprBwDGeaWhL0AbRgK6MsdNk2cq5WiBRFfSXg=
+	t=1747754553; cv=none; b=GSsTNfJ/vNkQ2FlSC/xFU50mj5KK5Qxk8L2B+LOOGZzOGEXs01T78tNA5nZ8dyK9o9CwR7YpWbYPjphP+fr4iY43GawjhUzqex/P3YX3z9C2nUytKTExgySX/5TOBjttOuyZ4xmk7/JpUS9XpTgvIp/rCOIw+ajtemdWnZNYr2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747754504; c=relaxed/simple;
-	bh=2I2RLcNJVt/tlKlu1Lp5Cs9pa3vOTjYe6mYV0vz+MNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tBsUiaRpfyJcnECStgvmnygppF2AzDZZYmntYkFo1pfArT7wKdXb9PUCZb531S3sY5xWhONMW0tWq1jQEiwAFidpeQW5kWCKfaUNxGBeN/9Sk9vgFmcGgVV8KzjB7JFlG9eMoo0N28kOG7kjXPuip/SovFvoLidrL4+x4iE81+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eCM8v5H/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F08EC4CEEA;
-	Tue, 20 May 2025 15:21:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747754502;
-	bh=2I2RLcNJVt/tlKlu1Lp5Cs9pa3vOTjYe6mYV0vz+MNc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eCM8v5H/xpVdc2gVJZlOwPG+UMmK+4RJnJxxC34EGCueMramyU65Fyrzi0aEUGRlK
-	 3EgKIf8lYiDo7exi9dWoDkpeTsbQbKwgWL01yRvMv9vOHoXpv0s065EPa2kTgKEK2w
-	 u/YjO+nOJUNr1xaUjQOOfuUVN3cFPL1v7F/EwxnbQ+HvFNkQ+zBA7Do4Ip/anjkqW6
-	 /1IzPhnxCZMIrOcq1FN7m8Lmq3c4TTkGS8aJfTMDABODrsgKBpfaiIoWHJzlT2XlyA
-	 NRL3B7FLW4vO9Cfxq9Q4F200jKL+CSSu1ltjUB8B4Q3gxX8MBaCOOjw6YVxWmf3C7l
-	 2hmPhx2oStpGw==
-Date: Tue, 20 May 2025 17:21:37 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org, Connor Abbott <cwabbott0@gmail.com>,
-	Rob Clark <robdclark@chromium.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 01/40] drm/gpuvm: Don't require obj lock in destructor
- path
-Message-ID: <aCyeAb0vnQqPVbiz@cassiopeiae>
-References: <20250519175348.11924-1-robdclark@gmail.com>
- <20250519175348.11924-2-robdclark@gmail.com>
- <aCwt20O7SH1zQLlV@pollux>
- <CAF6AEGvhxeCAz41F72hq=V3aD38jm+aUQqX3GwaOR4uzZGn6hg@mail.gmail.com>
+	s=arc-20240116; t=1747754553; c=relaxed/simple;
+	bh=TOckte/RXxhhtZxgfzD8giJmyAbKzFbnveOMKN1CJ7E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=fY3kAU3NBa5xHigSz/FxLASIjoeezMxIcwBdtmZz/FUEl9yo2gupS0uGebtpioAGEyrRwjaaQANWb1YF5ehpvv5+KZhMLcA0sIjGDOxBfYRugv69/yqcJjo49OR9CDNaWDh5dEtIyJK6XKe+PeaKRxcDX2xnWpSkjz2WjnEPXCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=PN/xGAA4; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1747754552; x=1779290552;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=TOckte/RXxhhtZxgfzD8giJmyAbKzFbnveOMKN1CJ7E=;
+  b=PN/xGAA4KKeLsK7pR0JI9c69pIm9J7kvuDSKhpN15i/DdnviJWl/cx4F
+   eiGJ6DsTFQkJarmZrT8BNBvQI2dmv8zTJY/DrYVFj2hR0nTbZe2RbW0IU
+   SR6Dj7eJPLauHViiMHd3DGTLpUlWogT2AgILMxlmJwzM8G0T/+xBuQs3o
+   yFzixkmYbXQAzEbDaI/ZWzAgay3sUS6qqOw4MVugCb+/FTBdAjuPanylu
+   h7LzsXEknTpZ6adF7JcbZHPNV2IObUTuY9e5fnAAtjgUP5lyjHpkchDIG
+   V1BlxH9wITbAos6IfRTsRfIOoi7cu8aC3Z4bTsr59Z7MlZCHqCn6WWJpG
+   g==;
+X-CSE-ConnectionGUID: Mv3k4QTqSfuckgJwL9Kybw==
+X-CSE-MsgGUID: R5ra95CaR2KdyZQCHjO6ng==
+X-IronPort-AV: E=Sophos;i="6.15,302,1739862000"; 
+   d="scan'208";a="41853373"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 May 2025 08:22:26 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 20 May 2025 08:21:52 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Tue, 20 May 2025 08:21:48 -0700
+From: Dharma Balasubiramani <dharma.b@microchip.com>
+Date: Tue, 20 May 2025 20:51:46 +0530
+Subject: [PATCH v3] counter: microchip-tcb-capture: Add watch validation
+ support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF6AEGvhxeCAz41F72hq=V3aD38jm+aUQqX3GwaOR4uzZGn6hg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250520-counter-tcb-v3-1-4631e2aff7ed@microchip.com>
+X-B4-Tracking: v=1; b=H4sIAAmeLGgC/23MQQ6CMBCF4auQrq3pjBTUlfcwLko7yCygpMVGQ
+ 7i7hZUal+8l3z+LSIEpinMxi0CJI/shj8OuELYzw50ku7wFKtRKg5bWP4aJgpxsI5vKEJxKjaA
+ akcUYqOXnVrve8u44Tj68tniC9f3fSSBBki5rVQG5o2ovPdvgbcfj3vperK2EHx7Vt8fsTca1Q
+ 4eozK9fluUN+ewv8eoAAAA=
+To: Kamel Bouhara <kamel.bouhara@bootlin.com>, William Breathitt Gray
+	<wbg@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dharma Balasubiramani
+	<dharma.b@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747754508; l=3596;
+ i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
+ bh=TOckte/RXxhhtZxgfzD8giJmyAbKzFbnveOMKN1CJ7E=;
+ b=wn+a9fjoolTdBjvBYyQB/3JM0obFki/MI9r7lVs8n3lHFMJpxKAAUmnoQ89tYB26zcm++sFos
+ M6I/YoN6YhtA7bxDVWGwabKlXvljmGicckGjlWxC9NJ18nbTWqufY3z
+X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
+ pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
 
-On Tue, May 20, 2025 at 07:57:36AM -0700, Rob Clark wrote:
-> On Tue, May 20, 2025 at 12:23 AM Danilo Krummrich <dakr@kernel.org> wrote:
-> > On Mon, May 19, 2025 at 10:51:24AM -0700, Rob Clark wrote:
-> > > diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-> > > index f9eb56f24bef..1e89a98caad4 100644
-> > > --- a/drivers/gpu/drm/drm_gpuvm.c
-> > > +++ b/drivers/gpu/drm/drm_gpuvm.c
-> > > @@ -1511,7 +1511,9 @@ drm_gpuvm_bo_destroy(struct kref *kref)
-> > >       drm_gpuvm_bo_list_del(vm_bo, extobj, lock);
-> > >       drm_gpuvm_bo_list_del(vm_bo, evict, lock);
-> > >
-> > > -     drm_gem_gpuva_assert_lock_held(obj);
-> > > +     if (kref_read(&obj->refcount) > 0)
-> > > +             drm_gem_gpuva_assert_lock_held(obj);
-> >
-> > Again, this is broken. What if the reference count drops to zero right after
-> > the kref_read() check, but before drm_gem_gpuva_assert_lock_held() is called?
-> 
-> No, it is not.  If you find yourself having this race condition, then
-> you already have bigger problems.  There are only two valid cases when
-> drm_gpuvm_bo_destroy() is called.  Either:
-> 
-> 1) You somehow hold a reference to the GEM object, in which case the
-> refcount will be a positive integer.  Maybe you race but on either
-> side of the race you have a value that is greater than zero.
-> 2) Or, you are calling this in the GEM object destructor path, in
-> which case no one else should have a reference to the object, so it
-> isn't possible to race
+The Timer Counter Block (TCB) exposes several kinds of events to the
+Counter framework, but not every event is meaningful on every hardware
+channel. Add a `watch_validate()` callback so userspace may register only
+the combinations actually supported:
 
-What about:
+* Channel 0 (COUNTER_MCHP_EVCHN_CV, COUNTER_MCHP_EVCHN_RA)
+   - COUNTER_EVENT_CAPTURE
+   - COUNTER_EVENT_CHANGE_OF_STATE
+   - COUNTER_EVENT_OVERFLOW
 
-3) You destroy the VM_BO, because the VM is destroyed, but someone else (e.g.
-   another VM) holds a reference of this BO, which is dropped concurrently?
+* Channel 1 (COUNTER_MCHP_EVCHN_RB)
+   - COUNTER_EVENT_CAPTURE
 
-Please don't tell me "but MSM doesn't do that". This is generic infrastructure,
-it is perfectly valid for drivers to do that.
+* Channel 2 (COUNTER_MCHP_EVCHN_RC)
+   - COUNTER_EVENT_THRESHOLD
 
-> If the refcount drops to zero after the check, you are about to blow
-> up regardless.
+Any other request is rejected with `-EINVAL`.
 
-Exactly, that's why the whole approach of removing the reference count a VM_BO
-has on the BO, i.e. the proposed DRM_GPUVM_VA_WEAK_REF is broken.
+Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+---
+Tested the code on target (sam9x60_curiosity) using the following commands
 
-As mentioned, make it DRM_GPUVM_MSM_LEGACY_QUIRK and get an approval from Dave /
-Sima for it.
+valid ones:
+./counter_watch_events -d -wevt_change_of_state,chan=0
+./counter_watch_events -d -wevt_ovf,chan=0
+./counter_watch_events -d -wevt_capture,chan=0
+./counter_watch_events -d -wevt_capture,chan=1
+./counter_watch_events -d -wevt_threshold,chan=2
 
-You can't make DRM_GPUVM_VA_WEAK_REF work as a generic thing without breaking
-the whole design and lifetimes of GPUVM.
+invalid ones:
+./counter_watch_events -d -wevt_threshold,chan=0
+./counter_watch_events -d -wevt_threshold,chan=1
+Error adding watches[0]: Invalid argument
+---
+Changes in v3:
+- Update commit description to not mention undefined behaviour as that is
+  not the case.
+- Use the early returns to avoid the else statements and code consistent with
+  linux style.
+- Link to v2: https://lore.kernel.org/r/20250520-counter-tcb-v2-1-a0617d2d220a@microchip.com
 
-We'd just end up with tons of traps for drivers with lots of WARN_ON() paths and
-footguns like the one above if a driver works slightly different than MSM.
+Changes in v2:
+- Include COUNTER_MCHP_EVCHN_CV as well for the sake of completeness.
+- Adjust the code to ensure channel limitations.
+- Drop sorting in this patch, will be taken care seperately.
+- Link to v1: https://lore.kernel.org/r/20250515-counter-tcb-v1-1-e547061ed80f@microchip.com
+---
+ drivers/counter/microchip-tcb-capture.c | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/counter/microchip-tcb-capture.c b/drivers/counter/microchip-tcb-capture.c
+index 1de3c50b9804..1a299d1f350b 100644
+--- a/drivers/counter/microchip-tcb-capture.c
++++ b/drivers/counter/microchip-tcb-capture.c
+@@ -337,6 +337,28 @@ static struct counter_comp mchp_tc_count_ext[] = {
+ 	COUNTER_COMP_COMPARE(mchp_tc_count_compare_read, mchp_tc_count_compare_write),
+ };
+ 
++static int mchp_tc_watch_validate(struct counter_device *counter,
++				  const struct counter_watch *watch)
++{
++	if (watch->channel == COUNTER_MCHP_EVCHN_CV || watch->channel == COUNTER_MCHP_EVCHN_RA)
++		switch (watch->event) {
++		case COUNTER_EVENT_CHANGE_OF_STATE:
++		case COUNTER_EVENT_OVERFLOW:
++		case COUNTER_EVENT_CAPTURE:
++			return 0;
++		default:
++			return -EINVAL;
++		}
++
++	if (watch->channel == COUNTER_MCHP_EVCHN_RB && watch->event == COUNTER_EVENT_CAPTURE)
++		return 0;
++
++	if (watch->channel == COUNTER_MCHP_EVCHN_RC && watch->event == COUNTER_EVENT_THRESHOLD)
++		return 0;
++
++	return -EINVAL;
++}
++
+ static struct counter_count mchp_tc_counts[] = {
+ 	{
+ 		.id = 0,
+@@ -356,7 +378,8 @@ static const struct counter_ops mchp_tc_ops = {
+ 	.function_read  = mchp_tc_count_function_read,
+ 	.function_write = mchp_tc_count_function_write,
+ 	.action_read    = mchp_tc_count_action_read,
+-	.action_write   = mchp_tc_count_action_write
++	.action_write   = mchp_tc_count_action_write,
++	.watch_validate = mchp_tc_watch_validate,
+ };
+ 
+ static const struct atmel_tcb_config tcb_rm9200_config = {
+
+---
+base-commit: 8566fc3b96539e3235909d6bdda198e1282beaed
+change-id: 20250515-counter-tcb-b6ae1945210b
+
+Best regards,
+-- 
+Dharma Balasubiramani <dharma.b@microchip.com>
+
 
