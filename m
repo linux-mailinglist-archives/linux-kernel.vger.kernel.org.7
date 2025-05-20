@@ -1,101 +1,124 @@
-Return-Path: <linux-kernel+bounces-655573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38442ABD82A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:26:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E757FABD82E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FFDB7B006E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:24:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 587253A56F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33C31172A;
-	Tue, 20 May 2025 12:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB734143736;
+	Tue, 20 May 2025 12:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fa2znJKV"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aqks2Wnq"
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1E220328
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 12:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3A620328
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 12:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747743955; cv=none; b=eUjzmcaJnzg3HCN98x12TtYYcydxcxefGA9z212Ry09AqKRJFlzLQk9pY3yo4WGWFdiT0zq/pNICfrhLLxEjxHRQ2sIYuPVxWJskfbZqXNgld2RBPXdPpG3C9NKdcfu6b2HDnE9TOQcvyJJ2Glbd4tnmZgOFZNKbOe9nVF2TD0o=
+	t=1747743975; cv=none; b=NPhhf40pz0v46HrIA1W5S+98iYG0cdtEwQ3ItJVSSiYr+N7Zo16sOG+cINRQXqxkBUv3qbdmgkA0Le7YCpbpp0QKgwMtWPgmCs2DRjXwOr9KKWkzGKc92fUABkAqtjggX8nB6njWBqJsvHd8WdB1sLuFBvwpg7W08jK9ZN/U1C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747743955; c=relaxed/simple;
-	bh=10VOOs9OpZbgOc/7CEG+2dPlzikjuwLA+ThlPNmj5HU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HUd/A7Rq4Z0Yfxz15mh1LELZFXx/Uf5AN/WsncXCwX8HMUuXwwIvY00kLYBqs6pUhT1mNxa35n8djkxVJfvXrItiZKekCQkRmeEhCmoXPK1ZjWrTeJ9YmI0iwpZtkB2b4VAgxFJf+2QI/atAug/D06ydVJQPIThydWBH9aIPp0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fa2znJKV; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 20 May 2025 08:25:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747743940;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3tTe7AZhcsLl1SFjFBWYt00FQokJCv6k4IfTZPHi9Gk=;
-	b=fa2znJKViX8E2/nzL1p8DdYezYUsoHEk15n4AO9kEi+ClPGyobWI1DoqF7IwPkVmCQJLIc
-	4A9gBcw3ziEUJlji3q1jSY1U+VDsqhfgiaKS7QVbp/cNLkqUI3iTdckj3aYF2K7v1P3199
-	Y2nRlVc5VbJF4GRUtjzfmsmOxhj3aT0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 0/6] overlayfs + casefolding
-Message-ID: <osbsqlzkc4zttz4gxa25exm5bhqog3tpyirsezcbcdesaucd7g@4sltqny4ybnz>
-References: <20250520051600.1903319-1-kent.overstreet@linux.dev>
- <CAOQ4uxg8p2Kg0BKrU4NSUzLVVLWcW=vLaw4kJkVR1Q-LyRbRXA@mail.gmail.com>
+	s=arc-20240116; t=1747743975; c=relaxed/simple;
+	bh=E99b+O1AU7Ok1H7iVjTy2Cw4tgSWKFd62aJJ56SCAhA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nHLwo9VRAAsvEKSdFNRuhnTcBT6DQFHeWBBEv50WRLRQeHkhcsTurtJLWVWV2Uud9qzNqckaDEbrwfQG3GFfEvtghJEXt4g8tBd2+gQrkw4F7kkHxdfo5OAJl2jSZlJqzhhzITZ9xE5WTf/OvUF62JEuZmdNAErXyNcqHsa3Wbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aqks2Wnq; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-731e277a6b0so5246385a34.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 05:26:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747743972; x=1748348772; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eDPheIrp0fqErLgYkpz9GaxvmJrQjKvco7dUB64QMfw=;
+        b=aqks2WnqSA2vk5KkrOn25xPF+MbwMrOhYBq4OmhNT9u5VZ8njPbUSL2sFFQTrhLWrA
+         JARjZ0+NlxwO/etSAwGoeBY13HCMwibLaCNPsu85DFT7V5fpgeK1FJHzVKmuY4KpXFEG
+         nic9yTwHCdXActW8oSpQJyHZFfU9uxjJcGqelTmfvJT5WmnMZp/szz9yDtpkJtITICs3
+         vmx75deH3OoVLl4MolG6fuplkP0nWGZQvwnQdSynk+9e6//EzP128QieQqxD2VfHSQYp
+         ziOSCzH3euGCNp3J4v8su1ojErVmxBqwJRKX2Ip7Eiy0MzzDK4b6HiQ0yuSCVUZ1c3KR
+         7CBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747743972; x=1748348772;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eDPheIrp0fqErLgYkpz9GaxvmJrQjKvco7dUB64QMfw=;
+        b=YZLplwR5NwVblQ+hr5UFUSphZVU6LKQDLXtm0tcVitvkhG1f/8rNhW1KEozDxgUBSD
+         dFC4vB+kxssQo6/ruYx3pqdJ+WK/fSoAnpuLNgU9MDL2jIaphXpPJq11pvbhHBvgS6/K
+         vdRAiNqlMWqiXYMYwCvd9jjcvkr7aa9Uk1UFSPUixhtt90pPeQ8VAUNFGCTzHfL3DDNX
+         LYo9MEbbqjeciQBCf2bAiDE9zhJPtjDkInyGup0eMJf13y+8xQk266XFEOeQjsjlo8C6
+         +UGTjpZcEgNOkkn6XNAwWRihWr/9scZfg40MfmYbzQltU+xgEBRQrUsemR6ekzzUpW7M
+         54Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtaMr5ty2VL+zjtwmsAaqT/d0IfchN5ZkoV+KrVc546iZb8gLNBqWkBFnRR0C1PiTKi20QTDrU78f8Gcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkNK8nPqoIW45TlXJNyibhsvPclXPZ1Zcw1FZfzmRsdJ4WF/+q
+	r+KqKEGv9jbIwGoMUwCL7Tvx1SlpFFQRdfhAXy7QuIfP0fUY9vQALsjME6CiuaFG
+X-Gm-Gg: ASbGncvfbQ2RxZACoxMJNVgFOaluc03GsZYFtSFxJpY522bivBkRjgr8NArOXUag7G0
+	4451RsmRyZUjDgmbyvWuTP1xQfUx39OVHdKdlVwmQG7EaxqSbXPqxH+suiF5fcWSJXhuuNGb4Gf
+	yYFxPTEgap8fciYyDYVELl4h/np4nstP59oSB67RyYqYWwpwJCV4MQKXEUzVQqRfAjTmbF50rCI
+	jD2ZkR5wB46M8DRWpTR/2YN6GbmuJFeaqJT/rK2gdS9onFf0hGADyFZkRRzG4YiWizQwpN6k7bt
+	ToYONwfdE2IEA8/JNTjvw7XNEgb75Y0KENanRnbJdgnGE3as
+X-Google-Smtp-Source: AGHT+IFUOHS9yLvKj9NZ9wKJYyBAWKUVRFOj4PSguUJ46Iyb32cjwBy2K5MN3bwdmiZOdBi4VX/MEA==
+X-Received: by 2002:a05:620a:2955:b0:7c7:93c7:f35d with SMTP id af79cd13be357-7cd4673c076mr2297280785a.31.1747743962173;
+        Tue, 20 May 2025 05:26:02 -0700 (PDT)
+Received: from localhost ([2a03:2880:20ff:3::])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cd467d7ee8sm731753385a.26.2025.05.20.05.26.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 05:26:01 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	surenb@google.com
+Cc: hannes@cmpxchg.org,
+	shakeel.butt@linux.dev,
+	vlad.wing@gmail.com,
+	linux-mm@kvack.org,
+	kent.overstreet@linux.dev,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH 1/2] mm: slub: allocate slab object extensions non-contiguously
+Date: Tue, 20 May 2025 13:25:46 +0100
+Message-ID: <20250520122547.1317050-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxg8p2Kg0BKrU4NSUzLVVLWcW=vLaw4kJkVR1Q-LyRbRXA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Tue, May 20, 2025 at 10:05:14AM +0200, Amir Goldstein wrote:
-> On Tue, May 20, 2025 at 7:16 AM Kent Overstreet
-> <kent.overstreet@linux.dev> wrote:
-> >
-> > This series allows overlayfs and casefolding to safely be used on the
-> > same filesystem by providing exclusion to ensure that overlayfs never
-> > has to deal with casefolded directories.
-> >
-> > Currently, overlayfs can't be used _at all_ if a filesystem even
-> > supports casefolding, which is really nasty for users.
-> >
-> > Components:
-> >
-> > - filesystem has to track, for each directory, "does any _descendent_
-> >   have casefolding enabled"
-> >
-> > - new inode flag to pass this to VFS layer
-> >
-> > - new dcache methods for providing refs for overlayfs, and filesystem
-> >   methods for safely clearing this flag
-> >
-> > - new superblock flag for indicating to overlayfs & dcache "filesystem
-> >   supports casefolding, it's safe to use provided new dcache methods are
-> >   used"
-> >
-> 
-> I don't think that this is really needed.
-> 
-> Too bad you did not ask before going through the trouble of this implementation.
-> 
-> I think it is enough for overlayfs to know the THIS directory has no
-> casefolding.
+When memory allocation profiling is running on memory bound services,
+allocations greater than order 0 for slab object extensions can fail,
+for e.g. zs_handle zswap slab which will be 512 objsperslab x 16 bytes
+per slabobj_ext (order 1 allocation). Use kvcalloc to improve chances
+of the allocation being successful.
 
-overlayfs works on trees, not directories...
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+Reported-by: Vlad Poenaru <vlad.wing@gmail.com>
+Closes: https://lore.kernel.org/all/17fab2d6-5a74-4573-bcc3-b75951508f0a@gmail.com/
+---
+ mm/slub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/slub.c b/mm/slub.c
+index dc9e729e1d26..bf43c403ead2 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1989,7 +1989,7 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
+ 	gfp &= ~OBJCGS_CLEAR_MASK;
+ 	/* Prevent recursive extension vector allocation */
+ 	gfp |= __GFP_NO_OBJ_EXT;
+-	vec = kcalloc_node(objects, sizeof(struct slabobj_ext), gfp,
++	vec = kvcalloc_node(objects, sizeof(struct slabobj_ext), gfp,
+ 			   slab_nid(slab));
+ 	if (!vec) {
+ 		/* Mark vectors which failed to allocate */
+-- 
+2.47.1
+
 
