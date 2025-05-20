@@ -1,296 +1,340 @@
-Return-Path: <linux-kernel+bounces-656510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC49BABE744
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:35:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32421ABE743
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC7D83B1E86
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:34:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F28ED7B58D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C4925C6EE;
-	Tue, 20 May 2025 22:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAD5261589;
+	Tue, 20 May 2025 22:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTFmP/oR"
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LeLsTjlw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51D71FDE02
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 22:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFD525FA1B;
+	Tue, 20 May 2025 22:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747780430; cv=none; b=X8Su6G1p9Osxn6khQ8qwWSRlTyhgibVspMirPQFSIfb4guAG1WfXbomoqE6165+y39i29VnbqeUSBSobS/qyX44phRmuXnN8jkK08zgOXLe5LUmdcEdIV5zEtV1lGXqEgI1AxZgnmEhWBTm4rrH8/I6t3mvxkX7zpw3g/7MDedI=
+	t=1747780507; cv=none; b=iNYqatlYZQbJ7kinfFuOeqKN9kp4hDLB9R6Hri/zBLAXxNQHrQz9FZE2/cz/mPpOGMa92ygz334wXMpfyVkF9IurVLcPoaT8ggvKnpDyaiNhLb2NsOQMzcZKBUVMmPCFp72ahSM1BsSY2DbU2FgFYABgRhSEBsR9sFwwSs0bW3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747780430; c=relaxed/simple;
-	bh=gXVaSL6GGIy2fOds4Afx+/UYBW/wJ5R6ZupRPmys638=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ngVi+u6RYEt3G+osgaA2ZIhwc7pGvv6OOC5bS6aOYerI5dH9P4WFgIL/c0w/FVm32/XfSWMNNEzn0iuuZVjypJmWE3fTnraw5/rprOczM5fLq7wqLRc7SstATmTgLWhLY3AktlX29pnRc4pDAcHvC2LwEi/ufELF3dSg2UUA+bA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTFmP/oR; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-52934f4fb23so4167485e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 15:33:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747780427; x=1748385227; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BEQ4yHTgYt/W3yyenrM8/GZviNPETELo+EsMJcdNHok=;
-        b=CTFmP/oRHg93petkrJQQl6kSoOiM6rNsrAr+/TPTRw7aQs/8vlLPiobZSH+Fw5aIeQ
-         afopkkSsunCbBKMcthIu+nJ7RMBhbo3rM/TzXJt7RFfd/mpTbPY8xMFpN8hOl+PuFtQL
-         FVa/x1qEWLX/tWIDvI8bpW0JvEJA0pqbr3ZCx3i/YNkAX/7+YiEGhuiaR5e5FiJyAN+c
-         GRN2j7DnSflftWhLr/r+YOgeC5geTTy7Ks1n3xzjx0XeKtdOpMtT1x21237HR3h/zi69
-         1JzdCgSM4a1EavqtlZ9UFy1nV5QKQAhhhSCiJokZgiT0y6+bgpzfWPY7CdQI+yc9vpPS
-         2E2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747780427; x=1748385227;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BEQ4yHTgYt/W3yyenrM8/GZviNPETELo+EsMJcdNHok=;
-        b=KrPSEha2mMsTWR3rru04c+d2gLrKRQBiga0vJQWmSbQ92Jfar0ZFxDGPZ17F+YnApO
-         xRUJBhjTn1RDje3XcjdMLlB9v5m8j9rAx19RT6xDDAOzhG7yXfJ2v2E8YL0fUnm5zA0S
-         fVVGqUauW1YQ6cEbjV579C4C9B2snSOxxPVZn5+L2T55SApUwR2xFmljKwGMJYvpZHby
-         ikJwaDrYltJX4Cj7sFwKDk60SrL5bMArjCtbXwdYLUMTLbG78u+lZ3Dq/0/97d7/Gz5j
-         ii3FdEtIvF2HludeJk7stu50BxJmtqtPkifdYIekVAW9+GigVzInHYJa6NhYPYkpN17F
-         QXRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCAjDh54GZ1i3bUj0vwoqHA2jAeYRleRMIyJRkeh8bPC0mgr2b3CARjAVJppHXxZ157/x1pw3RYb6uSFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzWUD3kajTCZl3FRVQYKcksBR9qcPuA5yWBYz5SgXlJaxIPuIr
-	m75Wi1raNwxMP7qlIKDWA1WACyG1ZXAQLihDL9qFNRzUUI64rxs0oH9nMktuwB/o77FOcwlrSXt
-	/4cGmlzMobEcoyhN+xsKdjzfVBjYyfZY=
-X-Gm-Gg: ASbGncuv8jgCvyjopigZM38YK65ih3ou+iYMAQaRk09vumpGmRK9AvPVl2VjG2KTlVL
-	SyjGwaTcQDfyEj2kFklUr5Ac+0oESv7xiVV99mr7GIdGWQLfSA+6RrtL4SWveO/tphyS/zIYWAp
-	owFCSp8tk/Y8DcZ7LUJMapMyjfnrWX6mYVoQ==
-X-Google-Smtp-Source: AGHT+IGPHoXac3jI35IfwhzrJ/gzoXPwDZc5MasnWyMo8kgUrXT0nFms4usEO1kkGt4/hMnTUQvvQ/ePeTnoSom82J8=
-X-Received: by 2002:a05:6122:8c0f:b0:520:62ce:98ed with SMTP id
- 71dfb90a1353d-52dba8d0941mr19344098e0c.6.1747780427377; Tue, 20 May 2025
- 15:33:47 -0700 (PDT)
+	s=arc-20240116; t=1747780507; c=relaxed/simple;
+	bh=u5OBlSUF6CCSyhQ2s09ZkOGdrSdh0FPBxB4ZEKRKka8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S5tF/y85qDWt+ZAF0YheBR0hLugV2cP517zgjEfPWlQiP+UURKnodY+YOIHPjwU86vBjpWTrJSIwf4Hb3Jv0QRnqqcL8AV9gYY47SV/Dur4FrspTwckp9A1BACsMH5sp26UKGTnHH91SEiXgqxFsuAfmQpAoQLNmQ4CnhzVPPLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LeLsTjlw; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747780505; x=1779316505;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=u5OBlSUF6CCSyhQ2s09ZkOGdrSdh0FPBxB4ZEKRKka8=;
+  b=LeLsTjlwBHu+1rQsbNPUX/5BCRJXirQ4/Jq3ENOxbCndIarIPfoNtvVe
+   hOfDVG3Xue2mqksEaA572mE1T1svDZ+rHJETqW4bKKrr7snEi5Ng/3YF5
+   rXLND8oj86227Dwp0LFVUqkLqx1sSrDcUvJxi+qYh1ybdVLbCq5zNzsvX
+   HrIym9FMRCWBMtm5u8Z8dN6xTSaMxoQ59qckiyZgD4BsxHywEnOaRI7Ti
+   /tT2FhPVKuI1JkpnOgh86OtMu1DVs1WwVDieH/w4P5/s6+WYM+rVvlmk2
+   TZtgngovAZbTZ/rMDjMPh3Ro0LAonrY1eJr5CIpjeWC0hem24kwESsAGh
+   g==;
+X-CSE-ConnectionGUID: 3W8YxRaUQsGVOjGm8nMl7A==
+X-CSE-MsgGUID: bCZjvkXPQhib7tXJ+C9Wpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49665339"
+X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
+   d="scan'208";a="49665339"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 15:35:04 -0700
+X-CSE-ConnectionGUID: X8XXuC4KT8+zSrqPD6YQDA==
+X-CSE-MsgGUID: 3BRHmB77QR+2L8aPwUy2+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
+   d="scan'208";a="140758599"
+Received: from iweiny-desk3.amr.corp.intel.com (HELO [10.124.222.89]) ([10.124.222.89])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 15:33:47 -0700
+Message-ID: <ac30a88d-7139-40ce-ae3c-34ef12c939a5@linux.intel.com>
+Date: Tue, 20 May 2025 15:33:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250514201729.48420-6-ryncsn@gmail.com> <20250519043847.1806-1-21cnbao@gmail.com>
- <CAMgjq7BpfueOn9ms8apRX-6dF8rZGtbC=MuZzSD7hbZxtw=Kdg@mail.gmail.com>
- <CAGsJ_4wC5_YSMLNoY5q4hUsZTpD+YPHSBtzCAdWRFH65EJA_iw@mail.gmail.com> <CAMgjq7AO__8TFE8ibwQswWmmf4tTGg2NBEJp0aEn32vN+Dy8uw@mail.gmail.com>
-In-Reply-To: <CAMgjq7AO__8TFE8ibwQswWmmf4tTGg2NBEJp0aEn32vN+Dy8uw@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 21 May 2025 10:33:36 +1200
-X-Gm-Features: AX0GCFtlyzmN6MFJ-bl0pt3pOnCjq_9R5kTXKBIQWYVW7LIPaaKshpndYqyFqVI
-Message-ID: <CAGsJ_4z1cJfOCcpZDt4EuHK7+SON1r0ptRJNv1h=cDv+eOcdSQ@mail.gmail.com>
-Subject: Re: [PATCH 05/28] mm, swap: sanitize swap cache lookup convention
-To: Kairui Song <ryncsn@gmail.com>
-Cc: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, bhe@redhat.com, 
-	chrisl@kernel.org, david@redhat.com, hannes@cmpxchg.org, hughd@google.com, 
-	kaleshsingh@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	nphamcs@gmail.com, ryan.roberts@arm.com, shikemeng@huaweicloud.com, 
-	tim.c.chen@linux.intel.com, willy@infradead.org, ying.huang@linux.alibaba.com, 
-	yosryahmed@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 15/17] PCI/AER: Ratelimit correctable and non-fatal
+ error logging
+To: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
+Cc: Jon Pan-Doh <pandoh@google.com>,
+ Karolina Stolarek <karolina.stolarek@oracle.com>,
+ Weinan Liu <wnliu@google.com>, Martin Petersen <martin.petersen@oracle.com>,
+ Ben Fuller <ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>,
+ Anil Agrawal <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Lukas Wunner <lukas@wunner.de>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney" <paulmck@kernel.org>,
+ Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+ Oliver O'Halloran <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>,
+ Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
+ Terry Bowman <terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>
+References: <20250520215047.1350603-1-helgaas@kernel.org>
+ <20250520215047.1350603-16-helgaas@kernel.org>
+Content-Language: en-US
+From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+In-Reply-To: <20250520215047.1350603-16-helgaas@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 21, 2025 at 7:10=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
-e:
+
+On 5/20/25 2:50 PM, Bjorn Helgaas wrote:
+> From: Jon Pan-Doh <pandoh@google.com>
 >
-> On Tue, May 20, 2025 at 12:41=E2=80=AFPM Barry Song <21cnbao@gmail.com> w=
-rote:
-> >
-> > On Tue, May 20, 2025 at 3:31=E2=80=AFPM Kairui Song <ryncsn@gmail.com> =
-wrote:
-> > >
-> > > On Mon, May 19, 2025 at 12:38=E2=80=AFPM Barry Song <21cnbao@gmail.co=
-m> wrote:
-> > > >
-> > > > > From: Kairui Song <kasong@tencent.com>
-> > > >
-> > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > > > > index e5a0db7f3331..5b4f01aecf35 100644
-> > > > > --- a/mm/userfaultfd.c
-> > > > > +++ b/mm/userfaultfd.c
-> > > > > @@ -1409,6 +1409,10 @@ static int move_pages_pte(struct mm_struct=
- *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
-> > > > >                               goto retry;
-> > > > >                       }
-> > > > >               }
-> > > > > +             if (!folio_swap_contains(src_folio, entry)) {
-> > > > > +                     err =3D -EBUSY;
-> > > > > +                     goto out;
-> > > > > +             }
-> > > >
-> > > > It seems we don't need this. In move_swap_pte(), we have been check=
-ing pte pages
-> > > > are stable:
-> > > >
-> > > >         if (!is_pte_pages_stable(dst_pte, src_pte, orig_dst_pte, or=
-ig_src_pte,
-> > > >                                  dst_pmd, dst_pmdval)) {
-> > > >                 double_pt_unlock(dst_ptl, src_ptl);
-> > > >                 return -EAGAIN;
-> > > >         }
-> > >
-> > > The tricky part is when swap_cache_get_folio returns the folio, both
-> > > folio and ptes are unlocked. So is it possible that someone else
-> > > swapped in the entries, then swapped them out again using the same
-> > > entries?
-> > >
-> > > The folio will be different here but PTEs are still the same value to
-> > > they will pass the is_pte_pages_stable check, we previously saw
-> > > similar races with anon fault or shmem. I think more strict checking
-> > > won't hurt here.
-> >
-> > This doesn't seem to be the same case as the one you fixed in
-> > do_swap_page(). Here, we're hitting the swap cache, whereas in that
-> > case, there was no one hitting the swap cache, and you used
-> > swap_prepare() to set up the cache to fix the issue.
-> >
-> > By the way, if we're not hitting the swap cache, src_folio will be
-> > NULL. Also, it seems that folio_swap_contains(src_folio, entry) does
-> > not guard against that case either.
+> Spammy devices can flood kernel logs with AER errors and slow/stall
+> execution. Add per-device ratelimits for AER correctable and non-fatal
+> uncorrectable errors that use the kernel defaults (10 per 5s).  Logging of
+> fatal errors is not ratelimited.
 >
-> Ah, that's true, it should be moved inside the if (folio) {...} block
-> above. Thanks for catching this!
+> There are two AER logging entry points:
 >
-> > But I suspect we won't have a problem, since we're not swapping in =E2=
-=80=94
-> > we didn't read any stale data, right? Swap-in will only occur after we
-> > move the PTEs.
+>    - aer_print_error() is used by DPC and native AER
 >
-> My concern is that a parallel swapin / swapout could result in the
-> folio to be a completely irrelevant or invalid folio.
+>    - pci_print_aer() is used by GHES and CXL
 >
-> It's not about the dst, but in the move src side, something like:
+> The native AER aer_print_error() case includes a loop that may log details
+> from multiple devices.  This is ratelimited such that we log all the
+> details we find if any of the devices has not hit the ratelimit.  If no
+> such device details are found, we still log the Error Source from the ERR_*
+> Message, ratelimited by the Root Port or RCEC that received it.
 >
-> CPU1                             CPU2
-> move_pages_pte
->   folio =3D swap_cache_get_folio(...)
->     | Got folio A here
->   move_swap_pte
->                                  <swapin src_pte, using folio A>
->                                  <swapout src_pte, put folio A>
->                                    | Now folio A is no longer valid.
->                                    | It's very unlikely but here SWAP
->                                    | could reuse the same entry as above.
-
-
-swap_cache_get_folio() does increment the folio's refcount, but it seems th=
-is
-doesn't prevent do_swap_page() from freeing the swap entry after swapping
-in src_pte with folio A, if it's a read fault.
-for write fault, folio_ref_count(folio) =3D=3D (1 + folio_nr_pages(folio))
-will be false:
-
-static inline bool should_try_to_free_swap(struct folio *folio,
-                                           struct vm_area_struct *vma,
-                                           unsigned int fault_flags)
-{
-       ...
-
-        /*
-         * If we want to map a page that's in the swapcache writable, we
-         * have to detect via the refcount if we're really the exclusive
-         * user. Try freeing the swapcache to get rid of the swapcache
-         * reference only in case it's likely that we'll be the exlusive us=
-er.
-         */
-        return (fault_flags & FAULT_FLAG_WRITE) && !folio_test_ksm(folio) &=
-&
-                folio_ref_count(folio) =3D=3D (1 + folio_nr_pages(folio));
-}
-
-and for swapout, __removing_mapping does check refcount as well:
-
-static int __remove_mapping(struct address_space *mapping, struct folio *fo=
-lio,
-                            bool reclaimed, struct mem_cgroup *target_memcg=
-)
-{
-        refcount =3D 1 + folio_nr_pages(folio);
-        if (!folio_ref_freeze(folio, refcount))
-                goto cannot_free;
-
-}
-
-However, since __remove_mapping() occurs after pageout(), it seems
-this also doesn't prevent swapout from allocating a new swap entry to
-fill src_pte.
-
-It seems your concern is valid=E2=80=94unless I'm missing something.
-Do you have a reproducer? If so, this will likely need a separate fix
-patch rather than being hidden in this patchset.
-
->     double_pt_lock
->     is_pte_pages_stable
->       | Passed because of entry reuse.
->     folio_move_anon_rmap(...)
->       | Moved invalid folio A.
+> The DPC aer_print_error() case is not ratelimited, since this only happens
+> for fatal errors.
 >
-> And could it be possible that the swap_cache_get_folio returns NULL
-> here, but later right before the double_pt_lock, a folio is added to
-> swap cache? Maybe we better check the swap cache after clear and
-> releasing dst lock, but before releasing src lock?
-
-It seems you're suggesting that a parallel swap-in allocates and adds
-a folio to the swap cache, but the PTE has not yet been updated from
-a swap entry to a present mapping?
-
-As long as do_swap_page() adds the folio to the swap cache
-before updating the PTE to present, this scenario seems possible.
-
-It seems we need to double-check:
-
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index bc473ad21202..976053bd2bf1 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -1102,8 +1102,14 @@ static int move_swap_pte(struct mm_struct *mm,
-struct vm_area_struct *dst_vma,
-        if (src_folio) {
-                folio_move_anon_rmap(src_folio, dst_vma);
-                src_folio->index =3D linear_page_index(dst_vma, dst_addr);
-+       } else {
-+               struct folio *folio =3D
-filemap_get_folio(swap_address_space(entry),
-+                                       swap_cache_index(entry));
-+               if (!IS_ERR_OR_NULL(folio)) {
-+                       double_pt_unlock(dst_ptl, src_ptl);
-+                       return -EAGAIN;
-+               }
-        }
--
-        orig_src_pte =3D ptep_get_and_clear(mm, src_addr, src_pte);
- #ifdef CONFIG_MEM_SOFT_DIRTY
-        orig_src_pte =3D pte_swp_mksoft_dirty(orig_src_pte);
-
-Let me run test case [1] to check whether this ever happens. I guess I need=
- to
-hack kernel a bit to always add folio to swapcache even for SYNC IO.
-
-[1] https://lore.kernel.org/linux-mm/20250219112519.92853-1-21cnbao@gmail.c=
-om/
-
+> The CXL pci_print_aer() case is ratelimited by the Error Source device.
 >
+> The GHES pci_print_aer() case is via aer_recover_work_func(), which
+> searches for the Error Source device.  If the device is not found, there's
+> no per-device ratelimit, so we use a system-wide ratelimit that covers all
+> error types (correctable, non-fatal, and fatal).
 >
-> >
-> > >
-> > > >
-> > > > Also, -EBUSY is somehow incorrect error code.
-> > >
-> > > Yes, thanks, I'll use EAGAIN here just like move_swap_pte.
-> > >
-> > >
-> > > >
-> > > > >               err =3D move_swap_pte(mm, dst_vma, dst_addr, src_ad=
-dr, dst_pte, src_pte,
-> > > > >                               orig_dst_pte, orig_src_pte, dst_pmd=
-, dst_pmdval,
-> > > > >                               dst_ptl, src_ptl, src_folio);
-> > > > >
-> > > >
-> >
+> Sargun at Meta reported internally that a flood of AER errors causes RCU
+> CPU stall warnings and CSD-lock warnings.
+>
+> Tested using aer-inject[1]. Sent 11 AER errors. Observed 10 errors logged
+> while AER stats (cat /sys/bus/pci/devices/<dev>/aer_dev_correctable) show
+> true count of 11.
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/gong.chen/aer-inject.git
+>
+> [bhelgaas: commit log, factor out trace_aer_event() and aer_print_rp_info()
+> changes to previous patches, collect single aer_err_info.ratelimit as union
+> of ratelimits of all error source devices, don't ratelimit fatal errors,
+> "aer_report" -> "aer_info"]
+> Reported-by: Sargun Dhillon <sargun@meta.com>
+> Signed-off-by: Jon Pan-Doh <pandoh@google.com>
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
 
-Thanks
-Barry
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+
+>   drivers/pci/pci.h      |  3 +-
+>   drivers/pci/pcie/aer.c | 66 ++++++++++++++++++++++++++++++++++++++----
+>   drivers/pci/pcie/dpc.c |  1 +
+>   3 files changed, 64 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 705f9ef58acc..65c466279ade 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -593,7 +593,8 @@ struct aer_err_info {
+>   	unsigned int id:16;
+>   
+>   	unsigned int severity:2;	/* 0:NONFATAL | 1:FATAL | 2:COR */
+> -	unsigned int __pad1:5;
+> +	unsigned int ratelimit:1;	/* 0=skip, 1=print */
+> +	unsigned int __pad1:4;
+>   	unsigned int multi_error_valid:1;
+>   
+>   	unsigned int first_error:5;
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index 4f1bff0f000f..f9e684ac7878 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -28,6 +28,7 @@
+>   #include <linux/interrupt.h>
+>   #include <linux/delay.h>
+>   #include <linux/kfifo.h>
+> +#include <linux/ratelimit.h>
+>   #include <linux/slab.h>
+>   #include <acpi/apei.h>
+>   #include <acpi/ghes.h>
+> @@ -88,6 +89,10 @@ struct aer_info {
+>   	u64 rootport_total_cor_errs;
+>   	u64 rootport_total_fatal_errs;
+>   	u64 rootport_total_nonfatal_errs;
+> +
+> +	/* Ratelimits for errors */
+> +	struct ratelimit_state cor_log_ratelimit;
+> +	struct ratelimit_state uncor_log_ratelimit;
+
+Nit: Do you think we should name it as nonfatal_log_ratelimit?
+
+>   };
+>   
+>   #define AER_LOG_TLP_MASKS		(PCI_ERR_UNC_POISON_TLP|	\
+> @@ -379,6 +384,11 @@ void pci_aer_init(struct pci_dev *dev)
+>   
+>   	dev->aer_info = kzalloc(sizeof(*dev->aer_info), GFP_KERNEL);
+>   
+> +	ratelimit_state_init(&dev->aer_info->cor_log_ratelimit,
+> +			     DEFAULT_RATELIMIT_INTERVAL, DEFAULT_RATELIMIT_BURST);
+> +	ratelimit_state_init(&dev->aer_info->uncor_log_ratelimit,
+> +			     DEFAULT_RATELIMIT_INTERVAL, DEFAULT_RATELIMIT_BURST);
+> +
+>   	/*
+>   	 * We save/restore PCI_ERR_UNCOR_MASK, PCI_ERR_UNCOR_SEVER,
+>   	 * PCI_ERR_COR_MASK, and PCI_ERR_CAP.  Root and Root Complex Event
+> @@ -672,6 +682,18 @@ static void pci_rootport_aer_stats_incr(struct pci_dev *pdev,
+>   	}
+>   }
+>   
+> +static int aer_ratelimit(struct pci_dev *dev, unsigned int severity)
+> +{
+> +	struct ratelimit_state *ratelimit;
+> +
+> +	if (severity == AER_CORRECTABLE)
+> +		ratelimit = &dev->aer_info->cor_log_ratelimit;
+> +	else
+> +		ratelimit = &dev->aer_info->uncor_log_ratelimit;
+> +
+> +	return __ratelimit(ratelimit);
+> +}
+> +
+>   static void __aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
+>   {
+>   	const char **strings;
+> @@ -715,6 +737,9 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
+>   
+>   	pci_dev_aer_stats_incr(dev, info);
+>   
+> +	if (!info->ratelimit)
+> +		return;
+> +
+>   	if (!info->status) {
+>   		pci_err(dev, "PCIe Bus Error: severity=%s, type=Inaccessible, (Unregistered Agent ID)\n",
+>   			aer_error_severity_string[info->severity]);
+> @@ -785,6 +810,9 @@ void pci_print_aer(struct pci_dev *dev, int aer_severity,
+>   
+>   	pci_dev_aer_stats_incr(dev, &info);
+>   
+> +	if (!aer_ratelimit(dev, info.severity))
+> +		return;
+> +
+>   	layer = AER_GET_LAYER_ERROR(aer_severity, status);
+>   	agent = AER_GET_AGENT(aer_severity, status);
+>   
+> @@ -815,8 +843,19 @@ EXPORT_SYMBOL_NS_GPL(pci_print_aer, "CXL");
+>    */
+>   static int add_error_device(struct aer_err_info *e_info, struct pci_dev *dev)
+>   {
+> +	/*
+> +	 * Ratelimit AER log messages.  "dev" is either the source
+> +	 * identified by the root's Error Source ID or it has an unmasked
+> +	 * error logged in its own AER Capability.  If any of these devices
+> +	 * has not reached its ratelimit, log messages for all of them.
+> +	 * Messages are emitted when "e_info->ratelimit" is non-zero.
+> +	 *
+> +	 * Note that "e_info->ratelimit" was already initialized to 1 for the
+> +	 * ERR_FATAL case.
+> +	 */
+>   	if (e_info->error_dev_num < AER_MAX_MULTI_ERR_DEVICES) {
+>   		e_info->dev[e_info->error_dev_num] = pci_dev_get(dev);
+> +		e_info->ratelimit |= aer_ratelimit(dev, e_info->severity);
+>   		e_info->error_dev_num++;
+>   		return 0;
+>   	}
+> @@ -914,7 +953,7 @@ static int find_device_iter(struct pci_dev *dev, void *data)
+>    * e_info->error_dev_num and e_info->dev[], based on the given information.
+>    */
+>   static bool find_source_device(struct pci_dev *parent,
+> -		struct aer_err_info *e_info)
+> +			       struct aer_err_info *e_info)
+>   {
+>   	struct pci_dev *dev = parent;
+>   	int result;
+> @@ -1140,9 +1179,10 @@ static void aer_recover_work_func(struct work_struct *work)
+>   		pdev = pci_get_domain_bus_and_slot(entry.domain, entry.bus,
+>   						   entry.devfn);
+>   		if (!pdev) {
+> -			pr_err("no pci_dev for %04x:%02x:%02x.%x\n",
+> -			       entry.domain, entry.bus,
+> -			       PCI_SLOT(entry.devfn), PCI_FUNC(entry.devfn));
+> +			pr_err_ratelimited("%04x:%02x:%02x.%x: no pci_dev found\n",
+> +					   entry.domain, entry.bus,
+> +					   PCI_SLOT(entry.devfn),
+> +					   PCI_FUNC(entry.devfn));
+>   			continue;
+>   		}
+>   		pci_print_aer(pdev, entry.severity, entry.regs);
+> @@ -1283,7 +1323,21 @@ static void aer_isr_one_error_type(struct pci_dev *root,
+>   	bool found;
+>   
+>   	found = find_source_device(root, info);
+> -	aer_print_source(root, info, found ? "" : " (no details found");
+> +
+> +	/*
+> +	 * If we're going to log error messages, we've already set
+> +	 * "info->ratelimit" to non-zero (which enables printing) because
+> +	 * this is either an ERR_FATAL or we found a device with an error
+> +	 * logged in its AER Capability.
+> +	 *
+> +	 * If we didn't find the Error Source device, at least log the
+> +	 * Requester ID from the ERR_* Message received by the Root Port or
+> +	 * RCEC, ratelimited by the RP or RCEC.
+> +	 */
+> +	if (info->ratelimit ||
+> +	    (!found && aer_ratelimit(root, info->severity)))
+> +		aer_print_source(root, info, found ? "" : " (no details found");
+> +
+>   	if (found)
+>   		aer_process_err_devices(info);
+>   }
+> @@ -1317,12 +1371,14 @@ static void aer_isr_one_error(struct pci_dev *root,
+>   		aer_isr_one_error_type(root, &e_info);
+>   	}
+>   
+> +	/* Note that messages for ERR_FATAL are never ratelimited */
+>   	if (status & PCI_ERR_ROOT_UNCOR_RCV) {
+>   		int fatal = status & PCI_ERR_ROOT_FATAL_RCV;
+>   		int multi = status & PCI_ERR_ROOT_MULTI_UNCOR_RCV;
+>   		struct aer_err_info e_info = {
+>   			.id = ERR_UNCOR_ID(e_src->id),
+>   			.severity = fatal ? AER_FATAL : AER_NONFATAL,
+> +			.ratelimit = fatal ? 1 : 0,
+>   			.level = KERN_ERR,
+>   			.multi_error_valid = multi ? 1 : 0,
+>   		};
+> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+> index 6c98fabdba57..530c5e2cf7e8 100644
+> --- a/drivers/pci/pcie/dpc.c
+> +++ b/drivers/pci/pcie/dpc.c
+> @@ -271,6 +271,7 @@ void dpc_process_error(struct pci_dev *pdev)
+>   			 status);
+>   		if (dpc_get_aer_uncorrect_severity(pdev, &info) &&
+>   		    aer_get_device_error_info(pdev, &info)) {
+> +			info.ratelimit = 1;	/* ERR_FATAL; no ratelimit */
+>   			aer_print_error(pdev, &info);
+>   			pci_aer_clear_nonfatal_status(pdev);
+>   			pci_aer_clear_fatal_status(pdev);
+
+-- 
+Sathyanarayanan Kuppuswamy
+Linux Kernel Developer
+
 
