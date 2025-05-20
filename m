@@ -1,169 +1,156 @@
-Return-Path: <linux-kernel+bounces-654958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB09ABCEFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:10:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBFBEABCF09
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED6797A6018
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:09:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697368A2A78
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6750E25C826;
-	Tue, 20 May 2025 06:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C4525C836;
+	Tue, 20 May 2025 06:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="IuofMIoD"
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	dkim=pass (2048-bit key) header.d=astier.eu header.i=@astier.eu header.b="UK1dKBGl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kXV3Z0ps"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055E81DB124;
-	Tue, 20 May 2025 06:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B77825A334;
+	Tue, 20 May 2025 06:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747721411; cv=none; b=uoh1Zw4SHIfRKMOP2mA6622PZMUP5KdyKdB1A12/DNtULLCQ1xGNqYPKN3TFtnxaX7fyTBYPeekjuW0ofcgv2Q96mCiOpl5Nj/jHHnisM5tiLA4z7Beffg212DArCaMqDGDo9uO2+zp2gaqq1/aCPrnEDHdcG+YkqSNox6U06DQ=
+	t=1747721645; cv=none; b=CJitSo6o56Tf4nadOo1reCKiPxDvMVP0eK/wSH9Ih8KP++ifcKrIzM9wF1muVIotIX1U7PQGQbeTX2jPlHxWFFXobxlXqzl1j4tOUVimb7eMkUYEtwcmyt0XhyyyMRKwJ6yla6kldZgrE/OReCMOJgVqCcCxtHATMOLWKwc/tCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747721411; c=relaxed/simple;
-	bh=3inkbt8TL1lFoRCu53H4E/rxKOPuy4Fw9iBX9yfI1EA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uryXOx+GTEr4IhThQkt9u3Cr+8csa1QPZOxjp2vPeRPvfdKV8ZVsgzwXJmjvAbmI39T+cJ36Rjy1rVU+qJxitE8ZkJh8po05p/wHVNEAvvrSfZaKfQAnzvk5lAIX5BV+ukV9GFYw6hThm3hxZW4eg6NtqhXq8Dn+68Wfzmjrtko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=IuofMIoD; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=G7Kx0ZtWsfXqw30Vxg8hLBL8MP5DK1Zph4yxRDD3jAc=; b=IuofMIoDA6/GxCoqUO+bj/xGM9
-	/YzUYj2Dm9Xkdu92t6jcUkeX/gyoGdKcpsmBoTttu+WEzuF7rr4eoBQLA5CopLnsVG4gUd3epTFN2
-	iT0q5MDt5QKDnxp3HEZShGLpOiR1oVvAflWmSYT+/5QzFzaHxiWcfnpifZUOivkWzcVVKHeU7FSqi
-	Ve2jA6iXN888dRQcH0RvE2bfMR1a31gCX6FZekP6gPjAACpTzpg+5MHhA+MQLQxdYz/fnK3C1FsGs
-	0CazuZXoc/hOBGvOpkeL4g71qsRkOdXII0wLvEtu9VnqhFhnNFNAKyJYMiHB5Umpyy2ikl/zfdZHA
-	9eNdLXwg==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.94.2)
-	(envelope-from <carnil@debian.org>)
-	id 1uHGAv-00GASm-Et; Tue, 20 May 2025 06:10:06 +0000
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id 929F3BE2DE0; Tue, 20 May 2025 08:10:04 +0200 (CEST)
-Date: Tue, 20 May 2025 08:10:04 +0200
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Roland Clobus <rclobus@rclobus.nl>, Lizhi Xu <lizhi.xu@windriver.com>,
-	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Cc: 1106070@bugs.debian.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [6.12.y regression] loosetup: failed to set up loop device:
- Invalid argument after 184b147b9f7f ("loop: Add sanity check for
- read/write_iter")
-Message-ID: <aCwcvC4KBu6j4Dqz@eldamar.lan>
-References: <3a333f27-6810-4313-8910-485df652e897@rclobus.nl>
- <aCwZy6leWNvr7EMd@eldamar.lan>
+	s=arc-20240116; t=1747721645; c=relaxed/simple;
+	bh=sfOGzBxbmYxrpTmsmk9iA7kI+4GcUiAg7Ev+d64vRxA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=UstwmppSmTF0q2myh9EN/kTRoSfGfXdEcYqN7OIaAg9m3VfCGSd9GXLP2swUPPa0Huc6V7LFvlzPbx1WEP80hbqLQxiCKJvK2C4a+Q7KIB4L6xjUZAnYCqWOM4BvceJO4itVWT2keQeXGQljkFZMlSFF+2pouW5Xqr2dW25ty3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astier.eu; spf=pass smtp.mailfrom=astier.eu; dkim=pass (2048-bit key) header.d=astier.eu header.i=@astier.eu header.b=UK1dKBGl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kXV3Z0ps; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astier.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astier.eu
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 6119F2540156;
+	Tue, 20 May 2025 02:14:00 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Tue, 20 May 2025 02:14:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=astier.eu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1747721640;
+	 x=1747808040; bh=ebCCwKl+ctIjs3xdVcCquO8ccEzo9gT00bMAJW9tR3k=; b=
+	UK1dKBGlOE/nPbSFz2w4NVz0qzvvRxtPLIANPfir872v6f8QPbeybw8fzi0JeWj4
+	vnalmJl4JpaBJSrU3Z2FkdoQyOephsDTEdjqhfkX8Vb8tMta+dcg7LhphfWbhf7a
+	akyJcLx5Ehiq6iXJIEeOtQUnM1hm8V3GsHdS4mZKqJlFlKeYqhycgERZpMRCwwiy
+	zI0iHMLipA4FCU5uJc7ER6HPVfylazaud6VKL7eLLsvS4szv4V9+/aRpb5XzJMky
+	XAGTJjplkAKqCVkVpWheHRepDybx53LwpLxYKjuHlni+OAymlLhxZ63aeYf54OO+
+	RtyyzPdKSTSO7ItH29fL9Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1747721640; x=
+	1747808040; bh=ebCCwKl+ctIjs3xdVcCquO8ccEzo9gT00bMAJW9tR3k=; b=k
+	XV3Z0ps9QdyShz3WgtdZTFTNx4ZS/RgqjBNiy8fn05lQc2cyOiqvTR7QxmGDCtaR
+	e167ALUh3QZg2+lJUz1Tjykr9PcflQK0S/bz1gnQBWbfUfwLIzGYgoDQBdb++iL7
+	LK1rIM/qpRVRO/kxvMTJkNdswhrWfIOO3NL9KlAklw9zinyzdvRjRBhmoBBN9fNK
+	0ge2wA5diNZtojP2miy8fSnwY7SjHBjebJVzG83b0+zz1aXYVeB9/RNqvQuyftGI
+	ei+Z4LUZAYNPNjd/s40uTGFzdQNPUXU3AHYWSeLA6pbejnK0XU5IIyoqTCPmXktR
+	dNA1ffpfGnsdmLM99D0sw==
+X-ME-Sender: <xms:px0saFY933IyeKEWYu3XuDcC-SGiR6bNl4iLz_M7NuHdPfvXkjllOQ>
+    <xme:px0saMZ9ZuGp5gd440aUHBHelMRvH5_nWuDdlHln6mDWgYxZ0oLQlKhRejnK0tbX2
+    z0FaoDXmVVF2IoGz38>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefvdefheduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertder
+    tdejnecuhfhrohhmpedftehnihhsshgvucetshhtihgvrhdfuceorghnihhsshgvsegrsh
+    htihgvrhdrvghuqeenucggtffrrghtthgvrhhnpeekvedutdeghfevfeevjefhvdfhtdeh
+    teetfedvgfdvffefveeufeduueethfegfeenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpegrnhhishhsvgesrghsthhivghrrdgvuhdpnhgspghr
+    tghpthhtohepfedupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigse
+    grrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepmhhtuhhrqhhuvghtthgvsegs
+    rgihlhhisghrvgdrtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvth
+    dprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthht
+    oheprghnughrvgifjhgsrghllhgrnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhope
+    gsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphhtthhopehmihhguhgvlhdr
+    ohhjvggurgdrshgrnhguohhnihhssehgmhgrihhlrdgtohhmpdhrtghpthhtohephihurh
+    ihrdhnohhrohhvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghlihgtvghrhihhlhes
+    ghhoohhglhgvrdgtohhm
+X-ME-Proxy: <xmx:px0saH_Ji6vuSbgAkP2LDvb94v-U3vk5LgRfgazc5HYIcqfC-vpOMA>
+    <xmx:px0saDpRhMm_Nx09JgSroPL-Ur1A8wMHKD2-6mLWZMjOv-38Pdxqpw>
+    <xmx:px0saAp2DBjw2SBZMd8AmMDJB34Elb9ERuvq7RqLGbtGWH-yQMuOQQ>
+    <xmx:px0saJTaeW3h9Vhf5t5KvcchACqLnVj3EhG2N4j48qFuWAFl1aTvJg>
+    <xmx:qB0saEPbiwR3t4qKp0RzcC6tYAfavsmtt2bjyqVbRFtLP3L5rEOWCj73>
+Feedback-ID: iccec46d4:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 4EE4B700060; Tue, 20 May 2025 02:13:59 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCwZy6leWNvr7EMd@eldamar.lan>
-X-Debian-User: carnil
+X-ThreadId: Tc582061166103edd
+Date: Tue, 20 May 2025 08:13:09 +0200
+From: "Anisse Astier" <anisse@astier.eu>
+To: "Viresh Kumar" <viresh.kumar@linaro.org>,
+ "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@redhat.com>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, linux-pm@vger.kernel.org,
+ "Vincent Guittot" <vincent.guittot@linaro.org>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Nishanth Menon" <nm@ti.com>,
+ rust-for-linux@vger.kernel.org,
+ "Manos Pitsidianakis" <manos.pitsidianakis@linaro.org>,
+ =?UTF-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
+ "Joakim Bech" <joakim.bech@linaro.org>, "Rob Herring" <robh@kernel.org>,
+ "Yury Norov" <yury.norov@gmail.com>, "Burak Emir" <bqe@google.com>,
+ "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
+ "Russell King" <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Andrew Ballance" <andrewjballance@gmail.com>,
+ linux-kernel@vger.kernel.org
+Message-Id: <e8a404b2-4ec6-4e1d-a973-15684676e870@app.fastmail.com>
+In-Reply-To: <20250520043355.wjkrslnripaqj6mm@vireshk-i7>
+References: <cover.1747634382.git.viresh.kumar@linaro.org>
+ <21b4c30db60f22d56cc6386a18564705ad3a6f4a.1747634382.git.viresh.kumar@linaro.org>
+ <CANiq72mNHYKXcDm6DiB=69W0w8pZ1KhqeARqqKBK_s01PPRsmQ@mail.gmail.com>
+ <20250520043355.wjkrslnripaqj6mm@vireshk-i7>
+Subject: Re: [PATCH V12 06/15] rust: macros: enable use of hyphens in module names
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 20, 2025 at 07:57:31AM +0200, Salvatore Bonaccorso wrote:
-> Hi
-> 
-> In Debian Roland Clobus reported a regression with setting up loop
-> devices from a backing squashfs file lying on read-only mounted target
-> directory from a iso.
-> 
-> The original report is at:
-> https://bugs.debian.org/1106070
-> 
-> Quoting the report:
-> 
-> On Mon, May 19, 2025 at 12:15:10PM +0200, Roland Clobus wrote:
-> > Package: linux-image-6.12.29-amd64
-> > Version: 6.12.29-1
-> > Severity: important
-> > X-Debbugs-Cc: debian-amd64@lists.debian.org
-> > User: debian-amd64@lists.debian.org
-> > Usertags: amd64
-> > X-Debbugs-Cc: phil@hands.com
-> > User: debian-qa@lists.debian.org
-> > Usertags: openqa
-> > X-Debbugs-Cc: debian-boot
-> > 
-> > Hello maintainers of the kernel,
-> > 
-> > The new kernel (6.12.29) has a modified behaviour (compared to 6.12.27) for
-> > the loop device.
-> > 
-> > This causes the Debian live images (for sid) to fail to boot.
-> > 
-> > The change happened between 20250518T201633Z and 20250519T021902Z, which
-> > matches the upload of 6.12.29 (https://tracker.debian.org/news/1646619/accepted-linux-signed-amd64-612291-source-into-unstable/)
-> > at 20250518T230426Z.
-> > 
-> > To reproduce:
-> > * Download the daily live image from https://openqa.debian.net/tests/396941/asset/iso/smallest-build_sid_20250519T021902Z.iso
-> > * Boot into the live image (the first boot option)
-> > * Result: an initramfs shell (instead of a live system) -> FAIL
-> > * Try: `losetup -r /dev/loop1 /run/live/medium/live/filesystem.squashfs`
-> > * Result: `failed to set up loop device: invalid argument` -> FAIL
-> > * Try: `cp /run/live/medium/live/filesystem.squashfs /`
-> > * Try: `losetup -r /dev/loop2 /filesystem.squashfs`
-> > * Result: `loop2: detected capacity change from 0 to 1460312` -> PASS
-> > 
-> > It appears that the loopback device cannot be used any more with the mount
-> > /run/live/medium (which is on /dev/sr0).
-> > 
-> > I've verified: the md5sum of the squashfs file is OK.
-> > 
-> > The newer kernel is not in trixie yet.
-> > 
-> > With kind regards,
-> > Roland Clobus
-> 
-> A short reproducer is as follows:
-> 
-> iso="netinst.iso"
-> url="https://openqa.debian.net/tests/396941/asset/iso/smallest-build_sid_20250519T021902Z.iso"
-> if [ ! -e "${iso}" ]; then
->         wget "${url}" -O "${iso}"
-> fi
-> mountdir="$(mktemp -d)"
-> mount -v "./${iso}" "${mountdir}"
-> losetup -v -r -f "${mountdir}/live/filesystem.squashfs"
-> loosetup -l
-> 
-> resulting in:
-> 
-> mount: /tmp/tmp.HgbNe7ek3h: WARNING: source write-protected, mounted read-only.
-> mount: /dev/loop0 mounted on /tmp/tmp.HgbNe7ek3h.
-> losetup: /tmp/tmp.HgbNe7ek3h/live/filesystem.squashfs: failed to set up loop device: Invalid argument
-> NAME       SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE         DIO LOG-SEC
-> /dev/loop0         0      0         1  0 /root/netinst.iso   0     512
-> 
-> Reverting 184b147b9f7f ("loop: Add sanity check for read/write_iter")
-> on top of 6.12.29 fixes the issue:
-> 
-> mount: /tmp/tmp.ACkkdCdYvB: WARNING: source write-protected, mounted read-only.
-> mount: /dev/loop0 mounted on /tmp/tmp.ACkkdCdYvB.
-> NAME       SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE                                    DIO LOG-SEC
-> /dev/loop1         0      0         0  1 /tmp/tmp.ACkkdCdYvB/live/filesystem.squashfs   0     512
-> /dev/loop0         0      0         1  0 /root/netinst.iso                              0     512
-> 
-> For completeness, netinst.iso is a iso9660 fstype with mount options
-> "ro,relatime,nojoliet,check=s,map=n,blocksize=2048,iocharset=utf8".
-> 
-> #regzbot introduced: 184b147b9f7f
-> #regzbot link: https://bugs.debian.org/1106070
 
-Just tested: The regression exists as well in 6.15-rc7 so it is not
-specific to the stable 6.12.y update.
 
-Regards,
-Salvatore
+Mar 20 mai 2025, =C3=A0 06:33, Viresh Kumar a =C3=A9crit=E2=80=AF:
+> On 19-05-25, 16:15, Miguel Ojeda wrote:
+>> On Mon, May 19, 2025 at 9:08=E2=80=AFAM Viresh Kumar <viresh.kumar@li=
+naro.org> wrote:
+>> >
+>> > +    /* Rust does not allow hyphens in identifiers, use underscore =
+instead */
+>>=20
+>> (In case you see this before you apply)
+>>=20
+>> Nit: `//` for comments, also please end with a period.
+>
+> Done.
+
+Thank you Viresh for iterating on this and picking up review comments. D=
+o not hesitate to add your Co-developed-by.
+
+Kind regards,
+
+Anisse
 
