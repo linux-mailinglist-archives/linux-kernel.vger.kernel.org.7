@@ -1,39 +1,45 @@
-Return-Path: <linux-kernel+bounces-656279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B81ABE3D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:39:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E56FABE40B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70051BA728D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:40:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 068EE7A69E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F88627FD4D;
-	Tue, 20 May 2025 19:39:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF7722DA0D;
-	Tue, 20 May 2025 19:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFEA248F75;
+	Tue, 20 May 2025 19:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=david-bauer.net header.i=@david-bauer.net header.b="gKppwhXq"
+Received: from mailgate02.uberspace.is (mailgate02.uberspace.is [185.26.156.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B853324C66C
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 19:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747769992; cv=none; b=rp2+O6qOXZsvPmqV6wscVzOzyZ3ro3AabcxpHCt3sBpc7qRN0Rgf3E7V0v3VhohhZLBMkO3hgQwReqZBTZIH3Zwc4mmpnalGRt+AgoCoD5xu6nfN+AccPj9C257WNAX5ObdD8+Hu7FG/Cjaw9xjxcWeHPq1LsOcF3K4F++LZZWY=
+	t=1747770616; cv=none; b=A0pAhCwZSYqwIYGccRCMjNIjDxe16AZ/iR5HmPj+9NuWTpXlK4oO0aGb7M2QTM/xIRkqODpuuxOwIKcAfSXWwr4V5TkWbSg1GMnxztQc19X5x13toHn+xJP6bk+F7yIALRPMevHV3XarHZvKuwVw5inqlKFV5KgG6GuWjS+VSQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747769992; c=relaxed/simple;
-	bh=75F8BZwSWDSrqGudZvElei0KYaFv2MODy/UlW3wQAAk=;
+	s=arc-20240116; t=1747770616; c=relaxed/simple;
+	bh=kMiX/BWWUBpZXgzAi68O/8mLwTgRWc6IeaKIGYwCbsY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hOYnIUGpshzeYK9I/Cd9C2/mLGlnhqHlU3jG2TpMgC6JY5l70K34HBLRT0TYVVZuThK4ARChwDvbmYJjVhUgB5cd8Oh7KDKDp/zTxKPpIPCZCvf0YbXuCaTRpubkPMBs85KnHtVlIVAEsDkDIwYnBdREasGAKe3l1QH3DvJwIjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D533339;
-	Tue, 20 May 2025 12:39:35 -0700 (PDT)
-Received: from [10.57.93.184] (unknown [10.57.93.184])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 86A723F6A8;
-	Tue, 20 May 2025 12:39:47 -0700 (PDT)
-Message-ID: <a64cd485-310f-4d4c-a3da-2d8c35d7f343@arm.com>
-Date: Tue, 20 May 2025 20:39:45 +0100
+	 In-Reply-To:Content-Type; b=aXcUq94j8zB3dQXwaTrnx11V/3J2E8t2WHGV3Inw3zPVsLDAYYsGhRrZ3e6Gf7WW7dCEPlpa3vqdm0hwSkRcM1+AF06kX3nCZXew0BB5zazx9XqwTkRVLxvhpMWgOO3fjOX7hRg7HkrdRzANxBlfHw5OUnHg3eOIM98LXFhhBII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=david-bauer.net; spf=pass smtp.mailfrom=david-bauer.net; dkim=pass (4096-bit key) header.d=david-bauer.net header.i=@david-bauer.net header.b=gKppwhXq; arc=none smtp.client-ip=185.26.156.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=david-bauer.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=david-bauer.net
+Received: from perseus.uberspace.de (perseus.uberspace.de [95.143.172.134])
+	by mailgate02.uberspace.is (Postfix) with ESMTPS id 734CD17F9A0
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 21:40:06 +0200 (CEST)
+Received: (qmail 31776 invoked by uid 988); 20 May 2025 19:40:06 -0000
+Authentication-Results: perseus.uberspace.de;
+	auth=pass (plain)
+Received: from unknown (HELO unkown) (::1)
+	by perseus.uberspace.de (Haraka/3.0.1) with ESMTPSA; Tue, 20 May 2025 21:40:05 +0200
+Message-ID: <16f39da9-d182-4dc6-8739-1d33fecd0e8f@david-bauer.net>
+Date: Tue, 20 May 2025 21:40:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,145 +47,276 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: Restrict pagetable teardown to avoid false
- warning
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>, Dev Jain <dev.jain@arm.com>
-Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- mark.rutland@arm.com, stable@vger.kernel.org, will@kernel.org,
- yang@os.amperecomputing.com
-References: <df7eb016-bea4-489d-aecb-1a47eb5e33b2@arm.com>
- <20250520090501.27273-1-dev.jain@arm.com>
- <021dfe38-f786-46d0-a43f-769aff07b3f0@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <021dfe38-f786-46d0-a43f-769aff07b3f0@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 1/2] dt-bindings: input: add Semtech SX951x binding
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250505203847.86714-1-mail@david-bauer.net>
+ <cbf42385-9803-4bea-bf99-a6f31f1454f6@linaro.org>
+ <8c9e5e74-966b-4969-9776-7655863fd197@david-bauer.net>
+ <b6d066ea-e47d-4495-bd0b-17ba184275a1@linaro.org>
+Content-Language: en-US
+From: David Bauer <mail@david-bauer.net>
+Autocrypt: addr=mail@david-bauer.net; keydata=
+ xjMEZgynMBYJKwYBBAHaRw8BAQdA+32xE63/l6uaRAU+fPDToCtlZtYJhzI/dt3I6VxixXnN
+ IkRhdmlkIEJhdWVyIDxtYWlsQGRhdmlkLWJhdWVyLm5ldD7CjwQTFggANxYhBLPGu7DmE/84
+ Uyu0uW0x5c9UngunBQJmDKcwBQkFo5qAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQbTHlz1Se
+ C6eKAwEA8B6TGkUMw8X7Kv3JdBIoDqJG9+fZuuwlmFsRrdyDyHkBAPtLydDdancCVWNucImJ
+ GSk+M80qzgemqIBjFXW0CZYPzjgEZgynMBIKKwYBBAGXVQEFAQEHQPIm0qo7519c7VUOTAUD
+ 4OR6mZJXFJDJBprBfnXZUlY4AwEIB8J+BBgWCAAmFiEEs8a7sOYT/zhTK7S5bTHlz1SeC6cF
+ AmYMpzAFCQWjmoACGwwACgkQbTHlz1SeC6fP2AD8CduoErEo6JePUdZXwZ1e58+lAeXOLLvC
+ 2kj1OiLjqK4BANoZuHf/ku8ARYjUdIEgfgOzMX/OdYvn0HiaoEfMg7oB
+In-Reply-To: <b6d066ea-e47d-4495-bd0b-17ba184275a1@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Bar: ---
+X-Rspamd-Report: BAYES_HAM(-3) XM_UA_NO_VERSION(0.01) MIME_GOOD(-0.1)
+X-Rspamd-Score: -3.09
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=david-bauer.net; s=uberspace;
+	h=from:to:cc:subject:date;
+	bh=kMiX/BWWUBpZXgzAi68O/8mLwTgRWc6IeaKIGYwCbsY=;
+	b=gKppwhXqCzdpmt8JuQ8Yrn4xFo3jWWuQxZQ5mG5WsNzNGOtfyn/os6ZgRxQ3hPUq+rWp1k7+NF
+	SoFijgSyIHhkprLr+Z6SCK3YTDI76DEMjQnus/5mCa6HNqYok0esKQisdRVWGY/N8m3BVbyzoRrX
+	U0diABp/pelOHL7ALQXXGcWs+4nXLuMK4g8F+cK/E/0LkhakUhMHAAT2g1kV1vWsRDSRw+mC9b8y
+	8hfKn/8zKdA9JJhyWYGtgvSuLpeE1GnfuK9BYnWzb4PvgCOw0AYTcN/WkFYTAtEwd/+KU7hrqtEq
+	icPXzw9yWBy35cgZmQXnv8EAIzFAlOXS2fR3WoCi48psgdtwwjsQYQ2rnqRJw8y7ALoZ8/yLfdW2
+	Yw4P8d8qHBV1WNsjpU1PRH/rwYSOoc3RgjuBoof+64rdD1eRpbss7kE5ZcRL059rjpwXspYPTS3t
+	EoBuCYJZO/5QslE2vBw49EgSmK9/pASyiNJ54XvcIH3MqWtGT8KST8e9ZaZ1SyZH0RkMPCORDKK+
+	+6NeN6wl9D7dtFLRATF99M0dAtEeEfNU5lutCshZSvt3qoVkMrMhaERfhAOsOUVva7dIeI74a7ux
+	wS3TLe5Zv7yhC0DUu4z0+OV8GQ8ZBdiwt0yN0lM62iRBK1zrDMOkvNGSkc6+VnIISKPmvp/Dl4dT
+	M=
 
-On 20/05/2025 10:10, David Hildenbrand wrote:
-> On 20.05.25 11:05, Dev Jain wrote:
->> On 19/05/2025 13:16, David Hildenbrand wrote:
->>> On 19.05.25 11:08, Ryan Roberts wrote:
->>>> On 18/05/2025 10:54, Dev Jain wrote:
->>>>> Commit 9c006972c3fe removes the pxd_present() checks because the caller
+Hi Krzysztof,
+
+On 5/20/25 15:58, Krzysztof Kozlowski wrote:
+> On 06/05/2025 12:05, David Bauer wrote:
+>> Hi Krzysztof,
+>>
+>> thanks for the review.
+>>
+>> On 5/6/25 08:21, Krzysztof Kozlowski wrote:
+>>> On 05/05/2025 22:38, David Bauer wrote:
+>>>> Add device-tree binding for the Semtech SX9512/SX9513 family of touch
+>>>> controllers with integrated LED driver.
 >>>>
->>>> nit: please use the standard format for describing commits: Commit 9c006972c3fe
->>>> ("arm64: mmu: drop pXd_present() checks from pXd_free_pYd_table()")
->>>>
->>>>> checks pxd_present(). But, in case of vmap_try_huge_pud(), the caller only
->>>>> checks pud_present(); pud_free_pmd_page() recurses on each pmd through
->>>>> pmd_free_pte_page(), wherein the pmd may be none. Thus it is possible to
->>>>> hit a warning in the latter, since pmd_none => !pmd_table(). Thus, add
->>>>> a pmd_present() check in pud_free_pmd_page().
->>>>>
->>>>> This problem was found by code inspection.
->>>>>
->>>>> This patch is based on 6.15-rc6.
->>>>
->>>> nit: please remove this to below the "---", its not part of the commit log.
->>>>
->>>>>
->>>>> Fixes: 9c006972c3fe (arm64: mmu: drop pXd_present() checks from
->>>>> pXd_free_pYd_table())
->>>>>
->>>>
->>>> nit: remove empty line; the tags should all be in a single block with no empty
->>>> lines.
->>>>
->>>>> Cc: <stable@vger.kernel.org>
->>>>> Reported-by: Ryan Roberts <ryan.roberts@arm.com>
->>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>>> ---
->>>>> v1->v2:
->>>>>    - Enforce check in caller
->>>>>
->>>>>    arch/arm64/mm/mmu.c | 3 ++-
->>>>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->>>>> index ea6695d53fb9..5b1f4cd238ca 100644
->>>>> --- a/arch/arm64/mm/mmu.c
->>>>> +++ b/arch/arm64/mm/mmu.c
->>>>> @@ -1286,7 +1286,8 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
->>>>>        next = addr;
->>>>>        end = addr + PUD_SIZE;
->>>>>        do {
->>>>> -        pmd_free_pte_page(pmdp, next);
->>>>> +        if (pmd_present(*pmdp))
->>>>
->>>> pmd_free_pte_page() is using READ_ONCE() to access the *pmdp to ensure it can't
->>>> be torn. I suspect we don't technically need that in these functions because
->>>> there can be no race with a writer.
+>>>> Signed-off-by: David Bauer <mail@david-bauer.net>
 >>>
->>> Yeah, if there is no proper locking in place the function would already
->>> seriously mess up (double freeing etc).
+>>> You CC-ed an address, which suggests you do not work on mainline kernel
+>>> or you do not use get_maintainers.pl/b4/patman. Please rebase and always
+>>> work on mainline or start using mentioned tools, so correct addresses
+>>> will be used.
+>> I'm a bit unsure what you are referring to - maybe I've set the options
+>> for get_maintainer.pl wrong, but i use
 >>
->> Indeed; there is no locking, but this portion of the vmalloc VA space has been
->> allocated to us exclusively, so we know there can be no one else racing.
+>> get_maintainer.pl --nogit --nogit-fallback --norolestats --nol
 >>
->>>
->>>> But the arm64 arch code always uses
->>>> READ_ONCE() for dereferencing pgtable entries for safely. Perhaps we should be
->>>> consistent here?
->>>
->>> mm/vmalloc.c:   if (pmd_present(*pmd) && !pmd_free_pte_page(pmd, addr))
+>> to determine TO recipients and
 >>
->> Yes, I saw that. I know that we don't technically need READ_ONCE(). I'm just
->> proposng that for arm64 code we should be consistent with what it already does.
->> See Commit 20a004e7b017 ("arm64: mm: Use READ_ONCE/WRITE_ONCE when accessing
->> page tables")
+>> get_maintainer.pl --nogit --nogit-fallback --norolestats --nom
 >>
->> So I'll just use pmdp_get()?
+>> for CC destinations.
+>>
+>> Granted, my tree was a bit out of date but it was from mainline
 > 
-> Maybe that's the cleanest approach. 
+> Mainline means latest RC or maintainer tree or linux next. v5.0 is not
+> mainline anymoer.
+> 
+>> and after rebase both commands returned consistent results.
+>>
+>> Hope you can provide me with some guidance there.
+> 
+> Well, read full reply. It is impossible to get such email address from
+> above commands. Such email address does not exist since long time and it
+> easy to prove - just git grep for it. No results, so how could it be
+> printed by get_maintainers.pl?
+> 
+> If you disagree then please paste full output of:
+> 
+> $ git describe
+> $ git status
+> $ scripts/get_maintainer.pl 0*
+> 
+> I provided you extensive guideline exactly to avoid further trivial
+> discussions about that triviality, so I would really appreciate if you
+> followed it.
 
-Yeah let's do that.
+I did a complete new clone of my repository without changing the base-branch
+and now the script outputs the correct set of addresses. Be assured v2
+will reach the correct inbox(es).
 
-> Likely also common code should use that at
-> some point @Ryan?
+Sorry for the confusion here. Still appreciate you did point this
+out to me.
 
-This is a bit of a can of worms... :)
+> 
+>>
+>>>
+>>> Please use scripts/get_maintainers.pl to get a list of necessary people
+>>> and lists to CC (and consider --no-git-fallback argument, so you will
+>>> not CC people just because they made one commit years ago). It might
+>>> happen, that command when run on an older kernel, gives you outdated
+>>> entries. Therefore please be sure you base your patches on recent Linux
+>>> kernel.
+>>>
+>>> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+>>> people, so fix your workflow. Tools might also fail if you work on some
+>>> ancient tree (don't, instead use mainline) or work on fork of kernel
+>>> (don't, instead use mainline). Just use b4 and everything should be
+>>> fine, although remember about `b4 prep --auto-to-cc` if you added new
+>>> patches to the patchset.
+>>>
+>>>
+>>>> ---
+>>>>    .../bindings/input/semtech,sx951x.yaml        | 180 ++++++++++++++++++
+>>>>    1 file changed, 180 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/input/semtech,sx951x.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/input/semtech,sx951x.yaml b/Documentation/devicetree/bindings/input/semtech,sx951x.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..e4f938decd86
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/input/semtech,sx951x.yaml
+>>>> @@ -0,0 +1,180 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/input/semtech,sx951x.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Semtech SX9512/SX9513 based capacitive touch sensors
+>>>> +
+>>>> +description: |
+>>>
+>>> Do not need '|' unless you need to preserve formatting.
+>>>
+>>>> +  The Semtech SX9512/SX9513 Family of capacitive touch controllers
+>>>> +  with integrated LED drivers. The device communication is using I2C only.
+>>>> +
+>>>> +maintainers:
+>>>> +  - David Bauer <mail@david-bauer.net>
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    enum:
+>>>> +      - semtech,sx9512
+>>>> +      - semtech,sx9513
+>>>
+>>> Devices are not compatible? What are the differences?
+>>
+>> The SX9513 is a cost-reduced version which does not
+>> support proximity sensing. With the current support
+>> of the driver they work identical. Should i add this
+>> information as a comment?
+> 
+> So they are compatible and this should be expressed via fallback.
+> 
+> 
+>>
+>>>
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  '#address-cells':
+>>>> +    const: 1
+>>>> +
+>>>> +  '#size-cells':
+>>>> +    const: 0
+>>>> +
+>>>> +  poll-interval:
+>>>> +    default: 100
+>>>> +    description: |
+>>>
+>>> Do not need '|' unless you need to preserve formatting. Same comment
+>>> everywhere.
+>>>
+>>>> +      The polling interval for touch events in milliseconds.
+>>>
+>>> Missing -ms property unit suffix... unless you are using existing
+>>> property from common schema, but I do not see any reference (and thus
+>>> unevaluatedProperties at the end).
+>>>
+>>>> +
+>>>> +patternProperties:
+>>>> +  "^channel@[0-7]$":
+>>>> +    $ref: input.yaml#
+>>>> +    type: object
+>>>> +    description: |
+>>>> +      Each node represents a channel of the touch controller.
+>>>> +      Each channel provides a capacitive touch sensor input and
+>>>> +      an LED driver output.
+>>>> +
+>>>> +    properties:
+>>>> +      reg:
+>>>> +        enum: [0, 1, 2, 3, 4, 5, 6, 7]
+>>>> +
+>>>> +      linux,keycodes:
+>>>> +        maxItems: 1
+>>>> +        description: |
+>>>> +          Specifies an array of numeric keycode values to
+>>>> +          be used for the channels. If this property is
+>>>> +          omitted, the channel is not used as a key.
+>>>> +
+>>>> +      semtech,cin-delta:
+>>>
+>>> Use proper unit suffix and express it in pF.
+>>
+>> To represent 2.3 and 3.8 pF, would it be better to represent in
+>> femtofarad?
+>>
+>>>
+>>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>>> +        minimum: 0
+>>>> +        maximum: 3
+>>>> +        default: 3
+>>>> +        description: |
+>>>> +          The capacitance delta which is used to detect a touch
+>>>> +          or release event. The property value is mapped to a
+>>>> +          farad range between 7pF and 2.3pF internally. The delta
+>>>> +          becomes smaller the higher the value is.
+>>>> +
+>>>> +      semtech,sense-threshold:
+>>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>>> +        minimum: 0
+>>>> +        maximum: 255
+>>>> +        default: 4
+>>>> +        description: |
+>>>> +          The threshold value after which the channel detects a touch.
+>>>> +          Refer to the datasheet for the internal calculation of the
+>>>> +          resulting touch sensitivity.
+>>>> +
+>>>> +      led:
+>>>
+>>> I think subnode is here not needed. This should be part of the channel,
+>>> probably.
+>>
+>> Just to be sure - you mean to have a property "led" upon which instructs
+>> the channel to be used to drive an LED and include the LED specific
+>> properties in the node of the channel?
+> No, I do not mean a property led. I mean that child node should be
+> folded into parent.
 
-Potted history: I converted all non-arch and arm64 code to use ptep_get() a
-while back. That was necessary because for contpte mappings, arm64 needs to do
-more than just read the pte, so that provided the needed hook.
+Okay, now i get it. The hardware supports the exclusive as well as combined
+use of channels as LED-driver and touch input.
 
-Anshuman had a go at converting all generic code to use pXdp_get() last year as
-a means to help arm64 move to supporting 128-bit pgtables - the arm64 compiler
-doesn't gurrantee to emit ldp ("load pair") when dereferencing a 128-bit type
-but it does guarrantee to emit ldr ("load register") when dereferencing a 64-bit
-type, so we don't get single-copy atomicity for *pmdp with 128-bit pgtables but
-we do for 64-bit. So we thought we would just convert all the accesses to
-pXdp_get() which would allow us to wrap and make the guarrantee.
+In case the channel is not wired up to work as an input, the linux,keycodes
+property can be omitted, not creating the input channel.
 
-Some places (GUP, ...) were already using READ_ONCE() so we thought we would
-just default pXdp_get() to READ_ONCE() (even for the previously *pmdp case). But
-that caused issues with folded pgtable levels; the compiler was no longer able
-to optimize out the loads and arm32 and powerpc complained.
+In turn if the channel is not wired up to an LED, omitting the led subnode
+prevents an led device from being created for this channel.
 
-We looked at implementing pXdp_get() as either READ_ONCE(*pXdp) or *pXdp
-depending on if the level was folded, but I never really convinced myself that
-it was definitely safe for cases that were previously unconditionally
-READ_ONCE(*pXdp).
+If I were to fold the led subnode into the channel node I would still need
+a way to indicate if an LED is actually present in hardware, correct? This
+was what i was aiming for with the "led" property. However if I've had to
+choose between these two approaches, I prefer the subnode.
 
-So that leaves us with needing 2 variants of the accessors, which is horrible IMHO.
+If you have a different idea how to handle this apart from Rob's suggestion,
+It could also be the case I'm creating more problems than I solve with this
+approach :)
 
-But ultimately I don't think the vast majority of existing *pXdp accesses even
-need single-copy atomicity guarrantees, so perhaps from the arm64 128-bit
-pgtables PoV it simpler just to leave it all as is and make READ_ONCE() work
-with 128-bit types (but that has a downside because arm64 can only support the
-required READ_ONCE() semantics if the HW supports it, which we don't know until
-boot time. READ_ONCE() wants the compiler to raise an error if trying to use it
-with an unsupported type).
-
-In general, it would be nice to use accessors everywhere, but I haven't figured
-how to make it all work with a single accessor per level so I'm now trying to
-side step it.
-
-In hindsight I'm not sure you really asked for all this detail :)
-
-Thanks,
-Ryan
+Best
+David
 
 
