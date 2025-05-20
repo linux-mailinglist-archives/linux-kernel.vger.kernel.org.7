@@ -1,104 +1,187 @@
-Return-Path: <linux-kernel+bounces-656439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BFF1ABE639
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 23:40:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05AFBABE641
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 23:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6522F1B65CDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:40:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B688A48F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE4F25D1E7;
-	Tue, 20 May 2025 21:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCC525EF8C;
+	Tue, 20 May 2025 21:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="phq8wHBt"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="azUdx4vz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E18121CFFA
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 21:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E01025E834;
+	Tue, 20 May 2025 21:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747777233; cv=none; b=ZNJwfdxygngMrOUdLxlKjfkSF1gq8Hn3uOhYMoxx7zExx7w3kEmjM1UOOFdkg40SEWSUQ0y2jxfvUWJpxpkJZbt5da8NfJV82q5GITrK8tf0cBhB+i4nHavoFXCgKFGDuH5DAQ+ZHyt1tAOAyezdx+Lhzh2X/n5ZUKZBBngCgPc=
+	t=1747777426; cv=none; b=FEeF3CWOcsbnOtpjdn2N9I6Ozjif2gLFxG3GKdTd+A0ED71/0MKp7NeVtAbMvoUJBy8EK8D1J5gRbcrhpjT1b2SujuccwEPFEKSLFYsXgRb6QgS3Ve54q0bJDBSAU22NlwAJuePiVSmGCoXPGHwj6w3A5oHB9vyl6aWQS/JSDHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747777233; c=relaxed/simple;
-	bh=oCgewP2Dk7ae9CV7K8C4fa2fNf4DN1qFq9tYjptuES0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XFNARNTcKI+3qzbykXlcSLxAaLNxyE1M3X5CXmWSqlGBjaSYu8KB3jvZjYeGeuo+fkfYTyGZ8HOq9YhYp36iANV5oEV3KKzvDFYOcXy4lMz0arwYAHTbOQ1hZtTBd2vyBfZN4RuvZNPl1Im/M3zyFV1MVPxaAUKxr+O7C9rT/NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=phq8wHBt; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-549b116321aso7132506e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 14:40:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747777230; x=1748382030; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oCgewP2Dk7ae9CV7K8C4fa2fNf4DN1qFq9tYjptuES0=;
-        b=phq8wHBtbVbFPvBY1LhFPxhhKVA6oWWC5DSQxDRj2BggOobkM1tjMRw9zG7Y5c6atp
-         i49GjT9q1bCdgYaykzCrr7j/FT5a/visRdWoneRbkWHwlLERxyPenna/aD6gqpH9Z3J1
-         3BSQy7Bh2KoPvU0GXEajgxeMoZoWB2bA1oztrogWgN96Ob8dtXieM8B61TWzqqYqGyWS
-         Dpoc1A2Cd3UXIHyEhlCrXbpZ5fGsRc2OveqhwMdEVR+3rltaI0ZDX43QJJmoh9mXShgo
-         ax7tdkvksH3EBjom0njHL1lQbho2oO3njY0+WkDtRmRWAed+K3qS2t2Vz4yykOpFoH0n
-         IxLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747777230; x=1748382030;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oCgewP2Dk7ae9CV7K8C4fa2fNf4DN1qFq9tYjptuES0=;
-        b=QA4AfN38V2l6EAs5AFe7YQRNYHh23iLF26JcIJLxbNschXToIBSawp7rcpkSiMEnY0
-         faZmoZothuzP4wihHdBWYUonOSDVtY5LICvPhhwkyLfFbMXBGxHqS1ptMG8l+oHKAtJj
-         nSXdCDWIhSebcjJQy9mlCf8t8LDSajEzLqAK6mtBeh5okytsY3SIqQcrFIo9VJFHOjOf
-         3ayqfSyHoVc7UHBH/MVqz4EXk6LImBn91itfuhpo9hDG6Bh25s4nbMuLSlCfBK7uZPaW
-         NS9Ab86pbx7n57xfngRSbYO5qRJ9xgIPtcaKKXqrMZY7F+Me4o1yHtuEv2albrBMSSbz
-         vCRw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5c4UafN7l5VimIcx8gDC4i9sQnmwixpg5YpG5sIQEKuDOUrFZMrsg1EKBCqJ1DTwP2RII6fRDv+PDlxs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsD6bCX3azr6Jl0JWzvFEI6lehkI1aOLllvkoO4UV/WfMf9tRT
-	WTQwgPM54bXWjuy0wEVpKxeIhCWJz2gSjnnv42LV1G4hokOJQORfoVC1Y+Bfwut2XBSqYxGjNt1
-	uMohvJ8GTbvK1TfKSd+YwLLFf+mmWpl2zLGr8bqJqmQ==
-X-Gm-Gg: ASbGncvRDwwbsPC9ykYfxfFatLDK+U1EUOmvkRfUxJIXR0hUGnI2TzVwvxTc3h8FwGU
-	Hele9hMZWeFAcNOULLfKL3HKuocDJGzAEFwzH4DITBl1P+/7FCSANiotnk9qyxyXQBKfR+o6l56
-	qL40rIGSpm5syy0SuHV3/RQoRBmgLVwGmlM4V5n+8h+aE=
-X-Google-Smtp-Source: AGHT+IHzVYJxuTgrgs6K8x7YKkYpNRse35+6uNr28ZJ3LfuVJa1uRT/W2mPAkpXkEEI+sX0vS8ApdkMNSAaanvKv3vA=
-X-Received: by 2002:a05:6512:6805:b0:54f:bf00:6f38 with SMTP id
- 2adb3069b0e04-550e99045efmr4388422e87.45.1747777230153; Tue, 20 May 2025
- 14:40:30 -0700 (PDT)
+	s=arc-20240116; t=1747777426; c=relaxed/simple;
+	bh=3Uwzu0x4Ol7jQHWlBgnHzcOFIw3Xt2G7jzzTCuvsxA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ls9HlOzPGG4CVFBDzwLkF1tXyknypjMJvg75wTwiioCjIJFiopl6KXrSoSsWpeypfFV4OMCi4xd0jxpySEjRv5ZURZ0FmQvhMtY5/iwLJzg840wnZwqwRadzUJ5VvsWeC42+hWNX1qYxVWXwIbYjyGzv8apSULFe5j8kUPyB2qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=azUdx4vz; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747777424; x=1779313424;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3Uwzu0x4Ol7jQHWlBgnHzcOFIw3Xt2G7jzzTCuvsxA8=;
+  b=azUdx4vzotGu0CYUKO3vh3ScAZ+l+10KiEau6TGXRIYQht+S2hBBNvvK
+   68xkvQ94PojbKrPcFHJ3Tehv/lnHxfGavzRvS63uehGTlQhHrJK8i5u5k
+   MmSjZL1Ix6nnW/vNu3j34WCB78uM2UUUjkv6S/8WFAhJXa1C8ozSLtCdG
+   9wI7IdVIihH6+JeuxyaURjKbIEWpcP/HI9J08bYgMTdc1RMyu+GrDTIQL
+   7vsD4kIfuYDGWwy+j8/fxi/JLFn4zuc2SOplS95r7yehcl4/Dhj6OpTC/
+   4wlhfDANR1s3wN7QYM5Kqlt3D9GLztN/pi0+LrPeEPs4tKAa2XNh6lbi2
+   Q==;
+X-CSE-ConnectionGUID: ZWaH8tt1RNqe+g7zulRMgA==
+X-CSE-MsgGUID: OpCSTDmiRAm/sPAkgyR3tg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49435925"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="49435925"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 14:43:43 -0700
+X-CSE-ConnectionGUID: 3+/Jn4AWQHeWHUJykGSFxg==
+X-CSE-MsgGUID: EXveqf+TQbqRz9yutsdNTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="139721317"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 20 May 2025 14:43:36 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uHUkI-000Nb2-0B;
+	Tue, 20 May 2025 21:43:34 +0000
+Date: Wed, 21 May 2025 05:43:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ai Chao <aichao@kylinos.cn>, johannes@sipsolutions.net, perex@perex.cz,
+	tiwai@suse.com, shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com,
+	festevam@gmail.com, nicoleotsuka@gmail.com, lgirdwood@gmail.com,
+	broonie@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, jbrunet@baylibre.com,
+	neil.armstrong@linaro.org, khilman@baylibre.com,
+	martin.blumenstingl@googlemail.com, srinivas.kandagatla@linaro.org,
+	kuninori.morimoto.gx@renesas.com, zhangzekun11@huawei.com,
+	krzysztof.kozlowski@linaro.org, ckeepax@opensource.cirrus.com,
+	drhodes@opensource.cirrus.com, alexey.klimov@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 4/6] ASoC: meson: Use helper function
+ for_each_child_of_node_scoped()
+Message-ID: <202505210557.EpJig9BQ-lkp@intel.com>
+References: <20250520091131.4150248-5-aichao@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250514131342.755840-1-alexander.stein@ew.tq-group.com>
-In-Reply-To: <20250514131342.755840-1-alexander.stein@ew.tq-group.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 20 May 2025 23:40:19 +0200
-X-Gm-Features: AX0GCFuUSwW_4O9obfFKQvmdKYpuQp-SLx-d_4JegFT_41aqCgC4BS-UTD5YyXo
-Message-ID: <CACRpkdbmHjan9ifg_hs_2qbjBS=LCKenMbvnbCDX7zOsM0TvQQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] pinctrl: freescale: Depend imx-scu driver on OF
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, Esben Haabendal <esben@geanix.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250520091131.4150248-5-aichao@kylinos.cn>
 
-On Wed, May 14, 2025 at 3:13=E2=80=AFPM Alexander Stein
-<alexander.stein@ew.tq-group.com> wrote:
+Hi Ai,
 
-> Although the driver itself does not depend on OF itself, it selects
-> PINCTRL_IMX which depends on OF. So only select PINCTRL_IMX if OF is
-> already selected to ensure dependencies are met.
->
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+kernel test robot noticed the following build errors:
 
-Both patches applied.
+[auto build test ERROR on broonie-sound/for-next]
+[also build test ERROR on tiwai-sound/for-next tiwai-sound/for-linus wireless-next/main wireless/main linus/master v6.15-rc7 next-20250516]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Yours,
-Linus Walleij
+url:    https://github.com/intel-lab-lkp/linux/commits/Ai-Chao/ASoC-ppc-Use-helper-function-for_each_child_of_node_scoped/20250520-171556
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+patch link:    https://lore.kernel.org/r/20250520091131.4150248-5-aichao%40kylinos.cn
+patch subject: [PATCH 4/6] ASoC: meson: Use helper function for_each_child_of_node_scoped()
+config: arc-randconfig-002-20250521 (https://download.01.org/0day-ci/archive/20250521/202505210557.EpJig9BQ-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250521/202505210557.EpJig9BQ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505210557.EpJig9BQ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/device.h:15,
+                    from include/sound/soc.h:15,
+                    from sound/soc/meson/meson-card-utils.c:8:
+   sound/soc/meson/meson-card-utils.c: In function 'meson_card_set_be_link':
+>> sound/soc/meson/meson-card-utils.c:166:71: error: 'np' undeclared (first use in this function); did you mean 'up'?
+     166 |                 dev_err(card->dev, "error setting %pOFn link name\n", np);
+         |                                                                       ^~
+   include/linux/dev_printk.h:110:37: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                                     ^~~~~~~~~~~
+   sound/soc/meson/meson-card-utils.c:166:17: note: in expansion of macro 'dev_err'
+     166 |                 dev_err(card->dev, "error setting %pOFn link name\n", np);
+         |                 ^~~~~~~
+   sound/soc/meson/meson-card-utils.c:166:71: note: each undeclared identifier is reported only once for each function it appears in
+     166 |                 dev_err(card->dev, "error setting %pOFn link name\n", np);
+         |                                                                       ^~
+   include/linux/dev_printk.h:110:37: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                                     ^~~~~~~~~~~
+   sound/soc/meson/meson-card-utils.c:166:17: note: in expansion of macro 'dev_err'
+     166 |                 dev_err(card->dev, "error setting %pOFn link name\n", np);
+         |                 ^~~~~~~
+
+
+vim +166 sound/soc/meson/meson-card-utils.c
+
+aa9c3b7273a58b Jerome Brunet     2020-02-13  134  
+aa9c3b7273a58b Jerome Brunet     2020-02-13  135  int meson_card_set_be_link(struct snd_soc_card *card,
+aa9c3b7273a58b Jerome Brunet     2020-02-13  136  			   struct snd_soc_dai_link *link,
+aa9c3b7273a58b Jerome Brunet     2020-02-13  137  			   struct device_node *node)
+aa9c3b7273a58b Jerome Brunet     2020-02-13  138  {
+aa9c3b7273a58b Jerome Brunet     2020-02-13  139  	struct snd_soc_dai_link_component *codec;
+aa9c3b7273a58b Jerome Brunet     2020-02-13  140  	int ret, num_codecs;
+aa9c3b7273a58b Jerome Brunet     2020-02-13  141  
+aa9c3b7273a58b Jerome Brunet     2020-02-13  142  	num_codecs = of_get_child_count(node);
+aa9c3b7273a58b Jerome Brunet     2020-02-13  143  	if (!num_codecs) {
+aa9c3b7273a58b Jerome Brunet     2020-02-13  144  		dev_err(card->dev, "be link %s has no codec\n",
+aa9c3b7273a58b Jerome Brunet     2020-02-13  145  			node->full_name);
+aa9c3b7273a58b Jerome Brunet     2020-02-13  146  		return -EINVAL;
+aa9c3b7273a58b Jerome Brunet     2020-02-13  147  	}
+aa9c3b7273a58b Jerome Brunet     2020-02-13  148  
+aa9c3b7273a58b Jerome Brunet     2020-02-13  149  	codec = devm_kcalloc(card->dev, num_codecs, sizeof(*codec), GFP_KERNEL);
+aa9c3b7273a58b Jerome Brunet     2020-02-13  150  	if (!codec)
+aa9c3b7273a58b Jerome Brunet     2020-02-13  151  		return -ENOMEM;
+aa9c3b7273a58b Jerome Brunet     2020-02-13  152  
+aa9c3b7273a58b Jerome Brunet     2020-02-13  153  	link->codecs = codec;
+aa9c3b7273a58b Jerome Brunet     2020-02-13  154  	link->num_codecs = num_codecs;
+aa9c3b7273a58b Jerome Brunet     2020-02-13  155  
+6c05494fd8e28e Ai Chao           2025-05-20  156  	for_each_child_of_node_scoped(node, np) {
+2e1dbea1f8a358 Kuninori Morimoto 2023-06-20  157  		ret = meson_card_parse_dai(card, np, codec);
+6c05494fd8e28e Ai Chao           2025-05-20  158  		if (ret)
+aa9c3b7273a58b Jerome Brunet     2020-02-13  159  			return ret;
+aa9c3b7273a58b Jerome Brunet     2020-02-13  160  
+aa9c3b7273a58b Jerome Brunet     2020-02-13  161  		codec++;
+aa9c3b7273a58b Jerome Brunet     2020-02-13  162  	}
+aa9c3b7273a58b Jerome Brunet     2020-02-13  163  
+aa9c3b7273a58b Jerome Brunet     2020-02-13  164  	ret = meson_card_set_link_name(card, link, node, "be");
+aa9c3b7273a58b Jerome Brunet     2020-02-13  165  	if (ret)
+aa9c3b7273a58b Jerome Brunet     2020-02-13 @166  		dev_err(card->dev, "error setting %pOFn link name\n", np);
+aa9c3b7273a58b Jerome Brunet     2020-02-13  167  
+aa9c3b7273a58b Jerome Brunet     2020-02-13  168  	return ret;
+aa9c3b7273a58b Jerome Brunet     2020-02-13  169  }
+aa9c3b7273a58b Jerome Brunet     2020-02-13  170  EXPORT_SYMBOL_GPL(meson_card_set_be_link);
+aa9c3b7273a58b Jerome Brunet     2020-02-13  171  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
