@@ -1,166 +1,124 @@
-Return-Path: <linux-kernel+bounces-654785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63600ABCC71
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 03:50:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92787ABCC77
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 03:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 742267A6347
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 01:48:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BF7E17F454
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 01:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6654255227;
-	Tue, 20 May 2025 01:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA10254B1B;
+	Tue, 20 May 2025 01:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BQw6p0QQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bv9AbFqC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FAE4317D;
-	Tue, 20 May 2025 01:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B617E1C3C08;
+	Tue, 20 May 2025 01:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747705793; cv=none; b=bW0robq0Ry99igXoU9Q7veGIrtrFQLZYHrXVTN7rPHVbrzRhKf+PbaEi8h0c5SyFUuYGuALUTpWWy083Dmv21VKtyVtRYvhTyiQ1ZNlx5FMtUtmo+1VVbYD5s11+MPf+2+A15reQd15LZxXAFBmKssGNSjZPNtisfsQfokp6uNU=
+	t=1747705967; cv=none; b=TPT3Lsmj/KTgQR6J+VXp+tMJRluI7nELb/x3HqWdUoJuVEW0ZHXpSZqubzzDeQDoOMFHlQ4YffAWTMGSjBcupsrU0iPJpHwAt2ugquC8mlN1cONO0puvS9i1Rc3HJeX8F7MjE9oAgrWaiOaUSVGQ5qhAkSYIdhx5EqBFBhUJ0kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747705793; c=relaxed/simple;
-	bh=vsLxZwJQaEjAfR/JuZ5NYNwq+/uZf2rMOMPY+vUbdi0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gUVOna/FCb4eLL1eAudETBw1IYPbYv/9JWAA8tY6RQvauytUHc26bOFPdIvFsULDNUiguenf2ZAR/T7Pd5VSIZLqJzRpeaKRuHw8oneHjs8HRRdAW4vy3VaCmq/cYcPMH5GYQXT7zMve9JvTIzJntRm1UHdompzzshiIyqqjja8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BQw6p0QQ; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747705791; x=1779241791;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=vsLxZwJQaEjAfR/JuZ5NYNwq+/uZf2rMOMPY+vUbdi0=;
-  b=BQw6p0QQUSuA3FH7Bn22sQuFxguF44kmr578kw81fyIaIHxCk3/ehn7o
-   1IAtkKx8IpPrWofYFGR9UjHhzOdpNjlPl73mZy0Wcw7b7U9YXOrecibTW
-   UU3HoemryXH3ntH09jd/Rmfgc99PvuODGwhjO/Wg/DVp7o6HbCwicgWaq
-   +AzgC/ngFRmr+R4/SvE0/sECy/Zf3rOxMRgl/tBi1VqKNmt9FsmtVf+A0
-   ExegUnW2Lj6wboTU56CYd6l+Nzot1sqLSHs2Aclu2BekGNSVnn80Y43Jo
-   hgfCFzUcwpLQP5KTTRVP/c1NTzLuP8wkAIby11P6sWl0QQo87LhlrANMr
-   A==;
-X-CSE-ConnectionGUID: n53HrImoS22L1ystEaXaOw==
-X-CSE-MsgGUID: WCZ4yYPOQFu1+gQySEeyHA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="48737300"
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="48737300"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 18:49:50 -0700
-X-CSE-ConnectionGUID: 0zrs3Y+BSOak+jEDiEkNbQ==
-X-CSE-MsgGUID: md5biXXwRjyq3FH5wZYmvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="140063943"
-Received: from mdroper-mobl2.amr.corp.intel.com (HELO [10.124.221.39]) ([10.124.221.39])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 18:49:49 -0700
-Message-ID: <6774c3a6-9d0e-4a73-bfb1-91507ce85411@linux.intel.com>
-Date: Mon, 19 May 2025 18:49:49 -0700
+	s=arc-20240116; t=1747705967; c=relaxed/simple;
+	bh=7rvK125QqYiLA2+g2nikKbIyGirADh4k9rK/bWO22cE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gSozyk1O+pP2Q4nc1DXcb8dZlgGigH0JcCNPmYXQoxOri1+dSyj1Xm+OawtchLs//hVpCf53ke3Iwim3oLF4M865JvoyKWjjTGalDAY59Q0E+Srq8xMwrfEn9WOiEg7GvWRzNv0v14gukeWz2Owr0gIO0Kd4huQYmSD+3xQJnhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bv9AbFqC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9EC9C4CEE4;
+	Tue, 20 May 2025 01:52:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747705967;
+	bh=7rvK125QqYiLA2+g2nikKbIyGirADh4k9rK/bWO22cE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bv9AbFqCAYrqZGnfJyB4wz4YJOkvLpvHhamcSDmUlg33+Vrt235+fJtwn3DmvFCQS
+	 B50zaIYaRyG6K8JSZCQNuuTsxX3AdnevEtuZCoLLA8CFgEulW4aZVFWeBkW4BqzpRG
+	 ObJXuDPBaD47Rhf+vrJ+dzhQmLL4dQlSjchVnfYJV4Aounr1ZLao2rwNDBQ8zlsBVB
+	 SVgsd7QgVUYfv9cFoZxltnwZ+wpS3l5mrYvfkxOKZfKwnRVDmIKSfuFq6DDBxAn7UG
+	 q5h/EJ6LJi433s9Li8l7tspTTJmY84SKM4c8bh0h05/r3Ltb0f6ScigFwikciNWTOk
+	 oG4NqTc9tOSoA==
+Date: Mon, 19 May 2025 18:52:45 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf tests switch-tracking: Fix timestamp comparison
+Message-ID: <aCvgbd5dZrF0YJg7@google.com>
+References: <20250331172759.115604-1-leo.yan@arm.com>
+ <CAP-5=fVsgahBhOEOac52PmL0V+n1jqAxzf7n9PVWgWsxq9TvgQ@mail.gmail.com>
+ <20250401091422.GA115840@e132581.arm.com>
+ <CAP-5=fUGLy9xGmMO+6PXvfviB4U8Q8O7H3iTSSqEf72vin8gDA@mail.gmail.com>
+ <20250402090516.GG115840@e132581.arm.com>
+ <20250516153158.GH412060@e132581.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 10/16] PCI/AER: Combine trace_aer_event() with
- statistics updates
-To: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
-Cc: Jon Pan-Doh <pandoh@google.com>,
- Karolina Stolarek <karolina.stolarek@oracle.com>,
- Martin Petersen <martin.petersen@oracle.com>,
- Ben Fuller <ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>,
- Anil Agrawal <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Lukas Wunner <lukas@wunner.de>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>,
- Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
- Terry Bowman <terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>
-References: <20250519213603.1257897-1-helgaas@kernel.org>
- <20250519213603.1257897-11-helgaas@kernel.org>
-Content-Language: en-US
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20250519213603.1257897-11-helgaas@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250516153158.GH412060@e132581.arm.com>
 
+Hi Leo,
 
-On 5/19/25 2:35 PM, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
->
-> As with the AER statistics, we always want to emit trace events, even if
-> the actual dmesg logging is rate limited.
->
-> Call trace_aer_event() directly from pci_dev_aer_stats_incr(), where we
-> update the statistics.
->
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
+On Fri, May 16, 2025 at 04:31:58PM +0100, Leo Yan wrote:
+> Hi Ian, Namhyung,
+> 
+> [ - Mailing list ]
+> 
+> On Wed, Apr 02, 2025 at 10:05:16AM +0100, Leo Yan wrote:
+> > On Tue, Apr 01, 2025 at 12:54:12PM -0700, Ian Rogers wrote:
+> > > On Tue, Apr 1, 2025 at 2:14 AM Leo Yan <leo.yan@arm.com> wrote:
+> > > >
+> > > > On Mon, Mar 31, 2025 at 01:18:31PM -0700, Ian Rogers wrote:
+> > > >
+> > > > [...]
+> > > >
+> > > > > I'm reminded of a Java check I wrote for this:
+> > > >
+> > > > Nice short article.
+> > > >
+> > > > > In clang -Wshorten-64-to-32 looks to cover this. I'll see if we can
+> > > > > clean those warnings up a bit.
+> > > >
+> > > > I checked a bit and seems GCC has no this flag, but it makes sense for
+> > > > me to enable the flag for Clang.
+> > > >
+> > > > > Reviewed-by: Ian Rogers <irogers@google.com>
+> > > >
+> > > > Thanks a lot, Ian.
+> > > 
+> > > I made a small variation to the change in:
+> > > https://lore.kernel.org/lkml/20250401182347.3422199-10-irogers@google.com/
+> > > to avoid a subtract and just directly compare the values.
+> 
+> Do you mind to pick up my this patch? :) Our internal CI reports the
+> test case 109_Track_with_sched_switch failure daily, I am just wandering
+> if we could apply the fix quickly.
 
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Arnaldo is taking care of patches for v6.15.
 
->   drivers/pci/pcie/aer.c | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index eb80c382187d..4683a99c7568 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -625,6 +625,9 @@ static void pci_dev_aer_stats_incr(struct pci_dev *pdev,
->   	u64 *counter = NULL;
->   	struct aer_stats *aer_stats = pdev->aer_stats;
->   
-> +	trace_aer_event(pci_name(pdev), (info->status & ~info->mask),
-> +			info->severity, info->tlp_header_valid, &info->tlp);
-> +
->   	if (!aer_stats)
->   		return;
->   
-> @@ -741,9 +744,6 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
->   out:
->   	if (info->id && info->error_dev_num > 1 && info->id == id)
->   		pci_err(dev, "  Error of this Agent is reported first\n");
-> -
-> -	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
-> -			info->severity, info->tlp_header_valid, &info->tlp);
->   }
->   
->   #ifdef CONFIG_ACPI_APEI_PCIEAER
-> @@ -782,6 +782,9 @@ void pci_print_aer(struct pci_dev *dev, int aer_severity,
->   
->   	info.status = status;
->   	info.mask = mask;
-> +	info.tlp_header_valid = tlp_header_valid;
-> +	if (tlp_header_valid)
+Arnaldo, can you please take this?
 
-I think you can skip this check. The trace call checks for valid flag before accessing
-the tlp buffer. If you want to keep it, try to set it to NULL for !tlp_header_valid case.
+Thanks,
+Namhyung
 
-> +		info.tlp = aer->header_log;
->   
->   	pci_dev_aer_stats_incr(dev, &info);
->   
-> @@ -799,9 +802,6 @@ void pci_print_aer(struct pci_dev *dev, int aer_severity,
->   
->   	if (tlp_header_valid)
->   		pcie_print_tlp_log(dev, &aer->header_log, dev_fmt("  "));
-> -
-> -	trace_aer_event(pci_name(dev), (status & ~mask),
-> -			aer_severity, tlp_header_valid, &aer->header_log);
->   }
->   EXPORT_SYMBOL_NS_GPL(pci_print_aer, "CXL");
->   
-
--- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
-
+> 
+> Ian is working on a patch series for resolving the Clang warning which
+> also includes a fix [1], if Ian could extract the fix for the compar()
+> function in switch-tracking.c, this either would be fine for me.
+> 
+> Thanks a lot for your helping!
+> 
+> Leo
+> 
+> [1] https://lore.kernel.org/linux-perf-users/20250401182347.3422199-10-irogers@google.com/
 
