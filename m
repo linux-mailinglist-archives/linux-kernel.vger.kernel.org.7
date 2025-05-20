@@ -1,167 +1,259 @@
-Return-Path: <linux-kernel+bounces-655432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A143ABD584
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:50:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD23ABD573
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:47:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E594D4A7A01
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:46:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C9E73A1771
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76C627AC4E;
-	Tue, 20 May 2025 10:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB95279906;
+	Tue, 20 May 2025 10:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WLtnk0Uy"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ONIy7QxZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TZr3igxw"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6752701D5;
-	Tue, 20 May 2025 10:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777B12701B6;
+	Tue, 20 May 2025 10:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747737806; cv=none; b=dmGg6WRX2L3VeqfIxBGot+/bSBDheKhQunkItyWPbbfDxp03AD60qIBKz06htRxD7ccIlwdw4LZNSiaLagr8z7Zq0TaDDoe3+5uWvhMT1MTlPBEUsQxnsotAb8NGKa0bFSlkxTG4I0Nl75MabD5xJJ9FeSBItZh98oUMoB4XHo8=
+	t=1747737773; cv=none; b=OFVqaHQX9bEP2B+AdpmT/tOYanra2aGBSQ/eyFNHLh+YZKUGAI3/2Eh/PXCUf4ghyCKgp2D1NJE3rLMgNmMX1iId3MByE322eSonhlqZX7XxrG/kVIkXhNY1qcuYGSIQWui765plL7vpohz/Gbbfjpj5+mXNG03DpdpFboUH2UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747737806; c=relaxed/simple;
-	bh=V08AVv+/lAMqzRlpqb1FXcV1tIW3pW3roNbrQr3JBdA=;
+	s=arc-20240116; t=1747737773; c=relaxed/simple;
+	bh=T189RjTrntINPu365l3ja6YhxwdP6P6S4tUmnB9uCEo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ff4yiK8EomDmxZbCZTRNs3aH2yzuOnKLUhpzsSnIyagrQGIHYHoieRln/BWuGO03auJfG2qBPlJuE0wwwULQiA2Mr24jgouYt0e4vNr0vRffRtysFlLsVSxXpRJJXZa9FFIElsEXObFJUeG+B1AStbOic/hxteuf1NlfnZ8iNIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WLtnk0Uy; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54K6IOU8016865;
-	Tue, 20 May 2025 10:43:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=B3U5JZ+urBABc5iue7NkxXnaFXJIoM
-	sghZyTldyK+zc=; b=WLtnk0UyzGJW90ZTF6FsdvE7hChBHfb6CWPWPjueSjRQd/
-	4j4CJIpaH6ty8wDQIPjIP2JFCBHNey18mn6PCkEfYktVRWHvnXyXS353jqgVUd7b
-	NSyf0hFuI+JTlDtgc+v3dqxiShxcTSTLmu9PF8v0t0luiG66KO8rbmH84C9o/zON
-	QgBwFKp7TQKyromT61VWETZ0GyCY6o/EiC1s/2Og1YtuNyC38enoh5T2hK0dCQcN
-	mZXGsz6ybZPcdT/ArKDK9wKmiLW2GWKjjHdNeX7NYw+t9hYMATBLywv7Au+PwNlU
-	23ET53HMy0sc7SALEAoj6dCflQNGKztG8GVubSYA==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46rmbss6kg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 May 2025 10:43:02 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54KAZQpa002502;
-	Tue, 20 May 2025 10:43:00 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46q5snuddw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 May 2025 10:43:00 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54KAgwlo51904898
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 May 2025 10:42:58 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C1F2B200AE;
-	Tue, 20 May 2025 10:42:58 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D89E4200B1;
-	Tue, 20 May 2025 10:42:55 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.28.45])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 20 May 2025 10:42:55 +0000 (GMT)
-Date: Tue, 20 May 2025 16:12:45 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
-        libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 6/8] ext4: make the writeback path support large folios
-Message-ID: <aCxcpU_FBBQAguHR@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <20250512063319.3539411-1-yi.zhang@huaweicloud.com>
- <20250512063319.3539411-7-yi.zhang@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JfaVqWF0Xn85jhmpY13DHm4gbQzRn9skLrkKVkF2+hvAEdQfBzTauvDD7AuuubTgTnwRCLKb9IWhK24jBWDf3qWehcLwsTssH3SGukn2xlrLXUvsr17XDTlv2S88WtcLoxb/INtI3cNIfR39mZ5i9VVS6UFOC2EwqsDG1p7LLJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ONIy7QxZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TZr3igxw; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 20 May 2025 12:42:47 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747737768;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aKAey3wDze0P9HqHy2EvYY9m+3GTRLbM7rCWmYob5VM=;
+	b=ONIy7QxZ4R15uE7nU7fEe+g/zox8fjOaYpwcvJP+t344Nz1n4EwDiYsalpuPb5L91DSV/4
+	CUn7RcEA+84x5aijy/Mon8wIC7KXE7pvV+rJoT5l0GaZFWcLjBSZsSf3fTenJm2Y+kSoEE
+	/3z9ZTpBklTZBSKuqIxKri3eyabSX7CzkDu84hhqTswycc1PRYa/eQ8IIAkcvToxGKa/uv
+	T3C+++T5z+I1YRJ/7u3Q/mhu2+gyO84XCpib8Jq71ZkTCYIuop6/86wFTS1bTTeZyXJwZD
+	tBiZhbLEJ+dETLEPsfBtMLwb87wPyCkvoBAidWen6QiEDYjXPvDDCYHJdgU26A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747737768;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aKAey3wDze0P9HqHy2EvYY9m+3GTRLbM7rCWmYob5VM=;
+	b=TZr3igxw/tKyEhPNivxzCl9sC6gRcqhpxVyS/aV6+4CiArn5hQkd/yIhMRLYjLoqu7y5aL
+	i7SlCbU4ABE/jQCg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: linux-man@vger.kernel.org, linux-kernel@vger.kernel.org,
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v2] prctl: Add documentation for PR_FUTEX_HASH
+Message-ID: <20250520104247.S-gVcgxM@linutronix.de>
+References: <20250516161422.BqmdlxlF@linutronix.de>
+ <fuudjpar7kv7liwj4aucekktkzuhkalzkhsz5gv3mxzletlstk@tzokaret52cv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250512063319.3539411-7-yi.zhang@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDA4NyBTYWx0ZWRfX86EtVG0FShOs 9QzQVkjvWpUakLlVowjEl4eVG1bKeqMeh0C8eihaMcvNgKLQlnz50bo5Of8zhW2SJFG8jHsQyIF GN0gxXIbejbciE2fIU4fPMMQeS6BOtcc7OblnEjkbXtqoXrFt8V6y/zRtgooZIDvcamnZm8YF5i
- bYyv6URmpJU3xQcG8wCSBAirDJca//WQjkLohnKTdn2rvq7IlAZB6fSWM3rV3PPP82rY6JGPbN0 fhx6wFAyKEt+JHo6iLugoDSHCOfboTAZGZ9kR+HEWCgtpksJE/vgvpWlpyxrEvUdOfIa4SQ42KV G6S+upJW8ywJtXYT8aMMgxP8jsHU8JskRnmc6zpCcBCET6MMmpDsDI8tJjxkpHtX8JXL+tHCRaD
- hu1fbQZVWIL83Hiow+i3ITiCSjfru7fuyAEZNS990TBduurhBauKVMvqwVvBuXSSZc8nvDf0
-X-Proofpoint-ORIG-GUID: NyShGHtmB3n9HS7dCK_j0zXo1PX4PnY7
-X-Proofpoint-GUID: NyShGHtmB3n9HS7dCK_j0zXo1PX4PnY7
-X-Authority-Analysis: v=2.4 cv=DsxW+H/+ c=1 sm=1 tr=0 ts=682c5cb6 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8 a=HOOD98lnpYojEHEThZwA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-20_04,2025-05-16_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0
- priorityscore=1501 adultscore=0 suspectscore=0 mlxlogscore=882
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505200087
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <fuudjpar7kv7liwj4aucekktkzuhkalzkhsz5gv3mxzletlstk@tzokaret52cv>
 
-On Mon, May 12, 2025 at 02:33:17PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> In mpage_map_and_submit_buffers(), the 'lblk' is now aligned to
-> PAGE_SIZE. Convert it to be aligned to folio size. Additionally, modify
-> the wbc->nr_to_write update to reduce the number of pages in a single
-> folio, ensuring that the entire writeback path can support large folios.
-> 
-Looks good, feel free to add:
+The prctl(PR_FUTEX_HASH) is queued for the v6.16 merge window.
+Add some documentation of the interface.
 
-Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+v1=E2=80=A6v2: https://lore.kernel.org/all/20250516161422.BqmdlxlF@linutron=
+ix.de/
+  - Partly reword
+  - Use "semantic newlines"
 
-Regards,
-ojaswin
+ man/man2/prctl.2                   |   3 +
+ man/man2const/PR_FUTEX_HASH.2const | 122 +++++++++++++++++++++++++++++
+ 2 files changed, 125 insertions(+)
+ create mode 100644 man/man2const/PR_FUTEX_HASH.2const
 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
->  fs/ext4/inode.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 3e962a760d71..29eccdf8315a 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -1942,7 +1942,7 @@ static int mpage_submit_folio(struct mpage_da_data *mpd, struct folio *folio)
->  		len = size & (len - 1);
->  	err = ext4_bio_write_folio(&mpd->io_submit, folio, len);
->  	if (!err)
-> -		mpd->wbc->nr_to_write--;
-> +		mpd->wbc->nr_to_write -= folio_nr_pages(folio);
->  
->  	return err;
->  }
-> @@ -2165,7 +2165,6 @@ static int mpage_map_and_submit_buffers(struct mpage_da_data *mpd)
->  
->  	start = mpd->map.m_lblk >> bpp_bits;
->  	end = (mpd->map.m_lblk + mpd->map.m_len - 1) >> bpp_bits;
-> -	lblk = start << bpp_bits;
->  	pblock = mpd->map.m_pblk;
->  
->  	folio_batch_init(&fbatch);
-> @@ -2176,6 +2175,7 @@ static int mpage_map_and_submit_buffers(struct mpage_da_data *mpd)
->  		for (i = 0; i < nr; i++) {
->  			struct folio *folio = fbatch.folios[i];
->  
-> +			lblk = folio->index << bpp_bits;
->  			err = mpage_process_folio(mpd, folio, &lblk, &pblock,
->  						 &map_bh);
->  			/*
-> @@ -2397,7 +2397,7 @@ static int mpage_journal_page_buffers(handle_t *handle,
->  	size_t len = folio_size(folio);
->  
->  	folio_clear_checked(folio);
-> -	mpd->wbc->nr_to_write--;
-> +	mpd->wbc->nr_to_write -= folio_nr_pages(folio);
->  
->  	if (folio_pos(folio) + len > size &&
->  	    !ext4_verity_in_progress(inode))
-> -- 
-> 2.46.1
-> 
+diff --git a/man/man2/prctl.2 b/man/man2/prctl.2
+index f29b745b12578..a884064a40b7d 100644
+--- a/man/man2/prctl.2
++++ b/man/man2/prctl.2
+@@ -150,6 +150,8 @@ with a significance depending on the first one.
+ .B PR_GET_MDWE
+ .TQ
+ .B PR_RISCV_SET_ICACHE_FLUSH_CTX
++.TQ
++.B PR_FUTEX_HASH
+ .SH RETURN VALUE
+ On success,
+ a nonnegative value is returned.
+@@ -262,4 +264,5 @@ so these operations should be used with care.
+ .BR PR_SET_MDWE (2const),
+ .BR PR_GET_MDWE (2const),
+ .BR PR_RISCV_SET_ICACHE_FLUSH_CTX (2const),
++.BR PR_FUTEX_HASH (2const),
+ .BR core (5)
+diff --git a/man/man2const/PR_FUTEX_HASH.2const b/man/man2const/PR_FUTEX_HA=
+SH.2const
+new file mode 100644
+index 0000000000000..c7aa36064b79e
+--- /dev/null
++++ b/man/man2const/PR_FUTEX_HASH.2const
+@@ -0,0 +1,122 @@
++.\" Copyright, The authors of the Linux man-pages project
++.\"
++.\" SPDX-License-Identifier: Linux-man-pages-copyleft
++.\"
++.TH PR_FUTEX_HASH 2const (date) "Linux man-pages (unreleased)"
++.SH NAME
++PR_FUTEX_HASH
++\-
++configure the private futex hash
++.SH LIBRARY
++Standard C library
++.RI ( libc ,\~ \-lc )
++.SH SYNOPSIS
++.nf
++.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
++.B #include <sys/prctl.h>
++.P
++.BI "int prctl(PR_FUTEX_HASH, unsigned long " op ", ...);"
++.fi
++.SH DESCRIPTION
++Configure the attributes for the underlying hash used by the
++.BR futex (2)
++family of operations.
++The Linux kernel uses a hash to distributes the
++.BR futex (2)
++users on different data structures.
++The data structure holds the in-kernel representation of the operation and
++keeps track of the current users which are enqueued and wait for a wake up.
++It also provides synchronisation with users who perform a wake up.
++The size of the global hash is determined at boot time and is based on the
++number of CPUs in the system.
++Since the mapping from the provided
++.I uaddr
++value to the in-kernel representation is based on a hash, two unrelated ta=
+sks
++in the system can share the same hash bucket.
++This in turn can lead to delays of the
++.BR futex (2)
++operation due to lock contention of the data structure.
++These delays can be problematic on a real-time system since random tasks c=
+an
++share in-kernel locks and it is not deterministic which tasks will be invo=
+lved.
++.P
++Linux v6.16 implements a process wide private hash which is used by all
++.BR futex (2)
++operations which specify the
++.B FUTEX_PRIVATE_FLAG
++as part of the operation.
++Without any configuration the kernel will allocate 16 hash slots once the =
+first
++thread has been created.
++If the process continues to create threads, the kernel will try to resize =
+the
++private hash based on the number of threads and available CPUs in the syst=
+em.
++The kernel will only increase the size and will make sure it does not exce=
+ed
++the size of the global hash.
++.P
++The user can configure the size of the private hash which will also disabl=
+e the
++automatic resize provided by the kernel.
++.P
++The following values for
++.I op
++can be specified:
++.TP
++.BI "int prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_SET_SLOTS, unsigned long " has=
+h_size ", unsigned long " hash_flags ");
++Set the number of slots to use for the private hash.
++.P
++.RS
++.TP
++.I hash_size
++Specifies the size of private hash to allocate. Possible values are:
++.RS
++.TP
++.I 0
++Use the global hash.
++This is the behaviour used before v6.16.
++The operation can not be undone.
++.TP
++.I >0
++Specifies the number of slots to allocate.
++The value must be power of two and the lowest possible value is 2.
++The upper limit depends on the available memory in the system.
++Each slot requires 64bytes of memory.
++Kernels compiled with
++.I CONFIG_PROVE_LOCKING
++will consume more than that.
++.RE
++.TP
++.I hash_flags
++.RS
++The following flags can be specified:
++.TP
++.I FH_FLAG_IMMUTABLE
++The private hash can no longer be changed.
++By using an immutable privat hash the kernel can avoid some accounting for=
+ the
++data structure.
++This accounting is visible in benchmarks if many
++.BR futex (2)
++operations are invoked in parallel on different CPUs.
++.RE
++.RE
++.TP
++.BI "int prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_GET_SLOTS);
++Returns the current size of the the private hash.
++A value of 0 means that a private hash has not been allocated and the glob=
+al
++hash is in use.
++A value >0 specifies the size of the private hash.
++.TP
++.BI "int prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_GET_IMMUTABLE);
++Return 1 if the hash has been made immutable and not be changed.
++Otherwise 0.
++.\"
++.SH RETURN VALUE
++On success,
++these calls return a nonnegative value.
++On error, \-1 is returned, and
++.I errno
++is set to indicate the error.
++.SH STANDARDS
++Linux.
++.SH HISTORY
++Linux 6.16.
++.SH SEE ALSO
++.BR prctl (2) ,
++.BR futex (2) ,
++.BR futex (7)
+--=20
+2.49.0
+
 
