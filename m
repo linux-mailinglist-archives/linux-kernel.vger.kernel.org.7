@@ -1,96 +1,107 @@
-Return-Path: <linux-kernel+bounces-656263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EAADABE3A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:25:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5473ABE3A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0C7C3AC5FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:25:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2981E1BA4A10
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C28283157;
-	Tue, 20 May 2025 19:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60769280004;
+	Tue, 20 May 2025 19:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NtQB2L+2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pm03hirf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBE525C707;
-	Tue, 20 May 2025 19:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CBD48CFC;
+	Tue, 20 May 2025 19:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747769111; cv=none; b=p1Pnrfulcb0lgmk/1b5ukoHRSgwIHUOLNeyCVbMDI9aXKqWcjLbqPhbyS2/sI2yKFDHGKiCj5VJeRq0dc0vsWibax1Lg15CkEplsd09FIbxn/VuzrfpHwM8TGhqn+3+vGkw3ONApXgw84zjIAp8Xoz/U2Bg8xNr1EqCUWQk4CtU=
+	t=1747769105; cv=none; b=g0aYWdXlo6nfQoCz4VQf5mqkp71lDVEoUmQ97cgHRo5/lHDIT795IfrBB1Dd7TLd6Yitr75mR+xAgDt02VoJC1ej5Bc8f+EejsEvUn6xcj2g1tNkg9FGotbPPrkCoYWCDrQMmcNkMoDfA2ozoAdiZf9ElBF0zZP9LX6hxbV2eKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747769111; c=relaxed/simple;
-	bh=bQgOF1utoXWEyH8ZdstymbRT4aWMNrmVlxjsAeALsgs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rKbyrkb2dt0RwjDawAN/V9uiFR/4O8lZKGzRX0MEj5XnmTYrrnoxI3eSMs6KqJ7jBo/ZRzFwXo5JGhApUX9y0J2uDpM1MhpJsh7wyZsRV8ovmWtHmbVVBej9M55HsT0tacfkzJ6hz38UX3ugc5aZLhgnZtF2xsRVVAJ/lcydvp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NtQB2L+2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0A45C4CEE9;
-	Tue, 20 May 2025 19:25:06 +0000 (UTC)
+	s=arc-20240116; t=1747769105; c=relaxed/simple;
+	bh=/YQuD/zXoYuchGtOXAaMXzL86e5ZTR1Z9Yg6aUdHmaE=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=TI0LkBWs6eWS0S/GEDNueTtvRp9rgrsLyzK1TUORureeO4311swlhU7OBUt47mXqUL9mgi8nbTNuX6WaOa+0GwFqFaKXmKMmVZPIcNdsAn8Ss/hDXUEKPtYgfcQxCszU/RX7fbJcpbxSoMdtU56ljyhzgSoDsMSpf1gUnN/WYg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pm03hirf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFCD4C4CEE9;
+	Tue, 20 May 2025 19:25:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747769111;
-	bh=bQgOF1utoXWEyH8ZdstymbRT4aWMNrmVlxjsAeALsgs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NtQB2L+2jgtnVqFwNwvm/EX4vmi35bV8Ml8mCORWhIR3Z9Mgywm8D9cdH3hIAru+t
-	 KQmfHpMOAb1Xgp43eEPSxdS6ff2WwwPErumT2sZTrBZflGLqp5ZsWFZkxttuG72jdE
-	 Geb7Jqm1JDMYb6d/+CFev+jd2zBYvlXS5cDzpxyO/Kn62GS1+HSvJs9nkup4k/sZ/Z
-	 FLZXLxjU1qEK8Rw2waK8UmLmNGiMA6D94QCCYCyHKknJ9AzU/p1JzWYtAFdoErdMXm
-	 IuN5R5IQhg4H9w8xhc6DaAnN+rRke4G/9kZRT7NPGyz+Q5l79XSD/I9+B7jRlDIeMj
-	 ECBhIFTo6v09w==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [PATCH 6.12 000/143] 6.12.30-rc1 review
-Date: Tue, 20 May 2025 21:25:00 +0200
-Message-ID: <20250520192500.890306-1-ojeda@kernel.org>
-In-Reply-To: <20250520125810.036375422@linuxfoundation.org>
-References: <20250520125810.036375422@linuxfoundation.org>
+	s=k20201202; t=1747769105;
+	bh=/YQuD/zXoYuchGtOXAaMXzL86e5ZTR1Z9Yg6aUdHmaE=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Pm03hirfXqvWbK011PvyDZTeKD4xh9DP40C0ABh/Ysw6K4+tq4abcOoIoCf0F1gGc
+	 82Fb5HnxBy+bQUH3IAzfuz7EN9Eawm4UUWq11H8MUAh9KZiAY5m8NovoXz4SzLnNK1
+	 wpxVLlCHpD9kfgNJOyrsuhqRgJipU4kGxs+WJxB/8/ZeA31BTTxj3ICMMZgXuUUXrF
+	 Adh5Gst1HVJ3QHntXwLLmU0CdobimUXECalSIWjuUQxydJ9lr7Nkcmc207/6o6AQgk
+	 K8Vp1fJwqpaY+pGsUqiWunkC3ZR6CajLGe+VGkn02DtTXzO9niJ0MdzAePbONXYh2F
+	 WLiAll5knHuOw==
+Date: Tue, 20 May 2025 14:25:03 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-gpio@vger.kernel.org, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+To: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+In-Reply-To: <20250520-hdp-upstream-v2-1-53f6b8b5ffc8@foss.st.com>
+References: <20250520-hdp-upstream-v2-0-53f6b8b5ffc8@foss.st.com>
+ <20250520-hdp-upstream-v2-1-53f6b8b5ffc8@foss.st.com>
+Message-Id: <174776907517.1215979.15639504513287893325.robh@kernel.org>
+Subject: Re: [PATCH v2 1/8] dt-bindings: pinctrl: stm32: Introduce HDP
 
-On Tue, 20 May 2025 15:49:15 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.30 release.
-> There are 143 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 22 May 2025 12:57:37 +0000.
-> Anything received after that time might be too late.
 
-Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
-for loongarch64:
+On Tue, 20 May 2025 17:02:28 +0200, Clément Le Goffic wrote:
+> 'HDP' stands for Hardware Debug Port, it is an hardware block in
+> STMicrolectronics' MPUs that let the user decide which internal SoC's
+> signal to observe.
+> It provides 8 ports and for each port there is up to 16 different
+> signals that can be output.
+> Signals are different for each MPU.
+> 
+> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+> ---
+>  .../bindings/pinctrl/st,stm32-pinctrl-hdp.yaml     | 188 +++++++++++++++++++++
+>  1 file changed, 188 insertions(+)
+> 
 
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks!
+yamllint warnings/errors:
 
-Cheers,
-Miguel
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl-hdp.example.dtb: /example-0/pinctrl@54090000: failed to match any schema with compatible: ['st,stm32mp15-hdp']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250520-hdp-upstream-v2-1-53f6b8b5ffc8@foss.st.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
