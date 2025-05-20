@@ -1,149 +1,161 @@
-Return-Path: <linux-kernel+bounces-654949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3695DABCEDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 07:59:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAEBEABCEDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69EE41B65BB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:00:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44BF03BFAAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AB825B67E;
-	Tue, 20 May 2025 05:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5590C25A334;
+	Tue, 20 May 2025 06:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="izkB1OJ+"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YEnf3/fP"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C5925B682
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 05:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BD5610B
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 06:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747720789; cv=none; b=ohhoTgzDRwd+0zGNNUpzIxIkzMLuqhjrIk7nSU46IEFO2MeGUjl6sq989p/qto5WsQl/evip2Cyp6bpUYQvPee+xS86PxgRSBiTpI/HLrBJq5VapaV2CQIWAozwUgcrNCsXzDjljmB2XyiXMQPX+vkbnFpH+F0/g+ifuYZ/KrpY=
+	t=1747720849; cv=none; b=hzoXPcePDD9XxFJKbmokq48hg7xibYzbSeWRU3gVdlamNZW06aO1GEdXjaL0jqisBRoy0AsKcuUorMhsUcaPOi/GmuavJ/IF/MKnFHXT5+AWrJX4jw4tn4zoo7zhvCrU8tdk5i+PmKyXp0PoBhehB6lXa7UE3TNYww+PtnQEeCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747720789; c=relaxed/simple;
-	bh=HtZ3r2Fkj3SIQiBaksw/po6bDy3r2DetEvEulkhJ2Qg=;
+	s=arc-20240116; t=1747720849; c=relaxed/simple;
+	bh=YNt7GVpMt3rH6IhDifdifaG1wJKxlmQglVMhDCO52Ig=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dmFtOzu/7olGxgcBMS+Xwm518dLPNLfc0LmRhFVzQk7W5Hy4tIEerMGrof9Fhxp6HnEw8+XJrFlZdk8Xra0wjGmKpCBJyh28XL08ohi/BRhDCPNr6ar7BWJSPgfqkT1y3ZLMgPnoPNsD9OCUjDUjkDP/TAPFQvkzQds7QkL0j/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=izkB1OJ+; arc=none smtp.client-ip=209.85.219.52
+	 To:Cc:Content-Type; b=AKUxCn/gJ8i9Xo2jHg4RhKPeLIjgnO6dRm7tBao7xiDxr8bCBTSCmsJJLWxto+nQt/RYrF1CSYoueQPffOr/f2PE9VnvWeR9VQsy5w16DRQ0r4VpwgmXNLOKlGGyCmBNtpYh7qEwvj0FVofjjZKN5HW/s8zkc0M3oIj+q2/bTzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YEnf3/fP; arc=none smtp.client-ip=209.85.160.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6f2b04a6169so60836226d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 22:59:47 -0700 (PDT)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-476977848c4so56671921cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 23:00:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747720787; x=1748325587; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1747720847; x=1748325647; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wbPvbtnOrmQE+1U2utP3GVC8XV93atGkPO7YSOID2TE=;
-        b=izkB1OJ+Rgzsn87q2BGWFPGRFLfRD+l3hC1ZV/p8b3z2rPLn7eYxckC2qby8brmUyv
-         jQvVaDhrg5V5oljn6CR3Tl7MHaFKRrdHYjPzcD1pc3mOvC2uFQoBjqqgjNcCagupi9sL
-         0YZYSLPaRz2XBrKtkFUns/Oa8nme7R2jDrskuFhNWEWUuw1IsSuYCVJiK61EwW5ejnzB
-         6URWgjMlHH35QFDoRXKTXzYUBuVdTEouPIutPSIr7ydxRpAAj7RDejThYgNPiYdBQqJa
-         Nk4cOF1y52xEqAgpNfc532ct+UQilR47yN7w21LRYBIXNwiFfEgq9f3j8dmS+IOzJ0Me
-         7ZdA==
+        bh=nZXsny14e42iWJBckI/0/LeNEtvKMq33ZaZVTv73eV8=;
+        b=YEnf3/fP3M8ZKDtjcjSGc3N/Vv4T2ytPQW1EYgPC2gfdS6hpFZ+jDKIliLya/qgO31
+         L6HHW9btV+yCSNczULMskd+1dOJsZYzQyo9wcRxJXhGbG4jKfN0IriG0ORAruUdeQYCE
+         8rFBRoho/qitQ8oUrILqjmWPQEM0tPza148Yv86PUAfDF7vQ8lpvTepbMn/WUF7efH7h
+         x/kVoKWhTzafwPDq2+KRNpdSuapGWzZnaZlg1teoqwdp0Qep3vh1GLZnHRyTbeAFmbpZ
+         Z8cW9MIKfAt/aTssigzCDFHBJf/+SL3FFT8Yan5wkSoXTFbx4EbysXZ7yv1TQQrbuj5O
+         SetA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747720787; x=1748325587;
+        d=1e100.net; s=20230601; t=1747720847; x=1748325647;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wbPvbtnOrmQE+1U2utP3GVC8XV93atGkPO7YSOID2TE=;
-        b=HeHNQdeKPSft+FEbJwxqXnNbQHZA5Irsr+RfnSK0vTP61acOBSh/lD8/nug+PD/OWg
-         hnJzekVMea6psL2PaagSfFgEdUxZtpL1AVSA2qyeV/mdLzLvJYsJ0OR9GTYgTuwY0Cz5
-         LFT/0kc2ByLv0xnk6UTm2bHSIBNdxlRNzT9Lw77bvFnjHLNFre1q0ZvpL4mq89SX1Vae
-         ySNmeaSvDfPu+6h3oCLkuKlhqvR0+Dmd6imLbu37S8o9kYPrxF0OR4bkdlo21NjgF/G0
-         zsI+dks9R+3pusHtO1asUM6qFrQoFn49fvzkCpyq8t9oep6Absc7Dx2spYAWn1dxdi8S
-         RZZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFpT3LVbuRc55AIeUbQQRs03Q4gsF1AEgnJYztQWdl8Kt8XsGDFCF+nxWNyJPmQ8rEIvDSWNPBMgErLeI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6WLSySBONgOFluo3eNUw3MqAAP8SGIfFckBQYu4HU0FeSISWY
-	SPs7oLN9dxjmb/qjkcqNsNFo8qi21uR2TIqBY6f6+jjk24YT8v4MnVCYifdEVD+TlWs4qLDZvu1
-	0MRtkryF9gFnP6S6UattRZ9Go1UxY+3U=
-X-Gm-Gg: ASbGncvebugOYKBdfuWZr9Vmivc35F9w7jcPyBbbDABSNw9cK9qwsmqX8MgOiKturrs
-	4w+5GtB73FmaEWrAD7aog1exdwB3Hw2JIaGIxP/omrLruiXsT2n6/kP3LCXakGJJavHLYsAZmc9
-	qMs0Gz9n1KrjFhF/Krq9/SCVLWNwthkS+/4en2/6DM73ce
-X-Google-Smtp-Source: AGHT+IF66zV1pqgN2aIRpxtBq0k2LIK+BnL60q836qda3s8pLIoPl4F6+KD3l+xh+yzzMDQPHqydEt4QyNx6dnGdqio=
-X-Received: by 2002:a05:6214:27e2:b0:6f5:4055:83d9 with SMTP id
- 6a1803df08f44-6f8b2c32c7bmr247622576d6.6.1747720786785; Mon, 19 May 2025
- 22:59:46 -0700 (PDT)
+        bh=nZXsny14e42iWJBckI/0/LeNEtvKMq33ZaZVTv73eV8=;
+        b=fSmrKVZ7/5vRVdiqY+vxsza9gNE09N7dF4z/MgIeUk17FjE1eju1SV+Ya99tNpF1D6
+         QfS21fRJfIyMbpPkxd3jMtYdmKBBRRYEGhGukOxEqIrfuAouYBRVJ9Ftmf5dJUcSkh+8
+         v2ABHYMewVBHb5qL2gpKeYBOme3Pxybk/mZKQ86KlJFNc2P0ELGuDxICSEQq5tlMUvwA
+         vtijyrTSfVCy8pD0YOcb9YEUZg6UdRE4Kodwolzxe71fI30l+siLOji3WgCha3GImw+W
+         uJrB88E2yIw08vDxJowlX3h0FS3NaUd5hlXS9tcqM4YT8r3YU6UA1LfrNlkJ+0zr3oDv
+         7GQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqKta3CcnPzPcNLnJEgWQPYLV/FxsHhgB3MzcBgFhYG1tT0MWAYKYEaRfGEIh95OVu0HeQqddoxdi+hdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm3GEgNVMpYcnp9UZho7KtpgbBDl95E1UTeR4CxWLf+DbWL9p3
+	w9w6I8kefWONysPZvP2a7dSNtGPMEYos4z8W9rvzZJ7N81sE4uygGZVea+ildJyjMkFqygUjYg5
+	NFHPUUNCbFoah3tiFCg33agxC6mSGaCA=
+X-Gm-Gg: ASbGncsxCLMhJnR7RooxOfmvvMkZc6vXjaB7GYwgU/NNepWgPHNMK/87Ie56VpLulET
+	TRepzINCvXeqcXUuxleUqC2M+J0Yn56mZML18ewRyxITbhCCknJz+yJofm8eU2HkX9eOrRM5IgM
+	Z6+rnCA6sCckeS1Um2Fa0N8+ae+zN4LrEjSehmS/xMii7K
+X-Google-Smtp-Source: AGHT+IGCa05LbeR70eqTtMtimJ6ArW9/xpgA5aUTRVTU/C3P71ZbtgHeyJGf38a8+ADASAkcSyrUnEsDICDaMPQmy0U=
+X-Received: by 2002:a05:622a:98e:b0:494:7bfe:b68d with SMTP id
+ d75a77b69052e-494ae3668e0mr249269091cf.2.1747720846907; Mon, 19 May 2025
+ 23:00:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250417043457.10632-1-xuewen.yan@unisoc.com> <77de8033-4364-44a5-b21b-ffe511b8f5d3@arm.com>
-In-Reply-To: <77de8033-4364-44a5-b21b-ffe511b8f5d3@arm.com>
+References: <20250303105241.17251-1-xuewen.yan@unisoc.com> <20250303105241.17251-2-xuewen.yan@unisoc.com>
+ <CAKfTPtC=QYe4uZuK87G3GG6zi+f3r214hUnK9=K1mNv59FsYFA@mail.gmail.com>
+In-Reply-To: <CAKfTPtC=QYe4uZuK87G3GG6zi+f3r214hUnK9=K1mNv59FsYFA@mail.gmail.com>
 From: Xuewen Yan <xuewen.yan94@gmail.com>
-Date: Tue, 20 May 2025 13:59:36 +0800
-X-Gm-Features: AX0GCFuXp-0Jt8EaoVHmOVp6krqXu0HiBP6JiLmDKhIlVKYOhJutpRNS05h6Ab4
-Message-ID: <CAB8ipk9bLmnVYnjggw-Ymp6sZiO9SHJ-XZBNRj0Bv3taYSRM2w@mail.gmail.com>
-Subject: Re: [PATCH V3 0/2] sched: Align uclamp and util_est
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org, mingo@redhat.com, 
-	peterz@infradead.org, juri.lelli@redhat.com, rostedt@goodmis.org, 
+Date: Tue, 20 May 2025 14:00:35 +0800
+X-Gm-Features: AX0GCFudeKqKImbCHgQE-Tt4n-S6MKnt-iONIyBFvqcpGqdP4gESU8lG0UT6G-w
+Message-ID: <CAB8ipk94m_aD8-Pd2hTrkqhDJkq-scnO3zq4wsY4LSnnL-YD0A@mail.gmail.com>
+Subject: Re: [RFC PATCH V2 1/3] sched/fair: Fixup-wake_up_sync-vs-DELAYED_DEQUEUE
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, peterz@infradead.org, mingo@redhat.com, 
+	juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
 	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	hongyan.xia2@arm.com, linux-kernel@vger.kernel.org, ke.wang@unisoc.com, 
-	di.shen@unisoc.com, kprateek.nayak@amd.com, kuyo.chang@mediatek.com, 
-	juju.sung@mediatek.com, qyousef@layalina.io
+	linux-kernel@vger.kernel.org, ke.wang@unisoc.com, di.shen@unisoc.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Gentle ping if forgotten.
+Hi Vincent,
 
 Sorry to ask, but may I know if this patch can be merged into the mainline?
 
 Thanks!
 
-On Tue, Apr 22, 2025 at 11:27=E2=80=AFPM Dietmar Eggemann
-<dietmar.eggemann@arm.com> wrote:
+On Wed, Mar 19, 2025 at 5:35=E2=80=AFPM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
 >
-> On 17/04/2025 06:34, Xuewen Yan wrote:
-> > Now, both uclamp and util_est have been adapted for DELAYED_DEQUEUE,
-> > and the double enqueue/dequeue issue no longer exists.
-> > However, there is still room for optimization in both uclamp and util_e=
-st.
-> > Previous discussions as following:
-> > https://lore.kernel.org/all/CAB8ipk8pEvOtCm-d0o1rsekwxPWUHk9iBGtt9TLTWW=
--iWTQKiA@mail.gmail.com/
-> > https://lore.kernel.org/all/84441660bef0a5e67fd09dc3787178d0276dad31.17=
-40664400.git.hongyan.xia2@arm.com/T/#u
-> > https://lore.kernel.org/all/CAB8ipk9LpbiUDnbcV6+59+Sa=3DAi7tFzO=3D=3D=
-=3DmpLD3obNdV4=3DJ-A@mail.gmail.com/T/#u
-> > https://lore.kernel.org/all/aa8baf67-a8ec-4ad8-a6a8-afdcd7036771@arm.co=
-m/
-> > https://lore.kernel.org/all/20250325014733.18405-1-xuewen.yan@unisoc.co=
-m/
+> On Mon, 3 Mar 2025 at 11:56, Xuewen Yan <xuewen.yan@unisoc.com> wrote:
 > >
-> > patch[1]: Simply the condition for util_est_dequeue/enqueue;
-> > patch[2] aligns uclamp and util_est and call before freq update to impr=
-ove
-> > the performance and power.
+> > Delayed dequeued feature keeps a sleeping task enqueued until its
+> > lag has elapsed. As a result, it stays also visible in rq->nr_running.
+> > So when in wake_affine_idle(), we should use the real running-tasks
+> > in rq to check whether we should place the wake-up task to
+> > current cpu.
+> > On the other hand, add a helper function to return the nr-delayed.
 > >
-> > Xuewen Yan (2):
-> >   sched/util_est: Simply the condition for util_est_dequeue/enqueue
-> >   sched/uclamp: Align uclamp and util_est and call before freq update
-> >
-> >  kernel/sched/core.c | 17 ++++++++++-------
-> >  kernel/sched/fair.c |  4 ++--
-> >  2 files changed, 12 insertions(+), 9 deletions(-)
-> >
+> > Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
+> > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+>
+> Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+>
 > > ---
-> > v3:
-> > - split previous patch in 2 patches.
-> >
-> > v2:
-> > - simply the util-est's en/dequeue check;
+> > V2:
+> > - add helper function (Vincent)
 > > ---
->
-> LGTM.
->
-> Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
->
-> I assume you can add Hongyan's test tag from:
-> https://lkml.kernel.org/r/be0cace9-d173-4de3-959e-861876ad77fc@arm.com
-> as well.
->
+> >  kernel/sched/fair.c | 13 +++++++++++--
+> >  1 file changed, 11 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 1c0ef435a7aa..a354f29c4f6f 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -7181,6 +7181,11 @@ static bool dequeue_task_fair(struct rq *rq, str=
+uct task_struct *p, int flags)
+> >         return true;
+> >  }
+> >
+> > +static inline unsigned int cfs_h_nr_delayed(struct rq *rq)
+> > +{
+> > +       return (rq->cfs.h_nr_queued - rq->cfs.h_nr_runnable);
+> > +}
+> > +
+> >  #ifdef CONFIG_SMP
+> >
+> >  /* Working cpumask for: sched_balance_rq(), sched_balance_newidle(). *=
+/
+> > @@ -7342,8 +7347,12 @@ wake_affine_idle(int this_cpu, int prev_cpu, int=
+ sync)
+> >         if (available_idle_cpu(this_cpu) && cpus_share_cache(this_cpu, =
+prev_cpu))
+> >                 return available_idle_cpu(prev_cpu) ? prev_cpu : this_c=
+pu;
+> >
+> > -       if (sync && cpu_rq(this_cpu)->nr_running =3D=3D 1)
+> > -               return this_cpu;
+> > +       if (sync) {
+> > +               struct rq *rq =3D cpu_rq(this_cpu);
+> > +
+> > +               if ((rq->nr_running - cfs_h_nr_delayed(rq)) =3D=3D 1)
+> > +                       return this_cpu;
+> > +       }
+> >
+> >         if (available_idle_cpu(prev_cpu))
+> >                 return prev_cpu;
+> > --
+> > 2.25.1
+> >
 
