@@ -1,129 +1,183 @@
-Return-Path: <linux-kernel+bounces-655152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE2E8ABD18B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:12:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E80ABD293
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44BE13BCFCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:11:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09A493A6471
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE4625D55D;
-	Tue, 20 May 2025 08:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2152A266EF1;
+	Tue, 20 May 2025 09:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2ttoRup"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="cAQXddps"
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D63F259C92;
-	Tue, 20 May 2025 08:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3D525DD18;
+	Tue, 20 May 2025 09:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747728714; cv=none; b=W5+nm+akAxSY9Zu9MiwCm0m1SECMQOemDI9CZSWl3lmmKiuJoDV8EYgbRsV4hICi3DpR9L4vxb69nPUOiCzgSBsNDUxO8TkVn5PEaPlJ/UkNg+HHk0WbDWxEkCxGsI5qeJzQF6ICkX3cFDJs1ZGF/EVTcH1NPSfy98v53YjzaV8=
+	t=1747731612; cv=none; b=qtBCSNmg6wF4yhRi/yQUvp0P1vEpQl199pZHh/3NjrfuFNU21gHi/PFi08b+XhTGJMn/1BNoRxzy3d50JmdrKvhYU/u/EXc7dbNc0N6bcLEhx6qt1YuymeM9RxzKQ05tw9whFlMf4l9ZXjRbPGGR12IirT7uJ9WYkaXuEfZr8WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747728714; c=relaxed/simple;
-	bh=HY3/3VrBJOV9DPhjj3cdE9p8tIgorKhSkSawnUdq37c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bQj75m0Hc74OpD4xXoPgG932zrat9eyiALg+BXNto8zUTqmVlANdLQgmmcyK8DMFZuZnopjbTKtQYA4cXFhUOPTaJYBOen8I/WoK7A4jJ6sH7nD+hUN9D46fj3lRnEsQ/mYRy/BFmfp2F0WFtv5UNX91X2Iv2+bl1muO4n5u8NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z2ttoRup; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-22e033a3a07so54598205ad.0;
-        Tue, 20 May 2025 01:11:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747728712; x=1748333512; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IRjDqcSJJrxFBZdRg26AJmo3YQXMo538YSxA/CYDg10=;
-        b=Z2ttoRupXmJg37v4o2b7/L2GTMQ8owmMt0ybmGJ4S0RxD3pvs+pWMDgjj0/hmFh19p
-         7uVxTaddOnvHNronq2IcWLqoBZ+rMErXnG1KYxwpvMkD3Z3SmqTS7xNmT8QchGTArgFW
-         HDWkgN9xzcu4FH/yE0LBQbi6Io9PqfRc5IJyRZkfCFU4Nz95kwa1AVEodqgvcgf8BhRb
-         KUqqwev/Fpf2mbqtMAeREW0g0Whmt+NECcn1OrNAqML45Pv+HnTyl0ZtI6lCXRYm9eqL
-         hoCQctwAIrkFrwXxEjjm2AGRcbd/3YlGshkWmyQZAubFr4JgfBzpqyTsVQOKuuKgiZRH
-         umdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747728712; x=1748333512;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IRjDqcSJJrxFBZdRg26AJmo3YQXMo538YSxA/CYDg10=;
-        b=bITTma0j08z2NUnpjaZqNP7kZB6xcy83WNl/T6cwEI6EsTOG83rHpwlwdVpxcXZugi
-         pZVDKb9KRwZyaFqA8Y6Mq91v1rHoHOdaanPXQdo5SSA9ZEX7gLsjKQdJOBlI9Vmd4nsP
-         2/8BrAdJDPe+a+jOkMYcffkY7C44VwrvjqtpCULb9QjwPwN2NWaPJ6heIb5+UkmbklM8
-         lsHKogsHEogzeAJ+CE+i6KNRudWFscPR8/knD0HgtLUyaMp85zYc/iIaeMPUTRU4LNRz
-         Actm9bhShh3iy9FQuz4NS/VZ1fLRZHnY9MUUPjRIRyyIFfu6N1QhAYOVJXRmS9ceGR56
-         nWqw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7v9bNRcNlCh77INLbGeP7YXcXkizaOYkS9XnDAXELySpb0FTvM/p4YmjEfAGI9nlj2dQfQhobupztTZY=@vger.kernel.org, AJvYcCVEWUd630Jf7dvtPXpjNmrnGGzcsypYnguhXvTjXjfxRevUHUSujuDrbRq2FDkXM/o+mKUEQSQDFw8Tv7Nx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRhOH7g0MLiScniUNbGySMJFN6WHhV56UdYJvsYB0etFC8HgQG
-	DA5m11ipvqgFAQmjKPMvQjwcowZix3SoLjXHKh+BekKC4uTRdvNwRsee
-X-Gm-Gg: ASbGncswo7BRINCkgVd5Kh+dljlw8CgtyV0CdX5lcZMe2QRKMKfTCjEwXTS2+AASqAy
-	PzSWNk36RT94kwcN9mdYD4K+yNSEsSEt9togNJ0JVmRk2ML4uWehT3XddyS0D2lHdR8c7rBkJ8c
-	/UAfZGZorwh79M6Zp8a440ddwLbrrECOAJ73xI5J0BsKrx2FUHuYlt3bs3v+lbVycJK6qEs3FRc
-	DLMJ4YfL+NOENZrS2PKScgJx6ZfIv86NgqJ2aC4S6dG7THdoe7r8CDMxcSd/ZiDo9a8AFoCbcTX
-	9JP9o/R6tY0QR1J/9H4j4lgjn3S9lSbGjSfTeeHHtHzck+ioUJGffZ9ILA/fyfAwtb6DHLSRBA=
-	=
-X-Google-Smtp-Source: AGHT+IF01pc7wJS45XtZbbEPv7g6v1IT8nDwJMbFmA9NsJ7SIh5+xzKe2M0rmxrrsMIIzkDuHtu2Wg==
-X-Received: by 2002:a17:903:1a68:b0:216:393b:23d4 with SMTP id d9443c01a7336-231d43d9bd7mr237599345ad.11.1747728712228;
-        Tue, 20 May 2025 01:11:52 -0700 (PDT)
-Received: from localhost.localdomain ([183.137.13.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4adbfe1sm71788425ad.66.2025.05.20.01.11.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 01:11:52 -0700 (PDT)
-From: oaygnahzz <oaygnahzz@gmail.com>
-To: masahiroy@kernel.org
-Cc: nathan@kernel.org,
-	nicolas.schier@linux.dev,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	oaygnahzz <oaygnahzz@gmail.com>
-Subject: [PATCH] modpost: decreasing the log print level
-Date: Tue, 20 May 2025 13:07:03 +0800
-Message-Id: <20250520050703.12173-1-oaygnahzz@gmail.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1747731612; c=relaxed/simple;
+	bh=/cBn7/afihVspLZ8dscheq2oAej7A2VWzWI1xW+tNR0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DbgBnqSPcmS8q4KMnmXX5Tp48yd/68/KIRMHhGi8EaGPNC5P+djZcQAD3ORyKoFKkvHlqUGZ6naFUNF/6talJ1iSxpK61xMESba2QXeQnDA0zI7JbV92L5rDZyR6sJS9hBl8YL4K64I3r1oHzkSX0/7F0MuxH1QXp7WZfN2uSdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=cAQXddps; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=w0LsP1fiZLjpi1gUjPOfQqurrRWtv9lamy0l+H19eNs=; b=cAQXddps1vtWNSjTgqR6JR92O/
+	A1Ul4BSViUPWt9tLuHIctuBmrLCSjqBtoB5E9M0C4nC/WRRgMLHV8aUYGnJqG8dOmaBlyIpGhvkKI
+	pBptnZMQrLeWndGWsrFddQG3KuNkECU8Wv8GhmXG0ZA54ru0m/WPNJoQuct2xKoQbriAx+G0jMD+3
+	ogJWW5IueXiow4jsKv7Lhtpi2zB2ObuAG2fnvW0pR5+5SdZIeRgrz3VanAZlcJWK3+HntLxuc8n//
+	24MKYDkz1Fru7hNdy3blghtKO8NwnazWBxz2YB7lC1O6zCvTWYWF2wpnfToYGqiMp73irFST3y1UP
+	Q/WlkGow==;
+Received: from [89.212.21.243] (port=52674 helo=[192.168.69.116])
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <primoz.fiser@norik.com>)
+	id 1uHHqP-009yd6-21;
+	Tue, 20 May 2025 09:57:01 +0200
+Message-ID: <e986fcf0-fe2b-43de-9d46-8ea60d97ca14@norik.com>
+Date: Tue, 20 May 2025 09:56:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Upstream] [PATCH] arm64: dts: freescale: imx93-phycore-som:
+ Delay the phy reset by a gpio
+To: Christoph Stoidner <c.stoidner@phytec.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ upstream@lists.phytec.de
+References: <20250520073450.388989-1-c.stoidner@phytec.de>
+Content-Language: en-US
+From: Primoz Fiser <primoz.fiser@norik.com>
+Autocrypt: addr=primoz.fiser@norik.com; keydata=
+ xjMEZrROOxYJKwYBBAHaRw8BAQdAADVOb5tiLVTUAC9nu/FUl4gj/+4fDLqbc3mk0Vz8riTN
+ JVByaW1veiBGaXNlciA8cHJpbW96LmZpc2VyQG5vcmlrLmNvbT7CiQQTFggAMRYhBK2YFSAH
+ ExsBZLCwJGoLbQEHbnBPBQJmtE47AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQagttAQducE+T
+ gAD+K4fKlIuvH75fAFwGYG/HT3F9mN64majvqJqvp3gTB9YBAL12gu+cm11m9JMyOyN0l6Os
+ jStsQFghPkzBSDWSDN0NzjgEZrROPBIKKwYBBAGXVQEFAQEHQP2xtEOhbgA+rfzvvcFkV1zK
+ 6ym3/c/OUQObCp50BocdAwEIB8J4BBgWCAAgFiEErZgVIAcTGwFksLAkagttAQducE8FAma0
+ TjwCGwwACgkQagttAQducE8ucAD9F1sXtQD4iA7Qu+SwNUAp/9x7Cqr37CSb2p6hbRmPJP8B
+ AMYR91JYlFmOJ+ScPhQ8/MgFO+V6pa7K2ebk5xYqsCgA
+Organization: Norik systems d.o.o.
+In-Reply-To: <20250520073450.388989-1-c.stoidner@phytec.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
+X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-We are doing a kernel hot patch and have modified the internal 
-implementation of an exported function (funcA) while also adding 
-a new function (funcB) and exporting it. The compilation of the 
-kernel hot patch failed, and the print is as follows:.
-export_stymbol section contains strange symbol '(unknown)'.
+Hi Christoph,
 
-I found that there was a change in whether to call sym_add_exported. 
-Before commit ddb5cdbafaaa ("kbuild: generate KSYMTAB entries by modpost")
- committed, it only judged whether it was equal to __ksymtab_. But now, 
-it obtains the export symbol by traversing the. rela.export_symbol section 
-and then calls check_export_symbol. In the above case, the. 
-rela.export_symbol section will have additional funcA information, 
-but no export information. This will lead to an error in calling 
-check_export_symbol (null is returned when find_fromsym processes funcA), 
-and the hot patch make fails.
+On 20. 05. 25 09:34, Christoph Stoidner wrote:
+> According to the datasheet the phy needs to be held in reset until the
+> reference clock got stable. Even though no issue was observed, fix this
+> as the software should always comply with the specification.
+> 
+> Fix this in the bootloader, as this is the point where the reference
+> clock gets initialized and stable first.
 
-Signed-off-by: oaygnahzz <oaygnahzz@gmail.com>
----
- scripts/mod/modpost.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I would remove this paragraph about the "Fix this in the bootloader..."
 
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index be89921d60b6..cbf83c58f00f 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1075,7 +1075,7 @@ static void check_export_symbol(struct module *mod, struct elf_info *elf,
- 	label_name = sym_name(elf, label);
- 
- 	if (!strstarts(label_name, prefix)) {
--		error("%s: .export_symbol section contains strange symbol '%s'\n",
-+		warn("%s: .export_symbol section contains strange symbol '%s'\n",
- 		      mod->name, label_name);
- 		return;
- 	}
+Doesn't patch apply to both the kernel and the bootloader FEC driver?
+
+> 
+> Use gpio4 23, which is connected to the phy reset pin. On the same pin
+> RX_ER was used before, but this signal is optional and can be dropped.
+> 
+> Note: This comes into effect with the phyCOREs SOM hardware revision 4.
+> In revisions before, this gpio is not connected, and the phy reset is
+> managed with the global hardware reset circuit.
+> 
+> Signed-off-by: Christoph Stoidner <c.stoidner@phytec.de>
+> ---
+>  arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
+> index 88c2657b50e6..f8e2f3f3baa8 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
+> @@ -58,6 +58,9 @@ &fec {
+>  				 <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>,
+>  				 <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>;
+>  	assigned-clock-rates = <100000000>, <50000000>, <50000000>;
+> +	phy-reset-gpios = <&gpio4 23 GPIO_ACTIVE_HIGH>;
+> +	phy-reset-duration = <1>;
+> +	phy-reset-post-delay = <0>;
+>  	status = "okay";
+>  
+>  	mdio: mdio {
+> @@ -91,14 +94,16 @@ pinctrl_fec: fecgrp {
+>  		fsl,pins = <
+>  			MX93_PAD_ENET2_MDC__ENET1_MDC			0x50e
+>  			MX93_PAD_ENET2_MDIO__ENET1_MDIO			0x502
+> -			MX93_PAD_ENET2_RD0__ENET1_RGMII_RD0		0x57e
+> -			MX93_PAD_ENET2_RD1__ENET1_RGMII_RD1		0x57e
+> -			MX93_PAD_ENET2_RXC__ENET1_RX_ER			0x5fe
+> +			/* the three pins below are connected to PHYs straps,
+> +			 * that is what the pull-up/down setting is for. */
+
+I would remove this comment and maybe move it to the commit msg why are
+you changing the PD/PU configuration.
+
+Anyway, if you decide to keep it, you need to fix the following warning:
+
+WARNING: Block comments use a trailing */ on a separate line
+#46: FILE: arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi:98:
++                        * that is what the pull-up/down setting is for. */
+
+BR,
+Primoz
+
+> +			MX93_PAD_ENET2_RD0__ENET1_RGMII_RD0		0x37e
+> +			MX93_PAD_ENET2_RD1__ENET1_RGMII_RD1		0x37e
+>  			MX93_PAD_ENET2_RX_CTL__ENET1_RGMII_RX_CTL	0x57e
+>  			MX93_PAD_ENET2_TD0__ENET1_RGMII_TD0		0x50e
+>  			MX93_PAD_ENET2_TD1__ENET1_RGMII_TD1		0x50e
+>  			MX93_PAD_ENET2_TX_CTL__ENET1_RGMII_TX_CTL	0x50e
+>  			MX93_PAD_ENET2_TD2__ENET1_TX_CLK		0x4000050e
+> +			MX93_PAD_ENET2_RXC__GPIO4_IO23			0x51e
+>  		>;
+>  	};
+>  
+
 -- 
-2.33.0
-
+Primoz Fiser
+phone: +386-41-390-545
+email: primoz.fiser@norik.com
+--
+Norik systems d.o.o.
+Your embedded software partner
+Slovenia, EU
+phone: +386-41-540-545
+email: info@norik.com
 
