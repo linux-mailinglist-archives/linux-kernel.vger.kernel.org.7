@@ -1,156 +1,153 @@
-Return-Path: <linux-kernel+bounces-655314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68308ABD3D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:45:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E63C2ABD3DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B2581BA04B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:46:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91EFE167645
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C0A26773C;
-	Tue, 20 May 2025 09:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2C226460D;
+	Tue, 20 May 2025 09:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SvHXCb+7"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CYyDJVWg"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340F722256C;
-	Tue, 20 May 2025 09:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E801C3306;
+	Tue, 20 May 2025 09:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747734339; cv=none; b=vFYdaYcdL2RomJxr1TlkdB2+O73Xlls8Sh+0wBPE2CUfTusbA6ZG5GopWoMbiokv+ttaM6VM1re8BRhjNY1V0fTdCnULKJHSdXg2sOxL3jkI9MUOCh6zR4t7HuVNuPvl1HByBxJubssGh1KX3Bp7q8dHIdU2CIpwZD7+KXqoao0=
+	t=1747734450; cv=none; b=DcfAPu+LjT80bsMEudVBMKEcmEFIykAbbMNG9wY18eIof+Clyo/4aES9ysrkSOpg301aWVrm+oCeGZX21PjlT8EeTzjic7zI1Vj/kgmYRXvV/Ug0AtW/Ne/xwSmgwKDSE32JWXW1YPjmOc2G+TkBghEuv8dhkZ5I0fmLJ82KhY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747734339; c=relaxed/simple;
-	bh=55t2jOzwJu/Pe94Z1MGgGTsjmdsmro44z4m15Q30ch4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aXfI4xGTpr1YemhopQVqBxoStnTa0wcsn9AW/Xd5poztBoN3IFLK/PGQ7N/nsHPXv9jCIcZE70Dh0EN6p+SrKNYVq2TiFvDgefmmnlsF59WX+UlS0Ia+kRfO+rAGu+uFd/UkS82hxp99s3OJd9l5XAxkDC8k+34/AaXID+kOZQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SvHXCb+7; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-742c27df0daso2266555b3a.1;
-        Tue, 20 May 2025 02:45:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747734337; x=1748339137; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RF8ffXs2a5We2CWtSW9yaEOhQbyIvm2awu47Uy03/dI=;
-        b=SvHXCb+7sELvbEyybNopZy3BqroEP5VtAl92gz3FBhyFPcM/pO6CarrISlRs6XZnxP
-         QafyX29N7pZ0v1M/MR3h1cfDSs9RBuHZYCPYlAhSGwcCsXZ2eFyOoL6TSu6k6kky61x8
-         weqiJHjkYDhejX3SmDKWxPmV8coCoDUZfykIX1SHIE7FjJDkPd6xpDbeV4VJenIq4HB+
-         2ptqC8Yx+6I7+PBXrEDW+ykefrDlK3LuIoazqbA84vpeoTn+JJIu71W8yqzPAdjcn2Wx
-         2oWv5pHsLiPU0HhZHEYutNAflFzHwXXX/+qfszGicVIoDsATrFY7zTwfce+GM6St4HBL
-         DlqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747734337; x=1748339137;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RF8ffXs2a5We2CWtSW9yaEOhQbyIvm2awu47Uy03/dI=;
-        b=ELorIjanlAW5I6yX4o5j4UGQiUTTDBRBPDUP+TrQLovHlBdiQM9pk+F0s620iT65KZ
-         l+Q3jdcaVP81N3etwjh7v9pwigrSb7UJ2JhNe2zL0YXNTPhDGWsvOno7ZvjVbINNyuli
-         X4mab2tcieHbTDYT5ARohHk1AcpgIZ8P9ISkx3hKP8y6+MMwGM9sVHue0OB8e9mfoaYp
-         cIwCliDbenmNGhQAKRjp4vWWzVyMjANAvWmCSCqKztC2I7bYCbDvK9akvBPIz0iSZ4ps
-         oIN43rLMLuoWAymB9FvAHLS7PESrP/Shvlqv029AuYRurmlRcJK/rxRbvvlXcBm0goGC
-         CfKw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4t3RLjWFQOZKt9127I/tSIy5BjnDSEg/OSB7GleOp5VDcCCyreNUME7513/t46Fmo5VDURRquRNP8fQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+cVQb7G3Jx7NykQo//pq9YfsYZnl/RTQIr2dUHzYNymrDTEc3
-	N0ER0dIi043UGJZnXkilQhx+OD6MowVxsUu1kHN86E/54+U9ClhSvyr7
-X-Gm-Gg: ASbGncvIZTWL0bL8rOeb6ZSpu5/QJxGKdg0dwwejnHel/FiNumI2FbJxF9axDT9wDsk
-	KltOYQIJ+3/SbpYQOkMsjRthuYx8khi8B3uMmcFDUbGMx/4VqjG4BivLaga0cUyEbCZyf8+PxFP
-	PQUudrhQ1ftA/OtAARLWkK4zpNMRIyFbiOdgbTl2/v+dUFKRQbIoif4ejT9uRFOpCtJ1bvHMLfg
-	xI94m0HVJvTDsQfzcGTAQK/QJzjgT/f4JFCjtL4ZPcnFT9PVUteR7VqDwwwlmgluCFs37/6tyai
-	pCcxBufokI5PzMXQWnN8LOhrbF3BFJXFnH+YbrphK3q8C1biv/TLP1NYDpMUxRh9irdS8jw4v3D
-	Ul1J1MT80Byt+UQ==
-X-Google-Smtp-Source: AGHT+IGjC38TxGHkGLNwrYD7Ou7a0rpGqtFyhZa76JxTWq07mNYsWa8kQEbhMKoz4uNlmMMxii9iUA==
-X-Received: by 2002:a05:6a00:982:b0:736:a7ec:a366 with SMTP id d2e1a72fcca58-742a97a2bcamr20340316b3a.9.1747734337299;
-        Tue, 20 May 2025 02:45:37 -0700 (PDT)
-Received: from localhost.localdomain ([2401:4900:62fe:9593:f762:39d9:3865:830a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a983551fsm7576457b3a.113.2025.05.20.02.45.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 02:45:36 -0700 (PDT)
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Subject: [PATCH RESEND] perf stat: Fix JSON output formatting in iostat_prefix()
-Date: Tue, 20 May 2025 15:15:25 +0530
-Message-ID: <20250520094525.97706-1-suchitkarunakaran@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1747734450; c=relaxed/simple;
+	bh=st5ZN9t4lGCsmTwBzj6GkRzehVqb+AvIjSrgYKxmT1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZHV0QvyxE0v1RZEbye/yk+12fqQBvOldL+oVxkWTvyerGGVqo9CDhwJzVlErAbUhKw3zWi4DTht6tQLOBEkdih5mIi7bDGoUrYbumNItHp8qqzNgJfPvHbR3WHEfdF4l8XSI1VcUTk2Q35RAA8RB1hJHkLnMlXJ3u4c6x1C07g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CYyDJVWg; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54K9F6SC008002;
+	Tue, 20 May 2025 09:47:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=eYsshfL6ZUO0WplOFcK3FPi+KTAn+c
+	nW/kMDuLwfRGY=; b=CYyDJVWgOkoVyl/0wxvxQC9k/uaTksD+i5VxFboBhblXmd
+	57GPEmxFZezvrC0/PuK3i3RqrBq0V6lL4pG5qphQsr1GdG4Rzvt7XAPY0kfi0lJf
+	LCGlnBg5sI9mNT7kCFz2iG9nGD49zIl4lvWUUkzGKmT2WZOXs23IDX5InPzncOUF
+	zUzzTjBDO/AcZsLYM+yR/UzopLF50fp8lLd4vUO6vDGnECYi9YBspylhVdNsFQ4i
+	ir6/u7WB5Xh74LaSHwTQMobbGDlwUvtnM6WSNpS7zQX4FeDoY/bPufIyBJ9uu6mQ
+	g3NFJl4bjzYpwq0qrUtJRkmLorGWUNNva91GMQPw==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46rpxkr53u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 May 2025 09:47:09 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54K87Gga015958;
+	Tue, 20 May 2025 09:47:09 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46q7g2aw0w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 May 2025 09:47:08 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54K9l7T140370652
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 20 May 2025 09:47:07 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 48F9E2013E;
+	Tue, 20 May 2025 09:47:07 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1B0BF20140;
+	Tue, 20 May 2025 09:47:07 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.133])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 20 May 2025 09:47:07 +0000 (GMT)
+Date: Tue, 20 May 2025 11:47:05 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Ihor Solodrai <ihor.solodrai@linux.dev>,
+        Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: Re: [bug?] s390: kernel panic on specification exception: 0006
+Message-ID: <20250520094705.7932Bc3-hca@linux.ibm.com>
+References: <4f3768be36e0298be4ceebd4fdd3e96dd4fbdc04@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4f3768be36e0298be4ceebd4fdd3e96dd4fbdc04@linux.dev>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=EM8G00ZC c=1 sm=1 tr=0 ts=682c4f9d cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=NEAV23lmAAAA:8 a=VuaLrmb_DCXaSyQ9aWYA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: ndqHY9jSY1soiqAi2mGLACUJw-m9cHwz
+X-Proofpoint-ORIG-GUID: ndqHY9jSY1soiqAi2mGLACUJw-m9cHwz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDA3OSBTYWx0ZWRfXxOPtJFTQoQvW e5KbT4Np1rwke1MB6rgJTtatfakliBYkpfvaJi2385BgGpRd6h8Xim+p+djCjHOHwRlMNL8kIeY yESFxPnWzLoCVaxjmkk1f/T/SmhhmtU174L38r9o+9Ot6pwHSkyaneoAzZRJ/t0YWRY7Kczhqs2
+ UsIEkAQ2MYlREfkE9Q6Xl+Fp1r9dBSUdm2yDD2TMeL1rT96PI4sLnQqFvLrLKdnAVEfjweahAaA Cp2A3s0V/JFZB9fHUeKsq2W528I/dG3Nw7QGW6Qnbm6E/RIa2sf7s5jGCjlhb64cVMK794JwbYQ 6olsJ9YAaJqyEIfifwlJWihEayxKkvyVByLiHLhQ8yUGF19z9HVZPiVZVisRVpcu3iX6qgTjFqZ
+ wjDF36U5TQia8mrAElLSNAUXrVjRdvfN4IqJHImsDwwRC7r8nBo8CdxCbWlEZKjXw4W0lYBt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_04,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ mlxscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0
+ priorityscore=1501 suspectscore=0 adultscore=0 phishscore=0 clxscore=1011
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505200079
 
-The iostat_prefix() function previously included a TODO noting that its output
-format was incorrect in JSON mode. This patch corrects that by conditionally
-formatting the prefix string based on the output mode specified in
-perf_stat_config.
+[full quote, and adding Ilya]
 
-Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
----
- tools/perf/arch/x86/util/iostat.c | 35 ++++++++++++++++++++-----------
- 1 file changed, 23 insertions(+), 12 deletions(-)
+On Thu, May 15, 2025 at 07:04:20PM +0000, Ihor Solodrai wrote:
+> Hi everyone.
+> 
+> Stumbled on the following while testing unrelated changes to BPF CI scripts:
+> 
+>     #353     select_reuseport:OK
+>     specification exception: 0006 ilc:2 [#1]SMP
+>     Modules linked in: bpf_testmod(OE) [last unloaded: bpf_test_modorder_x(OE)]
+>     CPU: 0 UID: 0 PID: 108 Comm: new_name Tainted: G           OE       6.15.0-rc4-g169491540638-dirty #1 NONE
+>     Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+>     Hardware name: IBM 8561 LT1 400 (KVM/Linux)
+>     Krnl PSW : 0404e00180000000 000001e43ac595e4 (hrtimer_interrupt+0x4/0x2a0)
+>                R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
+>     Krnl GPRS: 7fffffffffffffff 000001e43ac595e0 00000000fff8f200 000001e43c52a0c0
+>                00000164c50740d8 0000000000000000 0000000000000000 0000000000000000
+>                0000000000000000 0000000000000000 000001643afabe00 0000000000000000
+>                000003ff9fbadf98 000001e43b747550 000001e43ab12774 00000000fffdfe68
+>     Krnl Code:#000001e43ac595e0: 67756573		mxd	%f7,1395(%r5,%r6)
+>               >000001e43ac595e4: 743d696e		unknown
+>                000001e43ac595e8: 73303031		unknown
+>                000001e43ac595ec: 61652c64		unknown
+>                000001e43ac595f0: 65627567		unknown
+>                000001e43ac595f4: 2d74		ddr	%f7,%f4
+>                000001e43ac595f6: 68726561		ld	%f7,1377(%r2,%r6)
+>                000001e43ac595fa: 64733d6f		unknown
+>     Call Trace:
+>      [<000001e43ac595e4>] hrtimer_interrupt+0x4/0x2a0
+>      [<000001e43ab128ca>] do_irq_async+0x5a/0x78
+>      [<000001e43b65f694>] do_ext_irq+0xac/0x168
+>      [<000001e43b66ae90>] ext_int_handler+0xc8/0xf8
+>     Last Breaking-Event-Address:
+>      [<000001e43ab08a9e>] clock_comparator_work+0x2e/0x30
+>     Kernel panic - not syncing: Fatal exception in interrupt
+> 
+> This is on the current tip of bpf-next (9325d53fe9ad).
+> 
+> Job: https://github.com/kernel-patches/vmtest/actions/runs/15051985809/job/42309244372
+> You can download full logs from there.
+> 
+> It only happened once so far, didn't repeat on restart.
 
-diff --git a/tools/perf/arch/x86/util/iostat.c b/tools/perf/arch/x86/util/iostat.c
-index 7442a2cd87ed..1d9c20dab5c7 100644
---- a/tools/perf/arch/x86/util/iostat.c
-+++ b/tools/perf/arch/x86/util/iostat.c
-@@ -403,18 +403,29 @@ void iostat_prefix(struct evlist *evlist,
- 	struct iio_root_port *rp = evlist->selected->priv;
- 
- 	if (rp) {
--		/*
--		 * TODO: This is the incorrect format in JSON mode.
--		 *       See prepare_timestamp()
--		 */
--		if (ts)
--			sprintf(prefix, "%6lu.%09lu%s%04x:%02x%s",
--				ts->tv_sec, ts->tv_nsec,
--				config->csv_sep, rp->domain, rp->bus,
--				config->csv_sep);
--		else
--			sprintf(prefix, "%04x:%02x%s", rp->domain, rp->bus,
--				config->csv_sep);
-+		if (ts) {
-+			if (config->json_output)
-+				sprintf(prefix,
-+					"\"interval\" : %lu.%09lu, \"device\" : \"%04x:%02x\"",
-+					(unsigned long)ts->tv_sec, ts->tv_nsec,
-+					rp->domain, rp->bus);
-+			else if (config->csv_output)
-+				sprintf(prefix, "%lu.%09lu%s%04x:%02x%s",
-+					(unsigned long)ts->tv_sec, ts->tv_nsec,
-+					config->csv_sep,
-+					rp->domain, rp->bus, config->csv_sep);
-+			else
-+				sprintf(prefix, "%6lu.%09lu %04x:%02x%s",
-+					(unsigned long)ts->tv_sec, ts->tv_nsec,
-+					rp->domain, rp->bus, config->csv_sep);
-+		} else {
-+			if (config->json_output)
-+				sprintf(prefix, "\"device\" : \"%04x:%02x\"",
-+					rp->domain, rp->bus);
-+			else
-+				sprintf(prefix, "%04x:%02x%s", rp->domain,
-+					rp->bus, config->csv_sep);
-+		}
- 	}
- }
- 
--- 
-2.49.0
+Looks like the text section, which contains the hrtimer_interrupt
+function, got corrupted, and an ASCII string was written there.
+The hexdump above with the corrupted code translates to the following
+ASCII text: "guest=ins001ae,debug-threads=o".
 
+Does that ring a bell?
 
