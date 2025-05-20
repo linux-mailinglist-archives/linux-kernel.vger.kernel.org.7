@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-656308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5431BABE43E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:01:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2BF6ABE445
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6241BC2A5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:01:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76DB94C7526
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C5B281539;
-	Tue, 20 May 2025 20:00:51 +0000 (UTC)
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95AC82882BA;
+	Tue, 20 May 2025 20:00:57 +0000 (UTC)
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169E446B5;
-	Tue, 20 May 2025 20:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968AF286D56;
+	Tue, 20 May 2025 20:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747771250; cv=none; b=QDVYMXXfViitNH8+1ho7SafqSwppTy/XCht4zuWN5eUhJVj7FtPa67eVT0Cpnwz4s8jO8EBxaSfdi95PkWRkKqB3X9+JalTKML+mVrm0HtbI90nhGAXf7dyKiHc2kxweVX1DDzaFvWc75uu8JM/9iZt7QYunhlWyz5e8SEjfJ7k=
+	t=1747771257; cv=none; b=ilcBS02jJ0JtuvRYfWtLI+H7TfNIh+Bn0GkFcbdWX5TO2TLBYWGFKXIOGnuAlxjeWzBN8VUeQGfS3KR+ssw/8sy49NayC9Kz3MuoBuJeA7DIKr5palCgEzu1azxAVAaySgUw7ptTHpUfYO1iF3GFkdoKy1A/QU3Ihz3JvaBH/IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747771250; c=relaxed/simple;
-	bh=qKfSPG9K79WyI4EW3CnFmX5Ja+fl2qkbBt6UeOyPZ4A=;
+	s=arc-20240116; t=1747771257; c=relaxed/simple;
+	bh=v7Qf/Do3avaqhR94kWRjDwETchjOW6NVRtx2BVbhaGI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jv2tC53NraeEwHkbzIj/1govfh8hgiklqMZw4/qrchbJR7ANlpOZClwzQlvcY+PwJbvZ7JX1MYTA8PTIuDfjYbgWr6N1ekojgLcIV/vxcbs8D0dPMjPzTdWHGuWnJY4h+D9BorQczL6aijvbw8y7fISPMFS6/znAHW0pk3yWydA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.152
+	 MIME-Version; b=gSOM/avCYKMi8UBIWfuvLLTMq5ztl3JcBIHiXvFzybSIB1jGYJUzArhtEbnGv03vKYVytk7l1ivQca4Jhc5JRfApi3yECFiNYRiscQwiE69nx5SCJbn0ehVGcoeGd6nWETAOA/Mlab8Z2YVaXH42lFxg4JJLFkYxmnltrZpMVGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
 Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4b255S0bC4z9t2q;
-	Tue, 20 May 2025 22:00:44 +0200 (CEST)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4b255V5QpLz9srp;
+	Tue, 20 May 2025 22:00:46 +0200 (CEST)
 From: Remo Senekowitsch <remo@buenzli.dev>
 To: Rob Herring <robh@kernel.org>,
 	Saravana Kannan <saravanak@google.com>,
@@ -54,9 +54,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	rust-for-linux@vger.kernel.org
-Subject: [PATCH v5 1/9] rust: device: Create FwNode abstraction for accessing device properties
-Date: Tue, 20 May 2025 22:00:16 +0200
-Message-ID: <20250520200024.268655-2-remo@buenzli.dev>
+Subject: [PATCH v5 2/9] rust: device: Enable accessing the FwNode of a Device
+Date: Tue, 20 May 2025 22:00:17 +0200
+Message-ID: <20250520200024.268655-3-remo@buenzli.dev>
 In-Reply-To: <20250520200024.268655-1-remo@buenzli.dev>
 References: <20250520200024.268655-1-remo@buenzli.dev>
 Precedence: bulk
@@ -66,139 +66,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4b255S0bC4z9t2q
+X-Rspamd-Queue-Id: 4b255V5QpLz9srp
 
-Accessing device properties is currently done via methods on `Device`
-itself, using bindings to device_property_* functions. This is
-sufficient for the existing method property_present. However, it's not
-sufficient for other device properties we want to access. For example,
-iterating over child nodes of a device will yield a fwnode_handle.
-That's not a device, so it wouldn't be possible to read the properties
-of that child node. Thus, we need an abstraction over fwnode_handle and
-methods for reading its properties.
+Subsequent patches will add methods for reading properties to FwNode.
+The first step to accessing these methods will be to access the "root"
+FwNode of a Device.
 
-Add a struct FwNode which abstracts over the C struct fwnode_handle.
-Implement its reference counting analogous to other Rust abstractions
-over reference-counted C structs.
-
-Subsequent patches will add functionality to access FwNode and read
-properties with it.
+Add the method `fwnode` to `Device`.
 
 Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
 ---
- MAINTAINERS                    |  1 +
- rust/helpers/helpers.c         |  1 +
- rust/helpers/property.c        |  8 ++++++
- rust/kernel/device.rs          |  2 ++
- rust/kernel/device/property.rs | 47 ++++++++++++++++++++++++++++++++++
- 5 files changed, 59 insertions(+)
- create mode 100644 rust/helpers/property.c
- create mode 100644 rust/kernel/device/property.rs
+ rust/kernel/device.rs | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3cbf9ac0d83f6..0b95c4b0f657e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7248,6 +7248,7 @@ F:	include/linux/property.h
- F:	include/linux/sysfs.h
- F:	lib/kobj*
- F:	rust/kernel/device.rs
-+F:	rust/kernel/device/
- F:	rust/kernel/device_id.rs
- F:	rust/kernel/devres.rs
- F:	rust/kernel/driver.rs
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index 1e7c84df72521..6aac840417648 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -25,6 +25,7 @@
- #include "platform.c"
- #include "pci.c"
- #include "pid_namespace.c"
-+#include "property.c"
- #include "rbtree.c"
- #include "rcu.c"
- #include "refcount.c"
-diff --git a/rust/helpers/property.c b/rust/helpers/property.c
-new file mode 100644
-index 0000000000000..08f68e2dac4a9
---- /dev/null
-+++ b/rust/helpers/property.c
-@@ -0,0 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/property.h>
-+
-+void rust_helper_fwnode_handle_put(struct fwnode_handle *fwnode)
-+{
-+	fwnode_handle_put(fwnode);
-+}
 diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-index 0353c5552769c..d8619d4485fb4 100644
+index d8619d4485fb4..b4b7056eb80f8 100644
 --- a/rust/kernel/device.rs
 +++ b/rust/kernel/device.rs
-@@ -14,6 +14,8 @@
- #[cfg(CONFIG_PRINTK)]
- use crate::c_str;
+@@ -186,6 +186,21 @@ unsafe fn printk(&self, klevel: &[u8], msg: fmt::Arguments<'_>) {
+         };
+     }
  
-+pub mod property;
-+
- /// A reference-counted device.
- ///
- /// This structure represents the Rust abstraction for a C `struct device`. This implementation
-diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
-new file mode 100644
-index 0000000000000..e75d55f5856cf
---- /dev/null
-+++ b/rust/kernel/device/property.rs
-@@ -0,0 +1,47 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Unified device property interface.
-+//!
-+//! C header: [`include/linux/property.h`](srctree/include/linux/property.h)
-+
-+use core::ptr;
-+
-+use crate::{bindings, types::Opaque};
-+
-+/// A reference-counted fwnode_handle.
-+///
-+/// This structure represents the Rust abstraction for a
-+/// C `struct fwnode_handle`. This implementation abstracts the usage of an
-+/// already existing C `struct fwnode_handle` within Rust code that we get
-+/// passed from the C side.
-+///
-+/// # Invariants
-+///
-+/// A `FwNode` instance represents a valid `struct fwnode_handle` created by the
-+/// C portion of the kernel.
-+///
-+/// Instances of this type are always reference-counted, that is, a call to
-+/// `fwnode_handle_get` ensures that the allocation remains valid at least until
-+/// the matching call to `fwnode_handle_put`.
-+#[repr(transparent)]
-+pub struct FwNode(Opaque<bindings::fwnode_handle>);
-+
-+impl FwNode {
-+    /// Obtain the raw `struct fwnode_handle *`.
-+    pub(crate) fn as_raw(&self) -> *mut bindings::fwnode_handle {
-+        self.0.get()
-+    }
-+}
-+
-+// SAFETY: Instances of `FwNode` are always reference-counted.
-+unsafe impl crate::types::AlwaysRefCounted for FwNode {
-+    fn inc_ref(&self) {
-+        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
-+        unsafe { bindings::fwnode_handle_get(self.as_raw()) };
++    /// Obtain the [`FwNode`](property::FwNode) corresponding to the device.
++    pub fn fwnode(&self) -> Option<&property::FwNode> {
++        // SAFETY: `self` is valid.
++        let fwnode_handle = unsafe { bindings::__dev_fwnode(self.as_raw()) };
++        if fwnode_handle.is_null() {
++            return None;
++        }
++        // SAFETY: `fwnode_handle` is valid. Its lifetime is tied to `&self`. We
++        // return a reference instead of an `ARef<FwNode>` because `dev_fwnode()`
++        // doesn't increment the refcount. It is safe to cast from a
++        // `struct fwnode_handle*` to a `*const FwNode` because `FwNode` is
++        // defined as a `#[repr(transparent)]` wrapper around `fwnode_handle`.
++        Some(unsafe { &*fwnode_handle.cast() })
 +    }
 +
-+    unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
-+        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
-+        unsafe { bindings::fwnode_handle_put(obj.cast().as_ptr()) }
-+    }
-+}
+     /// Checks if property is present or not.
+     pub fn property_present(&self, name: &CStr) -> bool {
+         // SAFETY: By the invariant of `CStr`, `name` is null-terminated.
 -- 
 2.49.0
 
