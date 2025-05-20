@@ -1,192 +1,109 @@
-Return-Path: <linux-kernel+bounces-655609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8E73ABD89D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:56:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A14B5ABD8A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A41F73A53D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:56:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CF588A7259
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DB51D54E3;
-	Tue, 20 May 2025 12:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IDppxmN0"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2907C1FFC5D;
+	Tue, 20 May 2025 13:00:56 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862D79461;
-	Tue, 20 May 2025 12:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997854689
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 13:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747745779; cv=none; b=aAs9t+uE06SJhnYbfz0z544EiTt8ym13MhjkU2J0eMRCMgzlEc0Ik+cGp+kH3LCo6cTQzFua0UfdZJct0aIgv6iWUeuDEZk3GWJjrheLBzPagTsNDTxj631JSjrFzJiABMemYG55fnVLRqvGbDtkme4f6Ww4b3M165pSp7XcuqM=
+	t=1747746055; cv=none; b=S52jROqfxf/VLrHHy5mHymBrjXJaPTU5BE+FnCgFesUccl3ExpXkf6S1TGt7hv/cKMzyhO3+oByzl656CD6ng2ueADDytJVZD1iNnlSwuQeJvuBqSArAmju83rEhlKCq5jf5oxkKcx7rm2WalfatthS8KWvze7lGqGXMpd92oDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747745779; c=relaxed/simple;
-	bh=4S8ZauXkXCneFSHnIt8yPad/b3zcMosS2XT+O7zzntI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KF2D/y5zX0xJoYP9BO4x/dMCsipskV7mEI9XrNDcPMWFplnpgGohnvDIFT6XXqk8J/tC+OqZz6KDwGZqoH0zueF6qIS/qHqnkDPcUmEBTt75t3h9mDHHzXFasRjE6mSNzdHICsPN9npnbBWDjjNj3uC/MMPjvJTWxN3I5F3A+vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IDppxmN0; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-47698757053so73075611cf.0;
-        Tue, 20 May 2025 05:56:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747745776; x=1748350576; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=FeiADSmz4HK3l7V7PhgpHIgI1M3PHWKk6zyjdcQyvN4=;
-        b=IDppxmN0wyn+tUqnHZgjM3pKhVv2aIdF+T18DUerwO+DDjx/iZwQTmV271dzod0FSa
-         WmR/2id9b6zFz6LGrJmTtI4oQCQ9gA0cVg4bp6jd0HiZfvPGldQ1fSgylK0OWRrpQKHL
-         wG0P2+fvr/jxgceQfDRl6JyG/P8MkVg82FmbVOxEte9zSMZ05SLxRHAeUeUNikl8XCMM
-         ZpSkpGpvA77UmTREq+X9TaexjxirZgoqYy52h820Sfolb4enM1yp/+IONmCeZyL0yGgh
-         P63raMkUQ9kqVgZhabBKWn5h+1gAWJmibUvae1214W73lOF6R+b+mEPw4wuQdyrFChH4
-         P/9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747745776; x=1748350576;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FeiADSmz4HK3l7V7PhgpHIgI1M3PHWKk6zyjdcQyvN4=;
-        b=n1NGknAOHHV+XJ5ROI7+d7IQhLzHn1KOlsagkU7vCIsDmbkU2BJ2It5sOZTsJmWjbV
-         futasx9hLWRIIO4UEhFoVYxD6d5jFxIBAru3XBhk93pm54omouey2QbvtPCAEz8V4BaN
-         y0TH3W/IHnbS44p1JKqRRFIWARF56BNwMif4ws6rq/dnShjb7X5ocDu9XaHF3cUkZ7Ky
-         gMGVa0kQecdyIQTgivwxxdPuxWbq7UscY1dpnULSLb4U8OSBCcY2iKB1oGrUUkp6ubXJ
-         zc3xaYaO7JOlReckp0yab3o3frXDrG6WYIH+NvcUkYyY9SY2EAPByHSH/Lr3vKz/oxCX
-         wrXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXgqUj/isCebbBnh2dBqrpNqiMN9k5QDm8r9AML2xTw0PSa4LVT6hNiMMfBXs4eBRwA9SjaR5aYj62dAgs@vger.kernel.org, AJvYcCWKvm0EGCp/A2z9KvUPyyiHh2NO+a/UtxtryMYV98s08+I/KW3Z+AvYZ9CwI7d3q4j2H+DqhT3LenoXv9a3Bw0=@vger.kernel.org, AJvYcCWzEWhe9LfhSZ893pQZuwwAzlvwuosaFIFZ2ZHVxnWwDMwQm4amHjZ9yyEgq9C/bRMOfQOoLIpNuROTnW5Tsgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoqRTuJ31XfamRwKAnf/197ri5gC0tVCSsSnnJRWwqtVTnb70r
-	Uyo1sumb256ulFw1XFPF+skI+i3TgKLq3cAS+XSNb3yQKL/f8RqqRp/j
-X-Gm-Gg: ASbGncurHUUGo4+l1k8V9FY8tW/DZ3YZ2DOSRqylBTTraazC1Fp/zeG1GAWVScQPkxe
-	H763NK/RzvzWUB9YmqTmdyLpTHPEl/D7QzxVsLseUy54Jvc9tb81pHxz6SzFh7xU9g4Du73QFYl
-	pLvIRXw2zlIm+pqXF6mQXkif4Te+0cl4H/lVX/IXgrJjhauJiTAtKwQeT9UrGwNZl4Z/kAkpALP
-	vZmsWfQTj6TSji/0a+10HZArZI/WW6LHLQuxYfA/YR8NM3eaFtRntRv4HS3P4MARFH3pXCntaQc
-	hUntAOhxpx3WQy8mZ//ARb0Kv4N0jfj8TDcRduKZ/lVnZOtoKCcohsNuyYj6WA/6Hptp7Gbw8xe
-	mFZIMhDZt/9vHMclJ34nFYCN4rpG4phtOW9pvSo5EbQ==
-X-Google-Smtp-Source: AGHT+IEL3+h3BCUV6mXDOV6MS77SPTtdgt0hkDPfNmEKaPC4GDYuj04L6rKR/KRb8XZgyrIXCGEygQ==
-X-Received: by 2002:a05:622a:2605:b0:494:9fc0:de3 with SMTP id d75a77b69052e-494ae4662cemr344326741cf.32.1747745776311;
-        Tue, 20 May 2025 05:56:16 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494ae528f08sm69365631cf.72.2025.05.20.05.56.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 05:56:15 -0700 (PDT)
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 41DA81200069;
-	Tue, 20 May 2025 08:56:15 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Tue, 20 May 2025 08:56:15 -0400
-X-ME-Sender: <xms:7nssaLWvxRXQBwUxDE5ZJ-nC1iUCfTTgcxPfb-gaChQanIUN74BxLg>
-    <xme:7nssaDmK2hkj2Q8bfWiUx7yT8CdBWeoPdaURNeQBp6zHsA1vTMLH05Bg6FEeqAeVA
-    maE5hYquVyG3bravw>
-X-ME-Received: <xmr:7nssaHZoKCwh0Op4dZk2QLElTksO0Yd6CCIKFjDHfkv-qmDouo_BoZHd>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddviecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeevgffhueevkedutefgveduuedujeefledthffg
-    heegkeekiefgudekhffggeelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudelpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtg
-    homhdprhgtphhtthhopehjrghnnhhhsehgohhoghhlvgdrtghomhdprhgtphhtthhopegs
-    qhgvsehgohhoghhlvgdrtghomhdprhgtphhtthhopeihuhhrhidrnhhorhhovhesghhmrg
-    hilhdrtghomhdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheplhhinhhugiesrhgrshhmuhhsvhhilhhlvghmohgvshdrughkpdhrtghpthhtohepvh
-    hirhgvshhhrdhkuhhmrghrsehlihhnrghrohdrohhrghdprhgtphhtthhopehojhgvuggr
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrih
-    hlrdgtohhm
-X-ME-Proxy: <xmx:73ssaGXquQALZ7jhoyENrGBsa9cE9sle6x67j2_XC5_tAlTIEf2l3w>
-    <xmx:73ssaFlPHz-5oAT9ramwuYajOZkAA6Nr9j5iOLXfyFJ0A14GIH8ldw>
-    <xmx:73ssaDdbkdYntKtpIx8s9_NfENXtPxnhHI84sATjvIMiiLjadwOyXQ>
-    <xmx:73ssaPHRKC_SI5tVToofsZId8IL5rY4VpyHsyq2CRBhWs_8egavUPA>
-    <xmx:73ssaHm23FG2_I0MNE9FRwj_QR1njJLBZQS8kGtioyD99AMbeiCjnxcw>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 20 May 2025 08:56:14 -0400 (EDT)
-Date: Tue, 20 May 2025 05:56:13 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Jann Horn <jannh@google.com>, Burak Emir <bqe@google.com>,
-	Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v8 5/5] rust: add dynamic ID pool abstraction for bitmap
-Message-ID: <aCx77cCum_b-IR4H@Mac.home>
-References: <20250519161712.2609395-1-bqe@google.com>
- <20250519161712.2609395-6-bqe@google.com>
- <CAG48ez2WdxXVCzVsAPeQWgso3ZBQS_Xm+9D1FLBx6UHFV1bGHQ@mail.gmail.com>
- <682bc528.c80a0220.13f632.9ec0@mx.google.com>
- <CAH5fLghNJYjxPFUc2E4-2pJpGT5umUr1EJstZvs88ox3MsXDGQ@mail.gmail.com>
- <aCwRZlkBWekRmDg7@Mac.home>
- <CAH5fLgj1NVodPy-95CFUygGO7WC0siNEKSyEhgLvpX-1zMXErQ@mail.gmail.com>
+	s=arc-20240116; t=1747746055; c=relaxed/simple;
+	bh=WjhGiKBKJeTkNW7Xg+AcIBpjobKTAScRBZjiprQ/HZs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=g45Bd6zvdiA3ImjsB8OyZN6c+5BhD6TldK4kYZWyNa7j4purMnfDzEAmu5FwluMNIad4GcBhv5U9B91hct+NMuelXtjLalcnkLdgHHBKGHqH9oZ15YdJG8wP6QPJZpqA6WrNn5eECnzyHBGQ1YPnyHWMXt0arWFJ1hFESLZ+fPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1uHMWo-000000000yi-2DwF;
+	Tue, 20 May 2025 08:57:06 -0400
+Message-ID: <841d88f8db26f33ede5a9277efca77e331f45e7c.camel@surriel.com>
+Subject: Re: [RFC v2 7/9] x86/mm: Introduce Remote Action Request
+From: Rik van Riel <riel@surriel.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org, 
+	kernel-team@meta.com, dave.hansen@linux.intel.com, luto@kernel.org, 
+	peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	hpa@zytor.com, nadav.amit@gmail.com, Yu-cheng Yu <yu-cheng.yu@intel.com>
+Date: Tue, 20 May 2025 08:57:06 -0400
+In-Reply-To: <aCxLMsjkA9dBeKvD@gmail.com>
+References: <20250520010350.1740223-1-riel@surriel.com>
+	 <20250520010350.1740223-8-riel@surriel.com> <aCxLMsjkA9dBeKvD@gmail.com>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
+ eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
+ Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
+ lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
+ dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
+ mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
+ gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
+ r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
+ WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
+ 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
+ Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
+ +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
+ g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
+ KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
+ fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
+ 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
+ G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
+ okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
+ TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
+ cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
+ omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
+ QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
+ c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgj1NVodPy-95CFUygGO7WC0siNEKSyEhgLvpX-1zMXErQ@mail.gmail.com>
+Sender: riel@surriel.com
 
-On Tue, May 20, 2025 at 05:42:51AM -0700, Alice Ryhl wrote:
-> On Mon, May 19, 2025 at 10:21 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> >
-> > On Mon, May 19, 2025 at 08:46:37PM -0700, Alice Ryhl wrote:
-> > > On Mon, May 19, 2025 at 4:56 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> > > >
-> > > > On Tue, May 20, 2025 at 12:51:07AM +0200, Jann Horn wrote:
-> > > > > On Mon, May 19, 2025 at 6:20 PM Burak Emir <bqe@google.com> wrote:
-> > > > > > This is a port of the Binder data structure introduced in commit
-> > > > > > 15d9da3f818c ("binder: use bitmap for faster descriptor lookup") to
-> > > > > > Rust.
-> > > > >
-> > > > > Stupid high-level side comment:
-> > > > >
-> > > > > That commit looks like it changed a simple linear rbtree scan (which
-> > > > > is O(n) with slow steps) into a bitmap thing. A more elegant option
-> > > > > might have been to use an augmented rbtree, reducing the O(n) rbtree
-> > > > > scan to an O(log n) rbtree lookup, just like how finding a free area
-> > > >
-> > > > I think RBTree::cursor_lower_bound() [1] does exactly what you said
-> > >
-> > > We need the smallest ID without a value, not the smallest ID in use.
-> > >
-> >
-> > Ok, but it shouldn't be hard to write a Rust function that search that,
-> > right? My point was mostly the Rust rbtree binding can do O(log n)
-> > search. I have no idea about "even so, should we try something like Jann
-> > suggested". And I think your other reply basically says no.
-> 
-> We would need to store additional data in the r/b tree to know whether
-> to go left or right, so it would be somewhat tricky. We don't have an
+On Tue, 2025-05-20 at 11:28 +0200, Ingo Molnar wrote:
+>=20
+> * Rik van Riel <riel@surriel.com> wrote:
+>=20
+> > From: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> >=20
+> > Remote Action Request (RAR) is a TLB flushing broadcast facility.
+> > To start a TLB flush, the initiator CPU creates a RAR payload and
+> > sends a command to the APIC.=C2=A0 The receiving CPUs automatically
+> > flush
+> > TLBs as specified in the payload without the kernel's involement.
+> >=20
+> > [ riel: add pcid parameter to smp_call_rar_many so other mms can be
+> > flushed ]
+>=20
+> Please actually review & tidy up patches that you pass through, don't
+> just hack them up minimally and slap your tag and SOB on top of it.
 
-Hmm... I'm confused, I thought you can implement a search like that by
-doing what RBTree::raw_entry() does except that when Ordering::Equal you
-always go left or right (depending on whether you want to get an unused
-ID less or greater than a key value), i.e. you always search until you
-get an Vacant entry. Why do you need store additional data for that?
-Maybe I'm missing something here?
+I'm happy to do that now that the code is finally working.
 
-Regards,
-Boqun
+v3 will have much more cleanups, and hopefully a few
+optimizations.
 
-> implementation of that in Rust.
-> 
-> Alice
+--=20
+All Rights Reversed.
 
