@@ -1,232 +1,361 @@
-Return-Path: <linux-kernel+bounces-655872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C73ABDE88
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:12:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A807ABDE85
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 538338A2544
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:12:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F9953AB214
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D27C251796;
-	Tue, 20 May 2025 15:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEF9251796;
+	Tue, 20 May 2025 15:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="M6gbo3Pk"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B26A4A06;
-	Tue, 20 May 2025 15:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747753944; cv=none; b=OJ9BDboe+rn1vuOp1NFGw+4a3RU296QfntuSBlt7lTsBNKFXGfjW1WvrvoByXUEZpj8VqBZgxkHM0qh2A43cfuNlpz/NqZmH6zCGX1kbVI5dFSFKL9nWObtb29L3X2ZaBYUzOzeOwNamO/ZTVxb3xxdCaLaQH/ZWHha6kmQKMV8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747753944; c=relaxed/simple;
-	bh=aclJQ19M3A9ayMS+Wkon/Rf6N7eDyUDtpUE1LE6RJFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q4gZNdhnLomaVMfR8EYXyvOwWmEYkZ8kYMFYs04tRW/jBTBW3wrMibKNv27509h2CXx/tto3+rHQQqXxUxsbupZgE5e+0H4KjbHaYOBsvVy7RpE4ZO330PaI7drINKsuXnU1GQTQnKCNyKgA4bKBpeIqsbBPmXLU8D3TqorW/t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=M6gbo3Pk; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=GPaZJXcP6XubVhJ/WV1CIEQYs82mgwU/ATflS6SjxSY=;
-	b=M6gbo3PkyNO6LKEIRcnZEar2L3xmcCL05XCix/scjTswOD8OfX3hq7iMJqVaW3
-	qBSEtfuIuRcy+U5BVj4+FQ6VLe6nOO3g04/cNXFC5BUFJDThIliGdMQpLtqLeviU
-	+R/SiXqIWGLa7OvxsSrbqv8VxwXFRA5h8wbO2Gk68EqPg=
-Received: from [192.168.71.93] (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wBHzheFmyxoXz1HCw--.9652S2;
-	Tue, 20 May 2025 23:11:01 +0800 (CST)
-Message-ID: <5759e70d-1098-4a6a-bc7a-bcbad394d739@163.com>
-Date: Tue, 20 May 2025 23:11:01 +0800
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YqVVke4A"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2069.outbound.protection.outlook.com [40.107.223.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283931AA7BF;
+	Tue, 20 May 2025 15:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747753883; cv=fail; b=nuTVROgUuNzYJqF9Zuxzmt1n2khNMIlO/E80Zmxy4NuFNqi9/E/ipqlAEj+rWw6g98RbEmowPuESeJhdoHJSEtYPDaSnrRSTTgFeCq16qBsMFxroqA8cxoQjKVO5ASKzRI7rum9rXmgGMaMVQKESFPGVP1ujqouwu3NO/aAxK1c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747753883; c=relaxed/simple;
+	bh=KDYaLE5rVrJe/lPxZ0t/vjx/dmVXaaEoM9aEnQ7FJpU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=VifyXNPk5UndAuinKmLO4U4rGxxbzV03y+paCyvnekTNArBK8Ql47r0Vo0KbXeAbodZlUzxpt5bBCUcOCLwA2z5/TGEGejYGs1do+t7d5BMF32PQj/R2doPpDLHIMx34CIMYs9pevn9Pi4lo2wVnBooW53arcr3IotoqreJdhao=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YqVVke4A; arc=fail smtp.client-ip=40.107.223.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ThGlAuoLnK8UBywZuJDxvIllAzMlytvjT4Q5U/QballyOrXqr2CL8ZdWVCmWi34M9LZRhTTUaiCNx9PYyeBR9tjL1RTTRs1xRlrDjkMafy8u84yZ4Euj8JRWCvmyKsDvMHyEh7iLBnr+VDbwXjSO140/O8RXpaO9NouZ8RFiNcY/+6cMd/O6W1QlgHBGyKrdex6Kke2O5XiQBcLzFHx2I7q+QtHm/ElD6csDw0pBInXJU2IZIxi/1L3+DJHUqxZXL8lTK8vkQtBEk/6/L1rttK3q/p/w2RSMjJJ4BUjJuVyZOrdr/XaQjcSUWhf73ryIn4HDtZ+wXt7dEq4Lv4k3pg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p4+mcAdJYOzf6+1nRidTuQw54TfPcu1O4WBA0+Cc6uQ=;
+ b=fMjtc/57i8Ha9ukNO90XqveSFbbWGbS00zCz20MhiWLBkxnVgYBPSVTSIn3TulCB5YR6f0IHlivk0cUkFPuhG3Lx7oJUrXJuql4vUooMbRmVuAw1y38AF5htEWB7J83rMEsRYhI1TGFia8jcolRajhiHQh9ttCcl0AYTRCqKdqq1jBjwpkYal8TpyLESz1LNV5dG1LRbN+Dv3KKPp13nEzvsivD0FW/oHpzXL8Dy9xnqJaG35POUk+hPeFcgJGnngdMSV1RWjm40IeKAz3XxbF8+oxfR+SpWyH/6csvMgtv1gGYOLYKrFxRmOlZYLeCex2AUM2WjZ0nzVqsoVACafA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p4+mcAdJYOzf6+1nRidTuQw54TfPcu1O4WBA0+Cc6uQ=;
+ b=YqVVke4AS3vXeqgtKRfYlb8eky1onxeK3MQxAf2QLviclzHcvRJgki33HG4A29DAW2AuaK9mgofK1pbDlgRP3YDET2mx1/EwSxsU2pag9c9jtpt87Zh3lNV9Vb0VbHSggzmNt1Sz/2GAqDmJH5cDZkKN0uvBlTM4nro+WCDMx9zhsp/ft87UlHRQG90fgrMELhdTCK2ol77J76r1DZzATVXCTVVxJCCiPoBCN/MqZGZ9jgMWkxPTLJOYIa8mkgZmqIDmXinHDiCqCf6KkDdrVPVtFKfB2fU+dOniKN5L9x1aSV33JXct47dVdxSUUdIzRbGukZYsAiIsbndJD4bIZg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by SJ0PR12MB6712.namprd12.prod.outlook.com (2603:10b6:a03:44e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.19; Tue, 20 May
+ 2025 15:11:16 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.8746.030; Tue, 20 May 2025
+ 15:11:16 +0000
+Message-ID: <bdb290d4-b369-4b8e-b78d-8c8d3cc07057@nvidia.com>
+Date: Tue, 20 May 2025 11:11:12 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 16/19] nova-core: Add support for VBIOS ucode
+ extraction for boot
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Jonathan Corbet <corbet@lwn.net>, John Hubbard <jhubbard@nvidia.com>,
+ Ben Skeggs <bskeggs@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Shirish Baskaran <sbaskaran@nvidia.com>
+References: <20250507-nova-frts-v3-0-fcb02749754d@nvidia.com>
+ <20250507-nova-frts-v3-16-fcb02749754d@nvidia.com> <aCN_PIYEEzs73AqT@pollux>
+ <4fee85be-a8c5-4a99-8397-c93e79d72d15@nvidia.com>
+ <aCxLyxcERNHKzfvI@cassiopeiae>
+ <3cfb7a8c-467e-44d0-9874-361f719748b8@nvidia.com>
+ <aCyZPUaPSks_DhTn@cassiopeiae>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <aCyZPUaPSks_DhTn@cassiopeiae>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MN2PR05CA0048.namprd05.prod.outlook.com
+ (2603:10b6:208:236::17) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] pci: implement "pci=aer_panic"
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: bhelgaas@google.com, tglx@linutronix.de, kw@linux.com,
- manivannan.sadhasivam@linaro.org, mahesh@linux.ibm.com, oohall@gmail.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org
-References: <20250519220310.GA1258923@bhelgaas>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250519220310.GA1258923@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wBHzheFmyxoXz1HCw--.9652S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3GF1xJF1UuF43KF1rXry7Wrg_yoWxJFyrpF
-	WrWan0krs7GF9Ivan2k3W8WFyYyas3t34UGr1kKw17X3ZxZF95XrySvay5uFZFqrZY9w43
-	ZF4jvFZrWF1DAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRP3ktUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWwVTo2gslzmFdgAAs3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SJ0PR12MB6712:EE_
+X-MS-Office365-Filtering-Correlation-Id: 284855c7-250c-4a7d-c53f-08dd97b09151
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZHA2eDRkR003enRXTTRRZ0VRZWVPNkNvWEUzb2dxN3FyRkxleW5sRTEzdGZu?=
+ =?utf-8?B?dzhzTTh4aGRoOER4MUxCMmp5ckVNWUQ4cmdRMDJNWlU0RHBLUXk5eXRsZDl5?=
+ =?utf-8?B?cEt3cG1EQkRlcGFySERMUFF5L3RKemlveGw4cmNYazNXT0dlMmxINUcxazlp?=
+ =?utf-8?B?bys4K2NydGp6S1dLWGFoemE1WnNiUjNNam5lU213dVpvdCtnZi9Rb1laRlZF?=
+ =?utf-8?B?YXo1Z09uY1ZIeTRJOE1veHJTb3dPeGIyNDlRN2piRWpHMFEzakhQY0RRaE9m?=
+ =?utf-8?B?VVZ6eml1WXFlSm5rMEc5dHNFVXFrVjRaNmxybFNJelhpODFKMHlNcHhUUFpC?=
+ =?utf-8?B?YUlwSk9HT09weFdBVEV4MWF3eTFDU1JDOCt6dm1uN2o4YTR0ZnhGMEpjWXl6?=
+ =?utf-8?B?RFVZS2NJVlJQYjRqQmtQTmt4NHBmUXRMSGRaakV4U0dhNW42eSt4QzVRTUtz?=
+ =?utf-8?B?RXBHcE9NeTZ3RnBnQ3h3VjZsa2xxdno0R0lMU29zbGxTYzVQMnNnNE5UWVk3?=
+ =?utf-8?B?aGQ5bnQwdnBsUVo3RFI5WExuU3VyU1ZtOEFFR25ZZlZsVzhDWjREa0VvRnpa?=
+ =?utf-8?B?aEFkVFhBNzlJT3VWcThoRlNCZU9vN1BHZklYZEtQSVB2RGxCdWprcnhoaDk4?=
+ =?utf-8?B?dXBRTmtDV3RYN3pBUVhjYjZHdkkrL01OWmFWbUJod3ZuekYrNXZVY1JvQ2xV?=
+ =?utf-8?B?ajRid1FUTlhrQTYxTm1Nckc0QU9wQzM4Y1ROUnhDRmdGQzB1MDRJcERmOWRI?=
+ =?utf-8?B?L0lFWkJlblZYV1lJbUFZVjQySWtvZFJFSGhXZmNad1RwSUcwcUpPclVMODRB?=
+ =?utf-8?B?b3poWC81cXZsZkJ2RGhtSnBuSDZoTzlwK2tudjh1NlZsVm5ETS9OUGZ2cVRV?=
+ =?utf-8?B?K1BMZDFmMngvVEFuQjFOYXdsNXQvZDdhTE9ZdkdtS2hRRGc0Szd6MTFCL3JD?=
+ =?utf-8?B?YjdhSTBOcSt1bVBxbmlsN0R0UWc3Rm1JVXJhbVNkL1R1RUJML2xIOUo5TERY?=
+ =?utf-8?B?dnpXWEhvL3poZjB3U2N3Ly9sTytWcDFRMDhmN3R5WHl0eEhFcndwM3RNSUVn?=
+ =?utf-8?B?YVRiNkdzYWdJRVNyRnRQd0tNQnV0Q3g0NW1IcHdXSG16Wk1QWjNISWRZbDF6?=
+ =?utf-8?B?T213ZEx4eUM0UEdOZlNYVDRnWFY3bjBHaHI4NkZJc0M4U1RnaVdxNmlDVzEy?=
+ =?utf-8?B?Um5vWEJNZkQyMWdpMjluS1lPeUlORzE4MkZDcUNCeU5CdUlvWjJzTEFrR0gv?=
+ =?utf-8?B?YUFDRm1heWVnZFhuVVpoSnRMU2pqQ2lDbkNyV2ZQMmIrZmZMNVF3MXR3bEdp?=
+ =?utf-8?B?VFhaL1B5V3VKc05VMU1wK0dGUTVIMGpxbHpWaUEyQXVUK3MzWTdOSUZWNzdF?=
+ =?utf-8?B?NFZvdmdmNloxSGhUK0dvSkYvUS8zM3ZuN3NlLzB0dTlKN2FUcFpRNkdVNkJx?=
+ =?utf-8?B?cVhaL1ZPUkl1VEt5dXQrZUdibHJDSStKVDhTWW9oNlRvTmprQkNFdEltTE00?=
+ =?utf-8?B?ZWVnRlNLaHNCOUhDVWJiOGhKZ3R4UFBXSUZUbTI2K1BhWXQvcCtYTHRZZ3Jw?=
+ =?utf-8?B?QkNKcVNmQVFFRkQzYXVFcS9GbVRNTGh1d3VBOHM2aGhYUlh1UmN5RXViMEw4?=
+ =?utf-8?B?UG90NkU4UW1QY3cxRHYxS1JrS082U04yT1JnUU00d2l2b05kY2laSE1oajBq?=
+ =?utf-8?B?U1NjVUFjMHJVanZPa0VKM2RyeW8xcVRoVC8wRXYvd3FrQ2FrUEtnVVFzVURE?=
+ =?utf-8?B?ZGd2cCsyME9ZdWtIWnprazJodHUyL1hWWk5yUEdScmZpWXNMYXV2a3hhQi9B?=
+ =?utf-8?B?bi9Ed3hnWjdKM1FPaUoxNTl2NllCTjVPWTZNUVNmQ0ErR2RNQXFRZi9FdlJE?=
+ =?utf-8?B?blZZYmZ6eE1DZ3BKbVRsSkxQN3daY0phY1pQeC92bzBIekVmMVRNc0ZkNUYx?=
+ =?utf-8?Q?1/lEuDnGV+c=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ME8rMTc3bFhsd1M1aVh0bkl5S1ErNlE1MWFtWUx1cHVOVXVWUEVvWUV0cVZo?=
+ =?utf-8?B?R1hwdWpiVVMrY0l0dnFJMjFOWm54WWlMNlc2QVFSdDhIc1A3TlNROHdqMUhB?=
+ =?utf-8?B?RG9Xd0NnOUVHaG5TVmk4Z3JGUmRsUW41UGRDWEN4anl0LzZTL0tjS1c0Q05m?=
+ =?utf-8?B?Q2xpeUZTZEVuT2UrdUNndTVLaDg5aXNLNjJ5U2FRcXVoRCs2ZmVWM2RrVllW?=
+ =?utf-8?B?czRyMFNXd0ZXdXdjMnBvekJGZllDMFZsbDFVb0NGTGJlVFA2bkppSkFnNTBi?=
+ =?utf-8?B?ZHQzdW1CbGc4L25BN3BjeE9IcWN0bjE3Q09DamwwU0JVSDdkOEg0Mm1YM09Y?=
+ =?utf-8?B?TTZwdlkyK0Nua0NzVERjY3ZCUFB4bDFaRnphZ0t3REQzTTJPWUVvV2RiUHR2?=
+ =?utf-8?B?T0dGVlN4aE1helhhVUlqZ0t6WHo3eFlGeUlmbll3NG85ZVFnY2pLdXV3T0h0?=
+ =?utf-8?B?RDR0V0daSGorazIveXMxK3hiWVdEOU0yekpKWlR5cFh5SHM3d3BJVG9MRlp6?=
+ =?utf-8?B?TkZtREhNejR4RENnVVNsVGtkdXhUbHNUcGJncjhXSEs5anZHOVkvMGFOZWts?=
+ =?utf-8?B?dnc0VW45dnplOUlzcFI3TGd0dmpEMGQwbUZaT3pOdjNBUWMzc0lPTHFTSS9L?=
+ =?utf-8?B?VW5hUjRocUNwLzY4Zjc0L2lweGZObUtjQzVYS290ZWlZUi9iWGFkWGZDSjlG?=
+ =?utf-8?B?RjdpK3FlaGU0MEcxYlV5dzNxWUFhYVdYRXlRVzdkWkM1QmFGSnhHb294WnVs?=
+ =?utf-8?B?RVZYY2crM1h1a1d1R3Yrb08xeUs2OVFEd3BBUldwN3hGd3hCeFgxYlRTdUhU?=
+ =?utf-8?B?bnlLZlZ4ajUzV0JIa2dNSkJsSVhJSCt2ZGxCOWhwWkk4WUVQZnZwYkN1c2xI?=
+ =?utf-8?B?c2tZbFY3Q2RNdzhqOGFKeVdsTk93ZG9TU2NUNVBKMUhrNUd6MXlBbTVaazc5?=
+ =?utf-8?B?VUNWdER0SGQzN0V2S3ZpZDFHcWQ2VG90MkNKTE14MS9SQWNVemVtaE5FRmR1?=
+ =?utf-8?B?ZjBieVduV1c1WHh3Q0kzeVZYMlEvYS9PNldYbzRoNXFGc3hHRDU1VXlKUVhw?=
+ =?utf-8?B?UmtCRVRCajFlb1k4U0Q4M05zMGxNZEVjZm8rMlBEY0dLSlZRUjRXVzB4YUJ2?=
+ =?utf-8?B?dUpvVDJMWkI5aG1tK0tocjErbThMamJRWndOYjNZeDhWWk0yQ3JoRTVpT28x?=
+ =?utf-8?B?TGFLdm9NREtNdzlMb3YzcXpMUFFaNnRPWTg1SGtzMUhMaTMxS1R5UmxRYWxW?=
+ =?utf-8?B?ZGJVcDdHeTVVRWU0Q0k5REc0bFpnem5UckV0WXluUmRXRWhKQWhXYWQwaEdD?=
+ =?utf-8?B?NE54SWxENTEzTHRZQ2svL0plMGpZbUdhNGw2cHhNWGI5SnJ4MkdpSDBwYkl3?=
+ =?utf-8?B?Q3FyTmgxcnNjSlVtb2w0WXZHMHBjbEx1S0NERlJEM2xmbHBXUWIwNUthK1NG?=
+ =?utf-8?B?ejZub0pCa21vTTRyRUQwbEVwdVlObk8xMEUrL3I3Rm1OVTZOQzlOWHhEc2dp?=
+ =?utf-8?B?MDg4eXlYUXQvOHNBc1ZqRXVmZHhldHc4NjJFRHkwUVh0a3Y4cGcvcENKZmQv?=
+ =?utf-8?B?ZmVFK29TcFBHUFVFNVRVbDNlSGJKeGxXcU5QblN0clJBT1BBQmE5QUs2YlNn?=
+ =?utf-8?B?YkZZNEhpdkp5QU9jU093dFdPemdaYkRtQ1Q1andRL1EzR0dObnlibXFHTDVY?=
+ =?utf-8?B?UkdtUHROQ2xscGI4MS90OHZtY1BrLzFlNVZMUDhlRnBNeVBaUGN0dXdqRy9r?=
+ =?utf-8?B?ZSt4WXNNdkF1Q1Q1czJiTjMweFdWTTJpbExwK0o5TkV4K0pvaCtJN3FYU2RL?=
+ =?utf-8?B?SENxTC9WNjdIeGRBNkpoTGdkRFpremxDejdtZzArWm5WUE0vNi91YmpwUjRW?=
+ =?utf-8?B?bHF2RFI5WjhtZ3FnR3RxVmxEV1hBWG5yNkpubXA0K1VSM1hQZmhHd1luQmJR?=
+ =?utf-8?B?TENXVjZ2WmVSNHY4N3hIeE0xdXA0YTdwZlpmZVg4K2h5aDZWUHIzNk9ma0ht?=
+ =?utf-8?B?bE4rZWlpNHZ5ZEEyb09oRHVZVGZna2l0VFd4NnZVem1Dcm9yRWQ0N2RWSEts?=
+ =?utf-8?B?REdBQ3N1ZmtLMjRoNVFoTURxL09iaXpLbmROWGtyMzUzZFAxVndrR2xwZFN1?=
+ =?utf-8?Q?WajUwgx7/DFOp1idkE2QTx+ip?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 284855c7-250c-4a7d-c53f-08dd97b09151
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2025 15:11:16.6239
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: obUUcTdPYhImgWkbfwYHWlfvRHsTlcxs9iaJoIwyUpNgqaRE86VG6OEJgeLZ7elqV7OILLjulUgqrnnJbwnK6Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6712
 
 
 
-On 2025/5/20 06:03, Bjorn Helgaas wrote:
-> On Sat, May 17, 2025 at 12:55:14AM +0800, Hans Zhang wrote:
->> The following series introduces a new kernel command-line option aer_panic
->> to enhance error handling for PCIe Advanced Error Reporting (AER) in
->> mission-critical environments. This feature ensures deterministic recover
->> from fatal PCIe errors by triggering a controlled kernel panic when device
->> recovery fails, avoiding indefinite system hangs.
+On 5/20/2025 11:01 AM, Danilo Krummrich wrote:
+> On Tue, May 20, 2025 at 09:43:42AM -0400, Joel Fernandes wrote:
+>> On 5/20/2025 5:30 AM, Danilo Krummrich wrote:
+>>> On Tue, May 20, 2025 at 03:55:06AM -0400, Joel Fernandes wrote:
+>>>> On 5/13/2025 1:19 PM, Danilo Krummrich wrote:
+>>>>> On Wed, May 07, 2025 at 10:52:43PM +0900, Alexandre Courbot wrote:
+>>
+>> So the code here now looks like the below, definitely better, thanks! :
+>>
+>>             if let (Some(second_ref), Some(first), Some(pci_at)) =
+>>                 (second.as_mut(), first_fwsec_image, pci_at_image)
+>>             {
+>>                 second_ref
+>>                     .setup_falcon_data(pdev, &pci_at, &first)
+>>                     .inspect_err(|e| {
+>>                         dev_err!(..)
+>>                     })?;
+>>                 Ok(Vbios { fwsec_image: second.take().ok_or(EINVAL)? })
+>>             } else {
+>>                 dev_err!(
+>>                     pdev.as_ref(),
+>>                     "Missing required images for falcon data setup, skipping\n"
+>>                 );
+>>                 Err(EINVAL)
+>>             }
 > 
-> We try very hard not to add new kernel parameters.
+> Sorry, my code-snipped was incorrect indeed. Let me paste what I actually
+> intended (and this time properly compile checked) and should be even better:
 > 
-> It sounds like part of the problem is the use of SPI interrupts rather
-> than the PCIe-architected INTx/MSI/MSI-X.  I'm not sure this warrants
-> generic upstream code changes.  This might be something you need to
-> maintain out-of-tree.
+> 	if let (Some(mut second), Some(first), Some(pci_at)) =
+> 	    (second_fwsec_image, first_fwsec_image, pci_at_image)
+> 	{
+> 	    second
+> 	        .setup_falcon_data(pdev, &pci_at, &first)
+> 	        .inspect_err(|e| {
+> 	            dev_err!(pdev.as_ref(), "Falcon data setup failed: {:?}\n", e)
+> 	        })?;
+> 	
+> 	    Ok(Vbios(second))
+> 	} else {
+> 	    dev_err!(
+> 	        pdev.as_ref(),
+> 	        "Missing required images for falcon data setup, skipping\n"
+> 	    );
+> 	
+> 	    Err(EINVAL)
+> 	}
 > 
+> So, with this second is the actual value and not just a reference. :)
+> 
+> And the methods can become:
+> 
+> 	pub(crate) fn fwsec_header(&self, pdev: &device::Device) -> Result<&FalconUCodeDescV3> {
+> 	    self.0.fwsec_header(pdev)
+> 	}
+> 	
+> 	pub(crate) fn fwsec_ucode(&self, pdev: &device::Device) -> Result<&[u8]> {
+> 	    self.0.fwsec_ucode(pdev, self.fwsec_header(pdev)?)
+> 	}
+> 	
+> 	pub(crate) fn fwsec_sigs(&self, pdev: &device::Device) -> Result<&[u8]> {
+> 	    self.0.fwsec_sigs(pdev, self.fwsec_header(pdev)?)
+> 	}
 
-Dear Bjorn,
+I made this change and it LGTM. Thanks! I did not do the '.0' though since I
+want to keep the readability, lets see in the next revision if that looks good.
 
-This seems to have nothing to do with whether AER uses the 
-INTx/MSI/MSI-X specified in the PCIe spec. Just like the example I gave 
-earlier.
+>>> In general, I feel like a lot of those Option come from a programming pattern
+>>> that is very common in C, i.e. allocate a structure (stack or heap) and then
+>>> initialize its fields.
+>>>
+>>> In Rust you should aim to initialize all the fields of a structure when you
+>>> create the instance. Option as a return type of a function is common, but it's
+>>> always a bit suspicious when there is an Option field in a struct.
+>>
+>> I looked into it, I could not git rid of those ones because we need to
+>> initialize in the "impl TryFrom<BiosImageBase> for BiosImage {"
+>>
+>>             0xE0 => Ok(BiosImage::FwSec(FwSecBiosImage {
+>>                 base,
+>>                 falcon_data_offset: None,
+>>                 pmu_lookup_table: None,
+>>                 falcon_ucode_offset: None,
+>>             })),
+>>
+>> And these fields will not be determined until much later, because as is the case
+>> with the earlier example, these fields cannot be determined until all the images
+>> are parsed.
+> 
+> You should not use TryFrom, but instead use a normal constructor, such as
+> 
+> 	BiosImage::new(base_bios_image)
+> 
+> and do the parsing within this constructor.
+> 
+> If you want a helper type with Options while parsing that's totally fine, but
+> the final result can clearly be without Options. For instance:
+> 
+> 	struct Data {
+> 	   image: KVec<u8>,
+> 	}
+> 
+> 	impl Data {
+> 	   fn new() -> Result<Self> {
+> 	      let parser = DataParser::new();
+> 
+> 	      Self { image: parser.parse()? }
+> 	   }
+> 
+> 	   fn load_image(&self) {
+> 	      ...
+> 	   }
+> 	}
+> 
+> 	struct DataParser {
+> 	   // Only some images have a checksum.
+> 	   checksum: Option<u64>,
+> 	   // Some images have an extra offset.
+> 	   offset: Option<u64>,
+> 	   // Some images need to be patched.
+> 	   patch: Option<KVec<u8>>,
+> 	   image: KVec<u8>,
+> 	}
+> 
+> 	impl DataParser {
+> 	   fn new() -> Self {
+> 	      Self {
+> 	         checksum: None,
+> 	         offset: None,
+> 	         patch: None,
+> 	         bytes: KVec::new(),
+> 	      }
+> 	   }
+> 
+> 	   fn parse(self) -> Result<KVec<u8>> {
+> 	      // Fetch all the required data.
+> 	      self.fetch_checksum()?;
+> 	      self.fetch_offset()?;
+> 	      self.fetch_patch()?;
+> 	      self.fetch_byes()?;
+> 
+> 	      // Doesn't do anything if `checksum == None`.
+> 	      self.validate_checksum()?;
+> 
+> 	      // Doesn't do anything if `offset == None`.
+> 	      self.apply_offset()?;
+> 
+> 	      // Doesn't do anything if `patch == None`.
+> 	      self.apply_patch()?;
+> 
+> 	      // Return the final image.
+> 	      self.image
+> 	   }
+> 	}
+> 
+> I think the pattern here is the same, but in this example you keep working with
+> the DataParser, instead of a new instance of Data.
 
-Our next-generation SOC has already converted AER interrupts into INTx 
-and reported them to the GIC interrupt controller. But the following 
-problems still cannot be solved.
+I think this would be a fundamental rewrite of the patch. I am Ok with looking
+into it as a future item, but right now I am not sure if it justifies not using
+Option for these few. There's a lot of immediate work we have to do for boot,
+lets please not block the patch on just this if that's Ok with you. If you want,
+I could add a TODO here.
 
-```
-Supplementary reasons:
+thanks,
 
-drivers/pci/controller/cadence/pcie-cadence-host.c
-cdns_pci_map_bus
-      /* Clear AXI link-down status */
-      cdns_pcie_writel(pcie, CDNS_PCIE_AT_LINKDOWN, 0x0);
-
-https://elixir.bootlin.com/linux/v6.15-rc6/source/drivers/pci/controller/cadence/pcie-cadence-host.c#L52
-
-If there has been a link down in this PCIe port, the register
-CDNS_PCIE_AT_LINKDOWN must be set to 0 for the AXI transmission to
-continue.  This is different from Synopsys.
-
-If CPU Core0 runs to code L52 and CPU Core1 is executing NVMe SSD saving
-files, since the CDNS_PCIE_AT_LINKDOWN register is still 1, it causes
-CPU Core1 to be unable to send TLP transfers and hang.  This is a very
-extreme situation.
-(The current Cadence code is Legacy PCIe IP, and the HPA IP is still in
-the upstream process at present.)
-
-Radxa O6 uses Cadence's PCIe HPA IP.
-http://radxa.com/products/orion/o6/
-```
-
-
-If we are in the out-of-tree maintenance corresponding driver, but in 
-the file the arch/arm64 / configs/defconfig "CONFIG_PCIEAER=y", make we 
-can't modify the AER common code. It also cannot be compiled to aer.ko
-
-Because: CONFIG_PCIEAER can only be equal to y or n.
-config PCIEAER
-	bool "PCI Express Advanced Error Reporting support"
-	depends on PCIEPORTBUS
-	select RAS
-	help
-	  This enables PCI Express Root Port Advanced Error Reporting
-	  (AER) driver support. Error reporting messages sent to Root
-	  Port will be handled by PCI Express AER driver.
-
-Furthermore, the API of AER common code cannot be used either, and many 
-variables have not been exported either. If we write another set of AER 
-drivers by ourselves, it will lead to a lot of repetitive processing 
-logic code.
-
-
-I believe that the Qualcomm platform and many other platforms also have 
-similar problems.
-
-
-So can we add a config? For example: CONFIG_PCIEAER_PANIC instead of 
-command-line option aer_panic. Or the AER driver can be KO(tristate), so 
-that our SOC manufacturer can modify the AER driver.
-
-
-Best regards,
-Hans
-
->> Problem Statement
->> In systems where unresolved PCIe errors (e.g., bus hangs) occur,
->> traditional error recovery mechanisms may leave the system unresponsive
->> indefinitely. This is unacceptable for high-availability environment
->> requiring prompt recovery via reboot.
->>
->> Solution
->> The aer_panic option forces a kernel panic on unrecoverable AER errors.
->> This bypasses prolonged recovery attempts and ensures immediate reboot.
->>
->> Patch Summary:
->> Documentation Update: Adds aer_panic to kernel-parameters.txt, explaining
->> its purpose and usage.
->>
->> Command-Line Handling: Implements pci=aer_panic parsing and state
->> management in PCI core.
->>
->> State Exposure: Introduces pci_aer_panic_enabled() to check if the panic
->> mode is active.
->>
->> Panic Trigger: Modifies recovery logic to panic the system when recovery
->> fails and aer_panic is enabled.
->>
->> Impact
->> Controlled Recovery: Reduces downtime by replacing hangs with immediate
->> reboots.
->>
->> Optional: Enabled via pci=aer_panic; no default behavior change.
->>
->> Dependency: Requires CONFIG_PCIEAER.
->>
->> For example, in mobile phones and tablets, when there is a problem with
->> the PCIe link and it cannot be restored, it is expected to provide an
->> alternative method to make the system panic without waiting for the
->> battery power to be completely exhausted before restarting the system.
->>
->> ---
->> For example, the sm8250 and sm8350 of qcom will panic and restart the
->> system when they are linked down.
->>
->> https://github.com/DOITfit/xiaomi_kernel_sm8250/blob/d42aa408e8cef14f4ec006554fac67ef80b86d0d/drivers/pci/controller/pci-msm.c#L5440
->>
->> https://github.com/OnePlusOSS/android_kernel_oneplus_sm8350/blob/13ca08fdf0979fdd61d5e8991661874bb2d19150/drivers/net/wireless/cnss2/pci.c#L950
->>
->>
->> Since the design schemes of each SOC manufacturer are different, the AXI
->> and other buses connected by PCIe do not have a design to prevent hanging.
->> Once a FATAL error occurs in the PCIe link and cannot be restored, the
->> system needs to be restarted.
->>
->>
->> Dear Mani,
->>
->> I wonder if you know how other SoCs of qcom handle FATAL errors that occur
->> in PCIe link.
->> ---
->>
->> Hans Zhang (4):
->>    pci: implement "pci=aer_panic"
->>    PCI/AER: Introduce aer_panic kernel command-line option
->>    PCI/AER: Expose AER panic state via pci_aer_panic_enabled()
->>    PCI/AER: Trigger kernel panic on recovery failure if aer_panic is set
->>
->>   .../admin-guide/kernel-parameters.txt          |  7 +++++++
->>   drivers/pci/pci.c                              |  2 ++
->>   drivers/pci/pci.h                              |  4 ++++
->>   drivers/pci/pcie/aer.c                         | 18 ++++++++++++++++++
->>   drivers/pci/pcie/err.c                         |  8 ++++++--
->>   5 files changed, 37 insertions(+), 2 deletions(-)
->>
->>
->> base-commit: fee3e843b309444f48157e2188efa6818bae85cf
->> prerequisite-patch-id: 299f33d3618e246cd7c04de10e591ace2d0116e6
->> prerequisite-patch-id: 482ad0609459a7654a4100cdc9f9aa4b671be50b
->> -- 
->> 2.25.1
->>
+ - Joel
 
 
