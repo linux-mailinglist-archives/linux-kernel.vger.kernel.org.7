@@ -1,202 +1,219 @@
-Return-Path: <linux-kernel+bounces-656097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FDA5ABE1B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:19:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C3DABE1B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:17:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADD817AC5AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:17:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64D8C4C03BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C31827FB1A;
-	Tue, 20 May 2025 17:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5AC27A47C;
+	Tue, 20 May 2025 17:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="E4LmKGGG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FoyI5tUy"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ipDHD+9o"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688472B9A9;
-	Tue, 20 May 2025 17:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601C82B9A9
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 17:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747761538; cv=none; b=J/SHJRvkRUVMN81JfJ6h+7b/nGh1JwEbnFkFrG63KlYBWZjKQ76SLP9BrNMMgjkgU5NSc0YC3I2plFN5/Y+iJsSokcKA/YqjAeUpEAwUWJqcxyf2lf3gNpqpd2JYVFDwgocCRQh95urHuX+W84fEVU2dBgO3mL7psI5wJmIlZlI=
+	t=1747761454; cv=none; b=O9zABfb+0r2jnnrwhFcOQu39Usojnf6Tmiv9/F9nFAvUAc67xUiTOk1EJluE+h+sxV7XVyPmR1KAvHcDhF+tAhd+jL4pE+YHXRwkVUxJS9JpBy8rQ5Bb2uxlQeFNP/98lGWP8SlAlIalvU94GLvuBUyAzLz71fIumOL2oVKbqkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747761538; c=relaxed/simple;
-	bh=ACfNSwmkzssroJJcZP4EuRX43gpzxLxxSbrVcgjG9CI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J2hZBctwGE33VuGx7mokGTG0NYxAi8mZKqfBUHKoNPte6pGziQybcHWJzStAtOce9KvFX92bDGQMm1kck3lGpbxJbjaF1DaNv2+9xJRRV1tdUTP67XsSDy7PWcPZMyj9Tkizb69typ/sm9bfRlyy2yuZYqZ3Li9npjZ5VnodIrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=E4LmKGGG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FoyI5tUy; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id A009E138045A;
-	Tue, 20 May 2025 13:18:55 -0400 (EDT)
-Received: from phl-frontend-01 ([10.202.2.160])
-  by phl-compute-02.internal (MEProxy); Tue, 20 May 2025 13:18:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1747761535; x=
-	1747847935; bh=cyUwDJ3M1+wj/CBnqD/jzq+Mn30lj8oo1hYViiIgR+o=; b=E
-	4LmKGGGee2F1NyNn0zMpIZTdiWxvsdOMMLe4Xq3sBHhior++hHO7VWkdT4cgaKk1
-	QDIS3Eq8ZP+LwCvQnCJa3DbrmgCmobwiNcoi99F8K+w24+42eHE7GxVdGO1yoOu4
-	wRzVaOvLq7/ozcOqRfFp7OQMTchgGz7fdYr0KWGjbbkhIBojClZn+R6PYpiWMZMa
-	FCJTRHQg0xQ8CYTrLIrBrlUxbfNmrdgcMhofCgrLtRdcr1yy/hVqlDliuz1cU8p4
-	dsfNJ6ybfi+8wl9cpO9FMVvPIyREb2jFFDe2uMxmZywsf1rPWNzlj+AUeJuuTVz8
-	5iKMHxMTf2t8mE2bAl8pg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1747761535; x=1747847935; bh=c
-	yUwDJ3M1+wj/CBnqD/jzq+Mn30lj8oo1hYViiIgR+o=; b=FoyI5tUy+NovDHeU9
-	w80QmirC/56+V08Xv7yK/ozjl0k3fZ/cbh0vmFtnc9BGXYuB+xRBTJq5AOkckOxB
-	NDPFusgvQhXtwPKEf3tWI3W1IX8uYFfk9wMEX56NsowVkUs7sQExaz6MDZAmc3WR
-	KY4Gm+Gxt66DbidlV5Uuz7cLYGiLmYVUckY2AMy74FhTJW5sQkOkItUBCTHf+4gT
-	0lwoVFUbiaa76KudLsY/UalMiqDGl9/QWL3GclvNOhfJQ31ORuooebRS5TfYP6kG
-	qZMFx9UF7YiYFNvNBvg1a7ZMzueto4gjv+EKz0MVTp9e18hjrHqS/wpbUJ2QyMGH
-	UF4dA==
-X-ME-Sender: <xms:f7ksaLbcOCS0UFbZlheay73SaE0sT9HSXVe3tGZU9MWHZanK25lsTA>
-    <xme:f7ksaKaZPxblrUaEP3LWEByKoRyhmloDAGlQ3OGdmUxZ495lNI6kZQqzc4QONe8qk
-    OOKOYfA6hyuOZiEx90>
-X-ME-Received: <xmr:f7ksaN_nhy3YYlccEg8XMjy6yD7WNVEC1JUhCWdwzPnUAcNA2PL1atWMlFQHsvkWHoNHIR4pxWfsNMxzA4IZ-9ni0ZOjmvZQ6mdnIZAQTGegZZpRXg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdejleculddtuddrgeefvddrtddtmd
-    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghn
-    shhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtne
-    cusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghf
-    ggfgsedtkeertdertddtnecuhfhrohhmpefpihgtohhlrghsucfrihhtrhgvuceonhhitg
-    hosehflhhugihnihgtrdhnvghtqeenucggtffrrghtthgvrhhnpedtjeeuieeiheeiueff
-    uddvffelheekleegkedukeeffffhudffudegvdetiefhteenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihgtohesfhhluhignhhitgdrnhgv
-    thdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnh
-    hpihhtrhgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehjihhrihhslhgrsgih
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunh
-    gurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvghrihgrlhesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:f7ksaBqAp-Uiz_WvJZ0KCNHvLgCie5v5_P-IfUR8U3d5CUZFS-KoZw>
-    <xmx:f7ksaGqrpCWdfewso2msc4iDOt0ApQ5iRyXfXljqrISgyX5lxrHteQ>
-    <xmx:f7ksaHTUvGttByw-K-GmMhltezu3Uo3Ouyy7BwOqFy65NdAqTL7Ohg>
-    <xmx:f7ksaOo-1GviOiBopWGglnG0Q8nBMlHYbDeSspMTOojY45LDE4RBkw>
-    <xmx:f7ksaL4pj1UKfBjSEhQ2ov8lRJd7lfEM9Y5B6uaxaRQ-WM6ixTpQUGKf>
-Feedback-ID: i58514971:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 20 May 2025 13:18:55 -0400 (EDT)
-Received: from xanadu.lan (OpenWrt.lan [192.168.1.1])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 6C99011B0CF0;
-	Tue, 20 May 2025 13:18:54 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: Nicolas Pitre <npitre@baylibre.com>,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] vt: add VT_GETCONSIZECSRPOS to retrieve console size and cursor position
-Date: Tue, 20 May 2025 13:16:44 -0400
-Message-ID: <20250520171851.1219676-3-nico@fluxnic.net>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250520171851.1219676-1-nico@fluxnic.net>
-References: <20250520171851.1219676-1-nico@fluxnic.net>
+	s=arc-20240116; t=1747761454; c=relaxed/simple;
+	bh=sbBPrcKlpzkqf+EvXrK5q9JFazNaHCusAXL+IFPG8/A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T8j96372vnz5CR1Ou9F7BDbGFICZXjNnUqvz6VWH1oLLjz6sxLNfVnyqcRNhFgZk/HqTkFqUr9A75fcmKaJxAqWw9Q3UP1E3jqa35WGNRVzGKn4lN/FTOah58C6nJiw/ufhbJwvHF6ybdDOgz4l4o64PwdOHdq72V3xqCOFQ1CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ipDHD+9o; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b1f7357b5b6so3907296a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:17:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747761450; x=1748366250; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m5sVT6y4YSnGlKGqP6gXqGwI3RzkKYcVE2Jf3DOuL9k=;
+        b=ipDHD+9oZkAe/fs9yTZcjn7prXbkHXQRwtRuf1WgXh9r7lBsfCXkNx29YEN3N5ImE+
+         X47n4qyXxBqBoxtJFW3bnB6GjQ6MTOxiV1MjXPSOYejDdSRMClIT2u+fTQtQ7tMfUJLD
+         Fp5TpXvrfLp7zrfkzggWkqYzEf61X2n/QPPVl9RD3bfQVCirb2CoUVlrKb5S4gKiRN96
+         7SPskvnvK2Z6lSGabrj+5pdrR7kpAdvgU/Y0hV3gQKEar8HFcSNEPQVXGyARIreZdMU6
+         xQPfa4AMGXYy5c7p9yhu1DFI4N/Rlp8tsZYt/GtfmvRodgSDi+2/woA0DQF0Kh8O/5ao
+         nBOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747761450; x=1748366250;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m5sVT6y4YSnGlKGqP6gXqGwI3RzkKYcVE2Jf3DOuL9k=;
+        b=PSr5gjdg0QXx/o1+HafN2iQVt4nZG1p40cHzTEJF5SGBO7fslt+8C0ISYlUmAI90Xr
+         FrjIZGWGyEAMA5K1jnlYC+s96IVnpKlqmkUs/4hMWnQSHqcWYvFWY7fXwUOSFJLACM/g
+         T4+/cS+6Gj4gISxtyWfrudKMqSMGQrBO2ixZEUSCiVzL953izD7zTvtGJA2RKLSlysv6
+         8sFB89T09uzmrtO5Ouh9LjbuaSibBgTA5JEva2aKPwQafvMjLpZqOrZCBwlJQYUMY+Mw
+         wQk4ZPx78v6JMkEK4YkJHvwu2cCLqLP1kHy5jV7GXjCyBakUKfUHqgDr7d9i/lmMrI43
+         cD3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXHKAzSY3R1QWm0rVzRGMY1S/wNZ+3RyPl7NliDzpBOBeeA8egkiwlgCr2YZR3f88vDf2sGo2vch9SpfRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylxvJ1t3H4qb9vIvxnIZ8I3qa9kOk4gv/YX2CMhtLmzs57fM54
+	r/yNBzyXyEjMAwy9sTs2LflqBnp7p7Legon21dRUWY09w4QytsRvzpbNbn2mB5T3EVvjWpWJsKU
+	O1+/PpmgGLpgXJpv+yqGhFzWpyQyQDD7lTQtnaiHa
+X-Gm-Gg: ASbGncuG5/YK9UR4W/uf/OB7H02V4WyzCU1ArlrpGRecbCMvmgJxz+ziQgEnxrwpGTc
+	q8YVEKXnxyUT41syMCN9KY/F9zXSDcTEEHG4+ZryXs3YfwBTdnFBGbDgGLG9rFhv2TVIxM4DzDa
+	/hFyj4CF2kafN2XHq99p6Dk1dKoF5qFUeCQNonk0Su9oF1tVfQf+3oqdDwCFPJk9FFR/wOem/Mp
+	4BPsY9GhPbcuqI=
+X-Google-Smtp-Source: AGHT+IHsHx+xZBgbaLrxW+q7w4hfzF7ci4/OH6M0XOp3DOGWGM+CCsEa6HV3QBQDepNNYYuHQ+OUh/rEI7VYOmFwA/E=
+X-Received: by 2002:a17:902:e885:b0:22e:421b:49b1 with SMTP id
+ d9443c01a7336-231d45bfc34mr279967565ad.48.1747761450362; Tue, 20 May 2025
+ 10:17:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <680809f3.050a0220.36a438.0003.GAE@google.com> <tencent_55ACA45C1762977206C3B376C36BA96B8305@qq.com>
+ <20250516193122.GS2023217@ZenIV> <20250516232046.GT2023217@ZenIV>
+In-Reply-To: <20250516232046.GT2023217@ZenIV>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Tue, 20 May 2025 19:17:17 +0200
+X-Gm-Features: AX0GCFt0jmQ7RJlWUHtJOlQZuoQ26GKGxmJ1lhYT3ZEgehcfVvrGpSVJNfVcSOQ
+Message-ID: <CANp29Y55bJ_3qg+y4jgwuUu7nwvtrfhFEvStzFuoWzS=Xm=3uw@mail.gmail.com>
+Subject: Re: [pox on syzbot - again][exfat] exfat_mkdir() breakage on
+ corrupted image
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Edward Adam Davis <eadavis@qq.com>, syzbot+321477fad98ea6dd35b7@syzkaller.appspotmail.com, 
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Nicolas Pitre <npitre@baylibre.com>
+Hi Al,
 
-The console dimension and cursor position are available through the
-/dev/vcsa interface already. However the /dev/vcsa header format uses
-single-byte fields therefore those values are clamped to 255.
+I've only just seen this email as it landed in my Spam folder for some reas=
+on.
 
-As surprizing as this may seem, some people do use 240-column 67-row
-screens (a 1920x1080 monitor with 8x16 pixel fonts) which is getting
-close to the limit. Monitors with higher resolution are not uncommon
-these days (3840x2160 producing a 480x135 character display) and it is
-just a matter of time before someone with, say, a braille display using
-the Linux VT console and BRLTTY on such a screen reports a bug about
-missing and oddly misaligned screen content.
+On Sat, May 17, 2025 at 1:20=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Fri, May 16, 2025 at 08:31:22PM +0100, Al Viro wrote:
+> > On Wed, May 14, 2025 at 06:39:40AM +0800, Edward Adam Davis wrote:
+> > > In the reproducer, when calling renameat2(), olddirfd and newdirfd pa=
+ssed
+> > > are the same value r0, see [1]. This situation should be avoided.
+> > >
+> > > [1]
+> > > renameat2(r0, &(0x7f0000000240)=3D'./bus/file0\x00', r0, &(0x7f000000=
+01c0)=3D'./file0\x00', 0x0)
+> > >
+> > > Reported-by: syzbot+321477fad98ea6dd35b7@syzkaller.appspotmail.com
+> > > Closes: https://syzkaller.appspot.com/bug?extid=3D321477fad98ea6dd35b=
+7
+> > > Tested-by: syzbot+321477fad98ea6dd35b7@syzkaller.appspotmail.com
+> > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> > > ---
+> > >  fs/namei.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/fs/namei.c b/fs/namei.c
+> > > index 84a0e0b0111c..ff843007ca94 100644
+> > > --- a/fs/namei.c
+> > > +++ b/fs/namei.c
+> > > @@ -5013,7 +5013,7 @@ int vfs_rename(struct renamedata *rd)
+> > >     struct name_snapshot old_name;
+> > >     bool lock_old_subdir, lock_new_subdir;
+> > >
+> > > -   if (source =3D=3D target)
+> > > +   if (source =3D=3D target || old_dir =3D=3D target)
+> > >             return 0;
+> >
+> > What the hell?
+> >
+> > 1) olddirfd and newdirfd have nothing to do with vfs_rename() - they ar=
+e
+> > bloody well gone by the time we get there.
+> >
+> > 2) there's nothing wrong with having the same value passed in both -
+> > and it's certainly not a "quietly do nothing".
+> >
+> > 3) the check added in this patch is... odd.  You are checking essentica=
+lly
+> > for rename("foo/bar", "foo").  It should fail (-ENOTEMPTY or -EINVAL, d=
+epending
+> > upon RENAME_EXCHANGE in flags) without having reached vfs_rename().
+>
+> 4) it's definitely an exfat bug, since we are getting
+>         old_dentry->d_parent !=3D target
+>         old_dentry->d_parent->d_inode =3D=3D target->d_inode
+>         S_ISDIR(target->d_inode->i_mode)
+> All objects involved are on the same super_block, which has "exfat" for
+> ->s_type->name, so it's exfat ending up with multiple dentries for
+> the same directory inode, and once that kind of thing has happened,
+> the system is FUBAR.
+>
+> As for the root cause, almost certainly their ->mkdir() is deciding
+> that it has just created a new inode - and ending up with existing one,
+> already in icache and already with a dentry attached to it.
+>
+> <adds BUG_ON(!hlist_empty(&inode->i_dentry)) into exfat_mkdir()>
+>
+>    [   84.780875] exFAT-fs (loop0): Volume was not properly unmounted. So=
+me data may be corrupt. Please run fsck.
+>    [   84.781411] exFAT-fs (loop0): Medium has reported failures. Some da=
+ta may be lost.
+>    [   84.782209] exFAT-fs (loop0): failed to load upcase table (idx : 0x=
+00010000, chksum : 0xe62de5da, utbl_chksum : 0xe619d30d)
+>    [   84.783272] ------------[ cut here ]------------
+>    [   84.783546] kernel BUG at fs/exfat/namei.c:881!
+>
+> ... and there we go.  exfat_mkdir() getting an existing in-core inode
+> and attaching an alias to it, with expected fun results.
+>
+> For crying out loud, how many times do syzbot folks need to be told that
+> getting report to attention of relevant filesystem folks is important?
+>
+> Subject: [syzbot] [fs?] INFO: task hung in vfs_rename (2)
+>
+> mentionings of anything exfat-related: 0.
+>
+> Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+>          linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+>                  viro@zeniv.linux.org.uk
+>
+> mentionings of anything exfat-related: 0.
+>
+> In message body:
+>   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=3D=
+12655204580000)
+>
+> Why, that does sound like some filesystem bug might be involved
+> and presumably the damn thing knows which type had it been.
+> <start browser, cut'n'paste the sodding link>
+> ... and the very first line is
+> fsck.exfat -n exited with status code 4
+>
+> Result: 3 weeks later it *STILL* hasn't reached the relevant fs
+> maintainers.  Could that be a sufficient evidence to convince the
+> fine fellows working on syzbot that "you just need to click a few
+> links" DOES NOT WORK?
+>
+> We'd been there several times already.  For relatively polite example,
+> see https://lore.kernel.org/all/Y5ZDjuSNuSLJd8Mn@ZenIV/ - I can't be arse=
+d
+> to explain that again and again, and you don't seem to mind following
+> links in email, so...
+>
 
-Let's add VT_GETCONSIZECSRPOS for the retrieval of console size and cursor
-position without byte-sized limitations. The actual console size limit as
-encoded in vt.c is 32767x32767 so using a short here is appropriate. Then
-this can be used to get the cursor position when /dev/vcsa reports 255.
+I've checked the code, and there was indeed a bug in our
+classification rules, specifically concerning the recognition of the
+`syz_mount_image$exfat` call as an indicator for the "exfat"
+subsystem. The fix will reach syzbot soon.
 
-The screen dimension may already be obtained using TIOCGWINSZ and adding
-the same information to VT_GETCONSIZECSRPOS might be redundant. However
-applications that care about cursor position also care about display
-size and having 2 separate system calls to obtain them separately is
-wasteful. Also, the cursor position can be queried by writing "\e[6n" to
-a tty and reading back the result but that may be done only by the actual
-application using that tty and not a sideline observer.
+Sorry for the inconvenience it has caused.
 
-Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
----
- drivers/tty/vt/vt_ioctl.c | 16 ++++++++++++++++
- include/uapi/linux/vt.h   | 11 +++++++++++
- 2 files changed, 27 insertions(+)
-
-diff --git a/drivers/tty/vt/vt_ioctl.c b/drivers/tty/vt/vt_ioctl.c
-index 4b91072f3a4e..83a3d49535e5 100644
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -951,6 +951,22 @@ int vt_ioctl(struct tty_struct *tty,
- 					(unsigned short __user *)arg);
- 	case VT_WAITEVENT:
- 		return vt_event_wait_ioctl((struct vt_event __user *)arg);
-+
-+	case VT_GETCONSIZECSRPOS:
-+	{
-+		struct vt_consizecsrpos concsr;
-+
-+		console_lock();
-+		concsr.con_cols = vc->vc_cols;
-+		concsr.con_rows = vc->vc_rows;
-+		concsr.csr_col = vc->state.x;
-+		concsr.csr_row = vc->state.y;
-+		console_unlock();
-+		if (copy_to_user(up, &concsr, sizeof(concsr)))
-+			return -EFAULT;
-+		return 0;
-+	}
-+
- 	default:
- 		return -ENOIOCTLCMD;
- 	}
-diff --git a/include/uapi/linux/vt.h b/include/uapi/linux/vt.h
-index e9d39c48520a..e5b0c492aa18 100644
---- a/include/uapi/linux/vt.h
-+++ b/include/uapi/linux/vt.h
-@@ -2,6 +2,8 @@
- #ifndef _UAPI_LINUX_VT_H
- #define _UAPI_LINUX_VT_H
- 
-+#include <linux/ioctl.h>
-+#include <linux/types.h>
- 
- /*
-  * These constants are also useful for user-level apps (e.g., VC
-@@ -84,4 +86,13 @@ struct vt_setactivate {
- 
- #define VT_SETACTIVATE	0x560F	/* Activate and set the mode of a console */
- 
-+/* get console size and cursor position */
-+struct vt_consizecsrpos {
-+	__u16 con_rows;		/* number of console rows */
-+	__u16 con_cols;		/* number of console columns */
-+	__u16 csr_row;		/* current cursor's row */
-+	__u16 csr_col;		/* current cursor's column */
-+};
-+#define VT_GETCONSIZECSRPOS	_IOR('V', 0x10, struct vt_consizecsrpos)
-+
- #endif /* _UAPI_LINUX_VT_H */
--- 
-2.49.0
-
+--=20
+Aleksandr
 
