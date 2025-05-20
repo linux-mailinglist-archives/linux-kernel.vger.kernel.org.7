@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-655357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA7EABD462
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B38ABD461
 	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 035E53B7A0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:18:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA6A1BA18AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EC226A0FC;
-	Tue, 20 May 2025 10:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5382E26AAAF;
+	Tue, 20 May 2025 10:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D1JnHBhU"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lVTkAkRM"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9859225D1F9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFBA265CAC
 	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747736335; cv=none; b=Op9LxJyl8Y0MFFL+/EWo/F0Ls2ARf05OnQKTL6a8i6IIZk32jnoEcoUzXKpDlu2mFsxvcW8CNPHy3pzAWitRlRTQIXJoaUcjgVZTS2wWs/XFprjEvrNWwPO7muC2Tx8w5K11hbGsNieZrRZQBMfwPoSxOcAXRe5xij/0QsaW/sw=
+	t=1747736335; cv=none; b=bmxEesC4Ki80GuHHhmadCi4ip05YX+BsWxy4CRpav6QRVS3suWCWt8bIknMBHm4z941bPmFYCKYkNFO05mCtnzY9p5kmVUDw5NqoRW9dDhTURkdiGxLGa7gbFieKXNYfhK9KruSR9NrOmob/Su7029WMRwJcEpUX1N73MtAaaYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747736335; c=relaxed/simple;
-	bh=mjb+AofgEQErmC1wLIMq2NamLveZrEDc/pwROLW6SLQ=;
-	h=Message-ID:Date:From:To:Cc:Subject; b=BslNpb/cr0vG6t3SBObRJwydxPeYw9EQYPnZHR+5Db7JujSG2oqGxCagVLe8xxyAJJzpgP9eOBP96OdaLInL991ZSPtCM/eTJzctyM5ukeYIN4XybgaTWsG4SmnjCYvh1ACB7Dg5c2LWlb3IX7/gj5VQ65s+XyV6L/E7iaiZioQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=D1JnHBhU; arc=none smtp.client-ip=90.155.92.199
+	bh=ZFZHPQB2gr7QrnWvcowqbVRfTF6upcz8CBZDjNdGW+w=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=qtjEo9Ne5fHqLYffHQN98OVeovBvd6gKo5DKhcshHH7jX/02Dlig7b2IgVM2CPgKk5CeaFo6ebavhg91t66aOIYERPbq/zz6Q7hq+u5XqGSS+Y25Tb25qZiOu669AB+2Eoxza1HB8tfQ7/pNMO8PegBdZ4/Vzzs3ZCQ+DHT89CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lVTkAkRM; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Subject:Cc:To:From:Date:Message-ID:
-	Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=ZMi0U2zr4ZWzhpIPyVKhut6zuCHSmuHjaPz65LW/Ous=; b=D1JnHBhUyV3K6tksOdfPjzTu3n
-	sidCxwfkJRewc4yh8ZacaP5OFxf5E+xSSYcsIN1IE3ZD/CNJx8wwVEn5q8Vabce+eHii0tNKjTf24
-	05CWb25rNQMqAbEm79UwYSWAHTnMk7lQfus1IHSDzSiAM3TMeQCJbHA9PwF3UxiZ1WMkjrvWWK+Pi
-	4pk6517Qic0OyJi/yVMt9dh+H71JPQ562HDVvlJOWuZm0YN2f8G9cwQRFEc6Jud/j6AFbz6cySmWY
-	M6D3CSjpcCWMVDhMb0uqltT2vQUEz3kKR6ECRRO3UuPwwL7UlLYOYZ/4c6hz/WjHYdkkaGVFKyXmn
-	KpFSl85g==;
+	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
+	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To;
+	bh=dirTgPpnRB9/rGEebkVK3Wz8ypqGQFLT/f1SYZQ6aJs=; b=lVTkAkRMZQqgdbUrym6f8BdRNK
+	nZDbeTn+1EZ111LfCdMraFR5B5Sxw/VbVH07P3HwlH1ZMPkw1RJdsXnYdDxOHiP1F6PTn/6baWjWb
+	6mG1OUPmBalFGg0+QD0S40fF7FAvzObdP4bLwyvH2J4Yr9tsdc9at2g5w2VVEae5HbvyGcTKWo5kE
+	YrpDlXKX+HzveGc9xX8HXFSr+wtOhoP6UlHeIFTwbLtRBdQjXO2MY1aNua+gPu+AxWXIdeqw+37Cw
+	8nyiFx3Fy5lvPos8UZIpeJRje1yxbXRvPT0UTQX9r0kvlYSjs1X+Nb3P51sLyj0LrTN4VKVRfHoGg
+	5CjPtDzQ==;
 Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1uHK3Z-00000000lL3-3kLh;
-	Tue, 20 May 2025 10:18:46 +0000
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uHK3Z-000000038Hf-2SAU;
+	Tue, 20 May 2025 10:18:45 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id B27E9300677; Tue, 20 May 2025 12:18:44 +0200 (CEST)
-Message-ID: <20250520094538.086709102@infradead.org>
+	id B75FE300780; Tue, 20 May 2025 12:18:44 +0200 (CEST)
+Message-ID: <20250520101727.507378961@infradead.org>
 User-Agent: quilt/0.66
-Date: Tue, 20 May 2025 11:45:38 +0200
+Date: Tue, 20 May 2025 11:45:39 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: mingo@redhat.com,
  juri.lelli@redhat.com,
@@ -60,98 +61,130 @@ To: mingo@redhat.com,
  clm@meta.com
 Cc: linux-kernel@vger.kernel.org,
  peterz@infradead.org
-Subject: [RFC][PATCH 0/5] sched: Try and address some recent-ish regressions
+Subject: [RFC][PATCH 1/5] sched/deadline: Less agressive dl_server handling
+References: <20250520094538.086709102@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 
+Chris reported that commit 5f6bd380c7bd ("sched/rt: Remove default
+bandwidth control") caused a significant dip in his favourite
+benchmark of the day. Simply disabling dl_server cured things.
 
-Hi!
+His workload hammers the 0->1, 1->0 transitions, and the
+dl_server_{start,stop}() overhead kills it -- fairly obviously a bad
+idea in hind sight and all that.
 
-So Chris poked me about how they're having a wee performance drop after around
-6.11. He's extended his schbench tool to mimic the workload in question.
+Change things around to only disable the dl_server when there has not
+been a fair task around for a whole period. Since the default period
+is 1 second, this ensures the benchmark never trips this, overhead
+gone.
 
-Specifically the commandline given:
+Fixes: 557a6bfc662c ("sched/fair: Add trivial fair server")
+Reported-by: Chris Mason <clm@meta.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ include/linux/sched.h   |    1 +
+ kernel/sched/deadline.c |   31 +++++++++++++++++++++++++++----
+ 2 files changed, 28 insertions(+), 4 deletions(-)
 
-  schbench -L -m 4 -M auto -t 128 -n 0 -r 60
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -702,6 +702,7 @@ struct sched_dl_entity {
+ 	unsigned int			dl_defer	  : 1;
+ 	unsigned int			dl_defer_armed	  : 1;
+ 	unsigned int			dl_defer_running  : 1;
++	unsigned int			dl_server_idle    : 1;
+ 
+ 	/*
+ 	 * Bandwidth enforcement timer. Each -deadline task has its
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1215,6 +1215,8 @@ static void __push_dl_task(struct rq *rq
+ /* a defer timer will not be reset if the runtime consumed was < dl_server_min_res */
+ static const u64 dl_server_min_res = 1 * NSEC_PER_MSEC;
+ 
++static bool dl_server_stopped(struct sched_dl_entity *dl_se);
++
+ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_dl_entity *dl_se)
+ {
+ 	struct rq *rq = rq_of_dl_se(dl_se);
+@@ -1234,6 +1236,7 @@ static enum hrtimer_restart dl_server_ti
+ 
+ 		if (!dl_se->server_has_tasks(dl_se)) {
+ 			replenish_dl_entity(dl_se);
++			dl_server_stopped(dl_se);
+ 			return HRTIMER_NORESTART;
+ 		}
+ 
+@@ -1639,8 +1642,10 @@ void dl_server_update_idle_time(struct r
+ void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
+ {
+ 	/* 0 runtime = fair server disabled */
+-	if (dl_se->dl_runtime)
++	if (dl_se->dl_runtime) {
++		dl_se->dl_server_idle = 0;
+ 		update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
++	}
+ }
+ 
+ void dl_server_start(struct sched_dl_entity *dl_se)
+@@ -1663,7 +1668,7 @@ void dl_server_start(struct sched_dl_ent
+ 		setup_new_dl_entity(dl_se);
+ 	}
+ 
+-	if (!dl_se->dl_runtime)
++	if (!dl_se->dl_runtime || dl_se->dl_server_active)
+ 		return;
+ 
+ 	dl_se->dl_server_active = 1;
+@@ -1672,7 +1677,7 @@ void dl_server_start(struct sched_dl_ent
+ 		resched_curr(dl_se->rq);
+ }
+ 
+-void dl_server_stop(struct sched_dl_entity *dl_se)
++static void __dl_server_stop(struct sched_dl_entity *dl_se)
+ {
+ 	if (!dl_se->dl_runtime)
+ 		return;
+@@ -1684,6 +1689,24 @@ void dl_server_stop(struct sched_dl_enti
+ 	dl_se->dl_server_active = 0;
+ }
+ 
++static bool dl_server_stopped(struct sched_dl_entity *dl_se)
++{
++	if (!dl_se->dl_server_active)
++		return false;
++
++	if (dl_se->dl_server_idle) {
++		__dl_server_stop(dl_se);
++		return true;
++	}
++
++	dl_se->dl_server_idle = 1;
++	return false;
++}
++
++void dl_server_stop(struct sched_dl_entity *dl_se)
++{
++}
++
+ void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+ 		    dl_server_has_tasks_f has_tasks,
+ 		    dl_server_pick_f pick_task)
+@@ -2435,7 +2458,7 @@ static struct task_struct *__pick_task_d
+ 	if (dl_server(dl_se)) {
+ 		p = dl_se->server_pick_task(dl_se);
+ 		if (!p) {
+-			if (dl_server_active(dl_se)) {
++			if (!dl_server_stopped(dl_se)) {
+ 				dl_se->dl_yielded = 1;
+ 				update_curr_dl_se(rq, dl_se, 0);
+ 			}
 
-This benchmark wants to stay on a single (large) LLC (Chris, perhaps add an
-option to start the CPU mask with
-/sys/devices/system/cpu/cpu0/cache/index3/shared_cpu_list or something). Both
-the machine Chris has (SKL, 20+ cores per LLC) and the machines I ran this on
-(SKL,SPR 20+ cores) are Intel, AMD has smaller LLC and the problem wasn't as
-pronounced there.
-
-Use performance CPU governor (as always when benchmarking). Also, if the test
-results are unstable as all heck, disable turbo.
-
-After a fair amount of tinkering I managed to reproduce on my SPR and Thomas'
-SKL. The SKL would only give usable numbers with the second socket offline and
-turbo disabled -- YMMV.
-
-Chris further provided a bisect into the DELAY_DEQUEUE patches and a bisect
-leading to commit 5f6bd380c7bd ("sched/rt: Remove default bandwidth control")
--- which enables the dl_server by default.
-
-
-SKL (performance, no_turbo):
-
-schbench-6.9.0-1.txt:average rps: 2040360.55
-schbench-6.9.0-2.txt:average rps: 2038846.78
-schbench-6.9.0-3.txt:average rps: 2037892.28
-
-schbench-6.15.0-rc6+-1.txt:average rps: 1907718.18
-schbench-6.15.0-rc6+-2.txt:average rps: 1906931.07
-schbench-6.15.0-rc6+-3.txt:average rps: 1903190.38
-
-schbench-6.15.0-rc6+-dirty-1.txt:average rps: 2002224.78
-schbench-6.15.0-rc6+-dirty-2.txt:average rps: 2007116.80
-schbench-6.15.0-rc6+-dirty-3.txt:average rps: 2005294.57
-
-schbench-6.15.0-rc6+-dirty-delayed-1.txt:average rps: 2011282.15
-schbench-6.15.0-rc6+-dirty-delayed-2.txt:average rps: 2016347.10
-schbench-6.15.0-rc6+-dirty-delayed-3.txt:average rps: 2014515.47
-
-schbench-6.15.0-rc6+-dirty-delayed-default-1.txt:average rps: 2042169.00
-schbench-6.15.0-rc6+-dirty-delayed-default-2.txt:average rps: 2032789.77
-schbench-6.15.0-rc6+-dirty-delayed-default-3.txt:average rps: 2040313.95
-
-
-SPR (performance):
-
-schbench-6.9.0-1.txt:average rps: 2975450.75
-schbench-6.9.0-2.txt:average rps: 2975464.38
-schbench-6.9.0-3.txt:average rps: 2974881.02
-
-schbench-6.15.0-rc6+-1.txt:average rps: 2882537.37
-schbench-6.15.0-rc6+-2.txt:average rps: 2881658.70
-schbench-6.15.0-rc6+-3.txt:average rps: 2884293.37
-
-schbench-6.15.0-rc6+-dl_server-1.txt:average rps: 2924423.18
-schbench-6.15.0-rc6+-dl_server-2.txt:average rps: 2920422.63
-
-schbench-6.15.0-rc6+-dirty-1.txt:average rps: 3011540.97
-schbench-6.15.0-rc6+-dirty-2.txt:average rps: 3010124.10
-
-schbench-6.15.0-rc6+-dirty-delayed-1.txt:average rps: 3030883.15
-schbench-6.15.0-rc6+-dirty-delayed-2.txt:average rps: 3031627.05
-
-schbench-6.15.0-rc6+-dirty-delayed-default-1.txt:average rps: 3053005.98
-schbench-6.15.0-rc6+-dirty-delayed-default-2.txt:average rps: 3052972.80
-
-
-As can be seen, the SPR is much easier to please than the SKL for whatever
-reason. I'm thinking we can make TTWU_QUEUE_DELAYED default on, but I suspect
-TTWU_QUEUE_DEFAULT might be a harder sell -- we'd need to run more than this
-one benchmark.
-
-Anyway, the patches are stable (finally!, I hope, knock on wood) but in a
-somewhat rough state. At the very least the last patch is missing ttwu_stat(),
-still need to figure out how to account it ;-)
-
-Chris, I'm hoping your machine will agree with these numbers; it hasn't been
-straight sailing in that regard.
 
 
