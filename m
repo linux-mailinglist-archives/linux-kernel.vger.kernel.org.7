@@ -1,101 +1,100 @@
-Return-Path: <linux-kernel+bounces-656080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABC24ABE16F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:00:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3B64ABE165
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E81D7A8746
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:59:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD1B27B20E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3570922D794;
-	Tue, 20 May 2025 17:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D76024EA85;
+	Tue, 20 May 2025 16:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="CwyNXFeY";
-	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="DPADTAzj"
-Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ROvd9qDI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3966024338F
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 17:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A7A35893
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 16:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747760437; cv=none; b=rY4IWyyPkfM5M+S4HZ1w+r7JUZWpQ+7VOKDWjmNQNXG2LbfwIfHv3Rv2KWJ4nqJpecTwYr+o6Dksw8/tkUAFsQMVwcCsZDfXjjYPycF9lYGIvzH4GdwTAS4B2MEZwU+gtq6bx0vJMg4SrLUlA1Ztc9dCwYh9eEMmILR/d/9rRHg=
+	t=1747760251; cv=none; b=Dy3IRnu4uPhTJs/xIIkrv7TTQuSM5n5O4cbIq4tOgaXFISa6VZWnouN7lCoKY/8tsCCzQIYRV9tRADXS79yAcXTtKKz9zcM3s0udGXmzaBKDrit7V3+xSigMb17XXaalP/ILnh/wmdyQ5ON+8rghUR7tq81CZ2ExEwwTW2sHQyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747760437; c=relaxed/simple;
-	bh=xcDcxfy2ihH9lRNz6yAykV3gFlUPQ6q9xcUWXZPxDK8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=giOsydAXh+tkrV+1ZtEwVcB3rCpohIVkESZWeHD1xtRW075dxat4YRN5kR6hTp88J7ksmkI8TlLyeoKxXpl579ohvHJOTMwTC6pNTD7+08wQAX+WRM6f8im6VbOqQRuJfWCPuIArmORuZ1AQoZSXvoc1uwu0CC/UCfpE+9gxrt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=CwyNXFeY; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=DPADTAzj; arc=none smtp.client-ip=51.159.152.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
-DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1747760214; bh=bK6d56SoduXJWmbkEZP5dQH
-	CvkZGM1JG60/cVI5W0u8=; b=CwyNXFeYu5J3ksYIGHzAAy83eosq3C9+2BDOECr4ZHYLAakawj
-	q+e4Wsk4Boyl7aJOxmGbXUDW0ZtMcBFvPn6nw8v4MNzbLXQUR+96AipUpun63wgTK8dQPedOfei
-	m9puOObjCjipXYp0Wn5fNcvfb4gUrn7mmg+7ARzTv5rGuHc/pYm9oWl2KBIRTaL471arAsSLSbi
-	50ubja47xPBBaCZ8dfVl1/umZ3LK5cZZyW12MvJgynBbP4jfXDf0uwJ1q5A//5w0e9vSWHTbS7E
-	NVNU+PphMsV0l5AXeMQfOEJAePp/sCHs9fteZI1OTBrlRNFmn7ANdWmSvxOgyurRD4Q==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1747760214; bh=bK6d56SoduXJWmbkEZP5dQH
-	CvkZGM1JG60/cVI5W0u8=; b=DPADTAzjt9Kr+1Yk7wKthqzjmt53FiLLwRNYc3XTY8u6DyqL/V
-	zod8DVyUvNx7fHiumgIDVeb85KBD5aTTnsAg==;
-Message-ID: <c9794bcf-6e00-4900-ba1e-cc8b223bfbb9@damsy.net>
-Date: Tue, 20 May 2025 18:56:54 +0200
+	s=arc-20240116; t=1747760251; c=relaxed/simple;
+	bh=aNxL1aTVHEMzz5FK9fboIZ2vhWlwMFBKj8NyPo07GHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PWIoVEgWsX6DGu9Vvy1FufavwwwTQDvRZBXm1u+26TnyR09zuTKk566H8gIW56XErkYK3hKTGo7TPT1q350X3Wc7afUjTn9lJsxYqAqTu5/lsbwyWb9TD3WLn8R7NyagbPNavn6wSMRln4tN6mblsl4Itvh4mgZTb//Ej6C9v9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ROvd9qDI; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747760249; x=1779296249;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aNxL1aTVHEMzz5FK9fboIZ2vhWlwMFBKj8NyPo07GHQ=;
+  b=ROvd9qDIxVy4ryIFK+AkoowYGJjHttbh0n1+kmhdJ+umgyyRe1y1MxKP
+   QaldHVQX4O9StyO17FGrMcHiLGKTUWGsrABkCTkjpWs86kcaYud5h0ttJ
+   eul92ISb3KTP3Wlm1FrXeGxdh53DdE1UXE4YHaJw5SVuIS3LfwbWC+NOf
+   x1jfk/jrP6Ye7H5iITJvLlkY3bY6/Fa5cl0A3hg4P9vF+pGoGGM2B5aVN
+   r14ST70IXKlOGH05hai5ZePSd5jBRUIZHzWlMKJRiBLEfIhnCCWAtEFmB
+   I9e+Hn7SY2ztzn4iYyedRaMbxc7jYA7EbEBeAD6PxZndxEgQUyEbq0aZo
+   Q==;
+X-CSE-ConnectionGUID: XKY1g9TvS2SBegf2lLL0mw==
+X-CSE-MsgGUID: QNco3JPbTgKsbVo9rITwzw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="48824446"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="48824446"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 09:57:29 -0700
+X-CSE-ConnectionGUID: HLWAKE3MR7+rj/dAWF4xgg==
+X-CSE-MsgGUID: IDACnwiPSE2EFwVcXAPxzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="140281869"
+Received: from bruceprx-mobl.amr.corp.intel.com (HELO desk) ([10.125.146.21])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 09:57:28 -0700
+Date: Tue, 20 May 2025 09:57:24 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: David Kaplan <david.kaplan@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/bugs: Restructure ITS mitigation
+Message-ID: <20250520165716.5rfmxe7gqizy55zh@desk>
+References: <20250515134756.93274-1-david.kaplan@amd.com>
+ <20250516193212.128782-1-david.kaplan@amd.com>
+ <20250520163221.ndezdfrhoav43sxi@desk>
+ <20250520164826.GMaCyyWodIiRMuBtw3@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 03/10] drm/sched: add device name to the
- drm_sched_process_job event
-To: Danilo Krummrich <dakr@kernel.org>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Cc: Matthew Brost <matthew.brost@intel.com>,
- Philipp Stanner <phasta@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250424083834.15518-1-pierre-eric.pelloux-prayer@amd.com>
- <20250424083834.15518-4-pierre-eric.pelloux-prayer@amd.com>
- <aCtPbUaah-bmcEMk@pollux>
-Content-Language: en-US
-From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
-In-Reply-To: <aCtPbUaah-bmcEMk@pollux>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250520164826.GMaCyyWodIiRMuBtw3@fat_crate.local>
 
-
-
-Le 19/05/2025 à 17:34, Danilo Krummrich a écrit :
-> On Thu, Apr 24, 2025 at 10:38:15AM +0200, Pierre-Eric Pelloux-Prayer wrote:
->> diff --git a/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h b/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
->> index f56e77e7f6d0..713df3516a17 100644
->> --- a/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
->> +++ b/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
->> @@ -42,6 +42,7 @@ DECLARE_EVENT_CLASS(drm_sched_job,
->>   			     __field(uint64_t, id)
->>   			     __field(u32, job_count)
->>   			     __field(int, hw_job_count)
->> +			     __string(dev, dev_name(sched_job->sched->dev))
+On Tue, May 20, 2025 at 06:48:26PM +0200, Borislav Petkov wrote:
+> On Tue, May 20, 2025 at 09:32:21AM -0700, Pawan Gupta wrote:
+> > Index 1 (which is now ITS_MITIGATION_AUTO) is missing. I understand AUTO is
+> > a temporary state, and it may not be necessary to define a string for it.
+> > But, assigning an empty string, or an error message would make this obvious
+> > for a future reader.
 > 
-> Using the sched_job->sched pointer here and in other trace events implies that
-> the trace event must not be called before the sched_job->sched has been set,
-> i.e. in drm_sched_job_arm().
+> Yeah, this AUTO gets overwritten and the other AUTOs don't have strings too.
 > 
-> Please document this for the corresponding trace events.
+> We can fix that after the MW if you think it is important but from what
+> I looked, all the AUTO settings get overwritten as AUTO means, user didn't
+> make any decision here so it is left to the kernel to make it.
 
-This is not a new requirement as sched and s_fence were already used by the trace events.
-
-Still it's a good idea to document this, so I'll update the comment added in the documentation patch.
-
-Thanks,
-Pierre-Eric
+As long as AUTO setting is overwritten it is fine.
 
