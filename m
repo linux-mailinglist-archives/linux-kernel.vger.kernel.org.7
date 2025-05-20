@@ -1,83 +1,86 @@
-Return-Path: <linux-kernel+bounces-655414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE06EABD55E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:43:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 206A9ABD561
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ED231B61C41
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:42:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C484E3B7427
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E99027511E;
-	Tue, 20 May 2025 10:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A12D2798F9;
+	Tue, 20 May 2025 10:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yp0bVz6p"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WOAIdj3j"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F7027932A
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243192750FD
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747737719; cv=none; b=P2zymnlanKsIOH6yunb2NZtBHOgh32WcMiWZb17js1n9lV1WEK1CV0F8zOAVWDwQZwCqRCp8mvserCUspFdCH+asZgmaxuHWHXl69DWIAzST2C2iJ6m92EfhQNz5kjLA5/z99sYKWCnXVRNGM74QZiNje2GwHSuCkaUPbSFOsoQ=
+	t=1747737721; cv=none; b=RnHrKp48p9rT2v80IFCXWEsQPrin2U8/76gS8eLpp2upWBr26sm8zpDh3pTjHK8UN9Enuwr6I+MYCuq9kAM4nLKOT1PY9HBiG7anD7j7APsoVC/9JecjjtgiE1IQOThKu1sdqd55a4GTGmIqVv9ySdgDMUkXANC76yCY+2efqaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747737719; c=relaxed/simple;
-	bh=5+DdnQrD8Jm7ALCp3LsrdVZBmTTMhmvX4Okxp7+4aZE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gt6GlpcgzWWhw0q7PMWinEZMn1ajsp5Fqh+Wu2wcVZdeLMJ7CxwtxnuU5qdWqYJSTjRMQ8TJH+mnhRjFUHo4ZHrOlZ2noUt2LZp10vOBySMUGaWxqnoIYZiF5ROvO8DZyz2HVCMqWxPyqdNV07orK9nLWZluSaUKFKeoSYgLb5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Yp0bVz6p; arc=none smtp.client-ip=209.85.128.74
+	s=arc-20240116; t=1747737721; c=relaxed/simple;
+	bh=vbW4J15gT0Anek7l1UlLR4VB3Z3pNTgkHhKTuT6ywMY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=N2polUxDSF9WsjWkllRQTMkrFsCMW1NLms5nqq4tW5NY1wTDoZwM6Z6QE1vdhOrVsUon58x25BwXn7TcSV6nD3nJxkWpHJxYr82YeOMbVug/2MirP7KFoJvTlHbdG9OxQvVixzKEWRZOGYwgsLd5bJsdPy+LYiME6PZB6Ku1jzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WOAIdj3j; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43eed325461so31616405e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 03:41:57 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43d4d15058dso11127985e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 03:41:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747737716; x=1748342516; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=syvU+98K4794Raf3X6G+lZLkSQNhm8MB57r88GVHtjY=;
-        b=Yp0bVz6pNBShaMjr51z6Hvxj2vjqyeYm/5rAZ+3/RwIOpiY2VKLh6mj+JvhGNWhJYc
-         BnSAkAEyijMAfiDsNlZv6CdKf7lWrTeQDy1bvt0JxsphVlISCefCnCrec4lbvgwDG6bs
-         XOixVbnTt+9XPIIB59neoAhjYi1NkuxOuu7SYXGZCvcywwYBAsxRlzMrszAyqqF2dD6O
-         LV1U4O/2DaY9AiUJG36HVYhjuppVcFbkpk9oKLrJZ52mml8T1F3+wbZ7/vuAWXV0In3S
-         kVyzeG1V926ts0p/FU+yAilgvdZYUY0eavd6mZ+OXt3p2X9NMhgoDUbPPjI8XXrjg1AP
-         MwsA==
+        d=google.com; s=20230601; t=1747737718; x=1748342518; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2i089Y2WwQ9qQU2NJo6zV7zkt8mG6d9ipwjqGuYXJek=;
+        b=WOAIdj3j3nQceSYc6ecI4eOZCw+cCA68+Pesnwlr2A0hMWpm8ivfhZFWplC+p2/L/8
+         Lh8yBZAGRrY4s0Mp4em0+lh6hJx/N1Dknom4joAnkNzJLRd5bk+eS0vrpVmx8hKCvWnk
+         K/kPXfXUJs4uBiuBdhVh+RgiJnqvfUEm6Vt52JXu95sdtjUXjXnXwxENnMGIKC6/FXtL
+         y2VAGNMRbYl7YLOFfJwRTMW1LdUYNBa+6Jw5uP62UWH8r0nx7Pk8RQF6Zq4F2pl6vonE
+         nB4HY+6XF2Bmefh3OHGLMM9OELIPzCBoO0PfjJpr56T2nJFYw4sTCNYTrdfaSQEzqoxx
+         bpKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747737716; x=1748342516;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=syvU+98K4794Raf3X6G+lZLkSQNhm8MB57r88GVHtjY=;
-        b=Dv9JDr59EX+Y+Gc4O/PBg2qRdlOMmGbHpnwT2zWdXVJFWFAhWQ3eCEP/xDW27s2VsZ
-         3QCVksjUdzQUdNotevXNT5MUmNbAKM/GO0gfayzSS9EqRaBzrwUSdC+Sf7LiMpJFSX9q
-         W9L/9dOialZ1WGfa9wt7s+XgcVabIQV5BBUY13C/sjgAgV+QPiwPyWuHJQsgqSK5n5GU
-         7Ka0KpAWmGvROMml4WTJiPIwFE+tFuuEPFGK2s80pL7vANd4UgY0aLK/EDNtzVqnh6BL
-         tvUJqLGfFDTzSC36fakh/HjMfWiICfT1qdrGKJuNsTPan6uVTreJdbVu+cGcESKu+CX+
-         2hzA==
-X-Gm-Message-State: AOJu0YxB4mKEVGiBGb3lMX6zb1CUHSS2rovABWoTIeKB+6L4qCbiM/uU
-	+k3E6whNgsPFptHWFoYl8A1/QBdzxD2RYaAOtq9r4iNxTxON4ZUi57o4YWjmp6dIeuxw5atGEa3
-	TYbZQgOxDHndxkCAC4VkDvgD2oUnYhwzC88BSsB4sw/P9D9Pl9EuOqJVh62Mthy+MNd1jSsXEjP
-	XNFZ2VOqOnWOo6OTIioIfCAivj1wdGYcFRbQ==
-X-Google-Smtp-Source: AGHT+IHkTafgnDTkldvnfKXwrHhcaDnjGVxDAfPbmXSQMWezNOea/JqGoCUrkPujtq4FH7yTvRedyn+j
-X-Received: from wmbei7.prod.google.com ([2002:a05:600c:3f07:b0:442:e9ed:dccc])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:19c8:b0:43d:abd:ad0e
- with SMTP id 5b1f17b1804b1-442ff000bf6mr117767795e9.18.1747737716491; Tue, 20
- May 2025 03:41:56 -0700 (PDT)
-Date: Tue, 20 May 2025 12:41:39 +0200
+        d=1e100.net; s=20230601; t=1747737718; x=1748342518;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2i089Y2WwQ9qQU2NJo6zV7zkt8mG6d9ipwjqGuYXJek=;
+        b=U36NwFZRmWJbMD4reglhyl59W6k52j0tXhwShRgbIvaD7KdLqk3g+Zkz24tXLa4NVF
+         3iCJQftwxhDRH1YBOnSrQ8nb4pdc124MptZyacOuiFKglTeV+U2gkP8G6QSbQnt+ot22
+         Q/67wId7hcrY+AhAdmAXVxuAuHjtE9f58pSprBh4CGOdZej2DUfyeohTKpAEuFUjxH+3
+         lmI6W3f4//b2q4VMRCD/bKVlAefsPUM3M+aIMS3qHRtj2jmLoK4eA9DJOt9UjP6X9T5A
+         IWXqCNvi1/IGLM4UbE+yHqROSQg/vO9kW9bqqGjNEFl3npo4oe8vinI3JmUdszDrBeeg
+         0dFg==
+X-Gm-Message-State: AOJu0Yx/tQoThHv/rJUSiahuo0SugFglE+xhc12mUeGKP888nb8Ahf0k
+	r7UGD8V4EBihnrd+6RELn5yfbxwG6FlBlMGvxDx8kJ1ReznuuBJ3l08Eoc2ejmf/Ry21MqIVVli
+	/GLvsh3Qes7qBneWuUm855Q/PluMCVKtDy4IioXJXXSuE0o3Vc2pKtZSO+VxTDVviEm3511qSoF
+	UBRILCh2YM4RDwNNQNYWR4lVl0uRKgMw6KLQ==
+X-Google-Smtp-Source: AGHT+IFBU8TCAwpTPuGWuckj9SBjBaf7waNzV9OC3co6AKbdhaL4TZkNRZwAWSi7F8QhIX62Kn75NxdT
+X-Received: from wmbfm26.prod.google.com ([2002:a05:600c:c1a:b0:442:f8e9:a2ac])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:4706:b0:43c:f629:66f3
+ with SMTP id 5b1f17b1804b1-442fd63b22cmr140816855e9.18.1747737718459; Tue, 20
+ May 2025 03:41:58 -0700 (PDT)
+Date: Tue, 20 May 2025 12:41:40 +0200
+In-Reply-To: <20250520104138.2734372-9-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250520104138.2734372-9-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4847; i=ardb@kernel.org;
- h=from:subject; bh=aHOyYap++8M1FZ4FuojjmVoeUUIngzDbPEyELQnz7z8=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIUMnJuVcyFGbAG77t+8XvzXjaE97vpBptte+Qyuzjb+EV
- nLOCgnuKGVhEONgkBVTZBGY/ffdztMTpWqdZ8nCzGFlAhnCwMUpABNpy2f4w2cY+ugZL1fYIj5t
- wWn5Ymmq+k52Zy9JLpzO99q55uRMaYb/7ryP53Pd47kjbL30TVK21M4Ols0u+/PmnzLlYT2n+s6 UFQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1605; i=ardb@kernel.org;
+ h=from:subject; bh=gDhtt2gsfPR+q9p6uoVx2wiSpQ+yOS3VasjQVtcD7TY=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIUMnJjX9SePeX/u85N9le6jy7bg/6UjMvek6854f7tprn
+ 1/5S4ejo5SFQYyDQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAEwkpIrhf6T7o+2qxTPMc34s
+ /H8mevdUscnWWc96NIs3bzx27tbpHQIM/502GM4q+LSJe6qh16eUO28e7zXo12Jl2XvwefFb3vb cdBYA
 X-Mailer: git-send-email 2.49.0.1101.gccaa498523-goog
-Message-ID: <20250520104138.2734372-9-ardb+git@google.com>
-Subject: [PATCH v5 0/7] x86: Robustify pgtable_l5_enabled()
+Message-ID: <20250520104138.2734372-10-ardb+git@google.com>
+Subject: [PATCH v5 1/7] x86/mm: Decouple MAX_PHYSMEM_BITS from LA57 state
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
@@ -87,106 +90,48 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-This is a follow-up to the discussion at [0], broken out of that series
-so we can progress while the SEV changes are being reviewed and tested.
+As the Intel SDM states, MAXPHYADDR is up to 52 bits when running in
+long mode, and this is independent from the number of levels of paging.
+I.e., it is permitted for a 4-level hierarchy to use 52-bit output
+addresses in the descriptors, both for next-level tables and for the
+mappings themselves.
 
-The current implementation of pgtable_l5_enabled() is problematic
-because it has two implementations, and source files need to opt into
-the correct one if they contain code that might be called very early.
-Other related global pseudo-constants exist that assume different values
-based on the number of paging levels, and it is hard to reason about
-whether or not all memory mapping and page table code is guaranteed to
-observe consistent values of all of these at all times during the boot.
-Case in point: currently, KASAN needs to be disabled during alternatives
-patching because otherwise, it will reliably produce false positive
-reports due to such inconsistencies.
+So set MAX_PHYSMEM_BITS to 52 in all cases for x86_64, and drop the
+MAX_POSSIBLE_PHYSMEM_BITS definition, which becomes redundant as a
+result.
 
-This revision of the series still provides a single implementation of
-pgtable_l5_enabled(), but no longer based on cpu_feature_enabled(), for
-a number of reasons:
-- fiddling with the early CPU feature detection code is not risk-free,
-  and may cause regressions that are difficult to debug;
-- Boris objected to the use of a separate capability flag, and using the
-  existing one is trickier, as it gets set and cleared during the boot
-  by the feature detection code a couple of times, even if 5-level
-  paging is not in use
-- by their very nature, manipulations of level 4 and level 5 page
-  tables occur rarely compared to lower levels, so it is not obvious
-  that the code patching in cpu_feature_enabled() is needed.
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+---
+ arch/x86/include/asm/pgtable_64_types.h | 2 --
+ arch/x86/include/asm/sparsemem.h        | 2 +-
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
-So instead, collapse the various 5-level paging related global variables
-into a single byte wide pgdir_shift variable, and move it into the cache
-hot per-CPU section where it can be accessed cheaply. Set it from asm
-code so C will always see the same value, and derive
-pgtable_l5_enabled() and PTRS_PER_P4D from it directly, ensuring that
-all these quantities are always mutually consistent.
-
-If pgtable_l5_enabled() requires more optimization, we can consider
-alternatives, runtime constants, etc. but whether this is actually
-necessary is TBD. Suggestions welcome for (micro-)benchmarks that
-illustrate the perf delta.
-
-Build and boot tested using QEMU with LA57 emulation.
-
-Changes since v4:
-- Add patch to fix MAX_PHYSMEM_BITS (and drop an occurrence of
-  pgtable_l5_enabled())
-- Re-order the changes and split across more patches so any potential
-  performance hit is bisectable.
-
-Changes since v3:
-- Drop asm-offsets patch which has been merged already
-- Rebase onto tip/x86/core which now carries some related changes by
-  Kirill
-- Avoid adding new instances of '#ifdef CONFIG_X86_5LEVEL' where
-  possible, as it is going to be removed soon
-- Move cap override arrays straight to __ro_after_init
-- Drop KVM changes entirely - they were wrong and unnecessary
-- Drop the new "la57_hw" capability flag for now - we can always add it
-  later if there is a need.
-
-Changes since v2:
-- Drop first patch which has been merged
-- Rename existing "la57" CPU flag to "la57_hw" and use "la57" to
-  indicate that 5 level paging is being used
-- Move memset() out of identify_cpu()
-- Make set/clear cap override arrays ro_after_init
-- Split off asm-offsets update
-
-[0] https://lore.kernel.org/all/20250504095230.2932860-28-ardb+git@google.com/
-
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Kirill A. Shutemov <kirill@shutemov.name>
-Cc: Borislav Petkov <bp@alien8.de>
-
-Ard Biesheuvel (7):
-  x86/mm: Decouple MAX_PHYSMEM_BITS from LA57 state
-  x86/mm: Use a single cache hot per-CPU variable to record pgdir_shift
-  x86/mm: Define PTRS_PER_P4D in terms of pgdir_shift()
-  x86/mm: Derive pgtable_l5_enabled() from pgdir_shift()
-  x86/boot: Drop USE_EARLY_PGTABLE_L5 definitions
-  x86/boot: Drop 5-level paging related global variable
-  x86/boot: Remove KASAN workaround for 4/5 level paging switch
-
- arch/x86/boot/compressed/misc.h         |  8 +++---
- arch/x86/boot/compressed/pgtable_64.c   | 10 --------
- arch/x86/boot/startup/map_kernel.c      | 18 +------------
- arch/x86/boot/startup/sme.c             |  9 -------
- arch/x86/include/asm/page_64_types.h    |  2 +-
- arch/x86/include/asm/pgtable_64_types.h | 27 ++++++++------------
- arch/x86/include/asm/sparsemem.h        |  2 +-
- arch/x86/kernel/alternative.c           | 12 ---------
- arch/x86/kernel/cpu/common.c            |  3 ---
- arch/x86/kernel/head64.c                |  9 -------
- arch/x86/kernel/head_64.S               |  5 ++++
- arch/x86/mm/kasan_init_64.c             |  3 ---
- arch/x86/mm/pgtable.c                   |  4 +++
- 13 files changed, 26 insertions(+), 86 deletions(-)
-
-
-base-commit: 54c2c688cd9305bdbab4883b9da6ff63f4deca5d
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index 4604f924d8b8..1481b234465a 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -56,8 +56,6 @@ extern unsigned int ptrs_per_p4d;
+ #define P4D_SIZE		(_AC(1, UL) << P4D_SHIFT)
+ #define P4D_MASK		(~(P4D_SIZE - 1))
+ 
+-#define MAX_POSSIBLE_PHYSMEM_BITS	52
+-
+ /*
+  * 3rd level page
+  */
+diff --git a/arch/x86/include/asm/sparsemem.h b/arch/x86/include/asm/sparsemem.h
+index 3918c7a434f5..550b6d73ae22 100644
+--- a/arch/x86/include/asm/sparsemem.h
++++ b/arch/x86/include/asm/sparsemem.h
+@@ -26,7 +26,7 @@
+ # endif
+ #else /* CONFIG_X86_32 */
+ # define SECTION_SIZE_BITS	27 /* matt - 128 is convenient right now */
+-# define MAX_PHYSMEM_BITS	(pgtable_l5_enabled() ? 52 : 46)
++# define MAX_PHYSMEM_BITS	52
+ #endif
+ 
+ #endif /* CONFIG_SPARSEMEM */
 -- 
 2.49.0.1101.gccaa498523-goog
 
