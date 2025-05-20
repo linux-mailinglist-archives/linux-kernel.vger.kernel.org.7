@@ -1,195 +1,182 @@
-Return-Path: <linux-kernel+bounces-656491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B59ABE6E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:27:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF8AABE6E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C09A24C7449
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C558A61E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A89D25F790;
-	Tue, 20 May 2025 22:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E13225F978;
+	Tue, 20 May 2025 22:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HiFzR3vU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QtcQfDnq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9B325B66D;
-	Tue, 20 May 2025 22:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FAE25B66D;
+	Tue, 20 May 2025 22:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747780015; cv=none; b=EqpXueeRucUnT2X7D8pkIDQtf9Ua3j8JMcJFrfS7+/rbKiSAg8rUKgcadx2/crlJ8MqLBPBYPcDTZt2Wxwim96H3rupzGZ+vrvS85ZLNOOg02UmsCuC60MnxhpmDe3+bGkSSWvmiTZS2aAKFGHmR4ElCl8au8tZmpfbTNVqNt/o=
+	t=1747780085; cv=none; b=UjhN0MkXqWLPayaW5naKFn8CYk2iToyJjRW8azLs7BwbZHLflJb8ofRWhGbLFBq48LTh0fkqQ9bWS6OiP22v+0/F/m+2JWAsF/5QAu24dQ1Wt0fgWw6jS/o6pL57WoseLuqIH6nM42X+qEtmCzc7syD31uMyousdU+nDELOMsPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747780015; c=relaxed/simple;
-	bh=8tFeW05/7XCVuFCJ6OwQew4Gt09wQRdhiAtl6NZm4Vs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fc4gxR6/vreEfY90m1BdWp+mnjdxTCZxJFHuXdxamzZab/80fD5xn6EZtypfGxmWwN8uqqVkV3QXzKfD95OmCI0NUNOKE26SsBj/i6X5fHPr/E2hJbo34BzghTS60qZWupSOueVlwfLBntf9FPXNjDbDi8J2Lrbv59vsgYogUIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HiFzR3vU; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747780013; x=1779316013;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=8tFeW05/7XCVuFCJ6OwQew4Gt09wQRdhiAtl6NZm4Vs=;
-  b=HiFzR3vUwIgnf9JfPc3SKFcdPsoJ10O/hMLq2ZtG+C/6yida05k/pk+J
-   9FqILe1JB5SfjrtHP8hIx/F1MPI6iMLvMygaJo85Up9SokFNG/A6dVH/U
-   GD69gWmLbkU/wlc80yg4gtRyeg7WSBL1Czw9h/NhObMPj+gu6HLnFWHS2
-   s8EbvLaUfifTU5xXNXmKsbW0B/NhK6dUTexrp6SOmwwIJQvwyKCzJway6
-   fTtg69lOhAOEc4l7aySWehsyY4mmhn6FU/59JX9+WWUZcC6AWEdTCdMn4
-   4iT/vDJXXyOzeDXRp/c+UcTWD9LzVhIJxfraQcBgMhaPNS4EinVVupfH/
-   A==;
-X-CSE-ConnectionGUID: 5nyMtIZBQZy7b7X/CdusMw==
-X-CSE-MsgGUID: 8qz85ansRJKn1HQaEnB8tQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49835301"
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="49835301"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 15:26:52 -0700
-X-CSE-ConnectionGUID: DEx49EBDSU2K0eC3jg1jlw==
-X-CSE-MsgGUID: ZKAIxYD7Rsq5IwWloIgvsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="144786555"
-Received: from iweiny-desk3.amr.corp.intel.com (HELO [10.124.222.89]) ([10.124.222.89])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 15:26:50 -0700
-Message-ID: <bacf754b-7807-4058-be4b-6b5c5a17a4d6@linux.intel.com>
-Date: Tue, 20 May 2025 15:26:49 -0700
+	s=arc-20240116; t=1747780085; c=relaxed/simple;
+	bh=1rC7SEwUZWx9R8K9mnDFMVOe9WTjcLxX2/ToCfUFA30=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mJbZ0qffrXiBDhUOkXiuITJaL/gEtCpXSyIRCkA4kNtBLvlI6gL02GECBuzMTvnsR20d9DK/suPgSQcAcM3x9f9kMOvK2PN4q7xS8IsIUoJ9L9uWQsyNtoPOzayr3Xv8rHjJkR5vCmKE/GdSCXvoiW3B/VRjEC1N6TLyzQk6zkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QtcQfDnq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DEC5C4CEE9;
+	Tue, 20 May 2025 22:28:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747780084;
+	bh=1rC7SEwUZWx9R8K9mnDFMVOe9WTjcLxX2/ToCfUFA30=;
+	h=From:Subject:Date:To:Cc:From;
+	b=QtcQfDnqQckp+/Xb/jLS8IKj1G2TJ5esJX0Ep9eBKaf/0xuTGVc76r5ekbQqLEdc+
+	 KnfeiGVrNQsi4wcX4smkWEuCy4aAQV+J5Ua+20OyOG5+eFfLBrkvplqBOZzIWo8nos
+	 p9/UPOVLxpHluZsuEEDjQq5SAl1IltQPW21v542uCdq+8E0Wy3Orh5YYa1LepUqecJ
+	 ndA2FaOGKplPCCqmhfyhR9qa785i8437ix3Wt/l+WSR89UmD0Mb5VnnRXOW0SNkNcA
+	 JiOPgeaVQPI2fno5ICSI8GEdpsuI4xvIDz9W5p0YB/UGn05JOPUaNTjTPaA4UBt2Li
+	 F/RuZhAVJFF9g==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Subject: [PATCH v22 0/5] arm64/perf: Enable branch stack sampling
+Date: Tue, 20 May 2025 17:27:35 -0500
+Message-Id: <20250520-arm-brbe-v19-v22-0-c1ddde38e7f8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 03/17] PCI/AER: Factor COR/UNCOR error handling out
- from aer_isr_one_error()
-To: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
-Cc: Jon Pan-Doh <pandoh@google.com>,
- Karolina Stolarek <karolina.stolarek@oracle.com>,
- Weinan Liu <wnliu@google.com>, Martin Petersen <martin.petersen@oracle.com>,
- Ben Fuller <ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>,
- Anil Agrawal <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Lukas Wunner <lukas@wunner.de>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>,
- Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
- Terry Bowman <terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>
-References: <20250520215047.1350603-1-helgaas@kernel.org>
- <20250520215047.1350603-4-helgaas@kernel.org>
-Content-Language: en-US
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20250520215047.1350603-4-helgaas@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANcBLWgC/2XMwQ6CMAyA4VchOzvTFQabJ9/DeIDRwaKC2QzRE
+ N7dgQcFD1vSpt8/skDeUWCHZGSeBhdc38UBcZcw05ZdQ9zVccEQUIJAzUt/45WviA9Cc8xqWWu
+ SlGPKIrl7su659E7nOLcuPHr/WvLxfl5/SvFbl+YHXBiRAijAVMnjhXxH133vGza3BoQfL9TGI
+ 0SfkdaI1iAp+vfi6zMotl5Eb61QhbW50ahWfpqmN87iguQsAQAA
+X-Change-ID: 20250129-arm-brbe-v19-24d5d9e5e623
+To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Jonathan Corbet <corbet@lwn.net>, 
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Zenghui Yu <yuzenghui@huawei.com>, James Clark <james.clark@linaro.org>, 
+ Anshuman Khandual <anshuman.khandual@arm.com>, Leo Yan <leo.yan@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ kvmarm@lists.linux.dev, Mark Brown <broonie@kernel.org>, 
+ Dave Martin <Dave.Martin@arm.com>
+X-Mailer: b4 0.15-dev
 
+This series enables perf branch stack sampling support on arm64 via a 
+v9.2 arch feature called Branch Record Buffer Extension (BRBE). Details 
+on BRBE can be found in the Arm ARM[1] chapter D18.
 
-On 5/20/25 2:50 PM, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
->
-> aer_isr_one_error() duplicates the Error Source ID logging and AER error
-> processing for Correctable Errors and Uncorrectable Errors.  Factor out the
-> duplicated code to aer_isr_one_error_type().
->
-> aer_isr_one_error() doesn't need the struct aer_rpc pointer, so pass it the
-> Root Port or RCEC pci_dev pointer instead.
->
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
+I've picked up this series from Anshuman. v19 and later versions have 
+been reworked quite a bit by Mark and myself. The bulk of those changes 
+are in patch 5.
 
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+A git branch is here[2].
 
->   drivers/pci/pcie/aer.c | 36 +++++++++++++++++++++++-------------
->   1 file changed, 23 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index a1cf8c7ef628..568229288ca3 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -1273,17 +1273,32 @@ static inline void aer_process_err_devices(struct aer_err_info *e_info)
->   }
->   
->   /**
-> - * aer_isr_one_error - consume an error detected by Root Port
-> - * @rpc: pointer to the Root Port which holds an error
-> + * aer_isr_one_error_type - consume a Correctable or Uncorrectable Error
-/s/cosume/Consume/
-> + *			    detected by Root Port or RCEC
-> + * @root: pointer to Root Port or RCEC that signaled AER interrupt
-> + * @info: pointer to AER error info
-> + */
-> +static void aer_isr_one_error_type(struct pci_dev *root,
-> +				   struct aer_err_info *info)
-> +{
-> +	aer_print_port_info(root, info);
-> +
-> +	if (find_source_device(root, info))
-> +		aer_process_err_devices(info);
-> +}
-> +
-> +/**
-> + * aer_isr_one_error - consume error(s) signaled by an AER interrupt from
-> + *		       Root Port or RCEC
-> + * @root: pointer to Root Port or RCEC that signaled AER interrupt
->    * @e_src: pointer to an error source
->    */
-> -static void aer_isr_one_error(struct aer_rpc *rpc,
-> +static void aer_isr_one_error(struct pci_dev *root,
->   		struct aer_err_source *e_src)
->   {
-> -	struct pci_dev *pdev = rpc->rpd;
->   	struct aer_err_info e_info;
->   
-> -	pci_rootport_aer_stats_incr(pdev, e_src);
-> +	pci_rootport_aer_stats_incr(root, e_src);
->   
->   	/*
->   	 * There is a possibility that both correctable error and
-> @@ -1297,10 +1312,8 @@ static void aer_isr_one_error(struct aer_rpc *rpc,
->   			e_info.multi_error_valid = 1;
->   		else
->   			e_info.multi_error_valid = 0;
-> -		aer_print_port_info(pdev, &e_info);
->   
-> -		if (find_source_device(pdev, &e_info))
-> -			aer_process_err_devices(&e_info);
-> +		aer_isr_one_error_type(root, &e_info);
->   	}
->   
->   	if (e_src->status & PCI_ERR_ROOT_UNCOR_RCV) {
-> @@ -1316,10 +1329,7 @@ static void aer_isr_one_error(struct aer_rpc *rpc,
->   		else
->   			e_info.multi_error_valid = 0;
->   
-> -		aer_print_port_info(pdev, &e_info);
-> -
-> -		if (find_source_device(pdev, &e_info))
-> -			aer_process_err_devices(&e_info);
-> +		aer_isr_one_error_type(root, &e_info);
->   	}
->   }
->   
-> @@ -1340,7 +1350,7 @@ static irqreturn_t aer_isr(int irq, void *context)
->   		return IRQ_NONE;
->   
->   	while (kfifo_get(&rpc->aer_fifo, &e_src))
-> -		aer_isr_one_error(rpc, &e_src);
-> +		aer_isr_one_error(rpc->rpd, &e_src);
->   	return IRQ_HANDLED;
->   }
->   
+[1] https://developer.arm.com/documentation/ddi0487/latest/
+[2] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git arm/brbe-v22
 
+Changes in v22:
+ - New patch reworking the labels in el2_setup.h
+ - Move branch stack disabling after armpmu_stop() in armpmu_del()
+ - Fix branch_records_alloc() to work on heterogeneous systems
+ - Make setting .sched_task function ptr conditional on BRBE support
+ - Reword booting.rst section name (s/feature/the/) and move next to
+   other PMU related features instead of in the middle of SME features.
+ - Drop setting SYS_BRBCR_EL1
+ - Drop CONFIG_ARM64_BRBE ifdef
+ - Rework initialization of HFGITR_EL2
+
+v21:
+ - https://lore.kernel.org/r/20250407-arm-brbe-v19-v21-0-ff187ff6c928@kernel.org
+ - Drop clean-up patches 1-7 already applied
+ - Rebase on v6.15-rc1
+
+v20:
+ - https://lore.kernel.org/r/20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org
+ - Added back some of the arm64 specific exception types. The x86 IRQ 
+   branches also include other exceptions like page faults. On arm64, we 
+   can distinguish the exception types, so we do. Also, to better 
+   align with x86, we convert 'call' branches which are user to kernel 
+   to 'syscall'.
+ - Only enable exceptions and exception returns if recording kernel
+   branches (matching x86)
+ - Drop requiring event and branch privileges to match
+ - Add "branches" caps sysfs attribute like x86
+ - Reword comment about FZP and MDCR_EL2.HPMN interaction
+ - Rework BRBE invalidation to avoid invalidating in interrupt handler
+   when no handled events capture the branch stack (i.e. when there are 
+   multiple users).
+ - Also clear BRBCR_ELx bits in brbe_disable(). This is for KVM nVHE 
+   checks if BRBE is enabled.
+ - Document that MDCR_EL3.SBRBE can be 0b01 also
+
+v19:
+ - https://lore.kernel.org/all/20250202-arm-brbe-v19-v19-0-1c1300802385@kernel.org/
+ - Drop saving of branch records when task scheduled out (Mark). Make 
+   sched_task() callback actually get called. Enabling requires a call 
+   to perf_sched_cb_inc(). So the saving of branch records never 
+   happened.
+ - Got rid of added armpmu ops. All BRBE support is contained within 
+   pmuv3 code.
+ - Fix freeze on overflow for VHE
+ - The cycle counter doesn't freeze BRBE on overflow, so avoid assigning
+   it when BRBE is enabled.
+ - Drop all the Arm specific exception branches. Not a clear need for
+   them.
+ - Fix handling of branch 'cycles' reading. CC field is
+   mantissa/exponent, not an integer.
+ - Rework s/w filtering to better match h/w filtering
+ - Reject events with disjoint event filter and branch filter or with 
+   exclude_host set
+ - Dropped perf test patch which has been applied for 6.14
+ - Dropped patch "KVM: arm64: Explicitly handle BRBE traps as UNDEFINED"
+   which has been applied for 6.14
+
+v18:
+ - https://lore.kernel.org/all/20240613061731.3109448-1-anshuman.khandual@arm.com/
+
+For v1-v17, see the above link. Not going to duplicate it all here...
+
+Signed-off-by: "Rob Herring (Arm)" <robh@kernel.org>
+---
+---
+Anshuman Khandual (4):
+      arm64/sysreg: Add BRBE registers and fields
+      arm64: el2_setup.h: Make __init_el2_fgt labels consistent, again
+      arm64: Handle BRBE booting requirements
+      KVM: arm64: nvhe: Disable branch generation in nVHE guests
+
+Rob Herring (Arm) (1):
+      perf: arm_pmuv3: Add support for the Branch Record Buffer Extension (BRBE)
+
+ Documentation/arch/arm64/booting.rst |  21 +
+ arch/arm64/include/asm/el2_setup.h   |  81 +++-
+ arch/arm64/include/asm/kvm_host.h    |   2 +
+ arch/arm64/include/asm/sysreg.h      |  17 +-
+ arch/arm64/kvm/debug.c               |   4 +
+ arch/arm64/kvm/hyp/nvhe/debug-sr.c   |  32 ++
+ arch/arm64/kvm/hyp/nvhe/switch.c     |   2 +-
+ arch/arm64/tools/sysreg              | 132 ++++++
+ drivers/perf/Kconfig                 |  11 +
+ drivers/perf/Makefile                |   1 +
+ drivers/perf/arm_brbe.c              | 802 +++++++++++++++++++++++++++++++++++
+ drivers/perf/arm_brbe.h              |  47 ++
+ drivers/perf/arm_pmu.c               |  16 +-
+ drivers/perf/arm_pmuv3.c             | 125 +++++-
+ include/linux/perf/arm_pmu.h         |   8 +
+ 15 files changed, 1276 insertions(+), 25 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250129-arm-brbe-v19-24d5d9e5e623
+
+Best regards,
 -- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
+Rob Herring (Arm) <robh@kernel.org>
 
 
