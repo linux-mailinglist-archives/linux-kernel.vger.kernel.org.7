@@ -1,104 +1,103 @@
-Return-Path: <linux-kernel+bounces-655349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7FB4ABD44B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:13:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45358ABD44F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 519E43AAD49
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:13:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899AC1BA2086
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F30826A1B5;
-	Tue, 20 May 2025 10:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9567721C9EA;
+	Tue, 20 May 2025 10:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X0DhJZhh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aQE+z7k1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534A91DA61B
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7A01EA7FF;
+	Tue, 20 May 2025 10:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747736004; cv=none; b=WKFpRgceCQDoYWmDiDM3Vi70QmvQCS7fUy3zNOtXZqB8R4sMY7l6D9fqB9Pnb8K3zjPvRfX+MLXCC7yfEgn115YvRBKEly6UQIKu4/hICk638ZR7haQMuzE4ycQX9TepqO3QAifA+otyaxzviunbRIqAqD4jQZ3loDdJerH8T/I=
+	t=1747736120; cv=none; b=E1YpmQ850h+KhM63m9t/cAg8Du71KNFmkPVU9AXxHF90hWBwmPzwmBiIS5jRM2FGAGbSE6s03ZV61UxhtfPHfiY0jo47JHDsNzLGtuIlPnFam9P9zudMbr68iw2g6Q6vm6Ck00AYH/w5gggQS0Fd2UdhJEuGwZ3wzwQDh4bZT/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747736004; c=relaxed/simple;
-	bh=xedbwFYNs/SBNVB/LTfUxiDLu0V5LEWyXtUlj5WSX88=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=iLQ5ILyiqciqwsxWMhmhPbI4gULVD+b2ZY246N0v8bcKFbec1KenUddslP4OiFqpVdLb9NsgZQA1xg2guDaY6tCj5uveLt9D1f4ewKDRhgL7BXsp7wgupqTyHmjRxsytLvolPRDCKa2bzALnpe6gK5ZMTBgxeKyfW9XlLTjaWJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X0DhJZhh; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1747736120; c=relaxed/simple;
+	bh=PcrQz+183ljK1hQ/XNWCXWQbSr+ggu/4ZFnGTVIjrh0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IfAepOJvQDu5jlcflmos2dURZOw8p7+24yAq3fKZppp62fCtU2kX2gel5HnEwfHo7UC3tB6kYOJe5IdYH4DV6dyUTHO1ReyVE10QwSebPmv0pSTqr3TUHeqATTIU/J2QgnPAanxcdIhTsZd0o6/kPj+qRyEtv/7UnZ5FVjPR9XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aQE+z7k1; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747736002; x=1779272002;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=xedbwFYNs/SBNVB/LTfUxiDLu0V5LEWyXtUlj5WSX88=;
-  b=X0DhJZhhH8fhD69tDqxIeD7A+PFazUFc3Vvm6Fa2VI+WD/I9usouI39V
-   0L7lVZM2dhrsRDXISrKZS1Xzw72bd/DQnMla38b+IJxG4P4hw+NKfTWaO
-   vM85y4aC47SwE4/CDm4B1U0PMc1Su+js57yonIfEQBRBzK09pYCc1cVXB
-   q7zf9iHLBRdNTLZIZUCapwEJePAC91I5m2rTU0/lWNVAnvaWYzilLacT1
-   abbNxXCe1bNyntFYP3E7hlibAL+Qwrr+14uvVHy9Cl7nWYtYehno1pfDz
-   Tv7nQ2svsOweBfC7AKC5kaG4zgqnT2qV6jUVUEKPvjxBuGVPrF0/BMKf8
-   A==;
-X-CSE-ConnectionGUID: QJ1jQsCtSbGS5U50ZAoSgA==
-X-CSE-MsgGUID: eyVGZkTwTW+GfRdJEVJUBQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="72174020"
+  t=1747736119; x=1779272119;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=PcrQz+183ljK1hQ/XNWCXWQbSr+ggu/4ZFnGTVIjrh0=;
+  b=aQE+z7k1j25ug0mtY4XaIRS1SHklRQvdqo/4ZjsWI0LVnQ+t835lNpXM
+   HGY3yHo8B0kn3HtAxxEER7QzLrgWheeZSGIRpPdSxH0HMihxoqGxq9q3R
+   gXDAlx1Efmz3P9pvEmScfmalyh5/jzR8CRQsPTE+1qJtfwfXf5aSrzjUx
+   mSSy5hdZXG+/+IIhaiwTJ/Xrkw6BaC1T3AhbC6YdK/0cr0RH6vW37TBfz
+   Zofi+S8Dc9bC6H418njdQkdE9uznMg+U4hByawji4/iVnGe9lgfd46Pqf
+   +jI42iIpKRjhcnUh9dCCJH0RRuSEGvjEMbQZOMjEppQSqZkXWRAWMe3he
+   w==;
+X-CSE-ConnectionGUID: xaiL+qTsRhWro8RwI72Y0w==
+X-CSE-MsgGUID: lF2yk+BXQGiL5PmcqkgPTw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="49360199"
 X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="72174020"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 03:13:21 -0700
-X-CSE-ConnectionGUID: nxYK+sFaQnmm2Q3LnXym7w==
-X-CSE-MsgGUID: LO2GgDkOTv+qExKH2b1Xtg==
+   d="scan'208";a="49360199"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 03:15:18 -0700
+X-CSE-ConnectionGUID: nPLiF8OASJOm0vzBvDc6dQ==
+X-CSE-MsgGUID: 4Fezwh6jTOu/EZEldwbvbw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="139680314"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 20 May 2025 03:13:20 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uHJyH-000MQu-3C;
-	Tue, 20 May 2025 10:13:17 +0000
-Date: Tue, 20 May 2025 18:12:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: kismet: WARNING: unmet direct dependencies detected for
- DRM_BRIDGE_CONNECTOR when selected by DRM_IMX_PARALLEL_DISPLAY
-Message-ID: <202505201837.S8wp6yuH-lkp@intel.com>
+   d="scan'208";a="144637122"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.235])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 03:15:15 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: hdegoede@redhat.com, ibm-acpi-devel@lists.sourceforge.net, 
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Derek Barbosa <debarbos@redhat.com>
+In-Reply-To: <20250517023348.2962591-1-mpearson-lenovo@squebb.ca>
+References: <mpearson-lenovo@squebb.ca>
+ <20250517023348.2962591-1-mpearson-lenovo@squebb.ca>
+Subject: Re: [PATCH] platform/x86: thinkpad_acpi: Ignore battery threshold
+ change event notification
+Message-Id: <174773611073.1880.16721567091299499613.b4-ty@linux.intel.com>
+Date: Tue, 20 May 2025 13:15:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   a5806cd506af5a7c19bcd596e4708b5c464bfd21
-commit: f673055a46784ccea04465b9213e999f7bc5187e drm/imx: Add missing DRM_BRIDGE_CONNECTOR dependency
-date:   8 months ago
-config: m68k-kismet-CONFIG_DRM_BRIDGE_CONNECTOR-CONFIG_DRM_IMX_PARALLEL_DISPLAY-0-0 (https://download.01.org/0day-ci/archive/20250520/202505201837.S8wp6yuH-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250520/202505201837.S8wp6yuH-lkp@intel.com/reproduce)
+On Fri, 16 May 2025 22:33:37 -0400, Mark Pearson wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505201837.S8wp6yuH-lkp@intel.com/
+> If user modifies the battery charge threshold an ACPI event is generated.
+> Confirmed with Lenovo FW team this is only generated on user event. As no
+> action is needed, ignore the event and prevent spurious kernel logs.
+> 
+> 
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for DRM_BRIDGE_CONNECTOR when selected by DRM_IMX_PARALLEL_DISPLAY
-   WARNING: unmet direct dependencies detected for DRM_BRIDGE_CONNECTOR
-     Depends on [n]: HAS_IOMEM [=y] && DRM [=y] && DRM_DISPLAY_HELPER [=n]
-     Selected by [y]:
-     - DRM_IMX_PARALLEL_DISPLAY [=y] && HAS_IOMEM [=y] && DRM [=y] && DRM_IMX [=y]
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/1] platform/x86: thinkpad_acpi: Ignore battery threshold change event notification
+      commit: 29e4e6b4235fefa5930affb531fe449cac330a72
+
+--
+ i.
+
 
