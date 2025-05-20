@@ -1,42 +1,75 @@
-Return-Path: <linux-kernel+bounces-656558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B217ABE7E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 01:05:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9168EABE76D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372594C201E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 23:05:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5137316E6ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D392566F5;
-	Tue, 20 May 2025 23:05:26 +0000 (UTC)
-Received: from sxb1plsmtpa01-14.prod.sxb1.secureserver.net (sxb1plsmtpa01-14.prod.sxb1.secureserver.net [92.204.81.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A20C202C3B;
+	Tue, 20 May 2025 22:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JIuesaM7"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C191E1DB124
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 23:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.204.81.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22EA1C84C0
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 22:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747782326; cv=none; b=pSVQbyiKbaxT/vEYEIiATeG6iOhKVICnv9Ito2dB35gkcDQfGgIrR4kuKE05p18WyebS/cNtw6E13PfL7pQS6TkqY9ja0iP69pRBlq28cahsfkS5hfLr4BaPQRawCzRiCmwVwujjYsB0Q1gM565iDKjM411ZDVRXLCleTg+y5fE=
+	t=1747781178; cv=none; b=S1g/nIGMxAbdAvwmSSFW9Fo4ldIY0qjWaneFZh0OKruX6xOFQ79w64SkKgts1iFfTVsVxvi7ze8FRkShDPUgMdQHgbUn6If1UBgde+9fq7B21/WaVaAtrkD6PmeRy8+Z+k8EvN2mOcGCp7paN/fTROP0Q9SQTJhdtYvnGwsSIuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747782326; c=relaxed/simple;
-	bh=BRuhdr5tVsHYPVxgsgfcnDBAArK6CdrX6ja85k5r5PE=;
+	s=arc-20240116; t=1747781178; c=relaxed/simple;
+	bh=xU1qrpva3srGXzaRllUISS4qZ9R1FkREbCpATdGX090=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VTxNsI5F2Kxa0pxNXjx+6FK/awg1RgF4tgWVwoeg/OIlhWMlFOMKCupaoIMZLwpHe4moFzDUxcC6vnQ+Ttzw2NSfzIShlA94gfMfTtCBfuWk0eZHaiWu2XW1eZE1aX+E32HlPzk13gut1/W+AZgLiKTY6YzmXJatVWNPZackb/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=92.204.81.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from [192.168.178.95] ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPSA
-	id HVisu1fVOc0xeHViuumg1S; Tue, 20 May 2025 15:46:13 -0700
-X-CMAE-Analysis: v=2.4 cv=EdjIQOmC c=1 sm=1 tr=0 ts=682d0636
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
- a=IkcTkHD0fZMA:10 a=57SyGIRnAAAA:8 a=F8v1yU81VWNR6WkcbFIA:9 a=QEXdDO2ut3YA:10
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-Message-ID: <cc8a035e-f4ad-49ba-9d00-4635e319bc83@squashfs.org.uk>
-Date: Tue, 20 May 2025 23:45:00 +0100
+	 In-Reply-To:Content-Type; b=c3rdK8EoiDtlTlYnPWzcesLlpyw09+RKnEmb1XKFaM08IwJy8o1+LffZzk8MWM87wZoVPXVfoXpCUgaYkmwzpGQT3rA7KjxPDGH7ICUrOLrrfcAnSsT9v/6lv2MNGhhGvdsCNjP05Lx9U/QdMYnmaOABYDbeO40wgPo8mnwtLgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JIuesaM7; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-85e46f5c50fso556663439f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 15:46:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1747781175; x=1748385975; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oBK2iNtnFXG+56awWUtYZcqCou699Pnyv5HV8iziaWs=;
+        b=JIuesaM7weI+iM93RjfzACOI6VFPOqHYt52beJBVKQN+EBwLUnKywffDLZJTQMxmOM
+         zf09Q1sTkNDkxl9/IGuUAaeLAy8CkEyCuytFaR0hSoxiorXMsTqv0g1L2lte7x2lgkkp
+         EQgpXhYrsBxxknpdnrdgLOLZbthEBfxIFk4+I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747781175; x=1748385975;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oBK2iNtnFXG+56awWUtYZcqCou699Pnyv5HV8iziaWs=;
+        b=aZuQ092O25j2BHsJAkU9u8IIAa297fnv2ILo7BYvhYu09wI0UWYU4/ShZlmbunmeK4
+         HWUXk9HZsl2IX8igOdmfLII2/tAx/2nQAIm5H8d3JnYRFuWJMNIYgMoCdSriZM5++XR3
+         9suY+cvogTEiW/vr82epOSz4wJdEE7t42nOLaCWamo/OSaHiH8X5t7ZjJoXYvSs40YV4
+         KDnL2hOW8IZ5ChxvDvjxi1sxuwu31vq6br9bvsYnt2YdrMHz6pSLGqEF5cEVQ4zRwJKc
+         +xRb1nO03KT/UBQFLdgHs4VjB2v7PA/rUzbcMMGnNxN0top1YOcU3xXAw20nta/D5J4P
+         Nyfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeYE3TCYl0TEibk9zGIpklrg70sGV+Yjjxm7iK3gxyWvOPL8E+q3lkhejikQRMGRStgZ47pb3fday+bbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPjYFFpsWh+KDzwknlarqTpVBFAAQGYL6DHzr3Tc59r/n9MX0x
+	Ha5hZCLe8Gw9Kry6Az5NQw0dFyAkzu3qkk38ne+ViGeMhhsyI/cHbmzzb4YxVJNdEg8=
+X-Gm-Gg: ASbGncsGAE6buF6cYYXJhUnISo+jq7Ws8o/iScQmpXKpPKedODguYtzpJXD1S8Ue3vS
+	S7uGdLEpxUpyimhnpZCkoAko+fv3ZVOOwUr6k1WAy38S3Fb6aGtis2UvIzmsBgBCYXSAj4bztXv
+	2y3grCvM7NbwhRlm7g4uLrmAQgZqseSMGFmMXNfOPqoqDsDqLg4QnYuiDPtY2IpPP0JBZtvt8U+
+	ZlgHYlKRlwyr1JWggD6L4esYUqpqo3om6L3yZ3jVV04PK5TR5ZFhy0dLpknBiL+if4w5N3gKRb7
+	HgFRX81YNwN6ZNBQt0EVEh1gpGibym0JLvU4SPicyHw3Gkz6KlW7LR0TrkEplazwG126atPL
+X-Google-Smtp-Source: AGHT+IGaYckQ1ocB0rCSKdcZon0qF7utkxxlGcyX9+/b8GAs+CN77IZYj8Y6+RKi+IUPbifSGPiiMA==
+X-Received: by 2002:a05:6602:4808:b0:867:6680:8191 with SMTP id ca18e2360f4ac-86a2306ee1cmr2732619239f.0.1747781174829;
+        Tue, 20 May 2025 15:46:14 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fbe649f14asm1726634173.79.2025.05.20.15.46.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 May 2025 15:46:14 -0700 (PDT)
+Message-ID: <d2cd655a-7375-4870-b6a0-757721ae183f@linuxfoundation.org>
+Date: Tue, 20 May 2025 16:46:12 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,86 +77,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] squashfs: Add optional full compressed block caching
-To: Chanho Min <chanho.min@lge.com>
-Cc: linux-kernel@vger.kernel.org, gunho.lee@lge.com
-References: <20250502081947.44034-1-chanho.min@lge.com>
+Subject: Re: [PATCH 5.15 00/59] 5.15.184-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250520125753.836407405@linuxfoundation.org>
 Content-Language: en-US
-From: Phillip Lougher <phillip@squashfs.org.uk>
-In-Reply-To: <20250502081947.44034-1-chanho.min@lge.com>
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250520125753.836407405@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfDRQNSwqLeESSCq8nzo+Ev+TRVx9I2RtSxhbk+O9/bfbENW3azpBM/RRthT0W7vC0lQoUzVaz77FcWiF2DlyhOqTstFxz4OA9GE4r2/cUSxXLgM7exLb
- 3vK0n+2FnAkYseAjcSjcGHhEsOFCgpLjQynCQh9eIBwC8gQ4agR8otJoSdmQupKQ4Y3E2RS3KWeHT9HqZ6tYzMC4F3vWQEZji+Nehm6gflkxoebOtze1X8Dw
- SsrCHnGh9ApD8ZnIr40ia6ffykYUPtT0VderiD8zcwc=
 
-On 02/05/2025 09:19, Chanho Min wrote:
-> The commit 93e72b3c612adcaca1("squashfs: migrate from ll_rw_block usage to BIO")
-> removed caching of compressed blocks in SquashFS, causing fio performance
-> regression in workloads with repeated file reads. Without caching, every read
-
-Please run scripts/checkpatch.pl on your patch.  It complains that the above
-line is over 75 characters in length.
-
-It also complains of DOS line endings.
-
-> triggers disk I/O, severely impacting performance in tools like fio.
+On 5/20/25 07:49, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.184 release.
+> There are 59 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> This patch introduces a new CONFIG_SQUASHFS_COMP_CACHE_FULL Kconfig option to
-> enable caching of all compressed blocks, restoring performance to pre-BIO
-> migration levels. When enabled, all pages in a BIO are cached in the page
-> cache, reducing disk I/O for repeated reads. The fio test results with this
-> patch confirm the performance restoration:
+> Responses should be made by Thu, 22 May 2025 12:57:37 +0000.
+> Anything received after that time might be too late.
 > 
-> For example, fio tests (iodepth=1, numjobs=1, 
-> ioengine=psync) show a notable performance restoration:
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.184-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
 > 
-> Disable CONFIG_SQUASHFS_COMP_CACHE_FULL:
->    IOPS=815, BW=102MiB/s (107MB/s)(6113MiB/60001msec)
-> Enable CONFIG_SQUASHFS_COMP_CACHE_FULL:
->    IOPS=2223, BW=278MiB/s (291MB/s)(16.3GiB/59999msec)
+> thanks,
 > 
-> The trade-off is increased memory usage due to caching all compressed blocks.
-> The CONFIG_SQUASHFS_COMP_CACHE_FULL option allows users to enable this feature
-> selectively, balancing performance and memory usage for workloads with frequent
-> repeated reads.
+> greg k-h
 > 
-> Signed-off-by: Chanho Min <chanho.min@lge.com>
-> ---
->   fs/squashfs/Kconfig | 21 +++++++++++++++++++++
->   fs/squashfs/block.c | 28 ++++++++++++++++++++++++++++
->   2 files changed, 49 insertions(+)
-> 
-> diff --git a/fs/squashfs/Kconfig b/fs/squashfs/Kconfig
-> index 60fc98bdf421..cc5e4be58afa 100644
-> --- a/fs/squashfs/Kconfig
-> +++ b/fs/squashfs/Kconfig
-> @@ -149,6 +149,27 @@ config SQUASHFS_XATTR
->   
->   	  If unsure, say N.
->   
-> +config SQUASHFS_COMP_CACHE_FULL
-> +	bool "Enable full caching of compressed blocks"
-> +	depends on SQUASHFS
-> +	default n
-> +	help
-> +	  This option enables caching of all compressed blocks, Without caching,
-> +	  repeated reads of the same files trigger excessive disk I/O, significantly
-> +	  reducinng performance in workloads like fio-based benchmarks.
-> +
-> +	  For example, fio tests (iodepth=1, numjobs=1, ioengine=psync) show:
-> +	   Without caching: IOPS=2223, BW=278MiB/s (291MB/s)
-> +	   With caching:    IOPS=815, BW=102MiB/s (107MB/s)
-> +
 
-I think the figures for caching and without caching are transposed above.
+Compiled and booted on my test system. No dmesg regressions.
 
-Apart from that the patch looks good.
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Please send a V2 fixing the above.
-
-Thanks
-
-Phillip
-
+thanks,
+-- Shuah
 
