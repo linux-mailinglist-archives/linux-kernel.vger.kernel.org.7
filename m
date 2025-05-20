@@ -1,163 +1,103 @@
-Return-Path: <linux-kernel+bounces-655230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D551ABD2A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:02:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04C77ABD2AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D38A3B43C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:01:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3E777B0168
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938CB266B5A;
-	Tue, 20 May 2025 09:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329B0263F2D;
+	Tue, 20 May 2025 09:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M6dJtQ6N"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b="RHnop4Z/"
+Received: from smtpcmd10102.aruba.it (smtpcmd10102.aruba.it [62.149.156.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5294B264621
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 09:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F2C20D506
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 09:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.156.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747731714; cv=none; b=gJ1AVZNN+D/aL0wq/nAIfTU1vEr6AQCGn7vjuWdvJkJQOX7piW9STTUjCzlNrnX76gtfA4ffIF9sCT8Z4Sle9i+rlAUgP2lyFvXeKqRxxBMWY9o7K4nKJisjRdTsj5Ak+wzufgLttLVE4uytzq/eQgfyjDflPrI6/yu/VSYysfc=
+	t=1747731910; cv=none; b=GxsHrQdH8XFnYJFflM+trpX2C393+q+BmISVftNH01srVggUWNuWqWA9//NWRaDtA7kv2aN5DvkTlsAuBdzx4ee4GiBq6aNOvHOPWEKS2021HDOJBvtYJpkFZwCKIjHwj8+fptJNUZH0ODvjndbHvlXWSPzIqVC8r0Id08WbYIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747731714; c=relaxed/simple;
-	bh=f4PFfUo3CVYvxjRWKlbGvRUOQy86q4nrR07UPkeiNIk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DVXDupc1RYINOQHUZ1QhYMmay3sD6LWaiKlGcgq48h4Wit6he7uzY0w0yHtPY2/+RvfcyAbPT59EIzAetczpCYUr1vdRhR63Vg5oM+IU17L1qW334WxwvBD+JMJc/oR9fhHBtLp5N3PGEg7QQlAXpYRtHsosW4c1nOuMrsafxGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M6dJtQ6N; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747731712;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f4PFfUo3CVYvxjRWKlbGvRUOQy86q4nrR07UPkeiNIk=;
-	b=M6dJtQ6NHD4vqnSt44Ul3IslqNmFcdI9fL7zqCqL0DEVQoaSBnRinvWY8ixuS9+JpLvt4d
-	1DHVEWHk1DXmLZmKVfLLJJo5DTC20DEf06WMLn+FQPdyFdLqCsXHRXk1Ig6E1i2Yd/DYRD
-	x0iC+CY0PdEdZzWmY3aJzkercp3FgGI=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-35-IsmX750rNaGccJj9_E-Bcw-1; Tue, 20 May 2025 05:01:48 -0400
-X-MC-Unique: IsmX750rNaGccJj9_E-Bcw-1
-X-Mimecast-MFC-AGG-ID: IsmX750rNaGccJj9_E-Bcw_1747731708
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-708aca58513so74055867b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 02:01:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747731708; x=1748336508;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f4PFfUo3CVYvxjRWKlbGvRUOQy86q4nrR07UPkeiNIk=;
-        b=JEHeIGhcAGG00jYBfl8ebrnhFwpMhSeDGFQqrH7ZBD6ItGWziuiYZhMkA0o7KdfKen
-         F/+XCcOLaTmJJnII4uaA8+mgw/c7kgyECfoms9pisIWYk4W66oNjEPIDqGXoloLI3Wa7
-         8XBEd8KApDAKVIbYhYGetCXuEdDJJdjaIHcdoj06VbySo2VwDfHPwyFQdmtNk8YPHwdz
-         jlCSP+yUWEXIX/Fz4grQ5Q+rewZmitB1lkcqTKLqtsqoHyfvgSMfqFynUgjy4+mCIMHh
-         peG76Z8oxbsqRlbvmkGYYhLmMshCx3B+WEH5Mp5SKhF0UV5kgeosvRYNQIpTUuzRv3a1
-         wJSw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2zNs2LI4RgycPDLmPlU1IunyBQwEL3XzIRDLEPzshzUXGVJG9OUyWOSC/2R4/BJHNzaF27doRSf+TKNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxShbClw0+DJI/3hkVLJvQhadT6fGKKV/gMKjbnX5+lnbidm71Y
-	5ak0/+saEEok5sQLEKD7sYi5fIx+67qelWfEChruNxBZBzMcpORExqrOI8nNKvwBjLwSOy1lTtI
-	ZgZZ/jV/rA4DMoDF37xxhoTpepTclFIQf9e7v4IjhA3PRsKgJJsomvTTjKO3N+1L/b7tXzGAo67
-	DSFodEPnkIc5zR5hsz5DkuLEYJJE5aSHQHE+nDIriR
-X-Gm-Gg: ASbGnctGOlSZLQ6RNJ1KfDklBdi1wk2P0pUJr205h4p791iIx4TyEJflzSWe3NeEhjx
-	wT+z2ptAsdLhDY6mDOUBsK6AO631q3+BfeSmedGdNeHClkgFuHyeH1MsFL9zxa+pR/eI=
-X-Received: by 2002:a05:690c:6f03:b0:700:a988:59dc with SMTP id 00721157ae682-70ca7babbb1mr240865977b3.31.1747731707605;
-        Tue, 20 May 2025 02:01:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG3XkPTDHC2bT/+30vHIfK94LVFwuyNrNbVOqdnshE4e5m8CfpmTKyeL6GG9M8oi09my2f4OCE0WTxgWx8PWBs=
-X-Received: by 2002:a05:690c:6f03:b0:700:a988:59dc with SMTP id
- 00721157ae682-70ca7babbb1mr240865377b3.31.1747731707035; Tue, 20 May 2025
- 02:01:47 -0700 (PDT)
+	s=arc-20240116; t=1747731910; c=relaxed/simple;
+	bh=yBbdj7NlwMTxQ67l5t0qFWn7th72f332I3gFq49d3kk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BKKh5q3gjb7Wf/1xkwgVQ5pMjyIKGUV/7lIPfwMhoZ1DOl+ru1/G1nanJAxpjGIfoZfsdNvpRYvIDYqrU9QjrVhATQD3SVZYkV3REllssD/3Z3FP09xX6k72c1eQ6J2duvLUqjh+rjp73rLaOP7kr7ALtQlx9x6cW1dGqwKW3XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=RHnop4Z/; arc=none smtp.client-ip=62.149.156.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
+Received: from [192.168.1.58] ([79.0.204.227])
+	by Aruba SMTP with ESMTPSA
+	id HIrDueuvb1ugbHIrEu6UMu; Tue, 20 May 2025 11:01:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+	t=1747731716; bh=yBbdj7NlwMTxQ67l5t0qFWn7th72f332I3gFq49d3kk=;
+	h=Date:MIME-Version:Subject:To:From:Content-Type;
+	b=RHnop4Z/13NUHHIaqHKFs5/V45U20yPHUv+wcekwlnZ+lngOjSR4jv9q32CXilpXc
+	 c4lpW69sNC5NOJweIRIC4PDlw7ZBZwkxlTMxlkV6sPMeyS5E2Vt++MA+D4sPi/fyoT
+	 oj2tyyL2gMptGuEzbPEpqU5HfCHx6/nydQ+rdQRTjpqLi2YD9NmVvBE4p8s5aeK46w
+	 GRNxFq8kEvRWzMl8E6lYgbmJtID0PSgvM3Walx+489OfTaIkgqRhooEVkL41wlsTJg
+	 qO/7esMlW3aE9PPW7b3j6HgVDC/hFzNS0fPckwPl6G34iC+NrnLY44tgkjuO3cKUlL
+	 8fsbyZM+rVETg==
+Message-ID: <c682e4da-ae75-4e93-bbf1-a68f31bd15de@enneenne.com>
+Date: Tue, 20 May 2025 11:01:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250501-vsock-linger-v4-0-beabbd8a0847@rbox.co>
- <20250501-vsock-linger-v4-3-beabbd8a0847@rbox.co> <g5wemyogxthe43rkigufv7p5wrkegbdxbleujlsrk45dmbmm4l@qdynsbqfjwbk>
- <CAGxU2F59O7QK2Q7TeaP6GU9wHrDMTpcO94TKz72UQndXfgNLVA@mail.gmail.com>
- <ff959c3e-4c47-4f93-8ab8-32446bb0e0d0@rbox.co> <CAGxU2F77OT5_Pd6EUF1QcvPDC38e-nuhfwKmPSTau262Eey5vQ@mail.gmail.com>
- <720f6986-8b32-4d00-b309-66a6f0c1ca40@rbox.co> <37c5ymzjhr3pivvx6sygsdqmrr72solzqltwhcsiyvvc3iagiy@3vc3rbxrbcab>
-In-Reply-To: <37c5ymzjhr3pivvx6sygsdqmrr72solzqltwhcsiyvvc3iagiy@3vc3rbxrbcab>
-From: Stefano Garzarella <sgarzare@redhat.com>
-Date: Tue, 20 May 2025 11:01:35 +0200
-X-Gm-Features: AX0GCFvwufUSjICCevkhSa4UF6ys3CpGsz9VU3OXC4m_4xblOUg6kg956W_4nJw
-Message-ID: <CAGxU2F4ue9UxZd1_wB2D=Oww6W9r7kTBPVjjbnm24Lywz+0wSA@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 3/3] vsock/test: Expand linger test to ensure
- close() does not misbehave
-To: Michal Luczaj <mhal@rbox.co>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [V1 2/2] drivers soc: add support for ST stm32mp13xx family
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Eric Fourmont <eric.fourmont-ext@st.com>,
+ Yann GAUTIER <yann.gautier@foss.st.com>, linux-kernel@vger.kernel.org
+References: <20250519130859.3389704-1-giometti@enneenne.com>
+ <20250519130859.3389704-3-giometti@enneenne.com>
+ <4566f4c1-f4d0-4f32-8fcd-bb3057b5d1fa@kernel.org>
+From: Rodolfo Giometti <giometti@enneenne.com>
+In-Reply-To: <4566f4c1-f4d0-4f32-8fcd-bb3057b5d1fa@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfJEjQksEF2gr1H+kBdUbxxgnkrI7vfEOspMWR+zMH4bcN/GomTOL9m5YhNhmULAAHo01QUSDpomTsicddghDGtLGxp2WePiPIRXKZquNVP5Sz7CY1OY6
+ 7onfNyX02udqJq7Jkyc9mSa2FQo7O/A4sg6dfaACmA3ZWRguE8wmFqG1JMgB0CgJwc+IufEqos231NdANrqJ1cw+y+pRY5mQfuZnWKe2x72P9Bri+xWZXXTH
+ iEbWOP1YokbZMxVgmnEAQMHsLP2H/OxwqETIPkU85Xs7N/BuLAzlhoivY8O6z7hc9lUfecxpfUscw5OBhHWLP1njczo1EGu6sxAexIZ3Kvzv5//wtPno/8aD
+ 9pZUWSLcIwiTMNCUpzRds9LmRbONIA==
 
-On Tue, 20 May 2025 at 10:54, Stefano Garzarella <sgarzare@redhat.com> wrote:
->
-> On Mon, May 12, 2025 at 02:23:12PM +0200, Michal Luczaj wrote:
-> >On 5/7/25 10:26, Stefano Garzarella wrote:
-> >> On Wed, 7 May 2025 at 00:47, Michal Luczaj <mhal@rbox.co> wrote:
-> >>>
-> >>> On 5/6/25 11:46, Stefano Garzarella wrote:
-> >>>> On Tue, 6 May 2025 at 11:43, Stefano Garzarella <sgarzare@redhat.com> wrote:
-> >>>>>
-> >>>>> On Thu, May 01, 2025 at 10:05:24AM +0200, Michal Luczaj wrote:
-> >>>>>> There was an issue with SO_LINGER: instead of blocking until all queued
-> >>>>>> messages for the socket have been successfully sent (or the linger timeout
-> >>>>>> has been reached), close() would block until packets were handled by the
-> >>>>>> peer.
-> >>>>>
-> >>>>> This is a new behaviour that only new kernels will follow, so I think
-> >>>>> it is better to add a new test instead of extending a pre-existing test
-> >>>>> that we described as "SOCK_STREAM SO_LINGER null-ptr-deref".
-> >>>>>
-> >>>>> The old test should continue to check the null-ptr-deref also for old
-> >>>>> kernels, while the new test will check the new behaviour, so we can skip
-> >>>>> the new test while testing an old kernel.
-> >>>
-> >>> Right, I'll split it.
-> >>>
-> >>>> I also saw that we don't have any test to verify that actually the
-> >>>> lingering is working, should we add it since we are touching it?
-> >>>
-> >>> Yeah, I agree we should. Do you have any suggestion how this could be done
-> >>> reliably?
-> >>
-> >> Can we play with SO_VM_SOCKETS_BUFFER_SIZE like in credit-update tests?
-> >>
-> >> One peer can set it (e.g. to 1k), accept the connection, but without
-> >> read anything. The other peer can set the linger timeout, send more
-> >> bytes than the buffer size set by the receiver.
-> >> At this point the extra bytes should stay on the sender socket buffer,
-> >> so we can do the close() and it should time out, and we can check if
-> >> it happens.
-> >>
-> >> WDYT?
-> >
-> >Haven't we discussed this approach in [1]? I've reported that I can't make
->
-> Sorry, I forgot. What was the conclusion? Why this can't work?
->
-> >it work. But maybe I'm misunderstanding something, please see the code
-> >below.
->
-> What I should check in the code below?
+On 19/05/25 20:34, Krzysztof Kozlowski wrote:
+> On 19/05/2025 15:08, Rodolfo Giometti wrote:
 
-Okay, I see the send() is blocking (please next time explain better
-the issue, etc.)
+[snip]
 
-I don't want to block this series, so feel free to investigate that
-later if we have a way to test it. If I'll find some time, I'll try to
-check if we have a way.
+>> +
+>> +static int __init stm32mp13_soc_get_idc(u32 *idc)
+>> +{
+>> +	struct device_node *np;
+>> +	void __iomem *regs;
+>> +	static const struct of_device_id devids[] = {
+>> +		{ .compatible = "st,stm32mp157-syscfg" },
+> 
+> No, don't add compatibles for other devices into the driver functions.
+> Use standard methods for binding, like every driver does.
 
-Thanks,
-Stefano
+I need to access a region assigned to another driver very early on boot, and 
+this is the only way I've found to solve the problem. Can you please give me an 
+example of these standard binding methods?
+
+Thanks in advance,
+
+Rodolfo
+
+-- 
+GNU/Linux Solutions                  e-mail: giometti@enneenne.com
+Linux Device Driver                          giometti@linux.it
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming
 
 
