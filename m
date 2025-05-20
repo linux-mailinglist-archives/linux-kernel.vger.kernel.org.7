@@ -1,79 +1,44 @@
-Return-Path: <linux-kernel+bounces-655867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA902ABDE6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:10:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C73ABDE88
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26F343A76BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:09:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 538338A2544
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576D5248895;
-	Tue, 20 May 2025 15:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D27C251796;
+	Tue, 20 May 2025 15:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JD2jMFIC"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C688C250C18;
-	Tue, 20 May 2025 15:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="M6gbo3Pk"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B26A4A06;
+	Tue, 20 May 2025 15:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747753771; cv=none; b=ja1mv0IE5FuYKuf0HkK2myiEswJ0ER3zGKup7QHDqY+c1ZikaRX3BDnT9lLa6JDsge1vzLc+1Wfex7t4zl68GnIuXEWUsEkDu7QPIXu1SWIpmsFnJtBZFE0H0wZaixjKjj/632M6pwUq29u+9Pl/tNBcCL6OFePE5tYoVodXO+s=
+	t=1747753944; cv=none; b=OJ9BDboe+rn1vuOp1NFGw+4a3RU296QfntuSBlt7lTsBNKFXGfjW1WvrvoByXUEZpj8VqBZgxkHM0qh2A43cfuNlpz/NqZmH6zCGX1kbVI5dFSFKL9nWObtb29L3X2ZaBYUzOzeOwNamO/ZTVxb3xxdCaLaQH/ZWHha6kmQKMV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747753771; c=relaxed/simple;
-	bh=LxISO3z6KWXiemomrWzTw2ALScLyGRqLuUgSVlA0vWU=;
+	s=arc-20240116; t=1747753944; c=relaxed/simple;
+	bh=aclJQ19M3A9ayMS+Wkon/Rf6N7eDyUDtpUE1LE6RJFk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dBtSmBxB9/zkYiV4ktFvP0+jsYTnsm0R1LGYqr97yfLzWtu9MA9J0lDdA+ZJRGPde1Q02LMHNVPRiwjoANd2XXdmPdw8e1HqdqV+wkgPZk0KGbIKO596N14x26MSBO41b8I6nWAjbNY/ZPFIO+WzRsvCrVBzwgc7bETv4Kq9K3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JD2jMFIC; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ad574992fcaso396149566b.1;
-        Tue, 20 May 2025 08:09:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747753765; x=1748358565; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=K4fg7CBjj81Y+lIyXwgfxY20nHUQb0kdLesg6+u2b6k=;
-        b=JD2jMFICf9U0zXaOo09Kp3hB9E5oQ3RE26q2mRTF0Yd4HzdP05HQ0abpdg9ZcudPYM
-         gMPim2t/DIgACqLHdeukSPUY9aibTfVG8FEngv1/1Owd07B334QUJpyFEYkOcPkAINp5
-         XadJAduV/yk4YF4FZY4gyOavwqYcgu3Pwz/jJmVq5s9hxNWILZaNYb0WHsu+nKdZh1vQ
-         ZeDmLFkCJ7AAgBdnejUFbuVjVE74KVgVr0pAvl6AxjvgMA1qyiGoHDVBMOn6HjGSoyQ5
-         etFNOMDjHY/2MQ7ISFlfd2ujFyMHztp1kMotljbjp0bPyESkDLL8UUR6Egn0eJwPdNSh
-         s2Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747753765; x=1748358565;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K4fg7CBjj81Y+lIyXwgfxY20nHUQb0kdLesg6+u2b6k=;
-        b=RzcwhJwX9JeV9dOnWsFvszkJRqPHD+Y1Tf96UY4cNigJuCoan0WEBcXQBuu3HadZBH
-         AljGyH+lioZpeVAYs5B2tEYtmwOdD1H+H8tKm9XXOnBXCe58CZ95VTHeY9M5ZFY/3OKv
-         6RQMNzvSW4+dW1+JNzQ4LHfPdCqlEZMiXXas7AtyZGCObQPtADepgkWy2a3iR7FwiB0d
-         29fTB5tLkqkX7zXSMlc/EW3fWRTDflhqNHQQE9a/PZeoXaHDs8YfM1fC8jGolYSrMlNP
-         6GUhK4qJpkWiEOZ24pNXlMQjmUB0ngdx0+IGx4dDroA0H+Q13vmT9FKygFsJ2O7++sip
-         RokQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9m5UmdAOw6ajaTHlzuS6ZxtKnw6tiPs77wAuFgMeU7JBmRQUWaLUtXVchfgvA8iNk+SNXD2JAhW8e2aQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7+pho7F/GD/hLoRkoWJ/Gc+rCSDhopKj4iwC7DbquO7YL4j30
-	zJAfiqQBL6HeyCISbc35tSO8DPtS5vCTXtxDKHzbIeb1JqHy1rz9yU7H
-X-Gm-Gg: ASbGncuMsUAE7u4PcHdBfjmtCj++wAlANjOp3/0Jjkaxh25UEfD0of362uVuKzRGrsX
-	VgfKSb8X2mx9Gyn7hI6xhxgyisD/txcDv6IyVERQtKfxYTZY4eAC05TGUhtHF1eSG1QPCauqfGQ
-	4gvDNlZqX73SRcYJStTO5SFMbjn5oTGOQjfy1SEk+OOgMORMq5d3F6rA11UoEUg1BttGof0rg0V
-	G+GTxJHur+XQ0yAaWL8nnw+M9CCGd/tC/Fh0bqW4aNF5ffg0o2g7JEEYkng6SVB6Ih0qzE0Bk2w
-	laXaIzpI3Qsr43csy3LNIm8TDueYegT5x80lrK3qYsck9ytfHy/jrm3wDzaY5MXuiBcI4w22Bhx
-	HaNTrHCk=
-X-Google-Smtp-Source: AGHT+IHnJC0l+gbDs00pwG1808MP+xOdj+5geC/SnK90Q7YfSO2tawHe9nZ1kBJXaAyfhzoTYpFF1A==
-X-Received: by 2002:a17:907:d716:b0:ad4:f5ed:42db with SMTP id a640c23a62f3a-ad52d4b3699mr1761549666b.17.1747753764479;
-        Tue, 20 May 2025 08:09:24 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:e7c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d08058bsm750241866b.68.2025.05.20.08.09.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 May 2025 08:09:23 -0700 (PDT)
-Message-ID: <7f06216e-1e66-433e-a247-2445dac22498@gmail.com>
-Date: Tue, 20 May 2025 16:10:42 +0100
+	 In-Reply-To:Content-Type; b=q4gZNdhnLomaVMfR8EYXyvOwWmEYkZ8kYMFYs04tRW/jBTBW3wrMibKNv27509h2CXx/tto3+rHQQqXxUxsbupZgE5e+0H4KjbHaYOBsvVy7RpE4ZO330PaI7drINKsuXnU1GQTQnKCNyKgA4bKBpeIqsbBPmXLU8D3TqorW/t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=M6gbo3Pk; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=GPaZJXcP6XubVhJ/WV1CIEQYs82mgwU/ATflS6SjxSY=;
+	b=M6gbo3PkyNO6LKEIRcnZEar2L3xmcCL05XCix/scjTswOD8OfX3hq7iMJqVaW3
+	qBSEtfuIuRcy+U5BVj4+FQ6VLe6nOO3g04/cNXFC5BUFJDThIliGdMQpLtqLeviU
+	+R/SiXqIWGLa7OvxsSrbqv8VxwXFRA5h8wbO2Gk68EqPg=
+Received: from [192.168.71.93] (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wBHzheFmyxoXz1HCw--.9652S2;
+	Tue, 20 May 2025 23:11:01 +0800 (CST)
+Message-ID: <5759e70d-1098-4a6a-bc7a-bcbad394d739@163.com>
+Date: Tue, 20 May 2025 23:11:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,127 +46,187 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: devmem: remove min_t(iter_iov_len) in
- sendmsg
-To: Stanislav Fomichev <stfomichev@gmail.com>,
- Al Viro <viro@zeniv.linux.org.uk>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, willemb@google.com,
- sagi@grimberg.me, almasrymina@google.com, kaiyuanz@google.com,
- linux-kernel@vger.kernel.org
-References: <20250517000431.558180-1-stfomichev@gmail.com>
- <20250517000907.GW2023217@ZenIV> <aCflM0LZ23d2j2FF@mini-arch>
- <20250517020653.GX2023217@ZenIV> <aCfxs5CiHYMJPOsy@mini-arch>
- <20250517033951.GY2023217@ZenIV> <aCgIJSgv-yQzaHLl@mini-arch>
- <20250517040530.GZ2023217@ZenIV> <aCgQwfyQqkD2AUSs@mini-arch>
+Subject: Re: [PATCH 0/4] pci: implement "pci=aer_panic"
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, tglx@linutronix.de, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, mahesh@linux.ibm.com, oohall@gmail.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org
+References: <20250519220310.GA1258923@bhelgaas>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <aCgQwfyQqkD2AUSs@mini-arch>
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <20250519220310.GA1258923@bhelgaas>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wBHzheFmyxoXz1HCw--.9652S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3GF1xJF1UuF43KF1rXry7Wrg_yoWxJFyrpF
+	WrWan0krs7GF9Ivan2k3W8WFyYyas3t34UGr1kKw17X3ZxZF95XrySvay5uFZFqrZY9w43
+	ZF4jvFZrWF1DAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRP3ktUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWwVTo2gslzmFdgAAs3
 
-On 5/17/25 05:29, Stanislav Fomichev wrote:
-> On 05/17, Al Viro wrote:
->> On Fri, May 16, 2025 at 08:53:09PM -0700, Stanislav Fomichev wrote:
->>> On 05/17, Al Viro wrote:
->>>> On Fri, May 16, 2025 at 07:17:23PM -0700, Stanislav Fomichev wrote:
->>>>>> Wait, in the same commit there's
->>>>>> +       if (iov_iter_type(from) != ITER_IOVEC)
->>>>>> +               return -EFAULT;
->>>>>>
->>>>>> shortly prior to the loop iter_iov_{addr,len}() are used.  What am I missing now?
->>>>>
->>>>> Yeah, I want to remove that part as well:
->>>>>
->>>>> https://lore.kernel.org/netdev/20250516225441.527020-1-stfomichev@gmail.com/T/#u
->>>>>
->>>>> Otherwise, sendmsg() with a single IOV is not accepted, which makes not
->>>>> sense.
->>>>
->>>> Wait a minute.  What's there to prevent a call with two ranges far from each other?
->>>
->>> It is perfectly possible to have a call with two disjoint ranges,
->>> net_devmem_get_niov_at should correctly resolve it to the IOVA in the
->>> dmabuf. Not sure I understand why it's an issue, can you pls clarify?
->>
->> Er...  OK, the following is given an from with two iovecs.
->>
->> 	while (length && iov_iter_count(from)) {
->> 		if (i == MAX_SKB_FRAGS)
->> 			return -EMSGSIZE;
->>
->> 		virt_addr = (size_t)iter_iov_addr(from);
->>
->> OK, that's iov_base of the first one.
->>
->> 		niov = net_devmem_get_niov_at(binding, virt_addr, &off, &size);
->> 		if (!niov)
->> 			return -EFAULT;
->> Whatever it does, it does *NOT* see iov_len of the first iovec.  Looks like
->> it tries to set something up, storing the length of what it had set up
->> into size
->>
->> 		size = min_t(size_t, size, length);
->> ... no more than length, OK.  Suppose length is considerably more than iov_len
->> of the first iovec.
->>
->> 		size = min_t(size_t, size, iter_iov_len(from));
->> ... now trim it down to iov_len of that sucker.  That's what you want to remove,
->> right?  What happens if iov_len is shorter than what we have in size?
->>
->> 		get_netmem(net_iov_to_netmem(niov));
->> 		skb_add_rx_frag_netmem(skb, i, net_iov_to_netmem(niov), off,
->> 				      size, PAGE_SIZE);
->> Still not looking at that iov_len...
->>
->> 		iov_iter_advance(from, size);
->> ... and now that you've removed the second min_t, size happens to be greater
->> than that iovec[0].iov_len.  So we advance into the second iovec, skipping
->> size - iovec[0].iov_len bytes after iovev[1].iov_base.
->> 		length -= size;
->> 		i++;
->> 	}
->> ... and proceed into the second iteration.
->>
->> Would you agree that behaviour ought to depend upon the iovec[0].iov_len?
->> If nothing else, it affects which data do you want to be sent, and I don't
->> see where would anything even look at that value with your change...
-> 
-> Yes, I think you have a point. I was thinking that net_devmem_get_niov_at
-> will expose max size of the chunk, but I agree that the iov might have
-> requested smaller part and it will bug out in case of multiple chunks...
-> 
-> Are you open to making iter_iov_len more ubuf friendly? Something like
-> the following:
-> 
-> static inline size_t iter_iov_len(const struct iov_iter *i)
-> {
-> 	if (iter->iter_type == ITER_UBUF)
-> 		return ni->count;
-> 	return iter_iov(i)->iov_len - i->iov_offset;
-> }
-> 
-> Or should I handle the iter_type here?
-> 
-> if (iter->iter_type == ITER_IOVEC)
-> 	size = min_t(size_t, size, iter_iov_len(from));
-> /* else
-> 	I don think I need to clamp to iov_iter_count() because length
-> 	should take care of it */
 
-FWIW, since it's not devmem specific, I looked through the callers:
-io_uring handles ubuf separately, read_write.c and madvise.c advance
-strictly by iov_iter_count() and hence always consume ubuf iters in
-one go. So the only one with a real problem is devmem tx, which and
-hasn't been released yet.
 
-With that said, it feels error prone, and IMO we should either make the
-helper work with ubuf well as Stan suggested, or force _all_ users to
-check if it's ubuf. Also, I can't say for madvise, but it's not in
-any hot / important path of neither io_uring nor rw, so we likely
-don't care about this extra check.
+On 2025/5/20 06:03, Bjorn Helgaas wrote:
+> On Sat, May 17, 2025 at 12:55:14AM +0800, Hans Zhang wrote:
+>> The following series introduces a new kernel command-line option aer_panic
+>> to enhance error handling for PCIe Advanced Error Reporting (AER) in
+>> mission-critical environments. This feature ensures deterministic recover
+>> from fatal PCIe errors by triggering a controlled kernel panic when device
+>> recovery fails, avoiding indefinite system hangs.
+> 
+> We try very hard not to add new kernel parameters.
+> 
+> It sounds like part of the problem is the use of SPI interrupts rather
+> than the PCIe-architected INTx/MSI/MSI-X.  I'm not sure this warrants
+> generic upstream code changes.  This might be something you need to
+> maintain out-of-tree.
+> 
 
--- 
-Pavel Begunkov
+Dear Bjorn,
+
+This seems to have nothing to do with whether AER uses the 
+INTx/MSI/MSI-X specified in the PCIe spec. Just like the example I gave 
+earlier.
+
+Our next-generation SOC has already converted AER interrupts into INTx 
+and reported them to the GIC interrupt controller. But the following 
+problems still cannot be solved.
+
+```
+Supplementary reasons:
+
+drivers/pci/controller/cadence/pcie-cadence-host.c
+cdns_pci_map_bus
+      /* Clear AXI link-down status */
+      cdns_pcie_writel(pcie, CDNS_PCIE_AT_LINKDOWN, 0x0);
+
+https://elixir.bootlin.com/linux/v6.15-rc6/source/drivers/pci/controller/cadence/pcie-cadence-host.c#L52
+
+If there has been a link down in this PCIe port, the register
+CDNS_PCIE_AT_LINKDOWN must be set to 0 for the AXI transmission to
+continue.  This is different from Synopsys.
+
+If CPU Core0 runs to code L52 and CPU Core1 is executing NVMe SSD saving
+files, since the CDNS_PCIE_AT_LINKDOWN register is still 1, it causes
+CPU Core1 to be unable to send TLP transfers and hang.  This is a very
+extreme situation.
+(The current Cadence code is Legacy PCIe IP, and the HPA IP is still in
+the upstream process at present.)
+
+Radxa O6 uses Cadence's PCIe HPA IP.
+http://radxa.com/products/orion/o6/
+```
+
+
+If we are in the out-of-tree maintenance corresponding driver, but in 
+the file the arch/arm64 / configs/defconfig "CONFIG_PCIEAER=y", make we 
+can't modify the AER common code. It also cannot be compiled to aer.ko
+
+Because: CONFIG_PCIEAER can only be equal to y or n.
+config PCIEAER
+	bool "PCI Express Advanced Error Reporting support"
+	depends on PCIEPORTBUS
+	select RAS
+	help
+	  This enables PCI Express Root Port Advanced Error Reporting
+	  (AER) driver support. Error reporting messages sent to Root
+	  Port will be handled by PCI Express AER driver.
+
+Furthermore, the API of AER common code cannot be used either, and many 
+variables have not been exported either. If we write another set of AER 
+drivers by ourselves, it will lead to a lot of repetitive processing 
+logic code.
+
+
+I believe that the Qualcomm platform and many other platforms also have 
+similar problems.
+
+
+So can we add a config? For example: CONFIG_PCIEAER_PANIC instead of 
+command-line option aer_panic. Or the AER driver can be KO(tristate), so 
+that our SOC manufacturer can modify the AER driver.
+
+
+Best regards,
+Hans
+
+>> Problem Statement
+>> In systems where unresolved PCIe errors (e.g., bus hangs) occur,
+>> traditional error recovery mechanisms may leave the system unresponsive
+>> indefinitely. This is unacceptable for high-availability environment
+>> requiring prompt recovery via reboot.
+>>
+>> Solution
+>> The aer_panic option forces a kernel panic on unrecoverable AER errors.
+>> This bypasses prolonged recovery attempts and ensures immediate reboot.
+>>
+>> Patch Summary:
+>> Documentation Update: Adds aer_panic to kernel-parameters.txt, explaining
+>> its purpose and usage.
+>>
+>> Command-Line Handling: Implements pci=aer_panic parsing and state
+>> management in PCI core.
+>>
+>> State Exposure: Introduces pci_aer_panic_enabled() to check if the panic
+>> mode is active.
+>>
+>> Panic Trigger: Modifies recovery logic to panic the system when recovery
+>> fails and aer_panic is enabled.
+>>
+>> Impact
+>> Controlled Recovery: Reduces downtime by replacing hangs with immediate
+>> reboots.
+>>
+>> Optional: Enabled via pci=aer_panic; no default behavior change.
+>>
+>> Dependency: Requires CONFIG_PCIEAER.
+>>
+>> For example, in mobile phones and tablets, when there is a problem with
+>> the PCIe link and it cannot be restored, it is expected to provide an
+>> alternative method to make the system panic without waiting for the
+>> battery power to be completely exhausted before restarting the system.
+>>
+>> ---
+>> For example, the sm8250 and sm8350 of qcom will panic and restart the
+>> system when they are linked down.
+>>
+>> https://github.com/DOITfit/xiaomi_kernel_sm8250/blob/d42aa408e8cef14f4ec006554fac67ef80b86d0d/drivers/pci/controller/pci-msm.c#L5440
+>>
+>> https://github.com/OnePlusOSS/android_kernel_oneplus_sm8350/blob/13ca08fdf0979fdd61d5e8991661874bb2d19150/drivers/net/wireless/cnss2/pci.c#L950
+>>
+>>
+>> Since the design schemes of each SOC manufacturer are different, the AXI
+>> and other buses connected by PCIe do not have a design to prevent hanging.
+>> Once a FATAL error occurs in the PCIe link and cannot be restored, the
+>> system needs to be restarted.
+>>
+>>
+>> Dear Mani,
+>>
+>> I wonder if you know how other SoCs of qcom handle FATAL errors that occur
+>> in PCIe link.
+>> ---
+>>
+>> Hans Zhang (4):
+>>    pci: implement "pci=aer_panic"
+>>    PCI/AER: Introduce aer_panic kernel command-line option
+>>    PCI/AER: Expose AER panic state via pci_aer_panic_enabled()
+>>    PCI/AER: Trigger kernel panic on recovery failure if aer_panic is set
+>>
+>>   .../admin-guide/kernel-parameters.txt          |  7 +++++++
+>>   drivers/pci/pci.c                              |  2 ++
+>>   drivers/pci/pci.h                              |  4 ++++
+>>   drivers/pci/pcie/aer.c                         | 18 ++++++++++++++++++
+>>   drivers/pci/pcie/err.c                         |  8 ++++++--
+>>   5 files changed, 37 insertions(+), 2 deletions(-)
+>>
+>>
+>> base-commit: fee3e843b309444f48157e2188efa6818bae85cf
+>> prerequisite-patch-id: 299f33d3618e246cd7c04de10e591ace2d0116e6
+>> prerequisite-patch-id: 482ad0609459a7654a4100cdc9f9aa4b671be50b
+>> -- 
+>> 2.25.1
+>>
 
 
