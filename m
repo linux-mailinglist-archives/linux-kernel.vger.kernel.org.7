@@ -1,161 +1,152 @@
-Return-Path: <linux-kernel+bounces-655216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E62EABD279
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:57:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9980ABD27E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA66A8A0C90
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:56:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DF244A754D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70726264637;
-	Tue, 20 May 2025 08:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA14266EF1;
+	Tue, 20 May 2025 08:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="usU2oo39"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TIxv0VX1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D867F1DA61B
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 08:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C263262815;
+	Tue, 20 May 2025 08:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747731402; cv=none; b=maH3pElzaPUWN30TuhGdn+4LSRzIf0fIPviMdpQXNMYEEiJY24xS7uKQiZ/ZmrZQBt8a/CFnVri+U3KWR0nkTE6NgbizF+vV7KHm+QC0emayTzqTQWFj5RCUJcH8i7tBKGXUgKbzpNG8loHvwoRvre8jeQQzcryv6mnr4EHWMZc=
+	t=1747731446; cv=none; b=UcMMBAsIeGjMqdaR789IxSWFUsPO+PoJf0McXz3wrw0kOBhmYR2G+Y8yP5doT3p0XyfxdUr6PZiN8WZIgQbWKzJ2lqb3Xgs80PUfKL2WEb2wU1lr0Ljt8B+gCa+n/gQE6tVv0dDdiZuUWUEa+yJ3v4FKe1PpgNqRyl6MYz6ZOm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747731402; c=relaxed/simple;
-	bh=gTOEFHhEVtSsMXhUVOfV50UNmO+gWk1rhRzIRqfppwQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sNVoi+cJyqr3TvA85rYwNlc8OjkVC+8KShqiHRvknTMLoGY/6AbacPk1TcX8DulfGQ2PmPWLq8TzSE8qTEwgqyI0Pjh53zDP39VIL1ITvyElwOxmBcKoXPo6VwH/OevTbnwLPTFI/q9C8h4fIIrfPBJ595aUS7sAQIYYpaI6Ang=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=usU2oo39; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-442ccf0e1b3so65547385e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 01:56:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747731399; x=1748336199; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BJKlEALqukBWVIaZSvMQu0X1rlqrFGy0vpDP61lvuJA=;
-        b=usU2oo39cNDyVJ/RDt6XxoI4HnsCj+NW5e9bRGd4ZM7tCWfUsaaIqxIN/o4SiVdrnH
-         mKdaDlYswOQZMOQekKYSHpVIFTwaCL876p+SugGnECMz09Dk2c9akJLLFOoN7mguPTid
-         3HGw7dF+dDWnw41xbwh7Nj3DEP4QWohdaVEm5K5GklBvSj9dP8a6GgFejMktfThco+op
-         hB8qAGjG1GAFbwUM7/djA47woK16Sy31g6zHzTDHZMoPZpCASnSfXruCXitVtFEI3gw9
-         7M8ct28+VdBWY0RLgFtcKZQE49CtQakm+olCHcMj9rVGlboNG45fjxLfe2v/PzB2A54l
-         RjWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747731399; x=1748336199;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BJKlEALqukBWVIaZSvMQu0X1rlqrFGy0vpDP61lvuJA=;
-        b=MoJ/T39wOuh21D3EWuaShrg1gsSXEb/2BHSLyYxyn0/LhrfilucgaV0EauN8SyCCxc
-         0tTSBY5VW/WyY+n2iwZ45gE0e3YZCiKGfn3m3IUjk+ioMsTaY9ZK3a/pBXnd6VHctp9N
-         1amO13UbPlH7YaJs6gxj99R2OohQmZb24lbRR9L3+VqMEKo8Lc7E91L8ni2rm83GQp1u
-         mctEzxr9wrDSTMgvqyuz/guU//56cV3UrZSop32WfZJPp6X+RfRdDZSFcFHKfAkbaW2p
-         pWxVGRr55U4SuXwoVIobA5KqaXJ9ns/VPorXszo/kL0sr/Fsuc2Ztwlra0Rd3MOxAbhH
-         1ruA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxlNjGr0DbLlcDfwyTDW/duYvbhX3wO9mUCJai1shgKUr7RizDOXnThXS767oGLbOBS7EdLyveCp9qBFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/v7PFInXWY1DymPm+cOlg/YYoMQcf/b3dAYbwx/DKPY3bplny
-	aYqnbS0zHq/Hx1W8An2+ZhuUjh5mz/P3B4PMlrz733xrD9rjXtPwCdMAzxwMIVQGX0U=
-X-Gm-Gg: ASbGncufApsP2f8N/X5mFoof9p2pr6FGh5mDt3kkCEZtJSxzUazaG3V2yfQUZOv5ISn
-	K9rT2mqoueTCdOnfj0NoM35akx+vic2ekx5/luMTcdI52EuL+iIjeL/DjozJrr8KNOscZweY2B7
-	giBlsMQOtz3bUznkoAf7V3L6I+IFaRW4+KPxUQSePTdl8KcvnnXsD/kJs8DDThqL6FXt9jnfS+p
-	+HpFHFfzdchYsBorwRiCKl1Ba6m2JKXtIs1rVN0esV0UFuspFYRkTSDS75J5WIiemALrUojdoW1
-	vE6BMAZMJVXGqRrXRd63Dm2lmV/7jAiMOrmWH6N96Rjh/WspBp9ELY75x0z8wV/CKsd+B5K1zLN
-	MktPu8r+u/z7eFXDcbndVvEmSQQbY
-X-Google-Smtp-Source: AGHT+IHNhmKQWrNn4QBK50SWwlms3o9VxLv7gTlj1bGD4mEbBOIXSOIVbGOCKtrZsXub4P9ruVz32A==
-X-Received: by 2002:a05:600c:3c9b:b0:439:643a:c8d5 with SMTP id 5b1f17b1804b1-442fd5a1e4cmr153219395e9.0.1747731399071;
-        Tue, 20 May 2025 01:56:39 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:fb2e:6266:4e39:ce68? ([2a01:e0a:3d9:2080:fb2e:6266:4e39:ce68])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f3dd99edsm22193575e9.36.2025.05.20.01.56.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 May 2025 01:56:38 -0700 (PDT)
-Message-ID: <35cf95f6-30ba-4833-a059-e455d7370fda@linaro.org>
-Date: Tue, 20 May 2025 10:56:38 +0200
+	s=arc-20240116; t=1747731446; c=relaxed/simple;
+	bh=VHy0SVogWeHY2IfpU+OPOWiglTZ5eYL637S51TLiNUc=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=VaAER2NgiYKMWvIFTeW0b4MI1y6gNw6rHzOrkhy6CBaDC/kMNm7Cih0YePdnNOUF7iXtvcSZHv9wRH40SkrrWI/ma0zNSK77qIPK9NCNomqBBQCQj9RRfM3h/67sXoqf0CbqpOTI7u/efzTQUSmSwGBau8v4Q3yqfRsqEBdbbZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TIxv0VX1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54K8RpYg013665;
+	Tue, 20 May 2025 08:57:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=F15XSMFY8hy5TUYxx3Prr5
+	Oz1cZgvdXnfoeCEe3JgbE=; b=TIxv0VX17QwMpQM1ud+wBXcI1mSXnDWfo0lFk9
+	PAtk181F1QpNaCVW7kxu5pL8FBmye0LdT3zLX2Nx1Tg643DQjkEn213W6RyfwOAo
+	cnpA666kixwOArowF9Lo75nGOZa2JahBJk2Ij3rG0oDsst2yt2edyayJxusHXhPy
+	LlxYaE7c6AqzpmyAflsGpcnfYyRj3+h9sTOuJ3ByEzG5ynq7QuRWXQ7z4mLPen9A
+	5X3MD8gYkGMnTwgHZ5j/8NRvR/mYgfx5c8uekW+m1TkKauqS10qRjDjiGkCVBs0m
+	/APOLiHADD4EpKIcJM+8tA9YRy/9ON+Xkebep9M/0BQjCSOw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46pjkyq8k9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 May 2025 08:57:19 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54K8vIVJ019846
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 May 2025 08:57:18 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 20 May 2025 01:57:14 -0700
+From: Wenmeng Liu <quic_wenmliu@quicinc.com>
+Subject: [PATCH 0/2] arm64: dts: qcom: qcs615: Add support for camss
+Date: Tue, 20 May 2025 16:56:50 +0800
+Message-ID: <20250520-qcs615-adp-air-camss-v1-0-ac25ca137d34@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] drm/panel-simple: fix the warnings for the Evervision
- VGG644804
-To: Michael Walle <mwalle@kernel.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250520074110.655114-1-mwalle@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250520074110.655114-1-mwalle@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANNDLGgC/x3MPQqAMAxA4atIZgNptYJeRRxKjJrBvwZEEO9uc
+ fyG9x4wSSoGXfFAkktN9y3DlQXwErdZUMds8OQDBU94sjUuYBwPjJqQ42qGtaN2Ys9SVwQ5PZJ
+ Mev/bfnjfD0dh96ZmAAAA
+X-Change-ID: 20250520-qcs615-adp-air-camss-4109fc2ce430
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <bryan.odonoghue@linaro.org>,
+        <todor.too@gmail.com>, <rfoss@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Wenmeng Liu <quic_wenmliu@quicinc.com>,
+        <linux-media@vger.kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747731434; l=1411;
+ i=quic_wenmliu@quicinc.com; s=20250211; h=from:subject:message-id;
+ bh=VHy0SVogWeHY2IfpU+OPOWiglTZ5eYL637S51TLiNUc=;
+ b=YAZQ1tZZbvbmL9pQ8EQS5NG9KO4jZK0h349Z1SdfVYJGlUOvwNT6z9XXlvyxbf/MLt+LD/K6p
+ NFNYqz7dcyQAk3auYcQB0r25nkcYEyeErCTSRDgS651TL8jpuwasV87
+X-Developer-Key: i=quic_wenmliu@quicinc.com; a=ed25519;
+ pk=PTegr3w0f1C9dOSL6CUdJR5+u+X/4vsW7VMfwIMeMXQ=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: zTUkMQLX6o410DHZqAGzGOVbhYKVIl3K
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDA3MiBTYWx0ZWRfXxdU81e8EkX9M
+ FiSg9VDq+x6hlzRgF//fLjEbtUU4Ffnyvkvymm42Gm4jRC+YBReheEEmYJkaiRZwBwFaK1abBlR
+ AkrmGV0ZiFFedABAJ3SjKvEokt58mttqiWuu7wEMXKN8d91otifmoDw6OPLR+ls9+Sn02hdpjxj
+ kZjLv5YVVzuXIuVX8ranO8ryuWvN4beLlSjvjkarcG3iB8m7kxbmT72zE3X/KdrfsQOT1MI2FP4
+ G0STkGOafOjLoh7EGcBqNNjmmZyZxP7a1ItDPS5FVZ2pKJzVLGE9/9EXF9qUR4jls2QuR1R05Ss
+ N9drd1mQ6PRgo+fOzTF5as1zRKbH8bOND4UwYpFIRi4gYRoKyRrVidbTQaDERM7rDoLpgQheb5V
+ jLxMgAyF3QbGweYKVDPpmJ5AiCv3sMtMxsN2WZW/iAi+F2DXrMUSjmXESzdLreH0I35EpjgL
+X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=682c43ef cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=WuS4yPkh8SfIzpwGxFYA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: zTUkMQLX6o410DHZqAGzGOVbhYKVIl3K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_04,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 bulkscore=0 clxscore=1015 mlxlogscore=651 adultscore=0
+ phishscore=0 mlxscore=0 priorityscore=1501 suspectscore=0 malwarescore=0
+ impostorscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505200072
 
-On 20/05/2025 09:41, Michael Walle wrote:
-> The panel lacked the connector type which causes a warning. Adding the
-> connector type reveals wrong bus_flags and bits per pixel. Fix all of
-> it.
-> 
-> Fixes: 1319f2178bdf ("drm/panel-simple: add Evervision VGG644804 panel entry")
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
-> ---
->   drivers/gpu/drm/panel/panel-simple.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> index 82ee2f12b8d2..0a3b26bb4d73 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -2198,13 +2198,14 @@ static const struct display_timing evervision_vgg644804_timing = {
->   static const struct panel_desc evervision_vgg644804 = {
->   	.timings = &evervision_vgg644804_timing,
->   	.num_timings = 1,
-> -	.bpc = 8,
-> +	.bpc = 6,
->   	.size = {
->   		.width = 115,
->   		.height = 86,
->   	},
->   	.bus_format = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG,
-> -	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_SAMPLE_NEGEDGE,
-> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH,
-> +	.connector_type = DRM_MODE_CONNECTOR_LVDS,
->   };
->   
->   static const struct display_timing evervision_vgg804821_timing = {
+This series adds support to bring up the CSIPHY, CSID, VFE/RDI interfaces 
+in QCS615. Tested this on QCS615 ADP AIR board with CSID TPG.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Tested with following commands:
+media-ctl --reset
+v4l2-ctl -d /dev/v4l-subdev3 -c test_pattern=0
+media-ctl -V '"msm_csid0":0[fmt:SRGGB10/1920x1080 field:none]'
+media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/1920x1080 field:none]'
+media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
+v4l2-ctl -d /dev/v4l-subdev3 -c test_pattern=9
+yavta -B capture-mplane -n 5 -f SRGGB10P -s 1920x1080 /dev/video0 --capture=7
+
+This patch series depends on patch series:
+https://lore.kernel.org/all/20250518-qcs615_camss-v1-0-12723e26ea3e@quicinc.com/
+https://lore.kernel.org/all/20250518-qcs615_camss-v1-0-12723e26ea3e@quicinc.com/
+https://lore.kernel.org/all/20250424-qcs615-mm-v7-clock-controllers-v8-0-bacad5b3659a@quicinc.com/
+
+Signed-off-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
+---
+Wenmeng Liu (2):
+      arm64: dts: qcom: qcs615: Add support for camss
+      arm64: dts: qcom: qcs615: Enable camss for qcs615-adp-air
+
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts |   7 ++
+ arch/arm64/boot/dts/qcom/qcs615.dtsi     | 133 +++++++++++++++++++++++++++++++
+ 2 files changed, 140 insertions(+)
+---
+base-commit: 5840726e19bb6e86566a9fa68c2dc21ed64761d4
+change-id: 20250520-qcs615-adp-air-camss-4109fc2ce430
+
+Best regards,
+-- 
+Wenmeng Liu <quic_wenmliu@quicinc.com>
+
 
