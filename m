@@ -1,132 +1,430 @@
-Return-Path: <linux-kernel+bounces-655833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECF8ABDDAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:47:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E7A9ABDE05
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DF951B61A11
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:47:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4E1D501046
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089B4242D76;
-	Tue, 20 May 2025 14:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C5024C07E;
+	Tue, 20 May 2025 14:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GE2zvWnt"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="pX8Mi0bU"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66AB1DFD84
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 14:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEC4248F65;
+	Tue, 20 May 2025 14:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747752424; cv=none; b=bfQGDX0AMze2LW2rW5ZE7Lh0lV7dtUyJt+Gfau+kmvbE6LTsCPHi/wyZD78ZZ3g0H+kicYiimbPqDABXxYg4Xfi2bYamZQYCYQNCQcSIULCgQjdPlSASwyPto1CR5KT3P7Q1r8vx41nIdtpBLhSBVDhTSRb1/trIsg5u5MQpllA=
+	t=1747752452; cv=none; b=P4lGfrN3A1LkR7M0Rs9XrvZve+8UfG9l5la66w04he7bUkvhRPXxFXPzVhGAnRT8wh16BzhUnmkz6C0GmKHmI4Y3572yMmCLfJeFkB5m00y/FQwjN3NcuEvxn2Yf1nkVtn8y/7kYodwOITSugyaVW0AwgejAS3ZAZ43Gs3fykMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747752424; c=relaxed/simple;
-	bh=ZRQ3Q9G+wKen49/SUgW1eKjlAVd7SYSuATHQNLfuGaM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MYs9+RnWU629XnTo0U5Ym917rEuy2PZoUhYvgfGgUWN9X4mZYrCha/1I6JGaUoW6svbq2j8jV30xs3gKtJyiBDe05z4qLOd5FgNbgNRvEVbCLw+j8c9BTjtlTHTnpSvjlHbr9NyzbrdlYuaUYqKJgDGr3cVV/wbhqmrSC3OLJEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GE2zvWnt; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b1fb650bdf7so3414925a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 07:47:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1747752419; x=1748357219; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G4vJaDxoDG9WGh9CletqNGUQTpz+mcDhT/atRFz9AQ4=;
-        b=GE2zvWntVmUVu8aBJy6M/LWY6PhJWTOWUb8hmqO9dRbmeWf9Aw+CemCwTMBB5XBn/u
-         VeMJ6aJI/lP7fFcEUmXC/V6uff9/OuX3Wu2mkqAOslK2wMjgqUpd6+PeP4+WtEI0EzQX
-         T4wit/SJX6/d0bWygn/69Ny9jGOIhW9x6UQFY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747752419; x=1748357219;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G4vJaDxoDG9WGh9CletqNGUQTpz+mcDhT/atRFz9AQ4=;
-        b=MT1ylVEhsmQkS1y269fb/aA9BRTCCdF36OZvK6/AFXmlolNzXEJmYCtPwNZr1+Vo1j
-         zdPZS7obWv4rrrlsAVkxxxI8/fnpuqwvp303svzuFy67dXmgxTtyPjNYgHhKLCovl3Br
-         NRmgGMSjFmQ1tIaFom39iu7gS7BjyCD2AkrzM3A2WzBszBOvzlq6/x88ScMiBhkxLQct
-         ZHNgb/2XhJ6rfzTmbA8mJg4a7SAybUYZ3egGeC0fr11UGkmZwtDNIXDE1eoxAeGoMwBi
-         WTk7x57ZrmM944nv0huQMa1U79ZEEZ5wtUz16OYDnoBc0crUGvRaBoFF+lWzElt3h1nS
-         Xfgw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0ipcoRHVpFSrD1mOD6QPDOD7Rv14NVNWiifdbX4nkBDUFgbiVhQzKxWXR7nQSM3o+8HBiAATXB71Fzx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtLM7F3pq71n9JxM3mYOgoV/kvvPRRKDKOLLPS98EtuXYWS2xo
-	mJDeD4mCGi6QBO1ZmeVr9CUt2fchBKpiFqEoxBelqbQCizJNx8N76tqzMgURsWSFxjddftsB8af
-	9ne4=
-X-Gm-Gg: ASbGncvjzKfg25Goi6iWrYGPiPWSR67kZFIhrGhWSM3fK2xW0BYbzaWbluquEZH6yDg
-	hznNNtJLFcqCNJABcQYHdEm1HMNylw3bRrAx2oqxOPFj0arZKaa5Q29lYcVFlHx15AXH0LcI04F
-	o20UB/QdyslKcgNM1W8S7Cf98qKVIbB+bRahxdgvSsxiMHSrUZSkT9PpmEWkmU1KQUuLGH7Z2uf
-	L5H29U7/6X/2NcCThcv0ziVXIEWORBVQwp9FtHkn7oGX2pazaQc00GkoSPwLNHUPcSsrjj/99aH
-	7smwdeJSjAEgDYFv0oHeIcxX+8wbTNWeV7f9Kic9pAd4frUV90o4HWm3xWA0dps0Bew6kg1hONr
-	G1W1uq9FpKrunxOH0Ddc8AGgFLV16lA==
-X-Google-Smtp-Source: AGHT+IHIHl8GsjmsBiaaykvd91xNrwXRJblPMtZBk5Rx8UxPGNwMrH4TqvdzOtGILQ3V+Ymt6R+Qbw==
-X-Received: by 2002:a17:902:e74c:b0:22e:59cc:a44e with SMTP id d9443c01a7336-231de3b96femr252229815ad.44.1747752418583;
-        Tue, 20 May 2025 07:46:58 -0700 (PDT)
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com. [209.85.214.172])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231e26d8448sm74477935ad.21.2025.05.20.07.46.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 May 2025 07:46:56 -0700 (PDT)
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-231fc83a33aso31430525ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 07:46:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVN9b8wEj+XDqSR+ytUzEwlL8y2HPi0tgae+rBG2XnRIz1SlKr2w9BVva8YAAWDJM0osfcW/glXoQI4/+A=@vger.kernel.org
-X-Received: by 2002:a17:902:ea05:b0:223:f9a4:3fa8 with SMTP id
- d9443c01a7336-231de36a90cmr233267205ad.19.1747752415759; Tue, 20 May 2025
- 07:46:55 -0700 (PDT)
+	s=arc-20240116; t=1747752452; c=relaxed/simple;
+	bh=Tx7/FcEU6Bw90Yjwe4KaoxrW48XMQgTlH5CIeNph+bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UaCpv1YAAx946hh6FPM4ZD4Q57bt+04YbiN4xJlHc9c031+8x19mWrXa+nzAIdlIHw5kZ9sV+g64+0dK1kv/emRbmXQ0il+IlqfTHJZbZxQyLnlfUuDlU45MbH7AzTYV0MZFulNxAAAmGsC1s82EyWNjaFbVSM8eOx6H7rRtOLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=pX8Mi0bU; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9Wxg0bmAoZMwL7DP1FILaNYigKUm5O9FzWzy/QHJHkI=; b=pX8Mi0bUJ6hoQj29r3i0g1OlW+
+	F7PCyKksKYZca1wgvyIbC6eoBMDnVf12DNbkZB6iwqXHieeea005dByLCB03jd/wFr+VRkB4dnneC
+	mlkMEy1AJRPN9DJ+OwA3nHySQTiRESYuIqxD6ct7MAk5N2IgO6rk8+2M5uoJBt/w+Ba0MlywjRe5S
+	WMLHcPWPI7ovYIjtBX+M2r0AB8LQF+C4CWi7GP3S9aUcMTaccA+Xrzjz1idndjIGar2d3H589bZmv
+	gXyj6stTXgwskn2NRQ3BwVP/4PAyzQHjUV2rnVbxU9lcGlQ+8CZItLzYVvvNeBAgMgcbF8K46lDbR
+	FanQuf/g==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37484)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uHOFY-0007Sm-2h;
+	Tue, 20 May 2025 15:47:24 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uHOFW-0002yr-0L;
+	Tue, 20 May 2025 15:47:22 +0100
+Date: Tue, 20 May 2025 15:47:21 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: stefano.radaelli21@gmail.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Xu Liang <lxu@maxlinear.com>
+Subject: Re: [PATCH net-next v4] net: phy: add driver for MaxLinear MxL86110
+ PHY
+Message-ID: <aCyV-Zaeg-BLV0Vt@shell.armlinux.org.uk>
+References: <20250520124521.440639-1-stefano.radaelli21@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250520124332.71705-1-ernest.vanhoecke@toradex.com>
-In-Reply-To: <20250520124332.71705-1-ernest.vanhoecke@toradex.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 20 May 2025 07:46:43 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Vwu=Oy_HA3Noj0bLX_GcqHLnrRd6kTRZFe0R7Z8-JD2Q@mail.gmail.com>
-X-Gm-Features: AX0GCFviZ27GtZgXi5xqwESNlGLrxUC3PhVAhYxJBxB4B6ZFxbz3vrPQhk_NcqI
-Message-ID: <CAD=FV=Vwu=Oy_HA3Noj0bLX_GcqHLnrRd6kTRZFe0R7Z8-JD2Q@mail.gmail.com>
-Subject: Re: [PATCH v1] drm/panel-edp: Add support for AUO G156HAN03.0 panel
-To: ernestvanhoecke@gmail.com
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, 
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250520124521.440639-1-stefano.radaelli21@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi,
+On Tue, May 20, 2025 at 02:45:18PM +0200, stefano.radaelli21@gmail.com wrote:
+> +/**
+> + * mxl86110_write_extended_reg() - write to a PHY's extended register
+> + * @phydev: pointer to a &struct phy_device
+> + * @regnum: register number to write
+> + * @val: value to write to @regnum
+> + *
+> + * Note: This function assumes the caller already holds the MDIO bus lock
+> + * or otherwise has exclusive access to the PHY.
+> + *
+> + * Return: 0 or negative error code
+> + */
+> +static int mxl86110_write_extended_reg(struct phy_device *phydev,
+> +				       u16 regnum, u16 val)
+> +{
+> +	int ret;
+> +
+> +	ret = __phy_write(phydev, MXL86110_EXTD_REG_ADDR_OFFSET, regnum);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return __phy_write(phydev, MXL86110_EXTD_REG_ADDR_DATA, val);
+> +}
+> +
+> +/**
+> + * mxl86110_read_extended_reg - Read a PHY's extended register
+> + * @phydev: Pointer to the PHY device structure
+> + * @regnum: Extended register number to read (address written to reg 30)
+> + *
+> + * Reads the content of a PHY extended register using the MaxLinear
+> + * 2-step access mechanism: write the register address to reg 30 (0x1E),
+> + * then read the value from reg 31 (0x1F).
+> + *
+> + * Note: This function assumes the caller already holds the MDIO bus lock
+> + * or otherwise has exclusive access to the PHY.
+> + *
+> + * Return: 16-bit register value on success, or negative errno code on failure.
+> + */
+> +static int mxl86110_read_extended_reg(struct phy_device *phydev, u16 regnum)
+> +{
+> +	int ret;
+> +
+> +	ret = __phy_write(phydev, MXL86110_EXTD_REG_ADDR_OFFSET, regnum);
+> +	if (ret < 0)
+> +		return ret;
+> +	return __phy_read(phydev, MXL86110_EXTD_REG_ADDR_DATA);
+> +}
+> +
+> +/**
+> + * mxl86110_modify_extended_reg() - modify bits of a PHY's extended register
+> + * @phydev: pointer to the phy_device
+> + * @regnum: register number to write
+> + * @mask: bit mask of bits to clear
+> + * @set: bit mask of bits to set
+> + *
+> + * Note: register value = (old register value & ~mask) | set.
+> + * This function assumes the caller already holds the MDIO bus lock
+> + * or otherwise has exclusive access to the PHY.
+> + *
+> + * Return: 0 or negative error code
+> + */
+> +static int mxl86110_modify_extended_reg(struct phy_device *phydev,
+> +					u16 regnum, u16 mask, u16 set)
+> +{
+> +	int ret;
+> +
+> +	ret = __phy_write(phydev, MXL86110_EXTD_REG_ADDR_OFFSET, regnum);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return __phy_modify(phydev, MXL86110_EXTD_REG_ADDR_DATA, mask, set);
+> +}
 
-On Tue, May 20, 2025 at 5:43=E2=80=AFAM <ernestvanhoecke@gmail.com> wrote:
->
-> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
->
-> AUO G156HAN03.0 EDID:
->
-> 00 ff ff ff ff ff ff 00 06 af ed 30 00 00 00 00
-> 1a 1c 01 04 a5 22 13 78 02 05 b5 94 59 59 92 28
-> 1d 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
-> 01 01 01 01 01 01 78 37 80 b4 70 38 2e 40 6c 30
-> aa 00 58 c1 10 00 00 18 00 00 00 0f 00 00 00 00
-> 00 00 00 00 00 00 00 00 00 20 00 00 00 fe 00 41
-> 55 4f 0a 20 20 20 20 20 20 20 20 20 00 00 00 fe
-> 00 47 31 35 36 48 41 4e 30 33 2e 30 20 0a 00 bb
->
-> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> ---
->  drivers/gpu/drm/panel/panel-edp.c | 1 +
->  1 file changed, 1 insertion(+)
+As these are all unlocked variants, I wonder whether they should have
+__ prefixes. I'm wondering whether our paged accessors could be re-used
+for this phy, even though effectively there is only one "paged" register
+at offset 31 with the page index at offset 30.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Also, given the number of single accesses to the registers, I wonder if
+it also makes sense to have variants that take the MDIO bus lock, which
+would allow simplification of sites such as...
 
-Pushed to drm-misc-next:
+> +
+> +/**
+> + * mxl86110_get_wol() - report if wake-on-lan is enabled
+> + * @phydev: pointer to the phy_device
+> + * @wol: a pointer to a &struct ethtool_wolinfo
+> + */
+> +static void mxl86110_get_wol(struct phy_device *phydev,
+> +			     struct ethtool_wolinfo *wol)
+> +{
+> +	int value;
+> +
+> +	wol->supported = WAKE_MAGIC;
+> +	wol->wolopts = 0;
+> +	phy_lock_mdio_bus(phydev);
+> +	value = mxl86110_read_extended_reg(phydev, MXL86110_EXT_WOL_CFG_REG);
+> +	phy_unlock_mdio_bus(phydev);
 
-[1/1] drm/panel-edp: Add support for AUO G156HAN03.0 panel
-      commit: a4b4e3fd536763b3405c70ef97a6e7f9af8a00dc
+... here.
+
+> +	if (value >= 0 && (value & MXL86110_WOL_CFG_WOLE_MASK))
+> +		wol->wolopts |= WAKE_MAGIC;
+> +}
+> +
+> +/**
+> + * mxl86110_set_wol() - enable/disable wake-on-lan
+> + * @phydev: pointer to the phy_device
+> + * @wol: a pointer to a &struct ethtool_wolinfo
+> + *
+> + * Configures the WOL Magic Packet MAC
+> + *
+> + * Return: 0 or negative errno code
+> + */
+> +static int mxl86110_set_wol(struct phy_device *phydev,
+> +			    struct ethtool_wolinfo *wol)
+> +{
+> +	struct net_device *netdev;
+> +	const u8 *mac;
+
+Use "const unsigned char *mac" - that way you don't need the cast below.
+
+> +	int ret = 0;
+> +
+> +	phy_lock_mdio_bus(phydev);
+> +
+> +	if (wol->wolopts & WAKE_MAGIC) {
+> +		netdev = phydev->attached_dev;
+> +		if (!netdev) {
+> +			ret = -ENODEV;
+> +			goto out;
+> +		}
+> +
+> +		/* Configure the MAC address of the WOL magic packet */
+> +		mac = (const u8 *)netdev->dev_addr;
+> +		ret = mxl86110_write_extended_reg(phydev,
+> +						  MXL86110_EXT_MAC_ADDR_CFG1,
+> +						  ((mac[0] << 8) | mac[1]));
+> +		if (ret < 0)
+> +			goto out;
+> +
+> +		ret = mxl86110_write_extended_reg(phydev,
+> +						  MXL86110_EXT_MAC_ADDR_CFG2,
+> +						  ((mac[2] << 8) | mac[3]));
+> +		if (ret < 0)
+> +			goto out;
+> +
+> +		ret = mxl86110_write_extended_reg(phydev,
+> +						  MXL86110_EXT_MAC_ADDR_CFG3,
+> +						  ((mac[4] << 8) | mac[5]));
+> +		if (ret < 0)
+> +			goto out;
+> +
+> +		ret = mxl86110_modify_extended_reg(phydev,
+> +						   MXL86110_EXT_WOL_CFG_REG,
+> +						   MXL86110_WOL_CFG_WOLE_MASK,
+> +						   MXL86110_EXT_WOL_CFG_WOLE);
+> +		if (ret < 0)
+> +			goto out;
+> +
+> +		/* Enables Wake-on-LAN interrupt in the PHY. */
+> +		ret = __phy_modify(phydev, PHY_IRQ_ENABLE_REG, 0,
+> +				   PHY_IRQ_ENABLE_REG_WOL);
+> +		if (ret < 0)
+> +			goto out;
+> +
+> +		phydev_dbg(phydev,
+> +			   "%s, MAC Addr: %02X:%02X:%02X:%02X:%02X:%02X\n",
+> +			   __func__,
+> +			   mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+> +	} else {
+> +		ret = mxl86110_modify_extended_reg(phydev,
+> +						   MXL86110_EXT_WOL_CFG_REG,
+> +						   MXL86110_WOL_CFG_WOLE_MASK,
+> +						   0);
+> +		if (ret < 0)
+> +			goto out;
+> +
+> +		/* Disables Wake-on-LAN interrupt in the PHY. */
+> +		ret = __phy_modify(phydev, PHY_IRQ_ENABLE_REG,
+> +				   PHY_IRQ_ENABLE_REG_WOL, 0);
+> +	}
+> +
+> +out:
+> +	phy_unlock_mdio_bus(phydev);
+> +	return ret;
+> +}
+> +
+
+...
+> +static int mxl86110_led_hw_control_get(struct phy_device *phydev, u8 index,
+> +				       unsigned long *rules)
+> +{
+> +	int val;
+> +
+> +	if (index >= MXL86110_MAX_LEDS)
+> +		return -EINVAL;
+> +
+> +	phy_lock_mdio_bus(phydev);
+> +	val = mxl86110_read_extended_reg(phydev,
+> +					 MXL86110_LED0_CFG_REG + index);
+> +	phy_unlock_mdio_bus(phydev);
+
+This could also be simplified with the locking accessors.
+
+> +	if (val < 0)
+> +		return val;
+> +
+> +	if (val & MXL86110_LEDX_CFG_LINK_UP_TX_ACT_ON)
+> +		*rules |= BIT(TRIGGER_NETDEV_TX);
+> +
+> +	if (val & MXL86110_LEDX_CFG_LINK_UP_RX_ACT_ON)
+> +		*rules |= BIT(TRIGGER_NETDEV_RX);
+> +
+> +	if (val & MXL86110_LEDX_CFG_LINK_UP_HALF_DUPLEX_ON)
+> +		*rules |= BIT(TRIGGER_NETDEV_HALF_DUPLEX);
+> +
+> +	if (val & MXL86110_LEDX_CFG_LINK_UP_FULL_DUPLEX_ON)
+> +		*rules |= BIT(TRIGGER_NETDEV_FULL_DUPLEX);
+> +
+> +	if (val & MXL86110_LEDX_CFG_LINK_UP_10MB_ON)
+> +		*rules |= BIT(TRIGGER_NETDEV_LINK_10);
+> +
+> +	if (val & MXL86110_LEDX_CFG_LINK_UP_100MB_ON)
+> +		*rules |= BIT(TRIGGER_NETDEV_LINK_100);
+> +
+> +	if (val & MXL86110_LEDX_CFG_LINK_UP_1GB_ON)
+> +		*rules |= BIT(TRIGGER_NETDEV_LINK_1000);
+> +
+> +	return 0;
+> +};
+> +
+> +static int mxl86110_led_hw_control_set(struct phy_device *phydev, u8 index,
+> +				       unsigned long rules)
+> +{
+> +	u16 val = 0;
+> +	int ret;
+> +
+> +	if (index >= MXL86110_MAX_LEDS)
+> +		return -EINVAL;
+> +
+> +	if (rules & BIT(TRIGGER_NETDEV_LINK_10))
+> +		val |= MXL86110_LEDX_CFG_LINK_UP_10MB_ON;
+> +
+> +	if (rules & BIT(TRIGGER_NETDEV_LINK_100))
+> +		val |= MXL86110_LEDX_CFG_LINK_UP_100MB_ON;
+> +
+> +	if (rules & BIT(TRIGGER_NETDEV_LINK_1000))
+> +		val |= MXL86110_LEDX_CFG_LINK_UP_1GB_ON;
+> +
+> +	if (rules & BIT(TRIGGER_NETDEV_TX))
+> +		val |= MXL86110_LEDX_CFG_LINK_UP_TX_ACT_ON;
+> +
+> +	if (rules & BIT(TRIGGER_NETDEV_RX))
+> +		val |= MXL86110_LEDX_CFG_LINK_UP_RX_ACT_ON;
+> +
+> +	if (rules & BIT(TRIGGER_NETDEV_HALF_DUPLEX))
+> +		val |= MXL86110_LEDX_CFG_LINK_UP_HALF_DUPLEX_ON;
+> +
+> +	if (rules & BIT(TRIGGER_NETDEV_FULL_DUPLEX))
+> +		val |= MXL86110_LEDX_CFG_LINK_UP_FULL_DUPLEX_ON;
+> +
+> +	if (rules & BIT(TRIGGER_NETDEV_TX) ||
+> +	    rules & BIT(TRIGGER_NETDEV_RX))
+> +		val |= MXL86110_LEDX_CFG_LAB_BLINK;
+> +
+> +	phy_lock_mdio_bus(phydev);
+> +	ret = mxl86110_write_extended_reg(phydev,
+> +					  MXL86110_LED0_CFG_REG + index, val);
+> +	phy_unlock_mdio_bus(phydev);
+
+and this... and with the locking accessors it could become simply:
+
+	return mxl86110_write_extended_reg(...);
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +};
+> +
+> +/**
+> + * mxl86110_synce_clk_cfg() - applies syncE/clk output configuration
+> + * @phydev: pointer to the phy_device
+> + *
+> + * Note: This function assumes the caller already holds the MDIO bus lock
+> + * or otherwise has exclusive access to the PHY.
+> + *
+> + * Return: 0 or negative errno code
+> + */
+> +static int mxl86110_synce_clk_cfg(struct phy_device *phydev)
+> +{
+> +	u16 mask = 0, val = 0;
+> +	int ret;
+> +
+> +	/*
+> +	 * Configures the clock output to its default
+> +	 * setting as per the datasheet.
+> +	 * This results in a 25MHz clock output being selected in the
+> +	 * COM_EXT_SYNCE_CFG register for SyncE configuration.
+> +	 */
+> +	val = MXL86110_EXT_SYNCE_CFG_EN_SYNC_E |
+> +			FIELD_PREP(MXL86110_EXT_SYNCE_CFG_CLK_SRC_SEL_MASK,
+> +				   MXL86110_EXT_SYNCE_CFG_CLK_SRC_SEL_25M);
+> +	mask = MXL86110_EXT_SYNCE_CFG_EN_SYNC_E |
+> +	       MXL86110_EXT_SYNCE_CFG_CLK_SRC_SEL_MASK |
+> +	       MXL86110_EXT_SYNCE_CFG_CLK_FRE_SEL;
+> +
+> +	/* Write clock output configuration */
+> +	ret = mxl86110_modify_extended_reg(phydev, MXL86110_EXT_SYNCE_CFG_REG,
+> +					   mask, val);
+> +
+> +	return ret;
+
+No need for "ret":
+
+	return mxl86110_modify_extended_reg(phydev, MXL86110_EXT_SYNCE_CFG_REG,
+					    mask, val);
+
+> +}
+> +
+> +/**
+> + * mxl86110_broadcast_cfg - Configure MDIO broadcast setting for PHY
+> + * @phydev: Pointer to the PHY device structure
+> + *
+> + * This function configures the MDIO broadcast behavior of the MxL86110 PHY.
+> + * Currently, broadcast mode is explicitly disabled by clearing the EPA0 bit
+> + * in the RGMII_MDIO_CFG extended register.
+> + *
+> + * Note: This function assumes the caller already holds the MDIO bus lock
+> + * or otherwise has exclusive access to the PHY.
+> + *
+> + * Return: 0 on success or a negative errno code on failure.
+> + */
+> +static int mxl86110_broadcast_cfg(struct phy_device *phydev)
+> +{
+> +	int ret;
+> +
+> +	ret = mxl86110_modify_extended_reg(phydev,
+> +					   MXL86110_EXT_RGMII_MDIO_CFG,
+> +					   MXL86110_RGMII_MDIO_CFG_EPA0_MASK,
+> +					   0);
+> +
+> +	return ret;
+
+No need for "ret".
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
