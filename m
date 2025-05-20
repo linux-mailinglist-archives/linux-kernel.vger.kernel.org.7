@@ -1,75 +1,76 @@
-Return-Path: <linux-kernel+bounces-655413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 438E1ABD568
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:45:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69899ABD55F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83A254C33B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:42:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A187C1BA2EAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61AE2749F5;
-	Tue, 20 May 2025 10:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970762797A6;
+	Tue, 20 May 2025 10:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="OL0ykUeL"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="U5qMx1CD"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D85F2741CA
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE7F2741CA
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747737715; cv=none; b=QDAvSxgLC1INI+MCUJpJgXCiHYapXtnMtdQK9EB4potrxdhylaubtixsFSQVycQ2gg2ThtAFXPHnWadVfSq8RyBsNeya2/YC/1VwvJwvhahE23z9R6H27EOpGOQplqOq9bCmnc4ODD1wdin6HQXs3kMlbjFsHBgGyUGKbJAQ1sk=
+	t=1747737721; cv=none; b=r7X2CC+AzRZdwM22bjAGEES/kHjzhEsx+7Ve98sNpPJmmosJ3W5kYtWAu29g0zka36thguGW7z88hZ0f7Hl/PieMT/05nS8+nrBuMGEOOXSkDqf+rEnxZdNWe8Qp91jxNM1Yq5xpjvmsqW1ElL0Tk4rYHnGrHpT1rRrzn2qCJmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747737715; c=relaxed/simple;
-	bh=Yi3quYVqyCI1bbWOlHM5FspDzUGMS3vBIi76r6QnT34=;
+	s=arc-20240116; t=1747737721; c=relaxed/simple;
+	bh=mUWTXN9HHfTlRXKGpPk+mQJc0KnWojsAPguAI+nOV+U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=H2xGISo6Fxa7/ugBnS/4a+h5sP0PFp1b8YhMU8t4hCxX75xmvL1uDPvA04PjSQRSFZ9jHShD89qaU1KZjO/y8Y++3jXrLXSWh/y/TEn5OyXypshm6+NPv7pl7HO5M3aGJDY7AHuXrkE5M/IB3Lz2Veo0Ok+2H7WSwu0WdWstSE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=OL0ykUeL; arc=none smtp.client-ip=209.85.210.180
+	 MIME-Version; b=fL8w3M40/eEqj0qEjTGPXkRO6BdJM2SS+j+p8MzFauNv3hE9UVQOXP0Wd5H7rPu/JorkTrGspemH0k1i17Bd0egRAebeFdAq2ooWymouo29HKw7rpGQxRAZ2EM6YHTDWnLXWlGMcHOe+7yXd8dDBfQWDOKnFIQukQYqWqTonjZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=U5qMx1CD; arc=none smtp.client-ip=209.85.215.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-736c277331eso5699892b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 03:41:52 -0700 (PDT)
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b0b2d0b2843so4193583a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 03:41:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1747737712; x=1748342512; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1747737718; x=1748342518; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6gGyT2TBYGGTLbruyOBVqMqc5c3gyEsAoJSjXYUgjR0=;
-        b=OL0ykUeLMrUYemVnmd6Dwoe/Hj1em6o3olq9nZvHCvrDMFQEVv+awmJ/dshJefa/Jg
-         uD5YvMAONRzeIsuDU2anbkKgChHaR8p08qVzeBSsnVTKZW2XN3HlA0X4u5nc6h73qCyg
-         uy07a3zL/NdhiRtfX2a4jwzpqxEHBkGqlx0IdCCFTwZzQdVp8GMj4gFdKnjQD6EhMxi5
-         3LjTiJ5UI2ZpDuAwGBLaomMKY8Xa+be+rH/ZBIiyGUgkX1bv7UAyLdDRZy2/3Kch1SWW
-         IRsXDlupNqVjszKEHc6j6/Y2143bf+IcWV76tADyKxGJHJt+w0dhMd0+Pjs0pdEtP7lG
-         viSw==
+        bh=o/EhzKMaxIvvDCcy/f4feKI9fqwkuL11s7nWdOGRixo=;
+        b=U5qMx1CDhFxQ2AbPAyPfVLaEQQOIMtN5iSLgBUaZTEMy49KWN+0ZiNJyiGwiDVkbbY
+         KTyLDiRC5oAfn4n2sG6OxBHCSvYISwl97l35paU7KwqxiEJvsNDu4p4RSWjjwkCCUw2v
+         L6nzp50qRyhkso9a27CzU2MnsMg1FwUposHld9loTQl/dSCg59QFqxKE7F/rfb/uM0ad
+         0mHVSOghIUTbgJMo8kcmr+YwopSyvpcSB4nS1lf+BUcE+L2mh3y3GGbpjpcRyDdPXOnt
+         t7oJ9cKDRFTqdZgDcMdTN/pvU8UavNHjxPsTEcbN0LPAT3qhcVTJdsaj6EBYdqjZF55y
+         3XQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747737712; x=1748342512;
+        d=1e100.net; s=20230601; t=1747737718; x=1748342518;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6gGyT2TBYGGTLbruyOBVqMqc5c3gyEsAoJSjXYUgjR0=;
-        b=NcmP0gbfvRdBQecAWrUwTb1u71qqiEO+KkA4gxBQhme/ZAHJRX2E7M4m0LAWLfLuUi
-         vcEsUmtHNKYFB+BmNYrl3uI8d/skAAPhBkdhhb9MoocQHkRusRNVliVeBfDFvdCctSoM
-         sq0xLXNfPTbd822bG3TsqaGyzXwD18rf/1ubUkC6HSFR371RpQ6X24xcOBy2OUT4ZACt
-         pBtERRwiTcDu2Q5fWJjL8ThxUD2DhR3qX8zi/hh7Jw5XioinpA6kFOJ48yhHYX91HW+M
-         CLb5WT/Mi48M6m56k1lMkMOkNd+wo7BWnNxdImO6LTf5E/O+vSCsildLa7orHL1DmDNO
-         MQFw==
-X-Gm-Message-State: AOJu0YxltYQ05DswarKMZOBS/z9sYp2tdH0bIrFxc/aHXLEVgIjvH+AV
-	ACnSJYgs+jq0E1dZUZ/6iMAmc11G3yKCF/W2/QyeyAIcpnoUte9N7vVAx3ArI+qcmw==
-X-Gm-Gg: ASbGnctrQqEHaOhDuuhw6xiYMHunPW3/pIOTlDNlqV3S+tIpLV8bG7Oku0lpwBgLxxJ
-	esslg4qLaFCdho5erZ7HMN9NnXNl0+2aykV81CSeKV79P6jgdYpJ1lq8FvzWYnlDXC4pL4oMgyt
-	fJdSpPUrrlwaaK8wWCwwYQtI0I6rN9PYJhl5W0KBZDWUmggGblK2jndHfeG4dC6oNRkh3TnZV3A
-	iMjD3+jpGpmTazhDTVQSpW7TP8JN1KUZLZzAaiSapNX+i93CjKnexU9GKt5VwWjeP/qzKeGKNhk
-	YZvf+SP51RjvnyV/OjaMZKF8V8Da16hUFL5g9AGf8UW+eNJGhyaVgX8ZUC6rVhprnck=
-X-Google-Smtp-Source: AGHT+IENNcTSUwnsI+Z9AsK6+k8fGvZRH8A165FYAKbqg0IwJSc5LyI8x210CGvJR9VhZ9zm/LjCHw==
-X-Received: by 2002:a05:6a20:c707:b0:218:183b:ccaa with SMTP id adf61e73a8af0-218183bd4e6mr17182557637.17.1747737712352;
-        Tue, 20 May 2025 03:41:52 -0700 (PDT)
+        bh=o/EhzKMaxIvvDCcy/f4feKI9fqwkuL11s7nWdOGRixo=;
+        b=XKDtgPWgjlsuMKbK4Lbkt4acJkohSgtN8DK5H2nR/ws23BWBTneiWFAoPjWQkYdIjq
+         6H64lYMrMCFPQtVQDTEE8EceZLpPbuRSth9TNimNvYGNNmOzlKM4L6Mt+/Ej2qs/LtDX
+         D6Hnq+18uaiOrfVnpouLln1n23ZN4xYcydZmyNR2WvtNfU5rAO0i7mTJtCSngKQhSnGd
+         K2PwaBTpHUeY38kW6XussB0hR/DrQgTvtp67Loq0PnLBrW6avw/ghJ2Vt23u3LqjnSz9
+         X/HZZwngEND3bkXuzmH4VvmrlD6cuzkuQ00AyOPqky3AJ5dSKLdi9/QAWMQBEatqdlR7
+         zM9w==
+X-Gm-Message-State: AOJu0YxiIYYt+7e6Z3slSyAcR2KGInRbiWRDjw9HAQw07b8FYHas+e3b
+	rIlWOc5U3ujfbdtLHjr4fV5+AEwnX+qxdk6khtALXSVfUvdJ6/1fTYht3DuJhAzXVQ==
+X-Gm-Gg: ASbGnctQR5tIZAw5I59Ch1ED3GIg0JFr19CDLHu2r3OA7u15Lf/8SWG8/MtynUFz1OP
+	XvIrHX79CxxbnZBI6e2vXQXjlYI0GeOBG9cK2GoEPwpnXOdTeyodrSJdQ2OYPnlR2PwhTVk7PWA
+	3JlzlBEfeQjcT30r6f/vXQpVzb+BgSIolZTW2HYts7E2Z6IGXn2MLMOaymxr3l8IwR3fJobBFDK
+	EXNgDEQAnTVP+HWnDKybmJ7Q8vmfJoKloxp+x0gDD5imhHrdEmOLxwKDebMGBKopeLvg8XD7ksW
+	yfAdzOpN0fYX+10UKA7e2rYx9K6izKiJeY2eWtpQ+ns0bwIlroyfyGNRuMjFZ6GNuQnro1vgmAw
+	ryw==
+X-Google-Smtp-Source: AGHT+IHKvJUSPKPdHp3qQ5+Ubc2geQwAfPn/IejVahVN8wD99rI82HgnXp5cQMlWsXUPZMovKC/fmQ==
+X-Received: by 2002:a17:90a:e706:b0:30e:5c7f:5d26 with SMTP id 98e67ed59e1d1-30e7d5aca67mr25983405a91.24.1747737718476;
+        Tue, 20 May 2025 03:41:58 -0700 (PDT)
 Received: from n37-107-136.byted.org ([115.190.40.14])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f365e5d31sm1359431a91.38.2025.05.20.03.41.46
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f365e5d31sm1359431a91.38.2025.05.20.03.41.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 03:41:52 -0700 (PDT)
+        Tue, 20 May 2025 03:41:58 -0700 (PDT)
 From: Aaron Lu <ziqianlu@bytedance.com>
 To: Valentin Schneider <vschneid@redhat.com>,
 	Ben Segall <bsegall@google.com>,
@@ -88,9 +89,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Chuyi Zhou <zhouchuyi@bytedance.com>,
 	Jan Kiszka <jan.kiszka@siemens.com>,
 	Florian Bezdeka <florian.bezdeka@siemens.com>
-Subject: [PATCH 3/7] sched/fair: prepare unthrottle path for task based throttle
-Date: Tue, 20 May 2025 18:41:06 +0800
-Message-Id: <20250520104110.3673059-4-ziqianlu@bytedance.com>
+Subject: [PATCH 4/7] sched/fair: Take care of group/affinity/sched_class change for throttled task
+Date: Tue, 20 May 2025 18:41:07 +0800
+Message-Id: <20250520104110.3673059-5-ziqianlu@bytedance.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250520104110.3673059-1-ziqianlu@bytedance.com>
 References: <20250520104110.3673059-1-ziqianlu@bytedance.com>
@@ -102,128 +103,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Valentin Schneider <vschneid@redhat.com>
+On task group change, for tasks whose on_rq equals to TASK_ON_RQ_QUEUED,
+core will dequeue it and then requeued it.
 
-During unthrottle, enqueued back throttled tasks so that they can
-resume execution.
+The throttled task is still considered as queued by core because p->on_rq
+is still set so core will dequeue it, but since the task is already
+dequeued on throttle in fair, handle this case properly.
 
-This patch only sets up the enqueue mechanism; it does not take effect
-yet because no tasks in the throttled hierarchy are placed on the limbo
-list as of now.
+Affinity and sched class change is similar.
 
-Signed-off-by: Valentin Schneider <vschneid@redhat.com>
 Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
 ---
- kernel/sched/fair.c | 55 ++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 42 insertions(+), 13 deletions(-)
+ kernel/sched/fair.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e87ceb0a2d37f..74bc320cbc238 100644
+index 74bc320cbc238..4c66fd8d24389 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5825,6 +5825,11 @@ static inline int throttled_lb_pair(struct task_group *tg,
- 	       throttled_hierarchy(dest_cfs_rq);
- }
- 
-+static inline bool task_is_throttled(struct task_struct *p)
-+{
-+	return !list_empty(&p->throttle_node);
-+}
-+
- static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags);
- static void throttle_cfs_rq_work(struct callback_head *work)
- {
-@@ -5876,32 +5881,41 @@ void init_cfs_throttle_work(struct task_struct *p)
+@@ -5866,6 +5866,10 @@ static void throttle_cfs_rq_work(struct callback_head *work)
+ 		update_rq_clock(rq);
+ 		WARN_ON_ONCE(!list_empty(&p->throttle_node));
+ 		dequeue_task_fair(rq, p, DEQUEUE_SLEEP | DEQUEUE_SPECIAL);
++		/*
++		 * Must not add it to limbo list before dequeue or dequeue will
++		 * mistakenly regard this task as an already throttled one.
++		 */
+ 		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
+ 		resched_curr(rq);
+ 	}
+@@ -5881,6 +5885,20 @@ void init_cfs_throttle_work(struct task_struct *p)
  	INIT_LIST_HEAD(&p->throttle_node);
  }
  
-+static void enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags);
++static void dequeue_throttled_task(struct task_struct *p, int flags)
++{
++	/*
++	 * Task is throttled and someone wants to dequeue it again:
++	 * it must be sched/core when core needs to do things like
++	 * task affinity change, task group change, task sched class
++	 * change etc.
++	 */
++	WARN_ON_ONCE(p->se.on_rq);
++	WARN_ON_ONCE(flags & DEQUEUE_SLEEP);
++
++	list_del_init(&p->throttle_node);
++}
++
+ static void enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags);
  static int tg_unthrottle_up(struct task_group *tg, void *data)
  {
- 	struct rq *rq = data;
- 	struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
-+	struct task_struct *p, *tmp;
- 
- 	cfs_rq->throttle_count--;
--	if (!cfs_rq->throttle_count) {
--		cfs_rq->throttled_clock_pelt_time += rq_clock_pelt(rq) -
--					     cfs_rq->throttled_clock_pelt;
-+	if (cfs_rq->throttle_count)
-+		return 0;
- 
--		/* Add cfs_rq with load or one or more already running entities to the list */
--		if (!cfs_rq_is_decayed(cfs_rq))
--			list_add_leaf_cfs_rq(cfs_rq);
-+	cfs_rq->throttled_clock_pelt_time += rq_clock_pelt(rq) -
-+		cfs_rq->throttled_clock_pelt;
- 
--		if (cfs_rq->throttled_clock_self) {
--			u64 delta = rq_clock(rq) - cfs_rq->throttled_clock_self;
-+	if (cfs_rq->throttled_clock_self) {
-+		u64 delta = rq_clock(rq) - cfs_rq->throttled_clock_self;
- 
--			cfs_rq->throttled_clock_self = 0;
-+		cfs_rq->throttled_clock_self = 0;
- 
--			if (WARN_ON_ONCE((s64)delta < 0))
--				delta = 0;
-+		if (WARN_ON_ONCE((s64)delta < 0))
-+			delta = 0;
- 
--			cfs_rq->throttled_clock_self_time += delta;
--		}
-+		cfs_rq->throttled_clock_self_time += delta;
-+	}
-+
-+	/* Re-enqueue the tasks that have been throttled at this level. */
-+	list_for_each_entry_safe(p, tmp, &cfs_rq->throttled_limbo_list, throttle_node) {
-+		list_del_init(&p->throttle_node);
-+		enqueue_task_fair(rq_of(cfs_rq), p, ENQUEUE_WAKEUP);
- 	}
- 
-+	/* Add cfs_rq with load or one or more already running entities to the list */
-+	if (!cfs_rq_is_decayed(cfs_rq))
-+		list_add_leaf_cfs_rq(cfs_rq);
-+
- 	return 0;
- }
- 
-@@ -6059,6 +6073,19 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 	long queued_delta, runnable_delta, idle_delta;
- 	long rq_h_nr_queued = rq->cfs.h_nr_queued;
- 
-+	/*
-+	 * It's possible we are called with !runtime_remaining due to things
-+	 * like user changed quota setting(see tg_set_cfs_bandwidth()) or async
-+	 * unthrottled us with a positive runtime_remaining but other still
-+	 * running entities consumed those runtime before we reached here.
-+	 *
-+	 * Anyway, we can't unthrottle this cfs_rq without any runtime remaining
-+	 * because any enqueue in tg_unthrottle_up() will immediately trigger a
-+	 * throttle, which is not supposed to happen on unthrottle path.
-+	 */
-+	if (cfs_rq->runtime_enabled && cfs_rq->runtime_remaining <= 0)
-+		return;
-+
- 	se = cfs_rq->tg->se[cpu_of(rq)];
- 
- 	cfs_rq->throttled = 0;
-@@ -6806,6 +6833,7 @@ static void check_enqueue_throttle(struct cfs_rq *cfs_rq) {}
- static inline void sync_throttle(struct task_group *tg, int cpu) {}
+@@ -6834,6 +6852,7 @@ static inline void sync_throttle(struct task_group *tg, int cpu) {}
  static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq) {}
  static void task_throttle_setup_work(struct task_struct *p) {}
-+static bool task_is_throttled(struct task_struct *p) { return false; }
+ static bool task_is_throttled(struct task_struct *p) { return false; }
++static void dequeue_throttled_task(struct task_struct *p, int flags) {}
  
  static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
  {
-@@ -7014,6 +7042,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 		util_est_enqueue(&rq->cfs, p);
+@@ -7281,6 +7300,11 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+  */
+ static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ {
++	if (unlikely(task_is_throttled(p))) {
++		dequeue_throttled_task(p, flags);
++		return true;
++	}
++
+ 	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & DEQUEUE_SAVE))))
+ 		util_est_dequeue(&rq->cfs, p);
  
- 	if (flags & ENQUEUE_DELAYED) {
-+		WARN_ON_ONCE(task_is_throttled(p));
- 		requeue_delayed_entity(se);
- 		return;
- 	}
 -- 
 2.39.5
 
