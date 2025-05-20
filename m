@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-654986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B70ABCF5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:30:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31BEFABCF62
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8941E17931A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:30:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF61C7B0AA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2C725CC6C;
-	Tue, 20 May 2025 06:30:30 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C421854;
-	Tue, 20 May 2025 06:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C7525CC68;
+	Tue, 20 May 2025 06:31:39 +0000 (UTC)
+Received: from mx.mylinuxtime.de (mx.mylinuxtime.de [46.4.70.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79932459F1
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 06:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.70.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747722630; cv=none; b=fExFLI/QFjc+r/JgyyJEHDANecUI3vctdrOxKvu8iQN5f5I9rYgsnLQ13J2Fa0stS0NscKQXOStim9rKKORmQLy0JsoJcJp6mTnX/Qr7IMP8ibvSZiZFyqa8VT24qKH3llg4Qml6ATuFidQQeN+4O1Osg0ufy+P7lIIm1Py91M8=
+	t=1747722698; cv=none; b=BT+yj0S+5sc8PjrbnPKLmBVdz7Mi66Ru9IR2r8qpfask5IJdExW1f97Cygt/QP2EkQIgJkk8UyfnOFjUCfUy2o9M5gyiXWQCbvgXOLiFm/91pitrWmmPGVGq3gT/APWzEa3DMoudzT6zs0bOCnxZkDPPwa+1B0RnCvnDGeaY6hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747722630; c=relaxed/simple;
-	bh=pC7hcoBItm/p4ikdY5pstS8S6ncVBZrRXfm7pjZ61Iw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rp+2BXd8XkaqsYh1Xz8b+Z/eEMHJkUussR5o5Unu1soalqDWPFHyFYknjvnhTCuM717DhiL1LiPtAPCotBt6ODtb+w2mjhrXFG7qJGooIQ1RP478GQF8aZOHXL+GnxQiGABVj1bsDgKQ+XhFSTytg0p/7w4eK7vzpTalDGnRqiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8AxWXF1ISxoEA3zAA--.152S3;
-	Tue, 20 May 2025 14:30:13 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMDxu8RxISxo+8fiAA--.53745S2;
-	Tue, 20 May 2025 14:30:10 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH for 6.14.y] perf tools: Fix build error for LoongArch
-Date: Tue, 20 May 2025 14:30:09 +0800
-Message-ID: <20250520063009.23504-1-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1747722698; c=relaxed/simple;
+	bh=d0nAGsYw2R6FLg5r2h36rVVt8q36cToCdrm+N3mMMFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X7Dfk5zUqGtsCVVYBCMKho7OLzDxW3pgLEwFTZtioSwpFMh3VGFvTLlY8TJirJX91IJPpi3T7Xirsce9HCqGtTKStR833tKrcIf/tsn17OjIhS7uePVU+XRccYWW+xNgVxlcO+AjYwI4kp58zSCXgJ9c/UEVc4lOp2Z8ourFsBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eworm.de; spf=pass smtp.mailfrom=eworm.de; arc=none smtp.client-ip=46.4.70.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eworm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eworm.de
+Received: from leda.eworm.net (unknown [194.36.25.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx.mylinuxtime.de (Postfix) with ESMTPSA id 77E6225AA38;
+	Tue, 20 May 2025 08:31:34 +0200 (CEST)
+Authentication-Results: mx.mylinuxtime.de;
+	auth=pass smtp.auth=mail@eworm.de smtp.mailfrom=mail@eworm.de
+Date: Tue, 20 May 2025 08:31:33 +0200
+From: Christian Hesse <mail@eworm.de>
+To: "Xu, Lizhi" <Lizhi.Xu@windriver.com>
+Cc: "axboe@kernel.dk" <axboe@kernel.dk>, "christian@heusel.eu"
+ <christian@heusel.eu>, "hch@infradead.org" <hch@infradead.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "ming.lei@redhat.com" <ming.lei@redhat.com>,
+ "syzbot+6af973a3b8dfd2faefdc@syzkaller.appspotmail.com"
+ <syzbot+6af973a3b8dfd2faefdc@syzkaller.appspotmail.com>,
+ "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>
+Subject: Re: =?UTF-8?B?5Zue5aSNOg==?= [PATCH V5] loop: Add sanity check for
+ read/write_iter
+Message-ID: <20250520083133.0683bdda@leda.eworm.net>
+In-Reply-To: <BL1PR11MB5979C666DA3BC228C2C30E92869FA@BL1PR11MB5979.namprd11.prod.outlook.com>
+References: <20250519175640.2fcac001@leda.eworm.net>
+	<20250520030051.177205-1-lizhi.xu@windriver.com>
+	<20250520073901.6fdfbee4@leda.eworm.net>
+	<BL1PR11MB5979C666DA3BC228C2C30E92869FA@BL1PR11MB5979.namprd11.prod.outlook.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+X-Face: %O:rCSk<c"<MpJ:yn<>HSKf7^4uF|FD$9$I0}g$nbnS1{DYPvs#:,~e`).mzj\$P9]V!WCveE/XdbL,L!{)6v%x4<jA|JaB-SKm74~Wa1m;|\QFlOg>\Bt!b#{;dS&h"7l=ow'^({02!2%XOugod|u*mYBVm-OS:VpZ"ZrRA4[Q&zye,^j;ftj!Hxx\1@;LM)Pz)|B%1#sfF;s;,N?*K*^)
+Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAGFBMVEUZFRFENy6KVTKEd23CiGHeqofJvrX4+vdHgItOAAAACXBIWXMAAA3XAAAN1wFCKJt4AAACUklEQVQ4y2VUTZeqMAxNxXG2Io5uGd64L35unbF9ax0b3OLxgFs4PcLff0lBHeb1QIq5uelNCEJNq/TIFGyeC+iugH0WJr+B1MvzWASpuP4CYHOB0VfoDdddwA7OIFQIEHjXDiCtV5e9QX0WMu8AG0mB7g7WP4GqeqVdsi4vv/5kFBvaF/zD7zDquL4DxbrDGDyAsgNYOsJOYzth4Q9ZF6iLV+6TLAT1pi2kuvgAtZxSjoG8cL+8vIn251uoe1OOEWwbIPU04gHsmMsoxyyhYsD2FdIigF1yxaVbBuSOCAlCoX324I7wNMhrO1bhOLsRoA6DC6wQ5eQiSG5BiWQfM4gN+uItQTRDMaJUhVbGyKWCuaaUGSVFVKpl4PdoDn3yY8J+YxQxyhlHfoYOyPgyDcO+cSQK6Bvabjcy2nwRo3pxgA8jslnCuYw23ESOzHAPYwo4ITNQMaOO+RGPEGhSlPEZBh2jmBEjQ5cKbxmr0ruAe/WCriUxW76I8T3h7vqY5VR5wXLdERodg2rHEzdxxk5KpXTL4FwnarvndKM5/MWDY5CuBBdQ+3/0ivsUJHicuHd+Xh3jOdBL+FjSGq4SPCwco+orpWlERRTNo7BHCvbNXFVSIQMp+P5QsIL9upmr8kMTUOfxEHoanwzKRcNAe76WbjBwex/RkdHu48xT5YqP70DaMOhBcTHmAVDxLaBdle93oJy1QKFUh2GXT4am+YH/GGel1CeI98GdMXsytjCKIq/9cMrlgxFCROv+3/BU1fijNpcVD6DxE8VfLBaxUGr1D5usgDYdjwiPAAAAAElFTkSuQmCC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxu8RxISxo+8fiAA--.53745S2
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7uFy3tr4kKFy5XFWDArykXrc_yoW8Ar1UpF
-	sxC34DtFWrWryrArnrur1IgFy8Gw4DX342qFy0kr45ZwnIgr9IqF97Xas8KFyxWa9FgrW0
-	vrWSkay5GF48XabCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
-	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AK
-	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
-	0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j0FALUUUUU=
+Content-Type: multipart/signed; boundary="Sig_/yM+n6Brr1lK6Aa0/ksIAfQn";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Spamd-Bar: /
+X-Spamd-Result: default: False [0.00 / 15.00];
+	TAGGED_RCPT(0.00)[6af973a3b8dfd2faefdc]
+X-Rspamd-Server: mx
+X-Rspamd-Queue-Id: 77E6225AA38
+X-Stat-Signature: k3m653n37d5ritghdgb1iub49hbdnpy3
+X-Rspamd-Action: no action
 
-There exists the following error when building perf tools on LoongArch:
+--Sig_/yM+n6Brr1lK6Aa0/ksIAfQn
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-  CC      util/syscalltbl.o
-In file included from util/syscalltbl.c:16:
-tools/perf/arch/loongarch/include/syscall_table.h:2:10: fatal error: asm/syscall_table_64.h: No such file or directory
-    2 | #include <asm/syscall_table_64.h>
-      |          ^~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
+"Xu, Lizhi" <Lizhi.Xu@windriver.com> on Tue, 2025/05/20 06:29:
+> I figured out your steps to reproduce, and yes, this problem will occur if
+> you do losetup with a file in a filesystem that does not support read_ite=
+r,
+> which is what this patch does.
 
-This is because the generated syscall header is syscalls_64.h rather
-than syscall_table_64.h. The above problem was introduced from v6.14,
-then the header syscall_table.h has been removed from mainline tree
-in commit af472d3c4454 ("perf syscalltbl: Remove syscall_table.h"),
-just fix it only for the linux-6.14.y branch of stable tree.
+So is this expected behavior now?
 
-By the way, no need to fix the mainline tree and there is no upstream
-git id for this patch.
+It worked before... How to recover for our use case?
+--=20
+Best regards,
+Chris
 
-How to reproduce:
+--Sig_/yM+n6Brr1lK6Aa0/ksIAfQn
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-  git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
-  cd linux && git checkout origin/linux-6.14.y
-  make JOBS=1 -C tools/perf
+-----BEGIN PGP SIGNATURE-----
 
-Fixes: fa70857a27e5 ("perf tools loongarch: Use syscall table")
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- tools/perf/arch/loongarch/include/syscall_table.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+iHUEARYKAB0WIQSmOl3fryo2Nzt8CpJOj8ol/axIVQUCaCwhxQAKCRBOj8ol/axI
+VTLGAQD5EXUGIGmsUkbCqYtfvroxPldCPKOGk9O0D8iX2o630QD/WlgL5yfMuDEx
+eAjCgtwuMo9XCkPCe/0Qx4mCExmgbQE=
+=oF/4
+-----END PGP SIGNATURE-----
 
-diff --git a/tools/perf/arch/loongarch/include/syscall_table.h b/tools/perf/arch/loongarch/include/syscall_table.h
-index 9d0646d3455c..b53e31c15805 100644
---- a/tools/perf/arch/loongarch/include/syscall_table.h
-+++ b/tools/perf/arch/loongarch/include/syscall_table.h
-@@ -1,2 +1,2 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--#include <asm/syscall_table_64.h>
-+#include <asm/syscalls_64.h>
--- 
-2.42.0
-
+--Sig_/yM+n6Brr1lK6Aa0/ksIAfQn--
 
