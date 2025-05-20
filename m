@@ -1,150 +1,161 @@
-Return-Path: <linux-kernel+bounces-655255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB45ABD2F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:14:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3CEABD312
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4203E4A7C92
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:14:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C891BA327D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4264267713;
-	Tue, 20 May 2025 09:13:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDB22676DC;
-	Tue, 20 May 2025 09:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3966921C9FE;
+	Tue, 20 May 2025 09:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZvvjKpOW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF22F2192E3
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 09:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747732407; cv=none; b=e20Y0j1zQdVa4+fj8urAx7f1Ssoz/c9g9XEAx7xVHnBhVeT7AvwV0LG875jOVmFGSrwC9aGhFKwY3H2MWq2KIV7DZ8S4ClXXH4//nZqvVIFqrzmHIMXrJvn6sBSZhMwUBtdKU7AaAAXC7byJrW6Hxph4m7n2OuqE8I4btq5drmE=
+	t=1747732554; cv=none; b=JWg5OBCoquvKYvKNTfBtTY3xg5Ak39biuzRDNVjgaewusCd+NmGtLXdCe3BOcM9X7werMrfTo/dBcx0xmlZTs3rGKyG+gOmSRQAeXRmM/ybyfRs+mSbpAjuj3ZMpPgkpbpyVfHxfkb8Fdqgi6UHrpLj+Rr4vY4UG7DWv7eQbrg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747732407; c=relaxed/simple;
-	bh=Hh9qJZdaF4ZQAaENwivk2JifLFjrU3RWeIo0TJd3veQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GCBwSvNx7VcMLMF3GOGwStgKDX7CLGMABx593J1ShbCUElaLM0QNcqux0bc2f/dPt9VbQtLlsWmHkNVn5FTtGuUPELKinuMhnMs+Nz1bK8ugzT1b+2H9BrPdHlEEUv+WdRk4G/mhN3b/e0Vj+tV6isdOTrM3GkRGKPd0WrUWrLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BBE2152B;
-	Tue, 20 May 2025 02:13:11 -0700 (PDT)
-Received: from [10.164.18.48] (unknown [10.164.18.48])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 35A483F5A1;
-	Tue, 20 May 2025 02:13:21 -0700 (PDT)
-Message-ID: <7d5476a1-baa8-4bd0-965f-009bfa01c3c3@arm.com>
-Date: Tue, 20 May 2025 14:43:10 +0530
+	s=arc-20240116; t=1747732554; c=relaxed/simple;
+	bh=hAxmmjzsAYVT1sNDVLnxaei5u2Ja1JhgSPN81JIqWV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CDMoNqeDQ46j5x8boyd2IG+2sFQ7VN5q+c3whXVp0e+78rwojBTu6+jh+jht4vLXlR/ALIoRO3uFbiDb3LZTuswu18qtHWppJy7Vd50fTKS3RyAqh1VXhxzBUl3SFM/92bXW2N5QHTwpKpvR+/m/qwFeWOKaa0xbZq3ZiDZ7YKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZvvjKpOW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747732551;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KhESp3G/SIa6HPbqoYw8chTa3J1tACi3fMTgeUE9g64=;
+	b=ZvvjKpOW+LUfi3W2Eg1VIvsiZoYXQ6KaA+NRfNTB7PLsjneGvgWxHbozH/hINiADCa5SII
+	OugWLx7GCxKPWUrx6J4grYIqLcg0yTzqKLtvjWBHdXDgEyeQlspR2LMDPthBvF60mxbXx2
+	nj4FQU4MgdBdiAFAuqgqFz/3x2b4dno=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-14-u2iH8ojFNf2rkB5P_rNygw-1; Tue, 20 May 2025 05:15:49 -0400
+X-MC-Unique: u2iH8ojFNf2rkB5P_rNygw-1
+X-Mimecast-MFC-AGG-ID: u2iH8ojFNf2rkB5P_rNygw_1747732549
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-30ec5cc994eso2188910a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 02:15:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747732549; x=1748337349;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KhESp3G/SIa6HPbqoYw8chTa3J1tACi3fMTgeUE9g64=;
+        b=BsHBR6PHwP+/Zwu974VhC9/SPnRC5UXeEm/TRyTNqjht92Gi+zC2NRhoiMn4PF29Vo
+         2Vnxr9fSHTD7iEw5coI6uGtnc22MweRHg4iMvSOwLpTdO/0t9CjD/PS8guiKNx8h7SPv
+         VY+/O/JvKMPDu2G8kiXPB2eP/lymrJSWvfhO5DLad1vvTjbboJo6HQ6OicGP8QF6DPjy
+         nHng8M6ggsIMv0yDLQ6RrJEhKLJikYlbNL22aAEzRKxojcXQsR4aDFecxjel1YOV6PD8
+         JNKmQZbx1aTm9Kn6TN1zX2k5wm4T804wWzja5/2cDWxjifFfU2vgV5q4djyz4MBEp0JS
+         LsHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbCI9OmydPmpT+oRBsUG/S/jvepZiYNoq9hHKfNuJAqTiW6PXY7MixBgtIQZ6pzZ5Ej7nOqPk3Pc2krng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ+YW96RQv547rPy8fqThgTl19d5UTsYr/qe9HgckN5lk6y3x8
+	SKnTDN4bvzV61L05W9ALhGhNB83rA3bqgZAa91OOIGFNssqeSbmx935uZEiMf8ywjhbK25Otjoh
+	DEDPJQwUp+UHUBjcMOC0s/D0tSQbTxwKKBVTS50vzr/gphz5Glz1yjSMxocXn1mYs6g==
+X-Gm-Gg: ASbGncu5jzcUaEgtL4J3m/LwD4EEVYG2y6AnfeWfLIDCnQd+HoQx/PNis81u+31SqCq
+	0eBhvyowaaeMMJEoKn9e943iV48sZrpeGOl8pXcdwi5q5GsV1CbIaiZaMuN9Uz5c49m5joCqf5E
+	73SOL5ipTBd8CIFm47f9WIzKusGq3KcpOWDtvcFTer/epE939JSwMXxNpGtqGEImZAqwrkM7Ir8
+	RzIEp3hQJz8KWiuoh9/6t7lQ3cCnbjYayA1rzU6pNKIdEM7BT3IW3atceiuJ+fgq6s3UPyNNG6v
+	rBg=
+X-Received: by 2002:a17:90b:2e42:b0:2f5:88bb:118 with SMTP id 98e67ed59e1d1-30e7d5aca5cmr21330346a91.22.1747732548829;
+        Tue, 20 May 2025 02:15:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxay4p7pv52Vodnk4Tfn2ozXI0HmKtyE04pWaZsFVCaSe4/2BLoC7rn0Est1OtxnsGuBJXMg==
+X-Received: by 2002:a17:90b:2e42:b0:2f5:88bb:118 with SMTP id 98e67ed59e1d1-30e7d5aca5cmr21330307a91.22.1747732548461;
+        Tue, 20 May 2025 02:15:48 -0700 (PDT)
+Received: from localhost ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f36368bb0sm1213053a91.10.2025.05.20.02.15.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 02:15:48 -0700 (PDT)
+Date: Tue, 20 May 2025 17:13:28 +0800
+From: Coiby Xu <coxu@redhat.com>
+To: Kees Cook <kees@kernel.org>, Baoquan He <bhe@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	fuqiang wang <fuqiang.wang@easystack.cn>, Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>, 
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v4] x86/kexec: fix potential cmem->ranges out of bounds
+Message-ID: <gxysezp2tc6qtb3o3wpdsk7k4aijxontf3ozfnhn76giobkefe@v2vkfov2tcck>
+References: <20250507225959.174dd1eed6b0b1354c95a0fd@linux-foundation.org>
+ <2754f4evjfumjqome63bc3inqb7ozepemejn2lcl57ryio2t6k@35l3tnn73gei>
+ <aB3RqS85p6DiHKHm@MiWiFi-R3L-srv>
+ <20250509183518.bf7cd732ac667a9c20f1fee1@linux-foundation.org>
+ <sn775iwfnogyvgxetbcfneuuzsnr5wva6kc4vachyzc7r6uhfi@ozhimoihtk4b>
+ <aCaycGEtgNvynjNQ@MiWiFi-R3L-srv>
+ <202505161616.F4C1BCCF6A@keescook>
+ <aCksAsgAw1jsGBL9@MiWiFi-R3L-srv>
+ <202505190716.B21F11984@keescook>
+ <aCtBf2LqRqlWXaUp@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: Restrict pagetable teardown to avoid false
- warning
-To: Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand
- <david@redhat.com>, catalin.marinas@arm.com, will@kernel.org
-Cc: anshuman.khandual@arm.com, mark.rutland@arm.com,
- yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-References: <20250518095445.31044-1-dev.jain@arm.com>
- <5763d921-f8a8-4ca6-b5b5-ad96eb5cda11@arm.com>
- <7680e775-d277-45ea-9b6c-1f16b8b55a3f@redhat.com>
- <df7eb016-bea4-489d-aecb-1a47eb5e33b2@arm.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <df7eb016-bea4-489d-aecb-1a47eb5e33b2@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <aCtBf2LqRqlWXaUp@MiWiFi-R3L-srv>
 
+On Mon, May 19, 2025 at 10:34:39PM +0800, Baoquan He wrote:
+>On 05/19/25 at 07:19am, Kees Cook wrote:
+>> On Mon, May 19, 2025 at 09:22:30AM +0800, Baoquan He wrote:
+[...]
+>> > > I went back through the thread and the referenced threads and I can't
+>> > > find any details on the USBAN splat. Can that please get reproduced in a
+>> > > commit log? That would help understand if it's a false positive or not.
+>> >
+>> >
+>> > The original patch is trying to fix a potential issue in which a memory
+>> > range is split, while the sub-range split out is always on top of the
+>> > entire memory range, hence no risk.
+>> >
+>> > Later, we encountered a UBSAN warning around the above memory range
+>> > splitting code several times. We found this patch can mute the warning.
+>> >
+>> > Please see below UBSAN splat trace report from Coiby:
+>> > https://lore.kernel.org/all/4de3c2onosr7negqnfhekm4cpbklzmsimgdfv33c52dktqpza5@z5pb34ghz4at/T/#u
+>>
+>> Ah-ha! Thanks for the link.
+>>
+>> > Later, Coiby got the root cause from investigation, please see:
+>> > https://lore.kernel.org/all/2754f4evjfumjqome63bc3inqb7ozepemejn2lcl57ryio2t6k@35l3tnn73gei/T/#u
+>>
+>> Looking at https://lore.kernel.org/all/aBxfflkkQXTetmbq@MiWiFi-R3L-srv/
+>> it seems like this actually turned out to be a legitimate overflow
+>> detection? I.e. the fix isn't silencing a false positive, but rather
+>> allocating enough space?
 
+The words "out of bounds" in the patch subject are kind of misleading
+because the patch is outdated. A later merged commit 6dff31597264
+("crash_core: fix and simplify the logic of crash_exclude_mem_range()")
+has actually fixed out-of-bound access issue as illustrated in
+https://lore.kernel.org/kexec/ZXrY7QbXAlxydsSC@MiWiFi-R3L-srv/ 
+Current crash_exclude_mem_range simply returns -ENOMEM when there is no
+enough space to hold split ranges (I'll post a patch to prove the
+correctness of crash_exclude_mem_range by reasoning about the code and
+including a thorough unit tests). So I'll change the subject to "fix
+potential cmem->ranges out of memory" in the upcoming patch.
 
-On 19/05/25 6:17 pm, Ryan Roberts wrote:
-> On 19/05/2025 13:16, David Hildenbrand wrote:
->> On 19.05.25 11:08, Ryan Roberts wrote:
->>> On 18/05/2025 10:54, Dev Jain wrote:
->>>> Commit 9c006972c3fe removes the pxd_present() checks because the caller
->>>
->>> nit: please use the standard format for describing commits: Commit 9c006972c3fe
->>> ("arm64: mmu: drop pXd_present() checks from pXd_free_pYd_table()")
->>>
->>>> checks pxd_present(). But, in case of vmap_try_huge_pud(), the caller only
->>>> checks pud_present(); pud_free_pmd_page() recurses on each pmd through
->>>> pmd_free_pte_page(), wherein the pmd may be none. Thus it is possible to
->>>> hit a warning in the latter, since pmd_none => !pmd_table(). Thus, add
->>>> a pmd_present() check in pud_free_pmd_page().
->>>>
->>>> This problem was found by code inspection.
->>>>
->>>> This patch is based on 6.15-rc6.
->>>
->>> nit: please remove this to below the "---", its not part of the commit log.
->>>
->>>>
->>>> Fixes: 9c006972c3fe (arm64: mmu: drop pXd_present() checks from
->>>> pXd_free_pYd_table())
->>>>
->>>
->>> nit: remove empty line; the tags should all be in a single block with no empty
->>> lines.
->>>
->>>> Cc: <stable@vger.kernel.org>
->>>> Reported-by: Ryan Roberts <ryan.roberts@arm.com>
->>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>> ---
->>>> v1->v2:
->>>>    - Enforce check in caller
->>>>
->>>>    arch/arm64/mm/mmu.c | 3 ++-
->>>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->>>> index ea6695d53fb9..5b1f4cd238ca 100644
->>>> --- a/arch/arm64/mm/mmu.c
->>>> +++ b/arch/arm64/mm/mmu.c
->>>> @@ -1286,7 +1286,8 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
->>>>        next = addr;
->>>>        end = addr + PUD_SIZE;
->>>>        do {
->>>> -        pmd_free_pte_page(pmdp, next);
->>>> +        if (pmd_present(*pmdp))
->>>
->>> pmd_free_pte_page() is using READ_ONCE() to access the *pmdp to ensure it can't
->>> be torn. I suspect we don't technically need that in these functions because
->>> there can be no race with a writer.
->>
->> Yeah, if there is no proper locking in place the function would already
->> seriously mess up (double freeing etc).
-> 
-> Indeed; there is no locking, but this portion of the vmalloc VA space has been
-> allocated to us exclusively, so we know there can be no one else racing.
-> 
->>
->>> But the arm64 arch code always uses
->>> READ_ONCE() for dereferencing pgtable entries for safely. Perhaps we should be
->>> consistent here?
->>
->> mm/vmalloc.c:   if (pmd_present(*pmd) && !pmd_free_pte_page(pmd, addr))
-> 
-> Yes, I saw that. I know that we don't technically need READ_ONCE(). I'm just
-> proposng that for arm64 code we should be consistent with what it already does.
-> See Commit 20a004e7b017 ("arm64: mm: Use READ_ONCE/WRITE_ONCE when accessing
-> page tables")
+>
+>This v5 is on top of below patch which Andrew has picked to his mm tree.
+>In there, it happened to get the ubsan warning fixed. But the hunk
+>doesn't reflect it in the v5 patch.
+>
+>[PATCH v9 7/8] x86/crash: pass dm crypt keys to kdump kernel
+>https://lore.kernel.org/all/20250502011246.99238-8-coxu@redhat.com/T/#u
+>
 
-(Sorry for the spam, managed to import the mbox into thunderbird)
-So we can just pmdp_get() here?
-
-> 
-> Thanks,
-> Ryan
-> 
->>
->>
->> :)
->>
->> Acked-by: David Hildenbrand <david@redhat.com>
->>
-> 
+-- 
+Best regards,
+Coiby
 
 
