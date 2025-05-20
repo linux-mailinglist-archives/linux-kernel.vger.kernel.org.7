@@ -1,192 +1,279 @@
-Return-Path: <linux-kernel+bounces-654885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FC8ABCE12
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:06:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04C0AABCE1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65BD216DD68
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 04:06:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0E611887B79
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 04:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FC625A2C0;
-	Tue, 20 May 2025 04:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ok2dYX/2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A83259CB4;
+	Tue, 20 May 2025 04:06:39 +0000 (UTC)
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022121.outbound.protection.outlook.com [40.107.75.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9581DDA24
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 04:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747713968; cv=none; b=n3bkxcHYYiKhI0d/kPVjjQewQWuo3jle021874aPxQbOI4wZYnxQzU3MIGSL3rqAKXz6LJ5NujarbVEF9WjLknpXxcwhcoAKC2YFWdZIqdX/Sxso9gth88tC+26Ckhrs2lBXU0c1FpCF3L8UccYelgiMVbY+73Z6se61II7qnUo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747713968; c=relaxed/simple;
-	bh=OjHg+Vyus8o0ZLxaz0u47ocwameFVHjmY7vBPG4yAT0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zx59l5NLQuU7vOzaTd3wFYAzSmAd/nwgi0pUY3goeobnKmOq/f1rm9JYDNYhTMmhcaOKfI9cHoUFYa1Q3Iz0lydBkLJqzTEICIx50vwHU02u15SDM3dEpRhqe+qI+o1TbvTdhFgLd/H8/1aKhEsS2DWE0aTiIhqp718rxA0REqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ok2dYX/2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54JJbmqb009531
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 04:06:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mRkL6ZD37aILbTjnj5L1nOvB0DmK7nmgx/7Bty5lsHA=; b=ok2dYX/2JfvIPoT5
-	1EdJ6q1GigS8gpD+pcbPatWPkZVETqe0DYpUc8C50rI0AHNF6NWQuYu6OrO9zTF5
-	sc7MlmfF9JG7cGOGVvPfyNhs07LnS3ykzrWV1YpJcyUdrpvOHdcEpWGkJQZYp8no
-	5wFcgJJhoKju92/h2mCRC7a0zwME8nqH46J4mKl7Wha4CRpscBqrZNgGm+Z7vuwp
-	6dDmpSaDx8aHL7ypmvUw1jY6rWMGHa6a6EqVy4bnYffiExWD3RWgVa0x0zqFYB+C
-	WLUIPi54xiZlGU29YULaKW10p095pn4FoqRQpTL1otMeVPAECP3Iwls+a8MlwSQP
-	5rlSmw==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46pjkyphs4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 04:06:05 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-231d4e36288so35741055ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 21:06:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747713965; x=1748318765;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mRkL6ZD37aILbTjnj5L1nOvB0DmK7nmgx/7Bty5lsHA=;
-        b=ASlR66h/BAX91SRShbhlJF24F1kTAiBRuQUIhznmmwT+1jeEz47DheHTDu0HaWraSR
-         4yoknmT7QUxfeT9MUhML1elP8EhpVqSZmAOi6aOfiznp6HsjW4s5v4LsNud/5YEiQA+B
-         wMg7RCotQh0ZNMwRu9oQw+UGlkTYkH4PQhWwlh0OgWBuEEpt0GNyWcVnn3zJ9ZBZxwVM
-         7Zgs0N37UpUlQ34Yjh9JbMmK5XSV4MChvBTfFSOp5vdliGk4kbGCQuhAl4lf7FScWVPw
-         sr7b41ap2iF282no6ote+BRQobrpJKF5gXz56h8tlMFvFSaIyR2EpIxVrqc+Yne1S0FD
-         SS+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUVB8JKFFw3TNrgsC2pBKJxajOhRJwpH5oELXW0Jc4XqbGnox+P1EgA8M/ATwTDeYkFV7rMSmgF6xhJjDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4fdgg5IhJ0BxLLBAeGUFf24P74wZhr+3Zl6aY+MPrA56OUxB8
-	s7sX9BtP3sNGNtZ/6Ep8r6oQRSZGYU6CJvYrGnE/1C0MVuakWa9ipFvDRARW2N2mmB9L0mqJY1r
-	rRfP6xnw5X8M3Ilk7oIHFV6whMqpMKAs8WJMO4Xna87OCHo2FMUC6hMxGSdJZeg2BaPY=
-X-Gm-Gg: ASbGncusEXBr7L7M9NIaOUE4QaCCselKMHrH2hpFTuVJ0BgFWL+4G5QxiOFMf2xmV8S
-	Zprh0kmoTWQySLI1+KideBuKlRITSxn7vJ7ULgBqlpR0aG0jy7nPq72t6oWSnflBBI+JVpqZAZN
-	ACItATEGF8qHpeA+XJa6nW2BGGRvepD6AEZi80zSQ0rxSF2eKh+QnYTdalV4p4zzgmQqxsyr9/3
-	u/ikSMpR9gQ5LohN/Z1pB+zfaI6PuFAacisZ8ZJewnjut43ASr5dNHTlnptuBgigIy3CdP67ddd
-	AhPCVk/ZVtK9NBGDSghUPioGvXxt6B3IM+/KnYMNOg==
-X-Received: by 2002:a17:903:1987:b0:223:5e76:637a with SMTP id d9443c01a7336-231d451906dmr235890305ad.23.1747713965015;
-        Mon, 19 May 2025 21:06:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFCF1HMD5IOIAcLUdbyDa32PLQI1LeHPs7Pwruc6NNnS2Fm+f5VrtQdL4uL+gDaDwT1GlS9+w==
-X-Received: by 2002:a17:903:1987:b0:223:5e76:637a with SMTP id d9443c01a7336-231d451906dmr235890025ad.23.1747713964612;
-        Mon, 19 May 2025 21:06:04 -0700 (PDT)
-Received: from [10.92.214.105] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4e98009sm67639245ad.152.2025.05.19.21.05.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 May 2025 21:06:04 -0700 (PDT)
-Message-ID: <25723231-c396-2d20-aea1-5e506b44a778@oss.qualcomm.com>
-Date: Tue, 20 May 2025 09:35:58 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD851E51FE;
+	Tue, 20 May 2025 04:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.121
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747713998; cv=fail; b=f6KrFM390dt1qmmFPoEle7VAvZjsZ2XG+wH0oCefFWpwL95GRNfu9MNexfiMkIyUW2kyWzCVTYcmHOWzoeFEV97vfRsZMKS+r1YNCuLEH4l0PpTA+UJR+phZA5NvBbvPHBGkkdjFDM/iUt1xotLI7epaW+I0zfNVjP8FWrRS4ek=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747713998; c=relaxed/simple;
+	bh=k3O8+UlU/1e97Uj7wLFajZusexYnN7XRSuC+J4L2FvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l6hlzpMM6JOtC0cBNWQdDp4Jdsdd3PEEyltVP+Lz3+k9p2kW3wDXDohdtPl21cQYjydUSqr0n7G1cpk7kxF8iI4xyYtjgyko/UvVtjJsNvuzJAttvuXV1ta0eMTEuIzagSS1k2q5bMknSSu9h9nM7JGTUoC54UPtl2AXEbjWDJ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YUhXYLqbIWkSQCoN77P4fCVkBS4JvmuiloV9cbCZY6eRI5E85K4JC3Hx9Nb939qtTCepRDe20sveDpS/ujQ8Ff81FtFoB/U2OAiJ1gD9A8eyAqeMZAkg9MN9xgmEFLfC92qPX+KY4jvBbv2Z/m+/iIv5NmU1TlckR7uDsfgjBlsAXxbcqFQl02kI574bgb9eRAtUHH0QuEa3zbHtweRgsHNtzWQ1sEsu2Hy/gdtFv4r0ncZ2eDTZqGr0A7Wv+Le2+CXY/tBGPgEZ6hKEpMKk+o3yAWn93KCEGtR/8IPeQ19JNFB4pFzg7jRuBLmZ2x/yz2/8fNIbDZO+LJAL1Vzw9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xHQ9PjkVRFQYPfJnACZEp48qV1JwY3YsU1pngAMcgeo=;
+ b=YWht9kUCsqxHg1ppH7eBFUZ3faBAdP08JFTMLp6xVHWQ90zae8qx+BLU+fh3VxOZnkvVVssIGfrQgzBzxHQRzqdSBmeLF9g5pqBLyggmUQLaDPReO1tnLURHoLfEpR+cR+dnqmJVYqjUemau/zwv2XI8TKVYZBHaFZf9M9y38iQB6XZ16SKnGK5K+V9ol1IZBoj8/bQsyItC1rUWpttdhNSezueNAYYdscPV/KoH0Wo3oGlRgej13TuV5vhVrJa2ynuDB2mptxPxhCDNS/oZupTrIktIL8jMRiKRSVdlL7X4P9yz9+ieHermk7dq30Zrb+UHnOYAcKi30pMERHzhEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SG2PR04CA0214.apcprd04.prod.outlook.com (2603:1096:4:187::17)
+ by KU2PPF6B67D0B99.apcprd06.prod.outlook.com (2603:1096:d18::49c) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.31; Tue, 20 May
+ 2025 04:06:27 +0000
+Received: from SG2PEPF000B66CC.apcprd03.prod.outlook.com
+ (2603:1096:4:187:cafe::f0) by SG2PR04CA0214.outlook.office365.com
+ (2603:1096:4:187::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.31 via Frontend Transport; Tue,
+ 20 May 2025 04:06:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG2PEPF000B66CC.mail.protection.outlook.com (10.167.240.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8769.18 via Frontend Transport; Tue, 20 May 2025 04:06:27 +0000
+Received: from gchen (unknown [172.20.64.84])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id C8DF240A5BFE;
+	Tue, 20 May 2025 12:06:24 +0800 (CST)
+Date: Tue, 20 May 2025 04:05:38 +0000
+From: Guomin chen <guomin.chen@cixtech.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: peter.chen@cixtech.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+	arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	cix-kernel-upstream <cix-kernel-upstream@cixtech.com>,
+	maz@kernel.org, sudeep.holla@arm.com, kajetan.puchalski@arm.com,
+	eballetb@redhat.com, Gary Yang <gary.yang@cixtech.com>,
+	Lihua Liu <Lihua.Liu@cixtech.com>
+Subject: Re: [PATCH v8 5/9] mailbox: add CIX mailbox driver
+Message-ID: <aCv/ksNjpYcOMZCj@gchen>
+References: <20250513020327.414017-1-peter.chen@cixtech.com>
+ <20250513020327.414017-6-peter.chen@cixtech.com>
+ <CABb+yY2fj13YDCYD9B-Hwta47=+CLy6eGSOOc_ez2HrR4-xbjg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 01/11] PCI: Update current bus speed as part of
- pci_pwrctrl_notify()
-Content-Language: en-US
-To: =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, linux-pci@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
-        mhi@lists.linux.dev, linux-wireless@vger.kernel.org,
-        ath11k@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-        quic_vbadigan@quicinc.com, quic_vpernami@quicinc.com,
-        quic_mrana@quicinc.com, Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-References: <20250519-mhi_bw_up-v3-0-3acd4a17bbb5@oss.qualcomm.com>
- <20250519-mhi_bw_up-v3-1-3acd4a17bbb5@oss.qualcomm.com>
- <10de35f5-bec6-5df3-768d-04f88c4e3d77@linux.intel.com>
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <10de35f5-bec6-5df3-768d-04f88c4e3d77@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: k7RYObEhKYQ0_WSpVKcP1vF1ZqwDR5f6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDAzMSBTYWx0ZWRfX+2Uoa2MbLwUM
- X36Nez3Banb2wx0aTmr+pJN1dWAtmYQQatvee8k8NSnqUQgzyWQ1vJs2pw+9uDXraWyBZTUlJe0
- Id339yq9Qc92tM97ChIFM/xaOFsWxrFT/3jJLIelceuqnT36+NLyjE46V5Ug9s/A9hqlKyRWeId
- CIINRh92MfIeuxLZU/yIbSWMhzKEaVVKDQ1AhJP0xyUL4MUlteIyS8uH2XYiryMgIbHOZqtQM6B
- CGzk3muIlXKTzCgx4u0EvfcAfqgPf+Tdau4cRCoPl64leSkdh0AfyoOdWQm/JrTSO9JDPsfcmLn
- uBxBnoqpkYTz/HoCSb6zfTaCLpoCU/crypLdDUGgk1aSfuqS9IgdIcViZrXVnRaF/XnAnjiQinr
- 9YvmbRJZG3EYMZMd6h3gbXCZAxYG8GVycGtZKzyOYN0+CnGvaGoEzG4p9ic4raoKVbqSxwdj
-X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=682bffad cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=tf4daXCc1kDTc5M98m0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: k7RYObEhKYQ0_WSpVKcP1vF1ZqwDR5f6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-20_02,2025-05-16_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 mlxlogscore=999 adultscore=0
- phishscore=0 mlxscore=0 priorityscore=1501 suspectscore=0 malwarescore=0
- impostorscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505200031
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABb+yY2fj13YDCYD9B-Hwta47=+CLy6eGSOOc_ez2HrR4-xbjg@mail.gmail.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CC:EE_|KU2PPF6B67D0B99:EE_
+X-MS-Office365-Filtering-Correlation-Id: 194e9ad2-0fe5-4edd-ba1f-08dd9753b186
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KzPg9oziBBUDuwiGMOhWM+ijPuGHqZuGDWaq+O9eFQm2uNr3E8+3NX8kPmO1?=
+ =?us-ascii?Q?BDgP3nTvzv6h+HEv1Jq1FsQs3BARlxfN6JW3PBNHhdZeb5zd6oswAaau22Ko?=
+ =?us-ascii?Q?3ZZGfPWjbl1MvgSyZColJmj20WzfozWl+0C0EDCu4CaX3arjb1Xf2VFyXpr9?=
+ =?us-ascii?Q?cbFlfh9qCg/YfIsYlO4vIZJZYku6ZteVplro//NQYMxD5Nkwoh0o9uhQGE0C?=
+ =?us-ascii?Q?9DO95I+twztMwSN2oqJJcj0fzFHmYHZr67o6k8SFD5NOsKinUckAJLwdxJfJ?=
+ =?us-ascii?Q?Z+PayVobsVx+ffFQbDLqNtvkMlMf1pp1PiQl2i5DgOHlv49avt9K2gJXHxEc?=
+ =?us-ascii?Q?ZNGLWy+z+/t1EM0JrrUTZr5ZPh236hNANyc3xit41RZ2ZzuiULB2mOWoFplO?=
+ =?us-ascii?Q?1gD7avTsEMnJYI1DKtf/QSvOfhCyv6NlA8ruZu6MY67KV8Q3R5IMfGv6pqFk?=
+ =?us-ascii?Q?f4C7nvY43W+Ztp1L9sI5d6mEFemJjU7B3/5KL6hgRiSIWWdemB5D/yhweH/T?=
+ =?us-ascii?Q?iO2OqVuYyd5Bd6whe/d009gvEp9/wlicQcxUFTK+OTFNktj/Q/Mp2VHtoa/C?=
+ =?us-ascii?Q?Uz4IsKIZz89leef7GknFJ2FFrCDFvb7GI6q3wYcUeWsZJY8zH2BUXtTiX6zb?=
+ =?us-ascii?Q?mBw6wh7uSQhZ2bFrxuIZriiZG6B6kGzp9PRikytulDLoV7v58eNlNaD+vrUU?=
+ =?us-ascii?Q?4usw2S2sK4mg48Nq4wNuMTxeOLTYOMYAjKY1Sg+kAbwTdY1WpohOas8eyGg4?=
+ =?us-ascii?Q?sG0vylbsLx8CZMQB9uCtpXR6QVLKrcJa2LVqx5JxZqOg7/4ZJk8JZ1u4egeX?=
+ =?us-ascii?Q?fMaW9d6G3Ftx2IxAtozUDrVlk6Qh2rzmJgX4O7n+rNnGR+3AxZ4JLefJcZu4?=
+ =?us-ascii?Q?UUuDG3bb5wfg4LqD21+JFiE/O2rutqkqqBkISpUkiamVzEJIl2NqSMZNH5JP?=
+ =?us-ascii?Q?D4SRRZ1QNa1XAnl7iNTRKtnCMMtc0a5F9+RQjAqnBpmJcq3p/svQrIw//B1T?=
+ =?us-ascii?Q?IwTV2qgTErQu+NErQHZB7SvkFDKFcWISL05f0cRW8EYNjfngjZTiKTUAuLVh?=
+ =?us-ascii?Q?vaBkurBzu2mFoHNp6Ti72DmhjVXax0wTBrdUtTKsUVVnHadPF17/L2Er5u4K?=
+ =?us-ascii?Q?fvUNeyndT8p2BI5sMV8vLgctCeL9f9es5PtvGl/HJdtMLXZiZxme2egOOKaw?=
+ =?us-ascii?Q?qEhtIsWiUyQssWD23lGeytYh4Owm9o//f0ULJKmK05jPufPVhZhF8K7haG63?=
+ =?us-ascii?Q?dUD3iAJJhklem0EFrYi8KuEy5o15kDL/LshF5VBBqUWwd9Ptiyq2RbpJJuTU?=
+ =?us-ascii?Q?QDuaQAC+hvhnzw6Gcv8JgThZjQ9pp1Qpy9CoZDID8BEA4R6+fppyYJe65LkT?=
+ =?us-ascii?Q?+Qzo4Q8tKUl/xh6RsPEVeVcSH/mtYHlAUCXFBhRdQg79DPx/fcsKjVtWeY+u?=
+ =?us-ascii?Q?bcMEigpZHsXFwFrrZ2pq0hWRjJWGb+WvfTXCXqxj1Z79wk8tPiQpf6szRO8o?=
+ =?us-ascii?Q?mjZx/Zwwe05COfOXyB3lRVLpVIPfRrB8unoV?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2025 04:06:27.1084
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 194e9ad2-0fe5-4edd-ba1f-08dd9753b186
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: SG2PEPF000B66CC.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KU2PPF6B67D0B99
 
+On Mon, May 19, 2025 at 12:46:54PM -0500, Jassi Brar wrote:
+> [Some people who received this message don't often get email from jassisinghbrar@gmail.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> EXTERNAL EMAIL
+> 
+> Hi,
+> 
+Hi Jassi 
+  Thank you for your feedback.
+> > diff --git a/drivers/mailbox/cix-mailbox.c b/drivers/mailbox/cix-mailbox.c
+> > new file mode 100644
+> > index 000000000000..c2783dd7d145
+> > --- /dev/null
+> > +++ b/drivers/mailbox/cix-mailbox.c
+> > @@ -0,0 +1,632 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright 2025 Cix Technology Group Co., Ltd.
+> > + */
+> > +
+> > +#include <linux/device.h>
+> > +#include <linux/err.h>
+> > +#include <linux/io.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/mailbox_controller.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +#include "mailbox.h"
+> > +
+> > +/* Register define */
+> > +#define REG_MSG(n)     (0x0 + 0x4*(n))                 /* 0x0~0x7c */
+> > +#define REG_DB_ACK     REG_MSG(CIX_MBOX_MSG_LEN)       /* 0x80 */
+> > +#define ERR_COMP       (REG_DB_ACK + 0x4)              /* 0x84 */
+> > +#define ERR_COMP_CLR   (REG_DB_ACK + 0x8)              /* 0x88 */
+> > +#define REG_F_INT(IDX) (ERR_COMP_CLR + 0x4*(IDX+1))    /* 0x8c~0xa8 */
+> > +#define FIFO_WR                (REG_F_INT(MBOX_FAST_IDX+1))    /* 0xac */
+> > +#define FIFO_RD                (FIFO_WR + 0x4)                 /* 0xb0 */
+> > +#define FIFO_STAS      (FIFO_WR + 0x8)                 /* 0xb4 */
+> > +#define FIFO_WM                (FIFO_WR + 0xc)                 /* 0xb8 */
+> > +#define INT_ENABLE     (FIFO_WR + 0x10)                /* 0xbc */
+> > +#define INT_ENABLE_SIDE_B      (FIFO_WR + 0x14)        /* 0xc0 */
+> > +#define INT_CLEAR      (FIFO_WR + 0x18)                /* 0xc4 */
+> > +#define INT_STATUS     (FIFO_WR + 0x1c)                /* 0xc8 */
+> > +#define FIFO_RST       (FIFO_WR + 0x20)                /* 0xcc */
+> > +
+> > +/* [0~7] Fast channel
+> > + * [8] doorbell base channel
+> > + * [9]fifo base channel
+> > + * [10] register base channel
+> > + */
+> > +#define CIX_MBOX_CHANS         (11)
+> > +
+> > +/*
+> > + * The maximum transmission size is 32 words or 128 bytes.
+> > + */
+> > +#define CIX_MBOX_MSG_LEN       (32)    /* Max length = 32 words */
+> > +#define MBOX_MSG_LEN_MASK      (0x7fL) /* Max length = 128 bytes */
+> > +
+> >
+> Move these above register defines where these are used.
+> Also, no need for brackets around numbers. Here and elsewhere.
+> ....
+Okay, I will move these two macros to the beginning and
+remove the brackets around numbers.
 
+> > +
+> > +static void cix_mbox_isr_reg(struct mbox_chan *chan)
+> > +{
+> > +       struct cix_mbox_priv *priv = to_cix_mbox_priv(chan->mbox);
+> > +       u32 int_status;
+> > +       u32 data[CIX_MBOX_MSG_LEN];
+> > +       int i;
+> > +       u32 len;
+> >
+> cosmetic: tidy these up by merging and sorting in reverse christmas tree.
+> 
+Okay, I will make an overall adjustment according to this rule.
 
-On 5/19/2025 6:39 PM, Ilpo Järvinen wrote:
-> On Mon, 19 May 2025, Krishna Chaitanya Chundru wrote:
-> 
->> If the link is not up till the pwrctl drivers enable power to endpoints
->> then cur_bus_speed will not be updated with correct speed.
->>
->> As part of rescan, pci_pwrctrl_notify() will be called when new devices
->> are added and as part of it update the link bus speed.
->>
->> Suggested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
->> ---
->>   drivers/pci/pwrctrl/core.c | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/pci/pwrctrl/core.c b/drivers/pci/pwrctrl/core.c
->> index 9cc7e2b7f2b5608ee67c838b6500b2ae4a07ad52..034f0a5d7868fe956e3fc6a9b7ed485bb69caa04 100644
->> --- a/drivers/pci/pwrctrl/core.c
->> +++ b/drivers/pci/pwrctrl/core.c
->> @@ -10,16 +10,21 @@
->>   #include <linux/pci-pwrctrl.h>
->>   #include <linux/property.h>
->>   #include <linux/slab.h>
->> +#include "../pci.h"
->>   
->>   static int pci_pwrctrl_notify(struct notifier_block *nb, unsigned long action,
->>   			      void *data)
->>   {
->>   	struct pci_pwrctrl *pwrctrl = container_of(nb, struct pci_pwrctrl, nb);
->>   	struct device *dev = data;
->> +	struct pci_bus *bus = to_pci_dev(dev)->bus;
->>   
->>   	if (dev_fwnode(dev) != dev_fwnode(pwrctrl->dev))
->>   		return NOTIFY_DONE;
->>   
->> +	if (bus->self)
->> +		pcie_update_link_speed((struct pci_bus *)bus);
-> 
-> Why are you casting here?? (Perhaps it's a leftover).
-> 
-yeah it is a leftover I will remove it in next patch.
+> > +
+> > +       int_status = cix_mbox_read(priv, INT_STATUS);
+> > +
+> > +       if (priv->dir == MBOX_RX) {
+> > +               /* rx interrupt is triggered */
+> > +               if (int_status & DB_INT) {
+> > +                       cix_mbox_write(priv, DB_INT, INT_CLEAR);
+> > +                       data[0] = cix_mbox_read(priv, REG_MSG(0));
+> > +                       len = mbox_get_msg_size(data);
+> > +                       for (i = 0; i < len; i++)
+> > +                               data[i] = cix_mbox_read(priv, REG_MSG(i));
+> > +
+> > +                       /* trigger ack interrupt */
+> > +                       cix_mbox_write(priv, DB_ACK_INT_BIT, REG_DB_ACK);
+> > +                       mbox_chan_received_data(chan, data);
+> > +               }
+> > +       } else {
+> > +               /* tx ack interrupt is triggered */
+> > +               if (int_status & ACK_INT) {
+> > +                       cix_mbox_write(priv, ACK_INT, INT_CLEAR);
+> > +                       mbox_chan_txdone(chan, 0);
+> > +               }
+> > +       }
+> > +}
+> > +
+> > +static void cix_mbox_isr_fifo(struct mbox_chan *chan)
+> > +{
+> > +       struct cix_mbox_priv *priv = to_cix_mbox_priv(chan->mbox);
+> > +       u32 data[CIX_MBOX_MSG_LEN] = { 0 };
+> >
+> Is it really needed? Can we do with just zeroing the byte after valid data?
+> At least move it under "FIFO waterMark interrupt is generated", so it
+> is only done when needed.
+Yes, In some cases it is not necessary.
+I will move this under "FIFO waterMark interrupt is generated." 
 
-- Krishna Chaitanya.
->> +
->>   	switch (action) {
->>   	case BUS_NOTIFY_ADD_DEVICE:
->>   		/*
->>
->>
-> 
+> > +
+> > +static int cix_mbox_startup(struct mbox_chan *chan)
+> > +{
+> > +       struct cix_mbox_priv *priv = to_cix_mbox_priv(chan->mbox);
+> > +       struct cix_mbox_con_priv *cp = chan->con_priv;
+> > +       int ret;
+> > +       int index = cp->index;
+> > +       u32 val_32;
+> > +
+> > +       ret = request_irq(priv->irq, cix_mbox_isr, 0,
+> > +                         dev_name(priv->dev), chan);
+> >
+> Can we do this later just before returning from the function? Or
+> atleast free the irq before error returns.
+This cannot be done before the return, as it needs to be registered
+before the interrupt enable register. 
+However, I do need to free this IRQ before the error return.
+
+> Also please make sure you run scripts/checkpatch and have all warnings cleared.
+I have already run scripts/checkpatch to perform the check. 
+The warning you mentioned is due to the need to update the MAINTAINERS file for
+the newly added files, right?
+
+Thanks
+Guomin Chen
 
