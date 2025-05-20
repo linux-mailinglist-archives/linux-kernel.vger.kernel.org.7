@@ -1,72 +1,127 @@
-Return-Path: <linux-kernel+bounces-656077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1A9ABE16A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:59:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A3CABE16E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C37493AB078
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:59:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC54C3AA19F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3D72798E1;
-	Tue, 20 May 2025 16:59:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EDC257AFB;
-	Tue, 20 May 2025 16:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A19A27B4F0;
+	Tue, 20 May 2025 16:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UB2wxhWv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6180724A076
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 16:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747760384; cv=none; b=VgWSXPKZ/6ac6ZAQs1uoiPcMvXP0UpqFIlYBX+PgCqk0j+CHCwbjgAbz0IXbk403XZFUuijMfFKqT/6qC0oKt7L6BCBN9LqFtNgAuO33cYxymJQd0fBchpED6EGbjww4Xj2YVJlvraJznTk1/ufLJSY2ZvpM/yjHS91pIyYowvE=
+	t=1747760398; cv=none; b=qRfQbE83C2CV3K4I7TFI+u7vE7Z0hzfwG5OcRZg2eU/pFjIcpSU9ORHlZfRzR1bOftEUAdGfKtakV0Wb2yALUxyTYLZ8RtjP7/rE346OEwUySVwqi7ruI1ry0e/L2r08BHRc4sdOkGWqujvOqviyjVonwfVNrnWpT9ca9BxXvDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747760384; c=relaxed/simple;
-	bh=zrLVYfoIkes3LrPYLk3Pw0KFTE0IuKNEFcraBOZjca8=;
+	s=arc-20240116; t=1747760398; c=relaxed/simple;
+	bh=Jh2BvARYgXxOW9h9dO25z5GwMY969hNL4tjAnGB4lfY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=el6mWhz8iEkcLGhu2QhwPtHjT77Rr4MTzBm1ctIJnPZVU0ZJ9qivt5g4Dag29CBuD8rylAvbyAxBhAApj5XtYyQFcHy9M5XpmUDNb1aHyBdcFFCt95HwQNh44KqU3JnLn+0AUHVn55VRhGVxR/qcoobwEAI1HyVOczALWVd0q7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8AE981516;
-	Tue, 20 May 2025 09:59:28 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC1F23F5A1;
-	Tue, 20 May 2025 09:59:39 -0700 (PDT)
-Date: Tue, 20 May 2025 17:59:32 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Will Deacon <will@kernel.org>
-Cc: Song Liu <song@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-toolchains@vger.kernel.org,
-	live-patching@vger.kernel.org, indu.bhagat@oracle.com,
-	puranjay@kernel.org, wnliu@google.com, irogers@google.com,
-	joe.lawrence@redhat.com, jpoimboe@kernel.org, peterz@infradead.org,
-	roman.gushchin@linux.dev, rostedt@goodmis.org, kernel-team@meta.com
-Subject: Re: [PATCH v3 1/2] arm64: Implement arch_stack_walk_reliable
-Message-ID: <aCy09N8TwP1wEN-X@J2N7QTR9R3>
-References: <20250320171559.3423224-1-song@kernel.org>
- <20250320171559.3423224-2-song@kernel.org>
- <aCs08i3u9C9MWy4M@J2N7QTR9R3>
- <20250520142845.GA18846@willie-the-truck>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CVKJ2YkTmmM3VMrWbcDy9SZ4ippMRyk4XKp7y14YBoO5wTZbPFb3dApo9ACNmmXq7hdvtsBBfzTtaNyKeYU+GsGGjjsBjY0strO5iQUPW5sfewpt8x7UBOmWlBwcxKYvONG7NdbV8fyA/U8U3FmTMcwafkLiWnWjOxXqtlPfBw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UB2wxhWv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747760395;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rEMj9V3JwMyZ4OkKJP+U49jj1V+/NAmehjsFGeGy4Gg=;
+	b=UB2wxhWvSuqbupGZOJmeaYrrxgt3U3Bwkc35cqfuNX6PGPm2w9rWAwE61pVhH1sD1UoNI7
+	OPj1zoYUuzke7R69q/0Ia/jkMDmhXYhJUL9g9IGHpmW6Raz8U69x91Y80faKcMbmJsJfAk
+	pHuYWUwxU3BMmrvB90EJPdclKYjLCu0=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-692-RFNBKapqPPiw2B0g3djiBQ-1; Tue, 20 May 2025 12:59:52 -0400
+X-MC-Unique: RFNBKapqPPiw2B0g3djiBQ-1
+X-Mimecast-MFC-AGG-ID: RFNBKapqPPiw2B0g3djiBQ_1747760392
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6f8c9552514so52242036d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 09:59:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747760392; x=1748365192;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rEMj9V3JwMyZ4OkKJP+U49jj1V+/NAmehjsFGeGy4Gg=;
+        b=P6aUSljzgUFe0FydaDphzbpq1JhoeGAYZHK5pN+Ba2Ww6YC20tN3R6RhCsifzJPBTb
+         dzSXh16KpgVwhO8h/RS7pAjaaGYiRgN4EgFZh+TAQbfXg+S2Bh1+cp8dECREu4YTcnK7
+         v56C6iZAU2Ca0dx1A7h899h5tITU8S9FISxJBOEgvZquutnnyZP++wDQdHa0zd5oQx+1
+         sBJrNbAbrTZooqFCX4lbiNqcGjCFGr5N0qkXFXAY6sc5MSQvcF13nlM7k8VF/LFqmION
+         o/7u1k/Y+pXmV1/j8PcgJ8DewFmcOLvQ+nNy6+kYp6afGwS0iyl9LGKcn7hxuue36Qky
+         KRtA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbn7SAbYtAYVzuAybRBxjxG8NiZtHmYAdPhNO+WysESdoIj80hQvZ57dJwVotA7agAj13wF4oZCZ1aQI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYZ/Skaj2TQ1wOnIy/0+ktl9zSD9QR688vkIDILkdqsJKFDz7o
+	/rL6ADyC5FyXZoKbuW1r1aSXUSfqDB6ICT5XO/ULoFp1wjvh+0JEUrMMWYa6o/4/UBxdY7Wz8OA
+	urpPMIbPDftsFOh+MnjsYFmBco8PZRQBmy9RcVVRYa0hI4KcvZTPm7lpHdl7/zXDBww==
+X-Gm-Gg: ASbGncvWlnb8yxE2TaeZLIvJ+fcRzwkjQE8ixz2tzjXonav89PrT071S6DBJZCzI1GE
+	3X+orUcoQdrLIhDYh2EBFBN/XQgcysmY0hOQ15hpFIZGW12itLod1Hh53+d7l8l/HpQLXsFcYUi
+	dz00VWFr+BkrL8e9mred0mOkmtcQHUc4/xak3Jpxy1Wd4z48mxLuJ7tW0zY0JiXDFxaT8xPUz+M
+	1tHCYJQHexpvkRSTZRkICJZDklq3G0WJ6kelRsdfWvXfaQPr32ILek/9/ncu62lcVzjZm0jLYmm
+	Ty4=
+X-Received: by 2002:a05:6214:33c7:b0:6f8:ca09:d60f with SMTP id 6a1803df08f44-6f8ca09d764mr183451746d6.10.1747760392249;
+        Tue, 20 May 2025 09:59:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH9IfWJXFVUh9zlVq3n1AuEKD6UqJhdqI6hkbwqQIr3nDPfW3C8vHTS4HJ61qbW6AJWrPiEAw==
+X-Received: by 2002:a05:6214:33c7:b0:6f8:ca09:d60f with SMTP id 6a1803df08f44-6f8ca09d764mr183451476d6.10.1747760391869;
+        Tue, 20 May 2025 09:59:51 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f8b08aed47sm73634666d6.50.2025.05.20.09.59.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 09:59:51 -0700 (PDT)
+Date: Tue, 20 May 2025 12:59:47 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: lizhe.67@bytedance.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, muchun.song@linux.dev,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v3] vfio/type1: optimize vfio_pin_pages_remote() for huge
+ folio
+Message-ID: <aCy1AzYFyo4Ma1Z1@x1.local>
+References: <20250520070020.6181-1-lizhe.67@bytedance.com>
+ <20250520080719.2862017e.alex.williamson@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250520142845.GA18846@willie-the-truck>
+In-Reply-To: <20250520080719.2862017e.alex.williamson@redhat.com>
 
-On Tue, May 20, 2025 at 03:28:45PM +0100, Will Deacon wrote:
-> On Mon, May 19, 2025 at 02:41:06PM +0100, Mark Rutland wrote:
-> > I've pushed a arm64/stacktrace-updates branch [1] with fixups for those
-> > as two separate commits atop this one. If that looks good to you I
-> > suggest we post that as a series and ask Will and Catalin to take that
-> > as-is.
-> 
-> Yes, please post those to the list for review.
+Hi, Alex,
 
-Sure; I'm just prepping that now...
+On Tue, May 20, 2025 at 08:07:19AM -0600, Alex Williamson wrote:
+> Peter, David, if you wouldn't mind double checking the folio usage
+> here, I'd appreciate it.  The underlying assumption used here is that
+> folios always have physically contiguous pages, so we can increment at
+> the remainder of the folio_nr_pages() rather than iterate each page.
 
-Mark.
+Yes I think so.  E.g., there's comment above folio definition too:
+
+/**
+ * struct folio - Represents a contiguous set of bytes.
+ * ...
+ * A folio is a physically, virtually and logically contiguous set
+ * of bytes...
+ */
+
+For 1G, I wonder if in the future vfio can also use memfd_pin_folios()
+internally when possible, e.g. after stumbled on top of a hugetlb folio
+when filling the batch.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
