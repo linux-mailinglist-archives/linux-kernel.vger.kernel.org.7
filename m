@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-655251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB74ABD2E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:13:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5016DABD2EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 095941BA2CE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:13:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0E421BA27D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A79526A09E;
-	Tue, 20 May 2025 09:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D7E267711;
+	Tue, 20 May 2025 09:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MbvKLDhG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aL+LzJSU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAAA2676E9;
-	Tue, 20 May 2025 09:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7849B266B59;
+	Tue, 20 May 2025 09:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747732331; cv=none; b=AxzkJ9umgsM0epbkbPX266WeaBvL4eIOTMHaHb3odSzhmj9oxva0Rq6tuLSs+3HAONhhJNv/rQl0HmsfCmguHXN/g/7NB4ND2scPU3Sk+FrMlUyqZ7onEBSTHBmPT2Qp/fpe4qK+w7KngFdhAWfw79uf0jQD9Itux07EHXucMCo=
+	t=1747732374; cv=none; b=dsXqIVo2fR3ixLixU9Z/xkZLhGL6FSbzJSm/U3fIdnDdOyude0HpETDTD+LsHg7GASUSDplVtKOUZTXDsqeiTtuC1Hdb2yg9LwFbXWgEPF4jYYRP+UqeGWZVfQRvwISALyTmSBb1IL6O0guqQeTSvyjWcHD0l8c6YQAjMgoKhmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747732331; c=relaxed/simple;
-	bh=wubhh9XhVYypx8GAoHX6m/e9AhpqZI3lbcAFW5S/+Rc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=tkxwDxu7g3Y4+SoSjx4p9u0bXl+l8Fb+upS2sxcMhhKlqYa/f96gq6JVbTGbV4OngFp6xhNeap18qmvHpX4v+IOPrfpOXo9AaiVaNtlyrhIlRwjd8oPC+5Uot3jMLh+PqWfmc0Y68zyUz8aJc+Yxj8GK4gQVzT0bHRVlpGY/yec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MbvKLDhG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 083DEC4CEE9;
-	Tue, 20 May 2025 09:12:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747732331;
-	bh=wubhh9XhVYypx8GAoHX6m/e9AhpqZI3lbcAFW5S/+Rc=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=MbvKLDhGY0VwbC4mMAYJlCphBF4ewci+ErNPXvWxb0IjC2yPADqot53x7AF0cayFW
-	 /oOkRakWDiI3FtEo0D513hGnpP7hra/tRgHYbKvf1LOEJrKP/ScRNdrlj7YGGZXnIh
-	 w2hdU9/eE75ggvfUudY7qXRwFvYYTI6u/6CChQV71BrV7bZpercmMEqoBuAUD0kgma
-	 PSf6PTVa2foIwmpfAxrB7mvFrFaPZifkvnUHA/bcm7HtnaP/C4a5hJN6i8QNA00uwf
-	 w2Qm/SA8xBc/kmPsULbN0+HLBguiLrsg0AN+RbKBc+IP4j/D8gvdzqqFLSXXksTCVN
-	 aGZaaNNpC0Xqg==
-Message-ID: <4af0b843-171e-42d4-a9a2-d13b84c5dabd@kernel.org>
-Date: Tue, 20 May 2025 11:12:07 +0200
+	s=arc-20240116; t=1747732374; c=relaxed/simple;
+	bh=VyNSIUVE3L1AVI9sfU40qgyG3ZplchlZ8Y8Ao5j96PM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LluF4Apjswxq+70q5cVFaF3dwlGCgI4BcGR3FGe5xnreRzMyKjlt63bFfq733LwBPVv5rA2J3gbekXD3nDm0cpWlAYeGvsMAr/TTJnZPbcBmZL6CBFLx4Jz5lEVRIMohNlId3IvTJ7gibpcOueJ+9MD5JlFadtfzXuKNt754+oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aL+LzJSU; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747732372; x=1779268372;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=VyNSIUVE3L1AVI9sfU40qgyG3ZplchlZ8Y8Ao5j96PM=;
+  b=aL+LzJSUzSnOxPN8rIMqHhaEzbe2jVJkRi4Mb3bKoyV6641ARzYWZzjK
+   D2nZv7JBdmo7Yp4kVBwAp+b91rmZlOk7MX1AnCDTg6E1JgtTMQek8UGhd
+   PWlQrCJCfLKR3wy07vPtGs+72oySg7L1vQic7XEWlinAN9HQGfTly9GE3
+   IVgUddP9KcY3vnICGrhb0p1uWFxHH9/Xqe94Wr/BGxu7B6pxXKFw2lvkn
+   fdE35Ahmu4ORFUAMI/y8QiF6XXMN20WHAXa5W4rLV51fQJX8PgFHyUec8
+   l+2lEyYgggQPnnvu2HddJNkCo6DjwQmDG4b+VN7TPDWOVP7BCE/qqnnxW
+   w==;
+X-CSE-ConnectionGUID: GkA0bKEaTQiQwbEKU2RiOQ==
+X-CSE-MsgGUID: jhsPU6WzRfO6cGsCoRrRNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="49810070"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="49810070"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 02:12:51 -0700
+X-CSE-ConnectionGUID: zyRZGchVQy2k9iJkYhgmYg==
+X-CSE-MsgGUID: cLs/JexxRjufODmenBzt8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="162938153"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.243.99]) ([10.124.243.99])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 02:12:49 -0700
+Message-ID: <b8ab3c01-0602-4980-8c31-0d16c5de2545@linux.intel.com>
+Date: Tue, 20 May 2025 17:12:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,70 +66,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 5/6] arm64: defconfig: enable NVIDIA VRS PSEQ
-To: Shubhi Garg <shgarg@nvidia.com>, jonathanh@nvidia.com, lee@kernel.org,
- robh@kernel.org, alexandre.belloni@bootlin.com, thierry.reding@gmail.com,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250520090832.3564104-1-shgarg@nvidia.com>
- <20250520090832.3564104-6-shgarg@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: baolu.lu@linux.intel.com, linux-pci@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH v4 rc] iommu: Skip PASID validation for devices without
+ PASID capability
+To: Tushar Dave <tdave@nvidia.com>, joro@8bytes.org, will@kernel.org,
+ robin.murphy@arm.com, kevin.tian@intel.com, jgg@nvidia.com,
+ yi.l.liu@intel.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250520011937.3230557-1-tdave@nvidia.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250520090832.3564104-6-shgarg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250520011937.3230557-1-tdave@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 20/05/2025 11:08, Shubhi Garg wrote:
-> Enable NVIDIA VRS (Voltage Regulator Specification) power sequencer
-> device modules. NVIDIA VRS PSEQ controls ON/OFF and suspend/resume
-> power sequencing of system power rails on Tegra234 SoC. This device
-> also provides 32kHz RTC support with backup battery for system timing.
+On 5/20/2025 9:19 AM, Tushar Dave wrote:
+> Generally PASID support requires ACS settings that usually create
+> single device groups, but there are some niche cases where we can get
+> multi-device groups and still have working PASID support. The primary
+> issue is that PCI switches are not required to treat PASID tagged TLPs
+> specially so appropriate ACS settings are required to route all TLPs to
+> the host bridge if PASID is going to work properly.
+> 
+> pci_enable_pasid() does check that each device that will use PASID has
+> the proper ACS settings to achieve this routing.
+> 
+> However, no-PASID devices can be combined with PASID capable devices
+> within the same topology using non-uniform ACS settings. In this case
+> the no-PASID devices may not have strict route to host ACS flags and
+> end up being grouped with the PASID devices.
+> 
+> This configuration fails to allow use of the PASID within the iommu
+> core code which wrongly checks if the no-PASID device supports PASID.
+> 
+> Fix this by ignoring no-PASID devices during the PASID validation. They
+> will never issue a PASID TLP anyhow so they can be ignored.
+> 
+> Fixes: c404f55c26fc ("iommu: Validate the PASID in iommu_attach_device_pasid()")
+> Cc:stable@vger.kernel.org
+> Signed-off-by: Tushar Dave<tdave@nvidia.com>
+> ---
+> 
+> changes in v4:
+> - rebase to 6.15-rc7
+> 
+>   drivers/iommu/iommu.c | 43 ++++++++++++++++++++++++++++---------------
+>   1 file changed, 28 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 4f91a740c15f..9d728800a862 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -3366,10 +3366,12 @@ static int __iommu_set_group_pasid(struct iommu_domain *domain,
+>   	int ret;
+>   
+>   	for_each_group_device(group, device) {
+> -		ret = domain->ops->set_dev_pasid(domain, device->dev,
+> -						 pasid, old);
+> -		if (ret)
+> -			goto err_revert;
+> +		if (device->dev->iommu->max_pasids > 0) {
+> +			ret = domain->ops->set_dev_pasid(domain, device->dev,
+> +							 pasid, old);
+> +			if (ret)
+> +				goto err_revert;
+> +		}
 
-Nothing improved in the commit msg.
+You can save an indent by making it like this,
 
-Best regards,
-Krzysztof
+for_each_group_device(group, device) {
+	if (device->dev->iommu->max_pasids == 0)
+		continue;
+
+	ret = domain->ops->set_dev_pasid(domain, device->dev, pasid, old);
+	if (ret)
+		goto err_revert;
+}
+
+Anyway,
+
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
