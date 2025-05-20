@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-656165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D4E3ABE27A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:19:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1E2ABE27B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C56617A2FFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:19:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E4401BC0CCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72BC280010;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15C028936E;
 	Tue, 20 May 2025 18:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IpZya7Sm"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VgOncb3F"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580E32874FF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB7D28751A;
 	Tue, 20 May 2025 18:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747765044; cv=none; b=PfjdLEbEwsVStx9XhKQ9aWBp3GN0LDFT2ftC4WRWFZwp/KGWRoxbXySx7UT3cUNs6U7VmhvkTHWnyUhYm6Z51WQvUgim0d0YOBHO657DlAriC7TTNr33AWbddEsbcEtrzxdKIZV1EzNa8h11hXocSp7uIAG5SSN7DzG87EPzygE=
+	t=1747765044; cv=none; b=kcFSIgFXAZcp6CHdcGt7x7Tvxk2o0DVTpyjjvSfR9ZEW4Se2GHq/xNW12YRFo1n7yQTkom3cPte3iYWgN+wGRYeIfCqBzj1cnG16yZuoSmgWnUQJPn5Hi0Q8mDXRGkWDPWY3f7vCg5O7t75KmZjvyA+tirf2NFgZfQH12mQKOcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747765044; c=relaxed/simple;
-	bh=dbXx+MD2QCNjSXPlgp390XJDfrTSi22QXjpUAVmjpNs=;
+	bh=+LerS4ypY2xtEwvIwpQb+1sereJGijuBSIcL0NVDkSQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CHwmtvl0lc4wPuKYSsh05IF1/5FEUoIfO4A9bn9fiiFrOu92O76RTFzjEJrkbYpySgbxFNtEk98ly9rwvlw60fLtqQ1GKaWHdHvu4PamK5Trvl3Be5QrpZeryxpjiuFP3aS09PL36t3903gwtX2SF8TATvh4C2RfJruP0a9ccPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IpZya7Sm; arc=none smtp.client-ip=192.198.163.15
+	 MIME-Version; b=VQZF3p5LjHg2ZN2VWjwUNxc90ttZjbe/OOJfrFCzuh0AI7+2PSlVgOiQl8mPaThHI1xvY+yhpqYYeJ6kKWVL8ZcJKbG2mGUqKDdpTIaL8IzMGsSY5EjZuPeTuCe1R+IzqexFy0AKMVDMZp8s6mDfUznnXU59c4SArNo1kEXI1VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VgOncb3F; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,26 +35,26 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1747765043; x=1779301043;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=dbXx+MD2QCNjSXPlgp390XJDfrTSi22QXjpUAVmjpNs=;
-  b=IpZya7SmFWypX9RyAlKCveoDGsubmB33yj2a2D6vb8C+tgn5mxO5TzTh
-   ri1p8ge/aQFoX1zxhQJGknvmOIdzv3yOGKaKaTd/mIwjIJ6jMIv3Q0B7G
-   o4LtVm3UGvn/B39dL5xTNiJzquuBFloB58NFzOqZ6ILTVRGf/p/KWstiY
-   n4nrUp7x0XhZHhlCqQsT9gW+vTmjxPj6PTM6DpFRIikP7N2arO8XkaJCW
-   2kqMAzrVR4q3QRNHQi+SBWwDNnScI+ZCYAHcRTA9Ig/3R7jrd5NHsDJkM
-   4y+lALFpqNgIMaxv6fBKZaUSputw/UI5j66GVuIgcfY/SnM5c1bzfAOzj
-   Q==;
-X-CSE-ConnectionGUID: IVW93gROQYa3hSSb3tXC/Q==
-X-CSE-MsgGUID: XQ/Tb4XDRi2ggdpgqqUD6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49848038"
+  bh=+LerS4ypY2xtEwvIwpQb+1sereJGijuBSIcL0NVDkSQ=;
+  b=VgOncb3FBudyiHqvWGxGYRlEbYeZLxoh7VxBOyDoQEW/h4C3hA6zRqDR
+   VANtZKUh3jSHjWYXHS6Hq++06L1FOpa6vwZR1kb9cH99W1YWUzEsE4Zea
+   cz7C8360i5wCOShHm12pGbFn/xoiS1SVp+GSnFijlWdXeqgiaYHWJvgqq
+   1uSt3pKtblmRphbZlb8ZtIsKOkr7RNEs5o8/4+HqTlYJKDZdbMDOGlsec
+   d4l0EhlU7EQCOr0LdwrcsDkZUpkZLOr2Id5R3s/cdFEWXiid9AfJCDJu9
+   K33Aqs7w7AIFqIkTg2XZKvPVsWoZCJiXLtN8YZW3S+1h0prt/3izLpcdE
+   w==;
+X-CSE-ConnectionGUID: w7zYMWFjSU2rcY4OrqfO5w==
+X-CSE-MsgGUID: 6KjH8gFkQpeF8f26Lneljw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49848046"
 X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="49848038"
+   d="scan'208";a="49848046"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
   by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 11:17:14 -0700
-X-CSE-ConnectionGUID: TrTu6ZqPT6ypv9Q1C4ThIQ==
-X-CSE-MsgGUID: 9XXQkyNdQSmcZPyPMEDAQA==
+X-CSE-ConnectionGUID: cr8XOTUAT+SPa6g60OZ7lw==
+X-CSE-MsgGUID: a4ZuTZ0RQCuFnKnQZwo38A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="144514721"
+   d="scan'208";a="144514722"
 Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
   by orviesa003.jf.intel.com with ESMTP; 20 May 2025 11:17:14 -0700
 From: kan.liang@linux.intel.com
@@ -70,12 +70,11 @@ Cc: eranian@google.com,
 	tmricht@linux.ibm.com,
 	leo.yan@arm.com,
 	Kan Liang <kan.liang@linux.intel.com>,
-	Bibo Mao <maobibo@loongson.cn>,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	loongarch@lists.linux.dev
-Subject: [PATCH V4 13/16] loongarch/perf: Remove driver-specific throttle support
-Date: Tue, 20 May 2025 11:16:41 -0700
-Message-Id: <20250520181644.2673067-14-kan.liang@linux.intel.com>
+	"David S . Miller" <davem@davemloft.net>,
+	sparclinux@vger.kernel.org
+Subject: [PATCH V4 14/16] sparc/perf: Remove driver-specific throttle support
+Date: Tue, 20 May 2025 11:16:42 -0700
+Message-Id: <20250520181644.2673067-15-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20250520181644.2673067-1-kan.liang@linux.intel.com>
 References: <20250520181644.2673067-1-kan.liang@linux.intel.com>
@@ -97,27 +96,26 @@ event_limit. It already does an inatomic event disable. The pmu->stop
 is not required either.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Bibo Mao <maobibo@loongson.cn>
-Cc: Huacai Chen <chenhuacai@loongson.cn>
-Cc: loongarch@lists.linux.dev
+Cc: David S. Miller <davem@davemloft.net>
+Cc: sparclinux@vger.kernel.org
 ---
- arch/loongarch/kernel/perf_event.c | 3 +--
+ arch/sparc/kernel/perf_event.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/loongarch/kernel/perf_event.c b/arch/loongarch/kernel/perf_event.c
-index f86a4b838dd7..8ad098703488 100644
---- a/arch/loongarch/kernel/perf_event.c
-+++ b/arch/loongarch/kernel/perf_event.c
-@@ -479,8 +479,7 @@ static void handle_associated_event(struct cpu_hw_events *cpuc, int idx,
- 	if (!loongarch_pmu_event_set_period(event, hwc, idx))
- 		return;
+diff --git a/arch/sparc/kernel/perf_event.c b/arch/sparc/kernel/perf_event.c
+index f02a283a8e8f..cae4d33002a5 100644
+--- a/arch/sparc/kernel/perf_event.c
++++ b/arch/sparc/kernel/perf_event.c
+@@ -1668,8 +1668,7 @@ static int __kprobes perf_event_nmi_handler(struct notifier_block *self,
+ 		if (!sparc_perf_event_set_period(event, hwc, idx))
+ 			continue;
  
--	if (perf_event_overflow(event, data, regs))
--		loongarch_pmu_disable_event(idx);
-+	perf_event_overflow(event, data, regs);
- }
+-		if (perf_event_overflow(event, &data, regs))
+-			sparc_pmu_stop(event, 0);
++		perf_event_overflow(event, &data, regs);
+ 	}
  
- static irqreturn_t pmu_handle_irq(int irq, void *dev)
+ 	finish_clock = sched_clock();
 -- 
 2.38.1
 
