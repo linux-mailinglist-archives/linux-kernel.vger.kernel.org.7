@@ -1,135 +1,148 @@
-Return-Path: <linux-kernel+bounces-655303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B912ABD3AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:42:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99A2ABD3B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5191B65553
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:43:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF716160E75
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44018269898;
-	Tue, 20 May 2025 09:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F1D268C51;
+	Tue, 20 May 2025 09:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kmDkdezT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVy0BD+X"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC1425DD18;
-	Tue, 20 May 2025 09:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5096F25DD18;
+	Tue, 20 May 2025 09:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747734156; cv=none; b=IfloIdMDwGf3aOZ0m9WaJsCbOsOev1UqjUBl6GS1VINDYX/iZF+WjPQDuO9WdKXlPD8N0Ez5k2ji7L7DxYonejNzEwHzjD64Q6OtBPmis9vRZkqSqCIURPifN56WcIlvVis8vP0TxBPPBBnAu3O+w1b8Akc9pYus00zKSs2NTj8=
+	t=1747734239; cv=none; b=B1wOmPmwdzvJykuwAZXbrHNGdbtmRNom3wPDC1fSY7Ydv0O/pF8GPs5zbQ6DB1g5A5eBFLJMcDetCz3jfdJCmWd1wY8h7pMDqktcpWmzxjATwBfOvOrfEGorbs96CeuVQe/jrVFjOkJ0JlK8AFFZmzcLQUNkcQ8jh+D69Kvp+uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747734156; c=relaxed/simple;
-	bh=scRTFg5Z/15G3T5ZwlK/DAxQySslJLmHICkOIOYLsbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VMrp74+zXPRAUbagVST7LGkh6rOnQ2DfKR4pm8HOD7gRkqT4Ti9zrk/qVFwDsiN5IdZ3/peCiGa/uO22vuRpCYsWc6H6JFxvFh1Zuwgyyry0llkjh9mM5gxCGhzj5mw3LZs3rVTASLxAUml+nlGKKkpnBK9B6yT/3RkEzycAzIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kmDkdezT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81FF4C4CEEB;
-	Tue, 20 May 2025 09:42:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747734156;
-	bh=scRTFg5Z/15G3T5ZwlK/DAxQySslJLmHICkOIOYLsbQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kmDkdezTOgHiecsU+sNSU1PX+X1FeyQIpiks20/VgbkozAunNLjiygnSVNOn16qiK
-	 VXwpnjdYzYVIJQ4HaBZx20u1TG0eBJjZM3yEGGCY0zPxTH8kMwSQGWDpvRC9DUK00s
-	 xIsEgcgAg/tZCeJSV69RYdOiTw8OfaQ8Aee1hYM58FreDmC4cNo1G5+I61OqKaFEfV
-	 Nw5jEpvBgSKabD7SoJ/C12CLt8L4q2LGiUdEnHHacTik/OFxRTZ9iK3jWI0Yv782dU
-	 y1TufKO3hp7vEbBTVb5uRPNk4FtsPvchNh49xXcBcA9RInoHnHdYW6l6pxHWTmZdRU
-	 3KTPqMj7K4DRg==
-Message-ID: <b7bd8289-840b-47b8-ba66-d4dc865885ba@kernel.org>
-Date: Tue, 20 May 2025 11:42:31 +0200
+	s=arc-20240116; t=1747734239; c=relaxed/simple;
+	bh=KRC80vXoGGKP5ZAHY2BxEV2sWz7Ool89aoaHqbBCfdg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mCUuyDikubZ8BXQdWdG+8dIjol0CS0z2cUVUG1JoBjMdWjL1z/hqL1b6SV9ere0P9uGWQE8skn/xpcmGTjeU+sKJvVbtY1KsedDEx3nc9yNNAmu1CzDHKmRCCgWRnr6c/mo8E7C7ONnPXw/RfmNwudP3y4OVzFH55JkB84ZktO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nVy0BD+X; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7399a2dc13fso6858647b3a.2;
+        Tue, 20 May 2025 02:43:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747734237; x=1748339037; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=72RXTv/sI4vy4urdgBX3zIYwp1p5m2C94ZkpYBDXKgc=;
+        b=nVy0BD+XcjFFNPjkzR/AMwwb34w3bkz/v96UDObzPcqTpyzgacpBbX8NKjNpd/Mz9d
+         ZqEbS9nADo1JUQDUUIbxy4JYs1jixGzf0wbc05HQ/71wxiqcgjIbq6vmYbqViaooR4vp
+         26BK5Saorq3gGinfMBTS8H/UWSblUuQXwMSaBLeK1Dy5UuZG0R9on/YQzsbV/pnYvNjO
+         0GDXIkz+/WqUpllJtYFPsHufeKCj4KtuOz0y7+Q0hS2NVo5pdcXpJ52bPPIIJSXcVRT9
+         vk39sqFq+yOLcSo2Q+4ecgMTOcIC3OkS3TCqvkzAN0e+UhJ2+/yToPlktAdKpnZ9iFU0
+         vqww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747734237; x=1748339037;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=72RXTv/sI4vy4urdgBX3zIYwp1p5m2C94ZkpYBDXKgc=;
+        b=lkRwRtsKbCTTXy5BDzudLTAJq4Lewdq8DG+ROSVAc9sQL+fK9hzUTxmQZwv7m+4gid
+         DwEKb/uJ6+aK1szJuLgz6bf9yHJmCIffWBaCx+1zRadWc7hGf+AwGpPKmUsKX/nnHp3a
+         NzXI4VyBnlESv/vezUnnqHaQ3Irc70CC7+u/3gXHJX9fAYdI7y86bjqBd7z4u1aIQcOV
+         KO49WfWxaAISvqnG334FfTUrabABKaU+mJ1WwyaEMpWnoM8f2/E1Ikafy9LBDsEG2nQ1
+         SVHn1QuqbIC9uMiDZUG7alPjTk/qDBIAynnNw+C6n1D/F9XFVi848wj26oxdhn0CXvl6
+         3Fgg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9HSk+zXwtJ0+pF2svqCs/cFWAJ1zvK1tWQIqDUs/smMKaO19nX5+kr9udtnaL++cxL2BtGps7kKE=@vger.kernel.org, AJvYcCWGLAr6bxWplqLeWKrwDGxl6WSCY6JkwJ3ZCs+opZ9GfyKaETPd3mUG/D+knS6kf4aVcnTl5sMyiBajVeo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/kMTjp0v8dtTDK03IkVf/f49sWRxu1j2G+Ghi6m22OXeE5PcK
+	MHc3pejZdN9ntGXQ9QZgxYHmKwnoInKx4Vt9Q2PYRBdIQipPFxoV39sj
+X-Gm-Gg: ASbGnctxqNR24fb+XFmmUTydxdGcIhZlgi6/taRILuiHM2KbPFJ7krJ/pdVxVWSpg+x
+	xxUVyco6YLSpV9qfl/BvgFY0PMST2D4KXKWAxYX72T11qB+nRNWBW+Mu7shhksdJYJ5zFTVxhao
+	TN/wDXfCePihlLZ5Wif/UHZaxmf46NDh7Q4dQL2ZkkIRCNgrV/fUzTB3cUV5FPyf0H4RxEUyH8L
+	5t60Ub0qe5RlOhIGtFNTn/Ov61OAjRS3mEOSFiaBhRtj9YHctNo577QDCLbUhlliN57IXLZRW7l
+	ObdQK1DzGeibaa9ZTfJzd1rTmsK0CI5gCNFydm6zVlhhCNFLMLYjYAI3L1MfQxA5p1ncpb+v5I4
+	Ir+ZhP1v2QcbVZA==
+X-Google-Smtp-Source: AGHT+IGowChZd0yBQuEnow5mD+xA969bcqL8YkmmtlUyLJOW3JKKttacw6iwp5p0zrT9Yq8ZzAOl4w==
+X-Received: by 2002:a05:6a20:3d1c:b0:1ee:d418:f764 with SMTP id adf61e73a8af0-2170ce33ad3mr24484932637.38.1747734237424;
+        Tue, 20 May 2025 02:43:57 -0700 (PDT)
+Received: from localhost.localdomain ([2401:4900:62fe:9593:f762:39d9:3865:830a])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eaf6ffdbsm6559891a12.20.2025.05.20.02.43.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 02:43:57 -0700 (PDT)
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+To: trenn@suse.com,
+	shuah@kernel.org,
+	jwyatt@redhat.com,
+	jkacur@redhat.com,
+	linux-pm@vger.kernel.org
+Cc: linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Subject: [PATCH v2] cpupower: Implement powercap_set_enabled()
+Date: Tue, 20 May 2025 15:13:45 +0530
+Message-ID: <20250520094345.97200-1-suchitkarunakaran@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] arm64: dts: qcom: qcs615: Add support for camss
-To: Wenmeng Liu <quic_wenmliu@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, bryan.odonoghue@linaro.org, todor.too@gmail.com,
- rfoss@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-References: <20250520-qcs615-adp-air-camss-v1-0-ac25ca137d34@quicinc.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250520-qcs615-adp-air-camss-v1-0-ac25ca137d34@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20/05/2025 10:56, Wenmeng Liu wrote:
-> This series adds support to bring up the CSIPHY, CSID, VFE/RDI interfaces 
-> in QCS615. Tested this on QCS615 ADP AIR board with CSID TPG.
-> 
-> Tested with following commands:
-> media-ctl --reset
-> v4l2-ctl -d /dev/v4l-subdev3 -c test_pattern=0
-> media-ctl -V '"msm_csid0":0[fmt:SRGGB10/1920x1080 field:none]'
-> media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/1920x1080 field:none]'
-> media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
-> v4l2-ctl -d /dev/v4l-subdev3 -c test_pattern=9
-> yavta -B capture-mplane -n 5 -f SRGGB10P -s 1920x1080 /dev/video0 --capture=7
-> 
-> This patch series depends on patch series:
-> https://lore.kernel.org/all/20250518-qcs615_camss-v1-0-12723e26ea3e@quicinc.com/
-> https://lore.kernel.org/all/20250518-qcs615_camss-v1-0-12723e26ea3e@quicinc.com/
-> https://lore.kernel.org/all/20250424-qcs615-mm-v7-clock-controllers-v8-0-bacad5b3659a@quicinc.com/
+The powercap_set_enabled() function previously returned a dummy value
+and was marked with a TODO comment to implement it. This patch implements the 
+function by writing the desired mode (0 or 1) to /sys/class/powercap/intel-rapl/enabled
 
-Three dependencies? So this cannot be tested in any close future. You
-need to rework the way you upstream, to avoid multiple dependencies.
-This was already communicated multiple times.
+Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+---
+ tools/power/cpupower/lib/powercap.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/tools/power/cpupower/lib/powercap.c b/tools/power/cpupower/lib/powercap.c
+index 94a0c69e55ef..7947b9809239 100644
+--- a/tools/power/cpupower/lib/powercap.c
++++ b/tools/power/cpupower/lib/powercap.c
+@@ -70,6 +70,22 @@ static int sysfs_get_enabled(char *path, int *mode)
+ 	return ret;
+ }
+ 
++static int sysfs_set_enabled(const char *path, int mode)
++{
++	int fd;
++	char buf[2] = { mode ? '1' : '0', '\n' };
++	ssize_t ret;
++
++	fd = open(path, O_WRONLY);
++	if (fd == -1)
++		return -1;
++
++	ret = write(fd, buf, sizeof(buf));
++	close(fd);
++
++	return ret == sizeof(buf) ? 0 : -1;
++}
++
+ int powercap_get_enabled(int *mode)
+ {
+ 	char path[SYSFS_PATH_MAX] = PATH_TO_POWERCAP "/intel-rapl/enabled";
+@@ -77,12 +93,10 @@ int powercap_get_enabled(int *mode)
+ 	return sysfs_get_enabled(path, mode);
+ }
+ 
+-/*
+- * TODO: implement function. Returns dummy 0 for now.
+- */
+ int powercap_set_enabled(int mode)
+ {
+-	return 0;
++	char path[SYSFS_PATH_MAX] = PATH_TO_POWERCAP "/intel-rapl/enabled";
++	return sysfs_set_enabled(path, mode);
+ }
+ 
+ /*
+-- 
+2.49.0
+
 
