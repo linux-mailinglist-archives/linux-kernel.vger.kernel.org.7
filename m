@@ -1,332 +1,208 @@
-Return-Path: <linux-kernel+bounces-656527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB7D8ABE77D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:50:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D65BFABE843
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 01:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44E003A62DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:49:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 409F33BE644
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 23:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C38A255240;
-	Tue, 20 May 2025 22:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2E625F99F;
+	Tue, 20 May 2025 23:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8wyhnMY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="RkOEIL8H"
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A485E219A80;
-	Tue, 20 May 2025 22:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B311544C7C;
+	Tue, 20 May 2025 23:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747781410; cv=none; b=jGrFX1JIYo4gVnUyvGTB+E7YF2vAqgKdf9BudVTV3Rd9uYQxgQfqtEh9pPcj8HDaXx8ct+qurj0fYgqM/eZm9rZfUogWi1w/CccaRJvzQcj/HxmHsR0IliqzrlMHOUINm/Bip5IdVadPrdLmcgNcil6GjoEvOy12BjGbRa7wPxE=
+	t=1747784804; cv=none; b=e7o1j9LbPyGK8DHmeetQeuz9gPqjCK8uGpXsiBcYLtg/d8baf+t1d84A7zIOs6e9noaRE2NGRBiu0VV7HGugD80B9iw/Rc5h3HJjiFKzV2/WBeUw0BL9bktCnDKncSO+luAXpcmLVq5v3+yPhdkQCtFryWQNs6yHvxZRtvmeajg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747781410; c=relaxed/simple;
-	bh=1u9LvhcaOTRd24ql7ud9/uRq8uX/ET3DmN6DwGlD20k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uSLWca2mP7TWUVyMEHzUy0dYb8NAYv/JxZxXFruE6zQ4n1kJvB54+hg9X2m+XFDL/FkwnEwZ9FgXefBOzSSgqSSPJr2rmJP6wut6i49z5wlDK81dHOw6MC1gmIkGYVYid0CBENGwgkhjBnjRyy7ngjimotJk7EllrfzXmliXo04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8wyhnMY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3476C4CEE9;
-	Tue, 20 May 2025 22:50:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747781409;
-	bh=1u9LvhcaOTRd24ql7ud9/uRq8uX/ET3DmN6DwGlD20k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O8wyhnMYLHA+w1I6e2yBl+GrfhCu3uhYqgMZdD6q6Kn6YMCDg8EujS/qPKoLM6ely
-	 R67k3HejOtKkUNX3cM3b/9XGyjwq2optLdKxGdKcy73Z606SlY5Der/NV3KucUZ5Jm
-	 AZiLQjuba8+iuG5+FMoaqm+Ra7Bg9C0Xsofl+nfQ9IqzcyIwd+nyZ3BPce7oodV5oQ
-	 iTwYzlOZJZvu1DOB+f4QvNMsqQp+W90YY6SA0q/v71lefDBEDnursvI1P+YNbT+fyM
-	 nWCxCGgwjn56r+Zlw6qy4PM4L5IJUzZadBrrq+AwHvmbo5NXsMyeHAfgmsNhoW/SI+
-	 KiAEz/DVZHVeA==
-Date: Tue, 20 May 2025 15:50:07 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [RFC/PATCH] perf report: Support latency profiling in
- system-wide mode
-Message-ID: <aC0HH45JCBTchZMc@google.com>
-References: <aBmvmmRKpeVd6aT3@google.com>
- <CACT4Y+bm4gCO_sGvEkxLQfw8JyrWvCzqV_H5h+oebt8kk1_Hwg@mail.gmail.com>
- <aBm1x2as1fraHXHz@google.com>
- <CACT4Y+aiU-dHVgTKEpyJtn=RUUyYJp8U5BjyWSOHm6b2ODp9cA@mail.gmail.com>
- <aBvwFPRwA2LVQJkO@google.com>
- <CACT4Y+YacgzrUL1uTqxkPOjQm6ryn2R_nPs8dgnrP_iKA9yasQ@mail.gmail.com>
- <aCdo6Vz2MVv3N0kk@google.com>
- <CACT4Y+YHxXjCU2jySTUO5kH=xC8scdzTTuP2qEBc5zMber44Aw@mail.gmail.com>
- <aCveO4qQGy03ow5p@google.com>
- <CACT4Y+YdnQebkGTQJ9yhLs2j12WBYk2ReiBAq5cE+wtu1RRU5A@mail.gmail.com>
+	s=arc-20240116; t=1747784804; c=relaxed/simple;
+	bh=bLUFl9S0ppuDBraRW5HPCuSaH2HqBMXggxUmwVMjqpY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g2gG/HeyNXm/i6m5oHezu4Iff6iGGIL64VhHD9UYCXLf1+N669MtX1iWOnUZdiwyZZI9VnQNKUc+1Q4K6VP6k8MR09HmhA5/8VTgIY+fGAzF9aQMNLp0pWPcLGlmlZldmKyEgszpKgeh8P6NeEM/I7gG6jV/n6r/oIugaGd9KrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=RkOEIL8H; arc=none smtp.client-ip=44.202.169.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5002a.ext.cloudfilter.net ([10.0.29.215])
+	by cmsmtp with ESMTPS
+	id HV1mulW5czZPaHWfQuWA9E; Tue, 20 May 2025 23:46:40 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id HWfPupK4YJ4PgHWfPuXVMp; Tue, 20 May 2025 23:46:40 +0000
+X-Authority-Analysis: v=2.4 cv=ZaLWNdVA c=1 sm=1 tr=0 ts=682d1460
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=efVMuJ2jJG67FGuSm7J3ww==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=vggBfdFIAAAA:8 a=1XWaLZrsAAAA:8 a=J1Y8HTJGAAAA:8 a=20KFwNOVAAAA:8
+ a=Ikd4Dj_1AAAA:8 a=80Ll13GqqWtdygCPsrQA:9 a=QEXdDO2ut3YA:10
+ a=y1Q9-5lHfBjTkpIzbSAN:22 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=GCSOMPC5nSp6vXCJCOyw43TeCqRPw0aHopDjgStRrEo=; b=RkOEIL8HdLqtSdBneGawhJ03KC
+	V5lylhiwlA4tjpIzNUfTJZWG/JI7KZeu0R6u6RT1Wgrna+sdG1TDsjQp636L0eq6FZoYKWChuB7Fw
+	OZ0G0KSPZ070n11fgREH1/0pK0bKpUB1DPc5b1W9aIcMOqclPtiHhEqQxW+bGAm7kgVZE2mo/dh/j
+	6zJNBFSYvPNpVvAkrfTJ/WhewMnZXFW4+yGGQzgISc7mhKsZql+BSiIpOk5uDOG5GEinCO8EkqnBy
+	s1A4m2PG6KKo5ero7hH8QxQugRIrdkWVBAN3yDhtTyq0bNE9UoLHmAnxwgN9oLTnhDbcmdEAAKCgY
+	iZ1Mg+vw==;
+Received: from [177.238.17.151] (port=45184 helo=[192.168.0.27])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1uHVnL-00000001711-3dD6;
+	Tue, 20 May 2025 17:50:47 -0500
+Message-ID: <2af2857c-d4b9-45c1-b241-dffa23ff4f32@embeddedor.com>
+Date: Tue, 20 May 2025 16:50:29 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+YdnQebkGTQJ9yhLs2j12WBYk2ReiBAq5cE+wtu1RRU5A@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/7] rtnetlink: do_setlink: Use struct sockaddr_storage
+To: Kees Cook <kees@kernel.org>, Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Ido Schimmel <idosch@nvidia.com>,
+ netdev@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Mike Christie <michael.christie@oracle.com>,
+ Max Gurtovoy <mgurtovoy@nvidia.com>, Maurizio Lombardi
+ <mlombard@redhat.com>, Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Mingzhe Zou <mingzhe.zou@easystack.cn>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Dr. David Alan Gilbert" <linux@treblig.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Stanislav Fomichev <sdf@fomichev.me>,
+ Cosmin Ratiu <cratiu@nvidia.com>, Lei Yang <leiyang@redhat.com>,
+ Samuel Mendoza-Jonas <sam@mendozajonas.com>,
+ Paul Fertser <fercerpav@gmail.com>, Alexander Aring <alex.aring@gmail.com>,
+ Stefan Schmidt <stefan@datenfreihafen.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>, Hayes Wang
+ <hayeswang@realtek.com>, Douglas Anderson <dianders@chromium.org>,
+ Grant Grundler <grundler@chromium.org>, Jay Vosburgh <jv@jvosburgh.net>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Jiri Pirko <jiri@resnulli.us>,
+ Eric Biggers <ebiggers@google.com>, Milan Broz <gmazyland@gmail.com>,
+ Philipp Hahn <phahn-oss@avm.de>, Ard Biesheuvel <ardb@kernel.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, Ahmed Zaki <ahmed.zaki@intel.com>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Xiao Liang <shaw.leon@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+ target-devel@vger.kernel.org, linux-wpan@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-hyperv@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20250520222452.work.063-kees@kernel.org>
+ <20250520223108.2672023-7-kees@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20250520223108.2672023-7-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 177.238.17.151
+X-Source-L: No
+X-Exim-ID: 1uHVnL-00000001711-3dD6
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.27]) [177.238.17.151]:45184
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 0
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfBhr7T620cDl5hmzjg9cEWPDyFpOpeDCN3E8pMcuns6h52ziAfClC024x3YzYQB9UuuHs0ergmKEnlhuUPx2EMZeelFPRFED6kM2tjNFw0h4tTPU82ev
+ k0jzQe6m/V3iFOQr0NTmNrdVZG8pspKVOYw6Br7t7Ur9kNaso/5mMlupVCzYCafeWP003u6gI6CmPk0m5LdWdY1XQ+F2WpHR6N+OvSC2JJjhskRms7+0iVRl
+ vddpxGoS1RcLWQdFZQuohRk40h+aC25VdQcOSD+kKHTNcv/e4zjBNTW6mbc6UyKjiD3b/zDiGan5FKTXK+JOmGvqL/QGnvXubkU1Afr1fcPynffeDhr/X+DP
+ hQSfaTcViH/DPoSSPDTfs09bDhuRWa6IMguBtVWRJhIBkVdJNU2WSCkEO+9JUONeFp65nquPRuULRWDFfjZktxL8PEhi9JpQDHEPxLGh0jWvqoQePSAYTtj/
+ 517k4M1TV2Tf2IMlI5gBCNFLKR2Bs00YNWYe/w==
 
-On Tue, May 20, 2025 at 08:45:51AM +0200, Dmitry Vyukov wrote:
-> On Tue, 20 May 2025 at 03:43, Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > On Mon, May 19, 2025 at 08:00:49AM +0200, Dmitry Vyukov wrote:
-> > > On Fri, 16 May 2025 at 18:33, Namhyung Kim <namhyung@kernel.org> wrote:
-> > > >
-> > > > Hello,
-> > > >
-> > > > Sorry for the delay.
-> > > >
-> > > > On Thu, May 08, 2025 at 02:24:08PM +0200, Dmitry Vyukov wrote:
-> > > > > On Thu, 8 May 2025 at 01:43, Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > >
-> > > > > > On Tue, May 06, 2025 at 09:40:52AM +0200, Dmitry Vyukov wrote:
-> > > > > > > On Tue, 6 May 2025 at 09:10, Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > > > > > > > Where does the patch check that this mode is used only for system-wide profiles?
-> > > > > > > > > > > Is it that PERF_SAMPLE_CPU present only for system-wide profiles?
-> > > > > > > > > >
-> > > > > > > > > > Basically yes, but you can use --sample-cpu to add it.
-> > > > > > > > >
-> > > > > > > > > Are you sure? --sample-cpu seems to work for non-system-wide profiles too.
-> > > > > > > >
-> > > > > > > > Yep, that's why I said "Basically".  So it's not 100% guarantee.
-> > > > > > > >
-> > > > > > > > We may disable latency column by default in this case and show warning
-> > > > > > > > if it's requested.  Or we may add a new attribute to emit sched-switch
-> > > > > > > > records only for idle tasks and enable the latency report only if the
-> > > > > > > > data has sched-switch records.
-> > > > > > > >
-> > > > > > > > What do you think?
-> > > > > > >
-> > > > > > > Depends on what problem we are trying to solve:
-> > > > > > >
-> > > > > > > 1. Enabling latency profiling for system-wide mode.
-> > > > > > >
-> > > > > > > 2. Switch events bloating trace too much.
-> > > > > > >
-> > > > > > > 3. Lost switch events lead to imprecise accounting.
-> > > > > > >
-> > > > > > > The patch mentions all 3 :)
-> > > > > > > But I think 2 and 3 are not really specific to system-wide mode.
-> > > > > > > An active single process profile can emit more samples than a
-> > > > > > > system-wide profile on a lightly loaded system.
-> > > > > >
-> > > > > > True.  But we don't need to care about lightly loaded systems as they
-> > > > > > won't cause problems.
-> > > > > >
-> > > > > >
-> > > > > > > Similarly, if we rely on switch events for system-wide mode, then it's
-> > > > > > > equally subject to the lost events problem.
-> > > > > >
-> > > > > > Right, but I'm afraid practically it'll increase the chance of lost
-> > > > > > in system-wide mode.  The default size of the sample for system-wide
-> > > > > > is 56 byte and the size of the switch is 48 byte.  And the default
-> > > > > > sample frequency is 4000 Hz but it cannot control the rate of the
-> > > > > > switch.  I saw around 10000 Hz of switches per CPU on my work env.
-> > > > > >
-> > > > > > >
-> > > > > > > For problem 1: we can just permit --latency for system wide mode and
-> > > > > > > fully rely on switch events.
-> > > > > > > It's not any worse than we do now (wrt both profile size and lost events).
-> > > > > >
-> > > > > > This can be an option and it'd work well on lightly loaded systems.
-> > > > > > Maybe we can just try it first.  But I think it's better to have an
-> > > > > > option to make it work on heavily loaded systems.
-> > > > > >
-> > > > > > >
-> > > > > > > For problem 2: yes, we could emit only switches to idle tasks. Or
-> > > > > > > maybe just a fake CPU sample for an idle task? That's effectively what
-> > > > > > > we want, then your current accounting code will work w/o any changes.
-> > > > > > > This should help wrt trace size only for system-wide mode (provided
-> > > > > > > that user already enables CPU accounting for other reasons, otherwise
-> > > > > > > it's unclear what's better -- attaching CPU to each sample, or writing
-> > > > > > > switch events).
-> > > > > >
-> > > > > > I'm not sure how we can add the fake samples.  The switch events will be
-> > > > > > from the kernel and we may add the condition in the attribute.
-> > > > > >
-> > > > > > And PERF_SAMPLE_CPU is on by default in system-wide mode.
-> > > > > >
-> > > > > > >
-> > > > > > > For problem 3: switches to idle task won't really help. There can be
-> > > > > > > lots of them, and missing any will lead to wrong accounting.
-> > > > > >
-> > > > > > I don't know how severe the situation will be.  On heavily loaded
-> > > > > > systems, the idle task won't run much and data size won't increase.
-> > > > > > On lightly loaded systems, increased data will likely be handled well.
-> > > > > >
-> > > > > >
-> > > > > > > A principled approach would be to attach a per-thread scheduler
-> > > > > > > quantum sequence number to each CPU sample. The sequence number would
-> > > > > > > be incremented on every context switch. Then any subset of CPU should
-> > > > > > > be enough to understand when a task was scheduled in and out
-> > > > > > > (scheduled in on the first CPU sample with sequence number N, and
-> > > > > > > switched out on the last sample with sequence number N).
-> > > > > >
-> > > > > > I'm not sure how it can help.  We don't need the switch info itself.
-> > > > > > What's needed is when the CPU was idle, right?
-> > > > >
-> > > > > I mean the following.
-> > > > > Each sample has a TID.
-> > > > > We add a SEQ field, which is per-thread and is incremented after every
-> > > > > rescheduling of the thread.
-> > > > >
-> > > > > When we see the last sample for (TID,SEQ), we pretend there is SCHED
-> > > > > OUT event for this thread at this timestamp. When we see the first
-> > > > > sample for (TID,SEQ+1), we pretend there is SCHED IN event for this
-> > > > > thread at this timestamp.
-> > > > >
-> > > > > These SCHED IN/OUT events are not injected by the kernel. We just
-> > > > > pretend they happen for accounting purposes. We may actually
-> > > > > materialize them in the perf tool, or me may just update parallelism
-> > > > > as if they happen.
-> > > >
-> > > > Thanks for the explanation.  But I don't think it needs the SEQ and
-> > > > SCHED IN/OUT generated from it to track lost records.  Please see below.
-> > > >
-> > > > >
-> > > > > With this scheme we can lose absolutely any subset of samples, and
-> > > > > still get very precise accounting. When we lose samples, the profile
-> > > > > of course becomes a bit less precise, but the effect is local and
-> > > > > recoverable.
-> > > > >
-> > > > > If we lose the last/first event for (TID,SEQ), then we slightly
-> > > > > shorten/postpone the thread accounting in the process parallelism
-> > > > > level. If we lose a middle (TID,SEQ), then parallelism is not
-> > > > > affected.
-> > > >
-> > > > I'm afraid it cannot check parallelism by just seeing the current thread.
-> > > > I guess it would need information from other threads even if it has same
-> > > > SEQ.
-> > >
-> > > Yes, we still count parallelism like you do in this patch, we just use
-> > > the SEQ info instead of CPU numbers and explicit switch events.
-> >
-> > I mean after record lost, let's say
-> >
-> >   t1: SAMPLE for TID 1234, seq 10  (parallelism = 4)
-> >   t2: LOST
-> >   t3: SAMPLE for TID 1234, seq 10  (parallelism = ?)
-> >
-> > I don't think we can continue to use parallelism of 4 after LOST even if
-> > it has the same seq because it cannot know if other threads switched on
-> > other CPUs.  Then do we need really the seq?
+
+
+On 20/05/25 16:31, Kees Cook wrote:
+> Instead of a heap allocating a variably sized struct sockaddr and lying
+> about the type in the call to netif_set_mac_address(), use a stack
+> allocated struct sockaddr_storage. This lets us drop the cast and avoid
+> the allocation.
 > 
-> I do not understand the problem you describe.
-> We just keep updating parallelism according to the algorithm I
-> described. It works fine in the presence of lost events.
-
-Do you think it's ok to use 4 if seq is the same?  I'm afraid it'd be
-inaccurate.
-
+> Putting "ss" on the stack means it will get a reused stack slot since
+> it is the same size (128B) as other existing single-scope stack variables,
+> like the vfinfo array (128B), so no additional stack space is used by
+> this function.
 > 
+> Signed-off-by: Kees Cook <kees@kernel.org>
+
+Acked-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+
+Thanks!
+-Gustavo
+
+> ---
+> Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Simon Horman <horms@kernel.org>
+> Cc: Ido Schimmel <idosch@nvidia.com>
+> Cc: <netdev@vger.kernel.org>
+> ---
+>   net/core/rtnetlink.c | 19 ++++---------------
+>   1 file changed, 4 insertions(+), 15 deletions(-)
 > 
-> > > > Also postpone thread accounting can be complex.  I think it should wait
-> > > > for all other threads to get a sample.  Maybe some threads exited and
-> > > > lost too.
-> > >
-> > > Yes, in order to understand what's the last event for (TID,SEQ) we
-> > > need to look ahead and find the event (TID,SEQ+1). The easiest way to
-> > > do it would be to do 2 passes over the trace. That's the cost of
-> > > saving trace space + being resilient to lost events.
-> > >
-> > > Do you see any other issues with this scheme besides requiring 2 passes?
-> >
-> > Well.. 2 pass itself can be a problem due to slowness it'd bring.  Some
-> > people complain about the speed of perf report as of now.
-> 
-> Is trace processing CPU-bound or memory-bound? If it's CPU-bound, then
-> the second pass may be OK-ish, since we will need minimal CPU
-> processing during the first pass.
-
-It depends on the size of data, but I guess it's CPU-bound in most cases.
-
-> 
-> 
-> > I think we can simply reset the parallelism in all processes after LOST
-> > and set current process to the idle task.  It'll catch up as soon as it
-> > sees samples from all CPUs.
-> 
-> I guess we can approximate parallelism as you described here:
-> 
-> > Hmm.. ok.  Maybe we can save the timestamp of the last sample on each
-> > CPU and clear the current thread after some period (2x of given freq?).
-> 
-> We probably don't need to do anything special for lost events in this
-> scheme at all. If the gap caused by lost events is tiny, then we
-> consider nothing happened. If the gap is large enough, then we
-> consider the CPU as idle for the duration of the gap. Either way it
-> will be handled on common grounds.
-
-How do you know if it's tiny?  Do you mean the seq remains after lost?
-
-> 
-> But tuning of these heuristics + testing and verification may be a bit
-> of a problem. I would hate to end up with a tool which I won't trust.
-> 
-> Here:
-> "after some period (2x of given freq?)"
-> do you mean 2x average/median period, or 1/2 average/median period?
-> (2x freq is 1/2 period)
-
-Oh, sorry.  It's 2x period.
-
-> 
-> Ideally, we consider a CPU idle after 1/2 period after it switched to
-> the idle task and we stop receiving samples.
-> But on the other hand, we don't want to consider it constantly
-> becoming idle, when it's just doing normal sampling with the normal
-> period...
-> 
-> So ideally the algorithm should be something like:
-> let's say average/median sampling period is P
-> we got last sample for CPU X at time T
-> if by time T+2P we have not seen any other sample on CPU X, then
-> consider CPU X idle since T+0.5P
-> 
-> But this would also require either 2 passes over the data, or some
-> kind of look ahead similar to the algo I proposed...
-
-I think we can do it in 1 pass.  For each sample,
-
-  for_each_cpu(cpu) {
-      if (current[cpu]->last_timestamp + 2*period < sample->timestamp) {
-          if (current[cpu]->thread != idle) {
-              current[cpu]->thread->parallelism--;
-              current[cpu]->thread = idle;
-	  }
-      }
-  }
-
-  leader = machine__findnew_thread(machine, sample->pid);
-  current[sample->cpu]->last_timestamp = sample->timestamp;
-
-  if (current[sample->cpu]->thread != leader) {
-      if (current[sample->cpu]->thread != idle)
-          current[sample->cpu]->thread->parallelism--;
-      
-      current[sample->cpu]->thread = leader;
-      leader->parallelism++;
-  }
-
-  sample->parallelism = leader->parallelism;
-
-> 
-> Also, do we take the median period? or average? do we update it over
-> time (say, if CPU freq changes)? do we count it globally, or per CPU
-> (in case CPUs run at different freqs)?
-
-Oh, perf tools use default frequency of 4000 Hz.  Maybe we can use this
-only for the frequency mode which means user didn't use -c option or
-similar in the event description.
-
-Thanks,
-Namhyung
+> diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+> index 9743f1c2ae3c..f9a35bdc58ad 100644
+> --- a/net/core/rtnetlink.c
+> +++ b/net/core/rtnetlink.c
+> @@ -3080,17 +3080,7 @@ static int do_setlink(const struct sk_buff *skb, struct net_device *dev,
+>   	}
+>   
+>   	if (tb[IFLA_ADDRESS]) {
+> -		struct sockaddr *sa;
+> -		int len;
+> -
+> -		len = sizeof(sa_family_t) + max_t(size_t, dev->addr_len,
+> -						  sizeof(*sa));
+> -		sa = kmalloc(len, GFP_KERNEL);
+> -		if (!sa) {
+> -			err = -ENOMEM;
+> -			goto errout;
+> -		}
+> -		sa->sa_family = dev->type;
+> +		struct sockaddr_storage ss = { };
+>   
+>   		netdev_unlock_ops(dev);
+>   
+> @@ -3098,10 +3088,9 @@ static int do_setlink(const struct sk_buff *skb, struct net_device *dev,
+>   		down_write(&dev_addr_sem);
+>   		netdev_lock_ops(dev);
+>   
+> -		memcpy(sa->sa_data, nla_data(tb[IFLA_ADDRESS]),
+> -		       dev->addr_len);
+> -		err = netif_set_mac_address(dev, (struct sockaddr_storage *)sa, extack);
+> -		kfree(sa);
+> +		ss.ss_family = dev->type;
+> +		memcpy(ss.__data, nla_data(tb[IFLA_ADDRESS]), dev->addr_len);
+> +		err = netif_set_mac_address(dev, &ss, extack);
+>   		if (err) {
+>   			up_write(&dev_addr_sem);
+>   			goto errout;
 
 
