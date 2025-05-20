@@ -1,114 +1,120 @@
-Return-Path: <linux-kernel+bounces-656339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089CCABE497
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:16:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337B4ABE49D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A02784C77EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:16:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16EE218896A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176F0288C2C;
-	Tue, 20 May 2025 20:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D5D28C5B1;
+	Tue, 20 May 2025 20:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YCW8JW2x"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7FBA7cw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98962853ED
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 20:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE8B1D54E2;
+	Tue, 20 May 2025 20:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747772166; cv=none; b=RWXFWdY2qjEb4RtKW8Gb9f0dip7ENJEk8qLyTYmEnp9b8mOVY65raH8wC6biOZB7P5aPyhhEgZlF2wYuiUj4pcIx9NoVhyDpetkOfIT2JPk5rb4TU1iZ9Y3WuSHPlKHKe0JNGiBDYdujOJOeo2BiSMHMDuVBz2kbb7l+iKk1VM4=
+	t=1747772202; cv=none; b=F1n19Mj5LGBGXpohJgAkGmXlZsOZse/wnnTglHQ5dyX/tRUZDhVFJ+NfwiEy1ni2h257pY1l46/AS3lWMMDZPU8jI4kduWoyXogymbAFlkEho8LGACizRJgSSLCQvI6BoUo/HAIamtOL+Gn4C2X/1cYvGXh/Bna83PiMKZUYbJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747772166; c=relaxed/simple;
-	bh=xwX8SXBiV4rJxuj4dleNJkMs/Z+TlwBtHelnmb6gjkA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BiN8rNfdyC1Ju0Ln2ZLuxv7+Evj9K7Z+3JmWT0p4yqoM2j+wpEz0ARijzoL8/qjf5cy3gPaexrwubjTg7tWF94xF8fvkTR1aria82IQXpD96Hau4SdSpBGObVEGy2D5791mWEi1bHFktC6FhcUuR6SShRjTceo67kkzzVzdQ87k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YCW8JW2x; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so46133795e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 13:16:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747772163; x=1748376963; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xwX8SXBiV4rJxuj4dleNJkMs/Z+TlwBtHelnmb6gjkA=;
-        b=YCW8JW2xJaOCtXCtzXjKFO0SyIYtxQhgeGbXitkh0FlZcc0ixc3JHDT/lsA/G25Egi
-         N59zUsq/VxrXNI/2NQiC+PPquQOcMYfOK1No1h5hXazMOgTeKS5MdEUyBbkarRcKxRzx
-         rfTWiZ25SdhY+qZjsDU6FHIxxGZbFw3KWdPP3/m8HEYbxu6yxRJq8pT4FyBvEuH/Z1TQ
-         kZK0KAYaTYiaL3OStA8pmrM3QD29plmhlF0XVwoYu1u2QwEFhFhzNSUACotxLeaSbzjp
-         LovpnS5C4beuNdVxkh9SmTM16qYmf5K36+ra1Wb7/LqGpSDBGgdqiIkO8bMVn3OLTnuG
-         IM4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747772163; x=1748376963;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xwX8SXBiV4rJxuj4dleNJkMs/Z+TlwBtHelnmb6gjkA=;
-        b=fVn70as0R2+nFUPRY5QgMe93DLN1CmIropZ7w1rVcF96/UZtfa/neWT5FWK9vazYjE
-         GJvx504IqPTnjPOoI8BBWbDLSGPSPdvqbNeevYzLtMDxUaa4SqT9zvsrEJAoj5ERERSQ
-         OX64I/dkedS9my0j1to8nwb5aYw+vd0oMivjwgpdmuNFCkmlfBAGwehpLUjs/3s3GvpP
-         9ccDMXEv6g5jWwotgOVDK0UvmpgK1oLK054WoXzLhLnuYBQvUv+x4yNuTpsXJIpFqEMa
-         dVT+lo5us74LLpEV8m3p+eENvrdLREGuN8XGzQ6l/dAJ+pYzJmmNm0I3ans7QsuUdmnJ
-         N0+w==
-X-Forwarded-Encrypted: i=1; AJvYcCW4uxsYqbeGqE5T8Eu2vSyuMbeTASFv0KK+M6cWjfUFPPY/lSearQlPBTRJtowmrwcO8siL/pmA1FwpnVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytnuoklHYERHNu3961STJ4dvapq1xBrrq3oO3BGUUxREX8hoxX
-	ds6t24IuWuUz3YSJGS1s1la7V2muTIXKbLR1Msrdj5R3TCDQj53jD5OdGJqVNBdpzEo=
-X-Gm-Gg: ASbGncuFIjFDK+vVaKA6wBuO7vAfDu4mp+s1mVPM9snI1BP1MMOfPzs6dopmhEzaxux
-	wTeIA7HA8O88z76xdMZIy45RceiEyWXiEqkcyn8zbSHZCBe1g/T/TtBVIdhP7nHGebzI4yKV3CC
-	1XZs7TJ4BmOpm6dp6nyDLt9U1PK2TW3L7/hb138MymBIT/ltG9rL5KXUdsQq3XgW69a+OIQYRf7
-	4m29I3J4Oy2xOdgSdfVD2ebtu4JfbBZyMWGMDmT2rpKOFayhDr/M3WDtlpR0GM25oNwWy2Cx+U9
-	vCd3e3vanQkVLGH/yWcQtMptb7lwVNVw+tHK4zDM1hKzmS18o4LRYss4o6WZrlC8f+KZWwKy3Y8
-	nVghk0Q7M5L7OFIBF
-X-Google-Smtp-Source: AGHT+IFomONvs1EX0RMA446jV5f93QAkM8Rj3K77G0JpdXLi12SD0UAU2iTB/izbisJsPSjdAcCOZw==
-X-Received: by 2002:a05:600c:154c:b0:43b:c857:e9d7 with SMTP id 5b1f17b1804b1-442fd93d4fcmr143678295e9.5.1747772163086;
-        Tue, 20 May 2025 13:16:03 -0700 (PDT)
-Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca5a03fsm17212470f8f.22.2025.05.20.13.16.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 May 2025 13:16:02 -0700 (PDT)
-Message-ID: <ba3a8154-2390-4800-a3ed-973eed68ec10@linaro.org>
-Date: Tue, 20 May 2025 21:16:01 +0100
+	s=arc-20240116; t=1747772202; c=relaxed/simple;
+	bh=vcTNhZndcqpAjXKFEWnY03tRam60uwe7XxAlmMNyOE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u4afbVfhVhrn2Dx5svZh5NGbA2cd4Kzrc/2Wyq5+t/PZ8d5ulF7IJGPg23OGpGOod35g2iT2LoLZvszcv7ZKDr2LHb4Pf9+cA7k9VCDfWEQGEgdwiIzP8nskpSFOMe+2aGPqv7q7ebS+qMstJZb+3se0CohPjxTaEHrpgyDKheE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7FBA7cw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED8FC4CEE9;
+	Tue, 20 May 2025 20:16:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747772200;
+	bh=vcTNhZndcqpAjXKFEWnY03tRam60uwe7XxAlmMNyOE8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X7FBA7cwfq9DuWQK7nFrjnJmhQKp1FkpZCXRtjqdqRM465svg0dHLCiKplaU+087M
+	 E5x3xSNdlOV3qAGykZ4YIfFjtoKztHeZRA2TsFbx44qDSHZb0Pr0bZ/LPOt87/v4C0
+	 EVzH7PeS8PmvTkYQwNBpuRuL8n5bgA19HNGvaDL8MWfWav2rCpUYLRvg7injNsNG+0
+	 np7LfU4nWX4xkwQkAIkc0fPFrty9jOyEwsFYbL/W4x3Ijhh1Ol7+1pgfHMNClW02/K
+	 OT5p6U33HSUemeerej5M0B48mVSvi3ByRnHs9vs+zGF4e4DCZM9S022BXSCgX4zqfj
+	 VphREBNKlIPSw==
+Date: Tue, 20 May 2025 10:16:38 -1000
+From: Tejun Heo <tj@kernel.org>
+To: shashank.mahadasyam@sony.com
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Shinya Takumi <shinya.takumi@sony.com>
+Subject: Re: [PATCH v2 3/3] cgroup, docs: cpu controller interaction with
+ various scheduling policies
+Message-ID: <aCzjJp1ovS6kCqHj@slm.duckdns.org>
+References: <20250520-rt-and-cpu-controller-doc-v2-0-70a2b6a1b703@sony.com>
+ <20250520-rt-and-cpu-controller-doc-v2-3-70a2b6a1b703@sony.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: qcom: msm8939: Add camss and cci
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: vincent.knecht@mailoo.org, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, =?UTF-8?Q?Andr=C3=A9_Apitzsch?=
- <git@apitzsch.eu>, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20250520-camss-8x39-vbif-v1-0-a12cd6006af9@mailoo.org>
- <20250520-camss-8x39-vbif-v1-4-a12cd6006af9@mailoo.org>
- <30dd203f-d7e7-420a-b310-2c36869f3aa8@linaro.org>
- <5acpcyzscv47uyyjhtpfi3x7oh47wafo4n6kd5iu6zs7rkpzro@nwkupv5mpjpi>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <5acpcyzscv47uyyjhtpfi3x7oh47wafo4n6kd5iu6zs7rkpzro@nwkupv5mpjpi>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250520-rt-and-cpu-controller-doc-v2-3-70a2b6a1b703@sony.com>
 
-On 20/05/2025 20:53, Dmitry Baryshkov wrote:
->> <0x01b0ac00 0x0 0x200 0x0>
-> No.
+Hello,
 
-Ah you're right I see we are only doing this for new SoCs.
+On Tue, May 20, 2025 at 11:07:47PM +0900, Shashank Balaji via B4 Relay wrote:
+...
+> +The interaction of a process with the cpu controller depends on its scheduling
+> +policy. We have the following scheduling policies: ``SCHED_IDLE``, ``SCHED_BATCH``,
+> +``SCHED_OTHER``, ``SCHED_EXT`` (if ``CONFIG_SCHED_CLASS_EXT`` is enabled), ``SCHED_FIFO``,
+> +``SCHED_RR``, and ``SCHED_DEADLINE``. ``SCHED_{IDLE,BATCH,OTHER,EXT}`` can be scheduled
+> +either by the fair-class scheduler or by a BPF scheduler::
+> +
+> +    CONFIG_SCHED_CLASS_EXT
+> +    ├─ Disabled
+> +    |   └─ SCHED_{IDLE,BATCH,OTHER} -> fair-class scheduler
+> +    └─ Enabled
+> +        ├─ BPF scheduler disabled
+> +        |   └─ SCHED_{IDLE,BATCH,OTHER,EXT} -> fair-class scheduler
+> +        ├─ BPF scheduler without SCX_OPS_SWITCH_PARTIAL enabled
+> +        |   └─ SCHED_{IDLE,BATCH,OTHER,EXT} -> BPF scheduler
+> +        └─ BPF scheduler with SCX_OPS_SWITCH_PARTIAL enabled
+> +            ├─ SCHED_{IDLE,BATCH,OTHER} -> fair-class scheduler
+> +            └─ SCHED_EXT -> BPF scheduler
+> +
+> +For more details on ``SCHED_EXT``, check out :ref:`Documentation/scheduler/sched-ext.rst. <sched-ext>`
+> +From the point of view of the cpu controller, processes can be categorized as
+> +follows:
+> +
+> +* Processes under the fair-class scheduler
+> +* Processes under a BPF scheduler with the ``cgroup_set_weight`` callback
+> +* Everything else: ``SCHED_{FIFO,RR,DEADLINE}`` and processes under a BPF scheduler
+> +  without the ``cgroup_set_weight`` callback
+> +
+> +Note that the ``cgroup_*`` family of callbacks require ``CONFIG_EXT_GROUP_SCHED``
+> +to be enabled. For each of the following interface files, the above categories
+> +will be referred to. All time durations are in microseconds.
 
----
-bod
+Can we document the above in sched_ext documentation and point to it from
+here? Documenting sched_ext details here seems a bit out of place and prone
+to becoming stale over time.
+
+...
+>    cpu.uclamp.min
+> -        A read-write single value file which exists on non-root cgroups.
+> -        The default is "0", i.e. no utilization boosting.
+> +	A read-write single value file which exists on non-root cgroups.
+> +	The default is "0", i.e. no utilization boosting.
+
+Can you please separate out indentation changes to a separate patch? These
+usually make reviewing tricky.
+
+Thanks.
+
+-- 
+tejun
 
