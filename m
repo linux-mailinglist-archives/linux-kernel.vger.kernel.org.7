@@ -1,183 +1,138 @@
-Return-Path: <linux-kernel+bounces-656492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 916C4ABE6E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:28:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD4AABE6F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29C717AB25F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:26:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A606D7B347B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A2225F790;
-	Tue, 20 May 2025 22:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE355262FF7;
+	Tue, 20 May 2025 22:28:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lA83djm+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dMW8B8aL"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACAA25B66D;
-	Tue, 20 May 2025 22:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D5B2620FC
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 22:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747780079; cv=none; b=tqnhas3nyHt0xEjO+if3f5AMdgLprEo9R2un1ZrugccHvtJ8ir+WUKSASN+pfOdxPk4HNo1NIq1s0wyQtYn7BD29wdN+E6x4OoqYjdzYl/M6n3Uf4MTp1Co5BksOu8ZDpnsTcRYR128CWLNf+CxvVCm3K1yoquDmlRz38qpZ384=
+	t=1747780094; cv=none; b=TM4YG63f7uoAVR8TPetCv1W2h998E6r8wq1sYQNMrts/WG/1tLX4Szev4qnDvR0d6S+4yse5wSzFEOdrYCLhGknJCWH+5KAJUZbpo7r2vbNhbRdPmoWQOcnmq8wL8fXlmU7DUHpMe4SXGpt73abdd2B5lvZZOucWIknxaRgJvGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747780079; c=relaxed/simple;
-	bh=l1cP/qs5vRZwTD2Bx8knT8IoVRjZHeWsMztzxK6U6fU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dx/mTxOmGuSOoH9EJOEQcoMjUeL+CuTfxIqICf3JGffCdpafQSS2a3qWjcHkBNd/qycmQ1THV24ORb3EHfL0kL59VZFnbl06UPL00Cuny7tzzhHnYmsQ5bpyttqTIOs14IpWATjoyHZ4wuwbOyrLP8szZFxcoZZX46/GKpT8+Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lA83djm+; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747780078; x=1779316078;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=l1cP/qs5vRZwTD2Bx8knT8IoVRjZHeWsMztzxK6U6fU=;
-  b=lA83djm+QbuDBsMAviuLM2g8dETFKU5khBrkGk+0SXm9YZf0hr9OJgXz
-   SxEsEPRU3MJQ8KlMG5GMrPHFuqU4Y0B6HlMwwxdiCfNVBZRc1Dpz0mmcS
-   QgDUHHpAv0dKSd+OABrBhGK+plITMTFL1jT89jY8CzYJ+COSleKB1Aaua
-   v3nZgJbTqeZS1qiherqToyhgGHvO7L+h6xlTttjySbiBUIR8D3E+ga8sC
-   tdTAtPBdrMx3tGrI6ZPR9VPkKeky/ErQsKkPmLbu9KlpcNP41RiMqcXTy
-   zmB5vE8rJeYGFlfTArrEy5r4yhhzpjFh6HI5ARbFzAcVULMupcd0okZux
-   Q==;
-X-CSE-ConnectionGUID: KKwyIrc4QTCvAZoTKOjeXw==
-X-CSE-MsgGUID: V3slUM5uQ4WKERqChLWSCA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49835328"
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="49835328"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 15:27:57 -0700
-X-CSE-ConnectionGUID: qW9qWDnrScyHgWk0lNpy4A==
-X-CSE-MsgGUID: uLC217MUQne/69bSqCsZ3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="144786813"
-Received: from iweiny-desk3.amr.corp.intel.com (HELO [10.124.222.89]) ([10.124.222.89])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 15:27:55 -0700
-Message-ID: <8898c999-b43b-4568-afe1-6a996fc90bbc@linux.intel.com>
-Date: Tue, 20 May 2025 15:27:54 -0700
+	s=arc-20240116; t=1747780094; c=relaxed/simple;
+	bh=yChqWPEdp9cZ0Ga5eFD3Bpq++BDAWVx2gbBXO4TT6lA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Y3sZoGG06bLVixMe0wPImWKN6b3UwDzmsmJ2K/w4p2XZUtc6KTY333LJd4yG6KBM5kSF8gq5keRI72Xlr4wPqrkKlmbKCRgEr+cePLRkLXerXcTDLLBqRk/7lRDzreNlcxF0Kz2tnb/zG9UoGOvvxGmZ9Y/EfRjvcOVgSYwZZUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dMW8B8aL; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c922169051so370740785a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 15:28:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747780089; x=1748384889; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lms3OE/sNYy0oTfqz7IHuFMIn+Z4wTwAkMcVtFfs6Vw=;
+        b=dMW8B8aLpAvfwOfH2iGB7027kh5XRgpTfde+8QAOPDaxpzhHFMQIibyjjOH0QCoTBo
+         MqRwR4w48rWIIedH3pYbgn+Li5ZRqQOPAtGa7FGrdbsP/uBix0GUEiM1UE1nmf72EMMU
+         CUmwSayKzTbk7IX9uHQSwcmBW0u8R6hCCIiW02J+PraCXVbiy0Uk5dsfe9C2mmjY6IoG
+         Vbu6qH/GyBTEuhhxWUVOxaKeNnVe+OmnT1BLtQmhH2abh2BM18U2pXm8rpC3ZCScHEnH
+         sDG7O0ZFvibCBCIiY7iau/RVzZg8CchQj+Ftx4X8JIyVPZp91tQ4jmC+i6wmEn1XFtj4
+         uOZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747780089; x=1748384889;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lms3OE/sNYy0oTfqz7IHuFMIn+Z4wTwAkMcVtFfs6Vw=;
+        b=Vfwkk1jj1ubYYa6D9ZwywmleOcwfo6jggxz1NvX+cLrxsHqSbanYPStz0b9SQdI7WR
+         4oye/ORiAJChdbrcvc777aX2uoLt+OLYtcY5fOX1GtvcXNvzBhCZYy89I9CiWE62dIqE
+         B3Akoh9/bRCabW9kUKxH/QkheVL9g+Y1x7AboTCyldgndTFSU4XkCgg5hY+YSwiedvUg
+         +7o5WappA2xP4aY1sX995oPveEw2Bw3WGSRpStIFlGjMrYutD25Bj1b51ph8rfnRHiLe
+         nD6AJCCYwDmru/26M4u37omcHMzYRyD9qcYxZYDo/niwznTUoHbh0RCU+oz1e1QEcGdn
+         XIgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDIix07HOXkbfT4HVEkWYg0dPtjEpGreTc7yeNYvuA+SprNSWNtr4wI2XysohS3ygbgsbSZarqkSTn8ac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDgIbXY2lSkmCYula/Z/JvJlsPPS3UKTSBfqRoLiolBkOwPajx
+	2e/b6glQjslHA7Yq/IUAPgjOe/oeuOGi/wSQoStvLmiJtvNsKsNe+AJcbMIdtHICaeSMm/okBeX
+	flcte
+X-Gm-Gg: ASbGncuxykWhgMRovNbJ3zeof+gw59FF7tI5lnUgD8pKpMVl0sSaL6Ywpo8RWFtm2yB
+	y6Z4hgahMlZJnoWFzSdUli9nojdZ94scMl4YH0BnVJGxFrDEm9iPE1f4HE5zDLAjGp38Lq7P+xq
+	drJgknHwRdhyTnLVMxhVi/NhEElUYGWvE8akRZv8fmZcKx8bu2ZXhgXxl1n2xoKb/DDA+wobYA1
+	MvisykOBHAzgN5fubC1clHZy+6gpZfmY5u1x/nCSTJDjcQhfk4gckx//CFKJXZSW9XiOQPZYaZ/
+	2ZjYv9bAhHsNiUOj6wzZHcNJSJeamt7vJsHubpjgmTROdWx4kgfu10SPX+AZ14IeEvX8qJdYAbw
+	70WTs+48TrFEdDw==
+X-Google-Smtp-Source: AGHT+IHpL8cZf2WFN565+0ROiOlrp0pc2fmKMVUb4mjZFaH8jHRKJpqzsgtzrJbWKBwduWNsVxAN+Q==
+X-Received: by 2002:a05:6214:2b09:b0:6f8:f1b8:fbd0 with SMTP id 6a1803df08f44-6f8f1b8fc65mr5866046d6.17.1747780089584;
+        Tue, 20 May 2025 15:28:09 -0700 (PDT)
+Received: from xanadu (modemcable179.17-162-184.mc.videotron.ca. [184.162.17.179])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f8b0883b7dsm77376766d6.16.2025.05.20.15.28.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 15:28:09 -0700 (PDT)
+Date: Tue, 20 May 2025 18:28:08 -0400 (EDT)
+From: Nicolas Pitre <npitre@baylibre.com>
+To: David Laight <david.laight.linux@gmail.com>
+cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+    u.kleine-koenig@baylibre.com, Oleg Nesterov <oleg@redhat.com>, 
+    Peter Zijlstra <peterz@infradead.org>, 
+    Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v2 next 2/4] lib: mul_u64_u64_div_u64() Use BUG_ON() for
+ divide by zero
+In-Reply-To: <20250520224314.7f929b5f@pumpkin>
+Message-ID: <4qprn4oq-qo64-r3n9-9rs7-345o552qo3s5@onlyvoer.pbz>
+References: <20250518133848.5811-1-david.laight.linux@gmail.com> <20250518133848.5811-3-david.laight.linux@gmail.com> <pr79o4o1-5345-popr-r206-8qo76523657s@onlyvoer.pbz> <20250520224314.7f929b5f@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 04/17] PCI/AER: Consolidate Error Source ID logging in
- aer_isr_one_error_type()
-To: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
-Cc: Jon Pan-Doh <pandoh@google.com>,
- Karolina Stolarek <karolina.stolarek@oracle.com>,
- Weinan Liu <wnliu@google.com>, Martin Petersen <martin.petersen@oracle.com>,
- Ben Fuller <ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>,
- Anil Agrawal <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Lukas Wunner <lukas@wunner.de>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>,
- Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
- Terry Bowman <terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>
-References: <20250520215047.1350603-1-helgaas@kernel.org>
- <20250520215047.1350603-5-helgaas@kernel.org>
-Content-Language: en-US
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20250520215047.1350603-5-helgaas@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+
+On Tue, 20 May 2025, David Laight wrote:
+
+> On Mon, 19 May 2025 22:21:15 -0400 (EDT)
+> Nicolas Pitre <npitre@baylibre.com> wrote:
+> 
+> > On Sun, 18 May 2025, David Laight wrote:
+> > 
+> > > Do an explicit BUG_ON(!divisor) instead of hoping the 'undefined
+> > > behaviour' the compiler generated for a compile-time 1/0 is in any
+> > > way useful.
+> > > 
+> > > It may be better to define the function to return ~(u64)0 for
+> > > divide by zero.
+> > > 
+> > > Signed-off-by: David Laight <david.laight.linux@gmail.com>
+> > > ---
+> > > 
+> > > A new change for v2 of the patchset.
+> > > Whereas gcc inserts (IIRC) 'ud2' clang is likely to let the code
+> > > continue and generate 'random' results for any 'undefined bahaviour'.  
+> > 
+> > clang does exactly the same as gcc.
+> 
+> Did you see the recent 'rant' from Linus about the way clang handles UB.
+> I'm pretty sure 'divide by zero' is UB, valid options include.
+> - Jump to random location in the current function (what Linus was ranting).
+> - Jump to any random location with any register values.
+> - Enable user access to all kernel memory.
+> - Permanently damage your cpu.
+> - Make your computer catch fire.
+> - Send an ICBM to some unspecified location.
+
+LOL
+
+> If you want a 'divide by zero' error you better generate one. eg:
+> 	int n = 0;
+> 	OPTIMSER_HIDE_VAR(n);
+> 	i = 1 / n;
+
+As you say then. As long as the resulting behavior is coherent for all 
+division flavors on a given architecture.
 
 
-On 5/20/25 2:50 PM, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
->
-> Previously we decoded the AER Error Source ID in aer_isr_one_error_type(),
-> then again in find_source_device() if we didn't find any devices with
-> errors logged in their AER Capabilities.
->
-> Consolidate this so we only decode and log the Error Source ID once in
-> aer_isr_one_error_type().  Add a "details" parameter so we can add a note
-> when we didn't find any downstream devices with errors logged in their AER
-> Capability.
->
-> This changes the dmesg logging when we found no devices with errors logged:
->
->    - pci 0000:00:01.0: AER: Correctable error message received from 0000:02:00.0
->    - pci 0000:00:01.0: AER: found no error details for 0000:02:00.0
->    + pci 0000:00:01.0: AER: Correctable error message received from 0000:02:00.0 (no details found)
->
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
-
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-
->   drivers/pci/pcie/aer.c | 22 +++++++++-------------
->   1 file changed, 9 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 568229288ca3..488a6408c7a8 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -733,16 +733,17 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
->   			info->severity, info->tlp_header_valid, &info->tlp);
->   }
->   
-> -static void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
-> +static void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info,
-> +				const char *details)
->   {
->   	u8 bus = info->id >> 8;
->   	u8 devfn = info->id & 0xff;
->   
-> -	pci_info(dev, "%s%s error message received from %04x:%02x:%02x.%d\n",
-> +	pci_info(dev, "%s%s error message received from %04x:%02x:%02x.%d%s\n",
->   		 info->multi_error_valid ? "Multiple " : "",
->   		 aer_error_severity_string[info->severity],
->   		 pci_domain_nr(dev->bus), bus, PCI_SLOT(devfn),
-> -		 PCI_FUNC(devfn));
-> +		 PCI_FUNC(devfn), details);
->   }
->   
->   #ifdef CONFIG_ACPI_APEI_PCIEAER
-> @@ -926,15 +927,8 @@ static bool find_source_device(struct pci_dev *parent,
->   	else
->   		pci_walk_bus(parent->subordinate, find_device_iter, e_info);
->   
-> -	if (!e_info->error_dev_num) {
-> -		u8 bus = e_info->id >> 8;
-> -		u8 devfn = e_info->id & 0xff;
-> -
-> -		pci_info(parent, "found no error details for %04x:%02x:%02x.%d\n",
-> -			 pci_domain_nr(parent->bus), bus, PCI_SLOT(devfn),
-> -			 PCI_FUNC(devfn));
-> +	if (!e_info->error_dev_num)
->   		return false;
-> -	}
->   	return true;
->   }
->   
-> @@ -1281,9 +1275,11 @@ static inline void aer_process_err_devices(struct aer_err_info *e_info)
->   static void aer_isr_one_error_type(struct pci_dev *root,
->   				   struct aer_err_info *info)
->   {
-> -	aer_print_port_info(root, info);
-> +	bool found;
->   
-> -	if (find_source_device(root, info))
-> +	found = find_source_device(root, info);
-> +	aer_print_port_info(root, info, found ? "" : " (no details found");
-> +	if (found)
->   		aer_process_err_devices(info);
->   }
->   
-
--- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
-
+Nicolas
 
