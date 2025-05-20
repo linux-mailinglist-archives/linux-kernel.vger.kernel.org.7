@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-655822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08AD9ABDD8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:43:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D49E8ABDE06
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B2EF1887B2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:43:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E94B74E679D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6180524E4AA;
-	Tue, 20 May 2025 14:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E35E24C66C;
+	Tue, 20 May 2025 14:40:55 +0000 (UTC)
 Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913212517AC
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 14:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549D71519AC
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 14:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747752082; cv=none; b=XDF01BfIzvZkxHlhAWr7Rolxc1See+Rl5EfCnSZnGuPWC/vV09Q+d9akFabzjItRWD6ZVqZX5RNTYb9R+fxvvp0AZiEBemMdSv/akHZIDxXVV/hgof0bLl+EyAdLgx378I4rz64gQ2aaMC5dxubeAt2i3EFkdpQmHIQrYFJ0L7A=
+	t=1747752054; cv=none; b=Wfi/+0MuYVsqU9Y4dXQ12CADDekswTJqUel0QWumZhmObSs5BsULxqvvfh39jyQVHSe346/TbRmkeZDXtxb87rGSghgEH3NQ+fqxJo0kRe3EYZ03RmRSFtI44OQGXr19O0OZHTpW6TI7XzkxOpvc3ObfI2WFYclqCx+nXzPQxe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747752082; c=relaxed/simple;
-	bh=qRybH5cw5MW+2tIr6+LlsfuFuUK8mFtVjjDVpaujrY8=;
+	s=arc-20240116; t=1747752054; c=relaxed/simple;
+	bh=RxEXSvsHhqY0DGAOiz1+rJd7062BJqiB5VbH/Bb7YLE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zy58Uoh5cRPYzKQ5GFLH6OzDymaTt4eZuHhg447KvRLWY7OH6EHa3OlYTlrOTlwvEkldJQ00zRW0mPg9yIkvdB98kEbQRqlSc44pufW1y4krvdO3ZMlQntXKcg1C+PuyJ1iWcBI7VrvcRIG6C9AD0/bYCKtVOf5uULUFFpVEVAI=
+	 MIME-Version:Content-Type; b=BLwx2E8WC2SamI8s8XXuY9sLJnGazWcR9yEPt6kC/S8+i6C8Z3RZbOTH9w5wwXuExIUgds75jhyFwtwOsViyQuzaujnJJ0UJViKNiMboF2d0ikpISPL9va1JBF419DrMbL65bJvDJukLM2R6DLwD3XFY+kobRK1wyiHmqLJ3/eE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
 Received: from trampoline.thunk.org (pool-173-48-111-173.bstnma.fios.verizon.net [173.48.111.173])
 	(authenticated bits=0)
         (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 54KEeOXq013125
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 54KEeOut013127
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 May 2025 10:40:25 -0400
+	Tue, 20 May 2025 10:40:26 -0400
 Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id B4B552E00DE; Tue, 20 May 2025 10:40:24 -0400 (EDT)
+	id B9FEF2E00E1; Tue, 20 May 2025 10:40:24 -0400 (EDT)
 From: "Theodore Ts'o" <tytso@mit.edu>
-To: Andreas Dilger <adilger.kernel@dilger.ca>, Arnd Bergmann <arnd@kernel.org>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
-        Jan Kara <jack@suse.cz>, Zhang Yi <yi.zhang@huawei.com>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        Shida Zhang <zhangshida@kylinos.cn>, Baokun Li <libaokun1@huawei.com>,
-        Jann Horn <jannh@google.com>, Brian Foster <bfoster@redhat.com>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: avoid -Wformat-security warning
-Date: Tue, 20 May 2025 10:40:10 -0400
-Message-ID: <174775151764.432196.13613749014255693736.b4-ty@mit.edu>
+To: Andreas Dilger <adilger.kernel@dilger.ca>, Tao Ma <boyu.mt@taobao.com>,
+        Jan Kara <jack@suse.com>,
+        Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-dev@igalia.com,
+        syzbot+fe2a25dae02a207717a0@syzkaller.appspotmail.com,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] ext4: inline: fix len overflow in ext4_prepare_inline_data
+Date: Tue, 20 May 2025 10:40:12 -0400
+Message-ID: <174775151761.432196.4462280436120329643.b4-ty@mit.edu>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250423164354.2780635-1-arnd@kernel.org>
-References: <20250423164354.2780635-1-arnd@kernel.org>
+In-Reply-To: <20250415-ext4-prepare-inline-overflow-v1-1-f4c13d900967@igalia.com>
+References: <20250415-ext4-prepare-inline-overflow-v1-1-f4c13d900967@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,21 +61,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 23 Apr 2025 18:43:49 +0200, Arnd Bergmann wrote:
-> check_igot_inode() prints a variable string, which causes a harmless
-> warning with 'make W=1':
+On Tue, 15 Apr 2025 11:53:04 -0300, Thadeu Lima de Souza Cascardo wrote:
+> When running the following code on an ext4 filesystem with inline_data
+> feature enabled, it will lead to the bug below.
 > 
-> fs/ext4/inode.c:4763:45: error: format string is not a string literal (potentially insecure) [-Werror,-Wformat-security]
->  4763 |         ext4_error_inode(inode, function, line, 0, err_str);
-> 
-> Use a trivial "%s" format string instead.
+>         fd = open("file1", O_RDWR | O_CREAT | O_TRUNC, 0666);
+>         ftruncate(fd, 30);
+>         pwrite(fd, "a", 1, (1UL << 40) + 5UL);
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] ext4: avoid -Wformat-security warning
-      commit: d612a07931e261c537978aad096e7340b687cd0c
+[1/1] ext4: inline: fix len overflow in ext4_prepare_inline_data
+      commit: 227cb4ca5a6502164f850d22aec3104d7888b270
 
 Best regards,
 -- 
