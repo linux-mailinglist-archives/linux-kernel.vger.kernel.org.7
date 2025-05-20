@@ -1,122 +1,154 @@
-Return-Path: <linux-kernel+bounces-656033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F888ABE0C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:33:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A8E0ABE0D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5A163A5F9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:32:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA0444C46C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D39C2701A0;
-	Tue, 20 May 2025 16:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A757627CB0D;
+	Tue, 20 May 2025 16:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GA6yiitB"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxjnUpwn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C604B1E5D;
-	Tue, 20 May 2025 16:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B1927AC48;
+	Tue, 20 May 2025 16:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747758789; cv=none; b=s62hZuX6gjvzvb3LxfXo26wPaQjdZM7kLpT1FgmvDylM0XzLRk4cNYaEBPTUtHUybWvs96nWSnAuKBav+ARMH0MnqY8mbRpv9b6x2iNgEYj59DCGWCpOCKx6Na1+O26p2Gbyxf+6ZqISMEnxgI8J/WJcgxKtb8XIM7xdeneND8o=
+	t=1747758806; cv=none; b=JTGVxzSz2K3QgWs7wFK6JetN9TxG9+uHewt7lHB+zOrjluyF19RTDS0GI8Gg+laRfwAlZePeF8uN/1fDksVNzCeUqKbN2Uc3/Mn+4IVrbVk4h6XCgBYlh7a/gHph5Mza6fDb/4jbbBeVia5ktHbWYiyJk0WFyd8tbLHYHyUwCp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747758789; c=relaxed/simple;
-	bh=9iywa8LxDBmIJmnFA0mWiRWkOXXa499m0kRd7LsL7ag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CILZL6uRGkoJQtJgmsgEQzFq8uqcaPSht9m6viTBcuer1/7wKxtbG9qYZg5sjfcPv7KOZNNZouApUF1gHtoh0IqSOETMhelZq9L8fcaX4rM/7R7P5DA6Qil7KUKf7G8cdwFMuJLX0n+DuK0vC/rnsJyQ/fwae2OvCaCBONnbxTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GA6yiitB; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7399838db7fso5528526b3a.0;
-        Tue, 20 May 2025 09:33:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747758787; x=1748363587; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N4J9GjT2DkNx9RKMdFilKV2qV6BHNi7N4nhhnVWjxkM=;
-        b=GA6yiitBt6I5Rd95Do5zzbLjzJb0nj7Vw/LFeumfftUIiOVarMigpCicb698VT/wIE
-         2nY37kIUll4gH8JXK61UJqRSWJJNThxW6UF0YskbLHQfs9X6x/42qQ4dMEpixNoLmZrV
-         9vYJrOYfa5g8zR7nFotLguBfDwbcMu2w9qhxJKNv2Be0CxLrViSw3A5rKQlKj0pVcBCo
-         Gy0LE9gzr1UrTXCPSFPdf2RIgT1se1eB1zR0Lh/d/8yMeNHpNjurjoQCmmGsIRIIbasu
-         FaAnt2Hyojdg0yNr9z9KJdJip7VBsVTowzQcbR9jE9idxS+aoC9eH5nJL2bx8eGSghGa
-         27iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747758787; x=1748363587;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N4J9GjT2DkNx9RKMdFilKV2qV6BHNi7N4nhhnVWjxkM=;
-        b=hc1zSem6wVrQOJ5pPpI3773fY5VGa64rLso2SvLGpvte9Y+fB42XrSl2Kx43mbD0NU
-         CPDI/Yozcu1d31L+hxU6doxmMFTYLrlu0femnnWcBqxo4ugJpowevBnjj8E0nim1mkDa
-         vkUZ+OT68G9NXo5gehg4aBKnHQlfx3WWOaRez3m5j9y7VSjPIXlQJm87Fqym6G2p5IrH
-         7O128l6+QdSODI5LH+fqKO4fXZvOtTqeiDO+1DF8e0JXkNsINQU9VnNIL2H0AO+IMFhP
-         1LRIcB0shFmOiWsbFFGDZy2unHVk6tB0cIxlOCqPsirsmLXqMN0zA/9xhPv7gL75bMJx
-         7E6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU/z+7dIv9eX5Ng4KFXXXY7sCrSlD/kj1lC0n0qG0+5C6odjKs7Mr8yK/ydVewkrlCZ3Q6sNfpk0iVkgU3wWu3F@vger.kernel.org, AJvYcCV8Ys9VPzPe59MVXldyoa6fGcLAnqk+cR3d/51kkYEI6SsZ5O8Ebf/p9uFXl9/gRhgSohv9yMA6HiJLLScf@vger.kernel.org, AJvYcCWA+GaI7udbxBJQprH4UFfR90R2T2D5zz2jkWapTiI5kENq901ZsJUDWgZkx5jZdLm8Nx4=@vger.kernel.org, AJvYcCWvOcvTyBJrlX6qXlnZSPnlYkXT3TKnLsEzJawhoFltR6f2U7wFNfOAZL+yGPBgPKhPok8rLD7r@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi3gtW8kxnqdJJetBjFbjA1VRtgR35yH01vpi0J2b9UTpJZlxx
-	52h0+2PnyaqOpAKYSOzVaQxkWmQMk3mH5rUfkcwwQ3IjLaTHoEjytmTW
-X-Gm-Gg: ASbGnctSmvmZWvO+hNL1+29OK/m9RJ5NbwdJY3iLZ7UvHvE9VWH140K5xYNkdfu+m3q
-	66+oisJ3p/6fIMLo49DuZzMaV1gMDz1DzyJ4TAvUtFaJwNp0wvs3+O4Z8uAOYSj+CS5l1c1Piq0
-	Ak3vSCTpNXzoYJHQUasYGuY2ara2f4tir7xYvBwooBLwYXX05SaDiTLJ8m2a0hsc7HsiIMrb+iR
-	ndnMkr5N0RJF3+a9zU+k8mei8cg3XRtE7pyOAma1GRFQ2l3q6jxN2n58oaFaVsd2M53JM/pd7kT
-	1PR8/PtxjTvPqEttUeIsvlSViV1RjHPhnI3LLuS1Pw/ZV7pFq0smrPXPbGpvMrBCtMMa5bY=
-X-Google-Smtp-Source: AGHT+IFFEtELJ7CNY/gj67X7KGAeNhJCZbOLnPiYWwQ92Z9dI1v88DKGl6Pdba0V9ObimC+EYXJnbQ==
-X-Received: by 2002:a05:6a20:12c3:b0:1f3:3547:f21b with SMTP id adf61e73a8af0-2165f641cf3mr29465576637.5.1747758787474;
-        Tue, 20 May 2025 09:33:07 -0700 (PDT)
-Received: from devbig793.prn5.facebook.com ([2a03:2880:ff:3::])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eb081aa2sm8256782a12.48.2025.05.20.09.33.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 09:33:06 -0700 (PDT)
-Date: Tue, 20 May 2025 09:33:05 -0700
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v7] selftests/vsock: add initial vmtest.sh for
- vsock
-Message-ID: <aCyuwa8x9ClTOM+Z@devbig793.prn5.facebook.com>
-References: <20250515-vsock-vmtest-v7-1-ba6fa86d6c2c@gmail.com>
- <f7dpfvsdupcf4iucmmit2xzgwk53ial6mcl445uxocizw6iow5@rhmh6m2qd3zu>
- <73a4740e-755e-4ba8-8130-df09bd25197a@redhat.com>
- <w6aizeb2i5m52e2ifqcikgwdbrkkbc46sf4hx5b6jsm7o4drio@n3dzlatb426s>
+	s=arc-20240116; t=1747758806; c=relaxed/simple;
+	bh=OoBKYnWkbMa37dGf3bqGJtv+2nUTHc/3tPjJKv4bdY0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=JJN9bKO/uUPsu/1NxAO5gYAvpFteY+jYX0NbijdBdAxb4IHzpjYF0Do09E+PZZLi71bbBBXQ/Z20qCEQ2LL7QI56dB/VGV1t6XOU4i+VbYpOK8box7mF2TVqeufpPq30s78MuvcfHOXeYA8pFpjVwnxW9FBIi227gL808HwxFzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxjnUpwn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68B56C4AF09;
+	Tue, 20 May 2025 16:33:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747758805;
+	bh=OoBKYnWkbMa37dGf3bqGJtv+2nUTHc/3tPjJKv4bdY0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pxjnUpwnKBf+DRwmV71oty7jHzV1SVlOQRNDf0Kodrk7PFP9KkcT6SXTVcpmAM7jl
+	 47yAuD6MydcRwWqPkF08DINdyvacqXKfmDq7jGLmVQjhlmUxNTl+W0/LksQJ8ba/Wg
+	 Z8QAR0oTpi4OP/0fwVFb1OPaHB0cfdWIqAW6wdnq8z1RAIWi70TMf0YxBAN2I90xjf
+	 HtQ/XV3AkqJMEimUFd4i/Aj2iW+ruRVrN8rrgjBYRoLrhjtFKS+G8t6T0TtLdnYnB0
+	 PVs1i8TZBIavM/zt1y98NWyRGVkWifDeOsE9VB8HwwBOfPwK02cyAxg5srfcabH8lW
+	 RjR6twozEajOg==
+From: Kees Cook <kees@kernel.org>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Kees Cook <kees@kernel.org>,
+	kernel test robot <lkp@intel.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] string.h: Provide basic sanity checks for fallback memcpy()
+Date: Tue, 20 May 2025 09:33:21 -0700
+Message-Id: <20250520163320.work.924-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <w6aizeb2i5m52e2ifqcikgwdbrkkbc46sf4hx5b6jsm7o4drio@n3dzlatb426s>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3060; i=kees@kernel.org; h=from:subject:message-id; bh=OoBKYnWkbMa37dGf3bqGJtv+2nUTHc/3tPjJKv4bdY0=; b=owGbwMvMwCVmps19z/KJym7G02pJDBk66y6u7Zd4NnED78GrbDemRwrdibVzeblyAY+hNMvbe WLG3+U4O0pZGMS4GGTFFFmC7NzjXDzetoe7z1WEmcPKBDKEgYtTACbifY+R4f7sU2vr5tSZzbsh WH5sz6983f5NQpfP2lis7lnH/nkznyrD//qt3E7HuXdv7Amy/G648vrm8KV71a9V/JmlrsPp/X9 lCAcA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 20, 2025 at 01:09:25PM +0200, Stefano Garzarella wrote:
-> On Tue, May 20, 2025 at 12:58:18PM +0200, Paolo Abeni wrote:
-> > On 5/20/25 10:24 AM, Stefano Garzarella wrote:
-> > 
-> > Still it could be worthy to re-introduce (behind a command line option)
-> > the ability to build the kernel as per Stefano request, to fit his
-> > existing workflow (sorry for the partial back and forth).
-> 
-> If that's possible, I'd appreciate it (not a strong opinion). Otherwise if
-> we don't, I'd say take the use of the direct script out of the commit
-> messaging, because to me it's confusing if we don't plan to use it without
-> the selftest infrastructure.
-> 
-> Thanks,
-> Stefano
-> 
+Instead of defining memcpy() in terms of __builtin_memcpy() deep
+in arch/x86/include/asm/string_32.h, notice that it is needed up in
+the general string.h, as done with other common C String APIs. This
+allows us to add basic sanity checking for pathological "size"
+arguments to memcpy(). Besides the run-time checking benefit, this
+avoids GCC trying to be very smart about value range tracking[1] when
+CONFIG_PROFILE_ALL_BRANCHES=y but FORTIFY_SOURCE=n.
 
-No problem at all to add it back in. It's a nice feature to have for dev
-workflows too.
+Link: https://lore.kernel.org/all/202505191117.C094A90F88@keescook/ [1]
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/all/202501040747.S3LYfvYq-lkp@intel.com/
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Closes: https://lore.kernel.org/all/e3754f69-1dea-4542-8de0-a567a14fb95b@infradead.org/
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: "Mickaël Salaün" <mic@digikod.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: <x86@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andy Shevchenko <andy@kernel.org>
+Cc: Uros Bizjak <ubizjak@gmail.com>
+Cc: <linux-hardening@vger.kernel.org>
+---
+ arch/x86/include/asm/string_32.h |  6 ------
+ include/linux/string.h           | 13 +++++++++++++
+ 2 files changed, 13 insertions(+), 6 deletions(-)
 
-Best,
-Bobby
+diff --git a/arch/x86/include/asm/string_32.h b/arch/x86/include/asm/string_32.h
+index 32c0d981a82a..fad9566f43a6 100644
+--- a/arch/x86/include/asm/string_32.h
++++ b/arch/x86/include/asm/string_32.h
+@@ -145,12 +145,6 @@ static __always_inline void *__constant_memcpy(void *to, const void *from,
+ #define __HAVE_ARCH_MEMCPY
+ extern void *memcpy(void *, const void *, size_t);
+ 
+-#ifndef CONFIG_FORTIFY_SOURCE
+-
+-#define memcpy(t, f, n) __builtin_memcpy(t, f, n)
+-
+-#endif /* !CONFIG_FORTIFY_SOURCE */
+-
+ #define __HAVE_ARCH_MEMMOVE
+ void *memmove(void *dest, const void *src, size_t n);
+ 
+diff --git a/include/linux/string.h b/include/linux/string.h
+index 01621ad0f598..a1f8fdcf8482 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -4,6 +4,7 @@
+ 
+ #include <linux/args.h>
+ #include <linux/array_size.h>
++#include <linux/bug.h>
+ #include <linux/cleanup.h>	/* for DEFINE_FREE() */
+ #include <linux/compiler.h>	/* for inline */
+ #include <linux/types.h>	/* for size_t */
+@@ -390,7 +391,19 @@ static inline const char *kbasename(const char *path)
+ 
+ #if !defined(__NO_FORTIFY) && defined(__OPTIMIZE__) && defined(CONFIG_FORTIFY_SOURCE)
+ #include <linux/fortify-string.h>
++#else
++/* Basic sanity checking even without FORTIFY_SOURCE */
++# ifndef __HAVE_ARCH_MEMCPY
++#  define memcpy(t, f, n)					\
++	do {							\
++		typeof(n) __n = (n);				\
++		/* Skip impossible sizes. */			\
++		if (!WARN_ON(__n < 0 || __n == SIZE_MAX))	\
++			__builtin_memcpy(t, f, __n);		\
++	} while (0)
++# endif
+ #endif
++
+ #ifndef unsafe_memcpy
+ #define unsafe_memcpy(dst, src, bytes, justification)		\
+ 	memcpy(dst, src, bytes)
+-- 
+2.34.1
+
 
