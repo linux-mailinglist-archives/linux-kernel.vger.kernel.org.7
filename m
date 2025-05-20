@@ -1,57 +1,100 @@
-Return-Path: <linux-kernel+bounces-656296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8EE9ABE41B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:53:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 356CAABE41F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F9B34C5B14
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:53:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E29828A447A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1A52820C2;
-	Tue, 20 May 2025 19:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724202820C2;
+	Tue, 20 May 2025 19:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pTCCX8XV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QvCktGuM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sL68f2ji";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QvCktGuM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sL68f2ji"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AC02820CC;
-	Tue, 20 May 2025 19:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43A2280CFB
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 19:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747770777; cv=none; b=ph/3Xdb6o7pKet51Hc8S35Ie/CVDOeSmP2tH86w+TALFU7PJE+Q3UicN4bf3dr7gMPOHtsxx3kwuaDtG9Z5Ck8wd90O6KQunlP8GZe3ebZ/uNKQJCTlIr1JbpvMTqBmbiwr8IhYTC1EOoSfC25lKWYOeNQm4VuXrmnGuPmS50Js=
+	t=1747770799; cv=none; b=p22e+Ym7oZh2C5mMTQEkLJ7NmVqncr2jJkiHeGO+gTPhAv94OjRD4Yj5Bq//uNZbfu8yVv0kBloBxgMOW5UgmuZ9J7xA2FYM2Ify/9Zf3RVwD9Ss2dT0Jh8Q7JqEPBZN/SD8uJsIPK+BTqdO38ozeDznZQ6ee6lqnTILOdaPx84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747770777; c=relaxed/simple;
-	bh=sVuIV87vGQNNhBH1C+IifHHMly6qW45dro2WlmwqoKE=;
+	s=arc-20240116; t=1747770799; c=relaxed/simple;
+	bh=r02WTNLTkZ/4TsfbX5I3EifcoEkeGfFEmnTe1C+LMjo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UFuHdpghk3X/Qc4GYyzakjlUIwzrv94Nj3EqblvWvZCDYQgynzOulWbLgZeZeMIhuznvB78nRgcYt1UK+iDAy63JTY9BNcXh07kD+0IqbJPDVNx2LUGT0dcO00mJHa12F0M90/l+2dhps77KxHgRPd4RIzMbrD7FG4YlMlg9u5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pTCCX8XV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79FCDC4CEE9;
-	Tue, 20 May 2025 19:52:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747770776;
-	bh=sVuIV87vGQNNhBH1C+IifHHMly6qW45dro2WlmwqoKE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pTCCX8XVM9CEiOBZ79VhWuUwWU6FGvo2W901AQ4LYk4O44bVdXPD+YcX2kmgyjLTi
-	 1+LgeF8JMlSIvH5ORHHLppC0LhPgisAd7j6rUtJjbnzyaocoljL7ga8x3l5MpXgwvv
-	 cQ0Oq8LN6prykF704uEZjAHRpdLmYqqOm68GjPaZJNhaAXvEM4x1esIYkFZwsYc4pP
-	 QopYcvL3vU8OnP1iDQI6WUY+n8EDsWXgTeZxc395GqVkr4fumvmRTBI1ucbDqObCCg
-	 OHMZhAneCp7TFzKEcFdGySTnVre2k5G2siQs4gTpPRPU7cKCLcoe8q1W6wlqT2bfuB
-	 r5JD92U70lgeQ==
-Date: Tue, 20 May 2025 14:52:54 -0500
-From: Rob Herring <robh@kernel.org>
-To: Matthew Gerlach <matthew.gerlach@altera.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mturquette@baylibre.com,
-	richardcochran@gmail.com, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mun Yew Tham <mun.yew.tham@altera.com>
-Subject: Re: [PATCH] dt-bindings: net: Convert socfpga-dwmac bindings to yaml
-Message-ID: <20250520195254.GA1247930-robh@kernel.org>
-References: <20250513152237.21541-1-matthew.gerlach@altera.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YIAEofBBa4DanrYhWhmHkqZheQbAwQ0Ne4S5bIz5yPoitu9tm4EgtooI/by3mtq7hioMlXfWvJNfFWiGrD7AqkgwagxpuYeL4tj06JNskK8uKOBz1pxSAApC0dTrnM7bT8qkgG9sVq12096GvpPd68BkbqA3m2a/Kc1AnEKGN0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QvCktGuM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sL68f2ji; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QvCktGuM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sL68f2ji; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A55B02225F;
+	Tue, 20 May 2025 19:53:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747770789; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S34FQjO/spo0/EF5quOdXn1uELyrC8/pQ7dPMdPUKXs=;
+	b=QvCktGuMZWVjCcKAF6DQr/6K/g9d0kj8S88bvzkl9x+3GLmyUCJWBeakmlcbrgg6qgPJ7n
+	NejSFqWc6b+GsRzQh6T6rcK7XR4sI8EDwFCNJaErMjb9JP2dhqOPC9JC1YI9HYYB+qFyzY
+	jfxbpoGfWg8jz3yExwONwb5p+7uzWb8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747770789;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S34FQjO/spo0/EF5quOdXn1uELyrC8/pQ7dPMdPUKXs=;
+	b=sL68f2jiZoxPUe0MpvYNAOsabqTjxTgbFBzg8X4oCHV/MW8maD8NyEdzlpOlGr+xOvEfpk
+	h040HrHFg4xf3FCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747770789; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S34FQjO/spo0/EF5quOdXn1uELyrC8/pQ7dPMdPUKXs=;
+	b=QvCktGuMZWVjCcKAF6DQr/6K/g9d0kj8S88bvzkl9x+3GLmyUCJWBeakmlcbrgg6qgPJ7n
+	NejSFqWc6b+GsRzQh6T6rcK7XR4sI8EDwFCNJaErMjb9JP2dhqOPC9JC1YI9HYYB+qFyzY
+	jfxbpoGfWg8jz3yExwONwb5p+7uzWb8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747770789;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S34FQjO/spo0/EF5quOdXn1uELyrC8/pQ7dPMdPUKXs=;
+	b=sL68f2jiZoxPUe0MpvYNAOsabqTjxTgbFBzg8X4oCHV/MW8maD8NyEdzlpOlGr+xOvEfpk
+	h040HrHFg4xf3FCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 77B7B13A3E;
+	Tue, 20 May 2025 19:53:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id eI5+HKXdLGgYdQAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Tue, 20 May 2025 19:53:09 +0000
+Date: Tue, 20 May 2025 21:53:00 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Gavin Guo <gavinguo@igalia.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, muchun.song@linux.dev,
+	akpm@linux-foundation.org, mike.kravetz@oracle.com,
+	kernel-dev@igalia.com, stable@vger.kernel.org,
+	Hugh Dickins <hughd@google.com>, Florent Revest <revest@google.com>,
+	Gavin Shan <gshan@redhat.com>
+Subject: Re: [PATCH] mm/hugetlb: fix a deadlock with pagecache_folio and
+ hugetlb_fault_mutex_table
+Message-ID: <aCzdnAmuOylilU1p@localhost.localdomain>
+References: <20250513093448.592150-1-gavinguo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,165 +103,194 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250513152237.21541-1-matthew.gerlach@altera.com>
+In-Reply-To: <20250513093448.592150-1-gavinguo@igalia.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -1.30
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
 
-On Tue, May 13, 2025 at 08:22:37AM -0700, Matthew Gerlach wrote:
-> From: Mun Yew Tham <mun.yew.tham@altera.com>
+On Tue, May 13, 2025 at 05:34:48PM +0800, Gavin Guo wrote:
+> The patch fixes a deadlock which can be triggered by an internal
+> syzkaller [1] reproducer and captured by bpftrace script [2] and its log
+> [3] in this scenario:
 > 
-> Convert the bindings for socfpga-dwmac to yaml.
+> Process 1                              Process 2
+> ---				       ---
+> hugetlb_fault
+>   mutex_lock(B) // take B
+>   filemap_lock_hugetlb_folio
+>     filemap_lock_folio
+>       __filemap_get_folio
+>         folio_lock(A) // take A
+>   hugetlb_wp
+>     mutex_unlock(B) // release B
+>     ...                                hugetlb_fault
+>     ...                                  mutex_lock(B) // take B
+>                                          filemap_lock_hugetlb_folio
+>                                            filemap_lock_folio
+>                                              __filemap_get_folio
+>                                                folio_lock(A) // blocked
+>     unmap_ref_private
+>     ...
+>     mutex_lock(B) // retake and blocked
 > 
-> Signed-off-by: Mun Yew Tham <mun.yew.tham@altera.com>
-> Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
+...
+> Signed-off-by: Gavin Guo <gavinguo@igalia.com>
+
+I think this is more convoluted that it needs to be?
+
+hugetlb_wp() is called from hugetlb_no_page() and hugetlb_fault().
+hugetlb_no_page() locks and unlocks the lock itself, which leaves us
+with hugetlb_fault().
+
+hugetlb_fault() always passed the folio locked to hugetlb_wp(), and the
+latter only unlocks it when we have a cow from owner happening and we
+cannot satisfy the allocation.
+So, should not checking whether the folio is still locked after
+returning enough?
+What speaks against:
+
+ diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+ index bd8971388236..23b57c5689a4 100644
+ --- a/mm/hugetlb.c
+ +++ b/mm/hugetlb.c
+ @@ -6228,6 +6228,12 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
+  			u32 hash;
+ 
+  			folio_put(old_folio);
+ +			/*
+ +			* The pagecache_folio needs to be unlocked to avoid
+ +			* deadlock when the child unmaps the folio.
+ +			*/
+ +			if (pagecache_folio)
+ +				folio_unlock(pagecache_folio);
+  			/*
+  			 * Drop hugetlb_fault_mutex and vma_lock before
+  			 * unmapping.  unmapping needs to hold vma_lock
+ @@ -6825,7 +6831,12 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+  	spin_unlock(vmf.ptl);
+ 
+  	if (pagecache_folio) {
+ -		folio_unlock(pagecache_folio);
+ +		/*
+ +		 * hugetlb_wp() might have already unlocked pagecache_folio, so
+ +		 * skip it if that is the case.
+ +		 */
+ +		if (folio_test_locked(pagecache_folio))
+ +			folio_unlock(pagecache_folio);
+  		folio_put(pagecache_folio);
+  	}
+  out_mutex:
+
 > ---
->  .../bindings/net/socfpga,dwmac.yaml           | 109 ++++++++++++++++++
->  .../devicetree/bindings/net/socfpga-dwmac.txt |  57 ---------
->  2 files changed, 109 insertions(+), 57 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/net/socfpga,dwmac.yaml
->  delete mode 100644 Documentation/devicetree/bindings/net/socfpga-dwmac.txt
+>  mm/hugetlb.c | 33 ++++++++++++++++++++++++++++-----
+>  1 file changed, 28 insertions(+), 5 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/net/socfpga,dwmac.yaml b/Documentation/devicetree/bindings/net/socfpga,dwmac.yaml
-> new file mode 100644
-> index 000000000000..68ad580dc2da
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/socfpga,dwmac.yaml
-> @@ -0,0 +1,109 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/socfpga,dwmac.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Altera SOCFPGA SoC DWMAC controller
-> +
-> +maintainers:
-> +  - Matthew Gerlach <matthew.gerlach@altera.com>
-> +
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        enum:
-> +          - altr,socfpga-stmmac
-> +          - altr,socfpga-stmmac-a10-s10
-> +  required:
-> +    - altr,sysmgr-syscon
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index e3e6ac991b9c..ad54a74aa563 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -6115,7 +6115,8 @@ static void unmap_ref_private(struct mm_struct *mm, struct vm_area_struct *vma,
+>   * Keep the pte_same checks anyway to make transition from the mutex easier.
+>   */
+>  static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
+> -		       struct vm_fault *vmf)
+> +		       struct vm_fault *vmf,
+> +		       bool *pagecache_folio_unlocked)
+>  {
+>  	struct vm_area_struct *vma = vmf->vma;
+>  	struct mm_struct *mm = vma->vm_mm;
+> @@ -6212,6 +6213,22 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
+>  			u32 hash;
+>  
+>  			folio_put(old_folio);
+> +			/*
+> +			 * The pagecache_folio needs to be unlocked to avoid
+> +			 * deadlock and we won't re-lock it in hugetlb_wp(). The
+> +			 * pagecache_folio could be truncated after being
+> +			 * unlocked. So its state should not be relied
+> +			 * subsequently.
+> +			 *
+> +			 * Setting *pagecache_folio_unlocked to true allows the
+> +			 * caller to handle any necessary logic related to the
+> +			 * folio's unlocked state.
+> +			 */
+> +			if (pagecache_folio) {
+> +				folio_unlock(pagecache_folio);
+> +				if (pagecache_folio_unlocked)
+> +					*pagecache_folio_unlocked = true;
+> +			}
+>  			/*
+>  			 * Drop hugetlb_fault_mutex and vma_lock before
+>  			 * unmapping.  unmapping needs to hold vma_lock
+> @@ -6566,7 +6583,7 @@ static vm_fault_t hugetlb_no_page(struct address_space *mapping,
+>  	hugetlb_count_add(pages_per_huge_page(h), mm);
+>  	if ((vmf->flags & FAULT_FLAG_WRITE) && !(vma->vm_flags & VM_SHARED)) {
+>  		/* Optimization, do the COW without a second fault */
+> -		ret = hugetlb_wp(folio, vmf);
+> +		ret = hugetlb_wp(folio, vmf, NULL);
+>  	}
+>  
+>  	spin_unlock(vmf->ptl);
+> @@ -6638,6 +6655,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+>  	struct hstate *h = hstate_vma(vma);
+>  	struct address_space *mapping;
+>  	int need_wait_lock = 0;
+> +	bool pagecache_folio_unlocked = false;
+>  	struct vm_fault vmf = {
+>  		.vma = vma,
+>  		.address = address & huge_page_mask(h),
+> @@ -6792,7 +6810,8 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+>  
+>  	if (flags & (FAULT_FLAG_WRITE|FAULT_FLAG_UNSHARE)) {
+>  		if (!huge_pte_write(vmf.orig_pte)) {
+> -			ret = hugetlb_wp(pagecache_folio, &vmf);
+> +			ret = hugetlb_wp(pagecache_folio, &vmf,
+> +					&pagecache_folio_unlocked);
+>  			goto out_put_page;
+>  		} else if (likely(flags & FAULT_FLAG_WRITE)) {
+>  			vmf.orig_pte = huge_pte_mkdirty(vmf.orig_pte);
+> @@ -6809,10 +6828,14 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+>  out_ptl:
+>  	spin_unlock(vmf.ptl);
+>  
+> -	if (pagecache_folio) {
+> +	/*
+> +	 * If the pagecache_folio is unlocked in hugetlb_wp(), we skip
+> +	 * folio_unlock() here.
+> +	 */
+> +	if (pagecache_folio && !pagecache_folio_unlocked)
+>  		folio_unlock(pagecache_folio);
+> +	if (pagecache_folio)
+>  		folio_put(pagecache_folio);
+> -	}
+>  out_mutex:
+>  	hugetlb_vma_unlock_read(vma);
+>  
+> 
+> base-commit: d76bb1ebb5587f66b0f8b8099bfbb44722bc08b3
+> -- 
+> 2.43.0
+> 
+> 
 
-Should be 'compatible' here.
-
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - const: altr,socfpga-stmmac
-> +          - const: snps,dwmac-3.70a
-> +          - const: snps,dwmac
-> +      - items:
-> +          - const: altr,socfpga-stmmac-a10-s10
-> +          - const: snps,dwmac-3.74a
-> +          - const: snps,dwmac
-> +      - items:
-> +          - const: altr,socfpga-stmmac-a10-s10
-> +          - const: snps,dwmac-3.72a
-> +          - const: snps,dwmac
-
-The last 2 lists can be combined.
-
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 4
-
-You need to define what each entry is.
-
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 4
-
-And the name for each entry.
-
-> +
-> +  phy-mode:
-> +    enum:
-> +      - rgmii
-> +      - sgmii
-> +      - gmii
-> +
-> +  altr,emac-splitter:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Should be the phandle to the emac splitter soft IP node if DWMAC
-> +      controller is connected an emac splitter.
-> +
-> +  altr,f2h_ptp_ref_clk:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Phandle to Precision Time Protocol reference clock. This clock is
-> +      common to gmac instances and defaults to osc1.
-> +
-> +  altr,gmii-to-sgmii-converter:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Should be the phandle to the gmii to sgmii converter soft IP.
-> +
-> +  altr,sysmgr-syscon:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      Should be the phandle to the system manager node that encompass
-> +      the glue register, the register offset, and the register shift.
-> +      On Cyclone5/Arria5, the register shift represents the PHY mode
-> +      bits, while on the Arria10/Stratix10/Agilex platforms, the
-> +      register shift represents bit for each emac to enable/disable
-> +      signals from the FPGA fabric to the EMAC modules.
-> +    minItems: 1
-> +    items:
-> +      - description: phandle to the system manager node
-> +      - description: offset of the control register
-> +      - description: shift within the control register
-
-items:
-  - items:
-      - description: phandle to the system manager node
-      - ...
-      - ...
-
-And drop minItems.
-
-> +
-> +allOf:
-> +  - $ref: snps,dwmac.yaml#
-> +
-> +additionalProperties: true
-
-unevaluatedProperties: false
-
-> +
-> +examples:
-> +
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    soc {
-> +            #address-cells = <1>;
-
-Use 4 space indent.
-
-> +            #size-cells = <1>;
-> +            gmac0: ethernet@ff700000 {
-
-Drop the label.
-
-> +                    compatible = "altr,socfpga-stmmac", "snps,dwmac-3.70a",
-> +                    "snps,dwmac";
-> +                    altr,sysmgr-syscon = <&sysmgr 0x60 0>;
-> +                    reg = <0xff700000 0x2000>;
-> +                    interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
-> +                    interrupt-names = "macirq";
-> +                    mac-address = [00 00 00 00 00 00]; /* Filled in by U-Boot */
-> +                    clocks = <&emac_0_clk>;
-> +                    clock-names = "stmmaceth";
-> +                    phy-mode = "sgmii";
-> +            };
-> +    };
+-- 
+Oscar Salvador
+SUSE Labs
 
