@@ -1,161 +1,252 @@
-Return-Path: <linux-kernel+bounces-655439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D662DABD590
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:52:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 285A5ABD59F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E0DE3A8F86
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:52:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6604D7A861D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943F12701B7;
-	Tue, 20 May 2025 10:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A3321CC70;
+	Tue, 20 May 2025 10:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="G2kGfE39"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="f5OtOc+h"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9282626A1D0
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4DD270EC3;
+	Tue, 20 May 2025 10:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747738342; cv=none; b=sYH7d3Y0I2eNp1UyL3hV6xTqgT084g8R+lMoP4FE4sjl1n7en16oE9h+2oeMGXZac8xGHGd97zTLfIvVvc2fYR/lJN3vk7h15dPcj3Ri+LkrH8eRhTTygaRtliVz9xbERbu1ykpfzN+9VJvX32I18T0+3bjOXA8UrpAqXYWap4k=
+	t=1747738518; cv=none; b=YlPyy3IBJ+IbxeU8pajVq71j+Hi8NFqKoo0Emli3uEiFuENiAEYenX6dGq8ZC9Ym0S5+xnAoIb2+BsdW5snsLNoazHaO6iB6r8+6Cq+lu6kdx5hoXhinxyPYFQ/Gko13PgsuGRXvGqsgCMgrmbK/rQFTHdvRihT5HEzw8OHHMcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747738342; c=relaxed/simple;
-	bh=Oa9k0noCv5pfsZvbyv4j1AKu0STBRVDPhxiDXfVsT8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YsEDBzj6JCE7bLQO6bsdHM1H9z/8fkcupn8cwX7S+rJx59/oGeY2y8nZ2xoHAvoS/Hgz7H55v0uNH1QhM3Ho3dY8EvjHbr/5CGx6xTaKA0ChYKmgSc32gVafptDoUDM0JtSoUHbfLuJ/94FL7Q8o+Z6n2cpyg9rmfDI8ftrLFOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=G2kGfE39; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54K7a355015695
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:52:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=iu6hQ3FOP9u9YuNt9OId1rpc
-	oHm2k7ZRa3DQfZxPW7A=; b=G2kGfE39xHXtJo3JfPN9p5Gbsjy6vaDU78zvVggd
-	AjNF77Cj64hMIZVcIkerHarinstxprWv0Up9BBc9pUu+TLfRGRs4PnUH8D1NvdDc
-	VHu+S+9PzQoCoryGCTmWAgf/iT7AMy4iL91HZALsh3BcUoDbOGErbnnmFGFvptxB
-	3B5wdgF8rxl76WznhcKzJKWhTFDVg7kNrMkT37VLPmDY9J2mBj2dbt9n5CODS6nm
-	/C2V946jtTtjlSYNn8C8XR6WSYG1zZ6WDwODyiA3niI9heI6SdvSLLa8vX6AcstA
-	d4xMglzrhiwYUmZYn7GX5+TZAF78n0Q4XYFZ0XD15gqeWQ==
-Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46pjkyqjat-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:52:19 +0000 (GMT)
-Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-52aa2e08ce5so5103998e0c.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 03:52:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747738336; x=1748343136;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iu6hQ3FOP9u9YuNt9OId1rpcoHm2k7ZRa3DQfZxPW7A=;
-        b=F46+Equk595NnOym36U7mWZPXlKDqZdfTqWOv03M8clyb9eWnrn68GPVa9Eklp7fm6
-         5PC9t0pib/o3QJg4KhVC7SpZTVltEjx/5gHrMG8Kf/VjZxNf+L0jrZlAvsntLIGt20IV
-         C+csa4Ehz6TTJkIuNfZIkRd++ZwbsvXQIzb+1yn2G7A1lPKEw7gtViVxJKfKBLF8HjzC
-         LIYs/h9AjoXLqW3DFjotaP/dXJlFvs2bkBLkx4sg44gMI3vWjllXLjlO/5b4AlOLlgaV
-         rEhPctJu49mD+tfXNyXZmnVqUrOGy2Es8onnqfXO8gXuqWtnlWoXDCxW4o9bj8ML04sT
-         rvUg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8x4+XI4iHPQYbefKsgFoH1FWU4nGgNMfKxjntj9YWGfFNhfkiaPN0DV4MWxjijxd3sdQHJb9x54ntfg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcMuAg4fj15KobAY3qbP+NDk1H7zWJuaHxD34vFuV5FD0+mINe
-	tjqQGc6Ba5e1JeKMzndRWBtVsE0S8TAkDwnvNqJCYGLuNBu3vFRZ7pTbMQ7UL/yBB+mKsBl1ibl
-	0biNPj1D7mbSU8wKCA1fayhN4YgcyEzceBqFeamSxtSWYfdqbRUH1ehPsGMdhymD1j+twOfqgZX
-	0=
-X-Gm-Gg: ASbGnct4MOSSZEw9RR0XlYkatd+WN9XkZXw9qVJiiG+/MCLivwuIxzb8muoWGW9XMdb
-	RZIcsl8YQTDz6PVlrWwcz8PYaNl/oJPhlvMnRHeCZW66YR58ta1ofeEcVdunt8QBrspzlWFl7ZJ
-	odhWEjTMyDIvrqPmvZWIBgan6qFc4l0a/jZYNpof3VmqMND8w1xgOjnQjzs9J0MM/sx0YSa92UB
-	8ClIMeVyhhKqkNPssMkAHt70K5fSoCOxqvwAVL2l8pZyL0QQGhiCok3a9+iQHwyW9z9ItWG24Ut
-	9ceuH4nHYz3OxogS6Sq6+MmEtfNAh/GuuWqYkfP48n2h292YBsXTSNLeQpkzuF7s1XtGbE0zt+c
-	=
-X-Received: by 2002:a05:6122:46a7:b0:523:dd87:fe95 with SMTP id 71dfb90a1353d-52dba928373mr15602812e0c.9.1747738336044;
-        Tue, 20 May 2025 03:52:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFKLSIG2Onln6gXMObDRG2o81ByYnYJZsZgsh86zfCf5MH9TVDxED5HmWvf5vBdtOWBgkCTTg==
-X-Received: by 2002:a05:620a:44cf:b0:7c5:95e6:ce1d with SMTP id af79cd13be357-7cd4608ea23mr2402476385a.0.1747738324922;
-        Tue, 20 May 2025 03:52:04 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e703f47csm2282736e87.237.2025.05.20.03.52.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 03:52:04 -0700 (PDT)
-Date: Tue, 20 May 2025 13:52:02 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Wenmeng Liu <quic_wenmliu@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, bryan.odonoghue@linaro.org,
-        todor.too@gmail.com, rfoss@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: qcs615: Add support for camss
-Message-ID: <gsj7aya7lr3quuw56n6p3utvz27qaqn5rxoihkvecsgfy4itu3@zoekpc7fyabs>
-References: <20250520-qcs615-adp-air-camss-v1-0-ac25ca137d34@quicinc.com>
- <20250520-qcs615-adp-air-camss-v1-1-ac25ca137d34@quicinc.com>
+	s=arc-20240116; t=1747738518; c=relaxed/simple;
+	bh=Gc0wZ+bMJbD1feOCIgrzdzp2vokFyfBnADbbUlrcFdQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jjWqiOx6VfBLAczXj0hsSAHGXEkl1Z8BOimMPFsBg20a5vz66fzhpEf8GFJ5sb1nyqvAsojWyODB2SxoAxvImaEG5+FH2CNLXWqBzAjsqpzjYj2S1c8f+R2P93zJ0DUk9KDU8oIIuZWlxSidFscfHFssAGS8LHmrEWk1DcG8rho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=f5OtOc+h; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1747738492; x=1748343292; i=wahrenst@gmx.net;
+	bh=TT2xkWfmRv0GSyyjB8NHPoKAs97BDlbBMy3S8w3PonU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=f5OtOc+hn1NjVYTN+ZPwGD2Qy/qnFTYq14Ld6LmqvIIQK5nDltkEg7zrL8AAhlQt
+	 JKnRLbANzffZRjaSCQaSa0tyjdkba703usKpOuUecBHXBurPuPymcay1bpV0RtQzE
+	 UVR53BcwfU/kx2sbKCPmOXy3k1dbBeENVJHvbd74vO6/mSj21Y56FWMg05Mm+6fe+
+	 P2XYFV9wRAiVn6zX07tpXc6ehjqv5so99Y6MioH7YaGEAuIkjz7xg3zMiRYz1OQM/
+	 tQGIV5fo9VhqyyodCcEDFiqQQej2vcTcx0MU13EjLLi21YJ5sd9XttFhhIil0vlYk
+	 WuDD9Mv3mvn+oZNhkA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.105] ([91.41.216.208]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MRTRH-1ucPhm3Cwn-00O2G5; Tue, 20
+ May 2025 12:54:51 +0200
+Message-ID: <f0017caf-8fd7-4046-ab7c-71c6560b7a95@gmx.net>
+Date: Tue, 20 May 2025 12:54:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250520-qcs615-adp-air-camss-v1-1-ac25ca137d34@quicinc.com>
-X-Proofpoint-GUID: hPo3KzMYWAaMXNUSqmoV9yda7FTFU895
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDA4OSBTYWx0ZWRfX/cRPh5bKgTfc
- dxtZrKgGz6+mxF/8Td3pUUbBraoxJs2slFCnSi+oqWQMrlOlBtoU8OrBJfaS4JS1rDOudMI8xFI
- 7D2AhGNzdQxJw2Jxsjwx/Q8TEmeR9vKrEtaqJc7oS4sBPNM9/QxC2ogaT0uDzuAaH8vjWXwys7W
- GaP2ye4dVrPN2dqmuIob+BU63bagUOHX0fDgyKp5aLqD+4abmWVWIOXQOE8GwRJt1yImBwCHtt7
- VoVYI1b/bWap0y1ISPXVmMqNoSXIRO7ZZcDkqlkL9izrpu/OSK8fy1MVrldK4ncJ/ouZsu2KhlR
- 4MMjY7O/LQO6H/wiVE/x/6sN1vUNxLSYrIJV1Bec2bOn9Aa7Hzgmr79l1yn41wkmZ3XYuMJz98c
- FcYZN77KQOFq+FAQ5xCss0UkCXSOHYyh6sn1rmL2sYBufPaB1Wj0DHb/vHcDy/8IatHbSFUa
-X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=682c5ee3 cx=c_pps
- a=+D9SDfe9YZWTjADjLiQY5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=Sj07yxY_p6yHqL6ZhSQA:9 a=CjuIK1q_8ugA:10
- a=vmgOmaN-Xu0dpDh8OwbV:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: hPo3KzMYWAaMXNUSqmoV9yda7FTFU895
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-20_04,2025-05-16_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 mlxlogscore=770 adultscore=0
- phishscore=0 mlxscore=0 priorityscore=1501 suspectscore=0 malwarescore=0
- impostorscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
- definitions=main-2505200089
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] ARM: dts: add ngpios for vf610 compatible gpio
+ controllers
+To: Haibo Chen <haibo.chen@nxp.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, peng.fan@nxp.com, conor@kernel.org,
+ Frank Li <Frank.Li@nxp.com>
+References: <20250520-gpio-dts-v3-0-04771c6cf325@nxp.com>
+ <20250520-gpio-dts-v3-2-04771c6cf325@nxp.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+Autocrypt: addr=wahrenst@gmx.net; keydata=
+ xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
+ IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
+ NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
+ JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
+ TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
+ f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
+ V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
+ aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
+In-Reply-To: <20250520-gpio-dts-v3-2-04771c6cf325@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:xrkl7NJAqZnlTaTEnX/cpkGwTW+zKvSKuh/hDiAPK7+MOCaf2yi
+ 1LSOS8uyvmobKOQO4SbcnnT2r6QgfpWyxp+PllMX8Oh98+98AMlHVGYF8t37PPv/twH0Yhb
+ aYpgIdqZw0RWW50rnjO87u6w/9vC4NDNMH1cxFFq/HynPB+bN1dKvao5Q28BVKNO4KgKzvo
+ ZFSgwTWU9lIullCEOTZNw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ssFXhHaeEuM=;Gx4eRypxVFkb9GRqF9fl4ZVUEQu
+ 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
+ 1XEpMxhRDAL0s2dT
 
-On Tue, May 20, 2025 at 04:56:51PM +0800, Wenmeng Liu wrote:
-> Add support for the camera subsystem on the QCS615 Qualcomm SoC. This
-> includes bringing up the CSIPHY, CSID, VFE/RDI interfaces.
-> 
-> QCS615 provides
-> - 2 x VFE, 3 RDI per VFE
-> - 1 x VFE Lite, 4 RDI per VFE
-> - 2 x CSID
-> - 1 x CSID Lite
-> - 3 x CSI PHY
-> 
-> Signed-off-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
+Hi,
+
+Am 20.05.25 um 05:46 schrieb Haibo Chen:
+> After commit da5dd31efd24 ("gpio: vf610: Switch to gpio-mmio"),
+> the vf610 GPIO driver no longer uses the static number 32 for
+> gc->ngpio. This allows users to configure the number of GPIOs
+> per port.
+>
+> And some gpio controllers did have less pads. So add 'ngpios' here,
+> this can save some memory when request bitmap, and also show user
+> more accurate information when use gpio tools.
+sorry for asking this dumb question: why do we need the redundant ngpio=20
+property in case there is already gpio-ranges defined? AFAIU the last=20
+cell already contains the necessary information. Or do I missed something?
+
+Best regards
+>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
 > ---
->  arch/arm64/boot/dts/qcom/qcs615.dtsi | 133 +++++++++++++++++++++++++++++++++++
->  1 file changed, 133 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> index 47e350f175860e7b06f7b2c13fed75a65e489c8a..535251efc6b559447482b9ecc67ca26e7efbbb8c 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> @@ -3242,6 +3242,139 @@ videocc: clock-controller@ab00000 {
->                          #power-domain-cells = <1>;
->                  };
->  
-> +		camss: camss@acb3000 {
+>   arch/arm/boot/dts/nxp/imx/imx7ulp.dtsi | 4 ++++
+>   arch/arm/boot/dts/nxp/vf/vfxxx.dtsi    | 5 +++++
+>   2 files changed, 9 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/nxp/imx/imx7ulp.dtsi b/arch/arm/boot/dts/=
+nxp/imx/imx7ulp.dtsi
+> index 3c6ef7bfba60986b797bb01b843830d364c96d45..880b9a4f32b0846a773dbf9a=
+d30715c84ac2fda6 100644
+> --- a/arch/arm/boot/dts/nxp/imx/imx7ulp.dtsi
+> +++ b/arch/arm/boot/dts/nxp/imx/imx7ulp.dtsi
+> @@ -399,6 +399,7 @@ gpio_ptc: gpio@40ae0000 {
+>   				 <&pcc3 IMX7ULP_CLK_PCTLC>;
+>   			clock-names =3D "gpio", "port";
+>   			gpio-ranges =3D <&iomuxc1 0 0 20>;
+> +			ngpios =3D <20>;
+>   		};
+>  =20
+>   		gpio_ptd: gpio@40af0000 {
+> @@ -413,6 +414,7 @@ gpio_ptd: gpio@40af0000 {
+>   				 <&pcc3 IMX7ULP_CLK_PCTLD>;
+>   			clock-names =3D "gpio", "port";
+>   			gpio-ranges =3D <&iomuxc1 0 32 12>;
+> +			ngpios =3D <12>;
+>   		};
+>  =20
+>   		gpio_pte: gpio@40b00000 {
+> @@ -427,6 +429,7 @@ gpio_pte: gpio@40b00000 {
+>   				 <&pcc3 IMX7ULP_CLK_PCTLE>;
+>   			clock-names =3D "gpio", "port";
+>   			gpio-ranges =3D <&iomuxc1 0 64 16>;
+> +			ngpios =3D <16>;
+>   		};
+>  =20
+>   		gpio_ptf: gpio@40b10000 {
+> @@ -441,6 +444,7 @@ gpio_ptf: gpio@40b10000 {
+>   				 <&pcc3 IMX7ULP_CLK_PCTLF>;
+>   			clock-names =3D "gpio", "port";
+>   			gpio-ranges =3D <&iomuxc1 0 96 20>;
+> +			ngpios =3D <20>;
+>   		};
+>   	};
+>  =20
+> diff --git a/arch/arm/boot/dts/nxp/vf/vfxxx.dtsi b/arch/arm/boot/dts/nxp=
+/vf/vfxxx.dtsi
+> index 597f20be82f1ee044e14bfaf3bd05cff37a8ad39..a275821c35d41e97eb2139a0=
+81ef5765d07672aa 100644
+> --- a/arch/arm/boot/dts/nxp/vf/vfxxx.dtsi
+> +++ b/arch/arm/boot/dts/nxp/vf/vfxxx.dtsi
+> @@ -318,6 +318,7 @@ gpio0: gpio@40049000 {
+>   				interrupt-controller;
+>   				#interrupt-cells =3D <2>;
+>   				gpio-ranges =3D <&iomuxc 0 0 32>;
+> +				ngpios =3D <32>;
+>   			};
+>  =20
+>   			gpio1: gpio@4004a000 {
+> @@ -329,6 +330,7 @@ gpio1: gpio@4004a000 {
+>   				interrupt-controller;
+>   				#interrupt-cells =3D <2>;
+>   				gpio-ranges =3D <&iomuxc 0 32 32>;
+> +				ngpios =3D <32>;
+>   			};
+>  =20
+>   			gpio2: gpio@4004b000 {
+> @@ -340,6 +342,7 @@ gpio2: gpio@4004b000 {
+>   				interrupt-controller;
+>   				#interrupt-cells =3D <2>;
+>   				gpio-ranges =3D <&iomuxc 0 64 32>;
+> +				ngpios =3D <32>;
+>   			};
+>  =20
+>   			gpio3: gpio@4004c000 {
+> @@ -351,6 +354,7 @@ gpio3: gpio@4004c000 {
+>   				interrupt-controller;
+>   				#interrupt-cells =3D <2>;
+>   				gpio-ranges =3D <&iomuxc 0 96 32>;
+> +				ngpios =3D <32>;
+>   			};
+>  =20
+>   			gpio4: gpio@4004d000 {
+> @@ -362,6 +366,7 @@ gpio4: gpio@4004d000 {
+>   				interrupt-controller;
+>   				#interrupt-cells =3D <2>;
+>   				gpio-ranges =3D <&iomuxc 0 128 7>;
+> +				ngpios =3D <7>;
+>   			};
+>  =20
+>   			anatop: anatop@40050000 {
+>
 
-camss: isp@acb3000 {}
-
-
--- 
-With best wishes
-Dmitry
 
