@@ -1,151 +1,192 @@
-Return-Path: <linux-kernel+bounces-656030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D675ABE0BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:32:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6DFABE0B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76F113BF3D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:31:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43CE1162F18
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C27326A1B6;
-	Tue, 20 May 2025 16:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92BE263C91;
+	Tue, 20 May 2025 16:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="nPDeI+8d"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qZPrfh52"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D356F25228B
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 16:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C03F2B9A9;
+	Tue, 20 May 2025 16:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747758727; cv=none; b=ekBskw8SJJo70J7dzSNAj43+7L3j/ARK3HWtGjUwivFh2CuvWhS6wE/nShdhOenI2NN3dxXqk+D4qXS+D3YhlLJdS8SBKkzQPobMzrSVFd0B7J9kAubrKNHp3OtTRaN+a6gB6Z/VjFIPCT706AFlXEJUIJRCUVEt08h6zZQf7tM=
+	t=1747758663; cv=none; b=GXbj+foCmV8eCB8Rm3RX1GmMucklbKYi7nTYBbiqLLHT6mPivmxIptsdGKl7ds6uhRynbm3NKv976vQvYOWMwSFFxf/Jmalc8PEnDx/iG6PNcO93IxkZunVNzPeD+3WgCofU7Gg2zOVG9whGT1Fbp2dnSwcPQBsa2t5TPEg4NF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747758727; c=relaxed/simple;
-	bh=POmbrIHo60gDWrhh/e54NXyzo1C9QXa4uEQ3RXx3osc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=dwZ/vtpoTTUQqOeBqbf/jrIqBAIz94NQDNhyL3+1UEYvFEcvZALFnWW5RTQUCde18fMpFZnyFbXJvSNE+fOZMm9PtFCSmqErLgwEer8N7itH+g2qSLppeF3b4qfhrA1Pkxs1NbuZ7yiofSImBKX2ksRrvnASzJ/mjmAWkX56p4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=nPDeI+8d; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54KEk9RU024592;
-	Tue, 20 May 2025 18:32:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	WLtDt6YanhmPfaOmDE+0nd7iiaBZS7FD9MJadgVpl0c=; b=nPDeI+8dm9CPaejc
-	Q0ud6zvn0FTXf8V0HOukof9Nyx6XE7pG7hhP1R8AVQCRQ+aOwkUl1UdpJp4T5uMo
-	HMFWkMJxF/0djHZO8q8QrM6GmL4pqk2qnVvXjmnPDVUMZCvLCHtw2MZ/Nb/sgQvG
-	9rAO16C+RmI/8cIMgvrCPAmIN8XW0KQazsRsAH3yIG6CORMz+39trn9VT1CgrEyb
-	yAn+dYv5ewgQW3d9OAssi8PY/fzgR0knsWWCRBfCbS5aYtvv+orefp6qVkp28RQ/
-	41Ai9ry1o46/dSFmKH0/0+k8BrGORrrLAJktIgkBZazll5P1uEclk/ZFF6/ht05A
-	dCx+cQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46phbgnvc5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 May 2025 18:32:01 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id AF92A4004F;
-	Tue, 20 May 2025 18:31:02 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D2C93B190B2;
-	Tue, 20 May 2025 18:29:44 +0200 (CEST)
-Received: from [10.252.30.65] (10.252.30.65) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 20 May
- 2025 18:29:44 +0200
-Message-ID: <25eec2f8-8883-489e-a68b-3f80056bdc76@foss.st.com>
-Date: Tue, 20 May 2025 18:29:43 +0200
+	s=arc-20240116; t=1747758663; c=relaxed/simple;
+	bh=Hem8uB3zD/uymJ9qJM41N8VYIt7YRxLcq73u4y3iXZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=sUYaNraYH3Y0+MgpDbweSn4wigLYDrILCwk6N9RQpMOiEheOTwXv1T5dFTzxWs+m3wehZ1h/exAsTTJzpkQq25VxZhsPyHoEKKca3hMWNmYqyr2AyLmXLnc3HyXhezfT612vkellPiT0FCQOB08IFKlhrepJQT5H7Y9SdXQ+Gmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qZPrfh52; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5206CC4CEE9;
+	Tue, 20 May 2025 16:31:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747758662;
+	bh=Hem8uB3zD/uymJ9qJM41N8VYIt7YRxLcq73u4y3iXZQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=qZPrfh52H9nmCtaZEzHwRsuSjNG60L8K+op7YjP/4d3Clt8YrQ61bHb4RMRebkQYp
+	 ZlfbFO/xEeyf3YewDEOrx+Gsz/ioRAER2UxfGLorG8iVIO7cNDTqMWBFQ9n2/f1+5p
+	 GaUbj1QCopmcrQvH294U3xHiBoEaRf0UPLpni9r23pLebn/8/003ycFdkfhuI2VLlt
+	 BLLWuhfkeGcf26KXqG192DtM77svvxhattM5I7y1gXS+2A5aZTh+G+/KIZFjAuGbT9
+	 CSBhrSR1NKdXdr06Ibm3CHtR7lB9c9Z5ns4XBHRJzFPUd1oFaKN9HSZLBplRI/Alg7
+	 TSa9BmbDkwVWQ==
+Date: Tue, 20 May 2025 11:31:00 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-pci@vger.kernel.org, Jon Pan-Doh <pandoh@google.com>,
+	Karolina Stolarek <karolina.stolarek@oracle.com>,
+	Martin Petersen <martin.petersen@oracle.com>,
+	Ben Fuller <ben.fuller@oracle.com>,
+	Drew Walton <drewwalton@microsoft.com>,
+	Anil Agrawal <anilagrawal@meta.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Sargun Dhillon <sargun@meta.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Kai-Heng Feng <kaihengf@nvidia.com>,
+	Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v6 16/16] PCI/AER: Add sysfs attributes for log ratelimits
+Message-ID: <20250520163100.GA1307206@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [V1 1/2] arm stm32mp131.dtsi: add "encoding_mode" nvmem
- definition
-From: Yann Gautier <yann.gautier@foss.st.com>
-To: Rodolfo Giometti <giometti@enneenne.com>, <linux-kernel@vger.kernel.org>
-CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Eric Fourmont <eric.fourmont-ext@st.com>
-References: <20250519130859.3389704-1-giometti@enneenne.com>
- <20250519130859.3389704-2-giometti@enneenne.com>
- <f1ffb147-459a-4b3b-b109-9b07b25c99ac@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <f1ffb147-459a-4b3b-b109-9b07b25c99ac@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-20_06,2025-05-20_03,2025-03-28_01
+In-Reply-To: <cfe3d2a5-fe32-ca35-98f5-812da367dc99@linux.intel.com>
 
-On 5/20/25 10:26, Yann Gautier wrote:
-> On 5/19/25 15:08, Rodolfo Giometti wrote:
->> This patch adds the definition for the nvmem location "encoding_mode"
->> related to the "cpu0" node.
->>
->> Signed-off-by: Rodolfo Giometti <giometti@enneenne.com>
->> ---
->>   arch/arm/boot/dts/st/stm32mp131.dtsi | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/st/stm32mp131.dtsi 
->> b/arch/arm/boot/dts/st/stm32mp131.dtsi
->> index e555717c0048..52bf497e26bb 100644
->> --- a/arch/arm/boot/dts/st/stm32mp131.dtsi
->> +++ b/arch/arm/boot/dts/st/stm32mp131.dtsi
->> @@ -24,6 +24,9 @@ cpu0: cpu@0 {
->>               clocks = <&scmi_perf 0>;
->>               clock-names = "cpu";
->>               #cooling-cells = <2>;
->> +
->> +            nvmem-cells = <&encoding_mode_otp>;
->> +            nvmem-cell-names = "encoding_mode";
->>           };
->>       };
->> @@ -1167,6 +1170,10 @@ part_number_otp: part-number-otp@4 {
->>                   reg = <0x4 0x2>;
->>                   bits = <0 12>;
->>               };
->> +            encoding_mode_otp: encoding-mode-otp@4 {
+On Tue, May 20, 2025 at 03:02:06PM +0300, Ilpo Järvinen wrote:
+> On Mon, 19 May 2025, Bjorn Helgaas wrote:
 > 
-> This node should end with @0 instead of 4.
-> It should also be placed before part-number-otp node.
+> > From: Jon Pan-Doh <pandoh@google.com>
+> > 
+> > Allow userspace to read/write log ratelimits per device (including
+> > enable/disable). Create aer/ sysfs directory to store them and any
+> > future aer configs.
+> > 
+> > Update AER sysfs ABI filename to reflect the broader scope of AER sysfs
+> > attributes (e.g. stats and ratelimits).
+> > 
+> >   Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats ->
+> >     sysfs-bus-pci-devices-aer
+> > 
+> > Tested using aer-inject[1]. Configured correctable log ratelimit to 5.
+> > Sent 6 AER errors. Observed 5 errors logged while AER stats
+> > (cat /sys/bus/pci/devices/<dev>/aer_dev_correctable) shows 6.
+> > 
+> > Disabled ratelimiting and sent 6 more AER errors. Observed all 6 errors
+> > logged and accounted in AER stats (12 total errors).
+> > 
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/gong.chen/aer-inject.git
+> > 
+> > Signed-off-by: Karolina Stolarek <karolina.stolarek@oracle.com>
+> > Signed-off-by: Jon Pan-Doh <pandoh@google.com>
+> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> > Acked-by: Paul E. McKenney <paulmck@kernel.org>
+> > ---
+> >  ...es-aer_stats => sysfs-bus-pci-devices-aer} | 34 +++++++
+> >  Documentation/PCI/pcieaer-howto.rst           |  5 +-
+> >  drivers/pci/pci-sysfs.c                       |  1 +
+> >  drivers/pci/pci.h                             |  1 +
+> >  drivers/pci/pcie/aer.c                        | 99 +++++++++++++++++++
+> >  5 files changed, 139 insertions(+), 1 deletion(-)
+> >  rename Documentation/ABI/testing/{sysfs-bus-pci-devices-aer_stats => sysfs-bus-pci-devices-aer} (77%)
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer
+> > similarity index 77%
+> > rename from Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+> > rename to Documentation/ABI/testing/sysfs-bus-pci-devices-aer
+> > index d1f67bb81d5d..771204197b71 100644
+> > --- a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+> > +++ b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer
+> > @@ -117,3 +117,37 @@ Date:		July 2018
+> >  KernelVersion:	4.19.0
+> >  Contact:	linux-pci@vger.kernel.org, rajatja@google.com
+> >  Description:	Total number of ERR_NONFATAL messages reported to rootport.
+> > +
+> > +PCIe AER ratelimits
+> > +-------------------
+> > +
+> > +These attributes show up under all the devices that are AER capable.
+> > +They represent configurable ratelimits of logs per error type.
+> > +
+> > +See Documentation/PCI/pcieaer-howto.rst for more info on ratelimits.
+> > +
+> > +What:		/sys/bus/pci/devices/<dev>/aer/ratelimit_log_enable
+> > +Date:		March 2025
+> > +KernelVersion:	6.15.0
+> 
+> This ship has sailed.
 
-I forgot that this node already was in TF-A, with a different name.
-This is better to align it here, the the node would become:
+Updated to May 2025 and 6.16.0 (I hope :)).
 
-			cfg0_otp: cfg0-otp@0 {
-				reg = <0x0 0x2>;
-				bits = <0 9>;
-			};
+> > +Contact:	linux-pci@vger.kernel.org, pandoh@google.com
+> > +Description:	Writing 1/0 enables/disables AER log ratelimiting. Reading
+> > +		gets whether or not AER is currently enabled.
+> 
+> AER or AER ratelimiting is enabled?
 
-Best regards,
-Yann
+I think we want "AER ratelimiting" here, thanks!
 
-> 
->> +                reg = <0x0 0x1>;
-> 
-> If I'm not mistaken, this should be:
->      reg = <0x0 0x2>;
-> 
-> 
-> Best regards,
-> Yann
-> 
->> +                bits = <0 9>;
->> +            };
->>               vrefint: vrefin-cal@52 {
->>                   reg = <0x52 0x2>;
->>               };
-> 
-
+> > + * Ratelimit enable toggle
+> > + * 0: disabled with ratelimit.interval = 0
+> > + * 1: enabled with ratelimit.interval = nonzero
+> > + */
+> > +static ssize_t ratelimit_log_enable_show(struct device *dev,
+> > +					 struct device_attribute *attr,
+> > +					 char *buf)
+> > +{
+> > +	struct pci_dev *pdev = to_pci_dev(dev);
+> > +	bool enabled = pdev->aer_report->cor_log_ratelimit.interval != 0;
+> > +
+> > +	return sysfs_emit(buf, "%d\n", enabled);
+> > +}
+> > +
+> > +static ssize_t ratelimit_log_enable_store(struct device *dev,
+> > +					  struct device_attribute *attr,
+> > +					  const char *buf, size_t count)
+> > +{
+> > +	struct pci_dev *pdev = to_pci_dev(dev);
+> > +	bool enable;
+> > +	int interval;
+> > +
+> > +	if (!capable(CAP_SYS_ADMIN))
+> > +		return -EPERM;
+> > +
+> > +	if (kstrtobool(buf, &enable) < 0)
+> > +		return -EINVAL;
+> > +
+> > +	if (enable)
+> > +		interval = DEFAULT_RATELIMIT_INTERVAL;
+> > +	else
+> > +		interval = 0;
+> > +
+> > +	pdev->aer_report->cor_log_ratelimit.interval = interval;
+> > +	pdev->aer_report->uncor_log_ratelimit.interval = interval;
+> > +
+> > +	return count;
+> > +}
+> > +static DEVICE_ATTR_RW(ratelimit_log_enable);
 
