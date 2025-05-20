@@ -1,505 +1,206 @@
-Return-Path: <linux-kernel+bounces-655960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD481ABDFB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:58:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFD04ABDFB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 853BC7A7E0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:56:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FC301BC0D4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E98226562D;
-	Tue, 20 May 2025 15:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="iGkeNS/4"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3206226FDB9;
+	Tue, 20 May 2025 15:56:44 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59954266592;
-	Tue, 20 May 2025 15:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747756655; cv=pass; b=Q+9Wo90mULtTHz/kHT7azs5tHfut/i0Una7AOG402xJ2Sk0aB4ik9qTYYLf9pdR3kJT84XRp+95n3XjK1Ch6cXGyJMiPf0c4u46l10uBdJ0NkERxA93I11lkSs5IpPZjtKC05Kactqzd5bDbvolGwYPlhfGqVIFMYcAM3QvLACM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747756655; c=relaxed/simple;
-	bh=nQI6L7wo6nOQ6itKtFl4U5on3EvuP0P0ORwafgrPHa0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VcDuLzUp0rYmZrKD65i99sMIghBvY1y1KR+WDOX2ugdcoagzce944C6LXegkxkCyPNhbXzZytRtOiXeibVRfNTCAn4DYASF2w5mkbHSVIG18ymei3uQ7HPy03tbExBnsQZ1K7xBj+8DkqPyDEwJaj1hHp+WeRHUIrEQVSNrUSTw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=iGkeNS/4; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1747756645; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=UjGj6C4EDK97NZk7G7C+OQtAEuXMb/0P5aqWC/Y8SQfwYhB6H5JCKu2Pg3esJBAXRswBJeH2mvFINcvmP/aXUfGgdSAEpGc2mU8i0Oh8kth3nbJx3yanj6aLAUAQQ2f7PpxsUB9hjTpDlCYTOgKfSoWlb4ARNOqgopjMH77CsC0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1747756645; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=VHjk4Bf/QGRzRDkOeyGhCa9baizht500HJklCSaHrQA=; 
-	b=KT9sNa3jpiCp9qTNNRFWEtWfGe8IE93Of2lBaXYQXmIv2jRNZqYRWgPpimnWrmAz+XHZXUNyMSyMh2D5FAuf8hy4kRbvP1CMDmbSNEFHY2fG0CV21f+qYmwXqB3TlpO66rRFztuAV5RMf4+Sl7pZg2TyJlW93RSxzxWOFJWC1TM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747756645;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=VHjk4Bf/QGRzRDkOeyGhCa9baizht500HJklCSaHrQA=;
-	b=iGkeNS/4VjaDS1tP5rANszwnjK3PO20tLczXWps2ac4eQC9uTbURVpcVk33olkWQ
-	N1Vxc6cWVYxrGLufwn1QWUAipsT1e7inWUBNNqk/xbexHd84DksDNvsh3kks9/b3MZC
-	zEEedC97tcOxBM1ysGdsG4kwQxtm1DCraHz5eGkQ=
-Received: by mx.zohomail.com with SMTPS id 1747756644135260.52544976196987;
-	Tue, 20 May 2025 08:57:24 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Tue, 20 May 2025 17:57:15 +0200
-Subject: [PATCH 2/2] docs: document linked lists
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8550526D4C3;
+	Tue, 20 May 2025 15:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747756603; cv=none; b=NLrFkQR3AZoJL2MTttMbGR6NNQXWvMLa/8yUi/IQlTJAmgQPxy8urn6LAb6/Lbi3+sUE6JHG/wqq5VM5mxCsdolKY8itEUcrGZvDeZJ5aAbwCldnp2kLRREdES2d5G5xe7acGZvROT1a5M8P/nenVC8Cl1JxZCNQ/yPtkytlFhA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747756603; c=relaxed/simple;
+	bh=9t27kuG+nmeuoyFeo+Lr3zYDfVp+3AnIEpw2qvtpWCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N0f3QdsvsJK5KTXPw4ymHyLBrPo6WOB2zyiKNtCXm76mKR8R4e9Se6p1dWFVdU24n77al6HplG17y2AcpymydwXn8wOfvugr49lN5C9EuVQHv7OYPVQahVaMllTa1hj3jlbQhnzIrc2QheEJGla33vkH/ICsr/O8MJfW58YvLPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2593CC4CEEA;
+	Tue, 20 May 2025 15:56:41 +0000 (UTC)
+Date: Tue, 20 May 2025 11:57:21 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Jiri Olsa <jolsa@kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Andrii
+ Nakryiko <andrii@kernel.org>, "Jose E. Marchesi" <jemarch@gnu.org>, Indu
+ Bhagat <indu.bhagat@oracle.com>
+Subject: Re: [PATCH v9 00/13] unwind_user: x86: Deferred unwinding
+ infrastructure
+Message-ID: <20250520115721.7a4307a2@gandalf.local.home>
+In-Reply-To: <aCxM_BizulyIVcdb@gmail.com>
+References: <20250513223435.636200356@goodmis.org>
+	<20250514132720.6b16880c@gandalf.local.home>
+	<aCfMzJ-zN0JKKTjO@google.com>
+	<20250519113339.027c2a68@batman.local.home>
+	<aCxM_BizulyIVcdb@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250520-linked-list-docs-v1-2-db74f7449785@collabora.com>
-References: <20250520-linked-list-docs-v1-0-db74f7449785@collabora.com>
-In-Reply-To: <20250520-linked-list-docs-v1-0-db74f7449785@collabora.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: kernel@collabora.com, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
 
-The kernel contains various generic data structures that should ideally
-not be reinvented. However, it often fails to document the usage of
-these in the in-tree kernel documentation beyond just a listing of
-header symbols in the very lengthy kernel-api docs page. This is fine
-for things that have simple invocations, but occasionally things devolve
-into several layers of concatenating macros, which are subpar for humans
-to parse.
+On Tue, 20 May 2025 11:35:56 +0200
+Ingo Molnar <mingo@kernel.org> wrote:
 
-Begin making a small impact by adding some rudimentary example-driven
-documentation for the linked list type. It's far from exhaustive, as
-many list modification functions are currently not mentioned. However,
-it covers the basics and directs readers towards further documentation
-should they be interested in concurrency.
+> > Ah, I think I forgot about that. I believe the exit path can also be a
+> > faultable path. All it needs is a hook to do the exit. Is there any
+> > "task work" clean up on exit? I need to take a look.  
+> 
+> Could you please not rush this facility into v6.16? It barely had any 
+> design review so far, and I'm still not entirely sure about the 
+> approach.
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- Documentation/core-api/index.rst |   1 +
- Documentation/core-api/list.rst  | 390 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 391 insertions(+)
+Hi Ingo,
 
-diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index e9789bd381d8048364b2f679bb668f503f8780ec..5723432593f46144dbc4c0232086649bab05f24b 100644
---- a/Documentation/core-api/index.rst
-+++ b/Documentation/core-api/index.rst
-@@ -54,6 +54,7 @@ Library functionality that is used throughout the kernel.
-    union_find
-    min_heap
-    parser
-+   list
- 
- Low level entry and exit
- ========================
-diff --git a/Documentation/core-api/list.rst b/Documentation/core-api/list.rst
-new file mode 100644
-index 0000000000000000000000000000000000000000..1c7375a52afaf884418c4ea2b64d4d0bb6b79d9d
---- /dev/null
-+++ b/Documentation/core-api/list.rst
-@@ -0,0 +1,390 @@
-+.. SPDX-License-Identifier: GPL-2.0+
-+
-+=====================
-+Linked Lists in Linux
-+=====================
-+
-+:Author: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-+
-+.. contents::
-+
-+Introduction
-+============
-+
-+Linked lists are one of the most basic data structures used in many programs.
-+The Linux kernel implements several different flavours of linked lists. The
-+purpose of this document is not to explain linked lists in general, but to show
-+new kernel developers how to use the Linux kernel implementations of linked
-+lists.
-+
-+Please note that while linked lists certainly are ubiquitous, they may not
-+always be the best data structure to use in cases where a simple array doesn't
-+already suffice. Familiarizing oneself with other in-kernel generic data
-+structures, especially for concurrent accesses, is highly encouraged.
-+
-+Linux implementation of doubly linked lists
-+===========================================
-+
-+Linux's linked list implementations can be used by including the header file
-+``<linux/list.h>``.
-+
-+The doubly-linked list will likely be the most familiar to many readers. It's a
-+list that can efficiently be traversed forwards and backwards.
-+
-+The Linux kernel's doubly-linked list is circular in nature. This means that to
-+get from the head node to the tail, we can just travel one edge backwards.
-+Similarly, to get from the tail node to the head, we can simply travel forwards
-+"beyond" the tail and arrive back at the head.
-+
-+Declaring a node
-+----------------
-+
-+A node in a doubly-linked list is declared by adding a ``struct list_head``
-+member to the struct you wish to be contained in the list:
-+
-+.. code-block:: c
-+
-+  struct clown {
-+          unsigned long long shoe_size;
-+          const char *name;
-+          struct list_head node;  /* the aforementioned member */
-+  };
-+
-+This may be an unfamiliar approach to some, as the classical explanation of a
-+linked list is a list node struct with pointers to the previous and next list
-+node, as well the payload data. Linux chooses this approach because it allows
-+for generic list modification code regardless of what data struct is contained
-+within the list. Since the ``struct list_head`` member is not a pointer but part
-+of the struct proper, the ``container_of`` pattern can be used by the list
-+implementation to access the payload data regardless of its type, while staying
-+oblivious to what said type actually is.
-+
-+Declaring and initializing a list
-+---------------------------------
-+
-+A doubly-linked list can then be declared as just another ``struct list_head``,
-+and initialised with the LIST_HEAD_INIT() macro during initial assignment, or
-+with the INIT_LIST_HEAD() function later:
-+
-+.. code-block:: c
-+
-+  struct clown_car {
-+          int tyre_pressure[4];
-+          struct list_head clowns;        /* Looks like a node! */
-+  };
-+
-+  /* ... Somewhere later in our driver ... */
-+
-+  static int circus_init(struct circus_priv *circus)
-+  {
-+          struct clown_car other_car = {
-+                .tyre_pressure = {10, 12, 11, 9},
-+                .clowns = LIST_HEAD_INIT(other_car.clowns)
-+          };
-+
-+          circus->car.clowns = INIT_LIST_HEAD(&circus->car.clowns);
-+
-+          return 0;
-+  }
-+
-+A further point of confusion to some may be that the list itself doesn't really
-+have its own type. The concept of the entire linked list and a
-+``struct list_head`` member that points to other entries in the list are one and
-+the same.
-+
-+Adding nodes to the list
-+------------------------
-+
-+Adding a node to the linked list is done through the list_add() function.
-+
-+We'll return to our clown car example to illustrate how nodes get added to the
-+list:
-+
-+.. code-block:: c
-+
-+  static int circus_fill_car(struct circus_priv *circus)
-+  {
-+          struct clown_car *car = &circus->car;
-+          struct clown *grock;
-+          struct clown *dimitri;
-+
-+          /* State 1 */
-+
-+          grock = kzalloc(sizeof(*grock), GFP_KERNEL);
-+          if (!grock)
-+                  return -ENOMEM;
-+          grock->name = "Grock";
-+          grock->shoe_size = 1000;
-+
-+          /* Note that we're adding the "node" member */
-+          list_add(&grock->node, &car->clowns);
-+
-+          /* State 2 */
-+
-+          dimitri = kzalloc(sizeof(*dimitri), GFP_KERNEL);
-+          if (!dimitri)
-+                  return -ENOMEM;
-+          dimitri->name = "Dimitri";
-+          dimitri->shoe_size = 50;
-+
-+          list_add(&dimitri->node, &car->clowns);
-+
-+          /* State 3 */
-+
-+          return 0;
-+  }
-+
-+In State 1, our list of clowns is still empty:
-+
-+.. kernel-render:: DOT
-+   :alt: Visualization of clowns list in State 1
-+   :caption: clowns list in State 1, grey dashed lines are "prev" edges
-+
-+   digraph c {
-+    rankdir="LR";
-+    node [shape=box];
-+    "clowns" -> "clowns";
-+    "clowns" -> "clowns" [color=gray, style=dashed, constraint=false, arrowsize=0.5];
-+   }
-+
-+In State 2, we've added Grock after the list head:
-+
-+.. kernel-render:: DOT
-+   :alt: Visualization of clowns list in State 2
-+   :caption: clowns list in State 2, grey dashed lines are "prev" edges
-+
-+   digraph c {
-+    rankdir="LR";
-+    node [shape=box];
-+    "clowns" -> "Grock";
-+    "Grock" -> "clowns" [constraint=false];
-+    "clowns" -> "Grock" -> "clowns" [color=gray, style=dashed, constraint=false,
-+                                     arrowsize=0.5];
-+   }
-+
-+In State 3, we've added Dimitri after the list head, resulting in the following:
-+
-+.. kernel-render:: DOT
-+   :alt: Visualization of clowns list in State 3
-+   :caption: clowns list in State 3, grey dashed lines are "prev" edges
-+
-+   digraph c {
-+    rankdir="LR";
-+    node [shape=box];
-+    "clowns" -> "Dimitri" -> "Grock";
-+    "Grock" -> "clowns" [constraint=false];
-+    "clowns" -> "Grock" -> "Dimitri" -> "clowns" [color=gray, style=dashed,
-+                                                  constraint=false, arrowsize=0.5];
-+   }
-+
-+If we wanted to have Dimitri inserted at the end of the list instead, we'd use
-+list_add_tail(). Our code would then look like this:
-+
-+.. code-block:: c
-+
-+  static int circus_fill_car(struct circus_priv *circus)
-+  {
-+          /* ... */
-+
-+          list_add_tail(&dimitri->node, &car->clowns);
-+
-+          /* State 3b */
-+
-+          return 0;
-+  }
-+
-+This results in the following list:
-+
-+.. kernel-render:: DOT
-+   :alt: Visualization of clowns list in State 3b
-+   :caption: clowns list in State 3b, grey dashed lines are "prev" edges
-+
-+   digraph c {
-+    rankdir="LR";
-+    node [shape=box];
-+    "clowns" -> "Grock" -> "Dimitri";
-+    "Dimitri" -> "clowns" [constraint=false];
-+    "clowns" -> "Dimitri" -> "Grock" -> "clowns" [color=gray, style=dashed,
-+                                                  constraint=false, arrowsize=0.5];
-+   }
-+
-+Traversing the list
-+-------------------
-+
-+To iterate the list, we can loop through all nodes within the list with
-+list_for_each().
-+
-+In our clown example, this results in the following somewhat awkward code:
-+
-+.. code-block:: c
-+
-+  static unsigned long long circus_get_max_shoe_size(struct circus_priv *circus)
-+  {
-+          unsigned long long res = 0;
-+          struct clown *e;
-+          struct list_head *cur;
-+
-+          list_for_each(cur, &circus->car.clowns) {
-+                  e = list_entry(cur, struct clown, node);
-+                  if (e->shoe_size > res)
-+                          res = e->shoe_size;
-+          }
-+
-+          return res;
-+  }
-+
-+Note how the additional ``list_entry`` call is a little awkward here. It's only
-+there because we're iterating through the ``node`` members, but we really want
-+to iterate through the payload, i.e. the ``struct clown`` that contains each
-+node's ``struct list_head``. For this reason, there is a second macro:
-+list_for_each_entry()
-+
-+Using it would change our code to something like this:
-+
-+.. code-block:: c
-+
-+  static unsigned long long circus_get_max_shoe_size(struct circus_priv *circus)
-+  {
-+          unsigned long long res = 0;
-+          struct clown *e;
-+
-+          list_for_each_entry(e, &circus->car.clowns, node) {
-+                  if (e->shoe_size > res)
-+                          res = e->shoe_size;
-+          }
-+
-+          return res;
-+  }
-+
-+This eliminates the need for the ``list_entry`` step, and our loop cursor is now
-+of the type of our payload. The macro is given the member name that corresponds
-+to the list's ``struct list_head`` within the clown struct so that it can still
-+walk the list.
-+
-+Removing nodes from the list
-+----------------------------
-+
-+The list_del() function can be used to remove entries from the list. It not only
-+removes the given entry from the list, but poisons the entry's ``prev`` and
-+``next`` pointers, so that unintended use of the entry after removal does not
-+go unnoticed.
-+
-+We can extend our previous example to remove one of the entries:
-+
-+.. code-block:: c
-+
-+  static int circus_fill_car(struct circus_priv *circus)
-+  {
-+          /* ... */
-+
-+          list_add(&dimitri->node, &car->clowns);
-+
-+          /* State 3 */
-+
-+          list_del(&dimitri->node);
-+
-+          /* State 4 */
-+
-+          return 0;
-+  }
-+
-+The result of this would be this:
-+
-+.. kernel-render:: DOT
-+   :alt: Visualization of clowns list in State 4
-+   :caption: clowns list in State 4, grey dashed lines are "prev" edges. Note
-+             how the Dimitri node no longer points to itself.
-+
-+   digraph c {
-+    rankdir="LR";
-+    node [shape=box];
-+    "Dimitri";
-+    "clowns" -> "Grock";
-+    "Grock" -> "clowns" [constraint=false];
-+    "clowns" -> "Grock" -> "clowns" [color=gray, style=dashed, constraint=false,
-+                                     arrowsize=0.5];
-+   }
-+
-+If we wanted to reinitialize the removed node instead to make it point at itself
-+again like an empty list head, we can use list_del_init() instead:
-+
-+.. code-block:: c
-+
-+  static int circus_fill_car(struct circus_priv *circus)
-+  {
-+          /* ... */
-+
-+          list_add(&dimitri->node, &car->clowns);
-+
-+          /* State 3 */
-+
-+          list_del_init(&dimitri->node);
-+
-+          /* State 4b */
-+
-+          return 0;
-+  }
-+
-+This results in the deleted node pointing to itself again:
-+
-+.. kernel-render:: DOT
-+   :alt: Visualization of clowns list in State 4b
-+   :caption: clowns list in State 4b, grey dashed lines are "prev" edges. Note
-+             how the Dimitri node points to itself again.
-+
-+   digraph c {
-+    rankdir="LR";
-+    node [shape=box];
-+    "Dimitri" -> "Dimitri";
-+    "Dimitri" -> "Dimitri" [color=gray, style=dashed, constraint=false, arrowsize=0.5];
-+    "clowns" -> "Grock";
-+    "Grock" -> "clowns" [constraint=false];
-+    "clowns" -> "Grock" -> "clowns" [color=gray, style=dashed, constraint=false,
-+                                     arrowsize=0.5];
-+   }
-+
-+Traversing whilst removing nodes
-+--------------------------------
-+
-+Deleting entries while we're traversing the list will cause problems if we use
-+list_for_each() and list_for_each_entry(), as deleting the current entry would
-+modify the ``next`` pointer of it, which means the traversal can't properly
-+advance to the next list entry.
-+
-+There is a solution to this however: list_for_each_safe() and
-+list_for_each_entry_safe(). These take an additional parameter of a pointer to
-+a ``struct list_head`` to use as temporary storage for the next entry during,
-+iteration, solving the issue.
-+
-+An example of how to use it:
-+
-+.. code-block:: c
-+
-+  static void circus_eject_insufficient_clowns(struct circus_priv *circus)
-+  {
-+          struct clown *e;
-+          struct clown *n;      /* temporary storage for safe iteration */
-+
-+          list_for_each_entry_safe(e, n, &circus->car.clowns, node) {
-+                if (e->shoe_size < 500)
-+                        list_del(&e->node);
-+          }
-+  }
-+
-+Proper memory management (i.e. freeing the deleted node while making sure
-+nothing still references it) in this case is left up as an exercise to the
-+reader.
-+
-+Concurrency considerations
-+--------------------------
-+
-+Concurrent access and modification of a list needs to be protected with a lock
-+in most cases. Alternatively and preferably, one may use the RCU primitives for
-+lists in read-mostly use-cases, where read accesses to the list are common but
-+modifications to the list less so. See Documentation/RCU/listRCU.rst for more
-+details.
-+
-+Further reading
-+---------------
-+
-+* `How does the kernel implements Linked Lists? - KernelNewbies <https://kernelnewbies.org/FAQ/LinkedLists>`_
+Note, there has been a lot of discussion on this approach, although it's
+been mostly at conferences and in meetings. At GNU Cauldron in September
+2024 (before Plumbers) Josh, Mathieu and myself discussed it in quite
+detail. I've then been hosting a monthly meeting with engineers from
+Google, Red Hat, EffiOS, Oracle, Microsoft and others (I can invite you to
+it if you would like). There's actually two meetings (one that is in a Asia
+friendly timezone and another in a European friendly timezone). The first
+patches from this went out in October, 2024:
 
--- 
-2.49.0
+  https://lore.kernel.org/all/cover.1730150953.git.jpoimboe@kernel.org/
 
+There wasn't much discussion on it, although Peter did reply, and I believe
+that we did address all of his concerns.
+
+Josh then changed the approach from what we originally discussed, which was
+to just have each tracer attach a task_work to the task it wants a trace
+thinking that would be good enough, but Mathieu and I found that it doesn't
+work because even a perf event can not handle this because it would need to
+keep track of several tasks that may migrate.
+
+Let me state the goal of this work, as it started from a session at the
+2022 Tracing Summit in London. We needed a way to get reliable user space
+stack traces without using frame pointers. We discussed various methods,
+including using eh_frame but they all had issues. We concluded that it
+would be nice to have an ORC unwinder (technically it's called a stack
+walker), for user space.
+
+Then in Nov 2022, I read about "sframes" which was exactly what we were
+looking for:
+
+   https://www.phoronix.com/news/GNU-Binutils-SFrame
+
+At FOSDEM 2023, I asked Jose Marchesi (a GCC maintainer) about sframes, and
+it just happened to be one of his employees that created it (Indu Bhagat).
+At Kernel Recipes 2023, Brendan Gregg, during his talk, asked if it would
+be great to have user space stack walking without needing to run everything
+with frame pointers. I raised my hand and asked if he had heard about
+"sframes", which he did not. I explained what it was and he was very
+interested. After that talk, Josh Poimboeuf came up to me and asked if he
+could implement this, which I agreed.
+
+One thing that is needed for sframes is that it has to be done in a
+faultable context. The sframe sections are like ORC, where it has lookup
+tables, but they live in the user space address, and because they can be
+large, they can't be locked into memory. This brings up the deferred
+unwinding aspect.
+
+At the LSFMMBPF 2023 conference, Indu and myself ran a session on sframes
+to get a better idea on how to implement this. The perf user space stack
+tracing was mentioned, where if frame pointers are not there, perf may copy
+thousands of bytes of the user space stack into the perf buffer. If there's
+a long system call, it may do this several times, and because the user
+space stack does not change while the task is in the kernel, this is
+thousands of bytes of duplicate data. I asked Jiri Olsa "why not just defer
+the stack trace and only make a single entry", and I believe he replied "we
+are thinking about it", but nothing further came about it.
+
+Now, there's a serious push to get sframes upstream, and that will take a
+few steps. These are:
+
+1) Create a new user unwind stack call that is expected to be called in
+   faultable context. If a tracer (perf, ftrace, BPF or whatever) knows
+   it's in a faultable context and wants a trace, it can simply ask for it.
+
+   It was also asked to have a user space system call that can get this
+   trace so that a function in a user space applications can see what is
+   calling it.
+
+2) Create a deferred stack unwinding infrastructure that can be used by
+   many clients (perf, ftrace, BPF or whatever) and called in any context
+   (interrupt or NMI).
+
+   As the unwind stack call needs to be in a faultable context, and it is
+   very common to want both a kernel stack trace along with a user space
+   stack trace and this can happen in an NMI, allow the kernel stack trace
+   to be executed and delay the user stack trace.
+
+   The accounting for this is not easy, as it has a many to many
+   relationship. You could have perf, ftrace and BPF all asking for a
+   delayed stack trace and they all need to be called. But each could be
+   wanting a stack trace from a different set of tasks. Keeping track of
+   which tracer gets a callback for which task is where this patch set
+   comes in. Or at least just the infrastructure part.
+
+3) Add sframes.
+
+   The final part is to get this working with sframes. Where a distro
+   builds all its applications with sframes enabled and then perf, ftrace,
+   BPF or whatever gets access to it through this interface.
+
+There's quite a momentum of work happening today that is being built
+expecting us to get to step 3. There's no use to adding sframes to
+applications if the kernel can't read them. The only way to read them is to
+have this deferred infrastructure.
+
+We've discussed the current design quiet a bit, but until there's actual
+users starting to build on top of it, all the corner cases may not come
+out. That's why I'm suggesting if we can just get the basic infrastructure
+in this merge window, where it's not fully enabled (there are no users of
+it), we can then have several users build on top of it in the next merge
+window to see if it finds anything that breaks.
+
+As perf has the biggest user space ABI, where the delayed stack trace may
+be in a different event buffer than where the kernel stack trace occurred
+(due to migration), it's the one I'm most concern about getting this right.
+As once it is exposed to user space, it can never change. That's the one I
+do want to focus on the most. But it shouldn't delay getting the non user
+space visible aspect of the kernel side moving forward. If we find an
+issue, it can always be changed because it doesn't affect user space.
+
+I've been testing this on the ftrace side and so far, everything works
+fine. But the ftrace side has the deferred trace always in the same
+instance buffer as where it was triggered, as it doesn't depend on user
+space API for that.
+
+I've also been running this on perf and it too is working well. But I don't
+know the perf interface well enough to make sure there isn't other corner
+cases that I may be missing.
+
+For 6.16, I would just like to get the common infrastructure in the kernel
+so there's no dependency on different tracers. This patch set adds the
+changes but does not enable it yet. This way, perf, ftrace and BPF can all
+work to build on top of the changes without needing to share code.
+
+There's only two patches that touch x86 here. I have another patch series
+that removes them and implements this for ftrace, but because no
+architecture has it enabled, it's just dead code. But it would also allow
+to build on top of the infrastructure where any architecture could enable
+it. Kind of like what PREEMPT_RT did.
+
+-- Steve
 
