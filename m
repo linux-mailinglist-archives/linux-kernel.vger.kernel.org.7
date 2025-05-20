@@ -1,123 +1,320 @@
-Return-Path: <linux-kernel+bounces-656007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75972ABE05F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:18:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC28ABE057
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3E4A8C0E61
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:16:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5B3B7B40AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C1727CCF2;
-	Tue, 20 May 2025 16:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68137280010;
+	Tue, 20 May 2025 16:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPrnBUlS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s9pVr6JL"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F3E26B085;
-	Tue, 20 May 2025 16:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18B626AA91
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 16:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747757546; cv=none; b=UkuwkYm0A5uO/kK11Wf+uOgHmA0LN+F2fq9eB6GbOXYFkLokSa3UyDC3I+7LocIcFX2/aCZFdZpPsdBU2mzsQwIKIBWtgwJfZMMqwfmy2Zu0VuzpRxi7QfDHBZxQLF+aaZje+T1rKAJUX/i43FQl2obvVWTZ0SV1G2LZdNqW0YE=
+	t=1747757609; cv=none; b=fI3UzafPUyjyhsoWZ6aqB9r7v867T0O0qwu1j4E4dRq0O0FL7a8RakUHDyNon4gm7tb8aBDmo+vZjsFovPih2mRHovioTyXf8E5cfFSlEictFTPINOvymuoAYg4u9KvLlwAN7L8Amla6URKQC+xSendfUjSpNkezFTuGE2AGJcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747757546; c=relaxed/simple;
-	bh=H0wdVOSbUkt1lm7oK4U/1cODmEgFmaDK31ojwjNSrDc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QHNeZ7jSFxQZVykWsgRWo6D8utBV6q330K6NNAIHKZJXRwR+cybgefqmiRJNsrfsG7+Dyi3C+wuFnnNWwYeebunAxDyG2oxG3JM+8dDo/0UrDRnoHQv4GR4a2jpbrA9t6/kp6MiI0GrTJiIKjBIWDrYJyvhk7N9rWePS+T9xexY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPrnBUlS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07871C4CEE9;
-	Tue, 20 May 2025 16:12:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747757545;
-	bh=H0wdVOSbUkt1lm7oK4U/1cODmEgFmaDK31ojwjNSrDc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uPrnBUlS6G38zQL9J1d0mEtD3d6wnS3FaUkDi741pR6lEo71M/GmN7s7zJoU3Z5+P
-	 kJiVqXDfbIQvZujeqZnfreCz9rrIj/0emBGveYgh7ZS2NfC5aKBMJKXoEtkBTQEuKB
-	 k0CF4InZYB/lEpqQRHZ0nKUjYsK6oYR8bxGorwFXY1ZhqF6DGVBmZEuz8ZzRN1/AEl
-	 Wx2L1bu/zXPySD8gNI1GSg0/xWaqj0Fj6SXhJOGLLv0l/njfI4mD9LEfMNkQiP/1VS
-	 o0tkt12LtgzbtZaVZ/qA0E1mMJOFt3H4tyCohfB/ATK9JTxKXM2xVXFfawM4HA1Hga
-	 EOoxt/4atys7A==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Wei Fang <wei.fang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	imx@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: enetc: fix NTMP build dependency
-Date: Tue, 20 May 2025 18:12:09 +0200
-Message-Id: <20250520161218.3581272-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1747757609; c=relaxed/simple;
+	bh=KE2OCe6IyeztKEsfnChEOSQXap8doIjqd735T6E7YA0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jJWy0HVNQO8S0DFHDyILt6BqIwvn6F6GJB8SeAibeQpUBsYs6zzXKCxBYNajLej59/AUv0LDKJUf/18VMsBPQSsN8LeaIRO9G1P2mq55X8np8seBCh0mBc6kVxMxCwd2nbGWbnR3Qaq290sN3wz6QIKDaz5w6CiJHi6n489yiFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s9pVr6JL; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30e895056f0so5594036a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 09:13:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747757607; x=1748362407; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ls0/Kk7BPNf74U1b37tpKVNG4EXoATMFXNgVLcw3EiQ=;
+        b=s9pVr6JLXBYRs3v5K3xBFiX3wmzzSHW3nyzneXsJX1cKbo07Xlo+F9F/5H7hnSoWCF
+         JEoulPbRS9FkOZDWWFrLC11KqydWFz8DA2kllTh4i+qsyui+V3vmiWQ4ppqLSIq6212D
+         XnrDzrisFwcvew4DzwACNc21K4isGwyecRMwIdD3PwnoVSBv/9c/SBSAtGvgxqgB3kpX
+         rLAt9twvESe5oGq50Az7No9lw9bubwkeANOXY0GMnQe/eBxT0iKcHqM3Gx1RBPbkt+EG
+         8ub+9xfq/TzSbZbWy1gJcggYnGSvHWXYWGV8R3LgNyfYgPkaEoVQHtsoDI4VKT/3caGj
+         dnpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747757607; x=1748362407;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Ls0/Kk7BPNf74U1b37tpKVNG4EXoATMFXNgVLcw3EiQ=;
+        b=d5w3SgcY2uc0mNlyoXFZp+oDEZlEcIcKy6wFisJvG7QMyNi5DDJm9SES5PwtTFo++k
+         7fRU6njCEv5hxfaQC54Bo/CatK/b6xhWoJ8ClK9X7DqVpawXj+kDZ8EIhq4SD74wcqjj
+         3BnjQGlUbgjsSTvb8KSewVtPEyxvgzDsefZoWAz0Rh/ol2io1MB8t7oSyob/H7rImQtQ
+         AYx7kwFoscxF8UYbzRxsuD0ZVFGDPvp3kyM+kDY9VpIoy7La0rDREvKC6Rk69BCLj/js
+         1aqI8MilTRtG+vQJKHdqnyqJNK0L6CN9tk4AXYDRML0BOQqVFq0HD7LHUUvSRHdltfMZ
+         2YWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzWEgK8zVucZ2tsTLvjDlMcYIsBDTOFcErHS3Y+OY9hcGBvVx9RzlRd58nqH9N8M7NvYFeTVhWm5vQYc4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkhAvopqMzVOlghp6i/QYs1kZfWAZR/hicgb+bVh1PULiGJ512
+	Z2jVTJHc0yAmi2F+E++zCStUtzox+9zLH2B7DPmLWoYKFU3Y2KrMExbgr9EQWwrrFtQnNcWAs5d
+	cyeXPnw==
+X-Google-Smtp-Source: AGHT+IHMKyPInf5Mx6zQ4/ui8cpT9wwv9RNjU8jzSIFSzm+Iwk1A8XhiboMbrIzMSQGLh2tYzCEvCXrUorE=
+X-Received: from pjbnc5.prod.google.com ([2002:a17:90b:37c5:b0:30e:5bd5:880d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4f46:b0:2ee:fa0c:cebc
+ with SMTP id 98e67ed59e1d1-30e7d555a46mr25556918a91.20.1747757607132; Tue, 20
+ May 2025 09:13:27 -0700 (PDT)
+Date: Tue, 20 May 2025 09:13:25 -0700
+In-Reply-To: <aCwUO7cQkPzIe0ZA@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250519023613.30329-1-yan.y.zhao@intel.com> <20250519023737.30360-1-yan.y.zhao@intel.com>
+ <aCsy-m_esVjy8Pey@google.com> <52bdeeec0dfbb74f90d656dbd93dc9c7bb30e84f.camel@intel.com>
+ <aCtlDhNbgXKg4s5t@google.com> <aCwUO7cQkPzIe0ZA@yzhao56-desk.sh.intel.com>
+Message-ID: <aCyqJTSDTKt1xiKr@google.com>
+Subject: Re: [PATCH 1/2] KVM: x86/mmu: Add RET_PF_RETRY_INVALID_SLOT for fault
+ retry on invalid slot
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, Reinette Chatre <reinette.chatre@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Tue, May 20, 2025, Yan Zhao wrote:
+> On Mon, May 19, 2025 at 10:06:22AM -0700, Sean Christopherson wrote:
+> > On Mon, May 19, 2025, Rick P Edgecombe wrote:
+> > > On Mon, 2025-05-19 at 06:33 -0700, Sean Christopherson wrote:
+> > > > Was this hit by a real VMM?=C2=A0 If so, why is a TDX VMM removing =
+a memslot without
+> > > > kicking vCPUs out of KVM?
+> > > >=20
+> > > > Regardless, I would prefer not to add a new RET_PF_* flag for this.=
+=C2=A0 At a glance,
+> > > > KVM can simply drop and reacquire SRCU in the relevant paths.
+> > >=20
+> > > During the initial debugging and kicking around stage, this is the fi=
+rst
+> > > direction we looked. But kvm_gmem_populate() doesn't have scru locked=
+, so then
+> > > kvm_tdp_map_page() tries to unlock without it being held. (although t=
+hat version
+> > > didn't check r =3D=3D RET_PF_RETRY like you had). Yan had the followi=
+ng concerns and
+> > > came up with the version in this series, which we held review on for =
+the list:
+> >=20
+> > Ah, I missed the kvm_gmem_populate() =3D> kvm_tdp_map_page() chain.
+> >=20
+> > > > However, upon further consideration, I am reluctant to implement th=
+is fix for
+> >=20
+> > Which fix?
+> >=20
+> > > > the following reasons:
+> > > > - kvm_gmem_populate() already holds the kvm->slots_lock.
+> > > > - While retrying with srcu unlock and lock can workaround the
+> > > >   KVM_MEMSLOT_INVALID deadlock, it results in each kvm_vcpu_pre_fau=
+lt_memory()
+> > > >   and tdx_handle_ept_violation() faulting with different memslot la=
+youts.
+> >=20
+> > This behavior has existed since pretty much the beginning of KVM time. =
+ TDX is the
+> > oddball that doesn't re-enter the guest.  All other flavors re-enter th=
+e guest on
+> > RET_PF_RETRY, which means dropping and reacquiring SRCU.  Which is why =
+I don't like
+> > RET_PF_RETRY_INVALID_SLOT; it's simply handling the case we know about.
+> >=20
+> > Arguably, _TDX_ is buggy by not providing this behavior.
+> >=20
+> > > I'm not sure why the second one is really a problem. For the first on=
+e I think
+> > > that path could just take the scru lock in the proper order with kvm-
+> > > >slots_lock?
+> >=20
+> > Acquiring SRCU inside slots_lock should be fine.  The reserve order wou=
+ld be
+> > problematic, as KVM synchronizes SRCU while holding slots_lock.
+> >=20
+> > That said, I don't love the idea of grabbing SRCU, because it's so obvi=
+ously a
+> > hack.  What about something like this?
+> So you want to avoid acquiring SRCU in the kvm_gmem_populate() path?
 
-When the new library driver is in a loadable module, but the enetc
-core driver is built-in, the kernel fails to link:
+Yes, ideally.  Acquiring SCRU wouldn't be the end of the world, but I don't=
+ love
+the idea of taking a lock just so that the lock can be conditionally droppe=
+d in
+a common flow.  It's not a deal breaker (I wouldn't be surprised if there's=
+ at
+least one path in KVM that acquires SRCU purely because of such behavior), =
+but
+separating kvm_tdp_prefault_page() from kvm_tdp_map_page()=20
 
-aarch64-linux-ld: drivers/net/ethernet/freescale/enetc/enetc_cbdr.o: in function `enetc4_teardown_cbdr':
-enetc_cbdr.c:(.text+0x70): undefined reference to `ntmp_free_cbdr'
-aarch64-linux-ld: drivers/net/ethernet/freescale/enetc/enetc_cbdr.o: in function `enetc4_get_rss_table':
-enetc_cbdr.c:(.text+0x98): undefined reference to `ntmp_rsst_query_entry'
-aarch64-linux-ld: drivers/net/ethernet/freescale/enetc/enetc_cbdr.o: in function `enetc4_set_rss_table':
-enetc_cbdr.c:(.text+0xb8): undefined reference to `ntmp_rsst_update_entry'
-aarch64-linux-ld: drivers/net/ethernet/freescale/enetc/enetc_cbdr.o: in function `enetc4_setup_cbdr':
-enetc_cbdr.c:(.text+0x438): undefined reference to `ntmp_init_cbdr'
+> Generally I think it's good, except that it missed a kvm_mmu_reload() (pl=
+ease
+> refer to my comment below) and the kvm_vcpu_srcu_read_{un}lock() pair in
+> tdx_handle_ept_violation() path (So, Reinette reported it failed the TDX =
+stress
+> tests at [1]).
 
-Move the ntmp code into the core module itself to avoid this link error.
+> > @@ -4891,6 +4884,28 @@ int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_=
+t gpa, u64 error_code, u8 *level
+> >  }
+> >  EXPORT_SYMBOL_GPL(kvm_tdp_map_page);
+> > =20
+> > +int kvm_tdp_prefault_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_=
+code, u8 *level)
+> > +{
+> > +	int r;
+> > +
+> > +	/*
+> > +	 * Restrict to TDP page fault, since that's the only case where the M=
+MU
+> > +	 * is indexed by GPA.
+> > +	 */
+> > +	if (vcpu->arch.mmu->page_fault !=3D kvm_tdp_page_fault)
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	for (;;) {
+> > +		r =3D kvm_tdp_map_page(vcpu, gpa, error_code, level);
+> > +		if (r !=3D -EAGAIN)
+> > +			break;
+> > +
+> > +		/* Comment goes here. */
+> > +		kvm_vcpu_srcu_read_unlock(vcpu);
+> > +		kvm_vcpu_srcu_read_lock(vcpu);
+> For the hang in the pre_fault_memory_test reported by Reinette [1], it's =
+because
+> the memslot removal succeeds after releasing the SRCU, then the old root =
+is
+> stale. So kvm_mmu_reload() is required here to prevent is_page_fault_stal=
+e()
+> from being always true.
 
-Fixes: 4701073c3deb ("net: enetc: add initial netc-lib driver to support NTMP")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+That wouldn't suffice, KVM would also need to process KVM_REQ_MMU_FREE_OBSO=
+LETE_ROOTS,
+otherwise kvm_mmu_reload() will do nothing.
+
+Thinking about this scenario more, I don't mind punting this problem to use=
+rspace
+for KVM_PRE_FAULT_MEMORY because there's no existing behavior/ABI to uphold=
+, and
+because the complexity vs. ABI tradeoffs are heavily weighted in favor of p=
+unting
+to userspace.  Whereas for KVM_RUN, KVM can't change existing behavior with=
+out
+breaking userspace, should provide consistent behavior regardless of VM typ=
+e, and
+KVM needs the "complex" code irrespective of this particular scenario.
+
+I especially like punting to userspace if KVM returns -EAGAIN, not -ENOENT,
+because then KVM is effectively providing the same overall behavior as KVM_=
+RUN,
+just without slightly different roles and responsibilities between KVM and
+userspace.  And -ENOENT is also flat out wrong for the case where a memslot=
+ is
+being moved, but the new base+size still contains the to-be-faulted GPA.
+
+I still don't like RET_PF_RETRY_INVALID_SLOT, because that bleeds gory MMU =
+details
+into the rest of KVM, but KVM can simply return -EAGAIN if an invalid memsl=
+ot is
+encountered during prefault (as identified by fault->prefetch).
+
+For TDX though, tdx_handle_ept_violation() needs to play nice with the scen=
+ario,
+i.e. punting to userspace is not a viable option.  But that path also has o=
+ptions
+that aren't available to prefaulting.  E.g. it could (and probably should) =
+break
+early if a request is pending instead of special casing KVM_REQ_VM_DEAD, wh=
+ich
+would take care of the KVM_REQ_MMU_FREE_OBSOLETE_ROOTS scenario.  And as Ri=
+ck
+called out, the zero-step mess really needs to be solved in a more robust f=
+ashion.
+
+So this?
+
 ---
- drivers/net/ethernet/freescale/enetc/Kconfig  | 2 +-
- drivers/net/ethernet/freescale/enetc/Makefile | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
+From: Sean Christopherson <seanjc@google.com>
+Date: Tue, 20 May 2025 07:55:32 -0700
+Subject: [PATCH] KVM: x86/mmu: Return -EAGAIN if userspace deletes/moves
+ memslot during prefault
 
-diff --git a/drivers/net/ethernet/freescale/enetc/Kconfig b/drivers/net/ethernet/freescale/enetc/Kconfig
-index e917132d3714..90aa6f6dfd63 100644
---- a/drivers/net/ethernet/freescale/enetc/Kconfig
-+++ b/drivers/net/ethernet/freescale/enetc/Kconfig
-@@ -16,7 +16,7 @@ config NXP_ENETC_PF_COMMON
- 	  If compiled as module (M), the module name is nxp-enetc-pf-common.
- 
- config NXP_NETC_LIB
--	tristate
-+	bool
- 	help
- 	  This module provides common functionalities for both ENETC and NETC
- 	  Switch, such as NETC Table Management Protocol (NTMP) 2.0, common tc
-diff --git a/drivers/net/ethernet/freescale/enetc/Makefile b/drivers/net/ethernet/freescale/enetc/Makefile
-index f1c5ad45fd76..0af59f97b7e7 100644
---- a/drivers/net/ethernet/freescale/enetc/Makefile
-+++ b/drivers/net/ethernet/freescale/enetc/Makefile
-@@ -6,8 +6,7 @@ fsl-enetc-core-y := enetc.o enetc_cbdr.o enetc_ethtool.o
- obj-$(CONFIG_NXP_ENETC_PF_COMMON) += nxp-enetc-pf-common.o
- nxp-enetc-pf-common-y := enetc_pf_common.o
- 
--obj-$(CONFIG_NXP_NETC_LIB) += nxp-netc-lib.o
--nxp-netc-lib-y := ntmp.o
-+fsl-enetc-core-$(CONFIG_NXP_NETC_LIB) += ntmp.o
- 
- obj-$(CONFIG_FSL_ENETC) += fsl-enetc.o
- fsl-enetc-y := enetc_pf.o
--- 
-2.39.5
+Return -EAGAIN if userspace attemps to delete or move a memslot while also
+prefaulting memory for that same memslot, i.e. force userspace to retry
+instead of trying to handle the scenario entirely within KVM.  Unlike
+KVM_RUN, which needs to handle the scenario entirely within KVM because
+userspace has come to depend on such behavior, KVM_PRE_FAULT_MEMORY can
+return -EAGAIN without breaking userspace as this scenario can't have ever
+worked (and there's no sane use case for prefaulting to a memslot that's
+being deleted/moved).
 
+And also unlike KVM_RUN, the prefault path doesn't naturally gaurantee
+forward progress.  E.g. to handle such a scenario, KVM would need to drop
+and reacquire SRCU to break the deadlock between the memslot update
+(synchronizes SRCU) and the prefault (waits for the memslot update to
+complete).
+
+However, dropping SRCU creates more problems, as completing the memslot
+update will bump the memslot generation, which in turn will invalidate the
+MMU root.  To handle that, prefaulting would need to handle pending
+KVM_REQ_MMU_FREE_OBSOLETE_ROOTS requests and do kvm_mmu_reload() prior to
+mapping each individual.
+
+I.e. to fully handle this scenario, prefaulting would eventually need to
+look a lot like vcpu_enter_guest().  Given that there's no reasonable use
+case and practically zero risk of breaking userspace, punt the problem to
+userspace and avoid adding unnecessary complexity to the prefualt path.
+
+Note, TDX's guest_memfd post-populate path is unaffected as slots_lock is
+held for the entire duration of populate(), i.e. any memslot modifications
+will be fully serialized against TDX's flavor of prefaulting.
+
+Reported-by: Reinette Chatre <reinette.chatre@intel.com>
+Closes: https://lore.kernel.org/all/20250519023737.30360-1-yan.y.zhao@intel=
+.com
+Debugged-by: Yan Zhao <yan.y.zhao@intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/mmu/mmu.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index a284dce227a0..7ae56a3c7607 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -4595,10 +4595,16 @@ static int kvm_mmu_faultin_pfn(struct kvm_vcpu *vcp=
+u,
+ 	/*
+ 	 * Retry the page fault if the gfn hit a memslot that is being deleted
+ 	 * or moved.  This ensures any existing SPTEs for the old memslot will
+-	 * be zapped before KVM inserts a new MMIO SPTE for the gfn.
++	 * be zapped before KVM inserts a new MMIO SPTE for the gfn.  Punt the
++	 * error to userspace if this is a prefault, as KVM's prefaulting ABI
++	 * doesn't need provide the same forward progress guarantees as KVM_RUN.
+ 	 */
+-	if (slot->flags & KVM_MEMSLOT_INVALID)
++	if (slot->flags & KVM_MEMSLOT_INVALID) {
++		if (fault->prefetch)
++			return -EAGAIN;
++
+ 		return RET_PF_RETRY;
++	}
+=20
+ 	if (slot->id =3D=3D APIC_ACCESS_PAGE_PRIVATE_MEMSLOT) {
+ 		/*
+
+base-commit: 45eb29140e68ffe8e93a5471006858a018480a45
+--
 
