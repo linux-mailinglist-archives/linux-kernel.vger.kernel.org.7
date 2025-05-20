@@ -1,302 +1,233 @@
-Return-Path: <linux-kernel+bounces-655204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DCBCABD262
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:53:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D08CABD257
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C35A4A6726
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:53:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31A117AD003
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5CA26772E;
-	Tue, 20 May 2025 08:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CDB265CDC;
+	Tue, 20 May 2025 08:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="txmpiOR3"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QUUjELLP"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD113265CAD
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 08:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10331E5701
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 08:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747731190; cv=none; b=u4QrT/RCaTer3gRumsQfQ1nL103Pm7/zKD9Yo2wviMHUoNQ6TigqlTFnB6i9hbnZvR9fChT7RpJYGjI5htsOn/jMVfUODoahB+ksKaalYeG0ySUzNJdDmM4ENT9Gwufq+ImSCWf+8BB559y3smF/UaKrVPkFhi5wloHQnvCZfYw=
+	t=1747731121; cv=none; b=dZp7NxpK5DjNzkQi0RvJpAcA7z8OaTi72uoRVVVU6RwJTgos+FlNcHl1wv1uwACmHbLO5SUMJnSgx8CLsbh5463r0PvwPryyLYo0xYEevFsIBGM/WNRIHhYD31NjM+In6zU/YgsTLOjZ+vBZ/ewhKlxCRuKZGCnGHPoBWJ9+p24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747731190; c=relaxed/simple;
-	bh=VTZws/rr3NWkVDECjiFo3Socp4fltMh839a6raPpmE0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kqQ73k+w2ZKl4AsKwmyrOggZEyqOd35fzhUzqDPigOVMEpucL+bgFul/Ai1LbKOEIzCDOXgA6ztm4NXk4lSOMdy238ZqUYtQ9gCWQepdOPPeLAzF6wkB3HznJ+mX4CB8W/5h1AcgClahtzxGeq+Q/kDI90YZYlAt+dDrmhoGeC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=txmpiOR3; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43cf172ffe1so40584675e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 01:53:08 -0700 (PDT)
+	s=arc-20240116; t=1747731121; c=relaxed/simple;
+	bh=YCrqNFKUKD4zinSt1TMUJca2aMf9Hj3UkJPZF9E78wo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jcmhpWvM6k9qiwDfYs+O0HA3uwL8QbLRQvbVh1Pk3C12e08PwQlsUypCmWXgKWQsbnJFrtemlImW/T55mS4VQJNtZl3QxWTswTLeewz36IPpk9aO0hHwM3Cn5NlJLIYH0zrW8vZHNQySp41PywsXk/5X6gdyYxKaUsR2o6lljUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QUUjELLP; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-601d91f36feso387849a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 01:51:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747731187; x=1748335987; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0qnoZeCyJg3ALVmFHMjFJfi4uCu0wBz7RX/Yio9mY38=;
-        b=txmpiOR32DyJ4bGA2uL1eRoM9ummifLCQM8fpP/WN2Cap2MpzRUKzE8ITk8AUEBz9M
-         QoTZ0JUABIqPKzShtYIIdN9h0tF/UIh+iK5V7+92E05mTZ23zeRNFPXaY7san9jXgmqx
-         roGUs2QTZkLxVASeuwkv5kFI8PxEJUn0ZR4AbKjDjpbgnUPcqzqA/M+ZwlLjfzzZUEw4
-         08GanIlKDpA60hPzAUGxDcc5c5Uu+agcL4VzCXhUSzO6ulXqy/HbI5zKnbqhtRN4G2DA
-         kVtN8KtbjcgjkhP/GNJudq1+R/llcb4I6VcH5vDNn5qFKfOl07Qg0tx7YSGUL4NhRg8I
-         GG5g==
+        d=linaro.org; s=google; t=1747731118; x=1748335918; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=F9B1v/gS4gHKj6aqa0YLCYdit5fsKzxzh7WU+CmWXYM=;
+        b=QUUjELLPjfDTB9hwzEMkCtGbkQ8Mp7dFbwhLaEi97jMPwS5E/tOcZuPmQ8n1XDa4j7
+         4bwFnHKcAgZxkhijKLpPxWQEhWI0gOj3wzFQamrpoAPcYOvNAAdST50afzC0NMHih+zu
+         0KqCL2BwaLTgjVWRDwrv23porIcNxoW1k4n+8ZQpyVQ15SxvYGJbgkoOse121vwmRQYK
+         uhaLiKrBzlzUcVPtx7Pyf3OR6SqFhA33DugagXhhryjPP4vrukPaGgDnxGeij5Uz3xS7
+         5BHCRKOhfNOtYzo6FZotZY5QURrBRTrDs9WMxi/gckyna69U57A5bh5RyMSBDlpUblP5
+         Njdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747731187; x=1748335987;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0qnoZeCyJg3ALVmFHMjFJfi4uCu0wBz7RX/Yio9mY38=;
-        b=ceGeAfNuHpR+RxZf2DuDpI6QdPGFFDJIVLrhgQO95EwcjhSd1lolSa3IlY8bO28i+V
-         1ONYY3kXSSplTC26ef/7QT29naJ+/Bf79ZKPB1Clmbxb8bjUfLNhJ3H4r4EDYUYg1fw1
-         iFznKM3x+PR9xYWqiZS37l/M6xgtURnU2PpMcDtDx0AvlE7ZkU6Giy1xfxDRNLJglNiC
-         Wm6ML0xlnVJuY6rOY6B7oYHaZ+UpFi4iqyXhpczozFtGFn2WUEs3+orbUc71O3p3NYJ8
-         5Gajb5mWJv0OxSxJhR+DvyyQLu9mtJSIV6QoVJc3Qr6bJmEBnFV5bu1zCq+4CgCr3E9t
-         1gKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDjyIv97NnngxJ6xiw4OPvudhTrteMeTyMAlrC4WQ0G+7TodmcwJ7A/Ki/o4e7prtVsoByN64Qv8Fr0mM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjR9z5I4tNS2UGv49yANkRPZ7hYAWigH5qCfFhNoUDQt+BApR9
-	aZSoN85xRTFLQzvSD1mZY+IUU47PCRmUT9lDK3uCRtS2LWSKLPM5iuoMnXAeKaXfHMIxUl9TDn1
-	zz6bE3Cc+RSkwYLYvrquVYQ==
-X-Google-Smtp-Source: AGHT+IEpcnPZ2ofMn+yji7Z+XgSt5iwLOb91LYysxKgZe0xq+lvgP12pvdNLF1SqkBuLey6BH72CI9pPRzVZ9+5E
-X-Received: from wmbbe8.prod.google.com ([2002:a05:600c:1e88:b0:43b:bf16:d6be])
- (user=vdonnefort job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1d8c:b0:442:e109:3032 with SMTP id 5b1f17b1804b1-445917d2a0amr66079815e9.24.1747731187551;
- Tue, 20 May 2025 01:53:07 -0700 (PDT)
-Date: Tue, 20 May 2025 09:51:55 +0100
-In-Reply-To: <20250520085201.3059786-1-vdonnefort@google.com>
+        d=1e100.net; s=20230601; t=1747731118; x=1748335918;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F9B1v/gS4gHKj6aqa0YLCYdit5fsKzxzh7WU+CmWXYM=;
+        b=OVGpRSNGmaCSEE0v/rRlVufGss6oCIRSFTuD1Pa2NSrsZyM5gJ6k+JlK3EjPU/5usB
+         MJ1qYdv2r5EgLE8M61/xlxqZGvUrMPQTk6nhHsT4CGTen7wUK9stkpZLIde+2Xfx88h2
+         KbDavcg75aHsmze3ho5mJvEoQ00tWpqHbiImuS65hYY/OLLGxHObVspJQbVTtZaICj9j
+         oVQp1u+v5NvTHic81OYRPh6BbRDuiTrdqLPS+UwPPrfiLHeNOIb4qOOv4H7a6ZgrUGGi
+         a7SNTnTX8DvXvzBg1Qu4NzmhVviBL/5eFZZ9csNE1sZwxOpn8u/5+BtyvoaBtYa/Cf4/
+         I2mw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfS341I6yPYrf474DNJNQTh2XFeh4mwXtgTZ2nESGwu1KhGzehwJvkUGmn0yfqrKV9XE2YezqyPfKmw6Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuL0ZxuflSjJ84EsTtxoqU36HOuSDa4VN5rwAMEwVsPkqTHTND
+	3wcnzQYNPXI1Tmu9+3GY2Uk+3rH9niU61PBt2F5DLX/ckCApPj8zXnjBQcpIl6I13kc=
+X-Gm-Gg: ASbGnctZ30YOmeSiwuSBAiYbCJ+vWUkTDFHWzjroizkJltwjNnz6VqN1OwJvGaysIv1
+	bHHez6hhZDD8DhFAR3NmmDDvaehFTKPRjAG4VIDHFosyeTvQsXMRD6DmaHZFRVQbrmm48irYVgT
+	+Q6FaQpTi5TPHWWoUxZPdZPPj5Z/FPUhzwZ6hPDVSfp0SbVvm2mO3rrekmGLydMrvYJRUoA6lDe
+	uwFHObmBTXWelYMDoDW4nTH6in/Zqx5B1dXcsPi6RRxI8l1yijUk+QczOeBLaLaHeEl537/zYMH
+	Nrr4Z6V+UDlyN5v+UyTN8r47icw/oenKay8Fe7iP7TchlWn23lPug6qCkkbkNe2XnuZNUg02qTW
+	H70Rdcg==
+X-Google-Smtp-Source: AGHT+IGg07atEuyp2187jP+7t5twQC1qi6mfhpuH68MH0EKiAzSk9v+ESzad5yqvUWDbN00pfXCW+A==
+X-Received: by 2002:a17:907:2713:b0:ad2:292d:6b9b with SMTP id a640c23a62f3a-ad52d50f06fmr498338566b.9.1747731117922;
+        Tue, 20 May 2025 01:51:57 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.223.125])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d04e80asm697292766b.2.2025.05.20.01.51.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 May 2025 01:51:57 -0700 (PDT)
+Message-ID: <d81de587-7452-4fa1-836e-9e30b6d63c57@linaro.org>
+Date: Tue, 20 May 2025 10:51:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250520085201.3059786-1-vdonnefort@google.com>
-X-Mailer: git-send-email 2.49.0.1143.g0be31eac6b-goog
-Message-ID: <20250520085201.3059786-5-vdonnefort@google.com>
-Subject: [PATCH v5 04/10] KVM: arm64: Add a range to __pkvm_host_unshare_guest()
-From: Vincent Donnefort <vdonnefort@google.com>
-To: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, 
-	suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, 
-	will@kernel.org
-Cc: qperret@google.com, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	Vincent Donnefort <vdonnefort@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] media: qcom: camss: vfe: Stop spamming logs with
+ version
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Johan Hovold <johan@kernel.org>
+Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250429180828.950219-4-krzysztof.kozlowski@linaro.org>
+ <aBHQejn_ksLyyUm1@hovoldconsulting.com>
+ <3e34ce09-1207-4dba-bff8-38c01cad9b78@linaro.org>
+ <4d942a6c-cbff-41ac-af8b-12a1ff5181aa@linaro.org>
+ <883eb54a-fcaf-443c-a4d7-e1278fd43f5a@linaro.org>
+ <ea9f570c-b135-4a98-91ea-ceeb2f48a0e5@linaro.org>
+ <aCw09Vci12txhYj-@hovoldconsulting.com>
+ <190100e7-8a59-4cf3-8434-bcb6292cacb2@linaro.org>
+ <aCw78CRda6VS6ost@hovoldconsulting.com>
+ <8a2f2269-d07f-42b2-ab6c-dcff30a1f431@linaro.org>
+ <f4de3ab5-b40a-4d87-916b-8d1a1fb607b2@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <f4de3ab5-b40a-4d87-916b-8d1a1fb607b2@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In preparation for supporting stage-2 huge mappings for np-guest. Add a
-nr_pages argument to the __pkvm_host_unshare_guest hypercall. This range
-supports only two values: 1 or PMD_SIZE / PAGE_SIZE (that is 512 on a
-4K-pages system).
+On 20/05/2025 10:44, Bryan O'Donoghue wrote:
+> On 20/05/2025 09:30, Krzysztof Kozlowski wrote:
+>> On 20/05/2025 10:23, Johan Hovold wrote:
+>>> On Tue, May 20, 2025 at 10:02:32AM +0200, Krzysztof Kozlowski wrote:
+>>>> On 20/05/2025 09:53, Johan Hovold wrote:
+>>>
+>>>>> Spamming the logs as the driver currently does is clearly broken and
+>>>>> should be fixed. Keeping a hw version dev_dbg() is generally perfectly
+>>>>> fine, though.
+>>>
+>>>> My main argument, expressed in the commit msg to which no one objected,
+>>>> is that this debug is 100% useless: deducible from the compatible,
+>>>> always known upfront, always the same.
+>>>
+>>> To me that deduction does not seem straightforward, at least not without
+>>> access to internal qualcomm docs, for example:
+>>>
+>>> 	compatible = "qcom,sc8280xp-camss";
+>>>
+>>>          qcom-camss ac5a000.camss: VFE:0 HW Version = 1.2.2
+>>> 	qcom-camss ac5a000.camss: VFE:1 HW Version = 1.2.2
+>>>          qcom-camss ac5a000.camss: VFE:2 HW Version = 1.2.2
+>>>          qcom-camss ac5a000.camss: VFE:3 HW Version = 1.2.2
+>>>          qcom-camss ac5a000.camss: VFE:4 HW Version = 1.3.0
+>>>          qcom-camss ac5a000.camss: VFE:5 HW Version = 1.3.0
+>>>          qcom-camss ac5a000.camss: VFE:6 HW Version = 1.3.0
+>>>          qcom-camss ac5a000.camss: VFE:7 HW Version = 1.3.0
+>>>
+>>
+>> I understand that deduction is not straightforward, but it is also a
+>> fixed one, meaning it will be always sc8280xp -> (vFOO, vBAR), thus the
+>> only usefulness of above is to map each compatible to pair of two HW
+>> versions. This can be done via debugfs interface once and stored in
+>> public docs. No need to do that mapping every time driver probes and my
+>> patches drop nice chunk of code, including indirect function calls.
+>>
+>> At least so far no one objected that same compatible maps to same pairs
+>> of HW versions.
+>>
+>>> Whether the hw version is actually useful to anyone debugging this
+>>> driver I can't say, but keeping it printed *once* seems perfectly
+>>> alright if someone wants to keep it (e.g. as we have a long history of
+>>> working around hw bugs based on revision information like this).
+>>
+>> Now if you claim that one needs access to qcom docs to deduce it, I
+>> claim this version would be useful only to qcom people (or
+>> qcom-NDA-access-to-HPG) folks.
+>>
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> I find the debug prints useful in that I know the hardware block has 
+> been powered on, clocked etc. I agree the number of those prints seems 
+> excessive.
+> 
+> The reason it is printed out multiple time is the blocks get powered on/off.
+> 
+> Personally I agree with Johan - it would be nice/useful to print it out 
+> once with DEBUG on, so that we know we have successfully powered-on and 
 
-Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+That's opposite to what coding style asks. Success should be silent.
 
-diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-index 47aa7b01114f..19671edbe18f 100644
---- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-+++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-@@ -41,7 +41,7 @@ int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages);
- int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages);
- int __pkvm_host_share_guest(u64 pfn, u64 gfn, u64 nr_pages, struct pkvm_hyp_vcpu *vcpu,
- 			    enum kvm_pgtable_prot prot);
--int __pkvm_host_unshare_guest(u64 gfn, struct pkvm_hyp_vm *hyp_vm);
-+int __pkvm_host_unshare_guest(u64 gfn, u64 nr_pages, struct pkvm_hyp_vm *hyp_vm);
- int __pkvm_host_relax_perms_guest(u64 gfn, struct pkvm_hyp_vcpu *vcpu, enum kvm_pgtable_prot prot);
- int __pkvm_host_wrprotect_guest(u64 gfn, struct pkvm_hyp_vm *hyp_vm);
- int __pkvm_host_test_clear_young_guest(u64 gfn, bool mkold, struct pkvm_hyp_vm *vm);
-diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-index 4d3d215955c3..5c03bd1db873 100644
---- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-+++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-@@ -270,6 +270,7 @@ static void handle___pkvm_host_unshare_guest(struct kvm_cpu_context *host_ctxt)
- {
- 	DECLARE_REG(pkvm_handle_t, handle, host_ctxt, 1);
- 	DECLARE_REG(u64, gfn, host_ctxt, 2);
-+	DECLARE_REG(u64, nr_pages, host_ctxt, 3);
- 	struct pkvm_hyp_vm *hyp_vm;
- 	int ret = -EINVAL;
- 
-@@ -280,7 +281,7 @@ static void handle___pkvm_host_unshare_guest(struct kvm_cpu_context *host_ctxt)
- 	if (!hyp_vm)
- 		goto out;
- 
--	ret = __pkvm_host_unshare_guest(gfn, hyp_vm);
-+	ret = __pkvm_host_unshare_guest(gfn, nr_pages, hyp_vm);
- 	put_pkvm_hyp_vm(hyp_vm);
- out:
- 	cpu_reg(host_ctxt, 1) =  ret;
-diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-index 8e0847aa090d..884e2316aa48 100644
---- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-+++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-@@ -980,10 +980,9 @@ int __pkvm_host_share_guest(u64 pfn, u64 gfn, u64 nr_pages, struct pkvm_hyp_vcpu
- 	return ret;
- }
- 
--static int __check_host_shared_guest(struct pkvm_hyp_vm *vm, u64 *__phys, u64 ipa)
-+static int __check_host_shared_guest(struct pkvm_hyp_vm *vm, u64 *__phys, u64 ipa, u64 size)
- {
- 	enum pkvm_page_state state;
--	struct hyp_page *page;
- 	kvm_pte_t pte;
- 	u64 phys;
- 	s8 level;
-@@ -994,7 +993,7 @@ static int __check_host_shared_guest(struct pkvm_hyp_vm *vm, u64 *__phys, u64 ip
- 		return ret;
- 	if (!kvm_pte_valid(pte))
- 		return -ENOENT;
--	if (level != KVM_PGTABLE_LAST_LEVEL)
-+	if (kvm_granule_size(level) != size)
- 		return -E2BIG;
- 
- 	state = guest_get_page_state(pte, ipa);
-@@ -1002,43 +1001,49 @@ static int __check_host_shared_guest(struct pkvm_hyp_vm *vm, u64 *__phys, u64 ip
- 		return -EPERM;
- 
- 	phys = kvm_pte_to_phys(pte);
--	ret = check_range_allowed_memory(phys, phys + PAGE_SIZE);
-+	ret = check_range_allowed_memory(phys, phys + size);
- 	if (WARN_ON(ret))
- 		return ret;
- 
--	page = hyp_phys_to_page(phys);
--	if (get_host_state(page) != PKVM_PAGE_SHARED_OWNED)
--		return -EPERM;
--	if (WARN_ON(!page->host_share_guest_count))
--		return -EINVAL;
-+	for_each_hyp_page(page, phys, size) {
-+		if (get_host_state(page) != PKVM_PAGE_SHARED_OWNED)
-+			return -EPERM;
-+		if (WARN_ON(!page->host_share_guest_count))
-+			return -EINVAL;
-+	}
- 
- 	*__phys = phys;
- 
- 	return 0;
- }
- 
--int __pkvm_host_unshare_guest(u64 gfn, struct pkvm_hyp_vm *vm)
-+int __pkvm_host_unshare_guest(u64 gfn, u64 nr_pages, struct pkvm_hyp_vm *vm)
- {
- 	u64 ipa = hyp_pfn_to_phys(gfn);
--	struct hyp_page *page;
--	u64 phys;
-+	u64 size, phys;
- 	int ret;
- 
-+	ret = __guest_check_transition_size(0, ipa, nr_pages, &size);
-+	if (ret)
-+		return ret;
-+
- 	host_lock_component();
- 	guest_lock_component(vm);
- 
--	ret = __check_host_shared_guest(vm, &phys, ipa);
-+	ret = __check_host_shared_guest(vm, &phys, ipa, size);
- 	if (ret)
- 		goto unlock;
- 
--	ret = kvm_pgtable_stage2_unmap(&vm->pgt, ipa, PAGE_SIZE);
-+	ret = kvm_pgtable_stage2_unmap(&vm->pgt, ipa, size);
- 	if (ret)
- 		goto unlock;
- 
--	page = hyp_phys_to_page(phys);
--	page->host_share_guest_count--;
--	if (!page->host_share_guest_count)
--		WARN_ON(__host_set_page_state_range(phys, PAGE_SIZE, PKVM_PAGE_OWNED));
-+	for_each_hyp_page(page, phys, size) {
-+		/* __check_host_shared_guest() protects against underflow */
-+		page->host_share_guest_count--;
-+		if (!page->host_share_guest_count)
-+			set_host_state(page, PKVM_PAGE_OWNED);
-+	}
- 
- unlock:
- 	guest_unlock_component(vm);
-@@ -1058,7 +1063,7 @@ static void assert_host_shared_guest(struct pkvm_hyp_vm *vm, u64 ipa)
- 	host_lock_component();
- 	guest_lock_component(vm);
- 
--	ret = __check_host_shared_guest(vm, &phys, ipa);
-+	ret = __check_host_shared_guest(vm, &phys, ipa, PAGE_SIZE);
- 
- 	guest_unlock_component(vm);
- 	host_unlock_component();
-@@ -1245,7 +1250,7 @@ void pkvm_ownership_selftest(void *base)
- 	assert_transition_res(-EPERM,	__pkvm_host_unshare_ffa, pfn, 1);
- 	assert_transition_res(-EPERM,	hyp_pin_shared_mem, virt, virt + size);
- 	assert_transition_res(-EPERM,	__pkvm_host_share_guest, pfn, gfn, 1, vcpu, prot);
--	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, vm);
-+	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, 1, vm);
- 
- 	selftest_state.host = PKVM_PAGE_OWNED;
- 	selftest_state.hyp = PKVM_NOPAGE;
-@@ -1253,7 +1258,7 @@ void pkvm_ownership_selftest(void *base)
- 	assert_transition_res(-EPERM,	__pkvm_hyp_donate_host, pfn, 1);
- 	assert_transition_res(-EPERM,	__pkvm_host_unshare_hyp, pfn);
- 	assert_transition_res(-EPERM,	__pkvm_host_unshare_ffa, pfn, 1);
--	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, vm);
-+	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, 1, vm);
- 	assert_transition_res(-EPERM,	hyp_pin_shared_mem, virt, virt + size);
- 
- 	selftest_state.host = PKVM_PAGE_SHARED_OWNED;
-@@ -1264,7 +1269,7 @@ void pkvm_ownership_selftest(void *base)
- 	assert_transition_res(-EPERM,	__pkvm_host_share_ffa, pfn, 1);
- 	assert_transition_res(-EPERM,	__pkvm_hyp_donate_host, pfn, 1);
- 	assert_transition_res(-EPERM,	__pkvm_host_share_guest, pfn, gfn, 1, vcpu, prot);
--	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, vm);
-+	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, 1, vm);
- 
- 	assert_transition_res(0,	hyp_pin_shared_mem, virt, virt + size);
- 	assert_transition_res(0,	hyp_pin_shared_mem, virt, virt + size);
-@@ -1276,7 +1281,7 @@ void pkvm_ownership_selftest(void *base)
- 	assert_transition_res(-EPERM,	__pkvm_host_share_ffa, pfn, 1);
- 	assert_transition_res(-EPERM,	__pkvm_hyp_donate_host, pfn, 1);
- 	assert_transition_res(-EPERM,	__pkvm_host_share_guest, pfn, gfn, 1, vcpu, prot);
--	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, vm);
-+	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, 1, vm);
- 
- 	hyp_unpin_shared_mem(virt, virt + size);
- 	assert_page_state();
-@@ -1295,7 +1300,7 @@ void pkvm_ownership_selftest(void *base)
- 	assert_transition_res(-EPERM,	__pkvm_host_unshare_hyp, pfn);
- 	assert_transition_res(-EPERM,	__pkvm_hyp_donate_host, pfn, 1);
- 	assert_transition_res(-EPERM,	__pkvm_host_share_guest, pfn, gfn, 1, vcpu, prot);
--	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, vm);
-+	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, 1, vm);
- 	assert_transition_res(-EPERM,	hyp_pin_shared_mem, virt, virt + size);
- 
- 	selftest_state.host = PKVM_PAGE_OWNED;
-@@ -1319,11 +1324,11 @@ void pkvm_ownership_selftest(void *base)
- 	WARN_ON(hyp_virt_to_page(virt)->host_share_guest_count != 2);
- 
- 	selftest_state.guest[0] = PKVM_NOPAGE;
--	assert_transition_res(0,	__pkvm_host_unshare_guest, gfn, vm);
-+	assert_transition_res(0,	__pkvm_host_unshare_guest, gfn, 1, vm);
- 
- 	selftest_state.guest[1] = PKVM_NOPAGE;
- 	selftest_state.host = PKVM_PAGE_OWNED;
--	assert_transition_res(0,	__pkvm_host_unshare_guest, gfn + 1, vm);
-+	assert_transition_res(0,	__pkvm_host_unshare_guest, gfn + 1, 1, vm);
- 
- 	selftest_state.host = PKVM_NOPAGE;
- 	selftest_state.hyp = PKVM_PAGE_OWNED;
-diff --git a/arch/arm64/kvm/pkvm.c b/arch/arm64/kvm/pkvm.c
-index 0285e2cd2e7f..f77c5157a8d7 100644
---- a/arch/arm64/kvm/pkvm.c
-+++ b/arch/arm64/kvm/pkvm.c
-@@ -371,7 +371,7 @@ int pkvm_pgtable_stage2_unmap(struct kvm_pgtable *pgt, u64 addr, u64 size)
- 
- 	lockdep_assert_held_write(&kvm->mmu_lock);
- 	for_each_mapping_in_range_safe(pgt, addr, addr + size, mapping) {
--		ret = kvm_call_hyp_nvhe(__pkvm_host_unshare_guest, handle, mapping->gfn);
-+		ret = kvm_call_hyp_nvhe(__pkvm_host_unshare_guest, handle, mapping->gfn, 1);
- 		if (WARN_ON(ret))
- 			break;
- 		rb_erase(&mapping->node, &pgt->pkvm_mappings);
--- 
-2.49.0.1143.g0be31eac6b-goog
+> identified the blocks once.
 
+Last time you suggested to print it once, so this is contradictory. If
+you need simple probe success (or component bind) confirmation, then
+fortunately we already have infrastructure for that: sysfs and tracing.
+
+This log should either say something useful or not be there at all.
+Printing same version 4 times is not useful at all, considering all my
+previous arguments that this maps to compatible 1-to-1.
+
+> 
+> Doing it over and over again is excessive as failure to power-on will 
+> surely produce error messages anyway.
+
+
+Best regards,
+Krzysztof
 
