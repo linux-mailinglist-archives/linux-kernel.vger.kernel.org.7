@@ -1,143 +1,119 @@
-Return-Path: <linux-kernel+bounces-655173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A4BABD1E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:27:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C086ABD1CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E7994A346C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:27:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B047F7A898D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21446264629;
-	Tue, 20 May 2025 08:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22D4262815;
+	Tue, 20 May 2025 08:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UbZuTXHP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IVDQifqh"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7501C267702;
-	Tue, 20 May 2025 08:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F296263F2D;
+	Tue, 20 May 2025 08:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747729532; cv=none; b=Yr4rzQkST8BQ6a+CUQ3dm+WEpQ+oTE1QGajbU54U3r/DQ2e/2yuEs2Wb+w63jdDhZHT+QKJk/h1FYzp2c3HZCTYuNbH+rVXd0sZzP7kwaLeZv83Z8/x4PSS3mGkvGJsVRFwsSawI5r0cp53+eZChhakhLWypGBSrEfpScrw4otY=
+	t=1747729497; cv=none; b=m3fMGBCx9EKyjo2RArSrOYX9l4iT/fsChfY1auXSBEpAq1uMs6UIwk8SijzNwqdQV3mkoDpht0Mjbnvr8uzONFTH7+krdj72sGaS8G0sOGmKHjjPco6DnsEqkLk4aGUj6xtIkBi/2kbNmbwcQ+mQtX3wGqU2dVxKP1oWiGgzJ68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747729532; c=relaxed/simple;
-	bh=nBLwYdLCrdKN8wRv7ArzFbqRn5yd+GRLAnV4S2iIl/w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LjIjtGyYUPStqASVCYfN586idW8nywvrux9C2yrm9vwo2ypwFinLd7YhYnIRASWhFQLRYD5Px1m+M97UjBccEN4jBlSACns42/n7V+4j7A2VpmQnD820ryWBCIUk4clyqLtZUlYulmkPD4z6TcLWIPKmyLKu6UqcI8rExxr8jls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UbZuTXHP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC02FC4CEF0;
-	Tue, 20 May 2025 08:25:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747729531;
-	bh=nBLwYdLCrdKN8wRv7ArzFbqRn5yd+GRLAnV4S2iIl/w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UbZuTXHPjSMU8w6PSVIPcLhHf3wW8xc3x6FhbA9MDjKaVOBpg/qasfeExFkxPaz78
-	 XxUo0xIt3rJd+gvg4sH91FqOqjMqlDalB0O/oL+bwmS0242Izjxe0zS5jkTVjBw12l
-	 VlL5Ad4N4ujQhOCExsEpuXTAtep7YkVg1C5SeViXPaOvUV4DWo+j9/XpW8xK6+M1pD
-	 elAD7VWTGl/xt5nGn+y9OoeFxLqDIuzpP29WFZbFjkolvbyNlvIE/MRMT9gUumcb1q
-	 Y5/fkQqgRTl1kMoghMKY8A3z1sdL/LvMexP1wjKJxD9ys6k1or6wrnGPUSz61b0qID
-	 9kjWbIDCuDuTQ==
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: bleung@chromium.org,
-	brendan.higgins@linux.dev,
-	davidgow@google.com
-Cc: tzungbi@kernel.org,
-	rmoar@google.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	naveen@kernel.org,
-	anil.s.keshavamurthy@intel.com,
-	davem@davemloft.net,
-	chrome-platform@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	linux-trace-kernel@vger.kernel.org,
+	s=arc-20240116; t=1747729497; c=relaxed/simple;
+	bh=T/BPs7AVr5XnkfJdKRAT/wF0DytkqWa/g+g70eIDPuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bYic9lHQKj8mOJOzcZWqxugj6UGZtBR+blp9xSBStf3Ao87tinFqJJcgyaVaejv8pQcQRk40eEnT3SHQZS3l4MeVTSEEhtxi/SKP2csTBq3Gnkw8steCgh5y0YkInG/L5qpFK/q8/Izry6WsK+tdOpPDDgiKj4oy638Boi9sEQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IVDQifqh; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-442ec3ce724so43388335e9.0;
+        Tue, 20 May 2025 01:24:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747729492; x=1748334292; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pBe9HFmfYkZA0vZ9epGzGQwP62XWv9bdcLFLfgUYqN4=;
+        b=IVDQifqhsC2m3ztaUHMi2wYx+qN/+ldul9upZrfLhT3Kb5tMyIldLSBdxPlY8/z7o8
+         T1AL9C1oP8o4DMlG76hEdBM0rKVnbAsm56wxXWVNRXy95vwDbKXcs1K4JvtnP/KpMy0s
+         oqeyViPq0GpfVmQb/QCAzxImVgc3PjOPQaFmPmZIBix1sP91q+f2udA/AZklXVvCVeRT
+         1Zb7yRK6KihJjKYw+qOgC9zkjA98Knb7mPct1hF3xEtCyRXMGfPrC0YoqxDLIfmQB+7l
+         xq+qg/cZ0xqM2TLvaj2Y4foEuYBa581JWG+kvS19ym7tTPClIOZWoI7AeXP5kFPqpADx
+         aYtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747729492; x=1748334292;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pBe9HFmfYkZA0vZ9epGzGQwP62XWv9bdcLFLfgUYqN4=;
+        b=XdaxHZENPPdKy1W0e2WepwdLJU/Eq97/TNi5HP2CP1qlMvfj/19etpAamQycMT1iAM
+         BiuBI+hvlvp3NFDjqBNj3bXq2T64iWye8QQhN+MBKGDkuLSTeSamD+iRVM7PlpO+yWWa
+         43JJab9JbuoS5uv0oxrTStslL7aIPQDCtD025j137vXlnQzWqqOJK25ZjzaQX4d/EhIb
+         3rI4mv7doPXzGw2VA3XWx8VUH+mQDz03LR4mkPeVUwQ5LYEereYpr511TmLWbKZIVEDn
+         V0bL7RD8N725BLzNEe2ZNIFKWg8z/JISX07aJlUqa7hd1/QQFZEOgocCLrpGB669N0JC
+         a3Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCWGIq9GZDZFiaoQLljxdlnXE9uCP6xN3hmLlUHp9s3trP3EFFlBPcV+DqIla0yy7vhiegBFHO93wEVvW38=@vger.kernel.org, AJvYcCXCX2klOv7UbhBMdCWdM8Gd+nKW877fME9YEcFQIZGbD1taGHVpNnVgliDP0BabJSoRIMO/v2aPZfhoWW6m@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiuaFGQZCCnf4EsZWb/SssJCz+AtrRYIuprC/sSJE19msgT1hM
+	9kUaGDXhHyR7Hd74Xvpy6PKCJmr1UmnAA59bwCV7F4bAscf1bZ3cj6v+
+X-Gm-Gg: ASbGncsECZZyAfU3ap9te+d1QBPp4Pf5rODh+NawWw328lzzU9JqPgVYBGf+cmVO1H+
+	GReuOjbCUzhdCA5zY3CMyjWmop2ERMSuAF8RKeulmo+7xKtui4s1FL/sLOYfhYIAsCSiYYJ4bso
+	MiNaWMqM08f6niPYcL/UHKQs0DbripMM//EzG3v7Zw6k7yz2Ku+TvqMM+CNwDfWU+mrHq9jqxhT
+	O3UfItrutGqjTvhYiJ4KTdfv0J+c+Ny5IO34aze9mQDLX3Dd3DwEoFuG6hjsoANJQj6YFgG6nUs
+	mARLTdp7aIkWUlNDmCgy80dxtpbfJXMVjI1+sldlQuTGaBvpgC52
+X-Google-Smtp-Source: AGHT+IFiq7yNzRMHYgxf8Y2AvL/vFL+N/JR75NfHsu+y2i1yEiKH/7J56FYwi2SZ/j61+N05P1IBwQ==
+X-Received: by 2002:a05:600c:8597:b0:445:cd3:fa00 with SMTP id 5b1f17b1804b1-4450cd3faafmr73300515e9.4.1747729492130;
+        Tue, 20 May 2025 01:24:52 -0700 (PDT)
+Received: from Red ([2a01:cb1d:897:7800:4a02:2aff:fe07:1efc])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-447f74cce5bsm20578415e9.24.2025.05.20.01.24.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 01:24:51 -0700 (PDT)
+Date: Tue, 20 May 2025 10:24:49 +0200
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
+To: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+Cc: herbert@gondor.apana.org.au, davem@davemloft.net,
+	linux-crypto@vger.kernel.org, wens@csie.org,
+	jernej.skrabec@gmail.com, samuel@sholland.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 7/7] platform/chrome: kunit: cros_ec_spi: Use kprobes stub instead
-Date: Tue, 20 May 2025 08:24:34 +0000
-Message-ID: <20250520082435.2255639-8-tzungbi@kernel.org>
-X-Mailer: git-send-email 2.49.0.1101.gccaa498523-goog
-In-Reply-To: <20250520082435.2255639-1-tzungbi@kernel.org>
-References: <20250520082435.2255639-1-tzungbi@kernel.org>
+Subject: Re: [PATCH 1/3] crypto: sun8i-ce - fix nents passed to dma_unmap_sg()
+Message-ID: <aCw8UVORVj7GFc22@Red>
+References: <20250519151350.3442981-1-ovidiu.panait.oss@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250519151350.3442981-1-ovidiu.panait.oss@gmail.com>
 
-For running the tests:
+Le Mon, May 19, 2025 at 06:13:48PM +0300, Ovidiu Panait a écrit :
+> In sun8i_ce_cipher_unprepare(), dma_unmap_sg() is incorrectly called with
+> the number of entries returned by dma_map_sg(), rather than using the
+> original number of entries passed when mapping the scatterlist.
+> 
+> To fix this, stash the original number of entries passed to dma_map_sg()
+> in the request context.
+> 
+> Fixes: 0605fa0f7826 ("crypto: sun8i-ce - split into prepare/run/unprepare")
+> Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+> ---
+>  drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-$ ./tools/testing/kunit/kunit.py run \
-	--arch=x86_64 \
-	--kconfig_add CONFIG_KPROBES=y \
-	--kconfig_add CONFIG_KUNIT_KPROBES_STUBS=y \
-	--kconfig_add CONFIG_CHROME_PLATFORMS=y \
-	--kconfig_add CONFIG_CROS_EC=y \
-	--kconfig_add CONFIG_SPI=y \
-	--kconfig_add CONFIG_CROS_EC_SPI=y \
-	--kconfig_add CONFIG_CROS_KUNIT_EC_SPI_TEST=y \
-	cros_ec_spi*
+Hello
 
-Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
----
- drivers/platform/chrome/Kconfig            |  2 +-
- drivers/platform/chrome/cros_ec_spi_test.c | 10 +++++-----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+All patches are:
+Acked-by: Corentin LABBE <clabbe.montjoie@gmail.com>
+Tested-by: Corentin LABBE <clabbe.montjoie@gmail.com>
 
-diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
-index aa13e871a31f..aacce3323384 100644
---- a/drivers/platform/chrome/Kconfig
-+++ b/drivers/platform/chrome/Kconfig
-@@ -339,7 +339,7 @@ config CROS_KUNIT_EC_SPI_TEST
- 	tristate "Kunit tests for ChromeOS EC over SPI" if !KUNIT_ALL_TESTS
- 	depends on KUNIT && CROS_EC
- 	default KUNIT_ALL_TESTS
--	depends on KUNIT_FTRACE_STUBS
-+	depends on KUNIT_KPROBES_STUBS
- 	depends on CROS_EC_SPI
- 	help
- 	  Kunit tests for ChromeOS EC over SPI.
-diff --git a/drivers/platform/chrome/cros_ec_spi_test.c b/drivers/platform/chrome/cros_ec_spi_test.c
-index 52dea75ecabf..74fcbd37b87b 100644
---- a/drivers/platform/chrome/cros_ec_spi_test.c
-+++ b/drivers/platform/chrome/cros_ec_spi_test.c
-@@ -3,7 +3,7 @@
-  * Kunit tests for ChromeOS Embedded Controller SPI interface.
-  */
- #include <kunit/test.h>
--#include <kunit/ftrace_stub.h>
-+#include <kunit/kprobes_stub.h>
- 
- #include <linux/platform_data/cros_ec_commands.h>
- #include <linux/platform_data/cros_ec_proto.h>
-@@ -121,8 +121,8 @@ static int cros_ec_spi_test_init(struct kunit *test)
- 	int ret;
- 	struct device_driver *drv;
- 
--	kunit_activate_ftrace_stub(test, cros_ec_register, fake_cros_ec_register);
--	kunit_activate_ftrace_stub(test, cros_ec_unregister, fake_cros_ec_unregister);
-+	kunit_activate_kprobes_stub(test, cros_ec_register, fake_cros_ec_register);
-+	kunit_activate_kprobes_stub(test, cros_ec_unregister, fake_cros_ec_unregister);
- 
- 	priv = kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
- 	KUNIT_ASSERT_NOT_NULL(test, priv);
-@@ -181,8 +181,8 @@ static void cros_ec_spi_test_exit(struct kunit *test)
- 	device_del(&priv->dev);
- 	class_destroy(priv->fake_class);
- 
--	kunit_deactivate_ftrace_stub(test, cros_ec_register);
--	kunit_deactivate_ftrace_stub(test, cros_ec_unregister);
-+	kunit_deactivate_kprobes_stub(test, cros_ec_register);
-+	kunit_deactivate_kprobes_stub(test, cros_ec_unregister);
- }
- 
- static int cros_ec_spi_test_cmd_xfer_init(struct kunit *test)
--- 
-2.49.0.1101.gccaa498523-goog
-
+Thanks
+Regards
 
