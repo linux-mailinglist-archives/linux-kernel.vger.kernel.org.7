@@ -1,87 +1,231 @@
-Return-Path: <linux-kernel+bounces-655046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0CFDABCFF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:57:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C081ABCFDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B114D3B6A3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC83B17C33B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C80625D8E1;
-	Tue, 20 May 2025 06:56:53 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC181F180C;
-	Tue, 20 May 2025 06:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16EF425D1E0;
+	Tue, 20 May 2025 06:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FX56neqn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4FB1D5CEA;
+	Tue, 20 May 2025 06:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747724213; cv=none; b=E3d0Y9wxzfJPqVwH3IC0lfhSXkc1/hObYsVfwqbtxHhtQcc8qqOH9psoOIMVWfwQDE26b4ZqftKXMMPt7OM83laMRlXV+frKMhO0vz9ZbWHzEcLsUfnQuO4f2OBT2MmkNTPIIewcpMrGaYzifgDm4QVZ3gwNIYKg31jQoqbZ9K4=
+	t=1747723905; cv=none; b=EzKwL7x6RARTm6yDDW9M30Q9BtxsdoYfvEbk29a6LdsZdkP9MfYu0KnOcmf01gFJFFGWK5EFoRMn88EwHo4MBUP6ry4xzWiow/2owlKzBc3ium7cIgF8SGi4p0wtOUmFBaFZqKtyDNuAAiQC2e+oONE7HwEEItsUVNqv/q7GFSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747724213; c=relaxed/simple;
-	bh=hiP99CePJ2mKC4e+6iQzIlVpHlYwNuQCviCkM0kP/d8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iG2v9Kg/0PUS2jsgrmFOhDOw5+MsWiHiLw3KHevw0SAf10NUNhOZHmtL/TtDQGvNb/44gRKIMcWN3NUTr38cwjYfbJ0kG4KfrM1QAIOCZBBYFQctKDZ8ls4wyuTRaFPvf9UOW1UJ1l1un/bDq7Lpf7mZmUINzjEzCZh35FBkxko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1uHGu1-0006iR-00; Tue, 20 May 2025 08:56:41 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id C44B6C060E; Tue, 20 May 2025 08:50:58 +0200 (CEST)
-Date: Tue, 20 May 2025 08:50:58 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Charan Pedumuru <charan.pedumuru@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, devicetree@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 1/2] mips: dts: pic32: pic32mzda: Rename the sdhci
- nodename to match with common mmc-controller binding
-Message-ID: <aCwmUiUIoLanCOYw@alpha.franken.de>
-References: <20250507-mchp-sdhci-v1-0-ed29de05295a@gmail.com>
- <20250507-mchp-sdhci-v1-1-ed29de05295a@gmail.com>
+	s=arc-20240116; t=1747723905; c=relaxed/simple;
+	bh=lrahYfVNEp1NImx1ihzeATT4d2KtwWOZnfKtjTvmf6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CN88+12b0m8GfIDFOsxP2KGzJG1BeOboCWXtnEKzMIwCqjFx80yoql/XHkrfcTkhj0QhiO3WutZXcc86noQyr6uJGW5hvC/SP4B05+LYogjEvFSHYgKKpM4qcShz3oqYb/BtTyQdRqrukiwFC6sG5re4RQNHTegD6IsicDxWH5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FX56neqn; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747723904; x=1779259904;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=lrahYfVNEp1NImx1ihzeATT4d2KtwWOZnfKtjTvmf6w=;
+  b=FX56neqnMky3q4xyJxy/3h/4FAuIHbPp+lAydI9jySXvpnmZuuFb1RZl
+   Busr3yeo98xcLs/6g3uVvqZbjCXVthfeQJX+iAmcGvWm3yh30YMZ0o0of
+   HBwwUEwdJsVDv7yadjwDx6BA8KKjxtZawzd9v+SllHNsQ+MMuu38L4ZN6
+   Q40Ktckmj8PGAPLapZrTOOaoL1xJs7k4Npk1o/Z72xQoZRoSnwjOqrdJ2
+   ehPV1gssWgAB0dsQSZkt6g+vdEDeQw4H2kXkPXofNGSEbsTH471v1VKrS
+   xx5YP2iAI8ncqDqQfcTgLQl6ssLYf7hsQLWi20WMAVm3B5O14ZgazLabw
+   A==;
+X-CSE-ConnectionGUID: vikYx9GCRLalmTuYXTdJdg==
+X-CSE-MsgGUID: zmbjrS7dSlyFq4nVHVgeMQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="49625104"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="49625104"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 23:51:43 -0700
+X-CSE-ConnectionGUID: dDvxapy/RbuiKHRZgnOfrQ==
+X-CSE-MsgGUID: vpD4U9gXSfmb2CXjIDzEwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="139503204"
+Received: from unknown (HELO [10.238.12.207]) ([10.238.12.207])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 23:51:40 -0700
+Message-ID: <afd1dbe1-3055-45f4-9db1-a31e4b9a6722@linux.intel.com>
+Date: Tue, 20 May 2025 14:51:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250507-mchp-sdhci-v1-1-ed29de05295a@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/6] KVM: Bound the number of dirty ring entries in a
+ single reset at INT_MAX
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Peter Xu <peterx@redhat.com>,
+ Yan Zhao <yan.y.zhao@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
+ James Houghton <jthoughton@google.com>, Pankaj Gupta <pankaj.gupta@amd.com>
+References: <20250516213540.2546077-1-seanjc@google.com>
+ <20250516213540.2546077-2-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250516213540.2546077-2-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 07, 2025 at 06:29:35AM +0000, Charan Pedumuru wrote:
-> Rename the sdhci nodename from "sdhci@" to "mmc@" to align with
-> linux common mmc-controller binding.
-> 
-> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+
+
+On 5/17/2025 5:35 AM, Sean Christopherson wrote:
+> Cap the number of ring entries that are reset in a single ioctl to INT_MAX
+> to ensure userspace isn't confused by a wrap into negative space, and so
+> that, in a truly pathological scenario, KVM doesn't miss a TLB flush due
+> to the count wrapping to zero.  While the size of the ring is fixed at
+> 0x10000 entries and KVM (currently) supports at most 4096, userspace is
+> allowed to harvest entries from the ring while the reset is in-progress,
+> i.e. it's possible for the ring to always have harvested entries.
+>
+> Opportunistically return an actual error code from the helper so that a
+> future fix to handle pending signals can gracefully return -EINTR.  Drop
+> the function comment now that the return code is a stanard 0/-errno (and
+
+stanard -> standard
+
+The rest looks good to me.
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+
+
+> because a future commit will add a proper lockdep assertion).
+>
+> Opportunistically drop a similarly stale comment for kvm_dirty_ring_push().
+>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Yan Zhao <yan.y.zhao@intel.com>
+> Cc: Maxim Levitsky <mlevitsk@redhat.com>
+> Cc: Binbin Wu <binbin.wu@linux.intel.com>
+> Fixes: fb04a1eddb1a ("KVM: X86: Implement ring-based dirty memory tracking")
+> Reviewed-by: James Houghton <jthoughton@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->  arch/mips/boot/dts/pic32/pic32mzda.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/mips/boot/dts/pic32/pic32mzda.dtsi b/arch/mips/boot/dts/pic32/pic32mzda.dtsi
-> index fdc721b414a88a12050497cd2ddf98ae2fbce035..feca35ba56a47adac0e2a906f4fe9c7a4e89cd4f 100644
-> --- a/arch/mips/boot/dts/pic32/pic32mzda.dtsi
-> +++ b/arch/mips/boot/dts/pic32/pic32mzda.dtsi
-> @@ -225,7 +225,7 @@ gpio9: gpio9@1f860900 {
->  		gpio-ranges = <&pic32_pinctrl 0 144 16>;
->  	};
->  
-> -	sdhci: sdhci@1f8ec000 {
-> +	sdhci: mmc@1f8ec000 {
->  		compatible = "microchip,pic32mzda-sdhci";
->  		reg = <0x1f8ec000 0x100>;
->  		interrupts = <191 IRQ_TYPE_LEVEL_HIGH>;
-> 
+>   include/linux/kvm_dirty_ring.h | 18 +++++-------------
+>   virt/kvm/dirty_ring.c          | 10 +++++-----
+>   virt/kvm/kvm_main.c            |  9 ++++++---
+>   3 files changed, 16 insertions(+), 21 deletions(-)
+>
+> diff --git a/include/linux/kvm_dirty_ring.h b/include/linux/kvm_dirty_ring.h
+> index da4d9b5f58f1..eb10d87adf7d 100644
+> --- a/include/linux/kvm_dirty_ring.h
+> +++ b/include/linux/kvm_dirty_ring.h
+> @@ -49,9 +49,10 @@ static inline int kvm_dirty_ring_alloc(struct kvm *kvm, struct kvm_dirty_ring *r
+>   }
+>   
+>   static inline int kvm_dirty_ring_reset(struct kvm *kvm,
+> -				       struct kvm_dirty_ring *ring)
+> +				       struct kvm_dirty_ring *ring,
+> +				       int *nr_entries_reset)
+>   {
+> -	return 0;
+> +	return -ENOENT;
+>   }
+>   
+>   static inline void kvm_dirty_ring_push(struct kvm_vcpu *vcpu,
+> @@ -77,17 +78,8 @@ bool kvm_arch_allow_write_without_running_vcpu(struct kvm *kvm);
+>   u32 kvm_dirty_ring_get_rsvd_entries(struct kvm *kvm);
+>   int kvm_dirty_ring_alloc(struct kvm *kvm, struct kvm_dirty_ring *ring,
+>   			 int index, u32 size);
+> -
+> -/*
+> - * called with kvm->slots_lock held, returns the number of
+> - * processed pages.
+> - */
+> -int kvm_dirty_ring_reset(struct kvm *kvm, struct kvm_dirty_ring *ring);
+> -
+> -/*
+> - * returns =0: successfully pushed
+> - *         <0: unable to push, need to wait
+> - */
+> +int kvm_dirty_ring_reset(struct kvm *kvm, struct kvm_dirty_ring *ring,
+> +			 int *nr_entries_reset);
+>   void kvm_dirty_ring_push(struct kvm_vcpu *vcpu, u32 slot, u64 offset);
+>   
+>   bool kvm_dirty_ring_check_request(struct kvm_vcpu *vcpu);
+> diff --git a/virt/kvm/dirty_ring.c b/virt/kvm/dirty_ring.c
+> index d14ffc7513ee..77986f34eff8 100644
+> --- a/virt/kvm/dirty_ring.c
+> +++ b/virt/kvm/dirty_ring.c
+> @@ -105,19 +105,19 @@ static inline bool kvm_dirty_gfn_harvested(struct kvm_dirty_gfn *gfn)
+>   	return smp_load_acquire(&gfn->flags) & KVM_DIRTY_GFN_F_RESET;
+>   }
+>   
+> -int kvm_dirty_ring_reset(struct kvm *kvm, struct kvm_dirty_ring *ring)
+> +int kvm_dirty_ring_reset(struct kvm *kvm, struct kvm_dirty_ring *ring,
+> +			 int *nr_entries_reset)
+>   {
+>   	u32 cur_slot, next_slot;
+>   	u64 cur_offset, next_offset;
+>   	unsigned long mask;
+> -	int count = 0;
+>   	struct kvm_dirty_gfn *entry;
+>   	bool first_round = true;
+>   
+>   	/* This is only needed to make compilers happy */
+>   	cur_slot = cur_offset = mask = 0;
+>   
+> -	while (true) {
+> +	while (likely((*nr_entries_reset) < INT_MAX)) {
+>   		entry = &ring->dirty_gfns[ring->reset_index & (ring->size - 1)];
+>   
+>   		if (!kvm_dirty_gfn_harvested(entry))
+> @@ -130,7 +130,7 @@ int kvm_dirty_ring_reset(struct kvm *kvm, struct kvm_dirty_ring *ring)
+>   		kvm_dirty_gfn_set_invalid(entry);
+>   
+>   		ring->reset_index++;
+> -		count++;
+> +		(*nr_entries_reset)++;
+>   		/*
+>   		 * Try to coalesce the reset operations when the guest is
+>   		 * scanning pages in the same slot.
+> @@ -167,7 +167,7 @@ int kvm_dirty_ring_reset(struct kvm *kvm, struct kvm_dirty_ring *ring)
+>   
+>   	trace_kvm_dirty_ring_reset(ring);
+>   
+> -	return count;
+> +	return 0;
+>   }
+>   
+>   void kvm_dirty_ring_push(struct kvm_vcpu *vcpu, u32 slot, u64 offset)
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index b24db92e98f3..571688507204 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -4903,15 +4903,18 @@ static int kvm_vm_ioctl_reset_dirty_pages(struct kvm *kvm)
+>   {
+>   	unsigned long i;
+>   	struct kvm_vcpu *vcpu;
+> -	int cleared = 0;
+> +	int cleared = 0, r;
+>   
+>   	if (!kvm->dirty_ring_size)
+>   		return -EINVAL;
+>   
+>   	mutex_lock(&kvm->slots_lock);
+>   
+> -	kvm_for_each_vcpu(i, vcpu, kvm)
+> -		cleared += kvm_dirty_ring_reset(vcpu->kvm, &vcpu->dirty_ring);
+> +	kvm_for_each_vcpu(i, vcpu, kvm) {
+> +		r = kvm_dirty_ring_reset(vcpu->kvm, &vcpu->dirty_ring, &cleared);
+> +		if (r)
+> +			break;
+> +	}
+>   
+>   	mutex_unlock(&kvm->slots_lock);
+>   
 
-applied to mips-next
-
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
 
