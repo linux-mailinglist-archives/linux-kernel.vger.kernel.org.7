@@ -1,116 +1,92 @@
-Return-Path: <linux-kernel+bounces-656006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43CDEABE05D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:18:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15290ABDFF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A391C3BFE52
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:15:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79BFF4C0F6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D8C2798FA;
-	Tue, 20 May 2025 16:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD9426A1CC;
+	Tue, 20 May 2025 16:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dMMaR+AF"
-Received: from out.smtpout.orange.fr (out-66.smtpout.orange.fr [193.252.22.66])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pdgs6/FI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D90276054;
-	Tue, 20 May 2025 16:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38238241696;
+	Tue, 20 May 2025 16:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747757523; cv=none; b=rarZ2hQfIZool7de6AyDLFRQJRdCt0mKGY+TSWiWPSiYt5+9jk6JBpkmO7VKpm1kb/tjDoPkkD48RSk4NManvNLSMmpOOiQKGW9T0d28c1UaiasIjbkytIj1QLEka+VYGoV8ngGWWP/stH5CfhY9GQP43bAq/jq4Wwu/qbOyTFk=
+	t=1747757174; cv=none; b=DXbwuC5tyRuvSHpUwkG5o9dp1bc37cVg9B0TnjMR0ZfbK9ghtNriPWfWl3fjI45w/AApFM5UpVFw/JjzoEKdCQk3r+KbzuA8ry1HLNqS7bU9K4zJMRwkK7pHkGBd1OOpG50R3kUYoFUuvtRVDk5HjqWJifRIbBOdUiOevCifSQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747757523; c=relaxed/simple;
-	bh=U6lo7wpJePXrQN+8jqAd6+6cxb+SFV2VYr+GvxVd548=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nqAIM6Hw5W/O9sgBvOsHO2Awj5Pa6Fa68R6lxxrMOK9O5rniPYwpoNmFMWnXLpiESdVaxBgUD14GLd9pDQFDtQ/kHA8h3A5YobWBGJa1lQBo73j9QltOFpPYFjtjKoyZLNrYURORhLl1Kte8hR+UIQNLDE9V78339yK/jx2wZYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dMMaR+AF; arc=none smtp.client-ip=193.252.22.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id HPQYu9zeCFfBZHPQfuCi6a; Tue, 20 May 2025 18:03:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1747756989;
-	bh=U6lo7wpJePXrQN+8jqAd6+6cxb+SFV2VYr+GvxVd548=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=dMMaR+AFCHRDRqO/p9iL5eji6THqnlwGIZf0pOLqdvEGZ76W4qhMTn+EiagUzdWxQ
-	 CPytae6VjbfmGmLazR6+oB1RU1rhqxBt1Z7DKF4xxVCUDXmf1cpRc6UvyrT6rwNAbZ
-	 n9H2RMmZaDVOECX0m/P5L7y9wBPZZvgiL993jini4zAjlyKJjscVr9e3XnujHeOyxj
-	 PPJU1TFkfamk71h0rw3hVUKHM2ITkdhzgDXEIMvbi9pXjqE8acGw8o6b2jfI0Qw1oN
-	 1LMgj7K/GD1Gapjq6CGwjHJE3SCvoujZuArtvIQ260vmRZuCWJaFE3kpl2UWI6fe+O
-	 Vse/wByRNa1Mg==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 20 May 2025 18:03:09 +0200
-X-ME-IP: 124.33.176.97
-Message-ID: <5b83c1b3-6370-4df1-8a57-7940d7a629fd@wanadoo.fr>
-Date: Wed, 21 May 2025 01:02:49 +0900
+	s=arc-20240116; t=1747757174; c=relaxed/simple;
+	bh=LwPbqoIXOVyP2aQDPKPm6hmyDnm8quZTF2z+BUwu33w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JPRcya/+75xXSZ8ZfgCOCw4CRonc92Jei31jpXQyEJCBXRVqxwkz16HcksjRw8mFmSiDmcahJtaaHacVvUuSxfb7WZ2MRTBfJRD1hoIq2HTFIUzn7DxX5CCCMp05f2olkH25EHmkEnyuv2SfoG9F0ttlzGJf/vfNs5+pLTqQw0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pdgs6/FI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C252C4CEE9;
+	Tue, 20 May 2025 16:06:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747757173;
+	bh=LwPbqoIXOVyP2aQDPKPm6hmyDnm8quZTF2z+BUwu33w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pdgs6/FIlZFOYSnMfFOajMq74ngEqAh6X37JSbg+2aZQuFBKu1sbR5fhBqs/913t3
+	 AwGvai69zatfsOl/9eQ4Vz2u3B/rE3eHDhLDIkZbBEcZSy3w+NlqMIU6cMdSYyoRxu
+	 C+NaBH4GcohDC1pIQv3AIHLU/jY4wN9r0D4UN2+kwkJ/Dhhhy3Cng1L0Gh4wXSyxZl
+	 Zo0mtMiVhfaJV37T9GlA7XRetK+vukjVPBX83GusCB/+VdqK1CZ0CwvhOv3Q+UFrXw
+	 7JdN0j73CAHmOxvqI4WF/p7wy0G0g1AO4Spma/GUAhoEniv8F8RLqPbBGewkyoC88Q
+	 PKi8HawOmrwNg==
+Date: Tue, 20 May 2025 09:06:10 -0700
+From: Kees Cook <kees@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Shung-Hsi Yu <shung-hsi.yu@suse.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Erhard Furtner <erhard_f@mailbox.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, bpf@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 0/2] mm: vmalloc: Actually use the in-place vrealloc
+ region
+Message-ID: <202505200904.474938A8B5@keescook>
+References: <20250515214020.work.519-kees@kernel.org>
+ <202505191217.B047E005F2@keescook>
+ <20250519170607.b8d9c23bb928935d19b333fa@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH FYI 0/7] Updating some kernel headers with the kernel
- sources
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, James Clark <james.clark@linaro.org>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Clark Williams <williams@redhat.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Arnaldo Carvalho de Melo <acme@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- I Hsin Cheng <richard120310@gmail.com>, "Michael S . Tsirkin"
- <mst@redhat.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Peng Jiang <jiang.peng9@zte.com.cn>, Stefano Garzarella
- <sgarzare@redhat.com>, Yazen Ghannam <yazen.ghannam@amd.com>,
- Yury Norov <yury.norov@gmail.com>
-References: <20250519214126.1652491-1-acme@kernel.org>
- <CAMZ6RqJUf=LpczMNu9WwLik9i-4tJHYENvM3d15nxjNM+_vc5w@mail.gmail.com>
- <aCylQUlY3W7rbZAs@x1>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <aCylQUlY3W7rbZAs@x1>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250519170607.b8d9c23bb928935d19b333fa@linux-foundation.org>
 
-On 21/05/2025 at 00:52, Arnaldo Carvalho de Melo wrote:
-> On Tue, May 20, 2025 at 09:44:05AM +0900, Vincent Mailhol wrote:
->> On Tue. 20 May 2025 at 06:41, Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+On Mon, May 19, 2025 at 05:06:07PM -0700, Andrew Morton wrote:
+> On Mon, 19 May 2025 12:18:42 -0700 Kees Cook <kees@kernel.org> wrote:
+> 
+> > On Thu, May 15, 2025 at 02:42:14PM -0700, Kees Cook wrote:
+> > > This fixes a performance regression[1] with vrealloc(). This needs to
+> > > get into v6.15, which is where the regression originates, and then it'll
+> > > get backport to the -stable releases as well.
+> 
+> No -stable backporting will be needed?
 
-(...)
+I think it will, since the vrealloc patches were backported
+automatically, e.g. in v6.14.y: 0b391a520b4e ("mm: vmalloc: support more
+granular vrealloc() sizing")
 
-> I think there is value in doing it now, as it clears up the build
-> warnings and solves already one prep work that syncing would entail,
-> namely the inclusion of const_true() in the tools compiler.h file.
+> > Andrew, can you get these to Linus this week?
+> 
+> Sure.
 
-Ack.
+Thanks!
 
-> I think I can take your "I am not objecting to this series in any way."
-> as an Acked-by?
-
-Sure. You can add my Acked-by to patch 6 and 7 (the ones in which you put me in
-CC). I did not have a look at the other ones (and do not plan to do so).
-
-
-Yours sincerely,
-Vincent Mailhol
-
+-- 
+Kees Cook
 
