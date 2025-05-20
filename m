@@ -1,201 +1,154 @@
-Return-Path: <linux-kernel+bounces-656355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5E1CABE4C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:32:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1219ABE4B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BFE218864BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:32:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32ED63B4F4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9BF28C86C;
-	Tue, 20 May 2025 20:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CCB28C5B5;
+	Tue, 20 May 2025 20:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MwFkArGp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FHEGuuh4"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF0428C2CF;
-	Tue, 20 May 2025 20:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C558D2517A0;
+	Tue, 20 May 2025 20:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747773095; cv=none; b=se7gdbgiiLtATVW56cK1X5kVJ++vjSZTCMeYKVkvpfoJJJLu5A/3ADG/d/WztA3YPnqBxVzhm49c4iy7ZPr7o6iMR0xYn+W4Kr8MkKwvnbxDE8Ok5NdI2bvVgRu0pomhi6pihDBeb8YyBIcTfM8nGFgEkPiiAzNyRxqxQjLSugE=
+	t=1747773049; cv=none; b=CfI0YZkqQXqLebb638mqwybPDU+lEtGxj0T1Rr3waPf0CNZ8x21OerELwaO28zSgfIpMFIxnQSH3LsIY36R70Ymw0uCRW+NW41bQEzIABh8uP+GrV8Q+ni8q8MDrtgUXHeXI7xS5G7JHp8vNNQH3PaUXrBaymgWblJa68sntDow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747773095; c=relaxed/simple;
-	bh=3GWxq42/tgSqBxgPB7yrDRaLb7a882QSAs5qQK5Arp4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YxSDwfZbZt0O9gNOJxCGqt3xr22Ua8ZBRVXPIXHgdWnNfzD/dlCcQ+cyiq39AIcCVIdN2UzvbGNdewZrAN0HjEakoJAvrYWZUtlWlrunzBmLhgoKuJe2toNU+s7xiFtT/HNznNSkvKQvZN1Hh2uKFiL0YW4GpikiC4b6vMhyLYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MwFkArGp; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747773093; x=1779309093;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3GWxq42/tgSqBxgPB7yrDRaLb7a882QSAs5qQK5Arp4=;
-  b=MwFkArGpeogcwVgPjgL2rJMTtRAcbp9562nAO5+Ho28kuMYAZgAPA45R
-   YucRJdLLEipn66ji1PB36597lvHwlgT6I0mpng0ReYBqGVtRx+281SUfg
-   2CKNbgmiiskW+rDoF7hSY782cSM8MST3TckWrwYVVVsNfc657cl7cI1H4
-   XBzGphp60vK8nA9qGxFaRdqUU2OklW+eF4H0XyosxWMbcyFUlFlfnxIG2
-   hjHbCredLgRrG1IBkzu/qlYfp5AiHhWZCR0YwI8Kw1oHh8tZ3VqV6H0jg
-   /Rh1yTKt2H46rY/GJbY2wzAH81dPsJjRj9VG8j1ozzLiGj5Rwa85vdMSL
-   A==;
-X-CSE-ConnectionGUID: zq8BqAp1QEGwr3K86DZSxg==
-X-CSE-MsgGUID: pKLRBb06Sc2bf3jBiEhCLg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49861355"
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="49861355"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 13:31:32 -0700
-X-CSE-ConnectionGUID: q0AcIwtGTrC78y+QjzCHfg==
-X-CSE-MsgGUID: JQOZXCiKQOu/6s3LgSjiSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="176941458"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 20 May 2025 13:31:30 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uHTcW-000NXg-0K;
-	Tue, 20 May 2025 20:31:28 +0000
-Date: Wed, 21 May 2025 04:30:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wentao Liang <vulab@iscas.ac.cn>, andi.shyti@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] i2c: qup: Add error handling in qup_i2c_xfer_v2()
-Message-ID: <202505210438.G4nfkpQ2-lkp@intel.com>
-References: <20250519141918.2522-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1747773049; c=relaxed/simple;
+	bh=Dv9KHRHIkhlXXihA8tlvzOGYGP+ZrgFKTlpzZ0LcYYQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u51l5xda636MOt+ZWwPLyplXdlAMrhy3xAHtlXti4cOJBtCTmwwtIoxdbEFbDVx/hh9j3/uaLIdjROSEOplDnqxLyfbL7u44PVpjLEfPNoPd4EyyFzsPEv8fZ31WPAPck5JiuBY6H74LGGptz5jpbtnrOVlMsja0s6iu7pzcSbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FHEGuuh4; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2327aa24b25so14764525ad.3;
+        Tue, 20 May 2025 13:30:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747773046; x=1748377846; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aUEqs6dZhNI3ovSU8UcexR0LzNfKYj8EYbPae4zKS+8=;
+        b=FHEGuuh47nKDpi42V1E9Z+GnSiE7hqFUn6rlo82yNNj0ZlVFgLpjx5zmwwqvsGvlfC
+         kQg9w3F15kVbh++0fkXKZefPIJnXSLQ9rag/lBnXoDC1zF4khj8e/6Ah4lX2UO300xN2
+         y9wmtcdDk39QLQz+RlkjlWlCjmNyOqCQMECWrTUlhrkLU0+to+age+R91kx7jXYj19QA
+         z2XEOGdLEl35lLorogdwnUAQRkR/b+lSPFJhBMdaXdfcTy9KiGpLz7GYR0VWqJfrav6r
+         AOu6DzcBosVc0i5Rews8yUFkrvUa9JP8kNuCgmmfxHwUDdoaDE68jhGhWNZwk1VkRXYB
+         JY8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747773046; x=1748377846;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aUEqs6dZhNI3ovSU8UcexR0LzNfKYj8EYbPae4zKS+8=;
+        b=fGtyp2fyHczWYud/xTkhQ6cUyoCWYv+JkOQSOYRPIo8TYASEyieKfk5hD8lL5KmbcC
+         2Yy2vCg1tZFQHi3+StKiVs+lfyzmREzhTlkEH4z7oev8poV9RMA/Ex+f7OBDMb7j1HlE
+         Uiz7macju8jY5az5EYyl6TykY433Cb1wgO1RCGtQpY9LPhBOrfwizv5kGCAE3JvxtYiW
+         eEa0obUgAAD+8lcnGLYGGB4PysstIpxDIL71TxuH4SauV469e27nPc+KrsdyFk3ImqZo
+         7Ie8dAaBDZgnMRQbrvlDZ3Mue6CyJFYRTYrC9jwEDEPB8e/VPuOEOlh5lCNnhdMoRE5v
+         vHNA==
+X-Forwarded-Encrypted: i=1; AJvYcCW442J1EvMWzdz5t/Bp+PXzQ0cKYJSznixLCLKFMkvcwa1yL9UuoZk9/2Wvc4TTATOofqGN4gyl7yvBj0U=@vger.kernel.org, AJvYcCWlTY5HXX6oQaCuvSlBJp3kPwheEiIe/CtYKY4PNaMe/beEBYkZkbNjlPqoGzlggSviyO8crpncT23FXyiN+DUi@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbNyzIYCKQcAmbMHfUBIP2k/LDeIPdrD94itnA2xgMe/7hQiKF
+	4VMQdxnJYvfqaFalhyRB49nQLi5MameP0ZngsM+9g6MAx/XYjcA6Q19wfc2K
+X-Gm-Gg: ASbGncukvlkvrUewq749Kz98bPm3yKv/voxXX27VPZ5+dk7RJRWqOf3klRiFuWpaLoZ
+	4UVke8hRZK6L81ozn9d3qLqAamceCQSxLfDWBIT9vZzwdyQDXjm3fhldKxmiEdNOYZoCGxBNZC1
+	k7J6YoRS1zqeL4pHdZ1mqzznaUxtrebkYyURZvUniTLO+Cis+anJ6r1N1feJkFstc9V2SF40q4N
+	wENE23xwbizxr41QQuVDDBgz8jZs/NPPRp3twkuMCCPdrm2ooe0DjSvDR/eALRcvyY9mCtHGbNC
+	CSiZPI3bPGxpZ/OMPicfVPjjQ2xk55kKz/RG2LNqsm6IHpYry5nfG+gTqevrUUZeBZkiM0JgAL4
+	8jIOPrmKYcSxJ
+X-Google-Smtp-Source: AGHT+IGT2lNEBwf8awb27u1brE1IBOcEYa4FzAFb6XP3Z7d3y7G/2OawqOjN+NLOvmB7v5Y2PxRwcw==
+X-Received: by 2002:a17:903:25ca:b0:231:f5a8:173a with SMTP id d9443c01a7336-231f5a81b85mr161086395ad.51.1747773046246;
+        Tue, 20 May 2025 13:30:46 -0700 (PDT)
+Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-231f04e75bdsm70345625ad.216.2025.05.20.13.30.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 13:30:45 -0700 (PDT)
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	viro@zeniv.linux.org.uk,
+	horms@kernel.org,
+	andrew+netdev@lunn.ch,
+	shuah@kernel.org,
+	sagi@grimberg.me,
+	willemb@google.com,
+	asml.silence@gmail.com,
+	almasrymina@google.com,
+	stfomichev@gmail.com,
+	jdamato@fastly.com,
+	kaiyuanz@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH net-next 1/3] net: devmem: support single IOV with sendmsg
+Date: Tue, 20 May 2025 13:30:42 -0700
+Message-ID: <20250520203044.2689904-1-stfomichev@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250519141918.2522-1-vulab@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
 
-Hi Wentao,
+sendmsg() with a single iov becomes ITER_UBUF, sendmsg() with multiple
+iovs becomes ITER_IOVEC. iter_iov_len does not return correct
+value for UBUF, so teach to treat UBUF differently.
 
-kernel test robot noticed the following build warnings:
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Mina Almasry <almasrymina@google.com>
+Fixes: bd61848900bf ("net: devmem: Implement TX path")
+Signed-off-by: Stanislav Fomichev <stfomichev@gmail.com>
+---
+ include/linux/uio.h | 8 +++++++-
+ net/core/datagram.c | 3 ++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-[auto build test WARNING on andi-shyti/i2c/i2c-host]
-[also build test WARNING on linus/master v6.15-rc7 next-20250516]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Wentao-Liang/i2c-qup-Add-error-handling-in-qup_i2c_xfer_v2/20250519-222137
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
-patch link:    https://lore.kernel.org/r/20250519141918.2522-1-vulab%40iscas.ac.cn
-patch subject: [PATCH] i2c: qup: Add error handling in qup_i2c_xfer_v2()
-config: hexagon-randconfig-001-20250521 (https://download.01.org/0day-ci/archive/20250521/202505210438.G4nfkpQ2-lkp@intel.com/config)
-compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250521/202505210438.G4nfkpQ2-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505210438.G4nfkpQ2-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/i2c/busses/i2c-qup.c:1619:6: warning: variable 'err' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-    1619 |         if (!ret)
-         |             ^~~~
-   drivers/i2c/busses/i2c-qup.c:1621:6: note: uninitialized use occurs here
-    1621 |         if (err)
-         |             ^~~
-   drivers/i2c/busses/i2c-qup.c:1619:2: note: remove the 'if' if its condition is always true
-    1619 |         if (!ret)
-         |         ^~~~~~~~~
-    1620 |                 err = qup_i2c_change_state(qup, QUP_RESET_STATE);
-   drivers/i2c/busses/i2c-qup.c:1570:14: note: initialize the variable 'err' to silence this warning
-    1570 |         int ret, err, idx = 0;
-         |                     ^
-         |                      = 0
-   1 warning generated.
-
-
-vim +1619 drivers/i2c/busses/i2c-qup.c
-
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1564  
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1565  static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1566  			   struct i2c_msg msgs[],
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1567  			   int num)
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1568  {
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1569  	struct qup_i2c_dev *qup = i2c_get_adapdata(adap);
-61f647e9d36d67 Wentao Liang          2025-05-19  1570  	int ret, err, idx = 0;
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1571  
-fbf9921f8b35d9 Sricharan Ramabadhran 2016-06-10  1572  	qup->bus_err = 0;
-fbf9921f8b35d9 Sricharan Ramabadhran 2016-06-10  1573  	qup->qup_err = 0;
-fbf9921f8b35d9 Sricharan Ramabadhran 2016-06-10  1574  
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1575  	ret = pm_runtime_get_sync(qup->dev);
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1576  	if (ret < 0)
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1577  		goto out;
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1578  
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1579  	ret = qup_i2c_determine_mode_v2(qup, msgs, num);
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1580  	if (ret)
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1581  		goto out;
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1582  
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1583  	writel(1, qup->base + QUP_SW_RESET);
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1584  	ret = qup_i2c_poll_state(qup, QUP_RESET_STATE);
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1585  	if (ret)
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1586  		goto out;
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1587  
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1588  	/* Configure QUP as I2C mini core */
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1589  	writel(I2C_MINI_CORE | I2C_N_VAL_V2, qup->base + QUP_CONFIG);
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1590  	writel(QUP_V2_TAGS_EN, qup->base + QUP_I2C_MASTER_GEN);
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1591  
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1592  	if (qup_i2c_poll_state_i2c_master(qup)) {
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1593  		ret = -EIO;
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1594  		goto out;
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1595  	}
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1596  
-eb422b539c1f39 Abhishek Sahu         2018-03-12  1597  	if (qup->use_dma) {
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1598  		reinit_completion(&qup->xfer);
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1599  		ret = qup_i2c_bam_xfer(adap, &msgs[0], num);
-eb422b539c1f39 Abhishek Sahu         2018-03-12  1600  		qup->use_dma = false;
-9cedf3b2f09946 Sricharan Ramabadhran 2016-02-22  1601  	} else {
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1602  		qup_i2c_conf_mode_v2(qup);
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1603  
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1604  		for (idx = 0; idx < num; idx++) {
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1605  			qup->msg = &msgs[idx];
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1606  			qup->is_last = idx == (num - 1);
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1607  
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1608  			ret = qup_i2c_xfer_v2_msg(qup, idx,
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1609  					!!(msgs[idx].flags & I2C_M_RD));
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1610  			if (ret)
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1611  				break;
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1612  		}
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1613  		qup->msg = NULL;
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1614  	}
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1615  
-f74187932d30e4 Sricharan Ramabadhran 2016-01-19  1616  	if (!ret)
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1617  		ret = qup_i2c_bus_active(qup, ONE_BYTE);
-7545c7dba169c4 Abhishek Sahu         2018-03-12  1618  
-7545c7dba169c4 Abhishek Sahu         2018-03-12 @1619  	if (!ret)
-61f647e9d36d67 Wentao Liang          2025-05-19  1620  		err = qup_i2c_change_state(qup, QUP_RESET_STATE);
-61f647e9d36d67 Wentao Liang          2025-05-19  1621  	if (err)
-61f647e9d36d67 Wentao Liang          2025-05-19  1622  		return err;
-f74187932d30e4 Sricharan Ramabadhran 2016-01-19  1623  
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1624  	if (ret == 0)
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1625  		ret = num;
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1626  out:
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1627  	pm_runtime_mark_last_busy(qup->dev);
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1628  	pm_runtime_put_autosuspend(qup->dev);
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1629  
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1630  	return ret;
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1631  }
-191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1632  
-
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 49ece9e1888f..393d0622cc28 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -99,7 +99,13 @@ static inline const struct iovec *iter_iov(const struct iov_iter *iter)
+ }
+ 
+ #define iter_iov_addr(iter)	(iter_iov(iter)->iov_base + (iter)->iov_offset)
+-#define iter_iov_len(iter)	(iter_iov(iter)->iov_len - (iter)->iov_offset)
++
++static inline size_t iter_iov_len(const struct iov_iter *i)
++{
++	if (i->iter_type == ITER_UBUF)
++		return i->count;
++	return iter_iov(i)->iov_len - i->iov_offset;
++}
+ 
+ static inline enum iter_type iov_iter_type(const struct iov_iter *i)
+ {
+diff --git a/net/core/datagram.c b/net/core/datagram.c
+index 9ef5442536f5..c44f1d2b70a4 100644
+--- a/net/core/datagram.c
++++ b/net/core/datagram.c
+@@ -706,7 +706,8 @@ zerocopy_fill_skb_from_devmem(struct sk_buff *skb, struct iov_iter *from,
+ 	 * iov_addrs are interpreted as an offset in bytes into the dma-buf to
+ 	 * send from. We do not support other iter types.
+ 	 */
+-	if (iov_iter_type(from) != ITER_IOVEC)
++	if (iov_iter_type(from) != ITER_IOVEC &&
++	    iov_iter_type(from) != ITER_UBUF)
+ 		return -EFAULT;
+ 
+ 	while (length && iov_iter_count(from)) {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.49.0
+
 
