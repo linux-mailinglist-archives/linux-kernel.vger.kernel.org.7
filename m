@@ -1,123 +1,86 @@
-Return-Path: <linux-kernel+bounces-655331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F3FABD410
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:01:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02521ABD415
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13DB51B650C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:01:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B379D4A33DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00150269D0B;
-	Tue, 20 May 2025 10:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JO+mWJwv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1972626AAB2;
+	Tue, 20 May 2025 10:01:18 +0000 (UTC)
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EC821019C;
-	Tue, 20 May 2025 10:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3082E264F9B;
+	Tue, 20 May 2025 10:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747735259; cv=none; b=WgtKA4x9SF7qQ31sMsTDW2OJTcCtCRBtS61rGBvhuTCQl7cKzeeXujzqRiSL1LdUFE1ciIszP4xPbiXOdqhQqNVWNyphljtl4r/5F//BjBst9YMzgmTVeBJfJ5amzhLZdKaSmD9dP436QWr7ORm2CB/Ff5FRwBx6iJVV95+35EY=
+	t=1747735277; cv=none; b=IWGtpYOWcAlBcw4rdhIMufTpYOrD+nhNU2eajF8lyiszVf7ScOpVwRFaEO9SzEmnAUnves9t7qm5u94QINyOb9BXGgMliPaVwf6mmLB4lZc3hOREfjvXQJdX+4+gTVQxNy/TtA5YNA4zDA524jjklTQ/DS5TIBN5+YuwidEmcU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747735259; c=relaxed/simple;
-	bh=VtvyvJBr+xABbz7Z/Y+DSfzvO6xe8ZmQbFMl50W4Adg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Nffd+I00/Gbyys5e5QgzUQi2U4uirlWzGIGum2Wiv3qodxaS6TCSTf6yrypCp+FlisXfkX4wpJ2nElHYRCktSHDbsfoXnncZJAOdwSrLQ6faNTTeT4Bs7tSsV50/2sgGhzZWlAeC3hHfZU9s6FRiREzEHxaAaJXOKSZPllsuvTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JO+mWJwv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 760E2C4CEE9;
-	Tue, 20 May 2025 10:00:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747735258;
-	bh=VtvyvJBr+xABbz7Z/Y+DSfzvO6xe8ZmQbFMl50W4Adg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=JO+mWJwvZgebav7s6IIkQQVajz5Ge2lf2xdMS8+oBzHJAuNCNko1ml50feRmIYcFI
-	 QwgZBahA6ywZWArWlTWEm6nZB/7CIVFtF4s6HXfpDo+pVW6O1snVx/y2siukRT5dMr
-	 SPSVqb6bMl8w29K6mx9l1p/4EZGm7w/Jv755v0YLniNRfYegH4sdqsDxX2WE1MAANh
-	 o9GCJeXo4uWFQdt+HzU4W2MfMEs7n24gEf2z3J0fIj++BsLnWRRDaP0FHSVt5ilcTS
-	 BRGizJ3OF34h/Qi77xMYbHtYjpm9/VGIFLAvqS59B4NUUKqi5HOrr8RIPG8HieI4lB
-	 bSPh57dhwneWg==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Tue, 20 May 2025 12:00:53 +0200
-Subject: [PATCH] Documentation: dma-buf: heaps: Add naming guidelines
+	s=arc-20240116; t=1747735277; c=relaxed/simple;
+	bh=fAoZuInaKK7IcGVyGFNhXp+fd4hHEJGf/PXCY8Y/URY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NF1ZskKw7jAcNUaZ95kwD55B3DiGvXtGc4o0B4vZ6cco2gROSYJahIfc2F4vOoQ/Ku1uko2fDe3wNSKiT44RmiHBBr9dIbgIT89Uj7Hs4G2IGkUwGcbkme6J3Tm4nhutJ8zrEiXB6wbEC3PW5k56mJECXONAadGF0N9aJnWxYqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c04:7a30:290:8105:3706:5628])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 15b89590f;
+	Tue, 20 May 2025 18:01:06 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Yao Zi <ziyao@disroot.org>,
+	Rob Herring <robh@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org
+Subject: [PATCH 0/2] arm64: dts: rockchip: Add spi nodes for RK3528
+Date: Tue, 20 May 2025 18:01:00 +0800
+Message-Id: <20250520100102.1226725-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250520-dma-buf-heap-names-doc-v1-1-ab31f74809ee@kernel.org>
-X-B4-Tracking: v=1; b=H4sIANRSLGgC/x3MQQqAIBBA0avIrBtQoxZdJVpMOtYsMlGKILx70
- vIt/n+hcBYuMKkXMt9S5IwNplPgdoobo/hmsNoOerAa/UG4XgF3poSRDi7oT4e9saMh0i7wCC1
- OmYM8/3heav0A9+Bmw2gAAAA=
-X-Change-ID: 20250520-dma-buf-heap-names-doc-31261aa0cfe6
-To: Sumit Semwal <sumit.semwal@linaro.org>, 
- Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
- "T.J. Mercier" <tjmercier@google.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1869; i=mripard@kernel.org;
- h=from:subject:message-id; bh=VtvyvJBr+xABbz7Z/Y+DSfzvO6xe8ZmQbFMl50W4Adg=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBk6QdfNUwoC2mY7pIvHTVs8LUzhR8fqpk8ldpqXXYO+O
- L6P7ovrmMrCIMzJICumyPJEJuz08vbFVQ72K3/AzGFlAhnCwMUpABPRncbYMNGk4Iwsd2V1e+ps
- 3XsTpqmfUFMKzhEQbT7z/vnN71oLWd43tjx9LOK9OMr45ZwALfM9jA2npgk1H3Pw2nPqeQ5TlOY
- Egfsssh+6FB8yV/ZemSf31+Q6o/MSDc63D7dYN0/+7+ixShwA
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCQkkeVk4eTUxPQkgZHRkfGFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtPQUwaSEtBSUJLQUNKS05BSExLTUFOTUlDWVdZFhoPEh
+	UdFFlBWU9LSFVKS0lPT09LVUpLS1VLWQY+
+X-HM-Tid: 0a96ed23c4c403a2kunm0a9e35a49faac
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ogg6SQw4CDEwNho5PQg*Ni9N
+	IgkwCVFVSlVKTE9MTEhOSU1MT0lNVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
+	Sx5BSBlIQUkYS09BTBpIS0FJQktBQ0pLTkFITEtNQU5NSUNZV1kIAVlBSk9NTDcG
 
-We've discussed a number of times of how some heap names are bad, but
-not really what makes a good heap name.
+There are 2 SPI controllers on the RK3528 SoC, describe it.
+Tested using st7789v chip with spi-cpha and spi-cpol properties.
 
-Let's document what we expect the heap names to look like.
+[   10.831306] fb_st7789v spi0.0: fbtft_property_value: buswidth = 8
+[   11.042915] graphics fb0: fb_st7789v frame buffer, 240x320, 150 KiB
+ video memory, 4 KiB buffer memory, fps=20, spi0.0 at 15 MHz
 
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
- Documentation/userspace-api/dma-buf-heaps.rst | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Chukun Pan (2):
+  spi: dt-bindings: Add rk3528-spi compatible
+  arm64: dts: rockchip: Add spi nodes for RK3528
 
-diff --git a/Documentation/userspace-api/dma-buf-heaps.rst b/Documentation/userspace-api/dma-buf-heaps.rst
-index 535f49047ce6450796bf4380c989e109355efc05..b24618e360a9a9ba0bd85135d8c1760776f1a37f 100644
---- a/Documentation/userspace-api/dma-buf-heaps.rst
-+++ b/Documentation/userspace-api/dma-buf-heaps.rst
-@@ -21,5 +21,24 @@ following heaps:
-    usually created either through the kernel commandline through the
-    `cma` parameter, a memory region Device-Tree node with the
-    `linux,cma-default` property set, or through the `CMA_SIZE_MBYTES` or
-    `CMA_SIZE_PERCENTAGE` Kconfig options. Depending on the platform, it
-    might be called ``reserved``, ``linux,cma``, or ``default-pool``.
-+
-+Naming Convention
-+=================
-+
-+A good heap name is a name that:
-+
-+- Is stable, and won't change from one version to the other;
-+
-+- Describes the memory region the heap will allocate from, and will
-+  uniquely identify it in a given platform;
-+
-+- Doesn't use implementation details, such as the allocator;
-+
-+- Can describe intended usage.
-+
-+For example, assuming a platform with a reserved memory region located
-+at the RAM address 0x42000000, intended to allocate video framebuffers,
-+and backed by the CMA kernel allocator. Good names would be
-+`memory@42000000` or `video@42000000`, but `cma-video` wouldn't.
+ .../devicetree/bindings/spi/spi-rockchip.yaml |  1 +
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 28 +++++++++++++++++++
+ 2 files changed, 29 insertions(+)
 
----
-base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
-change-id: 20250520-dma-buf-heap-names-doc-31261aa0cfe6
-
-Best regards,
 -- 
-Maxime Ripard <mripard@kernel.org>
+2.25.1
 
 
