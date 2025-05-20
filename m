@@ -1,170 +1,160 @@
-Return-Path: <linux-kernel+bounces-655047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C58ABCFF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:58:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B968ABCFD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C05CA189716B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CDA53A9533
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1114C1F180C;
-	Tue, 20 May 2025 06:56:55 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C427D25CC69;
-	Tue, 20 May 2025 06:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF86925CC6C;
+	Tue, 20 May 2025 06:49:50 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45AF6210F5D
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 06:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747724214; cv=none; b=K1d05LhW42BoWopj7HNnCdPtTtE6aU89uiE/neQlzkNsg4JHWp1Sh6xC2COWr3t9BPDYmNp0DqHx3iUrOtxYyzyjNkAjWJprsDfjenPUv/Z90uJwM3TH/oW8TarW8vC0jFTcx1zQ/eeSLligG766iDy+x7SOosIFKMNnmTs9nto=
+	t=1747723790; cv=none; b=PK7fsOlZW8anaIZcSA4Hsj6c3Ln9PXT4S2nBr2ww0tTw2BuF6E18p0oxbP5T/Co2j/r0rD1Ot+LV8RLOqHzpw0RABGQAKVx1ksxkXfQHJznKWwhPMIm2CdDd27h1EWHAud57qYbQAi1rZDRKNArgQCPpRjw3LwII1bUxFD8cWz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747724214; c=relaxed/simple;
-	bh=Y14PCFj43DbhJGJ4iFsgQIVQHaLzrwZZci/lnH1yV4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RmeKCppJMy9fcbCb89FepxAUi2cM8gyz+AUCTWmq226q3ZUbQuym3zdK4ZZ1WytbxqxJYTQoDT4tUNHbdTqNJTPcaTDpuTomnvf9cFrHp+gLiUpFXVBAq3FYJke18VIcxhVv20lUTtLX+d7RkK9Rt+/ZpQW7yATD8K11/PTjrmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1uHGu1-0006iN-00; Tue, 20 May 2025 08:56:41 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 35693C00EF; Tue, 20 May 2025 08:49:30 +0200 (CEST)
-Date: Tue, 20 May 2025 08:49:30 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Caleb James DeLisle <cjd@cjdns.fr>
-Cc: linux-mips@vger.kernel.org, tglx@linutronix.de, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, daniel.lezcano@linaro.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	benjamin.larsson@genexis.eu, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v5 0/7] Add EcoNet EN751221 MIPS platform support
-Message-ID: <aCwl-nAMxjqjxRM6@alpha.franken.de>
-References: <20250507134500.390547-1-cjd@cjdns.fr>
+	s=arc-20240116; t=1747723790; c=relaxed/simple;
+	bh=QRhChKgCx1c5REOWDfJJeI9cbJ1pcG2pyDF3snU2xlM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eRGNOFbOA3HHrrcU7lBAygmbKLdEBiYb24PCGl5zIcthHx6Rw2SRYUP3vB/3zky8XLYgokrFLkG2EeytC1JuPqMjXszoR9Gsrxt+aZgObHP2obolFumB2Yc7qeK+5GHySW8AGYoE50w45DQWLWELd5OCydjOKxfkZNqko4ga4Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8AxQK0CJixoNxPzAA--.48361S3;
+	Tue, 20 May 2025 14:49:38 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMBxn8UBJixorc_iAA--.56937S2;
+	Tue, 20 May 2025 14:49:37 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] LoongArch: Do not include larchintrin.h
+Date: Tue, 20 May 2025 14:49:36 +0800
+Message-ID: <20250520064936.32291-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250507134500.390547-1-cjd@cjdns.fr>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxn8UBJixorc_iAA--.56937S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxGrWkGw1DGrykXrWDCr1Utwc_yoW5tFWxpr
+	43Zr98trWUXF1fCwn2vF15Xrn8t3yvgw12vFy3W3yxur47JryIvrs5Grs8XF15Xa95Xr1v
+	gw1fZ34Fq3WDCabCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AK
+	xVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64
+	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
+	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI48JMIIF0xvE2I
+	x0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK
+	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
+	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUcDDGUUUUU
 
-On Wed, May 07, 2025 at 01:44:53PM +0000, Caleb James DeLisle wrote:
-> EcoNet MIPS SoCs are big endian machines based on 34Kc and 1004Kc
-> processors. They are found in xDSL and xPON modems, and contain PCM
-> (VoIP), Ethernet, USB, GPIO, I2C, SPI (Flash), UART, and PCIe.
-> 
-> The EcoNet MIPS SoCs are divided broadly into two families, the
-> EN751221 family based on the 34Kc, and the EN751627 family based on
-> the 1004Kc. Individual SoCs within a family are very similar, only
-> with different peripherals.
-> 
-> This patchset adds basic "boots to a console" support for the EN751221
-> family and adds SmartFiber XP8421-B, a low cost commercially available
-> board that is useful for testing and development.
-> 
-> Note that Airoha (AN7523, AN7581) is similar to EcoNet in terms of
-> peripherals, and for historical reasons Airoha chips are sometimes
-> referred to with the EN75xx prefix. However this is a different
-> platform because Airoha chips are ARM based.
-> 
-> This patchset is against mips-next.
-> 
-> v4 -> v5
-> * 2/7 clocksource/drivers: Add EcoNet Timer HPT driver:
->   * Improve explanation of HPT timer in changelog
->   * Move pr_info to pr_debug per recommendation
->   * Remove pointless debug on spurious interrupt
->   * Small code-style change
-> 
-> v3 -> v4
-> * Rebase to 3b3704261e851e25983860e4c352f1f73786f4ab
-> * Omit already accepted patches (thanks guys!):
->   - https://patchwork.kernel.org/project/linux-mips/patch/20250330170306.2584136-2-cjd@cjdns.fr/
->   - https://patchwork.kernel.org/project/linux-mips/patch/20250330170306.2584136-3-cjd@cjdns.fr/
->   - https://patchwork.kernel.org/project/linux-mips/patch/20250330170306.2584136-4-cjd@cjdns.fr/
-> 
-> v2 -> v3
-> * econet,en751221-timer.yaml -> Improve code style
-> * vendor-prefixes.yaml -> Correct alphabetic order
-> * en751221.dtsi
->   - interrupt-controller code style
->   - serial: Explain reason for clock-frequency = <1843200>
-> * v3->v3 diff provided for reference
->   - https://gist.github.com/cjdelisle/21c9f0cd225f499bdff3c574c7f185f2
-> * CC: linux-mediatek@lists.infradead.org who may be interested.
-> 
-> v1 -> v2
-> * Codestyle
->   - Apply codestyle from "The tip tree handbook" and recommendations
->   - Remove "_rai" and "_m" symbol suffixes which are not standard
-> * irq-econet-en751221.c
->   - Use cleanup.h _guard() and _free()
->   - Separate irq_domain_ops from irq_chip, eliminating econet_intc struct
->   - Remove irqsave in econet_wreg, irqs are already disabled in mask/unmask
->   - Add explainatory comments
->   - Refactor shadow logic for clarity, e.g. INTC_NO_SHADOW -> NOT_PERCPU
->   - Improve error handling in case of invalid DTS
-> * econet,timer-hpt.yaml
->   - Rename to econet,timer-en751221.yaml
->   - Impose rule: "reg" must have 1 item on EN751221 and 2 on EN751627
-> * timer-econet-hpt.c
->   - Rename to timer-econet-en751221.c to follow naming scheme from DT
-> * econet,en751221-intc.yaml
->   - Fix validation error from required: interrupt-parent
->   - shadow-interrupts -> switch to uint32-matrix for list of pairs
-> * MAINTAINERS -> Fixed accidental F: MAINTAINERS
-> * Replace "test image" with device SmartFiber-XP8421-B
-> * Restructure arch/mips/econet/Kconfig per arch/mips/ralink example
-> * v1->v2 diff is offered for reference:
->   - https://gist.github.com/cjdelisle/bb3acab78b5f70dcdfe5dd6338293efe
-> 
-> 
-> Caleb James DeLisle (7):
->   dt-bindings: timer: Add EcoNet EN751221 "HPT" CPU Timer
->   clocksource/drivers: Add EcoNet Timer HPT driver
->   dt-bindings: mips: Add EcoNet platform binding
->   mips: Add EcoNet MIPS platform support
->   dt-bindings: vendor-prefixes: Add SmartFiber
->   mips: dts: Add EcoNet DTS with EN751221 and SmartFiber XP8421-B board
->   MAINTAINERS: Add entry for newly added EcoNet platform.
-> 
->  .../devicetree/bindings/mips/econet.yaml      |  26 +++
->  .../bindings/timer/econet,en751221-timer.yaml |  80 +++++++
->  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
->  MAINTAINERS                                   |  12 +
->  arch/mips/Kbuild.platforms                    |   1 +
->  arch/mips/Kconfig                             |  25 ++
->  arch/mips/boot/compressed/uart-16550.c        |   5 +
->  arch/mips/boot/dts/Makefile                   |   1 +
->  arch/mips/boot/dts/econet/Makefile            |   2 +
->  arch/mips/boot/dts/econet/en751221.dtsi       |  67 ++++++
->  .../econet/en751221_smartfiber_xp8421-b.dts   |  19 ++
->  arch/mips/econet/Kconfig                      |  48 ++++
->  arch/mips/econet/Makefile                     |   2 +
->  arch/mips/econet/Platform                     |   5 +
->  arch/mips/econet/init.c                       |  78 +++++++
->  drivers/clocksource/Kconfig                   |   8 +
->  drivers/clocksource/Makefile                  |   1 +
->  drivers/clocksource/timer-econet-en751221.c   | 216 ++++++++++++++++++
->  18 files changed, 598 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mips/econet.yaml
->  create mode 100644 Documentation/devicetree/bindings/timer/econet,en751221-timer.yaml
->  create mode 100644 arch/mips/boot/dts/econet/Makefile
->  create mode 100644 arch/mips/boot/dts/econet/en751221.dtsi
->  create mode 100644 arch/mips/boot/dts/econet/en751221_smartfiber_xp8421-b.dts
->  create mode 100644 arch/mips/econet/Kconfig
->  create mode 100644 arch/mips/econet/Makefile
->  create mode 100644 arch/mips/econet/Platform
->  create mode 100644 arch/mips/econet/init.c
->  create mode 100644 drivers/clocksource/timer-econet-en751221.c
+larchintrin.h is a system header of compiler, include it in the
+kernel header may lead to the fatal error "'larchintrin.h' file
+not found".
 
-applied patches 3-7 to mips-next
+There are two related cases so far:
 
-Thomas.
+(1) When compiling samples/bpf, it has been fixed in the latest
+kernel [1].
 
+(2) When running bcc script, it has been fixed in the latest
+bcc [2] [3], like this:
+
+$ /usr/share/bcc/tools/filetop
+In file included from <built-in>:4:
+In file included from /virtual/include/bcc/helpers.h:54:
+In file included from arch/loongarch/include/asm/page.h:7:
+In file included from arch/loongarch/include/asm/addrspace.h:9:
+arch/loongarch/include/asm/loongarch.h:11:10: fatal error: 'larchintrin.h' file not found
+   11 | #include <larchintrin.h>
+      |          ^~~~~~~~~~~~~~~
+1 error generated.
+
+Maybe there are same errors for the other unknown projects, it is
+annoyance to add the include path each time. In order to avoid such
+errors once and for all, do not include larchintrin.h, just use the
+builtin functions directly.
+
+[1] https://git.kernel.org/torvalds/c/548762f05d19
+[2] https://github.com/iovisor/bcc/commit/8aa9f7072d53
+[3] https://github.com/iovisor/bcc/commit/af8258c21004
+
+Cc: stable@vger.kernel.org # 6.6+
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+ arch/loongarch/include/asm/loongarch.h | 31 +++++++++++---------------
+ 1 file changed, 13 insertions(+), 18 deletions(-)
+
+diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/include/asm/loongarch.h
+index 52651aa0e583..b33e4c9cb903 100644
+--- a/arch/loongarch/include/asm/loongarch.h
++++ b/arch/loongarch/include/asm/loongarch.h
+@@ -9,14 +9,6 @@
+ #include <linux/linkage.h>
+ #include <linux/types.h>
+ 
+-#ifndef __ASSEMBLY__
+-#include <larchintrin.h>
+-
+-/* CPUCFG */
+-#define read_cpucfg(reg) __cpucfg(reg)
+-
+-#endif /* !__ASSEMBLY__ */
+-
+ #ifdef __ASSEMBLY__
+ 
+ /* LoongArch Registers */
+@@ -173,19 +165,22 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
++/* CPUCFG */
++#define read_cpucfg(reg) __builtin_loongarch_cpucfg(reg)
++
+ /* CSR */
+-#define csr_read32(reg) __csrrd_w(reg)
+-#define csr_read64(reg) __csrrd_d(reg)
+-#define csr_write32(val, reg) __csrwr_w(val, reg)
+-#define csr_write64(val, reg) __csrwr_d(val, reg)
+-#define csr_xchg32(val, mask, reg) __csrxchg_w(val, mask, reg)
+-#define csr_xchg64(val, mask, reg) __csrxchg_d(val, mask, reg)
++#define csr_read32(reg) __builtin_loongarch_csrrd_w(reg)
++#define csr_read64(reg) __builtin_loongarch_csrrd_d(reg)
++#define csr_write32(val, reg) __builtin_loongarch_csrwr_w(val, reg)
++#define csr_write64(val, reg) __builtin_loongarch_csrwr_d(val, reg)
++#define csr_xchg32(val, mask, reg) __builtin_loongarch_csrxchg_w(val, mask, reg)
++#define csr_xchg64(val, mask, reg) __builtin_loongarch_csrxchg_d(val, mask, reg)
+ 
+ /* IOCSR */
+-#define iocsr_read32(reg) __iocsrrd_w(reg)
+-#define iocsr_read64(reg) __iocsrrd_d(reg)
+-#define iocsr_write32(val, reg) __iocsrwr_w(val, reg)
+-#define iocsr_write64(val, reg) __iocsrwr_d(val, reg)
++#define iocsr_read32(reg) __builtin_loongarch_iocsrrd_w(reg)
++#define iocsr_read64(reg) __builtin_loongarch_iocsrrd_d(reg)
++#define iocsr_write32(val, reg) __builtin_loongarch_iocsrwr_w(val, reg)
++#define iocsr_write64(val, reg) __builtin_loongarch_iocsrwr_d(val, reg)
+ 
+ #endif /* !__ASSEMBLY__ */
+ 
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.42.0
+
 
