@@ -1,56 +1,53 @@
-Return-Path: <linux-kernel+bounces-655817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49E8ABDE06
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:58:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35586ABDD8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E94B74E679D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:41:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B98767B58E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E35E24C66C;
-	Tue, 20 May 2025 14:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2779824888F;
+	Tue, 20 May 2025 14:41:03 +0000 (UTC)
 Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549D71519AC
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 14:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DC924EF6F
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 14:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747752054; cv=none; b=Wfi/+0MuYVsqU9Y4dXQ12CADDekswTJqUel0QWumZhmObSs5BsULxqvvfh39jyQVHSe346/TbRmkeZDXtxb87rGSghgEH3NQ+fqxJo0kRe3EYZ03RmRSFtI44OQGXr19O0OZHTpW6TI7XzkxOpvc3ObfI2WFYclqCx+nXzPQxe4=
+	t=1747752062; cv=none; b=UMoicGaXOeA4tEWiFn/+jKZ1OUiQt7H4b9xtpS3S3uqLbc9wds/sVqXeWY2TjZ87lvkzclHpcOluolj5+4rrylHI25j4QhoBeYQ72dRjWaxK/OiFB68bQLQ58fn3X3J7LXmB3OzPvjML7MyTWiP/2i+BN7Zd4pFQ7WUSti7m8Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747752054; c=relaxed/simple;
-	bh=RxEXSvsHhqY0DGAOiz1+rJd7062BJqiB5VbH/Bb7YLE=;
+	s=arc-20240116; t=1747752062; c=relaxed/simple;
+	bh=aJenwxdDmXYJfWrC4hpGWB7PoCgfVUGznezpZ57Nbg8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BLwx2E8WC2SamI8s8XXuY9sLJnGazWcR9yEPt6kC/S8+i6C8Z3RZbOTH9w5wwXuExIUgds75jhyFwtwOsViyQuzaujnJJ0UJViKNiMboF2d0ikpISPL9va1JBF419DrMbL65bJvDJukLM2R6DLwD3XFY+kobRK1wyiHmqLJ3/eE=
+	 MIME-Version:Content-Type; b=pUmy91SP/5SZXbLyIN1Bb9tP/h4YzuSriQdL2gcASjGe1XBXL6PtMGsAzpzY/l1PK0gtYtqOoDpYsT1NwnzZrjwaWocKPYixCkxyTIfQI3FXyae65gCvDbpc8PdXhdkWnyrqPqVCHE4eBFZZ8w+1zYdtN8CYpYBBi8UmWJkjy2Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
 Received: from trampoline.thunk.org (pool-173-48-111-173.bstnma.fios.verizon.net [173.48.111.173])
 	(authenticated bits=0)
         (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 54KEeOut013127
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 54KEeQ5i013155
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Tue, 20 May 2025 10:40:26 -0400
 Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id B9FEF2E00E1; Tue, 20 May 2025 10:40:24 -0400 (EDT)
+	id C8C812E00E7; Tue, 20 May 2025 10:40:24 -0400 (EDT)
 From: "Theodore Ts'o" <tytso@mit.edu>
-To: Andreas Dilger <adilger.kernel@dilger.ca>, Tao Ma <boyu.mt@taobao.com>,
-        Jan Kara <jack@suse.com>,
-        Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-dev@igalia.com,
-        syzbot+fe2a25dae02a207717a0@syzkaller.appspotmail.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] ext4: inline: fix len overflow in ext4_prepare_inline_data
-Date: Tue, 20 May 2025 10:40:12 -0400
-Message-ID: <174775151761.432196.4462280436120329643.b4-ty@mit.edu>
+To: linux-ext4@vger.kernel.org, Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
+        yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
+        yangerkun@huawei.com
+Subject: Re: [PATCH 0/9] ext4: fix stale extent status entries and clairfy rules
+Date: Tue, 20 May 2025 10:40:18 -0400
+Message-ID: <174775151762.432196.4176698555758333920.b4-ty@mit.edu>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250415-ext4-prepare-inline-overflow-v1-1-f4c13d900967@igalia.com>
-References: <20250415-ext4-prepare-inline-overflow-v1-1-f4c13d900967@igalia.com>
+In-Reply-To: <20250423085257.122685-1-yi.zhang@huaweicloud.com>
+References: <20250423085257.122685-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,20 +58,40 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 15 Apr 2025 11:53:04 -0300, Thadeu Lima de Souza Cascardo wrote:
-> When running the following code on an ext4 filesystem with inline_data
-> feature enabled, it will lead to the bug below.
+On Wed, 23 Apr 2025 16:52:48 +0800, Zhang Yi wrote:
+> This patch series addresses the potential problems discussed with Jan
+> Kara regarding the modification rules for mapping extents[1]. Preparing
+> for the buffered I/O conversion for regular files.
 > 
->         fd = open("file1", O_RDWR | O_CREAT | O_TRUNC, 0666);
->         ftruncate(fd, 30);
->         pwrite(fd, "a", 1, (1UL << 40) + 5UL);
+> This change includes:
+> 
+> Patch 1-5 fixes problems related to stale extent status entries that
+> may arise during the collapsing of ranges, the insertion of ranges, or
+> file truncation when these operations compete with concurrent writeback,
+> fiemap, or get extent cache.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] ext4: inline: fix len overflow in ext4_prepare_inline_data
-      commit: 227cb4ca5a6502164f850d22aec3104d7888b270
+[1/9] ext4: ext4: unify EXT4_EX_NOCACHE|NOFAIL flags in ext4_ext_remove_space()
+      commit: 53ce42accd2002cc490fc86000ac532530507a74
+[2/9] ext4: generalize EXT4_GET_BLOCKS_IO_SUBMIT flag usage
+      commit: 86b349ce0312a397a6961e457108556e44a3d211
+[3/9] ext4: prevent stale extent cache entries caused by concurrent I/O writeback
+      commit: 402e38e6b71f5739119ca3107f375e112d63c7c5
+[4/9] ext4: prevent stale extent cache entries caused by concurrent fiemap
+      commit: 151ff9325e5e17c97839a00b740726656b04647b
+[5/9] ext4: prevent stale extent cache entries caused by concurrent get es_cache
+      commit: f22a0ef2231a7d8374bb021eb86404d0e9de5a02
+[6/9] ext4: factor out is_special_ino()
+      commit: 0b8e0bd45007d5740391e658c2581bd614207387
+[7/9] ext4: introduce ext4_check_map_extents_env() debug helper
+      commit: 7871da20d484d5c7e536bfd52845b6be4488ff30
+[8/9] ext4: check env when mapping and modifying extents
+      commit: 1b4d2a0b794669e54914e3f429c08e49ea40b40c
+[9/9] ext4: clairfy the rules for modifying extents
+      commit: 24b7a2331fcdf6de103ea85e67eede43c0372f77
 
 Best regards,
 -- 
