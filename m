@@ -1,104 +1,232 @@
-Return-Path: <linux-kernel+bounces-655274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5900ABD338
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:21:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C0A5ABD33E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AC4D4A6E1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:21:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3089F4A1271
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C0D268C7C;
-	Tue, 20 May 2025 09:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBC5267AFD;
+	Tue, 20 May 2025 09:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U4C1b21z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JGbX0jbF"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758C02676DF;
-	Tue, 20 May 2025 09:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC0A266EEA;
+	Tue, 20 May 2025 09:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747732833; cv=none; b=lS7m/lR0hUGvXvJ9nqH2X0w9+mTNkXPhN1oAT27stvgKOj+xbq7ZUAIFW+uoi87Arpx9I93LwLcAHLmFQB8Jorw/92K5CR0o9KaAoMEuW8Cx+Xg3ya7SnzZRdgT1L4GzWs66FJJjmB5AGETgXnizHC4oYBmVz1Z3Uqqe45W76PM=
+	t=1747732915; cv=none; b=kYA8RRuHZXx4xUCK8U567UM9GKhWlsyuHHrl7qPRIj3a8gy4Vu9b5AnrMBYsw0kN1EqnUMVOR2csl5YJ3x8fexgnR+r5X5MMT5pzMc/2gdkYmI2ijIlZwKDB0QcqBYHHZhq5Oogr7KqT9d9rT9CFIPut4oDMYnx4s/xQTtVtirY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747732833; c=relaxed/simple;
-	bh=drmLNZREsEi2qwurO6x9+d7a7DiG6SJbsdoEHUKB2oQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=CG2sc5VYkEz1LIui/7YMTBDI6f6k9teoxnw5NKzwgjkZQDNvMGBkKLwNymhhkptpJ4tnJMLV0y3VwMJPnGBQ6lbO/Jp8+QsNWNNmd8/R6h8U9KDr1O1hOFbuhnvzevvETr9FJAWOVoBWPf+smYw1cfQX8Zm1IWeRfxOYJTg5fdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U4C1b21z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56BF7C4CEE9;
-	Tue, 20 May 2025 09:20:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747732833;
-	bh=drmLNZREsEi2qwurO6x9+d7a7DiG6SJbsdoEHUKB2oQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=U4C1b21zU3uzpfHHnbaMqpSOiiIiTNkSuUcm6CRIhplDoB4c+Yk5tCkg7Sgo9b73Y
-	 mI/Y/enOhxwT8WjiRg2ahQdK1J3KL3GPraHKqsUala59dOqUhEGVpsCoRd/iqPfkyp
-	 6Akp6WoIMvFrwjJqeBpFJlnp9YKm+//Oj3u8aEU5LGFnOEpeL0t6VWPVw7tNt4EsX2
-	 p6Huu5iTP5vRgw3cKlzad0hvT7anwzMvRrmcNhF8nlYGM/ZbJsx4qfLQXudby9zT01
-	 xeT48yVR66tADMN+pLKYbzBCSEzQNp8zX35OubBEO+ouUyBuorcP1F0X5pxXuSWOAy
-	 9bmJGif+nFvyA==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org
-In-Reply-To: <ef2a4b6df61e19470ddf6cbd1f3ca1ce88a3c1a0.1747570556.git.christophe.jaillet@wanadoo.fr>
-References: <ef2a4b6df61e19470ddf6cbd1f3ca1ce88a3c1a0.1747570556.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] regulator: qcom_spmi: Constify struct
- spmi_voltage_range
-Message-Id: <174773283210.19657.11607687696086405986.b4-ty@kernel.org>
-Date: Tue, 20 May 2025 10:20:32 +0100
+	s=arc-20240116; t=1747732915; c=relaxed/simple;
+	bh=nRck76upIrqayF48r0JMEfKggSJcdZp1u2tGZS16wqs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X6i8eqIGnAkYIAiywQqGxubfd+1dWDwZ/QRxr80+PWbYRHnl84lVt6mm2RrTU5kdIZ1BtfWCOahSsBCvW/d1uw6xqFo10id8FQ8mgYDJZnedNMu5gEBcLxAbYcMv0J1+G7H0dQnbvkMPuLibTnmJjeVIRmjIqJkrwvdw4+YtJB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JGbX0jbF; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54K7K1NC012077;
+	Tue, 20 May 2025 09:21:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=m2Upju
+	Q/5KwMg+65JZtPR4E0vx7qlZD6xAt9dld09JI=; b=JGbX0jbFVwGCRv0iByTjJW
+	kVSzg+KBv3LpDWCKR7tviyfCr12E+nFR0y+G4a68Haf9vTqx1BulUOCHtXQsEcmf
+	H8w4h5Pj+lzN5iAfyH/TJGUkcNszJS3e/MKmVZaMZlDJqesbrFQ+xFJhmrm4Bhdg
+	iRCrKUTqleaxFSlNti10cHja6JtmKMlUTM/A7F9ICW4q7/i+Wtu4laOfRueN0MDq
+	WgcA9yy12xTnN6gqTEgj1xMU6KZ6IirqxgWfCKjV/P1qsxDtmuDG5yLN+6Tv6Xfq
+	4EuQ3eiVFTo05O5XxPTBoI7vdB1LVZUCI/0QssYN20jTkUaxZ42RVX1rGkGDXvwQ
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46rab734y5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 May 2025 09:21:44 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54K87GZX015958;
+	Tue, 20 May 2025 09:21:43 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46q7g2aspj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 May 2025 09:21:43 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54K9LdJl55705870
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 20 May 2025 09:21:39 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ACEB220244;
+	Tue, 20 May 2025 09:21:39 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5C52C20242;
+	Tue, 20 May 2025 09:21:39 +0000 (GMT)
+Received: from [9.152.212.130] (unknown [9.152.212.130])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 20 May 2025 09:21:39 +0000 (GMT)
+Message-ID: <1660a81e-e057-44d3-be99-ec91fbf512e7@linux.ibm.com>
+Date: Tue, 20 May 2025 11:21:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] perf ftrace: Use process/session specific trace
+ settings
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, acme@kernel.org,
+        agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com, Alexander Egorenkov <egorenar@linux.ibm.com>
+References: <20250519145235.56006-1-tmricht@linux.ibm.com>
+ <aCvGF547Y3eteLRK@google.com>
+Content-Language: en-US
+From: Thomas Richter <tmricht@linux.ibm.com>
+Organization: IBM
+In-Reply-To: <aCvGF547Y3eteLRK@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=ELgG00ZC c=1 sm=1 tr=0 ts=682c49a8 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=uxB-eVp_abppLh5YTSIA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: XvjZbF10tOtyVpdm3aWD2c0FeYSTQV1q
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDA3NCBTYWx0ZWRfX3ckwVGefrPpf as27ZneEG13UyW1uUbXzpVs7aKQeK+Rhq8AWD4fwE/woXS/SDZqRKbA9fX05fQqGBdGKh4sUbDc Ul8v4tHxQBYJdsHkudyLaK/+vCl6GoAhOIAbcw5f4z2IEF0Q1509z/tfHPQZJlczTp1NTeb0Nn3
+ XiFJCXgzkqDmS2zij7aOWx66hkZa30SIujhABjl4eHQ+c0/vDxPFPfQy1uJuHcMrYicU1hXFmMn /K5vC3XGe4MndrPN9EXcp8Ba0g6WflcmbjGIubx++RtRmoeArVWvqR0ALt4zNUjvcbBuCQVvGiw IfbQYnwkMOPHn8kTGoD93Yhk4/zYd6hynxWUydgGUdhWdnxjOXQ/aU+apdq0K/Jc2Gp9mE/+P/N
+ 0YMqTFx7uBvolq+b6vqzQd6w+zfQR0bU/MW/0OiDk6rMNgyW4c/G6fuzFxuxkW3f9IfQO4Qe
+X-Proofpoint-GUID: XvjZbF10tOtyVpdm3aWD2c0FeYSTQV1q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_04,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
+ adultscore=0 lowpriorityscore=0 spamscore=0 bulkscore=0 suspectscore=0
+ phishscore=0 priorityscore=1501 impostorscore=0 mlxscore=0 malwarescore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505200074
 
-On Sun, 18 May 2025 14:16:21 +0200, Christophe JAILLET wrote:
-> 'struct spmi_voltage_range' are only modified at runtime to compile a
-> field, n_voltages, that could be computed at compile time.
+On 5/20/25 02:00, Namhyung Kim wrote:
+> Hello,
 > 
-> So, simplify spmi_calculate_num_voltages() and compute n_voltages at
-> compile time within the SPMI_VOLTAGE_RANGE macro.
+> On Mon, May 19, 2025 at 04:52:35PM +0200, Thomas Richter wrote:
+>> V1 --> V2: Add Suggestion from Arnaldo Cavalho de Melo confirmed by
+>>            Steven Rostedt. Use rmdir(../tracing/instances/dir) to stop
+>> 	   process/session specific tracing and delete all 
+>> 	   process/session specific setings.
+>>
+>> Executing perf ftrace commands ftrace, profile and latency
+>> leave tracing disabled as can seen in this output:
+>>
+>>  # echo 1 > /sys/kernel/debug/tracing/tracing_on
+>>  # cat /sys/kernel/debug/tracing/tracing_on
+>>  1
+>>  # perf ftrace trace --graph-opts depth=5 sleep 0.1 > /dev/null
+>>  # cat /sys/kernel/debug/tracing/tracing_on
+>>  0
+>>  #
+>>
+>> The tracing_on file is not restored to its value before the command.
+>> Fix this behavior and restore the trace setting to what
+>> is was before the invocation of the command.
+>> On Fedora 41 and 42 tracing is turned on by default.
+>>
+>> This patch use the .../tracing/instances/XXX subdirectory feature.
+>> Each perf ftrace invocation creates its own session/process
+>> specific subdirectory and does not change the global state
+>> in the .../tracing directory itself.
+>>
+>> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+>> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+>> Reported-by: Alexander Egorenkov <egorenar@linux.ibm.com>
+>> ---
+>>  tools/perf/builtin-ftrace.c | 105 +++++++++++++++++++++++++++++++-----
+>>  1 file changed, 91 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+>> index 7caa18d5ffc3..3faf96e7185e 100644
+>> --- a/tools/perf/builtin-ftrace.c
+>> +++ b/tools/perf/builtin-ftrace.c
+>> @@ -38,6 +38,8 @@
+>>  #include "util/units.h"
+>>  #include "util/parse-sublevel-options.h"
+>>  
+>> +#include <sys/stat.h>
 > 
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security.
+> The standard header files are placed in the above.  Let's put it there.
 > 
-> [...]
+>> +
+>>  #define DEFAULT_TRACER  "function_graph"
+>>  
+>>  static volatile sig_atomic_t workload_exec_errno;
+>> @@ -45,6 +47,8 @@ static volatile sig_atomic_t done;
+>>  
+>>  static struct stats latency_stats;  /* for tracepoints */
+>>  
+>> +static char tracing_instance[PATH_MAX];	/* Trace instance directory */
+>> +
+>>  static void sig_handler(int sig __maybe_unused)
+>>  {
+>>  	done = true;
+>> @@ -100,6 +104,34 @@ static bool is_ftrace_supported(void)
+>>  	return supported;
+>>  }
+>>  
+>> +/*
+>> + * Wrapper to test if a file in directory .../tracing/instances/XXX
+>> + * exists. If so return the .../tracing/instances/XXX file for use.
+>> + * Otherwise the file exists only in directory .../tracing and
+>> + * is applicable to all instances, for example file available_filter_functions.
+>> + * Return that file name in this case.
+> 
+> Not sure if it's needed.  Can we call get_tracing_file() directly for
+> the global files?
+> 
+[SNIP]
+>> +static char *get_tracing_instance_file(const char *name)
 
-Applied to
+Not really, some files are not available in the tracing/instances/XXX
+directory, for example 
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+   ret = read_tracing_file_by_line("available_filter_functions",         
+                                   list_function_cb, filter);  
 
-Thanks!
+That file is not created in the instances subdirectory:
+ # pwd
+/sys/kernel/debug/tracing
+[
+# find . -name tracing_on | grep -E '(\.|foo)/t'
+./instances/foo/tracing_on
+./tracing_on
+# find . -name available_filter_functions | grep -E '(\.|foo)/a'
+./available_filter_functions
+#
 
-[1/1] regulator: qcom_spmi: Constify struct spmi_voltage_range
-      commit: e9be77134469df4a11da898bec2bfc137700a9f3
+The easiest approach is to always test for file existance in the
+instances/XXX directory first and if it is missing, fall back
+to the tracing directory. Otherwise the file location has to
+be known by file name.
+The other files which are not created in the instances/XXX subdirectory
+are
+  max_graph_depth, tracing_thres, set_graph_function and set_graph_notrace.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Hope this helps.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+I will add all your other rewiev comment and submit V3.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Thanks a lot
+    
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+IBM Deutschland Research & Development GmbH
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Vorsitzender des Aufsichtsrats: Wolfgang Wendt
 
-Thanks,
-Mark
+Geschäftsführung: David Faller
 
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
