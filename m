@@ -1,204 +1,156 @@
-Return-Path: <linux-kernel+bounces-655556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76637ABD803
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:13:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57378ABD7F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74443174D19
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:06:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32F1E7AA2F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59E327CCDF;
-	Tue, 20 May 2025 12:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C1E27FD7B;
+	Tue, 20 May 2025 12:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="D3ED9yj9"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2042.outbound.protection.outlook.com [40.107.93.42])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="E6IIruio";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="sRWml8PK"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DB014F9FB;
-	Tue, 20 May 2025 12:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747742774; cv=fail; b=mYZWO+MGTgSZ7GfKsAjOf7/g9Tz2hS8CSY93/Hnh0XsZSqPW1UvfjXW2droBxkrnjLgNFnQ8EuTxPVtXizZ+NNsuXCd+0d5dJm7Krf2T7ysuVt0k9CVtg4eYBTky3VVo0Yu+d0WrzRhNZPr+a3bT7A1ZdZWI91QKsFM+SXsSGyM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747742774; c=relaxed/simple;
-	bh=DjcCq5L5l0dwMhBTcH9HErKgnQSza5jXrtpXfjIu9p4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Eqje6SPlTjEE1YrBlmft9dG0eqNwbqGiGB9+IHaNVa0Sqi95YXsewr+PgSmmucIw/Y3NS0uvRX/EyCYbKKH6hM/NCYtafYNha3+vpEIv3IXvo43D9f59DniwoLEgfrLbNPV0efxcPcQNqoQ8pJDKRKb0NaGDO+ahpDvgvZTkqjU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=D3ED9yj9; arc=fail smtp.client-ip=40.107.93.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OEbikQ2cXp8WLJsmR+OWxTihcePPtCpfnfyRZBu3DYAxpf9doIjBNJZ045g3ueRqD4VUWqpZ+WCg/dzysIc0OnMsYes0qDgGzYVJRyzHFp4/cnGiO3UFX9DOmSn5yfITzb+zPob2GigZoWhv1u4Ivrjp8+CmDUitgYYoqx7pL1xdWnu/mdh6MJlaleLs91uh7VVY5Oyy5DB192iywmm4fE++9kCnQRWZhQFRuLh5A1uYpdhv1s1+zXbLNj2l5pV1HfMAJ3km1/VFm3N+MvShJMX4K1A2sv0+GEcpiV7y0AuaWA08M9X6wvUJzSiaVNKAuVT7SOHJ/V2NvsZYyulVAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OhPCanriSoDO/qSZ+V9r3G3EWN0Vt5XOjwz2ICCIODE=;
- b=yA38xMkp/htFtSvGZl1DtbonGT3cqzTxiDjguSzMdxwb5cOef/R45Tue904fIw/WW/JTUMo7Ffd642kTKkjbDEppHAxu/b5i4PP5XaiGxEp9qKVmMbOFb9QvCOqhKYlQYondEMPM12H6USWC3/ytSS3HxLArAMbqOFS1fevXCNFYaENse2BuobaVzZgqK93Z7uXLmruYOHBFrRTVmv3DTuWORHCPMlGrO1HH4ffbnyPg3uLn4NeIiN/RPW6Jq4n/cBu2/FQOuZH8ZFJnpCC6ul14OyZQcrn/ouNSZRsUDXW5S++a+/plpz7tR0NSO72e3G6xqekge382+LA50NrZKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OhPCanriSoDO/qSZ+V9r3G3EWN0Vt5XOjwz2ICCIODE=;
- b=D3ED9yj9ZukuI+ou66yDs1iwa6JWd2fMwBhRuwH3DrZGUR2utX6wA3DNAJnKJQNQZxRWJK6ocWGHMTt1IhGv9GhdUiKsclkcreVgNF3JdT0Tbu2SN0lGFqr6Bs92szjE8Q8y4jRl2j3dCIH8U9n1ngmEtqI5j2RZmVdMTRodH0mt09L3kVrT9u59A0sJsAr5TEf5FvwlQK5UcOzf1XHkRarG6PNEmpovDge7NC3nI9LogO+ZBXj6cBxU0VdeiUzrYhtMfWm3Rcr61uGOZZxmc1mPeWMggjYX8X/sw9CwaiOtRhFiGYrq0NlcMDh9zwn5xLbpkwjmwhaBHZm9DeHN7w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by CH2PR12MB4182.namprd12.prod.outlook.com (2603:10b6:610:ae::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.32; Tue, 20 May
- 2025 12:06:10 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%3]) with mapi id 15.20.8746.030; Tue, 20 May 2025
- 12:06:10 +0000
-Message-ID: <9d00d20f-f766-4b44-a162-35a70ebc6041@nvidia.com>
-Date: Tue, 20 May 2025 13:06:04 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/2] Disable periodic tracking on Tegra234
-To: Wayne Chang <waynec@nvidia.com>, jckuo@nvidia.com, vkoul@kernel.org,
- kishon@kernel.org, thierry.reding@gmail.com
-Cc: linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250519090929.3132456-1-waynec@nvidia.com>
-Content-Language: en-US
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20250519090929.3132456-1-waynec@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0602.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:295::16) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0C827FD6C;
+	Tue, 20 May 2025 12:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747742984; cv=none; b=B3V2eZlavwgZKZqX7e9cfc+LXxk6WLoG8N8VkhEBZULXiWfaEkj6Lu7jWQQNZzKJy4mgfUDCij9FidD73aBnUKWJZR4AWqvlZlP3CNkgr1Ick9PmQe5xHLhIughtVhv3+4nw4hPnVBsyNzwJ1kdCWy4c2+37LDoJYzeisLPs2qM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747742984; c=relaxed/simple;
+	bh=r/0a45tDOG1Wp/4/S60HJvxc7MPWubEQ4sYHv9Gbi60=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qtufm4grSDNZL5devcGaE9OXBfkgot60QFt3TbYGbSKGqpyhTqyXeKmNSWWseNegf/jOBFKnHZDWGrlpdLU3fMycpU4Y/uAV53eYLjVmNcO8Wmo0gPaElAHnUHB1Z8Y6yyew2v8HWhGda12O2JxIK/n0TCoxuKoPvPSKy+kzv1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=E6IIruio; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=sRWml8PK reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1747742981; x=1779278981;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Mydkjm08QIvLWA/4BcOB1dXEsbYKaUwIYfeH9kPQgNs=;
+  b=E6IIruioTkRtzvsz4YzE6FUFtJm3y4XF5TlNjoldovtXwR7FEKsUlnOg
+   IJ54IBp9AR4dd35cQSuWBmXCYH6XOh2vbDZbEHVCZnyjTyW4gF4hnyE58
+   Y8d1x7Zh2ieC4ChEhq1hBhQNCzzwrX3SWa1mE6l6dRRMAmlfKPCPqILDW
+   FTfgqYYfg5IQ7W5gwo1BoPxL6GvAtvVbZ3iHQGhDxffSlOt9FvNdWTm8A
+   /OjqJz4nliTli9Trz09vgDgQ83eSpLZiH5uUc5RjhvOCbfhNUJxQvrbXc
+   FFoKBCCCJtQhukFPydx7kiKNu8XGmf5PAU4y+uh3yjuvDkzIr4VDs1RCn
+   Q==;
+X-CSE-ConnectionGUID: WGbEe5mISL6y4FTUK6hA/A==
+X-CSE-MsgGUID: wNbZQtggSh+ST2W74UFkow==
+X-IronPort-AV: E=Sophos;i="6.15,302,1739833200"; 
+   d="scan'208";a="44182551"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 20 May 2025 14:08:28 +0200
+X-CheckPoint: {682C70BC-7-DF3E87D0-C74668F0}
+X-MAIL-CPID: E98BEE298717E5CE9BA43ED74D55136E_0
+X-Control-Analysis: str=0001.0A00639F.682C70C3.0032,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3AC9B160A8F;
+	Tue, 20 May 2025 14:08:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1747742903;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Mydkjm08QIvLWA/4BcOB1dXEsbYKaUwIYfeH9kPQgNs=;
+	b=sRWml8PKLS2gK0dDH+njNPfwX5dX8uBb4x78wNwmI8THAjaUaxNIy0E8nNNOZTWVSPlGQl
+	arvXW+bEXegh5G+J2k4pX85rcpKWy58VMgcIgx/g8ZKxbBrwWqz3f0zdEyJU+jyxIJW5LI
+	1tf7o811/HyX+ke4jpKxmCqluVPK7Gbj3eU04I+YpaqaWkSuUOPDf7dVehlrisH2k32W4O
+	v2ZBUQDPf2KHfJFWxMvj7Jg6PK72UmDsBT/ogFVb/UEQdw/GqRU9/VTrjJkIc965k4Orjv
+	ZjG3j/QiKeB161PgIJUdrLi80srNDlysDrNuZnNJgJ5t/vYoABXH5S1UK5KHPw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux@ew.tq-group.com,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] arm64: dts: tqma8mnql: Add EASRC support
+Date: Tue, 20 May 2025 14:08:18 +0200
+Message-ID: <20250520120820.890252-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|CH2PR12MB4182:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1077a04f-19ac-43c9-7812-08dd9796b54d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|10070799003|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T2ZQOGZIL1djVzUrR2xra2tLaDUwZ0VZWWF4czNLaWVRQUJPWVdqSjI5MVFC?=
- =?utf-8?B?MXBCQmZDckEzVVlZYVdJOFR4V0FXZ3lTdWdMd0RONWxwYmxiY3lSS2xoNncx?=
- =?utf-8?B?aWtVbnJnbW9pRk91K1czaTlnM0o5SHRBQUpkRW1DZDRHanU3aDlRNklOeHps?=
- =?utf-8?B?bUFucFhrOVFhOUVHQ0JjY2VCbC90Z3lIUWd6YXk0clUrSkFvOEdGQ1VqSExS?=
- =?utf-8?B?SE94dGVqcHJaSWtQRFFjcVFqMjdDQWdtUEVwcTRORTZDSEFOemFjSzk0ays2?=
- =?utf-8?B?S1g4NWdFRWtkS0VTWWNWeVVnb2VpaHdTb0R3eUNTQUtScUF2aXhTQ3Y3QmJm?=
- =?utf-8?B?YUtQcnNSVnNrMVN5eGYxRHBsVnBvcnpaU0E5b2d3YzlSSCtZZ2hocUkwc1gy?=
- =?utf-8?B?eEo4eEQrdzFDYnVid2I4aVVBTlZGUU91dHR2aDY5dUpSTk9GL0REcmw1TlBs?=
- =?utf-8?B?c2dNNlk5d1ZMZDArTklQWW5URXFJYS92LysvRlp3eWo5RDAxcnlsQjVNaUFX?=
- =?utf-8?B?ZXpSRjBDcUh3Z1pyVHFBK0Mwc1Z5Sm96Y2l2bFhaUThUTWpHbmZiV3FlZ1c1?=
- =?utf-8?B?SFlQbjd3UXJnLzhDUDQ4ME55dng3eG5wY296a3pVME03TmF0SGd6UFdCeWtn?=
- =?utf-8?B?czhGLzZidVY1SmErWDlvZGtTdkFSL21BUlI4TlRpLzNoTXNDUFRUYjdoZzF1?=
- =?utf-8?B?OWJMbkhUMlh1dEc3WHJ2b2VtRWthOG9qdmJrcU5UeDIyUzg0RE9SYUM5elFX?=
- =?utf-8?B?RVE1U2hxeVBSQjVvTTNFK0s3Rk9EM3d3SGRZTFZMcGxXWHp2QUlLaC9zMjdm?=
- =?utf-8?B?c21vTFV4aDBOOUpLZ0JGRVFWRkpOUnJhWTlIbGF2TW9rRHB2b0xOTHlCNTZo?=
- =?utf-8?B?OXNIbzZQMWRMZW1FTnJ2MnNQNmdOenpMYU50aW4vQ2lxU2pkdDJFVnFweGo2?=
- =?utf-8?B?NDgycmVQZE8vL2pabllrUFF1SFB6QTZEZ3JZUC9WTnlvYlAwTkoyOWpzanRj?=
- =?utf-8?B?dFpZZDJVNUxQbjBDQ1ZabmNjdE9sd2YvN3ZISitDcURCczBHUThOQ0NQSkM2?=
- =?utf-8?B?ZG8wSFJhc2RwamZvNG1kQXo2TmRWYTlJdFhOenhEMHVFSGhRdUdBaER5OUJB?=
- =?utf-8?B?S0F5dCtBdy9oUGJYSVFZVkZXbnI3ZWVtQkJ4ZDJuTjg1TXJnWE40aUNSY2pL?=
- =?utf-8?B?ZTZXWG9SYThlbnRqSVBNK2x3ZEZOa25xK3VOcGQzWDZVQ3A5ekxpOUM3REpq?=
- =?utf-8?B?UXhpdVA0RGpYdW1GbC84ZjVFd3dHc1VScVZFRCsrc0VKcTEyZTZyUC9PQjNs?=
- =?utf-8?B?NGpSbHJEZ1lFcFVhbDNGVnhuZE5IckU5WnRTcWRrZWI0VS9hWnFFOG1UcWZa?=
- =?utf-8?B?dFVudXJxRXA3UFBWbitjZXBJQ2c4RVpicW9OemFIMTdyMG00STdZc2hRY0Za?=
- =?utf-8?B?WDF2aktTQkxTREpFQW9ER1NzM1NJM3l6dVRHcDNoam5rVGFhSjJKakxETStm?=
- =?utf-8?B?UzlaYXlidDZ2UVhINndPazFzaEJ3WUUxOUNNdkltd0tQditDMCtlZ3RJYmVz?=
- =?utf-8?B?ZDc1ck1MZzRPeVl2MnB2NzNUT21NT1VYMVhIMjNXMkxWZE1Veks5OEpPZWVW?=
- =?utf-8?B?UkdqQVVsdVdVQjR5UXROV0k1TkxpNWRBK1dHQk9iZjZORk4wTEtrYWN2ckU5?=
- =?utf-8?B?NVF0U1hQN3VxZGxGdVV3U0NSWnFYQWU1UWlhK0VZWEsxYkpIVWN5U0lBWkY2?=
- =?utf-8?B?STZ6NFRUbkVhYy9IMnp2RXBPL05IRk5XUENMcTdRNll4dzB3N0RBL3dEUjlE?=
- =?utf-8?B?WEk3N3hRNUhkUHh4bG9adkZCZHlCSW9LL2hHK0dUd3RKMEJsMUt5S1NTQlY4?=
- =?utf-8?B?YmtoQmNIOVJKRzdON3Q5anl5clhYRVFSYU9aWmRiTGlzcWJHVG0rTTlmMmNO?=
- =?utf-8?Q?vIonD5WsQkY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(10070799003)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WXNjK2d6dXhtSlpNb1NBWGg5TlZvMHd4aEVGYWs5aDUzL1hTN0dEcW9NQkpB?=
- =?utf-8?B?Z0JMTUdoYnpjVFZ3VW9pTVV1M25HcDJPanNFRnV1YVVDUEkrVGc2LzN2bFo1?=
- =?utf-8?B?MWRUazdNdVMrU2pLWm1GSFRRMW4raXhNZzd4TFg1S213RXJZdUlUS0VmSTc0?=
- =?utf-8?B?bEpkVzRIT3hPOGszaWhZU3N0OWd2ZE4va2h3T09tanI1QUpWaHJGY0o1dUxn?=
- =?utf-8?B?Wm8vU1F4Nkp1RWJTRDcydHBIZ3JtMVJOdHl6cHFUWEZvKzFqU2dLdFFyekxy?=
- =?utf-8?B?ZjV5Q043TkF4dmRWR2NjZTFFZi9jQXdYWHFwL3luZDQ4THJPYzJFbHFNUW94?=
- =?utf-8?B?TmJXKzFIb2RreW5zK1RRL0JvSTd5cU5IREVsNFlVRzdNM2NyNVI4bnJNOXk3?=
- =?utf-8?B?VHVhOHVWTk5DNEczajNFWVlsUk8zUkxIZkdLYWE4dXRBV1FyYy9kVEt3a3gw?=
- =?utf-8?B?UHJkdTJienVuV1JkSkVmTmZRbkFGS20yT1pwVjEzZEVKenl3NHljbytrc1Jw?=
- =?utf-8?B?WDZReEpYYS9BeHdFTHZ6WUxrUys5MUNhRStSN2ZVOFNibTd3ZGJrY2h5NE1x?=
- =?utf-8?B?MUt5aGp0KzAvUWpGY0hlR3BIRTBIc0M3MzZ0empyMzJnRit5WmFsdWFleDlW?=
- =?utf-8?B?emN2RGlLN1pFWEpKSmJ1SW45aS9JbEZrVXFvZk1wV2tUSndkOURIT2RMSmZD?=
- =?utf-8?B?Q2x6bXVBcnlodkFiVGlMdjIxZVYvNlVCT2cxSFZ5ZlNuaEZTOFpLVlQwU1Ev?=
- =?utf-8?B?WGtNY2I0Q3dZV1BKNjFlS0NFN21UQnQ5MjFmdDRkaWp1K0RrN0xsK0E4RHRr?=
- =?utf-8?B?eTkzVTdGUjB3WVhUbHllSnJ5L1dFa1Vnb1JOK241bUxwMW9zK042b3hqTWRj?=
- =?utf-8?B?TWFzS015ZmhVaUY5dWtxd3ZMWlRsVktjK0ZBeXVuSVlESHlWeWk4WlNtVkF1?=
- =?utf-8?B?VTJ4M2VKMk8vcGtrMjhLcXlNa2RkWnpTM0l6d0I4cTMvaC9aWkRNRmdwRHpF?=
- =?utf-8?B?Myt0MmFRZlZSM1lYdHZQbndNa1hrbGdVa1pXZExLSHJmMWQ5USt3eWdaUWlk?=
- =?utf-8?B?WktGQ21vU0ljZC9TQ1FPcEFZWTNDK0R0Nkd2aUdBVUxkaS9CcHFUclFVSDRt?=
- =?utf-8?B?MDVVU0t0cFJpb2JnbVY5ZXloZnZvRCsrNVo1c0gxY01GTzJlRGFzVTBWazl6?=
- =?utf-8?B?WU9zUkQ2STJuaXo0c1pnVEQzSDBONXlsOUZGSFAvc2xhcnE1RkVWSVQ3WVBu?=
- =?utf-8?B?QThsU09UVVk4UFVwaW5XZ0IvUmhEUWtnNkxMbFZleG42OFhaTjI0NG43QmJt?=
- =?utf-8?B?dDdXcUFhTkcyVFJZRWFKNFFwRVdNZEdoa0J1QnQyWnZDNzlEZUtTb051TkZH?=
- =?utf-8?B?cnM2c2c1amdNcTBNMW0wVmdiK3JJcGk3UGhWNjRDV2d0M3AwcENwZitHbmZ1?=
- =?utf-8?B?L3lGallacS9WMURZMmZmNnNIUHBUbGpseWdFY0k5K21EZkZ0M29nQndtUjVI?=
- =?utf-8?B?d2hWSW50bkk4Y3VMb3pISFVPMHF2ZWcwbFhGYXJzSWJROWFaTHpvcHlIYWpE?=
- =?utf-8?B?THcvNFhvOU9PQXlYSmFpalhDaVp0SlllUHQzcVBhbGs1YzJHdlcwaGhqTlNk?=
- =?utf-8?B?dzZlYnJUeVMyREJvMjY3L3BqQmwyUk9kVTQyYzRRL0F4LzdIa1cwSDFOV1g4?=
- =?utf-8?B?VXh3MnhLYXpjelNXa2xaZ0pua09GNTIxSTV0QnI2dGloV0x0VjVNdDlKN3dp?=
- =?utf-8?B?SDhPVUZPV1FUNjB1cWQ2RkNxK2NGQVBxd2RaN01BWTdzWlhKSnFQbmxQOWtC?=
- =?utf-8?B?ditkYUp0YWExUTRyamhMWlpWTjJxSW0ySVVpb3J1OVdORXV4dU5pY2Z3SS9T?=
- =?utf-8?B?UU9xZGxkREkwRU0xQzlvU0o1NkU1Wm5OMHdDa3EvVHRTYmFacVZmdUI4b3VS?=
- =?utf-8?B?U2kralVLbTNYaFpCVTd4Zzl6emdWT29taG1KNG54RjlyMEo2cVlYdmlxLzRv?=
- =?utf-8?B?d2F3RTZ6WE94dlFrSEZRWkRZdWc5SEpJN0lweE1CM1R5K0QwK2p5bVpZN2wv?=
- =?utf-8?B?TEZHVFloMk1yUFoxL0FoSUxRWVVXUVJkRk5xRnBORHFNRXAwZ0lIRVhPeGlL?=
- =?utf-8?B?SXNiNDVCVm5zcWNveWx5MURnV3gwTXgvaVpOMkFYb1lIWFdmQmlxOERoNHRw?=
- =?utf-8?B?L1h3L1YweCtTdnNmTklqNk5Vb1dYR1RxRi9JcVhRRWFMM2ZKVXhQanIrbDlQ?=
- =?utf-8?B?eXFnY3YzNGx3ZnNPV2VsbSs2MjBBPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1077a04f-19ac-43c9-7812-08dd9796b54d
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2025 12:06:10.2755
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: N6VyYEmWRM58VHOsXPVpKrMEBAuRNCCBHtpLSw+fi3yPf9xspB/GkIINZL/FtZFT331z3aiDC/hjt/MKxC/LaQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4182
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Enable EASRC support in tlv320aic32x4 sound card.
 
-On 19/05/2025 10:09, Wayne Chang wrote:
-> Decouple CYA_TRK_CODE_UPDATE_ON_IDLE from trk_hw_mode and disable
-> periodic tracking on Tegra234
-> 
-> Haotien Hsu (1):
->    phy: tegra: xusb: Disable periodic tracking on Tegra234
-> 
-> Wayne Chang (1):
->    phy: tegra: xusb: Decouple CYA_TRK_CODE_UPDATE_ON_IDLE from
->      trk_hw_mode
-> 
->   drivers/phy/tegra/xusb-tegra186.c | 16 +++++++++-------
->   drivers/phy/tegra/xusb.h          |  1 +
->   2 files changed, 10 insertions(+), 7 deletions(-)
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Note that the firmware file /lib/firmware/imx/easrc/easrc-imx8mn.bin
+is needed.
 
+Changes in v2:
+* Rebase to next-20250516
 
-For the series ...
+ arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts | 4 ++++
+ arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl.dtsi       | 4 ++++
+ arch/arm64/boot/dts/freescale/mba8mx.dtsi                 | 2 +-
+ 3 files changed, 9 insertions(+), 1 deletion(-)
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks!
-Jon
-
+diff --git a/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts b/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts
+index dc94d73f7106c..d7f7f9aafb7d1 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts
+@@ -79,6 +79,10 @@ &sai3 {
+ 		 <&clk IMX8MN_AUDIO_PLL2_OUT>;
+ };
+ 
++&sound {
++	audio-asrc = <&easrc>;
++};
++
+ &tlv320aic3x04 {
+ 	clock-names = "mclk";
+ 	clocks = <&clk IMX8MN_CLK_SAI3_ROOT>;
+diff --git a/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl.dtsi b/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl.dtsi
+index 640c41b51af98..1d23814e11cd3 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl.dtsi
+@@ -52,6 +52,10 @@ &A53_0 {
+ 	cpu-supply = <&buck2_reg>;
+ };
+ 
++&easrc {
++	status = "okay";
++};
++
+ &flexspi {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_flexspi>;
+diff --git a/arch/arm64/boot/dts/freescale/mba8mx.dtsi b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
+index 7ee1228a50f4f..79daba930ad64 100644
+--- a/arch/arm64/boot/dts/freescale/mba8mx.dtsi
++++ b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
+@@ -136,7 +136,7 @@ reg_vcc_3v3: regulator-3v3 {
+ 		regulator-max-microvolt = <3300000>;
+ 	};
+ 
+-	sound {
++	sound: sound {
+ 		compatible = "fsl,imx-audio-tlv320aic32x4";
+ 		model = "tqm-tlv320aic32";
+ 		ssi-controller = <&sai3>;
 -- 
-nvpublic
+2.43.0
 
 
