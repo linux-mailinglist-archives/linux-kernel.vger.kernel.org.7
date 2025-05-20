@@ -1,128 +1,201 @@
-Return-Path: <linux-kernel+bounces-656350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82AA4ABE4B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:27:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E1CABE4C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D3757A71FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:26:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BFE218864BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113C5287506;
-	Tue, 20 May 2025 20:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9BF28C86C;
+	Tue, 20 May 2025 20:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GcDL+dyh"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MwFkArGp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1420E283125
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 20:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF0428C2CF;
+	Tue, 20 May 2025 20:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747772835; cv=none; b=tr+PbqPL11bPXMNRyrql4cLPJLvhBVzwUDg8nCvqaCVDj7mlZGLNs+EuPOHK01mREksd9Fu5UsBzP8FluGRWsZ0mB4YL/fnaMdsJDCqKirxkbkv2alx8CNZBk/lnU032dTX15N8VelA8xksc54nyu9xtA/RUoDG8F0hWeK1v9ew=
+	t=1747773095; cv=none; b=se7gdbgiiLtATVW56cK1X5kVJ++vjSZTCMeYKVkvpfoJJJLu5A/3ADG/d/WztA3YPnqBxVzhm49c4iy7ZPr7o6iMR0xYn+W4Kr8MkKwvnbxDE8Ok5NdI2bvVgRu0pomhi6pihDBeb8YyBIcTfM8nGFgEkPiiAzNyRxqxQjLSugE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747772835; c=relaxed/simple;
-	bh=byTi+sAOTj0x56q0zXwI7gx6OBoBWQKhfumi6kPLa0Y=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=oQu7Rcx8f8oVkd5NsWTemDANr2WuiacE38hJ0Fj5JkRkpou0g4vFQa/i2BOHu9rocLdN69Nk+SjnVgyDlpZoiKs73AtEP+rFwqV5o/Xu4xk2IIgUdgOlUvN2Leb4btwZ6sqFn/fYoW9k50sp2tZLk065k9IWQS0NOGjH0rY72Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GcDL+dyh; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so67010945e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 13:27:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747772830; x=1748377630; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=byTi+sAOTj0x56q0zXwI7gx6OBoBWQKhfumi6kPLa0Y=;
-        b=GcDL+dyhZTXvSaVAHeJG2hOdVpRveAUwTj+Crh4BkHSVCARQBMHhnkuc5e7ZZJirOP
-         80c22dB6mlPdC4HX+MMuXpwq2RSRJ/wsBNQ0vE8W0mO4TGnXVSVkxZ0G6/k+Qk91mR6x
-         zakUIlhIKSeYxbc+2PDqbysxEMQVQpMnXacVDQn1FfhzsQ7VAzs5vY593wQBSrAzErQf
-         GXjhWA1XT+dXxn6n9D7ZeuuQ/pSribUGxn4kC1Dvo/RGnZN8FV8MwSMpB9pKOaq2OlPE
-         JxPd0vbKxdNqYc/J+EoRp58N0TxDlwMcfazgRGSi6N+IWgsJvGhzD/Tyv9nKUQf0EFP2
-         slAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747772830; x=1748377630;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=byTi+sAOTj0x56q0zXwI7gx6OBoBWQKhfumi6kPLa0Y=;
-        b=cpbcVRlb6UBGVCDdzAInyGC1l+ejy7Ta8/mBu9BVP6w563yOodDpQtEhB/8gTc4wLr
-         qvgRxLXSnI58Z8GOWIr90b2CE9mWxMkBxotvv7xTOE49MB4YoOm6PxriPuH4QgbIG4as
-         93Z7oaTfwAlIiPrp3442jvxWnYP3/dCclL0nmUghndCLCqoIvSTnxNj1bV1KWthJCabt
-         1gcKdh2ki5sHwkZ5OZsMG2Ep3yZ0Df7JPp0yTzHLJ12d2BXz3u80b5AAzYiaRLdshgvX
-         Quelb1SzaFZxJXoUt6ADBxlvs7No22ojWLMjkc2M9+42toJuJMf1suxzkX/8oetlvExf
-         qYxg==
-X-Gm-Message-State: AOJu0YznXRsHaxYlC70Nys1TkvFVd3FAszfqWB/mkgzRAUEgg2QHKgRO
-	QNl4Le3EiLndSHGNDvKiZbNdMf+wGO+fLpuBgXMi9KVAb9ZDJAK4dlzj
-X-Gm-Gg: ASbGncvBRCiAmEJ9HMG+BHhGANr8I4zBOKIebnJ5bkm0jRn17eZoEqme+E+zAaA2k1h
-	wn9poPeeLVLTFIJhzaZ4aygFbRXBzoK6DDEVQEnN8cEvvq6B/J4YnrLcwppPVoJjcKhFoBejPGx
-	bR/gmDirW4UOy9nMOHqtRdIGmA3HSlKPqxGDz48uvOv+8ERrTLu/wOBcuushSVcWBS6FWbVbNob
-	z9YH7iaRTWTiVHgTJ/zNbxJj8DFUk43i9GdOir+9AjNFTIWpBr7Tw3us/O7ufbzt84+ufdlA5Xd
-	1X+qRcOTJhQmbAJdkGMOLrPQuIUmrQuhkSXbb0w1MuOgUX0kTxTt4VMAY+IC07ZspMpDEldMX2x
-	p
-X-Google-Smtp-Source: AGHT+IGxPr0xo/HVPVanixrOZ+HQ5nEzm+pNPHc4gMNp7DrOfzd7JQexs0V8oLBvyq2q4bzYRs6nTg==
-X-Received: by 2002:a05:600c:4f42:b0:442:f4d4:522 with SMTP id 5b1f17b1804b1-442fd60a5bemr168457955e9.5.1747772830152;
-        Tue, 20 May 2025 13:27:10 -0700 (PDT)
-Received: from smtpclient.apple ([5.29.20.116])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f45a8434sm46613305e9.0.2025.05.20.13.27.08
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 May 2025 13:27:09 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1747773095; c=relaxed/simple;
+	bh=3GWxq42/tgSqBxgPB7yrDRaLb7a882QSAs5qQK5Arp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YxSDwfZbZt0O9gNOJxCGqt3xr22Ua8ZBRVXPIXHgdWnNfzD/dlCcQ+cyiq39AIcCVIdN2UzvbGNdewZrAN0HjEakoJAvrYWZUtlWlrunzBmLhgoKuJe2toNU+s7xiFtT/HNznNSkvKQvZN1Hh2uKFiL0YW4GpikiC4b6vMhyLYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MwFkArGp; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747773093; x=1779309093;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3GWxq42/tgSqBxgPB7yrDRaLb7a882QSAs5qQK5Arp4=;
+  b=MwFkArGpeogcwVgPjgL2rJMTtRAcbp9562nAO5+Ho28kuMYAZgAPA45R
+   YucRJdLLEipn66ji1PB36597lvHwlgT6I0mpng0ReYBqGVtRx+281SUfg
+   2CKNbgmiiskW+rDoF7hSY782cSM8MST3TckWrwYVVVsNfc657cl7cI1H4
+   XBzGphp60vK8nA9qGxFaRdqUU2OklW+eF4H0XyosxWMbcyFUlFlfnxIG2
+   hjHbCredLgRrG1IBkzu/qlYfp5AiHhWZCR0YwI8Kw1oHh8tZ3VqV6H0jg
+   /Rh1yTKt2H46rY/GJbY2wzAH81dPsJjRj9VG8j1ozzLiGj5Rwa85vdMSL
+   A==;
+X-CSE-ConnectionGUID: zq8BqAp1QEGwr3K86DZSxg==
+X-CSE-MsgGUID: pKLRBb06Sc2bf3jBiEhCLg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49861355"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="49861355"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 13:31:32 -0700
+X-CSE-ConnectionGUID: q0AcIwtGTrC78y+QjzCHfg==
+X-CSE-MsgGUID: JQOZXCiKQOu/6s3LgSjiSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="176941458"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 20 May 2025 13:31:30 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uHTcW-000NXg-0K;
+	Tue, 20 May 2025 20:31:28 +0000
+Date: Wed, 21 May 2025 04:30:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wentao Liang <vulab@iscas.ac.cn>, andi.shyti@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] i2c: qup: Add error handling in qup_i2c_xfer_v2()
+Message-ID: <202505210438.G4nfkpQ2-lkp@intel.com>
+References: <20250519141918.2522-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
-Subject: Re: [RFC v2 7/9] x86/mm: Introduce Remote Action Request
-From: Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <6a3290319031cd68a383e416f53aa7549bac9407.camel@surriel.com>
-Date: Tue, 20 May 2025 23:26:57 +0300
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
- the arch/x86 maintainers <x86@kernel.org>,
- kernel-team@meta.com,
- Dave Hansen <dave.hansen@linux.intel.com>,
- luto@kernel.org,
- peterz@infradead.org,
- Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
- "H. Peter Anvin" <hpa@zytor.com>,
- Yu-cheng Yu <yu-cheng.yu@intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4009A0C6-CE5C-4197-9F48-3805059C214E@gmail.com>
-References: <20250520010350.1740223-1-riel@surriel.com>
- <20250520010350.1740223-8-riel@surriel.com>
- <4A879001-E213-4239-9D25-CDA8EC3E2CD9@gmail.com>
- <6a3290319031cd68a383e416f53aa7549bac9407.camel@surriel.com>
-To: Rik van Riel <riel@surriel.com>
-X-Mailer: Apple Mail (2.3826.500.181.1.5)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250519141918.2522-1-vulab@iscas.ac.cn>
+
+Hi Wentao,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on andi-shyti/i2c/i2c-host]
+[also build test WARNING on linus/master v6.15-rc7 next-20250516]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Wentao-Liang/i2c-qup-Add-error-handling-in-qup_i2c_xfer_v2/20250519-222137
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20250519141918.2522-1-vulab%40iscas.ac.cn
+patch subject: [PATCH] i2c: qup: Add error handling in qup_i2c_xfer_v2()
+config: hexagon-randconfig-001-20250521 (https://download.01.org/0day-ci/archive/20250521/202505210438.G4nfkpQ2-lkp@intel.com/config)
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250521/202505210438.G4nfkpQ2-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505210438.G4nfkpQ2-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/i2c/busses/i2c-qup.c:1619:6: warning: variable 'err' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    1619 |         if (!ret)
+         |             ^~~~
+   drivers/i2c/busses/i2c-qup.c:1621:6: note: uninitialized use occurs here
+    1621 |         if (err)
+         |             ^~~
+   drivers/i2c/busses/i2c-qup.c:1619:2: note: remove the 'if' if its condition is always true
+    1619 |         if (!ret)
+         |         ^~~~~~~~~
+    1620 |                 err = qup_i2c_change_state(qup, QUP_RESET_STATE);
+   drivers/i2c/busses/i2c-qup.c:1570:14: note: initialize the variable 'err' to silence this warning
+    1570 |         int ret, err, idx = 0;
+         |                     ^
+         |                      = 0
+   1 warning generated.
 
 
+vim +1619 drivers/i2c/busses/i2c-qup.c
 
-> On 20 May 2025, at 16:00, Rik van Riel <riel@surriel.com> wrote:
->=20
->> Putting aside the rest of the code, I see you don=E2=80=99t call
->> should_flush_tlb().
->> I think it is worth mentioning in commit log or comment the rationale
->> behind
->> it (and maybe benchmarks to justify it).
->>=20
->>=20
-> The long term plan here is to simply have the originating
-> CPU included in the cpumask, and have it send a RAR
-> request to itself.
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1564  
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1565  static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1566  			   struct i2c_msg msgs[],
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1567  			   int num)
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1568  {
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1569  	struct qup_i2c_dev *qup = i2c_get_adapdata(adap);
+61f647e9d36d67 Wentao Liang          2025-05-19  1570  	int ret, err, idx = 0;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1571  
+fbf9921f8b35d9 Sricharan Ramabadhran 2016-06-10  1572  	qup->bus_err = 0;
+fbf9921f8b35d9 Sricharan Ramabadhran 2016-06-10  1573  	qup->qup_err = 0;
+fbf9921f8b35d9 Sricharan Ramabadhran 2016-06-10  1574  
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1575  	ret = pm_runtime_get_sync(qup->dev);
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1576  	if (ret < 0)
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1577  		goto out;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1578  
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1579  	ret = qup_i2c_determine_mode_v2(qup, msgs, num);
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1580  	if (ret)
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1581  		goto out;
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1582  
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1583  	writel(1, qup->base + QUP_SW_RESET);
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1584  	ret = qup_i2c_poll_state(qup, QUP_RESET_STATE);
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1585  	if (ret)
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1586  		goto out;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1587  
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1588  	/* Configure QUP as I2C mini core */
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1589  	writel(I2C_MINI_CORE | I2C_N_VAL_V2, qup->base + QUP_CONFIG);
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1590  	writel(QUP_V2_TAGS_EN, qup->base + QUP_I2C_MASTER_GEN);
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1591  
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1592  	if (qup_i2c_poll_state_i2c_master(qup)) {
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1593  		ret = -EIO;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1594  		goto out;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1595  	}
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1596  
+eb422b539c1f39 Abhishek Sahu         2018-03-12  1597  	if (qup->use_dma) {
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1598  		reinit_completion(&qup->xfer);
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1599  		ret = qup_i2c_bam_xfer(adap, &msgs[0], num);
+eb422b539c1f39 Abhishek Sahu         2018-03-12  1600  		qup->use_dma = false;
+9cedf3b2f09946 Sricharan Ramabadhran 2016-02-22  1601  	} else {
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1602  		qup_i2c_conf_mode_v2(qup);
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1603  
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1604  		for (idx = 0; idx < num; idx++) {
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1605  			qup->msg = &msgs[idx];
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1606  			qup->is_last = idx == (num - 1);
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1607  
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1608  			ret = qup_i2c_xfer_v2_msg(qup, idx,
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1609  					!!(msgs[idx].flags & I2C_M_RD));
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1610  			if (ret)
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1611  				break;
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1612  		}
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1613  		qup->msg = NULL;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1614  	}
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1615  
+f74187932d30e4 Sricharan Ramabadhran 2016-01-19  1616  	if (!ret)
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1617  		ret = qup_i2c_bus_active(qup, ONE_BYTE);
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1618  
+7545c7dba169c4 Abhishek Sahu         2018-03-12 @1619  	if (!ret)
+61f647e9d36d67 Wentao Liang          2025-05-19  1620  		err = qup_i2c_change_state(qup, QUP_RESET_STATE);
+61f647e9d36d67 Wentao Liang          2025-05-19  1621  	if (err)
+61f647e9d36d67 Wentao Liang          2025-05-19  1622  		return err;
+f74187932d30e4 Sricharan Ramabadhran 2016-01-19  1623  
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1624  	if (ret == 0)
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1625  		ret = num;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1626  out:
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1627  	pm_runtime_mark_last_busy(qup->dev);
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1628  	pm_runtime_put_autosuspend(qup->dev);
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1629  
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1630  	return ret;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1631  }
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1632  
 
-That=E2=80=99s unrelated. I was referring to considering supporting
-some sort of lazy TLB to eliminate sending RAR to cores that
-do not care about it. Is there a cost of RAR to more cores than
-needed? My guess is that there is one, and maybe in such cases
-you would want actual IPI and special handling.
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
