@@ -1,149 +1,182 @@
-Return-Path: <linux-kernel+bounces-654983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45BF6ABCF54
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:29:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9686CABCF4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C9A94A3D98
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:29:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5288A2818
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CB325D1F5;
-	Tue, 20 May 2025 06:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD0C25EFB2;
+	Tue, 20 May 2025 06:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="sbxkTALx"
-Received: from esa11.hc1455-7.c3s2.iphmx.com (esa11.hc1455-7.c3s2.iphmx.com [207.54.90.137])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNJh2BrK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCC625CC7A;
-	Tue, 20 May 2025 06:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.90.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C6925EF8B;
+	Tue, 20 May 2025 06:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747722507; cv=none; b=l2//ERgC1MivUmwcEgPHttcc2NMqbHqZcnhnIMGFzsMaXyoX1fy6PIxgcrcEFIAVUVWZpfoLlUJjn+IawV0A+rMVO7GefBFX6ad3EZdt2Vde2egbIPOpGN8BxaxbV4YdQgEosR0bcYQyTumW8yLNk9XV2jCBdBvf8YPlgdidWlg=
+	t=1747722434; cv=none; b=R9XtnFwbzlOsX9kofwDh8kE2gJdixw7W1+qtEjT9wP7gz7GBAB2pIVYnP3gxivcsxnV/RBl1vU2qFVdSI8h6hxJNVZdCLVxxZmPmGl/a+TASVGFFPtkXwSu4xL0FWsgxGuqizpaGYsnto+TJ5QCWHwBJ4q6kUxEcBer7QP9EgDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747722507; c=relaxed/simple;
-	bh=atb6z9XN7RCNKDZIpyj4g2de70/OejRuLU3sua0jLJY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=DK+mRc6yYlsosqyNXyvAhDFppUkSgjygsUh6he9BEYgFi+PGU4oS9iohT5eNRkf25OCyZszRhyMQ8HjG79GRTOhgGd13fyIOiBuzv3Pi+HwxGMKCTxJICJqKEahizIX+9zvqFsWsUtMYbDNfncg7WPDgYsCfbTR1CHz5srA2CKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=sbxkTALx; arc=none smtp.client-ip=207.54.90.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1747722505; x=1779258505;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=atb6z9XN7RCNKDZIpyj4g2de70/OejRuLU3sua0jLJY=;
-  b=sbxkTALxEGIfT60slQtcl95iWBamxuAYRDnWAacVK2fPc/eWsRIgmkQl
-   ilBDpnp16ZQcnIb68LdwFDqsZLnOtvbaKZnAjeSUGJ5IvuWATvo/q0ogJ
-   nGUcihAk/UUnJRms5/W3p0zNDdfpOU/MprU7iFN5puoXlTnEmLcCSgxyA
-   KlkQNF/ClOSVKa3/LFJ1R3gfKbtRLtzNcaPC4SClPRwKMIET0hU47gqnd
-   yUEdjtRBfiCWxVO2hsSp+8lHR/GIMr2N3tVsp+79ZrBECLxeuMGhJfbw0
-   WGxg0bIX9q50Qjmff/lwjgJkWHJrAJadwDmWDeR+muDjg8DGnOXgEZkBA
-   w==;
-X-CSE-ConnectionGUID: LvLGJodVRRu2qf2agvdBUA==
-X-CSE-MsgGUID: vpB2GC5QSlqDUko+T+DTZQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="179514708"
-X-IronPort-AV: E=Sophos;i="6.15,302,1739804400"; 
-   d="scan'208";a="179514708"
-Received: from unknown (HELO yto-r2.gw.nic.fujitsu.com) ([218.44.52.218])
-  by esa11.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 15:27:15 +0900
-Received: from yto-m1.gw.nic.fujitsu.com (yto-nat-yto-m1.gw.nic.fujitsu.com [192.168.83.64])
-	by yto-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id E5664C68A5;
-	Tue, 20 May 2025 15:27:11 +0900 (JST)
-Received: from oym-om3.fujitsu.com (oym-om3.o.css.fujitsu.com [10.85.58.163])
-	by yto-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id B2472CFA2E;
-	Tue, 20 May 2025 15:27:11 +0900 (JST)
-Received: from sm-arm-grace07.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
-	by oym-om3.fujitsu.com (Postfix) with ESMTP id 5293E4004BB01;
-	Tue, 20 May 2025 15:27:11 +0900 (JST)
-From: Shinji Nomoto <fj5851bi@fujitsu.com>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shinji Nomoto <fj5851bi@fujitsu.com>
-Subject: [PATCH v2] doc: hwmon: acpi_power_meter: Add information about enabling the power capping feature.
-Date: Tue, 20 May 2025 15:27:04 +0900
-Message-ID: <20250520062707.1657667-1-fj5851bi@fujitsu.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1747722434; c=relaxed/simple;
+	bh=zP6SDHTIuKSL2ym0vtEEnrQ7j+shMIs+JbhfY6qCzvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vES78QETTcvrHVngGomgqKV3E661+RxwFYcSemQDOuS1OJva0J1kNmiZKYLWsWxtQSq+71oEhZ0/QJdiXLYlxVK+UMk/myog8yMgYYL7frSTgob4sIlQT5+y+z1uQDtdVlx4mUUguMN4RpnH163+gx3aAnKM+MdO4UQK69LI79w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gNJh2BrK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7690C4CEEF;
+	Tue, 20 May 2025 06:27:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747722433;
+	bh=zP6SDHTIuKSL2ym0vtEEnrQ7j+shMIs+JbhfY6qCzvc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gNJh2BrKsRrCE1lUH4HyJPqdUV60P6z2FdarI0T4xyW3sDJZPvIRI1EeRZV6akljn
+	 HkLJ/LBR0tGS8OonknGDd/R/D02qEy11CsvLOPso5LRAYH2fiCERMEI64Aug0aQrHw
+	 tM/N67BDthBLMGisgPm9VnAKdK//Hzbh/232IGbNOzAxqWPNfaK+aziiISuwuZF4/A
+	 49fghvE8Xxp8V3/J0eT/x9Kt59fK7kviOSINzlAmpA9RsqnZwEpYW2OJcXTc7jf8Ia
+	 Qmn+v8w7JWV+Dvp9utA46SYRzi6HaZdg37CMEMrvz6GlgftSLOJ4rnJ5xNFaTivy01
+	 2h8U5tGU03b7A==
+Message-ID: <f9eb4322-cf6f-445d-8ba8-39182325ca4e@kernel.org>
+Date: Tue, 20 May 2025 08:27:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] dt-bindings: media: nxp: Add Wave6 video codec
+ device
+To: Nas Chung <nas.chung@chipsnmedia.com>
+Cc: "mchehab@kernel.org" <mchehab@kernel.org>,
+ "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-imx@nxp.com" <linux-imx@nxp.com>, "marex@denx.de" <marex@denx.de>,
+ "jackson.lee" <jackson.lee@chipsnmedia.com>,
+ "lafley.kim" <lafley.kim@chipsnmedia.com>
+References: <20250422093119.595-1-nas.chung@chipsnmedia.com>
+ <20250422093119.595-3-nas.chung@chipsnmedia.com>
+ <20250425-romantic-truthful-dove-3ef949@kuoka>
+ <SL2P216MB124656A87931B153F815820BFB8AA@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
+ <f1073f21-0885-486f-80c8-00f91dfd7448@kernel.org>
+ <SL2P216MB1246002B8EFD5CBE69E447ACFB96A@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
+ <cafba18a-5391-4d9d-aa4c-2f06f93af0f8@kernel.org>
+ <SL2P216MB1246B1DA93D85C1536476D74FB9CA@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <SL2P216MB1246B1DA93D85C1536476D74FB9CA@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-To enable the power capping feature of the acpi_power_meter driver on
-systems other than IBM products, you must explicitly specify
-the force_cap_on module parameter.
+On 19/05/2025 07:08, Nas Chung wrote:
+> Hi, Krzysztof.
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Friday, May 16, 2025 9:56 PM
+>> To: Nas Chung <nas.chung@chipsnmedia.com>
+>> Cc: mchehab@kernel.org; hverkuil@xs4all.nl; sebastian.fricke@collabora.com;
+>> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; linux-
+>> media@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; linux-imx@nxp.com; marex@denx.de; jackson.lee
+>> <jackson.lee@chipsnmedia.com>; lafley.kim <lafley.kim@chipsnmedia.com>
+>> Subject: Re: [PATCH v2 2/8] dt-bindings: media: nxp: Add Wave6 video codec
+>> device
+>>
+>> On 13/05/2025 09:39, Nas Chung wrote:
+>>>>
+>>>> All of above are wrong for the SoC...
+>>>>
+>>>>>
+>>>>>         #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>>>         #include <dt-bindings/clock/nxp,imx95-clock.h>
+>>>>>
+>>>>>         soc {
+>>>>>           #address-cells = <2>;
+>>>>>           #size-cells = <2>;
+>>>>>
+>>>>>           vpu: video-codec {
+>>>>>             compatible = "nxp,imx95-vpu", "cnm,wave633c";
+>>>>
+>>>> What does this device represent? It is not "ctrl", because you made ctrl
+>>>> separate device node. Your binding description suggests that is the VPU
+>>>> control region.
+>>>
+>>> My intention was to represent the MMIO VPU device, which includes
+>>> both the core and control nodes.
+>>
+>> Then what is the VPU device if not CTRL? What is the CTRL device?
+> 
+> The VPU device represents the entire VPU hardware block,
+> which includes 1 CTRL component(node) and 4 CORE components(nodes).
 
-Add information to the documentation about enabling the power capping
-feature with this driver, including the above, to improve user convenience.
+What is entire VPU hardware block?
 
------
+> 
+> The CTRL device represents the VCPU, a 32-bit processor embedded within the
+> VPU hardware block. This VCPU is responsible for executing the VPU firmware.
+> The CTRL device is in charge of tasks such as firmware booting, power management
+> (sleep and wakeup command), and managing memory regions that are exclusively
+> accessed by the firmware.
 
-Here are the differences from the previous patch:
-* Added a note to the "Module Parameters" description regarding systems
-  that do not support power capping.
+This sounds like CTRL is responsible for entire VPU block. What are the
+tasks of VPU block then? What are its registers? What is that device
+exactly doing?
 
-The previous post can be found at:
-https://lore.kernel.org/linux-hwmon/20250519072756.1512244-1-fj5851bi@fujitsu.com/T/#u
+You keep repeating the same, so my initial idea - CTRL is not a separate
+block - still stands. Can you have more CTRL blocks than one?
 
-Signed-off-by: Shinji Nomoto <fj5851bi@fujitsu.com>
----
- Documentation/hwmon/acpi_power_meter.rst | 29 +++++++++++++++++++++---
- 1 file changed, 26 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/hwmon/acpi_power_meter.rst b/Documentation/hwmon/acpi_power_meter.rst
-index 8628c1161015..a91403a2a26f 100644
---- a/Documentation/hwmon/acpi_power_meter.rst
-+++ b/Documentation/hwmon/acpi_power_meter.rst
-@@ -37,9 +37,16 @@ arbitrary strings that ACPI provides with the meter.  The measures/ directory
- contains symlinks to the devices that this meter measures.
- 
- Some computers have the ability to enforce a power cap in hardware.  If this is
--the case, the `power[1-*]_cap` and related sysfs files will appear.  When the
--average power consumption exceeds the cap, an ACPI event will be broadcast on
--the netlink event socket and a poll notification will be sent to the
-+the case, the `power[1-*]_cap` and related sysfs files will appear.
-+For information on enabling the power cap feature, refer to the description
-+of the "force_on_cap" option in the "Module Parameters" chapter.
-+To use the power cap feature properly, you need to set appropriate value
-+(in microWatts) to the `power[1-*]_cap` sysfs files.
-+The value must be within the range between the minimum value at `power[1-]_cap_min`
-+and the maximum value at `power[1-]_cap_max (both in microWatts)`.
-+
-+When the average power consumption exceeds the cap, an ACPI event will be
-+broadcast on the netlink event socket and a poll notification will be sent to the
- appropriate `power[1-*]_alarm` file to indicate that capping has begun, and the
- hardware has taken action to reduce power consumption.  Most likely this will
- result in reduced performance.
-@@ -52,3 +59,19 @@ follows:
- `power[1-*]_cap` will be notified if the firmware changes the power cap.
- `power[1-*]_interval` will be notified if the firmware changes the averaging
- interval.
-+
-+Module Parameters
-+-----------------
-+
-+* force_cap_on: bool
-+                        Forcefully enable the power capping feature to specify
-+                        the upper limit of the system's power consumption.
-+
-+                        By default, the driver's power capping feature is only
-+                        enabled on IBM products.
-+                        Therefore, on other systems that support power capping,
-+                        you will need to use the option to enable it.
-+
-+                        Note: power capping is potentially unsafe feature.
-+                        Please check the platform specifications to make sure
-+                        that capping is supported before using this option.
--- 
-2.43.0
-
+Best regards,
+Krzysztof
 
