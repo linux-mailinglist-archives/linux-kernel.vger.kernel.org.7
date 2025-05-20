@@ -1,98 +1,109 @@
-Return-Path: <linux-kernel+bounces-655948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A015ABDF9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:54:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E74ABDF97
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D45A17AD99
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:52:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B294A188F6D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4525264A84;
-	Tue, 20 May 2025 15:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203F625FA3B;
+	Tue, 20 May 2025 15:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qwlsqHNe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fb0KetSS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BD71DD525;
-	Tue, 20 May 2025 15:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8281C69D;
+	Tue, 20 May 2025 15:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747756307; cv=none; b=CJX4Y675/AqMzrg6vPyBUEcpwLf15phZ/I1pdPg7QmXASTxxRu741fmXn0byTf+K++0Ehw55s5l1atHHhBjJ8GgBArBIDgD5rIucnzzVz/tCnSCPmtBhbNjqHTBud1/A96QSe2922CC/UUNyBo/ehozbuHCKZqKcCPJScMiE4Z0=
+	t=1747756357; cv=none; b=JoNSOot66njcmIX4B3p2caIzx51/fuctYxQnvroWS7BVJiBOinZYCE21QmRJCC86e8ZH/UVDr5UiXgR0DMYPNf36iUbvr3ZdZJB9K2Zw+P1qezcUHVyTkQXoELZw2ZWmZRJj/RxfC5fQEoU9Jnbl2liUIRnQ3bVLPqC1Rwi0dw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747756307; c=relaxed/simple;
-	bh=IwWJceYu3JkiAc7/L82nbhvxzCuuysjyyIx3+TMwENs=;
+	s=arc-20240116; t=1747756357; c=relaxed/simple;
+	bh=mmgg73v2jzwkpcaoNnwqn6tjFg4oJjClM289A0Fi0Bk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=axOIjBf7AyOldf4n9Y5ZpTGHOMK222FwMh0BPK091IoclpFqi9otxJbG4NxLVTG7ldRX7LLy1WAbs+D3O8fnGfCxr2R8u9WZQU8Bmpe2LQ9BhpH8AgNB7sYZC0j++P/jpCTpNCDe+DGh6eqMRhfey9r2ogCQCiSi8cYBIbhCJg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qwlsqHNe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4485CC4CEE9;
-	Tue, 20 May 2025 15:51:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PkI3SMpVOgxBoNeK+8uMBEGoW1FuBc5vE1dhMkYPCkm+S4W796ZwWFS74ixsMvpxwJEukyeLtHOiQJkHB5fquLcH0R3BI8w2ycVwrXxFNmxNRgbRZJfb/PRymNWMcRFxsa1T/9aRqzjxWJkgt1sQ+nbydHn3s+caDoUJurlqVj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fb0KetSS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87BF9C4CEE9;
+	Tue, 20 May 2025 15:52:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747756306;
-	bh=IwWJceYu3JkiAc7/L82nbhvxzCuuysjyyIx3+TMwENs=;
+	s=k20201202; t=1747756356;
+	bh=mmgg73v2jzwkpcaoNnwqn6tjFg4oJjClM289A0Fi0Bk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qwlsqHNeznsHNLLIriL2SvfwXRNNoEIs15W1mFoOE5kJlx+nYNh1X2cm71T3Q/ZVx
-	 e0H0Xs8CbTZUdMZ9S35vb7+hOgYQdZ3+0Or8dDXVGNyIkvO/mMNwsNhSSlz/9fkOsU
-	 iITZlaS+gfgNF0GU3Xyq5i92f2mWZ2o2pTmCP3OEli9PvWufC1O2RQKmwJy/Q4C8xZ
-	 GH0FbAyp28fd4DFxqqdHFdNgtcmSa8OkY/44vX9wmv3Ekv4+0b+RckXATdFi1GferU
-	 ezgOmmeV23hBXavTOQAi47jv3ga6css4ae+89nmtxaHg65s/gpLUoFkkPCNoXwwJTl
-	 NTW4fx3okZ4iA==
-Date: Tue, 20 May 2025 16:51:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Drew Fustini <drew@pdp7.com>
-Cc: Oliver O'Halloran <oohall@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, nvdimm@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: pmem: Convert binding to YAML
-Message-ID: <20250520-refract-fling-d064e11ddbdf@spud>
-References: <20250520021440.24324-1-drew@pdp7.com>
- <aCvnXW12cC97amX3@x1>
+	b=Fb0KetSSys8o5YRXMNo0ePTvTcD0X1Dq7V20AuMoON7KdJnku7V+9MCd/5n35G4wN
+	 FJ2lA4aeCjCq+PyduCwBZc9lPPof78DOMYJw4itfvgrdsik14XgVTdbDrfqf/5qJRd
+	 0QwtGWVoYqQXy14WUrmEVnJWuIbR/eHhS+ENqKVqPGdA/f7XMOZxniMCYeikBnwJaU
+	 cniAOksalB3jBk8twlxmBqofEGPAu68FLpVdVuwJxWIR1T4/1lcSPTp4+Pm1hf3oFq
+	 GJGSp70ZjSCNMDxj58i5pZwEx6y2kBEFrxYOT2fJMkSlNsSurFYn1fhiw5ePFmI918
+	 HtFAaeUSZoTow==
+Date: Tue, 20 May 2025 12:52:33 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	I Hsin Cheng <richard120310@gmail.com>,
+	"Michael S . Tsirkin" <mst@redhat.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Peng Jiang <jiang.peng9@zte.com.cn>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Yury Norov <yury.norov@gmail.com>
+Subject: Re: [PATCH FYI 0/7] Updating some kernel headers with the kernel
+ sources
+Message-ID: <aCylQUlY3W7rbZAs@x1>
+References: <20250519214126.1652491-1-acme@kernel.org>
+ <CAMZ6RqJUf=LpczMNu9WwLik9i-4tJHYENvM3d15nxjNM+_vc5w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="/RmgWgYikgxBfqFB"
-Content-Disposition: inline
-In-Reply-To: <aCvnXW12cC97amX3@x1>
-
-
---/RmgWgYikgxBfqFB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAMZ6RqJUf=LpczMNu9WwLik9i-4tJHYENvM3d15nxjNM+_vc5w@mail.gmail.com>
 
-On Mon, May 19, 2025 at 07:22:21PM -0700, Drew Fustini wrote:
-> On Mon, May 19, 2025 at 07:14:40PM -0700, Drew Fustini wrote:
-> > Convert the PMEM device tree binding from text to YAML. This will allow
-> > device trees with pmem-region nodes to pass dtbs_check.
-> >=20
-> > Signed-off-by: Drew Fustini <drew@pdp7.com>
-> > ---
-> > v2: remove the txt file to make the conversion complete
->=20
-> Krzysztof/Rob: my apologies, I forgot to add v2 to the Subject. Please
-> let me know if I should resend.
+On Tue, May 20, 2025 at 09:44:05AM +0900, Vincent Mailhol wrote:
+> On Tue. 20 May 2025 at 06:41, Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> >         Updating some kernel headers with the kernel sources.
 
-I see how it is Drew...
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> >   tools headers: Synchronize uapi/linux/bits.h with the kernel sources
+> >   tools headers compiler: Pick the const_true() define from the kernel
+> >     sources
+> >   tools headers: Synchronize linux/bits.h with the kernel sources
+ 
+> Note that there are new upcoming changes in bits.h and build_bug.h
+> which are queue in the bitmap tree:
+ 
+>   https://github.com/norov/linux/commits/bitmap-for-next/
+ 
+> So, if you prefer, you can wait for the beginning of the merge windows
+> when the above changes will be merged and do the sync with all those
+> changes (this is just a suggestion, I am not objecting to this series
+> in any way).
 
---/RmgWgYikgxBfqFB
-Content-Type: application/pgp-signature; name="signature.asc"
+I think there is value in doing it now, as it clears up the build
+warnings and solves already one prep work that syncing would entail,
+namely the inclusion of const_true() in the tools compiler.h file.
 
------BEGIN PGP SIGNATURE-----
+I think I can take your "I am not objecting to this series in any way."
+as an Acked-by?
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaCylDgAKCRB4tDGHoIJi
-0rXKAP9g+8aPmNDbW0ZawJooRsBArqyl3mivyOOmhI0Jlw4OkQD/e2G4f5aQOLMo
-kyN5yDei7EtHuv0vBfpg+PIvrwhuBAU=
-=tE++
------END PGP SIGNATURE-----
+Thanks!
 
---/RmgWgYikgxBfqFB--
+- Arnaldo
 
