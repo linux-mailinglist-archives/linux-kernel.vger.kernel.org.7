@@ -1,85 +1,55 @@
-Return-Path: <linux-kernel+bounces-655051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952F1ABCFFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:00:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC5E0ABD005
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87157189149B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 07:01:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9DC53B6792
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 07:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A03C25CC63;
-	Tue, 20 May 2025 07:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A1B25C826;
+	Tue, 20 May 2025 07:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="dGTVK3LK"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA74374D1
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 07:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LUPBYq9j"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BD4255250
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 07:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747724437; cv=none; b=gQPk6JovifppV0O4Hrof7PMMdSdFeNmvwXV6pnEgMT9VilHV8QrzXf+cP60nMk/VPxGoui6g8ndVW4LbhYFmJSzzGT3pjYTmlLg22tJtWbMIZqOVe7KbsikfLH3UYrznRa3GCXJ3IuzdaubhvaH5dczXHY8UUvZO4AkQRUSmWYI=
+	t=1747724515; cv=none; b=Db6Sfio3sk6HHSu1Y8UJ7QA/ZEHFF3Zj+9JdV6mXbXtWwBtMl7slY2KJS3Eg3DN/Hu/af1DQHYXAhCi8WyQcXTxCvVqKoQun7VS05JmInGa4XvxUyTZ9Zrh3Fs4UHqw1A1X6NabwPvLLBcCCVuQM4zJpJsRxQ9zd71aHwa8G4xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747724437; c=relaxed/simple;
-	bh=7NxhdigZ82QnVowEcqj++dSX/lzsiiQrLwTIFBW5fE0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sVOaaQPDUHL4tn3PKQCJKca/gPiXPKHyy15vzmz5PU3A/hlvIEhc7W+SFjZN7VXkn2ncNHwvMcIRjIKpqbfZrDRyxOHCn1RcomeSJpyQC/VYseDwiz3KLXi51psGK+N1K9G8NCzjDzksVTI0ddFuddI1IRnHiUgyF+Z8fELvswA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=dGTVK3LK; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-742b614581dso3814309b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 00:00:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1747724435; x=1748329235; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ff9F/0DQJXXOaC1XJzAjuzNhvSsUDESXc6O/jTJ6rOQ=;
-        b=dGTVK3LKrXIw7306sE7sbcHpd/wTL6vrqNDUjGQiDW8L/clLylm7RgfWxgssc36zTY
-         MTePwao5dOclrWqYrQoZe0IpCxmM8DtpNpmsRSos9VQ0HpVjy6/Ha4ea9LSviy2dWzGv
-         nUWiQQCIGP1uBlF08raghpdfcT9lt9bd/TzKBbsaxwg97sDbO6bCK5goQOBIwsVVbYZE
-         vhQZC4rzL2OKjGzoXwrqzktAOG7VUYnNWUYo9cHszwFHmQo34jXBJsrXk9nckuYiOZA5
-         wFuXlLEYEzEpsvr451HCdgM4RtarF5N4thJxLmQWezfAprg80OPAVvYmzCfuM+fiHBG5
-         mszA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747724435; x=1748329235;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ff9F/0DQJXXOaC1XJzAjuzNhvSsUDESXc6O/jTJ6rOQ=;
-        b=mu0G6/bW9fxyrRX8zfvO5Fx2yAcwjjduWi8etlHngu+QCZ45h7ua+W2rUszHvKQ8CP
-         92Z/IOc4VAHtheacX2jdQLlq3Qa31E/nC4NyTsyXeryuuk4FJxEQ5aqdSx7E6CFwDtlI
-         JGviANfdwthnNOswEpBrLxihTeyakrVu9gMFkjYKrTy1i5eRIRl9TB81t4Mft5oaBfGD
-         6yBB17K+UJ+c7jLnZUNHVyjkeIQHk6typws6l4ap3DjvC2QSdVjJLploSaPDxrmqw1CD
-         tbRh7k52yKPTLYjUjdYmEzz+WdxwkW+DpeIjf5QGgwMpZGkfu0xNew4heb1sxSHHO0M5
-         HSag==
-X-Forwarded-Encrypted: i=1; AJvYcCWSzqrdI5qs0CNXXUWSWPwlWHk7r2ka0rn9yEMZyEx84VfD775keRBdpiUv+99swvumjNudLokxe3/0558=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBD8sEPXEdemfZ1aCFO4U/+ExOZ7vQpu9js5yBU0Km9SBe51Ih
-	phsOTvlI5DqN52/P/xC5dpSY5xCdJ4B48nitWphx3CYPQrVZGco17ALbHyyz/VpNAok=
-X-Gm-Gg: ASbGncuUtXWYw0xKQog0hXYydWqmqEb4TsbpjXNtyISxMJwfC/crl8sQidZ+fx4vA+j
-	cUgUQjqfIhzf92WpALu7XZWkMkk3GtEpGR9qw8v6Pzu1qcMEkf7ST5UDFPvXUr0NjSpB+X1mN4O
-	XBaSMxPoQvh7AEGQ0hQURThqTa7LdELrIDAphpTfbGidlz2rzrxtkS4Bi1+foPD98FXTLiAGpo9
-	Vm1z9L2zuQpvn/1+dXfBWomoGs01tfC78C27o1tkdw5z4rkGArrTCyX0Qjf2lxSeA8BWivVbGvx
-	iTPrg5YKt6uDeokKHFTcjJYcQ186gJU9ZAiS+G7Ik6V2jQ23iya8ZPbXksQm3ILS2050S6rlByp
-	fCw==
-X-Google-Smtp-Source: AGHT+IE2UUD5R4s/WvPiXuoKLU/Iu/dG3zcz5OVyolIzRJsK9e7kKmhBl42IJ6kwx4IBjwk0q4Rmeg==
-X-Received: by 2002:a05:6a21:1089:b0:1f5:6b36:f56c with SMTP id adf61e73a8af0-2170ce39a55mr20972295637.39.1747724434707;
-        Tue, 20 May 2025 00:00:34 -0700 (PDT)
-Received: from localhost.localdomain ([203.208.189.8])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eaf5a441sm7325968a12.8.2025.05.20.00.00.31
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 20 May 2025 00:00:34 -0700 (PDT)
-From: lizhe.67@bytedance.com
-To: alex.williamson@redhat.com
-Cc: kvm@vger.kernel.org,
+	s=arc-20240116; t=1747724515; c=relaxed/simple;
+	bh=YJQouvoFwkbY/fOp2JD1wYmXX/okQ9EKMNpr2jY70WA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p8lcefW1Zi2seyoMA6Y92fjVQco0dXewUbvPbgSJgdV8z5E/6OYSupItKcTA4+LoSg9ErO9IC/B+BuTOytWfrvvANbOiqX6UBT1J3gZd1f1hKV0S1qAhuWDU97XvPs2W2VvnXhH+jv3Pb5X6eP2BW/CiKuh6rCL+a4nt0AI16Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=LUPBYq9j; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=MS
+	evaegFQzBWfa3FzRcJhjO3v80wKbxaXbg9gIgT2c4=; b=LUPBYq9jBxRMmJfNYi
+	PCqG1CMAt6bxU23EME7J4m8lNRxwAZS9bstyVak7pXItaKn9khk+2roif72aGJtq
+	L0ZVhmkz4o1B59lfEw2Otp9gAjsMRYxtm7UoiUkgYxIMULGO33CWVUKiDWo4HaXG
+	RwW2WHItTMV8QuSLWip3l4nac=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wAHjbyoKCxoPgjwCg--.9174S2;
+	Tue, 20 May 2025 15:00:57 +0800 (CST)
+From: oushixiong1025@163.com
+To: Liviu Dudau <liviu.dudau@arm.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	lizhe.67@bytedance.com,
-	muchun.song@linux.dev
-Subject: [PATCH v3] vfio/type1: optimize vfio_pin_pages_remote() for huge folio
-Date: Tue, 20 May 2025 15:00:20 +0800
-Message-ID: <20250520070020.6181-1-lizhe.67@bytedance.com>
-X-Mailer: git-send-email 2.45.2
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: [PATCH] drm/arm/komeda: Register sysfs groups through driver core
+Date: Tue, 20 May 2025 15:00:46 +0800
+Message-Id: <20250520070046.340122-1-oushixiong1025@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,148 +57,191 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAHjbyoKCxoPgjwCg--.9174S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3JF4DZFy3Jw1DuF13KFy7Awb_yoW7urW8pF
+	4xJa4UWrWUGF13C3yUCa18WF90kwn3K3yfJrW8uw1Ska42ya4ktFykZ34qyrWUJFZ5Cr17
+	JFs0qFWj9rZakr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnVyxUUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/xtbBYxtTD2gsIzaDNwAAsB
 
-From: Li Zhe <lizhe.67@bytedance.com>
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
-When vfio_pin_pages_remote() is called with a range of addresses that
-includes huge folios, the function currently performs individual
-statistics counting operations for each page. This can lead to significant
-performance overheads, especially when dealing with large ranges of pages.
+[WHY] If the call to sysfs_create_group() fails, there is no need to
+      call function sysfs_remove_group().
+      But if calling sysfs_create_group() fails, it will go to label
+      'err_cleanup:' in komeda_dev_create(), and it will call
+      komeda_dev_destroy() laterly.
 
-This patch optimize this process by batching the statistics counting
-operations.
+[HOW] Register sysfs groups through driver core.
 
-The performance test results for completing the 8G VFIO IOMMU DMA mapping,
-obtained through trace-cmd, are as follows. In this case, the 8G virtual
-address space has been mapped to physical memory using hugetlbfs with
-pagesize=2M.
-
-Before this patch:
-funcgraph_entry:      # 33813.703 us |  vfio_pin_map_dma();
-
-After this patch:
-funcgraph_entry:      # 15635.055 us |  vfio_pin_map_dma();
-
-Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
 ---
-Changelogs:
+ .../gpu/drm/arm/display/komeda/komeda_dev.c   | 60 -------------------
+ .../gpu/drm/arm/display/komeda/komeda_drv.c   | 51 ++++++++++++++++
+ 2 files changed, 51 insertions(+), 60 deletions(-)
 
-v2->v3:
-- Code simplification.
-- Fix some issues in comments.
-
-v1->v2:
-- Fix some issues in comments and formatting.
-- Consolidate vfio_find_vpfn_range() and vfio_find_vpfn().
-- Move the processing logic for huge folio into the while(true) loop
-  and use a variable with a default value of 1 to indicate the number
-  of consecutive pages.
-
-v2 patch: https://lore.kernel.org/all/20250519070419.25827-1-lizhe.67@bytedance.com/
-v1 patch: https://lore.kernel.org/all/20250513035730.96387-1-lizhe.67@bytedance.com/
-
- drivers/vfio/vfio_iommu_type1.c | 48 +++++++++++++++++++++++++--------
- 1 file changed, 37 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 0ac56072af9f..48f06ce0e290 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -319,15 +319,22 @@ static void vfio_dma_bitmap_free_all(struct vfio_iommu *iommu)
- /*
-  * Helper Functions for host iova-pfn list
-  */
--static struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
-+
-+/*
-+ * Find the first vfio_pfn that overlapping the range
-+ * [iova, iova + PAGE_SIZE * npage) in rb tree.
-+ */
-+static struct vfio_pfn *vfio_find_vpfn_range(struct vfio_dma *dma,
-+		dma_addr_t iova, unsigned long npage)
- {
- 	struct vfio_pfn *vpfn;
- 	struct rb_node *node = dma->pfn_list.rb_node;
-+	dma_addr_t end_iova = iova + PAGE_SIZE * npage;
- 
- 	while (node) {
- 		vpfn = rb_entry(node, struct vfio_pfn, node);
- 
--		if (iova < vpfn->iova)
-+		if (end_iova <= vpfn->iova)
- 			node = node->rb_left;
- 		else if (iova > vpfn->iova)
- 			node = node->rb_right;
-@@ -337,6 +344,11 @@ static struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
- 	return NULL;
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+index 5ba62e637a61..a285fec3be23 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+@@ -53,58 +53,6 @@ static void komeda_debugfs_init(struct komeda_dev *mdev)
+ 			   &mdev->err_verbosity);
  }
  
-+static inline struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
-+{
-+	return vfio_find_vpfn_range(dma, iova, 1);
-+}
-+
- static void vfio_link_pfn(struct vfio_dma *dma,
- 			  struct vfio_pfn *new)
+-static ssize_t
+-core_id_show(struct device *dev, struct device_attribute *attr, char *buf)
+-{
+-	struct komeda_dev *mdev = dev_to_mdev(dev);
+-
+-	return sysfs_emit(buf, "0x%08x\n", mdev->chip.core_id);
+-}
+-static DEVICE_ATTR_RO(core_id);
+-
+-static ssize_t
+-config_id_show(struct device *dev, struct device_attribute *attr, char *buf)
+-{
+-	struct komeda_dev *mdev = dev_to_mdev(dev);
+-	struct komeda_pipeline *pipe = mdev->pipelines[0];
+-	union komeda_config_id config_id;
+-	int i;
+-
+-	memset(&config_id, 0, sizeof(config_id));
+-
+-	config_id.max_line_sz = pipe->layers[0]->hsize_in.end;
+-	config_id.n_pipelines = mdev->n_pipelines;
+-	config_id.n_scalers = pipe->n_scalers;
+-	config_id.n_layers = pipe->n_layers;
+-	config_id.n_richs = 0;
+-	for (i = 0; i < pipe->n_layers; i++) {
+-		if (pipe->layers[i]->layer_type == KOMEDA_FMT_RICH_LAYER)
+-			config_id.n_richs++;
+-	}
+-	return sysfs_emit(buf, "0x%08x\n", config_id.value);
+-}
+-static DEVICE_ATTR_RO(config_id);
+-
+-static ssize_t
+-aclk_hz_show(struct device *dev, struct device_attribute *attr, char *buf)
+-{
+-	struct komeda_dev *mdev = dev_to_mdev(dev);
+-
+-	return sysfs_emit(buf, "%lu\n", clk_get_rate(mdev->aclk));
+-}
+-static DEVICE_ATTR_RO(aclk_hz);
+-
+-static struct attribute *komeda_sysfs_entries[] = {
+-	&dev_attr_core_id.attr,
+-	&dev_attr_config_id.attr,
+-	&dev_attr_aclk_hz.attr,
+-	NULL,
+-};
+-
+-static struct attribute_group komeda_sysfs_attr_group = {
+-	.attrs = komeda_sysfs_entries,
+-};
+-
+ static int komeda_parse_pipe_dt(struct komeda_pipeline *pipe)
  {
-@@ -681,32 +693,46 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 		 * and rsvd here, and therefore continues to use the batch.
- 		 */
- 		while (true) {
-+			struct folio *folio = page_folio(batch->pages[batch->offset]);
-+			long nr_pages;
+ 	struct device_node *np = pipe->of_node;
+@@ -253,12 +201,6 @@ struct komeda_dev *komeda_dev_create(struct device *dev)
+ 
+ 	clk_disable_unprepare(mdev->aclk);
+ 
+-	err = sysfs_create_group(&dev->kobj, &komeda_sysfs_attr_group);
+-	if (err) {
+-		DRM_ERROR("create sysfs group failed.\n");
+-		goto err_cleanup;
+-	}
+-
+ 	mdev->err_verbosity = KOMEDA_DEV_PRINT_ERR_EVENTS;
+ 
+ 	komeda_debugfs_init(mdev);
+@@ -278,8 +220,6 @@ void komeda_dev_destroy(struct komeda_dev *mdev)
+ 	const struct komeda_dev_funcs *funcs = mdev->funcs;
+ 	int i;
+ 
+-	sysfs_remove_group(&dev->kobj, &komeda_sysfs_attr_group);
+-
+ 	debugfs_remove_recursive(mdev->debugfs_root);
+ 
+ 	if (mdev->aclk)
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_drv.c b/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
+index 358c1512b087..598d2f985dad 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
+@@ -4,6 +4,7 @@
+  * Author: James.Qian.Wang <james.qian.wang@arm.com>
+  *
+  */
++#include <linux/debugfs.h>
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+@@ -20,6 +21,55 @@ struct komeda_drv {
+ 	struct komeda_kms_dev *kms;
+ };
+ 
++static ssize_t
++aclk_hz_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct komeda_dev *mdev = dev_to_mdev(dev);
 +
- 			if (pfn != *pfn_base + pinned ||
- 			    rsvd != is_invalid_reserved_pfn(pfn))
- 				goto out;
- 
-+			/*
-+			 * Note: The current nr_pages does not achieve the optimal
-+			 * performance in scenarios where folio_nr_pages() exceeds
-+			 * batch->capacity. It is anticipated that future enhancements
-+			 * will address this limitation.
-+			 */
-+			nr_pages = min((long)batch->size, folio_nr_pages(folio) -
-+						folio_page_idx(folio, batch->pages[batch->offset]));
-+			if (nr_pages > 1 && vfio_find_vpfn_range(dma, iova, nr_pages))
-+				nr_pages = 1;
++	return sysfs_emit(buf, "%lu\n", clk_get_rate(mdev->aclk));
++}
++static DEVICE_ATTR_RO(aclk_hz);
 +
- 			/*
- 			 * Reserved pages aren't counted against the user,
- 			 * externally pinned pages are already counted against
- 			 * the user.
- 			 */
--			if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-+			if (!rsvd && (nr_pages > 1 || !vfio_find_vpfn(dma, iova))) {
- 				if (!dma->lock_cap &&
--				    mm->locked_vm + lock_acct + 1 > limit) {
-+				    mm->locked_vm + lock_acct + nr_pages > limit) {
- 					pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n",
- 						__func__, limit << PAGE_SHIFT);
- 					ret = -ENOMEM;
- 					goto unpin_out;
- 				}
--				lock_acct++;
-+				lock_acct += nr_pages;
- 			}
- 
--			pinned++;
--			npage--;
--			vaddr += PAGE_SIZE;
--			iova += PAGE_SIZE;
--			batch->offset++;
--			batch->size--;
-+			pinned += nr_pages;
-+			npage -= nr_pages;
-+			vaddr += PAGE_SIZE * nr_pages;
-+			iova += PAGE_SIZE * nr_pages;
-+			batch->offset += nr_pages;
-+			batch->size -= nr_pages;
- 
- 			if (!batch->size)
- 				break;
++static ssize_t
++config_id_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct komeda_dev *mdev = dev_to_mdev(dev);
++	struct komeda_pipeline *pipe = mdev->pipelines[0];
++	union komeda_config_id config_id;
++	int i;
++
++	memset(&config_id, 0, sizeof(config_id));
++
++	config_id.max_line_sz = pipe->layers[0]->hsize_in.end;
++	config_id.n_pipelines = mdev->n_pipelines;
++	config_id.n_scalers = pipe->n_scalers;
++	config_id.n_layers = pipe->n_layers;
++	config_id.n_richs = 0;
++	for (i = 0; i < pipe->n_layers; i++) {
++		if (pipe->layers[i]->layer_type == KOMEDA_FMT_RICH_LAYER)
++			config_id.n_richs++;
++	}
++	return sysfs_emit(buf, "0x%08x\n", config_id.value);
++}
++static DEVICE_ATTR_RO(config_id);
++
++static ssize_t
++core_id_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct komeda_dev *mdev = dev_to_mdev(dev);
++
++	return sysfs_emit(buf, "0x%08x\n", mdev->chip.core_id);
++}
++static DEVICE_ATTR_RO(core_id);
++
++static struct attribute *komeda_sysfs_attrs[] = {
++	&dev_attr_aclk_hz.attr,
++	&dev_attr_config_id.attr,
++	&dev_attr_core_id.attr,
++	NULL,
++};
++ATTRIBUTE_GROUPS(komeda_sysfs);
++
+ struct komeda_dev *dev_to_mdev(struct device *dev)
+ {
+ 	struct komeda_drv *mdrv = dev_get_drvdata(dev);
+@@ -158,6 +208,7 @@ static struct platform_driver komeda_platform_driver = {
+ 	.driver	= {
+ 		.name = "komeda",
+ 		.of_match_table	= komeda_of_match,
++		.dev_groups	= komeda_sysfs_groups,
+ 		.pm = &komeda_pm_ops,
+ 	},
+ };
 -- 
-2.20.1
+2.17.1
 
 
