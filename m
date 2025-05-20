@@ -1,89 +1,107 @@
-Return-Path: <linux-kernel+bounces-655741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F76ABDBBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:15:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ADCBABDB8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3A6E8A58E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:08:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66C67188AE7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427BB24677A;
-	Tue, 20 May 2025 14:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D51C248F76;
+	Tue, 20 May 2025 14:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhPfhdPm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OlXkWcXM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4B8242907;
-	Tue, 20 May 2025 14:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA58F2475E3;
+	Tue, 20 May 2025 14:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747750067; cv=none; b=W8OySsTHkB+vreWixAHZkko0ZhqHAby1CdLs63hrSW+CyaftliwmUNhI1qAwovAPTSfsh3M98TWDaThHKX4A8brVeyMNKzzCj1QAI9S6DOci3YZOUbXW5Dqovb8MU8P8AYQ2kVKMdpxGDlRb7+nAoyRtIjums2L4ay/y9CmzvPM=
+	t=1747750114; cv=none; b=PiV7dTc6qPeuuYTWGG6QiUoQm3SqnvQJGWlq4E8MJSoXoqpUD+LjyONHkR9u+DLx/VbPMFEpByfjuVIJ4KA9rVxiGtfOOpscHEfdAd/Cadlt03ySuCsFvRiGxlllwJ9Ypi1Z5zgIfjxefpuK1xC/6eVhE9DntLbtkiNn5fSWec8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747750067; c=relaxed/simple;
-	bh=LSCg1WtZiijRBQPQNeV6HQ3meIGHPHi5xW3N/tJxwKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jfrv2iau0lDUu8vtxJQszOR++05fnvPjC9KqzLAnP56xvp2C+geJQ02BEVYW3OyJrZFyZVeT12vHnQyXxsXGcivLDUhKDV2XQoOLfBVDHr0+Ay34SnTgIloykLtA3QUzO5LANyN5JQ0dZQf+QhGU0oOFH27islrWaJkObQ2YYdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhPfhdPm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B65C4CEE9;
-	Tue, 20 May 2025 14:07:46 +0000 (UTC)
+	s=arc-20240116; t=1747750114; c=relaxed/simple;
+	bh=+VIZI0thf+/H5abY0c5Mvtc6jv5kMqAoJ4uZft755Eo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GGPvMxCkaoGe5tYhzqyIQFj+pYSo3VUACdmOumREpGzkQGWbPJnYjHexguejTdCMAcR+ZcjEk2fb6Labi2GIgVDCfRI/YbKLl2KAkgNW1/cFYTYl97joAuOR1AdJrs4LquYU3M3NO5owf9j0YeUFuGy98v5+d+Rnx+RH55esONQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OlXkWcXM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A97B8C4CEEA;
+	Tue, 20 May 2025 14:08:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747750067;
-	bh=LSCg1WtZiijRBQPQNeV6HQ3meIGHPHi5xW3N/tJxwKY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FhPfhdPmp2r2S7/maxTkCUhqOKs6wqRP2tJXDr41s4uQ30rwwCfFCHh14mB777rua
-	 6me++dEJQX7EPUHHuF0JwWs2C0SF9MEMKaK2D4rM9MvCJozy4od20TpghXrlhnjS81
-	 e+SJJ4myQfzFDM6VdI67ETDzz5f5+UeEGqOYtx3cSR/ypMwwQHpGxT5ns1OVHx6Gze
-	 TBNdCtksbBTjCKuPlS8n8viFJJNT0JpcG00EV4IcwvUSZvT2K559/FFZc9tJrAgkeD
-	 Fxkx1gV9RNVMnuiK0hxR4ifjyKCyFp3YQPirQ1RNPjrC4IQNymJSdp5j0AcAiKC4da
-	 PhDwwv6/Ads/g==
-Date: Tue, 20 May 2025 10:07:45 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Harry Wentland <harry.wentland@amd.com>, sunpeng.li@amd.com,
-	christian.koenig@amd.com, airlied@gmail.com, simona@ffwll.ch,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH AUTOSEL 6.6 229/294] drm/amd/display/dc: enable oem i2c
- support for DCE 12.x
-Message-ID: <aCyMsX3_LQXsUuE4@lappy>
-References: <20250505225634.2688578-1-sashal@kernel.org>
- <20250505225634.2688578-229-sashal@kernel.org>
- <CADnq5_OGPGwbKfFSP6BpNAhtOXnZ+L3Vmga9TxLDAAub=bu9JA@mail.gmail.com>
+	s=k20201202; t=1747750113;
+	bh=+VIZI0thf+/H5abY0c5Mvtc6jv5kMqAoJ4uZft755Eo=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=OlXkWcXMskGq4RZJqDGaZBNai+ftFCMooxjzQOkWmwiNpNW1Odniq+/fGoT7vq8Lz
+	 5fXY4CtT5phi32yZ3xZG6M7ncfv+CUxHV6fi4iLphDkfmjdzvy/PhUHvClGE8XwX+d
+	 U/eWQ7m5z9T4dF1q2RCgS4L+Vp/d7qsv7utx+DaoqV51K/ANqrBi6C19UubAPY71K+
+	 3kIm7jPrniZX1bVFhEj3oPqHiSQJs5d1Lf6SS6FF/fqmxElHG7qjvNScjF3WRDg4ik
+	 69M5eFMUQtXM80+GympQicDDPcEZJtFWNe8cIqD04/pPu1qIWWVSf8QepuZRWNOvTV
+	 s0aHBfIlORhcA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B310C3DA6D;
+	Tue, 20 May 2025 14:08:33 +0000 (UTC)
+From: Shashank Balaji via B4 Relay <devnull+shashank.mahadasyam.sony.com@kernel.org>
+Date: Tue, 20 May 2025 23:07:45 +0900
+Subject: [PATCH v2 1/3] cgroup, docs: be specific about bandwidth control
+ of rt processes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADnq5_OGPGwbKfFSP6BpNAhtOXnZ+L3Vmga9TxLDAAub=bu9JA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250520-rt-and-cpu-controller-doc-v2-1-70a2b6a1b703@sony.com>
+References: <20250520-rt-and-cpu-controller-doc-v2-0-70a2b6a1b703@sony.com>
+In-Reply-To: <20250520-rt-and-cpu-controller-doc-v2-0-70a2b6a1b703@sony.com>
+To: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+ =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Shinya Takumi <shinya.takumi@sony.com>, 
+ Shashank Balaji <shashank.mahadasyam@sony.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1072;
+ i=shashank.mahadasyam@sony.com; h=from:subject:message-id;
+ bh=0fu39uClw6bO5Fx9qm8IAuu7HAJELLYW1+XN2jpeVRc=;
+ b=owGbwMvMwCV2mPH4Ij++H1mMp9WSGDJ0eu4ryTSGmj/9K5m283rhgp2TvHbPr+kp3S/tf6D7j
+ nncxO08HaUsDGJcDLJiiizvZNZdOGhl2fT1OMM3mDmsTCBDGLg4BWAinN6MDBOnHXDfpefzryzv
+ 5t+ZQYxia9t3/2g32+9gO6vhuX3oyURGhl8vA09LbbSKufD17pmXV5czV30MUbOen2am4vw6rUl
+ rJSMA
+X-Developer-Key: i=shashank.mahadasyam@sony.com; a=openpgp;
+ fpr=EE1CAED0C13A3982F5C700F6C301C7A24E0EF86A
+X-Endpoint-Received: by B4 Relay for shashank.mahadasyam@sony.com/default
+ with auth_id=354
+X-Original-From: Shashank Balaji <shashank.mahadasyam@sony.com>
+Reply-To: shashank.mahadasyam@sony.com
 
-On Tue, May 06, 2025 at 11:02:34AM -0400, Alex Deucher wrote:
->On Mon, May 5, 2025 at 7:04 PM Sasha Levin <sashal@kernel.org> wrote:
->>
->> From: Alex Deucher <alexander.deucher@amd.com>
->>
->> [ Upstream commit 2ed83f2cc41e8f7ced1c0610ec2b0821c5522ed5 ]
->>
->> Use the value pulled from the vbios just like newer chips.
->>
->> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
->> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->
->This is a new feature not a bug fix and this change only makes sense
->with the other changes in kernel 6.15.
+From: Shashank Balaji <shashank.mahadasyam@sony.com>
 
-I'll drop it, thanks!
+Signed-off-by: Shashank Balaji <shashank.mahadasyam@sony.com>
+---
+ Documentation/admin-guide/cgroup-v2.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 1a16ce68a4d7f6f8c9070be89c4975dbfa79077e..3b3685736fe9b12e96a273248dfb4a8c62a4b698 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1076,7 +1076,7 @@ cpufreq governor about the minimum desired frequency which should always be
+ provided by a CPU, as well as the maximum desired frequency, which should not
+ be exceeded by a CPU.
+ 
+-WARNING: cgroup2 cpu controller doesn't yet fully support the control of
++WARNING: cgroup2 cpu controller doesn't yet support the (bandwidth) control of
+ realtime processes. For a kernel built with the CONFIG_RT_GROUP_SCHED option
+ enabled for group scheduling of realtime processes, the cpu controller can only
+ be enabled when all RT processes are in the root cgroup. Be aware that system
 
 -- 
-Thanks,
-Sasha
+2.43.0
+
+
 
