@@ -1,216 +1,162 @@
-Return-Path: <linux-kernel+bounces-656229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736B8ABE338
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:51:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C05DABE32D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0E511BC2415
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:51:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 198EE3B903B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2094A283FC0;
-	Tue, 20 May 2025 18:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C143280011;
+	Tue, 20 May 2025 18:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="GvjYfsx+"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bwhZZdYD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53E9280019;
-	Tue, 20 May 2025 18:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747767053; cv=pass; b=fb/Ggxl41Ij1TYu3kdCERCb2Gka3f5IjYfR+K0u+bDofqbDGAEKqiFxesSQr2MsemnzQ0OA3dxJN0iyBTi2WQ3HbqqkWSgtY3IgHar0B6brc//Te5YYOJHCpb9+gzYkGoZ20UGbzOM2Qxbm0SYcsCkEJC45RwHHhUvZ7qEf+46Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747767053; c=relaxed/simple;
-	bh=YV1yofmzk6BRPg7IlpbgT7OEW0ivlDiHh07HmOBrTF8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JwePjRq2OIONRYCFv7uODzzQ49rJvzIc+l2yR+C9P8z4oPyuwyLwH3MQLvNSt6tZOj3PF7tejeHVeOTKUN17MJ1SJEgXRUAwIMTrkmJ6aSQ7DyGC11sWSh0xhiy09oGXqmHrx6f/Vj85ST99SOgfpV6GCDrLCg2I2+uyoGmecMU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=GvjYfsx+; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1747767038; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RGUw8ODNuHBjEdFA8J69cfIu7ncEa5ht6r/4SOWdZUv6DlbInBKy4gvWpKJh11CddyyuZzrwB9bUq7J/qbmUbicik/mTLlWALIza2VexASRetGnfrudGhRAMHk2oHSxNghAqci2alKUcl/okp4FcFlP+jAbZZCUFLqr67MIRuek=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1747767038; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=9NVX9DGWtltArDSsIhCoLb3HU2s5EyD0+aa+l4lHxvk=; 
-	b=JOEy2iXkUISax9rLv4VVTpIofaYNQHZ7d6YqpbGUcDDOPajsGmLLBypb3oSphenGdHeuShguPXU74Sj2qTGlOlLLOfwqHyIL82cBUQlyd4+ocCWJ7fQk0oFSfCBZWYSunnKf5nroIZfEH7OJqS/fmwwRhbHvjhjqpl6BvJ5jeZ8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747767038;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=9NVX9DGWtltArDSsIhCoLb3HU2s5EyD0+aa+l4lHxvk=;
-	b=GvjYfsx+VpE4F/7noSi3CG2q9YkBwTtkhxIvWN9vFHeKaUW79edGpOL88ge1y0RE
-	Wcf7xWEAHOEQTpFjFN1bXuqZ6h7eebTMvvapVX7QKPZSnTufiH+vHLFdgVBjaOqNxkD
-	no/PBrg1Emos0IuNVneESzlEhWQQ8ZgRmjPzvk4Y=
-Received: by mx.zohomail.com with SMTPS id 1747767037706798.1912513861447;
-	Tue, 20 May 2025 11:50:37 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Tue, 20 May 2025 20:50:11 +0200
-Subject: [PATCH v2 4/4] arm64: dts: rockchip: add ROCK 5T device tree
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7DB248F75;
+	Tue, 20 May 2025 18:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747767034; cv=none; b=b1KnUfPnWToR8z3/xo+bHuGXm+UKPITi/rIHXdYIgmMouojM45AsW0N5uCsAIEy9cAfz4ouZCe6gmHFnxmNtuZxXM8OLroIep9Q8Of9nvePWywGc7IBB0UkQMlsrmdm9ITT5k/AwYHhmDdPmQTgzrp1p21n6XEdwE655IjVG1i4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747767034; c=relaxed/simple;
+	bh=4Xz+qUHB2YCNCR2CV7QYNfulgNvPj70zCp9v+dNVwig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BV8TOVabC5hRixJw6XHN6OQyS0IiQnnjadXWbFM/nAPlbd0U5mgHBG0NsZh2BL140pyWoN7gFQNqC7NqMRKQx/AMP6Z9SbcyhiuRa1SpO8rtXjmlKw18zgF3LZ3iajCihlJat8BOcD8T+LrG/cpkCZ07wRXfPDrITwevw4NKaAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bwhZZdYD; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747767033; x=1779303033;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4Xz+qUHB2YCNCR2CV7QYNfulgNvPj70zCp9v+dNVwig=;
+  b=bwhZZdYDBnBQONXGGBqd/VT6CtxKDbiDXMGoBF/xOOUQRl6WvOVbSDUb
+   oKU5Ap77UR1myCMBLuKo2gQNVwNNJZ4lQsSaL9xJEEbVDrKMFCsJR5u5Z
+   2zWNGdq2WmKDDe1XyCcaBBNYVlrQjdNVe1wvVLCU/Vklmj4Rds83A7sN1
+   67agHcTk3eiAGeRWXBgBwDDmPdxDbATTXmiEai8v0T+kX+6no8FLajPLl
+   yD6ShZByd518WBgyQFAckYKBNXpSc1tlu9bpbvygaWsjGDpxcPyLYVG9n
+   7R3vHaGVC20HDg7lJ2ot8pCAJXiYGBH9+ub3vrBJW1gtgiXiVHZHSJis4
+   Q==;
+X-CSE-ConnectionGUID: TjO85QopSf+tZLHcHj/WKA==
+X-CSE-MsgGUID: 6BEDDGCeTuCbUJGoSeW7PA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="59946398"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="59946398"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 11:50:31 -0700
+X-CSE-ConnectionGUID: XEW4GmabSG2u9P81egzzEw==
+X-CSE-MsgGUID: 9Lv+wtraReqXT+hvIqH6Hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="140708012"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 11:50:31 -0700
+Received: from [10.246.136.52] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id CAD4A20B5736;
+	Tue, 20 May 2025 11:50:28 -0700 (PDT)
+Message-ID: <800f99f6-a1bf-41f3-bc65-67fbe4c61368@linux.intel.com>
+Date: Tue, 20 May 2025 14:50:27 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 04/38] perf: Add a EVENT_GUEST flag
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Mingwei Zhang <mizhang@google.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com,
+ "H. Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Yongwei Ma <yongwei.ma@intel.com>,
+ Xiong Zhang <xiong.y.zhang@linux.intel.com>,
+ Dapeng Mi <dapeng1.mi@linux.intel.com>, Jim Mattson <jmattson@google.com>,
+ Sandipan Das <sandipan.das@amd.com>, Zide Chen <zide.chen@intel.com>,
+ Eranian Stephane <eranian@google.com>, Shukla Manali
+ <Manali.Shukla@amd.com>, Nikunj Dadhania <nikunj.dadhania@amd.com>
+References: <20250324173121.1275209-1-mizhang@google.com>
+ <20250324173121.1275209-5-mizhang@google.com> <aCrWqhaID9-b_jmr@google.com>
+ <09ed8cb5-707d-4b13-b230-cff4fab02b72@linux.intel.com>
+ <aCzBDaHdELjiKHfc@google.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <aCzBDaHdELjiKHfc@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250520-add-rock5t-v2-4-1f1971850a20@collabora.com>
-References: <20250520-add-rock5t-v2-0-1f1971850a20@collabora.com>
-In-Reply-To: <20250520-add-rock5t-v2-0-1f1971850a20@collabora.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
 
-The RADXA ROCK 5T is a single board computer quite similar to the ROCK
-5B+, except it has one more PCIe-to-Ethernet controller (at the expense
-of a USB3 port) and a barrel jack for power input instead. Some pins are
-shuffled around as well.
 
-Add a device tree for it.
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- arch/arm64/boot/dts/rockchip/Makefile           |   1 +
- arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts | 105 ++++++++++++++++++++++++
- 2 files changed, 106 insertions(+)
+On 2025-05-20 1:51 p.m., Namhyung Kim wrote:
+>>>> @@ -1089,6 +1094,7 @@ struct bpf_perf_event_data_kern {
+>>>>   */
+>>>>  struct perf_cgroup_info {
+>>>>  	struct perf_time_ctx		time;
+>>>> +	struct perf_time_ctx		timeguest;
+>>>>  	int				active;
+>>>>  };
+>>>>  
+>>>> diff --git a/kernel/events/core.c b/kernel/events/core.c
+>>>> index e38c8b5e8086..7a2115b2c5c1 100644
+>>>> --- a/kernel/events/core.c
+>>>> +++ b/kernel/events/core.c
+>>>> @@ -163,7 +163,8 @@ enum event_type_t {
+>>>>  	/* see ctx_resched() for details */
+>>>>  	EVENT_CPU	= 0x10,
+>>>>  	EVENT_CGROUP	= 0x20,
+>>>> -	EVENT_FLAGS	= EVENT_CGROUP,
+>>>> +	EVENT_GUEST	= 0x40,
+>>> It's not clear to me if this flag is for events to include guests or
+>>> exclude them.  Can you please add a comment?
+>>>
+>> /*
+>>  * There are guest events. The for_each_epc() iteration can
+>>  * skip those PMUs which doesn't support guest events via the
+>>  * MEDIATED_VPMU. It is also used to indicate the start/end of
+>>  * guest events to calculate the guest running time.
+>>  */
+> Thanks for the explanation.  So it's for events with !exclude_guest on
+> host 
 
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 4bf84622db473696f64b157ba94560f476d4f52f..3ae12aad3e56db155dd0754dfcc7e6441d5071b4 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -174,6 +174,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-ep.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-srns.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-plus.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5t.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou-video-demo.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-toybrick-x0.dtb
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..258c7400301d7f77517197ab433946bbfa39cf63
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts
-@@ -0,0 +1,105 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+
-+/dts-v1/;
-+
-+#include "rk3588-rock-5b-5bp-5t.dtsi"
-+
-+/ {
-+	model = "Radxa ROCK 5T";
-+	compatible = "radxa,rock-5t", "rockchip,rk3588";
-+
-+	analog-sound {
-+		compatible = "audio-graph-card";
-+		label = "rk3588-es8316";
-+
-+		widgets = "Microphone", "Mic Jack",
-+		"Headphone", "Headphones";
-+
-+		routing = "MIC2", "Mic Jack",
-+		"Headphones", "HPOL",
-+		"Headphones", "HPOR";
-+
-+		dais = <&i2s0_8ch_p0>;
-+		hp-det-gpios = <&gpio4 RK_PC3 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&hp_detect>;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&led_rgb_b>;
-+
-+		led_rgb_b {
-+			function = LED_FUNCTION_STATUS;
-+			color = <LED_COLOR_ID_BLUE>;
-+			gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+
-+	rfkill {
-+		compatible = "rfkill-gpio";
-+		label = "rfkill-m2-wlan";
-+		radio-type = "wlan";
-+		shutdown-gpios = <&gpio1 RK_PB0 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	vcc3v3_pcie2x1l1: regulator-vcc3v3-pcie2x1l2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc3v3_pcie2x1l1";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		startup-delay-us = <5000>;
-+		vin-supply = <&vcc_3v3_s3>;
-+	};
-+};
-+
-+&hdmi_receiver {
-+	hpd-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
-+&pcie2x1l1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie2_1_rst>;
-+	reset-gpios = <&gpio4 RK_PA2 GPIO_ACTIVE_HIGH>;
-+	vpcie3v3-supply = <&vcc3v3_pcie2x1l1>;
-+	status = "okay";
-+};
-+
-+&pinctrl {
-+	hdmirx {
-+		hdmirx_hpd: hdmirx-5v-detection {
-+			rockchip,pins = <2 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	leds {
-+		led_rgb_b: led-rgb-b {
-+			rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pcie2 {
-+		pcie2_1_rst: pcie2-1-rst {
-+			rockchip,pins = <4 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+		pcie2_0_vcc3v3_en: pcie2-0-vcc-en {
-+			rockchip,pins = <2 RK_PC0 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	sound {
-+		hp_detect: hp-detect {
-+			rockchip,pins = <4 RK_PC3 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+};
-+
-+&vcc3v3_pcie2x1l0 {
-+	gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_HIGH>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie2_0_vcc3v3_en>;
-+	status = "okay";
-+};
+The above "guest events" means that the events in a guest. The KVM
+should only invokes the interface when a guest requires PMU.
 
--- 
-2.49.0
+For the host, for now, only the event with exclude_guest is supported.
+The !exclude_guest event on host must be failed to be created if there
+is a running VM.
 
+and to do some operation only for host-only events on mediated
+> vPMUs.
+
+Yes.
+
+Update the comments as below.
+
+/*
+ * There are events in a guest enabled with MEDIATED_VPMU.
+ * The flag can be used in two places.
+ * - The for_each_epc() iteration can skip those PMUs which
+ *   doesn't support the events in a guest via the MEDIATED_VPMU.
+ * - Indicate the start/end point of the events in a guest.
+ *   The guest running time can be deducted for the
+ *   host-only (exclude_guest) events.
+ */
+
+Thanks,
+Kan
 
