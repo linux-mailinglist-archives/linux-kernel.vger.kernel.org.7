@@ -1,235 +1,181 @@
-Return-Path: <linux-kernel+bounces-656324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA64FABE466
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:05:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5223ABE467
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E04121BC35B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:05:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65ADC4C3E2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E39A288C93;
-	Tue, 20 May 2025 20:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFA328AAE5;
+	Tue, 20 May 2025 20:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h60fgItG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dLhb1sSF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C451288C04;
-	Tue, 20 May 2025 20:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CA728A72E;
+	Tue, 20 May 2025 20:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747771352; cv=none; b=VYTY5pKD0rZOMGsWqkAhw/B2J9QGxBb2D4jNtrxl8Xxq7Swa6dYzH2ffBcVVWhQEB+jktFCCcYx7pTjk6qtMSx1g5xN5gtewdYD6S7lJlI/jK1xlTyAoNlnW+rzXJyjtEn5sfdK/eYT62xDbYhnrRyUqRD4Bq+aIx95W/89vhwI=
+	t=1747771373; cv=none; b=NESBOY/2sHOi56MfdhuQSFWrYJS/LXDkejjCH2EClHLyRes6Gk3QiQqdo0yR1SOs7Po0coCmAD8e4aog2KcWQnrTqKBOWD1QrKk68nKSWXXSv4CTDBkiVffbziKkCYkwsZ9s+OW7wyNEjopozzkbZ64aZq6Ywb5cdFbyjTVBjv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747771352; c=relaxed/simple;
-	bh=gdB/aUFh/EfFdDW3zJSjo8/8Qk4K6QKnp6agplPsdH4=;
+	s=arc-20240116; t=1747771373; c=relaxed/simple;
+	bh=ipb1eCljeIm2r5OkPhtSsa9n7gXb96lo1YYOTFP6ZPU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JLtybYrY4HZDuhkpiwRTQ27HzLxYW0xTJI1LjA3Ys6va7Mp0ZFaONVVKS+EcWBY9EUjMu9spJxBd6Epe8Ap6WFFL0wGelUZft35Wc/qpu6llqYEP2TwvuYu7AULoHPyaLmPHuL9Psh3LGuKMjyzkWoaiCOzPzO6/gYshByN7Pbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h60fgItG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DDA2C4CEE9;
-	Tue, 20 May 2025 20:02:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pGQBPm2HTv0rFEGY8GFlmHjbb+iIsFwSKlz+RvMohBKE8tSgoGBEXPZY92V5ib4J4LFMmYcFMAHh+xhOH2VH/zog4tJ4z10zNzXOVC+VR4+BW5KGtSpw/7kVgUWbjE4l6neuDNKxJY+edlTkn4ybVALGC8mY4cLnmNRU2B9CgYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dLhb1sSF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C612C4CEE9;
+	Tue, 20 May 2025 20:02:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747771351;
-	bh=gdB/aUFh/EfFdDW3zJSjo8/8Qk4K6QKnp6agplPsdH4=;
+	s=k20201202; t=1747771373;
+	bh=ipb1eCljeIm2r5OkPhtSsa9n7gXb96lo1YYOTFP6ZPU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h60fgItGfIxOvadalfWdc89HnSZCZc5zitiLlB9I1kbjYZXWYnXyVW8On1otNd0QB
-	 InUVV/ltU7pYux8T6wVDbWmRbfxJNW9js1LTNuWoOLd2tsBlY5ia1+XK8QwH6poSx9
-	 R6p16ovf2o8fMKugEQm6GPdctTs0RaERTNPTyIQ20FfPKgIviSOfWVFrHSHxOyXVDB
-	 Q+Um+3T1FzBF9A6zAjMrsWEOKPdAMCdl6z+dizRQJSYQEVdMVYULmbleXXa0Y3j56G
-	 m9VlTpVueZqkikflfbRP1QlViR0/DMNqw7euvRZWk0HpfZfKNt60o1inAxX7INCa8K
-	 tnk+xC8WFERKw==
-Date: Tue, 20 May 2025 13:02:29 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: peterz@infradead.org, mingo@redhat.com, irogers@google.com,
-	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, eranian@google.com,
-	ctshao@google.com, tmricht@linux.ibm.com, leo.yan@arm.com
-Subject: Re: [PATCH V3 02/16] perf: Fix the throttle logic for a group
-Message-ID: <aCzf1epMZn20K55q@google.com>
-References: <20250516182853.2610284-1-kan.liang@linux.intel.com>
- <20250516182853.2610284-3-kan.liang@linux.intel.com>
- <aCoynoKRbpnOZ7QE@google.com>
- <8e2c5349-571d-4436-a10e-ae1a50ed6b1f@linux.intel.com>
+	b=dLhb1sSFzls6z4ybonOCIe75fqv5xXE/hup5qinNdeuHoGd8MuPuOzlXXBO9wl/8f
+	 Hh/5LQiTqGwYS7l+HT2NlPKflmOHvkwjZ0E0l5Od8hav8x2u5jTo3wpcu7ms4/xc8Y
+	 rrirDQSHOhDouqRY0ThHP5RPBaQ99RqtIViakrmmw02J0NkyR08Sqgl9x/m34+E38W
+	 ZtLIDsqOJnIEBm9GODFUfpIF0vIBoM6iZNmT7UjcN56ul0EMvOWaMJMq97TVUMWCgO
+	 0AQBNZE275z5UeHLQoyyLzjlXlZvZnkzB+CbngW8H3F5wxFd4Ym1OcUtaqnMUqD9nA
+	 ZQO3bRsWqj1Uw==
+Date: Tue, 20 May 2025 23:02:49 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: linuxppc-dev@lists.ozlabs.org, Peter Huewe <peterhuewe@gmx.de>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	linux-integrity@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Sumit Garg <sumit.garg@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH v5 4/4] tpm/tpm_svsm: support TPM_CHIP_FLAG_SYNC
+Message-ID: <aCzf6aoJAC-IdS_n@kernel.org>
+References: <20250514134630.137621-1-sgarzare@redhat.com>
+ <20250514134630.137621-5-sgarzare@redhat.com>
+ <aCVHQ-LRqHeEVEAW@kernel.org>
+ <CAGxU2F5AsNY5mQPd=qajW1seFYHSYpB0Fa1iuR_f2QavtoB6sA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8e2c5349-571d-4436-a10e-ae1a50ed6b1f@linux.intel.com>
+In-Reply-To: <CAGxU2F5AsNY5mQPd=qajW1seFYHSYpB0Fa1iuR_f2QavtoB6sA@mail.gmail.com>
 
-On Tue, May 20, 2025 at 10:47:21AM -0400, Liang, Kan wrote:
+On Tue, May 20, 2025 at 06:06:50PM +0200, Stefano Garzarella wrote:
+> On Thu, 15 May 2025 at 03:45, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> >
+> > On Wed, May 14, 2025 at 03:46:30PM +0200, Stefano Garzarella wrote:
+> > > From: Stefano Garzarella <sgarzare@redhat.com>
+> > >
+> > > This driver does not support interrupts, and receiving the response is
+> > > synchronous with sending the command.
+> > >
+> > > Enable synchronous send() with TPM_CHIP_FLAG_SYNC, which implies that
+> > > ->send() already fills the provided buffer with a response, and ->recv()
+> > > is not implemented.
+> > >
+> > > Keep using the same pre-allocated buffer to avoid having to allocate
+> > > it for each command. We need the buffer to have the header required by
+> > > the SVSM protocol and the command contiguous in memory.
+> > >
+> > > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> > > ---
+> > > v5:
+> > > - changed order and parameter names to match tpm_try_transmit() [Jarkko]
+> > > v4:
+> > > - reworked commit description [Jarkko]
+> > > ---
+> > >  drivers/char/tpm/tpm_svsm.c | 27 +++++++++++----------------
+> > >  1 file changed, 11 insertions(+), 16 deletions(-)
+> > >
+> > > diff --git a/drivers/char/tpm/tpm_svsm.c b/drivers/char/tpm/tpm_svsm.c
+> > > index 0847cbf450b4..f5ba0f64850b 100644
+> > > --- a/drivers/char/tpm/tpm_svsm.c
+> > > +++ b/drivers/char/tpm/tpm_svsm.c
+> > > @@ -26,37 +26,31 @@ struct tpm_svsm_priv {
+> > >  };
+> > >
+> > >  static int tpm_svsm_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+> > > -                      size_t len)
+> > > +                      size_t cmd_len)
+> > >  {
+> > >       struct tpm_svsm_priv *priv = dev_get_drvdata(&chip->dev);
+> > >       int ret;
+> > >
+> > > -     ret = svsm_vtpm_cmd_request_fill(priv->buffer, 0, buf, len);
+> > > +     ret = svsm_vtpm_cmd_request_fill(priv->buffer, 0, buf, cmd_len);
+> > >       if (ret)
+> > >               return ret;
+> > >
+> > >       /*
+> > >        * The SVSM call uses the same buffer for the command and for the
+> > > -      * response, so after this call, the buffer will contain the response
+> > > -      * that can be used by .recv() op.
+> > > +      * response, so after this call, the buffer will contain the response.
+> > > +      *
+> > > +      * Note: we have to use an internal buffer because the device in SVSM
+> > > +      * expects the svsm_vtpm header + data to be physically contiguous.
+> > >        */
+> > > -     return snp_svsm_vtpm_send_command(priv->buffer);
+> > > -}
+> > > -
+> > > -static int tpm_svsm_recv(struct tpm_chip *chip, u8 *buf, size_t len)
+> > > -{
+> > > -     struct tpm_svsm_priv *priv = dev_get_drvdata(&chip->dev);
+> > > +     ret = snp_svsm_vtpm_send_command(priv->buffer);
+> > > +     if (ret)
+> > > +             return ret;
+> > >
+> > > -     /*
+> > > -      * The internal buffer contains the response after we send the command
+> > > -      * to SVSM.
+> > > -      */
+> > > -     return svsm_vtpm_cmd_response_parse(priv->buffer, buf, len);
+> > > +     return svsm_vtpm_cmd_response_parse(priv->buffer, buf, bufsiz);
+> > >  }
+> > >
+> > >  static struct tpm_class_ops tpm_chip_ops = {
+> > >       .flags = TPM_OPS_AUTO_STARTUP,
+> > > -     .recv = tpm_svsm_recv,
+> > >       .send = tpm_svsm_send,
+> > >  };
+> > >
+> > > @@ -85,6 +79,7 @@ static int __init tpm_svsm_probe(struct platform_device *pdev)
+> > >
+> > >       dev_set_drvdata(&chip->dev, priv);
+> > >
+> > > +     chip->flags |= TPM_CHIP_FLAG_SYNC;
+> > >       err = tpm2_probe(chip);
+> > >       if (err)
+> > >               return err;
+> > > --
+> > > 2.49.0
+> > >
+> > >
+> >
+> > I can pick this for 6.16.
 > 
-> 
-> On 2025-05-18 3:18 p.m., Namhyung Kim wrote:
-> > Hi Kan,
-> > 
-> > On Fri, May 16, 2025 at 11:28:39AM -0700, kan.liang@linux.intel.com wrote:
-> >> From: Kan Liang <kan.liang@linux.intel.com>
-> >>
-> >> The current throttle logic doesn't work well with a group, e.g., the
-> >> following sampling-read case.
-> >>
-> >> $ perf record -e "{cycles,cycles}:S" ...
-> >>
-> >> $ perf report -D | grep THROTTLE | tail -2
-> >>             THROTTLE events:        426  ( 9.0%)
-> >>           UNTHROTTLE events:        425  ( 9.0%)
-> >>
-> >> $ perf report -D | grep PERF_RECORD_SAMPLE -a4 | tail -n 5
-> >> 0 1020120874009167 0x74970 [0x68]: PERF_RECORD_SAMPLE(IP, 0x1):
-> >> ... sample_read:
-> >> .... group nr 2
-> >> ..... id 0000000000000327, value 000000000cbb993a, lost 0
-> >> ..... id 0000000000000328, value 00000002211c26df, lost 0
-> >>
-> >> The second cycles event has a much larger value than the first cycles
-> >> event in the same group.
-> >>
-> >> The current throttle logic in the generic code only logs the THROTTLE
-> >> event. It relies on the specific driver implementation to disable
-> >> events. For all ARCHs, the implementation is similar. Only the event is
-> >> disabled, rather than the group.
-> >>
-> >> The logic to disable the group should be generic for all ARCHs. Add the
-> >> logic in the generic code. The following patch will remove the buggy
-> >> driver-specific implementation.
-> >>
-> >> The throttle only happens when an event is overflowed. Stop the entire
-> >> group when any event in the group triggers the throttle.
-> >> The MAX_INTERRUPTS is set to all throttle events.
-> >>
-> >> The unthrottled could happen in 3 places.
-> >> - event/group sched. All events in the group are scheduled one by one.
-> >>   All of them will be unthrottled eventually. Nothing needs to be
-> >>   changed.
-> >> - The perf_adjust_freq_unthr_events for each tick. Needs to restart the
-> >>   group altogether.
-> >> - The __perf_event_period(). The whole group needs to be restarted
-> >>   altogether as well.
-> >>
-> >> With the fix,
-> >> $ sudo perf report -D | grep PERF_RECORD_SAMPLE -a4 | tail -n 5
-> >> 0 3573470770332 0x12f5f8 [0x70]: PERF_RECORD_SAMPLE(IP, 0x2):
-> >> ... sample_read:
-> >> .... group nr 2
-> >> ..... id 0000000000000a28, value 00000004fd3dfd8f, lost 0
-> >> ..... id 0000000000000a29, value 00000004fd3dfd8f, lost 0
-> > 
-> > Thanks for working on this!
-> > 
-> >>
-> >> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> >> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> >> ---
-> >>  kernel/events/core.c | 60 ++++++++++++++++++++++++++++++++------------
-> >>  1 file changed, 44 insertions(+), 16 deletions(-)
-> >>
-> >> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> >> index af78ec118e8f..52490c2ce45b 100644
-> >> --- a/kernel/events/core.c
-> >> +++ b/kernel/events/core.c
-> >> @@ -2739,6 +2739,39 @@ void perf_event_disable_inatomic(struct perf_event *event)
-> >>  static void perf_log_throttle(struct perf_event *event, int enable);
-> >>  static void perf_log_itrace_start(struct perf_event *event);
-> >>  
-> >> +static void perf_event_unthrottle(struct perf_event *event, bool start)
-> >> +{
-> >> +	event->hw.interrupts = 0;
-> >> +	if (start)
-> >> +		event->pmu->start(event, 0);
-> >> +	perf_log_throttle(event, 1);
-> >> +}
-> >> +
-> >> +static void perf_event_throttle(struct perf_event *event)
-> >> +{
-> >> +	event->pmu->stop(event, 0);
-> >> +	event->hw.interrupts = MAX_INTERRUPTS;
-> >> +	perf_log_throttle(event, 0);
-> >> +}
-> >> +
-> >> +static void perf_event_unthrottle_group(struct perf_event *event, bool skip_start_event)
-> >> +{
-> >> +	struct perf_event *sibling, *leader = event->group_leader;
-> >> +
-> >> +	perf_event_unthrottle(leader, skip_start_event ? leader != event : true);
-> >> +	for_each_sibling_event(sibling, leader)
-> >> +		perf_event_unthrottle(sibling, skip_start_event ? sibling != event : true);
-> > 
-> > This will add more PERF_RECORD_THROTTLE records for sibling events.
-> 
-> Yes
-> 
-> > Maybe we can generate it for the actual target event only?
-> 
-> The current code cannot track the actual target event for unthrottle.
-> Because the MAX_INTERRUPTS are set for all events when event_throttle.
+> Great, thanks!
 
-Right.
+Can you rebase this on top of my next branch and send one more version
+of the series (fake ancestor crap)?
 
 > 
-> But I think we can only add a PERF_RECORD_THROTTLE record for the leader
-> event, which can reduce the number of THROTTLE records.
-
-Sounds good.
-
+> Stefano
 > 
-> The sample right after the THROTTLE record must be generated by the
-> actual target event. I think it should be good enough for the perf tool
-> to locate the event.
 
-IIRC perf tool doesn't track which event is throttled, but yeah, it'd be
-possible to use the next sample to locate it.
-
-> 
-> I will add the below patch as a separate improvement in V4.
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 52490c2ce45b..cd559501cfbd 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -2744,14 +2744,16 @@ static void perf_event_unthrottle(struct
-> perf_event *event, bool start)
->   	event->hw.interrupts = 0;
->   	if (start)
->   	event->pmu->start(event, 0);
-> -	perf_log_throttle(event, 1);
-> +	if (event == event->group_leader)
-> +		perf_log_throttle(event, 1);
->   }
-> 
->   static void perf_event_throttle(struct perf_event *event)
->   {
->   	event->pmu->stop(event, 0);
->   	event->hw.interrupts = MAX_INTERRUPTS;
-> -	perf_log_throttle(event, 0);
-> +	if (event == event->group_leader)
-> +		perf_log_throttle(event, 0);
->   }
-
-Looks good.
-
-> 
-> 
-> > 
-> > Also the condition for skip_start_event is if it's a freq event.
-> > I think we can skip pmu->start() if the sibling is also a freq event.
-> 
-> The skip_start_event is if it will be start later separately. It intends
-> to avoid the double start.
-> 
-> In the perf_adjust_freq_unthr_events(), it will only adjust and start
-> the leader event, not group. If we skip pmu->start() for a freq sibling
-> event, it will not start until the next context switch.
-
-Oh, I missed that it only has leaders in the active list.
-
-Thanks,
-Namhyung
-
+BR, Jarkko
 
