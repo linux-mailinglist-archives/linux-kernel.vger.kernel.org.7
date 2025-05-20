@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-655009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C7AABCF8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:42:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1AEABCFAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7B1917E06D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:42:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D71067A7FFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB9925D8FC;
-	Tue, 20 May 2025 06:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4F2262FD4;
+	Tue, 20 May 2025 06:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zsh3YVpR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HoATP6Us"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8FA25D1E3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD89525D8E2
 	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 06:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747723316; cv=none; b=RSuMF5TzT7OEYB7rBPkXy771t3qODl2uLuSuCnBgyECDr4vNXGL1tPodh8zCZja8XFovXBoOy/oaRcdFdYgKCdi+OahHQ8GwNzWFt3HhCq7YB+tEPPZNabAmqTIZJysSB+UlEn3JsuEpPGgh52JtInlqJYE4W0NxED2dHqZbkq4=
+	t=1747723316; cv=none; b=RJBZSz0V/TOEB4bjDNK87GwX7464tPB6y6XmqdpfeM3AvwEYuYg2Ij8tBIh1I7vDkv9u8MtvxTpCAUPJxP/W2/rlx9BEuAQrO5vOcSoADikggkQGsNIYo8655tqpZa7yAls+RUNZO1ngYgWIRLyguaM6kGwGZ10Hdh/qJhCt6y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747723316; c=relaxed/simple;
-	bh=iqKzCLpBXkIFI6v1NlURAzof90ZSGexhmC5aANXLHhQ=;
+	bh=/y0hWOJtiHnkfhkc+ZKW6EBO35Ljb5z1ppUMaWzh3GM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FYO58YMZ2WgB9DBheE3Lk4dTPyazrh7WDOtt2J8Of/aza0Zug8BCn711JOhN8FIyzOqyZLnp+tzNrHtSdO/tkKvjdp6MPqC9xAfTpyCPGdcMsZ5MLGCvyNzhtAWGnNE+aSUdP3Mpao7AS+QTA6JVi5IVqIKeIotYCoD529PBSxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zsh3YVpR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E38D1C4CEF1;
-	Tue, 20 May 2025 06:41:55 +0000 (UTC)
+	 MIME-Version; b=piiRrA1Q2t9GTheDgNXs86PtV+IqCXaqP4AWqWoihM8jn4MqQF7lBuvhgjMdhJqJDjwMcmdRwruHCtR3J/E/AZxoiLP1xnFMM+puGSDlB7etjXDK2to1dVnE9nWXxK77oAi69isGWBQX1r0jaYxgdugagmWot9T3tLyVLx8iWac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HoATP6Us; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04252C4CEF6;
+	Tue, 20 May 2025 06:41:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747723315;
-	bh=iqKzCLpBXkIFI6v1NlURAzof90ZSGexhmC5aANXLHhQ=;
+	s=k20201202; t=1747723316;
+	bh=/y0hWOJtiHnkfhkc+ZKW6EBO35Ljb5z1ppUMaWzh3GM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Zsh3YVpROz7e/Tngh+YeDT3xZVCwnjK2TUXZRoPYHJY7o+q8NYidLmJPB8IXOR3FS
-	 rViwrVk5lrPE4kz1VyphGhxslKMGV0qiyVzKIDmVJrxT0YVfnLzquxUEd1fBImwnMB
-	 a2NSBgcgTch81jkoIrVsBYeCL5NYAEChdIc3Dr8GCtxW6rucwthIeahO3lFe7QpC0l
-	 Yo67i5mT6txjIAu5dxdJ1lOUyggVlKoTMKcBguYATwkTbULxmW0LxA3HmZJ890wet8
-	 gASrUNF7K0BOWRSzS7uk+lDjm1qcQ6iXWz4M/oKalVGMI+Tsaswkus0UdA7eoGghhg
-	 OTtQZ5l+Sg7Wg==
+	b=HoATP6UsVaKXotJ7Wn/Kg6cxq93zhSq1hvlQqDtJbgEd0dxgGTWWfG1WluKQu3L1r
+	 A9yTO7fIG4AEYNsoMSAye1l5T/a5WvVmdXNZV23TCajwx2dXoZTcscTBQFJu3esuj3
+	 Njz5dhMvS+Pd2MScr8234tlVQmGf2QuXblMNRcpOCYMLFZlPOVH/XLInJOfs12DhdH
+	 8aHN1oi6/E0l3cru08tWpBkTAWOcybULdnWJ+ig+3gqv+9+1Jyiy/zUq/D6vTgDLEW
+	 Q+o6nNr5d+gOOspeG+bS5/6lINsTPcSzod4a+djLOuKV37dHz0Cvs3QJEivhxePrfm
+	 d/paOn7/f9CfA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uHGfi-00000005qtw-0FMG;
+	id 1uHGfi-00000005qu1-0N71;
 	Tue, 20 May 2025 08:41:54 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Igor Mammedov <imammedo@redhat.com>,
@@ -53,12 +53,17 @@ Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	qemu-devel@nongnu.org,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	Eric Blake <eblake@redhat.com>,
+	Markus Armbruster <armbru@redhat.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
 	Peter Maydell <peter.maydell@linaro.org>,
 	Shannon Zhao <shannon.zhaosl@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v9 15/20] arm/virt: Wire up a GED error device for ACPI / GHES
-Date: Tue, 20 May 2025 08:41:34 +0200
-Message-ID: <24f2c83cfb03ff405db4773ab0aacaceacc43738.1747722973.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v9 16/20] qapi/acpi-hest: add an interface to do generic CPER error injection
+Date: Tue, 20 May 2025 08:41:35 +0200
+Message-ID: <9e923bac8ae4a5519922e6a21688f898f37c4ecd.1747722973.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1747722973.git.mchehab+huawei@kernel.org>
 References: <cover.1747722973.git.mchehab+huawei@kernel.org>
@@ -71,85 +76,294 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Adds support to ARM virtualization to allow handling
-generic error ACPI Event via GED & error source device.
+Creates a QMP command to be used for generic ACPI APEI hardware error
+injection (HEST) via GHESv2, and add support for it for ARM guests.
 
-It is aligned with Linux Kernel patch:
-https://lore.kernel.org/lkml/1272350481-27951-8-git-send-email-ying.huang@intel.com/
+Error injection uses ACPI_HEST_SRC_ID_QMP source ID to be platform
+independent. This is mapped at arch virt bindings, depending on the
+types supported by QEMU and by the BIOS. So, on ARM, this is supported
+via ACPI_GHES_NOTIFY_GPIO notification type.
 
-Co-authored-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+This patch is co-authored:
+    - original ghes logic to inject a simple ARM record by Shiju Jose;
+    - generic logic to handle block addresses by Jonathan Cameron;
+    - generic GHESv2 error inject by Mauro Carvalho Chehab;
+
 Co-authored-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Co-authored-by: Shiju Jose <shiju.jose@huawei.com>
+Co-authored-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Acked-by: Igor Mammedov <imammedo@redhat.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Acked-by: Markus Armbruster <armbru@redhat.com>
 ---
+ MAINTAINERS              |  7 +++++++
+ hw/acpi/Kconfig          |  5 +++++
+ hw/acpi/ghes.c           |  2 +-
+ hw/acpi/ghes_cper.c      | 39 +++++++++++++++++++++++++++++++++++++++
+ hw/acpi/ghes_cper_stub.c | 20 ++++++++++++++++++++
+ hw/acpi/meson.build      |  2 ++
  hw/arm/virt-acpi-build.c |  1 +
- hw/arm/virt.c            | 12 +++++++++++-
+ hw/arm/virt.c            |  7 +++++++
+ include/hw/acpi/ghes.h   |  1 +
  include/hw/arm/virt.h    |  1 +
- 3 files changed, 13 insertions(+), 1 deletion(-)
+ qapi/acpi-hest.json      | 35 +++++++++++++++++++++++++++++++++++
+ qapi/meson.build         |  1 +
+ qapi/qapi-schema.json    |  1 +
+ 13 files changed, 121 insertions(+), 1 deletion(-)
+ create mode 100644 hw/acpi/ghes_cper.c
+ create mode 100644 hw/acpi/ghes_cper_stub.c
+ create mode 100644 qapi/acpi-hest.json
 
-diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
-index 3126234e657d..33a701d6ad19 100644
---- a/hw/arm/virt-acpi-build.c
-+++ b/hw/arm/virt-acpi-build.c
-@@ -857,6 +857,7 @@ build_dsdt(GArray *table_data, BIOSLinker *linker, VirtMachineState *vms)
-     }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 57dddcc80d6f..c335fbd288fe 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2132,6 +2132,13 @@ F: hw/acpi/ghes.c
+ F: include/hw/acpi/ghes.h
+ F: docs/specs/acpi_hest_ghes.rst
  
-     acpi_dsdt_add_power_button(scope);
-+    aml_append(scope, aml_error_device());
- #ifdef CONFIG_TPM
-     acpi_dsdt_add_tpm(scope, vms);
- #endif
-diff --git a/hw/arm/virt.c b/hw/arm/virt.c
-index 9a6cd085a37a..e994809512f3 100644
---- a/hw/arm/virt.c
-+++ b/hw/arm/virt.c
-@@ -682,7 +682,7 @@ static inline DeviceState *create_acpi_ged(VirtMachineState *vms)
-     DeviceState *dev;
-     MachineState *ms = MACHINE(vms);
-     int irq = vms->irqmap[VIRT_ACPI_GED];
--    uint32_t event = ACPI_GED_PWR_DOWN_EVT;
-+    uint32_t event = ACPI_GED_PWR_DOWN_EVT | ACPI_GED_ERROR_EVT;
++ACPI/HEST/GHES/ARM processor CPER
++R: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
++S: Maintained
++F: hw/arm/ghes_cper.c
++F: hw/acpi/ghes_cper_stub.c
++F: qapi/acpi-hest.json
++
+ ppc4xx
+ L: qemu-ppc@nongnu.org
+ S: Orphan
+diff --git a/hw/acpi/Kconfig b/hw/acpi/Kconfig
+index 1d4e9f0845c0..daabbe6cd11e 100644
+--- a/hw/acpi/Kconfig
++++ b/hw/acpi/Kconfig
+@@ -51,6 +51,11 @@ config ACPI_APEI
+     bool
+     depends on ACPI
  
-     if (ms->ram_slots) {
-         event |= ACPI_GED_MEM_HOTPLUG_EVT;
-@@ -1016,6 +1016,13 @@ static void virt_powerdown_req(Notifier *n, void *opaque)
-     }
++config GHES_CPER
++    bool
++    depends on ACPI_APEI
++    default y
++
+ config ACPI_PCI
+     bool
+     depends on ACPI && PCI
+diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+index 0135ac844bcf..1d02ef6dcb70 100644
+--- a/hw/acpi/ghes.c
++++ b/hw/acpi/ghes.c
+@@ -553,7 +553,7 @@ void ghes_record_cper_errors(AcpiGhesState *ags, const void *cper, size_t len,
+     /* Write the generic error data entry into guest memory */
+     cpu_physical_memory_write(cper_addr, cper, len);
+ 
+-    notifier_list_notify(&acpi_generic_error_notifiers, NULL);
++    notifier_list_notify(&acpi_generic_error_notifiers, &source_id);
  }
  
-+static void virt_generic_error_req(Notifier *n, void *opaque)
+ int acpi_ghes_memory_errors(AcpiGhesState *ags, uint16_t source_id,
+diff --git a/hw/acpi/ghes_cper.c b/hw/acpi/ghes_cper.c
+new file mode 100644
+index 000000000000..1a391d85fc61
+--- /dev/null
++++ b/hw/acpi/ghes_cper.c
+@@ -0,0 +1,39 @@
++/*
++ * CPER payload parser for error injection
++ *
++ * Copyright(C) 2024-2025 Huawei LTD.
++ *
++ * This code is licensed under the GPL version 2 or later. See the
++ * COPYING file in the top-level directory.
++ *
++ * SPDX-License-Identifier: GPL-2.0-or-later
++ */
++
++#include "qemu/osdep.h"
++
++#include "qemu/base64.h"
++#include "qemu/error-report.h"
++#include "qemu/uuid.h"
++#include "qapi/qapi-commands-acpi-hest.h"
++#include "hw/acpi/ghes.h"
++
++void qmp_inject_ghes_v2_error(const char *qmp_cper, Error **errp)
 +{
-+    VirtMachineState *s = container_of(n, VirtMachineState, generic_error_notifier);
++    AcpiGhesState *ags;
 +
-+    acpi_send_event(s->acpi_dev, ACPI_GENERIC_ERROR);
++    ags = acpi_ghes_get_state();
++    if (!ags) {
++        return;
++    }
++
++    uint8_t *cper;
++    size_t  len;
++
++    cper = qbase64_decode(qmp_cper, -1, &len, errp);
++    if (!cper) {
++        error_setg(errp, "missing GHES CPER payload");
++        return;
++    }
++
++    ghes_record_cper_errors(ags, cper, len, ACPI_HEST_SRC_ID_QMP, errp);
 +}
+diff --git a/hw/acpi/ghes_cper_stub.c b/hw/acpi/ghes_cper_stub.c
+new file mode 100644
+index 000000000000..b16be73502db
+--- /dev/null
++++ b/hw/acpi/ghes_cper_stub.c
+@@ -0,0 +1,20 @@
++/*
++ * Stub interface for CPER payload parser for error injection
++ *
++ * Copyright(C) 2024-2025 Huawei LTD.
++ *
++ * This code is licensed under the GPL version 2 or later. See the
++ * COPYING file in the top-level directory.
++ *
++ * SPDX-License-Identifier: GPL-2.0-or-later
++ */
 +
- static void create_gpio_keys(char *fdt, DeviceState *pl061_dev,
-                              uint32_t phandle)
- {
-@@ -2398,6 +2405,9 @@ static void machvirt_init(MachineState *machine)
++#include "qemu/osdep.h"
++#include "qapi/error.h"
++#include "qapi/qapi-commands-acpi-hest.h"
++#include "hw/acpi/ghes.h"
++
++void qmp_inject_ghes_v2_error(const char *cper, Error **errp)
++{
++    error_setg(errp, "GHES QMP error inject is not compiled in");
++}
+diff --git a/hw/acpi/meson.build b/hw/acpi/meson.build
+index 73f02b96912b..56b5d1ec9691 100644
+--- a/hw/acpi/meson.build
++++ b/hw/acpi/meson.build
+@@ -34,4 +34,6 @@ endif
+ system_ss.add(when: 'CONFIG_ACPI', if_false: files('acpi-stub.c', 'aml-build-stub.c', 'ghes-stub.c', 'acpi_interface.c'))
+ system_ss.add(when: 'CONFIG_ACPI_PCI_BRIDGE', if_false: files('pci-bridge-stub.c'))
+ system_ss.add_all(when: 'CONFIG_ACPI', if_true: acpi_ss)
++system_ss.add(when: 'CONFIG_GHES_CPER', if_true: files('ghes_cper.c'))
++system_ss.add(when: 'CONFIG_GHES_CPER', if_false: files('ghes_cper_stub.c'))
+ system_ss.add(files('acpi-qmp-cmds.c'))
+diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
+index 33a701d6ad19..8a604b0b038b 100644
+--- a/hw/arm/virt-acpi-build.c
++++ b/hw/arm/virt-acpi-build.c
+@@ -892,6 +892,7 @@ static void acpi_align_size(GArray *blob, unsigned align)
  
-     if (has_ged && aarch64 && firmware_loaded && virt_is_acpi_enabled(vms)) {
-         vms->acpi_dev = create_acpi_ged(vms);
-+        vms->generic_error_notifier.notify = virt_generic_error_req;
-+        notifier_list_add(&acpi_generic_error_notifiers,
-+                          &vms->generic_error_notifier);
-     } else {
-         create_gpio_devices(vms, VIRT_GPIO, sysmem);
-     }
+ static const AcpiNotificationSourceId hest_ghes_notify[] = {
+     { ACPI_HEST_SRC_ID_SYNC, ACPI_GHES_NOTIFY_SEA },
++    { ACPI_HEST_SRC_ID_QMP, ACPI_GHES_NOTIFY_GPIO },
+ };
+ 
+ static const AcpiNotificationSourceId hest_ghes_notify_10_0[] = {
+diff --git a/hw/arm/virt.c b/hw/arm/virt.c
+index e994809512f3..5832737b3827 100644
+--- a/hw/arm/virt.c
++++ b/hw/arm/virt.c
+@@ -1018,6 +1018,13 @@ static void virt_powerdown_req(Notifier *n, void *opaque)
+ 
+ static void virt_generic_error_req(Notifier *n, void *opaque)
+ {
++    uint16_t *source_id = opaque;
++
++    /* Currently, only QMP source ID is async */
++    if (*source_id != ACPI_HEST_SRC_ID_QMP) {
++        return;
++    }
++
+     VirtMachineState *s = container_of(n, VirtMachineState, generic_error_notifier);
+ 
+     acpi_send_event(s->acpi_dev, ACPI_GENERIC_ERROR);
+diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+index 390943e46d99..df2ecbf6e4a9 100644
+--- a/include/hw/acpi/ghes.h
++++ b/include/hw/acpi/ghes.h
+@@ -65,6 +65,7 @@ enum AcpiGhesNotifyType {
+  */
+ enum AcpiGhesSourceID {
+     ACPI_HEST_SRC_ID_SYNC,
++    ACPI_HEST_SRC_ID_QMP,       /* Use it only for QMP injected errors */
+ };
+ 
+ typedef struct AcpiNotificationSourceId {
 diff --git a/include/hw/arm/virt.h b/include/hw/arm/virt.h
-index 9a1b0f53d218..16b505604b2c 100644
+index 16b505604b2c..1b70f7750ce9 100644
 --- a/include/hw/arm/virt.h
 +++ b/include/hw/arm/virt.h
-@@ -170,6 +170,7 @@ struct VirtMachineState {
-     DeviceState *gic;
-     DeviceState *acpi_dev;
-     Notifier powerdown_notifier;
-+    Notifier generic_error_notifier;
-     PCIBus *bus;
-     char *oem_id;
-     char *oem_table_id;
+@@ -33,6 +33,7 @@
+ #include "exec/hwaddr.h"
+ #include "qemu/notify.h"
+ #include "hw/boards.h"
++#include "hw/acpi/ghes.h"
+ #include "hw/arm/boot.h"
+ #include "hw/arm/bsa.h"
+ #include "hw/block/flash.h"
+diff --git a/qapi/acpi-hest.json b/qapi/acpi-hest.json
+new file mode 100644
+index 000000000000..fff5018c7ec1
+--- /dev/null
++++ b/qapi/acpi-hest.json
+@@ -0,0 +1,35 @@
++# -*- Mode: Python -*-
++# vim: filetype=python
++
++##
++# == GHESv2 CPER Error Injection
++#
++# Defined since ACPI Specification 6.1,
++# section 18.3.2.8 Generic Hardware Error Source version 2. See:
++#
++# https://uefi.org/sites/default/files/resources/ACPI_6_1.pdf
++##
++
++
++##
++# @inject-ghes-v2-error:
++#
++# Inject an error with additional ACPI 6.1 GHESv2 error information
++#
++# @cper: contains a base64 encoded string with raw data for a single
++#     CPER record with Generic Error Status Block, Generic Error Data
++#     Entry and generic error data payload, as described at
++#     https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#format
++#
++# Features:
++#
++# @unstable: This command is experimental.
++#
++# Since: 10.0
++##
++{ 'command': 'inject-ghes-v2-error',
++  'data': {
++    'cper': 'str'
++  },
++  'features': [ 'unstable' ]
++}
+diff --git a/qapi/meson.build b/qapi/meson.build
+index eadde4db307f..8017346a6f6e 100644
+--- a/qapi/meson.build
++++ b/qapi/meson.build
+@@ -59,6 +59,7 @@ qapi_all_modules = [
+ if have_system
+   qapi_all_modules += [
+     'acpi',
++    'acpi-hest',
+     'audio',
+     'cryptodev',
+     'qdev',
+diff --git a/qapi/qapi-schema.json b/qapi/qapi-schema.json
+index 7bc600bb768f..6b953090dea5 100644
+--- a/qapi/qapi-schema.json
++++ b/qapi/qapi-schema.json
+@@ -64,6 +64,7 @@
+ { 'include': 'misc-target.json' }
+ { 'include': 'audio.json' }
+ { 'include': 'acpi.json' }
++{ 'include': 'acpi-hest.json' }
+ { 'include': 'pci.json' }
+ { 'include': 'stats.json' }
+ { 'include': 'virtio.json' }
 -- 
 2.49.0
 
