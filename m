@@ -1,144 +1,131 @@
-Return-Path: <linux-kernel+bounces-656354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEF5CABE4BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:32:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 226EAABE4C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D66EF4C5FB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:31:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C327C17B043
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD1928C5C6;
-	Tue, 20 May 2025 20:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kaFsiuTp"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EF328C2D8;
+	Tue, 20 May 2025 20:34:26 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430BD288CA5;
-	Tue, 20 May 2025 20:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D0A2836B9
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 20:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747773065; cv=none; b=rEdSx6CSlKlRO7/Z+pTkwvco6fw4aFUi0EAvhXIXJLxbcK8sUcTLTNIRU8wHbiDPAZeF9b1PnLnVBgbh4hQPcHm39p3L+hWMu3Q4w1AbpgElo80jhva09WzCuatnpo9sBIwUQJm9Ng4lcymuEj8arc+SnU+BHsXsrBLmvU1342Q=
+	t=1747773266; cv=none; b=G5fvtVwMehgvO0dxOZe2la+XfEPSgplWxjLUcH0zoZekK4P8o4HC5CrnjzseskOnnXCmeMLl9w7aRp+AG0uPP4vizqfsNK0Ubzjmj4XCTF+YCl4TvBNBUTwZ/4tmF2CqYEsPU8V1+0id46gqOx7rHiMocCVANxFivugiy6p4+4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747773065; c=relaxed/simple;
-	bh=xgNMllPyPQbD/jsNqHCtVrLImV9tm2A22847oz+aSxI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F5M0SYa4CRoLqErlgc/kZpCXErJZRv4cb30t1lHfk+mdtfmAJJ7F8xdRo9U+vT6mLn+5ceCCccxY5gP6paG1tFhy8QrYZcdYrjvnxvqdkUDC/fzYWIX4xaBrYjZv8H8bYV82zaOQUkUwn8V1Te2QXO0nLdr2lRkwSFpZotFU14c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kaFsiuTp; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3108d54332eso30341a91.2;
-        Tue, 20 May 2025 13:31:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747773063; x=1748377863; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GrnzUd/yQLqyU7Ecj4tNRoixyaCDlqm4F4WRkVeusgI=;
-        b=kaFsiuTphJH2OOxWuWNS3mLTQX5fFs4G11RVc/fDEaSjqvY5eYUAjNe/AIOkU2tG1H
-         cz8rULH2zV/x2wQhXpD1Ld2hY+WmbyPS6en3NI96VBAV7S5SzyQwYGChz1M11EIFHocO
-         bnt5DKDZMSKj4EaHp8R40E6o33lL4h9N1qUVOuKrLJwDozcj+3hKCvShg2BTHr744rjn
-         WoUr+a4O/CqHCxKmB+WvUfqe9B6wvtOxSh/G/r/sgAjlRUyfmLdZuIkat1kVXzAuTwIb
-         Zu279uk7YQQ28duItfAFy+vZDWCj+dj3sqZFDDzpVcyiJ0qL9dtMelMC5wxfdJkrOMev
-         f/lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747773063; x=1748377863;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GrnzUd/yQLqyU7Ecj4tNRoixyaCDlqm4F4WRkVeusgI=;
-        b=go5ZAhs82y5bx+F+D5BUcR+9bRGYcVY6jTEHwDdUw17SOAnaKq0fH83CzGuadppqku
-         qJ++u3/WGyY8JAfwAN5HRdC1OkR75SZnBcf2J+GWWIuG3AFce0vniVbrPT9N3uPSY7p0
-         PXiIHOyym8FMd6m5CY8AMaszQW/ZmZhUjlqC7p+r8Dg8B0rC7Bcohbn0rVa7G3An9Epg
-         bki6fBar/4Rnrcgqy+ful/NE/kJ9k4I9lntULKmKHMOaOm8yrlKwlXpYGxYcfaWYgwuJ
-         jGvgyVjQCLEQlF1KuH0t8hRKfjWjOCBx8G60bkVSvVq7/+GawU4Dbc9SLm4zLG/+QNfP
-         sGFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnAuQWoqwMPg60wOgNVTUMFpkXQd2u8BS98qhxt23Ju7aJs6YE+eoHOQ2E8soPVkQLn10=@vger.kernel.org, AJvYcCUx4kVQTSBfrPKi2WmZolWKObHCobrMsNU31QYk3xUwjXebOOxziuqP16XWYG2SVpCIPCq8DtxINZL0cltV@vger.kernel.org, AJvYcCX61FDYb5L+3QRvZct7b1eYKUk+iyXLscCBWGnshSiLERnnWeAKTMJe1nlEs+DG4MXSkg6HEeUxlii6hw8dAjnyCebn@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKK/tEuSDDScmczoMOa6CZ/9YWrrSoWTeI2OTQ2dI5R883VsGL
-	ut5BkIL3YsPbNWHVchiEfPTwb3gK8XK5yMZlA1/GBMm3QQxOuJsCzY8c9ER6XrVYglixpV1fY10
-	5XW7L7/EqV2rtEYFzA+kFLtj0b+iYTNk=
-X-Gm-Gg: ASbGncvZaC8GJ9PpB1B5B/dVYt3M8z/OsLGrN3oN3mkkdy2liU+6UkYKBBFijiFO2i9
-	AUreNoNlXv2ahSAOqgvIjuB9hehkoPKVQ+fZcX+EiGbMDV3q49ckXlU2SekZbyZ1WFEuJvW+uB+
-	nnDMFm00NDGSvc5mMI/bi/yTi52mazVfpvibQMmLeRvc+/SZPWMLQ1fJd9NOM=
-X-Google-Smtp-Source: AGHT+IE4ybAlv//BF8DsZphTTjPnCY4hzs7HwyQTj6wNk6+OE/f/W7jgi+Jk5MPxTYQ39xpfrlKnAcwF17FlNzlsbyk=
-X-Received: by 2002:a17:90b:4a:b0:30a:4ce4:5287 with SMTP id
- 98e67ed59e1d1-30e82fbd3a0mr34472432a91.0.1747773063310; Tue, 20 May 2025
- 13:31:03 -0700 (PDT)
+	s=arc-20240116; t=1747773266; c=relaxed/simple;
+	bh=ZAKqfEk5wNkSxchE2mlMppcXllbhtMFBGsoAzbBLQxA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jqmV85kikY+owCUPJd03sQ5si7qusPNkhqYaRc5yQmG91Bu4pqSSEXRPYPYrbSYEhKXWxKTP6iZDVO3UVBsp92SELIlhyamrJpLD7hpjGOs/Vc5tN8XoCJr9FKVRo8nbO3i3aaRf4EaxBwhd/jop30W1MwoTifAxHM/8gI9TCvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1uHTcK-000000007yU-3VQB;
+	Tue, 20 May 2025 16:31:16 -0400
+Message-ID: <1debe11314379cd767c5f75131e81eed70670b91.camel@surriel.com>
+Subject: Re: [RFC v2 7/9] x86/mm: Introduce Remote Action Request
+From: Rik van Riel <riel@surriel.com>
+To: Nadav Amit <nadav.amit@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open
+ list:MEMORY MANAGEMENT"	 <linux-mm@kvack.org>, the arch/x86 maintainers
+ <x86@kernel.org>, 	kernel-team@meta.com, Dave Hansen
+ <dave.hansen@linux.intel.com>, luto@kernel.org, 	peterz@infradead.org,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar	 <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"	 <hpa@zytor.com>, Yu-cheng
+ Yu <yu-cheng.yu@intel.com>
+Date: Tue, 20 May 2025 16:31:16 -0400
+In-Reply-To: <4009A0C6-CE5C-4197-9F48-3805059C214E@gmail.com>
+References: <20250520010350.1740223-1-riel@surriel.com>
+	 <20250520010350.1740223-8-riel@surriel.com>
+	 <4A879001-E213-4239-9D25-CDA8EC3E2CD9@gmail.com>
+	 <6a3290319031cd68a383e416f53aa7549bac9407.camel@surriel.com>
+	 <4009A0C6-CE5C-4197-9F48-3805059C214E@gmail.com>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
+ eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
+ Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
+ lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
+ dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
+ mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
+ gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
+ r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
+ WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
+ 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
+ Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
+ +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
+ g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
+ KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
+ fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
+ 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
+ G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
+ okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
+ TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
+ cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
+ omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
+ QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
+ c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250520054943.5002-1-xuewen.yan@unisoc.com> <CAADnVQKZti=SXM=4owtk9jEqGMcD0mUqb46PNYwhquYfyORUuw@mail.gmail.com>
-In-Reply-To: <CAADnVQKZti=SXM=4owtk9jEqGMcD0mUqb46PNYwhquYfyORUuw@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 20 May 2025 13:30:51 -0700
-X-Gm-Features: AX0GCFsY3sKiVL7c-RoHprUTofVqmOmNX1pZbpz9SDyWTlzwI07QmpOPvE0uocs
-Message-ID: <CAEf4BzaHFPpz9QmVNOHH_hJ-KOF+wsimGqBYRnNwAhz7zcj35w@mail.gmail.com>
-Subject: Re: [PATCH] Revert "bpf: remove unnecessary rcu_read_{lock,unlock}()
- in multi-uprobe attach logic"
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, Song Liu <song@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Steven Rostedt <rostedt@goodmis.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, xuewen.yan94@gmail.com, 
-	di.shen@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Sender: riel@surriel.com
 
-On Tue, May 20, 2025 at 1:08=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Mon, May 19, 2025 at 10:51=E2=80=AFPM Xuewen Yan <xuewen.yan@unisoc.co=
-m> wrote:
-> >
-> > From: Di Shen <di.shen@unisoc.com>
-> >
-> > This reverts commit 4a8f635a60540888dab3804992e86410360339c8.
-> >
-> > Althought get_pid_task() internally already calls rcu_read_lock() and
-> > rcu_read_unlock(), the find_vpid() was not.
-> >
-> > The documentation for find_vpid() clearly states:
-> >
-> >   "Must be called with the tasklist_lock or rcu_read_lock() held."
-> >
-> > Add proper rcu_read_lock/unlock() to protect the find_vpid().
-> >
-> > Reported-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> > Signed-off-by: Di Shen <di.shen@unisoc.com>
-> > ---
-> >  kernel/trace/bpf_trace.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> > index 187dc37d61d4..0c4b6af10601 100644
-> > --- a/kernel/trace/bpf_trace.c
-> > +++ b/kernel/trace/bpf_trace.c
-> > @@ -3417,7 +3417,9 @@ int bpf_uprobe_multi_link_attach(const union bpf_=
-attr *attr, struct bpf_prog *pr
-> >         }
-> >
-> >         if (pid) {
-> > +               rcu_read_lock();
-> >                 task =3D get_pid_task(find_vpid(pid), PIDTYPE_TGID);
-> > +               rcu_read_unlock();
-> >                 if (!task) {
-> >                         err =3D -ESRCH;
-> >                         goto error_path_put;
->
-> hmm. indeed.
->
+On Tue, 2025-05-20 at 23:26 +0300, Nadav Amit wrote:
+>=20
+> > On 20 May 2025, at 16:00, Rik van Riel <riel@surriel.com> wrote:
+> >=20
+> > > Putting aside the rest of the code, I see you don=E2=80=99t call
+> > > should_flush_tlb().
+> > > I think it is worth mentioning in commit log or comment the
+> > > rationale
+> > > behind
+> > > it (and maybe benchmarks to justify it).
+> > >=20
+> > >=20
+> > The long term plan here is to simply have the originating
+> > CPU included in the cpumask, and have it send a RAR
+> > request to itself.
+>=20
+> That=E2=80=99s unrelated. I was referring to considering supporting
+> some sort of lazy TLB to eliminate sending RAR to cores that
+> do not care about it. Is there a cost of RAR to more cores than
+> needed? My guess is that there is one, and maybe in such cases
+> you would want actual IPI and special handling.
 
-yep, my bad, missed find_vpid() restrictions. revert LGTM
+For RAR, I suspect the big cost is waking up
+CPUs in idle states, and waiting for them to
+wake up.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+One possibility may be to change leave_mm()
+to have an argument to set some flag that
+the RAR code can read to see whether or
+not to send a RAR interrupt to that CPU,
+even if it is in the cpumask.
 
-> Jiri ?
+I don't think we can use the exact same
+should_flush_tlb() logic, because the
+tlb_gen is not updated by a RAR flush,
+and the should_flush_tlb() logic is
+somewhat intertwined with the tlb_gen
+logic.
+
+--=20
+All Rights Reversed.
 
