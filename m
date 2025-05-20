@@ -1,178 +1,205 @@
-Return-Path: <linux-kernel+bounces-656507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7DACABE726
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:33:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33820ABE72E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B28874C8359
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:33:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12B57189C751
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA51280CFF;
-	Tue, 20 May 2025 22:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEDB25F998;
+	Tue, 20 May 2025 22:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BOwFhMEv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCrUKpsi"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCF626462C;
-	Tue, 20 May 2025 22:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721CB25F7B4;
+	Tue, 20 May 2025 22:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747780275; cv=none; b=rrPGJnaMH75ovdAYyr6Th35iEsKMcUfc5reKPyDLVEZgt5H9VHljPBMxmgNxfcLv8zvUOYIcyxZXfHdGl6MYeac4zI2Dfwk+ndMG5knyu5g3/2TK8Af39wwvqB0DjCUo/vhWa8l+DY6XCiNH86hMrpn+BdFwF8fiovENRKVCSU4=
+	t=1747780307; cv=none; b=dRV8Fg57x2GnHPWEmEIUWH1J3WH63dzr3al/K40asOppmsR2hjRZntSRDAdDYAwPhQBRjDYxvtGVioyCPsoynur9pno5aG+4hU7hvwlHAosKESEfGpTMW2ou+s5D5Uqmko3J9zmT11L3zGtkladw5P4p4Xp/XCQN1jVQ3VtXyL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747780275; c=relaxed/simple;
-	bh=7Qa/IpuQKFOWRWF79NofDyxxIjQyXX1yFfRlJmNAhpQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FMGvzHCkuxWqFl+EdeIaiVXvWM22bM1XJy5kvTmjTryNWpe/9siMWQcQEU50HrVch5PMu2DM+GQA+KKftY3EDepBiQj5wCiiItWSzMh+Y8ue1eE+W9Hwp2K/UcdljULWD1lI4QK0DMDxxJSvDq4XpdM2Y4rcvM1R+v9WBnlsinA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BOwFhMEv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CF8AC4CEF2;
-	Tue, 20 May 2025 22:31:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747780274;
-	bh=7Qa/IpuQKFOWRWF79NofDyxxIjQyXX1yFfRlJmNAhpQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BOwFhMEvnncEbt04sunuSxfflgKvjcUp7JSXl1Rx49NjhAjlJs3CnmgFEO2OjYLFS
-	 FnxMRf+Y0l8NIw9qbw2FBVhJEmGUfzmI3o5rYjb5Xats4x1tM2hRAQqRSZlsxW/PVs
-	 99R5M0bnHfVohXHQoaW/qQCm7BPLAGEzVl0pXcL5Vst2Vc6khbh8bQjuyOktICMffX
-	 U3L1qVyImNx2jT/9p34tb3ykRcqoI2oa5OpAV4Lpy5hLXCv+0K7HtW4O6s6vPI/P8i
-	 l2MNooYeY9cP5g1ou6cmJiHAiz4cPxZ+ZQeRqLYZPnvcGd3eMSvAungNxE2YUbqYgG
-	 83Ywtr100ZzXw==
-From: Kees Cook <kees@kernel.org>
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Kees Cook <kees@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Ido Schimmel <idosch@nvidia.com>,
-	netdev@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Mike Christie <michael.christie@oracle.com>,
-	Max Gurtovoy <mgurtovoy@nvidia.com>,
-	Maurizio Lombardi <mlombard@redhat.com>,
-	Dmitry Bogdanov <d.bogdanov@yadro.com>,
-	Mingzhe Zou <mingzhe.zou@easystack.cn>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Cosmin Ratiu <cratiu@nvidia.com>,
-	Lei Yang <leiyang@redhat.com>,
-	Samuel Mendoza-Jonas <sam@mendozajonas.com>,
-	Paul Fertser <fercerpav@gmail.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Stefan Schmidt <stefan@datenfreihafen.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Hayes Wang <hayeswang@realtek.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Grant Grundler <grundler@chromium.org>,
-	Jay Vosburgh <jv@jvosburgh.net>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Eric Biggers <ebiggers@google.com>,
-	Milan Broz <gmazyland@gmail.com>,
-	Philipp Hahn <phahn-oss@avm.de>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Xiao Liang <shaw.leon@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org,
-	target-devel@vger.kernel.org,
-	linux-wpan@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH 7/7] rtnetlink: do_setlink: Use struct sockaddr_storage
-Date: Tue, 20 May 2025 15:31:06 -0700
-Message-Id: <20250520223108.2672023-7-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250520222452.work.063-kees@kernel.org>
-References: <20250520222452.work.063-kees@kernel.org>
+	s=arc-20240116; t=1747780307; c=relaxed/simple;
+	bh=4M2YWpO1US5cekurRighr1N0tBMWxvV+4CgHP8/lknk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gIgxnl2WtuG3CW9Bt2sMhBEPUlHgTK+zlmka52e/aoXCdvU0E/gJ3SiMuNP1pRUiqiEMdNd3NFMLMgRCdBa0ZiY82zBaIO+z+ZEO1Oo4BZe8NuIXiMhjnEX2qheOQ/XDwlRsEShTqkvm1MCYQLPw+tqwjtm93Eog3YTmlkwJzpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mCrUKpsi; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-601ab204085so5618208a12.1;
+        Tue, 20 May 2025 15:31:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747780304; x=1748385104; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VfViJTkocBFZaKtNJGCb8qOEo9ZbscCCsSMtkpHUjAw=;
+        b=mCrUKpsi5cE+GC8z72L99cKzA8DsQoIfdzVKRextIyj4UG2fn9fTkydowjpocRtxMY
+         l6wnt1P/6lZ+Gdlrhrav4ag9YOk8qm6/VZxZneXf9rX6wVkyrW37QSiPZfyAlUhBsQbl
+         vPxykVXrGdbZhkMzW7+D4QJGVHoUVqQBzlTeQ+Iul8q4Zbg68Yd+WsDCXtH+0yf3kHXR
+         2ahJG1d2F6pLfmj5k59h4d13oTjts7i9SsVCoQi37XkgwYEe6iDDFWkHRWPXyw3fWs3B
+         /K24g29yuf8F+0kc75+w8zrn0qNcynqmC6EPKwEPNRmHgoLf0TOmIGyPKwyjloPVMO7N
+         X5+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747780304; x=1748385104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VfViJTkocBFZaKtNJGCb8qOEo9ZbscCCsSMtkpHUjAw=;
+        b=eg8AzZfhg40W5zbQzM3rHsYAATQ7KlUQuCSDRQcaKyTZFS11/tLX2jZWsCMa7RdXQS
+         1J1w3Y6xC/mKwIv8AGrFnSZ1sBxdaE+RhRZlAGrAJKSRE/105Sjcxf0wShKP5MZwTnEo
+         pnte1EJaHnVaMgZ2Ao7fGU1lPLeqR7wXCZkYlJQP8h3BOMHEVKMWCf3BX8MnEeGYCefP
+         zWGsyYTvXzmEItUVNDtYvYc1KINkpJ3ALmFs80TYUdG5tT9Yg6TKXmYapbe3ULPlLhGj
+         re+6nV1HkBd+ekiA7ijbHOK1lprQCBEiLxDeJODWhcJs4kYquiy7NJMLvevhdJvFNZPB
+         +dlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWe9w7+hZRAI8yLhyMJa86iFO+wdl0TA77S0Xb1FEvIKK3zLCSeZ8RRwInCUkcPlYdJ8yETV/sCeoTukjHa@vger.kernel.org, AJvYcCXaXNGwuc30ULketBpaUoByiTDUcaK3Lbf6k7AEGnrJdeSS0tpUTOtU9/WqWQ1dtLf+JBTVKHgHsc6bFUrX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9GnA8BzX8Hs2i4EZvKlO/LnkQWHnz9osV3TGy6s5Zx78bkIWW
+	zZ4j5iKehw1/LmQNWysLmaDDkGBw1ycwYRUsQ3BCBOa0QvBaBIwU4icECtGmcV2hBIjZ1+fitsu
+	5B8HtTPleuzOif7ddRBnLXg+UusP3sBg=
+X-Gm-Gg: ASbGncukDq1h+egy8J/lJoNwsjQ6ZH8j175m5II6E4TWJWSV0VjW8/kpMR3awuHoqQ2
+	UdEMMOKYhhiUuzjXd0B66OkYQiiBCi8gubR6XwWCdHIg5eDs/keh6dG2svDygQ+T50o4UkSyntW
+	KvoIHiuc5RTP0abRjmaN8QIRie14ysXSwkJLIa3AyiHQ==
+X-Google-Smtp-Source: AGHT+IHy1qy9Y9Iw/2PjuoPWfqMC/gE8vuaoRZoeD3b3kOntxxhSfTFnxCi25EtDFYsyoHHlawo3lUz4LJtHhfQlWCs=
+X-Received: by 2002:a17:907:7d86:b0:ad5:6258:996f with SMTP id
+ a640c23a62f3a-ad56258a94fmr1093719966b.19.1747780303506; Tue, 20 May 2025
+ 15:31:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2093; i=kees@kernel.org; h=from:subject; bh=7Qa/IpuQKFOWRWF79NofDyxxIjQyXX1yFfRlJmNAhpQ=; b=owGbwMvMwCVmps19z/KJym7G02pJDBm6TKtmnOlUkkri/PtTpKuJWcgyguPHyic/Ci2ju8tye j+JT8rrKGVhEONikBVTZAmyc49z8XjbHu4+VxFmDisTyBAGLk4BmIiyHcP/5OXSpk/zfC1KOKbI rnhQbaXzKEa72P+m2Oa4bIZV4bfXMzKsmyNVf+e5ovVutyS7NQKZupb5O/XKFvdZxT2fsS5DZR0 TAA==
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+References: <20250514175527.42488-1-robdclark@gmail.com> <20250514175527.42488-2-robdclark@gmail.com>
+ <aCWrwz2IF6VBUi4e@pollux> <aCWueFzx2QzF7LVg@pollux> <CAF6AEGu9MPxKnkHo45gSRxaCP+CTzqsKZjiLuy4Ne4GbrsStGA@mail.gmail.com>
+ <aCYqlvp_T77LyuMa@pollux> <CAF6AEGsOTNedZhuBzipSQgNpG0SyVObaeq+g5U1hGUFfRYjw8w@mail.gmail.com>
+ <aCb-72KH-NrzvGXy@pollux> <CAF6AEGu=KzCnkxuUsYvCHBGwo-e2W16u_cRT1NFAXLphty1_ig@mail.gmail.com>
+ <CAPM=9tzcvDVDOM88O8oqDHURR1nbR7KsFStavNnT1CN6C6kGgg@mail.gmail.com> <CAF6AEGuv3GXTBcU99sBjAa5gPOSNoxwY+eiPy=Q--cLYHVn+cw@mail.gmail.com>
+In-Reply-To: <CAF6AEGuv3GXTBcU99sBjAa5gPOSNoxwY+eiPy=Q--cLYHVn+cw@mail.gmail.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Wed, 21 May 2025 08:31:31 +1000
+X-Gm-Features: AX0GCFsKkEmiEjqukzoqKCLeCFvPEzUImMvmitaMXLQCSIsFSJxiY59ID8GzQYM
+Message-ID: <CAPM=9tykCXSKOH0BcMkNLKyCWfEN-kCjs0U7UA+C1pPqFr1jLA@mail.gmail.com>
+Subject: Re: [PATCH v4 01/40] drm/gpuvm: Don't require obj lock in destructor path
+To: Rob Clark <robdclark@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	Connor Abbott <cwabbott0@gmail.com>, Rob Clark <robdclark@chromium.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Instead of a heap allocating a variably sized struct sockaddr and lying
-about the type in the call to netif_set_mac_address(), use a stack
-allocated struct sockaddr_storage. This lets us drop the cast and avoid
-the allocation.
+On Wed, 21 May 2025 at 07:53, Rob Clark <robdclark@gmail.com> wrote:
+>
+> On Tue, May 20, 2025 at 2:25=E2=80=AFPM Dave Airlie <airlied@gmail.com> w=
+rote:
+> >
+> > On Sat, 17 May 2025 at 02:20, Rob Clark <robdclark@gmail.com> wrote:
+> > >
+> > > On Fri, May 16, 2025 at 2:01=E2=80=AFAM Danilo Krummrich <dakr@kernel=
+.org> wrote:
+> > > >
+> > > > On Thu, May 15, 2025 at 02:57:46PM -0700, Rob Clark wrote:
+> > > > > On Thu, May 15, 2025 at 10:55=E2=80=AFAM Danilo Krummrich <dakr@k=
+ernel.org> wrote:
+> > > > > > Anyways, I don't agree with that. Even if you can tweak your dr=
+iver to not run
+> > > > > > into trouble with this, we can't introduce a mode that violates=
+ GOUVM's internal
+> > > > > > lifetimes and subsequently fix it up with WARN_ON() or BUG_ON()=
+.
+> > > > > >
+> > > > > > I still don't see a real technical reason why msm can't be rewo=
+rked to follow
+> > > > > > those lifetime rules.
+> > > > >
+> > > > > The basic issue is that (a) it would be really awkward to have tw=
+o
+> > > > > side-by-side VM/VMA management/tracking systems.  But in legacy m=
+ode,
+> > > > > we have the opposite direction of reference holding.  (But at the=
+ same
+> > > > > time, don't need/use most of the features of gpuvm.)
+> > > >
+> > > > Ok, let's try to move this forward; I see three options (in order o=
+f descending
+> > > > preference):
+> > > >
+> > > >   1) Rework the legacy code to properly work with GPUVM.
+> > > >   2) Don't use GPUVM for the legacy mode.
+> > > >   .
+> > > >   .
+> > > >   .
+> > > >   3) Get an ACK from Dave / Sima to implement those workarounds for=
+ MSM in
+> > > >      GPUVM.
+> > > >
+> > > > If you go for 3), the code introduced by those two patches should b=
+e guarded
+> > > > with a flag that makes it very clear that this is a workaround spec=
+ifically
+> > > > for MSM legacy mode and does not give any guarantees in terms of co=
+rrectness
+> > > > regarding lifetimes etc., e.g. DRM_GPUVM_MSM_LEGACY_QUIRK.
+> > >
+> > > I'm not even sure how #2 would work, other than just copy/pasta all o=
+f
+> > > drm_gpuvm into msm, which doesn't really seem great.
+> > >
+> > > As for #1, even if I could get it to work, it would still be a lot
+> > > more mmu map/unmap (like on every pageflip, vs the current state that
+> > > the vma is kept around until the object is freed).  For the
+> > > non-VM_BIND world, there are advantages to the BO holding the ref to
+> > > the VMA, rather than the other way around.  Even at just a modest
+> > > single layer 1080p the map takes ~.2ms and unmap ~.3ms (plus the unma=
+p
+> > > costs a tlbinv).  So from that standpoint, #3 is the superior option.
+> > >
+> >
+> > Before we get to #3, I'll need a bit more info here on why you have to
+> > map/unmap the VMA on every pageflip.
+>
+> Previously we'd keep the VMA hanging around until the GEM obj is
+> freed.  But that can't work if the VMA (via the VM_BO) is holding a
+> reference to the GEM obj.
+>
+> I was kinda thinking about keeping the VMA around until the handle is
+> closed.. but that doesn't cover the dma-buf case (ie. when you
+> re-import the dma-buf fd each frame.. I know android does this, unsure
+> about other wsi's).
+>
+> > But actually I think 2 is the best option, I think in nouveau this is
+> > where we ended up, we didn't modify the old submission paths at all
+> > and kept the old bo/vm lifetimes.
+> >
+> > We just added completely new bind/exec ioctls and you can only use one
+> > method once you've opened an fd.
+>
+> hmm, but that means tracking VMAs against a single BO differently..
+> which.. at least seems ugly..
 
-Putting "ss" on the stack means it will get a reused stack slot since
-it is the same size (128B) as other existing single-scope stack variables,
-like the vfinfo array (128B), so no additional stack space is used by
-this function.
+I don't think it is if you already have the code to do that, and just
+add gpuvm support in parallel.
 
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Cc: Simon Horman <horms@kernel.org>
-Cc: Ido Schimmel <idosch@nvidia.com>
-Cc: <netdev@vger.kernel.org>
----
- net/core/rtnetlink.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+You also have to figure out that the world is moving towards Vulkan
+for everything so any optimisations you've made for particular legacy
+paths will need to be dealt with in the future picture anyways.
 
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index 9743f1c2ae3c..f9a35bdc58ad 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -3080,17 +3080,7 @@ static int do_setlink(const struct sk_buff *skb, struct net_device *dev,
- 	}
- 
- 	if (tb[IFLA_ADDRESS]) {
--		struct sockaddr *sa;
--		int len;
--
--		len = sizeof(sa_family_t) + max_t(size_t, dev->addr_len,
--						  sizeof(*sa));
--		sa = kmalloc(len, GFP_KERNEL);
--		if (!sa) {
--			err = -ENOMEM;
--			goto errout;
--		}
--		sa->sa_family = dev->type;
-+		struct sockaddr_storage ss = { };
- 
- 		netdev_unlock_ops(dev);
- 
-@@ -3098,10 +3088,9 @@ static int do_setlink(const struct sk_buff *skb, struct net_device *dev,
- 		down_write(&dev_addr_sem);
- 		netdev_lock_ops(dev);
- 
--		memcpy(sa->sa_data, nla_data(tb[IFLA_ADDRESS]),
--		       dev->addr_len);
--		err = netif_set_mac_address(dev, (struct sockaddr_storage *)sa, extack);
--		kfree(sa);
-+		ss.ss_family = dev->type;
-+		memcpy(ss.__data, nla_data(tb[IFLA_ADDRESS]), dev->addr_len);
-+		err = netif_set_mac_address(dev, &ss, extack);
- 		if (err) {
- 			up_write(&dev_addr_sem);
- 			goto errout;
--- 
-2.34.1
+But I'd rather not hack gpuvm into being something it isn't, if there
+is a meaningful commonality in legacy bo/vm bindings across drivers,
+we could create something new, but the ref counting and handling is
+pretty fundamental to gpuvm architecture.
 
+There should only be two paths, legacy and gpuvm, and you shouldn't
+ever be mixing them on a particular exec path, since you should only
+have a vm per userspace fd, and can pick which way to use it the first
+time someone calls it.
+
+Dave.
+Dave.
 
