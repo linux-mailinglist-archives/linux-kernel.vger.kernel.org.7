@@ -1,55 +1,81 @@
-Return-Path: <linux-kernel+bounces-655227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E80ABD293
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:00:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32BD3ABD162
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09A493A6471
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:59:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F4163163BF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2152A266EF1;
-	Tue, 20 May 2025 09:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B40F25D201;
+	Tue, 20 May 2025 08:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="cAQXddps"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eJBoNza5"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3D525DD18;
-	Tue, 20 May 2025 09:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A203525D1F5
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 08:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747731612; cv=none; b=qtBCSNmg6wF4yhRi/yQUvp0P1vEpQl199pZHh/3NjrfuFNU21gHi/PFi08b+XhTGJMn/1BNoRxzy3d50JmdrKvhYU/u/EXc7dbNc0N6bcLEhx6qt1YuymeM9RxzKQ05tw9whFlMf4l9ZXjRbPGGR12IirT7uJ9WYkaXuEfZr8WI=
+	t=1747728305; cv=none; b=gePpA8HMnzUyRFAKiVlWp6ZfTq0qsJfN1YscBdtNgWlwunqS7qoVXUG4qgCmjGinDu+0GbDfVRN5qs6zS3ohDUqHZMBJLy0AVpSP+Ofs+qMTbntJ4pMYEJ1L3ChaSZKdTxM10NRjuYdvMikxIQaLNOVIaw9+EZKJUCadnkPEK9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747731612; c=relaxed/simple;
-	bh=/cBn7/afihVspLZ8dscheq2oAej7A2VWzWI1xW+tNR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DbgBnqSPcmS8q4KMnmXX5Tp48yd/68/KIRMHhGi8EaGPNC5P+djZcQAD3ORyKoFKkvHlqUGZ6naFUNF/6talJ1iSxpK61xMESba2QXeQnDA0zI7JbV92L5rDZyR6sJS9hBl8YL4K64I3r1oHzkSX0/7F0MuxH1QXp7WZfN2uSdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=cAQXddps; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=w0LsP1fiZLjpi1gUjPOfQqurrRWtv9lamy0l+H19eNs=; b=cAQXddps1vtWNSjTgqR6JR92O/
-	A1Ul4BSViUPWt9tLuHIctuBmrLCSjqBtoB5E9M0C4nC/WRRgMLHV8aUYGnJqG8dOmaBlyIpGhvkKI
-	pBptnZMQrLeWndGWsrFddQG3KuNkECU8Wv8GhmXG0ZA54ru0m/WPNJoQuct2xKoQbriAx+G0jMD+3
-	ogJWW5IueXiow4jsKv7Lhtpi2zB2ObuAG2fnvW0pR5+5SdZIeRgrz3VanAZlcJWK3+HntLxuc8n//
-	24MKYDkz1Fru7hNdy3blghtKO8NwnazWBxz2YB7lC1O6zCvTWYWF2wpnfToYGqiMp73irFST3y1UP
-	Q/WlkGow==;
-Received: from [89.212.21.243] (port=52674 helo=[192.168.69.116])
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <primoz.fiser@norik.com>)
-	id 1uHHqP-009yd6-21;
-	Tue, 20 May 2025 09:57:01 +0200
-Message-ID: <e986fcf0-fe2b-43de-9d46-8ea60d97ca14@norik.com>
-Date: Tue, 20 May 2025 09:56:59 +0200
+	s=arc-20240116; t=1747728305; c=relaxed/simple;
+	bh=dVd66/LTvQ2RN45Jr2m5S/pHVpsDjYhPNQPEkpudd+4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ra4+rHvSzAiEPOZz6vepcxF3xCIwBG+YJ30H3cxv9orvl7y3m9IEzsdeNLLRbbah7kF4Xfz/eEfw+fmjXMPQAEbPPeMTgVpvKXeSbd5ZHWaGS4WakuULUOKQ3G2eXcQbFJ5G/0DZZuqqcltZyYqBbtQ1O2HrYl7Tslvml84HQp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eJBoNza5; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-442ccf0e1b3so64967335e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 01:05:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747728299; x=1748333099; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PTvudJvnhDEPuyFu1j/pIjb7A7vd2K7xc6jlT71fWUc=;
+        b=eJBoNza5GBMuEknl8sGd4T+k+AGif5XIgyXeYosjyKZzs/1rA/zV8CestdM4a3rSJN
+         zUl9864KjZgXt2zS2n6ECOFiVkvc/r9Yu+OUmEVfyHAwpFRyEF5iq6k4/NbxElctyzQl
+         ph0NHIwFdYxSgMvoZtMdaXWjTyiVGEjQKg6ldp+u7yYdqEa1UPe9nQG6OQwKlbzznHao
+         W07bJ/7vH3mDG5camfk1r/AO9QBjLCTWqcKX418mBy2KF7BNUe2JeD3sIAFhRNACLoZM
+         1Wt5kkYRaILW95ubGJLfQyqvV0tnK1pEAdxxl+pqR/VvQXFj2aS6G4MtEwQsT72vIp/a
+         FK4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747728299; x=1748333099;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PTvudJvnhDEPuyFu1j/pIjb7A7vd2K7xc6jlT71fWUc=;
+        b=vBzsVkOlTEKJqUuRc9cUPliZqdPnBuMWw1nopAWFEGd6Z/t/9aTbfEEnTssS5mLza6
+         TZYfyxlfO22ScvJMtAQ9yGdO5H3mzx0ANxn1FvGwO1ydNdNjPNW9kHLmaH6zGJUE9RGV
+         7RKvr7aNJ47Nl1+6PnA/HUr5ivqwAC+YAtUpc2VOQ/raLhtVObXy+RlsENPKDUoIJ4OU
+         0QxtCFgOM7v6GxJubzGp1rDXD5FCYTMcMqeAuG2NaWMgH19eY6CpspZHrnMLk7jEaw/k
+         rlzvxltP48HB61+6Mm/joEyv01JLJpK9CL+sETNBlAeS8RDciRr27h5FVtrtpxhKwtJ/
+         l9kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzJ5w5AFKtgVkXdoVNbUSoaedbuQLODfD/4tSEJ7HP0uRjDmsOd+ZDl4D0ZFWlF0mXlVYNkYIsNC3wu3k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoiFpiDebYNaXglj7suBeDQRzETfr5tPxv3AFe+kEVxUTBgkU9
+	pult4qp15R+Ll09lBSAR49+PnQomAI47Lur0kaZKWXnoN/+LeJu3afOKRhlHq9XLbVM=
+X-Gm-Gg: ASbGnctU9LnxXtfS2vIrCPa8NXlRbKg/FkypjIKlrj43PYcOpsFfpcZuNQaItBsbiF2
+	SUMFzZ09/cihvs800d/kiLJvJELr5DyjNB7ZqngnItzrHRtpsz7IJ2ISZ6p0Q0eJ7tABEV6YsVX
+	WiQMFzDb4N8HhSL5Dldr2ZsoowqG7hq/aqYfrkiXJ3xp+Kak86+GthnN3svra5g8e8lkBM6BhZy
+	Pkg9Wui1FHmVktTc6JEM1Ej5CMcLoJiRwy1I9Zzs7UoPbjQfCSKOMTwd7L7BVPsdftVh2bkdxtL
+	UNLWEt+IwzcEf6Ylxutd8uNz9Pzx7h2fcPo8D1rikKGi5xrBNRYpAWgk4vYd3xhXD3S9+tH+33D
+	Rvy2nNaYRVvQYjKtzZgRYK6W8d5VXnFxOYCf27cM=
+X-Google-Smtp-Source: AGHT+IGUPKh2A40EZEfnAPoVQ3zMAxuIk1SlR6DLZKDJjOuSfQInyC6VjSaaWvvIanac18fckF6Umw==
+X-Received: by 2002:a05:600c:34d4:b0:442:e0e0:250 with SMTP id 5b1f17b1804b1-442fd67200emr144060775e9.29.1747728299447;
+        Tue, 20 May 2025 01:04:59 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:fb2e:6266:4e39:ce68? ([2a01:e0a:3d9:2080:fb2e:6266:4e39:ce68])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a362997dc8sm13872656f8f.46.2025.05.20.01.04.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 May 2025 01:04:59 -0700 (PDT)
+Message-ID: <b6ef6e15-cff4-40d2-a54d-55dd0218f966@linaro.org>
+Date: Tue, 20 May 2025 10:04:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,127 +83,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Upstream] [PATCH] arm64: dts: freescale: imx93-phycore-som:
- Delay the phy reset by a gpio
-To: Christoph Stoidner <c.stoidner@phytec.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- upstream@lists.phytec.de
-References: <20250520073450.388989-1-c.stoidner@phytec.de>
-Content-Language: en-US
-From: Primoz Fiser <primoz.fiser@norik.com>
-Autocrypt: addr=primoz.fiser@norik.com; keydata=
- xjMEZrROOxYJKwYBBAHaRw8BAQdAADVOb5tiLVTUAC9nu/FUl4gj/+4fDLqbc3mk0Vz8riTN
- JVByaW1veiBGaXNlciA8cHJpbW96LmZpc2VyQG5vcmlrLmNvbT7CiQQTFggAMRYhBK2YFSAH
- ExsBZLCwJGoLbQEHbnBPBQJmtE47AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQagttAQducE+T
- gAD+K4fKlIuvH75fAFwGYG/HT3F9mN64majvqJqvp3gTB9YBAL12gu+cm11m9JMyOyN0l6Os
- jStsQFghPkzBSDWSDN0NzjgEZrROPBIKKwYBBAGXVQEFAQEHQP2xtEOhbgA+rfzvvcFkV1zK
- 6ym3/c/OUQObCp50BocdAwEIB8J4BBgWCAAgFiEErZgVIAcTGwFksLAkagttAQducE8FAma0
- TjwCGwwACgkQagttAQducE8ucAD9F1sXtQD4iA7Qu+SwNUAp/9x7Cqr37CSb2p6hbRmPJP8B
- AMYR91JYlFmOJ+ScPhQ8/MgFO+V6pa7K2ebk5xYqsCgA
-Organization: Norik systems d.o.o.
-In-Reply-To: <20250520073450.388989-1-c.stoidner@phytec.de>
-Content-Type: text/plain; charset=UTF-8
+From: neil.armstrong@linaro.org
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v4 26/30] drm/msm/dpu: get rid of DPU_SSPP_QOS_8LVL
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vinod Koul <vkoul@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20250519-dpu-drop-features-v4-0-6c5e88e31383@oss.qualcomm.com>
+ <20250519-dpu-drop-features-v4-26-6c5e88e31383@oss.qualcomm.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250519-dpu-drop-features-v4-26-6c5e88e31383@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
-X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
-Hi Christoph,
-
-On 20. 05. 25 09:34, Christoph Stoidner wrote:
-> According to the datasheet the phy needs to be held in reset until the
-> reference clock got stable. Even though no issue was observed, fix this
-> as the software should always comply with the specification.
+On 19/05/2025 18:04, Dmitry Baryshkov wrote:
+> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > 
-> Fix this in the bootloader, as this is the point where the reference
-> clock gets initialized and stable first.
-
-I would remove this paragraph about the "Fix this in the bootloader..."
-
-Doesn't patch apply to both the kernel and the bootloader FEC driver?
-
+> Continue migration to the MDSS-revision based checks and replace
+> DPU_SSPP_QOS_8LVL feature bit with the core_major_ver >= 4 check.
 > 
-> Use gpio4 23, which is connected to the phy reset pin. On the same pin
-> RX_ER was used before, but this signal is optional and can be dropped.
-> 
-> Note: This comes into effect with the phyCOREs SOM hardware revision 4.
-> In revisions before, this gpio is not connected, and the phy reset is
-> managed with the global hardware reset circuit.
-> 
-> Signed-off-by: Christoph Stoidner <c.stoidner@phytec.de>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > ---
->  arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c | 6 +++---
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h | 2 --
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.c    | 5 ++++-
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h    | 2 ++
+>   4 files changed, 9 insertions(+), 6 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-> index 88c2657b50e6..f8e2f3f3baa8 100644
-> --- a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-> @@ -58,6 +58,9 @@ &fec {
->  				 <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>,
->  				 <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>;
->  	assigned-clock-rates = <100000000>, <50000000>, <50000000>;
-> +	phy-reset-gpios = <&gpio4 23 GPIO_ACTIVE_HIGH>;
-> +	phy-reset-duration = <1>;
-> +	phy-reset-post-delay = <0>;
->  	status = "okay";
->  
->  	mdio: mdio {
-> @@ -91,14 +94,16 @@ pinctrl_fec: fecgrp {
->  		fsl,pins = <
->  			MX93_PAD_ENET2_MDC__ENET1_MDC			0x50e
->  			MX93_PAD_ENET2_MDIO__ENET1_MDIO			0x502
-> -			MX93_PAD_ENET2_RD0__ENET1_RGMII_RD0		0x57e
-> -			MX93_PAD_ENET2_RD1__ENET1_RGMII_RD1		0x57e
-> -			MX93_PAD_ENET2_RXC__ENET1_RX_ER			0x5fe
-> +			/* the three pins below are connected to PHYs straps,
-> +			 * that is what the pull-up/down setting is for. */
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
+> index 6d7be74bafe326a1998a69ed9b3495c5acf6350f..a276a1beaf95d183f6119452e5516fa8ee60cef6 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
+> @@ -35,12 +35,12 @@
+>   	(VIG_MASK | BIT(DPU_SSPP_SCALER_QSEED3_COMPATIBLE))
+>   
+>   #define VIG_SDM845_MASK_NO_SDMA \
+> -	(VIG_MASK | BIT(DPU_SSPP_QOS_8LVL) | BIT(DPU_SSPP_SCALER_QSEED3_COMPATIBLE))
+> +	(VIG_MASK | BIT(DPU_SSPP_SCALER_QSEED3_COMPATIBLE))
+>   
+>   #define VIG_SDM845_MASK_SDMA \
+>   	(VIG_SDM845_MASK_NO_SDMA | BIT(DPU_SSPP_SMART_DMA_V2))
+>   
+> -#define VIG_QCM2290_MASK (VIG_BASE_MASK | BIT(DPU_SSPP_QOS_8LVL))
+> +#define VIG_QCM2290_MASK (VIG_BASE_MASK)
+>   
+>   #define DMA_MSM8953_MASK \
+>   	(BIT(DPU_SSPP_QOS))
+> @@ -60,7 +60,7 @@
+>   	(VIG_SC7280_MASK | BIT(DPU_SSPP_SMART_DMA_V2))
+>   
+>   #define DMA_SDM845_MASK_NO_SDMA \
+> -	(BIT(DPU_SSPP_QOS) | BIT(DPU_SSPP_QOS_8LVL) |\
+> +	(BIT(DPU_SSPP_QOS) | \
+>   	BIT(DPU_SSPP_TS_PREFILL) | BIT(DPU_SSPP_TS_PREFILL_REC1) |\
+>   	BIT(DPU_SSPP_CDP) | BIT(DPU_SSPP_EXCL_RECT))
+>   
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+> index 8c394e7d6496ca2d120c81c7776b4b979368be23..c582ef1ffe022f2e92b1b80cbab97ff41a2acfe9 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
+> @@ -50,7 +50,6 @@ enum {
+>    * @DPU_SSPP_CSC_10BIT,      Support of 10-bit Color space conversion
+>    * @DPU_SSPP_CURSOR,         SSPP can be used as a cursor layer
+>    * @DPU_SSPP_QOS,            SSPP support QoS control, danger/safe/creq
+> - * @DPU_SSPP_QOS_8LVL,       SSPP support 8-level QoS control
+>    * @DPU_SSPP_EXCL_RECT,      SSPP supports exclusion rect
+>    * @DPU_SSPP_SMART_DMA_V1,   SmartDMA 1.0 support
+>    * @DPU_SSPP_SMART_DMA_V2,   SmartDMA 2.0 support
+> @@ -68,7 +67,6 @@ enum {
+>   	DPU_SSPP_CSC_10BIT,
+>   	DPU_SSPP_CURSOR,
+>   	DPU_SSPP_QOS,
+> -	DPU_SSPP_QOS_8LVL,
+>   	DPU_SSPP_EXCL_RECT,
+>   	DPU_SSPP_SMART_DMA_V1,
+>   	DPU_SSPP_SMART_DMA_V2,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.c
+> index 32c7c80845533d720683dbcde3978d98f4972cce..7dfd0e0a779535e1f6b003f48188bc90d29d6853 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.c
+> @@ -543,7 +543,7 @@ static void dpu_hw_sspp_setup_qos_lut(struct dpu_hw_sspp *ctx,
+>   		return;
+>   
+>   	_dpu_hw_setup_qos_lut(&ctx->hw, SSPP_DANGER_LUT,
+> -			      test_bit(DPU_SSPP_QOS_8LVL, &ctx->cap->features),
+> +			      ctx->mdss_ver->core_major_ver >= 4,
+>   			      cfg);
+>   }
+>   
+> @@ -703,6 +703,9 @@ struct dpu_hw_sspp *dpu_hw_sspp_init(struct drm_device *dev,
+>   	hw_pipe->ubwc = mdss_data;
+>   	hw_pipe->idx = cfg->id;
+>   	hw_pipe->cap = cfg;
+> +
+> +	hw_pipe->mdss_ver = mdss_rev;
+> +
+>   	_setup_layer_ops(hw_pipe, hw_pipe->cap->features, mdss_rev);
+>   
+>   	return hw_pipe;
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
+> index 56a0edf2a57c6dcef7cddf4a1bcd6f6df5ad60f6..ed90e78d178a497ae7e2dc12b09a37c8a3f79621 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
+> @@ -314,6 +314,8 @@ struct dpu_hw_sspp {
+>   	enum dpu_sspp idx;
+>   	const struct dpu_sspp_cfg *cap;
+>   
+> +	const struct dpu_mdss_version *mdss_ver;
+> +
+>   	/* Ops */
+>   	struct dpu_hw_sspp_ops ops;
+>   };
+> 
 
-I would remove this comment and maybe move it to the commit msg why are
-you changing the PD/PU configuration.
-
-Anyway, if you decide to keep it, you need to fix the following warning:
-
-WARNING: Block comments use a trailing */ on a separate line
-#46: FILE: arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi:98:
-+                        * that is what the pull-up/down setting is for. */
-
-BR,
-Primoz
-
-> +			MX93_PAD_ENET2_RD0__ENET1_RGMII_RD0		0x37e
-> +			MX93_PAD_ENET2_RD1__ENET1_RGMII_RD1		0x37e
->  			MX93_PAD_ENET2_RX_CTL__ENET1_RGMII_RX_CTL	0x57e
->  			MX93_PAD_ENET2_TD0__ENET1_RGMII_TD0		0x50e
->  			MX93_PAD_ENET2_TD1__ENET1_RGMII_TD1		0x50e
->  			MX93_PAD_ENET2_TX_CTL__ENET1_RGMII_TX_CTL	0x50e
->  			MX93_PAD_ENET2_TD2__ENET1_TX_CLK		0x4000050e
-> +			MX93_PAD_ENET2_RXC__GPIO4_IO23			0x51e
->  		>;
->  	};
->  
-
--- 
-Primoz Fiser
-phone: +386-41-390-545
-email: primoz.fiser@norik.com
---
-Norik systems d.o.o.
-Your embedded software partner
-Slovenia, EU
-phone: +386-41-540-545
-email: info@norik.com
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
