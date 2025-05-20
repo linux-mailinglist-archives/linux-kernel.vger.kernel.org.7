@@ -1,340 +1,247 @@
-Return-Path: <linux-kernel+bounces-656514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32421ABE743
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:35:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 550E5ABE739
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F28ED7B58D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:34:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21DAE7B2673
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAD5261589;
-	Tue, 20 May 2025 22:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AD825F991;
+	Tue, 20 May 2025 22:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LeLsTjlw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="X9yxXSJk"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFD525FA1B;
-	Tue, 20 May 2025 22:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217691FDE02;
+	Tue, 20 May 2025 22:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747780507; cv=none; b=iNYqatlYZQbJ7kinfFuOeqKN9kp4hDLB9R6Hri/zBLAXxNQHrQz9FZE2/cz/mPpOGMa92ygz334wXMpfyVkF9IurVLcPoaT8ggvKnpDyaiNhLb2NsOQMzcZKBUVMmPCFp72ahSM1BsSY2DbU2FgFYABgRhSEBsR9sFwwSs0bW3g=
+	t=1747780487; cv=none; b=m4+FD7BAGQ0swMtmZUxDGA69IiE+0kH2u5uWDScaZJ4F4SpPLEhx8zfKhM1Xyr8cPg9LtMG+tEQgWzM3izJ0bPwpSpA1zc1pVwclZAxEQg3SX7J7Lrb7x10iLttX+A70P4JYz9FRWQmcEZTLLgHUgx+brwImDlsasnXWrXS6yYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747780507; c=relaxed/simple;
-	bh=u5OBlSUF6CCSyhQ2s09ZkOGdrSdh0FPBxB4ZEKRKka8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S5tF/y85qDWt+ZAF0YheBR0hLugV2cP517zgjEfPWlQiP+UURKnodY+YOIHPjwU86vBjpWTrJSIwf4Hb3Jv0QRnqqcL8AV9gYY47SV/Dur4FrspTwckp9A1BACsMH5sp26UKGTnHH91SEiXgqxFsuAfmQpAoQLNmQ4CnhzVPPLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LeLsTjlw; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747780505; x=1779316505;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=u5OBlSUF6CCSyhQ2s09ZkOGdrSdh0FPBxB4ZEKRKka8=;
-  b=LeLsTjlwBHu+1rQsbNPUX/5BCRJXirQ4/Jq3ENOxbCndIarIPfoNtvVe
-   hOfDVG3Xue2mqksEaA572mE1T1svDZ+rHJETqW4bKKrr7snEi5Ng/3YF5
-   rXLND8oj86227Dwp0LFVUqkLqx1sSrDcUvJxi+qYh1ybdVLbCq5zNzsvX
-   HrIym9FMRCWBMtm5u8Z8dN6xTSaMxoQ59qckiyZgD4BsxHywEnOaRI7Ti
-   /tT2FhPVKuI1JkpnOgh86OtMu1DVs1WwVDieH/w4P5/s6+WYM+rVvlmk2
-   TZtgngovAZbTZ/rMDjMPh3Ro0LAonrY1eJr5CIpjeWC0hem24kwESsAGh
-   g==;
-X-CSE-ConnectionGUID: 3W8YxRaUQsGVOjGm8nMl7A==
-X-CSE-MsgGUID: bCZjvkXPQhib7tXJ+C9Wpg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49665339"
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="49665339"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 15:35:04 -0700
-X-CSE-ConnectionGUID: X8XXuC4KT8+zSrqPD6YQDA==
-X-CSE-MsgGUID: 3BRHmB77QR+2L8aPwUy2+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="140758599"
-Received: from iweiny-desk3.amr.corp.intel.com (HELO [10.124.222.89]) ([10.124.222.89])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 15:33:47 -0700
-Message-ID: <ac30a88d-7139-40ce-ae3c-34ef12c939a5@linux.intel.com>
-Date: Tue, 20 May 2025 15:33:45 -0700
+	s=arc-20240116; t=1747780487; c=relaxed/simple;
+	bh=DfSmlw2ky7OFmz4+3PUKVmvruRbl4BnFb/x15VDASIY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Jv/DA83t3DeeqiJMJv0EBc+Wq4FIjINeKtJjHHkC7YLlvcB94VyHI78KhjaHP4DDQhCvcmTR1JIOC6SHxyPO6JvKozwW4cGx+gX5Xqd7/Nonhk8RTU1e+l8tqPVkM5vx/xyKX+HB5kiBNLtfyFXpQdwU41cBM3aM9FPBSwmoF1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=X9yxXSJk; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1747780473; x=1748385273; i=spasswolf@web.de;
+	bh=vLvpg1gqk1QMzG4wp0MpOyy9qKpbJeSJVQiP69cX4Vc=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=X9yxXSJkmS+FUJGE+iPGVjgH5kHoYZIEZfApQPoVTMC7hCcpVhfxSai1bcJIwedd
+	 HIx+gdzkeytyc8iRrvN7IqdLIa31UwpttTIs5WRHoRQKN8kZQr2TIONRvbRRZ3fCT
+	 uoWIXd4xais30CtihvTJuH65hOnTaiIVus0YhSl1fD44wgPaHfXQxcazqKOBL+gN7
+	 w4y95o2J8uZgGBrj8OSuhfD8Bp1EtTt0M8wWZIlt/l8DH7AxkVj4valfaz3GKjLF0
+	 ac3hKjNTVXs+nzxwol7i5hwuw2guEoRFcGakoMlnRl9sYmtYIQawvUzalwylCNRD+
+	 663sYlF5CDkWc1vHmg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from localhost.localdomain ([95.223.134.88]) by smtp.web.de
+ (mrweb105 [213.165.67.124]) with ESMTPSA (Nemesis) id
+ 1MeDQj-1uq1HS0Ckp-00aXaR; Wed, 21 May 2025 00:34:33 +0200
+From: Bert Karwatzki <spasswolf@web.de>
+To: linux-wireless@vger.kernel.org
+Cc: Bert Karwatzki <spasswolf@web.de>,
+	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org,
+	Johannes Berg <johannes.berg@intel.com>,
+	Jason Xing <kerneljasonxing@gmail.com>
+Subject: [PATCH] wifi: add sk_requests_wifi_status()
+Date: Wed, 21 May 2025 00:34:29 +0200
+Message-ID: <20250520223430.6875-1-spasswolf@web.de>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: f6d119025a88b766ec803ef948dbbf7c97574b74.camel@sipsolutions.net
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 15/17] PCI/AER: Ratelimit correctable and non-fatal
- error logging
-To: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
-Cc: Jon Pan-Doh <pandoh@google.com>,
- Karolina Stolarek <karolina.stolarek@oracle.com>,
- Weinan Liu <wnliu@google.com>, Martin Petersen <martin.petersen@oracle.com>,
- Ben Fuller <ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>,
- Anil Agrawal <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Lukas Wunner <lukas@wunner.de>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>,
- Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
- Terry Bowman <terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>
-References: <20250520215047.1350603-1-helgaas@kernel.org>
- <20250520215047.1350603-16-helgaas@kernel.org>
-Content-Language: en-US
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20250520215047.1350603-16-helgaas@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8B3KASvul8NjNhieBQsQqF9z56AhbnbcW82TkfiyNI52alVYc5Z
+ Ey/KfZvSvz9yRYMARv0iFSsqwfpUFTIJPaxuWi4lAvDaJKwZ+P5jS/RltuN2ZTNrNhCBcIc
+ pJHw9LcVzt8VGS+m6N9qqSsFT0BjtjO6hXyfMoGbE1rbpCSCfC289O2nPFbFNJws/Pgjgqd
+ 93loyV9JlK/FKre/f0ohw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wPKrg23ARa0=;zQkm+35Dq+Z7+NACxLSzy68DnS5
+ +h5khAFaplrXPHHa5Tu2ghNcS8BzhVrSftU7xC2zC3t2i/tJdjchZklZwK15WMFxjPi2nSbb6
+ rz5JUEc3zo29T1MBPqhC7f3gTRh8+2k9e1yhS0kcG6NRW9iiJr/onZtULe1u9pe0fRAePZfIt
+ 4hL4q+FzjPFtQpHs+sFKzmO5U9gJAtMjbNZp8xN8At3zy2ZuJlN4e7C4hplOv+29iuO2V269h
+ rRSlUr7YsPTWtXaS+AMq8emda0COdXCRWAQKmaR35mcZASY1x6PUsHPxiGU5R807ZjukSOXWa
+ KBZy3cLDquKPLoODrRDLUu7wMRjFRDMhPbscrfP+LCzb2PdJT7ZwRvlZ7AFgP7NQL9qd9TUH4
+ FxgOzsV6YjbUcNfte0TFUir9iO+6Vg3B1syp6jBQYgi3J4D2aEPtYPnlzfSuGD5UEtVdULs+7
+ ZiqIM1lKlmTNcfBs2Bc0rTex2UJGLru1/sPZO+uDLqcpyTliyRwfJhQhQUJ0inMMymNWqtS4D
+ yiPLxxQwBmBsyJ/OXGLw2zDy/sQPTIYyd8xWXc20ILqZKLUQCb8TfCELia5n2Z/WhAzDuYNkG
+ 9PZ2N9hEq15dd4D9rLQ0nyuiN2stNZmJEmWm+oyvCwnTHo2jv44iVL0unVuhslEbB53tRXNcY
+ FT1kMhQMaHj2pv+vw2CtmrZY6jjjBHo7OrN9qMRCb1WfjlimOAPI41opF5bZ96J0HoY7UTeDh
+ IECuxFTulULTdNKo3MkPbU5Ky+a3RTr2F7pVq8q0dVxlz01KjoJIf6o1DI2kVCTfKT1Pjdqeh
+ CdJOClejjzc29gTzjBXsWObscSsMDmxMOzRpsULoPXGXxWn6EcfFhH5f119+KKwmfoLEW6v63
+ p/GcZriTQu6RxLxnsyu6al5fRn460swAW7r0c8fCQmyYW9tWgu2EmHevXudPjkZdT4czw6o+u
+ p+PIU4Kt+5uXhROyWWl3jkaXcZXgyeWyQxX7RA7HBgIhxb6pYh4hu//X84b2L3vY7QVZ0wJZD
+ hgM94jrARa3OiGN7XFkSGn7KiLgVUvAL+oSEac7tgg/frobep96bN59rHkXAWsjfVMEBLrxeH
+ cb7UfI1NUMcCVLZ6Hkbh8Vdn3qNv6k6Sm5LT1QosRI1P1E714Ro9LjlUB3UAg2mzcL8OZQWTa
+ lV9ZOaxNFRKb3ZFKjd8E8/+zxURMILNo9tS1xj/lBI5CzBqJbYNnmHL1OLfWwqHoPnOsVfRNV
+ 2dYEYCuIdJHboq5OtzDcJ/qF2UtHnHaRL+JExeBPS8aWUd1QkojyB36S+UdBl4ORV+IFy0vB2
+ hYcZM25A/nNQRT8CFY0tCiJZaSClKs5XKcOV3N1BLiSF0vLsLRwZ6suhAbNhmBzkXkwqy6xZC
+ 1kWQan86EkTW+Ei0q92bFByJ5FAnnLIja34IV46nrW/NfyLzMb6vzA1/KGCyMEa5iYtunbuxT
+ k8lLzQR0TgOC2N/3aLjnnfi2Z6OnA/gZjgBr1f+JjZZ+BgfhdGz7nJOJKOitrP0MAVEdV+jMl
+ gDWGIL0NKT/ZeYizb0Z3DdlwduiS/CBombTKv/+BSYo1eX6FUqInG0iir7dKwFRBBKhNWmP8X
+ XAzfSY8SBasKfrJ2S+NGWGbob0HUYLqFfF4mmjXjBY49Eex+C09/gAElxacQDkkS7Z3Eui+wN
+ h09IYN1T1WqAcnkozBVvFVQ0Ot8krI21HojpWFaPQoopObaqJDihwErFMikXn0FHaY9KXO/Tz
+ oTBB0L/3GwQkcaeeVlX/hxRLimHPdmXCls0zcZY784aW+tWkCo0UWGuc1u6qqLhN3FV5vhjbp
+ 7PUzv8m3skjTeaCm6AnkyJz4+sZvT+jjUWdx6cpwk9x/feUjDwzhfdjXeza0JvEnQ0ra8HM/e
+ bhDhk8XdyD3LfO29mdkUFEuNev1tDBPijb9O8fIv1rdR0O2N/F32Vu/Z9oSJw3YvwZG4brWiJ
+ aEjLgiv5p6VgVKkxP1FxQi+nfMwFLv1w7kOXq4cm2EielFRSNIniCaKomEJO3l5Hzv55/WUT4
+ krOll40uS3lGmW8X58jalPcfBEIzlQFFBrTrg5u3wXroNGW0moi9iZHOdKn56HTF26Wb1V+4T
+ S8wsyW33rxy+MVyaxxec7EUFdyV09jkLs3cFm7asptIlgti7IJo6jz55twAVpoKcNnkEjppJk
+ UhQkNZhTzXYKr8G3Th2Ru1eFW59K81JYzOh0fy2Q24gskBRZuMaP5ez4NbADGsX2BkmLKo5ro
+ 2Ls5sb2yvcfqdQDipVr/DfdWaQG1CC/Rty9j+suVWqSiDVeSMqX3IiX+cym5NVUzsUD05ARD7
+ 0am2p2mF+yZFCsOjW9kgf55bxCq1OiZ+HUngbzCoFetHVr2tTNps/SwGKyQ2U+AQXDnvULjIJ
+ mJ3TsVHVTMOISot42aUNCjGBtK2IJRJTm1GKrRIsmuUaFZPdfFGgRK/7v0ur/Ai45qSMuu2FF
+ sBTMMpUL8jwfHiA8tbbxAHTvIsJhEPcUaDsa+5M7DKcnAiYFiDhdwP6RaPNxEM1FD/fPpPmvU
+ JBa607hxcBXkOCHNBXckPhSCsm2UIt6u3zYcEHs7MyO7JUbxtA7d4mWkSz04TNbUu5BUO0G3n
+ fOAOZMzx8w/ekDqFYl6okZmeCB3flsCTf8PSbEcHtAVUevXn3Eoi5F3g3wR3iQMkWbjGKv4Na
+ 6rKqQXLyc47wDMbmiN/MTjugPlEp5HdhMJkcqbRsJ5g+LzQNX5MQAKy9oIMG/rbk6OzJ2Gdvs
+ ELObUdVqL3qvPn+2OUlJJZzdWw1hSSEPjVqqC4/NwwXqERrL85uDXZlqWZdYlXncBZ6EMI7Qe
+ fUukT/Qqb505KshJw7LZKcyQHr1p0AIoh8iBybO98ZqPITilJda0K/Db57p1za4ZYhlwTtbN/
+ 43qoVStfEF9G2FCBPYcrlyobn1N5vuTYaS9l546ScXkobBvNgUUY1aytQCk0yixByk6jWibXc
+ 53i5w5a5fPfoImi/0Ny2jzuflHb/xY9fvsQeISBgqCEVAM+5WpT1Ga0TfJyPLIkkfyVhbjnwM
+ Lp5RLqaGrfXBlW5H5BT91yXqThLu7Jx9ZQbYqfZZ33+A0IhkI/bi9eF/pFfr0jnd929/+2orw
+ Uu8qutgxovdyA=
 
+Checking the SOCK_WIFI_STATUS flag bit in sk_flags, may give a wrong resul=
+t
+since sk_flags are part of a union and the union is used otherwise. Add
+a sk_requests_wifi_status() which checks if sk is non-NULL, sk is a full s=
+ocket
+and checks the flag bit.
 
-On 5/20/25 2:50 PM, Bjorn Helgaas wrote:
-> From: Jon Pan-Doh <pandoh@google.com>
->
-> Spammy devices can flood kernel logs with AER errors and slow/stall
-> execution. Add per-device ratelimits for AER correctable and non-fatal
-> uncorrectable errors that use the kernel defaults (10 per 5s).  Logging of
-> fatal errors is not ratelimited.
->
-> There are two AER logging entry points:
->
->    - aer_print_error() is used by DPC and native AER
->
->    - pci_print_aer() is used by GHES and CXL
->
-> The native AER aer_print_error() case includes a loop that may log details
-> from multiple devices.  This is ratelimited such that we log all the
-> details we find if any of the devices has not hit the ratelimit.  If no
-> such device details are found, we still log the Error Source from the ERR_*
-> Message, ratelimited by the Root Port or RCEC that received it.
->
-> The DPC aer_print_error() case is not ratelimited, since this only happens
-> for fatal errors.
->
-> The CXL pci_print_aer() case is ratelimited by the Error Source device.
->
-> The GHES pci_print_aer() case is via aer_recover_work_func(), which
-> searches for the Error Source device.  If the device is not found, there's
-> no per-device ratelimit, so we use a system-wide ratelimit that covers all
-> error types (correctable, non-fatal, and fatal).
->
-> Sargun at Meta reported internally that a flood of AER errors causes RCU
-> CPU stall warnings and CSD-lock warnings.
->
-> Tested using aer-inject[1]. Sent 11 AER errors. Observed 10 errors logged
-> while AER stats (cat /sys/bus/pci/devices/<dev>/aer_dev_correctable) show
-> true count of 11.
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/gong.chen/aer-inject.git
->
-> [bhelgaas: commit log, factor out trace_aer_event() and aer_print_rp_info()
-> changes to previous patches, collect single aer_err_info.ratelimit as union
-> of ratelimits of all error source devices, don't ratelimit fatal errors,
-> "aer_report" -> "aer_info"]
-> Reported-by: Sargun Dhillon <sargun@meta.com>
-> Signed-off-by: Jon Pan-Doh <pandoh@google.com>
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
+Fixes: 76a853f86c97 ("wifi: free SKBTX_WIFI_STATUS skb tx_flags flag")
+Idea-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Bert Karwatzki <spasswolf@web.de>
+=2D--
+ drivers/net/wireless/ath/wil6210/txrx.h     | 3 +--
+ drivers/net/wireless/marvell/mwifiex/main.c | 3 +--
+ include/net/sock.h                          | 7 +++++++
+ net/mac80211/mesh.c                         | 2 +-
+ net/mac80211/tx.c                           | 6 +++---
+ 5 files changed, 13 insertions(+), 8 deletions(-)
 
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+diff --git a/drivers/net/wireless/ath/wil6210/txrx.h b/drivers/net/wireles=
+s/ath/wil6210/txrx.h
+index 33ccd0b248d4..fff8b7f8abc5 100644
+=2D-- a/drivers/net/wireless/ath/wil6210/txrx.h
++++ b/drivers/net/wireless/ath/wil6210/txrx.h
+@@ -617,8 +617,7 @@ static inline bool wil_need_txstat(struct sk_buff *skb=
+)
+ {
+ 	const u8 *da =3D wil_skb_get_da(skb);
+=20
+-	return is_unicast_ether_addr(da) && skb->sk &&
+-	       sock_flag(skb->sk, SOCK_WIFI_STATUS);
++	return is_unicast_ether_addr(da) && sk_requests_wifi_status(skb->sk);
+ }
+=20
+ static inline void wil_consume_skb(struct sk_buff *skb, bool acked)
+diff --git a/drivers/net/wireless/marvell/mwifiex/main.c b/drivers/net/wir=
+eless/marvell/mwifiex/main.c
+index 1485f949ad4e..7b50a88a18e5 100644
+=2D-- a/drivers/net/wireless/marvell/mwifiex/main.c
++++ b/drivers/net/wireless/marvell/mwifiex/main.c
+@@ -913,8 +913,7 @@ mwifiex_hard_start_xmit(struct sk_buff *skb, struct ne=
+t_device *dev)
+=20
+ 	multicast =3D is_multicast_ether_addr(skb->data);
+=20
+-	if (unlikely(!multicast && skb->sk &&
+-		     sock_flag(skb->sk, SOCK_WIFI_STATUS) &&
++	if (unlikely(!multicast && sk_requests_wifi_status(skb->sk) &&
+ 		     priv->adapter->fw_api_ver =3D=3D MWIFIEX_FW_V15))
+ 		skb =3D mwifiex_clone_skb_for_tx_status(priv,
+ 						      skb,
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 3e15d7105ad2..2da289ec4c17 100644
+=2D-- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -2822,6 +2822,13 @@ sk_is_refcounted(struct sock *sk)
+ 	return !sk_fullsock(sk) || !sock_flag(sk, SOCK_RCU_FREE);
+ }
+=20
++static inline bool
++sk_requests_wifi_status(struct sock *sk)
++{
++	return sk && sk_fullsock(sk) && sock_flag(sk,
++SOCK_WIFI_STATUS);
++}
++
+ /* Checks if this SKB belongs to an HW offloaded socket
+  * and whether any SW fallbacks are required based on dev.
+  * Check decrypted mark in case skb_orphan() cleared socket.
+diff --git a/net/mac80211/mesh.c b/net/mac80211/mesh.c
+index a381b4b756ea..5cc56d578048 100644
+=2D-- a/net/mac80211/mesh.c
++++ b/net/mac80211/mesh.c
+@@ -777,7 +777,7 @@ bool ieee80211_mesh_xmit_fast(struct ieee80211_sub_if_=
+data *sdata,
+ 	if (ethertype < ETH_P_802_3_MIN)
+ 		return false;
+=20
+-	if (skb->sk && sock_flag(skb->sk, SOCK_WIFI_STATUS))
++	if (sk_requests_wifi_status(skb->sk))
+ 		return false;
+=20
+ 	if (skb->ip_summed =3D=3D CHECKSUM_PARTIAL) {
+diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
+index 3b9392a6ddb2..d8d4f3d7d7f2 100644
+=2D-- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -2859,7 +2859,7 @@ static struct sk_buff *ieee80211_build_hdr(struct ie=
+ee80211_sub_if_data *sdata,
+ 	}
+=20
+ 	if (unlikely(!multicast &&
+-		     ((skb->sk && sock_flag(skb->sk, SOCK_WIFI_STATUS)) ||
++		     (sk_requests_wifi_status(skb->sk) ||
+ 		      ctrl_flags & IEEE80211_TX_CTL_REQ_TX_STATUS)))
+ 		info_id =3D ieee80211_store_ack_skb(local, skb, &info_flags,
+ 						  cookie);
+@@ -3756,7 +3756,7 @@ static bool ieee80211_xmit_fast(struct ieee80211_sub=
+_if_data *sdata,
+ 		return false;
+=20
+ 	/* don't handle TX status request here either */
+-	if (skb->sk && sock_flag(skb->sk, SOCK_WIFI_STATUS))
++	if (sk_requests_wifi_status(skb->sk))
+ 		return false;
+=20
+ 	if (hdr->frame_control & cpu_to_le16(IEEE80211_STYPE_QOS_DATA)) {
+@@ -4648,7 +4648,7 @@ static void ieee80211_8023_xmit(struct ieee80211_sub=
+_if_data *sdata,
+ 			memcpy(IEEE80211_SKB_CB(seg), info, sizeof(*info));
+ 	}
+=20
+-	if (unlikely(skb->sk && sock_flag(skb->sk, SOCK_WIFI_STATUS))) {
++	if (unlikely(sk_requests_wifi_status(skb->sk))) {
+ 		info->status_data =3D ieee80211_store_ack_skb(local, skb,
+ 							    &info->flags, NULL);
+ 		if (info->status_data)
+=2D-=20
+2.49.0
 
->   drivers/pci/pci.h      |  3 +-
->   drivers/pci/pcie/aer.c | 66 ++++++++++++++++++++++++++++++++++++++----
->   drivers/pci/pcie/dpc.c |  1 +
->   3 files changed, 64 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 705f9ef58acc..65c466279ade 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -593,7 +593,8 @@ struct aer_err_info {
->   	unsigned int id:16;
->   
->   	unsigned int severity:2;	/* 0:NONFATAL | 1:FATAL | 2:COR */
-> -	unsigned int __pad1:5;
-> +	unsigned int ratelimit:1;	/* 0=skip, 1=print */
-> +	unsigned int __pad1:4;
->   	unsigned int multi_error_valid:1;
->   
->   	unsigned int first_error:5;
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 4f1bff0f000f..f9e684ac7878 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -28,6 +28,7 @@
->   #include <linux/interrupt.h>
->   #include <linux/delay.h>
->   #include <linux/kfifo.h>
-> +#include <linux/ratelimit.h>
->   #include <linux/slab.h>
->   #include <acpi/apei.h>
->   #include <acpi/ghes.h>
-> @@ -88,6 +89,10 @@ struct aer_info {
->   	u64 rootport_total_cor_errs;
->   	u64 rootport_total_fatal_errs;
->   	u64 rootport_total_nonfatal_errs;
-> +
-> +	/* Ratelimits for errors */
-> +	struct ratelimit_state cor_log_ratelimit;
-> +	struct ratelimit_state uncor_log_ratelimit;
+There are two calls to sock_flag(., SOCK_WIFI_STATUS) which I didn't chang=
+e:
+In __sock_recv_wifi_status() (in net/socket.c) which gets called by=20
+sock_recv_timestamp() and in sk_getsockopt() (in net/core/sock.c). These
+existed before the error occured and seem to be fine.=20
 
-Nit: Do you think we should name it as nonfatal_log_ratelimit?
-
->   };
->   
->   #define AER_LOG_TLP_MASKS		(PCI_ERR_UNC_POISON_TLP|	\
-> @@ -379,6 +384,11 @@ void pci_aer_init(struct pci_dev *dev)
->   
->   	dev->aer_info = kzalloc(sizeof(*dev->aer_info), GFP_KERNEL);
->   
-> +	ratelimit_state_init(&dev->aer_info->cor_log_ratelimit,
-> +			     DEFAULT_RATELIMIT_INTERVAL, DEFAULT_RATELIMIT_BURST);
-> +	ratelimit_state_init(&dev->aer_info->uncor_log_ratelimit,
-> +			     DEFAULT_RATELIMIT_INTERVAL, DEFAULT_RATELIMIT_BURST);
-> +
->   	/*
->   	 * We save/restore PCI_ERR_UNCOR_MASK, PCI_ERR_UNCOR_SEVER,
->   	 * PCI_ERR_COR_MASK, and PCI_ERR_CAP.  Root and Root Complex Event
-> @@ -672,6 +682,18 @@ static void pci_rootport_aer_stats_incr(struct pci_dev *pdev,
->   	}
->   }
->   
-> +static int aer_ratelimit(struct pci_dev *dev, unsigned int severity)
-> +{
-> +	struct ratelimit_state *ratelimit;
-> +
-> +	if (severity == AER_CORRECTABLE)
-> +		ratelimit = &dev->aer_info->cor_log_ratelimit;
-> +	else
-> +		ratelimit = &dev->aer_info->uncor_log_ratelimit;
-> +
-> +	return __ratelimit(ratelimit);
-> +}
-> +
->   static void __aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
->   {
->   	const char **strings;
-> @@ -715,6 +737,9 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
->   
->   	pci_dev_aer_stats_incr(dev, info);
->   
-> +	if (!info->ratelimit)
-> +		return;
-> +
->   	if (!info->status) {
->   		pci_err(dev, "PCIe Bus Error: severity=%s, type=Inaccessible, (Unregistered Agent ID)\n",
->   			aer_error_severity_string[info->severity]);
-> @@ -785,6 +810,9 @@ void pci_print_aer(struct pci_dev *dev, int aer_severity,
->   
->   	pci_dev_aer_stats_incr(dev, &info);
->   
-> +	if (!aer_ratelimit(dev, info.severity))
-> +		return;
-> +
->   	layer = AER_GET_LAYER_ERROR(aer_severity, status);
->   	agent = AER_GET_AGENT(aer_severity, status);
->   
-> @@ -815,8 +843,19 @@ EXPORT_SYMBOL_NS_GPL(pci_print_aer, "CXL");
->    */
->   static int add_error_device(struct aer_err_info *e_info, struct pci_dev *dev)
->   {
-> +	/*
-> +	 * Ratelimit AER log messages.  "dev" is either the source
-> +	 * identified by the root's Error Source ID or it has an unmasked
-> +	 * error logged in its own AER Capability.  If any of these devices
-> +	 * has not reached its ratelimit, log messages for all of them.
-> +	 * Messages are emitted when "e_info->ratelimit" is non-zero.
-> +	 *
-> +	 * Note that "e_info->ratelimit" was already initialized to 1 for the
-> +	 * ERR_FATAL case.
-> +	 */
->   	if (e_info->error_dev_num < AER_MAX_MULTI_ERR_DEVICES) {
->   		e_info->dev[e_info->error_dev_num] = pci_dev_get(dev);
-> +		e_info->ratelimit |= aer_ratelimit(dev, e_info->severity);
->   		e_info->error_dev_num++;
->   		return 0;
->   	}
-> @@ -914,7 +953,7 @@ static int find_device_iter(struct pci_dev *dev, void *data)
->    * e_info->error_dev_num and e_info->dev[], based on the given information.
->    */
->   static bool find_source_device(struct pci_dev *parent,
-> -		struct aer_err_info *e_info)
-> +			       struct aer_err_info *e_info)
->   {
->   	struct pci_dev *dev = parent;
->   	int result;
-> @@ -1140,9 +1179,10 @@ static void aer_recover_work_func(struct work_struct *work)
->   		pdev = pci_get_domain_bus_and_slot(entry.domain, entry.bus,
->   						   entry.devfn);
->   		if (!pdev) {
-> -			pr_err("no pci_dev for %04x:%02x:%02x.%x\n",
-> -			       entry.domain, entry.bus,
-> -			       PCI_SLOT(entry.devfn), PCI_FUNC(entry.devfn));
-> +			pr_err_ratelimited("%04x:%02x:%02x.%x: no pci_dev found\n",
-> +					   entry.domain, entry.bus,
-> +					   PCI_SLOT(entry.devfn),
-> +					   PCI_FUNC(entry.devfn));
->   			continue;
->   		}
->   		pci_print_aer(pdev, entry.severity, entry.regs);
-> @@ -1283,7 +1323,21 @@ static void aer_isr_one_error_type(struct pci_dev *root,
->   	bool found;
->   
->   	found = find_source_device(root, info);
-> -	aer_print_source(root, info, found ? "" : " (no details found");
-> +
-> +	/*
-> +	 * If we're going to log error messages, we've already set
-> +	 * "info->ratelimit" to non-zero (which enables printing) because
-> +	 * this is either an ERR_FATAL or we found a device with an error
-> +	 * logged in its AER Capability.
-> +	 *
-> +	 * If we didn't find the Error Source device, at least log the
-> +	 * Requester ID from the ERR_* Message received by the Root Port or
-> +	 * RCEC, ratelimited by the RP or RCEC.
-> +	 */
-> +	if (info->ratelimit ||
-> +	    (!found && aer_ratelimit(root, info->severity)))
-> +		aer_print_source(root, info, found ? "" : " (no details found");
-> +
->   	if (found)
->   		aer_process_err_devices(info);
->   }
-> @@ -1317,12 +1371,14 @@ static void aer_isr_one_error(struct pci_dev *root,
->   		aer_isr_one_error_type(root, &e_info);
->   	}
->   
-> +	/* Note that messages for ERR_FATAL are never ratelimited */
->   	if (status & PCI_ERR_ROOT_UNCOR_RCV) {
->   		int fatal = status & PCI_ERR_ROOT_FATAL_RCV;
->   		int multi = status & PCI_ERR_ROOT_MULTI_UNCOR_RCV;
->   		struct aer_err_info e_info = {
->   			.id = ERR_UNCOR_ID(e_src->id),
->   			.severity = fatal ? AER_FATAL : AER_NONFATAL,
-> +			.ratelimit = fatal ? 1 : 0,
->   			.level = KERN_ERR,
->   			.multi_error_valid = multi ? 1 : 0,
->   		};
-> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-> index 6c98fabdba57..530c5e2cf7e8 100644
-> --- a/drivers/pci/pcie/dpc.c
-> +++ b/drivers/pci/pcie/dpc.c
-> @@ -271,6 +271,7 @@ void dpc_process_error(struct pci_dev *pdev)
->   			 status);
->   		if (dpc_get_aer_uncorrect_severity(pdev, &info) &&
->   		    aer_get_device_error_info(pdev, &info)) {
-> +			info.ratelimit = 1;	/* ERR_FATAL; no ratelimit */
->   			aer_print_error(pdev, &info);
->   			pci_aer_clear_nonfatal_status(pdev);
->   			pci_aer_clear_fatal_status(pdev);
-
--- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
-
+Bert Karwatzki
 
