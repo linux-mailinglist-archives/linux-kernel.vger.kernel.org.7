@@ -1,140 +1,133 @@
-Return-Path: <linux-kernel+bounces-656032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E3FABE0C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:32:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A2FFABE0C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 860D13BF586
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:32:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC0D31BA50C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB4F26B2CC;
-	Tue, 20 May 2025 16:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8571326E17F;
+	Tue, 20 May 2025 16:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f9CQM3kU"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="bWLts2ZO"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7DF24C07A;
-	Tue, 20 May 2025 16:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88534B1E5D
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 16:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747758763; cv=none; b=sKzmvjgOrW9ACngtwxkdDQX0R+HRaNN7MirG4aSMqNKuKyHTIK5HkpygN7HfGTnWdJ3xlN2CmQZyYJa4VEGlnbWqiFYNHC8sI7Q6E3kqyqQ0eZAqqLjJLxkzSly2KtwF7JIHmmcqDGvb99vRBu4XQxBg46PvN5KrBKfOds37n1Q=
+	t=1747758803; cv=none; b=ipEB9OCXOTLLDX6uwXl9eH12d/PPZfy99cIyOtnIDc1k0H7Ve6w2PD/u79PU3MPE3pXY4jogk5aCVDHf3L9gX5ui0NhUrUrd74PMObvjFOQqoJ+o4UIraxP/DRuPwIBAnmBGSMDkqspXhx+kiSVbVI+Y6rXF5AxXWNsGEg8gevI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747758763; c=relaxed/simple;
-	bh=VxL65GSY3jg0UxcejEQeHBF4bpS7AbjITpw7p8xiujU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iY/jn1kO0yl/4XarLmh2ukpy0TrmIRlW8YSDCRosCcRdpUBgt4p4KB1GbG3lfno1EDILg/cbo5Czp9IjQDdr2W0prp+NfauptSpj+YmVsUilMNNO6zb/0mHDZzLKo5lKQcaMOwyiR/OPU48rSmb8sULt6D8LRONKQieM5cTEaII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f9CQM3kU; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-231d4679580so39222415ad.1;
-        Tue, 20 May 2025 09:32:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747758761; x=1748363561; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JfechbBoXh5EUb1CnvnuWI7jG3482+KAnoqrpf/01NM=;
-        b=f9CQM3kUwVxNL1DrFEAbLvoPYVOB73Dwd3aR3Lq4ti61JPesesdyeKdEr9LIe/mtAf
-         NhFZW869r4FXGBEiwVQFBIJ6AgQvfWwuvav8ERlm8QR6B1R2sexf0w/bAJv0FIgrzZna
-         ZWCcMcH3Ya80WPbHnyKjNKKsggn7hlhIIyD6U2mqofKgE4c5mCNH89CHDp0kP6miV5Xd
-         pvmv2zsI58/ucqa4PRJZCPBiobSgHpX/Lxr/aoCMijKEIyfs8Cq0H2V4M8m4Gor56uCR
-         wP8cDadlRompDYc0FCif+MIT19xIVMALtrgNzA+j3alAA0gTUITkkOj72FRNGIaXIXST
-         hqhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747758761; x=1748363561;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JfechbBoXh5EUb1CnvnuWI7jG3482+KAnoqrpf/01NM=;
-        b=FtodKL7sru+U6sImu/rXRQaOIyVgQAPWYUqpmG4lnk20Zi0RGnon6DV67EFl1ZI7LZ
-         7z6pEXWnwygilT21g7lyazljWzGMXnUo/j9Tc5HvsOl23NFFN9j7M0LO0ZQc8KRf8GwQ
-         SH0s7xx9SyjHfSn5qwJ7GV490yRuch5L2YRJvQgGkX/YDgAFSKW62oK+oDuffC6zqjXD
-         bUVTk6GrXygyx8JZogxJ/vdOyuxdORef2z8JFuG1AmdEpEmnMBYYKlMDNePSXodxlT6g
-         /BfpqjMYecEnHPzGo+UYWbGDMDnGb1Dmv0bfoPHM7zSEcEOhsaYJmabkYduwC11e5UNt
-         OFnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkRzj5UAtiBrZD0UgD9tGbdXxCT1TeUeDUVNDSwCoY9yyOPpDz3+PnMFwrITFENhO63amHykD32rEm0VE=@vger.kernel.org, AJvYcCXdlZHrW/xjycvGZoEkQUN7lgNwfUV1wuPUTXTODqPVC6wVcB9pQDG5u3ao5qRzUngqmJ3q5rOvLMtw3ArsCKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxalfDK6huSfMBz+jlVP25cJondBvWAsVhlU3+sI2QYB4Pz3eTC
-	3Nqr9LO5lRtMreQZ6+uyH6IqDb49IOozeV8ATgLsNFhFnOCV1T2AucWWcH5xtg==
-X-Gm-Gg: ASbGncu4NP7A3sIDr03UEN2iwb9j1K7tTH6LrLiQQ7+I++rb6GinsnvdpaHpv6GkBTP
-	ScekCBhfft2xNdceXO+8yAgn5ZULRNA4qvYnpGVZSe2fqVR5NOO92iqULiCiRpZ65ZFxjx5DcLw
-	Fcnmjam0ZWcMoFNHNROmlnE6cw+roLDObk4vulrr3XatRjJYKn+mHGSMfO0fpktbBsO/+mNck63
-	lVjip/YN+81d91LvCIAuzbPDaTPc3B3CJlPvzInpvcBRhWmsDYuZg5MpWN2wAP7VV12LBKXmt+F
-	FJGI5y03C8Hi4OEOc5vPd3HLZld7RV+NSJCeug6obb7BjCt4QpM=
-X-Google-Smtp-Source: AGHT+IG2s3iNB/QZDUNIt9beVD907qupAKc92c9ZClxDz8HYPKBX6cGcKZgHh8UEcx4pM/i/DPC5sg==
-X-Received: by 2002:a17:902:e5d1:b0:223:54aa:6d15 with SMTP id d9443c01a7336-231d44e4599mr265064745ad.12.1747758761099;
-        Tue, 20 May 2025 09:32:41 -0700 (PDT)
-Received: from localhost ([216.228.127.130])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4ebaa21sm78890125ad.162.2025.05.20.09.32.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 09:32:40 -0700 (PDT)
-Date: Tue, 20 May 2025 12:32:38 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Cc: Christian Lamparter <chunkeey@gmail.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] wifi: carl9170: micro-optimize carl9170_tx_shift_bm()
-Message-ID: <aCyupkU1tK-bUlZV@yury>
-References: <20250326155200.39895-1-yury.norov@gmail.com>
- <CAAd0S9BDCqw9XZSe=r5fcJuncUagJoJJ0jOe3fB2=UkyXgjozQ@mail.gmail.com>
- <aA5McagnQw49MElr@yury>
- <54f50afa-3267-4829-8be6-1542c3fef606@oss.qualcomm.com>
+	s=arc-20240116; t=1747758803; c=relaxed/simple;
+	bh=aVn/UqXBkoPw+6F5mVA78evMicxRecWn26vZyB8ygUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dTGntnJFxOQBHGCWOL/+F/uzR7siYuYjAf589Mfiwt+dDnP1A0tq7qxBTABeFTb+w93bB60LeMzonkC+fZx780KIBvTTxYoIU8nUE8Wkyf/9zzMaODLQs+Sscnyd97bjS0s+2tn1Tj3rpMAifupXl7mOuP86hCUidG2Vh510kkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=bWLts2ZO; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=YdjyEPBmxO4B47+ZxLGzrbjFqRygXskU19UFo/LjOJM=; b=bWLts2ZODBFvtH+wGgsMpUh7b7
+	nAu2IEiYWkS7p1MLhuB9/NrtF6d1pyKy1NTlfXITZPI1qTo9Z34+2oB5e0job5+uC5wKhFCuqWNS/
+	V2ayLWB8goiJy6KFPpazNNQdFfM043h72CvELPE132mf4+FoPRNrk4P3v6XIurgX+fazAcAeOmbPF
+	N6AM4QToRUe//nKtsyUHJSk3uAEX2TyCzzUTXK5Jsl6Ifgd9DIAiDOH3DbyC6sSLlBuVt+r8tPs6G
+	in62DUYwH8D2X+ZICLlkdpsMmL98io0vJginl6Me+eHtjRAjh9yUEFRX/VrmcpwCAtjIEblmsD8I2
+	xNWutPVw==;
+Received: from [191.204.192.64] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uHPtp-00AnEg-Cy; Tue, 20 May 2025 18:33:05 +0200
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+To: "Alex Deucher" <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	siqueira@igalia.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	"Raag Jadav" <raag.jadav@intel.com>,
+	rodrigo.vivi@intel.com,
+	jani.nikula@linux.intel.com,
+	Xaver Hugl <xaver.hugl@gmail.com>,
+	Krzysztof Karas <krzysztof.karas@intel.com>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	amd-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH v5 0/3] drm: Create a tas info option for wedge events
+Date: Tue, 20 May 2025 13:32:40 -0300
+Message-ID: <20250520163243.328746-1-andrealmeid@igalia.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <54f50afa-3267-4829-8be6-1542c3fef606@oss.qualcomm.com>
 
-On Tue, May 20, 2025 at 09:24:14AM -0700, Jeff Johnson wrote:
-> On 4/27/2025 8:25 AM, Yury Norov wrote:
-> > On Wed, Mar 26, 2025 at 09:00:33PM +0100, Christian Lamparter wrote:
-> >> Hi,
-> >>
-> >> On Wed, Mar 26, 2025 at 4:52 PM Yury Norov <yury.norov@gmail.com> wrote:
-> >>>
-> >>> The function calls bitmap_empty() just before find_first_bit(). Both
-> >>> functions are O(N). Because find_first_bit() returns >= nbits in case of
-> >>> empty bitmap, the bitmap_empty() test may be avoided.
-> >>>
-> >>
-> >> I looked up bitmap_empty():
-> >> <https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/bitmap.h#n423>
-> >>
-> >> apart from the small_const_nbits stuff (which carl9170 likely does not qualify
-> >> for since from what I remember it's a 128bits bitmap) the function just does:
-> >>
-> >> |   return find_first_bit(src, nbits) == nbits;
-> >>
-> >> so yes, find_first_bit runs twice with same parameters... Unless the
-> >> compiler is smart
-> >> enough to detect this and (re-)use the intermediate result later. But
-> >> I haven't check
-> >> if this is the case with any current, old or future compilers. Has anyone?
-> >>
-> >> Anyway, Sure.
-> >>
-> >>> Signed-off-by: Yury Norov <yury.norov@gmail.com>
-> >>
-> >> Acked-by: Christian Lamparter <chunkeey@gmail.com>
-> > 
-> > Thanks, Chrustian. So, how is that supposed to be merged?
-> > I can move it with bitmap-for-next, unless there's no better
-> > branch.
-> > 
-> > Thanks,
-> > Yury
-> > 
-> 
-> Yury, did you take this?
-> If not, I'll take it through the ath tree.
+This patchset implements a request made by Xaver Hugl about wedge events:
 
-No. Please take with ath.
+"I'd really like to have the PID of the client that triggered the GPU
+reset, so that we can kill it if multiple resets are triggered in a
+row (or switch to software rendering if it's KWin itself) and show a
+user-friendly notification about why their app(s) crashed, but that
+can be added later."
+
+From https://lore.kernel.org/dri-devel/CAFZQkGwJ4qgHV8WTp2=svJ_VXhb-+Y8_VNtKB=jLsk6DqMYp9w@mail.gmail.com/
+
+For testing, I've used amdgpu's debug_mask options debug_disable_soft_recovery
+and debug_disable_gpu_ring_reset to test both wedge event paths in the driver.
+To trigger a ring timeout, I've used this app:
+https://gitlab.freedesktop.org/andrealmeid/gpu-timeout
+
+Thanks!
+
+Changelog:
+
+v5:
+ - Change from app to task also in structs, commit message and docs
+ - Add a check for NULL or empty task name string
+
+v4:
+ - Change from APP to TASK
+ - Add defines for event_string and pid_string length
+
+v3:
+ - Make comm_string and pid_string empty when there's no app info
+ - Change "app that caused ..." to "app involved ..."
+ - Clarify that devcoredump have more information about what happened
+
+v2:
+  - Rebased on top of drm/drm-next
+  - Added new patch for documentation
+
+André Almeida (3):
+  drm: Create a task info option for wedge events
+  drm/doc: Add a section about "Task information" for the wedge API
+  drm/amdgpu: Make use of drm_wedge_task_info
+
+ Documentation/gpu/drm-uapi.rst             | 17 +++++++++++++++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 19 +++++++++++++++++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_job.c    |  6 +++++-
+ drivers/gpu/drm/drm_drv.c                  | 19 +++++++++++++++----
+ drivers/gpu/drm/i915/gt/intel_reset.c      |  3 ++-
+ drivers/gpu/drm/xe/xe_device.c             |  3 ++-
+ include/drm/drm_device.h                   |  8 ++++++++
+ include/drm/drm_drv.h                      |  3 ++-
+ 8 files changed, 68 insertions(+), 10 deletions(-)
+
+-- 
+2.49.0
+
 
