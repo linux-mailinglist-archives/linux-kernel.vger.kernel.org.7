@@ -1,90 +1,106 @@
-Return-Path: <linux-kernel+bounces-655766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E32F7ABDD12
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:33:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA7CABDD4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B5FE174E16
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:19:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 364D54E5997
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1024C2517A8;
-	Tue, 20 May 2025 14:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hOGo8eDB"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EF62550AE;
+	Tue, 20 May 2025 14:15:07 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9F52459F3;
-	Tue, 20 May 2025 14:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6D024679C;
+	Tue, 20 May 2025 14:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747750457; cv=none; b=IeO67fmqu9vk+68LafkkfN2+gsn2M1Khf9LXXgkg9ECu9cWjU7GnK6shYf0KRjnJIFBRrvgXpbFCw9RyyySz8qjRaRjFtcOrG7kVCiHVcFPJLYjAjuuA+QaKrujIaQn8k4K+FGInrGIDrHb2yX6KSg/ZmGV1Yn+lNuINgSNB3po=
+	t=1747750506; cv=none; b=dvAfHWX+6wSo7ESM7B6VapBk+TTJ3jKZIajcC5TUq6hraR45ggrUr00wz3nYx07Lq54qKNaVm41DmoFZxqx/jwrP5+EQuD2jYXQtpUDhbdp8bUxruPfqIARiY+9vx8q5SGGDe7OYEHLMSHrN4zczhzNnRGmdUJkdRZ9KkcYJiUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747750457; c=relaxed/simple;
-	bh=er5Z9v1gTHlblQ0IFiaXz43wpcJyMEwObalM+JrBQ+4=;
+	s=arc-20240116; t=1747750506; c=relaxed/simple;
+	bh=LFQufN+AWf8VXZCCvIGwfEDPP4LEHOeX0XvuqmXIuHE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=th/B9CSSBtmJ1Bvos6ZcsEBLygJu7SbRtcWA9diCQgo6jss/yILEbmziXVJKwXLqnjhiQ7BEtfocKBSIwzCWGJyb+nTNXSHMrLMGiRtkHiyQ22q8+XRTP72k97SDtY1tijzU9C7I1FGxhxzyo5Q3yMUEd0qdRvDe4dThbkgxJs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hOGo8eDB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB1DDC4CEE9;
-	Tue, 20 May 2025 14:14:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747750457;
-	bh=er5Z9v1gTHlblQ0IFiaXz43wpcJyMEwObalM+JrBQ+4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hOGo8eDBFYN3Jqyj3FUpoKhdtxaJ88v3hAYKddVq6a9xPj7N/EPLUwNimiW1bULhV
-	 zzS3bD0NvJRjmxd3bA4KkQLRbbG8XVQkcBxnNi/xINhap4m4X1kn80eiBHapK6w6T5
-	 DRBOnFHvZeRKYV9+WonGg/aJ9sJC/S0WSeEOcNdQ8pkxHXFIKsSVv77pMu2FwJFR6r
-	 pzHr9qRP7l47V/cJE9R0+gfV3do/1PAEedaCAPJ8besyxGRg8akGTwH4kFQoS/OUTG
-	 bZ6KUwtA4TP5QtjTpyCGBwINqRGG2PF25VBpFsYI76M8abO+KoJvIg6Ebb1LP8sxnt
-	 ENFgeVV1im3yw==
-Date: Tue, 20 May 2025 10:14:15 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Alexandre Demers <alexandre.f.demers@gmail.com>,
-	Alex Deucher <alexander.deucher@amd.com>, christian.koenig@amd.com,
-	airlied@gmail.com, simona@ffwll.ch, sunil.khatri@amd.com,
-	boyuan.zhang@amd.com, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH AUTOSEL 6.14 248/642] drm/amdgpu: add
- dce_v6_0_soft_reset() to DCE6
-Message-ID: <aCyONyjgTxvphCPN@lappy>
-References: <20250505221419.2672473-1-sashal@kernel.org>
- <20250505221419.2672473-248-sashal@kernel.org>
- <CADnq5_MfAFmbLeg+PAtWaFvY1G29ApTmMKwFq7etT35NvQWXHw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bdhLZ5zn6XC3h96cIcfvL75F0tlUCwQwSdk9mtvCaPJuWhVOUiIJrMU9OF1dTmhSgrYQnyA8xDOLQZhRVHEZWJns3YZDj7zdSUbjIsdLRWyE9oFTlee6wGElmYut8El6HwPw0DzNBSOK4dvkmSsrDXSks0cCXjoonhrCceoqqCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 991D0C4CEEF;
+	Tue, 20 May 2025 14:15:04 +0000 (UTC)
+Date: Tue, 20 May 2025 15:15:01 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	john.ogness@linutronix.de, Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v8 17/22] arm64: mm: Add page fault trace points
+Message-ID: <aCyOZVVioijWpEPY@arm.com>
+References: <cover.1747046848.git.namcao@linutronix.de>
+ <f5fccde2326a896e5c568ef06a4dbd9aa7465f6a.1747046848.git.namcao@linutronix.de>
+ <aCtE-RvyN6XJQjTo@arm.com>
+ <20250520122548.lkvaylSB@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADnq5_MfAFmbLeg+PAtWaFvY1G29ApTmMKwFq7etT35NvQWXHw@mail.gmail.com>
+In-Reply-To: <20250520122548.lkvaylSB@linutronix.de>
 
-On Tue, May 06, 2025 at 11:05:15AM -0400, Alex Deucher wrote:
->On Mon, May 5, 2025 at 6:24 PM Sasha Levin <sashal@kernel.org> wrote:
->>
->> From: Alexandre Demers <alexandre.f.demers@gmail.com>
->>
->> [ Upstream commit ab23db6d08efdda5d13d01a66c593d0e57f8917f ]
->>
->> DCE6 was missing soft reset, but it was easily identifiable under radeon.
->> This should be it, pretty much as it is done under DCE8 and DCE10.
->>
->> Signed-off-by: Alexandre Demers <alexandre.f.demers@gmail.com>
->> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->
->This is not stable material.
+On Tue, May 20, 2025 at 02:25:48PM +0200, Nam Cao wrote:
+> On Mon, May 19, 2025 at 03:49:29PM +0100, Catalin Marinas wrote:
+> > On Mon, May 12, 2025 at 12:51:00PM +0200, Nam Cao wrote:
+> > > diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+> > > index ec0a337891dd..55094030e377 100644
+> > > --- a/arch/arm64/mm/fault.c
+> > > +++ b/arch/arm64/mm/fault.c
+> > > @@ -44,6 +44,9 @@
+> > >  #include <asm/tlbflush.h>
+> > >  #include <asm/traps.h>
+> > >  
+> > > +#define CREATE_TRACE_POINTS
+> > > +#include <trace/events/exceptions.h>
+> > > +
+> > >  struct fault_info {
+> > >  	int	(*fn)(unsigned long far, unsigned long esr,
+> > >  		      struct pt_regs *regs);
+> > > @@ -559,6 +562,11 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
+> > >  	if (kprobe_page_fault(regs, esr))
+> > >  		return 0;
+> > >  
+> > > +	if (user_mode(regs))
+> > > +		trace_page_fault_user(addr, regs, esr);
+> > > +	else
+> > > +		trace_page_fault_kernel(addr, regs, esr);
+> > 
+> > What are the semantics for these tracepoints? When are they supposed to
+> > be called? In the RV context context I guess you only care about the
+> > benign, recoverable faults that would affect timing. These tracepoints
+> > were generalised from the x86 code but I don't know enough about it to
+> > tell when they would be invoked.
+> > 
+> > For arm64, we also have the do_translation_fault() path for example that
+> > may or may not need to log such trace events.
+> 
+> These tracepoints are invoked for x86 page fault exceptions. Are arm64's
+> translation faults considered equivalent to x86 page faults?
 
-Dropped, thanks!
+Probably. We route permission or access flag faults via do_page_fault()
+directly while missing page table entries via do_translation_fault().
+The latter end up in do_page_fault() only if the faulting address is in
+the user address range.
+
+My point was that we may not always invoke the trace callbacks if, for
+example, the user tries to access the kernel space (and results in a
+SIGSEGV). While that's fine for RV, I wanted to know what is expected of
+these trace points in general. Do we need to log such SIGSEGV-generating
+events? We do log them if there's a permission fault.
 
 -- 
-Thanks,
-Sasha
+Catalin
 
