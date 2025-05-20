@@ -1,100 +1,111 @@
-Return-Path: <linux-kernel+bounces-655676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C62ABD986
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:35:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF20FABD993
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D183317A6EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:33:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12FD116BF38
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3248242D92;
-	Tue, 20 May 2025 13:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2AC7242D60;
+	Tue, 20 May 2025 13:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKWJAaAo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aCmoeg6n"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E95A22DA16;
-	Tue, 20 May 2025 13:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9980A1C4609;
+	Tue, 20 May 2025 13:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747748003; cv=none; b=ZYVIuxUt2v09u5EUI9g3teJUtXvGpp12/XCOj552IixNGPzbWKJnTT44jOlGwj4Ul1t4+uVKCWwFj5gyfa3rTiZ4KO5Dwey5bXUD3HmqUgAPL+z1XTrkA13xzL/jvjv556dIP9wtC8MsQuyz/45PHOWGBx6Ow+JLk0SKR0CpiF8=
+	t=1747748035; cv=none; b=LmPaQmn2HjweZc0CrjGYG+TItM8kFRkHxl7E57YCGOde59cqGjARZFqR1q31QwRv7/YYqtB0V5IBOuRi63BDLFGgu5obXW5MLywmNSOacFfXNXQptsONWmc9mBgNkh1JXt+HwVD7EgBq+3BW3EJOyQD6Z+PHphomnsdDKbI3hsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747748003; c=relaxed/simple;
-	bh=fEgVgn8ddmuG94XtJzRW64JNMVcuU+HToQCr20S4KM0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tt5DvPSUwM4FC/UgIwwC0Z2vsGBRSdgOdCrPajMvjP6SSo+KRFzynAHM9z1CMyj3SkdTcCwvzLYptF1UxV2FgB3kgubMGjcWUtHR+w73bXKg9eI3HlxeTpr/tIxCNcIPXiHJkzH7xfpjbLy88cCb7EmGRTLVEI6UFp0xSG0oAFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kKWJAaAo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F2CC4CEE9;
-	Tue, 20 May 2025 13:33:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747748002;
-	bh=fEgVgn8ddmuG94XtJzRW64JNMVcuU+HToQCr20S4KM0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kKWJAaAob7o5E4J6lRb1qIeP3I9g6Sq+eN3TEt43Kl8XAFUWF5BHA7P/3/7ooKv6V
-	 7uIv2FbP3lta2DxTC0Nn9w8MU4fPUTmuCQKITHBGp8QyNCYxsrIMMY84q3AHPjKAPq
-	 0wJxHffs/5Q6PWAqpFWNJhiPbWzhc6JDlwKQFd4+1nWiKsmKEmHG3qvlyJ1TQSvHsw
-	 J/SVzrFqf92+Yz6UYgU/7Clk7YsLTOV2e7XvSgD7kKa9QDIKVhpQZM6qZCSBmTxdLJ
-	 XreisQrHCDZpSeebobtLnYrEb1oJjGgHI+luXNc2w42DYxezlwt2vdlo11AxAr+6d5
-	 EOAFFdIIeK7Fg==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab@kernel.org>)
-	id 1uHN5r-00000006n8U-1bhS;
-	Tue, 20 May 2025 15:33:19 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: "Jonathan Corbet" <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Akira Yokosawa" <akiyks@gmail.com>,
-	"Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-	"Nicolas Schier" <nicolas.schier@linux.dev>,
-	"Randy Dunlap" <rdunlap@infradead.org>,
-	"Stephen Rothwell" <sfr@canb.auug.org.au>,
-	linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] MAINTAINERS: update linux-doc entry to cover new Python scripts
-Date: Tue, 20 May 2025 15:33:09 +0200
-Message-ID: <8eb4f06214e1eadc8aff43d7264814bf0264c80d.1747747695.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1747747695.git.mchehab+huawei@kernel.org>
-References: <cover.1747747695.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1747748035; c=relaxed/simple;
+	bh=rIqoGaaGyavsM7na6Hvy5JvsqPVDZt9ZL8/zRvC/W7A=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=MDPz/nzoIpcNkdNeSDgjvr0JUdj+XzwYN+36dqV+2bkBO1dz3lJn/FUqxQnmuO9sFe2v3N/vcoyLyRDI8Y3Q3WaUxD99aiHoPHteep2PT5MlxcDdcxD9RjFW/7tNGtJIzoYLdchu+EEGdl73K+h/5YPRbEdTXNquYB9ZP0VMzZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aCmoeg6n; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E25DC43194;
+	Tue, 20 May 2025 13:33:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1747748030;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t4iZngiHNbvjN/vY+Ll5XMZSl5RZys/uNJtWIz71Yrs=;
+	b=aCmoeg6ncauNRhPdtUHMe9VF96k4jHDadH1GmHqKNnF/3K5oBMy4TSTgNHV1kNfG5fMYTk
+	CigyTNqENADWTUAnCkZ9Ir6XHxgX/+UbnzK6i+zC4Xfz3bga5JWBrmIdNznkjnR39eiM47
+	38l0uZYklSrvG+eGsbuTZMoT2WuFGELScNuFOvHi+yiru/XnZH5uVT2W4ZC8P9TBvAfRtK
+	CxGkOwLhVVrSwRgmwWiqerLIQJKeBwjL/m8xEDl+0gJR4xjIiXjeQzFHR65vDVWZ/Blcn3
+	F1gcIJDFhc5o0STm+X/eqc1IXaFNpnlqlu8VWZO8MEb3u9KcNQ9NaRKXLCb8lQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 20 May 2025 15:33:49 +0200
+Message-Id: <DA10YWIDW9TD.3NHV65FWMG7ZC@bootlin.com>
+Subject: Re: [PATCH v8 08/11] gpio: max7360: Add MAX7360 gpio support
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
+ <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Bartosz Golaszewski"
+ <bartosz.golaszewski@linaro.org>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
+X-Mailer: aerc 0.19.0-0-gadd9e15e475d
+References: <20250509-mdb-max7360-support-v8-0-bbe486f6bcb7@bootlin.com>
+ <20250509-mdb-max7360-support-v8-8-bbe486f6bcb7@bootlin.com>
+ <aCsv3Me2J8cotW6s@smile.fi.intel.com>
+In-Reply-To: <aCsv3Me2J8cotW6s@smile.fi.intel.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffuvefhvffofhgjsehtqhertdertdejnecuhfhrohhmpedfofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugdfuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkefhkeeifeethfejteevfeduheduvddvuedvvddugfffhfevkefftefhuefftddunecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdefpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkohesihhnthgvlhdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrg
+ hdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplh
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-Changes to ABI and kernel-doc need to be c/c linux-doc. Update
-the maintainer's entry to cover those files.
+On Mon May 19, 2025 at 3:19 PM CEST, Andy Shevchenko wrote:
+> On Fri, May 09, 2025 at 11:14:42AM +0200, Mathieu Dubois-Briand wrote:
+>> Add driver for Maxim Integrated MAX7360 GPIO/GPO controller.
+>>=20
+>> Two sets of GPIOs are provided by the device:
+>> - Up to 8 GPIOs, shared with the PWM and rotary encoder functionalities.
+>>   These GPIOs also provide interrupts on input changes.
+>> - Up to 6 GPOs, on unused keypad columns pins.
+>
+> ...
+>
+>> +	for (unsigned int i =3D 0; i < MAX7360_MAX_GPIO; ++i) {
+>
+> Is there any special reaso to use pre-increment?
+>
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- MAINTAINERS | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+No, I will switch it to post-increment.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 20e07e61a148..a668808769b6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7173,7 +7173,10 @@ T:	git git://git.lwn.net/linux.git docs-next
- F:	Documentation/
- F:	scripts/check-variable-fonts.sh
- F:	scripts/documentation-file-ref-check
--F:	scripts/kernel-doc
-+F:	scripts/get_abi.py
-+F:	scripts/kernel-doc*
-+F	scripts/lib/abi/*
-+F	scripts/lib/kdoc/*
- F:	scripts/sphinx-pre-install
- X:	Documentation/ABI/
- X:	Documentation/admin-guide/media/
--- 
-2.49.0
+
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
