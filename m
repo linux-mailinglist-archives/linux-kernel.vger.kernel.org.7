@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-655213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1458BABD273
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:56:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B406ABD276
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B475D172C3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:56:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39F2F3AB67A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369E4266B76;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A62266EE7;
 	Tue, 20 May 2025 08:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ic84TmVf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K2VZakvN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9321A2C11
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 08:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9F0264602;
+	Tue, 20 May 2025 08:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747731378; cv=none; b=GNh0fevA79VjUSQyBETfwxbZSMKpC9SxjNt2A53Hes0bHh/CzIkRDPvtSQiRapwExkHmv7R1ep5jQZTtAc48R7zTpr70X179CDjB9PA1Qw6hVQelKBZ88sHj5fYRAngfPXn2lhLx6dGtiMfQtr5rI3S5Sb9pekAlISn0gLWANb8=
+	t=1747731378; cv=none; b=QNMYtzB5TEse2jGciikz9i0OWEi5WD9p52HnUP31xlAckdJ5p19LwMfFpm/SXjggckV7VMZ9kaBAragGk4tTB8hO0LJzeNt/nyzSuvrhbUbEspmodfHT6JTIa6LVnGczS7j9y7GuYu3pcvz153aKHvD3sIB2i5+i9U0UufTGlmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747731378; c=relaxed/simple;
-	bh=zrs4cXgnOa//B/Txk8KhjILwuaI02i9DB4tFgWygRDc=;
+	bh=hcqt6eZBGihUCfmwzVKOQS5DiA0cgTfveFjb6FGh0AA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fFct9/QxjcZqXmFFRKI0m4MCCmoxrF995NshVT9kvumMig/zHtIwCusL+6tS37cH+Z7u8fzFEeS8Cn+CS/qT+4357Ly7pbH8DdH3Ng9m4Evuxy8dvh65VY6J2kxNc0WDxsfQ7eVb5v8VUwf7it/CqvxhtnRqoIHq3PoB28Uz0aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ic84TmVf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E6BEC4CEEF;
+	 MIME-Version; b=qm3KQh/pNbsbS1ZklMB8ZW9XC6zDpiyCF0J9ldYCV+SjAYYdmYQ8TymUMk4PYZkm8vHQ5dgLgtNCKwMaQX8wSChuhYH7ROQF2+P4VXiPxG/vr9HT8P6FOB6qoS/3RSIS9Vu6AdVk6CurrGCF0UV8ILg/qpMNgQT0Sb9Kk5JqH/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K2VZakvN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10CB9C4CEF0;
 	Tue, 20 May 2025 08:56:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1747731378;
-	bh=zrs4cXgnOa//B/Txk8KhjILwuaI02i9DB4tFgWygRDc=;
+	bh=hcqt6eZBGihUCfmwzVKOQS5DiA0cgTfveFjb6FGh0AA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ic84TmVfLRSHgCuwKEB0fSzqZqtOzLOApk8I+bsQdlT5jUPAVpYyhr62ETWyKvQ61
-	 XJpCRRPL3GEb9CIgsgmqPSMsQ0Ugv6d8b7RX0L4nfZ5mV4uD3d6Ugyx+Wv49rHAw/s
-	 5OTl0clfLAHAdCVdYwDBD68UI0DrymrhVKjN+jqbfam1YUmwZb6RQhwqZa6vIRqZwE
-	 FSsw4zPvBTocHLIE21TDd7SGd6IIMyj1gJLfcBhp6xGEsvoTdqHRMpJbiNmNFBaUz4
-	 oW8p5Gyp9G0LA7dQtBHZxeNi4QgP5h8eyXJIQIkzD55LibjQeM2cUBoa1mSue/tdvB
-	 jOckvwNbLRzyg==
+	b=K2VZakvNgo7vyScfDwPrjGoF+U8I/l4NlVsB7hK+XE4t0JjYjcAGTR5Z2+6f/3JFq
+	 gqB81+rI97Heq4h0LgmDwUVNCJyHVW5aNUn6k0F4Rvp7wQu9GDIEwFOHZfTcqM25U9
+	 I80eh6uGJI+xKerUDSMRr4jogoZX5okUG3aYF1OQ+fcRP0riJ33/5C4B7OH0XrvFSw
+	 3tXzDhlES2lGQS0i3n16lMBJHl/c2mN6mJxUWI43eDprNiUU/+2UrUmb/2e4ftSl1n
+	 FW6hY6gJPk4CJckIVtpz4rULYLIGB5fqKvg9KwbrjNxvEnNYc9QtnEKJlKbHi/odXN
+	 D2/V/KieNlp0A==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab@kernel.org>)
-	id 1uHIlj-00000006U8D-0nMy;
+	id 1uHIlj-00000006U8G-0riS;
 	Tue, 20 May 2025 10:56:15 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH 1/2] scripts: kernel-doc: prevent a KeyError when checking output
-Date: Tue, 20 May 2025 10:55:46 +0200
-Message-ID: <d97e86c7176f671405b4c15d75cb951349022a23.1747730982.git.mchehab+huawei@kernel.org>
+	Kees Cook <kees@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] docs: kerneldoc.py: add try/except blocks for kernel-doc class errors
+Date: Tue, 20 May 2025 10:55:47 +0200
+Message-ID: <064bac2f462c13f56154891d8f3fb788db94f325.1747730982.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1747730982.git.mchehab+huawei@kernel.org>
 References: <cover.1747730982.git.mchehab+huawei@kernel.org>
@@ -64,30 +65,49 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-If a file sent to KernelFiles.msg() method doesn't exist, instead
-of producing a KeyError, output an error message.
+Replicate the same behavior as what's done with kernel-doc.pl:
+continue building docs even when there are exceptions.
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Closes: https://lore.kernel.org/linux-doc/cover.1747719873.git.mchehab+huawei@kernel.org/T/#ma43ae9d8d0995b535cf5099e5381dace0410de04
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/lib/kdoc/kdoc_files.py | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/sphinx/kerneldoc.py | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/scripts/lib/kdoc/kdoc_files.py b/scripts/lib/kdoc/kdoc_files.py
-index 630aa5ca6460..9be4a64df71d 100644
---- a/scripts/lib/kdoc/kdoc_files.py
-+++ b/scripts/lib/kdoc/kdoc_files.py
-@@ -271,6 +271,10 @@ class KernelFiles():
-                                       no_doc_sections)
+diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
+index 314479718a01..4de667d4d95b 100644
+--- a/Documentation/sphinx/kerneldoc.py
++++ b/Documentation/sphinx/kerneldoc.py
+@@ -278,14 +278,27 @@ class KernelDocDirective(Directive):
  
-             msg = ""
-+            if fname not in self.results:
-+                self.config.log.warning("No kernel-doc for file %s", fname)
-+                continue
+         node = nodes.section()
+ 
+-        kfiles.parse(**self.parse_args)
+-        filenames = self.parse_args["file_list"]
++        try:
++            kfiles.parse(**self.parse_args)
++            filenames = self.parse_args["file_list"]
++            msgs = kfiles.msg(**self.msg_args, filenames=filenames)
+ 
+-        for filename, out in kfiles.msg(**self.msg_args, filenames=filenames):
++        except Exception as e:  # pylint: disable=W0703
++            logger.warning("kernel-doc '%s' processing failed with: %s" %
++                           (cmd_str(cmd), str(e)))
 +
-             for name, arg in self.results[fname]:
-                 m = self.out_msg(fname, name, arg)
++        for filename, out in msgs:
+             if self.verbose >= 1:
+                 print(cmd_str(cmd))
+ 
+-            ret = self.parse_msg(filename, node, out, cmd)
++            try:
++                ret = self.parse_msg(filename, node, out, cmd)
++
++            except Exception as e:  # pylint: disable=W0703
++                logger.warning("kernel-doc '%s' processing failed with: %s" %
++                               (cmd_str(cmd), str(e)))
++                return [nodes.error(None, nodes.paragraph(text = "kernel-doc missing"))]
++
+             if ret:
+                 return ret
  
 -- 
 2.49.0
