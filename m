@@ -1,129 +1,215 @@
-Return-Path: <linux-kernel+bounces-655707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A32DABDA22
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:54:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E8DABDA5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FB897A1C95
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:52:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66C6417E74E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ADB24501D;
-	Tue, 20 May 2025 13:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8294245019;
+	Tue, 20 May 2025 13:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKhSL5zH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="zIjnQCbO"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EC322D7A8;
-	Tue, 20 May 2025 13:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D131922ED;
+	Tue, 20 May 2025 13:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747749219; cv=none; b=RldcnOxlH6aCb+FLcO3f9LCkMi7wvL4hq0DBmSj7aAhA1qvpsLefBhO9wZFH6HZV8AoHq/m51ccSgn+ZCygZ0CFnrYQW4yyS1EwQj03+KML+32SnZnxZ+j6jbnnZcZDzjyC7bEaQLwyrY8+tyQ2TmYdWk7mSiG9b1/i1ng4LF44=
+	t=1747749379; cv=none; b=MXKWamgXuOY13Zz5DglrbeEOMTliUktvUsBaRpvpWGUgLJwU/xd4z1xuuZcN6F8PDXfXO0BrGVVPocJOHOCmCs9c6rwGRvew8kNfvvR11cC9yxk5r33hu6bqlICWWLAVVDyW7WY9cnae3/RnbJoEw6r0RFqxdS0GsRvsvASsvIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747749219; c=relaxed/simple;
-	bh=CA5p6228eQF/0HRQYWgn129Rwa1VmXENjAQVYFscsY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=RmMttkjPY9FHhUwwlDT10pxARENCikFP6SYnpUosoGxonYkHOulDN7E+9KmB0r+CW3k3bMd1ki8123nIpR/SoOKQkg37wUU/6PzenoR3zmhoxxmkFq8UN6++qbBgPkT1FvVIJxGIdZrxSjHly1MLhbo3S4dkRojtJtSV6RXkcZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKhSL5zH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25F38C4CEE9;
-	Tue, 20 May 2025 13:53:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747749219;
-	bh=CA5p6228eQF/0HRQYWgn129Rwa1VmXENjAQVYFscsY4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=qKhSL5zHq6LTXe4tDiSws76qlpFpBxS55j5/qW7Kw0DLI30xLHiPQHy+WCf8jqGbn
-	 GulWMyASh05tnd6owvEp/31ihxBteK6KrFklBxQB9ibsexDTyhdosP2LQIkhF6hUA6
-	 0Ql6lVXoDXZiagWAM6NWz6nDZpsSIZC8Qv4I1ev6ecrmXmYlmnbftL/r4CZrULN4ks
-	 Vh2NOO0WfaPRpC4IEkRIgGAf7VpAUJT3YTSNCgyn9yoiU12j3kw5Lj2AOvAtIJ8Yzy
-	 ITdDeli7zeQUnKGWsedG+wCqldMbN0jI0PPF7Gyi8ZzJGWbYfhkaGKBfDZXS85wrhs
-	 zzL31sbUUSjIQ==
-Date: Tue, 20 May 2025 08:53:37 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: linux-pci@vger.kernel.org, Jon Pan-Doh <pandoh@google.com>,
-	Karolina Stolarek <karolina.stolarek@oracle.com>,
-	Martin Petersen <martin.petersen@oracle.com>,
-	Ben Fuller <ben.fuller@oracle.com>,
-	Drew Walton <drewwalton@microsoft.com>,
-	Anil Agrawal <anilagrawal@meta.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Sargun Dhillon <sargun@meta.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Kai-Heng Feng <kaihengf@nvidia.com>,
-	Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v6 01/16] PCI/DPC: Initialize aer_err_info before using it
-Message-ID: <20250520135337.GA1290915@bhelgaas>
+	s=arc-20240116; t=1747749379; c=relaxed/simple;
+	bh=jD77PHAq98t/fTpuATjnvTsRHf77AgXl2kaJDhuTTzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=A/gNrbMVeKc8qhTuNHqYrcyZ7jfXDgUbSlSeybM/7f69dF7S6uBUDxV4+OFVY2F6kbeaJ2YHLPPdPECRVQUVPKdkfhXr/1QrZ0O5Hx5HmLyhso03h3EgQLlbY6PVKi/WsZpCjhSxlpcDIdY2G3oD9KH+/5nQJ3aYChoXdmIPO7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=zIjnQCbO; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54K9Ubf0009345;
+	Tue, 20 May 2025 15:55:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	t4BiJg3sqYOfiLTKe5j15knUi7a/LhANZGo2DtDRYK8=; b=zIjnQCbO3gdOkkV3
+	btjiMB/a7ikbNnoKhSnQox9YWOTdLIN9i/DpeBNLw73zxUau+ipMkSHpCP/u949b
+	yPzJugUn4J3GT9BrhmzSZ9FsBUjl5QFpzE5sxRPaeI5qRGpOMEvXqa7UEn+NGjy5
+	mfqRxEf4XaF/B8owiVziod3/yqqdb7H/QeIIm+SNc9ZnuyIp0VOu5ggd1Bi2ODsp
+	8OfGoTioIdb4Dk/bCPznHMjRdiiI1hZAxaWLruMezuYn7RuOrKl1fDFrdnfZKmiA
+	KoO9XOoHcIbGYB6vwA8ZSUGyV9b615dzQuOe9PIJbBRv48xgSZ60TQylwJpi2zM2
+	apVOZg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46q5dn36n4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 May 2025 15:55:55 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CAFC140047;
+	Tue, 20 May 2025 15:54:35 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D4283B0F0D0;
+	Tue, 20 May 2025 15:53:44 +0200 (CEST)
+Received: from [10.48.87.146] (10.48.87.146) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 20 May
+ 2025 15:53:44 +0200
+Message-ID: <8fc2a770-4940-4275-8080-27ef53ec3d2d@foss.st.com>
+Date: Tue, 20 May 2025 15:53:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b1b80e2-4f59-462e-96a9-546b1d7a7644@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: stm32: add STM32MP21 clocks and reset
+ bindings
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Nicolas Le Bayon <nicolas.le.bayon@st.com>
+References: <20250519142057.260549-1-gabriel.fernandez@foss.st.com>
+ <20250519142057.260549-2-gabriel.fernandez@foss.st.com>
+ <f58f085e-fb41-434d-958d-1d6d8c63d793@linaro.org>
+Content-Language: en-US
+From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+In-Reply-To: <f58f085e-fb41-434d-958d-1d6d8c63d793@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_06,2025-05-16_03,2025-03-28_01
 
-On Mon, May 19, 2025 at 03:41:50PM -0700, Sathyanarayanan Kuppuswamy wrote:
-> Hi,
-> 
-> On 5/19/25 2:35 PM, Bjorn Helgaas wrote:
-> > From: Bjorn Helgaas <bhelgaas@google.com>
-> > 
-> > Previously the struct aer_err_info "info" was allocated on the stack
-> 
-> /s/Previously/Currently ?
 
-I prefer "previously" here because it clearly refers to the situation
-*before* this patch (allocated on stack without initialization), and
-it also gives a hint that this situation is what the patch changes.
+On 5/19/25 16:38, Krzysztof Kozlowski wrote:
+> On 19/05/2025 16:20, gabriel.fernandez@foss.st.com wrote:
+>> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>>
+>> Adds clock and reset binding entries for STM32MP21 SoC family.
+>>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>> Signed-off-by: Nicolas Le Bayon <nicolas.le.bayon@st.com>
+>
+> I am pretty sure I gave to ST this feedback already:
+>
+> You CC-ed an address, which suggests you do not work on mainline kernel
+> or you do not use get_maintainers.pl/b4/patman. Please rebase and always
+> work on mainline or start using mentioned tools, so correct addresses
+> will be used.
 
-If I used "currently," I could be mentioning something relevant that
-isn't being changed by the patch, e.g., "currently the struct is
-allocated on the stack so it's important to keep it small."
+Hi Krzysztof, many thanks for your review
 
-> > without being initialized, so it contained junk except for the fields we
-> > explicitly set later.
-> > 
-> > Initialize "info" at declaration so it starts as all zeroes.
-> 
-> /s/zeroes/zeros
+Sorry for this bad manipulation, i will use b4 tools.
 
-Fixed, thank you!
 
-> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> > 
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > ---
-> >   drivers/pci/pcie/dpc.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-> > index df42f15c9829..fe7719238456 100644
-> > --- a/drivers/pci/pcie/dpc.c
-> > +++ b/drivers/pci/pcie/dpc.c
-> > @@ -258,7 +258,7 @@ static int dpc_get_aer_uncorrect_severity(struct pci_dev *dev,
-> >   void dpc_process_error(struct pci_dev *pdev)
-> >   {
-> >   	u16 cap = pdev->dpc_cap, status, source, reason, ext_reason;
-> > -	struct aer_err_info info;
-> > +	struct aer_err_info info = { 0 };
-> >   	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
-> >   	pci_read_config_word(pdev, cap + PCI_EXP_DPC_SOURCE_ID, &source);
-> 
-> -- 
-> Sathyanarayanan Kuppuswamy
-> Linux Kernel Developer
-> 
+>> ---
+>>   .../bindings/clock/st,stm32mp21-rcc.yaml      | 200 ++++++++
+>>   include/dt-bindings/clock/st,stm32mp21-rcc.h  | 428 ++++++++++++++++++
+>>   include/dt-bindings/reset/st,stm32mp21-rcc.h  | 140 ++++++
+>>   3 files changed, 768 insertions(+)
+> ...
+>
+>> +
+>> +  access-controllers:
+>> +    minItems: 1
+>> +    maxItems: 2
+> List the items.
+ok
+>
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - '#clock-cells'
+>> +  - '#reset-cells'
+>> +  - clocks
+>
+> ...
+>
+>> +#define CK_KER_FMC		263
+>> +#define CK_KER_SDMMC1		264
+>> +#define CK_KER_SDMMC2		265
+>> +#define CK_KER_SDMMC3		266
+>> +#define CK_KER_ETH1		267
+>> +#define CK_KER_ETH2		268
+>> +#define CK_KER_ETH1PTP		269
+>> +#define CK_KER_ETH2PTP		270
+>> +#define CK_KER_USB2PHY1		271
+>> +#define CK_KER_USB2PHY2		272
+>> +#define CK_MCO1			273
+>> +#define CK_MCO2			274
+>> +#define CK_KER_DTS		275
+>> +#define CK_ETH1_RX		276
+>> +#define CK_ETH1_TX		277
+>> +#define CK_ETH1_MAC		278
+>> +#define CK_ETH2_RX		279
+>> +#define CK_ETH2_TX		280
+>> +#define CK_ETH2_MAC		281
+>> +#define CK_ETH1_STP		282
+>> +#define CK_ETH2_STP		283
+>> +#define CK_KER_LTDC		284
+>> +#define HSE_DIV2_CK		285
+>> +#define CK_DBGMCU		286
+>> +#define CK_DAP			287
+>> +#define CK_KER_ETR		288
+>> +#define CK_KER_STM		289
+>> +
+>> +#define STM32MP21_LAST_CLK	290
+> Drop
+
+ok
+
+
+>> +
+>
+> ...
+>
+>> +#define DDR_R		113
+>> +#define DDRPERFM_R	114
+>> +#define IWDG1_SYS_R	116
+>> +#define IWDG2_SYS_R	117
+>> +#define IWDG3_SYS_R	118
+>> +#define IWDG4_SYS_R	119
+>> +
+>> +#define STM32MP21_LAST_RESET	120
+> Drop
+
+ok
+
+Best regards,
+
+Gabriel
+
+>
+>> +
+>> +#define RST_SCMI_C1_R		0
+>> +#define RST_SCMI_C2_R		1
+>> +#define RST_SCMI_C1_HOLDBOOT_R	2
+>> +#define RST_SCMI_C2_HOLDBOOT_R	3
+>> +#define RST_SCMI_FMC		4
+>> +#define RST_SCMI_OSPI1		5
+>> +#define RST_SCMI_OSPI1DLL	6
+>> +
+>> +#endif /* _DT_BINDINGS_STM32MP21_RESET_H_ */
+>
+> Best regards,
+> Krzysztof
 
