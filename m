@@ -1,126 +1,140 @@
-Return-Path: <linux-kernel+bounces-655856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD871ABDE36
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:05:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CC9ABDEAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F93C1B68481
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:05:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60C934E779D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB1225392C;
-	Tue, 20 May 2025 15:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890A626B97F;
+	Tue, 20 May 2025 15:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wJmAUVP0"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJWU12d6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B922505C7;
-	Tue, 20 May 2025 15:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E9A25228B;
+	Tue, 20 May 2025 15:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747753486; cv=none; b=rVpi3A6N5dNSYXNLIhPM9Bj6LCifMUCuEFR9yGIqWbab8jfVF+rgJO/J8o7v0J+yfIhjWzZ8KWALawRmsgFng9MN9o9iaR3MSclYoqXXyhUUTG+o5fVdW+hvihGf4U805//kk1myBFx+QhOdLeFVHK0//IiRfz+JCAUPv6KPL+4=
+	t=1747753498; cv=none; b=Xu4w5lM8EKKq2hxo/Q0IhsWFAmG1iu8oBgdHY/Ox/6KjhZpIO1E2MehCghPnK64+mKOTqv2EjEi5MAEejExedDHcAx3J+2LfF3gpbeZiJnQno0NASJd8PwGh4WnMkJeXPnVJBo62cvHtXVehFJCc9Iy86T3oCNrzbeymhtG+AT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747753486; c=relaxed/simple;
-	bh=sU2RhePat1aQjBO237+i5tjmIArbuVyp7bQ9whF+JYE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=QMT9NQYvGMniev0VfDUf8wKnQ1hIAHYDALWXCTPq6oUh+rYU2MziLeuR2eKdMCtEgtmp6t1k2G0wvA0hD8qPwm/BsE/3NIVkf4yT3TQTw9UZBv8VZqceo9d5mnv/0zeIXfdC2HZ1U2C2jTsDjZCX/bEMejl3IdRGVFAP8ymfUXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wJmAUVP0; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54KD0WJZ009394;
-	Tue, 20 May 2025 17:04:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	R4Em2WOCtNmZnECHj9cB8orbqHwuCdEzrhZKZaFoeaU=; b=wJmAUVP0sW4c1M5j
-	EthjR4xrl0Y3ZWbpm0PGN61kpA9U7SN6Fr5zS2atRDp/7O1P5VX3O35iiWFYojIO
-	pq8MbqJswLVX66+XE8I8yVXTZZTd9u1fL4+hFGNqEIdS97QsLBQ/yHoZcjKhY1uo
-	9PchrQ+SdYxGpCC2VLWcPQYjwyccEC7eSKX3fVdctQwUlpZ8W4D6WVI5cijYywU3
-	5tDCDtYjTL9T4BcVEFxaKUilE2fPOicogMJe1C3kwKDrUyqmj3jsniJ7ttOmA4SD
-	KH14o0t1vcQQbdgvdVCqB7Ctk32PjGvHncY3iNRU57v0mhrt65cM7QfIwJebwPnE
-	A1Y53g==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46pfvke9ha-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 May 2025 17:04:18 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 51BC74005A;
-	Tue, 20 May 2025 17:03:22 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CA1B9B20B09;
-	Tue, 20 May 2025 17:02:37 +0200 (CEST)
-Received: from localhost (10.48.86.185) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 20 May
- 2025 17:02:37 +0200
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Tue, 20 May 2025 17:02:35 +0200
-Subject: [PATCH v2 8/8] ARM: dts: stm32: add Hardware debug port (HDP) on
- stm32mp157c-dk2 board
+	s=arc-20240116; t=1747753498; c=relaxed/simple;
+	bh=386vJl/A+qlhOwBt1iwrNQY1ZNkTiZORVnCA7Xh0ge8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=JZxkm17DO/aepYIQSDiEmQozf7pkGPxl5Xuj/0sy92ZDhYHQghajef8sHceSZq7EqjWU1K8h9lhErMYq+thVWHpGd3Ugo/wSTstMEX9YY/bJoOvMsZ0tiQ2N4JJNneIiSNBnvIX5dMhf1Q8T92kUXu+FWgOhL26pRlyCgfxarMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJWU12d6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3729AC4CEEA;
+	Tue, 20 May 2025 15:04:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747753497;
+	bh=386vJl/A+qlhOwBt1iwrNQY1ZNkTiZORVnCA7Xh0ge8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=VJWU12d62az2Yuj+AiW/gJexWUaLd+pCW0i0fnwxfBu6oNPS2cbTPk9e0zEnP2e0g
+	 3nGpWzqsHXcLuOcGrm9iKFo9cj9T9UnWcvukafFN4no84C7QpBSxSPtilNGGkXjt4b
+	 UbYDjd7v+cCptdXnJy9doVcR6avpcHvQBe7ZrUawMvCTYGyPsXeQjTP4SHNRuQlsve
+	 hhwtDsdkvAiWCPa4y1WlykZAzi7mQmNRu+v+8YjFYZPy8f62HIQAh3nHNFw9CvUv4y
+	 kz7ArCrgyOZzwaufLKWg6Xw00fU7H9Tg0ndpU5JMoji2u2qjW4+Se10JoMM72SdyZR
+	 WA+Indy/ny7cA==
+Date: Tue, 20 May 2025 10:04:55 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-pci@vger.kernel.org, Jon Pan-Doh <pandoh@google.com>,
+	Karolina Stolarek <karolina.stolarek@oracle.com>,
+	Martin Petersen <martin.petersen@oracle.com>,
+	Ben Fuller <ben.fuller@oracle.com>,
+	Drew Walton <drewwalton@microsoft.com>,
+	Anil Agrawal <anilagrawal@meta.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Sargun Dhillon <sargun@meta.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Kai-Heng Feng <kaihengf@nvidia.com>,
+	Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v6 12/16] PCI/AER: Make all pci_print_aer() log levels
+ depend on error type
+Message-ID: <20250520150455.GA1300985@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-ID: <20250520-hdp-upstream-v2-8-53f6b8b5ffc8@foss.st.com>
-References: <20250520-hdp-upstream-v2-0-53f6b8b5ffc8@foss.st.com>
-In-Reply-To: <20250520-hdp-upstream-v2-0-53f6b8b5ffc8@foss.st.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
-	<clement.legoffic@foss.st.com>
-X-Mailer: b4 0.15-dev-6f78e
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-20_06,2025-05-20_01,2025-03-28_01
+In-Reply-To: <921fea13-9a28-9dc6-90c3-48498626f317@linux.intel.com>
 
-On the stm32mp157fc-dk2 board, we can observe the hdp GPOVAL function on
-SoC pin E13 accessible on the pin 5 on the Arduino connector CN13.
-Add the relevant configuration but keep it disabled as it's used for
-debug only.
+On Tue, May 20, 2025 at 02:37:33PM +0300, Ilpo Järvinen wrote:
+> On Mon, 19 May 2025, Bjorn Helgaas wrote:
+> 
+> > From: Karolina Stolarek <karolina.stolarek@oracle.com>
+> > 
+> > Some existing logs in pci_print_aer() log with error severity by default.
+> > Convert them to depend on error type (consistent with rest of AER logging).
+> > 
+> > Link: https://lore.kernel.org/r/20250321015806.954866-3-pandoh@google.com
+> > Signed-off-by: Karolina Stolarek <karolina.stolarek@oracle.com>
+> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> > ---
+> >  drivers/pci/pcie/aer.c | 16 +++++++++++-----
+> >  1 file changed, 11 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> > index 73b03a195b14..06a7dda20846 100644
+> > --- a/drivers/pci/pcie/aer.c
+> > +++ b/drivers/pci/pcie/aer.c
+> > @@ -788,15 +788,21 @@ void pci_print_aer(struct pci_dev *dev, int aer_severity,
+> >  	layer = AER_GET_LAYER_ERROR(aer_severity, status);
+> >  	agent = AER_GET_AGENT(aer_severity, status);
+> >  
+> > -	pci_err(dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n", status, mask);
+> > +	aer_printk(info.level, dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n",
+> > +		   status, mask);
+> >  	__aer_print_error(dev, &info);
+> > -	pci_err(dev, "aer_layer=%s, aer_agent=%s\n",
+> > -		aer_error_layer[layer], aer_agent_string[agent]);
+> > +	aer_printk(info.level, dev, "aer_layer=%s, aer_agent=%s\n",
+> > +		   aer_error_layer[layer], aer_agent_string[agent]);
+> >  
+> >  	if (aer_severity != AER_CORRECTABLE)
+> > -		pci_err(dev, "aer_uncor_severity: 0x%08x\n",
+> > -			aer->uncor_severity);
+> > +		aer_printk(info.level, dev, "aer_uncor_severity: 0x%08x\n",
+> > +			   aer->uncor_severity);
+> >  
+> > +	/*
+> > +	 * pcie_print_tlp_log() uses KERN_ERR, but we only call it when
+> > +	 * tlp_header_valid is set, and info.level is always KERN_ERR in
+> > +	 * that case.
+> > +	 */
+> >  	if (tlp_header_valid)
+> >  		pcie_print_tlp_log(dev, &aer->header_log, dev_fmt("  "));
+> 
+> There's another similar callsite but only this has the comment added. I 
+> was thinking if this call could be made from __aer_print_error(). There 
+> would be small change in order of messages but I can't seem to decide if 
+> it would be bad/good.
 
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
----
- arch/arm/boot/dts/st/stm32mp157c-dk2.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+I guess the other caller is dpc_process_rp_pio_error(), which uses
+pci_err() for other logging, so at least it matches the level used by
+pcie_print_tlp_log().
 
-diff --git a/arch/arm/boot/dts/st/stm32mp157c-dk2.dts b/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
-index 324f7bb988d1..8a8fdf338d1d 100644
---- a/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
-+++ b/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
-@@ -63,6 +63,12 @@ &dsi_out {
- 	remote-endpoint = <&panel_in>;
- };
- 
-+&hdp {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&hdp2_gpo &hdp2_pins_a>;
-+	pinctrl-1 = <&hdp2_sleep_pins_a>;
-+};
-+
- &i2c1 {
- 	touchscreen@38 {
- 		compatible = "focaltech,ft6236";
-
--- 
-2.43.0
-
+This patch uses info.level to control the message level, and
+pcie_print_tlp_log() doesn't look at info.level.  I added this comment
+to explain why that's OK and the message level happens to match
+already.  Maybe not super ideal long term.
 
