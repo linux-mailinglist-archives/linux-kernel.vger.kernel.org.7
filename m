@@ -1,221 +1,265 @@
-Return-Path: <linux-kernel+bounces-656544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23316ABE7B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:56:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5BD8ABE7CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 601303A9666
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:56:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 794D11BC21D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA12125B695;
-	Tue, 20 May 2025 22:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E72425DB0D;
+	Tue, 20 May 2025 22:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MujjToa2"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fVqBH8Vv"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846582566FE;
-	Tue, 20 May 2025 22:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20245256C71
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 22:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747781790; cv=none; b=hY+RY0c99tn52pXTynujuCHCvTLmITRWpsX/4jvU3eZK65jRhP0++zBgm53VZ2v+l4/Rqdsr1rQJe3LM/6wrQNAWWD333W+HPGIGdQdl2qaynBl97HK8sfU8hocEdA/F/shmnD+wUOcoNltdbHpbWChSjMJB7kCzMnNswkHdmPQ=
+	t=1747781829; cv=none; b=tiQ7SBalmAwWd+tAHD6Kc7U0B+D63IMMdBkLlV0wZq1FoOt93Vu0I0b6R1lGsbUko3+rs6pJ4ygcLiWrh/9ZEvogL1YrQgrIDU/zhp1+J20Bg0V0W/LN0iSRcEnTKRS6ShJdMTaOdv8OWTTcEIzYW2vedcNPoQyB/s986wsRzws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747781790; c=relaxed/simple;
-	bh=E5CCP2G2mbNbJvzbh7UCw14ea4N2zT5ir18+mCDw/ds=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nc+sCi+iAryjKMKZMvNWQ7r9GdOm+plE2UtCrJBhfSuJs+gFONeKMngW2kSS0RGJWgaPCil06sPJoexqHunglGzCgQdUgPjfomOjX8u7ypfV9OT6Wx4G1/Bnx3SCZhH5X4XKAt/IdZwpLu3LXnHI9n4IkAwFFyDkkXs7H0GxsyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MujjToa2; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-8647a81e683so153656239f.1;
-        Tue, 20 May 2025 15:56:28 -0700 (PDT)
+	s=arc-20240116; t=1747781829; c=relaxed/simple;
+	bh=rdA6H3VgwQOCh8S8IexGiiGwtEMnVDcfDttQOjM2xbQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=BE8nI0oBz/pkvcLupIdAOI2aBH2WDxFXVYXzp5/XAIe0bQXAZyeH1+RR+gDOhh7HKwod+6U6lggtR66TXe82ThF3puHN1rOqC5J+s7dz1ArfYzxXhT5n5mRfq7a6mTx+N9clHnxloO+4ZFaoOYK7wnWvt47NFC9Qw34hKsSbImc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fVqBH8Vv; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30e9659a391so3629230a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 15:57:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747781787; x=1748386587; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xfbTmppHxOLXCmtZNJSatt4EkTAJlAlHVYpSJyOZFfg=;
-        b=MujjToa2TN+ReWgbfZkI1j4Uk88iFp9axdih/7hu13T9l1NwLtP+wH/KY207MKPydr
-         vwpJav64j1QZIhIeK2PMnaUk654TwRan3yQcOics0IRM7DA2x/nUXtmTxvcVmLBRIIiK
-         HvfgP8r2hPSw0F2VpIIbwu14gOy1hDinM7dU/oCRHxqAPVgfoJZiwhLbRe8UzDTLYLkF
-         g1+IgyFU2icuAahyKEzmbsDjPEEoYofGuTb6tDRZFb3NADnUrHjb3u5qhSN49rtY3nBH
-         ybCl99PVb9z9HD+XN4z4qv4jnW/p+RowXWapVWK1IawARYSGmob7+FMsHn87DMM4cXaw
-         PLrA==
+        d=google.com; s=20230601; t=1747781827; x=1748386627; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8yKW/q7vhix09E264PiuMuzRJMsgSqosjtJ6IDxGY5A=;
+        b=fVqBH8Vvb707psRBTNWpMcUffsSgv6j1iPvpuFiNF5K3MTpvWNEEbNTgVGak6L+7xX
+         bdbp6+oatcZi5PJZOnar0/J7tHmXbcA5nQ5ywkIgxbmIi+3R/ooRvD54uIp5IkSLwaIz
+         bWLIG1fOWt7+goJujdqobNwxSGqyuZKEUerxeruLzolKwrL4xaEIpudt+6ZNQqySCrgv
+         Y6Mhax7cD4HvRWb49aj1AXUjHqVDcl26Z8jOn7DtMUA6NUoTxBuCoBdg9Kpwt2DTXDXG
+         FkNl4HPISKAZOgjBbM2XB8GDfKCi/ZIju/KMSDrr4pa3HPLUN73Alj+vLhGQQB1xX1e7
+         MqDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747781787; x=1748386587;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xfbTmppHxOLXCmtZNJSatt4EkTAJlAlHVYpSJyOZFfg=;
-        b=RP/hOyRFF823JRA2ol3Iu6J+8ZejlS3FUrptUcjNdxLGtM76AB43aOdVXU0a4wW10d
-         fpPL4teAg063ynI0LjWweqipvdkiLa5jHezEE9hse18sfFrWipdd8Mar7z+XiOW7fEX0
-         kB+ftY6JeJOoICJKSYyTa9NDJ28sdM/aObMSTQlohmIj3k5isQRbgjZZFuTKRF817tbz
-         RMrU03cXq/x0QuJQkG1LhrwW+r6Ae61sEtGaJbzNAthVZNxedjpgJdQ749Z8Z/p+ez5q
-         HRCKw2Svu99LCpDlMBC5MXhzEAzZXi9sq6QFcRbbMjGUG//n9FIY7ZcQdCWSUlKV2Rf7
-         HQng==
-X-Forwarded-Encrypted: i=1; AJvYcCURw+BQ5cHn96XwTqzoW8AjnIKfNKvOf1o7T9Fv+0ZTFbZR15nt9ByHVS11WycJ4R+c6ex3CiYxX9RBNVgx@vger.kernel.org, AJvYcCWQwXpUaJSeT7iI2irjT0tVjJ/ov5hqA3fXLCqZjijj9EjYd4q6nbGM/aCB2BApmp1IlDq2Or57/lwb5Ru8@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQBvUPQ1lwm394lF0y0+HSQ1EY30xAQvcxZIUra8OtSuoCgq6i
-	bF4UV30VjVqXNfbwLblt/KyT8F9JIvhsLk/bX45pElR2mhqoK01UXHVFjoMcxVho78IK9KU6Lx4
-	xDrzaW4kGr3inI42dGHK4x9X0gJIp9og=
-X-Gm-Gg: ASbGnctseIEWnBpt3g+aTq5i4upO+vwirKAiPRRgrqtYjF9yP8yiMBDBO1VYTyd+Jo/
-	uwyX7N1tRrvUB8hZy+5Dcv7gQLXyoFWh4tYW3JdpsgnMDWgqy127yxjkfcs3nkAWScF7c0k5BfR
-	maZ1tYCLN6OFK0/dZ3RRj7rprJwJqc75Kd4q89pf/GzhiGmqnhizd55fnHti7AHK3Vx7xyZcL6d
-	3c=
-X-Google-Smtp-Source: AGHT+IGOPI/jkR0SE4Ah18tEgrGyD13jj9I35eWxSMfqfHBJtXz1Ptp5VDoU4Ml5gVYvLQqXk4RTcbwN8ZBaSDzk14Q=
-X-Received: by 2002:a05:6602:3e82:b0:867:6c90:4867 with SMTP id
- ca18e2360f4ac-86a23256cadmr2998450939f.14.1747781787455; Tue, 20 May 2025
- 15:56:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747781827; x=1748386627;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8yKW/q7vhix09E264PiuMuzRJMsgSqosjtJ6IDxGY5A=;
+        b=EXS5YGO9t6+zefJsBbn5JJ+2CPh3uG6yRZSBc+mv5r0WWwOVgYK86C9B2zNpE3Q1Wz
+         lP9whj34ZT1UrqfNfh/0F6MzBVofkFrHA1sHddiDF/bRgfgv2VNCFkb+YUTCjBYtQXlz
+         g0SYwzmiEx3wCKSgoObgXGSMwVhaqZcZP/1Izq0OVNN5VglidO4gxip54P3c95JrfaqB
+         0DR3pklgHMnhPUQGcblKw8V2qJOTL3chIOLQ/hd1SR3gst7JFyVLhHRjCUuqJK9n9XBA
+         D2bIlDW+JYNdbR2MXfXlG30+Vwu911cRbU51ZDLAmbYwdo34T9IPgeO4JMvnc3tF7L4f
+         nyYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEha/YHuanCrxLn9+9hA2uYefkzsHNImX0SVxfnoMXgx35/tVInURVpdB8u4Mnv2wvfe9b8aqJQ7AWfeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCTDTAV1nDvwsfcB0PVMW8pQYZ/fTcJBPykpwHxbwfEgvlLh76
+	guAm3ZCEfLVf9HT8BLHdes6Ogg3cVvai0tx2xH9K2CVNKU3iKyDjIw0jjg1uyRMToA0xviNMDAq
+	zM7WOcA==
+X-Google-Smtp-Source: AGHT+IHZMVljwetvzNG3QUgRgAPbKeHu60JLPsRcUNj6g9cQyY08V1CGpDmRnHFioMM/wBEXLCKeZRJAv+c=
+X-Received: from pjbdy5.prod.google.com ([2002:a17:90b:6c5:b0:2ff:6e58:89f7])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:dfc7:b0:30c:5479:c92e
+ with SMTP id 98e67ed59e1d1-30e830c7988mr28117531a91.4.1747781827386; Tue, 20
+ May 2025 15:57:07 -0700 (PDT)
+Date: Tue, 20 May 2025 15:57:05 -0700
+In-Reply-To: <20250515005353.952707-5-mlevitsk@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250514175527.42488-1-robdclark@gmail.com> <20250514175527.42488-2-robdclark@gmail.com>
- <aCWrwz2IF6VBUi4e@pollux> <aCWueFzx2QzF7LVg@pollux> <CAF6AEGu9MPxKnkHo45gSRxaCP+CTzqsKZjiLuy4Ne4GbrsStGA@mail.gmail.com>
- <aCYqlvp_T77LyuMa@pollux> <CAF6AEGsOTNedZhuBzipSQgNpG0SyVObaeq+g5U1hGUFfRYjw8w@mail.gmail.com>
- <aCb-72KH-NrzvGXy@pollux> <CAF6AEGu=KzCnkxuUsYvCHBGwo-e2W16u_cRT1NFAXLphty1_ig@mail.gmail.com>
- <CAPM=9tzcvDVDOM88O8oqDHURR1nbR7KsFStavNnT1CN6C6kGgg@mail.gmail.com>
- <CAF6AEGuv3GXTBcU99sBjAa5gPOSNoxwY+eiPy=Q--cLYHVn+cw@mail.gmail.com> <CAPM=9tykCXSKOH0BcMkNLKyCWfEN-kCjs0U7UA+C1pPqFr1jLA@mail.gmail.com>
-In-Reply-To: <CAPM=9tykCXSKOH0BcMkNLKyCWfEN-kCjs0U7UA+C1pPqFr1jLA@mail.gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Tue, 20 May 2025 15:56:15 -0700
-X-Gm-Features: AX0GCFsoUmkG3s3L14GoLEL15C4sCyP3V1E3Uragg5_xADxJ_pxuus52D_2x7-E
-Message-ID: <CAF6AEGvr6-9af9ZyccYF-g56j5-4sHocH+9JPk=cKfgdMTAjLg@mail.gmail.com>
-Subject: Re: [PATCH v4 01/40] drm/gpuvm: Don't require obj lock in destructor path
-To: Dave Airlie <airlied@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	Connor Abbott <cwabbott0@gmail.com>, Rob Clark <robdclark@chromium.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250515005353.952707-1-mlevitsk@redhat.com> <20250515005353.952707-5-mlevitsk@redhat.com>
+Message-ID: <aC0IwYfNvuo_vUDU@google.com>
+Subject: Re: [PATCH v4 4/4] x86: KVM: VMX: preserve DEBUGCTLMSR_FREEZE_IN_SMM
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	x86@kernel.org, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, May 20, 2025 at 3:31=E2=80=AFPM Dave Airlie <airlied@gmail.com> wro=
-te:
->
-> On Wed, 21 May 2025 at 07:53, Rob Clark <robdclark@gmail.com> wrote:
-> >
-> > On Tue, May 20, 2025 at 2:25=E2=80=AFPM Dave Airlie <airlied@gmail.com>=
- wrote:
-> > >
-> > > On Sat, 17 May 2025 at 02:20, Rob Clark <robdclark@gmail.com> wrote:
-> > > >
-> > > > On Fri, May 16, 2025 at 2:01=E2=80=AFAM Danilo Krummrich <dakr@kern=
-el.org> wrote:
-> > > > >
-> > > > > On Thu, May 15, 2025 at 02:57:46PM -0700, Rob Clark wrote:
-> > > > > > On Thu, May 15, 2025 at 10:55=E2=80=AFAM Danilo Krummrich <dakr=
-@kernel.org> wrote:
-> > > > > > > Anyways, I don't agree with that. Even if you can tweak your =
-driver to not run
-> > > > > > > into trouble with this, we can't introduce a mode that violat=
-es GOUVM's internal
-> > > > > > > lifetimes and subsequently fix it up with WARN_ON() or BUG_ON=
-().
-> > > > > > >
-> > > > > > > I still don't see a real technical reason why msm can't be re=
-worked to follow
-> > > > > > > those lifetime rules.
-> > > > > >
-> > > > > > The basic issue is that (a) it would be really awkward to have =
-two
-> > > > > > side-by-side VM/VMA management/tracking systems.  But in legacy=
- mode,
-> > > > > > we have the opposite direction of reference holding.  (But at t=
-he same
-> > > > > > time, don't need/use most of the features of gpuvm.)
-> > > > >
-> > > > > Ok, let's try to move this forward; I see three options (in order=
- of descending
-> > > > > preference):
-> > > > >
-> > > > >   1) Rework the legacy code to properly work with GPUVM.
-> > > > >   2) Don't use GPUVM for the legacy mode.
-> > > > >   .
-> > > > >   .
-> > > > >   .
-> > > > >   3) Get an ACK from Dave / Sima to implement those workarounds f=
-or MSM in
-> > > > >      GPUVM.
-> > > > >
-> > > > > If you go for 3), the code introduced by those two patches should=
- be guarded
-> > > > > with a flag that makes it very clear that this is a workaround sp=
-ecifically
-> > > > > for MSM legacy mode and does not give any guarantees in terms of =
-correctness
-> > > > > regarding lifetimes etc., e.g. DRM_GPUVM_MSM_LEGACY_QUIRK.
-> > > >
-> > > > I'm not even sure how #2 would work, other than just copy/pasta all=
- of
-> > > > drm_gpuvm into msm, which doesn't really seem great.
-> > > >
-> > > > As for #1, even if I could get it to work, it would still be a lot
-> > > > more mmu map/unmap (like on every pageflip, vs the current state th=
-at
-> > > > the vma is kept around until the object is freed).  For the
-> > > > non-VM_BIND world, there are advantages to the BO holding the ref t=
-o
-> > > > the VMA, rather than the other way around.  Even at just a modest
-> > > > single layer 1080p the map takes ~.2ms and unmap ~.3ms (plus the un=
-map
-> > > > costs a tlbinv).  So from that standpoint, #3 is the superior optio=
-n.
-> > > >
-> > >
-> > > Before we get to #3, I'll need a bit more info here on why you have t=
-o
-> > > map/unmap the VMA on every pageflip.
-> >
-> > Previously we'd keep the VMA hanging around until the GEM obj is
-> > freed.  But that can't work if the VMA (via the VM_BO) is holding a
-> > reference to the GEM obj.
-> >
-> > I was kinda thinking about keeping the VMA around until the handle is
-> > closed.. but that doesn't cover the dma-buf case (ie. when you
-> > re-import the dma-buf fd each frame.. I know android does this, unsure
-> > about other wsi's).
-> >
-> > > But actually I think 2 is the best option, I think in nouveau this is
-> > > where we ended up, we didn't modify the old submission paths at all
-> > > and kept the old bo/vm lifetimes.
-> > >
-> > > We just added completely new bind/exec ioctls and you can only use on=
-e
-> > > method once you've opened an fd.
-> >
-> > hmm, but that means tracking VMAs against a single BO differently..
-> > which.. at least seems ugly..
->
-> I don't think it is if you already have the code to do that, and just
-> add gpuvm support in parallel.
->
-> You also have to figure out that the world is moving towards Vulkan
-> for everything so any optimisations you've made for particular legacy
-> paths will need to be dealt with in the future picture anyways.
+KVM: VMX:
 
-fwiw, the case I'm more worried about is the kms vm for scanout, that
-won't be using vk
+On Wed, May 14, 2025, Maxim Levitsky wrote:
+> Pass through the host's DEBUGCTL.DEBUGCTLMSR_FREEZE_IN_SMM to the guest
+> GUEST_IA32_DEBUGCTL without the guest seeing this value.
+> 
+> Since the value of the host DEBUGCTL can in theory change between VM runs,
+> check if has changed, and if yes, then reload the GUEST_IA32_DEBUGCTL with
+> the new value.
 
-BR,
--R
+Please split this into two patches.  Add vmx_guest_debugctl_{read,write}(), then
+land the FREEZE_IN_SMM change on top.  Adding the helpers should be a nop and
+thus trivial to review, and similarly the DEBUGCTLMSR_FREEZE_IN_SMM change is
+actually pretty small.  But combined, this patch is annoying to review because
+there's a lot of uninteresting diff to wade through to get at the FREEZE_IN_SMM
+logic.
 
-> But I'd rather not hack gpuvm into being something it isn't, if there
-> is a meaningful commonality in legacy bo/vm bindings across drivers,
-> we could create something new, but the ref counting and handling is
-> pretty fundamental to gpuvm architecture.
->
-> There should only be two paths, legacy and gpuvm, and you shouldn't
-> ever be mixing them on a particular exec path, since you should only
-> have a vm per userspace fd, and can pick which way to use it the first
-> time someone calls it.
->
-> Dave.
-> Dave.
+> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h |  1 +
+>  arch/x86/kvm/vmx/nested.c       |  4 ++--
+>  arch/x86/kvm/vmx/vmx.c          | 22 +++++++++++++++++++---
+>  arch/x86/kvm/vmx/vmx.h          |  2 ++
+>  arch/x86/kvm/x86.c              |  7 +++++--
+>  5 files changed, 29 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index d2ad31a1628e..2e7e4a8b392e 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1673,6 +1673,7 @@ static inline u16 kvm_lapic_irq_dest_mode(bool dest_mode_logical)
+>  enum kvm_x86_run_flags {
+>  	KVM_RUN_FORCE_IMMEDIATE_EXIT	= BIT(0),
+>  	KVM_RUN_LOAD_GUEST_DR6		= BIT(1),
+> +	KVM_RUN_LOAD_DEBUGCTL		= BIT(2),
+>  };
+>  
+>  struct kvm_x86_ops {
+
+...
+
+> @@ -7368,6 +7381,9 @@ fastpath_t vmx_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
+>  	if (run_flags & KVM_RUN_LOAD_GUEST_DR6)
+>  		set_debugreg(vcpu->arch.dr6, 6);
+>  
+> +	if (run_flags & KVM_RUN_LOAD_DEBUGCTL)
+> +		vmx_guest_debugctl_write(vcpu, vmx_guest_debugctl_read());
+> +
+>  	/*
+>  	 * Refresh vmcs.HOST_CR3 if necessary.  This must be done immediately
+>  	 * prior to VM-Enter, as the kernel may load a new ASID (PCID) any time
+> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+> index 1b80479505d3..5ddedf73392b 100644
+> --- a/arch/x86/kvm/vmx/vmx.h
+> +++ b/arch/x86/kvm/vmx/vmx.h
+> @@ -416,6 +416,8 @@ static inline void vmx_set_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr,
+>  
+>  void vmx_update_cpu_dirty_logging(struct kvm_vcpu *vcpu);
+>  u64 vmx_get_supported_debugctl(struct kvm_vcpu *vcpu, bool host_initiated);
+> +void vmx_guest_debugctl_write(struct kvm_vcpu *vcpu, u64 val);
+> +u64 vmx_guest_debugctl_read(void);
+
+I vote to make these static inlines, I don't see any reason to bury them in vmx.c
+
+>  /*
+>   * Note, early Intel manuals have the write-low and read-high bitmap offsets
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 684b8047e0f2..a85078dfa36d 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -10752,7 +10752,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+>  		dm_request_for_irq_injection(vcpu) &&
+>  		kvm_cpu_accept_dm_intr(vcpu);
+>  	fastpath_t exit_fastpath;
+> -	u64 run_flags;
+> +	u64 run_flags, host_debug_ctl;
+>  
+>  	bool req_immediate_exit = false;
+>  
+> @@ -11024,7 +11024,10 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+>  		set_debugreg(0, 7);
+>  	}
+>  
+> -	vcpu->arch.host_debugctl = get_debugctlmsr();
+> +	host_debug_ctl = get_debugctlmsr();
+
+This can probably just be debug_ctl to shorten the lines, I don't see a strong
+need to clarify it's the host's value since all accesses are clustered together.
+
+> +	if (host_debug_ctl != vcpu->arch.host_debugctl)
+> +		run_flags |= KVM_RUN_LOAD_DEBUGCTL;
+> +	vcpu->arch.host_debugctl = host_debug_ctl;
+
+Argh, the TDX series didn't get refreshed (or maybe it got poorly rebased), and
+now there's a redundant and confusing "host_debugctlmsr" field in vcpu_vt.  Can
+you slot in the below?  It's not urgent enough to warrant posting separately,
+and handling TDX in this series would get a bit wonky if TDX uses a different
+snapshot.
+
+The reason I say that TDX will get wonky is also why I think the "are bits
+changing?" check in x86.c needs to be precise.  KVM_RUN_LOAD_DEBUGCTL should
+*never* be set for TDX and SVM, and so they should WARN instead of silently
+doing nothing.  But to do that without generating false positives, the common
+check needs to be precise.
+
+I was going to say we could throw a mask in kvm_x86_ops, but TDX throws a wrench
+in that idea.  Aha!  Actually, we can still use kvm_x86_ops.  TDX can be exempted
+via guest_state_protected.  E.g. in common x86:
+
+	debug_ctl = get_debugctlmsr();
+	if (((debug_ctl ^ vcpu->arch.host_debugctl) & kvm_x86_ops.HOST_DEBUGCTL_MASK) &&
+	    !vcpu->arch.guest_state_protected)
+		run_flags |= KVM_RUN_LOAD_DEBUGCTL;
+	vcpu->arch.host_debugctl = debug_ctl;
+
+--
+From: Sean Christopherson <seanjc@google.com>
+Date: Tue, 20 May 2025 15:37:41 -0700
+Subject: [PATCH] KVM: TDX: Use kvm_arch_vcpu.host_debugctl to restore the
+ host's DEBUGCTL
+
+Use the kvm_arch_vcpu.host_debugctl snapshot to restore DEBUGCTL after
+running a TD vCPU.  The final TDX series rebase was mishandled, likely due
+to commit fb71c7959356 ("KVM: x86: Snapshot the host's DEBUGCTL in common
+x86") deleting the same line of code from vmx.h, i.e. creating a semantic
+conflict of sorts, but no syntactic conflict.
+
+Using the version in kvm_vcpu_arch picks up the ulong => u64 fix (which
+isn't relevant to TDX) as well as the IRQ fix from commit 189ecdb3e112
+("KVM: x86: Snapshot the host's DEBUGCTL after disabling IRQs").
+
+Link: https://lore.kernel.org/all/20250307212053.2948340-10-pbonzini@redhat.com
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Fixes: 8af099037527 ("KVM: TDX: Save and restore IA32_DEBUGCTL")
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/vmx/common.h | 2 --
+ arch/x86/kvm/vmx/tdx.c    | 6 ++----
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/kvm/vmx/common.h b/arch/x86/kvm/vmx/common.h
+index 8f46a06e2c44..66454bead202 100644
+--- a/arch/x86/kvm/vmx/common.h
++++ b/arch/x86/kvm/vmx/common.h
+@@ -53,8 +53,6 @@ struct vcpu_vt {
+ #ifdef CONFIG_X86_64
+ 	u64		msr_host_kernel_gs_base;
+ #endif
+-
+-	unsigned long	host_debugctlmsr;
+ };
+ 
+ #ifdef CONFIG_KVM_INTEL_TDX
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 7dbfad28debc..84b2922b8119 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -778,8 +778,6 @@ void tdx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
+ 	else
+ 		vt->msr_host_kernel_gs_base = read_msr(MSR_KERNEL_GS_BASE);
+ 
+-	vt->host_debugctlmsr = get_debugctlmsr();
+-
+ 	vt->guest_state_loaded = true;
+ }
+ 
+@@ -1056,8 +1054,8 @@ fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
+ 
+ 	tdx_vcpu_enter_exit(vcpu);
+ 
+-	if (vt->host_debugctlmsr & ~TDX_DEBUGCTL_PRESERVED)
+-		update_debugctlmsr(vt->host_debugctlmsr);
++	if (vcpu->arch.host_debugctl & ~TDX_DEBUGCTL_PRESERVED)
++		update_debugctlmsr(vcpu->arch.host_debugctl);
+ 
+ 	tdx_load_host_xsave_state(vcpu);
+ 	tdx->guest_entered = true;
+
+base-commit: 475a02020ac2de6b10e85de75e79833139b556e0
+--
 
