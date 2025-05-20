@@ -1,92 +1,75 @@
-Return-Path: <linux-kernel+bounces-656029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5BD6ABE0B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:31:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD6EABE0BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FF084C1765
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:31:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21B11BA1FDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF612270542;
-	Tue, 20 May 2025 16:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54FA2676D1;
+	Tue, 20 May 2025 16:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IP0xUmHy"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="evLjZHay"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9E324E010;
-	Tue, 20 May 2025 16:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B902580E4
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 16:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747758674; cv=none; b=gidG3BwRIXsVCAvKTLNt9a6VxvReRbd0KPVOH3ArJb8vKjRSGGcav0LP+GIAlyBuWG2GrALFbPe6OX2p7fxsjTBukp0HzW5A1sTKNgB2mO4IVjNs1Gi+nJIRDOJ6LK0zgVlQ7vJEKV95DM9uueNlMLMwjxKvDDS5cmishndlEho=
+	t=1747758753; cv=none; b=p8RgNwF7qXBgiZyLx1P9Kwq7J9RINg8ZAzblyIaekWnOreieQChBmRVN75fvdypOUvhSqffXXWC9VZEMdjG0Od81aRHNPHo6FseuXXjGiY5t1ZD9LQ5YhoguLwizyyxmV+8V6Uuk1V8JhoGGeq1Hc7iZDOARMMAkLzwQtLpltLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747758674; c=relaxed/simple;
-	bh=A1uJoYur0CJnK5muRGxD+LMFE0Wmuv2z5f3tDoh1UVY=;
+	s=arc-20240116; t=1747758753; c=relaxed/simple;
+	bh=NE1lbQoX3Y6rrhD5RK6HSkfUgRGFG4LfnQSLgHP+z5U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JbEBiG88kIMgSQYZJut7cumf8eIngOGd5EV6YybTpEburO5b7+FvWRRmNSdVOjVEFcg810zyNTTFN0cTEK3w55UuxtDJABRDxdKEZ3lVrldVz4nVFkwTukKcdQoc8GZJ21Ibzllais264IzXbo621wrCdSL+Yim5oM4X8R/1mGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IP0xUmHy; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-30ea8b7c5c2so3209614a91.3;
-        Tue, 20 May 2025 09:31:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747758672; x=1748363472; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U2t05IAhu5JS6yf2a0L1zsY+gn4NL8gR5pf4kfZkSQo=;
-        b=IP0xUmHyxxhxDKJdzauRevns7e5KOJ4x/oEj9jKVEzFDwMue8nFY6dhU1qh70BSyYm
-         kIvI8c4yr3cEpfbejY9BiysEgnIzjpSU6M3c/nxqS0PbTzB79AhmpjNI8WE/bSdgujsl
-         7+ZMNOFUsqEGdTH2bO272HDMlUZubAKB0r14aya4w3FY17ftjleuojXrtQedc8inGIPG
-         ri5Tprv2sQTlFF7kEX7KON/LTc882k0MNwRl5B1JZRaOs0UZjoNuxknuzpH1jTr39mle
-         21yun3ane6NDYtSoqbgGHqu5jO6TP8oimUmROJXlzZARqyI8XzTAEfIo3knsAeX42gOh
-         R/DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747758672; x=1748363472;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U2t05IAhu5JS6yf2a0L1zsY+gn4NL8gR5pf4kfZkSQo=;
-        b=gvKXIlemUmK/6JvAvUad+VXU6Z9bw8wvWr5AdEVawMt4AWfe1BZXsrW4DVNOUX62+S
-         HDhme5wQvXpfXkEku7lOi2lAHhjT/JW2KeurqCRy9Y1LNaSQMog4vz3ypd+CA8g2NMeW
-         IHDV1GqWdXceaSas7smnuQT/081OdJSxPkqDRyLWT6CUArWKyXi4XNyPCeHWluK+Zk01
-         EQ0amUBGWWXfEpz0nWaqp1fS4JVzFW8JMtYKS6RQZOvmKyRobwgVJszzHjZrZI8TSjdl
-         ER6PwGgI39xIuFkM7YYqexX+5WBYfENVI1HGNj/pV2Zgx3u+H+ZwE+iNfQwEfZoLlfQp
-         JHUA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3VZTpDpyQgm19VpaHFMYEUYFvQq/IwxAIa09Z+MnX5knH2IADL/ruEPQOwmfokp0iCOAJkpuJJEZKmNyB@vger.kernel.org, AJvYcCVgrBFtmQvFgRI4sYwWulK1Qcr0Z5lbLLU5VaC7Ab96kU2qsTEQ9lwACKNGsUKIXyRI260UheaO@vger.kernel.org, AJvYcCWSsbR5vJJPnzsKC/u7+xPTfmIz76c+1Sqc0GiIrbYm2dO/AWBMnr5tX9Yhoca1wQfLc+0=@vger.kernel.org, AJvYcCXc2XkNdfwU8BX+MbL4+5PAWtwLhu3WjN8HpLMovrk8H9hNzYObqYE/lsPHZberZKHcY7jGoda8BS8FFSw8Kv7W@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2o9MyYY4BP0vLX0sBMEzLs3+FXCKZ8DOC7KRc4Mq+M30coqSt
-	a93X89RdIhwZgHXtT58FekGlq7fWu8bD9tvHFdfjxIuHvaAx5e7q+/4b
-X-Gm-Gg: ASbGncuLSAzrhsypXGBLlxUxX6pT5e31cXhZlSFXLvJUwY6QtIx1IIXzxcftAmeTUUG
-	YY8AKHUR5wUPd0z4wNgK2vek67Nxla7o+bUzSoY06RvNJB7QdhnJ+Kb17n9S2Atm5baAquyglft
-	00dG+unfyn2V1fJfS9RLiLJlpQHxVksplpeDqQdbkR1PqxUWf/uLQJVg2XN5FAw3FngZSg6l8A9
-	+bpaJ8ZEea5NMGZDWFa5Xox8NFfQkrWLSHWtDDbPFtWYiZYJB06KgD5R7QlhSlC+e6ELw40HbAp
-	xxcsG5BTNXCaAVIX6mjlbucq6oqrPmc0+nYgVZJYLWrorxfmobxfuTaY617hfKW+uHlx0Dw=
-X-Google-Smtp-Source: AGHT+IEtnb8aYdRjb2chzZc4KFgAuKLohjg+W8+FnvIkeyuCGBJPJPSMAMhgJm+kE/2axZm/rVc6cw==
-X-Received: by 2002:a17:90b:570b:b0:305:5f32:d9f0 with SMTP id 98e67ed59e1d1-30e7d540033mr26297107a91.19.1747758671634;
-        Tue, 20 May 2025 09:31:11 -0700 (PDT)
-Received: from devbig793.prn5.facebook.com ([2a03:2880:ff:3::])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eb0843d1sm8290669a12.49.2025.05.20.09.31.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 09:31:10 -0700 (PDT)
-Date: Tue, 20 May 2025 09:31:08 -0700
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v7] selftests/vsock: add initial vmtest.sh for
- vsock
-Message-ID: <aCyuTMNkRzCBMp1i@devbig793.prn5.facebook.com>
-References: <20250515-vsock-vmtest-v7-1-ba6fa86d6c2c@gmail.com>
- <f7dpfvsdupcf4iucmmit2xzgwk53ial6mcl445uxocizw6iow5@rhmh6m2qd3zu>
- <73a4740e-755e-4ba8-8130-df09bd25197a@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GYCy0qC3KpeukBtZPixnNNnll1ofNfQYwBjMF+JP0u/uetWkdui0Jmlru3JOb29Es80ZWGGxeJcSlAZckY97d61uWO/uo+Oerw83nxjn+VrPDxmH5h6ZeQr3z9oGjLaCXj9WlZoYXnK0yItq1GQNlvf0h9IXNc4VcqXgJbP0BHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=evLjZHay; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747758751; x=1779294751;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NE1lbQoX3Y6rrhD5RK6HSkfUgRGFG4LfnQSLgHP+z5U=;
+  b=evLjZHay649z4rDgKG63GZvjxX/A62bE1YW2PYWFJN4rE+I2nR3fewOg
+   APDByuazUxozncvYAegbypx4S8NzSdY5J9uVFZjY/T+7t9D8K3c+zR7Z1
+   mpkVdeBnseJK4wMRTnGa1vZ5y7q9feV4O/xP/htriqzjWG3f5wE3vK7xL
+   nhr0oVmVGEVPxSk5OAJIv8y709bMoxcPzBooCbr1gec2HQMnaVCPQdrvR
+   VBUrIse9h+hi0MgToMd8CYOSqDZ/KQxI4ArA8vxHm8c2MwvrMqPf4pky+
+   WoPa8o7vo8Ri0fD6Mg1mVKQ/0BnqzGFk2N4JhRVRZgpsxEyFDTd7J7zAi
+   g==;
+X-CSE-ConnectionGUID: mKK4XTgZTde8se060qywwQ==
+X-CSE-MsgGUID: 7YQNauUpTQ6qjiHVNHCKYw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49634765"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="49634765"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 09:32:31 -0700
+X-CSE-ConnectionGUID: P8NPDRkARqiK2iMhHMuCfw==
+X-CSE-MsgGUID: Gd/ORA//SRyNqlaUM9XX1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="139625018"
+Received: from bruceprx-mobl.amr.corp.intel.com (HELO desk) ([10.125.146.21])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 09:32:30 -0700
+Date: Tue, 20 May 2025 09:32:21 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: David Kaplan <david.kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/bugs: Restructure ITS mitigation
+Message-ID: <20250520163221.ndezdfrhoav43sxi@desk>
+References: <20250515134756.93274-1-david.kaplan@amd.com>
+ <20250516193212.128782-1-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,32 +78,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <73a4740e-755e-4ba8-8130-df09bd25197a@redhat.com>
+In-Reply-To: <20250516193212.128782-1-david.kaplan@amd.com>
 
-On Tue, May 20, 2025 at 12:58:18PM +0200, Paolo Abeni wrote:
-> On 5/20/25 10:24 AM, Stefano Garzarella wrote:
+On Fri, May 16, 2025 at 02:32:11PM -0500, David Kaplan wrote:
+> Restructure the ITS mitigation to use select/update/apply functions like
+> the other mitigations.
 > 
-> https://github.com/linux-netdev/nipa/wiki/How-to-run-netdev-selftests-CI-style
+> There is a particularly complex interaction between ITS and Retbleed as CDT
+> (Call Depth Tracking) is a mitigation for both, and either its=stuff or
+> retbleed=stuff will attempt to enable CDT.
 > 
-> @Bobby: AFAICS this now has all the ingredients to fit NIPA integration
-> am I correct? the last commit message sentence could possibly be dropped.
+> retbleed_update_mitigation() runs first and will check the necessary
+> pre-conditions for CDT if either ITS or Retbleed stuffing is selected.  If
+> checks pass and ITS stuffing is selected, it will select stuffing for
+> Retbleed as well.
 > 
+> its_update_mitigation() runs after and will either select stuffing if
+> retbleed stuffing was enabled, or fall back to the default (aligned thunks)
+> if stuffing could not be enabled.
+> 
+> Enablement of CDT is done exclusively in retbleed_apply_mitigation().
+> its_apply_mitigation() is only used to enable aligned thunks.
+> 
+> Changes since v1:
+>    - Moved ITS enum definition before retbleed logic
+> 
+> Signed-off-by: David Kaplan <david.kaplan@amd.com>
+> ---
+>  arch/x86/kernel/cpu/bugs.c | 167 ++++++++++++++++++++-----------------
+...
+> @@ -1338,20 +1365,6 @@ static void __init retbleed_apply_mitigation(void)
+>  #undef pr_fmt
+>  #define pr_fmt(fmt)     "ITS: " fmt
+>  
+> -enum its_mitigation_cmd {
+> -	ITS_CMD_OFF,
+> -	ITS_CMD_ON,
+> -	ITS_CMD_VMEXIT,
+> -	ITS_CMD_RSB_STUFF,
+> -};
+> -
+> -enum its_mitigation {
+> -	ITS_MITIGATION_OFF,
+> -	ITS_MITIGATION_VMEXIT_ONLY,
+> -	ITS_MITIGATION_ALIGNED_THUNKS,
+> -	ITS_MITIGATION_RETPOLINE_STUFF,
+> -};
+> -
+>  static const char * const its_strings[] = {
+>  	[ITS_MITIGATION_OFF]			= "Vulnerable",
 
-NP, I can drop it. All of the ingredients should be here, but I haven't
-completed setting up an environment yet to test that integretation.
+Index 1 (which is now ITS_MITIGATION_AUTO) is missing. I understand AUTO is
+a temporary state, and it may not be necessary to define a string for it.
+But, assigning an empty string, or an error message would make this obvious
+for a future reader.
 
-> Still it could be worthy to re-introduce (behind a command line option)
-> the ability to build the kernel as per Stefano request, to fit his
-> existing workflow (sorry for the partial back and forth).
-> 
-> Thanks,
-> 
-> Paolo
-> 
-
-No worries. I can add a "build and run the built kernel" option... it
-should probably build the tools too to be all streamlined.
-
-Best,
-Boby
+>  	[ITS_MITIGATION_VMEXIT_ONLY]		= "Mitigation: Vulnerable, KVM: Not affected",
+> @@ -1359,11 +1372,6 @@ static const char * const its_strings[] = {
+>  	[ITS_MITIGATION_RETPOLINE_STUFF]	= "Mitigation: Retpolines, Stuffing RSB",
+>  };
 
