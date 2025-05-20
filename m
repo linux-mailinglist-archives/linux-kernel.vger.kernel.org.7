@@ -1,110 +1,172 @@
-Return-Path: <linux-kernel+bounces-654990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33098ABCF66
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:34:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03377ABCF72
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83FE13ADB34
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:34:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89EA117AF0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165BD25CC6F;
-	Tue, 20 May 2025 06:34:43 +0000 (UTC)
-Received: from mx.mylinuxtime.de (mx.mylinuxtime.de [46.4.70.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2B225D8F7;
+	Tue, 20 May 2025 06:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VnZdlAAt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B00A25C6F9
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 06:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.70.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184FB25C80A;
+	Tue, 20 May 2025 06:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747722882; cv=none; b=i8iq4dAk6F/u1yD0P1VREbDUW5JV5EbgbVUi2AGf/4nCxa//mPYz0alSPTrrvzhr1ocWfHtjjCr4ko/jfMIZ7RHFpwn3rlYTjrxJN7ve9SwDSn6/b3E0ZD7UrU3gZh8tn3VBISSEWHFHimTvWQypC+6R8UqowCi2/gBCNuhZOkU=
+	t=1747722894; cv=none; b=coSwBnsr+xRup7+4sp8crSwJXiNTzRRci1OvTLVS3XbKrkmL8SLmR83fcNSkz83/smvD0VgmupvJxesFXldV/x78cKCu6GcnXPITZu/97jnpxWDr/UbWMW6O9IJJi7OJIGLthDpYNIu0CRZAauNCOcGolg6SOt5a+HOiY5j+UUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747722882; c=relaxed/simple;
-	bh=2RUinEL1Eq5U6TvPMd7m9XAO3DZWMF0UfUS5bEdGUL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EdaUZi086XH559J71TNDGd9fGm7SYMv1mX13t2/yAU8/UbJ55Sy3wvosPWpqup4udckfTCWyyPl3ZXf9UI6rqkJ8JapKLJM2m1hDdqYzuifoeYeiqsjuiYA6fD2B1KWXx9mzNgPVWN7rxQuEinnrGAsrn1GnCVE1zzhqp3dJ3eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eworm.de; spf=pass smtp.mailfrom=eworm.de; arc=none smtp.client-ip=46.4.70.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eworm.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eworm.de
-Received: from leda.eworm.net (unknown [194.36.25.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx.mylinuxtime.de (Postfix) with ESMTPSA id CFC1C25AAFF;
-	Tue, 20 May 2025 08:34:38 +0200 (CEST)
-Authentication-Results: mx.mylinuxtime.de;
-	auth=pass smtp.auth=mail@eworm.de smtp.mailfrom=list@eworm.de
-Date: Tue, 20 May 2025 08:34:38 +0200
-From: Christian Hesse <list@eworm.de>
-To: Salvatore Bonaccorso <carnil@debian.org>
-Cc: Roland Clobus <rclobus@rclobus.nl>, Lizhi Xu <lizhi.xu@windriver.com>,
- Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
- 1106070@bugs.debian.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- regressions@lists.linux.dev
-Subject: Re: [6.12.y regression] loosetup: failed to set up loop device:
- Invalid argument after 184b147b9f7f ("loop: Add sanity check for
- read/write_iter")
-Message-ID: <20250520083438.295e415a@leda.eworm.net>
-In-Reply-To: <aCwZy6leWNvr7EMd@eldamar.lan>
-References: <3a333f27-6810-4313-8910-485df652e897@rclobus.nl>
-	<aCwZy6leWNvr7EMd@eldamar.lan>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
-X-Face: %O:rCSk<c"<MpJ:yn<>HSKf7^4uF|FD$9$I0}g$nbnS1{DYPvs#:,~e`).mzj\$P9]V!WCveE/XdbL,L!{)6v%x4<jA|JaB-SKm74~Wa1m;|\QFlOg>\Bt!b#{;dS&h"7l=ow'^({02!2%XOugod|u*mYBVm-OS:VpZ"ZrRA4[Q&zye,^j;ftj!Hxx\1@;LM)Pz)|B%1#sfF;s;,N?*K*^)
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAGFBMVEUZFRFENy6KVTKEd23CiGHeqofJvrX4+vdHgItOAAAACXBIWXMAAA3XAAAN1wFCKJt4AAACUklEQVQ4y2VUTZeqMAxNxXG2Io5uGd64L35unbF9ax0b3OLxgFs4PcLff0lBHeb1QIq5uelNCEJNq/TIFGyeC+iugH0WJr+B1MvzWASpuP4CYHOB0VfoDdddwA7OIFQIEHjXDiCtV5e9QX0WMu8AG0mB7g7WP4GqeqVdsi4vv/5kFBvaF/zD7zDquL4DxbrDGDyAsgNYOsJOYzth4Q9ZF6iLV+6TLAT1pi2kuvgAtZxSjoG8cL+8vIn251uoe1OOEWwbIPU04gHsmMsoxyyhYsD2FdIigF1yxaVbBuSOCAlCoX324I7wNMhrO1bhOLsRoA6DC6wQ5eQiSG5BiWQfM4gN+uItQTRDMaJUhVbGyKWCuaaUGSVFVKpl4PdoDn3yY8J+YxQxyhlHfoYOyPgyDcO+cSQK6Bvabjcy2nwRo3pxgA8jslnCuYw23ESOzHAPYwo4ITNQMaOO+RGPEGhSlPEZBh2jmBEjQ5cKbxmr0ruAe/WCriUxW76I8T3h7vqY5VR5wXLdERodg2rHEzdxxk5KpXTL4FwnarvndKM5/MWDY5CuBBdQ+3/0ivsUJHicuHd+Xh3jOdBL+FjSGq4SPCwco+orpWlERRTNo7BHCvbNXFVSIQMp+P5QsIL9upmr8kMTUOfxEHoanwzKRcNAe76WbjBwex/RkdHu48xT5YqP70DaMOhBcTHmAVDxLaBdle93oJy1QKFUh2GXT4am+YH/GGel1CeI98GdMXsytjCKIq/9cMrlgxFCROv+3/BU1fijNpcVD6DxE8VfLBaxUGr1D5usgDYdjwiPAAAAAElFTkSuQmCC
+	s=arc-20240116; t=1747722894; c=relaxed/simple;
+	bh=MaCkDQE8U2QDmRDmED4Ce+Q4F2+F5eALbfrUvn+NHJQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jiLEYlwlLZbc0b3h3o8Y7+VFNUJRn5P56MI3b11Tr9IF5olJ9ai99y6SFHLRgkyea1s+au5P8wptfch7H3RBrTwyqSy/724qrqrdqzdGZTEXq96yuwEPdJVpWPSz54lnMah3LY3Ho8bsX7RpGmUt1gnqraGkFKahcm+cFo97Nio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VnZdlAAt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7E2B4C4CEE9;
+	Tue, 20 May 2025 06:34:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747722893;
+	bh=MaCkDQE8U2QDmRDmED4Ce+Q4F2+F5eALbfrUvn+NHJQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=VnZdlAAticMb/HhGTojh/GQp/I16M6VuHn/FfRqGi3np+TYxL0WWGTyRe89RK7c5u
+	 j0L5XH3O+rNEYT4B+ihDjMFIWPK/my58MZM9ivjuI1Gf6y8ipE4QBC55vFoQtybWkE
+	 7/AhBCzCcEWE6hYxXHDMw4vJdzJ8PZdeOvYgrJCD4WYTsbsMkSqHlxK1I3EuxpdDRH
+	 mzpbb8VH1r9iE4is0vVRS11+oSpDl9PPhe2v+I9/D0zdmkI7dRzyOGk5QXuihYnrnP
+	 Kf21stZG9v27XQoFSIgUWJSpul+cvwT084L4QDmj4roJ9+4p4n8xrlPZdTyRLWluGP
+	 YHhu7uuL7ULsw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 644F6C3ABDA;
+	Tue, 20 May 2025 06:34:53 +0000 (UTC)
+From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
+Subject: [PATCH v7 0/8] arm64: dts: freescale: Add support for the
+ GOcontroll Moduline Display
+Date: Tue, 20 May 2025 08:34:49 +0200
+Message-Id: <20250520-initial_display-v7-0-a8f0195420aa@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/pHHCVVO63xn3l9rY3DXDkq1";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Spamd-Bar: /
-X-Spamd-Result: default: False [0.00 / 15.00]
-X-Rspamd-Server: mx
-X-Rspamd-Queue-Id: CFC1C25AAFF
-X-Stat-Signature: tto66ciskyy4jxzcwht5ucfkrgp8hxhr
-X-Rspamd-Action: no action
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIkiLGgC/3XPzWoDIRDA8VcJnmvR8TunvkcJxXU1EbZr0GVJC
+ PvuNblkQXv8D8xvmAcqPkdf0PHwQNmvscQ011AfB+Qudj57HMfaCAgIAsBxnOMS7fQzxnKd7B0
+ HqwGo9kR6gerWNfsQby/x+1T7EsuS8v11YKXP6f/WSjHBwrlhCJIywdnXObk0LzlN06dLv+gJr
+ rBHZItARYAFGyxlRFPVRdgbYaBahFWEe228pVJJO3QR/kY4gRbhFTFBG62ZtlryLiJ2CBUtIio
+ SGKnOqCg3povIPdJ5R1aEORnkCNwpGxpk27Y/1jJmPAwCAAA=
+X-Change-ID: 20250224-initial_display-fa82218e06e5
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Maud Spierings <maudspierings@gocontroll.com>, Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747722892; l=4059;
+ i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
+ bh=MaCkDQE8U2QDmRDmED4Ce+Q4F2+F5eALbfrUvn+NHJQ=;
+ b=sX+e/W5gyP6cgDk/CGRsehxUQzRmluCed7s/xWuO4IpWq/A+pT52Q8KmJd8MFSG8m0B0qMgvr
+ 6YIkBKGll72DcN0w5iCr0PQxDJyPiKtUmBD03WVzk9IXMaGsqNLVSH9
+X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
+ pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
+X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
+ with auth_id=341
+X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
+Reply-To: maudspierings@gocontroll.com
 
---Sig_/pHHCVVO63xn3l9rY3DXDkq1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Add inital support for 2 variants of the Moduline Display controller.
+This system is powered by the Ka-Ro Electronics tx8p-ml81 COM, which
+features an imx8mp SoC.
 
-Salvatore Bonaccorso <carnil@debian.org> on Tue, 2025/05/20 07:57:
-> In Debian Roland Clobus reported a regression with setting up loop
-> devices from a backing squashfs file lying on read-only mounted target
-> directory from a iso.
->=20
-> The original report is at:
-> https://bugs.debian.org/1106070
+Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+---
+Changes in v7:
+- Fix indentation as requested by Shawn
+- Set alias for fec to ethernet1 so eqos actually becomes end0 throught
+  systemd, without that alias eqos was both ethernet0 and ethernet1, and
+  it would become end1 instead of the desired end0.
+- Link to v6: https://lore.kernel.org/r/20250417-initial_display-v6-0-3c6f6d24c7af@gocontroll.com
 
-We are suffering the same for Arch Linux. Already reported here:
+Changes in v6:
+- Fix spi cs formatting in baseboard dts
+- Add model to baseboard dts
+- Fix commit typo in karo tx8p ml81 dtsi
+- Link to v5: https://lore.kernel.org/r/20250415-initial_display-v5-0-f309f8d71499@gocontroll.com
 
-https://lore.kernel.org/all/20250519175640.2fcac001@leda.eworm.net/
---=20
-main(a){char*c=3D/*    Schoene Gruesse                         */"B?IJj;MEH"
-"CX:;",b;for(a/*    Best regards             my address:    */=3D0;b=3Dc[a+=
-+];)
-putchar(b-1/(/*    Chris            cc -ox -xc - && ./x    */b/42*2-3)*42);}
+Changes in v5:
+- Merge the makefile patch into the two dtso patches
+- Fix references to the root node in the dtso patches
+- Enable the USB bus going to the adapter board in the mainboard dts
+- Fix some formatting issues in the mainboard dts
+- Fix some formatting issues in the COM dts
+- Change a clock as suggested in the COM dts
+- Fix the maintainers entries, remove devicetree list and imx list
+- Rebase on latest linux-next
+- Link to v4: https://lore.kernel.org/r/20250402-initial_display-v4-0-9f898838a864@gocontroll.com
 
---Sig_/pHHCVVO63xn3l9rY3DXDkq1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Changes in v4:
+- Add imx mailing list to ka-ro tx8p maintainer entry
+- Fix several small indentation and ordering issues in devicetrees
+- Change the two display adapter boards to overlays
+- Add the missing patch for the Makefile to actually be able to build
+  the new devicetrees
+- Link to v3: https://lore.kernel.org/r/20250327-initial_display-v3-0-4e89ea1676ab@gocontroll.com
 
------BEGIN PGP SIGNATURE-----
+Changes in v3:
+- Set regulator-boot-on and always-on on LDO5 of the pmic, after 20 ish
+  seconds it auto disabled this LDO causing weird behaviour like
+  ethernet droping out, wifi not working anymore. This LDO can control
+  the IO voltage level of certain pins, just let it keep the u-boot
+  value.
+- Fix the comment style in imx8mp-pinfunc.h
+- Rebase on newest next tag
+- Link to v2: https://lore.kernel.org/r/20250226-initial_display-v2-0-23fafa130817@gocontroll.com
 
-iQEzBAEBCgAdFiEEXHmveYAHrRp+prOviUUh18yA9HYFAmgsIn4ACgkQiUUh18yA
-9HYgZAgA4bNSTczRx+NihDV8Xfx3/KM7eGuNVbcIFhiXgm6AnWmqrobyQQU3vygo
-79dKyAXYTmB7dxGDOkmMv5JiqJ3yzOUNx4gX6OlAoX9ZlLA7PUrqBcPvLyAhrhvd
-0VR5wSwLOsBo4ujSlR0wQNTc03UwtIRm+t6gdTrqAGBhe7yJNMYCutvwuqEe67wH
-pMszcc7rOHNM8h/2//xz6uyIK1whIO1DU4hsvbZiGMcayKZnNeClGB4JdCZDwaH6
-M6Dpv5aZ05JySqPg1eQvXA/QR6VWPNjoj/J9Ph2yAcx5gQ8bwS3quyhjETOajgad
-5ACdS83Ua+gZs3Iy8M1Pb0a+JxmsvA==
-=Hr/4
------END PGP SIGNATURE-----
+Changes in v2:
+- Dropped the trivial-devices patch
+- Added a patch with bindings for the gocontroll,moduline-module-slot
+- Added a patch to spidev.c to enable the spidev driver for the module
+  slot
+- Added a missing usb-c connector in the av101hdt-a10 variant dts
+- Switched to the new bindings for the module slots in the base dts
+- Fixed some commit typos
+- Link to v1: https://lore.kernel.org/r/20250224-initial_display-v1-0-5ccbbf613543@gocontroll.com
 
---Sig_/pHHCVVO63xn3l9rY3DXDkq1--
+---
+Maud Spierings (8):
+      dt-bindings: arm: fsl: Add GOcontroll Moduline Display
+      arm64: dts: imx8mp: Add pinctrl config definitions
+      MAINTAINERS: add maintainer for the Ka-Ro tx8p-ml81 COM module
+      MAINTAINERS: add maintainer for the GOcontroll Moduline controllers
+      arm64: dts: freescale: add Ka-Ro Electronics tx8p-ml81 COM
+      arm64: dts: freescale: Add the GOcontroll Moduline Display baseboard
+      arm64: dts: freescale: Add the BOE av101hdt-a10 variant of the Moduline Display
+      arm64: dts: freescale: Add the BOE av123z7m-n17 variant of the Moduline Display
+
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   1 +
+ MAINTAINERS                                        |  12 +
+ arch/arm64/boot/dts/freescale/Makefile             |   8 +
+ arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h     |  33 ++
+ ...x8p-ml81-moduline-display-106-av101hdt-a10.dtso |  94 ++++
+ ...x8p-ml81-moduline-display-106-av123z7m-n17.dtso | 139 ++++++
+ .../imx8mp-tx8p-ml81-moduline-display-106.dts      | 527 ++++++++++++++++++++
+ .../arm64/boot/dts/freescale/imx8mp-tx8p-ml81.dtsi | 548 +++++++++++++++++++++
+ 8 files changed, 1362 insertions(+)
+---
+base-commit: fb44e19e78df2950877a9f7b4f24b58db790d293
+change-id: 20250224-initial_display-fa82218e06e5
+
+Best regards,
+-- 
+Maud Spierings <maudspierings@gocontroll.com>
+
+
 
