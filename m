@@ -1,57 +1,93 @@
-Return-Path: <linux-kernel+bounces-655393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05091ABD504
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:33:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170A7ABD528
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F1137B49E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:32:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F32B8C16D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD6F2749F7;
-	Tue, 20 May 2025 10:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD86272E4E;
+	Tue, 20 May 2025 10:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tjX2seFj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nKEAvyTn"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B519B2701B6;
-	Tue, 20 May 2025 10:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B45626FDA2
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747737157; cv=none; b=BS5mpnKo6BQ1AyW+5JUqqo3RSE17BfYFLU+DZNtb5LVFTKU0M6rGelzPC/90NfX4BSBIHZW64a/1rw9FSDcBXc7GzDRlWjCGz5svfUs6J/H/ReKQmgP8Srk8EG2QUejExIhw7J3sWb9UFH0cePtL2Ux3LjzHrmgOQo0c9/fH7Xo=
+	t=1747737189; cv=none; b=CyRTW7upcXaGd4ftx50kdhTuA5JqZGTW9qDrZhmPgLEIBGqJ9mqQkzi68Io6+fWa42lWslGsJvbU2EudAFDBoz0/S9lUf0yvHTrXq9h+ngvEpLm6eXRKa1hUD5qkzDZ1mlEaxbTNLgQt5nNXlka+0BZKKcqZRMiODBOPDX5+ors=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747737157; c=relaxed/simple;
-	bh=zDpmgNIk0KgV9mLpwYhAEJqLphnW13jDgqbiqxHvUZM=;
+	s=arc-20240116; t=1747737189; c=relaxed/simple;
+	bh=Ltw5M1lySmrMauSrqTCCb0ZHHbcTroNTLc7rS9O0Oms=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2s3ogxH4EgRmOEa5PiiTB98BmZ1hxg2NhxPaAoMvpzXRUUk75V1EEDA6+kR1qi6uJIJcII7OAujEcgz4zcgaB2prcc2gEiKZ4ykMIcYjyJp16h983PycJJIyia/qPsDE8l6/2tuUguE+dUu5zgboC2E1IiV25VWoNCBajkjQT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tjX2seFj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 692E5C4CEE9;
-	Tue, 20 May 2025 10:32:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747737157;
-	bh=zDpmgNIk0KgV9mLpwYhAEJqLphnW13jDgqbiqxHvUZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tjX2seFj28kVM1MCXRY+f4rM7a6JeGQTg5sZWiT7PoHTMpa7d71V2Vyq6JSvj9t8a
-	 E5o3GukKw7ov8CeHsC+2FgCmGihirW/DYnQRdJxylygaMBXon3pi+ttHqJWjCT5fCY
-	 SBHmeb4L7oIBVDXPiE2VyuQ3avQck5Tm14PYsAWs=
-Date: Tue, 20 May 2025 12:32:34 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: jianqi.ren.cn@windriver.com
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, robdclark@gmail.com,
-	quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org,
-	sean@poorly.run, airlied@gmail.com, daniel@ffwll.ch,
-	sashal@kernel.org, quic_vpolimer@quicinc.com,
-	quic_jesszhan@quicinc.com, linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	quic_kalyant@quicinc.com
-Subject: Re: [PATCH 6.1.y 1/2] drm/msm/disp/dpu: use atomic enable/disable
- callbacks for encoder functions
-Message-ID: <2025052007-penalize-gummy-61e2@gregkh>
-References: <20250512033116.3331668-1-jianqi.ren.cn@windriver.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ox2dH0XnnsQsZ53Uc5lQNVwvuyHeOYXsbyujuySYkefkCIDGXm2kpXYpiSWBSXiCQOBn7/0wIWB3O3KooDD2NVHaQuG+SvTY3Mmv7KBg+TP5fUKOyZeoSwggCa/41UJFGaPmyvbdgzma3RQmZNGmWdiD7MX0UBtC92krKOYpCwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nKEAvyTn; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-30e93626065so3218800a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 03:33:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747737187; x=1748341987; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=a2kiU0hliZX3M+Z93vHD55Gq88AD3oRKFF0hgKdQy4o=;
+        b=nKEAvyTnJCQ9CAKW2m8fgGQ78ddTxEiCCDkeGyAeNf5lq7PgtRcHt+CqEIqgWp6qCJ
+         VnObKfFen6GZeVK4cYDIyYL9BhMfIXBsAkMbP/l5y98UXj1qnC++oT4veeN6o5VmGYc7
+         ERj8J9JLAx2ZmC/FHohAfIcYayNitiHAZkGJKgKvWUB00fK+doJig09HQQJyJSPpyVGm
+         V58qLWhYBtp4cA4BU3RpNhb3VHo/6LZ57qIAXSYz6C2muMrxbJ2WB5acQRQvyFoaRInq
+         gl8z30Ubl6b3EDhGtnurGSr20hamNgudSLC+FaJ5njzdSrIDPpVEIZ1Yg1A1RXZ4xrIj
+         TwiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747737187; x=1748341987;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a2kiU0hliZX3M+Z93vHD55Gq88AD3oRKFF0hgKdQy4o=;
+        b=UQw6bphPkmGwvevDTXAthiyc5NOb6nnwiQlwV17EZRbwoTq6T0bKDh/nIcJULZwTjT
+         LYxvu1M2JB43x2JYHCLgGqK8ZTsziNx3pWqxfqe/T78tuh5sVAOOUBYnXbsQzrDcpVLB
+         m+0GMW2GS0DRyDN/q//nGTjN1tSyOhJ4mqqyxMBam1ezFcmof0Mh5z3wqOoGZOk9a9IO
+         f/CC/dQNUv+zV+SFi6UEWa03Rt6PzmdgdDcPh4mHaBbq5o2T7i8LeNaujmD2Iw6T/JtL
+         ToIgx+dkr4WnmU6j87pQV6f15dYMIF5W5ufACKyo6TvxGlhzSXgZfpcWd8Vp9YDVh9wU
+         nlmw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4yYTHRfFFkKiLCb2a5n1MNwn8QNnTeeeZVDLDI7wAzm13/mon2qmWw+NTtsBfewsJ0rz6ZBbz/rxywT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxskZF9/JRpsw3z03Q/KVVsH1YOV58ODde5kGxqGb62Sug3jVbb
+	sxCVAW60TB1K5HvL8fnjyJLWI25WUkAgb48Dv6G3lRNZ+bJ9GR/0akBYeCEUaHh5z+Esa9oCHnr
+	2NWZA
+X-Gm-Gg: ASbGncsWUITuYG3wi2y1UJbZGCqllbdtm1I6a3KuoAMRt38OzegaiIL1k1nf10UdYfg
+	LVQgvXdJIa5aOpKUUBl2G/GED/OJpXtE7aRdeuSKtzLkoICRY8xgklic4FB2KJUbK/tvAByKmqk
+	e3O7c2RQSRAZX+jW2+L+veJVdDCZemc8FW/SewboOig7HAaB+spCEG7FXqr4f9wt07kHiIuo9Rm
+	veplnesS8aFbJJej6d/Ccevw/FIANIA+K/ttDQfBiJwL6APUVXmCmU+Q6HEhJ7sFqyYxU3TwXuC
+	WEAUWYAbJ6IZCwr/JRsivU8ehxUbtiF2IMSt8edvwXieUj2oqGzS
+X-Google-Smtp-Source: AGHT+IHm+zce6wVGhmj39um6VsmybhdOdhuKQ+lb+Ma5CrUm2fVpCacBPSaYFhoG1FApBOr61KuRzg==
+X-Received: by 2002:a17:90b:48c6:b0:2ef:19d0:2261 with SMTP id 98e67ed59e1d1-30e8314cff5mr29948004a91.16.1747737187612;
+        Tue, 20 May 2025 03:33:07 -0700 (PDT)
+Received: from localhost ([122.172.81.72])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eb081aa2sm7772574a12.48.2025.05.20.03.33.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 03:33:07 -0700 (PDT)
+Date: Tue, 20 May 2025 16:03:04 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Aaron Kling <webgeek1234@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] cpufreq: tegra124: Allow building as a module
+Message-ID: <20250520103304.jfevon546rft2ncr@vireshk-i7>
+References: <20250508-tegra124-cpufreq-v4-0-d142bcbd0234@gmail.com>
+ <20250508-tegra124-cpufreq-v4-2-d142bcbd0234@gmail.com>
+ <cd801698-d7cf-4e9e-aa01-5525f8687ab0@nvidia.com>
+ <CALHNRZ_9tMi5iihyTsEuU4T72=oTQM6-rVhqozzLf9DiB_TpcA@mail.gmail.com>
+ <CALHNRZ-pu9HUzVyR3-U=XZKFFZPnn5-DNLWPqPx6CSoW0dHMrA@mail.gmail.com>
+ <bc0a4c75-df5b-4b4d-9c9e-a2c99d3f4f6e@nvidia.com>
+ <20250519103749.falgd64ikkwkfpg7@vireshk-i7>
+ <9a15ea89-5e33-48e7-8c75-b041f6832bc1@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,37 +96,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250512033116.3331668-1-jianqi.ren.cn@windriver.com>
+In-Reply-To: <9a15ea89-5e33-48e7-8c75-b041f6832bc1@nvidia.com>
 
-On Mon, May 12, 2025 at 11:31:16AM +0800, jianqi.ren.cn@windriver.com wrote:
-> From: Vinod Polimera <quic_vpolimer@quicinc.com>
+On 20-05-25, 10:57, Jon Hunter wrote:
 > 
-> [ Upstream commit c0cd12a5d29fa36a8e2ebac7b8bec50c1a41fb57 ]
+> On 19/05/2025 11:37, Viresh Kumar wrote:
+> > On 15-05-25, 07:41, Jon Hunter wrote:
+> > > Yes and that is understood. I see a few drivers calling ...
+> > > 
+> > >   platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+> > > 
+> > > One option, and I don't know if this would be acceptable, would be to add a
+> > > new wrapper function in the cpufreq-dt driver for the above that other
+> > > drivers could call and that would create the dependency you need.
+> > 
+> > Doing that won't be a problem, but I doubt if that is a better than
+> > adding a soft dependency here. I personally felt that the soft
+> > dependency may be the right way here. The cpufreq-dt file presents a
+> > driver, a device can be added from any file and that doesn't require
+> > the driver file to be inserted first. If the platform wants to
+> > simplify and create a dependency, a soft dependency looks okay.
 > 
-> Use atomic variants for encoder callback functions such that
-> certain states like self-refresh can be accessed as part of
-> enable/disable sequence.
-> 
-> Signed-off-by: Kalyan Thota <quic_kalyant@quicinc.com>
-> Signed-off-by: Vinod Polimera <quic_vpolimer@quicinc.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Patchwork: https://patchwork.freedesktop.org/patch/524738/
-> Link: https://lore.kernel.org/r/1677774797-31063-12-git-send-email-quic_vpolimer@quicinc.com
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
-> Signed-off-by: He Zhe <zhe.he@windriver.com>
-> ---
-> Verified the build test
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+> The only downside of a soft dependency is that this driver could load but if
+> the cpufreq-dt driver is missing for whatever reason, it might not be
+> obvious. Ideally it is better if this driver does not load at all if the
+> cpufreq-dt is not present.
 
-If patches are ment to be in a series, please properly send them as a
-series, not as individual emails like you did here :(
+Fair enough.
 
-Please fix up and resend.
+Aaron, you can introduce a helper like cpufreq_dt_pdev_register() to
+solve the linking here.
 
-thanks,
-
-greg k-h
+-- 
+viresh
 
