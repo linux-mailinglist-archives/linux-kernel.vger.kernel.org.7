@@ -1,90 +1,138 @@
-Return-Path: <linux-kernel+bounces-654912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A76ABCE74
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 07:15:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35279ABCE8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 07:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D2F43A9C6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 05:15:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 213928A43D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 05:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD10E25A324;
-	Tue, 20 May 2025 05:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114A625D212;
+	Tue, 20 May 2025 05:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aXCGjr3o"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="l+7XOLPd"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22E61E9B19
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 05:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6854E25A34B
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 05:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747718116; cv=none; b=aDBjcl4bOxu0HIwtuevpOuyxoV1/LL8qW+TDVkCbq0IAXBnJoQjHYOWGTXXif8QpJ+W7sdcYFF32x93eqhK7Ld0Ra+6+UPKePKERRo9/VkM7NuKarh4pkPjs3zfZVJr87Wod8Qr27lb3mFD21cgXU+lzpkAKfBKsnNwb4v5E8Qk=
+	t=1747718181; cv=none; b=Y2c6Ggesiwor4NNm8SfiIA4mKIODfGgrSxl50bdKTBbHGzyBtxb9j7U/7VqltZsOi5+xOXYeT+RvlJ+M4jft4QKOeEiFBaBwsdahQCjcqdBusBJtDiUAqZP/XH8Q1rpOWvzBz7idjflB4GpGfYifBBB0ieqRbZokZt5EqF7NpFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747718116; c=relaxed/simple;
-	bh=l9uDPeb1Op/lAHJBHz3/JUe5Uu5x4M5WwnU1yD8OyEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tZs33QtTuMx3RPUe+rNwM8kw5kHInpTSVwp/nwiMmkvUu5jNBnAE2sAiSOVfLy5dMbw0R/dDPYhuFrid7TfkO14BKORiVgYt89t6NUI+ggS5P9q5+2xLCwFzz4TGazwQjyOCjiWgiO02IehR1kIG5fD+rAi+1VixFhsTzduTHWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aXCGjr3o; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7376e311086so6383273b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 22:15:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1747718114; x=1748322914; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HiysgefIEzUO5GCfnzINSaq9Lwavqid+wd8gv2MrulE=;
-        b=aXCGjr3oAnmba8NWuijKcfoSXZWyGZ6nuFFSkRTlC/KTmWp93TpjIj2R364sotCvYJ
-         2arRcrLKgVMLyP8uESmzFmfOGy61Abb/EyU9V/YlHYIBjFk9F7y+8TheMG1JwR7BtILA
-         hR0I92eCrsMYos8c6XtVN6xIJlBSqlexMkudc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747718114; x=1748322914;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HiysgefIEzUO5GCfnzINSaq9Lwavqid+wd8gv2MrulE=;
-        b=oMnjeaMZJq+OHSyIC4wQeFFZqRZwie3xEbbo/gk2OQO7GLeGo3p+iHddy+vKTPVvL9
-         VLvmkKnjyfrrP+AuHr7LIZcHqkH0+FPPTrm37hJB60xDFbshX5AvqNTnWku8a1pXPHfL
-         UIYOwiwsa1o+GcxAHYWhKVF+7tvGoJG1Fb7ospL0qKfZYYC3iHy6rRyl9/DaDNMQ8/X3
-         doo842AY/1S9uweSzagDv4y0cXonKaBqfSRT9+6YN6cxgbcH3DOEha7SC+ayUEAKaPhi
-         UfG2al5mG+oKXAf4xRxzbgSyBqv1IEiK5jhxtt8tXCHnQzlXUB5o3GN5RnydTjOQFJpn
-         E0HA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBRX7uqtJ9Wl49C4HqkclZdISYoSorQAPyCalOkn/ZlJtq+MAZZXpP11IiAiotDftYGGaNiTenYzZwx9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJgt6lGTxUc3PkVtyKPzf3XpD58x6hYF+vDsX54MJvt8NuPxjA
-	MQdEb0AJQdYfVQR0JoH58ba2j209awip0pOdp011PYNSIRC+soU1G1+DkwGfNPLKzg==
-X-Gm-Gg: ASbGncs2x8vjH08p1fZrQJpu5idodJI+381mcz7EAOkpyDsvmLGFzlmyJjbcGGxUCoh
-	gG+FI1vydxpFtxgsHAJw61APPXVV8hnvSQPjF4/9vTcZdVV+SBEvLh2VsUjDQaGeM7V51muxNgz
-	qoOtj5W6oSB1hHUaucINCX38bU8FILiB7r4LAeXi0OhT1J2XmuV8xJ4y6zS6K+Y6LWoNdA4wmSx
-	j5lsrnkrkhNGLcZ+gz5MVArDD5ck1qX6W3MJ8M5s8qcWCeNp+jPrHT8pDRFlD+4wLYz8gfg6VHK
-	7mjJ5BcthDaVNWY3G6H6EL5KtqEy7FnvtrS+4ePh63dPXmmMw5Ht9vM=
-X-Google-Smtp-Source: AGHT+IEFKnPKfgX98qSEHZHOpRkj8MQwEVAPRNDz/Xu8YBp0YmRXN4XOaVXMD+HIcDb1EXD4aQWuig==
-X-Received: by 2002:a05:6a00:2790:b0:740:5927:bb8b with SMTP id d2e1a72fcca58-742a961837amr18032495b3a.0.1747718114140;
-        Mon, 19 May 2025 22:15:14 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:451b:c9c0:8e9a:5e30])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a98a338bsm7362953b3a.175.2025.05.19.22.15.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 22:15:13 -0700 (PDT)
-Date: Tue, 20 May 2025 14:15:09 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	Matthew Bobrowski <repnop@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: notify: wake_up response waiters on release
-Message-ID: <3p5hvygkgdhrpbhphtjm55vnvprrgguk46gic547jlwdhjonw3@nz54h4fjnjkm>
+	s=arc-20240116; t=1747718181; c=relaxed/simple;
+	bh=pOeLJYgVVwY6Qw6KFmNhBVQUpZ19g+EsZnha/9udttY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vvf66FmaZvS/zet2UCC73FQcWz32zg6zQPVXnYjWn0QhTXkaw43I0B9gyvCegoTXMQoYbHuQuFML/wX5x0p/nwfR/p1cVWHtyaxBz2nS8hegfW/ywJnrEpwvHQtfOf67N4ZdcW1HW55XFJP9AHpoSwKljplC4nUW2O4mXfw6v18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=l+7XOLPd; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747718167;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7Dgf3nS6gL7uN94ZVb9SokCJOHrb/S37y754RGVpO+Q=;
+	b=l+7XOLPdWR54LJe45UA1vxDQgnJwwtduhI5d2JfuQatCJWWxI9ncGrov+OXBckkNgyt6RZ
+	lwiuVsPrrOuMVtb7jQOP2JywmqgYpNYOi2ELRVqukio1ezSn9IW6Ckpv+lbtibXwO8wpU7
+	/sAFoNU+1G2MOQxh1AzuaYjfgOx4rqY=
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: linux-fsdevel@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH 0/6] overlayfs + casefolding
+Date: Tue, 20 May 2025 01:15:52 -0400
+Message-ID: <20250520051600.1903319-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+This series allows overlayfs and casefolding to safely be used on the
+same filesystem by providing exclusion to ensure that overlayfs never
+has to deal with casefolded directories.
 
-A quick question, it seems that fanotify_release() wake_up() just one
-waiter from the group->fanotify_data.access_waitq queue.  Why doesn't
-it wake_up_all() instead?
+Currently, overlayfs can't be used _at all_ if a filesystem even
+supports casefolding, which is really nasty for users.
+
+Components:
+
+- filesystem has to track, for each directory, "does any _descendent_
+  have casefolding enabled"
+
+- new inode flag to pass this to VFS layer
+
+- new dcache methods for providing refs for overlayfs, and filesystem
+  methods for safely clearing this flag
+
+- new superblock flag for indicating to overlayfs & dcache "filesystem
+  supports casefolding, it's safe to use provided new dcache methods are
+  used"
+
+Kent Overstreet (6):
+  bcachefs: BCH_INODE_has_case_insensitive
+  darray: lift from bcachefs
+  fs: SB_CASEFOLD
+  fs: dcache locking for exlusion between overlayfs, casefolding
+  bcachefs: Hook up d_casefold_enable()
+  overlayfs: Support casefolded filesystems
+
+ MAINTAINERS                             |   7 +
+ fs/bcachefs/Makefile                    |   1 -
+ fs/bcachefs/bcachefs_format.h           |   3 +-
+ fs/bcachefs/btree_node_scan_types.h     |   2 +-
+ fs/bcachefs/btree_types.h               |   2 +-
+ fs/bcachefs/btree_update.c              |   1 +
+ fs/bcachefs/btree_write_buffer_types.h  |   2 +-
+ fs/bcachefs/disk_accounting_types.h     |   2 +-
+ fs/bcachefs/fs.c                        |  45 +++++-
+ fs/bcachefs/fsck.c                      |  12 +-
+ fs/bcachefs/inode.c                     |   8 +-
+ fs/bcachefs/inode.h                     |   2 +-
+ fs/bcachefs/inode_format.h              |   7 +-
+ fs/bcachefs/journal_io.h                |   2 +-
+ fs/bcachefs/journal_sb.c                |   2 +-
+ fs/bcachefs/namei.c                     | 166 +++++++++++++++++++++-
+ fs/bcachefs/namei.h                     |   5 +
+ fs/bcachefs/rcu_pending.c               |   3 +-
+ fs/bcachefs/sb-downgrade.c              |   9 +-
+ fs/bcachefs/sb-errors_format.h          |   4 +-
+ fs/bcachefs/sb-errors_types.h           |   2 +-
+ fs/bcachefs/sb-members.h                |   3 +-
+ fs/bcachefs/snapshot_types.h            |   3 +-
+ fs/bcachefs/subvolume.h                 |   1 -
+ fs/bcachefs/thread_with_file_types.h    |   2 +-
+ fs/bcachefs/util.h                      |  28 +---
+ fs/dcache.c                             | 177 ++++++++++++++++++++++++
+ fs/libfs.c                              |   1 +
+ fs/overlayfs/params.c                   |  20 ++-
+ fs/overlayfs/util.c                     |  19 ++-
+ {fs/bcachefs => include/linux}/darray.h |  70 +++++-----
+ include/linux/darray_types.h            |  33 +++++
+ include/linux/dcache.h                  |  10 ++
+ include/linux/fs.h                      |   4 +
+ lib/Makefile                            |   2 +-
+ {fs/bcachefs => lib}/darray.c           |   9 +-
+ 36 files changed, 571 insertions(+), 98 deletions(-)
+ rename {fs/bcachefs => include/linux}/darray.h (64%)
+ create mode 100644 include/linux/darray_types.h
+ rename {fs/bcachefs => lib}/darray.c (75%)
+
+-- 
+2.49.0
+
 
