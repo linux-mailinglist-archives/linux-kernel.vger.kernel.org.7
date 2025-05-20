@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-655021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A33BABCFA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:44:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B04F6ABCF97
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 060C73B58B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:43:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C69F4A42E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336FD25F98C;
-	Tue, 20 May 2025 06:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E5625F78E;
+	Tue, 20 May 2025 06:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KLKb6LBx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNzIFK2k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12D125D207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A039725D1FE
 	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 06:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747723316; cv=none; b=ES3g768fPSLnRKZvbFd7RoS6uKIEkt4omN5/TddXpDDgWnvFcnvKS7LLZuefqkUm1Ot82wctBmDOFWMtq9hWwutzcqZIDRvOBUXeWQ+VSwBIA9EuyaOG4jP5kFvcGiOuRm0GgW2F4hpq9PhAwDd9BWO+hRkJgdJ0cTZjGamLDMU=
+	t=1747723316; cv=none; b=LTTvdrJH0M4KDxom3aN5D4o3VLg7ShVnrv8cEPxoFu5WTHhFab334Mnx8sU7ESx4VVJIrx2swgVfm8m9GvAccG1K0YJs6pvQEVSCOGS4h7Y1TzKGhtaNycwHdoZ3vcLsCwfX0wKD/1jNXkidQ8ZY0iIoBajhXyKLSub86dse1iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747723316; c=relaxed/simple;
-	bh=IADrYFANwdNZ1rY1HT52KolBlScr6ckE6a5syaX5oVY=;
+	bh=y+91L8zFi/kS/qXA1N6gYpa+EDi9svLMUkTanEYBrfU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KZ7cUsoJnqRy6DqJ10WiDydYPHxqTi72Kjm33muR2TYFhJeHaMvV4tjaPo6bLWFCy2NeOf9ijLIEaKQhX9utOYfCX3zMt10cuR/8eAAQ3MOuIsA6FgeAWVyMQNxm5tJXWxWokium6NLvA5bp+L3SdJKWBD76sXDqv3ij9lG8lWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KLKb6LBx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 206AAC113D0;
+	 MIME-Version; b=gRxOZTvisplqnqEojFmzEyPW2KYP7Ig3IfCF19b7NtzN68vSmHMh7odJs0hFvGCvv1O1G2MXfdptCmTF7QaFltLXn1aWCAVQqF4RKaeGRst3Lf7gYOkfNn3OIfRjqWt+uY/XUHDtv2tGUuBL+qDiqIi5RwiLLtvDEcnfSTlQkkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNzIFK2k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25437C116D0;
 	Tue, 20 May 2025 06:41:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1747723316;
-	bh=IADrYFANwdNZ1rY1HT52KolBlScr6ckE6a5syaX5oVY=;
+	bh=y+91L8zFi/kS/qXA1N6gYpa+EDi9svLMUkTanEYBrfU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KLKb6LBx9+wa0kdXu9DUcgc1FxvFFGfjcLsFERtpvIswEDUtCpd7wFO6X04E+7rNI
-	 WVKNvEBC1CemouxWpUuyIYSXCGQBe7Zw082peTrq7LnDHNv7wRE7GVc5nzsS4/JQut
-	 9aD+gUkqMOlp0iDptZjYvSekY4azAH/xA6vRhg63BCHE8UN7q2569MtVv5IIJRfvkD
-	 xkL0vi7sK0IxSrH96yJPcoqIK6Vo81sjtWxcTrXj3GQVJT11V9LhXM2sk0TYixbVVj
-	 3OpBJNLTOK2zwpHRuducqpLAx/XGU6OmDeyaoEBGvnm7GudrWOzQI3CLeJDzpDBm2E
-	 4aWiHjwqwAk9w==
+	b=fNzIFK2kb9yYWDgJP7CVnT7zvWW080F6W3ydIGeOsWK23dWvXYd5MrGDVYV9yp2z1
+	 8aclv7Yk/B9Qw0/6hWcnqctQumvoVxK9u26g6Hsu3j+N9c4NdWYmyYUDKD7sUcT7Y8
+	 /Rh5Yy2+BwCUnf56iorKYmsrBtKxlXo2+jfu3ga7RjUIjgQ/U24ZjEKaoJCwyfna4C
+	 SVCsMj8aPbXJLecMoc8dun8ub0FWRg20GI+21qCyz0YX8i4LchbK3205FcXwDlXCiv
+	 EtJ4tTCgMe046I2rkDaJ0tVhs1nRWfc8gHn4m/tRijjgKp/fISEd1I0iq7XQWQDg4A
+	 CMCHALaxdhXvg==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uHGfh-00000005qtA-33Xg;
+	id 1uHGfh-00000005qtE-3AaD;
 	Tue, 20 May 2025 08:41:53 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Igor Mammedov <imammedo@redhat.com>,
@@ -53,10 +53,11 @@ Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	qemu-devel@nongnu.org,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v9 03/20] tests/acpi: virt: update HEST file with its current data
-Date: Tue, 20 May 2025 08:41:22 +0200
-Message-ID: <a98a8eaad20d0674d880cd2925d66c29f5c6e757.1747722973.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v9 04/20] Revert "hw/acpi/ghes: Make ghes_record_cper_errors() static"
+Date: Tue, 20 May 2025 08:41:23 +0200
+Message-ID: <1ee2df288540088176a1ac27c70cc2736d10ad16.1747722973.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1747722973.git.mchehab+huawei@kernel.org>
 References: <cover.1747722973.git.mchehab+huawei@kernel.org>
@@ -69,34 +70,57 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Now that HEST table is checked for aarch64, add the current
-firmware file.
+The ghes_record_cper_errors() function was introduced to be used
+by other types of errors, as part of the error injection
+patch series. That's why it is not static.
+
+Make it non-static again to allow its usage outside ghes.c
+
+This reverts commit 611f3bdb20f7828b0813aa90d47d1275ef18329b.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Acked-by: Igor Mammedov <imammedo@redhat.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 ---
- tests/data/acpi/aarch64/virt/HEST           | Bin 0 -> 132 bytes
- tests/qtest/bios-tables-test-allowed-diff.h |   1 -
- 2 files changed, 1 deletion(-)
+ hw/acpi/ghes.c         | 6 ++++--
+ include/hw/acpi/ghes.h | 2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/tests/data/acpi/aarch64/virt/HEST b/tests/data/acpi/aarch64/virt/HEST
-index e69de29bb2d1d6434b8b29ae775ad8c2e48c5391..4c5d8c5b5da5b3241f93cd0839e94272bf6b1486 100644
-GIT binary patch
-literal 132
-zcmeZp4Gw8xU|?W;<mB({5v<@85#X$#prF9Wz`y`vgJ=-uVqjqS|DS;o#%Ew*U|?_n
-dk++-~7#J8hWI!Yi09DHYRr~Kh1c1x}0RY>66afGL
-
-literal 0
-HcmV?d00001
-
-diff --git a/tests/qtest/bios-tables-test-allowed-diff.h b/tests/qtest/bios-tables-test-allowed-diff.h
-index 39901c58d647..dfb8523c8bf4 100644
---- a/tests/qtest/bios-tables-test-allowed-diff.h
-+++ b/tests/qtest/bios-tables-test-allowed-diff.h
-@@ -1,2 +1 @@
- /* List of comma-separated changed AML files to ignore */
--"tests/data/acpi/aarch64/virt/HEST",
+diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+index b85bb48195a0..b709c177cdea 100644
+--- a/hw/acpi/ghes.c
++++ b/hw/acpi/ghes.c
+@@ -390,8 +390,8 @@ static void get_hw_error_offsets(uint64_t ghes_addr,
+     *read_ack_register_addr = ghes_addr + sizeof(uint64_t);
+ }
+ 
+-static void ghes_record_cper_errors(const void *cper, size_t len,
+-                                    uint16_t source_id, Error **errp)
++void ghes_record_cper_errors(const void *cper, size_t len,
++                             uint16_t source_id, Error **errp)
+ {
+     uint64_t cper_addr = 0, read_ack_register_addr = 0, read_ack_register;
+     AcpiGedState *acpi_ged_state;
+@@ -440,6 +440,8 @@ static void ghes_record_cper_errors(const void *cper, size_t len,
+ 
+     /* Write the generic error data entry into guest memory */
+     cpu_physical_memory_write(cper_addr, cper, len);
++
++    return;
+ }
+ 
+ int acpi_ghes_memory_errors(uint16_t source_id, uint64_t physical_address)
+diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+index 578a582203ce..39619a2457cb 100644
+--- a/include/hw/acpi/ghes.h
++++ b/include/hw/acpi/ghes.h
+@@ -75,6 +75,8 @@ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+ void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
+                           GArray *hardware_errors);
+ int acpi_ghes_memory_errors(uint16_t source_id, uint64_t error_physical_addr);
++void ghes_record_cper_errors(const void *cper, size_t len,
++                             uint16_t source_id, Error **errp);
+ 
+ /**
+  * acpi_ghes_present: Report whether ACPI GHES table is present
 -- 
 2.49.0
 
