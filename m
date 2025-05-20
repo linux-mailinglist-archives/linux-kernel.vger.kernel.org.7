@@ -1,142 +1,111 @@
-Return-Path: <linux-kernel+bounces-655194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5292FABD248
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:48:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7113FABD25C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8208E1B658DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:48:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CB2D4A4AE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED22A266EF1;
-	Tue, 20 May 2025 08:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4674826561E;
+	Tue, 20 May 2025 08:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ad+UN3aS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="xYlOKwHu"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF26266B41
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 08:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9B21DA61B;
+	Tue, 20 May 2025 08:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747730901; cv=none; b=RWCszqOJ6a2tbgHdOQhd0ln6Mwokq6WXLFvjmhwEeFALUtK7hiXkK/UILI3YKhFmMHUlfYjLZTic9C1pKZY4YOlpEjhrUXB9gGAOxCMnmtwYW0Mp36syt/L58BxC3a7AZmU2b4/vvCjJQt5FTabgZDzllgAW/sUKj2g7VTYiDiE=
+	t=1747731163; cv=none; b=oYz7nOrbyDiFVcmIn7g3zCp0fIh+tKVZMuMmWbBCCc9egrVbFbJfyjiIyaBO6PNwp+CPeBlEdoD4EBHItJKuaq3X6tr2GtJGhpJ/1D8uTDLBshH1qbSxC/4ncKXCRxTzQuZ3H4c2cNrq9MznXuCHdWiMLOWNrWTK9bHYKxac0OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747730901; c=relaxed/simple;
-	bh=nr7R7Fg4ot8hKPSC611voSLfEni8RCjYfnpL6ZiLWEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QxbNCDHzSZk/XC4Ok6rX+abTS7dNVuPW24IMUOtvx522/VNm0utW5BAG2MVOnnnBDnmVqpj7RwMB7+E8VvlDjQXH3/u19bAWcnSTVxXxmQjsBC6tM0k7gzfCIR5e1ajWScJj4YpGJAR+T3nU1tFgof0pp1trHrkZYceNWggiFtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ad+UN3aS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747730898;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9Jdw+1ZYszJBt4wLErRESKCGA4uJXq+gclnU2fYPdK0=;
-	b=ad+UN3aSJgGIU+GyTHcqbwSosk9YnsWYOQt3Cjn106Uel9seaN4nOg5Fsx2AYDXBlgCXsX
-	ZqLOe/c29Fc/wxXk13/9SGkB3QWICiAKjt7Iazp8KtxPDySiQZZd6qWUbpQUJJrTt7TEe9
-	x3vpcTtKfANqK7nLCRDEiOWhAZs3GXU=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-256-fN8bpCzcPm6H_wVWO_DnZQ-1; Tue, 20 May 2025 04:48:17 -0400
-X-MC-Unique: fN8bpCzcPm6H_wVWO_DnZQ-1
-X-Mimecast-MFC-AGG-ID: fN8bpCzcPm6H_wVWO_DnZQ_1747730896
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ad56437a03eso180041866b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 01:48:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747730896; x=1748335696;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Jdw+1ZYszJBt4wLErRESKCGA4uJXq+gclnU2fYPdK0=;
-        b=aPfYM+f+6UfIOakvebI6aHuwFA/m9DESscsPMhxUm22I8jtoheJd1kdaQV+PQ/srDN
-         ERHA+8lyZ7B9jkaaVIfAsyoCZ+3JOhUpZ7JRWkvKdgZmpbC/5RcboTVEq50HzyKNySau
-         3DBkTobSsNvbfYrgXCcbTJEjrJok4WiSgqnY7myve3fzEiSHFVIe7/4fbmnvQWpZoojt
-         GfiHH0WJPiFVHl7M3rAHyG/JVaJDYdupinQhlgjZVAr7ke1EN6vHbDeTrv2r38FTePP4
-         dNFpw0FziPH1u+IwShbqBBZCscCvCkA+tZtauKns6e/Fqcfd+MVstr/gqilkzJhNkqYk
-         BCzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVn0h9nplNXaXP31Lxpv6efg9USEYia0FuUvmuIaH01Sdhze7qBGWsuoHWvbGl12bgn/YeW6ytfHVkj6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCwe5Td4DG6cjA7vAp8f5XVQE1qt2wabLvXLev7kFpBWVsmzmL
-	87r6Svva35qOw+byksdoLQVDH07nAMG3j09C3zKknhQICdSDUDcfjJ8BHvZIx6rEw9fT7dcTPUG
-	gclYuKvVPPchXmaQ7UNt9D6l+vYMUbNfSLdw+GHeZZIXX8BzcR7kUwyGMnVkoyZwuDQ==
-X-Gm-Gg: ASbGncvYFOFkoJTjHYJcrLd9iDXFRkrnTgUv/Iib+5GDzAcT2IIoXJNh3HEnQxEPHX5
-	SQi+JwoIcPJI2/iGkC86tIm6CeFqLEadUYkSYg3G7U06QrGWfFQHDdbgawF7nHX3tnmr3vsI0Np
-	OrcBqYUxE4sngD9lgzL4zH5A27D5USkkJCgko4ApVunIsU58G/8/QFSt4UsBDa9cc8iBfD5TQLO
-	tBRPSheMatV/bNRI59AlpMska3k2/HwjyFkUs2gmTcOPvqL0XxvNhejgzD1+/mpWurCdOj+cgw1
-	uF0jrbOtR0Yfzr4BVNvmDtD0o5+/1mH3mDPiDZhpuafl+FjtwaUMA3tOBOEZ
-X-Received: by 2002:a17:907:7b97:b0:ad2:50ef:4933 with SMTP id a640c23a62f3a-ad536bca532mr1376485966b.31.1747730895770;
-        Tue, 20 May 2025 01:48:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG2BHWScPxNpfhTKIVE/UH/c9qw0sXakELnUkTcCcer3v4L/X1iHFZvbAf5Qer6tD/v8Uho5Q==
-X-Received: by 2002:a17:907:7b97:b0:ad2:50ef:4933 with SMTP id a640c23a62f3a-ad536bca532mr1376482466b.31.1747730895174;
-        Tue, 20 May 2025 01:48:15 -0700 (PDT)
-Received: from sgarzare-redhat (host-82-53-134-35.retail.telecomitalia.it. [82.53.134.35])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6005ac327d5sm6862353a12.63.2025.05.20.01.48.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 01:48:14 -0700 (PDT)
-Date: Tue, 20 May 2025 10:48:10 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Xuewei Niu <niuxuewei97@gmail.com>
-Cc: mst@redhat.com, fupan.lfp@antgroup.com, pabeni@redhat.com, 
-	jasowang@redhat.com, xuanzhuo@linux.alibaba.com, davem@davemloft.net, 
-	stefanha@redhat.com, virtualization@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Xuewei Niu <niuxuewei.nxw@antgroup.com>
-Subject: Re: [PATCH 0/3] vsock: Introduce SIOCINQ ioctl support
-Message-ID: <27pwterjsrrvgzcdwgkrfkthbqdaqptj6lj75gzfmhuouilexp@jg4t54gsnw2h>
-References: <20250519070649.3063874-1-niuxuewei.nxw@antgroup.com>
+	s=arc-20240116; t=1747731163; c=relaxed/simple;
+	bh=qXEo/UrIkGCwUrlFozHzuYP47TLSy+9BFxO8UXHRiS0=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MvrAnd8TCkQWmV0vNMgpwV++36Dzd5QWomPeFIH+oQR3c10QqjPexCr/FrjJSNewv7k3wrEKhxkYKJXiFuJnLpGbUiTynFZG7g4X9VKpfARCrrHYCuppARwu3PEmQpGjgDXbLUCXe9HnY31fneyp6DJjfU9FsfzdWXc4CRwUrxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=xYlOKwHu; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54K5nKFo003415;
+	Tue, 20 May 2025 10:52:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	qXEo/UrIkGCwUrlFozHzuYP47TLSy+9BFxO8UXHRiS0=; b=xYlOKwHuL1ZgDVwh
+	FNEeusm/eqTYERP2Y/YJk6M5jl38EMeKOQ0Nafgl68Ni7O650FDcSk2+YiizrXY/
+	FMOCEipNGP847LM5w0Aroy4tAHdSECl5HFt7duJovBokGi2fCj4psE6Ucs1uNA22
+	vHrdF66I/TiZUvTQk23RHJzYXp1Hw3FCOVw+ErtS1DimCaB39Ab/Y/IGcE5J44Ot
+	5cm6KTadkByETx7wsGFfptpOnb1l5NJJao/IYIbZZjEBhU4bqTjwd6dWz3ZHJrKc
+	zXCgK2aa1ejWu4o/NfT3p7cdRRc8BY3eCkMJY/7M/o5Di3/UaEr0ZCX1rGp9GOpX
+	8Q/IxA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46pfvkchka-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 May 2025 10:52:21 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 58CAC40082;
+	Tue, 20 May 2025 10:51:04 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A27B1B373DB;
+	Tue, 20 May 2025 10:49:48 +0200 (CEST)
+Received: from [192.168.8.15] (10.48.86.132) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 20 May
+ 2025 10:49:48 +0200
+Message-ID: <cf096db75e9a321ee86eeb1685f4f1f5cb140e4b.camel@foss.st.com>
+Subject: Re: [PATCH] watchdog: arm_smc_wdt: get wdt status through
+ SMCWD_GET_TIMELEFT
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: Guenter Roeck <linux@roeck-us.net>, Julius Werner <jwerner@chromium.org>
+CC: Evan Benn <evanbenn@chromium.org>,
+        Wim Van Sebroeck
+	<wim@linux-watchdog.org>,
+        <linux-watchdog@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Date: Tue, 20 May 2025 10:49:46 +0200
+In-Reply-To: <2bb28691-def0-4365-98e0-7f53d4d19966@roeck-us.net>
+References: <20250519170055.205544-1-antonio.borneo@foss.st.com>
+	 <df2124f7-8df9-4fb3-b687-5968805c668a@roeck-us.net>
+	 <CAODwPW-gEOotp8KGhzk3E11PqF9xdan8dOwxe_SW4txh+uQp=w@mail.gmail.com>
+	 <2bb28691-def0-4365-98e0-7f53d4d19966@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250519070649.3063874-1-niuxuewei.nxw@antgroup.com>
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_04,2025-05-16_03,2025-03-28_01
 
-On Mon, May 19, 2025 at 03:06:46PM +0800, Xuewei Niu wrote:
->This patchset introduces SIOCINQ ioctl support for vsock, indicating the
->number of unread bytes.
+On Mon, 2025-05-19 at 18:13 -0700, Guenter Roeck wrote:
+> On 5/19/25 17:12, Julius Werner wrote:
+> > I don't really know about the issue Guenter mentioned, but otherwise,
+> > from the driver's side this looks good to me.
+> >=20
+>=20
+> It should just be
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0set_bit(WDOG_HW_RUNNING, =
+&wdd->status);
+>=20
+> There should be no dependency on CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED.
+>=20
+> Guenter
+>=20
 
-Thanks for this work, but please use net-next tree since this is a new 
-feature: 
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html#netdev
+Thanks for the review!
+I agree on Guenter's comment and I will send a V2 shortly.
 
-Thanks,
-Stefano
-
->
->Similar to SIOCOUTQ ioctl, the information is transport-dependent. The
->first patch introduces a new callback, unread_bytes, in vsock transport,
->and adds ioctl support in AF_VSOCK.
->
->The second patch implements the SIOCINQ ioctl for all virtio-based transports.
->
->The last one adds two test cases to check the functionality. The changes
->have been tested, and the results are as expected.
->
->Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
->
->Xuewei Niu (3):
->  vsock: Add support for SIOCINQ ioctl
->  vsock/virtio: Add SIOCINQ support for all virtio based transports
->  test/vsock: Add ioctl SIOCINQ tests
->
-> drivers/vhost/vsock.c                   |   1 +
-> include/linux/virtio_vsock.h            |   2 +
-> include/net/af_vsock.h                  |   2 +
-> net/vmw_vsock/af_vsock.c                |  22 +++++
-> net/vmw_vsock/virtio_transport.c        |   1 +
-> net/vmw_vsock/virtio_transport_common.c |  17 ++++
-> net/vmw_vsock/vsock_loopback.c          |   1 +
-> tools/testing/vsock/vsock_test.c        | 102 ++++++++++++++++++++++++
-> 8 files changed, 148 insertions(+)
->
->-- 
->2.34.1
->
-
+Regards
+Antonio
 
