@@ -1,225 +1,147 @@
-Return-Path: <linux-kernel+bounces-654954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2EC0ABCEEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:03:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F345ABCEF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600283B669E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:03:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A663168292
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3320E25CC51;
-	Tue, 20 May 2025 06:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC9925B672;
+	Tue, 20 May 2025 06:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y9je46LL"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="llnxB6g+"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAC825C807
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 06:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EDABE5E;
+	Tue, 20 May 2025 06:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747721006; cv=none; b=KXcxLHjhWEenZ3xyrsVyMKEYVZgsLPdjV4tjRdsA0c3ELFPDcLThPM26ZEmEYbE1GstyWdXxwrc3dqF7Ej6CaFfP//g6GlO7EdJtbhjoq7Wr0xL/cj/X5ELQl+tEhJRXWsWkX/j/XTx8D5W2I/btMRtYAgFEecdDo2wjw+vKUCU=
+	t=1747721116; cv=none; b=ElIM82AvJ2EAp8+pkin1YQ+86rLFYsRJlo2ohn1unTkZqZoGdDdgh8qSy7qsafhLC9TxA5T+c+bOxwKTu+hBtaNpUXE8BDaQdKtQ+eIsjZl0ws8hkH3XSEBEvv5vO3GsG0LqwDPoHX8HylEGRJVboHg3Y2HtBmXAYXPHycysqTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747721006; c=relaxed/simple;
-	bh=s5ZFlWa2MpdvYNmAn19sW48vqvwbzszHzHufPZ8IlvE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KeXdK2I2SZ6po/jknem0doNoM3AVt/924KDAlo/rCv34ylUp2drv+4g4DOK6sPW/6JHu2kud7gUm+vkQp6cua8GSl+v29EKtv3nEtu2pjwiOMluhQPNrgPuyNSJqmz4gdjmoRdmQ4uPSGnnxHKpMfj86ye3gB4GLVK2Qupf3lAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y9je46LL; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-601df382301so332636a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 May 2025 23:03:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747721003; x=1748325803; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GunpgoETVGf3K3HF59YPy781/KUyyc4hFczZi9N9xRw=;
-        b=Y9je46LLNnQXdbG7GCBaSwOXxuGl6ZS/bymKriIOQL3TflNf0zT73JntNhOoc8Qgo5
-         3GTGG8MIppdiPWRDTEFdE/Bbe9RINQZFywUu6ZDGSuoyWGNwPoep+nKZQLd6qfr4N8eT
-         TONcy13rfRk9QobZNqZtndAB8vupBiNnsTJoXTBxcuO5oDuKnwQRKFTlZzq67hIPsgN2
-         FxoMSaGswDEwJLV4eWycEzcOMDNYJf354UJ3FEf73LJCbjerD5FvENo+mW/9sj13C0TR
-         k0kPpKY0RGR6Qnti9bh/nu4PrQLrPXnq/vUaOQSzn0YTetNDkuyJ0iwDvIOKTTP3olQW
-         C1Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747721003; x=1748325803;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GunpgoETVGf3K3HF59YPy781/KUyyc4hFczZi9N9xRw=;
-        b=lTOoFhUeQbpn4ockk9jCettU8Saur6SPWrZjMZZYoO1CaN0zVuX3FZjsQrTcj2kNWF
-         v2lC9fk6UQff7rmqboo/iz1a7YGhNn87AxFwirk2gCkEuIxx81Q/aQH/zjfDma7RMwcy
-         RSCUioU93lk521E480aOaXsc6KhJJlQEhm2cuEDryyRtJ7/AkxmCAl/oHA4s7BkL9BY1
-         xpZOiYqaOIhCSUL1GLINDXpt88UiDTO3sJnMX4ZUKowCIK4M88YjfAEbHBCUlRTqdm75
-         CXZFnOzoUKYgzaa95wqe6BxGYaMfRiHa8otqklQQtNSNA7mlxl/BGUpx6yDB+Te1X5Kw
-         C2qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjkEA1e5dhTOHLY/umBo4qaJ/2uTPVDPQ3OosxCsXlGtTtfOFj3SDaHCWUKnwKcEQwU2h4EA25QOOZyXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNYzoV6rlBx/Pgq7ljfi9YbUhcfD7QNRYoxsB/Rji/kVhnKzeZ
-	Ra06P0HdYGU5Dp0EdJ2P6jSuCuosz27h6Wg4zA4Mim/spnqk6Aw8S2HtA1kH+HqXyWE=
-X-Gm-Gg: ASbGnctgruwWYT2Ygeu8mQADeWnC7uxai/XiFex8mbscVLnu4/RZ9JT7sNvP2fofEet
-	Yea7aJwjsGoQhiBB0YA6EmjcLdyxAcyBhmPnlHoSNXHTUdhwvpUetj7FYlLhEJfAhNkuAqXQUi5
-	SUf3QGlurtXavTe5uYKAeaYGL5wfygL2t48QRXbmraT1jIMkBWPYk2nMScKAetiIF+v67i7RTf0
-	LqHtiVN0Pt9Tpze8MeJs3AaaFNtYZbsdAOp4oWk3+5g410cM+6IajDIn54ajC8s06JdVoAZAteX
-	sEjTE2Bua+sPUVXsyosU9O9U0DWri1EQo8q2ldNGgREcKFlXPMFvbP93QrdRyA==
-X-Google-Smtp-Source: AGHT+IHxcxUmDMY6HrZgZSsQpx9fvPtvfK/+uzfpHOMfp00cUxC0UaWFC598+1/y+YpvBHLB6GAKmA==
-X-Received: by 2002:a05:6402:254b:b0:5fe:c344:5ed1 with SMTP id 4fb4d7f45d1cf-6008a3a25aemr5183705a12.1.1747721002546;
-        Mon, 19 May 2025 23:03:22 -0700 (PDT)
-Received: from kuoka.. ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6005ac33a88sm6698710a12.51.2025.05.19.23.03.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 23:03:21 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Robert Foss <rfoss@kernel.org>,
-	Todor Tomov <todor.too@gmail.com>,
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 3/3] media: qcom: camss: csiphy: Stop spamming logs with version
-Date: Tue, 20 May 2025 08:03:13 +0200
-Message-ID: <20250520060310.7543-6-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250520060310.7543-4-krzysztof.kozlowski@linaro.org>
-References: <20250520060310.7543-4-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1747721116; c=relaxed/simple;
+	bh=E6Bv5Kf1btUKpM56ks3fuPFcEXgIIHaRF+lU2+ALPo0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S+ETQxE9e0vuNq1ZRDkegC6hn/UpDADqB/D8xKsIswAYcId0ezjjWpdTvAepIzCTIxiJI3rQnBJsMEos/w3pXWVOHVOQx8+t9KBO7eXxQPCVfcvXgXJlTFYAAjEiHqt3u8eGRpRFHt+tziif4OhjSAgFFkyVSHV1KomdgKjB/Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=llnxB6g+; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 310CE42E7E;
+	Tue, 20 May 2025 06:05:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1747721111;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2nl4mudUc0nIhyGRm1/GP/8CNdcLzRtbFIzfDOjZEcM=;
+	b=llnxB6g+wvmqq2N97pkvrFp96c+QEm5vP4eLMrbwxGzkK6hiR/39F3APB2fwqQudW8U7Ds
+	5QIkZ+wbJ2a0QdrdF1RPhvNjuzyxNLaM9PYKzp192l5WhBXkda1eRL81DB9hMMTgJP6A/9
+	0d+BdwQePSch8rEuBDb1GMXjBwlfDifyzrqwfNw+wcQa/qgnoD6plrECCsZE9yw8kHgmoc
+	/Mx58edhdyfnYV/rSew5mfbL97zgrFf3f8SmDFkyfKdCT09GxLMG80pmcxBb6dzRzkiWRr
+	H0Siut0K0wZd6LWqkq8Za0x4mgaJY6U5WFEl14mpgQ4fCMgn+fTXx18RQtZNzw==
+Date: Tue, 20 May 2025 08:05:08 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, Jingoo
+ Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, Tony Lindgren
+ <tony@atomide.com>, Pavel Machek <pavel@ucw.cz>, Jean-Jacques Hiblot
+ <jjhiblot@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Saravana Kannan
+ <saravanak@google.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Daniel Thompson <daniel.thompson@linaro.org>,
+ dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Alexander Sverdlin
+ <alexander.sverdlin@gmail.com>
+Subject: Re: [PATCH v6] backlight: led-backlight: add devlink to supplier
+ LEDs
+Message-ID: <20250520080508.3a15a949@bootlin.com>
+In-Reply-To: <20250519-led-backlight-add-devlink-to-supplier-class-device-v6-1-845224aeb2ce@bootlin.com>
+References: <20250519-led-backlight-add-devlink-to-supplier-class-device-v6-1-845224aeb2ce@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4539; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=s5ZFlWa2MpdvYNmAn19sW48vqvwbzszHzHufPZ8IlvE=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoLBsjSlBwNYTLmWtVGQ9R3zgaEbN1PnfIYX9vt
- xKiK0S8372JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaCwbIwAKCRDBN2bmhouD
- 1wnSD/92zfJ7ofRfnAh3nDOWREUebPj6OL6stRO4TTMWC+ve0bwjvTL2xJclxfPP/vSNOweYBJR
- Qj4tn/LR1At9cViTF5wlCsYntFeAA0GK3CkTUDjhiR8BEgXX2W69+4kk0zyHvpaczvgfSh0+XJd
- K6s3c3e++0Lhvxl09Z/uW44CSY6i43yxsr5UKeESV99YBMR431H0ejF1C9PeVtFflUFMI7M1H09
- TJ3KvM5A58DCLAAyvVNcJDewWD8SNG1kOJYwJFJl/LfZ6O+JtYLPjZJ1qPqUm+a61XBot0YyvU1
- BpmPRdQqqZytWC8vU2aqzHApJmvgO6L8S9Ei8J84ClZiZiUF9SNW8ksCCRMGJhMrry9dmUXGU1s
- hVawP8+q6gngjmuvvSXo7kjdozH76XnDS4uiMPvmo0c6roBywe4YhGTZZgxjnEbHY6te93tyuCl
- dD3tMa/1w8V6mYlkOSjfgXgMhVlwmkkJKRH6Dc9cJGpGBpCnJ0+PRWUC+OStUN7tkE8ocHlsFmZ
- w9fN10FvAjaVLlLe8cYvJYSZ03u+knWXhZj1mVYw+0/yP5hu3hY5rdRI1DV1HmfJDaubNUtUh0P
- LLPdYFpdXCgnYdc8eJ02wZb8/mCOWHQwaRIMJAVuxqZ9Dl2pPJra3sMnjaB1jNsmSna9XM5eTHL 1xpRnqEA9GityVQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefvdefgeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppedvrgdtudemvgdtrgemvdekheemsgelkedtmegvgedttgemiegtgeefmegshegssgemrgegvdeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvkeehmegsleektdemvgegtdgtmeeitgegfeemsgehsggsmegrgedvkedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduiedprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghltheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhinhhgohhohhgrnhdusehgmhgri
+ hhlrdgtohhmpdhrtghpthhtohepuggvlhhlvghrsehgmhigrdguvgdprhgtphhtthhopehtohhnhiesrghtohhmihguvgdrtghomhdprhgtphhtthhopehprghvvghlsehutgifrdgtiidprhgtphhtthhopehjjhhhihgslhhothesthhirdgtohhm
+X-GND-Sasl: herve.codina@bootlin.com
 
-Camss drivers spam kernel dmesg with 64 useless messages during boot:
+Hi Luca,
 
-  qcom-camss acb7000.isp: VFE:1 HW Version = 3.0.2
-  qcom-camss acb7000.isp: VFE:2 HW Version = 2.4.0
+On Mon, 19 May 2025 22:19:11 +0200
+Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
 
-All of these messages are the same, so it makes no sense to print same
-information 32 times.
+> led-backlight is a consumer of one or multiple LED class devices, but
+> devlink is currently unable to create correct supplier-producer links when
+> the supplier is a class device. It creates instead a link where the
+> supplier is the parent of the expected device.
+> 
+> One consequence is that removal order is not correctly enforced.
+> 
+> Issues happen for example with the following sections in a device tree
+> overlay:
+> 
+>     // An LED driver chip
+>     pca9632@62 {
+>         compatible = "nxp,pca9632";
+>         reg = <0x62>;
+> 
+> 	// ...
+> 
+>         addon_led_pwm: led-pwm@3 {
+>             reg = <3>;
+>             label = "addon:led:pwm";
+>         };
+>     };
+> 
+>     backlight-addon {
+>         compatible = "led-backlight";
+>         leds = <&addon_led_pwm>;
+>         brightness-levels = <255>;
+>         default-brightness-level = <255>;
+>     };
+> 
+> In this example, the devlink should be created between the backlight-addon
+> (consumer) and the pca9632@62 (supplier). Instead it is created between the
+> backlight-addon (consumer) and the parent of the pca9632@62, which is
+> typically the I2C bus adapter.
+> 
+> On removal of the above overlay, the LED driver can be removed before the
+> backlight device, resulting in:
+> 
+>     Unable to handle kernel NULL pointer dereference at virtual address 0000000000000010
+>     ...
+>     Call trace:
+>      led_put+0xe0/0x140
+>      devm_led_release+0x6c/0x98
+> 
+> Another way to reproduce the bug without any device tree overlays is
+> unbinding the LED class device (pca9632@62) before unbinding the consumer
+> (backlight-addon):
+> 
+>   echo 11-0062 >/sys/bus/i2c/drivers/leds-pca963x/unbind
+>   echo ...backlight-dock >/sys/bus/platform/drivers/led-backlight/unbind
+> 
+> Fix by adding a devlink between the consuming led-backlight device and the
+> supplying LED device, as other drivers and subsystems do as well.
+> 
+> Tested-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+> Fixes: ae232e45acf9 ("backlight: add led-backlight driver")
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-The driver does not use read version at all, so if it was needed for any
-real debugging purpose it would be provided via debugfs interface.
-However even then printing this is pointless, because version of
-hardware block is deducible from the compatible.  Fix the code to adhere
-to Linux kernel coding style: being silent on success.  For the same
-reasons this should not be even dbg message (see driver development
-debug guide: "In almost all cases the debug statements shouldn't be
-upstreamed").
+Reviewed-by: Herve Codina <herve.codina@bootlin.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
----
-
-Changes in v2:
-1. Extend commit msg, because apparently coding style and debug guide
-   has to be reminded in commit msg, otherwise rules don't apply.
----
- .../qcom/camss/camss-csiphy-2ph-1-0.c         | 10 ---------
- .../qcom/camss/camss-csiphy-3ph-1-0.c         | 22 -------------------
- .../media/platform/qcom/camss/camss-csiphy.c  |  2 --
- 3 files changed, 34 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
-index 9d67e7fa6366..09d3b21e222f 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
-@@ -40,15 +40,6 @@ static u8 csiphy_get_lane_mask(struct csiphy_lanes_cfg *lane_cfg)
- 	return lane_mask;
- }
- 
--static void csiphy_hw_version_read(struct csiphy_device *csiphy,
--				   struct device *dev)
--{
--	u8 hw_version = readl_relaxed(csiphy->base +
--				      CAMSS_CSI_PHY_HW_VERSION);
--
--	dev_dbg(dev, "CSIPHY HW Version = 0x%02x\n", hw_version);
--}
--
- /*
-  * csiphy_reset - Perform software reset on CSIPHY module
-  * @csiphy: CSIPHY device
-@@ -187,7 +178,6 @@ static int csiphy_init(struct csiphy_device *csiphy)
- 
- const struct csiphy_hw_ops csiphy_ops_2ph_1_0 = {
- 	.get_lane_mask = csiphy_get_lane_mask,
--	.hw_version_read = csiphy_hw_version_read,
- 	.reset = csiphy_reset,
- 	.lanes_enable = csiphy_lanes_enable,
- 	.lanes_disable = csiphy_lanes_disable,
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-index f732a76de93e..bc605931278b 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-@@ -541,27 +541,6 @@ csiphy_lane_regs lane_regs_x1e80100[] = {
- 	{0x0C64, 0x7F, 0x00, CSIPHY_SKEW_CAL},
- };
- 
--static void csiphy_hw_version_read(struct csiphy_device *csiphy,
--				   struct device *dev)
--{
--	struct csiphy_device_regs *regs = csiphy->regs;
--	u32 hw_version;
--
--	writel(CSIPHY_3PH_CMN_CSI_COMMON_CTRL6_SHOW_REV_ID, csiphy->base +
--	       CSIPHY_3PH_CMN_CSI_COMMON_CTRLn(regs->offset, 6));
--
--	hw_version = readl_relaxed(csiphy->base +
--				   CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 12));
--	hw_version |= readl_relaxed(csiphy->base +
--				   CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 13)) << 8;
--	hw_version |= readl_relaxed(csiphy->base +
--				   CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 14)) << 16;
--	hw_version |= readl_relaxed(csiphy->base +
--				   CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 15)) << 24;
--
--	dev_dbg(dev, "CSIPHY 3PH HW Version = 0x%08x\n", hw_version);
--}
--
- /*
-  * csiphy_reset - Perform software reset on CSIPHY module
-  * @csiphy: CSIPHY device
-@@ -858,7 +837,6 @@ static int csiphy_init(struct csiphy_device *csiphy)
- 
- const struct csiphy_hw_ops csiphy_ops_3ph_1_0 = {
- 	.get_lane_mask = csiphy_get_lane_mask,
--	.hw_version_read = csiphy_hw_version_read,
- 	.reset = csiphy_reset,
- 	.lanes_enable = csiphy_lanes_enable,
- 	.lanes_disable = csiphy_lanes_disable,
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
-index c622efcc92ff..111c3a52a6d1 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-@@ -243,8 +243,6 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
- 		enable_irq(csiphy->irq);
- 
- 		csiphy->res->hw_ops->reset(csiphy);
--
--		csiphy->res->hw_ops->hw_version_read(csiphy, dev);
- 	} else {
- 		disable_irq(csiphy->irq);
- 
--- 
-2.45.2
-
+Best regards,
+Hervé
 
