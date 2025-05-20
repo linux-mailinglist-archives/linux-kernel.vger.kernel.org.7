@@ -1,151 +1,167 @@
-Return-Path: <linux-kernel+bounces-655826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F47ABDE2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:04:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6988ABDDA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AA404E118E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:44:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2F93B8BBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422D924C07E;
-	Tue, 20 May 2025 14:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F1624BC07;
+	Tue, 20 May 2025 14:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8wBNvwO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="msAu+UBZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4F424C063
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 14:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E339D1519AC
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 14:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747752229; cv=none; b=kJFd7afZPUeD9MLbAurrBdaOOB1YbJQxQngXzh2kqvA0+oQWttIsiDkoH10I8LunN2/cFq+E3Y8FH2Wv4mcRCAHnDYITFJ8tgpb2QuDv8jWeGzRF9wlNE212p64gAwu+0NFGCgmEQDUdLkJM7ZmsBmhlAc1ifWrt1vEmO6ozrb0=
+	t=1747752276; cv=none; b=ZAhwb1uDSOUSAoJffCXspPh6jK8H52HIEbOo6dBf/2Rt81cT1p0a3qlaydL4wXD1G+y+gjfowgjjcbp29b6qEoMcDNaVk8hf2RCSVaq3NYn1iseHzs+pgPSIxn4sVs9+zwQIlV/giXPlReM/NHU9l+zbmbVcmgwctM6ovM4C2Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747752229; c=relaxed/simple;
-	bh=poMDWomSHm/7La5v9RRwAi2yuj0/cALqWvTC9gTtnbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lsecxv06YUjyeQxd5CYZq8BYXB0sOxK3AqCmu2nAznHE8TYP+2qSaN5qCv0s+tBVBb+LkpK2rWc6d5Qw+XKjqDbayO4F7QZwJLZ8tABZRP91aeuz5/k+D+cG2mWKuiczop3CC6rjRxqSHJFePgEwgNAlR84MTvU3MOde54fuyYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8wBNvwO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C61D1C4CEEA;
-	Tue, 20 May 2025 14:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747752229;
-	bh=poMDWomSHm/7La5v9RRwAi2yuj0/cALqWvTC9gTtnbw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W8wBNvwOuGZj39j2XIwIyChrXokCWk83F4sh+KyvhR7RSrd6Lz+ubXMgqQRU1KuE0
-	 Kn4oGZxm8QJNva46vLxQ1F9jFaYrBaPHdBThn/PJCecf8MhbnU6a2c6gsTXtDTLQtW
-	 ubVLkHElNmV/4QIYv5NhXYqr5vwBpNUgze3/V/q36Rrbr2Md6mGZuIBfCBUuqPf5q5
-	 laI/WvLw+K9HL/BLrTrMHpDLGz9IXHr9Y6YSImvH9sIx/6xKkMLs/WwztxW/chkSal
-	 jBgfTyMNupVp6jGmPtYtO9WxoU/ZqjOxZboufsVeIQ5NwUufUJ8tCtlQHZQnV8NdOi
-	 lpsPUF/sf1ceg==
-Date: Tue, 20 May 2025 16:43:45 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v5 6/6] timers: Exclude isolated cpus from timer migation
-Message-ID: <aCyVIfD-pbOlvsFy@localhost.localdomain>
-References: <20250508145319.97794-8-gmonaco@redhat.com>
- <20250508145319.97794-14-gmonaco@redhat.com>
+	s=arc-20240116; t=1747752276; c=relaxed/simple;
+	bh=hDxj1l9EjzLGuEMefLk+RkWuYjxMkDyVcIfEClwKEfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pGnfESz434ZaB/CQnjgwHjsUp8NrOQkWqdqTFlVKpf0DnwnxM8byBoAXyuw7io3S7qf5so8O/isQXVOalycd9JlTFTbQvbnIEppXJ0w2yWrfsCZV31ytZ4qy2AmWxHDPT4vbw1Itx7/qwL0XJrPN4XrMxZcoR0vQ4GS58CmbQGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=msAu+UBZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54KDojoN011465
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 14:44:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QorgnidCWBJg7Vmt5XBSexmPldS7Zeq3ffAJyueefoc=; b=msAu+UBZOHaAkog/
+	VksUxN9B5K126HeDMviRBjJRweSX4iK3cvMq0ZsPcSTgcgtRxybRLVxu2iIpV3pB
+	RFJGbsiY8eITaVefuua8f1uKi5WHBFqHn85L4FJKlcaiB6Shmsw01D1pOIAMi5TU
+	gGB+XhV/5uGlFZ2yG42mA77w6nBviCia5XMtI+fu2Mgwd5bIJud+XD+ppe/FXI+Q
+	8P2f2GYMh/xpLQxMfx2mTisWyWeDkxldSLB0+06il8SxxTNH5Ga0QDJigoNXS/jO
+	7LFIWzpfv2MQpYc1nZZXlpZejDJx5PElm6Gqw3zOudovs8malVzc9KTKSaFqUfcU
+	AdoXLw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46pjnyr3bm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 14:44:33 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c552802e9fso144069785a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 07:44:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747752272; x=1748357072;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QorgnidCWBJg7Vmt5XBSexmPldS7Zeq3ffAJyueefoc=;
+        b=JiXFlwLDeTWxKFaYj2W50Hn+QP8Ww/+qx0kmj9Uo22Bss2+x+sUG9YYc4OnNikqgIi
+         MYklpEI555nOIbGqPhLzpdz9kr/RE8S0dHLtB2N/gSEwfup4QZwEK5CmlMDiKLisYqtp
+         Jx1h66rb77YMeYmmEHGTSX4x4NDXRn/k3RPd+RD6Me2g65s53EVShUY9KXfz+pmAo1+S
+         r/FzTXoTBYKfmm+eEQGQV7TSQA1UeoqkzRSjkRbX/MlsdOH2lBWVGQbFd1dO22hOx2YG
+         VLn+q/JdiNrd5Rzb1Fhr4JrfvBnzH0IA4X6c2w8xbG4u9nxFtjrBKASKgaCS6m81+kb0
+         L01A==
+X-Forwarded-Encrypted: i=1; AJvYcCUWm8WIj+RnzZx1E5l8GG7ErjSqQRTF5Sb3H2IcrUvsiMWFtXJPAbmUFD0LLIPVD4x5egEdcCJNJfFQgGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYpYMFJ9dUnb6/aAj4KXjMKAtTJKGEtbLvGnO475USDAW063pv
+	/nLN4YubklDuTF0z3dTDBQXHLXZnOiEctbu+CxsoQYaSMJU2EseCcPxoHK0sKO3BXSq4uB4WeHn
+	Wja6ilT6lWMS/dkbMWDk4IuVrd1mVHtYw4AA0L9nAMuAsALNRLjawdYZpORH4FzkoIco=
+X-Gm-Gg: ASbGnct5/5gOg3o2G0aUaiDBKMu0Gs5aP2j6e4hyWIsWasyZzHqD5nHNLC9XsBMcK4h
+	tNMMxpcnVlmKzGU9az0fEroy6ehONkmTXEnb+5nBcAI/oYwcusu43Ar7zz4ARZC1CTGcr81LvDA
+	foKOVBDey5httaUft7ffaXlzBZHxLEG6anoBmG6vty3Dwbsv6DtN5nPek+4Kull8iuTjzui7DWL
+	pcaDrJk2cDc6kCP57lyzQGye/8GB2428m93nZBOLdj9U8/R0TuHQ9BwZI3mDt/u9YCyGxU+HXCv
+	wCasIqtFe/oWb6Ngta3lnApp8CC+qk8+ffB8oCUQXqzfijRZ0gc83W58vsr3D0q2YQ==
+X-Received: by 2002:a05:620a:1b97:b0:7cd:2992:9f43 with SMTP id af79cd13be357-7cd460ae593mr1054836085a.0.1747752272667;
+        Tue, 20 May 2025 07:44:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFFvcWl585nw0J4PUITOMZ8zCHstBQtqWLtVIW4D6lddZf2iSNRacWBKpVGy4oqfbMBzjINjA==
+X-Received: by 2002:a05:620a:1b97:b0:7cd:2992:9f43 with SMTP id af79cd13be357-7cd460ae593mr1054833685a.0.1747752272248;
+        Tue, 20 May 2025 07:44:32 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6004d501f0dsm7352610a12.21.2025.05.20.07.44.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 May 2025 07:44:31 -0700 (PDT)
+Message-ID: <8bf46af8-d36c-4cd5-b92e-9b7005d621d6@oss.qualcomm.com>
+Date: Tue, 20 May 2025 16:44:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250508145319.97794-14-gmonaco@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] soc: qcom: qcom_stats: Add QMP support for syncing
+ ddr stats
+To: "Maulik Shah (mkshah)" <maulik.shah@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Doug Anderson <dianders@chromium.org>
+References: <20250429-ddr_stats_-v1-0-4fc818aab7bb@oss.qualcomm.com>
+ <20250429-ddr_stats_-v1-2-4fc818aab7bb@oss.qualcomm.com>
+ <c876ae55-a84a-436e-8c11-c0df236c1ea5@oss.qualcomm.com>
+ <a14f58ed-fbc7-4074-ada7-3b9e50eb3047@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <a14f58ed-fbc7-4074-ada7-3b9e50eb3047@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDExOSBTYWx0ZWRfXxz9/6RRGuEJX
+ VeYjLdPyP24s9aqOnqYd/mU+npyOxAkobCL5Q5YF4b5q8hS/rzrRGq18n9kAKUVeeXcLFrYc6My
+ 7veFxgWfhjaWY7xnm/uK9iyzI6gFZYJx4Exf90tZMobioL+/R/PbdvgOM+TDPRNt3f7LuOsTaA7
+ uqoJFrIH32lHiPbOJmPgWUbxC7NFHYIdL5E5RgcRkVI/IuPE/5/MOHTm9zH6+6vbLD3V6jWbnxf
+ dqPWCi8gsMxUUUtPLrdXisgJNFnF2epEsDBchc0FibbarzP28SnazZX/wpHmGyLZAgJtpHyHshX
+ yJQtgTTuwY7CeriOCosr6sQmJ/ks/GMcJT9VdtzXfipg6YKPUl4FN0HaYEIThVLl0AnKuncGM2I
+ tjKgZ6xk+XfX0aTp1A0a3Yo+ngiHRudQgmw4CphjlDfJMcv/4YE78PYUwMWOJDY6rS41ACEl
+X-Authority-Analysis: v=2.4 cv=Z9XsHGRA c=1 sm=1 tr=0 ts=682c9551 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=zmVLOkNBcqytz3L41WAA:9
+ a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-GUID: kujLtkTumPdNVa8AE6w6kGkCCJvdXB70
+X-Proofpoint-ORIG-GUID: kujLtkTumPdNVa8AE6w6kGkCCJvdXB70
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_06,2025-05-20_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 mlxlogscore=999 mlxscore=0 priorityscore=1501
+ adultscore=0 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ malwarescore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505200119
 
-Le Thu, May 08, 2025 at 04:53:26PM +0200, Gabriele Monaco a écrit :
-> diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-> index 25439f961ccf..fb27e929e2cf 100644
-> --- a/kernel/time/timer_migration.c
-> +++ b/kernel/time/timer_migration.c
-> @@ -10,6 +10,7 @@
->  #include <linux/spinlock.h>
->  #include <linux/timerqueue.h>
->  #include <trace/events/ipi.h>
-> +#include <linux/sched/isolation.h>
+On 5/20/25 11:55 AM, Maulik Shah (mkshah) wrote:
 >  
->  #include "timer_migration.h"
->  #include "tick-internal.h"
-> @@ -1478,6 +1479,16 @@ static int tmigr_cpu_available(unsigned int cpu)
->  	if (WARN_ON_ONCE(!tmc->tmgroup))
->  		return -EINVAL;
->  
-> +	/*
-> +	 * Domain isolated CPUs don't participate in timer migration.
-> +	 * Checking here guarantees that CPUs isolated at boot (e.g. isolcpus)
-> +	 * are not marked as available when they first become online.
-> +	 * During runtime, any offline isolated CPU is also not incorrectly
-> +	 * marked as available once it gets back online.
-> +	 */
-> +	if (!housekeeping_test_cpu(cpu, HK_TYPE_DOMAIN) ||
-> +	    cpuset_cpu_is_isolated(cpu))
-
-if (housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE) &&
-    (!housekeeping_cpu(cpu,HK_TYPE_DOMAIN) || cpuset_cpu_is_isolated(cpu)))
-
-Because nohz_full= must be part of the hierarchy.
-
-> +		return 0;
->  	raw_spin_lock_irq(&tmc->lock);
->  	trace_tmigr_cpu_available(tmc);
->  	tmc->idle = timer_base_is_idle();
-> @@ -1489,6 +1500,38 @@ static int tmigr_cpu_available(unsigned int cpu)
->  	return 0;
->  }
->  
-> +static void tmigr_remote_cpu_unavailable(void *ignored)
-> +{
-> +	tmigr_cpu_unavailable(smp_processor_id());
-> +}
-> +
-> +static void tmigr_remote_cpu_available(void *ignored)
-> +{
-> +	tmigr_cpu_available(smp_processor_id());
-> +}
-> +
-> +int tmigr_isolated_exclude_cpumask(cpumask_var_t exclude_cpumask)
-> +{
-> +	cpumask_var_t cpumask;
-> +	int ret = 0;
-> +
-> +	lockdep_assert_cpus_held();
-> +
-> +	if (!alloc_cpumask_var(&cpumask, GFP_KERNEL))
-> +		return -ENOMEM;
-> +
-> +	cpumask_and(cpumask, exclude_cpumask, tmigr_available_cpumask);
-> +	cpumask_and(cpumask, cpumask, housekeeping_cpumask(HK_TYPE_TICK));
-
-Good, but please use HK_TYPE_KERNEL_NOISE, I need to finish that rename at some
-point.
-
-Thanks.
-
-> +	on_each_cpu_mask(cpumask, tmigr_remote_cpu_unavailable, NULL, 0);
-> +
-> +	cpumask_andnot(cpumask, cpu_online_mask, exclude_cpumask);
-> +	cpumask_andnot(cpumask, cpumask, tmigr_available_cpumask);
-> +	on_each_cpu_mask(cpumask, tmigr_remote_cpu_available, NULL, 0);
-> +
-> +	free_cpumask_var(cpumask);
-> +	return ret;
-> +}
-> +
->  static void tmigr_init_group(struct tmigr_group *group, unsigned int lvl,
->  			     int node)
->  {
-> -- 
-> 2.49.0
 > 
+> On 4/29/2025 4:09 PM, Konrad Dybcio wrote:
+>> On 4/29/25 5:52 AM, Maulik Shah wrote:
+>>> +	if (qcom_stats_qmp) {
+>>> +		/*
+>>> +		 * Recent SoCs (SM8450 onwards) do not have duration field
+>>> +		 * populated from boot up onwards for both DDR LPM Stats
+>>> +		 * and DDR Frequency Stats.
+>>> +		 *
+>>> +		 * Send QMP message to Always on processor which will
+>>> +		 * populate duration field into MSG RAM area.
+>>> +		 *
+>>> +		 * Sent everytime to read latest data.
+>>> +		 */
+>>> +		ret = qmp_send(qcom_stats_qmp, "{class: ddr, action: freqsync}");
+>>> +		if (ret)
+>>> +			seq_printf(s, "Error updating duration field %d\n", ret);
+>>
+>> let's just return some error, instead of printing "error" successfully
+> 
+> Should i drop the print and also error, From details given in commit message of [1] 
+> which made the qcom_subsystem_sleep_stats_show() function return 0
+> in order to run command like below to collect the stats without interspersed errors
+> grep ^ /sys/kernel/debug/qcom_stats/*
+> 
+> The same may break if return error from ddr stats too.
 
--- 
-Frederic Weisbecker
-SUSE Labs
+You're trying to print potentially garbage data if this fails
+
+Konrad
 
