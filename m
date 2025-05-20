@@ -1,366 +1,529 @@
-Return-Path: <linux-kernel+bounces-655708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8784AABDA19
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:54:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04D79ABD9EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F05323BE01E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:53:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479C4165FBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C00F242D89;
-	Tue, 20 May 2025 13:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C21242D93;
+	Tue, 20 May 2025 13:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JbmTu7aR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SvxdBazU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C699242D94;
-	Tue, 20 May 2025 13:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E5027715;
+	Tue, 20 May 2025 13:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747749230; cv=none; b=mpnim3Sz+HaXqwUtUenbE5nx2gMs+GwVr7H4wgNYlNbx9TKeU4mhtSDkbd2kC3MIPU/0h/Jmqp/SVwR9xFrNrxKqIhXUcHdgektqzlBXifNXP8hKQBcCGLf/+AbnCCe9Mt2HXlSF4xDsbCy+iD6EpJRSYKbTlQxLvfYfQ1EjL5g=
+	t=1747749102; cv=none; b=F95qfkwE4tljt6X/mP8gROHZKW08Nqxeqzq/CathxCardD7lRXwBzAUkkVVLJ0TOhXzf6exqN8QzVjKYkLxueD5DSx8ef21LKWZo99xCCKQedUkHDX7t+OxuvD3HoqwMVU53IGL5MAhXHnqbxfJCGrekhGQKIT55kMNHts2Dlzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747749230; c=relaxed/simple;
-	bh=zdXNnbdGaJCt0N/OoGuupugiCA473zfMCOlVhoilwuU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ThsKvTEycme3HmOtIQ8w2JkFqgD2VWNs4GQmHfg9kYiPRi85tn6UHmvkgS4jKDTp3gdI9CWTSeZu6OrJH+ddRAkyv38TskQp+nJtEEaGntzOAbLTkZGT/+S1rDMxreRpG7sAe3fXAuNNcCKxgahH/ry3NOLaPukR37AJ/pZZ+0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JbmTu7aR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0BE0C4CEE9;
-	Tue, 20 May 2025 13:53:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747749229;
-	bh=zdXNnbdGaJCt0N/OoGuupugiCA473zfMCOlVhoilwuU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=JbmTu7aRu+DjuovMlNiCcVWuD5C+efcqsPGw4Uq67nXiy10W82UfL0gOe+0p5j734
-	 +P+2u/NUyKlbthGBYk9gYtYmKGexE/81YWYtH5ukGEzMbofdEekR3d5dFMcqRF/feB
-	 wUyHKEO9V92bepO7jlCeaqvKmgWdL1Dk2hLlsDZQ=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org
-Subject: [PATCH 5.15 00/59] 5.15.184-rc1 review
-Date: Tue, 20 May 2025 15:49:51 +0200
-Message-ID: <20250520125753.836407405@linuxfoundation.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1747749102; c=relaxed/simple;
+	bh=uzB1YRpi7xD+gsKGERyiPBkXAwyGzTk3H2qN3C67oZ8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=M9LqGSV6LkK6egeN9fhJinQogNvIAuLYtllUe5b77P+NjFX6Cc8C++Y4ryx0hT/MzO0eJT1kYZ5TvYkA76M253qkWh6ldaFvVfFjlH5N/x16cnlh+CQQQdRCS2YVF6al5TKhvH8+SWODEEyVLVgZDA3tqvdUuhlRVurGaJz4Qo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SvxdBazU; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747749100; x=1779285100;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=uzB1YRpi7xD+gsKGERyiPBkXAwyGzTk3H2qN3C67oZ8=;
+  b=SvxdBazUrSHteVEwyomPhGO/Clpsb6oalh/x4o5sSS8YAXONboZ2Jsih
+   8rDpc3vGY2HojddcE9w/qdZRFOuzib5Ia8kso7+9wAUifxskB0R8nc/Nj
+   ld5V4+aW63zOMsBZ2LAIfuJ3pwP1iIHWJHicU2d8i5iGSYQLnzZ8tq8/i
+   4m8w6yBwxrq8oF+1I+uFS71xmiWtHWGBiEsUPAlPLq2zs6Bjw5kcWlLrF
+   ykQpZUi6plq1gcKvjdc1rquezHgyXn+nXekTGriZeH5nEDTEEM9elYavD
+   /l51OiiZcwbednYXzrqiUysuAj3/AjkPUlXHhtmyhdreyC57r2DZBK0Da
+   g==;
+X-CSE-ConnectionGUID: Kccp2dGsSAOhBXTurTvbBw==
+X-CSE-MsgGUID: MxH8pOu0Qgytm5m0Chk72Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="37301444"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="37301444"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 06:51:39 -0700
+X-CSE-ConnectionGUID: U4gDZFQAQNSSYpSbFMDKwQ==
+X-CSE-MsgGUID: 1+9+S1LLRJeU84BuKEdmCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="176826732"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.235])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 06:51:36 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 20 May 2025 16:51:32 +0300 (EEST)
+To: "David E. Box" <david.e.box@linux.intel.com>
+cc: LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
+    srinivas.pandruvada@linux.intel.com, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, tony.luck@intel.com, 
+    xi.pardee@linux.intel.com, Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH 04/15] platform/x86/intel/vsec: Add device links to
+ enforce dependencies
+In-Reply-To: <20250430212106.369208-5-david.e.box@linux.intel.com>
+Message-ID: <31ed1609-5da1-722e-5182-5c199a3bcb1f@linux.intel.com>
+References: <20250430212106.369208-1-david.e.box@linux.intel.com> <20250430212106.369208-5-david.e.box@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.184-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.15.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.15.184-rc1
-X-KernelTest-Deadline: 2025-05-22T12:57+00:00
-Content-Transfer-Encoding: 8bit
-
-This is the start of the stable review cycle for the 5.15.184 release.
-There are 59 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Thu, 22 May 2025 12:57:37 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.184-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 5.15.184-rc1
-
-Alexander Lobakin <alexandr.lobakin@intel.com>
-    ice: arfs: fix use-after-free when freeing @rx_cpu_rmap
-
-Florian Westphal <fw@strlen.de>
-    netfilter: nf_tables: do not defer rule destruction via call_rcu
-
-Pablo Neira Ayuso <pablo@netfilter.org>
-    netfilter: nf_tables: wait for rcu grace period on net_device removal
-
-Florian Westphal <fw@strlen.de>
-    netfilter: nf_tables: pass nft_chain to destroy function, not nft_ctx
-
-Josef Bacik <josef@toxicpanda.com>
-    btrfs: do not clean up repair bio if submit fails
-
-Filipe Manana <fdmanana@suse.com>
-    btrfs: don't BUG_ON() when 0 reference count at btrfs_lookup_extent_info()
-
-Eric Dumazet <edumazet@google.com>
-    sctp: add mutual exclusion in proc_sctp_do_udp_port()
-
-Feng Tang <feng.tang@linux.alibaba.com>
-    selftests/mm: compaction_test: support platform with huge mount of memory
-
-GONG Ruiqi <gongruiqi1@huawei.com>
-    usb: typec: fix pm usage counter imbalance in ucsi_ccg_sync_control()
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    usb: typec: fix potential array underflow in ucsi_ccg_sync_control()
-
-RD Babiera <rdbabiera@google.com>
-    usb: typec: altmodes/displayport: create sysfs nodes as driver's default device attribute group
-
-Andrei Kuchynski <akuchynski@chromium.org>
-    usb: typec: ucsi: displayport: Fix deadlock
-
-Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-    clocksource/i8253: Use raw_spinlock_irqsave() in clockevent_i8253_disable()
-
-Fengnan Chang <changfengnan@bytedance.com>
-    block: fix direct io NOWAIT flag not work
-
-Shuai Xue <xueshuai@linux.alibaba.com>
-    dmaengine: idxd: fix memory leak in error handling path of idxd_setup_groups
-
-Shuai Xue <xueshuai@linux.alibaba.com>
-    dmaengine: idxd: fix memory leak in error handling path of idxd_setup_engines
-
-Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-    dmaengine: ti: k3-udma: Use cap_mask directly from dma_device structure instead of a local copy
-
-Ronald Wahl <ronald.wahl@legrand.com>
-    dmaengine: ti: k3-udma: Add missing locking
-
-Fedor Pchelkin <pchelkin@ispras.ru>
-    wifi: mt76: disable napi on driver removal
-
-Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-    phy: renesas: rcar-gen3-usb2: Set timing registers only once
-
-Ma Ke <make24@iscas.ac.cn>
-    phy: Fix error handling in tegra_xusb_port_init
-
-Steven Rostedt <rostedt@goodmis.org>
-    tracing: samples: Initialize trace_array_printk() with the correct function
-
-pengdonglin <pengdonglin@xiaomi.com>
-    ftrace: Fix preemption accounting for stacktrace filter command
-
-pengdonglin <pengdonglin@xiaomi.com>
-    ftrace: Fix preemption accounting for stacktrace trigger command
-
-Nicolas Chauvet <kwizart@gmail.com>
-    ALSA: usb-audio: Add sample rate quirk for Microdia JP001 USB Camera
-
-Christian Heusel <christian@heusel.eu>
-    ALSA: usb-audio: Add sample rate quirk for Audioengine D1
-
-Wentao Liang <vulab@iscas.ac.cn>
-    ALSA: es1968: Add error handling for snd_pcm_hw_constraint_pow2()
-
-Jeremy Linton <jeremy.linton@arm.com>
-    ACPI: PPTT: Fix processor subtable walk
-
-Filipe Manana <fdmanana@suse.com>
-    btrfs: fix discard worker infinite loop after disabling discard
-
-Nathan Lynch <nathan.lynch@amd.com>
-    dmaengine: Revert "dmaengine: dmatest: Fix dmatest waiting less when interrupted"
-
-Peter Zijlstra <peterz@infradead.org>
-    x86/its: FineIBT-paranoid vs ITS
-
-Eric Biggers <ebiggers@google.com>
-    x86/its: Fix build errors when CONFIG_MODULES=n
-
-Peter Zijlstra <peterz@infradead.org>
-    x86/its: Use dynamic thunks for indirect branches
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    x86/its: Align RETs in BHB clear sequence to avoid thunking
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    x86/its: Add "vmexit" option to skip mitigation on some CPUs
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    x86/its: Enable Indirect Target Selection mitigation
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    x86/its: Add support for ITS-safe return thunk
-
-Josh Poimboeuf <jpoimboe@kernel.org>
-    x86/alternatives: Remove faulty optimization
-
-Borislav Petkov (AMD) <bp@alien8.de>
-    x86/alternative: Optimize returns patching
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    x86/its: Add support for ITS-safe indirect thunk
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    x86/its: Enumerate Indirect Target Selection (ITS) bug
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    Documentation: x86/bugs/its: Add ITS documentation
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    x86/speculation: Remove the extra #ifdef around CALL_NOSPEC
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    x86/speculation: Add a conditional CS prefix to CALL_NOSPEC
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    x86/speculation: Simplify and make CALL_NOSPEC consistent
-
-Peter Zijlstra <peterz@infradead.org>
-    x86,nospec: Simplify {JMP,CALL}_NOSPEC
-
-Trond Myklebust <trond.myklebust@hammerspace.com>
-    NFSv4/pnfs: Reset the layout state after a layoutreturn
-
-Abdun Nihaal <abdun.nihaal@gmail.com>
-    qlcnic: fix memory leak in qlcnic_sriov_channel_cfg_cmd()
-
-Geert Uytterhoeven <geert+renesas@glider.be>
-    ALSA: sh: SND_AICA should depend on SH_DMA_API
-
-Vladimir Oltean <vladimir.oltean@nxp.com>
-    net: dsa: sja1105: discard incoming frames in BR_STATE_LISTENING
-
-Mathieu Othacehe <othacehe@gnu.org>
-    net: cadence: macb: Fix a possible deadlock in macb_halt_tx.
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    net_sched: Flush gso_skb list too during ->change()
-
-Geert Uytterhoeven <geert+renesas@glider.be>
-    spi: loopback-test: Do not split 1024-byte hexdumps
-
-Li Lingfeng <lilingfeng3@huawei.com>
-    nfs: handle failure of nfs_get_lock_context in unlock path
-
-Zhu Yanjun <yanjun.zhu@linux.dev>
-    RDMA/rxe: Fix slab-use-after-free Read in rxe_queue_cleanup bug
-
-David Lechner <dlechner@baylibre.com>
-    iio: chemical: sps30: use aligned_s64 for timestamp
-
-Jonathan Cameron <Jonathan.Cameron@huawei.com>
-    iio: adc: ad7768-1: Fix insufficient alignment of timestamp.
-
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
-    tracing: probes: Fix a possible race in trace_probe_log APIs
-
-Hans de Goede <hdegoede@redhat.com>
-    platform/x86: asus-wmi: Fix wlan_ctrl_by_user detection
-
-
--------------
-
-Diffstat:
-
- Documentation/ABI/testing/sysfs-devices-system-cpu |   1 +
- Documentation/admin-guide/hw-vuln/index.rst        |   1 +
- .../hw-vuln/indirect-target-selection.rst          | 156 +++++++++++++
- Documentation/admin-guide/kernel-parameters.txt    |  15 ++
- Makefile                                           |   4 +-
- arch/x86/Kconfig                                   |  11 +
- arch/x86/entry/entry_64.S                          |  20 +-
- arch/x86/include/asm/alternative.h                 |  32 +++
- arch/x86/include/asm/cpufeatures.h                 |   3 +
- arch/x86/include/asm/msr-index.h                   |   8 +
- arch/x86/include/asm/nospec-branch.h               |  57 +++--
- arch/x86/kernel/alternative.c                      | 243 ++++++++++++++++++++-
- arch/x86/kernel/cpu/bugs.c                         | 139 +++++++++++-
- arch/x86/kernel/cpu/common.c                       |  63 +++++-
- arch/x86/kernel/ftrace.c                           |   2 +-
- arch/x86/kernel/module.c                           |   7 +
- arch/x86/kernel/static_call.c                      |   2 +-
- arch/x86/kernel/vmlinux.lds.S                      |  10 +
- arch/x86/kvm/x86.c                                 |   4 +-
- arch/x86/lib/retpoline.S                           |  39 ++++
- arch/x86/net/bpf_jit_comp.c                        |   8 +-
- block/fops.c                                       |   5 +-
- drivers/acpi/pptt.c                                |  11 +-
- drivers/base/cpu.c                                 |   8 +
- drivers/clocksource/i8253.c                        |   6 +-
- drivers/dma/dmatest.c                              |   6 +-
- drivers/dma/idxd/init.c                            |   8 +
- drivers/dma/ti/k3-udma.c                           |  10 +-
- drivers/iio/adc/ad7768-1.c                         |   2 +-
- drivers/iio/chemical/sps30.c                       |   2 +-
- drivers/infiniband/sw/rxe/rxe_cq.c                 |   5 +-
- drivers/net/dsa/sja1105/sja1105_main.c             |   6 +-
- drivers/net/ethernet/cadence/macb_main.c           |  19 +-
- drivers/net/ethernet/intel/ice/ice_arfs.c          |   9 +-
- drivers/net/ethernet/intel/ice/ice_lib.c           |   5 +-
- drivers/net/ethernet/intel/ice/ice_main.c          |  20 +-
- .../ethernet/qlogic/qlcnic/qlcnic_sriov_common.c   |   7 +-
- drivers/net/wireless/mediatek/mt76/dma.c           |   1 +
- drivers/phy/renesas/phy-rcar-gen3-usb2.c           |   7 +-
- drivers/phy/tegra/xusb.c                           |   8 +-
- drivers/platform/x86/asus-wmi.c                    |   3 +-
- drivers/spi/spi-loopback-test.c                    |   2 +-
- drivers/usb/typec/altmodes/displayport.c           |  18 +-
- drivers/usb/typec/ucsi/displayport.c               |  19 +-
- drivers/usb/typec/ucsi/ucsi.c                      |  34 +++
- drivers/usb/typec/ucsi/ucsi.h                      |   3 +
- drivers/usb/typec/ucsi/ucsi_ccg.c                  |   5 +
- fs/btrfs/discard.c                                 |  17 +-
- fs/btrfs/extent-tree.c                             |  25 ++-
- fs/btrfs/extent_io.c                               |  15 +-
- fs/nfs/nfs4proc.c                                  |   9 +-
- fs/nfs/pnfs.c                                      |   9 +
- include/linux/cpu.h                                |   2 +
- include/linux/module.h                             |   5 +
- include/net/netfilter/nf_tables.h                  |   2 +-
- include/net/sch_generic.h                          |  15 ++
- kernel/trace/trace_dynevent.c                      |  16 +-
- kernel/trace/trace_dynevent.h                      |   1 +
- kernel/trace/trace_events_trigger.c                |   2 +-
- kernel/trace/trace_functions.c                     |   6 +-
- kernel/trace/trace_kprobe.c                        |   2 +-
- kernel/trace/trace_probe.c                         |   9 +
- kernel/trace/trace_uprobe.c                        |   2 +-
- net/netfilter/nf_tables_api.c                      |  54 +++--
- net/netfilter/nft_immediate.c                      |   2 +-
- net/sched/sch_codel.c                              |   2 +-
- net/sched/sch_fq.c                                 |   2 +-
- net/sched/sch_fq_codel.c                           |   2 +-
- net/sched/sch_fq_pie.c                             |   2 +-
- net/sched/sch_hhf.c                                |   2 +-
- net/sched/sch_pie.c                                |   2 +-
- net/sctp/sysctl.c                                  |   4 +
- samples/ftrace/sample-trace-array.c                |   2 +-
- sound/pci/es1968.c                                 |   6 +-
- sound/sh/Kconfig                                   |   2 +-
- sound/usb/quirks.c                                 |   4 +
- tools/testing/selftests/vm/compaction_test.c       |  19 +-
- 77 files changed, 1112 insertions(+), 184 deletions(-)
-
+Content-Type: text/plain; charset=US-ASCII
+
+On Wed, 30 Apr 2025, David E. Box wrote:
+
+> New Intel VSEC features will have dependencies on other features, requiring
+> certain supplier drivers to be probed before their consumers. To enforce
+> this dependency ordering, introduce device links using device_link_add(),
+> ensuring that suppliers are fully registered before consumers are probed.
+> 
+> - Add device link tracking by storing supplier devices and tracking their
+>   state.
+> - Implement intel_vsec_link_devices() to establish links between suppliers
+>   and consumers based on feature dependencies.
+> - Add get_consumer_dependencies() to retrieve supplier-consumer
+>   relationships.
+> - Modify feature registration logic:
+>   * Consumers now check that all required suppliers are registered before
+>     being initialized.
+>   * suppliers_ready() verifies that all required supplier devices are
+>     available.
+> - Prevent potential null consumer name issue in sysfs:
+>   - Use dev_set_name() when creating auxiliary devices to ensure a
+>     unique, non-null consumer name.
+> - Update intel_vsec_pci_probe() to loop up to the number of possible
+>   features or when all devices are registered, whichever comes first.
+> - Introduce VSEC_CAP_UNUSED to prevent sub-features (registered via
+>   exported APIs) from being mistakenly linked.
+> 
+> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> ---
+>  drivers/platform/x86/intel/vsec.c | 214 +++++++++++++++++++++++++++++-
+>  include/linux/intel_vsec.h        |  28 +++-
+>  2 files changed, 230 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/intel/vsec.c b/drivers/platform/x86/intel/vsec.c
+> index f01651f498ca..8700ed7656df 100644
+> --- a/drivers/platform/x86/intel/vsec.c
+> +++ b/drivers/platform/x86/intel/vsec.c
+> @@ -15,9 +15,11 @@
+>  
+>  #include <linux/auxiliary_bus.h>
+>  #include <linux/bits.h>
+> +#include <linux/bitops.h>
+>  #include <linux/cleanup.h>
+>  #include <linux/delay.h>
+>  #include <linux/idr.h>
+> +#include <linux/log2.h>
+>  #include <linux/intel_vsec.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> @@ -32,8 +34,17 @@ static DEFINE_IDA(intel_vsec_ida);
+>  static DEFINE_IDA(intel_vsec_sdsi_ida);
+>  static DEFINE_XARRAY_ALLOC(auxdev_array);
+>  
+> +enum vsec_device_state {
+> +	STATE_NOT_FOUND,
+> +	STATE_REGISTERED,
+> +	STATE_SKIP,
+> +};
+> +
+>  struct vsec_priv {
+>  	struct intel_vsec_platform_info *info;
+> +	struct device *suppliers[VSEC_FEATURE_COUNT];
+> +	enum vsec_device_state state[VSEC_FEATURE_COUNT];
+> +	unsigned long found_caps;
+>  };
+>  
+>  static const char *intel_vsec_name(enum intel_vsec_id id)
+> @@ -95,6 +106,72 @@ static void intel_vsec_dev_release(struct device *dev)
+>  	kfree(intel_vsec_dev);
+>  }
+>  
+> +static const struct vsec_feature_dependency *
+> +get_consumer_dependencies(struct vsec_priv *priv, int cap_id)
+> +{
+> +	const struct vsec_feature_dependency *deps = priv->info->deps;
+> +	int consumer_id = priv->info->num_deps;
+> +
+> +	if (!deps)
+> +		return NULL;
+> +
+> +	while (consumer_id--)
+> +		if (deps[consumer_id].feature == BIT(cap_id))
+> +			break;
+> +
+> +	if (consumer_id < 0)
+> +		return NULL;
+> +
+> +	return &deps[consumer_id];
+
+This has unnecessary complexity. Why can't you return immediately instead 
+of break. After doing that, you don't need that <0 check either.
+
+> +}
+> +
+> +/*
+> + * Although pci_device_id table is available in the pdev, this prototype is
+> + * necessary because the code using it can be called by an exported API that
+> + * might pass a different pdev.
+> + */
+> +static const struct pci_device_id intel_vsec_pci_ids[];
+> +
+> +static int intel_vsec_link_devices(struct pci_dev *pdev, struct device *dev,
+> +				   int consumer_id)
+> +{
+> +	const struct vsec_feature_dependency *deps;
+> +	enum vsec_device_state *state;
+> +	struct device **suppliers;
+> +	struct vsec_priv *priv;
+> +	int supplier_id;
+> +
+> +	if (!consumer_id)
+> +		return 0;
+> +
+> +	if (!pci_match_id(intel_vsec_pci_ids, pdev))
+> +		return 0;
+> +
+> +	priv = pci_get_drvdata(pdev);
+> +	state = priv->state;
+> +	suppliers = priv->suppliers;
+> +
+> +	priv->suppliers[consumer_id] = dev;
+> +
+> +	deps = get_consumer_dependencies(priv, consumer_id);
+> +	if (!deps)
+> +		return 0;
+> +
+> +	for_each_set_bit(supplier_id, &deps->supplier_bitmap, VSEC_FEATURE_COUNT) {
+> +		if (state[supplier_id] != STATE_REGISTERED)
+> +			continue;
+> +
+> +		if (!suppliers[supplier_id]) {
+> +			dev_err(dev, "Bad supplier list\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		device_link_add(dev, suppliers[supplier_id], DL_FLAG_AUTOPROBE_CONSUMER);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  int intel_vsec_add_aux(struct pci_dev *pdev, struct device *parent,
+>  		       struct intel_vsec_device *intel_vsec_dev,
+>  		       const char *name)
+> @@ -132,6 +209,25 @@ int intel_vsec_add_aux(struct pci_dev *pdev, struct device *parent,
+>  		return ret;
+>  	}
+>  
+> +	/*
+> +	 * Assign a name now to ensure that the device link doesn't contain
+> +	 * a null string for the consumer name. This is a problem when a supplier
+> +	 * supplys more than one consumer and can lead to a duplicate name error
+
+supplies
+
+> +	 * when the link is created in sysfs.
+> +	 */
+> +	ret = dev_set_name(&auxdev->dev, "%s.%s.%d", KBUILD_MODNAME, auxdev->name,
+> +			   auxdev->id);
+> +	if (ret) {
+> +		auxiliary_device_uninit(auxdev);
+> +		return ret;
+> +	}
+> +
+> +	ret = intel_vsec_link_devices(pdev, &auxdev->dev, intel_vsec_dev->cap_id);
+> +	if (ret) {
+> +		auxiliary_device_uninit(auxdev);
+
+Instead of repeating this 3 times, do a rollback path.
+
+> +		return ret;
+> +	}
+> +
+>  	ret = auxiliary_device_add(auxdev);
+>  	if (ret < 0) {
+>  		auxiliary_device_uninit(auxdev);
+
+Don't you need to tear down the device link on failure?
+
+> @@ -144,7 +240,8 @@ int intel_vsec_add_aux(struct pci_dev *pdev, struct device *parent,
+>  EXPORT_SYMBOL_NS_GPL(intel_vsec_add_aux, "INTEL_VSEC");
+>  
+>  static int intel_vsec_add_dev(struct pci_dev *pdev, struct intel_vsec_header *header,
+> -			      struct intel_vsec_platform_info *info)
+> +			      struct intel_vsec_platform_info *info,
+> +			      unsigned long cap_id)
+>  {
+>  	struct intel_vsec_device __free(kfree) *intel_vsec_dev = NULL;
+>  	struct resource __free(kfree) *res = NULL;
+> @@ -211,6 +308,7 @@ static int intel_vsec_add_dev(struct pci_dev *pdev, struct intel_vsec_header *he
+>  	intel_vsec_dev->quirks = info->quirks;
+>  	intel_vsec_dev->base_addr = info->base_addr;
+>  	intel_vsec_dev->priv_data = info->priv_data;
+> +	intel_vsec_dev->cap_id = cap_id;
+>  
+>  	if (header->id == VSEC_ID_SDSI)
+>  		intel_vsec_dev->ida = &intel_vsec_sdsi_ida;
+> @@ -219,12 +317,108 @@ static int intel_vsec_add_dev(struct pci_dev *pdev, struct intel_vsec_header *he
+>  
+>  	/*
+>  	 * Pass the ownership of intel_vsec_dev and resource within it to
+> -	 * intel_vsec_add_aux()
+> +	 * intel_vsec_add_aux().
+
+Unrelated change, please put into own patch if you want to do this.
+
+>  	 */
+>  	return intel_vsec_add_aux(pdev, parent, no_free_ptr(intel_vsec_dev),
+>  				  intel_vsec_name(header->id));
+>  }
+>  
+> +static bool suppliers_ready(struct vsec_priv *priv,
+> +			    const struct vsec_feature_dependency *consumer_deps,
+> +			    int cap_id)
+> +{
+> +	enum vsec_device_state *state = priv->state;
+> +	int supplier_id;
+> +
+> +	if (consumer_deps->feature != BIT(cap_id))
+> +		return false; /* Should not happen */
+> +
+> +	/*
+> +	 * Find all features that are suppliers and check their state.
+> +	 * Only suppliers that have been successfully registered will be linked.
+> +	 */
+> +	for_each_set_bit(supplier_id, &consumer_deps->supplier_bitmap, VSEC_FEATURE_COUNT) {
+> +		if (state[supplier_id] == STATE_SKIP)
+> +			continue;
+> +
+> +		/* If any supplier is not yet found, return immediately */
+
+I'm not sure how I should interpret this comment, and it seems to 
+contradict with "Find all features" in the comment above because this will 
+return immediately so what about finding the rest of the features?
+
+> +		if (state[supplier_id] == STATE_NOT_FOUND)
+> +			return false;
+> +	}
+> +
+> +	/*
+> +	 * If we get here, all suppliers have been found and the consumer
+> +	 * is ready to be registered.
+> +	 */
+> +	return true;
+> +}
+> +
+> +static int get_cap_id(u32 header_id, unsigned long *cap_id)
+> +{
+> +	switch (header_id) {
+> +	case VSEC_ID_TELEMETRY:
+> +		*cap_id = ilog2(VSEC_CAP_TELEMETRY);
+> +		break;
+> +	case VSEC_ID_WATCHER:
+> +		*cap_id = ilog2(VSEC_CAP_WATCHER);
+> +		break;
+> +	case VSEC_ID_CRASHLOG:
+> +		*cap_id = ilog2(VSEC_CAP_CRASHLOG);
+> +		break;
+> +	case VSEC_ID_SDSI:
+> +		*cap_id = ilog2(VSEC_CAP_SDSI);
+> +		break;
+> +	case VSEC_ID_TPMI:
+> +		*cap_id = ilog2(VSEC_CAP_TPMI);
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int intel_vsec_register_device(struct pci_dev *pdev,
+> +				      struct intel_vsec_header *header,
+> +				      struct intel_vsec_platform_info *info)
+> +{
+> +	const struct vsec_feature_dependency *consumer_deps;
+> +	struct vsec_priv *priv;
+> +	unsigned long cap_id;
+> +	int ret;
+> +
+> +	ret = get_cap_id(header->id, &cap_id);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Only track dependencies for devices probed by the VSEC driver.
+> +	 * For others using the exported APIs, add the device directly.
+> +	 */
+> +	if (!pci_match_id(intel_vsec_pci_ids, pdev))
+> +		return intel_vsec_add_dev(pdev, header, info, cap_id);
+> +
+> +	priv = pci_get_drvdata(pdev);
+> +	if (priv->state[cap_id] == STATE_REGISTERED ||
+> +	    priv->state[cap_id] == STATE_SKIP)
+> +		return -EEXIST;
+> +
+> +	priv->found_caps |= BIT(cap_id);
+> +
+> +	consumer_deps = get_consumer_dependencies(priv, cap_id);
+> +	if (!consumer_deps || suppliers_ready(priv, consumer_deps, cap_id)) {
+> +		ret = intel_vsec_add_dev(pdev, header, info, cap_id);
+> +		if (ret)
+> +			priv->state[cap_id] = STATE_SKIP;
+> +		else
+> +			priv->state[cap_id] = STATE_REGISTERED;
+> +
+> +		return ret;
+> +	}
+> +
+> +	return -EAGAIN;
+> +}
+> +
+>  static bool intel_vsec_walk_header(struct pci_dev *pdev,
+>  				   struct intel_vsec_platform_info *info)
+>  {
+> @@ -233,7 +427,7 @@ static bool intel_vsec_walk_header(struct pci_dev *pdev,
+>  	int ret;
+>  
+>  	for ( ; *header; header++) {
+> -		ret = intel_vsec_add_dev(pdev, *header, info);
+> +		ret = intel_vsec_register_device(pdev, *header, info);
+>  		if (!ret)
+>  			have_devices = true;
+>  	}
+> @@ -281,7 +475,7 @@ static bool intel_vsec_walk_dvsec(struct pci_dev *pdev,
+>  		pci_read_config_dword(pdev, pos + PCI_DVSEC_HEADER2, &hdr);
+>  		header.id = PCI_DVSEC_HEADER2_ID(hdr);
+>  
+> -		ret = intel_vsec_add_dev(pdev, &header, info);
+> +		ret = intel_vsec_register_device(pdev, &header, info);
+>  		if (ret)
+>  			continue;
+>  
+> @@ -326,7 +520,7 @@ static bool intel_vsec_walk_vsec(struct pci_dev *pdev,
+>  		header.tbir = INTEL_DVSEC_TABLE_BAR(table);
+>  		header.offset = INTEL_DVSEC_TABLE_OFFSET(table);
+>  
+> -		ret = intel_vsec_add_dev(pdev, &header, info);
+> +		ret = intel_vsec_register_device(pdev, &header, info);
+>  		if (ret)
+>  			continue;
+>  
+> @@ -375,7 +569,7 @@ static int intel_vsec_pci_probe(struct pci_dev *pdev, const struct pci_device_id
+>  	struct intel_vsec_platform_info *info;
+>  	struct vsec_priv *priv;
+>  	bool have_devices = false;
+> -	int ret;
+> +	int num_caps, ret;
+>  
+>  	ret = pcim_enable_device(pdev);
+>  	if (ret)
+> @@ -393,7 +587,13 @@ static int intel_vsec_pci_probe(struct pci_dev *pdev, const struct pci_device_id
+>  	priv->info = info;
+>  	pci_set_drvdata(pdev, priv);
+>  
+> -	intel_vsec_feature_walk(pdev, &have_devices, info);
+> +	num_caps = hweight_long(info->caps);
+> +	while (num_caps--) {
+> +		intel_vsec_feature_walk(pdev, &have_devices, info);
+> +
+> +		if (priv->found_caps == priv->info->caps)
+
+The hweight_long() arg is info->caps and here you used priv->info->caps.
+
+> +			break;
+> +	}
+>  
+>  	if (!have_devices)
+>  		return -ENODEV;
+> diff --git a/include/linux/intel_vsec.h b/include/linux/intel_vsec.h
+> index bc95821f1bfb..71067afaca99 100644
+> --- a/include/linux/intel_vsec.h
+> +++ b/include/linux/intel_vsec.h
+> @@ -5,11 +5,18 @@
+>  #include <linux/auxiliary_bus.h>
+>  #include <linux/bits.h>
+>  
+> -#define VSEC_CAP_TELEMETRY	BIT(0)
+> -#define VSEC_CAP_WATCHER	BIT(1)
+> -#define VSEC_CAP_CRASHLOG	BIT(2)
+> -#define VSEC_CAP_SDSI		BIT(3)
+> -#define VSEC_CAP_TPMI		BIT(4)
+> +/*
+> + * VSEC_CAP_UNUSED is reserved. It exists to prevent zero initialized
+> + * intel_vsec devices from being automatically set to a known
+> + * capability with ID 0
+> + */
+> +#define VSEC_CAP_UNUSED		BIT(0)
+> +#define VSEC_CAP_TELEMETRY	BIT(1)
+> +#define VSEC_CAP_WATCHER	BIT(2)
+> +#define VSEC_CAP_CRASHLOG	BIT(3)
+> +#define VSEC_CAP_SDSI		BIT(4)
+> +#define VSEC_CAP_TPMI		BIT(5)
+> +#define VSEC_FEATURE_COUNT	6
+>  
+>  /* Intel DVSEC offsets */
+>  #define INTEL_DVSEC_ENTRIES		0xA
+> @@ -81,22 +88,31 @@ struct pmt_callbacks {
+>  	int (*read_telem)(struct pci_dev *pdev, u32 guid, u64 *data, loff_t off, u32 count);
+>  };
+>  
+> +struct vsec_feature_dependency {
+> +	unsigned long feature;
+> +	unsigned long supplier_bitmap;
+> +};
+> +
+>  /**
+>   * struct intel_vsec_platform_info - Platform specific data
+>   * @parent:    parent device in the auxbus chain
+>   * @headers:   list of headers to define the PMT client devices to create
+> + * @deps:      array of feature dependencies
+>   * @priv_data: private data, usable by parent devices, currently a callback
+>   * @caps:      bitmask of PMT capabilities for the given headers
+>   * @quirks:    bitmask of VSEC device quirks
+>   * @base_addr: allow a base address to be specified (rather than derived)
+> + * @num_deps:  Count feature dependencies
+>   */
+>  struct intel_vsec_platform_info {
+>  	struct device *parent;
+>  	struct intel_vsec_header **headers;
+> +	const struct vsec_feature_dependency *deps;
+>  	void *priv_data;
+>  	unsigned long caps;
+>  	unsigned long quirks;
+>  	u64 base_addr;
+> +	int num_deps;
+>  };
+>  
+>  /**
+> @@ -110,6 +126,7 @@ struct intel_vsec_platform_info {
+>   * @priv_data:     any private data needed
+>   * @quirks:        specified quirks
+>   * @base_addr:     base address of entries (if specified)
+> + * @cap_id:        the enumerated id of the vsec feature
+>   */
+>  struct intel_vsec_device {
+>  	struct auxiliary_device auxdev;
+> @@ -122,6 +139,7 @@ struct intel_vsec_device {
+>  	size_t priv_data_size;
+>  	unsigned long quirks;
+>  	u64 base_addr;
+> +	unsigned long cap_id;
+>  };
+>  
+>  int intel_vsec_add_aux(struct pci_dev *pdev, struct device *parent,
+> 
+
+-- 
+ i.
 
 
