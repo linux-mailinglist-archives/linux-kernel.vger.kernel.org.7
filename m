@@ -1,171 +1,175 @@
-Return-Path: <linux-kernel+bounces-655337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E6D8ABD428
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:05:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEDB2ABD3F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B719169344
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:05:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46EB03B3874
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8362D26A0AE;
-	Tue, 20 May 2025 10:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Kg/oXx3+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BksDnml4";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Kg/oXx3+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BksDnml4"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B442690FA;
+	Tue, 20 May 2025 09:55:15 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BA2267713
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E56425DAF4;
+	Tue, 20 May 2025 09:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747735512; cv=none; b=VJr3lUaQum3XZJMq8UEbRTvPVTkX0AbkkmYh2drg2GW66Zoj8LUR4qCv9OejzkKffPA/eWiEzCmjDCprBHzJSittY9TWpkGWtr5rDRd/Q3oz11DN6uhmfvskN2XSZamtRY4fRNkQcy5+BZCooVyndHa0XqRqlrMtICV2VfA1UhE=
+	t=1747734915; cv=none; b=cZAKZwwRx9t/A+eb6TkGuhai8pgyZ6uKiH1aM5n5ZrQwjRkSpImOPj1i5h7O/nWwBswPUJBQw8OS8tj6UoJBs1PXyP52+Dpw2nCKPRVjhHOgR0Zh5z2AuJDDKibjab7o3qmj07ifSlyd9SnBxyEjED3OACowGcCdiV+QYi+8Vos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747735512; c=relaxed/simple;
-	bh=vEr2evVqF7buvX80qTeUg68IDenzt6IkT7O+67h9UCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CZOnWqF05lJOnlWXsQRxcePmmbna736i2Mgv99j4q+X+F4932U1VUCMq8mOO1JQDgZXUwKf8/LOZcd/KAYKiMz/o3ycUv7LdBtHZUwy0TlYJ2g6QTGR12/cF/tHdvGYkulhV6R65IrHAv27B660IjE4rshv9wmIEfoD9KoX/KlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Kg/oXx3+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BksDnml4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Kg/oXx3+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BksDnml4; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5484220663;
-	Tue, 20 May 2025 10:05:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747735509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l0NOErDr8CoTJmeJPQ3XuHSDjH3q/HOWtKaSpvPXI2k=;
-	b=Kg/oXx3+ECnyjLTpNUlHhIRxHB8NCCkg/xdE2jad5z4Z1M9v7knCNij9q3FQwadO7/WwWD
-	uG3oIEY+QrwsH+lZ7vozxm7d9TCEBNKcNyqngITV3RXqnBn2zrkExkDIP7OW0vwIluJrY7
-	RmkfDvGOyVdWVfWaDHF84X4MpwjLi4Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747735509;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l0NOErDr8CoTJmeJPQ3XuHSDjH3q/HOWtKaSpvPXI2k=;
-	b=BksDnml4mZ9b53Ff6/wF+rwSSZwwlDSkcUEMgCXX17l0Cg8+v4G8Icspkkr4ptv/kFsV4u
-	Y7IKJvikUeU7nJAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="Kg/oXx3+";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=BksDnml4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747735509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l0NOErDr8CoTJmeJPQ3XuHSDjH3q/HOWtKaSpvPXI2k=;
-	b=Kg/oXx3+ECnyjLTpNUlHhIRxHB8NCCkg/xdE2jad5z4Z1M9v7knCNij9q3FQwadO7/WwWD
-	uG3oIEY+QrwsH+lZ7vozxm7d9TCEBNKcNyqngITV3RXqnBn2zrkExkDIP7OW0vwIluJrY7
-	RmkfDvGOyVdWVfWaDHF84X4MpwjLi4Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747735509;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l0NOErDr8CoTJmeJPQ3XuHSDjH3q/HOWtKaSpvPXI2k=;
-	b=BksDnml4mZ9b53Ff6/wF+rwSSZwwlDSkcUEMgCXX17l0Cg8+v4G8Icspkkr4ptv/kFsV4u
-	Y7IKJvikUeU7nJAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1EB3C13A3E;
-	Tue, 20 May 2025 10:05:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id E2PMBtVTLGiVZAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 20 May 2025 10:05:09 +0000
-Date: Tue, 20 May 2025 12:05:03 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Donet Tom <donettom@linux.ibm.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@kernel.org>, Zi Yan <ziy@nvidia.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>, rafael@kernel.org,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Dave Jiang <dave.jiang@intel.com>
-Subject: Re: [PATCH v4 2/4] driver/base: remove
- register_mem_block_under_node_early()
-Message-ID: <aCxTz1iOgysNDH60@localhost.localdomain>
-References: <f94685be9cdc931a026999d236d7e92de29725c7.1747376551.git.donettom@linux.ibm.com>
- <1b516adb43371fad2dbc69c83a2ed2a224219688.1747376551.git.donettom@linux.ibm.com>
+	s=arc-20240116; t=1747734915; c=relaxed/simple;
+	bh=nYtSmDmCMfbAwLf3uXqJZRMJmgIAW9Thdzm8zwi6TrI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n4P1uYRU/6DyE6vtALDQZzvSyrzFkq7ooVpxS0IwB6+EbuX5AbW0CDqF3FuKKa6ta6svogj6Eyp78akkkk+FRDbOwxAAQmEsduPkZ1qoYajYV3bNi4Oize+USScc5fcu38+hFPCZNfOwFPYrFoN4af3i1QGq8HijQpld7BEa+Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4b1qgX2LMqz27hxh;
+	Tue, 20 May 2025 17:55:52 +0800 (CST)
+Received: from kwepemg200005.china.huawei.com (unknown [7.202.181.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id D2D3B1A016C;
+	Tue, 20 May 2025 17:55:03 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by kwepemg200005.china.huawei.com
+ (7.202.181.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 20 May
+ 2025 17:55:02 +0800
+From: Wang Liang <wangliang74@huawei.com>
+To: <jmaloy@redhat.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<tuong.t.lien@dektech.com.au>, <ying.xue@windreiver.com>
+CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<wangliang74@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <tipc-discussion@lists.sourceforge.net>
+Subject: [PATCH net] net/tipc: fix slab-use-after-free Read in tipc_aead_encrypt_done
+Date: Tue, 20 May 2025 18:14:04 +0800
+Message-ID: <20250520101404.1341730-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b516adb43371fad2dbc69c83a2ed2a224219688.1747376551.git.donettom@linux.ibm.com>
-X-Spam-Level: 
-X-Spamd-Bar: /
-X-Spam-Flag: NO
-X-Spam-Score: -0.01
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 5484220663
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.01 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	FREEMAIL_CC(0.00)[redhat.com,linux-foundation.org,kernel.org,nvidia.com,gmail.com,linuxfoundation.org,vger.kernel.org,kvack.org,huawei.com,intel.com];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	MISSING_XM_UA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[nvidia.com:email,suse.de:email,suse.de:dkim]
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemg200005.china.huawei.com (7.202.181.32)
 
-On Fri, May 16, 2025 at 03:19:52AM -0500, Donet Tom wrote:
-> The function register_mem_block_under_node_early() is no longer used,
-> as register_memory_blocks_under_node_early() now handles memory block
-> registration during early boot.
-> 
-> Removed register_mem_block_under_node_early() and get_nid_for_pfn(),
-> the latter was only used by the former.
-> 
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Acked-by: Zi Yan <ziy@nvidia.com>
-> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+Syzbot reported a slab-use-after-free with the following call trace:
 
-Acked-by: Oscar Salvador <osalvador@suse.de>
+  ==================================================================
+  BUG: KASAN: slab-use-after-free in tipc_aead_encrypt_done+0x4bd/0x510 net/tipc/crypto.c:840
+  Read of size 8 at addr ffff88807a733000 by task kworker/1:0/25
 
+  Call Trace:
+   kasan_report+0xd9/0x110 mm/kasan/report.c:601
+   tipc_aead_encrypt_done+0x4bd/0x510 net/tipc/crypto.c:840
+   crypto_request_complete include/crypto/algapi.h:266
+   aead_request_complete include/crypto/internal/aead.h:85
+   cryptd_aead_crypt+0x3b8/0x750 crypto/cryptd.c:772
+   crypto_request_complete include/crypto/algapi.h:266
+   cryptd_queue_worker+0x131/0x200 crypto/cryptd.c:181
+   process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3231
 
+  Allocated by task 8355:
+   kzalloc_noprof include/linux/slab.h:778
+   tipc_crypto_start+0xcc/0x9e0 net/tipc/crypto.c:1466
+   tipc_init_net+0x2dd/0x430 net/tipc/core.c:72
+   ops_init+0xb9/0x650 net/core/net_namespace.c:139
+   setup_net+0x435/0xb40 net/core/net_namespace.c:343
+   copy_net_ns+0x2f0/0x670 net/core/net_namespace.c:508
+   create_new_namespaces+0x3ea/0xb10 kernel/nsproxy.c:110
+   unshare_nsproxy_namespaces+0xc0/0x1f0 kernel/nsproxy.c:228
+   ksys_unshare+0x419/0x970 kernel/fork.c:3323
+   __do_sys_unshare kernel/fork.c:3394
+
+  Freed by task 63:
+   kfree+0x12a/0x3b0 mm/slub.c:4557
+   tipc_crypto_stop+0x23c/0x500 net/tipc/crypto.c:1539
+   tipc_exit_net+0x8c/0x110 net/tipc/core.c:119
+   ops_exit_list+0xb0/0x180 net/core/net_namespace.c:173
+   cleanup_net+0x5b7/0xbf0 net/core/net_namespace.c:640
+   process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3231
+
+After freed the tipc_crypto tx by delete namespace, tipc_aead_encrypt_done
+may still visit it in cryptd_queue_worker workqueue.
+
+I reproduce this issue by:
+  ip netns add ns1
+  ip link add veth1 type veth peer name veth2
+  ip link set veth1 netns ns1
+  ip netns exec ns1 tipc bearer enable media eth dev veth1
+  ip netns exec ns1 tipc node set key this_is_a_master_key master
+  ip netns exec ns1 tipc bearer disable media eth dev veth1
+  ip netns del ns1
+
+The key of reproduction is that, simd_aead_encrypt is interrupted, leading
+to crypto_simd_usable() return false. Thus, the cryptd_queue_worker is
+triggered, and the tipc_crypto tx will be visited.
+
+  tipc_disc_timeout
+    tipc_bearer_xmit_skb
+      tipc_crypto_xmit
+        tipc_aead_encrypt
+          crypto_aead_encrypt
+            // encrypt()
+            simd_aead_encrypt
+              // crypto_simd_usable() is false
+              child = &ctx->cryptd_tfm->base;
+
+  simd_aead_encrypt
+    crypto_aead_encrypt
+      // encrypt()
+      cryptd_aead_encrypt_enqueue
+        cryptd_aead_enqueue
+          cryptd_enqueue_request
+            // trigger cryptd_queue_worker
+            queue_work_on(smp_processor_id(), cryptd_wq, &cpu_queue->work)
+
+Fix this by holding net reference count before encrypt.
+
+Reported-by: syzbot+55c12726619ff85ce1f6@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=55c12726619ff85ce1f6
+Fixes: fc1b6d6de220 ("tipc: introduce TIPC encryption & authentication")
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
+---
+ net/tipc/crypto.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c
+index c524421ec652..8584893b4785 100644
+--- a/net/tipc/crypto.c
++++ b/net/tipc/crypto.c
+@@ -817,12 +817,16 @@ static int tipc_aead_encrypt(struct tipc_aead *aead, struct sk_buff *skb,
+ 		goto exit;
+ 	}
+ 
++	/* Get net to avoid freed tipc_crypto when delete namespace */
++	get_net(aead->crypto->net);
++
+ 	/* Now, do encrypt */
+ 	rc = crypto_aead_encrypt(req);
+ 	if (rc == -EINPROGRESS || rc == -EBUSY)
+ 		return rc;
+ 
+ 	tipc_bearer_put(b);
++	put_net(aead->crypto->net);
+ 
+ exit:
+ 	kfree(ctx);
+@@ -860,6 +864,7 @@ static void tipc_aead_encrypt_done(void *data, int err)
+ 	kfree(tx_ctx);
+ 	tipc_bearer_put(b);
+ 	tipc_aead_put(aead);
++	put_net(net);
+ }
+ 
+ /**
 -- 
-Oscar Salvador
-SUSE Labs
+2.34.1
+
 
