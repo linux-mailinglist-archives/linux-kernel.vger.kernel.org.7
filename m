@@ -1,193 +1,152 @@
-Return-Path: <linux-kernel+bounces-655884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B83FBABDEBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:21:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06EEAABDEB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C458F1BA673B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:21:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C7FE8C09F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50DB25F98D;
-	Tue, 20 May 2025 15:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859632580F7;
+	Tue, 20 May 2025 15:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPbOClgy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="olv01epP"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4B025CC6C
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 15:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EC320C473
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 15:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747754478; cv=none; b=ZjC5loczkb20JIF+cs4ZRrpD9R3JFpYzpxjrVQCA7MJLvI7uX2NXhgUM6ul4JCildCYob+mPs8KWobYMUDSj9cCo8TNh6oMrzq2zd+Lx2FfCkbXWb5CInAs8v1za57g5tzqZ7d5iNSwWMRPl5TED+CxC5Sw98KXERweRiiHdqY8=
+	t=1747754452; cv=none; b=H1jpQJ6eAYtG7CMLoki1PAXThco1EtEGJvtryOyBYZLs7BzEJI3AB1NoSuiT5+TaEoKN6BqrHZejxX/e0iHzBZI4N8USapLRv4eQwgY+cdZGit9yvYoRgGRE3E1fR3IG1pCj5OJrrdmbDBgt8NT28qA69qMf3nLRzQBMqjT8z5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747754478; c=relaxed/simple;
-	bh=Ac577SF1EdQVGlVaI269T+n4SvgSNPC1N5Hajobt0fM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SCUwE5u7y9VF77HqVQParEZmTI3+/mxcSx+relx69yDhe808JNqoyjkf0R6bI9YM3bjF40j+8UWen5j+2PVqe2rdljhNoy4bV87HlPSf9QqVQ6dOfIZeUbYiluTMjN/R5w3NFWrng18o9qklTkqa2IiOICvpqkUKk/61Jw1WnIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPbOClgy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 135F0C4CEE9;
-	Tue, 20 May 2025 15:21:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747754477;
-	bh=Ac577SF1EdQVGlVaI269T+n4SvgSNPC1N5Hajobt0fM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gPbOClgyTtlZIMJZYwGSjVD2G2MK2svN+vfrvfovNWQ8QelZQQLfICrbmBA3E6Gdf
-	 NjXsPvJaXaRVeT74MEIOWbvzgirq+82PluCGBARSQNtHx3VOa6hcEvji+9ctj6FVCZ
-	 NBhz0CpRY0GaQigQVnraMoIr/x+BpXYvv6LivQt3i8NQ95k8YVg22KDXL1/lo1udme
-	 iNOhE7WrRVjbdbQtbQPCozwSPDU+DcyqelOvLgIAreUUz2LtZcVLcyjCe0JCHFcNPN
-	 r/OoyvYvD2qX1gneGmmr1F/sWwBTzGFalf2t45L7ipSWbdjyXbxfBVrclmagvHX5ml
-	 bWyr8YeqGop2g==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Dave Hansen <dave.hansen@linux.intel.com>,
-	Dan Williams <dan.j.williams@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 3/3] [RFC] x86/devmem: remove low 1MB hack for x86-64
-Date: Tue, 20 May 2025 17:20:30 +0200
-Message-Id: <20250520152030.1499670-3-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250520152030.1499670-1-arnd@kernel.org>
-References: <20250520152030.1499670-1-arnd@kernel.org>
+	s=arc-20240116; t=1747754452; c=relaxed/simple;
+	bh=w3T8AvivgiFTSQv1ULlmSX1cmJkhVDHYEOpGIa8Ypms=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uVakzpUH7oI2bmftFybba2H2Pa9QRcEBpc07rf2rp1jwVeK1ldRxMjIbY/3V5akJP+en1LIdhugNlH4jZWIczL1ZB2IwattjEgYOmA0ho2JdmuOi8jMLTC7qchwGx65YuO1PKxwgo8LkxwcbICRkTIJImRP6YGapKG8lRMsadQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=olv01epP; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4774611d40bso858811cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 08:20:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747754450; x=1748359250; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v3MrdtSTY4wKglagIHVXNzkkUsqfR79ur5B+p/qdTJ0=;
+        b=olv01epP4KV+VZuhiegQEiefmmFPEQZ+QVZcTclm96P6UvId5mTFsF/9ld4sXIiZ7e
+         RvrDCfSWy1JKVA4vwnPW9sRhSEZ02hJAn/hc1eyciiYWh9u3BZAMKysfrK8UjJazkwW1
+         1dd3MVPn+Uz8WdyzvUCJIku+QKXv0dsVcQF85fq8WxjNCd/DmJRb4JTpec7fDgyxD9wF
+         zLMs9eiJVMUf7vloTG1+RwnMUCEBQOUkY5yhV92/masSMUnmImF2cqP39cjN9romlNJx
+         gPUss3SGTGzmlevy5BQe7nvxvILhGybRrJSToxB21okZFUCcBTKylvvgrHCnZQ8Q4atA
+         niYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747754450; x=1748359250;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v3MrdtSTY4wKglagIHVXNzkkUsqfR79ur5B+p/qdTJ0=;
+        b=vCBAL0joXCPYQxroweDMe0xvrD37hs0q3VZ8dMJrgCaG+yAJNfZQINJInzdtCJ4Jtj
+         45H+LXZpmHgIYj5K8QtSZ+1fDmuPVsdnxHL/M/gdERiRuSnQsGVrs+8/LlMxiXUlB3Xy
+         UzL6osA7QmJMTJaOCVTgCl/RhZWt8EsumidcEB46CZ0S/iRmzuy6izR2KKm8S4r7xmLC
+         YPrIE/zbUiNxbwvKZKO/VYSAx57QLgnWRO+t7/nQz3Gnu4frCTvZseHYSRmhHqIph/KC
+         dSPh21zuc85qbJLz6QcSC1taIPGvM97Mu2Kr6lASNELjsbLDR/bl0xUa+UQiE2B/xy/e
+         kW7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWyD1mPKeBjm8m1GQJuGBszHE2otIr+5i+vbsKzl9Edlk+dPyU6JXgt5Ylnr8keL+4nvl9xXFQsPDk+QtY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPNwXxius5uuXka4WS+j6fMi40n/LFOT6l/mx2ATMK1zAWovl8
+	+8n6L1gvWvwB1UOP9eobprTjh4G/6jrRKimx59ZqKqshC4P1fAN9L+fhgCod6TolpinwoB9Xt/I
+	8D5ql+MT7JMSkYN118qbeN/faBcm0NzyeX4Zv++FnFbj/Y7fpD7m/RDMARlM=
+X-Gm-Gg: ASbGncurQXwe2I4ERa3b4EWtPDyy+ZhlMb4ebKHhHKJn3uPRdTQIlTsXdL4wtT8ef4w
+	jZ9TMT0Ik8PgEWAFdadXIgVLnigjiH2HCaiHhz+I095sQ+ORMK7C8b2gc3Zptd9wXjGQQCQG3OX
+	wS+8GYewxUyyXLutuT98XdjLJeLXsLeex2RL7exiKO84cjGO7wpUjF6U44zfMPG57fFiG3NQI0a
+	1scmPKXF2w=
+X-Google-Smtp-Source: AGHT+IF7oSHLctYVPC6f6D7Wt3pmznOFYfEJFyea3DIJ5UOsx7qH8Nkpb8EezW5dKVDCCU5Ue2Kat1rkfVWfxpFZ5Jo=
+X-Received: by 2002:ac8:57d6:0:b0:471:f34d:1d83 with SMTP id
+ d75a77b69052e-49600b8a5eamr11172951cf.7.1747754449801; Tue, 20 May 2025
+ 08:20:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250520122547.1317050-1-usamaarif642@gmail.com>
+ <3divtzm4iapcxwbzxlmfmg3gus75n3rqh43vkjnog456jm2k34@f3rpzvcfk3p6>
+ <6d015d91-e74c-48b3-8bc3-480980a74f9b@gmail.com> <b696e3c2-3d96-4729-9e07-87bb644f145b@gmail.com>
+In-Reply-To: <b696e3c2-3d96-4729-9e07-87bb644f145b@gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 20 May 2025 08:20:38 -0700
+X-Gm-Features: AX0GCFv793lIfMLoXYJzZEQOhHK703DUxeFSvODGjDn1KjZgtwC7v1s2Xb3hFKI
+Message-ID: <CAJuCfpEL__bRSbVWATs0qbNF3E2ZS_n7banhRxU01FFT2aTPAQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: slub: allocate slab object extensions non-contiguously
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	hannes@cmpxchg.org, shakeel.butt@linux.dev, vlad.wing@gmail.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Tue, May 20, 2025 at 7:13=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
+ wrote:
+>
+>
+>
+> On 20/05/2025 14:46, Usama Arif wrote:
+> >
+> >
+> > On 20/05/2025 14:44, Kent Overstreet wrote:
+> >> On Tue, May 20, 2025 at 01:25:46PM +0100, Usama Arif wrote:
+> >>> When memory allocation profiling is running on memory bound services,
+> >>> allocations greater than order 0 for slab object extensions can fail,
+> >>> for e.g. zs_handle zswap slab which will be 512 objsperslab x 16 byte=
+s
+> >>> per slabobj_ext (order 1 allocation). Use kvcalloc to improve chances
+> >>> of the allocation being successful.
+> >>>
+> >>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> >>> Reported-by: Vlad Poenaru <vlad.wing@gmail.com>
+> >>> Closes: https://lore.kernel.org/all/17fab2d6-5a74-4573-bcc3-b75951508=
+f0a@gmail.com/
+> >>> ---
+> >>>  mm/slub.c | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/mm/slub.c b/mm/slub.c
+> >>> index dc9e729e1d26..bf43c403ead2 100644
+> >>> --- a/mm/slub.c
+> >>> +++ b/mm/slub.c
+> >>> @@ -1989,7 +1989,7 @@ int alloc_slab_obj_exts(struct slab *slab, stru=
+ct kmem_cache *s,
+> >>>     gfp &=3D ~OBJCGS_CLEAR_MASK;
+> >>>     /* Prevent recursive extension vector allocation */
+> >>>     gfp |=3D __GFP_NO_OBJ_EXT;
+> >>> -   vec =3D kcalloc_node(objects, sizeof(struct slabobj_ext), gfp,
+> >>> +   vec =3D kvcalloc_node(objects, sizeof(struct slabobj_ext), gfp,
+> >>>                        slab_nid(slab));
+> >>
+> >> And what's the latency going to be on a vmalloc() allocation when we'r=
+e
+> >> low on memory?
+> >
+> > Would it not be better to get the allocation slighly slower than to not=
+ get
+> > it at all?
+>
+> Also a majority of them are less than 1 page. kvmalloc of less than 1 pag=
+e
+> falls back to kmalloc. So vmalloc will only be on those greater than 1 pa=
+ge
+> size, which are in the minority (for e.g. zs_handle, request_sock_subflow=
+_v6,
+> request_sock_subflow_v4...).
 
-Traditionally, both reading and mapping anything in the low 1MB area is
-allowed on x86, through a series of ugly hacks.  In combination with
-features such as memory encryption, this keeps causing trouble and
-requires building additional hacks on top.
-
-Chances are that this is only really used for 32-bit machines, as the
-usual users of this were dosemu, svgalib or ancient XFree86 versions,
-none of which should be used on 64-bit kernels any more.
-
-Remove both the custom devmem_is_allowed() and the custom
-xlate_dev_mem_ptr() on 64-bit kernels, and use the normal implementation
-based on phys_to_virt() instead for read/write access on the linear
-map.
-
-As a result, this makes x86-64 behave more like the other architecture
-on /dev/mem, allowing read/write access only on actual system RAM and
-only when CONFIG_STRICT_DEVMEM is disabled, while mmap() can be use
-on MMIO pages with the normal restrictions.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-Unlike the other two patches in this series, this one is expected to
-change the behavior on x86-64 kernels, which has the risk of
-regressions, but seems worthwhile to me.
-
-Are there any reasons left for keeping these hacks?
----
- arch/x86/Kconfig          | 3 ++-
- arch/x86/include/asm/io.h | 3 ++-
- arch/x86/mm/init.c        | 4 +++-
- arch/x86/mm/ioremap.c     | 2 ++
- 4 files changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 47a3cd5ffc4f..635328b57e35 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -85,7 +85,7 @@ config X86
- 	select ARCH_HAS_CURRENT_STACK_POINTER
- 	select ARCH_HAS_DEBUG_VIRTUAL
- 	select ARCH_HAS_DEBUG_VM_PGTABLE	if !X86_PAE
--	select ARCH_HAS_DEVMEM_IS_ALLOWED
-+	select ARCH_HAS_DEVMEM_IS_ALLOWED	if !X86_64
- 	select ARCH_HAS_DMA_OPS			if GART_IOMMU || XEN
- 	select ARCH_HAS_EARLY_DEBUG		if KGDB
- 	select ARCH_HAS_ELF_RANDOMIZE
-@@ -180,6 +180,7 @@ config X86
- 	select GENERIC_IRQ_PROBE
- 	select GENERIC_IRQ_RESERVATION_MODE
- 	select GENERIC_IRQ_SHOW
-+	select GENERIC_LIB_DEVMEM_IS_ALLOWED	if X86_64
- 	select GENERIC_PENDING_IRQ		if SMP
- 	select GENERIC_SMP_IDLE_THREAD
- 	select GENERIC_TIME_VSYSCALL
-diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
-index 367d45755f85..c1ecca34f28d 100644
---- a/arch/x86/include/asm/io.h
-+++ b/arch/x86/include/asm/io.h
-@@ -285,11 +285,12 @@ BUILDIO(l, u32)
- #define outsw outsw
- #define outsl outsl
- 
-+#ifdef CONFIG_X86_32
- extern void *xlate_dev_mem_ptr(phys_addr_t phys);
- extern void unxlate_dev_mem_ptr(phys_addr_t phys, void *addr);
--
- #define xlate_dev_mem_ptr xlate_dev_mem_ptr
- #define unxlate_dev_mem_ptr unxlate_dev_mem_ptr
-+#endif
- 
- extern int ioremap_change_attr(unsigned long vaddr, unsigned long size,
- 				enum page_cache_mode pcm);
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index aa56d9ac0b8f..16d0f242f0de 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -856,11 +856,12 @@ void __init poking_init(void)
- 	pte_unmap_unlock(ptep, ptl);
- }
- 
-+#ifdef CONFIG_X86_32
- /*
-  * devmem_is_allowed() checks to see if /dev/mem access to a certain address
-  * is valid. The argument is a physical page number.
-  *
-- * On x86, access has to be given to the first megabyte of RAM because that
-+ * On x86-32, access has to be given to the first megabyte of RAM because that
-  * area traditionally contains BIOS code and data regions used by X, dosemu,
-  * and similar apps. Since they map the entire memory range, the whole range
-  * must be allowed (for mapping), but any areas that would otherwise be
-@@ -897,6 +898,7 @@ int devmem_is_allowed(unsigned long pagenr)
- 
- 	return 1;
- }
-+#endif
- 
- void free_init_pages(const char *what, unsigned long begin, unsigned long end)
- {
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index 11b4ea7d7fa5..1e51d1c245bf 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -509,6 +509,7 @@ void *arch_memremap_wb(phys_addr_t phys_addr, size_t size, unsigned long flags)
- 	return (void __force *)ioremap_encrypted(phys_addr, size);
- }
- 
-+#ifdef CONFIG_X86_32
- /*
-  * Convert a physical pointer to a virtual kernel pointer for /dev/mem
-  * access
-@@ -533,6 +534,7 @@ void unxlate_dev_mem_ptr(phys_addr_t phys, void *addr)
- {
- 	memunmap((void *)((unsigned long)addr & PAGE_MASK));
- }
-+#endif
- 
- #ifdef CONFIG_AMD_MEM_ENCRYPT
- /*
--- 
-2.39.5
-
+Not just the majority. For all of these kvmalloc allocations kmalloc
+will be tried first and vmalloc will be used only if the former
+failed: https://elixir.bootlin.com/linux/v6.14.7/source/mm/util.c#L665
+That's why I think this should not regress normal case when slab has
+enough space to satisfy the allocation.
 
