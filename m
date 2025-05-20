@@ -1,130 +1,110 @@
-Return-Path: <linux-kernel+bounces-656045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF69AABE0E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:41:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B59F6ABE0FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5C073A5701
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:41:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 014337AF453
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B20A26F473;
-	Tue, 20 May 2025 16:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E0527A121;
+	Tue, 20 May 2025 16:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="O4O+QXIT"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/FHzbIR"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4E01C8603
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 16:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B67248F46;
+	Tue, 20 May 2025 16:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747759294; cv=none; b=P49lWdFONEHKdXW1ZjMTurkxYRj33Fvty5DCLRiKD1TPpFmu/oVszDd7S5v7qOQURlRK/XjzLpOK6MsKbTLobfojE1Ot9bIv0fd9Q3jc+FSdb8N8FpiFOBQ7Hj1QSCYbyHRPIi/OTmmk9WNqpAm76Yo2tSsTpv/58gX8/GFlZN4=
+	t=1747759492; cv=none; b=itZdPzwqVDKwZBXTty81f1ztG9JbixOWhhquf9lu3/optSlZ0EEn7pFBFAF+TGgri0XVtts+wk94g5eQYzYqF95N4sx3bXleZZpR7XWwntD2oh6ic7DFLLOJWWLVPR+IeB2bwme1ETPp66nwbHbsAkYX3TT6ADUoYdpwhGjUJNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747759294; c=relaxed/simple;
-	bh=Lk4YRXtXRsvB/RhdeZ5uh98f9tYT1dI73CFFgqPX/9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SJcG6TWs70Ol4l1yLPLiCyst1Y8l0m+zrFXqYFtbeQ1JZhX2sm7kfUJXiIi6q2IHjc7HltpqCbyOpAFZy+stDZllfLwfv3yKen/y4wsae+EbG0d3kTMb/i7kkoZki09btrM5TTHM8ZXXxJip1gHOOC864WTtKqGgW1K03pIr5EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=O4O+QXIT; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 20 May 2025 12:41:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747759288;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yesL9v5oI+2cUm8MiDnev15NKhDO2Hb+odQB+4YCNWM=;
-	b=O4O+QXITIhBx+t//BHiXt6DJlx9SEukou54zmJlhbo6vcJIRGOe1ybUjFRTse5adKBXqIn
-	jOoXYXwHmgeHt3BG99WVkpXi5c4c/o+bbowVaRkHcf2UIvsAqw6pddn7EvyIvVtKFDgJlk
-	XTVB+HRg/zke9xNpjRSoyLUL0idIl1U=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Usama Arif <usamaarif642@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, hannes@cmpxchg.org, shakeel.butt@linux.dev, vlad.wing@gmail.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH 1/2] mm: slub: allocate slab object extensions
- non-contiguously
-Message-ID: <sfh57nqbhxaycdlyitiughqc7ul3xuix5kis65l4grrnxwfqz3@gch2dlf3fnxo>
-References: <20250520122547.1317050-1-usamaarif642@gmail.com>
- <3divtzm4iapcxwbzxlmfmg3gus75n3rqh43vkjnog456jm2k34@f3rpzvcfk3p6>
- <6d015d91-e74c-48b3-8bc3-480980a74f9b@gmail.com>
- <b696e3c2-3d96-4729-9e07-87bb644f145b@gmail.com>
- <CAJuCfpEL__bRSbVWATs0qbNF3E2ZS_n7banhRxU01FFT2aTPAQ@mail.gmail.com>
+	s=arc-20240116; t=1747759492; c=relaxed/simple;
+	bh=xWCsQzdrdiPokZKnGHhLi0nzidYVTPQvwDy4E6Ruzrk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZCtfsk019pY7irAg9u/dOezRm+l/lO24rUISapwXhxb+JNBUfIEuSmsW9+s2tLuEQbrmGxRAskRWf+ao+dkD6/rKLWrWUK4z+SFTmitQpaIWXlZra2RfPlMxynS8ZI9LoH0P5ZCssmcGeZHdXyWkS07Rfd74PiQn+oxLBBcjMbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B/FHzbIR; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-233b1e4376fso789215ad.0;
+        Tue, 20 May 2025 09:44:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747759490; x=1748364290; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=raaMPey0rkHKajk8tyVYlWOb4mxfJ4ZQ+4vrv9/8SeA=;
+        b=B/FHzbIRlmLqUfp0Wgm7eYyKx0xWOtTNo0KaQxRKucEi499VEYvzDCD4AhHd+JfV9y
+         APOqpp/g/DiofdzI546kBqRcSs9DDGcHE22aybZmYbLjPz3ndGbndr9vbBqTaUmIu46X
+         z54LNcYWn3cJ+eFhVtdFb41/t9Rge5PcKOqc9dMs7G5vNBXDcUrG0tmeE3Tfir+/bG4W
+         +KHhvc44AfbTDimw1NsXc3+o3QzKUUyp312zQOLZMes94etIvBzlzDN2BJu4Asp3cUhR
+         /x8rauEdJ3YIcpDytcBeWkBRBISYMzs0FBBJ82JY+zHbDsHdFqAiT6fAY1uNc1LO/HmY
+         jI+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747759490; x=1748364290;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=raaMPey0rkHKajk8tyVYlWOb4mxfJ4ZQ+4vrv9/8SeA=;
+        b=WSACu6KnFUyBFAUgsAobWrLL3aEeQrfMGsqUIGdssTrAs7/uNYgRZXGCy50Ou6Ivrt
+         CkrVdmJR35p7OgVWwvYcjLQoHvSe1+wloh6B+8/aQejvhTSCS7EkylcOdQ0aT2xhGbww
+         Y+A5JLwe2xfETpiH2bDRsoS/Rs4Xk5hg+qzXSF3L4oalQLsMo1dk2tP50XUhw28IHWGA
+         O3i0jfLHaKTJkUwry4FcIeDihGQdGd2pVXWhTIrq6MU5RzU3JzzkMYG6hDM8Ysze+5Tx
+         +4KeLTTjLb9AfT0YlW4HIf0IKj5jHwfsFVrNL+YYWGEKIVoo7A7JhPetfUHPXjOVGmkf
+         nB3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWmQVtuoMlHjxB9vtlwW8oF9npLC2BLXywW3OIaZv1N8RzBx+JzxaCgAwmMbHwdJ4PVI7gqfQ+7izT1iCB6@vger.kernel.org, AJvYcCXOBemq+7inQYZl/ioBjq//EefoFvgQwQTlbtVpY8FV3pAkNgIl+upf4Ff+an3pfN+4WAJNKQ6HM0s6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlEamF15Yl9dymDKfrrdmCohf3rBu0v1pXPwINkzn+UIdMK+qr
+	fr4yLf0R67HvNugi5hA1AeZESW2yl62VbF8+62X3MAeVk9hEqedZejKQ
+X-Gm-Gg: ASbGncvhlFvVatsde4a3zZ1UgvWPnJNyxER4Qcvtj40hIOFndH8bgshfLYR1P79Kna8
+	tCTtNFc92neA5rSJuhdtvk9wxNQfrE3KqwE3B3sHZr1ksLiBdPGAr81GmsI9MUEcjVrN2ZDL7+5
+	Gbh2UYuly37fUDfbPKgONQtjB21wZ+YZxh7fY4pY9dYCSHn8dG06fXoTt5VAeorHvCxz4+4AXbx
+	LsRS3rFcJKJzLHgwj0UYCfZI3uuKT+6J69yDjnU7rAZxj6mKoPbZdd4fKXdbAC5ppPXvXzX/+Vj
+	80843b/GsJO1ylbJiRmEcVtTHYkGHC++vV889i0ihZF4NZ48Aw==
+X-Google-Smtp-Source: AGHT+IHNEJ2zAnt6MeP+t81APpuG8oTNngDxsuW7MvC7FQ43V9hR2igZnzg4OfilzwLB4OwAIV00xw==
+X-Received: by 2002:a17:902:e803:b0:22e:50f6:b95b with SMTP id d9443c01a7336-231d438b517mr258326255ad.11.1747759490279;
+        Tue, 20 May 2025 09:44:50 -0700 (PDT)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-233abb99a06sm3548205ad.254.2025.05.20.09.44.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 09:44:49 -0700 (PDT)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pengyu Luo <mitltlatltl@gmail.com>
+Subject: [PATCH 0/2] arm64: dts: qcom: Introduce Oneplus Pad Pro
+Date: Wed, 21 May 2025 00:42:06 +0800
+Message-ID: <20250520164208.516675-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpEL__bRSbVWATs0qbNF3E2ZS_n7banhRxU01FFT2aTPAQ@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Tue, May 20, 2025 at 08:20:38AM -0700, Suren Baghdasaryan wrote:
-> On Tue, May 20, 2025 at 7:13 AM Usama Arif <usamaarif642@gmail.com> wrote:
-> >
-> >
-> >
-> > On 20/05/2025 14:46, Usama Arif wrote:
-> > >
-> > >
-> > > On 20/05/2025 14:44, Kent Overstreet wrote:
-> > >> On Tue, May 20, 2025 at 01:25:46PM +0100, Usama Arif wrote:
-> > >>> When memory allocation profiling is running on memory bound services,
-> > >>> allocations greater than order 0 for slab object extensions can fail,
-> > >>> for e.g. zs_handle zswap slab which will be 512 objsperslab x 16 bytes
-> > >>> per slabobj_ext (order 1 allocation). Use kvcalloc to improve chances
-> > >>> of the allocation being successful.
-> > >>>
-> > >>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> > >>> Reported-by: Vlad Poenaru <vlad.wing@gmail.com>
-> > >>> Closes: https://lore.kernel.org/all/17fab2d6-5a74-4573-bcc3-b75951508f0a@gmail.com/
-> > >>> ---
-> > >>>  mm/slub.c | 2 +-
-> > >>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >>>
-> > >>> diff --git a/mm/slub.c b/mm/slub.c
-> > >>> index dc9e729e1d26..bf43c403ead2 100644
-> > >>> --- a/mm/slub.c
-> > >>> +++ b/mm/slub.c
-> > >>> @@ -1989,7 +1989,7 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
-> > >>>     gfp &= ~OBJCGS_CLEAR_MASK;
-> > >>>     /* Prevent recursive extension vector allocation */
-> > >>>     gfp |= __GFP_NO_OBJ_EXT;
-> > >>> -   vec = kcalloc_node(objects, sizeof(struct slabobj_ext), gfp,
-> > >>> +   vec = kvcalloc_node(objects, sizeof(struct slabobj_ext), gfp,
-> > >>>                        slab_nid(slab));
-> > >>
-> > >> And what's the latency going to be on a vmalloc() allocation when we're
-> > >> low on memory?
-> > >
-> > > Would it not be better to get the allocation slighly slower than to not get
-> > > it at all?
-> >
-> > Also a majority of them are less than 1 page. kvmalloc of less than 1 page
-> > falls back to kmalloc. So vmalloc will only be on those greater than 1 page
-> > size, which are in the minority (for e.g. zs_handle, request_sock_subflow_v6,
-> > request_sock_subflow_v4...).
-> 
-> Not just the majority. For all of these kvmalloc allocations kmalloc
-> will be tried first and vmalloc will be used only if the former
-> failed: https://elixir.bootlin.com/linux/v6.14.7/source/mm/util.c#L665
-> That's why I think this should not regress normal case when slab has
-> enough space to satisfy the allocation.
+The OnePlus Pad Pro is an Android tablet based on the Qualcomm SM8650
+platform. Its device codename is "caihong". These patches adds an
+initial devicetree for basic functionality.
 
-And you really should consider just letting the extension vector
-allocation fail if we're under that much memory pressure.
+Pengyu Luo (2):
+  dt-bindings: arm: qcom: Add Oneplus Pad Pro (caihong)
+  arm64: dts: qcom: sm8650: Add support for Oneplus Pad Pro (caihong)
 
-Failing allocations is an important mechanism for load shedding,
-otherwise stuff just piles up - it's a big cause of our terrible
-behaviour when we're thrashing.
+ .../devicetree/bindings/arm/qcom.yaml         |   1 +
+ .../boot/dts/qcom/sm8650-oneplus-caihong.dts  | 960 ++++++++++++++++++
+ 2 files changed, 961 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/sm8650-oneplus-caihong.dts
 
-It's equivalent to bufferbloat in the networking world.
+-- 
+2.49.0
+
 
