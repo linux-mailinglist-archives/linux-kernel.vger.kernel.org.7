@@ -1,151 +1,223 @@
-Return-Path: <linux-kernel+bounces-655278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E92ABD344
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:24:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B704ABD34B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F37B51894097
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:24:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D12416DB0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF5C26988E;
-	Tue, 20 May 2025 09:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34AC2673B5;
+	Tue, 20 May 2025 09:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="G9824tmF"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mfGvtzNB"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7872263F44;
-	Tue, 20 May 2025 09:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6DF25B1C5;
+	Tue, 20 May 2025 09:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747733006; cv=none; b=fZCjc9ap78jlaab72KpbKJ/lLj0bJ0w+VA2iTm6dskEUqPIf2zF07UVkUBzaNLrufbbWIjz/aY/cPsbxgb75waf169J1sLtcKOvhvdAffUkeMdDMweodXq7Ujhgu9/SnF8w4ih6g+6H2fBun3PqWs66YLQuGL6qLL24QfNVKiXc=
+	t=1747733096; cv=none; b=uQjATmDwsI3e9UzrE3xvVtvoFSc4XPBzGIz3sCySoaxj+Sw66OYhBUrhabx+5HjFVpgZxhhvsHKTfirZ6jDN6DiVe7P+qFOCugJ9mabRKGNTm1Kz3W6MLGsuWzWBHUVCXIINhp9FixKh8naFOdW+ACp9PNOa4yiVtfP6Sfn6zgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747733006; c=relaxed/simple;
-	bh=f6uMN/qfgFSUel7hrqq9RGFK8nG0PVaWF4Jy5LR6W4o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZT+DvbOt2PxcU/ai7DO5JlwNQDEAjEI1klhmYzIE/CiZER9RgXWhTMrB48BI6rDNPZMS5nPtF+yitH22LU0KBCjB0AHU31ddjIYElKoOjDrqyucLkqVTFNR2o0jqOVtfIEq4JF8LvmwFuoH3Gnk2XsKK0FUUBGQdE2UlZ+EUih8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=G9824tmF; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54JHr1GM001904;
-	Tue, 20 May 2025 02:23:01 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=MXCKhHkSP7si1f7Y5i5VsCh
-	4Ng2sFD41PgdisHGznVE=; b=G9824tmFdPal5EJ89rSbJSHy7QQJb1dM9uN/ODC
-	sjcIjm16bCahjosMmYzj3tEIdoDh1EcfQn+1eq+BmgMTtFf+78xaBBbVGst19DjA
-	mMqKyTRfHMV+AehpEF3Sp0LEWDgNi/ZOSk9Cqiro+jZtm9NlrShVGxEOjqI/viQC
-	JDbDHPVcCfcd0am+JGzMy6oIE7mL1ZgmFJVma5C8J1iKMw2U7VcweNUv+x6r4zA7
-	9wmkyZ79hjN7mnryHsmxGh89VV/k56rYwypuMvD9U537uXMd0+shKPkfBlyf8owy
-	5nvUrZP+Mhp1OoFzUYebUWHkOr7rK62Y+yE/vyHG82j1njA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46q46fcgq5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 May 2025 02:23:01 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 20 May 2025 02:23:00 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 20 May 2025 02:23:00 -0700
-Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
-	by maili.marvell.com (Postfix) with ESMTP id 2EC0F3F7061;
-	Tue, 20 May 2025 02:22:55 -0700 (PDT)
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Hariprasad Kelam <hkelam@marvell.com>,
-        Sunil Goutham
-	<sgoutham@marvell.com>,
-        Geetha sowjanya <gakula@marvell.com>,
-        "Subbaraya
- Sundeep" <sbhatta@marvell.com>,
-        Bharat Bhushan <bbhushan2@marvell.com>,
-        "Andrew Lunn" <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>,
-        Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: [net-next] octeontx2-pf: QOS: Perform cache sync on send queue teardown
-Date: Tue, 20 May 2025 14:52:48 +0530
-Message-ID: <20250520092248.1102707-1-hkelam@marvell.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747733096; c=relaxed/simple;
+	bh=8lqQQP4T8U24N8XgiVMBAB9dvBkyWQckbVdZ4ZEwckU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OgsawpDf4yuLwQEUHFyTFAfAU75eh+j6RW15bf+0G8raxUHD1q93Z+EJhpOPYCfz2hxlVgLaMNmuoNJ23KR69JAQ+5XvK0xyrODPCu1QHatxpDLnKS2+Uw/Ycdn+5P4eehLVACJcCxvuzitkhuwiN/ElAfBep2GYnofp1d7UdBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mfGvtzNB; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6f8cb6b3340so45299006d6.1;
+        Tue, 20 May 2025 02:24:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747733093; x=1748337893; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xx//TkYKG/87T6qfujpj4GQczz4RSpoekiQT+JUTLAs=;
+        b=mfGvtzNBMuMptWP++LSaQ1dMlqMX/AQ5CSVcMOohu4y+gIsyv7tHZDqVsE1CkBy8Bx
+         qj6lOiZO15AMLWCG0sMXDPQGls71ayREZq6m6l9U4G58QU1aPXAQWwk1cz6/qklCmf4j
+         mEGOEMzjkIbGZhHPbbDQAOIwQgxGj2BQP87kjeJXEDzJB4xzqA6I1w4ik9wx20Dvsbml
+         b5jEdu3LezhA3lSgyoQXA0tBvoRRhpMFnPchvHjwZRo0QssOSXieffKk/mxpp/MCC44W
+         ju/nI3d0udaZ/rjMp5X0zXCJ+1DkG1iY2DFOfdkQ8TuxULh8IXIL7XtDWE8jtBwuy/x/
+         sgBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747733093; x=1748337893;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xx//TkYKG/87T6qfujpj4GQczz4RSpoekiQT+JUTLAs=;
+        b=CFfZi+oAouBeo/R8F3gVyKRaXNkB7A5AiWEDJ16GoE6sEtMRTHhxABHJi+yYXX2J2N
+         cOeS4tzhuicGt8tXG713ZxOnsm6zfI0ndct2jl8Kyw+Nmneh8IfPBiJ3fQE7ougwsBPT
+         8woSeLCP5gTxe9XP8AozPUNusflIfENeOe3rMf9RGP/1ooqBwTwOIX2aFpHBd4Swp9Sw
+         ii7nrQCTu1SJ4Lv1ZGAimDCY8IG8kk9Tfgx+0j1fhheFYigoMbsciNSllqwi68wmdvq8
+         fozZdXPfCwZ3Yv7ylGnUzo8pkqQ1DpErYWSkMTtLb5mgkDH+daQN2zjKOMWRgjWH0Qsa
+         PXyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmqr487JOZtRYOPzco+RT2KAHjpx+Os9hcrHBAt+wBfMGhpqfPM0Pw4MmyCnnGG37EhhIFDb4235q9MwTPx4Kc@vger.kernel.org, AJvYcCVyIQiOmWoXolyT6IeebjKnC7HNf3EqwezrBD5yoEQXTfgwVp6qp/najBp9I51VRIc1XSFxyTgCvWReQO3I@vger.kernel.org, AJvYcCWW9feh+uweAYJMc5/Uiapn3tBmYG7rixCu8BuiU8R6vPp0K+pdvN0RIbphHBIuNx3fTZ6s/dkclzI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydMj/DUzC+vly4eA1i8KkdjKJhtXLyMjaVhf+Xu8xttiDJu4U2
+	mmhN0KL7KslJL/Um/SXmVunTwSZ1bk4aa4vRFXeG0raKgES0H2u1j7XbaG8NTjktm3+TeH+/2Zf
+	hgtameIHv9GzQNYUgW02gZ8F+jJOx9I4=
+X-Gm-Gg: ASbGncvTp5K7HGWFuzvee+fijXTwy9MiUP60bdoiBmrw3s/TMlIWzWvVZgpO5CB+q3d
+	tKuzdBDDtUTOt+8ntAksfLgWpEHYR7p9SwzV9VThvkZ9vfilU2PFwarmsUdwxLAEApBdHZRDHBt
+	HV791qHdV+bpW5L4I3Mr95jEpGH6LsOCHq7g==
+X-Google-Smtp-Source: AGHT+IGgparnaxmNvuHM/lrDoY1fvAKD0ORwmu9fSSm7EZPsILX0++SVjr2wKYyuavU6HNxWcE8IYtysoLY8rG5k1Go=
+X-Received: by 2002:ad4:5aa3:0:b0:6f5:38a2:52dd with SMTP id
+ 6a1803df08f44-6f8b2d12d21mr267363036d6.31.1747733093356; Tue, 20 May 2025
+ 02:24:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=b8uy4sGx c=1 sm=1 tr=0 ts=682c49f5 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=QY2NK7KhZwvVfJmNNlwA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: R1i0RygRbEliO-PJRScBckPEThoCfpn0
-X-Proofpoint-ORIG-GUID: R1i0RygRbEliO-PJRScBckPEThoCfpn0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDA3NiBTYWx0ZWRfX7QMj2kpUSwTk L1yfvBbF9eKdCrM9iEXvV7YCB40vXq/Ha9mVhE1fj7rirMGRLE+86cPcnKoIUoeB0r2rgPOrTG7 OBhCCi2Ig8d4hJ8YjjfgQHOryzemT21MSuOfBkk0xSaGUOx9qyzkhLqAa9YhyrYWlkHYxPU9Hb1
- nbKfFrIxSB+jRG/9HgdaPfKMVcA9u9GmnRsLxUm6UZJi29WyUClTVCV7ywoaQNgnOttXOtmNIl5 XVeT0DrbouKJP+CXiqxXwv846jOBU+8sllNslYoKC4MmlrHRlP7AAlKlfCdOEciWqewYHM/G0eC UOrIFOtQKobS5VCy2BKXK1aH+MexCTcDfJ9Nsun2+92VJCgRMc7ok7AEQa2cvCJ1hhMJ34DffT3
- 54IWn37T/KGBjfYc1Tr1Jrt1emfxUr+H3DcktuWHbvnVtZ7F38G5XzXkmLXMv0EZ2xvWYww2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-20_04,2025-05-16_03,2025-03-28_01
+References: <20250515033857.132535-1-npache@redhat.com>
+In-Reply-To: <20250515033857.132535-1-npache@redhat.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Tue, 20 May 2025 17:24:16 +0800
+X-Gm-Features: AX0GCFuzkEn4ubaObVckXJemP0oCOx73QZ9HTjLQbxewFSpT9IkcJKm3ftBH9v4
+Message-ID: <CALOAHbAa7DY6+hO4RJtjg-MS+cnUmsiPXX8KS1MKSfgy6HLYAQ@mail.gmail.com>
+Subject: Re: [PATCH v6 0/4] mm: introduce THP deferred setting
+To: Nico Pache <npache@redhat.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	rientjes@google.com, hannes@cmpxchg.org, lorenzo.stoakes@oracle.com, 
+	rdunlap@infradead.org, mhocko@suse.com, Liam.Howlett@oracle.com, 
+	zokeefe@google.com, surenb@google.com, jglisse@google.com, cl@gentwo.org, 
+	jack@suse.cz, dave.hansen@linux.intel.com, will@kernel.org, tiwai@suse.de, 
+	catalin.marinas@arm.com, anshuman.khandual@arm.com, dev.jain@arm.com, 
+	raquini@redhat.com, aarcange@redhat.com, kirill.shutemov@linux.intel.com, 
+	yang@os.amperecomputing.com, thomas.hellstrom@linux.intel.com, 
+	vishal.moola@gmail.com, sunnanyong@huawei.com, usamaarif642@gmail.com, 
+	wangkefeng.wang@huawei.com, ziy@nvidia.com, shuah@kernel.org, 
+	peterx@redhat.com, willy@infradead.org, ryan.roberts@arm.com, 
+	baolin.wang@linux.alibaba.com, baohua@kernel.org, david@redhat.com, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
+	corbet@lwn.net, akpm@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-QOS is designed to create a new send queue whenever  a class
-is created, ensuring proper shaping and scheduling. However,
-when multiple send queues are created and deleted in a loop,
-SMMU errors are observed.
+On Thu, May 15, 2025 at 11:41=E2=80=AFAM Nico Pache <npache@redhat.com> wro=
+te:
+>
+> This series is a follow-up to [1], which adds mTHP support to khugepaged.
+> mTHP khugepaged support is a "loose" dependency for the sysfs/sysctl
+> configs to make sense. Without it global=3D"defer" and  mTHP=3D"inherit" =
+case
+> is "undefined" behavior.
+>
+> We've seen cases were customers switching from RHEL7 to RHEL8 see a
+> significant increase in the memory footprint for the same workloads.
+>
+> Through our investigations we found that a large contributing factor to
+> the increase in RSS was an increase in THP usage.
+>
+> For workloads like MySQL, or when using allocators like jemalloc, it is
+> often recommended to set /transparent_hugepages/enabled=3Dnever. This is
+> in part due to performance degradations and increased memory waste.
+>
+> This series introduces enabled=3Ddefer, this setting acts as a middle
+> ground between always and madvise. If the mapping is MADV_HUGEPAGE, the
+> page fault handler will act normally, making a hugepage if possible. If
+> the allocation is not MADV_HUGEPAGE, then the page fault handler will
+> default to the base size allocation. The caveat is that khugepaged can
+> still operate on pages that are not MADV_HUGEPAGE.
+>
+> This allows for three things... one, applications specifically designed t=
+o
+> use hugepages will get them, and two, applications that don't use
+> hugepages can still benefit from them without aggressively inserting
+> THPs at every possible chance. This curbs the memory waste, and defers
+> the use of hugepages to khugepaged. Khugepaged can then scan the memory
+> for eligible collapsing. Lastly there is the added benefit for those who
+> want THPs but experience higher latency PFs. Now you can get base page
+> performance at the PF handler and Hugepage performance for those mappings
+> after they collapse.
+>
+> Admins may want to lower max_ptes_none, if not, khugepaged may
+> aggressively collapse single allocations into hugepages.
+>
+> TESTING:
+> - Built for x86_64, aarch64, ppc64le, and s390x
+> - selftests mm
+> - In [1] I provided a script [2] that has multiple access patterns
+> - lots of general use.
+> - redis testing. This test was my original case for the defer mode. What =
+I
+>    was able to prove was that THP=3Dalways leads to increased max_latency
+>    cases; hence why it is recommended to disable THPs for redis servers.
+>    However with 'defer' we dont have the max_latency spikes and can still
+>    get the system to utilize THPs. I further tested this with the mTHP
+>    defer setting and found that redis (and probably other jmalloc users)
+>    can utilize THPs via defer (+mTHP defer) without a large latency
+>    penalty and some potential gains. I uploaded some mmtest results
+>    here[3] which compares:
+>        stock+thp=3Dnever
+>        stock+(m)thp=3Dalways
+>        khugepaged-mthp + defer (max_ptes_none=3D64)
+>
+>   The results show that (m)THPs can cause some throughput regression in
+>   some cases, but also has gains in other cases. The mTHP+defer results
+>   have more gains and less losses over the (m)THP=3Dalways case.
+>
+> V6 Changes:
+> - nits
+> - rebased dependent series and added review tags
+>
+> V5 Changes:
+> - rebased dependent series
+> - added reviewed-by tag on 2/4
+>
+> V4 Changes:
+> - Minor Documentation fixes
+> - rebased the dependent series [1] onto mm-unstable
+>     commit 0e68b850b1d3 ("vmalloc: use atomic_long_add_return_relaxed()")
+>
+> V3 Changes:
+> - Combined the documentation commits into one, and moved a section to the
+>   khugepaged mthp patchset
+>
+> V2 Changes:
+> - base changes on mTHP khugepaged support
+> - Fix selftests parsing issue
+> - add mTHP defer option
+> - add mTHP defer Documentation
+>
+> [1] - https://lore.kernel.org/all/20250515032226.128900-1-npache@redhat.c=
+om/
+> [2] - https://gitlab.com/npache/khugepaged_mthp_test
+> [3] - https://people.redhat.com/npache/mthp_khugepaged_defer/testoutput2/=
+output.html
+>
+> Nico Pache (4):
+>   mm: defer THP insertion to khugepaged
+>   mm: document (m)THP defer usage
+>   khugepaged: add defer option to mTHP options
+>   selftests: mm: add defer to thp setting parser
+>
+>  Documentation/admin-guide/mm/transhuge.rst | 31 +++++++---
+>  include/linux/huge_mm.h                    | 18 +++++-
+>  mm/huge_memory.c                           | 69 +++++++++++++++++++---
+>  mm/khugepaged.c                            |  8 +--
+>  tools/testing/selftests/mm/thp_settings.c  |  1 +
+>  tools/testing/selftests/mm/thp_settings.h  |  1 +
+>  6 files changed, 106 insertions(+), 22 deletions(-)
+>
+> --
+> 2.49.0
+>
+>
 
-This patch addresses the issue by performing an data cache sync
-during the teardown of QOS send queues.
+Hello Nico,
 
-Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
----
- .../ethernet/marvell/octeontx2/nic/qos_sq.c   | 22 +++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Upon reviewing the series, it occurred to me that BPF could solve this
+more cleanly. Adding a 'tva_flags' parameter to the BPF hook would
+handle this case and future scenarios without requiring new modes. The
+BPF mode could then serve as a unified solution.
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/qos_sq.c b/drivers/net/ethernet/marvell/octeontx2/nic/qos_sq.c
-index c5dbae0e513b..58d572ce08ef 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/qos_sq.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/qos_sq.c
-@@ -256,6 +256,26 @@ int otx2_qos_enable_sq(struct otx2_nic *pfvf, int qidx)
- 	return err;
- }
- 
-+static int otx2_qos_nix_npa_ndc_sync(struct otx2_nic *pfvf)
-+{
-+	struct ndc_sync_op *req;
-+	int rc;
-+
-+	mutex_lock(&pfvf->mbox.lock);
-+
-+	req = otx2_mbox_alloc_msg_ndc_sync_op(&pfvf->mbox);
-+	if (!req) {
-+		mutex_unlock(&pfvf->mbox.lock);
-+		return -ENOMEM;
-+	}
-+
-+	req->nix_lf_tx_sync = true;
-+	req->npa_lf_sync = true;
-+	rc = otx2_sync_mbox_msg(&pfvf->mbox);
-+	mutex_unlock(&pfvf->mbox.lock);
-+	return rc;
-+}
-+
- void otx2_qos_disable_sq(struct otx2_nic *pfvf, int qidx)
- {
- 	struct otx2_qset *qset = &pfvf->qset;
-@@ -285,6 +305,8 @@ void otx2_qos_disable_sq(struct otx2_nic *pfvf, int qidx)
- 
- 	otx2_qos_sqb_flush(pfvf, sq_idx);
- 	otx2_smq_flush(pfvf, otx2_get_smq_idx(pfvf, sq_idx));
-+	/* NIX/NPA NDC sync */
-+	otx2_qos_nix_npa_ndc_sync(pfvf);
- 	otx2_cleanup_tx_cqes(pfvf, cq);
- 
- 	mutex_lock(&pfvf->mbox.lock);
--- 
-2.34.1
-
+--=20
+Regards
+Yafang
 
