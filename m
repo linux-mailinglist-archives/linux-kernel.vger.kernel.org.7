@@ -1,126 +1,106 @@
-Return-Path: <linux-kernel+bounces-656307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E46ABE43A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:59:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00AF4ABE442
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 058061BC29D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:00:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A83484C74C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32030283144;
-	Tue, 20 May 2025 19:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eccU5JfO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B97C2853FF;
+	Tue, 20 May 2025 20:00:53 +0000 (UTC)
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853821FFC54;
-	Tue, 20 May 2025 19:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21ED428313A;
+	Tue, 20 May 2025 20:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747771179; cv=none; b=VV2Odl2P6CQk7OH+0nxnq0BbRdDNuaaNlZymeGr63ht62VpmfRmWFNpEC2Pms3nrDv+jPasrxNz+nBkcsWcgBXUnLEHaViy0oF75Aj8Fy00qf5r3IExr8ZpLB7ndO7vjkXI6VAX9Ycy2xF8O8+XLNygQOloTVghz34U0eYxe+RQ=
+	t=1747771252; cv=none; b=n1EWYkbUxdEl+5kMXt4fWyqnhTWHnH+yvMSyNjy3aY1eoUtPKknQNz6dkCScN4A6q+Ryxons7xhnqdPke/BTyvM5Vdn1bOFbOlCv2Gc96rubCNX5hk5rC5oDjhWIC4U3ZOZ/9vK8B4kHrc1sBzrgyElPaQ1HkG664t3S6pWMjZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747771179; c=relaxed/simple;
-	bh=pYVFlS69XDxsHN23lybt9RSWuBOvdx2W2TJ4J67ytOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oBD3Opurd9VjWOBsGc9NXlZrWD1OgRnQ36b/UTmggWuQcQIcJi8be9U+eiz43cT53uNPO9acoY5VoaT7+ZiHn8RbERS9gB4jVo8ldFrSLkaHYx3HATJ4/srTrQrdDLVZHrE0EL22V7Hy5QZjpNbUGZ0x672RyRWUHCZxFNr9QQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eccU5JfO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C674AC4CEE9;
-	Tue, 20 May 2025 19:59:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747771179;
-	bh=pYVFlS69XDxsHN23lybt9RSWuBOvdx2W2TJ4J67ytOo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eccU5JfOabmAf7qbz66mkoZeidMaFmn+BtKQqlt05ksQf5cbyiQ8YHrnIhRkvx2iV
-	 pLi3Uvm9kdSDCdv8k7fMO+kJzIyfz7vPOTN9Az0cmsEF91UJID6ecvKQQCVkQB8kRx
-	 DcrZh/S0v3v5xNwOVW3iysVp+5kBEyfqBifQVZlWGYteffmNeVV6iqNCDnO2QPhXeh
-	 3e9C/mVqJ8XGLz07WQORwxVl/2QUmFhM4tFD7Az7Nv8oXlW7fkpcoeZhMoI+wUZtid
-	 JpePLGkLIFBgKcbm9wwpSFRa343y45CPfdlOzj+rX/nYzJ1WXScoHyBb8OlqthNYvg
-	 dZuJbJ7cYFc2g==
-Date: Tue, 20 May 2025 14:59:36 -0500
-From: Rob Herring <robh@kernel.org>
-To: Charan Pedumuru <charan.pedumuru@gmail.com>
-Cc: Conor Dooley <conor@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: mmc: ti-omap: convert text based binding
- to json schema
-Message-ID: <20250520195936.GA1261173-robh@kernel.org>
-References: <20250519-ti-omap-v2-1-2a0dbc08fb9c@gmail.com>
- <20250519-unstamped-tabasco-05d9c7223289@spud>
- <314cdaf1-b989-4cae-a275-d962186bd46c@gmail.com>
+	s=arc-20240116; t=1747771252; c=relaxed/simple;
+	bh=3jMdP6nY+nDa5rerPzG+npZ7bqrZhfxIqKBZATbtr54=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KH1OXoctntXRKXNazEW2NAb6xddE/GgXYiqUb6KSFQsooClyCiuqfCav+lNeCFJm5ybRzNd1YpqHqSMCQ0OSvROLsHq9eZStdYQdwUnDGY/cKLSYopa6AoOS8bYc07iX/KVBHFx+TCsvnMHg5kOTLkf3dNBh9L0RdBi9X45+ji0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4b255P2WM7z9sST;
+	Tue, 20 May 2025 22:00:41 +0200 (CEST)
+From: Remo Senekowitsch <remo@buenzli.dev>
+To: Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>,
+	Remo Senekowitsch <remo@buenzli.dev>
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: [PATCH v5 0/9] More Rust bindings for device property reads
+Date: Tue, 20 May 2025 22:00:15 +0200
+Message-ID: <20250520200024.268655-1-remo@buenzli.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <314cdaf1-b989-4cae-a275-d962186bd46c@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 20, 2025 at 10:06:50AM +0530, Charan Pedumuru wrote:
-> 
-> 
-> On 19-05-2025 21:29, Conor Dooley wrote:
-> > On Mon, May 19, 2025 at 01:11:17PM +0000, Charan Pedumuru wrote:
-> >> Convert TI MMC host controller binding to YAML format.
-> >> Changes during Conversion:
-> >> - Add new properties 'dma', 'dma-names' under required.
-> >> - Define two separate phandles for 'dmas' in the examples.
-> >> - Include appropriate header file for interrupts and use
-> >>   it in the examples.
-> >>
-> >> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
-> >> ---
-> >> Changes in v2:
-> >> - Added include statement for irq interrupt controller and
-> >>   modified the interrupts under property to use header.
-> >> - Changed maintainer to Rob Herring.
-> >> - Defined two seperate phandles for 'dmas' under examples.
-> >> - Rename the YAML file name to the compatible 'ti,omap2420-mmc'.
-> >> - Added missing type and maxItems to 'ti,hwmods' under properties.
-> >> - Link to v1: https://lore.kernel.org/r/20250510-ti-omap-v1-1-588b0ccb1823@gmail.com
-> >> ---
-> >>  .../devicetree/bindings/mmc/ti,omap2420-mmc.yaml   | 64 ++++++++++++++++++++++
-> >>  Documentation/devicetree/bindings/mmc/ti-omap.txt  | 26 ---------
-> >>  2 files changed, 64 insertions(+), 26 deletions(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/mmc/ti,omap2420-mmc.yaml b/Documentation/devicetree/bindings/mmc/ti,omap2420-mmc.yaml
-> >> new file mode 100644
-> >> index 0000000000000000000000000000000000000000..195db77e0063b867f318ffc6b5f8811adb531515
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/mmc/ti,omap2420-mmc.yaml
-> >> @@ -0,0 +1,64 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/mmc/ti,omap2420-mmc.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: TI MMC host controller for OMAP1 and 2420
-> >> +
-> >> +description:
-> >> +  The MMC Host controller for TI OMAP1 and 2420 family provides
-> >> +  an interface for MMC, SD and SDIO types of memory cards.
-> >> +
-> >> +allOf:
-> >> +  - $ref: mmc-controller.yaml
-> >> +
-> >> +maintainers:
-> >> +  - Rob Herring <robh@kernel.org>
-> > 
-> > This patch looks fine, but I don't want to ack this with Rob's name
-> > there. Tony Lindgren <tony@atomide.com> wrote the original binding
-> > as far as I saw from a quick check, maybe he's a more suitable pick?
-> 
-> Sure, I will add Tony to the maintainers then.
+changes in v5:
+* Move rust/kernel/device/mod.rs back to rust/kernel/device.rs.
+* Reword some commit messages.
+* Leave property_present on Device for now to make merging easier.
+* Cleanup Rust platform driver sample.
+* Fix conflict with alloc-next tree.
+* Improve documentation and safety comments.
+* Seal the traits Property and PropertyInt.
+* Move more logic into the PropertyInt trait, making its methods safe.
 
-Replace, not add.
+Best regards,
+Remo
 
-Rob
+Remo Senekowitsch (9):
+  rust: device: Create FwNode abstraction for accessing device
+    properties
+  rust: device: Enable accessing the FwNode of a Device
+  rust: device: Add property_present() to FwNode
+  rust: device: Enable printing fwnode name and path
+  rust: device: Introduce PropertyGuard
+  rust: device: Implement accessors for firmware properties
+  rust: device: Add child accessor and iterator
+  rust: device: Add property_get_reference_args
+  samples: rust: platform: Add property read examples
+
+ MAINTAINERS                                  |   1 +
+ drivers/of/unittest-data/tests-platform.dtsi |   3 +
+ rust/helpers/helpers.c                       |   1 +
+ rust/helpers/property.c                      |   8 +
+ rust/kernel/device.rs                        |  17 +
+ rust/kernel/device/property.rs               | 578 +++++++++++++++++++
+ samples/rust/rust_driver_platform.rs         |  60 +-
+ 7 files changed, 667 insertions(+), 1 deletion(-)
+ create mode 100644 rust/helpers/property.c
+ create mode 100644 rust/kernel/device/property.rs
+
+-- 
+2.49.0
+
 
