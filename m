@@ -1,156 +1,122 @@
-Return-Path: <linux-kernel+bounces-656038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF62ABE0D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:35:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F888ABE0C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 832FF163F5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:34:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5A163A5F9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3707627AC48;
-	Tue, 20 May 2025 16:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D39C2701A0;
+	Tue, 20 May 2025 16:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="jnRibK+o"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GA6yiitB"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63ABE27BF95
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 16:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C604B1E5D;
+	Tue, 20 May 2025 16:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747758808; cv=none; b=OteO4qrvSYJVmUhKLNqxcmnRo1GWAUdQqgqkd0+UJNmXRt0K7gH/7usjTAQH50zNuA1InhXxKV+eGJM/cwMToJD7lUbt2y/Gal/dwQpqDWtxqddNCx90Z6+AbJHTrx9SX8n+544v7RMpLh1l8H2F08xVH6VAISROi+Bwtnn4WRU=
+	t=1747758789; cv=none; b=s62hZuX6gjvzvb3LxfXo26wPaQjdZM7kLpT1FgmvDylM0XzLRk4cNYaEBPTUtHUybWvs96nWSnAuKBav+ARMH0MnqY8mbRpv9b6x2iNgEYj59DCGWCpOCKx6Na1+O26p2Gbyxf+6ZqISMEnxgI8J/WJcgxKtb8XIM7xdeneND8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747758808; c=relaxed/simple;
-	bh=Vtcw7mINIlvUr04SjFTIlN54iDrSaPcKmCM119sSc1U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DI+zxp6Y8VAC6Zj5MWDVwT0kvEnNqLv2iqv8CMSeIdVnpkb66KsIOgUBnC3bpryHjuzZ7zx+oxFnbx72o1mgw5apVSJbdBUZLt8CXh1B70mPeF80VyFZSZnJqr9Zxj1GI3PZqCya14jEG0y+U48wNzW28otA10A8+viXRNvXqw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=jnRibK+o; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=2n0ULhZnCu8C1LAodYKH8luvq5s03x0GpqQhjbAmhMQ=; b=jnRibK+ozj05E1whLwd1XH+6x8
-	QcWjxGNcXIYTn4QkTCwLxQJpmeDns+adJ7VOeYzev6fW78y/mqBjs3d12uksw9HXoA8WBJfMxeJMi
-	Cf7GYJWHfTzdWm/bUSlySXrGVk7TfcFvHWGt33TGQOGXr8NOldEx/51nnxELojyRypmT4hiYccfjz
-	HBvHGFrEGEqbfAOJEUwoY5HsOMGs5Y5X5oCBBeTJJwkqKLda7wC/jQaEFuH264uJkuJIv0E53rfqN
-	Cw+eadxtgqkXEltGRxR7JdMzDl7DcGMoOkRkxLO4OwGHPljFWdUCFr9ynwG0oAL7Nun14m2NhxBh7
-	12N7GREQ==;
-Received: from [191.204.192.64] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uHPu1-00AnEg-AK; Tue, 20 May 2025 18:33:17 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: "Alex Deucher" <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	siqueira@igalia.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	"Raag Jadav" <raag.jadav@intel.com>,
-	rodrigo.vivi@intel.com,
-	jani.nikula@linux.intel.com,
-	Xaver Hugl <xaver.hugl@gmail.com>,
-	Krzysztof Karas <krzysztof.karas@intel.com>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	amd-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v5 3/3] drm/amdgpu: Make use of drm_wedge_task_info
-Date: Tue, 20 May 2025 13:32:43 -0300
-Message-ID: <20250520163243.328746-4-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250520163243.328746-1-andrealmeid@igalia.com>
-References: <20250520163243.328746-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1747758789; c=relaxed/simple;
+	bh=9iywa8LxDBmIJmnFA0mWiRWkOXXa499m0kRd7LsL7ag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CILZL6uRGkoJQtJgmsgEQzFq8uqcaPSht9m6viTBcuer1/7wKxtbG9qYZg5sjfcPv7KOZNNZouApUF1gHtoh0IqSOETMhelZq9L8fcaX4rM/7R7P5DA6Qil7KUKf7G8cdwFMuJLX0n+DuK0vC/rnsJyQ/fwae2OvCaCBONnbxTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GA6yiitB; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7399838db7fso5528526b3a.0;
+        Tue, 20 May 2025 09:33:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747758787; x=1748363587; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=N4J9GjT2DkNx9RKMdFilKV2qV6BHNi7N4nhhnVWjxkM=;
+        b=GA6yiitBt6I5Rd95Do5zzbLjzJb0nj7Vw/LFeumfftUIiOVarMigpCicb698VT/wIE
+         2nY37kIUll4gH8JXK61UJqRSWJJNThxW6UF0YskbLHQfs9X6x/42qQ4dMEpixNoLmZrV
+         9vYJrOYfa5g8zR7nFotLguBfDwbcMu2w9qhxJKNv2Be0CxLrViSw3A5rKQlKj0pVcBCo
+         Gy0LE9gzr1UrTXCPSFPdf2RIgT1se1eB1zR0Lh/d/8yMeNHpNjurjoQCmmGsIRIIbasu
+         FaAnt2Hyojdg0yNr9z9KJdJip7VBsVTowzQcbR9jE9idxS+aoC9eH5nJL2bx8eGSghGa
+         27iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747758787; x=1748363587;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N4J9GjT2DkNx9RKMdFilKV2qV6BHNi7N4nhhnVWjxkM=;
+        b=hc1zSem6wVrQOJ5pPpI3773fY5VGa64rLso2SvLGpvte9Y+fB42XrSl2Kx43mbD0NU
+         CPDI/Yozcu1d31L+hxU6doxmMFTYLrlu0femnnWcBqxo4ugJpowevBnjj8E0nim1mkDa
+         vkUZ+OT68G9NXo5gehg4aBKnHQlfx3WWOaRez3m5j9y7VSjPIXlQJm87Fqym6G2p5IrH
+         7O128l6+QdSODI5LH+fqKO4fXZvOtTqeiDO+1DF8e0JXkNsINQU9VnNIL2H0AO+IMFhP
+         1LRIcB0shFmOiWsbFFGDZy2unHVk6tB0cIxlOCqPsirsmLXqMN0zA/9xhPv7gL75bMJx
+         7E6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU/z+7dIv9eX5Ng4KFXXXY7sCrSlD/kj1lC0n0qG0+5C6odjKs7Mr8yK/ydVewkrlCZ3Q6sNfpk0iVkgU3wWu3F@vger.kernel.org, AJvYcCV8Ys9VPzPe59MVXldyoa6fGcLAnqk+cR3d/51kkYEI6SsZ5O8Ebf/p9uFXl9/gRhgSohv9yMA6HiJLLScf@vger.kernel.org, AJvYcCWA+GaI7udbxBJQprH4UFfR90R2T2D5zz2jkWapTiI5kENq901ZsJUDWgZkx5jZdLm8Nx4=@vger.kernel.org, AJvYcCWvOcvTyBJrlX6qXlnZSPnlYkXT3TKnLsEzJawhoFltR6f2U7wFNfOAZL+yGPBgPKhPok8rLD7r@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi3gtW8kxnqdJJetBjFbjA1VRtgR35yH01vpi0J2b9UTpJZlxx
+	52h0+2PnyaqOpAKYSOzVaQxkWmQMk3mH5rUfkcwwQ3IjLaTHoEjytmTW
+X-Gm-Gg: ASbGnctSmvmZWvO+hNL1+29OK/m9RJ5NbwdJY3iLZ7UvHvE9VWH140K5xYNkdfu+m3q
+	66+oisJ3p/6fIMLo49DuZzMaV1gMDz1DzyJ4TAvUtFaJwNp0wvs3+O4Z8uAOYSj+CS5l1c1Piq0
+	Ak3vSCTpNXzoYJHQUasYGuY2ara2f4tir7xYvBwooBLwYXX05SaDiTLJ8m2a0hsc7HsiIMrb+iR
+	ndnMkr5N0RJF3+a9zU+k8mei8cg3XRtE7pyOAma1GRFQ2l3q6jxN2n58oaFaVsd2M53JM/pd7kT
+	1PR8/PtxjTvPqEttUeIsvlSViV1RjHPhnI3LLuS1Pw/ZV7pFq0smrPXPbGpvMrBCtMMa5bY=
+X-Google-Smtp-Source: AGHT+IFFEtELJ7CNY/gj67X7KGAeNhJCZbOLnPiYWwQ92Z9dI1v88DKGl6Pdba0V9ObimC+EYXJnbQ==
+X-Received: by 2002:a05:6a20:12c3:b0:1f3:3547:f21b with SMTP id adf61e73a8af0-2165f641cf3mr29465576637.5.1747758787474;
+        Tue, 20 May 2025 09:33:07 -0700 (PDT)
+Received: from devbig793.prn5.facebook.com ([2a03:2880:ff:3::])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eb081aa2sm8256782a12.48.2025.05.20.09.33.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 09:33:06 -0700 (PDT)
+Date: Tue, 20 May 2025 09:33:05 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v7] selftests/vsock: add initial vmtest.sh for
+ vsock
+Message-ID: <aCyuwa8x9ClTOM+Z@devbig793.prn5.facebook.com>
+References: <20250515-vsock-vmtest-v7-1-ba6fa86d6c2c@gmail.com>
+ <f7dpfvsdupcf4iucmmit2xzgwk53ial6mcl445uxocizw6iow5@rhmh6m2qd3zu>
+ <73a4740e-755e-4ba8-8130-df09bd25197a@redhat.com>
+ <w6aizeb2i5m52e2ifqcikgwdbrkkbc46sf4hx5b6jsm7o4drio@n3dzlatb426s>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <w6aizeb2i5m52e2ifqcikgwdbrkkbc46sf4hx5b6jsm7o4drio@n3dzlatb426s>
 
-To notify userspace about which task (if any) made the device get in a
-wedge state, make use of drm_wedge_task_info parameter, filling it with
-the task PID and name.
+On Tue, May 20, 2025 at 01:09:25PM +0200, Stefano Garzarella wrote:
+> On Tue, May 20, 2025 at 12:58:18PM +0200, Paolo Abeni wrote:
+> > On 5/20/25 10:24 AM, Stefano Garzarella wrote:
+> > 
+> > Still it could be worthy to re-introduce (behind a command line option)
+> > the ability to build the kernel as per Stefano request, to fit his
+> > existing workflow (sorry for the partial back and forth).
+> 
+> If that's possible, I'd appreciate it (not a strong opinion). Otherwise if
+> we don't, I'd say take the use of the direct script out of the commit
+> messaging, because to me it's confusing if we don't plan to use it without
+> the selftest infrastructure.
+> 
+> Thanks,
+> Stefano
+> 
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 19 +++++++++++++++++--
- drivers/gpu/drm/amd/amdgpu/amdgpu_job.c    |  6 +++++-
- 2 files changed, 22 insertions(+), 3 deletions(-)
+No problem at all to add it back in. It's a nice feature to have for dev
+workflows too.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index d27091d5929c..c29c924aa506 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -6362,8 +6362,23 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
- 
- 	atomic_set(&adev->reset_domain->reset_res, r);
- 
--	if (!r)
--		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, NULL);
-+	if (!r) {
-+		struct drm_wedge_task_info aux, *info = NULL;
-+
-+		if (job) {
-+			struct amdgpu_task_info *ti;
-+
-+			ti = amdgpu_vm_get_task_info_pasid(adev, job->pasid);
-+			if (ti) {
-+				aux.pid = ti->pid;
-+				aux.comm = ti->process_name;
-+				info = &aux;
-+				amdgpu_vm_put_task_info(ti);
-+			}
-+		}
-+
-+		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, info);
-+	}
- 
- 	return r;
- }
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-index a47b2eb301e5..5cb17e62df57 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-@@ -89,6 +89,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
- {
- 	struct amdgpu_ring *ring = to_amdgpu_ring(s_job->sched);
- 	struct amdgpu_job *job = to_amdgpu_job(s_job);
-+	struct drm_wedge_task_info aux, *info = NULL;
- 	struct amdgpu_task_info *ti;
- 	struct amdgpu_device *adev = ring->adev;
- 	int idx;
-@@ -127,6 +128,9 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
- 		dev_err(adev->dev,
- 			"Process information: process %s pid %d thread %s pid %d\n",
- 			ti->process_name, ti->tgid, ti->task_name, ti->pid);
-+		aux.pid = ti->pid;
-+		aux.comm = ti->process_name;
-+		info = &aux;
- 		amdgpu_vm_put_task_info(ti);
- 	}
- 
-@@ -166,7 +170,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
- 			if (amdgpu_ring_sched_ready(ring))
- 				drm_sched_start(&ring->sched, 0);
- 			dev_err(adev->dev, "Ring %s reset succeeded\n", ring->sched.name);
--			drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, NULL);
-+			drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, info);
- 			goto exit;
- 		}
- 		dev_err(adev->dev, "Ring %s reset failure\n", ring->sched.name);
--- 
-2.49.0
-
+Best,
+Bobby
 
