@@ -1,118 +1,99 @@
-Return-Path: <linux-kernel+bounces-655004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF42ABCF83
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:40:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA294ABCFA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:43:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37D027A2DCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:38:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 675EF1BA01B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F9125CC7C;
-	Tue, 20 May 2025 06:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3035925F989;
+	Tue, 20 May 2025 06:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICz1u1U4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tla/hMdf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691D625C70F;
-	Tue, 20 May 2025 06:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DF325D203
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 06:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747723198; cv=none; b=ByFQASf36E+iMEiWC/O7WNYcs0/jlKflfMWtciyAKTShTuQxOByi6EwNFUQFzub9ewpyfLZqrxTgrW2xeCy3KUx3vYE9lYgoXBi0MOob7OcqOuL2mD+N9QiOR8dabHHW0mdK46ef/8iHYiym1TvBrNKlhHCntqKcXh2KqGxgVrs=
+	t=1747723316; cv=none; b=oxjXST9ykgMRlVYeXLKRZTw4yGvJaBed7MRm0GsPvqNyxUy88CMDQx3hZQxCKL3IBSS+ifuVaPaLB91kR1Od5Ao0beYFofecpVQd7073WBW7u67TC81ZuHFRV9JmmaGxzpJZpyUZgaUSp+ctrTHH86rjNCwlm0hhNjipKSh4VNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747723198; c=relaxed/simple;
-	bh=EGlTeSB6uRyx77ddElrn0kc7eI9eJYnJgKalNdeLb6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g16aJ9/rWTROJl8zLKwwZNIsK25AD8gKvpKkkKNRC5SukT3qkpGHu0AZlot970+dw845o8ufvq/ncVHRn6MQq/8SJ58atXBEBsmXGcmTDsSAF83MemZi3Y56I70DVvOVG/RoNEHlIqVB3qlhAG9mBmkP4xu48ws14ctQvLKA7Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICz1u1U4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C65BC4CEE9;
-	Tue, 20 May 2025 06:39:57 +0000 (UTC)
+	s=arc-20240116; t=1747723316; c=relaxed/simple;
+	bh=12fECthY6pkGs+Y6n/4fbZ5eWnjF1raHBzKHenr6KjA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lx+vpTruSgmMsUldAqBHD7H81nLjg14hj/rGatjyoVlrv8Bg/9TsCvOA7a0OIveGed2fAGhvcZ7KObPdMi/Z81bX124btg5sq07c5tYzhfkMTRmdweXWo1YjCUA564B1Is9ph+boxe7OyiEvcFWlO50Fgtp5/4L8arafAKBXR+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tla/hMdf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BD28C113CF;
+	Tue, 20 May 2025 06:41:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747723197;
-	bh=EGlTeSB6uRyx77ddElrn0kc7eI9eJYnJgKalNdeLb6I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ICz1u1U4YO/Cu9JWreR4lFOc6PIhc7pQ+voH0dXHHIUTUqTiw8IM83wHYosYopr8y
-	 GadUjMVtOUnTHmrvUjbMc8nch7IcLwJ3oosVvig/nLTC2/A7H3CjsrY4XSHWVbNWPL
-	 j2cHnhPIr3z1oNEDBx0uXQpDoV8oOdLLtpxafoMHJeF1w6ZMPbFEeUmD/HYv5xNIKb
-	 LyS2DtRw3OEn929ntvLRiB6UFMNqQu04Tu10rOeEwf9sW5GQmOuGEgeMmRqhHh9d4c
-	 /jWUphVmOIAPPKtBkLh70wX0OmJmu5q+/xr+4PprrKmj6LXMN4kUBOlAbBYOHZ37D/
-	 isv6jK1KUtNjQ==
-Date: Tue, 20 May 2025 08:39:55 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Pop Ioan Daniel <pop.ioan-daniel@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sergiu Cuciurean <sergiu.cuciurean@analog.com>, Dragos Bogdan <dragos.bogdan@analog.com>, 
-	Antoniu Miclaus <antoniu.miclaus@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Tobias Sperling <tobias.sperling@softing.com>, Alisa-Dariana Roman <alisadariana@gmail.com>, 
-	Marcelo Schmitt <marcelo.schmitt@analog.com>, 
-	=?utf-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>, Esteban Blanc <eblanc@baylibre.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] dt-bindings: iio: adc: adi-axi-adc: add ad7405
- example
-Message-ID: <20250520-brawny-statuesque-rottweiler-9ae801@kuoka>
-References: <20250519140220.81489-1-pop.ioan-daniel@analog.com>
- <20250519140220.81489-6-pop.ioan-daniel@analog.com>
+	s=k20201202; t=1747723316;
+	bh=12fECthY6pkGs+Y6n/4fbZ5eWnjF1raHBzKHenr6KjA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Tla/hMdfYOPu/OvbKrZR0Bbul2xNFVxcNL1dKL3I1wPubEiBY0hNwLoYZ4EpxB4y2
+	 As6h4TAXw25KEBNrogfE/bHkLsjzxjOf+SLli6CPEgDhSWcxdWNmZZZspHbt3quxrJ
+	 EuHPkxDhT5IINSxZ+Ez5+xPzSdHWmFapzYLsXS+qKuF/Q7N3w1MHkb1PSqbg8oK1Ut
+	 mQFYcq1VFd0/n2VVEmRhAlWg+pEHLg5yWEj+Lz67KDNgV1aJVFSnzWWiWj4hOlOE3P
+	 UTP4CAnesOOW2z2id2WEsgXSCVMXG/vCui/ksX+AkZK3VdUVo1gyxFJWNrsqiMP8z4
+	 8sgJmx0gI1BXw==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1uHGfh-00000005qt2-2pd4;
+	Tue, 20 May 2025 08:41:53 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>,
+	"Michael S . Tsirkin" <mst@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Ani Sinha <anisinha@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v9 01/20] tests/acpi: virt: add an empty HEST file
+Date: Tue, 20 May 2025 08:41:20 +0200
+Message-ID: <bf80156b422fc95bc90202455e2de9e4369e8a54.1747722973.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1747722973.git.mchehab+huawei@kernel.org>
+References: <cover.1747722973.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250519140220.81489-6-pop.ioan-daniel@analog.com>
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Mon, May 19, 2025 at 05:02:13PM GMT, Pop Ioan Daniel wrote:
-> The ad7405 device is defined as a child of the AXI ADC.
+Such file will be used to track HEST table changes.
 
-1. Why? What we see easily (although not here, because above does not
-answer even to what).
-2. I do not see any device being added to the binding.
+For now, disallow HEST table check until we update it to the
+current data.
 
-> 
-> Signed-off-by: Pop Ioan Daniel <pop.ioan-daniel@analog.com>
-> ---
-> changes in v4:
->  - add ad7405 device that is defined as a child of the AXI ADC
->  .../bindings/iio/adc/adi,axi-adc.yaml           | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml b/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
-> index cf74f84d6103..a6bc8acd101f 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
-> @@ -135,4 +135,21 @@ examples:
->              io-backends = <&parallel_bus_controller>;
->          };
->      };
-> +  - |
-> +    axi_adc@44a00000 {
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Acked-by: Igor Mammedov <imammedo@redhat.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+---
+ tests/data/acpi/aarch64/virt/HEST           | 0
+ tests/qtest/bios-tables-test-allowed-diff.h | 1 +
+ 2 files changed, 1 insertion(+)
+ create mode 100644 tests/data/acpi/aarch64/virt/HEST
 
-Follow DTS coding style.
-
-> +        compatible = "adi,axi-adc-10.0.a";
-> +        reg = <0x44a00000 0x10000>;
-> +        dmas = <&rx_dma 0>;
-> +        dma-names = "rx";
-> +        clocks = <&axi_clk>;
-> +        #io-backend-cells = <0>;
-
-This example is already there, so I do not get why you duplicate it.
-Skip the patch or with reason add the child to the existing example.
-
-> +
-> +        adc@0 {
-> +            compatible = "adi,ad7405";
-
-Best regards,
-Krzysztof
+diff --git a/tests/data/acpi/aarch64/virt/HEST b/tests/data/acpi/aarch64/virt/HEST
+new file mode 100644
+index 000000000000..e69de29bb2d1
+diff --git a/tests/qtest/bios-tables-test-allowed-diff.h b/tests/qtest/bios-tables-test-allowed-diff.h
+index dfb8523c8bf4..39901c58d647 100644
+--- a/tests/qtest/bios-tables-test-allowed-diff.h
++++ b/tests/qtest/bios-tables-test-allowed-diff.h
+@@ -1 +1,2 @@
+ /* List of comma-separated changed AML files to ignore */
++"tests/data/acpi/aarch64/virt/HEST",
+-- 
+2.49.0
 
 
