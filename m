@@ -1,107 +1,149 @@
-Return-Path: <linux-kernel+bounces-654901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4BBDABCE57
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:56:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CF7ABCE5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB0D03A97E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 04:56:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 347A57ACF50
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 04:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09462258CE5;
-	Tue, 20 May 2025 04:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443B525B683;
+	Tue, 20 May 2025 04:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i6IgdWdA"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="K9HdEcq+"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA20213E77;
-	Tue, 20 May 2025 04:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B7E25A65C;
+	Tue, 20 May 2025 04:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747717004; cv=none; b=tLaWCdg4pOGTCZhOo/s6bY9u5ndxXco3wG2BwaczYlxYxDff6N4nU841tdh/0zo6GZ6LV/akxgu6inKBCZ/840pmlON89agsUIE5bdMuJGK1y8unl3pKPYIXNIAvg2IWc5zom6BseOc3k97yB0tyZIFyupfHA40q7/ciEBMqFQc=
+	t=1747717180; cv=none; b=PDE8RJB3oDgI6nYAhnwbcAh8cz22k8FcB8BtQ7O+U9iIw99/NKGkAb2NQcMlt9VM1M3ivRmIEA+6jEMTH7UDI5Xqz+SStxSvEkHRwrogM+ZwuLQAEMmWtl0ns0PwfG5Qrhm6y9vzAfokrKG2ScxYrtACjHmWQsPIhPTs01qcMgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747717004; c=relaxed/simple;
-	bh=3Xc0C1/MjHRmlEpsp4Yj9FmwRG53JSwRm8BA6yoW9K0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u6VWe7hND8Mygh29N1kBftK3kgWfZhPIOgo0ey3xq0IizsyTfdkGGV8RSaqUhNweHsq9hqQN2ZnEVfROHEAyOxpe/vtucRCgPyfPkxwJRMg88mkI4cP/yz1vVtg/wUDfloU+sMgX6i4SK/ZsNDzAa4InC1TGwMyKOhPJeEhnkBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i6IgdWdA; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-231f325366eso33208085ad.1;
-        Mon, 19 May 2025 21:56:42 -0700 (PDT)
+	s=arc-20240116; t=1747717180; c=relaxed/simple;
+	bh=DptRutwWA6KxqxdlcBqZhKp/gcI1ZF1zcNFYSZFJB0c=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JrhdElBoYIMCuPUgGZKL90rsaHvYBy6k67RCPHI68pVAbfC7i21zkl87BzVOORjdgswqWteYo0CB6/tgUlcUNfc219d0qa5wa0orOjONs9qBIo+NuUe/rlDzKFrud4+HyxExBVPWyLUZkrjuFPA4ZkK4InZl4YkPGUFfUGwqhRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=K9HdEcq+; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747717002; x=1748321802; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3KhnddQ+QhiIufxyI7j9wOBhDynzKukSpiqhLIt+sok=;
-        b=i6IgdWdAnC/Pybf5t20beRG4rixShDm17qpR3n3ezjzIwD5TcIhT4rbMb/1004KZC1
-         HiQDbb0re31/RNbIc2C3qZ8VhQ9raPUNQrsjh2xn6TNbiZ05d8KpJx8uOt5buSW5tUHT
-         nz1VgRrRxr5kdfwvyIVyxVh4KLE12fMAxaPQ8hzDZ2imExARu4EOU0hEFkoJYCPPeNma
-         z8kUe935LWQC030X37XTJQjfcUsemEbi7p/O+tTJNkizaZW0+od92HHMYXrvZk9WnDTP
-         t/p+omSLajSpOpsRX4eLVofMkxEOWEiPL52Ak2uojS0nuAkOOjkXy5fARE7+pbdiPvRw
-         g7yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747717002; x=1748321802;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3KhnddQ+QhiIufxyI7j9wOBhDynzKukSpiqhLIt+sok=;
-        b=XIeAQsnzd/ZCMo11GekjLz4gvbe1y+kAWBh/aXmLPWSy8yN58XcPhKhtEjDqm0kXfH
-         rsjrHJaNwcj0TnCYfUuWuGdXV/QSYsQL8emq8xpzOAdcg94LDvCbGI3YXtP6Y+S2zep2
-         3J/6G2DkBGbPcQvCVaKO+NO47KfLn7wfCkr8PfXcRyAFFlBa8khSLkEXpFHzH+mxihzx
-         Id9luqo6UW3UXre+yEt6wryVFqHeTVb3gPGZfQ9Y3vJ2ieGslfqMiAofICiUJ4Uy+FFP
-         ltyWzys/qFKLIJqDz/8Y51xiRITR97N/4GJ9Ss3AG7/SVihfSg5s9OVLBgvwhAZsP9qU
-         98BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/ZCiPyqWy6gm/6TAPDj4bwXCalTthuXFpT27D5YVAa5v3pGTxAbjBQ5XYfFp06p3s79g2BEQqH+/2KcKI@vger.kernel.org, AJvYcCUb+bG6bpBFKcQLNAjhiFP3yGNu56Sxb8fVXhvFpbO7gmYB+Y7V9gdAAUMfYWH5G7IrteByumNtETg7Dg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwt/5w7IntTZBHamDMMSKytRfEEuoRcouWEYo8KP1wT6jD5BFJ
-	ogrwiIvTNwmGcDg2HqOuQdSSeLvrj2hM/A43WlJGgpjM3v+HPIUHBlWfBkoRlpJ6
-X-Gm-Gg: ASbGncu7b5Tb1/eFt2yfwDSjHYOko95vpsyvJrE3YpaIZwX57RhBgTPOMDIwEJyTiGj
-	1OA2ZAVzo3VMOKKECXoOXHdDxncm8ng5MQoETFUpc1zBp/ZXY/vif124ZSzvuxlhs5QAucSh1yf
-	6QFBW2yfmni8sqwsyDsPbZh0F+uZOZIGT/CrXLOVQn04Dp6tpBC27ZT/+/Ob1y4Z3rzHX9UBS6f
-	bQPuughYSwdeee9m8+DSF22dUrf4qbCtw8d11o86cq5W7tQqpYw0N9UgZuFcEhxi/lx3oQim3JN
-	ZQqaFiX0DMqTKI86Xe9//MlIqvASsPpzeHNjs6KSB9O8/l+tx0x4g0hX0lcMSaEAqySyxS046S0
-	=
-X-Google-Smtp-Source: AGHT+IE1HvZMXTpLIKXrgs5vgk2lC8Gd0BVJQ3GbmMb7vDXCEy8E09Qlccu8jOdcLbqOczxFK8Fo+Q==
-X-Received: by 2002:a17:90b:538c:b0:306:b65e:13a8 with SMTP id 98e67ed59e1d1-30e7d522134mr25469442a91.8.1747716991893;
-        Mon, 19 May 2025 21:56:31 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f365134c2sm748415a91.43.2025.05.19.21.56.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 21:56:31 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 19 May 2025 21:56:30 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>
-Cc: patrick@stwcx.xyz,
-	Carsten =?iso-8859-1?Q?Spie=DF?= <mail@carsten-spiess.de>,
-	Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] hwmon: (isl28022) Fix current reading calculation
-Message-ID: <2b5e38cd-ea1e-4ec3-b8ca-4b7ab9db7b85@roeck-us.net>
-References: <20250519084055.3787-1-yikai.tsai.wiwynn@gmail.com>
- <20250519084055.3787-2-yikai.tsai.wiwynn@gmail.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1747717179; x=1779253179;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=+7EzC6fpwrFJPpkzxIXD6suNFs9l44QJ7ZK5ERClQV8=;
+  b=K9HdEcq+nyMSx0aVrXBPGBkLwDvWvEmdWnwnoJX+Zdb15kTRjdJr9b3S
+   94/6EHE5h4/sm7+YJd0logsEdkSF3wWF0kS46MFCjgyVYikIpkLgy1YC7
+   kD104VMxh4zalakgRIYvgqS/IhE78cEqovyfxJS5fcJCh2c/B3mStWmiu
+   B65J6qoGr6kG0KGMXPTtTsnQSSP9s0nygLPFC0uwOZazHUJJ/5+njRsx0
+   kKvh9na/oJXVvjYJgQwhTnjQRQR6PjCYsmpxdKBwAgzt3T6mGGe+vka/a
+   2TRJk1WP0ks6GLTSa+bGnMVYCkKWm4KTCJcuxdX7ANqY//hmITIxRqsHH
+   g==;
+X-IronPort-AV: E=Sophos;i="6.15,302,1739836800"; 
+   d="scan'208";a="724523668"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 04:59:35 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:7547]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.45.193:2525] with esmtp (Farcaster)
+ id b5978a69-a66c-4db0-92a5-3a1a7bb9aa64; Tue, 20 May 2025 04:59:34 +0000 (UTC)
+X-Farcaster-Flow-ID: b5978a69-a66c-4db0-92a5-3a1a7bb9aa64
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 20 May 2025 04:59:33 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.142.169.18) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 20 May 2025 04:59:29 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <jiang.kun2@zte.com.cn>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <fan.yu9@zte.com.cn>,
+	<gnaaman@drivenets.com>, <he.peilin@zte.com.cn>, <horms@kernel.org>,
+	<kuba@kernel.org>, <kuniyu@amazon.com>, <leitao@debian.org>,
+	<linux-kernel@vger.kernel.org>, <lizetao1@huawei.com>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <qiu.yutan@zte.com.cn>,
+	<tu.qiang35@zte.com.cn>, <wang.yaxin@zte.com.cn>, <xu.xin16@zte.com.cn>,
+	<yang.yang29@zte.com.cn>, <ye.xingchen@zte.com.cn>, <zhang.yunkai@zte.com.cn>
+Subject: Re: [PATCH linux next] net: neigh: use kfree_skb_reason() in neigh_resolve_output()
+Date: Mon, 19 May 2025 21:58:58 -0700
+Message-ID: <20250520045922.34528-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250520104413538Q88ZB2XVWu1BthfQkFSuW@zte.com.cn>
+References: <20250520104413538Q88ZB2XVWu1BthfQkFSuW@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250519084055.3787-2-yikai.tsai.wiwynn@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D044UWA001.ant.amazon.com (10.13.139.100) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Mon, May 19, 2025 at 04:40:51PM +0800, Yikai Tsai wrote:
-> According to the ISL28022 datasheet, bit15 of the current register is
-> representing -32768. Fix the calculation to properly handle this bit,
-> ensuring correct measurements for negative values.
+From: <jiang.kun2@zte.com.cn>
+Date: Tue, 20 May 2025 10:44:13 +0800 (CST)
+> From: Qiu Yutan <qiu.yutan@zte.com.cn>
 > 
-> Signed-off-by: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>
+> Replace kfree_skb() used in neigh_resolve_output() with kfree_skb_reason().
+> 
+> Following new skb drop reason is added:
+> /* failed to fill the device hard header */
+> SKB_DROP_REASON_NEIGH_HH_FILLFAIL
+> 
+> Signed-off-by: Qiu Yutan <qiu.yutan@zte.com.cn>
+> Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
+> ---
+>  include/net/dropreason-core.h | 3 +++
+>  net/core/neighbour.c          | 2 +-
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/net/dropreason-core.h b/include/net/dropreason-core.h
+> index bea77934a235..bcf9d7467e1a 100644
+> --- a/include/net/dropreason-core.h
+> +++ b/include/net/dropreason-core.h
+> @@ -62,6 +62,7 @@
+>  	FN(NEIGH_FAILED)		\
+>  	FN(NEIGH_QUEUEFULL)		\
+>  	FN(NEIGH_DEAD)			\
+> +	FN(NEIGH_HH_FILLFAIL)		\
+>  	FN(TC_EGRESS)			\
+>  	FN(SECURITY_HOOK)		\
+>  	FN(QDISC_DROP)			\
+> @@ -348,6 +349,8 @@ enum skb_drop_reason {
+>  	SKB_DROP_REASON_NEIGH_QUEUEFULL,
+>  	/** @SKB_DROP_REASON_NEIGH_DEAD: neigh entry is dead */
+>  	SKB_DROP_REASON_NEIGH_DEAD,
+> +	/** @SKB_DROP_REASON_NEIGH_HH_FILLFAIL: failed to fill the device hard header */
+> +	SKB_DROP_REASON_NEIGH_HH_FILLFAIL,
+>  	/** @SKB_DROP_REASON_TC_EGRESS: dropped in TC egress HOOK */
+>  	SKB_DROP_REASON_TC_EGRESS,
+>  	/** @SKB_DROP_REASON_SECURITY_HOOK: dropped due to security HOOK */
+> diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+> index 254067b719da..f297296c1a43 100644
+> --- a/net/core/neighbour.c
+> +++ b/net/core/neighbour.c
+> @@ -1517,7 +1517,7 @@ int neigh_resolve_output(struct neighbour *neigh, struct sk_buff *skb)
+>  	return rc;
+>  out_kfree_skb:
+>  	rc = -EINVAL;
+> -	kfree_skb(skb);
+> +	kfree_skb_reason(skb, SKB_DROP_REASON_NEIGH_HH_FILLFAIL);
 
-Applied.
+Is there any reason you don't change neigh_connected_output() ?
 
-Guenter
+
+If you respin, please specify net-next and the patch version in
+
+Subject: [PATCH v2 net-next] net: neighbour: ...
+
+
+>  	goto out;
+>  }
+>  EXPORT_SYMBOL(neigh_resolve_output);
+> -- 
 
