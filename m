@@ -1,121 +1,104 @@
-Return-Path: <linux-kernel+bounces-655462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D280ABD5E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:07:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C560ABD5D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BB583A6A84
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:06:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D638D189F4AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9AF27F171;
-	Tue, 20 May 2025 11:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAAF27A447;
+	Tue, 20 May 2025 11:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KsefpQsp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdQMgIOp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF7427C863
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 11:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B610826738B;
+	Tue, 20 May 2025 11:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747739140; cv=none; b=lfZQo7YL1UpeKu+Mv+zcojfusNwgfKe3xe0qVCGth1jYhNO/u9qIX045bH7PGVrrhVrajbdYxFUdESCQxRJsyhwylCxF7Q1HDOYfcFENPzhZaGKSLxJrBQ2xX03038vLchFZiN6rsuqVSGydUSrk4g2sQH5uqdmTVl3Td2sw8gI=
+	t=1747739136; cv=none; b=VWGj80oIxwG7EJOIvRKJBrmCQj22DZSY6SyigJx7VtPgqPjKlsidc5LLhJpi5wQST7S/X7P/WXy/EQWfghwt4sIlMs+xRIEL8w43ZLLHuyCdGtB0as4o4uXU4lhHTcwj/qFwRkp79PKiKj3lzTbAdk3tfufC5tUCIcpRP9VNwzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747739140; c=relaxed/simple;
-	bh=b+YrCJ42KjHUkvwgT4xR/mxKsHO8cOHl9FN4Vq7fOL4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z4pbVjkfttYI/7LnDwpo4CQA9DoDN/Xu4HLBCRPIakzYpu74M2yX9yfIvtYQ77exgvMvJgVWCxWWlYxaOX74CLUWgl2aiilw/Jw6vOVjaPimryuvC84yfMSjpLQvei4h0/18NMArMx7diQeyeHkhzit2hlUvO+GPZDrCvImNX9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KsefpQsp; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747739138;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j3L6s3nZuJ4uDKFUqy+XqgUhFnSv9Fk5O3ApL5qopTw=;
-	b=KsefpQsp0V25jbLE2/os+ZwpM2Okn5q3/qMU47EOPGIhkSSQlRyTmTkivm2j1soxWx+igv
-	UQVZimwZcp3AlDpYv6s1HoQKSK4kHQAzerb8uEAGmr9lW+sz0NOgE2dVKXm7sIGwdLUnWv
-	Q1Qz/owv7QzYO7vycXYGdVFSdqX5ANo=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-82-fTA5-6DCO7aER2-un1MXKQ-1; Tue,
- 20 May 2025 07:05:36 -0400
-X-MC-Unique: fTA5-6DCO7aER2-un1MXKQ-1
-X-Mimecast-MFC-AGG-ID: fTA5-6DCO7aER2-un1MXKQ_1747739135
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9369F180034E;
+	s=arc-20240116; t=1747739136; c=relaxed/simple;
+	bh=moJr557cLpcwfssxs4X6NO0Ta6elVHfYr4Rk4IzgEJU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=iFwnfuvF6jsA9ZHPx0kcCdmLVYs8I8RhHR1AzxyoOUYrRWb44VVhek/PIamL+oVLPPK++1u1hFsEdyKTQFl+houEa3LYlKtcSl8Df5IaRBDJs1RHnaj+mYbQXIGuPUfUbfjN0W388Qx6ivqCoaPu0SawkciA65eSXYGSSS3aoBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdQMgIOp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A50C4CEEB;
 	Tue, 20 May 2025 11:05:35 +0000 (UTC)
-Received: from lenovo-t14s.redhat.com (unknown [10.44.33.64])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B003E19560A3;
-	Tue, 20 May 2025 11:05:33 +0000 (UTC)
-From: Laurent Vivier <lvivier@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Jason Wang <jasowang@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	netdev@vger.kernel.org,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Subject: [PATCH 2/2] virtio_net: Enforce minimum TX ring size for reliability
-Date: Tue, 20 May 2025 13:05:26 +0200
-Message-ID: <20250520110526.635507-3-lvivier@redhat.com>
-In-Reply-To: <20250520110526.635507-1-lvivier@redhat.com>
-References: <20250520110526.635507-1-lvivier@redhat.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747739136;
+	bh=moJr557cLpcwfssxs4X6NO0Ta6elVHfYr4Rk4IzgEJU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=gdQMgIOpmMAyWGmvCDjPOQwDXR6RGsVp36+EM0AsuL7GUQLpbVcRPWQlUbaIWa0xE
+	 x/7t3Yg+5cocNnBgvaVsz6VX+wxW4BuQO/kya5ZHuC+ocHQ1q/fOm4goHCUkxjwE3q
+	 bgk78ESVWn28w1RR7vpv6QqF7pnjSmRKbKmO3f6wPx8bU4Hx0brmiRcsamyE9/v8ax
+	 4XeOtaSHg9ThOy3/AZ64q3Cxj1cHBVvXsjYYZOYQJ8YdfCJyK8w5xFeayg2zqGKjws
+	 BWmCfqV030Bpdi93s2LoSeE40cJ0VZBTNaFlwNDWsFJe1vDMZD4X3Iq+lM87ZZIxZT
+	 s4gP7/4RUCVIw==
+From: Mark Brown <broonie@kernel.org>
+To: Raju Rangoju <Raju.Rangoju@amd.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ krishnamoorthi.m@amd.com, akshata.mukundshetty@amd.com
+In-Reply-To: <20250516100658.585654-1-Raju.Rangoju@amd.com>
+References: <20250516100658.585654-1-Raju.Rangoju@amd.com>
+Subject: Re: [PATCH v2 0/3] spi: spi_amd: Add DMA write and Kconfig changes
+Message-Id: <174773913545.45044.805296108345217999.b4-ty@kernel.org>
+Date: Tue, 20 May 2025 12:05:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-The `tx_may_stop()` logic stops TX queues if free descriptors
-(`sq->vq->num_free`) fall below the threshold of (2 + `MAX_SKB_FRAGS`).
-If the total ring size (`ring_num`) is not strictly greater than this
-value, queues can become persistently stopped or stop after minimal
-use, severely degrading performance.
+On Fri, 16 May 2025 15:36:55 +0530, Raju Rangoju wrote:
+> This series include following changes to spi_amd driver:
+> - Changes to replace read{q,b} functions with direct memory copy logic on
+>   DMA buffer.
+> - Support for HID2 DMA single mode basic write operation for the HID2
+>   SPI controller.
+> - Changes to add missing Kconfig dependencies.
+> 
+> [...]
 
-A single sk_buff transmission typically requires descriptors for:
-- The virtio_net_hdr (1 descriptor)
-- The sk_buff's linear data (head) (1 descriptor)
-- Paged fragments (up to MAX_SKB_FRAGS descriptors)
+Applied to
 
-This patch enforces that the TX ring size ('ring_num') must be strictly
-greater than (2 + MAX_SKB_FRAGS). This ensures that the ring is
-always large enough to hold at least one maximally-fragmented packet
-plus at least one additional slot.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Reported-by: Lei Yang <leiyang@redhat.com>
-Signed-off-by: Laurent Vivier <lvivier@redhat.com>
----
- drivers/net/virtio_net.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Thanks!
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index e53ba600605a..866961f368a2 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -3481,6 +3481,12 @@ static int virtnet_tx_resize(struct virtnet_info *vi, struct send_queue *sq,
- {
- 	int qindex, err;
- 
-+	if (ring_num <= 2+MAX_SKB_FRAGS) {
-+		netdev_err(vi->dev, "tx size (%d) cannot be smaller than %d\n",
-+			   ring_num, 2+MAX_SKB_FRAGS);
-+		return -EINVAL;
-+	}
-+
- 	qindex = sq - vi->sq;
- 
- 	virtnet_tx_pause(vi, sq);
--- 
-2.49.0
+[1/3] spi: spi_amd: Remove read{q,b} usage on DMA buffer
+      commit: 8cd079e69dc51e707b0a7ce105b01f6dbb66ddc1
+[2/3] spi: spi_amd: Add HIDDMA basic write support
+      commit: a5733666c775eb852409261d7a6363883d97ff93
+[3/3] spi: spi_amd: Update Kconfig dependencies
+      commit: dbb79974193a2932e828ebbd216efb428c81dc63
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
