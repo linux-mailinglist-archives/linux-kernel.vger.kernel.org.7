@@ -1,175 +1,157 @@
-Return-Path: <linux-kernel+bounces-655324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEDB2ABD3F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:55:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DA7EABD462
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46EB03B3874
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:55:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 035E53B7A0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B442690FA;
-	Tue, 20 May 2025 09:55:15 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EC226A0FC;
+	Tue, 20 May 2025 10:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D1JnHBhU"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E56425DAF4;
-	Tue, 20 May 2025 09:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9859225D1F9
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747734915; cv=none; b=cZAKZwwRx9t/A+eb6TkGuhai8pgyZ6uKiH1aM5n5ZrQwjRkSpImOPj1i5h7O/nWwBswPUJBQw8OS8tj6UoJBs1PXyP52+Dpw2nCKPRVjhHOgR0Zh5z2AuJDDKibjab7o3qmj07ifSlyd9SnBxyEjED3OACowGcCdiV+QYi+8Vos=
+	t=1747736335; cv=none; b=Op9LxJyl8Y0MFFL+/EWo/F0Ls2ARf05OnQKTL6a8i6IIZk32jnoEcoUzXKpDlu2mFsxvcW8CNPHy3pzAWitRlRTQIXJoaUcjgVZTS2wWs/XFprjEvrNWwPO7muC2Tx8w5K11hbGsNieZrRZQBMfwPoSxOcAXRe5xij/0QsaW/sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747734915; c=relaxed/simple;
-	bh=nYtSmDmCMfbAwLf3uXqJZRMJmgIAW9Thdzm8zwi6TrI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n4P1uYRU/6DyE6vtALDQZzvSyrzFkq7ooVpxS0IwB6+EbuX5AbW0CDqF3FuKKa6ta6svogj6Eyp78akkkk+FRDbOwxAAQmEsduPkZ1qoYajYV3bNi4Oize+USScc5fcu38+hFPCZNfOwFPYrFoN4af3i1QGq8HijQpld7BEa+Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4b1qgX2LMqz27hxh;
-	Tue, 20 May 2025 17:55:52 +0800 (CST)
-Received: from kwepemg200005.china.huawei.com (unknown [7.202.181.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id D2D3B1A016C;
-	Tue, 20 May 2025 17:55:03 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by kwepemg200005.china.huawei.com
- (7.202.181.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 20 May
- 2025 17:55:02 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <jmaloy@redhat.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<tuong.t.lien@dektech.com.au>, <ying.xue@windreiver.com>
-CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<wangliang74@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <tipc-discussion@lists.sourceforge.net>
-Subject: [PATCH net] net/tipc: fix slab-use-after-free Read in tipc_aead_encrypt_done
-Date: Tue, 20 May 2025 18:14:04 +0800
-Message-ID: <20250520101404.1341730-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747736335; c=relaxed/simple;
+	bh=mjb+AofgEQErmC1wLIMq2NamLveZrEDc/pwROLW6SLQ=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=BslNpb/cr0vG6t3SBObRJwydxPeYw9EQYPnZHR+5Db7JujSG2oqGxCagVLe8xxyAJJzpgP9eOBP96OdaLInL991ZSPtCM/eTJzctyM5ukeYIN4XybgaTWsG4SmnjCYvh1ACB7Dg5c2LWlb3IX7/gj5VQ65s+XyV6L/E7iaiZioQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=D1JnHBhU; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Subject:Cc:To:From:Date:Message-ID:
+	Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=ZMi0U2zr4ZWzhpIPyVKhut6zuCHSmuHjaPz65LW/Ous=; b=D1JnHBhUyV3K6tksOdfPjzTu3n
+	sidCxwfkJRewc4yh8ZacaP5OFxf5E+xSSYcsIN1IE3ZD/CNJx8wwVEn5q8Vabce+eHii0tNKjTf24
+	05CWb25rNQMqAbEm79UwYSWAHTnMk7lQfus1IHSDzSiAM3TMeQCJbHA9PwF3UxiZ1WMkjrvWWK+Pi
+	4pk6517Qic0OyJi/yVMt9dh+H71JPQ562HDVvlJOWuZm0YN2f8G9cwQRFEc6Jud/j6AFbz6cySmWY
+	M6D3CSjpcCWMVDhMb0uqltT2vQUEz3kKR6ECRRO3UuPwwL7UlLYOYZ/4c6hz/WjHYdkkaGVFKyXmn
+	KpFSl85g==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uHK3Z-00000000lL3-3kLh;
+	Tue, 20 May 2025 10:18:46 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
+	id B27E9300677; Tue, 20 May 2025 12:18:44 +0200 (CEST)
+Message-ID: <20250520094538.086709102@infradead.org>
+User-Agent: quilt/0.66
+Date: Tue, 20 May 2025 11:45:38 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: mingo@redhat.com,
+ juri.lelli@redhat.com,
+ vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com,
+ rostedt@goodmis.org,
+ bsegall@google.com,
+ mgorman@suse.de,
+ vschneid@redhat.com,
+ clm@meta.com
+Cc: linux-kernel@vger.kernel.org,
+ peterz@infradead.org
+Subject: [RFC][PATCH 0/5] sched: Try and address some recent-ish regressions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemg200005.china.huawei.com (7.202.181.32)
 
-Syzbot reported a slab-use-after-free with the following call trace:
 
-  ==================================================================
-  BUG: KASAN: slab-use-after-free in tipc_aead_encrypt_done+0x4bd/0x510 net/tipc/crypto.c:840
-  Read of size 8 at addr ffff88807a733000 by task kworker/1:0/25
+Hi!
 
-  Call Trace:
-   kasan_report+0xd9/0x110 mm/kasan/report.c:601
-   tipc_aead_encrypt_done+0x4bd/0x510 net/tipc/crypto.c:840
-   crypto_request_complete include/crypto/algapi.h:266
-   aead_request_complete include/crypto/internal/aead.h:85
-   cryptd_aead_crypt+0x3b8/0x750 crypto/cryptd.c:772
-   crypto_request_complete include/crypto/algapi.h:266
-   cryptd_queue_worker+0x131/0x200 crypto/cryptd.c:181
-   process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3231
+So Chris poked me about how they're having a wee performance drop after around
+6.11. He's extended his schbench tool to mimic the workload in question.
 
-  Allocated by task 8355:
-   kzalloc_noprof include/linux/slab.h:778
-   tipc_crypto_start+0xcc/0x9e0 net/tipc/crypto.c:1466
-   tipc_init_net+0x2dd/0x430 net/tipc/core.c:72
-   ops_init+0xb9/0x650 net/core/net_namespace.c:139
-   setup_net+0x435/0xb40 net/core/net_namespace.c:343
-   copy_net_ns+0x2f0/0x670 net/core/net_namespace.c:508
-   create_new_namespaces+0x3ea/0xb10 kernel/nsproxy.c:110
-   unshare_nsproxy_namespaces+0xc0/0x1f0 kernel/nsproxy.c:228
-   ksys_unshare+0x419/0x970 kernel/fork.c:3323
-   __do_sys_unshare kernel/fork.c:3394
+Specifically the commandline given:
 
-  Freed by task 63:
-   kfree+0x12a/0x3b0 mm/slub.c:4557
-   tipc_crypto_stop+0x23c/0x500 net/tipc/crypto.c:1539
-   tipc_exit_net+0x8c/0x110 net/tipc/core.c:119
-   ops_exit_list+0xb0/0x180 net/core/net_namespace.c:173
-   cleanup_net+0x5b7/0xbf0 net/core/net_namespace.c:640
-   process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3231
+  schbench -L -m 4 -M auto -t 128 -n 0 -r 60
 
-After freed the tipc_crypto tx by delete namespace, tipc_aead_encrypt_done
-may still visit it in cryptd_queue_worker workqueue.
+This benchmark wants to stay on a single (large) LLC (Chris, perhaps add an
+option to start the CPU mask with
+/sys/devices/system/cpu/cpu0/cache/index3/shared_cpu_list or something). Both
+the machine Chris has (SKL, 20+ cores per LLC) and the machines I ran this on
+(SKL,SPR 20+ cores) are Intel, AMD has smaller LLC and the problem wasn't as
+pronounced there.
 
-I reproduce this issue by:
-  ip netns add ns1
-  ip link add veth1 type veth peer name veth2
-  ip link set veth1 netns ns1
-  ip netns exec ns1 tipc bearer enable media eth dev veth1
-  ip netns exec ns1 tipc node set key this_is_a_master_key master
-  ip netns exec ns1 tipc bearer disable media eth dev veth1
-  ip netns del ns1
+Use performance CPU governor (as always when benchmarking). Also, if the test
+results are unstable as all heck, disable turbo.
 
-The key of reproduction is that, simd_aead_encrypt is interrupted, leading
-to crypto_simd_usable() return false. Thus, the cryptd_queue_worker is
-triggered, and the tipc_crypto tx will be visited.
+After a fair amount of tinkering I managed to reproduce on my SPR and Thomas'
+SKL. The SKL would only give usable numbers with the second socket offline and
+turbo disabled -- YMMV.
 
-  tipc_disc_timeout
-    tipc_bearer_xmit_skb
-      tipc_crypto_xmit
-        tipc_aead_encrypt
-          crypto_aead_encrypt
-            // encrypt()
-            simd_aead_encrypt
-              // crypto_simd_usable() is false
-              child = &ctx->cryptd_tfm->base;
+Chris further provided a bisect into the DELAY_DEQUEUE patches and a bisect
+leading to commit 5f6bd380c7bd ("sched/rt: Remove default bandwidth control")
+-- which enables the dl_server by default.
 
-  simd_aead_encrypt
-    crypto_aead_encrypt
-      // encrypt()
-      cryptd_aead_encrypt_enqueue
-        cryptd_aead_enqueue
-          cryptd_enqueue_request
-            // trigger cryptd_queue_worker
-            queue_work_on(smp_processor_id(), cryptd_wq, &cpu_queue->work)
 
-Fix this by holding net reference count before encrypt.
+SKL (performance, no_turbo):
 
-Reported-by: syzbot+55c12726619ff85ce1f6@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=55c12726619ff85ce1f6
-Fixes: fc1b6d6de220 ("tipc: introduce TIPC encryption & authentication")
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
----
- net/tipc/crypto.c | 5 +++++
- 1 file changed, 5 insertions(+)
+schbench-6.9.0-1.txt:average rps: 2040360.55
+schbench-6.9.0-2.txt:average rps: 2038846.78
+schbench-6.9.0-3.txt:average rps: 2037892.28
 
-diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c
-index c524421ec652..8584893b4785 100644
---- a/net/tipc/crypto.c
-+++ b/net/tipc/crypto.c
-@@ -817,12 +817,16 @@ static int tipc_aead_encrypt(struct tipc_aead *aead, struct sk_buff *skb,
- 		goto exit;
- 	}
- 
-+	/* Get net to avoid freed tipc_crypto when delete namespace */
-+	get_net(aead->crypto->net);
-+
- 	/* Now, do encrypt */
- 	rc = crypto_aead_encrypt(req);
- 	if (rc == -EINPROGRESS || rc == -EBUSY)
- 		return rc;
- 
- 	tipc_bearer_put(b);
-+	put_net(aead->crypto->net);
- 
- exit:
- 	kfree(ctx);
-@@ -860,6 +864,7 @@ static void tipc_aead_encrypt_done(void *data, int err)
- 	kfree(tx_ctx);
- 	tipc_bearer_put(b);
- 	tipc_aead_put(aead);
-+	put_net(net);
- }
- 
- /**
--- 
-2.34.1
+schbench-6.15.0-rc6+-1.txt:average rps: 1907718.18
+schbench-6.15.0-rc6+-2.txt:average rps: 1906931.07
+schbench-6.15.0-rc6+-3.txt:average rps: 1903190.38
+
+schbench-6.15.0-rc6+-dirty-1.txt:average rps: 2002224.78
+schbench-6.15.0-rc6+-dirty-2.txt:average rps: 2007116.80
+schbench-6.15.0-rc6+-dirty-3.txt:average rps: 2005294.57
+
+schbench-6.15.0-rc6+-dirty-delayed-1.txt:average rps: 2011282.15
+schbench-6.15.0-rc6+-dirty-delayed-2.txt:average rps: 2016347.10
+schbench-6.15.0-rc6+-dirty-delayed-3.txt:average rps: 2014515.47
+
+schbench-6.15.0-rc6+-dirty-delayed-default-1.txt:average rps: 2042169.00
+schbench-6.15.0-rc6+-dirty-delayed-default-2.txt:average rps: 2032789.77
+schbench-6.15.0-rc6+-dirty-delayed-default-3.txt:average rps: 2040313.95
+
+
+SPR (performance):
+
+schbench-6.9.0-1.txt:average rps: 2975450.75
+schbench-6.9.0-2.txt:average rps: 2975464.38
+schbench-6.9.0-3.txt:average rps: 2974881.02
+
+schbench-6.15.0-rc6+-1.txt:average rps: 2882537.37
+schbench-6.15.0-rc6+-2.txt:average rps: 2881658.70
+schbench-6.15.0-rc6+-3.txt:average rps: 2884293.37
+
+schbench-6.15.0-rc6+-dl_server-1.txt:average rps: 2924423.18
+schbench-6.15.0-rc6+-dl_server-2.txt:average rps: 2920422.63
+
+schbench-6.15.0-rc6+-dirty-1.txt:average rps: 3011540.97
+schbench-6.15.0-rc6+-dirty-2.txt:average rps: 3010124.10
+
+schbench-6.15.0-rc6+-dirty-delayed-1.txt:average rps: 3030883.15
+schbench-6.15.0-rc6+-dirty-delayed-2.txt:average rps: 3031627.05
+
+schbench-6.15.0-rc6+-dirty-delayed-default-1.txt:average rps: 3053005.98
+schbench-6.15.0-rc6+-dirty-delayed-default-2.txt:average rps: 3052972.80
+
+
+As can be seen, the SPR is much easier to please than the SKL for whatever
+reason. I'm thinking we can make TTWU_QUEUE_DELAYED default on, but I suspect
+TTWU_QUEUE_DEFAULT might be a harder sell -- we'd need to run more than this
+one benchmark.
+
+Anyway, the patches are stable (finally!, I hope, knock on wood) but in a
+somewhat rough state. At the very least the last patch is missing ttwu_stat(),
+still need to figure out how to account it ;-)
+
+Chris, I'm hoping your machine will agree with these numbers; it hasn't been
+straight sailing in that regard.
 
 
