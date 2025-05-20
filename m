@@ -1,115 +1,96 @@
-Return-Path: <linux-kernel+bounces-656262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77BE8ABE3A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:25:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA377ABE3A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1614D3AFFE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:25:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8A31BA6045
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291E82820C2;
-	Tue, 20 May 2025 19:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBF2270570;
+	Tue, 20 May 2025 19:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mq4MwtoL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3aog9tW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1B2281344;
-	Tue, 20 May 2025 19:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D08825B69D;
+	Tue, 20 May 2025 19:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747769107; cv=none; b=ZMWBAxFBnQpgkPggsDqqK1ERUJB+XbZAKCChcpTfn43srjqL6U7ydOEbnfTwtSldQZoBcBxVgP73xJ3nLF8E/DDYAH6PfSaT6VK936eUvoy+GXRKUO9zn0ii4NOZRea8F9R2ufeCEXJ1Z6X/tnefhuF0t8vU+UCzdukCS2KMhDc=
+	t=1747769182; cv=none; b=ndqqP4mMCDRfkMAXCvbvRdZa/a0LOaoOfJ1yMJj5RFitVFTmZBgtMlcnkJU1PWtFLVXCQ+d+yotTGRuA8hTnRb3TQ4dpA06Jz/pUB9iqernn88BMASaoVfNPIp68IZQswQAtLqzYpMdabTiCqy9Kh7gcwbR/Yo1fIGQ/CqkX37o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747769107; c=relaxed/simple;
-	bh=wYtGxquDyb/uwRox/J1ebRNegYN8+f58D8Ohb3JJlS0=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=FGneyhUKzFNY1HNOgaeT5qXrRpBH1jyr0HKy6sepP+WnSijo5JUVu+32l70QReZbfP7dgxiCxBNZwkLtjLEacE8nZyfFWATff9H57Inat/hj/L3Fbuui81fm/EPt1NH2LJT4ifhgKXyYzyUUJPKtDZo3+mLMweqAch5jk+9V2Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mq4MwtoL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B60CAC4CEEF;
-	Tue, 20 May 2025 19:25:06 +0000 (UTC)
+	s=arc-20240116; t=1747769182; c=relaxed/simple;
+	bh=EEKZPw1F6ZjbLWINaDq5GKXqD8bK0kWe1R+5RT1/KqQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VjeAIbsb3Ya+GP1QQs0xzS5VLTd2znthAMphyc52M+thLbnenzuu7OPT9Xi4PLpGOZpJmbdHry7BaZ1gIawKrIrmnXSf5RLrtDgCZzeCFyZOdLKaAJ+65G39j91JJDV8BXvGZ+LsnKWpDKp1uSrXo376cUH6L4IrJ1687S7UHpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3aog9tW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 398DAC4CEE9;
+	Tue, 20 May 2025 19:26:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747769107;
-	bh=wYtGxquDyb/uwRox/J1ebRNegYN8+f58D8Ohb3JJlS0=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=mq4MwtoLo5Wzyd5gbzrmxP+oV99rqMPjNFLimTHDS6kh+QWK3DB/s0UQU1SvFt2fl
-	 z9G3eV17jA4/SCAfvUQ0gSpKXkJ4IOALf+MPQqyeEUjXcgnMr+PBiiE+yFs4yKOVdm
-	 hjbPho3BuMrnPe+Y7HP2NefU2baF+2TYGc/n55HdbvJonXj/i3tSuCefsT8F3fZXAi
-	 /zx+ap7FTN5+FV0heRFKqSTgsoO/ZjJKIR0wsh8aQnxVFbqc53v0I6Ly9wlevXiw4Z
-	 hZcfEhDcYIeP2iuGFjrTw85RmvD0oMV28aiboXDYmQQP3ULxuU88QtkO3bykWaqlqj
-	 uGVn8MAz4sHHw==
-Date: Tue, 20 May 2025 14:25:05 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1747769178;
+	bh=EEKZPw1F6ZjbLWINaDq5GKXqD8bK0kWe1R+5RT1/KqQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=U3aog9tWd6bXcpGT5UjgeE56/ORLeuQCgSDubATJky9aRmIJCSfs7g6Y/J7sB8E0U
+	 LL8KSsBHkoRdkCIhpHSk8XgM+gAa+redCwTOybiNAItJ7WzL2sEs1DXJ3UcpFj3mpi
+	 GgBD+JW91HR5goyqakmbtLoxWwjME/cAxP8RJSwJmXj/Uer4fU6e0wE3hZRvSDYhhq
+	 USSbf5hm1ycuNh3BrIjay2BpbYiWGq/3/xQJLwhACab98CetJ0aYy0Efw4JJkssYqK
+	 ggl8xHj4yj1BJAYcDPrwRmL6djFe9acBtpHL0G+46SL6Pwsk5nYW52VO5c9zbnKTAW
+	 h02oXqRaHAwrw==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.14 000/145] 6.14.8-rc1 review
+Date: Tue, 20 May 2025 21:26:03 +0200
+Message-ID: <20250520192603.890440-1-ojeda@kernel.org>
+In-Reply-To: <20250520125810.535475500@linuxfoundation.org>
+References: <20250520125810.535475500@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, 
- Nicolas Le Bayon <nicolas.le.bayon@foss.st.com>, 
- linux-stm32@st-md-mailman.stormreply.com, Stephen Boyd <sboyd@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>
-To: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-In-Reply-To: <20250520-upstream_rcc_mp21-v2-1-3c776a6e5862@foss.st.com>
-References: <20250520-upstream_rcc_mp21-v2-0-3c776a6e5862@foss.st.com>
- <20250520-upstream_rcc_mp21-v2-1-3c776a6e5862@foss.st.com>
-Message-Id: <174776907578.1216009.15135400439348545740.robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: stm32: add STM32MP21 clocks and
- reset bindings
+Content-Transfer-Encoding: 8bit
 
+On Tue, 20 May 2025 15:49:30 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.14.8 release.
+> There are 145 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 22 May 2025 12:57:37 +0000.
+> Anything received after that time might be too late.
 
-On Tue, 20 May 2025 17:28:37 +0200, Gabriel Fernandez wrote:
-> Adds clock and reset binding entries for STM32MP21 SoC family.
-> 
-> Signed-off-by: Nicolas Le Bayon <nicolas.le.bayon@foss.st.com>
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> ---
->  .../bindings/clock/st,stm32mp21-rcc.yaml           | 204 ++++++++++
->  include/dt-bindings/clock/st,stm32mp21-rcc.h       | 426 +++++++++++++++++++++
->  include/dt-bindings/reset/st,stm32mp21-rcc.h       | 138 +++++++
->  3 files changed, 768 insertions(+)
-> 
+Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
+for loongarch64:
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-yamllint warnings/errors:
+Thanks!
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/st,stm32mp21-rcc.yaml: properties:access-controllers: {'description': 'phandle to the rifsc device to check access right.', 'items': [{'description': 'phandle to access controller'}], 'minItems': 1, 'maxItems': 1} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/st,stm32mp21-rcc.yaml: properties:access-controllers: 'oneOf' conditional failed, one must be fixed:
-	[{'description': 'phandle to access controller'}] is too short
-	False schema does not allow 1
-	hint: "minItems" is only needed if less than the "items" list length
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250520-upstream_rcc_mp21-v2-1-3c776a6e5862@foss.st.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Cheers,
+Miguel
 
