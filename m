@@ -1,169 +1,258 @@
-Return-Path: <linux-kernel+bounces-655066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B518ABD04A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:21:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A44BBABD075
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01DC13A62B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 07:21:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0CF37AAF45
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 07:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6760A25D539;
-	Tue, 20 May 2025 07:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDF025D201;
+	Tue, 20 May 2025 07:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r1cwvOxY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="oPz3t/CA"
+Received: from sonic305-19.consmr.mail.sg3.yahoo.com (sonic305-19.consmr.mail.sg3.yahoo.com [106.10.241.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBB310E4;
-	Tue, 20 May 2025 07:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A29145FE0
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 07:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.241.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747725679; cv=none; b=H7jks6deTwKKzsuDX2q0h0L7VIM6nTVHJprPc+yuSezKdPyQ0FX1TblG3K9Kssp93rQIzKupvM0xWFjmKF072vM3fYdLZPepPwuT2heXzLQGHXim+GEi0iwu5blIPv1Rofi0yFgfkv1a/5uZstRYek3Sx00hRAEALKlDpo0Czgg=
+	t=1747726331; cv=none; b=uMLrbJ1cmPAwXsy3YWydVsPVbKw8PZHicA1IHZBA/A3//FfzFt8TxnakgSGScbeUlG+hvpM3FsvlO83k8dXFlxEqJBtLWj6TWDj1Yw69a8LucbbYgzk80yXq2xwqQIDg720C8lqEfNB0Y8XIZHyhPoeXxj0afS0iJF/Jvnt5ZQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747725679; c=relaxed/simple;
-	bh=1q5hAkbkfFSCW+NeCF6lRVxMy74rmlMg7B0eD/X0zJw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=nM0oqUD/lpu9olmW2bzRx+BRFCkwBUNI/qCA5zNeNEF6nYX2juGlpvQ+pAa31d+EbdrVMYSlpHxNUcd4LamUaeH2OAXgcyXDINvLXrTcPBvUe8/fr2pPg4v8Y2uAtsQq63YSnrbsAyNF/+jLfamSjV7kjsGZYoIZJAY7maTG8tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r1cwvOxY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C8DC4CEE9;
-	Tue, 20 May 2025 07:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747725679;
-	bh=1q5hAkbkfFSCW+NeCF6lRVxMy74rmlMg7B0eD/X0zJw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r1cwvOxYN9S17xE1kv90orTjCleKG1ZW0nmbs3kS/R5KhpWG2jbwCe+bDEfFuxsZ/
-	 +6cJcV14TV6x5Lq8SHxmPSq3MAzkA0GRKLaALr9HL+v55Mgk7DP/QnClFcJEhQ+Uf1
-	 SUxbCDOKoouJ95YgO68kJHxjwm6foEgg6KZuE/9bMu1AKNEFdcMrDPQ/heQKRUJyUq
-	 iSX/RQ8JSz4INH/FgIZfzTjv1sdTREa+CpdYkC6rXVn4u1IQk9UmGvNrzBIYuxaqR5
-	 7IL++GH8skVcHrME4xcd6RHM3z+/wmJ6lqNm+vx1KmzvLWza2PS6FpLFWVVryNpA+q
-	 FddU5mX8yHn8w==
+	s=arc-20240116; t=1747726331; c=relaxed/simple;
+	bh=vvWKBexwkfQZ03sAq9Ojn0Zqt5SiYG03IRVvTfvqPZI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=riL3rB9UJxoXIpnvrV6PcqWocqbDqwKyJJSCAmCcMLuyqzLTvz5udHrdH/jSyGCFkwyywlr140WeJqnEmK0+IVx3KJi7N4JmH2/ESRcDvdTMNM5ryq7PA6enZCPcLv0E5wt5ax/wuSSX2pnUe7c55nTkGu5ayp8Kn97+HwiYHsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=oPz3t/CA; arc=none smtp.client-ip=106.10.241.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747726321; bh=N8uoUa6Am0nLGOIzto6+l13jmNC8tGFsQPG+3gW2waA=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=oPz3t/CAz8aN8BR5PgV7LGVXY507AARSu2QGP1cxDRrN2NSHxcj7luLnN/qxp/uaTzAhJLdk0HshLmy1/kNqQV3wWl0nApmbNtDyK3WD9If6yu9/HscqDUybNnVNGhneB6qGk+LHg4Zqcyu1D6uAGMtQ3OElInI+FbFchwjDKDOXmsU4LDf9mQTSJaWPvy7ESazXUZ+9VmNmg9DEXLDwTXrFfbz/+uD3rASOgdyb3iZnV8HSvdFVpntYmAKcequvGxbiZkCDBfj/dntyiW9f5geTjjYcp+wpmXak3sQVpNIn3RWHjjWR3PhML1v3/4D6aFKiYL3IlNmD3W/I3H1qHQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747726321; bh=ArV7i8E4lKYhwbNuq8TDmKMtOPJsak4ieVPAsnZtVIF=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=YnNcpuGh6Zd2xrXgNDTcpJOKmseKMSk1p5m+N39Y9uZfhTFBlbIRhqA1+OqN+BVEV4vLP3bwYea+1u6If3H8Bu4uQars6J/aLY+qC7QionaDks+BmOFQYT9y/rXlN3TIOlAbwOSpA9yGp+Fu74q+grOXIyz9SOmzp3PuJnDC+XzaiHUXs0L5pq+63JQplm+iyfxQjOWj2UQ1tmuSIPPD/qML2DmtOe3yml55CxCAKOS2BjrccZtR5Uy6qBdVxv8Jjz7zUPXAUghdcJu7Jc8wMkGDzJXND5tAajdeTs0O7QIcCF5YOPftJdNJSDDuEFSSmS69uAIYOiETnxaVM3nr5A==
+X-YMail-OSG: Yf8XIygVM1mZIwIWnBhae6KBjpQFTFlIjQhSE2barQYYJ3JepOX.Xycl3S3k2GT
+ UlZja4VPuUOo1fdpBWyA_wZz5jB3eZPu_E0maM2ocn1csFKP1BlfMEO2R_8ntP3TufWevFoNaZNj
+ e72L.2TUVT0_aQtDptUUqpY9s1sglyExItx0Ez3VU1k91o8RisvIhuNvUqF5uX2UKyOTY_mwFzse
+ poOIRcHOQb9BITRb_BAQi2bAnZaTLj5n.0H6bSm_Ppz7FJjHcq2QLP9eAx3NNh_z_F36R81n2q6z
+ jC67TEmu1qMmgif2gZDkeSQNAHpEeLSCA7VlUgAcUGfu4dmt.Hjt54Igc6QTtbOHLAGiRcy1FYVH
+ MQ5QC34asS9hdqduEVSjCzHEklN74zpbO3GN4MJ9gB_4rAgEXpAma5Rfic6BJcCzKOw22H3E.SmD
+ tMOb9YpryD3mxkvAOCBTfsXwTeLeEkqTJ4UXsVcZsAtr5GLolq7pOXY9u8WzJh0cLZUN0.98whCj
+ rxoLZ4TL5AUWhCGsBEXQmpOaK1izXccm9xXDcYktLBT.3Rn5Gdad.xk.Gl8KCMmvG_ynQWhysti2
+ zIm.chY96DzoIwYaEDT_p1.ZOmagCKsPyFDIuBn_Z3ZE9WoNdxYuCg5HzaPS1nW_a.KnZ6Z7ek6g
+ 71D_upAmOjB49FyC0JulpnAaMfua1En_4nncD4hK1HqrH4p.dOt3hIG9hqHW3mknfeKVkXqvm9.j
+ qgt_IwPgyGATNtXe3hKMukN9FucUYKs467uIi9P5MHI8e_uWcoURcU1s81Smkfc8Qq96zCGsJ7gK
+ rQnxp5vc.xJduVhtXT3VKHx..1qOUOrBp7aHqBx2i_iABJP9SmmBOaUGVeSE1KC6UNV_9LAqZC76
+ bYKTwDKsoxQjG.7kR_yvvjfKTqdmSFcgLl5_3iYWlob_lJTH0Zy8colj2TMVgLkoIXkuqXUn6_5i
+ Axuow97r_fgGmQZV5bBcb8OCb1_UbgVwlo9YEubLejos4.9OPbejt9Ao.umKchAYMTJoAbrKkzyp
+ HIBk6jVBUrCp3_1NZ8hcxw0rUEsG2aMWDycLuI2CRlcGByu1.x9PNEyNCJ510Y3YpOGCVDOavqvZ
+ _Y172j9Bm0eG..Drs6saGBEjvKiTr850KDzJT6pl7XgkZOfn30oLKPHsnXKrvX0daPcGCE7fjJqI
+ hywwdpmHJxpZH3JI54u42.a0NoTBdDre_TIpMZMoynU6eA6F7LWBAWbsgQip2vY_YD96tB0ev2Zm
+ OOmaYJmaHbDtpHaUjavp.rxciNfO3aAAbmrPeO7Nm5FXumAfIQGIvrXXiFns4sIc2qAJCu75cc3v
+ L9N_D6_YCF1mG2xkjBSxS2LmUy1uTdAQQYLAQb9MvFZtDHLlnjQJxlr48aBsQuBkzB8oGiMpMviJ
+ JYJFKZMVK6HFUIJKf1r_90PM_kKetXwA8_sTf4IRzm65BZFQrKDCdSvU3eJtbpCTPftnlFAI4Ze2
+ biYnFwWmtq8FTYZRqQqu1dnGM8DcTNAdZKxcufLy_UzF9TsqOdWq4aINUa.dTnMSWYJNNZlPYK1.
+ W49GE5KJMfNwZ3x2kU_ExFYQXVC0iNvpaoUnBakOJRXr5LSLrCsp2PmyZazs3ovh6g2O8ce_8Y_2
+ EX.uibvTVxUxo8hsKLUJEjSGymN.tH07WzDQTG8TgA5Hu1lHMBwhTAkjmxM8l72VpApr8lAk0Cdm
+ vNARm_eFXbQXK3IPG6aBMDyImvFbPDJl3g4sSCc05OnaqDw70bs9ud49jxK5Q6ocSoVLmT9GrU_J
+ 1lCZl7Nz.CQ5Hyos5XK9ZGeIVlmxT6GQTOukjacdrm3lxi0LCL0gds8IHmIh122lE2565XxCwmE3
+ SE9tYofmWroazf5qAi_lCNE9wsDYw6ippSBi8EXCamD6jd3A4ScOUumemvlYaiC2K9AGAkx.0tEr
+ j.HVfuK5XUSu9Rz1txRPjlbrqi_ulzGG_NkeULVoqfjxE36SrsAHChBc2cI0at7ZYgvLFz3GckPH
+ VeXIpY.NAOdJ6fxg8MNU9EdLNw1D_BhmdpV37.X4Ty.vYILyBVrVdk4Cu2E3QXkklFMfnhuuUrnk
+ qrPLlZojz7R6WobYqHxZIVwW_Ko59QOlqhM8i2I82ew_RErOw1Q_HtthwgPwUxEzgc1tcy1uHef5
+ Ou2iAoERyuzgt5uhoDAXVmh5b73LT7FabTEb280fJ5h1pcFF4AGVMRf66ObADT83WQzsBDOwiiOh
+ eT1qeUj_YPHF89fyN5NyKLbWbhUqCbaJYiJko2GRItyZtCKhyazD9.Gsi2c6tggxAfE3voo0zvfl
+ xy0ucJoUn0V3i0eFNsnbenM3.bH3rRn62j4.g5oRATAqgHw--
+X-Sonic-MF: <sumanth.gavini@yahoo.com>
+X-Sonic-ID: 7788ade7-b3a9-48ef-a725-1ab67cdd9fe1
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.sg3.yahoo.com with HTTP; Tue, 20 May 2025 07:32:01 +0000
+Received: by hermes--production-gq1-74d64bb7d7-5wzx5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f1965de6dd6214c4a76ef4d067160fdf;
+          Tue, 20 May 2025 07:21:51 +0000 (UTC)
+From: Sumanth Gavini <sumanth.gavini@yahoo.com>
+To: krzk@kernel.org,
+	bongsu.jeon@samsung.com
+Cc: Sumanth Gavini <sumanth.gavini@yahoo.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3] nfc: Correct Samsung "Electronics" spelling in copyright headers
+Date: Tue, 20 May 2025 00:21:19 -0700
+Message-ID: <20250520072119.176018-1-sumanth.gavini@yahoo.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <906c36f9-f8af-49a3-a2d7-b146a793f1bc@kernel.org>
+References: <906c36f9-f8af-49a3-a2d7-b146a793f1bc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 20 May 2025 09:21:13 +0200
-Message-Id: <DA0T1M8YEHZ9.1AW3IGD1IZX7Z@kernel.org>
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Remo Senekowitsch" <remo@buenzli.dev>, "Danilo Krummrich"
- <dakr@kernel.org>
-Cc: "Rob Herring" <robh@kernel.org>, "Saravana Kannan"
- <saravanak@google.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Dirk Behme" <dirk.behme@de.bosch.com>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v4 6/9] rust: device: Add bindings for reading device
- properties
-X-Mailer: aerc 0.20.1
-References: <20250504173154.488519-1-remo@buenzli.dev>
- <20250504173154.488519-7-remo@buenzli.dev> <aCH5WgORn9ZGl9Il@pollux>
- <DA093HA2415H.29OCPLS0M7H84@buenzli.dev> <aCtici15vSCBDbzE@pollux>
- <DA0EDC6W54E5.2CO8VXPTOXXJK@buenzli.dev>
-In-Reply-To: <DA0EDC6W54E5.2CO8VXPTOXXJK@buenzli.dev>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon May 19, 2025 at 9:51 PM CEST, Remo Senekowitsch wrote:
-> On Mon May 19, 2025 at 6:55 PM CEST, Danilo Krummrich wrote:
->> On Mon, May 19, 2025 at 05:43:17PM +0200, Remo Senekowitsch wrote:
->>> On Mon May 12, 2025 at 3:36 PM CEST, Danilo Krummrich wrote:
->>> >> +/// Implemented for all integers that can be read as properties.
->>> >> +///
->>> >> +/// This helper trait is needed on top of the existing [`Property`]
->>> >> +/// trait to associate the integer types of various sizes with thei=
-r
->>> >> +/// corresponding `fwnode_property_read_*_array` functions.
->>> >> +pub trait PropertyInt: Copy {
->>> >> +    /// # Safety
->>> >> +    ///
->>> >> +    /// Callers must uphold the same safety invariants as for the v=
-arious
->>> >> +    /// `fwnode_property_read_*_array` functions.
->>> >
->>> > I think you have additional requirements on the fwnode, propname and =
-val
->>> > pointers as well as on nval, please document them as well.
->>>=20
->>> What are the additional requirements? The implementation just calls the
->>> underlying `fwnode_property_read_*_array` with the exact same arguments=
-,
->>> so I don't know what the additional requirements are.
->>
->> First of all, I don't think you can refer to the safety requirements of =
-the
->> `fwnode_property_read_*_array` functions, since they don't have any docu=
-mented
->> safety requirements.
+Fix the misspelling of "Electronics" in copyright headers across:
+- s3fwrn5 driver
+- virtual_ncidev driver
 
-Yes. We do sometimes link to other function for safety requirements if
-they are very repetitive, but in that case we use a rustdoc link (so
-[`my_other_function`]).
-
-In this case, one doesn't even have a name to search for, only the
-`fwnode_property_read_` prefix (and who is going to bother doing that?).
-Additionally, the functions that you are referring to are from the
-`bindings`! Those functions do not have safety documentation!
-
-Another thing, functions do not have safety invariants, they only have
-safety requirements and guarantees.
-
->> So, I think you have safety requirements regarding pointer validity of f=
-wnode,
->> propname and val.
->>
->> Additionally, there's the requirement that val has to be an array of nva=
-l
->> length.
-
-Yes these two are probably required, but to be sure one would have to
-dig through the C code.
-
->> Also, the PropertyInt trait itself has to be unsafe, given that it conta=
-ins
->> unsafe functions.
->
-> I don't think a trait necessarily has to be marked unsafe just because
-> it has unsafe methods. Marking a trait as unsafe means that implementors
-> of the trait must uphold some invariants. This is not the case here
-> IIUC. Here's a good explanation of my understanding: [1]
-
-Yes this is correct, I don't think that the trait itself should be
-unsafe.
-
-> But I should anyway seal the two traits. They're not supposed to be
-> implemented outside the kernel crate.
-
-Yes that sounds like a good idea.
-
-I'll send a separate email for some more comments on the design.
-
+Signed-off-by: Sumanth Gavini <sumanth.gavini@yahoo.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Cheers,
-Benno
+v2:
+ - Missed to add changelog
+ - Link to v1: https://lore.kernel.org/lkml/e414c1ca-6e56-4088-b974-3a45eab682c1@kernel.org/
 
-> [1] https://users.rust-lang.org/t/safe-trait-with-an-unsafe-method/67993/=
-3
->
->> I also pinged Benno about it, he usually knows best how to cover such th=
-ings
->> properly. :)
->>
->>> >> +    unsafe fn read_array_from_fwnode_property(
->>> >> +        fwnode: *const bindings::fwnode_handle,
->>> >> +        propname: *const ffi::c_char,
->>> >> +        val: *mut Self,
->>> >> +        nval: usize,
->>> >> +    ) -> ffi::c_int;
->>> >> +}
+v3:
+ - Added changelog for v2 updates
+---
+ drivers/nfc/s3fwrn5/core.c       | 2 +-
+ drivers/nfc/s3fwrn5/firmware.c   | 2 +-
+ drivers/nfc/s3fwrn5/firmware.h   | 2 +-
+ drivers/nfc/s3fwrn5/i2c.c        | 2 +-
+ drivers/nfc/s3fwrn5/nci.c        | 2 +-
+ drivers/nfc/s3fwrn5/nci.h        | 2 +-
+ drivers/nfc/s3fwrn5/phy_common.c | 4 ++--
+ drivers/nfc/s3fwrn5/phy_common.h | 4 ++--
+ drivers/nfc/s3fwrn5/s3fwrn5.h    | 2 +-
+ drivers/nfc/virtual_ncidev.c     | 2 +-
+ 10 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/nfc/s3fwrn5/core.c b/drivers/nfc/s3fwrn5/core.c
+index aec356880adf..af0fa8bd970b 100644
+--- a/drivers/nfc/s3fwrn5/core.c
++++ b/drivers/nfc/s3fwrn5/core.c
+@@ -2,7 +2,7 @@
+ /*
+  * NCI based driver for Samsung S3FWRN5 NFC chip
+  *
+- * Copyright (C) 2015 Samsung Electrnoics
++ * Copyright (C) 2015 Samsung Electronics
+  * Robert Baldyga <r.baldyga@samsung.com>
+  */
+ 
+diff --git a/drivers/nfc/s3fwrn5/firmware.c b/drivers/nfc/s3fwrn5/firmware.c
+index c20fdbac51c5..781cdbcac104 100644
+--- a/drivers/nfc/s3fwrn5/firmware.c
++++ b/drivers/nfc/s3fwrn5/firmware.c
+@@ -2,7 +2,7 @@
+ /*
+  * NCI based driver for Samsung S3FWRN5 NFC chip
+  *
+- * Copyright (C) 2015 Samsung Electrnoics
++ * Copyright (C) 2015 Samsung Electronics
+  * Robert Baldyga <r.baldyga@samsung.com>
+  */
+ 
+diff --git a/drivers/nfc/s3fwrn5/firmware.h b/drivers/nfc/s3fwrn5/firmware.h
+index 3a82ce5837fb..19f479aa6920 100644
+--- a/drivers/nfc/s3fwrn5/firmware.h
++++ b/drivers/nfc/s3fwrn5/firmware.h
+@@ -2,7 +2,7 @@
+ /*
+  * NCI based driver for Samsung S3FWRN5 NFC chip
+  *
+- * Copyright (C) 2015 Samsung Electrnoics
++ * Copyright (C) 2015 Samsung Electronics
+  * Robert Baldyga <r.baldyga@samsung.com>
+  */
+ 
+diff --git a/drivers/nfc/s3fwrn5/i2c.c b/drivers/nfc/s3fwrn5/i2c.c
+index 536c566e3f59..110d086cfe5b 100644
+--- a/drivers/nfc/s3fwrn5/i2c.c
++++ b/drivers/nfc/s3fwrn5/i2c.c
+@@ -2,7 +2,7 @@
+ /*
+  * I2C Link Layer for Samsung S3FWRN5 NCI based Driver
+  *
+- * Copyright (C) 2015 Samsung Electrnoics
++ * Copyright (C) 2015 Samsung Electronics
+  * Robert Baldyga <r.baldyga@samsung.com>
+  */
+ 
+diff --git a/drivers/nfc/s3fwrn5/nci.c b/drivers/nfc/s3fwrn5/nci.c
+index ca6828f55ba0..5a9de11bbece 100644
+--- a/drivers/nfc/s3fwrn5/nci.c
++++ b/drivers/nfc/s3fwrn5/nci.c
+@@ -2,7 +2,7 @@
+ /*
+  * NCI based driver for Samsung S3FWRN5 NFC chip
+  *
+- * Copyright (C) 2015 Samsung Electrnoics
++ * Copyright (C) 2015 Samsung Electronics
+  * Robert Baldyga <r.baldyga@samsung.com>
+  */
+ 
+diff --git a/drivers/nfc/s3fwrn5/nci.h b/drivers/nfc/s3fwrn5/nci.h
+index c2d906591e9e..bc4bce2bbc4d 100644
+--- a/drivers/nfc/s3fwrn5/nci.h
++++ b/drivers/nfc/s3fwrn5/nci.h
+@@ -2,7 +2,7 @@
+ /*
+  * NCI based driver for Samsung S3FWRN5 NFC chip
+  *
+- * Copyright (C) 2015 Samsung Electrnoics
++ * Copyright (C) 2015 Samsung Electronics
+  * Robert Baldyga <r.baldyga@samsung.com>
+  */
+ 
+diff --git a/drivers/nfc/s3fwrn5/phy_common.c b/drivers/nfc/s3fwrn5/phy_common.c
+index 81318478d5fd..deb2c039f0fd 100644
+--- a/drivers/nfc/s3fwrn5/phy_common.c
++++ b/drivers/nfc/s3fwrn5/phy_common.c
+@@ -2,9 +2,9 @@
+ /*
+  * Link Layer for Samsung S3FWRN5 NCI based Driver
+  *
+- * Copyright (C) 2015 Samsung Electrnoics
++ * Copyright (C) 2015 Samsung Electronics
+  * Robert Baldyga <r.baldyga@samsung.com>
+- * Copyright (C) 2020 Samsung Electrnoics
++ * Copyright (C) 2020 Samsung Electronics
+  * Bongsu Jeon <bongsu.jeon@samsung.com>
+  */
+ 
+diff --git a/drivers/nfc/s3fwrn5/phy_common.h b/drivers/nfc/s3fwrn5/phy_common.h
+index 99749c9294d1..9cef25436bf9 100644
+--- a/drivers/nfc/s3fwrn5/phy_common.h
++++ b/drivers/nfc/s3fwrn5/phy_common.h
+@@ -2,9 +2,9 @@
+  *
+  * Link Layer for Samsung S3FWRN5 NCI based Driver
+  *
+- * Copyright (C) 2015 Samsung Electrnoics
++ * Copyright (C) 2015 Samsung Electronics
+  * Robert Baldyga <r.baldyga@samsung.com>
+- * Copyright (C) 2020 Samsung Electrnoics
++ * Copyright (C) 2020 Samsung Electronics
+  * Bongsu Jeon <bongsu.jeon@samsung.com>
+  */
+ 
+diff --git a/drivers/nfc/s3fwrn5/s3fwrn5.h b/drivers/nfc/s3fwrn5/s3fwrn5.h
+index bb8f936d13a2..2b492236090b 100644
+--- a/drivers/nfc/s3fwrn5/s3fwrn5.h
++++ b/drivers/nfc/s3fwrn5/s3fwrn5.h
+@@ -2,7 +2,7 @@
+ /*
+  * NCI based driver for Samsung S3FWRN5 NFC chip
+  *
+- * Copyright (C) 2015 Samsung Electrnoics
++ * Copyright (C) 2015 Samsung Electronics
+  * Robert Baldyga <r.baldyga@samsung.com>
+  */
+ 
+diff --git a/drivers/nfc/virtual_ncidev.c b/drivers/nfc/virtual_ncidev.c
+index 6b89d596ba9a..9ef8ef2d4363 100644
+--- a/drivers/nfc/virtual_ncidev.c
++++ b/drivers/nfc/virtual_ncidev.c
+@@ -2,7 +2,7 @@
+ /*
+  * Virtual NCI device simulation driver
+  *
+- * Copyright (C) 2020 Samsung Electrnoics
++ * Copyright (C) 2020 Samsung Electronics
+  * Bongsu Jeon <bongsu.jeon@samsung.com>
+  */
+ 
+-- 
+2.43.0
 
 
