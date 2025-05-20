@@ -1,215 +1,581 @@
-Return-Path: <linux-kernel+bounces-655700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F849ABD9E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7746ABDAF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F358B175D58
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:49:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0266C16C569
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE926241CB7;
-	Tue, 20 May 2025 13:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CD024502E;
+	Tue, 20 May 2025 14:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Mly2KS3I";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LRU268jS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Mly2KS3I";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LRU268jS"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NuUTY1/8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C5527715
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 13:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB65EEDE;
+	Tue, 20 May 2025 14:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747748958; cv=none; b=XmyMlCIQImxkjouHKhUxLFlJYtQnBkkCwLH7aEflGRyCMvlci5uAgZz8W8PKw7OFQqq/BUYnvPKiflxg6GWPfHQqqOhHvFanTRHfWbFAlZeN6RUixDOtEdYx3xPgUTnH3OLNzPGlp4zvRRdnNfCIaGP0zLw5eRx2hMr7vUMjDuo=
+	t=1747749674; cv=none; b=Qm4nfZ/tlb/FGnBhO49+DZghgf+3SHbRaGRjinOEYYiyK3ZKEaxgZbcW+sf8lbxGcLzmFmR6X4mZ5hgTyH9QlvntMhlDoZPgHkBonhBQV+TjY1jOQUyjLfwa0nh+CzhwR2FAnbZXy/0RGtXjZ3bm0emJxqZv0FcMcsBuIM+/6I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747748958; c=relaxed/simple;
-	bh=/7VWxyML0vhfRCRDPfsAONOkPvqvpuIQvH3cnTg6A0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pmVf6V1LS/fqDc5U8+Mo4ZG0SauuQqS2B6WbwvvsBxOp6O+QZZP/UDpsZ425/uwRa6hm+gLZtyJa8V63JpV1cDwMwk7WEksa2YzjeMZLYq867ttVCzOuPr9io5cyIk2NnNzAGvpoxQCI1EvIoprXvyh5e7g01Wf1swqVviaz96k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Mly2KS3I; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LRU268jS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Mly2KS3I; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LRU268jS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6921F21FD1;
-	Tue, 20 May 2025 13:49:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747748954; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RZM3TBrxZ9gV4DGlqhfK6QoDDrye6xmauHV1rnGmWSo=;
-	b=Mly2KS3I0NbyhSJJz7h6ruYYwaHp/fHXCq11O1fT8DP7aV/C/Y30EYo2uiVDHJueRowmFb
-	w/jClxindqho6mWfikBzmJmqhlH98/sDYtKKI8FzOrqJIQDJBL9g6hygCXICADEpJPc8wm
-	6yY96T0WsokpVXC5hrrPFeyQD0AipKs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747748954;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RZM3TBrxZ9gV4DGlqhfK6QoDDrye6xmauHV1rnGmWSo=;
-	b=LRU268jSD4WF+otrYrdGkTmH1eEoo/LZA++Bp0MzsNwIrUiKyjnHWzB1py/+OzeGrz6CtB
-	0x16ubzzcNnE0cBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747748954; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RZM3TBrxZ9gV4DGlqhfK6QoDDrye6xmauHV1rnGmWSo=;
-	b=Mly2KS3I0NbyhSJJz7h6ruYYwaHp/fHXCq11O1fT8DP7aV/C/Y30EYo2uiVDHJueRowmFb
-	w/jClxindqho6mWfikBzmJmqhlH98/sDYtKKI8FzOrqJIQDJBL9g6hygCXICADEpJPc8wm
-	6yY96T0WsokpVXC5hrrPFeyQD0AipKs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747748954;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RZM3TBrxZ9gV4DGlqhfK6QoDDrye6xmauHV1rnGmWSo=;
-	b=LRU268jSD4WF+otrYrdGkTmH1eEoo/LZA++Bp0MzsNwIrUiKyjnHWzB1py/+OzeGrz6CtB
-	0x16ubzzcNnE0cBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2C7EB13A3E;
-	Tue, 20 May 2025 13:49:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TgiGCVqILGgbGwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 20 May 2025 13:49:14 +0000
-Message-ID: <990c04a5-6477-42c0-986d-9b63a30ac90b@suse.de>
-Date: Tue, 20 May 2025 15:49:13 +0200
+	s=arc-20240116; t=1747749674; c=relaxed/simple;
+	bh=gpAwP3ORqXEAVfwJ2WVNB8AXOeR/47Y4aILq4XAT2UE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pDtkGx5ysE84xjkMJtifNCKOwb2GgyTfpFZBoktwKt6YU9azAbRcUsONI88RcKmvOpDQcbMZ8oWzGTPTX5llwrd9CbR/yuHNk08e2kjH7ofZRrilwjAgPecA3sCY6GWtO1GU+pZKm+hkm+hZ1xM5Ju8fO1tV+cV/TdFgd+sxEgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NuUTY1/8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48AF7C4CEE9;
+	Tue, 20 May 2025 14:01:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747749673;
+	bh=gpAwP3ORqXEAVfwJ2WVNB8AXOeR/47Y4aILq4XAT2UE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NuUTY1/8Wdnufl16BIgV6MCzDbzlVWKm38kwS9V6y5a3Dcdaw8nnN1Wrd3m4jkbPo
+	 V61pWKTZhHUg/DgBeGtzayr0gzn5RSgOBvnYCvdgQXeJkAXUylHF7ZMm9R3bwba1q+
+	 v5La0dvoS0h9NIvb6joRzSFD83T13wQ+iyIHOI/0=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org
+Subject: [PATCH 6.6 000/117] 6.6.92-rc1 review
+Date: Tue, 20 May 2025 15:49:25 +0200
+Message-ID: <20250520125803.981048184@linuxfoundation.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/sitronix: Fix broken backwards-compatibility layer
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Marcus Folkesson <marcus.folkesson@gmail.com>,
- Javier Martinez Canillas <javierm@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <1682cd80989f9ab98a7a9910a086a3a4d9769cc6.1747744752.git.geert+renesas@glider.be>
- <07088966-73f4-4b5d-898d-b596dede53e4@suse.de>
- <CAMuHMdU6XD_tqXaf4-h9KeC58XDOodUWa0d-Wmp6zcr2BHTA1w@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <CAMuHMdU6XD_tqXaf4-h9KeC58XDOodUWa0d-Wmp6zcr2BHTA1w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: 0.20
-X-Spamd-Result: default: False [0.20 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,redhat.com,linux.intel.com,kernel.org,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.92-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-6.6.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 6.6.92-rc1
+X-KernelTest-Deadline: 2025-05-22T12:58+00:00
+Content-Transfer-Encoding: 8bit
 
-Hi
+This is the start of the stable review cycle for the 6.6.92 release.
+There are 117 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Am 20.05.25 um 15:09 schrieb Geert Uytterhoeven:
-> Hi Thomas,
->
-> On Tue, 20 May 2025 at 15:04, Thomas Zimmermann <tzimmermann@suse.de> wrote:
->> Am 20.05.25 um 14:40 schrieb Geert Uytterhoeven:
->>> When moving the Sitronix DRM drivers and renaming their Kconfig symbols,
->>> the old symbols were kept, aiming to provide a seamless migration path
->>> when running "make olddefconfig" or "make oldconfig".
->>>
->>> However, the old compatibility symbols are not visible.  Hence unless
->>> they are selected by another symbol (which they are not), they can never
->>> be enabled, and no backwards compatibility is provided.
->>>
->>> Fix this by making them visible, and inverting the selection logic.
->>> Add comments to make it clear why there are two symbols with the same
->>> description.
->> These symbols were only meant for variants of 'make oldconfig' to pick
->> up th enew symbols. They where never for being selected manually.
-> But that pick-up does not work, unfortunately...
-> (I know, I had one of them enabled in one of my configs ;-)
+Responses should be made by Thu, 22 May 2025 12:57:37 +0000.
+Anything received after that time might be too late.
 
-I see.
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.92-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+and the diffstat can be found below.
 
->
-> The alternative is to just drop the old symbols, and ignore current users.
-> Which is not that uncommon...
+thanks,
 
-If there's no easy fix for the current setup, I'd prefer removing the 
-old symbols.
+greg k-h
 
-Best regards
-Thomas
+-------------
+Pseudo-Shortlog of commits:
 
->
-> Gr{oetje,eeting}s,
->
->                          Geert
->
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 6.6.92-rc1
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Alex Deucher <alexander.deucher@amd.com>
+    drm/amdgpu: fix pm notifier handling
+
+Dan Carpenter <dan.carpenter@linaro.org>
+    phy: tegra: xusb: remove a stray unlock
+
+Filipe Manana <fdmanana@suse.com>
+    btrfs: don't BUG_ON() when 0 reference count at btrfs_lookup_extent_info()
+
+Eric Dumazet <edumazet@google.com>
+    sctp: add mutual exclusion in proc_sctp_do_udp_port()
+
+Ma Wupeng <mawupeng1@huawei.com>
+    hwpoison, memory_hotplug: lock folio before unmap hwpoisoned folio
+
+Tom Lendacky <thomas.lendacky@amd.com>
+    memblock: Accept allocated memory before use in memblock_double_array()
+
+Huacai Chen <chenhuacai@kernel.org>
+    LoongArch: Explicitly specify code model in Makefile
+
+Peter Collingbourne <pcc@google.com>
+    bpf, arm64: Fix address emission with tag-based KASAN enabled
+
+Puranjay Mohan <puranjay@kernel.org>
+    bpf, arm64: Fix trampoline for BPF_TRAMP_F_CALL_ORIG
+
+Zi Yan <ziy@nvidia.com>
+    mm/migrate: correct nr_failed in migrate_pages_sync()
+
+Feng Tang <feng.tang@linux.alibaba.com>
+    selftests/mm: compaction_test: support platform with huge mount of memory
+
+Andrei Kuchynski <akuchynski@chromium.org>
+    usb: typec: ucsi: displayport: Fix deadlock
+
+Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+    Bluetooth: btnxpuart: Fix kernel panic during FW release
+
+Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+    mm/page_alloc: fix race condition in unaccepted memory handling
+
+Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+    x86/its: Fix build error for its_static_thunk()
+
+Shuai Xue <xueshuai@linux.alibaba.com>
+    dmaengine: idxd: Refactor remove call with idxd_cleanup() helper
+
+Shuai Xue <xueshuai@linux.alibaba.com>
+    dmaengine: idxd: fix memory leak in error handling path of idxd_pci_probe
+
+Shuai Xue <xueshuai@linux.alibaba.com>
+    dmaengine: idxd: fix memory leak in error handling path of idxd_alloc
+
+Shuai Xue <xueshuai@linux.alibaba.com>
+    dmaengine: idxd: Add missing idxd cleanup to fix memory leak in remove call
+
+Shuai Xue <xueshuai@linux.alibaba.com>
+    dmaengine: idxd: Add missing cleanups in cleanup internals
+
+Shuai Xue <xueshuai@linux.alibaba.com>
+    dmaengine: idxd: Add missing cleanup for early error out in idxd_setup_internals
+
+Shuai Xue <xueshuai@linux.alibaba.com>
+    dmaengine: idxd: fix memory leak in error handling path of idxd_setup_groups
+
+Shuai Xue <xueshuai@linux.alibaba.com>
+    dmaengine: idxd: fix memory leak in error handling path of idxd_setup_engines
+
+Shuai Xue <xueshuai@linux.alibaba.com>
+    dmaengine: idxd: fix memory leak in error handling path of idxd_setup_wqs
+
+Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+    dmaengine: ti: k3-udma: Use cap_mask directly from dma_device structure instead of a local copy
+
+Ronald Wahl <ronald.wahl@legrand.com>
+    dmaengine: ti: k3-udma: Add missing locking
+
+Nathan Chancellor <nathan@kernel.org>
+    net: qede: Initialize qede_ll_ops with designated initializer
+
+Fedor Pchelkin <pchelkin@ispras.ru>
+    wifi: mt76: disable napi on driver removal
+
+Aaron Kling <webgeek1234@gmail.com>
+    spi: tegra114: Use value to check for invalid delays
+
+Jethro Donaldson <devel@jro.nz>
+    smb: client: fix memory leak during error handling for POSIX mkdir
+
+Steve Siwinski <ssiwinski@atto.com>
+    scsi: sd_zbc: block: Respect bio vector limits for REPORT ZONES buffer
+
+Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+    phy: renesas: rcar-gen3-usb2: Set timing registers only once
+
+Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+    phy: renesas: rcar-gen3-usb2: Fix role detection on unbind/bind
+
+Ma Ke <make24@iscas.ac.cn>
+    phy: Fix error handling in tegra_xusb_port_init
+
+Wayne Chang <waynec@nvidia.com>
+    phy: tegra: xusb: Use a bitmask for UTMI pad power state tracking
+
+Steven Rostedt <rostedt@goodmis.org>
+    tracing: samples: Initialize trace_array_printk() with the correct function
+
+pengdonglin <pengdonglin@xiaomi.com>
+    ftrace: Fix preemption accounting for stacktrace filter command
+
+pengdonglin <pengdonglin@xiaomi.com>
+    ftrace: Fix preemption accounting for stacktrace trigger command
+
+Michael Kelley <mhklinux@outlook.com>
+    Drivers: hv: vmbus: Remove vmbus_sendpacket_pagebuffer()
+
+Michael Kelley <mhklinux@outlook.com>
+    Drivers: hv: Allow vmbus_sendpacket_mpb_desc() to create multiple ranges
+
+Michael Kelley <mhklinux@outlook.com>
+    hv_netvsc: Remove rmsg_pgcnt
+
+Michael Kelley <mhklinux@outlook.com>
+    hv_netvsc: Preserve contiguous PFN grouping in the page buffer array
+
+Michael Kelley <mhklinux@outlook.com>
+    hv_netvsc: Use vmbus_sendpacket_mpb_desc() to send VMBus messages
+
+Hyejeong Choi <hjeong.choi@samsung.com>
+    dma-buf: insert memory barrier before updating num_fences
+
+Nicolas Chauvet <kwizart@gmail.com>
+    ALSA: usb-audio: Add sample rate quirk for Microdia JP001 USB Camera
+
+Christian Heusel <christian@heusel.eu>
+    ALSA: usb-audio: Add sample rate quirk for Audioengine D1
+
+Wentao Liang <vulab@iscas.ac.cn>
+    ALSA: es1968: Add error handling for snd_pcm_hw_constraint_pow2()
+
+Jeremy Linton <jeremy.linton@arm.com>
+    ACPI: PPTT: Fix processor subtable walk
+
+Wayne Lin <Wayne.Lin@amd.com>
+    drm/amd/display: Avoid flooding unnecessary info messages
+
+Wayne Lin <Wayne.Lin@amd.com>
+    drm/amd/display: Correct the reply value when AUX write incomplete
+
+Tiezhu Yang <yangtiezhu@loongson.cn>
+    LoongArch: uprobes: Remove redundant code about resume_era
+
+Tiezhu Yang <yangtiezhu@loongson.cn>
+    LoongArch: uprobes: Remove user_{en,dis}able_single_step()
+
+Huacai Chen <chenhuacai@kernel.org>
+    LoongArch: Fix MAX_REG_OFFSET calculation
+
+Huacai Chen <chenhuacai@kernel.org>
+    LoongArch: Save and restore CSR.CNTC for hibernation
+
+Tianyang Zhang <zhangtianyang@loongson.cn>
+    LoongArch: Prevent cond_resched() occurring within kernel-fpu
+
+Jan Kara <jack@suse.cz>
+    udf: Make sure i_lenExtents is uptodate on inode eviction
+
+Nathan Lynch <nathan.lynch@amd.com>
+    dmaengine: Revert "dmaengine: dmatest: Fix dmatest waiting less when interrupted"
+
+Trond Myklebust <trond.myklebust@hammerspace.com>
+    NFSv4/pnfs: Reset the layout state after a layoutreturn
+
+Gerhard Engleder <gerhard@engleder-embedded.com>
+    tsnep: fix timestamping with a stacked DSA driver
+
+Gerhard Engleder <gerhard@engleder-embedded.com>
+    tsnep: Inline small fragments within TX descriptor
+
+Pengtao He <hept.hept.hept@gmail.com>
+    net/tls: fix kernel panic when alloc_page failed
+
+Ido Schimmel <idosch@nvidia.com>
+    mlxsw: spectrum_router: Fix use-after-free when deleting GRE net devices
+
+Kees Cook <kees@kernel.org>
+    wifi: mac80211: Set n_channels after allocating struct cfg80211_scan_request
+
+Hariprasad Kelam <hkelam@marvell.com>
+    octeontx2-af: Fix CGX Receive counters
+
+Bo-Cun Chen <bc-bocun.chen@mediatek.com>
+    net: ethernet: mtk_eth_soc: fix typo for declaration MT7988 ESW capability
+
+Subbaraya Sundeep <sbhatta@marvell.com>
+    octeontx2-pf: macsec: Fix incorrect max transmit size in TX secy
+
+Cosmin Tanislav <demonsingur@gmail.com>
+    regulator: max20086: fix invalid memory access
+
+Abdun Nihaal <abdun.nihaal@gmail.com>
+    qlcnic: fix memory leak in qlcnic_sriov_channel_cfg_cmd()
+
+Carolina Jubran <cjubran@nvidia.com>
+    net/mlx5e: Disable MACsec offload for uplink representor profile
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    ALSA: sh: SND_AICA should depend on SH_DMA_API
+
+Keith Busch <kbusch@kernel.org>
+    nvme-pci: acquire cq_poll_lock in nvme_poll_irqdisable
+
+Kees Cook <kees@kernel.org>
+    nvme-pci: make nvme_pci_npages_prp() __always_inline
+
+Vladimir Oltean <vladimir.oltean@nxp.com>
+    net: dsa: sja1105: discard incoming frames in BR_STATE_LISTENING
+
+Mathieu Othacehe <othacehe@gnu.org>
+    net: cadence: macb: Fix a possible deadlock in macb_halt_tx.
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: ump: Fix a typo of snd_ump_stream_msg_device_info
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: seq: Fix delivery of UMP events to group ports
+
+Andrew Jeffery <andrew@codeconstruct.com.au>
+    net: mctp: Ensure keys maintain only one ref to corresponding dev
+
+Matt Johnston <matt@codeconstruct.com.au>
+    net: mctp: Don't access ifa_index when missing
+
+Eric Dumazet <edumazet@google.com>
+    mctp: no longer rely on net->dev_index_head[]
+
+Hangbin Liu <liuhangbin@gmail.com>
+    tools/net/ynl: ethtool: fix crash when Hardware Clock info is missing
+
+Rahul Rameshbabu <rrameshbabu@nvidia.com>
+    tools: ynl: ethtool.py: Output timestamping statistics from tsinfo-get operation
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    net_sched: Flush gso_skb list too during ->change()
+
+Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+    Bluetooth: MGMT: Fix MGMT_OP_ADD_DEVICE invalid device flags
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    spi: loopback-test: Do not split 1024-byte hexdumps
+
+Li Lingfeng <lilingfeng3@huawei.com>
+    nfs: handle failure of nfs_get_lock_context in unlock path
+
+Henry Martin <bsdhenrymartin@gmail.com>
+    HID: uclogic: Add NULL check in uclogic_input_configured()
+
+Qasim Ijaz <qasdev00@gmail.com>
+    HID: thrustmaster: fix memory leak in thrustmaster_interrupts()
+
+Zhu Yanjun <yanjun.zhu@linux.dev>
+    RDMA/rxe: Fix slab-use-after-free Read in rxe_queue_cleanup bug
+
+David Lechner <dlechner@baylibre.com>
+    iio: chemical: sps30: use aligned_s64 for timestamp
+
+Jonathan Cameron <Jonathan.Cameron@huawei.com>
+    iio: adc: ad7768-1: Fix insufficient alignment of timestamp.
+
+Alex Deucher <alexander.deucher@amd.com>
+    Revert "drm/amd: Stop evicting resources on APUs in suspend"
+
+Mario Limonciello <mario.limonciello@amd.com>
+    drm/amd: Add Suspend/Hibernate notification callback support
+
+Zhigang Luo <Zhigang.Luo@amd.com>
+    drm/amdgpu: trigger flr_work if reading pf2vf data failed
+
+Ma Jun <Jun.Ma2@amd.com>
+    drm/amdgpu: Fix the runtime resume failure issue
+
+Mario Limonciello <mario.limonciello@amd.com>
+    drm/amd: Stop evicting resources on APUs in suspend
+
+Jonathan Cameron <Jonathan.Cameron@huawei.com>
+    iio: adc: ad7266: Fix potential timestamp alignment issue.
+
+Mikhail Lobanov <m.lobanov@rosa.ru>
+    KVM: SVM: Forcibly leave SMM mode on SHUTDOWN interception
+
+Peter Gonda <pgonda@google.com>
+    KVM: SVM: Update SEV-ES shutdown intercepts with more metadata
+
+Cristian Marussi <cristian.marussi@arm.com>
+    firmware: arm_scmi: Fix timeout checks on polling path
+
+Luke Parkin <luke.parkin@arm.com>
+    firmware: arm_scmi: Track basic SCMI communication debug metrics
+
+Luke Parkin <luke.parkin@arm.com>
+    firmware: arm_scmi: Add support for debug metrics at the interface
+
+Cristian Marussi <cristian.marussi@arm.com>
+    firmware: arm_scmi: Add message dump traces for bad and unexpected replies
+
+Cristian Marussi <cristian.marussi@arm.com>
+    firmware: arm_scmi: Add helper to trace bad messages
+
+Michal Suchanek <msuchanek@suse.de>
+    tpm: tis: Double the timeout B to 4s
+
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
+    tracing: probes: Fix a possible race in trace_probe_log APIs
+
+Waiman Long <longman@redhat.com>
+    cgroup/cpuset: Extend kthread_is_per_cpu() check to all PF_NO_SETAFFINITY tasks
+
+Hans de Goede <hdegoede@redhat.com>
+    platform/x86: asus-wmi: Fix wlan_ctrl_by_user detection
+
+Runhua He <hua@aosc.io>
+    platform/x86/amd/pmc: Declare quirk_spurious_8042 for MECHREVO Wujie 14XA (GX4HRXL)
+
+Kees Cook <kees@kernel.org>
+    binfmt_elf: Move brk for static PIE even if ASLR disabled
+
+Kees Cook <kees@kernel.org>
+    binfmt_elf: Honor PT_LOAD alignment for static PIE
+
+Kees Cook <kees@kernel.org>
+    binfmt_elf: Calculate total_size earlier
+
+Kees Cook <kees@kernel.org>
+    selftests/exec: Build both static and non-static load_address tests
+
+Kees Cook <keescook@chromium.org>
+    binfmt_elf: Leave a gap between .bss and brk
+
+Muhammad Usama Anjum <usama.anjum@collabora.com>
+    selftests/exec: load_address: conform test to TAP format output
+
+Kees Cook <keescook@chromium.org>
+    binfmt_elf: elf_bss no longer used by load_elf_binary()
+
+Eric W. Biederman <ebiederm@xmission.com>
+    binfmt_elf: Support segments with 0 filesz and misaligned starts
+
+Stephen Smalley <stephen.smalley.work@gmail.com>
+    fs/xattr.c: fix simple_xattr_list to always include security.* xattrs
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |   4 +-
+ arch/arm64/net/bpf_jit_comp.c                      |  12 +-
+ arch/loongarch/Makefile                            |   2 +-
+ arch/loongarch/include/asm/ptrace.h                |   2 +-
+ arch/loongarch/include/asm/uprobes.h               |   1 -
+ arch/loongarch/kernel/kfpu.c                       |  22 +-
+ arch/loongarch/kernel/time.c                       |   2 +-
+ arch/loongarch/kernel/uprobes.c                    |  11 +-
+ arch/loongarch/power/hibernate.c                   |   3 +
+ arch/x86/kernel/alternative.c                      |  17 +-
+ arch/x86/kvm/smm.c                                 |   1 +
+ arch/x86/kvm/svm/svm.c                             |  19 +-
+ block/bio.c                                        |   2 +-
+ drivers/acpi/pptt.c                                |  11 +-
+ drivers/bluetooth/btnxpuart.c                      |   6 +-
+ drivers/char/tpm/tpm_tis_core.h                    |   2 +-
+ drivers/dma-buf/dma-resv.c                         |   5 +-
+ drivers/dma/dmatest.c                              |   6 +-
+ drivers/dma/idxd/init.c                            | 159 ++++++++----
+ drivers/dma/ti/k3-udma.c                           |  10 +-
+ drivers/firmware/arm_scmi/Kconfig                  |  14 +
+ drivers/firmware/arm_scmi/common.h                 |  35 +++
+ drivers/firmware/arm_scmi/driver.c                 |  89 ++++++-
+ drivers/firmware/arm_scmi/mailbox.c                |   3 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h                |   1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c         |  51 +++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c            |  11 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c           |  29 ++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_virt.h           |   3 +
+ drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c              |   2 +
+ drivers/gpu/drm/amd/amdgpu/mxgpu_nv.c              |   2 +
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |   3 +-
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |  16 +-
+ drivers/hid/hid-thrustmaster.c                     |   1 +
+ drivers/hid/hid-uclogic-core.c                     |   7 +-
+ drivers/hv/channel.c                               |  65 +----
+ drivers/iio/adc/ad7266.c                           |   2 +-
+ drivers/iio/adc/ad7768-1.c                         |   2 +-
+ drivers/iio/chemical/sps30.c                       |   2 +-
+ drivers/infiniband/sw/rxe/rxe_cq.c                 |   5 +-
+ drivers/net/dsa/sja1105/sja1105_main.c             |   6 +-
+ drivers/net/ethernet/cadence/macb_main.c           |  19 +-
+ drivers/net/ethernet/engleder/tsnep_hw.h           |   2 +
+ drivers/net/ethernet/engleder/tsnep_main.c         | 131 +++++++---
+ drivers/net/ethernet/marvell/octeontx2/af/cgx.c    |   5 +
+ .../ethernet/marvell/octeontx2/nic/cn10k_macsec.c  |   3 +-
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c        |   2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |   4 +
+ .../net/ethernet/mellanox/mlxsw/spectrum_router.c  |   3 +
+ drivers/net/ethernet/qlogic/qede/qede_main.c       |   2 +-
+ .../ethernet/qlogic/qlcnic/qlcnic_sriov_common.c   |   7 +-
+ drivers/net/hyperv/hyperv_net.h                    |  13 +-
+ drivers/net/hyperv/netvsc.c                        |  57 ++++-
+ drivers/net/hyperv/netvsc_drv.c                    |  62 +----
+ drivers/net/hyperv/rndis_filter.c                  |  24 +-
+ drivers/net/wireless/mediatek/mt76/dma.c           |   1 +
+ drivers/nvme/host/pci.c                            |   4 +-
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c           |  38 ++-
+ drivers/phy/tegra/xusb-tegra186.c                  |  46 ++--
+ drivers/phy/tegra/xusb.c                           |   8 +-
+ drivers/platform/x86/amd/pmc/pmc-quirks.c          |   7 +
+ drivers/platform/x86/asus-wmi.c                    |   3 +-
+ drivers/regulator/max20086-regulator.c             |   7 +-
+ drivers/scsi/sd_zbc.c                              |   6 +-
+ drivers/scsi/storvsc_drv.c                         |   1 +
+ drivers/spi/spi-loopback-test.c                    |   2 +-
+ drivers/spi/spi-tegra114.c                         |   6 +-
+ drivers/usb/gadget/function/f_midi2.c              |   2 +-
+ drivers/usb/typec/ucsi/displayport.c               |  19 +-
+ drivers/usb/typec/ucsi/ucsi.c                      |  34 +++
+ drivers/usb/typec/ucsi/ucsi.h                      |   2 +
+ fs/binfmt_elf.c                                    | 281 ++++++++++++---------
+ fs/btrfs/extent-tree.c                             |  25 +-
+ fs/nfs/nfs4proc.c                                  |   9 +-
+ fs/nfs/pnfs.c                                      |   9 +
+ fs/smb/client/smb2pdu.c                            |   2 +-
+ fs/udf/truncate.c                                  |   2 +-
+ fs/xattr.c                                         |  24 ++
+ include/linux/bio.h                                |   1 +
+ include/linux/hyperv.h                             |   7 -
+ include/linux/tpm.h                                |   2 +-
+ include/net/sch_generic.h                          |  15 ++
+ include/sound/ump_msg.h                            |   4 +-
+ kernel/cgroup/cpuset.c                             |   6 +-
+ kernel/trace/trace_dynevent.c                      |  16 +-
+ kernel/trace/trace_dynevent.h                      |   1 +
+ kernel/trace/trace_events_trigger.c                |   2 +-
+ kernel/trace/trace_functions.c                     |   6 +-
+ kernel/trace/trace_kprobe.c                        |   2 +-
+ kernel/trace/trace_probe.c                         |   9 +
+ kernel/trace/trace_uprobe.c                        |   2 +-
+ mm/memblock.c                                      |   9 +-
+ mm/memory_hotplug.c                                |   6 +-
+ mm/migrate.c                                       |  16 +-
+ mm/page_alloc.c                                    |  27 --
+ net/bluetooth/mgmt.c                               |   9 +-
+ net/mac80211/main.c                                |   6 +-
+ net/mctp/device.c                                  |  65 +++--
+ net/mctp/route.c                                   |   4 +-
+ net/sched/sch_codel.c                              |   2 +-
+ net/sched/sch_fq.c                                 |   2 +-
+ net/sched/sch_fq_codel.c                           |   2 +-
+ net/sched/sch_fq_pie.c                             |   2 +-
+ net/sched/sch_hhf.c                                |   2 +-
+ net/sched/sch_pie.c                                |   2 +-
+ net/sctp/sysctl.c                                  |   4 +
+ net/tls/tls_strp.c                                 |   3 +-
+ samples/ftrace/sample-trace-array.c                |   2 +-
+ sound/core/seq/seq_clientmgr.c                     |  52 ++--
+ sound/core/seq/seq_ump_convert.c                   |  18 ++
+ sound/core/seq/seq_ump_convert.h                   |   1 +
+ sound/pci/es1968.c                                 |   6 +-
+ sound/sh/Kconfig                                   |   2 +-
+ sound/usb/quirks.c                                 |   4 +
+ tools/net/ynl/ethtool.py                           |  29 ++-
+ tools/testing/selftests/exec/Makefile              |  19 +-
+ tools/testing/selftests/exec/load_address.c        |  83 ++++--
+ tools/testing/selftests/mm/compaction_test.c       |  19 +-
+ 118 files changed, 1294 insertions(+), 693 deletions(-)
+
 
 
