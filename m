@@ -1,276 +1,95 @@
-Return-Path: <linux-kernel+bounces-655903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 531DBABDEF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:28:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E218ABDECA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 17:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 907623B622E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:26:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1D0E161073
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE54D25FA29;
-	Tue, 20 May 2025 15:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F315525D203;
+	Tue, 20 May 2025 15:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gfXFU4PG"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIkvmAtt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1569427FB2D
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 15:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5026B25229C;
+	Tue, 20 May 2025 15:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747754702; cv=none; b=Q/XTCW9xBx153TKBEQnIaAeGAhW6Ecz2VfWk59kerZWIFyHr70kXyfqmBG2sHzMRt+QzTDTlDD/0CXxaUSkYufsixBoBZQp9TnjwwwpT5Rh/c5P0vUcxBRvPIiY8XTIREuKfKD0e4QTgJP4YnTgpk8NDm/l6nV7eaLfPNQXpNj0=
+	t=1747754311; cv=none; b=Vbt9yVQYIg/trOmt9P36y+W3mLnAJqin1NDSnogCxd2AgIgqXNmbHenrSydaboVPpbOcA2sW4WWEyGfwIPTLCtf0B03nUwbJn9l2Vi8cSxe1mO0Uz2SAxwPTNlxUmeS1Jop9NwwRp4ac38ppjla6q6kybI5hVdf9yl2k+tMaLxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747754702; c=relaxed/simple;
-	bh=HrWAkjXzo1cwOQkzp5D5PLjihxqiuqVqgMCi74TCylM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lBRZMQNCaz5FS+VnbJCsLuPm8DsuPz/36gFQUkhNVBcOCktKkRGVbX9jiTFqElWyIqQh209M1s1IkbgI48E+fAVATOz4h+VQxNX7ClIFp1/QuSsUnFsYVcApwaHxGF13RDnbYHWE/PQyhyZ5IVQQv6cMv+X3/l45vnQJIgTpwNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gfXFU4PG; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-601dfef6a8dso4003267a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 08:24:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747754697; x=1748359497; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sws8LggPb3Nr4WEIwk49/i4GQcd2qsiJjDBUK0g1c0s=;
-        b=gfXFU4PGCj+JV99lZR6A1oIf0EDlGCRXtA28zlGjNR0sRtrTG91gmKlcoGC6+Z2voy
-         PPtx+UOtskL9zX8R2Ldr8ih+VS1ErUFk61EqHorpTAihOc6YUmXgRpVZfZqjcpv9MRQd
-         sAfRvtCjDMYBKV/jpFAKpo7/f4p7nNgJFkWnegmZBfTEH+VIw0nAqtq29AxuoWVGBTN3
-         Qstpz25KOrjBjX6fSyeARTzQAIXN9yrdgrKUfnCQgnKbCslsxya8H0hrLZXOGUAUwClX
-         4YO/GhKegTdO6JDUOHgHFMPGY6mAgX0uiz3cExqCIUYrtbDZLF7PzRXsuAh22cs6TUFD
-         mi6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747754698; x=1748359498;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sws8LggPb3Nr4WEIwk49/i4GQcd2qsiJjDBUK0g1c0s=;
-        b=I00er7KfSJsaudx1cXZnn746tsW6Tl8RPOCG03gE0RibSUK/1aIw8WVZu7GdCuPsRW
-         iozFM/OunxG6L4YIdirkKFspkC6sJpab7jwp3r21IiUeCFsvM/At6OkjL3Whoiaq3y+n
-         btHrybPvQfx00capxrxzw3BMDjTTaElCdo+W/9x2hUVgPEFcNsmDYpLzw7/fT4Ap6SIz
-         DQqrLRx1zwAJX1LJBMHyd+A/tu9gjEqRRB6Z98MqZHPySxY3q6s3G9WI6uINEY+C8FB1
-         ISjiGhy90LZ7BYMUtB4LaOJlCgU2TP/7iTtVHy+3QbWgpqPwdiMFB0TuaOF4Ahpxe0kP
-         m7Rg==
-X-Gm-Message-State: AOJu0YyrgutEHMsmzZidXJkSnuAaUeekncncOwpzc7H5Ks/Ikakqe1Py
-	2ojF21JaE2uYFAZq8+Et6VQ4jWko4sRBbamdujTW4/g0gaxOErmWlcRO/VDICKP6y2IshpfYE19
-	CEr3RSpA=
-X-Gm-Gg: ASbGnctMfpMp8NKUw6qXgFUu9SA7tsiwLzioSQITqILVsEzwk91PLCA9bMKqx1r9X1j
-	Rw590ge1oB0PhCuIJGnRhYR0ilPITXR16hXqh77eSgYHfqEyWam3ydvaKEezpWfFVW9LUx5AKMf
-	TBNY7CuJ7UJlOw5hdCAConb5IkO3lEy8fej61kW3aaDWDe192tNkp0X7m1n1vdHBnSkE6D5UyP0
-	j2aTb0yxPJu8a4MQVeEMOC20g93CIlFEd2n+CGLYpMn9eR5mN3FhtXs6DxP3X7nDaRqd7z/B0fp
-	x913x8Ga41e79P6fsSq+v6CVOATwaKfjWsPTok6DLaArKa5E6ogFdtk86ExvmyWiiRDyI1eekBq
-	01tKVYrFSzTzmYhT2o9rWPcpvAmkmd+A6MD/rXV0=
-X-Google-Smtp-Source: AGHT+IFajjrVIsC7kJISaAObbiybAYfu3AaUSsn1KJ4AT03AxVtsB+czB4nAf85bGG6wnrUQQg0qnQ==
-X-Received: by 2002:a17:907:7f08:b0:ac7:3817:d8da with SMTP id a640c23a62f3a-ad52d609170mr1346626366b.52.1747754697525;
-        Tue, 20 May 2025 08:24:57 -0700 (PDT)
-Received: from rayden.urgonet (h-98-128-140-123.A175.priv.bahnhof.se. [98.128.140.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d278257sm742608766b.82.2025.05.20.08.24.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 08:24:56 -0700 (PDT)
-From: Jens Wiklander <jens.wiklander@linaro.org>
-To: linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	op-tee@lists.trustedfirmware.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Olivier Masse <olivier.masse@nxp.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T . J . Mercier" <tjmercier@google.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Sumit Garg <sumit.garg@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	azarrabi@qti.qualcomm.com,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Daniel Stone <daniel@fooishbar.org>,
-	Rouven Czerwinski <rouven.czerwinski@linaro.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>
-Subject: [PATCH v9 9/9] optee: smc abi: dynamic protected memory allocation
-Date: Tue, 20 May 2025 17:16:52 +0200
-Message-ID: <20250520152436.474778-10-jens.wiklander@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250520152436.474778-1-jens.wiklander@linaro.org>
-References: <20250520152436.474778-1-jens.wiklander@linaro.org>
+	s=arc-20240116; t=1747754311; c=relaxed/simple;
+	bh=gOcAH/YL5VciW2jCfOJM+RDZl3zKyoeTRxoKCucXQKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNmkEERJHOsT0jVLXqV6syU2YG7UI19X5CVFnJpIomX9/PuNl8AGpn81o0b/x9XxDuHwzaZfjouNbhPcDIZfY4hYjDvOZR2YtQyvKLI0lpgpfAyi3QBJ2g1ZAUVKrLXIyKhc9MCWaW8eI7exBoGHgHKrFnbEdeuuI2ZXS26nCh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WIkvmAtt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A749C4CEEA;
+	Tue, 20 May 2025 15:18:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747754310;
+	bh=gOcAH/YL5VciW2jCfOJM+RDZl3zKyoeTRxoKCucXQKc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WIkvmAtt5TOeMvCDGBbPJgB4JjBBPqqSvNUUZs5g4513rRX5RxJkhlFPLNQkiiSyC
+	 kEEBnlMGbFy/UU2efYx4TS3uT1GkmLUB264f5DqVEAa1qu5AO0ZRlBcHoeOMvtBA6A
+	 dlCY/nTm3or20KEx0j9YfHik5x+PVGGk4VLjiEfUS3XV41Kx+8Mm28DQSJyEUF+vYJ
+	 OZB17ZWCrXlQ1JSY2UVx+PS5QsvjVLI4un1blQBMuTIzblz8vEuUEAWl+bbvgzxDeR
+	 +cE1X4cBIWWYk68/zYN0cY9FKSUESNiQcbeSYO/YpWyDDzCytghiSikW029Z+g86CS
+	 Ha7+ngUMOWpVw==
+Date: Tue, 20 May 2025 08:18:17 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Bernard Metzler <BMT@zurich.ibm.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-sctp@vger.kernel.org" <linux-sctp@vger.kernel.org>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+	Sagi Grimberg <sagi@grimberg.me>, Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH net-next 04/10] RDMA/siw: use skb_crc32c() instead of
+ __skb_checksum()
+Message-ID: <20250520151817.GA1249@sol>
+References: <20250511004110.145171-1-ebiggers@kernel.org>
+ <20250511004110.145171-5-ebiggers@kernel.org>
+ <BN8PR15MB2513872CE462784A1A4E50B7999CA@BN8PR15MB2513.namprd15.prod.outlook.com>
+ <20250520131841.GH7435@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250520131841.GH7435@unreal>
 
-Add support in the OP-TEE backend driver for dynamic protected memory
-allocation using the SMC ABI.
+On Tue, May 20, 2025 at 04:18:41PM +0300, Leon Romanovsky wrote:
+> On Mon, May 19, 2025 at 09:04:04AM +0000, Bernard Metzler wrote:
+> > 
+> 
+> <...>
+> 
+> > > 
+> > 
+> > Thanks Eric!
+> > Works fine. Correct checksum tested against siw and cxgb4 peers.
+> > 
+> > Reviewed-by: Bernard Metzler <bmt@zurich.ibm.com>
+> 
+> This patch should go through RDMA repository, Please resend it.
+> 
+> Thanks
 
-Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
----
- drivers/tee/optee/smc_abi.c | 102 ++++++++++++++++++++++++++++++------
- 1 file changed, 85 insertions(+), 17 deletions(-)
+It depends on patches 1-2, and patches 6-7 depend on this one.  So your proposal
+would require that we drag this out over 3 cycles (patches 1-3,5,8-10 in net in
+6.16, patch 4 in RDMA in 6.17, patches 6-7 in net in 6.18).  Can we please just
+take the whole series through net in 6.16?  There aren't any conflicts.
 
-diff --git a/drivers/tee/optee/smc_abi.c b/drivers/tee/optee/smc_abi.c
-index f3cae8243785..6b3fbe7f0909 100644
---- a/drivers/tee/optee/smc_abi.c
-+++ b/drivers/tee/optee/smc_abi.c
-@@ -965,6 +965,70 @@ static int optee_smc_do_call_with_arg(struct tee_context *ctx,
- 	return rc;
- }
- 
-+static int optee_smc_lend_protmem(struct optee *optee, struct tee_shm *protmem,
-+				  u16 *end_points, unsigned int ep_count,
-+				  u32 use_case)
-+{
-+	struct optee_shm_arg_entry *entry;
-+	struct optee_msg_arg *msg_arg;
-+	struct tee_shm *shm;
-+	u_int offs;
-+	int rc;
-+
-+	msg_arg = optee_get_msg_arg(optee->ctx, 2, &entry, &shm, &offs);
-+	if (IS_ERR(msg_arg))
-+		return PTR_ERR(msg_arg);
-+
-+	msg_arg->cmd = OPTEE_MSG_CMD_LEND_PROTMEM;
-+	msg_arg->params[0].attr = OPTEE_MSG_ATTR_TYPE_VALUE_INPUT;
-+	msg_arg->params[0].u.value.a = use_case;
-+	msg_arg->params[1].attr = OPTEE_MSG_ATTR_TYPE_TMEM_INPUT;
-+	msg_arg->params[1].u.tmem.buf_ptr = protmem->paddr;
-+	msg_arg->params[1].u.tmem.size = protmem->size;
-+	msg_arg->params[1].u.tmem.shm_ref = (u_long)protmem;
-+
-+	rc = optee->ops->do_call_with_arg(optee->ctx, shm, offs, false);
-+	if (rc)
-+		goto out;
-+	if (msg_arg->ret != TEEC_SUCCESS) {
-+		rc = -EINVAL;
-+		goto out;
-+	}
-+	protmem->sec_world_id = (u_long)protmem;
-+
-+out:
-+	optee_free_msg_arg(optee->ctx, entry, offs);
-+	return rc;
-+}
-+
-+static int optee_smc_reclaim_protmem(struct optee *optee,
-+				     struct tee_shm *protmem)
-+{
-+	struct optee_shm_arg_entry *entry;
-+	struct optee_msg_arg *msg_arg;
-+	struct tee_shm *shm;
-+	u_int offs;
-+	int rc;
-+
-+	msg_arg = optee_get_msg_arg(optee->ctx, 1, &entry, &shm, &offs);
-+	if (IS_ERR(msg_arg))
-+		return PTR_ERR(msg_arg);
-+
-+	msg_arg->cmd = OPTEE_MSG_CMD_RECLAIM_PROTMEM;
-+	msg_arg->params[0].attr = OPTEE_MSG_ATTR_TYPE_RMEM_INPUT;
-+	msg_arg->params[0].u.rmem.shm_ref = (u_long)protmem;
-+
-+	rc = optee->ops->do_call_with_arg(optee->ctx, shm, offs, false);
-+	if (rc)
-+		goto out;
-+	if (msg_arg->ret != TEEC_SUCCESS)
-+		rc = -EINVAL;
-+
-+out:
-+	optee_free_msg_arg(optee->ctx, entry, offs);
-+	return rc;
-+}
-+
- /*
-  * 5. Asynchronous notification
-  */
-@@ -1216,6 +1280,8 @@ static const struct optee_ops optee_ops = {
- 	.do_call_with_arg = optee_smc_do_call_with_arg,
- 	.to_msg_param = optee_to_msg_param,
- 	.from_msg_param = optee_from_msg_param,
-+	.lend_protmem = optee_smc_lend_protmem,
-+	.reclaim_protmem = optee_smc_reclaim_protmem,
- };
- 
- static int enable_async_notif(optee_invoke_fn *invoke_fn)
-@@ -1586,11 +1652,14 @@ static inline int optee_load_fw(struct platform_device *pdev,
- 
- static int optee_protmem_pool_init(struct optee *optee)
- {
-+	bool protm = optee->smc.sec_caps & OPTEE_SMC_SEC_CAP_PROTMEM;
-+	bool dyn_protm = optee->smc.sec_caps &
-+			 OPTEE_SMC_SEC_CAP_DYNAMIC_PROTMEM;
- 	enum tee_dma_heap_id heap_id = TEE_DMA_HEAP_SECURE_VIDEO_PLAY;
--	struct tee_protmem_pool *pool;
--	int rc;
-+	struct tee_protmem_pool *pool = ERR_PTR(-EINVAL);
-+	int rc = -EINVAL;
- 
--	if (optee->smc.sec_caps & OPTEE_SMC_SEC_CAP_PROTMEM) {
-+	if (protm) {
- 		union {
- 			struct arm_smccc_res smccc;
- 			struct optee_smc_get_protmem_config_result result;
-@@ -1598,26 +1667,26 @@ static int optee_protmem_pool_init(struct optee *optee)
- 
- 		optee->smc.invoke_fn(OPTEE_SMC_GET_PROTMEM_CONFIG, 0, 0, 0, 0,
- 				     0, 0, 0, &res.smccc);
--		if (res.result.status != OPTEE_SMC_RETURN_OK) {
--			pr_err("Secure Data Path service not available\n");
--			return 0;
--		}
--		rc = optee_set_dma_mask(optee, res.result.pa_width);
-+		if (res.result.status == OPTEE_SMC_RETURN_OK)
-+			rc = optee_set_dma_mask(optee, res.result.pa_width);
- 		if (!rc)
- 			pool = tee_protmem_static_pool_alloc(res.result.start,
- 							     res.result.size);
--		if (IS_ERR(pool))
--			return PTR_ERR(pool);
-+	}
- 
-+	if (dyn_protm && IS_ERR(pool))
-+		pool = optee_protmem_alloc_dyn_pool(optee, heap_id);
-+
-+	if (!IS_ERR(pool)) {
- 		rc = tee_device_register_dma_heap(optee->teedev, heap_id, pool);
- 		if (rc)
--			goto err;
-+			pool->ops->destroy_pool(pool);
- 	}
- 
-+	if (protm || dyn_protm)
-+		return rc;
-+
- 	return 0;
--err:
--	pool->ops->destroy_pool(pool);
--	return rc;
- }
- 
- static int optee_probe(struct platform_device *pdev)
-@@ -1788,9 +1857,8 @@ static int optee_probe(struct platform_device *pdev)
- 		pr_info("Asynchronous notifications enabled\n");
- 	}
- 
--	rc = optee_protmem_pool_init(optee);
--	if (rc)
--		goto err_notif_uninit;
-+	if (optee_protmem_pool_init(optee))
-+		pr_info("Protected memory service not available\n");
- 
- 	/*
- 	 * Ensure that there are no pre-existing shm objects before enabling
--- 
-2.43.0
-
+- Eric
 
