@@ -1,164 +1,221 @@
-Return-Path: <linux-kernel+bounces-656547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5280ABE7BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:57:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23316ABE7B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 00:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC373B12D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 601303A9666
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 22:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3167A262FD6;
-	Tue, 20 May 2025 22:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA12125B695;
+	Tue, 20 May 2025 22:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="a1zwU4lC"
-Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MujjToa2"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FEA725A322
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 22:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846582566FE;
+	Tue, 20 May 2025 22:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747781793; cv=none; b=QZstDMt8TLxv6v741k+PzDh/TVjlENT9fFmFG8vGI633MltGApTUU6Quhl5L9aLkFzti7a136R+Qh1O7mnmti0GoGntOkJ00pprc/0HPCVKxLoKJ1VsngHPW6fhsoqz1ODtkP4mDncibDN0o6q8Wp+kF05PDlL4DU8/GyOpNjMM=
+	t=1747781790; cv=none; b=hY+RY0c99tn52pXTynujuCHCvTLmITRWpsX/4jvU3eZK65jRhP0++zBgm53VZ2v+l4/Rqdsr1rQJe3LM/6wrQNAWWD333W+HPGIGdQdl2qaynBl97HK8sfU8hocEdA/F/shmnD+wUOcoNltdbHpbWChSjMJB7kCzMnNswkHdmPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747781793; c=relaxed/simple;
-	bh=wQQubEBib3byNdfTnd7ko0vhCud06Uio7n09JluN5A0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oS0LH9w9gLNeOzmHePQiPGL0uZGfJTTegEiJFE9UNsXvFbG86W91fNl/pXsPebofrmplkUcujYswY67tOghqUfjkyOIGFXpYaC5sE240PW9hIuYQIPKe2yhfIVh0XxbFp6dLbhIrezYlav6IpVHX2q34ZiyOL+fqGTmEK+cMyVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=a1zwU4lC; arc=none smtp.client-ip=185.226.149.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
-	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1uHVsi-001X5G-Em; Wed, 21 May 2025 00:56:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector2; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From;
-	bh=J8ECBmbAYxlbH2+qPMrZpA1tVV7W3mma7W+7fWFHowY=; b=a1zwU4lCjIw4rl0eCGmePhdG70
-	Kl5MZpMWS3dDQKCbhrvJuYTJICmXOGRkgD6tSjAQ8IiGd6MX/2NVB3J/JEe3jmdNkaYOXfkBX1HOF
-	titg1QEnk4LOFk22l1ttevdjoS2E559+ym1/Zr00rZO5NdIEoVjphwk1Hp3p0R8gUlnrzJLBuROj+
-	pppmsVvoNZRMHuK8sqZagfc63xgF3JBR7NtfRNnTW8LiXj7cX8GoI+d5HEpzwTzvSyIYrPX1mf6N7
-	DnETfPryVxqiiBBRXqyfJ9Mx6vMFCvgEmhtHpV6ve+b6EDEpej9FLZ0Z8g+vSHgijXUKU4ri7JPAj
-	6F2jVpdA==;
-Received: from [10.9.9.73] (helo=submission02.runbox)
-	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1uHVsi-0007nJ-6I; Wed, 21 May 2025 00:56:20 +0200
-Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1uHVsZ-00CxGf-Hx; Wed, 21 May 2025 00:56:11 +0200
-From: Michal Luczaj <mhal@rbox.co>
-Date: Wed, 21 May 2025 00:55:23 +0200
-Subject: [PATCH net-next v5 5/5] vsock/test: Add test for an unexpectedly
- lingering close()
+	s=arc-20240116; t=1747781790; c=relaxed/simple;
+	bh=E5CCP2G2mbNbJvzbh7UCw14ea4N2zT5ir18+mCDw/ds=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nc+sCi+iAryjKMKZMvNWQ7r9GdOm+plE2UtCrJBhfSuJs+gFONeKMngW2kSS0RGJWgaPCil06sPJoexqHunglGzCgQdUgPjfomOjX8u7ypfV9OT6Wx4G1/Bnx3SCZhH5X4XKAt/IdZwpLu3LXnHI9n4IkAwFFyDkkXs7H0GxsyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MujjToa2; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-8647a81e683so153656239f.1;
+        Tue, 20 May 2025 15:56:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747781787; x=1748386587; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xfbTmppHxOLXCmtZNJSatt4EkTAJlAlHVYpSJyOZFfg=;
+        b=MujjToa2TN+ReWgbfZkI1j4Uk88iFp9axdih/7hu13T9l1NwLtP+wH/KY207MKPydr
+         vwpJav64j1QZIhIeK2PMnaUk654TwRan3yQcOics0IRM7DA2x/nUXtmTxvcVmLBRIIiK
+         HvfgP8r2hPSw0F2VpIIbwu14gOy1hDinM7dU/oCRHxqAPVgfoJZiwhLbRe8UzDTLYLkF
+         g1+IgyFU2icuAahyKEzmbsDjPEEoYofGuTb6tDRZFb3NADnUrHjb3u5qhSN49rtY3nBH
+         ybCl99PVb9z9HD+XN4z4qv4jnW/p+RowXWapVWK1IawARYSGmob7+FMsHn87DMM4cXaw
+         PLrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747781787; x=1748386587;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xfbTmppHxOLXCmtZNJSatt4EkTAJlAlHVYpSJyOZFfg=;
+        b=RP/hOyRFF823JRA2ol3Iu6J+8ZejlS3FUrptUcjNdxLGtM76AB43aOdVXU0a4wW10d
+         fpPL4teAg063ynI0LjWweqipvdkiLa5jHezEE9hse18sfFrWipdd8Mar7z+XiOW7fEX0
+         kB+ftY6JeJOoICJKSYyTa9NDJ28sdM/aObMSTQlohmIj3k5isQRbgjZZFuTKRF817tbz
+         RMrU03cXq/x0QuJQkG1LhrwW+r6Ae61sEtGaJbzNAthVZNxedjpgJdQ749Z8Z/p+ez5q
+         HRCKw2Svu99LCpDlMBC5MXhzEAzZXi9sq6QFcRbbMjGUG//n9FIY7ZcQdCWSUlKV2Rf7
+         HQng==
+X-Forwarded-Encrypted: i=1; AJvYcCURw+BQ5cHn96XwTqzoW8AjnIKfNKvOf1o7T9Fv+0ZTFbZR15nt9ByHVS11WycJ4R+c6ex3CiYxX9RBNVgx@vger.kernel.org, AJvYcCWQwXpUaJSeT7iI2irjT0tVjJ/ov5hqA3fXLCqZjijj9EjYd4q6nbGM/aCB2BApmp1IlDq2Or57/lwb5Ru8@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQBvUPQ1lwm394lF0y0+HSQ1EY30xAQvcxZIUra8OtSuoCgq6i
+	bF4UV30VjVqXNfbwLblt/KyT8F9JIvhsLk/bX45pElR2mhqoK01UXHVFjoMcxVho78IK9KU6Lx4
+	xDrzaW4kGr3inI42dGHK4x9X0gJIp9og=
+X-Gm-Gg: ASbGnctseIEWnBpt3g+aTq5i4upO+vwirKAiPRRgrqtYjF9yP8yiMBDBO1VYTyd+Jo/
+	uwyX7N1tRrvUB8hZy+5Dcv7gQLXyoFWh4tYW3JdpsgnMDWgqy127yxjkfcs3nkAWScF7c0k5BfR
+	maZ1tYCLN6OFK0/dZ3RRj7rprJwJqc75Kd4q89pf/GzhiGmqnhizd55fnHti7AHK3Vx7xyZcL6d
+	3c=
+X-Google-Smtp-Source: AGHT+IGOPI/jkR0SE4Ah18tEgrGyD13jj9I35eWxSMfqfHBJtXz1Ptp5VDoU4Ml5gVYvLQqXk4RTcbwN8ZBaSDzk14Q=
+X-Received: by 2002:a05:6602:3e82:b0:867:6c90:4867 with SMTP id
+ ca18e2360f4ac-86a23256cadmr2998450939f.14.1747781787455; Tue, 20 May 2025
+ 15:56:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250521-vsock-linger-v5-5-94827860d1d6@rbox.co>
-References: <20250521-vsock-linger-v5-0-94827860d1d6@rbox.co>
-In-Reply-To: <20250521-vsock-linger-v5-0-94827860d1d6@rbox.co>
-To: Stefano Garzarella <sgarzare@redhat.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, 
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
- Stefan Hajnoczi <stefanha@redhat.com>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
- Michal Luczaj <mhal@rbox.co>
-X-Mailer: b4 0.14.2
+References: <20250514175527.42488-1-robdclark@gmail.com> <20250514175527.42488-2-robdclark@gmail.com>
+ <aCWrwz2IF6VBUi4e@pollux> <aCWueFzx2QzF7LVg@pollux> <CAF6AEGu9MPxKnkHo45gSRxaCP+CTzqsKZjiLuy4Ne4GbrsStGA@mail.gmail.com>
+ <aCYqlvp_T77LyuMa@pollux> <CAF6AEGsOTNedZhuBzipSQgNpG0SyVObaeq+g5U1hGUFfRYjw8w@mail.gmail.com>
+ <aCb-72KH-NrzvGXy@pollux> <CAF6AEGu=KzCnkxuUsYvCHBGwo-e2W16u_cRT1NFAXLphty1_ig@mail.gmail.com>
+ <CAPM=9tzcvDVDOM88O8oqDHURR1nbR7KsFStavNnT1CN6C6kGgg@mail.gmail.com>
+ <CAF6AEGuv3GXTBcU99sBjAa5gPOSNoxwY+eiPy=Q--cLYHVn+cw@mail.gmail.com> <CAPM=9tykCXSKOH0BcMkNLKyCWfEN-kCjs0U7UA+C1pPqFr1jLA@mail.gmail.com>
+In-Reply-To: <CAPM=9tykCXSKOH0BcMkNLKyCWfEN-kCjs0U7UA+C1pPqFr1jLA@mail.gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 20 May 2025 15:56:15 -0700
+X-Gm-Features: AX0GCFsoUmkG3s3L14GoLEL15C4sCyP3V1E3Uragg5_xADxJ_pxuus52D_2x7-E
+Message-ID: <CAF6AEGvr6-9af9ZyccYF-g56j5-4sHocH+9JPk=cKfgdMTAjLg@mail.gmail.com>
+Subject: Re: [PATCH v4 01/40] drm/gpuvm: Don't require obj lock in destructor path
+To: Dave Airlie <airlied@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	Connor Abbott <cwabbott0@gmail.com>, Rob Clark <robdclark@chromium.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There was an issue with SO_LINGER: instead of blocking until all queued
-messages for the socket have been successfully sent (or the linger timeout
-has been reached), close() would block until packets were handled by the
-peer.
+On Tue, May 20, 2025 at 3:31=E2=80=AFPM Dave Airlie <airlied@gmail.com> wro=
+te:
+>
+> On Wed, 21 May 2025 at 07:53, Rob Clark <robdclark@gmail.com> wrote:
+> >
+> > On Tue, May 20, 2025 at 2:25=E2=80=AFPM Dave Airlie <airlied@gmail.com>=
+ wrote:
+> > >
+> > > On Sat, 17 May 2025 at 02:20, Rob Clark <robdclark@gmail.com> wrote:
+> > > >
+> > > > On Fri, May 16, 2025 at 2:01=E2=80=AFAM Danilo Krummrich <dakr@kern=
+el.org> wrote:
+> > > > >
+> > > > > On Thu, May 15, 2025 at 02:57:46PM -0700, Rob Clark wrote:
+> > > > > > On Thu, May 15, 2025 at 10:55=E2=80=AFAM Danilo Krummrich <dakr=
+@kernel.org> wrote:
+> > > > > > > Anyways, I don't agree with that. Even if you can tweak your =
+driver to not run
+> > > > > > > into trouble with this, we can't introduce a mode that violat=
+es GOUVM's internal
+> > > > > > > lifetimes and subsequently fix it up with WARN_ON() or BUG_ON=
+().
+> > > > > > >
+> > > > > > > I still don't see a real technical reason why msm can't be re=
+worked to follow
+> > > > > > > those lifetime rules.
+> > > > > >
+> > > > > > The basic issue is that (a) it would be really awkward to have =
+two
+> > > > > > side-by-side VM/VMA management/tracking systems.  But in legacy=
+ mode,
+> > > > > > we have the opposite direction of reference holding.  (But at t=
+he same
+> > > > > > time, don't need/use most of the features of gpuvm.)
+> > > > >
+> > > > > Ok, let's try to move this forward; I see three options (in order=
+ of descending
+> > > > > preference):
+> > > > >
+> > > > >   1) Rework the legacy code to properly work with GPUVM.
+> > > > >   2) Don't use GPUVM for the legacy mode.
+> > > > >   .
+> > > > >   .
+> > > > >   .
+> > > > >   3) Get an ACK from Dave / Sima to implement those workarounds f=
+or MSM in
+> > > > >      GPUVM.
+> > > > >
+> > > > > If you go for 3), the code introduced by those two patches should=
+ be guarded
+> > > > > with a flag that makes it very clear that this is a workaround sp=
+ecifically
+> > > > > for MSM legacy mode and does not give any guarantees in terms of =
+correctness
+> > > > > regarding lifetimes etc., e.g. DRM_GPUVM_MSM_LEGACY_QUIRK.
+> > > >
+> > > > I'm not even sure how #2 would work, other than just copy/pasta all=
+ of
+> > > > drm_gpuvm into msm, which doesn't really seem great.
+> > > >
+> > > > As for #1, even if I could get it to work, it would still be a lot
+> > > > more mmu map/unmap (like on every pageflip, vs the current state th=
+at
+> > > > the vma is kept around until the object is freed).  For the
+> > > > non-VM_BIND world, there are advantages to the BO holding the ref t=
+o
+> > > > the VMA, rather than the other way around.  Even at just a modest
+> > > > single layer 1080p the map takes ~.2ms and unmap ~.3ms (plus the un=
+map
+> > > > costs a tlbinv).  So from that standpoint, #3 is the superior optio=
+n.
+> > > >
+> > >
+> > > Before we get to #3, I'll need a bit more info here on why you have t=
+o
+> > > map/unmap the VMA on every pageflip.
+> >
+> > Previously we'd keep the VMA hanging around until the GEM obj is
+> > freed.  But that can't work if the VMA (via the VM_BO) is holding a
+> > reference to the GEM obj.
+> >
+> > I was kinda thinking about keeping the VMA around until the handle is
+> > closed.. but that doesn't cover the dma-buf case (ie. when you
+> > re-import the dma-buf fd each frame.. I know android does this, unsure
+> > about other wsi's).
+> >
+> > > But actually I think 2 is the best option, I think in nouveau this is
+> > > where we ended up, we didn't modify the old submission paths at all
+> > > and kept the old bo/vm lifetimes.
+> > >
+> > > We just added completely new bind/exec ioctls and you can only use on=
+e
+> > > method once you've opened an fd.
+> >
+> > hmm, but that means tracking VMAs against a single BO differently..
+> > which.. at least seems ugly..
+>
+> I don't think it is if you already have the code to do that, and just
+> add gpuvm support in parallel.
+>
+> You also have to figure out that the world is moving towards Vulkan
+> for everything so any optimisations you've made for particular legacy
+> paths will need to be dealt with in the future picture anyways.
 
-Add a test to alert on close() lingering when it should not.
+fwiw, the case I'm more worried about is the kms vm for scanout, that
+won't be using vk
 
-Signed-off-by: Michal Luczaj <mhal@rbox.co>
----
- tools/testing/vsock/vsock_test.c | 49 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+BR,
+-R
 
-diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
-index f401c6a79495bc7fda97012e5bfeabec7dbfb60a..1040503333cf315e52592c876f2c1809b36fdfdb 100644
---- a/tools/testing/vsock/vsock_test.c
-+++ b/tools/testing/vsock/vsock_test.c
-@@ -1839,6 +1839,50 @@ static void test_stream_linger_server(const struct test_opts *opts)
- 	close(fd);
- }
- 
-+static void test_stream_nolinger_client(const struct test_opts *opts)
-+{
-+	bool nowait;
-+	time_t ns;
-+	int fd;
-+
-+	fd = vsock_stream_connect(opts->peer_cid, opts->peer_port);
-+	if (fd < 0) {
-+		perror("connect");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	enable_so_linger(fd);
-+	send_byte(fd, 1, 0); /* Left unread to expose incorrect behaviour. */
-+	nowait = vsock_wait_sent(fd);
-+
-+	ns = current_nsec();
-+	close(fd);
-+	ns = current_nsec() - ns;
-+
-+	if (nowait) {
-+		fprintf(stderr, "Test skipped, SIOCOUTQ not supported.\n");
-+	} else if ((ns + NSEC_PER_SEC - 1) / NSEC_PER_SEC >= LINGER_TIMEOUT) {
-+		fprintf(stderr, "Unexpected lingering\n");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	control_writeln("DONE");
-+}
-+
-+static void test_stream_nolinger_server(const struct test_opts *opts)
-+{
-+	int fd;
-+
-+	fd = vsock_stream_accept(VMADDR_CID_ANY, opts->peer_port, NULL);
-+	if (fd < 0) {
-+		perror("accept");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	control_expectln("DONE");
-+	close(fd);
-+}
-+
- static struct test_case test_cases[] = {
- 	{
- 		.name = "SOCK_STREAM connection reset",
-@@ -1999,6 +2043,11 @@ static struct test_case test_cases[] = {
- 		.run_client = test_stream_linger_client,
- 		.run_server = test_stream_linger_server,
- 	},
-+	{
-+		.name = "SOCK_STREAM SO_LINGER close() on unread",
-+		.run_client = test_stream_nolinger_client,
-+		.run_server = test_stream_nolinger_server,
-+	},
- 	{},
- };
- 
-
--- 
-2.49.0
-
+> But I'd rather not hack gpuvm into being something it isn't, if there
+> is a meaningful commonality in legacy bo/vm bindings across drivers,
+> we could create something new, but the ref counting and handling is
+> pretty fundamental to gpuvm architecture.
+>
+> There should only be two paths, legacy and gpuvm, and you shouldn't
+> ever be mixing them on a particular exec path, since you should only
+> have a vm per userspace fd, and can pick which way to use it the first
+> time someone calls it.
+>
+> Dave.
+> Dave.
 
