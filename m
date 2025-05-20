@@ -1,365 +1,247 @@
-Return-Path: <linux-kernel+bounces-655099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EB9AABD0CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:46:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E42B1ABD0B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F8534A5EB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 07:46:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B21B7AA363
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 07:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DA925E818;
-	Tue, 20 May 2025 07:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="VmF8Xvju"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C0E25DD01;
+	Tue, 20 May 2025 07:44:35 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F005225E808;
-	Tue, 20 May 2025 07:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747727165; cv=pass; b=PbVVYJaJeL1OrmQK/D0lv1YBqaGZyZ10KlhS+MYtAdQazlakOE86DgE159GQqJArv12gyHItdu3MYOESMQYWa5V+FrrChHXv2gDBL3+nC3i/ZNPIC1TAxCk5RWrT5cGBW1LPJCQo2CyiS45Wv/dlIDToKhHaWcSI/27OEpkT3jU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747727165; c=relaxed/simple;
-	bh=Se5CkXRHeAp3i1/2HW3MuqAZdpbFQY2Kk8epZlQ3BlM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tPJAyGmudN/TalHT0tU+DNh7fjJRnFWrQ8ed7jN/RjRRbtMu2KBiw5zMRSJSMGhoWxf76cqEbRuisFdqnqsgB3NNqHhyfG/gwXyHbef4amvmNf1TP5URcEGmG3nPSRt9H0GHMLCLmnsIacJYQmlkIcpnk7di/Y11opvEbuGRANM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=VmF8Xvju; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
-ARC-Seal: i=1; a=rsa-sha256; t=1747727140; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=TPBmOYPy0eMIaOKMNcAnT9e82FTL1VLNrOc3E589goMuJ7/GQc3ZytQ0TmL5QPJw+DESC3597Gbffeg1eBCi5rNSGDbL7d2Bx11mlP+c//Il+oZo+CTnYOoRsqV0thFap70mwcp5Krco1EXkBaaZQDc9PG9g6fKUlInJOFdSDRg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1747727140; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=jn3uOBcDY2q1MgCXeLp3Q0HzCg0IJCGajPJa/7QWSSA=; 
-	b=O7g70/eRaw5y4RoooE1vjMaCn16lkUwryB9kPpYj2MllhxtVgLqsYJDNFsDw9lZERlTMYJ4Is0/nCZN38LLaOV303AxnjVEtDsFa1nXmUwfyVSUvVlAAbCS4rZqzm+iy146nwrHesuwR/jZ27iBN0hj5CiKqEFZtiDcKKfAf6as=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747727140;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=jn3uOBcDY2q1MgCXeLp3Q0HzCg0IJCGajPJa/7QWSSA=;
-	b=VmF8Xvjuf/Klb7n3XHLi0A29WO4U5a/9BWYfJlqBhpbmJ7zGsJV6b/E8mknG0J3A
-	NOS9gw0JLRYi9CaD15wU1e5m+hLLCB/dfxCS4L0bp5T+RlkpNuWOGa1c1bQHO1CPX9e
-	Yehh+sdPEzanuZQ8xtkZXvWnDG/EmKKAYOhqsYuc=
-Received: by mx.zohomail.com with SMTPS id 1747727138759542.4562492623348;
-	Tue, 20 May 2025 00:45:38 -0700 (PDT)
-From: Junhui Liu <junhui.liu@pigmoral.tech>
-Date: Tue, 20 May 2025 15:44:24 +0800
-Subject: [PATCH v4 2/2] mailbox: sophgo: add mailbox driver for CV18XX
- series SoC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D362EEC8
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 07:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747727075; cv=none; b=PSEfyH/IxAVe6mKbvPZCjElQ0pxtE+fNl0Q4Gu4z+RVsMiHx6rrCMc0izBiiMuwGyHPj6VQxFudWG/Lwtrrg0wuCpnjL8ueFVzKT5ThSwcl5XEsQmR1auw/+m6yGB+DEYMB5Z8bJlsrjiW8OSq9bgSykA16zkPDXkh6QOC92mQ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747727075; c=relaxed/simple;
+	bh=ZorFAwBbLzmqqwLs6qQTXcA9LWMey+cSU32Dibx+Twk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jwmF5tIE5fmOivGOwbvymimUKYC5I8JlBbnYOuwnJdwKMQrdKqK6XHa4JPz/miIZ6Nv5WZQKcPzdpPD57wvSmXRYefNkKl8ZLfMN/5YGbhgNZctio7SsMQFHs6nZKtEJzK9jQTiM5QmNTDZ2w92C1iYcHFMZzLGMpqU6SP29F9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-85ed07f832dso473902239f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 00:44:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747727072; x=1748331872;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lXTn0uFs/zpHcdgwQzrvYgeEZBncnm7hDcWxaM7Qg4Y=;
+        b=fEiltwAP2k5TRBov3h14JdXOtL4ATRHFCoEdchCo3neLdiwRLyM3e9SKYFGan277ZS
+         rVUdV+scSO98ddof3pc1typWj0tQky9V40H4peDX+DkP67wRGp4BpfAzmuTkhMBZUEeN
+         R56zXu1zKIKaJqqH3lv96cJRcihVNltPc51s8vP6R4ROhenlLTkBmGuWLQHAu6f1lZDQ
+         JxiwA5hVCDYUuyrS2kcimOgnYpoTnbHiMD23nDEwhfJcLSGXKpiLkQEAnCBI5Ldskhnn
+         KxrPkxaFWfRgo/x3iM0egRnorkbtjoWxh3QiPHdPo9+yHi/BLxwZWz/wXqXaKvZqwAed
+         Bqlw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxGarlv/wpsPUQMsWMXTmQFFSUJzfbecpT7wq4IwAqJPRivY+De5l1oHM+FTaUMYPqyB4+oY+o0V2CRkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybhHhJcH3naH889qOYuar87IAfvUYRYkdMyVnhBLdqIyhnxmQZ
+	FOl35V2BX7m7bZ5pxP/PfPDA+GXpRCFgx/iLcixXS7ftR+04MFkVtsJzVEZucxsv//iviTxwh2s
+	40/bKjmuqrcLa5SV/UJ4BZk1JHzmn0cbNWGpkeveKD7B2e8YRPJ8W1JWwyEg=
+X-Google-Smtp-Source: AGHT+IEADEopJ8mYcz+ruDd+m3udPRRwUh1XWJnoOsOFne0SoVNQgOwcAnBClvDKzlH1uV17VQFaWxwYtC/PZvP51v1T9TjgLiwu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250520-cv18xx-mbox-v4-2-fd4f1c676d6e@pigmoral.tech>
-References: <20250520-cv18xx-mbox-v4-0-fd4f1c676d6e@pigmoral.tech>
-In-Reply-To: <20250520-cv18xx-mbox-v4-0-fd4f1c676d6e@pigmoral.tech>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
- Inochi Amaoto <inochiama@gmail.com>, Yuntao Dai <d1581209858@live.com>, 
- Junhui Liu <junhui.liu@pigmoral.tech>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- sophgo@lists.linux.dev, linux-riscv@lists.infradead.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747727085; l=8014;
- i=junhui.liu@pigmoral.tech; s=20250507; h=from:subject:message-id;
- bh=a0cR+fhvbwMEYXPvZAtsXSXc4eeCzygWnJG9I9aL5Ak=;
- b=R9SPTMpzh7smVi5B4VdXQuujLsleWoLh+ro2ewg04+zA+vmsEWAuEz4mYk7CLWr7ceGptRvo+
- UfMIFlel6I+Cg3fjipboHqHzup//iXTPYAxM/0+zY7uz41bjAgc5Ozr
-X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
- pk=d3i4H2mg9LUn4SQemoLAjLRQy0nTcyknIv6zgKMwiBA=
-X-ZohoMailClient: External
+X-Received: by 2002:a05:6602:4802:b0:864:48eb:30fd with SMTP id
+ ca18e2360f4ac-86a23227308mr1743532039f.11.1747727072426; Tue, 20 May 2025
+ 00:44:32 -0700 (PDT)
+Date: Tue, 20 May 2025 00:44:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <682c32e0.a00a0220.29bc26.0274.GAE@google.com>
+Subject: [syzbot] [net?] [nfs?] KASAN: slab-out-of-bounds Read in cache_clean
+From: syzbot <syzbot+a15182e1a4094a69cbec@syzkaller.appspotmail.com>
+To: Dai.Ngo@oracle.com, anna@kernel.org, chuck.lever@oracle.com, 
+	davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	jlayton@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, neilb@suse.de, netdev@vger.kernel.org, 
+	okorniev@redhat.com, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tom@talpey.com, trondmy@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Yuntao Dai <d1581209858@live.com>
+Hello,
 
-Add mailbox controller driver for CV18XX SoCs, which provides 8 channels
-and each channel has an 8-byte FIFO.
+syzbot found the following issue on:
 
-Signed-off-by: Yuntao Dai <d1581209858@live.com>
-Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+HEAD commit:    088d13246a46 Merge tag 'kbuild-fixes-v6.15' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1047ce70580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=30181bfb60dbb0a9
+dashboard link: https://syzkaller.appspot.com/bug?extid=a15182e1a4094a69cbec
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-088d1324.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/273390076ad5/vmlinux-088d1324.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3de2f79595a2/bzImage-088d1324.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a15182e1a4094a69cbec@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in hlist_empty include/linux/list.h:972 [inline]
+BUG: KASAN: slab-out-of-bounds in cache_clean+0x8a0/0x990 net/sunrpc/cache.c:468
+Read of size 8 at addr ffff88802ae03800 by task kworker/1:2/1335
+
+CPU: 1 UID: 0 PID: 1335 Comm: kworker/1:2 Not tainted 6.15.0-rc6-syzkaller-00105-g088d13246a46 #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: events_power_efficient do_cache_clean
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0xc3/0x670 mm/kasan/report.c:521
+ kasan_report+0xe0/0x110 mm/kasan/report.c:634
+ hlist_empty include/linux/list.h:972 [inline]
+ cache_clean+0x8a0/0x990 net/sunrpc/cache.c:468
+ do_cache_clean net/sunrpc/cache.c:519 [inline]
+ do_cache_clean+0x29/0xa0 net/sunrpc/cache.c:512
+ process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+ kthread+0x3c2/0x780 kernel/kthread.c:464
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+Allocated by task 19792:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4327 [inline]
+ __kmalloc_noprof+0x223/0x510 mm/slub.c:4339
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ kmalloc_array_noprof include/linux/slab.h:948 [inline]
+ cache_create_net+0x9d/0x220 net/sunrpc/cache.c:1746
+ nfsd_idmap_init+0x62/0x250 fs/nfsd/nfs4idmap.c:470
+ nfsd_net_init+0x69/0x3d0 fs/nfsd/nfsctl.c:2198
+ ops_init+0x1df/0x5f0 net/core/net_namespace.c:138
+ setup_net+0x21e/0x850 net/core/net_namespace.c:364
+ copy_net_ns+0x2a6/0x5f0 net/core/net_namespace.c:518
+ create_new_namespaces+0x3ea/0xad0 kernel/nsproxy.c:110
+ unshare_nsproxy_namespaces+0xc0/0x1f0 kernel/nsproxy.c:228
+ ksys_unshare+0x45b/0xa40 kernel/fork.c:3375
+ __do_sys_unshare kernel/fork.c:3446 [inline]
+ __se_sys_unshare kernel/fork.c:3444 [inline]
+ __x64_sys_unshare+0x31/0x40 kernel/fork.c:3444
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88802ae03000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 0 bytes to the right of
+ allocated 2048-byte region [ffff88802ae03000, ffff88802ae03800)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2ae00
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801b442f00 0000000000000000 dead000000000001
+raw: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+head: 00fff00000000040 ffff88801b442f00 0000000000000000 dead000000000001
+head: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+head: 00fff00000000003 ffffea0000ab8001 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 837, tgid 837 (kworker/3:2), ts 32884542472, free_ts 32014442038
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x181/0x1b0 mm/page_alloc.c:1718
+ prep_new_page mm/page_alloc.c:1726 [inline]
+ get_page_from_freelist+0x135c/0x3920 mm/page_alloc.c:3688
+ __alloc_frozen_pages_noprof+0x263/0x23a0 mm/page_alloc.c:4970
+ alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2301
+ alloc_slab_page mm/slub.c:2450 [inline]
+ allocate_slab mm/slub.c:2618 [inline]
+ new_slab+0x244/0x340 mm/slub.c:2672
+ ___slab_alloc+0xd9c/0x1940 mm/slub.c:3858
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3948
+ __slab_alloc_node mm/slub.c:4023 [inline]
+ slab_alloc_node mm/slub.c:4184 [inline]
+ __do_kmalloc_node mm/slub.c:4326 [inline]
+ __kmalloc_node_track_caller_noprof+0x2ee/0x510 mm/slub.c:4346
+ kmalloc_reserve+0xef/0x2c0 net/core/skbuff.c:599
+ __alloc_skb+0x166/0x380 net/core/skbuff.c:668
+ alloc_skb include/linux/skbuff.h:1340 [inline]
+ mld_newpack.isra.0+0x18e/0xa20 net/ipv6/mcast.c:1788
+ add_grhead+0x299/0x340 net/ipv6/mcast.c:1899
+ add_grec+0x112a/0x1680 net/ipv6/mcast.c:2037
+ mld_send_cr net/ipv6/mcast.c:2163 [inline]
+ mld_ifc_work+0x41f/0xca0 net/ipv6/mcast.c:2702
+ process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+page last free pid 5792 tgid 5792 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1262 [inline]
+ __free_frozen_pages+0x69d/0xff0 mm/page_alloc.c:2725
+ discard_slab mm/slub.c:2716 [inline]
+ __put_partials+0x16d/0x1c0 mm/slub.c:3185
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4147 [inline]
+ slab_alloc_node mm/slub.c:4196 [inline]
+ __do_kmalloc_node mm/slub.c:4326 [inline]
+ __kmalloc_noprof+0x1d4/0x510 mm/slub.c:4339
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ tomoyo_realpath_from_path+0xc2/0x6e0 security/tomoyo/realpath.c:251
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_path_perm+0x274/0x460 security/tomoyo/file.c:822
+ security_inode_getattr+0x116/0x290 security/security.c:2377
+ vfs_getattr fs/stat.c:256 [inline]
+ vfs_fstat+0x4b/0xd0 fs/stat.c:278
+ __do_sys_newfstat+0x91/0x110 fs/stat.c:546
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88802ae03700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88802ae03780: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff88802ae03800: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                   ^
+ ffff88802ae03880: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88802ae03900: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
 ---
- drivers/mailbox/Kconfig          |  10 ++
- drivers/mailbox/Makefile         |   2 +
- drivers/mailbox/cv1800-mailbox.c | 220 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 232 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-index ed52db272f4d059ff60d608f40e3845411bc63f7..fd3f28d705bc00166028c372d3398f2e225aa8a7 100644
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@ -36,6 +36,16 @@ config ARM_MHU_V3
- 	  that provides different means of transports: supported extensions
- 	  will be discovered and possibly managed at probe-time.
- 
-+config CV1800_MBOX
-+	tristate "cv1800 mailbox"
-+	depends on ARCH_SOPHGO || COMPILE_TEST
-+	help
-+	  Mailbox driver implementation for Sophgo CV18XX SoCs. This driver
-+	  can be used to send message between different processors in SoC. Any
-+	  processer can write data in a channel, and set co-responding register
-+	  to raise interrupt to notice another processor, and it is allowed to
-+	  send data to itself.
-+
- config EXYNOS_MBOX
- 	tristate "Exynos Mailbox"
- 	depends on ARCH_EXYNOS || COMPILE_TEST
-diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
-index 9a1542b55539c673af874c5c37fbb3d438fd05d3..13a3448b327115add5ebb8c4f116e68dedd755cb 100644
---- a/drivers/mailbox/Makefile
-+++ b/drivers/mailbox/Makefile
-@@ -11,6 +11,8 @@ obj-$(CONFIG_ARM_MHU_V2)	+= arm_mhuv2.o
- 
- obj-$(CONFIG_ARM_MHU_V3)	+= arm_mhuv3.o
- 
-+obj-$(CONFIG_CV1800_MBOX)	+= cv1800-mailbox.o
-+
- obj-$(CONFIG_EXYNOS_MBOX)	+= exynos-mailbox.o
- 
- obj-$(CONFIG_IMX_MBOX)	+= imx-mailbox.o
-diff --git a/drivers/mailbox/cv1800-mailbox.c b/drivers/mailbox/cv1800-mailbox.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..4761191acf782654c1724df2c9cc619e1d7c985c
---- /dev/null
-+++ b/drivers/mailbox/cv1800-mailbox.c
-@@ -0,0 +1,220 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (C) 2024 Sophgo Technology Inc.
-+ * Copyright (C) 2024 Yuntao Dai <d1581209858@live.com>
-+ * Copyright (C) 2025 Junhui Liu <junhui.liu@pigmoral.tech>
-+ */
-+
-+#include <linux/bits.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/kfifo.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/mailbox_controller.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#define RECV_CPU		1
-+
-+#define MAILBOX_MAX_CHAN	8
-+#define MAILBOX_MSG_LEN		8
-+
-+#define MBOX_EN_REG(cpu)	(cpu << 2)
-+#define MBOX_DONE_REG(cpu)	((cpu << 2) + 2)
-+#define MBOX_SET_CLR_REG(cpu)	(0x10 + (cpu << 4))
-+#define MBOX_SET_INT_REG(cpu)	(0x18 + (cpu << 4))
-+#define MBOX_SET_REG		0x60
-+
-+#define MAILBOX_CONTEXT_OFFSET	0x0400
-+#define MAILBOX_CONTEXT_SIZE	0x0040
-+
-+#define MBOX_CONTEXT_BASE_INDEX(base, index) \
-+	((u64 __iomem *)(base + MAILBOX_CONTEXT_OFFSET) + index)
-+
-+/**
-+ * struct cv1800_mbox_chan_priv - cv1800 mailbox channel private data
-+ * @idx: index of channel
-+ * @cpu: send to which processor
-+ */
-+struct cv1800_mbox_chan_priv {
-+	int idx;
-+	int cpu;
-+};
-+
-+struct cv1800_mbox {
-+	struct mbox_controller mbox;
-+	struct cv1800_mbox_chan_priv priv[MAILBOX_MAX_CHAN];
-+	struct mbox_chan chans[MAILBOX_MAX_CHAN];
-+	u64 __iomem *content[MAILBOX_MAX_CHAN];
-+	void __iomem *mbox_base;
-+	int recvid;
-+};
-+
-+static irqreturn_t cv1800_mbox_isr(int irq, void *dev_id)
-+{
-+	struct cv1800_mbox *mbox = (struct cv1800_mbox *)dev_id;
-+	size_t i;
-+	u64 msg;
-+	int ret = IRQ_NONE;
-+
-+	for (i = 0; i < MAILBOX_MAX_CHAN; i++) {
-+		if (mbox->content[i] && mbox->chans[i].cl) {
-+			memcpy_fromio(&msg, mbox->content[i], MAILBOX_MSG_LEN);
-+			mbox->content[i] = NULL;
-+			mbox_chan_received_data(&mbox->chans[i], (void *)&msg);
-+			ret = IRQ_HANDLED;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static irqreturn_t cv1800_mbox_irq(int irq, void *dev_id)
-+{
-+	struct cv1800_mbox *mbox = (struct cv1800_mbox *)dev_id;
-+	u8 set, valid;
-+	size_t i;
-+	int ret = IRQ_NONE;
-+
-+	set = readb(mbox->mbox_base + MBOX_SET_INT_REG(RECV_CPU));
-+
-+	if (!set)
-+		return ret;
-+
-+	for (i = 0; i < MAILBOX_MAX_CHAN; i++) {
-+		valid = set & BIT(i);
-+		if (valid) {
-+			mbox->content[i] =
-+				MBOX_CONTEXT_BASE_INDEX(mbox->mbox_base, i);
-+			writeb(valid, mbox->mbox_base +
-+				      MBOX_SET_CLR_REG(RECV_CPU));
-+			writeb(~valid, mbox->mbox_base + MBOX_EN_REG(RECV_CPU));
-+			ret = IRQ_WAKE_THREAD;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static int cv1800_mbox_send_data(struct mbox_chan *chan, void *data)
-+{
-+	struct cv1800_mbox_chan_priv *priv =
-+		(struct cv1800_mbox_chan_priv *)chan->con_priv;
-+	struct cv1800_mbox *mbox = dev_get_drvdata(chan->mbox->dev);
-+	int idx = priv->idx;
-+	int cpu = priv->cpu;
-+	u8 en, valid;
-+
-+	memcpy_toio(MBOX_CONTEXT_BASE_INDEX(mbox->mbox_base, idx),
-+		    data, MAILBOX_MSG_LEN);
-+
-+	valid = BIT(idx);
-+	writeb(valid, mbox->mbox_base + MBOX_SET_CLR_REG(cpu));
-+	en = readb(mbox->mbox_base + MBOX_EN_REG(cpu));
-+	writeb(en | valid, mbox->mbox_base + MBOX_EN_REG(cpu));
-+	writeb(valid, mbox->mbox_base + MBOX_SET_REG);
-+
-+	return 0;
-+}
-+
-+static bool cv1800_last_tx_done(struct mbox_chan *chan)
-+{
-+	struct cv1800_mbox_chan_priv *priv =
-+		(struct cv1800_mbox_chan_priv *)chan->con_priv;
-+	struct cv1800_mbox *mbox = dev_get_drvdata(chan->mbox->dev);
-+	u8 en;
-+
-+	en = readb(mbox->mbox_base + MBOX_EN_REG(priv->cpu));
-+
-+	return !(en & BIT(priv->idx));
-+}
-+
-+static const struct mbox_chan_ops cv1800_mbox_chan_ops = {
-+	.send_data = cv1800_mbox_send_data,
-+	.last_tx_done = cv1800_last_tx_done,
-+};
-+
-+static struct mbox_chan *cv1800_mbox_xlate(struct mbox_controller *mbox,
-+					   const struct of_phandle_args *spec)
-+{
-+	struct cv1800_mbox_chan_priv *priv;
-+
-+	int idx = spec->args[0];
-+	int cpu = spec->args[1];
-+
-+	if (idx >= mbox->num_chans)
-+		return ERR_PTR(-EINVAL);
-+
-+	priv = mbox->chans[idx].con_priv;
-+	priv->cpu = cpu;
-+
-+	return &mbox->chans[idx];
-+}
-+
-+static const struct of_device_id cv1800_mbox_of_match[] = {
-+	{ .compatible = "sophgo,cv1800b-mailbox", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, cv1800_mbox_of_match);
-+
-+static int cv1800_mbox_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct cv1800_mbox *mb;
-+	int irq, idx, err;
-+
-+	mb = devm_kzalloc(dev, sizeof(*mb), GFP_KERNEL);
-+	if (!mb)
-+		return -ENOMEM;
-+
-+	mb->mbox_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(mb->mbox_base))
-+		return dev_err_probe(dev, PTR_ERR(mb->mbox_base),
-+				     "Failed to map resource\n");
-+
-+	mb->mbox.dev = dev;
-+	mb->mbox.chans = mb->chans;
-+	mb->mbox.txdone_poll = true;
-+	mb->mbox.ops = &cv1800_mbox_chan_ops;
-+	mb->mbox.num_chans = MAILBOX_MAX_CHAN;
-+	mb->mbox.of_xlate = cv1800_mbox_xlate;
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	err = devm_request_threaded_irq(dev, irq, cv1800_mbox_irq,
-+					cv1800_mbox_isr, IRQF_ONESHOT,
-+					dev_name(&pdev->dev), mb);
-+	if (err < 0)
-+		return dev_err_probe(dev, err, "Failed to register irq\n");
-+
-+	for (idx = 0; idx < MAILBOX_MAX_CHAN; idx++) {
-+		mb->priv[idx].idx = idx;
-+		mb->mbox.chans[idx].con_priv = &mb->priv[idx];
-+	}
-+
-+	platform_set_drvdata(pdev, mb);
-+
-+	err = devm_mbox_controller_register(dev, &mb->mbox);
-+	if (err)
-+		return dev_err_probe(dev, err, "Failed to register mailbox\n");
-+
-+	return 0;
-+}
-+
-+static struct platform_driver cv1800_mbox_driver = {
-+	.driver = {
-+		.name = "cv1800-mbox",
-+		.of_match_table = cv1800_mbox_of_match,
-+	},
-+	.probe	= cv1800_mbox_probe,
-+};
-+
-+module_platform_driver(cv1800_mbox_driver);
-+
-+MODULE_DESCRIPTION("cv1800 mailbox driver");
-+MODULE_LICENSE("GPL");
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.49.0
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
