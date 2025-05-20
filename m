@@ -1,177 +1,122 @@
-Return-Path: <linux-kernel+bounces-655581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B8EABD840
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:32:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ACAFABD847
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74AFA3BF41D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:32:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EA897A6FF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD67619E971;
-	Tue, 20 May 2025 12:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0676C1A08B8;
+	Tue, 20 May 2025 12:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oKlOMxLm"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KFPXYsLY"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58227E573
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 12:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0941463CB
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 12:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747744365; cv=none; b=V2EGVMc6XfyJZJbV5jQ+zMEfgJUW32LyiAWK5WDrn3q4/4YrLYS8rnZ1IS0VO3KlUvzhhEeswIID68ulKmY8ue49/DBWU6lXqJedyLokTOGIYpD8ncuchD5oZk7jLHkLy9ugCE495WIcbBVobDnMaXU3MFNZ/hJNU4VZZlQXKik=
+	t=1747744562; cv=none; b=a2g6eVxEso0yAvA3wtPi5tiVRniz6ElLNJez9O9cWJKHxOp7BUi7QTlMeWGPiZVRTXsWOuHVHWPAD5ICfOGlCABvFkEsoTSh5kvMZ2iiFrTqXuEEHBQ8HbRr0Ld+HgvPnhWHIptoonbYmCze2JvBnDMPWANejvPynu+iP44v4UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747744365; c=relaxed/simple;
-	bh=mo+zkf2V9/PQsTpLE7bLLxHvMSr4hjhk93Mt9S9v2VM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LnFjXbgL6WqdcTy3RDb4jtqVeXBdJGmteOQBuY2llO0o9lZnae0+RQNT1xS5L0x2BI2SCelXyO6DPF6IQOXOyGz+8OUEGqR7EhsyP4mSyPQZK1c9ETW9ik6Ip7tgOqdZLkCY4mdj5+64sjFTKsAgAXXTUS5sqv3BAjRf1cOA2AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oKlOMxLm; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a3683d8314so2560045f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 05:32:43 -0700 (PDT)
+	s=arc-20240116; t=1747744562; c=relaxed/simple;
+	bh=673XBPRyzebnsJJ6ivPQwMAs0N/F83vVBY0oWEkZ3nI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=vFH+ldwpb3QqCPOnnOvjiP+8DrF3r5IA5152wbkAndS8zBEWxyDbUOxMCulGA63FMGYJGNWsfl/nYa0MUbhocwu048QpZTFYNB0ZEObNhy8DhSvCw5RV3N9wRxRxMExeTlDtB/Re6f1CHOZkDPHnuF7LBdDeVULTvD6Yp/Agfmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KFPXYsLY; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-30e93626065so3321496a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 05:36:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747744361; x=1748349161; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lQ/iGDifZoJFpYpccOafvVqXyLvyOSbrLk1nfUTcRGE=;
-        b=oKlOMxLmeJ1CZGQ+fJ6qBDnwCWaIv9bp2/H29U83r/wsnXmU+aeth1hxUpEbwS23JI
-         etARuHaS4mitMjiLuQ9rOzTMTzidxyqVa+4Exw1oxgkhljYsLMwks2zyGe/gR2MDko2J
-         QZzdYYWseqrAvcMnRYdlRyCOQbBM5QUqEBiyv0DhKtVDTe/X2f47OH1SlJWqEfN+jmiW
-         mGyUmrzNb+DSu3jOGYkqMy6ZoieUYLFeyXegFNzP2vU2U9DM1nsEDh9XJTaq2nbhfLK3
-         OzFT8XGHfF9fezNwgeRs1mTYZlrYN0scVFPlmxExFMVkoY6XZ2/EGQ3TCNYSZeLNbPYq
-         MEUw==
+        d=chromium.org; s=google; t=1747744560; x=1748349360; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jFqkyuEgS2DYkSpYETdQW6012El1Bu2/BFMTj3Lxalc=;
+        b=KFPXYsLYrodHMp/5DgMiSf9ZpiOSba8JSBxJEP+oP/fBh1NHbPIBS9bv2kc34CyCji
+         u2ZyFyy/W7EyLsw1OALMeM5y7wPNikqQ8tHrghL0bIuygGkqTkWpOeAvZsqT/OFiAHsU
+         RxjIc53fmBqp+qV3D2v8Ogk30CYF2ceGHNEso=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747744361; x=1748349161;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lQ/iGDifZoJFpYpccOafvVqXyLvyOSbrLk1nfUTcRGE=;
-        b=cSvfmSAcoGZ/5ARgoc672ytWj25kPp55GdzuuF+4uWrrAyj+U+119FfhcXzGdl/fnQ
-         o64Ch7JOdf39M/dEFR4v+kiFmsXcO1tzcYqE9wQWLOFbO3M9ljXY7K3u/EJf8yX7x1K+
-         PUO/55bc/LVxaymsbgSo/GGYqt65r1MEEJrZlXmAzuWtdn7EdbuDX15kaGIa5ugS1fPe
-         /G4fgQfASlKVO0Krwgv18WXc7oasNrAatkFJK5yXDmkZgmomGqb+5UMu3eG04f6zfEKE
-         uLUgv9uCrq0wQe8cq6eqdj9lJCYR85cYfjzJabdQqv03ZhCl9L7tw/WXezttWBCy0MM3
-         TUvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ3RSoiZ0YDVNsT74eNPMvpp9mvmQTEnsiyUSASJ3NFBRECgJoM9Q3Fz4KjcBXlpsk3krb2ndBHFqYGSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiFGsICc7BO5noAW6I3NkgpGCo1u/ciON0paUSXmH6Z9l9WvzY
-	/A/Ye467/pn7SiAFFdE3L1t8HguoF9ihH5x8cUMEyS3FJUfLexYjeMOInTQdZyW44N8=
-X-Gm-Gg: ASbGncva+qaYoJSaoRa9somkfFAX71/0C0t5rVbHRlZwaAO77fbFeLqfQlblBg9+c/a
-	pj2sfEl0oQnWkHPJIZf5r4vXvPcSoOUYbwH57DYz4Ufty8nhRFPqfqlNrTFRQfPZPTB4s/pNvWA
-	mPgNW2lQP/ZFTAGTB5IcDKi+6Hk4N5eHZ5xGYdhF5LxLScmrwe5qjBFvkhbZelSDvDA4k/974lN
-	JMhRC90U146YxLvgAjOF2En6dzn1oBQiR4wKEWNSnZYUyJ8SzBVetSZ3Ky8Q7/WIs5Or/vU1Fx8
-	3tMpoVpCqcSiY2jcV+X+i7Y/npMylAUar+ahFz0Ygmw1d9w6/RlmgGbmkU7trP7vLxQCiUdABCZ
-	2YX5r1F4c3IHPMjMLAQz4n1oUoWKg
-X-Google-Smtp-Source: AGHT+IF9JgnEXOZZrtY+Ie0ZOfbkRyYBtLxvkI5PbUcfuC510953elD1+wY7Qfb0abQ602fLh29f7w==
-X-Received: by 2002:a05:6000:2509:b0:3a3:7bbc:d957 with SMTP id ffacd0b85a97d-3a37bbcdaa6mr1647245f8f.33.1747744361519;
-        Tue, 20 May 2025 05:32:41 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:fb2e:6266:4e39:ce68? ([2a01:e0a:3d9:2080:fb2e:6266:4e39:ce68])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca5a04csm16065014f8f.23.2025.05.20.05.32.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 May 2025 05:32:40 -0700 (PDT)
-Message-ID: <872b7da3-b771-4df3-9b1a-21ca48c36045@linaro.org>
-Date: Tue, 20 May 2025 14:32:40 +0200
+        d=1e100.net; s=20230601; t=1747744560; x=1748349360;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jFqkyuEgS2DYkSpYETdQW6012El1Bu2/BFMTj3Lxalc=;
+        b=Oo/XTvLue4yZCMaKE2wa2L0o4lx25X6KwNAT983xyonTYCVeTIK1LkNKgwek1eB42S
+         ZSQB8ZA/qxXNyuXL+73+KFTETV+WWz10RetMBWJxa8uBzZGYiUcYWIziqt74d+L/Hf8D
+         BGNYqmK0vPATv9DyIUu3ZZak8HalCliuvC1YQ/64tZs92NC9ygMJsreMxLzZSN5T6Ylf
+         oUUHotDzZgOD2sXuN8eSmC5xd2WQikcCNvX+h0mBLsA6uJHv+5WbQA7aURShJjz9av6o
+         GxIpGb1hqPTohk6cnj8JCxYOJLFMsVGQAcmCqxsZFH8x/YlF8QOSil7P3aOP7Pb7MP1s
+         y4kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXINeRZDo7dvgAJ3jUOBfWZtwDbH3iV3g0wK1eThIAEX698lt32WFy0+fLQkoJARWu1m2t89Fdj5NljPbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaTeg3/gxheOdqx7U4NISeSrCSdkMn1qtVLg9geUE1/ztqWlVc
+	ggpe9usDtx4FdjTA3+o1cCrumwfB72+HOCQgdkIrYEj2jZDCTznuwpnTRwb3qAk3EQ==
+X-Gm-Gg: ASbGncsl/ZWL9UwCBg+eY3OisQMwxsMqCOs02Gq/fhcB35UKkRgJH6FhtCO8IzQu/nH
+	amMSUdaLpoihchnuFEWz+rTVFRuo74ZKl8yi5d0UNH5D49LkNzSU4xss4n46BRvjJeh6wh3sc4Q
+	A04a58tc8Okz+psW6CKxksDHq6AkPgzx7jqlsMxm78l8VvV9B8ekJAmp07/poEGak3k5gduGzmh
+	AmCvE/8u2rcCkZ91dOYbRw/t+O2+C+DZn0KQ91a56Myl81xV4pUQKslzn7d+zSrdwbOBQ3OG5eZ
+	bfUyH61yqmSxGpjt//aL3PZOGS67MQNKtCP3QobaeGAqrvZHza/yqfoO4Wdm/ZoocTrnAB7EZzl
+	tlQ==
+X-Google-Smtp-Source: AGHT+IGpncCXk5KCz55zccTXitwVoPNGD+eQUN+YfywndV0MF1z25HxMj+U4Tr7S90HyyHj9gOFxpw==
+X-Received: by 2002:a17:90b:2b45:b0:308:7a70:489a with SMTP id 98e67ed59e1d1-30e83228dcfmr23999528a91.30.1747744560161;
+        Tue, 20 May 2025 05:36:00 -0700 (PDT)
+Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:cdd3:ba65:b6f2:d55e])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f365d6f95sm1573989a91.30.2025.05.20.05.35.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 05:35:59 -0700 (PDT)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Matthew Bobrowski <repnop@google.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [RFC PATCH] fanotify: wake-up all waiters on release
+Date: Tue, 20 May 2025 21:35:12 +0900
+Message-ID: <20250520123544.4087208-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.49.0.1101.gccaa498523-goog
+In-Reply-To: <3p5hvygkgdhrpbhphtjm55vnvprrgguk46gic547jlwdhjonw3@nz54h4fjnjkm>
+References: <3p5hvygkgdhrpbhphtjm55vnvprrgguk46gic547jlwdhjonw3@nz54h4fjnjkm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v1] arm64: dts: amlogic: Update USB hub power and reset
- properties
-To: Anand Moon <linux.amoon@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "moderated list:ARM/Amlogic Meson SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM/Amlogic Meson SoC support"
- <linux-amlogic@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
-Cc: Wayne Schroeder <raz@chewies.net>
-References: <20250520091842.7504-1-linux.amoon@gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250520091842.7504-1-linux.amoon@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20/05/2025 11:18, Anand Moon wrote:
-> Add missing reset-gpios property to the USB 2.0 hub node to
-> ensure proper reset handling. Also update the vdd-supply for
-> both USB 2.0 and 3.0 hubs to use the shared hub_5v regulator
-> for consistent power management.
-> 
-> Fixes: ccff36934137 ("arm64: dts: amlogic: Used onboard usb hub reset on odroid n2")
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->   arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-> index 3bca8023638d..ad959f8bc1ac 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-> @@ -42,7 +42,8 @@ hub_2_0: hub@1 {
->   			compatible = "usb5e3,610";
->   			reg = <1>;
->   			peer-hub = <&hub_3_0>;
-> -			vdd-supply = <&usb_pwr_en>;
-> +			reset-gpios = <&gpio GPIOH_4 GPIO_ACTIVE_LOW>;
-> +			vdd-supply = <&hub_5v>;
->   		};
->   
->   		/* 3.0 hub on port 4 */
-> @@ -51,7 +52,7 @@ hub_3_0: hub@2 {
->   			reg = <2>;
->   			peer-hub = <&hub_2_0>;
->   			reset-gpios = <&gpio GPIOH_4 GPIO_ACTIVE_LOW>;
-> -			vdd-supply = <&vcc_5v>;
-> +			vdd-supply = <&hub_5v>;
+Once reply response is set for all outstanding requests
+wake_up_all() of the ->access_waitq waiters so that they
+can finish user-wait.  Otherwise fsnotify_destroy_group()
+can wait forever for ->user_waits to reach 0 (which it
+never will.)
 
-In this case, also remove the &usb2_phy1 phy-supply since now it's managed by the hub reset control.
+Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+---
+ fs/notify/fanotify/fanotify_user.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Neil
-
->   		};
->   	};
->   
-> 
-> base-commit: a5806cd506af5a7c19bcd596e4708b5c464bfd21
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 87f861e9004f..95a3b843cbbf 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -1046,8 +1046,8 @@ static int fanotify_release(struct inode *ignored, struct file *file)
+ 	}
+ 	spin_unlock(&group->notification_lock);
+ 
+-	/* Response for all permission events it set, wakeup waiters */
+-	wake_up(&group->fanotify_data.access_waitq);
++	/* Response for all permission events is set, wakeup waiters */
++	wake_up_all(&group->fanotify_data.access_waitq);
+ 
+ 	/* matches the fanotify_init->fsnotify_alloc_group */
+ 	fsnotify_destroy_group(group);
+-- 
+2.49.0.1101.gccaa498523-goog
 
 
