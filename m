@@ -1,63 +1,102 @@
-Return-Path: <linux-kernel+bounces-656037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A8E0ABE0D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5622ABE0D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA0444C46C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:33:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D734F173BBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A757627CB0D;
-	Tue, 20 May 2025 16:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F217926FDB6;
+	Tue, 20 May 2025 16:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxjnUpwn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ktkRFswK"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B1927AC48;
-	Tue, 20 May 2025 16:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02B322D795;
+	Tue, 20 May 2025 16:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747758806; cv=none; b=JTGVxzSz2K3QgWs7wFK6JetN9TxG9+uHewt7lHB+zOrjluyF19RTDS0GI8Gg+laRfwAlZePeF8uN/1fDksVNzCeUqKbN2Uc3/Mn+4IVrbVk4h6XCgBYlh7a/gHph5Mza6fDb/4jbbBeVia5ktHbWYiyJk0WFyd8tbLHYHyUwCp0=
+	t=1747758858; cv=none; b=dTsjmPHwQYKOtQ8mz8bQm+LC3L+zU6NhiDCccCjpJR/p4cdAIa1agdyDmB1CtIpcsJ8mAqr9NlZ8csJN1XcKsSAHp9SG14V0FvFRjT+4XGBO3FAXGZ7uEjNG7qI/5Tj053aF5KaBA8Y5cUOqPEyCcmqemKrxaVdTGqNvIEAz5Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747758806; c=relaxed/simple;
-	bh=OoBKYnWkbMa37dGf3bqGJtv+2nUTHc/3tPjJKv4bdY0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=JJN9bKO/uUPsu/1NxAO5gYAvpFteY+jYX0NbijdBdAxb4IHzpjYF0Do09E+PZZLi71bbBBXQ/Z20qCEQ2LL7QI56dB/VGV1t6XOU4i+VbYpOK8box7mF2TVqeufpPq30s78MuvcfHOXeYA8pFpjVwnxW9FBIi227gL808HwxFzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxjnUpwn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68B56C4AF09;
-	Tue, 20 May 2025 16:33:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747758805;
-	bh=OoBKYnWkbMa37dGf3bqGJtv+2nUTHc/3tPjJKv4bdY0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=pxjnUpwnKBf+DRwmV71oty7jHzV1SVlOQRNDf0Kodrk7PFP9KkcT6SXTVcpmAM7jl
-	 47yAuD6MydcRwWqPkF08DINdyvacqXKfmDq7jGLmVQjhlmUxNTl+W0/LksQJ8ba/Wg
-	 Z8QAR0oTpi4OP/0fwVFb1OPaHB0cfdWIqAW6wdnq8z1RAIWi70TMf0YxBAN2I90xjf
-	 HtQ/XV3AkqJMEimUFd4i/Aj2iW+ruRVrN8rrgjBYRoLrhjtFKS+G8t6T0TtLdnYnB0
-	 PVs1i8TZBIavM/zt1y98NWyRGVkWifDeOsE9VB8HwwBOfPwK02cyAxg5srfcabH8lW
-	 RjR6twozEajOg==
-From: Kees Cook <kees@kernel.org>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Kees Cook <kees@kernel.org>,
-	kernel test robot <lkp@intel.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] string.h: Provide basic sanity checks for fallback memcpy()
-Date: Tue, 20 May 2025 09:33:21 -0700
-Message-Id: <20250520163320.work.924-kees@kernel.org>
+	s=arc-20240116; t=1747758858; c=relaxed/simple;
+	bh=VyyYOhKbGdK6Q4Vh3+ZAnFAI49OgnPA+WshnAQ64g5c=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jVYVCvRudql0lrnYMfKbl4oj78Y8p3q9mFMIAG1W5nXlHJdkF1HtReb1qDX1wBuuzqtxzvKN0tnJEA0F4zvFWNTDTEsKZUmfxWk5OYGF2FO/SaieSuUbR5cqk6kKqddyde4jHSIPHwd37PdEWE5WzhcohqItTEnAuitmnNgjNNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ktkRFswK; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4769f3e19a9so39497521cf.0;
+        Tue, 20 May 2025 09:34:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747758855; x=1748363655; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VyyYOhKbGdK6Q4Vh3+ZAnFAI49OgnPA+WshnAQ64g5c=;
+        b=ktkRFswKT/ch7S2Bayh/huowdTggpYrn+iOIYoShwoyqlTlI1or6q7bezTeWlqtE2u
+         D70UcQoSJIu9xCzl6o9QT6dLJdivoiuEagy2P7YugEP8jucnYsQoOoN+qsj+Hnw7Cm/6
+         jmqrbIH98vcTuFVuvi8OkmlCZX2f8QLZKdDO2WO+PWCPZlimoz4f4RqzFYEKlqiGtIyo
+         zhjQ8RPcShfLUPe1yNWD4UzA1qBr1sXRRTT2opYPAzYQLlFXKXyjP/4tLiy0uv1cGvUU
+         oJYIiS2DeBGqePxDOaA07lKny2rA+o4zPhuBFxw/SC3LDdj6YgFupzGTfA4e7Ult12eG
+         U8Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747758855; x=1748363655;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VyyYOhKbGdK6Q4Vh3+ZAnFAI49OgnPA+WshnAQ64g5c=;
+        b=LFxZECiFFFuj5PaBc0z9AOtUJ0u0ywnA9DA/1ltAaISdiaQPIlN1288C2IOIAvZDJ9
+         dS8ut/ObS3c1qAjjg6KK7jbe4dQ6IKb2lHYHuMGTDYUVM1+idyBc7JGO2ctF7hD5N+sJ
+         4NBP4OYTnLafPWSmcSspZK8LZguQMwEwhzzvIdG6/y9dfUq9090ISLCCbRTDNQOfTiSq
+         3SlwYikoUE30jJ/BicT/Jp6Ta+y72Ge/9sJmFFrprJBlWikwd9IXRssMtn+AlN9YLjbH
+         EigXifkrtvxPqh3lphbWBgIP7bPoaa9WizqQZZLWVlVuuYyX2Z1A43OvgBvGrgrltvvV
+         rM3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVrdfwayBuqJ4TT4U0IKK/1CWMYAXCSPERsuqSUiqk7xt3JoMqEKcu91+z/ticQo6djJzEoxm0rOqiIqW3m@vger.kernel.org, AJvYcCW5jo8IO3qPuH651wiXxvoq2bIr+WSOu5oNd2YyV/McIyXwHAZf0aBZfEQ+XGs/0b7LPX/Z@vger.kernel.org, AJvYcCX66u0VwnPH6lz8UoU2sokGR+h/MxQtMLEXtuR8pNQNS81UGwSEqI//rG9WBDn3IE4IMJXf0A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW0Qhl1iZQ4vLfllDsr9ojTWZ/kENj9EIXIRjjBCImtrsdahiD
+	ueF+JlxuUWXlu7U9QMJA4Z5v+iuMJW/VckPUMn7muXKuOp9qdOzN1ufW
+X-Gm-Gg: ASbGncscJWfFPj4qfKRtZ1AO7kdTj08/NYLjwzAisz34tnbmogvWi+lCga/sFGRZ6fD
+	zxHx5mqpXcvMoVjPW3c9ZPFK4IkjV7YJLmBiDpWRsPh9Bh9CoZqtKgFdtg4DiUNEMRKuRyqVVqZ
+	dsNMMx7wytvqCG4U069Xz/AaPPAPn6ORPMwjQY86FHQAvVFqhFX9gzBuHRTRn6xpXw9TKVsTmtj
+	whSsJH1iLj0BpCId92GD7JhYdvfERd6uKO3+E+iLXDR69xN0NDBPL+02Y5KFiAvRheewI2B0AfW
+	AbXm5oQhfhLc9Wy0KkTBpgUP6pBG5CL3dOI41ndbVrmmqAtLzClXypajT82Tmg5H4g7QMbCv4aj
+	JsByM675tspMByvVoq10XCKFVNg==
+X-Google-Smtp-Source: AGHT+IHF89vB9sSkJ+0Go8jzkQaq8IlhxufFTHLal/lvGAHMBlLkCEK8kQavtZYLi/oDmSbgOit/iQ==
+X-Received: by 2002:a05:622a:4105:b0:494:a4c2:57fd with SMTP id d75a77b69052e-494ae34b716mr270643771cf.9.1747758855231;
+        Tue, 20 May 2025 09:34:15 -0700 (PDT)
+Received: from worker0.chath-257877.iommu-security-pg0.utah.cloudlab.us ([128.110.220.58])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494ae3ccf9dsm72118821cf.12.2025.05.20.09.34.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 09:34:14 -0700 (PDT)
+From: Chathura Rajapaksha <chathura.abeyrathne.lk@gmail.com>
+X-Google-Original-From: Chathura Rajapaksha <chath@bu.edu>
+To: paul@paul-moore.com
+Cc: Yunxiang.Li@amd.com,
+	alex.williamson@redhat.com,
+	audit@vger.kernel.org,
+	avihaih@nvidia.com,
+	bhelgaas@google.com,
+	chath@bu.edu,
+	chathura.abeyrathne.lk@gmail.com,
+	eparis@redhat.com,
+	kevin.tian@intel.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	schnelle@linux.ibm.com,
+	xin.zeng@intel.com,
+	xwill@bu.edu,
+	yahui.cao@intel.com,
+	zhangdongdong@eswincomputing.com
+Subject: Re: [PATCH RFC 2/2] audit accesses to unassigned PCI config regions
+Date: Tue, 20 May 2025 10:33:55 -0600
+Message-Id: <20250520163355.13346-1-chath@bu.edu>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <669e1abd542da9fbcfb466d134f01767@paul-moore.com>
+References: <669e1abd542da9fbcfb466d134f01767@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,90 +104,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3060; i=kees@kernel.org; h=from:subject:message-id; bh=OoBKYnWkbMa37dGf3bqGJtv+2nUTHc/3tPjJKv4bdY0=; b=owGbwMvMwCVmps19z/KJym7G02pJDBk66y6u7Zd4NnED78GrbDemRwrdibVzeblyAY+hNMvbe WLG3+U4O0pZGMS4GGTFFFmC7NzjXDzetoe7z1WEmcPKBDKEgYtTACbifY+R4f7sU2vr5tSZzbsh WH5sz6983f5NQpfP2lis7lnH/nkznyrD//qt3E7HuXdv7Amy/G648vrm8KV71a9V/JmlrsPp/X9 lCAcA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-Instead of defining memcpy() in terms of __builtin_memcpy() deep
-in arch/x86/include/asm/string_32.h, notice that it is needed up in
-the general string.h, as done with other common C String APIs. This
-allows us to add basic sanity checking for pathological "size"
-arguments to memcpy(). Besides the run-time checking benefit, this
-avoids GCC trying to be very smart about value range tracking[1] when
-CONFIG_PROFILE_ALL_BRANCHES=y but FORTIFY_SOURCE=n.
+Hi Bjorn and Paul,
 
-Link: https://lore.kernel.org/all/202505191117.C094A90F88@keescook/ [1]
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/all/202501040747.S3LYfvYq-lkp@intel.com/
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Closes: https://lore.kernel.org/all/e3754f69-1dea-4542-8de0-a567a14fb95b@infradead.org/
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: "Mickaël Salaün" <mic@digikod.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: <x86@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andy Shevchenko <andy@kernel.org>
-Cc: Uros Bizjak <ubizjak@gmail.com>
-Cc: <linux-hardening@vger.kernel.org>
----
- arch/x86/include/asm/string_32.h |  6 ------
- include/linux/string.h           | 13 +++++++++++++
- 2 files changed, 13 insertions(+), 6 deletions(-)
+Thank you for your comments, and sorry for the late reply.
 
-diff --git a/arch/x86/include/asm/string_32.h b/arch/x86/include/asm/string_32.h
-index 32c0d981a82a..fad9566f43a6 100644
---- a/arch/x86/include/asm/string_32.h
-+++ b/arch/x86/include/asm/string_32.h
-@@ -145,12 +145,6 @@ static __always_inline void *__constant_memcpy(void *to, const void *from,
- #define __HAVE_ARCH_MEMCPY
- extern void *memcpy(void *, const void *, size_t);
- 
--#ifndef CONFIG_FORTIFY_SOURCE
--
--#define memcpy(t, f, n) __builtin_memcpy(t, f, n)
--
--#endif /* !CONFIG_FORTIFY_SOURCE */
--
- #define __HAVE_ARCH_MEMMOVE
- void *memmove(void *dest, const void *src, size_t n);
- 
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 01621ad0f598..a1f8fdcf8482 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -4,6 +4,7 @@
- 
- #include <linux/args.h>
- #include <linux/array_size.h>
-+#include <linux/bug.h>
- #include <linux/cleanup.h>	/* for DEFINE_FREE() */
- #include <linux/compiler.h>	/* for inline */
- #include <linux/types.h>	/* for size_t */
-@@ -390,7 +391,19 @@ static inline const char *kbasename(const char *path)
- 
- #if !defined(__NO_FORTIFY) && defined(__OPTIMIZE__) && defined(CONFIG_FORTIFY_SOURCE)
- #include <linux/fortify-string.h>
-+#else
-+/* Basic sanity checking even without FORTIFY_SOURCE */
-+# ifndef __HAVE_ARCH_MEMCPY
-+#  define memcpy(t, f, n)					\
-+	do {							\
-+		typeof(n) __n = (n);				\
-+		/* Skip impossible sizes. */			\
-+		if (!WARN_ON(__n < 0 || __n == SIZE_MAX))	\
-+			__builtin_memcpy(t, f, __n);		\
-+	} while (0)
-+# endif
- #endif
-+
- #ifndef unsafe_memcpy
- #define unsafe_memcpy(dst, src, bytes, justification)		\
- 	memcpy(dst, src, bytes)
--- 
-2.34.1
+On Mon, Apr 28, 2025 at 11:05 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> Add blank line between paragraphs.
 
+> Use imperative mood ("Introduce" instead of "This patch introduces
+> ..." and "Add ..." instead of "A new type has been introduced").
+
+> Simplify this patch by adding "blocked" in the first patch.  Then you
+> won't have to touch the permission checking that is unrelated to the
+> audit logging.  Consider adding a helper to do the checking and return
+> "blocked" so it doesn't clutter vfio_config_do_rw().
+
+I will address the above comments in the next revision.
+
+On Fri, May 16, 2025 at 4:41 PM Paul Moore <paul@paul-moore.com> wrote:
+> I try to encourage people to put a sample audit record in the commit
+> description as it helps others, even those not overly familiar with the
+> Linux kernel, know what to expect in the audit log and provide feedback.
+
+> > +static const char * const vfio_audit_str[VFIO_AUDIT_MAX] = {
+> > +     [VFIO_AUDIT_READ]  = "READ",
+> > +     [VFIO_AUDIT_WRITE] = "WRITE",
+> > +};
+>
+> We generally don't capitalize things like this in audit, "read" and
+> "write" would be preferred.
+
+I will address the above comments in the next revision.
+The following is the expected audit message when a write is performed
+to an unassigned PCI config region:
+
+  device=0000:01:00.1 access=WRITE offset=0x298 size=1 blocked=0
+
+> In the commit description you talk about a general PCIe device issue
+> in the first paragraph before going into the specifics of the VFIO
+> driver.  That's all well and good, but it makes me wonder if this
+> audit code above is better done as a generic PCI function that other
+> PCI drivers could use if they had similar concerns?  Please correct
+> me if I'm wrong, but other than symbol naming I don't see anyting
+> above which is specific to VFIO.  Thoughts?
+
+While the issue is independent of VFIO, the security and availability
+concerns arise when guests are able to write to unassigned PCI config
+regions on devices passed through using VFIO. That's why we thought it
+would be better to audit these accesses in the VFIO driver. Given this
+context, do you think it would be more appropriate to audit these
+accesses through a generic PCI function instead?
+
+> Beyond that, I might also change the "access=" field to "op=" as we
+> already use the "op=" field name for similar things in audit, it would
+> be good to leverage that familiarity here.  Similarly using "res=",
+> specifically "res=0" for failure/blocked or "res=1" allowed, would
+> better fit with audit conventions.
+
+Thanks for the suggestions, I will address these in the next revision.
+
+Regards,
+Chathura
 
