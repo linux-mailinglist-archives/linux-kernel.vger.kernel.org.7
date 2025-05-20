@@ -1,180 +1,157 @@
-Return-Path: <linux-kernel+bounces-655638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52F35ABD910
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:13:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1469ABD91D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 15:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85AC31BA3EFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:14:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BEDC17B3AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA5122D7B1;
-	Tue, 20 May 2025 13:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772FE2405F8;
+	Tue, 20 May 2025 13:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YppeWIkj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="TH/qe1I0"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6648622CBE4;
-	Tue, 20 May 2025 13:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7952322E
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 13:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747746822; cv=none; b=byvoKxIyh/lxoiNHGnDE7++JXPZKbEzFW+rSxx0NgrOcjX9GUxmVmkOtAiQEUHFYhK6JygkerFyP6hKHoHNTkF2OQ3pqTuc7NJaUuRAt/K5umDx+7G6MJh1TEFcYHI6qRUYhu4LF5X3WuCROBrPt0pyPB3vsDPJAKf5R+fRYyiY=
+	t=1747747002; cv=none; b=iQP0JQdviTiwWmzqjyadpf1huEtjegXM8rUJLrM7y3dssEtsjHeHXIirMPm27x4Vyapo9vKLsZFjzzuv0++G1NN31v/V/O1937RPh32Mk8TbyG9uGpMkrUhfAXByiTynZ3ioHq637OtmNkXlk9H5IVX1FTHPGPTz5VWSL0Wt44g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747746822; c=relaxed/simple;
-	bh=OsUk1HDLzXJbjJz5VCLQBVaTC8gEtGoSU5l12/RHrKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NsH4b1SXLHCL92kVW3K7gNZtMAhlWjy+m222QiyCIZBNX65cm37TmjXRlcleaP/rvdHvlqDnZET2U5sjrWYx106yRk9Sp5elWxXq9AqBCk7/nRegQjqGH3TwQ00CT87hEQprHeE11Q9jXBJ06P7diQtRb93xVuwVrvgexo4n8iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YppeWIkj; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747746820; x=1779282820;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OsUk1HDLzXJbjJz5VCLQBVaTC8gEtGoSU5l12/RHrKg=;
-  b=YppeWIkjp6D2bTxbKNJXnlupB1mbHaXIZiUkM75Q9DphFKK8v1CJsQ3l
-   HHLhTvTnJYl9BYY6kvjbdXTCsJcoa11efvEMRC6y4t0bAPyovc8C8ep30
-   mDGr1TgWOUMNKD0NfKB1v624JqXP56f+ZiDnHkh9hzfMvIt58OEMyhmOj
-   29/rMhPbsZjpS1ajiePGZntc2I5qTF8mEJ71NU9t6E4EpzzENcOL9NpTK
-   /rhYvlfzIjHjxMeQ4GHMz+TqDlwnHqbBXiIU7hN+hhVpWGIx4/DWCtzGR
-   IqWTPkWGE/051KkadR2bj6b58+efQor5G4ojsWsfeUeGBIpYb1YX6246j
-   w==;
-X-CSE-ConnectionGUID: bSdvcZk2RbyxaN6K9xKgcg==
-X-CSE-MsgGUID: /7faESv+SYqWLS1wZ8OgFw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="61074171"
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="61074171"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 06:13:40 -0700
-X-CSE-ConnectionGUID: rA1loLxxTQa7qEkXvaO1Fw==
-X-CSE-MsgGUID: 2vu6Lnj/S4ysDQHYaBmWIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="140109610"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 20 May 2025 06:13:37 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uHMml-000MbQ-1y;
-	Tue, 20 May 2025 13:13:35 +0000
-Date: Tue, 20 May 2025 21:13:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Zhongkun He <hezhongkun.hzk@bytedance.com>, tj@kernel.org,
-	hannes@cmpxchg.org, longman@redhat.com
-Cc: oe-kbuild-all@lists.linux.dev, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org, muchun.song@linux.dev,
-	Zhongkun He <hezhongkun.hzk@bytedance.com>
-Subject: Re: [PATCH] cpuset: introduce non-blocking cpuset.mems setting option
-Message-ID: <202505202106.sXzGXeU4-lkp@intel.com>
-References: <20250520031552.1931598-1-hezhongkun.hzk@bytedance.com>
+	s=arc-20240116; t=1747747002; c=relaxed/simple;
+	bh=9iyKp66AuKRah6+SIzO8sFhwt6I/SWsHSzCMi/NZBm8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=nABUMiQ7lOqAyKumrrEVjTYXDEjglT0L7GAoBUbuXiLYIMBqsU2ORQkgC5QZRIkTiKA20fdtzt1mQeGYcGlfFbNsBDsxJjV3N919V3+c5Mx8NYbrfiVVaIUgwv7WV/BcJiuTrZKnWcOGYvHQ2b0SQoPPk6UuTenSCLKK1xwweoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=TH/qe1I0; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54KBStlD006650;
+	Tue, 20 May 2025 15:16:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	yBy5SJPnGNYkoa6Z5ILQ91Byp9mkblFSTlrqPKH6O2c=; b=TH/qe1I0XC4SnMpF
+	aqiuuGS6atDP6k3ZyrAwOjgIDHDT1VD3w+vSQ9qkMsKV6vKpjc56seghHJj0XMgI
+	giE2W5SfW5DMbBv11vRYxwSzzUNy6fjb2s1sTrFXQveo6r5vr4wzDldQaIApM69+
+	hG5mEptSxLbrBOGz0mFVPwcTsfXkkggjYFK1N+qfoGwmSk26TsRdxScvdeYLoanx
+	WgzREXSNd0GZSiGfFLsJxq2qxb/dXNxRGnjPaWOUTUSEsjeOhrJzf2VO6cG1fKmR
+	0pPwvN187Kfd6BIDqpU7YYMS1WzLNDj5L9PEfikP8+vopigiAGJ4F9sTxEdBYsfV
+	/C+1Aw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46phbgn3xw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 May 2025 15:16:24 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B955740047;
+	Tue, 20 May 2025 15:14:41 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 795F3AF993E;
+	Tue, 20 May 2025 15:14:03 +0200 (CEST)
+Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 20 May
+ 2025 15:14:02 +0200
+Message-ID: <e1bd523b-e7da-41eb-ad1a-a56488c4f0cd@foss.st.com>
+Date: Tue, 20 May 2025 15:14:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250520031552.1931598-1-hezhongkun.hzk@bytedance.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] checkpatch: use utf-8 match for spell checking
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+To: Antonio Borneo <antonio.borneo@foss.st.com>,
+        Andy Whitcroft
+	<apw@canonical.com>, Joe Perches <joe@perches.com>,
+        Dwaipayan Ray
+	<dwaipayanray1@gmail.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+CC: <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
+	<clement.leger@bootlin.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20231212094310.3633-1-antonio.borneo@foss.st.com>
+ <20240102161038.22347-1-antonio.borneo@foss.st.com>
+ <02e9e9c5-449a-48ae-88a7-0483895cd4bf@foss.st.com>
+Content-Language: en-US
+In-Reply-To: <02e9e9c5-449a-48ae-88a7-0483895cd4bf@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_05,2025-05-16_03,2025-03-28_01
 
-Hi Zhongkun,
+On 5/6/24 14:07, Clement LE GOFFIC wrote:
+> Hello,
+> 
+> A gentle reminder to review this patch.
+> 
+> Best regards,
+> 
+> Clément
+> 
+> On 1/2/24 17:10, Antonio Borneo wrote:
+>> The current code that checks for misspelling verifies, in a more
+>> complex regex, if $rawline matches [^\w]($misspellings)[^\w]
+>>
+>> Being $rawline a byte-string, a utf-8 character in $rawline can
+>> match the non-word-char [^\w].
+>> E.g.:
+>>     ./scripts/checkpatch.pl --git 81c2f059ab9
+>>     WARNING: 'ment' may be misspelled - perhaps 'meant'?
+>>     #36: FILE: MAINTAINERS:14360:
+>>     +M:     Clément Léger <clement.leger@bootlin.com>
+>>                 ^^^^
+>>
+>> Use a utf-8 version of $rawline for spell checking.
+>>
+>> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
+>> Reported-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+>> ---
+>> Changes in v2:
+>> - use $rawline_utf8 also in the while-loop's body;
+>> - fix path of checkpatch in the commit message.
+>> ---
+>>   scripts/checkpatch.pl | 5 +++--
+>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+>> index 25fdb7fda112..2d122d232c6d 100755
+>> --- a/scripts/checkpatch.pl
+>> +++ b/scripts/checkpatch.pl
+>> @@ -3477,9 +3477,10 @@ sub process {
+>>   # Check for various typo / spelling mistakes
+>>           if (defined($misspellings) &&
+>>               ($in_commit_log || $line =~ /^(?:\+|Subject:)/i)) {
+>> -            while ($rawline =~ /(?:^|[^\w\-'`])($misspellings)(?: 
+>> [^\w\-'`]|$)/gi) {
+>> +            my $rawline_utf8 = decode("utf8", $rawline);
+>> +            while ($rawline_utf8 =~ /(?:^|[^\w\-'`])($misspellings) 
+>> (?:[^\w\-'`]|$)/gi) {
+>>                   my $typo = $1;
+>> -                my $blank = copy_spacing($rawline);
+>> +                my $blank = copy_spacing($rawline_utf8);
+>>                   my $ptr = substr($blank, 0, $-[1]) . "^" x 
+>> length($typo);
+>>                   my $hereptr = "$hereline$ptr\n";
+>>                   my $typo_fix = $spelling_fix{lc($typo)};
+>>
+>> base-commit: b85ea95d086471afb4ad062012a4d73cd328fa86
 
-kernel test robot noticed the following build errors:
+Hi,
 
-[auto build test ERROR on tj-cgroup/for-next]
-[also build test ERROR on linus/master v6.15-rc7 next-20250516]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Is it just due to -ENOTIME for the maintainers, or are there doubts 
+about this patch? (inspired from a response of Uwe).
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Zhongkun-He/cpuset-introduce-non-blocking-cpuset-mems-setting-option/20250520-111737
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
-patch link:    https://lore.kernel.org/r/20250520031552.1931598-1-hezhongkun.hzk%40bytedance.com
-patch subject: [PATCH] cpuset: introduce non-blocking cpuset.mems setting option
-config: sparc64-randconfig-001-20250520 (https://download.01.org/0day-ci/archive/20250520/202505202106.sXzGXeU4-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250520/202505202106.sXzGXeU4-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505202106.sXzGXeU4-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   kernel/cgroup/cpuset.c: In function 'cpuset_write_resmask':
->> kernel/cgroup/cpuset.c:3246:3: error: a label can only be part of a statement and a declaration is not a statement
-      bool skip_migrate_once = false;
-      ^~~~
-
-
-vim +3246 kernel/cgroup/cpuset.c
-
-  3215	
-  3216	/*
-  3217	 * Common handling for a write to a "cpus" or "mems" file.
-  3218	 */
-  3219	ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
-  3220					    char *buf, size_t nbytes, loff_t off)
-  3221	{
-  3222		struct cpuset *cs = css_cs(of_css(of));
-  3223		struct cpuset *trialcs;
-  3224		int retval = -ENODEV;
-  3225	
-  3226		buf = strstrip(buf);
-  3227		cpus_read_lock();
-  3228		mutex_lock(&cpuset_mutex);
-  3229		if (!is_cpuset_online(cs))
-  3230			goto out_unlock;
-  3231	
-  3232		trialcs = alloc_trial_cpuset(cs);
-  3233		if (!trialcs) {
-  3234			retval = -ENOMEM;
-  3235			goto out_unlock;
-  3236		}
-  3237	
-  3238		switch (of_cft(of)->private) {
-  3239		case FILE_CPULIST:
-  3240			retval = update_cpumask(cs, trialcs, buf);
-  3241			break;
-  3242		case FILE_EXCLUSIVE_CPULIST:
-  3243			retval = update_exclusive_cpumask(cs, trialcs, buf);
-  3244			break;
-  3245		case FILE_MEMLIST:
-> 3246			bool skip_migrate_once = false;
-  3247	
-  3248			if ((of->file->f_flags & O_NONBLOCK) &&
-  3249				is_memory_migrate(cs) &&
-  3250				!cpuset_update_flag(CS_MEMORY_MIGRATE, cs, 0))
-  3251				skip_migrate_once = true;
-  3252	
-  3253			retval = update_nodemask(cs, trialcs, buf);
-  3254	
-  3255			/* Restore the migrate flag */
-  3256			if (skip_migrate_once)
-  3257				cpuset_update_flag(CS_MEMORY_MIGRATE, cs, 1);
-  3258			break;
-  3259		default:
-  3260			retval = -EINVAL;
-  3261			break;
-  3262		}
-  3263	
-  3264		free_cpuset(trialcs);
-  3265		if (force_sd_rebuild)
-  3266			rebuild_sched_domains_locked();
-  3267	out_unlock:
-  3268		mutex_unlock(&cpuset_mutex);
-  3269		cpus_read_unlock();
-  3270		flush_workqueue(cpuset_migrate_mm_wq);
-  3271		return retval ?: nbytes;
-  3272	}
-  3273	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Clément
 
