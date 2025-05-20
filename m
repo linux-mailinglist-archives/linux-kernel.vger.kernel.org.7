@@ -1,112 +1,120 @@
-Return-Path: <linux-kernel+bounces-655800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C0FABDD30
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:35:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A5AABDD97
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBC7F7A5884
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:29:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 725214E21B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E791EA7C9;
-	Tue, 20 May 2025 14:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC8D242D98;
+	Tue, 20 May 2025 14:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0i9OMxnJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPYfX/Wh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A84EEDE
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 14:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317E51AF0C8;
+	Tue, 20 May 2025 14:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747751422; cv=none; b=AH1W1M9HiKbMY1R16griWHiNCTDA6dXrrRdmkqz4TKAMOe0botX0UxcwX9RCdv/Rxqg1mZxXUtc3VRRevBgskBDdE88z5ag6xOoIhQVFhjlFsvGqVry+X3945BSr/RQ9tzS058vF8KRCXv9+KoyGvtOIahgpNMpAx3FtXtyadlE=
+	t=1747751469; cv=none; b=UXdRxnOIxyOn7r64WiywDASYQkdnSI1ciNTNkvUlYXugt15GM/17OJCXaP6BFK0kTKpZMb91XK8NHWKHAU752MaKkMLyoe/Kyh12MTHsIT87TeIFZK9P/muAkjWAI7NFLyfq+0JZpdMZFOQMV1uo43bAm0jVVfwVlqPC6UtZ4Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747751422; c=relaxed/simple;
-	bh=tDxFg5u7htARHr4/+5MkmgEU9t8HaQ9XdhHL6oCTbIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NLdDlcbFY9pRa5+uQ6L25LVEDEgv1ZS++Xj/GiKPbMOMNfdiN59OqczkJw79s1pnP+Tkbh6nlEAdr0YUJoCC4antRmXapvZ6CnEsb3QEYs7+fSzhY8sKQvNtYizRwoTAQYTjYF9sYXRLjONAdnAPjKBUA57B/RQVmA2rK3OLbMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0i9OMxnJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAF68C4CEE9;
-	Tue, 20 May 2025 14:30:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747751422;
-	bh=tDxFg5u7htARHr4/+5MkmgEU9t8HaQ9XdhHL6oCTbIU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0i9OMxnJZc8zYB9c3yoqFwnbfGGIK4pwY7ZJI1uEHMYiYQHZ791OpXV57EQfzzIYg
-	 k0+/7CCayFJkYr8ZnvQ5OCRUIJMF1BtKDiF8MD+jti2fu1iVGaS+oaB7W0ASXLqrZO
-	 aHoWyg7RTsSoazl7uvqL2y9A7xYnz3Ms38mdyPV8=
-Date: Tue, 20 May 2025 16:30:19 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	s=arc-20240116; t=1747751469; c=relaxed/simple;
+	bh=f3Bm+vGkam2mdGleQTX64PuwPT5vvIv85wSu6+MtV1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EyNiD5HH3zMLrB29bASkqQsHRUQ1CwxEmWHnKeJ3OMx13ViUaoIgSKI4IpblD81nssv13u6NysTZj6WSApH2gNN7kXx6enHSiGFxEm0rZNbOAjGItMn2ODJPOYKN2xbV1Nu0PMnF5/BpbpjJzTZQr+00HWtcTTqZbMwroPsZ9Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPYfX/Wh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 189BCC4CEE9;
+	Tue, 20 May 2025 14:31:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747751468;
+	bh=f3Bm+vGkam2mdGleQTX64PuwPT5vvIv85wSu6+MtV1Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vPYfX/WhBietxhN+xIRkqpvjTo3DEPuqzYYkcDLb/01fglMmQ37cxRho4+sTsmICK
+	 3g8jFY1Z36/TjVXnMAwxq7VvauZLGm5wNG2gQGQbRaY4tyVxCQp8uJxW3Vx1+TUils
+	 cn0uFd2j+PiFX35K3vhtKpC4ducSY5BBRHwymOhFFLBqy4dKaiMY0lV4kR4l1HNCra
+	 FoeUv3/3aMjIroMN++g6MA4SI7DLRXjJqlI7p6sGZ5dlZo88/WWTgDYPzjJ08sfwB0
+	 iK1DervVsrkl3U9xPg7AH6XVs5BMQwYYpxy2l/F+esuQqt9d8s4NE7Pd/K5PKIAJ2r
+	 wbdJzl69LdVIQ==
+Date: Tue, 20 May 2025 16:31:02 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] container_of: Document container_of() is not to be
- used in new code
-Message-ID: <2025052000-widen-lip-350b@gregkh>
-References: <20250520103437.468691-1-sakari.ailus@linux.intel.com>
- <aCyOzUIIvMk6Gp8o@smile.fi.intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Stephen Rothwell
+ <sfr@canb.auug.org.au>, Nicolas Schier <nicolas.schier@linux.dev>, Akira
+ Yokosawa <akiyks@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
+ linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Some kernel-doc fixes
+Message-ID: <20250520163102.611cecc6@sal.lan>
+In-Reply-To: <aCyPFAKhSQIFR_lJ@smile.fi.intel.com>
+References: <cover.1747747695.git.mchehab+huawei@kernel.org>
+	<aCyPFAKhSQIFR_lJ@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aCyOzUIIvMk6Gp8o@smile.fi.intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 20, 2025 at 05:16:45PM +0300, Andy Shevchenko wrote:
-> On Tue, May 20, 2025 at 01:34:37PM +0300, Sakari Ailus wrote:
-> > There is a warning in the kerneldoc documentation of container_of() that
-> > constness of its ptr argument is lost. While this is a faible suggestion
-> > container_of_const() should be used instead, the vast majority of new code
-> > still uses container_of():
+Em Tue, 20 May 2025 17:17:56 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> escreveu:
+
+> On Tue, May 20, 2025 at 03:33:05PM +0200, Mauro Carvalho Chehab wrote:
+> > Hi Jon,
 > > 
-> > $ git diff v6.13 v6.14|grep container_of\(|wc -l
-> > 646
-> > $ git diff v6.13 v6.14|grep container_of_const|wc -l
-> > 9
+> > Let me consolidate some patches on a single PR to make life simpler
+> > for you. Those should address Stephen and Akira's concerns with
+> > regards to KernelDoc class usage via sphinx kerneldoc.py extension.
 > > 
-> > Make an explicit recommendation to use container_of_const().
+> > Patch 1:	don't let Sphinx suppress errors/warnings;
+> > Patch 2:	fix a KeyError when trying to acess data from non-existing files;
+> > Patch 3:	add try/except blocks to avoid crashes when handling bad
+> > 	kernel-doc markups;
+> > Patch 4:	makes Lore and kernel-doc ML receive patches related
+> > 	to kernel-doc.py and get_abi.py.
 > > 
-> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > ---
-> > Hi Greg, Andy,
-> > 
-> > I guess we generally agree the additional constness check in
-> > container_of_const() is useful, but adding the same check to
-> > container_of() generates warnings -- there are some errors, too -- such as
-> > this one currently:
-> > 
-> > In file included from /home/sailus/src/linux/include/linux/bcma/bcma.h:14,
-> >                  from /home/sailus/src/linux/arch/x86/kernel/early-quirks.c:17:
-> > /home/sailus/src/linux/include/linux/ssb/ssb.h: In function ‘dev_to_ssb_dev’:
-> > /home/sailus/src/linux/include/linux/ssb/ssb.h:291:14: warning: assignment discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
-> >   291 |         wrap = container_of(dev, struct __ssb_dev_wrapper, dev);
-> >       |              ^
-> > 
-> > As noted above, 646 new missing constness checks were introduced through
-> > container_of() macro use during the 6.14 cycle alone. Most of these are
-> > likely harmless, but with so many new users some are bound to be ignoring
-> > constness.
-> > 
-> > Once the warnings from bad container_of() use are worked out in a way or
-> > another, the constness check could be added to the container_of() macro
-> > and the current container_of_const() be dropped altogether.
-> > 
-> > If this patch is accepted, I'll see how to add a warning on container_of()
-> > to checkpatch.pl.
+> > Patches 1 to 3 were already submitted on separate series. Patch 4 is new.  
 > 
-> Hmm... Wouldn't be better to fix non-const cases and add the const check, etc
-> to the container_of() instead of doing these comments?
+> Can we actually utilise CONFIG_WERROR to fail the build. If yes, the build will
+> be failed. This is in align with the warnings in the C code.
 
-Yes, fixing up the existing places where it is broken would be best, how
-many of them are there now?
+It makes sense to me - either to use CONFIG_WERROR or to have something like:
 
-thanks,
+	make SPHINX_WERROR=1 htmldocs
 
-greg k-h
+Btw, kernel-doc.pl (*) and kernel-doc.py have several command-line parameters
+to control warnings:
+
+  $ ./scripts/kernel-doc --help
+  ... 
+  -Wreturn, --wreturn   Warns about the lack of a return markup on functions.
+  -Wshort-desc, -Wshort-description, --wshort-desc
+                        Warns if initial short description is missing
+  -Wcontents-before-sections, --wcontents-before-sections
+                        
+                        Warns if there are contents before sections (deprecated).
+                        
+                        This option is kept just for backward-compatibility, but it does nothing,
+                        neither here nor at the original Perl script.
+  -Wall, --wall         Enable all types of warnings
+  -Werror, --werror     Treat warnings as errors.
+  ...
+
+(*) from the above, only -Werror is documented at the Perl version.
+
+In the future, I'm planning to do some work to improve it - including
+removing the deprecated -Wcontents-before-sections.
+
+But anyway this is out of the scope of this series, as we're aiming
+to be bug-compatible with kernel-doc.pl. The crashes were unintended.
+
+Regards,
+Mauro
 
