@@ -1,170 +1,139 @@
-Return-Path: <linux-kernel+bounces-655180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B40ABD20A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:33:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C25ABD213
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 991CD4A6C40
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:33:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B77051BA2009
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7962A264FB2;
-	Tue, 20 May 2025 08:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YgkV93AW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="46djWSt1";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pLOmC0iK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fM59v9qA"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E58F262FCB;
+	Tue, 20 May 2025 08:34:51 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF29264A9F
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 08:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69D01D86C6;
+	Tue, 20 May 2025 08:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747730001; cv=none; b=Z+ZBqv+zVzI3e1tZ19FJ0wdA3cpKpngruIuyHiULeVRaRCFrtqAnaMxhANBv8A8AyOumphRN/bpDV1fb0UEfXNcL8XnoGNs7wdVwx0BAu+BklOCqtHf2XKnLZvNA8fD905yMhNG5b0UC55ZqRYzn1LCp27pMJq6USHwZcObUZHM=
+	t=1747730091; cv=none; b=oUvhWarIFB7OXe/EhFo2FaxuoOWVfNQW9KByee29kxL78vYzT+rk152p5105FSU9S4n95c1JALQa+4XBlUhVnLktnSazII+7Pz36PUSKo7nbukWkHYx8ckYLeGcEFiG4X3TDc4vBQJEx31NLlkkAMmOZ1OwPW9IdrxES4nDJhL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747730001; c=relaxed/simple;
-	bh=gZlYFM7lX7TkWpTV+6o7guEG13fRDeniCefNu4L8P0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AmcCbGU8TcNPQIwnn5KFe4SjEa9gU/zqd9w9dU31teowViqngUMl6b1C2gscWsKINA4uG6gDim/nhVHZknHgu1B2OF/bOtod6vb7MZR28GRGRgnq/AreJWjEUTkr+5Rdtx0ldDhEQSkKQqxIyLIyQd+v6TKvcYmveiddAUL3rB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YgkV93AW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=46djWSt1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pLOmC0iK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fM59v9qA; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8B1F520634;
-	Tue, 20 May 2025 08:33:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747729997; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LpHAVQCkyfQV4gQBT/q8vfa5AfukF+uSKRXPvXO1Lv8=;
-	b=YgkV93AWk6oYNSn25eCgMYDr8t1OCQ4txtEZ2sKqcECD/u9pVVpVbCgK5TcyYFIp2Jue87
-	AOt8wHWCvU4adEg8yo761/iB+DZD7iU2wiet0ctnoYazU9IkU94Bb1edgbdzVmY5qFUtDm
-	FsRKpiNStVf09B/RzgvyfMYAh+/REuI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747729997;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LpHAVQCkyfQV4gQBT/q8vfa5AfukF+uSKRXPvXO1Lv8=;
-	b=46djWSt1BoTOT6Cv0KTWEL/4WlR2fmp/LmDL89W20itXHCjvfRUmHdgoF7rYbJbKKto+oc
-	VzIcPPfETmVJGDAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747729996; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LpHAVQCkyfQV4gQBT/q8vfa5AfukF+uSKRXPvXO1Lv8=;
-	b=pLOmC0iKY2mRPJQI1/PeDaLdNWGpD5FSB+G3N/EQV4r12Y0Ys3gIH4x3Wi7Q1kw2rIDhgj
-	17Y+wTZSpycakeX0Y6vUjMZqlMqq0aQtoFqPAbRKMFLxSWFPBlUoVAbdeGvBASNGsD5CFl
-	tlyMOnN++hpQC89Pfg/Vvksw8GkUiPA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747729996;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LpHAVQCkyfQV4gQBT/q8vfa5AfukF+uSKRXPvXO1Lv8=;
-	b=fM59v9qAb/+UTZ9o2j0slAPoTnvUK96heiGHwn7fGjj+02VfMjLTLdaKgE8vMQGg1/9KmV
-	TxJYIsvdJPNU+KAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C66013888;
-	Tue, 20 May 2025 08:33:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8T36EUw+LGihSwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 20 May 2025 08:33:16 +0000
-Date: Tue, 20 May 2025 10:33:15 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	James Houghton <jthoughton@google.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>,
-	Yang Shi <yang@os.amperecomputing.com>,
-	David Hildenbrand <david@redhat.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, pbonzini@redhat.com,
-	kvm@vger.kernel.org, linux-s390@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH] KVM: s390: rename PROT_NONE to PROT_TYPE_DUMMY
-Message-ID: <aCw-S8Fj-OCSsPqW@localhost.localdomain>
-References: <20250519145657.178365-1-lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1747730091; c=relaxed/simple;
+	bh=baaNnB5mw6P6bMCAwvRD2yCzeVDnqWbowLwoQ3gRqBU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HxAuzVhsHTZKX6ajxKZc0zKtgLZpExo1pS5a7ERDBRfFDPc+PNyo5Dn6GwC7xNTM7H1VbimPvKPJDWJH7MENEGBDIB7Lwh2BUbCji216b29ZghIsA10vYpOQTXRQFHvJWZV0bO8i0LbTEBa5TPewzfVUuMZbla1k+g/rs/kYQ+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54K6KccP028082;
+	Tue, 20 May 2025 01:34:40 -0700
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 46psykjn66-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 20 May 2025 01:34:40 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Tue, 20 May 2025 01:34:24 -0700
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Tue, 20 May 2025 01:34:20 -0700
+From: <jianqi.ren.cn@windriver.com>
+To: <gregkh@linuxfoundation.org>, <stable@vger.kernel.org>
+CC: <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <jianqi.ren.cn@windriver.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <atenart@kernel.org>, <kareemem@amazon.com>, <netdev@vger.kernel.org>
+Subject: [PATCH 5.15.y] net: decrease cached dst counters in dst_release
+Date: Tue, 20 May 2025 16:34:36 +0800
+Message-ID: <20250520083436.1956589-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250519145657.178365-1-lorenzo.stoakes@oracle.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -1.30
-X-Spamd-Result: default: False [-1.30 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,localhost.localdomain:mid,suse.de:email,intel.com:email]
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=a8kw9VSF c=1 sm=1 tr=0 ts=682c3ea0 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=dt9VzEwgFbYA:10 a=bC-a23v3AAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=t7CeM3EgAAAA:8 a=RSTy8_7DnOH_di7dvoIA:9
+ a=-FEs8UIgK8oA:10 a=FO4_E8m0qiDe52t0p3_H:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: BnuNRq0N2AnM-9QjhHY5rghkzHYzyerE
+X-Proofpoint-ORIG-GUID: BnuNRq0N2AnM-9QjhHY5rghkzHYzyerE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDA2OSBTYWx0ZWRfX7V+o0cpuP0ED SKJuEbV+Ne49fSGoLidRfnT7LVcyUt1GTDxB+tXbFX/7t8TJ5rIUD1xLA6kJwmwRY0ZckDV2og0 Vq0VQ9bLUPuNOgBpTQ5x3a85K6/R0kQhC3ior7XYLuCF5+bWpr2q3+MDqGmA9ZsBB3V+knnuVc9
+ TMTscfUAyfTO/LmYlPUk/+fciHF4fwStuxOTZH45XUEoSpX1Ojnw0aETgAAdVv8c45GRH7sIe6o 8g/P2oGe+CQOFlSnVGmO43LnPwdj9iSk4VRESvnwNYzmrg+P51BS4OjgwmKYK4798rnidfCxwrc G2BsvcGZ5zuQY4TsELWNbaxGgMZf/IjJnU01eVQLkUF9UfXBfciFdgkMEbrrObuoHTBTfwHp0xE
+ hwCXGF1jYPjbcZgM/Pyg6agjO/LdNvPy+QmyQ1Bey63uRgKJ2+3rt9g58dCXyMSNR0xVpfiN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_03,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 bulkscore=0 phishscore=0
+ impostorscore=0 mlxlogscore=999 mlxscore=0 priorityscore=1501
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2505070000
+ definitions=main-2505200069
 
-On Mon, May 19, 2025 at 03:56:57PM +0100, Lorenzo Stoakes wrote:
-> The enum type prot_type declared in arch/s390/kvm/gaccess.c declares an
-> unfortunate identifier within it - PROT_NONE.
-> 
-> This clashes with the protection bit define from the uapi for mmap()
-> declared in include/uapi/asm-generic/mman-common.h, which is indeed what
-> those casually reading this code would assume this to refer to.
-> 
-> This means that any changes which subsequently alter headers in any way
-> which results in the uapi header being imported here will cause build
-> errors.
-> 
-> Resolve the issue by renaming PROT_NONE to PROT_TYPE_DUMMY.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Suggested-by: Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
-> Fixes: b3cefd6bf16e ("KVM: s390: Pass initialized arg even if unused")
-> Cc: stable@vger.kernel.org
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202505140943.IgHDa9s7-lkp@intel.com/
-> Acked-by: Christian Borntraeger <borntraeger@linux.ibm.com>
-> Acked-by: Ignacio Moreno Gonzalez <Ignacio.MorenoGonzalez@kuka.com>
-> Acked-by: Yang Shi <yang@os.amperecomputing.com>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> Acked-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+From: Antoine Tenart <atenart@kernel.org>
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+[ Upstream commit 3a0a3ff6593d670af2451ec363ccb7b18aec0c0a ]
 
+Upstream fix ac888d58869b ("net: do not delay dst_entries_add() in
+dst_release()") moved decrementing the dst count from dst_destroy to
+dst_release to avoid accessing already freed data in case of netns
+dismantle. However in case CONFIG_DST_CACHE is enabled and OvS+tunnels
+are used, this fix is incomplete as the same issue will be seen for
+cached dsts:
 
+  Unable to handle kernel paging request at virtual address ffff5aabf6b5c000
+  Call trace:
+   percpu_counter_add_batch+0x3c/0x160 (P)
+   dst_release+0xec/0x108
+   dst_cache_destroy+0x68/0xd8
+   dst_destroy+0x13c/0x168
+   dst_destroy_rcu+0x1c/0xb0
+   rcu_do_batch+0x18c/0x7d0
+   rcu_core+0x174/0x378
+   rcu_core_si+0x18/0x30
+
+Fix this by invalidating the cache, and thus decrementing cached dst
+counters, in dst_release too.
+
+Fixes: d71785ffc7e7 ("net: add dst_cache to ovs vxlan lwtunnel")
+Signed-off-by: Antoine Tenart <atenart@kernel.org>
+Link: https://patch.msgid.link/20250326173634.31096-1-atenart@kernel.org
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+[Minor conflict resolved due to code context change.]
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+Verified the build test
+---
+ net/core/dst.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/net/core/dst.c b/net/core/dst.c
+index 6d74b4663085..c1ea331c4bfd 100644
+--- a/net/core/dst.c
++++ b/net/core/dst.c
+@@ -173,6 +173,14 @@ void dst_release(struct dst_entry *dst)
+ 			net_warn_ratelimited("%s: dst:%p refcnt:%d\n",
+ 					     __func__, dst, newrefcnt);
+ 		if (!newrefcnt){
++#ifdef CONFIG_DST_CACHE
++			if (dst->flags & DST_METADATA) {
++				struct metadata_dst *md_dst = (struct metadata_dst *)dst;
++
++				if (md_dst->type == METADATA_IP_TUNNEL)
++					dst_cache_reset_now(&md_dst->u.tun_info.dst_cache);
++			}
++#endif
+ 			dst_count_dec(dst);
+ 			call_rcu(&dst->rcu_head, dst_destroy_rcu);
+ 		}
 -- 
-Oscar Salvador
-SUSE Labs
+2.34.1
+
 
