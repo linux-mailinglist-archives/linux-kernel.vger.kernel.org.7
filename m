@@ -1,251 +1,158 @@
-Return-Path: <linux-kernel+bounces-656177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75E20ABE291
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:23:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67A71ABE290
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 20:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F268B3B777A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:22:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52B757B6C14
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBD027E1AB;
-	Tue, 20 May 2025 18:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3BA27FD4D;
+	Tue, 20 May 2025 18:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DvPiJUDn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lWQ9AMbk"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3D22798FA
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 18:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA12262FD6;
+	Tue, 20 May 2025 18:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747765360; cv=none; b=g8OSNd0MwLpSrVDoxXOHy09YXqaLiltruZo+IpnAtYgZUdJDKRLB0v5TBEhKLm1bvaM9+wwdhzOTQYOec+T1feOOejR75V1TuD7C2Odrr+3IpC56YM/3gBrjZx+uHz1IRB+NSM2FJ2P6O+wNHtoLpLpJw0IZd1CW1Ai3Pg31zDk=
+	t=1747765168; cv=none; b=OtMoCA+SOzsBlQs0pDdNjqyOOEMv56w0Oboo7TNJIbv1hA1dGbNWIp82KXpZMcZAj+AowWziU3Bnokr07b9K6jUkY5iSjt6i3v9/1incIlEip4vNfqcBEYLMOxlrh1Mip5YHrOrdfszBnW4pfm5Cs9K3SsHuHZh6x0cRJoFrxko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747765360; c=relaxed/simple;
-	bh=aWwJ/oMd4fz3YgcXiEteqlK6RlUREh7MuXxCEm+1IO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IGIjqVpjma8Qd95OXZpZiirHe1lr+juf+CVD10+2KKkfrRsZ15+OsfuN06U7e/MeSdRQKdC1o2l2XY7fmA0C7yZvYsn5OiOnnNPMTw2R8i3Wo/+J++A9BLMhFGFQwNnr8mJK2hrNCmvvW0OJM9ueQhn8f74w64nkGEqJHAmXtG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DvPiJUDn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747765357;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QTc5ZzsULEJRyl7cd9ycKlIiqkNSEfS7X3XjScm3/CY=;
-	b=DvPiJUDn0OIF89iGXm3E8LWWaONbW/sqbxk8MoHdt9fMpntmUPSODZrbqq93JbBr1ZnIUb
-	f1X6pBZjdND9kp3mpXZq9a6NLnrtdu1Mjb9K2vTahj/nWZaeFh951xu6pgObXixZ95pmel
-	RfLYW0h0FuzWGTsiOlFZ3A7z8FlW264=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-137-uFSE8K05OdWE274LEBJZbA-1; Tue,
- 20 May 2025 14:22:33 -0400
-X-MC-Unique: uFSE8K05OdWE274LEBJZbA-1
-X-Mimecast-MFC-AGG-ID: uFSE8K05OdWE274LEBJZbA_1747765351
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 27DBA1956051;
-	Tue, 20 May 2025 18:22:31 +0000 (UTC)
-Received: from chopper.redhat.com (unknown [10.22.88.70])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3708F180045B;
-	Tue, 20 May 2025 18:22:26 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Cc: Danilo Krummrich <dakr@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Asahi Lina <lina@asahilina.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	nouveau@lists.freedesktop.org (open list:DRM DRIVER FOR NVIDIA GPUS [RUST])
-Subject: [PATCH v3 4/4] rust: drm: Use gem::BaseDriverObject in driver::Driver
-Date: Tue, 20 May 2025 14:19:15 -0400
-Message-ID: <20250520182144.1313262-5-lyude@redhat.com>
-In-Reply-To: <20250520182144.1313262-1-lyude@redhat.com>
-References: <20250520182144.1313262-1-lyude@redhat.com>
+	s=arc-20240116; t=1747765168; c=relaxed/simple;
+	bh=IxR++kloUJc3RyylQhbXGp9wRrX6m+pcg5jG15OjKas=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dE94eMe2LyAYZZ3JpESHXRgifQjMNQC0lsDbqUHSvRJ9BfsOAezmgQBXWNZyOMBep6kkONtt0qWWas/vw9nwq5T+rI2EGvOdzEHDgSthLNeEcGDU3j8Uk/cGP89lpehobjKh301uu0ISR7fl6Qz/vzPF5FlnJOguiGI9WX2f9FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lWQ9AMbk; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-231f6af929eso44190685ad.2;
+        Tue, 20 May 2025 11:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747765165; x=1748369965; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=DoKyA3bBBGJsvFy+XPHReVuHpiex51sJQBrZyjvoQcc=;
+        b=lWQ9AMbk/zEZe3n5BURY22o+SzlHHUSIoZ6+NSSaRJmsAQLSqSRawwB8A8lLNnM3Xi
+         nqg8MUBuRtHYt8i4yP6vRrImSiqe6F8xHD90AUnLjnYglTpaoe++RbRlywJHPqKYtzQy
+         rc7LSLx8xZ0AFICfm4/12ffNcQw8nuMhsj4p4P1MknppCiuqST6ZpzVLFLA1t2yhe0wL
+         gZVYuWgjltK26b4bekB7lXCU0zNCF944qDdoYVjUVLKATMbYEQwJo+mk1VLwnoMlLOmr
+         JTot5uMD7yhGmMMwDT43+Qda3s23Cni90/rmu2Edb+X7S8n/zk1gjfAQW2owenmpQBZv
+         HK2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747765165; x=1748369965;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DoKyA3bBBGJsvFy+XPHReVuHpiex51sJQBrZyjvoQcc=;
+        b=K6bYSDI2UTPH45oiFXrHx59MXg5vbSx3nbDZ18SMG3s4gRAZ1UXATvnRvgUBjanwy4
+         +rKUrU1y0mHLdAGr+TlhdNwMyxt7rcmaPsfpQmD+E5tGhhiGDYMJ0jxwVNqhZACN6sd8
+         D2s/Mvw7ibppZY5N8XyKH8haGkUU9QgZqhKEoe0dx6ioIAT3J054iSixnjhKmz4zfVyD
+         R1dEPSYj/b27yz2ItGABBL9WzMxqTMjryf72bOGFSk9eC+FN1NvGlVbOHqICf2DkUWUd
+         72wRV9yJUiCIN2TRFdsqwhqOlmUpgG4BdxbRgO8Vn2fL+HdK7gjKu6A9vHesjE5Rco9X
+         2o9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUBTX0BE5XFrTfyR9Tj3VLMTrxBSdL+0WyJo1HYhjfjFOwwHRHd7nzcikvdAIjMZHDs9X+9QugP@vger.kernel.org, AJvYcCWY0azZj7yFMjQhVCZQySwzzYappe4puu/7NFKMGII89kYxIkTgirasG17PpczjfeDJ0KelJKlUbZPIL5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzppPtm1swE2sTaglF6OBVhHT2snbHHIg8hxsM3WnPUbthjLX5b
+	B9PCqe+jF1N4EqXWEZJHkKp6LedyodMVIENxUZlXSk/tfXQixL9trVpD
+X-Gm-Gg: ASbGncsEG0bgumh3dC3YliEyyFfg3tVRA6Pc26AvhL3c7u6QeLSF/nrCSfjlbgP7A9e
+	jJtUWzRFU7P/rocQOwCDf+CXb42sv/Mqn7+B2l3n7SW4XWLKaB3RJu0mUnftSGrFSnFm0bVMf6G
+	lspMvl/8eJI4rt3l0eqj9jiM/yn1Ob7QWdpQHBm8D757x3qUxBi53xjUq5YlTI/T7jPuM2hMmN8
+	rHt35PZ1cwwZmMiB49CsZbazxFY4d6QSg/QNkCGwezjUxph2ZTOw0y6tcOFgLJV+zayi826lGS6
+	eK4OQkHJ/pgUHbfu8oNwBTvfFKn3IklnD5q17Nfidz8Swo2l44wFWZ3wn1ke3x1xPanM61XBD3Q
+	ezAvG6Gys+omRPQ==
+X-Google-Smtp-Source: AGHT+IGwQsi+8LxueG7nm1aZmo1UnaHvJZf+HsSsQQMtspoPLyCUE/TSSuNXzyEMuI5THrd+rgbtxg==
+X-Received: by 2002:a17:902:ce01:b0:224:194c:6942 with SMTP id d9443c01a7336-231d452d6e8mr274361115ad.34.1747765165516;
+        Tue, 20 May 2025 11:19:25 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4ed255dsm79721135ad.213.2025.05.20.11.19.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 May 2025 11:19:24 -0700 (PDT)
+Message-ID: <cedb87c7-cb1e-450b-8d83-62b2d39ceea3@gmail.com>
+Date: Tue, 20 May 2025 11:19:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 00/59] 5.15.184-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250520125753.836407405@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250520125753.836407405@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-One of the original intents with the gem bindings was that drivers could
-specify additional gem implementations, in order to enable for driver
-private gem objects. This wasn't really possible however, as up until now
-our GEM bindings have always assumed that the only GEM object we would run
-into was driver::Driver::Object - meaning that implementing another GEM
-object type would result in all of the BaseDriverObject callbacks assuming
-the wrong type.
+On 5/20/25 06:49, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.184 release.
+> There are 59 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 22 May 2025 12:57:37 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.184-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-This is a pretty easy fix though, all we need to do is specify a
-BaseDriverObject in driver::Driver instead of an AllocImpl, and then add an
-associated type for AllocImpl in BaseDriverObject. That way each
-BaseDriverObject has its own AllocImpl allowing it to know which type to
-provide in BaseDriverObject callbacks, and driver::Driver can simply go
-through the BaseDriverObject to its AllocImpl type in order to get access
-to ALLOC_OPS.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-So, let's do this and update Nova for these changes.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- drivers/gpu/drm/nova/driver.rs |  4 ++--
- drivers/gpu/drm/nova/gem.rs    |  1 +
- rust/kernel/drm/device.rs      | 17 ++++++++++-------
- rust/kernel/drm/driver.rs      |  2 +-
- rust/kernel/drm/gem/mod.rs     | 11 +++++++----
- 5 files changed, 21 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/gpu/drm/nova/driver.rs b/drivers/gpu/drm/nova/driver.rs
-index b28b2e05cc156..58e534cf3ed39 100644
---- a/drivers/gpu/drm/nova/driver.rs
-+++ b/drivers/gpu/drm/nova/driver.rs
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- 
--use kernel::{auxiliary, c_str, device::Core, drm, drm::gem, drm::ioctl, prelude::*, types::ARef};
-+use kernel::{auxiliary, c_str, device::Core, drm, drm::ioctl, prelude::*, types::ARef};
- 
- use crate::file::File;
- use crate::gem::NovaObject;
-@@ -57,7 +57,7 @@ fn probe(adev: &auxiliary::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBo
- impl drm::Driver for NovaDriver {
-     type Data = NovaData;
-     type File = File;
--    type Object = gem::Object<NovaObject>;
-+    type Object = NovaObject;
- 
-     const INFO: drm::DriverInfo = INFO;
- 
-diff --git a/drivers/gpu/drm/nova/gem.rs b/drivers/gpu/drm/nova/gem.rs
-index 68f93c9675611..a3024922f0d90 100644
---- a/drivers/gpu/drm/nova/gem.rs
-+++ b/drivers/gpu/drm/nova/gem.rs
-@@ -18,6 +18,7 @@ pub(crate) struct NovaObject {}
- 
- impl gem::BaseDriverObject for NovaObject {
-     type Driver = NovaDriver;
-+    type Object = gem::Object<Self>;
- 
-     fn new(_dev: &NovaDevice, _size: usize) -> impl PinInit<Self, Error> {
-         try_pin_init!(NovaObject {})
-diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
-index 74c9a3dd719e3..6fc6995be637d 100644
---- a/rust/kernel/drm/device.rs
-+++ b/rust/kernel/drm/device.rs
-@@ -60,6 +60,9 @@ pub struct Device<T: drm::Driver> {
-     data: T::Data,
- }
- 
-+/// A type alias for referring to the [`AllocImpl`] implementation for a DRM driver.
-+type DriverAllocImpl<T> = <<T as drm::Driver>::Object as drm::gem::BaseDriverObject>::Object;
-+
- impl<T: drm::Driver> Device<T> {
-     const VTABLE: bindings::drm_driver = drm_legacy_fields! {
-         load: None,
-@@ -70,13 +73,13 @@ impl<T: drm::Driver> Device<T> {
-         master_set: None,
-         master_drop: None,
-         debugfs_init: None,
--        gem_create_object: T::Object::ALLOC_OPS.gem_create_object,
--        prime_handle_to_fd: T::Object::ALLOC_OPS.prime_handle_to_fd,
--        prime_fd_to_handle: T::Object::ALLOC_OPS.prime_fd_to_handle,
--        gem_prime_import: T::Object::ALLOC_OPS.gem_prime_import,
--        gem_prime_import_sg_table: T::Object::ALLOC_OPS.gem_prime_import_sg_table,
--        dumb_create: T::Object::ALLOC_OPS.dumb_create,
--        dumb_map_offset: T::Object::ALLOC_OPS.dumb_map_offset,
-+        gem_create_object: DriverAllocImpl::<T>::ALLOC_OPS.gem_create_object,
-+        prime_handle_to_fd: DriverAllocImpl::<T>::ALLOC_OPS.prime_handle_to_fd,
-+        prime_fd_to_handle: DriverAllocImpl::<T>::ALLOC_OPS.prime_fd_to_handle,
-+        gem_prime_import: DriverAllocImpl::<T>::ALLOC_OPS.gem_prime_import,
-+        gem_prime_import_sg_table: DriverAllocImpl::<T>::ALLOC_OPS.gem_prime_import_sg_table,
-+        dumb_create: DriverAllocImpl::<T>::ALLOC_OPS.dumb_create,
-+        dumb_map_offset: DriverAllocImpl::<T>::ALLOC_OPS.dumb_map_offset,
-         show_fdinfo: None,
-         fbdev_probe: None,
- 
-diff --git a/rust/kernel/drm/driver.rs b/rust/kernel/drm/driver.rs
-index 2be2a2d318e03..a77747edac80e 100644
---- a/rust/kernel/drm/driver.rs
-+++ b/rust/kernel/drm/driver.rs
-@@ -106,7 +106,7 @@ pub trait Driver {
-     type Data: Sync + Send;
- 
-     /// The type used to manage memory for this driver.
--    type Object: AllocImpl;
-+    type Object: drm::gem::BaseDriverObject;
- 
-     /// The type used to represent a DRM File (client)
-     type File: drm::file::DriverFile;
-diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-index 8944fc7a815a2..3c45883011d49 100644
---- a/rust/kernel/drm/gem/mod.rs
-+++ b/rust/kernel/drm/gem/mod.rs
-@@ -26,16 +26,19 @@ pub trait BaseDriverObject: Sync + Send + Sized {
-     /// Parent `Driver` for this object.
-     type Driver: drm::Driver;
- 
-+    /// The GEM object type that will be passed to various callbacks.
-+    type Object: AllocImpl;
-+
-     /// Create a new driver data object for a GEM object of a given size.
-     fn new(dev: &drm::Device<Self::Driver>, size: usize) -> impl PinInit<Self, Error>;
- 
-     /// Open a new handle to an existing object, associated with a File.
--    fn open(_obj: &<Self::Driver as drm::Driver>::Object, _file: &DriverFile<Self>) -> Result {
-+    fn open(_obj: &Self::Object, _file: &DriverFile<Self>) -> Result {
-         Ok(())
-     }
- 
-     /// Close a handle to an existing object, associated with a File.
--    fn close(_obj: &<Self::Driver as drm::Driver>::Object, _file: &DriverFile<Self>) {}
-+    fn close(_obj: &Self::Object, _file: &DriverFile<Self>) {}
- }
- 
- /// Trait that represents a GEM object subtype
-@@ -83,7 +86,7 @@ extern "C" fn open_callback<T: BaseDriverObject>(
- 
-     // SAFETY: `open_callback` is specified in the AllocOps structure for `DriverObject<T>`,
-     // ensuring that `raw_obj` is contained within a `DriverObject<T>`
--    let obj = unsafe { <<T::Driver as drm::Driver>::Object as IntoGEMObject>::as_ref(raw_obj) };
-+    let obj = unsafe { T::Object::as_ref(raw_obj) };
- 
-     match T::open(obj, file) {
-         Err(e) => e.to_errno(),
-@@ -100,7 +103,7 @@ extern "C" fn close_callback<T: BaseDriverObject>(
- 
-     // SAFETY: `close_callback` is specified in the AllocOps structure for `Object<T>`, ensuring
-     // that `raw_obj` is indeed contained within a `Object<T>`.
--    let obj = unsafe { <<T::Driver as drm::Driver>::Object as IntoGEMObject>::as_ref(raw_obj) };
-+    let obj = unsafe { T::Object::as_ref(raw_obj) };
- 
-     T::close(obj, file);
- }
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-2.49.0
-
+Florian
 
