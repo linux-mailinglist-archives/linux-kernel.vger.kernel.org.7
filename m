@@ -1,167 +1,168 @@
-Return-Path: <linux-kernel+bounces-655139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32885ABD165
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:05:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE7EABD16E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E1581BA164A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:05:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4982617A87D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0394621A43C;
-	Tue, 20 May 2025 08:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBC125E809;
+	Tue, 20 May 2025 08:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BRLXQtoj"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="deabvDB2"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7A1212FB8
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 08:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738CF212FB8;
+	Tue, 20 May 2025 08:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747728315; cv=none; b=lbEpeghkV8RrBND+ncNZl6UAZPAjtyX4XEjs6uoGczNPHmnjEHF43k24aB73dO7gNIeyMGNIx2oID3BW/YrzakPk/fYXzgZ7V4wytkRIfX9R4Be3YjDfwanuuJxP6k/v651XQ2tDHbJDoh5026UFdwucpOub4sq0uiUl+l5uRJA=
+	t=1747728330; cv=none; b=KN+POlaI4I5OBk8IqyHbZC8LPSRsIHQG3WyUZKehEH/kmgDIe0ilHXrrN1PH/OMEo3LMssLEhOFJknfHABAzmKU3PpsEch6fVaNTqfHsg3kiH33g/1lO7Vf+Tpn8Z8uYOoawraMfazeitCAKyeyes7uJ89uiVCnTp81+FR5iyPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747728315; c=relaxed/simple;
-	bh=wWkafiNEWdpxukzyksw2hTHdNCcqHphqd37cyWmEwYA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=faAh8jFGp9pK9W9O+t664QggNIBBSmlJwOb6NvIscPCeJDRQcjT5h1L3BpUkJjZMd+Vj/LJ+Dli0uvREELLJEH5alwwlCbowri4VBXMJ95jd74KAsueCMxZQvJcSzbH7TakAKwZOzZ6RGfErbJs3lHqu/eQaBNGyyML9XWPcWVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BRLXQtoj; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cfe574976so37081365e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 01:05:13 -0700 (PDT)
+	s=arc-20240116; t=1747728330; c=relaxed/simple;
+	bh=JR57pZ1HByRrhf92K1jrgg2JNrFtpgD4QQI5ZYZgONk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IDATCfLkvJgyE/rFukl/y2tc1S0fIMGYysiAqM7tPLb7fPcWPHVnggrtsBjtSx844ZnaavTftZ+Oe2Z1mY7cfOwEnADsscINF5DuIOD0T8YvcOeMzOHRnll32uv1fRZnkZ0hLe1szWci1ABroMdr+uMVanDjnIByZJeZk5lVc54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=deabvDB2; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6021d01298cso67914a12.3;
+        Tue, 20 May 2025 01:05:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747728312; x=1748333112; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5GL9/WVnDzCRjHM7KCqjvky6ly317+0xsVdOQlS6d90=;
-        b=BRLXQtoj3XcKiP9Nu+QgLGK2NVz90m9JFCZyvTC29GhRcYHyEh+19gNaJUfRJHxntl
-         KUm9tt33iomk1SkN5s3hyoUC0DRCiLUwWb3KYMo8rHxxhIstYX9vuy0dXi674Krcvyuv
-         4HbpFucAJfDGuQkEn96gIQqvpZ8e6IbAPz1stqKtZk6RdDSPlL+MI494nqvGMlbDylFi
-         5C41mgjndOnKBZpvZrQkJmUi3/kjp6yhk0EtIr0VFcb05E1SAWR3AbhEN+ZmIiP78WxZ
-         p4wuks0QtZw1vTQoBO95seE+QFnwo/HYtQ9B0FLw/qNLZCgkIWEVMhpx+tyKOHEH7PF9
-         N6PQ==
+        d=gmail.com; s=20230601; t=1747728327; x=1748333127; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A9I7rP4M4yCmXtCFSSopzacSCExCy5zEsmTeQ8DMKvQ=;
+        b=deabvDB2zwj6fFO/mVfZdbNTA9Lq1tK47ouwzFD8Q1d2lDjTX1Lx0X87u52yHFsY3q
+         owEErFr4qU6+BRFt4+LP9I2xlyLCrqsgwWJGbhqPPgF/sjosYl5MmZuv+GRTl3NsZ0yD
+         8eappmIAXS19QM/WFkvIBxTfmskHY3VvcxYT2MDtRWePR8ESQgtfV39riEufwQ78aQWy
+         M+ZNyeHU0ymhwhM+Pj9lAdNmS8G473r/3yC0qvuvFttFvrFNf0DMzEJgQvirGvdk4BRK
+         UtubT+NgTk7wGKkAvMrQlY9kxNMvXEZ1meEeqWbkF5hiP4LeBU8X0PujQWxTsD6eaNt1
+         MN7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747728312; x=1748333112;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5GL9/WVnDzCRjHM7KCqjvky6ly317+0xsVdOQlS6d90=;
-        b=FGRbZqTieAiDmsHXPejJ4YntQAKEAqKhzdxwSWxQEwdOEr1kpf+wB48Pfod7bEFVZO
-         h0rHT7Rc+uK7VmCeXxkPLr4gCtyIU6qIYtO9ZpJlmruG6yBsk35Wfpb5uG1/DQJeEPG6
-         Vn/rA4fL6KiVWpu/UMPweahmILkSYxFMv5JT7M/k9bGiPY0mcA9hCBD4wn1n8dj5v+FV
-         jZbzSE+l5Vsxh3dHZoGVh+o9svBUsLUFBe7U3hRqsUTxF8pGlLhA8M1iP4qTbvVBnB9r
-         gWLXClZdOfKtfiizi/M20Zoia3rsUyWXi+MkrvqI7y3qPzZI/5zzKyfIsr+78P0ImIiN
-         7rfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOtxUpgBWuX9Q3hBFTR6ud1RKyG3xFSAlZ4BgGotkBLwlcBVeqaC4mFLCX3U58B/1n5bGrK0gzLSNKV68=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9i6tZQR7kvZ7G4qvzbD0+MHRXv8H4Mr3y77rZGq7xyyZIJQUD
-	Rl+rO3SX6AL6fdnFqCi47RRh8URZrMGU8YNkIgFpdlCKbFJJYfhA3D99ht9O62bIB5M=
-X-Gm-Gg: ASbGnctLcRYCvGlfGSvZKKKhlNw0l2znkg47Jl9010A+m2K0GGaafXFGOTmoMfAP8Af
-	3EybOGF/WndbIziLyNo6xJUB1pyWsYOXc7lYcu7P7wJniiv/vtS6OvCJFbQo/uIyMVnXvABtfwB
-	+SanN/bPWoo+V1t1wmjuTIxM+A4LC4qE9cdA1y2m5MorpRaXXD4KL9Zv7Ou3Pan71Esx2wQbXzm
-	ZqT8HqIIa0fiaioJx6bT+KHkGDuIejSPmVEaDaDoK3c4yRVKvENNBt8jCX52/jGVij+t3obMBTG
-	a2I1PZ/qgfgsDyLK+li8eBaDn80ayedMuYa5xbK/CkSU1I5xyxFgvgD3hxVQkZ81VxP0RiLMC0P
-	qlZTL2a0TWz6SzRMEh9cS3ID5zH8i
-X-Google-Smtp-Source: AGHT+IGP1iT2KS7C1jAAS9avfiRYegZAXZJbq43ThFN2fqZehYB3eN8S1ivyCQg/LLIAvxsCPpLRRg==
-X-Received: by 2002:a05:600c:3f06:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-442fd63c7aemr176158525e9.16.1747728311950;
-        Tue, 20 May 2025 01:05:11 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:fb2e:6266:4e39:ce68? ([2a01:e0a:3d9:2080:fb2e:6266:4e39:ce68])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca88990sm15825687f8f.68.2025.05.20.01.05.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 May 2025 01:05:11 -0700 (PDT)
-Message-ID: <7142ab55-9173-431a-98fb-a78acf0e5ddb@linaro.org>
-Date: Tue, 20 May 2025 10:05:10 +0200
+        d=1e100.net; s=20230601; t=1747728327; x=1748333127;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A9I7rP4M4yCmXtCFSSopzacSCExCy5zEsmTeQ8DMKvQ=;
+        b=amiU6q5usvamAe73/MDnsHFx56UvZ6/j4gi8izfqj0pOBMOWzU0ZA3RxNNkn420ppI
+         Xl/QOpwlCQ2NVoOd1q2q2yBoPTMLp1wlOfdjzgq+rmINPWHgBb2ujrzJFm5HzM/JnPK0
+         uBbCn95XwIVpdvASOPUuGhl7ffb+Z8OBIAVKsXhYGWx9hFNUQukYm+xEJu6Y7395LOVJ
+         riRu5WAL6tPUkOUHmUapRetGUyUhQcLbNqZl63baXlObXntcnl2xggfI9Z4l0cn7ruro
+         Fhr4xBf3oVOXbIE+skeE0+w7zAX3FvrVkwr6EzEeUaYL54c7+K0I1lU+eNU87PIfCxZ4
+         UEMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQVikStRwhXUNEU3Mle4EqbDv2IM55Id+Q9ufSpzPgj4/Jy3AIRS2aLh37/EfAc850IaFcJJNes9F0nzPF/A==@vger.kernel.org, AJvYcCXTIvctBzIwtX2Rqrr1ix5ocaDamay/FCQWDl3Qm7FErJ1oXCfP/M6y2X6HwTupr0w9L2UvErhPCPqN2DOW@vger.kernel.org, AJvYcCXgNT4+cgB+JZoFhA0Lk5jYYAd3OXz9dIhSQum7KJrrxx/LgHWd7ThIh9RX/KqZ2L8jjwB6vMyH6dT7cEPnsw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhYC8+uqtVMzTccb3leXzJQCznlnfT1EXQkBA9HYbgnJJ62GLx
+	YLns8aN3nBPxEhds3d1zc6T/d3WBtgJxiQiCjTEyBwiwYYcPI3buFkybxvjhH0Gbi533De+8L8V
+	tF7uondBdrCsvabaT/tHYC9MPCUQuIj8=
+X-Gm-Gg: ASbGncu6zQ/vGLEnDHXY1/KW/cK7R8FAvs2f86LN2XWYfralrAr7ZvW6ah6ZIocdtVZ
+	hGfnXqfW5HtwBLwMW9oEzIuW7rmu9PffhHhSl+ICpMlxvoq7GIrnYIQREAMfUIT/nptvA7mSRNR
+	NMXkYMBJ8/tCVKJNppYpu7xlvsfnS1HI47
+X-Google-Smtp-Source: AGHT+IFY1jN0nUINWAznHYhlgE6xZL8U6IPHM8alhc3DwvleXkkArjDV4AZFltkqlyZckqPQ5oIx2qZoC2UmUisZ2ow=
+X-Received: by 2002:a17:907:268a:b0:ad5:eff:db32 with SMTP id
+ a640c23a62f3a-ad536de9517mr1261607666b.48.1747728326074; Tue, 20 May 2025
+ 01:05:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v4 27/30] drm/msm/dpu: drop unused MDP TOP features
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Vinod Koul <vkoul@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20250519-dpu-drop-features-v4-0-6c5e88e31383@oss.qualcomm.com>
- <20250519-dpu-drop-features-v4-27-6c5e88e31383@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250519-dpu-drop-features-v4-27-6c5e88e31383@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250520051600.1903319-1-kent.overstreet@linux.dev>
+In-Reply-To: <20250520051600.1903319-1-kent.overstreet@linux.dev>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 20 May 2025 10:05:14 +0200
+X-Gm-Features: AX0GCFuFQrDONvSfR8Y_Mf2EsqWLcTxhUjONRoK8I3nNLmrI5PDpEqDCnwJHZpI
+Message-ID: <CAOQ4uxg8p2Kg0BKrU4NSUzLVVLWcW=vLaw4kJkVR1Q-LyRbRXA@mail.gmail.com>
+Subject: Re: [PATCH 0/6] overlayfs + casefolding
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 19/05/2025 18:04, Dmitry Baryshkov wrote:
-> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
-> Drop unused MDP TOP features from the current codebase.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h | 13 -------------
->   1 file changed, 13 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-> index c582ef1ffe022f2e92b1b80cbab97ff41a2acfe9..9658561c4cb653ca86094d67f7b5dc92d36d38cd 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-> @@ -28,19 +28,6 @@
->   
->   #define MAX_XIN_COUNT 16
->   
-> -/**
-> - * MDP TOP BLOCK features
-> - * @DPU_MDP_PANIC_PER_PIPE Panic configuration needs to be done per pipe
-> - * @DPU_MDP_10BIT_SUPPORT, Chipset supports 10 bit pixel formats
-> - * @DPU_MDP_MAX            Maximum value
-> -
-> - */
-> -enum {
-> -	DPU_MDP_PANIC_PER_PIPE = 0x1,
-> -	DPU_MDP_10BIT_SUPPORT,
-> -	DPU_MDP_MAX
-> -};
-> -
->   /**
->    * SSPP sub-blocks/features
->    * @DPU_SSPP_SCALER_QSEED2,  QSEED2 algorithm support
-> 
+On Tue, May 20, 2025 at 7:16=E2=80=AFAM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> This series allows overlayfs and casefolding to safely be used on the
+> same filesystem by providing exclusion to ensure that overlayfs never
+> has to deal with casefolded directories.
+>
+> Currently, overlayfs can't be used _at all_ if a filesystem even
+> supports casefolding, which is really nasty for users.
+>
+> Components:
+>
+> - filesystem has to track, for each directory, "does any _descendent_
+>   have casefolding enabled"
+>
+> - new inode flag to pass this to VFS layer
+>
+> - new dcache methods for providing refs for overlayfs, and filesystem
+>   methods for safely clearing this flag
+>
+> - new superblock flag for indicating to overlayfs & dcache "filesystem
+>   supports casefolding, it's safe to use provided new dcache methods are
+>   used"
+>
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+I don't think that this is really needed.
+
+Too bad you did not ask before going through the trouble of this implementa=
+tion.
+
+I think it is enough for overlayfs to know the THIS directory has no
+casefolding.
+
+in ovl_lookup() that returns a merged directory, ovl_dentry_weird() would
+result in -EIO if any of the real directories have casefolding and we can a=
+dd
+another sanotify in ovl_lookup_single() that the 'base' dentry is not weird=
+()
+to cover the case of casefolder changed on an underlying reference director=
+y.
+
+Obviously, if any of the overlayfs layer root dirs have casefolding enabled=
+ the
+mount would fail.
+
+w.r.t enabling casefolding underneath overlayfs, overlayfs documentation sa=
+ys:
+
+"Changes to underlying filesystems
+---------------------------------
+
+Changes to the underlying filesystems while part of a mounted overlay
+filesystem are not allowed.  If the underlying filesystem is changed,
+the behavior of the overlay is undefined, though it will not result in
+a crash or deadlock."
+
+So why is enabling casefolding on underlying layers so special that we
+should have specific protection for that?
+
+From what I remember in ext4, enabling casefolding is only allowed
+on empty directories.
+
+Is this also the case for bcachefs?
+
+If that is the case, then the situation is even simpler -
+If filesystem can singal to vfs/ovl that directory is empty (i.e. S_EMPTYDI=
+R)
+then overlayfs can ignore this dir altogether when composing
+the merged directory.
+
+But again, I don't think there is a good reason to treat this case
+of changing the underlying layer specially.
+
+Please explain if I missed anything.
+
+Thanks,
+Amir.
 
