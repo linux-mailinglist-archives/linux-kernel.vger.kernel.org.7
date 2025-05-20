@@ -1,374 +1,184 @@
-Return-Path: <linux-kernel+bounces-655840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A2DABDDE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:54:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75119ABDDEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11E988A5644
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:54:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 841BB1BA2857
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E15C24C06A;
-	Tue, 20 May 2025 14:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HfTlj2D8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CDD24290D;
+	Tue, 20 May 2025 14:55:18 +0000 (UTC)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0F524C07F;
-	Tue, 20 May 2025 14:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F291FF7B3;
+	Tue, 20 May 2025 14:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747752854; cv=none; b=eELqGMOaJCExKbzZ6R8+FySQhhHMyuTmMyLAu6j8wnyeY+CG+xOIpxaRSRqvOsLXnbnK32wj14BSFLxhXAlXaJb42WT9lcg15MUdPbXUmbXfSwhniws2YHfZnDqdZNSnT+FG+CXWPALklmXSJ0tjjVgWL8W1hTiaGFDqgmHcCwk=
+	t=1747752917; cv=none; b=Rc18vmp+aMWiV6VzuY35puHprtV9p94k4Uv8t1bHUOxFZSts89pqOZYfdUEiRNE3/2rOQ4xuHw/+/2ruUXROtBPqba2LIVvYf4mBrXTh2F3LjxhLG2RZy0xtk374pIUkbliCosKrOPLcgOzjzis9EMTKYORluuCoJStuPeYiBxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747752854; c=relaxed/simple;
-	bh=OeKfSVs/1QSZvK90pEfiggOvCGaV0fnju6Pbjxm6QD0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=TtBJxf8gyW0xDz4A+6O1rsvV2q52nwF1Y+UUJ6a6xZ2QjWysUF5kLSnAWv0wohj8ZrUZFeymln2AgN5PNNbbqa75n8XlYQ1k5sLXMhN1fo6dmLL28OeGYMnQnTVXkEYYnZckUMrqbG0KrDNW2H2P+SiN8DfNjRl5FZa9t1nPrv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HfTlj2D8; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747752853; x=1779288853;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=OeKfSVs/1QSZvK90pEfiggOvCGaV0fnju6Pbjxm6QD0=;
-  b=HfTlj2D8OGpVng25aHkEGbGVms49LoI4L/+r11KFlIGfaF/trxeew3za
-   /xtEjeAlroxzDRCQXK8UOYax/gg2SlQk0ZJdGKWpELVBjlmoDO4cVJvqi
-   TuFC/01jIYLdrlG8XboaHYY8GjUXrKu8+OguChmO2DGM3KYEW4eWPiSXn
-   1KPzw6f8SY0zM/4GGQZIvd5Aw+jSlcLapRH3Xc3iTMSDSogV4BKzZMpZJ
-   XmHHVGBw7SB7QAAQ5JdAHwglMpmjdcnqMVOUFTFw1XOAWspI0mR37dbbD
-   BqXM09H4TVP6vjxv29iRWewnTy+i/HIR9iz475Sm0t4Q+CsmBOJFs0k4Y
-   A==;
-X-CSE-ConnectionGUID: uck0+I18QdKgPcnMRK8+Fg==
-X-CSE-MsgGUID: HgvFF8tdQ86/A0JmBNW4Yg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49792613"
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="49792613"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 07:54:12 -0700
-X-CSE-ConnectionGUID: rRvW8EdYTXmXpCdQ3c/WXg==
-X-CSE-MsgGUID: w6TSiCYCRJKypAfjwHEufw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="144457832"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.235])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 07:54:08 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 20 May 2025 17:54:05 +0300 (EEST)
-To: "David E. Box" <david.e.box@linux.intel.com>
-cc: LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
-    srinivas.pandruvada@linux.intel.com, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, tony.luck@intel.com, 
-    xi.pardee@linux.intel.com, Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH 10/15] platform/x86/intel/tpmi: Relocate platform info
- to intel_vsec.h
-In-Reply-To: <20250430212106.369208-11-david.e.box@linux.intel.com>
-Message-ID: <b8b5bcf8-bac9-4e92-f876-2c6ac595596f@linux.intel.com>
-References: <20250430212106.369208-1-david.e.box@linux.intel.com> <20250430212106.369208-11-david.e.box@linux.intel.com>
+	s=arc-20240116; t=1747752917; c=relaxed/simple;
+	bh=5t0gdhv8R1teNpgkE18HM4BYta0hXkyqjJazcPOR+ng=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qQFeT9O++rnv/lJ8UoBSqotnwJbA9dj5UCf7su2vlaz5AEnQdX+MSCJ8Xq47vbBUo82ZiSjUtHLD8m/j4mqNz5dbtDPvx1wz8y6kKTw+Knl2DuhPJixz9QW3Uz2UKlVjzy3llY5XAg996EiKfmDJA4hNn+18XyQv9rCdVhEaJzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-528ce9730cfso1255329e0c.3;
+        Tue, 20 May 2025 07:55:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747752912; x=1748357712;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ttxhK6Ti/XQOTqH6UODUStCIPGw0sZp98YSCtYewY44=;
+        b=cL+3mS+4BqZ/mDap4LhnaV/I2C5lMzmxPYCi5HtzBWbsBW+Ep2D7+U/igZZRuL9G2T
+         bhZKv3Ne2oLDga33fVyh9BRUzSoV6L+6hGHte1VI+OMg7cmY5H4yEtyPMHMFmnBFuDEk
+         VLqGNJqzjmzv040f5QSIPzIgkmFiEny57uePyj9ZMLMZwZcRTd7I1aigAMnEe1wOcJVc
+         RjbDfScsE2/IgmZLshD6nwc0gB2C/JicvYxGo0672GTTl1HMlIL9c5p2QkNNe7g+RnRK
+         L/GjsPRLVF5ijQgJ78/UOmTitJzeyCjr29f6Cv7J1sP3C3R+VZx6Wwt4b6KzamndC9AO
+         aE7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWlfWX2nL6EzePZ0NlTFVj0UB/hK2moT6jGrEFZGliTeV1ru1QMJLlbbyh4KJEzueh6R+/wP1wsGaZDPNcYiEiC3nc=@vger.kernel.org, AJvYcCWo39dssUrqSFHTi6hgqP1SCUclEeYutEL3bl2cnpZziuUDpYtWdD82s4BpeRDyHXFvjMCmry+hhQC5raat@vger.kernel.org, AJvYcCXRVjNuOwtZIhfbGCdaR4SbDrQHBnM8on3LdAg6UJzTlFZG3OQ2/czRfKsWzkSGlVv4Gn2OCOgsRoUl@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMk0qgXtv40WbR4i6AvHHdWVZ0RuUWyydECM5ajanF4sdcQ5r/
+	cPkaHVfpfoZO9tRLhQYlhi/jbN3xmJ7RxJFbaxE+CvNBHvw06mf4k9DHWT7hihWT
+X-Gm-Gg: ASbGnct37/EIdU51NMYNHcoWvSjIKQjtOZbNE6M9hR2O6n+tdNV41N6cfLEeLNqjpLj
+	iKCacnerDNTF+DjmZVPdL3bvRg55xM28/lei9h2i9fVK+7xujclpyapzk/0WGLAYUI+u9l3ycKq
+	boG1kOBqRXZAHHMXxJBvlbGhp2+9hyiVz2ZbK3dHS2o3Dpth0W1jShIVUNENW+FzhY4oGhl4brj
+	DhZYWP1lOKzBSIqDFNlHK1Ui9nD1n7MsA0s42Zj6L8btDZmFwBvjeCr3N7C4L4H7ENo4Gi4GTZk
+	55qRVCg/ay1j+5OtBfMaJ8uoeM+keTkJvscb03btEqfLfQdGi4n3y4rEy8kM+CH88tChzapFhSw
+	Duz0OQeiVKLrGFHD9d+hoHfTx
+X-Google-Smtp-Source: AGHT+IGT+Pt99Y+3HfVgDShKNL8vdrHQAAbHfwHQA+KKt72ephUI5sgsIyJmD/DCo1cPN4ZNSHXkHA==
+X-Received: by 2002:a05:6122:d18:b0:529:995:5aec with SMTP id 71dfb90a1353d-52dbcc85543mr14651405e0c.4.1747752912368;
+        Tue, 20 May 2025 07:55:12 -0700 (PDT)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52dba967b83sm8598811e0c.23.2025.05.20.07.55.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 May 2025 07:55:11 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4e14dd8abdaso1419387137.3;
+        Tue, 20 May 2025 07:55:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4RaSxuNppLtmO+MBcdr+g+j7uHeyYHEqsBeYc8hy239zJTmL+zzFC+gTQosAXoQ6w9WWn+ytdr2n0FMvy@vger.kernel.org, AJvYcCW16sqSmhkBbmgRkKc6CjougZ8RYRq/+OALGgiqpjLkIUt/zkxkmY/tZho9rhSPYkNGyqbiHa8Bi2HG@vger.kernel.org, AJvYcCWkx0jPofCStulT5Up2Zs9+edCBwEJ5SNEapORk4O9r/T4F7BdHEIL+na59dXO8uv0rbLm4+qzVjZS4HrqtCpgBG1s=@vger.kernel.org
+X-Received: by 2002:a05:6102:1528:b0:4c1:76a4:aee4 with SMTP id
+ ada2fe7eead31-4e05375dcb2mr14690410137.19.1747752910647; Tue, 20 May 2025
+ 07:55:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1116251625-1747752845=:936"
+References: <20250512182330.238259-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250512182330.238259-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250512182330.238259-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 May 2025 16:54:57 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVEgTo7V-gzzpVVNqxnDMSdTC1ew70gbJ=Sb5Qr4asryA@mail.gmail.com>
+X-Gm-Features: AX0GCFv8LYK03_9WrEiJFFzvjW_0fJJk_EmmURtGv-joA1Jov8I_4pZ3KpumSj4
+Message-ID: <CAMuHMdVEgTo7V-gzzpVVNqxnDMSdTC1ew70gbJ=Sb5Qr4asryA@mail.gmail.com>
+Subject: Re: [PATCH v5 05/12] drm: renesas: rz-du: mipi_dsi: Use VCLK for
+ HSFREQ calculation
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, dri-devel@lists.freedesktop.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Prabhakar,
 
---8323328-1116251625-1747752845=:936
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Wed, 30 Apr 2025, David E. Box wrote:
-
-> The TPMI platform information provides a mapping of OOBMSM PCI devices to
-> logical CPUs. Since this mapping is consistent across all OOBMSM features
-> (e.g., TPMI, PMT, SDSi), it can be leveraged by multiple drivers. To
-> facilitate reuse, relocate the struct intel_tpmi_plat_info to intel_vsec.=
-h,
-> renaming it to struct oobmsm_plat_info, making it accessible to other
-> features. While modifying headers, place them in alphabetical order.
->=20
-> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+On Mon, 12 May 2025 at 20:23, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Update the RZ/G2L MIPI DSI driver to calculate HSFREQ using the actual
+> VCLK rate instead of the mode clock. The relationship between HSCLK and
+> VCLK is:
+>
+>     vclk * bpp <= hsclk * 8 * lanes
+>
+> Retrieve the VCLK rate using `clk_get_rate(dsi->vclk)`, ensuring that
+> HSFREQ accurately reflects the clock rate set in hardware, leading to
+> better precision in data transmission.
+>
+> Additionally, use `DIV_ROUND_CLOSEST_ULL` for a more precise division
+> when computing `hsfreq`. Also, update unit conversions to use correct
+> scaling factors for better clarity and correctness.
+>
+> Since `clk_get_rate()` returns the clock rate in Hz, update the HSFREQ
+> threshold comparisons to use Hz instead of kHz to ensure correct behavior.
+>
+> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 > ---
->  drivers/platform/x86/intel/plr_tpmi.c         |  3 ++-
->  .../intel/speed_select_if/isst_tpmi_core.c    |  9 ++++---
->  .../uncore-frequency/uncore-frequency-tpmi.c  |  5 ++--
->  drivers/platform/x86/intel/vsec_tpmi.c        |  4 +--
->  drivers/powercap/intel_rapl_tpmi.c            |  9 ++++---
->  include/linux/intel_tpmi.h                    | 26 ++-----------------
->  include/linux/intel_vsec.h                    | 22 ++++++++++++++++
->  7 files changed, 41 insertions(+), 37 deletions(-)
->=20
-> diff --git a/drivers/platform/x86/intel/plr_tpmi.c b/drivers/platform/x86=
-/intel/plr_tpmi.c
-> index 2b55347a5a93..58132da47745 100644
-> --- a/drivers/platform/x86/intel/plr_tpmi.c
-> +++ b/drivers/platform/x86/intel/plr_tpmi.c
-> @@ -14,6 +14,7 @@
->  #include <linux/err.h>
->  #include <linux/gfp_types.h>
->  #include <linux/intel_tpmi.h>
-> +#include <linux/intel_vsec.h>
->  #include <linux/io.h>
->  #include <linux/iopoll.h>
->  #include <linux/kstrtox.h>
-> @@ -256,7 +257,7 @@ DEFINE_SHOW_STORE_ATTRIBUTE(plr_status);
-> =20
->  static int intel_plr_probe(struct auxiliary_device *auxdev, const struct=
- auxiliary_device_id *id)
->  {
-> -=09struct intel_tpmi_plat_info *plat_info;
-> +=09struct oobmsm_plat_info *plat_info;
->  =09struct dentry *dentry;
->  =09int i, num_resources;
->  =09struct resource *res;
-> diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c =
-b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> index 9978cdd19851..875afa6835cd 100644
-> --- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> +++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> @@ -22,6 +22,7 @@
->  #include <linux/auxiliary_bus.h>
->  #include <linux/delay.h>
->  #include <linux/intel_tpmi.h>
-> +#include <linux/intel_vsec.h>
->  #include <linux/fs.h>
->  #include <linux/io.h>
->  #include <linux/kernel.h>
-> @@ -1446,7 +1447,7 @@ int tpmi_sst_dev_add(struct auxiliary_device *auxde=
-v)
->  {
->  =09struct tpmi_per_power_domain_info *pd_info;
->  =09bool read_blocked =3D 0, write_blocked =3D 0;
-> -=09struct intel_tpmi_plat_info *plat_info;
-> +=09struct oobmsm_plat_info *plat_info;
->  =09struct device *dev =3D &auxdev->dev;
->  =09struct tpmi_sst_struct *tpmi_sst;
->  =09u8 i, num_resources, io_die_cnt;
-> @@ -1598,7 +1599,7 @@ EXPORT_SYMBOL_NS_GPL(tpmi_sst_dev_add, "INTEL_TPMI_=
-SST");
->  void tpmi_sst_dev_remove(struct auxiliary_device *auxdev)
->  {
->  =09struct tpmi_sst_struct *tpmi_sst =3D auxiliary_get_drvdata(auxdev);
-> -=09struct intel_tpmi_plat_info *plat_info;
-> +=09struct oobmsm_plat_info *plat_info;
-> =20
->  =09plat_info =3D tpmi_get_platform_data(auxdev);
->  =09if (!plat_info)
-> @@ -1620,7 +1621,7 @@ void tpmi_sst_dev_suspend(struct auxiliary_device *=
-auxdev)
->  {
->  =09struct tpmi_sst_struct *tpmi_sst =3D auxiliary_get_drvdata(auxdev);
->  =09struct tpmi_per_power_domain_info *power_domain_info;
-> -=09struct intel_tpmi_plat_info *plat_info;
-> +=09struct oobmsm_plat_info *plat_info;
->  =09void __iomem *cp_base;
-> =20
->  =09plat_info =3D tpmi_get_platform_data(auxdev);
-> @@ -1648,7 +1649,7 @@ void tpmi_sst_dev_resume(struct auxiliary_device *a=
-uxdev)
->  {
->  =09struct tpmi_sst_struct *tpmi_sst =3D auxiliary_get_drvdata(auxdev);
->  =09struct tpmi_per_power_domain_info *power_domain_info;
-> -=09struct intel_tpmi_plat_info *plat_info;
-> +=09struct oobmsm_plat_info *plat_info;
->  =09void __iomem *cp_base;
-> =20
->  =09plat_info =3D tpmi_get_platform_data(auxdev);
-> diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency=
--tpmi.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi=
-=2Ec
-> index 4aa6c227ec82..23a86feb12ef 100644
-> --- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
-> +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
-> @@ -22,9 +22,10 @@
->  #include <linux/auxiliary_bus.h>
->  #include <linux/bitfield.h>
->  #include <linux/bits.h>
-> +#include <linux/intel_tpmi.h>
-> +#include <linux/intel_vsec.h>
->  #include <linux/io.h>
->  #include <linux/module.h>
-> -#include <linux/intel_tpmi.h>
-> =20
->  #include "uncore-frequency-common.h"
-> =20
-> @@ -421,7 +422,7 @@ static void remove_cluster_entries(struct tpmi_uncore=
-_struct *tpmi_uncore)
->  static int uncore_probe(struct auxiliary_device *auxdev, const struct au=
-xiliary_device_id *id)
->  {
->  =09bool read_blocked =3D 0, write_blocked =3D 0;
-> -=09struct intel_tpmi_plat_info *plat_info;
-> +=09struct oobmsm_plat_info *plat_info;
->  =09struct tpmi_uncore_struct *tpmi_uncore;
->  =09bool uncore_sysfs_added =3D false;
->  =09int ret, i, pkg =3D 0;
-> diff --git a/drivers/platform/x86/intel/vsec_tpmi.c b/drivers/platform/x8=
-6/intel/vsec_tpmi.c
-> index 5c383a27bbe8..d95a0d994546 100644
-> --- a/drivers/platform/x86/intel/vsec_tpmi.c
-> +++ b/drivers/platform/x86/intel/vsec_tpmi.c
-> @@ -116,7 +116,7 @@ struct intel_tpmi_info {
->  =09struct intel_vsec_device *vsec_dev;
->  =09int feature_count;
->  =09u64 pfs_start;
-> -=09struct intel_tpmi_plat_info plat_info;
-> +=09struct oobmsm_plat_info plat_info;
->  =09void __iomem *tpmi_control_mem;
->  =09struct dentry *dbgfs_dir;
->  };
-> @@ -187,7 +187,7 @@ struct tpmi_feature_state {
->  /* Used during auxbus device creation */
->  static DEFINE_IDA(intel_vsec_tpmi_ida);
-> =20
-> -struct intel_tpmi_plat_info *tpmi_get_platform_data(struct auxiliary_dev=
-ice *auxdev)
-> +struct oobmsm_plat_info *tpmi_get_platform_data(struct auxiliary_device =
-*auxdev)
->  {
->  =09struct intel_vsec_device *vsec_dev =3D auxdev_to_ivdev(auxdev);
-> =20
-> diff --git a/drivers/powercap/intel_rapl_tpmi.c b/drivers/powercap/intel_=
-rapl_tpmi.c
-> index af2368f4db10..82201bf4685d 100644
-> --- a/drivers/powercap/intel_rapl_tpmi.c
-> +++ b/drivers/powercap/intel_rapl_tpmi.c
-> @@ -9,9 +9,10 @@
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> =20
->  #include <linux/auxiliary_bus.h>
-> -#include <linux/io.h>
-> -#include <linux/intel_tpmi.h>
->  #include <linux/intel_rapl.h>
-> +#include <linux/intel_tpmi.h>
-> +#include <linux/intel_vsec.h>
-> +#include <linux/io.h>
->  #include <linux/module.h>
->  #include <linux/slab.h>
-> =20
-> @@ -48,7 +49,7 @@ enum tpmi_rapl_register {
-> =20
->  struct tpmi_rapl_package {
->  =09struct rapl_if_priv priv;
-> -=09struct intel_tpmi_plat_info *tpmi_info;
-> +=09struct oobmsm_plat_info *tpmi_info;
->  =09struct rapl_package *rp;
->  =09void __iomem *base;
->  =09struct list_head node;
-> @@ -253,7 +254,7 @@ static int intel_rapl_tpmi_probe(struct auxiliary_dev=
-ice *auxdev,
->  =09=09=09=09 const struct auxiliary_device_id *id)
->  {
->  =09struct tpmi_rapl_package *trp;
-> -=09struct intel_tpmi_plat_info *info;
-> +=09struct oobmsm_plat_info *info;
->  =09struct resource *res;
->  =09u32 offset;
->  =09int ret;
-> diff --git a/include/linux/intel_tpmi.h b/include/linux/intel_tpmi.h
-> index ff480b47ae64..d1fe2469b0a4 100644
-> --- a/include/linux/intel_tpmi.h
-> +++ b/include/linux/intel_tpmi.h
-> @@ -7,6 +7,7 @@
->  #define _INTEL_TPMI_H_
-> =20
->  #include <linux/bitfield.h>
+> v4->v5:
+> - Added dev_info() to print the VCLK rate if it doesn't match the
+>   requested rate.
+> - Added Reviewed-by tag from Biju
+>
+> v3->v4:
+> - Used MILLI instead of KILO
 
-Add an empty line here.
+Thanks for the update!
 
-Once that is addressed,
+> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
-
-> +struct oobmsm_plat_info;
-> =20
->  #define TPMI_VERSION_INVALID=090xff
->  #define TPMI_MINOR_VERSION(val)=09FIELD_GET(GENMASK(4, 0), val)
-> @@ -26,30 +27,7 @@ enum intel_tpmi_id {
->  =09TPMI_INFO_ID =3D 0x81,=09/* Special ID for PCI BDF and Package ID inf=
-ormation */
->  };
-> =20
-> -/**
-> - * struct intel_tpmi_plat_info - Platform information for a TPMI device =
-instance
-> - * @cdie_mask:       Mask of all compute dies in the partition
-> - * @package_id:      CPU Package id
-> - * @partition:       Package partition id when multiple VSEC PCI devices=
- per package
-> - * @segment:         PCI segment ID
-> - * @bus_number:      PCI bus number
-> - * @device_number:   PCI device number
-> - * @function_number: PCI function number
-> - *
-> - * Structure to store platform data for a TPMI device instance. This
-> - * struct is used to return data via tpmi_get_platform_data().
-> - */
-> -struct intel_tpmi_plat_info {
-> -=09u16 cdie_mask;
-> -=09u8 package_id;
-> -=09u8 partition;
-> -=09u8 segment;
-> -=09u8 bus_number;
-> -=09u8 device_number;
-> -=09u8 function_number;
-> -};
-> -
-> -struct intel_tpmi_plat_info *tpmi_get_platform_data(struct auxiliary_dev=
-ice *auxdev);
-> +struct oobmsm_plat_info *tpmi_get_platform_data(struct auxiliary_device =
-*auxdev);
->  struct resource *tpmi_get_resource_at_index(struct auxiliary_device *aux=
-dev, int index);
->  int tpmi_get_resource_count(struct auxiliary_device *auxdev);
->  int tpmi_get_feature_status(struct auxiliary_device *auxdev, int feature=
-_id, bool *read_blocked,
-> diff --git a/include/linux/intel_vsec.h b/include/linux/intel_vsec.h
-> index a07796d7d43b..cd78d0b2e623 100644
-> --- a/include/linux/intel_vsec.h
-> +++ b/include/linux/intel_vsec.h
-> @@ -144,6 +144,28 @@ struct intel_vsec_device {
->  =09unsigned long cap_id;
->  };
-> =20
-> +/**
-> + * struct oobmsm_plat_info - Platform information for a device instance
-> + * @cdie_mask:       Mask of all compute dies in the partition
-> + * @package_id:      CPU Package id
-> + * @partition:       Package partition id when multiple VSEC PCI devices=
- per package
-> + * @segment:         PCI segment ID
-> + * @bus_number:      PCI bus number
-> + * @device_number:   PCI device number
-> + * @function_number: PCI function number
-> + *
-> + * Structure to store platform data for a OOBMSM device instance.
-> + */
-> +struct oobmsm_plat_info {
-> +=09u16 cdie_mask;
-> +=09u8 package_id;
-> +=09u8 partition;
-> +=09u8 segment;
-> +=09u8 bus_number;
-> +=09u8 device_number;
-> +=09u8 function_number;
-> +};
+> @@ -269,6 +271,12 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
+>         u32 golpbkt;
+>         int ret;
+>
+> +       ret = pm_runtime_resume_and_get(dsi->dev);
+> +       if (ret < 0)
+> +               return ret;
 > +
->  int intel_vsec_add_aux(struct pci_dev *pdev, struct device *parent,
->  =09=09       struct intel_vsec_device *intel_vsec_dev,
->  =09=09       const char *name);
->=20
+> +       clk_set_rate(dsi->vclk, mode->clock * MILLI);
 
---=20
- i.
+drm_display_mode.clock is in kHz, so s/MILLI/KILO/
 
---8323328-1116251625-1747752845=:936--
+> +
+>         /*
+>          * Relationship between hsclk and vclk must follow
+>          * vclk * bpp = hsclk * 8 * lanes
+> @@ -280,13 +288,11 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
+>          * hsclk(bit) = hsclk(byte) * 8 = hsfreq
+>          */
+>         bpp = mipi_dsi_pixel_format_to_bpp(dsi->format);
+> -       hsfreq = (mode->clock * bpp) / dsi->lanes;
+> -
+> -       ret = pm_runtime_resume_and_get(dsi->dev);
+> -       if (ret < 0)
+> -               return ret;
+> -
+> -       clk_set_rate(dsi->vclk, mode->clock * 1000);
+> +       vclk_rate = clk_get_rate(dsi->vclk);
+> +       if (vclk_rate != mode->clock * MILLI)
+> +               dev_info(dsi->dev, "Requested vclk rate %lu, actual %lu mismatch\n",
+> +                        mode->clock * MILLI, vclk_rate);
+
+Likewise.
+
+> +       hsfreq = DIV_ROUND_CLOSEST_ULL(vclk_rate * bpp, dsi->lanes);
+>
+>         ret = rzg2l_mipi_dsi_dphy_init(dsi, hsfreq);
+>         if (ret < 0)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
