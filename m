@@ -1,114 +1,104 @@
-Return-Path: <linux-kernel+bounces-656260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CBEDABE39A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:24:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C41E5ABE3A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 21:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58B5916DA71
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:24:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21F081BA5F67
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 19:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FC8280A58;
-	Tue, 20 May 2025 19:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFD2281519;
+	Tue, 20 May 2025 19:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pr3EAfpi"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PhL2s4CI"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD0C2620E5;
-	Tue, 20 May 2025 19:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DD9281343;
+	Tue, 20 May 2025 19:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747769046; cv=none; b=Gh0sOderWc2GYafJpI9w6qCzvC+s3Zpjm7DP0sF4W013sR7qELhIiGVqBZsryhNH77tSPHFEt+siWMJriFwUw3lfVQ0key1D4JOmAImVgwhIiYiBvpSP9aNUksQGrmtCEQ8WEKZ5p7lBiTdaT1A3W/hp5fiN+THbmOzl5qqEGxk=
+	t=1747769127; cv=none; b=k+noOTCUyVFLNlv2hagy8PaRr9QRmON1joiq9l4klbRrnPIgH93/HMqsjICSsDREITfPNAiJfBrRdwRsraVc5zsVFsR88xXLzKTnJJlZ7Nce0igRMZa2VQUC0s5HigX5vf36bwp/S6Hu86+g2QmGdrjUeSltjsdIgYyv6cmG4oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747769046; c=relaxed/simple;
-	bh=L1J2+f/o6ewoklc+hKFnSACjTFC2/ANmUYvlgy5NJjg=;
+	s=arc-20240116; t=1747769127; c=relaxed/simple;
+	bh=xRG49+PpG7U4ZkVsvft/ymPJLA1JQ82j7TzgDK5o4V0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ep55eN6lYHUr8OkrANfiYLroZCltICU3R0ChsP8HAi8l5suLUkcJfgAYnKrfoRgC7tivS/3v5+7Bog6Xr/VtIB0LHl2NLpNV1OdHpot58mPnLy5rDAWyn5I9uJlA5qFnttCcFswAFCDbChdd2HsSzcg9/z9hbec7q87i8CqTuiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pr3EAfpi; arc=none smtp.client-ip=209.85.167.43
+	 To:Cc:Content-Type; b=dhw8f2zcwD2zQgpNKxUfVevtSFu8PXV4e2UQ52SKo8ZjTcqdu6ls1+jvjQAZU9r3PUThUgXSNtqhyZA1NlNATEexj2OjhghDYRHrU3Z+LN8XnxVPOSpBamJT3DlPWOxuZ/VBHr7ZbKw8GXD8a4P/nhCEQQvpR55khaRzxh2hBgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PhL2s4CI; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-551fb4d153dso1678605e87.3;
-        Tue, 20 May 2025 12:24:04 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-551efcb745eso3658195e87.2;
+        Tue, 20 May 2025 12:25:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747769043; x=1748373843; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1747769124; x=1748373924; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d6XdgS84YDQPuRuy9Jq0oBvxTqOH5n4daq0yM54SeO0=;
-        b=Pr3EAfpi8tHBNGmpt/zsfP4Jp/nLFdeUgN+g7T24egdkp4CG0/NAMvD+tLnA2pcHR2
-         ad0iyLoSCZGNOzJ7dEZ4C+bbJNav9SadzBev6kWVzmS/VqTivtBRG9OC1KmM6Ub64iyR
-         ySp45jhrfiK1C2YXV+Qi6J/I7YJNoQTWW3icYKYtmNdEcq/NZQxlqE46Va6ibZF0gFa3
-         dnfFfq5tLEm7VQgV1v5J9x6wu1FejEWL+h29wrBLuqqLRRFMFsre/nYMttST5i1bXKoR
-         CwjeO65JEEDUk1ocjRlDR/PZfU3KjMuesoRdpLW7At6/LbpU7T3bIfe+dttSISIr0ukE
-         LIpQ==
+        bh=xRG49+PpG7U4ZkVsvft/ymPJLA1JQ82j7TzgDK5o4V0=;
+        b=PhL2s4CIA+TjtcMJTd9k2O3Gvtx3LChOvP0km7EeMcQeabqKGd1mPyRRnF1e/Xgh54
+         itjSBIeG4Eqna1nPc3ByBD7oj9S3rOodTOqxwXCQcscIVAXY2/c1r9AB3KnDpeEMNQi+
+         odTK0hjwDGeNC76lWgygWCdPVuqtOMf7YVqi3qitYlgEa5iBMrPwJOTE01Zbg7ctoOLz
+         R/DrRfOhhsjoACGoCpr4Wcm8nmKWgcQjXDxYDWYdCNGEne0aTSa8Rn7OL8ua38T+c6Mr
+         U6etkZr+blR74Ll29N4vs6KJqo/WRvUFpgCMXraSsBWE4c4m1XUNKcwoKRl2yz/VBUZT
+         qobw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747769043; x=1748373843;
+        d=1e100.net; s=20230601; t=1747769124; x=1748373924;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=d6XdgS84YDQPuRuy9Jq0oBvxTqOH5n4daq0yM54SeO0=;
-        b=EbBKZNenOFt8Q5AEFBWVYR4s8YglwXRiBs6lg0Cpt993MZ1swP64PkSDLkoWcBXbzQ
-         PeSZsG089MTeFArS6OJd6J7tioHmEC/xDVnaADAEScdS+BLy6Cg+96dE/ce1VDWnwJX6
-         VqDP0xh59Fzx992/lgNb9u2W7neb7HpoLMM9CtKJmhX8B5o7S32iiuZye4EAHd1PMuBU
-         z4JZGyjcIuudixJ76udNFMSIVuMDeWUeXdHp8cxJ/JLziIEl3occzwolulQVEyDXT6rS
-         VfFRGsESto3e9lBSiDkfmE6lcL7F3Gt5SWpKmVs6GphYvXhpp4LxXR5141MGUzOk4HxD
-         jFGg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1C0Gs8JhbfFlCJBEWbtVhDChxyGV6lvP7XAHdTjW+qGar7R/qobw3ln7yrUy2APlF7+tIzpkYonEUUJE=@vger.kernel.org, AJvYcCWBKHo1usWL3S7OsR6vseNiQGmWW7eEk4pdoj8UQOng7FfT2a71eHlxwX7QXA70lORzwOLx0u/iBpjpVs5bMFQ=@vger.kernel.org, AJvYcCWyBUa88Nz6cJKfX8jvKtvWQJqIixRf2O3Yt0JDQNlMIC+p36Coyc4wbDgv1ndaNOtqaubXBFId@vger.kernel.org, AJvYcCXXZ5CVcuq46OXCbsCVqe05IavjWjsxw2b2CEHn0H5nWbKAxYMWwSIEut9SI+20HZnbVk64jVLVCvdhmO7W@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9y0OW+DJdNXobUup0LLDal2yE6kks2iNtJHts1qwUiqn7vOTA
-	NgfZqRFGtfGKjuho9NgKjtYskscwLCcpuPfMrIc2J87N/D0mOIC5ArsX4NRW6IYtbUSAyvUlaM/
-	mCFeicwJMs2tkkybGqiaPdM+VpzR/uL4=
-X-Gm-Gg: ASbGncupfMLgjLO34ARpfAzXR70aFbI8HKE29KACRKvQEUzttqDFSySRQl5el4tSi2L
-	KGdX589Y9NxieYROntirT8dms4ELJ9Db8N5d+anEH+ZxR9lxDi+38Chaktvwl/SFqq6XY1CN/ne
-	ZI8iT5iQ8geqsn87U437s64hiImb7Kw7AdBcBw1rmNLJ70YiM8HGDova03ShjMEMObl9NM+xMCI
-	Ee4
-X-Google-Smtp-Source: AGHT+IFz3JlmJoyJ1wap0ojoWn4Wrko8mlIC7Ep/pg5OlmQk3tTzNnmLB3I17P8W6HKbwMRLn0gUghgOlCmTVzkS+jg=
-X-Received: by 2002:a05:6512:3e17:b0:54d:6dd3:614f with SMTP id
- 2adb3069b0e04-550e97cbca5mr5277052e87.21.1747769042589; Tue, 20 May 2025
- 12:24:02 -0700 (PDT)
+        bh=xRG49+PpG7U4ZkVsvft/ymPJLA1JQ82j7TzgDK5o4V0=;
+        b=n2VV4b46dxyY2p8v2zG5p4Bk53W7FqYAFCYye4NSwdPqY2EJSt0lrwwIcFugHfR5Wm
+         +PiHN397YpIh2Tjb5W9h+D4+aaKHGEd59hw3YLrJoLYDs70dOxqlqVZiz2kVNZy/sATj
+         3VMKnmTHHcCLmz8WJxgtknWiC0CYMI1InUdL3vQrZdmsDcK8JrRHG2lVN4/EIggBjKCq
+         lR8Bma9OmxHoQnKV6sWc4b/Nn3LqD7vCpYAd7tmBRaybZQMm3xAbWELj2/Q9z8kL7ZcK
+         Q/333zvPPtqOYoPuRwyrUyDCOtsSerW5QiUp+EVQTTxEQcgIY/UxCB0ZU82pbTAca/3X
+         OmdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQNwcw6R6xlKgzSkB6+PozLOWmGPK+e2IcYJAn7QjoHwmhBwSMd/fipDqNWUptH6jJdAVvwEFEMU334oo=@vger.kernel.org, AJvYcCWwaGT/PzN8KpWjYx0x3hJGdrMhGODLML3eUCNoDG4RaH2GmUnTrMFTdv81uzB0m+FuJWBZGKWCUpfvVrm4Wu4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVppc32guwZglcszW1Ge+Z5j8POIMDYDdXzdh2jOD2+pAomtA8
+	No8HDjwYHYAuePQV1vw3D2WBgXxIERIcjvepv/eEm8TbG8sUTlgudyUmZDScq3ABgbS4dx/chdG
+	mPl/v2OOai9Vj7JysxekXVwVttMZlHCc=
+X-Gm-Gg: ASbGncvOSyyWZlzDkdoTvObUH8ryCTcjIiSaXKR9ZUv40nACl+v6EEl1teV/vauLV4L
+	y1YTwTj6OELar5X6f7zTIwV/44I/1icijV6RlhXTc1ukEpUT+s+cQiZBGu4eb9GBf261/CMNOXW
+	BjTs6/FgbdOpxjT33OceiwMTmPHvorkgMsuuuYGUjUKyfAgkTmPst3p6K54LyWi+aMpQ==
+X-Google-Smtp-Source: AGHT+IEt231Hia+2d5t1uKCJJ+Q/JT7cC/Op/NwMXFOpCHRunyocwxy5yMFgmMlR7stLBoD1FpbxO2tKh2yObJYkw5U=
+X-Received: by 2002:a05:6512:650e:b0:549:8cbb:5443 with SMTP id
+ 2adb3069b0e04-550e724a21emr5127582e87.47.1747769123724; Tue, 20 May 2025
+ 12:25:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250520192034.889415-1-ojeda@kernel.org>
-In-Reply-To: <20250520192034.889415-1-ojeda@kernel.org>
+References: <20250520192307.259142-1-lossin@kernel.org>
+In-Reply-To: <20250520192307.259142-1-lossin@kernel.org>
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 20 May 2025 15:23:26 -0400
-X-Gm-Features: AX0GCFuaLSbZQ1hVvU1lb2VxUKLxVWKNlDMNxG3qmRXP7Db0x4G0ZVJV-F0CVHo
-Message-ID: <CAJ-ks9=4DJdbUBiy_45wWPviOs48NEK1DmeqWnDaFSpkoda_GQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: kbuild: rebuild if `.clippy.toml` changes
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+Date: Tue, 20 May 2025 15:24:46 -0400
+X-Gm-Features: AX0GCFtuqgLLr69Nc8UFXGTMandfNmhiFetxWkvHV9Xr60PZmguzdAcmFGi9tkI
+Message-ID: <CAJ-ks9nX-JtQ4toZjYnQ4Y7-pzpLhO5OVYffGSt6V9L7xxUVbQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust: add `pin-init` as a dependency to `bindings`
+ and `uapi`
+To: Benno Lossin <lossin@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
 	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
 	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
 	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org
+	Danilo Krummrich <dakr@kernel.org>, Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 20, 2025 at 3:20=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
+On Tue, May 20, 2025 at 3:23=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
+ote:
 >
-> We rarely modify `.clippy.toml`, but currently we do not rebuild if that
-> happens, thus it is easy to miss possible changes in lints.
+> This allows `bindings` and `uapi` to implement `Zeroable` and use other
+> items from pin-init.
 >
-> Thus rebuild in case of changes.
->
-> Cc: stable@vger.kernel.org
-> Reported-by: Tamir Duberstein <tamird@gmail.com>
-> Closes: https://github.com/Rust-for-Linux/linux/issues/1151
-> Fixes: 7d56786edcbd ("rust: introduce `.clippy.toml`")
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
->  rust/Makefile | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+> Signed-off-by: Benno Lossin <lossin@kernel.org>
 
-It is possible to do this only if CLIPPY=3D1?
+Please remember to update `generate_rust_analyzer.py`.
 
