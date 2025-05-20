@@ -1,139 +1,141 @@
-Return-Path: <linux-kernel+bounces-655582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B948FABD844
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:35:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAFEDABD84B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9676C3B7420
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:35:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35B4C1B665A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457901A2387;
-	Tue, 20 May 2025 12:35:25 +0000 (UTC)
-Received: from ni.piap.pl (ni.piap.pl [195.187.100.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D61E1A314E;
+	Tue, 20 May 2025 12:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L4nCJbdO"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8918719E966;
-	Tue, 20 May 2025 12:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.187.100.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481B2DDAB;
+	Tue, 20 May 2025 12:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747744524; cv=none; b=psAJov8QiGJ2znpBmeDvR7fRvVMLJ4CZeYHnBq4qgcfH4Ofj3GNEKatwRtR9LYla5K9sPC7TFg2lu5MiEBh3kOGsmKYL16DJ7yXI/J6VWNlw6bEgJ/DxdL1LbzA0tmdG0zcAKFRjJbeBMpdrmhTVgLyn5r+mcDR+0fi6YOgl5o4=
+	t=1747744822; cv=none; b=jB6f7PiPktb0XRSAOtAO9diTL4MD10AnnXU81j4K4LqMekHjr0T5jeBabkDPBaWzo70ZUyUMzcJNKEMKBiZKLkYOd5Ek10AmmdcH7pc3nQSo3R7BvvqCIvrKx5qTHvK7f68x3KSapaVfCFpVGcXxPBlFhQqrlnOOkS7O1Tk+qN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747744524; c=relaxed/simple;
-	bh=4yYh+52kFZWGuy7sYSIaRe8+zSWmoKcHoy3cEoyEaXQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=V7Bh8d78YwAOxy1jjFf/W13lykQnJRsGCmZoX1vn4Wf/xBrDkHzZjYNrC28uNHhjk3P+ZdAjr8cc3D+56yAOg+h7ucdy+H5FL2WUqTzrfDi3oL4U3YU9zHedfdnJNJ0cbhP83ONIsTiU7c9uLK2xHyj5PiQxG0odlGDnszjdPQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl; spf=pass smtp.mailfrom=piap.pl; arc=none smtp.client-ip=195.187.100.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piap.pl
-Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
-	by ni.piap.pl (Postfix) with ESMTPS id A255FC405A49;
-	Tue, 20 May 2025 14:35:18 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl A255FC405A49
-From: =?utf-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Rui Miguel Silva <rmfrfs@gmail.com>,  Martin Kepplinger
- <martink@posteo.de>,  Purism Kernel Team <kernel@puri.sm>,  Mauro Carvalho
- Chehab <mchehab@kernel.org>,  Shawn Guo <shawnguo@kernel.org>,  Sascha
- Hauer <s.hauer@pengutronix.de>,  Pengutronix Kernel Team
- <kernel@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>,
-  linux-media@vger.kernel.org,  imx@lists.linux.dev,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Enable MIPI filtering by DT on i.MX8M*
-In-Reply-To: <20250509103733.GE28896@pendragon.ideasonboard.com> (Laurent
-	Pinchart's message of "Fri, 9 May 2025 12:37:33 +0200")
-References: <m3h61u9jy2.fsf@t19.piap.pl>
-	<20250509103733.GE28896@pendragon.ideasonboard.com>
-Sender: khalasa@piap.pl
-Date: Tue, 20 May 2025 14:35:18 +0200
-Message-ID: <m3o6vn8np5.fsf@t19.piap.pl>
+	s=arc-20240116; t=1747744822; c=relaxed/simple;
+	bh=ATYacQzOSN+D3qKstMSJ9/0jNFcPqEoH9o4IEJcPRjE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ta6JVosucHNO6NwTPaNSK4aqupNGAlX9liGx0Pw/n0Q0ih2AVzMTQCr2gn8nhiWFepH7Nwrbm4Jm9uNkif/np77JQSWOtg+XOplYthyn2Pq559l9JmOAVCnNqdheYtyHcvpGT9Fo5z3xFE2vBmk7Nmo2SNSUqnFy5rY+aIjvWWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L4nCJbdO; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ad572ba1347so269487066b.1;
+        Tue, 20 May 2025 05:40:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747744819; x=1748349619; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/jl+c2q+Ung+HT/OYN3z/VcGpR80c0US6Yin5H+E6eI=;
+        b=L4nCJbdOsRcn/7KQPVzMAq3Cn/eq2CcTmZOyCguLrL+jvg+Vm3OddiRFT+c/9RdEWB
+         zDwm9T/qBxq49m3RcuXBuuKi/p8uQ+UmLnYY0oS45D7yP6CZ9BXvTzEkV0ozq3zkVoVy
+         GyfA2K3Ya5EXffR6riIvvf6uPiKd9xoUbc8BBw4O7pPwzxcaWX/OgXoGZlja4XXAUNP5
+         37svqpDQy3IUreTdyTOaVciRp06jgWnNXwhMYlxU/0HWAGdgSADqukRSxHPRbtpKTEyj
+         f6WSWNT5+XALyzlVeP0J1Bi90iZiPz9ER3qra2d4Fr+USVVTHB+KndZilQfxlH2QMmYb
+         E+sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747744819; x=1748349619;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/jl+c2q+Ung+HT/OYN3z/VcGpR80c0US6Yin5H+E6eI=;
+        b=pO+sYHtkUIfBJAYHNtJ23eSZJQ9aM2JbRvHjnhr7Ph+ra8n4+lzzyf0Ngc6xm9NrVp
+         84LRbENX6fUuEl2KBjc+caq3TIr2uoOeDUn5hsU4cx7BxThYmdgthNt4yaW4/TmgCG4V
+         QH5G0TTF0iMCBinukZhcxgjKQeodIhNKm+a0veZ0WRQe3RXAPwWOgml3lTEMCyNscPU0
+         2ecwCbuBHIvf5jAPeaup18WGDOmPEFpyMrxQu9V1WhebX7tslnKlH+3kP0EVnYGSUOE8
+         r/XDoAsRFiwLzJuuQY0fM05wkXiNuQCgSyCQ2QviTAolCqOU4PLed7yD5/Oe6R/RdS2W
+         U8Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTzHKy/90tqw3RBeBVoRUDNjWndtZtllW3rqqbujCT1nTVBesJZeCLU+LmdHLFJdnces6ZH8EO0voD6RUXJg==@vger.kernel.org, AJvYcCXNculZJ+6NMNgTM50QTEsOudknd7WAPqy0KitrN0gWsx+L2vze+2RTjkf9oQPFF7i1P8aPdR8tsUutu7Va@vger.kernel.org, AJvYcCXVdScY+19jmAXCxVrVtTsVtbC2EOq/tDHgfeDiKvnJq7tcUsx4jtMhAm4JrbxGjz4MCM3cZHpeoSZ1v/17YQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCPEgcOKopVkYW7KWth0ioUYJlLvIKrpGloL7EahTPJjG+eQTg
+	uY5uLapX1xZRZCENS9D8EA4tjr1Bz5cj4ZLmbhjc8jlMGJgui0foo8Kp51/nEe47j/cAl39mCuz
+	/Dp8HokGDRsHfj/HtV04ohwBwFzrvwRw=
+X-Gm-Gg: ASbGnctbQZxO0B+Q2J547l7Hb3x9FyHViz4MqiFfKmVRo5EHXGwjhKrT2JhzfPNcZ74
+	br2FMsU5vxfed2NWH9yK2n6W5/CRuXBx3nal+sDtCNy7KfFPLpo5FolYP1VUfrfXjn0l3FvW2E1
+	fyrX91YrLfGRJ+A0W/nqVl4hDUUDcMJoVW
+X-Google-Smtp-Source: AGHT+IH5bUvnBxRxXybMjRDoEeYe3bPA/LSHsUGIEwJlRwCiBFI36+/QdNM/UouWlg6Q+ELdsoDk7HXXHta80d4O7yI=
+X-Received: by 2002:a17:907:e915:b0:ad5:1e70:7150 with SMTP id
+ a640c23a62f3a-ad52d443a03mr1516742866b.2.1747744818984; Tue, 20 May 2025
+ 05:40:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250520051600.1903319-1-kent.overstreet@linux.dev>
+ <CAOQ4uxg8p2Kg0BKrU4NSUzLVVLWcW=vLaw4kJkVR1Q-LyRbRXA@mail.gmail.com> <osbsqlzkc4zttz4gxa25exm5bhqog3tpyirsezcbcdesaucd7g@4sltqny4ybnz>
+In-Reply-To: <osbsqlzkc4zttz4gxa25exm5bhqog3tpyirsezcbcdesaucd7g@4sltqny4ybnz>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 20 May 2025 14:40:07 +0200
+X-Gm-Features: AX0GCFuJIxA9Wv-He4w9A6tRHOYc4zkEtD6DXI93Cz2XPfD5o9cWDaYraN4RDjc
+Message-ID: <CAOQ4uxjUC=1MinjDCOfY5t89N3ga6msLmpVXL1p23qdQax6fSg@mail.gmail.com>
+Subject: Re: [PATCH 0/6] overlayfs + casefolding
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Laurent Pinchart <laurent.pinchart@ideasonboard.com> writes:
-
->> +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
->> @@ -654,8 +654,7 @@ static void mipi_csis_set_params(struct mipi_csis_de=
-vice *csis,
->>       val =3D mipi_csis_read(csis, MIPI_CSIS_CMN_CTRL);
->>       val &=3D ~MIPI_CSIS_CMN_CTRL_LANE_NR_MASK;
->>       val |=3D (lanes - 1) << MIPI_CSIS_CMN_CTRL_LANE_NR_OFFSET;
->> -     if (csis->info->version =3D=3D MIPI_CSIS_V3_3)
->> -             val |=3D MIPI_CSIS_CMN_CTRL_INTER_MODE;
->> +     val |=3D MIPI_CSIS_CMN_CTRL_INTER_MODE; /* enable filtering by DT =
-*/
+On Tue, May 20, 2025 at 2:25=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
 >
-> The condition was added because the CSIS in the i.MX8MM doesn't
-> implement the INTERLEAVE_MODE field. We can't remove it unconditionally.
+> On Tue, May 20, 2025 at 10:05:14AM +0200, Amir Goldstein wrote:
+> > On Tue, May 20, 2025 at 7:16=E2=80=AFAM Kent Overstreet
+> > <kent.overstreet@linux.dev> wrote:
+> > >
+> > > This series allows overlayfs and casefolding to safely be used on the
+> > > same filesystem by providing exclusion to ensure that overlayfs never
+> > > has to deal with casefolded directories.
+> > >
+> > > Currently, overlayfs can't be used _at all_ if a filesystem even
+> > > supports casefolding, which is really nasty for users.
+> > >
+> > > Components:
+> > >
+> > > - filesystem has to track, for each directory, "does any _descendent_
+> > >   have casefolding enabled"
+> > >
+> > > - new inode flag to pass this to VFS layer
+> > >
+> > > - new dcache methods for providing refs for overlayfs, and filesystem
+> > >   methods for safely clearing this flag
+> > >
+> > > - new superblock flag for indicating to overlayfs & dcache "filesyste=
+m
+> > >   supports casefolding, it's safe to use provided new dcache methods =
+are
+> > >   used"
+> > >
+> >
+> > I don't think that this is really needed.
+> >
+> > Too bad you did not ask before going through the trouble of this implem=
+entation.
+> >
+> > I think it is enough for overlayfs to know the THIS directory has no
+> > casefolding.
+>
+> overlayfs works on trees, not directories...
 
-Is this confirmed (and not just an incidental omission from the docs)?
-Same version (3.6.3), and even earlier version (3.3) has it... It would
-mean MM can't work with those sensors producing extra packets.
+I know how overlayfs works...
 
-I wonder what version is shown in the #0 register on 8MM (8MP shows
-3060301).
+I've explained why I don't think that sanitizing the entire tree is needed
+for creating overlayfs over a filesystem that may enable casefolding
+on some of its directories.
 
-> You mentioned i.MX8MP, that's a platform where I'd like to see proper
-> support for *capturing* embedded data, not just dropping it. Have you
-> looked at how this could be implemented ?
-
-I had a brief look at it, but a) the embedded data is not very
-interesting in case of my IMX290, b) I don't want to interleave it with
-my image data (DMA buffers and what not) and I don't see a way to store
-it independently.
-
-If you want to store it along the image, the currect code does that -
-more or less correctly. This is the problem.
-
-The RM says "13.5.2.6.6 Null and Blanking Data
-For both the null and blanking data types CSIS V3.6.3 ignore the content
-of the packet payload data." which is half-truth, e.g. it needs the
-MIPI_CSIS_CMN_CTRL_INTER_MODE to do that, otherwise it messes it up.
-
-Several CSIC registers are named XXXXXn, suggesting more than one
-register, but the docs say only #0 exists. Nevertheless, the actual
-hardware seems to contain 3 packs of registers (the 4th one is weirder):
-
-32E40000:  3060301     4705    F0000 DEADCAFE
-32E40010: FFFFFFFF        0        0        0
-32E40020:       F0  900001F DEADCAFE DEADCAFE
-32E40030:      1F4        0        0        0
-32E40040:       B0  4380780        0 DEADCAFE <<< ISP_CONFIG0
-32E40050:      8FD 80008000        0 DEADCAFE <<< ISP_CONFIG1
-32E40060:      8FE 80008000        0 DEADCAFE <<< ISP_CONFIG2
-32E40070:      8FF 80008000        0 DEADCAFE ???
-32E40080:       B0  4380780        0 DEADCAFE <<< SHADOW_CONFIG0
-32E40090:      8FD 80008000        0 DEADCAFE <<< SHADOW_CONFIG1
-32E400A0:      8FE 80008000        0 DEADCAFE <<< SHADOW_CONFIG2
-32E400B0:        0        0        0 DEADCAFE
-32E400C0:        0 7FFFFFFF        0       E4
-32E400D0:        0        0        0 DEADCAFE
-32E400E0: DEADCAFE DEADCAFE DEADCAFE DEADCAFE
-32E400F0: DEADCAFE DEADCAFE DEADCAFE DEADCAFE
-32E40100:     22E1     22E1     22E1        0 <<< FRAME_COUNTER*
-32E40110:        0        0        0        0 <<< LINE_INTERRUPT_RATIO*
-32E40120:        0 DEADCAFE DEADCAFE DEADCAFE
-
-This is the first CSI. The 3 frame counters are visibly active as well.
-
-The manual states (MIPI_CSIx_ISP_CONFIGn) "NOTE: Not described types are
-ignored" and even if not, I can't see what could we do with this extra
-data.
-
-Perhaps the CSIC internally has 3 output ports, but only the first one
-is connected to ISI and ISP?
---=20
-Krzysztof "Chris" Ha=C5=82asa
-
-Sie=C4=87 Badawcza =C5=81ukasiewicz
-Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
-Al. Jerozolimskie 202, 02-486 Warszawa
+Thanks,
+Amir.
 
