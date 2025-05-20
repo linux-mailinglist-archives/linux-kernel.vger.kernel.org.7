@@ -1,96 +1,349 @@
-Return-Path: <linux-kernel+bounces-655265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 004CBABD31D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:17:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 189F7ABD324
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2E047A66AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:16:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA15B7A8B1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFA826773C;
-	Tue, 20 May 2025 09:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1Ea/sjV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E9C647;
-	Tue, 20 May 2025 09:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B9D25485A;
+	Tue, 20 May 2025 09:18:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E173D2135D1
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 09:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747732635; cv=none; b=PbFMPui4YbBzSClY2dyllTCY9DVCDRayfoK95ynrh5DFJAElRB2rhj0pJ3mwa5Q4AOgfAIOKcWd7hHNV2Brzh+QKEBWhHi4MqXPVFuq88VNfU/PGEdZiHUXRxbOtK37I6wVwNG42cHyEHhIEULrWjs7TwF938M4kyy5rMzyLq7M=
+	t=1747732697; cv=none; b=pPZc23FXOGL84deivKqj1NDOaDct7Cm2WgK/cm8wW7IEgpWRE16g/gls3KwAUPMDb3eMqi3io4ZHmpTi5ako9qkw3HB1XBf3JniSs8r/6Ee0zDI6u7tqbeKYwj/ihTK0ffSnFyksJl5Qx4pTMp5N9mIAT+JDtq27Ff8mADnhIVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747732635; c=relaxed/simple;
-	bh=BhrwYR9Bpw5TY8cvWbegmzVkfmOOpNoCkTqfQfjj81A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLrbQUjA5C2dhe5IlgqGhxYGwvk9HLMHR7m75o7LXtqpChHTnCdv962+gS53FqJ4gyndqBYXeAq2miPp15Tuo1XJsLLT8s/KWzw6yvZbTTbZ0hUGY+hGjSWlKuKbqGWdktySkMfXE11qOswzKx0UapxJA8AVKvQLlikHT0xYsFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1Ea/sjV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75782C4CEE9;
-	Tue, 20 May 2025 09:17:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747732634;
-	bh=BhrwYR9Bpw5TY8cvWbegmzVkfmOOpNoCkTqfQfjj81A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c1Ea/sjVdrTFuG7y7I0ieQGNx21uUgP4RgkC9wJXvN22g6sOi6sR15D/6+8dYkTh8
-	 xilTfUIhrvRjwwYD2UrXQyQ4ACFIvY8akHrltM1VQDdMF0eUwYLXKn5y9FzQvRToO1
-	 nltIqgzkvi6peYbdC4ebehQJxNV5RqPfhU/rG9JJeBYgTFU+e+k99ZabUYY4MIpwA9
-	 t9zPPoITlYNl8YHQQmU2jtuGz5AAS/GRlIo325D5KyLK4x8zEvoWmVg58W5cBrqpBO
-	 jV1aCW4FJdOKkDqu9+Ew2FF+W+vmXMIh8BVsvOihKK1uJa8Q/MO5kjOA44fXxosHvA
-	 Z8gq5HN3TeSwA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uHJ5y-000000002o0-0OPB;
-	Tue, 20 May 2025 11:17:10 +0200
-Date: Tue, 20 May 2025 11:17:10 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] media: qcom: camss: vfe: Stop spamming logs with
- version
-Message-ID: <aCxIlnPsVZBiUpc8@hovoldconsulting.com>
-References: <3e34ce09-1207-4dba-bff8-38c01cad9b78@linaro.org>
- <4d942a6c-cbff-41ac-af8b-12a1ff5181aa@linaro.org>
- <883eb54a-fcaf-443c-a4d7-e1278fd43f5a@linaro.org>
- <ea9f570c-b135-4a98-91ea-ceeb2f48a0e5@linaro.org>
- <aCw09Vci12txhYj-@hovoldconsulting.com>
- <190100e7-8a59-4cf3-8434-bcb6292cacb2@linaro.org>
- <aCw78CRda6VS6ost@hovoldconsulting.com>
- <8a2f2269-d07f-42b2-ab6c-dcff30a1f431@linaro.org>
- <f4de3ab5-b40a-4d87-916b-8d1a1fb607b2@linaro.org>
- <d81de587-7452-4fa1-836e-9e30b6d63c57@linaro.org>
+	s=arc-20240116; t=1747732697; c=relaxed/simple;
+	bh=2pRto+71Kd/ER6tDHyqGN/vEDctwC7+pXk3vQDdzGXA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H8+jFyWRj0m/W2kXKIOAH44MWt0JXPVM1g9IIaLEZ+0JO7jmByJagZR7jY2KVXIyNRyHuHPQxQQFWKyfkh7MsWMYLYgzqxRDkjoorVAazMyOc81ZKekvMJWdjG2ZpxAQEfZ0m3h9q0LcsXy1lmhkll1iKvKhbSsXt1m/CFw9oFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6F33152B;
+	Tue, 20 May 2025 02:18:00 -0700 (PDT)
+Received: from [10.164.18.48] (unknown [10.164.18.48])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC7A83F5A1;
+	Tue, 20 May 2025 02:18:07 -0700 (PDT)
+Message-ID: <cc646daf-980e-4299-af5e-65742bb06bf9@arm.com>
+Date: Tue, 20 May 2025 14:48:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d81de587-7452-4fa1-836e-9e30b6d63c57@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/5] mm: Optimize mprotect() by PTE batching
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, ryan.roberts@arm.com, david@redhat.com,
+ willy@infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ catalin.marinas@arm.com, will@kernel.org, Liam.Howlett@oracle.com,
+ lorenzo.stoakes@oracle.com, vbabka@suse.cz, jannh@google.com,
+ anshuman.khandual@arm.com, peterx@redhat.com, joey.gouly@arm.com,
+ ioworker0@gmail.com, kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
+ christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
+ linux-arm-kernel@lists.infradead.org, hughd@google.com,
+ yang@os.amperecomputing.com, ziy@nvidia.com
+References: <20250519074824.42909-1-dev.jain@arm.com>
+ <20250519074824.42909-4-dev.jain@arm.com>
+ <CAGsJ_4yY7OXm68vLvWL1Oh=315jR5bX4BDKsaKrqKhEfxVdibg@mail.gmail.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <CAGsJ_4yY7OXm68vLvWL1Oh=315jR5bX4BDKsaKrqKhEfxVdibg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 20, 2025 at 10:51:56AM +0200, Krzysztof Kozlowski wrote:
-> On 20/05/2025 10:44, Bryan O'Donoghue wrote:
+Hi, sorry for the late reply, my Thunderbird is not working and I am not
+being able to receive emails. I am manually downloading the mbox and 
+then replying, so my email response may be slow :(
 
-> > I find the debug prints useful in that I know the hardware block has 
-> > been powered on, clocked etc. I agree the number of those prints seems 
-> > excessive.
-> > 
-> > The reason it is printed out multiple time is the blocks get powered on/off.
-> > 
-> > Personally I agree with Johan - it would be nice/useful to print it out 
-> > once with DEBUG on, so that we know we have successfully powered-on and 
+On 19/05/25 1:48 pm, Barry Song wrote:
+> On Mon, May 19, 2025 at 7:49 PM Dev Jain <dev.jain@arm.com> wrote:
+>>
+>> Use folio_pte_batch to batch process a large folio. Reuse the folio from prot_numa
+>> case if possible. Since modify_prot_start_ptes() gathers access/dirty bits,
+>> it lets us batch around pte_needs_flush() (for parisc, the definition includes
+>> the access bit).
+>> For all cases other than the PageAnonExclusive case, if the case holds true
+>> for one pte in the batch, one can confirm that that case will hold true for
+>> other ptes in the batch too; for pte_needs_soft_dirty_wp(), we do not pass
+>> FPB_IGNORE_SOFT_DIRTY. modify_prot_start_ptes() collects the dirty and access bits
+>> across the batch, therefore batching across pte_dirty(): this is correct since
+>> the dirty bit on the PTE really is just an indication that the folio got written
+>> to, so even if the PTE is not actually dirty (but one of the PTEs in the batch is),
+>> the wp-fault optimization can be made.
+>> The crux now is how to batch around the PageAnonExclusive case; we must check
+>> the corresponding condition for every single page. Therefore, from the large
+>> folio batch, we process sub batches of ptes mapping pages with the same PageAnonExclusive
+>> condition, and process that sub batch, then determine and process the next sub batch,
+>> and so on. Note that this does not cause any extra overhead; if suppose the size of
+>> the folio batch is 512, then the sub batch processing in total will take 512 iterations,
+>> which is the same as what we would have done before.
+>>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> ---
+>>   include/linux/mm.h |   7 ++-
+>>   mm/mprotect.c      | 126 +++++++++++++++++++++++++++++++++++----------
+>>   2 files changed, 104 insertions(+), 29 deletions(-)
+>>
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index 43748c8f3454..7d5b96f005dc 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -2542,8 +2542,11 @@ int get_cmdline(struct task_struct *task, char *buffer, int buflen);
+>>   #define  MM_CP_UFFD_WP_ALL                 (MM_CP_UFFD_WP | \
+>>                                              MM_CP_UFFD_WP_RESOLVE)
+>>
+>> -bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
+>> -                            pte_t pte);
+>> +bool can_change_ptes_writable(struct vm_area_struct *vma, unsigned long addr,
+>> +                            pte_t pte, int max_len, int *len);
+>> +#define can_change_pte_writable(vma, addr, pte)        \
+>> +       can_change_ptes_writable(vma, addr, pte, 1, NULL)
+>> +
+>>   extern long change_protection(struct mmu_gather *tlb,
+>>                                struct vm_area_struct *vma, unsigned long start,
+>>                                unsigned long end, unsigned long cp_flags);
+>> diff --git a/mm/mprotect.c b/mm/mprotect.c
+>> index 124612ce3d24..6cd8cdc168fa 100644
+>> --- a/mm/mprotect.c
+>> +++ b/mm/mprotect.c
+>> @@ -40,25 +40,36 @@
+>>
+>>   #include "internal.h"
+>>
+>> -bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
+>> -                            pte_t pte)
+>> +bool can_change_ptes_writable(struct vm_area_struct *vma, unsigned long addr,
+>> +                            pte_t pte, int max_len, int *len)
+>>   {
+>>          struct page *page;
+>> +       bool temp_ret;
+>> +       bool ret;
+>> +       int i;
+>>
+>> -       if (WARN_ON_ONCE(!(vma->vm_flags & VM_WRITE)))
+>> -               return false;
+>> +       if (WARN_ON_ONCE(!(vma->vm_flags & VM_WRITE))) {
+>> +               ret = false;
+>> +               goto out;
+>> +       }
+>>
+>>          /* Don't touch entries that are not even readable. */
+>> -       if (pte_protnone(pte))
+>> -               return false;
+>> +       if (pte_protnone(pte)) {
+>> +               ret = false;
+>> +               goto out;
+>> +       }
+>>
+>>          /* Do we need write faults for softdirty tracking? */
+>> -       if (pte_needs_soft_dirty_wp(vma, pte))
+>> -               return false;
+>> +       if (pte_needs_soft_dirty_wp(vma, pte)) {
+>> +               ret = false;
+>> +               goto out;
+>> +       }
+>>
+>>          /* Do we need write faults for uffd-wp tracking? */
+>> -       if (userfaultfd_pte_wp(vma, pte))
+>> -               return false;
+>> +       if (userfaultfd_pte_wp(vma, pte)) {
+>> +               ret = false;
+>> +               goto out;
+>> +       }
+>>
+>>          if (!(vma->vm_flags & VM_SHARED)) {
+>>                  /*
+>> @@ -68,7 +79,19 @@ bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
+>>                   * any additional checks while holding the PT lock.
+>>                   */
+>>                  page = vm_normal_page(vma, addr, pte);
+>> -               return page && PageAnon(page) && PageAnonExclusive(page);
+>> +               ret = (page && PageAnon(page) && PageAnonExclusive(page));
+>> +               if (!len)
+>> +                       return ret;
+>> +
+>> +               /* Check how many consecutive pages are AnonExclusive or not */
+>> +               for (i = 1; i < max_len; ++i) {
+>> +                       ++page;
+>> +                       temp_ret = (page && PageAnon(page) && PageAnonExclusive(page));
+>> +                       if (temp_ret != ret)
 > 
-> That's opposite to what coding style asks. Success should be silent.
+> Do we really need to do PageAnon for each subpage which is:
+> folio_test_anon(page_folio(page))
+> 
+> since we have checked subpage[0] ?
 
-The coding style says probe should be silent, but debug statements are
-not printed by default so that bit does not apply here.
+You are correct. I just wrote it like that for consistency, I'll change
+it in v4.
 
-Johan
+> 
+>> +                               break;
+>> +               }
+>> +               *len = i;
+>> +               return ret;
+>>          }
+>>
+>>          VM_WARN_ON_ONCE(is_zero_pfn(pte_pfn(pte)) && pte_dirty(pte));
+>> @@ -80,21 +103,55 @@ bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
+>>           * FS was already notified and we can simply mark the PTE writable
+>>           * just like the write-fault handler would do.
+>>           */
+>> -       return pte_dirty(pte);
+>> +       ret = pte_dirty(pte);
+>> +
+>> +out:
+>> +       /* The entire batch is guaranteed to have the same return value */
+>> +       if (len)
+>> +               *len = max_len;
+>> +       return ret;
+>>   }
+>>
+>>   static int mprotect_batch(struct folio *folio, unsigned long addr, pte_t *ptep,
+>> -               pte_t pte, int max_nr_ptes)
+>> +               pte_t pte, int max_nr_ptes, bool ignore_soft_dirty)
+>>   {
+>> -       const fpb_t flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
+>> +       fpb_t flags = FPB_IGNORE_DIRTY;
+>>
+>> -       if (!folio_test_large(folio) || (max_nr_ptes == 1))
+>> +       if (ignore_soft_dirty)
+>> +               flags |= FPB_IGNORE_SOFT_DIRTY;
+>> +
+>> +       if (!folio || !folio_test_large(folio) || (max_nr_ptes == 1))
+>>                  return 1;
+>>
+>>          return folio_pte_batch(folio, addr, ptep, pte, max_nr_ptes, flags,
+>>                                 NULL, NULL, NULL);
+>>   }
+>>
+>> +/**
+>> + * modify_sub_batch - Identifies a sub-batch which has the same return value
+>> + * of can_change_pte_writable(), from within a folio batch. max_len is the
+>> + * max length of the possible sub-batch. sub_batch_idx is the offset from
+>> + * the start of the original folio batch.
+>> + */
+>> +static int modify_sub_batch(struct vm_area_struct *vma, struct mmu_gather *tlb,
+>> +               unsigned long addr, pte_t *ptep, pte_t oldpte, pte_t ptent,
+>> +               int max_len, int sub_batch_idx)
+>> +{
+>> +       unsigned long new_addr = addr + sub_batch_idx * PAGE_SIZE;
+>> +       pte_t new_oldpte = pte_advance_pfn(oldpte, sub_batch_idx);
+>> +       pte_t new_ptent = pte_advance_pfn(ptent, sub_batch_idx);
+>> +       pte_t *new_ptep = ptep + sub_batch_idx;
+>> +       int len = 1;
+>> +
+>> +       if (can_change_ptes_writable(vma, new_addr, new_ptent, max_len, &len))
+>> +               new_ptent = pte_mkwrite(new_ptent, vma);
+>> +
+>> +       modify_prot_commit_ptes(vma, new_addr, new_ptep, new_oldpte, new_ptent, len);
+>> +       if (pte_needs_flush(new_oldpte, new_ptent))
+>> +               tlb_flush_pte_range(tlb, new_addr, len * PAGE_SIZE);
+>> +       return len;
+>> +}
+>> +
+>>   static long change_pte_range(struct mmu_gather *tlb,
+>>                  struct vm_area_struct *vma, pmd_t *pmd, unsigned long addr,
+>>                  unsigned long end, pgprot_t newprot, unsigned long cp_flags)
+>> @@ -106,7 +163,7 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>          bool prot_numa = cp_flags & MM_CP_PROT_NUMA;
+>>          bool uffd_wp = cp_flags & MM_CP_UFFD_WP;
+>>          bool uffd_wp_resolve = cp_flags & MM_CP_UFFD_WP_RESOLVE;
+>> -       int nr_ptes;
+>> +       int sub_batch_idx, max_len, len, nr_ptes;
+>>
+>>          tlb_change_page_size(tlb, PAGE_SIZE);
+>>          pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
+>> @@ -121,10 +178,12 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>          flush_tlb_batched_pending(vma->vm_mm);
+>>          arch_enter_lazy_mmu_mode();
+>>          do {
+>> +               sub_batch_idx = 0;
+>>                  nr_ptes = 1;
+>>                  oldpte = ptep_get(pte);
+>>                  if (pte_present(oldpte)) {
+>>                          int max_nr_ptes = (end - addr) >> PAGE_SHIFT;
+>> +                       struct folio *folio = NULL;
+>>                          pte_t ptent;
+>>
+>>                          /*
+>> @@ -132,7 +191,6 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>                           * pages. See similar comment in change_huge_pmd.
+>>                           */
+>>                          if (prot_numa) {
+>> -                               struct folio *folio;
+>>                                  int nid;
+>>                                  bool toptier;
+>>
+>> @@ -180,7 +238,8 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>                                      toptier) {
+>>   skip_batch:
+>>                                          nr_ptes = mprotect_batch(folio, addr, pte,
+>> -                                                                oldpte, max_nr_ptes);
+>> +                                                                oldpte, max_nr_ptes,
+>> +                                                                true);
+>>                                          continue;
+>>                                  }
+>>                                  if (folio_use_access_time(folio))
+>> @@ -188,6 +247,11 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>                                                  jiffies_to_msecs(jiffies));
+>>                          }
+>>
+>> +                       if (!folio)
+>> +                               folio = vm_normal_folio(vma, addr, oldpte);
+>> +
+>> +                       nr_ptes = mprotect_batch(folio, addr, pte, oldpte,
+>> +                                                max_nr_ptes, false);
+>>                          oldpte = modify_prot_start_ptes(vma, addr, pte, nr_ptes);
+>>                          ptent = pte_modify(oldpte, newprot);
+>>
+>> @@ -209,15 +273,23 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>                           * example, if a PTE is already dirty and no other
+>>                           * COW or special handling is required.
+>>                           */
+>> -                       if ((cp_flags & MM_CP_TRY_CHANGE_WRITABLE) &&
+>> -                           !pte_write(ptent) &&
+>> -                           can_change_pte_writable(vma, addr, ptent))
+>> -                               ptent = pte_mkwrite(ptent, vma);
+>> -
+>> -                       modify_prot_commit_ptes(vma, addr, pte, oldpte, ptent, nr_ptes);
+>> -                       if (pte_needs_flush(oldpte, ptent))
+>> -                               tlb_flush_pte_range(tlb, addr, PAGE_SIZE);
+>> -                       pages++;
+>> +                       if (cp_flags & MM_CP_TRY_CHANGE_WRITABLE) {
+>> +                               max_len = nr_ptes;
+>> +                               while (sub_batch_idx < nr_ptes) {
+>> +
+>> +                                       /* Get length of sub batch */
+>> +                                       len = modify_sub_batch(vma, tlb, addr, pte,
+>> +                                                              oldpte, ptent, max_len,
+>> +                                                              sub_batch_idx);
+>> +                                       sub_batch_idx += len;
+>> +                                       max_len -= len;
+>> +                               }
+>> +                       } else {
+>> +                               modify_prot_commit_ptes(vma, addr, pte, oldpte, ptent, nr_ptes);
+>> +                               if (pte_needs_flush(oldpte, ptent))
+>> +                                       tlb_flush_pte_range(tlb, addr, nr_ptes * PAGE_SIZE);
+>> +                       }
+>> +                       pages += nr_ptes;
+>>                  } else if (is_swap_pte(oldpte)) {
+>>                          swp_entry_t entry = pte_to_swp_entry(oldpte);
+>>                          pte_t newpte;
+>> --
+>> 2.30.2
+>>
+> 
+> Thanks
+> barry
+
 
