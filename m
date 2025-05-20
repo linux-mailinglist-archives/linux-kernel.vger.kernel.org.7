@@ -1,163 +1,166 @@
-Return-Path: <linux-kernel+bounces-655518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE904ABD6CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:30:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876D9ABD6D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:30:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70BFC3BA0A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:29:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 929851BA3A4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D566727A911;
-	Tue, 20 May 2025 11:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D7126A1DB;
+	Tue, 20 May 2025 11:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PtpUo+JX"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="P6XloOu0"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993202701AA
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 11:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747740603; cv=none; b=aZSzq8/vlFzdMdVvopVJ5eGtzfjNH9Mk8pewCU1qS36j5h7psNjOkWliAnM6MRKpvh3pJzlx4KJ1cHuyUDK8mDJxAN8B+YfkFfssPx/y9+BxVtT3mflmM/SFH2RdYrrRO8cPUxBrgWLggRpHwkTO0coxd4mLZIH92qtcB17EBsQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747740603; c=relaxed/simple;
-	bh=jFnYWDnEGjQwDd2gLR9uDiOWEyDyzknYhlUitzuDj/0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=LXV6c/FH7vg3m9heGVp7VZ50QFDc0vrUUyT6HKnBAB56PC4q5JMfXOkPEVzouvHCMLFBFqminyc5AP871vVpIeJN3TBLrGNUccZ/XuRECrU0BY/UItJHkepBuLcHY++Fb9WTCsEBhtIEsJ7wuXWxuYl4xoXJ7PlrODCoLNWqsh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PtpUo+JX; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-601ed5e97e9so3400117a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 04:30:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747740600; x=1748345400; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iNSWdVp0pCGv6zZlGqB2G5Ypt6F8CERWSTLAliUg2NE=;
-        b=PtpUo+JXmKMgvTGkgzwZvWY6aJFPYOQw/ciYFUuvUmQK5FITDVJjZPWWs9vF7Uh0qb
-         j3i7lJtijieZxLXGQ/oooZSKnHpZWlT1TvXzHc2cH5TJs0P4LVvpGKf5e2EfqPXlC1my
-         ZvtbXf9RQyUrGtj0XrdVuf/ACLxonU9OCBxAd9DexX1kG/iH8vlBHTBYImEGZFEb6rDA
-         /x3dg+Sc1VZ2onIhTT5T7PWBXmy1ImHuQhd62eL49xTPzEeE/c7HvsKCo+apTOza9DVw
-         QPYZioTY/31nkWeuvJuIHa4QCUIjGjYS/62M4YJUjN02OjUb3JlFjBHIqz/VyekDWePz
-         HVyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747740600; x=1748345400;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iNSWdVp0pCGv6zZlGqB2G5Ypt6F8CERWSTLAliUg2NE=;
-        b=TCoTugdPdVbeOEajuvON6LZOws6ENyuyhCpJU5WfKe6LxNn16mamQAzv6KNUZLWb6H
-         p30Kkty+5hEETmjJUWxHRTPENHjRan4ABN8uFr2n8rDmHFCyXf8dlO0wTtzsDEH2lb7J
-         bkYQL3SKno6Y8ts+qosOSKwe+YNANc2pFMoUP5/iwACPyfca8pHUzjTBcnLmi6OfzzYP
-         bdDiBkfxXqAAeYVtuIli7/cifZdF4f0TP4hhgIvleScBD3zokotOUVtaPr7j2JVNpHSc
-         pe2e0loFXRmuP0XhEgxqO+VkJEa7RO06b4pjpxdj40OaAgP0UXWfZ0wv9nwZPjQnZ03f
-         KJ9g==
-X-Gm-Message-State: AOJu0YwTMhW5c1/0j7VNaw/Lbkkxj0rSA2+eVPTmwmwG2KrpGzdZC97r
-	wdtAUVV3SutF7jMChNozHnXypAZ5GXSVb+IfFJVGlL53OwrwJc0SgvfJ
-X-Gm-Gg: ASbGnct/zQvsoJAoSwIPqmXyws5vVUUAkM4RwsSnCiW4yMAUAWrAmeKXiDVHdDfmvQC
-	fsUQRrjdrnV6ZBdN0qlAd0xHNwlsmlNslPD6VoNukdEJrQwBHJ3YIQ6RxSgJZfvedWih2UfnlqH
-	qJCM3iRxy+QxaFEUoD9CU+WXFSpBLIMVPcrPFZzmjMarsR5dxInAv6BNOGxsoQ0m1wAjZO0Y+gm
-	B47MmuYK83BGuBVAs7nZ9Dnnz3XDM+jCpcf+z6Ws3ALnadoN3Ipkai9CUJdkZmV1o754AwgXHqa
-	V6hzQ++WTj47ie9AJ90polgHTRRP5fM8pExaqbXAMfNFNjoFN9R7OR09NPgfsGXm4GivL8uAUvm
-	6P0A=
-X-Google-Smtp-Source: AGHT+IFHkJS1TgytAIFMsB6vO1Cu5EW569Xn4PZHR3u4t0a3HsI/YxGapJU2ZnEmP8JJG2H20JPt0A==
-X-Received: by 2002:a17:907:7da2:b0:ace:5461:81dd with SMTP id a640c23a62f3a-ad536b5a0cfmr1500424866b.3.1747740599535;
-        Tue, 20 May 2025 04:29:59 -0700 (PDT)
-Received: from smtpclient.apple ([64.176.163.79])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d04e816sm708660766b.23.2025.05.20.04.29.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 May 2025 04:29:58 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B851F0984;
+	Tue, 20 May 2025 11:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747740647; cv=pass; b=qcJZalbR4vfgkonfiO9O3o5gIBcdyeSLtpS2v6skMXndB67+19+JjXJv3DwMebFrWe2zcl9pok1SB5HPFrhKheQNWAH0KNFK8SXDCCuA6eGJ6X51G+QomKODxDQsUfM7xM7jMCMg6oH1HEq3P6lKX5yNBAXpUurmGIYyrdvhGr0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747740647; c=relaxed/simple;
+	bh=YvgGfWJY5DvIz5iIyBCqQuZoMiDF090odSO8tP3apZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pNooQWLGMsxHNGptUOr3KD3Rn+yfDUpCstahFEDe/bGTmL9PMPt301DVg9uV4kBddBi1IvOWTS1pPqaxDIwOStWItDMDUM1JKM7gWjxixdWY3aSe6ZQf3uZdNrc5zsM93DmQHE9MdPVHP8BfhB3mlxD4yY57Q/n1XXj1NDcgrVE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=P6XloOu0; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1747740615; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=OAfR9+dfmGLx0obq9Sq2upth3x8aZfgbSaSOdAYvNeTrZLgGcS/qq+CEQrnF/b4iTKCs0bRHzXc2j//YdtR6R5420umkTC1ZcqWa/AaZkGCBDjXvF8xmWvPTDBqOXNpAVcEQkcJVheCp4/OsRBTFg5Ld6nuhG72HHGFIglu6P88=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1747740615; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7rhiKLJdl6FOUBApCJlP99V++YwPM8GHJ2e/QuOQgt0=; 
+	b=lgOplfh1rpk/8dUIE/h/dxvqVVKnnxJg1Pzwd+xWxZ00ZOp8a3KVQOlLGrZR4f4Le54TjvNc/IfNyPmwE//aEPxT/DXviWNashz+0iPDYEW7KWz/Z7sdhTDoBIP14lD74OoboLA+O/xwQzde+9g9FqDcCBSu1viP2Z4ZJB8k7mQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747740615;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=7rhiKLJdl6FOUBApCJlP99V++YwPM8GHJ2e/QuOQgt0=;
+	b=P6XloOu0uzM18xb8tmeg//wX9uHe0HJlHmrG9zxCVuTl/YluAwoxMl/uXREwZgs4
+	DOGU/ad53sLOZLvPXwnq1mThzPPLgsq/AGhEWjs/97LnG//xLjg7+Qd2BJSkxcnszRP
+	NF0AadJ2qpr5Oe1HfZA/g2qE76bt0LOwzsr/g2ZQ=
+Received: by mx.zohomail.com with SMTPS id 1747740613390113.43210297175915;
+	Tue, 20 May 2025 04:30:13 -0700 (PDT)
+Date: Tue, 20 May 2025 12:30:08 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Steven Price <steven.price@arm.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com, Rob Herring <robh@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v2 3/3] drm/panfrost: show device-wide list of DRM GEM
+ objects over DebugFS
+Message-ID: <w2arwkbzomfwkdq3c5veavjcfj3tlcwckmmjjy6wn5kehd4lvm@j4nxi4zfl7pm>
+References: <20250507160713.1363985-1-adrian.larumbe@collabora.com>
+ <20250507160713.1363985-4-adrian.larumbe@collabora.com>
+ <9c0b95c8-bf2d-4689-ac1f-ccacba826060@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
-Subject: Re: [RFC v2 7/9] x86/mm: Introduce Remote Action Request
-From: Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20250520010350.1740223-8-riel@surriel.com>
-Date: Tue, 20 May 2025 14:29:44 +0300
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
- the arch/x86 maintainers <x86@kernel.org>,
- kernel-team@meta.com,
- Dave Hansen <dave.hansen@linux.intel.com>,
- luto@kernel.org,
- peterz@infradead.org,
- Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
- "H. Peter Anvin" <hpa@zytor.com>,
- Yu-cheng Yu <yu-cheng.yu@intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4A879001-E213-4239-9D25-CDA8EC3E2CD9@gmail.com>
-References: <20250520010350.1740223-1-riel@surriel.com>
- <20250520010350.1740223-8-riel@surriel.com>
-To: Rik van Riel <riel@surriel.com>
-X-Mailer: Apple Mail (2.3826.500.181.1.5)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9c0b95c8-bf2d-4689-ac1f-ccacba826060@arm.com>
 
-Not a full review, but..
+Hi Steven,
 
-> On 20 May 2025, at 4:02, Rik van Riel <riel@surriel.com> wrote:
->=20
-> +/*
-> + * This is a modified version of smp_call_function_many() of =
-kernel/smp.c,
+On 08.05.2025 11:42, Steven Price wrote:
+> On 07/05/2025 17:07, Adrián Larumbe wrote:
+> > This change is essentially a Panfrost port of commit a3707f53eb3f
+> > ("drm/panthor: show device-wide list of DRM GEM objects over DebugFS").
+> >
+> > The DebugFS file is almost the same as in Panthor, minus the GEM object
+> > usage flags, since Panfrost has no kernel-only BO's.
+> >
+> > Two additional GEM state flags which are displayed but aren't relevant
+> > to Panthor are 'Purged' and 'Purgeable', since Panfrost implements an
+> > explicit shrinker and a madvise ioctl to flag objects as reclaimable.
+> >
+> > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+>
+> Minor point, but you've used "ptdev" rather than "pfdev" several times
+> in this patch - it would be good to avoid this.
 
-The updated function names is smp_call_function_many_cond() and it is
-not aligned with smp_call_rar_many. I think the new version is =
-(suprisingly)
-better, so it=E2=80=99d be beneficial to bring smp_call_rar_many() to be =
-like the
-updated one in smp.c.
+I've noticed I also forgot to fix the spelling when porting some devfreq fix code from Panthor some time ago.
 
-> + * without a function pointer, because the RAR handler is the ucode.
-> + */
-> +void smp_call_rar_many(const struct cpumask *mask, u16 pcid,
-> +		       unsigned long start, unsigned long end)
-> +{
-> +	unsigned long pages =3D (end - start + PAGE_SIZE) / PAGE_SIZE;
-> +	int cpu, next_cpu, this_cpu =3D smp_processor_id();
-> +	cpumask_t *dest_mask;
-> +	unsigned long idx;
-> +
-> +	if (pages > RAR_INVLPG_MAX_PAGES || end =3D=3D TLB_FLUSH_ALL)
-> +		pages =3D RAR_INVLPG_MAX_PAGES;
-> +
-> +	/*
-> +	 * Can deadlock when called with interrupts disabled.
-> +	 * We allow cpu's that are not yet online though, as no one else =
-can
-> +	 * send smp call function interrupt to this cpu and as such =
-deadlocks
-> +	 * can't happen.
-> +	 */
-> +	WARN_ON_ONCE(cpu_online(this_cpu) && irqs_disabled()
-> +		     && !oops_in_progress && !early_boot_irqs_disabled);
+I'll send a new patch within the same series to fix thosoe too.
 
-I thought you agreed to change it to make it use lockdep instead (so it =
-will
-be compiled out without LOCKDEP), like done in =
-smp_call_function_many_cond()
-
-> +
-> +	/* Try to fastpath.  So, what's a CPU they want?  Ignoring this =
-one. */
-> +	cpu =3D cpumask_first_and(mask, cpu_online_mask);
-> +	if (cpu =3D=3D this_cpu)
-> +		cpu =3D cpumask_next_and(cpu, mask, cpu_online_mask);
-> +
-
-Putting aside the rest of the code, I see you don=E2=80=99t call =
-should_flush_tlb().
-I think it is worth mentioning in commit log or comment the rationale =
-behind
-it (and maybe benchmarks to justify it).
-
+> I'm also seeing a splat when running this, see below. I haven't got my
+> head around how this is happening, but I see it when glmark quits at the
+> end of the test.
+>
+> Steve
+>
+> [  399.505066] Unable to handle kernel NULL pointer dereference at virtual address 00000004 when write
+> [  399.515519] [00000004] *pgd=00000000
+> [  399.519541] Internal error: Oops: 805 [#1] SMP ARM
+> [  399.524896] Modules linked in: panfrost gpu_sched drm_shmem_helper
+> [  399.531817] CPU: 1 UID: 1000 PID: 316 Comm: glmark2-es2-drm Not tainted 6.15.0-rc5-00731-g9cc5b4d7da27 #1 NONE
+> [  399.543098] Hardware name: Rockchip (Device Tree)
+> [  399.548350] PC is at panfrost_gem_free_object+0x8c/0x160 [panfrost]
+> [  399.555371] LR is at trace_contention_end+0x4c/0xfc
+> [  399.560822] pc : [<bf01a384>]    lr : [<c03d0170>]    psr: 60010013
+> [  399.567823] sp : f22b1df8  ip : c2163e00  fp : c4b15800
+> [  399.573658] r10: 00000009  r9 : c5f94c40  r8 : c4b15850
+> [  399.579492] r7 : c4b15884  r6 : c7813614  r5 : c5f94f30  r4 : c7813400
+> [  399.586784] r3 : 00000000  r2 : 00000000  r1 : 00000000  r0 : c5f94f30
+> [  399.594075] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+> [  399.602048] Control: 10c5387d  Table: 06c6c06a  DAC: 00000051
+> [  399.608465] Register r0 information: slab kmalloc-1k start c5f94c00 pointer offset 816 size 1024
+> [  399.618296] Register r1 information: NULL pointer
+> [  399.623551] Register r2 information: NULL pointer
+> [  399.628804] Register r3 information: NULL pointer
+> [  399.634057] Register r4 information: slab kmalloc-1k start c7813400 pointer offset 0 size 1024
+> [  399.643690] Register r5 information: slab kmalloc-1k start c5f94c00 pointer offset 816 size 1024
+> [  399.653517] Register r6 information: slab kmalloc-1k start c7813400 pointer offset 532 size 1024
+> [  399.663344] Register r7 information: slab kmalloc-1k start c4b15800 pointer offset 132 size 1024
+> [  399.673171] Register r8 information: slab kmalloc-1k start c4b15800 pointer offset 80 size 1024
+> [  399.682901] Register r9 information: slab kmalloc-1k start c5f94c00 pointer offset 64 size 1024
+> [  399.692631] Register r10 information: non-paged memory
+> [  399.698370] Register r11 information: slab kmalloc-1k start c4b15800 pointer offset 0 size 1024
+> [  399.708101] Register r12 information: non-slab/vmalloc memory
+> [  399.714521] Process glmark2-es2-drm (pid: 316, stack limit = 0x178bc4ea)
+> [  399.722009] Stack: (0xf22b1df8 to 0xf22b2000)
+> [  399.726874] 1de0:                                                       00000000 c4b15884
+> [  399.736012] 1e00: c7813400 c4b15800 00000007 c4b15884 c4b15850 c6815000 00000009 c0bb3824
+> [  399.745150] 1e20: 00000000 40086409 c7860800 c15fd008 00000008 c0bb588c c6815630 0000013c
+> [  399.754288] 1e40: 0000e280 00000000 c1b35650 b235e000 f22b1f5c 00000008 f22b1e74 bec37550
+> [  399.763426] 1e60: c6815630 c694ea00 c0bb47cc 00000051 00000000 00000007 00000000 00000000
+> [  399.772564] 1e80: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> [  399.781701] 1ea0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> [  399.790839] 1ec0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> [  399.799977] 1ee0: 00000000 00000000 00000000 00000000 00000000 356cc46f 00000000 40086409
+> [  399.809115] 1f00: c694ea00 c03000c0 bec37550 c694ea00 c6815000 00000006 c4bf9b70 c058d694
+> [  399.818253] 1f20: b2b47000 f22b1f50 00000001 c03002f0 00000000 c5f60900 00000000 b235e000
+> [  399.827391] 1f40: 007e9000 c053d874 f22b1f50 00000001 f22b1f50 f22b1f50 004e0b14 c5f60940
+> [  399.836528] 1f60: b235e000 b2b46fff c4abec0c b09e3000 b2bcffff 00000000 00000000 356cc46f
+> [  399.845666] 1f80: 00000003 004e6b40 bec37550 40086409 00000036 c03002f0 c6815000 00000036
+> [  399.854805] 1fa0: 01cb32a0 c03000c0 004e6b40 bec37550 00000006 40086409 bec37550 00000007
+> [  399.863943] 1fc0: 004e6b40 bec37550 40086409 00000036 00000000 00000000 01cb2da0 01cb32a0
+> [  399.873080] 1fe0: b6e4b08c bec37534 b6e3442f b6bb8f98 60010030 00000006 00000000 00000000
+> [  399.882216] Call trace:
+> [  399.882222]  panfrost_gem_free_object [panfrost] from drm_gem_handle_delete+0x84/0xb0
+> [  399.893813]  drm_gem_handle_delete from drm_ioctl+0x2b8/0x4f4
+> [  399.900237]  drm_ioctl from sys_ioctl+0x428/0xe30
+> [  399.905496]  sys_ioctl from ret_fast_syscall+0x0/0x1c
+> [  399.911141] Exception stack(0xf22b1fa8 to 0xf22b1ff0)
+> [  399.916783] 1fa0:                   004e6b40 bec37550 00000006 40086409 bec37550 00000007
+> [  399.925922] 1fc0: 004e6b40 bec37550 40086409 00000036 00000000 00000000 01cb2da0 01cb32a0
+> [  399.935058] 1fe0: b6e4b08c bec37534 b6e3442f b6bb8f98
+> [  399.940702] Code: eb0018fa e5943218 e5942214 e1a00005 (e5823004)
+> [  399.947532] ---[ end trace 0000000000000000 ]---
 
