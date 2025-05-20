@@ -1,194 +1,141 @@
-Return-Path: <linux-kernel+bounces-655725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DFAABDB1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:06:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9566ABDB20
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 044A24A38BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:02:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B78B188BDAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 14:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138E0247296;
-	Tue, 20 May 2025 14:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C422A242D92;
+	Tue, 20 May 2025 14:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H7x5e5mJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JTCtQwdy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC86E24728A;
-	Tue, 20 May 2025 14:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210262F37;
+	Tue, 20 May 2025 14:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747749722; cv=none; b=t8abUY6P2j5XInj3j1iXJLkyVuITsQqGdoBt2wGQ4WWS6cJ4ml+zo6riA1DSLW/O07QgD95IxjPA1w/d3q2L7z5eClmX+isT2A2GdvwZAtkh9klPJkPN7H3z+cuvql7ldyTjZch9NjynZGjHGH/js+ySLQpQXaLrqTxRSkGLAbQ=
+	t=1747749891; cv=none; b=agxjxtLW2HfJHEGDGdVrusKKyoUkg2ZD9tgs+MxAItSvRsClJcEwnRUMMaXIrZDXVNGaIkrjrvVc/p05hktm6JLQCyoQts8whlmg76u4XIcPLPzk+tfj8IlHGvjz/HPmYWhfYYUi435xuEd5wzWOtftticq8SQx/f4jzIdLknZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747749722; c=relaxed/simple;
-	bh=iygAvbmKh6dIuYS33fv3jjQnxcbHrBReM73qTZx4BJ4=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gj4oA1vvbvvoZzU4GTeJ4wcO+S0RqgzOpuxg1nm9r9Z4/yFXkuuou/gIhRXsPW1IX1UXogA11820VCxAXab3k+m0UCPuUnb7jyQT35N8KcCRtflrxN+822qCLgsQmjNoY7rgFddOSSBnTVrTgTE4ZkLxLFx7Yj9zzFiVSJ6RuTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H7x5e5mJ; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747749720; x=1779285720;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=iygAvbmKh6dIuYS33fv3jjQnxcbHrBReM73qTZx4BJ4=;
-  b=H7x5e5mJnNYb6l6C9qjZ7kUP+P3PVtRWrqFwV6WEH3CUvU/lISnprx6E
-   2xG3NS/UaL0PW22i8xjSCuYa4XO5hvPKk97H2Idt2mHDtPABVlTWd3yXZ
-   eJkvQRQniErZTTxs3yyCewn2sEh7X/kfisQ0x5S6jGV02yakueMF4HI3V
-   ATTGLDxmVb96mgOsp9EJl2FbNqnNuM61iDa3cxMv6wxhyEgc6O+aBpEsG
-   PhwRPAi8SVUgk8UI+b8fVHHishexKKuNYu1EFbIJZ8CfiR9uWQy9H7X5m
-   mWeJjQZX0V0Rl+SMCQN2GhSz5i4ECnDh/9sulq9VDmC/2Un/rMia6slxE
-   g==;
-X-CSE-ConnectionGUID: +myJu97yRJeKx+lHZfvmGw==
-X-CSE-MsgGUID: XIf7ncS8QOWj4x0DraYaHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49669673"
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="49669673"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 07:01:59 -0700
-X-CSE-ConnectionGUID: 44P5hnxsQ+GNkjwKcwFHTQ==
-X-CSE-MsgGUID: n5hyRiSRSlSt5qEwKiZyQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
-   d="scan'208";a="139586729"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.235])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 07:01:57 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 20 May 2025 17:01:53 +0300 (EEST)
-To: "David E. Box" <david.e.box@linux.intel.com>
-cc: LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
-    srinivas.pandruvada@linux.intel.com, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, tony.luck@intel.com, 
-    xi.pardee@linux.intel.com, Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH 07/15] platform/x86/intel/vsec: Add new Discovery
- feature
-In-Reply-To: <20250430212106.369208-8-david.e.box@linux.intel.com>
-Message-ID: <56f56bdd-80be-d140-1b9b-6c1d75df252f@linux.intel.com>
-References: <20250430212106.369208-1-david.e.box@linux.intel.com> <20250430212106.369208-8-david.e.box@linux.intel.com>
+	s=arc-20240116; t=1747749891; c=relaxed/simple;
+	bh=VgDUsWQh9mJ8cHhZPRAtRTcBXf6NeJtKdNxp+2kehWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ciXDQ94kUZE1a8KW3CBaiUw1sL4/w1xUpqqagXQ38GiTuh+yGqxh4TKqeMyIPQTaOGxT1XCJB062UcLfcaX6l6sAoISot+T5qH78YpImztF4srCfRR0lXDSwiHDFC3h1LEih8QKSeUU3HKhcZd26cc31NGzjmYKwXIFrjMSn3rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JTCtQwdy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B247FC4CEEF;
+	Tue, 20 May 2025 14:04:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747749890;
+	bh=VgDUsWQh9mJ8cHhZPRAtRTcBXf6NeJtKdNxp+2kehWw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JTCtQwdyidM6pLDCi79WvGZpz7jCqUd+nRz7nld6DZUJFUHc+zlC4bR6Hn9bsB1wX
+	 KaticX7V/hO2295lHp5hLHcDFDr+AABnFHPxvOzRrZhh2bICRZCzyzJ+uikiZcrTyh
+	 Ej4P9kmreibTSTLerjdGokH03Bf+zSdq0bK/7vq9ZmfNw9TqjZgKZlzlVeyosKpLKj
+	 tsJwF+5C700BfJCzL4Jj/YL8gaGJubGp+cSs+QAY3Dhf3cXilDqxZ91oecoB4BXxez
+	 qBcCk9WST7H9kWuRFkhogHGjGjoVrdgmoDcWGcfW8PjMffjyIp/tRLyMId8ypMPlOP
+	 RN5h9QlACoPhQ==
+Date: Tue, 20 May 2025 10:04:49 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: =?utf-8?Q?Micha=C5=82?= Pecio <michal.pecio@gmail.com>
+Cc: patches@lists.linux.dev, stable@vger.kernel.org,
+	Jonathan Bell <jonathan@raspberrypi.org>,
+	Oliver Neukum <oneukum@suse.com>,
+	Mathias Nyman <mathias.nyman@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	mathias.nyman@intel.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.14 08/15] usb: xhci: Don't trust the EP Context
+ cycle bit when moving HW dequeue
+Message-ID: <aCyMAdNzTPgS0urL@lappy>
+References: <20250512180352.437356-1-sashal@kernel.org>
+ <20250512180352.437356-8-sashal@kernel.org>
+ <20250512231628.7f91f435@foxbook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250512231628.7f91f435@foxbook>
 
-On Wed, 30 Apr 2025, David E. Box wrote:
+On Mon, May 12, 2025 at 11:16:28PM +0200, Michał Pecio wrote:
+>On Mon, 12 May 2025 14:03:43 -0400, Sasha Levin wrote:
+>> From: Michal Pecio <michal.pecio@gmail.com>
+>>
+>> [ Upstream commit 6328bdc988d23201c700e1e7e04eb05a1149ac1e ]
+>>
+>> VIA VL805 doesn't bother updating the EP Context cycle bit when the
+>> endpoint halts. This is seen by patching xhci_move_dequeue_past_td()
+>> to print the cycle bits of the EP Context and the TRB at hw_dequeue
+>> and then disconnecting a flash drive while reading it. Actual cycle
+>> state is random as expected, but the EP Context bit is always 1.
+>>
+>> This means that the cycle state produced by this function is wrong
+>> half the time, and then the endpoint stops working.
+>>
+>> Work around it by looking at the cycle bit of TD's end_trb instead
+>> of believing the Endpoint or Stream Context. Specifically:
+>>
+>> - rename cycle_found to hw_dequeue_found to avoid confusion
+>> - initialize new_cycle from td->end_trb instead of hw_dequeue
+>> - switch new_cycle toggling to happen after end_trb is found
+>>
+>> Now a workload which regularly stalls the device works normally for
+>> a few hours and clearly demonstrates the HW bug - the EP Context bit
+>> is not updated in a new cycle until Set TR Dequeue overwrites it:
+>>
+>> [  +0,000298] sd 10:0:0:0: [sdc] Attached SCSI disk
+>> [  +0,011758] cycle bits: TRB 1 EP Ctx 1
+>> [  +5,947138] cycle bits: TRB 1 EP Ctx 1
+>> [  +0,065731] cycle bits: TRB 0 EP Ctx 1
+>> [  +0,064022] cycle bits: TRB 0 EP Ctx 0
+>> [  +0,063297] cycle bits: TRB 0 EP Ctx 0
+>> [  +0,069823] cycle bits: TRB 0 EP Ctx 0
+>> [  +0,063390] cycle bits: TRB 1 EP Ctx 0
+>> [  +0,063064] cycle bits: TRB 1 EP Ctx 1
+>> [  +0,062293] cycle bits: TRB 1 EP Ctx 1
+>> [  +0,066087] cycle bits: TRB 0 EP Ctx 1
+>> [  +0,063636] cycle bits: TRB 0 EP Ctx 0
+>> [  +0,066360] cycle bits: TRB 0 EP Ctx 0
+>>
+>> Also tested on the buggy ASM1042 which moves EP Context dequeue to
+>> the next TRB after errors, one problem case addressed by the rework
+>> that implemented this loop. In this case hw_dequeue can be enqueue,
+>> so simply picking the cycle bit of TRB at hw_dequeue wouldn't work.
+>>
+>> Commit 5255660b208a ("xhci: add quirk for host controllers that
+>> don't update endpoint DCS") tried to solve the stale cycle problem,
+>> but it was more complex and got reverted due to a reported issue.
+>>
+>> Cc: Jonathan Bell <jonathan@raspberrypi.org>
+>> Cc: Oliver Neukum <oneukum@suse.com>
+>> Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+>> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+>> Link: https://lore.kernel.org/r/20250505125630.561699-2-mathias.nyman@linux.intel.com
+>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>
+>Hi,
+>
+>This wasn't tagged for stable because the function may potentially
+>still be affected by some unforeseen HW bugs, and previous attempt
+>at fixing the issue ran into trouble and nobody truly knows why.
+>
+>The problem is very old and not critically severe, so I think this
+>can wait till 6.15. People don't like minor release regressions.
 
-> Add the PCIe VSEC ID for new Intel Platform Monitoring Technology
-> Capability Discovery feature. Discovery provides detailed information for
-> the various Intel VSEC features. Also make the driver a supplier for
-> TPMI and Telemetry drivers which will use the information.
-> 
-> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
-> ---
->  drivers/platform/x86/intel/vsec.c | 26 ++++++++++++++++++++++++--
->  include/linux/intel_vsec.h        |  4 +++-
->  2 files changed, 27 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/intel/vsec.c b/drivers/platform/x86/intel/vsec.c
-> index 5374abef0b48..e3ec17a53e62 100644
-> --- a/drivers/platform/x86/intel/vsec.c
-> +++ b/drivers/platform/x86/intel/vsec.c
-> @@ -65,6 +65,9 @@ static const char *intel_vsec_name(enum intel_vsec_id id)
->  	case VSEC_ID_TPMI:
->  		return "tpmi";
->  
-> +	case VSEC_ID_DISCOVERY:
-> +		return "discovery";
-> +
->  	default:
->  		return NULL;
->  	}
-> @@ -83,6 +86,8 @@ static bool intel_vsec_supported(u16 id, unsigned long caps)
->  		return !!(caps & VSEC_CAP_SDSI);
->  	case VSEC_ID_TPMI:
->  		return !!(caps & VSEC_CAP_TPMI);
-> +	case VSEC_ID_DISCOVERY:
-> +		return !!(caps & VSEC_CAP_DISCOVERY);
->  	default:
->  		return false;
->  	}
-> @@ -140,6 +145,8 @@ static bool vsec_driver_present(int cap_id)
->  		return IS_ENABLED(CONFIG_INTEL_SDSI);
->  	case VSEC_CAP_TPMI:
->  		return IS_ENABLED(CONFIG_INTEL_TPMI);
-> +	case VSEC_CAP_DISCOVERY:
-> +		return IS_ENABLED(CONFIG_INTEL_PMT_DISCOVERY);
->  	default:
->  		return false;
->  	}
-> @@ -392,6 +399,9 @@ static int get_cap_id(u32 header_id, unsigned long *cap_id)
->  	case VSEC_ID_TPMI:
->  		*cap_id = ilog2(VSEC_CAP_TPMI);
->  		break;
-> +	case VSEC_ID_DISCOVERY:
-> +		*cap_id = ilog2(VSEC_CAP_DISCOVERY);
-> +		break;
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -677,14 +687,26 @@ static const struct intel_vsec_platform_info mtl_info = {
->  	.caps = VSEC_CAP_TELEMETRY,
->  };
->  
-> +static const struct vsec_feature_dependency oobmsm_deps[] = {
-> +	{
-> +		.feature = VSEC_CAP_TELEMETRY,
-> +		.supplier_bitmap = VSEC_CAP_DISCOVERY
-
-Missing a comma.
-
-> +	},
-> +};
-> +
->  /* OOBMSM info */
->  static const struct intel_vsec_platform_info oobmsm_info = {
-> -	.caps = VSEC_CAP_TELEMETRY | VSEC_CAP_SDSI | VSEC_CAP_TPMI,
-> +	.caps = VSEC_CAP_TELEMETRY | VSEC_CAP_SDSI | VSEC_CAP_TPMI |
-> +		VSEC_CAP_DISCOVERY,
-> +	.deps = oobmsm_deps,
-> +	.num_deps = ARRAY_SIZE(oobmsm_deps),
->  };
->  
->  /* DMR OOBMSM info */
->  static const struct intel_vsec_platform_info dmr_oobmsm_info = {
-> -	.caps = VSEC_CAP_TELEMETRY | VSEC_CAP_TPMI,
-> +	.caps = VSEC_CAP_TELEMETRY | VSEC_CAP_TPMI | VSEC_CAP_DISCOVERY,
-> +	.deps = oobmsm_deps,
-> +	.num_deps = ARRAY_SIZE(oobmsm_deps),
->  };
->  
->  /* TGL info */
-> diff --git a/include/linux/intel_vsec.h b/include/linux/intel_vsec.h
-> index 71067afaca99..a07796d7d43b 100644
-> --- a/include/linux/intel_vsec.h
-> +++ b/include/linux/intel_vsec.h
-> @@ -16,7 +16,8 @@
->  #define VSEC_CAP_CRASHLOG	BIT(3)
->  #define VSEC_CAP_SDSI		BIT(4)
->  #define VSEC_CAP_TPMI		BIT(5)
-> -#define VSEC_FEATURE_COUNT	6
-> +#define VSEC_CAP_DISCOVERY	BIT(6)
-> +#define VSEC_FEATURE_COUNT	7
->  
->  /* Intel DVSEC offsets */
->  #define INTEL_DVSEC_ENTRIES		0xA
-> @@ -33,6 +34,7 @@ enum intel_vsec_id {
->  	VSEC_ID_TELEMETRY	= 2,
->  	VSEC_ID_WATCHER		= 3,
->  	VSEC_ID_CRASHLOG	= 4,
-> +	VSEC_ID_DISCOVERY	= 12,
->  	VSEC_ID_SDSI		= 65,
->  	VSEC_ID_TPMI		= 66,
->  };
-> 
+I'll drop it, thanks!
 
 -- 
- i.
-
+Thanks,
+Sasha
 
