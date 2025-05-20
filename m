@@ -1,147 +1,114 @@
-Return-Path: <linux-kernel+bounces-655356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45117ABD45D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:18:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3CE0ABD464
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D37D7B1F1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:17:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1066B1BA17B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139A425D1F9;
-	Tue, 20 May 2025 10:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0157D268683;
+	Tue, 20 May 2025 10:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JE9BsWUy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ngqMnoV6"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C8321A459
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7952D267728;
+	Tue, 20 May 2025 10:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747736263; cv=none; b=iO5XTH75MfQN4ymPekzFiAuxSDNE1ho/dlpBnnS1vchUh0NJmm20Et54GTO2KSvUMNthzYDmKRKCDx2nNCqsexZU/jrKZfoLbTVzmmGz2csKNPTOYeHI40RQXUdY5Kg7sUH0lQoCnX8Et0vsHnNNlYmn68brXzWu47o85Bip+cE=
+	t=1747736352; cv=none; b=rgBThsZph/ZJMVRDz3dPR/enMKL1PvztkJ3Yu9iCPfVo6qCs4jWotwgKj8jcduhGvwustCiu+x2T5zR/ABvS9+NQrgiGPvryCSXxx1H/7sku1Bex2ki14f79xice+qqBKJlLL0cmQ1V9VxA54qCJv3eSo12aBPNNNedL59CXHCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747736263; c=relaxed/simple;
-	bh=9U6YX3W2B9G4OiKz5edOZ0uafPotHEljy1wWN/xh1g0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X1ux7dt1PO/GH4C/RkPwK3yvwMAoZsEJd0Ctj1Xr758YvrZLh9lNLM+DEepyrS3IDfr9S+DyypGvC/td+8XA+sAAt9Rpa+Tk36ixGF5RIdgOWMDOQ28NK0FII/OEJ6onCfDOS2KbHUrzJVzJm7ior66Q2V3Aa4TITy7LlTgIezY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JE9BsWUy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1128CC4CEF1;
-	Tue, 20 May 2025 10:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747736261;
-	bh=9U6YX3W2B9G4OiKz5edOZ0uafPotHEljy1wWN/xh1g0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JE9BsWUyaTBKdPoLZwivhB75f7tfIkjtyzJKYHaT/vFhl7+lDrVKhoHKRBuy9DgsO
-	 JC/tycWx2bPwUtqrGlyI9PILyJChR/PCddpg3ViXUD2ipO6K8zNOHXaLl2QaAa2ScC
-	 qexxdXZnOGUT851Omdb1GRqGxKam4vCcOWiYNyUn3De6lQuO1lQifVmeW++xxhglqX
-	 RHH/AUkdlKwX2SJ1UZYEQZ281Pw2nZS87zOHHAm2yZ8DdNAXLxd9f5AApdaqPLT1sg
-	 gjjeYbn6ulrIYWLhh0b2iwZ8EmzVntwKFmmKUnn1vKSvcvYNWQQdKpEJklpSI2uKvu
-	 sGg5lt1uOAwhA==
-Date: Tue, 20 May 2025 12:17:37 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v5 4/6] sched/isolation: Force housekeeping if isolcpus
- and nohz_full don't leave any
-Message-ID: <aCxWwVy2UUmvinyZ@localhost.localdomain>
-References: <20250508145319.97794-8-gmonaco@redhat.com>
- <20250508145319.97794-12-gmonaco@redhat.com>
+	s=arc-20240116; t=1747736352; c=relaxed/simple;
+	bh=9IamjCqlvQvJklBW8oB2MCtgzf/uhXR8hnZBDfqkBCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m1SHFS7YwYtO7oAYERP/sTJgUMPKqWyOV/eoesHiuIsCk6NEmVsvlHYQ7R0GQRctD8fnYE1E+t/METQPs+Xlv+61XjcOHdiBDJHFJQCxbTzlKqycpuuvzcQz4id7Su9v+RCfkqqZ8f2Bge46yrx7EDwGsd6lbvbBfplQ3JRZLvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ngqMnoV6; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1747736348;
+	bh=9IamjCqlvQvJklBW8oB2MCtgzf/uhXR8hnZBDfqkBCY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ngqMnoV6TclW8p981rXnTE16VJQJ26eVm+bjym3MWdm0qLUZGena3s0d9MhDYIc+M
+	 2zz21qlgzXFmKUEHfo/+eS1NAVWe3OVGhds4uH7LDB+6I5hGoqGPzqfVwLucFBXOH8
+	 lvplK/HLelavKF0A5A5xE+24csGH2s8QZNTPiQPwpGVPll9ocV2QWHrwtDdZYtNn10
+	 rA1kO20dkhGHRfYx4jpmL/w34jAEkO5Qln3enXr5hB+lTQc7aJGYLxfeFl4Rhg4rmH
+	 Lzq1KyYblbirWYGQl0EJRG+Z3FpZPH8wPSDRKM8xfIwDm6UgxLbUOuxgvZI6Kp5/Np
+	 KxvBoN+1THKmw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D938817E0E89;
+	Tue, 20 May 2025 12:19:07 +0200 (CEST)
+Message-ID: <b751c8d6-58ab-4a34-8d0e-a5300834962e@collabora.com>
+Date: Tue, 20 May 2025 12:19:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250508145319.97794-12-gmonaco@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: mediatek: Add #reset-cells
+ property for MT8188
+To: Julien Massot <julien.massot@collabora.com>, kernel@collabora.com,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Garmin Chang <garmin.chang@mediatek.com>,
+ Friday Yang <friday.yang@mediatek.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250516-dtb-check-mt8188-v2-0-fb60bef1b8e1@collabora.com>
+ <20250516-dtb-check-mt8188-v2-1-fb60bef1b8e1@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250516-dtb-check-mt8188-v2-1-fb60bef1b8e1@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Le Thu, May 08, 2025 at 04:53:24PM +0200, Gabriele Monaco a écrit :
-> Currently the user can set up isolcpus and nohz_full in such a way that
-> leaves no housekeeping CPU (i.e. no CPU that is neither domain isolated
-> nor nohz full). This can be a problem for other subsystems (e.g. the
-> timer wheel imgration).
+Il 16/05/25 16:12, Julien Massot ha scritto:
+> The '#reset-cells' property is permitted for some of the MT8188
+> clock controllers, but not listed as a valid property.
 > 
-> Prevent this configuration by setting the boot CPU as housekeeping if
-> the union of isolcpus and nohz_full covers all CPUs. In a similar
-> fashion as it already happens if either of them covers all CPUs.
-> 
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> Fixes: 9a5cd59640ac ("dt-bindings: clock: mediatek: Add SMI LARBs reset for MT8188")
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Julien Massot <julien.massot@collabora.com>
+
+Stephen, please don't forget to pick this one, so that we resolve all those
+warnings :-)
+
+Thanks!
+Angelo
+
 > ---
->  include/linux/tick.h     |  2 ++
->  kernel/sched/isolation.c | 20 ++++++++++++++++++++
->  kernel/time/tick-sched.c |  7 +++++++
->  3 files changed, 29 insertions(+)
+>   Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml | 3 +++
+>   1 file changed, 3 insertions(+)
 > 
-> diff --git a/include/linux/tick.h b/include/linux/tick.h
-> index b8ddc8e631a3..0b32c0bd3512 100644
-> --- a/include/linux/tick.h
-> +++ b/include/linux/tick.h
-> @@ -278,6 +278,7 @@ static inline void tick_dep_clear_signal(struct signal_struct *signal,
->  extern void tick_nohz_full_kick_cpu(int cpu);
->  extern void __tick_nohz_task_switch(void);
->  extern void __init tick_nohz_full_setup(cpumask_var_t cpumask);
-> +extern void __init tick_nohz_full_clear_cpu(unsigned int cpu);
->  #else
->  static inline bool tick_nohz_full_enabled(void) { return false; }
->  static inline bool tick_nohz_full_cpu(int cpu) { return false; }
-> @@ -304,6 +305,7 @@ static inline void tick_dep_clear_signal(struct signal_struct *signal,
->  static inline void tick_nohz_full_kick_cpu(int cpu) { }
->  static inline void __tick_nohz_task_switch(void) { }
->  static inline void tick_nohz_full_setup(cpumask_var_t cpumask) { }
-> +static inline void tick_nohz_full_clear_cpu(unsigned int cpu) { }
->  #endif
->  
->  static inline void tick_nohz_task_switch(void)
-> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-> index 81bc8b329ef1..27b65b401534 100644
-> --- a/kernel/sched/isolation.c
-> +++ b/kernel/sched/isolation.c
-> @@ -165,6 +165,26 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
->  			}
->  		}
->  
-> +		/* Check in combination with the previously set cpumask */
-> +		type = find_first_bit(&housekeeping.flags, HK_TYPE_MAX);
-> +		first_cpu = cpumask_first_and_and(cpu_present_mask,
-> +						  housekeeping_staging,
-> +						  housekeeping.cpumasks[type]);
-> +		if (first_cpu >= nr_cpu_ids || first_cpu >= setup_max_cpus) {
-> +			pr_warn("Housekeeping: must include one present CPU neither "
-> +				"in nohz_full= nor in isolcpus=, using boot CPU:%d\n",
-> +				smp_processor_id());
-> +			for_each_set_bit(type, &housekeeping.flags, HK_TYPE_MAX)
-> +				__cpumask_set_cpu(smp_processor_id(),
-> +						  housekeeping.cpumasks[type]);
-> +			__cpumask_set_cpu(smp_processor_id(), housekeeping_staging);
-> +			__cpumask_clear_cpu(smp_processor_id(), non_housekeeping_mask);
-> +			tick_nohz_full_clear_cpu(smp_processor_id());
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml
+> index 2985c8c717d72888dd49f1f6249a9e2594d8a38d..5403242545ab12a7736ed4fbac26008aa955c724 100644
+> --- a/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt8188-clock.yaml
+> @@ -52,6 +52,9 @@ properties:
+>     '#clock-cells':
+>       const: 1
+>   
+> +  '#reset-cells':
+> +    const: 1
 > +
-> +			if (cpumask_empty(non_housekeeping_mask))
-> +				goto free_housekeeping_staging;
-> +		}
-> +
+>   required:
+>     - compatible
+>     - reg
+> 
 
-Looking again at that, how is it possible to set a different CPU between
-isolcpus= and nohz_full= ?
 
-		enum hk_type type;
-		unsigned long iter_flags = flags & housekeeping.flags;
-
-		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX) {
-			if (!cpumask_equal(housekeeping_staging,
-					   housekeeping.cpumasks[type])) {
-				pr_warn("Housekeeping: nohz_full= must match isolcpus=\n");
-				goto free_housekeeping_staging;
-			}
-		}
-
--- 
-Frederic Weisbecker
-SUSE Labs
 
