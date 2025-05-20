@@ -1,147 +1,163 @@
-Return-Path: <linux-kernel+bounces-654956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-654987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F345ABCEF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:05:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B308ABCF60
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A663168292
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:05:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F06C416762A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 06:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC9925B672;
-	Tue, 20 May 2025 06:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2F725CC6B;
+	Tue, 20 May 2025 06:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="llnxB6g+"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="J0HOUDM5"
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EDABE5E;
-	Tue, 20 May 2025 06:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71252580CB;
+	Tue, 20 May 2025 06:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747721116; cv=none; b=ElIM82AvJ2EAp8+pkin1YQ+86rLFYsRJlo2ohn1unTkZqZoGdDdgh8qSy7qsafhLC9TxA5T+c+bOxwKTu+hBtaNpUXE8BDaQdKtQ+eIsjZl0ws8hkH3XSEBEvv5vO3GsG0LqwDPoHX8HylEGRJVboHg3Y2HtBmXAYXPHycysqTE=
+	t=1747722690; cv=none; b=qrFwxDsdFQyPYGBJrr8Nbp3J65bWFoPYOb0qgIBnY1YUPx920ysNzsyNIsoXCXaH36mlt90jX/LV/RjDDfWFz+v55cpGV3DdZe4NTXvZEB7coawBahiIE5OYlgB7PDX/RSOgJzcFz86IZ/cq4kq+slqS9U75E5BPR1X+kAWFj0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747721116; c=relaxed/simple;
-	bh=E6Bv5Kf1btUKpM56ks3fuPFcEXgIIHaRF+lU2+ALPo0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S+ETQxE9e0vuNq1ZRDkegC6hn/UpDADqB/D8xKsIswAYcId0ezjjWpdTvAepIzCTIxiJI3rQnBJsMEos/w3pXWVOHVOQx8+t9KBO7eXxQPCVfcvXgXJlTFYAAjEiHqt3u8eGRpRFHt+tziif4OhjSAgFFkyVSHV1KomdgKjB/Ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=llnxB6g+; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 310CE42E7E;
-	Tue, 20 May 2025 06:05:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747721111;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2nl4mudUc0nIhyGRm1/GP/8CNdcLzRtbFIzfDOjZEcM=;
-	b=llnxB6g+wvmqq2N97pkvrFp96c+QEm5vP4eLMrbwxGzkK6hiR/39F3APB2fwqQudW8U7Ds
-	5QIkZ+wbJ2a0QdrdF1RPhvNjuzyxNLaM9PYKzp192l5WhBXkda1eRL81DB9hMMTgJP6A/9
-	0d+BdwQePSch8rEuBDb1GMXjBwlfDifyzrqwfNw+wcQa/qgnoD6plrECCsZE9yw8kHgmoc
-	/Mx58edhdyfnYV/rSew5mfbL97zgrFf3f8SmDFkyfKdCT09GxLMG80pmcxBb6dzRzkiWRr
-	H0Siut0K0wZd6LWqkq8Za0x4mgaJY6U5WFEl14mpgQ4fCMgn+fTXx18RQtZNzw==
-Date: Tue, 20 May 2025 08:05:08 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, Jingoo
- Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, Tony Lindgren
- <tony@atomide.com>, Pavel Machek <pavel@ucw.cz>, Jean-Jacques Hiblot
- <jjhiblot@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Saravana Kannan
- <saravanak@google.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Daniel Thompson <daniel.thompson@linaro.org>,
- dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Alexander Sverdlin
- <alexander.sverdlin@gmail.com>
-Subject: Re: [PATCH v6] backlight: led-backlight: add devlink to supplier
- LEDs
-Message-ID: <20250520080508.3a15a949@bootlin.com>
-In-Reply-To: <20250519-led-backlight-add-devlink-to-supplier-class-device-v6-1-845224aeb2ce@bootlin.com>
-References: <20250519-led-backlight-add-devlink-to-supplier-class-device-v6-1-845224aeb2ce@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1747722690; c=relaxed/simple;
+	bh=Re+lidTtgn4qNd1zwUVxIaWwVsiZIZkKB59dSI0Tn3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rhuDMLRSj4JAa/FVPeXDB8tvo1MaC8Q56md/q5Jf+eQPIkhM6mi/pEi0LspHk9z7AE9zIOlteVZ+bCdES2cJOs3uGajrOrs4Lo9j7yEzjbsCxCOnrBsiXFCKhjhtW3Ou+Ln2UXxQClVzFSq019Oy9XwL1BEat5K2cGp0UOd3X+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=J0HOUDM5; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zOaRJ94Fm6w3ZOR6xqIqJ3OCL7WUo+919zCPbZH0zlw=; b=J0HOUDM5EP9FAFa1K3OyU4NgIL
+	i4b2Rk5wITFjxQMu1VzjVNZDvLv+pOoaHadSgN9oIwcG7RfPgv0vr4LY2fbeMwADttJaiS0GKnz1d
+	ej66NVBEe/XLYHjdSkLDG/iOCcBp6J1j6iHbojbQrVUBSo0Lz2QSIL03Xow9kgGS4EhkRaJL0WWBT
+	uBvgYUg7X2kbkVxNIYYmtnDQj+TSk/5DEItjGRaWFmJVf/qesBHYPrcV+QXtqavjWTQ8iyH8Iic8b
+	2AetF373Rh+Nha5peIV8j/EZZ7xvzXuugv9pF0p0zxh6OIuB03LFESJpwXPs5TbuaJu0ae3NhJ0im
+	cbtjak7w==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.94.2)
+	(envelope-from <carnil@debian.org>)
+	id 1uHFym-00GA08-6O; Tue, 20 May 2025 05:57:32 +0000
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id 0B758BE2DE0; Tue, 20 May 2025 07:57:31 +0200 (CEST)
+Date: Tue, 20 May 2025 07:57:31 +0200
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: Roland Clobus <rclobus@rclobus.nl>, Lizhi Xu <lizhi.xu@windriver.com>,
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc: 1106070@bugs.debian.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: [6.12.y regression] loosetup: failed to set up loop device: Invalid
+ argument after 184b147b9f7f ("loop: Add sanity check for read/write_iter")
+Message-ID: <aCwZy6leWNvr7EMd@eldamar.lan>
+References: <3a333f27-6810-4313-8910-485df652e897@rclobus.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefvdefgeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppedvrgdtudemvgdtrgemvdekheemsgelkedtmegvgedttgemiegtgeefmegshegssgemrgegvdeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvkeehmegsleektdemvgegtdgtmeeitgegfeemsgehsggsmegrgedvkedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduiedprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghltheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhinhhgohhohhgrnhdusehgmhgri
- hhlrdgtohhmpdhrtghpthhtohepuggvlhhlvghrsehgmhigrdguvgdprhgtphhtthhopehtohhnhiesrghtohhmihguvgdrtghomhdprhgtphhtthhopehprghvvghlsehutgifrdgtiidprhgtphhtthhopehjjhhhihgslhhothesthhirdgtohhm
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3a333f27-6810-4313-8910-485df652e897@rclobus.nl>
+X-Debian-User: carnil
 
-Hi Luca,
+Hi
 
-On Mon, 19 May 2025 22:19:11 +0200
-Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+In Debian Roland Clobus reported a regression with setting up loop
+devices from a backing squashfs file lying on read-only mounted target
+directory from a iso.
 
-> led-backlight is a consumer of one or multiple LED class devices, but
-> devlink is currently unable to create correct supplier-producer links when
-> the supplier is a class device. It creates instead a link where the
-> supplier is the parent of the expected device.
-> 
-> One consequence is that removal order is not correctly enforced.
-> 
-> Issues happen for example with the following sections in a device tree
-> overlay:
-> 
->     // An LED driver chip
->     pca9632@62 {
->         compatible = "nxp,pca9632";
->         reg = <0x62>;
-> 
-> 	// ...
-> 
->         addon_led_pwm: led-pwm@3 {
->             reg = <3>;
->             label = "addon:led:pwm";
->         };
->     };
-> 
->     backlight-addon {
->         compatible = "led-backlight";
->         leds = <&addon_led_pwm>;
->         brightness-levels = <255>;
->         default-brightness-level = <255>;
->     };
-> 
-> In this example, the devlink should be created between the backlight-addon
-> (consumer) and the pca9632@62 (supplier). Instead it is created between the
-> backlight-addon (consumer) and the parent of the pca9632@62, which is
-> typically the I2C bus adapter.
-> 
-> On removal of the above overlay, the LED driver can be removed before the
-> backlight device, resulting in:
-> 
->     Unable to handle kernel NULL pointer dereference at virtual address 0000000000000010
->     ...
->     Call trace:
->      led_put+0xe0/0x140
->      devm_led_release+0x6c/0x98
-> 
-> Another way to reproduce the bug without any device tree overlays is
-> unbinding the LED class device (pca9632@62) before unbinding the consumer
-> (backlight-addon):
-> 
->   echo 11-0062 >/sys/bus/i2c/drivers/leds-pca963x/unbind
->   echo ...backlight-dock >/sys/bus/platform/drivers/led-backlight/unbind
-> 
-> Fix by adding a devlink between the consuming led-backlight device and the
-> supplying LED device, as other drivers and subsystems do as well.
-> 
-> Tested-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-> Fixes: ae232e45acf9 ("backlight: add led-backlight driver")
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+The original report is at:
+https://bugs.debian.org/1106070
 
-Reviewed-by: Herve Codina <herve.codina@bootlin.com>
+Quoting the report:
 
-Best regards,
-Hervé
+On Mon, May 19, 2025 at 12:15:10PM +0200, Roland Clobus wrote:
+> Package: linux-image-6.12.29-amd64
+> Version: 6.12.29-1
+> Severity: important
+> X-Debbugs-Cc: debian-amd64@lists.debian.org
+> User: debian-amd64@lists.debian.org
+> Usertags: amd64
+> X-Debbugs-Cc: phil@hands.com
+> User: debian-qa@lists.debian.org
+> Usertags: openqa
+> X-Debbugs-Cc: debian-boot
+> 
+> Hello maintainers of the kernel,
+> 
+> The new kernel (6.12.29) has a modified behaviour (compared to 6.12.27) for
+> the loop device.
+> 
+> This causes the Debian live images (for sid) to fail to boot.
+> 
+> The change happened between 20250518T201633Z and 20250519T021902Z, which
+> matches the upload of 6.12.29 (https://tracker.debian.org/news/1646619/accepted-linux-signed-amd64-612291-source-into-unstable/)
+> at 20250518T230426Z.
+> 
+> To reproduce:
+> * Download the daily live image from https://openqa.debian.net/tests/396941/asset/iso/smallest-build_sid_20250519T021902Z.iso
+> * Boot into the live image (the first boot option)
+> * Result: an initramfs shell (instead of a live system) -> FAIL
+> * Try: `losetup -r /dev/loop1 /run/live/medium/live/filesystem.squashfs`
+> * Result: `failed to set up loop device: invalid argument` -> FAIL
+> * Try: `cp /run/live/medium/live/filesystem.squashfs /`
+> * Try: `losetup -r /dev/loop2 /filesystem.squashfs`
+> * Result: `loop2: detected capacity change from 0 to 1460312` -> PASS
+> 
+> It appears that the loopback device cannot be used any more with the mount
+> /run/live/medium (which is on /dev/sr0).
+> 
+> I've verified: the md5sum of the squashfs file is OK.
+> 
+> The newer kernel is not in trixie yet.
+> 
+> With kind regards,
+> Roland Clobus
+
+A short reproducer is as follows:
+
+iso="netinst.iso"
+url="https://openqa.debian.net/tests/396941/asset/iso/smallest-build_sid_20250519T021902Z.iso"
+if [ ! -e "${iso}" ]; then
+        wget "${url}" -O "${iso}"
+fi
+mountdir="$(mktemp -d)"
+mount -v "./${iso}" "${mountdir}"
+losetup -v -r -f "${mountdir}/live/filesystem.squashfs"
+loosetup -l
+
+resulting in:
+
+mount: /tmp/tmp.HgbNe7ek3h: WARNING: source write-protected, mounted read-only.
+mount: /dev/loop0 mounted on /tmp/tmp.HgbNe7ek3h.
+losetup: /tmp/tmp.HgbNe7ek3h/live/filesystem.squashfs: failed to set up loop device: Invalid argument
+NAME       SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE         DIO LOG-SEC
+/dev/loop0         0      0         1  0 /root/netinst.iso   0     512
+
+Reverting 184b147b9f7f ("loop: Add sanity check for read/write_iter")
+on top of 6.12.29 fixes the issue:
+
+mount: /tmp/tmp.ACkkdCdYvB: WARNING: source write-protected, mounted read-only.
+mount: /dev/loop0 mounted on /tmp/tmp.ACkkdCdYvB.
+NAME       SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE                                    DIO LOG-SEC
+/dev/loop1         0      0         0  1 /tmp/tmp.ACkkdCdYvB/live/filesystem.squashfs   0     512
+/dev/loop0         0      0         1  0 /root/netinst.iso                              0     512
+
+For completeness, netinst.iso is a iso9660 fstype with mount options
+"ro,relatime,nojoliet,check=s,map=n,blocksize=2048,iocharset=utf8".
+
+#regzbot introduced: 184b147b9f7f
+#regzbot link: https://bugs.debian.org/1106070
+
+Regards,
+Salvatore
 
