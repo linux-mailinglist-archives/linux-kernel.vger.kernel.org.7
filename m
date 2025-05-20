@@ -1,289 +1,389 @@
-Return-Path: <linux-kernel+bounces-656071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B00D3ABE14F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:55:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4389ABE152
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04E3C8A53E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:54:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 307408C02D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9303A27BF7D;
-	Tue, 20 May 2025 16:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B231927EC7C;
+	Tue, 20 May 2025 16:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUZbZK5g"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O0j99WmU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Bx1kaAwL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CED26F467;
-	Tue, 20 May 2025 16:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C49274678;
+	Tue, 20 May 2025 16:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747760080; cv=none; b=VXv+HDyZrs+Aig/ganuJU9wTGdAdDiHGhZz3V4wWczdc7dAFJSZQm1SqhggV5JFIYFVNc5W3V08mJ9VCg6cnI8AGQiWKp6I1mWaAsJTR0EMFjCCr6WjYvt2L/LSE7MoCnrmbpqwXnpsar7zg8hklyhPtZg+wgU4i2/iuwSEHvo4=
+	t=1747760096; cv=none; b=trlny03lhBMQpjjPgfy+lxdixBxzoxRKoIbnems5ctGOIT/r6GnHyv28xTBywALGfiksf+HCex/FYZchuL7Ki3DBhoHSOenw3Wp8gdO01leUBTldMnIf1PkMr10opAh9rIluOogd8tGK/tcyYOdRosyHZ/H0GKvehllVzBgxKf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747760080; c=relaxed/simple;
-	bh=M3HY+zNWDynah4tI2QSkRa1Jooa51OHDyTdwzMLHbEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gsdhPlHGUzLIHGpfqqdSzooWPpibHLfbmeVmzekk6vfEF8AEn2j0hoTSIa7Qdfs0CspmMCNGVjC9IQIqmNWvgIKGEu1LzWS2pNHl46Jza5BzLLnNKtdjjGaWm72hLjW/1HUAD4RGVUX/HcoJNk9gbg/rHaxOMbbjYKWSslH7J7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUZbZK5g; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4769b16d4fbso33035181cf.2;
-        Tue, 20 May 2025 09:54:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747760078; x=1748364878; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=B+0IFrW2TaHLKfnUj0NSz4bCh09+7jR+H80Edcxixow=;
-        b=EUZbZK5gjZL5UR59rlGm52JBQQrqhrQhMt36VLW2NJ1gOjsYaZSmEtYvO/WkN1gh/B
-         Ay6MrdHab0IzmMu7/IFdJzY9jLx05LdDgtMqs5Jvddtclblq0Zf6QYL8jx2Gu4P65+iv
-         cDbUw16CUYCC/VKVubfYcS5Y5JFWPKoybHUTdiYhltAxVgDVIJP+5Zz8gVTYvdrZX+Y+
-         CSuuXVGtJdfeUnXZn1jTJEYQFxD5tdDXjW3JFWLdK3eor7FgYgH3sMS7ILnrBPr9cFHQ
-         dsVT5+enAMgNMWoWJ+zHBLGHB26+3S3rYvlNAVvajfwFe3tL7sV1x72cgcxdCrjmKBj7
-         v/9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747760078; x=1748364878;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B+0IFrW2TaHLKfnUj0NSz4bCh09+7jR+H80Edcxixow=;
-        b=Wt6KviVVBfu1qeKcqlHPi5WbKjLx3uKseowlh4THiyjJA6jUX+43KhzhJBXp/PUyaK
-         RE0ydaAlry+e3T02fBPGle8bqIiflRpg2iEthyoB2Uu6ZUeC7thngTHuEY/07cZTl4ZC
-         G0PXAqgFj90WZyWDVGz6RPQX3Qn/Wt0+tQHLZOybQ00lGBFPbxFYEXL4dbz3s58fCuZh
-         B84dMsGl5gYfkUxvOk0rqMzHOX9DZOeM7t9JWqBS9HyjV0tJ/tJEDXJv9nTS1BXzk4zt
-         H4DQqMs3+3DwHs1/zwbXb3JazCQr3+pve6/ep9oazL3VfOh147l5+/pd6eeaToj9QGcl
-         SZaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUwLmf4Ouvo4jWw4sAGcW3Qes4+qH9OCA8gUJi8/Z/rgxYHlCMWi4p1l1L01qJb52RmAyyIKtpVPmA0nKyS2U=@vger.kernel.org, AJvYcCWBSjCHW1kAHAM4ht3tg4YQK9FVEgMj4OPe1Rh3B5gOUP2eIfrtKwaDMqZi78wGgY/rex5Z+L4oEi3D98NkmE8=@vger.kernel.org, AJvYcCXd0yVV6PZWj2C48oi+LSXhWxMU6yjtQqZqnV0hJibsSn56LIBdE98OLPRPZIYzg3/m3hZFeyy9tczmFBG5@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNkFWtpo1/tojRzWdgmlItGyKbSHM6NSQm0bdVzVXZaQagcciJ
-	aX0gJTUMQ5sQjGNWFTzxce1P4UdlgVjQIKS0TlJuOKJJcnfcDEJ6GP4M
-X-Gm-Gg: ASbGnctNdLW1grlRyndxxEicakdXn5V7XNI78R1IIoI+e/7mnreBmPFEPKusNexcEEJ
-	rKxTy1KzaIXJ3mL4iud9flRvjlkdNPe2wYvdjXGh/+c85tZih9Nbap7X4HadktU3tRVVmnlX87l
-	2IX/KnHVZc36knzJyCkwuwN3LP6TgQeUQ85nVyO0BEwKeWGYqux6uaksS8NpAFFnn9X1HhhoG8e
-	QMykI96Qicc4DJ7oEka+GR/YjhGGfDkb68yOXZ5Dr+0fIlKPF3ocWGcx+dhZcb9IS7SYEv9WOw9
-	VY4DAdr99IwJN4Fu7V25wjwykfSNZKxDbpfA3FR6c0cedJwPne+H6T6P1EGw/ERQfLryjJopKPC
-	cE+hVg9L9QepisJMa0oUgD3vzduKVKtUHlqRVi1Os7Q==
-X-Google-Smtp-Source: AGHT+IE3/R7uBhgGgs72BU0Nb0I6mQ1Pqz+HJQVtJWBnKoXI4/6Lk7IwQRlB39FmuJjIJ7cxcTOOig==
-X-Received: by 2002:a05:622a:4105:b0:494:a4c2:57fd with SMTP id d75a77b69052e-494ae34b716mr271435681cf.9.1747760077698;
-        Tue, 20 May 2025 09:54:37 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f8b0988e08sm73788126d6.125.2025.05.20.09.54.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 09:54:37 -0700 (PDT)
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfauth.phl.internal (Postfix) with ESMTP id B1FCE1200068;
-	Tue, 20 May 2025 12:54:36 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Tue, 20 May 2025 12:54:36 -0400
-X-ME-Sender: <xms:zLMsaCDDP1sjagN7Bv2LsfplGoy175g2u7ACYNNM54x92LIP31Qu1Q>
-    <xme:zLMsaMjw6gwA6gtiILRWojJv76bBYLZQBDSmHjbgeMYFyYorBKYAmnEhvm2THbCb9
-    d07zOSExjOJzts-nQ>
-X-ME-Received: <xmr:zLMsaFmNHPS4rIh7aLpiVoo1JuR5kGImDStbJXzdXjA6L7Yt4eItR3c5>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdejheculddtuddrgeefvddrtddtmd
-    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghn
-    shhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtne
-    cusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggt
-    ugfgjgesthekrodttddtjeenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunh
-    drfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtthgvrhhnpeekiedujeefvddu
-    veekteevudffgfeuueellefgjeeuvdetteekvdegleegteetfeenucffohhmrghinhepsg
-    hoohhtlhhinhdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
-    ihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqd
-    eiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhl
-    rdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudelpdhmohguvgepsh
-    hmthhpohhuthdprhgtphhtthhopehjrghnnhhhsehgohhoghhlvgdrtghomhdprhgtphht
-    thhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopegsqhgvse
-    hgohhoghhlvgdrtghomhdprhgtphhtthhopeihuhhrhidrnhhorhhovhesghhmrghilhdr
-    tghomhdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
-    hinhhugiesrhgrshhmuhhsvhhilhhlvghmohgvshdrughkpdhrtghpthhtohepvhhirhgv
-    shhhrdhkuhhmrghrsehlihhnrghrohdrohhrghdprhgtphhtthhopehojhgvuggrsehkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgt
-    ohhm
-X-ME-Proxy: <xmx:zLMsaAyRFVikYgt91fCMFih8TJ6lG6V-uL3MyaPQ4_I5ySCBFsJIzA>
-    <xmx:zLMsaHRO0zyfF17cAwq3mXqrXOpeYjiF4nxgYEKSc0jMRfOwh9aJRg>
-    <xmx:zLMsaLY7Syqq7XnV5aRe_ANjG1YG_xG3DeY4r7Ey7977DJLiMIsgJw>
-    <xmx:zLMsaASCE-zyDX80lWsSooVJ7IMyu0l5sRyPhJQyB0cRG8WICuf8yw>
-    <xmx:zLMsaJDAfmfoc161jmtnvQQAVcwEXVVKF6bET2NMGwhWj276Jnwy5fz2>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 20 May 2025 12:54:35 -0400 (EDT)
-Date: Tue, 20 May 2025 09:54:33 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Jann Horn <jannh@google.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Burak Emir <bqe@google.com>,
-	Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v8 5/5] rust: add dynamic ID pool abstraction for bitmap
-Message-ID: <aCyzySveBPZCnpZI@Mac.home>
-References: <20250519161712.2609395-6-bqe@google.com>
- <CAG48ez2WdxXVCzVsAPeQWgso3ZBQS_Xm+9D1FLBx6UHFV1bGHQ@mail.gmail.com>
- <682bc528.c80a0220.13f632.9ec0@mx.google.com>
- <CAH5fLghNJYjxPFUc2E4-2pJpGT5umUr1EJstZvs88ox3MsXDGQ@mail.gmail.com>
- <aCwRZlkBWekRmDg7@Mac.home>
- <CAH5fLgj1NVodPy-95CFUygGO7WC0siNEKSyEhgLvpX-1zMXErQ@mail.gmail.com>
- <aCx77cCum_b-IR4H@Mac.home>
- <CAH5fLgjqj7binVaLDh7Pc7SVKDM-XrYDEDj7GYBX_MnjHgufFg@mail.gmail.com>
- <aCyB4z23VP-3Hmor@Mac.home>
- <CAG48ez32gxwdmQ63XWB8Dz4b5seH7tOhY0yREC=34ubTHZ5VOg@mail.gmail.com>
+	s=arc-20240116; t=1747760096; c=relaxed/simple;
+	bh=55UEwFdL3W97V+z5vclafoLcxGMFWWJYVSo/GBGs68o=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=BihKmnig6rDPMz2EMsHKnvu6nwHt9PyIlBW2G3jo8/cR1CZFz3lP4mFAajuujTAch/qvmJjaFfGEJsMkmFqCXCSCfJRak/SlHywWG1gXSRN7oqzmBTudsrkz1d6knl2LvqMTSTGa/e3kBoMAUCAG5IWcgCH9wY0pchAQ3y7BPrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O0j99WmU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Bx1kaAwL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 20 May 2025 16:54:50 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747760091;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=htkZQ/WK18+u0c14mgIRIg0jP1NmFxZwqTedkU0cclQ=;
+	b=O0j99WmUTB7CGxgIfvwHtA8aCAfEoXmi9dy7I/TC/EUroQ0xtJfbNvNVudNZBNRcSRydYQ
+	+zuOSMk9rXiDxNUpZrt466kzJ2eOVfKaSCQpTXnWcJVGd1qzSWyMw77IjDkPKdGGShnl+t
+	jz3KpkPxOcKXmfECiNUQo5QT8vGocws7v2tLrEsAIa7/w9v6l3lAY6W69ZLErJBx1oshxo
+	nABbZV0bMCxRLUTxzZLC42fjvq6COTxYgXS5uFQw3UEGwGOd+ie7wJaNT0sKD86qMT4ofH
+	OgAtny9qZYDi9mtkhgBOwyqwWpSkW2Y6aBwaHbslWR2/Z6RBIwsRFNvNCS3dTg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747760091;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=htkZQ/WK18+u0c14mgIRIg0jP1NmFxZwqTedkU0cclQ=;
+	b=Bx1kaAwLdbSW0F6MfqOpIqBib2aw9ZcH738YJdgysoiNcanNSLcy0AMHEeHYIrP+S4NS8r
+	oCctkf2xnvA6hsAw==
+From: "tip-bot2 for David Kaplan" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/core] x86/bugs: Restructure ITS mitigation
+Cc: David Kaplan <david.kaplan@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250516193212.128782-1-david.kaplan@amd.com>
+References: <20250516193212.128782-1-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez32gxwdmQ63XWB8Dz4b5seH7tOhY0yREC=34ubTHZ5VOg@mail.gmail.com>
+Message-ID: <174776009020.406.11353051464571226797.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 20, 2025 at 05:55:47PM +0200, Jann Horn wrote:
-> On Tue, May 20, 2025 at 3:21 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> > On Tue, May 20, 2025 at 06:05:52AM -0700, Alice Ryhl wrote:
-> > > On Tue, May 20, 2025 at 5:56 AM Boqun Feng <boqun.feng@gmail.com> wrote:
-> > > >
-> > > > On Tue, May 20, 2025 at 05:42:51AM -0700, Alice Ryhl wrote:
-> > > > > On Mon, May 19, 2025 at 10:21 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> > > > > >
-> > > > > > On Mon, May 19, 2025 at 08:46:37PM -0700, Alice Ryhl wrote:
-> > > > > > > On Mon, May 19, 2025 at 4:56 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> > > > > > > >
-> > > > > > > > On Tue, May 20, 2025 at 12:51:07AM +0200, Jann Horn wrote:
-> > > > > > > > > On Mon, May 19, 2025 at 6:20 PM Burak Emir <bqe@google.com> wrote:
-> > > > > > > > > > This is a port of the Binder data structure introduced in commit
-> > > > > > > > > > 15d9da3f818c ("binder: use bitmap for faster descriptor lookup") to
-> > > > > > > > > > Rust.
-> > > > > > > > >
-> > > > > > > > > Stupid high-level side comment:
-> > > > > > > > >
-> > > > > > > > > That commit looks like it changed a simple linear rbtree scan (which
-> > > > > > > > > is O(n) with slow steps) into a bitmap thing. A more elegant option
-> > > > > > > > > might have been to use an augmented rbtree, reducing the O(n) rbtree
-> > > > > > > > > scan to an O(log n) rbtree lookup, just like how finding a free area
-> > > > > > > >
-> > > > > > > > I think RBTree::cursor_lower_bound() [1] does exactly what you said
-> > > > > > >
-> > > > > > > We need the smallest ID without a value, not the smallest ID in use.
-> > > > > > >
-> > > > > >
-> > > > > > Ok, but it shouldn't be hard to write a Rust function that search that,
-> > > > > > right? My point was mostly the Rust rbtree binding can do O(log n)
-> > > > > > search. I have no idea about "even so, should we try something like Jann
-> > > > > > suggested". And I think your other reply basically says no.
-> > > > >
-> > > > > We would need to store additional data in the r/b tree to know whether
-> > > > > to go left or right, so it would be somewhat tricky. We don't have an
-> > > >
-> > > > Hmm... I'm confused, I thought you can implement a search like that by
-> > > > doing what RBTree::raw_entry() does except that when Ordering::Equal you
-> > > > always go left or right (depending on whether you want to get an unused
-> > > > ID less or greater than a key value), i.e. you always search until you
-> > > > get an Vacant entry. Why do you need store additional data for that?
-> > > > Maybe I'm missing something here?
-> > >
-> > > Let's say you're at the root node of an r/b tree, and you see that the
-> > > root node has id 17, the left node has id 8, and the right node has id
-> > > 25. Do you go left or right?
-> > >
-> >
-> > I went to check what commit 15d9da3f818c actually did and I understand
-> > what you mean now ;-) In your case, the rbtree cannot have nodes with
-> > the same key. If Jann can provide the O(log n) search that could help in
-> > this case, I'm happy to learn about it ;-)
-> 
-> Linux has the concept of an "augmented rbtree", where you can stuff
-> extra information into the rbtree to keep track of things like "how
-> big is the biggest gap between objects in this subtree". This is how
-> the MM subsystem used to find free space in the virtual address space
-> before the maple tree refactor, a complicated example is here:
-> 
-> finding a free region (by looking at vm_area_struct::rb_subtree_gap to
-> decide whether to go left or right; this is made complicated here
-> because they have more search constraints):
-> https://elixir.bootlin.com/linux/v4.19.325/source/mm/mmap.c#L1841
-> 
-> But that requires an "augmented rbtree" where the rbtree code calls
-> back into callbacks for updating the subtree gap; the MM code has its
-> gap update here:
-> https://elixir.bootlin.com/linux/v4.19.325/source/mm/mmap.c#L261
-> 
+The following commit has been merged into the x86/core branch of tip:
 
-I see. I was missing this part.
+Commit-ID:     8c57ca583ebfe879f99007d10c8f2b66baa18422
+Gitweb:        https://git.kernel.org/tip/8c57ca583ebfe879f99007d10c8f2b66baa18422
+Author:        David Kaplan <david.kaplan@amd.com>
+AuthorDate:    Fri, 16 May 2025 14:32:11 -05:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Tue, 20 May 2025 18:42:06 +02:00
 
-> And associates that with VMA trees through this macro magic that would
-> probably be a terrible fit for Rust code:
-> https://elixir.bootlin.com/linux/v4.19.325/source/mm/mmap.c#L400
-> 
+x86/bugs: Restructure ITS mitigation
 
-Well, not sure that's true implementation-wise, I mean it's just
-function callbacks while you insert or erase nodes from rbtree, which
-could probably be described by a trait like:
+Restructure the ITS mitigation to use select/update/apply functions like
+the other mitigations.
 
-    pub trait RBTreeAugmented<K, V> {
-        fn compute(node: &Node<K, V, Self>) -> Self;
-    }
+There is a particularly complex interaction between ITS and Retbleed as CDT
+(Call Depth Tracking) is a mitigation for both, and either its=stuff or
+retbleed=stuff will attempt to enable CDT.
 
-    impl<K, V> RBTreeAugmented<K, V> for () {
-        fn compute(_node: &Node<K, V, Self>) -> Self {
-	    ()
-	}
-    }
-and we change the Node type into:
+retbleed_update_mitigation() runs first and will check the necessary
+pre-conditions for CDT if either ITS or Retbleed stuffing is selected.  If
+checks pass and ITS stuffing is selected, it will select stuffing for
+Retbleed as well.
 
-    pub struct Node<K, V, A: RBTreeAugmented<K, V> = ()> 
-    {
-        links: bindings::rb_node,
-        key: K,
-        value: V,
-	augmented: A
-    }
+its_update_mitigation() runs after and will either select stuffing if
+retbleed stuffing was enabled, or fall back to the default (aligned thunks)
+if stuffing could not be enabled.
 
-and _propagate() can be something like:
+Enablement of CDT is done exclusively in retbleed_apply_mitigation().
+its_apply_mitigation() is only used to enable aligned thunks.
 
-   unsafe fn augmented_propagate<K, V, A: RBTreeAugmented<K, V>>(
-       mut node: *mut rb_node, stop: *mut rb_node
-   ) {
-       	while !ptr::eq(node, stop) {
-            let rbnode = unsafe { container_of!(node, Node<K, V, A>, links) }.cast_mut();
-	    let rbnode: &mut Node<K,V,A> = unsafe { &mut *rbnode };
+Signed-off-by: David Kaplan <david.kaplan@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/20250516193212.128782-1-david.kaplan@amd.com
+---
+ arch/x86/kernel/cpu/bugs.c | 167 +++++++++++++++++++-----------------
+ 1 file changed, 90 insertions(+), 77 deletions(-)
 
-	    let new_augmented = A::compute(rbnode);
-
-	    if rbnode.aurmented == new_augmented {
-	        break;
-	    }
-		if (node->rbaugmented == augmented)			\
-			break;						\
-	    rbnode.augmented = augmented;				\
-
-	    node = rb_parent(node);
-	}
-   }
-
-probably works? However I guess we don't need to do that right now given
-Alice's point on xarray or maple tree.
-
-Regards,
-Boqun
-
-> As Alice said, this is probably not a great fit for Rust code. As she
-> said, an xarray or maple tree would have this kind of gap search
-> built-in, which would be nicer here. But if you're trying to do
-> insertions while holding your own outer spinlocks, I think they would
-> be hard (or impossible?) to use.
-> 
-> If you managed to avoid broad use of spinlocks, that might make it
-> much easier to use xarrays or maple trees (and that would also allow
-> you to make the bitmap API much simpler).
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index d1a03ff..3d5796d 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -92,6 +92,8 @@ static void __init bhi_select_mitigation(void);
+ static void __init bhi_update_mitigation(void);
+ static void __init bhi_apply_mitigation(void);
+ static void __init its_select_mitigation(void);
++static void __init its_update_mitigation(void);
++static void __init its_apply_mitigation(void);
+ 
+ /* The base value of the SPEC_CTRL MSR without task-specific bits set */
+ u64 x86_spec_ctrl_base;
+@@ -235,6 +237,11 @@ void __init cpu_select_mitigations(void)
+ 	 * spectre_v2=ibrs.
+ 	 */
+ 	retbleed_update_mitigation();
++	/*
++	 * its_update_mitigation() depends on spectre_v2_update_mitigation()
++	 * and retbleed_update_mitigation().
++	 */
++	its_update_mitigation();
+ 
+ 	/*
+ 	 * spectre_v2_user_update_mitigation() depends on
+@@ -263,6 +270,7 @@ void __init cpu_select_mitigations(void)
+ 	srbds_apply_mitigation();
+ 	srso_apply_mitigation();
+ 	gds_apply_mitigation();
++	its_apply_mitigation();
+ 	bhi_apply_mitigation();
+ }
+ 
+@@ -1115,6 +1123,17 @@ enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init = SPECTRE_V2_NONE;
+ #undef pr_fmt
+ #define pr_fmt(fmt)     "RETBleed: " fmt
+ 
++enum its_mitigation {
++	ITS_MITIGATION_OFF,
++	ITS_MITIGATION_AUTO,
++	ITS_MITIGATION_VMEXIT_ONLY,
++	ITS_MITIGATION_ALIGNED_THUNKS,
++	ITS_MITIGATION_RETPOLINE_STUFF,
++};
++
++static enum its_mitigation its_mitigation __ro_after_init =
++	IS_ENABLED(CONFIG_MITIGATION_ITS) ? ITS_MITIGATION_AUTO : ITS_MITIGATION_OFF;
++
+ enum retbleed_mitigation {
+ 	RETBLEED_MITIGATION_NONE,
+ 	RETBLEED_MITIGATION_AUTO,
+@@ -1242,11 +1261,19 @@ static void __init retbleed_update_mitigation(void)
+ 	/*
+ 	 * retbleed=stuff is only allowed on Intel.  If stuffing can't be used
+ 	 * then a different mitigation will be selected below.
++	 *
++	 * its=stuff will also attempt to enable stuffing.
+ 	 */
+-	if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF) {
++	if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF ||
++	    its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF) {
+ 		if (spectre_v2_enabled != SPECTRE_V2_RETPOLINE) {
+ 			pr_err("WARNING: retbleed=stuff depends on spectre_v2=retpoline\n");
+ 			retbleed_mitigation = RETBLEED_MITIGATION_AUTO;
++		} else {
++			if (retbleed_mitigation != RETBLEED_MITIGATION_STUFF)
++				pr_info("Retbleed mitigation updated to stuffing\n");
++
++			retbleed_mitigation = RETBLEED_MITIGATION_STUFF;
+ 		}
+ 	}
+ 	/*
+@@ -1338,20 +1365,6 @@ static void __init retbleed_apply_mitigation(void)
+ #undef pr_fmt
+ #define pr_fmt(fmt)     "ITS: " fmt
+ 
+-enum its_mitigation_cmd {
+-	ITS_CMD_OFF,
+-	ITS_CMD_ON,
+-	ITS_CMD_VMEXIT,
+-	ITS_CMD_RSB_STUFF,
+-};
+-
+-enum its_mitigation {
+-	ITS_MITIGATION_OFF,
+-	ITS_MITIGATION_VMEXIT_ONLY,
+-	ITS_MITIGATION_ALIGNED_THUNKS,
+-	ITS_MITIGATION_RETPOLINE_STUFF,
+-};
+-
+ static const char * const its_strings[] = {
+ 	[ITS_MITIGATION_OFF]			= "Vulnerable",
+ 	[ITS_MITIGATION_VMEXIT_ONLY]		= "Mitigation: Vulnerable, KVM: Not affected",
+@@ -1359,11 +1372,6 @@ static const char * const its_strings[] = {
+ 	[ITS_MITIGATION_RETPOLINE_STUFF]	= "Mitigation: Retpolines, Stuffing RSB",
+ };
+ 
+-static enum its_mitigation its_mitigation __ro_after_init = ITS_MITIGATION_ALIGNED_THUNKS;
+-
+-static enum its_mitigation_cmd its_cmd __ro_after_init =
+-	IS_ENABLED(CONFIG_MITIGATION_ITS) ? ITS_CMD_ON : ITS_CMD_OFF;
+-
+ static int __init its_parse_cmdline(char *str)
+ {
+ 	if (!str)
+@@ -1375,16 +1383,16 @@ static int __init its_parse_cmdline(char *str)
+ 	}
+ 
+ 	if (!strcmp(str, "off")) {
+-		its_cmd = ITS_CMD_OFF;
++		its_mitigation = ITS_MITIGATION_OFF;
+ 	} else if (!strcmp(str, "on")) {
+-		its_cmd = ITS_CMD_ON;
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
+ 	} else if (!strcmp(str, "force")) {
+-		its_cmd = ITS_CMD_ON;
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
+ 		setup_force_cpu_bug(X86_BUG_ITS);
+ 	} else if (!strcmp(str, "vmexit")) {
+-		its_cmd = ITS_CMD_VMEXIT;
++		its_mitigation = ITS_MITIGATION_VMEXIT_ONLY;
+ 	} else if (!strcmp(str, "stuff")) {
+-		its_cmd = ITS_CMD_RSB_STUFF;
++		its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
+ 	} else {
+ 		pr_err("Ignoring unknown indirect_target_selection option (%s).", str);
+ 	}
+@@ -1395,85 +1403,90 @@ early_param("indirect_target_selection", its_parse_cmdline);
+ 
+ static void __init its_select_mitigation(void)
+ {
+-	enum its_mitigation_cmd cmd = its_cmd;
+-
+ 	if (!boot_cpu_has_bug(X86_BUG_ITS) || cpu_mitigations_off()) {
+ 		its_mitigation = ITS_MITIGATION_OFF;
+ 		return;
+ 	}
+ 
+-	/* Retpoline+CDT mitigates ITS, bail out */
+-	if (boot_cpu_has(X86_FEATURE_RETPOLINE) &&
+-	    boot_cpu_has(X86_FEATURE_CALL_DEPTH)) {
+-		its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
+-		goto out;
+-	}
++	if (its_mitigation == ITS_MITIGATION_AUTO)
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
++
++	if (its_mitigation == ITS_MITIGATION_OFF)
++		return;
+ 
+-	/* Exit early to avoid irrelevant warnings */
+-	if (cmd == ITS_CMD_OFF) {
+-		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
+-	}
+-	if (spectre_v2_enabled == SPECTRE_V2_NONE) {
+-		pr_err("WARNING: Spectre-v2 mitigation is off, disabling ITS\n");
+-		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
+-	}
+ 	if (!IS_ENABLED(CONFIG_MITIGATION_RETPOLINE) ||
+ 	    !IS_ENABLED(CONFIG_MITIGATION_RETHUNK)) {
+ 		pr_err("WARNING: ITS mitigation depends on retpoline and rethunk support\n");
+ 		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
++		return;
+ 	}
++
+ 	if (IS_ENABLED(CONFIG_DEBUG_FORCE_FUNCTION_ALIGN_64B)) {
+ 		pr_err("WARNING: ITS mitigation is not compatible with CONFIG_DEBUG_FORCE_FUNCTION_ALIGN_64B\n");
+ 		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
+-	}
+-	if (boot_cpu_has(X86_FEATURE_RETPOLINE_LFENCE)) {
+-		pr_err("WARNING: ITS mitigation is not compatible with lfence mitigation\n");
+-		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
++		return;
+ 	}
+ 
+-	if (cmd == ITS_CMD_RSB_STUFF &&
+-	    (!boot_cpu_has(X86_FEATURE_RETPOLINE) || !IS_ENABLED(CONFIG_MITIGATION_CALL_DEPTH_TRACKING))) {
++	if (its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF &&
++	    !IS_ENABLED(CONFIG_MITIGATION_CALL_DEPTH_TRACKING)) {
+ 		pr_err("RSB stuff mitigation not supported, using default\n");
+-		cmd = ITS_CMD_ON;
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
+ 	}
+ 
+-	switch (cmd) {
+-	case ITS_CMD_OFF:
++	if (its_mitigation == ITS_MITIGATION_VMEXIT_ONLY &&
++	    !boot_cpu_has_bug(X86_BUG_ITS_NATIVE_ONLY))
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
++}
++
++static void __init its_update_mitigation(void)
++{
++	if (!boot_cpu_has_bug(X86_BUG_ITS) || cpu_mitigations_off())
++		return;
++
++	switch (spectre_v2_enabled) {
++	case SPECTRE_V2_NONE:
++		pr_err("WARNING: Spectre-v2 mitigation is off, disabling ITS\n");
+ 		its_mitigation = ITS_MITIGATION_OFF;
+ 		break;
+-	case ITS_CMD_VMEXIT:
+-		if (boot_cpu_has_bug(X86_BUG_ITS_NATIVE_ONLY)) {
+-			its_mitigation = ITS_MITIGATION_VMEXIT_ONLY;
+-			goto out;
+-		}
+-		fallthrough;
+-	case ITS_CMD_ON:
+-		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
+-		if (!boot_cpu_has(X86_FEATURE_RETPOLINE))
+-			setup_force_cpu_cap(X86_FEATURE_INDIRECT_THUNK_ITS);
+-		setup_force_cpu_cap(X86_FEATURE_RETHUNK);
+-		set_return_thunk(its_return_thunk);
++	case SPECTRE_V2_RETPOLINE:
++		/* Retpoline+CDT mitigates ITS */
++		if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF)
++			its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
+ 		break;
+-	case ITS_CMD_RSB_STUFF:
+-		its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
+-		setup_force_cpu_cap(X86_FEATURE_RETHUNK);
+-		setup_force_cpu_cap(X86_FEATURE_CALL_DEPTH);
+-		set_return_thunk(call_depth_return_thunk);
+-		if (retbleed_mitigation == RETBLEED_MITIGATION_NONE) {
+-			retbleed_mitigation = RETBLEED_MITIGATION_STUFF;
+-			pr_info("Retbleed mitigation updated to stuffing\n");
+-		}
++	case SPECTRE_V2_LFENCE:
++	case SPECTRE_V2_EIBRS_LFENCE:
++		pr_err("WARNING: ITS mitigation is not compatible with lfence mitigation\n");
++		its_mitigation = ITS_MITIGATION_OFF;
++		break;
++	default:
+ 		break;
+ 	}
+-out:
++
++	/*
++	 * retbleed_update_mitigation() will try to do stuffing if its=stuff.
++	 * If it can't, such as if spectre_v2!=retpoline, then fall back to
++	 * aligned thunks.
++	 */
++	if (its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF &&
++	    retbleed_mitigation != RETBLEED_MITIGATION_STUFF)
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
++
+ 	pr_info("%s\n", its_strings[its_mitigation]);
+ }
+ 
++static void __init its_apply_mitigation(void)
++{
++	/* its=stuff forces retbleed stuffing and is enabled there. */
++	if (its_mitigation != ITS_MITIGATION_ALIGNED_THUNKS)
++		return;
++
++	if (!boot_cpu_has(X86_FEATURE_RETPOLINE))
++		setup_force_cpu_cap(X86_FEATURE_INDIRECT_THUNK_ITS);
++
++	setup_force_cpu_cap(X86_FEATURE_RETHUNK);
++	set_return_thunk(its_return_thunk);
++}
++
+ #undef pr_fmt
+ #define pr_fmt(fmt)     "Spectre V2 : " fmt
+ 
 
