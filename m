@@ -1,161 +1,127 @@
-Return-Path: <linux-kernel+bounces-655341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4D63ABD432
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:07:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 581D7ABD437
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 718044A42C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:07:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 882AC1BA0EA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B9F26A0FD;
-	Tue, 20 May 2025 10:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583A426A0F6;
+	Tue, 20 May 2025 10:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NBSw0pBn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jYIDz284";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NBSw0pBn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jYIDz284"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tEqq2Y5g"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73AA26A0D6
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9A026A0AE;
+	Tue, 20 May 2025 10:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747735660; cv=none; b=ThJwidNmEMbIDLZuL9Xrnq88Rbk2aZOTQZf2s4tvfDE3j86sdJn9BvMQM4t0X7GyydccUfx5vRl5GpId1es0GxP008tF42mA0Vgkxpk125KqibGyMh27a0rUm1kGmsOYoI40kJ7Hvml0AHrsSw20S+NLMpNpPEzSNDjYA8ybeA0=
+	t=1747735692; cv=none; b=WcsFdyJzF5LyDfLP6ENpx935Ug0D6LeqEFBxHx0M3EQgMnMgbRmOhSH9Ls+GSMmvLZy8LDrVjB1+XAJY83UWUuB0IISVYju0BfFT0SNMDPNEMckrtfvm9/+jdofkQDMkzCy0NT8M7FpeX6pRdZpV8GaKflm0AB4boxH1/QWY4VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747735660; c=relaxed/simple;
-	bh=25JRvNl/dx87KSxbjSstyenPOj/uDk1UPkBdv46W/6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eo3ophicq8lCiuMTjJvDkg0Dfr7E8O6i6VOFzUskHGT5Zc8NWdPllAIJEP/xItXyx2M5E3xm0QoHzhWIo1UOoihpVeUtcfFT0y+NchX5KTlWoa2dRfi8T2KQZecB31+KpOpiz+DNnP+2v3U8Kte2fnI3KJ10PVbZO3yTZF4H+co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NBSw0pBn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jYIDz284; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NBSw0pBn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jYIDz284; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0D1A322825;
-	Tue, 20 May 2025 10:07:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747735657; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HZcuOoEOqHbdTzot/HwCcBkJCCvGt7biAEO66twbWi8=;
-	b=NBSw0pBnnlwFfUxGub7TFophZJF8yHh3Uu1lESogljorRKPx4UrkLkT+mUgC4SY3iFy+D6
-	Gvsb/13qrarKdU7FQGyq6XhrHYVHISlg8cl4GwdXCcLR0mQk6jnjGH5J25ukuOdU+cyK0G
-	niiLmOcDV5KnWO+4x+we4XFmNcFD8yY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747735657;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HZcuOoEOqHbdTzot/HwCcBkJCCvGt7biAEO66twbWi8=;
-	b=jYIDz284h8D2Fz/PaWrTih63BCR6jz+N+CbINtI8TFwbejxgZ1j/MeCeJ7HZ+WlGAWL7Vl
-	cAshT4iXdVGLZZCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747735657; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HZcuOoEOqHbdTzot/HwCcBkJCCvGt7biAEO66twbWi8=;
-	b=NBSw0pBnnlwFfUxGub7TFophZJF8yHh3Uu1lESogljorRKPx4UrkLkT+mUgC4SY3iFy+D6
-	Gvsb/13qrarKdU7FQGyq6XhrHYVHISlg8cl4GwdXCcLR0mQk6jnjGH5J25ukuOdU+cyK0G
-	niiLmOcDV5KnWO+4x+we4XFmNcFD8yY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747735657;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HZcuOoEOqHbdTzot/HwCcBkJCCvGt7biAEO66twbWi8=;
-	b=jYIDz284h8D2Fz/PaWrTih63BCR6jz+N+CbINtI8TFwbejxgZ1j/MeCeJ7HZ+WlGAWL7Vl
-	cAshT4iXdVGLZZCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB0E713A3F;
-	Tue, 20 May 2025 10:07:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EArZMGhULGgrZQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 20 May 2025 10:07:36 +0000
-Date: Tue, 20 May 2025 12:07:35 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Donet Tom <donettom@linux.ibm.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@kernel.org>, Zi Yan <ziy@nvidia.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>, rafael@kernel.org,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Dave Jiang <dave.jiang@intel.com>
-Subject: Re: [PATCH v4 4/4] drivers/base : Rename
- register_memory_blocks_under_node() and remove context argument
-Message-ID: <aCxUZwkU4Re4XXO7@localhost.localdomain>
-References: <f94685be9cdc931a026999d236d7e92de29725c7.1747376551.git.donettom@linux.ibm.com>
- <bb7bbc113a2f6d3b700f7e73eafd911f77748bbb.1747376551.git.donettom@linux.ibm.com>
+	s=arc-20240116; t=1747735692; c=relaxed/simple;
+	bh=zolhmYhyHr4joDT+gBXqiUzVZUaMtnM/IO5wc7F7X2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mvyWkgrdSzPPQWLyEvGCAz9h6DpprnPIsZfHDUY1RgLXiNutTsQN+Hr4EqwyXDYnYX2tkFFpcxY01TcOeS0YJ3jaX/bnuwjzIU3EoJ17t4Vq2QpVZfSs8QGq6bO/m6meYTCzbdUxnYO91NkzFW1oePsHjJOL+WcJpVS3CUtp35s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tEqq2Y5g; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54K9EvPw007692;
+	Tue, 20 May 2025 10:08:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=JidFdJQ6oQzitTBq0oMAAsFklOtwX9ZBeJp/hFh0d
+	c4=; b=tEqq2Y5gZrdBB2/7raVatsD7qwFQ3GTBAhotNExLZSxSIt5TERXupzwfc
+	xFzpZ3N3ZjbcXU+xGew3X1Hoq4XAp0eDPi/FpNtW4PA2/MhIYrs6bppoYjXM6dww
+	SXWre/alL73OESt5/ArUqLKVdTci2gezxO1G8JgxjXyP7c1KC4E9Xp5ZMrPkCC6O
+	yFo0TVqywyXt6HbhkkrfYecpfSDQftRkkshUTYUxX+EENo874jiqEWYrqhtZmJXI
+	5qV1+JPCWsNzfuHyNOPEjf7NLwFZ2iprFLc3Ko8W/o49N03d4LFzxrSKattrZtcS
+	hjPEA2hJgtxNnIYb7bj04yET+kCcQ==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46rpxkr8nx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 May 2025 10:08:00 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54K6QZSi002433;
+	Tue, 20 May 2025 10:07:59 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46q5snu9tn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 May 2025 10:07:59 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54KA7vmv27984582
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 20 May 2025 10:07:57 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7224A20092;
+	Tue, 20 May 2025 10:07:57 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C8A0620091;
+	Tue, 20 May 2025 10:07:55 +0000 (GMT)
+Received: from li-fdfde5cc-27d0-11b2-a85c-e224154bf6d4.in.ibm.com (unknown [9.204.206.228])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 20 May 2025 10:07:55 +0000 (GMT)
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Swapnil Sapkal <swapnil.sapkal@amd.com>
+Cc: linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Subject: [PATCH] Documentation/scheduler: Fix typo in sched-stats domain field description
+Date: Tue, 20 May 2025 15:37:52 +0530
+Message-ID: <20250520100752.39921-1-vineethr@linux.ibm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bb7bbc113a2f6d3b700f7e73eafd911f77748bbb.1747376551.git.donettom@linux.ibm.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: 0.20
-X-Spamd-Result: default: False [0.20 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,linux-foundation.org,kernel.org,nvidia.com,gmail.com,linuxfoundation.org,vger.kernel.org,kvack.org,huawei.com,intel.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,localhost.localdomain:mid,nvidia.com:email]
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=EM8G00ZC c=1 sm=1 tr=0 ts=682c5480 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=3Jt-_lBcBdfqp74euIsA:9
+X-Proofpoint-GUID: OPolaX72nBmtf1N0KS7Vk9xLbS7cfE_E
+X-Proofpoint-ORIG-GUID: OPolaX72nBmtf1N0KS7Vk9xLbS7cfE_E
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDA4MyBTYWx0ZWRfXx4++rjdYUnKK 9bYO3GLzBU1blbv5AImIiEc6kqPVyUqypkJLXGsDhCZ+22aq5+1MioE4IZQUyYtjPHPlLvqIfN3 dViP0TNkk6OfWBcGSSWAmtzkusFjRFWd82Dk/bwMmElQJTG8CQQlBizVzUqwXoKogZmidwpc+JE
+ 08ceTibvtQ2xGzeooO0Mcg66o7E99Qqa+wRA0dmucMlkR1xJR0yHsTSHjsqLpRGSrmjF790gje5 diihHMfQkt9HxeiVwPfCY9L5vU14oNcDd/+EG15TzyX4y5dW47vEXryy4Iwz52T/MeaZBsIDK3J z1RpFuELKQWp92MKXbQs42p887zMhXjKsNhvzmYALhsmN9c9HoB6R2B0sX0a2TygMVt/SDxB+1I
+ 5+HrHrxQ6/DznPdWua+8ARy2PR6H7M6CyMiUeWx7ANFMV/BRi72jhAlon2+GiaA6FtwxjD+p
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_04,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ mlxscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0
+ priorityscore=1501 suspectscore=0 adultscore=0 phishscore=0 clxscore=1011
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505200083
 
-On Fri, May 16, 2025 at 03:19:54AM -0500, Donet Tom wrote:
-> The function register_memory_blocks_under_node() is now only called from
-> the memory hotplug path, as register_memory_blocks_under_node_early()
-> handles registration during early boot. Therefore, the context argument
-> used to differentiate between early boot and hotplug is no longer needed
-> and was removed.
-> 
-> Since the function is only called from the hotplug path, we renamed
-> register_memory_blocks_under_node() to
-> register_memory_blocks_under_node_hotplug()
-> 
-> Acked-by: Zi Yan <ziy@nvidia.com>
-> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+Fixes a typo in the description of the 23rd field of the scheduling
+domain statistics, which was missing the word "cpu".
 
-Acked-by: Oscar Salvador <osalvador@suse.de>
+Fixes: 7c8cd569ff66 ("docs: Update Schedstat version to 17")
+Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+---
+ Documentation/scheduler/sched-stats.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/Documentation/scheduler/sched-stats.rst b/Documentation/scheduler/sched-stats.rst
+index 08b6bc9a315c..d82e7d2b54f0 100644
+--- a/Documentation/scheduler/sched-stats.rst
++++ b/Documentation/scheduler/sched-stats.rst
+@@ -135,7 +135,7 @@ of idleness (busy, idle and newly idle):
+         cpu was idle but no busier group was found
  
-
+     23) # of times in this domain sched_balance_rq() was called when the
+-        was just becoming idle
++        cpu was just becoming idle
+     24) # of times in this domain sched_balance_rq() checked but found the
+         load did not require balancing when the cpu was just becoming idle
+     25) # of times in this domain sched_balance_rq() tried to move one or more
 -- 
-Oscar Salvador
-SUSE Labs
+2.47.0
+
 
