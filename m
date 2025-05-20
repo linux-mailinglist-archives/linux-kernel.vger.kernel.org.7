@@ -1,190 +1,194 @@
-Return-Path: <linux-kernel+bounces-655385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38277ABD4F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:31:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C3BABD4E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 537F04C167A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:30:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCC8C8A82F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E5D270EA7;
-	Tue, 20 May 2025 10:27:47 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FA026B966;
+	Tue, 20 May 2025 10:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P0bkxUmf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55552701CB;
-	Tue, 20 May 2025 10:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AF826B0A7;
+	Tue, 20 May 2025 10:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747736867; cv=none; b=GFt//Er8sywtLbB+vxEmd5Wr9nCerMNuuY7Se7vzoUYVG0v6WGtBqMtde6JsmnEtLoFzr8izh0VGZVwc6wXevalwNYY1ayovDiIh3aU8/TCMcIAUcO+d7TBuEVPTZ4Q3x+kS9eORCgEYKb84UTbaH/X+T5xjvABVeANQy/nqf5g=
+	t=1747736895; cv=none; b=h/4c7pIps3XpUloJceRoy7Txry/L72G0guzE82UQ7IP0W/KGGetw4L3jUelE18te95HRvAJas3XFt9yZaAQjYmO3BMKgkBRPvPDNaBeAQDeGE8fRmtqjEOuRM8MlbHlaoyznNHckHYmaOP8HKxfFDTaFYw/pc+g43Onowi7VNzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747736867; c=relaxed/simple;
-	bh=qcLANFQYB6F1aTadtJclYNPeTflXqceuvsxjG9tl5Gg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gLUFyCtwsqamR6tv453yV7PgIrYzTBE882ZZjruSKsWEsRuTKLx5NILPPfw8RKnGA2Yk1vO58/YoXRq37jGbx0+iDAPgcP1kU/GUWz9JZKT639i666/YIWdcM87wYZxHHfTXx/6Iqt9HsyoO/8gdXr6PSSts0qJy04XMf2UdUv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-442f9043f56so29597685e9.0;
-        Tue, 20 May 2025 03:27:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747736864; x=1748341664;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=anhtEfC+aYWJeJvUly60jdWH8rm+sVcW8pcF9vb2eMk=;
-        b=N6WNFXRpPNc9+4xvuoJF3BsFa1PAqBYxuDGeDGf7s18Gszx0VqJLeJVNoH2nKHvBvf
-         ewU3v09u7IRwhGwpYsm1XY1OsvueSMq18uZQ+Drqh4ICLEm4m1dKyIytGpfmAPzpqGRs
-         LvbB4R4wwbIvqOWlXpwJo7Yc9Zd0epL7SmkLj7kfR5SpQeyb8bqKzzsfTLyiP5pX0kbs
-         Udko8o2Gdd69BIKydAGozktSzr37IZYGfWPdRo59TduBfmM4o/7tLv2rJT8wh07JLwFh
-         Kz5AV9E7Eh3W7ej6EOdrcU5MI01gGDZcn3AEWKGRNh6srfHMaJYGXXuk6t3Md3z5dggf
-         1Xzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXfjDRl4sUsEf8iR6YL7JPiGGMup2nBAkVj4q+hbd9UiSs741NlWaVfV1vpUAMJpdK5gCEFTobEwwxRiB0@vger.kernel.org, AJvYcCW2WKKLyIIvp7ZXG4g6Rrgux5l57xfZjzU09i7sOMJflS7UstM9Z47d8nulmtySXPVU4Bb+Fg9SV+khdt0=@vger.kernel.org, AJvYcCXFZkgVcjmp4bc8V0DYpdm6NKQ4P7/usX0YoJZcgkMgKdip4axNIKhZho/1jSuMGxgWcAvnK7po66Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/Folp1f4/ixCnIENp0U2mZcIW1cYc9+W2fZPppW1XMyZnhdhk
-	mftGsAVqM2/RJabE/6dkvSQA/gFD8sn9Rqs1k11ukx7QQ8BPYJ2isq01IRZIi389
-X-Gm-Gg: ASbGncuBTJJtrEhj58kbN1S2BYlEQvEyDpZCaIrKqdTFwP1LLa52qqZr3MS5M2B9ERn
-	wGLxoryIX9TfusY5v+jWlNR/6I62KCx+xWCio6FxOFlWdwHSgby1wwjx+9U0SeQ7CT8VmRnbPeU
-	sQ7XC6y6K/podCXdHsRxDoxYnXMrmGKeDhQtXuFu270mu9QFJAY45LzPJUnWlkB4tPRFnO7WPUe
-	A1ZJB/YwWaYoO2BzZgbNeuW4VohWvFW7x74qGLptsqLYl+r6F7dqDGwYgIDp8A877c3paPThfCG
-	/OsYdaUMMvbmXcF0pyzVXynqGlx3Hq9PZ1Z5OGg5Z/eKf35Dyv8/ZS7/1YQs2xsWAlxp08evxz0
-	c8/6aRdV49g==
-X-Google-Smtp-Source: AGHT+IGUarcsN0dGkfly/Rx4SdIOJyJyOrzjU/pgpXaQr2qIzh21VVgC/kOUDjf60ygnRBw0CXG2wQ==
-X-Received: by 2002:a05:600c:154a:b0:442:eaa9:31c9 with SMTP id 5b1f17b1804b1-442fd66dd78mr108589395e9.22.1747736863892;
-        Tue, 20 May 2025 03:27:43 -0700 (PDT)
-Received: from [10.42.0.1] (cst-prg-46-162.cust.vodafone.cz. [46.135.46.162])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f73d3defsm24680025e9.18.2025.05.20.03.27.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 03:27:43 -0700 (PDT)
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Tue, 20 May 2025 12:27:03 +0200
-Subject: [PATCH v5 10/10] arm64: dts: rockchip: enable NPU on ROCK 5B
+	s=arc-20240116; t=1747736895; c=relaxed/simple;
+	bh=ABdjG3Pe62S3x9ocvJ5urldXhGi9h8OX8THWZ/USw6U=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=lzVQEAm2QgsGMCy4mClUsuZ52ZhTSZcnMAr5fsGig70UE64OL+bpkLYgNEvO+dREyBcCoRkVP23c1Vz0GcSoX5bQxG8kW+YMGEb8TXscaQnfbGJF/EvmALzXFZaytHyYkSPrvfgwQqV+dU8XmOU1HIR7cN7SxH7W0bZ9NHMkAx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P0bkxUmf; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747736894; x=1779272894;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=ABdjG3Pe62S3x9ocvJ5urldXhGi9h8OX8THWZ/USw6U=;
+  b=P0bkxUmfJiWmlKXvEaY9RMLGLy2gyqOzDScJzmgrA3RyMYImlmf+k9D6
+   JDALcKyKivzDcZkwtcU/49/PQ7NjBRfx3ucNdZ4zACMmXrPCmEUyacZq5
+   anmRcNLY4KHye7Rsl9Z998xlb1A0rhlgh8uWr/wgwYTjiPyYRN9lF+Esg
+   blsSXJoc9IXm6IBUX4r1p+xqdleTBrnljMacQMAM/IqRtF0eAu7AroxFI
+   Dqkq6+3K9UDYAZoeb9x44oAc2DbsARHzKq9q/DP4/Hof8iyEdvpJNxb2o
+   nzih8KqKPb5yIR7nqgej5Usom8w6Af3O6muJ2dQlKIcrww0bUmzOjyZQE
+   g==;
+X-CSE-ConnectionGUID: Ga3F/Ic0SO2xQa0V0SwevA==
+X-CSE-MsgGUID: 18Y1QlMTSDiFllQrPj40Ow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="60700836"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="60700836"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 03:28:13 -0700
+X-CSE-ConnectionGUID: 9pyCjzPqSgefZQ4zCEbisg==
+X-CSE-MsgGUID: DlBKfSmYShKo2EDVX2N9Ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="144640371"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.235])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 03:28:05 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 20 May 2025 13:28:02 +0300 (EEST)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: linux-pci@vger.kernel.org, Jon Pan-Doh <pandoh@google.com>, 
+    Karolina Stolarek <karolina.stolarek@oracle.com>, 
+    Martin Petersen <martin.petersen@oracle.com>, 
+    Ben Fuller <ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>, 
+    Anil Agrawal <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>, 
+    Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>, 
+    Lukas Wunner <lukas@wunner.de>, 
+    Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+    Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
+    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+    Oliver O'Halloran <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>, 
+    Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>, 
+    Terry Bowman <terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>, 
+    Dave Jiang <dave.jiang@intel.com>, LKML <linux-kernel@vger.kernel.org>, 
+    linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v6 02/16] PCI/DPC: Log Error Source ID only when valid
+In-Reply-To: <20250519213603.1257897-3-helgaas@kernel.org>
+Message-ID: <b6ba76ff-7cbd-2d73-fdc4-41aa8c788bc9@linux.intel.com>
+References: <20250519213603.1257897-1-helgaas@kernel.org> <20250519213603.1257897-3-helgaas@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250520-6-10-rocket-v5-10-18c9ca0fcb3c@tomeuvizoso.net>
-References: <20250520-6-10-rocket-v5-0-18c9ca0fcb3c@tomeuvizoso.net>
-In-Reply-To: <20250520-6-10-rocket-v5-0-18c9ca0fcb3c@tomeuvizoso.net>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
- Jeff Hugo <jeff.hugo@oss.qualcomm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
- Tomeu Vizoso <tomeu@tomeuvizoso.net>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=US-ASCII
 
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+On Mon, 19 May 2025, Bjorn Helgaas wrote:
 
-The NPU on the ROCK5B uses the same regulator for both the sram-supply
-and the npu's supply. Add this regulator, and enable all the NPU bits.
-Also add the regulator as a domain-supply to the pd_npu power domain.
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> DPC Error Source ID is only valid when the DPC Trigger Reason indicates
+> that DPC was triggered due to reception of an ERR_NONFATAL or ERR_FATAL
+> Message (PCIe r6.0, sec 7.9.14.5).
+> 
+> When DPC was triggered by ERR_NONFATAL (PCI_EXP_DPC_STATUS_TRIGGER_RSN_NFE)
+> or ERR_FATAL (PCI_EXP_DPC_STATUS_TRIGGER_RSN_FE) from a downstream device,
+> log the Error Source ID (decoded into domain/bus/device/function).  Don't
+> print the source otherwise, since it's not valid.
+> 
+> For DPC trigger due to reception of ERR_NONFATAL or ERR_FATAL, the dmesg
+> logging changes:
+> 
+>   - pci 0000:00:01.0: DPC: containment event, status:0x000d source:0x0200
+>   - pci 0000:00:01.0: DPC: ERR_FATAL detected
+>   + pci 0000:00:01.0: DPC: containment event, status:0x000d, ERR_FATAL received from 0000:02:00.0
+> 
+> and when DPC triggered for other reasons, where DPC Error Source ID is
+> undefined, e.g., unmasked uncorrectable error:
+> 
+>   - pci 0000:00:01.0: DPC: containment event, status:0x0009 source:0x0200
+>   - pci 0000:00:01.0: DPC: unmasked uncorrectable error detected
+>   + pci 0000:00:01.0: DPC: containment event, status:0x0009: unmasked uncorrectable error detected
+> 
+> Previously the "containment event" message was at KERN_INFO and the
+> "%s detected" message was at KERN_WARNING.  Now the single message is at
+> KERN_WARNING.
+> 
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  drivers/pci/pcie/dpc.c | 45 ++++++++++++++++++++++++++----------------
+>  1 file changed, 28 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+> index fe7719238456..315bf2bfd570 100644
+> --- a/drivers/pci/pcie/dpc.c
+> +++ b/drivers/pci/pcie/dpc.c
+> @@ -261,25 +261,36 @@ void dpc_process_error(struct pci_dev *pdev)
+>  	struct aer_err_info info = { 0 };
+>  
+>  	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
+> -	pci_read_config_word(pdev, cap + PCI_EXP_DPC_SOURCE_ID, &source);
+> -
+> -	pci_info(pdev, "containment event, status:%#06x source:%#06x\n",
+> -		 status, source);
+>  
+>  	reason = status & PCI_EXP_DPC_STATUS_TRIGGER_RSN;
+> -	ext_reason = status & PCI_EXP_DPC_STATUS_TRIGGER_RSN_EXT;
+> -	pci_warn(pdev, "%s detected\n",
+> -		 (reason == PCI_EXP_DPC_STATUS_TRIGGER_RSN_UNCOR) ?
+> -		 "unmasked uncorrectable error" :
+> -		 (reason == PCI_EXP_DPC_STATUS_TRIGGER_RSN_NFE) ?
+> -		 "ERR_NONFATAL" :
+> -		 (reason == PCI_EXP_DPC_STATUS_TRIGGER_RSN_FE) ?
+> -		 "ERR_FATAL" :
+> -		 (ext_reason == PCI_EXP_DPC_STATUS_TRIGGER_RSN_RP_PIO) ?
+> -		 "RP PIO error" :
+> -		 (ext_reason == PCI_EXP_DPC_STATUS_TRIGGER_RSN_SW_TRIGGER) ?
+> -		 "software trigger" :
+> -		 "reserved error");
+> +
+> +	switch (reason) {
+> +	case PCI_EXP_DPC_STATUS_TRIGGER_RSN_UNCOR:
+> +		pci_warn(pdev, "containment event, status:%#06x: unmasked uncorrectable error detected\n",
+> +			 status);
+> +		break;
+> +	case PCI_EXP_DPC_STATUS_TRIGGER_RSN_NFE:
+> +	case PCI_EXP_DPC_STATUS_TRIGGER_RSN_FE:
+> +		pci_read_config_word(pdev, cap + PCI_EXP_DPC_SOURCE_ID,
+> +				     &source);
+> +		pci_warn(pdev, "containment event, status:%#06x, %s received from %04x:%02x:%02x.%d\n",
+> +			 status,
+> +			 (reason == PCI_EXP_DPC_STATUS_TRIGGER_RSN_FE) ?
+> +				"ERR_FATAL" : "ERR_NONFATAL",
+> +			 pci_domain_nr(pdev->bus), PCI_BUS_NUM(source),
+> +			 PCI_SLOT(source), PCI_FUNC(source));
+> +		return;
+> +	case PCI_EXP_DPC_STATUS_TRIGGER_RSN_IN_EXT:
+> +		ext_reason = status & PCI_EXP_DPC_STATUS_TRIGGER_RSN_EXT;
+> +		pci_warn(pdev, "containment event, status:%#06x: %s detected\n",
+> +			 status,
+> +			 (ext_reason == PCI_EXP_DPC_STATUS_TRIGGER_RSN_RP_PIO) ?
+> +			 "RP PIO error" :
+> +			 (ext_reason == PCI_EXP_DPC_STATUS_TRIGGER_RSN_SW_TRIGGER) ?
+> +			 "software trigger" :
+> +			 "reserved error");
+> +		break;
+> +	}
+>  
+>  	/* show RP PIO error detail information */
+>  	if (pdev->dpc_rp_extensions &&
+> 
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
----
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 56 +++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-index d22068475c5dc6cb885f878f3f527a66edf1ba70..49500f7cbcb14af4919a6c1997e9e53a01d84973 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-@@ -316,6 +316,28 @@ regulator-state-mem {
- 	};
- };
- 
-+&i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1m2_xfer>;
-+	status = "okay";
-+
-+	vdd_npu_s0: regulator@42 {
-+		compatible = "rockchip,rk8602";
-+		reg = <0x42>;
-+		fcs,suspend-voltage-selector = <1>;
-+		regulator-name = "vdd_npu_s0";
-+		regulator-boot-on;
-+		regulator-min-microvolt = <550000>;
-+		regulator-max-microvolt = <950000>;
-+		regulator-ramp-delay = <2300>;
-+		vin-supply = <&vcc5v0_sys>;
-+
-+		regulator-state-mem {
-+			regulator-off-in-suspend;
-+		};
-+	};
-+};
-+
- &i2c6 {
- 	status = "okay";
- 
-@@ -440,6 +462,10 @@ &pd_gpu {
- 	domain-supply = <&vdd_gpu_s0>;
- };
- 
-+&pd_npu {
-+	domain-supply = <&vdd_npu_s0>;
-+};
-+
- &pinctrl {
- 	hdmirx {
- 		hdmirx_hpd: hdmirx-5v-detection {
-@@ -500,6 +526,36 @@ &pwm1 {
- 	status = "okay";
- };
- 
-+&rknn_core_top {
-+	npu-supply = <&vdd_npu_s0>;
-+	sram-supply = <&vdd_npu_s0>;
-+	status = "okay";
-+};
-+
-+&rknn_core_1 {
-+	npu-supply = <&vdd_npu_s0>;
-+	sram-supply = <&vdd_npu_s0>;
-+	status = "okay";
-+};
-+
-+&rknn_core_2 {
-+	npu-supply = <&vdd_npu_s0>;
-+	sram-supply = <&vdd_npu_s0>;
-+	status = "okay";
-+};
-+
-+&rknn_mmu_top {
-+	status = "okay";
-+};
-+
-+&rknn_mmu_1 {
-+	status = "okay";
-+};
-+
-+&rknn_mmu_2 {
-+	status = "okay";
-+};
-+
- &saradc {
- 	vref-supply = <&avcc_1v8_s0>;
- 	status = "okay";
+After adding that switch (reason) there, wouldn't it make sense to move 
+also the code from the if blocks into the case blocks? That if 
+conditions check for reason anyway so those if branches would naturally 
+belong under one of the cases each.
 
 -- 
-2.49.0
+ i.
 
 
