@@ -1,135 +1,142 @@
-Return-Path: <linux-kernel+bounces-655424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70568ABD578
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:48:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A115ABD56C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 12:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EFD91631D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:44:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF9BF8C14EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5550A270EB1;
-	Tue, 20 May 2025 10:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d7PM6UIT"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F70280019;
+	Tue, 20 May 2025 10:42:27 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7CD27F171
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DC7280014
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 10:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747737733; cv=none; b=rrC92EsC6wBZqsmFmoivYRVaDG/DDKNuyijTW3ccsa5i9sNBPwsmQ7PWitkaBZCTg8ziWy6e/nqxNAuKGCoWl6apSRCxbvwWBnBM5cU4zMP92T4EH0urtMUJyTzrKQfF3D6uEmEdS4iDvu5J4KQcvU6MbQlCsxek2WJgvGwJqhc=
+	t=1747737746; cv=none; b=CxwSpju49ljDt/LBkw1K/eKvBP36PKj1CuKTaYFQWzXrZL93fyhPuWlFoZsJZ+HUIgBm7tCu6U6cUB6yoxZspWsWWVaRCyBA1/RHRP9UPAYVIdhckNEG9je5j7yJDhmKGlGytTPvc+ovB8wByH6logxa9MipcbEBiJU8qPQbhsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747737733; c=relaxed/simple;
-	bh=lIqPmrEeIkfT9o5Hp9bUhpJ6ilLaftkaOD4ciQyICAM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZW/zF/tJDFhuvkkGEEYjXGGtHO39K9451csMW658o43N0yUrMUQbXysF3BHFo5BFsXu9KKzLOGFGgAtUMMLzMLDRZUCuJWhXaaiRqD+1py05o1YyokuxGJN48q7AdpqRlWJlswxQbpAw4VaCC6e8gWGw5yHeXNd5G9/z9gSfwOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d7PM6UIT; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3a3683aa00eso1449784f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 03:42:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747737730; x=1748342530; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=48HSNwYzS4MdW1GYfppk4qhPWkku6mpAaebKvT0s29I=;
-        b=d7PM6UITinggEHOkDN9s4+aVPAaUo2/vAnTeNUMtLWukVRfzG+Ady1ceWN25h0pjcE
-         BGGtjWjxTax76PN+26n2Zj7evSqttO4ldkUXuOI6y2CjdXXkrs7m+jBlF8P3DHSJhg95
-         doLbp2I95FcWISUDOzsiFLFR+YaSZamepLNHelBYrC8tDyYw5IvbDf26dIiOCeiDZsXh
-         BZh3/KQM0KPa/ygCXRDmZfy8yA2oRCG7LMONjiE6ngx6MDp+hFKsuiRP52BPbXaRUCbf
-         6YLzbrLbFHS42Y3Cp9t+jxmRkgV2zPo4sXYWQUZbGyx0k/4b2wg8FBxSde8dTU44CjuG
-         JoCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747737730; x=1748342530;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=48HSNwYzS4MdW1GYfppk4qhPWkku6mpAaebKvT0s29I=;
-        b=KOC/iFf8OYMXdxhjdMqSK1SFRWCEnwaBn38HttOusRqvgLkpwKFBBPQ4gTgwfmHHn6
-         MTWURDdTFu7dsvjuncArRLnwB3FCuoUJtkpag5YZcVEfwhQmoeroHnScuu7RmIheauGA
-         PiK+w+1JGWraE2D2L2OyQxc0eCDKQ/Ki1y5aeUmPEd6H3NIaKFfuROLh9B2hzQa4L/bl
-         bMEvSSqXe6mmcU2OcKW11QeQcoaW5u3ky6b3JJADYoPiyoLVNZIKfEvHOHuBEOxtDYvU
-         XvX4ZXU3Cy+ZVJRzb+nwD9f+WoWP6jt02hXzmE98oKkI+iCydqYseaPU5a3IbNN1704G
-         lv5g==
-X-Gm-Message-State: AOJu0YxqV7oSHVyL4rpXHEsoUAVGkK8ZCg3Let+Puyv1S6ekdArLcXeX
-	rCWCXwil9jT55V7CCTkIi9HG1ULDEbn4b29COT/Zww2CBCQweBRHhWwm5+yxOyGBvovQg8xiXJ2
-	havmD0C1Mn2+VHHnb6IBZim30Z2P+nyYk4LwYzSr27tkjsMIArxSaaRgUwo2E9NHdaNpx++F4SW
-	W2cCNMhXejPsW0bDuhY+m7ruTilnN1ld3Mjg==
-X-Google-Smtp-Source: AGHT+IG8GElBuy5Mhy+BcBGRYqfJGH91mMqquZF7EvcN/D8+2f3OWAPnmPAptHQtfdOM5e85CYQd4IH8
-X-Received: from wmsp16.prod.google.com ([2002:a05:600c:1d90:b0:442:e9e9:c2a7])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:420d:b0:3a3:760c:81a4
- with SMTP id ffacd0b85a97d-3a3760c835fmr4336240f8f.24.1747737730457; Tue, 20
- May 2025 03:42:10 -0700 (PDT)
-Date: Tue, 20 May 2025 12:41:46 +0200
-In-Reply-To: <20250520104138.2734372-9-ardb+git@google.com>
+	s=arc-20240116; t=1747737746; c=relaxed/simple;
+	bh=ypsgp/8EOQfhR3gpKtdjHjDSjKXledeokdgkhyDij6s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NMoj+1uJFCVuRTpcP7/gGPRDH6/w0uOowaDMpCVWGCyGgTEzrxer97eYWW44Lmmsvl7kBoucz6IJz8dGOOx9LHNskJCDKtTHBXVif3yCrEQiLHAsFmO/C+iKYbnj85AVMRN8d+Zl29AjvreK55j6lktothVAye/NQ/1O5leP8aA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1uHKPz-0001aN-MM; Tue, 20 May 2025 12:41:55 +0200
+Message-ID: <e7c08305612e7323ca9d9ff6c44f3e2b63f171ff.camel@pengutronix.de>
+Subject: Re: [PATCH v5 08/10] accel/rocket: Add IOCTLs for synchronizing
+ memory accesses
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Oded Gabbay
+ <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>,
+ Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Sebastian
+ Reichel <sebastian.reichel@collabora.com>,  Nicolas Frattaroli
+ <nicolas.frattaroli@collabora.com>, Jeff Hugo <jeff.hugo@oss.qualcomm.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Date: Tue, 20 May 2025 12:41:47 +0200
+In-Reply-To: <20250520-6-10-rocket-v5-8-18c9ca0fcb3c@tomeuvizoso.net>
+References: <20250520-6-10-rocket-v5-0-18c9ca0fcb3c@tomeuvizoso.net>
+	 <20250520-6-10-rocket-v5-8-18c9ca0fcb3c@tomeuvizoso.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250520104138.2734372-9-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1426; i=ardb@kernel.org;
- h=from:subject; bh=vLh1RD9b/M3vr5yS8QTbENrmgs8a7pup/j6J3eE/P2c=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIUMnpsDS4ZWR8J5mV+P2ckcLPqdchxfPk948q07ZIXSjK
- PWLqHRHKQuDGAeDrJgii8Dsv+92np4oVes8SxZmDisTyBAGLk4BmIj+DUaG1k2rrYRf8XxZnRYT
- NVU+xJvzrXj/sjqPsqtMaT/VPF6UMPzPCnK1O1aoYZ0v2SE6fe/W+hzJazI7u1VPZ0xYa8ata8o AAA==
-X-Mailer: git-send-email 2.49.0.1101.gccaa498523-goog
-Message-ID: <20250520104138.2734372-16-ardb+git@google.com>
-Subject: [PATCH v5 7/7] x86/boot: Remove KASAN workaround for 4/5 level paging switch
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Brian Gerst <brgerst@gmail.com>, 
-	"Kirill A. Shutemov" <kirill@shutemov.name>, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ardb@kernel.org>
+Hi Tomeu,
 
-pgtable_l5_enabled() is no longer based on a CPU feature bit that might
-change values and confuse KASAN, so we no longer need to disable it
-temporarily.
+Am Dienstag, dem 20.05.2025 um 12:27 +0200 schrieb Tomeu Vizoso:
+> The NPU cores have their own access to the memory bus, and this isn't
+> cache coherent with the CPUs.
+>=20
+> Add IOCTLs so userspace can mark when the caches need to be flushed, and
+> also when a writer job needs to be waited for before the buffer can be
+> accessed from the CPU.
+>=20
+> Initially based on the same IOCTLs from the Etnaviv driver.
+>=20
+> v2:
+> - Don't break UABI by reordering the IOCTL IDs (Jeff Hugo)
+>=20
+> v3:
+> - Check that padding fields in IOCTLs are zero (Jeff Hugo)
+>=20
+> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> ---
+>  drivers/accel/rocket/rocket_drv.c |  2 +
+>  drivers/accel/rocket/rocket_gem.c | 80 +++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/accel/rocket/rocket_gem.h |  5 +++
+>  include/uapi/drm/rocket_accel.h   | 37 ++++++++++++++++++
+>  4 files changed, 124 insertions(+)
+>=20
+> diff --git a/drivers/accel/rocket/rocket_drv.c b/drivers/accel/rocket/roc=
+ket_drv.c
+> index fef9b93372d3f65c41c1ac35a9bfa0c01ee721a5..c06e66939e6c39909fe08bef3=
+c4f301b07bf8fbf 100644
+> --- a/drivers/accel/rocket/rocket_drv.c
+> +++ b/drivers/accel/rocket/rocket_drv.c
+> @@ -59,6 +59,8 @@ static const struct drm_ioctl_desc rocket_drm_driver_io=
+ctls[] =3D {
+> =20
+>  	ROCKET_IOCTL(CREATE_BO, create_bo),
+>  	ROCKET_IOCTL(SUBMIT, submit),
+> +	ROCKET_IOCTL(PREP_BO, prep_bo),
+> +	ROCKET_IOCTL(FINI_BO, fini_bo),
+>  };
+> =20
+>  DEFINE_DRM_ACCEL_FOPS(rocket_accel_driver_fops);
+> diff --git a/drivers/accel/rocket/rocket_gem.c b/drivers/accel/rocket/roc=
+ket_gem.c
+> index 8a8a7185daac4740081293aae6945c9b2bbeb2dd..cdc5238a93fa5978129dc1ac8=
+ec8de955160dc18 100644
+> --- a/drivers/accel/rocket/rocket_gem.c
+> +++ b/drivers/accel/rocket/rocket_gem.c
+> @@ -129,3 +129,83 @@ int rocket_ioctl_create_bo(struct drm_device *dev, v=
+oid *data, struct drm_file *
+> =20
+>  	return ret;
+>  }
+> +
+> +static inline enum dma_data_direction rocket_op_to_dma_dir(u32 op)
+> +{
+> +	if (op & ROCKET_PREP_READ)
+> +		return DMA_FROM_DEVICE;
+> +	else if (op & ROCKET_PREP_WRITE)
+> +		return DMA_TO_DEVICE;
+> +	else
+> +		return DMA_BIDIRECTIONAL;
+> +}
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/x86/kernel/alternative.c | 12 ------------
- 1 file changed, 12 deletions(-)
+This has copied over the bug fixed in etnaviv commit 58979ad6330a
+("drm/etnaviv: fix DMA direction handling for cached RW buffers")
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index f3c68b586a95..e39823d8d1ae 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -589,16 +589,6 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 
- 	DPRINTK(ALT, "alt table %px, -> %px", start, end);
- 
--	/*
--	 * KASAN_SHADOW_START is defined using
--	 * cpu_feature_enabled(X86_FEATURE_LA57) and is therefore patched here.
--	 * During the process, KASAN becomes confused seeing partial LA57
--	 * conversion and triggers a false-positive out-of-bound report.
--	 *
--	 * Disable KASAN until the patching is complete.
--	 */
--	kasan_disable_current();
--
- 	/*
- 	 * The scan order should be from start to end. A later scanned
- 	 * alternative code can overwrite previously scanned alternative code.
-@@ -666,8 +656,6 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 
- 		text_poke_early(instr, insn_buff, insn_buff_sz);
- 	}
--
--	kasan_enable_current();
- }
- 
- static inline bool is_jcc32(struct insn *insn)
--- 
-2.49.0.1101.gccaa498523-goog
-
+Regards,
+Lucas
 
