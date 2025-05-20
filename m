@@ -1,399 +1,657 @@
-Return-Path: <linux-kernel+bounces-655275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0A2ABD33C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:21:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67065ABD341
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE3433B2C50
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:21:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09E194A6BCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 09:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA8D264602;
-	Tue, 20 May 2025 09:21:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6641262807
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 09:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB8D267713;
+	Tue, 20 May 2025 09:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B80EdFxw"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0DB2571D3
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 09:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747732910; cv=none; b=Ab7NhUyWWXiE3Bl5PlWz6NYDLcw/+X8FmZyYet/XHPEEsAm1Xtej3kY6fx4/ieYYG/L5076crVX6naeV4sBwPoy4coTOPBkk1ITleLJNzWp/N9bI1dTw8nYpbb1Ho+HWbUEv++BBaZV1jZR5cMEUFfDr4o8bCy8CBLjKq1Ptnmw=
+	t=1747732995; cv=none; b=VCP/u5vgMJm6/IP8atpP1vzcRtAid/YIZ3tPHOWAnhN90QnAULKW79HG/oKqx/Mex8JcXFLHn70h6YYsNa0v/nAElIZ+IKOKVaYS/duwl+y18ANnDn6UfgVf01UbOx5xRVxTfevrSibemz6gilgMzNV1lP8Yp5SxSG1xqeP9JHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747732910; c=relaxed/simple;
-	bh=5LearHUE//FO6554JRsvDiIOyclElROM2x/Io+yLjos=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dDu3a2UvomXVXXOWSU3UxJzfYuRNU6PxNmCW9dQAag90RAI2vkWdG5m62dtsquZmF9hTmQD65kBIkGeuw2GXP3221X9UXsNQbU/n7JVb0A+Zbd+am7MuSaO/G4SWlkOv3Hyy0o7aqX3oJ+p0kPXGyn1+JOrpklEa4/rD6PBUpJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4BC1150C;
-	Tue, 20 May 2025 02:21:34 -0700 (PDT)
-Received: from [10.164.18.48] (unknown [10.164.18.48])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 568403F5A1;
-	Tue, 20 May 2025 02:21:42 -0700 (PDT)
-Message-ID: <712f21ea-e2e6-4a56-8bdb-6ad071b6972e@arm.com>
-Date: Tue, 20 May 2025 14:51:39 +0530
+	s=arc-20240116; t=1747732995; c=relaxed/simple;
+	bh=O0R+4hBrS+DWfxjMiLcCGNdUu4EaPTREGYA4X6FqPPw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WdFYW2IjXaClNtzt/kCht4pvMr8aZXUMOmjueZL2Bfw2wJtko7nhBuZw0yvaGZmWTiTAIyRYn05IHGiP6+W+DwXRCuWgBx4Zvji/dNwFZicGkso7VkQn0dsEwCI9eFBxgRIRF0VacUOdWYUn+HLSBJDpg17BCDiVlTda1N+AMVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B80EdFxw; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-47666573242so961761cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 02:23:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747732992; x=1748337792; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NgRslGgoPUIa9miQEs5PaTdBGnGmWi2fH+uqBrR2JTA=;
+        b=B80EdFxwNCyjOcsQeRpObAlk0KcYZR5dQZGg1BXmghTCrBHW4N9uRy9mNPCL1KrDaE
+         EPkqyuXpo4wNczeCS2s/iQvWlZSO+2L19s76DFuWcM3I5VONHOizR/dqmbzVEpRJNLRY
+         Osmxo1pobMhkREEHt5ZsyZSGJqt/uSf3w01NqRtijF1NOo427z8a4MNYkzmN4LovckBY
+         k9KlfVTsCSSVlG2fFFV4Ld+rA+EIb0nIkXBCt7waeqyID34DeA5GBV85o8yA26yqmZls
+         pli1wn2bmbhJZSqozVqUij8mwgMf21CiFV+5YLl1IqvWyx42wD9NnrXrXuSi/pHOTzDR
+         i2xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747732992; x=1748337792;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NgRslGgoPUIa9miQEs5PaTdBGnGmWi2fH+uqBrR2JTA=;
+        b=E9KR/N/oa+cqDaL/aEfnqauYGp0ZdCN1eLp3o7EEjMYJAlsmQiclPqwAFHEopcdKFS
+         wDla5zt1LJCqkXctmymjpdqD5KHZcP2WMrK2UNJ6isFzQwELcbLvrvcVTTofKsR+cjQx
+         CPI+7ni4VwZEPZOOza4j7ZerU/6p2IGLtBK0xPcdK1BFG63626cLo4MjePoojC89nCjr
+         adjupXvmBlhwZm4fxuD0LS4zFwSPl4RsasgJB3fRGg9ikxWQz319pXpXURB3MR4GfH0G
+         qVP96D6V8uWALcGRJi8WEL8WRgBNRjNZjOojJiZRnmEFkXT/GBgFHMwGw4Xk+++VnpKj
+         TEoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXjCgPz5EPjIczj4XuUBkrTbyh3LEjL7Hnw70k9KdtxZuj0kH4SzprOlEPqh9LNXeT/Yk+RxHlvZ75PJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySifikdaFHfbuJgWDrKQ/WlVz38FISMcJKyVVssycJrM5CFJW1
+	AvnY373Zs6++hYY72FVtrxzDYqpValNhM4Au+xggkhXCXsMk/xaPjyNQhq9/Q8Ed5/fmYrtalJ9
+	E7sW1SVphW4RWvwHfVRc56COUfIV9YjR6L9//vkpz
+X-Gm-Gg: ASbGncuRyx9aV4+dzs0v7xlet3QqEoLDpvO8/IwdnkFiBp7hCDFtMNRyzTS90x+azaJ
+	G1/VPeNpFrY4JZSyDZd7QcX3nj8C6lyOtrCIvGZ/4WQSPgcWDj0xYIJ3rgP0ilVaio0hQAROAmx
+	xKucD3gXxSRCbdFqJyq8k7ETl56aONAsB6MeHPVUVVnwrxN1uyosUqPZ9btMxcPdXew5Rv2gu8
+X-Google-Smtp-Source: AGHT+IHqSH0PeJIRquwgzahePpyVteyvanvz6fbvfbuDtvPX6fcluzAS0uk6PdWolQebE/NO+IFyJGyJiFbkj5kTeeE=
+X-Received: by 2002:ac8:7f4c:0:b0:48a:5b89:473b with SMTP id
+ d75a77b69052e-49600c85c06mr9620301cf.7.1747732991941; Tue, 20 May 2025
+ 02:23:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] mm: Optimize mremap() by PTE batching
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, vbabka@suse.cz,
- jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, david@redhat.com, peterx@redhat.com,
- ryan.roberts@arm.com, mingo@kernel.org, libang.li@antgroup.com,
- maobibo@loongson.cn, zhengqi.arch@bytedance.com, baohua@kernel.org,
- anshuman.khandual@arm.com, willy@infradead.org, ioworker0@gmail.com,
- yang@os.amperecomputing.com, baolin.wang@linux.alibaba.com, ziy@nvidia.com,
- hughd@google.com
-References: <20250507060256.78278-1-dev.jain@arm.com>
- <20250507060256.78278-3-dev.jain@arm.com>
- <fdb76016-396a-4ee4-9c9d-beb18c86cfdb@lucifer.local>
- <c038b7cf-3b72-403f-b988-bf3009287502@arm.com>
- <55cc1cef-1ece-48c3-af17-22ece8df5ed3@lucifer.local>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <55cc1cef-1ece-48c3-af17-22ece8df5ed3@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1747264138.git.ackerleytng@google.com> <d3832fd95a03aad562705872cbda5b3d248ca321.1747264138.git.ackerleytng@google.com>
+In-Reply-To: <d3832fd95a03aad562705872cbda5b3d248ca321.1747264138.git.ackerleytng@google.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Tue, 20 May 2025 10:22:35 +0100
+X-Gm-Features: AX0GCFuad3k_eeLCPfcn12RMV3c4zm88hv51IV1yTlQEhgXZK63kv1Lb7vhRYsI
+Message-ID: <CA+EHjTxtHOgichL=UvAzczoqS1608RSUNn5HbmBw2NceO941ng@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
+ KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
+	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
+	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
+	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
+	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
+	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
+	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, thomas.lendacky@amd.com, 
+	usama.arif@bytedance.com, vannapurve@google.com, vbabka@suse.cz, 
+	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com, 
+	will@kernel.org, willy@infradead.org, xiaoyao.li@intel.com, 
+	yan.y.zhao@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
+	zhiquan1.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hi Ackerley,
+
+On Thu, 15 May 2025 at 00:43, Ackerley Tng <ackerleytng@google.com> wrote:
+>
+> The two new guest_memfd ioctls KVM_GMEM_CONVERT_SHARED and
+> KVM_GMEM_CONVERT_PRIVATE convert the requested memory ranges to shared
+> and private respectively.
+
+I have a high level question about this particular patch and this
+approach for conversion: why do we need IOCTLs to manage conversion
+between private and shared?
+
+In the presentations I gave at LPC [1, 2], and in my latest patch
+series that performs in-place conversion [3] and the associated (by
+now outdated) state diagram [4], I didn't see the need to have a
+userspace-facing interface to manage that. KVM has all the information
+it needs to handle conversions, which are triggered by the guest. To
+me this seems like it adds additional complexity, as well as a user
+facing interface that we would need to maintain.
+
+There are various ways we could handle conversion without explicit
+interference from userspace. What I had in mind is the following (as
+an example, details can vary according to VM type). I will use use the
+case of conversion from shared to private because that is the more
+complicated (interesting) case:
+
+- Guest issues a hypercall to request that a shared folio become private.
+
+- The hypervisor receives the call, and passes it to KVM.
+
+- KVM unmaps the folio from the guest stage-2 (EPT I think in x86
+parlance), and unmaps it from the host. The host however, could still
+have references (e.g., GUP).
+
+- KVM exits to the host (hypervisor call exit), with the information
+that the folio has been unshared from it.
+
+- A well behaving host would now get rid of all of its references
+(e.g., release GUPs), perform a VCPU run, and the guest continues
+running as normal. I expect this to be the common case.
+
+But to handle the more interesting situation, let's say that the host
+doesn't do it immediately, and for some reason it holds on to some
+references to that folio.
+
+- Even if that's the case, the guest can still run *. If the guest
+tries to access the folio, KVM detects that access when it tries to
+fault it into the guest, sees that the host still has references to
+that folio, and exits back to the host with a memory fault exit. At
+this point, the VCPU that has tried to fault in that particular folio
+cannot continue running as long as it cannot fault in that folio.
+
+- The host tries a VCPU run again, and the above repeats, i.e., KVM
+checks the refcount, finds that the host still holds references,
+doesn't fault the folio into the guest, and exits back to the host.
+
+- Eventually a well-behaving host releases all its references, and the
+following VCPU run is able to fault the page into the guest, and
+proceed with running it.
+
+In case the guest is destroyed before that happens, we have the whole
+folio_put() callback scenario we had discussed earlier.
+
+In other words, the interface that I had in mind where KVM run exists
+(hyp call, memory fault), as well as VCPU run. Both which already
+exist, and convey the same information. Is there a case where that
+isn't enough or suboptimal?
+
+Thanks,
+/fuad
+
+(*) An alternative suggestion was to block the VCPU from running
+altogether, regardless of whether it wants to fault the unshared page
+immediately, and continually exit to the host until references are
+dropped and the conversion can happen.
+
+[1] https://lpc.events/event/17/contributions/1487/
+[2] https://lpc.events/event/18/contributions/1758/
+[3] https://lore.kernel.org/all/20250328153133.3504118-1-tabba@google.com/
+[4] https://lpc.events/event/18/contributions/1758/attachments/1457/3699/Guestmemfd%20folio%20state%20page_type.pdf
 
 
-
-On 19/05/25 2:34 pm, Lorenzo Stoakes wrote:
-> On Sun, May 18, 2025 at 01:47:35PM +0530, Dev Jain wrote:
->>
->>
->> On 08/05/25 3:34 pm, Lorenzo Stoakes wrote:
->>> Before getting into the review, just to say thanks for refactoring as per
->>> my (and of course other's) comments, much appreciated and big improvement!
->>> :)
->>>
->>> We're getting there...
->>>
->>> On Wed, May 07, 2025 at 11:32:56AM +0530, Dev Jain wrote:
->>>> To use PTE batching, we want to determine whether the folio mapped by
->>>> the PTE is large, thus requiring the use of vm_normal_folio(). We want
->>>> to avoid the cost of vm_normal_folio() if the code path doesn't already
->>>> require the folio. For arm64, pte_batch_hint() does the job. To generalize
->>>> this hint, add a helper which will determine whether two consecutive PTEs
->>>> point to consecutive PFNs, in which case there is a high probability that
->>>> the underlying folio is large.
->>>> Next, use folio_pte_batch() to optimize move_ptes(). On arm64, if the ptes
->>>> are painted with the contig bit, then ptep_get() will iterate through all 16
->>>> entries to collect a/d bits. Hence this optimization will result in a 16x
->>>> reduction in the number of ptep_get() calls. Next, ptep_get_and_clear()
->>>> will eventually call contpte_try_unfold() on every contig block, thus
->>>> flushing the TLB for the complete large folio range. Instead, use
->>>> get_and_clear_full_ptes() so as to elide TLBIs on each contig block, and only
->>>> do them on the starting and ending contig block.
->>>>
->>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>> ---
->>>>    include/linux/pgtable.h | 29 +++++++++++++++++++++++++++++
->>>>    mm/mremap.c             | 37 ++++++++++++++++++++++++++++++-------
->>>>    2 files changed, 59 insertions(+), 7 deletions(-)
->>>>
->>>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
->>>> index b50447ef1c92..38dab1f562ed 100644
->>>> --- a/include/linux/pgtable.h
->>>> +++ b/include/linux/pgtable.h
->>>> @@ -369,6 +369,35 @@ static inline pgd_t pgdp_get(pgd_t *pgdp)
->>>>    }
->>>>    #endif
->>>>
->>>> +/**
->>>> + * maybe_contiguous_pte_pfns - Hint whether the page mapped by the pte belongs
->>>> + * to a large folio.
->>>> + * @ptep: Pointer to the page table entry.
->>>> + * @pte: The page table entry.
->>>> + *
->>>> + * This helper is invoked when the caller wants to batch over a set of ptes
->>>> + * mapping a large folio, but the concerned code path does not already have
->>>> + * the folio. We want to avoid the cost of vm_normal_folio() only to find that
->>>> + * the underlying folio was small; i.e keep the small folio case as fast as
->>>> + * possible.
->>>> + *
->>>> + * The caller must ensure that ptep + 1 exists.
->>>> + */
->>>> +static inline bool maybe_contiguous_pte_pfns(pte_t *ptep, pte_t pte)
->>>> +{
->>>> +	pte_t *next_ptep, next_pte;
->>>> +
->>>> +	if (pte_batch_hint(ptep, pte) != 1)
->>>> +		return true;
->>>> +
->>>> +	next_ptep = ptep + 1;
->>>> +	next_pte = ptep_get(next_ptep);
->>>> +	if (!pte_present(next_pte))
->>>> +		return false;
->>>> +
->>>> +	return unlikely(pte_pfn(next_pte) - pte_pfn(pte) == 1);
->>>
->>> Let's not do unlikely()'s unless we have data for them... it shouldn't mean
->>> 'what the programmer believes' :)
->>>
->>>> +}
->>>
->>> Yeah I'm with Andrew and Anshuman, I mean this is kind of a nasty interface
->>> (I mean _perhaps_ unavoidably) and we've done the relevant check in
->>> mremap_folio_pte_batch(), so let's just move it there with comments, as this
->>>
->>>> +
->>>>    #ifndef __HAVE_ARCH_PTEP_TEST_AND_CLEAR_YOUNG
->>>>    static inline int ptep_test_and_clear_young(struct vm_area_struct *vma,
->>>>    					    unsigned long address,
->>>> diff --git a/mm/mremap.c b/mm/mremap.c
->>>> index 0163e02e5aa8..9c88a276bec4 100644
->>>> --- a/mm/mremap.c
->>>> +++ b/mm/mremap.c
->>>> @@ -170,6 +170,23 @@ static pte_t move_soft_dirty_pte(pte_t pte)
->>>>    	return pte;
->>>>    }
->>>>
->>>> +/* mremap a batch of PTEs mapping the same large folio */
->>>> +static int mremap_folio_pte_batch(struct vm_area_struct *vma, unsigned long addr,
->>>> +		pte_t *ptep, pte_t pte, int max_nr)
->>>> +{
->>>> +	const fpb_t flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
->>>> +	struct folio *folio;
->>>> +	int nr = 1;
->>>> +
->>>> +	if ((max_nr != 1) && maybe_contiguous_pte_pfns(ptep, pte)) {
->>>> +		folio = vm_normal_folio(vma, addr, pte);
->>>> +		if (folio && folio_test_large(folio))
->>>> +			nr = folio_pte_batch(folio, addr, ptep, pte, max_nr,
->>>> +					     flags, NULL, NULL, NULL);
->>>> +	}
->>>
->>> This needs some refactoring, avoid nesting at all costs :)
->>>
->>> We'll want to move the maybe_contiguous_pte_pfns() function over here, so
->>> that'll change things, but in general let's use a guard clause.
->>>
->>> So an if block like:
->>>
->>> if (foo) {
->>> 	... bunch of logic ...
->>> }
->>>
->>> Is better replaced with a guard clause so you have:
->>>
->>> if (!foo)
->>> 	return ...;
->>>
->>> ... bunch of logic ...
->>>
->>> Here we could really expand things out to make things SUPER clear like:
->>>
->>> static int mremap_folio_pte_batch(struct vm_area_struct *vma, unsigned long addr,
->>> 		pte_t *ptep, pte_t pte, int max_nr)
->>> {
->>> 	const fpb_t flags;
->>> 	struct folio *folio;
->>>
->>> 	if (max_nr == 1)
->>> 		return 1;
->>> 	if (!maybe_contiguous_pte_pfns(ptep, pte)) // obviously replace with open code...
->>> 		return 1;
->>>
->>> 	folio = vm_normal_folio(vma, addr, pte);
->>> 	if (!folio)
->>> 		return 1;
->>> 	if (!folio_test_large(folio))
->>> 		return 1;
->>>
->>> 	flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
->>> 	return folio_pte_batch(folio, addr, ptep, pte, max_nr,
->>> 		flags, NULL, NULL, NULL);
->>> }
->>>
->>> I mean you could argue assign nr would be neater here, but you get the point!
->>>
->>> David mentioned a point about this code over in v1 discussion (see
->>> [0]). Trying to bring converastion here to avoid it being split across
->>> old/new series. There he said:
->>>
->>> David H:
->>>> (2) Do we really need "must be part of the same folio", or could be just batch over present
->>>> ptes that map consecutive PFNs? In that case, a helper that avoids folio_pte_batch() completely
->>>> might be better.
->>>
->>> Hm, if we didn't do the batch test, can we batch a split large folio here ok?
->>> I'm guessing we can in which case this check is actually limiting...
->>>
->>> Are we _explicitly_ only considering the cont pte case and ignoring the
->>> split THP case?
->>>
->>> [0]: https://lore.kernel.org/all/887fb371-409e-4dad-b4ff-38b85bfddf95@redhat.com/
->>>
->>> And in what circumstances will the hint be set, with a present subsequent
->>> PTE but !folio_test_large()?
->>>
->>> I guess the hint might not be taken? But then isn't the valid check just
->>> folio_test_large() and we don't need this batched check at all?
->>>
->>> Is it only to avoid the split THP case?
->>>
->>> We definitely need some clarity here, and a comment in the code explaining
->>> what's going on as this is subtle stuff.
->>
->> I am focussed only on batching large folios. Split THPs won't be batched;
->> you can use pte_batch() (from David's refactoring) and
->> figure the split THP batch out, but then get_and_clear_full_ptes()
->> will be gathering a/d bits and smearing them across the batch, which will be
->> incorrect. Even if we introduce a new version of get_and_clear_full_ptes()
->> which does not gather a/d bits, then if the pte_batch actually belongs to a
->> folio, then we will *not* be smearing a/d bits, which is again wrong. So in
->> any case we must know what the underlying folio looks like :) So my agenda
->> for v3 is,
-> 
-> Right, ack, there being a large folio per se doesn't mean A/D collection is
-> appropriate in THP case.
-> 
-> I guess then this is really _only_ about the mTHP case, where essentially
-> the other PTEs are to be disregarded going forwards?
-
-Yes.
-
-> 
->>
->> - Incorporate your refactoring comments
->> - Remove maybe_contiguous_pte_pfns and just use vm_normal_folio +
->> folio_test_large
->> - Fix indentation
->>
->> Sounds good?
-> 
-> Sure, but can we hold off until the mprotect() stuff is done first please?
-> I mean obviously you're free to do things as you like, but this will help
-> workload-wise on my side :>)
-> 
-> Thanks!
-
-No problem, thanks for reviewing!
-
-> 
->>
->>>
->>>> +	return nr;
->>>> +}
->>>> +
->>>>    static int move_ptes(struct pagetable_move_control *pmc,
->>>>    		unsigned long extent, pmd_t *old_pmd, pmd_t *new_pmd)
->>>>    {
->>>> @@ -177,7 +194,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
->>>>    	bool need_clear_uffd_wp = vma_has_uffd_without_event_remap(vma);
->>>>    	struct mm_struct *mm = vma->vm_mm;
->>>>    	pte_t *old_ptep, *new_ptep;
->>>> -	pte_t pte;
->>>> +	pte_t old_pte, pte;
->>>>    	pmd_t dummy_pmdval;
->>>>    	spinlock_t *old_ptl, *new_ptl;
->>>>    	bool force_flush = false;
->>>> @@ -186,6 +203,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
->>>>    	unsigned long old_end = old_addr + extent;
->>>>    	unsigned long len = old_end - old_addr;
->>>>    	int err = 0;
->>>> +	int max_nr;
->>>>
->>>>    	/*
->>>>    	 * When need_rmap_locks is true, we take the i_mmap_rwsem and anon_vma
->>>> @@ -236,12 +254,13 @@ static int move_ptes(struct pagetable_move_control *pmc,
->>>>    	flush_tlb_batched_pending(vma->vm_mm);
->>>>    	arch_enter_lazy_mmu_mode();
->>>>
->>>> -	for (; old_addr < old_end; old_ptep++, old_addr += PAGE_SIZE,
->>>> -				   new_ptep++, new_addr += PAGE_SIZE) {
->>>> -		if (pte_none(ptep_get(old_ptep)))
->>>> +	for (int nr = 1; old_addr < old_end; old_ptep += nr, old_addr += nr * PAGE_SIZE,
->>>> +				   new_ptep += nr, new_addr += nr * PAGE_SIZE) {
->>>
->>> Really nitty thing here but the indentation is all messed up here, I mean
->>> nothing is going to be nice but maybe indent by two tabs below 'for'.
->>>
->>> I'm not a fan of this declaration of nr, typically in a for loop a declaration
->>> here would be the counter, so this is just confusing.
->>>
->>> In the old implementation, declaring nr in the for loop would make sense,
->>> but in the newly refactored one you should just declare it at the top.
->>>
->>> Also as per Anshuman review, I think nr_ptes, max_nr_ptes would be better.
->>>
->>> I don't think 'nr' needs to be initialised either, since the conditional is
->>> 'old_addr < old_end' and you _should_ only perform the
->>>
->>>> +		max_nr = (old_end - old_addr) >> PAGE_SHIFT;
->>>> +		old_pte = ptep_get(old_ptep);
->>>> +		if (pte_none(old_pte))
->>>
->>> This seems broken.
->>>
->>> You're missing a nr assignment here, so you'll happen to offset by the
->>> number of pages of the last folio you encountered?
->>>
->>> Should be:
->>>
->>> 	if (pte_none(old_pte)) {
->>> 		nr_ptes = 1;
->>> 		continue;
->>> 	}
->>>
->>> Or, alternatively, you can reset nr_ptes to 1 at the start of each loop.
->>>
->>>
->>>>    			continue;
->>>>
->>>> -		pte = ptep_get_and_clear(mm, old_addr, old_ptep);
->>>
->>>>    		/*
->>>>    		 * If we are remapping a valid PTE, make sure
->>>>    		 * to flush TLB before we drop the PTL for the
->>>> @@ -253,8 +272,12 @@ static int move_ptes(struct pagetable_move_control *pmc,
->>>>    		 * the TLB entry for the old mapping has been
->>>>    		 * flushed.
->>>>    		 */
->>>> -		if (pte_present(pte))
->>>> +		if (pte_present(old_pte)) {
->>>> +			nr = mremap_folio_pte_batch(vma, old_addr, old_ptep,
->>>> +						    old_pte, max_nr);
->>>>    			force_flush = true;
->>>> +		}
->>>
->>> Thanks this is much clearer compared to v1
->>>
->>>> +		pte = get_and_clear_full_ptes(mm, old_addr, old_ptep, nr, 0);
->>>
->>> Nit but...
->>>
->>> Can we have a comment indicating what the last parameter refers to? I think
->>> David maybe doens't like this so obviously if he prefers not that fine, but
->>> I'm thinking something like:
->>>
->>> pte = get_and_clear_full_ptes(mm, old_addr, old_ptep, nr, /*full=*/false);
->>>
->>> I think we are good to just use 'false' here right? As it's only an int for
->>> historical purposes...
->>>
->>>>    		pte = move_pte(pte, old_addr, new_addr);
->>>>    		pte = move_soft_dirty_pte(pte);
->>>>
->>>> @@ -267,7 +290,7 @@ static int move_ptes(struct pagetable_move_control *pmc,
->>>>    				else if (is_swap_pte(pte))
->>>>    					pte = pte_swp_clear_uffd_wp(pte);
->>>>    			}
->>>> -			set_pte_at(mm, new_addr, new_ptep, pte);
->>>> +			set_ptes(mm, new_addr, new_ptep, pte, nr);
->>>>    		}
->>>>    	}
->>>>
->>>> --
->>>> 2.30.2
->>>>
->>
-
+> A guest_memfd ioctl is used because shareability is a property of the
+> memory, and this property should be modifiable independently of the
+> attached struct kvm. This allows shareability to be modified even if
+> the memory is not yet bound using memslots.
+>
+> For shared to private conversions, if refcounts on any of the folios
+> within the range are elevated, fail the conversion with -EAGAIN.
+>
+> At the point of shared to private conversion, all folios in range are
+> also unmapped. The filemap_invalidate_lock() is held, so no faulting
+> can occur. Hence, from that point on, only transient refcounts can be
+> taken on the folios associated with that guest_memfd.
+>
+> Hence, it is safe to do the conversion from shared to private.
+>
+> After conversion is complete, refcounts may become elevated, but that
+> is fine since users of transient refcounts don't actually access
+> memory.
+>
+> For private to shared conversions, there are no refcount checks. any
+> transient refcounts are expected to drop their refcounts soon. The
+> conversion process will spin waiting for these transient refcounts to
+> go away.
+>
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+>
+> Change-Id: I3546aaf6c1b795de6dc9ba09e816b64934221918
+> ---
+>  include/uapi/linux/kvm.h |  11 ++
+>  virt/kvm/guest_memfd.c   | 357 ++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 366 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index d7df312479aa..5b28e17f6f14 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -1577,6 +1577,17 @@ struct kvm_create_guest_memfd {
+>         __u64 reserved[6];
+>  };
+>
+> +#define KVM_GMEM_IO 0xAF
+> +#define KVM_GMEM_CONVERT_SHARED                _IOWR(KVM_GMEM_IO,  0x41, struct kvm_gmem_convert)
+> +#define KVM_GMEM_CONVERT_PRIVATE       _IOWR(KVM_GMEM_IO,  0x42, struct kvm_gmem_convert)
+> +
+> +struct kvm_gmem_convert {
+> +       __u64 offset;
+> +       __u64 size;
+> +       __u64 error_offset;
+> +       __u64 reserved[5];
+> +};
+> +
+>  #define KVM_PRE_FAULT_MEMORY   _IOWR(KVMIO, 0xd5, struct kvm_pre_fault_memory)
+>
+>  struct kvm_pre_fault_memory {
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 590932499eba..f802116290ce 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -30,6 +30,10 @@ enum shareability {
+>  };
+>
+>  static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index);
+> +static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
+> +                                     pgoff_t end);
+> +static void kvm_gmem_invalidate_end(struct kvm_gmem *gmem, pgoff_t start,
+> +                                   pgoff_t end);
+>
+>  static struct kvm_gmem_inode_private *kvm_gmem_private(struct inode *inode)
+>  {
+> @@ -85,6 +89,306 @@ static struct folio *kvm_gmem_get_shared_folio(struct inode *inode, pgoff_t inde
+>         return kvm_gmem_get_folio(inode, index);
+>  }
+>
+> +/**
+> + * kvm_gmem_shareability_store() - Sets shareability to @value for range.
+> + *
+> + * @mt: the shareability maple tree.
+> + * @index: the range begins at this index in the inode.
+> + * @nr_pages: number of PAGE_SIZE pages in this range.
+> + * @value: the shareability value to set for this range.
+> + *
+> + * Unlike mtree_store_range(), this function also merges adjacent ranges that
+> + * have the same values as an optimization. Assumes that all stores to @mt go
+> + * through this function, such that adjacent ranges are always merged.
+> + *
+> + * Return: 0 on success and negative error otherwise.
+> + */
+> +static int kvm_gmem_shareability_store(struct maple_tree *mt, pgoff_t index,
+> +                                      size_t nr_pages, enum shareability value)
+> +{
+> +       MA_STATE(mas, mt, 0, 0);
+> +       unsigned long start;
+> +       unsigned long last;
+> +       void *entry;
+> +       int ret;
+> +
+> +       start = index;
+> +       last = start + nr_pages - 1;
+> +
+> +       mas_lock(&mas);
+> +
+> +       /* Try extending range. entry is NULL on overflow/wrap-around. */
+> +       mas_set_range(&mas, last + 1, last + 1);
+> +       entry = mas_find(&mas, last + 1);
+> +       if (entry && xa_to_value(entry) == value)
+> +               last = mas.last;
+> +
+> +       mas_set_range(&mas, start - 1, start - 1);
+> +       entry = mas_find(&mas, start - 1);
+> +       if (entry && xa_to_value(entry) == value)
+> +               start = mas.index;
+> +
+> +       mas_set_range(&mas, start, last);
+> +       ret = mas_store_gfp(&mas, xa_mk_value(value), GFP_KERNEL);
+> +
+> +       mas_unlock(&mas);
+> +
+> +       return ret;
+> +}
+> +
+> +struct conversion_work {
+> +       struct list_head list;
+> +       pgoff_t start;
+> +       size_t nr_pages;
+> +};
+> +
+> +static int add_to_work_list(struct list_head *list, pgoff_t start, pgoff_t last)
+> +{
+> +       struct conversion_work *work;
+> +
+> +       work = kzalloc(sizeof(*work), GFP_KERNEL);
+> +       if (!work)
+> +               return -ENOMEM;
+> +
+> +       work->start = start;
+> +       work->nr_pages = last + 1 - start;
+> +
+> +       list_add_tail(&work->list, list);
+> +
+> +       return 0;
+> +}
+> +
+> +static bool kvm_gmem_has_safe_refcount(struct address_space *mapping, pgoff_t start,
+> +                                      size_t nr_pages, pgoff_t *error_index)
+> +{
+> +       const int filemap_get_folios_refcount = 1;
+> +       struct folio_batch fbatch;
+> +       bool refcount_safe;
+> +       pgoff_t last;
+> +       int i;
+> +
+> +       last = start + nr_pages - 1;
+> +       refcount_safe = true;
+> +
+> +       folio_batch_init(&fbatch);
+> +       while (refcount_safe &&
+> +              filemap_get_folios(mapping, &start, last, &fbatch)) {
+> +
+> +               for (i = 0; i < folio_batch_count(&fbatch); ++i) {
+> +                       int filemap_refcount;
+> +                       int safe_refcount;
+> +                       struct folio *f;
+> +
+> +                       f = fbatch.folios[i];
+> +                       filemap_refcount = folio_nr_pages(f);
+> +
+> +                       safe_refcount = filemap_refcount + filemap_get_folios_refcount;
+> +                       if (folio_ref_count(f) != safe_refcount) {
+> +                               refcount_safe = false;
+> +                               *error_index = f->index;
+> +                               break;
+> +                       }
+> +               }
+> +
+> +               folio_batch_release(&fbatch);
+> +       }
+> +
+> +       return refcount_safe;
+> +}
+> +
+> +static int kvm_gmem_shareability_apply(struct inode *inode,
+> +                                      struct conversion_work *work,
+> +                                      enum shareability m)
+> +{
+> +       struct maple_tree *mt;
+> +
+> +       mt = &kvm_gmem_private(inode)->shareability;
+> +       return kvm_gmem_shareability_store(mt, work->start, work->nr_pages, m);
+> +}
+> +
+> +static int kvm_gmem_convert_compute_work(struct inode *inode, pgoff_t start,
+> +                                        size_t nr_pages, enum shareability m,
+> +                                        struct list_head *work_list)
+> +{
+> +       struct maple_tree *mt;
+> +       struct ma_state mas;
+> +       pgoff_t last;
+> +       void *entry;
+> +       int ret;
+> +
+> +       last = start + nr_pages - 1;
+> +
+> +       mt = &kvm_gmem_private(inode)->shareability;
+> +       ret = 0;
+> +
+> +       mas_init(&mas, mt, start);
+> +
+> +       rcu_read_lock();
+> +       mas_for_each(&mas, entry, last) {
+> +               enum shareability current_m;
+> +               pgoff_t m_range_index;
+> +               pgoff_t m_range_last;
+> +               int ret;
+> +
+> +               m_range_index = max(mas.index, start);
+> +               m_range_last = min(mas.last, last);
+> +
+> +               current_m = xa_to_value(entry);
+> +               if (m == current_m)
+> +                       continue;
+> +
+> +               mas_pause(&mas);
+> +               rcu_read_unlock();
+> +               /* Caller will clean this up on error. */
+> +               ret = add_to_work_list(work_list, m_range_index, m_range_last);
+> +               rcu_read_lock();
+> +               if (ret)
+> +                       break;
+> +       }
+> +       rcu_read_unlock();
+> +
+> +       return ret;
+> +}
+> +
+> +static void kvm_gmem_convert_invalidate_begin(struct inode *inode,
+> +                                             struct conversion_work *work)
+> +{
+> +       struct list_head *gmem_list;
+> +       struct kvm_gmem *gmem;
+> +       pgoff_t end;
+> +
+> +       end = work->start + work->nr_pages;
+> +
+> +       gmem_list = &inode->i_mapping->i_private_list;
+> +       list_for_each_entry(gmem, gmem_list, entry)
+> +               kvm_gmem_invalidate_begin(gmem, work->start, end);
+> +}
+> +
+> +static void kvm_gmem_convert_invalidate_end(struct inode *inode,
+> +                                           struct conversion_work *work)
+> +{
+> +       struct list_head *gmem_list;
+> +       struct kvm_gmem *gmem;
+> +       pgoff_t end;
+> +
+> +       end = work->start + work->nr_pages;
+> +
+> +       gmem_list = &inode->i_mapping->i_private_list;
+> +       list_for_each_entry(gmem, gmem_list, entry)
+> +               kvm_gmem_invalidate_end(gmem, work->start, end);
+> +}
+> +
+> +static int kvm_gmem_convert_should_proceed(struct inode *inode,
+> +                                          struct conversion_work *work,
+> +                                          bool to_shared, pgoff_t *error_index)
+> +{
+> +       if (!to_shared) {
+> +               unmap_mapping_pages(inode->i_mapping, work->start,
+> +                                   work->nr_pages, false);
+> +
+> +               if (!kvm_gmem_has_safe_refcount(inode->i_mapping, work->start,
+> +                                               work->nr_pages, error_index)) {
+> +                       return -EAGAIN;
+> +               }
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int kvm_gmem_convert_range(struct file *file, pgoff_t start,
+> +                                 size_t nr_pages, bool shared,
+> +                                 pgoff_t *error_index)
+> +{
+> +       struct conversion_work *work, *tmp, *rollback_stop_item;
+> +       LIST_HEAD(work_list);
+> +       struct inode *inode;
+> +       enum shareability m;
+> +       int ret;
+> +
+> +       inode = file_inode(file);
+> +
+> +       filemap_invalidate_lock(inode->i_mapping);
+> +
+> +       m = shared ? SHAREABILITY_ALL : SHAREABILITY_GUEST;
+> +       ret = kvm_gmem_convert_compute_work(inode, start, nr_pages, m, &work_list);
+> +       if (ret || list_empty(&work_list))
+> +               goto out;
+> +
+> +       list_for_each_entry(work, &work_list, list)
+> +               kvm_gmem_convert_invalidate_begin(inode, work);
+> +
+> +       list_for_each_entry(work, &work_list, list) {
+> +               ret = kvm_gmem_convert_should_proceed(inode, work, shared,
+> +                                                     error_index);
+> +               if (ret)
+> +                       goto invalidate_end;
+> +       }
+> +
+> +       list_for_each_entry(work, &work_list, list) {
+> +               rollback_stop_item = work;
+> +               ret = kvm_gmem_shareability_apply(inode, work, m);
+> +               if (ret)
+> +                       break;
+> +       }
+> +
+> +       if (ret) {
+> +               m = shared ? SHAREABILITY_GUEST : SHAREABILITY_ALL;
+> +               list_for_each_entry(work, &work_list, list) {
+> +                       if (work == rollback_stop_item)
+> +                               break;
+> +
+> +                       WARN_ON(kvm_gmem_shareability_apply(inode, work, m));
+> +               }
+> +       }
+> +
+> +invalidate_end:
+> +       list_for_each_entry(work, &work_list, list)
+> +               kvm_gmem_convert_invalidate_end(inode, work);
+> +out:
+> +       filemap_invalidate_unlock(inode->i_mapping);
+> +
+> +       list_for_each_entry_safe(work, tmp, &work_list, list) {
+> +               list_del(&work->list);
+> +               kfree(work);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static int kvm_gmem_ioctl_convert_range(struct file *file,
+> +                                       struct kvm_gmem_convert *param,
+> +                                       bool shared)
+> +{
+> +       pgoff_t error_index;
+> +       size_t nr_pages;
+> +       pgoff_t start;
+> +       int ret;
+> +
+> +       if (param->error_offset)
+> +               return -EINVAL;
+> +
+> +       if (param->size == 0)
+> +               return 0;
+> +
+> +       if (param->offset + param->size < param->offset ||
+> +           param->offset > file_inode(file)->i_size ||
+> +           param->offset + param->size > file_inode(file)->i_size)
+> +               return -EINVAL;
+> +
+> +       if (!IS_ALIGNED(param->offset, PAGE_SIZE) ||
+> +           !IS_ALIGNED(param->size, PAGE_SIZE))
+> +               return -EINVAL;
+> +
+> +       start = param->offset >> PAGE_SHIFT;
+> +       nr_pages = param->size >> PAGE_SHIFT;
+> +
+> +       ret = kvm_gmem_convert_range(file, start, nr_pages, shared, &error_index);
+> +       if (ret)
+> +               param->error_offset = error_index << PAGE_SHIFT;
+> +
+> +       return ret;
+> +}
+> +
+>  #else
+>
+>  static int kvm_gmem_shareability_setup(struct maple_tree *mt, loff_t size, u64 flags)
+> @@ -186,15 +490,26 @@ static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
+>         unsigned long index;
+>
+>         xa_for_each_range(&gmem->bindings, index, slot, start, end - 1) {
+> +               enum kvm_gfn_range_filter filter;
+>                 pgoff_t pgoff = slot->gmem.pgoff;
+>
+> +               filter = KVM_FILTER_PRIVATE;
+> +               if (kvm_gmem_memslot_supports_shared(slot)) {
+> +                       /*
+> +                        * Unmapping would also cause invalidation, but cannot
+> +                        * rely on mmu_notifiers to do invalidation via
+> +                        * unmapping, since memory may not be mapped to
+> +                        * userspace.
+> +                        */
+> +                       filter |= KVM_FILTER_SHARED;
+> +               }
+> +
+>                 struct kvm_gfn_range gfn_range = {
+>                         .start = slot->base_gfn + max(pgoff, start) - pgoff,
+>                         .end = slot->base_gfn + min(pgoff + slot->npages, end) - pgoff,
+>                         .slot = slot,
+>                         .may_block = true,
+> -                       /* guest memfd is relevant to only private mappings. */
+> -                       .attr_filter = KVM_FILTER_PRIVATE,
+> +                       .attr_filter = filter,
+>                 };
+>
+>                 if (!found_memslot) {
+> @@ -484,11 +799,49 @@ EXPORT_SYMBOL_GPL(kvm_gmem_memslot_supports_shared);
+>  #define kvm_gmem_mmap NULL
+>  #endif /* CONFIG_KVM_GMEM_SHARED_MEM */
+>
+> +static long kvm_gmem_ioctl(struct file *file, unsigned int ioctl,
+> +                          unsigned long arg)
+> +{
+> +       void __user *argp;
+> +       int r;
+> +
+> +       argp = (void __user *)arg;
+> +
+> +       switch (ioctl) {
+> +#ifdef CONFIG_KVM_GMEM_SHARED_MEM
+> +       case KVM_GMEM_CONVERT_SHARED:
+> +       case KVM_GMEM_CONVERT_PRIVATE: {
+> +               struct kvm_gmem_convert param;
+> +               bool to_shared;
+> +
+> +               r = -EFAULT;
+> +               if (copy_from_user(&param, argp, sizeof(param)))
+> +                       goto out;
+> +
+> +               to_shared = ioctl == KVM_GMEM_CONVERT_SHARED;
+> +               r = kvm_gmem_ioctl_convert_range(file, &param, to_shared);
+> +               if (r) {
+> +                       if (copy_to_user(argp, &param, sizeof(param))) {
+> +                               r = -EFAULT;
+> +                               goto out;
+> +                       }
+> +               }
+> +               break;
+> +       }
+> +#endif
+> +       default:
+> +               r = -ENOTTY;
+> +       }
+> +out:
+> +       return r;
+> +}
+> +
+>  static struct file_operations kvm_gmem_fops = {
+>         .mmap           = kvm_gmem_mmap,
+>         .open           = generic_file_open,
+>         .release        = kvm_gmem_release,
+>         .fallocate      = kvm_gmem_fallocate,
+> +       .unlocked_ioctl = kvm_gmem_ioctl,
+>  };
+>
+>  static void kvm_gmem_free_inode(struct inode *inode)
+> --
+> 2.49.0.1045.g170613ef41-goog
+>
 
