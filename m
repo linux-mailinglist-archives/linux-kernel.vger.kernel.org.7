@@ -1,281 +1,139 @@
-Return-Path: <linux-kernel+bounces-655179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B28B4ABD1FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:31:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3770DABD210
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 10:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B470D1BA1EEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:31:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D20504A6E48
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 08:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB3F264F9D;
-	Tue, 20 May 2025 08:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b="CKpjkFfL"
-Received: from PUWP216CU001.outbound.protection.outlook.com (mail-koreasouthazon11020079.outbound.protection.outlook.com [52.101.156.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909AA265CCA;
+	Tue, 20 May 2025 08:33:27 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DD42566FE;
-	Tue, 20 May 2025 08:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.156.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747729886; cv=fail; b=GLrM28muBkQWCMy4gawxXQKoAdMlcgXMksVYuE19jPbOf1pFnV4NBQFXRNgvVuYLxD8YkH6pvh4OClC7GouacJcZ5snz86fBWzqTdW9e+zlVsFD/EJ2KCDajgvOCFtVvTdofNLeKbPJOAlC0HJYFfj8G+zz2lajNHFy9DQg/AGY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747729886; c=relaxed/simple;
-	bh=IMMzXbK1Y3MBwrX0EpWF1Y4Xw3/vmQ7z2VKecQwnQPU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QLmilMjNKR9ehBN3jWBMHm/LBEs7XA+mLbE5Pk5rKzGzR3441VkTmWc4RbXOo7w4bQqjSweevki9j2+qZXddMd/oaZRocdo7YKBq1cZVk7/rxycSBbHPDz8CkHhB8N0jB+Ov4rkI4kj70nTGs3e0MOotFjN+QtzHbEMPykEJMPM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com; spf=fail smtp.mailfrom=chipsnmedia.com; dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b=CKpjkFfL; arc=fail smtp.client-ip=52.101.156.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=chipsnmedia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Of/EfBEPyLrAukiw629mufTXDpr90lodm7LlMDINoevrD7RWjM+VDmFAZQzalDFyf24hMGfzHSxpBKX5CKopX9g/OYdAZJQFCyUW2wvOvNYq/sGLRBwpihYHYNx/PP0fV5F3nYAjjeaflwkJX1+Iw7HDYds+hZS2Cg+TaU6UTooSfuhd8PIwUcVMVlktj5xNI9mnY+D9FkRhH5pHQv6JJoJZBgJKHDwYw/4G6BNzpssSCgubWl4SYvxqlu1LGW5lsaWRpMRg4m68PbjWPfdOkUh/5U69BH59VAJZBY50zd381UghcDgP0w7/kjgTbatLvqbFqGdE0+Lre3u1QCvPxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TdhLenwT2iR/k3dNRgX/XEEHtstqTt0YONas83M07qY=;
- b=uUKmXOt90UiEgWpk+IUmKM8/7KR+DZncBc53vnYRA3MvTYSF6tlI6K47fsV/np/q6Rw9R598RpbJnNvaXRpcW5jv5I0CjfpUMM6Tmy2xxVewbPn9dKvDoC5NLD/SL5zq5eLbzCnn1dburJaTxGkqJkRZ+N9so3C/1fEbX5AT5GgpM2vf4WRJ+36Ivd/7Q6/bTP5wNfBeCmRXn47sbp+wPUcMbmg7z73FQrVEn9L/NX/Wr4a5lKtR9ZPXXv8PvPqGrVXxiMN3nsu7Wcu2/nouagN8JANEHa0vuobZTaMS2z7dOd9xaZZEBIV8kJNv1CNZMNz7SDbwgm5k23gI9e9miA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=chipsnmedia.com; dmarc=pass action=none
- header.from=chipsnmedia.com; dkim=pass header.d=chipsnmedia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chipsnmedia.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TdhLenwT2iR/k3dNRgX/XEEHtstqTt0YONas83M07qY=;
- b=CKpjkFfLWwRSAxfYNx7jJ+Ec0yEVit2TXGd/NW3BYtqR2f5CKQjksV94cVjuhbmCdTy3kWUeWg7fhiDHQJ65CcwFll64jMLwaCMW4eBKHHNnuALqsEA7oRtL9noWsVhjSEzQXTJQ0kpdtGkiq8qUrFpfrbtvHoDld/Zh9oZuPNA=
-Received: from SL2P216MB1246.KORP216.PROD.OUTLOOK.COM (2603:1096:101:a::9) by
- SE1P216MB2242.KORP216.PROD.OUTLOOK.COM (2603:1096:101:15d::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8746.31; Tue, 20 May 2025 08:31:19 +0000
-Received: from SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
- ([fe80::9e3d:ee20:8cc7:3c07]) by SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
- ([fe80::9e3d:ee20:8cc7:3c07%3]) with mapi id 15.20.8746.030; Tue, 20 May 2025
- 08:31:19 +0000
-From: Nas Chung <nas.chung@chipsnmedia.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: "mchehab@kernel.org" <mchehab@kernel.org>, "hverkuil@xs4all.nl"
-	<hverkuil@xs4all.nl>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-imx@nxp.com" <linux-imx@nxp.com>,
-	"marex@denx.de" <marex@denx.de>, jackson.lee <jackson.lee@chipsnmedia.com>,
-	lafley.kim <lafley.kim@chipsnmedia.com>
-Subject: RE: [PATCH v2 2/8] dt-bindings: media: nxp: Add Wave6 video codec
- device
-Thread-Topic: [PATCH v2 2/8] dt-bindings: media: nxp: Add Wave6 video codec
- device
-Thread-Index:
- AQHbs2lXzy1gLrNeZ0ijKXj6PUT3srO0NFSAgBWF9JCAAHRxAIAFp7/wgAWGbQCAA/TX8IAB596AgAAXvuA=
-Date: Tue, 20 May 2025 08:31:19 +0000
-Message-ID:
- <SL2P216MB124663E8210291761226DAC2FB9FA@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
-References: <20250422093119.595-1-nas.chung@chipsnmedia.com>
- <20250422093119.595-3-nas.chung@chipsnmedia.com>
- <20250425-romantic-truthful-dove-3ef949@kuoka>
- <SL2P216MB124656A87931B153F815820BFB8AA@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
- <f1073f21-0885-486f-80c8-00f91dfd7448@kernel.org>
- <SL2P216MB1246002B8EFD5CBE69E447ACFB96A@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
- <cafba18a-5391-4d9d-aa4c-2f06f93af0f8@kernel.org>
- <SL2P216MB1246B1DA93D85C1536476D74FB9CA@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
- <f9eb4322-cf6f-445d-8ba8-39182325ca4e@kernel.org>
-In-Reply-To: <f9eb4322-cf6f-445d-8ba8-39182325ca4e@kernel.org>
-Accept-Language: en-US, ko-KR
-Content-Language: ko-KR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=chipsnmedia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SL2P216MB1246:EE_|SE1P216MB2242:EE_
-x-ms-office365-filtering-correlation-id: 78491408-e26f-404d-1174-08dd9778b1db
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?EBkGGS7P/XGJa7qH5wrwIbvhxIqvocguBy9AjFEz/vYQdoEv1MbJ/p9gBfLa?=
- =?us-ascii?Q?iSVEFxLU781BxlLF1cKkkoR/tVJNcetrGf1iBWZOMwT6pKeGgF/KaaGK/myM?=
- =?us-ascii?Q?5nIWcFim9GojUk8a739F80ZDvFE7W4bd6kYqbVZaoDrEaCXkzrVWfEINvxJ6?=
- =?us-ascii?Q?S/TQJGGN+93jQ9iHKCiMS0AeOReuna7H7DbS15a9qjFySmqqY02CW/8zCafr?=
- =?us-ascii?Q?Gt09j0pWEUlVJUr3gClCBLoAr1dGT1m8VkByyF4cz+NIKwydXMg4Cs2BsHF4?=
- =?us-ascii?Q?EWokayQqYCpxmaSOtdLmGWYmF7wJmRRaDHcFWyx5lUbv9FScDwI+GD0MT913?=
- =?us-ascii?Q?Us00FHS08oA4KhbpeGKFTV4JuicfDWMseBEbBOCo+IPD63W8LogYmqZH37GI?=
- =?us-ascii?Q?EaE9NRIo60gxx5yFGc1XNncZSlfsRzadByAxWOg5xDiKkg4HT9IBM7Nkyo/H?=
- =?us-ascii?Q?Qi+wxmq/SkdYYetcSpFWZNheuRJUD441RUtRx8Lg21dPdhFUDlOwlOPdVJxw?=
- =?us-ascii?Q?eguvSKhsZvDIl6ICsqB4SFZv4FIvKOTw8nBylv1S49tFRlneFcuBGdG/oURp?=
- =?us-ascii?Q?HpeJWcwL+TUFgwDvKIRX3Jw+nvBWhn9W5/1TJ1B1dhZ/gWWeU2plLbV9m9z1?=
- =?us-ascii?Q?BDoC0rvuF0ngT7Q0t+xpiKCnijvhI4+yNHGsMeTjqd2S7oW8RxjpgfADY4d6?=
- =?us-ascii?Q?deps1B5z55IIfY6yzRum0mnz84qQjU0hSlbP4E4Ck1dqtQx2q4imbkaCGkf2?=
- =?us-ascii?Q?pz46CFeeIrt7ho0coV9K1hzaArGRSVvNNUKKIElMPH5bEMBs59PGx+oU6IT5?=
- =?us-ascii?Q?V0Lt/pGO4HTsHsfmmLDvk6Md/ILXs5YlT4LkqhMSYSihAASlPl9WCbZ/IzH/?=
- =?us-ascii?Q?cB8ObcF1S/kAg+GVcQ2wOHbnzooUi6p0WVHzS8nRqpHuUNJUD3PgzyQEso5R?=
- =?us-ascii?Q?G55zKu56e9vDXYqIBGhsf1jML8eUAfyGFd0dGUsV7mCUFz7G6ckiG2hbnkzo?=
- =?us-ascii?Q?hI6SpSpt7xGIATrea5lOGQZP9Lmn0l5q6xH6FO6//Kvvc5oD09wJYJEjR+nx?=
- =?us-ascii?Q?zHvGOpq/IfpE2iyevpmVaA+2f+9iDJSXSxK+VvQ9oJ7nsvet6f/Rmv3PdnNB?=
- =?us-ascii?Q?2bvelJ0rd33PVHaKETv8XeLJlmzxHsGlXr2TiyvhFSb0Qk/GEZc53J1nFifw?=
- =?us-ascii?Q?qzas6Q6EhNCr9CUFBfbjv04Jha587Hgdbas1VzFSk73OPO+MJJ5PP0ttRK0o?=
- =?us-ascii?Q?+3GTjUwgb+r3QiDImjaWMfLKQfj+y8GvG2QsbU5IHBoFCO2wJzkjbgPYScqq?=
- =?us-ascii?Q?AuGUQRNM2IOivAL+pJ+OH84LFW4Izm/LYREyOqx0boyQ7qOJj4/woB8LpPdb?=
- =?us-ascii?Q?YvNpHHl+WrgDgTeN8tsctQ1iODKLhBfmnhCtnpvbrwMKnZu9dKXexDL4GtSc?=
- =?us-ascii?Q?ZH+jbO7JjxldgIEjBuuHC8grXsJ56h9ZJlU9TXfMvQpA8Kx1c9CYpw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SL2P216MB1246.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?n/jBGIlNNpj13hq8XrjQkbvB7HgtfMAbsr1aElhYn7GNtJbfOW8gh4OiDZ2Z?=
- =?us-ascii?Q?EAQoTOtUaiXKPX4/8OzVkcWA8V4hVzCK0SUJm9CcsUL4NPPZuZqnq5DzfbfB?=
- =?us-ascii?Q?N2ldd5xH9TEbhRefCjIlwSc3338oQ6onFcz5d6pWAUtSN2iWhcM3UVyJrYgR?=
- =?us-ascii?Q?3R08p8tpOZQyU652YGrF1yDyoHx0uPiADwXPv94f0D0Zt5GeFY0SQF8rR08M?=
- =?us-ascii?Q?VhXJJNJWI191Z0Zd9/NZAiLJlYr5O2Sb1lBFQWvbQa0DYuzHP7op9cEO4IqZ?=
- =?us-ascii?Q?N9wcNtFn/735qkGkRCNnWSOAiiCNytqtQsHuptOx4/CvtCs3xHyaY+TW3iDi?=
- =?us-ascii?Q?2gia62gdTtYvbUkFqExqr3zyI8l4eaRPDLmxmqAsDor1H9WUv6e70YqGdDd6?=
- =?us-ascii?Q?1uSyydCJ8/mMZXsYB4d05nhZXsKeesx5B2nn1C3DKI2sQ4nFqQ+ATokWXC1y?=
- =?us-ascii?Q?s49pR9O1SCWzGr8YA9ADAuUn0dhj2Z5C1qnee9weCyw7GUIS3c7ANJm8SI4a?=
- =?us-ascii?Q?Wni4BnuF6ixYcz+ch8+gC9Xak5F6hgqJGyF/VHKgywKvMrce+5ME6436+ym6?=
- =?us-ascii?Q?NRJXDbFKCiUJPLmuOv/KqZSgSO1kAgBNKOI+YhQKRrIXvTTIOguYMwqAIZ/f?=
- =?us-ascii?Q?VMg8qDDebAUpX0yTq5v/G9IVZB6EqeEdpAXyIj1cOLcZCeXhe8/JxoHrfgp/?=
- =?us-ascii?Q?nFYF0SWtFChBdKuch3ryXCzKX/dMT+CzygMBFjYC1jduuy8aP/R8U37ByP0z?=
- =?us-ascii?Q?oUv6aIRzAYklgsoRSQ/qlUy1FSmk2JBGyDLQ9T13cguvOLhBybLm8q18ygK/?=
- =?us-ascii?Q?jBe9AniOeuuTy+yKzwxgl3AUO/pQE8nuUvlGLrtd2t5KtXSbRDP7a7ccDNCt?=
- =?us-ascii?Q?uU9lNbUcWz91cCYuSso1dpUkV3HdQCjBrGZWg9La0tdjejxqQEHAgKEJG9Fa?=
- =?us-ascii?Q?0x8ct555/8xPjjZ3dy51SSVmv8bxxHjujd/5WNpBGHZSJEG11lsUt4UMNSS3?=
- =?us-ascii?Q?xlFTMQo1iUnxouo2QqJtNgDCszRMsdnoir+EUdOQQxwE/MtABjfp49ZnosNn?=
- =?us-ascii?Q?loK+DW/x4/Ve6BuW+RMvJsfpnYVr9h+Ik1ViMLD478ZxiQ48YYOOohUcNsYw?=
- =?us-ascii?Q?vPYYJkJp/rjT7j+2jLki0G+6tNVSj5UHDWYICSTPY/F/FjZ55Vxcffien2/j?=
- =?us-ascii?Q?Wn3l1WA0teZojmlzztUGYZ7L6Z19mWZcI/XpzhWYxWzkrrKWiVlxVqI0l/1W?=
- =?us-ascii?Q?sB41QlMCPrwDAz7Jkv6BATu74ia+T5TYIEpghNORrWW6FQFL1OvPduCvvqkc?=
- =?us-ascii?Q?wPdn9UptJ3EZJTLjZtc74FXFTs2Iq0/NCNXx29EK+PcTilo5i96B2G6VIETJ?=
- =?us-ascii?Q?8bhAqOy+zq1cBNRiWaaGNkdGrU0V3sgu96uZUpXbS02epHdK98g2HGVf4vss?=
- =?us-ascii?Q?Xg/ssHuAuuEscYtEik8iDs5R8Hnx3QPLnlM+3EKsgK9wra+I/a7kUrUbpJfT?=
- =?us-ascii?Q?tffZcnqUFrA0pGTcBfbejkFBTcU9QfALu7hOju5wKTWwfpBDfwPsnFJpiC8h?=
- =?us-ascii?Q?5m+FANKiLqqFdaFTIQ48X2xs0qs2jVxgIkXhYbCq?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D10E264A9F;
+	Tue, 20 May 2025 08:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747730007; cv=none; b=ZAH1ItUQnWGCffIEOb2rPYIZvSUGyiafhYfit4xfuqfivMqIBlJ6yC4YrAzsQsU7NwJj1SxGs2H9O9uNCzO7AbF3d/MeqdcetelB3/IXYcnBVxiXa09uobRo/9DINdvjrTb+Mg8ddiVwowmN4fC5gxjXw7d5X6Z9o+48JUCcs+s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747730007; c=relaxed/simple;
+	bh=hFVptviLLsmn8W3CbUF9WSbHP56TiBXDUOrzasHZE3c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DC++VR5F7YMlARLGQ/phy5frfMpudZfEaTGkddTxzQZrbKF7n413qvOv0BkGvEqZTk/w96VNzdCYGie87EODdGDdZvKrqi1DYUz+QntBSraIUNTRaXXYnT0FbONLu7gcud7s/aslp9flR+ztGui8dG1Xi9LeDbHmD1TLiDyqK24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54K55jWP009765;
+	Tue, 20 May 2025 08:33:09 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 46phe8ty6u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 20 May 2025 08:33:09 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Tue, 20 May 2025 01:32:52 -0700
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Tue, 20 May 2025 01:32:48 -0700
+From: <jianqi.ren.cn@windriver.com>
+To: <gregkh@linuxfoundation.org>, <stable@vger.kernel.org>
+CC: <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <jianqi.ren.cn@windriver.com>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <atenart@kernel.org>, <kareemem@amazon.com>, <netdev@vger.kernel.org>
+Subject: [PATCH 5.10.y] net: decrease cached dst counters in dst_release
+Date: Tue, 20 May 2025 16:33:04 +0800
+Message-ID: <20250520083304.1956521-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: chipsnmedia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78491408-e26f-404d-1174-08dd9778b1db
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 May 2025 08:31:19.2194
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4d70c8e9-142b-4389-b7f2-fa8a3c68c467
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: TgCsp/JHwwFNfmTnBGNUBMYQ3/rirScXfjw6/s3iVm5T3OMfKoKl2q1NRwsDQVXQNDtUUybbyNJIhs3O6hiRojIAvclZW2Ov++wuhlMQCJs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE1P216MB2242
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: CS04kR7QEL0BlePVkvi7GQsX-6nPLJOp
+X-Proofpoint-ORIG-GUID: CS04kR7QEL0BlePVkvi7GQsX-6nPLJOp
+X-Authority-Analysis: v=2.4 cv=arGyCTZV c=1 sm=1 tr=0 ts=682c3e45 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=dt9VzEwgFbYA:10 a=bC-a23v3AAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=t7CeM3EgAAAA:8 a=RSTy8_7DnOH_di7dvoIA:9
+ a=-FEs8UIgK8oA:10 a=FO4_E8m0qiDe52t0p3_H:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDA2OSBTYWx0ZWRfXzcuY4bz4pykn rFGcMunDeJr9gpiL5HnvqKJypbm2I51iRtFnntrt6Zr8x+JEnrqIvR1T+JF1krGb5rd8t+Lo8UU oVr6L5+CgxskG0x0+eY6W8IVZaRjuspuPjpi2Ft3SJAIa0N9r/HNpFK+kXf6S9kIY54/rWeq84w
+ 64LcHpXgyVEUNxH8xTGXw/TgVZLNB5+jkOMaSKjHsaCc9QvEIkLT+33Kr4I2H7KJHMGbwPrLLiy Af7EVii5Qva/oVX68pS4CHfl2ZB/8EK16rx5MmFEhz0SHnh6WLasjH+UfT08vEG0yihw8KmIOSe m3cKulyn341ml/OrXrUZ9rS39+i7JeOucBmy2Ms60n3pDkjZkZIKV5rJ+Qt93a/68/LZLNA6UYO
+ 16MV9Ix/+3EHVc5ivmmPkTApfZ07NY/C59VkVdTf34cYCDT7lUEsRj9iinyWGC7FFGhLh0Nm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-20_03,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ spamscore=0 phishscore=0 clxscore=1011 adultscore=0 suspectscore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2505070000
+ definitions=main-2505200069
 
-Hi, Krzysztof.
+From: Antoine Tenart <atenart@kernel.org>
 
->-----Original Message-----
->From: Krzysztof Kozlowski <krzk@kernel.org>
->Sent: Tuesday, May 20, 2025 3:27 PM
->To: Nas Chung <nas.chung@chipsnmedia.com>
->Cc: mchehab@kernel.org; hverkuil@xs4all.nl; robh@kernel.org;
->krzk+dt@kernel.org; conor+dt@kernel.org; linux-media@vger.kernel.org;
->devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-imx@nxp.co=
-m;
->marex@denx.de; jackson.lee <jackson.lee@chipsnmedia.com>; lafley.kim
-><lafley.kim@chipsnmedia.com>
->Subject: Re: [PATCH v2 2/8] dt-bindings: media: nxp: Add Wave6 video codec
->device
->
->On 19/05/2025 07:08, Nas Chung wrote:
->> Hi, Krzysztof.
->>
->>> -----Original Message-----
->>> From: Krzysztof Kozlowski <krzk@kernel.org>
->>> Sent: Friday, May 16, 2025 9:56 PM
->>> To: Nas Chung <nas.chung@chipsnmedia.com>
->>> Cc: mchehab@kernel.org; hverkuil@xs4all.nl;
->sebastian.fricke@collabora.com;
->>> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; linux-
->>> media@vger.kernel.org; devicetree@vger.kernel.org; linux-
->>> kernel@vger.kernel.org; linux-imx@nxp.com; marex@denx.de; jackson.lee
->>> <jackson.lee@chipsnmedia.com>; lafley.kim <lafley.kim@chipsnmedia.com>
->>> Subject: Re: [PATCH v2 2/8] dt-bindings: media: nxp: Add Wave6 video
->codec
->>> device
->>>
->>> On 13/05/2025 09:39, Nas Chung wrote:
->>>>>
->>>>> All of above are wrong for the SoC...
->>>>>
->>>>>>
->>>>>>         #include <dt-bindings/interrupt-controller/arm-gic.h>
->>>>>>         #include <dt-bindings/clock/nxp,imx95-clock.h>
->>>>>>
->>>>>>         soc {
->>>>>>           #address-cells =3D <2>;
->>>>>>           #size-cells =3D <2>;
->>>>>>
->>>>>>           vpu: video-codec {
->>>>>>             compatible =3D "nxp,imx95-vpu", "cnm,wave633c";
->>>>>
->>>>> What does this device represent? It is not "ctrl", because you made
->ctrl
->>>>> separate device node. Your binding description suggests that is the
->VPU
->>>>> control region.
->>>>
->>>> My intention was to represent the MMIO VPU device, which includes
->>>> both the core and control nodes.
->>>
->>> Then what is the VPU device if not CTRL? What is the CTRL device?
->>
->> The VPU device represents the entire VPU hardware block,
->> which includes 1 CTRL component(node) and 4 CORE components(nodes).
->
->What is entire VPU hardware block?
+[ Upstream commit 3a0a3ff6593d670af2451ec363ccb7b18aec0c0a ]
 
-I understand your point. The entire VPU hardware block cannot be considered
-a device on its own.
+Upstream fix ac888d58869b ("net: do not delay dst_entries_add() in
+dst_release()") moved decrementing the dst count from dst_destroy to
+dst_release to avoid accessing already freed data in case of netns
+dismantle. However in case CONFIG_DST_CACHE is enabled and OvS+tunnels
+are used, this fix is incomplete as the same issue will be seen for
+cached dsts:
 
->
->>
->> The CTRL device represents the VCPU, a 32-bit processor embedded within
->the
->> VPU hardware block. This VCPU is responsible for executing the VPU
->firmware.
->> The CTRL device is in charge of tasks such as firmware booting, power
->management
->> (sleep and wakeup command), and managing memory regions that are
->exclusively
->> accessed by the firmware.
->
->This sounds like CTRL is responsible for entire VPU block. What are the
->tasks of VPU block then? What are its registers? What is that device
->exactly doing?
+  Unable to handle kernel paging request at virtual address ffff5aabf6b5c000
+  Call trace:
+   percpu_counter_add_batch+0x3c/0x160 (P)
+   dst_release+0xec/0x108
+   dst_cache_destroy+0x68/0xd8
+   dst_destroy+0x13c/0x168
+   dst_destroy_rcu+0x1c/0xb0
+   rcu_do_batch+0x18c/0x7d0
+   rcu_core+0x174/0x378
+   rcu_core_si+0x18/0x30
 
-You're right - the VPU block itself does not have any dedicated registers
-or functionality beyond what is handled by the CTRL and CORE components.
-Therefore, it cannot be clearly defined as a device.
+Fix this by invalidating the cache, and thus decrementing cached dst
+counters, in dst_release too.
 
->
->You keep repeating the same, so my initial idea - CTRL is not a separate
->block - still stands. Can you have more CTRL blocks than one?
+Fixes: d71785ffc7e7 ("net: add dst_cache to ovs vxlan lwtunnel")
+Signed-off-by: Antoine Tenart <atenart@kernel.org>
+Link: https://patch.msgid.link/20250326173634.31096-1-atenart@kernel.org
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+[Minor conflict resolved due to code context change.]
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+Verified the build test
+---
+ net/core/dst.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-No, there is only one CTRL block in the hardware.
+diff --git a/net/core/dst.c b/net/core/dst.c
+index 5bb143857336..e5d2ce95a2b6 100644
+--- a/net/core/dst.c
++++ b/net/core/dst.c
+@@ -175,6 +175,14 @@ void dst_release(struct dst_entry *dst)
+ 			net_warn_ratelimited("%s: dst:%p refcnt:%d\n",
+ 					     __func__, dst, newrefcnt);
+ 		if (!newrefcnt){
++#ifdef CONFIG_DST_CACHE
++			if (dst->flags & DST_METADATA) {
++				struct metadata_dst *md_dst = (struct metadata_dst *)dst;
++
++				if (md_dst->type == METADATA_IP_TUNNEL)
++					dst_cache_reset_now(&md_dst->u.tun_info.dst_cache);
++			}
++#endif
+ 			dst_count_dec(dst);
+ 			call_rcu(&dst->rcu_head, dst_destroy_rcu);
+ 		}
+-- 
+2.34.1
 
-I agree with your view that the CTRL node should be treated as the top-leve=
-l
-device node, with the COREs as its child nodes.
-I will revise the bindings accordingly and reflect this structure in v3.
-
-Thank you for the detailed feedback and clarification.
-
-Thanks.
-Nas.
-
->
->Best regards,
->Krzysztof
 
