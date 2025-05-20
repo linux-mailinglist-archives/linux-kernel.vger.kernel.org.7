@@ -1,92 +1,87 @@
-Return-Path: <linux-kernel+bounces-655491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-655489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CA0ABD68A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:17:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB538ABD687
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 13:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E7617B4780
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:13:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A44A164E88
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 11:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C5F27EC7C;
-	Tue, 20 May 2025 11:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="BaSL/gbC"
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE9C27A128;
+	Tue, 20 May 2025 11:13:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668E1277026;
-	Tue, 20 May 2025 11:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD40027511F
+	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 11:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747739596; cv=none; b=DJWBbRYWskWRFBYbBpMUjhXsagbg6rgoztbf2widQukxJFEhiyJEjp8V+8qtKS3pzT4vvrv+lTO8wR/ndzwUTYNxEO5Rdyk6OO9zprfpgX/rix4vosN2w99hu2/y6SJW3dgVoa9lT/nffHTHlGCylMljyTWkByke6tlg6YAZX2w=
+	t=1747739587; cv=none; b=TGtAVNB28UaQq63efY/3jIrsCW8j7go2PIRLt4xCpC4TG0xcpfxZyArGiNr+P4FVSNsWCjHTjcD/aw93GDG0DiP/g+3CSABDQZgcIFq9Peq438Ur9Zcmlq1aJOlbmWG+LRL+pJCz/SxQ2fS4uglnbaupnHKkB+8QODkBBWK3tME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747739596; c=relaxed/simple;
-	bh=HGkfVnnrGCEl7RuKCn+/IyyoDgVQGbywU/GKg8rw7Ss=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rAHmgziUbxYcu5SbY3/CUvNWHL0bz1ZZ2iurWwK+mc07hgWXOfQBjS7Rs/LM4oJMu1gI8ExY22TXiX1gsjxK80+ViQ8LDc0/nT8KggJ9ZIpdIV6RbiyoO4S+iSo0CEwPNAipwnOefLYffzDeu2nNO7Jl0t3Q4VwaApiYbs9KbYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=BaSL/gbC; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
-From: Denis Arefev <arefev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1747739581;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+yQOU/9dcs2ycwOIOAdnjAOleA1m7cxeGj9WPvbFMAQ=;
-	b=BaSL/gbC4SNgFuPXY6I8Ml8FwZYwEFGYQ92BlnCseNlslAt8yBc4iDkdF/6NTXfUTn969l
-	/Bvjr+XSB68O8tP04HlEq9v1D8lChoS04dc9fTUtUcbcQ+mNKwTSxLR05Cn6qGwZmNw7ys
-	Xf4YgoISCquJsMiM/G6LCQfq0YdHTyw=
-To: noname.nuno@gmail.com
-Cc: arefev@swemel.ru,
-	dmitry.torokhov@gmail.com,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	michael.hennerich@analog.com
-Subject: Re: [PATCH 0/2] Input: adp5588-keys Please correct and add
-Date: Tue, 20 May 2025 14:12:59 +0300
-Message-ID: <20250520111301.1346035-1-arefev@swemel.ru>
-In-Reply-To: <9615d118cf3e52ea67ac0421016f0b6cceb49c71.camel@gmail.com>
-References: <9615d118cf3e52ea67ac0421016f0b6cceb49c71.camel@gmail.com>
+	s=arc-20240116; t=1747739587; c=relaxed/simple;
+	bh=VzUN3NGU7q+yc/+dMqXzmAFUUyyKBpsURpNuG+b8nqg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hENYpx8KBzas3U0OS7Bu4dmch+trJi2Ha2upmQcE9i3UJXf6Z0dyy6Ec/Zkp8eKqc/2z3RxjeTy0ZuGzBr6WIyaSToAIUOqcU0weBN9rp6sCnyVkIkMfNEHuZO0IbKbOfpTh+Eqz1MisGHL4qAT8EpLs2LupdmIbrgjdVHV2mEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85e6b977ef2so875931839f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 04:13:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747739585; x=1748344385;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9KeIz7ZNFsO8ojh1bU+Ei8TvVm3G9qEVsxdlM+En4FQ=;
+        b=Q5sTRUQQbZg5iaqeqS0ejyYfkbzQPsHBvg2mkahjRO3irYVl1wqlSA7pAANrNd7E0b
+         i5ZY12BwUY2tsbAjJ/dDwQQ+SEt9cv0nOo8h+23ycAlhFpNIEvaS6yDvdfzNqsu7/8Ps
+         2OMh/mPUOyv6ACNeFLrdCZ5GmxgPZ8ScuJIbK76piY0N+kYfWB5DnW/1s7rFC/tD2QNQ
+         3GgHX9KyR7N24qa3+MRLEEQUW1TdCHuaFmMOaU3VuuqeynWcIl7/slh+BFx/EvvuSN03
+         eBMyA/IGkpcjswrp0KJ34fZBA6iRtcZfYHZhE/vR9yv1fRurJRRUsEFxgV0VQqKFqUtw
+         Om9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWa4YWrT69p1wZrIDqcIsTGAt3EDt2dOAgDMpUhy759aA4DijyOGfCYY1twTWEImFnEZjt0XVrClWCIng8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxdfqpcRKhqWdcS5Cda5MBX7GZV8kTqjGlystYzgScqGXp5xgc
+	FZiXXfGgnSM1X4dLrA+pah0LrK7U2f7cRBV7rrhOhKOfiqB8OVr8e3SfMcfXiST8Q81gOUpj0rY
+	FgK+Kcjl+Z5Mw2n+ktMtyTz8VYNizcGF8GDhyB8jM8yCkABhPaWdVemYIDKo=
+X-Google-Smtp-Source: AGHT+IEPQEEoOt3ZC+92dOFjTkVhQCHWWFZYWAU7lfbSzR5mQzhCs+sOSrNUCFd5+oHQ7F9ZNrRhGNeP1hZOcOMjGnzOavVzhxv0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:3683:b0:86a:1faf:84c with SMTP id
+ ca18e2360f4ac-86a24bb412bmr2171326339f.2.1747739584987; Tue, 20 May 2025
+ 04:13:04 -0700 (PDT)
+Date: Tue, 20 May 2025 04:13:04 -0700
+In-Reply-To: <20250520105016.2205-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <682c63c0.a00a0220.29bc26.027b.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] WARNING in hci_recv_frame
+From: syzbot <syzbot+3e07a461b836821ff70e@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> On Fri, 2025-05-16 at 16:43 +0300, Denis Arefev wrote:
->> 1. Add check on return code
->> 2. Prevent buffer overflow
->>
->> Denis Arefev (2):
->>   Input: adp5588-keys Add check on return code
->>   Input: adp5588-keys Prevent buffer overflow
->>
->>  drivers/input/keyboard/adp5588-keys.c | 18 ++++++++++++++----
->>  1 file changed, 14 insertions(+), 4 deletions(-)
->
-> Hi,
->
-> Thanks for the patch. However, not sure if this is really worth it... This is
-> driver is in the process of being removed:
->
-> https://lore.kernel.org/linux-input/04b8a6d68fdc0c0eadf69fbbc6a130ecc6c49360.camel@gmail.com/T/#mad1980e9652161a6a2e36c2aeeb97f900c6e9fc2
->
-> Unless we want somehow to backport these patches?
->
-> - Nuno Sá
+Hello,
 
-Hi Nuno.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-It'd be great if the fix patches are applied and then directed
-to stable kernels before the code is dropped from upstream.
-I've sent v3 with relevant stable tags included. Thanks.
+Reported-by: syzbot+3e07a461b836821ff70e@syzkaller.appspotmail.com
+Tested-by: syzbot+3e07a461b836821ff70e@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         a5806cd5 Linux 6.15-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=111661f4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9fd1c9848687d742
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e07a461b836821ff70e
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1712de70580000
+
+Note: testing is done by a robot and is best-effort only.
 
