@@ -1,86 +1,70 @@
-Return-Path: <linux-kernel+bounces-656052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD767ABE0F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:44:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07631ABE102
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 18:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046191BA69D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:45:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64EFA1BA6E34
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 May 2025 16:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD4D26FDB6;
-	Tue, 20 May 2025 16:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502AC26B2C1;
+	Tue, 20 May 2025 16:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KiEKW9Dm"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CqEuqm9N"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C37248F46
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 16:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B25126A1CC;
+	Tue, 20 May 2025 16:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747759481; cv=none; b=KKnp03u85TlG7o8p0vXOn5WfvLF7MKL9BWlSPQ5HgYs1Q4wB6sY4faoRN6K640f8XDVBY7jxEDUQwdKubo3eEYaKyC+kFT98lOMHrIAIyMKLaEw18dOvHUD/QX6nXjDYdNizpSZJf5ygH1SJiy3aM2MwTfHIL6UG2snbbYW5SSQ=
+	t=1747759530; cv=none; b=SgKqGgrMUQrEGiNGflYC04TI7U/+W4AlW8TYnYG8VihZx7FEpU/zNltHl+kWdavaTYSszC1jZw/YHegTfHGtEbIpFWIglVLyxA6jXiAF/9ojgHkyG0aLFDvHOd9xYTnLATIgXB8Bj+VdLxQhTVkhRLypbfqqjP3I/kpPaHwbjVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747759481; c=relaxed/simple;
-	bh=I842f8QC/KMfYaWpLg9cY6lpFSAzcGFG5grlUZY7DNU=;
+	s=arc-20240116; t=1747759530; c=relaxed/simple;
+	bh=2m5zn8UGpDXLkEP1kMEnT4ipR3FUe9IKaZfpADLI8DU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ceUVPct/PESKs788o/j5OoXiMnwCGErCCzFVJfkJCtsiznZ3kqcMHKnBrW1It3NSLRlBaghUpw8TjaMcCLQiu2XH7SLB+gZ6LyPEUHXg9W5ASAMlHTldUfex8OLMp6SrqqFhB4/bUv8nr1MMRFIkSGf4NQNmscT/sqeNAs84UAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KiEKW9Dm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54KGeDsf018394
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 16:44:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	c2Cr0Q3aujptwyPPP/18wEcr3RB2aPvaUVraUjgKeIo=; b=KiEKW9DmkbNJnmvr
-	vMjxlDtRo8r5fXRGGWzTBX04jtarGLosI/E+U2UD5kTdezwZwdfC6SeVORsmKP0X
-	suf+Xf6LM4UoZYqwNZ7n5/WKCS9wlQuYRQGAkKCCTc66pqOjPCaEBt+8jLCsIB1+
-	M1O9P1WnWhahyt/4WqEbjhFXwW65SRRCiogj47qj5vFid5XwMKc/nlM9wm4dVcT7
-	EEm1w/pQ94qv/gWowM+LfF97uuQD1mVWeBZi1BG8U7kufy887DNIUA6L9reb9FfE
-	BF/XJO2fEb2CAbXbsAhP/qAhoe0nDnTh0bMQAHa8Z2LkO6UlO4pJydCKu0x1kcXp
-	r8Cmnw==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf9r0dm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 16:44:39 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6f8a8883437so7569196d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 09:44:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747759478; x=1748364278;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c2Cr0Q3aujptwyPPP/18wEcr3RB2aPvaUVraUjgKeIo=;
-        b=jqBiSQovbs9tmSJkPvgmLAFzHq6edCvr8r9dJbJhJjhWwg/dQyeoujCEs1jGfg7cYJ
-         qeIKmgiioeZomyfsVzphdzsPMPg14/n5uovbmUVle999t1GQsGH/9CKn4gNj0X4/RPSx
-         Wt57DBRTvGpIwHPOd6eq2c5TUFVNP3cjeA3EqRF1v3ZNYvby/hl11U1OIA93s6nUK0+w
-         QyvHgrreb5N8EpII6M2Z/0sM5XnBNk+84gGI2IcimEugEsFkQVxNSO/CioUPUqfped3p
-         hUfhqTtVZZVgYD1HL2USph7PF0orYNRE9LXCY5rGgtpQvg2M6yzxZnkuRCsigL171/MK
-         L+cA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyLj5ZZWtCq4bhRH0g73THr/WarG71j5bbeGZ3Cnq5Ey0LzDSX1s6Cf6cv0y1+XR3VQqaLqo9Eokt5ZAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkUYE55sw7lDJg+jzll2pHuoOt4QA66W6lLB4g5B/wrCl8tTN6
-	Vqviu4J7mkahIoQPuMNsM2o4cMh2m9othvIftcMDQPb4d6s7m51ALkEhzcyZUfGQPHsP8vA6k2h
-	GgTY2mo7JXnhN9CWbyIQ8RQgRNChRwfczqJLO/YNbNSO+UDrzZ3/kBLAFPgLmU82hKrA=
-X-Gm-Gg: ASbGnctKojOyRicFUXqeGb7hA3T+amSo9bezxP4+HuJlGlZpsWoqpqnEZdCMOkXm51L
-	aqURtX13mB3JCqxYI8RoJYfM2zBdnmf91KtWUbT02Y0EKJPCpneV9UM00N0zUMeFnvV6bVO4eCv
-	FTRDuGNz/4uAxbtxF5EQLQaAT4KkgPxcSPcyWcisqRekzja3nrshu3YuZfYUlNWvHIryPyICMtj
-	aiWtFlkSyRVBP4tk/+rnFzGOihGuT+jMD9WAFTE0UlLKfbcXQjbuduLc+t9i+DWCrKdDQ3afjrK
-	+k6Y8wdG9Ppthn6NTVseObOQpzdYq/9zhP6boz2DS+IsWv346nK5o+OUr/U+ekJ8DQ==
-X-Received: by 2002:a05:6214:18f2:b0:6f8:b104:4186 with SMTP id 6a1803df08f44-6f8b10441bdmr82991726d6.2.1747759477861;
-        Tue, 20 May 2025 09:44:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE4a0OdI4aLpuBYrJMMu6xHS4MmAbVCMTTGLWKZDGXZ+g4jOZbXkvgeQMFRDEnmvpFkP5lQcw==
-X-Received: by 2002:a05:6214:18f2:b0:6f8:b104:4186 with SMTP id 6a1803df08f44-6f8b10441bdmr82991556d6.2.1747759477341;
-        Tue, 20 May 2025 09:44:37 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d442069sm762552866b.103.2025.05.20.09.44.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 May 2025 09:44:36 -0700 (PDT)
-Message-ID: <6f12b7e6-5743-45ba-a425-029655096f5b@oss.qualcomm.com>
-Date: Tue, 20 May 2025 18:44:34 +0200
+	 In-Reply-To:Content-Type; b=JiFK7BKb4PI55MkLORGdltlbQLBy/zHy37w7nbChtll/tcpMtvTj30f8ZgxXjVmFqHLOqIMujVIY2mugJTg5QR09f0PcLvp/1raA2MoyW2PD3atGQupOGNKwh3/cJZgTDf+Hg8nCMwSAFyZ2aHTQWIBGUNt/VYYcrYFWkbhZNAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CqEuqm9N; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747759528; x=1779295528;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2m5zn8UGpDXLkEP1kMEnT4ipR3FUe9IKaZfpADLI8DU=;
+  b=CqEuqm9NHB/zSChD3fG07oRt5FhIEvJw4BxoKj/Wt+mWtyqmZhLL17WT
+   qg0Bi72TvwxfQgw97l4/jByQ/tshOo/5IE1TnCkBmgXe3ZPM9XQrCZ8+n
+   jgkGiWtZetdG6HQPGaZc6QoDsAB5fQvRuRaO61Im2N67Kt/EDIQR/wRrD
+   K+usJYiqtv3zXa3AQpjwZAeuqfdt2ly+65gayDeONyH9eZv9dxYzWNVjE
+   kzi13zVhcsnHYGB9ivabWbqVFFbOpaRLGlfCWV2BEfvA4Awerg8Od1KFa
+   kIG7x3CrP7U/OjpeO/LJkmYd3XYZ/+EtVRY2cqVAxzDYffl1spbkOsDKm
+   Q==;
+X-CSE-ConnectionGUID: GTYIkCnnQR2TgZFqQuzfNw==
+X-CSE-MsgGUID: o4j2Lhy4RyGIB3qFLqpDVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="48822342"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="48822342"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 09:45:27 -0700
+X-CSE-ConnectionGUID: vKh2UPJtTpKbChH0XxNSAg==
+X-CSE-MsgGUID: J5D+VUrxRGeNis7RNldSng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="139787863"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 09:45:27 -0700
+Received: from [10.246.136.52] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 9F69A20B5736;
+	Tue, 20 May 2025 09:45:25 -0700 (PDT)
+Message-ID: <1fcdbfa7-5d99-4337-a473-eb711f27b8a3@linux.intel.com>
+Date: Tue, 20 May 2025 12:45:24 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,55 +72,199 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: sm8750-mtp: Add sound (speakers,
- headset codec, dmics)
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250519-sm8750-audio-part-2-v2-0-5ac5afdf4ee2@linaro.org>
- <20250519-sm8750-audio-part-2-v2-2-5ac5afdf4ee2@linaro.org>
+Subject: Re: [PATCH v3] perf pmu intel: Adjust cpumaks for sub-NUMA clusters
+ on graniterapids
+To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
+Cc: Weilin Wang <weilin.wang@intel.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Ravi Bangoria <ravi.bangoria@amd.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250515181417.491401-1-irogers@google.com>
+ <96c8fae8-b8f9-4094-b03a-9dba3ca234c2@linux.intel.com>
+ <CAP-5=fVDF4-qYL1Lm7efgiHk7X=_nw_nEFMBZFMcsnOOJgX4Kg@mail.gmail.com>
+ <aCoUMOVRjCr_t0ae@google.com>
+ <CAP-5=fXnvRLiGmV7rr2H8A2Hj7HDE9m+B6Qn0areRXBhz-tK+Q@mail.gmail.com>
+ <aCviJJpEYKt8wYEk@google.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250519-sm8750-audio-part-2-v2-2-5ac5afdf4ee2@linaro.org>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <aCviJJpEYKt8wYEk@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: RidV3FKm5dZsbBRT7toC6E_NK6OhwU8X
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDEzOSBTYWx0ZWRfX1fPJchTFqPuI
- j1eaKeLl7MyYKBtiikPHssegc1ZBIj++ySfeMmOQHXYsdTbTLbHvCjk1Ntw2NhwPCfaeYni+/su
- LUFpbWBRkebKskom+Rwt1CVT9mkJZcLjxfV41PxfSEnzkCZfeDLuxCsBNW47AXuskQTrRf2ZWb9
- 3EWzlpHues6Qa14wfz8Bq9hYtG0Ic4uyLFaHYtHGhv36gw7ZiyAebHBopAEDyZ5V9E4XwLvMwlm
- UE9cGpLci5WWBY0ACZK6/350K9Vkz3zzMspjlDwQbUjugLEuUX8kGMC3PZ+dk4HwGDikvxowuMY
- VqdQ+HZzwFxXkJFV06SAU9rSa5zuzKRNmnK+6vsK1RpLNduTgBrqinEXAvtuSw=
-X-Proofpoint-GUID: RidV3FKm5dZsbBRT7toC6E_NK6OhwU8X
-X-Authority-Analysis: v=2.4 cv=V9990fni c=1 sm=1 tr=0 ts=682cb177 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=er6kI1bek27KySCzKVEA:9 a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
- a=iYH6xdkBrDN1Jqds4HTS:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-20_06,2025-05-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=910 bulkscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0
- phishscore=0 suspectscore=0 adultscore=0 malwarescore=0 classifier=spam
- authscore=0 authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505160000 definitions=main-2505200139
+Content-Transfer-Encoding: 8bit
 
-On 5/19/25 11:54 AM, Krzysztof Kozlowski wrote:
-> Add device nodes for most of the sound support - WSA883x smart speakers,
-> WCD9395 audio codec (headset) and sound card - which allows sound
-> playback via speakers and recording via DMIC microphones.  Changes bring
-> necessary foundation for headset playback/recording via USB, but that
-> part is not yet ready.
+
+
+On 2025-05-19 10:00 p.m., Namhyung Kim wrote:
+> On Sun, May 18, 2025 at 10:45:52AM -0700, Ian Rogers wrote:
+>> On Sun, May 18, 2025 at 10:09 AM Namhyung Kim <namhyung@kernel.org> wrote:
+>>>
+>>> Hello,
+>>>
+>>> On Thu, May 15, 2025 at 03:35:41PM -0700, Ian Rogers wrote:
+>>>> On Thu, May 15, 2025 at 2:01 PM Liang, Kan <kan.liang@linux.intel.com> wrote:
+>>>>>
+>>>>> On 2025-05-15 2:14 p.m., Ian Rogers wrote:
+>>>>>> On graniterapids the cache home agent (CHA) and memory controller
+>>>>>> (IMC) PMUs all have their cpumask set to per-socket information. In
+>>>>>> order for per NUMA node aggregation to work correctly the PMUs cpumask
+>>>>>> needs to be set to CPUs for the relevant sub-NUMA grouping.
+>>>>>>
+>>>>>> For example, on a 2 socket graniterapids machine with sub NUMA
+>>>>>> clustering of 3, for uncore_cha and uncore_imc PMUs the cpumask is
+>>>>>> "0,120" leading to aggregation only on NUMA nodes 0 and 3:
+>>>>>> ```
+>>>>>> $ perf stat --per-node -e 'UNC_CHA_CLOCKTICKS,UNC_M_CLOCKTICKS' -a sleep 1
+>>>>>>
+>>>>>>  Performance counter stats for 'system wide':
+>>>>>>
+>>>>>> N0        1    277,835,681,344      UNC_CHA_CLOCKTICKS
+>>>>>> N0        1     19,242,894,228      UNC_M_CLOCKTICKS
+>>>>>> N3        1    277,803,448,124      UNC_CHA_CLOCKTICKS
+>>>>>> N3        1     19,240,741,498      UNC_M_CLOCKTICKS
+>>>>>>
+>>>>>>        1.002113847 seconds time elapsed
+>>>>>> ```
+>>>>>>
+>>>>>> By updating the PMUs cpumasks to "0,120", "40,160" and "80,200" then
+>>>>>> the correctly 6 NUMA node aggregations are achieved:
+>>>>>> ```
+>>>>>> $ perf stat --per-node -e 'UNC_CHA_CLOCKTICKS,UNC_M_CLOCKTICKS' -a sleep 1
+>>>>>>
+>>>>>>  Performance counter stats for 'system wide':
+>>>>>>
+>>>>>> N0        1     92,748,667,796      UNC_CHA_CLOCKTICKS
+>>>>>> N0        0      6,424,021,142      UNC_M_CLOCKTICKS
+>>>>>> N1        0     92,753,504,424      UNC_CHA_CLOCKTICKS
+>>>>>> N1        1      6,424,308,338      UNC_M_CLOCKTICKS
+>>>>>> N2        0     92,751,170,084      UNC_CHA_CLOCKTICKS
+>>>>>> N2        0      6,424,227,402      UNC_M_CLOCKTICKS
+>>>>>> N3        1     92,745,944,144      UNC_CHA_CLOCKTICKS
+>>>>>> N3        0      6,423,752,086      UNC_M_CLOCKTICKS
+>>>>>> N4        0     92,725,793,788      UNC_CHA_CLOCKTICKS
+>>>>>> N4        1      6,422,393,266      UNC_M_CLOCKTICKS
+>>>>>> N5        0     92,717,504,388      UNC_CHA_CLOCKTICKS
+>>>>>> N5        0      6,421,842,618      UNC_M_CLOCKTICKS
+>>>>>
+>>>>> Is the second coloum  the number of units?
+>>>>> If so, it's wrong.
+>>>>>
+>>>>> On my GNR with SNC-2, I observed the similar issue.
+>>>>>
+>>>>> $ sudo ./perf stat -e 'UNC_M_CLOCKTICKS' --per-node -a sleep 1
+>>>>>  Performance counter stats for 'system wide':
+>>>>>
+>>>>> N0        0      6,405,811,284      UNC_M_CLOCKTICKS
+>>>>> N1        1      6,405,895,988      UNC_M_CLOCKTICKS
+>>>>> N2        0      6,152,906,692      UNC_M_CLOCKTICKS
+>>>>> N3        1      6,063,415,630      UNC_M_CLOCKTICKS
+>>>>>
+>>>>> It's supposed to be 4?
+>>>>
+>>>> Agreed it is weird, but it is what has historically been displayed.
+>>>> The number is the aggregation number:
+>>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/stat-display.c?h=perf-tools-next#n307
+>>>> which comes from:
+>>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/stat-display.c?h=perf-tools-next#n135
+>>>> which comes from:
+>>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/stat.c?h=perf-tools-next#n435
+>>>> However, I think it is missing updates from:
+>>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/stat.c?h=perf-tools-next#n526
+>>>> but there is a comment there saying "don't increase aggr.nr for
+>>>> aliases" and all the uncore events are aliases. I don't understand
+>>>> what the aggregation number is supposed to be, it is commented as
+>>>> "number of entries (CPUs) aggregated":
+>>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/stat.h?h=perf-tools-next#n26
+>>>> it would seem to make sense in the CHA case with SNC3 and 42 evsels
+>>>> per NUMA node that the value should be 42. Maybe Namhyung (who did the
+>>>> evsel__merge_aggr_counters clean up) knows why it is this way but in
+>>>> my eyes it just seems like something that has been broken for a long
+>>>> time.
+>>>
+>>> I think it's the number of aggregated entries (FDs?).
+>>>
+>>> For core events, it's the number of CPUs for the given aggregation as it
+>>> collects from all CPUs.  But it'd be confusing with uncore events which
+>>> have cpumask to collect data from a few CPUs.
+>>>
+>>> On my laptop, --per-socket gives different numbers depending on the
+>>> events/PMUs.
+>>>
+>>> For core events, it's 4.
+>>>
+>>>   $ sudo ./perf stat -a --per-socket -e cycles sleep 1
+>>>
+>>>    Performance counter stats for 'system wide':
+>>>
+>>>   S0        4        225,297,257      cycles
+>>>
+>>>          1.002581995 seconds time elapsed
+>>>
+>>> While uncore events give 1.
+>>>
+>>>   $ sudo ./perf stat -a --per-socket -e unc_mc0_rdcas_count_freerun sleep 1
+>>>
+>>>    Performance counter stats for 'system wide':
+>>>
+>>>   S0        1         23,665,510      unc_mc0_rdcas_count_freerun
+>>>
+>>>          1.002148012 seconds time elapsed
+>>
+>> I think we're agreeing. I wonder that the intent of the aggregation
+>> number is to make it so that you can work out an average from the
+>> aggregated count. So for core PMUs you divide the count by the
+>> aggregation number and get the average count per core (CPU?). If we're
+>> getting an aggregated count of say uncore memory controller events
+>> then it would make sense to me that we show the aggregated total and
+>> the aggregation count is the number of memory controller PMUs, so we
+>> can have an average per memory controller. This should line up with
+>> using the number of file descriptors.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+> Sounds right.
+> 
+>>
+>> I think this isn't the current behavior, on perf v6.12:
+>> ```
+>> $ sudo perf stat --per-socket -e data_read -a sleep 1
+>>
+>>  Performance counter stats for 'system wide':
+>>
+>> S0        1           2,484.96 MiB  data_read
+>>
+>>        1.001365319 seconds time elapsed
+>>
+>> $ sudo perf stat -A -e data_read -a sleep 1
+>>
+>>  Performance counter stats for 'system wide':
+>>
+>> CPU0             1,336.48 MiB  data_read [uncore_imc_free_running_0]
+>> CPU0             1,337.06 MiB  data_read [uncore_imc_free_running_1]
+>>
+>>        1.001049096 seconds time elapsed
+>> ```
+>> so the aggregation number shows 1 but 2 events were aggregated together.
+> 
+> Ugh.. right.  Merging uncore PMU instances can add more confusion. :(
+> 
+>>
+>> I think computing the aggregation number in the stat code is probably
+>> wrong. The value should be constant for an evsel and aggr_cpu_id, it's
+>> just computing it for an aggr_cpu_id is a pain due to needing topology
+>> and/or PMU information. The code is ripe for refactoring. I'd prefer
+>> not to do it as part of this change though which is altering a
+>> particular Intel Granite Rapids issue.
+> 
+> That's ok.  Just one more TODO items..
+> 
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Sounds good to me as well.
 
-Konrad
+For this patch, I've verified it with SNC-2. The rest looks good to me.
+
+Tested-by: Kan Liang <kan.liang@linux.intel.com>
+
+Thanks,
+Kan
 
