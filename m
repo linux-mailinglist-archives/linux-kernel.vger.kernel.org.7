@@ -1,154 +1,268 @@
-Return-Path: <linux-kernel+bounces-657259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A0AABF1AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:32:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1015ABF1C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9513188CE76
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:32:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 558673AE503
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2505E25F795;
-	Wed, 21 May 2025 10:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B4725F7A5;
+	Wed, 21 May 2025 10:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="cqb0hLHC"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eDq/77FY"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FED248F49
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 10:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBC325EFBD;
+	Wed, 21 May 2025 10:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747823552; cv=none; b=Wc63a6t4PZ0jQa5k8A653xtDrz6si+5XvkrXUcrdvRHyXa0zRf1oyDLxMrN3VORUOm+DpNz7ufb10y8r8sPODqCc/o7L+m4To4HnuaQoczf2EWbX4AtXE1FHTJM/fwpHzS3ExbHrLvLp4CZx48ywAK1TJ4z7GDtFOxslyX2derk=
+	t=1747823716; cv=none; b=fYwSv/sf8ZrfVL8gIx1pLlAfIupp2ZWsk/I1TVAGMU0AeNxKPZ1jgDCb/niMP6BajUaRrFOVQkdpufnKLPvj33uq+8giqKNnq6cZLY43mqXFXE//qxF6k5J5qx9xCIKrXa9/TE74peRKDJy2hUfMbibJDQvL1BHo6jSwiQRljRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747823552; c=relaxed/simple;
-	bh=TzN8oeMuskKQU6CcpR7ilKeJfIloLruNAKAnwByhXCY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rwiMXk6R//JHiPJC8i1J627DG0vKgaD0+m+w1uypjof/IckJFMo8Vc4HIk0Oep8ZK1/cUTpleTePNUdiS7coIQGsa+L6EufO7IqSFZ9zB3GNhWcKfJszAfiNq9cJwkf+1BWfWU2mZZi9FNN/knYUybEXO4LQVVoY//wZMvvoRKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=cqb0hLHC; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-70811611315so60582247b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 03:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1747823550; x=1748428350; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wrx4aRxpWMNpz3kBZx0QvAIs12jvmJX0PVdxD7GtL1U=;
-        b=cqb0hLHC6w3Q0OTL1zG3CwAGqIBK0bVe45FNNNmp+xaMMMiDfpxDn9A0+cKG14r7P9
-         LEWowWp1wXq26EMuSWR/IaOa/UK7tfW5EC3TLJvgpJTkaydXZGvIeZpZlwHmHgcqNhMy
-         ugIsb7O67RgttVJc9n3FLKODo5Zey4JUhxOHg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747823550; x=1748428350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wrx4aRxpWMNpz3kBZx0QvAIs12jvmJX0PVdxD7GtL1U=;
-        b=bVsYENXNkHU1nnrnH97l7JmrnjTdbRVRx/0M7otoR7EnSpKj2Eg30THIfzvA2Obw2o
-         z7uWvSEun9ArY6qW05+YBgt4Ngw/VBDNLUiwcONK/QU5oSyiGtTe3A+oJ+TAiclB71YI
-         D/eZiKKm4r5ITBLiSoyL7Fugqg6Ox1LRHITZEuK1j6lrhlIb7M0hhEafUucRonT/qDa2
-         ZWlkGd6r/WgsoR02036RcQyGyTmc1sf0fn8pstSWfA1YSKhsbR14cjof09NvsH6bprhA
-         DviJIN3VX4ttA/9JRh14CShxELd/WmjN0ZjdZo5m7An6dEygPYtkI60z/898Sh+0AX2n
-         yoGw==
-X-Gm-Message-State: AOJu0YzN/QLwfxL5HGq3IB9sjKwn7W5DeF0SW31OOsfzpM7P/kr0YhaF
-	MT6r5Upv3yt7JhuBd3Wt2OBqocEdXIxppzE5LAZCfyz/+2ATGULvp9YZghA2P6nPwsMPe6aPTw2
-	JlKnJAyTajwh2tX5uyCV2BXBwKo/DdAn1cKMYw0yRCA==
-X-Gm-Gg: ASbGnct3jvtGv4aBG8gNn3bvLAuCkK51EhDfJTK05fT4PhgwE5TwpGDwK+5s3mzrleP
-	k8Fn2fZnb/jrhPqQHLlzBVHEf+QsN1qTjtAsMmeipB+b7SE9vB1zjDFvIJ6UZXYzVHdqdyYEy0h
-	8BsCE/6l0ZKIGBo4dCxVlPdUK0g9ygrRk5ze2iwVHX/HzM2iEiPAWusiCcDnNBR+2WUA==
-X-Google-Smtp-Source: AGHT+IFFal7PqjGJ+LGmx5bNYrc9004KFk4ruAZ0EqygehsuQ0KzsT99Pyli2tqxvHiA6hWSh10r4+jSoSJ6zf3teYw=
-X-Received: by 2002:a05:690c:ed4:b0:6fb:1f78:d9ee with SMTP id
- 00721157ae682-70caaf78e03mr301107987b3.15.1747823549692; Wed, 21 May 2025
- 03:32:29 -0700 (PDT)
+	s=arc-20240116; t=1747823716; c=relaxed/simple;
+	bh=Bc0tuxh6FuJgjjna2ZA5ICMvztWDekZiHjGH1e4t3aQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kPH5t+xFWw/F+h3IOjqWeLCTzUSP+F3oe0pyYuE6D+9wAWGHhfTFg+nNvQ+/wW+eL94wy73FcEWVcgP2VnOACS3gpAFnXfWuOJavds0T4ElNMAJBGrPit3XJoqM+2vKa9/lr8AjCT1tOdH/ZGJL8kq6tQ/BFEM5BSevJU8ousrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eDq/77FY; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L8pd6Z014503;
+	Wed, 21 May 2025 10:35:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=OnL2JX
+	aeHotq86V5UBxO4l5O+IBgRMNGBuvWWVOJgCw=; b=eDq/77FYm2qIZjkTd8ZBSk
+	Z6egjzV6wPflUaml1pHfFzppoS464s17qIPib/LO/VbzBhsq2ZfB8oHoamsj8SXR
+	suieV+YEtyENELG4iv2YvILt5IY6Z7x72vV/dtp16fzrM6oEHUDJcrdCzyj4ICiX
+	FWlnueZSMkFGKc4XRvoij0SOT+MicVGUXRCCrzyJ8ZCME+bl1wkCPyXb6vTY8+mH
+	Y/B4AfIy564zHVpgkTuA6xXqVRVfWZedWP/h6v8D+bsJfBEyAXI+7xUIPL+zaqRG
+	3iAzw3Rr3xwFYl9gHRSxnYfVOuM3QuUm/Xgo/VE+g4AcmzabzUf+1l5BowHIB7OQ
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46sbph0ekd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 10:35:05 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9u1Qn010595;
+	Wed, 21 May 2025 10:35:03 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46rwnmbqhu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 10:35:03 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54LAYxgU53018952
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 May 2025 10:34:59 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C53042004B;
+	Wed, 21 May 2025 10:34:59 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 34E3E20040;
+	Wed, 21 May 2025 10:34:59 +0000 (GMT)
+Received: from li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com (unknown [9.87.130.155])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 21 May 2025 10:34:59 +0000 (GMT)
+Date: Wed, 21 May 2025 12:34:57 +0200
+From: Sumanth Korikkar <sumanthk@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/4] mm/memory_hotplug: Add interface for runtime
+ (de)configuration of memory
+Message-ID: <aC2sUdhavboOgS83@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+References: <20241202082732.3959803-1-sumanthk@linux.ibm.com>
+ <20241202082732.3959803-2-sumanthk@linux.ibm.com>
+ <3151b9a0-3e96-4820-b6af-9f9ec4996ee1@redhat.com>
+ <Z08WpCxt4lsIsjcN@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+ <1b9285ba-4118-4572-9392-42ec6ba6728c@redhat.com>
+ <aCx-SJdHd-3Z12af@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+ <fca5fe72-55a8-456c-a179-56776848091d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250521092826.1035448-1-dario.binacchi@amarulasolutions.com>
- <20250521092826.1035448-4-dario.binacchi@amarulasolutions.com> <20250521-quizzical-tidy-worm-1fe67d-mkl@pengutronix.de>
-In-Reply-To: <20250521-quizzical-tidy-worm-1fe67d-mkl@pengutronix.de>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Wed, 21 May 2025 12:32:19 +0200
-X-Gm-Features: AX0GCFtZ6hwSbA_J2rTqW8QnXowGlyqASP2_EDudgcpET604dgwM5KYsyW3Eszo
-Message-ID: <CABGWkvrmuhaF4iHqHRkrNrrHb2gUNDBJKCT-jZ8ZuwZGRvm7Lw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ARM: dts: mxs: support i.MX28 Amarula rmm board
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-amarula@amarulasolutions.com, Sascha Hauer <s.hauer@pengutronix.de>, 
-	imx@lists.linux.dev, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, michael@amarulasolutions.com, 
-	Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fca5fe72-55a8-456c-a179-56776848091d@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDA5NCBTYWx0ZWRfX1Ir7nocZ0ZE7 VwLaSFnCBcLO9gRJZ9hYfiAMbU76FNh4iApIpKJXzmSoT4vn8Lg/IQsyfdLK+Zoo+3Lltk+M4dt WLrbH+L/w3uVcn3PaOptjzibwO6gX4snCn68eKGHOUgnSg7AqiEQacJX/TW1NIyLk74DiQa0Kgo
+ 3R7kuIRsH/LnPCinvoUJmCM19GWwY1dJ//Vw3W6duRncWG7Jqh//UHn22WpssalgytAR8cIoag0 Oeb43/6GaKAoiElpSR4dB9sRvAK9zqI4j0huC1qZOk5Op7TdXK7eqC9GNpwOP4c/u0wJCs3cD0R Ra69DlOVVZSqzCex62bUhtmAUEiRT5ul8SfAXwBLSFxpR68pfPZrOBzhsxUEJteLPiOSFg6Skg4
+ lbXbrBX+iK02e+5l/C8DEBK9bgfaBj1C6lfu/yb5kOcWtiQROKDDVPJeIG/baEMajccqj7t3
+X-Proofpoint-ORIG-GUID: n9icrul-5QQRR8-0XybbBDzAXo3tLAj0
+X-Authority-Analysis: v=2.4 cv=L5kdQ/T8 c=1 sm=1 tr=0 ts=682dac59 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=E8j359MtUMzoLxJxKO8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: n9icrul-5QQRR8-0XybbBDzAXo3tLAj0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_02,2025-05-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 spamscore=0 clxscore=1015
+ mlxlogscore=999 suspectscore=0 phishscore=0 impostorscore=0 malwarescore=0
+ mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505210094
 
-Hello Marc,
+> > Introduce new interface on s390 with the following attributes:
+> > 
+> > 1) Attribute1:
+> > /sys/firmware/memory/block_size_bytes
+> 
+> I assume this will be the storage increment size.
 
-On Wed, May 21, 2025 at 11:35=E2=80=AFAM Marc Kleine-Budde <mkl@pengutronix=
-.de> wrote:
->
-> On 21.05.2025 11:28:22, Dario Binacchi wrote:
-> > The board includes the following resources:
-> >  - 256 Mbytes NAND Flash
-> >  - 256 Mbytes SRAM
-> >  - LCD-TFT controller
-> >  - CAN
->
-> [...]
->
-> > +&can0 {
-> > +     pinctrl-names =3D "default";
-> > +     pinctrl-0 =3D <&can0_pins_a>;
-> > +     xceiver-supply =3D <&reg_3v3>;
->
-> Since v6.15-rc1 (d80bfde3c57a ("can: flexcan: add transceiver
-> capabilities")), the flexcan driver supports CAN transceivers via the
-> phy framework, see drivers/phy/phy-can-transceiver.c. Can you make use
-> of it?
+Hi David,
 
-The board uses the SN65HVD233 transceiver, which is not listed among those
-supported by drivers/phy/phy-can-transceiver.c. So I can't use the PHY
-framework.
-Do you agree?
-Or am I missing something?
+No, this is memory block size.
 
-Thanks and regards,
-Dario
+> > > 2) Attribute2:
+> > /sys/firmware/memory/memoryX/config
+> > echo 0 > /sys/firmware/memory/memoryX/config  -> deconfigure memoryX
+> > echo 1 > /sys/firmware/memory/memoryX/config ->  configure memoryX
+> 
+> And these would configure individual storage increments, essentially calling
+> add_memory() and (if possible because we could offline the memory)
+> remove_memory().
 
->
-> regards,
-> Marc
->
-> --
-> Pengutronix e.K.                 | Marc Kleine-Budde          |
-> Embedded Linux                   | https://www.pengutronix.de |
-> Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-> Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+configure or deconfigure memory in units of entire memory blocks.
+
+As I understand it, add_memory() operates on memory block granularity,
+and this is enforced by check_hotplug_memory_range(), which ensures the
+requested range aligns with the memory block size.
+
+> > 3) Attribute3:
+> > /sys/firmware/memory/memoryX/altmap_required
+> > echo 0 > /sys/firmware/memory/memoryX/altmap_required -> noaltmap
+> > echo 1 > /sys/firmware/memory/memoryX/altmap_required -> altmap
+> > echo N > /sys/firmware/memory/memoryX/altmap_required -> variable size
+> > 	 altmap grouping (possible future requirements),
+> > 	 where N specifies the number of memory blocks that the current
+> > 	 memory block manages altmap. There are two possibilities here:
+> >          * If the altmap cannot fit entirely within memoryX, it can
+> >            extend into memoryX+1, meaning the altmap metadata will span
+> >            across multiple memory blocks.
+> >          * If the altmap for memory range cannot fit within memoryX,
+> >            then config will return -EINVAL.
+> 
+> Do we really still need this when we can configure/deconfigure?
+> 
+> I mean, on s390x, the most important use case for memmap-on-memory was not
+> wasting memory for offline memory blocks.
+> 
+> But with a configuration interface like this ... the only benefit is being
+> able to more-reliably add memory in low-memory conditions. An unlikely
+> scenario with standby storage IMHO.
+> 
+> Note that I dislike exposing "altmap" to the user :) Dax calls it
+> "memmap_on_memory", and it is a device attrivute.
+> 
+> As soon as we go down that path we have the complexity of having to group
+> memory blocks etc, and if we can just not go down that path right now it
+> will make things a lot simpler.
+> 
+> (especially, as you document above, the semantics become *really* weird)
+> 
+> As yet another point, I am not sure if someone really needs a per-memory
+> block control of the memmap-on-memory feature.
+> 
+> If we could simplify here, that would be great ...
+
+The original motivation for introducing memmap_on_memory on s390 was to
+avoid using online memory to store struct page metadata, particularly
+for standby memory blocks. This became critical in cases where there was
+an imbalance between standby and online memory, potentially leading to
+boot failures due to insufficient memory for metadata allocation.
+
+To address this, memmap_on_memory was utilized on s390. However, in its
+current form, it adds altmap metadata at the start of each memory block
+at the time of addition, and this configuration is static. It cannot be
+changed at runtime.
+
+I was wondering about the following practical scenario:
+
+When online memory is nearly full, the user can add a standby memory
+block with memmap_on_memory enabled. This allows the system to avoid
+consuming already scarce online memory for metadata.
+
+After enabling and bringing that standby memory online, the user now
+has enough free online memory to add additional memory blocks without
+memmap_on_memory. These later blocks can provide physically contiguous
+memory, which is important for workloads or devices requiring continuous
+physical address space.
+
+If my interpretation is correct, I see good potential for this be be
+useful.
+
+As you pointed out, how about having something similar to
+73954d379efd ("dax: add a sysfs knob to control memmap_on_memory behavior")
+
+i.e.
+
+1) To configure/deconfigure a memory block
+/sys/firmware/memory/memoryX/config
+
+1 -> configure
+0 -> deconfigure
+
+2) Determine whether memory block should have memmap_on_memory or not.
+/sys/firmware/memory/memoryX/memmap_on_memory
+1 -> with altmap
+0 -> without altmap
+
+This attribute must be set before the memoryX is configured. Or else, it
+will default to CONFIG_MHP_MEMMAP_ON_MEMORY / memmap_on_memory parameter.
 
 
+> > NOTE: “altmap_required” attribute must be set before setting the block as
+> > configured via “config” attribute. (Dependancy)
+> > 
+> > 4) Additionally add the patch to check if the memory block is configured
+> > with altmap or not. Similar to [RFC PATCH 2/4] mm/memory_hotplug: Add
+> > memory block altmap sysfs attribute.
+> > 
+> > Most of the code changes will be s390 specific with this interface.
+> > 
+> > Request your inputs on the potential interface. Thank you.
+> > 
+> > Other questions:
+> > 1. I’m just wondering how variable-sized altmap grouping will be
+> > structured in the future. Is it organized by grouping the memory blocks
+> > that require altmap, with the first memory block storing the altmap
+> > metadata for all of them? Or is it possible for the altmap metadata to
+> > span across multiple memory blocks?
+> 
+> That exactly is unclear, which is why we should probably avoid doing that
+> for now. Also, with other developments happening (memdesc), and ongoing
+> effort to shrink "struct page", maybe we will not even need most of this in
+> the future?
+> 
+> > 
+> > 2. OR, will dedicated memory blocks be used exclusively for altmap
+> > metadata, which the memory blocks requiring altmap would then consume? (To
+> > prevent fragmentation) ?
+> 
+> One idea I had was that you would do the add_memory() in bigger granularity.
+> 
+> Then, the memory blocks hosting the memmap would have to get onlined first.
+> And offlining of them would fail until all dependent ones were offlined.
+> 
+> That would at least limit the impact.
+> 
+> Then, the question would be, how could you "group" these memory blocks from
+> your interface to do a single add_memory() etc.
+> 
+> But again, maybe we can leave that part out for now ...
 
---=20
-
-Dario Binacchi
-
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+Thank you David for the details. I will ignore/leave variable sized
+altmap grouping for now.
 
