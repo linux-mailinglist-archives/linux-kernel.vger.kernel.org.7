@@ -1,229 +1,119 @@
-Return-Path: <linux-kernel+bounces-657128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75216ABEF9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:24:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00BB4ABEFF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26E4B1719F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:24:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459DC1BA5140
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2674123D282;
-	Wed, 21 May 2025 09:23:05 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418542472BE;
+	Wed, 21 May 2025 09:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="uRKm31hS"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC12B23C51A
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 09:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7E5238173;
+	Wed, 21 May 2025 09:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747819384; cv=none; b=OrWIQZmnCOmyUlARaPPYgraCyqqRWxlXhq3o57eozhfDyO0zYC+YzsjYYySdpapk0pe9gXg6SNZsOBOrfm+nbecpLwNTdLxS06rcLx7QWttq6QPwnpDadO94EIIpDS9+iFjwU/sKYTMxz7rhDygyqSyv76eYuVa7j0y1GW3x+OQ=
+	t=1747819996; cv=none; b=FtHMzP51q1U0o9HUzW8CGKOaO5yV5/lVNO7q49srXWq2aEoi7kd9lVtJErBju5auyaFul0I1pScZ/SXxyBN/PQW2d+7WF1NWExgDWf3Qd1ZD6lqLR4T5b3ur4oSVMKO6gtnkACnP73w4XXdc+uQEdlPvHE1Cw+lnR2J3es70Fik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747819384; c=relaxed/simple;
-	bh=7TWfyuQGehMlwy6wQ854Zjiz2fwqm0HkfmnWjVAVV1c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pHJ7ElIubgxif6D3wnL05PgyZn/TZ36uifOBjfq4ZI66pB24gttFNRoriVgsknZYjUzS0CmfKnsgVRd2uESOiiUn2NhIBU8vpjutF/Ixs53dj+yWJabmTDtGhgbUK5+cY5OsAYe5gnChNLRJUxU2+mBVvXybF1sDRWNpze4ib90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4b2QtV3WdNz4f3jMf
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 17:22:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 83DC11A0359
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 17:22:51 +0800 (CST)
-Received: from ultra.huawei.com (unknown [10.90.53.71])
-	by APP3 (Coremail) with SMTP id _Ch0CgC3VcBomy1orXF3Mw--.54633S2;
-	Wed, 21 May 2025 17:22:49 +0800 (CST)
-From: Pu Lehui <pulehui@huaweicloud.com>
-To: mhiramat@kernel.org,
-	oleg@redhat.com,
-	peterz@infradead.org,
-	akpm@linux-foundation.org,
-	Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com,
-	vbabka@suse.cz,
-	jannh@google.com,
-	pfalcato@suse.de
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	pulehui@huawei.com
-Subject: [RFC PATCH] mm/mmap: Fix uprobe anon page be overwritten when expanding vma during mremap
-Date: Wed, 21 May 2025 09:25:03 +0000
-Message-Id: <20250521092503.3116340-1-pulehui@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747819996; c=relaxed/simple;
+	bh=qzl+GCezGpStnRyOr52+ceiFfjWtiTGDmpqhsXl8tEc=;
+	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=aEU4CW5J39HC2U6pOlVb4LqsosBWjffAg9sD4SDnZMOsdpIBkDKlQIsG3w+LjzHMzmSjXw4p/sZPVnZa0GfYow/0FvPfrludi9JtzwLtnUWVr43JnxGeE/Df/BxVryR681gf0U+Q29HGNdfpDJwPIddyydbhBy7eQ1uwhs9tLPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=uRKm31hS; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1747819984; h=Message-ID:Subject:Date:From:To;
+	bh=LwrdmgjpSSjCk4xY0DYUL0GPY9RuDrSmgjjk2Np2zCg=;
+	b=uRKm31hSVTjjaW0j5HLWxlU5Bz3Lzej22OfMlQcEsGtHoEMhzgVaIqLPD6b1h5QWqzjq0YOHcnrBa0nhVXGONCvI9zJAvKVo8B2eL+w4Lqo8u2ekByDzZcDSb3+9Uq1+UaeE0daQWGgE99sPTKtrxnErNtUjlMJWpn5+Lji3D5Q=
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WbR961-_1747819984 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 21 May 2025 17:33:04 +0800
+Message-ID: <1747819548.635838-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH 1/2] virtio_ring: Fix error reporting in virtqueue_resize
+Date: Wed, 21 May 2025 17:25:48 +0800
+From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To: Laurent Vivier <lvivier@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>,
+ netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250520110526.635507-1-lvivier@redhat.com>
+ <20250520110526.635507-2-lvivier@redhat.com>
+In-Reply-To: <20250520110526.635507-2-lvivier@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgC3VcBomy1orXF3Mw--.54633S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCw15WrWfZFy3Xr4DJF1xAFb_yoW7JFykpF
-	Wvv398KFWrJa1vgr98Zw1qvry3tws2yr4UAry5X34Y9r9Igr43tFs3AF48Ary5JFZ2vr1f
-	tF4UKryftFW2va7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
-	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
-	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
-	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU17KsUUUUUU==
-X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
 
-From: Pu Lehui <pulehui@huawei.com>
 
-We encountered a BUG alert triggered by Syzkaller as follows:
-   BUG: Bad rss-counter state mm:00000000b4a60fca type:MM_ANONPAGES val:1
+We should provide feedback to the caller indicating the queue's current status
+whether it is still valid and whether its size has been successfully
+modified. Here I selected the first. The caller can know the second by
+virtqueue_get_vring_size().
 
-And we can reproduce it with the following steps:
-1. register uprobe on file at zero offset
-2. mmap the file at zero offset:
-   addr1 = mmap(NULL, 2 * 4096, PROT_NONE, MAP_PRIVATE, fd, 0);
-3. mremap part of vma1 to new vma2:
-   addr2 = mremap(addr1, 4096, 2 * 4096, MREMAP_MAYMOVE);
-4. mremap back to orig addr1:
-   mremap(addr2, 4096, 4096, MREMAP_MAYMOVE | MREMAP_FIXED, addr1);
+Thanks.
 
-In the step 3, the vma1 range [addr1, addr1 + 4096] will be remap to new
-vma2 with range [addr2, addr2 + 8192], and remap uprobe anon page from
-the vma1 to vma2, then unmap the vma1 range [addr1, addr1 + 4096].
-In tht step 4, the vma2 range [addr2, addr2 + 4096] will be remap back
-to the addr range [addr1, addr1 + 4096]. Since the addr range [addr1 +
-4096, addr1 + 8192] still maps the file, it will take
-vma_merge_new_range to merge these two addr ranges, and then do
-uprobe_mmap in vma_complete. Since the merged vma pgoff is also zero
-offset, it will install uprobe anon page to the merged vma. However, the
-upcomming move_page_tables step, which use set_pte_at to remap the vma2
-uprobe anon page to the merged vma, will over map the old uprobe anon
-page in the merged vma, and lead the old uprobe anon page to be orphan.
 
-Since the uprobe anon page will be remapped to the merged vma, we can
-remove the unnecessary uprobe_mmap at merged vma, that is, do not
-perform uprobe_mmap when there is no vma in the addr range to be
-expaned.
-
-This problem was first find in linux-6.6.y and also exists in the
-community syzkaller:
-https://lore.kernel.org/all/000000000000ada39605a5e71711@google.com/T/
-
-The complete Syzkaller C reproduction program is as follows:
-
-#define _GNU_SOURCE
-#include <sys/mman.h>
-#include <linux/perf_event.h>
-#include <linux/hw_breakpoint.h>
-
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <syscall.h>
-#include <unistd.h>
-
-int main(int argc, char *argv[])
-{
-    // Find out what type id we need for uprobes
-    int perf_type_pmu_uprobe;
-    {
-        FILE *fp = fopen("/sys/bus/event_source/devices/uprobe/type", "r");
-        fscanf(fp, "%d", &perf_type_pmu_uprobe);
-        fclose(fp);
-    }
-
-    const char *filename = "./bus";
-
-    int fd = open(filename, O_RDWR|O_CREAT, 0600);
-    write(fd, "x", 1);
-
-    void *addr = mmap(NULL, 4096, PROT_READ | PROT_WRITE | PROT_EXEC,
-                      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-
-    // Register a perf uprobe on "./bus"
-    struct perf_event_attr attr = {};
-    attr.type = perf_type_pmu_uprobe;
-    attr.uprobe_path = (unsigned long) filename;
-    syscall(__NR_perf_event_open, &attr, 0, 0, -1, 0);
-
-    void *addr2 = mmap(NULL, 2 * 4096, PROT_NONE, MAP_PRIVATE, fd, 0);
-    void *addr3 = mremap((void *) addr2, 4096, 2 * 4096, MREMAP_MAYMOVE);
-    mremap(addr3, 4096, 4096, MREMAP_MAYMOVE | MREMAP_FIXED, (void *) addr2);
-
-    return 0;
-}
-
-Signed-off-by: Pu Lehui <pulehui@huawei.com>
----
- mm/vma.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/mm/vma.c b/mm/vma.c
-index 3ff6cfbe3338..9a8d84b12918 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -325,7 +325,7 @@ static void vma_prepare(struct vma_prepare *vp)
-  * @mm: The mm_struct
-  */
- static void vma_complete(struct vma_prepare *vp, struct vma_iterator *vmi,
--			 struct mm_struct *mm)
-+			 struct mm_struct *mm, bool handle_vma_uprobe)
- {
- 	if (vp->file) {
- 		if (vp->adj_next)
-@@ -358,7 +358,8 @@ static void vma_complete(struct vma_prepare *vp, struct vma_iterator *vmi,
- 
- 	if (vp->file) {
- 		i_mmap_unlock_write(vp->mapping);
--		uprobe_mmap(vp->vma);
-+		if (handle_vma_uprobe)
-+			uprobe_mmap(vp->vma);
- 
- 		if (vp->adj_next)
- 			uprobe_mmap(vp->adj_next);
-@@ -549,7 +550,7 @@ __split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
- 	}
- 
- 	/* vma_complete stores the new vma */
--	vma_complete(&vp, vmi, vma->vm_mm);
-+	vma_complete(&vp, vmi, vma->vm_mm, true);
- 	validate_mm(vma->vm_mm);
- 
- 	/* Success. */
-@@ -715,6 +716,7 @@ static int commit_merge(struct vma_merge_struct *vmg)
- {
- 	struct vm_area_struct *vma;
- 	struct vma_prepare vp;
-+	bool handle_vma_uprobe = !!vma_lookup(vmg->mm, vmg->start);
- 
- 	if (vmg->__adjust_next_start) {
- 		/* We manipulate middle and adjust next, which is the target. */
-@@ -748,7 +750,7 @@ static int commit_merge(struct vma_merge_struct *vmg)
- 	vmg_adjust_set_range(vmg);
- 	vma_iter_store_overwrite(vmg->vmi, vmg->target);
- 
--	vma_complete(&vp, vmg->vmi, vma->vm_mm);
-+	vma_complete(&vp, vmg->vmi, vma->vm_mm, handle_vma_uprobe);
- 
- 	return 0;
- }
-@@ -1201,7 +1203,7 @@ int vma_shrink(struct vma_iterator *vmi, struct vm_area_struct *vma,
- 
- 	vma_iter_clear(vmi);
- 	vma_set_range(vma, start, end, pgoff);
--	vma_complete(&vp, vmi, vma->vm_mm);
-+	vma_complete(&vp, vmi, vma->vm_mm, true);
- 	validate_mm(vma->vm_mm);
- 	return 0;
- }
--- 
-2.34.1
-
+On Tue, 20 May 2025 13:05:25 +0200, Laurent Vivier <lvivier@redhat.com> wrote:
+> The virtqueue_resize() function was not correctly propagating error codes
+> from its internal resize helper functions, specifically
+> virtqueue_resize_packet() and virtqueue_resize_split(). If these helpers
+> returned an error, but the subsequent call to virtqueue_enable_after_reset()
+> succeeded, the original error from the resize operation would be masked.
+> Consequently, virtqueue_resize() could incorrectly report success to its
+> caller despite an underlying resize failure.
+>
+> This change restores the original code behavior:
+>
+>        if (vdev->config->enable_vq_after_reset(_vq))
+>                return -EBUSY;
+>
+>        return err;
+>
+> Fix: commit ad48d53b5b3f ("virtio_ring: separate the logic of reset/enable from virtqueue_resize")
+> Cc: xuanzhuo@linux.alibaba.com
+> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+> ---
+>  drivers/virtio/virtio_ring.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index b784aab66867..4397392bfef0 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -2797,7 +2797,7 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
+>  		     void (*recycle_done)(struct virtqueue *vq))
+>  {
+>  	struct vring_virtqueue *vq = to_vvq(_vq);
+> -	int err;
+> +	int err, err_reset;
+>
+>  	if (num > vq->vq.num_max)
+>  		return -E2BIG;
+> @@ -2819,7 +2819,11 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
+>  	else
+>  		err = virtqueue_resize_split(_vq, num);
+>
+> -	return virtqueue_enable_after_reset(_vq);
+> +	err_reset = virtqueue_enable_after_reset(_vq);
+> +	if (err_reset)
+> +		return err_reset;
+> +
+> +	return err;
+>  }
+>  EXPORT_SYMBOL_GPL(virtqueue_resize);
+>
+> --
+> 2.49.0
+>
 
