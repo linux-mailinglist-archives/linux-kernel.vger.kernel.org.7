@@ -1,97 +1,129 @@
-Return-Path: <linux-kernel+bounces-656662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4048ABE952
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 03:50:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A11FCABE956
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 03:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 059EE4E3512
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 01:50:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B86D7A40B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 01:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CDD1C3306;
-	Wed, 21 May 2025 01:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A425C1C5489;
+	Wed, 21 May 2025 01:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVUcL+kE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="FaJoIMIv"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750791AC43A;
-	Wed, 21 May 2025 01:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D94EED7
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 01:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747792200; cv=none; b=HvyI06d4eC+wSAo2B4fcQrFDA0NOMZTNrGhXQHmPnGJMtvzJiWPKVDuAMJJO44GwABlUJKJFCuUi/+oVqYqLOiDOjWT/QUa4Z8FqLna5Wtckh+ll7ImrW5yPyQkwO9peJ0mbMY8z8LuFMPKkfRFI71eCSjTOaIZA9LZ03LrzsLw=
+	t=1747792400; cv=none; b=BjU855YCm5h5ms60HzXLNmQHw9uYaosT8DNhjMQfPlPgA7Bw6wPmfUawcWFsq7Ek//Q7f7d0IjG8HTTYPrmPMlAJl1Hg+TTwM7yHkbd86q0u3vbFH0vMcn8AdqbO/wX1kSxvYbrNapBT1COFn6dyyddRiFRJ6q54+YZGEJsTKVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747792200; c=relaxed/simple;
-	bh=dRWvsaYGYRWrcyvlu6C9BPSvDpDDZnOCcNdOY/cneHk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=NgwrrB4YBByuzBC80alfcPeUhXYO9cFw8AApCONlV1yakyJ70IyKssrdCZyucDP8EQ01K55vdLMfcsyq6FwzKAtoqoTHTmq+/FvfbKjFvs9WXEnXhS5i2IhxhcPISJjCgVgR1H4+Jk/hcHnesthrtZRUDhT1PwiLTkjG06j8a4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVUcL+kE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9526C4CEE9;
-	Wed, 21 May 2025 01:49:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747792199;
-	bh=dRWvsaYGYRWrcyvlu6C9BPSvDpDDZnOCcNdOY/cneHk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=gVUcL+kEVcd1NY16muInO5FqJa4/AuOELDCX+Cl6eYmsbyT6oJpr5O+WcQVx/glOm
-	 RZ6B8DrjmsgCtpjhFUdP6159OHzvrFXwRtUyGFzJV5szEMKXfL0FQkjEPGCnmWVGrA
-	 yAq69DhpAMbfu3wh3cX58pDLI8z/xRDYUaVzU9nxWZSMRgabSkG2vtI248N6jwJ3wX
-	 qp5oL1rhthw/bfZ81iOCjsQRHr/zfx3D8VF4NSWFh5rzRWIGh2j171W8sA40qNKvVJ
-	 xlG41mWVPgwbVz8OsMkNxTD/oQoC7gLtnwMrD4AGJ+wpmuxi1jyux5Zmrf0XtzS8Qp
-	 2SC5/grOIz1kw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAC6A380AAD0;
-	Wed, 21 May 2025 01:50:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1747792400; c=relaxed/simple;
+	bh=BFUsm+CtFzkYoOFT0IcD/3GeiYNyfD5Fu+25O0J820Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=naLpJtgTQAY09PlBv0iw1KuJVX/ycMHyC19hHwEjV10kWYoRtmQlkkArLMFr2tXYh/Ie3eMIQ+mqpGeaNvPXb6nb7wERY75jZGdXH+g9Qz/+E11ZB+dvaNP/kiIOwxHHnTJvbxr0YpvRlf3PaLFDVpHWtcJ4TroHkSECsQgwcOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=FaJoIMIv; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6008a.ext.cloudfilter.net ([10.0.30.227])
+	by cmsmtp with ESMTPS
+	id HUn7uhXmCf1UXHYdxuS8rP; Wed, 21 May 2025 01:53:17 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id HYdwusJydDd4SHYdxu8uek; Wed, 21 May 2025 01:53:17 +0000
+X-Authority-Analysis: v=2.4 cv=CZUO5qrl c=1 sm=1 tr=0 ts=682d320d
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=qfBMeBQ8Qh9mIwLNFBIA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ljAXeLh7IWEQrb6v9uD9cqDfEuhMh2lQAo2hYNlKG1s=; b=FaJoIMIv0K55E8uzkpiEFPbuwZ
+	lvGAf9cs+pn8+TtkEJt3FYvJzJ3Zea/toWNenhV3Am6nSzBGvyVjf+lgBxLVcFlIRREcrSsMlp2gL
+	0XRzSYqKsxiQ5VhKP7lxKP7CBxiXbKgz2gNU9X1tKXVRo4L3zbLBJmZ57nzP3RaChBz6PKwCXz6CB
+	jtO/GZFR1OEjek2aLUF8iqAWIxvjM4Ym8m9RF/xqr83zQDzX+sIdki8bSa2V0N+7CY1Hf0f3V0s7H
+	4VSQFpSdLEU5QGMXdX7tLG1ms21DSLfib04AeZYMOOFTa8V4119K4n8mzPQ2bl3r2XbNssRjJhR3G
+	0AmIZ9iA==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:40880 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uHYdu-000000010dX-3Ca7;
+	Tue, 20 May 2025 19:53:14 -0600
+Message-ID: <769775bb-4dcc-4181-a220-76fc28aae773@w6rz.net>
+Date: Tue, 20 May 2025 18:53:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3 0/3] net: bcmgenet: 64bit stats and expose more stats in
- ethtool
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174779223573.1533629.605506624462580045.git-patchwork-notify@kernel.org>
-Date: Wed, 21 May 2025 01:50:35 +0000
-References: <20250519113257.1031-1-zakkemble@gmail.com>
-In-Reply-To: <20250519113257.1031-1-zakkemble@gmail.com>
-To: Zak Kemble <zakkemble@gmail.com>
-Cc: opendmb@gmail.com, florian.fainelli@broadcom.com,
- bcm-kernel-feedback-list@broadcom.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 00/59] 5.15.184-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250520125753.836407405@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250520125753.836407405@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1uHYdu-000000010dX-3Ca7
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:40880
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 92
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFJavWwjXG5pJMG/bC9pUgdVLilkcCg2SEbQ5Y0vHxv3dUmH347n75JUEYdb9nYRtJR8iBKPPBDmyx+o1gj3vNjL0ZjOy0eDkZEZ0omxCzE8eH6zDtbI
+ xpwVa2qwZbC8RCYMsheQb5kOEVq4nj920SZbbiIBaB/YtN7ZK4bIYMYFEm7cUBpCfRjZR/PcKFFq7VRZ6dVdQW/M1miv+omFFyo=
 
-Hello:
+On 5/20/25 06:49, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.184 release.
+> There are 59 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 22 May 2025 12:57:37 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.184-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-On Mon, 19 May 2025 12:32:54 +0100 you wrote:
-> Hi, this patchset updates the bcmgenet driver with new 64bit statistics via
-> ndo_get_stats64 and rtnl_link_stats64, now reports hardware discarded
-> packets in the rx_missed_errors stat and exposes more stats in ethtool.
-> 
-> v1:
-> - https://lore.kernel.org/all/20250513144107.1989-1-zakkemble@gmail.com
-> 
-> [...]
-
-Here is the summary with links:
-  - [v3,1/3] net: bcmgenet: switch to use 64bit statistics
-    https://git.kernel.org/netdev/net-next/c/59aa6e3072aa
-  - [v3,2/3] net: bcmgenet: count hw discarded packets in missed stat
-    https://git.kernel.org/netdev/net-next/c/e985b97ac1b1
-  - [v3,3/3] net: bcmgenet: expose more stats in ethtool
-    https://git.kernel.org/netdev/net-next/c/bbdf9ec61053
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Tested-by: Ron Economos <re@w6rz.net>
 
 
