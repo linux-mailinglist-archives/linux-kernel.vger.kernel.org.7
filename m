@@ -1,205 +1,187 @@
-Return-Path: <linux-kernel+bounces-657544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 809A6ABF5B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:12:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45F6ABF5A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5745418952D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:12:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93E157AE803
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9890F2741C4;
-	Wed, 21 May 2025 13:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8015227874B;
+	Wed, 21 May 2025 13:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBM60d25"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TEQicBG5"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A11263F4E;
-	Wed, 21 May 2025 13:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154DA277037;
+	Wed, 21 May 2025 13:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747833118; cv=none; b=CsYHlJUYcL2on/2/hraSHEiOoTIX8lg6enzBun9FUSHiq2C7bgQDKfYNmHPEWUOOjzNYNDC6aFBzM9goZpsolECPHP/gLLrD0u6zKjN80YGH88lK3C230fCQRWyLiRyq0nTHKD646+wgr8kxckpPXU6Sihcyj9bPZ9H8fso+Ywo=
+	t=1747833053; cv=none; b=DlCawrv/pFgiIGQIpr6Djvu7R0wIGGpLc+eUCmYqIWT2mDD+cXvzFDqrLwRkY0h184FF8ysmWDPUH4JoBxHlNM3TRwrBnnHZAeiQoVKp0CCX/bXst8POXwTQfPQE5giCiThmyNyM+JL+c1d6yf3c8ciDnjMNy4sPDv43gQUn/3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747833118; c=relaxed/simple;
-	bh=za+MdSYK+CoBXvIWPz3YA6uAitLEqcQq9VREikg77H8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NdaOMaDvgIIOppusa/TL422m76RvwEYxVIYfVvvVssDR+0Kt83RBeKslpuIcHHYkalt6SEdGYThxT9HxSCgoB4+XJyjTYTZvAZaMwYT6Lg6KGEpSA2Fn66YYvwKvY6onQX9DkMNV3AuL+nKR2wJzuI+qNkY/IpRbxai/zDzAwHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBM60d25; arc=none smtp.client-ip=209.85.210.180
+	s=arc-20240116; t=1747833053; c=relaxed/simple;
+	bh=+N0EsOxMzlQuApqznQafbw5+jTAR+Iw6BzZ0VRGEI7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xk1qqWL6tA3AGJP1ElenuU1Hm2+H0qLqxngvZWOj6oPv/zCLWdATzTgrio3mNmVdbjqxxyUrJJ2eFTqlERsQaNmssguO+0jRs3yJ/rzg+9lPSzgzWZ5qYkV0LtxFabYvY/8CtsIBCKak8QOjoNkKtkmxobTZOm6/yFjBUgupti0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TEQicBG5; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so5653368b3a.0;
-        Wed, 21 May 2025 06:11:55 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a36ab95a13so2464009f8f.3;
+        Wed, 21 May 2025 06:10:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747833115; x=1748437915; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=O2qQPefvvV4ihaAAFaNPu9WwGYNsphvozJRkAhoefLE=;
-        b=TBM60d25l5nm9YZS0Qkz5QoPWZJigtO7w+rqKjcdfRnpz95kXbfdvqq8VAVPQCt0u2
-         AQ7bgE0/ErcuQUz23nCgofSzeVvJkrkgn5UU/f0GHib2abFWqGnUy6k9j0HzSJlLb4Xt
-         J7oCUjPSEhSd+IhrK1hKXy5fDfj5P2/Y9g6sYQHOmWbmvsR897R5WVVWC8XzzdenpO1o
-         SUiJSe8L2LX60g4y86Qy41/an0iwdNEWBlwOWy0R5tzu+201Qsi6Okvr50wM2g3sNb17
-         cU21ywb5BgV8tX5B8h6W89kunu94Dl6qHp7463mYfZJ28LtIjpzoOHGc31/uHXqQ1LA8
-         6ZMw==
+        d=gmail.com; s=20230601; t=1747833050; x=1748437850; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r/i/cOKT8js+VBc0E/AJo6vob3UrWTCSL5Lk/36I7Dw=;
+        b=TEQicBG5EWHVaDZPU9s1o1kWEgdLhyDln/s2PRhxsyQZG9Nct+IDZy4BkTyeu+lNAG
+         Xd9+81z9VS4JRx0q9beUSRQsLZo4elAK+U6OVSa22rfncY2yxK7EwBJdjzethIYa80h1
+         3FYN3tdu5QabQ6cJZjf7zQR+wM2jM9Z15GrTQDOuIjEnWrpginAlhU+FgpJ+g0SRFkDX
+         GA+LIlH8PUg6mvrKooup/nKVb1fg3WKonIXzqzNbf602LqTGFfjwop37d/Zx9N2wJQo2
+         gh86LGdG0iHPFRaAFg7Bh26pwQ+3cbGpmufOP0PBKctd56ehbsDPXdZmv0Pzr0BhMVZE
+         nIAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747833115; x=1748437915;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O2qQPefvvV4ihaAAFaNPu9WwGYNsphvozJRkAhoefLE=;
-        b=muHDa5nCgijV+jHlWZaU+ar1gHhcDyRdTkqT92emT2bMb3KDe35F4Oqez6H1KKJS4G
-         PcHoH442B9OhiQjFm7u+InJ71B0qU2V9Ltq9mXuCYQBuo8gbuGl88XtFf/hzri4SPcCI
-         NhjLgIxkpf+L44+y84Ymnvl5nISc3JG9HsDPnQ2hCV38nTY4Vt07pv8jnyxBk63QGHQb
-         YPdpqd6truoF8zQm265bUFMRp5S3sfj4cNAWl2nR50NkOgDO6IUU2sf1IYMscneWGQou
-         5G+qIKnMut1OAd89JGw3Z8QCF6uxZUTG7+nVo5iFZF0xU5BVigkXhbwvJi2gHZvLMPn+
-         8Ulg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjDAfD/+mBQ2I7gRdXdqbGGORcuTLnTcoCJ+g64Ruf80xC4g8MoxcAtwEMyiioKGQ3ovZKGLIlVlnURrFu@vger.kernel.org, AJvYcCVwsYjTz/4fcTtrLvKtGYqCs3WuDElJyYsZPXpXOkwHTkCcxNwEQ0sl6xiAYo1Khc4lBxEDr7bSLjWREcbx@vger.kernel.org, AJvYcCXl7qXY5EZKS4RYG916VgCX4pXbMNvOUF087IGk30+a11ADiO0XgFd72Gn8/9aztS4txICv6Kc04zs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw03ej7fTEsKgPGoSD4CJlwUZ6Agf3gXK7vDz0kzaov0kO05yX
-	+7TJ07Fxp0KPlAEps2JKJyuLzwC2ZQN+QQH1GeS1T6/H1KSSTTaONQQ13pnzUydfjyDn1Q==
-X-Gm-Gg: ASbGncucCJ9YpHS67I7EJt7A6GgBxKg/V01UVK6QiZeME/KSV79IoOqGmkYIkU+NFHT
-	PX90/oybemP7t89PLVWGVSHsXSV42ymhdD7IhWq0j1AUYBR7WJA2UXMBC5x940Nrdy9518SwBk6
-	lDzIXepWvWfGIIhYsD0hjUSNZWMB3WmNLHWGDuKSNyCRuZjOt4t9g/rxPMBUuybJgcAxcQtYZKj
-	csGWJnBpc4JvMXpLv7PzisySAB5rpT3O3FhL492PdBSwUVkm27vKNX6rTmiXyBVailqDwaqXlOg
-	ty9/W7QAIeSKeEWP6CPQCNJWAjzI1Ze6SZ4nbvwJTyQejDau670NVH/GfN151RhIkWqtKgxqGrs
-	gsHnOwg==
-X-Google-Smtp-Source: AGHT+IFlGplauBEgvKTRiQTI4a4oPx0iajBKn0509TDL6mEGaAIkVylvguO2Fv9F3FG+EprGcIHh4Q==
-X-Received: by 2002:a05:6a20:7353:b0:1f5:8c05:e8f8 with SMTP id adf61e73a8af0-216218f916cmr33749172637.25.1747833114470;
-        Wed, 21 May 2025 06:11:54 -0700 (PDT)
-Received: from localhost.localdomain ([61.77.55.112])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b26eaf5c6b0sm9679038a12.7.2025.05.21.06.11.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 06:11:53 -0700 (PDT)
-From: Taeyoung Kwon <xoduddk12345@gmail.com>
-X-Google-Original-From: Taeyoung Kwon <Taeyoung.Kwon@telit.com>
-To: Sebastian Reichel <sre@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Taeyoung Kwon <Taeyoung.Kwon@telit.com>
-Subject: [PATCH v2] power: reset: qcom-pon: Rename variables to use generic naming
-Date: Wed, 21 May 2025 13:09:52 +0000
-Message-ID: <20250521131116.2664-1-Taeyoung.Kwon@telit.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1747833050; x=1748437850;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r/i/cOKT8js+VBc0E/AJo6vob3UrWTCSL5Lk/36I7Dw=;
+        b=JbYxy0rzrYbKwnAOyWHpACAK1F8k+XFpmM8xotIcnv9oxC4xCw76eTYmhN7ZpTTm01
+         MiJbLTNaoAg9TsbP55tb/HtynlK4Qhb1tCrFYdmwF6KicKhCGvyztAqsribNxh17R4Od
+         jFcNBNQJ6NYFcT//PqbCaF4PBcfOWctxADtwQT4P/OfX1nQCf36MoxC/DTyd8eXPPwUH
+         HZGFfTAsTqS5T9i+NXoTeq9wLfYYn+qRb9+N7MDPmBaANazKITVtp/vZk7y5OxXl9txs
+         8gYJ6qnRl0fbU+6ick91NKnb0v3chVZpqYyhHu3PopFv2I26cyDVe7XfO7XOAMd5mUVc
+         Xb4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUqZJQm9YCosDODf9WjFYsmSXTehB8jVwSxt33mMJuVHf5x+bQQK4rTpf/hbDKGhTWQIhoCmBazn0gB@vger.kernel.org, AJvYcCVZ7IlX/kDYPGHdNUi3minqWHqjHmzErGWtHP1WrpZMY9zb1OPGxWAoTbylkJQf59k57Xiqr7cthWLsaO2O@vger.kernel.org, AJvYcCXs5RupSJU0h/RJ65UDWl5dyA5J0uqgBpPDL+59Icx+G4IUNf//SQzUb9dYdQZBCnJGaIt/ssVzVj2A3LXDvcETWxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSgFHMDii3WjvEM9FvXbH2u5OHK/DHYozshZy7zwKuc+882ADO
+	j9Hm9554WZ4jq1f9Rrhgp01FZtdNPFqrGSD5kJXBvMLPHFLiuIrTE20L5WhDzCWIdQxcv7IpNZu
+	NmN0TIj8/2hZi6ghmozYgqEY8/E2mN28=
+X-Gm-Gg: ASbGnctsXhbzs82FsZ2GzL9mUaKVQdH0uQ7XQfBdQNO7fSbVCu7bRZRo9ts6b1bIIK0
+	Tkl7NnpvoUJzg39L22Q+0cjhHVz76PCLB/8GDbdg9effqHUlzfZXwQovHe02OtJvAjng0iYeifC
+	wUJxyZ4BoKJAEuyiMsIUgUx8rRm+qPxNf/qB/iVg==
+X-Google-Smtp-Source: AGHT+IH4oQ/KZkDKNtscP9U9jlsLlq7/1OVsl4bF4giaJPvt/bEthmSkeP9I6o3Q0H4C4/3CZLrskdHpBT1rmXrsgnM=
+X-Received: by 2002:a05:6000:178c:b0:3a1:fe77:9e0b with SMTP id
+ ffacd0b85a97d-3a35fe7962bmr16202099f8f.16.1747833050180; Wed, 21 May 2025
+ 06:10:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250512182330.238259-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250512182330.238259-11-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250520142815.GJ13321@pendragon.ideasonboard.com>
+In-Reply-To: <20250520142815.GJ13321@pendragon.ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 21 May 2025 14:10:24 +0100
+X-Gm-Features: AX0GCFvkUotq5lJN2WL25-xOX-EKusGynjFMjAQPIg56Hl9FpsKjDTJt3B7gMeI
+Message-ID: <CA+V-a8sxHiddge_U7SLr6jBdjVvDFCzqsr6mgZBCoyVsjo9Uxg@mail.gmail.com>
+Subject: Re: [PATCH v5 10/12] drm: renesas: rz-du: mipi_dsi: Add
+ dphy_late_init() callback for RZ/V2H(P)
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Taeyoung Kwon <Taeyoung.Kwon@telit.com>
+Hi Laurent,
 
-The qcom-pon driver was originally implemented for the PM8916 PMIC, and
-as a result, several internal variable names still refer to 'pm8916'.
-However, the driver has since been extended to support other PMICs as
-well.
+Thank you for the review.
 
-This patch renames those variables to use more generic and consistent
-names, improving clarity and reducing confusion for non-PM8916 devices.
+On Tue, May 20, 2025 at 3:28=E2=80=AFPM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Prabhakar,
+>
+> Thank you for the patch.
+>
+> On Mon, May 12, 2025 at 07:23:28PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Introduce the `dphy_late_init` callback in `rzg2l_mipi_dsi_hw_info` to
+> > allow additional D-PHY register configurations after enabling data and
+> > clock lanes. This is required for the RZ/V2H(P) SoC but not for the
+> > RZ/G2L SoC.
+> >
+> > Modify `rzg2l_mipi_dsi_startup()` to invoke `dphy_late_init` if defined=
+,
+> > ensuring SoC-specific initialization is performed only when necessary.
+> >
+> > This change prepares for RZ/V2H(P) SoC support while maintaining
+> > compatibility with existing platforms.
+> >
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > ---
+> > v4->v5:
+> > - Added Reviewed tag from Biju
+> >
+> > v3->v4:
+> > - No changes
+> >
+> > v2->v3:
+> > - No changes
+> >
+> > v1->v2:
+> > - No changes
+> > ---
+> >  drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/g=
+pu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > index 55a1c1b043c8..e1ce21a9ddb3 100644
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > @@ -34,6 +34,7 @@ struct rzg2l_mipi_dsi;
+> >
+> >  struct rzg2l_mipi_dsi_hw_info {
+> >       int (*dphy_init)(struct rzg2l_mipi_dsi *dsi, u64 hsfreq_millihz);
+> > +     void (*dphy_late_init)(struct rzg2l_mipi_dsi *dsi);
+>
+> As this is called at startup time I would have called it dphy_startup.
+> Up to you.
+>
+Agreed, I will rename this to dphy_startup_late_init().
 
-Signed-off-by: Taeyoung Kwon <Taeyoung.Kwon@telit.com>
----
+Cheers,
+Prabhakar
 
-Changes in v1:
-- Moved explanation under the '---' line
-
-Changes in v2:
-- Moved "From:" line
-
-Since my company email automatically adds a footer signature,
-I’m sending this patch from my personal Gmail account.
-
-Apologies for the repeated mistakes.
-
- drivers/power/reset/qcom-pon.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/power/reset/qcom-pon.c b/drivers/power/reset/qcom-pon.c
-index 1344b361a475..7e108982a582 100644
---- a/drivers/power/reset/qcom-pon.c
-+++ b/drivers/power/reset/qcom-pon.c
-@@ -19,7 +19,7 @@
- 
- #define NO_REASON_SHIFT			0
- 
--struct pm8916_pon {
-+struct qcom_pon {
- 	struct device *dev;
- 	struct regmap *regmap;
- 	u32 baseaddr;
-@@ -27,11 +27,11 @@ struct pm8916_pon {
- 	long reason_shift;
- };
- 
--static int pm8916_reboot_mode_write(struct reboot_mode_driver *reboot,
-+static int qcom_pon_reboot_mode_write(struct reboot_mode_driver *reboot,
- 				    unsigned int magic)
- {
--	struct pm8916_pon *pon = container_of
--			(reboot, struct pm8916_pon, reboot_mode);
-+	struct qcom_pon *pon = container_of
-+			(reboot, struct qcom_pon, reboot_mode);
- 	int ret;
- 
- 	ret = regmap_update_bits(pon->regmap,
-@@ -44,9 +44,9 @@ static int pm8916_reboot_mode_write(struct reboot_mode_driver *reboot,
- 	return ret;
- }
- 
--static int pm8916_pon_probe(struct platform_device *pdev)
-+static int qcom_pon_probe(struct platform_device *pdev)
- {
--	struct pm8916_pon *pon;
-+	struct qcom_pon *pon;
- 	long reason_shift;
- 	int error;
- 
-@@ -72,7 +72,7 @@ static int pm8916_pon_probe(struct platform_device *pdev)
- 	if (reason_shift != NO_REASON_SHIFT) {
- 		pon->reboot_mode.dev = &pdev->dev;
- 		pon->reason_shift = reason_shift;
--		pon->reboot_mode.write = pm8916_reboot_mode_write;
-+		pon->reboot_mode.write = qcom_pon_reboot_mode_write;
- 		error = devm_reboot_mode_register(&pdev->dev, &pon->reboot_mode);
- 		if (error) {
- 			dev_err(&pdev->dev, "can't register reboot mode\n");
-@@ -85,7 +85,7 @@ static int pm8916_pon_probe(struct platform_device *pdev)
- 	return devm_of_platform_populate(&pdev->dev);
- }
- 
--static const struct of_device_id pm8916_pon_id_table[] = {
-+static const struct of_device_id qcom_pon_id_table[] = {
- 	{ .compatible = "qcom,pm8916-pon", .data = (void *)GEN1_REASON_SHIFT },
- 	{ .compatible = "qcom,pm8941-pon", .data = (void *)NO_REASON_SHIFT },
- 	{ .compatible = "qcom,pms405-pon", .data = (void *)GEN1_REASON_SHIFT },
-@@ -93,16 +93,16 @@ static const struct of_device_id pm8916_pon_id_table[] = {
- 	{ .compatible = "qcom,pmk8350-pon", .data = (void *)GEN2_REASON_SHIFT },
- 	{ }
- };
--MODULE_DEVICE_TABLE(of, pm8916_pon_id_table);
-+MODULE_DEVICE_TABLE(of, qcom_pon_id_table);
- 
--static struct platform_driver pm8916_pon_driver = {
--	.probe = pm8916_pon_probe,
-+static struct platform_driver qcom_pon_driver = {
-+	.probe = qcom_pon_probe,
- 	.driver = {
--		.name = "pm8916-pon",
--		.of_match_table = pm8916_pon_id_table,
-+		.name = "qcom-pon",
-+		.of_match_table = qcom_pon_id_table,
- 	},
- };
--module_platform_driver(pm8916_pon_driver);
-+module_platform_driver(qcom_pon_driver);
- 
--MODULE_DESCRIPTION("pm8916 Power On driver");
-+MODULE_DESCRIPTION("Qualcomm Power On driver");
- MODULE_LICENSE("GPL v2");
--- 
-2.49.0
-
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>
+> >       void (*dphy_exit)(struct rzg2l_mipi_dsi *dsi);
+> >       u32 phy_reg_offset;
+> >       u32 link_reg_offset;
+> > @@ -320,6 +321,9 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi=
+_dsi *dsi,
+> >       txsetr =3D TXSETR_DLEN | TXSETR_NUMLANEUSE(dsi->lanes - 1) | TXSE=
+TR_CLEN;
+> >       rzg2l_mipi_dsi_link_write(dsi, TXSETR, txsetr);
+> >
+> > +     if (dsi->info->dphy_late_init)
+> > +             dsi->info->dphy_late_init(dsi);
+> > +
+> >       hsfreq =3D DIV_ROUND_CLOSEST_ULL(hsfreq_millihz, MILLI);
+> >       /*
+> >        * Global timings characteristic depends on high speed Clock Freq=
+uency
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
