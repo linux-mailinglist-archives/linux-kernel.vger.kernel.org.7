@@ -1,105 +1,103 @@
-Return-Path: <linux-kernel+bounces-657875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 485DBABF9BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:44:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8379ABF9FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F120F7AF033
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:42:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D230E189CE28
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FD1221270;
-	Wed, 21 May 2025 15:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C77221291;
+	Wed, 21 May 2025 15:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="GRMrsJRa"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TjQ1NMaP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1dQ1PAbL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4830B2185B8;
-	Wed, 21 May 2025 15:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40401187876;
+	Wed, 21 May 2025 15:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747841925; cv=none; b=Jp5IWXt90OAwok41eB8YuIeQ0Pryo77eavbL1vltqh8DcrjEy3MiUYSZPDu/yxxrS6sI/vAdAT2nLePc9/RgDVWuQcd3HE7onbOer6tG9kIChbi2A8m+vMCFQ35yy2n02HXfVx0f46cPmvuc9HBBXcpwnSkYmzHN6UvF3rwoYeI=
+	t=1747841971; cv=none; b=i3YfdPIcH2/qvYGOYAayoJPqozde9puKUhcSgm5b7i3Y1KAB17rI36RBdsGmpNDwCJGuWZ+xpJWgRG7vxPqMjBiJmYAqpFeSvhC469ZSetIPgMhuVtEQ8pIxmy6UxvgopCe+s/6HIkvx0qJHC7LDqd7oEllpJ0C8KWyygMxwRAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747841925; c=relaxed/simple;
-	bh=PTX025higgfiVJV/H2ZoQOmewRxlFy3bJrnMoGbZ6OQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oqktZgGAL4RoXF71bDu2yhdG6A/x6tOfaVPmmEa9HndNkl2xKCguzp+qBcRqBy6iBBs1P+gtMQk+lpao5crJw0d/HO4oDdrITngUtYM/YT1YmM9W/GCbtvUio6HhY5sRo9R/yiZ0jLfgl7yuMevebhbolrxWK8gc4pQpxevg6sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=GRMrsJRa; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6A2941039728C;
-	Wed, 21 May 2025 17:38:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1747841922; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=7rLP30jivhSXxGxmK0/4iDagKg0IOY91vTVP7E2pscU=;
-	b=GRMrsJRaALKKXzx9osgt9vXWhW6cIl7qLkqvlq0idkwi8lLTEtycP6niRktt3MzEnzAaGH
-	/f7JJdnwwzglAo8ANrA6dqWh2+mazICODBmG42udjCguTXjrikD0beLlAQ6MKLx0JMjmOd
-	4gJUSfSNsNnBkaXustEa1cfNRYPD0yBoYNzwhpXd1tuv/FiNK99uMh6PcptFC0dmg4iQQW
-	BRDgHl+mx94vVSuz8DMpSYyKpkKgkvKFqoMOuqy7N6JOD9bjPCTVaIA/cd0DbafhM308e4
-	sGrvPXXBgfzQHTcUaciurWV8hm2VZrHg9D/7Y0nXijqT4+2q4IDNMpSH4VIgLA==
-Date: Wed, 21 May 2025 17:38:36 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 00/97] 6.1.140-rc1 review
-Message-ID: <aC3zfDn0nylOsK51@duo.ucw.cz>
-References: <20250520125800.653047540@linuxfoundation.org>
+	s=arc-20240116; t=1747841971; c=relaxed/simple;
+	bh=M0xnQCH/jkZcVXaDZwlHXs+CVeYCjbcwpo+8G31rlSU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=I+bJUQykJVPWWFNTaXdADop8srSLYzLcLn4BrKwU1VHxBA44SlfEQwj1QiazHegexhosX7jsNTnMnGBrp5yYOQD0V5B1Oipe+jIZdpPl3rE0jqujja0D0TzSts/4TYLUmpcNbCYtXJNbZsBhr0IUZiY8btU2BpMZMQvx1jbXRcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TjQ1NMaP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1dQ1PAbL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747841968;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SQ+g0KsSoQcXvFv/UMQhWRNxJGO87hFMnKc/PPFYBFw=;
+	b=TjQ1NMaPTGPoxadAMirnci0cD3lHXLGVja0LVlzqikLmmul3L+e57SdlvmG6e7WC62nPbM
+	SaAYm72Oq9kkjhhUrjgSdpfSvbdvp66/qbPWXP8IoGOXVxjRyzl7Wpz2YHtb2i6QrgTAqT
+	J30QU8WO+NOHv506cJ6B3OhWAxpbBYwDFUp2AH7LStQZOALHqAZrBBLEnPhfbI/SqPu9ks
+	s16YzSkLkHpHLovu5DjHRWzRKHy845bSmoZgxfycm/Ift+fKf/TcrQ2vHvZMAgTtFKGMTv
+	+YTVpfVg3uuK+SWvU+5636/zrouX7pCF8FcJOnHso+jQivsM2qHHNyZxESiYdA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747841968;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SQ+g0KsSoQcXvFv/UMQhWRNxJGO87hFMnKc/PPFYBFw=;
+	b=1dQ1PAbLE14uEhyztrb5NRt/6b5fAPyBgieR6Z+vBAQVG5EonVObjVj1CRQnv6RgW7mn5j
+	ar2xoPZjHjpZRjAg==
+To: Ingo Molnar <mingo@kernel.org>, Eric Biggers <ebiggers@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-pm@vger.kernel.org, Borislav Petkov
+ <bp@alien8.de>, Ayush Jain <Ayush.Jain3@amd.com>, Herbert Xu
+ <herbert@gondor.apana.org.au>, Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH] x86/fpu: Fix irq_fpu_usable() to return false during
+ CPU onlining
+In-Reply-To: <aCxMXqQmHGU06l-O@gmail.com>
+References: <20250518193212.1822-1-ebiggers@kernel.org>
+ <aCrrMEN01O7FWY6V@gmail.com> <aCrsiPd3u1-tEVd0@gmail.com>
+ <20250519170425.GA1243@sol> <aCxMXqQmHGU06l-O@gmail.com>
+Date: Wed, 21 May 2025 17:39:27 +0200
+Message-ID: <87y0uqq8gg.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="YIHR8/QkgoVUOGnE"
-Content-Disposition: inline
-In-Reply-To: <20250520125800.653047540@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain
+
+On Tue, May 20 2025 at 11:33, Ingo Molnar wrote:
+> * Eric Biggers <ebiggers@kernel.org> wrote:
+>
+>> Or we could use DEFINE_PER_CPU() = true in patch 1, then revert that 
+>> in patch 2 and replace it with the line in fpu__init_cpu().  But 
+>> again I think the split would be more likely to create problems than 
+>> solve them.
+>
+> Well, my request would be for the first patch to simply mimic current 
+> (and buggy) behavior as much as reasonably possible (obviously the 
+> effects of BSS zeroing shouldn't be mimiced 100%) - and the second 
+> patch to fix the initialization-ordering bug.
+
+So the first patch is then incomprehensible buggy and needs a trivial
+one-liner to fix up, right?
+
+TBH, that's just bonkers. Eric's patch is trivial enough as is and easy
+to review. Artifical patch splitting with buggy intermediate state makes
+only sense, when the overall changes are massive and hard to
+review. That's absolutely not the case here.
+
+Thanks,
+
+        tglx
 
 
---YIHR8/QkgoVUOGnE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
 
-> This is the start of the stable review cycle for the 6.1.140 release.
-> There are 97 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---YIHR8/QkgoVUOGnE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaC3zfAAKCRAw5/Bqldv6
-8kptAJ9fISqWJXe7UrOT6WWYNALSgm8K1gCgmVnSyqX/UVU1X4fFfs53lqQ0sBs=
-=stm8
------END PGP SIGNATURE-----
-
---YIHR8/QkgoVUOGnE--
 
