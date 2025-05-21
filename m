@@ -1,233 +1,231 @@
-Return-Path: <linux-kernel+bounces-657906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A80ABFA67
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:58:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BF2ABFA47
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E8CD3AE051
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:51:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA96BA241B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DCD22129E;
-	Wed, 21 May 2025 15:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FFA1E3DF9;
+	Wed, 21 May 2025 15:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iNAxYDQr"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2070.outbound.protection.outlook.com [40.107.212.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0MCkY5V9"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EC7220689
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747842489; cv=fail; b=FWJQaKS2ZtTWq+uaqT1VBj7sHabIHcJFEI33+ghEam2e5uczVSimXbxU9LO4C/nDmEtcOWyFyOELoZK+PuvTUTH1svsIzsvlYHe+TQsSy49k1ZKYm7mhUmR5D8UJ/Z4VAR645MmIyeftO1RNd75eOvgwXTmHyds8FTjxoDl6XCs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747842489; c=relaxed/simple;
-	bh=S4exrgp6nCCnjpU75pvGfnP76/5r83VUA6Fzx6/riZQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PDCdGg8GQmbIB41AR7aCcANU2Ccf0Vepb323O060WB6eHT0rsR5U5sdWUj92nnVEoup6Y4t958WuEfjuJXlec+oKzyZHSykLLG+jZWh95+bg/EPx5EMkvp2v14hKK6wzTf76WSmBboyjFgRewzkhNxE/bgy3QvCRYbGvcfKMtnw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iNAxYDQr; arc=fail smtp.client-ip=40.107.212.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kFu0BR29RSCNRFiSJnatLygHG3OkWbfRBRtcqbUpWUr2BhElBMM6OQk8fUGilozymIyUctm/d0K4qcptlSNb1OBSoKWDDat3+h0qD9ZqzNUmxzG7zhQPZHSkQdhRBXKtAMRlrusupoOuCxTeVXgXegj2EgAAJ9l0tTIYSp7xHSr+xA7LASeIQp6/fYKBp+CMlBNcgNy3J1MGIuIoGbvPVEmL4WEM5/PMb4fCifVb8fbxmjWRJvSJ3yS7TZmUbIivANlZY3vTie/Da9jNU3a0L1S/C76AC7nF3b+AEmun/zQwcuQu8DYE51esb6Zlt44tsY0bG4Wi33KmO+cAnLGYkg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9+D/MixmJoxbu9aKCUjkmWdqscb9PVWuTnt6HvTbnqQ=;
- b=AGOlyxt52u5koJh82tIv5Yj7KkTYrMquJMPMcRnS03XqcQdw7OVpJG/DUiKunbdgWTiNL2en7GMvfSZ+zYfYdQUOPnIRfh/l3F1GvJxJC1MjPGqnP/yZXb5xeyT3Dcu+250+Q9MOgoXk5HZPcNUdYOCO+I3OwK7R2NrogaV193feABxbGb82b58daRUkj1ArCJsxKLYgWNfoQmIV3CIptH1xXfc6PSc4CUnN3Ob83Qj8viTf/I/qN4VgYqfUNhGzXZcGdJ8AB0nb/TwFCAcctIQ1beUA0d8/OJZrr6U4FgvVm6AEagdj9h1EbDNt+eMwREwVI2biQR5SkxGJD+Wv4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9+D/MixmJoxbu9aKCUjkmWdqscb9PVWuTnt6HvTbnqQ=;
- b=iNAxYDQroRgfoY6jHLkFq0sot9O0VvE+9VsWlqVadT3k3mEli2NmSFot3gJqfMXm9ECogXfBWkKSoaSUEiiKxcWx4ooZ7FXBTQ10qVT9BbGggUqQORApmNHOQ2d+MpSJIHovCDhx2Uonb/Ax6AhOQs0yO2e2yeHb6cdd91jNoY8=
-Received: from DM6PR01CA0016.prod.exchangelabs.com (2603:10b6:5:296::21) by
- IA0PR12MB7626.namprd12.prod.outlook.com (2603:10b6:208:438::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Wed, 21 May
- 2025 15:48:02 +0000
-Received: from DS1PEPF0001708E.namprd03.prod.outlook.com
- (2603:10b6:5:296:cafe::e3) by DM6PR01CA0016.outlook.office365.com
- (2603:10b6:5:296::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.18 via Frontend Transport; Wed,
- 21 May 2025 15:48:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS1PEPF0001708E.mail.protection.outlook.com (10.167.17.134) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8769.18 via Frontend Transport; Wed, 21 May 2025 15:48:02 +0000
-Received: from FRAPPELLOUX01.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 21 May
- 2025 10:48:00 -0500
-From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-CC: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, "Arvind
- Yadav" <arvind.yadav@amd.com>, <amd-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v10 10/10] drm/amdgpu: update trace format to match gpu_scheduler_trace
-Date: Wed, 21 May 2025 17:45:12 +0200
-Message-ID: <20250521154531.10541-11-pierre-eric.pelloux-prayer@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250521154531.10541-1-pierre-eric.pelloux-prayer@amd.com>
-References: <20250521154531.10541-1-pierre-eric.pelloux-prayer@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686951990D8
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747842325; cv=none; b=FBxSjCchCMU86J+55cnT8qHpu7GatOB8ngTMuDz6Nh9wPn1RfuX630VvG7fQsTTRTUgMVzXRFjV9qIFSkiNjwojuPXq/lXxeXmoh05Vunt3aoQXy14sILZp1sc8z6RbiAOrN7xjCKEMHWwu2JTk/EKzuMv2KPCtQ0xV+RDpdwy8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747842325; c=relaxed/simple;
+	bh=yoo7Pbk4q9EQbJCx1fpa8UGP4E7ZGrMF4YnmPofM9Hg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Ezig4QXdychLcWtjWmcJQfQkPiIx+xyiRt2Zb5dIg2w7Zcs+TtYs+g1RmBnskNcC/PmEiqmUynLVjM7snY833ELWa2e7R/UY+r4CJPbSGIQ3BKlajVegvnrtO7qkVoitUXTU4ZcMsoZ2TwvqRzI2OYX7nuGn5u761QoTw1+NBg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0MCkY5V9; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30e2bd11716so7039770a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 08:45:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747842322; x=1748447122; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KGfD6Lt7AWlUqczGy/2lWkOYK/KBxBEZXw+C7OEpdvI=;
+        b=0MCkY5V9dyoJp5w7PrEuFgOqP7qyi7/QYSXpyJzlrEhYy088JvqXAWbR1qttJxHSWV
+         r9lDocPutfYvloUUqenWCUDEx71PyWdbr+poOrAFQZO9m62G/SFwD6Gdy9ACXUVR4D/K
+         hljY3LAvS6HQbgIckQeZSe5mqidZle6Q+1agBVJ9QRV9+bEu9YZy2XpjXNIaLYPWF54x
+         wQxVBR0ZMXjgb9B1rFpwI8/exAq4NOO8hCY0JaBB1boeeX3UKpyfecoQ9Yi4P8pygqq6
+         zGi30ZYwc0Gc5432z7g+vgoasDPpK9fnm0b0T4ygqqBcCMFi2ozcDYFyg/9nfN4g2nyo
+         /lPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747842322; x=1748447122;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KGfD6Lt7AWlUqczGy/2lWkOYK/KBxBEZXw+C7OEpdvI=;
+        b=A1PGAqmfgarUIX+fJjx/UuBTnHzbusPsgDCWiH3xKHPFwyXR0VCLH16CQfFgbJ2QN2
+         PrFcS44U/ImR7k009tXjWcxHpHrDuYaJriil5X1rkpPk8g/hrZOaK+H6hRrEcVsWTUUm
+         EgIFrKgzMQA+dXKbBeu7GDWUuzfHjewzwEm9N4wuyMjR5hGD1byR+2ykgO5yJV8rtL2o
+         /UVFYlLPbXKPshmPSPVsBJNC3L/ShzvovUf55KI9JhRUYfuhTBrZiO8da93XhCFFgtKm
+         BCrIbnEuWJnsdduz/0FDr4dGK8TXDlaLhBzrdXLGNF6Ppy3h6i37GSHjXUKWBw4Pe8hA
+         Hu2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUOZJ/zSLHb8CSzaLWQscPcMBzrvXIWFyCOTIewo2X3ri2sQGg6YYv4BG5Sl/vI0v+dbV0M8H9ijyfmPCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAFPtdMmZ7kxiTLiz8Gg2YsvKW7ExFlP2YXNKgaSJD03N2IOFn
+	yl3GTeZEuhvGiKiJ8J63h3dx9PLRC9UHvzJtBzxG/3N+Gr8GIUT2mZ4YaLWGlA/QoGeOymgORok
+	AZaY9Yg==
+X-Google-Smtp-Source: AGHT+IEF1qPUzq4BlErEYu7Xd5Q90YOhv8rHaJY+RZXAoiCRRlJbaX8/E3b+d3lzEtxfAC35W1OjHa68m+s=
+X-Received: from pjm6.prod.google.com ([2002:a17:90b:2fc6:b0:2fa:a101:755])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3d85:b0:2f9:d9fe:e72e
+ with SMTP id 98e67ed59e1d1-30e8312dcd2mr40125626a91.16.1747842322673; Wed, 21
+ May 2025 08:45:22 -0700 (PDT)
+Date: Wed, 21 May 2025 08:45:21 -0700
+In-Reply-To: <aC0wT68EY4Ybz+wI@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0001708E:EE_|IA0PR12MB7626:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2113e563-295a-4374-4a47-08dd987edebc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aXZSN3VSL0xZN1dnSDAxR0tsQVpXak11Q21ab1dlSE8xU2taSkVhdHJoNitu?=
- =?utf-8?B?M3lhei80S0cxUVo3Q0hRYjlCQnl6Unduc2ZOYTh0S2t6eG5QSHh6S2sxSnhp?=
- =?utf-8?B?M2lWb2R1N0N6QlFpTHZ4OGZweWk2cVZORXdBbFV0d2hMWTZyRXFBYmorOFRr?=
- =?utf-8?B?SlN3YTlTMVdnWmRJOHFPOGxJU3UzWU13RHA2OVAyVEVTWlFJYWl2V1ArUTlp?=
- =?utf-8?B?VWJ1MnR2bUdFdmYzYzFMY2FMYXBKN2JyaU84NUk3Y085RDJCRHMrQWsxME5r?=
- =?utf-8?B?SW11N3RrODJ4b0o5M0VjY0JxaGtWQjFkOU1VanNmczlPRUZPNk56MHprVWtZ?=
- =?utf-8?B?a3o2QzR1a0Ixb2ovMko0QkllU1dsMWt5K3BWOFQyWnZ2ajd4OWw1YVR4UUtI?=
- =?utf-8?B?Zmw2VkFTSWx0QmlLcDVlUVU1V3dZY2VrMVpKNFY2UzgzcERBRWxZeEZ6dStD?=
- =?utf-8?B?NmFyTGFkZC9NMHFqMWw1ak5GSTlBbTJBUE5EOVJ2NThBMnRaZHRxa0tjency?=
- =?utf-8?B?alBOVy85SGc4bks0alVIUjg4enhhT2s3MWdEY1hPSXE3bmoxaUVYMU8yVE1k?=
- =?utf-8?B?MGdVcytqNnVpZXNCVjhyRkhBZXNkMVprMXk4a3l5NW1VUzZ0ZEJtWXVIT0Vs?=
- =?utf-8?B?MzZvWDhkOGhocDU5elBkRmQ5ajF1a3VwUjk1U1NWU3kxYzBJbVR4QXZWa1Yv?=
- =?utf-8?B?UUVDQWZRbktmdHI3czFtWEVjQjhyZWRlekx3emM3TDk1Y0FTY1psY1NiT2VS?=
- =?utf-8?B?QUc1Q1cySElESjNMT3JZRnhBY21iRFhWd21raHoyZGJFYWpxWDhHUndPWGdQ?=
- =?utf-8?B?RHA2VVdQc0JWcWR1UXpHN05NSGdnS05wbDJBSFFBYzdGOFJTY3FPRVB3TjNx?=
- =?utf-8?B?OGdRcWVLUzZzbWE3azNoMDNUM3NCSFhYRFBKTjZSNk5oMGlaVDcwRVdFTEV5?=
- =?utf-8?B?bnpkLzY0aGR4Z3hTU2gxVkVNYXUxTVRaU09rdTVQWmJFd3pxZ1hOcm5zRmNy?=
- =?utf-8?B?eUJXTFhPZDNFLzkwQi90cld4QkNXZzBiVHlydUpRdS81RlBIS3pad2VFVFo3?=
- =?utf-8?B?QTB0QmxXelBLbVcvZXNkMCtnYkVCL1lPY2tKWlhMaXMveEFKY3FnaDBvcmJW?=
- =?utf-8?B?RDBubXI3dnh5RVlUMkxSbmZHOGFCOFlyR1JQY0k1elRjMG1HVEgyTWRZZ29r?=
- =?utf-8?B?OW9HekpzbzQzK0JrQVNmdWxxYzZmKy9DbC9ONzZ0MUQvNHFNeUdwbTkzVDVu?=
- =?utf-8?B?NjhZNnVFMjZBUWUrOXU1TnY2RXhsSUVqdlJUanBvTm1ldEZCRzNDazQyWVhp?=
- =?utf-8?B?SnFNMEFtOE1FZlJleEkxcHN0Q1Q2YkR1eTIzR2xHaEhRcmRUUHg4Vm5melNV?=
- =?utf-8?B?UE96bUpEZnhqa3VMMFB0aTlJSTZONStvd1ptdS83M1Jjc3FWcUJSeHZYY1dk?=
- =?utf-8?B?anRyaXpQNU00L3Z3K0VNK0pYZ3U4VG1sV2wralNSTEZDQXRMRmV4SU9lYnV2?=
- =?utf-8?B?aEp5TU0xN0ZORkI3MHovdnN5RkIxUEozR1BrR1NhbGJNdUl0dTZ2UXBueXRl?=
- =?utf-8?B?SVhKT21Idy9VSHZIZWNyU2IvV3pUTm14RU9XUTdsRERpdXZpRDNURENnaG1Z?=
- =?utf-8?B?MFFmMFNDM2NlaEs3N0NHdWYvU2lTVjJMR21GSjMrQUdVRVB6TUF1ZWlZQWF3?=
- =?utf-8?B?S1A1b2ttYk5KMDF1RlpnWDBhRXZ2eVhMS0xodFFtZU9DeTN3L2xyM1kzOFNl?=
- =?utf-8?B?KzVnOGEvTmNIdmZGT1FNRXRDdU5EdnpMZFp6L1RaNFNSZ0NRVmtrQ09USHhD?=
- =?utf-8?B?SmRNS1RFM3pQOXlXaThIMVNvaEpjMFhMZzlHUjFHc3FJTlI4dHY3cmF0RlhF?=
- =?utf-8?B?bnVRbnpjQjFsYlBYbWVkWFpsV1c5Q3FxUm50SXhxZ1ZkTVNoU28yaklkQUxr?=
- =?utf-8?B?RTlnUzVwTDR5SmwxTFFheExBTHZJNTBwNHg5dEZ1WEFQdWFUR2FCd2NaSFFQ?=
- =?utf-8?B?blBhQUlNb2NBVURKVmZkSnpQeHpKRU83OU9QaUxDVGNaSVlUcjhWK1ZpVjVP?=
- =?utf-8?Q?8h7fiP?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2025 15:48:02.5852
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2113e563-295a-4374-4a47-08dd987edebc
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF0001708E.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7626
+Mime-Version: 1.0
+References: <20250519023613.30329-1-yan.y.zhao@intel.com> <20250519023737.30360-1-yan.y.zhao@intel.com>
+ <aCsy-m_esVjy8Pey@google.com> <52bdeeec0dfbb74f90d656dbd93dc9c7bb30e84f.camel@intel.com>
+ <aCtlDhNbgXKg4s5t@google.com> <aCwUO7cQkPzIe0ZA@yzhao56-desk.sh.intel.com>
+ <aCyqJTSDTKt1xiKr@google.com> <aC0wT68EY4Ybz+wI@yzhao56-desk.sh.intel.com>
+Message-ID: <aC31EXLNzCVGT0EP@google.com>
+Subject: Re: [PATCH 1/2] KVM: x86/mmu: Add RET_PF_RETRY_INVALID_SLOT for fault
+ retry on invalid slot
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, Reinette Chatre <reinette.chatre@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-Log fences using the same format for coherency.
+On Wed, May 21, 2025, Yan Zhao wrote:
+> On Tue, May 20, 2025 at 09:13:25AM -0700, Sean Christopherson wrote:
+> > > > @@ -4891,6 +4884,28 @@ int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(kvm_tdp_map_page);
+> > > >  
+> > > > +int kvm_tdp_prefault_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level)
+> > > > +{
+> > > > +	int r;
+> > > > +
+> > > > +	/*
+> > > > +	 * Restrict to TDP page fault, since that's the only case where the MMU
+> > > > +	 * is indexed by GPA.
+> > > > +	 */
+> > > > +	if (vcpu->arch.mmu->page_fault != kvm_tdp_page_fault)
+> > > > +		return -EOPNOTSUPP;
+> > > > +
+> > > > +	for (;;) {
+> > > > +		r = kvm_tdp_map_page(vcpu, gpa, error_code, level);
+> > > > +		if (r != -EAGAIN)
+> > > > +			break;
+> > > > +
+> > > > +		/* Comment goes here. */
+> > > > +		kvm_vcpu_srcu_read_unlock(vcpu);
+> > > > +		kvm_vcpu_srcu_read_lock(vcpu);
+> > > For the hang in the pre_fault_memory_test reported by Reinette [1], it's because
+> > > the memslot removal succeeds after releasing the SRCU, then the old root is
+> > > stale. So kvm_mmu_reload() is required here to prevent is_page_fault_stale()
+> > > from being always true.
+> > 
+> > That wouldn't suffice, KVM would also need to process KVM_REQ_MMU_FREE_OBSOLETE_ROOTS,
+> > otherwise kvm_mmu_reload() will do nothing.
+> In commit 20a6cff3b283 ("KVM: x86/mmu: Check and free obsolete roots in
+> kvm_mmu_reload()"), KVM_REQ_MMU_FREE_OBSOLETE_ROOTS is processed in
+> kvm_mmu_reload().
 
-Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Arvind Yadav <arvind.yadav@amd.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+Oh, right!  I completely forgot about that.  Hmm, that reduces the complexity a
+little bit, but I'm still leaning towards punting -EAGAIN to userspace.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-index 4fd810cb5387..d13e64a69e25 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-@@ -168,8 +168,8 @@ TRACE_EVENT(amdgpu_cs_ioctl,
- 	    TP_ARGS(job),
- 	    TP_STRUCT__entry(
- 			     __string(timeline, AMDGPU_JOB_GET_TIMELINE_NAME(job))
--			     __field(unsigned int, context)
--			     __field(unsigned int, seqno)
-+			     __field(u64, context)
-+			     __field(u64, seqno)
- 			     __field(struct dma_fence *, fence)
- 			     __string(ring, to_amdgpu_ring(job->base.sched)->name)
- 			     __field(u32, num_ibs)
-@@ -182,7 +182,7 @@ TRACE_EVENT(amdgpu_cs_ioctl,
- 			   __assign_str(ring);
- 			   __entry->num_ibs = job->num_ibs;
- 			   ),
--	    TP_printk("timeline=%s, context=%u, seqno=%u, ring_name=%s, num_ibs=%u",
-+	    TP_printk("timeline=%s, fence=%llu:%llu, ring_name=%s, num_ibs=%u",
- 		      __get_str(timeline), __entry->context,
- 		      __entry->seqno, __get_str(ring), __entry->num_ibs)
- );
-@@ -192,8 +192,8 @@ TRACE_EVENT(amdgpu_sched_run_job,
- 	    TP_ARGS(job),
- 	    TP_STRUCT__entry(
- 			     __string(timeline, AMDGPU_JOB_GET_TIMELINE_NAME(job))
--			     __field(unsigned int, context)
--			     __field(unsigned int, seqno)
-+			     __field(u64, context)
-+			     __field(u64, seqno)
- 			     __string(ring, to_amdgpu_ring(job->base.sched)->name)
- 			     __field(u32, num_ibs)
- 			     ),
-@@ -205,7 +205,7 @@ TRACE_EVENT(amdgpu_sched_run_job,
- 			   __assign_str(ring);
- 			   __entry->num_ibs = job->num_ibs;
- 			   ),
--	    TP_printk("timeline=%s, context=%u, seqno=%u, ring_name=%s, num_ibs=%u",
-+	    TP_printk("timeline=%s, fence=%llu:%llu, ring_name=%s, num_ibs=%u",
- 		      __get_str(timeline), __entry->context,
- 		      __entry->seqno, __get_str(ring), __entry->num_ibs)
- );
-@@ -548,8 +548,8 @@ TRACE_EVENT(amdgpu_ib_pipe_sync,
- 	    TP_STRUCT__entry(
- 			     __string(ring, sched_job->base.sched->name)
- 			     __field(struct dma_fence *, fence)
--			     __field(uint64_t, ctx)
--			     __field(unsigned, seqno)
-+			     __field(u64, ctx)
-+			     __field(u64, seqno)
- 			     ),
+> > Thinking about this scenario more, I don't mind punting this problem to userspace
+> > for KVM_PRE_FAULT_MEMORY because there's no existing behavior/ABI to uphold, and
+> > because the complexity vs. ABI tradeoffs are heavily weighted in favor of punting
+> > to userspace.  Whereas for KVM_RUN, KVM can't change existing behavior without
+> > breaking userspace, should provide consistent behavior regardless of VM type, and
+> > KVM needs the "complex" code irrespective of this particular scenario.
+> > 
+> > I especially like punting to userspace if KVM returns -EAGAIN, not -ENOENT,
+> > because then KVM is effectively providing the same overall behavior as KVM_RUN,
+> > just without slightly different roles and responsibilities between KVM and
+> > userspace.  And -ENOENT is also flat out wrong for the case where a memslot is
+> > being moved, but the new base+size still contains the to-be-faulted GPA.
+> > 
+> > I still don't like RET_PF_RETRY_INVALID_SLOT, because that bleeds gory MMU details
+> > into the rest of KVM, but KVM can simply return -EAGAIN if an invalid memslot is
+> > encountered during prefault (as identified by fault->prefetch).
+> >
+> > For TDX though, tdx_handle_ept_violation() needs to play nice with the scenario,
+> > i.e. punting to userspace is not a viable option.  But that path also has options
+> > that aren't available to prefaulting.  E.g. it could (and probably should) break
+> > early if a request is pending instead of special casing KVM_REQ_VM_DEAD, which
+> Hmm, for TDX, there's no request KVM_REQ_MMU_FREE_OBSOLETE_ROOTS for slot
+> removal. (see commit aa8d1f48d353 ("KVM: x86/mmu: Introduce a quirk to control
+> memslot zap behavior").
+> 
+> > would take care of the KVM_REQ_MMU_FREE_OBSOLETE_ROOTS scenario.  And as Rick
+> > called out, the zero-step mess really needs to be solved in a more robust fashion.
+> > 
+> > So this?
+> Looks good to me for non-TDX side.
+> 
+> For TDX, could we provide below fix based on your change?
+
+Hmm, I'd prefer not to, mainly because I don't want to special case things even
+more in the common MMU code, e.g. I don't want to bleed the "no memslot == exit"
+logic into multiple locations.  And very strictly speaking, a memory fault exit
+isn't guaranteed, as userspace could set a new memory region before the vCPU
+retries the fault.
+
+Returning -EAGAIN isn't an option because that would break userspace (e.g. our
+VMM doesn't handle EAGAIN and supports SNP), and documenting the behavior would
+be weird.  For KVM_PRE_FAULT_MEMORY, KVM's documentation can simply state that
+EAGAIN is returned KVM encounters temporary resource contention and that userspace
+should simply try again.  It's an ABI change, but for a nascent ioctl() and a
+scenario that won't be hit in practice, so I'm confident we can make the change
+without breaking userspace.
+
+And again, this is an unfortunate side effect of zero-step; there's no such
+restriction for SNP, and ideally the TDX zero-step pain will be solved and this
+would also go away for TDX too, so I'm hesitant to bake this behavior into KVM's
+ABI.
+
+My best idea is to special case this in tdx_handle_ept_violation().  It's also
+very gross, but at least the nastiness is limited to the zero-step mitigation
+mess, and is co-located with the code that doesn't actually play nice with
+RET_PF_RETRY.  E.g.
+
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index b952bc673271..ca47d08ae112 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -1907,6 +1907,8 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
+         * handle retries locally in their EPT violation handlers.
+         */
+        while (1) {
++               struct kvm_memory_slot *slot;
++
+                ret = __vmx_handle_ept_violation(vcpu, gpa, exit_qual);
  
- 	    TP_fast_assign(
-@@ -558,10 +558,8 @@ TRACE_EVENT(amdgpu_ib_pipe_sync,
- 			   __entry->ctx = fence->context;
- 			   __entry->seqno = fence->seqno;
- 			   ),
--	    TP_printk("job ring=%s need pipe sync to fence=%p, context=%llu, seq=%u",
--		      __get_str(ring),
--		      __entry->fence, __entry->ctx,
--		      __entry->seqno)
-+	    TP_printk("job ring=%s need pipe sync to fence=%llu:%llu",
-+		      __get_str(ring), __entry->ctx, __entry->seqno)
- );
+                if (ret != RET_PF_RETRY || !local_retry)
+@@ -1920,6 +1922,10 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
+                        break;
+                }
  
- TRACE_EVENT(amdgpu_reset_reg_dumps,
--- 
-2.43.0
++               slot = kvm_vcpu_gfn_to_memslot(vcpu, fault.gfn);
++               if (slot && slot->flags & KVM_MEMSLOT_INVALID)
++                       break;
++
+                cond_resched();
+        }
+        return ret;
 
+> For private fault, -EFAULT will be returned to userspace after the retry anyway
+> after the slot is completed removed, which is unlike non-private faults that go
+> to emulate path after retry.
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -4602,6 +4602,11 @@ static int kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
+>                 if (fault->prefetch)
+>                         return -EAGAIN;
+> 
+> +               if (fault->is_private) {
+> +                       kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
+> +                       return -EFAULT;
+> +               }
+> +
+>                 return RET_PF_RETRY;
+>         }
+> 
+> 
+> And would you mind if I included your patch in my next version? I can update the
+> related selftests as well.
+
+Yes, please do!
 
