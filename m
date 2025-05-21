@@ -1,162 +1,90 @@
-Return-Path: <linux-kernel+bounces-657135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A8AABEFB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:28:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85103ABEFAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 490FD7A7CBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:25:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED4A217F119
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4733823D293;
-	Wed, 21 May 2025 09:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aPjLRi73"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6B523D28D;
+	Wed, 21 May 2025 09:27:12 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D66232367;
-	Wed, 21 May 2025 09:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716C023C51A;
+	Wed, 21 May 2025 09:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747819586; cv=none; b=jRauP0eTp3459v6HILzSm+P5RkMJ0Nsx0SGZKLXK9AyaFCA7MOxXJo4VXcMHqFwJQuwrPOrAs84nTOrzvNHFCB1bNRyYNZH5krIxCtTZpF+nWIQIvGDCQSni079KDSGYM5wai1L0qh3wbgR4kz2UKPO1tMrEBsc39ne2xKMUSPg=
+	t=1747819632; cv=none; b=hPj1FfiICZsY6Kh00DZ6h0uACq25TIhssEXSvLu/sdXdyEa1rKJwgbynnY5a2ONXRkRPctpUXgVy5fsqrPXx2evxnsItNejN8cKG+mGUEA+OHsU95iuLpiZ+QFQsVy52BWRHnyB5eEregRmBifXtV3GAqp+LmFTZ1y/t9zOtRDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747819586; c=relaxed/simple;
-	bh=ZOpY/97Ajk1+AuKUdRW8yZtKpNrYH5Zl/G/U2z+Pzyw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hcVK6O4WTZ0We1/yxlmQkFOPqbzXiFo9PTUOxd6I4QwUxRFJrT8o+R0X94eIKVeK+eIPH88niRzideGZNjlL5wkg4L+9nsLEZrU+4ZWVpWGAaLFzals65wyTZh+zQc2Ny3fZpuIi6iWYIn1+Ftk3bd/h9vC5E+wK5mGkzKBMXgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aPjLRi73; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1747819582;
-	bh=ZOpY/97Ajk1+AuKUdRW8yZtKpNrYH5Zl/G/U2z+Pzyw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aPjLRi73TKSd6G/BjOpJGab4gaFrJiIEj1xZD070Y7LlyE0OH0h/VmZg71+Hg/qP3
-	 +hfsHj3aOx+42qiffBTrkuL1KkpjP3BGQ4dGSTnRd+xENmz0cYf+Jwo87aSZTH9vG5
-	 oKdXARLPjySUfLo5Ri6ddTtmLtHtDJMSmdBrvbWPEpd2ZqpUYbJQKt09CeH84Z9w78
-	 HWdoOHDcUFVs+pKbqVYzuaKQYQOO1SQcD8vgP7akuVFvNTpHlHpTihMsH5K4/Wz/gD
-	 T1JrMuQpmJUKrV3qktg5Uzf0hEw9CWYykGKc3fSVUCfIOw1X46+CPom/EtlM3NaYeY
-	 95DxLunFkj97g==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BD8B517E02BE;
-	Wed, 21 May 2025 11:26:21 +0200 (CEST)
-Message-ID: <9c594eaa-9ddc-4340-ac0d-d911073764ac@collabora.com>
-Date: Wed, 21 May 2025 11:26:21 +0200
+	s=arc-20240116; t=1747819632; c=relaxed/simple;
+	bh=+lR4EOoNJ4nGzX8DuzXU2f7FDxq7F4tGHeg5UFgI61c=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=obbvZT3ZGcOjHHLt9Cn10Eir4IQ0b85EAeMuK9XTcd2DaPcx4MaR1gBaoBQmSBbFCuQfKjYLCvdmRV3LkET/RfVFQyKr7lGTEdBO5zh2efkySIK2H9O2mofOQwyIFe7Ga1SGNcbCW2FpI6Il11a0ag2fCfumg3hCfEVc1xNxFy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b2Qyv0bLgz6L52y;
+	Wed, 21 May 2025 17:26:15 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id A2F8F1404FC;
+	Wed, 21 May 2025 17:27:07 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 May
+ 2025 11:27:06 +0200
+Date: Wed, 21 May 2025 10:27:04 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: <linux-pci@vger.kernel.org>, Jon Pan-Doh <pandoh@google.com>, "Karolina
+ Stolarek" <karolina.stolarek@oracle.com>, Weinan Liu <wnliu@google.com>,
+	Martin Petersen <martin.petersen@oracle.com>, Ben Fuller
+	<ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>, "Anil
+ Agrawal" <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>, Ilpo
+ =?UTF-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, "Sathyanarayanan
+ Kuppuswamy" <sathyanarayanan.kuppuswamy@linux.intel.com>, Lukas Wunner
+	<lukas@wunner.de>, Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney"
+	<paulmck@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, "Oliver
+ O'Halloran" <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>, "Keith
+ Busch" <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>, Terry Bowman
+	<terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>, Dave Jiang
+	<dave.jiang@intel.com>, <linux-kernel@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Subject: Re: [PATCH v7 09/17] PCI/AER: Simplify pci_print_aer()
+Message-ID: <20250521102704.00002f74@huawei.com>
+In-Reply-To: <20250520215047.1350603-10-helgaas@kernel.org>
+References: <20250520215047.1350603-1-helgaas@kernel.org>
+	<20250520215047.1350603-10-helgaas@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] memory: mtk-smi: Add ostd setting for mt8186
-To: Friday Yang <friday.yang@mediatek.com>, Yong Wu <yong.wu@mediatek.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20250521091626.4283-1-friday.yang@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250521091626.4283-1-friday.yang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Il 21/05/25 11:16, Friday Yang ha scritto:
-> Add initial ostd setting for mt8186. All the settings come from DE.
-> These settings help adjust Multimedia HW's bandwidth limits to achieve
-> a balanced bandwidth requirement. Without this, the VENC HW works
-> abnormal while stress testing.
-> 
-> Fixes: 86a010bfc739 ("memory: mtk-smi: mt8186: Add smi support")
-> Signed-off-by: Friday Yang <friday.yang@mediatek.com>
+On Tue, 20 May 2025 16:50:26 -0500
+Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-I agree about this commit and you can get my
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-...but I still have a question.
-
-This driver is getting lots of those big OSTD arrays, and I can foresee this
-getting bigger and bigger with every new SoC getting supported in there.
-
-I'd like to understand how we can improve that, hence, can you please describe
-how the OSTD values are calculated and how are they limiting the bandwidth?
-
-I'm thinking that we can do something such that we get this runtime calculated
-instead of just holding fixed values, so that we may eventually replace all those
-big arrays with just a few values (foreseeing 3-4 values) and performing a big
-cleanup (which may bring further improvements in the future).
-
-Cheers,
-Angelo
-
-> ---
->   drivers/memory/mtk-smi.c | 33 +++++++++++++++++++++++++++++++++
->   1 file changed, 33 insertions(+)
-> 
-> diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-> index c086c22511f7..733e22f695ab 100644
-> --- a/drivers/memory/mtk-smi.c
-> +++ b/drivers/memory/mtk-smi.c
-> @@ -320,6 +320,38 @@ static const u8 mtk_smi_larb_mt6893_ostd[][SMI_LARB_PORT_NR_MAX] = {
->   	[20] = {0x9, 0x9, 0x5, 0x5, 0x1, 0x1},
->   };
-> 
-> +static const u8 mtk_smi_larb_mt8186_ostd[][SMI_LARB_PORT_NR_MAX] = {
-> +	[0] = {0x2, 0x1, 0x8, 0x1,},
-> +	[1] = {0x1, 0x3, 0x1, 0x1,},
-> +	[2] = {0x6, 0x1, 0x4, 0x1,},
-> +	[3] = {},
-> +	[4] = {0xf, 0x1, 0x5, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1,
-> +	       0x1, 0x1, 0x1,},
-> +	[5] = {},
-> +	[6] = {},
-> +	[7] = {0x1, 0x3, 0x1, 0x1, 0x1, 0x3, 0x2, 0xd, 0x7, 0x5, 0x3,
-> +	       0x1, 0x5,},
-> +	[8] = {0x1, 0x2, 0x2,},
-> +	[9] = {0x9, 0x7, 0xf, 0x8, 0x1, 0x8, 0x9, 0x3, 0x3, 0xb, 0x7, 0x4,
-> +	       0x9, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1,
-> +	       0x1, 0x1, 0x1, 0x1, 0x1,},
-> +	[10] = {},
-> +	[11] = {0x9, 0x7, 0xf, 0x8, 0x1, 0x8, 0x9, 0x3, 0x3, 0xb, 0x7, 0x4,
-> +		0x9, 0x1, 0x1, 0x1, 0x1, 0x1, 0x8, 0x7, 0x7, 0x1, 0x6, 0x2,
-> +		0xf, 0x8, 0x1, 0x1, 0x1,},
-> +	[12] = {},
-> +	[13] = {0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x6, 0x6, 0x6, 0x1, 0x1, 0x1,},
-> +	[14] = {0x1, 0x1, 0x1, 0x1, 0x1, 0x1,},
-> +	[15] = {},
-> +	[16] = {0x28, 0x14, 0x2, 0xc, 0x18, 0x1, 0x14, 0x1, 0x4, 0x4, 0x4,
-> +		0x2, 0x4, 0x2, 0x8, 0x4, 0x4,},
-> +	[17] = {0x28, 0x14, 0x2, 0xc, 0x18, 0x1, 0x14, 0x1, 0x4, 0x4, 0x4,
-> +		0x2, 0x4, 0x2, 0x8, 0x4, 0x4,},
-> +	[18] = {},
-> +	[19] = {0x1, 0x1, 0x1, 0x1,},
-> +	[20] = {0x2, 0x2, 0x2, 0x2, 0x1, 0x1,},
-> +};
-> +
->   static const u8 mtk_smi_larb_mt8188_ostd[][SMI_LARB_PORT_NR_MAX] = {
->   	[0] = {0x02, 0x18, 0x22, 0x22, 0x01, 0x02, 0x0a,},
->   	[1] = {0x12, 0x02, 0x14, 0x14, 0x01, 0x18, 0x0a,},
-> @@ -491,6 +523,7 @@ static const struct mtk_smi_larb_gen mtk_smi_larb_mt8183 = {
->   static const struct mtk_smi_larb_gen mtk_smi_larb_mt8186 = {
->   	.config_port                = mtk_smi_larb_config_port_gen2_general,
->   	.flags_general	            = MTK_SMI_FLAG_SLEEP_CTL,
-> +	.ostd			    = mtk_smi_larb_mt8186_ostd,
->   };
-> 
->   static const struct mtk_smi_larb_gen mtk_smi_larb_mt8188 = {
-> --
-> 2.46.0
-> 
-
+> From: Bjorn Helgaas <bhelgaas@google.com>
+>=20
+> Simplify pci_print_aer() by initializing the struct aer_err_info "info"
+> with a designated initializer list (it was previously initialized with
+> memset()) and using pci_name().
+>=20
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Tested-by: Krzysztof Wilczy=C5=84ski <kwilczynski@kernel.org>
+> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+Another nice cleanup.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
