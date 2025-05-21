@@ -1,231 +1,200 @@
-Return-Path: <linux-kernel+bounces-657893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BF2ABFA47
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:55:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15842ABFA1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA96BA241B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:48:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9D484A5EFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FFA1E3DF9;
-	Wed, 21 May 2025 15:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395CF22259B;
+	Wed, 21 May 2025 15:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0MCkY5V9"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NHEdSFd9"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2074.outbound.protection.outlook.com [40.107.20.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686951990D8
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747842325; cv=none; b=FBxSjCchCMU86J+55cnT8qHpu7GatOB8ngTMuDz6Nh9wPn1RfuX630VvG7fQsTTRTUgMVzXRFjV9qIFSkiNjwojuPXq/lXxeXmoh05Vunt3aoQXy14sILZp1sc8z6RbiAOrN7xjCKEMHWwu2JTk/EKzuMv2KPCtQ0xV+RDpdwy8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747842325; c=relaxed/simple;
-	bh=yoo7Pbk4q9EQbJCx1fpa8UGP4E7ZGrMF4YnmPofM9Hg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Ezig4QXdychLcWtjWmcJQfQkPiIx+xyiRt2Zb5dIg2w7Zcs+TtYs+g1RmBnskNcC/PmEiqmUynLVjM7snY833ELWa2e7R/UY+r4CJPbSGIQ3BKlajVegvnrtO7qkVoitUXTU4ZcMsoZ2TwvqRzI2OYX7nuGn5u761QoTw1+NBg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0MCkY5V9; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30e2bd11716so7039770a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 08:45:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747842322; x=1748447122; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KGfD6Lt7AWlUqczGy/2lWkOYK/KBxBEZXw+C7OEpdvI=;
-        b=0MCkY5V9dyoJp5w7PrEuFgOqP7qyi7/QYSXpyJzlrEhYy088JvqXAWbR1qttJxHSWV
-         r9lDocPutfYvloUUqenWCUDEx71PyWdbr+poOrAFQZO9m62G/SFwD6Gdy9ACXUVR4D/K
-         hljY3LAvS6HQbgIckQeZSe5mqidZle6Q+1agBVJ9QRV9+bEu9YZy2XpjXNIaLYPWF54x
-         wQxVBR0ZMXjgb9B1rFpwI8/exAq4NOO8hCY0JaBB1boeeX3UKpyfecoQ9Yi4P8pygqq6
-         zGi30ZYwc0Gc5432z7g+vgoasDPpK9fnm0b0T4ygqqBcCMFi2ozcDYFyg/9nfN4g2nyo
-         /lPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747842322; x=1748447122;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KGfD6Lt7AWlUqczGy/2lWkOYK/KBxBEZXw+C7OEpdvI=;
-        b=A1PGAqmfgarUIX+fJjx/UuBTnHzbusPsgDCWiH3xKHPFwyXR0VCLH16CQfFgbJ2QN2
-         PrFcS44U/ImR7k009tXjWcxHpHrDuYaJriil5X1rkpPk8g/hrZOaK+H6hRrEcVsWTUUm
-         EgIFrKgzMQA+dXKbBeu7GDWUuzfHjewzwEm9N4wuyMjR5hGD1byR+2ykgO5yJV8rtL2o
-         /UVFYlLPbXKPshmPSPVsBJNC3L/ShzvovUf55KI9JhRUYfuhTBrZiO8da93XhCFFgtKm
-         BCrIbnEuWJnsdduz/0FDr4dGK8TXDlaLhBzrdXLGNF6Ppy3h6i37GSHjXUKWBw4Pe8hA
-         Hu2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUOZJ/zSLHb8CSzaLWQscPcMBzrvXIWFyCOTIewo2X3ri2sQGg6YYv4BG5Sl/vI0v+dbV0M8H9ijyfmPCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAFPtdMmZ7kxiTLiz8Gg2YsvKW7ExFlP2YXNKgaSJD03N2IOFn
-	yl3GTeZEuhvGiKiJ8J63h3dx9PLRC9UHvzJtBzxG/3N+Gr8GIUT2mZ4YaLWGlA/QoGeOymgORok
-	AZaY9Yg==
-X-Google-Smtp-Source: AGHT+IEF1qPUzq4BlErEYu7Xd5Q90YOhv8rHaJY+RZXAoiCRRlJbaX8/E3b+d3lzEtxfAC35W1OjHa68m+s=
-X-Received: from pjm6.prod.google.com ([2002:a17:90b:2fc6:b0:2fa:a101:755])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3d85:b0:2f9:d9fe:e72e
- with SMTP id 98e67ed59e1d1-30e8312dcd2mr40125626a91.16.1747842322673; Wed, 21
- May 2025 08:45:22 -0700 (PDT)
-Date: Wed, 21 May 2025 08:45:21 -0700
-In-Reply-To: <aC0wT68EY4Ybz+wI@yzhao56-desk.sh.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA3D21B18B;
+	Wed, 21 May 2025 15:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747842381; cv=fail; b=SszK/fr8XEqYEiAKJk1pbIN1fTGGQ6ohvhntya5AwZBdvIXo71vTMQ9mcSFfaYs3zqueWI/7iASKasVFo5wrmv7s/Lx9dB54jwXVdG0INkIhwtz/37WYwMacX8Plx64vQUhsXD/CMd6ROOukIIqRCpdOkfogmbJ3fGeVjw3zFtg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747842381; c=relaxed/simple;
+	bh=pjgQOsRDeC8DTKoeeXu9vKX+PNE3PuUyiei5t2iuVMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=oy/EAEZUEb5OCG6QDHPHgSIL/JOjocCBmmemB6tXR/auV/PcCPaHmlP527xRESrD8iUtD3yUg40gCa2vWNn45ZCKloHrgvIVfpQjUDLCZf04bTIb1GHBmDl9Bspn5IIpLhy9zCDJ1PDibqPyBqcf6RzCliv+2PEJnghqEqrbX9Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NHEdSFd9; arc=fail smtp.client-ip=40.107.20.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NYLAtXRWOWwdyrov4oU+ijztADWowURT+YSli8hN/p2dQ6/nAhj9e1OxnwRn+DtxVKPEVVpfUYGcV/hpdA/eUf+jW8rgYCU0Ax4os1YS0qM6ka5DsSrGzYu+2Rkqfx1626kSShf/aztnToAAmfQ49ceBaFuGJsRK8GMGvEJ8EATCi6/OnblWDxGbw2f/wWDgCgzIz2Qm7hckG28xfJvOL/Vrl2k6qo1XkluIAFXuz8c4xG0NiIXqmFg9O4G3cPbOcbMP/61kJihqyMtVXitHZ4spo1gpyxTyyGI8CDVCL9Cbj+dMywgUHwZ4FbQ6pLpIyEum4wTBHMwgBmzLKLelYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LNgPqmDBeMzAZxt/N4624fE1ZMVlerBvs5HHjs6qOhs=;
+ b=tr/iSUZjNk3o2BMYs7Ax30gZmWKrfAWzXwneWzSaBcEp0KJY5eOcwCQ6JJG3++bIpXBtiofwSNn6J7DTnZxuy1WY/09o719BvU+IXfBmCMTI0Iq93LmRe5yS5LDAAEHjjA1kV06WR5FVJ/W2F2F80+WsIFL7rzgUbpVEc2cmds7jgtFaWC/lNGqLyUUT/Fu8nM+l+AjfkdQkTM0cw2rd5X+fQHWa3/6fwsQLgXQtXs2aIHWwtcbqPaVtvka1m2ArrEnZIXZBnL0Rk7A3LBShARMdKra2yL5nyP/Zr69hsyt3MbVxVKsRZNlBTyaIUTkPakVQAJZCRzkQJsHhloDXOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LNgPqmDBeMzAZxt/N4624fE1ZMVlerBvs5HHjs6qOhs=;
+ b=NHEdSFd9vFpEI3mhmaiLMRMNDi+Dp2zCH4QRITKpYILCMIAJ2gJwDGEtef977RDXrzt8LaJoe9rcH6Ac69XsnpQntA/G109Eq+it37L4Tad5V8VYB4ZvatBU9LtU6wYXJ4v+IGfJWsw0MO1BU/l2bLiI2CFggXyn4hnGNPVgpgYsqggcVmlA2PUxbLbdNp7TrZrlQJqghFkviL2JHwT/+bZOO76qfsTzf/rLsZf5jr3EJ8mGMBK1FRMxzu1VXhmQIdlqalTs95MJhcKRvbIIFO+gJ1uBRUSS49BdnHdEJQiKSrtxQdrVHhZEZwW6iOOIlvMH9GKu5yuEG+UrnN47Tw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI1PR04MB9931.eurprd04.prod.outlook.com (2603:10a6:800:1d4::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Wed, 21 May
+ 2025 15:46:16 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8746.030; Wed, 21 May 2025
+ 15:46:15 +0000
+Date: Wed, 21 May 2025 11:46:08 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: ziniu.wang_1@nxp.com
+Cc: haibo.chen@nxp.com, adrian.hunter@intel.com, ulf.hansson@linaro.org,
+	linux-mmc@vger.kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	imx@lists.linux.dev, s32@nxp.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mmc: sdhci-esdhc-imx: inherit pins_100mhz from
+ pins_200mhz when unconfigured
+Message-ID: <aC31QJpomsFWN++7@lizhi-Precision-Tower-5810>
+References: <20250521112042.266111-1-ziniu.wang_1@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250521112042.266111-1-ziniu.wang_1@nxp.com>
+X-ClientProxiedBy: PH8P220CA0032.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:348::10) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250519023613.30329-1-yan.y.zhao@intel.com> <20250519023737.30360-1-yan.y.zhao@intel.com>
- <aCsy-m_esVjy8Pey@google.com> <52bdeeec0dfbb74f90d656dbd93dc9c7bb30e84f.camel@intel.com>
- <aCtlDhNbgXKg4s5t@google.com> <aCwUO7cQkPzIe0ZA@yzhao56-desk.sh.intel.com>
- <aCyqJTSDTKt1xiKr@google.com> <aC0wT68EY4Ybz+wI@yzhao56-desk.sh.intel.com>
-Message-ID: <aC31EXLNzCVGT0EP@google.com>
-Subject: Re: [PATCH 1/2] KVM: x86/mmu: Add RET_PF_RETRY_INVALID_SLOT for fault
- retry on invalid slot
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI1PR04MB9931:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3bdb4787-9b7e-4559-35c1-08dd987e9edd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gNYuBgPsGolYgt0h0AsVSD+AO6k/nbetKX06HMaWZnOr4CNSsGttM9ud6O/u?=
+ =?us-ascii?Q?FfFO+hdcc8iZp5tec4LR8LRM47a6JwJenNWPct29d/OhO26kodSZCQfwslJu?=
+ =?us-ascii?Q?2jwpjjknc6hJcjvk6x2/X5Gx/CvhQx7LdEPinL7VA7AmYEO2/8+4Zzy1A9l5?=
+ =?us-ascii?Q?VELqf6FTtRE8VCSrEL9Zq88pVdteJcmBHXq4zJKR8lHzM7s0ZLYIMHct9Bwv?=
+ =?us-ascii?Q?o7HOtx5TYGjwehB4PfH38K50cR32Mse6TET0n8DQTTKcwuruJvAQwfvtd4/b?=
+ =?us-ascii?Q?ikqwuE3ZWLU8czKlun4fYqZoRj8F3wEdGgcqYRYcKxFJEzpikORhSsgq+nEl?=
+ =?us-ascii?Q?xnlGrxRfJyb+5DmcolwfWgSWXU/UetoTSaSd/+oo0IleLcYMQTrsdd0tjhTq?=
+ =?us-ascii?Q?qsGrahCR+RCvuM2qILjbEf9gUo4mdLskT9nJaGkfzOnzHt5in0h3ZBvxBaiw?=
+ =?us-ascii?Q?ijAloOKjiSyjIj/jmlYKKygBjBuDOqoq5gDQu3faeI6GlbSEoncI+LQks0jk?=
+ =?us-ascii?Q?uAA9QEFHHvraO0Z64xAlOqMl9koKTSNIguCh5OrtxEBlLfs/eW000l2qvKK+?=
+ =?us-ascii?Q?SxsUWJB9aM+71jJ0f1l5Ii7k+X6nYLf8Dxnert1sFUn9BOSH7yeU79GHuqmH?=
+ =?us-ascii?Q?dGUbEIgZYAk6sPig0VlVMzKpW2BgxqTylBiHg5y+SBDvIhrfG1JMM+0ocvL9?=
+ =?us-ascii?Q?e0sF8zKczqUK7JTV7hpCz99ihXWrA7jJCTLi0LmTHvqjVidgfMoqPpUlxFDV?=
+ =?us-ascii?Q?J+PMvkQPNOOlj2+sV4qdvwWiGu4WxecfUKIHCVK9zZyE42nM8tTJLzmVyVvj?=
+ =?us-ascii?Q?Iw0h/Vwg6Jvg3uLo8Q6EkyI9waI+bJPgOpTPdtf1sxPukhSSWW5Wj9PUbTWf?=
+ =?us-ascii?Q?26I9PYK5GW/Z9amPVsrrztccpHu3YrqIE3EK6H7Rb8VZyBCiDYE8U6lBbSbB?=
+ =?us-ascii?Q?p9f3vrbbGzTPWHSQHyHBk9U2byYsCET72F/gR8EWQWB+8Is1MUbSaRg4I9tk?=
+ =?us-ascii?Q?FYLyDYuUgZKapL58MRbvEEz4iotiibvf0fiWxM+3zvJ3sa6xkSVhT4mWiIgL?=
+ =?us-ascii?Q?SczTw2qNt8t/B5TzhFtUshdS1oGj7Vv/thoisEKKNxG4FoXUmJZmwukqWjuw?=
+ =?us-ascii?Q?KCrFSR00dAhMflP6u8ZyqF+a3IjVtOaoWzkprJTrxSS70IsrlWOev2wYG+23?=
+ =?us-ascii?Q?xwWZM4suha8xw0f4eC9GfvzJn9rSladj4osKjiyfNsF4Lp/pIC1731sUCA/g?=
+ =?us-ascii?Q?Mx7yl2ULTa5vJHEpfZYTUL0kU+MeijsUVQ0PfrbV0jgHgN58+2zdlkvffJKe?=
+ =?us-ascii?Q?oOFuQ7P40EHiRWNzmuu79Ospg5BU+9RBsz6kvYfu5PCRUGQElx2fAlseDPwj?=
+ =?us-ascii?Q?8XYhFTHf6reuGUB7jds65pWva8RWhNAOzUTaPCBve5Cpal4GTUkRdaF7kxDV?=
+ =?us-ascii?Q?Frfk4z02LIQ3gakuk5P78a42Jp8J4Mp6Zgndgnue6LFlZmacI4FLIw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DSHrfjX6Bcr6MxrZAXlTWR7imYihgGWiaZoitihqnGyL9FhC0oIyBWfYBt46?=
+ =?us-ascii?Q?4THyr7LZU9eIweH7xwF8+B0NI88GA2+C8odGQCU8aJhk8HYUcgzyZtOtaSW1?=
+ =?us-ascii?Q?PRJqAjl3jDdCtxBxlpZwK4UfzWc8IJvzGqooMHidB/FbVJ/xZlSNCkOUj9gt?=
+ =?us-ascii?Q?wFwQk+GZNaABRtxeaJZRrPNYFpAIUPvx2SIoho4KDyDEXazz47IuZbYlcM47?=
+ =?us-ascii?Q?ao3jNRsBVC2fHXo7NektQLAwFWwlDq3/PU4wjVucqvfnhrQlMSuJqrLSK25V?=
+ =?us-ascii?Q?XTWpBdakedlh/3vE0GVIa5DU4BPpE3ymLRX9gtSJqcz/inL6bLqXBxLW+C7o?=
+ =?us-ascii?Q?IANQXXpkChXvnIP1BGJTebBICaqIhV2WPvXGr093rIG7ylZ17Vil9GfpZgus?=
+ =?us-ascii?Q?k+5Rb1Pd2zsb7IJH2CiLFMlBLt1cfuSdziEmq5u+cMNq2Dfp1YW6yhoXDthF?=
+ =?us-ascii?Q?RBE88h5yojCxIPjKWozFChAQrB2C1u5s2D6CvNYeQhpYDf5XInerH5jFqANT?=
+ =?us-ascii?Q?btLKALYHEGeZl9ygxrcT6VShi+QhVyuCE96CoFaydLzf2YDDRU2jZbA0qW/f?=
+ =?us-ascii?Q?p6XE8/S4wWT6j8ywIdCc5djjnsHe/i8XLuWvMgGduGbWc3tue5UWYZVEVQEF?=
+ =?us-ascii?Q?c2gtXU0Wi6vJf7o+Rzserksd1p4u+3rOmae/QvAouHWeXoGKo9eM5N3dZ+Ao?=
+ =?us-ascii?Q?l3BdsbEM50Sr3o8MNZDuYYZAysxBn6iY3UtebStQ01UojkbF+CMtQfkWO/z+?=
+ =?us-ascii?Q?HkXLzNjQcOnLVd5bf96BYBwPUHbpZVNzsJeZXB5n6LGpNjK4iVmQEXI6ANy+?=
+ =?us-ascii?Q?BBgNRyteQifGBnTD79vcKXxqjkCKWwDennpf9NluHqH9CSDXYpnCGVCsrZvs?=
+ =?us-ascii?Q?s+E5GiaAwtpEdv4TEJH8jxJ3wX5Txbcz3I3u2SC2akYUNni93r1y2Fhktwe9?=
+ =?us-ascii?Q?MHRcGMH2aoSS3/rxFhLgpUalFtcrZjMi7fkWp+F2DnXgphD/35abiHVi811A?=
+ =?us-ascii?Q?y/LceN0gwiz1ekD4oefvP/VY9Gz35b6dRnYZ39PAZ7kNu5yAkxagFzoJy6Hi?=
+ =?us-ascii?Q?LOmCcOQhI5LWqcDVUKyh9voTVGzvRDoLsgSpEA9JXm1AWI3c0FWn4/1sOe70?=
+ =?us-ascii?Q?f0HoqY9KAipzBnTtSULs2uMGedToaUGhx/ZUoqRBRIrn5WV2VLbVY1NTLTpC?=
+ =?us-ascii?Q?ZHQdf7lYaAbQBOu+FVU02/knLKOz718siOGAabqd47PHt0LdV5BzJIs5PPvs?=
+ =?us-ascii?Q?+1eVKu8dNC57DB+3nILI9F2jQknlTewYpIRQaxw6ICzZ3uEgzL8CFcyzQhzn?=
+ =?us-ascii?Q?4eb7oR/LNOGKVs++ukOyTNf+Xx0IT+Oy/NQbMqrYt6ax/sdN+xBBPq97uzrR?=
+ =?us-ascii?Q?MawSG0/OBhwdY5MiwpRao1+KV2yridMfdM9VOHUtuFxYPTT1msw2s3pzTd5s?=
+ =?us-ascii?Q?1d3r0HZYVXx1kfwpRLqf3PF2I8Bv/19cf7lGL/jerMqsaR/Y1WGxsovK0xJE?=
+ =?us-ascii?Q?cedOoPkbsJxv8O4bffQ9OnqICcSBQYopQOETSotnbNW/o4cox1Eb/LCEBuNl?=
+ =?us-ascii?Q?/ENL+2+u097HytPUIzwXzPvhJLkFdXllmLvoq3j5?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3bdb4787-9b7e-4559-35c1-08dd987e9edd
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2025 15:46:15.7998
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oiIhBhSh5DoxvQoZIgKBTgV2XzeIdRvJz0cnjkpSW+38yBenrNHUy0MqW6k23PPsYaBHQFnmM3gmxj6K0/Vweg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9931
 
-On Wed, May 21, 2025, Yan Zhao wrote:
-> On Tue, May 20, 2025 at 09:13:25AM -0700, Sean Christopherson wrote:
-> > > > @@ -4891,6 +4884,28 @@ int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(kvm_tdp_map_page);
-> > > >  
-> > > > +int kvm_tdp_prefault_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level)
-> > > > +{
-> > > > +	int r;
-> > > > +
-> > > > +	/*
-> > > > +	 * Restrict to TDP page fault, since that's the only case where the MMU
-> > > > +	 * is indexed by GPA.
-> > > > +	 */
-> > > > +	if (vcpu->arch.mmu->page_fault != kvm_tdp_page_fault)
-> > > > +		return -EOPNOTSUPP;
-> > > > +
-> > > > +	for (;;) {
-> > > > +		r = kvm_tdp_map_page(vcpu, gpa, error_code, level);
-> > > > +		if (r != -EAGAIN)
-> > > > +			break;
-> > > > +
-> > > > +		/* Comment goes here. */
-> > > > +		kvm_vcpu_srcu_read_unlock(vcpu);
-> > > > +		kvm_vcpu_srcu_read_lock(vcpu);
-> > > For the hang in the pre_fault_memory_test reported by Reinette [1], it's because
-> > > the memslot removal succeeds after releasing the SRCU, then the old root is
-> > > stale. So kvm_mmu_reload() is required here to prevent is_page_fault_stale()
-> > > from being always true.
-> > 
-> > That wouldn't suffice, KVM would also need to process KVM_REQ_MMU_FREE_OBSOLETE_ROOTS,
-> > otherwise kvm_mmu_reload() will do nothing.
-> In commit 20a6cff3b283 ("KVM: x86/mmu: Check and free obsolete roots in
-> kvm_mmu_reload()"), KVM_REQ_MMU_FREE_OBSOLETE_ROOTS is processed in
-> kvm_mmu_reload().
+On Wed, May 21, 2025 at 07:20:42PM +0800, ziniu.wang_1@nxp.com wrote:
+> From: Luke Wang <ziniu.wang_1@nxp.com>
+>
+> On some new i.MX platforms, hardware guidelines recommend using identical
+> pin configurations for SDR50/DDR50 (100MHz) and SDR104/HS400 (200MHz)
+> modes. But defining two identical pinctrl for 100MHz and 200MHz in dts
+> creates redundancy. In this case, omit explicit 100MHz configuration,
+> driver will inherit 100MHz pinctrl from 200MHz.
 
-Oh, right!  I completely forgot about that.  Hmm, that reduces the complexity a
-little bit, but I'm still leaning towards punting -EAGAIN to userspace.
+It is quite strange inherit low freq setting from high freq setting.
 
-> > Thinking about this scenario more, I don't mind punting this problem to userspace
-> > for KVM_PRE_FAULT_MEMORY because there's no existing behavior/ABI to uphold, and
-> > because the complexity vs. ABI tradeoffs are heavily weighted in favor of punting
-> > to userspace.  Whereas for KVM_RUN, KVM can't change existing behavior without
-> > breaking userspace, should provide consistent behavior regardless of VM type, and
-> > KVM needs the "complex" code irrespective of this particular scenario.
-> > 
-> > I especially like punting to userspace if KVM returns -EAGAIN, not -ENOENT,
-> > because then KVM is effectively providing the same overall behavior as KVM_RUN,
-> > just without slightly different roles and responsibilities between KVM and
-> > userspace.  And -ENOENT is also flat out wrong for the case where a memslot is
-> > being moved, but the new base+size still contains the to-be-faulted GPA.
-> > 
-> > I still don't like RET_PF_RETRY_INVALID_SLOT, because that bleeds gory MMU details
-> > into the rest of KVM, but KVM can simply return -EAGAIN if an invalid memslot is
-> > encountered during prefault (as identified by fault->prefetch).
-> >
-> > For TDX though, tdx_handle_ept_violation() needs to play nice with the scenario,
-> > i.e. punting to userspace is not a viable option.  But that path also has options
-> > that aren't available to prefaulting.  E.g. it could (and probably should) break
-> > early if a request is pending instead of special casing KVM_REQ_VM_DEAD, which
-> Hmm, for TDX, there's no request KVM_REQ_MMU_FREE_OBSOLETE_ROOTS for slot
-> removal. (see commit aa8d1f48d353 ("KVM: x86/mmu: Introduce a quirk to control
-> memslot zap behavior").
-> 
-> > would take care of the KVM_REQ_MMU_FREE_OBSOLETE_ROOTS scenario.  And as Rick
-> > called out, the zero-step mess really needs to be solved in a more robust fashion.
-> > 
-> > So this?
-> Looks good to me for non-TDX side.
-> 
-> For TDX, could we provide below fix based on your change?
+Orignal method that decide support SDR50/DDR50/SDR104/HS400 abuse the
+pinctrl state usage.
 
-Hmm, I'd prefer not to, mainly because I don't want to special case things even
-more in the common MMU code, e.g. I don't want to bleed the "no memslot == exit"
-logic into multiple locations.  And very strictly speaking, a memory fault exit
-isn't guaranteed, as userspace could set a new memory region before the vCPU
-retries the fault.
+Frank
 
-Returning -EAGAIN isn't an option because that would break userspace (e.g. our
-VMM doesn't handle EAGAIN and supports SNP), and documenting the behavior would
-be weird.  For KVM_PRE_FAULT_MEMORY, KVM's documentation can simply state that
-EAGAIN is returned KVM encounters temporary resource contention and that userspace
-should simply try again.  It's an ABI change, but for a nascent ioctl() and a
-scenario that won't be hit in practice, so I'm confident we can make the change
-without breaking userspace.
-
-And again, this is an unfortunate side effect of zero-step; there's no such
-restriction for SNP, and ideally the TDX zero-step pain will be solved and this
-would also go away for TDX too, so I'm hesitant to bake this behavior into KVM's
-ABI.
-
-My best idea is to special case this in tdx_handle_ept_violation().  It's also
-very gross, but at least the nastiness is limited to the zero-step mitigation
-mess, and is co-located with the code that doesn't actually play nice with
-RET_PF_RETRY.  E.g.
-
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index b952bc673271..ca47d08ae112 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -1907,6 +1907,8 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
-         * handle retries locally in their EPT violation handlers.
-         */
-        while (1) {
-+               struct kvm_memory_slot *slot;
-+
-                ret = __vmx_handle_ept_violation(vcpu, gpa, exit_qual);
- 
-                if (ret != RET_PF_RETRY || !local_retry)
-@@ -1920,6 +1922,10 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
-                        break;
-                }
- 
-+               slot = kvm_vcpu_gfn_to_memslot(vcpu, fault.gfn);
-+               if (slot && slot->flags & KVM_MEMSLOT_INVALID)
-+                       break;
-+
-                cond_resched();
-        }
-        return ret;
-
-> For private fault, -EFAULT will be returned to userspace after the retry anyway
-> after the slot is completed removed, which is unlike non-private faults that go
-> to emulate path after retry.
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -4602,6 +4602,11 @@ static int kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
->                 if (fault->prefetch)
->                         return -EAGAIN;
-> 
-> +               if (fault->is_private) {
-> +                       kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
-> +                       return -EFAULT;
-> +               }
+>
+> Preserves existing behavior if 100MHz is configured but 200MHz not (e.g,
+> imx8mp-navq.dts usdhc1 supports SDR50/DDR50 but SDR104/HS400 not).
+>
+> Signed-off-by: Luke Wang <ziniu.wang_1@nxp.com>
+> ---
+>  drivers/mmc/host/sdhci-esdhc-imx.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
+> index f206b562a6e3..dfd8be5000c8 100644
+> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
+> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+> @@ -1810,6 +1810,9 @@ sdhci_esdhc_imx_probe_dt(struct platform_device *pdev,
+>  						ESDHC_PINCTRL_STATE_100MHZ);
+>  		imx_data->pins_200mhz = pinctrl_lookup_state(imx_data->pinctrl,
+>  						ESDHC_PINCTRL_STATE_200MHZ);
 > +
->                 return RET_PF_RETRY;
->         }
-> 
-> 
-> And would you mind if I included your patch in my next version? I can update the
-> related selftests as well.
-
-Yes, please do!
+> +		if (IS_ERR_OR_NULL(imx_data->pins_100mhz))
+> +			imx_data->pins_100mhz = imx_data->pins_200mhz;
+>  	}
+>
+>  	/* call to generic mmc_of_parse to support additional capabilities */
+> --
+> 2.34.1
+>
 
