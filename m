@@ -1,125 +1,458 @@
-Return-Path: <linux-kernel+bounces-658122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B712ABFD07
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 20:50:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794D9ABFD0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 20:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B655D4A78C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:50:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F228C3A9E50
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD72928F511;
-	Wed, 21 May 2025 18:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0855328ECF0;
+	Wed, 21 May 2025 18:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="tE2Ewykv"
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="LJjflFB6"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F93822B8AD;
-	Wed, 21 May 2025 18:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849791D7999;
+	Wed, 21 May 2025 18:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747853446; cv=none; b=U1wnAUXoMhhh+zRDazoDovY2//hcPcLFlgQsDem6z9h7c9QEdOGM2eprF3tKRj+XJgehwaDyCXNC4jTHYsFfEImFNFk62XugeHNNbfxfrswCSRMLlwhZdrWx7cON5wGjNIOIr99+QdPCK1O3JfvP7dsLXFW6V6EU0E/oDvKZEv8=
+	t=1747853503; cv=none; b=P4wUCMjt1tBaDo48r/rSE3r5wIRVJGmuEDbTZ6n4jDYXgGDWXXt31nSLm5GLMCnZE/1u6yQYUzythzjFidOy/U6dbR6T8aYz22kgwmofQjym1OP5LSTE3oP37IZS1hjntEsF1QAr4HR/orIHWycfDOYdNZcMNo/C+8cUVuO1hGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747853446; c=relaxed/simple;
-	bh=9XMv9SxJ06o/qz7m+z95pFFzS62JgbbA+p4iLf4Anko=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PIACRcoUI1GQESR43H+0OQ9+AAZwL5cOG+piDj8glMU1XY1mPs0W2qQLwJNJiSfDdKQTezgH6bEPEP9AMO/s6eLI0AxeX5LNBnlOgmuYjr9YmxQ06MgwVNeOKEbCzcLf+fKJTqXvn0vgKhKLPF3XuoEMX9RPkmUHMHXVApE1rVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=tE2Ewykv; arc=none smtp.client-ip=52.119.213.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1747853445; x=1779389445;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=sBKVsfi1NKHVCtjpithQ8ltEShaCCBzCJAIuJ+fqkHM=;
-  b=tE2EwykvBXUXgQ4OFjMBO/FMaFxoTRCI1AyfH6LXi8073tY8Gu5iUaVW
-   DlsvFf+mgFkih6s00Wui3vmGtvqpAKFu6i5sVUJmR4NLpQSdhsFLwe3j2
-   BXZm2dZdYZKPV9O3ISWn8s5BJVAIiDCiGHP8H5wfOvMkv6Pcd3FDwkuRJ
-   zvW925/rSzJt8fJmgsxMCEWgTIYJhZmy9RlFolQtCLHsraIr/LIhN2P0x
-   T3dqfLV9l6Ha2N8hu0cKqflKx7v31L61tGBo+ib7nqSHsVFRMdbNWSbfV
-   qS0Z26hugSBV2WqwX8n40pUb5MAV95Tz5H7c2Un2NvbdFgsSpSVPOWRaN
-   Q==;
-X-IronPort-AV: E=Sophos;i="6.15,304,1739836800"; 
-   d="scan'208";a="747108293"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 18:50:38 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:23358]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.52.117:2525] with esmtp (Farcaster)
- id fb42e788-7b2c-41af-9a95-325593b16934; Wed, 21 May 2025 18:50:37 +0000 (UTC)
-X-Farcaster-Flow-ID: fb42e788-7b2c-41af-9a95-325593b16934
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 21 May 2025 18:50:36 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.94.52.104) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 21 May 2025 18:50:34 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <john.cs.hey@gmail.com>
-CC: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<horms@kernel.org>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>
-Subject: Re: [Bug] "WARNING in should_fail_ex" in Linux kernel v6.14
-Date: Wed, 21 May 2025 11:50:22 -0700
-Message-ID: <20250521185026.56042-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <CAP=Rh=N4QcPLWQ2dqUHmKYeEhig3Cbi-3N8Q4-7qGT00htXrVw@mail.gmail.com>
-References: <CAP=Rh=N4QcPLWQ2dqUHmKYeEhig3Cbi-3N8Q4-7qGT00htXrVw@mail.gmail.com>
+	s=arc-20240116; t=1747853503; c=relaxed/simple;
+	bh=HViRkR9IseycG4RqrUMvqT/5luymndQHFzGO64flSWY=;
+	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
+	 Content-Type:Subject; b=kOsm/kTGJBajTzqYZ6kBNSiI2kdA6BUwlCIszNMXQLpMXs1nowx3xThBwQ0ZM3dDed7W1+GwHW2PN3oCUasUU4N2d+g5UN0iQx8fZjiNSDX5NGLG7syABP2DV6TAqpq+FAvRDdXescxaz06i6YKaVCH8z6SHNWiqxIEhl14l8xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=LJjflFB6; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=pLajyTKvSnjIeuhbiBRiqcZn2G1t4YqZMJu2Cek90Gc=; b=LJjflFB6AayCbZwPaANqL6treh
+	acw9Gk8X7GrVLSN+graw1u0fxSTvULAwfZurT3Zbo0eKQP2swDTGMcYWoGWKr9A/R3OKBQQHd2jQt
+	C/QFaEalCaJ2XeyvHfkKQcoLWeF4qJBT2Tt67U8GF7AJDzBnU1s8DPFutKrIKfr1x7wM=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:43264 helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1uHoX9-0004sc-Id; Wed, 21 May 2025 14:51:20 -0400
+Date: Wed, 21 May 2025 14:51:19 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de"
+ <tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>,
+ "simona@ffwll.ch" <simona@ffwll.ch>, "dri-devel@lists.freedesktop.org"
+ <dri-devel@lists.freedesktop.org>, "linux-renesas-soc@vger.kernel.org"
+ <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Chris Brandt <Chris.Brandt@renesas.com>
+Message-Id: <20250521145119.7b842eed340b403c024dff6b@hugovil.com>
+In-Reply-To: <TYCPR01MB113329D284B9AFDD68F9E64A3869EA@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+References: <20250520171034.3488482-2-hugo@hugovil.com>
+	<TYCPR01MB113329D284B9AFDD68F9E64A3869EA@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D036UWC002.ant.amazon.com (10.13.139.242) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.1 URIBL_CSS_A Contains URL's A record listed in the Spamhaus CSS
+	*      blocklist
+	*      [URIs: hugovil.com]
+	*  0.1 URIBL_CSS Contains an URL's NS IP listed in the Spamhaus CSS
+	*      blocklist
+	*      [URIs: hugovil.com]
+	* -0.3 NICE_REPLY_A Looks like a legit reply (A)
+Subject: Re: [PATCH 1/2] drm: rcar-du: rzg2l_mipi_dsi: Implement host
+ transfers
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-From: John <john.cs.hey@gmail.com>
-Date: Wed, 21 May 2025 22:13:15 +0800
-> Dear Linux Kernel Maintainers,
-> 
-> I hope this message finds you well.
-> 
-> I am writing to report a potential vulnerability I encountered during
-> testing of the Linux Kernel version v6.14.
-> 
-> Git Commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557 (tag: v6.14)
-> 
-> Bug Location: net/ipv4/ipmr.c:440 ipmr_free_table net/ipv4/ipmr.c:440
-> 
-> Bug report: https://pastebin.com/xkfF5DBt
-> 
-> Complete log: https://pastebin.com/uCfqY4D8
-> 
-> Entire kernel config: https://pastebin.com/MRWGr3nv
-> 
-> Root Cause Analysis:
-> The kernel warning is triggered in ipmr_free_table() at
-> net/ipv4/ipmr.c:440, where the multicast routing table (mr_table) is
-> being freed during network namespace exit (ipmr_rules_exit).
-> The warning indicates that the multicast forwarding cache count
-> (mfc_cache_cnt) is non-zero, implying that resources were not
-> correctly cleaned up prior to netns teardown.
-> This suggests a possible bug in reference counting or teardown logic
-> of the IPv4 multicast routing infrastructure.
-> Additionally, the environment is running with fail_usercopy fault
-> injection enabled, which deliberately triggers copy-from-user failures
-> to test kernel error paths.
-> While these failures are expected, they may interact with multicast
-> socket setup/teardown paths, exacerbating latent issues.
+Hi Biju,
 
-I think this was fixed by
+On Wed, 21 May 2025 07:43:08 +0000
+Biju Das <biju.das.jz@bp.renesas.com> wrote:
 
-commit c46286fdd6aa1d0e33c245bcffe9ff2428a777bd
-Author: Paolo Abeni <pabeni@redhat.com>
-Date:   Thu May 15 18:49:26 2025 +0200
+> Hi Hugo,
+> 
+> Thanks for the patch.
+> 
+> For some reason, your cover letter is not showing link to this patch
+> [1] https://lore.kernel.org/all/20250520164034.3453315-1-hugo@hugovil.com/
 
-    mr: consolidate the ipmr_can_free_table() checks.
+My server had problems, and only sent the cover letter, forcing me to
+manually send the two remaining patches thinking it would be ok :)
+
+> 
+> > -----Original Message-----
+> > From: Hugo Villeneuve <hugo@hugovil.com>
+> > Sent: 20 May 2025 18:11
+> > Subject: [PATCH 1/2] drm: rcar-du: rzg2l_mipi_dsi: Implement host transfers
+> 
+> rcar-du->rz-du
+
+Yes, and other commits use "drm: renesas: rz-du:", so I will change it
+to this prefix.
+
+
+> > From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+> > 
+> > Add support for sending MIPI DSI command packets from the host to a peripheral. This is required for
+> > panels that need configuration before they accept video data.
+> > 
+> > Based on Renesas Linux kernel v5.10 repos [1].
+> 
+> > 
+> > Link: https://github.com/renesas-rz/rz_linux-cip.git
+> > Cc: Biju Das <biju.das.jz@bp.renesas.com>
+> > Cc: Chris Brandt <chris.brandt@renesas.com>
+> > Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+> > ---
+> >  .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 174 ++++++++++++++++++
+> >  .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  56 ++++++
+> >  2 files changed, 230 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-
+> > du/rzg2l_mipi_dsi.c
+> > index dc6ab012cdb69..77d3a31ff8e35 100644
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > @@ -6,6 +6,7 @@
+> >   */
+> >  #include <linux/clk.h>
+> >  #include <linux/delay.h>
+> > +#include <linux/dma-mapping.h>
+> >  #include <linux/io.h>
+> >  #include <linux/iopoll.h>
+> >  #include <linux/module.h>
+> > @@ -23,9 +24,12 @@
+> >  #include <drm/drm_of.h>
+> >  #include <drm/drm_panel.h>
+> >  #include <drm/drm_probe_helper.h>
+> > +#include <video/mipi_display.h>
+> > 
+> >  #include "rzg2l_mipi_dsi_regs.h"
+> > 
+> > +#define RZG2L_DCS_BUF_SIZE	128 /* Maximum DCS buffer size in external memory. */
+> > +
+> >  struct rzg2l_mipi_dsi {
+> >  	struct device *dev;
+> >  	void __iomem *mmio;
+> > @@ -44,6 +48,10 @@ struct rzg2l_mipi_dsi {
+> >  	unsigned int num_data_lanes;
+> >  	unsigned int lanes;
+> >  	unsigned long mode_flags;
+> > +
+> > +	/* DCS buffer pointers when using external memory. */
+> > +	dma_addr_t dcs_buf_phys;
+> > +	u8 *dcs_buf_virt;
+> >  };
+> > 
+> >  static inline struct rzg2l_mipi_dsi *
+> > @@ -651,9 +659,168 @@ static int rzg2l_mipi_dsi_host_detach(struct mipi_dsi_host *host,
+> >  	return 0;
+> >  }
+> > 
+> > +static ssize_t rzg2l_mipi_dsi_read_response(struct rzg2l_mipi_dsi *dsi,
+> > +					    const struct mipi_dsi_msg *msg) {
+> > +	u8 *msg_rx = msg->rx_buf;
+> > +	u16 size;
+> > +	u8 datatype;
+> > +	u32 result;
+> 
+> Please arrange the variables in reverse xmas tree fashion.
+
+Ok.
+
+  
+> > +
+> > +	result = rzg2l_mipi_dsi_link_read(dsi, RXRSS0R);
+> > +	if (result & RXRSS0R_RXPKTDFAIL) {
+> > +		dev_err(dsi->dev, "packet rx data did not save correctly\n");
+> > +		return -EPROTO;
+> > +	}
+> > +
+> > +	if (result & RXRSS0R_RXFAIL) {
+> > +		dev_err(dsi->dev, "packet rx failure\n");
+> > +		return -EPROTO;
+> > +	}
+> > +
+> > +	if (!(result & RXRSS0R_RXSUC))
+> > +		return -EPROTO;
+> > +
+> > +	datatype = FIELD_GET(RXRSS0R_DT, result);
+> > +
+> > +	switch (datatype) {
+> > +	case 0:
+> > +		dev_dbg(dsi->dev, "ACK\n");
+> > +		return 0;
+> > +	case MIPI_DSI_RX_END_OF_TRANSMISSION:
+> > +		dev_dbg(dsi->dev, "EoTp\n");
+> > +		return 0;
+> > +	case MIPI_DSI_RX_ACKNOWLEDGE_AND_ERROR_REPORT:
+> > +		dev_dbg(dsi->dev, "Acknowledge and error report: $%02x%02x\n",
+> > +			(u8)FIELD_GET(RXRSS0R_DATA1, result),
+> > +			(u8)FIELD_GET(RXRSS0R_DATA0, result));
+> > +		return 0;
+> > +	case MIPI_DSI_RX_DCS_SHORT_READ_RESPONSE_1BYTE:
+> > +	case MIPI_DSI_RX_GENERIC_SHORT_READ_RESPONSE_1BYTE:
+> > +		msg_rx[0] = FIELD_GET(RXRSS0R_DATA0, result);
+> > +		return 1;
+> > +	case MIPI_DSI_RX_DCS_SHORT_READ_RESPONSE_2BYTE:
+> > +	case MIPI_DSI_RX_GENERIC_SHORT_READ_RESPONSE_2BYTE:
+> > +		msg_rx[0] = FIELD_GET(RXRSS0R_DATA0, result);
+> > +		msg_rx[1] = FIELD_GET(RXRSS0R_DATA1, result);
+> > +		return 2;
+> > +	case MIPI_DSI_RX_GENERIC_LONG_READ_RESPONSE:
+> > +	case MIPI_DSI_RX_DCS_LONG_READ_RESPONSE:
+> > +		size = FIELD_GET(RXRSS0R_WC, result);
+> > +
+> > +		if (size > msg->rx_len) {
+> > +			dev_err(dsi->dev, "rx buffer too small");
+> > +			return -ENOSPC;
+> > +		}
+> > +
+> > +		memcpy(msg_rx, dsi->dcs_buf_virt, size);
+> > +		return size;
+> > +	default:
+> > +		dev_err(dsi->dev, "unhandled response type: %02x\n", datatype);
+> > +		return -EPROTO;
+> > +	}
+> > +}
+> > +
+> > +static ssize_t rzg2l_mipi_dsi_host_transfer(struct mipi_dsi_host *host,
+> > +					    const struct mipi_dsi_msg *msg) {
+> > +	struct rzg2l_mipi_dsi *dsi = host_to_rzg2l_mipi_dsi(host);
+> > +	struct mipi_dsi_packet packet;
+> > +	bool need_bta;
+> > +	u32 value;
+> > +	int ret;
+> > +
+> > +	ret = mipi_dsi_create_packet(&packet, msg);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	/* Terminate operation after this descriptor is finished */
+> > +	value = SQCH0DSC0AR_NXACT_TERM;
+> > +
+> > +	if (msg->flags & MIPI_DSI_MSG_REQ_ACK) {
+> > +		need_bta = true; /* Message with explicitly requested ACK */
+> > +		value |= FIELD_PREP(SQCH0DSC0AR_BTA, SQCH0DSC0AR_BTA_NON_READ);
+> > +	} else if (msg->rx_buf && msg->rx_len > 0) {
+> > +		need_bta = true; /* Read request */
+> > +		value |= FIELD_PREP(SQCH0DSC0AR_BTA, SQCH0DSC0AR_BTA_READ);
+> > +	} else {
+> > +		need_bta = false;
+> > +		value |= FIELD_PREP(SQCH0DSC0AR_BTA, SQCH0DSC0AR_BTA_NONE);
+> > +	}
+> > +
+> > +	/* Set transmission speed */
+> > +	if (msg->flags & MIPI_DSI_MSG_USE_LPM)
+> > +		value |= SQCH0DSC0AR_SPD_LOW;
+> > +	else
+> > +		value |= SQCH0DSC0AR_SPD_HIGH;
+> > +
+> > +	/* Write TX packet header */
+> > +	value |= FIELD_PREP(SQCH0DSC0AR_DT, packet.header[0]) |
+> > +		FIELD_PREP(SQCH0DSC0AR_DATA0, packet.header[1]) |
+> > +		FIELD_PREP(SQCH0DSC0AR_DATA1, packet.header[2]);
+> > +
+> > +	if (mipi_dsi_packet_format_is_long(msg->type)) {
+> > +		value |= SQCH0DSC0AR_FMT_LONG;
+> > +
+> > +		if (packet.payload_length > RZG2L_DCS_BUF_SIZE) {
+> > +			dev_err(dsi->dev, "Packet Tx payload size (%d) too large",
+> > +				(unsigned int)packet.payload_length);
+> > +			return -ENOSPC;
+> > +		}
+> > +
+> > +		/* Copy TX packet payload data to memory space */
+> > +		memcpy(dsi->dcs_buf_virt, packet.payload, packet.payload_length);
+> > +	} else {
+> > +		value |= SQCH0DSC0AR_FMT_SHORT;
+> > +	}
+> > +
+> > +	rzg2l_mipi_dsi_link_write(dsi, SQCH0DSC0AR, value);
+> > +
+> > +	/*
+> > +	 * Write: specify payload data source location, only used for
+> > +	 *        long packet.
+> > +	 * Read:  specify payload data storage location of response
+> > +	 *        packet. Note: a read packet is always a short packet.
+> > +	 *        If the response packet is a short packet or a long packet
+> > +	 *        with WC = 0 (no payload), DTSEL is meaningless.
+> > +	 */
+> > +	rzg2l_mipi_dsi_link_write(dsi, SQCH0DSC0BR,
+> > +SQCH0DSC0BR_DTSEL_MEM_SPACE);
+> > +
+> > +	/*
+> > +	 * Set SQCHxSR.AACTFIN bit when descriptor actions are finished.
+> > +	 * Read: set Rx result save slot number to 0 (ACTCODE).
+> > +	 */
+> > +	rzg2l_mipi_dsi_link_write(dsi, SQCH0DSC0CR, SQCH0DSC0CR_FINACT);
+> > +
+> > +	/* Set rx/tx payload data address, only relevant for long packet. */
+> > +	rzg2l_mipi_dsi_link_write(dsi, SQCH0DSC0DR, (u32)dsi->dcs_buf_phys);
+> > +
+> > +	/* Start sequence 0 operation */
+> > +	value = rzg2l_mipi_dsi_link_read(dsi, SQCH0SET0R);
+> > +	value |= SQCH0SET0R_START;
+> > +	rzg2l_mipi_dsi_link_write(dsi, SQCH0SET0R, value);
+> > +
+> > +	/* Wait for operation to finish */
+> > +	ret = read_poll_timeout(rzg2l_mipi_dsi_link_read,
+> > +				value, value & SQCH0SR_ADESFIN,
+> > +				2000, 20000, false, dsi, SQCH0SR);
+> > +	if (ret == 0) {
+> > +		/* Success: clear status bit */
+> > +		rzg2l_mipi_dsi_link_write(dsi, SQCH0SCR, SQCH0SCR_ADESFIN);
+> > +
+> > +		if (need_bta)
+> > +			ret = rzg2l_mipi_dsi_read_response(dsi, msg);
+> > +		else
+> > +			ret = packet.payload_length;
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > +
+> >  static const struct mipi_dsi_host_ops rzg2l_mipi_dsi_host_ops = {
+> >  	.attach = rzg2l_mipi_dsi_host_attach,
+> >  	.detach = rzg2l_mipi_dsi_host_detach,
+> > +	.transfer = rzg2l_mipi_dsi_host_transfer,
+> >  };
+> > 
+> >  /* -----------------------------------------------------------------------------
+> > @@ -771,6 +938,11 @@ static int rzg2l_mipi_dsi_probe(struct platform_device *pdev)
+> >  	if (ret < 0)
+> >  		goto err_pm_disable;
+> > 
+> > +	dsi->dcs_buf_virt = dma_alloc_coherent(dsi->host.dev, RZG2L_DCS_BUF_SIZE,
+> > +					       &dsi->dcs_buf_phys, GFP_KERNEL);
+> > +	if (!dsi->dcs_buf_virt)
+> > +		return -ENOMEM;
+> > +
+> >  	return 0;
+> > 
+> >  err_phy:
+> > @@ -785,6 +957,8 @@ static void rzg2l_mipi_dsi_remove(struct platform_device *pdev)  {
+> >  	struct rzg2l_mipi_dsi *dsi = platform_get_drvdata(pdev);
+> > 
+> > +	dma_free_coherent(dsi->host.dev, RZG2L_DCS_BUF_SIZE, dsi->dcs_buf_virt,
+> > +			  dsi->dcs_buf_phys);
+> >  	mipi_dsi_host_unregister(&dsi->host);
+> >  	pm_runtime_disable(&pdev->dev);
+> >  }
+> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rz-
+> > du/rzg2l_mipi_dsi_regs.h
+> > index 1dbc16ec64a4b..33cd669bc74b1 100644
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
+> > @@ -81,6 +81,16 @@
+> >  #define RSTSR_SWRSTLP			(1 << 1)
+> >  #define RSTSR_SWRSTHS			(1 << 0)
+> > 
+> > +/* Rx Result Save Slot 0 Register */
+> > +#define RXRSS0R				0x240
+> > +#define RXRSS0R_RXPKTDFAIL		BIT(28)
+> > +#define RXRSS0R_RXFAIL			BIT(27)
+> > +#define RXRSS0R_RXSUC			BIT(25)
+> > +#define RXRSS0R_DT			GENMASK(21, 16)
+> > +#define RXRSS0R_DATA1			GENMASK(15, 8)
+> > +#define RXRSS0R_DATA0			GENMASK(7, 0)
+> > +#define RXRSS0R_WC			GENMASK(15, 0) /* Word count for long packet. */
+> > +
+> >  /* Clock Lane Stop Time Set Register */
+> >  #define CLSTPTSETR			0x314
+> >  #define CLSTPTSETR_CLKKPT(x)		((x) << 24)
+> > @@ -148,4 +158,50 @@
+> >  #define VICH1HPSETR_HFP(x)		(((x) & 0x1fff) << 16)
+> >  #define VICH1HPSETR_HBP(x)		(((x) & 0x1fff) << 0)
+> > 
+> > +/* Sequence Channel 0 Set 0 Register */
+> > +#define SQCH0SET0R			0x5c0
+> > +#define SQCH0SET0R_START		BIT(0)
+> > +
+> > +/* Sequence Channel 0 Set 1 Register */
+> > +#define SQCH0SET1R			0x5c4
+> 
+> Unused. Drop it.
+
+Ok, will remove all unused macros.
+
+> 
+> > +
+> > +/* Sequence Channel 0 Status Register */
+> > +#define SQCH0SR				0x5d0
+> > +#define SQCH0SR_RUNNING			BIT(2)
+> Unused
+> 
+> > +#define SQCH0SR_ADESFIN			BIT(8)
+> > +
+> > +/* Sequence Channel 0 Status Clear Register */
+> > +#define SQCH0SCR			0x5d4
+> > +#define SQCH0SCR_ADESFIN		BIT(8)
+> > +
+> > +/* Sequence Channel 0 Descriptor 0-A Register */
+> > +#define SQCH0DSC0AR			0x780
+> > +#define SQCH0DSC0AR_NXACT_TERM		0
+> > +#define SQCH0DSC0AR_NXACT_OPER		BIT(28)
+> Unused
+> 
+> > +#define SQCH0DSC0AR_BTA			GENMASK(27, 26)
+> > +#define SQCH0DSC0AR_BTA_NONE		0
+> > +#define SQCH0DSC0AR_BTA_NON_READ	1
+> > +#define SQCH0DSC0AR_BTA_READ		2
+> > +#define SQCH0DSC0AR_BTA_ONLY		3
+> > +#define SQCH0DSC0AR_SPD_HIGH		0
+> > +#define SQCH0DSC0AR_SPD_LOW		BIT(25)
+> > +#define SQCH0DSC0AR_FMT_SHORT		0
+> > +#define SQCH0DSC0AR_FMT_LONG		BIT(24)
+> > +#define SQCH0DSC0AR_DT			GENMASK(21, 16)
+> > +#define SQCH0DSC0AR_DATA1		GENMASK(15, 8)
+> > +#define SQCH0DSC0AR_DATA0		GENMASK(7, 0)
+> > +
+> > +/* Sequence Channel 0 Descriptor 0-B Register */
+> > +#define SQCH0DSC0BR			0x784
+> > +#define SQCH0DSC0BR_DTSEL_PAYLOAD_DR	0	/* Use packet payload data register */
+> Unused
+> 
+> > +#define SQCH0DSC0BR_DTSEL_MEM_SPACE	BIT(24)	/* Use external memory */
+> > +
+> > +/* Sequence Channel 0 Descriptor 0-C Register */
+> > +#define SQCH0DSC0CR			0x788
+> > +#define SQCH0DSC0CR_FINACT		BIT(0)
+> > +#define SQCH0DSC0CR_AUXOP		BIT(22)
+> Unused
+> 
+> > +
+> > +/* Sequence Channel 0 Descriptor 0-D Register */
+> > +#define SQCH0DSC0DR			0x78c
+> > +
+> 
+> Cheers,
+> Biju
+> 
+> >  #endif /* __RZG2L_MIPI_DSI_REGS_H__ */
+> > --
+> > 2.39.5
+> 
+> 
+
+
+-- 
+Hugo Villeneuve
 
