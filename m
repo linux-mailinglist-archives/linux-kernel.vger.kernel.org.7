@@ -1,115 +1,100 @@
-Return-Path: <linux-kernel+bounces-657945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8830ABFA87
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:01:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B217FABFA99
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C39A54E0D98
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:01:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DFCB16E177
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C913221735;
-	Wed, 21 May 2025 15:52:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFB821C19F
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CAB22A7E1;
+	Wed, 21 May 2025 15:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="I5ELHjt1"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C59220F3B;
+	Wed, 21 May 2025 15:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747842765; cv=none; b=RxyFXmiR68z4y5oeso5v6NVX54Zj8yRpWNBcuzdgCyDceaMABdiXbfawvYR8eOGJQ86Mwtqxs0pLVs0GvahfE2kHq93mvFulFNtFDmDLeUoT2pLGMAQYbLud8jHPakqk95piOBGQxxc1miDppCFT0oLatOUCF/uwVxaOFgUvELo=
+	t=1747842999; cv=none; b=DQxlCaMk2jFtORrguUGh5goB898z1Sye0ucFyIjT4++sBlFyWC5xtGER1999eJ4FKg4ptoUnSrYd0bKT10QDVVr1h6R3Hn6SI0Rc3kl+b+7flv3Z5ScffiROo+0NkANXdJRMDfZiGS2ODK3UU7cxw9iB5y+mTEtvnTN8pHk5IPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747842765; c=relaxed/simple;
-	bh=62QbmXK0GwsKDw4Ad5OcPzH+bRvRp41PR9RE8v8QHD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hb26eCB/alHV6Nyn79weKFDbqq56DOe3LUs5Lo8GQW+KllRb9l15UF8xsyfFBeS7Wyirp4X1Js3f7heJPQ09T88IP2UjJxJS01tLsxN76XbggTqkWhkrHoeBGNGtxtb7fKhazDDsUC+mtfxKMj/Be6JNi/Yu1XnQZw22Blb2LLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA7E91515;
-	Wed, 21 May 2025 08:52:26 -0700 (PDT)
-Received: from [10.57.23.70] (unknown [10.57.23.70])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 143A73F6A8;
-	Wed, 21 May 2025 08:52:37 -0700 (PDT)
-Message-ID: <41515a2d-75c0-4537-888a-8d27c2050a80@arm.com>
-Date: Wed, 21 May 2025 16:52:36 +0100
+	s=arc-20240116; t=1747842999; c=relaxed/simple;
+	bh=5Doh5G+A/5vZANC2hFIuj+z2N+72ML0y3weAUvUWF60=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XytLvjt13BGAbVFdGR14vp06hY7pEH+leIfZZ3EpdWEEBodDNW9Cp2c5AnhO6SyqYwpzdINVF0QFnyfuOt+QJwSu7Rox/EXfTycAPJQZYFpW42IP9Vleu+5Zf9DuCwB0JMlC1voTsNKLUpje52pyKMoXAssH+cHq/4awWouOY0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=I5ELHjt1; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1D9E41FCF1;
+	Wed, 21 May 2025 15:56:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1747842995;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YMt3+zKh8MFrX6ZVemx3nyqzynGMPwR2F6IMelQXdhA=;
+	b=I5ELHjt14Y9TpOPAjHO+Oh5J98liJodWmTRQNUrZu0Cx9jwLUagLp+R7iHi/P0Y46kTirn
+	vfbVifyDkwPfL2ZEfrbdOizwsS8cOnLgjKdMXvDfIaQ/8GTlsyd5K6IRnj+cE1vcKN4Rb1
+	FKzfTjS+NcvppGVsVCpLIp+4cv58yzPOgeWE0roMetS7Rt6LVP+fjkY1EsHVKxbE3wWtMV
+	Z0lX83KE6wcdaxODTlPLjgsMoKthXhybWYnzrzJQ01KOCPQDH+jCv1IzWosVTWGygYmrp9
+	t3B+ME+MXbneoHM6v6jJryrmMuvEbZ4N2yYrTX4sIpZ1B+RayOFavfkzw7gkVA==
+Date: Wed, 21 May 2025 17:56:31 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Tomi Valkeinen
+ <tomi.valkeinen@ideasonboard.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>, Arnd
+ Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org
+Subject: Re: [PATCH v5 8/9] i2c: atr: add static flag
+Message-ID: <20250521175631.0af904e9@booty>
+In-Reply-To: <20250507121917.2364416-9-demonsingur@gmail.com>
+References: <20250507121917.2364416-1-demonsingur@gmail.com>
+	<20250507121917.2364416-9-demonsingur@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] drm/panfrost: Internally label some BOs
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
- Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
- Rob Herring <robh@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-References: <20250520174634.353267-1-adrian.larumbe@collabora.com>
- <20250520174634.353267-3-adrian.larumbe@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250520174634.353267-3-adrian.larumbe@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefgeelucdltddurdegfedvrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepuggvmhhonhhsihhnghhurhesghhmrghilhdrtghomhdprhgtphhtthhopeifshgrodhrvghnvghsrghssehsrghnghdqvghnghhinhgvvghrihhnghdrtghomhdprhgtphhtt
+ hhopehtohhmihdrvhgrlhhkvghinhgvnhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhivdgtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On 20/05/2025 18:43, Adrián Larumbe wrote:
-> Perfcnt samples buffer is not exposed to UM, but we would like to keep
-> a tag on it as a potential debug aid.
+On Wed,  7 May 2025 15:19:14 +0300
+Cosmin Tanislav <demonsingur@gmail.com> wrote:
+
+> Some I2C ATRs do not support dynamic remapping, only static mapping
+> of direct children.
 > 
-> PRIME imported GEM buffers are UM exposed, but since the usual Panfrost
-> UM driver code path is not followed in their creation, they might remain
-> unlabelled for their entire lifetime, so a generic tag was deemed
-> preferable. The tag is assigned before a UM handle is created so it
-> doesn't contradict the logic about labelling internal BOs.
+> Mappings will only be added or removed as a result of devices being
+> added or removed from a child bus.
 > 
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-
-Reviewed-by: Steven Price <steven.price@arm.com>
-
-> ---
->  drivers/gpu/drm/panfrost/panfrost_gem.c     | 10 ++++++++++
->  drivers/gpu/drm/panfrost/panfrost_perfcnt.c |  2 ++
->  2 files changed, 12 insertions(+)
+> The ATR pool will have to be big enough to accomodate all devices
+> expected to be added to the child buses.
 > 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.c b/drivers/gpu/drm/panfrost/panfrost_gem.c
-> index 4c5be7ccc9cc..04483d5fb45d 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_gem.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_gem.c
-> @@ -305,6 +305,16 @@ panfrost_gem_prime_import_sg_table(struct drm_device *dev,
->  	bo = to_panfrost_bo(obj);
->  	bo->noexec = true;
->  
-> +	/*
-> +	 * We assign this generic label because this function cannot
-> +	 * be reached through any of the Panfrost UM driver-specific
-> +	 * code paths, unless one is given by explicitly calling the
-> +	 * SET_LABEL_BO ioctl. It is therefore preferable to have a
-> +	 * blanket BO tag that tells us the object was imported from
-> +	 * another driver than nothing at all.
-> +	 */
-> +	panfrost_gem_internal_set_label(obj, "GEM PRIME buffer");
-> +
->  	return obj;
->  }
->  
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
-> index 52befead08c6..563f16bae543 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
-> @@ -111,6 +111,8 @@ static int panfrost_perfcnt_enable_locked(struct panfrost_device *pfdev,
->  		goto err_put_mapping;
->  	perfcnt->buf = map.vaddr;
->  
-> +	panfrost_gem_internal_set_label(&bo->base, "Perfcnt sample buffer");
-> +
->  	/*
->  	 * Invalidate the cache and clear the counters to start from a fresh
->  	 * state.
+> Add a new flag that prevents old mappings to be replaced or new mappings
+> to be created in the alias finding code paths.
+> 
+> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
 
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
