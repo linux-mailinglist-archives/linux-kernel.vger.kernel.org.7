@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-658312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9030AAC002C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 00:55:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 469A5AC002F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 00:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFF159E5760
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 22:55:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36C563BE962
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 22:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0FD24E01B;
-	Wed, 21 May 2025 22:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5AD2517A7;
+	Wed, 21 May 2025 22:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X6ZpXKzY"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MuOi5n/u"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EBD248F43
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 22:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BA724C07B
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 22:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747867876; cv=none; b=Oq7nwuO/Doby1+MCkLNrZlQEzHtLF6Jlni6h+oBbb0VqtYDbS0fs3xY9dR58Oen1exI1f/vcqRyiitnihpr4LD2KGBE6eXXT2ucBK+lPUab/v+nVb8Xo45jUtzVHSfC/AuSk7RLo4h8pG+ln5aBCEeqOD+R4LbLjiQ5bcCy0ai4=
+	t=1747867878; cv=none; b=E9U+lIM/0uKOcim+POYlV0KuuOFHxTtRnmPaQH30xI0uui5+SuAfvKkRJkelYbs6D+P2QfMOgDyK2WffZw5q9qRqb5N92PWFJkJIo1UduiBWpuWdI2hMmrFVrIA9jz+SuPhtMswC1LLgWU5J3CbHOyMsrj06CWHxT0cxhoFiHiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747867876; c=relaxed/simple;
-	bh=Tf5Vr/3BaV/jZLBI9TGK8FQ85PWBU2b3anQXN/sHg2Y=;
+	s=arc-20240116; t=1747867878; c=relaxed/simple;
+	bh=jrQloV55Ky0xgLq1zhFh0R9wuW/MuUNKJYq9Raj0okk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KZjAzN8+fw65Ul1b/B9VZGPUNhnNXGh/O2Rl+SBlSu7f9EFqH7n6dsIuOc7h/ms/MBK9A+eItak6qUc0FoHZ1RMTPmR5ccYlvquUiYpgqpO4NABfsPmQWnDQgo6g3tLfZWXaxpHl5fUn7BdO+xjJmHp321orHH6+A0uUc2Gzt/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X6ZpXKzY; arc=none smtp.client-ip=198.175.65.14
+	 MIME-Version; b=A03ezfbLgp7fG7ZTwpqtgavqCWdJm0nouPSdnPsNLPkrrlCAmJQluNgLMQbgZL8JfnTdy6UPBmQm7L60U+uxrRf7g6uecEpD+3Dbu+pAEhc26500LiPIgbogrBNuQX7DAWTyHCSnZI/pMp9LrzaB/Jw1wtht/8uuurk/p4OOEjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MuOi5n/u; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747867874; x=1779403874;
+  t=1747867876; x=1779403876;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Tf5Vr/3BaV/jZLBI9TGK8FQ85PWBU2b3anQXN/sHg2Y=;
-  b=X6ZpXKzYbzkv1mZc8zZeWTIwDNMEH0HLbCeYFOe5xUOZDmyCXfBdLAEG
-   Fx35ODfXWVGwOMkemgw9AjNOFF4UsaueylfTliZpwi9m7cmhemMkwH+x2
-   l1OVp+BemulICeMN8bR7rQhRq08A2zSR4kx+oIdp//7S5DBpU9eFPozr6
-   +705sgRwERBOwFxfAJaA3BWOgdbo0kyZ9rdJG2RCoXZnx0L85SmxCtaSE
-   OOH6QVpQXOfSm7bHEjrAqQBNfqX5irHTJFooRwdFrHcSIFqNZaDsxuFPE
-   w0Q+7NPHRpICY79cJycU6k8zj5EoJnzcoeisvO2DqJq3cY6zHPIwhD+CL
-   g==;
-X-CSE-ConnectionGUID: v92OrKJjSfKwy0LNHp3PRQ==
-X-CSE-MsgGUID: hbCjzkpvQay5EzDQiTrPQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11440"; a="53677832"
+  bh=jrQloV55Ky0xgLq1zhFh0R9wuW/MuUNKJYq9Raj0okk=;
+  b=MuOi5n/ue6jm8BzFdtkEFVrD/HOC+ApZl7raivivmrQxZxRSNklfW1ZF
+   IboUhYa7gS6jhkUK/mGNHISSX5xDzxzMArxsrU0wDadFYqOya3Ed9neIQ
+   syTU29CtetWctSLCoaUahHXYiAc4vSfD+1zfCB0ZNwM8ylv3ghTKj6N6H
+   1f+uoDfxoGz8/orXDu1x08Zkj0ePAT9AxCh/e4tN0XAOFV7FcOni5ozGJ
+   pSS8n+xUGo0AmK75uV97I41SCQgfc2heRW40RbjKxFoO81o+H2+qhxOON
+   UJh4kwVTyRDBDTEtPm9OXOtyacc0VXDrwgvolgh9IQcDTPeQv+RQb1k+g
+   A==;
+X-CSE-ConnectionGUID: 8iQFIdJqQ++Xvh1J3j2pTg==
+X-CSE-MsgGUID: uH/qzomLSW2jlhcOp9srVw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11440"; a="53677837"
 X-IronPort-AV: E=Sophos;i="6.15,304,1739865600"; 
-   d="scan'208";a="53677832"
+   d="scan'208";a="53677837"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
   by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 15:51:00 -0700
-X-CSE-ConnectionGUID: o3JN4+EvTXqaiZDMpvXi7A==
-X-CSE-MsgGUID: DENlstCJROiZqDbPH5xF7Q==
+X-CSE-ConnectionGUID: PhPr06BlSii+AiDBGoPJHA==
+X-CSE-MsgGUID: fd64e14iStGT9CnV3YtdCQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,304,1739865600"; 
-   d="scan'208";a="141352203"
+   d="scan'208";a="141352206"
 Received: from agluck-desk3.sc.intel.com ([172.25.103.51])
   by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 15:50:59 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -72,9 +72,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v5 26/29] x86,fs/resctrl: Move RMID initialization to first mount
-Date: Wed, 21 May 2025 15:50:44 -0700
-Message-ID: <20250521225049.132551-27-tony.luck@intel.com>
+Subject: [PATCH v5 27/29] fs/resctrl: Add file system mechanism for architecture info file
+Date: Wed, 21 May 2025 15:50:45 -0700
+Message-ID: <20250521225049.132551-28-tony.luck@intel.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250521225049.132551-1-tony.luck@intel.com>
 References: <20250521225049.132551-1-tony.luck@intel.com>
@@ -86,224 +86,222 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The resctrl file system code assumed that the only monitor events were
-tied to the RDT_RESOURCE_L3 resource. Also that the number of supported
-RMIDs was enumerated during early initialization.
+Creation of all files in the resctrl file system is under control of
+the file system layer.
 
-RDT_RESOURCE_PERF_PKG breaks both of those assumptions.
+But some resources may need to add a file to the info/{resource}
+directory for debug purposes.
 
-Delay the final enumeration of the number of RMIDs and subsequent
-allocation of structures until first mount of the resctrl file system.
+Add a new rdt_resource::info_file field for the resource to specify
+show() and/or write() operations. These will be called with the
+rdtgroup_mutex held.
+
+Architecture can note the file is only for debug using by setting
+the rftype::flags RFTYPE_DEBUG bit.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- fs/resctrl/internal.h              |  4 ++-
- arch/x86/kernel/cpu/resctrl/core.c |  8 +++--
- fs/resctrl/monitor.c               | 58 +++++++++++++-----------------
- fs/resctrl/rdtgroup.c              | 12 +++++--
- 4 files changed, 42 insertions(+), 40 deletions(-)
+ include/linux/resctrl.h | 33 +++++++++++++++++++++++++++
+ fs/resctrl/internal.h   | 31 ++-----------------------
+ fs/resctrl/rdtgroup.c   | 50 ++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 82 insertions(+), 32 deletions(-)
 
+diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+index b7e15abcde23..e067007c633c 100644
+--- a/include/linux/resctrl.h
++++ b/include/linux/resctrl.h
+@@ -73,6 +73,37 @@ enum resctrl_conf_type {
+ 
+ #define CDP_NUM_TYPES	(CDP_DATA + 1)
+ 
++/**
++ * struct rftype - describe each file in the resctrl file system
++ * @name:	File name
++ * @mode:	Access mode
++ * @kf_ops:	File operations
++ * @flags:	File specific RFTYPE_FLAGS_* flags
++ * @fflags:	File specific RFTYPE_* flags
++ * @seq_show:	Show content of the file
++ * @write:	Write to the file
++ */
++struct rftype {
++	char			*name;
++	umode_t			mode;
++	const struct kernfs_ops	*kf_ops;
++	unsigned long		flags;
++	unsigned long		fflags;
++
++	int (*seq_show)(struct kernfs_open_file *of,
++			struct seq_file *sf, void *v);
++	/*
++	 * write() is the generic write callback which maps directly to
++	 * kernfs write operation and overrides all other operations.
++	 * Maximum write size is determined by ->max_write_len.
++	 */
++	ssize_t (*write)(struct kernfs_open_file *of,
++			 char *buf, size_t nbytes, loff_t off);
++};
++
++/* Only rftype::flags option available to architecture code */
++#define RFTYPE_DEBUG			BIT(10)
++
+ /*
+  * struct pseudo_lock_region - pseudo-lock region information
+  * @s:			Resctrl schema for the resource to which this
+@@ -281,6 +312,7 @@ enum resctrl_schema_fmt {
+  * @mbm_cfg_mask:	Bandwidth sources that can be tracked when bandwidth
+  *			monitoring events can be configured.
+  * @cdp_capable:	Is the CDP feature available on this resource
++ * @info_file:		Optional per-resource debug info file
+  */
+ struct rdt_resource {
+ 	int			rid;
+@@ -297,6 +329,7 @@ struct rdt_resource {
+ 	enum resctrl_schema_fmt	schema_fmt;
+ 	unsigned int		mbm_cfg_mask;
+ 	bool			cdp_capable;
++	struct rftype		info_file;
+ };
+ 
+ /*
 diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
-index 64c1c226d676..1f4800cfcd6a 100644
+index 1f4800cfcd6a..f13b63804c1a 100644
 --- a/fs/resctrl/internal.h
 +++ b/fs/resctrl/internal.h
-@@ -348,6 +348,8 @@ int alloc_rmid(u32 closid);
+@@ -232,7 +232,8 @@ struct rdtgroup {
  
- void free_rmid(u32 closid, u32 rmid);
+ #define RFTYPE_RES_MB			BIT(9)
  
-+int resctrl_mon_dom_data_init(void);
-+
- void resctrl_mon_resource_exit(void);
+-#define RFTYPE_DEBUG			BIT(10)
++// RFTYPE_DEBUG available to architecture code in <linux/resctrl.h>
++//#define RFTYPE_DEBUG			BIT(10)
  
- void mon_event_count(void *info);
-@@ -358,7 +360,7 @@ void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
- 		    struct rdt_l3_mon_domain *d, struct rdtgroup *rdtgrp,
- 		    cpumask_t *cpumask, struct mon_evt *evt, int first);
+ #define RFTYPE_RES_PERF_PKG		BIT(11)
  
--int resctrl_mon_resource_init(void);
-+void resctrl_mon_l3_resource_init(void);
+@@ -251,34 +252,6 @@ extern struct list_head rdt_all_groups;
  
- void mbm_setup_overflow_handler(struct rdt_l3_mon_domain *dom,
- 				unsigned long delay_ms,
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index b23309566500..8a9ceb03e252 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -111,10 +111,14 @@ struct rdt_hw_resource rdt_resources_all[RDT_NUM_RESOURCES] = {
+ extern int max_name_width;
  
- u32 resctrl_arch_system_num_rmid_idx(void)
- {
--	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
-+	u32 num_rmids = U32_MAX;
-+	struct rdt_resource *r;
-+
-+	for_each_mon_capable_rdt_resource(r)
-+		num_rmids = min(num_rmids, r->num_rmid);
- 
- 	/* RMID are independent numbers for x86. num_rmid_idx == num_rmid */
--	return r->num_rmid;
-+	return num_rmids;
- }
- 
- struct rdt_resource *resctrl_arch_get_resource(enum resctrl_res_level l)
-diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
-index f24a568f7b67..6041cb304624 100644
---- a/fs/resctrl/monitor.c
-+++ b/fs/resctrl/monitor.c
-@@ -775,15 +775,27 @@ void mbm_setup_overflow_handler(struct rdt_l3_mon_domain *dom, unsigned long del
- 		schedule_delayed_work_on(cpu, &dom->mbm_over, delay);
- }
- 
--static int dom_data_init(struct rdt_resource *r)
-+/*
-+ * resctrl_dom_data_init() - Initialise global monitoring structures.
-+ *
-+ * Allocate and initialise global monitor resources that do not belong to a
-+ * specific domain. i.e. the rmid_ptrs[] used for the limbo and free lists.
-+ * Called once during boot after the struct rdt_resource's have been configured
-+ * but before the filesystem is mounted.
-+ * Resctrl's cpuhp callbacks may be called before this point to bring a domain
-+ * online.
-+ *
-+ * Returns 0 for success, or -ENOMEM.
-+ */
-+int resctrl_mon_dom_data_init(void)
- {
-+	struct rdt_resource *r = resctrl_arch_get_resource(RDT_RESOURCE_L3);
- 	u32 idx_limit = resctrl_arch_system_num_rmid_idx();
- 	u32 num_closid = resctrl_arch_get_num_closid(r);
- 	struct rmid_entry *entry = NULL;
--	int err = 0, i;
- 	u32 idx;
-+	int i;
- 
--	mutex_lock(&rdtgroup_mutex);
- 	if (IS_ENABLED(CONFIG_RESCTRL_RMID_DEPENDS_ON_CLOSID)) {
- 		u32 *tmp;
- 
-@@ -794,10 +806,8 @@ static int dom_data_init(struct rdt_resource *r)
- 		 * use.
- 		 */
- 		tmp = kcalloc(num_closid, sizeof(*tmp), GFP_KERNEL);
--		if (!tmp) {
--			err = -ENOMEM;
--			goto out_unlock;
--		}
-+		if (!tmp)
-+			return -ENOMEM;
- 
- 		closid_num_dirty_rmid = tmp;
- 	}
-@@ -808,8 +818,7 @@ static int dom_data_init(struct rdt_resource *r)
- 			kfree(closid_num_dirty_rmid);
- 			closid_num_dirty_rmid = NULL;
- 		}
--		err = -ENOMEM;
--		goto out_unlock;
-+		return -ENOMEM;
- 	}
- 
- 	for (i = 0; i < idx_limit; i++) {
-@@ -830,13 +839,10 @@ static int dom_data_init(struct rdt_resource *r)
- 	entry = __rmid_entry(idx);
- 	list_del(&entry->list);
- 
--out_unlock:
--	mutex_unlock(&rdtgroup_mutex);
+-/**
+- * struct rftype - describe each file in the resctrl file system
+- * @name:	File name
+- * @mode:	Access mode
+- * @kf_ops:	File operations
+- * @flags:	File specific RFTYPE_FLAGS_* flags
+- * @fflags:	File specific RFTYPE_* flags
+- * @seq_show:	Show content of the file
+- * @write:	Write to the file
+- */
+-struct rftype {
+-	char			*name;
+-	umode_t			mode;
+-	const struct kernfs_ops	*kf_ops;
+-	unsigned long		flags;
+-	unsigned long		fflags;
 -
--	return err;
-+	return 0;
- }
- 
--static void dom_data_exit(struct rdt_resource *r)
-+static void resctrl_mon_dom_data_exit(struct rdt_resource *r)
- {
- 	mutex_lock(&rdtgroup_mutex);
- 
-@@ -943,28 +949,14 @@ bool resctrl_is_mon_event_enabled(enum resctrl_event_id evtid)
- }
- 
+-	int (*seq_show)(struct kernfs_open_file *of,
+-			struct seq_file *sf, void *v);
+-	/*
+-	 * write() is the generic write callback which maps directly to
+-	 * kernfs write operation and overrides all other operations.
+-	 * Maximum write size is determined by ->max_write_len.
+-	 */
+-	ssize_t (*write)(struct kernfs_open_file *of,
+-			 char *buf, size_t nbytes, loff_t off);
+-};
+-
  /**
-- * resctrl_mon_resource_init() - Initialise global monitoring structures.
-- *
-- * Allocate and initialise global monitor resources that do not belong to a
-- * specific domain. i.e. the rmid_ptrs[] used for the limbo and free lists.
-- * Called once during boot after the struct rdt_resource's have been configured
-- * but before the filesystem is mounted.
-- * Resctrl's cpuhp callbacks may be called before this point to bring a domain
-- * online.
-- *
-- * Returns 0 for success, or -ENOMEM.
-+ * resctrl_mon_l3_resource_init() - Initialise L3 configuration options.
-  */
--int resctrl_mon_resource_init(void)
-+void resctrl_mon_l3_resource_init(void)
- {
- 	struct rdt_resource *r = resctrl_arch_get_resource(RDT_RESOURCE_L3);
--	int ret;
- 
- 	if (!r->mon_capable)
--		return 0;
--
--	ret = dom_data_init(r);
--	if (ret)
--		return ret;
-+		return;
- 
- 	if (resctrl_arch_is_evt_configurable(QOS_L3_MBM_TOTAL_EVENT_ID)) {
- 		mon_event_all[QOS_L3_MBM_TOTAL_EVENT_ID].configurable = true;
-@@ -981,13 +973,11 @@ int resctrl_mon_resource_init(void)
- 		mba_mbps_default_event = QOS_L3_MBM_LOCAL_EVENT_ID;
- 	else if (resctrl_is_mon_event_enabled(QOS_L3_MBM_TOTAL_EVENT_ID))
- 		mba_mbps_default_event = QOS_L3_MBM_TOTAL_EVENT_ID;
--
--	return 0;
- }
- 
- void resctrl_mon_resource_exit(void)
- {
- 	struct rdt_resource *r = resctrl_arch_get_resource(RDT_RESOURCE_L3);
- 
--	dom_data_exit(r);
-+	resctrl_mon_dom_data_exit(r);
- }
+  * struct mbm_state - status for each MBM counter in each domain
+  * @prev_bw_bytes: Previous bytes value read for bandwidth calculation
 diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index 6078cdd5cad0..e212e46e0780 100644
+index e212e46e0780..f09674c209f8 100644
 --- a/fs/resctrl/rdtgroup.c
 +++ b/fs/resctrl/rdtgroup.c
-@@ -2583,6 +2583,7 @@ static int rdt_get_tree(struct fs_context *fc)
- 	unsigned long flags = RFTYPE_CTRL_BASE;
- 	struct rdt_l3_mon_domain *dom;
- 	struct rdt_resource *r;
-+	static bool once;
- 	int ret;
+@@ -329,6 +329,37 @@ static const struct kernfs_ops rdtgroup_kf_single_ops = {
+ 	.seq_show		= rdtgroup_seqfile_show,
+ };
  
- 	resctrl_arch_pre_mount();
-@@ -2597,6 +2598,13 @@ static int rdt_get_tree(struct fs_context *fc)
- 		goto out;
- 	}
++static int rdtgroup_seqfile_show_locked(struct seq_file *m, void *arg)
++{
++	struct kernfs_open_file *of = m->private;
++	struct rftype *rft = of->kn->priv;
++
++	guard(mutex)(&rdtgroup_mutex);
++
++	if (rft->seq_show)
++		return rft->seq_show(of, m, arg);
++	return 0;
++}
++
++static ssize_t rdtgroup_file_write_locked(struct kernfs_open_file *of, char *buf,
++					  size_t nbytes, loff_t off)
++{
++	struct rftype *rft = of->kn->priv;
++
++	guard(mutex)(&rdtgroup_mutex);
++
++	if (rft->write)
++		return rft->write(of, buf, nbytes, off);
++
++	return -EINVAL;
++}
++
++static const struct kernfs_ops rdtgroup_kf_single_locked_ops = {
++	.atomic_write_len	= PAGE_SIZE,
++	.write			= rdtgroup_file_write_locked,
++	.seq_show		= rdtgroup_seqfile_show_locked,
++};
++
+ static const struct kernfs_ops kf_mondata_ops = {
+ 	.atomic_write_len	= PAGE_SIZE,
+ 	.seq_show		= rdtgroup_mondata_show,
+@@ -2162,7 +2193,7 @@ int rdtgroup_kn_mode_restore(struct rdtgroup *r, const char *name,
+ 	return ret;
+ }
  
-+	if (resctrl_arch_mon_capable() && !once) {
-+		ret = resctrl_mon_dom_data_init();
+-static int rdtgroup_mkdir_info_resdir(void *priv, char *name,
++static int rdtgroup_mkdir_info_resdir(struct rdt_resource *r, void *priv, char *name,
+ 				      unsigned long fflags)
+ {
+ 	struct kernfs_node *kn_subdir;
+@@ -2177,6 +2208,19 @@ static int rdtgroup_mkdir_info_resdir(void *priv, char *name,
+ 	if (ret)
+ 		return ret;
+ 
++	if (r->info_file.name &&
++	    (!(r->info_file.flags & RFTYPE_DEBUG) || resctrl_debug)) {
++		r->info_file.mode = 0;
++		if (r->info_file.seq_show)
++			r->info_file.mode |= 0444;
++		if (r->info_file.write)
++			r->info_file.mode |= 0200;
++		r->info_file.kf_ops = &rdtgroup_kf_single_locked_ops;
++		ret = rdtgroup_add_file(kn_subdir, &r->info_file);
 +		if (ret)
-+			goto out;
-+		once = true;
++			return ret;
 +	}
 +
- 	ret = rdtgroup_setup_root(ctx);
- 	if (ret)
- 		goto out;
-@@ -4290,9 +4298,7 @@ int resctrl_init(void)
- 
- 	thread_throttle_mode_init();
- 
--	ret = resctrl_mon_resource_init();
--	if (ret)
--		return ret;
-+	resctrl_mon_l3_resource_init();
- 
- 	ret = sysfs_create_mount_point(fs_kobj, "resctrl");
- 	if (ret) {
+ 	ret = rdtgroup_add_files(kn_subdir, fflags);
+ 	if (!ret)
+ 		kernfs_activate(kn_subdir);
+@@ -2221,7 +2265,7 @@ static int rdtgroup_create_info_dir(struct kernfs_node *parent_kn)
+ 	list_for_each_entry(s, &resctrl_schema_all, list) {
+ 		r = s->res;
+ 		fflags = fflags_from_resource(r) | RFTYPE_CTRL_INFO;
+-		ret = rdtgroup_mkdir_info_resdir(s, s->name, fflags);
++		ret = rdtgroup_mkdir_info_resdir(r, s, s->name, fflags);
+ 		if (ret)
+ 			goto out_destroy;
+ 	}
+@@ -2229,7 +2273,7 @@ static int rdtgroup_create_info_dir(struct kernfs_node *parent_kn)
+ 	for_each_mon_capable_rdt_resource(r) {
+ 		fflags = fflags_from_resource(r) | RFTYPE_MON_INFO;
+ 		sprintf(name, "%s_MON", r->name);
+-		ret = rdtgroup_mkdir_info_resdir(r, name, fflags);
++		ret = rdtgroup_mkdir_info_resdir(r, r, name, fflags);
+ 		if (ret)
+ 			goto out_destroy;
+ 	}
 -- 
 2.49.0
 
