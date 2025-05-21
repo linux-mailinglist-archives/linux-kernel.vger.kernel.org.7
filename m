@@ -1,237 +1,127 @@
-Return-Path: <linux-kernel+bounces-656985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54CE2ABED61
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:59:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D66ABED67
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06D891689E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:59:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D04916BE20
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382E12356B8;
-	Wed, 21 May 2025 07:59:43 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1092356C7;
+	Wed, 21 May 2025 08:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2/9uM/U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD261199EAF;
-	Wed, 21 May 2025 07:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434871DC9A3;
+	Wed, 21 May 2025 08:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747814382; cv=none; b=MCeVbHw0krxwSSXJhLnm66GWlA4T5kU90rjj9ypHzKOO1wGk4NtY1KqA5NuCsELcnXCz2pkg5/IwISm29AaLXUeHtd59cwfGO/6sIF9qWUuuNoX0x697ExGaGErL6Wx5XQ/M4ybJhifgHvmMmbyYsnBbRTBhWnLqzQbNTO05yl0=
+	t=1747814435; cv=none; b=UF+gwo7vt40di+yDXkStR3nF7RRlK3x+dvNGmMa9goNtCdPV+BzFRBZmRssbvTOq9oH2d5nhIo+GpPfEjRnBXwtkFC/waakzIrafOgQlhXAAthkHbSmX/outFg1fMuHGYRSttsliQXD7hcJloRrOdL9/otP+9yHPEUK7KGplCyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747814382; c=relaxed/simple;
-	bh=q0MYXjYvjOE04gqmO4XaSD8Y5pEGPUj4OuusRDg8o3s=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=jZVkrtL7evRtI1NBHUFP0VEcYhlf1gPLWlFMLK3JLIE5VrBV9t17TGBa/mNRRqKsSCGh5Og7kcoIriuoHRz4QE4SSKIwxWXSrlInT5K8TEsiZVnESIT/p3fwajcI5GGb2Qc/KmOcN9rPuyxMBwZ8VeOgi3hh1QjAgVgxxZXWNQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4b2P2r41Y0z4x6DP;
-	Wed, 21 May 2025 15:59:32 +0800 (CST)
-Received: from njy2app08.zte.com.cn ([10.40.13.206])
-	by mse-fl2.zte.com.cn with SMTP id 54L7wmZv094717;
-	Wed, 21 May 2025 15:59:08 +0800 (+08)
-	(envelope-from long.yunjian@zte.com.cn)
-Received: from mapi (njy2app03[null])
-	by mapi (Zmail) with MAPI id mid201;
-	Wed, 21 May 2025 15:59:10 +0800 (CST)
-Date: Wed, 21 May 2025 15:59:10 +0800 (CST)
-X-Zmail-TransId: 2afb682d87ce225-b2bd2
-X-Mailer: Zmail v1.0
-Message-ID: <2025052115591093831MdOvruWdMiauIhA8-r3@zte.com.cn>
-In-Reply-To: <eb0b9f89-8c34-4d30-87bd-c4e631f5b1b7@wanadoo.fr>
-References: 20250515203855146Sn9x-Uw9Teur35mOjn41C@zte.com.cn,eb0b9f89-8c34-4d30-87bd-c4e631f5b1b7@wanadoo.fr
+	s=arc-20240116; t=1747814435; c=relaxed/simple;
+	bh=NXbCTTtiVf1hxjNTRc1GM2RzoMelIfvrZhBNyZ0cQJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tezvQDPv/iRw5dtmRKYa3j4SrxQDKRq4ELMX3+qSBdxUsR5ccoY3IK2XSyrleBldZfiUZy7GxJqqk24Ve3muqpkwxz5+2w25HWZMLxbveyR13jSdENS/OV43f/w/6K0QPsa1RVrnEZIu1WrK8sMoCgvDUznU4NfWdFbNvrzSF4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2/9uM/U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 149D9C4CEE4;
+	Wed, 21 May 2025 08:00:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747814434;
+	bh=NXbCTTtiVf1hxjNTRc1GM2RzoMelIfvrZhBNyZ0cQJs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m2/9uM/UEfrYjyZRB5+ZA8Cs/2Hmzow+6pqeB30HS4fYP9dE/0yDvbAta6DX0hKcW
+	 CdgvE2HGDxvB86ylvjwlpAQ5UlZ4FF2laz60QCYmYwsos8qZEvzO3e1hi84Yw8u8BA
+	 DrrnFuSjhGIQm7wGHSLQ6OYQUUb1p1BrhVK33smEnGBJK5BS2Pn/Dm+JZ59cH5UXlB
+	 uX1S5xdpjDt0HVVsA2hkx9HZdS2hwH+jsMeNXLRPxUu9VvQYzlhAzklsccQ2PKfVHQ
+	 UFFTZj3xOBMhocKbIJO49SEeXDGfWr0b/lDVE6GUSfsfGSJI3fMRxLFuvBUr68wz7o
+	 cZRSU6h8DYctw==
+Date: Wed, 21 May 2025 10:00:27 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 01/20] rust: dma: expose the count and size of
+ CoherentAllocation
+Message-ID: <aC2IG7amsKLk6G0a@pollux>
+References: <20250521-nova-frts-v4-0-05dfd4f39479@nvidia.com>
+ <20250521-nova-frts-v4-1-05dfd4f39479@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <long.yunjian@zte.com.cn>
-To: <christophe.jaillet@wanadoo.fr>, <sudeep.holla@arm.com>,
-        <dan.carpenter@linaro.org>
-Cc: <cristian.marussi@arm.com>, <peng.fan@nxp.com>, <justin.chen@broadcom.com>,
-        <florian.fainelli@broadcom.com>, <arm-scmi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <fang.yumeng@zte.com.cn>, <mou.yi@zte.com.cn>,
-        <ouyang.maochun@zte.com.cn>, <xu.lifeng1@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gZmlybXdhcmU6IGFybV9zY21pOiBVc2UgZGV2X2Vycl9wcm9iZSgpIHNpbXBsaWZ5IHRoZSBjb2Rl?=
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL:mse-fl2.zte.com.cn 54L7wmZv094717
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 682D87E4.000/4b2P2r41Y0z4x6DP
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250521-nova-frts-v4-1-05dfd4f39479@nvidia.com>
 
+On Wed, May 21, 2025 at 03:44:56PM +0900, Alexandre Courbot wrote:
+> These properties are very useful to have and should be accessible.
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+>  rust/kernel/dma.rs | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
+> index 605e01e35715667f93297fd9ec49d8e7032e0910..2a60eefa47dfc1f836c30ee342e26c6ff3e9b13a 100644
+> --- a/rust/kernel/dma.rs
+> +++ b/rust/kernel/dma.rs
+> @@ -129,6 +129,10 @@ pub mod attrs {
+>  //
+>  // Hence, find a way to revoke the device resources of a `CoherentAllocation`, but not the
+>  // entire `CoherentAllocation` including the allocated memory itself.
+> +//
+> +// # Invariants
+> +//
+> +// The size in bytes of the allocation is equal to `size_of::<T> * count()`.
 
+I think this also needs an invariant comment whenever self.count is set.
 
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
-
-
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
-
-
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-PiBEYW4gQ2FycGVudGVyOg0KPiBJdCdzIHByb2JhYmx5IGJldHRlciB0byBnZXQgcmlkIG9mIHRo
-ZSAicmV0ID0gUFRSX0VSUihzbWJveC0+Y2hhbik7Ig0KPiBhc3NpZ25tZW50IGFzIHdlbGwuICBU
-aGVuIGl0J3MgYSBvbmUgbGluZXI6DQo+DQo+ICAgICAgIGlmIChJU19FUlIoc21ib3gtPmNoYW4p
-KQ0KPiAgICAgICAgIHJldHVybiBkZXZfZXJyX3Byb2JlKGNkZXYsIFBUUl9FUlIoc21ib3gtPmNo
-YW4pLA0KPiAgICAgICAgICAgICAgICAgICAgICAiZmFpbGVkIHRvIHJlcXVlc3QgU0NNSSAlcyBt
-YWlsYm94XG4iLCBkZXNjKTsNCj4NCj4gQ2hyaXN0b3BoZSBKYWlsbGV0Og0KPj4gICNpbmNsdWRl
-IDxsaW51eC9vZl9hZGRyZXNzLmg+DQo+PiAgI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2Rldmlj
-ZS5oPg0KPj4gICNpbmNsdWRlIDxsaW51eC9zbGFiLmg+DQo+PiArI2luY2x1ZGUgPGxpbnV4L2Rl
-dl9wcmludGsuaD4NCj4NCj4gaW5jbHVkZXMgYXJlIChtb3N0bHkpIGFscGhhYmV0aWNhbGx5IG9y
-ZGVyZWQgcmlnaHQtbm93Lg0KPiBTbywgSXQgd291bGQgYmUgYmV0dGVyIHRvIGtlZXAgdGhpcyBs
-b2dpYywgSU1ITy4NCg0KDQpEZWFyIERhbiBDYXJwZW50ZXIgYW5kIENocmlzdG9waGUgSmFpbGxl
-dCwNClRoYW5rIHlvdSBib3RoIGZvciB5b3VyIGludmFsdWFibGUgc3VnZ2VzdGlvbnMhIA0KSSBo
-YXZlIHRob3JvdWdobHkgcmV2aXNlZCB0aGUgY29kZSBiYXNlZCBvbiB5b3VyIGZlZWRiYWNrLg0K
-SSB3aWxsIHNlbmQgdGhlIFBBVENIIFYyIGFuZCBsb29rIGZvcndhcmQgdG8geW91ciBmdXJ0aGVy
-IHJldmlldy4NCg0KDQpCZXN0IHJlZ2FyZHMsDQpGYW5nIFl1bWVuZw0KDQpPcmlnaW5hbA0KDQoN
-CkZyb206IGNocmlzdG9waGUuamFpbGxldCA8Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI+
-DQpUbzogTG9uZyBZdW5qaWFuMTAxNzE2OTk7c3VkZWVwLmhvbGxhIDxzdWRlZXAuaG9sbGFAYXJt
-LmNvbT47DQpDYzogY3Jpc3RpYW4ubWFydXNzaSA8Y3Jpc3RpYW4ubWFydXNzaUBhcm0uY29tPjtw
-ZW5nLmZhbiA8cGVuZy5mYW5AbnhwLmNvbT47anVzdGluLmNoZW4gPGp1c3Rpbi5jaGVuQGJyb2Fk
-Y29tLmNvbT47Zmxvcmlhbi5mYWluZWxsaSA8Zmxvcmlhbi5mYWluZWxsaUBicm9hZGNvbS5jb20+
-O2FybS1zY21pIDxhcm0tc2NtaUB2Z2VyLmtlcm5lbC5vcmc+O2xpbnV4LWFybS1rZXJuZWwgPGxp
-bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZz47bGludXgta2VybmVsIDxsaW51eC1r
-ZXJuZWxAdmdlci5rZXJuZWwub3JnPjtGYW5nIFl1bWVuZzAwMzM2NDM4O01vdSBZaTEwMjA1NTA4
-O091eWFuZyBNYW9jaHVuMTAwOTA1MDQ7WHUgTGlmZW5nMTAwMTM0NjU7DQpEYXRlOiAyMDI1LzA1
-LzE2IDIzOjI2DQpTdWJqZWN0OiBSZTogW1BBVENIXSBmaXJtd2FyZTogYXJtX3NjbWk6IFVzZSBk
-ZXZfZXJyX3Byb2JlKCkgc2ltcGxpZnkgdGhlIGNvZGUNCg0KTGUgMTUvMDUvMjAyNSDDoCAxNDoz
-OCwgbG9uZy55dW5qaWFuQHp0ZS5jb20uY24gYSDDqWNyaXQgOg0KPiBGcm9tOiBZdW1lbmcgRmFu
-ZyA8ZmFuZy55dW1lbmdAenRlLmNvbS5jbj4gDQo+ICANCj4gSW4gdGhlIHByb2JlIHBhdGgsIGRl
-dl9lcnIoKSBjYW4gYmUgcmVwbGFjZWQgd2l0aCBkZXZfZXJyX3Byb2JlKCkNCj4gd2hpY2ggd2ls
-bCBjaGVjayBpZiBlcnJvciBjb2RlIGlzIC1FUFJPQkVfREVGRVIgYW5kIHByaW50cyB0aGUNCj4g
-ZXJyb3IgbmFtZS4gSXQgYWxzbyBzZXRzIHRoZSBkZWZlciBwcm9iZSByZWFzb24gd2hpY2ggY2Fu
-IGJlDQo+IGNoZWNrZWQgbGF0ZXIgdGhyb3VnaCBkZWJ1Z2ZzLg0KPiAgDQo+IFNpZ25lZC1vZmYt
-Ynk6IFl1bWVuZyBGYW5nIDxmYW5nLnl1bWVuZ0B6dGUuY29tLmNuPiANCj4gLS0tDQo+ICAgZHJp
-dmVycy9maXJtd2FyZS9hcm1fc2NtaS90cmFuc3BvcnRzL21haWxib3guYyB8IDE3ICsrKysrKyst
-LS0tLS0tLS0tDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRp
-b25zKC0pDQo+ICANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZmlybXdhcmUvYXJtX3NjbWkvdHJh
-bnNwb3J0cy9tYWlsYm94LmMgYi9kcml2ZXJzL2Zpcm13YXJlL2FybV9zY21pL3RyYW5zcG9ydHMv
-bWFpbGJveC5jDQo+IGluZGV4IGJkMDQxYzk5YjkyYi4uODE2ZTc5NTM3OTM1IDEwMDY0NA0KPiAt
-LS0gYS9kcml2ZXJzL2Zpcm13YXJlL2FybV9zY21pL3RyYW5zcG9ydHMvbWFpbGJveC5jDQo+ICsr
-KyBiL2RyaXZlcnMvZmlybXdhcmUvYXJtX3NjbWkvdHJhbnNwb3J0cy9tYWlsYm94LmMNCj4gQEAg
-LTEzLDYgKzEzLDcgQEANCj4gICAjaW5jbHVkZSA8bGludXgvb2ZfYWRkcmVzcy5oPiANCj4gICAj
-aW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+IA0KPiAgICNpbmNsdWRlIDxsaW51eC9z
-bGFiLmg+IA0KPiArI2luY2x1ZGUgPGxpbnV4L2Rldl9wcmludGsuaD4gDQo+ICANCiANCmluY2x1
-ZGVzIGFyZSAobW9zdGx5KSBhbHBoYWJldGljYWxseSBvcmRlcmVkIHJpZ2h0LW5vdy4NClNvLCBJ
-dCB3b3VsZCBiZSBiZXR0ZXIgdG8ga2VlcCB0aGlzIGxvZ2ljLCBJTUhPLg0KIA0KQ0o=
-
-
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-PGRpdiBjbGFzcz0iemNvbnRlbnRSb3ciPjxwPiZndDsgRGFuIENhcnBlbnRlcjo8L3A+PHA+Jmd0
-OyBJdCdzIHByb2JhYmx5IGJldHRlciB0byBnZXQgcmlkIG9mIHRoZSAicmV0ID0gUFRSX0VSUihz
-bWJveC0mZ3Q7Y2hhbik7IjwvcD48cD4mZ3Q7IGFzc2lnbm1lbnQgYXMgd2VsbC4mbmJzcDsgVGhl
-biBpdCdzIGEgb25lIGxpbmVyOjwvcD48cD4mZ3Q7PC9wPjxwPiZndDsmbmJzcDsgJm5ic3A7ICZu
-YnNwOyAmbmJzcDtpZiAoSVNfRVJSKHNtYm94LSZndDtjaGFuKSk8L3A+PHA+Jmd0OyZuYnNwOyAm
-bmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDtyZXR1cm4gZGV2X2Vycl9wcm9iZShjZGV2LCBQVFJf
-RVJSKHNtYm94LSZndDtjaGFuKSw8L3A+PHA+Jmd0OyZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNw
-OyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgImZhaWxl
-ZCB0byByZXF1ZXN0IFNDTUkgJXMgbWFpbGJveFxuIiwgZGVzYyk7PC9wPjxwPiZndDs8L3A+PHA+
-Jmd0OyBDaHJpc3RvcGhlIEphaWxsZXQ6PC9wPjxwPiZndDsmZ3Q7Jm5ic3A7ICNpbmNsdWRlICZs
-dDtsaW51eC9vZl9hZGRyZXNzLmgmZ3Q7PC9wPjxwPiZndDsmZ3Q7Jm5ic3A7ICNpbmNsdWRlICZs
-dDtsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaCZndDs8L3A+PHA+Jmd0OyZndDsmbmJzcDsgI2luY2x1
-ZGUgJmx0O2xpbnV4L3NsYWIuaCZndDs8L3A+PHA+Jmd0OyZndDsgKyNpbmNsdWRlICZsdDtsaW51
-eC9kZXZfcHJpbnRrLmgmZ3Q7PC9wPjxwPiZndDs8L3A+PHA+Jmd0OyBpbmNsdWRlcyBhcmUgKG1v
-c3RseSkgYWxwaGFiZXRpY2FsbHkgb3JkZXJlZCByaWdodC1ub3cuPC9wPjxwPiZndDsgU28sIEl0
-IHdvdWxkIGJlIGJldHRlciB0byBrZWVwIHRoaXMgbG9naWMsIElNSE8uPC9wPjxwPjxicj48L3A+
-PHA+PGJyPjwvcD48cD5EZWFyIERhbiBDYXJwZW50ZXIgYW5kIENocmlzdG9waGUgSmFpbGxldCw8
-L3A+PHA+VGhhbmsgeW91IGJvdGggZm9yIHlvdXIgaW52YWx1YWJsZSBzdWdnZXN0aW9ucyEmbmJz
-cDs8L3A+PHA+SSBoYXZlIHRob3JvdWdobHkgcmV2aXNlZCB0aGUgY29kZSBiYXNlZCBvbiB5b3Vy
-IGZlZWRiYWNrLjwvcD48cD5JIHdpbGwgc2VuZCB0aGUgUEFUQ0ggVjIgYW5kIGxvb2sgZm9yd2Fy
-ZCB0byB5b3VyIGZ1cnRoZXIgcmV2aWV3LjwvcD48cD48YnI+PC9wPjxwPjxicj48L3A+PHA+QmVz
-dCByZWdhcmRzLDwvcD48cD5GYW5nIFl1bWVuZzwvcD48ZGl2IGNsYXNzPSJ6aGlzdG9yeVJvdyIg
-c3R5bGU9ImRpc3BsYXk6YmxvY2siPjxkaXYgY2xhc3M9InpoaXN0b3J5RGVzIiBzdHlsZT0id2lk
-dGg6IDEwMCU7IGhlaWdodDogMjhweDsgbGluZS1oZWlnaHQ6IDI4cHg7IGJhY2tncm91bmQtY29s
-b3I6ICNFMEU1RTk7IGNvbG9yOiAjMTM4OEZGOyB0ZXh0LWFsaWduOiBjZW50ZXI7Ij5PcmlnaW5h
-bDwvZGl2PjxkaXYgaWQ9Inp3cml0ZUhpc3RvcnlDb250YWluZXIiPjxkaXYgY2xhc3M9ImNvbnRy
-b2wtZ3JvdXAgemhpc3RvcnlQYW5lbCI+PGRpdiBjbGFzcz0iemhpc3RvcnlIZWFkZXIiIHN0eWxl
-PSJwYWRkaW5nOiA4cHg7IGJhY2tncm91bmQtY29sb3I6ICNGNUY2Rjg7Ij48ZGl2PjxzdHJvbmc+
-RnJvbTombmJzcDs8L3N0cm9uZz48c3BhbiBjbGFzcz0ienJlYWRVc2VyTmFtZSI+Y2hyaXN0b3Bo
-ZS5qYWlsbGV0ICZsdDtjaHJpc3RvcGhlLmphaWxsZXRAd2FuYWRvby5mciZndDs8L3NwYW4+PC9k
-aXY+PGRpdj48c3Ryb25nPlRvOiZuYnNwOzwvc3Ryb25nPjxzcGFuIGNsYXNzPSJ6cmVhZFVzZXJO
-YW1lIiBzdHlsZT0iZGlzcGxheTogaW5saW5lOyI+TG9uZyBZdW5qaWFuMTAxNzE2OTk7PC9zcGFu
-PjxzcGFuIGNsYXNzPSJ6cmVhZFVzZXJOYW1lIiBzdHlsZT0iZGlzcGxheTogaW5saW5lOyI+c3Vk
-ZWVwLmhvbGxhICZsdDtzdWRlZXAuaG9sbGFAYXJtLmNvbSZndDs7PC9zcGFuPjwvZGl2PjxkaXY+
-PHN0cm9uZz5DYzombmJzcDs8L3N0cm9uZz48c3BhbiBjbGFzcz0ienJlYWRVc2VyTmFtZSIgc3R5
-bGU9ImRpc3BsYXk6IGlubGluZTsiPmNyaXN0aWFuLm1hcnVzc2kgJmx0O2NyaXN0aWFuLm1hcnVz
-c2lAYXJtLmNvbSZndDs7PC9zcGFuPjxzcGFuIGNsYXNzPSJ6cmVhZFVzZXJOYW1lIiBzdHlsZT0i
-ZGlzcGxheTogaW5saW5lOyI+cGVuZy5mYW4gJmx0O3BlbmcuZmFuQG54cC5jb20mZ3Q7Ozwvc3Bh
-bj48c3BhbiBjbGFzcz0ienJlYWRVc2VyTmFtZSIgc3R5bGU9ImRpc3BsYXk6IGlubGluZTsiPmp1
-c3Rpbi5jaGVuICZsdDtqdXN0aW4uY2hlbkBicm9hZGNvbS5jb20mZ3Q7Ozwvc3Bhbj48c3BhbiBj
-bGFzcz0ienJlYWRVc2VyTmFtZSIgc3R5bGU9ImRpc3BsYXk6IGlubGluZTsiPmZsb3JpYW4uZmFp
-bmVsbGkgJmx0O2Zsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tJmd0Ozs8L3NwYW4+PHNwYW4g
-Y2xhc3M9InpyZWFkVXNlck5hbWUiIHN0eWxlPSJkaXNwbGF5OiBpbmxpbmU7Ij5hcm0tc2NtaSAm
-bHQ7YXJtLXNjbWlAdmdlci5rZXJuZWwub3JnJmd0Ozs8L3NwYW4+PHNwYW4gY2xhc3M9InpyZWFk
-VXNlck5hbWUiIHN0eWxlPSJkaXNwbGF5OiBpbmxpbmU7Ij5saW51eC1hcm0ta2VybmVsICZsdDts
-aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcmZ3Q7Ozwvc3Bhbj48c3BhbiBjbGFz
-cz0ienJlYWRVc2VyTmFtZSIgc3R5bGU9ImRpc3BsYXk6IGlubGluZTsiPmxpbnV4LWtlcm5lbCAm
-bHQ7bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZyZndDs7PC9zcGFuPjxzcGFuIGNsYXNzPSJ6
-cmVhZFVzZXJOYW1lIiBzdHlsZT0iZGlzcGxheTogaW5saW5lOyI+RmFuZyBZdW1lbmcwMDMzNjQz
-ODs8L3NwYW4+PHNwYW4gY2xhc3M9InpyZWFkVXNlck5hbWUiIHN0eWxlPSJkaXNwbGF5OiBpbmxp
-bmU7Ij5Nb3UgWWkxMDIwNTUwODs8L3NwYW4+PHNwYW4gY2xhc3M9InpyZWFkVXNlck5hbWUiIHN0
-eWxlPSJkaXNwbGF5OiBpbmxpbmU7Ij5PdXlhbmcgTWFvY2h1bjEwMDkwNTA0Ozwvc3Bhbj48c3Bh
-biBjbGFzcz0ienJlYWRVc2VyTmFtZSIgc3R5bGU9ImRpc3BsYXk6IGlubGluZTsiPlh1IExpZmVu
-ZzEwMDEzNDY1Ozwvc3Bhbj48L2Rpdj48ZGl2PjxzdHJvbmc+RGF0ZTombmJzcDs8L3N0cm9uZz48
-c3BhbiBjbGFzcz0iIj4yMDI1LzA1LzE2IDIzOjI2PC9zcGFuPjwvZGl2PjxkaXY+PHN0cm9uZz5T
-dWJqZWN0OiZuYnNwOzwvc3Ryb25nPjxzcGFuIGNsYXNzPSJ6cmVhZFRpdGxlIj48c3Ryb25nPlJl
-OiBbUEFUQ0hdIGZpcm13YXJlOiBhcm1fc2NtaTogVXNlIGRldl9lcnJfcHJvYmUoKSBzaW1wbGlm
-eSB0aGUgY29kZTwvc3Ryb25nPjwvc3Bhbj48L2Rpdj48L2Rpdj48ZGl2IGNsYXNzPSJ6aGlzdG9y
-eUNvbnRlbnQiPkxlJm5ic3A7MTUvMDUvMjAyNSZuYnNwO8OgJm5ic3A7MTQ6MzgsJm5ic3A7bG9u
-Zy55dW5qaWFuQHp0ZS5jb20uY24mbmJzcDthJm5ic3A7w6ljcml0Jm5ic3A7Ojxicj4mZ3Q7Jm5i
-c3A7RnJvbTombmJzcDtZdW1lbmcmbmJzcDtGYW5nJm5ic3A7Jmx0O2ZhbmcueXVtZW5nQHp0ZS5j
-b20uY24mZ3Q7IDxicj4mZ3Q7Jm5ic3A7IDxicj4mZ3Q7Jm5ic3A7SW4mbmJzcDt0aGUmbmJzcDtw
-cm9iZSZuYnNwO3BhdGgsJm5ic3A7ZGV2X2VycigpJm5ic3A7Y2FuJm5ic3A7YmUmbmJzcDtyZXBs
-YWNlZCZuYnNwO3dpdGgmbmJzcDtkZXZfZXJyX3Byb2JlKCk8YnI+Jmd0OyZuYnNwO3doaWNoJm5i
-c3A7d2lsbCZuYnNwO2NoZWNrJm5ic3A7aWYmbmJzcDtlcnJvciZuYnNwO2NvZGUmbmJzcDtpcyZu
-YnNwOy1FUFJPQkVfREVGRVImbmJzcDthbmQmbmJzcDtwcmludHMmbmJzcDt0aGU8YnI+Jmd0OyZu
-YnNwO2Vycm9yJm5ic3A7bmFtZS4mbmJzcDtJdCZuYnNwO2Fsc28mbmJzcDtzZXRzJm5ic3A7dGhl
-Jm5ic3A7ZGVmZXImbmJzcDtwcm9iZSZuYnNwO3JlYXNvbiZuYnNwO3doaWNoJm5ic3A7Y2FuJm5i
-c3A7YmU8YnI+Jmd0OyZuYnNwO2NoZWNrZWQmbmJzcDtsYXRlciZuYnNwO3Rocm91Z2gmbmJzcDtk
-ZWJ1Z2ZzLjxicj4mZ3Q7Jm5ic3A7IDxicj4mZ3Q7Jm5ic3A7U2lnbmVkLW9mZi1ieTombmJzcDtZ
-dW1lbmcmbmJzcDtGYW5nJm5ic3A7Jmx0O2ZhbmcueXVtZW5nQHp0ZS5jb20uY24mZ3Q7IDxicj4m
-Z3Q7Jm5ic3A7LS0tPGJyPiZndDsmbmJzcDsmbmJzcDsmbmJzcDtkcml2ZXJzL2Zpcm13YXJlL2Fy
-bV9zY21pL3RyYW5zcG9ydHMvbWFpbGJveC5jJm5ic3A7fCZuYnNwOzE3Jm5ic3A7KysrKysrKy0t
-LS0tLS0tLS08YnI+Jmd0OyZuYnNwOyZuYnNwOyZuYnNwOzEmbmJzcDtmaWxlJm5ic3A7Y2hhbmdl
-ZCwmbmJzcDs3Jm5ic3A7aW5zZXJ0aW9ucygrKSwmbmJzcDsxMCZuYnNwO2RlbGV0aW9ucygtKTxi
-cj4mZ3Q7Jm5ic3A7IDxicj4mZ3Q7Jm5ic3A7ZGlmZiZuYnNwOy0tZ2l0Jm5ic3A7YS9kcml2ZXJz
-L2Zpcm13YXJlL2FybV9zY21pL3RyYW5zcG9ydHMvbWFpbGJveC5jJm5ic3A7Yi9kcml2ZXJzL2Zp
-cm13YXJlL2FybV9zY21pL3RyYW5zcG9ydHMvbWFpbGJveC5jPGJyPiZndDsmbmJzcDtpbmRleCZu
-YnNwO2JkMDQxYzk5YjkyYi4uODE2ZTc5NTM3OTM1Jm5ic3A7MTAwNjQ0PGJyPiZndDsmbmJzcDst
-LS0mbmJzcDthL2RyaXZlcnMvZmlybXdhcmUvYXJtX3NjbWkvdHJhbnNwb3J0cy9tYWlsYm94LmM8
-YnI+Jmd0OyZuYnNwOysrKyZuYnNwO2IvZHJpdmVycy9maXJtd2FyZS9hcm1fc2NtaS90cmFuc3Bv
-cnRzL21haWxib3guYzxicj4mZ3Q7Jm5ic3A7QEAmbmJzcDstMTMsNiZuYnNwOysxMyw3Jm5ic3A7
-QEA8YnI+Jmd0OyZuYnNwOyZuYnNwOyZuYnNwOyNpbmNsdWRlJm5ic3A7Jmx0O2xpbnV4L29mX2Fk
-ZHJlc3MuaCZndDsgPGJyPiZndDsmbmJzcDsmbmJzcDsmbmJzcDsjaW5jbHVkZSZuYnNwOyZsdDts
-aW51eC9wbGF0Zm9ybV9kZXZpY2UuaCZndDsgPGJyPiZndDsmbmJzcDsmbmJzcDsmbmJzcDsjaW5j
-bHVkZSZuYnNwOyZsdDtsaW51eC9zbGFiLmgmZ3Q7IDxicj4mZ3Q7Jm5ic3A7KyNpbmNsdWRlJm5i
-c3A7Jmx0O2xpbnV4L2Rldl9wcmludGsuaCZndDsgPGJyPiZndDsmbmJzcDsgPGJyPiA8YnI+aW5j
-bHVkZXMmbmJzcDthcmUmbmJzcDsobW9zdGx5KSZuYnNwO2FscGhhYmV0aWNhbGx5Jm5ic3A7b3Jk
-ZXJlZCZuYnNwO3JpZ2h0LW5vdy48YnI+U28sJm5ic3A7SXQmbmJzcDt3b3VsZCZuYnNwO2JlJm5i
-c3A7YmV0dGVyJm5ic3A7dG8mbmJzcDtrZWVwJm5ic3A7dGhpcyZuYnNwO2xvZ2ljLCZuYnNwO0lN
-SE8uPGJyPiA8YnI+Q0o8L2Rpdj48L2Rpdj48L2Rpdj48L2Rpdj48cD48YnI+PC9wPjwvZGl2Pg==
-
---=====_003_next=====--
-
---=====_002_next=====--
-
---=====_001_next=====--
-
+>  pub struct CoherentAllocation<T: AsBytes + FromBytes> {
+>      dev: ARef<Device>,
+>      dma_handle: bindings::dma_addr_t,
+> @@ -201,6 +205,20 @@ pub fn alloc_coherent(
+>          CoherentAllocation::alloc_attrs(dev, count, gfp_flags, Attrs(0))
+>      }
+>  
+> +    /// Returns the number of elements `T` in this allocation.
+> +    ///
+> +    /// Note that this is not the size of the allocation in bytes, which is provided by
+> +    /// [`Self::size`].
+> +    pub fn count(&self) -> usize {
+> +        self.count
+> +    }
+> +
+> +    /// Returns the size in bytes of this allocation.
+> +    pub fn size(&self) -> usize {
+> +        // As per the invariants of `CoherentAllocation`.
+> +        self.count * core::mem::size_of::<T>()
+> +    }
+> +
+>      /// Returns the base address to the allocated region in the CPU's virtual address space.
+>      pub fn start_ptr(&self) -> *const T {
+>          self.cpu_addr
+> 
+> -- 
+> 2.49.0
+> 
 
