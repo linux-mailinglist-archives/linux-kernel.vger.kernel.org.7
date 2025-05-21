@@ -1,68 +1,67 @@
-Return-Path: <linux-kernel+bounces-657835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97834ABF979
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9182ABF932
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DA4A4E034B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:34:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 822A616EB43
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636BF2206AA;
-	Wed, 21 May 2025 15:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCD01EB5D8;
+	Wed, 21 May 2025 15:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BAn5V7uA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NDihUauO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B812B189513;
-	Wed, 21 May 2025 15:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E835B1607A4;
+	Wed, 21 May 2025 15:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747841572; cv=none; b=bHdtnsaijjekicstUlHW77qTEIURojhXto1KQnXEBYKOaARaDcy1PGM2EHo1qDV+rCcKuea4wx4wj9rUt0J+z2hlXyqr8eic4RLUJvtJBl55qetlsXsS13KH8+54j/qnkuMWjqaOnVXrbT8JLTra6nVQUq2LEiLKqbaC7uq2YxY=
+	t=1747841245; cv=none; b=h4ZS2MgiF8ZAcsTkR9DpPieB903BWGiMGXHtyCW2B0JDAVespUEFHDGLRzMdAMu7Ntc9p0rpgYtO2eJGRDtaCjHomIJ5v3Vj1lTu21/TwLroZoYjLWc9lqYGr81HssZIs+g16NpQ+G60iYV/vlAWadwfR8VrX8a7dyIPS+//fdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747841572; c=relaxed/simple;
-	bh=PQ8yqnHUEFa5BUreHYRwSgQIVySTh+UdDqRcgs6i9lI=;
+	s=arc-20240116; t=1747841245; c=relaxed/simple;
+	bh=1Ss0ZBRaHEV8F3rUqaE1lwJOphYa1YfsxLlCy/ljJ/s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=B+nCF8csFl0MZxU2LNF4h7OfYjXwI+busmGDf53fCj0DoMAa6dV5xpp06uPTBtCY/wvrZA9T13VrLJoocQtdbz0/78v/+101nrV8I6fpMvR5amZOqmq+kP/Q+J88K/P17AMEt4scw8HdQPNxhwEMPfYiERAc/HWFmuBDQ6YbNK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BAn5V7uA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8147EC4CEE4;
-	Wed, 21 May 2025 15:32:49 +0000 (UTC)
+	 MIME-Version; b=dsFrIM7OvT7M551lYa1t+3eV1jEAPVJgxWuCJTohQ2YFH6OmC/muCYaH5UJVtAY4yNrnma/9xcya9ELl9oCSPy1uBObmKOD7XedPUDsd8Q/PQuwX8srMeSrxeMha6Rfsy8skD7mbRBPZs8hQM+jFbbGBTd/DcEQJtUysRNcgk+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NDihUauO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C06D7C4CEE4;
+	Wed, 21 May 2025 15:27:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747841572;
-	bh=PQ8yqnHUEFa5BUreHYRwSgQIVySTh+UdDqRcgs6i9lI=;
+	s=k20201202; t=1747841244;
+	bh=1Ss0ZBRaHEV8F3rUqaE1lwJOphYa1YfsxLlCy/ljJ/s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BAn5V7uAjpTI4MACXEixF5hQmEMuTIqpoql0l9KOsRg+qj7/C7xw8wcjPSOdg9zBi
-	 r/d7ADETVl+Pn3CJAwoqlcZer+JxFqJCVVLo46spb1BrZsnvwfJOGZtlTp7xx4lqOy
-	 jLdhqspMbwFfOEAGuXv7rqKz86FbHhhdPPr+OqKiXJxhkWrU9BBHE7f/vcK2ShYPkb
-	 4gzOogxi3UKUe1TVfH5TlrhbMb+gOCStevxGUx/9rx4qHuA6lSbQ1MK1+j0CgZTEK9
-	 nMC0/0jZK+qAr8a1BySWi9KkQkjnHwqKfSnHiUH45bh7fAwFAalcKATdmOPGqvif2B
-	 28Kf4F7oi97MA==
-From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Sasha Levin <sashal@kernel.org>,
-	Michal Luczaj <mhal@rbox.co>,
-	Rao Shoaib <Rao.Shoaib@oracle.com>,
-	Simon Horman <horms@kernel.org>,
+	b=NDihUauOCxLT+TOKx/cv9W6c4iEgwOc7tKgC4GKSbNeqJ7Hg8jHz7cYO5U7llA9Y9
+	 6hlluj+bY+QwKq2rHZuxtCiXV0fbeCpqYuF51piLngZ9s2ZUaL4Uh8B8XRunKZ3XtH
+	 oNHBMJh9NK5lZfTssdqJiRfhk2n5PolNyeddJCkqDCaonPpLNxZjKsyFFUHxEZ5OhE
+	 /OSOH/OqYcKAgkfCUGZxWVK95kHII+yliC6/93sFRT0Kokk2PqtOiZRik6/QJZ0ZDa
+	 gp+lC11w+Ct8cFyzufRMM9UqjesNMHD3YLgZhL/LIoxaP3VCE9D8BLWrxv+00gEvgp
+	 f06UgpMA7xawQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: richard120310@gmail.com
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	benno.lossin@proton.me,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	dakr@kernel.org,
+	gary@garyguo.net,
+	jserv@ccns.ncku.edu.tw,
+	linux-kernel-mentees@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: [PATCH v6.1 05/27] af_unix: Replace BUG_ON() with WARN_ON_ONCE().
-Date: Wed, 21 May 2025 16:27:04 +0100
-Message-ID: <20250521152920.1116756-6-lee@kernel.org>
-X-Mailer: git-send-email 2.49.0.1143.g0be31eac6b-goog
-In-Reply-To: <20250521152920.1116756-1-lee@kernel.org>
-References: <20250521152920.1116756-1-lee@kernel.org>
+	ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	tmgross@umich.edu
+Subject: Re: [RFC PATCH v2] rust: list: Add examples for linked list
+Date: Wed, 21 May 2025 17:27:05 +0200
+Message-ID: <20250521152705.1056252-1-ojeda@kernel.org>
+In-Reply-To: <20250311133357.90322-1-richard120310@gmail.com>
+References: <20250311133357.90322-1-richard120310@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,86 +70,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
+On Tue, 11 Mar 2025 21:33:57 +0800 I Hsin Cheng <richard120310@gmail.com> wrote:
+>
+> Add basic examples for the structure "List", also serve as the unit
+> tests for basic list methods. Including the following manipulations:
+> * List creation
+> * List emptiness check
+> * List insertion through push_front(), push_back()
+> * List item removal through pop_front(), pop_back()
+> * Push one list to another through push_all_back()
+>
+> The method "remove()" doesn't have an example here because insertion
+> with push_front() or push_back() will take the ownership of the item,
+> which means we can't keep any valid reference to the node we want to
+> remove, unless Cursor is used. The remove example through Cursor is
+> already demonstrate with 'commit 52ae96f5187c ("rust: list: make the
+> cursor point between elements")' .
+>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1121
+> Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
 
-[ Upstream commit d0f6dc26346863e1f4a23117f5468614e54df064 ]
+It would be nice to pick this one up, even if it is similar to the
+cursor one -- some methods shown here are not in the other example.
 
-This is a prep patch for the last patch in this series so that
-checkpatch will not warn about BUG_ON().
+Any reviews Reviewed-bys/Tested-bys, anyone? (I can clean a few nits on
+my side when applying).
 
-Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-Acked-by: Jens Axboe <axboe@kernel.dk>
-Link: https://lore.kernel.org/r/20240129190435.57228-2-kuniyu@amazon.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-(cherry picked from commit d0f6dc26346863e1f4a23117f5468614e54df064)
-Signed-off-by: Lee Jones <lee@kernel.org>
----
- net/unix/garbage.c | 8 ++++----
- net/unix/scm.c     | 8 ++++----
- 2 files changed, 8 insertions(+), 8 deletions(-)
+By the way, similarly to the other one, your email did not reach my
+inbox for some reason.
 
-diff --git a/net/unix/garbage.c b/net/unix/garbage.c
-index 2934d7b68036..7eeaac165e85 100644
---- a/net/unix/garbage.c
-+++ b/net/unix/garbage.c
-@@ -145,7 +145,7 @@ static void scan_children(struct sock *x, void (*func)(struct unix_sock *),
- 			/* An embryo cannot be in-flight, so it's safe
- 			 * to use the list link.
- 			 */
--			BUG_ON(!list_empty(&u->link));
-+			WARN_ON_ONCE(!list_empty(&u->link));
- 			list_add_tail(&u->link, &embryos);
- 		}
- 		spin_unlock(&x->sk_receive_queue.lock);
-@@ -224,8 +224,8 @@ static void __unix_gc(struct work_struct *work)
- 
- 		total_refs = file_count(sk->sk_socket->file);
- 
--		BUG_ON(!u->inflight);
--		BUG_ON(total_refs < u->inflight);
-+		WARN_ON_ONCE(!u->inflight);
-+		WARN_ON_ONCE(total_refs < u->inflight);
- 		if (total_refs == u->inflight) {
- 			list_move_tail(&u->link, &gc_candidates);
- 			__set_bit(UNIX_GC_CANDIDATE, &u->gc_flags);
-@@ -318,7 +318,7 @@ static void __unix_gc(struct work_struct *work)
- 		list_move_tail(&u->link, &gc_inflight_list);
- 
- 	/* All candidates should have been detached by now. */
--	BUG_ON(!list_empty(&gc_candidates));
-+	WARN_ON_ONCE(!list_empty(&gc_candidates));
- 
- 	/* Paired with READ_ONCE() in wait_for_unix_gc(). */
- 	WRITE_ONCE(gc_in_progress, false);
-diff --git a/net/unix/scm.c b/net/unix/scm.c
-index 693817a31ad8..6f446dd2deed 100644
---- a/net/unix/scm.c
-+++ b/net/unix/scm.c
-@@ -50,10 +50,10 @@ void unix_inflight(struct user_struct *user, struct file *fp)
- 
- 	if (u) {
- 		if (!u->inflight) {
--			BUG_ON(!list_empty(&u->link));
-+			WARN_ON_ONCE(!list_empty(&u->link));
- 			list_add_tail(&u->link, &gc_inflight_list);
- 		} else {
--			BUG_ON(list_empty(&u->link));
-+			WARN_ON_ONCE(list_empty(&u->link));
- 		}
- 		u->inflight++;
- 		/* Paired with READ_ONCE() in wait_for_unix_gc() */
-@@ -70,8 +70,8 @@ void unix_notinflight(struct user_struct *user, struct file *fp)
- 	spin_lock(&unix_gc_lock);
- 
- 	if (u) {
--		BUG_ON(!u->inflight);
--		BUG_ON(list_empty(&u->link));
-+		WARN_ON_ONCE(!u->inflight);
-+		WARN_ON_ONCE(list_empty(&u->link));
- 
- 		u->inflight--;
- 		if (!u->inflight)
--- 
-2.49.0.1143.g0be31eac6b-goog
+Thanks!
 
+Cheers,
+Miguel
 
