@@ -1,109 +1,102 @@
-Return-Path: <linux-kernel+bounces-658331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C56DAC0061
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 01:08:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C82FAC006D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 01:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1CBD16573B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 23:08:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FF369E5EA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 23:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A4623BD17;
-	Wed, 21 May 2025 23:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4F423E358;
+	Wed, 21 May 2025 23:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ECZVUJKe"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="Bn6ZpSPI"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E664220686
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 23:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C008023E320;
+	Wed, 21 May 2025 23:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747868893; cv=none; b=U4wAE15lGTVf+hBVoEVw3n17tEAs0WDC+xNlW734dxduqYONlyQxKcb/70K0k5IM5RdmDs4PzR0wvBQ9EPIAw+DnTlEOk+GmWK0Sx+uovaMJVTujQFqQ/bVTPTZ7H83AeZ7IGuKpN+7p1r7wcFR+ETo8YgKT3lvZyoA521HaJo0=
+	t=1747868903; cv=none; b=VyU3kO1H/x3KMb8Mc8hkOQtjxGSiidrQ9576qf3o6KMiTiQzRIPQlcBIbq7EjjdBO78jFUDFiPJ6Y8xguJYGunsTEsVFEZxi62X7epqSZucUfpNpumZvImHhX4/mTVqn3UKOr7Nbr4r/+OsO/XKssnM54jUAGyhOQ0e2pJqK37I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747868893; c=relaxed/simple;
-	bh=hMM6ZBbu1Z03i6mNXQssFFLvBk0seumlrn1yafMIhGM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VhzzUa1ZPIuDIQM4wBFDgqSiiF15DzZBrLzPpxOlqTWaqMQbmcsMWnpAya9q48uGOBK8tatGpw/p4WbsiPC2aCCz6jv0Vjrx5fxX08Ol/xhN02L1EdDT/sg3k5mfzn87ni8JeIVYYFPsjv6taVDv5ZazmjLUjLbzdLxQN2uJHZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ECZVUJKe; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3a363beb5ebso3376262f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 16:08:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747868890; x=1748473690; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bk7nkRmDcObELLV9MxxzQAakXc5EAbtIqWryuUZfAWw=;
-        b=ECZVUJKe999kjhp1BabGxJNk8wNze3PPeoxzeuHUcrepj/lrff6zhLxcTD0sKsUQFI
-         XV896lGzFSb8Tou7Ze9AGXMZ2gDnWeopgcykR9bxBny+MKmJstNviZLOtquPGdB6nIw1
-         apht+GRCPwRVGZLF9dHKDQkunDbxJhsr+4qJ8IiAChLxBPUEUf8NYlA20qTj+RMTXW9q
-         sYJ9jhVSZVT+YA8nOhRH8JEomhdnLJKW7fpJokZCXvTgaSE8EeDQ7AQlQYxB8EgSTeyl
-         7OVS/zcesw46plVJTII/lHTpjZt4UTW8nUYn/vELrq6Q9iu+SWCEQuOM30eelzFCV48o
-         82aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747868890; x=1748473690;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bk7nkRmDcObELLV9MxxzQAakXc5EAbtIqWryuUZfAWw=;
-        b=d3CRzVQvk3elpq5eDGoO5Lwxi0Z7LA8nfo3sQJ5U9cqbk9QyjjO5ba3ZXFwoejPAEO
-         Ab6wyY4+p0fuOvVHLnxDpbJiyOFGnUxgWvsboi3L04d5aLdlLD3HAikPu2EgrPA8jnHB
-         glJehQtZdsdkiyjTs90aTOeoz77jpSC9P6ua0yVfkfLT2WR8LkvLF+jza9WtFQ2m8UFW
-         aIP6rNfT5USyEe2PWKAFpaiEuNbbFoKP6f/pfMAKSHQUdYoUfQP+leuOJJl2j0CwjN39
-         YheQA3Pgqr0jI/gnOc8e443fEGoZ4bNw8msFiyUmelVuJUb3tF0Zb/KPa/lQ00YJGQho
-         cqPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8ze78WJpReHaLyYhAzcrtERiGlg8szgqwGwPVJw5Aqbh8X4fsrwEDJ46213zw5Ox14CfhO7DgigaSM3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBwIiMUEthfyWQhVPURU9lWPogFTejjCHAB9QRy8mPagsIx7f+
-	vjJ3oeNZ0PHs8lKMe1pZsoCB7KLrgeiF9/5TtrLpTW9Njyn465GCbtLSyM4VNUhjH3A2ILb8OaU
-	mm/EQWghOuoU466iYsQ==
-X-Google-Smtp-Source: AGHT+IG5Ak+y0NsqThQ0r4o/665aH/C7btSt6+oGGDb7eAP6t0rwrL1Vx0qKYWSkRmlwXLgAu2h86m5nPyQnFjU=
-X-Received: from wrs24.prod.google.com ([2002:a05:6000:658:b0:3a3:6a36:d12])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2288:b0:3a1:f937:6e7c with SMTP id ffacd0b85a97d-3a35fe67a7bmr21858924f8f.22.1747868889839;
- Wed, 21 May 2025 16:08:09 -0700 (PDT)
-Date: Wed, 21 May 2025 23:08:07 +0000
-In-Reply-To: <20250311133357.90322-1-richard120310@gmail.com>
+	s=arc-20240116; t=1747868903; c=relaxed/simple;
+	bh=3u5mXZTP639Bpzu/sDU3G0u22iZ2giq/n2kDW+3VF3k=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QVq8cpdo8O79qX1JKzWB8nEcWjMa32eAgqHYG3Kqm4qwEFtKouiQSb7iqUu7Otb7UiWc/ufmAGo2ZnYKST73OKbZ7ELEm9k+0bzWan4jU8fRM1nKCvg4LCmGIqkvcG4mseouKBPpzngj6Jm6+3i07Xn9Iofrvrwn6TXhVQmNn1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=Bn6ZpSPI; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1uHsXm-004HlP-68; Thu, 22 May 2025 01:08:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector2; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID;
+	bh=QZBN6QDC8c9YN/GXfrYKyb8peS8O4SoKVkwZdKf4dk8=; b=Bn6ZpSPIiXuCsNZ/PI9ofTwzry
+	iU/Zno9Uzv1PuMW8ZvKfcx0Q5vhgYaOV6D+1ZYtYa06wnd5HcV3AfGMxbQR+QA7h1JFl5V4xhyG2W
+	umUOsKZEb8AmBIWzy0oOS5rQObT3oGPv1VexxTiZYA1naH2PRrLlssA9MPrE2ORz/GBEWFG0/EO4H
+	vU5fClJUSeKrYpyHGvqlQixezR8E7yaVM+wKpWJJsXnY01tT3O53j8t7wivnUDD+tdeRaqBM4bYNM
+	//Y3V7liOftxp1IGSFRhyFw5XTIwq2IKrYNWVx6f0d1z8Ho8CMkTin1ouY0iliXTQQjo2//vGua0C
+	QB+IVRNw==;
+Received: from [10.9.9.72] (helo=submission01.runbox)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1uHsXl-0005Vz-36; Thu, 22 May 2025 01:08:13 +0200
+Received: by submission01.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1uHsXi-000dQu-GI; Thu, 22 May 2025 01:08:10 +0200
+Message-ID: <89df5f4b-6955-4f01-97a5-4d24dd82ed51@rbox.co>
+Date: Thu, 22 May 2025 01:08:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250311133357.90322-1-richard120310@gmail.com>
-Message-ID: <aC5c1-VXoAIctyRI@google.com>
-Subject: Re: [RFC PATCH v2] rust: list: Add examples for linked list
-From: Alice Ryhl <aliceryhl@google.com>
-To: I Hsin Cheng <richard120310@gmail.com>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	a.hindborg@kernel.org, tmgross@umich.edu, dakr@kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
-	jserv@ccns.ncku.edu.tw
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Michal Luczaj <mhal@rbox.co>
+Subject: Re: [PATCH net-next v5 4/5] vsock/test: Introduce enable_so_linger()
+ helper
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+ virtualization@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250521-vsock-linger-v5-0-94827860d1d6@rbox.co>
+ <20250521-vsock-linger-v5-4-94827860d1d6@rbox.co>
+ <3uci6mlihjdst7iksimvsabnjggwpgskbhxz2262pmwdnrq3lx@v2dz7lsvpxew>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <3uci6mlihjdst7iksimvsabnjggwpgskbhxz2262pmwdnrq3lx@v2dz7lsvpxew>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 09:33:57PM +0800, I Hsin Cheng wrote:
-> Add basic examples for the structure "List", also serve as the unit
-> tests for basic list methods. Including the following manipulations:
-> * List creation
-> * List emptiness check
-> * List insertion through push_front(), push_back()
-> * List item removal through pop_front(), pop_back()
-> * Push one list to another through push_all_back()
+On 5/21/25 16:41, Stefano Garzarella wrote:
+> On Wed, May 21, 2025 at 12:55:22AM +0200, Michal Luczaj wrote:
+>> ...
+>> static void test_stream_linger_client(const struct test_opts *opts)
+>> {
+>> -	struct linger optval = {
+>> -		.l_onoff = 1,
+>> -		.l_linger = 1
 > 
-> The method "remove()" doesn't have an example here because insertion
-> with push_front() or push_back() will take the ownership of the item,
-> which means we can't keep any valid reference to the node we want to
-> remove, unless Cursor is used. The remove example through Cursor is
-> already demonstrate with 'commit 52ae96f5187c ("rust: list: make the
-> cursor point between elements")' .
-> 
-> Link: https://github.com/Rust-for-Linux/linux/issues/1121
-> Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+> So, we are changing the timeout from 1 to 5, right?
+> Should we mention in the commit description?
 
-LGTM.
+Yup, we do, but the value (as long as it's positive) is meaningless in the
+context of this test. That's way I didn't bother. But since
+enable_so_linger() is gaining @timeout, I'll pass the original `1` to keep
+things as they are.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Thanks,
+Michal
 
