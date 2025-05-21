@@ -1,126 +1,106 @@
-Return-Path: <linux-kernel+bounces-657186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C13ABF0B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:03:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77826ABF0C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22FFA4A7A58
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:03:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BB927B1AD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900A125A354;
-	Wed, 21 May 2025 10:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hMHbUL13";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZPkLyCPf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CB525B1F0;
+	Wed, 21 May 2025 10:04:54 +0000 (UTC)
+Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7E723BCF4;
-	Wed, 21 May 2025 10:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D94C25A342
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 10:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747821824; cv=none; b=urY+ANQbLj6Nea5uE1/3VOGwIGRnIVHG6KCcUQ2OZ4eluUTxWkW8xJsFi2nlezEd96Xx/CY561WqBxM/j8xrIAaYxh3RXTRPt14i2vdea7OpWACVq3gRfl7ONVlbPSyO7qPgjNuP/HpVdrtGh4pwzO10wu8EUy8G6L1yps6zuIY=
+	t=1747821894; cv=none; b=aplUBk/zRYNU/sVI7k8TNS9oMQ39HXQD5lCofEC5ginU4UcN8RfGZoqWeUMminJsS197uMaRLMxnP3CKQajoLSK9eFScK5qNDR5IJJhu+KHXLqPL7KO5D9zC+zrSrKzwYaGiSYzy3Mms4ufLlDY6rCy5GDTrChUcAl/5z3K7/mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747821824; c=relaxed/simple;
-	bh=OJ97p5B8Aw7zqzfQjB2nKZ8UX+vEV3Agwas2C74Qi/w=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=abNBj9VksjmuKwtKNkerkInvXoSWETX/MyzG3oNBpc7BWnVVat5DcJ8iiXvOKXCdzazPeuDnsCH8n+w9YHdPlLCAKE0/Fg5KqH+YVVY+Ii0eF7sKbYtsXN24QPUMzEb8/ynZ6Bz/+2+VjgX2es7CLnOqY6j1zYrbJ1W4HYvWCQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hMHbUL13; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZPkLyCPf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 21 May 2025 10:03:38 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747821820;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2NmAOPTvxvertRMNfAVoVd9vAR6Cr22OmQ9PU0AvO7Y=;
-	b=hMHbUL13Ybr1mhqfKVh64FGrp99saxrevmSeg12Sb+OruP/0zW7kanh7X8IbsfeOB2+Exg
-	2nvmarpoTrK35XIq8mJs6SHZGsPMetHHh3801wpv4lPSD5O/zhit4iPoBYeCAvuxaoh2bH
-	BxVqp75sN9V1PimwpWCUii8N/MVIHXeoAszQzyC3wjsOjjfr3b7ioMgows2eEC7CwXHtCh
-	Yn9c2w/iccdpP48h+ZY0nzODqS6pHQX93YahEU33exZFjudKG/7Q5oWUNHfYa8z4GoxRpG
-	ud75U5WuERCup7ROVHdFMTPN832YooL2q/NFqLL275rjbx7iU+Sc4s97TRmNXQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747821820;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2NmAOPTvxvertRMNfAVoVd9vAR6Cr22OmQ9PU0AvO7Y=;
-	b=ZPkLyCPfKu+hO4PxZXIOZeGmxXn3OsDEPoNfW5DulLzCO8bz5m3hqkyYmBCPtOwi/JUhUk
-	uxKEZE8C4kpr5EAQ==
-From: "tip-bot2 for Pawan Gupta" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/bugs: Fix spectre_v2 mitigation default on Intel
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250520-eibrs-fix-v1-1-91bacd35ed09@linux.intel.com>
-References: <20250520-eibrs-fix-v1-1-91bacd35ed09@linux.intel.com>
+	s=arc-20240116; t=1747821894; c=relaxed/simple;
+	bh=g6CYVYXiOTMe5bUJ93aSGwjCppez3IhEMpBu48hcmSs=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K0k1+pEpaFIwx5x/wbloNjPHBBJ+KqsjklJk4F2u2BgAPjJ0F6RNKDqZPbs5bzL9u8KZ3d+YSr224p8WEWV8pWyq3GE8WE9IRRCXBgHj6rKPOeEDVSIr+8XGw5T0J7Y9mK3yDvjwyOfs7K+JmOt1OW4skWFCNdEMC/HXK+SBLic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=free.fr; spf=pass smtp.mailfrom=free.fr; arc=none smtp.client-ip=212.27.42.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=free.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
+Received: from localhost (unknown [82.64.135.138])
+	by smtp2-g21.free.fr (Postfix) with ESMTP id 14B2F200401;
+	Wed, 21 May 2025 12:04:35 +0200 (CEST)
+Received: by localhost (Postfix, from userid 1502)
+	id 8BCBDC4D7; Wed, 21 May 2025 10:04:35 +0000 (GMT)
+Date: Wed, 21 May 2025 10:04:35 +0000
+From: Etienne Buira <etienne.buira@free.fr>
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Etienne Buira <etienne.buira@free.fr>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] firmware/raspberrypi: raise timeout to 3s
+Message-ID: <aC2lM6xXCVK_3oWI@Z926fQmE5jqhFMgp6>
+Mail-Followup-To: Florian Fainelli <florian.fainelli@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Etienne Buira <etienne.buira@free.fr>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <e5659e34-511c-4137-9ffe-152bb0777146@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174782181894.406.10038998736172191302.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e5659e34-511c-4137-9ffe-152bb0777146@gmx.net>
 
-The following commit has been merged into the x86/core branch of tip:
+Raspberry firmware driver expected said firmware to answer by 1 second.
+However, some firmware versions are buggy and can take longer with
+RPI_FIRMWARE_NOTIFY_DISPLAY_DONE.
+[    2.861407] ------------[ cut here ]------------
+[    2.865512] Firmware transaction 0x00030066 timeout
 
-Commit-ID:     6a7c3c2606105a41dde81002c0037420bc1ddf00
-Gitweb:        https://git.kernel.org/tip/6a7c3c2606105a41dde81002c0037420bc1ddf00
-Author:        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-AuthorDate:    Tue, 20 May 2025 22:35:20 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 21 May 2025 11:51:32 +02:00
+Raising the timeout to 3 seconds (ought to be enough®) doesn't trigger
+timeouts anymore for me and proceeds to the next failure.
 
-x86/bugs: Fix spectre_v2 mitigation default on Intel
+Some details about firmware debugging are available here:
+Link: https://github.com/raspberrypi/firmware/issues/1970
 
-Commit
+Signed-off-by: Etienne Buira <etienne.buira@free.fr>
 
-  480e803dacf8 ("x86/bugs: Restructure spectre_v2 mitigation")
-
-inadvertently changed the spectre-v2 mitigation default from eIBRS to IBRS on
-Intel. While splitting the spectre_v2 mitigation in select/update/apply
-functions, eIBRS and IBRS selection logic was separated in select and update.
-
-This caused IBRS selection to not consider that eIBRS mitigation is already
-selected, fix it.
-
-Fixes: 480e803dacf8 ("x86/bugs: Restructure spectre_v2 mitigation")
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/20250520-eibrs-fix-v1-1-91bacd35ed09@linux.intel.com
 ---
- arch/x86/kernel/cpu/bugs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v2: coding style
+v3: commit message
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 3d5796d..7f94e6a 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -2105,7 +2105,8 @@ static void __init spectre_v2_select_mitigation(void)
- 
- static void __init spectre_v2_update_mitigation(void)
- {
--	if (spectre_v2_cmd == SPECTRE_V2_CMD_AUTO) {
-+	if (spectre_v2_cmd == SPECTRE_V2_CMD_AUTO &&
-+	    !spectre_v2_in_eibrs_mode(spectre_v2_enabled)) {
- 		if (IS_ENABLED(CONFIG_MITIGATION_IBRS_ENTRY) &&
- 		    boot_cpu_has_bug(X86_BUG_RETBLEED) &&
- 		    retbleed_mitigation != RETBLEED_MITIGATION_NONE &&
+Stefan, feel free to edit to your liking if needed, or even take
+ownership of such one-liner, that would not be stealing.
+
+ drivers/firmware/raspberrypi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
+index 7ecde6921a0a..8c45a152e3ba 100644
+--- a/drivers/firmware/raspberrypi.c
++++ b/drivers/firmware/raspberrypi.c
+@@ -58,7 +58,7 @@ rpi_firmware_transaction(struct rpi_firmware *fw, u32 chan, u32 data)
+ 	reinit_completion(&fw->c);
+ 	ret = mbox_send_message(fw->chan, &message);
+ 	if (ret >= 0) {
+-		if (wait_for_completion_timeout(&fw->c, HZ)) {
++		if (wait_for_completion_timeout(&fw->c, 3 * HZ)) {
+ 			ret = 0;
+ 		} else {
+ 			ret = -ETIMEDOUT;
+-- 
+2.48.1
+
 
