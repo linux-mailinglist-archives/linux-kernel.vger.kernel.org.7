@@ -1,215 +1,154 @@
-Return-Path: <linux-kernel+bounces-657408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E3FABF3C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:09:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B830ABF3BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7FF91BC4193
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:08:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B5E11887907
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66A9267B84;
-	Wed, 21 May 2025 12:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0611266562;
+	Wed, 21 May 2025 12:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="mP/HYPyK"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dHifDJ4/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZDvnRghx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5F01B4121
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A20256C9F;
+	Wed, 21 May 2025 12:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747829255; cv=none; b=gdCAk0UKW1BEKofW5MEOV0ziNMus2F+09RFX9t1ieNyoCJg3dpUh3dvHU5D2UMUeBw1Zf/+RTa6snrK+l+wReWeiLQ7iaolpWxJI9jfmLP7CBiUf71yqP3C/mxkO+A1S4jYGSgBe/jhpj6BE1M1cLVed7aT1gbiyuJCNPCViRWI=
+	t=1747829223; cv=none; b=h49nTZXf88Loz5GRMxciiY6XomFcp6KInkLoQ7muYZITjdn7HVbP7du9wuxQY/dtmo7jVujiH+VGJHq3S+oCELt3DfTzwEGv+LbwaT2UuN20q7sKs63Sl6Tzs9deSNGXIIlaNGSzjr3kDHpaWakp5VjbDuya/taeDFhmNw6nNNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747829255; c=relaxed/simple;
-	bh=iHE1rx9pKNA3yS7AO8/GGqI2u5yXHHrzdzsIw2zPEl4=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=WZmPRgoKI7wcw3bGLptG+0/AIrDH+cQ94YCZwP+QU7bva0N6+P+ikOsnrO09sSkqX9CY28GV5GpzU9ybvfrX77WpvRoTewWG9CUO3wYk5cEJZNFpnoCwbabfYjacyuzAzICUN8JzlfApYt8enXcuFq60zVq3B2VR4a23wJdohX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=mP/HYPyK; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
-	s=sorc2401; t=1747829224;
-	bh=iHE1rx9pKNA3yS7AO8/GGqI2u5yXHHrzdzsIw2zPEl4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=mP/HYPyKnP4SzYZz+CwEPcCBjJiysYwBsLRB+wkJhkXUk39bS9RLiusRTdl+tve6A
-	 8et8WCrWbOjqaIHC2/wKey3Yq9UHG/KvthROwiLOlHdRQXyaMYo+sf3r5aRl3IlPI6
-	 Bc9d1G7rtk5L1I1Se+gKgnm1vYGq1ECiSAwP0/sE=
-X-QQ-mid: zesmtpip2t1747829220t5a0fbb7a
-X-QQ-Originating-IP: aHaUtuZnGZbyw4ycVOVBgV9sQsu/rt/nOmgAysmDB8Q=
-Received: from TYSPR06MB7158.apcprd06.prod.out ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 21 May 2025 20:06:58 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4736692606139951787
-EX-QQ-RecipientCnt: 6
-From: "huk23@m.fudan.edu.cn" <huk23@m.fudan.edu.cn>
-To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>, Christian
- Gromm <christian.gromm@microchip.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"syzkaller@googlegroups.com" <syzkaller@googlegroups.com>,
-	=?gb2312?B?sNfLuMi9?= <baishuoran@hrbeu.edu.cn>, "jjtan24@m.fudan.edu.cn"
-	<jjtan24@m.fudan.edu.cn>
-Subject: KASAN: slab-use-after-free Read in hdm_disconnect
-Thread-Topic: KASAN: slab-use-after-free Read in hdm_disconnect
-Thread-Index: AQHbykbvT+dcgAqjL0mzc9pIIbqv5A==
-X-MS-Exchange-MessageSentRepresentingType: 1
-Date: Wed, 21 May 2025 12:06:57 +0000
-Message-ID:
-	<TYSPR06MB7158E3C203DA0F66E0278046F69EA@TYSPR06MB7158.apcprd06.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-Exchange-Organization-SCL: -1
-X-MS-TNEF-Correlator:
-X-MS-Exchange-Organization-RecordReviewCfmType: 0
-msip_labels:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1747829223; c=relaxed/simple;
+	bh=8NsJuQFwrC95Xe7hMjLsK1Ug4H339jqL+JbTDQI1+cw=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=XEdu/FjE7HMUN6I7UGlELoXpDfbKs8TxQa89GEuPoo40eNDjzxW0FLjg0fYhu+t//vM/4ZeXb/ohSoIFFXOznDyoFnYo6bmyDHcQRozAcWvM15pR63QCpad75gMW7qN27EIVNaGEoo7OsvkNBfv03sx/fvItOTM9oKomIQ84uD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dHifDJ4/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZDvnRghx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 21 May 2025 12:06:58 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747829219;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ryus/mq3lNn3yJqy5ph1uS4I0lbbK9HipciUiWT8sx4=;
+	b=dHifDJ4/KqBGU5vk4DgtYhdbAnoG71enNgbn/mA2NvbFP70cRUn6/mw7/2ICqVKS8FjWhD
+	1vW+oOsXpb/opd7rkFTOr+veyiuBn3zmSMEfFZwFNeiBHt6/CZj4vzVzPD8a+YcLG/wOeD
+	eOgU6VvPla7RyMDENv20pYg5dfB0PZqXy/F5YB05bS/38o/GKW+ziiikVfoRUoU4BCxwEO
+	jUXKMHErTe/Zq/ilpNzplvaera9FxR79qPjlNBJKjhQs4ZaREvqSdzpjbsxIbTKEOJrFsc
+	agLtiw/y3HRNUW9MOCGDS5a9QMaPsoxmmfEc/LMFvuyvxT+gZIJY9ahPoyoTMw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747829219;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ryus/mq3lNn3yJqy5ph1uS4I0lbbK9HipciUiWT8sx4=;
+	b=ZDvnRghxGG9iqUIJ0FCvppZorWEUqEhw9BrljYDyQ2F3FzgBX9T56yrZs1HRFuSfp4bh7K
+	eJ4AePnvme2NvqDw==
+From: "tip-bot2 for Xuewen Yan" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched/util_est: Simplify condition for
+ util_est_{en,de}queue()
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250417043457.10632-2-xuewen.yan@unisoc.com>
+References: <20250417043457.10632-2-xuewen.yan@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: Mey4nVXkipeLbUcOu1XHhCmUgbw9JghvaDKYzyCM+8uH8Se6NMze0ml1
-	zRd20fGxxk2CGk5TzC70IEoRAlRmur8Wp2qOHj8OsMnw+bbk+JpxUIzKRk6WwyMsfCisHQk
-	8gjhEBa1mw0PmJBYIlVmPad7++x4iospKOdX23Eq0z+w6n6HYVeJVmpsbP/4WUMhuEmQxeb
-	ZnXscZmZD5H8Q+PXS6yJqYa7X9TZgiSZ6V5c4S66CPrRnK/UgHSM83nWSIaAx+QozR6msEJ
-	IV8TLvxnVicmxygYQL4OPZ7kQi6bd6cuzh68S23IpujVVHZEtb088qdORhxhPkuJUxpd9EM
-	XsAvnISDlKqgKWURa4HTWbwI7Sm1e8O91so/IjB4I9gESGgQgaGFyZxaP8+HjB9ZijJIaRz
-	7YnJ216k5lLSjKm27/wzNjeEiPeX9B6+2ucurUL6OcdjJvIlFGU+OLHFs2+xZo+v7yoTE75
-	2Ta5gVo2uRv/9wUnQaa9NTUom0BaIsKs4NSBbncPhR6SyhaG1p8T2Czx2VirNwU4/UK5wZY
-	0t4EU1oQH0fJZowsUwbPJHtdiNQp+9oRH4aWu6fM0+zksSxnXDOYPydnqTmYn0Emb7gxKrw
-	l2btXqVZWsVcjSO6jydk3Gxa2WTyNJbc+zF62f2wz/ZRRw9xnKe2oLSmr6iHwZBBQFGzL55
-	IFocYQPLkCVW9t5+pzdtrZkszh2RSDEjYFAlN8yLO0Xhr7R5kpIl4OidNvU6QHZqYib9YKB
-	1tN/QAlNMa40nxqPVW7UKQUR9mCRsp3UqBo0EfoJVtLzu3TJz2Dm8D2RhksrmJGRh3wUQPK
-	khEiLx0/0fpMhSUXWvp4gi/9ozdCcDTZ4sezY9upl1EdQemc6onOf5m00PQwF+sdDymTi/r
-	2I43MxcGkf/ZqXzv5/pv/Nb9vEshs1aDR6x+7w9BFziv1b63iyVXxxSOePhOQJ83gTPcoXn
-	w8z2IWxjsqAbkDXoPpKVn8K4oE/PPR4+R0d8VyHy0bgmXt8+GtFakQIGqKVhVwieP7RovKN
-	0nYszEbQU8ybc2/QD67eJXBb/onFFQ45UdxkAVkDpqu1mK/H/RlSsFpT9YRXg=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+Message-ID: <174782921810.406.7735731150435046147.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-RGVhciBNYWludGFpbmVycywKCgoKV2hlbiB1c2luZyBvdXIgY3VzdG9taXplZCBTeXprYWxsZXIg
-dG8gZnV6eiB0aGUgbGF0ZXN0IExpbnV4IGtlcm5lbCwgdGhlIGZvbGxvd2luZyBjcmFzaCAoMTA1
-dGgpd2FzIHRyaWdnZXJlZC4KCgpIRUFEIGNvbW1pdDogNjUzN2NmYjM5NWYzNTI3ODI5MThkOGVl
-N2I3ZjEwYmEyY2MzY2JmMgpnaXQgdHJlZTogdXBzdHJlYW0KT3V0cHV0Omh0dHBzOi8vZ2l0aHVi
-LmNvbS9wZ2hrMTMvS2VybmVsLUJ1Zy9ibG9iL21haW4vMDUyMF82LjE1LXJjNi8xMDVfS0FTQU4l
-M0ElMjBzbGFiLXVzZS1hZnRlci1mcmVlJTIwUmVhZCUyMGluJTIwaGRtX2Rpc2Nvbm5lY3QvMTA1
-cmVwb3J0LnR4dApLZXJuZWwgY29uZmlnOmh0dHBzOi8vZ2l0aHViLmNvbS9wZ2hrMTMvS2VybmVs
-LUJ1Zy9ibG9iL21haW4vMDUyMF82LjE1LXJjNi9jb25maWcudHh0CkMgcmVwcm9kdWNlcjpodHRw
-czovL2dpdGh1Yi5jb20vcGdoazEzL0tlcm5lbC1CdWcvYmxvYi9tYWluLzA1MjBfNi4xNS1yYzYv
-MTA1X0tBU0FOJTNBJTIwc2xhYi11c2UtYWZ0ZXItZnJlZSUyMFJlYWQlMjBpbiUyMGhkbV9kaXNj
-b25uZWN0LzEwNXJlcHJvLmMKU3l6bGFuZyByZXByb2R1Y2VyOmh0dHBzOi8vZ2l0aHViLmNvbS9w
-Z2hrMTMvS2VybmVsLUJ1Zy9ibG9iL21haW4vMDUyMF82LjE1LXJjNi8xMDVfS0FTQU4lM0ElMjBz
-bGFiLXVzZS1hZnRlci1mcmVlJTIwUmVhZCUyMGluJTIwaGRtX2Rpc2Nvbm5lY3QvMTA1cmVwcm8u
-dHh0CgoKCkR1cmluZyB0aGUgVVNCIGRldmljZSBpbml0aWFsaXphdGlvbiwgaGRtX3Byb2JlKCkg
-YWxsb2NhdGVzIG1lbW9yeSBmb3IgdGhlIGRldmljZSwgYW5kIHdoZW4gdGhlIGRldmljZSBpcyBk
-aXNjb25uZWN0ZWQsIGhkbV9kaXNjb25uZWN0IGlzIGNhbGxlZCB0byBjbGVhbiB1cCB0aGUgcmVz
-b3VyY2VzLCBhbmQgdGhlIG1lbW9yeSBpcyByZWxlYXNlZCB2aWEgZGV2aWNlX3JlbGVhc2UoKS4g
-VGhlbiwgaW5zaWRlIHRoZSBzYW1lIGhkbV9kaXNjb25uZWN0KCkgZnVuY3Rpb24gKGF0IG9mZnNl
-dCAgMDIyNyksIHRoZSBjb2RlIHRyaWVzIHRvIGFjY2VzcyB0aGlzIGFscmVhZHkgZnJlZWQgbWVt
-b3J5LgpUaGUgbWFpbiBpc3N1ZSBoZXJlIGlzIHRoYXQgaGRtX2Rpc2Nvbm5lY3QoKSBpcyBhY2Nl
-c3NpbmcgbWVtb3J5IHRoYXQgd2FzIHByZXZpb3VzbHkgZnJlZWQgaW4gc2FtZSBmdW5jdGlvbi4g
-VGhpcyBpbmRpY2F0ZXMgYSBtZW1vcnkgbWFuYWdlbWVudCBpc3N1ZSAtIHBvc3NpYmx5IHRoZSBm
-dW5jdGlvbiByZWxlYXNlZCB0aGUgcmVzb3VyY2UgYnV0IHRoZW4gY29udGludWVkIHRvIHVzZSBp
-dC4KVGhlIGVycm9yIHNwZWNpZmljYWxseSBvY2N1cnMgYXQgb2Zmc2V0ICAweDIyNyB0aGUgaGRt
-X2Rpc2Nvbm5lY3QoKSBmdW5jdGlvbiwgaS5lLiwgMHgyMjcgYnl0ZXMgYWZ0ZXIgdGhlIGZ1bmN0
-aW9uIGJlZ2lucy4gVGhlIGZ1bmN0aW9uIGJlZ2lucyBieSByZWxlYXNpbmcgdGhlIHJlc291cmNl
-IHZpYSB0aGUgZm9sbG93aW5nOiBkZXZpY2VfcmVsZWFzZSgpIC0+IGtvYmplY3RfcHV0KCkgLT4g
-YW5kIHRoZW4gaXQgdHJpZXMgdG8gYWNjZXNzIHRoZSBtZW1vcnkgdGhhdCB3YXMganVzdCBmcmVl
-ZAoKV2UgaGF2ZSByZXByb2R1Y2VkIHRoaXMgaXNzdWUgc2V2ZXJhbCB0aW1lcyBvbiA2LjE1LXJj
-NiBhZ2Fpbi4KCgoKSWYgeW91IGZpeCB0aGlzIGlzc3VlLCBwbGVhc2UgYWRkIHRoZSBmb2xsb3dp
-bmcgdGFnIHRvIHRoZSBjb21taXQ6ClJlcG9ydGVkLWJ5OiBLdW4gSHUgPGh1azIzQG0uZnVkYW4u
-ZWR1LmNuPiwgSmlhamkgUWluIDxqanRhbjI0QG0uZnVkYW4uZWR1LmNuPiwgU2h1b3JhbiBCYWkg
-PGJhaXNodW9yYW5AaHJiZXUuZWR1LmNuPgoKCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQpCVUc6IEtBU0FOOiBzbGFiLXVz
-ZS1hZnRlci1mcmVlIGluIGhkbV9kaXNjb25uZWN0KzB4MjI3LzB4MjUwClJlYWQgb2Ygc2l6ZSA4
-IGF0IGFkZHIgZmZmZjg4ODA3YzNmNTg5OCBieSB0YXNrIGt3b3JrZXIvMDoxLzEwCgpDUFU6IDAg
-VUlEOiAwIFBJRDogMTAgQ29tbToga3dvcmtlci8wOjEgTm90IHRhaW50ZWQgNi4xNS4wLXJjNiAj
-MSBQUkVFTVBUKGZ1bGwpIApIYXJkd2FyZSBuYW1lOiBRRU1VIFN0YW5kYXJkIFBDIChpNDQwRlgg
-KyBQSUlYLCAxOTk2KSwgQklPUyAxLjEzLjAtMXVidW50dTEuMSAwNC8wMS8yMDE0CldvcmtxdWV1
-ZTogdXNiX2h1Yl93cSBodWJfZXZlbnQKQ2FsbCBUcmFjZToKIDxUQVNLPgogZHVtcF9zdGFja19s
-dmwrMHgxMTYvMHgxYjAKIHByaW50X3JlcG9ydCsweGMxLzB4NjMwCiBrYXNhbl9yZXBvcnQrMHg5
-Ni8weGQwCiBoZG1fZGlzY29ubmVjdCsweDIyNy8weDI1MAogdXNiX3VuYmluZF9pbnRlcmZhY2Ur
-MHgxZTUvMHg5ODAKIGRldmljZV9yZW1vdmUrMHgxMjUvMHgxNzAKIGRldmljZV9yZWxlYXNlX2Ry
-aXZlcl9pbnRlcm5hbCsweDE0OS8weDI4MAogYnVzX3JlbW92ZV9kZXZpY2UrMHgyMmUvMHg0MjAK
-IGRldmljZV9kZWwrMHg0NmEvMHhiMzAKIHVzYl9kaXNhYmxlX2RldmljZSsweDIxYi8weDYwMAog
-dXNiX2Rpc2Nvbm5lY3QrMHgyODAvMHg4ZDAKIGh1Yl9ldmVudCsweDE4YmMvMHg0ODAwCiBwcm9j
-ZXNzX3NjaGVkdWxlZF93b3JrcysweDVkZS8weDFiZDAKIHdvcmtlcl90aHJlYWQrMHg1YTkvMHhk
-MTAKIGt0aHJlYWQrMHg0NDcvMHg4YTAKIHJldF9mcm9tX2ZvcmsrMHg0OC8weDgwCiByZXRfZnJv
-bV9mb3JrX2FzbSsweDFhLzB4MzAKIDwvVEFTSz4KCkFsbG9jYXRlZCBieSB0YXNrIDI0Ogoga2Fz
-YW5fc2F2ZV9zdGFjaysweDI0LzB4NTAKIGthc2FuX3NhdmVfdHJhY2srMHgxNC8weDMwCiBfX2th
-c2FuX2ttYWxsb2MrMHhhYS8weGIwCiBfX2ttYWxsb2NfY2FjaGVfbm9wcm9mKzB4MWUxLzB4NGIw
-CiBoZG1fcHJvYmUrMHhiMy8weDE5YTAKIHVzYl9wcm9iZV9pbnRlcmZhY2UrMHgzMDkvMHhhMTAK
-IHJlYWxseV9wcm9iZSsweDI1My8weDk5MAogX19kcml2ZXJfcHJvYmVfZGV2aWNlKzB4MWRmLzB4
-NDUwCiBkcml2ZXJfcHJvYmVfZGV2aWNlKzB4NGMvMHgxYTAKIF9fZGV2aWNlX2F0dGFjaF9kcml2
-ZXIrMHgxZTQvMHgyZDAKIGJ1c19mb3JfZWFjaF9kcnYrMHgxNGIvMHgxZDAKIF9fZGV2aWNlX2F0
-dGFjaCsweDI4NS8weDQ4MAogYnVzX3Byb2JlX2RldmljZSsweDE3ZS8weDFjMAogZGV2aWNlX2Fk
-ZCsweDExMmQvMHgxODcwCiB1c2Jfc2V0X2NvbmZpZ3VyYXRpb24rMHgxMWEyLzB4MWJlMAogdXNi
-X2dlbmVyaWNfZHJpdmVyX3Byb2JlKzB4YjcvMHgxMTAKIHVzYl9wcm9iZV9kZXZpY2UrMHhlYy8w
-eDNlMAogcmVhbGx5X3Byb2JlKzB4MjUzLzB4OTkwCiBfX2RyaXZlcl9wcm9iZV9kZXZpY2UrMHgx
-ZGYvMHg0NTAKIGRyaXZlcl9wcm9iZV9kZXZpY2UrMHg0Yy8weDFhMAogX19kZXZpY2VfYXR0YWNo
-X2RyaXZlcisweDFlNC8weDJkMAogYnVzX2Zvcl9lYWNoX2RydisweDE0Yi8weDFkMAogX19kZXZp
-Y2VfYXR0YWNoKzB4Mjg1LzB4NDgwCiBidXNfcHJvYmVfZGV2aWNlKzB4MTdlLzB4MWMwCiBkZXZp
-Y2VfYWRkKzB4MTEyZC8weDE4NzAKIHVzYl9uZXdfZGV2aWNlKzB4ZDNlLzB4MWEyMAogaHViX2V2
-ZW50KzB4MmEzOC8weDQ4MDAKIHByb2Nlc3Nfc2NoZWR1bGVkX3dvcmtzKzB4NWRlLzB4MWJkMAog
-d29ya2VyX3RocmVhZCsweDVhOS8weGQxMAoga3RocmVhZCsweDQ0Ny8weDhhMAogcmV0X2Zyb21f
-Zm9yaysweDQ4LzB4ODAKIHJldF9mcm9tX2ZvcmtfYXNtKzB4MWEvMHgzMAoKRnJlZWQgYnkgdGFz
-ayAxMDoKIGthc2FuX3NhdmVfc3RhY2srMHgyNC8weDUwCiBrYXNhbl9zYXZlX3RyYWNrKzB4MTQv
-MHgzMAoga2FzYW5fc2F2ZV9mcmVlX2luZm8rMHgzYS8weDYwCiBfX2thc2FuX3NsYWJfZnJlZSsw
-eDU0LzB4NzAKIGtmcmVlKzB4MTQ3LzB4NDQwCiBkZXZpY2VfcmVsZWFzZSsweGE2LzB4MjQwCiBr
-b2JqZWN0X3B1dCsweDFiMi8weDRjMAogZGV2aWNlX3VucmVnaXN0ZXIrMHgzMC8weGMwCiBoZG1f
-ZGlzY29ubmVjdCsweDEwYi8weDI1MAogdXNiX3VuYmluZF9pbnRlcmZhY2UrMHgxZTUvMHg5ODAK
-IGRldmljZV9yZW1vdmUrMHgxMjUvMHgxNzAKIGRldmljZV9yZWxlYXNlX2RyaXZlcl9pbnRlcm5h
-bCsweDE0OS8weDI4MAogYnVzX3JlbW92ZV9kZXZpY2UrMHgyMmUvMHg0MjAKIGRldmljZV9kZWwr
-MHg0NmEvMHhiMzAKIHVzYl9kaXNhYmxlX2RldmljZSsweDIxYi8weDYwMAogdXNiX2Rpc2Nvbm5l
-Y3QrMHgyODAvMHg4ZDAKIGh1Yl9ldmVudCsweDE4YmMvMHg0ODAwCiBwcm9jZXNzX3NjaGVkdWxl
-ZF93b3JrcysweDVkZS8weDFiZDAKIHdvcmtlcl90aHJlYWQrMHg1YTkvMHhkMTAKIGt0aHJlYWQr
-MHg0NDcvMHg4YTAKIHJldF9mcm9tX2ZvcmsrMHg0OC8weDgwCiByZXRfZnJvbV9mb3JrX2FzbSsw
-eDFhLzB4MzAKClRoZSBidWdneSBhZGRyZXNzIGJlbG9uZ3MgdG8gdGhlIG9iamVjdCBhdCBmZmZm
-ODg4MDdjM2Y0MDAwCiB3aGljaCBiZWxvbmdzIHRvIHRoZSBjYWNoZSBrbWFsbG9jLThrIG9mIHNp
-emUgODE5MgpUaGUgYnVnZ3kgYWRkcmVzcyBpcyBsb2NhdGVkIDYyOTYgYnl0ZXMgaW5zaWRlIG9m
-CiBmcmVlZCA4MTkyLWJ5dGUgcmVnaW9uIFtmZmZmODg4MDdjM2Y0MDAwLCBmZmZmODg4MDdjM2Y2
-MDAwKQoKVGhlIGJ1Z2d5IGFkZHJlc3MgYmVsb25ncyB0byB0aGUgcGh5c2ljYWwgcGFnZToKcGFn
-ZTogcmVmY291bnQ6MCBtYXBjb3VudDowIG1hcHBpbmc6MDAwMDAwMDAwMDAwMDAwMCBpbmRleDow
-eDAgcGZuOjB4N2MzZjAKaGVhZDogb3JkZXI6MyBtYXBjb3VudDowIGVudGlyZV9tYXBjb3VudDow
-IG5yX3BhZ2VzX21hcHBlZDowIHBpbmNvdW50OjAKZmxhZ3M6IDB4NGZmZjAwMDAwMDAwMDQwKGhl
-YWR8bm9kZT0xfHpvbmU9MXxsYXN0Y3B1cGlkPTB4N2ZmKQpwYWdlX3R5cGU6IGY1KHNsYWIpCnJh
-dzogMDRmZmYwMDAwMDAwMDA0MCBmZmZmODg4MDFiNDQzMTgwIGRlYWQwMDAwMDAwMDAxMjIgMDAw
-MDAwMDAwMDAwMDAwMApyYXc6IDAwMDAwMDAwMDAwMDAwMDAgMDAwMDAwMDA4MDAyMDAwMiAwMDAw
-MDAwMGY1MDAwMDAwIDAwMDAwMDAwMDAwMDAwMDAKaGVhZDogMDRmZmYwMDAwMDAwMDA0MCBmZmZm
-ODg4MDFiNDQzMTgwIGRlYWQwMDAwMDAwMDAxMjIgMDAwMDAwMDAwMDAwMDAwMApoZWFkOiAwMDAw
-MDAwMDAwMDAwMDAwIDAwMDAwMDAwODAwMjAwMDIgMDAwMDAwMDBmNTAwMDAwMCAwMDAwMDAwMDAw
-MDAwMDAwCmhlYWQ6IDA0ZmZmMDAwMDAwMDAwMDMgZmZmZmVhMDAwMWYwZmMwMSAwMDAwMDAwMGZm
-ZmZmZmZmIDAwMDAwMDAwZmZmZmZmZmYKaGVhZDogZmZmZmZmZmZmZmZmZmZmZiAwMDAwMDAwMDAw
-MDAwMDAwIDAwMDAwMDAwZmZmZmZmZmYgMDAwMDAwMDAwMDAwMDAwOApwYWdlIGR1bXBlZCBiZWNh
-dXNlOiBrYXNhbjogYmFkIGFjY2VzcyBkZXRlY3RlZApwYWdlX293bmVyIHRyYWNrcyB0aGUgcGFn
-ZSBhcyBhbGxvY2F0ZWQKcGFnZSBsYXN0IGFsbG9jYXRlZCB2aWEgb3JkZXIgMywgbWlncmF0ZXR5
-cGUgVW5tb3ZhYmxlLCBnZnBfbWFzayAweGQyOGMwKEdGUF9OT1dBSVR8X19HRlBfSU98X19HRlBf
-RlN8X19HRlBfTk9SRVRSWXxfX0dGUF9DT01QfF9fR0ZQX05PTUVNQUxMT0MpLCBwaWQgMTQ0NzAs
-IHRnaWQgMTQ0NzAgKGlmcXVlcnkpLCB0cyAxNTY0NzcwOTgwNDksIGZyZWVfdHMgMAogcHJlcF9u
-ZXdfcGFnZSsweDFiMC8weDFlMAogZ2V0X3BhZ2VfZnJvbV9mcmVlbGlzdCsweDFjODAvMHgzYTQw
-CiBfX2FsbG9jX2Zyb3plbl9wYWdlc19ub3Byb2YrMHgyZmQvMHg2ZDAKIGFsbG9jX3BhZ2VzX21w
-b2wrMHgyMDkvMHg1NTAKIG5ld19zbGFiKzB4MjU0LzB4MzUwCiBfX19zbGFiX2FsbG9jKzB4ZjBj
-LzB4MTdjMAogX19zbGFiX2FsbG9jLmlzcmEuMCsweDU2LzB4YjAKIF9fa21hbGxvY19ub2RlX3Ry
-YWNrX2NhbGxlcl9ub3Byb2YrMHgyZDQvMHg2MDAKIGttYWxsb2NfcmVzZXJ2ZSsweGVkLzB4MmIw
-CiBfX2FsbG9jX3NrYisweDE2MS8weDM3MAogbmV0bGlua19kdW1wKzB4MmJhLzB4YzgwCiBuZXRs
-aW5rX3JlY3Ztc2crMHhhZTkvMHhmMDAKIHNvY2tfcmVjdm1zZysweDIxYi8weDI5MAogX19fX3N5
-c19yZWN2bXNnKzB4MjBmLzB4NmUwCiBfX19zeXNfcmVjdm1zZysweGZlLzB4MTkwCiBfX3N5c19y
-ZWN2bXNnKzB4MTRkLzB4MjAwCnBhZ2Vfb3duZXIgZnJlZSBzdGFjayB0cmFjZSBtaXNzaW5nCgpN
-ZW1vcnkgc3RhdGUgYXJvdW5kIHRoZSBidWdneSBhZGRyZXNzOgogZmZmZjg4ODA3YzNmNTc4MDog
-ZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIKIGZmZmY4ODgw
-N2MzZjU4MDA6IGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZi
-Cj5mZmZmODg4MDdjM2Y1ODgwOiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBm
-YiBmYiBmYiBmYgogICAgICAgICAgICAgICAgICAgICAgICAgICAgXgogZmZmZjg4ODA3YzNmNTkw
-MDogZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIKIGZmZmY4
-ODgwN2MzZjU5ODA6IGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZi
-IGZiCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PQp0aGFua3MsCkt1biBIdQ==
+The following commit has been merged into the sched/core branch of tip:
+
+Commit-ID:     0212696a844631a923aa6cedd74ebbb3cf434e51
+Gitweb:        https://git.kernel.org/tip/0212696a844631a923aa6cedd74ebbb3cf434e51
+Author:        Xuewen Yan <xuewen.yan@unisoc.com>
+AuthorDate:    Thu, 17 Apr 2025 12:34:56 +08:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 21 May 2025 13:57:38 +02:00
+
+sched/util_est: Simplify condition for util_est_{en,de}queue()
+
+To prevent double enqueue/dequeue of the util-est for sched_delayed tasks,
+commit 729288bc6856 ("kernel/sched: Fix util_est accounting for DELAY_DEQUEUE")
+added the corresponding check. This check excludes double en/dequeue during
+task migration and priority changes.
+
+In fact, these conditions can be simplified.
+
+For util_est_dequeue, we know that sched_delayed flag is set in dequeue_entity.
+When the task is sleeping, we need to call util_est_dequeue to subtract
+util-est from the cfs_rq. At this point, sched_delayed has not yet been set.
+If we find that sched_delayed is already set, it indicates that this task
+has already called dequeue_task_fair once. In this case, there is no need to
+call util_est_dequeue again. Therefore, simply checking the sched_delayed flag
+should be sufficient to prevent unnecessary util_est updates during the dequeue.
+
+For util_est_enqueue, our goal is to add the util_est to the cfs_rq
+when task enqueue. However, we don't want to add the util_est of a
+sched_delayed task to the cfs_rq because the task is sleeping.
+Therefore, we can exclude the util_est_enqueue for sched_delayed tasks
+by checking the sched_delayed flag. However, when waking up a delayed task,
+the sched_delayed flag is cleared after util_est_enqueue. As a result,
+if we only check the sched_delayed flag, we would miss the util_est_enqueue.
+Since waking up a sched_delayed task calls enqueue_task with the ENQUEUE_DELAYED flag,
+we can determine whether to call util_est_enqueue by checking if the
+enqueue_flag contains ENQUEUE_DELAYED.
+
+Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Link: https://lore.kernel.org/r/20250417043457.10632-2-xuewen.yan@unisoc.com
+---
+ kernel/sched/fair.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b00f167..a028c29 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6936,7 +6936,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	 * Let's add the task's estimated utilization to the cfs_rq's
+ 	 * estimated utilization, before we update schedutil.
+ 	 */
+-	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE))))
++	if (!p->se.sched_delayed || (flags & ENQUEUE_DELAYED))
+ 		util_est_enqueue(&rq->cfs, p);
+ 
+ 	if (flags & ENQUEUE_DELAYED) {
+@@ -7178,7 +7178,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+  */
+ static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ {
+-	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & DEQUEUE_SAVE))))
++	if (!p->se.sched_delayed)
+ 		util_est_dequeue(&rq->cfs, p);
+ 
+ 	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
 
