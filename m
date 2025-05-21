@@ -1,167 +1,183 @@
-Return-Path: <linux-kernel+bounces-657720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74BA9ABF80B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:42:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AA60ABF80D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49AEC1BC3C0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:42:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9EE3172A41
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37DE1E2606;
-	Wed, 21 May 2025 14:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7141DDC07;
+	Wed, 21 May 2025 14:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XB/w+SSE"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yl8rcKfd"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851921DE4D3;
-	Wed, 21 May 2025 14:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3502F1D63C2
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747838508; cv=none; b=iyCMrr9u2cTe0RaLLmQIGiyHhAwpT9Bw+vjECgcL462z5pSyDo9xOQ7+dDLtBhyUoRMbDkhdO2wOBkZKFCAZrv498WCbTeq4PzJ5/cv4ZFey9Y4OIPuSmZ92ANJ/YN1KhpJSTHWo4PKMCOxYHqVeseiXoO/X2o4HFPKn94u67Jc=
+	t=1747838536; cv=none; b=YI9NSRYVLqCg1lpj4f53fN5pfT6ms46NBKgw5iM37fb3gxJT3BpzrT4PwIwINfO8GIGTGS8Uarm9iCeNH4kW2NaCrcOTSg188nnw2e3Wa4LabSqlYQJSGVjRnT4d3yfdJu1MCDEcZ9yMqqUN27mbWewmIge+oRtrbUdZrVtpMCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747838508; c=relaxed/simple;
-	bh=xGwv8zOnBEuC2KXKMvwIoAf5LhaujZS6kwKCDX9Q3Q8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SPw8oGPPcAJzrEbhad8tnIZnmjRp6esZjzoE8PKukRJbWDlKgtOQ2Cekn4hR4BBzyfgWVmuRNBtirWNEKinzjqtHw8X3jEmS8LiNV+dkihQhu4qBa+pv8OHEq47bfsNNH4QtytEQXwtNMtO41EUZulMdQ8W100eArYwITHXABcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XB/w+SSE; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-acbb85ce788so1342966766b.3;
-        Wed, 21 May 2025 07:41:46 -0700 (PDT)
+	s=arc-20240116; t=1747838536; c=relaxed/simple;
+	bh=MeIreJ0VzWT2UiLJVYu37D2mNjDEruPiWRZcit3nFDU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V2LseawHxsszI1t6gMU2P1io39fSO0aeuWj1Dgx5AdrGwQTFgEaK+jbmArirIEEDVfPn5+uZLdmjOQ/ZZXh6d7qKIaTaGBHtYPF2/Mkru+ivpA1ZkmsLqCOnVs7TTwKGHLOz8BPz8pmWxIPJViAOFIoj0fVQaxtzGoQkxTw7ttY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yl8rcKfd; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-231ba6da557so720395ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 07:42:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747838505; x=1748443305; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C1UUJjI6uVedXhjrW1TR558sVBfrP4UvOSPCt6T5RL8=;
-        b=XB/w+SSEFYmJW62fhRDvvFvlZCbvFunWoXiiYmEvPkcCkScnmF7LrDHPKYLnZIYUJf
-         glDpPc+iVlJU+Aies0Zbld1/rPvYnXxUIah84XGzLHZPRfdwDsysWAa79pWA53/bGc3e
-         rh+QXDhyLYR6SlQhr2M/E7bFXxdEi/18bxVn2wNzDmU1rMK/8Veg3SPQtHc3NUCxMBKA
-         QbEIdFPPPq1zkOdVxTQNarYTuY+9kYAjuptsLiVZV3h28sva5OrYWv4JmXaqdzJBK648
-         z7+OzBYGzeHYio/t+siPcANEJubEsYaTzD9QHw1W5EUMrpUrKogJdgieQVja6LY4Lm7O
-         qTdQ==
+        d=google.com; s=20230601; t=1747838534; x=1748443334; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MeIreJ0VzWT2UiLJVYu37D2mNjDEruPiWRZcit3nFDU=;
+        b=yl8rcKfdmTnA2glzI6CDGMGJzJw8woIbVZ8oU12U1HYxR0M+dHGBOg1/oZBPgw3taM
+         q78cYU+YditqGcWoM4IZaarAIrEjwctqzPzWgsUhbjNrGBs+n9KUsnlWAJG0Qyss1Lhh
+         faaymkhMilJAab4/EkZWaqAQ0h58S4Qj4ANwc1nixAp88y1gR4Y6Bz3CJP9OoXhge9ru
+         r/mvEKPlouRMG8uQwGCODWs/WZoUM38cZqMEWGZWB3SsrnKQVjirPvE4g78Pjfb/rcGi
+         /3EaG2O5vDGOxlD/gfhLE89kSCVbpHVpNhHdnV4luS3eOBp/SRS3RZdK3dOUWQWy4Qag
+         h9AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747838505; x=1748443305;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C1UUJjI6uVedXhjrW1TR558sVBfrP4UvOSPCt6T5RL8=;
-        b=c61khu4I/JRfdO6mRXVuD2i0kthplJXRQnoW0tzYsZB+jm+NiVGz/uj2E3lDYlyRR9
-         R0I0sZrbjt3dFZJke3R6Sol8hqPXWFXufgVum7Y/YF8ot167RiIEXoSk/1ZtATMX+QXK
-         0Cp7AYhjjV35Pej6JWggqkap158aKiWbrGKkDwCxR7TLJheOkcE9zQRQd+851npXt4Sh
-         33H/mkJedovc0DX3VYsMGOG3YhY55nZ10Zn2X9caocVXFl26UNOi7tof5qajtbbVDhuc
-         bgBypdVCbUvyZHMtLjFq0+QhuEZM3zx6bCkeM9r9WMOE4OthNNa523AX6kl2XN+YwVzI
-         XKzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMyOnp7F1F/5IrkJMtuOIdfsP3VZBa2IkS6+kcWQuAxjB2E5wyQbpx6TJnNpZM+wzSXRj84ixVEEG/Lok=@vger.kernel.org, AJvYcCWtJcUlEFMcD5qOxacG49FBuMfKseSLJwQcqUAmSwjUyuV5PX3miXPLkbJ6rszFDavOk4VbA8L7OL4jv7Uyfwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzculH+YXphrXpQkmt3JkyYnKcXmvxTDiYG0NZ7osALuVkjNMJW
-	H0IQnTfm9o4zOsSAoXWGx9iQxArdXGmSIXyyKz3u7TRMmdy0QioHTmpt
-X-Gm-Gg: ASbGncvrYQ8yYfjPFUwPxTCLqzyGqtRWAYeBIo49NRrcwyyqXJlc1IuLNgyIV3lJztL
-	mm9VVN057uJ8qUmX4xLJ1F2KptdDh8coGlp1sD6Yv3ABFuMHL74mjW+XQS+1yxdNgmjzb4r38lg
-	dRjrQD0LUP0KoiN1f+YxBdTJ0kHHNd4V/HxpNvo/BmVxAtZ5VXQFtC9UPVk54j3diaMQz1dzqiU
-	gxXjNgByFXv58YPjaY15uFPV0zmP4C1Ii5ebIg71TXTfGknhLBuCl/5sZFdS/zAPnEImFbNBJZM
-	iqdTKtoS0SImb82SRfdpITc6zdU3zfU4OGs+pjicywCtbkdiTNVDTlVsRGfw
-X-Google-Smtp-Source: AGHT+IHdWUcyjR/eAqavzD2juSux585KrfO0BAvXyaiLmoTl1xqZVtMRB8htIIkLjTQGAHmv4MaEgw==
-X-Received: by 2002:a17:907:7fac:b0:aca:c4a6:cd90 with SMTP id a640c23a62f3a-ad52d45accemr1998919366b.5.1747838504367;
-        Wed, 21 May 2025 07:41:44 -0700 (PDT)
-Received: from [10.5.1.156] ([193.170.134.247])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d490794sm915439866b.131.2025.05.21.07.41.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 May 2025 07:41:44 -0700 (PDT)
-Message-ID: <7a6852e9-54f7-4fc1-b052-f673f9eddd97@gmail.com>
-Date: Wed, 21 May 2025 16:41:42 +0200
+        d=1e100.net; s=20230601; t=1747838534; x=1748443334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MeIreJ0VzWT2UiLJVYu37D2mNjDEruPiWRZcit3nFDU=;
+        b=YW7r0mygCbxdnoM0EXr/pcxRPpgz294ndXOFH2t0JaY5EhDen4aiGuWoVhsVcfE9xz
+         /RaPxJnLI9/+Bpb3TwsJuYya3fON0rT8cC+o5eBISSfEGVtWZPcpQyv42yMsoao7696S
+         fwbjFjJVVh3kUnuFtxpp+n+TUZ8LrK+b0DV/aS+n5RJcDFwDmtnUFBo+MqDfvPP6NgNU
+         W3dZIjD3PUTREJRuvMfNhSRjQpuEmlY8Rmvlnl77znOsBIXYqK+3mGpxJiRek/JXBQo+
+         42b8/+6acEZxIxcPPIxmdzj+GtQa9JgS1WBvxz+3upypL+4NFF0d7f1aEABfibdLGjyq
+         9AlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqlchAPbjGLswdBbosCrdLSzb9AXqCdcIfGarRiFG2chGfHjBHPH3RZ6IGtf3RPpQcOXd5wilXsqB2IZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzoPBmumWxFjXzyc2180CHPtbvOqTUk9xL+dbH94oxKux13y4C
+	gfjn7TH9F5DOI8Ky9LMBIWXSgmmdI8ZBIPTe9eQO0TtxDlM6SRuwzgeDlVhEOHLzt131vHlJxuU
+	huvWReFTr+UKtf7qcgjTzJS497DIDLylXymYZGMg+
+X-Gm-Gg: ASbGncvBzKHmRAvU/fct4T3vj0FyyGR3muDSEl1BW+naXJq4vF09HgPL6rDVyeI7qQS
+	fyMvUZUFRHSFJD6+GUBiT4VTLTb07jxKiHqg+MXgadp5n9qhkZF6DYHeURkwywJuuDfkBBdKWN8
+	rQwJN914QqAZZoJmka/ypZ3E6thquiGUzplKF6NK+a5hiDN8RhcaXG1EN6pgXOcyzqGKi4jVuPV
+	QM=
+X-Google-Smtp-Source: AGHT+IG2dIYCeOz3RfprKj5ASeFAdVUkomyHxXDYNyHo+nRE69+av8tpRMQ+wxHyswC7YgfpsfFFUwky7GIhiFkkWlc=
+X-Received: by 2002:a17:902:cecd:b0:231:d7cf:cf18 with SMTP id
+ d9443c01a7336-23203eee503mr11647135ad.1.1747838533592; Wed, 21 May 2025
+ 07:42:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] rust: miscdevice: add additional data to
- MiscDeviceRegistration
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Arnd Bergmann <arnd@arndb.de>,
- Lee Jones <lee@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>,
- =?UTF-8?Q?Gerald_Wisb=C3=B6ck?= <gerald.wisboeck@feather.ink>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250517-b4-rust_miscdevice_registrationdata-v3-0-cdb33e228d37@gmail.com>
- <20250517-b4-rust_miscdevice_registrationdata-v3-1-cdb33e228d37@gmail.com>
- <aCiSRZjOETsD8MhX@pollux> <2025052107-awhile-drainer-38d0@gregkh>
- <aC3fYyvPvTB1DkeR@cassiopeiae>
-Content-Language: en-US, de-DE
-From: Christian Schrefl <chrisi.schrefl@gmail.com>
-In-Reply-To: <aC3fYyvPvTB1DkeR@cassiopeiae>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1747264138.git.ackerleytng@google.com> <d3832fd95a03aad562705872cbda5b3d248ca321.1747264138.git.ackerleytng@google.com>
+ <CA+EHjTxtHOgichL=UvAzczoqS1608RSUNn5HbmBw2NceO941ng@mail.gmail.com>
+ <CAGtprH8eR_S50xDnnMLHNCuXrN2Lv_0mBRzA_pcTtNbnVvdv2A@mail.gmail.com>
+ <CA+EHjTwjKVkw2_AK0Y0-eth1dVW7ZW2Sk=73LL9NeQYAPpxPiw@mail.gmail.com>
+ <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
+ <CA+EHjTy7iBNBb9DRdtgq8oYmvgykhSNvZL3FrRV4XF90t3XgBg@mail.gmail.com>
+ <CAGtprH_7jSpwF77j1GW8rjSrbtZZ2OW2iGck5=Wk67+VnF9vjQ@mail.gmail.com>
+ <CA+EHjTzMhKCoftfJUuL0WUZW4DdqOHgVDcn0Cmf-0r--8rBdbg@mail.gmail.com>
+ <diqzecwjnk95.fsf@ackerleytng-ctop.c.googlers.com> <CA+EHjTyY5C1QgkoAqvJ0kHM4nUvKc1e1nQ0Uq+BANtVEnZH90w@mail.gmail.com>
+In-Reply-To: <CA+EHjTyY5C1QgkoAqvJ0kHM4nUvKc1e1nQ0Uq+BANtVEnZH90w@mail.gmail.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Wed, 21 May 2025 07:42:01 -0700
+X-Gm-Features: AX0GCFtAT9R_Oe05rYdzQPFgRH8-_eDMLizxCLAk0K-mKF9SD9rgeSxLsWR73nE
+Message-ID: <CAGtprH-fE=G923ctBAcq5zFna+2WULhmHDSbXUsZKUrin29b4g@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
+ KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
+To: Fuad Tabba <tabba@google.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org, 
+	aik@amd.com, ajones@ventanamicro.com, akpm@linux-foundation.org, 
+	amoorthy@google.com, anthony.yznaga@oracle.com, anup@brainfault.org, 
+	aou@eecs.berkeley.edu, bfoster@redhat.com, binbin.wu@linux.intel.com, 
+	brauner@kernel.org, catalin.marinas@arm.com, chao.p.peng@intel.com, 
+	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com, 
+	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com, 
+	fan.du@intel.com, fvdl@google.com, graf@amazon.com, haibo1.xu@intel.com, 
+	hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
+	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
+	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
+	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
+	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
+	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
+	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, thomas.lendacky@amd.com, 
+	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
+	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org, 
+	willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com, 
+	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Danilo
+On Wed, May 21, 2025 at 5:36=E2=80=AFAM Fuad Tabba <tabba@google.com> wrote=
+:
+> ....
+> > When rebooting, the memslots may not yet be bound to the guest_memfd,
+> > but we want to reset the guest_memfd's to private. If we use
+> > KVM_SET_MEMORY_ATTRIBUTES to convert, we'd be forced to first bind, the=
+n
+> > convert. If we had a direct ioctl, we don't have this restriction.
+> >
+> > If we do the conversion via vcpu_run() we would be forced to handle
+> > conversions only with a vcpu_run() and only the guest can initiate a
+> > conversion.
+> >
+> > On a guest boot for TDX, the memory is assumed to be private. If the we
+> > gave it memory set as shared, we'd just have a bunch of
+> > KVM_EXIT_MEMORY_FAULTs that slow down boot. Hence on a guest reboot, we
+> > will want to reset the guest memory to private.
+> >
+> > We could say the firmware should reset memory to private on guest
+> > reboot, but we can't force all guests to update firmware.
+>
+> Here is where I disagree. I do think that this is the CoCo guest's
+> responsibility (and by guest I include its firmware) to fix its own
+> state after a reboot. How would the host even know that a guest is
+> rebooting if it's a CoCo guest?
 
-On 21.05.25 4:12 PM, Danilo Krummrich wrote:
-> On Wed, May 21, 2025 at 01:55:36PM +0200, Greg Kroah-Hartman wrote:
->> On Sat, May 17, 2025 at 03:42:29PM +0200, Danilo Krummrich wrote:
->>> On Sat, May 17, 2025 at 01:33:49PM +0200, Christian Schrefl wrote:
->>>> +pub struct MiscDeviceRegistration<T: MiscDevice> {
->>>>      #[pin]
->>>>      inner: Opaque<bindings::miscdevice>,
->>>> +    #[pin]
->>>> +    data: UnsafePinned<T::RegistrationData>,
->>>>      _t: PhantomData<T>,
->>>>  }
->>>
->>> I recommend not to store data within a Registration type itself.
->>>
->>> I know that this is designed with the focus on using misc device directly from
->>> the module scope; and in this context it works great.
->>>
->>> However, it becomes quite suboptimal when used from a driver scope. For
->>> instance, if the misc device is registered within a platform driver's probe()
->>> function.
->>>
->>> I know this probably isn't supported yet. At least, I assume it isn't supported
->>> "officially", given that the abstraction does not provide an option to set a
->>> parent device. Yet I think we should consider it.
->>
->> It's going to be a requirement to properly set the parent device, and
->> as you point out, this really should be in some sort of scope, not just
->> a module.
->>
->> But, we have two types of users of a misc device, one like this is
->> written, for a module-scope, and one for the "normal" device scope.  The
->> device scope is going to be tricker as it can, and will, get
->> disconnected from the device separately from the misc device lifespan,
->> so when that logic is added, it's going to be tricky as you point out.
->>
->> So I'll take this now, but in the future this is going to have to be
->> cleaned up and modified.
-> 
-> I'm about to sketch up something based on this patch that works properly for
-> both cases, i.e. module-scope and driver-scope.
+There are a bunch of complexities here, reboot sequence on x86 can be
+triggered using multiple ways that I don't fully understand, but few
+of them include reading/writing to "reset register" in MMIO/PCI config
+space that are emulated by the host userspace directly. Host has to
+know when the guest is shutting down to manage it's lifecycle.
 
-Let me know if you have any questions for me (if you want also privately 
-or on Zulip).
+x86 CoCo VM firmwares don't support warm/soft reboot and even if it
+does in future, guest kernel can choose a different reboot mechanism.
+So guest reboot needs to be emulated by always starting from scratch.
+This sequence needs initial guest firmware payload to be installed
+into private ranges of guest_memfd.
 
-I currently don't have the time to work on this myself. I'm not that
-familiar with the C side and the Devres abstraction and would need to look
-into these before getting much work done here.
+>
+> Either the host doesn't (or cannot even) know that the guest is
+> rebooting, in which case I don't see how having an IOCTL would help.
 
-> I think it would also be good for the misc device abstraction to demonstrate
-> how to properly make class device abstractions (such as misc device, DRM device,
-> input device etc.) go along with bus devices in the context of a driver.
-> 
-> misc device isn't *the* perfect example, given that it doesn't have the typical
-> create and register split and another complication is that we also have to deal
-> with the module-scope case, but it's still a very good candidate given that it
-> is very simple compared to other class devices.
+Host does know that the guest is rebooting.
 
-Cheers
-Christian
+> Or somehow the host does know that, i.e., via a hypercall that
+> indicates that. In which case, we could have it so that for that type
+> of VM, we would reconvert its pages to private on a reboot.
+
+This possibly could be solved by resetting the ranges to private when
+binding with a memslot of certain VM type. But then Google also has a
+usecase to support intrahost migration where a live VM and associated
+guest_memfd files are bound to new KVM VM and memslots.
+
+Otherwise, we need an additional contract between userspace/KVM to
+intercept/handle guest_memfd range reset.
 
