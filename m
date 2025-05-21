@@ -1,109 +1,100 @@
-Return-Path: <linux-kernel+bounces-657766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 367D8ABF892
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:01:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57AE5ABF8BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 936FA16CAF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:59:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00EFD1C0111C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2A521ADA0;
-	Wed, 21 May 2025 14:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3j9sLhbj"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2998221FC4;
+	Wed, 21 May 2025 14:55:36 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B737C1EB5FD
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5EC1537C6
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747839325; cv=none; b=W5fleHBk0kzkWyCYGh5B/fNe0PKQnm6sX6lgCrwumnAIMAiDMV18zMCTmCrqPmYBE/5FClV+XbfKZfxgujt0cOraAlp8XtsxzCzAT5YyBl5dCzH9mfFImA6f70UTqUo61wgtbcoH39TrOQxlCAfc2Qdf5Allp8QRXuEnXE09Dzs=
+	t=1747839336; cv=none; b=ptgwKmGLIJGsm50gIJ+G1Ksid+NlNEfx/VWarH5v5zVuWWbyDlvYpW/UvsQxKFL/TtvaYen7mfsT+QMFdcTv/1bwslunUQcNujmJdJQzDBcQzYKz7H2YeyrJzzPYXN0Yel1gvk+46U42wOhUef5dYc/K2+aFHMY+44wGH0axxx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747839325; c=relaxed/simple;
-	bh=O5sJy0530ExVjxfypTtpMC3Y59Ak4yYgb+R+ZUkl+KQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eERwx9vFezSzJM8zibxvylaNiXkXT66bgEEdLDmAkY5+Fssz25QdHa5L++bQY57QpBWEWZLVbpnI9SgcRbUuLIramjMsv0s0tViDqZXbUFKuIzU8bHB1JWSYb+DIXGvJw/BcqCxksgsgABuM2NJXWV1ZT5pUI3vZERGrXjb+1FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3j9sLhbj; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30e9b2e7a34so3779969a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 07:55:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747839323; x=1748444123; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bDpXqKhQ4ICuU1Y2giEphwOi7h1njnNeNM+cWlT6WKc=;
-        b=3j9sLhbjfCEI6r5tunaUnJWFjTxYlWCPCQUWso92a+ABJ4hsqRBjzESwVsaNYmDvrY
-         Siw61imsZ91fbHmpcN77HYqcuEb6XjHsDMfJCf7h/UiRpmeFdof+b4ta2Fgvs5z1quvV
-         9Cko/mVZmD1LnRz8EK9nzLZwXrNT34tm3uYjhSGCdTXIAUjTz7P0PQH+7Awc/pCQysPY
-         4g/uUFEOixBd7I+fmt3HA3eBW8SIEYuPOd9hv/WVJ3F6eTtkv5nRfteEVIQcUKJYxNdC
-         f9bk7fL3MCMrTQDkg1h/vbZCzILDF4sk1OAc90KtssKgEwzSxr/9QZ1QBveAUUfN4Yu/
-         zQYA==
+	s=arc-20240116; t=1747839336; c=relaxed/simple;
+	bh=7aC1JFlJZC4DzuXo5UNsxoo2hoz3sVAMFo0FeeyWrBA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=q7OaLlFvJoiug52xdvgGuAc83yV1YJhZPV7b8NP9dd2KaADXyNJoYHSHHIK+w1xLIV+I1ETTCaw3mHljn7IrlsPBQKW/SwVYj+EW81Uq6PCp3bopl5ExuIWGypy+yy9r7pCtSj8BnkNW+aZhw4HCPvCQXfLAs4Y6kcGwZqfKKZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-85b5e46a526so643902939f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 07:55:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747839323; x=1748444123;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bDpXqKhQ4ICuU1Y2giEphwOi7h1njnNeNM+cWlT6WKc=;
-        b=X6YhCUPIB1kct0DRNOH6uB8Qae6o9/yJrTL2TZPP7/glunSzfIWr9VyGGAKhrUwGWU
-         nSh6wBLDiPBX7LzlLEt3h1VkEqYGe/mhEWrQsIDwaup987E3JS2y3ieuezxRjjebrtcw
-         H84awO1Bk312HdG1y+9aLadcrbm8zSaF2NQOXesracloDZuNcozEsGjcfm5NGeKoTZWd
-         2Rm+ijpBDMfP7rJuKq+xJuw3C0PQt+5GaJSssjYeetDhExy/Mzmc5ygpf4eudAZMx38a
-         ko0PDnbMKmyknyik4K03CJ3Y1Ay/6s7n2y+1jsI0N6+cG3zX0cSAegKEnEl1RhV1mYV9
-         /6Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+W7Zhxs1LlCUdgtmpbGScVJ0UBgpsmZNpjAbO6FHiQ7aLC5H87Vrl1WxInTztIorzQdKaVO9HTIHGRgI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXgiesbaW/YiwHFEr/9jayZeekxR5v/MhdLD9ig0bj+b4tW4Gs
-	+GxYaZD93SkHKbhlq6jF57l89lCK57EG7VHNcSQ/zA8z0V2GmFEKgZQIDrQ2dsmFR29wpjate0+
-	qFNURPQ==
-X-Google-Smtp-Source: AGHT+IE14Lmz/nRFNIY20LyDCl9qEUvt6gWN6ZkQVOAJ6+PFcGmygAsOR1CKTNQZzkgN15CZOf2jdexMRXo=
-X-Received: from pjbhl12.prod.google.com ([2002:a17:90b:134c:b0:30a:7da4:f075])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:574c:b0:2f1:2fa5:1924
- with SMTP id 98e67ed59e1d1-30e7d5b6f64mr27777821a91.26.1747839322910; Wed, 21
- May 2025 07:55:22 -0700 (PDT)
-Date: Wed, 21 May 2025 07:55:20 -0700
-In-Reply-To: <aC2Z2U/HR5wAay3s@yzhao56-desk.sh.intel.com>
+        d=1e100.net; s=20230601; t=1747839333; x=1748444133;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JVkLcreEGxWf9CWcJBGD5Glu9UoiEI6rdnhABCYz4Uc=;
+        b=HzgMaYNTbJLIm/7RmB/gtQ4J0fcA+1Vye/14msWv+KOAwdnO99TbtUhbncVeO174O8
+         V0lsUyDtHdu5WITRZOoe4fJMuRBZuUvn9N16F4N+8TNeX3aM6gXha9b0Odh63hnagWS1
+         gDArSDColf3BxsJAIOXfl2nY19ksOaJDLzYmDClKa8fKlcpGyFj97YAxBquZy3UQW08u
+         2LhdZOEXVCxtXha6ejVUkl7bxtN5dovdhH4+1IWhqMr2QcnL6WkGcjtEMHIaoyi7KdYz
+         tKUQnhn5dxGYW/CW1sGZEnBQ4xDZSkstxiAY1uC/ranC/hZl69cjdZa9vyyn67SBzjOQ
+         xHeg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0QEYHZHwWbdckeKFaIM09De1ht3xV4ineIO+wQ3aq1hYTkSu6R5eB36thKPPudiw+AI6uwvSop7KPeoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8gCrQWjrezzmBWF3rvOeuPWTcZwThfp5VifQ2KzFXF2n2zG1H
+	JUHSWUXNvtqjwrY8xfcaAZNIuVyk01pEv501r75skaOzzRrjrVPJUIu0CuDzAi1D/79Lmy7wrUd
+	5iCwgbSpwlQgezSd0p6NFskPQ94fnz4NJVQe4RpyshqM9fKNOMM2DxkzkKrI=
+X-Google-Smtp-Source: AGHT+IHU3VOEtR1uxykFIZrxe5rsDjd3adSviinbsN8tiduT8BUfJ+kIHoWgSOKKBBfAdvb56JDQ1InZaweUiKFe+b6dknXVv2b2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250516213540.2546077-1-seanjc@google.com> <20250516213540.2546077-5-seanjc@google.com>
- <aC2Z2U/HR5wAay3s@yzhao56-desk.sh.intel.com>
-Message-ID: <aC3pWOUnMWvsxYWc@google.com>
-Subject: Re: [PATCH v3 4/6] KVM: Check for empty mask of harvested dirty ring
- entries in caller
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Xu <peterx@redhat.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, James Houghton <jthoughton@google.com>, 
-	Pankaj Gupta <pankaj.gupta@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:6a8e:b0:866:217f:80a with SMTP id
+ ca18e2360f4ac-86a24c12feemr2365065639f.7.1747839333227; Wed, 21 May 2025
+ 07:55:33 -0700 (PDT)
+Date: Wed, 21 May 2025 07:55:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <682de965.a00a0220.29bc26.0290.GAE@google.com>
+Subject: [syzbot] Monthly hams report (May 2025)
+From: syzbot <syzbot+list0ce723fccf3cd8df852f@syzkaller.appspotmail.com>
+To: linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 21, 2025, Yan Zhao wrote:
-> On Fri, May 16, 2025 at 02:35:38PM -0700, Sean Christopherson wrote:
-> > @@ -108,15 +105,24 @@ static inline bool kvm_dirty_gfn_harvested(struct kvm_dirty_gfn *gfn)
-> >  int kvm_dirty_ring_reset(struct kvm *kvm, struct kvm_dirty_ring *ring,
-> >  			 int *nr_entries_reset)
-> >  {
-> > +	/*
-> > +	 * To minimize mmu_lock contention, batch resets for harvested entries
-> > +	 * whose gfns are in the same slot, and are within N frame numbers of
-> > +	 * each other, where N is the number of bits in an unsigned long.  For
-> Suppose N is 64,
-> 
-> > +	 * simplicity, process the current set of entries when the next entry
-> > +	 * can't be included in the batch.
-> > +	 *
-> > +	 * Track the current batch slot, the gfn offset into the slot for the
-> > +	 * batch, and the bitmask of gfns that need to be reset (relative to
-> > +	 * offset).  Note, the offset may be adjusted backwards, e.g. so that
-> > +	 * a sequence of gfns X, X-1, ... X-N can be batched.
-> X-N can't be batched, right?
+Hello hams maintainers/developers,
 
-Hah!  Yeah, off-by-one error.
+This is a 31-day syzbot report for the hams subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/hams
+
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 5 issues are still open and 40 have already been fixed.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 4013    Yes   possible deadlock in nr_rt_device_down (3)
+                  https://syzkaller.appspot.com/bug?extid=ccdfb85a561b973219c7
+<2> 685     Yes   KASAN: slab-use-after-free Read in rose_get_neigh
+                  https://syzkaller.appspot.com/bug?extid=e04e2c007ba2c80476cb
+<3> 263     Yes   possible deadlock in nr_remove_neigh (2)
+                  https://syzkaller.appspot.com/bug?extid=8863ad36d31449b4dc17
+<4> 97      No    possible deadlock in serial8250_handle_irq
+                  https://syzkaller.appspot.com/bug?extid=5fd749c74105b0e1b302
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
