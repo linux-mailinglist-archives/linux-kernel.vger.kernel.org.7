@@ -1,418 +1,524 @@
-Return-Path: <linux-kernel+bounces-657726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A2FABF81D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:45:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B79D7ABF840
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ABB7167D96
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:45:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B5BE1BC3F0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1CB1DEFFC;
-	Wed, 21 May 2025 14:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D706B21B9C3;
+	Wed, 21 May 2025 14:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wXkGCkhN"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0EDk4AE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D0417C21B
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F2A1DE891;
+	Wed, 21 May 2025 14:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747838719; cv=none; b=cGYZDUA9Y83cWCIhRxRSBBdfo76kTffLkw0HWpAgCF/Uu5lseKbNIlprYwkJXpDuqACnFZee1ePbzAnzVENRQ/BTWBlPczX2SJQNpx0Q63BvRck9b/e+OnfrW5g92yazxdGsbsUCNYFxS8uI0dIKYSePZIPSvrtTQIEePlVWuR8=
+	t=1747839012; cv=none; b=Xv/L1q4QuFtxqo0vy3tOZTBb4J5sl0YNKX48ctw2UvzxX/Puu9DsWB7ZK8hlTjpO40DCjF7xhGhpyT7ZgByLLeoJDupl/sMcOncZ4EGewwHG5xx9Vtkd6KGlYjlqcm7VSQgc4q5BCYR2dabUNwTU2D6QoFkA78ni+4cgy6cBi+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747838719; c=relaxed/simple;
-	bh=sidpF4sfJBBUleOh6a+6izFFQKVFNqPgJN1yZk4Hjt4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eIZRzkJx+gwidHvTGD2OICkun8APEQZvTeEvK5QE666hMjjSKEGd/SxTvJkw2SpX+L77W1ZduCZQoShNKf8HOyiZnZeEsqRQ4NUXzu6Ig2pR7WauKWrDh1Z6evhVGFhgaMo1gTXO4SxLAPdLEm85gHw/kIMb2M/tFEJO/odfFgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wXkGCkhN; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30ebf91d150so5177880a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 07:45:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747838716; x=1748443516; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OV3HeD68X5N2HjLL1dYAYLv83kXznVC8n6fW8T6WEmU=;
-        b=wXkGCkhNcH8nOeXUdpah+rM6+1ziQfaFNaI3klMoyf1uwo0rQj1lDyL402/P4xjvIc
-         +kMgHR+TejQGiFw+/9vxjYvAX1QJHkCKev/9yWIDBWJCWMp2WL67JIN9MfDnCpslvclA
-         +Utx5xFkP+YhgN0v9ilQXLK7KT3eJnWLB+EMxGkXyVRsKf+Q3VyG0yjK9LamK7TDRZbS
-         bkKREvI9q3YIg3BRYU+YNWxQnKZ7mASUeO+9JIn2q1USDU/Ttc4lTSgykrtynu53cb6K
-         qE4/FWmNhg+oiDsRoSl6s+czavVDo3jTEF04C52Kt3LqMV2tp61iQUeL0L2rKdNemZJ+
-         PlTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747838716; x=1748443516;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OV3HeD68X5N2HjLL1dYAYLv83kXznVC8n6fW8T6WEmU=;
-        b=Is5ZSy+raycifeddNPgb4m8r7XVpjdl/tMaEl1h5kVkFE2hbXnhbc/XgPj6WzV0S91
-         7jLSvTz0soabO5YVMr62ro4HsV33Lre+RcaZ1xqAhvIkXeb/tANOhrEjp7kwAiUqyu+G
-         136ivrc5Mnf4JU9EEpQwLYv1+cVKypiMGJFE4oS/1o8dpIWG6RvJds+iMVgtd353EjBI
-         TysFgN4wmVOYdipoJW1bXJpkgs0eNjiFYhR/nkHTdYZMD0qU9hrja9XvCnspnsMXQGzq
-         irsQFbnxEd37BQsJ/2twM/AQiO092VX5CNYvzjqQbSZLicMVxMTyEspDhBvNz3np/xlS
-         QqLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRU4XhS/NmDv4NnTHzxR9d6MJCq9K/9BkMg7kcY8RgS3GfH7I8YArKd1optepzKCMrqth93PrgGUUxtRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznUJhLQs06z69AL0cH742FTxvmPQL6BwowtND8iDWMTUqtSNmT
-	til7nEyCv6lvuJMem6LU/FGANp8dXVbt8AqPLKFsYcujDR79JxNfMFJOkuKmVz2HpHpct7GsG4p
-	Mjd8yOA==
-X-Google-Smtp-Source: AGHT+IEeTmwVlYaTlQFYxlXvbl4oy21icgsEGds5/vQFLPfEpqjkg9FddL9Vfq4OEdSGr+6Yp9d4ksWEb1M=
-X-Received: from pjx8.prod.google.com ([2002:a17:90b:5688:b0:30a:31eb:ec8e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2c8c:b0:2fe:8c22:48b0
- with SMTP id 98e67ed59e1d1-30e7d555a3bmr30484637a91.15.1747838716138; Wed, 21
- May 2025 07:45:16 -0700 (PDT)
-Date: Wed, 21 May 2025 07:45:14 -0700
-In-Reply-To: <20250428195113.392303-2-michael.roth@amd.com>
+	s=arc-20240116; t=1747839012; c=relaxed/simple;
+	bh=WYkzm1N5I3TPmGmQgs6HWj4fRNpemSWsJgscAjFgG2U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PHdfyfMSeeqoOeoSo6LMfhvPDJv7k+KIF9eNaz2F0VpPAZgPwZ82mLnjl5u8KCVPfXg6U9GsNTmm9pmedIrC8yeObSot/gyGTFM6NBsTGnWkrkzdVl2TbJ5SbZEOLX39o4LGbAxvrNecp4djeSILVfEzVSnLBTAunnZe84yKalM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0EDk4AE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2559BC4CEE7;
+	Wed, 21 May 2025 14:50:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747839011;
+	bh=WYkzm1N5I3TPmGmQgs6HWj4fRNpemSWsJgscAjFgG2U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=E0EDk4AEu6FWyxDydqaEG37ZDxO1ogJi/c3mqAEwpWfyRUgfuEZfCD+I6+XHW0/Cv
+	 YbxeANlqiSPVAPuv2VRK88gDI9Pp9SDIyC7bxOOZBld1AXgzwvcAnQv/xnMUMWmbfs
+	 peEI8agvC4/Mcr0UVRszCaCRcGdmgJ+Fsr6DIgZoha05PkuLBJuy9FJ9s+ZxYjIA3V
+	 CgAT6YCw3gmcUde7KRqYTFKv9kM1BjF2PM8pubMl7zVyycaO8qq7CTCHrDPW/0e3lo
+	 P/NTJZnGaKS4Ss+54GOe/WmZu7p5vTBDBRt8ZUF7bxUR8GHsy0pS0wQp1ENoBTASAu
+	 IlF4GwcOZrwtw==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Sasha Levin <sashal@kernel.org>,
+	Michal Luczaj <mhal@rbox.co>,
+	Rao Shoaib <Rao.Shoaib@oracle.com>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: stable@vger.kernel.org
+Subject: [PATCH v6.6 06/26] af_unix: Remove CONFIG_UNIX_SCM.
+Date: Wed, 21 May 2025 14:45:14 +0000
+Message-ID: <20250521144803.2050504-7-lee@kernel.org>
+X-Mailer: git-send-email 2.49.0.1112.g889b7c5bd8-goog
+In-Reply-To: <20250521144803.2050504-1-lee@kernel.org>
+References: <20250521144803.2050504-1-lee@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250428195113.392303-1-michael.roth@amd.com> <20250428195113.392303-2-michael.roth@amd.com>
-Message-ID: <aC3m1uMmp28gSm3r@google.com>
-Subject: Re: [PATCH v6 1/2] KVM: Introduce KVM_EXIT_SNP_REQ_CERTS for SNP certificate-fetching
-From: Sean Christopherson <seanjc@google.com>
-To: Michael Roth <michael.roth@amd.com>
-Cc: kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, pbonzini@redhat.com, jroedel@suse.de, 
-	thomas.lendacky@amd.com, liam.merwick@oracle.com, dionnaglaze@google.com, 
-	huibo.wang@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 28, 2025, Michael Roth wrote:
-> For SEV-SNP, the host can optionally provide a certificate table to the
-> guest when it issues an attestation request to firmware (see GHCB 2.0
-> specification regarding "SNP Extended Guest Requests"). This certificate
-> table can then be used to verify the endorsement key used by firmware to
-> sign the attestation report.
-> 
-> While it is possible for guests to obtain the certificates through other
-> means, handling it via the host provides more flexibility in being able
-> to keep the certificate data in sync with the endorsement key throughout
-> host-side operations that might resulting in the endorsement key
-> changing.
-> 
-> In the case of KVM, userspace will be responsible for fetching the
-> certificate table and keeping it in sync with any modifications to the
-> endorsement key by other userspace management tools. Define a new
-> KVM_EXIT_SNP_REQ_CERTS event where userspace is provided with the GPA of
-> the buffer the guest has provided as part of the attestation request so
-> that userspace can write the certificate data into it while relying on
-> filesystem-based locking to keep the certificates up-to-date relative to
-> the endorsement keys installed/utilized by firmware at the time the
-> certificates are fetched.
-> 
->   [Melody: Update the documentation scheme about how file locking is
->   expected to happen.]
-> 
-> Reviewed-by: Liam Merwick <liam.merwick@oracle.com>
-> Tested-by: Liam Merwick <liam.merwick@oracle.com>
-> Tested-by: Dionna Glaze <dionnaglaze@google.com>
-> Signed-off-by: Michael Roth <michael.roth@amd.com>
-> Signed-off-by: Melody Wang <huibo.wang@amd.com>
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
 
-Heh, gotta love the chaos that of tossing around a patch between its original
-author and someone else.
+[ Upstream commit 99a7a5b9943ea2d05fb0dee38e4ae2290477ed83 ]
 
-The SoB chain should technically be:
+Originally, the code related to garbage collection was all in garbage.c.
 
-Signed-off-by: Michael Roth <michael.roth@amd.com>
-Signed-off-by: Melody Wang <huibo.wang@amd.com>
-[Melody: Update the documentation scheme about how file locking is
-         expected to happen]
-Signed-off-by: Michael Roth <michael.roth@amd.com>
+Commit f4e65870e5ce ("net: split out functions related to registering
+inflight socket files") moved some functions to scm.c for io_uring and
+added CONFIG_UNIX_SCM just in case AF_UNIX was built as module.
 
-> ---
->  Documentation/virt/kvm/api.rst | 80 ++++++++++++++++++++++++++++++++++
->  arch/x86/kvm/svm/sev.c         | 50 ++++++++++++++++++---
->  arch/x86/kvm/svm/svm.h         |  1 +
->  include/uapi/linux/kvm.h       |  9 ++++
->  include/uapi/linux/sev-guest.h |  8 ++++
->  5 files changed, 142 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index ad1859f4699e..a838289618b5 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -7194,6 +7194,86 @@ Please note that the kernel is allowed to use the kvm_run structure as the
->  primary storage for certain register types. Therefore, the kernel may use the
->  values in kvm_run even if the corresponding bit in kvm_dirty_regs is not set.
->  
-> +::
-> +
-> +		/* KVM_EXIT_SNP_REQ_CERTS */
-> +		struct kvm_exit_snp_req_certs {
-> +			__u64 gfn;
+However, since commit 97154bcf4d1b ("af_unix: Kconfig: make CONFIG_UNIX
+bool"), AF_UNIX is no longer built separately.  Also, io_uring does not
+support SCM_RIGHTS now.
 
-Hmm, a bit late on feedback, but I think I'd prefer to provide the gpa, not the
-gfn.  The address provided by the guest is a GPA, and similar KVM exits like
-KVM_HC_MAP_GPA_RANGE provide gpa+npages.
+Let's move the functions back to garbage.c
 
-> +			__u64 npages;
-> +			__u64 ret;
-> +		};
-> +
-> +This event provides a way to request certificate data from userspace and
-> +have it written into guest memory. This is intended to handle attestation
-> +requests made by SEV-SNP guests (using the Extended Guest Requests GHCB
-> +command as defined by the GHCB 2.0 specification for SEV-SNP guests),
-> +where additional certificate data corresponding to the endorsement key
-> +used by firmware to sign an attestation report can be optionally provided
-> +by userspace to pass along to the guest together with the
-> +firmware-provided attestation report.
-> +
-> +KVM will supply in `gfn` the non-private guest page 
+Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+Acked-by: Jens Axboe <axboe@kernel.dk>
+Link: https://lore.kernel.org/r/20240129190435.57228-4-kuniyu@amazon.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+(cherry picked from commit 99a7a5b9943ea2d05fb0dee38e4ae2290477ed83)
+Signed-off-by: Lee Jones <lee@kernel.org>
+---
+ include/net/af_unix.h |   7 +-
+ net/Makefile          |   2 +-
+ net/unix/Kconfig      |   5 --
+ net/unix/Makefile     |   2 -
+ net/unix/af_unix.c    |  63 +++++++++++++++++-
+ net/unix/garbage.c    |  73 +++++++++++++++++++-
+ net/unix/scm.c        | 150 ------------------------------------------
+ net/unix/scm.h        |  10 ---
+ 8 files changed, 137 insertions(+), 175 deletions(-)
+ delete mode 100644 net/unix/scm.c
+ delete mode 100644 net/unix/scm.h
 
-KVM cannot guarantee the page is non-private.  Even if KVM is 100% certain the
-page is shared when the userspace exit is initiated, unless KVM holds several
-locks across the exit to userspace, nothing prevents the page from being converted
-back to private.
+diff --git a/include/net/af_unix.h b/include/net/af_unix.h
+index 4d35204c08570..3dee0b2721aa4 100644
+--- a/include/net/af_unix.h
++++ b/include/net/af_unix.h
+@@ -17,19 +17,20 @@ static inline struct unix_sock *unix_get_socket(struct file *filp)
+ }
+ #endif
+ 
++extern spinlock_t unix_gc_lock;
++extern unsigned int unix_tot_inflight;
++
+ void unix_inflight(struct user_struct *user, struct file *fp);
+ void unix_notinflight(struct user_struct *user, struct file *fp);
+-void unix_destruct_scm(struct sk_buff *skb);
+ void unix_gc(void);
+ void wait_for_unix_gc(struct scm_fp_list *fpl);
++
+ struct sock *unix_peer_get(struct sock *sk);
+ 
+ #define UNIX_HASH_MOD	(256 - 1)
+ #define UNIX_HASH_SIZE	(256 * 2)
+ #define UNIX_HASH_BITS	8
+ 
+-extern unsigned int unix_tot_inflight;
+-
+ struct unix_address {
+ 	refcount_t	refcnt;
+ 	int		len;
+diff --git a/net/Makefile b/net/Makefile
+index 4c4dc535453df..45f3fbaae644e 100644
+--- a/net/Makefile
++++ b/net/Makefile
+@@ -17,7 +17,7 @@ obj-$(CONFIG_NETFILTER)		+= netfilter/
+ obj-$(CONFIG_INET)		+= ipv4/
+ obj-$(CONFIG_TLS)		+= tls/
+ obj-$(CONFIG_XFRM)		+= xfrm/
+-obj-$(CONFIG_UNIX_SCM)		+= unix/
++obj-$(CONFIG_UNIX)		+= unix/
+ obj-y				+= ipv6/
+ obj-$(CONFIG_BPFILTER)		+= bpfilter/
+ obj-$(CONFIG_PACKET)		+= packet/
+diff --git a/net/unix/Kconfig b/net/unix/Kconfig
+index 28b232f281ab1..8b5d04210d7cf 100644
+--- a/net/unix/Kconfig
++++ b/net/unix/Kconfig
+@@ -16,11 +16,6 @@ config UNIX
+ 
+ 	  Say Y unless you know what you are doing.
+ 
+-config UNIX_SCM
+-	bool
+-	depends on UNIX
+-	default y
+-
+ config	AF_UNIX_OOB
+ 	bool
+ 	depends on UNIX
+diff --git a/net/unix/Makefile b/net/unix/Makefile
+index 20491825b4d0d..4ddd125c4642c 100644
+--- a/net/unix/Makefile
++++ b/net/unix/Makefile
+@@ -11,5 +11,3 @@ unix-$(CONFIG_BPF_SYSCALL) += unix_bpf.o
+ 
+ obj-$(CONFIG_UNIX_DIAG)	+= unix_diag.o
+ unix_diag-y		:= diag.o
+-
+-obj-$(CONFIG_UNIX_SCM)	+= scm.o
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index bb92b1ed94aaf..78758af2c6f38 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -117,8 +117,6 @@
+ #include <linux/file.h>
+ #include <linux/btf_ids.h>
+ 
+-#include "scm.h"
+-
+ static atomic_long_t unix_nr_socks;
+ static struct hlist_head bsd_socket_buckets[UNIX_HASH_SIZE / 2];
+ static spinlock_t bsd_socket_locks[UNIX_HASH_SIZE / 2];
+@@ -1752,6 +1750,52 @@ static int unix_getname(struct socket *sock, struct sockaddr *uaddr, int peer)
+ 	return err;
+ }
+ 
++/* The "user->unix_inflight" variable is protected by the garbage
++ * collection lock, and we just read it locklessly here. If you go
++ * over the limit, there might be a tiny race in actually noticing
++ * it across threads. Tough.
++ */
++static inline bool too_many_unix_fds(struct task_struct *p)
++{
++	struct user_struct *user = current_user();
++
++	if (unlikely(READ_ONCE(user->unix_inflight) > task_rlimit(p, RLIMIT_NOFILE)))
++		return !capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN);
++	return false;
++}
++
++static int unix_attach_fds(struct scm_cookie *scm, struct sk_buff *skb)
++{
++	int i;
++
++	if (too_many_unix_fds(current))
++		return -ETOOMANYREFS;
++
++	/* Need to duplicate file references for the sake of garbage
++	 * collection.  Otherwise a socket in the fps might become a
++	 * candidate for GC while the skb is not yet queued.
++	 */
++	UNIXCB(skb).fp = scm_fp_dup(scm->fp);
++	if (!UNIXCB(skb).fp)
++		return -ENOMEM;
++
++	for (i = scm->fp->count - 1; i >= 0; i--)
++		unix_inflight(scm->fp->user, scm->fp->fp[i]);
++
++	return 0;
++}
++
++static void unix_detach_fds(struct scm_cookie *scm, struct sk_buff *skb)
++{
++	int i;
++
++	scm->fp = UNIXCB(skb).fp;
++	UNIXCB(skb).fp = NULL;
++
++	for (i = scm->fp->count - 1; i >= 0; i--)
++		unix_notinflight(scm->fp->user, scm->fp->fp[i]);
++}
++
+ static void unix_peek_fds(struct scm_cookie *scm, struct sk_buff *skb)
+ {
+ 	scm->fp = scm_fp_dup(UNIXCB(skb).fp);
+@@ -1799,6 +1843,21 @@ static void unix_peek_fds(struct scm_cookie *scm, struct sk_buff *skb)
+ 	spin_unlock(&unix_gc_lock);
+ }
+ 
++static void unix_destruct_scm(struct sk_buff *skb)
++{
++	struct scm_cookie scm;
++
++	memset(&scm, 0, sizeof(scm));
++	scm.pid  = UNIXCB(skb).pid;
++	if (UNIXCB(skb).fp)
++		unix_detach_fds(&scm, skb);
++
++	/* Alas, it calls VFS */
++	/* So fscking what? fput() had been SMP-safe since the last Summer */
++	scm_destroy(&scm);
++	sock_wfree(skb);
++}
++
+ static int unix_scm_to_skb(struct scm_cookie *scm, struct sk_buff *skb, bool send_fds)
+ {
+ 	int err = 0;
+diff --git a/net/unix/garbage.c b/net/unix/garbage.c
+index c04f82489abb9..0104be9d47045 100644
+--- a/net/unix/garbage.c
++++ b/net/unix/garbage.c
+@@ -81,11 +81,80 @@
+ #include <net/scm.h>
+ #include <net/tcp_states.h>
+ 
+-#include "scm.h"
++struct unix_sock *unix_get_socket(struct file *filp)
++{
++	struct inode *inode = file_inode(filp);
++
++	/* Socket ? */
++	if (S_ISSOCK(inode->i_mode) && !(filp->f_mode & FMODE_PATH)) {
++		struct socket *sock = SOCKET_I(inode);
++		const struct proto_ops *ops;
++		struct sock *sk = sock->sk;
+ 
+-/* Internal data structures and random procedures: */
++		ops = READ_ONCE(sock->ops);
+ 
++		/* PF_UNIX ? */
++		if (sk && ops && ops->family == PF_UNIX)
++			return unix_sk(sk);
++	}
++
++	return NULL;
++}
++
++DEFINE_SPINLOCK(unix_gc_lock);
++unsigned int unix_tot_inflight;
+ static LIST_HEAD(gc_candidates);
++static LIST_HEAD(gc_inflight_list);
++
++/* Keep the number of times in flight count for the file
++ * descriptor if it is for an AF_UNIX socket.
++ */
++void unix_inflight(struct user_struct *user, struct file *filp)
++{
++	struct unix_sock *u = unix_get_socket(filp);
++
++	spin_lock(&unix_gc_lock);
++
++	if (u) {
++		if (!u->inflight) {
++			WARN_ON_ONCE(!list_empty(&u->link));
++			list_add_tail(&u->link, &gc_inflight_list);
++		} else {
++			WARN_ON_ONCE(list_empty(&u->link));
++		}
++		u->inflight++;
++
++		/* Paired with READ_ONCE() in wait_for_unix_gc() */
++		WRITE_ONCE(unix_tot_inflight, unix_tot_inflight + 1);
++	}
++
++	WRITE_ONCE(user->unix_inflight, user->unix_inflight + 1);
++
++	spin_unlock(&unix_gc_lock);
++}
++
++void unix_notinflight(struct user_struct *user, struct file *filp)
++{
++	struct unix_sock *u = unix_get_socket(filp);
++
++	spin_lock(&unix_gc_lock);
++
++	if (u) {
++		WARN_ON_ONCE(!u->inflight);
++		WARN_ON_ONCE(list_empty(&u->link));
++
++		u->inflight--;
++		if (!u->inflight)
++			list_del_init(&u->link);
++
++		/* Paired with READ_ONCE() in wait_for_unix_gc() */
++		WRITE_ONCE(unix_tot_inflight, unix_tot_inflight - 1);
++	}
++
++	WRITE_ONCE(user->unix_inflight, user->unix_inflight - 1);
++
++	spin_unlock(&unix_gc_lock);
++}
+ 
+ static void scan_inflight(struct sock *x, void (*func)(struct unix_sock *),
+ 			  struct sk_buff_head *hitlist)
+diff --git a/net/unix/scm.c b/net/unix/scm.c
+deleted file mode 100644
+index db65b0ab59479..0000000000000
+--- a/net/unix/scm.c
++++ /dev/null
+@@ -1,150 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-#include <linux/module.h>
+-#include <linux/kernel.h>
+-#include <linux/string.h>
+-#include <linux/socket.h>
+-#include <linux/net.h>
+-#include <linux/fs.h>
+-#include <net/af_unix.h>
+-#include <net/scm.h>
+-#include <linux/init.h>
+-#include <linux/io_uring.h>
+-
+-#include "scm.h"
+-
+-unsigned int unix_tot_inflight;
+-EXPORT_SYMBOL(unix_tot_inflight);
+-
+-LIST_HEAD(gc_inflight_list);
+-EXPORT_SYMBOL(gc_inflight_list);
+-
+-DEFINE_SPINLOCK(unix_gc_lock);
+-EXPORT_SYMBOL(unix_gc_lock);
+-
+-struct unix_sock *unix_get_socket(struct file *filp)
+-{
+-	struct inode *inode = file_inode(filp);
+-
+-	/* Socket ? */
+-	if (S_ISSOCK(inode->i_mode) && !(filp->f_mode & FMODE_PATH)) {
+-		struct socket *sock = SOCKET_I(inode);
+-		const struct proto_ops *ops = READ_ONCE(sock->ops);
+-		struct sock *s = sock->sk;
+-
+-		/* PF_UNIX ? */
+-		if (s && ops && ops->family == PF_UNIX)
+-			return unix_sk(s);
+-	}
+-
+-	return NULL;
+-}
+-EXPORT_SYMBOL(unix_get_socket);
+-
+-/* Keep the number of times in flight count for the file
+- * descriptor if it is for an AF_UNIX socket.
+- */
+-void unix_inflight(struct user_struct *user, struct file *fp)
+-{
+-	struct unix_sock *u = unix_get_socket(fp);
+-
+-	spin_lock(&unix_gc_lock);
+-
+-	if (u) {
+-		if (!u->inflight) {
+-			WARN_ON_ONCE(!list_empty(&u->link));
+-			list_add_tail(&u->link, &gc_inflight_list);
+-		} else {
+-			WARN_ON_ONCE(list_empty(&u->link));
+-		}
+-		u->inflight++;
+-		/* Paired with READ_ONCE() in wait_for_unix_gc() */
+-		WRITE_ONCE(unix_tot_inflight, unix_tot_inflight + 1);
+-	}
+-	WRITE_ONCE(user->unix_inflight, user->unix_inflight + 1);
+-	spin_unlock(&unix_gc_lock);
+-}
+-
+-void unix_notinflight(struct user_struct *user, struct file *fp)
+-{
+-	struct unix_sock *u = unix_get_socket(fp);
+-
+-	spin_lock(&unix_gc_lock);
+-
+-	if (u) {
+-		WARN_ON_ONCE(!u->inflight);
+-		WARN_ON_ONCE(list_empty(&u->link));
+-
+-		u->inflight--;
+-		if (!u->inflight)
+-			list_del_init(&u->link);
+-		/* Paired with READ_ONCE() in wait_for_unix_gc() */
+-		WRITE_ONCE(unix_tot_inflight, unix_tot_inflight - 1);
+-	}
+-	WRITE_ONCE(user->unix_inflight, user->unix_inflight - 1);
+-	spin_unlock(&unix_gc_lock);
+-}
+-
+-/*
+- * The "user->unix_inflight" variable is protected by the garbage
+- * collection lock, and we just read it locklessly here. If you go
+- * over the limit, there might be a tiny race in actually noticing
+- * it across threads. Tough.
+- */
+-static inline bool too_many_unix_fds(struct task_struct *p)
+-{
+-	struct user_struct *user = current_user();
+-
+-	if (unlikely(READ_ONCE(user->unix_inflight) > task_rlimit(p, RLIMIT_NOFILE)))
+-		return !capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN);
+-	return false;
+-}
+-
+-int unix_attach_fds(struct scm_cookie *scm, struct sk_buff *skb)
+-{
+-	int i;
+-
+-	if (too_many_unix_fds(current))
+-		return -ETOOMANYREFS;
+-
+-	/*
+-	 * Need to duplicate file references for the sake of garbage
+-	 * collection.  Otherwise a socket in the fps might become a
+-	 * candidate for GC while the skb is not yet queued.
+-	 */
+-	UNIXCB(skb).fp = scm_fp_dup(scm->fp);
+-	if (!UNIXCB(skb).fp)
+-		return -ENOMEM;
+-
+-	for (i = scm->fp->count - 1; i >= 0; i--)
+-		unix_inflight(scm->fp->user, scm->fp->fp[i]);
+-	return 0;
+-}
+-EXPORT_SYMBOL(unix_attach_fds);
+-
+-void unix_detach_fds(struct scm_cookie *scm, struct sk_buff *skb)
+-{
+-	int i;
+-
+-	scm->fp = UNIXCB(skb).fp;
+-	UNIXCB(skb).fp = NULL;
+-
+-	for (i = scm->fp->count-1; i >= 0; i--)
+-		unix_notinflight(scm->fp->user, scm->fp->fp[i]);
+-}
+-EXPORT_SYMBOL(unix_detach_fds);
+-
+-void unix_destruct_scm(struct sk_buff *skb)
+-{
+-	struct scm_cookie scm;
+-
+-	memset(&scm, 0, sizeof(scm));
+-	scm.pid  = UNIXCB(skb).pid;
+-	if (UNIXCB(skb).fp)
+-		unix_detach_fds(&scm, skb);
+-
+-	/* Alas, it calls VFS */
+-	/* So fscking what? fput() had been SMP-safe since the last Summer */
+-	scm_destroy(&scm);
+-	sock_wfree(skb);
+-}
+-EXPORT_SYMBOL(unix_destruct_scm);
+diff --git a/net/unix/scm.h b/net/unix/scm.h
+deleted file mode 100644
+index 5a255a477f160..0000000000000
+--- a/net/unix/scm.h
++++ /dev/null
+@@ -1,10 +0,0 @@
+-#ifndef NET_UNIX_SCM_H
+-#define NET_UNIX_SCM_H
+-
+-extern struct list_head gc_inflight_list;
+-extern spinlock_t unix_gc_lock;
+-
+-int unix_attach_fds(struct scm_cookie *scm, struct sk_buff *skb);
+-void unix_detach_fds(struct scm_cookie *scm, struct sk_buff *skb);
+-
+-#endif
+-- 
+2.49.0.1112.g889b7c5bd8-goog
 
-> that userspace should use to write the contents of certificate data. 
-
-Please don't write documentation in the style of the APM, i.e. don't describe
-KVM's behavior in terms of what userspace should or should not do.  Userspace
-can do whatever it wants, including terminating the guest.  What matters is what
-information KVM will provide, and how KVM will respond to various userspace
-actions.
-
-> The format of this
-> +certificate data is defined in the GHCB 2.0 specification (see section
-> +"SNP Extended Guest Request"). KVM will also supply in `npages` the
-> +number of contiguous pages available for writing the certificate data
-> +into.
-> +
-> +  - If the supplied number of pages is sufficient, userspace must write
-
-As above, there is nothing userspace "must" do.      
-
-Side topic, what sadist wrote the GHCB?  The "documentation" for MSG_REPORT_REQ
-is garbage like this:
-
-  If there are not enough guest pages to hold the certificate table and
-  certificate data, the hypervisor will return the required number of pages
-  needed to hold the certificate table and certificate data in the RBX register
-  and set the SW_EXITINFO2 field to 0x0000000100000000
-
-It's very frustrating that proper documentation of WTF 0x0000000100000000 means,
-and where the seemingly magic values comes from, is left to software.
-
-> +    the certificate table blob (in the format defined by the GHCB spec)
-> +    into the address corresponding to `gfn` and set `ret` to 0 to indicate
-> +    success. If no certificate data is available, then userspace can
-> +    write an empty certificate table into the address corresponding to
-> +    `gfn`.
-> +
-> +  - If the number of pages supplied is not sufficient, userspace must set
-> +    the required number of pages in `npages` and then set `ret` to
-> +    ``ENOSPC``.
-> +
-> +  - If the certificate cannot be immediately provided, userspace should set
-> +    `ret` to ``EAGAIN``, which will inform the guest to retry the request
-> +    later. One scenario where this would be useful is if the certificate
-> +    is in the process of being updated and cannot be fetched until the
-> +    update completes (see the NOTE below regarding how file-locking can
-> +    be used to orchestrate such updates between management/guests).
-> +
-> +  - To indicate to the guest that a general error occurred while fetching
-> +    the certificate, userspace should set `ret` to ``EIO``.
-
-And definitely don't mix "should" and "must".
-
-My preference would be to first document what KVM will do/provide (which you've
-done), and then document how KVM will complete the #VMGEXIT.  Leave all other
-details to other documentation (more below on that).  E.g. (definitely audit
-this for correctness):
-
-----
-::
-
-    /* KVM_EXIT_SNP_REQ_CERTS */                                    
-    struct kvm_exit_snp_req_certs {                                 
-      __u64 gpa;                                              
-      __u64 npages;                                           
-      __u64 ret;                                              
-    };          
-
-KVM_EXIT_SNP_REQ_CERTS indicates an SEV-SNP guest with certificate requests
-enabled (see KVM_SEV_SNP_ENABLE_REQ_CERTS) has generated an Extended Guest
-Request NAE #VMGEXIT (SNP_GUEST_REQUEST) with message type MSG_REPORT_REQ,
-i.e. has requested a certificate report from the hypervisor.
-
-The 'gpa' and 'npages' are forwarded verbatim from the guest request (the RAX
-and RBX GHCB fields respectively).  'ret' is not an "output" from KVM, and is
-always '0' on exit.  KVM verifies the 'gpa' is 4KiB aligned prior to exiting to
-userspace, but otherwise the information from the guest isn't validated.
-
-Upon the next KVM_RUN, e.g. after userspace has serviced the request (or not),
-KVM will complete the #VMGEXIT, using the 'ret' field to determine whether to
-signal success or failure to the guest, and on failure, what reason code will
-be communicated via SW_EXITINFO2.  If 'ret' is set to an unsupported value (see
-the table below), KVM_RUN will fail with -EINVAL.  For a 'ret' of 'ENOSPC', KVM
-also consumes the 'npages' field, i.e. userspace can use the field to inform
-the guest of the number of pages needed to hold all certificates.
-
-The supported 'ret' values and their respective SW_EXITINFO2 encodings:
-
-  ======     =============================================================
-  0          0x0, i.e. success.  KVM will emit an SNP_GUEST_REQUEST command
-             to SNP firmware.
-  ENOSPC     0x0000000100000000, i.e. not enough guest pages to hold the
-             certificate table and certificate data.  KVM will also set the
-             RBX field in the GHBC to 'npages'.
-  EAGAIN     0x0000000200000000, i.e. the host is busy and the guest should
-             retry the request.
-  EIO        0xffffffff00000000, for all other errors (this return code is
-             a KVM-defined hypervisor value, as allowed by the GHCB)
-  ======     =============================================================
-----
-
-> +
-> +  - All other possible values for `ret` are reserved for future use.
-> +
-> +NOTE: The endorsement key used by firmware may change as a result of
-> +management activities like updating SEV-SNP firmware or loading new
-> +endorsement keys, so some care should be taken to keep the returned
-> +certificate data in sync with the actual endorsement key in use by
-> +firmware at the time the attestation request is sent to SNP firmware. The
-> +recommended scheme to do this is to use file locking (e.g. via fcntl()'s
-> +F_OFD_SETLK) in the following manner:
-> +
-> +  - The VMM should obtain a shared/read or exclusive/write lock on the
-> +  certificate blob file before reading it and returning it to KVM, and
-> +  continue to hold the lock until the attestation request is actually
-> +  sent to firmware. To facilitate this, the VMM can set the
-> +  ``immediate_exit`` flag of kvm_run just after supplying the
-> +  certificate data, and just before and resuming the vCPU. This will
-> +  ensure the vCPU will exit again to userspace with ``-EINTR`` after
-> +  it finishes fetching the attestation request from firmware, at which
-> +  point the VMM can safely drop the file lock.
-> +
-> +  - Tools/libraries that perform updates to SNP firmware TCB values or
-> +    endorsement keys (e.g. via /dev/sev interfaces such as ``SNP_COMMIT``,
-> +    ``SNP_SET_CONFIG``, or ``SNP_VLEK_LOAD``, see
-> +    Documentation/virt/coco/sev-guest.rst for more details) in such a way
-> +    that the certificate blob needs to be updated, should similarly take an
-> +    exclusive lock on the certificate blob for the duration of any updates
-> +    to endorsement keys or the certificate blob contents to ensure that
-> +    VMMs using the above scheme will not return certificate blob data that
-> +    is out of sync with the endorsement key used by firmware.
-> +
-> +This scheme is recommended so that tools can use a fairly generic/natural
-> +approach to synchronizing firmware/certificate updates via file-locking,
-> +which should make it easier to maintain interoperability across
-> +tools/VMMs/vendors.
-
-IMO, this is completely out of scope for KVM_EXIT_SNP_REQ_CERTS.  I would *love*
-to see documentation for how userspace can implement attestation and certificate
-management, but that belongs in Documentation/virt/kvm/x86/amd-memory-encryption.rst
-as it obviously involves far more than just KVM_EXIT_SNP_REQ_CERTS.
-
->  .. _cap_enable:
->  
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index 0bc708ee2788..b74e2be2cbaf 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -4042,6 +4042,36 @@ static int snp_handle_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t resp_
->  	return ret;
->  }
->  
-> +static int snp_req_certs_err(struct vcpu_svm *svm, u32 vmm_error)
-> +{
-> +	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, SNP_GUEST_ERR(vmm_error, 0));
-> +
-> +	return 1; /* resume guest */
-> +}
-> +
-> +static int snp_complete_req_certs(struct kvm_vcpu *vcpu)
-> +{
-> +	struct vcpu_svm *svm = to_svm(vcpu);
-> +	struct vmcb_control_area *control = &svm->vmcb->control;
-> +
-> +	switch (READ_ONCE(vcpu->run->snp_req_certs.ret)) {
-> +	case 0:
-> +		return snp_handle_guest_req(svm, control->exit_info_1,
-> +					    control->exit_info_2);
-> +	case ENOSPC:
-> +		vcpu->arch.regs[VCPU_REGS_RBX] = vcpu->run->snp_req_certs.npages;
-> +		return snp_req_certs_err(svm, SNP_GUEST_VMM_ERR_INVALID_LEN);
-> +	case EAGAIN:
-> +		return snp_req_certs_err(svm, SNP_GUEST_VMM_ERR_BUSY);
-> +	case EIO:
-> +		return snp_req_certs_err(svm, SNP_GUEST_VMM_ERR_GENERIC);
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
->  static int snp_handle_ext_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t resp_gpa)
->  {
->  	struct kvm *kvm = svm->vcpu.kvm;
-> @@ -4057,14 +4087,13 @@ static int snp_handle_ext_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t r
->  	/*
->  	 * As per GHCB spec, requests of type MSG_REPORT_REQ also allow for
->  	 * additional certificate data to be provided alongside the attestation
-> -	 * report via the guest-provided data pages indicated by RAX/RBX. The
-> -	 * certificate data is optional and requires additional KVM enablement
-> -	 * to provide an interface for userspace to provide it, but KVM still
-> -	 * needs to be able to handle extended guest requests either way. So
-> -	 * provide a stub implementation that will always return an empty
-> -	 * certificate table in the guest-provided data pages.
-> +	 * report via the guest-provided data pages indicated by RAX/RBX. If
-> +	 * userspace enables KVM_EXIT_SNP_REQ_CERTS, then exit to userspace
-> +	 * to fetch the certificate data. Otherwise, return an empty certificate
-
-Maybe "to let userspace handle the request"?
-
-> +	 * table in the guest-provided data pages.
->  	 */
->  	if (msg_type == SNP_MSG_REPORT_REQ) {
-> +		struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
->  		struct kvm_vcpu *vcpu = &svm->vcpu;
->  		u64 data_npages;
->  		gpa_t data_gpa;
-> @@ -4078,6 +4107,15 @@ static int snp_handle_ext_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t r
->  		if (!PAGE_ALIGNED(data_gpa))
->  			goto request_invalid;
->  
-> +		if (sev->snp_certs_enabled) {
-> +			vcpu->run->exit_reason = KVM_EXIT_SNP_REQ_CERTS;
-> +			vcpu->run->snp_req_certs.gfn = gpa_to_gfn(data_gpa);
-
-As above, I think it makes sense to just do ".gpa = data_gpa".
-
-> +			vcpu->run->snp_req_certs.npages = data_npages;
-> +			vcpu->run->snp_req_certs.ret = 0;
-> +			vcpu->arch.complete_userspace_io = snp_complete_req_certs;
-> +			return 0; /* fetch certs from userspace */
-
-Eh, I'd drop the comment.  KVM isn't "fetching" anything.
-
-> diff --git a/include/uapi/linux/sev-guest.h b/include/uapi/linux/sev-guest.h
-> index fcdfea767fca..38767aba4ff3 100644
-> --- a/include/uapi/linux/sev-guest.h
-> +++ b/include/uapi/linux/sev-guest.h
-> @@ -95,5 +95,13 @@ struct snp_ext_report_req {
->  
->  #define SNP_GUEST_VMM_ERR_INVALID_LEN	1
->  #define SNP_GUEST_VMM_ERR_BUSY		2
-> +/*
-> + * The GHCB spec essentially states that all non-zero error codes other than
-> + * those explicitly defined above should be treated as an error by the guest.
-> + * Define a generic error to cover that case, and choose a value that is not
-> + * likely to overlap with new explicit error codes should more be added to
-> + * the GHCB spec later.
-> + */
-> +#define SNP_GUEST_VMM_ERR_GENERIC       (~0U)
-
-This probably should go in arch/x86/include/uapi/asm/kvm.h, because it's not a
-GHCB-defined error code.  And we really, really don't want guests taking specific
-action for this error code, because that risks introducing VMM specific logic into
-guest code that is supposed to be VMM agnostic.
 
