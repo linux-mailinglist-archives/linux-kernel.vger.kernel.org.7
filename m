@@ -1,119 +1,113 @@
-Return-Path: <linux-kernel+bounces-657636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43970ABF6DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:59:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24FAEABF6D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4023F4E0884
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:58:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC2DA17715E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D391218A6C1;
-	Wed, 21 May 2025 13:58:29 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2391714AC;
+	Wed, 21 May 2025 13:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kMxNZFK/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D3726AE4
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CFF86331;
+	Wed, 21 May 2025 13:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747835909; cv=none; b=W6AIVmr09TrshStiBqFIUGpQwmW0sO5V9+5MP6NvEriOVunEpFGkKxxg3xFrRMirkV70/q6XKdFJEiup6yHQj6zDEqFhcLNOQSQlm43aBiLtxbVXmdfNIQvLGctEqIpuS2KT8toyhL6uyR1N5sUl+9Vl9ZZLfEllbjhEfx6lLE4=
+	t=1747835901; cv=none; b=Q/psWx86sRo2EvVI6rYDnzakElR/60zfuyCeCsjuyPZqTbCD49qKia9/dAHb1VSF1kgp6tAZ1ITB2lOkwHjNkeydA7gMRH3sNcH2Nbudzu8M1WLarQijAzLEPhN9PUc5dX6//Wsc+bcPiXm5GWQ2Ylr2rmRj9V6tpEkEph5/alw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747835909; c=relaxed/simple;
-	bh=uW9wgugdRaKgW7y55mEAnWqEGwNvDrKOKUgyTrcxlN0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LzL18IOCoYXK8jqaQbwrytwYaZZWBpUzxnBe4cWTyDPTeo0nVc9pa2HE2gvvP1iXPitIC+r7SiW6e9e7BbSeE93+4BujmoKQspVmR/WcMQXMKacdtL+ObmdklStSg8drjKOaDhZQvZ5S9zljNjf2eDPW/CPgMbCPZFvmNOT1GQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1uHjxA-000000005r3-0HFy;
-	Wed, 21 May 2025 09:57:52 -0400
-Message-ID: <cb657cabbc3c87e0a821c7c3fcc16e62b7d854f4.camel@surriel.com>
-Subject: Re: [RFC v2 4/9] x86/mm: Introduce X86_FEATURE_RAR
-From: Rik van Riel <riel@surriel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org, 
-	kernel-team@meta.com, dave.hansen@linux.intel.com, luto@kernel.org, 
-	peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, 
-	nadav.amit@gmail.com, Rik van Riel <riel@fb.com>, Yu-cheng Yu
-	 <yu-cheng.yu@intel.com>
-Date: Wed, 21 May 2025 09:57:52 -0400
-In-Reply-To: <20250521115343.GCaC2-x8LsmMApUkjQ@fat_crate.local>
-References: <20250520010350.1740223-1-riel@surriel.com>
-	 <20250520010350.1740223-5-riel@surriel.com>
-	 <20250521115343.GCaC2-x8LsmMApUkjQ@fat_crate.local>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1747835901; c=relaxed/simple;
+	bh=TV5Um3wEwSm9Yw2CbWgV1hqPi3iVOdmeNBmDMsMJJus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qSeF2URdAEdWQANI1vNMYdFu1meSiKS1GDL+3Gwvm9mSFqUbjLv75pAI+Hh5p+TS5q7NtTCC/T34a+m5/gOm/xv4AiCBOjjFwrf0JF9lWSGbQ2rOOKTnh/5Kds+vtMjI3eXwsP/aPFxr1GaQH95NL9u56Gz2PayUMtF6VsnVM5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kMxNZFK/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60E2EC4CEE4;
+	Wed, 21 May 2025 13:58:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747835900;
+	bh=TV5Um3wEwSm9Yw2CbWgV1hqPi3iVOdmeNBmDMsMJJus=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kMxNZFK/lgC4ZaEQYoSnJ5VGx6lIKQCL0sODzOUx5mwG4ZPRe5i/T8aw8Nq06ZHQb
+	 9b4Xdw3EV2a2gE0zwB9Xmgqv+lIIEf4Qi46mntSlWQTNNIxqPzhp9djxkXftPNE9Vm
+	 J6k2ZqM+dofAr3L6hoBk5tJk8zt5+f/Fom/HogY3ngdlxV1PAXLXS5JCre12D9p+Hu
+	 vNGSYqzy/hMa6Uz7O3TW36/H/OSFr5C3MZYYAK7r8aKY1gl8i2U8fEqvQ6gM7SALhM
+	 YQNL3z8rlMgv0E5rd7f+Hw+ZLVAVGWb4S5E6RN6LyysgrWxA0o6onC6W8swidmOaov
+	 xSwn+Ig7M1T9g==
+Date: Wed, 21 May 2025 14:58:16 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/9] tools/nolibc: move ioctl() to sys/ioctl.h
+Message-ID: <5ca9d57f-b711-4929-89ca-79e6966bf3be@sirena.org.uk>
+References: <20250515-nolibc-sys-v1-0-74f82eea3b59@weissschuh.net>
+ <20250515-nolibc-sys-v1-1-74f82eea3b59@weissschuh.net>
+ <eda3af4a-8dfe-4f82-a934-2d0256b754e2@sirena.org.uk>
+ <89bb5a3e-dd6c-475d-9c5d-0bd1595be735@t-8ch.de>
+ <744a1aa8-1efc-4c20-b45e-070fc038f6e8@sirena.org.uk>
+ <198bf1a8-98d0-4693-a4cf-234cad728c9b@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="o1EjMuOZVPaPj0Gi"
+Content-Disposition: inline
+In-Reply-To: <198bf1a8-98d0-4693-a4cf-234cad728c9b@t-8ch.de>
+X-Cookie: 42
 
-On Wed, 2025-05-21 at 13:53 +0200, Borislav Petkov wrote:
-> On Mon, May 19, 2025 at 09:02:29PM -0400, Rik van Riel wrote:
-> > From: Rik van Riel <riel@fb.com>
-> >=20
-> > Introduce X86_FEATURE_RAR and enumeration of the feature.
-> >=20
-> > [riel: moved initialization to intel.c and disabling to
-> > Kconfig.cpufeatures]
-> >=20
-> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
->=20
-> I'm guessing Yu-cheng is the original author - that's expressed
-> differently.
 
-I will fix that up!
+--o1EjMuOZVPaPj0Gi
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->=20
-> > @@ -1771,6 +1783,7 @@ static void __init early_identify_cpu(struct
-> > cpuinfo_x86 *c)
-> > =C2=A0		setup_clear_cpu_cap(X86_FEATURE_LA57);
-> > =C2=A0
-> > =C2=A0	detect_nopl();
-> > +	detect_rar(c);
-> > =C2=A0}
->=20
-> Move all this gunk into early_init_intel().
->=20
-I had the same thought, and tried that already.
+On Wed, May 21, 2025 at 03:45:42PM +0200, Thomas Wei=DFschuh wrote:
+> On 2025-05-21 14:22:30+0100, Mark Brown wrote:
 
-It didn't work.
+> > Ah, you expect what's currently there to work - good.  I noticed that
+> > the vDSO tests had a -I for the nolibc directory which made me think it
+> > was expected that it be there, it's the only user on most arches.
 
---=20
-All Rights Reversed.
+> The -I is useful to compile applications without guarding the system
+> includes with #ifndef NOLIBC.
+
+These tests are all nolibc specific and so don't reference the system
+headers, the whole point is to not use a real libc.
+
+> What do I have to do to cross-compile these selftests?
+> I get various compiler errors.
+
+Any specific errors?  It's just a standard selftest build, eg:
+
+   make -C tools/testing/selftests LLVM=3D1 ARCH=3Darm64 TARGETS=3Darm64
+
+Unless you've got very current userspace headers you'll probably need
+a headers_install too (that's generally needed for the selftests).
+
+--o1EjMuOZVPaPj0Gi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgt2/cACgkQJNaLcl1U
+h9ARDwf7BozdrB4Bcr6jM/YF1p6VqVRrJ0CeeWvtqJRfjrYx1kAx8w2sVJXMrHhb
+yq0/tQ5Nbms6IAM4evFvplCaqGsxSkjc3rsruqHstlyzQKzGRqEjrqAa9gnuWdHF
+ubgamRun3Ff0/xjVppOSdU8oxMPECjlLfQWgc4MDYNzyg0/B9ALeIOAsb3mjYk1U
+LirAWbSvbWzMqi8lL9gOwFtUyQn0j2+xhYN0pMuAt+g09tFc1+B6j8aPJq/pGbkk
+eko4YyzFx9eB18yUl4NWuv48oUZ46dMokY5K/lBFVo774BYHjFf4SRgATZ+mPkPw
+/BiHFCRIYPs+abzjfSbP6VZpw04SxA==
+=zzfQ
+-----END PGP SIGNATURE-----
+
+--o1EjMuOZVPaPj0Gi--
 
