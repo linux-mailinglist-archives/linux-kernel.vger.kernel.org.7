@@ -1,80 +1,53 @@
-Return-Path: <linux-kernel+bounces-657804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31DEABF903
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:17:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F32BABF908
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CA101887758
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:18:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1553E1894155
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2161DD0EF;
-	Wed, 21 May 2025 15:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30051DD0EF;
+	Wed, 21 May 2025 15:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H9IUi1tP"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="UiV707An"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F4FA92E;
-	Wed, 21 May 2025 15:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DD01EB18D
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747840662; cv=none; b=JyY1IN92zoxFodG4c4yJDEsp7JRzEqFSa8I1pmfF8fy96NXjeZCr4TZX9wKy8W+4Y7xI2ZWGtk0SkCAho2MWvwY885A7nFTMKgZmfZv1oagwUqyIEOb1fEpZGm2mHtVzqlvKinJ8DWruQshvpRJW2F3aFvv2NvvlXxm7ozgRSnU=
+	t=1747840697; cv=none; b=BytsdmkUtPXMokaYgRZW+1buEDwdcGjnzqxMwl3IuKEkT0KFr3RzfDqeBRuSFJsWChFiBK8bDZT6BLZYaArDuDTdRJ0pI7itUcA9WJEsRPy6NsNfr9OkBplt6JU0PdmmAii3tH/R5GNmYvnJboD55mccT1ekNeQi+x5L7Bmurf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747840662; c=relaxed/simple;
-	bh=kUCnnPeOSrm8mt4CfbncjKmyFQkFlkZd5zL0vOVsP5U=;
+	s=arc-20240116; t=1747840697; c=relaxed/simple;
+	bh=v2m6vAPGB5wp0Q/4PL9Vb957820dDG/Gx1nDbNXQUtM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qaV4ZHdDtDOXehc2TFLPvm5WS5yThU3DISacmcE7dbJTFRtCM2t/GL24YImq6w1kJEjBWYNaz2PR5sHSXm4z8UucoB6GO9zN0Eyux1YPTe8Vqb1OzO0jodOK7hMXv1jQ2pyLUKuuIN2vfng8GlqCZNrr1pO11PXtazgzQyOTiLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H9IUi1tP; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-551efd86048so4599197e87.3;
-        Wed, 21 May 2025 08:17:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747840659; x=1748445459; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bY5S7Wfb5ySyKh5UvVG0WBqudaowOyoDQxB/bdCEle4=;
-        b=H9IUi1tPzJKqwvKYaohBcOFlcuQMlETUyxr5MTkH0C5CHwuwpaepyy51Pph8N4u9M1
-         AGHV2lMsSkXk1nAtGcjRbMIG3mGNZEO9tBEBWltVY0m0IV1Gk60y+X/bAIST0Iuf0SjO
-         pXBLD3uok8acTlahQUA0dX7m3xbWPPu0aiMqaLh7YpO3xnKasymyHGdlcan8v6QNHtHe
-         jhvsyX0fFceNbU7oxRhc+he5nYUnzq/ouTTqZxL5UbGhEq59OxtB7QcpzLHtDScNc5bz
-         5iPH2j/gRXYwZ9CCfljp1rIFFfbx/SxXVHwDVoNxRlNQfCR0/zOcEAmimBhi1ccwnzmR
-         n76Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747840659; x=1748445459;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bY5S7Wfb5ySyKh5UvVG0WBqudaowOyoDQxB/bdCEle4=;
-        b=BxqtTV9mcw3mUDhhR4CQ46/WvmKA1xzxCceAutK0BrPHGF4TWS2yPmZqTmvdp9XRbz
-         ym/bHgWd8QxTN0OxiTC4BIysvv/TYLrg6NjJjO0V1wDhNTB8Zr3VQmRYKOsDcfyhyG0V
-         Sy5nmjMgz6lmjOlV4Hzrd+n44X3qpD1k8LaXrqKeKNvC/K42Ecns37MyQlIdmjR1a+Lu
-         HJapFw7GLwwCln3HmteltRqRdxp7zOIiMGkLBUP7SEZhpIqkQVPScdBrMNlL1AU43E3s
-         LV+t7hQXlltmNw4Y7SxhF2vqDe9AP4T3wUQqd/I7ugg2Ha1BDC4jrP9ArMyrNYCPg2cb
-         K4rw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpdMd7A7CWO+edsGSUyKLucwWLxA4kLesvBkD9ALVfDvNIXM4dbN4Cpl7LpdxOm7mEZUUkhbo26Zvhljw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww2ZmYBcXH9h5CJDEzf7pIDS8a8f9/LjfR/Dbj/3PDc/FYkKG/
-	Uh+EPHcSNi8acz2vbXAqHS/Cgq79Sm9eLMPYh2HYdukDL6NrOx/dyvWj
-X-Gm-Gg: ASbGncv37MCmb5lfG2bnyY/YSAzds5u+Hosi1E07Hxu8AJLd9/AE7ZrzfM+XgGY34TA
-	LNCtAoWSWimb9ZtxfrjxO23wHd6wCgBJHPA+cHhPoEM5VsIvPgEcFwsxNTsnAPjLNSXOLszaQm0
-	QG1gj62ZIPTI/An45jX5gZ1fYgpjOntAqyh0QnCkJYDfd13aE59365VZR19ygmmvltbAJ+BWRut
-	yVCefb40YeAG1JUDHmMkGoqMwvQYNQdeiwZjYHHjElKH5+J4bw4o6Y/Wln84SLHguHXuzViwTh8
-	YMF/h2f32SWyGSPe9UvEUpWjWU5TQd463j53zaQVVP0CG863Ovg/Qj/OVkpRZAp8kSj2uRvnOc/
-	vqxXbEna41wmOVsZeEDRRkql1lzkkhzwCQ2S0nZgnCdRtRLF6a3WUwGB5n6E39ljed1/2b0MVL7
-	u1MCcudhQGcjGmjx8kmPFDLm0=
-X-Google-Smtp-Source: AGHT+IEpTliLMqbAZ45KCj30NQTnQIbtnS7k2akX1eclggrk0SecoLdw9WewNGAj/w+Zp405OJOV5Q==
-X-Received: by 2002:a05:6512:3d05:b0:54f:c184:9de with SMTP id 2adb3069b0e04-550e98fbfdbmr7135214e87.35.1747840658971;
-        Wed, 21 May 2025 08:17:38 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:53:1500:e8f4:97c2:d311:5b15? (2001-14ba-53-1500-e8f4-97c2-d311-5b15.rev.dnainternet.fi. [2001:14ba:53:1500:e8f4:97c2:d311:5b15])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-551fc0d476esm986067e87.203.2025.05.21.08.17.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 May 2025 08:17:38 -0700 (PDT)
-Message-ID: <b6954169-63d9-4cac-aabd-2df1642f98af@gmail.com>
-Date: Wed, 21 May 2025 18:17:37 +0300
+	 In-Reply-To:Content-Type; b=NkW2994fQ9dkSEk7tSqTAAeOoY40gzB+P63/vPoKCmYp3Ccfr+7S7uNze/E2EqRaoslp3XJukL4ZcAquuQ9ap+iyjYGerTsj5QZbonojo+jjEpH8cN0KbUpypMTR4evQlUE5+imSVpdrNJx5HYVDxEr3OMC2kTgLJhBlhp7TqTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=UiV707An; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=CvdYKerDHmNMlOHDfBEif1LCoHW5CK6Ve9E47JRA324=; b=UiV707Anfw4FxyUfIIfSuvfglL
+	JSMS9Aus6VK/4DKu9DCBDGzY77I7IpWQTY6mr4faSyyCl46m+5E6rzj4twy8m2pdKy3KsQPvK0QX/
+	p/BJWyplWiHjbCHgg2Hby8t4x5qCkbx2hmPVgc5V8v9lv7K4Fe6RBuVuKYMuEshjyjO+t0wXm6oJB
+	9zOscoSKevURZBW+VVIR0iLPH1UTLVdLAf5PFPI9B9xuREOHo5I1zM1xMB0nUsDoFx1La2rcu8yq9
+	WumBS8h76eo8tetfe9WEVz+MuSwKB2E4I2krFOPI6SnJJVguGCXGEL6lLV8AxjJejMpHFf/3TkxKk
+	TpeeXeYg==;
+Received: from [191.204.192.64] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uHlCg-00BGaE-Qz; Wed, 21 May 2025 17:17:59 +0200
+Message-ID: <39acb89b-c376-4e12-aa86-2b78e8842334@igalia.com>
+Date: Wed, 21 May 2025 12:17:53 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,57 +55,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] docs: Improve grammar, formatting in Video4Linux
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- mchehab@kernel.org, ribalda@chromium.org, hverkuil@xs4all.nl,
- hljunggr@cisco.com, dave.jiang@intel.com, jgg@ziepe.ca, saeedm@nvidia.com,
- Jonathan.Cameron@huawei.com, ilpo.jarvinen@linux.intel.com,
- mario.limonciello@amd.com, W_Armin@gmx.de, mpearson-lenovo@squebb.ca
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev
-References: <20250517132711.117618-1-hannelotta@gmail.com>
- <20250517132711.117618-2-hannelotta@gmail.com>
- <871psml4t7.fsf@trenco.lwn.net> <aCqIAkoVr2yvDJbN@archie.me>
+Subject: Re: [PATCH v5 1/3] drm: Create a task info option for wedge events
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ siqueira@igalia.com, airlied@gmail.com, simona@ffwll.ch,
+ rodrigo.vivi@intel.com, jani.nikula@linux.intel.com,
+ Xaver Hugl <xaver.hugl@gmail.com>,
+ Krzysztof Karas <krzysztof.karas@intel.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel-dev@igalia.com, amd-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
+References: <20250520163243.328746-1-andrealmeid@igalia.com>
+ <20250520163243.328746-2-andrealmeid@igalia.com>
+ <aC2Yq89IL5tx8MY3@black.fi.intel.com>
 Content-Language: en-US
-From: =?UTF-8?B?SGFubmUtTG90dGEgTcOkZW5ww6TDpA==?= <hannelotta@gmail.com>
-In-Reply-To: <aCqIAkoVr2yvDJbN@archie.me>
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <aC2Yq89IL5tx8MY3@black.fi.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hello,
-
-On 5/19/25 04:23, Bagas Sanjaya wrote:
-> On Sun, May 18, 2025 at 02:08:04AM -0600, Jonathan Corbet wrote:
->>>       description of the correct character encoding for Programme Service
->>>       name strings. Also from RDS specification, PS is usually a single
->>>       eight character text. However, it is also possible to find receivers
->>> -    which can scroll strings sized as 8 x N characters. So, this control
->>> +    which can scroll strings sized as 8 x N characters. Therefore this control
+Em 21/05/2025 06:11, Raag Jadav escreveu:
+> On Tue, May 20, 2025 at 01:32:41PM -0300, André Almeida wrote:
+>> When a device get wedged, it might be caused by a guilty application.
+>> For userspace, knowing which task was the cause can be useful for some
+>> situations, like for implementing a policy, logs or for giving a chance
+>> for the compositor to let the user know what task caused the problem.
+>> This is an optional argument, when the task info is not available, the
+>> PID and TASK string won't appear in the event string.
 >>
->> This kind of change just seems like churn that isn't really improving
->> the content?
+>> Sometimes just the PID isn't enough giving that the task might be already
+>> dead by the time userspace will try to check what was this PID's name,
+>> so to make the life easier also notify what's the task's name in the user
+>> event.
 > 
-> I prefer the original as both so and therefore have the same meaning.>
->>>   ``V4L2_CID_RDS_TX_ALT_FREQS (__u32 array)``
->>>       The alternate frequencies in kHz units. The RDS standard allows for
->>> -    up to 25 frequencies to be defined. Drivers may support fewer
->>> -    frequencies so check the array size.
->>> +    up to 25 frequencies to be defined. Because drivers may support fewer
->>> +    frequencies, check the array size.
->>
->> Here too, I'm not sure I see the value in this kind of change.
+> ...
 > 
-> Again I'm agree.
+>> -int drm_dev_wedged_event(struct drm_device *dev, unsigned long method)
+>> +int drm_dev_wedged_event(struct drm_device *dev, unsigned long method,
+>> +			 struct drm_wedge_task_info *info)
+>>   {
+>>   	const char *recovery = NULL;
+>>   	unsigned int len, opt;
+>> -	/* Event string length up to 28+ characters with available methods */
+>> -	char event_string[32];
+>> -	char *envp[] = { event_string, NULL };
+>> +	char event_string[WEDGE_STR_LEN], pid_string[PID_LEN] = "", comm_string[TASK_COMM_LEN] = "";
+>> +	char *envp[] = { event_string, NULL, NULL, NULL };
+>>   
+>>   	len = scnprintf(event_string, sizeof(event_string), "%s", "WEDGED=");
+>>   
+>> @@ -582,6 +586,13 @@ int drm_dev_wedged_event(struct drm_device *dev, unsigned long method)
+>>   	drm_info(dev, "device wedged, %s\n", method == DRM_WEDGE_RECOVERY_NONE ?
+>>   		 "but recovered through reset" : "needs recovery");
+>>   
+>> +	if (info && ((info->comm && info->comm[0] != '\0'))) {
 > 
-> Thanks.
+> Thanks for adding this. Should we check if pid > 0?
 > 
 
-Alright, that is two opinions in favor of not changing this. I can send 
-a version 2 of this patch series without these.
+Ack, added this for the v6.
 
-Thank you for reviewing!
+> Also, I was wondering what if the driver only has info on one of the
+> given members? Should we allow it to be flagged independently?
 
-Best regards,
+I think we can allow it, but for now I would say that we can wait for a 
+driver that works like that to settle that.
 
-Hanne-Lotta Mäenpää
+> 
+>> +		snprintf(pid_string, sizeof(pid_string), "PID=%u", info->pid);
+>> +		snprintf(comm_string, sizeof(comm_string), "TASK=%s", info->comm);
+>> +		envp[1] = pid_string;
+>> +		envp[2] = comm_string;
+>> +	}
+>> +
+>>   	return kobject_uevent_env(&dev->primary->kdev->kobj, KOBJ_CHANGE, envp);
+>>   }
+>>   EXPORT_SYMBOL(drm_dev_wedged_event);
+> 
+> ...
+> 
+>> diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
+>> index e2f894f1b90a..c13fe85210f2 100644
+>> --- a/include/drm/drm_device.h
+>> +++ b/include/drm/drm_device.h
+>> @@ -30,6 +30,14 @@ struct pci_controller;
+>>   #define DRM_WEDGE_RECOVERY_REBIND	BIT(1)	/* unbind + bind driver */
+>>   #define DRM_WEDGE_RECOVERY_BUS_RESET	BIT(2)	/* unbind + reset bus device + bind */
+>>   
+>> +/**
+>> + * struct drm_wedge_task_info - information about the guilty app of a wedge dev
+> 
+> s/app/task, missed an instance ;)
+> 
+>> + */
+>> +struct drm_wedge_task_info {
+>> +	pid_t pid;
+>> +	char *comm;
+>> +};
+> 
+> Raag
+> _______________________________________________
+> Kernel-dev mailing list -- kernel-dev@igalia.com
+> To unsubscribe send an email to kernel-dev-leave@igalia.com
+
 
