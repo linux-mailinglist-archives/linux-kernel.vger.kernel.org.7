@@ -1,170 +1,183 @@
-Return-Path: <linux-kernel+bounces-657694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61819ABF7AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:22:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5761FABF7B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A619A7B44AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:21:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24B9A8C5C38
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A8E1A262A;
-	Wed, 21 May 2025 14:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jkz+Qred"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458C41A38E3;
+	Wed, 21 May 2025 14:23:02 +0000 (UTC)
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F99018B495;
-	Wed, 21 May 2025 14:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CBC1A314F;
+	Wed, 21 May 2025 14:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747837343; cv=none; b=Iw+TYj/xk7xfxgHWTqisRNMZXHvFDkBU1RmOQt1E/Njr7XwCu/wlxQAT1F2VLBMrgQxBc5/T154SS4uAAqbOigk1k0nPnB/d635W678gfHTNTh5/TOcD5vUusK4DGe27F67Zd/ExxHABuuvpydgIm9ZHPvgEtqW2//bRQe44ARc=
+	t=1747837381; cv=none; b=MxOBv/6ZwtbfVZiz1yBWsckcUDD2WT3Bya4hl/sTk/tfU2eqFWycNAbocAyB5yuhV7XA8KYxnB6LgmuCdjchoAg5Ui1UFNxtwRA/I2QoCY78ZF58Le49DIG/zc42mlFgkO7Uq5WO9pVa9iIbNjFV4lvUeO8uikb/otxbRZ0PGN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747837343; c=relaxed/simple;
-	bh=F5hEzDUx2SkcS2gm/dMFSeK7fTbZnXqJHdiIjgBb3Os=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hWUKNqL5l4pa+33mnD9ty2TBINV45nW4mv+YpSYI3sXA3tltuvEsJz/PshWMiTnoZusBzGqtfJebNFvz3q12URc+rlCrE6VzFWq5ZzG96sBJ6HSZn1MmLe4mqdRGPsX2DTpRJmROSz+qn8IqZkGyMvhEB5poHogbfMac+wZ04pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jkz+Qred; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43edb40f357so57520305e9.0;
-        Wed, 21 May 2025 07:22:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747837339; x=1748442139; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=s+jyCgbLr3xrcTJHsRt9Kq15QJhKLq4lab6/AE5okc8=;
-        b=Jkz+QredGO3QBuu2nwxa9v/kMh2pYT8rWROslTKj7d4EOd7chBmo5etIfrAGJ/2+F3
-         d0ZVv4qaag2DUTyQJpRIqXVLQT5drPL9r6U7u23Bg8ySEJK04he0CnEbTZXp+qa7RrXT
-         miySCqy+xAHya+KtLJCnzAk2kMjw9aVGYuR8PbfRNI6/g3oxRfBlClw81Lb5AwFgRV15
-         BpVaRDeD8/sZkDO8FwIMWftEhqLR7zY+olAG320JBd4xHRwmaxPjWGGr9tVXrIART05J
-         vL1pR3/cBl80kAXCqedjGRV6I1SpVk/+rkHL/snr98ak6K3mqkZOYGsBeM9HWKkblG95
-         FfqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747837339; x=1748442139;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s+jyCgbLr3xrcTJHsRt9Kq15QJhKLq4lab6/AE5okc8=;
-        b=w5ZytPDkOTZH+c6qLUougUDhP6LxPUgyJ4re8oYxHyv/wAjalHPHE9bPn763RhXh8z
-         lyAfNnxnV778QAZg2Hr/rAgPQnioj+KMZ3eco1MUvVHVtS9eQWKQqa048WssPDTGgzXL
-         POL9Ko4euNh24muTRT6JKyLC6KwuekbmR/LOIbr4wvRl932qeb1rkbMSP37JmuPohM2C
-         LnbXG/b1wGl3u1RxaiXQQm4grSXvbll44+HzSDPDQJWQJ2quPOl3jtbGbYOyQi89mx/x
-         NvlruZC8pk/uVkJAJGe5AWC7l9w6ajWjcyVdvu2c8xcmifPI3cBPQlOH1bicU8RU1moB
-         BTew==
-X-Forwarded-Encrypted: i=1; AJvYcCU0XvuH7Yx7H2oCD/yyP3MT1a5M/Y2GTnG5MhOlfiEMmsMQ78XxfSTcjhrkJACnTCN5dfS246Tx/DB0@vger.kernel.org, AJvYcCUID+rU1grRewcNPb+7BYHpGAQ+c20udZJlrEo/LWlf1eT7Cs6KVDNmXWOfZ7j+SDkAzg+S77TgIjNu@vger.kernel.org, AJvYcCVYBrnGW24YoNIhXHJ6tkU/H8JBiC93dFvTvGvztCF3HoRX/IJiEbHckByb9VfxqhKcZPeB414VrJ6cIqCi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8hXdJcDmrCGT47mbSXSP8g1r5phi9E8zO3vgEvZxh2bzQB/7u
-	ZNyFdKhLeE9ubDPPN39yDmpuP11BjzJaRtER1KvQkzS643WMcqCQMuIw
-X-Gm-Gg: ASbGnctP9hgISM4NWSP2J7s0JNb9T9y1R5BVNPv18yaai/udb75hF7r1NevgwWq9TfU
-	BaXB1wECBMJ/jzbt5gwvAH+w0GNNhc4Im55RRCYlnOzuOyKdL3+ohEXa9pr2yy6u9mRWLJ4qwGl
-	jZA+mSkMlllbpQza8wm28R51BdKqEFtfxHmigsn29AwNR3sRxCY3k8elsNjGWXJNE5ha2qhQw2X
-	hHiPZw8ScFaHwf5XHfJvHdptYKugwjpzZ5g5GAXeoT+C+P2A84UhpHpOJI3R95iRHi8IG/wsSDX
-	c9C05jiVVOn/osfuTqu/9u4yTRxgI/mgt4xfPVTseA1DlplaTds=
-X-Google-Smtp-Source: AGHT+IHDyF8zBHr8bx3AfS49+niCmB110rPNtZqQRPC4oaWWGA8YQRunaD+V7VF8sSF1eGCeXaxB0A==
-X-Received: by 2002:a05:600c:c13:b0:43d:79:ae1b with SMTP id 5b1f17b1804b1-442fd627416mr202152715e9.14.1747837339090;
-        Wed, 21 May 2025 07:22:19 -0700 (PDT)
-Received: from [10.5.0.2] ([185.174.156.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f7ca2dd9sm69237755e9.37.2025.05.21.07.22.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 07:22:18 -0700 (PDT)
-Message-ID: <6b72e9dc9d574aa1f025c0f5d317dcec1d729ba9.camel@gmail.com>
-Subject: Re: [PATCH 3/3] pwm: axi-pwmgen: add support for external clock
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>, David Lechner
-	 <dlechner@baylibre.com>
-Cc: Michael Hennerich <michael.hennerich@analog.com>, Nuno
- =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>, Trevor Gamblin
- <tgamblin@baylibre.com>, Rob Herring	 <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley	 <conor+dt@kernel.org>,
- linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
+	s=arc-20240116; t=1747837381; c=relaxed/simple;
+	bh=pa8b6sT6qx/AjmEa+fGychHn1RrQJhHunTxAnt2l3XU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N5GdYPLpdylvxauSMuMsYTEi/3fpDREIXQnGyIkoLv23QweKlv1FY2EItw1tKznJyVufQ0lMaIWYxhWZBRZ5l3egmLMjGeI2E7grG8Tc6jD3d1x4zh5h6aoWxmqN7PFVOmOtTUMDw1LOA4h2kA+gFCZpcmIfG45QnuLv3K9ue80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
+Received: from localhost (gy-adaptive-ssl-proxy-2-entmail-virt205.gy.ntes [27.18.99.37])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 15eccc893;
+	Wed, 21 May 2025 22:22:48 +0800 (GMT+08:00)
+Date: Wed, 21 May 2025 22:22:48 +0800
+From: Ze Huang <huangze@whut.edu.cn>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Ze Huang <huangze@whut.edu.cn>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Date: Wed, 21 May 2025 15:22:20 +0100
-In-Reply-To: <p3ejuwktdxcjwv43nnap5tin33ziimgxfan2xoghtaaubsxgy7@tjmwjpwy6yy5>
-References: 
-	<20250520-pwm-axi-pwmgen-add-external-clock-v1-0-6cd63cc001c8@baylibre.com>
-	 <20250520-pwm-axi-pwmgen-add-external-clock-v1-3-6cd63cc001c8@baylibre.com>
-	 <zdltaexty6pzbqesoluuyluygyt6w7nq7r2wccmtfktppwuw3e@qb36fsu3jq4k>
-	 <0dd1a97e-ff7c-4d09-b18e-5df9944488c6@baylibre.com>
-	 <p3ejuwktdxcjwv43nnap5tin33ziimgxfan2xoghtaaubsxgy7@tjmwjpwy6yy5>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+Subject: Re: [PATCH v3 3/3] riscv: dts: spacemit: add usb3.0 support for K1
+Message-ID: <aC3huEM4f9qAfgAR@jean.localdomain>
+References: <20250518-b4-k1-dwc3-v3-v3-0-7609c8baa2a6@whut.edu.cn>
+ <20250518-b4-k1-dwc3-v3-v3-3-7609c8baa2a6@whut.edu.cn>
+ <20250519-esoteric-pegasus-of-acumen-6ee8f8@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250519-esoteric-pegasus-of-acumen-6ee8f8@kuoka>
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDGUlMVhpNQklOTEoeTBhCGVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJTFVKQ1VCQlVITFlXWRYaDxIVHRRZQVlPS0hVSktISk5MT1VKS0tVSkJLS1
+	kG
+X-HM-Tid: 0a96f339b70803a1kunme43b676d164aa4
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MTI6Ogw5HTE*Lh0pSiwNNksX
+	F0wKCihVSlVKTE9MQ0hMSE1CS01JVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlJ
+	TFVKQ1VCQlVITFlXWQgBWUFPT0tKNwY+
 
-On Wed, 2025-05-21 at 15:54 +0200, Uwe Kleine-K=C3=B6nig wrote:
-> Hello David,
->=20
-> On Wed, May 21, 2025 at 08:19:51AM -0500, David Lechner wrote:
-> > On 5/21/25 4:22 AM, Uwe Kleine-K=C3=B6nig wrote:
-> > > Can you achieve the same effect with the (IMHO slightly nicer but
-> > > hand-crafted) following patch:
-> > >=20
-> > > =C2=A0	ddata =3D pwmchip_get_drvdata(chip);
-> > > =C2=A0	ddata->regmap =3D regmap;
-> > > =C2=A0
-> > > -	clk =3D devm_clk_get_enabled(dev, NULL);
-> > > -	if (IS_ERR(clk))
-> > > -		return dev_err_probe(dev, PTR_ERR(clk), "failed to get
-> > > clock\n");
-> > > +	axi_clk =3D devm_clk_get_enabled(dev, "axi");
-> > > +	if (IS_ERR(axi_clk))
-> > > +		return dev_err_probe(dev, PTR_ERR(axi_clk), "failed to
-> > > get axi clock\n");
-> > >=20
-> > > +	clk =3D devm_clk_get_enabled_optional(dev, "ext");
-> > > +	if (IS_ERR(clk))
-> > > +		return dev_err_probe(dev, PTR_ERR(clk), "failed to get
-> > > ext clock\n");
-> > > +	}
-> >=20
-> > The trouble with this is that it would not work with existing .dtbs
-> > that don't have clock-names set. I think it would need to be more like =
-this:
-> >=20
-> >=20
-> > 	axi_clk =3D devm_clk_get_enabled(dev, NULL);
-> > 	if (IS_ERR(axi_clk))
-> > 		return dev_err_probe(dev, PTR_ERR(axi_clk), "failed to get
-> > axi clock\n");
-> >=20
-> > 	clk =3D devm_clk_get_enabled_optional(dev, "ext");
-> > 	if (IS_ERR(clk))
-> > 		return dev_err_probe(dev, PTR_ERR(clk), "failed to get ext
-> > clock\n");
-> >=20
-> > 	if (!clk)
-> > 		clk =3D axi_clk
-> >=20
->=20
-> If there are no clock-names, the parameter is ignored. (I didn't test,
-> only quickly checked the code.) So passing "axi" instead of NULL should
-> work and yield a more robust solution.
->=20
->=20
+On Mon, May 19, 2025 at 11:37:30AM +0200, Krzysztof Kozlowski wrote:
+> On Sun, May 18, 2025 at 03:19:21AM GMT, Ze Huang wrote:
+> > diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > index 61f5ca250ded0da7b91cd4bbd55a5574a89c6ab0..164244fdb49f5d50a8abadb7b7e478cccc828087 100644
+> > --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> > @@ -4,6 +4,8 @@
+> >   */
+> >  
+> >  #include <dt-bindings/clock/spacemit,k1-syscon.h>
+> > +#include <dt-bindings/gpio/gpio.h>
+> > +#include <dt-bindings/phy/phy.h>
+> >  
+> >  /dts-v1/;
+> >  / {
+> > @@ -346,6 +348,15 @@ soc {
+> >  		dma-noncoherent;
+> >  		ranges;
+> >  
+> > +		mbus0: dram-controller@0 {
+> 
+> Missing compatible.
+> 
+> > +			reg = <0x0 0x00000000 0x0 0x80000000>;
+> > +			reg-names = "dram";
+> 
+> Where are the bindings for this?
+> 
+> > +			#address-cells = <2>;
+> > +			#size-cells = <2>;
+> 
+> Why are these needed?
+> 
 
-Are you sure? If there are no clock-names and you pass an id, you should ge=
-t an
-error back:
+Will drop them
 
-https://elixir.bootlin.com/linux/v6.14.7/source/drivers/clk/clk.c#L5198
+> > +			dma-ranges = <0x0 0x00000000 0x0 0x00000000 0x0 0x80000000>;
+> > +			#interconnect-cells = <0>;
+> 
+> No, you cannot just add any properties to any custom node. You need ABI
+> for all this.
+> 
 
+Thanks for correcting, will create a binding for it.
 
-I know it's not exactly the same we're discussing but of_property_match_str=
-ing()
-return -EINVAL if the property is not found which leads to an index < 0 and=
- thus
-of_parse_phandle_with_args() also returns an error back.
+> > +		};
+> > +
+> >  		syscon_rcpu: system-controller@c0880000 {
+> >  			compatible = "spacemit,k1-syscon-rcpu";
+> >  			reg = <0x0 0xc0880000 0x0 0x2048>;
+> > @@ -358,6 +369,64 @@ syscon_rcpu2: system-controller@c0888000 {
+> >  			#reset-cells = <1>;
+> >  		};
+> >  
+> > +		usb_dwc3: usb@c0a00000 {
+> > +			compatible = "spacemit,k1-dwc3";
+> > +			reg = <0x0 0xc0a00000 0x0 0x10000>;
+> > +			clocks = <&syscon_apmu CLK_USB30>;
+> > +			clock-names = "usbdrd30";
+> > +			resets = <&syscon_apmu RESET_USB3_0>;
+> > +			interrupt-parent = <&plic>;
+> > +			interrupts = <125>;
+> > +			interconnects = <&mbus0>;
+> > +			interconnect-names = "dma-mem";
+> > +			phys = <&usbphy2>, <&combphy PHY_TYPE_USB3>;
+> > +			phy-names = "usb2-phy", "usb3-phy";
+> > +			dr_mode = "host";
+> 
+> This does not look like property of the soc.
+> 
 
-I think I'm not missing anything but it's always a possibility.
+Will move `dr_mode` to board level
 
-- Nuno S=C3=A1
+> > +			phy_type = "utmi";
+> > +			snps,hsphy_interface = "utmi";
+> > +			snps,dis_enblslpm_quirk;
+> > +			snps,dis-u2-freeclk-exists-quirk;
+> > +			snps,dis-del-phy-power-chg-quirk;
+> > +			snps,dis_u2_susphy_quirk;
+> > +			snps,dis_u3_susphy_quirk;
+> > +			snps,dis_rxdet_inp3_quirk;
+> > +			status = "disabled";
+> > +		};
+> > +
+> > +		usbphy0: phy@c0940000 {
+> > +			compatible = "spacemit,k1-usb2-phy";
+> > +			reg = <0x0 0xc0940000 0x0 0x200>;
+> > +			clocks = <&syscon_apmu CLK_USB_AXI>;
+> > +			#phy-cells = <0>;
+> > +			status = "disabled";
+> 
+> What is missing here? Why is this node disabled?
+> 
+
+There're three USB controllers on K1 [1]:
+- A USB2.0 OTG
+- A USB2.0 Host Only
+- A USB3.0 with a USB2.0 DRD interface
+
+usbphy0 is for USB2.0 OTG, and ushphy1 is for USB2.0 Host Only.
+They're not supported yet.
+
+Link: https://developer.spacemit.com/documentation?token=AjHDwrW78igAAEkiHracBI9HnTb#part5 [1]
+
+> Best regards,
+> Krzysztof
+> 
+> 
+> 
+> 
 
