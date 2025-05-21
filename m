@@ -1,125 +1,103 @@
-Return-Path: <linux-kernel+bounces-657301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DEBDABF242
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:01:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3735ABF257
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:03:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC17D3A4171
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC4531898ED8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F2321D585;
-	Wed, 21 May 2025 11:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39FB2620EE;
+	Wed, 21 May 2025 11:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="QjI942zD"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VtShJ3KJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D2221516E
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 11:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224162367D4;
+	Wed, 21 May 2025 11:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747825258; cv=none; b=dGn+AYgFoQBpbeC3t82sSFBTWXJofqGsYIFfacnZjpFrbYZ6UVVIG2176XURGndlF4N6kHJEJOTHpXsQXWsk6bDBc/KhlS+3N24wL1dRVl5whPzUPmK6dw3FPg4w582v1gbEhwZvv3uJrf8y2L8v8SslyJIwR8eLafCNV8VE5OY=
+	t=1747825399; cv=none; b=lSdtEWHKSBbN1fo+9JpylthRhTLUhXVjOJ0nhzQuQfPPTSziSbPma1HIo1uvXZbTuAObRlqOezE5LP15Y3gLRiuE+Uz8Gm9CDMshvCGMuQ94UrK2xgCnAdoQncdXHroK2C7V/xtd8AWuacWPTumy/j55iZWyyCzwu99ZNGENEzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747825258; c=relaxed/simple;
-	bh=kQeuco4+e5SsARtY3nfrCmGKpElXymN3zNb4E6sJy9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jrC3FTQNhACgKhHyTeQ7ETvnS5FYTFRkpk+7EhcCa6U48PSs7f8DeIKAzliOkziG8j4s9n/b3bTp7FLw4bMhEHz3dm83oeF3umWrBt9W0CczV7jqhupmcwNoK1TTAs6fUYrw+vx0Uu8FhTmT/psP5Ef1XPKEzbZ230uUIJor77c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=QjI942zD; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=RM2B
-	44woUcjorhr9JLF9M8YKkzNP8iwLoLPgMAmQoBE=; b=QjI942zDQMU3wXSQKXRZ
-	R4gk1IzYpI5zjowjyt4U6b5trqpvVoelFRw7Xuk3wLlADF9qGgZX9y1uoY5+Fvgh
-	Fyse6BZWQo2cw/6H4MCkzEmTqjTMABMj6LW+kan2njJqiY816apQI7pRZTc3/DO6
-	lJpJ3Jr6h6p6U5xSt+GYkw4Ddr+REaJtQs8OgbCtZF7SjLnWFbVj7t36+iVq2mLs
-	pb3hN70dzGXhrucPn+M42xkCtuDLkYMz1vEs99zsihXcJIZCp3No63yBD2CSl6MP
-	QNkGacs34XVz/qN7+XjK0+Yndf6lDpqKMD3WTArctgvCI18HJhOQAEBjFBzY/Rtr
-	VA==
-Received: (qmail 3232836 invoked from network); 21 May 2025 13:00:48 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 May 2025 13:00:48 +0200
-X-UD-Smtp-Session: l3s3148p1@Ea4MR6M1bLlehhrc
-Date: Wed, 21 May 2025 13:00:48 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
-	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v9 06/10] serial: sh-sci: Use private port ID
-Message-ID: <aC2yYDpsv7ef9IVA@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
-	thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
-	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20250515141828.43444-1-thierry.bultel.yh@bp.renesas.com>
- <20250515141828.43444-7-thierry.bultel.yh@bp.renesas.com>
+	s=arc-20240116; t=1747825399; c=relaxed/simple;
+	bh=QAUAYNKmlM0RlaNjGicH9GqKIAhlrFtqHhssH2BVJ88=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RrC+NppFHUwhe36PVgJOGukn5n4GmCIaywa/Wh1IIF4jiZVAvmNFlqWrRWTVZzxqJM7unknryq7L3crPthz5te829hI14phofOEG4FG1OOAZnszL98xs0SBjqOrV4f+N72UgLUXsLwBl7tWZJzvizMUqlRL0BWdbC49xWEkeaUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VtShJ3KJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0738DC4CEEA;
+	Wed, 21 May 2025 11:03:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747825398;
+	bh=QAUAYNKmlM0RlaNjGicH9GqKIAhlrFtqHhssH2BVJ88=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=VtShJ3KJfMOydCfX5LajLrW/grN0PgqMTvj8HUyAMTJ5FEC1IsFZMNmbHkxRz87Xz
+	 UkbWY81F+ziNXmhvlfU2JLD4NvHSCGjDlybRT19p8UrwW8Vp2AUaLTBRl5HY4FPEhF
+	 L0ceKaiyVl6ctqBuDIzw9rSu7lzWfTWsV+KFVhJd2VhtLoxMRuSdqUXMbaUFMlYUY6
+	 fGlMt/nulJ2DFsJ+T3D5JJwWcjlqWF7qjCGOk+W3Jc+HVrSyPIVzDEkc8ZlOPlP+pX
+	 sYB71O1EVTh1ixylTXJDmFRLmL3fcachHtO1Vu8T/T7obmGPUSweDn6Tz+Cd1fzFlR
+	 EGKRY/rOOkROw==
+From: Will Deacon <will@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Leo Yan <leo.yan@arm.com>,
+	"Rob Herring (Arm)" <robh@kernel.org>
+Cc: kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	Mark Brown <broonie@kernel.org>,
+	Dave Martin <Dave.Martin@arm.com>
+Subject: Re: [PATCH v22 0/5] arm64/perf: Enable branch stack sampling
+Date: Wed, 21 May 2025 12:01:18 +0100
+Message-Id: <174782307035.3423409.3825975640964405604.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20250520-arm-brbe-v19-v22-0-c1ddde38e7f8@kernel.org>
+References: <20250520-arm-brbe-v19-v22-0-c1ddde38e7f8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/HOrjV2F0H4FDVet"
-Content-Disposition: inline
-In-Reply-To: <20250515141828.43444-7-thierry.bultel.yh@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+On Tue, 20 May 2025 17:27:35 -0500, Rob Herring (Arm) wrote:
+> This series enables perf branch stack sampling support on arm64 via a
+> v9.2 arch feature called Branch Record Buffer Extension (BRBE). Details
+> on BRBE can be found in the Arm ARM[1] chapter D18.
+> 
+> I've picked up this series from Anshuman. v19 and later versions have
+> been reworked quite a bit by Mark and myself. The bulk of those changes
+> are in patch 5.
+> 
+> [...]
 
---/HOrjV2F0H4FDVet
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied the '__init_el2_fgt' label cleanup to arm64 (for-next/entry), thanks!
 
-On Thu, May 15, 2025 at 04:18:21PM +0200, Thierry Bultel wrote:
-> New port types cannot be added in serial_core.h, which is shared with
-> userspace.
-> In order to support new port types, the coming new ones will have
-> BIT(7) set in the id value, and in this case, uartport->type is
-> set to PORT_GENERIC.
-> This commit therefore changes all the places where the port type is
-> read, by not relying on uartport->type but on the private
-> value stored in struct sci_port.
+[2/5] arm64: el2_setup.h: Make __init_el2_fgt labels consistent, again
+      https://git.kernel.org/arm64/c/54b8070548c6
 
-I quite like this approach to become independent of serial_core.h by
-adding a driver-local type. Because it changes only access to the
-variables but not much the logic of this driver. Two high level comments
-I do have:
+Cheers,
+-- 
+Will
 
-- I'd go for bit 31 as the flag, though. It is extremly unlikely that we
-  ever need a number in serial_core.h again, but if, it could likely be
-  > 127
-
-- whatever bit numer we choose, it should be hidden as a constant. My
-  suggestion:
-
-#define SCI_LOCAL_PORT_FLAG	BIT(x)
-
-?
-
-
---/HOrjV2F0H4FDVet
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmgtslwACgkQFA3kzBSg
-KbY9hw/+KCPfBEqpxSdVAC0NmTxrvYGMxQdLx9nhBGbKTSF65kHMvHbCeB3/VCMX
-EtIonj5Gm+ZLLEUFw7rPOlByOAXn/50pzmLN5Z9h6I++dM4MDMdj24LUMGLU7DbG
-/Eydt4Du2bjmKviosBJnpV/Whz2wfI4FUOHinI8fWvuo4BwLHuYUHj0EtIkrI992
-EbaUg77yTdb0qZF+e322wS2+E+b483MZHmgYzT19jbd9RzfLJ4BbLbw9SXXldpoM
-ljbVN1Jg6T9tZxQjFGJmhTRdW/BHMF+nimu4/uSuIp9ANGDhzahxbm200+TQtNl9
-0De1Bu2rKqanFLWbNZns4xcsj3eQVn719zt30g1GxB3PLJuHazLRzX1ed+yha85C
-KczWWLWECmpY9X7FooNEJjUI8IAx8hupjPo76lFQUrapujwFrbk0ilRbRS7tnB/g
-FeMxPbYgkQB/rPThjTo3lqdFxGSur/HUzGwdddiCEZvYayhbG5wWNXjWiVHJoMen
-cgxyhpFmcQVyE2dT9wNKtSLxApxPgRlfMxpqfcAvWHXHtntk6Swa85Ti1FVg1UhM
-/LU5p0RfsWJoB75ooAiISVN+7cPrtRsnLONK7YyZ1G+UK4A2fnn4EuIzwlE02bjB
-Ul0khEfB+0kv2wZYUqsxmoMTDjT44Q9Sz8gOWKSiRcbNc4uyPPs=
-=vEFG
------END PGP SIGNATURE-----
-
---/HOrjV2F0H4FDVet--
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
