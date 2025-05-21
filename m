@@ -1,221 +1,342 @@
-Return-Path: <linux-kernel+bounces-657257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86B24ABF1A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:31:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6F7ABF1B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1091417431F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:31:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26B3A188D02F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82CA25F961;
-	Wed, 21 May 2025 10:31:29 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C80B25F7BB;
+	Wed, 21 May 2025 10:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="o712bBwh"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27781F869E;
-	Wed, 21 May 2025 10:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5508725F795;
+	Wed, 21 May 2025 10:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747823489; cv=none; b=k8JioKK20k1WhaH4oP5EFhxxp4jKN4wCo3kNQVddWyzju5r1o9Zbd8IdMUSVDxZUK9ffbIicAjDcwKgxnGiUi1a4E5rmcTJp+jPUL591WLhtFJpv3tjW3k3vrauVe6VzS686S3NZG8E93+w+/W/UDqV09a7zpt3vm9hgOp3l5pk=
+	t=1747823627; cv=none; b=D/lPaSSsnoqRsQd4kLM1iYPG6IRlBtIcXL7n0TzNftJgaqQKof/YMUfNO/WIw4Ewp+0OT6WDvsPG9PwM53mzqTSN+oXsL98rFJTrZMgj5s5G/hIW89hW86kehZRaBOF+q1dfCwVYem5r5Av5v09Tv9Ph+GO+f7oiMQjBA37Uz50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747823489; c=relaxed/simple;
-	bh=yNefhY0Yb3i3XbOnbCmVwgsteNfUs7PGaKuiRFQbkFQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U0y4evymDIMqwfIYz0AgNDWpnSGGX2Cio5SjnZ5dIy0doYZHUbgleL2jPuVMnqu8li5H10zlxbBvIl98RqQKfHxeusAZKw1P7k02RZuFuTb8GFy14elcYEcyW4dYWwoeGm/6Dug9focpSjuNQzYuKa2dilYO104RVw9yIkJP7Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b2SP32hj5z6L54Y;
-	Wed, 21 May 2025 18:30:31 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2C4961402FC;
-	Wed, 21 May 2025 18:31:24 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 May
- 2025 12:31:23 +0200
-Date: Wed, 21 May 2025 11:31:21 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <linux-pci@vger.kernel.org>, Jon Pan-Doh <pandoh@google.com>, "Karolina
- Stolarek" <karolina.stolarek@oracle.com>, Weinan Liu <wnliu@google.com>,
-	Martin Petersen <martin.petersen@oracle.com>, Ben Fuller
-	<ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>, "Anil
- Agrawal" <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>, Ilpo
- =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Sathyanarayanan
- Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>, Lukas Wunner
-	<lukas@wunner.de>, Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney"
-	<paulmck@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Oliver
- O'Halloran <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>, Keith
- Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>, "Terry Bowman"
-	<terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>, "Dave Jiang"
-	<dave.jiang@intel.com>, <linux-kernel@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v7 15/17] PCI/AER: Ratelimit correctable and non-fatal
- error logging
-Message-ID: <20250521113121.000067ce@huawei.com>
-In-Reply-To: <20250520215047.1350603-16-helgaas@kernel.org>
-References: <20250520215047.1350603-1-helgaas@kernel.org>
-	<20250520215047.1350603-16-helgaas@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1747823627; c=relaxed/simple;
+	bh=2U19slZiU2ALPkhTZXk0jb1oR2jZ9lkTd4kFkjv2rDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ffj1lD/Xqs5y/Gl3lbLNOX9qSXoxrY2GMVr+40VKmqYblvz16nDfA8xBTosktTXmUctXNUnBYeK6qVChs/+3eqfjkgnJLPWJKHzi5cNWtsdyt3B9rAe0vupTOhfIq7+P8jRnBgbBHEni4dYXM/PQegMK+4xhOVRJdz38e0righc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=o712bBwh; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L97Vk2020294;
+	Wed, 21 May 2025 12:33:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	saaphKQ0bZ0mL7ccRrOXfxeZajtyiB5V88KyMoAwc+E=; b=o712bBwhh6e8IhY2
+	FozpW+sUcK5R8FTF9/xV4nfjKdZZRVwdO2CliRKm1BqHRNIESAvkO6iQsGYZQFgU
+	fIV/n5uBiTputRD0EY7l4iExwQwxWqB/fYK8Ri43sJzbS67IhBfFEyw9ri9l3gQs
+	nYuFfLcdvyhBHF3nRQAhuRiX06l//yPZ/lhuZKNkopvlLWwHV7sEva/qQgndX3yg
+	Sh4oI5wt39fRCnS9f8Lo+0PnUMLCwD0P9w/D/sf6GIYfS17B8YePjLC+9ALTrhE9
+	/ankL4/IND+LCa67Y1GwBYbMjvVAZWZuR8t7TJhbDzKS5H46JRHYHjovUowwNVQN
+	9/vnKA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46rwff3hp9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 12:33:28 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 358DD40047;
+	Wed, 21 May 2025 12:32:20 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3969FB6001B;
+	Wed, 21 May 2025 12:31:37 +0200 (CEST)
+Received: from [10.252.30.214] (10.252.30.214) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 21 May
+ 2025 12:31:36 +0200
+Message-ID: <8c72fe60-0ad6-450e-bfc3-5c64565c19f1@foss.st.com>
+Date: Wed, 21 May 2025 12:31:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Linux-stm32] [PATCH v2 1/8] dt-bindings: pinctrl: stm32:
+ Introduce HDP
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
+        Linus
+ Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250520-hdp-upstream-v2-0-53f6b8b5ffc8@foss.st.com>
+ <20250520-hdp-upstream-v2-1-53f6b8b5ffc8@foss.st.com>
+Content-Language: en-US
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+In-Reply-To: <20250520-hdp-upstream-v2-1-53f6b8b5ffc8@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_03,2025-05-20_03,2025-03-28_01
 
-On Tue, 20 May 2025 16:50:32 -0500
-Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-> From: Jon Pan-Doh <pandoh@google.com>
-> 
-> Spammy devices can flood kernel logs with AER errors and slow/stall
-> execution. Add per-device ratelimits for AER correctable and non-fatal
-> uncorrectable errors that use the kernel defaults (10 per 5s).  Logging of
-> fatal errors is not ratelimited.
 
-See below. I'm not sure that logging of fatal error should affect the rate
-for non fatal errors + the rate limit infrastructure kind of assumes
-that you only call it if you are planning to respect it's decision.
-
-Given overall aim is to restrict rates, maybe we don't care if we sometimes
-throttle earlier that we might expect with a simpler separation of what
-is being limited.
-
-I don't mind strongly either way.
-
+On 5/20/25 17:02, Clément Le Goffic wrote:
+> 'HDP' stands for Hardware Debug Port, it is an hardware block in
+> STMicrolectronics' MPUs that let the user decide which internal SoC's
+> signal to observe.
+> It provides 8 ports and for each port there is up to 16 different
+> signals that can be output.
+> Signals are different for each MPU.
 > 
-> There are two AER logging entry points:
-> 
->   - aer_print_error() is used by DPC and native AER
-> 
->   - pci_print_aer() is used by GHES and CXL
-> 
-> The native AER aer_print_error() case includes a loop that may log details
-> from multiple devices.  This is ratelimited such that we log all the
-> details we find if any of the devices has not hit the ratelimit.  If no
-> such device details are found, we still log the Error Source from the ERR_*
-> Message, ratelimited by the Root Port or RCEC that received it.
-> 
-> The DPC aer_print_error() case is not ratelimited, since this only happens
-> for fatal errors.
-> 
-> The CXL pci_print_aer() case is ratelimited by the Error Source device.
-> 
-> The GHES pci_print_aer() case is via aer_recover_work_func(), which
-> searches for the Error Source device.  If the device is not found, there's
-> no per-device ratelimit, so we use a system-wide ratelimit that covers all
-> error types (correctable, non-fatal, and fatal).
-> 
-> Sargun at Meta reported internally that a flood of AER errors causes RCU
-> CPU stall warnings and CSD-lock warnings.
-> 
-> Tested using aer-inject[1]. Sent 11 AER errors. Observed 10 errors logged
-> while AER stats (cat /sys/bus/pci/devices/<dev>/aer_dev_correctable) show
-> true count of 11.
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/gong.chen/aer-inject.git
-> 
-> [bhelgaas: commit log, factor out trace_aer_event() and aer_print_rp_info()
-> changes to previous patches, collect single aer_err_info.ratelimit as union
-> of ratelimits of all error source devices, don't ratelimit fatal errors,
-> "aer_report" -> "aer_info"]
-> Reported-by: Sargun Dhillon <sargun@meta.com>
-> Signed-off-by: Jon Pan-Doh <pandoh@google.com>
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
 > ---
->  drivers/pci/pci.h      |  3 +-
->  drivers/pci/pcie/aer.c | 66 ++++++++++++++++++++++++++++++++++++++----
->  drivers/pci/pcie/dpc.c |  1 +
->  3 files changed, 64 insertions(+), 6 deletions(-)
+>   .../bindings/pinctrl/st,stm32-pinctrl-hdp.yaml     | 188 +++++++++++++++++++++
+>   1 file changed, 188 insertions(+)
 > 
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 705f9ef58acc..65c466279ade 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -593,7 +593,8 @@ struct aer_err_info {
->  	unsigned int id:16;
->  
->  	unsigned int severity:2;	/* 0:NONFATAL | 1:FATAL | 2:COR */
-> -	unsigned int __pad1:5;
-> +	unsigned int ratelimit:1;	/* 0=skip, 1=print */
+> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl-hdp.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl-hdp.yaml
+> new file mode 100644
+> index 000000000000..6251e9c16ced
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl-hdp.yaml
+> @@ -0,0 +1,188 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) STMicroelectronics 2025.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/st,stm32-pinctrl-hdp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: STM32 Hardware Debug Port Mux/Config
+> +
+> +maintainers:
+> +  - Clément LE GOFFIC <clement.legoffic@foss.st.com>
+> +
+> +description:
+> +  STMicroelectronics's STM32 MPUs integrate a Hardware Debug Port (HDP).
+> +  It allows to output internal signals on SoC's GPIO.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - st,stm32mp131-hdp
+> +      - st,stm32mp151-hdp
+> +      - st,stm32mp251-hdp
+> +
 
-That naming is less than intuitive.  Maybe expand it to ratelimit_print or
-something like that.
+Hi Rob, Hi Krzyztof,
 
-> +	unsigned int __pad1:4;
->  	unsigned int multi_error_valid:1;
->  
->  	unsigned int first_error:5;
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 4f1bff0f000f..f9e684ac7878 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
+I hope to open Pandora's box one last time on this subject.
 
-> @@ -815,8 +843,19 @@ EXPORT_SYMBOL_NS_GPL(pci_print_aer, "CXL");
->   */
->  static int add_error_device(struct aer_err_info *e_info, struct pci_dev *dev)
->  {
-> +	/*
-> +	 * Ratelimit AER log messages.  "dev" is either the source
-> +	 * identified by the root's Error Source ID or it has an unmasked
-> +	 * error logged in its own AER Capability.  If any of these devices
-> +	 * has not reached its ratelimit, log messages for all of them.
-> +	 * Messages are emitted when "e_info->ratelimit" is non-zero.
-> +	 *
-> +	 * Note that "e_info->ratelimit" was already initialized to 1 for the
-> +	 * ERR_FATAL case.
-> +	 */
->  	if (e_info->error_dev_num < AER_MAX_MULTI_ERR_DEVICES) {
->  		e_info->dev[e_info->error_dev_num] = pci_dev_get(dev);
-> +		e_info->ratelimit |= aer_ratelimit(dev, e_info->severity);
+I've read all reviews of all STM32 bindings.
 
-So this is a little odd.  I think it works but there is code inside __ratelimit
-that I think we should not be calling for that ERROR_FATAL case
-(whether we should call lots of times for each device isn't obvious either
- but maybe that is more valid).
+Very recent STM32 bindings, for STM32MP25, STM32MP23, STM32MP21, are 
+using compatibles like st,stm32mp25-xxx, st,stm32mp23-xxx, 
+st,stm32mp21xx (e.g. st,stm32mp25-omm, st,stm32mp21-rcc, 
+st,stm32mp23-syscon, st,stm32mp25-lptimer, st,stm32mp25-pcie-rc, ...).
 
-In the event of it already being 1 due to ERROR_FATAL you will falsely trigger
-a potential print from inside __ratelimit() if we were rate limited and no
-longer are but only skipped FATAL prints.  My concern is that function
-is kind of assuming it's only called in cases where a rate limit decision
-is being made and the implementation may change in future).
+If compatible should inconditionnaly match the SoC dtsi, why don't we 
+have st,stm32mp131-hdp, st,stm32mp133-hdp, st,stm32mp135-hdp, ... ?
 
-https://elixir.bootlin.com/linux/v6.14.7/source/lib/ratelimit.c#L56
+https://www.st.com/en/microcontrollers-microprocessors/stm32mp1-series.html
+https://www.st.com/en/microcontrollers-microprocessors/stm32mp2-series.html
+"The STM32MP1 series is available in six different lines, which are, on 
+one hand STM32MP15x pin-to-pin compatible, and on the other hand 
+STM32MP13x pin-to-pin compatible."
+"The STM32MP2 series is available in seven different lines, which are 
+pin-to-pin compatible".
 
-Maybe, 
-		if (!info->ratelimit)
-			e_info->ratelimit = aer_ratelimit(dev, e_info->severity);
-is an alternative option.
-That allows a multiplication factor on the rate as all device count for 1.
- 
+For HDP, it means functions will be the same for each lines of 
+STM32MP13x, for each lines of STM32MP15x, ...
 
+So, why not having compatibles like st,stm32mp13-hdp, st,stm32mp15-hdp, 
+st,stm32mp25-hpd?
 
+Thanks,
+Amelie
 
->  		e_info->error_dev_num++;
->  		return 0;
->  	}
-> @@ -914,7 +953,7 @@ static int find_device_iter(struct pci_dev *dev, void *data)
->   * e_info->error_dev_num and e_info->dev[], based on the given information.
->   */
->  static bool find_source_device(struct pci_dev *parent,
-> -		struct aer_err_info *e_info)
-> +			       struct aer_err_info *e_info)
-Unrelated change
-
->  {
->  	struct pci_dev *dev = parent;
->  	int result;
-
->  			pci_aer_clear_fatal_status(pdev);
-
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  "^hdp[0-7]-pins$":
+> +    type: object
+> +    $ref: pinmux-node.yaml#
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      pins:
+> +        enum: [ HDP0, HDP1, HDP2, HDP3, HDP4, HDP5, HDP6, HDP7 ]
+> +
+> +      function:
+> +        maxItems: 1
+> +
+> +    required:
+> +      - function
+> +      - pins
+> +
+> +allOf:
+> +  - $ref: pinctrl.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: st,stm32mp131-hdp
+> +    then:
+> +      patternProperties:
+> +        "^hdp[0-7]-pins$":
+> +          properties:
+> +            function:
+> +              enum: [ pwr_pwrwake_sys, pwr_stop_forbidden, pwr_stdby_wakeup, pwr_encomp_vddcore,
+> +                      bsec_out_sec_niden, aiec_sys_wakeup, none, ddrctrl_lp_req,
+> +                      pwr_ddr_ret_enable_n, dts_clk_ptat, sram3ctrl_tamp_erase_act, gpoval0,
+> +                      pwr_sel_vth_vddcpu, pwr_mpu_ram_lowspeed, ca7_naxierrirq, pwr_okin_mr,
+> +                      bsec_out_sec_dbgen, aiec_c1_wakeup, rcc_pwrds_mpu, ddrctrl_dfi_ctrlupd_req,
+> +                      ddrctrl_cactive_ddrc_asr, sram3ctrl_hw_erase_act, nic400_s0_bready, gpoval1,
+> +                      pwr_pwrwake_mpu, pwr_mpu_clock_disable_ack, ca7_ndbgreset_i,
+> +                      bsec_in_rstcore_n, bsec_out_sec_bsc_dis, ddrctrl_dfi_init_complete,
+> +                      ddrctrl_perf_op_is_refresh, ddrctrl_gskp_dfi_lp_req, sram3ctrl_sw_erase_act,
+> +                      nic400_s0_bvalid, gpoval2, pwr_sel_vth_vddcore, pwr_mpu_clock_disable_req,
+> +                      ca7_npmuirq0, ca7_nfiqout0, bsec_out_sec_dftlock, bsec_out_sec_jtag_dis,
+> +                      rcc_pwrds_sys, sram3ctrl_tamp_erase_req, ddrctrl_stat_ddrc_reg_selfref_type0,
+> +                      dts_valobus1_0, dts_valobus2_0, tamp_potential_tamp_erfcfg, nic400_s0_wready,
+> +                      nic400_s0_rready, gpoval3, pwr_stop2_active, ca7_nl2reset_i,
+> +                      ca7_npreset_varm_i, bsec_out_sec_dften, bsec_out_sec_dbgswenable,
+> +                      eth1_out_pmt_intr_o, eth2_out_pmt_intr_o, ddrctrl_stat_ddrc_reg_selfref_type1,
+> +                      ddrctrl_cactive_0, dts_valobus1_1, dts_valobus2_1, tamp_nreset_sram_ercfg,
+> +                      nic400_s0_wlast, nic400_s0_rlast, gpoval4, ca7_standbywfil2,
+> +                      pwr_vth_vddcore_ack, ca7_ncorereset_i, ca7_nirqout0, bsec_in_pwrok,
+> +                      bsec_out_sec_deviceen, eth1_out_lpi_intr_o, eth2_out_lpi_intr_o,
+> +                      ddrctrl_cactive_ddrc, ddrctrl_wr_credit_cnt, dts_valobus1_2, dts_valobus2_2,
+> +                      pka_pka_itamp_out, nic400_s0_wvalid, nic400_s0_rvalid, gpoval5,
+> +                      ca7_standbywfe0, pwr_vth_vddcpu_ack, ca7_evento, bsec_in_tamper_det,
+> +                      bsec_out_sec_spniden, eth1_out_mac_speed_o1, eth2_out_mac_speed_o1,
+> +                      ddrctrl_csysack_ddrc, ddrctrl_lpr_credit_cnt, dts_valobus1_3, dts_valobus2_3,
+> +                      saes_tamper_out, nic400_s0_awready, nic400_s0_arready, gpoval6,
+> +                      ca7_standbywfi0, pwr_rcc_vcpu_rdy, ca7_eventi, ca7_dbgack0, bsec_out_fuse_ok,
+> +                      bsec_out_sec_spiden, eth1_out_mac_speed_o0, eth2_out_mac_speed_o0,
+> +                      ddrctrl_csysreq_ddrc, ddrctrl_hpr_credit_cnt, dts_valobus1_4, dts_valobus2_4,
+> +                      rng_tamper_out, nic400_s0_awavalid, nic400_s0_aravalid, gpoval7 ]
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: st,stm32mp151-hdp
+> +    then:
+> +      patternProperties:
+> +        "^hdp[0-7]-pins$":
+> +          properties:
+> +            function:
+> +              enum: [ pwr_pwrwake_sys, cm4_sleepdeep, pwr_stdby_wkup, pwr_encomp_vddcore,
+> +                      bsec_out_sec_niden, none, rcc_cm4_sleepdeep, gpu_dbg7, ddrctrl_lp_req,
+> +                      pwr_ddr_ret_enable_n, dts_clk_ptat, gpoval0, pwr_pwrwake_mcu, cm4_halted,
+> +                      ca7_naxierrirq, pwr_okin_mr, bsec_out_sec_dbgen, exti_sys_wakeup,
+> +                      rcc_pwrds_mpu, gpu_dbg6, ddrctrl_dfi_ctrlupd_req, ddrctrl_cactive_ddrc_asr,
+> +                      gpoval1, pwr_pwrwake_mpu, cm4_rxev, ca7_npmuirq1, ca7_nfiqout1,
+> +                      bsec_in_rstcore_n, exti_c2_wakeup, rcc_pwrds_mcu, gpu_dbg5,
+> +                      ddrctrl_dfi_init_complete, ddrctrl_perf_op_is_refresh,
+> +                      ddrctrl_gskp_dfi_lp_req, gpoval2, pwr_sel_vth_vddcore, cm4_txev, ca7_npmuirq0,
+> +                      ca7_nfiqout0, bsec_out_sec_dftlock, exti_c1_wakeup, rcc_pwrds_sys, gpu_dbg4,
+> +                      ddrctrl_stat_ddrc_reg_selfref_type0, ddrctrl_cactive_1, dts_valobus1_0,
+> +                      dts_valobus2_0, gpoval3, pwr_mpu_pdds_not_cstbydis, cm4_sleeping, ca7_nreset1,
+> +                      ca7_nirqout1, bsec_out_sec_dften, bsec_out_sec_dbgswenable,
+> +                      eth_out_pmt_intr_o, gpu_dbg3, ddrctrl_stat_ddrc_reg_selfref_type1,
+> +                      ddrctrl_cactive_0, dts_valobus1_1, dts_valobus2_1, gpoval4, ca7_standbywfil2,
+> +                      pwr_vth_vddcore_ack, ca7_nreset0, ca7_nirqout0, bsec_in_pwrok,
+> +                      bsec_out_sec_deviceen, eth_out_lpi_intr_o, gpu_dbg2, ddrctrl_cactive_ddrc,
+> +                      ddrctrl_wr_credit_cnt, dts_valobus1_2, dts_valobus2_2, gpoval5,
+> +                      ca7_standbywfi1, ca7_standbywfe1, ca7_evento, ca7_dbgack1,
+> +                      bsec_out_sec_spniden, eth_out_mac_speed_o1, gpu_dbg1, ddrctrl_csysack_ddrc,
+> +                      ddrctrl_lpr_credit_cnt, dts_valobus1_3, dts_valobus2_3, gpoval6,
+> +                      ca7_standbywfi0, ca7_standbywfe0, ca7_dbgack0, bsec_out_fuse_ok,
+> +                      bsec_out_sec_spiden, eth_out_mac_speed_o0, gpu_dbg0, ddrctrl_csysreq_ddrc,
+> +                      ddrctrl_hpr_credit_cnt, dts_valobus1_4, dts_valobus2_4, gpoval7 ]
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: st,stm32mp251-hdp
+> +    then:
+> +      patternProperties:
+> +        "^hdp[0-7]-pins$":
+> +          properties:
+> +            function:
+> +              enum: [ pwr_pwrwake_sys, cpu2_sleep_deep, bsec_out_tst_sdr_unlock_or_disable_scan,
+> +                      bsec_out_nidenm, bsec_out_nidena, cpu2_state_0, rcc_pwrds_sys, gpu_dbg7,
+> +                      ddrss_csysreq_ddrc, ddrss_dfi_phyupd_req, cpu3_sleep_deep,
+> +                      d2_gbl_per_clk_bus_req, pcie_usb_cxpl_debug_info_ei_0,
+> +                      pcie_usb_cxpl_debug_info_ei_8, d3_state_0, gpoval0, pwr_pwrwake_cpu2,
+> +                      cpu2_halted, cpu2_state_1, bsec_out_dbgenm, bsec_out_dbgena, exti1_sys_wakeup,
+> +                      rcc_pwrds_cpu2, gpu_dbg6, ddrss_csysack_ddrc, ddrss_dfi_phymstr_req,
+> +                      cpu3_halted, d2_gbl_per_dma_req, pcie_usb_cxpl_debug_info_ei_1,
+> +                      pcie_usb_cxpl_debug_info_ei_9, d3_state_1, gpoval1, pwr_pwrwake_cpu1,
+> +                      cpu2_rxev, cpu1_npumirq1, cpu1_nfiqout1, bsec_out_shdbgen, exti1_cpu2_wakeup,
+> +                      rcc_pwrds_cpu1, gpu_dbg5, ddrss_cactive_ddrc, ddrss_dfi_lp_req, cpu3_rxev,
+> +                      hpdma1_clk_bus_req, pcie_usb_cxpl_debug_info_ei_2,
+> +                      pcie_usb_cxpl_debug_info_ei_10, d3_state_2, gpoval2, pwr_sel_vth_vddcpu,
+> +                      cpu2_txev, cpu1_npumirq0, cpu1_nfiqout0, bsec_out_ddbgen, exti1_cpu1_wakeup,
+> +                      cpu3_state_0, gpu_dbg4, ddrss_mcdcg_en, ddrss_dfi_freq_0, cpu3_txev,
+> +                      hpdma2_clk_bus_req, pcie_usb_cxpl_debug_info_ei_3,
+> +                      pcie_usb_cxpl_debug_info_ei_11, d1_state_0, gpoval3, pwr_sel_vth_vddcore,
+> +                      cpu2_sleeping, cpu1_evento, cpu1_nirqout1, bsec_out_spnidena, exti2_d3_wakeup,
+> +                      eth1_out_pmt_intr_o, gpu_dbg3, ddrss_dphycg_en, ddrss_obsp0, cpu3_sleeping,
+> +                      hpdma3_clk_bus_req, pcie_usb_cxpl_debug_info_ei_4,
+> +                      pcie_usb_cxpl_debug_info_ei_12, d1_state_1, gpoval4, cpu1_standby_wfil2,
+> +                      none, cpu1_nirqout0, bsec_out_spidena, exti2_cpu3_wakeup, eth1_out_lpi_intr_o,
+> +                      gpu_dbg2, ddrctrl_dfi_init_start, ddrss_obsp1, cpu3_state_1,
+> +                      d3_gbl_per_clk_bus_req, pcie_usb_cxpl_debug_info_ei_5,
+> +                      pcie_usb_cxpl_debug_info_ei_13, d1_state_2, gpoval5, cpu1_standby_wfi1,
+> +                      cpu1_standby_wfe1, cpu1_halted1, cpu1_naxierrirq, bsec_out_spnidenm,
+> +                      exti2_cpu2_wakeup, eth2_out_pmt_intr_o, gpu_dbg1, ddrss_dfi_init_complete,
+> +                      ddrss_obsp2, d2_state_0, d3_gbl_per_dma_req, pcie_usb_cxpl_debug_info_ei_6,
+> +                      pcie_usb_cxpl_debug_info_ei_14, cpu1_state_0, gpoval6, cpu1_standby_wfi0,
+> +                      cpu1_standby_wfe0, cpu1_halted0, bsec_out_spidenm, exti2_cpu1__wakeup,
+> +                      eth2_out_lpi_intr_o, gpu_dbg0, ddrss_dfi_ctrlupd_req, ddrss_obsp3, d2_state_1,
+> +                      lpdma1_clk_bus_req, pcie_usb_cxpl_debug_info_ei_7,
+> +                      pcie_usb_cxpl_debug_info_ei_15, cpu1_state_1, gpoval7 ]
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/stm32mp1-clks.h>
+> +
+> +    pinctrl@54090000 {
+> +      compatible = "st,stm32mp15-hdp";
+> +      reg = <0x54090000 0x400>;
+> +      clocks = <&rcc HDP>;
+> +      pinctrl-names = "default";
+> +      pinctrl-0 = <&hdp2_gpo>;
+> +      hdp2_gpo: hdp2-pins {
+> +        function = "gpoval2";
+> +        pins = "HDP2";
+> +      };
+> +    };
+> 
 
