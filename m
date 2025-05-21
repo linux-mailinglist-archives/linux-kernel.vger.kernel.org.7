@@ -1,333 +1,340 @@
-Return-Path: <linux-kernel+bounces-656886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12370ABEC11
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:43:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38727ABEC22
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EF157AB9FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:41:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6D9B7ACFD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B150233140;
-	Wed, 21 May 2025 06:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B156B234994;
+	Wed, 21 May 2025 06:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="AmO0W2Ux"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BiDetCFn"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2059.outbound.protection.outlook.com [40.107.237.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6D2219EB
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 06:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747809771; cv=none; b=AzZswUrMAQSIo7gxCiT6/2XmqDoysFNc5LXbGdY5njpRuis10yn8ay2fiwHIZg8d/2YjOgzl2vBAoyIg43gZlSynlW9rc2frru/z6uZuz9fzfCuF/BJRAGsZoMTJ6mJ8X26hHTol4vWRCzHhCk1dD0poGS1tgewdq8qEarPt0GI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747809771; c=relaxed/simple;
-	bh=l0QCfl/CfItj0mArULKanpPjeVZ/9Lj72ppxxwwoFmc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k0CRd5dDADtwdzOYLgpAshKzmmODgESYIvXwOgGUBFLtcEvXMxu36fh+5Rx+JuhrSICinHV6sOy3Xo57PciAIBlsjTjDlLgNXAzPRH++vWL8o/SkRoGxQYJimp778PWIeNJJ18sg16eTKB4TfUIzmnVca+MTHltR7rNOPd1RPoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=AmO0W2Ux; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: cd0e9990360e11f0813e4fe1310efc19-20250521
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=evbOXmHnW0WCHWQX9clhz8jUt8kOoWPEaeDta7WskKA=;
-	b=AmO0W2Ux4IawCG5nzesAzR60nItBQO2B7x9NOJCrUkdS9GoBZPFKdBAmvI9SyDEjiceDYaOCvFCZ/dL8qNyKxwfX0TCDOzfFvwnHrbvsEzQxGTkIgJTqDgRyCgBYqrXYFVdiLMWBgZiFjQF+0e7ah2CigVypbckWLIsD4OyRKPA=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:2cf24169-bb56-422c-98fa-c64d58c3e809,IP:0,UR
-	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-25
-X-CID-META: VersionHash:0ef645f,CLOUDID:79b41cf1-2ded-45ed-94e2-b3e9fa87100d,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: cd0e9990360e11f0813e4fe1310efc19-20250521
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
-	(envelope-from <kuyo.chang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 998404097; Wed, 21 May 2025 14:42:44 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Wed, 21 May 2025 14:42:43 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Wed, 21 May 2025 14:42:42 +0800
-From: Kuyo Chang <kuyo.chang@mediatek.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, "Mel
- Gorman" <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-	"Matthias Brugger" <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: kuyo chang <kuyo.chang@mediatek.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-Subject: [PATCH 1/1] [Bug] list_add corruption during CPU hotplug stress test
-Date: Wed, 21 May 2025 14:42:18 +0800
-Message-ID: <20250521064238.3173224-1-kuyo.chang@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9BD221573;
+	Wed, 21 May 2025 06:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747809911; cv=fail; b=u+vAkpU1a8uRNkMHUDQrxxRUiysedxzjFX9tpe6LKn1HGQDJSc8NcVFzIx0xQbTJZS/mslRpRCKgu/Px+7mvZ6GMO/44WPrux1nSAJawkqOFE8ynP5g/96ZQH5iiDOna3Yic345rmNkGzzdAUDBsx5lq0UkEu/Txh1I0oGwv/U8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747809911; c=relaxed/simple;
+	bh=JXQm56dKawdcUzhfHKamIJnnYwy9uNDh2InezUUFlG0=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=l/M1yp/SuJA+P6HBg8dJ+iKMs7/OEii7xePiKJ5saza0KxmZ0mMQGB3muXIvkPhaGcAgnc7Xe1NlhXu7ao6a8xFc1MSOZ+/F8WB5We4tQ9XAtG8CVfiXjSKCMDnX17a1bBODPixqTqb6P4WDil1GR4yBgaQWNelKHAARJdmfDKw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BiDetCFn; arc=fail smtp.client-ip=40.107.237.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DkZFnoUIhWuKpc/fa6mTxpQvYXK/nF7ovJro6iFCAf6UvyfUMmPTGy+wN2ZuE26lHeiriw9YS8+6ewTkjtQ5ufpnfbcZja37OhjyQs+0/AJX/xY+uEp5jd3eIdTYU3UN2yxqBHmQ1PZrXxWpS2AS4FMv2kDHl/8Q0hwTXE7Gevr4Iz1gUk/pQ92GlZ9hbpO1mId/FaSmAd6GJvbajIsAhhxLpdcio/JJ/ptQdPJu/m/ieS3e+0JKv/97pfLxCfrTuYoF9bnO3nhdIf0ZvPveNDUVg1kqWA7K17kgmXf63IUclTTR4UN3/uB4K4Gnc7nyCz/ZTWmHdyuKCXdWfA9X8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qg4xVxc6lgksYKhe8xiGVOEd1/Rq6iivtZbqA6G0GrY=;
+ b=o6d7n9xso7bpQouqld9I4E5lOsxQXnojpw+kDxjCzGdwAIOP3E5F+O7PJW2CNJsehuyq3tn7OygrSS3MHGpw5cqv1tvj6SaMwZrYiQ37dj4UyB2trnA57Hvp0Q7g5Pq7PHZal9GAQrv18bNLZFMw4aAohB4Q9Fkby3Y/HkwoNtRLk8qyTW8KEvTOmoP4LAWf8AP6SvbBQlCqIdx8pJc+2xc9lsnJIWgk+CETOpON8TAQrS8mewX3PeM3UafuSeB0AAvWwBK6k4Twz4vVubLpoXwV/s3Gi39OobUJSOEXVTYBTiHUyMZ4+jPUCxt1lKxY5oxNAIVN0pDN0Rz/UpVpWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qg4xVxc6lgksYKhe8xiGVOEd1/Rq6iivtZbqA6G0GrY=;
+ b=BiDetCFnestXcHe3mcb/GsSUfsMYu5ZhbEtKThsh8Ti1Hn37S7Ty5VZficjqbFH8id6xvjGYH5/dPgmfOi16Kbir6LsUUNgvKB9yRZ8LaolXYkrtGmNP5Xj71WuhftO/s5gzWhsvlCxS7f9niji5NLUiTGUm6ifxE07ZWH2LlFjzQC4pFj5Yzui6tqHisZ6tAgFXgGOxREbBIPpT3lDEL4zcEiGoqtTihGtpJ/0TGLhl8ZaQn6gIfDJpi3bvSRDXnALqMqPJUrAVCi3TTrggZ3CPIYUfGFm2RpjJlUNPNcP+CtnX3SQfiX2Aa792jtJZlB2i6xFvES35/jMDgkbmVA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by BL3PR12MB6618.namprd12.prod.outlook.com (2603:10b6:208:38d::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.20; Wed, 21 May
+ 2025 06:45:02 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%5]) with mapi id 15.20.8769.019; Wed, 21 May 2025
+ 06:45:01 +0000
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v4 00/20] nova-core: run FWSEC-FRTS to perform first stage
+ of GSP initialization
+Date: Wed, 21 May 2025 15:44:55 +0900
+Message-Id: <20250521-nova-frts-v4-0-05dfd4f39479@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGd2LWgC/2WPQQ7CIBBFr9KwFgMDLcGV9zAuKB0sC1uFSjRN7
+ y6tJq1x+X/mvZ8ZScTgMZJDMZKAyUffdznIXUFsa7oLUt/kTIBBySRXtOuToS4MkeoKHWhtagR
+ L8v0toPPPxXU6f3LA+yMrh7VsfRz68Fr2Ep/brxrYRp04ZRRtw601IHQljl3yjTd721/JrEmwo
+ iXjWxQyWkvDheKqFEL9oWKLbh9KIqPO1gyU1KqUzQ86TdMbmIFMoC4BAAA=
+X-Change-ID: 20250417-nova-frts-96ef299abe2c
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>, 
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
+ Alistair Popple <apopple@nvidia.com>, linux-kernel@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org, Alexandre Courbot <acourbot@nvidia.com>, 
+ Shirish Baskaran <sbaskaran@nvidia.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: TYAPR01CA0080.jpnprd01.prod.outlook.com
+ (2603:1096:404:2c::20) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|BL3PR12MB6618:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee14bd89-aca8-4ab9-02f7-08dd983302a2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|1800799024|366016|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WUtJOXZQamw4NkE2Q1prU3FLQ1dMQ01uT05KT3FsalNncDI4bWF5dk8rSm1S?=
+ =?utf-8?B?OEtPbXNvR2dXTXR3dG5qTzY3M1pNZTYyWEpFY251TVRCR2N3QlBUeDVKaDVL?=
+ =?utf-8?B?V1pWT3JNUkVSWWErckhsN3RrdnhkdGRxeTFTTnF6UzBMZHhwU2tYREJVWUUy?=
+ =?utf-8?B?bE9oLzhWWlVNdkFYRm1rdjg2TGpnQnBhY0FNK1NIalVuVHgwZTZNcDZFa3RY?=
+ =?utf-8?B?cXVGcWZWTzFVMm5yZ3ZxL3hLdERXL2s1SDNwZ3RmZ1BCS0NUYWEzUHJxZ0V2?=
+ =?utf-8?B?cXpKQ0lJWmlBUXR3d2hxbWFMUkFFTmliTm5FM3UyWDVaNjVBRTZIMExaYldp?=
+ =?utf-8?B?bmdDN0hiRStkOXFja2hlRnYyZjFCdVNIS05sbnRWTVU0NUZJWitYakVNQVpJ?=
+ =?utf-8?B?M1hxSWxyZXhweVJFQTYxRHZWbngzUWdnRGV0RERNaXk5YTlZL1pybno1Si9I?=
+ =?utf-8?B?WElmSUdHTmJveUo4NzVUY3I2ckFzUTRtb0x2OHlMMDFVUk9qZkJTOTF4bWdS?=
+ =?utf-8?B?Q2QrRjVzMFBuWkpxWjRWeC9ieXVPVWxjOWUrSGh1cWF3VnhmTFcwM0JXSDNG?=
+ =?utf-8?B?NFpuSXRVRzFHdmlJeG9LWXRGeUdxUm5LTW5VV3RxYkVJOVA1WUx4NDgrWnF6?=
+ =?utf-8?B?VWtlbVp3SWNIc00rNXh5Q2dqb0NMTTFpT1ZqTlBVUkNqYXBOekRidnVkWm9P?=
+ =?utf-8?B?UkdnM3E0TUlKdmtFQ0FBNHNMQi9NRnBodUtNNlI5Y3E1dGtPYWlPVXhncEIw?=
+ =?utf-8?B?TkJYR0wyUWplakVXeE9RRi9vT1U4alhKQVhsYmI2RlpUdGwxQUFUQTZtQ1ZR?=
+ =?utf-8?B?Wlh2UERmd2ZGWjlVVng2M29Fd3lNTmdVWi9BWXhDNUZpUFBMbWRXTzNVZTNu?=
+ =?utf-8?B?bk9keFEwWk1DNEdvcGhqQUVsVjk4amlkeHRzNWllQXE5bEdXSFFSK2JIRlMy?=
+ =?utf-8?B?cHJFWGtQSk5sbklVcS9GMTAwZzBhUloxaW5yNXcvLzZ2NzRjUUtleDZCejNp?=
+ =?utf-8?B?UGx0bkJSTC9IbEZLSjlOQ3pEcHJzN2dMRGNPcjlwVmQ4djVoMFJkb2VOSnJZ?=
+ =?utf-8?B?QU1mZk5kRUpCWlgyRFZqSDROWlp5eFBzY29uM29hMXpBNlJQMFF3MEpraGVY?=
+ =?utf-8?B?MklvajlaTVVlRnA2ZUl3cHQwYlRORk8zdVgzUFpnaVBSWTZISW50SEdnWWR0?=
+ =?utf-8?B?TUxheTBKSGxreENTR1ZGRWZtWE9hZ2dFT1dXd1BRRnE4V0tjTE9KWW54VUVB?=
+ =?utf-8?B?NW04RmlMODRvTVN3cHRCS0FLYUdTVXhmQnZhVWIyN29zRlRSZ3NoYWVNbjVo?=
+ =?utf-8?B?MkF6VUIySzNRemp4NjJZY1IxTFNvTitJZitvMnpRUy9ZNXA0UEJWNVFXbVFD?=
+ =?utf-8?B?MFlKQnJIT1FSS1JmSGc2b0MrVkhlN3l3RVZraUxmVGlaZS9lYWJJMlNIZEZo?=
+ =?utf-8?B?NC9HS1Bocy80K2RnYWhLQ2VuRzE4SytiZFQzQlA5dmRaREpYKzNQMDhHYnMw?=
+ =?utf-8?B?Rit3bTlYWWNidWFmaytkZ1JSeGlhM2hJdXYzL1VBMmRLTy91MVM2dFNDdElq?=
+ =?utf-8?B?UXdkRGhWcW5EYXFVNnVreVV1cjc3SnEzWmN1OG4wQUo1M3FCYU9oWERRREs4?=
+ =?utf-8?B?SHJndWpWYzdFa0NSd2hHaW82d3dwcTlvZ3RSQW5Ock5uSGRDMGw5ajlzRk1j?=
+ =?utf-8?B?TTRpUXlQMkJpa3kyYkhTenIvZENGSWFlMGxNUTQyZ1Z2SzFQT0pGdWIvNTdm?=
+ =?utf-8?B?RjdFTXIzeHgxQXlBRjdIV28wbnZCbGNNSHNHbmV3SnBBb2dSYVBXcnJCY01O?=
+ =?utf-8?B?Q3BSa1I0OWJOY043T0VSM2tEWXFPN0duYlZ1VUpFdGVidjZNeE5sVTZWNHZX?=
+ =?utf-8?B?V09Cam5BZjhTV3FIOFkwSmZPelh4UjJYbm5UcUNNMWpBRUkrWjV3ako0dUpp?=
+ =?utf-8?B?SWUyZVpuZ0pCZDVUaHc3YUFjcDh1QXZUTW85dzI1bjNXVWVvdEtYRmVYOUl5?=
+ =?utf-8?B?bXhrV3VQY3NnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cTQ2eW4zTnQ2bmdMRnZUTWFHL0Y5NHhzb3lzWncveXN6cWpJSkQrUWpNRlZN?=
+ =?utf-8?B?Y3Z1UjVUaGI5WDZzaVV0L3g3c1puSTRUemJSbng2N1Z1b2RLRlBZd3ZZaSs3?=
+ =?utf-8?B?a1lodU95MHNTRm12REpRMHhxdFVQdExwVm9qdGx4RTUreVA4cGdsUythYnBL?=
+ =?utf-8?B?WEJEamN0NGJUSVJlY0gwbEU2RDN6M3l4UTV2OXlLbERldWdzQjVOS3EyT1Bj?=
+ =?utf-8?B?aHRiN01FMDY4TnUvNEJIdTFmeEhwNzBpaXFCTVQwNXZBekV1Q3pwR01LWVht?=
+ =?utf-8?B?by9tODBEUUdWTm1BRlYyTktCcm5FVmtJNEtKcFM3YUcwanU0TVBpWndhWkI0?=
+ =?utf-8?B?YW5TbUFQNlVRWXVTTHBaNnJWbmVJd3RaWlhZVDlncXU0NGdjLzQzOVVaSnNG?=
+ =?utf-8?B?a1p6aTlHZmtwVC9PYlN5dnZjMmpkcVU2L3JUbm4ydElvUlJYTVdBbEZNRWNG?=
+ =?utf-8?B?UVRHc2QrSEF0eTlRZGZhZ1NteWZiSUdoL2taU0RFWTVTb3RCOWZROXBpdDRV?=
+ =?utf-8?B?clE5TFBlOU1NKzFVZnlrQko0amVJV0d2WmRuZkltVFd6V1VzNFJPL01TaEls?=
+ =?utf-8?B?b2lOdHVFVGJhRXlKdVNTSFcvSHFnNVVXMlRjZDE4emYxOWs2KzFMRGhCNGpm?=
+ =?utf-8?B?ZXF2ODVkT0FsZlJqMkRpR0FHV3FTelhOd09heE16bU54bG10VEx1VVM4dU9R?=
+ =?utf-8?B?TXAvZlF2dG1BTmlrNDl6MFp6K3R1Nk45NzdYeHFVS0djNHFNVUlyNkpaZjBE?=
+ =?utf-8?B?Tm56QTFxbVkzRUxDaFQzdWw4RUlIY2Mrbzkvb250YUo4bGtDTndxYmhZODRu?=
+ =?utf-8?B?bERJTzJ6eEtIc0JLNDVlcjk3Mng2c0gvQS9nV2ErVDJ3UzVMRUZQSHRxUkVq?=
+ =?utf-8?B?MnJxWU5VMTZ4L2FoN3NwZlZBNnV6eHFTUHlxMHBJV0JjVFJ5TzBkTG8wVlRu?=
+ =?utf-8?B?QnpMUlRnajVJRFRhVG1KZ3dhczlmZFZCZXE0MGhnNit0T056eWlxRy9Tdi96?=
+ =?utf-8?B?SzJSK3BvRjNuZ2xLWDdOWTFwbXhWK1NzS0ZVRUpaNjNJUHNDT3NjNW1vTkJt?=
+ =?utf-8?B?ZVo2eEg1NTBTdVN4MXRhQnFiaFp6Nm5WMzUzNzBzVnlRR2U2bDd0K21DbnF4?=
+ =?utf-8?B?SkJJenRNY252Q1ZHV2xQNkdzYnN4M1dXWlZ0YTFEM3BZdkp3YlFQYUxVYjB0?=
+ =?utf-8?B?MU54a2RURGltZWdvc0lCVTZ3SEM2QUdoMWNpQTNtZVRpSnFQYnM2eGtDTHl4?=
+ =?utf-8?B?RHFFTWxNL00wc3NocVhudWR0SDF3ZnZUQThueWkzK3ZsR1lheldQaVVMMkdx?=
+ =?utf-8?B?Tm11dnpDdis4R2haNW5HWlpIZ3hnK29LSTdDbU9uTEh6YlgwaEFXakluWit6?=
+ =?utf-8?B?SG5HZFN0eFRWY1FieGJXNHBzUkl6Umo1c3M3Ujl0MXc2OWl3Z1NwZ3dTWDBh?=
+ =?utf-8?B?MllFWSttRVNpQUorU0tzRjd0ZDVlRG1rdnRQS1RBUmxDeVFaN09LNUVocGVH?=
+ =?utf-8?B?d25JRTRkSi9TYStYaEtqbWFlSmlQTG9vRUs1SDRQMlpSQStIN3J0Yzl1a0FZ?=
+ =?utf-8?B?VHFVMUI0a1Zha2p6cEtkaU1pZ0FEaGdOVDc4eHYzdlAzN1V4cWQ5OGVjKyti?=
+ =?utf-8?B?enB1KytNTXd1VGtCQmhuTkxwZnlTaEpiZWQ5WkZhUzVoa3FyM1k4N242Zkd0?=
+ =?utf-8?B?L09MZG1RTlpRVEdaclpiSDJRUXJVcDhKV2duS2Uydk5XbDlZRHJVSnJBZTc1?=
+ =?utf-8?B?dzJrSWhFaVBqM05JNHlUK3kzamNyNDlUeW12RStWUTZ3VGJjT1g5Kzk5cklH?=
+ =?utf-8?B?c2czbkVkcWxJU2k5RWVrTk5qYmpBQjdLTUFPUjh5SGU0S1loK0Y5ZmdpVmZo?=
+ =?utf-8?B?bWd4OHVOaGpwOXVCMWJ5UXVmTFYxL2lFVk1rM1ZnKzQ0Qk91VDBpdGx2K0dz?=
+ =?utf-8?B?YzMwc2hYdEhyVE9DUkVDS3JxNFJTeTJlRy9YZFVsK2lxRENZRzlnZCt4Q1cx?=
+ =?utf-8?B?b3JpaDVFbWVWVlZIdTJzMkdhTS83dFdZZVJMMG51cWo3VDJzMXlBUGhRa3pX?=
+ =?utf-8?B?NDRQRUYxNGdMRndkanYybXEzVTMwcVhpY2tzT2Zra04rRzZ2Z3ZnZzduay9Z?=
+ =?utf-8?B?QzNGaW1kK0JzZXF0TzdhS3B2aktRYnQ0a0FHSUJ1alY5cGl3a3JWemFzMlJM?=
+ =?utf-8?Q?JQFzRr7O9aQdS6wCdaCidMLzB4a6cqi9bxaRhFf5V6dp?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee14bd89-aca8-4ab9-02f7-08dd983302a2
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2025 06:45:01.5617
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Es3EcwyIcm07ytmPHZI3LUYkIJujQd7bsf3kfLS8o2RY4aQZSgr0hgj55PKrdnynGQgBnOswnsz/Jn9LWmIGmw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6618
 
-From: kuyo chang <kuyo.chang@mediatek.com>
+Hi everyone,
 
-The commit (stop_machine, sched: Fix migrate_swap() vs. active_balance() deadlock)
-introduces wake_q_add rather than wake_up_process.
-However, it encounters sporadic failures during CPU hotplug stress test.
+New revision addressing the feedback received on v3, and then some.
 
-The kernel log shows list add fail as below
-kmemleak: list_add corruption. prev->next should be next (ffffff82812c7a00), but was 0000000000000000. (prev=ffffff82812c3208).
-kmemleak: kernel BUG at lib/list_debug.c:34!
-kmemleak: Call trace:
-kmemleak:  __list_add_valid_or_report+0x11c/0x144
-kmemleak:  cpu_stop_queue_work+0x440/0x474
-kmemleak:  stop_one_cpu_nowait_rec+0xe4/0x138
-kmemleak:  balance_push+0x1f4/0x3e4
-kmemleak:  __schedule+0x1adc/0x23bc
-kmemleak:  preempt_schedule_common+0x68/0xd0
-kmemleak:  preempt_schedule+0x60/0x80
-kmemleak:  _raw_spin_unlock_irqrestore+0x9c/0xa0
-kmemleak:  scan_gray_list+0x220/0x3e4
-kmemleak:  kmemleak_scan+0x410/0x740
-kmemleak:  kmemleak_scan_thread+0xb0/0xdc
-kmemleak:  kthread+0x2bc/0x494
-kmemleak:  ret_from_fork+0x10/0x20
+Notably the `register!` macro gets a few new features that add clarity
+to the code (like register aliases), and the `vbios` module has also
+been reworked according to feedback. We also now have a HAL in the fb
+module.
 
-Because the reproduction rate is very low, I designed a simple debug patch to help find the root cause of these sporadic failures.
-The purpose of this debug patch is to record the status of push_work at balance_push, cpu_stopper, and cpu_stop_work.
-In the regular case, we queue the push_work to stopper->works and set work->exec_state = WORK_QUEUE.
-Then, we call wake_q_add for the stopper and set cpu_stopper.stopper_wakeq = WAKEQ_ADD_OK.
-Finally, we wake up the stopper, which picks up the work from cpu_stop_work to execute.
-We then set stopper->exec_state = WORK_PREP_EXEC to indicate that the push_work has been consumed.
+The newly-introduced `num` module provides some very common operations
+(i.e. `align_down`, `align_up`), so it might make sense to consider
+merging it early.
 
-However, in the failure case, by memory dump
-cpu_stopper.stopper_wakeq = WAKEQ_ADD_FAIL
-stopper->exec_state = WORK_QUEUE.
-cpu_stopper.enabled = TRUE
+As previously, this series only successfully probes Ampere GPUs, but
+support for other generations is on the way.
 
-Here is the failure sequence that leads to the bug.
-CPU0
-1st balance_push
-stop_one_cpu_nowait
-cpu_stop_queue_work
-__cpu_stop_queue_work
-list_add_tail  -> fist add work
-wake_q_add   -> returns failure
-wake_up_q(&wakeq); -> it doesn't wake up the stopper.
-2nd balance_push
-stop_one_cpu_nowait
-cpu_stop_queue_work
-__cpu_stop_queue_work
-list_add_tail  -> A double list add is detected, which triggers kernel bugs.
+Upon successful probe, the driver will display the range of the WPR2
+region constructed by FWSEC-FRTS with debug priority:
 
-Should we add queue status tracking in __cpu_stop_queue_work,
-or is there a better place to do this?
+  [   95.436000] NovaCore 0000:01:00.0: WPR2: 0xffc00000-0xffce0000
+  [   95.436002] NovaCore 0000:01:00.0: GPU instance built
 
-Signed-off-by: kuyo chang <kuyo.chang@mediatek.com>
+This series is based on nova-next with no other dependencies.
+
+There are bits of documentation still missing, these are addressed by
+Joel in his own documentation patch series [1]. I'll also double-check
+and send follow-up patches if anything is still missing after that.
+
+[1] https://lore.kernel.org/rust-for-linux/20250503040802.1411285-1-joelagnelf@nvidia.com/
+
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- include/linux/sched/wake_q.h |  1 +
- include/linux/stop_machine.h | 20 ++++++++++++++++++++
- kernel/sched/core.c          | 15 ++++++++++++++-
- kernel/stop_machine.c        | 36 ++++++++++++++++++++++++++++++++++--
- 4 files changed, 69 insertions(+), 3 deletions(-)
+Changes in v4:
+- Improve documentation of falcon security modes (thanks Joel!)
+- Add the definition of the size of CoherentAllocation as one of its
+  invariants.
+- Better document GFW boot progress, registers and use wait_on() helper,
+  and move it to `gfw` module instead of `devinit`.
+- Add missing TODOs for workarounds waiting to be replaced by in-flight
+  R4L features.
+- Register macro: add the offset of the register as a type constant, and
+  allow register aliases for registers which can be interpreted
+  differently depending on context.
+- Rework the `num` module using only macros (to allow use of overflowing
+  ops), and add align_down() and fls() ops.
+- Add a proper HAL to the `fb` module.
+- Move HAL builders to impl blocks of Chipset.
+- Add proper types and traits for signatures.
+- Proactively split FalconFirmware into distinct traits to ease
+  management of v2 vs v3 FWSEC headers that will be needed for Turing
+  support.
+- Link to v3:
+  https://lore.kernel.org/r/20250507-nova-frts-v3-0-fcb02749754d@nvidia.com
 
-diff --git a/include/linux/sched/wake_q.h b/include/linux/sched/wake_q.h
-index 0f28b4623ad4..083ced4bb5dc 100644
---- a/include/linux/sched/wake_q.h
-+++ b/include/linux/sched/wake_q.h
-@@ -60,6 +60,7 @@ static inline bool wake_q_empty(struct wake_q_head *head)
- }
- 
- extern void wake_q_add(struct wake_q_head *head, struct task_struct *task);
-+extern bool wake_q_add_ret(struct wake_q_head *head, struct task_struct *task);
- extern void wake_q_add_safe(struct wake_q_head *head, struct task_struct *task);
- extern void wake_up_q(struct wake_q_head *head);
- 
-diff --git a/include/linux/stop_machine.h b/include/linux/stop_machine.h
-index 3132262a404d..6daec44dcb99 100644
---- a/include/linux/stop_machine.h
-+++ b/include/linux/stop_machine.h
-@@ -21,18 +21,38 @@ typedef int (*cpu_stop_fn_t)(void *arg);
- 
- #ifdef CONFIG_SMP
- 
-+enum work_state {
-+	WORK_INIT = 0,
-+	WORK_READY,
-+	WORK_QUEUE,
-+	WORK_PREP_EXEC,
-+};
-+
-+enum stopper_wakeq_state {
-+	WAKEQ_ADD_FAIL = 0,
-+	WAKEQ_ADD_OK,
-+};
-+
-+enum work_rec {
-+	WORK_NO_REC = 0,
-+	WORK_REC,
-+};
- struct cpu_stop_work {
- 	struct list_head	list;		/* cpu_stopper->works */
- 	cpu_stop_fn_t		fn;
- 	unsigned long		caller;
- 	void			*arg;
- 	struct cpu_stop_done	*done;
-+	enum work_rec		rec;
-+	enum work_state exec_state;
- };
- 
- int stop_one_cpu(unsigned int cpu, cpu_stop_fn_t fn, void *arg);
- int stop_two_cpus(unsigned int cpu1, unsigned int cpu2, cpu_stop_fn_t fn, void *arg);
- bool stop_one_cpu_nowait(unsigned int cpu, cpu_stop_fn_t fn, void *arg,
- 			 struct cpu_stop_work *work_buf);
-+bool stop_one_cpu_nowait_rec(unsigned int cpu, cpu_stop_fn_t fn, void *arg,
-+			struct cpu_stop_work *work_buf);
- void stop_machine_park(int cpu);
- void stop_machine_unpark(int cpu);
- void stop_machine_yield(const struct cpumask *cpumask);
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index c81cf642dba0..a617f51d3e5a 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1037,6 +1037,19 @@ void wake_q_add(struct wake_q_head *head, struct task_struct *task)
- 		get_task_struct(task);
- }
- 
-+/**
-+ * wake_q_add_ret() - queue a wakeup for 'later' waking. record status.
-+ */
-+bool wake_q_add_ret(struct wake_q_head *head, struct task_struct *task)
-+{
-+	bool ret = false;
-+
-+	ret = __wake_q_add(head, task);
-+	if (ret)
-+		get_task_struct(task);
-+	return ret;
-+}
-+
- /**
-  * wake_q_add_safe() - safely queue a wakeup for 'later' waking.
-  * @head: the wake_q_head to add @task to
-@@ -8100,7 +8113,7 @@ static void balance_push(struct rq *rq)
- 	 */
- 	preempt_disable();
- 	raw_spin_rq_unlock(rq);
--	stop_one_cpu_nowait(rq->cpu, __balance_push_cpu_stop, push_task,
-+	stop_one_cpu_nowait_rec(rq->cpu, __balance_push_cpu_stop, push_task,
- 			    this_cpu_ptr(&push_work));
- 	preempt_enable();
- 	/*
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index 5d2d0562115b..3a2c48ed2182 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -42,6 +42,8 @@ struct cpu_stopper {
- 	struct list_head	works;		/* list of pending works */
- 
- 	struct cpu_stop_work	stop_work;	/* for stop_cpus */
-+	enum stopper_wakeq_state stopper_wakeq;		/* for stopper wakeup */
-+	enum work_state exec_state;			/* for stopper exec state */
- 	unsigned long		caller;
- 	cpu_stop_fn_t		fn;
- };
-@@ -85,8 +87,18 @@ static void __cpu_stop_queue_work(struct cpu_stopper *stopper,
- 					struct cpu_stop_work *work,
- 					struct wake_q_head *wakeq)
- {
-+	bool wake_flag;
-+
- 	list_add_tail(&work->list, &stopper->works);
--	wake_q_add(wakeq, stopper->thread);
-+	wake_flag = wake_q_add_ret(wakeq, stopper->thread);
-+	if (work->rec == WORK_REC) {
-+		work->exec_state = WORK_QUEUE;
-+		stopper->exec_state = WORK_QUEUE;
-+		if (wake_flag)
-+			stopper->stopper_wakeq = WAKEQ_ADD_OK;
-+		else
-+			stopper->stopper_wakeq = WAKEQ_ADD_FAIL;
-+	}
- }
- 
- /* queue @work to @stopper.  if offline, @work is completed immediately */
-@@ -141,6 +153,8 @@ int stop_one_cpu(unsigned int cpu, cpu_stop_fn_t fn, void *arg)
- 	struct cpu_stop_done done;
- 	struct cpu_stop_work work = { .fn = fn, .arg = arg, .done = &done, .caller = _RET_IP_ };
- 
-+	work.rec = WORK_NO_REC;
-+	work.exec_state = WORK_INIT;
- 	cpu_stop_init_done(&done, 1);
- 	if (!cpu_stop_queue_work(cpu, &work))
- 		return -ENOENT;
-@@ -350,6 +364,8 @@ int stop_two_cpus(unsigned int cpu1, unsigned int cpu2, cpu_stop_fn_t fn, void *
- 		.arg = &msdata,
- 		.done = &done,
- 		.caller = _RET_IP_,
-+		.rec = WORK_NO_REC,
-+		.exec_state = WORK_INIT,
- 	};
- 
- 	cpu_stop_init_done(&done, 2);
-@@ -386,6 +402,17 @@ bool stop_one_cpu_nowait(unsigned int cpu, cpu_stop_fn_t fn, void *arg,
- 			struct cpu_stop_work *work_buf)
- {
- 	*work_buf = (struct cpu_stop_work){ .fn = fn, .arg = arg, .caller = _RET_IP_, };
-+	work_buf->rec = WORK_NO_REC;
-+	work_buf->exec_state = WORK_INIT;
-+	return cpu_stop_queue_work(cpu, work_buf);
-+}
-+
-+bool stop_one_cpu_nowait_rec(unsigned int cpu, cpu_stop_fn_t fn, void *arg,
-+			struct cpu_stop_work *work_buf)
-+{
-+	*work_buf = (struct cpu_stop_work){ .fn = fn, .arg = arg, .caller = _RET_IP_, };
-+	work_buf->rec = WORK_REC;
-+	work_buf->exec_state = WORK_READY;
- 	return cpu_stop_queue_work(cpu, work_buf);
- }
- 
-@@ -411,6 +438,8 @@ static bool queue_stop_cpus_work(const struct cpumask *cpumask,
- 		work->arg = arg;
- 		work->done = done;
- 		work->caller = _RET_IP_;
-+		work->rec = WORK_NO_REC;
-+		work->exec_state = WORK_INIT;
- 		if (cpu_stop_queue_work(cpu, work))
- 			queued = true;
- 	}
-@@ -496,6 +525,8 @@ static void cpu_stopper_thread(unsigned int cpu)
- 		work = list_first_entry(&stopper->works,
- 					struct cpu_stop_work, list);
- 		list_del_init(&work->list);
-+		if (work->rec == WORK_REC)
-+			stopper->exec_state = WORK_PREP_EXEC;
- 	}
- 	raw_spin_unlock_irq(&stopper->lock);
- 
-@@ -572,7 +603,8 @@ static int __init cpu_stop_init(void)
- 
- 	for_each_possible_cpu(cpu) {
- 		struct cpu_stopper *stopper = &per_cpu(cpu_stopper, cpu);
--
-+		stopper->exec_state = WORK_INIT;
-+		stopper->stopper_wakeq = WAKEQ_ADD_OK;
- 		raw_spin_lock_init(&stopper->lock);
- 		INIT_LIST_HEAD(&stopper->works);
- 	}
+Changes in v3:
+- Rebased on top of latest nova-next.
+- Use the new Devres::access() and remove the now unneeded with_bar!()
+  macro.
+- Dropped `rust: devres: allow to borrow a reference to the resource's
+  Device` as it is not needed anymore.
+- Fixed more erroneous uses of `ERANGE` error.
+- Optimized alignment computations of the FB layout a bit.
+- Link to v2: https://lore.kernel.org/r/20250501-nova-frts-v2-0-b4a137175337@nvidia.com
+
+Changes in v2:
+- Rebased on latest nova-next.
+- Fixed all clippy warnings.
+- Added `count` and `size` methods to `CoherentAllocation`.
+- Added method to obtain a reference to the `Device` from a `Devres`
+  (this is super convenient).
+- Split `DmaObject` into its own patch and added `Deref` implementation.
+- Squashed field names from [3] into "extract FWSEC from BIOS".
+- Fixed erroneous use of `ERANGE` error.
+- Reworked `register!()` macro towards a more intuitive syntax, moved
+  its helper macros into internal rules to avoid polluting the macro
+  namespace.
+- Renamed all registers to capital snake case to better match OpenRM.
+- Removed declarations for registers that are not used yet.
+- Added more documentation for items not covered by Joel's documentation
+  patches.
+- Removed timer device and replaced it with a helper function using
+  `Ktime`. This also made [4] unneeded so it is dropped.
+- Unregister the sysmem flush page upon device destruction.
+- ... probably more that I forgot. >_<
+- Link to v1: https://lore.kernel.org/r/20250420-nova-frts-v1-0-ecd1cca23963@nvidia.com
+
+[3] https://lore.kernel.org/all/20250423225405.139613-6-joelagnelf@nvidia.com/
+[4] https://lore.kernel.org/lkml/20250420-nova-frts-v1-1-ecd1cca23963@nvidia.com/
+
+---
+Alexandre Courbot (19):
+      rust: dma: expose the count and size of CoherentAllocation
+      rust: make ETIMEDOUT error available
+      rust: sizes: add constants up to SZ_2G
+      rust: add new `num` module with useful integer operations
+      gpu: nova-core: use absolute paths in register!() macro
+      gpu: nova-core: add delimiter for helper rules in register!() macro
+      gpu: nova-core: expose the offset of each register as a type constant
+      gpu: nova-core: allow register aliases
+      gpu: nova-core: increase BAR0 size to 16MB
+      gpu: nova-core: add helper function to wait on condition
+      gpu: nova-core: wait for GFW_BOOT completion
+      gpu: nova-core: add DMA object struct
+      gpu: nova-core: register sysmem flush page
+      gpu: nova-core: add falcon register definitions and base code
+      gpu: nova-core: firmware: add ucode descriptor used by FWSEC-FRTS
+      gpu: nova-core: compute layout of the FRTS region
+      gpu: nova-core: add types for patching firmware binaries
+      gpu: nova-core: extract FWSEC from BIOS and patch it to run FWSEC-FRTS
+      gpu: nova-core: load and run FWSEC-FRTS
+
+Joel Fernandes (1):
+      nova-core: Add support for VBIOS ucode extraction for boot
+
+ drivers/gpu/nova-core/dma.rs              |   58 ++
+ drivers/gpu/nova-core/driver.rs           |    2 +-
+ drivers/gpu/nova-core/falcon.rs           |  557 ++++++++++++++
+ drivers/gpu/nova-core/falcon/gsp.rs       |   22 +
+ drivers/gpu/nova-core/falcon/hal.rs       |   60 ++
+ drivers/gpu/nova-core/falcon/hal/ga102.rs |  122 +++
+ drivers/gpu/nova-core/falcon/sec2.rs      |    8 +
+ drivers/gpu/nova-core/firmware.rs         |   86 +++
+ drivers/gpu/nova-core/firmware/fwsec.rs   |  394 ++++++++++
+ drivers/gpu/nova-core/gfw.rs              |   37 +
+ drivers/gpu/nova-core/gpu.rs              |  135 +++-
+ drivers/gpu/nova-core/gsp.rs              |    3 +
+ drivers/gpu/nova-core/gsp/fb.rs           |   77 ++
+ drivers/gpu/nova-core/gsp/fb/hal.rs       |   30 +
+ drivers/gpu/nova-core/gsp/fb/hal/ga100.rs |   24 +
+ drivers/gpu/nova-core/gsp/fb/hal/ga102.rs |   24 +
+ drivers/gpu/nova-core/gsp/fb/hal/tu102.rs |   28 +
+ drivers/gpu/nova-core/nova_core.rs        |    5 +
+ drivers/gpu/nova-core/regs.rs             |  265 +++++++
+ drivers/gpu/nova-core/regs/macros.rs      |   63 +-
+ drivers/gpu/nova-core/util.rs             |   29 +
+ drivers/gpu/nova-core/vbios.rs            | 1173 +++++++++++++++++++++++++++++
+ rust/kernel/dma.rs                        |   18 +
+ rust/kernel/error.rs                      |    1 +
+ rust/kernel/lib.rs                        |    1 +
+ rust/kernel/num.rs                        |   82 ++
+ rust/kernel/sizes.rs                      |   24 +
+ 27 files changed, 3315 insertions(+), 13 deletions(-)
+---
+base-commit: 276c53c66e032c8e7cc0da63555f2742eb1afd69
+change-id: 20250417-nova-frts-96ef299abe2c
+
+Best regards,
 -- 
-2.45.2
+Alexandre Courbot <acourbot@nvidia.com>
 
 
