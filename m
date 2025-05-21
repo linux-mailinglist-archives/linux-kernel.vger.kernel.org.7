@@ -1,103 +1,180 @@
-Return-Path: <linux-kernel+bounces-657794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73853ABF8DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:10:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C1EABF8E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D3BF7B9326
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 221231891163
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9961D63C2;
-	Wed, 21 May 2025 15:08:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10509189513
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4275A1E25F2;
+	Wed, 21 May 2025 15:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jLvQsI+a"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B92B18B492
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747840102; cv=none; b=OGuA70L/+Hd5mEZjAdRucq5bnBcTrS3DwTHChUI4Fvark9oCZszPQiIztxEr/f/r03hFKm8hU6XQzImhUfk811BKhMvJT0jnc+nNlYI/SzHZnmI9xGPu8zc9snTqJ3Qof+PAwJ5rFZheFerriuMMWcMRSpkQvrA15pkqxBJ0oA8=
+	t=1747839912; cv=none; b=GI4UkjEi+YH+FsN7AACZZmqv45BfbXQcbAYsKpaF0D36cdY6o0X1O8Zskq5MHpOO5ISe6q3wa4LZa4AUiyroZ1Ct5f8TMSpHl8HMWFbXiGFIEPJczlJqA5hWpHnFXOBi/uV9ac3gd90MVv8/Az6fzgYvwdagw5fDq0SoIO9NB5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747840102; c=relaxed/simple;
-	bh=Ri95T1scPzaCxq0FHdnogfmI3VLOGHsMFZMfcgUs0lI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m0uUg6dKaayJsUkyREx/sCBNUiNofQ5AlXnU7Hc5WQPtqM32DqVwmGzhp7cScrDWOW75eZHNYvg1oxHcBXqiCyt3CR3So9riFe6QpvhWRnOZvS7NNcLVoI+PhDALdrBhM31AXIdFnF6HvvKsq2k86w2eIoq5eothrovZziSFZAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B7D01515;
-	Wed, 21 May 2025 08:08:04 -0700 (PDT)
-Received: from [10.57.23.70] (unknown [10.57.23.70])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DEABC3F6A8;
-	Wed, 21 May 2025 08:08:15 -0700 (PDT)
-Message-ID: <4dd05f07-7824-4e1b-ad4c-928a8861b2c4@arm.com>
-Date: Wed, 21 May 2025 16:04:45 +0100
+	s=arc-20240116; t=1747839912; c=relaxed/simple;
+	bh=RKB2z0hQP/qo6VCyUDMpywyny5OcLY+qjiNZEUbDqQ4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=KbN9u2OdJvD/VXqXJw/9tvDM0HCrnuXAQpDryGoBQc3u/NVg2on814s5MIlekYeagnPTWcY5fe9cucAx5v18IW/BMinUoGRDaec/S21DPK8bbCpgvhgUUvzChXCTHDQOe6V4zsc7sj57WZKp8OION6kkF8dku8WeyzLEzCCjFDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jLvQsI+a; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b16b35ea570so6722285a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 08:05:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747839910; x=1748444710; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zVleagUiVHw/5vhkBi8LDSAfw55ruRJcasWRJK+un3M=;
+        b=jLvQsI+awZL+vflIDEkAZoFJ95fpqQfmyhhnMJuB2Gj0kGhVPa8Vlasz6SLmH4wirU
+         DFHQVjTBm+6L8UyJDD756Cvgz0kSPr6xuXBGcOHIKPXn7+e+kg0BMDDFGde2IKeBMa1U
+         drn/MfNbuDc02al4Wx4SXGi5gYVpv6MkeE0fjA8Q5x6cPd++0HfXp+gyWQtM5gRODF4q
+         gBP7YNeDam1K+TYQcS1TMiTLpGEHbLjU2w9XzqQBfRJ2TYk8a4JS6EkSP0jkl/nXE/Yy
+         i68WNdmToSOmxGVPFApl4yOanbbz6wvy5oIAtR058o87ugq54IFWpxt7teOHIzN4BDLi
+         +vmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747839910; x=1748444710;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zVleagUiVHw/5vhkBi8LDSAfw55ruRJcasWRJK+un3M=;
+        b=DcYa+6bXrqA7RVQYAQkZfmXmWHbTrHBmQQl5fNh1hdn76pi3aKh6eV56LAeKRSfmFb
+         s+tGrBAb8v3CZ4iup6zGvq0ITDWTikkXrRpcfpdk0LgkYAFDkhrLFLawBltJqmlGlZZ/
+         X6US8QVkTOSjxTaNXRZhfkcjGP028GM0eIKYaz1Rntp89nqHJsfQ79ges1NXA8xNa1+A
+         glbcDGfM4vYSc4ByzccAq1mXXCPxZvnV7ydLZ4mNdt2sNa65Ntn6IZWcStAlAMprpiwr
+         ZdeUlR0YOhtHP1KCjYoEpxqf91/DRBWPtjC3Ahioy5VuxpfbXcw110mwj4CtDgahNskJ
+         8GxA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1dvjD/auT0gSKStGbC4Gv31+ZfYVLrZQM0Mzu3p2/mwOxKLGdt6851rnezyUVHxQEyDb5EubuuCCHd7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO0FKwNKgiUKIfO9i5JdqsfaTmvwETe199XCYCFurTpNub87YD
+	mWVxEhwn4rLZIzKyjXh7mVJttQMEJXVQfcCMyA3DKOKKz951HXFe2ApFmEUvzdnwMbnrEltbMfB
+	1ByPxOA==
+X-Google-Smtp-Source: AGHT+IHGSpJmNv8SAS14hmKKh6ZIg5876VKcdbgoWSZxr3DEmUJT2DSMLR2M8INJy/4FyAqIRr98hcZr/w0=
+X-Received: from pgbfe5.prod.google.com ([2002:a05:6a02:2885:b0:b26:eac3:3979])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:103:b0:1fe:90c5:7d00
+ with SMTP id adf61e73a8af0-216219c82fcmr35252646637.28.1747839910386; Wed, 21
+ May 2025 08:05:10 -0700 (PDT)
+Date: Wed, 21 May 2025 08:05:09 -0700
+In-Reply-To: <BN7PR02MB4148503E1599C1310F408863D49EA@BN7PR02MB4148.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/panthor: Reset queue slots if termination fails
-To: Ashley Smith <ashley.smith@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250519145150.2265020-1-ashley.smith@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250519145150.2265020-1-ashley.smith@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250519185514.2678456-1-seanjc@google.com> <20250519185514.2678456-9-seanjc@google.com>
+ <20250520191816.GJ16434@noisy.programming.kicks-ass.net> <aC0AEJX0FIMl9lDy@google.com>
+ <20250521114233.GC39944@noisy.programming.kicks-ass.net> <BN7PR02MB4148503E1599C1310F408863D49EA@BN7PR02MB4148.namprd02.prod.outlook.com>
+Message-ID: <aC3rpZChhtw4NODS@google.com>
+Subject: Re: [PATCH v2 08/12] sched/wait: Drop WQ_FLAG_EXCLUSIVE from add_wait_queue_priority()
+From: Sean Christopherson <seanjc@google.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Nuno Das Neves <nunodasneves@linux.microsoft.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	David Matlack <dmatlack@google.com>, Juergen Gross <jgross@suse.com>, 
+	Stefano Stabellini <sstabellini@kernel.org>, 
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 19/05/2025 15:50, Ashley Smith wrote:
-> This fixes a bug where if we timeout after a suspend and the termination
-> fails, due to waiting on a fence that will never be signalled for
-> example, we do not resume the group correctly. The fix forces a reset
-> for groups that are not terminated correctly.
+On Wed, May 21, 2025, Michael Kelley wrote:
+> From: Peter Zijlstra <peterz@infradead.org> Sent: Wednesday, May 21, 2025 4:43 AM
+> > 
+> > On Tue, May 20, 2025 at 03:20:00PM -0700, Sean Christopherson wrote:
+> > > On Tue, May 20, 2025, Peter Zijlstra wrote:
+> > > > On Mon, May 19, 2025 at 11:55:10AM -0700, Sean Christopherson wrote:
+> > > > > Drop the setting of WQ_FLAG_EXCLUSIVE from add_wait_queue_priority() to
+> > > > > differentiate it from add_wait_queue_priority_exclusive().  The one and
+> > > > > only user add_wait_queue_priority(), Xen privcmd's irqfd_wakeup(),
+> > > > > unconditionally returns '0', i.e. doesn't actually operate in exclusive
+> > > > > mode.
+> > > >
+> > > > I find:
+> > > >
+> > > > drivers/hv/mshv_eventfd.c:      add_wait_queue_priority(wqh, &irqfd->irqfd_wait);
+> > > > drivers/xen/privcmd.c:  add_wait_queue_priority(wqh, &kirqfd->wait);
+> > > >
+> > > > I mean, it might still be true and all, but hyperv seems to also use
+> > > > this now.
+> > >
+> > > Oh FFS, another "heavily inspired by KVM".  I should have bribed someone to take
+> > > this series when I had the chance.  *sigh*
+> > >
+> > > Unfortunately, the Hyper-V code does actually operate in exclusive mode.  Unless
+> > > you have a better idea, I'll tweak the series to:
+> > >
+> > >   1. Drop WQ_FLAG_EXCLUSIVE from add_wait_queue_priority() and have the callers
+> > >      explicitly set the flag,
+> > >   2. Add a patch to drop WQ_FLAG_EXCLUSIVE from Xen privcmd entirely.
+> > >   3. Introduce add_wait_queue_priority_exclusive() and switch KVM to use it.
+> > >
+> > > That has an added bonus of introducing the Xen change in a dedicated patch, i.e.
+> > > is probably a sequence anyways.
+> > >
+> > > Alternatively, I could rewrite the Hyper-V code a la the KVM changes, but I'm not
+> > > feeling very charitable at the moment (the complete lack of documentation for
+> > > their ioctl doesn't help).
+> > 
+> > Works for me. Michael is typically very responsive wrt hyperv (but you
+> > probably know this).
 > 
-> Signed-off-by: Ashley Smith <ashley.smith@collabora.com>
-
-Reviewed-by: Steven Price <steven.price@arm.com>
-
-> ---
-> Changes in v2:
->  - Fixed syntax error
-> ---
->  drivers/gpu/drm/panthor/panthor_sched.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+> I can't be much help on this issue. This Hyper-V code is for Linux running in
+> the root partition (i.e., "dom0") and I don't have a setup where I can run and
+> test that configuration.
 > 
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index 43ee57728de5..65d8ae3dcac1 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -2727,8 +2727,17 @@ void panthor_sched_suspend(struct panthor_device *ptdev)
->  			 * automatically terminate all active groups, so let's
->  			 * force the state to halted here.
->  			 */
-> -			if (csg_slot->group->state != PANTHOR_CS_GROUP_TERMINATED)
-> +			if (csg_slot->group->state != PANTHOR_CS_GROUP_TERMINATED) {
->  				csg_slot->group->state = PANTHOR_CS_GROUP_TERMINATED;
-> +
-> +				/* Reset the queue slots manually if the termination
-> +				 * request failed.
-> +				 */
-> +				for (i = 0; i < group->queue_count; i++) {
-> +					if (group->queues[i])
-> +						cs_slot_reset_locked(ptdev, csg_id, i);
-> +				}
-> +			}
->  			slot_mask &= ~BIT(csg_id);
->  		}
->  	}
-> 
-> base-commit: 9934ab18051118385c7ea44d8e14175edbe6dc9c
+> Adding Nuno Das Neves from Microsoft for his thoughts.
 
+A slightly more helpful, less ranty explanation of what's going on:
+
+KVM's irqfd code, which was pretty copied verbatim for Hyper-V partitions, disallows
+binding an eventfd to a single VM multiple times, but doesn't handle the scenario
+where an eventfd is bound to multiple VMs, i.e. to multiple partitions.  What's
+particular "fun" about such a scenario is that WQ_FLAG_EXCLUSIVE+WQ_FLAG_PRIORITY
+means only the first VM/partition that bound the eventfd will be notified.
+
+For KVM-based setups, this is a legitimate concern because KVM supports intra-host
+migration.  E.g. to upgrade the userspace VMM, a guest can be "migrated" from the
+old VMM's "struct kvm" instance to the new VMM's "struct kvm".  If userspace mucks
+up the migration, e.g. doesn't *unbind* the eventfd from the old VM(M) before
+resuming the guest in the new VM(M), KVM will effectively drop virtual IRQs.
+
+This is purely a hardening exercise, i.e. isn't required for correctness, assuming
+userspace userspace is bug-free.  The KVM patches surrounding this patch show how
+I am planning on ensuring a 1:1 eventfd:VM binding.
+
+To not block the KVM hardening on Hyper-V's eventfd usage, I am planning on making
+this change in the next version of the series:
+
+diff --git a/drivers/hv/mshv_eventfd.c b/drivers/hv/mshv_eventfd.c
+index 8dd22be2ca0b..b348928871c2 100644
+--- a/drivers/hv/mshv_eventfd.c
++++ b/drivers/hv/mshv_eventfd.c
+@@ -368,6 +368,14 @@ static void mshv_irqfd_queue_proc(struct file *file, wait_queue_head_t *wqh,
+                        container_of(polltbl, struct mshv_irqfd, irqfd_polltbl);
+ 
+        irqfd->irqfd_wqh = wqh;
++
++       /*
++        * TODO: Ensure there isn't already an exclusive, priority waiter, e.g.
++        * that the irqfd isn't already bound to another partition.  Only the
++        * first exclusive waiter encountered will be notified, and
++        * add_wait_queue_priority() doesn't enforce exclusivity.
++        */
++       irqfd->irqfd_wait.flags |= WQ_FLAG_EXCLUSIVE;
+        add_wait_queue_priority(wqh, &irqfd->irqfd_wait);
+ }
 
