@@ -1,261 +1,103 @@
-Return-Path: <linux-kernel+bounces-658348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10DA1AC00A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 01:21:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3488BAC00A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 01:21:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 159CF9E81CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 23:20:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 715254E6937
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 23:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E89523C8A0;
-	Wed, 21 May 2025 23:19:05 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0410323E226;
+	Wed, 21 May 2025 23:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="qhImsyoW"
+Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106D723AE95;
-	Wed, 21 May 2025 23:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EE121D3C7;
+	Wed, 21 May 2025 23:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747869545; cv=none; b=AuY/zUXnSuHOjS6yjFnsuZQ+gYP/XV3QWyf5PrOUdCeRIIkV0Y2KL3f18ZJ4/h0lo2Ldvw9v/4gbvv9t1pAo4vapQisMSixFZ00p4ki7LDeupt53KXeMoRpK0tuw/esvUzk87z5Ji4Q8AR5rtm3j+mxZtFM42vcZOwliFlVwW10=
+	t=1747869642; cv=none; b=LYdduBtEiXUrbCmwgw5xBic0jNItu29caZPQT6Dsdrr/eNldSDMuZGCbi6uHebeGlWB4HyaxSeSAjVvcsaWhsx/G2XCTTQZCjnKXFCd7nilo4xYw68LZ+wDn5kap8aE+S1nXY9zqU/8pmzPKEm381MkCB9IvugCyI/1sWx27KCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747869545; c=relaxed/simple;
-	bh=5KYpDNUpr65gculRdpQd+tomtSj8rRT5qn006JuM4Xc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d/Zl7+V8FrhgyLpK79SwkcigAl13u+p5SHhm2Lrg10lasSWPrqlF29k8/gNegKGdpyPgzIUryzZEZD4yzAsV7zO+mvlwtnlhp0oHl5qv5RrDbtai4s/tuml7y7YvPKoM3hsnvjajHW8k2e7I/3GrbOpTDR/RyLKjcFPhkPsTXJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AFEBC4CEE4;
-	Wed, 21 May 2025 23:19:03 +0000 (UTC)
-Date: Wed, 21 May 2025 19:19:47 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tracing: ring_buffer: Rewind persistent ring buffer
- when reboot
-Message-ID: <20250521191947.3f800c34@gandalf.local.home>
-In-Reply-To: <20250521145128.3a776466@gandalf.local.home>
-References: <174730775661.3893490.10420015749079085314.stgit@mhiramat.tok.corp.google.com>
-	<20250521145128.3a776466@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1747869642; c=relaxed/simple;
+	bh=CBO5bSjK0stsEuvSrLFecuRqTIT6JhNGNaszCB83c7w=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ccZyIOeMm9s/ea/KidIfapyvU6Cqx01bIcBmG1eFkRf7MDk0P6Ynpyn9jWBg22aN9kyQuEODROCGP2SMWoH+2G9nQCzFtEwQ7dGPP7h/5lA+9xOz0kGlVexujFkbNtp63V/tXiGd9pyQDPUAyCXGQdFZyMbEyJ+HfpxPCakR8Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=qhImsyoW; arc=none smtp.client-ip=99.78.197.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1747869636; x=1779405636;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=NXuJz2ArVBVRGn/T+wPi9D2VYsVT/YdvKkpsGgUQxzQ=;
+  b=qhImsyoWLaS3rgp9kKEnI/QAFBeh4PC/SQzXmJtZx6gOkHMuemHmVpfd
+   favCZk9MvZuXnLKDl/EmQjfTDEqscXVtqPa3suWeB5+Q5/PyDYKxuKD1m
+   BBqe1l+V1KIzXKmNsR/l7pV+uR2Gl84G8kKIARco+Tx3LGQRhCfMP5QJo
+   a67d0W/JzGbA3GyMLBMRKKiUIZkl8XeM/HSpvwTECq2wO/XKf+BntZno2
+   M8ZvNROKq9nKuDEV52hk6EHFZx+4jTsiE30l4b6ttkr/l9nQzJbc3Cuxg
+   3c7bSCnW8+xdHmkLgO+5QmTNrsLBDFfotPyMqFkhnbHlHSwqHdPz5mPoX
+   A==;
+X-IronPort-AV: E=Sophos;i="6.15,304,1739836800"; 
+   d="scan'208";a="52605345"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 23:20:35 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:64887]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.27.176:2525] with esmtp (Farcaster)
+ id 2024a941-f13d-4ded-9d38-e62a87a669ca; Wed, 21 May 2025 23:20:34 +0000 (UTC)
+X-Farcaster-Flow-ID: 2024a941-f13d-4ded-9d38-e62a87a669ca
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 21 May 2025 23:20:34 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.94.52.104) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 21 May 2025 23:20:30 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <jiang.kun2@zte.com.cn>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <fan.yu9@zte.com.cn>,
+	<gnaaman@drivenets.com>, <he.peilin@zte.com.cn>, <horms@kernel.org>,
+	<kuba@kernel.org>, <kuniyu@amazon.com>, <leitao@debian.org>,
+	<linux-kernel@vger.kernel.org>, <lizetao1@huawei.com>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <qiu.yutan@zte.com.cn>,
+	<tu.qiang35@zte.com.cn>, <wang.yaxin@zte.com.cn>, <xu.xin16@zte.com.cn>,
+	<yang.yang29@zte.com.cn>, <ye.xingchen@zte.com.cn>, <zhang.yunkai@zte.com.cn>
+Subject: Re: [PATCH linux next v2] net: neigh: use kfree_skb_reason() in neigh_resolve_output() and neigh_connected_output()
+Date: Wed, 21 May 2025 16:20:18 -0700
+Message-ID: <20250521232021.92209-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250521101408902uq7XQTEF6fr3v5HKWT2GO@zte.com.cn>
+References: <20250521101408902uq7XQTEF6fr3v5HKWT2GO@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D037UWB004.ant.amazon.com (10.13.138.84) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Wed, 21 May 2025 14:51:28 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+From: <jiang.kun2@zte.com.cn>
+Date: Wed, 21 May 2025 10:14:08 +0800 (CST)
+> From: Qiu Yutan <qiu.yutan@zte.com.cn>
+> 
+> Replace kfree_skb() used in neigh_resolve_output() and
+> neigh_connected_output() with kfree_skb_reason().
+> 
+> Following new skb drop reason is added:
+> /* failed to fill the device hard header */
+> SKB_DROP_REASON_NEIGH_HH_FILLFAIL
+> 
+> Signed-off-by: Qiu Yutan <qiu.yutan@zte.com.cn>
+> Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
 
-> On Thu, 15 May 2025 20:15:56 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> > index 6859008ca34d..48f5f248eb4c 100644
-> > --- a/kernel/trace/ring_buffer.c
-> > +++ b/kernel/trace/ring_buffer.c
-> > @@ -1358,6 +1358,13 @@ static inline void rb_inc_page(struct buffer_page **bpage)
-> >  	*bpage = list_entry(p, struct buffer_page, list);
-> >  }
-> >  
-> > +static inline void rb_dec_page(struct buffer_page **bpage)
-> > +{
-> > +	struct list_head *p = rb_list_head((*bpage)->list.prev);
-> > +
-> > +	*bpage = list_entry(p, struct buffer_page, list);
-> > +}
-> > +
-> >  static struct buffer_page *
-> >  rb_set_head_page(struct ring_buffer_per_cpu *cpu_buffer)
-> >  {
-> > @@ -1866,10 +1873,11 @@ static int rb_validate_buffer(struct buffer_data_page *dpage, int cpu)
-> >  static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
-> >  {
-> >  	struct ring_buffer_cpu_meta *meta = cpu_buffer->ring_meta;
-> > -	struct buffer_page *head_page;
-> > +	struct buffer_page *head_page, *orig_head;
-> >  	unsigned long entry_bytes = 0;
-> >  	unsigned long entries = 0;
-> >  	int ret;
-> > +	u64 ts;
-> >  	int i;
-> >  
-> >  	if (!meta || !meta->head_buffer)
-> > @@ -1885,8 +1893,93 @@ static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
-> >  	entry_bytes += local_read(&cpu_buffer->reader_page->page->commit);
-> >  	local_set(&cpu_buffer->reader_page->entries, ret);
-> >  
-> > -	head_page = cpu_buffer->head_page;
-> > +	orig_head = head_page = cpu_buffer->head_page;
-> > +	ts = head_page->page->time_stamp;
-> > +
-> > +	/*
-> > +	 * Try to rewind the head so that we can read the pages which already
-> > +	 * read in the previous boot.
-> > +	 */
-> > +	if (head_page == cpu_buffer->tail_page)
-> > +		goto rewound;  
-> 
-> Hmm, jumping to a label called "rewound" when you didn't do a rewind seems
-> confusing.
-> 
-> Perhaps call the label "skip_rewind"?
-> 
-> > +
-> > +	rb_dec_page(&head_page);
-> > +	for (i = 0; i < meta->nr_subbufs + 1; i++, rb_dec_page(&head_page)) {
-> > +
-> > +		/* Rewind until tail (writer) page. */
-> > +		if (head_page == cpu_buffer->tail_page)
-> > +			break;
-> > +
-> > +		/* Ensure the page has older data than head. */
-> > +		if (ts < head_page->page->time_stamp)
-> > +			break;
-> > +
-> > +		ts = head_page->page->time_stamp;
-> > +		/* Ensure the page has correct timestamp and some data. */
-> > +		if (!ts || rb_page_commit(head_page) == 0)
-> > +			break;
-> > +
-> > +		/* Stop rewind if the page is invalid. */
-> > +		ret = rb_validate_buffer(head_page->page, cpu_buffer->cpu);
-> > +		if (ret < 0)
-> > +			break;
-> > +
-> > +		/* Recover the number of entries and update stats. */
-> > +		local_set(&head_page->entries, ret);
-> > +		if (ret)
-> > +			local_inc(&cpu_buffer->pages_touched);
-> > +		entries += ret;
-> > +		entry_bytes += rb_page_commit(head_page);
-> > +	}
-> > +	pr_info("Rewound %d pages on cpu%d\n", i, cpu_buffer->cpu);  
-> 
-> Should state this is coming from the ring buffer and use "[%d]" for cpu
-> number as the other pr_info()'s do. Also only print if it did a rewind:
-> 
-> 	if (i)
-> 		pr_info("Ring buffer [%d] rewound %d pages\n", cpu_buffer->cpu, i);
-> 
-> 
-> > +
-> > +	/* The last rewound page must be skipped. */
-> > +	if (head_page != orig_head)
-> > +		rb_inc_page(&head_page);
-> >  
-> > +	/* If there are rewound pages, rewind the reader page too. */  
-> 
-> I would change the comment to:
-> 
-> 	/*
-> 	 * If the ring buffer was rewound, then inject the reader page
-> 	 * into the location just before the original head page.
-> 	 */
-> 
-> > +	if (head_page != orig_head) {
-> > +		struct buffer_page *bpage = orig_head;
-> > +
-> > +		rb_dec_page(&bpage);
-> > +		/*
-> > +		 * Insert the reader_page before the original head page.
-> > +		 * Since the list encode RB_PAGE flags, general list
-> > +		 * operations should be avoided.
-> > +		 */
-> > +		cpu_buffer->reader_page->list.next = &orig_head->list;
-> > +		cpu_buffer->reader_page->list.prev = orig_head->list.prev;
-> > +		orig_head->list.prev = &cpu_buffer->reader_page->list;
-> > +		bpage->list.next = &cpu_buffer->reader_page->list;
-> > +
-> > +		/* Make the head_page tthe new read page */  
-> 
-> Typo "tthe" and call it "new reader page", not "read page".
-> 
-> > +		cpu_buffer->reader_page = head_page;
-> > +		bpage = head_page;
-> > +		rb_inc_page(&head_page);
-> > +		head_page->list.prev = bpage->list.prev;
-> > +		rb_dec_page(&bpage);
-> > +		bpage->list.next = &head_page->list;
-> > +		rb_set_list_to_head(&bpage->list);
-
-When testing this patch, it kept crashing. I had to add this here:
-
-		cpu_buffer->pages = &head_page->list;
-
-That's because my test would end up having cpu_buffer->pages pointing to
-the reader page, and that will cause issues later. It has to point into the
-writing portion of the buffer.
-
-> > +
-> > +		cpu_buffer->head_page = head_page;
-> > +		meta->head_buffer = (unsigned long)head_page->page;
-> > +
-> > +		/* Reset all the indexes */
-> > +		bpage = cpu_buffer->reader_page;
-> > +		meta->buffers[0] = rb_meta_subbuf_idx(meta, bpage->page);
-> > +		bpage->id = 0;
-> > +
-> > +		for (i = 0, bpage = head_page; i < meta->nr_subbufs;
-> > +		     i++, rb_inc_page(&bpage)) {
-> > +			meta->buffers[i + 1] = rb_meta_subbuf_idx(meta, bpage->page);
-> > +			bpage->id = i + 1;
-> > +		}
-
-Can we convert the above to:
-
-		for (i = 1, bpage = head_page; i < meta->nr_subbufs;
-		     i++, rb_inc_page(&bpage)) {
-			meta->buffers[i] = rb_meta_subbuf_idx(meta, bpage->page);
-			bpage->id = i;
-		}
-
-By starting i at one, we can remove the "+ 1" inside the loop. It's a bit
-cleaner that way.
-
--- Steve
-
-
-> > +
-> > +		/* We'll restart verifying from orig_head */
-> > +		head_page = orig_head;
-> > +	}
-> > +
-> > + rewound:  
-> 
->  skip_rewind:
-> 
-> Also, I know other's don't like to do this, but I do add a space before
-> labels. It makes patch diffs easier to see which functions they are,
-> otherwise the patch shows the label and not the function.
-> 
-> -- Steve
-> 
-> 
-> >  	/* If the commit_buffer is the reader page, update the commit page */
-> >  	if (meta->commit_buffer == (unsigned long)cpu_buffer->reader_page->page) {
-> >  		cpu_buffer->commit_page = cpu_buffer->reader_page;
-> > @@ -5348,7 +5441,6 @@ rb_get_reader_page(struct ring_buffer_per_cpu *cpu_buffer)
-> >  	 */
-> >  	local_set(&cpu_buffer->reader_page->write, 0);
-> >  	local_set(&cpu_buffer->reader_page->entries, 0);
-> > -	local_set(&cpu_buffer->reader_page->page->commit, 0);
-> >  	cpu_buffer->reader_page->real_end = 0;
-> >  
-> >   spin:
-> > @@ -6642,7 +6734,6 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
-> >  		cpu_buffer->read_bytes += rb_page_size(reader);
-> >  
-> >  		/* swap the pages */
-> > -		rb_init_page(bpage);
-> >  		bpage = reader->page;
-> >  		reader->page = data_page->data;
-> >  		local_set(&reader->write, 0);  
-> 
-
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
