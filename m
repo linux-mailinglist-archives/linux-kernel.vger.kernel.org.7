@@ -1,114 +1,160 @@
-Return-Path: <linux-kernel+bounces-657550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4EDABF5C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:14:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E613ABF5AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B32A318976C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:14:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BCCF3B01E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86F7274678;
-	Wed, 21 May 2025 13:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="LYoxcSd/"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9109827057E;
+	Wed, 21 May 2025 13:11:42 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2602267B74;
-	Wed, 21 May 2025 13:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948FC2D613
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747833221; cv=none; b=GoabfVccGdEdP02/bz3aQlMab8FZbGnhx2B34KUX69duNHk0mP2L55kikxlx83mvpA0smek+f6Wnq+Aex45xcqpBkFbxbYjApiDE85DovnLo6hZyiHD1ex4Mwgzt+0ZYxEuny/S0N17OEw7+P8nmmSJQuw8LZFtRgY/BWO/hCCU=
+	t=1747833102; cv=none; b=d8XMeM+X/gkEHrBVUgxjUuPRrOyL85oY/HtKOyp6dYgq0aofdabEzPuDMnOfatphhLGWCNX6Cmtqz0P7FguYgTBtNbWK+/0PkMAnYqEOH5uXNpjE1aEj2zhqtvhjPqcBIybwy098WfwmioDZAdGZaDh6LL2HmDXEOC6rSFMsC+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747833221; c=relaxed/simple;
-	bh=K7L5xXjKGwqao/240GIrsFv5DITq/nJrUbkX2CFlM4Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pXv7jARHxUOnUaEpI7ANPrBM0GVex8HABAHrPQsna825VBzrtkC3l5wuiezgCPHsgIME3yh9WvhYz885R7VHl7wSGgGSczrRzRQPm74v0GUSNVAzUHBP9M/siiWqITAXcw/M1dFRNV9nIVszVbdCdqmID9c/f+wR7GyEQAjzT+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=LYoxcSd/; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1747833220; x=1779369220;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=K7L5xXjKGwqao/240GIrsFv5DITq/nJrUbkX2CFlM4Q=;
-  b=LYoxcSd/diwWCvFwtxkYuZyzXjto0SpuyiOVonnQXNtRLROy8OeiUuRz
-   VuSma225dVqeTUmmZet2u/fjrxz4y1TAC6KdzZ+5vAIFx8I0z1M1c5Aop
-   YBN/AQf+3Mnnhzsqk3OKv7H3pTqThC+FGtAcEzAnPUyZda+iYgq7lXlGY
-   95yZzUaDe/VG3mH3O1ZoquJXUCIwAQXZa6GvK+KmHXapyB6WSGP5xhZi5
-   L+oLkPF7gOXzAvg3ztfSk8R1V9VyiQhks8FRbpGdRe/bnBnFUX1SRyg1g
-   713Ro5GTMewrCoHWN0Be27V4skCP2SoUAAdXdi/kQXfteOtO4RPN4Qz66
-   A==;
-X-CSE-ConnectionGUID: Ho6MR7HOQcaGdH2JBUdWGg==
-X-CSE-MsgGUID: /e80DkcVStK6KBJCNc6+vg==
-X-IronPort-AV: E=Sophos;i="6.15,303,1739862000"; 
-   d="scan'208";a="273274614"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 May 2025 06:13:38 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 21 May 2025 06:13:07 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Wed, 21 May 2025 06:13:05 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <kory.maincent@bootlin.com>,
-	<shannon.nelson@amd.com>, <viro@zeniv.linux.org.uk>, <atenart@kernel.org>,
-	<quentin.schulz@bootlin.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net] net: phy: mscc: Fix memory leak when using one step timestamping
-Date: Wed, 21 May 2025 15:11:14 +0200
-Message-ID: <20250521131114.2719084-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747833102; c=relaxed/simple;
+	bh=lhh1hYn0GhJBl3MQiuJ3ZgVJnZubB815syL/zJ6kNZI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l++QU+yaJzVZr/DjX7NJW1ttRr6HUXff39lGkeBY0W9BsiMkGU3MBJ5qxvUn2DhQjx2EmxXkIfSfOBqBcUaXGDg524ZgvSTn77dwmi3ZFiWMYh8ILLiwZD5u09vkRlCjpZa3jL1fHcPp0NbSBwU9bP/zQiA0JjdUFHcyJUZah/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-85b402f69d4so718927339f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 06:11:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747833099; x=1748437899;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IrTK+l8Aj/pA31DELUnnqfEV2uIT+e3shglXW6nnXRA=;
+        b=F24ddo1vq6FK3ziEHw1IM5S40xln3gNw0MWS0J57jkfumvjLqDMtw0z8biteuz3B+o
+         yEiSrY4nr1LNChBRzitjCGUQutWtz/UDVxZ+JbXZzxJdGwNhS5uFOIJJaau2kYd5UzAe
+         e7gRfObcXY9sBZrGHqevnxRceMu+uVI96B9A4XeOe5r9PD3sGdS+f5g6hH6n6ekWl3+k
+         ONbaIK/4isF8JvDBCdV/CUrOaU+IyQMwX5yW/+MajGztPEiItb/k9UpynXEF4u22hWTh
+         iXwu6Uo7CNiqEUs3qZuDtQP9oDn5rlaANbzVVQJRNUsHdYlh6UpRnyw6RWaDAwQ7KN8l
+         fwQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcteY30G+RAGxkXdiGFkJDVAphX7uYz3bzh/IeH0Asu5eXOFpFeKWOdSd+PL5mDNa83fQ2n6DFPvqdKdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP5LZzIC89xKW7lDXqR6A7UOBwSaZKBD+aBLbZn8jH8gv1qfhP
+	pItZsjDbJRMTIxE7qU395kOm+b69uGEKi5/EA/qhGfrCwmADCRaG0dk2FF9a8T9/3QPxI3XY35R
+	+0qTDnfrRrmZDgHx9WBw/HtRrgPlEuX/nrY1Om0vUJdIlV3xYATAbvuJEsFQ=
+X-Google-Smtp-Source: AGHT+IGpINRHIv5Qt32rieZ9qoCXjUUE4pZkVobeBJhF3H1pMQxen0t2kAFPSkvY9JyRo5WLjfqN1vyRWgobXOcnOqcEdVNC73SN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-Received: by 2002:a05:6602:3589:b0:864:a1fe:1e41 with SMTP id
+ ca18e2360f4ac-86a24cdd7a1mr2812239139f.13.1747833099708; Wed, 21 May 2025
+ 06:11:39 -0700 (PDT)
+Date: Wed, 21 May 2025 06:11:39 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <682dd10b.a00a0220.29bc26.028e.GAE@google.com>
+Subject: [syzbot] [bpf?] WARNING in bpf_check (4)
+From: syzbot <syzbot+0ef84a7bdf5301d4cbec@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
+	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Fix memory leak when running one-step timestamping. When running
-one-step sync timestamping, the HW is configured to insert the TX time
-into the frame, so there is no reason to keep the skb anymore. As in
-this case the HW will never generate an interrupt to say that the frame
-was timestamped, then the frame will never released.
-Fix this by freeing the frame in case of one-step timestamping.
+Hello,
 
-Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+syzbot found the following issue on:
+
+HEAD commit:    172a9d94339c Merge tag '6.15-rc6-smb3-client-fixes' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11d15ef4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4f080d149583fe67
+dashboard link: https://syzkaller.appspot.com/bug?extid=0ef84a7bdf5301d4cbec
+compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130462d4580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14efaef4580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/98a89b9f34e4/non_bootable_disk-172a9d94.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/88f3b6a8815a/vmlinux-172a9d94.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8835063aa13d/zImage-172a9d94.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0ef84a7bdf5301d4cbec@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 3102 at kernel/bpf/verifier.c:20723 opt_subreg_zext_lo32_rnd_hi32 kernel/bpf/verifier.c:20723 [inline]
+WARNING: CPU: 1 PID: 3102 at kernel/bpf/verifier.c:20723 bpf_check+0x2d58/0x2ed4 kernel/bpf/verifier.c:24078
+Modules linked in:
+Kernel panic - not syncing: kernel: panic_on_warn set ...
+CPU: 1 UID: 0 PID: 3102 Comm: syz-executor107 Not tainted 6.15.0-rc6-syzkaller #0 PREEMPT 
+Hardware name: ARM-Versatile Express
+Call trace: 
+[<802019e4>] (dump_backtrace) from [<80201ae0>] (show_stack+0x18/0x1c arch/arm/kernel/traps.c:257)
+ r7:00000000 r6:828227fc r5:00000000 r4:82257e84
+[<80201ac8>] (show_stack) from [<8021ff7c>] (__dump_stack lib/dump_stack.c:94 [inline])
+[<80201ac8>] (show_stack) from [<8021ff7c>] (dump_stack_lvl+0x54/0x7c lib/dump_stack.c:120)
+[<8021ff28>] (dump_stack_lvl) from [<8021ffbc>] (dump_stack+0x18/0x1c lib/dump_stack.c:129)
+ r5:00000000 r4:82a70d4c
+[<8021ffa4>] (dump_stack) from [<802025f8>] (panic+0x120/0x374 kernel/panic.c:354)
+[<802024d8>] (panic) from [<802619e8>] (check_panic_on_warn kernel/panic.c:243 [inline])
+[<802024d8>] (panic) from [<802619e8>] (get_taint+0x0/0x1c kernel/panic.c:238)
+ r3:8280c604 r2:00000001 r1:8223ea4c r0:8224654c
+ r7:804020d0
+[<80261974>] (check_panic_on_warn) from [<80261b4c>] (__warn+0x80/0x188 kernel/panic.c:749)
+[<80261acc>] (__warn) from [<80261dcc>] (warn_slowpath_fmt+0x178/0x1f4 kernel/panic.c:776)
+ r8:00000009 r7:8225e3a4 r6:df989c44 r5:844f0000 r4:00000000
+[<80261c58>] (warn_slowpath_fmt) from [<804020d0>] (opt_subreg_zext_lo32_rnd_hi32 kernel/bpf/verifier.c:20723 [inline])
+[<80261c58>] (warn_slowpath_fmt) from [<804020d0>] (bpf_check+0x2d58/0x2ed4 kernel/bpf/verifier.c:24078)
+ r10:00000002 r9:84850000 r8:00000004 r7:00000002 r6:00000003 r5:000000c3
+ r4:ffffffff
+[<803ff378>] (bpf_check) from [<803d66d0>] (bpf_prog_load+0x68c/0xc20 kernel/bpf/syscall.c:2971)
+ r10:844f0000 r9:842a6f30 r8:00000048 r7:df989d90 r6:00000000 r5:00000000
+ r4:df989ec0
+[<803d6044>] (bpf_prog_load) from [<803d7e24>] (__sys_bpf+0x578/0x1fd0 kernel/bpf/syscall.c:5834)
+ r10:b5403587 r9:2000e000 r8:00000000 r7:00000000 r6:00000005 r5:df989e90
+ r4:00000048
+[<803d78ac>] (__sys_bpf) from [<803d9e1c>] (__do_sys_bpf kernel/bpf/syscall.c:5941 [inline])
+[<803d78ac>] (__sys_bpf) from [<803d9e1c>] (sys_bpf+0x2c/0x48 kernel/bpf/syscall.c:5939)
+ r10:00000182 r9:844f0000 r8:8020029c r7:00000182 r6:0008e048 r5:00000000
+ r4:ffffffff
+[<803d9df0>] (sys_bpf) from [<80200060>] (ret_fast_syscall+0x0/0x1c arch/arm/mm/proc-v7.S:67)
+Exception stack(0xdf989fa8 to 0xdf989ff0)
+9fa0:                   ffffffff 00000000 00000005 2000e000 00000048 00000000
+9fc0: ffffffff 00000000 0008e048 00000182 00000002 0000fd90 000f4240 00000000
+9fe0: 7ebc8c70 7ebc8c60 000106bc 0002e810
+Rebooting in 86400 seconds..
+
+
 ---
- drivers/net/phy/mscc/mscc_ptp.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/net/phy/mscc/mscc_ptp.c b/drivers/net/phy/mscc/mscc_ptp.c
-index ed8fb14a7f215..db8ca1dfd5322 100644
---- a/drivers/net/phy/mscc/mscc_ptp.c
-+++ b/drivers/net/phy/mscc/mscc_ptp.c
-@@ -1173,6 +1173,13 @@ static void vsc85xx_txtstamp(struct mii_timestamper *mii_ts,
- 		return;
- 	}
- 
-+	if (vsc8531->ptp->tx_type == HWTSTAMP_TX_ONESTEP_SYNC) {
-+		if (ptp_msg_is_sync(skb, type)) {
-+			kfree_skb(skb);
-+			return;
-+		}
-+	}
-+
- 	skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
- 
- 	mutex_lock(&vsc8531->ts_lock);
--- 
-2.34.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
