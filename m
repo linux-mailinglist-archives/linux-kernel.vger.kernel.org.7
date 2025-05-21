@@ -1,167 +1,229 @@
-Return-Path: <linux-kernel+bounces-657131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F0CEABEF9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75216ABEF9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E2B0179500
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:25:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26E4B1719F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E8223D28D;
-	Wed, 21 May 2025 09:24:54 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2674123D282;
+	Wed, 21 May 2025 09:23:05 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A3F238179;
-	Wed, 21 May 2025 09:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC12B23C51A
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 09:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747819493; cv=none; b=fsel0H8vOP9uU+JkmvHMiGmuSwuX3jAdiPQpcD6OaL4CVfHMrlk751FDZLOYyip+Ds9yp5WF19AxNgaW3m8z0c/3bog+PCaeO+NpXU1Xo14+0QTf9OqJFBVXY24pEn1xvCMCM6G6x+ba8MjHe3WNvymxcABBH0EzRYQB3NHcDUg=
+	t=1747819384; cv=none; b=OrWIQZmnCOmyUlARaPPYgraCyqqRWxlXhq3o57eozhfDyO0zYC+YzsjYYySdpapk0pe9gXg6SNZsOBOrfm+nbecpLwNTdLxS06rcLx7QWttq6QPwnpDadO94EIIpDS9+iFjwU/sKYTMxz7rhDygyqSyv76eYuVa7j0y1GW3x+OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747819493; c=relaxed/simple;
-	bh=d4E9NcLUt5nUR2bDBbyKqvn4SH6yypzOCVjKSJQlzVU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W0sAt/M8RFLOBdB3ukn5dG/9jZVoqHMRypO1lY/sFkPPzm3j1Pcgr6D3BdmGCm4Yyz21uliJB8ULDTbzfBRYWf8jGOTi/4BBNdy1iFRrYF40cWoYTp24wnQnSE7aq5T3yMFxqyOPjbi8WQwqNraREwCtgZWTTpntxJ4PY4syerk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b2Qqf6C55z6D92Z;
-	Wed, 21 May 2025 17:19:58 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1867E1402FC;
-	Wed, 21 May 2025 17:24:50 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 May
- 2025 11:24:49 +0200
-Date: Wed, 21 May 2025 10:24:47 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <linux-pci@vger.kernel.org>, Jon Pan-Doh <pandoh@google.com>, "Karolina
- Stolarek" <karolina.stolarek@oracle.com>, Weinan Liu <wnliu@google.com>,
-	Martin Petersen <martin.petersen@oracle.com>, Ben Fuller
-	<ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>, "Anil
- Agrawal" <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>, Ilpo
- =?UTF-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, "Sathyanarayanan
- Kuppuswamy" <sathyanarayanan.kuppuswamy@linux.intel.com>, Lukas Wunner
-	<lukas@wunner.de>, Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney"
-	<paulmck@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, "Oliver
- O'Halloran" <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>, "Keith
- Busch" <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>, Terry Bowman
-	<terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>, Dave Jiang
-	<dave.jiang@intel.com>, <linux-kernel@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: Re: [PATCH v7 08/17] PCI/AER: Initialize aer_err_info before using
- it
-Message-ID: <20250521102447.00000d94@huawei.com>
-In-Reply-To: <20250520215047.1350603-9-helgaas@kernel.org>
-References: <20250520215047.1350603-1-helgaas@kernel.org>
-	<20250520215047.1350603-9-helgaas@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1747819384; c=relaxed/simple;
+	bh=7TWfyuQGehMlwy6wQ854Zjiz2fwqm0HkfmnWjVAVV1c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pHJ7ElIubgxif6D3wnL05PgyZn/TZ36uifOBjfq4ZI66pB24gttFNRoriVgsknZYjUzS0CmfKnsgVRd2uESOiiUn2NhIBU8vpjutF/Ixs53dj+yWJabmTDtGhgbUK5+cY5OsAYe5gnChNLRJUxU2+mBVvXybF1sDRWNpze4ib90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4b2QtV3WdNz4f3jMf
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 17:22:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 83DC11A0359
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 17:22:51 +0800 (CST)
+Received: from ultra.huawei.com (unknown [10.90.53.71])
+	by APP3 (Coremail) with SMTP id _Ch0CgC3VcBomy1orXF3Mw--.54633S2;
+	Wed, 21 May 2025 17:22:49 +0800 (CST)
+From: Pu Lehui <pulehui@huaweicloud.com>
+To: mhiramat@kernel.org,
+	oleg@redhat.com,
+	peterz@infradead.org,
+	akpm@linux-foundation.org,
+	Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com,
+	vbabka@suse.cz,
+	jannh@google.com,
+	pfalcato@suse.de
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	pulehui@huawei.com
+Subject: [RFC PATCH] mm/mmap: Fix uprobe anon page be overwritten when expanding vma during mremap
+Date: Wed, 21 May 2025 09:25:03 +0000
+Message-Id: <20250521092503.3116340-1-pulehui@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgC3VcBomy1orXF3Mw--.54633S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw15WrWfZFy3Xr4DJF1xAFb_yoW7JFykpF
+	Wvv398KFWrJa1vgr98Zw1qvry3tws2yr4UAry5X34Y9r9Igr43tFs3AF48Ary5JFZ2vr1f
+	tF4UKryftFW2va7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU17KsUUUUUU==
+X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
 
-On Tue, 20 May 2025 16:50:25 -0500
-Bjorn Helgaas <helgaas@kernel.org> wrote:
+From: Pu Lehui <pulehui@huawei.com>
 
-> From: Bjorn Helgaas <bhelgaas@google.com>
->=20
-> Previously the struct aer_err_info "e_info" was allocated on the stack
-> without being initialized, so it contained junk except for the fields we
-> explicitly set later.
->=20
-> Initialize "e_info" at declaration with a designated initializer list,
-> which initializes the other members to zero.
->=20
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> Tested-by: Krzysztof Wilczy=C5=84ski <kwilczynski@kernel.org>
-> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux=
-.intel.com>
-> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com
-Ah. Here it is :)  Ignore earlier comment.
+We encountered a BUG alert triggered by Syzkaller as follows:
+   BUG: Bad rss-counter state mm:00000000b4a60fca type:MM_ANONPAGES val:1
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+And we can reproduce it with the following steps:
+1. register uprobe on file at zero offset
+2. mmap the file at zero offset:
+   addr1 = mmap(NULL, 2 * 4096, PROT_NONE, MAP_PRIVATE, fd, 0);
+3. mremap part of vma1 to new vma2:
+   addr2 = mremap(addr1, 4096, 2 * 4096, MREMAP_MAYMOVE);
+4. mremap back to orig addr1:
+   mremap(addr2, 4096, 4096, MREMAP_MAYMOVE | MREMAP_FIXED, addr1);
 
+In the step 3, the vma1 range [addr1, addr1 + 4096] will be remap to new
+vma2 with range [addr2, addr2 + 8192], and remap uprobe anon page from
+the vma1 to vma2, then unmap the vma1 range [addr1, addr1 + 4096].
+In tht step 4, the vma2 range [addr2, addr2 + 4096] will be remap back
+to the addr range [addr1, addr1 + 4096]. Since the addr range [addr1 +
+4096, addr1 + 8192] still maps the file, it will take
+vma_merge_new_range to merge these two addr ranges, and then do
+uprobe_mmap in vma_complete. Since the merged vma pgoff is also zero
+offset, it will install uprobe anon page to the merged vma. However, the
+upcomming move_page_tables step, which use set_pte_at to remap the vma2
+uprobe anon page to the merged vma, will over map the old uprobe anon
+page in the merged vma, and lead the old uprobe anon page to be orphan.
 
->  drivers/pci/pcie/aer.c | 39 +++++++++++++++++----------------------
->  1 file changed, 17 insertions(+), 22 deletions(-)
->=20
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 520c21ed4ba9..e6693f910a23 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -1289,9 +1289,9 @@ static void aer_isr_one_error_type(struct pci_dev *=
-root,
->   * @e_src: pointer to an error source
->   */
->  static void aer_isr_one_error(struct pci_dev *root,
-> -		struct aer_err_source *e_src)
-> +			      struct aer_err_source *e_src)
->  {
-> -	struct aer_err_info e_info;
-> +	u32 status =3D e_src->status;
-> =20
->  	pci_rootport_aer_stats_incr(root, e_src);
-> =20
-> @@ -1299,30 +1299,25 @@ static void aer_isr_one_error(struct pci_dev *roo=
-t,
->  	 * There is a possibility that both correctable error and
->  	 * uncorrectable error being logged. Report correctable error first.
->  	 */
-> -	if (e_src->status & PCI_ERR_ROOT_COR_RCV) {
-> -		e_info.id =3D ERR_COR_ID(e_src->id);
-> -		e_info.severity =3D AER_CORRECTABLE;
-> -
-> -		if (e_src->status & PCI_ERR_ROOT_MULTI_COR_RCV)
-> -			e_info.multi_error_valid =3D 1;
-> -		else
-> -			e_info.multi_error_valid =3D 0;
-> +	if (status & PCI_ERR_ROOT_COR_RCV) {
-> +		int multi =3D status & PCI_ERR_ROOT_MULTI_COR_RCV;
-> +		struct aer_err_info e_info =3D {
-> +			.id =3D ERR_COR_ID(e_src->id),
-> +			.severity =3D AER_CORRECTABLE,
-> +			.multi_error_valid =3D multi ? 1 : 0,
-> +		};
-> =20
->  		aer_isr_one_error_type(root, &e_info);
->  	}
-> =20
-> -	if (e_src->status & PCI_ERR_ROOT_UNCOR_RCV) {
-> -		e_info.id =3D ERR_UNCOR_ID(e_src->id);
-> -
-> -		if (e_src->status & PCI_ERR_ROOT_FATAL_RCV)
-> -			e_info.severity =3D AER_FATAL;
-> -		else
-> -			e_info.severity =3D AER_NONFATAL;
-> -
-> -		if (e_src->status & PCI_ERR_ROOT_MULTI_UNCOR_RCV)
-> -			e_info.multi_error_valid =3D 1;
-> -		else
-> -			e_info.multi_error_valid =3D 0;
-> +	if (status & PCI_ERR_ROOT_UNCOR_RCV) {
-> +		int fatal =3D status & PCI_ERR_ROOT_FATAL_RCV;
-> +		int multi =3D status & PCI_ERR_ROOT_MULTI_UNCOR_RCV;
-> +		struct aer_err_info e_info =3D {
-> +			.id =3D ERR_UNCOR_ID(e_src->id),
-> +			.severity =3D fatal ? AER_FATAL : AER_NONFATAL,
-> +			.multi_error_valid =3D multi ? 1 : 0,
-> +		};
-> =20
->  		aer_isr_one_error_type(root, &e_info);
->  	}
+Since the uprobe anon page will be remapped to the merged vma, we can
+remove the unnecessary uprobe_mmap at merged vma, that is, do not
+perform uprobe_mmap when there is no vma in the addr range to be
+expaned.
+
+This problem was first find in linux-6.6.y and also exists in the
+community syzkaller:
+https://lore.kernel.org/all/000000000000ada39605a5e71711@google.com/T/
+
+The complete Syzkaller C reproduction program is as follows:
+
+#define _GNU_SOURCE
+#include <sys/mman.h>
+#include <linux/perf_event.h>
+#include <linux/hw_breakpoint.h>
+
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
+#include <syscall.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[])
+{
+    // Find out what type id we need for uprobes
+    int perf_type_pmu_uprobe;
+    {
+        FILE *fp = fopen("/sys/bus/event_source/devices/uprobe/type", "r");
+        fscanf(fp, "%d", &perf_type_pmu_uprobe);
+        fclose(fp);
+    }
+
+    const char *filename = "./bus";
+
+    int fd = open(filename, O_RDWR|O_CREAT, 0600);
+    write(fd, "x", 1);
+
+    void *addr = mmap(NULL, 4096, PROT_READ | PROT_WRITE | PROT_EXEC,
+                      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
+    // Register a perf uprobe on "./bus"
+    struct perf_event_attr attr = {};
+    attr.type = perf_type_pmu_uprobe;
+    attr.uprobe_path = (unsigned long) filename;
+    syscall(__NR_perf_event_open, &attr, 0, 0, -1, 0);
+
+    void *addr2 = mmap(NULL, 2 * 4096, PROT_NONE, MAP_PRIVATE, fd, 0);
+    void *addr3 = mremap((void *) addr2, 4096, 2 * 4096, MREMAP_MAYMOVE);
+    mremap(addr3, 4096, 4096, MREMAP_MAYMOVE | MREMAP_FIXED, (void *) addr2);
+
+    return 0;
+}
+
+Signed-off-by: Pu Lehui <pulehui@huawei.com>
+---
+ mm/vma.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/mm/vma.c b/mm/vma.c
+index 3ff6cfbe3338..9a8d84b12918 100644
+--- a/mm/vma.c
++++ b/mm/vma.c
+@@ -325,7 +325,7 @@ static void vma_prepare(struct vma_prepare *vp)
+  * @mm: The mm_struct
+  */
+ static void vma_complete(struct vma_prepare *vp, struct vma_iterator *vmi,
+-			 struct mm_struct *mm)
++			 struct mm_struct *mm, bool handle_vma_uprobe)
+ {
+ 	if (vp->file) {
+ 		if (vp->adj_next)
+@@ -358,7 +358,8 @@ static void vma_complete(struct vma_prepare *vp, struct vma_iterator *vmi,
+ 
+ 	if (vp->file) {
+ 		i_mmap_unlock_write(vp->mapping);
+-		uprobe_mmap(vp->vma);
++		if (handle_vma_uprobe)
++			uprobe_mmap(vp->vma);
+ 
+ 		if (vp->adj_next)
+ 			uprobe_mmap(vp->adj_next);
+@@ -549,7 +550,7 @@ __split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
+ 	}
+ 
+ 	/* vma_complete stores the new vma */
+-	vma_complete(&vp, vmi, vma->vm_mm);
++	vma_complete(&vp, vmi, vma->vm_mm, true);
+ 	validate_mm(vma->vm_mm);
+ 
+ 	/* Success. */
+@@ -715,6 +716,7 @@ static int commit_merge(struct vma_merge_struct *vmg)
+ {
+ 	struct vm_area_struct *vma;
+ 	struct vma_prepare vp;
++	bool handle_vma_uprobe = !!vma_lookup(vmg->mm, vmg->start);
+ 
+ 	if (vmg->__adjust_next_start) {
+ 		/* We manipulate middle and adjust next, which is the target. */
+@@ -748,7 +750,7 @@ static int commit_merge(struct vma_merge_struct *vmg)
+ 	vmg_adjust_set_range(vmg);
+ 	vma_iter_store_overwrite(vmg->vmi, vmg->target);
+ 
+-	vma_complete(&vp, vmg->vmi, vma->vm_mm);
++	vma_complete(&vp, vmg->vmi, vma->vm_mm, handle_vma_uprobe);
+ 
+ 	return 0;
+ }
+@@ -1201,7 +1203,7 @@ int vma_shrink(struct vma_iterator *vmi, struct vm_area_struct *vma,
+ 
+ 	vma_iter_clear(vmi);
+ 	vma_set_range(vma, start, end, pgoff);
+-	vma_complete(&vp, vmi, vma->vm_mm);
++	vma_complete(&vp, vmi, vma->vm_mm, true);
+ 	validate_mm(vma->vm_mm);
+ 	return 0;
+ }
+-- 
+2.34.1
 
 
