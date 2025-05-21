@@ -1,127 +1,113 @@
-Return-Path: <linux-kernel+bounces-657572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28CE2ABF60E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:27:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDED0ABF613
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBCD9163505
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:27:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C2063AA28A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F79F27815B;
-	Wed, 21 May 2025 13:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F38B27E7F4;
+	Wed, 21 May 2025 13:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jv+kAAAq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkXfhZnS"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D971174040
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F2327C14E;
+	Wed, 21 May 2025 13:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747834043; cv=none; b=GPj3kZbfY89IiamEctB2HuOXWNuvRoySIP0IV10TpyXBHUQLWAcNHVUTbpktceEuOri0ypS8wAkwwL/dJl9ABsQfDXy6ZVyzOkKN8Ll8py80oZup/IKPCxo13ZM/ZPL86qDzAJlO4pF29Bx0j1ALKwqu0CMFkykvY6SbF6ZQaE4=
+	t=1747834127; cv=none; b=Bu+B3o0MdtJbc0sNqZcEtjgTm4pqUET5F3gu3a39PfdhazPRk5V+1zPe/r8u4JtHvjYDltuHymt27/DLXpBoAju4LmL0Urocb768lR2ZJqRsSkKgf6fNku6OVQa8LpcOFZJLWdJdH3GkfXVJeMZnng0N18hUE4Jx1tf7ECHAE9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747834043; c=relaxed/simple;
-	bh=xjFng9sdMzEFMX072tCQ9nsFr/cdpH/wI9japwTPBBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ADdFrtt9/CnximiieKWoS1texRKYEQuE9qlv6oCH1oWtWKc8msJhPGbmRgNKFpiCv0t4xCiCR1i/ZvolDoPyeN7cRC/K4cjYDzhEi1nbFplui2Xa0vbuBZ20BZbvg1di+k0uHbGQLUM3LSQ2UfX2uh6w/xIjZzuAWQmK2O5Lygs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jv+kAAAq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67908C4CEE4;
-	Wed, 21 May 2025 13:27:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747834043;
-	bh=xjFng9sdMzEFMX072tCQ9nsFr/cdpH/wI9japwTPBBw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jv+kAAAqFeIsWMj8Fom2dnW0M/SGE7/3t5nV5bOsMFtR8UAR5LGitH2MvyMyAxldl
-	 LakRF6XRNDeh3wDkqCbzkdBkDoqHjboCtagxWQ/2vOjBa5CCkpgJXQuMWjmEpot0c4
-	 iztYMnZk0NZ/TSRxPsNgKps4CaSf6Wg0aPc4u314=
-Date: Wed, 21 May 2025 15:27:19 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] container_of: Document container_of() is not to be
- used in new code
-Message-ID: <2025052138-carport-applaud-61b8@gregkh>
-References: <20250520103437.468691-1-sakari.ailus@linux.intel.com>
- <aCyOzUIIvMk6Gp8o@smile.fi.intel.com>
- <2025052000-widen-lip-350b@gregkh>
- <aCz9jlMcXDooqx0s@kekkonen.localdomain>
+	s=arc-20240116; t=1747834127; c=relaxed/simple;
+	bh=9jjkqdyYw49qjSuk0tVdxsGTONi8xGs2N9wC5Gwi2KY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g5TVt9JQIOJSdhvpKKqO1hhGLCRyb1opBtpAGZBu3ktyUWIEuZA0Lh+/PUWgpq6awUchZIs4m8tPDYCtkAU5eSh01ur0haG6I7wyyIIjiAShg6/8tgjvBgmkn1/PadcfcBAx6+1XSb+UUJoG79XXPYjVJRP4yYJfQvUu67HGZk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TkXfhZnS; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-6049acb776bso3557958eaf.3;
+        Wed, 21 May 2025 06:28:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747834123; x=1748438923; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vp47jDk9EdbNa/22Vb4r2YNTMUCPmM+xIbcDxwo1z94=;
+        b=TkXfhZnSB6WGjC50wA6J7SvbztNX5WKbrsxIV0LcAgMobwThAyQYyycc5zEG6zNUAy
+         1O+G+3eyFmAYOP0ZGiHJh/fcRQvWuS1croqZtNpFBUTt7367AdTz5I+ULlzF3mTHqyeG
+         nIOLY/hJVW1mKIdLQODUf5nC63BvZ01yQA2KcVtd38ROmzPoM3v9Xcfti11lVX70fgSD
+         D8UmwCsnYqvyt1+TPGX1j8HbH/N0QSOR7eCtEGZRmYSlg6oMZk+nmvMpqmysA1iJMEe5
+         x/aaOIIteTcx1nHC8lfs4xrm/m/9IRf+lyY55rw56l+DcI72tfMMryxyxMPAcBDwjmLu
+         NBfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747834123; x=1748438923;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vp47jDk9EdbNa/22Vb4r2YNTMUCPmM+xIbcDxwo1z94=;
+        b=T2E3KrGzbpNwV4iYqtWwWGIGQ5GppZM5wSZBDwEUOvvqpizsYd8oEAbzcQ68iOEUgm
+         AB23oIaBM/S7Df8QudOas52YpjpMTkb1+N9v9aO9LLzccmQN+Eh+DwFP1syv68YwzMG7
+         +yUfcrka1jXP4F4OEn4oheP15NBg65+sHZp4fS08XNzwwhchoJMGz3X2p9C/fvMZUynD
+         tob/UodbjuZkvVenfYdp/OY7ioJrCh08DDUkst7hW7OOZnD72zVh16glqzfxlUWJb8Sn
+         3ZR1lRZrDjuKUar//PPqS5zy/hxtUMGe0wDKqhpNDJd/knMD4cjix/OUn3jOBBrwh5H1
+         b6sA==
+X-Forwarded-Encrypted: i=1; AJvYcCX76MB3qZK3n4Wtr2GbXf/i7b5epCm8WuocTOrR+D7hXqino8zxbTSmnrPR1TZF1vx4e0QucljhpICP@vger.kernel.org, AJvYcCXIPwvKXkoMqyk3b1BbByzw+qrxX9Y3r9ccMHksOd/PLaLV/QhCj91p83jf+9MaTSghHlLAuMz/0ZqaXKC1@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXw41xedYcTvs3b2amKNHJgiI1EnVCS+4AKfczvP+jPNUZaNrK
+	w52Vf/27Hl+MCAo5VC6BtvrDoOw+VV0+o/q7EAMF5ToELrfAOxMWgIJxxsPW6rGhCg8FcS2eKJd
+	Ais2Mw/+KrsfmtnpK33vVSEgw/syWjYp/2WW8qwg=
+X-Gm-Gg: ASbGncsgaIeB/8+EjwiGUbv0YnMwDzn9cjgKpf5g7b8WhL911ULg37KXBBq7ScOVACx
+	Vkiy8e3YOpm/o9MaDD6fMR7UIkEIYb00BT5NOiN14ygYIRZlS5jV7A2oPS8YCEjrUO2tVLJ3smw
+	frLfhOodfd4re+iNdljFrWoh5aV9bIaykLFGwfVTelgwUTuGPLYJAsc0caI4aoEUgYqQ==
+X-Google-Smtp-Source: AGHT+IHOaVukk0EM+lTVkJgI5fCyJJvCmSaqJ4uFqjPApedUD3Wu7UNEtmyfEUE/FiwATDeJm2wxlMine+dMoW6oFSY=
+X-Received: by 2002:a05:622a:1c10:b0:494:a4b4:a21f with SMTP id
+ d75a77b69052e-494ae366aacmr379074121cf.1.1747834111964; Wed, 21 May 2025
+ 06:28:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aCz9jlMcXDooqx0s@kekkonen.localdomain>
+References: <20250515-wmt-dts-updates-v2-0-246937484cc8@gmail.com>
+In-Reply-To: <20250515-wmt-dts-updates-v2-0-246937484cc8@gmail.com>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Wed, 21 May 2025 17:28:29 +0400
+X-Gm-Features: AX0GCFs4gqRQCEacR_P5jWt1HkYYVLmoLMkcLsui-cKWWqCoZfVHFoasVDeMjPM
+Message-ID: <CABjd4YwoVRpJEMss8UN6xT9x4hf6GSjm34GtTHmmnHi8Q42DAQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] ARM: dts: vt8500: Minor fixups and L2 cache on WM8850
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 20, 2025 at 10:09:18PM +0000, Sakari Ailus wrote:
-> Hi Greg,
-> 
-> On Tue, May 20, 2025 at 04:30:19PM +0200, Greg Kroah-Hartman wrote:
-> > On Tue, May 20, 2025 at 05:16:45PM +0300, Andy Shevchenko wrote:
-> > > On Tue, May 20, 2025 at 01:34:37PM +0300, Sakari Ailus wrote:
-> > > > There is a warning in the kerneldoc documentation of container_of() that
-> > > > constness of its ptr argument is lost. While this is a faible suggestion
-> > > > container_of_const() should be used instead, the vast majority of new code
-> > > > still uses container_of():
-> > > > 
-> > > > $ git diff v6.13 v6.14|grep container_of\(|wc -l
-> > > > 646
-> > > > $ git diff v6.13 v6.14|grep container_of_const|wc -l
-> > > > 9
-> > > > 
-> > > > Make an explicit recommendation to use container_of_const().
-> > > > 
-> > > > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > > > ---
-> > > > Hi Greg, Andy,
-> > > > 
-> > > > I guess we generally agree the additional constness check in
-> > > > container_of_const() is useful, but adding the same check to
-> > > > container_of() generates warnings -- there are some errors, too -- such as
-> > > > this one currently:
-> > > > 
-> > > > In file included from /home/sailus/src/linux/include/linux/bcma/bcma.h:14,
-> > > >                  from /home/sailus/src/linux/arch/x86/kernel/early-quirks.c:17:
-> > > > /home/sailus/src/linux/include/linux/ssb/ssb.h: In function ‘dev_to_ssb_dev’:
-> > > > /home/sailus/src/linux/include/linux/ssb/ssb.h:291:14: warning: assignment discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
-> > > >   291 |         wrap = container_of(dev, struct __ssb_dev_wrapper, dev);
-> > > >       |              ^
-> > > > 
-> > > > As noted above, 646 new missing constness checks were introduced through
-> > > > container_of() macro use during the 6.14 cycle alone. Most of these are
-> > > > likely harmless, but with so many new users some are bound to be ignoring
-> > > > constness.
-> > > > 
-> > > > Once the warnings from bad container_of() use are worked out in a way or
-> > > > another, the constness check could be added to the container_of() macro
-> > > > and the current container_of_const() be dropped altogether.
-> > > > 
-> > > > If this patch is accepted, I'll see how to add a warning on container_of()
-> > > > to checkpatch.pl.
-> > > 
-> > > Hmm... Wouldn't be better to fix non-const cases and add the const check, etc
-> > > to the container_of() instead of doing these comments?
-> > 
-> > Yes, fixing up the existing places where it is broken would be best, how
-> > many of them are there now?
-> 
-> Adding constness check for container_of(), with my partial build on x86-64
-> I'm getting 893 such warnings. A fair number are probably duplicates or
-> repeat of the same pattern, but also the compilation didn't succeed --
-> there were multiple compilation failures.
+On Thu, May 15, 2025 at 11:39=E2=80=AFPM Alexey Charkov <alchark@gmail.com>=
+ wrote:
+>
+> Small fixups for VT8500 related device trees to improve correctness in
+> light of current guidelines.
+>
+> While at that, also include a DT node for the PL310 cache controller
+> present in WM8850/WM8950.
+>
+> Signed-off-by: Alexey Charkov <alchark@gmail.com>
+> ---
+> Alexey Charkov (5):
+>       ARM: dts: vt8500: Add node address and reg in CPU nodes
+>       ARM: dts: vt8500: Move memory nodes to board dts and fix addr/size
+>       ARM: dts: vt8500: Use generic node name for the SD/MMC controller
+>       ARM: dts: vt8500: Fix the unit address of the VT8500 LCD controller
+>       ARM: dts: vt8500: Add L2 cache controller on WM8850/WM8950
 
-So who is going to do that work?  I just did it for drivers/usb and it
-was pretty trivial, just declaring "do not use this!" feels like the
-easy way out, absolving yourself from any responsibility here :)
+Krzysztof, could you please pick these up for 6.16?
 
-thanks,
+No big deal here, but W=3D1 builds and DTBS_CHECK become somewhat happier.
 
-greg k-h
+Thanks a lot,
+Alexey
 
