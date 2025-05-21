@@ -1,116 +1,135 @@
-Return-Path: <linux-kernel+bounces-657193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845B4ABF0CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:05:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47698ABF0BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E054D8C7C73
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:05:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09CC04A858C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C59E25CC4F;
-	Wed, 21 May 2025 10:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A759F25A357;
+	Wed, 21 May 2025 10:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="G1xohiG3"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EXDFqe+h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92F225B1D7;
-	Wed, 21 May 2025 10:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC8422B59D;
+	Wed, 21 May 2025 10:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747821922; cv=none; b=q8CY6tquh8iDXPX9OtWJVmwl0GAAac2cxUedzXFXR7Mx7vi1UTsJSVpbTEK6yOF+8WXyTgCfzkNEztDsQOPQ3c/y0pLH8P2G0/zaC+CJh1EgbbbwRWNIOCqAf2j9Jy96EdFBHekKRyomqXsW/fNY2Jf2BOmjllnEzRVgU05ZSKw=
+	t=1747821891; cv=none; b=NQFb4GRVQyo08YyPAwyTWj3+pQFxHwtHNI3tGGQUBghb3hYu5vWYf+H0JCfNyUzMjJPrAiz7rk2gGnAtmJhh2XoyKvkaeGzyBhXEP2NTfE/8mN3hvtCdywuaWa6bhpuPc2h/noRDR3uZHrVy6lW33T7p/H67zL7SH7kPzwn7ZfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747821922; c=relaxed/simple;
-	bh=QBcXV2Go+RTJKZL8GPyRsRvcvbYEH2UET43WgqAY/IA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=csk8JRvA5fpXGZyMoK+DQnipiaw7iPU9Luz0GCif3raeQeaqSx/SFfb90Dp+Kn5/nHDLSn0mZwHV/Y6Dzsr4UPWYJBqFCNEgkfEgAUuBsK4GAqRLO9qwzVyIwsBKtlDqEnYGfIhMYKKnmSfw3PAnEfy8Ckcq5FnfJs4KSehGBmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=G1xohiG3; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9qwbi010202;
-	Wed, 21 May 2025 03:04:56 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=ESmwcFjV+fTv0t4n/zIs3wo
-	g9UJs7PIJJd1mf0W/d/Q=; b=G1xohiG3D1hYjxp1LyDzMT5H4HxCidwddc9hG28
-	YUrHgjUcsMw0K85DIiIuGYYBXTqKrpKHxmfA7Knui6U8LGqSTTyLhQlo5HZ+B9CI
-	oT78RxggDwFAW2XBNlPVs8AmJwzyvkyDfUmzEFjuxc145vgROXwDZefa3IKuGVoj
-	DTZiqkq85Chgw6TWcVPTnLIEReN6LeIW5JIhngpfC60aBjHHpix9yLU1PSrFxleK
-	c0x4Oec1Pgo5/d4ANY73exz7JPKNJSmGvg+AHfCBvPn2Y0UFXSn29zsC8wryQ+xO
-	L9/EtXPTg3dtzdFjz3o2EjPl3iCJcDv90Hp0CchndG0ieqA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46rwfghpgd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 03:04:56 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 21 May 2025 03:04:53 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 21 May 2025 03:04:53 -0700
-Received: from bharat-OptiPlex-Tower-Plus-7020.. (unknown [10.28.34.254])
-	by maili.marvell.com (Postfix) with ESMTP id 242DC3F70B3;
-	Wed, 21 May 2025 03:04:49 -0700 (PDT)
-From: Bharat Bhushan <bbhushan2@marvell.com>
-To: <bbrezillon@kernel.org>, <schalla@marvell.com>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <giovanni.cabiddu@intel.com>, <linux@treblig.org>,
-        <bharatb.linux@gmail.com>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Bharat Bhushan <bbhushan2@marvell.com>
-Subject: [PATCH 0/4 v3] crypto: octeontx2: Fix hang and address alignment issues
-Date: Wed, 21 May 2025 15:34:43 +0530
-Message-ID: <20250521100447.94421-1-bbhushan2@marvell.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747821891; c=relaxed/simple;
+	bh=vS/+CTtAxwz4y5synzPvLNW2wyjb4MRW5uQRuO6Y8rk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BKR1L+MTSwQIW+Yp/NnIrcKqbDNnC4AUsPJGkFBqTOVzDWSSp3SBchPoitKCXsowmhQQSjDLqMbyV/bfYh0+CTD+b2wHwfjqNnFoJXgf57Et/8aLXv7D0dxcOxXdNxLvDV3kU9T4fOoifT00i6BYkcr0o1eV7eGyxMSI0g9YcHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EXDFqe+h; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747821889; x=1779357889;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vS/+CTtAxwz4y5synzPvLNW2wyjb4MRW5uQRuO6Y8rk=;
+  b=EXDFqe+huKSq3+YzwunSOrBmWjzov53z75CG4jLZ/D42jXDIfg8h70rj
+   oTN/g+L+nSzozocrws/fwrxJPHpDmZm+irqq7N1JtvglZCSpJxhjWHne8
+   m1xUePiETAi3KG4TQfPNGcUWtWjMWcA0baD33uytOUzklNMSRbUWe/ntG
+   pcYMAbMjqdSVEiaKN6Vfi1B3rNUmjRnHgyZqriKEeOAeBTrr98vMMkEvT
+   la7BkRu4iQ+UHF2fP2Ei6fL94nr0JVtOo9OblZ1JKYMJJvEjCpgyrUUdQ
+   5h8IbMBmkl2zEs8zx3SmR7g+l/C4q2HGhrSW0a2YDPDRfVgc6QkIYBr/o
+   g==;
+X-CSE-ConnectionGUID: XFNIBfztRPiCbMHPC1Hv3w==
+X-CSE-MsgGUID: cxDjEG7wS3m35VCEFqBNHQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="72310778"
+X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
+   d="scan'208";a="72310778"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 03:04:48 -0700
+X-CSE-ConnectionGUID: OynbmfR/QG+ZTFFoHm4ydg==
+X-CSE-MsgGUID: nXHpVQeXTpuHGq8bWViLtA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
+   d="scan'208";a="170865893"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 03:04:46 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uHgJX-00000003a8o-1UET;
+	Wed, 21 May 2025 13:04:43 +0300
+Date: Wed, 21 May 2025 13:04:43 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Akira Yokosawa <akiyks@gmail.com>,
+	linux-doc@vger.kernel.org,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Randy Dunlap <rdunlap@infradead.org>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Some kernel-doc fixes
+Message-ID: <aC2lO7g_x6oTLYDA@smile.fi.intel.com>
+References: <cover.1747817887.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDA5OSBTYWx0ZWRfXxbVLDjiVJxOR glwwXGWgvHUeGlCBjnnNmMXV3NiDkeY3OzRH3AcqKrRxULB8xBq3jKBn2nXsQ9XhI2W5jP8DKXT KAlFFdYM3PnS4dbhlXZRHoWMghWNW/qLalo2ERpZIsVYbH9yI9LiYYX3IfTptz9LqANN0mPsBIf
- 8g9vz1WvkpSjXnE1Gvfc0CrAnOjkWaq3knFTuINS4rDmcJ6WePElLMy1nNnMsR2HYD0YsbdOkdX ifznzLtkjbAIY7zrhhEHOcD46roVdJRdDAfWReV71GuJv2UwyV5Ma1Qx0TsKXE/YIuENsvo+7l5 sKRcQtlJqkkcpDindy/u1/+I4GDWg7ojFT90f7o357BTEamB9+Au3R827WVH3a1h6VwTKaXX/6C
- ZcoFwszUVVfLioolKN8Z8Gmei3vScKWLwIhx9oXBbQgPwfz/cbgsxxkUqwP5vYnEKLadMEx3
-X-Proofpoint-GUID: MTMVrTTh5psOTIC3JOHOGxcFzvm_rh-C
-X-Authority-Analysis: v=2.4 cv=T6OMT+KQ c=1 sm=1 tr=0 ts=682da548 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=dt9VzEwgFbYA:10 a=voKHntS-kiqXh1f54uIA:9
-X-Proofpoint-ORIG-GUID: MTMVrTTh5psOTIC3JOHOGxcFzvm_rh-C
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_03,2025-05-20_03,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1747817887.git.mchehab+huawei@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-First patch of the series fixes possible infinite loop.
+On Wed, May 21, 2025 at 11:02:12AM +0200, Mauro Carvalho Chehab wrote:
+> Hi Jon,
+> 
+> That's the third version of the kernel-doc fixup patch series.
+> 
+> It address the root cause why Sphinx logger was not working: there
+> was a call there for logger.verbose(). According with:
+> 
+> 	https://www.sphinx-doc.org/en/master/extdev/logging.html
+> 
+> This is a valid call, but it doesn't verbose messages. Instead, it is
+> crashing with modern Sphinx versions, causing the log to not work.
+> 
+> I got rid of it, replacing by logger.info().  I took the time to also
+> address an issue pointed by Andy: not having the same log message
+> placed everywhere. With such change, we can keep using Sphinx
+> logger (which produces colored messages) inside kernel-doc
+> classes.
+> 
+> With that, we have:
+> 
+> Patch 1:	makes Lore and kernel-doc ML receive patches related
+> 	to kernel-doc.py and get_abi.py.
+> Patch 2:	cleanup try/except logic and get rid of logger.verbose();
+> Patch 3:	fix a KeyError when trying to acess data from non-existing files;
+> 
+> If you test just patch 1 on the top of next-20250516, you'll see the
+> keyerror message (in red):
+> 
+> 	ERROR: Cannot find file ./drivers/gpio/gpiolib-acpi.c
+> 	ERROR: Cannot find file ./drivers/gpio/gpiolib-acpi.c
+> 	WARNING: kernel-doc './scripts/kernel-doc.py -rst -enable-lineno -export ./drivers/gpio/gpiolib-acpi.c' processing failed with: KeyError('./drivers/gpio/gpiolib-acpi.c')
+> 
+> And the script doesn't crash anymore. After patch 2, the try/except
+> warning gets replaced by a proper message:
+> 
+> 	ERROR: Cannot find file ./drivers/gpio/gpiolib-acpi.c
+> 	ERROR: Cannot find file ./drivers/gpio/gpiolib-acpi.c
+> 	WARNING: No kernel-doc for file ./drivers/gpio/gpiolib-acpi.c
 
-Remaining three patches fixes address alignment issue observed
-after "9382bc44b5f5 arm64: allow kmalloc() caches aligned to the
-       smaller cache_line_size()"
-  
-First 3 patches applies to Linux version 6.5 onwards.
-Patch-4 applies to Linux version 6.8 onwards
-
-v2->v3:
- - Align DMA memory to ARCH_DMA_MINALIGN as that is mapped as
-   bidirectional
- 
-v1->v2:
- - Fixed memory padding size calculation as per review comment
-
-Bharat Bhushan (4):
-  crypto: octeontx2: add timeout for load_fvc completion poll
-  crypto: octeontx2: Fix address alignment issue on ucode loading
-  crypto: octeontx2: Fix address alignment on CN10K A0/A1 and OcteonTX2
-  crypto: octeontx2: Fix address alignment on CN10KB and CN10KA-B0
-
- .../marvell/octeontx2/otx2_cpt_reqmgr.h       | 121 +++++++++++++-----
- .../marvell/octeontx2/otx2_cptpf_ucode.c      |  51 +++++---
- 2 files changed, 126 insertions(+), 46 deletions(-)
+Sounds reasonable to me.
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
