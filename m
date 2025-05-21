@@ -1,87 +1,115 @@
-Return-Path: <linux-kernel+bounces-656908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3376ABEC69
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:51:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77001ABEC76
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07C6E1BA6EAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:51:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2C7E1BA7A89
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A991A235BFB;
-	Wed, 21 May 2025 06:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A365235368;
+	Wed, 21 May 2025 06:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Z08KUSqc"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2084.outbound.protection.outlook.com [40.107.243.84])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MNHsMtlV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2D3241139;
-	Wed, 21 May 2025 06:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24F9230D35;
+	Wed, 21 May 2025 06:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747809983; cv=fail; b=T9bZVrzIBogbEtNcRG2t5OQ4tKzo8Q3NrRVW1ukpoa91rL2Fjx/WrtbgR5M+9mem6+f2wLbbT96SHCLu0hD973UGVPO6wY2b1tXBa+kKPdj+mMdZz69y0/xQV0BEr/g8WTnVtPI2Q0QOeuDRbKOsEw0BOdTbrPjPB43+5DKIQNg=
+	t=1747810148; cv=fail; b=jkOkQvRSOHPkY9+SqNhtzqDd92GlswfKv/5ulRyELGr/CZa1mABb2SbPiQ1tEEc2andqaKnC96xLZVh11wl2ApmHn+60eTjsmbNWwAi6JzkXbq11gBSUvsP4yho0c24GKgWbnzV0cYnVNWNeAU0FB8IJ2jxzsZOqmYjdG7kZFdA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747809983; c=relaxed/simple;
-	bh=i7skErW7hidZrQW6PE9h7zhXf8J5H97xEvZtNnqxU+k=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=DBK916aZIYtGJqa0uJPk328ZpfuOSDniPhn+m0cv5ev4OcyKCRrLo8CigFqY62ZQkgIOE2mGillwScqqJ9sesB2Pg6UGQ1o04v20LL5sT/zMNvmUBNh9dWnTloaqoeOb2kf/A8yZISVqqjWVHLsYKkHkPJyu7HVEhqji7lCjgiU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Z08KUSqc; arc=fail smtp.client-ip=40.107.243.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1747810148; c=relaxed/simple;
+	bh=anrIDH8smWDPpSIMxn4ddY24zpEtUd3CKSrIrJoO7Us=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=abaNAK1bA7RfbDiv8fnWliqlVpDpD8YFfVdMzXMZ2D5psnYRukJi24HXseXlB9VAmU1V485jmBdzKUvOlGb+Nv6gJX486TpjhCravH13Vgugee0vv7sBkjuncqt78RFeVGizLsz7y14VOYSCpxuH5DT7ndkkL44E1L+qTUtCHG4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MNHsMtlV; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747810147; x=1779346147;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=anrIDH8smWDPpSIMxn4ddY24zpEtUd3CKSrIrJoO7Us=;
+  b=MNHsMtlV5Tw4wxTNoDXrm4DPwaZrfuxLknqtg5p2cyEScaPpBxnl5GOm
+   02EObyfjWo43MO3+yD/A2ogXB28814IhMur19jKDAS1Xb5jGlWhn/in79
+   GACRDmeNV022bXXqcM+PN3L+4ICZai+GHIkIq8c6/4WEOijXuNhv5d82l
+   RB8AaZ3NrZ75kcUlHJuodYZzhvoGsxGQC7q6I7kkaepnJ2C9BNwJ/B3th
+   u/eKv0xpCCaKSr5bNZMGgxPUQx+vaLnKq4pyjWCvzH7pFrew2XRSPefnT
+   lGWWisFxsaGHygefiIhcSFLwKKWnqQlq1HdfHyKHnydxPiURtX+RfbPSM
+   A==;
+X-CSE-ConnectionGUID: FIOhTKI7QMSQjke+8A15Zg==
+X-CSE-MsgGUID: F3h0Mv++Rded86Ep91mvSw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="60001918"
+X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
+   d="scan'208";a="60001918"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 23:49:06 -0700
+X-CSE-ConnectionGUID: JQwc2+wXTASE35yVIEr1Mg==
+X-CSE-MsgGUID: hEM2SqKvSLKOuCM8oVV53A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
+   d="scan'208";a="144913241"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 23:49:06 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 20 May 2025 23:49:05 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Tue, 20 May 2025 23:49:05 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.40) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.55; Tue, 20 May 2025 23:49:05 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jjc7P6iOP0o4X/9pASDpaDxTYucphZ7V1XlRGy4NGc7fa2tAXAmT0tmXUjEKmfjUTs0/dt1EQFxiXQiM2TLR1zO7AF1j/o7p7ZyhJN1w+8AIGq4r3ZktWTT1FmSl7JrO91br1qRwqKCXv7HtXOZHEGVDdxuzN1OgdELkfAlv2oI6+PQjwiDMz0CH+H+X+cXA6zIal9kXD7Gs8AdAH1f/9Ol/1MjCHVmQMdsZZM1dsgH3iRhX65mfT7jYRpIrm6xXqyXO3fHbTbdyEQbSBjHQRe2G70NZTqplk6Ew8ab0eh7JYk8SGgluJu2P/HJE9YD1JICG2okihLD7bJrwsITcWA==
+ b=yqkdauqADofIFjk9DRs1Pj6Rd9NKWt3/ZJMYjU+9GGvfEpyEWCQIP0PbWvyJ1Mp3AHvXwfBWKlusnHgLILgwgaHo0bnjeY6viPga/a/zbGbZmGbBx6Lisq5Jg+DHR+s/CNUi6vKnxrCNJcqaBLV2caSy0WEqrEo97Sc7+6Bw5lf7gmblQV6ga09ceYpkbnl1Sd6qRJvW3/JlExi7a+9C59YlK1meQEJnoLX8X44478H/FErKHhqhlUJgyJ2DWaU2FTnDwjOdz/Q3nOq05NpnBzPn1N74CUipKSVtTTQYcSVsiyaHBUwuW3C516NpASrkwq4N/Rvbx9ciMozaHGUNAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MF31ibu0OjJJ9CqRME6tTsA29agZDVJNxMMN4e2fGFk=;
- b=T2gr7KB06FShsZTRHjs46o0qYl0aVmOSX7NPWUia4vU/2FvF/TuEueL6oXVsx8XGBKAeSubIkv9j73KQMfDSo/M2lGXXRq+A6XtM+/vKptMV6pzTlcpbmlbjS2S2YvTWa/7CdqCVvdACf5zlVNJLYEwj+qz48Au4VL54443vB+NXE5RT4315stCJ4OcJZNIJ2Nr0O6Ugj9TjlXoLVCbLg0phgHfaukG/Y+v6BvCGOW67BWGvISnVnOi9XMNwH0dwDCy+IbpL+o+4y0Onv2z0xpseG4FblxXu+6QRVpVLFMRLdYX5Ip8uRO+MoIx9SncK3TS0WLoWAQEvrcIP5t8SfA==
+ bh=SFmpjlUMmY930yrno2EG1MZKGtN7FZYcPF1vXQRJslU=;
+ b=Jwwg/nhYqXnh3EIj89NLMBJqa/TJlTRej4LwjVFKp0TvOa9Lx+bw7ZYSfYGX+RiMLMLPkFUrJJfNz34FKTSGzBgfeIPmePAWiSdJrAIEjfnAqUHNmfgENo9UinJWnkDIyuAIHH+ljrQZJ/GRM1x3PyVEEy16z7BfIPXEwTpJ/PIa5zGWFfq4/LwHpx8vq5wGQK4oPFYxBWKEXaMCrzKK5y0BMTdGzizUu0fMNmE/qx64iJ+WPPvbMxSZSIK+pi86RRjaHfsAREsjz414wA+hfST+nIOxHaeDy6UZBJkPgW7f+z18WA023Zg6TN2EVWGfBBp0jdZoNoA5qns8eRGGSA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MF31ibu0OjJJ9CqRME6tTsA29agZDVJNxMMN4e2fGFk=;
- b=Z08KUSqcR24fSinL3u+AJbgW2czU/qArur5Gdk8rUecMhfFFjgwPu3FGxGmQzoi/NdlKg3SpIO6cN1g+hiMpdTHvwH4pmTgeB3VzYrHZ4J7W5OG9srRmItcAHPLZS3I8h+G4cURq1fA7xLpgFVGZCVfG6UXt8FIP8yKv/gbdnHx/uLwlUbNGAdeck0NmJ82Mzp2nWStInSg4VtWjUOvv/cUReCA7gKGikYnmBwuNf1Uc3G2KKqJi9eMLA+Ko1xLR6dYe45+9Mh0AMOF4vynlNDY/P9Ogz0DhGVNwqb0mNWYUBXITCsRyPSpEYtPMJCyC96mRdnvWaBEg+2S37NhsAQ==
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by SJ0PR12MB6805.namprd12.prod.outlook.com (2603:10b6:a03:44f::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Wed, 21 May
- 2025 06:46:18 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%5]) with mapi id 15.20.8769.019; Wed, 21 May 2025
- 06:46:17 +0000
-From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Wed, 21 May 2025 15:45:15 +0900
-Subject: [PATCH v4 20/20] gpu: nova-core: load and run FWSEC-FRTS
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250521-nova-frts-v4-20-05dfd4f39479@nvidia.com>
-References: <20250521-nova-frts-v4-0-05dfd4f39479@nvidia.com>
-In-Reply-To: <20250521-nova-frts-v4-0-05dfd4f39479@nvidia.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>, 
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
- Alistair Popple <apopple@nvidia.com>, linux-kernel@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: TYCPR01CA0135.jpnprd01.prod.outlook.com
- (2603:1096:400:26d::15) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ CO1PR11MB4993.namprd11.prod.outlook.com (2603:10b6:303:6c::23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8699.19; Wed, 21 May 2025 06:49:02 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%2]) with mapi id 15.20.8746.030; Wed, 21 May 2025
+ 06:49:02 +0000
+Date: Wed, 21 May 2025 14:46:51 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: Ackerley Tng <ackerleytng@google.com>
+CC: <michael.roth@amd.com>, <kvm@vger.kernel.org>,
+	<linux-coco@lists.linux.dev>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <jroedel@suse.de>, <thomas.lendacky@amd.com>,
+	<pbonzini@redhat.com>, <seanjc@google.com>, <vbabka@suse.cz>,
+	<amit.shah@amd.com>, <pratikrajesh.sampat@amd.com>, <ashish.kalra@amd.com>,
+	<liam.merwick@oracle.com>, <david@redhat.com>, <vannapurve@google.com>,
+	<quic_eberman@quicinc.com>
+Subject: Re: [PATCH 3/5] KVM: gmem: Hold filemap invalidate lock while
+ allocating/preparing folios
+Message-ID: <aC1221wU6Mby3Lo3@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <diqzjz7azkmf.fsf@ackerleytng-ctop.c.googlers.com>
+ <diqz8qmsfs5u.fsf@ackerleytng-ctop.c.googlers.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <diqz8qmsfs5u.fsf@ackerleytng-ctop.c.googlers.com>
+X-ClientProxiedBy: SG2P153CA0032.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::19)
+ To DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,235 +117,184 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SJ0PR12MB6805:EE_
-X-MS-Office365-Filtering-Correlation-Id: acd52724-16fa-4e8d-311d-08dd98333003
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|CO1PR11MB4993:EE_
+X-MS-Office365-Filtering-Correlation-Id: 99367a9d-e9af-4659-ba50-08dd9833928d
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|10070799003|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R0loUzVvaUgwUktYYkF6Uy9HVDY4S1JZemY0RFMzdDN0cUtFcG5BU0plNU5V?=
- =?utf-8?B?S3VUNytvdTNqRWpzc0lHa0VhNE9tbVRsT1VITFRnNktqVUdabGpscDJNY2Jr?=
- =?utf-8?B?dkZnUCs1R3dNREJrSEdlYXlOanhwQ0pEVTlsazRXWWJpUEhmUnA3bm5oS1du?=
- =?utf-8?B?V3FSZytSL1d6WE1uUWJPaGR1ZnRlRDJtUHRZa2pWTWswcUdGc0lvZmJ0YSs4?=
- =?utf-8?B?OGhYSkYxMHpPY0FqbDc0Ri9ORytUSkVPUTFiNzY5ellxZFNKRTVZRzE4Tndv?=
- =?utf-8?B?bnlPbUllWnlmcXpJQzhiY2ZTWjFJckZlTjR0dWVhZFhNUnJkMFF3cU1vbFNi?=
- =?utf-8?B?Ym1KYjRRUDhpbHQwaStpN3dvYi9EQTZFNG54ZVNibTRMZVRaNjgrUk5KeVhF?=
- =?utf-8?B?Tno3SXZDOHlhUkZFTmcyN2IzOGRXYm4ydVhTaG9kWUVRWGZ0RWRxVjB5U08x?=
- =?utf-8?B?ZksvNFVxZXZEc3FlNmp5S0lXREhKSTRYSFNETUllbjJxQmZyYWJYeHVXR2VN?=
- =?utf-8?B?NXZVWW9PWGVDbGoxSjdRN0ZrSG53Sk1sVFMvY0JBaE1mM0ZTc0V5VnZqSEFT?=
- =?utf-8?B?TmpJMkF4clVRQ29TMTA0Q1pCOTlpY29FZEdabFQveS9tUjluTmhaOW9MWUkw?=
- =?utf-8?B?MjlRZTh0M0VkdE1mZ2NieFhCdnJ4bW5BaDJHU3ZMLy9TVDZTb3dMaGFWb2tH?=
- =?utf-8?B?NitKQndwRXhScWVlYzdRWjJDTlRqMDluK2ZNam9nWUIvaGY4c3VIckROQmxn?=
- =?utf-8?B?RXIveG9BQ1RuSEhuV052RU53RWFYcXVQaUsyWE5ZaHpTOFVSaDRjU0tFK2xw?=
- =?utf-8?B?eGxOWkhzTDdGYktWcUZ3QjJTNHZuQm9qeklSR29jYzl0MU9HbGloRzg3SVA3?=
- =?utf-8?B?ZDNEdEJZTk9zQzhBaU04UTRNYnRxWmx6Ri96Mng2Vk5leUx3VXh6V0wxZU5W?=
- =?utf-8?B?cysvN0lCaVg2bGsrS0oxV2dCd0hrWU5SdkY2ZWtnVGVkbWFMc1dHMXFQcDJt?=
- =?utf-8?B?TnFGb1Z5YUxTSml3blkvOElFaUFWWExVZU8wZU1GWEYxVklqRW9ydnhIQlU4?=
- =?utf-8?B?NnY5V0dVUjlnL0NYOWNtankxcm43dW4ra2JuT3BIMGM4MmtDUVdHZkJnc0V1?=
- =?utf-8?B?dTM4OHhsY040bnRNamhUU0xoUDNSSWp1bUJnZEZxNFVWdmhMQTdyek5QWElh?=
- =?utf-8?B?aFVWVUFjQzY3MVQrcWI3TUJBRW4va3duR2tEMmxJb01IK2t2UHQxbEp1NFY5?=
- =?utf-8?B?UDM5OG03U203c1BNL0tPdkpmbHVUd1hoWTNmTjd1WDdxaVE5UHQ0WmhmQUk4?=
- =?utf-8?B?eXhKdUZ2SHc0VDh1NGhJMFh5b2NON2NtM29xMEw0aGlHWjEyMFV6MTJ5d0Rx?=
- =?utf-8?B?T2gxT0l2RitTT204WnN1d0F5SGxFZWt0VUVmaFB1MnNNUXlCUGo0U0duR2Yr?=
- =?utf-8?B?L3FRblkxVDI0Q0gwYWNpZVAzVjlicWpUa0JyMzJDa0dTN0hnaDZ5d01CNTBO?=
- =?utf-8?B?aFltakVIbytPZFVxeVd4cE11U2ZoOWF2M2tOeit3ZnhjdGR5bmI5a3V3WUdH?=
- =?utf-8?B?T3lZWFJBQUUvYVFRamJsTEhYZjhsbjlady93djRLNDJ6WFVuUWltcDRIdmR2?=
- =?utf-8?B?cHUvN3c5aEFlTXJZZmc5WXFnZU01OWljamhvMnFocXdUV3c1M1E5SjlCdko2?=
- =?utf-8?B?NXFtTStDOGJlSSt5V3pPcGtGWkszZ3FpaEhRcEVQQVk1ZFBrUmVLMFV4cENR?=
- =?utf-8?B?eExUeS8xNFpLS1VKSyszUUNtaWx2UzY0cFd0ZmVvMlNxWGgxWnhBeXZFYUsz?=
- =?utf-8?B?SWx0Q1lWL21FcG9kZDRVTmhYZ09TR1g3WGRIdURlbWlVcUtVUnJob3BTSW1a?=
- =?utf-8?B?YkQ3R2hEdEg2U1VaNHFyVjNES3Zwc2ltblRGQ1BJWndtTDJWRHJoNXF0N1VM?=
- =?utf-8?B?NGk1aytOc3Rrd1Axb0lvSytySFd0dW5VaytsaWNITnNvUHRQZkdtd2VCajA5?=
- =?utf-8?B?TnVIb3dqdlB3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(10070799003)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?HMb50P/BA+f/vEkpjCVoMaTqVedZfjIIJ2ZAPG2kKH1GgOKmrrHW/hlXdv0+?=
+ =?us-ascii?Q?XOPttJowfDAAGsegV9b4CBda97hfxYSSjZQeKbton1U6Smi6FOrUZUHyLk+J?=
+ =?us-ascii?Q?bnQa3Z9HsjTIZmJOtwSacD1mI6rrnoKoAthsIl825VViUzXYF7JKqI7xrcmY?=
+ =?us-ascii?Q?Z0tk6id1vtPa00UbN7hDRRm3Y+g/P8CWTKU5hcboHTXK22saoawzK9LUeG3S?=
+ =?us-ascii?Q?xYp2pd0oviEAG3RmVPRDuB972uXhpEgLW1N/Zppxn1eFcmdY1WtDBr1k/qyP?=
+ =?us-ascii?Q?YDRiJH0rIaALspWTO08r20k8NO/XIk1frG5vEdgqwMKSCGSXKAf+ONT/Y0aL?=
+ =?us-ascii?Q?+7QctRPDXRdLWFLpaBzFte3CP0mcA2Nt/Nnzy+j0PLSZMsXJLjpPtxDMWolx?=
+ =?us-ascii?Q?w9ef3DYnT+4D1Dey16fLM/Ao2zCu5vfirGbdiF/R0l5NMq57QtICm4//dm3W?=
+ =?us-ascii?Q?I7irSarolQsobYz2rxB4z2wnIxx5yOY12rarqbGZkGU8cami/lAuJ0GHVrJ+?=
+ =?us-ascii?Q?mGppWL2wBU7BEDMZHYDrDsLcXH0Wy2S55Uag2gKmHF8U/fnmTbWaZq6uydn7?=
+ =?us-ascii?Q?p/8Ye2b8FP2TPDCwhIMEPZxkbVrpbKul/wrzKLfUmrbCO/+EPHT662y/EBVP?=
+ =?us-ascii?Q?OGRu3Aq5Pl+F55W8rky1/Rs3DBhHJijS9oYwO2J1nqaL8qR7+nE3ydNJnb2G?=
+ =?us-ascii?Q?xDbtPopRIuxDyICMa5R1kMmuVpayDWhF4F3S/uH9SGBTTYxvmz8QQc51pwPx?=
+ =?us-ascii?Q?A0wScFw+tyS7EsZ9lAJ0g7YWplUdhrIZBbY422sIQ+Rs+xUkj1aEAE2wYE9k?=
+ =?us-ascii?Q?RyA0xkn+iC2b/uPswHCQrullo4kgFWOws0LtO5tXJGHV784Nq87bk4Jpedn/?=
+ =?us-ascii?Q?nCT9yUzZQ8NSK5ZjGjwc7ZQTOFrVMTyiUp32NTJ3FRLHKG/P/DV6NMhSsDF5?=
+ =?us-ascii?Q?Xi7hD3gA/NQPHzGDWp1IAWxkrDY7we564aIaRqv8GkvsRaxk8Hb5FcmjHHW+?=
+ =?us-ascii?Q?nQnGkLwrLJAMEVxBb7RR77bdPjHgkK3dtYdWOnbpFAGK/mcuqI6eZ7FAPpTv?=
+ =?us-ascii?Q?TU3AxAe97Mq071iFs8GZAUYmTfpqPv0WuvkMzSWnzSkd54XV/eixyLjvmYAE?=
+ =?us-ascii?Q?ZYxxuTc9kS+/k5CPrUShsFKQPbP3kkhMzTz+GvEMzjjq/p+0AtIGkr+j2Jha?=
+ =?us-ascii?Q?Y4V3kBZL1H9pCEyXQHz2BLaRU96atCkRarZmFppk+7zSR0wCYgj7CM41ikfk?=
+ =?us-ascii?Q?MP6+DILpeowVOleiyIn0KAEbiWfD3V3QOU6lGPbYfxxguqvsM0s7787wTTy2?=
+ =?us-ascii?Q?13rC0q2ulmurVOdTVooPuxT2Ml9BaTz19k00gSGedRfpC8Awgb1VtMcBG2Sk?=
+ =?us-ascii?Q?3eGgT1/o1PZmcOtJQM33MC+q3CxB?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OEEyellnZ2thUW5YNmZpODkvWCtYYjBrYVd0OUtCdndoQWR6MTl6SzhRWllw?=
- =?utf-8?B?SnNmVzZyQm5WcWNoZytsSEhxc0pvWHcyb1VRU3FkNHU4Zi9Xd3YwbW5IcGxI?=
- =?utf-8?B?WFo4aVZ1d2YyQVlVLzdEVlpZNWJHQXJmQ3FJMHlxR2tiS3NCbnJHQlRqSFg3?=
- =?utf-8?B?bGUxZVVCdS91d0ZYVGZmbHJWVmt3eVRzNXg3RG9OWnk1eWlKayswcDZLNSs1?=
- =?utf-8?B?dU5YSndiVktqdjJpSmgrSndXalNMWkVaREpSNm5BZkh1QUVPOUQwK2g1MWtk?=
- =?utf-8?B?ZGxpdWVVdE5yNHAzdDlJKzF3eVE0ZTFCcnAwQVFISXROenNrQ3BSK2syNmZ1?=
- =?utf-8?B?UHplNE9BZWJGM1NuTFB5V240NTg5U3d6Njg4VjRvbVl1UGFudWV2RlJCVG4z?=
- =?utf-8?B?UmJieUlhN0Y4OC9Kdmlod1F1TVQvUjkwZTg0MnRxa0lTUVNmdWtTUFJ2L09k?=
- =?utf-8?B?OWdkalhmWXRPN2VHYXBDay9YcGV1WVpMMHJRSnhxT3FGYW1ySGsxeHRRM01S?=
- =?utf-8?B?Qk1jQ2RWRVMvNmVhaWF3Q1dpLzZTUFlQMTJwZGI4cW4xalJEaDFXa0VsWW4x?=
- =?utf-8?B?ZlpXQUhhb0RDMHFIVXc5VllUS2Q5TVJBcWVHRWVyZHdjUnBXWXVpNG1DOFc3?=
- =?utf-8?B?bVdsV09WR1hrblpHcFNFSDJNMUhIU2JXL01Lc0JKOVZyNDNmY2RaZU5kSm9x?=
- =?utf-8?B?SGpieWdSNSt5dnhYL3pHNEVzMTJmYU5lNDE1cFJTU2pIWUMxWDByUlFnakVZ?=
- =?utf-8?B?MFM1K09KcnJweUxUYmN0MHExK08wdUlqNDJORGQrSW1GL2txa1NVMllrU1M2?=
- =?utf-8?B?bnJnU3JJWkFkam1TQWdaTVIxUnE0RjVyUlRrYkJ3TkJGdHkybXo3V2ZmNUs2?=
- =?utf-8?B?bTJacWpsWGRYUUlqQVJJaDZaTzBLU3k1WWZWMjA3dCtKTjA2dWYwK1NwYUkx?=
- =?utf-8?B?bXpFbGJTMW96VzA4bDZJcmZxZkpqRkxHZVRpemI5UGllQml5NElLUmFORzBa?=
- =?utf-8?B?RDhHdzNyRGNEaWF5UEc0QmlPRlpTQlVVQjZKUVpLYldOZmozOHprU2l0blRW?=
- =?utf-8?B?YXdtbjZxY05UbjhURGpuL1lRN3ZuYXdkWFlJK3ZwUXVYME10OWpBcUdhTVNV?=
- =?utf-8?B?eVZHZndLSTJ3WkliWGFLYW1MeHMzQk1WeTU1TFU3RnFiSW03a0Z2V0NWREdw?=
- =?utf-8?B?WTlsWUNSbG9KbFljQ2wyTG91dXpOYUpoK3prM2MyZmFVRTZ0Y1E1aXc4TjNa?=
- =?utf-8?B?eU41NlBzalFFWUdQR0NjNXJXbVVlV1JJa2szOWtTS3ZzT3p0bE53TzRKdlZO?=
- =?utf-8?B?MHR2cFNjMzYwK2pJcGlzR1dpVWdhdGlXbUVvKzJpeitVSFpTVFZGL1VjSnNQ?=
- =?utf-8?B?clVSMm5NUXU2TFlqTlBPSlNzTi9jSmV2NEZ2ZmUzL253akY5SUdtMnNJa0dw?=
- =?utf-8?B?cjI1alJXWGE2dWszYnV4ZXQ5Y1RhUGpDaG1pSURYQlJqWWdZUng4TWtDSi8v?=
- =?utf-8?B?NWYvTjR3MUY2K21MSTNhb2RXdFdYL3FiOGc4RkdOdFB5WkhiNTZUN2dxNldv?=
- =?utf-8?B?Y25oR2NUaVpTZ3lXWThrcEtLR3plY1BmKzRRQU5WUlRidjJvYTN5ektZSUc3?=
- =?utf-8?B?U2lHOTBmUkZiY3p6WUtZWTl4K25qSFNjN1UvUVQ2WnVpY3RuZVBiNFo1OFRl?=
- =?utf-8?B?YVRUR3gyM0wrM1ZPZ3c4MzBIY2w2aDVIeGJYMUNzREczY00vRjJoTTFOMHRv?=
- =?utf-8?B?YjRHRStiamlPVFRYMXVEejZ1M3dtMDhoT08zQSsxVEJWa2htQ3JJbmRwWVBL?=
- =?utf-8?B?QnQrMEs1L3FtVHBwS28xRDBRWUE1RDM5d1dqTFNxMW5VQ1JNSk92M1FaSGpY?=
- =?utf-8?B?RkdJTWoyZ3BOVjFnNUNtcFVWc2RQaVVIZlRHVGxzTG5tWDZBWXJFNlFQeHlR?=
- =?utf-8?B?dmFjUEk3OGE0TWVOVHFTS1JydE45cThoWGNtNDg5WUNtNXlkWFY1VkQvS1Z1?=
- =?utf-8?B?UW9oS2NyN1pXNEJQMS95WEQ2NHJxQy9SZjQ3SVVsaDZWUHgzY1hKVG96dFln?=
- =?utf-8?B?L2lsbWdKbGwyWlU3NXBoZTUvd3FtdEFMVW0yRGU1SDM3c2x1dENvMk9YR0xF?=
- =?utf-8?B?Q25uamk2bGZPMmNTWTB0ejc4WEwrZHhnT2xwbncwS1JRYXJ1R25kNm42ZFhG?=
- =?utf-8?Q?hdzjiU45YvOwROk9SnICcGbf2EwvIvJ/Aam9qHtTU1Ak?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: acd52724-16fa-4e8d-311d-08dd98333003
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Nisbdyz4RShAXr+Y+EdMFbwgZHpCEk5iLQofzgIiAqHogBfaoEiKSgbAQzgf?=
+ =?us-ascii?Q?UdE0YXPyVIkqk4e/LFKkax7Q3cqZ3SbmOMi5JPBy2Ag5ATAbXt/MaA0alhnY?=
+ =?us-ascii?Q?oqvKj6ki5dh9WFSzt3fYTaNZFMpEbSTqOuqKPoVyHGcN/bRzi5Bl1H/4CqQ+?=
+ =?us-ascii?Q?tBswbf3rYUXtpHgEO2EDVuG2APwqJ9qltrsXWC2DRDk/W8eBTEjl0zfKtj99?=
+ =?us-ascii?Q?U/sliCgN5AmjN1d3e2ltokGMP9mInAjNzkLUb1GUMAgNP1rtyhB1/jeNJuh2?=
+ =?us-ascii?Q?d4oVu64xAjqNBZjdnN1ofjBtPW7RL6GoZfIVpwC2sCeHhXAHfcRq4IEq9rAb?=
+ =?us-ascii?Q?3lmfe628+BZUetzBceFV+wfAN5UoJnHECyJNYAVDqLJz7Is+jsoyc2bn1Vr6?=
+ =?us-ascii?Q?Hq7jec0lOb+vY2MVlQR+BvlEUYuhe57kfAVU9DGxkdB+XUa54L4TYt7d6ard?=
+ =?us-ascii?Q?tu9pJHo4UFSVB47kCjrZSLkKoP+VqeL+9s2TPpvpwPGbvzNE2Bc74u/lue5N?=
+ =?us-ascii?Q?Lzy/81GbLyPGvQIH1tQ4p2JXgJyINE5WGxwlFkY3hJTXc3N6ZRLNJRG7NzCF?=
+ =?us-ascii?Q?9P3UWtQ2BF526oWBJ/ZlFLIReIPCeqt8IGxn81ECzsm9LFURaWW50Dp+kq3Z?=
+ =?us-ascii?Q?dgXWPuz1KvCQCW0RbBulLigx/FLzZKkriaqLemi1fmks56XnynEaVoPevarN?=
+ =?us-ascii?Q?DKIVcEF5BbQz/dPfK0e4pmP/iaJTVAXBncHecFlzMiyIIH1AuHdFIjG9KeN3?=
+ =?us-ascii?Q?I/4gOzCXlVB4mZEQvRdJ6T+lk/MshM4Vj4O0KWVrBw52PFBZFmak2ceZjeEn?=
+ =?us-ascii?Q?7uoEJrdPpM0b8vrYm3UApmtLvqfP6rdWeZ07uSqufi+zCLL0jr1pq91R9bOW?=
+ =?us-ascii?Q?OGhU0hB2doiPywWFi2nJi3hISH9wvF+B2ieH5a7S+DgTYI4lBNjCZFOIdT3k?=
+ =?us-ascii?Q?nCXkzdJA5EatUsJ7cKVMuYXu3wwPrWkMXm2KvVS5fNn5YD/0AoN4oee+SJ0U?=
+ =?us-ascii?Q?21u6PMHxM2pk6BuOE7O9VVyPM2ZwyuDIu8MRKoKmVcicrw08BHRBPiNCDgJG?=
+ =?us-ascii?Q?FL0In7BdF2bbBBe6sI6DQ6L7LOMfXaNG1aMotNEVbF3wjx+EwUXRCdBEgyKt?=
+ =?us-ascii?Q?r11YSkZwxaMn4UtIV/oct5SY0m5CPv3LKK0drfVbLfi3seujpMIKrsV8Yv5n?=
+ =?us-ascii?Q?BZjOD6B5df+J6wDI5Iyv5ljPgXbcGeCEtiVROdiRNjkfkh302R2NhWe8eHZ5?=
+ =?us-ascii?Q?HJA0Gx0jPn0iyiBFNkbz1PNlSt7MUEFPR4aOouXE8pbuOASEar4laO/6q+vE?=
+ =?us-ascii?Q?D6DQhvfRJItxpv5HghZg142XE3PiG75TM39gnKr4yzb1zjd6y6cw0Nds4q7u?=
+ =?us-ascii?Q?jeym72NFKpDAzHFTEMncsZdquda0eSMQg5pswaq5Zls/siZFTz/X/mjmLlkv?=
+ =?us-ascii?Q?aFUkTny5EsB4s8C7oZjovkD5DIueAEJepbgXc3tPX5v+4WxMMXEXdc2clFW/?=
+ =?us-ascii?Q?SjVm861LcEHy99lTUVSfB1Nnj/J+fEWWe1tvAN4D9QV4uQrpwduPVQb0gsDh?=
+ =?us-ascii?Q?FEtaiSvI5Sti2J+W/TVRZK7Mw2TtPrg6/hYTc/o2?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99367a9d-e9af-4659-ba50-08dd9833928d
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2025 06:46:17.3880
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2025 06:49:02.7684
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4zsfD9aX7t7VK58Qo6/gHZUSMC0yYqKSdSddSHxKbjFKkO+B2Twid+ghBsNA16wQNToRB/0f4uGJ7N1OWzZmZQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6805
+X-MS-Exchange-CrossTenant-UserPrincipalName: 44SfONMkx5fT76aqmbEGu2raEXKtg9z+2OMK6xBiGjZL1nrDExaA5KzHkvZoBsrQc5Z6UZDpPhzFk9ufqYPYcw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4993
+X-OriginatorOrg: intel.com
 
-With all the required pieces in place, load FWSEC-FRTS onto the GSP
-falcon, run it, and check that it successfully carved out the WPR2
-region out of framebuffer memory.
+On Mon, May 19, 2025 at 10:04:45AM -0700, Ackerley Tng wrote:
+> Ackerley Tng <ackerleytng@google.com> writes:
+> 
+> > Yan Zhao <yan.y.zhao@intel.com> writes:
+> >
+> >> On Fri, Mar 14, 2025 at 05:20:21PM +0800, Yan Zhao wrote:
+> >>> This patch would cause host deadlock when booting up a TDX VM even if huge page
+> >>> is turned off. I currently reverted this patch. No further debug yet.
+> >> This is because kvm_gmem_populate() takes filemap invalidation lock, and for
+> >> TDX, kvm_gmem_populate() further invokes kvm_gmem_get_pfn(), causing deadlock.
+> >>
+> >> kvm_gmem_populate
+> >>   filemap_invalidate_lock
+> >>   post_populate
+> >>     tdx_gmem_post_populate
+> >>       kvm_tdp_map_page
+> >>        kvm_mmu_do_page_fault
+> >>          kvm_tdp_page_fault
+> >> 	   kvm_tdp_mmu_page_fault
+> >> 	     kvm_mmu_faultin_pfn
+> >> 	       __kvm_mmu_faultin_pfn
+> >> 	         kvm_mmu_faultin_pfn_private
+> >> 		   kvm_gmem_get_pfn
+> >> 		     filemap_invalidate_lock_shared
+> >> 	
+> >> Though, kvm_gmem_populate() is able to take shared filemap invalidation lock,
+> >> (then no deadlock), lockdep would still warn "Possible unsafe locking scenario:
+> >> ...DEADLOCK" due to the recursive shared lock, since commit e918188611f0
+> >> ("locking: More accurate annotations for read_lock()").
+> >>
+> >
+> > Thank you for investigating. This should be fixed in the next revision.
+> >
+> 
+> This was not fixed in v2 [1], I misunderstood this locking issue.
+> 
+> IIUC kvm_gmem_populate() gets a pfn via __kvm_gmem_get_pfn(), then calls
+> part of the KVM fault handler to map the pfn into secure EPTs, then
+> calls the TDX module for the copy+encrypt.
+> 
+> Regarding this lock, seems like KVM'S MMU lock is already held while TDX
+> does the copy+encrypt. Why must the filemap_invalidate_lock() also be
+> held throughout the process?
+If kvm_gmem_populate() does not hold filemap invalidate lock around all
+requested pages, what value should it return after kvm_gmem_punch_hole() zaps a
+mapping it just successfully installed?
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpu/nova-core/falcon.rs |  3 ---
- drivers/gpu/nova-core/gpu.rs    | 57 ++++++++++++++++++++++++++++++++++++++++-
- drivers/gpu/nova-core/regs.rs   | 15 +++++++++++
- 3 files changed, 71 insertions(+), 4 deletions(-)
+TDX currently only holds the read kvm->mmu_lock in tdx_gmem_post_populate() when
+CONFIG_KVM_PROVE_MMU is enabled, due to both slots_lock and the filemap
+invalidate lock being taken in kvm_gmem_populate().
 
-diff --git a/drivers/gpu/nova-core/falcon.rs b/drivers/gpu/nova-core/falcon.rs
-index f224ca881b72954d17fee87278ecc7a0ffac5322..91f0451a04e7b4d0631fbcf9b1e76e59d5dfb7e8 100644
---- a/drivers/gpu/nova-core/falcon.rs
-+++ b/drivers/gpu/nova-core/falcon.rs
-@@ -2,9 +2,6 @@
- 
- //! Falcon microprocessor base support
- 
--// To be removed when all code is used.
--#![expect(dead_code)]
--
- use core::ops::Deref;
- use core::time::Duration;
- use hal::FalconHal;
-diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
-index 5a4c23a7a6c22abc1f6e72a307fa3336d731a396..280929203189fba6ad8e37709927597bb9c7d545 100644
---- a/drivers/gpu/nova-core/gpu.rs
-+++ b/drivers/gpu/nova-core/gpu.rs
-@@ -246,7 +246,7 @@ pub(crate) fn new(
- 
-         let bios = Vbios::new(pdev, bar)?;
- 
--        let _fwsec_frts = FwsecFirmware::new(
-+        let fwsec_frts = FwsecFirmware::new(
-             &gsp_falcon,
-             pdev.as_ref(),
-             bar,
-@@ -257,6 +257,61 @@ pub(crate) fn new(
-             },
-         )?;
- 
-+        // Check that the WPR2 region does not already exists - if it does, the GPU needs to be
-+        // reset.
-+        if regs::NV_PFB_PRI_MMU_WPR2_ADDR_HI::read(bar).hi_val() != 0 {
-+            dev_err!(
-+                pdev.as_ref(),
-+                "WPR2 region already exists - GPU needs to be reset to proceed\n"
-+            );
-+            return Err(EBUSY);
-+        }
-+
-+        // Reset falcon, load FWSEC-FRTS, and run it.
-+        gsp_falcon.reset(bar)?;
-+        gsp_falcon.dma_load(bar, &fwsec_frts)?;
-+        let (mbox0, _) = gsp_falcon.boot(bar, Some(0), None)?;
-+        if mbox0 != 0 {
-+            dev_err!(pdev.as_ref(), "FWSEC firmware returned error {}\n", mbox0);
-+            return Err(EINVAL);
-+        }
-+
-+        // SCRATCH_E contains FWSEC-FRTS' error code, if any.
-+        let frts_status = regs::NV_PBUS_SW_SCRATCH_0E::read(bar).frts_err_code();
-+        if frts_status != 0 {
-+            dev_err!(
-+                pdev.as_ref(),
-+                "FWSEC-FRTS returned with error code {:#x}",
-+                frts_status
-+            );
-+            return Err(EINVAL);
-+        }
-+
-+        // Check the WPR2 has been created as we requested.
-+        let (wpr2_lo, wpr2_hi) = (
-+            (regs::NV_PFB_PRI_MMU_WPR2_ADDR_LO::read(bar).lo_val() as u64) << 12,
-+            (regs::NV_PFB_PRI_MMU_WPR2_ADDR_HI::read(bar).hi_val() as u64) << 12,
-+        );
-+        if wpr2_hi == 0 {
-+            dev_err!(
-+                pdev.as_ref(),
-+                "WPR2 region not created after running FWSEC-FRTS\n"
-+            );
-+
-+            return Err(ENOTTY);
-+        } else if wpr2_lo != fb_layout.frts.start {
-+            dev_err!(
-+                pdev.as_ref(),
-+                "WPR2 region created at unexpected address {:#x} ; expected {:#x}\n",
-+                wpr2_lo,
-+                fb_layout.frts.start,
-+            );
-+            return Err(EINVAL);
-+        }
-+
-+        dev_dbg!(pdev.as_ref(), "WPR2: {:#x}-{:#x}\n", wpr2_lo, wpr2_hi);
-+        dev_dbg!(pdev.as_ref(), "GPU instance built\n");
-+
-         Ok(pin_init!(Self {
-             spec,
-             bar: devres_bar,
-diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
-index 54d4d37d6bf2c31947b965258d2733009c293a18..2a2d5610e552780957bcf00e0da1ec4cd3ac85d2 100644
---- a/drivers/gpu/nova-core/regs.rs
-+++ b/drivers/gpu/nova-core/regs.rs
-@@ -42,6 +42,13 @@ pub(crate) fn chipset(self) -> Result<Chipset> {
-     }
- }
- 
-+/* PBUS */
-+
-+// TODO: this is an array of registers.
-+register!(NV_PBUS_SW_SCRATCH_0E@0x00001438  {
-+    31:16   frts_err_code as u16;
-+});
-+
- /* PFB */
- 
- register!(NV_PFB_NISO_FLUSH_SYSMEM_ADDR @ 0x00100c10 {
-@@ -73,6 +80,14 @@ pub(crate) fn usable_fb_size(self) -> u64 {
-     }
- }
- 
-+register!(NV_PFB_PRI_MMU_WPR2_ADDR_LO@0x001fa824  {
-+    31:4    lo_val as u32;
-+});
-+
-+register!(NV_PFB_PRI_MMU_WPR2_ADDR_HI@0x001fa828  {
-+    31:4    hi_val as u32;
-+});
-+
- /* PGC6 */
- 
- register!(NV_PGC6_AON_SECURE_SCRATCH_GROUP_05_PRIV_LEVEL_MASK @ 0x00118128 {
+Looks sev_gmem_post_populate() does not take kvm->mmu_lock either.
 
--- 
-2.49.0
+I think kvm_gmem_populate() needs to hold the filemap invalidate lock at least
+around each __kvm_gmem_get_pfn(), post_populate() and kvm_gmem_mark_prepared().
 
+> If we don't have to hold the filemap_invalidate_lock() throughout, 
+> 
+> 1. Would it be possible to call kvm_gmem_get_pfn() to get the pfn
+>    instead of calling __kvm_gmem_get_pfn() and managing the lock in a
+>    loop?
+> 
+> 2. Would it be possible to trigger the kvm fault path from
+>    kvm_gmem_populate() so that we don't rebuild the get_pfn+mapping
+>    logic and reuse the entire faulting code? That way the
+>    filemap_invalidate_lock() will only be held while getting a pfn.
+The kvm fault path is invoked in TDX's post_populate() callback.
+I don't find a good way to move it to kvm_gmem_populate().
+
+> [1] https://lore.kernel.org/all/cover.1747264138.git.ackerleytng@google.com/T/
+> 
+> >>> > @@ -819,12 +827,16 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
+> >>> >  	pgoff_t index = kvm_gmem_get_index(slot, gfn);
+> >>> >  	struct file *file = kvm_gmem_get_file(slot);
+> >>> >  	int max_order_local;
+> >>> > +	struct address_space *mapping;
+> >>> >  	struct folio *folio;
+> >>> >  	int r = 0;
+> >>> >  
+> >>> >  	if (!file)
+> >>> >  		return -EFAULT;
+> >>> >  
+> >>> > +	mapping = file->f_inode->i_mapping;
+> >>> > +	filemap_invalidate_lock_shared(mapping);
+> >>> > +
+> >>> >  	/*
+> >>> >  	 * The caller might pass a NULL 'max_order', but internally this
+> >>> >  	 * function needs to be aware of any order limitations set by
+> >>> > @@ -838,6 +850,7 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
+> >>> >  	folio = __kvm_gmem_get_pfn(file, slot, index, pfn, &max_order_local);
+> >>> >  	if (IS_ERR(folio)) {
+> >>> >  		r = PTR_ERR(folio);
+> >>> > +		filemap_invalidate_unlock_shared(mapping);
+> >>> >  		goto out;
+> >>> >  	}
+> >>> >  
+> >>> > @@ -845,6 +858,7 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
+> >>> >  		r = kvm_gmem_prepare_folio(kvm, file, slot, gfn, folio, max_order_local);
+> >>> >  
+> >>> >  	folio_unlock(folio);
+> >>> > +	filemap_invalidate_unlock_shared(mapping);
+> >>> >  
+> >>> >  	if (!r)
+> >>> >  		*page = folio_file_page(folio, index);
+> >>> > -- 
+> >>> > 2.25.1
+> >>> > 
+> >>> > 
+> 
 
