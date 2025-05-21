@@ -1,155 +1,128 @@
-Return-Path: <linux-kernel+bounces-657566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5DD9ABF5FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:23:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2220CABF606
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C35CC1BA3B7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:23:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 458F84E7063
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0772726FA4D;
-	Wed, 21 May 2025 13:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lqS5gWCU"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EFD27C15A;
+	Wed, 21 May 2025 13:24:33 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735D1267B1F
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C80F4CB5B;
+	Wed, 21 May 2025 13:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747833801; cv=none; b=ETyIZxBQinwUOnN+gQh54GG5X83gtE+BQ4oEUzaZkUJsHSf8GTSvAGP+Kk0k41DKRoFH+O162x0n7ShJGCkJdBCHHLN/D+esimfbWYHiHZiUbGYEcuG+VGEim334s+W5waz6Ii3b2hxmljzy4ByuaeVgSEvMo9bzYqReNpo3apo=
+	t=1747833873; cv=none; b=K3QMCGPiSqOLQz7tElc1gN83HQDeyTIlWlP7iYFl9CBX++Ivqngx0wvkfVktTbkvV/erl5DapdWpxI3rZmYlwQ5QTZuNqGeJq+bQNClmakwM/HuXEn9+bALMM9jEY2ETbyL4Gq6F7g2mY3tNzEEULD0nw4A9u15aSudwD1j4cio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747833801; c=relaxed/simple;
-	bh=w73AQw8+g5fBpedRVPUGGRopTEwJA46061csugvI/zo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rQdxme4bbsdSAV3BIRsaXo8EC9FhxIrxcVZtN5Gd4UWB/RpMA05rXkGeYOksS3ai/kIxIcy5d8jIt6LicnqBYvmIDZwrO70ypoZf4wv9VXhEsI5G4EjogoRn/tcfP6aXUoJcv27DiB3JbabP0TXzr313dvETJ+rExigYND+K4iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lqS5gWCU; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3fe83c8cbdbso2458360b6e.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 06:23:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747833797; x=1748438597; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=73+Ub5D7zbTT7WbMLp31ncO7kWmhvFAqTPjsH0ZsZhs=;
-        b=lqS5gWCUR4SPY9ewYeFIUWBdlTIFTKDNqHLML7XSuNWvilvicm29/SevLvdA7rPT/v
-         /o2OIM2fTYfIYmqRkhHgICFHkKzk9ho+Hqzbqrcg0+zvx7ws3z/fVY06kfWFqJ4lfEef
-         tyqeGx+qF2u10PgiGo72FzrcubSnhuzw2C9E9xh5XjkNR55z/6+NUMGha8ihdpteGHLB
-         Q6aEj/UTi9mqop2itFHRJt6jMr8GuigOFgHfrGnUimRYB38kP9lhoGyhEm4iksDuC9Ql
-         Bz3H4MxvnYUnpiPCjHyNKJ5uYVhRX55osI+N2whlZLToTW7PNIocZaesSR9h7Ha+9+MX
-         zhBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747833797; x=1748438597;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=73+Ub5D7zbTT7WbMLp31ncO7kWmhvFAqTPjsH0ZsZhs=;
-        b=ZTxP9VNa43Yt2X0EKMtcqmLGnW73H6PlohmuRuUOSqD4cshIxwEySHFtf0KKLCif8Q
-         C1rQFzkkpCQYYJBfUj2btnI8zRGBwdlwDmB1MBejgtzfva/+ZEOlM1HNVmVUHU9isjzl
-         wZUIIBoR9UtHiLH/LDCMTSH3o2P3C5lrAq2Hh4B/io0WcQ+XlcdsYxZPG9/di2gfyNMI
-         VhoBkrokmYlCeCCLstD/XAcgXpiC3FCUe4sw/rQvJkugQ+97HvfoYQDztxM8JXVjt5Uy
-         NhxdaXoadfHvtMhUBzUK0IXiN2Vk3tdrqMQAmAnEQARxQJEQg0YBI8qMAA6aqeTbuLyT
-         mqTw==
-X-Forwarded-Encrypted: i=1; AJvYcCULlLdPS8JTww4RLDohQVyuES5JzwifEU4ezUICWYNljtTKz+5ijAv8ZO0wNbvehcdc/ECWqK+P0KFL9Kg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOB+K+3lo+u1lYoc5Jcw+lmNZZe5DLo8OVWY4BzhZX5jfXAXa3
-	qfNUSPDPaBRY7LsL3/xsobE7Df07027NUj29hXy/4nvJImYzLQbhFztxCnq8Qzl2bLo=
-X-Gm-Gg: ASbGnctz8iO/biu1EPNphRxenzukXQDP5oph35ybyD/UDwPzh8+EHj0PxbggQi9PijW
-	lyIke+YYYGmzT8ghHVSqczTkFYE2EHI376m53k14nUZtLl6dje/98or6u/OKUZjqfdgBikGDpzA
-	Ecb/IKNbpNo3qeScthgC1RHaj+g6ZNP4Jn7EJ60KQkisNhGU4CG/u/RKr3qiY2rVSwdiK5RCGqt
-	WKLzNERFQDIZ0nNm9f1VNPD/tQtndu5D+l9P4OC0KRLGrFPjZ6B6Yy3PkQh422j5oVFAUlaQnCV
-	btOCHJn+3F5L2aC4vFZXBEAjV+lHhbKJcKyQ7hyjiSoFjL4kKhbdi50jRLRocWhD58IYMg+w6UL
-	ZeH05M3IOTxRyyJ34SlyZFBnsww==
-X-Google-Smtp-Source: AGHT+IHvmT2xe5UfsGuH7VhuaUgi4gdIlcSV03RlKzpEU+TwayEelqHe5C4jtIcDiTOXtQ/wc9WNfw==
-X-Received: by 2002:a05:6808:338b:b0:403:3521:2475 with SMTP id 5614622812f47-404da826d65mr13000543b6e.37.1747833797424;
-        Wed, 21 May 2025 06:23:17 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:d77b:6acc:2ad1:8ff? ([2600:8803:e7e4:1d00:d77b:6acc:2ad1:8ff])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-404d98060ecsm2154491b6e.27.2025.05.21.06.23.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 May 2025 06:23:16 -0700 (PDT)
-Message-ID: <dc9c370c-e1e7-4ef9-8738-e6ac8887ee61@baylibre.com>
-Date: Wed, 21 May 2025 08:23:14 -0500
+	s=arc-20240116; t=1747833873; c=relaxed/simple;
+	bh=DXRBNohjBKRvMBf7q2uiahg8uAYiKa9riN8m6bUxBBs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UbVPTM/wZ6AtRTDqCkbV81K5ABwV5/B+5FKrVo12BJfvRf/t6XmovUJ+um8d5cUxMTkJrW0YIN2dqx6WQXsWxu5llq4PmKQbZGufBCACrANqMAYErmGM7QR+JBPCM32gj7DhhEi7fU9T1EWq3xH2RgjRtix8Fjew/KwtEKWLVoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowAA3dCb20y1oPaQcAg--.57214S2;
+	Wed, 21 May 2025 21:24:07 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: saeedm@nvidia.com,
+	leon@kernel.org,
+	tariqt@nvidia.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v3] net/mlx5: Add error handling in mlx5_query_nic_vport_node_guid()
+Date: Wed, 21 May 2025 21:23:43 +0800
+Message-ID: <20250521132343.844-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] pwm: axi-pwmgen: add support for external clock
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Trevor Gamblin <tgamblin@baylibre.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250520-pwm-axi-pwmgen-add-external-clock-v1-0-6cd63cc001c8@baylibre.com>
- <20250520-pwm-axi-pwmgen-add-external-clock-v1-3-6cd63cc001c8@baylibre.com>
- <20250521-nostalgic-pretty-hedgehog-d08a77@kuoka>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250521-nostalgic-pretty-hedgehog-d08a77@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAA3dCb20y1oPaQcAg--.57214S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr4rCF1DWr1DGF48uw4xXrb_yoW8Ar4xpF
+	47tr9rCrykGa4rX34jkFWrZrn5u3yjyayUua47tw13Xr4ktr4qyr45Ar9IgrWUuFW0ka9Y
+	yr42y3Z8AFn8C37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_Xr4l42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14
+	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU87KsUUUUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCREJA2gtsp4AvwABsF
 
-On 5/21/25 5:10 AM, Krzysztof Kozlowski wrote:
-> On Tue, May 20, 2025 at 04:00:46PM GMT, David Lechner wrote:
->> Add support for external clock to the AXI PWM generator driver.
->>
->> In most cases, there is a separate external clock that drives the PWM
->> output separate from the peripheral clock. This allows enabling both
->> clocks.
->>
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
->> ---
->>  drivers/pwm/pwm-axi-pwmgen.c | 23 ++++++++++++++++++++---
->>  1 file changed, 20 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/pwm/pwm-axi-pwmgen.c b/drivers/pwm/pwm-axi-pwmgen.c
->> index 4337c8f5acf055fc87dc134f2a70b99b0cb5ede6..67992a7561ec0440b1c1fa327f844a0602872771 100644
->> --- a/drivers/pwm/pwm-axi-pwmgen.c
->> +++ b/drivers/pwm/pwm-axi-pwmgen.c
->> @@ -280,9 +280,26 @@ static int axi_pwmgen_probe(struct platform_device *pdev)
->>  	ddata = pwmchip_get_drvdata(chip);
->>  	ddata->regmap = regmap;
->>  
->> -	clk = devm_clk_get_enabled(dev, NULL);
->> -	if (IS_ERR(clk))
->> -		return dev_err_probe(dev, PTR_ERR(clk), "failed to get clock\n");
->> +	/* When clock-names is present, there is a separate ext clock. */
->> +	if (device_property_present(dev, "clock-names")) {
-> 
-> No. List is ordered, you do not need such dance at all.
+The function mlx5_query_nic_vport_node_guid() calls the function
+mlx5_query_nic_vport_context() but does not check its return value.
+A proper implementation can be found in mlx5_nic_vport_query_local_lb().
 
-I should have added more to the comment here. This is also needed for
-backwards compatibility where only what should be the "ext" clock is
-given as clocks = <&spi_clk>; and the AXI clock was missing.
+Add error handling for mlx5_query_nic_vport_context(). If it fails, free
+the out buffer via kvfree() and return error code.
 
-> 
->> +		struct clk *axi_clk;
->> +
->> +		axi_clk = devm_clk_get_enabled(dev, "axi");
->> +		if (IS_ERR(axi_clk))
->> +			return dev_err_probe(dev, PTR_ERR(axi_clk),
->> +					     "failed to get axi clock\n");
->> +
->> +		clk = devm_clk_get_enabled(dev, "ext");
-> 
-> So that's messing the order, which confirms my question from the
-> binding.
-> 
-> No. List has a strict order, you cannot change it just because you want
-> to add optional clock.
-> 
-> Best regards,
-> Krzysztof
-> 
+Fixes: 9efa75254593 ("net/mlx5_core: Introduce access functions to query vport RoCE fields")
+Cc: stable@vger.kernel.org # v4.5
+Target: net
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+v3: Explicitly mention target branch. Change improper code.
+v2: Remove redundant reassignment. Fix typo error.
+
+ drivers/net/ethernet/mellanox/mlx5/core/vport.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/vport.c b/drivers/net/ethernet/mellanox/mlx5/core/vport.c
+index 0d5f750faa45..66e44905c1f0 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/vport.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/vport.c
+@@ -465,19 +465,22 @@ int mlx5_query_nic_vport_node_guid(struct mlx5_core_dev *mdev, u64 *node_guid)
+ {
+ 	u32 *out;
+ 	int outlen = MLX5_ST_SZ_BYTES(query_nic_vport_context_out);
++	int err;
+ 
+ 	out = kvzalloc(outlen, GFP_KERNEL);
+ 	if (!out)
+ 		return -ENOMEM;
+ 
+-	mlx5_query_nic_vport_context(mdev, 0, out);
++	ret = mlx5_query_nic_vport_context(mdev, 0, out);
++	if (err)
++		goto out;
+ 
+ 	*node_guid = MLX5_GET64(query_nic_vport_context_out, out,
+ 				nic_vport_context.node_guid);
+-
++out:
+ 	kvfree(out);
+ 
+-	return 0;
++	return err;
+ }
+ EXPORT_SYMBOL_GPL(mlx5_query_nic_vport_node_guid);
+ 
+-- 
+2.42.0.windows.2
 
 
