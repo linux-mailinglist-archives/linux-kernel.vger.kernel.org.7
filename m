@@ -1,104 +1,145 @@
-Return-Path: <linux-kernel+bounces-657078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37AD0ABEEEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:02:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9A2ABEEF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2BDD189D1F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:02:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DADAB1BA2783
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E1B239E7A;
-	Wed, 21 May 2025 09:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636682397BE;
+	Wed, 21 May 2025 09:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayiixZE5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FI5w5J4m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4932356DE;
-	Wed, 21 May 2025 09:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94E5238C16;
+	Wed, 21 May 2025 09:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747818143; cv=none; b=NZnBb35ItxWDmWqbfst3KjfurGIubET1K0AU1eHOotl6x6cjmUeIRUuqehKkmivfxCbAUN9C0+LvOufNu4EjHLxEspSW/ZxOBZXRch1pgbiDDi8KgarKY4CX9RTIJCuakvF1SO56RRZMoIGCT9gvHJoWByFeTqfVxwvORMr9bmw=
+	t=1747818163; cv=none; b=fN2WiSMByF+hYqapJTMFDLfK7CbaB92LiwSEDSscrQTL1SadbZtxGqxpIyrc0xbmC63gD/HVo4Eymdsat6I+vSjP6X7al363EjHZFWa4JE50ve6/tnaKZfM5y3mRsCOd0w7ZSP/QcyvtDHr4lab9snCgvFy7ii4rtMtR+4219Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747818143; c=relaxed/simple;
-	bh=1F+XLvKJN8mGHglQB9+YpWwhAiCnby4yAK6uXiE4F54=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=USDrPRxAcIo70bty9fs5le7/b2x4iRrKFXHzjGQoGP62UxzepY8QqGtrxozzD5TXwCGKmqap7Gj84+8XwC03t80/Jkn4+Q8g5zbg95JFhq27qpgePHZa4WpLozE7zmxJDpGB46WgcLKXp0ERtStF8WrdyLOXkbWmFV4qqZgsuEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ayiixZE5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9554C4CEEF;
-	Wed, 21 May 2025 09:02:22 +0000 (UTC)
+	s=arc-20240116; t=1747818163; c=relaxed/simple;
+	bh=RHaIWcN8RKu7hWMQ6BWOpFnFMTzBn0vqTSYhbOt0Hhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HiQhw7fGfSQFehEJPS1xN6GlahYojaMwrkU57da0jVnfKxhkylSb7POqn8WuR+nEbIQvd6twlYMKAGGVK5r8yHzZAHuwgl6tmXHOo5qoTsFv5ACjZclyoUxCFh5602Zx64PEhCdA1GSURvpg91gvcC/3b0nC/tbKlk3+Mtq3Paw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FI5w5J4m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7DB9C4CEE4;
+	Wed, 21 May 2025 09:02:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747818142;
-	bh=1F+XLvKJN8mGHglQB9+YpWwhAiCnby4yAK6uXiE4F54=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ayiixZE5PjtMegiMEfcN/b+gD+9JXxiPApEbPBI10p8y5YNhm8E+cbeHh0Q1Q/Xx9
-	 GHDoq43xiuCMOPRTcH19fuDas5cqwPPqzezfr30bVtkHaAFLZLIBkFmf6rdt57ka4m
-	 P4DLaUNIMg2qVGoTXhcfbK1FvaXvvwX/Er+NZFC1EhpJaUnFBwcBSTwRW7vvpQJ8v7
-	 QUkYNURhI6DEssc9zzwS4Ou2YqT2Yvo9w8Dmh0GzOAnGyxX4CB0wP48VjS0CGmlgqx
-	 /08ALbHYE77Vp6qknNH371+e044qMZ+bMsipmpy5aYcxrfI6K340DTLl5Dt7WtOhZR
-	 NHWR0OpN6U9Ug==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uHfLA-00000006L9i-3ki0;
-	Wed, 21 May 2025 11:02:20 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Akira Yokosawa" <akiyks@gmail.com>,
-	"Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-	"Masahiro Yamada" <mchehab+huawei@kernel.org>,
-	"Nathan Chancellor" <mchehab+huawei@kernel.org>,
-	"Nicolas Schier" <nicolas.schier@linux.dev>,
-	"Randy Dunlap" <rdunlap@infradead.org>,
-	"Stephen Rothwell" <sfr@canb.auug.org.au>,
-	linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
+	s=k20201202; t=1747818163;
+	bh=RHaIWcN8RKu7hWMQ6BWOpFnFMTzBn0vqTSYhbOt0Hhk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FI5w5J4m8fOlsArp2GXpfaHSJ7At4lAhl3yYOEYj6PsgDFVJQ+aMdonauBV4teN+O
+	 GElayUeVtP/44LIlgawnclP3ZK3vTouYa4Uo2kow1ykc/H9JnUzINcW4BXcgOf80t1
+	 V+zhGLinvtRcgZJfbFgs4iDb9sIVkvdzH2UxSIpXEjSKpknqGIdZ4pXJnPt9ZLhZmr
+	 II0Pcu79NA8LuKTfpyRl9P12IJ5CYlNzTiP6uSGLy/Tjd8XhOZ+iy5GjZHlTaBXhUU
+	 KVOmdFmcA4RYAC2KilXH+76+Ezqzabs75Oodo34VLV31YUTlWCV7Swg6+LOoz7h3z8
+	 wFUF/FJWNEXxA==
+Date: Wed, 21 May 2025 11:02:40 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Steffen Trumtrar <kernel@pengutronix.de>, 
+	Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] scripts: kernel-doc: prevent a KeyError when checking output
-Date: Wed, 21 May 2025 11:02:15 +0200
-Message-ID: <4efa177f2157a7ec009cc197dfc2d87e6f32b165.1747817887.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1747817887.git.mchehab+huawei@kernel.org>
-References: <cover.1747817887.git.mchehab+huawei@kernel.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: leds: add lp5860 LED controller
+Message-ID: <20250521-versatile-hamster-of-completion-d96e0a@kuoka>
+References: <20250514-v6-14-topic-ti-lp5860-v2-0-72ecc8fa4ad7@pengutronix.de>
+ <20250514-v6-14-topic-ti-lp5860-v2-1-72ecc8fa4ad7@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250514-v6-14-topic-ti-lp5860-v2-1-72ecc8fa4ad7@pengutronix.de>
 
-If a file sent to KernelFiles.msg() method doesn't exist, instead
-of producing a KeyError, output an error message.
+On Wed, May 14, 2025 at 12:36:28PM GMT, Steffen Trumtrar wrote:
+> The lp5860 is a LED matrix driver with 18 constant current sinks and 11
+> scan switches for 198 LED dots:
+>   * Supply range from 2.7 V to 5.5 V
+>   * 0.1mA - 50mA per current sink
+>   * 1MHz I2C and 12MHz SPI control interface
+>   * 8-bit analog dimming
+>   * 8/16-bit PWM dimming
+>   * individual ON and OFF control for each LED dot
+>   * globat 3-bit Maximum Current setting for all LED dots
+>   * individual LED dot open/short detection
+> 
+> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+> ---
+>  .../devicetree/bindings/leds/leds-lp5860.yaml      | 112 +++++++++++++++++++++
+>  1 file changed, 112 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-lp5860.yaml b/Documentation/devicetree/bindings/leds/leds-lp5860.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..330ff42b27fb19395e64f813da4b0ab1fa22fe69
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-lp5860.yaml
+> @@ -0,0 +1,112 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/leds-lp5860.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: LED driver for LP5860 RGB LED from Texas Instruments.
+> +
+> +maintainers:
+> +  - Steffen Trumtrar <kernel@pengutronix.de>
+> +
+> +description: |
+> +  The LP5860 is multi-channel, I2C and SPI RGB LED Driver that can group RGB LEDs
+> +  into a LED group or control them individually.
+> +
+> +  For more product information please see the link below:
+> +  https://www.ti.com/lit/ds/symlink/lp5860.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,lp5860
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    maximum: 12000000
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Closes: https://lore.kernel.org/linux-doc/cover.1747719873.git.mchehab+huawei@kernel.org/T/#ma43ae9d8d0995b535cf5099e5381dace0410de04
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Acked-by: Akira Yokosawa <akiyks@gmail.com>
----
- scripts/lib/kdoc/kdoc_files.py | 4 ++++
- 1 file changed, 4 insertions(+)
+So that's a SPI device? Where is the definition of this field? You miss
+ref to peripheral props.
 
-diff --git a/scripts/lib/kdoc/kdoc_files.py b/scripts/lib/kdoc/kdoc_files.py
-index 630aa5ca6460..9be4a64df71d 100644
---- a/scripts/lib/kdoc/kdoc_files.py
-+++ b/scripts/lib/kdoc/kdoc_files.py
-@@ -271,6 +271,10 @@ class KernelFiles():
-                                       no_doc_sections)
- 
-             msg = ""
-+            if fname not in self.results:
-+                self.config.log.warning("No kernel-doc for file %s", fname)
-+                continue
-+
-             for name, arg in self.results[fname]:
-                 m = self.out_msg(fname, name, arg)
- 
--- 
-2.49.0
+...
+
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+
+And this is unevaluated. See other examples.
+
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+
+Where do you use this header?
+
+> +    #include <dt-bindings/leds/common.h>
+> +
+> +    spi {
+> +        #address-cells = <1>;
+
+Best regards,
+Krzysztof
 
 
