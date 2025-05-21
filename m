@@ -1,144 +1,277 @@
-Return-Path: <linux-kernel+bounces-657511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92752ABF4FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:59:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05ABAABF4FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686083B94DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:58:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 765667A41D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0028426D4E0;
-	Wed, 21 May 2025 12:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F1A26E15D;
+	Wed, 21 May 2025 12:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnoVGq66"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ul4K2NoF"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A148267AFB;
-	Wed, 21 May 2025 12:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3270238C04;
+	Wed, 21 May 2025 12:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747832327; cv=none; b=EUrKFwxarC0Yejp+jzDiLifgvYCONBr5W66o9tOGwDtVi4ly+Hs4ornYIvC2YKEMSYa9l6ZYbz+tPq+jVLdYPh8eYnKZGA2qIERZyxfx0yYLVIMf6HW+fN8yThCAw7RatSl/nBoChOXoyVyQHN1vN5liJyOHzFCSDx9UsbfHhV0=
+	t=1747832346; cv=none; b=MYqaPUc9kBkXFS3YDE6z35EUBMvrh2Zdne3LxOigaIeZ+qCszTSLBaMsoZbDQJCX36StWhFhbcTHkhR3AtB1sYC6T8rOeVVhawxYw3K6xmeJBScji7FetkrttTyPcBFyE9pOJKpMIecddsOox4140N0mUUIXo2w79XAEACtYAh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747832327; c=relaxed/simple;
-	bh=IeQnLNJstNjynSs1koAm+vW3nzqLzxm3im3la+GCGMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=knheJfqU9lCl6Cq4OG+knGxpR7O3xBQAkz5DHGgI1MWf3MiiMKM2X1f0Eqc0lvKhbJswzMQ+/Exr5xLOG4BkAzlUz0yspeV7ksHnco7G2VKc6ARoLjvkEhnlBr2bCCkNck6xCzdFQf11lWDz3MTy7DdA0BdxsdWsaBd7UpcFOzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnoVGq66; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3C3DC4CEE4;
-	Wed, 21 May 2025 12:58:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747832327;
-	bh=IeQnLNJstNjynSs1koAm+vW3nzqLzxm3im3la+GCGMU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MnoVGq66iFbuFbrV5nf9ftLCWI+aBqdECdHTKaLh0hlPeo6aFLoxw44EjQGFG8A+n
-	 IXkHhB6JJOYgBx8k4c2Sn/2F8kFxhpX/hPFNp4daadLKS09YGJzSSs/CdDybSdUCkW
-	 27lCmgeMSYe9Ce3FeQtA85w7ukVqF4/42r2omGZa7Kc/jVBX3JHzD/w6ZrqwUs8hTE
-	 tkAkGAIkuOq3koHntDsetHtM4NjvcH34nAM48hZxjQGZ/PPJjMect9y0cPbD4a6p6S
-	 AqlQP6iYpH0XIMGzzB/KRaHMs5H+9wCCCePODnR5qdEVwbe270S/Tss4aZfgtJGyGH
-	 LVmWsO/Jdi6aw==
-Message-ID: <bd9ab640-2469-4455-bd69-302dd3898c7b@kernel.org>
-Date: Wed, 21 May 2025 14:58:40 +0200
+	s=arc-20240116; t=1747832346; c=relaxed/simple;
+	bh=QZdHAHwfqshPC1jRcjXaTn0ivG0PfpmF4PV30xVBifo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=p442hhwnBpy33RSAxZiBaAMEhvqZV7nUf99cnYxMFuyGrcWP7bynmkyfpqyly6eeknv8hlSL+0G4VQjVloBI9n8t9QXqGQtBQ0+hmK2afy3r8pnodGVglP7bq+62KsPOYoHJpv2IgZIbbkMEyIzaYfpz4DxJNteR6WG03yQ8G8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ul4K2NoF; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L4b229023126;
+	Wed, 21 May 2025 12:58:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=7ZBTcq
+	AAJGahPNJL6QJFCYv9rJB6qJJlgN6LrW/cYyI=; b=Ul4K2NoFmk9KUmodTNUKzY
+	phICVuDdTsSaNtxHhvH3bbiE5TgBHkAA5geD+VtjpXWsjK3S9sC7Js9x8txr6nxA
+	y7mCA+ISHNcnQne7XgZzAg4ZX/RXRZ1822qvlFPZiQY8tCDjRQbE3eSmb8ObrXs+
+	9uaDBvu9d+DZ6GlVp27PZhP9lFzDA10B19StmJ/r5npn/eQXRAz3FjWjDhDynXO1
+	Plk07KZc+syWAOuQ6mFaFWB9nCrZlYFjmLshUupts8FWX48QzmBBHibz5KPcmzxb
+	NgiX1ox1TxO7PumP8Ny3JjTRIc4Ijj8zc2VXhcuc3jJ8F6j33hbawn2tkti+KrzQ
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46rxaamg6g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 12:58:49 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9totF032087;
+	Wed, 21 May 2025 12:58:49 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46rwnmc81k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 12:58:49 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54LCwmeR32965234
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 May 2025 12:58:48 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 781A95805F;
+	Wed, 21 May 2025 12:58:48 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9A19558059;
+	Wed, 21 May 2025 12:58:47 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.23.72])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 21 May 2025 12:58:47 +0000 (GMT)
+Message-ID: <02e5091f96404a86073abacb2861a07cf1deb439.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: add a knob ima= to make IMA be able to be disabled
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Baoquan He <bhe@redhat.com>, linux-integrity@vger.kernel.org,
+        kexec@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, pmenzel@molgen.mpg.de, coxu@redhat.com,
+        ruyang@redhat.com, chenste@linux.microsoft.com
+Date: Wed, 21 May 2025 08:58:47 -0400
+In-Reply-To: <1d2848fe45dbf58707cecf16c4fc46b179e24415.camel@linux.ibm.com>
+References: <20250515233953.14685-1-bhe@redhat.com>
+	 <aCaFNvHbYxrCaPbe@MiWiFi-R3L-srv>
+	 <1d2848fe45dbf58707cecf16c4fc46b179e24415.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] phy: exyons5-usbdrd: support HS phy for
- ExynosAutov920
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
- kauschluss@disroot.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
- dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
- selvarasu.g@samsung.com
-References: <20250516102650.2144487-1-pritam.sutar@samsung.com>
- <CGME20250516101803epcas5p2d9403d89d840dcad88a03d437a48aceb@epcas5p2.samsung.com>
- <20250516102650.2144487-3-pritam.sutar@samsung.com>
- <a5c1a064-d760-4140-9e78-d74823b400a8@linaro.org>
- <000101dbca1d$78ca5570$6a5f0050$@samsung.com>
- <42ddb5c6-0f17-41ed-8bd4-ab58880515b1@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <42ddb5c6-0f17-41ed-8bd4-ab58880515b1@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=CMEqXQrD c=1 sm=1 tr=0 ts=682dce09 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=UeMwZWw34uBX8khp:21 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=20KFwNOVAAAA:8 a=WRvSffXkUtG6d0X-7VIA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: lXfcAT3opLDtnDkB2T7VqkO6QB2HWX4P
+X-Proofpoint-GUID: lXfcAT3opLDtnDkB2T7VqkO6QB2HWX4P
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDEyMiBTYWx0ZWRfXzBppxba+OEb5 kKuLEwKx1C5wTNf2l/LEGzpF+L6vh8Kkrhiggu5ubJhUYA5J4ACWH2pxkMRcCq6agHD/gzozcuS skl7UpcDtuN+MMPI8BYwiLeCJmBIV2DRJDxR3+u3xrw7p/5XWx1vrekVa4X3/3ELAT4AvZxZtDI
+ hpV1DImQSCI5TmSPHCW7UwKBvVXMcF2cwU9l+hBlqdJ6VwtsOMy1j99L4yybk8PbEwz4wtCwZkm ZZlBZrcpvDifcNjKjhED6nFfw1MydwwWFOYu23PUMqX875QwXKFBPJI/57FuylYouKdQNinNR24 nfmy0CFx3PzN+h0s4iBOnwJJW7B1KGqa/zYAh1MzICJ3CwwhhyWi5hutMzla7jY/VucdNYm8EAW
+ SfEzO9rBllvcTDVja98nvCCVjg5HqII9dJVO10mYwsWrSWmIzxdgFAp9B4X2b4kXt7TBFCHX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_04,2025-05-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ phishscore=0 bulkscore=0 clxscore=1015 impostorscore=0 malwarescore=0
+ mlxlogscore=999 adultscore=0 suspectscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505210122
 
-On 21/05/2025 14:56, 'Neil Armstrong' wrote:
->>> <snip>
->>>
->>>> +	}, {
->>>> +		.compatible = "samsung,exynosautov920-usb31drd-phy",
->>>> +		.data = &exynosautov920_usb31drd_phy
->>>
->>> All those new ops are only called when matching this compatible, it it really
->>> necessary to check the version ? is there "samsung,exynosautov920-usb31drd-
->>> phy" PHYs with version different from 3 in the wild ?
->>>
->>
->> This SoC has a single USB 3.1 DRD combo phy of version v400 (major : minor versions) and three USB2.0
->> DRD phy v303 (major : minor versions) controllers those only support the UTMI+ interface. Currently,
->> supporting only v303 phys in this patch-set, and planning v400 phy later (soon).
->>
->> Yes, there's v400 phy version that is different from v303 phy. Hence, phy version check is needed to support both the phys for same compatible.
-> 
-> OK so add 2 compatibles, one for the usb31drd and one for the usb2drd since those are 2 difference hardware.
+In addition, please update the Subject line to be less generic.
 
-...unless this is fully detectable hardware, then use fallbacks and only
-one compatible in the driver.
+thanks,
 
-Best regards,
-Krzysztof
+Mimi
+
+
+On Wed, 2025-05-21 at 08:54 -0400, Mimi Zohar wrote:
+> On Fri, 2025-05-16 at 08:22 +0800, Baoquan He wrote:
+> > CC kexec list.
+> >=20
+> > On 05/16/25 at 07:39am, Baoquan He wrote:
+> > > Kdump kernel doesn't need IMA functionality, and enabling IMA will co=
+st
+> > > extra memory. It would be very helpful to allow IMA to be disabled fo=
+r
+> > > kdump kernel.
+>=20
+> The real question is not whether kdump needs "IMA", but whether not enabl=
+ing
+> IMA in the kdump kernel could be abused.=C2=A0 The comments below don't a=
+ddress
+> that question but limit/emphasize, as much as possible, turning IMA off i=
+s
+> limited to the kdump kernel.
+>=20
+> > >=20
+> > > And Coiby also mentioned that for kdump kernel incorrect ima-policy
+> > > loaded
+> > > by systemd could cause kdump kernel hang, and it's possible the booti=
+ng
+> > > process may be stopped by a strict, albeit syntax-correct policy and
+> > > users
+> > > can't log into the system to fix the policy. In these cases, allowing=
+ to
+> > > disable IMA is very helpful too for kdump kernel.
+> > >=20
+> > > Hence add a knob ima=3Don|off here to allow people to disable IMA in =
+kdump
+> > > kenrel if needed.
+>=20
+> ^kernel
+>=20
+> > >=20
+> > > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > > ---
+> > > =C2=A0.../admin-guide/kernel-parameters.txt=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 5 +++++
+> > > =C2=A0security/integrity/ima/ima_main.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 22 +++++++++++++++++++
+> > > =C2=A02 files changed, 27 insertions(+)
+> > >=20
+> > > diff --git a/Documentation/admin-guide/kernel-parameters.txt
+> > > b/Documentation/admin-guide/kernel-parameters.txt
+> > > index d9fd26b95b34..762fb6ddcc24 100644
+> > > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > > @@ -2202,6 +2202,11 @@
+> > > =C2=A0			different crypto accelerators. This option can
+> > > be
+> > > used
+> > > =C2=A0			to achieve best performance for particular HW.
+> > > =C2=A0
+> > > +	ima=3D		[IMA] Enable or disable IMA
+> > > +			Format: { "off" | "on" }
+> > > +			Default: "on"
+> > > +			Note that this is only useful for kdump kernel.
+>=20
+> Instead of "useful" I would prefer something clearer like "limited".
+>=20
+> > > +
+> > > =C2=A0	init=3D		[KNL]
+> > > =C2=A0			Format: <full_path>
+> > > =C2=A0			Run specified binary instead of /sbin/init as
+> > > init
+> > > diff --git a/security/integrity/ima/ima_main.c
+> > > b/security/integrity/ima/ima_main.c
+> > > index f3e7ac513db3..07af5c6af138 100644
+> > > --- a/security/integrity/ima/ima_main.c
+> > > +++ b/security/integrity/ima/ima_main.c
+> > > @@ -27,6 +27,7 @@
+> > > =C2=A0#include <linux/fs.h>
+> > > =C2=A0#include <linux/iversion.h>
+> > > =C2=A0#include <linux/evm.h>
+> > > +#include <linux/crash_dump.h>
+> > > =C2=A0
+> > > =C2=A0#include "ima.h"
+> > > =C2=A0
+> > > @@ -38,11 +39,27 @@ int ima_appraise;
+> > > =C2=A0
+> > > =C2=A0int __ro_after_init ima_hash_algo =3D HASH_ALGO_SHA1;
+> > > =C2=A0static int hash_setup_done;
+> > > +static int ima_disabled;
+>=20
+> Like the ima_hash_algo variable definition above, ima_disabled should be
+> defined as __ro_after_init.
+>=20
+> > > =C2=A0
+> > > =C2=A0static struct notifier_block ima_lsm_policy_notifier =3D {
+> > > =C2=A0	.notifier_call =3D ima_lsm_policy_change,
+> > > =C2=A0};
+> > > =C2=A0
+> > > +static int __init ima_setup(char *str)
+> > > +{
+>=20
+> is_kdump_kernel() should also be called here, before the tests below.=20
+> Something like:
+>=20
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!is_kdump_kernel()) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 pr_info("Warning ima setup option only permitted in kdump");
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 return 1;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>=20
+> > > +	if (strncmp(str, "off", 3) =3D=3D 0)
+> > > +		ima_disabled =3D 1;
+> > > +	else if (strncmp(str, "on", 2) =3D=3D 0)
+> > > +		ima_disabled =3D 0;
+> > > +	else
+> > > +		pr_err("Invalid ima setup option: \"%s\" , please
+> > > specify
+> > > ima=3Don|off.", str);
+> > > +
+> > > +	return 1;
+> > > +}
+> > > +__setup("ima=3D", ima_setup);
+> > > +
+> > > +
+> > > +
+>=20
+> Remove the extraneous blank line.
+>=20
+> > > =C2=A0static int __init hash_setup(char *str)
+> > > =C2=A0{
+> > > =C2=A0	struct ima_template_desc *template_desc =3D
+> > > ima_template_desc_current();
+> > > @@ -1184,6 +1201,11 @@ static int __init init_ima(void)
+> > > =C2=A0{
+> > > =C2=A0	int error;
+> > > =C2=A0
+> > > +	if (ima_disabled && is_kdump_kernel()) {
+> > > +		pr_info("IMA functionality is disabled");
+> > > +		return 0;
+> > > +	}
+> > > +
+>=20
+> Even with the additional call to is_kdump_kernel() in ima_setup, please k=
+eep
+> the is_kdump_kernel() test here as well.=C2=A0 Even though the code is se=
+lf
+> describing, please add a one line comment emphasizing disabling IMA is
+> limited
+> to kdump.
+>=20
+> > > =C2=A0	ima_appraise_parse_cmdline();
+> > > =C2=A0	ima_init_template_list();
+> > > =C2=A0	hash_setup(CONFIG_IMA_DEFAULT_HASH);
+> > > --=20
+> > > 2.41.0
+> > >=20
+> >=20
+> >=20
+>=20
+> thanks,
+>=20
+> Mimi
+>=20
+
 
