@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-657478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26B4DABF49E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:45:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25D61ABF4A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D681BA6474
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:45:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AF561BC0459
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC56E267F46;
-	Wed, 21 May 2025 12:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FE7263F3C;
+	Wed, 21 May 2025 12:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UTnGNjdE"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pFdTEngw"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59F1267397;
-	Wed, 21 May 2025 12:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB24238C1A
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747831513; cv=none; b=EMVe3x5+nArEQszO/BLmG5AtikZXYA3BqScgkcT8WD7meH/Im4D23FXk3ZtnLJncAnOuq63OH2k4QuW1DX1G3Jpiaa8GDDYS2iQ2J/T3CF+omhIuMkaBU8g+2s5nPz4dJects6wH3u64NUliOsOmVhZNrsQ39C7x0h4R7cT0H2U=
+	t=1747831614; cv=none; b=fmnF8lqZQu0NqUCk2JdijMavOU5g3l/VhBtgFjot7QBpxFw3/SDmLJ8i2BH4bq/K8io0fIBXnxzsxkr5sf4tMlybZHNhotM5St+3pdcsK10wWYJ5cFXYzbNadVap4k4dZTCF7cM3o0XlXc2OowH7nFl6nQOqoLwtKpqaL8jV2ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747831513; c=relaxed/simple;
-	bh=4H0rPkjQH+/fJ/cjuVaeZatOtnNeHYnsf/hZvYEqwrs=;
+	s=arc-20240116; t=1747831614; c=relaxed/simple;
+	bh=Xqeu1aJ9MItEqCaHvO4dZVDW/+gda4kJKzaek2qb/UU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kWYwxEVeiVx+7zme0b730p4iAX0wm7WSNuEH+mrl0AZijWb5LRz1yxfKj4rhn67kVR818H7Qsu7U9c+o7h9Y2JFevRi9gNeA+o1BIBJCJyhjJ0Mnpn6DmOFvudZDL0NtA2rZXzIrXE/Ho1KLpZS745zc3y0wovhzGpz0uRwvJy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UTnGNjdE; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6f0c30a1ca3so66665556d6.1;
-        Wed, 21 May 2025 05:45:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747831510; x=1748436310; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vhnzj3NnJO366VT/ATwYapAPa7ylDj+dwVk+TFu/WXo=;
-        b=UTnGNjdELAWoS2Ursmtk+PExd44r6owpYWGHTwpRJ2sM/IfUFwT8/v8BglAbIhuZ0n
-         ftUl80CeXohbwzEJutS/sf+00K+FDuJArlxPSDuPEVWSu1oQFFzU9m2VtU40bahzC3T9
-         lpzix4tb6WAFz3iuJoGLEIKCC/QVlVw0YY4B4H0nP1LUXqgOiD7scrrVDPMDsoPecJG7
-         YjZ9MCuopqQ45gGUP1O6DVDJZoPmzFsDCdzRVk5N5bXOJR6clGMXKqy0VLyvNiQZNQxe
-         GqZ/8+k+jcE14cLPojE8zMDJzZaQn4+NCATHpUGio0eW4vzR39E1GBRB9DDTRQhVB2aq
-         DxMg==
+	 Content-Type:Content-Disposition:In-Reply-To; b=ljHPNAe7lNWw5fBKyC9COYlWPPggwVtPFSbGzytcjEuxAXRCzZ9qY0pSq0HUl8sAEXBE2Kjnav3B4m29bsHGRR0CGGf3VmNPMKLQI2kuCXBeY5gjwVqxYAWGqQwmr9AxN3SHUrdvo6zNtWdfKso3H6ZmWfy+BzF5qqWb42fPp7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pFdTEngw; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9Xx3N032698
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:46:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=sDTfHXY5P0IUFKShT7L/9f91
+	7VhrL5k2KweIDi5wmfs=; b=pFdTEngwWRO0CNSUUa02wThitfFtqjr336BgyA80
+	CTQ9jIeELHzB2Vjs4HosseT/LLzKbQ8EXjrr+IU0cZepeiYK51O+IginuP7ffyU+
+	jTWkC7yv1E27pZxpHYWNxy6Etoa1mnHoknH7m6VFIT2IzFkn4Itjqg5BekNhz6Jh
+	bhwxiZCjpUZldll7dOmJMZ2bTs+pCb6s8vP+JY9Sdfbr3TPOxWD2kNNWDzrHg9ts
+	QXrQd0ZL7B/SDWKRtcAGwRafT8aSa6LHK7iKijXh3z3UGz2q+c/eCmiy+jNwH8cB
+	M9HPqXCeFJBQbxv7XQAgRwqP7RFZIAYz860dKnJpCrfVvA==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46s8c21fe9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:46:51 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6f8c8a36dddso79136216d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:46:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747831510; x=1748436310;
+        d=1e100.net; s=20230601; t=1747831610; x=1748436410;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vhnzj3NnJO366VT/ATwYapAPa7ylDj+dwVk+TFu/WXo=;
-        b=u4Wdwb+ZBhR9tyMDl/motOIrq1HV6ej0e3bOogxd/7qmgH3YixGe9kZIu8CGtK+dKI
-         6y7kc0KY8Sil+v4olkJK1RdIyu5SJHMY9zQrODer0jq4FfKlH+ZN+9qcMnE8aKo5REBM
-         GBzD64EJltMBqJzMDiNedH+WLl9Inu8oisbBd/78JzYt+ApY5rrYUUqxLC8H353wTaqV
-         jiJoMmHk/aQm42erkgcTuCcHXEpkrPnHkZHvKCeNBwJdjW7k0QFiq5B/O1k7Oa/lrRHJ
-         zHFBF+cn9/VXHltktWjoJC/hajfsQ/7eQPJN5GrBbx08MW95Y370ZTtHeDZ4c1fnVzp5
-         fdUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0/m2xqLykc3BBh/UoqyunTx8yOr6j95uJQg2UfAsdhfX7pmaZtg/1yp1ugTCjp+lWAGA2kuGY1rGtQtc=@vger.kernel.org, AJvYcCXX8CPjw0ASg4j3dzVwYLil+xXIKn6RF4nr7L5DlMW60hR8XHWdvIOkp91vKOZFcHOt/JbcWhszBSwR7jlc/Ks=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD8YBQSYkIDq6nUefaoMUOij1DIfp1FLfxrGLrf5MJswVNQI1E
-	tvrci3ywO6TN2iLOf7nPI+yktGmLTB6onirZzwOGogu6rAYNd9mUl73i
-X-Gm-Gg: ASbGncsDGfpVcQ7rWpd8/94aBA4ygbKFnYIpLu1LWlhoKVdsdPjg74Ggw7/yvmIufM3
-	LA8pNmc2gYCY6VuJnAZ0V8yk61wm2qS0eFTja6A16oEbf1mq5V6TqtHWbC7eJf5M8OYSSbJNxwX
-	kEbx2j4ckoWHlYi44y/D7LR4Mzlgmv4XGuKtVlgiZ/KsZ6N9IwbTFKomCGPQfEpNSN/v8hVs0bU
-	lA3hKdSBsTG8afX8yt3EbBd1Co0RomOzewBVVeyeakayuxy528GAnnKHkDizpAkdLPPm/lE/rVR
-	3MKkU1WRrva+XkWoPFxPmY9/5p+0VJgbwczsPO8dLW2DpXKyiy06vpeyaQNjTc/4T3XNVM2I9wm
-	rGaVx23bCcXNTSjk8nxPROYFz5HNyppULloG18bXkpA==
-X-Google-Smtp-Source: AGHT+IEfRSqcGJ5t4rcRxmzM2k920FXsaJwu1wxt9D1Hfdpn8uKSN3fb6OCq2dNh4iOIGz1TYtv/Hg==
-X-Received: by 2002:a05:6214:cac:b0:6fa:864f:87cc with SMTP id 6a1803df08f44-6fa864f8a4fmr18904046d6.33.1747831510427;
-        Wed, 21 May 2025 05:45:10 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f8b08bf66bsm84578696d6.63.2025.05.21.05.45.09
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sDTfHXY5P0IUFKShT7L/9f917VhrL5k2KweIDi5wmfs=;
+        b=rTAfdmCwuO0Mj6SvuHT7He4C0Tsvh/IX8NolMhMIYNDyHz03zKgG/TiyQvw56VHkQj
+         YgQd91Q3kSBnsncNV7Lm5X+clOG5PIBFPcnegr/Am3DXVqHlEsOrmX6ym9YFeF1mixA/
+         qo3Ye0ab+395pnGKAvUDPYz327xK1qVn9dG5K0GTjKl/V3UBc6y28//kWkMUZJYGJ7oP
+         7a8tF9zIwabvbl8BTmiwlrv7ue0XNK1y4wYMIBqiytV4YEi8QrxXX75U/1osT4T1uto1
+         klcCparjXV04hQ+yLDOE9Tpsk/L6U1AuhasicwT5m+OXC4eFopnM0+RgzPRukDSrgso+
+         /jgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/GDUSDczXMBRH3HNimXD7xuDWR3/eIYkmU0b2MywjR1B5iLIqGvToLCRwYwWKeQ6lmn79MEC+WzXJaa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHuLlepCygKxYQOKnYnIpQg6+NSLexdl0dLrHtcOX4ul7mSbAE
+	EgVrkqcMfb9LJD/9hbOqMGHoV74x1AhZftLk9eNno/ejiOEJgkCMdodx2YeA2fFQrUcIYdQD/X/
+	WeockdbK4H6I08kH07pbgEGpirvhcHIk5kt0+QnXBlTtozizFybN75VOBZdBRSVTc5Ng=
+X-Gm-Gg: ASbGncsKZnCg8iEuky44q+HMH1HzqQy70R/Zhxecshmn8xvuyrsRInU3wZB1Kl5f7vg
+	ZUc/P4eUHY1mBHDJh5iXbpwEA0TC+O6G5S0Fc3b9eWiCjaN9Bj0ZCPuijncFDV1Mq3FaLCE2Mfh
+	fYDPwMTf1q5XNsSDNM/BOAt3xYfooLJq3Yk/lVNhlHsWkP3nIOVXxr+BFsBpP6QnvoBQkrAF/08
+	xypaRtUAvfpgHxbZnrKzY9oxS9invl/MbsJHcpaGIgxvgqlr/QBUNOvZOCRAixPHT2rtVF+mwbT
+	VbVJ8jqJjH5y7rqKO6VHH7wGaOHHdJHhh0aLLkJb0SqeOsI7EYrKvLjUHsTvpk3jnEXVLNd50KA
+	=
+X-Received: by 2002:a05:6214:2403:b0:6f6:33aa:258b with SMTP id 6a1803df08f44-6f8b2d44cb2mr310211916d6.45.1747831610317;
+        Wed, 21 May 2025 05:46:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEKrrceDDu+GLUk9ALbLga29Hnv6Ac2h9d892IylQS5MNstSZj4gPJnCFx3NnyAWf0EeS1rWw==
+X-Received: by 2002:a05:6214:2403:b0:6f6:33aa:258b with SMTP id 6a1803df08f44-6f8b2d44cb2mr310211526d6.45.1747831609859;
+        Wed, 21 May 2025 05:46:49 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e703c2f3sm2798700e87.214.2025.05.21.05.46.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 05:45:09 -0700 (PDT)
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 5CD34120007A;
-	Wed, 21 May 2025 08:45:09 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Wed, 21 May 2025 08:45:09 -0400
-X-ME-Sender: <xms:1cotaFbzhLa-AVxwpQ35d8kX6hIq-ZwWislwhChbDGrE886dcXNkqg>
-    <xme:1cotaMb7eFhXctyLi7ci4R4k3tFn2T2VAuphJPlupRodTcGwYg19z8qCxeIB3OiXg
-    GoUBfDa8naZrFuR_A>
-X-ME-Received: <xmr:1cotaH9vnyOR6XHBgx3dt1S-54GBmy0ro27iatwvJnw6GrIg8QlhdE-Y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefuddvucdltddurdegfedvrddttd
-    dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
-    nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
-    enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhgg
-    tggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunh
-    drfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffet
-    uedtvdehueevledvhfelleeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgr
-    uhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsoh
-    hquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghr
-    tghpthhtohepvdehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrtghouhhrsg
-    hothesnhhvihguihgrrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtph
-    htthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegp
-    ghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhssh
-    hinhesphhrohhtohhnrdhmvgdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpd
-    hrtghpthhtohepthhmghhrohhsshesuhhmihgthhdrvgguuh
-X-ME-Proxy: <xmx:1cotaDr_BZnTBO2ZZrxy5srrQmZLzeo9gWXnSOIXgNKffweWuOxofg>
-    <xmx:1cotaAqMl1zRLe7L77t9gwX1n54-xBKwNgVE1PMBxXFMnUOO50bscw>
-    <xmx:1cotaJQ4dtper7JsxvJG39LklNMIPguYPvErgkSuMnOiT_alNE6wdA>
-    <xmx:1cotaIqgOC4ilrO4JZb18O9O6GbSlFri46ozj22VjBeOFxpIB5P63g>
-    <xmx:1cotaJ4jQULX3Xw0qsN9n-dwPqENjGgYpRv_JvJUfS2Dt1RcyknYAt6Z>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 21 May 2025 08:45:08 -0400 (EDT)
-Date: Wed, 21 May 2025 05:45:07 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 03/20] rust: sizes: add constants up to SZ_2G
-Message-ID: <aC3K0-z7JARmg7Cc@Mac.home>
-References: <20250521-nova-frts-v4-0-05dfd4f39479@nvidia.com>
- <20250521-nova-frts-v4-3-05dfd4f39479@nvidia.com>
+        Wed, 21 May 2025 05:46:48 -0700 (PDT)
+Date: Wed, 21 May 2025 15:46:47 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v4 02/18] dt-bindings: clock: qcom: Update sc8280xp camcc
+ bindings
+Message-ID: <the3rt4gwb766u5tmzzugoozkyt3qw7kxvy6mlemxcqb5ibs37@szcq2rzbukma>
+References: <20250515-videocc-pll-multi-pd-voting-v4-0-571c63297d01@quicinc.com>
+ <20250515-videocc-pll-multi-pd-voting-v4-2-571c63297d01@quicinc.com>
+ <20250519-barnacle-of-beautiful-enthusiasm-4e6af0@kuoka>
+ <ec4ee2f5-162b-430d-aeb9-90ad4559707b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -138,57 +112,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250521-nova-frts-v4-3-05dfd4f39479@nvidia.com>
+In-Reply-To: <ec4ee2f5-162b-430d-aeb9-90ad4559707b@quicinc.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDEyMyBTYWx0ZWRfX6KWG1buJ8ScH
+ gJ35HzyNmZzxwlQu5jP5rnhsRC9YpdU894rbxDs43Fjn2bKIBJ1PhAUAD3C94Cl1IE4RS5gNrBB
+ Kfwa/VIx7OgVjn1SwGArBQvORkoRuj7PGKVz/kjWyck5IGyzaKNGjPcdIEeXFK713Y8Q3RzTdYi
+ HJ/5MK/qHORdA6X4qxmkNvi9pcHtEIeylh+ZcdEz/LpapE61EjssGJbafqM7DvdeSuksq6axkA9
+ +yOMLQWEC2eaGN/+iucTD8lKEtHwQKJnZeprBgwPUQPARpfYF8b8Ws/heOgi2WW04VUEK/rPKTE
+ z0NL1vC7m3uNFQaPJhxrFVEhvzwN0hTrFsfsV8OKuEEBvAb6bHXEdTrgUQ9rbjC21SddNr6ulZZ
+ VSF/n+cRDQaq93DWUcpAtL6z8783rGKR+WH7YreMHtFRBsdgMRAaNR9Lfii+M+nj4ErDbq8F
+X-Authority-Analysis: v=2.4 cv=RIuzH5i+ c=1 sm=1 tr=0 ts=682dcb3b cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=dt9VzEwgFbYA:10 a=P-IC7800AAAA:8 a=mlDIMNG6S_g-ndTHxx4A:9 a=CjuIK1q_8ugA:10
+ a=OIgjcC2v60KrkQgK7BGD:22 a=d3PnA9EDa4IxuAV0gXij:22
+X-Proofpoint-ORIG-GUID: kjiDVW-C6BUnV9SQsQQ4BvQYKmCeNeSC
+X-Proofpoint-GUID: kjiDVW-C6BUnV9SQsQQ4BvQYKmCeNeSC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_04,2025-05-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ mlxlogscore=999 spamscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501
+ adultscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505210123
 
-On Wed, May 21, 2025 at 03:44:58PM +0900, Alexandre Courbot wrote:
-> nova-core will need to use SZ_1M, so make the remaining constants
-> available.
+On Wed, May 21, 2025 at 03:32:34PM +0530, Jagadeesh Kona wrote:
 > 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> 
+> On 5/19/2025 1:48 PM, Krzysztof Kozlowski wrote:
+> > On Thu, May 15, 2025 at 12:38:47AM GMT, Jagadeesh Kona wrote:
+> >> SC8280XP camcc only requires the MMCX power domain, unlike
+> >> SM8450 camcc which will now support both MMCX and MXC power
+> > 
+> > I do not see change to sm8450 here. This makes no sense on its own. You
+> > do not move compatibles - what is the point of such change?
+> >
+> 
+> I did the SM8450 changes in next patch (3/18). But I agree with you, this needs to
+> be more structured. So I am planning to drop this patch and instead take care of
+> single power domain requirement for SC8280XP within SM8450 camcc bindings using
+> minItems and maxItems properties based on if check for sc8280xp compatible similar
+> to below snippet.
 
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+I think it is a bad idea. I liked the split that you've implemented:
+separate bindings for platforms that require MMCX (and MX), separate
+bindings for platforms which require MMCX and MXC (and MXA).
 
-Regards,
-Boqun
+It might be better to start by changing SM8450 binding to support MXC
+and then adding SC8280XP to those bindings.
 
-> ---
->  rust/kernel/sizes.rs | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
 > 
-> diff --git a/rust/kernel/sizes.rs b/rust/kernel/sizes.rs
-> index 834c343e4170f507821b870e77afd08e2392911f..661e680d9330616478513a19fe2f87f9521516d7 100644
-> --- a/rust/kernel/sizes.rs
-> +++ b/rust/kernel/sizes.rs
-> @@ -24,3 +24,27 @@
->  pub const SZ_256K: usize = bindings::SZ_256K as usize;
->  /// 0x00080000
->  pub const SZ_512K: usize = bindings::SZ_512K as usize;
-> +/// 0x00100000
-> +pub const SZ_1M: usize = bindings::SZ_1M as usize;
-> +/// 0x00200000
-> +pub const SZ_2M: usize = bindings::SZ_2M as usize;
-> +/// 0x00400000
-> +pub const SZ_4M: usize = bindings::SZ_4M as usize;
-> +/// 0x00800000
-> +pub const SZ_8M: usize = bindings::SZ_8M as usize;
-> +/// 0x01000000
-> +pub const SZ_16M: usize = bindings::SZ_16M as usize;
-> +/// 0x02000000
-> +pub const SZ_32M: usize = bindings::SZ_32M as usize;
-> +/// 0x04000000
-> +pub const SZ_64M: usize = bindings::SZ_64M as usize;
-> +/// 0x08000000
-> +pub const SZ_128M: usize = bindings::SZ_128M as usize;
-> +/// 0x10000000
-> +pub const SZ_256M: usize = bindings::SZ_256M as usize;
-> +/// 0x20000000
-> +pub const SZ_512M: usize = bindings::SZ_512M as usize;
-> +/// 0x40000000
-> +pub const SZ_1G: usize = bindings::SZ_1G as usize;
-> +/// 0x80000000
-> +pub const SZ_2G: usize = bindings::SZ_2G as usize;
+>    power-domains:
+> -    maxItems: 1
+> +    minItems: 1
+>      description:
+> -      A phandle and PM domain specifier for the MMCX power domain.
+> +      Power domains required for the clock controller to operate
+> +    items:
+> +      - description: MMCX power domain
+> +      - description: MXC power domain
 > 
-> -- 
-> 2.49.0
+> ......
 > 
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,sc8280xp-camcc
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          maxItems: 1
+> +        required-opps:
+> +          maxItems: 1
+> +
+> 
+> 
+> >> domains. Hence move SC8280XP camcc bindings from SM8450 to
+> >> SA8775P camcc.
+> > 
+> > Subject: everything could be an update. Be specific.
+> > 
+> > A nit, subject: drop second/last, redundant "bindings". The
+> > "dt-bindings" prefix is already stating that these are bindings.
+> > See also:
+> > https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+> > 
+> 
+> Sure, I will take care of above in next series.
+> 
+> Thanks,
+> Jagadeesh
+> 
+> >>
+> >> SA8775P camcc doesn't support required-opps property currently
+> >> but SC8280XP camcc need that property,  so add required-opps
+> >> based on SC8280XP camcc conditional check in SA8775P camcc
+> >> bindings.
+> > 
+> > Best regards,
+> > Krzysztof
+> > 
+
+-- 
+With best wishes
+Dmitry
 
