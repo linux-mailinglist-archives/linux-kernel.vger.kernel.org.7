@@ -1,402 +1,220 @@
-Return-Path: <linux-kernel+bounces-658260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08BFABFF31
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 23:58:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28C8ABFF4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 00:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1CCD7B50F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 21:56:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE0061BC5697
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 22:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D6C23817A;
-	Wed, 21 May 2025 21:57:57 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57B623183A;
+	Wed, 21 May 2025 22:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gFZZsZXJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22FE8633F
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 21:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747864676; cv=none; b=YTGoAo4Z/aAzJ6z9BMiG+cyl5eEzddyXZT6SUzQ4xzqVz0cIAWrpHvJIOCHwrjHVfEREEjg8+N292B4JiYp3qPNJkD3YCw/LObKYCMntX82DDlj0RPCZ2ReeWl5DsyboIlOhuRlC5BPoHnlN8zSO5tvJk8OwnriTatd7ys+vc80=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747864676; c=relaxed/simple;
-	bh=ezJsTZIOHLnsSfo92RZFN7R3lM5cMwfNZI8X86PkOHo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BYZ0rj72ovem9HzmmKIj65uQlvr1nY9Bd94TK9ICIi5GDJNfBiiikrUtGAzTuu3NPSD5KPyD2WifIbRSPYDV6V9tjVmUa/+/OIWEgdeCa8/htjZx1lvx0cNjCv3Rw4iiYmxDurmNAnNSflZlM9OAtoTyACJ/u/ZfDBauufyoKQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-86a5def8869so353850039f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:57:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747864674; x=1748469474;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+FiU59m1NdRUOrncNUFof24Wvl4zcyKpxxi8IJX8MoI=;
-        b=Zo9Cft0gW/3zC17vQ0o6PFYQta7flyu7yZlUaK3aQyCxEtFpxQyVJQf7NIQJNow454
-         oSyBMyT+g5ZkyBzXXNTfcUuYE/NA6LA+ZpZI77IbHd7Er4yZvS7Nuo47zfYBRUTwRL0t
-         1wrvjN3jNa97V56Fsm1+bkv5n+mEC4ZDpxaFq9UE90woJo8a1WJSYdtiLKnxgLzb3RCl
-         mxvXR4HZ2JVFbxNQ4KkGzfUM7gc2DYsSlxbjS7z5nH3uDVvoK/abv3Zg3oaC7S84Abvp
-         eASXb/hHSk0sz6TgjXgki1SpVitYWnCk9nHDIDuiuBlGRBg4bca9b6IoGUHT29HywBst
-         jToQ==
-X-Gm-Message-State: AOJu0Yyt8ICyLki887qY8v1iGJy75aeEWWNYOu9XFwtQxUU2Xgrf/OWz
-	VUyvTsqjyjgojSbwtWUtbJ/ylNSruf9N8Pmd1Dbmwk5f63lYrvxZkwyMZBAqUvwb9LiQkYAH4N4
-	TqBYzRWIPEzvfk5A5hWKfwfehr06aHbBZ7EtHcxzKWDjcCOxKp1vSq1YSCVM=
-X-Google-Smtp-Source: AGHT+IFUzZ6O+7nM95gS0dcss4UwSqC/W5SLKReTFm/W82MUcnGwUZgRme9ExGdWb0FOb5om/Mmjt8t9mxMe+2piLV9KMIqSEZMe
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29130184
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 22:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747865173; cv=fail; b=J0pnW05XHHS7wtDwNbqlpXuFVxdS+qg9cNQ8w5JvuZ3FdZ+UBgPrbPs4yGYvHzyb/1O26lTBSuBpcU46XUtGxGteGSpKkSIsRE50wr3uRnjtIjZRw9OqPkIf0kbWbDH9MfbK3lEKykL6hiipIKwkInc1ITfwVoVHGlvcg8ZfnfU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747865173; c=relaxed/simple;
+	bh=wpgs/Vnuv9weITmn5HkDncQqx4h4RL7U7jdL3F7msUg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=k554eJm625jZDg4J7PafSXnP7KOpL7NyhSmr8cLnnWpCLLJOevFyq/t/g0WaekjUk0Jt1SLVuWylEkp5Sf8tTpHU6DTlJHAzrSrVhHfwgyWapAS62SA2/3gGywQ97w7EF3SHLAjb37Mz8rs3vdUGvf8OGgooYPec8UZjA6fR4PU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gFZZsZXJ; arc=fail smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747865172; x=1779401172;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=wpgs/Vnuv9weITmn5HkDncQqx4h4RL7U7jdL3F7msUg=;
+  b=gFZZsZXJw8Iq7vN/O1Ql18cNVZolJV0glyzDpS3aFITMJ/TlzuhzAXwW
+   wKxGCPo6KB7nc6NiV155KauZ2PaWBNsCTZzQc63DfOAMuE5Gvhfj7ffHt
+   VckNreaoY6TSbObjXE0lJmZuXc5p17RQMtMCd4Gi0ljRcFGRAQrrEsqab
+   hnlZ4TsPadCBUE2WeAi7WrlRDQ8Llj/HTsLr2E7xICFqsa/nhNws0lwTw
+   UDjG2diOQEa3voV3Z9eX6X1PblkS/X+6G7ke5vNTreMFOUESbVrenDsx6
+   v4aQ4eWkBlJ+dREorV1j/fKY9LvKwZvRTDii00ugskiWBZVvk2FM0pjji
+   A==;
+X-CSE-ConnectionGUID: Z0kAYhXFRA6FXLEGjGcbeQ==
+X-CSE-MsgGUID: TMRuWa7DQH6Z4UWqp3kRzA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11440"; a="60503879"
+X-IronPort-AV: E=Sophos;i="6.15,304,1739865600"; 
+   d="scan'208";a="60503879"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 15:06:11 -0700
+X-CSE-ConnectionGUID: lIJtgBYLRM2vjOl+qVtQ4g==
+X-CSE-MsgGUID: L1FnozYzTCi6wAbhdNVNkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,304,1739865600"; 
+   d="scan'208";a="140799003"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 15:06:04 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 21 May 2025 15:06:00 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Wed, 21 May 2025 15:06:00 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.43) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.55; Wed, 21 May 2025 15:05:57 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dolU+Ryi6C8O6PfBmUoz3hBaP8l6BDvlYnrcC6/vznVyofRRkHRxxF9z1Sa8HlZrfy1+ZZtySOpRJffNFCyRffIewlz0tjjv6xDvwC7t9oWF36FkDw2b7t5GL5wjpLCApIaQT8nx+Jk78UilMdfrJXtBXT/GKa9Gb4b0nxoM36UvOtJLp6XkLT+NidICTR+9QuCHSmXAlkz7+aWr56TwE5SwSrq8dFeDpNKmW2ZAMd+3jaMGPCMEPHO/noB5C3WZXd6f/SPf6zowMGcr1Fwgp7I00YdaSYrCK76XUSaTkgZTxI/7dof/NM5YU6XB84SFykoFzZikD5YYN9gk5f3GoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6ySQhy9y8QbFeK1J3nzDrzwqnFkQAsmDBJC5JGS+JEo=;
+ b=o2Rzlmh3c2lu0HHEQv9uK5aLbowwykLL+fgcXF3L9KXwhSjVbttIYtBA3XISjklsU+n3Rv+Q8h2+mxjvu1GDD65RCl0LG8HMhE3RZU3mvbNZO9dbzCLwAlp2molx7xdoOSNcKp8m15yrCIXTf9nUnl8HRj+m5XN/fYE8IRyGOC2sTplBGD93hO/fm06IW4n68vXC0Q6Cux8VWkyBXIZAbqNB1Wn6+DgNho8LRzDhv4kF9TiP6E4uC2teMFnnjCUzSR0aZ8tPiP9AzD+D9kK690lAQGRGVN+a4yh54B0yMlfOIKnDyebS0e0szQrBw/9JWlq/5YabvPGLkJpPd0YL8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by CY8PR11MB7780.namprd11.prod.outlook.com (2603:10b6:930:78::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.21; Wed, 21 May
+ 2025 22:05:56 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.8746.030; Wed, 21 May 2025
+ 22:05:55 +0000
+Date: Wed, 21 May 2025 15:05:53 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Arnd Bergmann <arnd@kernel.org>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Dan Williams <dan.j.williams@intel.com>
+CC: Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, <x86@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Nikolay Borisov <nik.borisov@suse.com>,
+	<linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 1/3] x86/devmem: move range_is_allowed() to
+ drivers/char/mem.c
+Message-ID: <682e4e416f296_1626e1009c@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20250520152030.1499670-1-arnd@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250520152030.1499670-1-arnd@kernel.org>
+X-ClientProxiedBy: SJ0PR05CA0065.namprd05.prod.outlook.com
+ (2603:10b6:a03:332::10) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3a01:b0:3d6:cbad:235c with SMTP id
- e9e14a558f8ab-3db8573b700mr221390045ab.6.1747864673982; Wed, 21 May 2025
- 14:57:53 -0700 (PDT)
-Date: Wed, 21 May 2025 14:57:53 -0700
-In-Reply-To: <682c7f0d.a00a0220.29bc26.027d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <682e4c61.a00a0220.2a3337.0006.GAE@google.com>
-Subject: Re: [syzbot] Re: BUG: sleeping function called from invalid context
- in team_change_rx_flags
-From: syzbot <syzbot+b191b5ccad8d7a986286@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|CY8PR11MB7780:EE_
+X-MS-Office365-Filtering-Correlation-Id: 06da2087-c09b-43d5-0e9a-08dd98b3a8d6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?w62PGFIJNMn787M3u2tfiL/f9WwPCBbt4HcEYoi7D0UH93rzNLmsqGe/MvrV?=
+ =?us-ascii?Q?gruLt047Vw7I0bz1PRmNn/JwYLKrNdjvPUxsiOb89sP5RWF4DW0H0aYUqgVg?=
+ =?us-ascii?Q?gkSG1KsoZWtdeDWK/lEX0On9geS7rPxOzBl7Ff0cl6RIctxwz5pzP858r861?=
+ =?us-ascii?Q?17DEFFuJqoAGHloMN+xdyScn4rhWg0OUQ18JEWULsybU2hdniDHIx3/8308P?=
+ =?us-ascii?Q?Ut/HXAPuVPCnUYZ47/0+Ytr6uKyMKIAbGp1R3UuYjPoULjc99h6C0C0yA77c?=
+ =?us-ascii?Q?gMvPPyR3j9UIG7KQWD5E01jKZKpDG45Ip7FCBla6A2QP6nQn3tRvyYGzWFZe?=
+ =?us-ascii?Q?cZtCdrsupxDXE0slME27ynd+PAOOFOdjulzL74nm1u9OgzaF9qmdDvhkfvo/?=
+ =?us-ascii?Q?gsUwKF1cietmfB3a5tzNOoFOWtrBbH9bKVgt1Fgw5GijOM36nt60K+WvA+32?=
+ =?us-ascii?Q?z3ax45cyfIW1fsPUmLj5cE35qfwxBt/bMPjvlh0Vx9vsVve9OtifmD7enrEi?=
+ =?us-ascii?Q?3FRw1bTqWyd3qy/jfJ6dxs7GtZt4JhiYNFogFY2puWP/pO1+aGRyZ601eL/u?=
+ =?us-ascii?Q?YJXG+ppIVtvB5E8NetuqC44m0qxWxJOZ6lm/UdP2V1CH2pG+Af0O9KbcWm0A?=
+ =?us-ascii?Q?3l3UVJ/EbwVBwQp/NgigG/WznaRNBJ2mHTghprkFpRDVrm/CFHHUjRF1u4YE?=
+ =?us-ascii?Q?01rHtM7/krjUtYoH7RJfI2c0ZUOXBriXRZ/4HHMAWbT2CcVABSpTRPXoWWfI?=
+ =?us-ascii?Q?8NpggK596xVjQET4Ohav04s9oetFVz0Fv3FQU2DAqDUrnCMC/AoDDu6jlqe5?=
+ =?us-ascii?Q?K13mdbnqI347uOzb/E5BiEW2n9oWAfk09/Sq4PuI+8DNHSMIAnjsycQs216b?=
+ =?us-ascii?Q?FYNKbP7TjIs7sG7AK+ewpyihasm+7rwIJdsuTjztqp2cIkXqx0L3FsM5/nXb?=
+ =?us-ascii?Q?QsE4qCrpBbw2Lpx9EkoN6TkgZxbAGc0AG22gVe9tijN6Gd7in0os2Y3iGN1n?=
+ =?us-ascii?Q?enH3qkwgNL3yQVJJlVXgHw9P7iV8iV/vxhBDF2vzKEUGnNaEKX8N6jLGChg5?=
+ =?us-ascii?Q?v3Tl/nRIiiIQd6iC66bu/Tm/VG14DnSkcd72Otbym78f+YQlh4ZKTlF65Eys?=
+ =?us-ascii?Q?gr7mlYajI1HJREtA3pEXZCPCDktyXuwopUBqIpMZ//hd4mtawDJGd95HRm1L?=
+ =?us-ascii?Q?AUC/EyrlDpFpYyV+7lfocfsCrdDimir7ysJvRyg8pJeWNiC5v34Ghbew13Fc?=
+ =?us-ascii?Q?opQzfK+dtOwmuLtIpYiEGAcVrGZGjEGkiByzMzw16qrmu5R3D9WYdUTHsuzW?=
+ =?us-ascii?Q?EXaE8dWrh6bl/p4DX2f3HS+Ltv6+6zJ7Jran8V3oUJgqVy+u4vqW2PFKiSbE?=
+ =?us-ascii?Q?ZU2yC7WXY+KotKcLnpgzhJjd1h3jMncSimH7ffjqc5Ec1COzpw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Rm1nXviNOREaEggoaCPxHXTKSwObrzFN/UVlIr42ghtuGidDQApdqbacITVB?=
+ =?us-ascii?Q?K/VOWuHoULAGPna2y353nhZFkzZ5yYOZdIaYvthRJzcAezMWE4QHEjR7yq4k?=
+ =?us-ascii?Q?dvEqnE/n5iyws/2H3nVMY+iWxJ6FC8lZGkA9CPaEe8PJ0chinAOGZt4ydVKS?=
+ =?us-ascii?Q?D3rwZTFFIFdAs8NILzmCnwMoUH2JvQ94QEte7SH3sHkG7bySoGlxe8qaqYpz?=
+ =?us-ascii?Q?Xff9/h747jeEq0iOsSjMZaxy9QSc6/DiFWcGmY6pyc9V6fgFCiyp6ohTbBRT?=
+ =?us-ascii?Q?kZfeOM1Whm/7uiCK6CwKgijOt7MwdQu0imUDsjslGmdkiH4xbTcW7prgwcSG?=
+ =?us-ascii?Q?9OUpxzQD5RGm5s9E8p41ZFWS1bTncq46YFkKbuJ4xu9L8kmQBtbxtfzNoJQ9?=
+ =?us-ascii?Q?10wp/kZbHfjJybTYvgW77CuFMG1VwvUh+msbbTV1B82GnTXMKNfxfuVHnk71?=
+ =?us-ascii?Q?bbgzTDRXkHHn7ttu/xlEhJMMx13KR5xa8O1Mp9brv9Kiqy3oB/0ezaEXNuKI?=
+ =?us-ascii?Q?AnT+92KxG3W1zb2OlaC3/7YHwgY54RBOktlZ1mAJfGcfAM43/XL0gXIlX+mx?=
+ =?us-ascii?Q?HIeSN/6X8rxS2LfrSdIrZhvJjukWCkiJssXf2ybCnsTVwFEnOPe1I1DfC2ra?=
+ =?us-ascii?Q?YXlIlfXVEZ95m5dgYpm/AdLGUNUtfnh+lLBbkbkMaL1iSyla1VrI+B8g76mg?=
+ =?us-ascii?Q?lQQSBy+nIkWVaB7v0+SvPEwTUuX72RF3IkEPO2HHzB59qRxvEUX4jWRmNz3x?=
+ =?us-ascii?Q?/4mRVNQgoSMlD/zk07M2DGlzDMXxCVosdSFhDZiID6AeSBG2GCIsyQnrYZky?=
+ =?us-ascii?Q?uhG0UwcT+bXBEROAQdK9RO/s50tY9WYT++gI2myV/Gf1ECqVjq+VMdYywcGI?=
+ =?us-ascii?Q?UCCibuDa7IsFCW9V8EFm7lFFCVBXipbTtGRK5rdm7eBEWC64AB3yYSAI1NEE?=
+ =?us-ascii?Q?+zA9hLicbweV2d/BKNh1yhIiY3jVSg/3UZZ2EOjQd7z65gn2tgaRmDGP3v9Q?=
+ =?us-ascii?Q?g4HyASYamdDiziuy5noMmmPgIdjepiSx9UxCrTt64GMjHTls1CZ0vQFyz7Xt?=
+ =?us-ascii?Q?C/CazZ2dlANWVNZC1GplJ1BDzHBNbFr6SHW+NzrkaL5K4iRrtIBNUwiiGsN2?=
+ =?us-ascii?Q?eVzhSP2fGckY0s1oy0IGY4iNxQ9+bsWUbLrMmL6Vho2gDwiJrL0+9aomhzuR?=
+ =?us-ascii?Q?feJaQOhn7+Y5KqngqAnjGIZtLPKz739MGFUwGoOYOdfH1V7Byh0YYHYD8sia?=
+ =?us-ascii?Q?qEfAwVGlgtvi/ajCOz45gUmarq8b94DBQzSrwTOdlk/rMHZVHCoWi36F1vKI?=
+ =?us-ascii?Q?3V5yTJKtnMpjqHoiGZ4/HTP+ggS+/0uaSa9u8VtPr8Ab5ph7PV4xxxIcwO4e?=
+ =?us-ascii?Q?B0e7p+PEgiJkj/GuIFi/HZpdf5E31HI0kvjcXBtkFPt+WCmeLSiDiPy3Xgtq?=
+ =?us-ascii?Q?fLETnT5pm5gmJjtpdR76dkxCWe/kzgnZFWtqDY79EIHLqe3+zve6plfilTn+?=
+ =?us-ascii?Q?k6ok2omd+slN8UqTTYfaMNBa8zbHQuTMD40G1CDTyBS73PzjTPmR/tBocSxX?=
+ =?us-ascii?Q?rIKT7Kto/v19nhl1+X5y2uCBDyaUS2+MbZlnI12fYp7GM4UHdJ6pm5GsYjCe?=
+ =?us-ascii?Q?AQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06da2087-c09b-43d5-0e9a-08dd98b3a8d6
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2025 22:05:55.6847
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KEM6rP9xnOccSXVT96F3Z2u9llOBR6WWlc8O8zDZBC6HcmutZe0MJnXCqCL15/aUHZ9me/3gnyjdoEw9VDoDCoXcatntYepzdWrpYyUB2Hc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7780
+X-OriginatorOrg: intel.com
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The global inline function in include/linux/io.h causes problems
+> because of the unfortunate naming that is too generic, and because
+> it reintroduces a dependency on the PAGE_SIZE definition that should
+> not exist in this header file.
 
-***
+Ah, good point.
 
-Subject: Re: BUG: sleeping function called from invalid context in team_change_rx_flags
-Author: penguin-kernel@i-love.sakura.ne.jp
+> Something I had not seen during the earlier review is how the
+> x86 phys_mem_access_prot_allowed() is called directly after the
+> generic check for range_is_allowed(), so checking it again actually
+> has no effect at all, and the definition can be made local to
+> drivers/char/mem.c with no other caller.
 
-#syz test
+Oh, true.
 
-diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
-index b75ceb90359f..e4e49f8e566f 100644
---- a/drivers/net/team/team_core.c
-+++ b/drivers/net/team/team_core.c
-@@ -933,7 +933,7 @@ static bool team_port_find(const struct team *team,
-  * Enable/disable port by adding to enabled port hashlist and setting
-  * port->index (Might be racy so reader could see incorrect ifindex when
-  * processing a flying packet, but that is not a problem). Write guarded
-- * by team->lock.
-+ * by RTNL.
-  */
- static void team_port_enable(struct team *team,
- 			     struct team_port *port)
-@@ -1660,8 +1660,6 @@ static int team_init(struct net_device *dev)
- 		goto err_options_register;
- 	netif_carrier_off(dev);
- 
--	lockdep_register_key(&team->team_lock_key);
--	__mutex_init(&team->lock, "team->team_lock_key", &team->team_lock_key);
- 	netdev_lockdep_set_classes(dev);
- 
- 	return 0;
-@@ -1682,7 +1680,7 @@ static void team_uninit(struct net_device *dev)
- 	struct team_port *port;
- 	struct team_port *tmp;
- 
--	mutex_lock(&team->lock);
-+	ASSERT_RTNL();
- 	list_for_each_entry_safe(port, tmp, &team->port_list, list)
- 		team_port_del(team, port->dev);
- 
-@@ -1691,9 +1689,7 @@ static void team_uninit(struct net_device *dev)
- 	team_mcast_rejoin_fini(team);
- 	team_notify_peers_fini(team);
- 	team_queue_override_fini(team);
--	mutex_unlock(&team->lock);
- 	netdev_change_features(dev);
--	lockdep_unregister_key(&team->team_lock_key);
- }
- 
- static void team_destructor(struct net_device *dev)
-@@ -1778,7 +1774,7 @@ static void team_change_rx_flags(struct net_device *dev, int change)
- 	struct team_port *port;
- 	int inc;
- 
--	mutex_lock(&team->lock);
-+	ASSERT_RTNL();
- 	list_for_each_entry(port, &team->port_list, list) {
- 		if (change & IFF_PROMISC) {
- 			inc = dev->flags & IFF_PROMISC ? 1 : -1;
-@@ -1789,7 +1785,6 @@ static void team_change_rx_flags(struct net_device *dev, int change)
- 			dev_set_allmulti(port->dev, inc);
- 		}
- 	}
--	mutex_unlock(&team->lock);
- }
- 
- static void team_set_rx_mode(struct net_device *dev)
-@@ -1811,14 +1806,13 @@ static int team_set_mac_address(struct net_device *dev, void *p)
- 	struct team *team = netdev_priv(dev);
- 	struct team_port *port;
- 
-+	ASSERT_RTNL();
- 	if (dev->type == ARPHRD_ETHER && !is_valid_ether_addr(addr->sa_data))
- 		return -EADDRNOTAVAIL;
- 	dev_addr_set(dev, addr->sa_data);
--	mutex_lock(&team->lock);
- 	list_for_each_entry(port, &team->port_list, list)
- 		if (team->ops.port_change_dev_addr)
- 			team->ops.port_change_dev_addr(team, port);
--	mutex_unlock(&team->lock);
- 	return 0;
- }
- 
-@@ -1829,10 +1823,10 @@ static int team_change_mtu(struct net_device *dev, int new_mtu)
- 	int err;
- 
- 	/*
--	 * Alhough this is reader, it's guarded by team lock. It's not possible
-+	 * Alhough this is reader, it's guarded by RTNL. It's not possible
- 	 * to traverse list in reverse under rcu_read_lock
- 	 */
--	mutex_lock(&team->lock);
-+	ASSERT_RTNL();
- 	team->port_mtu_change_allowed = true;
- 	list_for_each_entry(port, &team->port_list, list) {
- 		err = dev_set_mtu(port->dev, new_mtu);
-@@ -1843,7 +1837,6 @@ static int team_change_mtu(struct net_device *dev, int new_mtu)
- 		}
- 	}
- 	team->port_mtu_change_allowed = false;
--	mutex_unlock(&team->lock);
- 
- 	WRITE_ONCE(dev->mtu, new_mtu);
- 
-@@ -1853,7 +1846,6 @@ static int team_change_mtu(struct net_device *dev, int new_mtu)
- 	list_for_each_entry_continue_reverse(port, &team->port_list, list)
- 		dev_set_mtu(port->dev, dev->mtu);
- 	team->port_mtu_change_allowed = false;
--	mutex_unlock(&team->lock);
- 
- 	return err;
- }
-@@ -1904,23 +1896,21 @@ static int team_vlan_rx_add_vid(struct net_device *dev, __be16 proto, u16 vid)
- 	int err;
- 
- 	/*
--	 * Alhough this is reader, it's guarded by team lock. It's not possible
-+	 * Alhough this is reader, it's guarded by RTNL. It's not possible
- 	 * to traverse list in reverse under rcu_read_lock
- 	 */
--	mutex_lock(&team->lock);
-+	ASSERT_RTNL();
- 	list_for_each_entry(port, &team->port_list, list) {
- 		err = vlan_vid_add(port->dev, proto, vid);
- 		if (err)
- 			goto unwind;
- 	}
--	mutex_unlock(&team->lock);
- 
- 	return 0;
- 
- unwind:
- 	list_for_each_entry_continue_reverse(port, &team->port_list, list)
- 		vlan_vid_del(port->dev, proto, vid);
--	mutex_unlock(&team->lock);
- 
- 	return err;
- }
-@@ -1930,10 +1920,9 @@ static int team_vlan_rx_kill_vid(struct net_device *dev, __be16 proto, u16 vid)
- 	struct team *team = netdev_priv(dev);
- 	struct team_port *port;
- 
--	mutex_lock(&team->lock);
-+	ASSERT_RTNL();
- 	list_for_each_entry(port, &team->port_list, list)
- 		vlan_vid_del(port->dev, proto, vid);
--	mutex_unlock(&team->lock);
- 
- 	return 0;
- }
-@@ -1955,9 +1944,8 @@ static void team_netpoll_cleanup(struct net_device *dev)
- {
- 	struct team *team = netdev_priv(dev);
- 
--	mutex_lock(&team->lock);
-+	ASSERT_RTNL();
- 	__team_netpoll_cleanup(team);
--	mutex_unlock(&team->lock);
- }
- 
- static int team_netpoll_setup(struct net_device *dev)
-@@ -1966,7 +1954,7 @@ static int team_netpoll_setup(struct net_device *dev)
- 	struct team_port *port;
- 	int err = 0;
- 
--	mutex_lock(&team->lock);
-+	ASSERT_RTNL();
- 	list_for_each_entry(port, &team->port_list, list) {
- 		err = __team_port_enable_netpoll(port);
- 		if (err) {
-@@ -1974,7 +1962,6 @@ static int team_netpoll_setup(struct net_device *dev)
- 			break;
- 		}
- 	}
--	mutex_unlock(&team->lock);
- 	return err;
- }
- #endif
-@@ -1985,9 +1972,8 @@ static int team_add_slave(struct net_device *dev, struct net_device *port_dev,
- 	struct team *team = netdev_priv(dev);
- 	int err;
- 
--	mutex_lock(&team->lock);
-+	ASSERT_RTNL();
- 	err = team_port_add(team, port_dev, extack);
--	mutex_unlock(&team->lock);
- 
- 	if (!err)
- 		netdev_change_features(dev);
-@@ -2000,18 +1986,12 @@ static int team_del_slave(struct net_device *dev, struct net_device *port_dev)
- 	struct team *team = netdev_priv(dev);
- 	int err;
- 
--	mutex_lock(&team->lock);
-+	ASSERT_RTNL();
- 	err = team_port_del(team, port_dev);
--	mutex_unlock(&team->lock);
- 
- 	if (err)
- 		return err;
- 
--	if (netif_is_team_master(port_dev)) {
--		lockdep_unregister_key(&team->team_lock_key);
--		lockdep_register_key(&team->team_lock_key);
--		lockdep_set_class(&team->lock, &team->team_lock_key);
--	}
- 	netdev_change_features(dev);
- 
- 	return err;
-@@ -2308,6 +2288,7 @@ static struct team *team_nl_team_get(struct genl_info *info)
- 	struct net_device *dev;
- 	struct team *team;
- 
-+	ASSERT_RTNL();
- 	if (!info->attrs[TEAM_ATTR_TEAM_IFINDEX])
- 		return NULL;
- 
-@@ -2319,13 +2300,12 @@ static struct team *team_nl_team_get(struct genl_info *info)
- 	}
- 
- 	team = netdev_priv(dev);
--	mutex_lock(&team->lock);
- 	return team;
- }
- 
- static void team_nl_team_put(struct team *team)
- {
--	mutex_unlock(&team->lock);
-+	ASSERT_RTNL();
- 	dev_put(team->dev);
- }
- 
-@@ -2961,11 +2941,8 @@ static void __team_port_change_port_removed(struct team_port *port)
- 
- static void team_port_change_check(struct team_port *port, bool linkup)
- {
--	struct team *team = port->team;
--
--	mutex_lock(&team->lock);
-+	ASSERT_RTNL();
- 	__team_port_change_check(port, linkup);
--	mutex_unlock(&team->lock);
- }
- 
- 
-diff --git a/drivers/net/team/team_mode_activebackup.c b/drivers/net/team/team_mode_activebackup.c
-index e0f599e2a51d..4e133451f4d6 100644
---- a/drivers/net/team/team_mode_activebackup.c
-+++ b/drivers/net/team/team_mode_activebackup.c
-@@ -68,7 +68,7 @@ static void ab_active_port_get(struct team *team, struct team_gsetter_ctx *ctx)
- 	struct team_port *active_port;
- 
- 	active_port = rcu_dereference_protected(ab_priv(team)->active_port,
--						lockdep_is_held(&team->lock));
-+						rtnl_is_locked());
- 	if (active_port)
- 		ctx->data.u32_val = active_port->dev->ifindex;
- 	else
-diff --git a/drivers/net/team/team_mode_loadbalance.c b/drivers/net/team/team_mode_loadbalance.c
-index 00f8989c29c0..6f9944108f5a 100644
---- a/drivers/net/team/team_mode_loadbalance.c
-+++ b/drivers/net/team/team_mode_loadbalance.c
-@@ -302,7 +302,7 @@ static int lb_bpf_func_set(struct team *team, struct team_gsetter_ctx *ctx)
- 		/* Clear old filter data */
- 		__fprog_destroy(lb_priv->ex->orig_fprog);
- 		orig_fp = rcu_dereference_protected(lb_priv->fp,
--						lockdep_is_held(&team->lock));
-+						    rtnl_is_locked());
- 	}
- 
- 	rcu_assign_pointer(lb_priv->fp, fp);
-@@ -325,7 +325,7 @@ static void lb_bpf_func_free(struct team *team)
- 
- 	__fprog_destroy(lb_priv->ex->orig_fprog);
- 	fp = rcu_dereference_protected(lb_priv->fp,
--				       lockdep_is_held(&team->lock));
-+				       rtnl_is_locked());
- 	bpf_prog_destroy(fp);
- }
- 
-@@ -336,7 +336,7 @@ static void lb_tx_method_get(struct team *team, struct team_gsetter_ctx *ctx)
- 	char *name;
- 
- 	func = rcu_dereference_protected(lb_priv->select_tx_port_func,
--					 lockdep_is_held(&team->lock));
-+					 rtnl_is_locked());
- 	name = lb_select_tx_port_get_name(func);
- 	BUG_ON(!name);
- 	ctx->data.str_val = name;
-@@ -478,7 +478,8 @@ static void lb_stats_refresh(struct work_struct *work)
- 	team = lb_priv_ex->team;
- 	lb_priv = get_lb_priv(team);
- 
--	if (!mutex_trylock(&team->lock)) {
-+	/* This rtnl_trylock() might be easy to compete... */
-+	if (!rtnl_trylock()) {
- 		schedule_delayed_work(&lb_priv_ex->stats.refresh_dw, 0);
- 		return;
- 	}
-@@ -515,7 +516,7 @@ static void lb_stats_refresh(struct work_struct *work)
- 	schedule_delayed_work(&lb_priv_ex->stats.refresh_dw,
- 			      (lb_priv_ex->stats.refresh_interval * HZ) / 10);
- 
--	mutex_unlock(&team->lock);
-+	rtnl_unlock();
- }
- 
- static void lb_stats_refresh_interval_get(struct team *team,
-diff --git a/include/linux/if_team.h b/include/linux/if_team.h
-index cdc684e04a2f..ce97d891cf72 100644
---- a/include/linux/if_team.h
-+++ b/include/linux/if_team.h
-@@ -191,8 +191,6 @@ struct team {
- 
- 	const struct header_ops *header_ops_cache;
- 
--	struct mutex lock; /* used for overall locking, e.g. port lists write */
--
- 	/*
- 	 * List of enabled ports and their count
- 	 */
-@@ -223,7 +221,6 @@ struct team {
- 		atomic_t count_pending;
- 		struct delayed_work dw;
- 	} mcast_rejoin;
--	struct lock_class_key team_lock_key;
- 	long mode_priv[TEAM_MODE_PRIV_LONGS];
- };
- 
--- 
-2.43.5
+> 
+> Fixes: 1b3f2bd04d90 ("x86/devmem: Remove duplicate range_is_allowed() definition")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/x86/mm/pat/memtype.c |  3 ---
+>  drivers/char/mem.c        | 18 ++++++++++++++++++
+>  include/linux/io.h        | 21 ---------------------
+>  3 files changed, 18 insertions(+), 24 deletions(-)
 
+Looks good to me.
 
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 
