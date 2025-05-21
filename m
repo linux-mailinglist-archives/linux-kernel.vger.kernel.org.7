@@ -1,129 +1,109 @@
-Return-Path: <linux-kernel+bounces-656657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BB1AABE945
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 03:46:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DBE4ABE955
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 03:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB7CE4E11CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 01:46:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1FA97A0BB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 01:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7FF1A841C;
-	Wed, 21 May 2025 01:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1861C3BE0;
+	Wed, 21 May 2025 01:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="qsxXpTcV"
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jq/x3oBV"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5E117BB6
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 01:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B2D19D07B
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 01:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747791988; cv=none; b=GLjs4mwlaN7AUVuuO4sAS42EmG9GeVvHrBCyBo+cIXZrbdKysAx5/gtbAhEvylXcUygNX5dkbWurCkoU+IoTkI2TiMYxO2eN7HjuBaaDXPgclawxshhA/RcX+m0ta1qWD0zx3VVHECbooNvTX/ifUad/05ERcY7R74CZeMlNkqA=
+	t=1747792351; cv=none; b=r9Qga88ZoE5q20vvjbxAqL0LyCxH4qG5V84gKfnJwT+SIktFp5fjbRux6RuakvyOIJJnQK80XYPg7t2FczElHweHi0ZeFn2ooKZasf6z/Y1B5B3QYi61TcL2gn4scTzizEv36wXQLtwOCOYRafBtHsiUW6nUklhzmYbnQugUthM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747791988; c=relaxed/simple;
-	bh=jAaJokIa13x3LtNmWW6+l9S8jnI3Nb2Pj+J5Zlm1ZZU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C9khvTJEQoUTcdeFeEGPZmo+6K4wF+vhLo1UGzoL+vgWovf6EzRVmGvjhN1zRDIWIEzaJIB+ZJoQCqWsquETlUOnKEPqj7csKOOFyGEfJXWhfbNm+Z0IDBG5PMJEvalYmDOwi9AswBTSFG/+bB6iwU0mv7pDTD+lCSfPD6HrIMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=qsxXpTcV; arc=none smtp.client-ip=35.89.44.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6010a.ext.cloudfilter.net ([10.0.30.248])
-	by cmsmtp with ESMTPS
-	id HTAHuFc7uAfjwHYXKuh5e1; Wed, 21 May 2025 01:46:26 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id HYXJuaAj70jHiHYXJu5bjh; Wed, 21 May 2025 01:46:26 +0000
-X-Authority-Analysis: v=2.4 cv=Jsn3rt4C c=1 sm=1 tr=0 ts=682d3072
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=qfBMeBQ8Qh9mIwLNFBIA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=yeJFc+6PtYF3NLLGJK8JkKqj2yUg2IAE5AzfEkYncNw=; b=qsxXpTcVvn2yjIO85KlczVA+ky
-	8PxptAbS14KBsVcjI3MdIooxhMX8oQzKOqZlXIH3I+jUx7BRu9ugTirV8gdq+p5bT1aEi4grux4Ot
-	G8tzavxVSXCLsQkTMqWTtTjus/7+MhApWTvo/Zvi8LF1rK0lUyIj3tJN0SrEC80U4RWSNsXip3mgq
-	dZhpUKOnzQ4riApsnPVkRuIQQpNAGqYMBbSGLyb9v3rfuci3R38rFIFIVoeOXV8cOGxnwipUEbB4v
-	8YwUAYKgk9gTawHo3MXMxbQmzttvRSuqkP0jfdgkVhCaj26dnmOIXCY9WLFHGptzsJf/MEzNJqRP9
-	OsdavB+w==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:60844 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1uHYXH-00000000yOS-2SGv;
-	Tue, 20 May 2025 19:46:23 -0600
-Message-ID: <12c3adac-412b-48b7-8a8d-4fc195f16a34@w6rz.net>
-Date: Tue, 20 May 2025 18:46:20 -0700
+	s=arc-20240116; t=1747792351; c=relaxed/simple;
+	bh=eJukfN/QnEFuUjo5/8Cknbd639EiAbrOw0Td6RFxca8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aihvg08F0RLa5NNKiCRsl9M3ORTgJFNNq8/E4t0QuZXO0Y0SE9e6LGzqieMFIG1fscSvVz0u5z18zHjCNUjB9UoM7lNdiXx0cAtL/SkQR7He7JVsek2o48BnFU3LJCkZyRLWnB/ijSNrNxEdPRF/eFPNgAoF8EP93BXGY+K+Rek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jq/x3oBV; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1747792339; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=xTkM+0D8//f566GySy7EXd19ZJqJeoizAhZSsoZc1/w=;
+	b=jq/x3oBVN8+aFaoF3JKdf5G8q2g1Bel5+s5wWudzdc23hoC8g5TMPj6rGgAryAwAxQYQ60HbwVeiMVDqkI58qjTpFEdDP+aLTYWSXCbP+QdsvYm63ClV3bAvJobR7YHRPxzcwiHyEK6cEOhom1zr+816N4pOt1SJJPjsJSG6qHc=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WbPY5eZ_1747792022 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 21 May 2025 09:47:02 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Baruch Siach <baruch@tkos.co.il>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Feng Tang <feng.tang@linux.alibaba.com>
+Subject: [PATCH RFC] arm64/mm: Lift the cma address limit when CONFIG_DMA_NUMA_CMA=y
+Date: Wed, 21 May 2025 09:47:01 +0800
+Message-Id: <20250521014701.73046-1-feng.tang@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 00/97] 6.1.140-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250520125800.653047540@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250520125800.653047540@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1uHYXH-00000000yOS-2SGv
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:60844
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 73
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfGKsA+AfGrfNcYAAPDgAbnEzpOpjBwJBF4x4vEFMONXarXlDEOVMlyeuN8YRvwnf5s6xc/jvp9y6y20wOYVCu3NcEtwihkP929Pb7o2t2Y1a4WCYd5cW
- wu0sMOo653fdBdm9dmjPpjN8OQYiXAByl/ZqMDOJh5R/+Jrpn1iv67A9tC3W3sPzvSn4uCEooFWF6nrYVygxIA+rZRoO6t0AvRk=
+Content-Transfer-Encoding: 8bit
 
-On 5/20/25 06:49, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.140 release.
-> There are 97 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 22 May 2025 12:57:37 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.140-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+When porting an cma related usage from x86_64 server to arm64 server,
+the "cma=4G" setup failed on arm64, and the reason is arm64 has 4G (32bit)
+address limit for cma reservation.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+The limit is reasonable due to device DMA requirement, but for NUMA
+servers which have CONFIG_DMA_NUMA_CMA enabled, the limit is not required
+as that config already allows cma area to be reserved on different NUMA
+nodes whose memory very likely goes beyond 4G limit.
 
-Tested-by: Ron Economos <re@w6rz.net>
+Lift the cma limit for platform with such configuration.
+
+Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+---
+ arch/arm64/mm/init.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index b99bf3980fc6..661758678cc4 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -312,6 +312,7 @@ void __init arm64_memblock_init(void)
+ void __init bootmem_init(void)
+ {
+ 	unsigned long min, max;
++	phys_addr_t cma_limit;
+ 
+ 	min = PFN_UP(memblock_start_of_DRAM());
+ 	max = PFN_DOWN(memblock_end_of_DRAM());
+@@ -343,8 +344,14 @@ void __init bootmem_init(void)
+ 
+ 	/*
+ 	 * Reserve the CMA area after arm64_dma_phys_limit was initialised.
++	 *
++	 * When CONFIG_DMA_NUMA_CMA is enabled, system may have CMA reserved
++	 * area in different NUMA nodes, which likely goes beyond the 32bit
++	 * limit, thus use (PHYS_MASK+1) as cma limit.
+ 	 */
+-	dma_contiguous_reserve(arm64_dma_phys_limit);
++	cma_limit = IS_ENABLED(CONFIG_DMA_NUMA_CMA) ?
++			(PHYS_MASK + 1) : arm64_dma_phys_limit;
++	dma_contiguous_reserve(cma_limit);
+ 
+ 	/*
+ 	 * request_standard_resources() depends on crashkernel's memory being
+-- 
+2.39.5 (Apple Git-154)
 
 
