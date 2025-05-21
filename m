@@ -1,271 +1,224 @@
-Return-Path: <linux-kernel+bounces-656646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21717ABE927
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 03:32:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 773E4ABE933
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 03:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFDDD4E04AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 01:32:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F2A7A6071
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 01:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85F01A83ED;
-	Wed, 21 May 2025 01:32:20 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F129C1A841C;
+	Wed, 21 May 2025 01:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GVIbmP7w";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="n4qbVD2i"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9501A5BAC
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 01:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747791140; cv=none; b=GfcY0v9/RhRciK9eW2hkSdtjeCry3KOuCPseQDzrVBvQEl4oHhNvN2lxaKB6sW+ojaJqxLtisIdBi8LTJypbpAEkMY+R5BsmMP/C8G0GXxH7L5+Wj+Ja9hYSv2YzHI4tIt6cgiZ5DwtQcyOSvPMd7DRjQczqyFpb0rhewpjLEcY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747791140; c=relaxed/simple;
-	bh=hBnjLjv2ou+aY2uFwv/e81yrC7atT7U+JpznvjyjaGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ViKIQbpz2PdOV0H5qSvUAjarnAUx0D8JmH8xLzx9ReKqPeZU/d1DISqQx91YkPrsoIUjZ3PE6vjjOr/KPCK9L9VgGzE2bYkCSAk+2cta4u3oIxOILItoDhjQmlGh8DdcOF0FfmNO+4H2Fbj5izsQMzotBlWSP/rpWbDhPVN1EoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4b2DRz4B4NzYQv9x
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 09:32:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id C39791A0359
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 09:32:14 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP2 (Coremail) with SMTP id Syh0CgBnb2IdLS1ojoC2Mw--.54620S2;
-	Wed, 21 May 2025 09:32:14 +0800 (CST)
-Message-ID: <6c3b4ac3-fe33-45d0-b7e8-d722e29c8240@huaweicloud.com>
-Date: Wed, 21 May 2025 09:32:12 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8248F3C38;
+	Wed, 21 May 2025 01:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747791569; cv=fail; b=oczJmGQFLls2xoSN1gsRRcLsJ3sT84V4IWWmwn4hAodMjx1XhZWTY6tFAzvWq3DpchBdZnzSuq7STyMezoHZECpLOxFiWn0bPo1AYVAyqGcn44GpBG300QuBWxAqrag7aFgnYQrHcrUV6QQJBN8L9OsmVYvlADclfaD0c9CbQeE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747791569; c=relaxed/simple;
+	bh=QEwUP+6c/IRPv4zynlBZLldImP+oCX4xCt1vLfFRLNE=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=Oik5dZa9tqtEqYWDJC+QXez+PqxcLCHbB63OJoTnIoFI2A1WKij9444mHFYFfg67dkyWkY4b5YiUKb9Cd21FZuqeFMlIvVK9fr0r1KBjJBZrGhjlVeLVo3u55rrQ1wkMIzF41NnAB3QdZC+glVIcmtl2Uxapc+Hecu/cr4klMx0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=GVIbmP7w; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=n4qbVD2i; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L1MspW025477;
+	Wed, 21 May 2025 01:39:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=jBRNFrm2zQtuZNmtEU
+	AfltM5IFfnxztiF8AEcRVAczs=; b=GVIbmP7wytodN6HjFh+FtvYlislnLTljQi
+	aR/K4LbJHYdt2qrxc1f4xQB3eGyd4KSjDjeTefprvv0sgjxH17GK0HgGkiqSXUgK
+	gXo5wxHPXyCq6VggxEPSNGWW0nhA4SFE2kpc2yu/GeMl/50Xy1M/TCSnb0cf351r
+	H7HQMawl3uqlQ3ItIhN5Lmf5lEChTY3Rj59GUWhrev45cSw8k5Ofm2doio8X/mch
+	590UaaqrRiZhP0/Uomei+LFuP5wWwxD4jDIO1eIw0ddz7ZHFQZYHXgQ3Lp+fbwiy
+	nkbvgSFqe5ZPWQtT8qry1tuz/SxrarJy/AsPgtjsn+4hyFzt8DVQ==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46s53vg0pk-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 May 2025 01:39:06 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54L0vbEn015567;
+	Wed, 21 May 2025 01:33:26 GMT
+Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04on2076.outbound.protection.outlook.com [40.107.101.76])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46rwep86b0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 May 2025 01:33:26 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eE7HpM+dTrY6XhV+1DZJ1LREpunxMWEHD1vhac1wOp0HBH1toO6xp3HWfCXPx9RsTyffI2GCNCGhGqX5XrEuPUYMnj3eFO1Mm/Iew9HAuijon8+D5ov8FjOoRhOforvFxRBW/pCxKrIX9QFsLk3V06kKQZueSnBEIsQzbyQ1lsdEVpn8Gm2r4FaHfYJXQ6vf0c+E9hU7MYIpaYSWNNPVQ70p3wVuFIOBRKRAasyVI4NVOBe5uYahHJMXMJXgBxPFvuf9SMFIXXiRwJaOxgjolb6i1sN7QGnmKT4Hv9W4pz4p5DO9RuxSBJZCQRGGENYv5j/MV6qMPJlauRLk5IoSxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jBRNFrm2zQtuZNmtEUAfltM5IFfnxztiF8AEcRVAczs=;
+ b=bSmtmQcr9r2g6MCZL1h2H0aXe55asXKqQdpZdTBYwwMx3XxXuBxMVU6cuSznBbCp2wj4Os88D2rIXLYKGD25/BWskXz5UGwxySLjUpOsyB3Yp5nUaC/vap8vPpaX/3q9JOvMUMfdtGenYHg6bSOLG912Qgaxiaj9nsYEGV+7HGgCGO3zwdn7EEQnVCRsmnMcw/ZFoJF5Gpw25LWt2tUb4TkbmoXlXgMo51fi4RVqBc8smlCkiMJqhjguvnMKT3iHlINfs0LaKPHqOYpUw8/EEfOyf8uPmFMs9EGpxc0x/x8sJ88Y7XVtvW6cs+AvWTELA1HOfOH3duMj3gWHEBd5/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jBRNFrm2zQtuZNmtEUAfltM5IFfnxztiF8AEcRVAczs=;
+ b=n4qbVD2ihYxJanLL7x4k78wzV1VNlW2ZLWqejA0GiQrKGCbjdo8z47TOUbgfX0gM9/k/EeSaNhEiBbyww3VVPcIsFRDAku04wv1XLtKAah/zj46Jgx2X5YbBhoZCaAvydFyPRqr6kyhp17/tRNtPCEv/ZLB8YlKGgsE+x7IVm8U=
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
+ by DM3PR10MB7945.namprd10.prod.outlook.com (2603:10b6:0:47::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Wed, 21 May
+ 2025 01:33:03 +0000
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf%6]) with mapi id 15.20.8746.030; Wed, 21 May 2025
+ 01:33:03 +0000
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Melody Olvera <melody.olvera@oss.qualcomm.com>,
+        Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>,
+        Alim Akhtar
+ <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van
+ Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Andy
+ Gross <agross@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nitin Rawat
+ <quic_nitirawa@quicinc.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 1/4] dt-bindings: ufs: qcom: Document the SM8750 UFS
+ Controller
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <ivyxgka65ahbwu7juszd7pf4wc3rns2siztibrtbnm6eoqjjwk@57nsyim5qyz7>
+	(Bjorn Andersson's message of "Sat, 17 May 2025 19:02:19 -0500")
+Organization: Oracle Corporation
+Message-ID: <yq1y0uqlpdx.fsf@ca-mkp.ca.oracle.com>
+References: <20250327-sm8750_ufs_master-v3-0-bad1f5398d0a@oss.qualcomm.com>
+	<20250327-sm8750_ufs_master-v3-1-bad1f5398d0a@oss.qualcomm.com>
+	<ivyxgka65ahbwu7juszd7pf4wc3rns2siztibrtbnm6eoqjjwk@57nsyim5qyz7>
+Date: Tue, 20 May 2025 21:33:00 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: BY3PR04CA0022.namprd04.prod.outlook.com
+ (2603:10b6:a03:217::27) To CH0PR10MB5338.namprd10.prod.outlook.com
+ (2603:10b6:610:cb::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC next v2 0/5] ucount: add rlimit cache for ucount
-To: Alexey Gladkov <legion@kernel.org>
-Cc: akpm@linux-foundation.org, paulmck@kernel.org, bigeasy@linutronix.de,
- roman.gushchin@linux.dev, brauner@kernel.org, tglx@linutronix.de,
- frederic@kernel.org, peterz@infradead.org, oleg@redhat.com,
- joel.granados@kernel.org, viro@zeniv.linux.org.uk,
- lorenzo.stoakes@oracle.com, avagin@google.com, mengensun@tencent.com,
- linux@weissschuh.net, jlayton@kernel.org, ruanjinjie@huawei.com,
- kees@kernel.org, linux-kernel@vger.kernel.org, lujialin4@huawei.com,
- Eric Biederman <ebiederm@xmission.com>
-References: <20250509072054.148257-1-chenridong@huaweicloud.com>
- <aCcl9M-BgOJ86gVJ@example.org>
- <f5c701d5-c501-4179-959c-85057705a09d@huaweicloud.com>
- <aCtdCkSGQJKCYApm@example.org>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <aCtdCkSGQJKCYApm@example.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgBnb2IdLS1ojoC2Mw--.54620S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxtr48Jw45tr43WrW8GrWUtwb_yoWxtryxpr
-	WSyasxtF4kJr13ArnFqw4kX3WF9348Ar1UWrs5Gw1fAwn0kF1ftr1xt34j9F9rXrs3Ja4j
-	qrWjg39ruF4DZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|DM3PR10MB7945:EE_
+X-MS-Office365-Filtering-Correlation-Id: 91da4066-dabb-4f60-b775-08dd98076dff
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?cEK2tjsuAcb10mADC90rQVPeHkK+w3X+NmYgpbXOB8HBGcJVqbjD8j41PCK5?=
+ =?us-ascii?Q?FsfjdVQaxPS7xlR+yAQeVQFtnkWByDW1tn1dRUj/KGvyDMIty/0zLzR2ogYd?=
+ =?us-ascii?Q?PqMHzYlGf/y5/VwuJFaFLW2mN0+vT01Y987FhzwpyUZKSvlZX2BI+oGKRnr1?=
+ =?us-ascii?Q?LmYS2gIORdALb55ZIxFg2SsjGzepU7uf5c/zGb+2YiA9VZV8BwR9S+8wK4I1?=
+ =?us-ascii?Q?I4xZT7vzXOVkEhPFLFZ/3JyMbo3YoNvcXquwXR1ScfSR3R2w/WfVnAT9EY5+?=
+ =?us-ascii?Q?2KrEZpXFNNH7xoPwpbTzD57qdKy4Ljp2JfINoYhZ4uNoIZaR8wyw8McLeEk+?=
+ =?us-ascii?Q?Llm5BTi7HRAJ+HFYejR4WB6g4CJBkeDuMsC/2XlbKGecAzNycN7FM0KL+LFp?=
+ =?us-ascii?Q?cwkMcJHEADOkqN3Gvnp426wMjJTfXHBPi4/ob6vKvdWu9P/yIb8BNBvse2rw?=
+ =?us-ascii?Q?Cl24lMkOAQnjPP8fM8IBmGka3U4P95wJgJMFwdwDpr6W4HBTalvXWHcYnpO3?=
+ =?us-ascii?Q?G0D73vza2EeSzOK1IHWBHCVa2cwhH7121VC5SOJxAlAa7imPfMHor9GaSUIA?=
+ =?us-ascii?Q?6F2bSnizxYYmP1b4yJa2UNLIhlkwhbXoCD+1+is0O2gA8xnn5y4gBbj5jZa+?=
+ =?us-ascii?Q?6S2f0M6F4WAs8JN+PwmVoPvzjyd4L9atUWFKcwDZGlrf6tU5x89l+szvEtCf?=
+ =?us-ascii?Q?BEeXfeSgJB1Nx4BNcvrRJ9VJlhhOwXspqlmxjgT3ViUa0N7L0G3gJtd/op6y?=
+ =?us-ascii?Q?2xQizMIMP5wBb9+w/IxAGWePtJ+mguqW61DaEAS5HztW3s0IohXLcGosA1Ve?=
+ =?us-ascii?Q?0z1WC4DQlAOZXPH5/Mwm/D5EXvmK8hwszk/uI3kW7z+7QamN0fgRJDn6F3rp?=
+ =?us-ascii?Q?uiMIfIUQWa5QN8z3VKYrPDVeRvXpvxWhX4jxThA3m4hRBCxYyHUxxJD02o1s?=
+ =?us-ascii?Q?SMTIyFx5CeN7TVzIxjgns8icwr2QZbjOqVrsJ5rysq80xZsS8L/gYjeHQqpL?=
+ =?us-ascii?Q?YY8HMm4bWWZRtOvp59cZy5YXScbKaahj/4XotI0rrSAOxlbagHRWh1lV5BCs?=
+ =?us-ascii?Q?RQgwTB4qgZJi33IO/Mvz7BQ/FHgl9zegeapyHSlQ8pbP3N/obE2gJFrmSquN?=
+ =?us-ascii?Q?OUVOR21rigops+anzAj93UARkGykf4JpikjBKsGF59iAP+LI/Q6MYBtIykAs?=
+ =?us-ascii?Q?yaabPH5rrxzaOGPtNyOZJm9vQzSaDWH7r50kSxbJNIcccI/mrTId5I94zAss?=
+ =?us-ascii?Q?GmLBSUiaEjwScVPtDRNyi4JYdAYKEtgnBv4beJzK2jYObVH03eCM7PHhEanL?=
+ =?us-ascii?Q?3LNKX6uKPxPRV5+QqSy1iQn2HGxJgglKlarf1oC3AiCrNfyMaKf73lYArq0t?=
+ =?us-ascii?Q?hDua9Ze0jgH7hoIpUu4Ngmuz1fa1TDquo80EzeRPfH9hCNl468Fd9vOzypvC?=
+ =?us-ascii?Q?kP/snKS7N4k=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5E2ff3aMV12jiCZdBxgWYp/WqAtTVUhgIazEDWyQG8LO1kQ6J/ooJPspKDQC?=
+ =?us-ascii?Q?bpI7is2wAwtu7j7n6GbFGpLAszzm0sG5IPFdRA2Qo06upDgtVn1h2sWXd4D/?=
+ =?us-ascii?Q?iNRAvNrb5gudDlVqFEXoQis1nRJaOiub6vQnalCyVt9MhHrut2vBx74TvInE?=
+ =?us-ascii?Q?vlBtWUMFFwpjlvTAQXbCSapFMlJgix8JSlmVdmV6DG2vTVmvqaWYLXHUmej/?=
+ =?us-ascii?Q?aImWOPRSFAsTAyMq4fWueQf3YeGB9kbZBEydoTY1H+71znJxiyL6rHiuVQTK?=
+ =?us-ascii?Q?loA0klW4hgVDYsDUyLxFQFuC/+vab+Y+0qfxiOaEmteCKniFHgKKWxvtR8/x?=
+ =?us-ascii?Q?BeY2oxYuUIif9cWjuLTFOP4Gt7b6hNzmxPfumGVSqE53rzeF6/unv1e5N3kp?=
+ =?us-ascii?Q?XdegJpPkgVlcML8xUM9B80tsC3Ja2X3iYrBfSKBtSIvD0aW1aBk4f3zCiCXe?=
+ =?us-ascii?Q?3Hn9WwrT2IbVU4Y3P8KsN7sq5ukqZA3oMIV9+N+qZT0WAYRNGG/iBn1NCU7P?=
+ =?us-ascii?Q?FMvXfFfJsRJWJ9+ZZMVhFPZFUS0A6PDHaljopCcPIXHjPCc318XR+CKjg4YA?=
+ =?us-ascii?Q?yfC9r8a9XnK47GtU/fTYIqxA2a6PLmNL1765iRx253bdNF+RhVfIkR+p2XsP?=
+ =?us-ascii?Q?Myy0CxtprhrLhOHPQYnab2CUQ5MiyAuwalpBMRMBviwIG394YXGL0TzBWG+v?=
+ =?us-ascii?Q?L7Jo+KnjCwKSRW/tcwPAvdl2OhJYkUVwy/+5oMg7HerVaOJfvuv+MkVjMQD5?=
+ =?us-ascii?Q?GHSACMitD0ZVmz2RMg22oud3gDBPyURN9hr15Uqawx+oLpyal1FgnCZesttz?=
+ =?us-ascii?Q?mBTrKY+T2gF/rx4QYNJXD8Fkpx1bG7NY+x8mtplKvoNRVaY7WvWZ8fegEufB?=
+ =?us-ascii?Q?4fBOS9Rn4zYTJxCA4ZdMaV/C8TwwfZfuRSURFPjS/89lK1na7yvRk5Rek+e3?=
+ =?us-ascii?Q?SoE2hsllFrvmDvmx7fiX+543enFc8X1VEtjpK+4UB7ROg7vq5BS+VSYm9jPT?=
+ =?us-ascii?Q?Thaon0SqoMYSzu/vGf98YCIEDvt1k59cLUdBX7Otd6E3SmkWkD72nnWNnOV9?=
+ =?us-ascii?Q?nTmCKDLXfoozmkD/OfwHO6WCut/ex5YaI2yFx+dfoFDmyyUBg31va0o2WB7H?=
+ =?us-ascii?Q?Xc1UdwRBGQ9eaCqzsr9R6rMg8Fuym9U2NroM7JGCxFrYRo6MVQWvr81k91Sv?=
+ =?us-ascii?Q?rINKfCA9TU+DuY9tIXdNfVu+DUibv1oYQp3v8U6rHCy7Fc6Z0LGve/c4ccRE?=
+ =?us-ascii?Q?wS7E4rx5cwLxjla9AWHvSnNtkgx8qs59K2t/BRKzNm7CJAwqR3JNUNNhyuih?=
+ =?us-ascii?Q?Q+uZan6CiPpXK1LBxwNHiJcq2IrNsIbBto/MwHF5roMuO4Des7wAMvuMI/c+?=
+ =?us-ascii?Q?WNtm/4URpVgJKAKZSKZa4Kqh2zoLoEUbrteHuDQHquSSV9HJrpRS+iuhK4RT?=
+ =?us-ascii?Q?89+WLDzZV6TtrPQCpmZst660UINvX57U6pKMphrmdgDeArPtApwb2gZ+DQNy?=
+ =?us-ascii?Q?cGxOqI9kDcA/zGcP/o/3eMTDzQypR/do5ZI33GPn9CIwiJ4VqenKxv9k954Y?=
+ =?us-ascii?Q?Mv+ZHvD2unlP8tmW1WX1FIroJDhb++A3A7pCwEa/jhNcHkm/goWV8MvtvYbX?=
+ =?us-ascii?Q?Hw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	7WqCqI6fdWBfN5KhOwNlt/phNgxjJmckb778f9AjwR5sgraF+xHu92ogsUABfx3tc3itx5wTOKmZeXbYMAy0c7qDmJDBm0pDbpTJyyJlDKw3uLZl7j9SdGxCx2N5lIDXut7oST0NtKRH88GXab7jtwVmdLRiUDdaYolXbDerxLMnajYEHc5Xgyslgp0dUlgFiCro6q4mn8MhjxdVsyKhNNWym5bVZJnJ1a0qSN6rMdAs/sOv8PYdZYxj2R22OT1CLnFgiz1zxztqrm3OxAyL3T2BYBCffWNvCE/TKzeQHkNi1WocvvdmKCIjbummKd8m9YpNOugKfShHlQ/c0LJBNYanpMByZqtdI318N4ipqvpchXOU4huXDQwEnwI7N368U6mcJyKs+9mWtMuhbfhzSZXbIyHB43ado/B+GZUrlfxyklrxw8kKtL3HOU/eyFqKsw0RUy8eGZ9XNdbJTJhu/Zi6z3jG6lMtXiRqwn2nYQxEf9eBb3ibGsTRVRfp4PoDPuuzznlSh1WVdHzd7zI/i6afNKkRDuMSN/UhGgcgEUtVDxv/qXaN0FLr7q6j5brF5Pl/paYKJf0DpZ/uRQ7y+jJPlI/5e9+PC5ZuNeEzrew=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91da4066-dabb-4f60-b775-08dd98076dff
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2025 01:33:03.5408
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rt9/wmyHTbwZzi2mSNPe9YGjbwZcWepZQ0ZAPLKHjaO3FRdxI3S6r/lACPmePyeZIogC8lYg7Qzq5GIbL7Nhc8nzKaWURh2aZA/QBjp9m60=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR10MB7945
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_01,2025-05-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
+ suspectscore=0 adultscore=0 malwarescore=0 phishscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2505210014
+X-Authority-Analysis: v=2.4 cv=cKrgskeN c=1 sm=1 tr=0 ts=682d2eba b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=3Cno-gKpN4ypsa_tLcAA:9 cc=ntf awl=host:13188
+X-Proofpoint-GUID: vTZDA1TqjUZ1KFIBGXHLwIea-Ve31uY3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDAxNCBTYWx0ZWRfX1D3pfhxDsHfJ jfHVrrrklmIc/6ZxZW+DWGctPK4OHFZ4NFaonhMSDEKSaTdYPK16HEXKdf3KSSd6B6RAMrObwJy TqaQgk71OlPt0/cdveXTZnFx03IOY5ReuDJIDzaBMd0ZR+sPSkJS35lhPgiqh4FvW6KLHTSfTtX
+ urvkKrga7NvSqKrwoytlSm9FynXevKy2nwUl9GJBbRRbarS0ewgtl764sUZxi+620Lw1EphKufj HKYxcIdbeI2DprmjT51BRgXIpaujKTwmlOqjgOHLPHuoQIPBkU/+ZILpVX4e5fLGsd58PKjpFBO MEzl8uN5/QwTGmssgIOdYB+b+pBNjhayA1kVHCErM7z0/sVU1ET4+3FAfYR7lXkpNNvO/Qp/KMW
+ 1gCZHtbBCa6l3w973yLWh9pT3snvUQa1YT3u2e6DB53ntOqDlo73s5swtkPdHdJ+UV+XDMIY
+X-Proofpoint-ORIG-GUID: vTZDA1TqjUZ1KFIBGXHLwIea-Ve31uY3
 
 
+Bjorn,
 
-On 2025/5/20 0:32, Alexey Gladkov wrote:
-> On Mon, May 19, 2025 at 09:39:34PM +0800, Chen Ridong wrote:
->>
->>
->> On 2025/5/16 19:48, Alexey Gladkov wrote:
->>> On Fri, May 09, 2025 at 07:20:49AM +0000, Chen Ridong wrote:
->>>> The will-it-scale test case signal1 [1] has been observed. and the test
->>>> results reveal that the signal sending system call lacks linearity.
->>>
->>> The signal1 testcase is pretty synthetic. It sends a signal in a busy loop.
->>>
->>> Do you have an example of a closer-to-life scenario where this delay
->>> becomes a bottleneck ?
->>>
->>> https://github.com/antonblanchard/will-it-scale/blob/master/tests/signal1.c
->>>
->>
->> Thank you for your prompt reply. Unfortunately, I do not have the
->> specific scenario.
->>
->> Motivation:
->> I plan to use servers with 384 cores, and potentially even more in the
->> future. Therefore, I am testing these system calls to identify any
->> scalability bottlenecks that could arise in massively parallel
->> high-density computing environments.
-> 
-> But it turns out that you're proposing complex changes for something that
+> @UFS-maintainers, could you please pick the binding (this patch)
+> through your tree, so that I can pick up the remaining dts changes
+> through the qcom tree?
 
-Using percpu_couter is not as complex as this patch set.
+Applied to 6.16/scsi-staging, thanks!
 
-> is essentially a non-issue. In the real world, applications don't spam
-> signals and I'm not sure we want to support that scenario.
-> 
->> In addition, we hope that the containers can be isolated as much as
->> possible to avoid interfering with each other.
-> 
-> But that's impossible. Even before migration to ucounts, some rlimits
-> (RLIMIT_MSGQUEUE, RLIMIT_MEMLOCK, RLIMIT_SIGPENDING, RLIMIT_NPROC) were
-> bound to user_struct. I mean, atomic counter and "bottleneck" was there.
-> We can't remove the counters for that rlimits and they will have an
-> impact.
-> 
-> These rlimits are now counted per-namespace. In real life, docker/podman
-> creates a separate user namespace for each container from init_user_ns.
-> Usually only one additional counter is added for each rlimit in this way.
-> 
-The problem is that when increasing an rlimit in Docker, the limit has
-to be increased in the init_user_ns even if a separate user namespace
-has been created. This is why I believe this issue deserves to be fixed.
-
-
-> All I'm saying is that "bottleneck" with atomic counter was there before
-> and can't be removed anywhere.
-> 
-
-Yes, it can not be removed anywhere, maybe we can make it better.
-
-Best regards,
-Ridong
-
->>
->> Best regards,
->> Ridong
->>
->>>> To further investigate this issue, we initiated a series of tests by
->>>> launching varying numbers of dockers and closely monitored the throughput
->>>> of each individual docker. The detailed test outcomes are presented as
->>>> follows:
->>>>
->>>> 	| Dockers     |1      |4      |8      |16     |32     |64     |
->>>> 	| Throughput  |380068 |353204 |308948 |306453 |180659 |129152 |
->>>>
->>>> The data clearly demonstrates a discernible trend: as the quantity of
->>>> dockers increases, the throughput per container progressively declines.
->>>> In-depth analysis has identified the root cause of this performance
->>>> degradation. The ucouts module conducts statistics on rlimit, which
->>>> involves a significant number of atomic operations. These atomic
->>>> operations, when acting on the same variable, trigger a substantial number
->>>> of cache misses or remote accesses, ultimately resulting in a drop in
->>>> performance.
->>>>
->>>> Notably, even though a new user_namespace is created upon docker startup,
->>>> the problem persists. This is because all these dockers share the same
->>>> parent node, meaning that rlimit statistics continuously modify the same
->>>> atomic variable.
->>>>
->>>> Currently, when incrementing a specific rlimit within a child user
->>>> namespace by 1, the corresponding rlimit in the parent node must also be
->>>> incremented by 1. Specifically, if the ucounts corresponding to a task in
->>>> Docker B is ucount_b_1, after incrementing the rlimit of ucount_b_1 by 1,
->>>> the rlimit of the parent node, init_ucounts, must also be incremented by 1.
->>>> This operation should be ensured to stay within the limits set for the
->>>> user namespaces.
->>>>
->>>> 	init_user_ns                             init_ucounts
->>>> 	^                                              ^
->>>> 	|                        |                     |
->>>> 	|<---- usr_ns_a(docker A)|usr_ns_a->ucount---->|
->>>> 	|                        |                     |
->>>> 	|<---- usr_ns_b(docker B)|usr_ns_a->ucount---->|
->>>> 					^
->>>> 					|
->>>> 					|
->>>> 					|
->>>> 					ucount_b_1
->>>>
->>>> What is expected is that dockers operating within separate namespaces
->>>> should remain isolated and not interfere with one another. Regrettably,
->>>> the current signal system call fails to achieve this desired level of
->>>> isolation.
->>>>
->>>> Proposal:
->>>>
->>>> To address the aforementioned issues, the concept of implementing a cache
->>>> for each namespace's rlimit has been proposed. If a cache is added for
->>>> each user namespace's rlimit, a certain amount of rlimits can be allocated
->>>> to a particular namespace in one go. When resources are abundant, these
->>>> resources do not need to be immediately returned to the parent node. Within
->>>> a user namespace, if there are available values in the cache, there is no
->>>> need to request additional resources from the parent node.
->>>>
->>>> 	init_user_ns                             init_ucounts
->>>> 	^                                              ^
->>>> 	|                        |                     |
->>>> 	|<---- usr_ns_a(docker A)|usr_ns_a->ucount---->|
->>>> 	|                        |                     |
->>>> 	|<---- usr_ns_b(docker B)|usr_ns_b->ucount---->|
->>>> 			^		^
->>>> 			|		|
->>>> 			cache_rlimit--->|
->>>> 					|
->>>> 					ucount_b_1
->>>>
->>>>
->>>> The ultimate objective of this solution is to achieve complete isolation
->>>> among namespaces. After applying this patch set, the final test results
->>>> indicate that in the signal1 test case, the performance does not
->>>> deteriorate as the number of containers increases. This effectively meets
->>>
->>>> the goal of linear scalability.
->>>>
->>>> 	| Dockers     |1      |4      |8      |16     |32     |64     |
->>>> 	| Throughput  |381809 |382284 |380640 |383515 |381318 |380120 |
->>>>
->>>> Challenges:
->>>>
->>>> When checking the pending signals in the parent node using the command
->>>>  cat /proc/self/status | grep SigQ, the retrieved value includes the
->>>> cached signal counts from its child nodes. As a result, the SigQ value
->>>> in the parent node fails to accurately and instantaneously reflect the
->>>> actual number of pending signals.
->>>>
->>>> 	# cat /proc/self/status | grep SigQ
->>>> 	SigQ:	16/6187667
->>>>
->>>> TODO:
->>>>
->>>> Add cache for the other rlimits.
->>>>
->>>> [1] https://github.com/antonblanchard/will-it-scale/blob/master/tests/
->>>>
->>>> Chen Ridong (5):
->>>>   user_namespace: add children list node
->>>>   usernamespace: make usernamespace rcu safe
->>>>   user_namespace: add user_ns iteration helper
->>>>   uounts: factor out __inc_rlimit_get_ucounts/__dec_rlimit_put_ucounts
->>>>   ucount: add rlimit cache for ucount
->>>>
->>>>  include/linux/user_namespace.h |  23 ++++-
->>>>  kernel/signal.c                |   2 +-
->>>>  kernel/ucount.c                | 181 +++++++++++++++++++++++++++++----
->>>>  kernel/user.c                  |   2 +
->>>>  kernel/user_namespace.c        |  60 ++++++++++-
->>>>  5 files changed, 243 insertions(+), 25 deletions(-)
->>>>
->>>> -- 
->>>> 2.34.1
->>>>
->>>
->>
-> 
-
+-- 
+Martin K. Petersen
 
