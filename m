@@ -1,159 +1,180 @@
-Return-Path: <linux-kernel+bounces-656869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323ADABEBE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:21:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D497FABEBE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D12254A640D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:21:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B84093A9CB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04427231842;
-	Wed, 21 May 2025 06:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434A0233D9E;
+	Wed, 21 May 2025 06:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JkGzmFXF"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="fq2evgm+"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AC322D788
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 06:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF631E9B19;
+	Wed, 21 May 2025 06:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747808480; cv=none; b=ZvRjeHq6z0w3nanbNYgtdt1qRXWc3c1hIjeoCuEmfkI6rSjNo9hXREnGUzikB4hgBrk7GFV2LEpn+mkvkW/9a9+WdbxfrRO/0V8SwPH1+4mD3LS0L//8bCaLq5tkd1BIzG93e2v8JxL9qjRXn/DNUR/rCqpy9RiVWO/tgnH17uE=
+	t=1747808643; cv=none; b=WrrV55J9M0Mb1gXoGC3DH/jber0qkk3jG510eOT7vMrbObDTcVOXSiCPCrQ+WlJb5yzCpfLQnEVaagLgfUwv8FGMJT97L4N2F7Bw1ShdTGAy9Pqzk3BZPdDmDEN5f7JNdtXhK2BlMMzzsGvvDsah1iW1eZ4ir/H9w/JgQqt0M30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747808480; c=relaxed/simple;
-	bh=6fd7IHRGu83NxTfyT0SalOcLlzPOsDoCo5ZLaUQUYko=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=OdRq0BCy1jOjLa8IZ3cNVXHWD3vPvQwvThS2v8/P/D5jwZc9Np7ykVnPGvRlT+SZMJEfwTJVTFFEhO5dnSHZ31iGjkSYd1siiCmpP21+bMoBOWGHnfHB5eKvB4wnOpjm4NJ2hTrDRXxfW4R3rGzZeDaNDjN6jmd5PAdvZsCN7GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JkGzmFXF; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2d0920ce388so2364806fac.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 23:21:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1747808477; x=1748413277; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AOkB60AMJtxVpaqykf8gS9NGTSk7YEzw+V5v/2zgCaA=;
-        b=JkGzmFXF6d5ZfzW+RD3kz4XEKJf3HPXc0wUlj/dz0pA4pPXYZ3NlBO1zepgoxaVfGH
-         v2pAXaXwuYbyTfLiQSc684fd+sPAXjn4HOpQUIdzdHqw4rHKb7Br0/V0YSFVBPProPqn
-         X+QK0V4rz2ZTUlXyrMtxFhvdhdbR7ac8HexEktBoCTZIWn+E2/LkGmHuf0soRjFEud9i
-         LHduU2lI5roVW1bW2+504SAavLs/pjhsR62xdKeb85NLzaOC2kC+FC5l7W2Hn70A24Oo
-         6rxwhRAzLgj1aJQSj15iXFKOfV7thLdMNA0sZm5k/yYc807vGulx6q3qc5REH3WIYuCB
-         UffQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747808477; x=1748413277;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AOkB60AMJtxVpaqykf8gS9NGTSk7YEzw+V5v/2zgCaA=;
-        b=hINAzFCeZcY2zINsN1ESPnqFew/w91umw5gmm+nbKYB7X7+pMVC+p9ALYGHPVQFoOf
-         SZsjvf/ZKszvNEbCYn02/9puoPJWvQP6rHPg7xMVkdNSEql5+M4eoPh0MC/X33DeqQPc
-         NLgJzzSAg5RhgWcJN39YxEEhw+As9ng84Y0t8a/ymVcxUrXxJ89WHWOsxLQBSFiLRxnU
-         VZI2ZP+oYEHXSn8hTz6GoRDiLjqpqUZXILJyno/ejqqCxRrVrONI3rVJGSLErnLQl+rQ
-         Pm3ZEsYiPvriHx5Frz2N9Neh4/m/oAhc15oFTr+m4KijI8wRcpn8DErdhvNYyJJmCsCG
-         HUig==
-X-Forwarded-Encrypted: i=1; AJvYcCVWne/VH2MtLjPtNK74zV/5jr7pR/RmxhN8Vg/gSNzYS2RU206ORiVEyFfFHOJ0dY9pClA0x32WQN8HDDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/cHChlUKdYcx8Z1FyRgmxYglb5b8X8rNYvoHweA/62eOie7GC
-	ZoFsIQhPu6DhNvuF+se30Vl9nQ4vOJtBajVj+OXEpU4kW28hznx/UxjIC3XdpPzDr0+qj6wmMeE
-	qP/P4umj4ZhpIILF6FJxc8yhaznSq65Rq+T5oD9nuEw==
-X-Gm-Gg: ASbGncv5zzDv71iFN3leOyGpZk1z/v+0sE1CgFPG0ucfFfKizFli+6c1MEmnM5pz4/E
-	x8hCODJAGjj5jbhs5GcKUhJj0te6/9rIEaXv0MeGHJmQdhZMRSCOkH3GOcpGdv30tIWRPaaIJyb
-	YwMyCb0xOPLvbDEbsih3McSv9ZSwQVTVWdyHR1mMbW7pcgKA==
-X-Google-Smtp-Source: AGHT+IFdeoiENF5NssGj08RW6C8y/2V+vUCBOiJ7eOfqfvG4ZPU6n8gvvJkZVmrcaOvrNSI0kRH1Lpo+qxGQ/w67DaQ=
-X-Received: by 2002:a05:6871:33a0:b0:2da:8a0e:6563 with SMTP id
- 586e51a60fabf-2e3c1ed0fa7mr12098896fac.30.1747808477225; Tue, 20 May 2025
- 23:21:17 -0700 (PDT)
+	s=arc-20240116; t=1747808643; c=relaxed/simple;
+	bh=0Vq9at/OYdOLMKZalD7R5Zkb+jm93cyO2v94IEXBflM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B45kGMFdNLH3nk8uXjhhoRIi44/0ywx5+Br7rkLUz8McB2UR1x6lcIfkSsC/NQGTToncHEzj1t7RfqsdRrBsF20HkFo2B4/BBWDkp/4tSxoRr+/FdPItuvLVeUEz/8lAtR7UCEyPvmOwen2FEZlerIem80FqiwgeLHm1e07GQ9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=fq2evgm+; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=1n/3IFWy+0LWJpNhuy9Hz5x+4AMFxJjBU/fPUdAjQPI=; b=fq2evgm+8aHHlVo2DpQEvrySSt
+	GO2vp2fKXtO2g0nV9hEiG9hYdjkigt7zTWE3O0j0gJBjVRLaydX4+pFf4K5zpdF2PfjTprkErWDUi
+	qDS50gNVmRRsXRFILzfFbW55oKZhR8+kLnt5Lg/C0unLciOTzqECfQuNkvaSGjvuvKs3VfIkjugkr
+	B70hJKa59NDjmQVnsBtL0OslaH6honTZblyqsH3I22LDdxQIYv+ZW/DSLurlonMtrQm5rc09l4BaV
+	0CS1mdNszFf0ahjBioD2m71swBrp44r1AHBYXq/tVmQv2aW/nPO+eQtLuRydoe3JL7XZSh0tRXS9X
+	miwX7g1g==;
+Received: from [223.233.70.209] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uHcrm-00B3oN-8q; Wed, 21 May 2025 08:23:50 +0200
+From: Bhupesh <bhupesh@igalia.com>
+To: akpm@linux-foundation.org
+Cc: bhupesh@igalia.com,
+	kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	oliver.sang@intel.com,
+	lkp@intel.com,
+	laoar.shao@gmail.com,
+	pmladek@suse.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	arnaldo.melo@gmail.com,
+	alexei.starovoitov@gmail.com,
+	andrii.nakryiko@gmail.com,
+	mirq-linux@rere.qmqm.pl,
+	peterz@infradead.org,
+	willy@infradead.org,
+	david@redhat.com,
+	viro@zeniv.linux.org.uk,
+	keescook@chromium.org,
+	ebiederm@xmission.com,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mingo@redhat.com,
+	juri.lelli@redhat.com,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] Add support for long task name
+Date: Wed, 21 May 2025 11:53:34 +0530
+Message-Id: <20250521062337.53262-1-bhupesh@igalia.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250513024212.74658-1-cuiyunhui@bytedance.com>
-In-Reply-To: <20250513024212.74658-1-cuiyunhui@bytedance.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Wed, 21 May 2025 14:21:06 +0800
-X-Gm-Features: AX0GCFvdsHvdDnWwbBaqd6fO_vbeMJzi4JgqkAgCH7b1GhfiOeTj9TnK_lkVy3Q
-Message-ID: <CAEEQ3wmNGNuG3v7RgowMrcHX9D7uRz3Y2q0eoORAN4i1Ep_HiQ@mail.gmail.com>
-Subject: Re: [PATCH v6 1/4] serial: 8250: fix panic due to PSLVERR
-To: arnd@arndb.de, andriy.shevchenko@linux.intel.com, 
-	benjamin.larsson@genexis.eu, cuiyunhui@bytedance.com, 
-	gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com, 
-	ilpo.jarvinen@linux.intel.com, jirislaby@kernel.org, 
-	jkeeping@inmusicbrands.com, john.ogness@linutronix.de, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	markus.mayer@linaro.org, matt.porter@linaro.org, namcao@linutronix.de, 
-	paulmck@kernel.org, pmladek@suse.com, schnelle@linux.ibm.com, 
-	sunilvl@ventanamicro.com, tim.kryger@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi All,
+Changes since v3:
+================
+- v3 can be seen here: https://lore.kernel.org/lkml/20250507110444.963779-1-bhupesh@igalia.com/
+- As suggested by Petr and Steven, used 'comm_ext' name instead of
+  'real_comm'. Correspondingly the macro name is changed to 'TASK_COMM_EXT_LEN'
+  for the 64-byte extended comm.
+- Rebased this patchset on linux-next/master, which contain the following patch from
+  Steven now:
+       155fd6c3e2f0 ("tracing/sched: Use __string() instead of fixed lengths for task->comm")
+- Accordingly, v4 drops the changes done for 'trace/sched' events in v3,
+  but retains the 'safe' memcpy' changes for other kernel trace users.
 
-Gentle ping. Any comments on this patchset?
+Changes since v2:
+================
+- v2 can be seen here: https://lore.kernel.org/lkml/20250331121820.455916-1-bhupesh@igalia.com/
+- As suggested by Yafang and Kees, picked Linus' suggested approach for
+  this version (see: <https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/>).
+- Dropped kthreads patch from this version. It would be sent out
+  separately, if we have a consensus on this approach.
 
-On Tue, May 13, 2025 at 10:42=E2=80=AFAM Yunhui Cui <cuiyunhui@bytedance.co=
-m> wrote:
->
-> When the PSLVERR_RESP_EN parameter is set to 1, the device generates
-> an error response if an attempt is made to read an empty RBR (Receive
-> Buffer Register) while the FIFO is enabled.
->
-> In serial8250_do_startup(), calling serial_port_out(port, UART_LCR,
-> UART_LCR_WLEN8) triggers dw8250_check_lcr(), which invokes
-> dw8250_force_idle() and serial8250_clear_and_reinit_fifos(). The latter
-> function enables the FIFO via serial_out(p, UART_FCR, p->fcr).
-> Execution proceeds to the serial_port_in(port, UART_RX).
-> This satisfies the PSLVERR trigger condition.
->
-> When another CPU (e.g., using printk()) is accessing the UART (UART
-> is busy), the current CPU fails the check (value & ~UART_LCR_SPAR) =3D=3D
-> (lcr & ~UART_LCR_SPAR) in dw8250_check_lcr(), causing it to enter
-> dw8250_force_idle().
->
-> Put serial_port_out(port, UART_LCR, UART_LCR_WLEN8) under the port->lock
-> to fix this issue.
->
-> Panic backtrace:
-> [    0.442336] Oops - unknown exception [#1]
-> [    0.442343] epc : dw8250_serial_in32+0x1e/0x4a
-> [    0.442351]  ra : serial8250_do_startup+0x2c8/0x88e
-> ...
-> [    0.442416] console_on_rootfs+0x26/0x70
->
-> Fixes: c49436b657d0 ("serial: 8250_dw: Improve unwritable LCR workaround"=
-)
-> Link: https://lore.kernel.org/all/84cydt5peu.fsf@jogness.linutronix.de/T/
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> ---
->  drivers/tty/serial/8250/8250_port.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/825=
-0/8250_port.c
-> index 6d7b8c4667c9c..07fe818dffa34 100644
-> --- a/drivers/tty/serial/8250/8250_port.c
-> +++ b/drivers/tty/serial/8250/8250_port.c
-> @@ -2376,9 +2376,10 @@ int serial8250_do_startup(struct uart_port *port)
->         /*
->          * Now, initialize the UART
->          */
-> -       serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
->
->         uart_port_lock_irqsave(port, &flags);
-> +       serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
-> +
->         if (up->port.flags & UPF_FOURPORT) {
->                 if (!up->port.irq)
->                         up->port.mctrl |=3D TIOCM_OUT1;
-> --
-> 2.39.2
->
+Changes since v1:
+================
+- v1 can be seen here: https://lore.kernel.org/lkml/20250314052715.610377-1-bhupesh@igalia.com/
+- As suggested by Kees, added [PATCH 3/3] to have a consistent
+  'full_name' entry inside 'task_struct' which both tasks and
+  kthreads can use.
+- Fixed the commit message to indicate that the existing ABI
+  '/proc/$pid/task/$tid/comm' remains untouched and a parallel
+  '/proc/$pid/task/$tid/full_name' ABI for new (interested) users.
 
-Thanks,
-Yunhui
+While working with user-space debugging tools which work especially
+on linux gaming platforms, I found that the task name is truncated due
+to the limitation of TASK_COMM_LEN.
+
+Now, during debug tracing, seeing truncated names is not very useful,
+especially on gaming platforms where the number of tasks running can
+be very high.
+
+This patchset does not touch 'TASK_COMM_LEN' at all, i.e.
+'TASK_COMM_LEN' and the 16-byte design remains untouched.
+
+Via this patchset, as Linus suggested, we can add the
+following union inside 'task_struct':
+       union {
+               char    comm[TASK_COMM_LEN];
+               char    comm_ext[TASK_COMM_EXT_LEN];
+       };
+
+and then modify '__set_task_comm()' to pass 'tsk->comm_ext'
+to the existing users.
+
+So, eventually:
+- users who want the existing 'TASK_COMM_LEN' behavior will get it
+  (existing ABIs would continue to work),
+- users who just print out 'tsk->comm' as a string will get the longer
+  new "extended comm",
+- users who do 'sizeof(->comm)' will continue to get the old value
+  because of the union.
+
+After this change, gdb is able to show full name of the task, using a
+simple app which generates threads with long names [see 1]:
+  # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+  # cat log
+
+  NameThatIsTooLongForComm[4662]
+
+[1]. https://github.com/lostgoat/tasknames
+
+Bhupesh (3):
+  exec: Remove obsolete comments
+  treewide: Switch memcpy() users of 'task->comm' to a more safer
+    implementation
+  exec: Add support for 64 byte 'tsk->comm_ext'
+
+ fs/exec.c                      |  6 +++---
+ include/linux/coredump.h       |  3 ++-
+ include/linux/sched.h          | 14 ++++++++------
+ include/trace/events/block.h   |  5 +++++
+ include/trace/events/oom.h     |  1 +
+ include/trace/events/osnoise.h |  1 +
+ include/trace/events/signal.h  |  1 +
+ include/trace/events/task.h    |  2 ++
+ 8 files changed, 23 insertions(+), 10 deletions(-)
+
+-- 
+2.38.1
+
 
