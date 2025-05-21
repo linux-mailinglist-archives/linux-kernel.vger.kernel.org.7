@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-657068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AA7ABEECB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:58:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5E3ABEEA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F03851894B4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:59:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5399F17ABD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC5B237163;
-	Wed, 21 May 2025 08:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="j0LK7o6z"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F3E236A70;
-	Wed, 21 May 2025 08:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8307223817E;
+	Wed, 21 May 2025 08:55:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB9221FF55;
+	Wed, 21 May 2025 08:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747817926; cv=none; b=IqMLKg9123pCkfQ1AsiWwfGd5hGoc86spVbGykNTBnrHGy816mVzSrDSzxzJWeVT1DRuwPPk0uhlUfD8i0GX361C/2mdbkBRgLY/iiRE5CaFt0UtKNCLWkLkg0A7gXlYCyv2wQevl6+DcRNA+58UNx+zWqarppVt7AMk5VrqshM=
+	t=1747817754; cv=none; b=ubvPeTbGSmZjtt28EBZsPGBnR1grOYWwhidMrbQDzQjBT4bs+jpiF0zQD8/8wg9mtNM+MpngcBs5fa9Ae6ZhmJtI4rXfhStAIBNpA3LQTN5cJmRv5yGpu02yw9iECaJZQ24v3ItT8Ton/+NqekJI6GdzaH5Db4rxv0AigMJddUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747817926; c=relaxed/simple;
-	bh=9oROgaRpgyQ3GB1/syDa8YVnvOgoQfHrFkuJQfbXF/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AYrzTh5JIRAxrWBP7Ani6vxzigRo8vR7t5zv3sGKQQkMOzNXWroI6cgVh+PzCU03b7wabCbwCA587OM4d0/zCWEbZr2cSoySJnhH9Id91dn4c0rAQlhv8hcGL1wTeCpQjjWnJJn85mnfm/PsHzoT3/S4HZ6I2f1aP+T9LNfHx0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=j0LK7o6z; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L8LBSd011048;
-	Wed, 21 May 2025 10:58:26 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	jlDfocRpLBC1fqG7olksB35wg8e5cS+aaD6BkzKFG5o=; b=j0LK7o6zzY5H6ERp
-	KASP8VeL6lA1ee/e/Xs48FG4No36uIe57CbEWV5rnfO6dsyFGGTsg2QSI3sUH15W
-	ZnRGscPNBO0/8qBUaacySTI+a7W8cr+AqRL9Dv10FupmnslnRgPwl7CsaUkkPkF8
-	BM2TDOBFT9k5QfbmL/+T7A5rYa7bRMpQvRpi6TmxdjrLN/zdjieneVI40x/Hvc+T
-	l7vSE6skj2+o/Xc5UTq4o8f3aVofCgCaxPL2gESTuqbdU7wZLBx/u5Ujp+5XTkID
-	qSNxhPAcw6mmg0U+Bn90Nbj2/cj2hkf3/RyhTvuJjv40FQ84qUDpOmOnSfe1mrbm
-	TGERrA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46rwfa2y9u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 10:58:26 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id AB3E140054;
-	Wed, 21 May 2025 10:57:11 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 42724B4B444;
-	Wed, 21 May 2025 10:55:35 +0200 (CEST)
-Received: from [10.48.81.67] (10.48.81.67) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 21 May
- 2025 10:55:34 +0200
-Message-ID: <0d113a6c-712b-440a-8f45-e12fd498fa51@foss.st.com>
-Date: Wed, 21 May 2025 10:55:33 +0200
+	s=arc-20240116; t=1747817754; c=relaxed/simple;
+	bh=J3eT9enofDeXnYSzoWheHzHJjQzB95yLnnDDVWBQ5Jc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OcVX2e7ibNC4ZpfOMhH0NPqVZzKMV5taJ3rDoVyslsnKlyJGqONUWDCPvpxe1g/fq+MfTwtfvJeVTQdH9Wr24KvQ8e4XnBgvRpeKGFsfur+AhYSHdELrtbAFlg3ISQiluFxw58zj2ar48V+A1ffRiCxaGmXKUFh6QMDLmVnXU7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE4E71515;
+	Wed, 21 May 2025 01:55:36 -0700 (PDT)
+Received: from [10.57.23.70] (unknown [10.57.23.70])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4864A3F6A8;
+	Wed, 21 May 2025 01:55:46 -0700 (PDT)
+Message-ID: <c544b3fe-3cf2-4dcd-8c0f-ab9f1795e305@arm.com>
+Date: Wed, 21 May 2025 09:55:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,194 +41,208 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] dt-bindings: pinctrl: stm32: Introduce HDP
-To: Rob Herring <robh@kernel.org>
-CC: Linus Walleij <linus.walleij@linaro.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250520-hdp-upstream-v2-0-53f6b8b5ffc8@foss.st.com>
- <20250520-hdp-upstream-v2-1-53f6b8b5ffc8@foss.st.com>
- <20250520193711.GA1227434-robh@kernel.org>
-Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <20250520193711.GA1227434-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH v8 20/43] arm64: RME: Runtime faulting of memory
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, Gavin Shan <gshan@redhat.com>,
+ kvm@vger.kernel.org, kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20250416134208.383984-1-steven.price@arm.com>
+ <20250416134208.383984-21-steven.price@arm.com>
+ <c99b408c-3819-482a-a427-68045211e434@redhat.com>
+ <4fca6bfa-3687-4fdf-8204-00fa90d36e2a@arm.com>
+ <d1b3caaf-636f-48e6-90e6-0bb650753748@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <d1b3caaf-636f-48e6-90e6-0bb650753748@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_02,2025-05-20_03,2025-03-28_01
 
-On 5/20/25 21:37, Rob Herring wrote:
-> On Tue, May 20, 2025 at 05:02:28PM +0200, Clément Le Goffic wrote:
->> 'HDP' stands for Hardware Debug Port, it is an hardware block in
->> STMicrolectronics' MPUs that let the user decide which internal SoC's
->> signal to observe.
->> It provides 8 ports and for each port there is up to 16 different
->> signals that can be output.
->> Signals are different for each MPU.
+On 20/05/2025 15:48, Suzuki K Poulose wrote:
+> On 16/05/2025 16:33, Steven Price wrote:
+>> On 01/05/2025 01:16, Gavin Shan wrote:
+>>> On 4/16/25 11:41 PM, Steven Price wrote:
+>>>> At runtime if the realm guest accesses memory which hasn't yet been
+>>>> mapped then KVM needs to either populate the region or fault the guest.
+>>>>
+>>>> For memory in the lower (protected) region of IPA a fresh page is
+>>>> provided to the RMM which will zero the contents. For memory in the
+>>>> upper (shared) region of IPA, the memory from the memslot is mapped
+>>>> into the realm VM non secure.
+>>>>
+>>>> Signed-off-by: Steven Price <steven.price@arm.com>
+>>>> ---
+>>>> Changes since v7:
+>>>>    * Remove redundant WARN_ONs for realm_create_rtt_levels() - it will
+>>>>      internally WARN when necessary.
+>>>> Changes since v6:
+>>>>    * Handle PAGE_SIZE being larger than RMM granule size.
+>>>>    * Some minor renaming following review comments.
+>>>> Changes since v5:
+>>>>    * Reduce use of struct page in preparation for supporting the RMM
+>>>>      having a different page size to the host.
+>>>>    * Handle a race when delegating a page where another CPU has
+>>>> faulted on
+>>>>      a the same page (and already delegated the physical page) but
+>>>> not yet
+>>>>      mapped it. In this case simply return to the guest to either
+>>>> use the
+>>>>      mapping from the other CPU (or refault if the race is lost).
+>>>>    * The changes to populate_par_region() are moved into the previous
+>>>>      patch where they belong.
+>>>> Changes since v4:
+>>>>    * Code cleanup following review feedback.
+>>>>    * Drop the PTE_SHARED bit when creating unprotected page table
+>>>> entries.
+>>>>      This is now set by the RMM and the host has no control of it
+>>>> and the
+>>>>      spec requires the bit to be set to zero.
+>>>> Changes since v2:
+>>>>    * Avoid leaking memory if failing to map it in the realm.
+>>>>    * Correctly mask RTT based on LPA2 flag (see rtt_get_phys()).
+>>>>    * Adapt to changes in previous patches.
+>>>> ---
+>>>>    arch/arm64/include/asm/kvm_emulate.h |  10 ++
+>>>>    arch/arm64/include/asm/kvm_rme.h     |  10 ++
+>>>>    arch/arm64/kvm/mmu.c                 | 127 ++++++++++++++++++-
+>>>>    arch/arm64/kvm/rme.c                 | 180 ++++++++++++++++++++++
+>>>> +++++
+>>>>    4 files changed, 321 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/
+>>>> include/asm/kvm_emulate.h
+>>>> index c803c8188d9c..def439d6d732 100644
+>>>> --- a/arch/arm64/include/asm/kvm_emulate.h
+>>>> +++ b/arch/arm64/include/asm/kvm_emulate.h
+>>>> @@ -704,6 +704,16 @@ static inline bool kvm_realm_is_created(struct
+>>>> kvm *kvm)
+>>>>        return kvm_is_realm(kvm) && kvm_realm_state(kvm) !=
+>>>> REALM_STATE_NONE;
+>>>>    }
+>>>>    +static inline gpa_t kvm_gpa_from_fault(struct kvm *kvm, phys_addr_t
+>>>> ipa)
+>>>> +{
+>>>> +    if (kvm_is_realm(kvm)) {
+>>>> +        struct realm *realm = &kvm->arch.realm;
+>>>> +
+>>>> +        return ipa & ~BIT(realm->ia_bits - 1);
+>>>> +    }
+>>>> +    return ipa;
+>>>> +}
+>>>> +
+>>>>    static inline bool vcpu_is_rec(struct kvm_vcpu *vcpu)
+>>>>    {
+>>>>        if (static_branch_unlikely(&kvm_rme_is_available))
+>>>> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/
+>>>> asm/kvm_rme.h
+>>>> index d86051ef0c5c..47aa6362c6c9 100644
+>>>> --- a/arch/arm64/include/asm/kvm_rme.h
+>>>> +++ b/arch/arm64/include/asm/kvm_rme.h
+>>>> @@ -108,6 +108,16 @@ void kvm_realm_unmap_range(struct kvm *kvm,
+>>>>                   unsigned long ipa,
+>>>>                   unsigned long size,
+>>>>                   bool unmap_private);
+>>>> +int realm_map_protected(struct realm *realm,
+>>>> +            unsigned long base_ipa,
+>>>> +            kvm_pfn_t pfn,
+>>>> +            unsigned long size,
+>>>> +            struct kvm_mmu_memory_cache *memcache);
+>>>> +int realm_map_non_secure(struct realm *realm,
+>>>> +             unsigned long ipa,
+>>>> +             kvm_pfn_t pfn,
+>>>> +             unsigned long size,
+>>>> +             struct kvm_mmu_memory_cache *memcache);
+>>>>      static inline bool kvm_realm_is_private_address(struct realm
+>>>> *realm,
+>>>>                            unsigned long addr)
+>>>> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+>>>> index 71c04259e39f..02b66ee35426 100644
+>>>> --- a/arch/arm64/kvm/mmu.c
+>>>> +++ b/arch/arm64/kvm/mmu.c
+>>>> @@ -338,8 +338,13 @@ static void __unmap_stage2_range(struct
+>>>> kvm_s2_mmu *mmu, phys_addr_t start, u64
+>>>>          lockdep_assert_held_write(&kvm->mmu_lock);
+>>>>        WARN_ON(size & ~PAGE_MASK);
+>>>> -    WARN_ON(stage2_apply_range(mmu, start, end,
+>>>> KVM_PGT_FN(kvm_pgtable_stage2_unmap),
+>>>> -                   may_block));
+>>>> +
+>>>> +    if (kvm_is_realm(kvm))
+>>>> +        kvm_realm_unmap_range(kvm, start, size, !only_shared);
+>>>> +    else
+>>>> +        WARN_ON(stage2_apply_range(mmu, start, end,
+>>>> +                       KVM_PGT_FN(kvm_pgtable_stage2_unmap),
+>>>> +                       may_block));
+>>>>    }
+>>>>    
+>>>
+>>> As spotted previsouly, the parameter @may_block isn't handled by
+>>> kvm_realm_unmap_range().
 >>
->> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->> ---
->>   .../bindings/pinctrl/st,stm32-pinctrl-hdp.yaml     | 188 +++++++++++++++++++++
->>   1 file changed, 188 insertions(+)
+>> Ack.
 >>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl-hdp.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl-hdp.yaml
->> new file mode 100644
->> index 000000000000..6251e9c16ced
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl-hdp.yaml
->> @@ -0,0 +1,188 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +# Copyright (C) STMicroelectronics 2025.
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/pinctrl/st,stm32-pinctrl-hdp.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: STM32 Hardware Debug Port Mux/Config
->> +
->> +maintainers:
->> +  - Clément LE GOFFIC <clement.legoffic@foss.st.com>
->> +
->> +description:
->> +  STMicroelectronics's STM32 MPUs integrate a Hardware Debug Port (HDP).
->> +  It allows to output internal signals on SoC's GPIO.
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - st,stm32mp131-hdp
->> +      - st,stm32mp151-hdp
->> +      - st,stm32mp251-hdp
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +patternProperties:
->> +  "^hdp[0-7]-pins$":
->> +    type: object
->> +    $ref: pinmux-node.yaml#
->> +    additionalProperties: false
->> +
->> +    properties:
->> +      pins:
->> +        enum: [ HDP0, HDP1, HDP2, HDP3, HDP4, HDP5, HDP6, HDP7 ]
+>>>>    void kvm_stage2_unmap_range(struct kvm_s2_mmu *mmu, phys_addr_t
+>>>> start,
+>>>> @@ -359,7 +364,10 @@ static void stage2_flush_memslot(struct kvm *kvm,
+>>>>        phys_addr_t addr = memslot->base_gfn << PAGE_SHIFT;
+>>>>        phys_addr_t end = addr + PAGE_SIZE * memslot->npages;
+>>>>    -    kvm_stage2_flush_range(&kvm->arch.mmu, addr, end);
+>>>> +    if (kvm_is_realm(kvm))
+>>>> +        kvm_realm_unmap_range(kvm, addr, end - addr, false);
+>>>> +    else
+>>>> +        kvm_stage2_flush_range(&kvm->arch.mmu, addr, end);
+>>>>    }
+>>>>      /**
+>>>> @@ -1053,6 +1061,10 @@ void stage2_unmap_vm(struct kvm *kvm)
+>>>>        struct kvm_memory_slot *memslot;
+>>>>        int idx, bkt;
+>>>>    +    /* For realms this is handled by the RMM so nothing to do
+>>>> here */
+>>>> +    if (kvm_is_realm(kvm))
+>>>> +        return;
+>>>> +
+>>>>        idx = srcu_read_lock(&kvm->srcu);
+>>>>        mmap_read_lock(current->mm);
+>>>>        write_lock(&kvm->mmu_lock);
+>>>> @@ -1078,6 +1090,7 @@ void kvm_free_stage2_pgd(struct kvm_s2_mmu *mmu)
+>>>>        if (kvm_is_realm(kvm) &&
+>>>>            (kvm_realm_state(kvm) != REALM_STATE_DEAD &&
+>>>>             kvm_realm_state(kvm) != REALM_STATE_NONE)) {
+>>>> +        kvm_stage2_unmap_range(mmu, 0, (~0ULL) & PAGE_MASK, false);
+>>>>            write_unlock(&kvm->mmu_lock);
+>>>>            kvm_realm_destroy_rtts(kvm, pgt->ia_bits);
+>>>
+>>> (~0ULL & PAGE_MASK) wouldn't be a problem since the range will be
+>>> limited to
+>>> [0, BIT(realm->ia_bits) - 1] in kvm_realm_unmap_range(). I think it's
+>>> reasonable
+>>> to pass the maximal size here, something like:
+>>>
+>>>          kvm_stage2_unmap_range(mmu, 0, BIT(realm->ia_bits - 1), false);
 > 
-> This can be:
+> I think this must be, given the end is excluding:
+>        kvm_stage2_unmap_range(mmu, 0, BIT(realm->ia_bits), false);
 > 
-> pattern: '^HDP[0-7]$'
+> BIT(realm->ia_bits - 1) only covers the protected half. The unprotected
+> half spans  [ BIT(realm->ia_bits - 1), BIT(realm->ia_bits))
 
-Hi Rob, thanks for pattern tips I didn't know it was possible
-> 
-> 
->> +
->> +      function:
->> +        maxItems: 1
-> 
-> This is always 1 item, so just 'function: true' here.
+The kernel treats the two halves as aliasing. kvm_realm_unmap_range()
+caps the end to min(BIT(realm->ia_bits - 1), end). So this wouldn't make
+any difference.
 
-Yes, I know I fought to make it work, and the maxItems was the only idea 
-that came out.
-> 
->> +
->> +    required:
->> +      - function
->> +      - pins
->> +
->> +allOf:
->> +  - $ref: pinctrl.yaml#
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            const: st,stm32mp131-hdp
->> +    then:
->> +      patternProperties:
->> +        "^hdp[0-7]-pins$":
->> +          properties:
->> +            function:
->> +              enum: [ pwr_pwrwake_sys, pwr_stop_forbidden, pwr_stdby_wakeup, pwr_encomp_vddcore,
->> +                      bsec_out_sec_niden, aiec_sys_wakeup, none, ddrctrl_lp_req,
->> +                      pwr_ddr_ret_enable_n, dts_clk_ptat, sram3ctrl_tamp_erase_act, gpoval0,
->> +                      pwr_sel_vth_vddcpu, pwr_mpu_ram_lowspeed, ca7_naxierrirq, pwr_okin_mr,
->> +                      bsec_out_sec_dbgen, aiec_c1_wakeup, rcc_pwrds_mpu, ddrctrl_dfi_ctrlupd_req,
->> +                      ddrctrl_cactive_ddrc_asr, sram3ctrl_hw_erase_act, nic400_s0_bready, gpoval1,
->> +                      pwr_pwrwake_mpu, pwr_mpu_clock_disable_ack, ca7_ndbgreset_i,
->> +                      bsec_in_rstcore_n, bsec_out_sec_bsc_dis, ddrctrl_dfi_init_complete,
->> +                      ddrctrl_perf_op_is_refresh, ddrctrl_gskp_dfi_lp_req, sram3ctrl_sw_erase_act,
->> +                      nic400_s0_bvalid, gpoval2, pwr_sel_vth_vddcore, pwr_mpu_clock_disable_req,
->> +                      ca7_npmuirq0, ca7_nfiqout0, bsec_out_sec_dftlock, bsec_out_sec_jtag_dis,
->> +                      rcc_pwrds_sys, sram3ctrl_tamp_erase_req, ddrctrl_stat_ddrc_reg_selfref_type0,
->> +                      dts_valobus1_0, dts_valobus2_0, tamp_potential_tamp_erfcfg, nic400_s0_wready,
->> +                      nic400_s0_rready, gpoval3, pwr_stop2_active, ca7_nl2reset_i,
->> +                      ca7_npreset_varm_i, bsec_out_sec_dften, bsec_out_sec_dbgswenable,
->> +                      eth1_out_pmt_intr_o, eth2_out_pmt_intr_o, ddrctrl_stat_ddrc_reg_selfref_type1,
->> +                      ddrctrl_cactive_0, dts_valobus1_1, dts_valobus2_1, tamp_nreset_sram_ercfg,
->> +                      nic400_s0_wlast, nic400_s0_rlast, gpoval4, ca7_standbywfil2,
->> +                      pwr_vth_vddcore_ack, ca7_ncorereset_i, ca7_nirqout0, bsec_in_pwrok,
->> +                      bsec_out_sec_deviceen, eth1_out_lpi_intr_o, eth2_out_lpi_intr_o,
->> +                      ddrctrl_cactive_ddrc, ddrctrl_wr_credit_cnt, dts_valobus1_2, dts_valobus2_2,
->> +                      pka_pka_itamp_out, nic400_s0_wvalid, nic400_s0_rvalid, gpoval5,
->> +                      ca7_standbywfe0, pwr_vth_vddcpu_ack, ca7_evento, bsec_in_tamper_det,
->> +                      bsec_out_sec_spniden, eth1_out_mac_speed_o1, eth2_out_mac_speed_o1,
->> +                      ddrctrl_csysack_ddrc, ddrctrl_lpr_credit_cnt, dts_valobus1_3, dts_valobus2_3,
->> +                      saes_tamper_out, nic400_s0_awready, nic400_s0_arready, gpoval6,
->> +                      ca7_standbywfi0, pwr_rcc_vcpu_rdy, ca7_eventi, ca7_dbgack0, bsec_out_fuse_ok,
->> +                      bsec_out_sec_spiden, eth1_out_mac_speed_o0, eth2_out_mac_speed_o0,
->> +                      ddrctrl_csysreq_ddrc, ddrctrl_hpr_credit_cnt, dts_valobus1_4, dts_valobus2_4,
->> +                      rng_tamper_out, nic400_s0_awavalid, nic400_s0_aravalid, gpoval7 ]
+This an unfortunate outcome of the memory slots describing both the
+protected region (via guestmem_fd) and the shared region (via VMM maps).
+So a single memslot describes two regions which leads to the kernel
+treating those regions as aliasing for some purposes.
 
-Do you know if it is possible to add an "and" in the if condition ?
-I want to restrict the function name per pin name:
-If compatible is "st,stm32mp131-hdp" and pin is "HDP2" then
-function:
-	enum: [..]
-Is it somehow feasible ?
-
-Thank you
-
-Clément
-
-[...]
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/stm32mp1-clks.h>
->> +
->> +    pinctrl@54090000 {
->> +      compatible = "st,stm32mp15-hdp";
->> +      reg = <0x54090000 0x400>;
->> +      clocks = <&rcc HDP>;
->> +      pinctrl-names = "default";
->> +      pinctrl-0 = <&hdp2_gpo>;
->> +      hdp2_gpo: hdp2-pins {
->> +        function = "gpoval2";
->> +        pins = "HDP2";
->> +      };
->> +    };
->>
->> -- 
->> 2.43.0
->>
+Thanks,
+Steve
 
 
