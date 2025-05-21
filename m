@@ -1,122 +1,152 @@
-Return-Path: <linux-kernel+bounces-657280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E7EABF209
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:48:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876F4ABF216
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4502117CB18
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:48:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2211BC2B7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CD925F98B;
-	Wed, 21 May 2025 10:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0586261584;
+	Wed, 21 May 2025 10:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TWmo0PFb"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XiIQegOR"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E869A2135CB
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 10:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960A425F7B7;
+	Wed, 21 May 2025 10:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747824517; cv=none; b=ZEbBkY6d5sRYOqAGpmPIDeiC9aWUm8HpI4kKtdKtgcH8l206ZtFdZzD4cgNHH2CBCdussXXJPhx8iaBY5ahS9SN2YrYWJZQTderK3Xs4ljeieVJOvh6bPomp9h8uCkEld0ewUZSuz3G88YlC9h1EKTKymw/BgqIGZZ5rU4Qyf1g=
+	t=1747824593; cv=none; b=csChInlRdtLJp/LKlDxW4UQchC6wqLOtuQVHinF7jTCHfkfQAHFIPe6U8cX5Oml0h140h0xNQ5/nACJjoQhodH9Q9Og0M2nhx2EnEVmD81whJl68yW+7XVbww8VuV+BZc3eRqc3toE4uoLFhB3B0mtfCEZqpjAWZk/BvXMZ1l5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747824517; c=relaxed/simple;
-	bh=zPVzcQ0wTxrrLosGxnFrsJYeTgPP4pLFOuxsLK0tQi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U0/NAmcptCIhkKuaojTGvJKh/eX28dvlY2mayuI+221TAJmE7e/vrJIPAtvNDpSH0DSuv81Xt2VoX4WVHKXm3G0edzYW93gZDspFb/47uJlUhw7YPFUVOTp19EeVOx3Cxprzt+zh6hciLxc99Z314EyVzhXxAdRDhTQ4Ijq/aAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TWmo0PFb; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b26c5fd40a9so6134631a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 03:48:34 -0700 (PDT)
+	s=arc-20240116; t=1747824593; c=relaxed/simple;
+	bh=K6OSHOvN8xKXv1PQv/W3lpylYIuNyEiiSXA3YxNEO1Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JdNiCar7Y/okvcTS+hiL79WcByg7HXYh/NaPLvICmhkBQIRiyQvjR4vd3EvOLt1oZ6A5Gzo/hO9UMz6URSP1cOmgA2CO2qLqgdKYmlCMUeZtjb6bhUgkOPV6aRMKnfus+KRVr+DU7lc/SUWMMssU4S4mqRPNEYjc10fn/7wSwFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XiIQegOR; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b26f67f10ddso3709553a12.3;
+        Wed, 21 May 2025 03:49:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747824514; x=1748429314; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KCVWhmhVUwvSreyj85yNDnhSC1O4ImPSH+cKpWIfIvs=;
-        b=TWmo0PFbGW/+u+YBHCF0aIFcD79Rxb6H/XY7PWwXeUbdec5sxkaJvoyXvyXr+lT+Vt
-         xmOc4laQaTr/iPFU2fdf56pr/sHvDM0Xk2Oxr89sswftvo/viMQDgyGL5MirLcsSKrRI
-         0zAEIdHpxD1gNVWwvWFUXrECi6P+tkwI4qBay4zmlEg08chOHHuNYXqykR6iVpE9zXn9
-         2v3A0+bgfjm+PjYXOT2g7A7IhJwDIUJCoWKrlkIhbjdaQcIuKVWEKZLUNlKsDlEvBuvl
-         b1IJ8bLihi6PqIpAkb5+Li4l99bv+kizHXQkPRuTbIz34SKps6Hg7c0V3oTdmltl+NdA
-         gSpw==
+        d=gmail.com; s=20230601; t=1747824591; x=1748429391; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DhMvQPsr7BqEJ8gDSGi5LI70uKf+QgEr+Y8tLGpjGRs=;
+        b=XiIQegOR34t4XecuhWCJlN1K2n6VU+xIYKnZhaUFQNVBhs6F4pl479zquYeui0alIl
+         BgKfp81FaaOsLNhkUMkuZjZmo7ijW3sYPE2DcPkfXFxclz1n6DOsxDYnus0Ixkgjkw9N
+         CmKoHha1AUOEACHQoE3+5Rnk6CK9Au5jdLwhVeEKFEOX2dj6LxECLIMLYJfjPDghZlC7
+         kbZLYbPOgaV0RWAmL7eiZj+ZRBvJlhCdTziYm4/5T9qRMR9yRgrePsaip/HWGlBnpWDl
+         OWRPoJ6dTvxTXWiWyVxjDHcBN8r4aOIzF/ki1aqHDi/dmBvBXWuM1VXga9GTFqSj5fll
+         GjQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747824514; x=1748429314;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KCVWhmhVUwvSreyj85yNDnhSC1O4ImPSH+cKpWIfIvs=;
-        b=ICu5naJ1ZhDHC26RTgL0HhOUQqZ/U0yfcbJCIkjum1FPNX1H1p3K33TSZFAIY0ZTz7
-         nCHBunQsmRnEcSFiINpLWClIKocqli2NmZ5tEYd3PEAPgqVtjlrO/D3nhMTTurD69urO
-         lBWIWgoYVRykJGcH2H2EzEVKkFQ8RXG4b7AqPGVdoA8wZd026dK1faHjQnyJRLX6hMRi
-         dT9MH9KKqAA1araLduD8dSX2alfhQSoFQy2RhS3lvJL2+05al+xDETUiavJo4k+5jN+5
-         jcQwq9u5ItUsMuRq/l52F3PXAs15T5s2rDao4/WHcPbBXZzFgQiUqrkkyDiWkJicvqFf
-         K9Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKahF7m3PQ3gHuT13PYn6BwPQXklR+2VUvJYmIvi9fxrZmj4BfqeejglmdOCMyhPxgHNbgb/tIeWa7bcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQmPAoiuScknZZ8SK9qiOZnTd2S8mocy/zV+Gxy7ezajGyzbqL
-	dq6EDvWjbUHFxlMikUT9FEOUNWJ7YmXi5eqegNrEyaMK604iziocfXcIo9nWrPiPhaM=
-X-Gm-Gg: ASbGnctWrabFA7AJiY1L0Fp7A8txPyi5UwjmwFCtyn1iX3CqxDne0qOY2+jG70eyupv
-	FHb5X157cuoq2LVp6glnkjelB35Mx8SxTDgS+PGaVjuGdx0bhCMrd5zsHbj9qRYwg5dV98D6JFi
-	NMbPC2dr9EhITvIRtD3VzN3aQwih24hmODniwSKsarvr4h5HaImEs0T1uNKaf/90L85XVkMGO/e
-	peJeH9dpMnrPhoSeApXnczWOb9LCeOl95QV6GA6VlGT/fRNZ61kxvjt/RGb8nHuUtNZOdpgz7UI
-	1U1vCPJDsXz5mFY32McPKY2aZZ7SIoiC565+ejFojFY/nXB7sTfq
-X-Google-Smtp-Source: AGHT+IGdd5dXeRvluDlCSAr/KcDBCCa0Jpvf2y620qpFkldBXh7b0d+mATtYjpGqsll1Ytp7og51QA==
-X-Received: by 2002:a17:903:2ec3:b0:215:a2f4:d4ab with SMTP id d9443c01a7336-231d4b05c54mr265369065ad.7.1747824514174;
-        Wed, 21 May 2025 03:48:34 -0700 (PDT)
-Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4ac94a0sm90907755ad.2.2025.05.21.03.48.33
+        d=1e100.net; s=20230601; t=1747824591; x=1748429391;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DhMvQPsr7BqEJ8gDSGi5LI70uKf+QgEr+Y8tLGpjGRs=;
+        b=ZlONoo5hp0gLWsQrm1P8hXowR6QK9zONphvvAGCOYOxtlEEUWxiSwaVMpTfd+wWzbH
+         9RLANJnWtxNQ4DAO9DVx9VZFNc6hSylnxbPBK8XWus//RJjQAi/n5fIw7RVxRaw7W9xJ
+         ewtR48NdCzLphW6qX2FgmOifFfGUE7663O+9Q1dXIyWuLxanXd7giB+gWH75aK6vezzq
+         hYZiis5crTdbAGgjLtAUvYguCjJXRzmZxSWqiFDEURh9dDdHCeaPG65r55SSZw3zHzXp
+         eBO/sclpxXOYGnzObcOJy1jFMP63m+Zqz07zm84+gO4nC84YGRuktMoiu8wMp5M9+JRW
+         ahqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIgrXZh2fBQOJYOXkm6DvXlzz5KGh7IqcpniGwOar2k07XbeWhoz8laR7ngzczqKf7CdfYZmb/qEsnGKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPkcCmBB0cgRwmXhBbAGuvP6QOEX+TyQnTTmqKNaahTyC6lhsA
+	AAwPC+P4/9+iW02Tk9YKFa8Sxu4CbStIBBoxOIsv5ZbOZte6i4aVC+5I
+X-Gm-Gg: ASbGnct4ijwZ3MGBgsGFuptXajgtAKZqSFOAXMF47EbFDgY3LYGI8qorEA9bt8Ry0Ig
+	by8lIyNd/gxqxOWbKT0m0GzhoONDEjb9qGeauSc6/4R3FuDN7MrwcgtXm14hR24uRzNSNnBzESa
+	4m2QobUYamXCVxJvHmDmXzEzBI6BQAA27p385YVVkYiiZ4928YshrZrvobfNOnsLv4JX5IHHtFl
+	FQBTaOPq9YEkff40lTIunnr2fOSyqrazVPJz4FBSNWJkED/V6B1sySNauexj21taRPamfnljQ/e
+	0rpIl47TaQkxqeZkOYn17PEQ7W49Dx2cBcDc3pvbbGtOCP75bJeU5R7PGv9J47s3vaha10Sp+7W
+	2WEzve1dUzl0iEenQjKYguoSkcMNNQMrKSDXyZg6D1htX
+X-Google-Smtp-Source: AGHT+IEcmvFcK/Uyyico+0ngdPnG6xEbSk1Q+QMKRfKMGjA56rbH6wvvzZ4PB7cYUmlfM/jH4TyVcw==
+X-Received: by 2002:a17:903:41c7:b0:22e:37b8:7972 with SMTP id d9443c01a7336-231de3514dcmr283226995ad.10.1747824590715;
+        Wed, 21 May 2025 03:49:50 -0700 (PDT)
+Received: from localhost.localdomain (123-194-189-72.dynamic.kbronet.com.tw. [123.194.189.72])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4ac9588sm90457315ad.24.2025.05.21.03.49.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 03:48:33 -0700 (PDT)
-Date: Wed, 21 May 2025 16:18:31 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: rafael@kernel.org, Sumit Gupta <sumitg@nvidia.com>
-Cc: Lifeng Zheng <zhenglifeng1@huawei.com>, pierre.gondois@arm.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linuxarm@huawei.com, mario.limonciello@amd.com,
-	yumpusamongus@gmail.com, srinivas.pandruvada@linux.intel.com,
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com,
-	lihuisong@huawei.com, cenxinghai@h-partners.com,
-	yubowen8@huawei.com, hepeng68@huawei.com,
-	linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] cpufreq: CPPC: Support for autonomous selection in
- cppc_cpufreq
-Message-ID: <20250521104831.6a3qfhzrwf2mcnyu@vireshk-i7>
-References: <20250507031941.2812701-1-zhenglifeng1@huawei.com>
- <98c87824-2c77-4ae3-b466-badd8e8187ad@nvidia.com>
+        Wed, 21 May 2025 03:49:50 -0700 (PDT)
+From: Jay Chen <shawn2000100@gmail.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jay.chen@siemens.com,
+	Jay Chen <shawn2000100@gmail.com>
+Subject: [PATCH v4] usb: xhci: Set avg_trb_len = 8 for EP0 during Address Device Command
+Date: Wed, 21 May 2025 18:48:34 +0800
+Message-ID: <20250521104838.15215-1-shawn2000100@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <98c87824-2c77-4ae3-b466-badd8e8187ad@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On 21-05-25, 16:13, Sumit Gupta wrote:
-> 
-> 
-> On 07/05/25 08:49, Lifeng Zheng wrote:
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > Add sysfs interfaces for CPPC autonomous selection in the cppc_cpufreq
-> > driver.
-> > 
-> > Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
-> 
-> Looks good to me.
-> 
-> Reviewed-by: Sumit Gupta <sumitg@nvidia.com>
+There is a subtle contradiction between sections of the xHCI 1.2 spec
+regarding the initialization of Input Endpoint Context fields. Section
+4.8.2 ("Endpoint Context Initialization") states that all fields should
+be initialized to 0. However, Section 6.2.3 ("Endpoint Context", p.453)
+specifies that the Average TRB Length (avg_trb_len) field shall be
+greater than 0, and explicitly notes (p.454): "Software shall set
+Average TRB Length to '8' for control endpoints."
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Strictly setting all fields to 0 during initialization conflicts with
+the specific recommendation for control endpoints. In practice, setting
+avg_trb_len = 0 is not meaningful for the hardware/firmware, as the
+value is used for bandwidth calculation.
 
-Rafael, since I have already sent the pull request, can you please
-take it directly ? Thanks.
+Motivation: Our company is developing a custom Virtual xHC hardware
+platform that strictly follows the xHCI spec and its recommendations.
+During validation, we observed that enumeration fails and a parameter
+error (TRB Completion Code = 5) is reported if avg_trb_len for EP0 is
+not set to 8 as recommended by Section 6.2.3. This demonstrates the
+importance of assigning a meaningful, non-zero value to avg_trb_len,
+even in virtualized or emulated environments.
 
+This patch explicitly sets avg_trb_len to 8 for EP0 in
+xhci_setup_addressable_virt_dev(), as recommended in Section 6.2.3, to
+prevent potential issues with xHCI host controllers that enforce the
+spec strictly.
+
+v4:
+- Clarify relevant spec sections and document their conflict.
+- Remove language about "ensuring compliance with the spec" per reviewer
+  suggestion.
+- Update assignment to use '=' instead of '|='.
+
+v3:
+- Corrected author name in commit metadata and added changelog.
+
+v2:
+- Fixed malformed patch formatting issue.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=220033
+Signed-off-by: Jay Chen <shawn2000100@gmail.com>
+---
+ drivers/usb/host/xhci-mem.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index d698095fc88d..26d0ab37bd5b 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -1166,6 +1166,8 @@ int xhci_setup_addressable_virt_dev(struct xhci_hcd *xhci, struct usb_device *ud
+ 	ep0_ctx->deq = cpu_to_le64(dev->eps[0].ring->first_seg->dma |
+ 				   dev->eps[0].ring->cycle_state);
+ 
++	ep0_ctx->tx_info = cpu_to_le32(EP_AVG_TRB_LENGTH(8));
++
+ 	trace_xhci_setup_addressable_virt_device(dev);
+ 
+ 	/* Steps 7 and 8 were done in xhci_alloc_virt_device() */
 -- 
-viresh
+2.43.5
+
 
