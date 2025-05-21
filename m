@@ -1,113 +1,153 @@
-Return-Path: <linux-kernel+bounces-657030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68CEBABEE1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:39:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D4B3ABEE15
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9081B4E1E35
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:39:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97C143B4639
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC20237173;
-	Wed, 21 May 2025 08:39:28 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BC42367C0;
+	Wed, 21 May 2025 08:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6+zkbI1"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E983B2367C0;
-	Wed, 21 May 2025 08:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47990199EAF
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 08:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747816768; cv=none; b=Y/ok+5i+tBx6fWLnY1P66yvQ1j00799DbhqMqqHgcTBnJlUkEsCQTy5lPl7GI5S6K8PWxw4+8lh7+fk0XzfnAEHpClGIa05Af+TIDSIVx5epnSPSXTnhj15MiKppezAejA+8J0SqAVpR/v5o4kSOH69edSUHqQCWUA/MxfrkctY=
+	t=1747816745; cv=none; b=R0FnGpcT6zdAI1zUiBHNSGU4P82rBK4KYAtFJvOAhWX47iFALGwopDGd44tfH0OK/TMHtd6Y2opBbruJWDGCPhsoUcBv+21wuE3NTsPQTHTrJQy4COR73qttknUduoHaUjYDz9Kn+uo7TCUGSX1m+Ft2jATm+S/F3DyN2O/EkX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747816768; c=relaxed/simple;
-	bh=7zLmzQ7OpMriiPhIS/LNVnD+rTOcckAQUownjGSaiS0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sMaBu76wrO4PXMsW07aXz2xoBTrAUKz4OzeAvKmoWt88xaSAEUPalmmixkeGZJfEHz2rYO4u/TRS4e4yA3FYU+xMvKQdYK1MY2b/uV5FDdh//K1sVgrE+EYhPiT+wG5wI5G6O0HHFiaGzHESQN6D56AOsSz0Jgp1dKOwfGnOUNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowAAXf74pkS1oZuXmAQ--.4439S2;
-	Wed, 21 May 2025 16:39:11 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: adrian.hunter@intel.com,
-	vigneshr@ti.com,
-	ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] mmc: sdhci-omap: Add error handling for sdhci_runtime_suspend_host()
-Date: Wed, 21 May 2025 16:38:46 +0800
-Message-ID: <20250521083846.718-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1747816745; c=relaxed/simple;
+	bh=ZrHnJ8tLnjK5oeQd5nHc+q9YJwBlpF7SD3M/7pIX/7I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L4ZGYuHotmSIwURu5OT0n471oXVOBxJSrD9A/So8vGuoyIUiArjS+dxAY/tMhfWr2I92oGgDSbTtNH6vl7JWbhyW2kRX9tsGrkvNB2gExRfw/LVU5e9i7NH+G8OBDRGRihCGFWtic8XH3x31sDNvz7a2/qJ7b4owCCTbUU+Kda4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F6+zkbI1; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-7086dcab64bso60939637b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 01:39:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747816743; x=1748421543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nlxLaOezJ54RMifNGPJT90Ch1a3hAKhBD04YGfXVM6I=;
+        b=F6+zkbI1W1lzvf/5n29Wq9oM16ByxdkcQYGuyYgEHvnyopL36zZCNnwn7E//FNLvCA
+         yHXYXfAyHb3M2V+Gw+djxVDluqnPCtt4oSqKpQ+Ge9xpzigx3w3FgyoEow7NOgW5vPiM
+         CyClDXJNPqgM6uEFhSi9/ugxGBE04FhS+5A3nFpf8vqbuUKrQPDysgEjCfs/FZ82yrzr
+         hkSjqXmWRbw/9X9caOL8ORrRSScbEFrlbdYTHiXkbRlPGK++EwPdFr50eZXxeJ54moGp
+         ob4kUh3kKdaSPw7mZfBSCdXkSHGeY75bCBFK+mkQFXB5STGD+Xd9dXtbkNtuTrt3jwOj
+         twxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747816743; x=1748421543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nlxLaOezJ54RMifNGPJT90Ch1a3hAKhBD04YGfXVM6I=;
+        b=fbQtLfO0ttmD9hwUWw0i+d7ZwtVoPfRyvC48F2W098rPkGlzyCKRVgj9JMPUvI4b3Q
+         7gaJSiH9T4rMrKNN7qj1dUTLGlnOJhkeM7nzJX3yEZpFhz1dZADSnPSNsWWGrS9W/QEQ
+         eRTe0faugSPxc4KjKhW84Ft8VRTG5vepqpYPGvQvC42wImmpAyBBySf5Mabxt27voEeY
+         wNTsDf1WTYY9rvYjv5E5BYU6bienDV7QwPz7VyHTBe9n/GuYFTEuKXOa5doePecpuhuV
+         Bnzb0GgC052WF/OpyMxlO36IDgTm998+ZMv6r8FuGpSPZc3wP420YXv/Ont6LM708lKd
+         4iSA==
+X-Forwarded-Encrypted: i=1; AJvYcCU25ZEdVdmudJVYg7pge1Xv6Lj1ZcdgWGL1LG3ETpgJ41QTyQrU8LGELqx5oJNtEnBc7odGJ2TotQBm9L8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8XvXyd3RU5JQu1+bcgvyPvBSKQeXeJD5YREn5TKwU9rx2Yn5z
+	B02NylGsdAnrx0/NGzu2zCcPp0t6eukftlFKKqc8jgICzae04yNFFNuCEk+QhCVZLzVRji9SggB
+	b0Tri4OphOG2+4bGQl4jMwJTfN/0ophg=
+X-Gm-Gg: ASbGncvQmnTxqBb22fy7JEjsLFs0Zr0imFfUyo3Q0asoEw62Ka1AniHcUWgyfZJZD4b
+	q2pNEcGluisCzxnC157+FbfBIudLc/FogoQlJY7LSPlntmUrQOvcbWFV4/QGwyDBpL3pxi09M7W
+	jnFIYDcM7GtkN8yuIug3N7A6Y8P8A2NT7zOs+SPRp6xnVO5yf+c5FfMdpK+LkKr/ovYA==
+X-Google-Smtp-Source: AGHT+IGn1ic8/qU3MsjWAq3GBfIPqaxt/z4IAGrqjkiBpwB9quqh6qpru5pVvB2n0NZEUTIDlvgIJbb6/9KsnN95NN4=
+X-Received: by 2002:a05:690c:3610:b0:70d:fd2a:1457 with SMTP id
+ 00721157ae682-70dfd2a14dbmr3227307b3.1.1747816743190; Wed, 21 May 2025
+ 01:39:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAXf74pkS1oZuXmAQ--.4439S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tryftFy7ZFyDKw47tF4kCrg_yoW8Gw13pa
-	n0grW29r48Ww1FkF4kJan2vryFg345KrWjy3s8Xw1ruw4IkrW5KFsrCFyYvF1UKr13Ganr
-	XF18XayUCFyYyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
-	WxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
-	Yx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbV
-	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8
-	JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUej
-	jgDUUUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAUJA2gtfVNegQABs2
+References: <aC2ILNV6xgt11KuN@brak3r-Ubuntu> <2025052142-maturing-earthworm-cb31@gregkh>
+In-Reply-To: <2025052142-maturing-earthworm-cb31@gregkh>
+From: Rujra Bhatt <braker.noob.kernel@gmail.com>
+Date: Wed, 21 May 2025 14:08:52 +0530
+X-Gm-Features: AX0GCFt73yT51gJAn-US9CzR9fBeYpCj9Uj81PJZLSTvmlHCr2-bT7uYTz3V5X0
+Message-ID: <CAG+54DZWjN3ii-JCOME8XdA1B+5yCmRSo0-wqTv+zt5w6UcEVA@mail.gmail.com>
+Subject: Re: [PATCH RESEND] staging : greybus : Documentation : firmware :
+ Replace deprecated strncpy() with strscpy()
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Johan Hovold <johan@kernel.org>, elder@kernel.org, greybus-dev@lists.linaro.org, 
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The sdhci_omap_runtime_suspend() calls sdhci_runtime_suspend_host() but
-does not handle the return value. A proper implementation can be found
-in sdhci_am654_runtime_suspend().
+On Wed, May 21, 2025 at 09:06:00AM +0200, Greg KH wrote:
+> A: http://en.wikipedia.org/wiki/Top_post
+> Q: Were do I find info about this thing called top-posting?
+> A: Because it messes up the order in which people normally read text.
+> Q: Why is top-posting such a bad thing?
+> A: Top-posting.
+> Q: What is the most annoying thing in e-mail?
+>
+> A: No.
+> Q: Should I include quotations after my reply?
+>
+>
+> http://daringfireball.net/2007/07/on_top
+>
+> On Wed, May 21, 2025 at 11:11:26AM +0530, rujra wrote:
+> > Hi greg,
+> >
+> > why is this a RESEND ?:
+> >
+> > >> I had sent the same patch 4 days ago and didn't get any reply , henc=
+e tried to resend the same patch for the same,
+> > here is earlier mail :
+> > https://mail.google.com/mail/u/1/?ik=3Df63b03515e&view=3Dom&permmsgid=
+=3Dmsg-a:s:12290863930259651721
+>
+> That is a link to _your_ account, not a public record of your email :(
+>
+> > ,
+> >
+> > line does not match this:
+> > >> sorry , i could not get it what it is exactly ?, if possible can you=
+ share some insights or example so that from in future i would get it right=
+.
+>
+> Your "From:" line in your email does not match with the signed-off-by
+> line.
 
-Add error handling for sdhci_runtime_suspend_host(). Return the error
-code if the suspend fails.
+This has been addressed successfully, Kindly preview it.
 
-Fixes: 51189eb9ddc8 ("mmc: sdhci-omap: Fix a lockdep warning for PM runtime init")
-Cc: stable@vger.kernel.org # 5.19
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
-v2: Fix code error.
+is this the way correct about the reply email ? , kindly let me know as I
+have tried to get more and more answers and solved issues, and thank you
+so much for your guidance and will be keep in mind about the process and wi=
+ll
+not fail next time onwards.
 
- drivers/mmc/host/sdhci-omap.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+thank you,
+regards,
+Rujra Bhatt
 
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index 54d795205fb4..f09f78cf244d 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -1438,12 +1438,16 @@ static int __maybe_unused sdhci_omap_runtime_suspend(struct device *dev)
- 	struct sdhci_host *host = dev_get_drvdata(dev);
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
-+	int ret;
- 
- 	if (host->tuning_mode != SDHCI_TUNING_MODE_3)
- 		mmc_retune_needed(host->mmc);
- 
--	if (omap_host->con != -EINVAL)
--		sdhci_runtime_suspend_host(host);
-+	if (omap_host->con != -EINVAL) {
-+		ret = sdhci_runtime_suspend_host(host);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	sdhci_omap_context_save(omap_host);
- 
--- 
-2.42.0.windows.2
-
+On Wed, May 21, 2025 at 2:02=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Wed, May 21, 2025 at 01:30:44PM +0530, Rujra Bhatt wrote:
+>
+> <snip>
+>
+> For some reason you sent this only to me, which is a bit rude to
+> everyone else on the mailing list.  I'll be glad to respond if you
+> resend it to everyone.
+>
+> thanks,
+>
+> greg k-h
 
