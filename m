@@ -1,126 +1,202 @@
-Return-Path: <linux-kernel+bounces-657103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F613ABEF4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:15:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 875A8ABEF3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A48B71BC001A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:15:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D48703A9400
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04187239E7E;
-	Wed, 21 May 2025 09:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7122397AA;
+	Wed, 21 May 2025 09:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="KrJSRluA"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2ZqpZVY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04CA238C3D;
-	Wed, 21 May 2025 09:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED911A9B4C;
+	Wed, 21 May 2025 09:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747818901; cv=none; b=PDJlME1sZAyO+rBkPyPmWdO92UsOujFj95VpvL+wo/yAaCfy37V+/BbO17rZLO8Lw06lXIr34Xvtq9ETFTm9xBdMOWTc+NxLBnnm/pW8C8MgoljkGOCETV0/1cgmDpYm5B5KyANYqPEhufKP2f2PRRBeateL4mrFqrEBJO6J4rk=
+	t=1747818745; cv=none; b=fWvedgIVr6vc4JUeszXtGdNB3krRWYhjBH8+U15tLL3CQEvL75oKgA2ZYYkMl8iXsbfGWcCziLmRQczCSopckP5AwdTsHRAByBka+mbhr20O7GfzFZS6wLz0ddNqgMfkV3X86VQw+cGJ/DKaOVTns8Ciz+oWUCPNU9e2H/jwv2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747818901; c=relaxed/simple;
-	bh=YSpDBfKl2V81ILNyL21Nv1m0vSKQGw/nVO0nNErWsyc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XIFavn359rBBHNdxczn3FwgiKKGJSKmknIAcZzkEPklF0AifDgeNenPyQUee4Uemsaf1AU49Ruu5ufX58MjL4F/s4D0ODCtM+JhI7MOjJqQ62ivAmJdNGh1Qq6/zs6WHB2pOF5o2YyFR9OGMbDXOFk0e+2GpKElGoSAm39yRZLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=KrJSRluA; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L3wVbU011053;
-	Wed, 21 May 2025 11:14:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	KuHtnSKsW+7Ihg+kQpOB9bOtYG+LujduoGhpLuXqrxs=; b=KrJSRluAke1eFynF
-	YsRSpn4AixLB3VnboO1r/4KySuJbz6jh6HF9bPuPTr5EV1/70xIUQgxGOKw/pMPS
-	UiVo2ky357LFlpVw+LbDpowzzLAOxpBFxPkjDAmnF4B1KIa4hpkhmMZNe7L2ohZH
-	8ooz1eucpgkw9UYlaARcJoHSIh28cPYjEQO2CJOU2nfF9Xl6U32qvtbPtT/yPZfv
-	27NPa1QM8feQ4Hwm1ZCRNOIN+n8+hRBialGHh5DeNIaHEVGS/9nv480F+cbh5dXy
-	MsD6/HIs1k6x3/vLAuWLkjnJ+/SPG+bAXbRzZc+bUgC8vypIHgig5knNR+9o5WE6
-	HebIfw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46rwfab5cx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 11:14:36 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id ECB1640054;
-	Wed, 21 May 2025 11:13:12 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4F64BB2E19D;
-	Wed, 21 May 2025 11:12:18 +0200 (CEST)
-Received: from [10.252.1.130] (10.252.1.130) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 21 May
- 2025 11:12:17 +0200
-Message-ID: <3e855041-3eb2-48c8-88d7-0eb7b9948cc8@foss.st.com>
-Date: Wed, 21 May 2025 11:12:16 +0200
+	s=arc-20240116; t=1747818745; c=relaxed/simple;
+	bh=Y79uDuogax25dTt9+OzgCk6nHYwyKb9v3cGEu2DGz+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ayI9SBvhejXJ6F/sULny9WLdLWJ/k5+3qqHk4seLiLQNaY9+xmeFzirVIsDUzmEyut7Qm3eWth5VbUxu/so3yHW0fQ9ExlyfwQJ20fOgC0vaEtUcQrxoNl/iIgImv3uaz9o84qwIpwPiz5GjSNhBq9A0RPR9Uk2IJEtvoRpH+90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2ZqpZVY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15BB7C4CEE4;
+	Wed, 21 May 2025 09:12:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747818744;
+	bh=Y79uDuogax25dTt9+OzgCk6nHYwyKb9v3cGEu2DGz+g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O2ZqpZVY1GHVQvRnH+uS7bAcwOBaeSTumQS66Srfn7xj+j7LlO+ktInrIjSC0n1z5
+	 Mop4xRkyEeXpYUd1sXgZA1PbIsxrSoy08anRBx6uhut3Ugb2V/J12aVEKzr6iQXoU0
+	 powBgA1aXpH0J0yVHeLMCEfgPYh+09+/x0ld2pEYZ7r5aqAqIFMkeWWlRBGy/54J6I
+	 x57UfcllCfGdE5juXSdZwDGxN5215O/VY2Aa92ku1PBKW9mdKIJTRhL4A1LxgRtxRd
+	 RzErkNhAdxYQjbOdoP9Auqi2JccH/TZt55kOb9mpyP9IOxad/WzQfqLuDfknrCSIwe
+	 +c4rL0NVdPbVA==
+Date: Wed, 21 May 2025 11:12:22 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Shubhi Garg <shgarg@nvidia.com>
+Cc: jonathanh@nvidia.com, lee@kernel.org, robh@kernel.org, 
+	alexandre.belloni@bootlin.com, thierry.reding@gmail.com, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 3/6] mfd: nvvrs: add NVVRS PSEQ MFD driver
+Message-ID: <20250521-observant-wildcat-of-weather-8ecc4e@kuoka>
+References: <20250520090832.3564104-1-shgarg@nvidia.com>
+ <20250520090832.3564104-4-shgarg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: stm32: add STM32MP21 clocks and reset
- bindings
-To: Conor Dooley <conor@kernel.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Nicolas Le Bayon <nicolas.le.bayon@foss.st.com>
-References: <20250520-upstream_rcc_mp21-v2-0-3c776a6e5862@foss.st.com>
- <20250520-upstream_rcc_mp21-v2-1-3c776a6e5862@foss.st.com>
- <20250520-absence-sixtyfold-0fd9bb03a42d@spud>
-Content-Language: en-US
-From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-In-Reply-To: <20250520-absence-sixtyfold-0fd9bb03a42d@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_02,2025-05-20_03,2025-03-28_01
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250520090832.3564104-4-shgarg@nvidia.com>
 
+On Tue, May 20, 2025 at 09:08:29AM GMT, Shubhi Garg wrote:
+> Add support for NVIDIA VRS (Voltage Regulator Specification) power
+> sequencer device driver. This driver manages ON/OFF and suspend/resume
+> power sequencing of system power rails for NVIDIA Tegra234 SoC. It also
+> provides 32kHz RTC clock support with backup battery for system timing.
+> 
+> Signed-off-by: Shubhi Garg <shgarg@nvidia.com>
+> ---
+> 
+> v2:
+> - removed unnecessary error logs
+> - changed dev_info to dev_dbg
+> - changed dev_err to dev_err_probe
+> - fixed "of_match_table" assignment
+> 
+>  drivers/mfd/Kconfig                 |  12 ++
+>  drivers/mfd/Makefile                |   1 +
+>  drivers/mfd/nvidia-vrs-pseq.c       | 270 ++++++++++++++++++++++++++++
+>  include/linux/mfd/nvidia-vrs-pseq.h | 127 +++++++++++++
+>  4 files changed, 410 insertions(+)
+>  create mode 100644 drivers/mfd/nvidia-vrs-pseq.c
+>  create mode 100644 include/linux/mfd/nvidia-vrs-pseq.h
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 6fb3768e3d71..3144b8f3eb9b 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1437,6 +1437,18 @@ config MFD_SC27XX_PMIC
+>  	  This driver provides common support for accessing the SC27xx PMICs,
+>  	  and it also adds the irq_chip parts for handling the PMIC chip events.
+>  
+> +config MFD_NVVRS_PSEQ
+> +	tristate "NVIDIA Voltage Regulator Specification Power Sequencer"
+> +	depends on I2C=y
 
-On 5/20/25 17:56, Conor Dooley wrote:
-> On Tue, May 20, 2025 at 05:28:37PM +0200, Gabriel Fernandez wrote:
->> +
->> +  access-controllers:
->> +    description: phandle to the rifsc device to check access right.
->> +    items:
->> +      - description: phandle to access controller
->> +
->> +    minItems: 1
->> +    maxItems: 1
-> That's just maxItems: 1, the minItems is redundant.
-> ok
->
->> +    rcc: clock-controller@44200000 {
-> Remove the label, there's no user.
+Why I2C cannot be a module? This is a module.
 
-ok
+> +	select MFD_CORE
+> +	select REGMAP_I2C
+> +	select REGMAP_IRQ
+> +	help
+> +	  Say Y here to add support for NVIDIA Voltage Regulator Specification
+> +	  Power Sequencer. NVVRS_PSEQ supports ON/OFF, suspend/resume sequence of
+> +	  system power rails. It provides 32kHz RTC clock support with backup
+> +	  battery for system timing.
+> +
 
-Many thanks for the review
+...
+
+> +static int nvvrs_pseq_irq_clear(void *irq_drv_data)
+> +{
+> +	struct nvvrs_pseq_chip *chip = (struct nvvrs_pseq_chip *)irq_drv_data;
+> +	struct i2c_client *client = chip->client;
+> +	u8 reg, val;
+> +	unsigned int i;
+> +	int ret = 0;
+> +
+> +	/* Write 1 to clear the interrupt bit in the Interrupt
+> +	 * Source Register, writing 0 has no effect, writing 1 to a bit
+> +	 * which is already at 0 has no effect
+> +	 */
+> +
+> +	for (i = 0; i < chip->irq_chip->num_regs; i++) {
+> +		reg = (u8)(chip->irq_chip->status_base + i);
+> +		ret = i2c_smbus_read_byte_data(client, reg);
+> +		if (ret) {
+> +			val = (u8)ret;
+> +			dev_dbg(chip->dev, "Clearing interrupts! Interrupt status reg 0x%02x = 0x%02x\n",
+> +				reg, val);
+
+ratelimit
+
+...
+
+> +
+> +static int nvvrs_pseq_probe(struct i2c_client *client)
+> +{
+> +	const struct regmap_config *rmap_config;
+> +	struct nvvrs_pseq_chip *nvvrs_chip;
+> +	const struct mfd_cell *mfd_cells;
+> +	int n_mfd_cells;
+> +	int ret;
+> +
+> +	nvvrs_chip = devm_kzalloc(&client->dev, sizeof(*nvvrs_chip), GFP_KERNEL);
+> +	if (!nvvrs_chip)
+> +		return -ENOMEM;
+> +
+> +	/* Set PEC flag for SMBUS transfer with PEC enabled */
+> +	client->flags |= I2C_CLIENT_PEC;
+> +
+> +	i2c_set_clientdata(client, nvvrs_chip);
+> +	nvvrs_chip->client = client;
+> +	nvvrs_chip->dev = &client->dev;
+> +	nvvrs_chip->chip_irq = client->irq;
+> +	mfd_cells = nvvrs_pseq_children;
+> +	n_mfd_cells = ARRAY_SIZE(nvvrs_pseq_children);
+> +	rmap_config = &nvvrs_pseq_regmap_config;
+> +	nvvrs_chip->irq_chip = &nvvrs_pseq_irq_chip;
+> +
+> +	nvvrs_chip->rmap = devm_regmap_init_i2c(client, rmap_config);
+> +	if (IS_ERR(nvvrs_chip->rmap)) {
+> +		ret = PTR_ERR(nvvrs_chip->rmap);
+
+Useless assignment
+
+> +		return dev_err_probe(nvvrs_chip->dev, ret,
+> +				     "Failed to initialise regmap\n");
+> +	}
+
+Drop }
+
+> +
+> +	ret = nvvrs_pseq_vendor_info(nvvrs_chip);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	nvvrs_pseq_irq_chip.irq_drv_data = nvvrs_chip;
+> +	ret = devm_regmap_add_irq_chip(nvvrs_chip->dev, nvvrs_chip->rmap, client->irq,
+> +				       IRQF_ONESHOT | IRQF_SHARED, 0,
+> +				       &nvvrs_pseq_irq_chip,
+> +				       &nvvrs_chip->irq_data);
+> +	if (ret < 0) {
+> +		return dev_err_probe(nvvrs_chip->dev, ret,
+> +				     "Failed to add regmap irq\n");
+> +	}
+
+Drop }
+
+Your entire code is full of that.
+
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
 
 Best regards,
-
-Gabriel
-
+Krzysztof
 
 
