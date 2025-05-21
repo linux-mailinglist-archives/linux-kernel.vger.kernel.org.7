@@ -1,244 +1,167 @@
-Return-Path: <linux-kernel+bounces-657133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A5AABEFA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:26:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0CEABEF9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47DDD8C2157
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:25:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E2B0179500
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C1823D2B7;
-	Wed, 21 May 2025 09:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JVzBGURi"
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E8223D28D;
+	Wed, 21 May 2025 09:24:54 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0151D23D2B8
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 09:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A3F238179;
+	Wed, 21 May 2025 09:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747819501; cv=none; b=ihXDlJsmabFyzRMvqwXdKU8I6cIq6s2rjHioTiXFx8zm0vCIYfb/1HilhCVcvke4zz8a5IWgdN5DrzPZext9KlBMpBfNWIVrlbVKqEqCymrC1V4eDFNQHtxIPtgg1lvCBp0IwKtyftn9E1ULo6xNg/y2iVXAsk06OF7rDE04ovo=
+	t=1747819493; cv=none; b=fsel0H8vOP9uU+JkmvHMiGmuSwuX3jAdiPQpcD6OaL4CVfHMrlk751FDZLOYyip+Ds9yp5WF19AxNgaW3m8z0c/3bog+PCaeO+NpXU1Xo14+0QTf9OqJFBVXY24pEn1xvCMCM6G6x+ba8MjHe3WNvymxcABBH0EzRYQB3NHcDUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747819501; c=relaxed/simple;
-	bh=SavTODshLkzYqwL86QGyu6EkUkeSNhbB+u+NcCVLQV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D+G4qJPNIKgMV0BA3z/gUrjB/LJ09DdOixqTdL/wkbT0lMZXKh0jvX2v6LQc7dTUmmFgFV5+5jmmsrm2bGSCydyR86fPVrqwGOq+/0wvaZsYfyJqC3HE4YR12+o8HwfMpbVNvCtB3hWaJDXPB+6pxRuj7jADss1bWa/XzWTYcx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JVzBGURi; arc=none smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4e150f1ba9aso3184696137.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 02:24:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747819497; x=1748424297; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y3hWC1VK1BIw070IJJezvDB/VqZ9aNqLVgo32LJ2soE=;
-        b=JVzBGURihtaTNHo49WFRic1f06Li1PnLlst0nBxdCXcUpneC0KTds+UdVeDLywlH/U
-         pP5cVPSjOCSsr/2HfmCszLit6Pz/kNurwCvXlFYs77v5rAIchWEBwo5n8cTh3BKKh6Ll
-         6YSs7OMahVTSwmoTxlfgd8HJ0hqWXwNNzuLvo1JPVAcJbxyeGGRj6k9+3TPK/DB6OvbG
-         L4paxdYmQPpmdsUuGjWjOA1bnIHcZblhZ7CEZjmc9x9ZFoVsYITY9shdVeHqJ48BuegO
-         RKUAbcs1wt8ykxYfk8bJBluxJnPEby3U+MtwyqPmiqOrC++TiO2eh7A5ptMpo4n11QVy
-         T/ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747819497; x=1748424297;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y3hWC1VK1BIw070IJJezvDB/VqZ9aNqLVgo32LJ2soE=;
-        b=dwdWjQQv5MAl+efzDpNSiGBgDJW1LIxQtXE8xIaEZOtiIFHwYLCDbSrMlLRSJUm7yT
-         +FqYWe7zeZU0OxNpCq1diYotKvOYesa97Uug5Htbf9yr7/r+WE8SdLFDZyDWgm1WLkDA
-         GanXizj4KGqs4JNAJlcjB8RW1moOp+oFOU6MlEHRHTL9Cgoq55ACoKhyvtyU/QkSasR0
-         eusmpyhUDfX/UMnbS1MioX8oF2p2s7DdMmevPx7oCDPH8jhGGJ1F+AjKzFmV16bfkAiC
-         RBbLKjWOg7f8y/4uZ8aOvQSMTfNx1UwDj0MzASd3qTy6D1ChQj67ClKyWnwW+KtAT0H6
-         b8qA==
-X-Forwarded-Encrypted: i=1; AJvYcCXms8uyVtg+zViLzFF772aelR2CxafgzTqNzXrt9oIibnVZoHqzUFL2d8PRHM0l22fb8ppC8mCdn9RUx3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgvJidTm1nd1Net0WOCy1Q/hevJsxEUlhuYOmQYqqTsCbUfqnv
-	m3nrfxW/lwKN4LL6y0CB7Nn4Er/wwnaILbU6EMuFbqXv0p1dyvfYIBgjkunsS0cJi042OtL1aZB
-	8YkipPabY19o2p4ipDcqv4iY8tPif84ChDa24TmPCrQ==
-X-Gm-Gg: ASbGncsstr9GjFdWj50sMOlVubfSB5XxWW52upBDaA6osf4HbWDVL0UaVx5CvrG5NrW
-	bhtXfA1oLi/rzXvWwvw4qClh0wwrgTpfvKXJKb5r9ONK0KXdYfOZTiS6Xb+pM6yknWQZyAzqbQe
-	k30nZokSLhJATr+GnseQegJDhAS1yf+HF9
-X-Google-Smtp-Source: AGHT+IHybR48EbvrBa29y9puviflM6BTRI7N0qtLYKnfE4iwghlm6IPecE8XTgSi4fNgHyd9vdOk97NIcw1zz+FQxY4=
-X-Received: by 2002:a05:6102:370a:b0:4db:154e:ad1d with SMTP id
- ada2fe7eead31-4dfa6aa8a8fmr19845230137.2.1747819496744; Wed, 21 May 2025
- 02:24:56 -0700 (PDT)
+	s=arc-20240116; t=1747819493; c=relaxed/simple;
+	bh=d4E9NcLUt5nUR2bDBbyKqvn4SH6yypzOCVjKSJQlzVU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W0sAt/M8RFLOBdB3ukn5dG/9jZVoqHMRypO1lY/sFkPPzm3j1Pcgr6D3BdmGCm4Yyz21uliJB8ULDTbzfBRYWf8jGOTi/4BBNdy1iFRrYF40cWoYTp24wnQnSE7aq5T3yMFxqyOPjbi8WQwqNraREwCtgZWTTpntxJ4PY4syerk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b2Qqf6C55z6D92Z;
+	Wed, 21 May 2025 17:19:58 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1867E1402FC;
+	Wed, 21 May 2025 17:24:50 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 May
+ 2025 11:24:49 +0200
+Date: Wed, 21 May 2025 10:24:47 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: <linux-pci@vger.kernel.org>, Jon Pan-Doh <pandoh@google.com>, "Karolina
+ Stolarek" <karolina.stolarek@oracle.com>, Weinan Liu <wnliu@google.com>,
+	Martin Petersen <martin.petersen@oracle.com>, Ben Fuller
+	<ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>, "Anil
+ Agrawal" <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>, Ilpo
+ =?UTF-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, "Sathyanarayanan
+ Kuppuswamy" <sathyanarayanan.kuppuswamy@linux.intel.com>, Lukas Wunner
+	<lukas@wunner.de>, Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney"
+	<paulmck@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, "Oliver
+ O'Halloran" <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>, "Keith
+ Busch" <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>, Terry Bowman
+	<terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>, Dave Jiang
+	<dave.jiang@intel.com>, <linux-kernel@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Subject: Re: [PATCH v7 08/17] PCI/AER: Initialize aer_err_info before using
+ it
+Message-ID: <20250521102447.00000d94@huawei.com>
+In-Reply-To: <20250520215047.1350603-9-helgaas@kernel.org>
+References: <20250520215047.1350603-1-helgaas@kernel.org>
+	<20250520215047.1350603-9-helgaas@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250520125810.535475500@linuxfoundation.org>
-In-Reply-To: <20250520125810.535475500@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 21 May 2025 14:54:45 +0530
-X-Gm-Features: AX0GCFskf24dlsDWbKHkhQN63sjnMSpcZ3dtlC-TQcODUS0EOjnNNGC3AAtyqw8
-Message-ID: <CA+G9fYuQf1dvNFru8dtiJnvJZjfKuMwN1DhN0EKrCLCR6DNbnw@mail.gmail.com>
-Subject: Re: [PATCH 6.14 000/145] 6.14.8-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, 20 May 2025 at 19:44, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.14.8 release.
-> There are 145 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 22 May 2025 12:57:37 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.14.8-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Tue, 20 May 2025 16:50:25 -0500
+Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+> From: Bjorn Helgaas <bhelgaas@google.com>
+>=20
+> Previously the struct aer_err_info "e_info" was allocated on the stack
+> without being initialized, so it contained junk except for the fields we
+> explicitly set later.
+>=20
+> Initialize "e_info" at declaration with a designated initializer list,
+> which initializes the other members to zero.
+>=20
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Tested-by: Krzysztof Wilczy=C5=84ski <kwilczynski@kernel.org>
+> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux=
+.intel.com>
+> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com
+Ah. Here it is :)  Ignore earlier comment.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-## Build
-* kernel: 6.14.8-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 75456e272f58170ba9694debd95bb643fc199e6d
-* git describe: v6.14.7-146-g75456e272f58
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.14.y/build/v6.14=
-.7-146-g75456e272f58
 
-## Test Regressions (compared to v6.14.6-198-g6f7a299729d3)
+>  drivers/pci/pcie/aer.c | 39 +++++++++++++++++----------------------
+>  1 file changed, 17 insertions(+), 22 deletions(-)
+>=20
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index 520c21ed4ba9..e6693f910a23 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -1289,9 +1289,9 @@ static void aer_isr_one_error_type(struct pci_dev *=
+root,
+>   * @e_src: pointer to an error source
+>   */
+>  static void aer_isr_one_error(struct pci_dev *root,
+> -		struct aer_err_source *e_src)
+> +			      struct aer_err_source *e_src)
+>  {
+> -	struct aer_err_info e_info;
+> +	u32 status =3D e_src->status;
+> =20
+>  	pci_rootport_aer_stats_incr(root, e_src);
+> =20
+> @@ -1299,30 +1299,25 @@ static void aer_isr_one_error(struct pci_dev *roo=
+t,
+>  	 * There is a possibility that both correctable error and
+>  	 * uncorrectable error being logged. Report correctable error first.
+>  	 */
+> -	if (e_src->status & PCI_ERR_ROOT_COR_RCV) {
+> -		e_info.id =3D ERR_COR_ID(e_src->id);
+> -		e_info.severity =3D AER_CORRECTABLE;
+> -
+> -		if (e_src->status & PCI_ERR_ROOT_MULTI_COR_RCV)
+> -			e_info.multi_error_valid =3D 1;
+> -		else
+> -			e_info.multi_error_valid =3D 0;
+> +	if (status & PCI_ERR_ROOT_COR_RCV) {
+> +		int multi =3D status & PCI_ERR_ROOT_MULTI_COR_RCV;
+> +		struct aer_err_info e_info =3D {
+> +			.id =3D ERR_COR_ID(e_src->id),
+> +			.severity =3D AER_CORRECTABLE,
+> +			.multi_error_valid =3D multi ? 1 : 0,
+> +		};
+> =20
+>  		aer_isr_one_error_type(root, &e_info);
+>  	}
+> =20
+> -	if (e_src->status & PCI_ERR_ROOT_UNCOR_RCV) {
+> -		e_info.id =3D ERR_UNCOR_ID(e_src->id);
+> -
+> -		if (e_src->status & PCI_ERR_ROOT_FATAL_RCV)
+> -			e_info.severity =3D AER_FATAL;
+> -		else
+> -			e_info.severity =3D AER_NONFATAL;
+> -
+> -		if (e_src->status & PCI_ERR_ROOT_MULTI_UNCOR_RCV)
+> -			e_info.multi_error_valid =3D 1;
+> -		else
+> -			e_info.multi_error_valid =3D 0;
+> +	if (status & PCI_ERR_ROOT_UNCOR_RCV) {
+> +		int fatal =3D status & PCI_ERR_ROOT_FATAL_RCV;
+> +		int multi =3D status & PCI_ERR_ROOT_MULTI_UNCOR_RCV;
+> +		struct aer_err_info e_info =3D {
+> +			.id =3D ERR_UNCOR_ID(e_src->id),
+> +			.severity =3D fatal ? AER_FATAL : AER_NONFATAL,
+> +			.multi_error_valid =3D multi ? 1 : 0,
+> +		};
+> =20
+>  		aer_isr_one_error_type(root, &e_info);
+>  	}
 
-## Metric Regressions (compared to v6.14.6-198-g6f7a299729d3)
-
-## Test Fixes (compared to v6.14.6-198-g6f7a299729d3)
-
-## Metric Fixes (compared to v6.14.6-198-g6f7a299729d3)
-
-## Test result summary
-total: 238113, pass: 213864, fail: 4515, skip: 19096, xfail: 638
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 139 total, 137 passed, 2 failed
-* arm64: 57 total, 56 passed, 1 failed
-* i386: 18 total, 16 passed, 2 failed
-* mips: 34 total, 33 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 40 total, 40 passed, 0 failed
-* riscv: 25 total, 22 passed, 3 failed
-* s390: 22 total, 22 passed, 0 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 49 total, 42 passed, 7 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* modules
-* perf
-* rcutorture
-* rt-tests-cyclicdeadline
-* rt-tests-pi-stress
-* rt-tests-pmqtest
-* rt-tests-rt-migrate-test
-* rt-tests-signaltest
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
