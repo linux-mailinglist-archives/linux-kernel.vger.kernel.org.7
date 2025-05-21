@@ -1,88 +1,281 @@
-Return-Path: <linux-kernel+bounces-657416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C652ABF3DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:12:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95015ABF3E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D233162555
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:11:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 609BD7B6236
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAD426B2AF;
-	Wed, 21 May 2025 12:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A1126656E;
+	Wed, 21 May 2025 12:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICWlmFKu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gCcdPsaX"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975102673B7;
-	Wed, 21 May 2025 12:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C917265CBD
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747829431; cv=none; b=pl+oafGE1pDlPbTUajpta2Z75Y4jRBd7eGqBgF6jyXPpGKUd7v86JnFo7ArVpRUl0ESfDPfG8DbYOGovXHlLbF3FeQm3GFozIC6pN0mm3rTz1LC/7DvMrxQC50bgzQWwX7TuMv/L1mz++GXTFp6EJx612JVE1/lV3QcwBpb8E4o=
+	t=1747829501; cv=none; b=BgVxd+JDOFLDU+BbPAxPk3XNDrOgzeVHLaAu595iJiOU4oiOvAbXEZSA8if+oH+Marlh+NecZ3Bnib4VRXOKhL6ivVE1qLW/uKiOcSl7/2y9MBn+TI7C1uzbjHl2FwZdNZ7RMvRTJgGGLsj0AB+mRikrXvSzFAYJBXSLB/Ba3i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747829431; c=relaxed/simple;
-	bh=Ul4S0upKxC6Psuxit4DXY3Lq9BItrraC6q/iSk8CsNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JWyPmnwQQy0w9K8IhPOdu1cw7LLgqYRkLw6UNw8VDOso4u0e8aI+ksQJDa2uvTb0kFT79VHJIlihGf95bBdDl3IJ0EK2g1Bd2mVt6E57Vv6s1tiXCOAhjbPoGoPfD7IBa1xCkZQHAzitBTKarCsY3CyFqbF1BNh0PiM/E7o5OTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICWlmFKu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D481BC4CEF2;
-	Wed, 21 May 2025 12:10:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747829431;
-	bh=Ul4S0upKxC6Psuxit4DXY3Lq9BItrraC6q/iSk8CsNw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ICWlmFKueb494KjAtMVKX72qaHmsMN3iJZeJmxG981pMNYWxJL//DLOn6m6Dejage
-	 IPv+v7J0h++Xz9CjuGKVNcXhSPkRQgNa0Z8DLjk+E116Q5pxjDnGwjF6czbWP1xtBW
-	 qvNZ+nomRSmA5eZVOwbxsr0gK8xoX9IYRgUlKNZHntl0MWv8WozRnURKpiHzRgzQx1
-	 IiqL1GB+InXNlIOBfrUlnstrAo8/vDoFVw7CUCPvqJG+NfzD7+6kTdD5SHM+K5FF9p
-	 L1Y4i3w6DQZtzi/iz+hA7gwcSSJtVUa3YrLoLElBsudkGM7KnoGEXVgBuOaDSrBs7d
-	 hW1kzx5ezFMYA==
-Date: Wed, 21 May 2025 21:10:29 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the pci tree
-Message-ID: <20250521121029.GA143406@rocinante>
-References: <20250521202640.53a4fc3d@canb.auug.org.au>
+	s=arc-20240116; t=1747829501; c=relaxed/simple;
+	bh=VqSxZbHBNqv79Xze1igbciYOMZRnsmnIMjQTjRZltsA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WRC6DjBSCVxei9k4I4NpphHc+I8EAk65aoIVX0aF7CAH1+ulIdo3A42/7uO7WqxNgiopF/tSSqzO8LzNOVfoAuT48AHi3pvrbSjSBmLcDai1srntJeu8JHQYR3EifNwgc3cbn60/fAuBx0bHkbzEqssTerNFY62zW/gfbpaFYmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gCcdPsaX; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e7b9a3d85b9so3068060276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:11:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747829498; x=1748434298; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=leH2Hwtpn8bKj0gxFlEX3tMtghWEWhWZN+JSBgnuZRk=;
+        b=gCcdPsaXGcvhRYIGqVy18Jc9wjdi3XtXjSxB18dB2qlAnolXwr4Qde6blLzWz+n3G8
+         8B6FpRmVgEcrUn/O7KGDe0Fg3x99hToL3UdqsQOripwzY4CbynwR0l39bGNstu9sc56C
+         Od95ROn21oI0tGWHpnIWqtP1u8bZKEKovUS9BsolvIf+n1D2wJDWNiJ58sa5PFwWg5CT
+         yPqFIoMvTasX8fZVLabDhttrB91vZjJ3YOMeDO9OpMGkTDtBn++aDB+WkjPimi2a2Lxp
+         Qn8Cq7feE3jPhNUXL+KBbDU1Qpp/mQS0Pvwe39xxHdYRM9JHV5vKpoXmWsrR20iV2TeW
+         0Ggg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747829498; x=1748434298;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=leH2Hwtpn8bKj0gxFlEX3tMtghWEWhWZN+JSBgnuZRk=;
+        b=UXSyURODh/RVNTMuM3GjjSJyobcU0jQPlWyyB5zicYP9m0TYvcSnVCiBIVDKLfd7je
+         b0P/IYmwnZYp+f/jQBhtPRhJxgNgV17/pilGic7j8e+re8VtfOy9bqlEOBCJsSdg81Vm
+         wwy82Qc8YAN5bBrGerMjZE6+4g1iAXX3Es6ZnrVVbHunVYeJe6iEWmjKPGqiwHYQ/6nG
+         pYxY/0Cy51b98Q6808ymO8uwyNzuvwV5ttg9lLgZL7jl/8L4y0NNZ6YWDP8YDUI3Or6Z
+         Gc3mXkFpRjxTGa9f5kY6KL0xNaNuLx+i1s/X1TQzZ4fsotEhx3J2nM3wzA2gSVW2K5OX
+         dyCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWml/8bOIAbUrXUSlj6KuGiEY8AZmkCEluDGUnYv0Sxerrs7h8FjOHCS2ZbjjW3TFHk/4NtpHe09mBlrKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhe/g13cnTrCMJMD9acX6lW/H1DhOqVu2S5UPVltpOyoHI/qa3
+	AuQDpX6lHDFlU3HW4bti/j1p9Wd7HgphPLvGtdyGlPnxU6sPk7LQF08UiI/DoyvxVln4A40axDm
+	wHuAs58p9C4UpjbKPDlelgzJohdG/9ULedDv1RJyGkA==
+X-Gm-Gg: ASbGncvH748J1BiPymXY2Hh1niPs175Il+Rac6qy51FdRmg/e2izGs5i6wjtGn/x7E+
+	u88DDbHylPTxrewIYe3d6iqUs8KfRwtT3YMKHXhbh60orsZRMgQFCoHUItXRURWjlnWzFlZfa5H
+	s8bHCPpg8DmqFPlnLcgzEAezKt3YsLXpFrUQ==
+X-Google-Smtp-Source: AGHT+IFK1U1VhHvGbw7ni7gmxP6cQYNFW+g9T99BOXkJgTIb2HoHmfYe7OdY+kneqLkjitX0ZrvP8e97mCZilZjwnvM=
+X-Received: by 2002:a05:6902:228e:b0:e72:85a8:cd14 with SMTP id
+ 3f1490d57ef6-e7b6d55485fmr25867282276.34.1747829498391; Wed, 21 May 2025
+ 05:11:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250521202640.53a4fc3d@canb.auug.org.au>
+References: <20250507160056.11876-1-hiagofranco@gmail.com> <20250507160056.11876-4-hiagofranco@gmail.com>
+ <CAPDyKFrHD1hVCfOK-JV5FJM+Cd9DoKKZGKcC94fxx6_9Bsri1g@mail.gmail.com>
+ <20250508202826.33bke6atcvqdkfa4@hiago-nb> <CAPDyKFr3yF=yYZ=Xo5FicvSbDPOTx7+fMwc8dMCLYKPBMEtCKA@mail.gmail.com>
+ <20250509191308.6i3ydftzork3sv5c@hiago-nb> <CAPDyKFpnLzk5YR3piksGhdB8ZoGNCzmweBTxm_rDX5=vjLFxqQ@mail.gmail.com>
+ <20250519172357.vfnwehrbkk24vkge@hiago-nb> <CAPDyKFpGcgMzOUHf-JTRTLBviFdLdbjZKrMm8yd37ZqJ1nfkHw@mail.gmail.com>
+ <20250521041306.GA28017@nxa18884-linux> <20250521041840.GB28017@nxa18884-linux>
+In-Reply-To: <20250521041840.GB28017@nxa18884-linux>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 21 May 2025 14:11:02 +0200
+X-Gm-Features: AX0GCFs2ejlkWlTvzumqCZeACImuwbiSBdhWlDwwv02fTo8PCrix65GSFR6kMCo
+Message-ID: <CAPDyKFpSb+KsfDr1-=uk4TF4Op1dUQ9rDwPP5sSpMfxDRDhnZA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: add power mode check for
+ remote core attachment
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Hiago De Franco <hiagofranco@gmail.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Bjorn Andersson <andersson@kernel.org>, Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
+	Fabio Estevam <festevam@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Wed, 21 May 2025 at 05:09, Peng Fan <peng.fan@oss.nxp.com> wrote:
+>
+> On Wed, May 21, 2025 at 12:13:06PM +0800, Peng Fan wrote:
+> >Hi Ulf,
+> >
+> >On Tue, May 20, 2025 at 02:21:49PM +0200, Ulf Hansson wrote:
+> >>On Mon, 19 May 2025 at 19:24, Hiago De Franco <hiagofranco@gmail.com> wrote:
+> >>>
+> >>> Hi Ulf,
+> >>>
+> >>> On Mon, May 19, 2025 at 04:33:30PM +0200, Ulf Hansson wrote:
+> >>> > On Fri, 9 May 2025 at 21:13, Hiago De Franco <hiagofranco@gmail.com> wrote:
+> >>> > >
+> >>> > > On Fri, May 09, 2025 at 12:37:02PM +0200, Ulf Hansson wrote:
+> >>> > > > On Thu, 8 May 2025 at 22:28, Hiago De Franco <hiagofranco@gmail.com> wrote:
+> >>> > > > >
+> >>> > > > > Hello,
+> >>> > > > >
+> >>> > > > > On Thu, May 08, 2025 at 12:03:33PM +0200, Ulf Hansson wrote:
+> >>> > > > > > On Wed, 7 May 2025 at 18:02, Hiago De Franco <hiagofranco@gmail.com> wrote:
+> >>> > > > > > >
+> >>> > > > > > > From: Hiago De Franco <hiago.franco@toradex.com>
+> >>> > > > > > >
+> >>> > > > > > > When the remote core is started before Linux boots (e.g., by the
+> >>> > > > > > > bootloader), the driver currently is not able to attach because it only
+> >>> > > > > > > checks for cores running in different partitions. If the core was kicked
+> >>> > > > > > > by the bootloader, it is in the same partition as Linux and it is
+> >>> > > > > > > already up and running.
+> >>> > > > > > >
+> >>> > > > > > > This adds power mode verification through the SCU interface, enabling
+> >>> > > > > > > the driver to detect when the remote core is already running and
+> >>> > > > > > > properly attach to it.
+> >>> > > > > > >
+> >>> > > > > > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> >>> > > > > > > Suggested-by: Peng Fan <peng.fan@nxp.com>
+> >>> > > > > > > ---
+> >>> > > > > > > v2: Dropped unecessary include. Removed the imx_rproc_is_on function, as
+> >>> > > > > > > suggested.
+> >>> > > > > > > ---
+> >>> > > > > > >  drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
+> >>> > > > > > >  1 file changed, 13 insertions(+)
+> >>> > > > > > >
+> >>> > > > > > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> >>> > > > > > > index 627e57a88db2..9b6e9e41b7fc 100644
+> >>> > > > > > > --- a/drivers/remoteproc/imx_rproc.c
+> >>> > > > > > > +++ b/drivers/remoteproc/imx_rproc.c
+> >>> > > > > > > @@ -949,6 +949,19 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
+> >>> > > > > > >                         if (of_property_read_u32(dev->of_node, "fsl,entry-address", &priv->entry))
+> >>> > > > > > >                                 return -EINVAL;
+> >>> > > > > > >
+> >>> > > > > > > +                       /*
+> >>> > > > > > > +                        * If remote core is already running (e.g. kicked by
+> >>> > > > > > > +                        * the bootloader), attach to it.
+> >>> > > > > > > +                        */
+> >>> > > > > > > +                       ret = imx_sc_pm_get_resource_power_mode(priv->ipc_handle,
+> >>> > > > > > > +                                                               priv->rsrc_id);
+> >>> > > > > > > +                       if (ret < 0)
+> >>> > > > > > > +                               dev_err(dev, "failed to get power resource %d mode, ret %d\n",
+> >>> > > > > > > +                                       priv->rsrc_id, ret);
+> >>> > > > > > > +
+> >>> > > > > > > +                       if (ret == IMX_SC_PM_PW_MODE_ON)
+> >>> > > > > > > +                               priv->rproc->state = RPROC_DETACHED;
+> >>> > > > > > > +
+> >>> > > > > > >                         return imx_rproc_attach_pd(priv);
+> >>> > > > > >
+> >>> > > > > > Why is it important to potentially set "priv->rproc->state =
+> >>> > > > > > RPROC_DETACHED" before calling imx_rproc_attach_pd()?
+> >>> > > > > >
+> >>> > > > > > Would it be possible to do it the other way around? First calling
+> >>> > > > > > imx_rproc_attach_pd() then get the power-mode to know if
+> >>> > > > > > RPROC_DETACHED should be set or not?
+> >>> > > > > >
+> >>> > > > > > The main reason why I ask, is because of how we handle the single PM
+> >>> > > > > > domain case. In that case, the PM domain has already been attached
+> >>> > > > > > (and powered-on) before we reach this point.
+> >>> > > > >
+> >>> > > > > I am not sure if I understood correcly, let me know if I missed
+> >>> > > > > something. From my understanding in this case it does not matter, since
+> >>> > > > > the RPROC_DETACHED will only be a flag to trigger the attach callback
+> >>> > > > > from rproc_validate(), when rproc_add() is called inside
+> >>> > > > > remoteproc_core.c.
+> >>> > > >
+> >>> > > > Okay, I see.
+> >>> > > >
+> >>> > > > To me, it sounds like we should introduce a new genpd helper function
+> >>> > > > instead. Something along the lines of this (drivers/pmdomain/core.c)
+> >>> > > >
+> >>> > > > bool dev_pm_genpd_is_on(struct device *dev)
+> >>> > > > {
+> >>> > > >         struct generic_pm_domain *genpd;
+> >>> > > >         bool is_on;
+> >>> > > >
+> >>> > > >         genpd = dev_to_genpd_safe(dev);
+> >>> > > >         if (!genpd)
+> >>> > > >                 return false;
+> >>> > > >
+> >>> > > >         genpd_lock(genpd);
+> >>> > > >         is_on = genpd_status_on(genpd);
+> >>> > > >         genpd_unlock(genpd);
+> >>> > > >
+> >>> > > >         return is_on;
+> >>> > > > }
+> >>> > > >
+> >>> > > > After imx_rproc_attach_pd() has run, we have the devices that
+> >>> > > > correspond to the genpd(s). Those can then be passed as in-parameters
+> >>> > > > to the above function to get the power-state of their PM domains
+> >>> > > > (genpds). Based on that, we can decide if priv->rproc->state should be
+> >>> > > > to RPROC_DETACHED or not. Right?
+> >>> > >
+> >>> > > Got your idea, I think it should work yes, I am not so sure how. From
+> >>> > > what I can see these power domains are managed by
+> >>> > > drivers/pmdomain/imx/scu-pd.c and by enabling the debug messages I can
+> >>> > > see the power mode is correct when the remote core is powered on:
+> >>> > >
+> >>> > > [    0.317369] imx-scu-pd system-controller:power-controller: cm40-pid0 : IMX_SC_PM_PW_MODE_ON
+> >>> > >
+> >>> > > and powered off:
+> >>> > >
+> >>> > > [    0.314953] imx-scu-pd system-controller:power-controller: cm40-pid0 : IMX_SC_PM_PW_MODE_OFF
+> >>> > >
+> >>> > > But I cannot see how to integrate this into the dev_pm_genpd_is_on() you
+> >>> > > proposed. For a quick check, I added this function and it always return
+> >>> > > NULL at dev_to_genpd_safe(). Can you help me to understand this part?
+> >>> >
+> >>> > As your device has multiple PM domains and those gets attached with
+> >>> > dev_pm_domain_attach_list(), the device(s) that you should use with
+> >>> > dev_pm_genpd_is_on() are in imx_rproc->pd_list->pd_devs[n].
+> >>>
+> >>> Ok got it, thanks for sharing.
+> >>>
+> >>> I just send the v3 with the changes Peng proposed (here
+> >>> https://lore.kernel.org/lkml/20250519171514.61974-1-hiagofranco@gmail.com/T/#t),
+> >>> but I am a bit confused which path we should take, the initial approach
+> >>> proposed or using these PD functions. Maybe we can discuss this in the
+> >>> new v3 patch series?
+> >>
+> >>I think it would be better if we can avoid sharing low-level firmware
+> >>functions for PM domains. I am worried that they may become abused for
+> >>other future use-cases.
+> >>
+> >>So, if possible, I would rather make us try to use
+> >>dev_pm_genpd_is_on() (or something along those lines), but let's see
+> >>what Peng thinks about it before we make the decision.
+> >
+> >There are two power domains for this m4:
+> >power-domains = <&pd IMX_SC_R_M4_0_PID0>, <&pd IMX_SC_R_M4_0_MU_1A>;
+> >
+> >So before attach the pd, dev_pm_genpd_is_on should also return false
+> >per my understanding. If run dev_pm_genpd_is_on after attaching the pd,
+> >the pd will be powered on. So we are not able to know whether M4 is started
+> >by bootloader or not.
+>
+>
+> Could we use PD_FLAG_NO_DEV_LINK when attach the PD, then
+> use dev_pm_genpd_is_on to detect the status of genpd?
+>
+> we set is_off as true when pm_genpd_init if the PD is physical ON.
+>
 
-> After merging the pci tree, today's linux-next build (htmldocs) produced
-> this warning:
-> 
-> Documentation/PCI/rcar-pcie-firmware.rst: WARNING: document isn't included in any toctree
-> 
-> Introduced by commit
-> 
->   2bdf6ffe9f66 ("PCI: rcar-gen4: Document how to obtain platform firmware")
+You should not provide any flag (or attach_data to
+dev_pm_domain_attach_list()) at all. In other words just call
+dev_pm_domain_attach_list(dev, NULL, &priv->pd_list), similar to how
+drivers/remoteproc/imx_dsp_rproc.c does it.
 
-Sorry about that!  This should be fixed on the branch already, per:
+In this way, the device_link is created by making the platform->dev
+the consumer and by keeping the supplier-devices (corresponding to the
+genpds) in RPM_SUSPENDED state.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/rcar-gen4&id=003d15b30f3690b14315822439edc2c3f823c6cd
+The PM domains (genpds) are then left in their current state, which
+should allow us to call dev_pm_genpd_is_on() for the corresponding
+supplier-devices, to figure out whether the bootloader turned them on
+or not, I think.
 
-Hopefully, running the "make htmldocs" should not report warnings for this
-new file any longer.
+Moreover, to make sure the genpds are turned on when needed, we also
+need to call pm_runtime_enable(platform->dev) and
+pm_runtime_get_sync(platform->dev). The easiest approach is probably
+to do that during ->probe() - and then as an improvement on top you
+may want to implement more fine-grained support for runtime PM.
 
-I will coordinate with Bjorn about pushing next, as he is working on
-something that he might want to include there.
+[...]
 
-Thank you!
-
-	Krzysztof
+Kind regards
+Uffe
 
