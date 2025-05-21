@@ -1,123 +1,172 @@
-Return-Path: <linux-kernel+bounces-656947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF2A6ABED00
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:24:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56BE2ABED59
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2801F3BB589
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:24:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983B31BA50A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0F22356B2;
-	Wed, 21 May 2025 07:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="2mr5M5je"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5725D235043;
+	Wed, 21 May 2025 07:56:09 +0000 (UTC)
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A38231857
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 07:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960DD17BD3
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 07:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.23.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747812267; cv=none; b=IixuEcjy6blyHQN1uKzt195w1nRZdJqDPUtL5oPw2JmdW8TzyVLPR6QUQpOaPbnbSRTC2ggkRefpNyP1b6IPfEkjlYBKCbsElmncRsujpaKRYUtgs915RumaJYYGkt39CBpaO0pWVi3zWKKGZXPxccm3GeXWpgXDvLdi73e0IKM=
+	t=1747814169; cv=none; b=p8x0Lbz7KJuI+cQODg4Sh5CC56aKT2Aicpml4sB9si325ILxlw5bKLPrtfAaV2731MtLOXfqEaL0TrSx2f3gE8bMERkUVIwNjw//g4/9Ow0eTaE/IsdYFdhBv2JfqDC8SWgol7RKKho1jgD1/ul1mr2lPOyLDKEWPIx4/Y3EA+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747812267; c=relaxed/simple;
-	bh=SSZC0mitB82FZFU2pushoizPNNrodpz4MhJe+R1PAp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kCybA5tXkQRi4A5iVg/cfTDTsdMvFM1PaLtpwuQuqmfElVB7Iia2AxFv47gFjzPcFGBZoCaI42YG+kaD77f3mP8XIPKgmejZC4DUkq69Tuf2WKjR3yoOk7aX2+TR5hAHCSIJ692dYt337p9OlWRn97ICqe7iA/+o9eSRQNVYQUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=2mr5M5je; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a35c894313so4101229f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 00:24:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1747812264; x=1748417064; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7tmry+gZIN6Abs3LRmBcQGrKF8Syxq0FRmSnVON+VdA=;
-        b=2mr5M5jeCC8x4gYTmVkNGHebWKBBlPLUem4VJlkY97uwDKB4jKsK2JO2htT1qyCHQg
-         7eWz3g10iz5D9H0nE1yQtwiyMMiNQkBDBmSLjKpi7gLwCDX5x7FkFg4ToegO3MZTrKTo
-         uHJ7kRtLxNP4wPXszpCll77pb3DOQixPwnb3z3im74TjK/PrG3n/CeE64Op6+Jqp8WFi
-         BFDT556y9UjTK5UxFIbKUd992Y8P+W/nfl90YUCv27wOwSi1eiR1ZIV+MOWH4aGv1tDj
-         b59YxsC7kk2PtlKfNvZJtjs7DROK9r2qIUCeblETd/E9TPwYidPRnCSoPsD+9B6ASu/5
-         WEVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747812264; x=1748417064;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7tmry+gZIN6Abs3LRmBcQGrKF8Syxq0FRmSnVON+VdA=;
-        b=Gtp1R5cKQ5krfK5SXBSylC4HVZ9WSJEx7Z62cEMSwJNazJpPldJemKuHSRThRkiOAQ
-         UrqdudH9MQERieu1baVOW0m9s+dFaGJn9UVGBBj/SGGKLu+8Hy47uvQO7s94FxrT3jxE
-         XTm56pNR5K4/A4yTObQ5yT/h9AH4oXjsw9kdDgh7qbKAoiu/Q9xV1T38cwt1+rWbdxab
-         mtk/CiY/6UWZCQVldWttpse/mcLPbV+h0rXhU8QWecxj4zQYXSyd4ON2kUvTAw6lmcYQ
-         nmpUFRvpoMdWEkf4vAmj2pys9zTj2fNqJGa+i34vljmAuSQDk45wlmF6zU3Xx7YJAHtR
-         wObw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5J7HMJ8nzdhyv5Fg381s18zw0zSp2towqrwQGRYoNZgmpyNvfLYjuxpxw5fx5iJU6KiclQlQP18y2P4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfbNQfo9Sz6gEEM7LvFL47iTW4fC2tEvlCfEKhiTs3A2ROj+oh
-	OWwqa71vIrJMZY4EiKCjFob4tq+CeClldVgTcChlMOp59BCYcN06v7wsGuOGq901+UU=
-X-Gm-Gg: ASbGncutMDcbbYitkTpXQRdSmrOO2trbAD8CaOZDakdjufO3zCN4QeD8tIyq60qDbUn
-	rlnrUDwbULCIIlW5dx9LwMM5Zu3Aim4K5CR7HeS41QhlpV9j78bUoW9yyVWOWhNLeDgVwJ4CAjD
-	lgKUwpBKPr0fPNmYp+ecuHKzRGVHLm8asH+kk/FP4zhjVujLq1RcVr+d0usH/qCWfp4uDW0JhXH
-	y9QBWYmjWGGIOLTUmQhZpcbbCE0aBoaV0SaYsnYYGiAz/CasEKIAVfgE5eAr1zZQNYmZkEarge2
-	t7oe2mRWdlUiF4ZdkWxvosL/Dy5sRA+QbTFu4OcgDrEu8Q/+rsFA
-X-Google-Smtp-Source: AGHT+IGyYaRZvMP4i91OpL2d/MEyFpMwzmSlJEKLV5gVV0Yn2UjpOWp3lJXMaKAOj7C3UWJ1TLETDg==
-X-Received: by 2002:a05:6000:1a88:b0:3a3:6595:921f with SMTP id ffacd0b85a97d-3a3659592b3mr12867311f8f.41.1747812263764;
-        Wed, 21 May 2025 00:24:23 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b545:3055:5b24:d6c3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a364d2636bsm16188060f8f.99.2025.05.21.00.24.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 00:24:23 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Peng Fan <peng.fan@nxp.com>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] gpio: davinci: select GPIOLIB_IRQCHIP
-Date: Wed, 21 May 2025 09:24:16 +0200
-Message-ID: <20250521072416.57505-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1747814169; c=relaxed/simple;
+	bh=X7TivkcYcg/eD32G9v1sqNLtIi3aPrvIGSvY66BeYXI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=C+y4tlVsQ9ZmWZq39jbBZKsdjIFhDHk4kvpAdVQjhQBftdsoL0pqll4eISpeKNy/Et5ldhC9MNrycwIZoWtfYmDo4jqYXXlFvqzgeL7C60LHFOhhv1oSiBm7SqbiBK57Jx/Rn2VNBuDFoCAgdq7wOJUicUWmGT/mSF6siF57WqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.23.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
+	by 156.147.23.52 with ESMTP; 21 May 2025 16:26:02 +0900
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: chanho.min@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.178.31.96)
+	by 156.147.1.151 with ESMTP; 21 May 2025 16:26:02 +0900
+X-Original-SENDERIP: 10.178.31.96
+X-Original-MAILFROM: chanho.min@lge.com
+From: Chanho Min <chanho.min@lge.com>
+To: Phillip Lougher <phillip@squashfs.org.uk>
+Cc: linux-kernel@vger.kernel.org,
+	gunho.lee@lge.com,
+	Chanho Min <chanho.min@lge.com>
+Subject: [PATCH v2] squashfs: Add optional full compressed block caching
+Date: Wed, 21 May 2025 16:25:59 +0900
+Message-Id: <20250521072559.2389-1-chanho.min@lge.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The commit 93e72b3c612adcaca1 ("squashfs: migrate from ll_rw_block usage to
+BIO") removed caching of compressed blocks in SquashFS, causing fio
+performance regression in workloads with repeated file reads. Without
+caching, every read triggers disk I/O, severely impacting performance in
+tools like fio.
 
-This driver uses gpiochip_irq_reqres() and gpiochip_irq_relres() which
-are only built with GPIOLIB_IRQCHIP=y. Add the missing Kconfig select.
+This patch introduces a new CONFIG_SQUASHFS_COMP_CACHE_FULL Kconfig option
+to enable caching of all compressed blocks, restoring performance to
+pre-BIO migration levels. When enabled, all pages in a BIO are cached in
+the page cache, reducing disk I/O for repeated reads. The fio test results
+with this patch confirm the performance restoration:
 
-Fixes: 3f50bb3124d7 ("gpio: davinci: Make irq_chip immutable")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202505210606.PudPm5pC-lkp@intel.com/
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+For example, fio tests (iodepth=1, numjobs=1,
+ioengine=psync) show a notable performance restoration:
+
+Disable CONFIG_SQUASHFS_COMP_CACHE_FULL:
+  IOPS=815, BW=102MiB/s (107MB/s)(6113MiB/60001msec)
+Enable CONFIG_SQUASHFS_COMP_CACHE_FULL:
+  IOPS=2223, BW=278MiB/s (291MB/s)(16.3GiB/59999msec)
+
+The trade-off is increased memory usage due to caching all compressed
+blocks. The CONFIG_SQUASHFS_COMP_CACHE_FULL option allows users to enable
+this feature selectively, balancing performance and memory usage for
+workloads with frequent repeated reads.
+
+Signed-off-by: Chanho Min <chanho.min@lge.com>
 ---
-Another one signalled by the build bot. Peng: if you could go through
-the other patches you sent and verify their dependencies are satisfied,
-that would be awesome.
+ fs/squashfs/Kconfig | 21 +++++++++++++++++++++
+ fs/squashfs/block.c | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 49 insertions(+)
 
- drivers/gpio/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index bbc71cdde9ed6..5bc31b56b5157 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -253,6 +253,7 @@ config GPIO_DAVINCI
- 	tristate "TI Davinci/Keystone GPIO support"
- 	default y if ARCH_DAVINCI
- 	depends on ((ARM || ARM64) && (ARCH_DAVINCI || ARCH_KEYSTONE || ARCH_K3)) || COMPILE_TEST
-+	select GPIOLIB_IRQCHIP
- 	help
- 	  Say yes here to enable GPIO support for TI Davinci/Keystone SoCs.
+diff --git a/fs/squashfs/Kconfig b/fs/squashfs/Kconfig
+index 60fc98bdf421..7db4d5b869a2 100644
+--- a/fs/squashfs/Kconfig
++++ b/fs/squashfs/Kconfig
+@@ -149,6 +149,27 @@ config SQUASHFS_XATTR
+ 
+ 	  If unsure, say N.
+ 
++config SQUASHFS_COMP_CACHE_FULL
++	bool "Enable full caching of compressed blocks"
++	depends on SQUASHFS
++	default n
++	help
++	  This option enables caching of all compressed blocks, Without caching,
++	  repeated reads of the same files trigger excessive disk I/O, significantly
++	  reducinng performance in workloads like fio-based benchmarks.
++
++	  For example, fio tests (iodepth=1, numjobs=1, ioengine=psync) show:
++	   With caching: IOPS=2223, BW=278MiB/s (291MB/s)
++	   Without caching: IOPS=815, BW=102MiB/s (107MB/s)
++
++	  Enabling this option restores performance to pre-regression levels by
++	  caching all compressed blocks in the page cache, reducing disk I/O for
++	  repeated reads. However, this increases memory usage, which may be a
++	  concern in memory-constrained environments.
++
++	  Enable this option if your workload involves frequent repeated reads and
++	  memory usage is not a limiting factor. If unsure, say N.
++
+ config SQUASHFS_ZLIB
+ 	bool "Include support for ZLIB compressed file systems"
+ 	depends on SQUASHFS
+diff --git a/fs/squashfs/block.c b/fs/squashfs/block.c
+index 2dc730800f44..3061043e915c 100644
+--- a/fs/squashfs/block.c
++++ b/fs/squashfs/block.c
+@@ -88,6 +88,10 @@ static int squashfs_bio_read_cached(struct bio *fullbio,
+ 	struct bio_vec *bv;
+ 	int idx = 0;
+ 	int err = 0;
++#ifdef CONFIG_SQUASHFS_COMP_CACHE_FULL
++	struct page **cache_pages = kmalloc_array(page_count,
++			sizeof(void *), GFP_KERNEL | __GFP_ZERO);
++#endif
+ 
+ 	bio_for_each_segment_all(bv, fullbio, iter_all) {
+ 		struct page *page = bv->bv_page;
+@@ -110,6 +114,11 @@ static int squashfs_bio_read_cached(struct bio *fullbio,
+ 			head_to_cache = page;
+ 		else if (idx == page_count - 1 && index + length != read_end)
+ 			tail_to_cache = page;
++#ifdef CONFIG_SQUASHFS_COMP_CACHE_FULL
++		/* Cache all pages in the BIO for repeated reads */
++		else if (cache_pages)
++			cache_pages[idx] = page;
++#endif
+ 
+ 		if (!bio || idx != end_idx) {
+ 			struct bio *new = bio_alloc_clone(bdev, fullbio,
+@@ -163,6 +172,25 @@ static int squashfs_bio_read_cached(struct bio *fullbio,
+ 		}
+ 	}
+ 
++#ifdef CONFIG_SQUASHFS_COMP_CACHE_FULL
++	if (!cache_pages)
++		goto out;
++
++	for (idx = 0; idx < page_count; idx++) {
++		if (!cache_pages[idx])
++			continue;
++		int ret = add_to_page_cache_lru(cache_pages[idx], cache_mapping,
++						(read_start >> PAGE_SHIFT) + idx,
++						GFP_NOIO);
++
++		if (!ret) {
++			SetPageUptodate(cache_pages[idx]);
++			unlock_page(cache_pages[idx]);
++		}
++	}
++	kfree(cache_pages);
++out:
++#endif
+ 	return 0;
+ }
  
 -- 
-2.48.1
+2.17.1
 
 
