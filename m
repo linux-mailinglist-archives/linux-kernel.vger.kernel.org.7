@@ -1,195 +1,95 @@
-Return-Path: <linux-kernel+bounces-657374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85C1ABF35A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:51:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49A7ABF342
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4D401BC3B8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:51:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3D1A1686BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5E4265607;
-	Wed, 21 May 2025 11:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1485425F99F;
+	Wed, 21 May 2025 11:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LN6OGKx3"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="N0ofAPH9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6335D264A95;
-	Wed, 21 May 2025 11:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B98F1B4121;
+	Wed, 21 May 2025 11:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747828257; cv=none; b=PAXHonbQ0yRuIz3Zb8iTmOq14tfeLbOG0IRqfAvtS8glqhImwdDLh1j9yzBtWghAbRuQ1ntqBQjeVSQ8kHfFRUOkCE+XjmpWWfDcgWqaT3n4AxSS5ugUV9Bz5X8LQZiPwD+EjdlbEm3jPCa4xpPuUJxueR2R1ScbL8tf3MYXs2M=
+	t=1747828045; cv=none; b=IgfzsG74Y7c9qA1JHhstQihq0orcaenJJKgUQknIcLuLHh7CKX04FaVeArB5g657eBhIa1CuEGHgaXdVhYIL1ucvOJYxPBqBu+fZC1RkvflBR5Y/Y+nEDpLw+8p61i935a7LCPAXjZWNKWfAfGVMQwr7soTQDrispyJK2BD4eRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747828257; c=relaxed/simple;
-	bh=hPxGyl0WCZ5+c5WHm1nrakYwWi2mBp464NPv8RSJ640=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E80nEToJxLCtnG8YXACBauW6HsBYOiFsPbDKqk/5kwiIwm6wPZNA1bhOpHzpXghvr896tcCl82Nj40RdB+AMRxsq4wYduyEJb3aQEla5VRVqgaYgOa8KrW97M//Y6pV/UT9HBKj7cRcRVQ3VqokM4/YKKoQKHd/07cmq1N38qe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LN6OGKx3; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-70dfa1aef36so2293017b3.0;
-        Wed, 21 May 2025 04:50:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747828254; x=1748433054; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wxH6blyBdkBLi+2regCSKNvizDAsAw0qoMZ/7Yx153o=;
-        b=LN6OGKx3OxJD3knrRPK3raSSD2hr7OGks+UwDQBd8TYnn5YnycAWzJv4woCFi+JlXQ
-         4bpWb5hrH/vP6t58DHz6vuCGJkJdYGkwfm1QcqKf9kKOO1f54t34P2creuzJ/+FNea6z
-         XzvrzejptI/BF31o4FQB91xUl3AoWlurtY51r6HjVdFsD3lFjop8M6txUeiuqpkEU19q
-         31UAMkT76FzvD1SbdIKdnOCWVFWwfu1zMkkzLJnIVhtmjS8Kupmp4iP3sZjJJ2jlgnVF
-         KZgM1gr4prcFXAeFYVBPQmTeXgX0XGr4mO1FpP/huVR0+b+JNWAT/F4JOPHYxoGeKhhb
-         1yKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747828254; x=1748433054;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wxH6blyBdkBLi+2regCSKNvizDAsAw0qoMZ/7Yx153o=;
-        b=PQiOoQrrjLPSuk3l0dqG4B0rxxXxsxYAQsvIUvqgXhNpAkEYIFTTS+mOaP8RLTK5T7
-         47Ocd9A67lrzkZqqMs5fYuawyDDWa/288QUyl9DUKKUWHLaJHYBzokEvsWw2SvRfQdjb
-         ys2LF2AloEARsj3VSFMJiEteAfNBh/2Jva/KxHREeizR58rA82par8lNwsAmgPlOB3Bt
-         EJj1VYtyh8HSshm9U0/xf5vgXtZdaF7Prs3D6GBYI7ZiE4E7UHjqvkxuXfzceTcih/td
-         FMqq9nXrHAhsBdaCXQR3sg4ooa3sV2dytadGQcU9lv3QKgoXZS/DDYqztUeOpCp6NREM
-         2VPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUf1alQhYVVxGoLSJW4+kB3GqSdGeffPFI3ry/iu1BJlFDF8NnF+BInG2JVQbm6j+rzMVEVs6JhhWNJUKQ=@vger.kernel.org, AJvYcCX0CYgU81neByUynIo2E1U4vE6pfPYRolwbYzNr7lXgS2+I+SpbGJhSUkmMvoR8ePQhvsV+caq3KF4SFI0rkORAvKVw@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuHbcSJoJ5pyRb8wf+NldHIMGZ/tzMW3kt2Ri4bQ6on6C/IkWA
-	+Gp4vD45DC/qeMRl0HurHnUQpXLAtLpl5o9eSzpHm5yHb7QXI3Cr60kn
-X-Gm-Gg: ASbGncsg4DpQpB1Mhme/hOYLdtzBP6CT7oHRSUfX1vxspY6TVh5eqlOvrHVuhm5fbwN
-	uiH1z3cHyarV70e+XP13ze2HBAwjzJHuXxDveckU53Oc04iyhpKObFDwlVabrr6aTf/pPwnYIMZ
-	jYN/b32huGZe1wJHV1+yv0t1S15mhdnYaHOcil0nIApXsC8LLxqnRcfLBROBA4a1s0OVwmbioIl
-	Zx2S7MqajtjtsYjTAiWlWCTPa4ej3DkbKe69twv2MORPSu+VpKNXWn4bB5kbbugpzRl9gBn5GSM
-	moJppKan96lFFyZ3g9m4k/Og7jGEwXxVx0jUGSdm8jqGsiYO47GiLuZOt6wRd0Y=
-X-Google-Smtp-Source: AGHT+IEZ8zu6Le2G1Gry70fS49+4L4N6IQkrIreprtywefvjnoN17yGjl2y69Sh6wqZ/+UngdIcOcw==
-X-Received: by 2002:a05:690c:7341:b0:70d:ed5d:b4de with SMTP id 00721157ae682-70ded5db78emr61451947b3.19.1747828254257;
-        Wed, 21 May 2025 04:50:54 -0700 (PDT)
-Received: from Gentoo.localdomain ([154.16.192.116])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-70ca83222ddsm26090297b3.42.2025.05.21.04.50.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 04:50:53 -0700 (PDT)
-From: Bhaskar Chowdhury <unixbhaskar@gmail.com>
-To: mhiramat@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Subject: [PATCH] tools:bootconfig:scripts: Put back the comments where they should be
-Date: Wed, 21 May 2025 17:16:51 +0530
-Message-ID: <20250521115018.32392-1-unixbhaskar@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1747828045; c=relaxed/simple;
+	bh=5G04Xfr/Kzfqdh1BXarJNMA4XuLP6nfQz3H+cym9yXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hI/FwFIub9giX1fWmHYT2H6IGo3GYXWGes3AJZDnuOWZz0WA4GUKIoLgV0e2XewRP9QSBCy9UId+2tbyKfaBVr5EM1AXV9y/FvECGCdCRKau21BqTOOKoASfT/d2XMz8eW9HPaOqenkmuJ9QkASJOnO/09wPwLUN5MnL2FF/iI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=N0ofAPH9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EFE8C4CEE4;
+	Wed, 21 May 2025 11:47:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747828044;
+	bh=5G04Xfr/Kzfqdh1BXarJNMA4XuLP6nfQz3H+cym9yXg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N0ofAPH9L6eXj0DIV/GIgGJ552+D/csz3ckclq/g26Ppwrl0+OCKNlXdW8xo4qFFL
+	 mciOHF7IUHBI9D7lnoC+F8XMxBp2sao6hpnVMZGA+AFsZh23tJnrZv1YvDCItzjhTA
+	 iqgzZp4BQP/ssS+Plhk8AHbRGWrKqdPQV/syQvSE=
+Date: Wed, 21 May 2025 13:47:22 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Eric Florin <ericflorin@google.com>
+Cc: teddy.wang@siliconmotion.com, sudipm.mukherjee@gmail.com,
+	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] staging: sm750fb: rename dprBase to dpr_base
+Message-ID: <2025052112-creole-brush-7038@gregkh>
+References: <cover.1747605658.git.ericflorin@google.com>
+ <d4b30e00ca64a233efc2a7dac4bc568186dafc71.1747605658.git.ericflorin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d4b30e00ca64a233efc2a7dac4bc568186dafc71.1747605658.git.ericflorin@google.com>
 
-Mundane adjustment to the comments, where they should belong.
+On Sun, May 18, 2025 at 03:09:46PM -0700, Eric Florin wrote:
+> Rename `dprBase` to `dpr_base` to conform with kernel style guidelines
+> as reported by checkpatch.pl
+> 
+> CHECK: Avoid CamelCase: <dprBase>
+> 
+> Signed-off-by: Eric Florin <ericflorin@google.com>
+> ---
+>  drivers/staging/sm750fb/sm750.h       | 2 +-
+>  drivers/staging/sm750fb/sm750_accel.c | 4 ++--
+>  drivers/staging/sm750fb/sm750_hw.c    | 2 +-
+>  3 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/staging/sm750fb/sm750.h b/drivers/staging/sm750fb/sm750.h
+> index aff69661c8e6..a2342c69a65a 100644
+> --- a/drivers/staging/sm750fb/sm750.h
+> +++ b/drivers/staging/sm750fb/sm750.h
+> @@ -50,7 +50,7 @@ struct init_status {
+>  
+>  struct lynx_accel {
+>  	/* base virtual address of DPR registers */
+> -	volatile unsigned char __iomem *dprBase;
+> +	volatile unsigned char __iomem *dpr_base;
 
-Does it change the functionality? NO
+Are you sure this isn't coming directly from a hardware data sheet or
+description somewhere?  Based on the type, it really looks like it is.
+If not, please document it properly that you have researched this in the
+changelog text when resending.
 
-Does it improve the readability? Probably and that is why.
+Don't change variable names that reflect external names, that just makes
+for more confusion over time.
 
-Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
----
- tools/bootconfig/scripts/ftrace.sh | 35 ++++++++++++++++++++----------
- 1 file changed, 24 insertions(+), 11 deletions(-)
+thanks,
 
-diff --git a/tools/bootconfig/scripts/ftrace.sh b/tools/bootconfig/scripts/ftrace.sh
-index 186eed923041..e2a075879db4 100644
---- a/tools/bootconfig/scripts/ftrace.sh
-+++ b/tools/bootconfig/scripts/ftrace.sh
-@@ -1,23 +1,28 @@
- # SPDX-License-Identifier: GPL-2.0-only
-
--clear_trace() { # reset trace output
--    echo > trace
-+ # reset trace output
-+clear_trace() {
-+
-+	 echo > trace
- }
-
--disable_tracing() { # stop trace recording
-+# stop trace recording
-+disable_tracing() {
-     echo 0 > tracing_on
- }
-
--enable_tracing() { # start trace recording
-+# start trace recording
-+enable_tracing() {
-     echo 1 > tracing_on
- }
-
--reset_tracer() { # reset the current tracer
-+# reset the current tracer
-+reset_tracer() {
-     echo nop > current_tracer
- }
-
-+# remove action triggers first
- reset_trigger_file() {
--    # remove action triggers first
-     grep -H ':on[^:]*(' $@ |
-     while read line; do
-         cmd=`echo $line | cut -f2- -d: | cut -f1 -d"["`
-@@ -32,21 +37,25 @@ reset_trigger_file() {
-     done
- }
-
--reset_trigger() { # reset all current setting triggers
-+# reset all current setting triggers
-+reset_trigger() {
-     if [ -d events/synthetic ]; then
-         reset_trigger_file events/synthetic/*/trigger
-     fi
-     reset_trigger_file events/*/*/trigger
- }
-
--reset_events_filter() { # reset all current setting filters
-+# reset all current setting filters
-+reset_events_filter() {
-     grep -v ^none events/*/*/filter |
-     while read line; do
- 	echo 0 > `echo $line | cut -f1 -d:`
-     done
- }
-
--reset_ftrace_filter() { # reset all triggers in set_ftrace_filter
-+# reset all triggers in set_ftrace_filter
-+
-+reset_ftrace_filter() {
-     if [ ! -f set_ftrace_filter ]; then
-       return 0
-     fi
-@@ -78,17 +87,21 @@ disable_events() {
-     echo 0 > events/enable
- }
-
--clear_synthetic_events() { # reset all current synthetic events
-+# reset all current synthetic events
-+
-+ clear_synthetic_events() {
-     grep -v ^# synthetic_events |
-     while read line; do
-         echo "!$line" >> synthetic_events
-     done
- }
-
--initialize_ftrace() { # Reset ftrace to initial-state
-+# Reset ftrace to initial-state
- # As the initial state, ftrace will be set to nop tracer,
- # no events, no triggers, no filters, no function filters,
- # no probes, and tracing on.
-+
-+initialize_ftrace() {
-     disable_tracing
-     reset_tracer
-     reset_trigger
---
-2.49.0
-
+greg k-h
 
