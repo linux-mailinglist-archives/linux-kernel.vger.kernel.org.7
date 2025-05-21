@@ -1,131 +1,121 @@
-Return-Path: <linux-kernel+bounces-656910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4653BABEC72
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:52:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D103ABEC77
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A3C6188E496
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:52:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A594E8A472A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D05235078;
-	Wed, 21 May 2025 06:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20979237713;
+	Wed, 21 May 2025 06:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FNtyNu/g"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gvGb5n1P"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCC222F169;
-	Wed, 21 May 2025 06:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B810237172;
+	Wed, 21 May 2025 06:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747810104; cv=none; b=csUqr7PGJACJXrGSdTHMQaSo4NO58KjNYBZ/eUEkMp7GjETNS3GSrI5QWk+2EraAf9oEky6ZLKTi05ubChb1WPgvYrFx0t91Cl/tK9SF7grqDTICWi4xuiSOBm/0DqmTsq89WmKYp3OL96S8Zst4axGIYi5b0BBMhO+ecMfLAM0=
+	t=1747810157; cv=none; b=SG2PxyYL/k4BUPphWQp3GwtTZUFAgQ3LfWOBckWxpvp+Z0J1+2dOlDpixkQPDJxc+MQhS/rfTUK1UUEYIGMO1W1fQnsW1OqCG1Z1OiLPvHSyY8s2eCYwDJzHTFvEvRdSbhooFi31QTMk0urG5jqvv+ejiAJteweap7LVs05wuok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747810104; c=relaxed/simple;
-	bh=I6xLSaFBQIId3MObCRNMgHxI1jqvUum8SVBf6dSTczs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Pb9Ld5rCHbODBBxkMBaPFeiYMHHsRcYS6U2Wt68IObRaedXkcX6TYP+VhieXMHgYrjBGnsvkfNGYWKB4VewUdliGCLVIVU7lh0QLLZPXIZPfiFIxusfyNvwfzygvLsYdJZd8SMpGSDSvwyLeWnCRNCImDOd6K8hjsBUgQUNhGBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=FNtyNu/g; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1747810096;
-	bh=KcYnKHf3wC05iJ0U5CbH9mfNcFKPffOomDQHqODaKBA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=FNtyNu/g18YjzqfAEBMCGPKSadTvWAhI/UQ+EElRAXPkM6vU7DSE/pAnpAunNjg2Y
-	 GdnRHRl7e4NAINGZI+Tdf11R5N8n98dMRdxjeAHdg+Bbt5lAJTcxCnpHyXo3xk0YTw
-	 uQI56v84jTeb11grhYJQp17cKLNwvnf0EgSIvOi+Jmuf0R6/GwkOWLJvGs0bRpajPk
-	 SweOrGsavMBznW87rfUsOlOXpWwb8ev8xoA0AH9KzFBrz+IWUxfEXthC4LZZoG3Oyh
-	 aGfrdhbdAJi9uEd0npn3M33yYzXmUE0/LyLAumH9EbDR9SXDYx9LoU8kfYlO2XYg4K
-	 cvXi3uqQRTnPw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4b2MSb6DcGz4xck;
-	Wed, 21 May 2025 16:48:15 +1000 (AEST)
-Date: Wed, 21 May 2025 16:48:14 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Anup Patel <anup@brainfault.org>, Christoffer Dall
- <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Radim =?UTF-8?B?S3LEjW3DocWZ?=
- <rkrcmar@ventanamicro.com>
-Subject: linux-next: manual merge of the kvm-riscv tree with the kvm-arm
- tree
-Message-ID: <20250521164814.3fddb821@canb.auug.org.au>
+	s=arc-20240116; t=1747810157; c=relaxed/simple;
+	bh=pMgfLOarE3sLn9ApmPKE5gjOoiEH3KlE+dCmFXpW1gM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cR0pmqJgbSlokO1u35t4t+Y3BCtuHVx3ufGNEfnbgk03qvg3mBxthE7WsYnLAEx7XXrkHxXtC3VdGcaus8Z/sKqZRsWBUf8GalFq8Nabppkis7zOamgrXoy6ofPwk5Nx+1+/V5qwGIq21K/r4DF8Bl7j9i/m4QXR2fEVwEtRtVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gvGb5n1P; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-30e85955bebso885697a91.0;
+        Tue, 20 May 2025 23:49:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747810155; x=1748414955; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pMgfLOarE3sLn9ApmPKE5gjOoiEH3KlE+dCmFXpW1gM=;
+        b=gvGb5n1PoCDt/jIHV2wF8JPzT0NflywpYmrJZbnbTj+dbhkzxQEHGUpXF7xqwIxkE+
+         +OG6xm+Z8HbrVG2Af9egsNHbFk+TYh4Dm+bPuOVK79L8TuQNVqWboWBwf9upaouPMzGF
+         ejoTFWbuiX5wwSq9xxd3QUUHDLmcUUBDBvm90npNj2t9m7m4Ymv0OQqoHi4XFshdMJcJ
+         YKywyOWwqoEi1i0MHKcZkqvmrgpiR2QgtJHPz9oKlIbJ4OAmTV/wIzjz673tR6ib34I/
+         rTI4aLhnBlG1d7o/OSGIyej47dR9LQYD/XgHblatuxFJFcid66EbPyLqTQTaPxROl94F
+         JevQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747810155; x=1748414955;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pMgfLOarE3sLn9ApmPKE5gjOoiEH3KlE+dCmFXpW1gM=;
+        b=obI3tX9QEVC59jJevBpHOsXt0zmiD1/26HbFtmJLutZV+AIHI7PFdn2V94idUmptRr
+         3xLMM9zniiKYjwYik+fA4VutTltzwpd4n350ctJtnIjDFdyQUoJX/vvcV7Prpbdfq122
+         kDUvgvr79tlhHLB6kWWZ6txIlpAw23mzBrRxicSZWHLshWtQvsIyW3lmfleSjyQ9/Xcj
+         cPjA8rNSjo3yBG0I/eK1QwTS3GCNfYGsrK1A0PqYnLPPFQEF3Rl6c/EGvU0vjUvkFKHy
+         XvifddLteoCAWgm5OXDpPTfvUtuoHBoGcMpCx5YrAxjzyc3Eo8fiyzmJZddYGqJQKMWW
+         IyeA==
+X-Forwarded-Encrypted: i=1; AJvYcCU791woDO2sjwSp3NVUd8i9YIIDbYmTHF1+oqZIn824/sWDiM4FrtyCB/ZWO/TAJW1zSSfjRMVtPeRIc1O6ykk=@vger.kernel.org, AJvYcCXEuF5w9lvZQJJVoM9ye17EqM9wR/tqdSlwUL1o6YOwFaYnWsDmiX4VUvJ8GvGUuJqITjfShSsdDlpOCIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzIs7k2EVeTcc+sOmaubeFqogwO0gmbTNm8mYf1Byn1g8B4ie+
+	0Ap1za9L+EpFxT2j6XQ6RWhdG3jdRwfMg6Qo6crroGyTIKC27qHlElufsY9DqRYl0DRQVn2vbnh
+	OllK83U4eTMsxiiX1ZoJSnGV+XkSe36c=
+X-Gm-Gg: ASbGnctEqpd09fsV+vP6n5g2nvSYz7vzGPDqPVwZl4HHBoMaM+R0SSmwWkGk8TJJRCG
+	4iXspfnWRqiCtQdqjA3jEhMWvRwwZPdMUzfQpqbqOyfjbI6XhEBZPoh/Vy2WqcIhQNeiO2sZIFT
+	ba9b/7J2skHjtSfH/O15HADA9AdBNwwZQn5xTyUHamr1U=
+X-Google-Smtp-Source: AGHT+IExmNmxiGkYVIFhd609smsGiWGOh8Tpu+Ows+3ubk7FR8CgblGAfBU0mW4P84FMoxwFG0XtVUhmE0uQ2j60ZMw=
+X-Received: by 2002:a17:902:7d86:b0:233:b829:691a with SMTP id
+ d9443c01a7336-233b82979b1mr7087165ad.12.1747810155231; Tue, 20 May 2025
+ 23:49:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/oyjzgwhEdqI0nbDxuIbcnjE";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/oyjzgwhEdqI0nbDxuIbcnjE
-Content-Type: text/plain; charset=US-ASCII
+References: <CA+G9fYvOanQBYXKSg7C6EU30k8sTRC0JRPJXYu7wWK51w38QUQ@mail.gmail.com>
+ <20250407183716.796891-1-ojeda@kernel.org> <CA+G9fYt4otQK4pHv8pJBW9e28yHSGCDncKquwuJiJ_1ou0pq0w@mail.gmail.com>
+ <CANiq72napRCGp3Z-xZJaA9zcgREe3Xy5efW8VW=NEZ13DAy+Xw@mail.gmail.com>
+ <aAKrq2InExQk7f_k@dell-precision-5540> <CANiq72nPtr1FE_SBU_+wHVptfjnoSGaxjP4LWMzVbOF0M6LvnA@mail.gmail.com>
+ <aAo_F_UP1Gd4jHlZ@dell-precision-5540> <CANiq72mPZ-ik8k+04BarAu26A1=rV_y7GYZHkFnCezW4jpXq+g@mail.gmail.com>
+ <53dc3112-9e34-43c5-852d-aeafea882247@gmail.com>
+In-Reply-To: <53dc3112-9e34-43c5-852d-aeafea882247@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 21 May 2025 08:49:01 +0200
+X-Gm-Features: AX0GCFs8alyZvoCaX-vEw4ZGLJj0dXRTRZ3S4mg4Ye5KYmwczTJfDAjcYR-KhaA
+Message-ID: <CANiq72n=pTHrXJysvJVV+xK9Y1O9owF=rxEnrMtMeN=gX4E=Sw@mail.gmail.com>
+Subject: Re: Build: arm rustgcc unknown argument '-mno-fdpic'
+To: Rudraksha Gupta <guptarud@gmail.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Christian Schrrefl <chrisi.schrefl@gmail.com>, Russell King <rmk+kernel@armlinux.org.uk>, 
+	Alice Ryhl <aliceryhl@google.com>, Ard Biesheuvel <ardb@kernel.org>, anders.roxell@linaro.org, 
+	arnd@arndb.de, dan.carpenter@linaro.org, laura.nao@collabora.com, 
+	linux-kernel@vger.kernel.org, lkft-triage@lists.linaro.org, 
+	regressions@lists.linux.dev, rust-for-linux@vger.kernel.org, 
+	Ben Wolsieffer <ben.wolsieffer@hefring.com>, torvalds@linux-foundation.org, 
+	Nick Clifton <nickc@redhat.com>, Richard Earnshaw <richard.earnshaw@arm.com>, 
+	Ramana Radhakrishnan <ramanara@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, May 21, 2025 at 1:21=E2=80=AFAM Rudraksha Gupta <guptarud@gmail.com=
+> wrote:
+>
+> I went ahead and sent a patch to Linus directly since it seemed to me
+> that this was about to fall thru the cracks. I signed both you and
+> Naresh on it since it seemed like you both were happy with the small
+> patch. Apologies if that's not standard, please do correct me as I'm
+> still new to kernel development.
 
-Today's linux-next merge of the kvm-riscv tree got a conflict in:
+Yeah, it is not standard, but no worries -- I will reply there.
 
-  include/uapi/linux/kvm.h
+> Btw Miguel, thanks for introducing Rust to Linux. I'm not too good at
+> kernel development or Rust, but hope to one day. The modern Zulip board
+> and documentation is very nice for newbies like me. Looking forward to
+> making my first Linux driver and Rust driver soon. :)
 
-between commit:
+Thanks for the kind words! :)
 
-  a7484c80e5ca ("KVM: arm64: Allow userspace to request KVM_ARM_VCPU_EL2*")
-
-from the kvm-arm tree and commit:
-
-  5b9db9c16f42 ("RISC-V: KVM: add KVM_CAP_RISCV_MP_STATE_RESET")
-
-from the kvm-riscv tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
 Cheers,
-Stephen Rothwell
-
-diff --cc include/uapi/linux/kvm.h
-index e6ed559d9091,454b7d4a0448..000000000000
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@@ -931,8 -930,7 +931,9 @@@ struct kvm_enable_cap=20
-  #define KVM_CAP_X86_APIC_BUS_CYCLES_NS 237
-  #define KVM_CAP_X86_GUEST_MODE 238
-  #define KVM_CAP_ARM_WRITABLE_IMP_ID_REGS 239
- -#define KVM_CAP_RISCV_MP_STATE_RESET 240
- +#define KVM_CAP_ARM_EL2 240
- +#define KVM_CAP_ARM_EL2_E2H0 241
-++#define KVM_CAP_RISCV_MP_STATE_RESET 242
- =20
-  struct kvm_irq_routing_irqchip {
-  	__u32 irqchip;
-
---Sig_/oyjzgwhEdqI0nbDxuIbcnjE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgtdy4ACgkQAVBC80lX
-0GyoKAf+I862MD67KZ6UCXiVNKahuKuKJ5yyIV15ir1ssuB/0Z+tKxNltgJe65/0
-8r+BL3AjEOCIREIWd9GnEmvd/Sr1xk6R70qNmMddFzxlElfrRN3I4JKE7NM8ooU1
-aMMgqcgINBifx2VMsGKaQBpzMRSKkuMQe8SeAZ4ysQH0piS488vZlffRS/KcfXVq
-9AaBiOlh2tLtUVbNLSomfs2l+Iq6LAt2tQOVFjeimopgVww9aTH5EvFgUD8E5fGH
-If74AD1hC1OfYbEdqwgu4dPYq1i/cT35a+vNeohDxkWHKJ6WWHPudyOachRakVXa
-RN3QvjLnysJapHzKy8WsV22Os6VufA==
-=I7y7
------END PGP SIGNATURE-----
-
---Sig_/oyjzgwhEdqI0nbDxuIbcnjE--
+Miguel
 
