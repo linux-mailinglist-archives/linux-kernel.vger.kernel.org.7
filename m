@@ -1,155 +1,212 @@
-Return-Path: <linux-kernel+bounces-657243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2794BABF17D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:25:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D78ABF180
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 156DC16D316
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:25:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EAB316EB60
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2361125E44B;
-	Wed, 21 May 2025 10:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F70825C814;
+	Wed, 21 May 2025 10:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="eWeJQa6e"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E55625C814;
-	Wed, 21 May 2025 10:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Go9oNXwe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D58425C802
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 10:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747823109; cv=none; b=lW9HozleZIcCy1IaapBOVuQfRwJPYCphXcQRK13eY2+mTiAGTdf6XQ35vg6mxBPLgo0LFM+D+Ru1H4lXKfucOBfW8PFnzoRspdKMYR1rbFDf4j3XvaAFj8Mx4dKQXjDbo0A5SSzXENcWc0zDdyi16yx+am+0I8GSZ/8TQJ9gozw=
+	t=1747823132; cv=none; b=sRbyDffkFsmR9lNhnckLeyLZ764mGSFN6yoWiV/unZ2BfsTKc5cvj70L3v9JZN2sRF1t+BjpJWotuIzr0D8Wss2CVNBXO3TyeUKQzShF/07WmbrA1/5mQQQ5h7ltkB25fXAn8UXnBu8gV6mIldZFFBPiKSotakg4VoXGaCsNlg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747823109; c=relaxed/simple;
-	bh=5HlH8MNJv3syXIN/vHnN2vVQp8Ri0Bh049wtA3tHBCE=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=F1jFZlYmdjy/1hQJTJuTKU0si8mkmh+UabbGCCZsu+SDqdO5uKMgUZAaziTniLc8dG+bEYfl+4OOcpy12+dK2514KTrUfo3JunB3K7S+/r08oW3eK9JeGX4Adu0goKfKVLU2FJ6+4zTyDmKZHc3hLxXPN1MQ2vZbjpiqp3NrEaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=eWeJQa6e; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id C8E8C206832E; Wed, 21 May 2025 03:25:06 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C8E8C206832E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1747823106;
-	bh=QR4U2caREfe4Ci0S/IeCgwAGch4AUN3kUS6ReAl1HII=;
-	h=From:To:Cc:Subject:Date:From;
-	b=eWeJQa6ex5RvTfbojYleEB1LCyZwvno5vXiEyXQi32dqUJu2w3hOass/vOFcuQ845
-	 byn7nsXClFZKcu9Me+QeA2wBWBk9sjRvBlwpzz5Pp1mgHqtjYRwPBH5J5TQ/WhIjFl
-	 gnoMDBCZt1cafttyeupHhDqUm91PSgNEJ3DLnBSQ=
-From: Saurabh Sengar <ssengar@linux.microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	hawk@kernel.org,
-	john.fastabend@gmail.com,
-	sdf@fomichev.me,
-	kuniyu@amazon.com,
-	ahmed.zaki@intel.com,
-	aleksander.lobakin@intel.com,
-	linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Cc: ssengar@microsoft.com,
-	stable@vger.kernel.org,
-	Saurabh Sengar <ssengar@linux.microsoft.com>
-Subject: [PATCH net,v2] hv_netvsc: fix potential deadlock in netvsc_vf_setxdp()
-Date: Wed, 21 May 2025 03:25:03 -0700
-Message-Id: <1747823103-3420-1-git-send-email-ssengar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1747823132; c=relaxed/simple;
+	bh=aNMA5GpZzY60QkMy/p2/ETXnXrwPpW/JHm5faOWS6ho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ePf2C84G1A1P4Up5b9Eq+cHrTBu3o5EYiUrg/qoNSNLwh4qDNxkEI47uGEPhOi3jnTCUPiXwwPQ5PRIqLQVmilEDvK9sJaKg2SCL+BhtZbRkuMZdqhqFNBtUMaWeTP3MxvczOAScBLJDMhuSqUNq3bNA8Rbs5vCYJlq8nbAjlsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Go9oNXwe; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747823129;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OmRNDn9pMz2kvSgpRMSd6bVT5frXfvGrBhompz0Lfnw=;
+	b=Go9oNXweidOYu+EIyHhIE1I2bmc2tqFZd3sv/KGo0yJh4UxbtHOQU3kbXgQnn2IYoF78fZ
+	XAMbJkslxuwzYUveBFUdzOn6nhktB1S3yXN0MrXd7m0rKQCAgKuFLYDVFD1u2xwwu3paXb
+	s3s1pdaMZTn/QD8zhfT3L+O2nCCOlds=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-172-8bBdDSyVN4eeWZ-O1Lhjaw-1; Wed, 21 May 2025 06:25:28 -0400
+X-MC-Unique: 8bBdDSyVN4eeWZ-O1Lhjaw-1
+X-Mimecast-MFC-AGG-ID: 8bBdDSyVN4eeWZ-O1Lhjaw_1747823127
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-442e0e6eb84so41614155e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 03:25:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747823127; x=1748427927;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OmRNDn9pMz2kvSgpRMSd6bVT5frXfvGrBhompz0Lfnw=;
+        b=q/vXcibsItP0TKMBmjR5nRByITMyOyDK6RV159vKiAnn7MEYqy8EiBSifGUO3292tA
+         NITKHMUs09wgOo3v07QHOW/54UavzIf2dzaZaYebl0VZv5LBsy4btv95fNCNlksr9Yt4
+         xPU3dQF10VXHaZEYkRFlZxKGcZS7LJrtWwIE42sX7Ig77Wy5Q+C/mtx6tI21AfYB8mzx
+         HODzW5+KHh/bwnBeIrbBHUYI/xP44aGMiAYKuWCiqxz+ow6of4nB8fbNebOQTvcqmVPC
+         dJ+4vQ7ivabzp9VuadvBIlHEiOpw+qXohDziahhXD240ZoY0onoTOJhm52oysgmnS+YF
+         jEVg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8NKZqKBM/SrkVqDNkXqn8HkbTtkUIxxNc669A3aZ67pxmXJgFdS+KHwF/uNAB7AmXqQg/E4gI2KVZBdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw79E+bQ9JWATjXcQ8AmIzIHP/tH7y4KQ6DpQLHwyta8yf/VUK5
+	f4+iNVgy4o3UGX0Cn0SwtfF0vLzR1aVUrnyqXieTi0zKng1j8vWnDWuBxAYYQrQOYKVTcI3RytG
+	ryy+34P3zBN+5NxQlQJakNzGhhkJHSikuPVKKNAk13dLgb8K6LXsCz2XNFYoKmN5W3w==
+X-Gm-Gg: ASbGnctaCphkp9oe9CQU4Jm513jxu5sv6QSXjMRWo1ytmc5/EezqnbQ+hcI/1kWgbNY
+	yxp71692M3FOxnm/YX4XcvEJ3X7jNJ9MyYvo5NgVHpddSU7I/tHuXxePz1c8VlwMbvpd4is7goK
+	7MeJtiITikf7X8KKZ/C2cSrmc9URkkrYq2XTUMGHpH9R5Bsizg9E4NMhIZJEjtMWoEXVR2ND5Il
+	md5JjwIGURwt9sw2SMX4X9Gb9NtEdhq5ro99DC6DfobIG5cT3uzQsI2/FEj8LFs+1M8d5KxAEtM
+	D4gfxnGZkejHTduMoiNPuLjNj4YvUtYTUICfD5923hhty0oI+CoMyN0fQiWHe8ylKbbqGOEWplG
+	awyvIFiXNCFmYAV8HOX9Xbn1qplboP6WhnSF/mMw=
+X-Received: by 2002:a05:600d:19:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-442fd6313f4mr138654595e9.18.1747823127364;
+        Wed, 21 May 2025 03:25:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFK31hCOI4AspdeyWTmUBM6tm6OjfoTLQ56G1e4yH46eK8Cne2OwOfr7oe4xsHWdMwN9VP/Ig==
+X-Received: by 2002:a05:600d:19:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-442fd6313f4mr138654385e9.18.1747823126926;
+        Wed, 21 May 2025 03:25:26 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:9c00:e2c7:6eb5:8a51:1c60? (p200300d82f259c00e2c76eb58a511c60.dip0.t-ipconnect.de. [2003:d8:2f25:9c00:e2c7:6eb5:8a51:1c60])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f6f0552esm63045705e9.11.2025.05.21.03.25.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 May 2025 03:25:26 -0700 (PDT)
+Message-ID: <62b5ccf5-f1cd-43c2-b0bc-f542f40c5bdf@redhat.com>
+Date: Wed, 21 May 2025 12:25:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm/mmap: Fix uprobe anon page be overwritten when
+ expanding vma during mremap
+To: Pu Lehui <pulehui@huaweicloud.com>, mhiramat@kernel.org, oleg@redhat.com,
+ peterz@infradead.org, akpm@linux-foundation.org, Liam.Howlett@oracle.com,
+ lorenzo.stoakes@oracle.com, vbabka@suse.cz, jannh@google.com,
+ pfalcato@suse.de
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, pulehui@huawei.com
+References: <20250521092503.3116340-1-pulehui@huaweicloud.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250521092503.3116340-1-pulehui@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The MANA driver's probe registers netdevice via the following call chain:
+On 21.05.25 11:25, Pu Lehui wrote:
+> From: Pu Lehui <pulehui@huawei.com>
+> 
+> We encountered a BUG alert triggered by Syzkaller as follows:
+>     BUG: Bad rss-counter state mm:00000000b4a60fca type:MM_ANONPAGES val:1
+> 
+> And we can reproduce it with the following steps:
+> 1. register uprobe on file at zero offset
+> 2. mmap the file at zero offset:
+>     addr1 = mmap(NULL, 2 * 4096, PROT_NONE, MAP_PRIVATE, fd, 0);
 
-mana_probe()
-  register_netdev()
-    register_netdevice()
+So, here we will install a uprobe.
 
-register_netdevice() calls notifier callback for netvsc driver,
-holding the netdev mutex via netdev_lock_ops().
+> 3. mremap part of vma1 to new vma2:
+>     addr2 = mremap(addr1, 4096, 2 * 4096, MREMAP_MAYMOVE);
 
-Further this netvsc notifier callback end up attempting to acquire the
-same lock again in dev_xdp_propagate() leading to deadlock.
+Okay, so we'll essentially move the uprobe as we mremap.
 
-netvsc_netdev_event()
-  netvsc_vf_setxdp()
-    dev_xdp_propagate()
 
-This deadlock was not observed so far because net_shaper_ops was never set,
-and thus the lock was effectively a no-op in this case. Fix this by using
-netif_xdp_propagate() instead of dev_xdp_propagate() to avoid recursive
-locking in this path.
+> 4. mremap back to orig addr1:
+>     mremap(addr2, 4096, 4096, MREMAP_MAYMOVE | MREMAP_FIXED, addr1);
 
-Also, clean up the unregistration path by removing the unnecessary call to
-netvsc_vf_setxdp(), since unregister_netdevice_many_notify() already
-performs this cleanup via dev_xdp_uninstall().
+And here, we would expect to move the uprobe again.
 
-Fixes: 97246d6d21c2 ("net: hold netdev instance lock during ndo_bpf")
-Cc: stable@vger.kernel.org
-Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-Tested-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
----
-[V2]
- - Modified commit message
+> 
+> In the step 3, the vma1 range [addr1, addr1 + 4096] will be remap to new
+> vma2 with range [addr2, addr2 + 8192], and remap uprobe anon page from
+> the vma1 to vma2, then unmap the vma1 range [addr1, addr1 + 4096].
+> In tht step 4, the vma2 range [addr2, addr2 + 4096] will be remap back
+> to the addr range [addr1, addr1 + 4096]. Since the addr range [addr1 +
+> 4096, addr1 + 8192] still maps the file, it will take
+> vma_merge_new_range to merge these two addr ranges, and then do
+> uprobe_mmap in vma_complete. Since the merged vma pgoff is also zero
+> offset, it will install uprobe anon page to the merged vma.
 
- drivers/net/hyperv/netvsc_bpf.c | 2 +-
- drivers/net/hyperv/netvsc_drv.c | 2 --
- net/core/dev.c                  | 1 +
- 3 files changed, 2 insertions(+), 3 deletions(-)
+Oh, so we're installing the uprobe into the extended VMA before moving 
+the page tables.
 
-diff --git a/drivers/net/hyperv/netvsc_bpf.c b/drivers/net/hyperv/netvsc_bpf.c
-index e01c5997a551..1dd3755d9e6d 100644
---- a/drivers/net/hyperv/netvsc_bpf.c
-+++ b/drivers/net/hyperv/netvsc_bpf.c
-@@ -183,7 +183,7 @@ int netvsc_vf_setxdp(struct net_device *vf_netdev, struct bpf_prog *prog)
- 	xdp.command = XDP_SETUP_PROG;
- 	xdp.prog = prog;
- 
--	ret = dev_xdp_propagate(vf_netdev, &xdp);
-+	ret = netif_xdp_propagate(vf_netdev, &xdp);
- 
- 	if (ret && prog)
- 		bpf_prog_put(prog);
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index d8b169ac0343..ee3aaf9c10e6 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -2462,8 +2462,6 @@ static int netvsc_unregister_vf(struct net_device *vf_netdev)
- 
- 	netdev_info(ndev, "VF unregistering: %s\n", vf_netdev->name);
- 
--	netvsc_vf_setxdp(vf_netdev, NULL);
--
- 	reinit_completion(&net_device_ctx->vf_add);
- 	netdev_rx_handler_unregister(vf_netdev);
- 	netdev_upper_dev_unlink(vf_netdev, ndev);
-diff --git a/net/core/dev.c b/net/core/dev.c
-index fccf2167b235..8c6c9d7fba26 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -9953,6 +9953,7 @@ int netif_xdp_propagate(struct net_device *dev, struct netdev_bpf *bpf)
- 
- 	return dev->netdev_ops->ndo_bpf(dev, bpf);
- }
-+EXPORT_SYMBOL_GPL(netif_xdp_propagate);
- 
- u32 dev_xdp_prog_id(struct net_device *dev, enum bpf_xdp_mode mode)
- {
+Gah.
+
+> However, the
+> upcomming move_page_tables step, which use set_pte_at to remap the vma2
+> uprobe anon page to the merged vma, will over map the old uprobe anon
+> page in the merged vma, and lead the old uprobe anon page to be orphan.
+
+Right, when moving page tables we don't expect there to already be 
+something from the uprobe code.
+
+> 
+> Since the uprobe anon page will be remapped to the merged vma, we can
+> remove the unnecessary uprobe_mmap at merged vma, that is, do not
+> perform uprobe_mmap when there is no vma in the addr range to be
+> expaned.
+
+Hmmm, I'll have to think about other corner cases ....
+
 -- 
-2.43.0
+Cheers,
+
+David / dhildenb
 
 
