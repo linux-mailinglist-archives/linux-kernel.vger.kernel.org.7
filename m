@@ -1,248 +1,133 @@
-Return-Path: <linux-kernel+bounces-657681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50FDFABF783
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:15:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE8A5ABF77F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0F7C7A9910
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:13:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3468A189D8F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904871A38E3;
-	Wed, 21 May 2025 14:11:55 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5BA01A23BE;
+	Wed, 21 May 2025 14:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F8mv+ltC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28711A3177;
-	Wed, 21 May 2025 14:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747836714; cv=fail; b=QdnxOTeLGhMH5W+EATQpd/nXE6RclytO1SwRbBMNWhhwCZ5lTnhd2/NnviCbyJpDgFPbHtaZcUSrZLRwnR7LdQDnF/X73ZCyvpLf2OU7KfXH5jirYlp9fYSHxD/EbELHHIyjtworuojE72mvyxLTqTDj7UKaXwxJ/sJBPwsZQ/U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747836714; c=relaxed/simple;
-	bh=Y/81Dutxz32cJzaWS1psgmSQp4oIXpeoaM5RaS8zoMI=;
-	h=Message-ID:Date:To:Cc:From:Subject:Content-Type:MIME-Version; b=PHy5hYlsPG8R3o8brOU3xpxQqIvqNUyTPUvGyUeyAdz798nCbLe8J30ayauUQH7jApeWUAbFaEiljVdT1ID/QG5+X9/iOtZrvpo15jNA8CJJEPzyp1yUMarn8iLyYi1GoVPzMpzeE0RoON1PnxGHTUiqxK1B5IWv1rzdPJhSFMY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54LCFYCr001026;
-	Wed, 21 May 2025 14:11:44 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2040.outbound.protection.outlook.com [104.47.55.40])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 46rwfwsehn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 14:11:44 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xCe+G48x1FdSY6PZQEnrYxfANFUNS7phnhTDiVEMOA/0r588B27Op6k/sCYua1G6Suw011ZbW5NWHOyI84QQWpIqd353/7ywOLA8AGEbLImtiK0dk2KKPKuuLQQzVa58LsmFmvV2vdDmyc30UH7jOlEwlo1Xp8GEQRoZw0UojI0Cttp7mJK/U8Tt73xRA4bA8TghKs5PlcOXeo94Ypgit+h2hJ91THCZtRBWMlnLR61gio1m/5dqA4In3DeNGLdTxHOJQk2+UDWZyr1VAp8iS1WFra2suWXTmincnhfG4ddP09s2HW5D95WwXtqXuB9heDydJgSMpFF+OX/ZdaPRww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i1hwEcjUrRomYN95h5yERarBJQZey4ugFM22FgpOCSc=;
- b=cn4iFsLAlzBJGlZBUOedtYGNgllrqHPe7CQm3jB+6GtpGUanJvFaM9wPGJTftc2IJIvhWqpMxIz/kqUbZlhIViwzbBS8OrfG8wOLSFNNmNIidHqr2xNtS4lpF6eTNYAFzQGdlwIW4+e+HblUqbF16JiZl1iTpTW6jPl8TaT37F0manDGVZ3dDjdtRQW6BzxSauLpQMUFt2NJCW7CWk66lLETce0YzLA7X7rXZrLSluj2QY8dbocSWmruWKRzbTxw0/czny5ud7mLZ+JbqyCecVu8DTtTYf1OuJarNi6LptBxFicqf+fPCa24Z+c4utg912lwxNplssz34EjJ8h+7hA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from CH0PR11MB8189.namprd11.prod.outlook.com (2603:10b6:610:18d::13)
- by DS0PR11MB7190.namprd11.prod.outlook.com (2603:10b6:8:132::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.19; Wed, 21 May
- 2025 14:11:40 +0000
-Received: from CH0PR11MB8189.namprd11.prod.outlook.com
- ([fe80::4025:23a:33d9:30a4]) by CH0PR11MB8189.namprd11.prod.outlook.com
- ([fe80::4025:23a:33d9:30a4%4]) with mapi id 15.20.8746.031; Wed, 21 May 2025
- 14:11:40 +0000
-Message-ID: <6bb8f01e-628d-4353-8ed5-f77939e99df9@windriver.com>
-Date: Wed, 21 May 2025 22:11:16 +0800
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: chuck.lever@oracle.com
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-From: "Yan, Haixiao (CN)" <haixiao.yan.cn@windriver.com>
-Subject: nfs mount failed with ipv6 addr
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR06CA0013.apcprd06.prod.outlook.com
- (2603:1096:4:186::18) To CH0PR11MB8189.namprd11.prod.outlook.com
- (2603:10b6:610:18d::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81913194080
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747836695; cv=none; b=ki/4b8jntP8oEqOaNsKmtgPzEodwl9Pvsm5qbvI/IIb7ap5LYyF/M+dRvife26aasKM1kIoVSP/SiPedLVJv1sV3qhkHp9n9DcYrkzBMS4skMHYGSZx+PlEGSdT7A953DQqG8z3DXLK8gAMaasCLGaKWuhGPPkJRWpFRVd0SiqQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747836695; c=relaxed/simple;
+	bh=nw2NRoUJDDAAldajyVllAgUstOzJboAyZ3klDqEyg5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ujJQ0CLCaQhIgHmyhwRcl5/JpE76WOYMnJqkdnWcnalRUKoSPl5tHYXN4WxkROn6b3d1Zv9AeRECSuxmYqGFF+wziWB+ap2ZHlvR2anRuhLCJZ9LC9xwlUL3lAOtuXnG8v4QZdLk4oyhB8GK72N+rkwpTbN7eHGhkdt3eSWGmRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F8mv+ltC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747836692;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XqC/At+Um4IKJ5Dheln0Cu/AgMJ1XH9fkqhVL9d6moY=;
+	b=F8mv+ltCcdx90VXMuQyGaTbEbE/RN2J15z6EQ6xxkfjV/vHOQVCgTZUfV9xKt7cw6MxYGv
+	q2jTlv6muIm/upvJU923T7b0vFVFOTGHWD48mU9tQGrGh98RITKGvRn0lsgpi0Q4gSFt/3
+	NucU7wbn4pIMZMEpmyUrO3R0f4SBYds=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-460-p5QLAFmLN9OiOJ_fxbwFlg-1; Wed,
+ 21 May 2025 10:11:28 -0400
+X-MC-Unique: p5QLAFmLN9OiOJ_fxbwFlg-1
+X-Mimecast-MFC-AGG-ID: p5QLAFmLN9OiOJ_fxbwFlg_1747836687
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 30026180035C;
+	Wed, 21 May 2025 14:11:27 +0000 (UTC)
+Received: from redhat.com (unknown [10.22.80.52])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E4B2A1955E83;
+	Wed, 21 May 2025 14:11:25 +0000 (UTC)
+Date: Wed, 21 May 2025 10:11:23 -0400
+From: Peter Jones <pjones@redhat.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
+	David Howells <dhowells@redhat.com>, linux-efi@vger.kernel.org, x86@kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] include: pe.h: Fix PE definitions
+Message-ID: <bc8307c5-cf59-4a9a-95e1-c49ac19efb43@uncooperative.org>
+References: <20250504182244.30446-1-pali@kernel.org>
+ <CAMj1kXE5DQ-tBFa+xLR10+joGADRB6BJ70EvDfJzfWJr1o3Q2A@mail.gmail.com>
+ <20250505173259.b34f6hvn6t73q3df@pali>
+ <CAMj1kXGE0fSRvR4=+qAWu54ehzJfdC9GSzHODr4pMTEbBwOhuA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR11MB8189:EE_|DS0PR11MB7190:EE_
-X-MS-Office365-Filtering-Correlation-Id: 09e0227a-21df-4d78-e006-08dd98716814
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bnlReHR1MVJyM1puZ3AxU1kyKzJBY1o5Zm9WQmc2SjFseWljeWs0K3VkYWEy?=
- =?utf-8?B?UXVvQjl0WGtrRkVzRVpIaTZjS3NCQlVUWkd2clBlZUhwbGFVR3dqUzFLeExu?=
- =?utf-8?B?YlE5UkpsczhGaVMycUxqdExMQmtLU0NOY1RpMHNFWmxYUHBha3Q1SkNLUFRi?=
- =?utf-8?B?dFY4S0ZKcTFBaHUvMHRqVHFiVGVZN0hPci9FbG45bStSd2tPU2JTbjU5QWxu?=
- =?utf-8?B?YUpvR0JuVzd4cU9FVnc2Y2NmTWtKdThrSUJzT0xjWktGSEh1eHkwYW9keEtK?=
- =?utf-8?B?NjRwNC95WHJpTmsyaDJqUTcxYnNiZTZ0bk1TMGM1dndLNk9jNTdrd3hFM2pP?=
- =?utf-8?B?QmdqTWlpaGNrc0JCa1llUXRndG92cUdXNCt3bW12aS9hSmZIbEdsN0JwSVgr?=
- =?utf-8?B?cDMyckZramhzL2hJOERYY3RuQUNWWUlUQWVGWUVTWHkzaGQraTFYQjNnY21i?=
- =?utf-8?B?Zzg1U0RKM1MrbU83L0lwdEFJR0dZNUhCQTBnaHNmcEhaWnR5YUc1SlNxNk5p?=
- =?utf-8?B?dEtRUHpoa0VSbWYwc1NEYXJPQnBEamVqWEFwWEhUcTJKd2s4ZzVlTFFtaWlM?=
- =?utf-8?B?R0tTNE9ra3VjUkpqTjN5SHZGc1JJS2t6Vzdva3BrRkRUTk5ZYi9reDZlVC9D?=
- =?utf-8?B?aHJLSGtPY08vVm5pK2FtVWE5bnNVMGZoWk13YzBoVno3N2lpYzNZa0EwaWdK?=
- =?utf-8?B?U0VmeW1ySmhLUU9sNTlXWGNhN29jN2JKTTRNRmxmSU1mVnZPNnUvUFlQb0pp?=
- =?utf-8?B?ZXZRMktLRWZQbUhVdEFBbXc5ZnA1WHh6Yk5EeWJqdmVxR0lYdVBiSERLNzhJ?=
- =?utf-8?B?cU9weGFHR3R5b2pDSGVYWWwwTWNTY3BNNlZ4QlBvVzJISmFXRi9janR6VmZH?=
- =?utf-8?B?OWYwSmpSQ1ZTbWFJVE9GSE96NlpKS05KSGs0RU1GQXNZMlVycTNoVExlSzh1?=
- =?utf-8?B?azNYRkwzVTlyZm9FbTVuRFo5ZWtOMDNWeFBmb3N5aVJ3TUxmTGp1a3BaKzNq?=
- =?utf-8?B?V3M2NytsaUQrRGJ5aXdpQnpwK3RGaDRCU1lYSTk5ajRyTkp5dytVRjFNa0RM?=
- =?utf-8?B?ZDNFVEx1cUZpeEtiYXdJZDVTekJBS3VuZ25vbDJhTFFqOTB5cGlsWmRQZkZX?=
- =?utf-8?B?TVMrRUg5U0E3ZjJpUEhld093NVRtQ0V1Nk9LT1lEbXVjL05oV3JFeUdXc0N6?=
- =?utf-8?B?amM3THVZd1h4aERIT2RFM1RGTnhKYWhrTXQ4SVdwbHVhWjN3KzFhTnlEMTlL?=
- =?utf-8?B?U1pJakwyUlc3WTVKL2VDaDBnd21PTU9QNEEzWGN3OFNrRmFneGxhN0loQzV3?=
- =?utf-8?B?ZTFYUTBoNnF4YXNuZGdPc3NkYlhrdnA0amsxUWF0UktuSnZiZmhxTlpleWxN?=
- =?utf-8?B?eVVHd1pPcVM0dXRoQXNWaittL3ZpWGhwM2hTcXZiQVE3WUJDQTcyTzNTRjg4?=
- =?utf-8?B?dGhpRFdaUlJLSEU5RjRWa0JVQ0lCS1F5QWNoRXI3Z0oyZ3BuT042SVNoZUdI?=
- =?utf-8?B?dXJVNSt5L3h4WitKK0ZpQzZYMFc2QklCZ1NmQVA1b2IvTlBRQ2ttekNIMkF5?=
- =?utf-8?B?VjhOb3ZpWS93cTNWZ1lJUXdwNzhZYm9EOE03bnVwbXh5b2kxYlM3enY2S2ZZ?=
- =?utf-8?B?akRpQ2xsUWs2TkJoQ083ZE84YmZHTm14cFA4NSt2ZjQrZ0drL0NNN082ZCtK?=
- =?utf-8?B?OFdzSi9tRFhoR09OQ1JMNWx0aHF5ZGorNjJ4akZOS1hWWnRHdUJ6YVRSaUEv?=
- =?utf-8?B?MUhQUXExRjB3eGlmK3IxWVhBWi8wUjlpTDhxNEtyVStWN1Ric1RlcWRSdWhP?=
- =?utf-8?B?R0R0ZmVXeHNOeEh5SnFSMGJsbTc2TW5XRUFzdTNtTDAvVUpNaGNjZmdYT1Vp?=
- =?utf-8?B?UVM1R3B6aEltR0prZUJ6MnlBYmJRMVIrN1hMYVVqaDZ1VkE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR11MB8189.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cjhlSUIwYXVwRzkxOXlWZWNTalp0YjIvZWgzeXdBZTNMU0x6V3pqMTNJVHFi?=
- =?utf-8?B?a3FIcGhCMVl0ZFFrR0FuR292cllOWks4N1U2UTNzMjE3NWFoSnRqK0JFK3VY?=
- =?utf-8?B?UnBtT2VDTUlvRVhkMUkwakZWQVJmSUhhYndEOGZheGtuT051N3dLR0xhbWd2?=
- =?utf-8?B?dkVIRG9mdkpqak1LcVd2d3J1VitoNlFObjZIaTd5YzRlY0xGWG8rSXFmeCtD?=
- =?utf-8?B?cWJ2TDJBL01GV1FZQnJ3d1ZiRkVkUzlPRmw5N3Z3R01yMjdkZ1I5UDBxbWcz?=
- =?utf-8?B?MVZRMmNGK2s4SXk5NkIybERtRHp5bnZKa3Uyallnd2tTOHp6VU1iRFBFeitD?=
- =?utf-8?B?VlVpNWRHY2FmTlVicVIzQU5LK25SODJBMWt0L3hlQWVQaVhBUFY5OWEyWUpG?=
- =?utf-8?B?TzVDL2dDcXkyWnA0bjg0amtNWnN3czZMSlZjRXhxRFZOUWdOU2NVYUZmTEx1?=
- =?utf-8?B?YXdpcU5vR2oyNzZhbWNLaXE1RGR2a0dtdnVuT1BKL0Vadko5Y3VsWnU5UnRI?=
- =?utf-8?B?c0Yxc2xheFJ3dVNCYzRMZm5vM2RvUVRGL3NSd3JnNG94bVZ4WmI3NVJOSWYx?=
- =?utf-8?B?SmdoRXZRKzcwdkFTSkhuU0huOXcyVjR2WStYL1BvQ3BzWXJ1Vk1qb2VwZkNo?=
- =?utf-8?B?T2NoMms1WDNabjhxOFlYYUt2bkc1L0NyN1V1NmN0VzlOVjdneFl3NlR2b0Fq?=
- =?utf-8?B?UWpSRHU5WGFwb2QwN3IvREJ2VTVxZk9JdzZkTWVVa2I5Tk1DWUN4YjFZNmZk?=
- =?utf-8?B?b1VRU25VeHpraVBOWjZiNVVzeGVTL1FEYVVlTmJkSWREKzdtblZIN28rUTFQ?=
- =?utf-8?B?dngzYWcvYXVlYlRVbXBvVkw2aHMzUVp0UnVXRTNXRHRjanc0d1Bwb2dUcGt1?=
- =?utf-8?B?bkxaL2kzRXlxdlR4VG5keHJYVG1lTmtXMFhKU3hjM051cHpzeWtENmhBWVpq?=
- =?utf-8?B?Q2ZBVmpxUVBoQUsrWDdOUEhIdnhTZkRKR01wZzY5NHNPYkRwcCtsS2ZFMFJr?=
- =?utf-8?B?Vk4xd3U0N3U2VkdMMkFOdkllZUsxNkxUS2xtdUZYNGtBaEtMenBOaGhsejlS?=
- =?utf-8?B?Ymczam4zaWxGTk5GdE0vQ0F6TVJFSzJzSnJSOE44STFJQld2aHNqbVB6V3dC?=
- =?utf-8?B?SlA4Tmp3RzduZFVkTTFXeWpnaHNPZ2hnUC92cXIva1NUczVmNU5ZTEFPQ0xB?=
- =?utf-8?B?UkNINDJmMHVKMlcxczMzeVVEM0pzSWVTT2FYaExNSHdJK3VqaHBMNmhSV2dj?=
- =?utf-8?B?N0VXdU1FK3V3VVVIN0xDcXd6aUJJNTg3TnhWSk5ZbGJtRTcwaEVCVU9hWVB3?=
- =?utf-8?B?VXY5azg4eHNoaTZkT3ZSWU1uOWlkbDVTSkR1TlZETElIOWFOT0lzaDJHME5R?=
- =?utf-8?B?T2pkSGtZY0xrWFlMOWVaalVIWkVwM29XYkFMK3VMNk5DQzJ3bW9MdDhzM2Rm?=
- =?utf-8?B?RG5saDhZa2U2U09WQ01reUN0T1o0Z0xmbWg4VWp1N2s5dVhJTGNSTE15NWhP?=
- =?utf-8?B?TzNrOFZtSWJiWXQ5NGQweDV2WUsrTVlSdFhkM21PYTEvU0pWRGQ4YzAxZldW?=
- =?utf-8?B?cVhUWkZqcUZyTkVpYUozWWlLSmxKRkxqTGRjRG1FRWd4THJqbHVieW1UYWtG?=
- =?utf-8?B?QjhZL0duSHI3MzRTU2dxaS9ZV2FaVnFRZjFYaTQvR0cvb2RkMm80NGkzZkpL?=
- =?utf-8?B?VU5HWEdmK2F1K0g3Zi9HOGZadUNuNk9LMkFkOVk2MDZHNklvWnFtSjVHSm1L?=
- =?utf-8?B?dS9VRmE0UmkrU1RSb3lHZkZjMFZQanVxVVFzaEJ3WkRkTXB0QVU5NitiQzg5?=
- =?utf-8?B?TEZ1NElLRWpRekFCb0RWRkM5c2I1dFVHcXh5K1RtNENlMDBORTVTV3o0MlFF?=
- =?utf-8?B?RGM0amsxV3h4Q3BUL1JtOGdTSGZDNzl0NTZoK21oQjA3RlMrSkowMWpnWGFC?=
- =?utf-8?B?V0ZvRDFkV3oxMmhXZ0RVUG5UWUpTRkdiMVpOeUV2Y3kwK25NT3cxMHowamJS?=
- =?utf-8?B?V3dqNTUwRHhmcytOZksxTmg5TXJLSDBqSGdYUDZoU1h1M3hDM3p0bEtuK0Jq?=
- =?utf-8?B?ZnJNNFdFeGtteVRQS0ZKd1VVQm1KenpJUnA5SUVDaUdPN0JiVkUzTGxiR3hs?=
- =?utf-8?B?SGRhc2pub0pWZnRsby9RY0hoa25sQTRNWFFqM1p6dis0YXVNWGdHOEpZcXRW?=
- =?utf-8?B?SHc9PQ==?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09e0227a-21df-4d78-e006-08dd98716814
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR11MB8189.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2025 14:11:40.4696
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mdD/VZH6geCNup1OYMTWBkCFyya5zThbGS+nCUNQuQr4nUowiyso3OkzpiJHCF7nGWJ7Ccz9U5u3m14NnfGbOWRmbNQwS91R5/teHcWckaM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7190
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDEzOCBTYWx0ZWRfX74kR7geIArU4 Lg2p5gNJQsmfCy3upLiZQ8mRBeAL2oAD0/9MONCgWAUdQK+KS9KOVAnF9cG15KIWuJ6Y+K7zVOP 99HvEQekf5ZbMToWyijH2NHqmokL52RyhsYl+N2q22us3GNpdYYCT3rKVEcY+vR1SHVsj4oA369
- /IBMOhoUxb8w/LqA/UhIYCZaX5YotACUfDdCr0CUEN8X5F9SzTLHhEIM4poHqFDWetr3u0vgS57 vh/Vjm5dNacIKcS3wQbf7DWeEFQz2ENCu46nPja0I6fjjmW3hLPoK55kgftGOD47ZR8ThIK629g 0xpsFdp7DAp/sPimjMT7LsCg7Ek9uSFTnt/wLrWaqpaw3HOYpQLFKupmAH28oh6y2h831hA3qLS
- +8XsaGNj5bWQ2VaEAEELgwvyGx4t6Vq7JEuPIHgHxH3N0NysmOrxp2mfSDey4ZWw/7E8F6Hl
-X-Proofpoint-ORIG-GUID: _MQjsk28r9S6714Ju_ykQKRKVzNe3zWm
-X-Proofpoint-GUID: _MQjsk28r9S6714Ju_ykQKRKVzNe3zWm
-X-Authority-Analysis: v=2.4 cv=b6Cy4sGx c=1 sm=1 tr=0 ts=682ddf20 cx=c_pps a=OemXRkCljtmPz/OzEC+nkg==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=dt9VzEwgFbYA:10 a=yPCof4ZbAAAA:8 a=4x1uw_1Qg-QOYtC87tQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_04,2025-05-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 spamscore=0 mlxscore=0 mlxlogscore=999 impostorscore=0
- suspectscore=0 malwarescore=0 clxscore=1011 phishscore=0
- priorityscore=1501 bulkscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.21.0-2505160000 definitions=main-2505210138
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMj1kXGE0fSRvR4=+qAWu54ehzJfdC9GSzHODr4pMTEbBwOhuA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On linux-5.10.y, my testcase run failed:
+On Wed, May 21, 2025 at 03:45:13PM +0200, Ard Biesheuvel wrote:
+> (cc Peter)
+> 
+> On Mon, 5 May 2025 at 19:33, Pali Rohár <pali@kernel.org> wrote:
+> >
+> > Hello Ard!
+> >
+> > On Monday 05 May 2025 13:25:45 Ard Biesheuvel wrote:
+> > > Hello Pali,
+> > >
+> > > On Sun, 4 May 2025 at 20:23, Pali Rohár <pali@kernel.org> wrote:
+> > > >
+> > > > * Rename constants to their standard PE names:
+> > > >   - MZ_MAGIC -> IMAGE_DOS_SIGNATURE
+> > > >   - PE_MAGIC -> IMAGE_NT_SIGNATURE
+> > > >   - PE_OPT_MAGIC_PE32_ROM -> IMAGE_ROM_OPTIONAL_HDR_MAGIC
+> > > >   - PE_OPT_MAGIC_PE32 -> IMAGE_NT_OPTIONAL_HDR32_MAGIC
+> > > >   - PE_OPT_MAGIC_PE32PLUS -> IMAGE_NT_OPTIONAL_HDR64_MAGIC
+> > > >   - IMAGE_DLL_CHARACTERISTICS_NX_COMPAT -> IMAGE_DLLCHARACTERISTICS_NX_COMPAT
+> > > >
+> > >
+> > > Where are these 'standard PE names' defined?
+> >
+> > Basically in any project which is doing something with PE, at least in
+> > projects which I saw or used it. Those names are mostly coming from
+> > Windows SDKs/WDKs as the Microsoft is inventor of them and are de-facto
+> > standard names -- or at least people are following existing naming
+> > convention for a good reasons. If you are are not familiar with
+> > MS/Windows world, you can find them also in projects like binutils,
+> > llvm/clang, wine or mingw-w64, which are hopefully well-known project
+> > references.
+> >
+> > Some of IMAGE_DLLCHARACTERISTICS_* names (including the NX_COMPAT) are
+> > defined also in the PE MS spec (win32/debug/pe-format). I hope that this
+> > spec can be taken as a reference, even that it does not document
+> > everything related to PE, and contains mistakes.
+> 
+> I don't feel strongly either way with any of this - I don't think
+> there's anything to fix here, but I'm not attached to the names so I
+> don't mind changing them either.
+> 
+> Peter: any thoughts?
 
-root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mount -t nfs [::1]:/mnt/nfs_root /mnt/v6 -o nfsvers=3
-mount.nfs: requested NFS version or transport protocol is not supported
+I'm broadly for making the names look more like what the spec uses
+whenever we can when it doesn't introduce naming collisions with other
+stuff.  But like you, it makes very little difference to me.
 
-The first bad commit is:
-
-commit 7229200f68662660bb4d55f19247eaf3c79a4217
-Author: Chuck Lever <chuck.lever@oracle.com>
-Date:   Mon Jun 3 10:35:02 2024 -0400
-
-   nfsd: don't allow nfsd threads to be signalled.
-
-   [ Upstream commit 3903902401451b1cd9d797a8c79769eb26ac7fe5 ]
-
-
-Here is the test log:
-
-root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# dd if=/dev/zero of=/tmp/nfs.img bs=1M count=100
-100+0 records in
-100+0 records out
-104857600 bytes (105 MB, 100 MiB) copied, 0.0386658 s, 2.7 GB/s
-root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mkfs /tmp/nfs.img
-mke2fs 1.46.1 (9-Feb-2021)
-Discarding device blocks:   1024/102400             done
-Creating filesystem with 102400 1k blocks and 25688 inodes
-Filesystem UUID: 77e3bc56-46bb-4e5c-9619-d9a0c0999958
-Superblock backups stored on blocks:
-	8193, 24577, 40961, 57345, 73729
-
-Allocating group tables:  0/13     done
-Writing inode tables:  0/13     done
-Writing superblocks and filesystem accounting information:  0/13     done
-root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mount /tmp/nfs.img /mnt
-
-root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mkdir /mnt/nfs_root
-
-root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# touch /etc/exports
-
-root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# echo '/mnt/nfs_root *(insecure,rw,async,no_root_squash)' >> /etc/exports
-
-root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# /opt/wr-test/bin/svcwp.sh nfsserver restart
-stopping mountd: done
-stopping nfsd: ..........failed
-  using signal 9:
-..........failed
-exportfs: /etc/exports [1]: Neither 'subtree_check' or 'no_subtree_check' specified for export "*:/mnt/nfs_root".
-   Assuming default behaviour ('no_subtree_check').
-   NOTE: this default has changed since nfs-utils version 1.0.x
-
-starting 8 nfsd kernel threads: done
-starting mountd: done
-exportfs: /etc/exports [1]: Neither 'subtree_check' or 'no_subtree_check' specified for export "*:/mnt/nfs_root".
-   Assuming default behaviour ('no_subtree_check').
-   NOTE: this default has changed since nfs-utils version 1.0.x
-root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# echo hello > /mnt/nfs_root/hello.txt
-
-root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mkdir /mnt/v6
-
-root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mount -t nfs [::1]:/mnt/nfs_root /mnt/v6 -o nfsvers=3
-mount.nfs: requested NFS version or transport protocol is not supported
-
-Thanks,
-Haixiao
+-- 
+        Peter
 
 
