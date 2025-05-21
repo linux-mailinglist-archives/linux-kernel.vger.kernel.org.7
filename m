@@ -1,157 +1,164 @@
-Return-Path: <linux-kernel+bounces-656885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BC4AABEC0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:37:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 731BFABEC16
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 929F23B51FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:37:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C0021BA3F7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEED230BD9;
-	Wed, 21 May 2025 06:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802A8233D64;
+	Wed, 21 May 2025 06:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="dfcnj2eS"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="aO46L6vy"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2C9219EB
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 06:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F23922B8C3;
+	Wed, 21 May 2025 06:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747809446; cv=none; b=D8BRdBlCqqRw6XTEcoGgN92DN0D/LLi+ETrqlY0GAYJTBUPoWbgVfmrjDKEKZlGbL3oP4hhBm4hyjDqsB9p5CXTrJr7EI34WVWS2iJs9kRKCkCa20sS4Q6z1UbvRGQ24iOmgZeMla2eM9Fm5t6V9dBT0gOGgIJanl6kmug/rSdc=
+	t=1747809910; cv=none; b=QuOm7QPB3YTwPVttbXRYjfSvtJ58Nu/ctI8vWAdPZDaBXWKjeKGslfoWF+C1UgWIAnZtWyEO/GLvsUHamBsO++3vGl9j+5loEOLiR6JIoWCW1dG/YcqCTZtxzSy3od7SGxhrt12GJ+YQcAH/3iNZCvAuJRnTgEAAn27knSox8uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747809446; c=relaxed/simple;
-	bh=VhuoHg3jQGfRZHvIXt/xWCqRtiaBwPsPV6EGEAMa9rY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vD4iPGONVWFp4vebKJGRlF3gn0xFyJ/ItrDXN0okWVKL49nypx4fCeSOomAqM9z5BoMXDQBF1VYVIay9TOjXvzGH2MAV5VF1ZDZ81Mv2vFz+Tss4eVBd2ByGmjJ7o5QVqF8sWLBiL+zGzgC1hfNKDOYqMKwsLnSUcBbEWUEL7sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=dfcnj2eS; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7399a2dc13fso8069857b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 23:37:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1747809444; x=1748414244; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w3mJUSzRUuycSX2Q6iIlOiZHH9hgJ0lk+kEJmIsy7hA=;
-        b=dfcnj2eSum88Piz8OQaZqOvtA5oSfB6Y0LOmHOdE+33j7vAUM7DMR/zlcbMeIgcwfz
-         2stJ7hfYzLeCbN/zqWceqaJ4MKE74/hPfGyL5BGa+CGZmvS6fmpLA4inPy/jIx8S69rG
-         YlmUZkizrswKug0Z0Uqar4wv3xfLvqo2DlJY6dIvDdKI+drFtXY1vXkgEiATluyLt7gM
-         7EB8YiRnULMUUu1MQdaFFtouxPEJ2uug6Nbb4yf/md6qZxBLLbqT6Vu6RYNqgIju4yuM
-         V72hQ06TQ1/73jZGPmQme+eAX11MRW8V+LREEVOKwCJmc/17CaVeEABf2H2vWd8USzqP
-         zpvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747809444; x=1748414244;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w3mJUSzRUuycSX2Q6iIlOiZHH9hgJ0lk+kEJmIsy7hA=;
-        b=UMX1msPT2Nyeeii3OyO+9G5pxGwH1Ae8QBlqXuqFLvrZR51E/JVsNzpcFUuB3WRCSz
-         Tiip2HoBuVh2F1pdcijcuX+QsthFyQsIdNk1ig/Qy/q2rAgy45U9kGcDMmJYOKazfz4t
-         5lDXYNZDgOMjw4lj81P8QEiQhfHiwKB+XHi0qbcik7QdeBtHoBYzueaQkg2kOksgH/ZJ
-         RwLfxRV2eQYY4rhQSggyiVkqMgQlonnGIZKLYj947AivmQ+BnK65jbO2N4oCY5tXyChp
-         4oOHD7bCoEo7N0j1mW7XtDfI3EcorhUlXXS5jWXSzv+8PLd+WuUHYbR1svS0k+Hbu2cM
-         30GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULkpTQh4i8l/2AU6Jjt5E/q+s2UCUgslubXkQp/VllW8YswjgCEz5GlPZ1fHgPUAdeqjNxPPFiTTGhTy0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjq5G6SwKD5S0vax5YpkFEzqjP9Ha+zi4L7lpCmvkx+OThSPgu
-	b5tdYuNzaNak+F3Mjen6sTFxTpvEXZfMxflFbBtpmJlpajdSsjH0JKowaTmiwYfq6A==
-X-Gm-Gg: ASbGncsum0RrTFa6QViUPwByt0/eAoHU1vYyOk3R9auYNg4I3BQFDkx3kNPF07Xeobn
-	JqnYtDIDJg71qrmfOgxxIgQZuKH9CUFm1840VLEj3/VxjOVkROXzWop8ZnvOodgN7/wd8NwStPT
-	YLs0Km39kX5bikBZimibU43dPp6nhtpFHMAZn8nZSYD4FK0k97kSNLSAEmVc2Xw2AY8E/LQLWNn
-	CVcwqJxuCsFEaaigyF2SbtMfjjyuAz+ZqRX3W9bf6GZZ5wsjYTWA50jlFuKJkYU2FlxV/Jb6ijO
-	ei8fUAQcadJhYaPmH11agilkmcTaeJtD4THllzo3ezUe//E82PU=
-X-Google-Smtp-Source: AGHT+IGksfHB8GP2Cr7l3dVRe3nYbg7hfMxDMcI9hzDvYhK2y00Jh+kUBQkpg18kBXjK/7Ki8ipazA==
-X-Received: by 2002:a05:6a20:958f:b0:215:e60b:3bc7 with SMTP id adf61e73a8af0-2170cde5298mr26460904637.26.1747809443633;
-        Tue, 20 May 2025 23:37:23 -0700 (PDT)
-Received: from bytedance ([115.190.40.14])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a987708asm8911809b3a.155.2025.05.20.23.37.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 23:37:23 -0700 (PDT)
-Date: Wed, 21 May 2025 14:37:05 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Florian Bezdeka <florian.bezdeka@siemens.com>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>
-Subject: Re: [PATCH 2/7] sched/fair: prepare throttle path for task based
- throttle
-Message-ID: <20250521063705.GA4059166@bytedance>
-References: <20250520104110.3673059-1-ziqianlu@bytedance.com>
- <20250520104110.3673059-3-ziqianlu@bytedance.com>
- <844ecab14632381bb5dd6a168a988dede64b459e.camel@siemens.com>
+	s=arc-20240116; t=1747809910; c=relaxed/simple;
+	bh=GHcnvXdMpAPuoIAioS/LOiLIKctVetFq3Kvs+ASYCC4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IR6nKO0isgLW6dnPQytYwuGMz7h2+1hJQBIHdiZzbeisJuietWgJbd1bozVRJOsoFFvzpaqzlyjK4Gg1zRSCt9/uDIjbOnbeCMDUS+zCXhv5mIUD3aBDClUmUZcq91jeYgjVBdqU7r/QdmQ+4uqn7luZ0S+GdPRdgiX4WkNq/Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=aO46L6vy; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
+	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=gO9ux4v6hOKrbiuo9LJ6PvUt/EemhxLVVjtbv/Lzolk=; b=aO46L6vyxpVeQSzGfWeCh/j8zS
+	HfWW4NYGZbFqS7eg7wtq923iPibVishJMvTIXlNN5jnhDHgCd4eNZhgMZIToIltSxGXz0LdAYa6np
+	LK4PcD8k+CMvbv6+pVW8wHBPnjcmk1VbnRrd034CP7G3x2308yjYrPuef3WpbwTZRciPOZRlQ/Zo9
+	24F7WAP1BNG77gVhZcwRNQOsn6EWcPPZ/Kuu//899Cfe93qc10DjbH/1ZG9HznZ5FyvkrwtC+q2IH
+	5cMUWNkBBiohfSKY4IcprgpD5wNB/fJwfeTnxS6w9ei3fJEZJVQBwqhHqxq54wcuA/dI6bElTvk0l
+	buTlZWKQ==;
+Received: from [191.204.192.64] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uHdCK-00B4IH-Lk; Wed, 21 May 2025 08:45:04 +0200
+From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Date: Wed, 21 May 2025 03:42:12 -0300
+Subject: [PATCH] ovl: Allow mount options to be parsed on remount
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <844ecab14632381bb5dd6a168a988dede64b459e.camel@siemens.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250521-ovl_ro-v1-1-2350b1493d94@igalia.com>
+X-B4-Tracking: v=1; b=H4sIAMN1LWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDUyND3fyynPiifN0kY4tEU/MUI0sLkxQloOKCotS0zAqwQdGxtbUAU3i
+ hAlgAAAA=
+X-Change-ID: 20250521-ovl_ro-b38a57d2984d
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+ Christian Brauner <brauner@kernel.org>
+Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-dev@igalia.com, linux-fsdevel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+X-Mailer: b4 0.14.2
 
-On Tue, May 20, 2025 at 02:02:54PM +0200, Florian Bezdeka wrote:
-> On Tue, 2025-05-20 at 18:41 +0800, Aaron Lu wrote:
-> > @@ -6744,6 +6805,7 @@ static bool check_cfs_rq_runtime(struct cfs_rq *cfs_rq) { return false; }
-> >  static void check_enqueue_throttle(struct cfs_rq *cfs_rq) {}
-> >  static inline void sync_throttle(struct task_group *tg, int cpu) {}
-> >  static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq) {}
-> > +static void task_throttle_setup_work(struct task_struct *p) {}
-> >  
-> >  static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
-> >  {
-> > @@ -8851,6 +8913,7 @@ static struct task_struct *pick_task_fair(struct rq *rq)
-> >  {
-> >  	struct sched_entity *se;
-> >  	struct cfs_rq *cfs_rq;
-> > +	struct task_struct *p;
-> >  
-> >  again:
-> >  	cfs_rq = &rq->cfs;
-> > @@ -8871,7 +8934,14 @@ static struct task_struct *pick_task_fair(struct rq *rq)
-> >  		cfs_rq = group_cfs_rq(se);
-> >  	} while (cfs_rq);
-> >  
-> > -	return task_of(se);
-> > +	p = task_of(se);
-> > +	if (throttled_hierarchy(cfs_rq_of(se))) {
-> > +		/* Shuold not happen for now */
-> 
-> Typo: s/Shuold/Should
->
+Allow mount options to be parsed on remount when using the new mount(8)
+API. This allows to give a precise error code to userspace when the
+remount is using wrong arguments instead of a generic -EINVAL error.
 
-Ah right, thanks.
+Signed-off-by: André Almeida <andrealmeid@igalia.com>
+---
+Hi folks,
 
-> Btw: Is there a trace point in place when throttling/unthrottling
-> happens? Would be nice to see that in a trace, but might be that I
-> missed those events in my configuration up to now.
+I was playing with xfstest with overlayfs and I got those fails:
 
-There is no trace point for throttle related events yet.
+$ sudo TEST_DIR=/tmp/dir1 TEST_DEV=/dev/vdb SCRATCH_DEV=/dev/vdc SCRATCH_MNT=/tmp/dir2 ./check -overlay
+...
+Failures: generic/294 generic/306 generic/452 generic/599 generic/623 overlay/035
+Failed 6 of 859 tests
 
-I tried to see if bpftrace can do the job but unfortunately, bpftrace
-does not allow variable as array indice so I failed to get cfs_rq when
-probing tg_throttle_down(tg, data)...
+5 of those 6 fails were related to the same issue, where fsconfig
+syscall returns EINVAL instead of EROFS:
 
-Thanks,
-Aaron
+-mount: cannot remount device read-write, is write-protected
++mount: /tmp/dir2/ovl-mnt: fsconfig() failed: overlay: No changes allowed in reconfigure
 
-> > +		WARN_ON_ONCE(1);
-> > +		task_throttle_setup_work(p);
-> > +	}
-> > +
-> > +	return p;
-> >  }
-> 
+I tracked down the origin of this issue being commit ceecc2d87f00 ("ovl:
+reserve ability to reconfigure mount options with new mount api"), where
+ovl_parse_param() was modified to reject any reconfiguration when using
+the new mount API, returning -EINVAL. This was done to avoid non-sense
+parameters being accepted by the new API, as exemplified in the commit
+message: 
+
+	mount -t overlay overlay -o lowerdir=/mnt/a:/mnt/b,upperdir=/mnt/upper,workdir=/mnt/work /mnt/merged
+    
+    and then issue a remount via:
+    
+            # force mount(8) to use mount(2)
+            export LIBMOUNT_FORCE_MOUNT2=always
+            mount -t overlay overlay -o remount,WOOTWOOT,lowerdir=/DOESNT-EXIST /mnt/merged
+
+    with completely nonsensical mount options whatsoever it will succeed
+    nonetheless. 
+
+However, after manually reverting such commit, I found out that
+currently those nonsensical mount options are being reject by the
+kernel:
+
+$ mount -t overlay overlay -o remount,WOOTWOOT,lowerdir=/DOESNT-EXIST /mnt/merged
+mount: /mnt/merged: fsconfig() failed: overlay: Unknown parameter 'WOOTWOOT'.
+
+$ mount -t overlay overlay -o remount,lowerdir=/DOESNT-EXIST /mnt/merged
+mount: /mnt/merged: special device overlay does not exist.
+       dmesg(1) may have more information after failed mount system call
+
+And now 5 tests are passing because the code can now returns EROFS:
+Failures: generic/623
+Failed 1 of 1 tests
+
+So this patch basically allows for the parameters to be parsed and to
+return an appropriated error message instead of a generic EINVAL one.
+
+Please let me know if this looks like going in the right direction.
+
+Thanks!
+---
+ fs/overlayfs/params.c | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
+index f42488c019572479d8fdcfc1efd62b21d2995875..f6b7acc0fee6174c48fcc8b87481fbcb60e6d421 100644
+--- a/fs/overlayfs/params.c
++++ b/fs/overlayfs/params.c
+@@ -600,15 +600,6 @@ static int ovl_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 		 */
+ 		if (fc->oldapi)
+ 			return 0;
+-
+-		/*
+-		 * Give us the freedom to allow changing mount options
+-		 * with the new mount api in the future. So instead of
+-		 * silently ignoring everything we report a proper
+-		 * error. This is only visible for users of the new
+-		 * mount api.
+-		 */
+-		return invalfc(fc, "No changes allowed in reconfigure");
+ 	}
+ 
+ 	opt = fs_parse(fc, ovl_parameter_spec, param, &result);
+
+---
+base-commit: b87e2318cdaa14024b62ab428b3471d81eafaf1a
+change-id: 20250521-ovl_ro-b38a57d2984d
+
+Best regards,
+-- 
+André Almeida <andrealmeid@igalia.com>
+
 
