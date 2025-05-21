@@ -1,199 +1,158 @@
-Return-Path: <linux-kernel+bounces-657474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB1D6ABF491
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 153FDABF4A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57AEB17538F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:43:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28E878E0BA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A00266EFC;
-	Wed, 21 May 2025 12:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801B0239E91;
+	Wed, 21 May 2025 12:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wdmg1DXo"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YZx/UHjF"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453FB2620FA;
-	Wed, 21 May 2025 12:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37163265607
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747831410; cv=none; b=ES8r3p7Ka0Z84VIWXCk3jBecVIT+cCrpuJWbHfbTpORHiiizyX7yuAPlyA4WSD1mfy+kkuQfdFex1EYq7GyyTqgEr5/zsAZkKidS2cjhvq7qC87mvY+qpmA7+4AwITzXV/BJnQCfGlk04LCnchmobk8CUSKcUXuLJc6DvlpFOpU=
+	t=1747831536; cv=none; b=NiVVPcdM3XmKU1PQEbrLMZ23PKQCgOaUire6tuC89OgEekxP1U+q5IzOnacZIFtAHk9AeYN8X8GLkslknPtOfwaZdjErJ/QXdMB09NfOD+MJg0wbvuVwOP3mpFtw1Pd2KQCWwzeI9YMe7eVMyKmKKc66+XOpL56/rRR5SK6JOqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747831410; c=relaxed/simple;
-	bh=YMoJAErzM5EZpwxgq0GrpjlYUWjIwa/Xx0qvGcd/9IA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fbdO7s2KScjUKMg12HcbuGiuWJjTNB0rnBlrcE5b4CQn+SlImpSShMQHlLTofCiHs24iNmULx3LYlDaQPJyUl1maPwUsqVVO8lTdeblG4D9dAlXLB+wIL4y4qE2SHlNFFekbJ3hiCsHCMazUBUtWlf6bQjTG2owzpWG0GYGMiUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wdmg1DXo; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4767e969b94so120587301cf.2;
-        Wed, 21 May 2025 05:43:28 -0700 (PDT)
+	s=arc-20240116; t=1747831536; c=relaxed/simple;
+	bh=n6rPJCx9/rJo0cLsi6xMccKyA/Zz3SsJyR7Z4cGd+a0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P9/uVfq5KpqsgyAs0WP7UIRlK9vT60eZTNhVchtUlZcZt9KhULrTpJ8l1Fd6RJuiqk8/lbn+VsL1iT2S5hlw7hs/Q8gdnGwgTlti+oiZxA87id6Q190gl4+Ee5xI9zNswORqjnnJxTI3Bq46NV/Na9xFgJtppxKav8ZouULJmSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YZx/UHjF; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e7311e66a8eso5957952276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:45:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747831408; x=1748436208; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1747831534; x=1748436334; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hgjwFdM2k5sCslQZdWwlZbIspHEoXzqe2FcVDJivI+o=;
-        b=Wdmg1DXoibSNJuM4v0H/7yd4l73HmoypbOzxK02lt9bIQEbxpESSe23NmSSAbBPQLX
-         +PGjgYS7KHY6GjYnfbrI5BxvQNQ5PrHeoMHJnU2KRu9leLFxL/YuiIivgmK7D0cZ1z/O
-         eAg1t0Kb2kYrGSriKjbT04tJkuVwIeTEj+cIHPO+Ni/gmhf8VO9rQpYraBfIehIx/hS4
-         G2j1RRZSoXFRmXXGlHWghFhVrffGre1e87uVK/5WGbNRs8+/7yLB4YfZen2N5YGd4VDR
-         +diJK8aeBmMI/0QshTrS1H2OVO9RTX9jnQlZPymea4Yp0DCRrjfImVHdpPPu2CuRpmiX
-         RlGg==
+        bh=BTGEEcDJ4Rf44o/m0iYLH1IvvxWp6S4La78m9u7l9Dk=;
+        b=YZx/UHjFwVO5rOU9UXwOJSAPsreG8JzSLus3yRDPteIOIFiy+W67QaC3Vasdh08t7V
+         FkO/62TkvqBiXXAY5koYLZEPTCA0H4gVVlm86mXGUxzhnhhR/cyY6FZnYHYHrJwYipGO
+         sYHbP8MRteQ/WHmQFHS4oHY2U0Noc1CWBF9usMTocSZs/k/OhwC8DBN49unrQc2NkJVB
+         LskJCu9Yov9M6NTmOWj9DymiAPzIPT2vJEc94/MqzcnjLnTifsXCtpLb5kp3FiW66GMv
+         WsW/QORveau1b+jV4qKZb8YEmTFwES7gwBLuUKmD+Gr37E3Ky+bXV8M7veZVW1mqZUvN
+         j1Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747831408; x=1748436208;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1747831534; x=1748436334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hgjwFdM2k5sCslQZdWwlZbIspHEoXzqe2FcVDJivI+o=;
-        b=r5jmFCY0+RCvn8ovznjjSOkL6hLT7KfUHIZwpT9N8Rq0QeeuwnN0tII9B9r8mSurwL
-         7apCToC1ZvQnXGdkPl5l2yyop9sgv/68uHW6s+Uql8RAU11zBy/12tHSfm38TzucIjgU
-         BRwIChreBPC7ABJslyCEvSgIbqnCVRcMsjo8bQ0Rfv6ECKibaV7mQuSentisPaex+DXR
-         T9IVa8o8wAOcjX+Af0hUtK3hCgGXP4R3hhL6Qb9CtEWtXYnapInSyAfgjZTHnUcEemON
-         cXY/qnVVNjXoiyZu9bQd5G0t2hUgMAengcPJTq0Bpb3KTAL9QY993amBqXFXbXMK2LeE
-         1W1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUP7XEwSAGqu3RwZmIGP8+bRCm5UOxuA1sifjifgNr0cnKS6l4uMO4OUNFPhDI2MF5HvOBH3QkHDd/Pnt4A+xQ=@vger.kernel.org, AJvYcCXuoIz9y2RFfHy4G0Kmgwc54CdQ/+kkRTXH7JzDES37whpaNrAdkSBRvyXC/UWEX9cqPP6OJEFuVuev2Ko=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrlnze6mBE7KAmUsc82F/npVkGdy0wwlFHXEWhhcrp/EPzz3kF
-	2Hj8jY7vQE5WGk5zpYN9uUhaOQUg5lZUck/icO2Puy272zu7BS7B0OhS
-X-Gm-Gg: ASbGncvk/78zB9Jz+KctaWqdPpw7mXSVBBcOgxChvJnEFpZbZr6o0cZhCqt5bumsgTg
-	DMRymqaWQBHA/5Dx7GpOHNyCkfwRX4me/5tbNDn24FIZprakqPp8ZFrITlagtu4Y79tOJvwy/Tm
-	H6eBEZLuUQHAvc4wFj8t3UEnOxEFBC96ZtM8eTGCfJTqi+U0xFYXfJqMkFEzOzQ2dDP9Hy0CPtZ
-	G6YoOOGRp+vznV7PSkpOIbmgsTf3H4JfhFfNUJz0HCx9/PkZ0f1xI9JDu1MSUfrz2Rh+qXdLpQk
-	2XG1wtKxPtW0cFsDAl+qO+FTWcfyaqU58GiKIx4AZv2vAw4iKi83sucs5b/HSTkeEj+J21vFgS5
-	8M9hKzNRnpF5ZexTN35nU975p+WNrQT6exhIPMFGYGaYQuWchotpd
-X-Google-Smtp-Source: AGHT+IErCuCfRGil1ejhob4xg9yF6HudkK+JCsZ+ou6hegKIPEwSjezrXHPPDMBGZDMU5QdCutpJMw==
-X-Received: by 2002:a05:622a:5a92:b0:474:fee1:7915 with SMTP id d75a77b69052e-494b0804fccmr351306121cf.31.1747831408000;
-        Wed, 21 May 2025 05:43:28 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494b2de7adesm78612461cf.17.2025.05.21.05.43.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 05:43:27 -0700 (PDT)
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfauth.phl.internal (Postfix) with ESMTP id C0F0E120007A;
-	Wed, 21 May 2025 08:43:26 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Wed, 21 May 2025 08:43:26 -0400
-X-ME-Sender: <xms:bsotaDmo6rPZ2tXj80tjivOzXA9zUk6xy3r7BaxKDzBH9Tl7SYB8Jw>
-    <xme:bsotaG3yjjhGuEA2SFUFzXmthWJxpZLhxozreZrqF_Mh0IiDABi6OW1yzmMv1Uc1B
-    1yS-xMRrtdJYAqDgQ>
-X-ME-Received: <xmr:bsotaJp-h3wu69T1xoojOOr2UB59J6teF9TmX8dDoOrOvdDnOJQiPFLq>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefudduucdltddurdegfedvrddttd
-    dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
-    nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
-    enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhgg
-    tggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunh
-    drfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffet
-    uedtvdehueevledvhfelleeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgr
-    uhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsoh
-    hquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghr
-    tghpthhtohepvdehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrtghouhhrsg
-    hothesnhhvihguihgrrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtph
-    htthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegp
-    ghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhssh
-    hinhesphhrohhtohhnrdhmvgdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpd
-    hrtghpthhtohepthhmghhrohhsshesuhhmihgthhdrvgguuh
-X-ME-Proxy: <xmx:bsotaLmvSkg2Q06ODnYxXBUDGpip6DQk3VTw7K4qMb2reqkkcSWrVA>
-    <xmx:bsotaB3MfIrt8FFge-AucHIiw6NaEDMgIfwaMG4fS9t1kft0C04zuA>
-    <xmx:bsotaKuSJ-iPW_ldhIxNCQ2UxEf5EaZ56wZOLmaLS1G0rcJmTJ2YgA>
-    <xmx:bsotaFWm4FiQy945-CSPTPkSXQlvyTnVjbb8iPWajXkBDIE068QB1g>
-    <xmx:bsotaA39I8JQdG94Oyw-Ah8xDMPX_twLC3gAiGlTsg415qakz7IrijV3>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 21 May 2025 08:43:25 -0400 (EDT)
-Date: Wed, 21 May 2025 05:43:24 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 01/20] rust: dma: expose the count and size of
- CoherentAllocation
-Message-ID: <aC3KbKeEVlHggi5l@Mac.home>
-References: <20250521-nova-frts-v4-0-05dfd4f39479@nvidia.com>
- <20250521-nova-frts-v4-1-05dfd4f39479@nvidia.com>
+        bh=BTGEEcDJ4Rf44o/m0iYLH1IvvxWp6S4La78m9u7l9Dk=;
+        b=e66I3tX77Rk35VzNnrMycomd0xe06tD8M++3IA9VlZagWKpjH1xDf6DMRtUVYi4OZS
+         fCTINsFCU2RCYgT+C+tKYLVSasZk9pccpj5cpRPSyEpZA5WEe8PeXhCRyppMycecY/dc
+         9D6mslRpPjM27vZFXvcZ+NUyDCA1x+UUrQIns0Yqkoll2Y1nfMxKDguRh1/mDWFfZJD3
+         Lej3MnsjMRcAc5jur7eGpHNRvSPe3ADRk4X5UzcubLr5XNgTfyy6Z4oStMptXgQis/dO
+         YhsS89TvYL5NqcpntmkuNsKosVuA9MfJcFeqOPd7n70TYaTUYMnYV1FYqNqikq10aeqC
+         gtjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFXFpyFpVLuKewk94imxHC2rBMqb9RMdyWhXARhvvyIB56GcrPA0wlWGWpS2zzQR0i5t+7othHwvrH4R4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgerbQ4bCgs5OmlEd936d4D0vcuHGAUnpBZlCSLWdTGFtw88Xl
+	legJKexErNjQ9pJFT9aQQu3xjC4ytAkrh3zeZ43Pk5veFgb+8v0VMKCEVHmxdtBsAr5cbn0VcqO
+	xVEN+LUL/2vUFTJeiRBBJLo5hIedAMtRbJElcVbomJA==
+X-Gm-Gg: ASbGncuZZUQ8ZIstgOWUqQz+tmOonILpDLCqRpu5QMgZj0KsLauOS6M46Kw5nBn4vn7
+	nT4+1K7dX7ZDsiCe8bY6ZEQq7fA4dgf8biy4PfcAC5Uqao9btByJYwNvUfHRkrWGKaiydbmKB2z
+	R0VMWRs/C3t0ZD4+ZFI+v1k+wKwM7qdGSYvA==
+X-Google-Smtp-Source: AGHT+IFdZAN7WRv6VPS5cGJ3gLPs22mEKo408MqP93yw+t5BEIMPcUMP1HhYDPUHVSuVMpda74VHpQZ4hE6QblI0FRQ=
+X-Received: by 2002:a05:6902:120c:b0:e7d:6717:b4f with SMTP id
+ 3f1490d57ef6-e7d67171335mr718291276.20.1747831534201; Wed, 21 May 2025
+ 05:45:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250521-nova-frts-v4-1-05dfd4f39479@nvidia.com>
+References: <20250516092716.3918-1-victorshihgli@gmail.com>
+ <20250516092716.3918-3-victorshihgli@gmail.com> <CAPDyKFqCo2-9fYYAoNpmJf7XOiTvLM07hQks1io-S0MvmbAjCQ@mail.gmail.com>
+ <CAK00qKAEN9+aA_7_YEGjjgovNG78du7+wmMyB4D0jZjzzcFNbA@mail.gmail.com>
+In-Reply-To: <CAK00qKAEN9+aA_7_YEGjjgovNG78du7+wmMyB4D0jZjzzcFNbA@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 21 May 2025 14:44:58 +0200
+X-Gm-Features: AX0GCFvdjxqAmgbrTOzHHBpAjrwEOM3dIarU_X-Ow71DNc9AeVmuEv_ZWGrofdM
+Message-ID: <CAPDyKFqsKqw2Oy2_JCK9ts1DytkMo86snWw9-OdxYwJfNWbnqw@mail.gmail.com>
+Subject: Re: [PATCH V1 2/2] mmc: sdhci-uhs2: Adjust some error messages and
+ register dump for SD UHS-II card
+To: Victor Shih <victorshihgli@gmail.com>
+Cc: adrian.hunter@intel.com, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, benchuanggli@gmail.com, 
+	HL.Liu@genesyslogic.com.tw, Greg.tu@genesyslogic.com.tw, 
+	Ben Chuang <ben.chuang@genesyslogic.com.tw>, 
+	Victor Shih <victor.shih@genesyslogic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 21, 2025 at 03:44:56PM +0900, Alexandre Courbot wrote:
-> These properties are very useful to have and should be accessible.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  rust/kernel/dma.rs | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-> index 605e01e35715667f93297fd9ec49d8e7032e0910..2a60eefa47dfc1f836c30ee342e26c6ff3e9b13a 100644
-> --- a/rust/kernel/dma.rs
-> +++ b/rust/kernel/dma.rs
-> @@ -129,6 +129,10 @@ pub mod attrs {
->  //
->  // Hence, find a way to revoke the device resources of a `CoherentAllocation`, but not the
->  // entire `CoherentAllocation` including the allocated memory itself.
-> +//
-> +// # Invariants
-> +//
-> +// The size in bytes of the allocation is equal to `size_of::<T> * count()`.
->  pub struct CoherentAllocation<T: AsBytes + FromBytes> {
->      dev: ARef<Device>,
->      dma_handle: bindings::dma_addr_t,
-> @@ -201,6 +205,20 @@ pub fn alloc_coherent(
->          CoherentAllocation::alloc_attrs(dev, count, gfp_flags, Attrs(0))
->      }
->  
-> +    /// Returns the number of elements `T` in this allocation.
-> +    ///
-> +    /// Note that this is not the size of the allocation in bytes, which is provided by
-> +    /// [`Self::size`].
-> +    pub fn count(&self) -> usize {
-> +        self.count
-> +    }
-> +
-> +    /// Returns the size in bytes of this allocation.
-> +    pub fn size(&self) -> usize {
-> +        // As per the invariants of `CoherentAllocation`.
-> +        self.count * core::mem::size_of::<T>()
+On Wed, 21 May 2025 at 12:45, Victor Shih <victorshihgli@gmail.com> wrote:
+>
+> On Mon, May 19, 2025 at 8:25=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
+rg> wrote:
+> >
+> > On Fri, 16 May 2025 at 11:27, Victor Shih <victorshihgli@gmail.com> wro=
+te:
+> > >
+> > > From: Victor Shih <victor.shih@genesyslogic.com.tw>
+> > >
+> > > Adjust some error messages to debug mode and register dump to dynamic
+> > > debug mode to avoid causing misunderstanding it is an error.
+> >
+> > Dumping the register may be useful for the debug level, I am not sure.
+> > Maybe Adrian has an opinion?
+> >
+> > >
+> > > Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> > > Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+> > > ---
+> > >  drivers/mmc/host/sdhci-uhs2.c | 18 +++++++++---------
+> > >  drivers/mmc/host/sdhci.h      | 16 ++++++++++++++++
+> > >  2 files changed, 25 insertions(+), 9 deletions(-)
+> > >
+> > > diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-u=
+hs2.c
+> > > index c53b64d50c0d..9ff867aee985 100644
+> > > --- a/drivers/mmc/host/sdhci-uhs2.c
+> > > +++ b/drivers/mmc/host/sdhci-uhs2.c
+> > > @@ -99,8 +99,8 @@ void sdhci_uhs2_reset(struct sdhci_host *host, u16 =
+mask)
+> > >         /* hw clears the bit when it's done */
+> > >         if (read_poll_timeout_atomic(sdhci_readw, val, !(val & mask),=
+ 10,
+> > >                                      UHS2_RESET_TIMEOUT_100MS, true, =
+host, SDHCI_UHS2_SW_RESET)) {
+> > > -               pr_warn("%s: %s: Reset 0x%x never completed. %s: clea=
+n reset bit.\n", __func__,
+> > > -                       mmc_hostname(host->mmc), (int)mask, mmc_hostn=
+ame(host->mmc));
+> > > +               DBG("%s: %s: Reset 0x%x never completed. %s: clean re=
+set bit.\n", __func__,
+> > > +                   mmc_hostname(host->mmc), (int)mask, mmc_hostname(=
+host->mmc));
+> >
+> > As I said on patch1, please use pr_debug() and drop the macro.
+> >
+>
+> Hi, Ulf
+>
+> This macro has been defined in previous patches not the first time it
+> has appeared here,
+> are we still going to drop this macro?
 
-I think we need a comment or even an invariant saying this multiply
-cannot overflow.
+Yes, please.
 
-Regards,
-Boqun
+We don't have macros for other log-prints, so let's not use a macro
+for debug prints either.
 
-> +    }
-> +
->      /// Returns the base address to the allocated region in the CPU's virtual address space.
->      pub fn start_ptr(&self) -> *const T {
->          self.cpu_addr
-> 
-> -- 
-> 2.49.0
-> 
+[...]
+
+Kind regards
+Uffe
 
