@@ -1,122 +1,104 @@
-Return-Path: <linux-kernel+bounces-657888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9BFABFA30
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:53:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 117C6ABFA26
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1753A25A3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:46:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6E2C1898D22
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CBC213E66;
-	Wed, 21 May 2025 15:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SK44UjCt"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3392206A8;
+	Wed, 21 May 2025 15:44:41 +0000 (UTC)
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59441E22E6
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1548C21770B
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747842189; cv=none; b=qo3nLiE1l3Zgn2J/Cpkaox/4iLgk0cxy+8MGBt32jIt/fLaarf88+AJWZk8c875A30a1TEtxrncaReeGyHZa++VHAYFzbsxIj70YtpAcBw9MtkMma5NL2cDo3g0O89ER+o57VaI7DhKz9CTHrhzcD5exXuJienrP0eCvVaiQG4M=
+	t=1747842280; cv=none; b=XGQUTi2b7saouV2Pgs6oSB6cUgOE42aF8m7rX1wTxxZLH2kqPbeg8OBR7wuQ1H1kEAxtghEWYOyZMJFS80GWwEYjYV3Sfyuv3vs83C4G9Kh8f7qz3DC+mZTiQnvnglRL4zGP7xOFDQtTLldTokPt5DfkuIiAE1FZCjom3kuXpvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747842189; c=relaxed/simple;
-	bh=ub6EBjOX/x+g4JEYt9PJ8xuK1jnmJgK5m8DaA8cx6Tw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=HCqVSzXFXWgTg2zYZgA6CoE3SAc7mxCbkJWX1QzaThWjodKM64gg8pniIifnPSDIVkWeaG6bgW4NLN/uIXUbuoKDAYpJJzKYZhN2OOTxv07jKGUU2Qm+klu9KNk/emuq/vVqy51IrrSBazbPDMYauKTNpC+2sVZlPmQJi38jTkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SK44UjCt; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30db1bd3bebso65404361fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 08:43:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747842185; x=1748446985; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ub6EBjOX/x+g4JEYt9PJ8xuK1jnmJgK5m8DaA8cx6Tw=;
-        b=SK44UjCtNCDU61Fb95vBKqOY1zwopGdykohtHCJya7+uXLq5lRCk8YDdqo9btZExkn
-         EfqLZd6P7bHJXjxahS4XbxiHtX0KMLArAXQJmWJVKBmLp2KwSJ6Y5mA7JhHKMmlStj3d
-         fn75mjaJzmXLeJGrjwglcFlhVpkGz6YKgQVk2JQ1I78rWdazWUbEPLPTczkvW5nOG4V1
-         ZGJqKlIUnxmlJh5/mL4FUzg3aEnr++CUW9riKoeLNxeWKT3hQPHo4WpmdWENitwxSSpY
-         2Og0fU+DnLtJQfXfesl/TvWrn6nQ1tmFpH0sOAQleV9qhTaonovZyR8f8SSCQcv0rjK1
-         gS3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747842185; x=1748446985;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ub6EBjOX/x+g4JEYt9PJ8xuK1jnmJgK5m8DaA8cx6Tw=;
-        b=bUeF8B/se6yVcYDg97P9mYOpWU3o51TH9qbRWx+lYjibqjnLSQfP1+NXyqAFuUNTLU
-         hGSdqf7BXBl2hBf5iqAdPKnNE/jceKIYCE+G8S2AD+2Nju7JcuApiP1sdklcAUC2aUg9
-         SX59YI6C99JGofNd25mehUCUN0IJmRLqESI26SLofH3snC3LaaPkIcoMqj4Vzjy9cXzn
-         8DQusmxWJzUKiwSDMalCDv2ssAQX/JXbESG6i5AHAZQo6ETLPrlNggKbrcBcEnXo2WgC
-         cQTqEihVZOsAWhc9Sx2ea+LKHlzPaBiABpbADLuLeDcJ/b0HPH9DVGaEvkKuiVdeNhm4
-         YryQ==
-X-Gm-Message-State: AOJu0YyY5zgbh1TmAzl17MlYuAukMASd00emcts8kgpMv4FAtpqMNIoG
-	lLi65axM0ZyCun0Ea68hdhfHMFe25FhSTKF5PkvkhujOl2FejstJR5ylB6/fywOi1LQYRVr2YOo
-	QZz7clXDgBi3RrGTw0x/UOTqn7zP6r3hHSrmjIA==
-X-Gm-Gg: ASbGnct4XycBqtjj1wRE/FJJtzFq+rkzVOglmVj9JnXf1AvafmzuKdTZMbUY+yb7hqz
-	aLC2g0eWfL7twTIv7dS6l1EyD1h68e84bVTBRl1AAaZfkecSFYQaAAAlrioQbxaWHrS+5jGv3a9
-	pLBxdG4ZS9VaXIatl1r9FIThgV25B1+fEw2H0uomMOhRPacPGbsL+xiA==
-X-Google-Smtp-Source: AGHT+IGVZb5hn2QbRv6nwQRgi4kKwnT+oUI36zscHQFKXXAjeUxlahe0jxvBuartDax7LQgeWTa0bCJq1TWB1lj06mI=
-X-Received: by 2002:a05:651c:f09:b0:30b:ed5a:6f3c with SMTP id
- 38308e7fff4ca-328096b5d72mr54804511fa.10.1747842184452; Wed, 21 May 2025
- 08:43:04 -0700 (PDT)
+	s=arc-20240116; t=1747842280; c=relaxed/simple;
+	bh=Tevs3pas6CDAsUh+2wMEgICV/gQAKnqDWGoJ36kuST8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UNefjHNOK0lDemC3HswRZF2E94jiJEFXfJBC0tfVUEVuSXAaJ/oi4fLQPja28Vnn+66mM69sVGVQKbfACz76kBYusWxYDlV0/ACEMFS16rj2xbReSEfJTEUD/EMuh3ExkIggHKC90CM7JGIiI3x7WVVbxYgmE8mXVtnYmBmJ56E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=84.16.66.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b2bML13WHz10xj;
+	Wed, 21 May 2025 17:44:30 +0200 (CEST)
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b2bMK2CbzzMn4;
+	Wed, 21 May 2025 17:44:29 +0200 (CEST)
+From: Quentin Schulz <foss+kernel@0leil.net>
+Subject: [PATCH 0/2] arm64: dts: rockchip: support Ethernet Switch adapter
+ for RK3588 Jaguar -- cover
+Date: Wed, 21 May 2025 17:44:18 +0200
+Message-Id: <20250521-jaguar-mezz-eth-switch-v1-0-9b5c48ebb867@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: John <john.cs.hey@gmail.com>
-Date: Wed, 21 May 2025 23:42:51 +0800
-X-Gm-Features: AX0GCFv4ykq7_C2kdkkSXUlaFmyciwyiuFbZddHkDdRCPwUNZJToA1BKM4qVv9U
-Message-ID: <CAP=Rh=M3f8uNL0G=dwEALH2AQxV8tznsMjMdXJ9TWcgNhHooGg@mail.gmail.com>
-Subject: [Bug] soft lockup in cleanup_mnt in Linux kernel v6.15-rc5
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANL0LWgC/x3MSQqAMAxA0atI1gZsMRS8irgoNbYRHGidULy7x
+ eVb/P9A4iicoCkeiHxIkmXOUGUBLtjZM0qfDbrSVJFWOFq/24gT3zfyFjCdsrmAhuqahl45owl
+ yvEYe5PrHbfe+H9DUt01oAAAA
+X-Change-ID: 20250521-jaguar-mezz-eth-switch-75445fd1c725
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Quentin Schulz <quentin.schulz@cherry.de>
+X-Mailer: b4 0.14.2
+X-Infomaniak-Routing: alpha
 
-Dear Linux Kernel Maintainers,
+This adds support for the Ethernet Switch adapter connected through the
+mezzanine connector on RK3588 Jaguar.
 
-I hope this message finds you well.
+This adapter has a KSZ9896 Ethernet Switch with 4 1GbE Ethernet
+connectors, two user controllable LEDs, and an M12 12-pin connector
+which exposes the following signals:
+ - RS232/RS485 (max 250Kbps/500Kbps, RX pin1, TX pin2)
+ - two digital inputs (pin4 routed to GPIO3_C5 on SoC, pin5 to GPIO4_B4)
+ - two digital outputs (pin7 routed to GPIO3_D3 on SoC, pin8 to
+   GPIO3_D1)
+ - two analog inputs (pin10 to channel1 of ADS1015, pin11 to channel2)
 
-I am writing to report a potential vulnerability I encountered during
-testing of the Linux Kernel version v6.15-rc5.
+The whole SBC can be powered through the M8 3-pin 12-24V connector on
+the adapter.
 
-Git Commit: 92a09c47464d040866cf2b4cd052bc60555185fb (tag: v6.15-rc5)
+This also adds the ethernet1 alias to the Jaguar main DTS as the GMAC1
+is exposed on the proprietary Mezzanine connector so anyone using GMAC
+on the Mezzanine connector would likely need it (actually need it until
+https://lore.kernel.org/netdev/20250521-stmmac-mdio-bus_id-v1-1-918a3c11bf2c@cherry.de/T/#u
+is merged).
 
-Bug Location: 0010:stack_depot_save_flags+0x133/0xa00 lib/stackdepot.c:619
+Note that for this to work, you need this commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=ba54bce747fa9e07896c1abd9b48545f7b4b31d2
+otherwise most packets are ignored by the DSA switch driver.
 
-Bug report: https://hastebin.com/share/jemayogixe.yaml
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+Quentin Schulz (2):
+      arm64: dts: rockchip: add ethernet1 alias to RK3588 Jaguar
+      arm64: dts: rockchip: support Ethernet Switch adapter for RK3588 Jaguar
 
-Complete log: https://hastebin.com/share/judumibuhe.perl
-
-Entire kernel config: https://hastebin.com/share/padecilimo.ini
-
-Root Cause Analysis:
-
-A soft lockup was detected on CPU#0 during kernel execution, with the
-testing process triggering the hang.
-The issue occurred in the function stack_depot_save_flags() in
-lib/stackdepot.c, which was invoked as part of the KASAN (Kernel
-Address Sanitizer) infrastructure during a kfree() operation.
-The failure originates from a pathological condition within
-stack_depot_save_flags() where the kernel attempts to store a stack
-trace associated with a memory deallocation event.
-Specifically, the function enters a long-running or potentially
-infinite loop while performing a linear search through the hash bucket
-used for stack trace deduplication.
-
-At present, I have not yet obtained a minimal reproducer for this
-issue. However, I am actively working on reproducing it, and I will
-promptly share any additional findings or a working reproducer as soon
-as it becomes available.
-
-Thank you very much for your time and attention to this matter. I
-truly appreciate the efforts of the Linux kernel community.
+ arch/arm64/boot/dts/rockchip/Makefile              |   5 +
+ .../rockchip/rk3588-jaguar-ethernet-switch.dtso    | 189 +++++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts     |   1 +
+ 3 files changed, 195 insertions(+)
+---
+base-commit: 4a95bc121ccdaee04c4d72f84dbfa6b880a514b6
+change-id: 20250521-jaguar-mezz-eth-switch-75445fd1c725
 
 Best regards,
-John
+-- 
+Quentin Schulz <quentin.schulz@cherry.de>
+
 
