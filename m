@@ -1,200 +1,196 @@
-Return-Path: <linux-kernel+bounces-657895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15842ABFA1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:51:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D404FABFA53
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9D484A5EFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:49:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3388C5B02
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395CF22259B;
-	Wed, 21 May 2025 15:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE61221F0C;
+	Wed, 21 May 2025 15:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NHEdSFd9"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2074.outbound.protection.outlook.com [40.107.20.74])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KAHkfWdQ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA3D21B18B;
-	Wed, 21 May 2025 15:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747842381; cv=fail; b=SszK/fr8XEqYEiAKJk1pbIN1fTGGQ6ohvhntya5AwZBdvIXo71vTMQ9mcSFfaYs3zqueWI/7iASKasVFo5wrmv7s/Lx9dB54jwXVdG0INkIhwtz/37WYwMacX8Plx64vQUhsXD/CMd6ROOukIIqRCpdOkfogmbJ3fGeVjw3zFtg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747842381; c=relaxed/simple;
-	bh=pjgQOsRDeC8DTKoeeXu9vKX+PNE3PuUyiei5t2iuVMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oy/EAEZUEb5OCG6QDHPHgSIL/JOjocCBmmemB6tXR/auV/PcCPaHmlP527xRESrD8iUtD3yUg40gCa2vWNn45ZCKloHrgvIVfpQjUDLCZf04bTIb1GHBmDl9Bspn5IIpLhy9zCDJ1PDibqPyBqcf6RzCliv+2PEJnghqEqrbX9Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NHEdSFd9; arc=fail smtp.client-ip=40.107.20.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NYLAtXRWOWwdyrov4oU+ijztADWowURT+YSli8hN/p2dQ6/nAhj9e1OxnwRn+DtxVKPEVVpfUYGcV/hpdA/eUf+jW8rgYCU0Ax4os1YS0qM6ka5DsSrGzYu+2Rkqfx1626kSShf/aztnToAAmfQ49ceBaFuGJsRK8GMGvEJ8EATCi6/OnblWDxGbw2f/wWDgCgzIz2Qm7hckG28xfJvOL/Vrl2k6qo1XkluIAFXuz8c4xG0NiIXqmFg9O4G3cPbOcbMP/61kJihqyMtVXitHZ4spo1gpyxTyyGI8CDVCL9Cbj+dMywgUHwZ4FbQ6pLpIyEum4wTBHMwgBmzLKLelYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LNgPqmDBeMzAZxt/N4624fE1ZMVlerBvs5HHjs6qOhs=;
- b=tr/iSUZjNk3o2BMYs7Ax30gZmWKrfAWzXwneWzSaBcEp0KJY5eOcwCQ6JJG3++bIpXBtiofwSNn6J7DTnZxuy1WY/09o719BvU+IXfBmCMTI0Iq93LmRe5yS5LDAAEHjjA1kV06WR5FVJ/W2F2F80+WsIFL7rzgUbpVEc2cmds7jgtFaWC/lNGqLyUUT/Fu8nM+l+AjfkdQkTM0cw2rd5X+fQHWa3/6fwsQLgXQtXs2aIHWwtcbqPaVtvka1m2ArrEnZIXZBnL0Rk7A3LBShARMdKra2yL5nyP/Zr69hsyt3MbVxVKsRZNlBTyaIUTkPakVQAJZCRzkQJsHhloDXOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LNgPqmDBeMzAZxt/N4624fE1ZMVlerBvs5HHjs6qOhs=;
- b=NHEdSFd9vFpEI3mhmaiLMRMNDi+Dp2zCH4QRITKpYILCMIAJ2gJwDGEtef977RDXrzt8LaJoe9rcH6Ac69XsnpQntA/G109Eq+it37L4Tad5V8VYB4ZvatBU9LtU6wYXJ4v+IGfJWsw0MO1BU/l2bLiI2CFggXyn4hnGNPVgpgYsqggcVmlA2PUxbLbdNp7TrZrlQJqghFkviL2JHwT/+bZOO76qfsTzf/rLsZf5jr3EJ8mGMBK1FRMxzu1VXhmQIdlqalTs95MJhcKRvbIIFO+gJ1uBRUSS49BdnHdEJQiKSrtxQdrVHhZEZwW6iOOIlvMH9GKu5yuEG+UrnN47Tw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI1PR04MB9931.eurprd04.prod.outlook.com (2603:10a6:800:1d4::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Wed, 21 May
- 2025 15:46:16 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8746.030; Wed, 21 May 2025
- 15:46:15 +0000
-Date: Wed, 21 May 2025 11:46:08 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: ziniu.wang_1@nxp.com
-Cc: haibo.chen@nxp.com, adrian.hunter@intel.com, ulf.hansson@linaro.org,
-	linux-mmc@vger.kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	imx@lists.linux.dev, s32@nxp.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mmc: sdhci-esdhc-imx: inherit pins_100mhz from
- pins_200mhz when unconfigured
-Message-ID: <aC31QJpomsFWN++7@lizhi-Precision-Tower-5810>
-References: <20250521112042.266111-1-ziniu.wang_1@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250521112042.266111-1-ziniu.wang_1@nxp.com>
-X-ClientProxiedBy: PH8P220CA0032.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:348::10) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890511EB18D;
+	Wed, 21 May 2025 15:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747842416; cv=none; b=RbcpGhQmShYkfgGTr2NH9P5F3uNAV9ngWDhRs09Cx+iUB8dxSPLHK+jnWyF18At0aS3PsfEv9JJwzeZO08OWv2RC92Y5UYQjOqXAo3lmW8Rm7MNYYDKkW0NygCSC7tJq/Cg82Foc+rO72WS0IyJXgvqRi0FHIhd4Q0lus4dZTdc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747842416; c=relaxed/simple;
+	bh=xs6MyiJsl4816VLbkiYJIjZ52nVBNYDg6IflP+yXM5o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ozyabUKB9ceBH35oSMyqlLIgBFFobE5D496v196aZWNE6ky5jWR0naXCttl6PY+MiDfc4SEIWnrgviCB0bivTOLxMkng7ACibcZAFkoZcFdVDTE602THaTHqSQm7S6Np2Gjo7PFEHgU/nF/axysWeUVc6I/fgvKMn+mRnzA9hzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KAHkfWdQ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54LDnJmq006706;
+	Wed, 21 May 2025 15:46:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Wx1Lgm
+	ZxF+Xwm4tlerhs5YqUIvIJlk0ChbGGpQkmSYs=; b=KAHkfWdQZKB4cbteFbtz8V
+	Ex11MQzhuBFamyqER/nkOQ/MauwI77DW+qYZ99McBOsljKu1a+be6TXhWp9NtFpV
+	E29jRXfNEWkrwWqsw0qzLMFY+filt+GqOO5tqvpa8mhF6qxHZ3v/L1WwyEqNI2t7
+	epxbY/Pyh7KVpU3yh0OHQ3lYUK6XJYwqLQ/xMR72duwd/jiphwZiLGMEqgqAOULC
+	9mkikP/HC7oaLVc71+wocKIotZVUZj9ciu4dvV5qSywMEjFtcgc2S5/4SB9nN0mu
+	q6oDGFDvgkNZsX7Gjq2DA/fHFD2TQsIEwAaVb0Tz6seNflsUtORmrVrLpVvnKouQ
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46sg230m3d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 15:46:50 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54LDu4Oj015444;
+	Wed, 21 May 2025 15:46:50 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 46rwnncv3j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 15:46:49 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54LFkkhn19136806
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 May 2025 15:46:46 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F366A20043;
+	Wed, 21 May 2025 15:46:45 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8E1B620040;
+	Wed, 21 May 2025 15:46:45 +0000 (GMT)
+Received: from li-978a334c-2cba-11b2-a85c-a0743a31b510.ibm.com (unknown [9.152.224.80])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 21 May 2025 15:46:45 +0000 (GMT)
+Message-ID: <bfec98c2f53cc71603445b0339f53111cbf86e9e.camel@linux.ibm.com>
+Subject: Re: [PATCH v1 4/5] KVM: s390: refactor and split some gmap helpers
+From: Nina Schoetterl-Glausch <nsg@linux.ibm.com>
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, frankja@linux.ibm.com,
+        borntraeger@de.ibm.com, seiden@linux.ibm.com, nrb@linux.ibm.com,
+        david@redhat.com, hca@linux.ibm.com, agordeev@linux.ibm.com,
+        svens@linux.ibm.com, gor@linux.ibm.com
+Date: Wed, 21 May 2025 17:46:46 +0200
+In-Reply-To: <20250521174137.5b2baaf6@p-imbrenda>
+References: <20250514163855.124471-1-imbrenda@linux.ibm.com>
+		<20250514163855.124471-5-imbrenda@linux.ibm.com>
+		<277aa125e8edaf55e82ca66a15b26eee6ba3320b.camel@linux.ibm.com>
+		<20250521171930.2edaaa8a@p-imbrenda>
+		<d495d17902955839b0d7d092334b47efbdcb55a1.camel@linux.ibm.com>
+	 <20250521174137.5b2baaf6@p-imbrenda>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI1PR04MB9931:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3bdb4787-9b7e-4559-35c1-08dd987e9edd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gNYuBgPsGolYgt0h0AsVSD+AO6k/nbetKX06HMaWZnOr4CNSsGttM9ud6O/u?=
- =?us-ascii?Q?FfFO+hdcc8iZp5tec4LR8LRM47a6JwJenNWPct29d/OhO26kodSZCQfwslJu?=
- =?us-ascii?Q?2jwpjjknc6hJcjvk6x2/X5Gx/CvhQx7LdEPinL7VA7AmYEO2/8+4Zzy1A9l5?=
- =?us-ascii?Q?VELqf6FTtRE8VCSrEL9Zq88pVdteJcmBHXq4zJKR8lHzM7s0ZLYIMHct9Bwv?=
- =?us-ascii?Q?o7HOtx5TYGjwehB4PfH38K50cR32Mse6TET0n8DQTTKcwuruJvAQwfvtd4/b?=
- =?us-ascii?Q?ikqwuE3ZWLU8czKlun4fYqZoRj8F3wEdGgcqYRYcKxFJEzpikORhSsgq+nEl?=
- =?us-ascii?Q?xnlGrxRfJyb+5DmcolwfWgSWXU/UetoTSaSd/+oo0IleLcYMQTrsdd0tjhTq?=
- =?us-ascii?Q?qsGrahCR+RCvuM2qILjbEf9gUo4mdLskT9nJaGkfzOnzHt5in0h3ZBvxBaiw?=
- =?us-ascii?Q?ijAloOKjiSyjIj/jmlYKKygBjBuDOqoq5gDQu3faeI6GlbSEoncI+LQks0jk?=
- =?us-ascii?Q?uAA9QEFHHvraO0Z64xAlOqMl9koKTSNIguCh5OrtxEBlLfs/eW000l2qvKK+?=
- =?us-ascii?Q?SxsUWJB9aM+71jJ0f1l5Ii7k+X6nYLf8Dxnert1sFUn9BOSH7yeU79GHuqmH?=
- =?us-ascii?Q?dGUbEIgZYAk6sPig0VlVMzKpW2BgxqTylBiHg5y+SBDvIhrfG1JMM+0ocvL9?=
- =?us-ascii?Q?e0sF8zKczqUK7JTV7hpCz99ihXWrA7jJCTLi0LmTHvqjVidgfMoqPpUlxFDV?=
- =?us-ascii?Q?J+PMvkQPNOOlj2+sV4qdvwWiGu4WxecfUKIHCVK9zZyE42nM8tTJLzmVyVvj?=
- =?us-ascii?Q?Iw0h/Vwg6Jvg3uLo8Q6EkyI9waI+bJPgOpTPdtf1sxPukhSSWW5Wj9PUbTWf?=
- =?us-ascii?Q?26I9PYK5GW/Z9amPVsrrztccpHu3YrqIE3EK6H7Rb8VZyBCiDYE8U6lBbSbB?=
- =?us-ascii?Q?p9f3vrbbGzTPWHSQHyHBk9U2byYsCET72F/gR8EWQWB+8Is1MUbSaRg4I9tk?=
- =?us-ascii?Q?FYLyDYuUgZKapL58MRbvEEz4iotiibvf0fiWxM+3zvJ3sa6xkSVhT4mWiIgL?=
- =?us-ascii?Q?SczTw2qNt8t/B5TzhFtUshdS1oGj7Vv/thoisEKKNxG4FoXUmJZmwukqWjuw?=
- =?us-ascii?Q?KCrFSR00dAhMflP6u8ZyqF+a3IjVtOaoWzkprJTrxSS70IsrlWOev2wYG+23?=
- =?us-ascii?Q?xwWZM4suha8xw0f4eC9GfvzJn9rSladj4osKjiyfNsF4Lp/pIC1731sUCA/g?=
- =?us-ascii?Q?Mx7yl2ULTa5vJHEpfZYTUL0kU+MeijsUVQ0PfrbV0jgHgN58+2zdlkvffJKe?=
- =?us-ascii?Q?oOFuQ7P40EHiRWNzmuu79Ospg5BU+9RBsz6kvYfu5PCRUGQElx2fAlseDPwj?=
- =?us-ascii?Q?8XYhFTHf6reuGUB7jds65pWva8RWhNAOzUTaPCBve5Cpal4GTUkRdaF7kxDV?=
- =?us-ascii?Q?Frfk4z02LIQ3gakuk5P78a42Jp8J4Mp6Zgndgnue6LFlZmacI4FLIw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DSHrfjX6Bcr6MxrZAXlTWR7imYihgGWiaZoitihqnGyL9FhC0oIyBWfYBt46?=
- =?us-ascii?Q?4THyr7LZU9eIweH7xwF8+B0NI88GA2+C8odGQCU8aJhk8HYUcgzyZtOtaSW1?=
- =?us-ascii?Q?PRJqAjl3jDdCtxBxlpZwK4UfzWc8IJvzGqooMHidB/FbVJ/xZlSNCkOUj9gt?=
- =?us-ascii?Q?wFwQk+GZNaABRtxeaJZRrPNYFpAIUPvx2SIoho4KDyDEXazz47IuZbYlcM47?=
- =?us-ascii?Q?ao3jNRsBVC2fHXo7NektQLAwFWwlDq3/PU4wjVucqvfnhrQlMSuJqrLSK25V?=
- =?us-ascii?Q?XTWpBdakedlh/3vE0GVIa5DU4BPpE3ymLRX9gtSJqcz/inL6bLqXBxLW+C7o?=
- =?us-ascii?Q?IANQXXpkChXvnIP1BGJTebBICaqIhV2WPvXGr093rIG7ylZ17Vil9GfpZgus?=
- =?us-ascii?Q?k+5Rb1Pd2zsb7IJH2CiLFMlBLt1cfuSdziEmq5u+cMNq2Dfp1YW6yhoXDthF?=
- =?us-ascii?Q?RBE88h5yojCxIPjKWozFChAQrB2C1u5s2D6CvNYeQhpYDf5XInerH5jFqANT?=
- =?us-ascii?Q?btLKALYHEGeZl9ygxrcT6VShi+QhVyuCE96CoFaydLzf2YDDRU2jZbA0qW/f?=
- =?us-ascii?Q?p6XE8/S4wWT6j8ywIdCc5djjnsHe/i8XLuWvMgGduGbWc3tue5UWYZVEVQEF?=
- =?us-ascii?Q?c2gtXU0Wi6vJf7o+Rzserksd1p4u+3rOmae/QvAouHWeXoGKo9eM5N3dZ+Ao?=
- =?us-ascii?Q?l3BdsbEM50Sr3o8MNZDuYYZAysxBn6iY3UtebStQ01UojkbF+CMtQfkWO/z+?=
- =?us-ascii?Q?HkXLzNjQcOnLVd5bf96BYBwPUHbpZVNzsJeZXB5n6LGpNjK4iVmQEXI6ANy+?=
- =?us-ascii?Q?BBgNRyteQifGBnTD79vcKXxqjkCKWwDennpf9NluHqH9CSDXYpnCGVCsrZvs?=
- =?us-ascii?Q?s+E5GiaAwtpEdv4TEJH8jxJ3wX5Txbcz3I3u2SC2akYUNni93r1y2Fhktwe9?=
- =?us-ascii?Q?MHRcGMH2aoSS3/rxFhLgpUalFtcrZjMi7fkWp+F2DnXgphD/35abiHVi811A?=
- =?us-ascii?Q?y/LceN0gwiz1ekD4oefvP/VY9Gz35b6dRnYZ39PAZ7kNu5yAkxagFzoJy6Hi?=
- =?us-ascii?Q?LOmCcOQhI5LWqcDVUKyh9voTVGzvRDoLsgSpEA9JXm1AWI3c0FWn4/1sOe70?=
- =?us-ascii?Q?f0HoqY9KAipzBnTtSULs2uMGedToaUGhx/ZUoqRBRIrn5WV2VLbVY1NTLTpC?=
- =?us-ascii?Q?ZHQdf7lYaAbQBOu+FVU02/knLKOz718siOGAabqd47PHt0LdV5BzJIs5PPvs?=
- =?us-ascii?Q?+1eVKu8dNC57DB+3nILI9F2jQknlTewYpIRQaxw6ICzZ3uEgzL8CFcyzQhzn?=
- =?us-ascii?Q?4eb7oR/LNOGKVs++ukOyTNf+Xx0IT+Oy/NQbMqrYt6ax/sdN+xBBPq97uzrR?=
- =?us-ascii?Q?MawSG0/OBhwdY5MiwpRao1+KV2yridMfdM9VOHUtuFxYPTT1msw2s3pzTd5s?=
- =?us-ascii?Q?1d3r0HZYVXx1kfwpRLqf3PF2I8Bv/19cf7lGL/jerMqsaR/Y1WGxsovK0xJE?=
- =?us-ascii?Q?cedOoPkbsJxv8O4bffQ9OnqICcSBQYopQOETSotnbNW/o4cox1Eb/LCEBuNl?=
- =?us-ascii?Q?/ENL+2+u097HytPUIzwXzPvhJLkFdXllmLvoq3j5?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3bdb4787-9b7e-4559-35c1-08dd987e9edd
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2025 15:46:15.7998
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oiIhBhSh5DoxvQoZIgKBTgV2XzeIdRvJz0cnjkpSW+38yBenrNHUy0MqW6k23PPsYaBHQFnmM3gmxj6K0/Vweg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9931
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Hq-FJRa7WzcXG0d_ztc0OJq8XzVcwHOx
+X-Authority-Analysis: v=2.4 cv=RPmzH5i+ c=1 sm=1 tr=0 ts=682df56a cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=TZB5Y_STSF-BKAUI658A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDE1MyBTYWx0ZWRfX2h2c5+cRJedL Btxuig7rXmaT4u4xFJsmDoQZsnvLG2JRPPiwN4wj85jOWRnEVYnGgYQOle6D9dspSwxihNiDiru hBy3ESEcCJ9fR19MwT5fl1JoOy/RjWeScK5GSs2RSnWgykrPV12/jWA55wbEkqvvQDv2D5cWNOE
+ zSE41r0GpqUNYZ+278mp4SriXauIS5ljvGr4tKaGGnHCkOgOkrl+kRzNm/dUMtzsZ+LLuWZ+4DV o4vBxGSnG6w73pTaQ0RtI69jPnmBjj+E/hASyrzD4fdrsy4az9P6hIYwiNcLRPYP7EYqVZKRour xZ4gIiEdkNCeUpqvLg7dgw9KmX2QC1xcdeMnk7aPR/e0zlUrNFRNAOYZS+RcbJe2MRmx1H7EE9e
+ exykHny+ksWE7iCnEmwCcj9+mEr84d+0B8KZsfd0ed5Ln/kvMfe+fL0fJZ7vVMhW3VvcyCbX
+X-Proofpoint-GUID: Hq-FJRa7WzcXG0d_ztc0OJq8XzVcwHOx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_05,2025-05-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 impostorscore=0 adultscore=0 priorityscore=1501
+ bulkscore=0 phishscore=0 mlxscore=0 malwarescore=0 spamscore=0
+ mlxlogscore=999 suspectscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2505210153
 
-On Wed, May 21, 2025 at 07:20:42PM +0800, ziniu.wang_1@nxp.com wrote:
-> From: Luke Wang <ziniu.wang_1@nxp.com>
->
-> On some new i.MX platforms, hardware guidelines recommend using identical
-> pin configurations for SDR50/DDR50 (100MHz) and SDR104/HS400 (200MHz)
-> modes. But defining two identical pinctrl for 100MHz and 200MHz in dts
-> creates redundancy. In this case, omit explicit 100MHz configuration,
-> driver will inherit 100MHz pinctrl from 200MHz.
+On Wed, 2025-05-21 at 17:41 +0200, Claudio Imbrenda wrote:
+> On Wed, 21 May 2025 17:30:00 +0200
+> Nina Schoetterl-Glausch <nsg@linux.ibm.com> wrote:
+>=20
+> > On Wed, 2025-05-21 at 17:19 +0200, Claudio Imbrenda wrote:
+> > > On Wed, 21 May 2025 16:55:18 +0200
+> > > Nina Schoetterl-Glausch <nsg@linux.ibm.com> wrote:
+> > >  =20
+> > > > On Wed, 2025-05-14 at 18:38 +0200, Claudio Imbrenda wrote: =20
+> > > > > Refactor some gmap functions; move the implementation into a sepa=
+rate
+> > > > > file with only helper functions. The new helper functions work on=
+ vm
+> > > > > addresses, leaving all gmap logic in the gmap functions, which mo=
+stly
+> > > > > become just wrappers.
+> > > > >=20
+> > > > > The whole gmap handling is going to be moved inside KVM soon, but=
+ the
+> > > > > helper functions need to touch core mm functions, and thus need t=
+o
+> > > > > stay in the core of kernel.
+> > > > >=20
+> > > > > Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> > > > > ---
+> > > > >  MAINTAINERS                          |   2 +
+> > > > >  arch/s390/include/asm/gmap_helpers.h |  18 ++
+> > > > >  arch/s390/kvm/diag.c                 |  11 +-
+> > > > >  arch/s390/kvm/kvm-s390.c             |   3 +-
+> > > > >  arch/s390/mm/Makefile                |   2 +
+> > > > >  arch/s390/mm/gmap.c                  |  46 ++---
+> > > > >  arch/s390/mm/gmap_helpers.c          | 266 +++++++++++++++++++++=
+++++++
+> > > > >  7 files changed, 307 insertions(+), 41 deletions(-)
+> > > > >  create mode 100644 arch/s390/include/asm/gmap_helpers.h
+> > > > >  create mode 100644 arch/s390/mm/gmap_helpers.c
+> > > > >    =20
+> > [...]
+> >=20
+> > > > > +void __gmap_helper_zap_one(struct mm_struct *mm, unsigned long v=
+maddr)   =20
+> > > >=20
+> > > > __gmap_helper_zap_mapping_pte ? =20
+> > >=20
+> > > but I'm not taking a pte as parameter =20
+> >=20
+> > The pte being zapped is the one mapping vmaddr, right?
+>=20
+> I don't know, _pte kinda sounds to me as the function would be taking a
+> pte as parameter
 
-It is quite strange inherit low freq setting from high freq setting.
+__gmap_helper_zap_pte_mapping_addr ?
 
-Orignal method that decide support SDR50/DDR50/SDR104/HS400 abuse the
-pinctrl state usage.
+IMO __gmap_helper_zap_one is rather vague. Zap one? Which one?
 
-Frank
+[...]
 
->
-> Preserves existing behavior if 100MHz is configured but 200MHz not (e.g,
-> imx8mp-navq.dts usdhc1 supports SDR50/DDR50 but SDR104/HS400 not).
->
-> Signed-off-by: Luke Wang <ziniu.wang_1@nxp.com>
-> ---
->  drivers/mmc/host/sdhci-esdhc-imx.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-> index f206b562a6e3..dfd8be5000c8 100644
-> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> @@ -1810,6 +1810,9 @@ sdhci_esdhc_imx_probe_dt(struct platform_device *pdev,
->  						ESDHC_PINCTRL_STATE_100MHZ);
->  		imx_data->pins_200mhz = pinctrl_lookup_state(imx_data->pinctrl,
->  						ESDHC_PINCTRL_STATE_200MHZ);
-> +
-> +		if (IS_ERR_OR_NULL(imx_data->pins_100mhz))
-> +			imx_data->pins_100mhz = imx_data->pins_200mhz;
->  	}
->
->  	/* call to generic mmc_of_parse to support additional capabilities */
-> --
-> 2.34.1
->
+> > >=20
+> > > > The stuff below is from arch/s390/mm/gmap.c right?
+> > > > Are you going to delete it from there? =20
+> > >=20
+> > > not in this series, but the next series will remove mm/gmap.c altoget=
+her =20
+> >=20
+> > Can't you do it with this one?
+>=20
+> if you mean removing mm/gmap.c, no. I would need to push the whole gmap
+> rewrite series, which is not ready yet.
+>=20
+> if you mean removing the redundant functions... I guess I could
+
+The latter. I think that would be cleaner.
+>=20
+> >=20
+> >=20
+> > [...]
+
+--=20
+IBM Deutschland Research & Development GmbH
+Vorsitzender des Aufsichtsrats: Wolfgang Wendt
+Gesch=C3=A4ftsf=C3=BChrung: David Faller
+Sitz der Gesellschaft: B=C3=B6blingen / Registergericht: Amtsgericht Stuttg=
+art, HRB 243294
 
