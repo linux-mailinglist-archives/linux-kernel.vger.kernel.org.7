@@ -1,131 +1,112 @@
-Return-Path: <linux-kernel+bounces-657935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82DF7ABFABB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:06:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FD91ABFACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4CA37BBD89
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:57:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 545477BCAD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65906280CE3;
-	Wed, 21 May 2025 15:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A3C212FB0;
+	Wed, 21 May 2025 15:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W6e7R2G3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N2vbeB//"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l32UhK7f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221CE27584F;
-	Wed, 21 May 2025 15:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F478221F1C;
+	Wed, 21 May 2025 15:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747842588; cv=none; b=DKeu5B2aIh4XQT40Za2+7UM82GjptK7Bwe5MMkwLIxp1eCLDwL6QoMnpLi1waj6V67h/dRH8Lu33QcEYeAgA5GCLKyJeE+IXjen/g2Pc/2doDy2hLfAZUP2JkO8mEFHRMKmbvfOfJS0ExT8ZDqDuEvvg79D41qOyNbG0wbC3Z0I=
+	t=1747842623; cv=none; b=H4CZdfGoD6Z5OO0eVfKlZLC7c3V9IxEjYKIQtEhSJdx465UgNB5GKRJUHm8GTg8PZME3phrmwCdeLrHeAvhrv8ItzbrnLM4mWGK0WcldnSh2NQ5/pILj8qGN+Af+I+ZADpEB87xq5QMdMIoPraHgaMNjT/AizbuJSRJxT/rxntw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747842588; c=relaxed/simple;
-	bh=bs8d5/4Cdzb2eqEflKfBmAdbYnWAKQlC53mlnQiE2xo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=OfTnf7L19sJiCh2CuYeOKMm0z5Gx+5IkyPeatE2zBupQiBEBDfvMMntB7yebIFPLamCMNpb6OH8VnASDN6WZm/4JXFQSCVUkOZzSHrfRG6cGnxV9HBD/k75cudBX4Sbn66T8jjc84sCkDBvcY2QkJbseD9UZs3N1VDlle8VeZH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W6e7R2G3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N2vbeB//; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 21 May 2025 15:49:44 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747842585;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qL+D+Z2tktdPi5YNiFx0Zq08nQCwQxp3+jjmarJxAUQ=;
-	b=W6e7R2G3u2HJhOqQH7mFwDol5VBgmk5wUmprqw7EfrQebizu9TUmTxGr6BiuMBFxABoLkY
-	hMSWyGxvdlK2g0ym3Z3+GwxKPzBjhL103AAeVhFSaJ7I4nvovXSMFsoLDPKbo/E93tdGAN
-	bbMKm6b5v/MVI3WdvFbqDuonLqySD2d+8gmNILUn3kjF33Eg6lS0XZtHGOh2QE6W9daprG
-	aM7Hjnq/biC85MxZG9mBbBNBdTJtjTm+tJtOC7msjmzX3qVmEkx33xqKfrK0PHTr42Czu+
-	8MtioLKqM94W6Ao8VVjLDVFC6Wvy8J1A2JkOoQqF7J9TPgKgN2P57HARx4CmrA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747842585;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qL+D+Z2tktdPi5YNiFx0Zq08nQCwQxp3+jjmarJxAUQ=;
-	b=N2vbeB//aNvyi9+pikvV/F39hYOlEhRwryS78rNNOgfhW95cAo5zTk8k786r3DRtnvPE0I
-	E+X3P3jqgr01d+Aw==
-From: "tip-bot2 for Arnd Bergmann" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/clocksource] clocksource/drivers/atmel_tcb: Fix kconfig
- dependency
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Arnd Bergmann <arnd@arndb.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250409155313.1096915-1-arnd@kernel.org>
-References: <20250409155313.1096915-1-arnd@kernel.org>
+	s=arc-20240116; t=1747842623; c=relaxed/simple;
+	bh=nhhhjr3ZsIPlHboQ0WAI79csQhBTmrt+G+gEWWUy9AM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A4wd/iDDi5YH/bfxTulrX7WB4B8RbqLsAmC+3uB7UQYcQQGxYrbl3wuQG96ALK8uMPcAlkNuswwSK/UoFU/wxOTWqShgclcNynwuQyhqb7j8ntP3j0pjMXrihjN11/RB+7/9jCT494qxI0thhBlVuOIfCC4J1SosBVpIEZFof5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l32UhK7f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A30C4CEE4;
+	Wed, 21 May 2025 15:50:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747842622;
+	bh=nhhhjr3ZsIPlHboQ0WAI79csQhBTmrt+G+gEWWUy9AM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l32UhK7fB3bt4qTi87Y9k9ADVMu1chT7/U3WUgudrGPmm++LMMIn9JYghsMRHgsxT
+	 aIuRB+IdUlZzbRC8nYvx3KxEDCH1zYFfNnipqxQshMIpdAQPGLX2HgkFTUpDOKPREY
+	 VN2lWQ1Mdr8PBt1xDeWSMiuLO/g1IXcW+Wey3ATrExTmccfqAUXTJz8b8oHlx15+ey
+	 zpzo6WvmCiO0OLkUiTvg3XpYwgKpZlmd+4e79cwsn9eClOn2hI4JNAM3cBMOxqPXj+
+	 2qTwwKM3DVYZriMwr2UME9WPMvG/3FXN9Zg3wYUVecOOFL/Q9nJR73gvVU8FeerbLj
+	 CsUSKn1fa1TVA==
+Date: Wed, 21 May 2025 16:50:18 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, jic23@kernel.org,
+	krzk+dt@kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, robh@kernel.org,
+	~lkcamp/patches@lists.sr.ht
+Subject: Re: [PATCH v2] dt-bindings:iio:adc:st,spear600-adc: txt to yaml
+ format conversion.
+Message-ID: <20250521-grew-rotting-7081d2939477@spud>
+References: <20250506-equivocal-snooper-8a7d1ce931c8@spud>
+ <20250520204720.11448-1-rodrigo.gobbi.7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174784258417.406.8798688138719774746.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="+INKktWV1RqG/D4m"
+Content-Disposition: inline
+In-Reply-To: <20250520204720.11448-1-rodrigo.gobbi.7@gmail.com>
 
-The following commit has been merged into the timers/clocksource branch of tip:
 
-Commit-ID:     b8239054194ad67aff7d244185ef46890c5ae71a
-Gitweb:        https://git.kernel.org/tip/b8239054194ad67aff7d244185ef46890c5ae71a
-Author:        Arnd Bergmann <arnd@arndb.de>
-AuthorDate:    Wed, 09 Apr 2025 17:53:08 +02:00
-Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
-CommitterDate: Fri, 16 May 2025 11:10:32 +02:00
+--+INKktWV1RqG/D4m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-clocksource/drivers/atmel_tcb: Fix kconfig dependency
+On Tue, May 20, 2025 at 05:43:45PM -0300, Rodrigo Gobbi wrote:
+> > Sounds like it's a 4-bit register where the samples is (1 + written val=
+ue),
+> > and the property is expected to be written directly to the register.
+> > I'd then expect the property to be min 0, default 0, max 127. If you
+> > write 128 to the register, you'll accidentally set the external vref
+> > bit. I'd maybe go as far as &ing the value to make sure out of range
+> > stuff is not permitted?
+>=20
+> Well, it looks like 4bit as you said (bits 5,6,7 and 8) and 9th bit is vr=
+ef.
+> But, in this case, it looks to me that we can only configure 0x15 as a ma=
+x value,
+> (didn`t see that before) which doesn`t fit the datasheet sentence that I`=
+ve mentioned before:
+>=20
+> "Programmable averaging of results from 1 (No averaging) up to 128"
+>=20
+> I mean, I`m not sure how many samples are configured when using
+> SPEAR_ADC_STATUS_AVG_SAMPLE(0xD) since we don`t have a register map descr=
+ibing
+> how it encodes that internally. Maybe we can change the requirements for =
+this field to be
+> min 0, default 0, max 15?
 
-Build-testing this driver on arm without CONFIG_OF produces a warning:
+I think so, since that matches the behaviour that's been there in the
+driver since the property was introduced.
 
-drivers/clocksource/timer-atmel-tcb.c:368:34: error: 'atmel_tcb_of_match' defined but not used [-Werror=unused-const-variable=]
-  368 | static const struct of_device_id atmel_tcb_of_match[] = {
-      |                                  ^~~~~~~~~~~~~~~~~~
+--+INKktWV1RqG/D4m
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Change the dependency to require CONFIG_OF for build testing to
-avoid the warning. Testing remains possible on all architectures
-as CONFIG_OF is user-selectable.
+-----BEGIN PGP SIGNATURE-----
 
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/r/20250409155313.1096915-1-arnd@kernel.org
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/clocksource/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaC32OgAKCRB4tDGHoIJi
+0pMwAQCDZihQlhX5Bi8Mg+rqgAd6gPrq3eDco7Kd2Lhz0Kr3RQD+NWNDjNsRH6au
+nI8rDj4s3sx4QI7SadpcRWJL/jvOSwQ=
+=VqKC
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 2861b2c..3b63a28 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -437,8 +437,8 @@ config ATMEL_ST
- 
- config ATMEL_TCB_CLKSRC
- 	bool "Atmel TC Block timer driver" if COMPILE_TEST
--	depends on ARM && HAS_IOMEM
--	select TIMER_OF if OF
-+	depends on ARM && OF && HAS_IOMEM
-+	select TIMER_OF
- 	help
- 	  Support for Timer Counter Blocks on Atmel SoCs.
- 
+--+INKktWV1RqG/D4m--
 
