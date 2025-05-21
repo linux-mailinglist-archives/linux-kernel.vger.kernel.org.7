@@ -1,167 +1,150 @@
-Return-Path: <linux-kernel+bounces-657514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE70ABF4FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:59:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44071ABF507
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFACC1BC1DA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:00:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2210A3A2201
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82AA235C1E;
-	Wed, 21 May 2025 12:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OHLUsocq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712AA26F473;
+	Wed, 21 May 2025 13:00:11 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE56322D9F7
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762B426D4D2
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747832387; cv=none; b=KWKxfPxp/dyJwfR0iiLC+ubN6E1RQlRqJWuwdapTOPALB1aexBZ6S5SVkjAiN7vm/zCxflcBTIaOQuTKf/5efLiikC/sY5Po2cVNOYElP2PlmizG9d43nIzjPItpIx+vYfjia2xDECi0lMzyKCx+uwkXZHrPJbs5smniWcirC4I=
+	t=1747832411; cv=none; b=TIAs57TbtoIPbD7zytdcEzdOSjsMDap6Y85KCz3c75BD+/9lhmto3APONelINCh3q9IoI8FvuUFnf4qoa7naKD3/f1NNaMMFVzVLpPqRRpaVESpNz1A/OOimB+ZWOeSP3Uqi1xW521u1iiyLLNYCYlD+QUWCIXG6OuZbDLxFL/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747832387; c=relaxed/simple;
-	bh=fNLPFd4xKlr3/lYdDZ86ImLr1zSXSvfTKD+9/Z5sUPQ=;
+	s=arc-20240116; t=1747832411; c=relaxed/simple;
+	bh=0hRq0bSmR5JZNPD2Mx0NYL1bKkYX+m5s1ZMhJDwT44g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e8BiNCiv1L50oGL6vLEh8gJOfd7Kr5+bmc3AkQ/P7OZL28BIRb5MqzISgWMhAGSKOQhpFuhTjcx3CpvD0+hSB9PZOIMphXum2YrydB300ONaBmuxvaPi8iv1cgu4WhRGJtlrlLfRO15tH6TgHWAyPaPQsC41Tlolx8D3MYZ95FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OHLUsocq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9XIan013410
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:59:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=PQ8FelBJqVusuKqI01bafP6p
-	gE/hxiJzISLHy0HpwSk=; b=OHLUsocqu+9QxrOtGR5b1KSyVIms2jesL2go7drl
-	2ooIQ74FhKamY66Q2+4rbF/CcVtFhncW+d7IjQGlfS/6WxyhWco7BJM/fZfSbJSQ
-	/jtP+SKQFdAmBjeaHs4qKhYeafhEr8G0H0NOpSco7EhBK61YtcRHRiy6zORt3dFA
-	R9jpsIOb9YKPn99a/MzAs5bTku9R5dGOMcCVGZxnRFu/ajVq87JZRvC8SmJaygPo
-	TturjWUKQhInUc8Xt0Jqc29IZc4VAv/Iq++KpDV7DW0hmSWfAULknkUOFReShf3y
-	1wbqL4KTNLWE2IJXFHKjvMkZuXuJTuF077AiM2JOiy1cwg==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwh5b1mj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:59:44 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6f8c9552514so69238906d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:59:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747832383; x=1748437183;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PQ8FelBJqVusuKqI01bafP6pgE/hxiJzISLHy0HpwSk=;
-        b=jZKqF+JJ+s4h0kbt4ZYV6xF9l83LPPNRvLiVrj9f1qyCZ4MIFXbbrkEFVD8oVzQgWh
-         RZXEonw9WTPLkNXmvqtyHFpMTZXYf2YmDC536ft8tU/kV/IgCgv0tsefK+CkX+wFqWbc
-         /jHao4SalEmS5emwLeNw61fOc0rWg+Nw9UPkZXew9X85J6LxVg1+9bq9wZNi3/jDVFiz
-         1HWbJIgOx7qjWD+Y1KH65slKlFw9bPjfoMDneDdJlAA6qDTy96OWbmGOV8tn7oVfbMBE
-         54goPnUJT6PJIsnY2j/p5e9o+wGxit/2O8ilGXNc4+j0P+twFphjs/81OBsv7WUC2GFS
-         Gu2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVpQz2eFjYujuYawHFZMQd3ZiSQ+w8k2fwu9azYtOiOmMclDSXZaIDxfaaAP0T2/hjXXiqZYyAA4p3knE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhSGmIXAXmYS+jg4ggff6a6KwNJpKK8bXyY7h7ofsKau97U8K8
-	Pa3a9xrDH6B7qTc/YAIVsweKSQDHr6FP+ymvupadnLJFELRqFDY5Opi7j9m324kVQNfgh+DcZLC
-	nRx8iQlUumNGJ0BnZJ+tqx4RAYa16BaBFkMCnF8SV68ZLMPFNPLqMMJvHKttv1CLCPpY=
-X-Gm-Gg: ASbGncugZtvI9AgrbZVVnJ+YCTb5tiW3lNO79moe0fz/ULRCXL1R/grkQin+NNJWvjy
-	2JP9h0pVVsWEBUgBogwYDrxCYA4nacc7K/z7bHGuP6OzTEuhsUyxJPFkIA3UIE6yqirMbCCAMMy
-	D0OOBLRxwvyX977e3UJYbioAvZi/xw+zYUuDzm9uVx2q68iwuU+iZPwCu2ASj5u+tpkwaH6xdsj
-	9W+AKfRHTNESoNDxE18cjLgPVScBxtWP3sBl3ltNyvBqK+v1Kb5uDRgPTTcq0ApyJnHyS2L4o27
-	ClyL8R/+CvxIzaLTKdZzx0/GMPmFfh3IZpot5K5bifEIbrSWdORNyAdxQoPYr7N710MX9Tnr9IY
-	=
-X-Received: by 2002:a05:6214:226d:b0:6f8:d035:7222 with SMTP id 6a1803df08f44-6f8d03572a0mr205090386d6.15.1747832383552;
-        Wed, 21 May 2025 05:59:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHUhnGy4gCGjXLtSemtXuIIR5DTpA42yEm9njhcNzOkanHSgLeUZ3VEd2gBEl+hjJ8sTmWA7w==
-X-Received: by 2002:a05:6214:226d:b0:6f8:d035:7222 with SMTP id 6a1803df08f44-6f8d03572a0mr205090066d6.15.1747832383172;
-        Wed, 21 May 2025 05:59:43 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e702c9d8sm2856946e87.181.2025.05.21.05.59.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 05:59:42 -0700 (PDT)
-Date: Wed, 21 May 2025 15:59:40 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/dsi/dsi_phy_10nm: Fix missing initial VCO rate
-Message-ID: <ybbyhri7vydiyowr3iqrizefblrfpedk5it723o254vyklcd5c@cdx7rhx2f3rn>
-References: <20250520111325.92352-2-krzysztof.kozlowski@linaro.org>
- <3ywacd4x23zadvwikw4hdprgbgxxdmbcar3lyayy4ezmd5lcyw@3h2oosmbk6yb>
- <87af51dd-a35c-460a-af4c-813427cdaf84@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ACbMY8oC+ksWvICJf/tdmD41XuTCLIiIltkYTh15x2rkO1FcHZEHYoI6bWCFsqb+FiyQTBmHmAPTpKfgJaBqU56KEOj8sHabd07RYe9qbmJ1BZgPAhPFbs+tFesyVQykSb2sX8spWIYC+tad2zQbh3Npv0TpRTz/Em6nxqKpbPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uHj32-00007s-NY; Wed, 21 May 2025 14:59:52 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uHj32-000ZXv-1X;
+	Wed, 21 May 2025 14:59:52 +0200
+Received: from pengutronix.de (unknown [IPv6:2a03:2260:2009:2000::])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 8452641698E;
+	Wed, 21 May 2025 12:59:51 +0000 (UTC)
+Date: Wed, 21 May 2025 14:59:50 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Sascha Hauer <s.hauer@pengutronix.de>, imx@lists.linux.dev, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, michael@amarulasolutions.com, Fabio Estevam <festevam@gmail.com>, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/3] ARM: dts: mxs: support i.MX28 Amarula rmm board
+Message-ID: <20250521-neon-yellow-groundhog-69f777-mkl@pengutronix.de>
+References: <20250521092826.1035448-1-dario.binacchi@amarulasolutions.com>
+ <20250521092826.1035448-4-dario.binacchi@amarulasolutions.com>
+ <20250521-quizzical-tidy-worm-1fe67d-mkl@pengutronix.de>
+ <CABGWkvrmuhaF4iHqHRkrNrrHb2gUNDBJKCT-jZ8ZuwZGRvm7Lw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="a46t33bhnuh43qgg"
 Content-Disposition: inline
-In-Reply-To: <87af51dd-a35c-460a-af4c-813427cdaf84@linaro.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDEyNiBTYWx0ZWRfX5ZfWnJv5guc6
- s+meY8JNeyPO5xNQj8xhjsANN7eoDkB4SEnMSFIb7I8DVAQrXmjX30F4ev2YCNAMy/XCRivH1vW
- JBFp1ynQLTz9k7r+kjCerbH2skCEBLFVspEZvg5JtUANitJQwsQS5x4sGn6v5UVEGAfy88fgIWT
- YlugkPv3j5X/ufQPgAGg8BzO+9X+cEYIh5XJbWEJYvZAH2/r7b4+EqvbF8YePw9TDR2uyRH9f9n
- jm5IropmffjeV+EXpneE5g6Vo0F+3WOR9cm0ARo/Pb3bvcKp6J9EgfQgKYnLjCqkuQevmmqik35
- uQhSYr3gYGVQiazORkIEZz46GCo+b2aC/Xjda3r2GIDgESga7oTR8FjtCFZridOtVR1yGNtudn1
- GZN/8J1zOG/hsSOvOWNhs9XT3PMywjS/TMC6NgOznA8hNBtHe+s0eC436JQioNgawJ/OOZTI
-X-Authority-Analysis: v=2.4 cv=XeWJzJ55 c=1 sm=1 tr=0 ts=682dce40 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=afxxqWxysUDinfw8BOsA:9 a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: DSttNmL_y9MhdgrKK8nubQn-w1F50hkh
-X-Proofpoint-ORIG-GUID: DSttNmL_y9MhdgrKK8nubQn-w1F50hkh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_04,2025-05-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 mlxlogscore=662 mlxscore=0 bulkscore=0 spamscore=0
- suspectscore=0 impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505210126
+In-Reply-To: <CABGWkvrmuhaF4iHqHRkrNrrHb2gUNDBJKCT-jZ8ZuwZGRvm7Lw@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, May 21, 2025 at 08:09:14AM +0200, Krzysztof Kozlowski wrote:
-> On 20/05/2025 22:06, Dmitry Baryshkov wrote:
-> > On Tue, May 20, 2025 at 01:13:26PM +0200, Krzysztof Kozlowski wrote:
-> >> Driver unconditionally saves current state on first init in
-> >> dsi_pll_10nm_init(), but does not save the VCO rate, only some of the
-> >> divider registers.  The state is then restored during probe/enable via
-> >> msm_dsi_phy_enable() -> msm_dsi_phy_pll_restore_state() ->
-> >> dsi_10nm_pll_restore_state().
-> >>
-> >> Restoring calls dsi_pll_10nm_vco_set_rate() with
-> >> pll_10nm->vco_current_rate=0, which basically overwrites existing rate of
-> >> VCO and messes with clock hierarchy, by setting frequency to 0 to clock
-> >> tree.  This makes anyway little sense - VCO rate was not saved, so
-> >> should not be restored.
-> >>
-> >> If PLL was not configured configure it to minimum rate to avoid glitches
-> >> and configuring entire in clock hierarchy to 0 Hz.
-> >>
-> >> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> >> Link: https://lore.kernel.org/r/sz4kbwy5nwsebgf64ia7uq4ee7wbsa5uy3xmlqwcstsbntzcov@ew3dcyjdzmi2/
-> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > 
-> > Fixes?
-> 
-> Probably:
-> Fixes: a4ccc37693a2 ("drm/msm/dsi_pll_10nm: restore VCO rate during
-> restore_state")
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+--a46t33bhnuh43qgg
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 3/3] ARM: dts: mxs: support i.MX28 Amarula rmm board
+MIME-Version: 1.0
 
-> But CC stable would not be appropriate, since this was never reproduced
-> on this PHY/hardware and we only guess a visible issue being fixed here.
+On 21.05.2025 12:32:19, Dario Binacchi wrote:
+> Hello Marc,
+>=20
+> On Wed, May 21, 2025 at 11:35=E2=80=AFAM Marc Kleine-Budde <mkl@pengutron=
+ix.de> wrote:
+> >
+> > On 21.05.2025 11:28:22, Dario Binacchi wrote:
+> > > The board includes the following resources:
+> > >  - 256 Mbytes NAND Flash
+> > >  - 256 Mbytes SRAM
+> > >  - LCD-TFT controller
+> > >  - CAN
+> >
+> > [...]
+> >
+> > > +&can0 {
+> > > +     pinctrl-names =3D "default";
+> > > +     pinctrl-0 =3D <&can0_pins_a>;
+> > > +     xceiver-supply =3D <&reg_3v3>;
+> >
+> > Since v6.15-rc1 (d80bfde3c57a ("can: flexcan: add transceiver
+> > capabilities")), the flexcan driver supports CAN transceivers via the
+> > phy framework, see drivers/phy/phy-can-transceiver.c. Can you make use
+> > of it?
+>=20
+> The board uses the SN65HVD233 transceiver, which is not listed among those
+> supported by drivers/phy/phy-can-transceiver.c. So I can't use the PHY
+> framework.
 
-Agreed.
+Hmmm, okay. Since the SN65HVD233 has features like loopback, we have to
+think about it more than adding a new compatible to the existing driver.
 
--- 
-With best wishes
-Dmitry
+> Do you agree?
+
+Ok
+
+> Or am I missing something?
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--a46t33bhnuh43qgg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmgtzkIACgkQDHRl3/mQ
+kZxORgf/WqqWv1YA6aA24pwIch/Mdi1hGSfsgp+sRP0Y+Rjp3ZFzW/NzCap+BoX8
+VPtoygZEJLRnFjuApZePl2IwbhUX8gEjffcfl29qjLzAo6Z4MFQUlzzAr9+GZS8h
+5XVxLVWher9z7xrW49Bhrebad+f9TEp+yFdez/W8LqTG6csHd2j/WhNvnA+iWp1u
+1aNVS6/4dFWPgqB+aQItZ8WXJOalqhKEePqgONIWA61pPwtsF/u219pPYLLfVFAs
+vL+7hVS2jph1b3sbLcUxTqZ6IV1kMUs8IyMmKyx9zYq7ziblcDGILMlPaJPkxvJO
+xunHUUhFDU2GQso45w88F6DpSq2SCA==
+=KaRh
+-----END PGP SIGNATURE-----
+
+--a46t33bhnuh43qgg--
 
