@@ -1,115 +1,128 @@
-Return-Path: <linux-kernel+bounces-657525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E19ABF550
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:04:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56260ABF57D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D4261BC335F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:04:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 292673AA5E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE5926FD92;
-	Wed, 21 May 2025 13:03:23 +0000 (UTC)
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7232741C4;
+	Wed, 21 May 2025 13:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPTrN2Jp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE61326560D;
-	Wed, 21 May 2025 13:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C142D613;
+	Wed, 21 May 2025 13:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747832603; cv=none; b=RqAw99kDi/FTXHpRU+YBBGt2UxEZfo0h0M8XS6bES9EkQzp27bq5Ulc7Zv2qOwBmo4eQT0hvqvP+goWBT92m6FybcEdLUfUIyiB7O3KZ604LF+3zheWYpQGTxuohGp0AxRVajSi3sZr3SnU2j8Nj9Ew4Rl1ajoD2KZYl2YlcbGc=
+	t=1747832621; cv=none; b=QdbC4SyJ6gbZ8JJBFVHs32sRKfC7Jgv4YFfasAhl8Oh0gXGAh+pRBo7t7UmLp/aeU1rpNjpEieNfSzdWQcsTm7ZhJaSjUk1p/QzJBYWit01PM4xcDueXRhj/m1/EVl3JKjzYB/CXohIk9fE1PAH3HEgnwWnPxnzjezkIiumYJqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747832603; c=relaxed/simple;
-	bh=dwIYOE3htI9GbHZbf78nxBK6FjqrDFIKmLnz0i4XDIw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=S5DMd8rS6esVeyiIlH9z6aD/7t0ob7bqQ0tvFL8YO7RrGba7VipK3jjsmhJY1NRsSY8dM5ep2e536bjO9F94ONwkEOrBkFNd4KrHYoDumW2+aiK6AsYO5yeMAB2fyhH9yOtcSQqapfKYivd3wTAEANvp/4FGlBkgB+fzd7JC2h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4b2WnD0Hhyz9vJ0;
-	Wed, 21 May 2025 15:03:12 +0200 (CEST)
+	s=arc-20240116; t=1747832621; c=relaxed/simple;
+	bh=Qbn7PRSdI6A1vFXmvZ3FylGRMq8wFbpdqz6uoGJ1KTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uH1ee7gWaqyljVv2MnMY1R8CsB4L529lL303Y8q9bLak8Da3SfhB0CnWFsNKvv67ZWueGihkyLyAkewtNhc3iJ357/iiNcDm1reqsgYdpC0g2jQiXoeGlm1/aNyyJai/1mdMKt+6sAei0O2y4Kf07ehT3ZR93tpmEEqO3q8ndx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPTrN2Jp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C29C4CEE7;
+	Wed, 21 May 2025 13:03:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747832621;
+	bh=Qbn7PRSdI6A1vFXmvZ3FylGRMq8wFbpdqz6uoGJ1KTk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vPTrN2JpL+5ssHyulU38iilerOyjb74mQlk2LvwX5/ybdDb5OXBd6GjUwBq49NZtI
+	 SRdftiDutw8Zb1SOaGM6Qd9HDSK2dQV1Pv4NE3sTgM7DeL8abyWOw2XekpHKyK7Ey8
+	 7Dkmm5oPcKdZNcG31Ot3biWo9Y/sOrFiGxQHr3tb4vxYnTYVRdl0UQB4JoUzpRtoA5
+	 ZGza6qn7Rl/l2iS3Y7cR/bmVvP8evv92wDse2aM/Y+9zxYEgQWQUJe83iT94tXim89
+	 5tipJx89Jl3SPqSS2H0Af9/Evi3G5geCAx8tppJTpB2nAwlBYlhs+aAQte3c2JW4FD
+	 +uiC6O63YzT7A==
+Date: Wed, 21 May 2025 14:03:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/9] tools/nolibc: move ioctl() to sys/ioctl.h
+Message-ID: <eda3af4a-8dfe-4f82-a934-2d0256b754e2@sirena.org.uk>
+References: <20250515-nolibc-sys-v1-0-74f82eea3b59@weissschuh.net>
+ <20250515-nolibc-sys-v1-1-74f82eea3b59@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qmCeH574rrIaZhHB"
+Content-Disposition: inline
+In-Reply-To: <20250515-nolibc-sys-v1-1-74f82eea3b59@weissschuh.net>
+X-Cookie: You need not be present to win.
+
+
+--qmCeH574rrIaZhHB
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 21 May 2025 15:03:07 +0200
-Message-Id: <DA1UXY2O47Y2.1ND9MC6L01217@buenzli.dev>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: "Rob Herring" <robh@kernel.org>, "Saravana Kannan"
- <saravanak@google.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
- Krummrich" <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Dirk Behme" <dirk.behme@de.bosch.com>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v5 4/9] rust: device: Enable printing fwnode name and
- path
-From: "Remo Senekowitsch" <remo@buenzli.dev>
-References: <20250520200024.268655-1-remo@buenzli.dev>
- <20250520200024.268655-5-remo@buenzli.dev>
- <2025052153-steadier-bargraph-e81a@gregkh>
-In-Reply-To: <2025052153-steadier-bargraph-e81a@gregkh>
-X-Rspamd-Queue-Id: 4b2WnD0Hhyz9vJ0
 
-On Wed May 21, 2025 at 2:02 PM CEST, Greg Kroah-Hartman wrote:
-> On Tue, May 20, 2025 at 10:00:19PM +0200, Remo Senekowitsch wrote:
->> Add two new public methods `display_name` and `display_path` to
->> `FwNode`. They can be used by driver authors for logging purposes. In
->> addition, they will be used by core property abstractions for automatic
->> logging, for example when a driver attempts to read a required but
->> missing property.
->>=20
->> Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
->> ---
->>  rust/kernel/device/property.rs | 72 ++++++++++++++++++++++++++++++++++
->>  1 file changed, 72 insertions(+)
->>=20
->> diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/propert=
-y.rs
->> index 70593343bd811..6ccc7947f9c31 100644
->> --- a/rust/kernel/device/property.rs
->> +++ b/rust/kernel/device/property.rs
->> @@ -32,6 +32,78 @@ pub(crate) fn as_raw(&self) -> *mut bindings::fwnode_=
-handle {
->>          self.0.get()
->>      }
->> =20
->> +    /// Returns an object that implements [`Display`](core::fmt::Displa=
-y) for
->> +    /// printing the name of a node.
->> +    pub fn display_name(&self) -> impl core::fmt::Display + '_ {
->> +        struct FwNodeDisplayName<'a>(&'a FwNode);
->> +
->> +        impl core::fmt::Display for FwNodeDisplayName<'_> {
->> +            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fm=
-t::Result {
->> +                // SAFETY: self is valid by its type invariant
->> +                let name =3D unsafe { bindings::fwnode_get_name(self.0.=
-as_raw()) };
->> +                if name.is_null() {
->> +                    return Ok(());
->
-> So if there is no name, you are returning Ok()?  Are you sure that's ok
-> to do?  What will the result of the string look like then?
+On Thu, May 15, 2025 at 09:57:47PM +0200, Thomas Wei=DFschuh wrote:
+> This is the location regular userspace expects this definition.
+>=20
+> Signed-off-by: Thomas Wei=DFschuh <linux@weissschuh.net>
 
-In that case we're not writing anything to the formatter, which is
-equivalent to an empty string. `Ok(())` means that writing succeeded.
+This is in -next as b8c436bbef0f2a and breaks the build of all the arm64
+selftests using nolibc:=20
 
-I assumed that a valid node would always have a name. And we're
-guaranteed to have a valid node. So I assumed this case would never
-happen and didn't think too hard about it. But even if a valid node has
-not name, empty string is probably the correct thing, right?
+clang --target=3Daarch64-linux-gnu -fintegrated-as -fno-asynchronous-unwind=
+-tables -fno-ident -s -Os -nostdlib \
+	-static -include ../../../../include/nolibc/nolibc.h \
+	-ffreestanding -Wall tpidr2.c -o /home/broonie/git/bisect/tools/testing/se=
+lftests/arm64/abi/tpidr2 -lgcc
+In file included from <built-in>:1:
+In file included from ./../../../../include/nolibc/nolibc.h:100:
+=2E/../../../../include/nolibc/sys/ioctl.h:8:10: fatal error: 'nolibc.h' fi=
+le not found
+    8 | #include "nolibc.h"
+      |          ^~~~~~~~~~
+1 error generated.
+
+This happens because:
+
+> +++ b/tools/include/nolibc/sys/ioctl.h
+> @@ -0,0 +1,29 @@
+> +/* SPDX-License-Identifier: LGPL-2.1 OR MIT */
+> +/*
+> + * Ioctl definitions for NOLIBC
+> + * Copyright (C) 2017-2021 Willy Tarreau <w@1wt.eu>
+> + */
+> +
+> +/* make sure to include all global symbols */
+> +#include "nolibc.h"
+
+assumes that the nolibc include directory is in the include path, or
+otherwise set up with a -I path, previously you just had to include
+nolibc.h with the includes that are there working due to being relative
+to nolibc.h.  I'll send a patch for the arm64 tests.
+
+It looks like the RISC-V selftests are also impacted, I didn't spot any
+other users that didn't already have an -I.
+
+--qmCeH574rrIaZhHB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgtzygACgkQJNaLcl1U
+h9DhQgf+JgacUZkzi23s2F8G/UznZcACYtRmlTDLwYsVcgns91u9TYZ9CvpFHkVb
+B477GNwDzt6lZeEgS26QWH5rnf+j/596lvIOS+FnsYIutEnoyyGxDKySN/9QxTgm
+H+j7MJV5CsOgE5SEJpdPus+jiuFcqesuubgOx1Jx1UlluZLfUOrSL9q4mWkbcIu+
+FD/421e+mtTQqgxS9JNkn9JcGXaZVITc193UGNFNEPeLBK+doMbxUjE2M45UXttC
+ZZg8EZRJ3J0ndGc2YXZ459olXkF+d9SAg4w9ELIfASUlV0DkZHu/3du8fiQngUtK
+daXVnzFHpb93bTyjZoe2Dat4HarlcA==
+=W+G+
+-----END PGP SIGNATURE-----
+
+--qmCeH574rrIaZhHB--
 
