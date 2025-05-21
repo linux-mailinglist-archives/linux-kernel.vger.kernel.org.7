@@ -1,159 +1,126 @@
-Return-Path: <linux-kernel+bounces-657098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D054ABEF3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:11:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F613ABEF4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0C33189F861
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A48B71BC001A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0682D239E9E;
-	Wed, 21 May 2025 09:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04187239E7E;
+	Wed, 21 May 2025 09:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WfzsStLm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="KrJSRluA"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA15238D53
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 09:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04CA238C3D;
+	Wed, 21 May 2025 09:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747818676; cv=none; b=gIlKZevucrDyBMKpDkf3WSB6PFzwRWoSKm/WHZDaA7tIHTlir/Sfmh6A59oMy8mU9+GzP1Nk8wEHcEKWNHXkIlgLPGKAezpfPOMdS/5ik0EHmbCgCry1cCsWCuwvX+n5WPyC7eD6fdRkEzSGWuVEtK05CWoFdsfBUcH0w7hyD64=
+	t=1747818901; cv=none; b=PDJlME1sZAyO+rBkPyPmWdO92UsOujFj95VpvL+wo/yAaCfy37V+/BbO17rZLO8Lw06lXIr34Xvtq9ETFTm9xBdMOWTc+NxLBnnm/pW8C8MgoljkGOCETV0/1cgmDpYm5B5KyANYqPEhufKP2f2PRRBeateL4mrFqrEBJO6J4rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747818676; c=relaxed/simple;
-	bh=AyTlo5MV4RoWb0/jlG7PaHacCmtKMIX6jHJZ5hNGkqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nt0XqoGsxpoLbBRyal+w4g3WPvLoTS8is6096rF1h4fKQmCE+7am/U/zBHrS263bwUlwQswP1l5emvIwJBvqIb98ZpOJ66oJE01Fwa1xFwFkA4goBkpoUzZabkgg6Qn80jLKr5Q65r8/2zfPoJt0vzfXNaW34czFFqMDTBizrS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WfzsStLm; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747818675; x=1779354675;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=AyTlo5MV4RoWb0/jlG7PaHacCmtKMIX6jHJZ5hNGkqo=;
-  b=WfzsStLml9i75yHwjIcOt+3CTxOikjzCnXzWXZek9CVg0IvPD6LtcaSh
-   8AWNaldt6fcfpNgN6wN5s+ViawYeWpexP7wteCHyka9mduP7xdKZ9ODBJ
-   k3Jcuk1kWYLW96pTYgwCDAXIer2E8xDdGfR4eGHhb0om828Irwvaz2Fd0
-   8oUIdQdPD+iS1h98Jh7pbPBU0pHigzOZCAHMOzbMjNahMyFtE/ddIDshv
-   HhKk+bivNdx+heFYge3iAljrFWcOHdvOJEWHPWaJMYQwFqbBydTUfDaMH
-   7H2B4TmVOpRNCPDGZPeOVlvbIEfQCFGfB5GT/yzRj9bx9folWcDcRZyPv
-   g==;
-X-CSE-ConnectionGUID: dX74oQ5mR92rspM4OLqE1A==
-X-CSE-MsgGUID: WojZ0WbQR5SlW0yywsurHA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="53595237"
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="53595237"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 02:11:14 -0700
-X-CSE-ConnectionGUID: CNu791ZaRYCb5Aog6f/7NQ==
-X-CSE-MsgGUID: QRyvUxAxS/aBYV8nILle/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="140044302"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 02:11:10 -0700
-Date: Wed, 21 May 2025 12:11:07 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	siqueira@igalia.com, airlied@gmail.com, simona@ffwll.ch,
-	rodrigo.vivi@intel.com, jani.nikula@linux.intel.com,
-	Xaver Hugl <xaver.hugl@gmail.com>,
-	Krzysztof Karas <krzysztof.karas@intel.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com, amd-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH v5 1/3] drm: Create a task info option for wedge events
-Message-ID: <aC2Yq89IL5tx8MY3@black.fi.intel.com>
-References: <20250520163243.328746-1-andrealmeid@igalia.com>
- <20250520163243.328746-2-andrealmeid@igalia.com>
+	s=arc-20240116; t=1747818901; c=relaxed/simple;
+	bh=YSpDBfKl2V81ILNyL21Nv1m0vSKQGw/nVO0nNErWsyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XIFavn359rBBHNdxczn3FwgiKKGJSKmknIAcZzkEPklF0AifDgeNenPyQUee4Uemsaf1AU49Ruu5ufX58MjL4F/s4D0ODCtM+JhI7MOjJqQ62ivAmJdNGh1Qq6/zs6WHB2pOF5o2YyFR9OGMbDXOFk0e+2GpKElGoSAm39yRZLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=KrJSRluA; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L3wVbU011053;
+	Wed, 21 May 2025 11:14:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	KuHtnSKsW+7Ihg+kQpOB9bOtYG+LujduoGhpLuXqrxs=; b=KrJSRluAke1eFynF
+	YsRSpn4AixLB3VnboO1r/4KySuJbz6jh6HF9bPuPTr5EV1/70xIUQgxGOKw/pMPS
+	UiVo2ky357LFlpVw+LbDpowzzLAOxpBFxPkjDAmnF4B1KIa4hpkhmMZNe7L2ohZH
+	8ooz1eucpgkw9UYlaARcJoHSIh28cPYjEQO2CJOU2nfF9Xl6U32qvtbPtT/yPZfv
+	27NPa1QM8feQ4Hwm1ZCRNOIN+n8+hRBialGHh5DeNIaHEVGS/9nv480F+cbh5dXy
+	MsD6/HIs1k6x3/vLAuWLkjnJ+/SPG+bAXbRzZc+bUgC8vypIHgig5knNR+9o5WE6
+	HebIfw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46rwfab5cx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 11:14:36 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id ECB1640054;
+	Wed, 21 May 2025 11:13:12 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4F64BB2E19D;
+	Wed, 21 May 2025 11:12:18 +0200 (CEST)
+Received: from [10.252.1.130] (10.252.1.130) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 21 May
+ 2025 11:12:17 +0200
+Message-ID: <3e855041-3eb2-48c8-88d7-0eb7b9948cc8@foss.st.com>
+Date: Wed, 21 May 2025 11:12:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250520163243.328746-2-andrealmeid@igalia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: stm32: add STM32MP21 clocks and reset
+ bindings
+To: Conor Dooley <conor@kernel.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Nicolas Le Bayon <nicolas.le.bayon@foss.st.com>
+References: <20250520-upstream_rcc_mp21-v2-0-3c776a6e5862@foss.st.com>
+ <20250520-upstream_rcc_mp21-v2-1-3c776a6e5862@foss.st.com>
+ <20250520-absence-sixtyfold-0fd9bb03a42d@spud>
+Content-Language: en-US
+From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+In-Reply-To: <20250520-absence-sixtyfold-0fd9bb03a42d@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_02,2025-05-20_03,2025-03-28_01
 
-On Tue, May 20, 2025 at 01:32:41PM -0300, André Almeida wrote:
-> When a device get wedged, it might be caused by a guilty application.
-> For userspace, knowing which task was the cause can be useful for some
-> situations, like for implementing a policy, logs or for giving a chance
-> for the compositor to let the user know what task caused the problem.
-> This is an optional argument, when the task info is not available, the
-> PID and TASK string won't appear in the event string.
-> 
-> Sometimes just the PID isn't enough giving that the task might be already
-> dead by the time userspace will try to check what was this PID's name,
-> so to make the life easier also notify what's the task's name in the user
-> event.
 
-...
+On 5/20/25 17:56, Conor Dooley wrote:
+> On Tue, May 20, 2025 at 05:28:37PM +0200, Gabriel Fernandez wrote:
+>> +
+>> +  access-controllers:
+>> +    description: phandle to the rifsc device to check access right.
+>> +    items:
+>> +      - description: phandle to access controller
+>> +
+>> +    minItems: 1
+>> +    maxItems: 1
+> That's just maxItems: 1, the minItems is redundant.
+> ok
+>
+>> +    rcc: clock-controller@44200000 {
+> Remove the label, there's no user.
 
-> -int drm_dev_wedged_event(struct drm_device *dev, unsigned long method)
-> +int drm_dev_wedged_event(struct drm_device *dev, unsigned long method,
-> +			 struct drm_wedge_task_info *info)
->  {
->  	const char *recovery = NULL;
->  	unsigned int len, opt;
-> -	/* Event string length up to 28+ characters with available methods */
-> -	char event_string[32];
-> -	char *envp[] = { event_string, NULL };
-> +	char event_string[WEDGE_STR_LEN], pid_string[PID_LEN] = "", comm_string[TASK_COMM_LEN] = "";
-> +	char *envp[] = { event_string, NULL, NULL, NULL };
->  
->  	len = scnprintf(event_string, sizeof(event_string), "%s", "WEDGED=");
->  
-> @@ -582,6 +586,13 @@ int drm_dev_wedged_event(struct drm_device *dev, unsigned long method)
->  	drm_info(dev, "device wedged, %s\n", method == DRM_WEDGE_RECOVERY_NONE ?
->  		 "but recovered through reset" : "needs recovery");
->  
-> +	if (info && ((info->comm && info->comm[0] != '\0'))) {
+ok
 
-Thanks for adding this. Should we check if pid > 0?
+Many thanks for the review
 
-Also, I was wondering what if the driver only has info on one of the
-given members? Should we allow it to be flagged independently?
+Best regards,
 
-> +		snprintf(pid_string, sizeof(pid_string), "PID=%u", info->pid);
-> +		snprintf(comm_string, sizeof(comm_string), "TASK=%s", info->comm);
-> +		envp[1] = pid_string;
-> +		envp[2] = comm_string;
-> +	}
-> +
->  	return kobject_uevent_env(&dev->primary->kdev->kobj, KOBJ_CHANGE, envp);
->  }
->  EXPORT_SYMBOL(drm_dev_wedged_event);
+Gabriel
 
-...
 
-> diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
-> index e2f894f1b90a..c13fe85210f2 100644
-> --- a/include/drm/drm_device.h
-> +++ b/include/drm/drm_device.h
-> @@ -30,6 +30,14 @@ struct pci_controller;
->  #define DRM_WEDGE_RECOVERY_REBIND	BIT(1)	/* unbind + bind driver */
->  #define DRM_WEDGE_RECOVERY_BUS_RESET	BIT(2)	/* unbind + reset bus device + bind */
->  
-> +/**
-> + * struct drm_wedge_task_info - information about the guilty app of a wedge dev
-
-s/app/task, missed an instance ;)
-
-> + */
-> +struct drm_wedge_task_info {
-> +	pid_t pid;
-> +	char *comm;
-> +};
-
-Raag
 
