@@ -1,89 +1,55 @@
-Return-Path: <linux-kernel+bounces-657577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF8DABF61D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:31:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930CBABF621
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:31:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A80131897BA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:31:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 370963A7FDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C7827815B;
-	Wed, 21 May 2025 13:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D00C272E42;
+	Wed, 21 May 2025 13:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ykx86oHR"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IP33UUjK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1F4143736
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58669265CBD
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747834262; cv=none; b=sNHWBMsl5K6Y69hwUpxTHWt0dlgCArpNMWbqA6KDowrEmmOVmqCCnFOID8uUxdyPMgb/WOhcft4+3cFMN9aClJHSsPb+Qip444Erl6Ao0wIFkZJSzP9c8Lm955bJw5GqexPYXNEeyRFYGNbopi/rm/5X5qKfd5A1OFK6fwoo2ew=
+	t=1747834300; cv=none; b=sOdQgBXJdqsgNq3jpwEsuwTyCJAUwKijijp/Ps1i95ga9yAuhQSdc6o9OF8x/xTwsH7oegXDQR6oGQujSUscAuF9ru6bN2Kz/KcYRXU0oQnA0N0ATdlX9+uRy9eDppq7r9LR8r4MflTDFaCn84XD2qHbhKbJZSbRCXFHqmGtxZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747834262; c=relaxed/simple;
-	bh=dE8S8U/P80oKy7v+PkEG7Bznl75i8IVoc76G1GRGRf8=;
+	s=arc-20240116; t=1747834300; c=relaxed/simple;
+	bh=rBj+TSECgbMyfdZJTFOICFONTba6Xwk88AfXCUiacQs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OygRCc3guDA5ADiDVp5c/IVomFo6XdMNJ7EsuBTZHEykaqnT+o3/0Do5erubeIGYFIQeAUbWn3hhhL1tHhsaPx6zXBlcsGnYn63jNPRl2B9ZKvl4yHzp5Gn3l+5Cxyv7fjyfuArgXaXrzE+GfF9V2UQhvnVmVNAdd44elSdri5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ykx86oHR; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-30572effb26so6288392a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 06:31:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747834260; x=1748439060; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=z1dbDjgMLEJrOwumrDgSLpVT4yaU17ZjFGTyjnMHOQ4=;
-        b=ykx86oHRpqzZLUu/PhAr12S1HWVP3F9SAavNqBFCef9dPiX7Amh+HvtTgtvoe1ghdL
-         4ZVunBabZhX8TKIHZ3+BZ0bEs1E4BEU97/2D/rmqHSr8tjKFOfPNVnsAgqrAYXdLca6V
-         4CYl0ihbhDn/ckt4ETo0KEkFVqvcfcmME3P4MvrIuwgQZl6AitENJTC9LzKlM48hiaET
-         0Ng5X1KqBAgkJGW9rO4J/jRpDvCJdPvEYskDlwpsRdq9UkIzzJmm6xXj+eF+YaQY7j/C
-         TiKmXpZ397Wa521vp2cqBqMgl3Abptd3GsDmYjLXJbpFVXJjmX5kcoxYxMLx9Ck8v6ku
-         Yk7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747834260; x=1748439060;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z1dbDjgMLEJrOwumrDgSLpVT4yaU17ZjFGTyjnMHOQ4=;
-        b=Q5fZps04gQOXmgb4ok1G/OxQJpQ+c/W0gmfYUjaLfOe0VrQ2tC355vWfx3+rAtwTLZ
-         YITQn5TbUWo0If9THYClTi5Vgf8+UZ8lT7vg64ijWs/TyIoO+vK1U8tozTKnMcqKPAhx
-         t6HAWufLNiwl74HinAEO+xntbzBxINWVQocWlpLqpbyWHgC0M5S94khn9rHqotib9MFi
-         OYBxXq6uzqrxQ9lY7cAN2i/J1LD7xmJnxOiCCFFZIjYypBw0GFpsQJ2Zh1UHTyTO08aR
-         IjK4HxC5IfRzQRIHLc1pINx8S3YxsWujZAcfdP9I8rua5+HVPdPd2vkk+rCuhI37HJGw
-         nNMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUO0YDGlDaWo5mkn7A1Ud7RL1fEIazda0Mf4YEYjSW0PTUWmANgzIdaWhrYd5QjGSzDFMGQbQZiYyUXpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPz2FJeI1q4IjQUhz0MDUoK3zvgptfcfbj7EbSRSkPKMc1Gja/
-	ZSTqYllhXrYzeeqxOCthysFSCSygLWIMbeeMWEf8RVF2UjLUqSzxdCrQQ66W6FCWTA==
-X-Gm-Gg: ASbGncuav6wGggnkQfmztaHfwDh1MWTxZZf5Qnn6IZBfifVR+o33aC6I+fqpg5yZNwz
-	ASmn0qeqjDkOgTX5S6LovI3urYn15Xr9mrFnlWUosjRZmJ3teix9stKMON/Bz9PwK3UUdDzAnNT
-	dh69pED4eGWjyId2sMr6vkCmCNfoJYVhibxnIu91/TE7iGB9sXxynBydUrzZDy4gha0tuJXmMcy
-	5KHDgi8zLMiwHsEkpa0ILC2qXBepDxH1jVIs2OFc7a6ahrHcjaeP/vbP/rU0Rp+ahhuAZadn7QR
-	NfNDcFBdPbv30ezF2nqb7y7cZtftK5Vkly+iqCkd3DN/2V30/DgHsw6KhDHW9FT7Q0qCrLA=
-X-Google-Smtp-Source: AGHT+IGPKkuMknbqbSMLVX+JBJd/UAyJcjpyOY/yvUsxjBau5eWt4Mkj+OEXtvgnfC9urBGO+cN+Qg==
-X-Received: by 2002:a17:90b:2f0d:b0:2fe:68a5:d84b with SMTP id 98e67ed59e1d1-30e7d4e7e1bmr29895277a91.1.1747834260260;
-        Wed, 21 May 2025 06:31:00 -0700 (PDT)
-Received: from thinkpad ([120.60.52.42])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f364907dfsm3632884a91.23.2025.05.21.06.30.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 06:30:59 -0700 (PDT)
-Date: Wed, 21 May 2025 14:30:53 +0100
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Nitin Rawat <quic_nitirawa@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, 
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, bvanassche@acm.org, 
-	andersson@kernel.org, neil.armstrong@linaro.org, dmitry.baryshkov@oss.qualcomm.com, 
-	konrad.dybcio@oss.qualcomm.com, quic_rdwivedi@quicinc.com, quic_cang@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-scsi@vger.kernel.org
-Subject: Re: [PATCH V5 05/11] phy: qcom-qmp-ufs: Remove qmp_ufs_com_init()
-Message-ID: <z3yfou4oolymsgb72dpakwcsmq6v3gnx64mdals7krnxdhpc2a@lsepak4kc2mg>
-References: <20250515162722.6933-1-quic_nitirawa@quicinc.com>
- <20250515162722.6933-6-quic_nitirawa@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uGEll3bRjWC+zOtuQt+qA/WI7xongSuPcbMbWa2NW0epGwTnJ3PhHwFQ3xe7aqx/kjSSEL/b4L/paSR8vhO2aTlIsQpmwIK2J6CjNfRovHa4uh7YQAQgCrgNUM7C9ewGe/vG87KFIDsKyOEkrZzVZQlNWUJkQBF1RXf4Vbc+1/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IP33UUjK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B804C4CEE4;
+	Wed, 21 May 2025 13:31:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747834299;
+	bh=rBj+TSECgbMyfdZJTFOICFONTba6Xwk88AfXCUiacQs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IP33UUjK5KDelqCUjLbTQUooVft/8rJ1/BGnL/DYhgQPcyu9tsYopHe5KS+VSXGlC
+	 fGRkAR0nbrYKNVBVoNZ6C/uXon12MQXr4ZrPxaxIjqRj5ov0YPT0Y5Ta+bUpBhzY1E
+	 C9+h3Cpl7bsZps6ca976hcPgvxjOe+JvE7mXa858=
+Date: Wed, 21 May 2025 15:31:36 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] container_of: Document container_of() is not to be
+ used in new code
+Message-ID: <2025052121-drastic-hacker-aab6@gregkh>
+References: <20250520103437.468691-1-sakari.ailus@linux.intel.com>
+ <aCyOzUIIvMk6Gp8o@smile.fi.intel.com>
+ <2025052000-widen-lip-350b@gregkh>
+ <aCz9jlMcXDooqx0s@kekkonen.localdomain>
+ <2025052138-carport-applaud-61b8@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,63 +59,76 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250515162722.6933-6-quic_nitirawa@quicinc.com>
+In-Reply-To: <2025052138-carport-applaud-61b8@gregkh>
 
-On Thu, May 15, 2025 at 09:57:16PM +0530, Nitin Rawat wrote:
-> The qmp_ufs_power_on() function acts as a wrapper, solely invoking
-> qmp_ufs_com_init(). Additionally, the code within qmp_ufs_com_init()
-> does not correspond well with its name.
+On Wed, May 21, 2025 at 03:27:19PM +0200, Greg Kroah-Hartman wrote:
+> On Tue, May 20, 2025 at 10:09:18PM +0000, Sakari Ailus wrote:
+> > Hi Greg,
+> > 
+> > On Tue, May 20, 2025 at 04:30:19PM +0200, Greg Kroah-Hartman wrote:
+> > > On Tue, May 20, 2025 at 05:16:45PM +0300, Andy Shevchenko wrote:
+> > > > On Tue, May 20, 2025 at 01:34:37PM +0300, Sakari Ailus wrote:
+> > > > > There is a warning in the kerneldoc documentation of container_of() that
+> > > > > constness of its ptr argument is lost. While this is a faible suggestion
+> > > > > container_of_const() should be used instead, the vast majority of new code
+> > > > > still uses container_of():
+> > > > > 
+> > > > > $ git diff v6.13 v6.14|grep container_of\(|wc -l
+> > > > > 646
+> > > > > $ git diff v6.13 v6.14|grep container_of_const|wc -l
+> > > > > 9
+> > > > > 
+> > > > > Make an explicit recommendation to use container_of_const().
+> > > > > 
+> > > > > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > > > > ---
+> > > > > Hi Greg, Andy,
+> > > > > 
+> > > > > I guess we generally agree the additional constness check in
+> > > > > container_of_const() is useful, but adding the same check to
+> > > > > container_of() generates warnings -- there are some errors, too -- such as
+> > > > > this one currently:
+> > > > > 
+> > > > > In file included from /home/sailus/src/linux/include/linux/bcma/bcma.h:14,
+> > > > >                  from /home/sailus/src/linux/arch/x86/kernel/early-quirks.c:17:
+> > > > > /home/sailus/src/linux/include/linux/ssb/ssb.h: In function ‘dev_to_ssb_dev’:
+> > > > > /home/sailus/src/linux/include/linux/ssb/ssb.h:291:14: warning: assignment discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
+> > > > >   291 |         wrap = container_of(dev, struct __ssb_dev_wrapper, dev);
+> > > > >       |              ^
+> > > > > 
+> > > > > As noted above, 646 new missing constness checks were introduced through
+> > > > > container_of() macro use during the 6.14 cycle alone. Most of these are
+> > > > > likely harmless, but with so many new users some are bound to be ignoring
+> > > > > constness.
+> > > > > 
+> > > > > Once the warnings from bad container_of() use are worked out in a way or
+> > > > > another, the constness check could be added to the container_of() macro
+> > > > > and the current container_of_const() be dropped altogether.
+> > > > > 
+> > > > > If this patch is accepted, I'll see how to add a warning on container_of()
+> > > > > to checkpatch.pl.
+> > > > 
+> > > > Hmm... Wouldn't be better to fix non-const cases and add the const check, etc
+> > > > to the container_of() instead of doing these comments?
+> > > 
+> > > Yes, fixing up the existing places where it is broken would be best, how
+> > > many of them are there now?
+> > 
+> > Adding constness check for container_of(), with my partial build on x86-64
+> > I'm getting 893 such warnings. A fair number are probably duplicates or
+> > repeat of the same pattern, but also the compilation didn't succeed --
+> > there were multiple compilation failures.
 > 
-> Therefore, to enhance the readability and eliminate unnecessary
-> function call inline qmp_ufs_com_init() into qmp_ufs_power_on().
-> 
-> There is no change to the functionality.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 43 ++++++++++---------------
->  1 file changed, 17 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> index 33d238cf49aa..d3f9ee490a32 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> @@ -1758,12 +1758,28 @@ static void qmp_ufs_init_registers(struct qmp_ufs *qmp, const struct qmp_phy_cfg
->  		qmp_ufs_init_all(qmp, &cfg->tbls_hs_b);
->  }
->  
-> -static int qmp_ufs_com_init(struct qmp_ufs *qmp)
-> +static int qmp_ufs_com_exit(struct qmp_ufs *qmp)
+> So who is going to do that work?  I just did it for drivers/usb and it
+> was pretty trivial, just declaring "do not use this!" feels like the
+> easy way out, absolving yourself from any responsibility here :)
 
-Since there is no qmp_ufs_com_init() now, qmp_ufs_com_exit() lacks symmetry.
-Maybe you should rename it too.
+I tried it for the whole tree, and ugh, there are some real "errors" in
+there.  The nfs inode handling logic is crazy, passing in a const
+pointer and then setting fields in it.  So this will be some real work
+to unwind and fix in some places.
 
->  {
->  	const struct qmp_phy_cfg *cfg = qmp->cfg;
-> +
-> +	reset_control_assert(qmp->ufs_reset);
-> +
-> +	clk_bulk_disable_unprepare(qmp->num_clks, qmp->clks);
-> +
-> +	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
-> +
-> +	return 0;
-> +}
-> +
-> +static int qmp_ufs_power_on(struct phy *phy)
-> +{
-> +	struct qmp_ufs *qmp = phy_get_drvdata(phy);
-> +	const struct qmp_phy_cfg *cfg = qmp->cfg;
->  	void __iomem *pcs = qmp->pcs;
->  	int ret;
->  
-> +	dev_vdbg(qmp->dev, "Initializing QMP phy\n");
+thanks,
 
-Now, this debug print doesn't make sense. You can drop it.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+greg k-h
 
