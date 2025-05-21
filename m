@@ -1,160 +1,203 @@
-Return-Path: <linux-kernel+bounces-657543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E613ABF5AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:11:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA406ABF5C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BCCF3B01E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:11:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 419A33AABD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9109827057E;
-	Wed, 21 May 2025 13:11:42 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D4A27584F;
+	Wed, 21 May 2025 13:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fkT7ecYS"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948FC2D613
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2659E267B74
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747833102; cv=none; b=d8XMeM+X/gkEHrBVUgxjUuPRrOyL85oY/HtKOyp6dYgq0aofdabEzPuDMnOfatphhLGWCNX6Cmtqz0P7FguYgTBtNbWK+/0PkMAnYqEOH5uXNpjE1aEj2zhqtvhjPqcBIybwy098WfwmioDZAdGZaDh6LL2HmDXEOC6rSFMsC+w=
+	t=1747833207; cv=none; b=rKG6Iokdvr2wC3+M+wqfvxxTzcYmvIwV2B666VmovMGkLo1tUyBClKH2yhRYwQIZdBPsnAZTPPaKzZAC+B+RIqHrxSgkjrBMi+J9ct3jWQSuRBaZJ1R4WBpxLcZeu3evq3vcquMEGQyJwZ5Ae4lXeZCadVS2QexwuLe/Iv8+Wuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747833102; c=relaxed/simple;
-	bh=lhh1hYn0GhJBl3MQiuJ3ZgVJnZubB815syL/zJ6kNZI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l++QU+yaJzVZr/DjX7NJW1ttRr6HUXff39lGkeBY0W9BsiMkGU3MBJ5qxvUn2DhQjx2EmxXkIfSfOBqBcUaXGDg524ZgvSTn77dwmi3ZFiWMYh8ILLiwZD5u09vkRlCjpZa3jL1fHcPp0NbSBwU9bP/zQiA0JjdUFHcyJUZah/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-85b402f69d4so718927339f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 06:11:40 -0700 (PDT)
+	s=arc-20240116; t=1747833207; c=relaxed/simple;
+	bh=PEUw8oNToGBQUpdkFgey1gEWtLuJRmRd/HOWRufD8D0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FB1yh9Q4NBvrQlm2YS2h6cR+NezMI3km9y98zscXVkoJYN6dGI2XVtAPGZJ9K6sU+O3UsKKMgNkE5c1qbLUUHjLCoQHL8P9uFWYSVCQo0rhJ7eq8WvXL7ATUaYS4ec4IoDWFYN/Y9tIjDVtIQ0oOEOSwVXLgslI3UuMXezPPrOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fkT7ecYS; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-742c9563fafso3304217b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 06:13:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747833205; x=1748438005; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=DowZvl7qA/uAhVQuHMif7vNt8RT6sHwwCijVL4Xt204=;
+        b=fkT7ecYS4NICRdU9xSXBycNBBO2wEeOv8x98W23bZv5PalpY/RfLCWEWsPN8ASvqIe
+         xWhuWEv7/Maxzuy8dc2VDBKr+unlLE3TXASK6NgmMvrKkzFVNXiKTHZnfV4lmoQqGCkZ
+         kQf71OtCRbnNxQaUeGO7YF7azPIQ7+u4HS1mF6jYGUCAFyTvH76V/bHmpU/g9AcHe4zU
+         46lUJ5a/7Nr1ouwad8XRCiq/L5d3lmnlpBXLONENK/bLoBHRWPJDCfUYOTZgpY8paW9N
+         W7mVKp8DqaPIMSOqy8FVuqxkUSejPxRYtaTIu685/z9qnjRVMB4aLN+oxVXTWb2bAW5S
+         EdrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747833099; x=1748437899;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IrTK+l8Aj/pA31DELUnnqfEV2uIT+e3shglXW6nnXRA=;
-        b=F24ddo1vq6FK3ziEHw1IM5S40xln3gNw0MWS0J57jkfumvjLqDMtw0z8biteuz3B+o
-         yEiSrY4nr1LNChBRzitjCGUQutWtz/UDVxZ+JbXZzxJdGwNhS5uFOIJJaau2kYd5UzAe
-         e7gRfObcXY9sBZrGHqevnxRceMu+uVI96B9A4XeOe5r9PD3sGdS+f5g6hH6n6ekWl3+k
-         ONbaIK/4isF8JvDBCdV/CUrOaU+IyQMwX5yW/+MajGztPEiItb/k9UpynXEF4u22hWTh
-         iXwu6Uo7CNiqEUs3qZuDtQP9oDn5rlaANbzVVQJRNUsHdYlh6UpRnyw6RWaDAwQ7KN8l
-         fwQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcteY30G+RAGxkXdiGFkJDVAphX7uYz3bzh/IeH0Asu5eXOFpFeKWOdSd+PL5mDNa83fQ2n6DFPvqdKdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP5LZzIC89xKW7lDXqR6A7UOBwSaZKBD+aBLbZn8jH8gv1qfhP
-	pItZsjDbJRMTIxE7qU395kOm+b69uGEKi5/EA/qhGfrCwmADCRaG0dk2FF9a8T9/3QPxI3XY35R
-	+0qTDnfrRrmZDgHx9WBw/HtRrgPlEuX/nrY1Om0vUJdIlV3xYATAbvuJEsFQ=
-X-Google-Smtp-Source: AGHT+IGpINRHIv5Qt32rieZ9qoCXjUUE4pZkVobeBJhF3H1pMQxen0t2kAFPSkvY9JyRo5WLjfqN1vyRWgobXOcnOqcEdVNC73SN
+        d=1e100.net; s=20230601; t=1747833205; x=1748438005;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DowZvl7qA/uAhVQuHMif7vNt8RT6sHwwCijVL4Xt204=;
+        b=fIkgfwKnGLKcSxhmOCGrb/IPlB9rdL8iM67dk4z8+QSp1brICoVxxinI8Zgy4Xv5dG
+         6LtlW/WM2/TISZYncKTih3P7vjs3kFl6LThLhudocxZdp+OXefk/JQBcXM0QWx9IB8os
+         j7YPofOXI2+et9WT8U95sSHnGiANrff1hfS4M/LnD2xP5vMXai/apcFdsQwbVfZhtwJo
+         eQykV8k2wyS9WfAL5LYAq3EULx+ldUesTMbQTGZe1d0yFAb/djvHKoP//vOs6/4ib0da
+         O/brQt1WqSIbBSjGl8lE4WfiSPTCty3SPIK5UfcuKCBoj0YHH0SrvZ8cLrnhdPhJmiuD
+         Zjmg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+iDPv6YcLRc2gJL9dNzW/T+SiOKQXkHrBCK8uAksLs7efs71TDV5tfkcYHyKUFkKINdvGvOckdtrQ3XE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzffrzUg3MjMywty+l5WN+C96IjYAET/bCJHe7jmeLj9mxNgfm2
+	chzN46jnrcYa/ZVGoZ0vNXHz9Jcyqoe4CDS+QASTDAFLmobiMOkjQkO+VlXqF9pJ1w==
+X-Gm-Gg: ASbGncsNgBcIjKGY7f1Mg0lgOE0MgAztQchyIRdW4ZVzLHtw/tKNFX8wYT5gPiRZtt/
+	ojx1Eflg/zQP7SnjaqetUBQymY0p+N/K/E8Ld4yxKuLerF56a0LkuJZXf3JFXPUhtiI7zDotdLa
+	ArDoH8uVDKOMlNNtTITaXLuskd//UWBljh04IrgYod9E/DdUfeKUw7s9LYxKijA/Fno+b5y1rea
+	Uv58XExOOxXwltfXOFbBx2L9pW/TNJllVqODvRQtIH72I/UX3ucfQtjJtW6x0cbD7qQczDbAZWz
+	21YpKpCgmW72u7Razxb6B/f5InUMZAI93VgrYsBxNr4RjZiV/f5QegPrNRK2
+X-Google-Smtp-Source: AGHT+IHiH2b/i4vvEt/AHMBHqqPS0yIzh62+h+3L9fGQ7pUd2qcx4hY61OfXdJ/u8TfPs3p6Vnp3eQ==
+X-Received: by 2002:a17:90b:4b0f:b0:2fe:8a84:e033 with SMTP id 98e67ed59e1d1-30e7d4ebdbcmr32842704a91.2.1747833205356;
+        Wed, 21 May 2025 06:13:25 -0700 (PDT)
+Received: from thinkpad ([120.60.52.42])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f3638710esm3578317a91.20.2025.05.21.06.13.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 May 2025 06:13:24 -0700 (PDT)
+Date: Wed, 21 May 2025 14:13:17 +0100
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Nitin Rawat <quic_nitirawa@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, 
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, bvanassche@acm.org, 
+	andersson@kernel.org, neil.armstrong@linaro.org, dmitry.baryshkov@oss.qualcomm.com, 
+	konrad.dybcio@oss.qualcomm.com, quic_rdwivedi@quicinc.com, quic_cang@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-scsi@vger.kernel.org
+Subject: Re: [PATCH V5 03/11] phy: qcom-qmp-ufs: Refactor phy_power_on and
+ phy_calibrate callbacks
+Message-ID: <g6neasajgbbu3iqy3kj6zzizichz5xvrsktepl46ahxepy2nus@whq2j35lc5fe>
+References: <20250515162722.6933-1-quic_nitirawa@quicinc.com>
+ <20250515162722.6933-4-quic_nitirawa@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3589:b0:864:a1fe:1e41 with SMTP id
- ca18e2360f4ac-86a24cdd7a1mr2812239139f.13.1747833099708; Wed, 21 May 2025
- 06:11:39 -0700 (PDT)
-Date: Wed, 21 May 2025 06:11:39 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <682dd10b.a00a0220.29bc26.028e.GAE@google.com>
-Subject: [syzbot] [bpf?] WARNING in bpf_check (4)
-From: syzbot <syzbot+0ef84a7bdf5301d4cbec@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
-	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250515162722.6933-4-quic_nitirawa@quicinc.com>
 
-Hello,
+On Thu, May 15, 2025 at 09:57:14PM +0530, Nitin Rawat wrote:
+> Commit 052553af6a31 ("ufs/phy: qcom: Refactor to use phy_init call")
+> puts enabling regulators & clks, calibrating UFS PHY, starting serdes
+> and polling PCS ready status into phy_power_on.
+> 
+> In Current code regulators enable, clks enable, calibrating UFS PHY,
+> start_serdes and polling PCS_ready_status are part of phy_power_on.
+> 
+> UFS PHY registers are retained after power collapse, meaning calibrating
+> UFS PHY, start_serdes and polling PCS_ready_status can be done only when
+> hba is powered_on, and not needed every time when phy_power_on is called
+> during resume. Hence keep the code which enables PHY's regulators & clks
+> in phy_power_on and move the rest steps into phy_calibrate function.
+> 
+> Refactor the code to retain PHY regulators & clks in phy_power_on and
+> move out rest of the code to new phy_calibrate function.
+> 
+> Also move reset_control_assert to qmp_ufs_phy_calibrate to align
+> with Hardware programming guide.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Co-developed-by: Can Guo <quic_cang@quicinc.com>
+> Signed-off-by: Can Guo <quic_cang@quicinc.com>
+> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
 
-syzbot found the following issue on:
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-HEAD commit:    172a9d94339c Merge tag '6.15-rc6-smb3-client-fixes' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11d15ef4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4f080d149583fe67
-dashboard link: https://syzkaller.appspot.com/bug?extid=0ef84a7bdf5301d4cbec
-compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130462d4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14efaef4580000
+- Mani
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/98a89b9f34e4/non_bootable_disk-172a9d94.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/88f3b6a8815a/vmlinux-172a9d94.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8835063aa13d/zImage-172a9d94.xz
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 26 ++++++-------------------
+>  1 file changed, 6 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> index a67cf0a64f74..ade8e9c4b9ae 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> @@ -1797,7 +1797,7 @@ static int qmp_ufs_com_exit(struct qmp_ufs *qmp)
+>  	return 0;
+>  }
+>  
+> -static int qmp_ufs_init(struct phy *phy)
+> +static int qmp_ufs_power_on(struct phy *phy)
+>  {
+>  	struct qmp_ufs *qmp = phy_get_drvdata(phy);
+>  	const struct qmp_phy_cfg *cfg = qmp->cfg;
+> @@ -1825,10 +1825,6 @@ static int qmp_ufs_init(struct phy *phy)
+>  				return ret;
+>  			}
+>  		}
+> -
+> -		ret = reset_control_assert(qmp->ufs_reset);
+> -		if (ret)
+> -			return ret;
+>  	}
+>  
+>  	ret = qmp_ufs_com_init(qmp);
+> @@ -1847,6 +1843,10 @@ static int qmp_ufs_phy_calibrate(struct phy *phy)
+>  	unsigned int val;
+>  	int ret;
+>  
+> +	ret = reset_control_assert(qmp->ufs_reset);
+> +	if (ret)
+> +		return ret;
+> +
+>  	qmp_ufs_init_registers(qmp, cfg);
+>  
+>  	ret = reset_control_deassert(qmp->ufs_reset);
+> @@ -1899,21 +1899,6 @@ static int qmp_ufs_exit(struct phy *phy)
+>  	return 0;
+>  }
+>  
+> -static int qmp_ufs_power_on(struct phy *phy)
+> -{
+> -	int ret;
+> -
+> -	ret = qmp_ufs_init(phy);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = qmp_ufs_phy_calibrate(phy);
+> -	if (ret)
+> -		qmp_ufs_exit(phy);
+> -
+> -	return ret;
+> -}
+> -
+>  static int qmp_ufs_disable(struct phy *phy)
+>  {
+>  	int ret;
+> @@ -1943,6 +1928,7 @@ static int qmp_ufs_set_mode(struct phy *phy, enum phy_mode mode, int submode)
+>  static const struct phy_ops qcom_qmp_ufs_phy_ops = {
+>  	.power_on	= qmp_ufs_power_on,
+>  	.power_off	= qmp_ufs_disable,
+> +	.calibrate	= qmp_ufs_phy_calibrate,
+>  	.set_mode	= qmp_ufs_set_mode,
+>  	.owner		= THIS_MODULE,
+>  };
+> -- 
+> 2.48.1
+> 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0ef84a7bdf5301d4cbec@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 3102 at kernel/bpf/verifier.c:20723 opt_subreg_zext_lo32_rnd_hi32 kernel/bpf/verifier.c:20723 [inline]
-WARNING: CPU: 1 PID: 3102 at kernel/bpf/verifier.c:20723 bpf_check+0x2d58/0x2ed4 kernel/bpf/verifier.c:24078
-Modules linked in:
-Kernel panic - not syncing: kernel: panic_on_warn set ...
-CPU: 1 UID: 0 PID: 3102 Comm: syz-executor107 Not tainted 6.15.0-rc6-syzkaller #0 PREEMPT 
-Hardware name: ARM-Versatile Express
-Call trace: 
-[<802019e4>] (dump_backtrace) from [<80201ae0>] (show_stack+0x18/0x1c arch/arm/kernel/traps.c:257)
- r7:00000000 r6:828227fc r5:00000000 r4:82257e84
-[<80201ac8>] (show_stack) from [<8021ff7c>] (__dump_stack lib/dump_stack.c:94 [inline])
-[<80201ac8>] (show_stack) from [<8021ff7c>] (dump_stack_lvl+0x54/0x7c lib/dump_stack.c:120)
-[<8021ff28>] (dump_stack_lvl) from [<8021ffbc>] (dump_stack+0x18/0x1c lib/dump_stack.c:129)
- r5:00000000 r4:82a70d4c
-[<8021ffa4>] (dump_stack) from [<802025f8>] (panic+0x120/0x374 kernel/panic.c:354)
-[<802024d8>] (panic) from [<802619e8>] (check_panic_on_warn kernel/panic.c:243 [inline])
-[<802024d8>] (panic) from [<802619e8>] (get_taint+0x0/0x1c kernel/panic.c:238)
- r3:8280c604 r2:00000001 r1:8223ea4c r0:8224654c
- r7:804020d0
-[<80261974>] (check_panic_on_warn) from [<80261b4c>] (__warn+0x80/0x188 kernel/panic.c:749)
-[<80261acc>] (__warn) from [<80261dcc>] (warn_slowpath_fmt+0x178/0x1f4 kernel/panic.c:776)
- r8:00000009 r7:8225e3a4 r6:df989c44 r5:844f0000 r4:00000000
-[<80261c58>] (warn_slowpath_fmt) from [<804020d0>] (opt_subreg_zext_lo32_rnd_hi32 kernel/bpf/verifier.c:20723 [inline])
-[<80261c58>] (warn_slowpath_fmt) from [<804020d0>] (bpf_check+0x2d58/0x2ed4 kernel/bpf/verifier.c:24078)
- r10:00000002 r9:84850000 r8:00000004 r7:00000002 r6:00000003 r5:000000c3
- r4:ffffffff
-[<803ff378>] (bpf_check) from [<803d66d0>] (bpf_prog_load+0x68c/0xc20 kernel/bpf/syscall.c:2971)
- r10:844f0000 r9:842a6f30 r8:00000048 r7:df989d90 r6:00000000 r5:00000000
- r4:df989ec0
-[<803d6044>] (bpf_prog_load) from [<803d7e24>] (__sys_bpf+0x578/0x1fd0 kernel/bpf/syscall.c:5834)
- r10:b5403587 r9:2000e000 r8:00000000 r7:00000000 r6:00000005 r5:df989e90
- r4:00000048
-[<803d78ac>] (__sys_bpf) from [<803d9e1c>] (__do_sys_bpf kernel/bpf/syscall.c:5941 [inline])
-[<803d78ac>] (__sys_bpf) from [<803d9e1c>] (sys_bpf+0x2c/0x48 kernel/bpf/syscall.c:5939)
- r10:00000182 r9:844f0000 r8:8020029c r7:00000182 r6:0008e048 r5:00000000
- r4:ffffffff
-[<803d9df0>] (sys_bpf) from [<80200060>] (ret_fast_syscall+0x0/0x1c arch/arm/mm/proc-v7.S:67)
-Exception stack(0xdf989fa8 to 0xdf989ff0)
-9fa0:                   ffffffff 00000000 00000005 2000e000 00000048 00000000
-9fc0: ffffffff 00000000 0008e048 00000182 00000002 0000fd90 000f4240 00000000
-9fe0: 7ebc8c70 7ebc8c60 000106bc 0002e810
-Rebooting in 86400 seconds..
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+மணிவண்ணன் சதாசிவம்
 
