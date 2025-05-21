@@ -1,367 +1,207 @@
-Return-Path: <linux-kernel+bounces-656675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E14ABE977
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 04:01:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E679AABE984
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 04:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0055A8A3EA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 02:00:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6BA03A8BFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 02:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9596322A1F1;
-	Wed, 21 May 2025 02:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC7B22AE68;
+	Wed, 21 May 2025 02:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z1/T37bv"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="I1kXmwZe";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="bttiNgdh"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969B422A4C2
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 02:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747792864; cv=none; b=V6fsU5CZAPzw2y0axdiE3rYOnbz8VzayY5ndYqf74WXLECwwFX+eYSiAt1u5PhhBGHi7spgQhZDwECPMPJwRldMRgV+W2DRMj1QOx1LrzCRkRMDK81nWdEzeogRrADql9bwLBtgBMWAInJiZQT7iHgSAFFUBGcatnVnCHjgbFO0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747792864; c=relaxed/simple;
-	bh=hzslMfLtFyZpt+0gjk0h5LXgMS30Bpsn+OmL1bwl1AI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pB1dZlURsdBs+TR0Fd1t7q/j7i4lMFiKkgv032eHevr0AJ/wd5965mfvPq9al3O0tRMAAQjoK+QmSWWtXoRMxCA0LOOlJ4YkE+ih7dWGaddMbsn3bs12PLNyHKjf2uxwDnXPp0lXWXKSj8YDoT2ogKe2ZaT2YAQmui+lI8BLkTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z1/T37bv; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf3192d8bso214615e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 19:01:02 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02F8223DE7;
+	Wed, 21 May 2025 02:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747793142; cv=fail; b=iVNmsA8M0TBBZlM0bULQy4/CkuMcIXsKJGGpN3LprlBHMA8PcyJisbqHzaRZrI1SrSHa4xC3wIBtEQ6XLFFAQfUiCxadulE7efW7P5IprkyeJ/k1mWM+5mSg1Obyxii7igb8hUSx/T0v7ShajmJMI4ypwgcb4ButdPf69rAgu1s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747793142; c=relaxed/simple;
+	bh=x/13B6Tu/+1lDbnVXFwLXvIaukoO3IRxhgN0PRX7qCc=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=sO8kB+hpDEqFPPTuxPyLsrwRLqdQO7Ew6+E8rehk7xCwDS4f+QDvFF84T0EML1c5JTxaHS8vYU1uX+u6TAdl/dyV2hA8mJGjXVCInCHUR6Szx19gokMi1luMzZbrKJ34W+9/RrzQ/wnz9Q76iWAye5kcEDhIVR7QYJCuGOBZ89Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=I1kXmwZe; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=bttiNgdh; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L1aFvl010540;
+	Wed, 21 May 2025 02:05:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=CE4o0BthoOa2g32WJO
+	kvCkLKkqSi4Rnn595sh5z6Y8Y=; b=I1kXmwZeoRon4oGi4XPU9yOihWzfZ73dk/
+	l+BHWJKQY8QiMJZjb10WHaWiuRBeWly9WWtkbXdfF97F3tr09VU0oDQngT24qj+v
+	95af0hOBefvYVpKaWdqJq/bWblSV4yq+iQgfhujOAm4X9zMvikDTweLxKFYHkV9k
+	1kd+Wk+rC/Y0QZ/IdrZeJeG31Ew0QbSQu6QcYo//5ZOc40gd1b+WwRqsZjQW2wo1
+	jcRlJGho/r2+Fa2dG+NpVFwZjQbJYZwPyfGl4kTp4H7dn11YxQ6QW+XbJW1PJGuA
+	NqUgVizEbyN7X2pCbfsDB4nHhUuPrNhcLrGnhPpzPlXl+DQVR0QQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46s53tg31m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 May 2025 02:05:24 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54L23nZ3040718;
+	Wed, 21 May 2025 02:05:24 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12on2047.outbound.protection.outlook.com [40.107.237.47])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46rwet91ku-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 May 2025 02:05:24 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xnaqg3cw103tSZsYbiYLV1c7KM6+BpXFMjTps2ecurjy4ZImOlikjaXnvRWabbhvI/4QXjNU42S0HwvDf0T4QeHl5TCsSFExCZSHvxDJwUwlfv56i9+vstC5E15T+aBL+vQLhoifiTgF3ShKY1g2EfO9XQU3/qLW/ClKP5mpliJgkYERfxFtgLM+EaqXMxANOI7R4d6GPqo4+n8CNqjG9IPqJDqa0c+sGkZCP3QVqFNlMse/eDjVAC8pVXcnXcIuHEsEd2Z41QX6IQHYRq2kiMTu8iEMunH8G/Zt1hv0MIluetnT91ZOmI8BrK6inQqfeU/ZLxuhW5X6zoHvhRdhBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CE4o0BthoOa2g32WJOkvCkLKkqSi4Rnn595sh5z6Y8Y=;
+ b=nMEA2ELXyuVjBEoG+ns87f4DFEwowom4gTXRBxaDFIalNFde/8jC+qD9Z6Tr7jUWCohMTpIL7VA0c8TcY74pfvjgJeY5Mpdzx0Os1gFMltUqLr8Y8eAZpIkvEEv96xK3ahDTvzh0BJElGMA7DjVtEI3s9NP8TJ0L6CtV54aKFT0Lld6JVbXyzAV71H6VUMkqY1TUNuZntv7taAE1qNFSAkMFUYvxdZrMpk78fEgFZYpgUDgxb1BOr92tNJvgjy1s0Kq+0f7tzNvlJiQ7kxfa0ihIjdXT/og1AZh8fKjdu+cTpYpkozyg1f1+ABXGDrfsZ3RK25izLGLs2XmpuV9JAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747792861; x=1748397661; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ljM9MFjV46ZMOOlPbOCsrBTlpQns4bVhtSel8RxQlJw=;
-        b=Z1/T37bv6nN0Qrp53WcHTN2h1dh5GfKcC1j2Czg7pw0lb2Qylwu9NhZtS1NzdY0cpb
-         OwYoxP5LycxgHRxm/YhgtZodBdcuX9p4Q74Ev83iq//ADqjmGeuIjGwI8cwp6v5Xn29b
-         bcXaI+cL6vZ3ZxMJQcvjhDJjaELW6+McTbwsgcZ6O1zSY6lQP2HSEXaQmDZlSWC1OEl0
-         x4MFnCS2R4AwK7yny8hzeGuX3OJl39YfrZ5Mo66R9gX4UedMK5h1VndnG2RZmAS19Lmp
-         4FuqU38UTz0KY0xF+az/RKho7sgU7xS1US9WiGcDjRScNjueEgGi34h/P0f8dQSu6idc
-         6jgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747792861; x=1748397661;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ljM9MFjV46ZMOOlPbOCsrBTlpQns4bVhtSel8RxQlJw=;
-        b=eFxAPVYxLNSL45z63UCfHSasQVWTR7drhPHOrRTMh5q2rqpEmftiIAneLIkyjAC14G
-         5Gs/MQ4IlshIxdgdyLJjCxeqk4n/CPPDNZOqV1UUjiYsORKm6yNWFc1VQq2mAAnflXAB
-         Q/WUKu4k4umznoH46wPZG6kvq7Gcr/OQTTKeHz2oS6DS3PvI/xsoTn5vD3M2SM6Fz88b
-         w7TTaHGIXWsxB5qZkdVItILyGvgebHK7GMXL0dsFofhkAA0GK0riaGYcwVyKy9lBYFOC
-         5MxiUJ0hoa1XeV9awDGZGbSinGTNm6gcw1DD3jJ+Dw5R8d+9BR6T+D2Um05AOvUfAc/+
-         JfbA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTzTEwHjhWngV00VSBQd4VgLn2MCMNZmRVkNW8aZquJ7mb6Qqk21Trv3xCNM48TNJ8BnsK5FvVXPMeHf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8l5knj9+n3XxBuIxAVTEpS1NTGxC0TRo4BoM3pG1AEbGZWt9T
-	GV2leAvBSq5wsHoDH0cuxX4LIKUhshNMQAvsDWuWTbwVgNgwTpeyf7TQvOIR3zcBaXRsk8fjn5m
-	KYj8fBWNLhLblAEvDC6afgmterAHMkINM0PRNhMoI
-X-Gm-Gg: ASbGncs3HWDuI+jmfcISjH5YZ82hRKsC0/J/KXpWFVv+7T4jgjq04Us1TPmsZ0O6T6e
-	znUZT9o+hn2yR1RGKP6jnGQR3akul9o3CEiqxVqzY/vHEMuIVE0d/hhDgPPYwZolghQe31GyyNu
-	cVbHnMgQEha/5btaC3rKroVxue3qgV/GB2mDlVTmxc69Bik5McJ0tx
-X-Google-Smtp-Source: AGHT+IEOHcOov2/pSfQJlxmzfo/j5bxNT/KSdVuGZ+JO7ohIG2u0emG4Wmu+Pqb7f9nl4M3gSpf5HPUdsVJMnqqY0MU=
-X-Received: by 2002:a05:600c:8289:b0:43b:bfe9:8b43 with SMTP id
- 5b1f17b1804b1-443ae0e958amr6941745e9.4.1747792860664; Tue, 20 May 2025
- 19:01:00 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CE4o0BthoOa2g32WJOkvCkLKkqSi4Rnn595sh5z6Y8Y=;
+ b=bttiNgdhxhm9wPeuxnXTLRK8Alg3Ln5nPzAJovFHO+15+h2QpUDcoRSoRr5ern5H6AyZoxRkvFsJHGMt0DW+auM8v7y4mLCGIJpijLqkgTHzuZ/xMiy2ryVcsEAQ3sBDbyVX4ytH6mQiDdxQ8eeagk+AUHunN/xlXOe9HssAT2Y=
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
+ by IA3PR10MB8347.namprd10.prod.outlook.com (2603:10b6:208:57d::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.28; Wed, 21 May
+ 2025 02:05:22 +0000
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf%6]) with mapi id 15.20.8746.030; Wed, 21 May 2025
+ 02:05:22 +0000
+To: Yihang Li <liyihang9@huawei.com>
+Cc: <martin.petersen@oracle.com>, <James.Bottomley@HansenPartnership.com>,
+        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <liuyonglong@huawei.com>,
+        <prime.zeng@hisilicon.com>
+Subject: Re: [PATCH] scsi: hisi_sas: Fix warning detected by sparse
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20250515013504.3234016-1-liyihang9@huawei.com> (Yihang Li's
+	message of "Thu, 15 May 2025 09:35:04 +0800")
+Organization: Oracle Corporation
+Message-ID: <yq1zff6k9ba.fsf@ca-mkp.ca.oracle.com>
+References: <20250515013504.3234016-1-liyihang9@huawei.com>
+Date: Tue, 20 May 2025 22:05:19 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR05CA0186.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::11) To CH0PR10MB5338.namprd10.prod.outlook.com
+ (2603:10b6:610:cb::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250513092803.2096-1-tao.wangtao@honor.com> <fdc8f0a2-5b2f-4898-8090-0d7b888c15d8@amd.com>
- <5b68b2a50d48444b93d97f5d342f37c8@honor.com> <ef978301-6a63-451d-9ae6-171968b26a55@amd.com>
- <9f732ac8b90e4e819e0a6a5511ac3f6d@honor.com> <50092362-4644-4e47-9c63-fc82ba24e516@amd.com>
- <2755aae2f1674b239569bf1acad765dc@honor.com> <2487bad4-81d6-4ea2-96a7-a6ac741c9d9c@amd.com>
- <a3f57102bc6e4588bc7659485feadbc1@honor.com> <5c11b50c-2e36-4fd5-943c-086f55adffa8@amd.com>
- <CABdmKX30c_5N34FYMre6Qx5LLLWicsi_XdUdu0QtsOmQ=RcYxQ@mail.gmail.com>
- <375f6aac8c2f4b84814251c5025ae6eb@honor.com> <38aa6cf19ce245578264aaa9062aa6dd@honor.com>
-In-Reply-To: <38aa6cf19ce245578264aaa9062aa6dd@honor.com>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Tue, 20 May 2025 19:00:48 -0700
-X-Gm-Features: AX0GCFvF9TZhpylv_JsP4r1YP9UqnDVjU8qQ_qNh30hYmp66TjxqNc3-mHZgPD0
-Message-ID: <CABdmKX0nAYDdgq-PHv0HxucfYQzvvTAJjVCo7nQ0UtjwcF02aQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dmabuf/heaps: implement DMA_BUF_IOCTL_RW_FILE for system_heap
-To: wangtao <tao.wangtao@honor.com>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>, 
-	"benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>, 
-	"Brian.Starkey@arm.com" <Brian.Starkey@arm.com>, "jstultz@google.com" <jstultz@google.com>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"wangbintian(BintianWang)" <bintian.wang@honor.com>, yipengxiang <yipengxiang@honor.com>, 
-	liulu 00013167 <liulu.liu@honor.com>, hanfeng 00012985 <feng.han@honor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, May 19, 2025 at 9:06=E2=80=AFPM wangtao <tao.wangtao@honor.com> wro=
-te:
->
->
->
-> > -----Original Message-----
-> > From: wangtao
-> > Sent: Monday, May 19, 2025 8:04 PM
-> > To: 'T.J. Mercier' <tjmercier@google.com>; Christian K=C3=B6nig
-> > <christian.koenig@amd.com>
-> > Cc: sumit.semwal@linaro.org; benjamin.gaignard@collabora.com;
-> > Brian.Starkey@arm.com; jstultz@google.com; linux-media@vger.kernel.org;
-> > dri-devel@lists.freedesktop.org; linaro-mm-sig@lists.linaro.org; linux-
-> > kernel@vger.kernel.org; wangbintian(BintianWang)
-> > <bintian.wang@honor.com>; yipengxiang <yipengxiang@honor.com>; liulu
-> > 00013167 <liulu.liu@honor.com>; hanfeng 00012985 <feng.han@honor.com>
-> > Subject: RE: [PATCH 2/2] dmabuf/heaps: implement
-> > DMA_BUF_IOCTL_RW_FILE for system_heap
-> >
-> >
-> >
-> > > -----Original Message-----
-> > > From: T.J. Mercier <tjmercier@google.com>
-> > > Sent: Saturday, May 17, 2025 2:37 AM
-> > > To: Christian K=C3=B6nig <christian.koenig@amd.com>
-> > > Cc: wangtao <tao.wangtao@honor.com>; sumit.semwal@linaro.org;
-> > > benjamin.gaignard@collabora.com; Brian.Starkey@arm.com;
-> > > jstultz@google.com; linux-media@vger.kernel.org; dri-
-> > > devel@lists.freedesktop.org; linaro-mm-sig@lists.linaro.org; linux-
-> > > kernel@vger.kernel.org; wangbintian(BintianWang)
-> > > <bintian.wang@honor.com>; yipengxiang <yipengxiang@honor.com>; liulu
-> > > 00013167 <liulu.liu@honor.com>; hanfeng 00012985
-> > <feng.han@honor.com>
-> > > Subject: Re: [PATCH 2/2] dmabuf/heaps: implement
-> > DMA_BUF_IOCTL_RW_FILE
-> > > for system_heap
-> > >
-> > > On Fri, May 16, 2025 at 1:36=E2=80=AFAM Christian K=C3=B6nig
-> > > <christian.koenig@amd.com>
-> > > wrote:
-> > > >
-> > > > On 5/16/25 09:40, wangtao wrote:
-> > > > >
-> > > > >
-> > > > >> -----Original Message-----
-> > > > >> From: Christian K=C3=B6nig <christian.koenig@amd.com>
-> > > > >> Sent: Thursday, May 15, 2025 10:26 PM
-> > > > >> To: wangtao <tao.wangtao@honor.com>; sumit.semwal@linaro.org;
-> > > > >> benjamin.gaignard@collabora.com; Brian.Starkey@arm.com;
-> > > > >> jstultz@google.com; tjmercier@google.com
-> > > > >> Cc: linux-media@vger.kernel.org; dri-devel@lists.freedesktop.org=
-;
-> > > > >> linaro- mm-sig@lists.linaro.org; linux-kernel@vger.kernel.org;
-> > > > >> wangbintian(BintianWang) <bintian.wang@honor.com>; yipengxiang
-> > > > >> <yipengxiang@honor.com>; liulu 00013167 <liulu.liu@honor.com>;
-> > > > >> hanfeng
-> > > > >> 00012985 <feng.han@honor.com>
-> > > > >> Subject: Re: [PATCH 2/2] dmabuf/heaps: implement
-> > > > >> DMA_BUF_IOCTL_RW_FILE for system_heap
-> > > > >>
-> > > > >> On 5/15/25 16:03, wangtao wrote:
-> > > > >>> [wangtao] My Test Configuration (CPU 1GHz, 5-test average):
-> > > > >>> Allocation: 32x32MB buffer creation
-> > > > >>> - dmabuf 53ms vs. udmabuf 694ms (10X slower)
-> > > > >>> - Note: shmem shows excessive allocation time
-> > > > >>
-> > > > >> Yeah, that is something already noted by others as well. But tha=
-t
-> > > > >> is orthogonal.
-> > > > >>
-> > > > >>>
-> > > > >>> Read 1024MB File:
-> > > > >>> - dmabuf direct 326ms vs. udmabuf direct 461ms (40% slower)
-> > > > >>> - Note: pin_user_pages_fast consumes majority CPU cycles
-> > > > >>>
-> > > > >>> Key function call timing: See details below.
-> > > > >>
-> > > > >> Those aren't valid, you are comparing different functionalities =
-here.
-> > > > >>
-> > > > >> Please try using udmabuf with sendfile() as confirmed to be
-> > > > >> working by
-> > > T.J.
-> > > > > [wangtao] Using buffer IO with dmabuf file read/write requires on=
-e
-> > > memory copy.
-> > > > > Direct IO removes this copy to enable zero-copy. The sendfile
-> > > > > system call reduces memory copies from two (read/write) to one.
-> > > > > However, with udmabuf, sendfile still keeps at least one copy, fa=
-iling
-> > zero-copy.
-> > > >
-> > > >
-> > > > Then please work on fixing this.
-> > > >
-> > > > Regards,
-> > > > Christian.
-> > > >
-> > > >
-> > > > >
-> > > > > If udmabuf sendfile uses buffer IO (file page cache), read latenc=
-y
-> > > > > matches dmabuf buffer read, but allocation time is much longer.
-> > > > > With Direct IO, the default 16-page pipe size makes it slower tha=
-n
-> > > > > buffer
-> > > IO.
-> > > > >
-> > > > > Test data shows:
-> > > > > udmabuf direct read is much faster than udmabuf sendfile.
-> > > > > dmabuf direct read outperforms udmabuf direct read by a large mar=
-gin.
-> > > > >
-> > > > > Issue: After udmabuf is mapped via map_dma_buf, apps using memfd
-> > > > > or udmabuf for Direct IO might cause errors, but there are no
-> > > > > safeguards to prevent this.
-> > > > >
-> > > > > Allocate 32x32MB buffer and read 1024 MB file Test:
-> > > > > Metric                 | alloc (ms) | read (ms) | total (ms)
-> > > > > -----------------------|------------|-----------|-----------
-> > > > > udmabuf buffer read    | 539        | 2017      | 2555
-> > > > > udmabuf direct read    | 522        | 658       | 1179
-> > >
-> > > I can't reproduce the part where udmabuf direct reads are faster than
-> > > buffered reads. That's the opposite of what I'd expect. Something
-> > > seems wrong with those buffered reads.
-> > >
-> > > > > udmabuf buffer sendfile| 505        | 1040      | 1546
-> > > > > udmabuf direct sendfile| 510        | 2269      | 2780
-> > >
-> > > I can reproduce the 3.5x slower udambuf direct sendfile compared to
-> > > udmabuf direct read. It's a pretty disappointing result, so it seems
-> > > like something could be improved there.
-> > >
-> > > 1G from ext4 on 6.12.17 | read/sendfile (ms)
-> > > ------------------------|-------------------
-> > > udmabuf buffer read     | 351
-> > > udmabuf direct read     | 540
-> > > udmabuf buffer sendfile | 255
-> > > udmabuf direct sendfile | 1990
-> > >
-> > [wangtao] By the way, did you clear the file cache during testing?
-> > Looking at your data again, read and sendfile buffers are faster than D=
-irect
-> > I/O, which suggests the file cache wasn=E2=80=99t cleared. If you didn=
-=E2=80=99t clear the file
-> > cache, the test results are unfair and unreliable for reference. On emb=
-edded
-> > devices, it=E2=80=99s nearly impossible to maintain stable caching for =
-multi-GB files. If
-> > such files could be cached, we might as well cache dmabufs directly to =
-save
-> > time on creating dmabufs and reading file data.
-> > You can call posix_fadvise(file_fd, 0, len, POSIX_FADV_DONTNEED) after
-> > opening the file or before closing it to clear the file cache, ensuring=
- actual file
-> > I/O operations are tested.
-> >
-> [wangtao] Please confirm if cache clearing was performed during testing.
-> I reduced the test scope from 3GB to 1GB. While results without
-> cache clearing show general alignment, udmabuf buffer read remains
-> slower than direct read. Comparative data:
->
-> Your test reading 1GB(ext4 on 6.12.17:
-> Method                | read/sendfile (ms) | read vs. (%)
-> ----------------------------------------------------------
-> udmabuf buffer read   | 351                | 138%
-> udmabuf direct read   | 540                | 212%
-> udmabuf buffer sendfile | 255              | 100%
-> udmabuf direct sendfile | 1990             | 780%
->
-> My 3.5GHz tests (f2fs):
-> Without cache clearing:
-> Method                | alloc | read  | vs. (%)
-> -----------------------------------------------
-> udmabuf buffer read   | 140   | 386   | 310%
-> udmabuf direct read   | 151   | 326   | 262%
-> udmabuf buffer sendfile | 136 | 124   | 100%
-> udmabuf direct sendfile | 132 | 892   | 717%
-> dmabuf buffer read    | 23    | 154   | 124%
-> patch direct read     | 29    | 271   | 218%
->
-> With cache clearing:
-> Method                | alloc | read  | vs. (%)
-> -----------------------------------------------
-> udmabuf buffer read   | 135   | 546   | 180%
-> udmabuf direct read   | 159   | 300   | 99%
-> udmabuf buffer sendfile | 134 | 303   | 100%
-> udmabuf direct sendfile | 141 | 912   | 301%
-> dmabuf buffer read    | 22    | 362   | 119%
-> patch direct read     | 29    | 265   | 87%
->
-> Results without cache clearing aren't representative for embedded
-> mobile devices. Notably, on low-power CPUs @1GHz, sendfile latency
-> without cache clearing exceeds dmabuf direct I/O read time.
->
-> Without cache clearing:
-> Method                | alloc | read  | vs. (%)
-> -----------------------------------------------
-> udmabuf buffer read   | 546   | 1745  | 442%
-> udmabuf direct read   | 511   | 704   | 178%
-> udmabuf buffer sendfile | 496 | 395   | 100%
-> udmabuf direct sendfile | 498 | 2332  | 591%
-> dmabuf buffer read    | 43    | 453   | 115%
-> my patch direct read  | 49    | 310   | 79%
->
-> With cache clearing:
-> Method                | alloc | read  | vs. (%)
-> -----------------------------------------------
-> udmabuf buffer read   | 552   | 2067  | 198%
-> udmabuf direct read   | 540   | 627   | 60%
-> udmabuf buffer sendfile | 497 | 1045  | 100%
-> udmabuf direct sendfile | 527 | 2330  | 223%
-> dmabuf buffer read    | 40    | 1111  | 106%
-> my patch direct read  | 44    | 310   | 30%
->
-> Reducing CPU overhead/power consumption is critical for mobile devices.
-> We need simpler and more efficient dmabuf direct I/O support.
->
-> As Christian evaluated sendfile performance based on your data, could
-> you confirm whether the cache was cleared? If not, please share the
-> post-cache-clearing test data. Thank you for your support.
-
-Yes sorry, I was out yesterday riding motorcycles. I did not clear the
-cache for the buffered reads, I didn't realize you had. The IO plus
-the copy certainly explains the difference.
-
-Your point about the unlikelihood of any of that data being in the
-cache also makes sense.
-
-I'm not sure it changes anything about the ioctl approach though.
-Another way to do this would be to move the (optional) support for
-direct IO into the exporter via dma_buf_fops and dma_buf_ops. Then
-normal read() syscalls would just work for buffers that support them.
-I know that's more complicated, but at least it doesn't require
-inventing new uapi to do it.
-
-1G from ext4 on 6.12.20 | read/sendfile (ms) w/ 3 > drop_caches
-------------------------|-------------------
-udmabuf buffer read     | 1210
-udmabuf direct read     | 671
-udmabuf buffer sendfile | 1096
-udmabuf direct sendfile | 2340
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|IA3PR10MB8347:EE_
+X-MS-Office365-Filtering-Correlation-Id: 10f1790e-6440-4ec9-d3b0-08dd980bf18f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NMjCq+ZYxtCFBWrvFonwSj6mqD4bvfN03NpWZAg5yNPXnhszIwxvJD+yfexF?=
+ =?us-ascii?Q?qLLsjTboO79g/rgUAzUCDbvw5jHBb4dm6SCJic1P/uB2hMbMSLmTF1a1jn+E?=
+ =?us-ascii?Q?yhSiOmnopydGn3eSo9NImpjtZp0+9APA4NP1RJCtbaneR0KMgLm1FuzLaqso?=
+ =?us-ascii?Q?o+7wnRCawa0fp+R7/rEkHVqHQ3Dt6pnjimHZmP9M73EREWVSrVkN/chyi6J/?=
+ =?us-ascii?Q?TWyL8Vcu9+64TZKjgRCWD1y4wUYGc0fYPL+ZT2L9cHWlQyLYzUraHgY5UMZr?=
+ =?us-ascii?Q?0Iyj5UApBiJAIOsFnfEgZDHJOUF8lLZiIVCdo9aFsMmDZpQGt8eHaiuPuohn?=
+ =?us-ascii?Q?4zPo81UvAEEEda0b7MJZUEiYWFfBbk1ekpGX5NIlitER+9W8vTDF1h0p91pl?=
+ =?us-ascii?Q?El2R+vacqJVEBvYweOUX8IZ1Brwm03yV8iI7SqVxVSTQer3GSdUzx7q7Hi1K?=
+ =?us-ascii?Q?IQdMJgSwZhMyunu2oX+RORiGJr2xgElU+xyCIFKmZwUnp8myGSC2ahkeaySb?=
+ =?us-ascii?Q?Ia+BmV0pEScw+GEsAJwWMvF/1+DF/WJMqem+o/8200IK2ZE/IcPkwgSqoysp?=
+ =?us-ascii?Q?uVGQggOpfCMaZKrPm+pFsoDgsaG8I3VPM8wfGYiVls7PlJkWMR5dZFMB7qNJ?=
+ =?us-ascii?Q?POe/9kn9VV9QxMhsikJlMw2yWc2+wLdBtkKUcriVU2D+7wjcyEI3nsoxAGCH?=
+ =?us-ascii?Q?w25PMIGv17AGDzc7MrBdi6Fd6FLHPb5SlYqGGYlVNHXx5eAUU1iaO/es7+Tx?=
+ =?us-ascii?Q?IAuGoKbXWqHyicLcKCcNQZ52kSfeQ8ZitdWuT6L5hfqrTYjnILBpAze++BE2?=
+ =?us-ascii?Q?Iw6GyWB4yuSb2BykDZdptoACufycoxIhWcaS223oAvDueHrF6r/0/RV+2fRB?=
+ =?us-ascii?Q?cBYDhGh+94qlyQHOhi85H2fHkrQNBUWymaajqa9cWrzLYGzac3VcA7eS1k4y?=
+ =?us-ascii?Q?HuJuAwbXYnV9leziTHC5QWVshqHESZAV4+8/th681+kLTkpNwtetoaMzzDUw?=
+ =?us-ascii?Q?SHuWMIOhCG6cDKEBJjcG7QctSeR6PcLuFTuUGq+arYRkzN4uhrxJxpT6zeNo?=
+ =?us-ascii?Q?hb8Xe8dMKyqvVmZ66MZ6B7gsY4MmMV8UhFhfTzy/WG2ET/Gbe5sIYDhg4acp?=
+ =?us-ascii?Q?glveLosurXZm967meHH1V3rAXz4EL7KMzf61+39kQNPvHAF53aFbFeFkfwMK?=
+ =?us-ascii?Q?D/CdtIIH4wjEclPWjRGgFzA+R85shJKSPxkRZ54czvSvuaJPx/XRfWeh3+yl?=
+ =?us-ascii?Q?VZdqWYVW/DG6t6HKmP2EIuavRqwEz/BJtamNj3w76jk68viJ/Gh+Rx8MkrkC?=
+ =?us-ascii?Q?3i8QpGyBG1DjG4MHf50i+2+Lk5UPFqRaauFwovO8W+iHPw06kl04jExosRxU?=
+ =?us-ascii?Q?d0ECLT0g5l2fG8OvV88ulzB3wFbCXg6Gyf7v8cV/yKz6KrECOC43AArOsOPo?=
+ =?us-ascii?Q?QnTH8WTW7yU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hHzKFQ3XpP7+eG7kM3ZNf5s/7waPwdTW9tlGqlQTQe75uiA56mUEvHDgq+9c?=
+ =?us-ascii?Q?+HfbnziKKP0lxINMUieFis5kGG0vy6CrUKs+scb71W9gR5wITv6iC+vZpbWA?=
+ =?us-ascii?Q?kCJ8AJYX6EntTdxaLlEPiOJIfT1Cij5Qi27Iw1ssU8TRNkJMPIHnGU6X7RrI?=
+ =?us-ascii?Q?8pAnTZ8ET1gtbjBJlg3pgKSxyUR+o/Q4QuFUCBWNDstaJsV89ddj4H4TL0Zi?=
+ =?us-ascii?Q?HzUUWrLqRNjDWHTzitr6WijGSSkA5VQd+XBJQxE0KQGJMlO8h1WTOOCqBgzO?=
+ =?us-ascii?Q?K5sIJYPvP8i1QAjlnjnI/X5c1sM6JONRRBp0qVJPo8/gp5NPposXhsTaLY7l?=
+ =?us-ascii?Q?s9XFlkxNrlAjYSM00XwT968zTH1iZL/zGqYnqYi/nKTgn8UfRpOduee8+Evm?=
+ =?us-ascii?Q?zCn2gyaH/MPEeywqSXMCb9sJfJttl0P3jjZJyjJuCdFP5IsKs6XQ0yQwYVbO?=
+ =?us-ascii?Q?DSJ13sab1m15nbicZdrylmzIMfDuRFnq7tcQPOYLI8tGItCi3IrY2UspiNH2?=
+ =?us-ascii?Q?wAOr02MgiAMOnY0G8wDEbTSNPhZVcVg5JUuKlIzJfSxbB5JbEQOj6G7vjT22?=
+ =?us-ascii?Q?X+HOVSs792//5ge0XTIlDirnd8/Tw3G6/4mzS0SsDXnCSKAcszjMORY04OjF?=
+ =?us-ascii?Q?eG9qlBgmaRozPBNlR0b2V4vipzlhWD5K3fYpQQsESQ1tLqjtQ8z5lc77X+0F?=
+ =?us-ascii?Q?DAaE1FhH+CZdJGStX8uK2ZxXsmgGULOe/kuXOBIGNDLv1ixlZxNyafkvCVrj?=
+ =?us-ascii?Q?kOBfP8ZLvcL2OMFNzEj/qLE85FAQg7z0DXkcYboxb1MFLN+/BuNMRWeJ1353?=
+ =?us-ascii?Q?blBgOG9zRdEU/cqImkxMoTU4vdaSK4McD5BLHNaSK7sE6cg5/gvkaC6/Fl4s?=
+ =?us-ascii?Q?4LT8zD4otbsZlWhsnmLXZata3w0HVmDC8XtKA9OGaOVT46G/yP5aRLH4NnG3?=
+ =?us-ascii?Q?IX9+tZrYYfX8KOsxNTZ9EV4pDZgi2e00aX1Wya7cs+++Fb/oBrMop6L4j9mb?=
+ =?us-ascii?Q?yNkH+fWjQUa9cyfJefVQ1y6bIEDV1Hp/ydr1Zzuze8aCXunWHdKITELFXgfe?=
+ =?us-ascii?Q?ZkVoHEf5u/rmr8N/bhwhwKQnWeftbAKbv9y8KZ1rebaby5iBxIyCJutzN/Mu?=
+ =?us-ascii?Q?hdusTV+TQ6jITvxoAlpm1eP9h0Bl5vfKvinDAMGZ1yI3lg8TICxAIlKs7QXr?=
+ =?us-ascii?Q?xA/YEPIvFYWqfcTn2kCzB7e0FJY4xlDCdpg/44zUGKRJuVKSMHW/XgAB7B6q?=
+ =?us-ascii?Q?Sb3CLQ1mXINXNY152FMhlrAag75aMvwajxliaUpAplfMKbrLnx1p974Xi89o?=
+ =?us-ascii?Q?t4wnx3vc8y/ory4x9Mi5DME3dr5cRBQEtCx/zhVzmmyV18eEUKjQK7L99EnS?=
+ =?us-ascii?Q?sQnJi0ZRSBabFAZuA1GP7zyvfpVTn6XBnEHXBxagXYVQZdHYRLvX5THT3tLb?=
+ =?us-ascii?Q?J0riIhbUeyownQdAVI5xaH1bcyWAOyQC+6fsIOO+rxniDzh1PEADfxMZB5HO?=
+ =?us-ascii?Q?npAiuvAh5cfaOn9eHEr2aMTej3nDL1zNMjKA61F2cTexX6HygSr44mCutMI0?=
+ =?us-ascii?Q?D7fwCfLZKTafitTDozoqExTW90HoRnDEQqGEt0+z3GeZ/UzRO+rpV7mXn87p?=
+ =?us-ascii?Q?3w=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	uKNqFSDGH3rkCsCxiZH0zneb+de26AnYm5RueBuFNlN9ahHTJkz3wlnnsl+xBAJiIOPPE6mED1H7VYdrLttBFFqACSlCSm12+Y5WS7ZAAdYUFrh0GnpKRc89BFpY0RkKm8DQ3TGmqG9hRK6CbWLZf+lZ40/qqn4kZQEM0xXMTD1SPo+ucX/8M4f2VBnFVbAICM9dUG8eKYrjWDSVifUsD5poHrKnPJt2+D1yeQkSq2a1Q5QUEU1tRsiN+/aioOmCfP5WzR4Rluy1j25pWSAS05srIwNW5Je9MF++II2wQyHWoK+qxgWOeK6oEDmk8Ia/gfltd4uMagC9S2ZppSix0NJ2Hndo76yYjcITJQ1rQCE6Q1PpPs5dD4schN8MBZc//ev32XRj/ltwTTuh9saET+QsP5mWCwP61eklyzrtV8M5M7RVC1H5fH1cCG+m4apwg3VnrugW/0v5cAwdYyL39yMxpzOltmLOceXp1Z0IFO+lZIZaF5OdI0ARTnTCmabW5f5KJAL9uzFeIeq6xtEfSms3CpKKppFEAWNIbcyyvVFqK6eHThC88J4cRUxmLUFDOYBJKZDcU0R6uD6rLByuwzLCBcdkwDkNVySTtp9NUyA=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10f1790e-6440-4ec9-d3b0-08dd980bf18f
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2025 02:05:22.4418
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7KQBX/5VTFgS674248+QSI2muPich7+D5v+vnyAEMVMGsqbHRSQ0BW8+oo9P13BEl6gxBxj0IHzyFsXilVm5FJMvvRQeQuRrvyLmTqA8j34=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR10MB8347
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_01,2025-05-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=699 adultscore=0
+ phishscore=0 spamscore=0 bulkscore=0 suspectscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2505210019
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDAxOCBTYWx0ZWRfXwu97oinA30ye 7WfGLsZ53l2/826td1OKw/b0leXzGFrjmXjnDxlE256hS/ZgV+gXUgCQki7M5gtjjJbrkoPvFuj HSJyriwNiOiQuGEOUlia9gB4bZAx6tfcnZe6uLK2fvqyvMlRlIRrMqTxlFmJAD3KeSrCVdqxeD5
+ Q0/qDUc2FMHfICHdb0wUiE7Kbwl/pC1r47lULLFKvjY7R9IFelQQpnkAiYsknxrcbQuhHbDV9df hRjFIW6dLsz3yHE9Ilm7+a85qhyqBvNjmZT7+HE4Ev0M1ZwIzRkRm4FfxVlwWWe0IOM9spydR00 g97SMcCbwn7We/5jklsLeESiYBzhXY36zGeva95rMWQwvBqxmM7SGEPhZwphQgKZuG3C6kUfiIP
+ LsnivrL5TJCdxGTwOdbi7yVJlMvcYRAnIj22Q65XEMxfTL7O0lv5CJiQ/L0ggKW+JBH1DEb1
+X-Authority-Analysis: v=2.4 cv=fI053Yae c=1 sm=1 tr=0 ts=682d34e5 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=q32mctcrirO_PcNCel4A:9 cc=ntf awl=host:13189
+X-Proofpoint-GUID: -Yju0nYlVlp52nbLPFqGwCmoClPVfd93
+X-Proofpoint-ORIG-GUID: -Yju0nYlVlp52nbLPFqGwCmoClPVfd93
 
 
+Yihang,
 
->
-> > >
-> > > > > dmabuf buffer read     | 51         | 1068      | 1118
-> > > > > dmabuf direct read     | 52         | 297       | 349
-> > > > >
-> > > > > udmabuf sendfile test steps:
-> > > > > 1. Open data file(1024MB), get back_fd 2. Create memfd(32MB) #
-> > > > > Loop steps 2-6 3. Allocate udmabuf with memfd 4. Call
-> > > > > sendfile(memfd,
-> > > > > back_fd) 5. Close memfd after sendfile 6. Close udmabuf 7. Close
-> > > > > back_fd
-> > > > >
-> > > > >>
-> > > > >> Regards,
-> > > > >> Christian.
-> > > > >
-> > > >
->
+> LKP reports below warning when building for RISC-V with randconfig
+> configuration.
+
+Applied to 6.16/scsi-staging, thanks!
+
+-- 
+Martin K. Petersen
 
