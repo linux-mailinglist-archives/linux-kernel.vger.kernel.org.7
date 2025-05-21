@@ -1,133 +1,184 @@
-Return-Path: <linux-kernel+bounces-657045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDD4ABEE75
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:46:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D444ABEE3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46FF71889CA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:47:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53C1D3B0EE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7DA2376E0;
-	Wed, 21 May 2025 08:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GCwY3wbF"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573A11D8E07
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 08:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEF022B59D;
+	Wed, 21 May 2025 08:43:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F6E231C9F
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 08:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747817204; cv=none; b=YCDgbabeZgRCgjuTmaRKaUcBVXngVvMxDyASnN06RnIkT7kWocYE4SdI7r8+cNw0nypHPyt9wZk5EU925TdK6u3HOKEHnF0GC8oLUb4bzNNxxAfR2cHzYxW7V36Po2STybASPykFzx3z8PjMqsHp8Hg0dp/splnqNy9GtOvu+RA=
+	t=1747817020; cv=none; b=jMtMi0OnAONc62k/gbMv0ZpXRyzvmUi3R+Nd34p9oXU3aeVIclqkR6XjnlME/Ev7gWPJA8ta3CZkcnbgZGWypSGwojQyEVpGwQ7bWDVhoBft1LQ6nXR+Xju2+zME7aOPnbralWjn1HJpmlPCCUSeFMl/w/tXjWpbPPDQgjkVxJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747817204; c=relaxed/simple;
-	bh=WnhL7uoBNqMZ3Cbebs3yyWF/yxiYNx9JjYSDc3RKJZs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=QWYtbwRCTP7aMQYGjRcdCLjdHZSRqQ4+cMMw4ciACPUjj/r/8y3d/rV2Oovo6ybMvwWAMGKjCxnnN6V+q7MReqNZvkK0x93gWbLVQwJRywz0xMYc/e2VCEFC9A397Fe/UcZb/CtvMw7VxbJnjdhRu7uFf7guIvY6Jct2mB66XdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GCwY3wbF; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250521084639epoutp02ec0de7adb51f5f8bcebae9a42df3d89a~BfnuJUXI12633426334epoutp026
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 08:46:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250521084639epoutp02ec0de7adb51f5f8bcebae9a42df3d89a~BfnuJUXI12633426334epoutp026
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1747817199;
-	bh=shbECNWSz86NpuLRg7p7TU1AfWaNOBZLxT9Qlix0Iyw=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=GCwY3wbFiUvS5MlwKmYAu0tp1ZNdGfc87EuGYRJHtZlkST5CnseL2oNkdSq4+QN97
-	 oKeMm+4LNou75HPrEmdOAixUL7t+tBXZLLDQY6IMksv4yHwyO7PpIZszpOdFK+N9+U
-	 XTVW+Ym4mUPFt0oVkHEg2Y2R8iGkC2V3+OsDVq6g=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250521084638epcas5p3c250d169b4a59ed73f9af721159bd62c~BfntdVWms0169101691epcas5p3Q;
-	Wed, 21 May 2025 08:46:38 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4b2Q572nhDz6B9mH; Wed, 21 May
-	2025 08:46:35 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250521083341epcas5p243dac11e4c5f2221473b8df8c3d7f060~BfcZpYq3P0049100491epcas5p2Q;
-	Wed, 21 May 2025 08:33:41 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250521083341epsmtrp15d2cf9fc5d29a621b7b9c91d2dda336e~BfcZffJTZ0709607096epsmtrp1L;
-	Wed, 21 May 2025 08:33:41 +0000 (GMT)
-X-AuditID: b6c32a52-f0cb424000004c16-ba-682d8fe55e25
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5C.15.19478.5EF8D286; Wed, 21 May 2025 17:33:41 +0900 (KST)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250521083339epsmtip19122db928827b44efd1a728582b64fef~BfcXjjrho0917109171epsmtip1M;
-	Wed, 21 May 2025 08:33:39 +0000 (GMT)
-From: Faraz Ata <faraz.ata@samsung.com>
-To: andi.shyti@kernel.org, tudor.ambarus@linaro.org, broonie@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alim.akhtar@samsung.com, rosa.pila@samsung.com, dev.tailor@samsung.com,
-	faraz.ata@samsung.com
-Subject: [PATCH v1] dt-bindings: spi: samsung: add exynosautov920-spi
- compatible
-Date: Wed, 21 May 2025 14:13:24 +0530
-Message-Id: <20250521084324.2759530-1-faraz.ata@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747817020; c=relaxed/simple;
+	bh=yt7QIvQQP+yscM4+L2JOiQOW0+9EHb6UGN4I+ug6mUM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qDBQNnwj7K7PPTHpCwqdjW4U6wsjzWtk01USZ1su1ZPNVGq4cFLSDsa96n9UCnfbEfWMRB/PlopiuxAOIWk9xxUDHMDr/b565VxaOn/Cl1P716yFgKoEhDL0QyTEhwksnhRk0dL3cteSek/hbMYgmnxKluBGPBXb/r7sNUwOET0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B22901515;
+	Wed, 21 May 2025 01:43:22 -0700 (PDT)
+Received: from [10.57.94.227] (unknown [10.57.94.227])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3AC93F5A1;
+	Wed, 21 May 2025 01:43:31 -0700 (PDT)
+Message-ID: <77e30902-dc38-4a92-9c29-ea9c6db53fc9@arm.com>
+Date: Wed, 21 May 2025 09:43:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsWy7bCSnO7Tft0Mg5nbBS0ezNvGZnH/awej
-	xdSHT9gs1uw9x2Rxb8cydov5R86xWly7sZDd4uWse2wWl3fNYbOYcX4fk0Xjx5vsFv/37GC3
-	+PLzAbPFp1txDnwem1Z1snncubaHzaNvyypGj8+b5AJYorhsUlJzMstSi/TtErgy5q7cz1iw
-	nq2icc5elgbGPtYuRk4OCQETiW+nHrF0MXJxCAlsZ5Q4tXonC0RCUuLw07tQRcISK/89Zwex
-	hQTeMko0HY8GsdkE1CVm3jgC1iwi0M0o0T/jEDOIwyzwnFHi+KY/TCBVwgIBErubfgNVcXCw
-	CKhKnJ8dChLmFbCRuLSthR1igbzE/oNnmSHighInZz4BO4IZKN68dTbzBEa+WUhSs5CkFjAy
-	rWIUTS0ozk3PTS4w1CtOzC0uzUvXS87P3cQIDmytoB2My9b/1TvEyMTBeIhRgoNZSYQ3doVO
-	hhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe5ZzOFCGB9MSS1OzU1ILUIpgsEwenVANTp5GChMFE
-	PRsu8f3Nkzh1L946LZd4Pz/8zJtMxSI/8zihlN9K7V+/5J76Oi942s+ShU5iqSqhws/ZzDaX
-	pXl4ekTGeNlU2cpEd0+NS/xj9LvFYdKmPyuf+h3lOpthuzTszPEfx3tLU8wC8u6vvW7L+6mZ
-	x5Kj3DrzQUNgybPFRwV5LQVluWKMWTgPhbMyhRy4+iPxto2wQYn6I283kSAlBY77T26wX7m6
-	hs3L7sJ3GQuO140FJ/8fi9+5yvuYRsLBt2U84fqLtWbPPT3XfmVtbfLyg/9MjAvWfGb2F5+3
-	0KI0OZaFyb9auDxPbXkx8/H2TEaz7b6N30+5v7HujS5ptVutvr/hs3fb3h+nlViKMxINtZiL
-	ihMBSxZgnNsCAAA=
-X-CMS-MailID: 20250521083341epcas5p243dac11e4c5f2221473b8df8c3d7f060
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250521083341epcas5p243dac11e4c5f2221473b8df8c3d7f060
-References: <CGME20250521083341epcas5p243dac11e4c5f2221473b8df8c3d7f060@epcas5p2.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] mm: Optimize mprotect() by batch-skipping PTEs
+Content-Language: en-GB
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
+Cc: david@redhat.com, willy@infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org,
+ Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+ jannh@google.com, anshuman.khandual@arm.com, peterx@redhat.com,
+ joey.gouly@arm.com, ioworker0@gmail.com, baohua@kernel.org,
+ kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
+ christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
+ linux-arm-kernel@lists.infradead.org, hughd@google.com,
+ yang@os.amperecomputing.com, ziy@nvidia.com
+References: <20250519074824.42909-1-dev.jain@arm.com>
+ <20250519074824.42909-2-dev.jain@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250519074824.42909-2-dev.jain@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add "samsung,exynosautov920-spi" dedicated compatible for
-SPI found in ExynosAutov920 SoC.
+On 19/05/2025 08:48, Dev Jain wrote:
+> In case of prot_numa, there are various cases in which we can skip to the
+> next iteration. Since the skip condition is based on the folio and not
+> the PTEs, we can skip a PTE batch.
+> 
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
 
-Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
----
- Documentation/devicetree/bindings/spi/samsung,spi.yaml | 1 +
- 1 file changed, 1 insertion(+)
+LGTM; a lot less churn than before.
 
-diff --git a/Documentation/devicetree/bindings/spi/samsung,spi.yaml b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-index 3c206a64d60a..fe298d47b1a9 100644
---- a/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-+++ b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-@@ -29,6 +29,7 @@ properties:
-       - items:
-           - enum:
-               - samsung,exynos8895-spi
-+              - samsung,exynosautov920-spi
-           - const: samsung,exynos850-spi
-       - const: samsung,exynos7-spi
-         deprecated: true
--- 
-2.34.1
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+
+> ---
+>  mm/mprotect.c | 36 +++++++++++++++++++++++++++++-------
+>  1 file changed, 29 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> index 88608d0dc2c2..1ee160ed0b14 100644
+> --- a/mm/mprotect.c
+> +++ b/mm/mprotect.c
+> @@ -83,6 +83,18 @@ bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
+>  	return pte_dirty(pte);
+>  }
+>  
+> +static int mprotect_batch(struct folio *folio, unsigned long addr, pte_t *ptep,
+> +		pte_t pte, int max_nr_ptes)
+> +{
+> +	const fpb_t flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
+> +
+> +	if (!folio_test_large(folio) || (max_nr_ptes == 1))
+> +		return 1;
+> +
+> +	return folio_pte_batch(folio, addr, ptep, pte, max_nr_ptes, flags,
+> +			       NULL, NULL, NULL);
+> +}
+> +
+>  static long change_pte_range(struct mmu_gather *tlb,
+>  		struct vm_area_struct *vma, pmd_t *pmd, unsigned long addr,
+>  		unsigned long end, pgprot_t newprot, unsigned long cp_flags)
+> @@ -94,6 +106,7 @@ static long change_pte_range(struct mmu_gather *tlb,
+>  	bool prot_numa = cp_flags & MM_CP_PROT_NUMA;
+>  	bool uffd_wp = cp_flags & MM_CP_UFFD_WP;
+>  	bool uffd_wp_resolve = cp_flags & MM_CP_UFFD_WP_RESOLVE;
+> +	int nr_ptes;
+>  
+>  	tlb_change_page_size(tlb, PAGE_SIZE);
+>  	pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
+> @@ -108,8 +121,10 @@ static long change_pte_range(struct mmu_gather *tlb,
+>  	flush_tlb_batched_pending(vma->vm_mm);
+>  	arch_enter_lazy_mmu_mode();
+>  	do {
+> +		nr_ptes = 1;
+>  		oldpte = ptep_get(pte);
+>  		if (pte_present(oldpte)) {
+> +			int max_nr_ptes = (end - addr) >> PAGE_SHIFT;
+>  			pte_t ptent;
+>  
+>  			/*
+> @@ -126,15 +141,18 @@ static long change_pte_range(struct mmu_gather *tlb,
+>  					continue;
+>  
+>  				folio = vm_normal_folio(vma, addr, oldpte);
+> -				if (!folio || folio_is_zone_device(folio) ||
+> -				    folio_test_ksm(folio))
+> +				if (!folio)
+>  					continue;
+>  
+> +				if (folio_is_zone_device(folio) ||
+> +				    folio_test_ksm(folio))
+> +					goto skip_batch;
+> +
+>  				/* Also skip shared copy-on-write pages */
+>  				if (is_cow_mapping(vma->vm_flags) &&
+>  				    (folio_maybe_dma_pinned(folio) ||
+>  				     folio_maybe_mapped_shared(folio)))
+> -					continue;
+> +					goto skip_batch;
+>  
+>  				/*
+>  				 * While migration can move some dirty pages,
+> @@ -143,7 +161,7 @@ static long change_pte_range(struct mmu_gather *tlb,
+>  				 */
+>  				if (folio_is_file_lru(folio) &&
+>  				    folio_test_dirty(folio))
+> -					continue;
+> +					goto skip_batch;
+>  
+>  				/*
+>  				 * Don't mess with PTEs if page is already on the node
+> @@ -151,7 +169,7 @@ static long change_pte_range(struct mmu_gather *tlb,
+>  				 */
+>  				nid = folio_nid(folio);
+>  				if (target_node == nid)
+> -					continue;
+> +					goto skip_batch;
+>  				toptier = node_is_toptier(nid);
+>  
+>  				/*
+> @@ -159,8 +177,12 @@ static long change_pte_range(struct mmu_gather *tlb,
+>  				 * balancing is disabled
+>  				 */
+>  				if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_NORMAL) &&
+> -				    toptier)
+> +				    toptier) {
+> +skip_batch:
+> +					nr_ptes = mprotect_batch(folio, addr, pte,
+> +								 oldpte, max_nr_ptes);
+>  					continue;
+> +				}
+>  				if (folio_use_access_time(folio))
+>  					folio_xchg_access_time(folio,
+>  						jiffies_to_msecs(jiffies));
+> @@ -280,7 +302,7 @@ static long change_pte_range(struct mmu_gather *tlb,
+>  				pages++;
+>  			}
+>  		}
+> -	} while (pte++, addr += PAGE_SIZE, addr != end);
+> +	} while (pte += nr_ptes, addr += nr_ptes * PAGE_SIZE, addr != end);
+>  	arch_leave_lazy_mmu_mode();
+>  	pte_unmap_unlock(pte - 1, ptl);
+>  
 
 
