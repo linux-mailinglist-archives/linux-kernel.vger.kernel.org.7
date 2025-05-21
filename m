@@ -1,105 +1,134 @@
-Return-Path: <linux-kernel+bounces-656833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2164ABEB5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:41:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 302B1ABEB60
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC8901B6726E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 05:41:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF2AA4E13E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 05:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51B622FF58;
-	Wed, 21 May 2025 05:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9365B23183A;
+	Wed, 21 May 2025 05:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="GIpUt/Q4"
-Received: from xry111.site (xry111.site [89.208.246.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DIx0B2CO"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE221A9B23
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1B4230BC5
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747806097; cv=none; b=hXLCi3yoRNaoJqr0wdbik/9lMrCXZQ/+h7d2H39HBKVQa8vTCZuWdDT4b/Ti3wsQKwWYIcYSb135FZrwevzioGt9ZNJV5A4FbUY6kCAJi54IbyaAGy1Q8dk+u/GVcF9EDeVUNzMLzJBsko3JmwZdwXhsGHDoWr+SQo9rorgSHjw=
+	t=1747806101; cv=none; b=MKZijWzq9KgKODSERjBibFKE5CQ9+nMpJHRf5dRaZ+jzzt14Ciww1JNT3LwwPdaSkMP8FK/OA0TWXeCZ39G0AjdmtY+11WwtexbKYcuzp4cLhccca2de+ep1P/gxwb8OIn16887Pnb8Ftdcd4nT8+suwSqJ1ZP674j3Jkq0xYvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747806097; c=relaxed/simple;
-	bh=/5x94+g+HwreplXOJJwMxKmIixq50Z1jAwaVFvflsa0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ywk0UtusIxXC68xbXre7q1DUbeH+phXuvMR+Wgj9otikWgVPvfVGdIU0WSUsiJi+qQvZXPYH5SVSzi0KIifWq6md0CGK8rQQwpnWCtXKIQOzUoohmSfmKimF9InyYOsap08nu1mfAMwV+9JxUPtZD3hU1cFeVEz2XpVdWbjQllQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=GIpUt/Q4; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1747806089;
-	bh=RGZBoFNO30D9TpBIuKnBH4Z7D9w4h9NHy/Fyb64gALU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=GIpUt/Q4twfNI/zn9dz9H9jv0LP6/5saNRt9Qs4oJXE1tx8W2FBL+0LfFGlcSnkeq
-	 9fby9XfNBk5YDSR27i8l4BtzB7BjRZYt+6qQvvQHgJM5w11+1qy3vGp7swulU9ChKD
-	 SdslJNKn9NFT8YoAOqAb1KthoJMxes3+alXKgb5k=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 638CA65992;
-	Wed, 21 May 2025 01:41:28 -0400 (EDT)
-Message-ID: <e005dd551aec8bea185b3d37295876bd75d7b3e4.camel@xry111.site>
-Subject: Re: [RFC PATCH] LoongArch: Do not include larchintrin.h
-From: Xi Ruoyao <xry111@xry111.site>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Date: Wed, 21 May 2025 13:41:26 +0800
-In-Reply-To: <20250520064936.32291-1-yangtiezhu@loongson.cn>
-References: <20250520064936.32291-1-yangtiezhu@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+	s=arc-20240116; t=1747806101; c=relaxed/simple;
+	bh=WuKPUIc4ggVixbgxrmfedA4AH8Wix3/q/5/YdGnifww=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YdbdutZsxyCkq/aVFcB5qgydR0Ghbyu2XjNMGA3yh8SXDSfSU8oNgkrRsbftXLmJik6/etV8GVlcUb1MdTDdlOAp+2y+R2PCYZuaCtMfBCcOJFvDMVoVgsiUz2no3LBJoyDDnbGxYcqlKlvGXN9dl8PCe7xnEqbcFc4QwHcmM4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DIx0B2CO; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-70d70ee042dso21684167b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 22:41:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747806098; x=1748410898; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WuKPUIc4ggVixbgxrmfedA4AH8Wix3/q/5/YdGnifww=;
+        b=DIx0B2CO+iAOj6bJFmM6v9lnQGKMMtp90IhVzzly/WVQPTwV2gTXxdOriG0Wwj/8Pe
+         4o2YmrprlyoisspMz4utLMJQMZN/81uq9coGoBkpPCv/IXZDY4RDvS01eRnLVp9pg57f
+         FGHNRdJPkSM4Y6S0HTDvdQ/yv6QCTFgk8eyTrXXStlPU0yONi5MldFiQ3LsSmciiU210
+         o5rKZ63l1mqki6LL3IwT6xlE1PpkBoZAuZNcubv2LMKyEB4xxe6yUU3ClRC0B+DSkVpu
+         Iw5f8ltWIZV1k8EtZTRBgc7g9c2wRlV6D+Tcfykf6OMMogNCuDiLQk64oRSrp1BUZWFL
+         Vsyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747806098; x=1748410898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WuKPUIc4ggVixbgxrmfedA4AH8Wix3/q/5/YdGnifww=;
+        b=b8A5qS8CiKsWqdq1yrHghRceNkFSW4H7LlF9YTUzqnKT42+xUFpTq81JaTvaJSWiC6
+         rR/9LRmhhiKWk4rjppKUk4pS8o9BNJ7fHs7ngtIinEPI8rLEJNcEX8R6c5oF4D47y/bg
+         bXCsZbkKc7XKSNMFfAlVKsaWgbuWoUZTm4ScX7tACHMuvmDC9toNdxuFIIhz5xKh1dw+
+         J7m4yjJXyYk8JJRbrFzZO4KRYRZc9AxyuN0zLzoqESoJ0e/woCe2XhbiJQxIQ5AxskF4
+         aGKGGt2IHqbZw98hKbcr/mRXKbZlBIBls3AnklnnGLPhpx0q5TCKpOB3q4rSfVt8VRKL
+         qVDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqG+F1L+QNEQqg3EQjFRL7+0/8x6N9cxmUUKvm1UcDv9vnD0wqUREE3m4Ci3EXu8KKwmFXnm50qF4GF70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJhMRHfhZuXDDpxFG66+gaVoPJvOj8zwnXV41T37AzSz5CUW+P
+	HCsVyP84r0ztwHgNYS5yVy4/m3tBC0+FlMo/1f1NMCh6WQUH41wHkVvEeK6yN6LsSgETD3sJb4k
+	tDAVfmzhRE8dyZYdLdrSL89DuTiEMK1Cnd4tt
+X-Gm-Gg: ASbGncsYFVSzRxTx0QsacwVESkmXgR9CKXgxumHj9rdWEj7SnT/oC6KyziM4DBSNE69
+	x7E03aINNi9sq7YrRNH+AOfXr3R2mj+qxgEAuKx9aZBTk2YucOV7FjajcU72qqObvEGMq2vuaVN
+	Y/wrKtKpTymBCGGVUM5rP4hdoyXPZGAydICHg5U2h9Cb8Y5+qWwHf2vb6t+v25A2L9
+X-Google-Smtp-Source: AGHT+IGdSZe7ylfgOWcxywNa73o7coZc7jyagjAA4TlJYJVRxstnsjYUscSako9JGhA3ho960/y7DVvylMCCgAFPLnM=
+X-Received: by 2002:a05:690c:4981:b0:70c:b882:2e5 with SMTP id
+ 00721157ae682-70cb88204d7mr223289207b3.2.1747806098307; Tue, 20 May 2025
+ 22:41:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <CAG+54DZYz-4hW33Py9mihHDauWw55=_rP71s1MbCg-5gxw7J7Q@mail.gmail.com>
+ <2025052116-diaphragm-payback-a3ef@gregkh>
+In-Reply-To: <2025052116-diaphragm-payback-a3ef@gregkh>
+From: rujra <braker.noob.kernel@gmail.com>
+Date: Wed, 21 May 2025 11:11:26 +0530
+X-Gm-Features: AX0GCFvPSzModwUdGmboKsJgQOYx09zLVKlfPKnab7JQIOmFxYmkMhIanR6ZZLk
+Message-ID: <CAG+54Db4k-sMVHUsUWx=oN-AXE5aife=Ugx4f49smGnhq6=-0g@mail.gmail.com>
+Subject: Re: [PATCH RESEND] staging : greybus : Documentation : firmware :
+ Replace deprecated strncpy() with strscpy()
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Johan Hovold <johan@kernel.org>, elder@kernel.org, greybus-dev@lists.linaro.org, 
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-05-20 at 14:49 +0800, Tiezhu Yang wrote:
-> larchintrin.h is a system header of compiler, include it in the
-> kernel header may lead to the fatal error "'larchintrin.h' file
-> not found".
->=20
-> There are two related cases so far:
->=20
-> (1) When compiling samples/bpf, it has been fixed in the latest
-> kernel [1].
->=20
-> (2) When running bcc script, it has been fixed in the latest
-> bcc [2] [3], like this:
->=20
-> $ /usr/share/bcc/tools/filetop
-> In file included from <built-in>:4:
-> In file included from /virtual/include/bcc/helpers.h:54:
-> In file included from arch/loongarch/include/asm/page.h:7:
-> In file included from arch/loongarch/include/asm/addrspace.h:9:
-> arch/loongarch/include/asm/loongarch.h:11:10: fatal error: 'larchintrin.h=
-' file not found
-> =C2=A0=C2=A0 11 | #include <larchintrin.h>
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 ^~~~~~~~~~~~~~~
-> 1 error generated.
->=20
-> Maybe there are same errors for the other unknown projects, it is
-> annoyance to add the include path each time. In order to avoid such
-> errors once and for all, do not include larchintrin.h, just use the
-> builtin functions directly.
+Hi greg,
 
-Sorry, but in GCC those builtin functions are not documented and may
-subject to change in the future.  Only the larchintrin.h interface is
-documented.
+why is this a RESEND ?:
 
-Thus if you don't want to rely on GCC for those operations, you may need
-to write inline asm...
+>> I had sent the same patch 4 days ago and didn't get any reply , hence tr=
+ied to resend the same patch for the same,
+here is earlier mail :
+https://mail.google.com/mail/u/1/?ik=3Df63b03515e&view=3Dom&permmsgid=3Dmsg=
+-a:s:12290863930259651721
+,
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+line does not match this:
+>> sorry , i could not get it what it is exactly ?, if possible can you sha=
+re some insights or example so that from in future i would get it right.
+
+thank you,
+rujra bhatt
+
+
+
+On Wed, May 21, 2025 at 11:00=E2=80=AFAM Greg KH <gregkh@linuxfoundation.or=
+g> wrote:
+>
+> On Wed, May 21, 2025 at 10:26:52AM +0530, rujra wrote:
+> > To ensure that the firmware tag is properly null-terminated. When
+> > copying firmware tag strings to prevent buffer overflows and ensure
+> > data integrity.
+> >
+> >
+> > changes has been made in 3 positions:
+> > 1: update firmware tag
+> > 2: backend update firmware tag
+> > 3: backend update firmware tag with unipro
+> >
+> > Signed-off-by: Rujra Bhatt <braker.noob.kernel@gmail.com>
+>
+> Your From: line does not match this :(
+>
+> Also, why is this a "RESEND"?
+>
+> thanks,
+>
+> greg k-h
 
