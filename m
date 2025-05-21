@@ -1,137 +1,143 @@
-Return-Path: <linux-kernel+bounces-656917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4D6ABEC8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:56:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8613ABEC8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0B6F188EF7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50CFB3B6506
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66148233D64;
-	Wed, 21 May 2025 06:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC20233722;
+	Wed, 21 May 2025 06:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lLKDkpLs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xm9St06R"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Edpjpf68";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7IOWTLCV"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494AD21CFFA;
-	Wed, 21 May 2025 06:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236A41DC1AB;
+	Wed, 21 May 2025 06:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747810604; cv=none; b=PxtfYXF1bxafLjUbG39ffR2MJpO6NLIxEtg9qZF+WIHoS0Lc56NnMpl3TkaYwWf9bbD/7dwHlXEf7cWbP1w7dQeMMiGYnpxrsAhEaDTPy3voQeOnXPx3jkQQx99amz7KiHAZqDsjXsGPppBKStT67UrzzkoJazDj7ZPFLKjZGlg=
+	t=1747810688; cv=none; b=OweYaojzfVySZaKLeCqTsmeC3/6pVYqPmRnKVx+noxcndF9L9T5l2xB96ehCm7c6EuKL3YKhPnizMVX3y/OwACzKQWh9GZ0QxLKG/ID78d9xcewTHbr9KC23ZtQNzKFqQsu10XpV0uwt+XG/Lv8aG0aN5NW1rwwXzcGcXbSVxqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747810604; c=relaxed/simple;
-	bh=F3uEABgfR1+DkLbPYcAfXvhGvJq3EQGGdZgGUi1GdVM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=M9uSnAYDLVuxjOrqSUKcqw2O2PKnAIqgCCkPXdrloQeSm/kXWJ8vGySX2di7dSuzVnQmwwEPe9JwYa9SaANoSE966IKZ7gj+Ug/ps3FZSIWb8QCdYkO7XgsVoRtT+eqpZTiA2YBrwa+kqhLVxfX5GIY660G+VA7WdhBYizxFQa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lLKDkpLs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xm9St06R; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1747810688; c=relaxed/simple;
+	bh=IWz6Yy/BcLz6PFo1jEHDIlrywfsNwNmZ069v+JGYxUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJlvCpLZK9Kaw/EsckaRNr5kCCxC4tic2mLZ1dXGe/qMJmwTOqFyXxHZVtvwJkX6BAk8m+qTlnksX2E0A6lnW4Ad1oHmGmgbVTrxtDRayl+ErUSKSSjEo6VHRfzDsRtpqelHpBNeJRYhgpH71ZAKaxPY7jg6qUS8E5QonVD1w10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Edpjpf68; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7IOWTLCV; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 21 May 2025 06:56:40 -0000
+Date: Wed, 21 May 2025 08:58:00 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747810601;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=2020; t=1747810685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/JZggDRh9VVMymbY9g3QDIHxu0xR+YS4bx4xyJb/nSo=;
-	b=lLKDkpLsVB6Oo0lyokO2MdcVybPWUOHU9pGqY6emtPU4oyWwKLRVR2Js8xLbrvgRiS9KB5
-	5cEvt6uh0XjzafwIstjQRcmfuA//Tq3S9jPGtdmJqJ2ssGhdgTTYu0f+mc+xn0vcNDfox9
-	nOJDow8DmoclQ56aIaiv8K2k0BiufOGSdv+EGD1xJ4K88X16n65P5WyJnwnzpSwrs/lDbO
-	BH5oGMnn2doWZ03dDUiY3ENshaIsMloUpLahK7MKlGDD6IjSpDLjUPHotwVATg17fjGyKC
-	Zm3A2DO+Li5m9bXK9x+tRmpzBSbK8iK4fO17jHODdGG+KuLnhujZYN57Z2HqLw==
+	bh=gdBcXY08SFR0xzfgVF5rY3+1lWSMx/XtZ80Wkh6Zt5Q=;
+	b=Edpjpf68A1uKzaP0QrwzhV1XWzGzmtCqSbPMr84wq8Z4mxdOcdWoAfU3ugeZbqHPag4wAo
+	CsBDDfsDq7rMLSxIZLcjvPVZoSHcgfaplwBo1ObxGGb+WFkVUt4I71qKCDsTmXyRimPxaj
+	QpPKj3cCzDNi7y7hKtoBIki51hbNsgxI36KFUYzKpiOeNBIdWZ2j3lsF8C/v6GdkfILxGh
+	n3OIx4qf3N27eAkXMi42uO40CljN32kg5rOhhlVwxu48v72FGqqv6ICIU7bIh5Zv6w3z1d
+	6AziKRVZitnc+snBXA9QbD/QXZKG6kfDT5AeIxvfCG7l5v0aAAuGLctDAz+AIQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747810601;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=2020e; t=1747810685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/JZggDRh9VVMymbY9g3QDIHxu0xR+YS4bx4xyJb/nSo=;
-	b=xm9St06RjS/Zwj2OuBqGICl2ryWzJqU8lo7SRx1K3V+diY28pXxhTLv3Mbey+GarJItfVJ
-	YuCLOU3Il16eg0DA==
-From: "tip-bot2 for Xin Li (Intel)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/xen/msr: Fix uninitialized variable 'err'
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, "Xin Li (Intel)" <xin@zytor.com>,
- Ingo Molnar <mingo@kernel.org>, Juergen Gross <jgross@suse.com>,
- "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250517165713.935384-1-xin@zytor.com>
-References: <20250517165713.935384-1-xin@zytor.com>
+	bh=gdBcXY08SFR0xzfgVF5rY3+1lWSMx/XtZ80Wkh6Zt5Q=;
+	b=7IOWTLCV94pErTphukCDvEfRUUt+2wfK7tjAEX3KdEcL7Ln508RjKfuP+sHHSecZHIk7bX
+	eRHBHnqpczRasHDA==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>
+Subject: Re: [RFC PATCH v2 10/12] rv: Retry when da monitor detects race
+ conditions
+Message-ID: <20250521065800.jgtPyWd7@linutronix.de>
+References: <20250514084314.57976-1-gmonaco@redhat.com>
+ <20250514084314.57976-11-gmonaco@redhat.com>
+ <20250519090626.zjiYgUGW@linutronix.de>
+ <5f1365f2cd84597fd3547544fcceab5c79682624.camel@redhat.com>
+ <20250519103809.nuEUQbVl@linutronix.de>
+ <cdcab46480cbfe2c3320e060ea9603adbd04956c.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174781060040.406.8154038959914617178.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cdcab46480cbfe2c3320e060ea9603adbd04956c.camel@redhat.com>
 
-The following commit has been merged into the x86/core branch of tip:
+On Mon, May 19, 2025 at 01:13:01PM +0200, Gabriele Monaco wrote:
+> 
+> 
+> On Mon, 2025-05-19 at 12:38 +0200, Nam Cao wrote:
+> > On Mon, May 19, 2025 at 12:28:12PM +0200, Gabriele Monaco wrote:
+> > > Mmh, although definitely unlikely, I'm thinking of a case in which
+> > > the
+> > > event starts on one CPU and at the same time we see events in IRQ
+> > > and 
+> > > on another CPU, let's say continuously. Nothing forbids that
+> > > between
+> > > any two consecutive try_cmpxchg another CPU/context changes the
+> > > next
+> > > state (making the local try_cmpxchg fail).
+> > > In practice I've never seen it going on the second iteration, as
+> > > the
+> > > critical section is really tiny, but I'm not sure we can guarantee
+> > > this
+> > > never happens.
+> > > Or am I missing something?
+> > 
+> > I have a feeling that you missed my point. I agree that the retrying
+> > is
+> > needed, because we may race with another.
+> > 
+> > What I am proposing is that we drop the MAX_DA_RETRY_RACING_EVENTS,
+> > and
+> > just keep retrying until we succeed.
+> > 
+> > And that's safe to do, because the maximum number of retries is the
+> > number
+> > of tasks contending with us to set the monitor's state. So we know we
+> > won't
+> > be retrying for long.
+> 
+> I get this point, what I mean is: can we really guarantee the number of
+> contending tasks (or contexts) is finite?
+> In other words, the try_cmpxchg guarantees 1 and only 1 actor wins
+> every time, but cannot guarantee all actors will eventually win, an
+> actor /could/ be hanging there forever.
+> 
+> This handler is running for each event in the monitor and tracepoint
+> handlers can be interrupted as well as run in interrupt context (where
+> of course they cannot be interrupted). I don't think the number of
+> actors is bounded by the number of CPUs.
+> I see this situation is extremely unlikely, but in an exotic scenario
+> where a CPU is sufficiently slower than others (e.g. in a VM) I believe
+> we can see this critical section large enough for this to potentially
+> happen.
+> 
+> I'm not quite afraid of infinite loops, but rather RV introducing
+> unbounded latency very hard to track and without any reporting.
+> Chances are, since tracepoints and actual traced events are not atomic,
+> that by the time this delayed context /wins/ the RV event is no longer
+> current, so we may see an error already.
+> 
+> Does it make sense to you or am I making it more complex than it should
+> be?
 
-Commit-ID:     e95534e107d2e9e136aa4d7cbededb3827e80074
-Gitweb:        https://git.kernel.org/tip/e95534e107d2e9e136aa4d7cbededb3827e80074
-Author:        Xin Li (Intel) <xin@zytor.com>
-AuthorDate:    Sat, 17 May 2025 09:57:12 -07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 21 May 2025 08:44:31 +02:00
+Right, I can see that being a problem. But I don't know enough about it to
+comment further, so do as you think best, maybe someone else can help.
 
-x86/xen/msr: Fix uninitialized variable 'err'
-
-xen_read_msr_safe() currently passes an uninitialized argument 'err' to
-xen_do_read_msr(). But as xen_do_read_msr() may not set the argument,
-xen_read_msr_safe() could return err with an unpredictable value.
-
-To ensure correctness, initialize err to 0 (representing success)
-in xen_read_msr_safe().
-
-Do the same in xen_read_msr(), even err is not used after being passed
-to xen_do_read_msr().
-
-Closes: https://lore.kernel.org/xen-devel/aBxNI_Q0-MhtBSZG@stanley.mountain/
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Link: https://lore.kernel.org/r/20250517165713.935384-1-xin@zytor.com
----
- arch/x86/xen/enlighten_pv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index 7f9ded1..26bbaf4 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -1162,7 +1162,7 @@ static void xen_do_write_msr(u32 msr, u64 val, int *err)
- 
- static int xen_read_msr_safe(u32 msr, u64 *val)
- {
--	int err;
-+	int err = 0;
- 
- 	*val = xen_do_read_msr(msr, &err);
- 	return err;
-@@ -1179,7 +1179,7 @@ static int xen_write_msr_safe(u32 msr, u64 val)
- 
- static u64 xen_read_msr(u32 msr)
- {
--	int err;
-+	int err = 0;
- 
- 	return xen_do_read_msr(msr, xen_msr_safe ? &err : NULL);
- }
+Best regards,
+Nam
 
