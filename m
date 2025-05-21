@@ -1,202 +1,100 @@
-Return-Path: <linux-kernel+bounces-657833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ECE6ABF972
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:34:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B6BEABF931
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1984500326
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:33:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BB491898513
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49B520E33D;
-	Wed, 21 May 2025 15:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FB61E47A5;
+	Wed, 21 May 2025 15:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHicAW/I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7XUweCK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391C817BB0D;
-	Wed, 21 May 2025 15:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3267158A09
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747841559; cv=none; b=QTpdkx3fA8qyUUkOGUvLJwwKa9Fx2q2B3yh1EDNt6hrBXoxXt+HboiPjPrWtscB12WLBUY4BM9klWO/ecL6okpgJFXGgKdoyhWRG4Wcfr/UPbmd1yM7F2V2iB42pFtK6Ig10ave2oCvGbCUinp2h5KcmpK52uWKsYUmsb2cHRwU=
+	t=1747841233; cv=none; b=hxsQ+GiWNSpnKL3unTzUqnhsd4DKJocNgJTaqC4scAO7HPWPoXpHYfaRy1bPnea3KYwX/InAd1mtbp9KN/7P80U1WayxQ5ldFA0eEoWuqBMwtLjHVePfHvwCqanUpCrBXF9jDkBo8fFBvX31D55aCspzntA256ESyPaJDnOUJUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747841559; c=relaxed/simple;
-	bh=ZAXKZ42zBWZyJ7kSkE/8V0bVlCWESw/XuUcLoE5rsKw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nFT/hVqx8z+W9x4FE176hZtec9llXEmzrhO5T6tBF/vK+biiyvJhtuEoUDc7xKlrau61/2zOPXHLmczM389NiXN82pQJRceLyWM4GnOaYnlrPUU0e16QBjYgvad/ievdlQ0acaty2P0dvs0eabq3CrRfGVLnh8rtwA5WguXRlSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHicAW/I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 928DDC4CEE7;
-	Wed, 21 May 2025 15:32:35 +0000 (UTC)
+	s=arc-20240116; t=1747841233; c=relaxed/simple;
+	bh=OREQHZGYo3NvKNR+PKTA7t1MGjIJnrFFdGtkjwEU9qU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QCmLzpfsqp71Sud9Cu/QIM8WaD/85XyBo2YCYIknb+uNgqm0Ih3/kfM0nFix715Kb/J38VfY+J2BtUvelROwDOyzzXemL8RIoBJxIb2J9+gJTFJADYIX5rTfMsZRt9jG+gB67Q/psml4Zd/gfrpZMlRy4ogK6s21CHlv5RYzzkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7XUweCK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB653C4CEE4;
+	Wed, 21 May 2025 15:27:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747841558;
-	bh=ZAXKZ42zBWZyJ7kSkE/8V0bVlCWESw/XuUcLoE5rsKw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VHicAW/ICNtkp+fmKZ9/4QZpzC4GhxiUrtZbZfsEXmCNiUyQP7K1sXci9tQkSo1kF
-	 JIHUBSKbv6X9XlvzvRDayf1FrBrpuxXM8E17sD53ufPFrIBxYWrokQWWy+T9rkORYI
-	 egdZ+GQY1xobkRZCn5TWKm5LYTfSyOtxdx0AopaAg2YcfnRKVQW4cHf1ZKDH+5OXQB
-	 h4/xt+h1K3AHg+W2TE7c07DNKndW9etEYas7vOFFE6piunA4ZakCnV6Aw7JqRuLr7c
-	 GfiC54XVrXwLALvfKYa/jY75j+yBLDOnJ7wuRx79A2LBR1ICdO8cnlMLhIZc3W5bKz
-	 3DvrJeLGcL+gQ==
-From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Sasha Levin <sashal@kernel.org>,
-	Michal Luczaj <mhal@rbox.co>,
-	Rao Shoaib <Rao.Shoaib@oracle.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: [PATCH v6.1 03/27] af_unix: Run GC on only one CPU.
-Date: Wed, 21 May 2025 16:27:02 +0100
-Message-ID: <20250521152920.1116756-4-lee@kernel.org>
-X-Mailer: git-send-email 2.49.0.1143.g0be31eac6b-goog
-In-Reply-To: <20250521152920.1116756-1-lee@kernel.org>
-References: <20250521152920.1116756-1-lee@kernel.org>
+	s=k20201202; t=1747841233;
+	bh=OREQHZGYo3NvKNR+PKTA7t1MGjIJnrFFdGtkjwEU9qU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k7XUweCKpFKWJICYq76TfDISsYXAaRG/WO7DIzj+Cd0xOXyA60iZLJ0nhdVjPAlly
+	 DHAxo+naXWo5rjJKLYvRjYRNIuFlNWx6Np0Bjk/QmmBGn3fIBYGOGaN2nqb6J9rEFS
+	 j1ig1OlpBj19WT6pGkVxfX/ulXl1n+DGlfkYUIyv29inAlFODqP4QixgOauwg2sgR2
+	 2zDkroPW/xH/d0oH02ugkePbiLo3nZ2vd2AkDkHSA18F21NR00eHQhzq1DBhwbH+3W
+	 m81rhzkUK57nHLPAUmDn53ZolxhVNtIxFC9E+Nl234NAw8PG3veRASeFl77u4YBOJK
+	 tkUG3kF0BMtKg==
+Date: Wed, 21 May 2025 18:27:03 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Oscar Salvador <osalvador@suse.de>
+Cc: Changyuan Lyu <changyuanl@google.com>, akpm@linux-foundation.org,
+	bhe@redhat.com, chrisl@kernel.org, graf@amazon.com,
+	jasonmiu@google.com, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	pasha.tatashin@soleen.com
+Subject: Re: [PATCH 1/2] memblock: show a warning if allocation in KHO
+ scratch fails
+Message-ID: <aC3wx5erybg00SaQ@kernel.org>
+References: <aCoFphqeZAMkhq51@kernel.org>
+ <20250521070310.2478491-1-changyuanl@google.com>
+ <aC2EE1pg9ktQdstI@kernel.org>
+ <aC2TdzP1AwYrQdcW@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aC2TdzP1AwYrQdcW@localhost.localdomain>
 
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
+On Wed, May 21, 2025 at 10:48:55AM +0200, Oscar Salvador wrote:
+> On Wed, May 21, 2025 at 10:43:15AM +0300, Mike Rapoport wrote:
+> > I think we should just make sparse_init_nid() panic or at least change 
+> > "sparse_init_nid: node[0] memory map backing failed. Some memory will not be available."
+> > to something more visible and clear. 
+> 
+> Panicking the system seems a bit too harsh.
+> Those sections will not be initialized, and sure you will lose some memory,
+> but still.
+> 
+> I think that making sure that subsection_map_init() does not access
+> non-initialized values is enough.
 
-[ Upstream commit 8b90a9f819dc2a06baae4ec1a64d875e53b824ec ]
+It's not only subsection_map_init(), next failing one is
+memmap_init_range() and maybe there's more, but we can audit and fix them.
+I believe all those accesses are at init time because after system is
+booted we are careful to avoid accessing absent sections.
 
-If more than 16000 inflight AF_UNIX sockets exist and the garbage
-collector is not running, unix_(dgram|stream)_sendmsg() call unix_gc().
-Also, they wait for unix_gc() to complete.
+> Because wrt. error message, I am not sure it can get more clear that we
+> failed we allocate memory to back the section and so that section will
+> not be activated :-)
 
-In unix_gc(), all inflight AF_UNIX sockets are traversed at least once,
-and more if they are the GC candidate.  Thus, sendmsg() significantly
-slows down with too many inflight AF_UNIX sockets.
+Add a dump_stack()? ;-)
 
-There is a small window to invoke multiple unix_gc() instances, which
-will then be blocked by the same spinlock except for one.
+> -- 
+> Oscar Salvador
+> SUSE Labs
+> 
 
-Let's convert unix_gc() to use struct work so that it will not consume
-CPUs unnecessarily.
-
-Note WRITE_ONCE(gc_in_progress, true) is moved before running GC.
-If we leave the WRITE_ONCE() as is and use the following test to
-call flush_work(), a process might not call it.
-
-    CPU 0                                     CPU 1
-    ---                                       ---
-                                              start work and call __unix_gc()
-    if (work_pending(&unix_gc_work) ||        <-- false
-        READ_ONCE(gc_in_progress))            <-- false
-            flush_work();                     <-- missed!
-	                                      WRITE_ONCE(gc_in_progress, true)
-
-Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-Link: https://lore.kernel.org/r/20240123170856.41348-5-kuniyu@amazon.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-(cherry picked from commit 8b90a9f819dc2a06baae4ec1a64d875e53b824ec)
-Signed-off-by: Lee Jones <lee@kernel.org>
----
- net/unix/garbage.c | 54 +++++++++++++++++++++++-----------------------
- 1 file changed, 27 insertions(+), 27 deletions(-)
-
-diff --git a/net/unix/garbage.c b/net/unix/garbage.c
-index 438f5d9b9173..bf628bfb6d35 100644
---- a/net/unix/garbage.c
-+++ b/net/unix/garbage.c
-@@ -86,7 +86,6 @@
- /* Internal data structures and random procedures: */
- 
- static LIST_HEAD(gc_candidates);
--static DECLARE_WAIT_QUEUE_HEAD(unix_gc_wait);
- 
- static void scan_inflight(struct sock *x, void (*func)(struct unix_sock *),
- 			  struct sk_buff_head *hitlist)
-@@ -182,23 +181,8 @@ static void inc_inflight_move_tail(struct unix_sock *u)
- }
- 
- static bool gc_in_progress;
--#define UNIX_INFLIGHT_TRIGGER_GC 16000
--
--void wait_for_unix_gc(void)
--{
--	/* If number of inflight sockets is insane,
--	 * force a garbage collect right now.
--	 * Paired with the WRITE_ONCE() in unix_inflight(),
--	 * unix_notinflight() and gc_in_progress().
--	 */
--	if (READ_ONCE(unix_tot_inflight) > UNIX_INFLIGHT_TRIGGER_GC &&
--	    !READ_ONCE(gc_in_progress))
--		unix_gc();
--	wait_event(unix_gc_wait, !READ_ONCE(gc_in_progress));
--}
- 
--/* The external entry point: unix_gc() */
--void unix_gc(void)
-+static void __unix_gc(struct work_struct *work)
- {
- 	struct sk_buff *next_skb, *skb;
- 	struct unix_sock *u;
-@@ -209,13 +193,6 @@ void unix_gc(void)
- 
- 	spin_lock(&unix_gc_lock);
- 
--	/* Avoid a recursive GC. */
--	if (gc_in_progress)
--		goto out;
--
--	/* Paired with READ_ONCE() in wait_for_unix_gc(). */
--	WRITE_ONCE(gc_in_progress, true);
--
- 	/* First, select candidates for garbage collection.  Only
- 	 * in-flight sockets are considered, and from those only ones
- 	 * which don't have any external reference.
-@@ -346,8 +323,31 @@ void unix_gc(void)
- 	/* Paired with READ_ONCE() in wait_for_unix_gc(). */
- 	WRITE_ONCE(gc_in_progress, false);
- 
--	wake_up(&unix_gc_wait);
--
-- out:
- 	spin_unlock(&unix_gc_lock);
- }
-+
-+static DECLARE_WORK(unix_gc_work, __unix_gc);
-+
-+void unix_gc(void)
-+{
-+	WRITE_ONCE(gc_in_progress, true);
-+	queue_work(system_unbound_wq, &unix_gc_work);
-+}
-+
-+#define UNIX_INFLIGHT_TRIGGER_GC 16000
-+
-+void wait_for_unix_gc(void)
-+{
-+	/* If number of inflight sockets is insane,
-+	 * force a garbage collect right now.
-+	 *
-+	 * Paired with the WRITE_ONCE() in unix_inflight(),
-+	 * unix_notinflight(), and __unix_gc().
-+	 */
-+	if (READ_ONCE(unix_tot_inflight) > UNIX_INFLIGHT_TRIGGER_GC &&
-+	    !READ_ONCE(gc_in_progress))
-+		unix_gc();
-+
-+	if (READ_ONCE(gc_in_progress))
-+		flush_work(&unix_gc_work);
-+}
 -- 
-2.49.0.1143.g0be31eac6b-goog
-
+Sincerely yours,
+Mike.
 
