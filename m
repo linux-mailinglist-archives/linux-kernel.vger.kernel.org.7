@@ -1,162 +1,228 @@
-Return-Path: <linux-kernel+bounces-657470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76268ABF487
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:41:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA2BABF478
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0E31BC2103
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:41:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82CFF189F6D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3032676C9;
-	Wed, 21 May 2025 12:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BE5266562;
+	Wed, 21 May 2025 12:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="gKSeAfZW"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rF2tkgVu"
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BBD25D8FC;
-	Wed, 21 May 2025 12:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A46248F49
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747831261; cv=none; b=gVBIdGZogIE5L9UOBUlcTS3CZWf5dYiJx1AwR5GUJZOtaQLnyrotfGwkWQVbPu6jA2dOSzIV+N+bjuaY9XCLMExXEeRJwKjJww+uwwWFalGeuhVaTy3GCP+L18YmVbK3aS4iuN7uVEb4ZbjVg9VpY+2KzIYKF94/ldckANMd99s=
+	t=1747831184; cv=none; b=eDnyQWohevIH2cQklRZrNR9vXRfBq+AmmdCC1gP4hx3BiuiMZroMaax0yjjqQOZsn8tQjUJUjY97XzR2DEGM4vLQVpElMJsPoXk1xwL4aO+HtScvA7gGf/bGEU0mhJXXR21XOFLRqIX1FLlF3EwczrtyFz9AH5ViKGViECnZbVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747831261; c=relaxed/simple;
-	bh=Zt5ygJEfH4hH4SkPDCDAhyibiaJiF0S5RQ07/hs0WB0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=nhUnlVHDYL7ITXNQtJ3Z1sL6DNXvcl5FqDyIHLvlVITr3djAV7m3+kpQ/yvuC3x9uRemNvt7mHzrR7lb89st7yZjDfPL29SRNKqzxq28rMcRGQr/g3CqWiXDL8ouMFCXKU9mOQXhtpXQVCOfmrnM0ZTKiEH2Dm4YOcgg9R86kuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=gKSeAfZW; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54LCbgVZ026217;
-	Wed, 21 May 2025 14:40:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	hnQP/Q6LnoWX6XkVCxhVUrfCmZaEh5Joq/MobuJDvww=; b=gKSeAfZWQbT8v6Ql
-	qJB5Xq8SdW7FyGWTyHFAq0L+Nvcrmq4MnJAc7HoqA5TdhEziL3ahKbQI69sDG/tG
-	Vq8K7i1ENHiP2FiME0j+yT+24D8bhBe4J/Sqh2l3wRfYOfjj/9JXzhOMfL/XjS7c
-	3U6EFf92p87xY9BhferX7MhwM5FwuvhqlyOhJf7NomAoHeFzwwp+cJvQftoK92Cc
-	lV5POoOWfeALgj+C4K2dYTGFxCr0gA6cTmbwW7UtmUnKNKXvROaRa2zgQKvU6MT0
-	iTu/xW+S0GQ6huW4c3CGBngUx3sm9qLkwpIOs5O9FBkiUGMo4CreBAYPPCsOq3YQ
-	GweTtw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46rwfac36c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 14:40:44 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9B66A4004D;
-	Wed, 21 May 2025 14:39:43 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DE06BCAA53E;
-	Wed, 21 May 2025 14:38:53 +0200 (CEST)
-Received: from localhost (10.252.1.130) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 21 May
- 2025 14:38:53 +0200
-From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Date: Wed, 21 May 2025 14:38:51 +0200
-Subject: [PATCH v3 3/3] dt-bindings: stm32: cosmetic fixes for STM32MP25
- clock and reset bindings
+	s=arc-20240116; t=1747831184; c=relaxed/simple;
+	bh=Ol3SYDgilOShW+o1WFJFj1f/kRmxH278HUmeGyLC5/E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IUmi/ELRGa8w8fh8nPPv7cyr8j1YImq87fcgc8r+y5YuM5Oi9o1PXtZjgAAaswmg+CrfdS3QVcOFqJyuQL2xjvnmEVbrb2XpycOLuYi7fMp06ejpg4Se7UAIw0pfMP5i4w+/ZcLmEa4+DsKg+Dz9JglG/fol/K/1J6nuxBL3MVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rF2tkgVu; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4e14dd8abdaso1763098137.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:39:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747831180; x=1748435980; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oKupp8/Fu+Q/fXSbeFEKEO8KyFhdMTZOQBPN0yqnh3Y=;
+        b=rF2tkgVuNlIGuPbc10/0hEZqnKW4titCvFI6AbVnRVo0N9UypDAkK4/velMZ//mW1L
+         P8WV5RDPUMM2vK+mwq1HnIMCA652uMWPkoz5uE+OXKTVTepI60TzXJe8rcbJZF/IF6D+
+         8Hmy4kk8IB0FGhuh/selvU6m73tjlTLUZ57jL1ul0Absx7aUpUl0Hn2+nxeF4dX++AvN
+         mjfloecx8P6cn9706sVE5BjDsdM7uLZVcNBtXzRVBV5CRpi++uXZx9Cg46HxhSSVnQCG
+         lJ0A1ix6o0le7u2khXMxJNCVwavT1I2fOFGIMAnr+XqO+2iL1GypFpO8CeRdfayf9JI2
+         kMOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747831180; x=1748435980;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oKupp8/Fu+Q/fXSbeFEKEO8KyFhdMTZOQBPN0yqnh3Y=;
+        b=KSfNUScWVxPGCo6MZIHrJReeJQrrXLJlMct3LA4V5CkQ11yK1W1Q77nea/T/yDIS+4
+         Gz2jW4jhJOcCmgJA55OXEzn2kMP+rpJvAJjhJx4EgAj/hzKokAPuNlJidnm+gMt53kAF
+         tG3okKXF5xjgEUgtXWq4njUt9MKIWLhyhLXPUdEK6rF9kxNupeNFu3SnuB0VKCHID9GW
+         BJhUF/ZS2ihvMgbnboO/jwPz1ZxmJ/e4z4n/sapbMOCkz1gtEaRL7TJR40xCBr4h9cun
+         GbIFTuUcafMgmC9NNdbr6Z3MiYnjg2KiUiv0lKqpBTuH7vfBOg4BF0pstlS/YaJHfurS
+         QmhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsFyTH4Sve6OZO8PFyKrcetz1sXUdzqpnyRSOZ7ubtTUSyZJUjrRjSMystMEt2YMRy6mBQ7ucEIXszUc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrpkMOqTWTM8F3Y/farNO156g9P9aPhu6onJOPUSTx04gL18f0
+	M7pm9PRrBeIGPQ6M4SjexG2hVf2LJ4MWwpPQx6IiSadBhb7XeqhFNiKHHmQATXQ69hIMidPhehu
+	bt+QtNPHQ/ZBrrTUyRFQw4XS7Hj46JjEXgRD5jAL1IA==
+X-Gm-Gg: ASbGncseQq46Lc2sDq/j4iIl9UTaL07kz2SZgPWC57slavaGoigAG+Su8L/hgrX2gfe
+	+Pq0duIfMYW8DzROIsxUZHqN1e1Nab4HczFk1JRKzRrxjfeEdfMcvHpN7gkjopZB8iVSispK2bA
+	0HBKYSFb4aIEEcGrOjT10zc6MpSN7OdHa91bZ8y3tVmTDV61cS2gkLxaxZI80Ic2FDDA==
+X-Google-Smtp-Source: AGHT+IG+EBWrQ9MFOPu2a53gcTca8fxH4g1iNDKit/DXzpT0QHLt9dTkLmNlN0hCtGWDXBUx7uKx49arXcF4HdQ2RIE=
+X-Received: by 2002:a05:6102:1593:b0:4c4:fdb9:2ea with SMTP id
+ ada2fe7eead31-4e049d5c1ecmr20292772137.7.1747831180485; Wed, 21 May 2025
+ 05:39:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250521-upstream_rcc_mp21-v3-3-cac9d8f63d20@foss.st.com>
-References: <20250521-upstream_rcc_mp21-v3-0-cac9d8f63d20@foss.st.com>
-In-Reply-To: <20250521-upstream_rcc_mp21-v3-0-cac9d8f63d20@foss.st.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_04,2025-05-20_03,2025-03-28_01
+References: <20250520125753.836407405@linuxfoundation.org>
+In-Reply-To: <20250520125753.836407405@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 21 May 2025 18:09:29 +0530
+X-Gm-Features: AX0GCFu6fLUPi2-ImLv8oVSMddRz_eslZAtfN0laHVarrqF2gfvQcjhr5N7sgAI
+Message-ID: <CA+G9fYtpC-uB9wCf=ZYRDF-YrP5WGMU1Y-4TcR+PKjNa97o5Ug@mail.gmail.com>
+Subject: Re: [PATCH 5.15 00/59] 5.15.184-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-- drop minItems from access-controllers
-- remove rcc label from example
-- fixes typos
-- remove double '::' from 'See also::'
+On Tue, 20 May 2025 at 19:23, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.15.184 release.
+> There are 59 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 22 May 2025 12:57:37 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.15.184-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
----
- .../devicetree/bindings/clock/st,stm32mp25-rcc.yaml         | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
-index 88e52f10d1ecc68e818cd7d8cb1ca39dceb7a494..1e3b5d218bb01acb247d27bc6902be821cabd98c 100644
---- a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
-@@ -11,9 +11,9 @@ maintainers:
- 
- description: |
-   The RCC hardware block is both a reset and a clock controller.
--  RCC makes also power management (resume/supend).
-+  RCC makes also power management (resume/suspend).
- 
--  See also::
-+  See also:
-     include/dt-bindings/clock/st,stm32mp25-rcc.h
-     include/dt-bindings/reset/st,stm32mp25-rcc.h
- 
-@@ -38,7 +38,7 @@ properties:
-       - description: CK_SCMI_MSI Low Power Internal oscillator (~ 4 MHz or ~ 16 MHz)
-       - description: CK_SCMI_LSE Low Speed External oscillator (32 KHz)
-       - description: CK_SCMI_LSI Low Speed Internal oscillator (~ 32 KHz)
--      - description: CK_SCMI_HSE_DIV2 CK_SCMI_HSE divided by 2 (coud be gated)
-+      - description: CK_SCMI_HSE_DIV2 CK_SCMI_HSE divided by 2 (could be gated)
-       - description: CK_SCMI_ICN_HS_MCU High Speed interconnect bus clock
-       - description: CK_SCMI_ICN_LS_MCU Low Speed interconnect bus clock
-       - description: CK_SCMI_ICN_SDMMC SDMMC interconnect bus clock
-@@ -108,15 +108,14 @@ properties:
-       - description: CK_SCMI_ICN_APB2 Peripheral bridge 2
-       - description: CK_SCMI_ICN_APB3 Peripheral bridge 3
-       - description: CK_SCMI_ICN_APB4 Peripheral bridge 4
--      - description: CK_SCMI_ICN_APBDBG Peripheral bridge for degub
-+      - description: CK_SCMI_ICN_APBDBG Peripheral bridge for debug
-       - description: CK_SCMI_TIMG1 Peripheral bridge for timer1
-       - description: CK_SCMI_TIMG2 Peripheral bridge for timer2
-       - description: CK_SCMI_PLL3 PLL3 clock
-       - description: clk_dsi_txbyte DSI byte clock
- 
-   access-controllers:
--    minItems: 1
--    maxItems: 2
-+    maxItems: 1
- 
- required:
-   - compatible
-@@ -131,7 +130,7 @@ examples:
-   - |
-     #include <dt-bindings/clock/st,stm32mp25-rcc.h>
- 
--    rcc: clock-controller@44200000 {
-+    clock-controller@44200000 {
-         compatible = "st,stm32mp25-rcc";
-         reg = <0x44200000 0x10000>;
-         #clock-cells = <1>;
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
--- 
-2.25.1
+## Build
+* kernel: 5.15.184-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: ba6ee53cdfadb92bab1c005dfb67a4397a8a7219
+* git describe: v5.15.183-60-gba6ee53cdfad
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15=
+.183-60-gba6ee53cdfad
 
+## Test Regressions (compared to v5.15.182-55-g5aa355897d1b)
+
+## Metric Regressions (compared to v5.15.182-55-g5aa355897d1b)
+
+## Test Fixes (compared to v5.15.182-55-g5aa355897d1b)
+
+## Metric Fixes (compared to v5.15.182-55-g5aa355897d1b)
+
+## Test result summary
+total: 60301, pass: 46648, fail: 2204, skip: 11039, xfail: 410
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 101 total, 101 passed, 0 failed
+* arm64: 28 total, 28 passed, 0 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 22 total, 22 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 22 total, 22 passed, 0 failed
+* riscv: 8 total, 8 passed, 0 failed
+* s390: 9 total, 9 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 24 total, 24 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-exec
+* kselftest-fpu
+* kselftest-futex
+* kselftest-intel_pstate
+* kselftest-kcmp
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
