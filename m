@@ -1,127 +1,302 @@
-Return-Path: <linux-kernel+bounces-657482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A64AABF4B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:48:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D22BABF4C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3707D8C13AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:48:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A5617A2CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76E726B968;
-	Wed, 21 May 2025 12:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C27269D06;
+	Wed, 21 May 2025 12:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dOZgprLV"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PalUQcTd"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD04B2673B7;
-	Wed, 21 May 2025 12:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D72526D4F5
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747831713; cv=none; b=IUl9KmHpXI2Qwn33mkwGvKAY2Fdjf/jgyWOuiCEEG1MvIUeg2bR7hMApTm1mIYnwdJp49B2bNbzvJWtp5zXA1cMipXUDjT3VwnyIda1ncIKHn2ywIFHBV9/Ol202pS/p/E8TpLLt8oTTbab2+F7VvkQ5AhmgfgnypS8BU7S3gso=
+	t=1747831874; cv=none; b=lfJ6fOnaQCix3CtTbMGle+50WRGd/e/aJKOddBy1XS0dF/JsQ9anSyitshvi4t/TO8Zj+buIXJUhvg0L9B+Wg+HUhE+bz+NPjYhOIhQnuBZ+MGZy0PEPaMRHQeizpWiVdN+yAOAArKdhhRcmdazW3/IebMXIbsWODNiSK5cxr5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747831713; c=relaxed/simple;
-	bh=6dpl5+hKXsjxHXJtgK+FmCRGvqugBoM7cVl8IOfANAo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=tqpDFRx8DpFsrSZPqC+yzdb8EHk+4VP/GwxpGnaG6zqTe2xe0+yeG5anzJKaZRCU3Pjgq5UeZBUC3mFV/r0OrLn11tT4B618ddvYBOlhLEqQyUpUc2kiHnXY7cCG2noke2EZPiBHpHlgdv3r7+e5TQoLZv7uQSMv5WrXr7QFhp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dOZgprLV; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-30f0d8628c8so2297665a91.0;
-        Wed, 21 May 2025 05:48:31 -0700 (PDT)
+	s=arc-20240116; t=1747831874; c=relaxed/simple;
+	bh=nwEtT+x1vftzTI0tYmPgfzg+e8CvSr12EldY+2+mMHw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=oFrYeyq5EJDcDmtVBgUzY66OkTy009wMg1+uzydM4uKtvQJQLuoi2DOEaNP60At2vCWiwhZIUaJMyWIpUmJmGn5imZ2dZahmVduSIYaWTpsHZ7Oxq623lo2fPQ1+rq1jF20yRXemyvX0b1q9BR6aW6eECc8amqISkRkDRF04a+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PalUQcTd; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a1f6c5f4f2so2625063f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:51:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747831711; x=1748436511; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/OlELLQdFDyxnorv2U2UyUYcCRMoCws2HjAojfez5Us=;
-        b=dOZgprLVPpeVrxVno988z0M6OqReXamXePP/bv/nTfLwKRINAfW2NQ1MiE9+kOf4bs
-         cfr5/tQtIi8XcP3uyBtGu26x47iqDwHS+AEi953IeVBNgUzLUdqGy8FjINre2UYk+/Oj
-         0CVnGVwD3sJYwCoKBYLPm6qAGcP5r7ZJ5qVndtl78mSwXZchrTIuwjc5Og9/3inOraFp
-         hD/Ja3FC63zD4OUIq91GSBhx/YImf42j+GL6sTmsomPsr0abl96k3y6qqT4GosEnA1eS
-         mVBUh97ZxQEHhu1QklPjTjx6nwuaPH/stj5V5W/KbuDW+hVk+sVruVJY3k2MkUkTfgBb
-         qV6A==
+        d=google.com; s=20230601; t=1747831871; x=1748436671; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OdCXehb9QOWC9OAAK/XLuCdQBwNqpxkcUy0DKMTcnfY=;
+        b=PalUQcTdDQT5FtVqpBcKkOvh0NwsDQkUyC1EGi3WZsiq5MM/ZbE9kco9f6pDiLWtVr
+         UA8ntv5qgdq6qt9VBfZ4wnhOg66dLu0TNxcqIW70X7BrBK0PW0qSZIyKJ+Fe7pq6LAv9
+         KdM2y6BABGi+XYyVfuwqPTHNBIiMb2XV+IAZV8vhRYjsnMR1fr1r8hdbdiNMdgmiE0dy
+         rjFeyyqLWglFeLuHU10Q2ZIJ2uaE/KjlejhegIpH1tS34CSxcYsIwrY+hUDEmzaabyvM
+         YNXVqAMIjNuBqNnN9XlJ/C1bwtpddhj7YjvqSfgFjY/aECkFhRPHhYJ/LsBJS3iKsTrh
+         xFTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747831711; x=1748436511;
-        h=content-transfer-encoding:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/OlELLQdFDyxnorv2U2UyUYcCRMoCws2HjAojfez5Us=;
-        b=Ok/LR6pGtX2Q0eVv3c5jn8/f36+ZiElk+SDGO2oVzZOrouIyOtfw1dmHZjyP10dh5i
-         NFl0452vltYMwP1UwK1PU7c0iC7x2iR6QrjsIJiFPO73E80SbHrcVjJKwIx+HW+eYI/E
-         6/7GXl69emFPB6XsFzcUEE8LyzooAwS+gGCh7epKnkAK4Zs5ZA1tiEzHkOUrwKIIH79S
-         iYDBCTVCc8OnAX812VWy1TihqMavSMzd5hhyI3cnyaw0fL/7h9AiMKf3MSWS1+Tnb1e/
-         /Wkd0gQYsGJ2Pm7kZNAg7kUrIEiRGFM4Yovyu3QieZA+tCG6gkgoZ17Lvms4zJ4T+S2j
-         mSXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWD6z1hWuP9MZKrpRa/XZuz05qONyIXhDEE3uUNhNsmqpkXCBMytVLK4/1+1wwKvn8sXCICabjEoLmOIwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyah86/RRsWuiswyF+Ta3aACyjWfCykNpj5awkzmILDNsl6xi+c
-	CjPxqMQ5ibX75poo6sG7fAG54Y8kj6Ws9qrTZV4Ckfezl2hnUWcDGxLb24GZhswb
-X-Gm-Gg: ASbGncsfw3rVrnlWnMDQABxPO08G74Dy0XCqVufsOIGXX4wQy797E9IypCg89qFZOOr
-	0zIY7JS9jUXIqe0rJDWw5QfcrSCdzPHfTSmukyvYQam3zSnGo/lyY3K0OZI4IRiMDRphOskf9oT
-	a4y6vdj1TQICAUQmA+QFp6qXONHrA7f1yjG5Ca0OehKyUffPG80jXeyWv/ZxisicjG1x8Pko1gE
-	FDF/lx2Gc6457OXTecq2eg7GZOICou2rM2mOy8wt+JJ1+ZBtCnf3yA3o3XnodvtINyflwac0toZ
-	/kGa0w2pfeI5ZBJaH3QbxVgMMJCKe+GLR6f7Qyoav3xKmUgAxVWnubQcLltfoBQi1IHucm8bTn+
-	4PxCHL+7cFTodupM3i32NPublJajf+Rp4/5oz2w==
-X-Google-Smtp-Source: AGHT+IHLCkETVF9IpoaNAmpLh2aR9pR6si9XDzVi377NoVdogivwd38lRxIY5SMd0CmaMqVs7afjzA==
-X-Received: by 2002:a17:90a:e710:b0:306:b593:455e with SMTP id 98e67ed59e1d1-30e7dc1f4a8mr33747981a91.1.1747831710723;
-        Wed, 21 May 2025 05:48:30 -0700 (PDT)
-Received: from [192.168.11.2] (FL1-119-244-79-106.tky.mesh.ad.jp. [119.244.79.106])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f365e5b91sm3543183a91.39.2025.05.21.05.48.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 May 2025 05:48:30 -0700 (PDT)
-Message-ID: <3e8f343f-7d66-4f7a-9f08-3910623e322f@gmail.com>
-Date: Wed, 21 May 2025 21:48:27 +0900
+        d=1e100.net; s=20230601; t=1747831871; x=1748436671;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OdCXehb9QOWC9OAAK/XLuCdQBwNqpxkcUy0DKMTcnfY=;
+        b=NjXW293YzwbaQQbaTIk0PEVi30kIA2LEdQe1HFPyx/3EZx7gpseMfKLHTZf/UfDSQv
+         WBRz71y+qKQczmrMkDiquK46fV3hSRXC4wMr/y+ApY9eKpyjNVDhOI7+mYXER/K4w1nG
+         I3lJqDs5kYmkJPBKbUAcVxFXQIUpIBmqfePqD4fURPKXfApu1NEs+hLHmAZYQKCG9uA5
+         otsFeHchLvk7fEn1k3Ypt9Jn7tCpQs48reBk9T6i4KGZsrPpmW0hv71bY7iATKO4jewc
+         78T5FuOzNEfPQgWwzB/Fjf9xl9eecwIVoR1tuNsDlMJxAl/lWB6ls6Bpa53/wRboLzwg
+         bQSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCS10/V+e1DJ6sID/WQEXiv+2ka3R3L4dpuqD9PTy3tpxxEdWCBzjc+Yz5T7aFYEi83AIECP5DypbQTs0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5KsN+6E4dAq3Fh+WBQkTlc3DtONRR1DwyigmfztFXVJzDuol5
+	sAiv+XpEXWr1WE4UwMsCK0Ivs41XeRtAmbr5555oWdzXKUVHWnTRNFkr+MwG6D3tYp1VpWbNLD9
+	GHUpMdIs9e+NlDnx3KoJxOg==
+X-Google-Smtp-Source: AGHT+IFOSbvAApsdL0WQw9HC/Z8jMn7H55eEstBUgN1REfYkPF+658GdQUPM6/v2SQsraL42umaM/rNDwNAlKI0U
+X-Received: from wrbee8.prod.google.com ([2002:a05:6000:2108:b0:3a3:6aae:bf2b])
+ (user=vdonnefort job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2211:b0:3a3:6c48:4703 with SMTP id ffacd0b85a97d-3a36c484c01mr11697103f8f.34.1747831871056;
+ Wed, 21 May 2025 05:51:11 -0700 (PDT)
+Date: Wed, 21 May 2025 13:48:28 +0100
+In-Reply-To: <20250521124834.1070650-1-vdonnefort@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Daisuke Matsuda <dskmtsd@gmail.com>
-Subject: [bug report] [rdma] RXE ODP test hangs with new DMA map API
-To: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- leon@kernel.org, jgg@ziepe.ca, zyjzyj2000@gmail.com
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250521124834.1070650-1-vdonnefort@google.com>
+X-Mailer: git-send-email 2.49.0.1112.g889b7c5bd8-goog
+Message-ID: <20250521124834.1070650-5-vdonnefort@google.com>
+Subject: [PATCH v6 04/10] KVM: arm64: Add a range to __pkvm_host_unshare_guest()
+From: Vincent Donnefort <vdonnefort@google.com>
+To: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, 
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, 
+	will@kernel.org
+Cc: qperret@google.com, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Vincent Donnefort <vdonnefort@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+In preparation for supporting stage-2 huge mappings for np-guest. Add a
+nr_pages argument to the __pkvm_host_unshare_guest hypercall. This range
+supports only two values: 1 or PMD_SIZE / PAGE_SIZE (that is 512 on a
+4K-pages system).
 
-After these two patches are merged to the for-next tree, RXE ODP test always hangs:
-   RDMA/core: Convert UMEM ODP DMA mapping to caching IOVA and page linkage
-   RDMA/umem: Store ODP access mask information in PFN
-cf. https://lore.kernel.org/linux-rdma/cover.1745831017.git.leon@kernel.org/
+Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
 
-Here is the console log:
-```
-$ ./build/bin/run_tests.py -v -k odp
-test_odp_dc_traffic (tests.test_mlx5_dc.DCTest.test_odp_dc_traffic) ... skipped 'Can not run the test over non MLX5 device'
-test_devx_rc_qp_odp_traffic (tests.test_mlx5_devx.Mlx5DevxRcTrafficTest.test_devx_rc_qp_odp_traffic) ... skipped 'Can not run the test over non MLX5 device'
-test_odp_mkey_list_new_api (tests.test_mlx5_mkey.Mlx5MkeyTest.test_odp_mkey_list_new_api)
-Create Mkeys above ODP MR, configure it with memory layout using the new API and ... skipped 'Could not open mlx5 context (This is not an MLX5 device)'
-test_odp_async_prefetch_rc_traffic (tests.test_odp.OdpTestCase.test_odp_async_prefetch_rc_traffic) ...
+diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+index 47aa7b01114f..19671edbe18f 100644
+--- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
++++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+@@ -41,7 +41,7 @@ int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages);
+ int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages);
+ int __pkvm_host_share_guest(u64 pfn, u64 gfn, u64 nr_pages, struct pkvm_hyp_vcpu *vcpu,
+ 			    enum kvm_pgtable_prot prot);
+-int __pkvm_host_unshare_guest(u64 gfn, struct pkvm_hyp_vm *hyp_vm);
++int __pkvm_host_unshare_guest(u64 gfn, u64 nr_pages, struct pkvm_hyp_vm *hyp_vm);
+ int __pkvm_host_relax_perms_guest(u64 gfn, struct pkvm_hyp_vcpu *vcpu, enum kvm_pgtable_prot prot);
+ int __pkvm_host_wrprotect_guest(u64 gfn, struct pkvm_hyp_vm *hyp_vm);
+ int __pkvm_host_test_clear_young_guest(u64 gfn, bool mkold, struct pkvm_hyp_vm *vm);
+diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+index 4d3d215955c3..5c03bd1db873 100644
+--- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
++++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+@@ -270,6 +270,7 @@ static void handle___pkvm_host_unshare_guest(struct kvm_cpu_context *host_ctxt)
+ {
+ 	DECLARE_REG(pkvm_handle_t, handle, host_ctxt, 1);
+ 	DECLARE_REG(u64, gfn, host_ctxt, 2);
++	DECLARE_REG(u64, nr_pages, host_ctxt, 3);
+ 	struct pkvm_hyp_vm *hyp_vm;
+ 	int ret = -EINVAL;
+ 
+@@ -280,7 +281,7 @@ static void handle___pkvm_host_unshare_guest(struct kvm_cpu_context *host_ctxt)
+ 	if (!hyp_vm)
+ 		goto out;
+ 
+-	ret = __pkvm_host_unshare_guest(gfn, hyp_vm);
++	ret = __pkvm_host_unshare_guest(gfn, nr_pages, hyp_vm);
+ 	put_pkvm_hyp_vm(hyp_vm);
+ out:
+ 	cpu_reg(host_ctxt, 1) =  ret;
+diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+index 8051235ea194..2703bce3b773 100644
+--- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
++++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+@@ -980,10 +980,9 @@ int __pkvm_host_share_guest(u64 pfn, u64 gfn, u64 nr_pages, struct pkvm_hyp_vcpu
+ 	return ret;
+ }
+ 
+-static int __check_host_shared_guest(struct pkvm_hyp_vm *vm, u64 *__phys, u64 ipa)
++static int __check_host_shared_guest(struct pkvm_hyp_vm *vm, u64 *__phys, u64 ipa, u64 size)
+ {
+ 	enum pkvm_page_state state;
+-	struct hyp_page *page;
+ 	kvm_pte_t pte;
+ 	u64 phys;
+ 	s8 level;
+@@ -994,7 +993,7 @@ static int __check_host_shared_guest(struct pkvm_hyp_vm *vm, u64 *__phys, u64 ip
+ 		return ret;
+ 	if (!kvm_pte_valid(pte))
+ 		return -ENOENT;
+-	if (level != KVM_PGTABLE_LAST_LEVEL)
++	if (kvm_granule_size(level) != size)
+ 		return -E2BIG;
+ 
+ 	state = guest_get_page_state(pte, ipa);
+@@ -1002,43 +1001,49 @@ static int __check_host_shared_guest(struct pkvm_hyp_vm *vm, u64 *__phys, u64 ip
+ 		return -EPERM;
+ 
+ 	phys = kvm_pte_to_phys(pte);
+-	ret = check_range_allowed_memory(phys, phys + PAGE_SIZE);
++	ret = check_range_allowed_memory(phys, phys + size);
+ 	if (WARN_ON(ret))
+ 		return ret;
+ 
+-	page = hyp_phys_to_page(phys);
+-	if (get_host_state(page) != PKVM_PAGE_SHARED_OWNED)
+-		return -EPERM;
+-	if (WARN_ON(!page->host_share_guest_count))
+-		return -EINVAL;
++	for_each_hyp_page(page, phys, size) {
++		if (get_host_state(page) != PKVM_PAGE_SHARED_OWNED)
++			return -EPERM;
++		if (WARN_ON(!page->host_share_guest_count))
++			return -EINVAL;
++	}
+ 
+ 	*__phys = phys;
+ 
+ 	return 0;
+ }
+ 
+-int __pkvm_host_unshare_guest(u64 gfn, struct pkvm_hyp_vm *vm)
++int __pkvm_host_unshare_guest(u64 gfn, u64 nr_pages, struct pkvm_hyp_vm *vm)
+ {
+ 	u64 ipa = hyp_pfn_to_phys(gfn);
+-	struct hyp_page *page;
+-	u64 phys;
++	u64 size, phys;
+ 	int ret;
+ 
++	ret = __guest_check_transition_size(0, ipa, nr_pages, &size);
++	if (ret)
++		return ret;
++
+ 	host_lock_component();
+ 	guest_lock_component(vm);
+ 
+-	ret = __check_host_shared_guest(vm, &phys, ipa);
++	ret = __check_host_shared_guest(vm, &phys, ipa, size);
+ 	if (ret)
+ 		goto unlock;
+ 
+-	ret = kvm_pgtable_stage2_unmap(&vm->pgt, ipa, PAGE_SIZE);
++	ret = kvm_pgtable_stage2_unmap(&vm->pgt, ipa, size);
+ 	if (ret)
+ 		goto unlock;
+ 
+-	page = hyp_phys_to_page(phys);
+-	page->host_share_guest_count--;
+-	if (!page->host_share_guest_count)
+-		WARN_ON(__host_set_page_state_range(phys, PAGE_SIZE, PKVM_PAGE_OWNED));
++	for_each_hyp_page(page, phys, size) {
++		/* __check_host_shared_guest() protects against underflow */
++		page->host_share_guest_count--;
++		if (!page->host_share_guest_count)
++			set_host_state(page, PKVM_PAGE_OWNED);
++	}
+ 
+ unlock:
+ 	guest_unlock_component(vm);
+@@ -1058,7 +1063,7 @@ static void assert_host_shared_guest(struct pkvm_hyp_vm *vm, u64 ipa)
+ 	host_lock_component();
+ 	guest_lock_component(vm);
+ 
+-	ret = __check_host_shared_guest(vm, &phys, ipa);
++	ret = __check_host_shared_guest(vm, &phys, ipa, PAGE_SIZE);
+ 
+ 	guest_unlock_component(vm);
+ 	host_unlock_component();
+@@ -1245,7 +1250,7 @@ void pkvm_ownership_selftest(void *base)
+ 	assert_transition_res(-EPERM,	__pkvm_host_unshare_ffa, pfn, 1);
+ 	assert_transition_res(-EPERM,	hyp_pin_shared_mem, virt, virt + size);
+ 	assert_transition_res(-EPERM,	__pkvm_host_share_guest, pfn, gfn, 1, vcpu, prot);
+-	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, vm);
++	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, 1, vm);
+ 
+ 	selftest_state.host = PKVM_PAGE_OWNED;
+ 	selftest_state.hyp = PKVM_NOPAGE;
+@@ -1253,7 +1258,7 @@ void pkvm_ownership_selftest(void *base)
+ 	assert_transition_res(-EPERM,	__pkvm_hyp_donate_host, pfn, 1);
+ 	assert_transition_res(-EPERM,	__pkvm_host_unshare_hyp, pfn);
+ 	assert_transition_res(-EPERM,	__pkvm_host_unshare_ffa, pfn, 1);
+-	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, vm);
++	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, 1, vm);
+ 	assert_transition_res(-EPERM,	hyp_pin_shared_mem, virt, virt + size);
+ 
+ 	selftest_state.host = PKVM_PAGE_SHARED_OWNED;
+@@ -1264,7 +1269,7 @@ void pkvm_ownership_selftest(void *base)
+ 	assert_transition_res(-EPERM,	__pkvm_host_share_ffa, pfn, 1);
+ 	assert_transition_res(-EPERM,	__pkvm_hyp_donate_host, pfn, 1);
+ 	assert_transition_res(-EPERM,	__pkvm_host_share_guest, pfn, gfn, 1, vcpu, prot);
+-	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, vm);
++	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, 1, vm);
+ 
+ 	assert_transition_res(0,	hyp_pin_shared_mem, virt, virt + size);
+ 	assert_transition_res(0,	hyp_pin_shared_mem, virt, virt + size);
+@@ -1276,7 +1281,7 @@ void pkvm_ownership_selftest(void *base)
+ 	assert_transition_res(-EPERM,	__pkvm_host_share_ffa, pfn, 1);
+ 	assert_transition_res(-EPERM,	__pkvm_hyp_donate_host, pfn, 1);
+ 	assert_transition_res(-EPERM,	__pkvm_host_share_guest, pfn, gfn, 1, vcpu, prot);
+-	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, vm);
++	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, 1, vm);
+ 
+ 	hyp_unpin_shared_mem(virt, virt + size);
+ 	assert_page_state();
+@@ -1295,7 +1300,7 @@ void pkvm_ownership_selftest(void *base)
+ 	assert_transition_res(-EPERM,	__pkvm_host_unshare_hyp, pfn);
+ 	assert_transition_res(-EPERM,	__pkvm_hyp_donate_host, pfn, 1);
+ 	assert_transition_res(-EPERM,	__pkvm_host_share_guest, pfn, gfn, 1, vcpu, prot);
+-	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, vm);
++	assert_transition_res(-ENOENT,	__pkvm_host_unshare_guest, gfn, 1, vm);
+ 	assert_transition_res(-EPERM,	hyp_pin_shared_mem, virt, virt + size);
+ 
+ 	selftest_state.host = PKVM_PAGE_OWNED;
+@@ -1319,11 +1324,11 @@ void pkvm_ownership_selftest(void *base)
+ 	WARN_ON(hyp_virt_to_page(virt)->host_share_guest_count != 2);
+ 
+ 	selftest_state.guest[0] = PKVM_NOPAGE;
+-	assert_transition_res(0,	__pkvm_host_unshare_guest, gfn, vm);
++	assert_transition_res(0,	__pkvm_host_unshare_guest, gfn, 1, vm);
+ 
+ 	selftest_state.guest[1] = PKVM_NOPAGE;
+ 	selftest_state.host = PKVM_PAGE_OWNED;
+-	assert_transition_res(0,	__pkvm_host_unshare_guest, gfn + 1, vm);
++	assert_transition_res(0,	__pkvm_host_unshare_guest, gfn + 1, 1, vm);
+ 
+ 	selftest_state.host = PKVM_NOPAGE;
+ 	selftest_state.hyp = PKVM_PAGE_OWNED;
+diff --git a/arch/arm64/kvm/pkvm.c b/arch/arm64/kvm/pkvm.c
+index 0285e2cd2e7f..f77c5157a8d7 100644
+--- a/arch/arm64/kvm/pkvm.c
++++ b/arch/arm64/kvm/pkvm.c
+@@ -371,7 +371,7 @@ int pkvm_pgtable_stage2_unmap(struct kvm_pgtable *pgt, u64 addr, u64 size)
+ 
+ 	lockdep_assert_held_write(&kvm->mmu_lock);
+ 	for_each_mapping_in_range_safe(pgt, addr, addr + size, mapping) {
+-		ret = kvm_call_hyp_nvhe(__pkvm_host_unshare_guest, handle, mapping->gfn);
++		ret = kvm_call_hyp_nvhe(__pkvm_host_unshare_guest, handle, mapping->gfn, 1);
+ 		if (WARN_ON(ret))
+ 			break;
+ 		rb_erase(&mapping->node, &pgt->pkvm_mappings);
+-- 
+2.49.0.1112.g889b7c5bd8-goog
 
-
-```
-
-It looks that the python process is somehow stuck in uverbs_destroy_ufile_hw():
-```
-$ sudo cat /proc/1845/task/1845/stack
-[<0>] uverbs_destroy_ufile_hw+0x24/0x100 [ib_uverbs]
-[<0>] ib_uverbs_close+0x1b/0xc0 [ib_uverbs]
-[<0>] __fput+0xea/0x2d0
-[<0>] ____fput+0x15/0x20
-[<0>] task_work_run+0x5d/0xa0
-[<0>] do_exit+0x316/0xa50
-[<0>] make_task_dead+0x81/0x160
-[<0>] rewind_stack_and_make_dead+0x16/0x20
-```
-
-I am not sure about the root cause but hope we can fix this before the next merge window.
-
-Thanks,
-Daisuke
 
