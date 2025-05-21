@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-656879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F1AABEC00
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:34:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0592ABEBFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:34:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 526637A6BEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:34:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B4A24A8432
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F6B235043;
-	Wed, 21 May 2025 06:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F75D232392;
+	Wed, 21 May 2025 06:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="lfySYCtq"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="NMuY+dsk"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C0E233D88;
-	Wed, 21 May 2025 06:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D09219EB;
+	Wed, 21 May 2025 06:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747809244; cv=none; b=HydxCi6Vxs27adXDkP7F39D+ia30yk9GYQkUCJqCxRoyQsChKfW+WiuwkaEhbpdPFIOkvW99pZtKa8ViKzEmwKtWWqdPOX+O+2HOxYvALU6xHScaNXnLlVgYJ0r1cSv8Ehjj3etc5DBhYnBt1UEvJF8AgT7Y9z/BWo52k3WjeUw=
+	t=1747809239; cv=none; b=Wmf10vnO2ONIKIEnOE/u3hpFNhj6KG3RroCgK50gFK68Od1PXKKeb9rQmd8ijAtG2wgVA8Q8fogdqHHwT88wrCMUcHS0ZQ9N/AJqVbMFBdJvuvBBJfsDs5rlo2Niq+EmPXgQUqp+jYmUlCFpjWqeNvyW1XdSShHqW8X5sXQTzn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747809244; c=relaxed/simple;
-	bh=kROxZMu/nh6HWdn2287ETRvS/NrNq1Dh6NlPCnmP4ck=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OphsT5sOYmgjjNrJ/922P2HR+rUtBgTt4VGs6S1rc+qA6K6qgXnWcatkzGmI55T4NHBQ8Vs8QIL/NGQeUMFojt5X7m78JHh0FWGxBsPT8iKQSNVszPq9czorCjD//cflV6+m4TdWBAc7AvFHTWHCcjX86Qgh+EJFbtYkMZb+Yr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=lfySYCtq; arc=none smtp.client-ip=60.244.123.138
+	s=arc-20240116; t=1747809239; c=relaxed/simple;
+	bh=rCJ86WBlxufQcGbhkCqas2vTU5ZRHf0quqp7GXnnWx0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mFdG6DQyLQzRS4OqkbWh4jiQzDAFOaWeDTZlC1sdNHmnEETUz9zvsXoegMkSVmf7g/2KvjuYTesqPXzrH4m55aGLWWmb3R0Zp8QsJtVwWbAAWH8QswB9ON/+LJqZ9t6Ti+KKjrfGyQhRU87NYneR6SjFvT8/r1MVab15nZ0MkPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=NMuY+dsk; arc=none smtp.client-ip=210.61.82.184
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 8f72bad6360d11f0813e4fe1310efc19-20250521
+X-UUID: 90738582360d11f082f7f7ac98dee637-20250521
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=/h4DXeSlHBOHr57ehL6D/b100MsQndsK0xj/jOkD2Ew=;
-	b=lfySYCtqZ525CdCtqNeKUjBQ2icdqIb5HVx+6hP1hjvSB9W5i12b0mHV5FpJqMEc/VpBEVqIUFnAHxGK3fljp0iW6EYMeyyAnZKXLQ7EzpFcXuLuT41vmoMM/9Fxjxu9gE8MFnay2j/PlpBCbzOOb+Pq+XRAhY1FYWlyINJn9OI=;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=ecWbI4Pje/gggka0f+VAOVDggUGkjU+rcYwW5aG2bTw=;
+	b=NMuY+dskfD2O4nCXG0fEIixcgkfdsSQNUUvsSpG7CGFqeT/w8SVIJ/LfsfcFmJ2aoov/YuXiBtG85upUlQQ+wzOixm+OAGk1oMlQuMqMAbP/QxzI8SW3J2xJAjN/j/OR5DUVdu9yDkO6NwUixgOjKGO+CQCLqai3OkfXSdkwghU=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:d65b8953-4de1-40f7-9088-9d8711477c3b,IP:0,UR
+X-CID-O-INFO: VERSION:1.2.1,REQID:e3844903-3c55-4804-ae01-cce095eb841b,IP:0,UR
 	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
 	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:b8958e47-ee4f-4716-aedb-66601021a588,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,
-	LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:349bf158-eac4-4b21-88a4-d582445d304a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
+	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
+	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
 X-CID-BVR: 0
 X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: 8f72bad6360d11f0813e4fe1310efc19-20250521
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 90738582360d11f082f7f7ac98dee637-20250521
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
 	(envelope-from <friday.yang@mediatek.com>)
 	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1630861245; Wed, 21 May 2025 14:33:51 +0800
+	with ESMTP id 1027610072; Wed, 21 May 2025 14:33:53 +0800
 Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Wed, 21 May 2025 14:33:50 +0800
+ 15.2.1258.39; Wed, 21 May 2025 14:33:51 +0800
 Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
  mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Wed, 21 May 2025 14:33:48 +0800
+ 15.2.1258.39 via Frontend Transport; Wed, 21 May 2025 14:33:50 +0800
 From: Friday Yang <friday.yang@mediatek.com>
 To: Yong Wu <yong.wu@mediatek.com>, Krzysztof Kozlowski <krzk@kernel.org>, Rob
  Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias
@@ -66,10 +67,12 @@ CC: Friday Yang <friday.yang@mediatek.com>,
 	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v8 0/2] Add SMI reset and clamp for MediaTek MT8188 SoC
-Date: Wed, 21 May 2025 14:33:34 +0800
-Message-ID: <20250521063347.31578-1-friday.yang@mediatek.com>
+Subject: [PATCH v8 1/2] dt-bindings: memory: mediatek: Add SMI reset and clamp for MT8188
+Date: Wed, 21 May 2025 14:33:35 +0800
+Message-ID: <20250521063347.31578-2-friday.yang@mediatek.com>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20250521063347.31578-1-friday.yang@mediatek.com>
+References: <20250521063347.31578-1-friday.yang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,45 +82,93 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Based on tag: next-20250521, linux-next/master
+From: "Friday Yang" <friday.yang@mediatek.com>
 
-On the MediaTek MT8188 SoC platform, we encountered power-off failures
-and SMI bus hang issues during camera stress tests. The issue arises
-because bus glitches are sometimes produced when MTCMOS powers on or
-off. While this is fairly normal, the software must handle these
-glitches to avoid mistaking them for transaction signals. What's
-more, this issue emerged only after the initial upstreaming of SMI
-driver.
+Add 'resets' and 'reset-names' properties for SMI LARBs to support
+SMI reset operations.
+On the MediaTek platform, some SMI LARBs are directly connected to
+the SMI Common, while others are connected to the SMI Sub-Common,
+which in turn is connected to the SMI Common. The hardware block
+diagram can be described as follows.
 
-The software solutions can be summarized as follows:
+             SMI-Common(Smart Multimedia Interface Common)
+                 |
+         +----------------+------------------+
+         |                |                  |
+         |                |                  |
+         |                |                  |
+         |                |                  |
+         |                |                  |
+       larb0       SMI-Sub-Common0     SMI-Sub-Common1
+                   |      |     |      |             |
+                  larb1  larb2 larb3  larb7       larb9
 
-1. Use CLAMP to disable the SMI sub-common port after turning off the
-   LARB CG and before turning off the LARB MTCMOS.
-2. Use CLAMP to disable/enable the SMI sub-common port.
-3. Implement an AXI reset for SMI LARBs.
+Signed-off-by: Friday Yang <friday.yang@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Acked-by: Rob Herring <robh@kernel.org>
 
-Changes v8:
-- We replaced 'pm_runtime_enable' with 'devm_pm_runtime_enable' in the
-  v6 patch. This changed the order of cleanup, and reviewers expressed
-  concerns that it could introduce unexpected issues. So I discard this
-  change and continue using 'pm_runtime_enable'. We need to conduct
-  further investigation to determine if there are any issues related
-  to the cleanup order. This might be resolved in the future, but for
-  now, we just maintain the current status.
+---
+ .../mediatek,smi-common.yaml                  |  2 ++
+ .../memory-controllers/mediatek,smi-larb.yaml | 19 +++++++++++++++++++
+ 2 files changed, 21 insertions(+)
 
-v7:
-https://lore.kernel.org/lkml/20250430094545.23932-2-friday.yang@mediatek.com/
-https://lore.kernel.org/lkml/20250430094545.23932-3-friday.yang@mediatek.com/
+diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
+index 0762e0ff66ef..3d98c08b2149 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
+@@ -40,6 +40,7 @@ properties:
+           - mediatek,mt8186-smi-common
+           - mediatek,mt8188-smi-common-vdo
+           - mediatek,mt8188-smi-common-vpp
++          - mediatek,mt8188-smi-sub-common
+           - mediatek,mt8192-smi-common
+           - mediatek,mt8195-smi-common-vdo
+           - mediatek,mt8195-smi-common-vpp
+@@ -108,6 +109,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - mediatek,mt8188-smi-sub-common
+               - mediatek,mt8195-smi-sub-common
+     then:
+       required:
+diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml
+index 2e7fac4b5094..fc5feb2eac1f 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml
+@@ -70,6 +70,12 @@ properties:
+     description: the hardware id of this larb. It's only required when this
+       hardware id is not consecutive from its M4U point of view.
 
-friday.yang (2):
-  dt-bindings: memory: mediatek: Add SMI reset and clamp for MT8188
-  memory: mtk-smi: mt8188: Add SMI reset and clamp for MT8188
++  resets:
++    maxItems: 1
++
++  reset-names:
++    const: larb
++
+ required:
+   - compatible
+   - reg
+@@ -126,6 +132,19 @@ allOf:
+       required:
+         - mediatek,larb-id
 
- .../mediatek,smi-common.yaml                  |   2 +
- .../memory-controllers/mediatek,smi-larb.yaml |  19 +++
- drivers/memory/mtk-smi.c                      | 133 ++++++++++++++++++
- 3 files changed, 154 insertions(+)
++  - if:  # only for image, camera and ipe subsys
++      properties:
++        compatible:
++          const: mediatek,mt8188-smi-larb
++        mediatek,larb-id:
++          enum:
++            [ 9, 10, 11, 12, 13, 16, 17, 18, 19, 20 ]
++
++    then:
++      required:
++        - resets
++        - reset-names
++
+ additionalProperties: false
 
+ examples:
 --
 2.46.0
 
