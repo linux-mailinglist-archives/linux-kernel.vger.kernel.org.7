@@ -1,146 +1,161 @@
-Return-Path: <linux-kernel+bounces-658080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB34ABFC7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 19:45:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 665FFABFC87
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 19:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 770A41BC3D6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:45:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 062461BA786D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944AC27CB0D;
-	Wed, 21 May 2025 17:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70AB289E0D;
+	Wed, 21 May 2025 17:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RljfERsi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T3CRG98C"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89C414EC62;
-	Wed, 21 May 2025 17:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC2F19F42F
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 17:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747849515; cv=none; b=OqBGQ1Ey/OxcHdKaWtz9R8gPUfuo4QmOXFNqBJzJ8JtmPd80SJhOKBkLK3vQ+l/gW7zkoQdkYUdnozPVqLSBWnoTHfTRr6eAGLLMsSP2WjwBNtRqfOPu0FsQ+a+sJK5DpqXnlkg5pA0Wo5J51QBgdYYd5hvADCQFEgm0lcGz6A4=
+	t=1747849669; cv=none; b=Lwp8I5hKAQo0Llw0XBPdWt/aIduZvSJEO1BjMsQBbddoi7Bfq6mkhvloylw/v2Z62GML6oT1vsofW47wA2nlvEIJwbreG9TSVZjbQUyFSjySBvUOHsFt0sA6N9OzsAHcJ/yMqn3AULPf3VkejpvYfo4MX9snPUp4wzvJUrZm4kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747849515; c=relaxed/simple;
-	bh=V2RuI4M0Yg8yY4cQ1BGXlcPOPaGhDVK1o5Gd0zRxX6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Z7irmZa1236L9ez0JIw9FIbl6ItLAObycPrI2/Yh87OUNJK8t30aLYIvObAfizNrTZlvscm71Visa3BxNpaA9SLKy/oYM8sgfdqBOgsxUJmmaAgX3e2bP1xk51vIYv6wMDjp5NMeYoVIpR8ZVy/IiW+5iJG/rq7s7s21+a0KolM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RljfERsi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11E58C4CEE4;
-	Wed, 21 May 2025 17:45:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747849514;
-	bh=V2RuI4M0Yg8yY4cQ1BGXlcPOPaGhDVK1o5Gd0zRxX6s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=RljfERsiU7aFbLVKDq5ROTWlQtAUt3TSPdC13pCW+KAEi1HcbnZfIzw3wwGSzwIvd
-	 8P43hHIJ/fnuTagraQu1Md6zU6v4R6GHObnrJZFUN6dtwfTb04gdxf/91M/Hn0UAwv
-	 /du5mpef0IdqcKAfnJGQjBjx/Qfh3gyesyx9hjbLF6Hdfnnw0BWbkms44iLj/6VOYr
-	 VGeS1y4vsazQv4eVJFlNX0uQ2dbPGEWJvQwhaDS/NUbWRVk7XMMUHgnYliFWtqhh+o
-	 mkqtpf7voixiQLX/jAX3LS99ryQQoJ3LmPT0vHDX5P6pliW2+H16bQbFLIIeDuRUKh
-	 LA0173jC5vRdQ==
-Date: Wed, 21 May 2025 12:45:12 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-pci@vger.kernel.org, Jon Pan-Doh <pandoh@google.com>,
-	Karolina Stolarek <karolina.stolarek@oracle.com>,
-	Weinan Liu <wnliu@google.com>,
-	Martin Petersen <martin.petersen@oracle.com>,
-	Ben Fuller <ben.fuller@oracle.com>,
-	Drew Walton <drewwalton@microsoft.com>,
-	Anil Agrawal <anilagrawal@meta.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Lukas Wunner <lukas@wunner.de>, Sargun Dhillon <sargun@meta.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Kai-Heng Feng <kaihengf@nvidia.com>,
-	Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: Re: [PATCH v7 13/17] PCI/AER: Make all pci_print_aer() log levels
- depend on error type
-Message-ID: <20250521174512.GA1426306@bhelgaas>
+	s=arc-20240116; t=1747849669; c=relaxed/simple;
+	bh=TgOo6A5A/c/4vmi6glL9bU93L3dWBs4RhVGWgQMINTM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t6idWGNI2H6/UdHLWF6TQaGGf5MNG58aVUX6NfJ0DPU3PrK2WcVW9Sl2KVSm3eFk/cezZMzp4dzDkGKMfzd+BWs1EvOxYMvhc8g/xgRiva/cC4WXsF7NF51C0YVv1MuWRnMXcso4mZSOb3T8FvVgnXrcTtNshOgqOW+MdAvSTUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T3CRG98C; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747849666;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oGeZ4/qscFDpgQW4r4FF8qcWixZjDJP3cGgKS2Y7uN4=;
+	b=T3CRG98C/EPHLWDDtBsyMw7fg/e7wenI0jAaoAvTvzOfQ9KzpQlOS/Uzw/ncJ68xEFDJqe
+	uS04FTi7TO96zJBhtJEZ+ZoH0giYJ8ZoOwYaNP0Of9sBCEgU9VPgtQaT5oybn6pAORLtKG
+	nPkj41t0Vi897oa2aJwsVx3ZgmzNJyg=
+Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com
+ [209.85.217.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-659-DiQh0M0nO8-JzvW15O7_zQ-1; Wed, 21 May 2025 13:47:44 -0400
+X-MC-Unique: DiQh0M0nO8-JzvW15O7_zQ-1
+X-Mimecast-MFC-AGG-ID: DiQh0M0nO8-JzvW15O7_zQ_1747849663
+Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-4e28ed5cbe1so505892137.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 10:47:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747849663; x=1748454463;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oGeZ4/qscFDpgQW4r4FF8qcWixZjDJP3cGgKS2Y7uN4=;
+        b=AViRBOg9pWopR7gfDr0ePl3CrR6x9yKZAEZ2uPtgd6xjvLvKWKrGPz0hlSHtFhOKMB
+         FodCtQhHQzp4EhfJ0vjd/O9NBFOty5oxeOcQUFHjw2Fb4wi1g8AlW8DQ2osF6BtoRcQb
+         v/cB3LKcQGqEa1wSgsy6koBFrMbfca6BBwJfplOxGGFuUSV90IIucn1UEWaUTdLj8DGl
+         DNK5wzKMRIYY33a8AoUyPpFMvODNTMVBTDdIC2AOnVYaVCMZWuHnMJF2TJlf8zVVoEvD
+         U+j43kqrYNMjLLYdqVyJsPKlBTofWRevYcLqNvIGQv6obBZlwjuz2T4EuXM2DA3nGaz6
+         37Nw==
+X-Gm-Message-State: AOJu0YzUCdxtmPn5SMATmUx94c/CeXjvaij2IKxC6TsJdQG+UZlQ4z3z
+	igvHZabYMUdfS7+eslyr6msOrB4G78CYFY2w9ZC9U4A+uVYDfNLABPJdkcxl3z0u2MTHZkXmxa6
+	TmL/55vxTKCC4tbKevGt77THvQ1fHCWAApQYGTgZLt1j/g6Q9JB8WpNEknqyOCNhb1g==
+X-Gm-Gg: ASbGncvZAMNWySgJ0FibX9mysvEtGNONIg95jxvp9A3vBuWf2HK6k2asXCzkadicMg/
+	WuEYNj84Xop6DwiOcJ+xdrmMMj//jf/Vq8mgoh5m7000fkpZNdw6bJWrwA70Mx9zawdyxJTtG/w
+	jcw29/h5tdKDLP/vdQzP1x3Em1had5e+rrxpUz0ygAy2Tcss0fu1rILN6zi46ErLuLnUmLpHuFF
+	a6Keb12z2MIO58KDbujoVs32lWOEItxSNbzNZE+CFFI7YkICk3Ph8y+JK8MhSUXqQDqrcZXxSD2
+	isfY8NIOdrMVnJsH6gmwfQE=
+X-Received: by 2002:a05:6102:2088:b0:4e2:86e6:3785 with SMTP id ada2fe7eead31-4e286e63831mr8631160137.5.1747849663596;
+        Wed, 21 May 2025 10:47:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFcgJMgOdIuV2JgSyNykYGAESv4TB7nALlmfCg5UZX+HHAGsDtiwbsJqHw7g+R8vvMr49hdzw==
+X-Received: by 2002:a05:6102:2088:b0:4e2:86e6:3785 with SMTP id ada2fe7eead31-4e286e63831mr8631149137.5.1747849663281;
+        Wed, 21 May 2025 10:47:43 -0700 (PDT)
+Received: from localhost.localdomain ([2804:1b3:a801:1fb:3066:58ce:cfdd:85bd])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87bec22768fsm9242464241.30.2025.05.21.10.47.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 May 2025 10:47:42 -0700 (PDT)
+From: Leonardo Bras <leobras@redhat.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Leonardo Bras <leobras@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/1] local_lock: Minor improvements of local_trylock*() documentation
+Date: Wed, 21 May 2025 14:47:26 -0300
+Message-ID: <20250521174726.578303-1-leobras@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250521105659.000064bd@huawei.com>
 
-On Wed, May 21, 2025 at 10:56:59AM +0100, Jonathan Cameron wrote:
-> On Tue, 20 May 2025 16:50:30 -0500
-> Bjorn Helgaas <helgaas@kernel.org> wrote:
-> 
-> > From: Karolina Stolarek <karolina.stolarek@oracle.com>
-> > 
-> > Some existing logs in pci_print_aer() log with error severity by default.
-> > Convert them to depend on error type (consistent with rest of AER logging).
-> > 
-> > Signed-off-by: Karolina Stolarek <karolina.stolarek@oracle.com>
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > Tested-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
-> > Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> > Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> 
-> One comment inline. It is painful to have a non trivial comment
-> that says we didn't pass a parameter for 'reason X' when maybe
-> it would be simpler to just pass it and not care that it always
-> takes the same value?
+Fix local_trylock_init() documentation, as it was mentioning the non-try
+helper instead, and use the opportunity to make clear the try_lock*() needs
+to receive a local_trylock_t variable as parameter.
 
-I agree.  I added a patch to pass the level to pcie_print_tlp_log().
+Signed-off-by: Leonardo Bras <leobras@redhat.com>
+---
+v1: https://lore.kernel.org/all/20250505170244.253170-1-leobras@redhat.com/
+RFC: https://lore.kernel.org/all/20250430073610.163846-1-leobras@redhat.com/
 
-> Either way this is fine.
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> 
-> > ---
-> >  drivers/pci/pcie/aer.c | 16 +++++++++++-----
-> >  1 file changed, 11 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> > index f5e9961d2c63..4cdcf0ebd86d 100644
-> > --- a/drivers/pci/pcie/aer.c
-> > +++ b/drivers/pci/pcie/aer.c
-> > @@ -788,15 +788,21 @@ void pci_print_aer(struct pci_dev *dev, int aer_severity,
-> >  	layer = AER_GET_LAYER_ERROR(aer_severity, status);
-> >  	agent = AER_GET_AGENT(aer_severity, status);
-> >  
-> > -	pci_err(dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n", status, mask);
-> > +	aer_printk(info.level, dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n",
-> > +		   status, mask);
-> >  	__aer_print_error(dev, &info);
-> > -	pci_err(dev, "aer_layer=%s, aer_agent=%s\n",
-> > -		aer_error_layer[layer], aer_agent_string[agent]);
-> > +	aer_printk(info.level, dev, "aer_layer=%s, aer_agent=%s\n",
-> > +		   aer_error_layer[layer], aer_agent_string[agent]);
-> >  
-> >  	if (aer_severity != AER_CORRECTABLE)
-> > -		pci_err(dev, "aer_uncor_severity: 0x%08x\n",
-> > -			aer->uncor_severity);
-> > +		aer_printk(info.level, dev, "aer_uncor_severity: 0x%08x\n",
-> > +			   aer->uncor_severity);
-> >  
-> > +	/*
-> > +	 * pcie_print_tlp_log() uses KERN_ERR, but we only call it when
-> > +	 * tlp_header_valid is set, and info.level is always KERN_ERR in
-> > +	 * that case.
-> 
-> I wonder if it's easier to just pass the level in than have the
-> comment?
-> 
-> > +	 */
-> >  	if (tlp_header_valid)
-> >  		pcie_print_tlp_log(dev, &aer->header_log, dev_fmt("  "));
-> >  }
-> 
+
+ include/linux/local_lock.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/local_lock.h b/include/linux/local_lock.h
+index 16a2ee4f8310b..d8d5e6cfa1151 100644
+--- a/include/linux/local_lock.h
++++ b/include/linux/local_lock.h
+@@ -45,38 +45,38 @@
+ /**
+  * local_unlock_irqrestore - Release a per CPU local lock and restore
+  *			      interrupt flags
+  * @lock:	The lock variable
+  * @flags:      Interrupt flags to restore
+  */
+ #define local_unlock_irqrestore(lock, flags)			\
+ 	__local_unlock_irqrestore(lock, flags)
+ 
+ /**
+- * local_lock_init - Runtime initialize a lock instance
++ * local_trylock_init - Runtime initialize a local_trylock_t instance
+  */
+ #define local_trylock_init(lock)	__local_trylock_init(lock)
+ 
+ /**
+  * local_trylock - Try to acquire a per CPU local lock
+- * @lock:	The lock variable
++ * @lock:	The local_trylock_t variable
+  *
+  * The function can be used in any context such as NMI or HARDIRQ. Due to
+  * locking constrains it will _always_ fail to acquire the lock in NMI or
+  * HARDIRQ context on PREEMPT_RT.
+  */
+ #define local_trylock(lock)		__local_trylock(lock)
+ 
+ /**
+  * local_trylock_irqsave - Try to acquire a per CPU local lock, save and disable
+  *			   interrupts if acquired
+- * @lock:	The lock variable
++ * @lock:	The local_trylock_t variable
+  * @flags:	Storage for interrupt flags
+  *
+  * The function can be used in any context such as NMI or HARDIRQ. Due to
+  * locking constrains it will _always_ fail to acquire the lock in NMI or
+  * HARDIRQ context on PREEMPT_RT.
+  */
+ #define local_trylock_irqsave(lock, flags)			\
+ 	__local_trylock_irqsave(lock, flags)
+ 
+ DEFINE_GUARD(local_lock, local_lock_t __percpu*,
+-- 
+2.49.0
+
 
