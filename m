@@ -1,133 +1,150 @@
-Return-Path: <linux-kernel+bounces-656986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98579ABED65
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:00:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B76FABED4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8E0D1B65082
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:00:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD6D27A2BE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26502233737;
-	Wed, 21 May 2025 08:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62900235074;
+	Wed, 21 May 2025 07:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="BVjkU+Om"
-Received: from jpms-ob02.noc.sony.co.jp (jpms-ob02.noc.sony.co.jp [211.125.140.165])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gwliCfW2"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB4E235BF4;
-	Wed, 21 May 2025 08:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A5017BD3;
+	Wed, 21 May 2025 07:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747814410; cv=none; b=cQrAEVH8TOgzV+OE+d2DGNQCDWe9lrXPMoAvfj5y95zDFYFey7WBx+RaKRAtGma7SIQrhMkA/kcj1fIGnVS38S9NcYUk6rR6WiffT60EGirxinsObcLlaXKEAyCzVUfnZn8ebPj7TWtc9tFR9olj2GikBGpmy695qTubdhkRS0M=
+	t=1747813807; cv=none; b=t+yHUB+pDrEMDkpmdgGDXq2251TaiMs/NQfrzbuZ3XE/GeaKebRHUi5+Cd5nW3gsJP/uPv8UsFbuvFn2J5TOXlG1pTgP49KFo9RfuAb+uWnVyg+uM4pPW7V17l45J3s7uiPOXpzE33PDvSps+b4NjlxYmyi6fyDUC8DQyDETqLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747814410; c=relaxed/simple;
-	bh=O18BluLzd0V6rN+4d/OuPHmQZQMOEKQe/u9KiGlBwCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AIqgDVZ8hyrGdahrj4PNBz+LEUVqxAZHtHjtLdD8lmLiFAiCBJ59osza80BfaCgQGCSNjmJp24BAG+Iqu6edmV5pHzoRpSTKe8Tlik2FJHco8xeSrAAZj+jsLJkrvXVsYMC3v530OcK/1XUcZ5GTxX2QKyPblzIAz/Sykh6YKW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=BVjkU+Om; arc=none smtp.client-ip=211.125.140.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=sony.com; s=s1jp; t=1747814407; x=1779350407;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=SRSeRZLTM88Xmp2dMNkQnEEMrTwWD8k4Sd+UM3+C5T0=;
-  b=BVjkU+OmQDYbgjKbm0KtZV8q14tEUZa/tcvDSQ9+94qn99Q0UY5AWoKy
-   jz4Lbb1an94t7v0ZtAfi9HwY0hyEh2L7SBW2oOMHnvClTjCFbA12jp/5T
-   dO5WiYtVaT21V80mGo3mN/bBfqUMEfi7qeeRF1oL9ArJR8EZpkpu1mn1G
-   HAXLOpllGwvcwTXQNnqflQQGmppX8LGj2+9kTu9N0rK1toCHeajZJCpFf
-   UwbXlDC++rNcZljGlvGGaYKs3zBLEsK3eldKAGdTCEVnrK4+rmwO5Hlec
-   IRC78VDRDDB3AWzcAezAGkZv0yud4ZaRjcEpm/9TCDBK/7KX2qfL5eXo9
-   g==;
-Received: from unknown (HELO jpmta-ob02.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::7])
-  by jpms-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 16:49:56 +0900
-X-IronPort-AV: E=Sophos;i="6.15,303,1739804400"; 
-   d="scan'208";a="532312397"
-Received: from unknown (HELO JPC00244420) ([IPv6:2001:cf8:1:573:0:dddd:6b3e:119e])
-  by jpmta-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 16:49:56 +0900
-Date: Wed, 21 May 2025 16:49:43 +0900
-From: Shashank Balaji <shashank.mahadasyam@sony.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Shinya Takumi <shinya.takumi@sony.com>,
-	shashank.mahadasyam@sony.com
-Subject: Re: [PATCH v2 3/3] cgroup, docs: cpu controller interaction with
- various scheduling policies
-Message-ID: <aC2Fl4DVRbn6bS8H@JPC00244420>
-References: <20250520-rt-and-cpu-controller-doc-v2-0-70a2b6a1b703@sony.com>
- <20250520-rt-and-cpu-controller-doc-v2-3-70a2b6a1b703@sony.com>
- <aCzjJp1ovS6kCqHj@slm.duckdns.org>
+	s=arc-20240116; t=1747813807; c=relaxed/simple;
+	bh=M6hHegyD98TL0m8czfxH786jd/dfOqlyQNycRL0bd6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FrsFKZF2WL8gGeRhu0Q3KSs8TzQsvYpFihLLPfJEHhMN5eF9iIcPuR3FQ31+rOYdiqIIRO1us1NyZJ/1HeHGMmbpSB+fdxrQcmBjiYeZaXYOb7+UGAolakWj2IrYJR9Xx1dUHmhzM68gNm1qVb/KhDfG/IyI6ZTiNuvaZkJQ7+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gwliCfW2; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1747813800;
+	bh=Lj73Hfw2rwfwGEJZS38M+p85uC7Tj8Ga1CjAqHRR7c8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=gwliCfW2wFU1SAZMpy/4hSmTxf52QT3rKpIxPTY4p4D49lImIel1vqHHDMq4aIHF9
+	 XsxB0E9E2XfcLB437PiAnoMxU8ndFgaLUfmDxXgX8hbXkPrCIVyGiQt0aBHb2TwiOI
+	 pNGFtDDtaNBqbJ4fRW0URWGHOt3Q3YGEF4So8GmVbeJmalyI8Fvz0WrUj258dGdBVC
+	 NMRRXSBzMsbVlzmA5KkBC++ezrdFHYuoooh7o4fYAtawJqgODiksUkbbkg5SD6s6Yi
+	 4DP9Dl3NIm98KnWGpp3mjgGu2wvF43+o7AD7gfMzEwFQYcxZUlBa9gf454XNmfYw2x
+	 9RIX1HenfCaUg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4b2Nqq6gqLz4wcy;
+	Wed, 21 May 2025 17:49:59 +1000 (AEST)
+Date: Wed, 21 May 2025 17:49:58 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: JP Kobryn <inwardvessel@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Shakeel Butt <shakeel.butt@linux.dev>
+Subject: linux-next: manual merge of the cgroup tree with the mm-stable,
+ mm-unstable trees
+Message-ID: <20250521174958.0b7354da@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aCzjJp1ovS6kCqHj@slm.duckdns.org>
+Content-Type: multipart/signed; boundary="Sig_/T53aqvqP+S+xEMAjxbAB1Yx";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Tejun,
+--Sig_/T53aqvqP+S+xEMAjxbAB1Yx
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 20, 2025 at 10:16:38AM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> On Tue, May 20, 2025 at 11:07:47PM +0900, Shashank Balaji via B4 Relay wrote:
-> ...
-> > +The interaction of a process with the cpu controller depends on its scheduling
-> > +policy. We have the following scheduling policies: ``SCHED_IDLE``, ``SCHED_BATCH``,
-> > +``SCHED_OTHER``, ``SCHED_EXT`` (if ``CONFIG_SCHED_CLASS_EXT`` is enabled), ``SCHED_FIFO``,
-> > +``SCHED_RR``, and ``SCHED_DEADLINE``. ``SCHED_{IDLE,BATCH,OTHER,EXT}`` can be scheduled
-> > +either by the fair-class scheduler or by a BPF scheduler::
-> > +
-> > +    CONFIG_SCHED_CLASS_EXT
-> > +    ├─ Disabled
-> > +    |   └─ SCHED_{IDLE,BATCH,OTHER} -> fair-class scheduler
-> > +    └─ Enabled
-> > +        ├─ BPF scheduler disabled
-> > +        |   └─ SCHED_{IDLE,BATCH,OTHER,EXT} -> fair-class scheduler
-> > +        ├─ BPF scheduler without SCX_OPS_SWITCH_PARTIAL enabled
-> > +        |   └─ SCHED_{IDLE,BATCH,OTHER,EXT} -> BPF scheduler
-> > +        └─ BPF scheduler with SCX_OPS_SWITCH_PARTIAL enabled
-> > +            ├─ SCHED_{IDLE,BATCH,OTHER} -> fair-class scheduler
-> > +            └─ SCHED_EXT -> BPF scheduler
-> > +
-> > +For more details on ``SCHED_EXT``, check out :ref:`Documentation/scheduler/sched-ext.rst. <sched-ext>`
-> > +From the point of view of the cpu controller, processes can be categorized as
-> > +follows:
-> > +
-> > +* Processes under the fair-class scheduler
-> > +* Processes under a BPF scheduler with the ``cgroup_set_weight`` callback
-> > +* Everything else: ``SCHED_{FIFO,RR,DEADLINE}`` and processes under a BPF scheduler
-> > +  without the ``cgroup_set_weight`` callback
-> > +
-> > +Note that the ``cgroup_*`` family of callbacks require ``CONFIG_EXT_GROUP_SCHED``
-> > +to be enabled. For each of the following interface files, the above categories
-> > +will be referred to. All time durations are in microseconds.
-> 
-> Can we document the above in sched_ext documentation and point to it from
-> here? Documenting sched_ext details here seems a bit out of place and prone
-> to becoming stale over time.
+Hi all,
 
-Got it. Apart from that, is the content alright? 
+Today's linux-next merge of the cgroup tree got a conflict in:
 
-> Can you please separate out indentation changes to a separate patch? These
-> usually make reviewing tricky.
+  mm/memcontrol.c
 
-Got it.
+between commits:
 
-Thank you
+  60cada258dfe ("memcg: optimize memcg_rstat_updated")
 
-Regards,
-Shashank
+from the mm-stable tree and
 
-PS: Apologies for any malformed emails. I finally managed to switch from Outlook
-to mutt.
+  d826d981051a ("memcg: memcg_rstat_updated re-entrant safe against irqs")
+
+from the mm-unstable trees and commit:
+
+  a97915559f5c ("cgroup: change rstat function signatures from cgroup-based=
+ to css-based")
+
+from the cgroup tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc mm/memcontrol.c
+index e936f6651f47,fde0934e2837..000000000000
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@@ -573,20 -582,11 +573,20 @@@ static inline void memcg_rstat_updated(
+  	if (!val)
+  		return;
+ =20
+- 	cgroup_rstat_updated(memcg->css.cgroup, cpu);
++ 	css_rstat_updated(&memcg->css, cpu);
+ -	statc =3D this_cpu_ptr(memcg->vmstats_percpu);
+ -	for (; statc; statc =3D statc->parent) {
+ -		stats_updates =3D READ_ONCE(statc->stats_updates) + abs(val);
+ -		WRITE_ONCE(statc->stats_updates, stats_updates);
+ +	statc_pcpu =3D memcg->vmstats_percpu;
+ +	for (; statc_pcpu; statc_pcpu =3D statc->parent_pcpu) {
+ +		statc =3D this_cpu_ptr(statc_pcpu);
+ +		/*
+ +		 * If @memcg is already flushable then all its ancestors are
+ +		 * flushable as well and also there is no need to increase
+ +		 * stats_updates.
+ +		 */
+ +		if (memcg_vmstats_needs_flush(statc->vmstats))
+ +			break;
+ +
+ +		stats_updates =3D this_cpu_add_return(statc_pcpu->stats_updates,
+ +						    abs(val));
+  		if (stats_updates < MEMCG_CHARGE_BATCH)
+  			continue;
+ =20
+
+--Sig_/T53aqvqP+S+xEMAjxbAB1Yx
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgthaYACgkQAVBC80lX
+0GyhuggAjRTDmVby8lZHoF49axV60kbGBM3lT/y4Il1Ui0kCF7xp31ydzc7HsyeD
+iGF8ZgEjbgdSuFTm/4KphRY+k3jdRediZVziF/nMT9kW+oZYmfOLl3vwhrE6Wz+r
+JV2u5WAIVx11lNE4KvkSLbktlJHGKLNmPc3ygiupFvQGSzd2xtyyt5A/nzpofILt
+924clywvJsEMPfctlkZQiyif7KcRHCbVK8upU8672K8YTlUJqfpI2M+N4cnWSFdZ
+k4BMplhTo6T6Ze/V+seH3h1T5FNj72xEDiHQkMceQ5E6xzlj2QjCE5GdLggDxj2U
+68VhgT7lv6qwKoWUsS3AxgjvvGF0MQ==
+=xfWM
+-----END PGP SIGNATURE-----
+
+--Sig_/T53aqvqP+S+xEMAjxbAB1Yx--
 
