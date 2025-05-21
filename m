@@ -1,272 +1,171 @@
-Return-Path: <linux-kernel+bounces-657523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60774ABF511
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:01:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E84C1ABF502
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8E1917D71E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:01:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 969CA17F158
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF40270566;
-	Wed, 21 May 2025 13:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77579270551;
+	Wed, 21 May 2025 13:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eqj28pWA"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xxETPoT6"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F401B95B;
-	Wed, 21 May 2025 13:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18715264A95
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747832469; cv=none; b=LIy4kfx+lA+C/V5kVjSq1f1KaDaILe8OrnjxcX63GGlQtNxliHzMfXDxh/l5eHvqk82gvUzTgTeo3UY1+x28A1Ie/tQ/iK5F4y+1eoKy+gw2JNN5+ecExw6IZiFP/yGJsNQ1urzQMqZx55sFNxbBMnSOcHSYgiGZmNqHuXtWdv4=
+	t=1747832431; cv=none; b=ONBg4qgo+FNhlFNTXn2SF/acqjVgc5hbzyh8zUcqBzEUQR7/4G0bJOjqgFbuwpKyGpLRJEFsScw1LVnLii8oN1/eusLCq45MYRruA1IlEp7QZqE2riNGFhPrmXk3MprKwTe8QhSfPjzM/QieuRXC5gqcvAJE8t+lO7T3NouooHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747832469; c=relaxed/simple;
-	bh=fg2O/NiYrG5jnAySQDhAJUCwCiNOphjw1AELvkeniPk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dPJitPlnQQSUmTceI1o500ulwwnknWNG0nVQD8ryUjMk+u5+zexXBayUbfxIxMXEf9oaVPCOlN9SApJ40mH1quxGYlF4epfGoVR7ighzesXu/kVfpOZkd5Tb3DGt9pO70O5qAgu0YwiEhDyx1gu+UGFCtBikmar2JCSNpTCNEZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eqj28pWA; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-23274dbcbc2so20333415ad.1;
-        Wed, 21 May 2025 06:01:07 -0700 (PDT)
+	s=arc-20240116; t=1747832431; c=relaxed/simple;
+	bh=qADv6ziM8BynGP0Frd3QYCagZF4zh/hj/3MAkN1hMIg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kryCk8z5l7HceFqr8D+xDastaPkVnyWUiqSftYWSHrGtgsYr6c4AIlnL0Pt3QS+KyiEnxKtK3o0LD9lDngKhi4KxNKoO4NS5Mk9p3My+jBVLoMx6PdvQBYU0PyyVcsxNgm+asxsyeoI+CUQVL2idQOPIEpRVqyV8BwdFJp0qhL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xxETPoT6; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30db1bd3bddso61954551fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 06:00:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747832467; x=1748437267; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YUsodPmJtak7dzPlFPK8l9nfS7vdyCUD4wkq3fhB9qw=;
-        b=Eqj28pWAZM7809XH8DfVwrHUqBTrUkXXQ9BMK+fmCruq8W1firH4+xjNzVXjtaRV9W
-         sCa4ED/b1Cl4tuCBQstWfxiH4HBnKHN9vbdNw9mT9lSvMkOs6OX//xEWeMJv4VuLYnyA
-         sCsvjHnrInk5Lk8HvY5bDU4vxv109mZ+mwEqKmot7siXsOkHa8hTbJiUqymhUkDZCMWU
-         rRAL2YO+/3cxtqDygU7XVDE+ilQZgy4qJfr7LP6yVFVa95W+Ef4bf+InAupk7D0il+E0
-         /KNIZ8F7DzaQGmzir3Ot4EzSOaSI9xHyEqb9ML9CSGxzxlYEJ1NULuMBbuyRdNJQKBa7
-         zpYQ==
+        d=google.com; s=20230601; t=1747832428; x=1748437228; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G73EKvuw4a7mUkaWcq9LcxdhnViFJcFqKeikiaQy7e0=;
+        b=xxETPoT6aG0lxVTQck1TuZgq6NdU+sbjsqCy8AkD6WfOJsp6Bv06grzz+C+E2BQlj8
+         Uo8LgMC3CwUGcX5MPBMjwKuvRw0nUubss74HcY45ucfqC2mPTTiQRmUG8jXfNKmCjqSg
+         Xi6jjKOmdni8Y1KEF7udrW6w4YdjS0L6i6LHZL5SE6U7RavGOHOS8R62YWfhyKVZ64kO
+         MFsJetqNC61hMYHRpakCpKS1t/u3Rgu0C04ChIzYLPz5nWOSSAR2pRPvdXzO+9WIyZgG
+         JGyy+gZNfjqPwHCIBiJGrxFzIQhUvMgPC7Lknj7skxaHAafPkVJhCfYDpPLKcKmwEho2
+         VWeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747832467; x=1748437267;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1747832428; x=1748437228;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YUsodPmJtak7dzPlFPK8l9nfS7vdyCUD4wkq3fhB9qw=;
-        b=KENEtiTpxGjLA+jxm/9ymSK1lxDV2dP6q7aymhm0jWV1EEgECmato/lepC2XzECC5I
-         4RZz3SIJZa/JfO9Cjqg2A4XyCzn5XE+Mf2HM0sK77nUS4IZexwRfTpv2iV/ZFq5h3XoM
-         XZQ7q6k2kHa3TDN42vK18BoSJEXBYsMXGYprYJt45Mqcb2/GBEsa+SL88k4vmMIE57ZR
-         5NTdE3v95kWLYhIkFvAcxL4Z8x/QXxYE/PIaVyXq5G6g3MLzs3KxbMNqAknoHK8m++2O
-         7LXRxyLDL1707I87EKV4VLA2zCiUijd0VUzIrpPvbba/7O0DZqjq0IIYviU8L+wPr48v
-         jIuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTH8hFLkGw372IoPpQ81XbxPnm7YR/kdNNeRodIkUr5w2tpvvrRxYJHOtQcuPCk+dvohI4DehO2NRQNHIW24A=@vger.kernel.org, AJvYcCVnKq6eX3lqIwvmtNX3T+6RYcFXwqSBTu7oCp2na+eZHAxSTHdx4IKh+DMH4Ztuev4+4tUJNnTZZpH0@vger.kernel.org, AJvYcCWH13AcseRAY6gWsqdabTVQHbpmNOgGfQFqDsdE8fHi7WsWFpz3c/cs8j+la5KUTkULPxmETF0B2x50lLrz@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwe70r0SEMV1D56QYo/62JTflH2XoJSkWSn5kDXoD0jkgexRh0
-	keLule54OKceMD4le0EXbHcEGaNDBAMACp64f0qeu6kK6rcOnqufQLEb
-X-Gm-Gg: ASbGncv6gWSf+4Vd1b+XMn3KaDdDdBhqG/JdMdYurx9qARdiczVB4KkTFDEpJGfkx/d
-	szHE7cuoarbSvS+R3/2YD6jbnZy4PEnm5jXvUe/petbl91K2XU3P7F2rOoqoEyA41uRkKlsGLP8
-	DKfgnA7Z9Ckrgb2iUAUjhOYo7TtYgIGQchFG2ct9cmArjEZMPtp5zk0xFe6Q3xnU2hIQOb/ZGgZ
-	HmJyVven2q839vpwatjRHLjh9Hbd9t56iDtVHctpmUHivrVZjeBofJxkKHyqm7By4QNcdPmVCAm
-	52y/x2etrerqo6v8mqUpj5MBH1sAGtALiC46fa5yKsDwJJ9e0OMLFkDDQmUmYaQ=
-X-Google-Smtp-Source: AGHT+IHi9JKW8hrJ0oTUZGRbjiYsmE67PwWiZFYcvvLI4U1V7ygYEi+JkVupxNUINvhANVgU2PeZAg==
-X-Received: by 2002:a17:903:2284:b0:22f:b25b:8e93 with SMTP id d9443c01a7336-231de3b9f2cmr307998035ad.48.1747832466871;
-        Wed, 21 May 2025 06:01:06 -0700 (PDT)
-Received: from NB-GIGA003.letovo.school ([5.194.95.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4adb017sm92691165ad.53.2025.05.21.06.00.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 06:01:06 -0700 (PDT)
-From: Alexey Charkov <alchark@gmail.com>
-Date: Wed, 21 May 2025 17:00:12 +0400
-Subject: [PATCH v5 4/4] watchdog: Add support for VIA/WonderMedia SoC
- watchdog functionality
+        bh=G73EKvuw4a7mUkaWcq9LcxdhnViFJcFqKeikiaQy7e0=;
+        b=RCbMvkHvzhzZKDraJwqlx2PyiPROY98ycZyECoMqSdrRmweIH/nY39o6j7yFqfpVhX
+         g5awycymtJTqClq0mIBN3LU/2MjgiHxjaIA2ux5k5nx8ncAi8W9vsOtpumtiPD3m065R
+         EtJSYngN9w5DM+eOqcWZCW0TgvGF8PZ/J/4x800fenGLRWROLUngVrVKwF8dEe5xXiTh
+         zSnU38I/RYnIO9zzpYMRvGYR8UYbvW7RV5ZjAT0cmS+eiPBNWG1dFDHQtNmM2LxVsFqK
+         B/sryrh/rJP4ex1GIq7IjwN/cPjG6tH4sVnQZ2IGhsdUBc4MKc2BlP1c29oAuZSibm34
+         hxGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRmDHZeBERrV8CPdb7RDxC1GXg2zSjIsftNtKsTUl6gKp/wCeUPIc/2mKPQTIT3cVYT/P6fEi5L2wyeWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPmkHYo8fFLpvgiT7CHJYsUl3fPVbvCN2J83eKHEo13qJLCYj4
+	hiJFC3hSu2zPgwHGz1B3+3vmwWUN6EkwbhR4K2I0qp2wTjwzkNXP6Y+CFPmuY9CkIzYP/658nF4
+	huWyKyrcPA6+9M6De2Cp8hSJnyt/c3JUWMOcK8nat
+X-Gm-Gg: ASbGncv97C8KdhrWt+UmeAaOjbPdC46/C1c8SiXrHEa21ANAzljQ8zhG78P/N/BmG7+
+	WGDoOdp47N5CjzHwkbDStx0gEmiK17tbzg16h+Lfa4x8o08OGyizSMbFgh5sG46v4IAD3M0fYxp
+	T+k5X03Vkox16amaimkQftZaMJfQVXblOMgaNIZiQdRUHfFHpk2Hbc7ylOMKmUi9TNHsOi2HhGc
+	HaY
+X-Google-Smtp-Source: AGHT+IFooYcYEExduBcnYQFbDug+Lni3ZVNCR6ZHlHaKU/h4Xs4wtm2a8Y2njLddvgAcEGxJeMXcnCkb2rQtevCDeMA=
+X-Received: by 2002:a2e:be20:0:b0:329:3690:5c60 with SMTP id
+ 38308e7fff4ca-32936905decmr9238831fa.38.1747832427890; Wed, 21 May 2025
+ 06:00:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250521-vt8500-timer-updates-v5-4-7e4bd11df72e@gmail.com>
-References: <20250521-vt8500-timer-updates-v5-0-7e4bd11df72e@gmail.com>
-In-Reply-To: <20250521-vt8500-timer-updates-v5-0-7e4bd11df72e@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, 
- Alexey Charkov <alchark@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747832426; l=5807;
- i=alchark@gmail.com; s=20250416; h=from:subject:message-id;
- bh=fg2O/NiYrG5jnAySQDhAJUCwCiNOphjw1AELvkeniPk=;
- b=lPyHbAc5NFVsW+VOhQpf2YBYDPTf4Ebr3BvqCdjt0B+TlJG5YPcpy/khytwwsZQyC7Hi/lIy3
- NeyS5Nvh+ayDb6Z7dhbTmUqbOjMp82ryHbvz0/v7CfcGs3yxL+GxZru
-X-Developer-Key: i=alchark@gmail.com; a=ed25519;
- pk=ltKbQzKLTJPiDgPtcHxdo+dzFthCCMtC3V9qf7+0rkc=
+References: <cover.1740386567.git.dvyukov@google.com> <d11d91e0c27ef78affcef06e00d1cf4cd8747fcc.1740386567.git.dvyukov@google.com>
+ <87v7sj3dlx.ffs@tglx> <CACT4Y+a3EPcAS4yB8c2d65+T3zXoTYwN6-G4G0C_JDWBEo6EOA@mail.gmail.com>
+ <ac23d886-8b9b-463c-91e4-aa541351976e@t-8ch.de>
+In-Reply-To: <ac23d886-8b9b-463c-91e4-aa541351976e@t-8ch.de>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 21 May 2025 15:00:15 +0200
+X-Gm-Features: AX0GCFvUEBNrK3JNS5dg8pRzJ-F3gzdBOQwU-amQhe_Pjy7oF6GB7qmsBoX0wIU
+Message-ID: <CACT4Y+ZFMGdvO8e5TenNKNCwBJYtY-kB=uB-CLBEe2vrr3TWdQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] selftests: Fix errno checking in
+ syscall_user_dispatch test
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com, luto@kernel.org, 
+	peterz@infradead.org, keescook@chromium.org, gregory.price@memverge.com, 
+	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-VIA/WonderMedia SoCs can use their system timer's first channel as a
-watchdog device which will reset the system if the clocksource counter
-matches the value given in its match register 0 and if the watchdog
-function is enabled.
+On Wed, 21 May 2025 at 13:10, Thomas Wei=C3=9Fschuh <linux@weissschuh.net> =
+wrote:
+>
+> On 2025-05-21 12:07:13+0200, Dmitry Vyukov wrote:
+> > On Sat, 8 Mar 2025 at 13:34, Thomas Gleixner <tglx@linutronix.de> wrote=
+:
+> > >
+> > > On Mon, Feb 24 2025 at 09:45, Dmitry Vyukov wrote:
+> > > >
+> > > > Also use EXPECT/ASSERT consistently. Currently there is an inconsis=
+tent mix
+> > > > without obvious reasons for usage of one or another.
+> > > >
+> > > > Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+> > >
+> > > As Gregory said, this should be the first patch in the series with a
+> > > proper Fixes tag.
+> > >
+> > > >       /* Invalid op */
+> > > >       op =3D -1;
+> > > > -     prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0, 0, &sel);
+> > > > -     ASSERT_EQ(EINVAL, errno);
+> >
+> > > > +     EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0, 0, &=
+sel));
+> > > > +     EXPECT_EQ(EINVAL, errno);
+> > >
+> > > Seriously?
+> > >
+> > > Something like:
+> > >
+> > > static void prctl_invalid(unsigned long op, unsigned long offs, unsig=
+ned long len,
+> > >                           void *sel, int err)
+> > > {
+> > >         EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, offs, l=
+en, 0, (unsigned long)sel));
+> > >         EXPECT_EQ(err, errno);
+> > > }
+> > >
+> > > static void prctl_valid(unsigned long op, unsigned long offs, unsigne=
+d long len,
+> > >                         void *sel)
+> > > {
+> > >         EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, offs, le=
+n, 0, (unsigned long)sel));
+> > > }
+> > >
+> > > ....
+> > >         /* Invalid op */
+> > >         prctl_invalid(-1, 0, 0, &sel, -EINVAL);
+> > >         /* offset !=3D 0 */
+> > >         prctl_invalid(PR_SYS_DISPATCH_OFF, 1, 0, NULL, -EINVAL);
+> > >         ....
+> > >         /* The odd valid test in bad_prctl_param() */
+> > >         prctl_valid(PR_SYS_DISPATCH_OFF, 0, 0, NULL);
+> > >
+> > > But that's not enough macro uglyness sprinkled all over the place and
+> > > too readable, right?
+> >
+> > The EXPECT* macros unfortunately can't be used in helper functions,
+> > they require some hidden _metadata variable that is present only in
+> > TEST/TEST_F functions:
+> >
+> > sud_test.c: In function =E2=80=98prctl_valid=E2=80=99:
+> > ../kselftest_harness.h:107:45: error: =E2=80=98_metadata=E2=80=99 undec=
+lared (first
+> > use in this function)
+> >   107 |                         __FILE__, __LINE__, _metadata->name,
+> > ##__VA_ARGS__)
+>
+> You can pass the _metadata parameter to your helper functions.
+> While it's a bit iffy, many selftests do this.
+> Also the upcoming harness selftests will make sure that this pattern
+> keeps working.
 
-Since the watchdog function is tightly coupled to the timer itself, it
-is implemented as an auxiliary device of the timer device
-
-Signed-off-by: Alexey Charkov <alchark@gmail.com>
----
- MAINTAINERS                   |  1 +
- drivers/watchdog/Kconfig      | 15 ++++++++
- drivers/watchdog/Makefile     |  1 +
- drivers/watchdog/vt8500-wdt.c | 88 +++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 105 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5362095240627f613638197fda275db6edc16cf7..97d1842625dbdf7fdca3556260662dab469ed091 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3447,6 +3447,7 @@ F:	drivers/tty/serial/vt8500_serial.c
- F:	drivers/video/fbdev/vt8500lcdfb.*
- F:	drivers/video/fbdev/wm8505fb*
- F:	drivers/video/fbdev/wmt_ge_rops.*
-+F:	drivers/watchdog/vt8500-wdt.c
- F:	include/linux/vt8500-timer.h
- 
- ARM/ZYNQ ARCHITECTURE
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 0d8d37f712e8cfb4bf8156853baa13c23a57d6d9..2e59303306feba7e15a015c2fce25b1290dc4cbc 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -1115,6 +1115,21 @@ config SUNPLUS_WATCHDOG
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called sunplus_wdt.
- 
-+config VT8500_WATCHDOG
-+	tristate "VIA/WonderMedia VT8500 watchdog support"
-+	depends on ARCH_VT8500 || COMPILE_TEST
-+	select WATCHDOG_CORE
-+	select AUXILIARY_BUS
-+	help
-+	  VIA/WonderMedia SoCs can use their system timer as a hardware
-+	  watchdog, as long as the first timer channel is free from other
-+	  uses and respective function is enabled in its registers. To
-+	  make use of it, say Y here and ensure that the device tree
-+	  lists at least two interrupts for the VT8500 timer device.
-+
-+	  To compile this driver as a module, choose M here.
-+	  The module will be called vt8500-wdt.
-+
- # X86 (i386 + ia64 + x86_64) Architecture
- 
- config ACQUIRE_WDT
-diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-index c9482904bf870a085c7fce2a439ac5089b6e6fee..3072786bf226c357102be3734fe6e701f753d45b 100644
---- a/drivers/watchdog/Makefile
-+++ b/drivers/watchdog/Makefile
-@@ -101,6 +101,7 @@ obj-$(CONFIG_MSC313E_WATCHDOG) += msc313e_wdt.o
- obj-$(CONFIG_APPLE_WATCHDOG) += apple_wdt.o
- obj-$(CONFIG_SUNPLUS_WATCHDOG) += sunplus_wdt.o
- obj-$(CONFIG_MARVELL_GTI_WDT) += marvell_gti_wdt.o
-+obj-$(CONFIG_VT8500_WATCHDOG) += vt8500-wdt.o
- 
- # X86 (i386 + ia64 + x86_64) Architecture
- obj-$(CONFIG_ACQUIRE_WDT) += acquirewdt.o
-diff --git a/drivers/watchdog/vt8500-wdt.c b/drivers/watchdog/vt8500-wdt.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..a47ee714e7c0172e89a31b0d6c064fff338bd5b6
---- /dev/null
-+++ b/drivers/watchdog/vt8500-wdt.c
-@@ -0,0 +1,88 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (C) 2025 Alexey Charkov <alchark@gmail.com */
-+
-+#include <linux/auxiliary_bus.h>
-+#include <linux/container_of.h>
-+#include <linux/io.h>
-+#include <linux/limits.h>
-+#include <linux/minmax.h>
-+#include <linux/module.h>
-+#include <linux/types.h>
-+#include <linux/watchdog.h>
-+#include <linux/vt8500-timer.h>
-+
-+static int vt8500_watchdog_start(struct watchdog_device *wdd)
-+{
-+	struct vt8500_wdt_info *info = watchdog_get_drvdata(wdd);
-+	u32 deadline = min(wdd->timeout * 1000, wdd->max_hw_heartbeat_ms);
-+
-+	/* The deadline is matched against the hardware clocksource counter,
-+	 * which is a u32 value incrementing at VT8500_TIMER_HZ and continuing
-+	 * past wraparound. When the return value of timer_next is greater than
-+	 * U32_MAX then the match should occur after the hardware counter wraps
-+	 * around, thus we take only the lower 32 bits of timer_next return val
-+	 */
-+	deadline = info->timer_next((u64)deadline * (VT8500_TIMER_HZ / 1000));
-+	writel(deadline, info->wdt_match);
-+	writel(1, info->wdt_en);
-+	return 0;
-+}
-+
-+static int vt8500_watchdog_stop(struct watchdog_device *wdd)
-+{
-+	struct vt8500_wdt_info *info = watchdog_get_drvdata(wdd);
-+
-+	writel(0, info->wdt_en);
-+	return 0;
-+}
-+
-+static const struct watchdog_ops vt8500_watchdog_ops = {
-+	.start			= vt8500_watchdog_start,
-+	.stop			= vt8500_watchdog_stop,
-+};
-+
-+static const struct watchdog_info vt8500_watchdog_info = {
-+	.identity		= "VIA VT8500 watchdog",
-+	.options		= WDIOF_MAGICCLOSE |
-+				  WDIOF_KEEPALIVEPING |
-+				  WDIOF_SETTIMEOUT,
-+};
-+
-+static int vt8500_wdt_probe(struct auxiliary_device *auxdev,
-+			    const struct auxiliary_device_id *id)
-+{
-+	struct vt8500_wdt_info *info;
-+	struct watchdog_device *wdd;
-+
-+	wdd = devm_kzalloc(&auxdev->dev, sizeof(*wdd), GFP_KERNEL);
-+	if (!wdd)
-+		return -ENOMEM;
-+
-+	wdd->info = &vt8500_watchdog_info;
-+	wdd->ops = &vt8500_watchdog_ops;
-+	wdd->max_hw_heartbeat_ms = U32_MAX / (VT8500_TIMER_HZ / 1000);
-+	wdd->parent = &auxdev->dev;
-+
-+	info = container_of(auxdev, struct vt8500_wdt_info, auxdev);
-+	watchdog_set_drvdata(wdd, info);
-+
-+	return devm_watchdog_register_device(&auxdev->dev, wdd);
-+}
-+
-+static const struct auxiliary_device_id vt8500_wdt_ids[] = {
-+	{ .name = "timer_vt8500.vt8500-wdt" },
-+	{},
-+};
-+
-+MODULE_DEVICE_TABLE(auxiliary, my_auxiliary_id_table);
-+
-+static struct auxiliary_driver vt8500_wdt_driver = {
-+	.name =	"vt8500-wdt",
-+	.probe = vt8500_wdt_probe,
-+	.id_table = vt8500_wdt_ids,
-+};
-+module_auxiliary_driver(vt8500_wdt_driver);
-+
-+MODULE_AUTHOR("Alexey Charkov <alchark@gmail.com>");
-+MODULE_DESCRIPTION("Driver for the VIA VT8500 watchdog timer");
-+MODULE_LICENSE("GPL");
-
--- 
-2.49.0
-
+This works, thanks. I will include this in v3.
 
