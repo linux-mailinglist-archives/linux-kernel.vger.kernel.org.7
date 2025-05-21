@@ -1,135 +1,145 @@
-Return-Path: <linux-kernel+bounces-657189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47698ABF0BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:04:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FCCABF0CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09CC04A858C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:04:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E84E1BA7E4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A759F25A357;
-	Wed, 21 May 2025 10:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2B725CC67;
+	Wed, 21 May 2025 10:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EXDFqe+h"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="hvh+LBvI"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC8422B59D;
-	Wed, 21 May 2025 10:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D928F25A358;
+	Wed, 21 May 2025 10:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747821891; cv=none; b=NQFb4GRVQyo08YyPAwyTWj3+pQFxHwtHNI3tGGQUBghb3hYu5vWYf+H0JCfNyUzMjJPrAiz7rk2gGnAtmJhh2XoyKvkaeGzyBhXEP2NTfE/8mN3hvtCdywuaWa6bhpuPc2h/noRDR3uZHrVy6lW33T7p/H67zL7SH7kPzwn7ZfA=
+	t=1747821922; cv=none; b=V73ybik83L6ssVNaCp5RRvDBX57OH4DlE2IJi2eJ/K0TP71Gj4TMYuMPlEvH6R3mZ6oGbGVyo+8EHmQg2SpH5/o0gLsIxnsB0/IgF6fox2Np77xqJ8tefc2tOenFU1PE3zfp6tHuO5OATRiSL3smoYTdkME34ZbVNow9Thoc9fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747821891; c=relaxed/simple;
-	bh=vS/+CTtAxwz4y5synzPvLNW2wyjb4MRW5uQRuO6Y8rk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BKR1L+MTSwQIW+Yp/NnIrcKqbDNnC4AUsPJGkFBqTOVzDWSSp3SBchPoitKCXsowmhQQSjDLqMbyV/bfYh0+CTD+b2wHwfjqNnFoJXgf57Et/8aLXv7D0dxcOxXdNxLvDV3kU9T4fOoifT00i6BYkcr0o1eV7eGyxMSI0g9YcHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EXDFqe+h; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747821889; x=1779357889;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vS/+CTtAxwz4y5synzPvLNW2wyjb4MRW5uQRuO6Y8rk=;
-  b=EXDFqe+huKSq3+YzwunSOrBmWjzov53z75CG4jLZ/D42jXDIfg8h70rj
-   oTN/g+L+nSzozocrws/fwrxJPHpDmZm+irqq7N1JtvglZCSpJxhjWHne8
-   m1xUePiETAi3KG4TQfPNGcUWtWjMWcA0baD33uytOUzklNMSRbUWe/ntG
-   pcYMAbMjqdSVEiaKN6Vfi1B3rNUmjRnHgyZqriKEeOAeBTrr98vMMkEvT
-   la7BkRu4iQ+UHF2fP2Ei6fL94nr0JVtOo9OblZ1JKYMJJvEjCpgyrUUdQ
-   5h8IbMBmkl2zEs8zx3SmR7g+l/C4q2HGhrSW0a2YDPDRfVgc6QkIYBr/o
-   g==;
-X-CSE-ConnectionGUID: XFNIBfztRPiCbMHPC1Hv3w==
-X-CSE-MsgGUID: cxDjEG7wS3m35VCEFqBNHQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="72310778"
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="72310778"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 03:04:48 -0700
-X-CSE-ConnectionGUID: OynbmfR/QG+ZTFFoHm4ydg==
-X-CSE-MsgGUID: nXHpVQeXTpuHGq8bWViLtA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="170865893"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 03:04:46 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uHgJX-00000003a8o-1UET;
-	Wed, 21 May 2025 13:04:43 +0300
-Date: Wed, 21 May 2025 13:04:43 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Akira Yokosawa <akiyks@gmail.com>,
-	linux-doc@vger.kernel.org,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Randy Dunlap <rdunlap@infradead.org>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] Some kernel-doc fixes
-Message-ID: <aC2lO7g_x6oTLYDA@smile.fi.intel.com>
-References: <cover.1747817887.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1747821922; c=relaxed/simple;
+	bh=McNK5rwRHYHZYFLqUU2KVc+aeV0jdFsf3ryi5vZOOlw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z5TkUJIEzAmt6GyNA1+wITOhyxMdaOq3X1eZmsSNOelSQkc9cG3I0QxwvBrBn7mwRgYjAVSPwPMsGRUaQF+yi/NjQv7uc9dEmjm1xpkBk6SZLinsEzCNwhgmusmLU/R+3LRBtwpFYMjM7H3J+aZnunvR+wuV3obWIU5CFt7ppoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=hvh+LBvI; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9qwLF010201;
+	Wed, 21 May 2025 03:04:58 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=J
+	efH84uhgqNME6qU13B3lV4H09DDmh0wckuzrahMkBk=; b=hvh+LBvI8a/WmqZuD
+	3Jmps2tj5xejFg6Rrh9W+DfjHBtY1vJRSW2ZjV7hJOFkVis0lv128YfUqwFeWJTY
+	wskBceJPU0tu7sHyhtunAVSXgMH2d3GAIfAjFksi0Q/FM6SXoVaY4iutPB5KpiwX
+	83B5rcEca3kqa3baTzKWzuJTN/PkZyKxFGTlQEZDp6Pr7UY5fpEtHIo6b6/q0+Yx
+	33GkZ7GwQHVUYJ08uYZfDCGD2PMNMz7cjqloC8/TyptIwDhVX/zkxhtZTGyQhlH7
+	nND8QTFqyM5ns5k3l78GmVxZyBiGkSpLBj5IiGGf4NbhOKIymDUyJn7vBDuqFvdI
+	WjZTg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46rwfghpgf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 03:04:58 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 21 May 2025 03:04:57 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 21 May 2025 03:04:57 -0700
+Received: from bharat-OptiPlex-Tower-Plus-7020.. (unknown [10.28.34.254])
+	by maili.marvell.com (Postfix) with ESMTP id EB31D3F70B3;
+	Wed, 21 May 2025 03:04:53 -0700 (PDT)
+From: Bharat Bhushan <bbhushan2@marvell.com>
+To: <bbrezillon@kernel.org>, <schalla@marvell.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <giovanni.cabiddu@intel.com>, <linux@treblig.org>,
+        <bharatb.linux@gmail.com>, <linux-crypto@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Bharat Bhushan <bbhushan2@marvell.com>
+Subject: [PATCH 1/4 v3] crypto: octeontx2: add timeout for load_fvc completion poll
+Date: Wed, 21 May 2025 15:34:44 +0530
+Message-ID: <20250521100447.94421-2-bbhushan2@marvell.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250521100447.94421-1-bbhushan2@marvell.com>
+References: <20250521100447.94421-1-bbhushan2@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1747817887.git.mchehab+huawei@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDA5OSBTYWx0ZWRfX7sNeaOAB8OIF kpCiU4jwNXJj3InZUTUYx78kq/nA9SKJEO/nZKY8mPThv8U2w3vrF96lxZJDEZerRhYwU+NxlJa /U5kF4RuXSR1pbY1CFV+LhXDK0IBF3tYgrFIXN+RQs75dDCmaabuUfe01l/1OOuAiUcZqVua/5U
+ PQKAqyBBgqC7CXtNSzljLzevXu2cnaoNpUW+b046h5JZlmxkWhNt6GDu56YQMKo8mf9IqUbZHPl FHAotrayhtV2qQvJYCdzeltyaTlyQjZpcST19qusemuMuJ2QUzR+K0dSkMCzlVLe6Dhv31t2Kz/ to/Nz3tGNURV+Bo7nWwZA2xiZM6EBwMNnakdd69718Y506jX14FgiKLr+EmKOF5ZcGrknrj03Fg
+ ZWZldVGhIOuvTPl6/H4HVeErNogrZVB1asiy1pK5E2axBzJhbWt4f+a+W5pywwQz4BrgNsPK
+X-Proofpoint-GUID: Ikz-tyihjJA9pvvJikOBIuEtjXCttmSC
+X-Authority-Analysis: v=2.4 cv=T6OMT+KQ c=1 sm=1 tr=0 ts=682da54a cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=dP9LQboaRqI6G61vZ2MA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: Ikz-tyihjJA9pvvJikOBIuEtjXCttmSC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_03,2025-05-20_03,2025-03-28_01
 
-On Wed, May 21, 2025 at 11:02:12AM +0200, Mauro Carvalho Chehab wrote:
-> Hi Jon,
-> 
-> That's the third version of the kernel-doc fixup patch series.
-> 
-> It address the root cause why Sphinx logger was not working: there
-> was a call there for logger.verbose(). According with:
-> 
-> 	https://www.sphinx-doc.org/en/master/extdev/logging.html
-> 
-> This is a valid call, but it doesn't verbose messages. Instead, it is
-> crashing with modern Sphinx versions, causing the log to not work.
-> 
-> I got rid of it, replacing by logger.info().  I took the time to also
-> address an issue pointed by Andy: not having the same log message
-> placed everywhere. With such change, we can keep using Sphinx
-> logger (which produces colored messages) inside kernel-doc
-> classes.
-> 
-> With that, we have:
-> 
-> Patch 1:	makes Lore and kernel-doc ML receive patches related
-> 	to kernel-doc.py and get_abi.py.
-> Patch 2:	cleanup try/except logic and get rid of logger.verbose();
-> Patch 3:	fix a KeyError when trying to acess data from non-existing files;
-> 
-> If you test just patch 1 on the top of next-20250516, you'll see the
-> keyerror message (in red):
-> 
-> 	ERROR: Cannot find file ./drivers/gpio/gpiolib-acpi.c
-> 	ERROR: Cannot find file ./drivers/gpio/gpiolib-acpi.c
-> 	WARNING: kernel-doc './scripts/kernel-doc.py -rst -enable-lineno -export ./drivers/gpio/gpiolib-acpi.c' processing failed with: KeyError('./drivers/gpio/gpiolib-acpi.c')
-> 
-> And the script doesn't crash anymore. After patch 2, the try/except
-> warning gets replaced by a proper message:
-> 
-> 	ERROR: Cannot find file ./drivers/gpio/gpiolib-acpi.c
-> 	ERROR: Cannot find file ./drivers/gpio/gpiolib-acpi.c
-> 	WARNING: No kernel-doc for file ./drivers/gpio/gpiolib-acpi.c
+Adds timeout to exit from possible infinite loop, which polls
+on CPT instruction(load_fvc) completion.
 
-Sounds reasonable to me.
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Srujana Challa <schalla@marvell.com>
+Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
+---
+ .../crypto/marvell/octeontx2/otx2_cptpf_ucode.c  | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c b/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c
+index 78367849c3d5..9095dea2748d 100644
+--- a/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c
++++ b/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c
+@@ -1494,6 +1494,7 @@ int otx2_cpt_discover_eng_capabilities(struct otx2_cptpf_dev *cptpf)
+ 	dma_addr_t rptr_baddr;
+ 	struct pci_dev *pdev;
+ 	u32 len, compl_rlen;
++	int timeout = 10000;
+ 	int ret, etype;
+ 	void *rptr;
+ 
+@@ -1554,16 +1555,27 @@ int otx2_cpt_discover_eng_capabilities(struct otx2_cptpf_dev *cptpf)
+ 							 etype);
+ 		otx2_cpt_fill_inst(&inst, &iq_cmd, rptr_baddr);
+ 		lfs->ops->send_cmd(&inst, 1, &cptpf->lfs.lf[0]);
++		timeout = 10000;
+ 
+ 		while (lfs->ops->cpt_get_compcode(result) ==
+-						OTX2_CPT_COMPLETION_CODE_INIT)
++						OTX2_CPT_COMPLETION_CODE_INIT) {
+ 			cpu_relax();
++			udelay(1);
++			timeout--;
++			if (!timeout) {
++				ret = -ENODEV;
++				cptpf->is_eng_caps_discovered = false;
++				dev_warn(&pdev->dev, "Timeout on CPT load_fvc completion poll\n");
++				goto error_no_response;
++			}
++		}
+ 
+ 		cptpf->eng_caps[etype].u = be64_to_cpup(rptr);
+ 	}
+-	dma_unmap_single(&pdev->dev, rptr_baddr, len, DMA_BIDIRECTIONAL);
+ 	cptpf->is_eng_caps_discovered = true;
+ 
++error_no_response:
++	dma_unmap_single(&pdev->dev, rptr_baddr, len, DMA_BIDIRECTIONAL);
+ free_result:
+ 	kfree(result);
+ lf_cleanup:
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
