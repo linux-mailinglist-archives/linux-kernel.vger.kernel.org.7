@@ -1,184 +1,202 @@
-Return-Path: <linux-kernel+bounces-657313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE0AABF26B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:08:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85AD7ABF2C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79859189AC6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:08:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14343167B82
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F67D261390;
-	Wed, 21 May 2025 11:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B965262FE7;
+	Wed, 21 May 2025 11:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Gqk6csu4"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="l9PZQdT5"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA91925EF9F;
-	Wed, 21 May 2025 11:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D2025FA3F
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 11:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747825708; cv=none; b=s/YKuCEGzC/ZHavhwfnAodjDbOeKtXEewux3Fuww+E3iIpfHJ1yY8U4iFjyA9lqZjMv0HG1MSz9szaJbQ2mqpBysX3LsR4AdL6NqVt2Ax22n1qZDJ/kEqONatBZbhOB0OfWnwPeBvlZ4c5peae22tI9ZrQJqcWBnVUGh2UHwI9o=
+	t=1747826850; cv=none; b=JzEXAROPb6LYtALnFRFpeZ1z3A+fHTeuNWLP9zR0WOUMOTnmGUPNzz5EJmMamn9GgipvWzm482qkCx5oIFq6LAldEb5mxiH2MvfT/gGj5/iUoZhaSWy3ab4Kosz/9Sm3ahRvayc8GmOGeTn9qhJpYho44AISfCIhb6dUb4oLYiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747825708; c=relaxed/simple;
-	bh=gTtti7ttfCtD1NPkXDRhmTzloNy7zkqQ1SAHnuSWIKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uTv3uBYbMpSgaUCSDFaRaAqdDE1LVgbxRxhYyY8ye2h0n8RQhLlwdX8EJjA+OuRRAlvclBh9Nggdii3sveF6x80AFy9mKpqseoFA/iDL1yhefVSCt8w2goUZ18XRSwqUi1GK4/rI0gDsNxTH6Et3v1j343UPdl+Q43Bqvy+4rhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Gqk6csu4; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (179.218-130-109.adsl-dyn.isp.belgacom.be [109.130.218.179])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 506D76DE;
-	Wed, 21 May 2025 13:08:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1747825682;
-	bh=gTtti7ttfCtD1NPkXDRhmTzloNy7zkqQ1SAHnuSWIKQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gqk6csu4H1umgLRDx9/FrYwNw2//YWdZ4CX2vWRoObEmX1783ZVjiJ1KgfNCk2JP8
-	 EaciAFlD6+TsMGIMCw5khaN46qr32q39NvCqOJ1DD2afzJn2kbgRWEqRBPc+Qugosw
-	 s3AWwytkmQcvjihFh9L7w7O/rXtqYn1ltLJDfWSo=
-Date: Wed, 21 May 2025 13:08:17 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Mehdi Djait <mehdi.djait@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	tomi.valkeinen@ideasonboard.com, jacopo.mondi@ideasonboard.com,
-	hverkuil@xs4all.nl, kieran.bingham@ideasonboard.com,
-	naush@raspberrypi.com, mchehab@kernel.org,
-	dave.stevenson@raspberrypi.com, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v4] media: v4l2-common: Add a helper for obtaining
- the clock producer
-Message-ID: <20250521110817.GA4116@pendragon.ideasonboard.com>
-References: <20250321130329.342236-1-mehdi.djait@linux.intel.com>
- <f467e4a8-fcb2-4345-b8f7-7557c1a7552b@redhat.com>
- <20250515084403.GQ23592@pendragon.ideasonboard.com>
- <id2ikiio23ahslghpx56niwxrvaqdgmrgk3k647i3u27cptqgz@hwqrkdvljd3b>
- <20250515124050.GA12492@pendragon.ideasonboard.com>
- <2egx7hakxleahk5o3ngydrcgtlnpgpdj4kgcijfij2bmss7u4d@2yho4udpzjtm>
- <aCZTi2odVXVZjJE8@svinhufvud>
- <20250521105141.GF12514@pendragon.ideasonboard.com>
- <aC2wzFD_bPgESZpR@kekkonen.localdomain>
+	s=arc-20240116; t=1747826850; c=relaxed/simple;
+	bh=+dz8MEJzeWy8hPhlya/3ZUY2mAMkUHkjyJF33DfG/34=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=DXoYor6J6fs8ZCcmjayPj3WK0k05p6B3Qio1tHRcKI1Vzo5FijsS0Aq/mpzgMk9MZVxNiJb418nn0lfwpkoytZXBJudAezeg89MtS8fcoQBtPHtwetDbhb87/lz3oKcaD+Xxb2ij57zc0DE7m7VY8uczA8PrgLsIa6/JbOMggrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=l9PZQdT5; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250521112726epoutp04cc29b8f5496df9560ad4ea0ceec74a3d~Bh0G403tl1389013890epoutp04Y
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 11:27:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250521112726epoutp04cc29b8f5496df9560ad4ea0ceec74a3d~Bh0G403tl1389013890epoutp04Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1747826846;
+	bh=vl3yajlFYJh19ijyGDpwJVcyHBKNanD49IYs8BuF3mE=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=l9PZQdT5FM400JC8c1gUdoezGUib72npsaCt+GnoAgm4Sopw/ZL0rAWeQp5culZ5S
+	 2iniP4tVUOrpd8bQvWKmdckShWro4dOJoQ18DfIRQUklh1YHiXU24gN6B1w7R3/efv
+	 mh6wdfXLkZ0hnLaRYkfkNn2KDReFGgeCaHllW01o=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250521112725epcas5p4aa1fbca701d58e50cf676d50e8611e7d~Bh0FwC1IV0397603976epcas5p4L;
+	Wed, 21 May 2025 11:27:25 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4b2Tfg5BcKz6B9m7; Wed, 21 May
+	2025 11:27:23 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250521110904epcas5p2ff2e2297e977703bf1ab672cedcb862c~BhkEH5SSR2735727357epcas5p2S;
+	Wed, 21 May 2025 11:09:04 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250521110904epsmtrp2f1fd152e9f172e0305985651e5538eae~BhkEG8BO11051310513epsmtrp29;
+	Wed, 21 May 2025 11:09:04 +0000 (GMT)
+X-AuditID: b6c32a28-46cef70000001e8a-2f-682db44f77f5
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	28.19.07818.F44BD286; Wed, 21 May 2025 20:09:04 +0900 (KST)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250521110901epsmtip2898271c09d575a746038f8201ac54627~BhkBKexXM2298622986epsmtip2N;
+	Wed, 21 May 2025 11:09:00 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <vkoul@kernel.org>,
+	<kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
+	<kauschluss@disroot.org>, <m.szyprowski@samsung.com>,
+	<s.nawrocki@samsung.com>
+Cc: <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
+	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <a584146d-df86-4e40-8a0f-c3b7558fd066@kernel.org>
+Subject: RE: [PATCH v2 1/2] dt-bindings: phy: samsung,usb3-drd-phy: add
+ dt-schema for ExynosAutov920
+Date: Wed, 21 May 2025 16:38:59 +0530
+Message-ID: <000101dbca40$c32aee90$4980cbb0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aC2wzFD_bPgESZpR@kekkonen.localdomain>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIiRnTfgkV106HBI/lpdza94uXQvgBQmjeRAP0KzpUC9NC6EwLLG322Am4GW9KzBBFtYA==
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Re0hTcRTH+917d3ddjG6b6E8trdFLs9kg8FeY2YMYUVCQUdHKpdcpOV2b
+	W09Qe2tRVlruVpo9pi6zmsPWG7ZZWuYobZboEHNYqzTTjPXQmKPwv+853/P9nAOHwgWviVAq
+	PTObUWfKM0Qkj6iziSLmrTXPS5t/0IOjrtI6Epk9tQSqftSMIZfFwEVl9mYOcr4t56LfIw4S
+	1R8exdFH1kUih+M2F5neOzmo5f5FEhUahwlU4niMoZv2Ti5yfCjgoNslIwQafWjhoiFvF45s
+	n49ykL1iAEP3OhrwhCBpY00tJjUZ80lph/MhKa29liM9aTYC6aApfC25mReXwmSk6xh1THwS
+	L+1pnlZlFe7+/icPzwXPJxWAAArSC2CvwQsKAI8S0A8AfH+vkOs3psDuc3c4fi2EVSO9XP9Q
+	L4D9+T+IAkBRJB0LL9XM9vUDaQcGu0u6cV+B0zYMfitiCX+iDYN6kwvzoQLoeNjAesdWCOkU
+	2PKtAvORCHomtHpW+dp8eiHML/tK+vVk2KjvIXwap+dC9zv3f20o/4T7r5sGvW7D2KWB9AZY
+	d8jL8c8Ew3rvCbwQCNlxKHYcih2HYsdFLgPCCEIYlUapUCZLVJJMZpdYI1dqtJkKcXKW0gTG
+	3h41xwL6hg/EWAFGASuAFC4K5Msqo9ME/BT5nr2MOmubWpvBaKwgjCJEwfwqyUaFgFbIs5kd
+	DKNi1P9cjAoIzcXOJcv6Na5j2zw/J4gtAr1sDQ2DhpjVWlx3bOGTvW26DRe+SkeA7E2nvnpJ
+	1fQDETW/7oIOm51VylqCirc09enbW9kyuLjCuWV5+OiwKn297MzK4ESiK/LorGUk5wltmZRY
+	33Pw+W94Xh/yQnG6NWndAgneVGT/bjxx64jcsOv6zrP840LFxITU9EU3rDPk7erOyOimvP0R
+	ceW2XHdSlwHFl4rttCq0/2rxxMfRDWHiL84Vup7q2LCt8CI3p+VwUCUeNTc8I2Tf9cnItXF7
+	75VXA42e00WFwamDKTv6XkamfkhK3VSsM283q+8+PeXurPxpnzY89UcCED2LXcrTighNmlwS
+	has18r+DrKQ8ZQMAAA==
+X-CMS-MailID: 20250521110904epcas5p2ff2e2297e977703bf1ab672cedcb862c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250516101800epcas5p49fdae57cdf1fbec0427720ee38b0f925
+References: <20250516102650.2144487-1-pritam.sutar@samsung.com>
+	<CGME20250516101800epcas5p49fdae57cdf1fbec0427720ee38b0f925@epcas5p4.samsung.com>
+	<20250516102650.2144487-2-pritam.sutar@samsung.com>
+	<0615877e-247a-419b-b4d6-de377cb40914@kernel.org>
+	<000001dbca1c$636ca080$2a45e180$@samsung.com>
+	<a584146d-df86-4e40-8a0f-c3b7558fd066@kernel.org>
 
-On Wed, May 21, 2025 at 10:54:04AM +0000, Sakari Ailus wrote:
-> Hi Laurent,
-> 
-> On Wed, May 21, 2025 at 12:51:41PM +0200, Laurent Pinchart wrote:
-> > On Thu, May 15, 2025 at 11:50:19PM +0300, Sakari Ailus wrote:
-> > > On Thu, May 15, 2025 at 03:51:33PM +0200, Mehdi Djait wrote:
-> > > > On Thu, May 15, 2025 at 02:40:50PM +0200, Laurent Pinchart wrote:
-> > > > > On Thu, May 15, 2025 at 11:17:37AM +0200, Mehdi Djait wrote:
-> > > > > > On Thu, May 15, 2025 at 10:44:03AM +0200, Laurent Pinchart wrote:
-> > > > > > > On Sat, May 10, 2025 at 04:21:09PM +0200, Hans de Goede wrote:
-> > > > > > > > On 21-Mar-25 2:03 PM, Mehdi Djait wrote:
-> > > > > > > > > Introduce a helper for v4l2 sensor drivers on both DT- and ACPI-based
-> > > > > > > > > platforms to retrieve a reference to the clock producer from firmware.
-> > > > > > > > > 
-> > > > > > > > > This helper behaves the same as clk_get_optional() except where there is
-> > > > > > > > > no clock producer like in ACPI-based platforms.
-> > > > > > > > > 
-> > > > > > > > > For ACPI-based platforms the function will read the "clock-frequency"
-> > > > > > > > > ACPI _DSD property and register a fixed frequency clock with the frequency
-> > > > > > > > > indicated in the property.
-> > > > > > > > > 
-> > > > > > > > > Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
-> > > > > > > > 
-> > > > > > > > This certainly looks quite useful, thank you for working
-> > > > > > > > on this.
-> > > > > > > > 
-> > > > > > > > Note on some IPU3 platforms where the clk is provided by
-> > > > > > > > a clk-generator which is part of a special sensor-PMIC
-> > > > > > > > the situation is a bit more complicated.
-> > > > > > > > 
-> > > > > > > > Basically if there is both a clk provider and a clock-frequency
-> > > > > > > > property then the clock-frequency value should be set as freq
-> > > > > > > > to the clk-provider, see:
-> > > > > > > > 
-> > > > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/i2c/ov8865.c#n3020
-> > > > > > > > 
-> > > > > > > > for an example of a driver which handles this case.
-> > > > > > > 
-> > > > > > > On a side note, the DT bindings for the OV8865 doesn't specify the
-> > > > > > > clock-frequency property...
-> > > > > > 
-> > > > > > Is this wrong ?
-> > > > > > 
-> > > > > > The OV8865 driver was introduced for DT-based systems, where you will
-> > > > > > get a reference to the "struct clk corresponding to the clock producer"
-> > > > > > and then get the clock-rate/frequency with a call to:
-> > > > > > 
-> > > > > > 	rate = clk_get_rate(sensor->extclk);
-> > > > > > 
-> > > > > > The patch "73dcffeb2ff9 media: i2c: Support 19.2MHz input clock in ov8865"
-> > > > > > adding support for clock-frequency came later to support ACPI-based
-> > > > > > systems (IPU3 here)
-> > > > > 
-> > > > > I'd expect all device properties to be documented in DT bindings. Is
-> > > > > that an incorrect assumption ?
-> > > > > 
-> > > > 
-> > > > I am actually genuinely asking, is the clock-frequency a device property
-> > > > of the ov8865 camera sensor or the clock source, which is a separate device ?
-> > > 
-> > > The sensor's.
-> > >
-> > > Could we document how this is supposed to work on DT and ACPI?
-> > 
-> > Yes please. Would you like to send a patch ? :-)
-> 
-> I'd add this to the helper's documentation. We'll work this out with Mehdi.
-> 
-> > > I think we should also select COMMON_CLK on ACPI systems for sensor
-> > > drivers (in a separate patch maybe?), instead of relying on distributions
-> > > enabling it.
-> > > 
-> > > > Example the imx258 with a fixed-clock, which has its own compatible
-> > > > and DT bindings under bindings/clock/fixed-clock.yaml
-> > > > 
-> > > > So when adding support for ACPI-based systems, the DT bindings should
-> > > > not be changed because getting the clock-frequency from the ACPI _DSD
-> > > > property is a workaround only needed on ACPI-based systems.
-> > > 
-> > > I wouldn't say it's a workaround, but something that's only needed on ACPI
-> > > systems.
-> > 
-> > Does that mean that the clock-frequency property should be deprecated on
-> > DT-based systems, and not used in any new sensor bindings ?
-> 
-> I don't think we've added any "clock-frequency" properties in DT bindings
-> for camera sensors since around 2020 or so.
+Hi Krzysztof,=20
 
-That's good news, but I'm not sure it's well known or well documented.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 21 May 2025 02:15 PM
+> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>; vkoul=40kernel.org=
+;
+> kishon=40kernel.org; robh=40kernel.org; krzk+dt=40kernel.org;
+> conor+dt=40kernel.org; alim.akhtar=40samsung.com; andre.draszik=40linaro.=
+org;
+> peter.griffin=40linaro.org; kauschluss=40disroot.org;
+> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com
+> Cc: linux-phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
+amsung-
+> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
+> selvarasu.g=40samsung.com
+> Subject: Re: =5BPATCH v2 1/2=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
+dd dt-
+> schema for ExynosAutov920
+>=20
+> On 21/05/2025 08:48, Pritam Manohar Sutar wrote:
+> >>> diff --git
+> >>> a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> >>> b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> >>> index fdddddc7d611..c50f4218ded9 100644
+> >>> ---
+> >>> a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> >>> +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yam
+> >>> +++ l
+> >>> =40=40 -32,6 +32,7 =40=40 properties:
+> >>>        - samsung,exynos7-usbdrd-phy
+> >>>        - samsung,exynos7870-usbdrd-phy
+> >>>        - samsung,exynos850-usbdrd-phy
+> >>> +      - samsung,exynosautov920-usb31drd-phy
+> >>>
+> >>>    clocks:
+> >>>      minItems: 2
+> >>> =40=40 -204,6 +205,32 =40=40 allOf:
+> >>>          reg-names:
+> >>>            maxItems: 1
+> >>>
+> >>> +  - if:
+> >>> +      properties:
+> >>> +        compatible:
+> >>> +          contains:
+> >>> +            const: samsung,exynosautov920-usb31drd-phy
+> >>> +    then:
+> >>> +      =24ref: /schemas/usb/usb-switch.yaml=23
+> >>> +
+> >>> +      properties:
+> >>> +        clocks:
+> >>> +          items:
+> >>
+> >> Why there is no main PHY clock?
+> >
+> > external crystal clk (ext_xtal) is used as main phy clk.
+>=20
+> So this is the main phy clock? This describes the clock input, not what y=
+ou have
+> on your board. If you change external crystal to internal clock in one de=
+sign, you
+> change the binding? No, this makes no sense.
+>=20
+>=20
 
-On a side note, should we try to make the existing clock-frequency
-properties optional (or even deprecate them and drop them from bindings)
-when they are currently mandatory ? The following five YAML bindings
-require the property:
+Yes, this is the main phy clock. Will revisit the binding and try reusing e=
+xisting one.
 
-- mipi-ccs.yaml
-- ovti,ov02a10.yaml
-- ovti,ov8856.yaml
-- sony,imx214.yaml
-- sony,imx290.yaml
+>=20
+> Best regards,
+> Krzysztof
 
-The CCS driver treats the property as optional, the imx214 driver
-doesn't use it at all, and the other drivers require it. There are other
-drivers that require the property, in particular ACPI-only drivers.
+Thank you,
+Pritam
 
--- 
-Regards,
-
-Laurent Pinchart
 
