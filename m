@@ -1,107 +1,230 @@
-Return-Path: <linux-kernel+bounces-656826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27EC4ABEB4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:35:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30074ABEB79
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6A714E1254
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 05:35:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D127F7A1790
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 05:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E04422FAF4;
-	Wed, 21 May 2025 05:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fhyGwMlV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0E2230981;
+	Wed, 21 May 2025 05:45:12 +0000 (UTC)
+Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAC4381BA
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDE6230BC0;
+	Wed, 21 May 2025 05:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747805707; cv=none; b=Iodg4DH3Jm4lFJn43ooukKWpRCLVuUODk8D9mKQCMIgp+k2DwTxx+olJN8zyKmzpnLBS+ZBUbLl+5vGOWhoBjpHfOVxRL3DyBednqEYl+feLXJ1Y6+p2ZRiYqmbm5Nf2jUVvbaMnRPkcwhjWQDIkreaWOjt2PzZqelOR33Ccb0w=
+	t=1747806312; cv=none; b=Fh1peBFnMfO9339SjT8qMPLioHExPVuUUp/YCCIdaVA9lZS6S6LUP0QRH+LIWPBMlPv/Vj674UYoWq8YIUlAy69yQfXqBtjC5W06TGQUe4NJHFxaNLnKjtgMapvsbboA8g1l3FSMiwRUiw9pfxxcDvVN9cWQkyxvrqH/K3+PCtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747805707; c=relaxed/simple;
-	bh=nbRBmLQJ/sS83FNFaw3HUtMqWrzXnQYs4/zhd0vRRbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Tl48ohFKSOiQ3H1sSi/RMErxNHmZSib9Gru0uqHB6bgkssRJBvCUPtzuZ9EI3b3VdX1CjB1TgS4ZIqjsdCAtrT5BW4G5mhhzzGMdXdrPLQYmdX4885qpwmGTrfWYFS7IXIy1Di/hEUa2hPHvKWr6F8ypIM/WQV0PvnpXDRnkesM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fhyGwMlV; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747805706; x=1779341706;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=nbRBmLQJ/sS83FNFaw3HUtMqWrzXnQYs4/zhd0vRRbY=;
-  b=fhyGwMlVdeOqngAHecstdxViSlv+fQsHumoirzv0D4sVqJdirIJwcp1v
-   2rbnmzMVv0K4nRR/Sb6/t5rOqusXQNfufn2424EgzGNnwMR3CHdf945ZY
-   DOLmnimEfTWmoeO89Tvu71MIyJFyw084XexJOE7xujWGdJnOr6vCE61qz
-   Yxdvui+2OYtwig48uQa4LEHeTz/EWkOStqgqrpxbl2SARuh6pwRZhgVsv
-   wwbpgkLfMO8XxwBJRH/QBwWNUiK7SLdLs/BCcePLgCp0ccE9ZlUPVxc4z
-   Xel2+n61o6YoUMz1tWP/m0fWKjyOXlSMjMWWA1FzihQE6AIZWGN33qnBC
-   w==;
-X-CSE-ConnectionGUID: hcujqtDhSNui6IEaQIiRVw==
-X-CSE-MsgGUID: Es4vRRKGTc2NfSuDqfvsCg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="37383376"
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="37383376"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 22:35:05 -0700
-X-CSE-ConnectionGUID: 6ezdw0IyThCxHQwsAu/93w==
-X-CSE-MsgGUID: SZB/OzbBQhG2EKln58B0Ag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="170919535"
-Received: from nsridha1-mobl.amr.corp.intel.com (HELO desk) ([10.125.146.22])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 22:35:05 -0700
-Date: Tue, 20 May 2025 22:35:04 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: x86@kernel.org
-Cc: David Kaplan <david.kaplan@amd.com>, linux-kernel@vger.kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>
-Subject: [PATCH 0/2] eIBRS fixes
-Message-ID: <20250520-eibrs-fix-v1-0-91bacd35ed09@linux.intel.com>
-X-B4-Tracking: v=1; b=H4sIAGFhLWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDUyMD3dTMpKJi3bTMCl2zZBNToyQzS/OUpDQloPqColSgMNis6NjaWgA
- PXM8JWwAAAA==
-X-Change-ID: 20250520-eibrs-fix-6c452b697dbf
-X-Mailer: b4 0.14.2
+	s=arc-20240116; t=1747806312; c=relaxed/simple;
+	bh=4HkLYWOsf+KFAlrO53Rwzj64dyrRJwyoObLm6cr2DQ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JmehYf3f2EojOrzW2JW6ODa9JMQBTc1zJxicFD/uSBRLY2enu13+oLX1Pv+Kfh9Jsw6OBFdyfSU8d3FH8s/JUDVrVl2yHxqrcYiEJt5YT+AJ1G/bCyLudcRKHqgo6LQK4PjSbTWfHPCin2nA/4hYFnW012Q+dav92FAJjJAuIcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp01.aussiebb.com.au (Postfix) with ESMTP id 8BF4B1004A3;
+	Wed, 21 May 2025 15:35:16 +1000 (AEST)
+X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
+Received: from smtp01.aussiebb.com.au ([127.0.0.1])
+	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id r3nvpw_bx252; Wed, 21 May 2025 15:35:16 +1000 (AEST)
+Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
+	id 728121004AD; Wed, 21 May 2025 15:35:16 +1000 (AEST)
+X-Spam-Level: 
+Received: from [192.168.68.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ian146@aussiebb.com.au)
+	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id 0B9391004A3;
+	Wed, 21 May 2025 15:35:13 +1000 (AEST)
+Message-ID: <c36cb32c-9434-4978-af75-ff6f04468c44@themaw.net>
+Date: Wed, 21 May 2025 13:35:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.10 0/5] kernfs: backport locking and concurrency
+ improvement
+To: Qingfang Deng <dqfext@gmail.com>, stable@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20250521015336.3450911-1-dqfext@gmail.com>
+Content-Language: en-US
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net; keydata=
+ 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
+In-Reply-To: <20250521015336.3450911-1-dqfext@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 21/5/25 09:53, Qingfang Deng wrote:
+> KCSAN reports concurrent accesses to inode->i_mode:
+>
+> ==================================================================
+> BUG: KCSAN: data-race in generic_permission / kernfs_iop_permission
+>
+> write to 0xffffffe001129590 of 2 bytes by task 2477 on cpu 1:
+>   kernfs_iop_permission+0x72/0x1a0
+>   link_path_walk.part.0.constprop.0+0x348/0x420
+>   path_openat+0xee/0x10f0
+>   do_filp_open+0xaa/0x160
+>   do_sys_openat2+0x252/0x380
+>   sys_openat+0x4c/0xa0
+>   ret_from_syscall+0x0/0x2
+>
+> read to 0xffffffe001129590 of 2 bytes by task 3902 on cpu 3:
+>   generic_permission+0x26/0x120
+>   kernfs_iop_permission+0x150/0x1a0
+>   link_path_walk.part.0.constprop.0+0x348/0x420
+>   path_lookupat+0x58/0x280
+>   filename_lookup+0xae/0x1f0
+>   user_path_at_empty+0x3a/0x70
+>   vfs_statx+0x82/0x170
+>   __do_sys_newfstatat+0x36/0x70
+>   sys_newfstatat+0x2e/0x50
+>   ret_from_syscall+0x0/0x2
+>
+> Reported by Kernel Concurrency Sanitizer on:
+> CPU: 3 PID: 3902 Comm: ls Not tainted 5.10.104+ #0
+> ==================================================================
 
-tip/x86/core that has restructured bugs.c including the recent ITS
-mitigation has some disparities compared to upstream:
+It's been soo long since this was merged.
 
-1. Spectre-v2 mitigation defaults to IBRS on eIBRS supported systems.
-2. RSB stuffing mitigation for ITS is not allowed with eIBRS.
+I seem to vaguely remember something along these lines and after 
+analyzing it
 
-These couple of patches fixes the above issues.
+came to the conclusion it was a false positive.
 
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
----
-Pawan Gupta (2):
-      x86/spectre_v2: Fix mitigation default on Intel
-      x86/its: Allow "=stuff" mitigation when eIBRS is enabled
+Let me think about it for a while and see if I can remember the reasoning.
 
- arch/x86/kernel/cpu/bugs.c | 104 ++++++++++++++++++++++++++++++---------------
- 1 file changed, 69 insertions(+), 35 deletions(-)
----
-base-commit: 8c57ca583ebfe879f99007d10c8f2b66baa18422
-change-id: 20250520-eibrs-fix-6c452b697dbf
 
--- 
-Thanks,
-Pawan
+Ian
 
+>
+> kernfs_iop_permission+0x72/0x1a0:
+>
+> kernfs_refresh_inode at fs/kernfs/inode.c:174
+>   169 	
+>   170 	static void kernfs_refresh_inode(struct kernfs_node *kn, struct inode *inode)
+>   171 	{
+>   172 		struct kernfs_iattrs *attrs = kn->iattr;
+>   173 	
+>> 174<		inode->i_mode = kn->mode;
+>   175 		if (attrs)
+>   176 			/*
+>   177 			 * kernfs_node has non-default attributes get them from
+>   178 			 * persistent copy in kernfs_node.
+>   179 			 */
+>
+> (inlined by) kernfs_iop_permission at fs/kernfs/inode.c:285
+>   280 			return -ECHILD;
+>   281 	
+>   282 		kn = inode->i_private;
+>   283 	
+>   284 		mutex_lock(&kernfs_mutex);
+>> 285<		kernfs_refresh_inode(kn, inode);
+>   286 		mutex_unlock(&kernfs_mutex);
+>   287 	
+>   288 		return generic_permission(inode, mask);
+>   289 	}
+>   290 	
+>
+> generic_permission+0x26/0x120:
+>
+> acl_permission_check at fs/namei.c:298
+>   293 	 * Note that the POSIX ACL check cares about the MAY_NOT_BLOCK bit,
+>   294 	 * for RCU walking.
+>   295 	 */
+>   296 	static int acl_permission_check(struct inode *inode, int mask)
+>   297 	{
+>> 298<		unsigned int mode = inode->i_mode;
+>   299 	
+>   300 		/* Are we the owner? If so, ACL's don't matter */
+>   301 		if (likely(uid_eq(current_fsuid(), inode->i_uid))) {
+>   302 			mask &= 7;
+>   303 			mode >>= 6;
+>
+> (inlined by) generic_permission at fs/namei.c:353
+>   348 		int ret;
+>   349 	
+>   350 		/*
+>   351 		 * Do the basic permission checks.
+>   352 		 */
+>> 353<		ret = acl_permission_check(inode, mask);
+>   354 		if (ret != -EACCES)
+>   355 			return ret;
+>   356 	
+>   357 		if (S_ISDIR(inode->i_mode)) {
+>   358 			/* DACs are overridable for directories */
+>
+> Backport the series from 5.15 to fix the concurrency bug.
+> https://lore.kernel.org/all/162642752894.63632.5596341704463755308.stgit@web.messagingengine.com
+>
+> Ian Kent (5):
+>    kernfs: add a revision to identify directory node changes
+>    kernfs: use VFS negative dentry caching
+>    kernfs: switch kernfs to use an rwsem
+>    kernfs: use i_lock to protect concurrent inode updates
+>    kernfs: dont call d_splice_alias() under kernfs node lock
+>
+>   fs/kernfs/dir.c             | 153 ++++++++++++++++++++----------------
+>   fs/kernfs/file.c            |   4 +-
+>   fs/kernfs/inode.c           |  26 +++---
+>   fs/kernfs/kernfs-internal.h |  24 +++++-
+>   fs/kernfs/mount.c           |  12 +--
+>   fs/kernfs/symlink.c         |   4 +-
+>   include/linux/kernfs.h      |   7 +-
+>   7 files changed, 138 insertions(+), 92 deletions(-)
+>
 
