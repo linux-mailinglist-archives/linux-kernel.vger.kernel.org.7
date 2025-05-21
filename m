@@ -1,166 +1,120 @@
-Return-Path: <linux-kernel+bounces-656936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E33FAABECBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:06:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A59ABECC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96B4B17976F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 077D63B3087
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0132235047;
-	Wed, 21 May 2025 07:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A5E234962;
+	Wed, 21 May 2025 07:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aC9SZxwm"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="U3PA9w87"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9D722B8B5;
-	Wed, 21 May 2025 07:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476F8235049;
+	Wed, 21 May 2025 07:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747811189; cv=none; b=dPZQPO0m3Uh6vWY8cP83oHlLNYDv6U7qqdjtIFKjRQ/fKY02vheTPWdbjIOlWn25AvS0NZutzTn8UKVAvCmNor+s79VgkWyEE5GskP6mxfZ9p/ur/7A2VykanNRD8k1ZUobtykIYO8JHykudMe5ayjDvnTW/b2fl2H9jh3o8GWo=
+	t=1747811212; cv=none; b=KtD/iue6XnxtTx90RzoJ8mMNAuc15CYhTaJMjEFbKqc5A3RH2Iu9iYiF6e9LLLSPrRVk1hBsfeGjekEFpbdZ7fdp8Ll27XdWM9dLPp7QT0Hc44EDHlPgXRH8FraO/Tr10QHamW+erNaB3NnPmwce5d4FPkmaLJx3qXEsoicuU38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747811189; c=relaxed/simple;
-	bh=x84u9qckH89jq1nabqOHuAQm5M4dSA9/eZu8we7XL1U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ssHE6vkJrrreq/JPQN8vjr3ENsMAbWpdvljSAKFrkxKVmfMH+9kbFEhlXQK1FnYBErHRw4728o23BuclS1ilISu4KwV/t8Wu3J9lknqTn72pv5705pGyoMDLbXF7uqdE8qidEkpu5K1OrTQi2i3XQFRCjpJ90o2/hhlUYTGI8FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aC9SZxwm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L6Tc2v004354;
-	Wed, 21 May 2025 07:06:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TQPHWZwd0L1ohEAFE8//z9F5diCwvbFjg15swR0eETE=; b=aC9SZxwmKqib79M+
-	Ma/pU0pvCtAK0RGb+sTz7fXYUZH6XOjR9Z4rStqqPpBq7f7Vn/8hugT3fq/87X0Q
-	y+4t3rx97FBLg2270OHUK5JszfyddzBolYqdAP0bE/cnjrbsNnStnG3lKFLx8ZeV
-	d2HC3lwsQ9kVdtwpxjpPDFJi0OIZhq+c54HCmb5oQNvpfv9U14SHjlbCI0YkXr7E
-	Paklt5+1RHbyWG0++GUY0zVeVnlTw751lX+7mQV5rGW0HktsNct7/yG7jdoNn67E
-	xWjzDOhagIBDhtQuACxnXdfa2YjXKZ3WChRd42sn5AJJ0H0EMU5y6s4mvjhGx5Xu
-	O32jgA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf6su31-1
+	s=arc-20240116; t=1747811212; c=relaxed/simple;
+	bh=y+EqpJywUMH9nHGD6s9CiK+qnZyK9vnfU8hT14XBxxs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wl0gVdAiaN7jKnTZrqODk+FC8fh5FtysLRD0qbEyJmusjOK7RMG1EXc+QCKbLr+HhTb/WHLGMOlFXM04IdSXL9rfcopK7tPyFJ/MeCiIaW+K/0Hpw0i1zGHCGbQq3XqcTzALwkxvHV/lZoXuTvL/aJDg0dxeFQX9i6dcbJyHUXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=U3PA9w87; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54KNkISX015649;
+	Wed, 21 May 2025 00:06:39 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=P8/ITfuQzWsLicHCkKnjp1NaO
+	TkPX9FT0tQbKECukXg=; b=U3PA9w87VighZgQ2Eyu7VtItKdloDjeOA+dP4Don6
+	beAelgGYfgsCE4vIjjvZiXARxnUnUH0rol9FAFafPJJr/d6l741mAPgq7CqKzbdF
+	ABDqvoQMTDrpJ+X4eBalIDPeVhGrRnd01psBrsZP//Z/PrQAE8cFe9slbxtqm9+j
+	QuQ7CNtMfMz/yp98y1VSOFnTLJu5fBPizcbLzoZ6YtLDFb3owXWwv/ugrZQCouI5
+	jRq4G6MFwakzdfhOX3N6J7HjJJIt9skAVYiQ3GmtmPF4fM9+8t38xiRFKGL0QlRV
+	QJP+Qli3C2Q8k2mkdVnXFLSvS1nLcrm/3UIs2ZopJtuzw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46s3purnqt-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 07:06:24 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54L76NjD014676
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 07:06:23 GMT
-Received: from [10.218.0.120] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 May
- 2025 00:06:16 -0700
-Message-ID: <6be65186-5af9-4a95-93db-41996310b715@quicinc.com>
-Date: Wed, 21 May 2025 12:36:13 +0530
+	Wed, 21 May 2025 00:06:39 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 21 May 2025 00:06:38 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 21 May 2025 00:06:38 -0700
+Received: from test-OptiPlex-Tower-Plus-7010 (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with SMTP id B01243F70B3;
+	Wed, 21 May 2025 00:06:34 -0700 (PDT)
+Date: Wed, 21 May 2025 12:36:33 +0530
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: Simon Horman <horms@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sunil Goutham
+	<sgoutham@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        "Subbaraya
+ Sundeep" <sbhatta@marvell.com>,
+        Bharat Bhushan <bbhushan2@marvell.com>,
+        "Andrew Lunn" <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [net-next] octeontx2-pf: QOS: Perform cache sync on send queue
+ teardown
+Message-ID: <aC17efTkxDQ5+h1P@test-OptiPlex-Tower-Plus-7010>
+References: <20250520092248.1102707-1-hkelam@marvell.com>
+ <20250520170615.GO365796@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1] mmc: sdhci-msm: Enable MMC_CAP_AGGRESSIVE_PM for
- qualcomm controllers
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Adrian Hunter <adrian.hunter@intel.com>, <linux-mmc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>,
-        <quic_rampraka@quicinc.com>, <quic_pragalla@quicinc.com>,
-        <quic_sayalil@quicinc.com>, <quic_nitirawa@quicinc.com>,
-        <quic_sachgupt@quicinc.com>, <quic_bhaskarv@quicinc.com>,
-        <quic_narepall@quicinc.com>, <kernel@quicinc.com>
-References: <20241104060722.10642-1-quic_sartgarg@quicinc.com>
- <CAPDyKFrYkKFJ=+4t4ad=a4GJUCBVO7FuaRqdxSTUWtHOWgUA_w@mail.gmail.com>
-Content-Language: en-US
-From: Sarthak Garg <quic_sartgarg@quicinc.com>
-In-Reply-To: <CAPDyKFrYkKFJ=+4t4ad=a4GJUCBVO7FuaRqdxSTUWtHOWgUA_w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 2yeWrEZCH9pEXSANZfN6AeunNkEfPVPM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDA2OCBTYWx0ZWRfX0U5OfGVXTXUC
- VK3Yc01faWHYYT5X6T8If7Xd5V1M9fNZhwvZmmvhEsFW/nIY6u2PZjgHySFTuw3u31S3UUi4ChC
- PV06I1iQ/MgsQwuIlBhdsGolXYbMN2YstgEufdBbji03uXmS5wQ6sIIeRfiHogZfZ/c4Urf5yT7
- pbrMUJlTO0YL24m5gN/XDq4j8thCX0oCfZnQNLYzcImHDLzbYxkc+iPtpAHGjwHQucPQAUS91uD
- sSQ3df/xdDEJDSL6VbyxwhxS3PCtpJyCLWo+WufhSU4opVo0kPKYD7bIZASDg1hxFIcMLBOqbEY
- /jxuRhdo9t+hrOYG28eEfnKlpMB6Tx6/7eM60dlXPL0IFR58H+3iF0llRmRpL57N51JywZSlUA5
- h732E7dVDNNrng+oUSLbtIU2HnAasriCLhPz+PQ7KZ2heTXgHAFRfooQ0dPavCWfiqAv6KKS
-X-Authority-Analysis: v=2.4 cv=fZOty1QF c=1 sm=1 tr=0 ts=682d7b70 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
- a=FhJCr26c34s6W4MfTmIA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 2yeWrEZCH9pEXSANZfN6AeunNkEfPVPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250520170615.GO365796@horms.kernel.org>
+X-Authority-Analysis: v=2.4 cv=SMtCVPvH c=1 sm=1 tr=0 ts=682d7b7f cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=M5GUcnROAAAA:8 a=t23tOx8119NCeN4cTkAA:9 a=CjuIK1q_8ugA:10
+ a=OBjm3rFKGHvpk9ecZwUJ:22 a=lhd_8Stf4_Oa5sg58ivl:22
+X-Proofpoint-ORIG-GUID: PVwdN8hdBB8HBBQh2nnlqKgbtslK1qdU
+X-Proofpoint-GUID: PVwdN8hdBB8HBBQh2nnlqKgbtslK1qdU
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDA2OCBTYWx0ZWRfXyFLO16LhMdPj 4QvyK1wwECkcehZbXFitX5LN4mv9Ia6VcmdOFqNm3a0ZYp+CH2QB0FvQxL/Vx7A0CRk9h1n/UFa LYlTsOD8eJQMvShXSAD+WPT2HOrGao67azz0PIdS5KWLz7m+qGIvGzSzUdSIaXNN8yJPwuWYMmS
+ eJAawmc7xox8MwHBZ87KBzM8jBhbVvdApZifSiPB1OizzSaCYvYKIA1J/kaw4G0NWSp9QeDlvqJ /Haomni4zofly+vUlCYIXJlFyIMT+UO3XSK/OcbXuoXyAej4gjGH8uXbcDxdNd5+WRDproNnwk0 mmkdZgXKiBpZwzt6dKNTD83vJmxC+qhQNYpPKcesdo+rMiViENmYUvCgKrKbBlCPwVUqnwj6iL+
+ uPa1hkTVOzFI+V+PcMNdjyUcnuFfbbUYgufoFCokEV1xsZa0BNMmE4jjyLqaJ1mhYgQyFYk5
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-21_01,2025-05-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxscore=0 adultscore=0 spamscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 priorityscore=1501 impostorscore=0 mlxlogscore=999
- lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505160000 definitions=main-2505210068
 
-
-
-On 11/15/2024 4:28 PM, Ulf Hansson wrote:
-> On Mon, 4 Nov 2024 at 07:07, Sarthak Garg <quic_sartgarg@quicinc.com> wrote:
->>
->> Enable MMC_CAP_AGGRESSIVE_PM for qualcomm controllers.
->> This enables runtime PM for eMMC/SD card.
->>
->> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+On 2025-05-20 at 22:36:15, Simon Horman (horms@kernel.org) wrote:
+> On Tue, May 20, 2025 at 02:52:48PM +0530, Hariprasad Kelam wrote:
+> > QOS is designed to create a new send queue whenever  a class
+> > is created, ensuring proper shaping and scheduling. However,
+> > when multiple send queues are created and deleted in a loop,
+> > SMMU errors are observed.
+> > 
+> > This patch addresses the issue by performing an data cache sync
+> > during the teardown of QOS send queues.
+> > 
+> > Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
 > 
-> In general I think using MMC_CAP_AGGRESSIVE_PM needs to be carefully
-> selected. I am not saying it's a bad idea to use it, but the commit
-> message above kind of indicates that this has only been enabled to
-> make sure we avoid wasting energy at any cost. Maybe I am wrong?
+> Hi Hariprasad,
 > 
-> Today the default autosuspend timeout is set to 3000 ms, which means
-> that beyond this idle-period the card internally will no longer be
-> able to manage "garbage collect". For a poorly behaving SD card, for
-> example, that could hurt future read/writes. Or maybe that isn't such
-> a big problem after all?
+> This feels like a fix and if so:
+> * Warrants a Fixes tag
+> * Should also be targeted at net rather than net-next if it fixes a problem
+>   present in net
 > 
-> Also note that userspace via sysfs is able to change the autosuspend
-> timeout and even disable runtime PM for the card, if that is needed.
-> 
-> Kind regards
-> Uffe
->
-
-Thanks for your valuable comment.
-First of all sorry Ulf for the late reply as I was on break and came 
-back now.
-Yes you are right this has been enabled to make sure we avoid wasting 
-power at any cost.
-Moreover for a poorly behaving SD card we can't penalize the power 
-consumption of all the SOC's so thats we won't to enable this flag.
-
->> ---
->>   drivers/mmc/host/sdhci-msm.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
->> index e00208535bd1..6657f7db1b8e 100644
->> --- a/drivers/mmc/host/sdhci-msm.c
->> +++ b/drivers/mmc/host/sdhci-msm.c
->> @@ -2626,6 +2626,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->>                  goto clk_disable;
->>          }
->>
->> +       msm_host->mmc->caps |= MMC_CAP_AGGRESSIVE_PM;
->>          msm_host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_NEED_RSP_BUSY;
->>
->>          /* Set the timeout value to max possible */
->> --
->> 2.17.1
->>
+   Ack, will post to net 
 
