@@ -1,71 +1,84 @@
-Return-Path: <linux-kernel+bounces-658144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF14CABFD4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 21:24:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A486CABFD4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 21:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E95CC9E721B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 19:23:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BA949E727A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 19:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897D628F956;
-	Wed, 21 May 2025 19:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492E728F924;
+	Wed, 21 May 2025 19:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ix0Hjd6V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MUfJAHxS"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8217280311;
-	Wed, 21 May 2025 19:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EADC21E082
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 19:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747855435; cv=none; b=AjS6PYhgMQtoMKyewhoiZLV1pZmhi28ms8BVWe2C3g+XMihfZ09iLsMDM3sgdMCG8metSTJayO+2V9x5g1bTHeAWSi6jTf+A6O+EnQKcBdMiDXIf1LjwY9OFk/WuehK1S3RxnGvP1MG+behPaSA5Cpe94JHbopKZ7eR100HJCzE=
+	t=1747855795; cv=none; b=bFLepTcXfVnRdS+p55goKi4g23H2SJq74oeafcbhZD0i5euFUeWJre8lvKydrgtdgQQv5UHgYi2W/3USn8Rc0HQxLiLhu9UuX1cVMOXp5g59SzHq1wXJX0jtkYIrXYihpNNJ0Vt9hBhXWQ8LsXyErEQb12+aPPF6MFA6c1mpYtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747855435; c=relaxed/simple;
-	bh=x7SU6M9EiUqm3oCZdiOBIeMXoijnsJiejNFd+jPSSMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=uXiEfSxT9pvjx0l/c+aNoMBZNYIS8aayxfx1CtiQ9ETfa92u9dM7Qj6k48g16cvS8riGt/Gq3JFxnxT1mKB75pVeh2V93htxm3dXx6peC3QbXAgG68dE057C0Dcjb07HN6bnTZ/nTgAirv0ihZAjsBsolwGrWcUij6LuzrHV9qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ix0Hjd6V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29530C4CEE4;
-	Wed, 21 May 2025 19:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747855434;
-	bh=x7SU6M9EiUqm3oCZdiOBIeMXoijnsJiejNFd+jPSSMc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Ix0Hjd6V1tx7KT5m6va1h0PDbofHGDHqXg8V7tyNqlwUs2SN7+1SUzlq6WqxYUK3n
-	 Y0tNStRGPFzn3dbbIvkfZmgdo5Z/7NRBsMJdIZ/wYzDnjbYWG8hwysgv1lxLMgk+sK
-	 9EQxQy1UMIy9XBxaKH5/0Hf7GAFkxpUO3uvXiAd7AcpuY10uxrfkHafU7YUaZTN137
-	 5Z8caXYvQebeBl/TVEU5w0gRMrBIqDeFamINoGn4dvFv+ZUUj0A+Lq3BIjoPC1VOwA
-	 fgG5xBra7M6bxg1bZ3l5deHZpQCYIFhjHBQe02WK++ej1oZ2WqvKuG7we9YLRBctWv
-	 KTCJJzLwrJ5JA==
-Date: Wed, 21 May 2025 14:23:52 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-pci@vger.kernel.org, Jon Pan-Doh <pandoh@google.com>,
-	Karolina Stolarek <karolina.stolarek@oracle.com>,
-	Weinan Liu <wnliu@google.com>,
-	Martin Petersen <martin.petersen@oracle.com>,
-	Ben Fuller <ben.fuller@oracle.com>,
-	Drew Walton <drewwalton@microsoft.com>,
-	Anil Agrawal <anilagrawal@meta.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Lukas Wunner <lukas@wunner.de>, Sargun Dhillon <sargun@meta.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Kai-Heng Feng <kaihengf@nvidia.com>,
-	Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: Re: [PATCH v7 02/17] PCI/DPC: Log Error Source ID only when valid
-Message-ID: <20250521192352.GA1430719@bhelgaas>
+	s=arc-20240116; t=1747855795; c=relaxed/simple;
+	bh=h6XilRWuBp7+PgmTU9jiMKkkq4FnFRWE5CVr1eHQsDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IbXNve2aIGxZeYhmS6+OQ/QW25Vp2N1O0U6FN41lDWet7NszhbbTVYscP5lrEPg5c7nMcsoiblNaalG05BWSeLlNCZN8oE0IiRX91ZMl5INFrxUREIdJVHeoPPTsGjtHueq3SsZHDtN81pVh0RmFxmZsGuxJjcnFs8vOI9Z5FQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MUfJAHxS; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 02A6440E0238;
+	Wed, 21 May 2025 19:29:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id TbjGMxBQ_vK4; Wed, 21 May 2025 19:29:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1747855786; bh=F6H3aHv8gh5alAtFsD2d4Wn0ntmMSpzzynBU1+ZZ9p4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MUfJAHxSDEdo94bVwdODqkU4+bO+QCQIws1/C+y7kJo/YIaAvQzDb/uB4QDNnkAAW
+	 nZllglYwrv1z5rTmB8ckklVJgN3vZNnD7xZXKbbUq8U5+xwCr8GXULw+qerQaIErbu
+	 SqO0hHodsRg02GvYpIJfqEvitPTff8yzydnK8co7ligYEDm9JvBJ6X4Tudj4NmAKrW
+	 XPNQF59xM3TMF8Wh5F84uXGqCNM9Coqxp4Dhhvv0cH7rTrfFxkvvJjk+Ixg5ra59hn
+	 nXn8Key4oRA84LWVMxXJEeKF8Ysy9f6xhsDBmpMd0yHyWo//cQGNi7lLASG4hA7fvY
+	 G8geDy8CYixsqiWA/e7LL+Bq+Q5RA+Yl/qSUmizg24pSxn6kyz+AH/WnDQFcBAfMMR
+	 k6uavfdSGcMilHk/GL9+1vQ18KfmFysFS+tIeBgXhRqleJnVFmBrFEI8elZVKRLcA6
+	 +d2EY4pJIpy2NNwzmQo6oAq1P/PqEb6jvql6eoOqzWnAJd5+LY9Q/dtn4TIjwlzktO
+	 wdp20o5Rtke5j+Y6AihvH/vcVUcAIqFR4iTY7B/t/jQMcTzTlu4MUCbY0+Blsqg9qr
+	 c4ZaAwxQy+2/ZITb7E3Jdj0uXEBR7PU5xDmuO3WFJsHcs5XWjX8el4lTNgDHTFJPvy
+	 9mCBbqiss1Tn57UHvghimMU4=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E02C940E01FA;
+	Wed, 21 May 2025 19:29:35 +0000 (UTC)
+Date: Wed, 21 May 2025 21:29:30 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>,
+	Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Brian Gerst <brgerst@gmail.com>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>
+Subject: Re: [PATCH v4 1/6] x86/cpu: Use a new feature flag for 5 level paging
+Message-ID: <20250521192930.GEaC4pmmpuktvClDxj@fat_crate.local>
+References: <20250517091639.3807875-8-ardb+git@google.com>
+ <20250517091639.3807875-9-ardb+git@google.com>
+ <20250519094038.GIaCr8ltHvLBYjk8iI@fat_crate.local>
+ <aCstaIBSfcHXpr8D@gmail.com>
+ <20250519131944.GCaCsv8A71vn21AB1W@fat_crate.local>
+ <874ixernra.ffs@tglx>
+ <20250521181141.GDaC4XXW8BmtvJFy6a@fat_crate.local>
+ <87sekxrdws.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,65 +87,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250521100035.0000544e@huawei.com>
+In-Reply-To: <87sekxrdws.ffs@tglx>
 
-On Wed, May 21, 2025 at 10:00:35AM +0100, Jonathan Cameron wrote:
-> On Tue, 20 May 2025 16:50:19 -0500
-> Bjorn Helgaas <helgaas@kernel.org> wrote:
+On Wed, May 21, 2025 at 08:56:19PM +0200, Thomas Gleixner wrote:
+> Yes, and the process is that the leaf/bit needs to be in the data base so
+> that the headers containing the new leaf/bit can be auto generated.
+
+Ack.
+
+> Kinda, but you're conflating things here. leaf_7.la57 is a hardware
+> property and leaf_linux_$N.la57 is a software property.
 > 
-> > From: Bjorn Helgaas <bhelgaas@google.com>
-> > 
-> > DPC Error Source ID is only valid when the DPC Trigger Reason indicates
-> > that DPC was triggered due to reception of an ERR_NONFATAL or ERR_FATAL
-> > Message (PCIe r6.0, sec 7.9.14.5).
-> > 
-> > When DPC was triggered by ERR_NONFATAL (PCI_EXP_DPC_STATUS_TRIGGER_RSN_NFE)
-> > or ERR_FATAL (PCI_EXP_DPC_STATUS_TRIGGER_RSN_FE) from a downstream device,
-> > log the Error Source ID (decoded into domain/bus/device/function).  Don't
-> > print the source otherwise, since it's not valid.
-> > 
-> > For DPC trigger due to reception of ERR_NONFATAL or ERR_FATAL, the dmesg
-> > logging changes:
-> > 
-> >   - pci 0000:00:01.0: DPC: containment event, status:0x000d source:0x0200
-> >   - pci 0000:00:01.0: DPC: ERR_FATAL detected
-> >   + pci 0000:00:01.0: DPC: containment event, status:0x000d, ERR_FATAL received from 0000:02:00.0
-> > 
-> > and when DPC triggered for other reasons, where DPC Error Source ID is
-> > undefined, e.g., unmasked uncorrectable error:
-> > 
-> >   - pci 0000:00:01.0: DPC: containment event, status:0x0009 source:0x0200
-> >   - pci 0000:00:01.0: DPC: unmasked uncorrectable error detected
-> >   + pci 0000:00:01.0: DPC: containment event, status:0x0009: unmasked uncorrectable error detected
-> > 
-> > Previously the "containment event" message was at KERN_INFO and the
-> > "%s detected" message was at KERN_WARNING.  Now the single message is at
-> > KERN_WARNING.
-> > 
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > Tested-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
-> > Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> Matches the spec conditions as far as I can tell.
+> Of course you might say, that clearing leaf_7.la57 is sufficient to achieve
+> this.
 > 
-> I guess interesting debate on whether providing extra garbage info is
-> a bug or not. Maybe a fixes tag for this one as well?
+> But in fact, "clearing" the hardware view is the wrong thing to do from
+> a conceptual point of view. The hardware view is "cast in stone" no
+> matter what and having a clear distinction of a separate software view
+> will make things way more clear and understandable.
 
-I added:
+Right, if I had a time machine, I would fly back and define this thing in
+a whole different way: X86_FEATURE would be what the kernel has enabled and if
+the bits completely or partially overlap with the definition of a respective
+CPUID bit, so be it. But they would not parrot CPUID.
 
-  Fixes: 26e515713342 ("PCI: Add Downstream Port Containment driver")
+IOW, I would completely decouple X86_FEATURE_ bits from CPUID and have all
+in-kernel users check X86_FEATURE flags and not touch CPUID at all.
 
-since it looks like we've printed the source unconditionally since the
-addition of DPC:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/pcie/pcie-dpc.c?id=26e515713342#n69
+But ok, in another life...
 
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> I've stared at code for hours just to figure out that there was some
+> obscure way to end up with a disabled feature bit.
 > 
-> I briefly wondered if it makes sense to have a prefix string initialized
-> outside the switch with "containment event, status:%#06x:"
-> made sense but it's probably not worth the effort and maybe makes it
-> harder to grep for the error messages.  So in the end
-> I think your code here is the best option.
+> Having a software view in the first place makes it clear that this is
+> subject to a logical operation of 'hardware capable' _and_ 'software
+> willing' instead of some hidden and obscure 'pretend that the hardware
+> is not capable' magic.
 > 
-> Jonathan
+> Clear conceptual seperation is the only way to keep sanity in this ever
+> increasing complexity nightmare.
+
+As long as we all agree and follow this, I'm a happy camper. Ofc, there will
+be confusion where: "hey, I'm checking the CPUID bit but the kernel has
+disabled it and marked this in the synthetic bit, blabla..." but once we know
+and agree to what goes where, it should work.
+
+> Claiming that saving 5 bits of extra memory is a brilliant idea was
+> even wrong 30 years ago when all of this madness started.
+> 
+> I freely admit that I was thinking the same way back then, because I was
+> coming from really memory constraint microcontroller systems. But in the
+> context of Linux and contemporary hardware complexity we really need to
+> shift the focus to comprehensible concepts and strict abstractions
+> between the hardware and software point of view.
+
+Right.
+
+And as said, arch/x86/ should be solely looking at the hw view and
+representing to the rest what is enabled or not. But I'm preaching to the
+choir here.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
