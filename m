@@ -1,100 +1,278 @@
-Return-Path: <linux-kernel+bounces-657818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B6BEABF931
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:27:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB836ABF976
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BB491898513
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:27:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B62717E7D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FB61E47A5;
-	Wed, 21 May 2025 15:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EC921D5BF;
+	Wed, 21 May 2025 15:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7XUweCK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugP9L4sd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3267158A09
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04D31607A4;
+	Wed, 21 May 2025 15:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747841233; cv=none; b=hxsQ+GiWNSpnKL3unTzUqnhsd4DKJocNgJTaqC4scAO7HPWPoXpHYfaRy1bPnea3KYwX/InAd1mtbp9KN/7P80U1WayxQ5ldFA0eEoWuqBMwtLjHVePfHvwCqanUpCrBXF9jDkBo8fFBvX31D55aCspzntA256ESyPaJDnOUJUI=
+	t=1747841565; cv=none; b=QqM8xHX4lcBoepHenY3mddOPbU1S6FqZ2ooEB9slGpEwW7TnecFF24w7mXYiPCX9jTfrj3H1cK97G2uK2OT36hIA7Acg2cMegNKac/xKAGDCGOK4LT3o3R6FSSXEryWUcDY3tQyiBuW2eq0yCGXVCdsQEBF3kAnsOhkvG734CNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747841233; c=relaxed/simple;
-	bh=OREQHZGYo3NvKNR+PKTA7t1MGjIJnrFFdGtkjwEU9qU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QCmLzpfsqp71Sud9Cu/QIM8WaD/85XyBo2YCYIknb+uNgqm0Ih3/kfM0nFix715Kb/J38VfY+J2BtUvelROwDOyzzXemL8RIoBJxIb2J9+gJTFJADYIX5rTfMsZRt9jG+gB67Q/psml4Zd/gfrpZMlRy4ogK6s21CHlv5RYzzkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7XUweCK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB653C4CEE4;
-	Wed, 21 May 2025 15:27:08 +0000 (UTC)
+	s=arc-20240116; t=1747841565; c=relaxed/simple;
+	bh=LkzJwLWakW+9qDe2Gz5b3l1g1z1NAf7iWtP6+sDm0ZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pJw9cxZqaADk0DDW1asoFZsNMuFXQrDZ3MQxMOtJ/L6V2wFLHewl7mQqHsgRPeM+w6cDzyFcQV1D4O5RnoKZnMCSahiLQPLdCIKJSoNo8NCMmzvtuMVyrHdFHQiB2jZSO1w+n2tcqQpNNHumx5ep/A3/pna+al4SGU6xFa3jd24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ugP9L4sd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 964FCC4CEE4;
+	Wed, 21 May 2025 15:32:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747841233;
-	bh=OREQHZGYo3NvKNR+PKTA7t1MGjIJnrFFdGtkjwEU9qU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k7XUweCKpFKWJICYq76TfDISsYXAaRG/WO7DIzj+Cd0xOXyA60iZLJ0nhdVjPAlly
-	 DHAxo+naXWo5rjJKLYvRjYRNIuFlNWx6Np0Bjk/QmmBGn3fIBYGOGaN2nqb6J9rEFS
-	 j1ig1OlpBj19WT6pGkVxfX/ulXl1n+DGlfkYUIyv29inAlFODqP4QixgOauwg2sgR2
-	 2zDkroPW/xH/d0oH02ugkePbiLo3nZ2vd2AkDkHSA18F21NR00eHQhzq1DBhwbH+3W
-	 m81rhzkUK57nHLPAUmDn53ZolxhVNtIxFC9E+Nl234NAw8PG3veRASeFl77u4YBOJK
-	 tkUG3kF0BMtKg==
-Date: Wed, 21 May 2025 18:27:03 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Changyuan Lyu <changyuanl@google.com>, akpm@linux-foundation.org,
-	bhe@redhat.com, chrisl@kernel.org, graf@amazon.com,
-	jasonmiu@google.com, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	pasha.tatashin@soleen.com
-Subject: Re: [PATCH 1/2] memblock: show a warning if allocation in KHO
- scratch fails
-Message-ID: <aC3wx5erybg00SaQ@kernel.org>
-References: <aCoFphqeZAMkhq51@kernel.org>
- <20250521070310.2478491-1-changyuanl@google.com>
- <aC2EE1pg9ktQdstI@kernel.org>
- <aC2TdzP1AwYrQdcW@localhost.localdomain>
+	s=k20201202; t=1747841565;
+	bh=LkzJwLWakW+9qDe2Gz5b3l1g1z1NAf7iWtP6+sDm0ZA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ugP9L4sdt1CrtPS/yWJtyRvdDa1rwBVnXDgM8WDhHBRbda/l1fp5h5Jl+LPGHKLGT
+	 +21h00aRhGT0C8fIRb3wQFcjfdQE3kNfWpD1IZRznyHCyKhVMGfTOpiuoeNfbxUVC4
+	 X981UkruXdeYWnm6hkNabqnkAvkHgtRBc5c/A2xgbtd9cY8i2SDUoin+C4gcLCQy/r
+	 fmbzggFQ+qQ1ijyiXFvVXwzBZt/qQ93BPRrlxvuKVSncpNWYc1iYTPMM3cLSlqPWlt
+	 1C0T94pPSeb/pI7PP93ZtuJ/RmVJ+kaTkyqfdMFPdsUwR+cow+Rfs/fXbNOAsptN0h
+	 xhUvnYHygGQbA==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Sasha Levin <sashal@kernel.org>,
+	Michal Luczaj <mhal@rbox.co>,
+	Rao Shoaib <Rao.Shoaib@oracle.com>,
+	Simon Horman <horms@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: stable@vger.kernel.org
+Subject: [PATCH v6.1 04/27] af_unix: Try to run GC async.
+Date: Wed, 21 May 2025 16:27:03 +0100
+Message-ID: <20250521152920.1116756-5-lee@kernel.org>
+X-Mailer: git-send-email 2.49.0.1143.g0be31eac6b-goog
+In-Reply-To: <20250521152920.1116756-1-lee@kernel.org>
+References: <20250521152920.1116756-1-lee@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aC2TdzP1AwYrQdcW@localhost.localdomain>
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 21, 2025 at 10:48:55AM +0200, Oscar Salvador wrote:
-> On Wed, May 21, 2025 at 10:43:15AM +0300, Mike Rapoport wrote:
-> > I think we should just make sparse_init_nid() panic or at least change 
-> > "sparse_init_nid: node[0] memory map backing failed. Some memory will not be available."
-> > to something more visible and clear. 
-> 
-> Panicking the system seems a bit too harsh.
-> Those sections will not be initialized, and sure you will lose some memory,
-> but still.
-> 
-> I think that making sure that subsection_map_init() does not access
-> non-initialized values is enough.
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
 
-It's not only subsection_map_init(), next failing one is
-memmap_init_range() and maybe there's more, but we can audit and fix them.
-I believe all those accesses are at init time because after system is
-booted we are careful to avoid accessing absent sections.
+[ Upstream commit d9f21b3613337b55cc9d4a6ead484dca68475143 ]
 
-> Because wrt. error message, I am not sure it can get more clear that we
-> failed we allocate memory to back the section and so that section will
-> not be activated :-)
+If more than 16000 inflight AF_UNIX sockets exist and the garbage
+collector is not running, unix_(dgram|stream)_sendmsg() call unix_gc().
+Also, they wait for unix_gc() to complete.
 
-Add a dump_stack()? ;-)
+In unix_gc(), all inflight AF_UNIX sockets are traversed at least once,
+and more if they are the GC candidate.  Thus, sendmsg() significantly
+slows down with too many inflight AF_UNIX sockets.
 
-> -- 
-> Oscar Salvador
-> SUSE Labs
-> 
+However, if a process sends data with no AF_UNIX FD, the sendmsg() call
+does not need to wait for GC.  After this change, only the process that
+meets the condition below will be blocked under such a situation.
 
+  1) cmsg contains AF_UNIX socket
+  2) more than 32 AF_UNIX sent by the same user are still inflight
+
+Note that even a sendmsg() call that does not meet the condition but has
+AF_UNIX FD will be blocked later in unix_scm_to_skb() by the spinlock,
+but we allow that as a bonus for sane users.
+
+The results below are the time spent in unix_dgram_sendmsg() sending 1
+byte of data with no FD 4096 times on a host where 32K inflight AF_UNIX
+sockets exist.
+
+Without series: the sane sendmsg() needs to wait gc unreasonably.
+
+  $ sudo /usr/share/bcc/tools/funclatency -p 11165 unix_dgram_sendmsg
+  Tracing 1 functions for "unix_dgram_sendmsg"... Hit Ctrl-C to end.
+  ^C
+       nsecs               : count     distribution
+  [...]
+      524288 -> 1048575    : 0        |                                        |
+     1048576 -> 2097151    : 3881     |****************************************|
+     2097152 -> 4194303    : 214      |**                                      |
+     4194304 -> 8388607    : 1        |                                        |
+
+  avg = 1825567 nsecs, total: 7477526027 nsecs, count: 4096
+
+With series: the sane sendmsg() can finish much faster.
+
+  $ sudo /usr/share/bcc/tools/funclatency -p 8702  unix_dgram_sendmsg
+  Tracing 1 functions for "unix_dgram_sendmsg"... Hit Ctrl-C to end.
+  ^C
+       nsecs               : count     distribution
+  [...]
+         128 -> 255        : 0        |                                        |
+         256 -> 511        : 4092     |****************************************|
+         512 -> 1023       : 2        |                                        |
+        1024 -> 2047       : 0        |                                        |
+        2048 -> 4095       : 0        |                                        |
+        4096 -> 8191       : 1        |                                        |
+        8192 -> 16383      : 1        |                                        |
+
+  avg = 410 nsecs, total: 1680510 nsecs, count: 4096
+
+Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+Link: https://lore.kernel.org/r/20240123170856.41348-6-kuniyu@amazon.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+(cherry picked from commit d9f21b3613337b55cc9d4a6ead484dca68475143)
+Signed-off-by: Lee Jones <lee@kernel.org>
+---
+ include/net/af_unix.h | 12 ++++++++++--
+ include/net/scm.h     |  1 +
+ net/core/scm.c        |  5 +++++
+ net/unix/af_unix.c    |  6 ++++--
+ net/unix/garbage.c    | 10 +++++++++-
+ 5 files changed, 29 insertions(+), 5 deletions(-)
+
+diff --git a/include/net/af_unix.h b/include/net/af_unix.h
+index 52ae023c3e93..be488d627531 100644
+--- a/include/net/af_unix.h
++++ b/include/net/af_unix.h
+@@ -8,12 +8,20 @@
+ #include <linux/refcount.h>
+ #include <net/sock.h>
+ 
++#if IS_ENABLED(CONFIG_UNIX)
++struct unix_sock *unix_get_socket(struct file *filp);
++#else
++static inline struct unix_sock *unix_get_socket(struct file *filp)
++{
++	return NULL;
++}
++#endif
++
+ void unix_inflight(struct user_struct *user, struct file *fp);
+ void unix_notinflight(struct user_struct *user, struct file *fp);
+ void unix_destruct_scm(struct sk_buff *skb);
+ void unix_gc(void);
+-void wait_for_unix_gc(void);
+-struct unix_sock *unix_get_socket(struct file *filp);
++void wait_for_unix_gc(struct scm_fp_list *fpl);
+ struct sock *unix_peer_get(struct sock *sk);
+ 
+ #define UNIX_HASH_MOD	(256 - 1)
+diff --git a/include/net/scm.h b/include/net/scm.h
+index 585adc1346bd..a5c26008fcec 100644
+--- a/include/net/scm.h
++++ b/include/net/scm.h
+@@ -23,6 +23,7 @@ struct scm_creds {
+ 
+ struct scm_fp_list {
+ 	short			count;
++	short			count_unix;
+ 	short			max;
+ 	struct user_struct	*user;
+ 	struct file		*fp[SCM_MAX_FD];
+diff --git a/net/core/scm.c b/net/core/scm.c
+index a877c4ef4c25..bb25052624ee 100644
+--- a/net/core/scm.c
++++ b/net/core/scm.c
+@@ -36,6 +36,7 @@
+ #include <net/compat.h>
+ #include <net/scm.h>
+ #include <net/cls_cgroup.h>
++#include <net/af_unix.h>
+ 
+ 
+ /*
+@@ -85,6 +86,7 @@ static int scm_fp_copy(struct cmsghdr *cmsg, struct scm_fp_list **fplp)
+ 			return -ENOMEM;
+ 		*fplp = fpl;
+ 		fpl->count = 0;
++		fpl->count_unix = 0;
+ 		fpl->max = SCM_MAX_FD;
+ 		fpl->user = NULL;
+ 	}
+@@ -109,6 +111,9 @@ static int scm_fp_copy(struct cmsghdr *cmsg, struct scm_fp_list **fplp)
+ 			fput(file);
+ 			return -EINVAL;
+ 		}
++		if (unix_get_socket(file))
++			fpl->count_unix++;
++
+ 		*fpp++ = file;
+ 		fpl->count++;
+ 	}
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 5ce60087086c..f74f7878b3fe 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -1875,11 +1875,12 @@ static int unix_dgram_sendmsg(struct socket *sock, struct msghdr *msg,
+ 	long timeo;
+ 	int err;
+ 
+-	wait_for_unix_gc();
+ 	err = scm_send(sock, msg, &scm, false);
+ 	if (err < 0)
+ 		return err;
+ 
++	wait_for_unix_gc(scm.fp);
++
+ 	err = -EOPNOTSUPP;
+ 	if (msg->msg_flags&MSG_OOB)
+ 		goto out;
+@@ -2145,11 +2146,12 @@ static int unix_stream_sendmsg(struct socket *sock, struct msghdr *msg,
+ 	bool fds_sent = false;
+ 	int data_len;
+ 
+-	wait_for_unix_gc();
+ 	err = scm_send(sock, msg, &scm, false);
+ 	if (err < 0)
+ 		return err;
+ 
++	wait_for_unix_gc(scm.fp);
++
+ 	err = -EOPNOTSUPP;
+ 	if (msg->msg_flags & MSG_OOB) {
+ #if IS_ENABLED(CONFIG_AF_UNIX_OOB)
+diff --git a/net/unix/garbage.c b/net/unix/garbage.c
+index bf628bfb6d35..2934d7b68036 100644
+--- a/net/unix/garbage.c
++++ b/net/unix/garbage.c
+@@ -335,8 +335,9 @@ void unix_gc(void)
+ }
+ 
+ #define UNIX_INFLIGHT_TRIGGER_GC 16000
++#define UNIX_INFLIGHT_SANE_USER (SCM_MAX_FD * 8)
+ 
+-void wait_for_unix_gc(void)
++void wait_for_unix_gc(struct scm_fp_list *fpl)
+ {
+ 	/* If number of inflight sockets is insane,
+ 	 * force a garbage collect right now.
+@@ -348,6 +349,13 @@ void wait_for_unix_gc(void)
+ 	    !READ_ONCE(gc_in_progress))
+ 		unix_gc();
+ 
++	/* Penalise users who want to send AF_UNIX sockets
++	 * but whose sockets have not been received yet.
++	 */
++	if (!fpl || !fpl->count_unix ||
++	    READ_ONCE(fpl->user->unix_inflight) < UNIX_INFLIGHT_SANE_USER)
++		return;
++
+ 	if (READ_ONCE(gc_in_progress))
+ 		flush_work(&unix_gc_work);
+ }
 -- 
-Sincerely yours,
-Mike.
+2.49.0.1143.g0be31eac6b-goog
+
 
