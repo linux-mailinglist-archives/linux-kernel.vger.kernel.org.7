@@ -1,207 +1,184 @@
-Return-Path: <linux-kernel+bounces-658026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69D7ABFBB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:54:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D27ABFBB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0298A1BC5416
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8288950106C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180A4264A96;
-	Wed, 21 May 2025 16:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1440A2367AA;
+	Wed, 21 May 2025 16:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HFC49Mrf"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N1AqdtOf"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A91C23A987
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 16:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E550622F16C;
+	Wed, 21 May 2025 16:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747846427; cv=none; b=TuQhYFrlQ89l33jrzO/d3JAoJB+eSTFPzwKpSELZUsECVvaZbK5vCQDj42WN9FCgOTfO1AM/iUgYIuVUM0L995CF7lsWazvR0fu5HpfjKEgbGaqDsOS15DLB/S5sQHXqRR7y9GjG3JKtUtwuYGrLtdygkpx/Ju2rtazrrjQSDoc=
+	t=1747846447; cv=none; b=JKJcJApSULWteCJl9XEqCUNF+BPSiSjQOgZ8nh2qoKTuGRZT679++y2c4ZgGWow+6E86j1QKL1KnQ7Xu07JOfufnJQOCUEhkjSDcDPaCSavjm9Oid3cJr9mRX3fA6lXMnHQozR/NQgp/OlvyiYkRVIMt57Bh42/bIHjEFRITrNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747846427; c=relaxed/simple;
-	bh=qHopfEyt81fEf/y8iQKjmcmiqXO3gugN6MkVzAFAIFE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H2JV7d6w0EDoxQ300DPUJUBG2bMSwL3cXa78hQDPX59hBpigWxP9BlsOOHR7JIkI86Va29oIVamuUPHHtVneognrcvUfTqQCTCaf4eAmexpjwenP32T2lQogU1QsHnEBWzsnXhDJT9nOwHul/X65SkWeQTfIQVi8tRUi/ZxZw8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HFC49Mrf; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-601a67c6e61so35636a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 09:53:45 -0700 (PDT)
+	s=arc-20240116; t=1747846447; c=relaxed/simple;
+	bh=lh3ztE7tDzTylan5uU21+WV+j2JH4ZpqzcOAV6F+ctI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LGYTpPznERx53he9Ha7NY73ISG2hfHiwHCrOZn1uADWAYSktv+FIgak9gez8EaezdIkqpqdXh3W3pIG/r5906OgyuQBKLQEkP95CoLVSYeIUJge4mqWlul3lMOQQgaqgpbj3gzs7fUChz9+sa0WeG3Iu8J0uorNKOX2ezfYH8yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N1AqdtOf; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b170c99aa49so4744797a12.1;
+        Wed, 21 May 2025 09:54:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747846423; x=1748451223; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gt2BJWIq8eUeGltZpFipvyHVPXsIRm7HCk10rPc4uGk=;
-        b=HFC49Mrff31yVR0qUjGCthAU5kSCfIb0Fccpe2r41ocl4EnK8Jl8wYFquNegHhMDqV
-         INI6PELFlj9l5BzpZ3sKnsrVUa94Y2NInVoED0torQvSHesYnUZZtlB2ucvCinTHdefd
-         mKLkNv7FO34PwoGs90odDLBtCIKSxWAe3QkFWtVQnoQEiUev0CAIfr4S+0XVx+Hxeu6w
-         Qu+TW4FkUEBdArLBE8oEXPJHKC1VUSY5EW/a2MXreezOhWk65w7wiqhsqZn8WI4xnUSg
-         Q7ubnxSY3K8dAbYzMBQY5A/fZwGjhE/G8tuowf5VgckDPeI2ueFLsYVmx9J6itLxAapr
-         alFw==
+        d=gmail.com; s=20230601; t=1747846445; x=1748451245; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BIQ1Rxc2ZpLERkR7gGmNgkdIGIhV9bfqR3o6mxkItNk=;
+        b=N1AqdtOfW7YqGOJkT+YJdOs9qfCSyu7TLaLIoSgaIMPnlH8/iMiIlTf3ZU3romv3Ze
+         0aKMVnDRJTivfmoxPnL7+5SLHQp1JenXxrVLUw7SObj1YVmV2XxwJ1HaDXbnmt7yCvt0
+         XkDqynX+AHbGAowvFz5FKOdVyvTXk67j1azTIq8yVB0I7o1XYdAW30WAaFV8kevfKmWU
+         lFWbaz0Xhlcp7coL0TrMmuUs2TxMHelVTN4StZ/aArfYiXAh7g7lpSieP+88EmFtSRvI
+         1cpNC+fRLNEcFE7plYWpgyd8h0kvr8iwFbNOQltRLUwHyZdVbIgaCVbZR/pEg2TRqJr3
+         la/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747846423; x=1748451223;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gt2BJWIq8eUeGltZpFipvyHVPXsIRm7HCk10rPc4uGk=;
-        b=W83kaCre5vCi5wuAgd3S8EIoEb7/pVvStyZiHVuY1c/Mszt6FkPkf15vSPsdGxqOeb
-         gYBNxI17t8AeQLFEOGsPMEtXgvUp73XRvTpgd3i2jzrKRoz8dHC3iGAd4SRONDgxtQ/g
-         iQTSf3HphFsO2HMwJ/G9PLNP6Q87CYAt1PTSqMdcy/Nu64qhDgbyTXGYbKtFSkwF7DOi
-         KYENbbSXhgCYZDPuYLuHXCrZ9C4nvJTbDibMB42GwdDq1NdT4WhfEDZKBdJlmKu7CIEn
-         ffSTnViOSykhtH5uVjvBX56oDR5W55C3j/PkTb0prEUSettwyJl9GZi+fJR6sStq1Pzy
-         3Grw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoNcIOv41SBMqYHxpuM6rsBfOIqaQbPW1DTfpafH+UPVw6LlILjFKz90gNX1664L6ARtiBD5SXAZXL5hA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5LWq22wWs9D6b1IYYbtCNZT+bWakWnb8vAF2KwaLbyWqJagt2
-	YRGdMLi4ePnBmLhzOlU9EVakxIp+EjDiZxeaEyyD+Yt1eoFFuwBe00XsmdnA5sR2tmVS33XOEJo
-	GD2PBfVZwJLjrEQzW4nfNcvoDSmGr/Pwooudc76Vf
-X-Gm-Gg: ASbGncvAQK8ucfI6h+QujEepnm1dD6uxpgKUdQHy/fklXEVqKwAQTBxhcqtqJrnDRj7
-	gU58Fzr3S9bqhQ8z30xOGTRFu003vU8sPxT/hmCNCpACyCK0khm4jnG1nHZc4Gd2cTFEcmTjWjv
-	zAFlAkTfpb26hX7NDIyxCX3QrhpT5gT0n0U9dH0NIRXdYAczbhxembGhERIniZvYJ01/sBJVEOw
-	Q==
-X-Google-Smtp-Source: AGHT+IEk1qK5pfCS9TiWiAJqcWHO+q4BDVFceePf5Pmj4GkZsf/xtSVgoYl2UGzFjXqYDQsYvRGQjsnQ0SmoCtpQU/I=
-X-Received: by 2002:aa7:cfc9:0:b0:602:3bf:ce73 with SMTP id
- 4fb4d7f45d1cf-60203bfcf5fmr309381a12.1.1747846423421; Wed, 21 May 2025
- 09:53:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747846445; x=1748451245;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BIQ1Rxc2ZpLERkR7gGmNgkdIGIhV9bfqR3o6mxkItNk=;
+        b=sjdU2a9SONZ8xKkufSQZxEyImE9RUB+NA/v/EPWFOaUELfddMr6Ub1bgseypSuCxwV
+         Qkx6Os9CjLzjiSbfgEnJEUxo8q1SobcYr11igHOYGJ9rar0NuHWolkoFs5+ape4ddbro
+         Bff0+oAYJvMdPYd4I99bxDCnmsB3T/YdKHxgjehg5hIBVppzmWYxgvaqrBayVIWRl+Qm
+         zi7+ok6RIVBLgFP9XsyCIdUEPB6YtQrNUjwnmuRrxVU6M0HqVWgkI9ExziUhZN3fiO7S
+         CXim94MklDavQRFKmBKQALBPm+qtgYb931hHTWHJYEO5k0GoiznSoVWg6n7DXIZCG8hm
+         kyeA==
+X-Forwarded-Encrypted: i=1; AJvYcCW37KVH0Rv5FROh4lo/vKQ92HdWSsSmUqfkianmnCYKY4iovpwBVp9zM2X1JyQ0in4hIZSaDJYDYoCshQ==@vger.kernel.org, AJvYcCWED5b7NGd5/Iddjy/qh3zcSJpdj4DgvvQ8tkWYTnf8rP/opnrqopCRbmhKQBCxjQsNx03MXlccciVjxX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDBAsjTyYZxLIAYDxiGsqXzb1grz5HWihRBTdEDWCpBUlvtP2G
+	SH9GK/HvQvsyiNcyY0nO9UUT6gcXwQLFD7czBJmDzeWAeXrAFPDYZvY=
+X-Gm-Gg: ASbGnctBiUDjv+JrAfZOxq49/iYm/vc4Bbx/mqb7Bnji5uHTAV0LqTcvxQVy4XAjRiZ
+	481S5RE5XhfWvmLk8FipzoqNAbRy+Vw4RdU6iHHkbOTiDTr30Cfd+zwEdQXjYEyFa2GUMZ0aSQE
+	FZMkNKGLoSa0vbGpn2QLJZd+JnsZbQ+H95opFZjY5Q/bfUBzx3XHKXKXoRzsufELimrBcQpoDaj
+	LuhtxM0sJ4afiaxUOm1sY32QZ/iKMjhoE7k9gUrTT566J3krVtKpRLwmXrUJX5Oik2kB0c6inG9
+	SDQ+F9kf//UL8hbrgjo66xccJ3g7AaiP2pn9TljSPuilB3q0MpPLXOKdNDqCES95F7ndwhLLFoQ
+	GTgmo6cWZO0FzXM0eCVZygWs=
+X-Google-Smtp-Source: AGHT+IFzVnTQj3n+QIgHnz/hXPz29MCKOLBHAPXbLuIFeELI/UwoDe/CHhh1zQ3pSSR6qsSCjVi80w==
+X-Received: by 2002:a17:902:d4c3:b0:232:4f8c:1af9 with SMTP id d9443c01a7336-2324f8c1c69mr153349335ad.21.1747846444917;
+        Wed, 21 May 2025 09:54:04 -0700 (PDT)
+Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-231d4b0d5f0sm94966375ad.102.2025.05.21.09.54.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 May 2025 09:54:04 -0700 (PDT)
+Date: Wed, 21 May 2025 09:54:03 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, skalluru@marvell.com, manishc@marvell.com,
+	andrew+netdev@lunn.ch, michael.chan@broadcom.com,
+	pavan.chebbi@broadcom.com, ajit.khaparde@broadcom.com,
+	sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com,
+	anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+	tariqt@nvidia.com, saeedm@nvidia.com, louis.peens@corigine.com,
+	shshaikh@marvell.com, GR-Linux-NIC-Dev@marvell.com,
+	ecree.xilinx@gmail.com, horms@kernel.org, dsahern@kernel.org,
+	ruanjinjie@huawei.com, mheib@redhat.com,
+	linux-kernel@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+	linux-rdma@vger.kernel.org, oss-drivers@corigine.com,
+	linux-net-drivers@amd.com, leon@kernel.org
+Subject: Re: [PATCH net-next 2/3] udp_tunnel: remove rtnl_lock dependency
+Message-ID: <aC4FK0fmUoaXYt4k@mini-arch>
+References: <20250520203614.2693870-1-stfomichev@gmail.com>
+ <20250520203614.2693870-3-stfomichev@gmail.com>
+ <20250521073401.67fbd1bc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507205504.2017028-1-xur@google.com> <a2db22a3-6d66-481d-9432-b38b83e17183@cachyos.org>
- <CAF1bQ=Sh+N1ifCHK-15zeqt1tyzFtr-+nEJmSjEJOgfXgK9ufg@mail.gmail.com>
-In-Reply-To: <CAF1bQ=Sh+N1ifCHK-15zeqt1tyzFtr-+nEJmSjEJOgfXgK9ufg@mail.gmail.com>
-From: Rong Xu <xur@google.com>
-Date: Wed, 21 May 2025 09:53:30 -0700
-X-Gm-Features: AX0GCFseOE_jhX8D3KglAvvruKoN_xZx_2C0u0wtd6LAGK11cpGwHfJ0lJ57Nkg
-Message-ID: <CAF1bQ=TQSQ75qCyQYegW7kq8WdyB-SNViraOuBvgGgAyUPS54Q@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: distributed build support for Clang ThinLTO
-To: Eric Naim <dnaim@cachyos.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Alice Ryhl <aliceryhl@google.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
-	Rafael Aquini <aquini@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Stafford Horne <shorne@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Teresa Johnson <tejohnson@google.com>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250521073401.67fbd1bc@kernel.org>
 
-On Wed, May 21, 2025 at 9:40=E2=80=AFAM Rong Xu <xur@google.com> wrote:
->
-> On Mon, May 19, 2025 at 10:22=E2=80=AFPM Eric Naim <dnaim@cachyos.org> wr=
-ote:
-> >
-> > Hi Rong Xu,
-> >
-> > On 5/8/25 04:55, xur@google.com wrote:
-> > > From: Rong Xu <xur@google.com>
-> > >
-> > > Add distributed ThinLTO build support for the Linux kernel.
-> > > This new mode offers several advantages: (1) Increased
-> > > flexibility in handling user-specified build options.
-> > > (2) Improved user-friendliness for developers. (3) Greater
-> > > convenience for integrating with objtool and livepatch.
-> > >
-> > > Note that "distributed" in this context refers to a term
-> > > that differentiates in-process ThinLTO builds by invoking
-> > > backend compilation through the linker, not necessarily
-> > > building in distributed environments.
-> > >
-> > > Distributed ThinLTO is enabled via the
-> > > `CONFIG_LTO_CLANG_THIN_DIST` Kconfig option. For example:
-> > >  > make LLVM=3D1 defconfig
-> > >  > scripts/config -e LTO_CLANG_THIN_DIST
-> > >  > make LLVM=3D1 oldconfig
-> > >  > make LLVM=3D1 vmlinux -j <..>
-> > >
-> > > The implementation changes the top-level Makefile with a
-> > > macro for generating `vmlinux.o` for distributed ThinLTO
-> > > builds. It uses the existing Kbuild infrastructure to
-> > > perform two recursive passes through the subdirectories.
-> > > The first pass generates LLVM IR object files, similar to
-> > > in-process ThinLTO. Following the thin-link stage, a second
-> > > pass compiles these IR files into the final native object
-> > > files. The build rules and actions for this two-pass process
-> > > are primarily implemented in `scripts/Makefile.build`.
-> > >
-> > > Currently, this patch focuses on building the main kernel
-> > > image (`vmlinux`) only. Support for building kernel modules
-> > > using this method is planned for a subsequent patch.
-> > >
-> > > Tested on the following arch: x86, arm64, loongarch, and
-> > > riscv.
-> > >
-> > > Some implementation details can be found here:
-> > > https://discourse.llvm.org/t/rfc-distributed-thinlto-build-for-kernel=
-/85934
-> > >
-> > > Signed-off-by: Rong Xu <xur@google.com>
-> > > ---
-> > > Changelog since v1:
-> > > - Updated the description in arch/Kconfig based on feedback
-> > >   from Nathan Chancellor
-> > > - Revised file suffixes: .final_o -> .o.thinlto.native, and
-> > >   .final_a -> .a.thinlto.native
-> > > - Updated list of ignored files in .gitignore
-> > > ---
-> > >  .gitignore                        |  2 ++
-> > >  MAINTAINERS                       |  5 +++
-> > >  Makefile                          | 40 ++++++++++++++++++++---
-> > >  arch/Kconfig                      | 19 +++++++++++
-> > >  scripts/Makefile.build            | 52 +++++++++++++++++++++++++++--=
--
-> > >  scripts/Makefile.lib              |  7 +++-
-> > >  scripts/Makefile.vmlinux_o        | 16 +++++++---
-> > >  scripts/Makefile.vmlinux_thinlink | 53 +++++++++++++++++++++++++++++=
-++
-> > >  scripts/head-object-list.txt      |  1 +
-> > >  9 files changed, 180 insertions(+), 15 deletions(-)
-> > >  create mode 100644 scripts/Makefile.vmlinux_thinlink
-> > >
-> >
-> > I noticed that both Makefile.autofdo and Makefile.propeller add extra l=
-inker flags when building with ThinLTO. Did you miss updating that or is th=
-e omission there intentional?
->
-> Thanks for catching this! One good aspect of distributed build mode is
-> that we no longer need the extra linker flags -- most of them are just
-> to pass the options to the BE compilation.
-> So this patch does not need these linker options.  But for the
-> Propeller build, we still need to pass one of the two profiles to the
-> final link, and I'll be sure to incorporate that into the patch.
+On 05/21, Jakub Kicinski wrote:
+> On Tue, 20 May 2025 13:36:13 -0700 Stanislav Fomichev wrote:
+> > Drivers that are using ops lock and don't depend on RTNL lock
+> > still need to manage it because udp_tunnel's RTNL dependency.
+> > Introduce new udp_tunnel_nic_lock and use it instead of
+> > rtnl_lock. Drop non-UDP_TUNNEL_NIC_INFO_MAY_SLEEP mode from
+> > udp_tunnel infra (udp_tunnel_nic_device_sync_work needs to
+> > grab udp_tunnel_nic_lock mutex and might sleep).
+> 
+> There is a netdevsim-based test for this that needs to be fixed up.
 
-One clarification: We don't need to change scripts/Makefile.propeller
-as the link
-ordering profile is already passed to the final link under
-CLANG_PROPELLER_PROFILE_PREFIX.
+Oh, I did not see that one, let me try to find and run it.
 
-All the --lto-* options are only for in-process thinlto builds.
+> > diff --git a/include/net/udp_tunnel.h b/include/net/udp_tunnel.h
+> > index 2df3b8344eb5..7f5537fdf2c9 100644
+> > --- a/include/net/udp_tunnel.h
+> > +++ b/include/net/udp_tunnel.h
+> > @@ -221,19 +221,17 @@ static inline void udp_tunnel_encap_enable(struct sock *sk)
+> >  #define UDP_TUNNEL_NIC_MAX_TABLES	4
+> >  
+> >  enum udp_tunnel_nic_info_flags {
+> > -	/* Device callbacks may sleep */
+> > -	UDP_TUNNEL_NIC_INFO_MAY_SLEEP	= BIT(0),
+> 
+> Could we use a different lock for sleeping and non-sleeping drivers?
 
->
-> However, I do need to make a change regarding file suffixes. The
-> is_kernel_obj macro in the Makefile.build uses the basename command.
-> The issue is that basename extracts everything before the last period
-> in a filename. So, for a file named "foo.o.thinlto.native", basename
-> returns "foo.o.thinlto", but kbuild expects it to return "foo".
->
-> To fix this, I'll adjust the suffixes to ".a_thinlto_native" and
-> ".o_thinlto_native". I'll send the patch v3 shortly.
->
-> Thanks,
->
-> -Rong
-> >
-> > --
-> > Regards,
-> >   Eric
+We can probably do it if we reorder the locks (as you ask/suggest
+below). Overall, I'm not sure I understand why we want to have two
+paths here. If we can do everything via work queue, why have a separate
+path for the non-sleepable callback? (more code -> more bugs)
+
+> > @@ -554,11 +543,11 @@ static void __udp_tunnel_nic_reset_ntf(struct net_device *dev)
+> >  	struct udp_tunnel_nic *utn;
+> >  	unsigned int i, j;
+> >  
+> > -	ASSERT_RTNL();
+> > +	mutex_lock(&udp_tunnel_nic_lock);
+> >  
+> >  	utn = dev->udp_tunnel_nic;
+> 
+> utn and info's lifetimes are tied to the lifetime of the device
+> I think their existence can remain protected by the external locks
+
+SG, will move the lock down a bit.
+
+> >  	if (!utn)
+> > -		return;
+> > +		goto unlock;
+> >  
+> >  	utn->need_sync = false;
+> >  	for (i = 0; i < utn->n_tables; i++)
+> 
+> > -	rtnl_lock();
+> > +	mutex_lock(&udp_tunnel_nic_lock);
+> >  	utn->work_pending = 0;
+> >  	__udp_tunnel_nic_device_sync(utn->dev, utn);
+> >  
+> > -	if (utn->need_replay)
+> > +	if (utn->need_replay) {
+> > +		rtnl_lock();
+> >  		udp_tunnel_nic_replay(utn->dev, utn);
+> > -	rtnl_unlock();
+> > +		rtnl_unlock();
+> > +	}
+> > +	mutex_unlock(&udp_tunnel_nic_lock);
+> >  }
+> 
+> What's the lock ordering between the new lock and rtnl lock?
+
+From ops-locked, we'll get: ops->tunnel_lock (__udp_tunnel_nic_reset_ntf)
+From non-ops locked, we'll get: rtnl->tunnel_lock
+
+I see your point, we need to do rtnl->tunnel_lock here as well.
+
+> BTW the lock could live in utn, right? We can't use the instance
+> lock because of sharing, but we could put the lock in utn?
+
+I was thinking that there is some global state besides udp_tunnel_nic,
+but I don't see any, will move the lock, thanks!
 
