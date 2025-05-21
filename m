@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-657847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74063ABF998
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:39:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE94ABF99F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6C411887193
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:37:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D1373B0E47
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E664223705;
-	Wed, 21 May 2025 15:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18D9224227;
+	Wed, 21 May 2025 15:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="D58eIVlJ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="CDdiQgZJ"
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C5422258B
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE5F223704
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747841630; cv=none; b=uaMeUyosYhHeMU7eC5VZww+C8KTq/vFgxW+RqJ7f6AS+Wa0WRZupX8KzvseXD086ANwxTNOtR4E3fMoicr87dKII/fgBXtQ/eIWokhPzsjQVQeNWcIDEfVWxi5x6gUb/qwZ3w31FO+eD7yPTaqHd5bICsSyp8ir78/o8XgtSJTo=
+	t=1747841633; cv=none; b=RjjYzHEn77ZcYh+yuIIV0Ietl/DneEG3VgzaidgJ3J69Se0Yl6Eo3el/apStYannzvx3YUjhfzEZiym2U0jMeLDAamCe3bYQY1pgOCrMNiloi8pKYNODKOYI7bw+e+n2sliqFG2YC3RthtqtsNevfIjfPEOG5yL5ArWRs9DGfMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747841630; c=relaxed/simple;
-	bh=A4B7mRZzDVqSEGqs/E7LEIqLxy39i6ZKVj4JhVcVQJU=;
+	s=arc-20240116; t=1747841633; c=relaxed/simple;
+	bh=Vtcw7mINIlvUr04SjFTIlN54iDrSaPcKmCM119sSc1U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o3pmHKwczO4sgr2o/7yPUcjMh1Nrjpf7AF9MGcKrRX8PaIBMp9w5esmGMKIpfWuEGoVrgKYB4AgI8TtVKhQ2+ap5DtbIAJoRmuRC1r6pn6Gk+EXtuD8Tx1IEbrWD6QHKQM13dmHAQsHyiC4rOrMD/1PLiD+J/RFs+9rD7nGHS8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=D58eIVlJ; arc=none smtp.client-ip=213.97.179.56
+	 MIME-Version:Content-Type; b=DJD789RHqQaNmSzi/yEmIqYALtVkuMZIKjiLwXCUhw+qLICVeRdO/YgWcu//+2d8A8mapoTSC4WqtqgOM3nAcRqYSKEdT5BRjOHfd+lAK/ujvOnXn/BGwb628nyv9kTiMgGCYpqXnBSbqiW7P8qQ3D0Gy0pNATWve8mCftd+SkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=CDdiQgZJ; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -36,16 +36,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=g1AFS96Z9JPDmTxa4c4KuWoTuO5ZT6F1LDqypU8z0N8=; b=D58eIVlJLtKEre4gO9w4o1BnOM
-	puPirwarCrRabjdCYb2MwRxyYkCjvWlqMHIriMuofK4/tWrcutajtHJUQQvEM8f6ckR7f5Vj2E7Ca
-	Q58XfoXqoAknzBhBbGZkIrCWqzULUP4xhOtGfNntKXC82MoDcl60BC9Bh9GYVjdGzNGDluXvH0IRY
-	dMFQaipjAtwQS/SSsDVS7Az+Aubk1arl28i5kAuLKjiOHWVGhv7bYDAjBgOjPByds7wpROdBlxuaf
-	DKy4hlB0g0H96XjngVQHUm039SXA8fbUyXb5nrfCf7VDoutDcYWSZODFdE1YLZzlu32dTmBoPxSRO
-	5hotiuIQ==;
+	bh=2n0ULhZnCu8C1LAodYKH8luvq5s03x0GpqQhjbAmhMQ=; b=CDdiQgZJuyOHdycIWE5ong+n1y
+	hGKkeWEzmpu7iGH/gFNeISG2CNzvIPEZBUPc/F7/vdjfbiTjlwW6JltqSTiNwGu0IbNwxeSwiDzeD
+	LEzoEw+t07pSTz56wJRXrbqfjmz+WCvArfcA4/Wi4geAV8Kq4pwYQpPm83G2p72p3tNgbYGVPkAz7
+	eY+hUz9d7J3sIcr8+ueNcoLX9pOWfbdBif/gwiqOocBxrNARPbiZD4uQSDMvbzl3zG45w3+Ot4DgJ
+	pLyW6DBXSHWJsUQF77OxFrB9owKkJZZf40VDco6hThr22HS347JFTh9nVYGeotxpmHZW5EKDKPvv4
+	0lUmkcdA==;
 Received: from [191.204.192.64] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uHlRq-00BGxd-AU; Wed, 21 May 2025 17:33:38 +0200
+	id 1uHlRu-00BGxd-8X; Wed, 21 May 2025 17:33:42 +0200
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
 To: "Alex Deucher" <alexander.deucher@amd.com>,
 	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
@@ -64,9 +64,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	intel-xe@lists.freedesktop.org,
 	intel-gfx@lists.freedesktop.org,
 	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v6 2/3] drm/doc: Add a section about "Task information" for the wedge API
-Date: Wed, 21 May 2025 12:33:22 -0300
-Message-ID: <20250521153323.935974-3-andrealmeid@igalia.com>
+Subject: [PATCH v6 3/3] drm/amdgpu: Make use of drm_wedge_task_info
+Date: Wed, 21 May 2025 12:33:23 -0300
+Message-ID: <20250521153323.935974-4-andrealmeid@igalia.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250521153323.935974-1-andrealmeid@igalia.com>
 References: <20250521153323.935974-1-andrealmeid@igalia.com>
@@ -79,52 +79,77 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add a section about "Task information" for the wedge API.
+To notify userspace about which task (if any) made the device get in a
+wedge state, make use of drm_wedge_task_info parameter, filling it with
+the task PID and name.
 
-Reviewed-by: Krzysztof Karas <krzysztof.karas@intel.com>
-Reviewed-by: Raag Jadav <raag.jadav@intel.com>
 Signed-off-by: André Almeida <andrealmeid@igalia.com>
 ---
-v5:
- - Change app to task in the text as well
-v4:
- - Change APP to TASK
-v3:
- - Change "app that caused ..." to "app involved ..."
- - Clarify that devcoredump have more information about what happened
- - Update that PID and APP will be empty if there's no app info
----
- Documentation/gpu/drm-uapi.rst | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 19 +++++++++++++++++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_job.c    |  6 +++++-
+ 2 files changed, 22 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/gpu/drm-uapi.rst b/Documentation/gpu/drm-uapi.rst
-index 69f72e71a96e..24aa9f320ebc 100644
---- a/Documentation/gpu/drm-uapi.rst
-+++ b/Documentation/gpu/drm-uapi.rst
-@@ -446,6 +446,23 @@ telemetry information (devcoredump, syslog). This is useful because the first
- hang is usually the most critical one which can result in consequential hangs or
- complete wedging.
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index d27091d5929c..c29c924aa506 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -6362,8 +6362,23 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
  
-+Task information
-+---------------
-+
-+The information about which application (if any) was involved in the device
-+wedging is useful for userspace if they want to notify the user about what
-+happened (e.g. the compositor display a message to the user "The <task name>
-+caused a graphical error and the system recovered") or to implement policies
-+(e.g. the daemon may "ban" an task that keeps resetting the device). If the task
-+information is available, the uevent will display as ``PID=<pid>`` and
-+``TASK=<task name>``. Otherwise, ``PID`` and ``TASK`` will not appear in the
-+event string.
-+
-+The reliability of this information is driver and hardware specific, and should
-+be taken with a caution regarding it's precision. To have a big picture of what
-+really happened, the devcoredump file provides should have much more detailed
-+information about the device state and about the event.
-+
- Consumer prerequisites
- ----------------------
+ 	atomic_set(&adev->reset_domain->reset_res, r);
  
+-	if (!r)
+-		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, NULL);
++	if (!r) {
++		struct drm_wedge_task_info aux, *info = NULL;
++
++		if (job) {
++			struct amdgpu_task_info *ti;
++
++			ti = amdgpu_vm_get_task_info_pasid(adev, job->pasid);
++			if (ti) {
++				aux.pid = ti->pid;
++				aux.comm = ti->process_name;
++				info = &aux;
++				amdgpu_vm_put_task_info(ti);
++			}
++		}
++
++		drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, info);
++	}
+ 
+ 	return r;
+ }
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+index a47b2eb301e5..5cb17e62df57 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+@@ -89,6 +89,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+ {
+ 	struct amdgpu_ring *ring = to_amdgpu_ring(s_job->sched);
+ 	struct amdgpu_job *job = to_amdgpu_job(s_job);
++	struct drm_wedge_task_info aux, *info = NULL;
+ 	struct amdgpu_task_info *ti;
+ 	struct amdgpu_device *adev = ring->adev;
+ 	int idx;
+@@ -127,6 +128,9 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+ 		dev_err(adev->dev,
+ 			"Process information: process %s pid %d thread %s pid %d\n",
+ 			ti->process_name, ti->tgid, ti->task_name, ti->pid);
++		aux.pid = ti->pid;
++		aux.comm = ti->process_name;
++		info = &aux;
+ 		amdgpu_vm_put_task_info(ti);
+ 	}
+ 
+@@ -166,7 +170,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+ 			if (amdgpu_ring_sched_ready(ring))
+ 				drm_sched_start(&ring->sched, 0);
+ 			dev_err(adev->dev, "Ring %s reset succeeded\n", ring->sched.name);
+-			drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, NULL);
++			drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, info);
+ 			goto exit;
+ 		}
+ 		dev_err(adev->dev, "Ring %s reset failure\n", ring->sched.name);
 -- 
 2.49.0
 
