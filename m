@@ -1,183 +1,139 @@
-Return-Path: <linux-kernel+bounces-657223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71173ABF13A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:16:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C987ABF149
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3500A1BA87C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:16:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EF6E8E040C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C083125B666;
-	Wed, 21 May 2025 10:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DuyGOlx2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Xt+H1xQ5";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DuyGOlx2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Xt+H1xQ5"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E10225B1CF;
+	Wed, 21 May 2025 10:17:20 +0000 (UTC)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0882472B4
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 10:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BE824BBFA;
+	Wed, 21 May 2025 10:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747822572; cv=none; b=CxE8NLGLfPXa8GTt+b4lJ1HTVmJQi/vWp4xqElYn4/Vgne/2pdLNzvJglaHaXqCVEuPNM4Z0uQ2Uz863QwsL7x01QTGdmb1Yj91Pt+wdAV/TY2Q0dPwdC4NUv2k2XiSx3sOTzXsWccFJsM2t4fLi9WuXk4fu9mW6Pd89rj8OlUw=
+	t=1747822640; cv=none; b=mbrTldyS6ZSawZ5emcl/y9Tssf75rvwhgS/Qj8HHn5v2zjjGjG4botQ/rugkmPUjLb8j1ojh+yac4vXIjTLbFoCaZ2QVEsSvn+7obH0g0ORAI4Ospk/9Lvx+Wc+lROlZlIZ3aZLm99yVtsXt3H2JE8hCv3GVly/0HftIJ6vxt08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747822572; c=relaxed/simple;
-	bh=3b8x3qpRfc/t8SlTRxfHyG4tgUvZSAQijQP6CnDfyLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hk4qqy7VGCdM4F0J8hQ9GS47TqQm0jk11nrPjsNuqPYlwFJlnWXjzTDY8qACLraVuP4WmFSx+ZEZoRZPdp2MI2M63aPUuYncQHKTR1vFJu491HTqUwO071x5CEZ7dy+O3M9pp3RwHhtlJj+sY1tIiBwUCVClTLz8N0tviMg5Xbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DuyGOlx2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Xt+H1xQ5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DuyGOlx2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Xt+H1xQ5; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 90DE72091C;
-	Wed, 21 May 2025 10:16:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747822568; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4wcWmyR1AiMJaEQNt1hassbelqkqhpDNye6S7Ijp6c0=;
-	b=DuyGOlx2c07z/3wBv1JQ4Km5lBN+/y1kHUkGS+UABocULt0LXt5bmwpe4+TNFWbY8nvMIS
-	e1QAbyf9A/bkTnNQjEkaf0TzRNWCyAUVQNF3lUT47j3iZHEqsniheykQ1KjDlS+sPrUsqS
-	akGnG877yzSc8XAcfrGYGyZjfdPDIdI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747822568;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4wcWmyR1AiMJaEQNt1hassbelqkqhpDNye6S7Ijp6c0=;
-	b=Xt+H1xQ5fZydl8MuyHAtU9Y1WCTXF64cMf8rOFlmXP/ZwUa5avTJTbK16/cyucctyDfnj0
-	pzvesSnHvplgO4Bg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=DuyGOlx2;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Xt+H1xQ5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747822568; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4wcWmyR1AiMJaEQNt1hassbelqkqhpDNye6S7Ijp6c0=;
-	b=DuyGOlx2c07z/3wBv1JQ4Km5lBN+/y1kHUkGS+UABocULt0LXt5bmwpe4+TNFWbY8nvMIS
-	e1QAbyf9A/bkTnNQjEkaf0TzRNWCyAUVQNF3lUT47j3iZHEqsniheykQ1KjDlS+sPrUsqS
-	akGnG877yzSc8XAcfrGYGyZjfdPDIdI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747822568;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4wcWmyR1AiMJaEQNt1hassbelqkqhpDNye6S7Ijp6c0=;
-	b=Xt+H1xQ5fZydl8MuyHAtU9Y1WCTXF64cMf8rOFlmXP/ZwUa5avTJTbK16/cyucctyDfnj0
-	pzvesSnHvplgO4Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 67D2513AA0;
-	Wed, 21 May 2025 10:16:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xqurGOinLWghTQAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 21 May 2025 10:16:08 +0000
-Message-ID: <85bdd00e-832f-47de-9822-6c8ae090701d@suse.de>
-Date: Wed, 21 May 2025 12:16:08 +0200
+	s=arc-20240116; t=1747822640; c=relaxed/simple;
+	bh=uJK95ugA0HSoGYOFlI28Y1sjfGBHT7L/o9KnriVaucE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P7VjIk8j6WakftCbBVFbiwsMklhKVUn3EWt/LXsIWslHijv4DdV511kkreZubYUIsqbrvF+Dbkqp4V2nQjJKOM4mnJKVK2q5QuS05wEP/x5QDsIxZvRb07nWxMM41PEOjh1/KODgw6ssHLoaOjZwnpHdzdbLOWEJOQBWlpJkhO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5240764f7c1so1940938e0c.2;
+        Wed, 21 May 2025 03:17:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747822635; x=1748427435;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pl0dTytafVhoCB0H0aa0pIPSG1UF8OiXB5MtAo2OXlg=;
+        b=PhtvUVL7hQkiKSb0qdGDZ1fe60TrBVeHyBJNDrFFf9Z3v71wrzBR4Je+U97yIH8lIi
+         E+3wIm3n11ICMhyCBJ3hPmaHuEcweOcm566zsO9YMpbdflhjgWAhL72AzIXH284K4tX5
+         1n+0u2nlM+Vlski2jnZeMC2UlPEoSai1OoH2eRyPBq66iDVV30/JLsxWVNIyNaR0LO6z
+         QWNq/tTyb9IUhmtIjPqDL786ZqfsGGfBGVKGGH12SK4m9hxTnMQN+ksmmmNjEj2KdrBg
+         6Y9DmlA/OiNMoq1/Lov5I2wsRI+CHbxzWDC+89nUytWr9YTyG7o6BE9dF802tfmYCmRS
+         0llQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9oRZDLW6h1PDOtp0YhgaP9+7C8Gi73FBx7RI+v9f8BaKNlT7P2MyzUtlFNrT4Cb2PjPuP0t0njJPg1m3s4DmCnQ0=@vger.kernel.org, AJvYcCVJLU1kUsuaua52PAXqlSkXYrTd+z3kC7TBo9aLVOs9QD2C43faag+2jcq0ZKp7H3swJtkFHo8vQ3Gg@vger.kernel.org, AJvYcCVzJmOSE9xWIve2DtGaDPpYMk45exmjJ85hF9uAzTmyfevCaY/t5XQmH7or4CRBiaDivcKLCR/eowlR5CfS@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLtTiJP2hrLz/B4+kQ3mbmjB8+A295mXSX2S1OXqNOAuLmtRlt
+	P1LkORTdnu9wH77VGqSjiqtn5SfDnK/49Nw5FHi1lBHc4RFUbN25C2UB0nJGB8ae
+X-Gm-Gg: ASbGnctiU38UBo/Ypmn10asAYfwTiE+PT5RwY63Q1gRjn2uo2qukeKI1mHXy6QM24QC
+	NMZdzpl8QP3GjpSYVs0KUKRa6YiOANdPMA8/aimQxNToEW2DcmRr6eVvB+EUXOJq0dWHE7PQDB4
+	OoHiy9bKBDtbbkWxrKLWHLhoV+iPjrBCcsnUmT+yos6w459nniym3H9bxpSL1myVR9XqNl5ZEs2
+	2mzx1dylDeaDBnqclfQD2Zt1djYaPkQk8vJon0dNhH2zmyt4RiJ3r0LMxE7Dhve0TKVxjGzoiXp
+	b/QjEc4YzFgpe+3Yr7fx5btGcukbtWjA11RMalDmet+em6bt+f920tXDcKxbM2TmEhBb+75CkU9
+	7/L7GjwU2V34hQw==
+X-Google-Smtp-Source: AGHT+IGX6d+ZVKWaADCU+OWm0aUNQ4iMjbHIYa9e2dH/6HJEzytKvQzfH9DI8ycTaSchtRefhx+wNw==
+X-Received: by 2002:a05:6122:885:b0:526:42c2:8453 with SMTP id 71dfb90a1353d-52dba9649b2mr17818459e0c.7.1747822635320;
+        Wed, 21 May 2025 03:17:15 -0700 (PDT)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52dba96a3efsm9872256e0c.26.2025.05.21.03.17.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 May 2025 03:17:14 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4e041582fd2so1917244137.0;
+        Wed, 21 May 2025 03:17:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVKv6pQDLyjhwIefWpMXGTb0F6g45eekpaH14KlprK3QzG9vp76tmsxJRZpnH8+tI+0vDUBm+pl3yI1zzFVg5HxvX8=@vger.kernel.org, AJvYcCVwNbIl3Plr1nD/BiRn3H+5icNw3LaXE/1dZgB32oIFnWcbf4D2rxEgyVPO7HomHye5YyoOsCg102hR@vger.kernel.org, AJvYcCX6xZ4GKPrsvZ3uMw2753ZMijedgIGHKfW8zPK+AUzTM0lMTVf07c9rqB8WKzphLUqPx9nUUyMABV4Hki+4@vger.kernel.org
+X-Received: by 2002:a05:6102:c0e:b0:4bd:22d5:fbd7 with SMTP id
+ ada2fe7eead31-4dfa6b9be4fmr20657171137.11.1747822634503; Wed, 21 May 2025
+ 03:17:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/10] net: add skb_copy_and_crc32c_datagram_iter()
-To: Eric Biggers <ebiggers@kernel.org>, netdev@vger.kernel.org
-Cc: linux-nvme@lists.infradead.org, linux-sctp@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Daniel Borkmann <daniel@iogearbox.net>,
- Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
- Sagi Grimberg <sagi@grimberg.me>, Ard Biesheuvel <ardb@kernel.org>
-References: <20250519175012.36581-1-ebiggers@kernel.org>
- <20250519175012.36581-9-ebiggers@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250519175012.36581-9-ebiggers@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_CC(0.00)[lists.infradead.org,vger.kernel.org,iogearbox.net,gmail.com,grimberg.me,kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -3.01
-X-Rspamd-Queue-Id: 90DE72091C
-X-Spam-Level: 
-X-Spam-Flag: NO
+References: <20250513131412.253091-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250513131412.253091-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250513131412.253091-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 May 2025 12:17:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU+NBJNcijYCK3SJrqL7xEyW9wveT40iHoH7n_E1o+R-w@mail.gmail.com>
+X-Gm-Features: AX0GCFtxmB0B30CkwBMhEHZGJnl-GCxoFG6iXqHAFR1FCnIMGsgF4hqdZ1BWFk4
+Message-ID: <CAMuHMdU+NBJNcijYCK3SJrqL7xEyW9wveT40iHoH7n_E1o+R-w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] arm64: dts: renesas: r9a09g057: Add GBETH nodes
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/19/25 19:50, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Since skb_copy_and_hash_datagram_iter() is used only with CRC32C, the
-> crypto_ahash abstraction provides no value.  Add
-> skb_copy_and_crc32c_datagram_iter() which just calls crc32c() directly.
-> 
-> This is faster and simpler.  It also doesn't have the weird dependency
-> issue where skb_copy_and_hash_datagram_iter() depends on
-> CONFIG_CRYPTO_HASH=y without that being expressed explicitly in the
-> kconfig (presumably because it was too heavyweight for NET to select).
-> The new function is conditional on the hidden boolean symbol NET_CRC32C,
-> which selects CRC32.  So it gets compiled only when something that
-> actually needs CRC32C packet checksums is enabled, it has no implicit
-> dependency, and it doesn't depend on the heavyweight crypto layer.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+Hi Prabhakar,
+
+On Tue, 13 May 2025 at 15:14, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Renesas RZ/V2H(P) SoC is equipped with 2x Synopsys DesignWare Ethernet
+> Quality-of-Service IP block version 5.20. Add GBETH nodes to R9A09G057
+> RZ/V2H(P) SoC DTSI.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
->   include/linux/skbuff.h |  2 ++
->   net/core/datagram.c    | 33 +++++++++++++++++++++++++++++++++
->   2 files changed, 35 insertions(+)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+> v2->v3:
+> - Added the mdio0/1 nodes to SoC DTSI.
 
-Cheers,
+Thanks for the update!
 
-Hannes
+> --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> @@ -701,6 +701,215 @@ sdhi2_vqmmc: vqmmc-regulator {
+>                                 status = "disabled";
+>                         };
+>                 };
+> +
+> +               eth0: ethernet@15c30000 {
+
+> +                       mdio0: mdio {
+> +                               compatible = "snps,dwmac-mdio";
+> +                               #address-cells = <0x1>;
+
+1
+
+> +                               #size-cells = <0x0>;
+
+0
+
+The rest LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.17 with the above fixed.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
