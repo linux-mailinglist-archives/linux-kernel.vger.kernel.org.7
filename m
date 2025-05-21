@@ -1,53 +1,98 @@
-Return-Path: <linux-kernel+bounces-657512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 404B5ABF4FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:59:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE70ABF4FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E910517CDB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:59:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFACC1BC1DA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5212126E145;
-	Wed, 21 May 2025 12:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82AA235C1E;
+	Wed, 21 May 2025 12:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="flMAcnKw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OHLUsocq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9319A26C380;
-	Wed, 21 May 2025 12:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE56322D9F7
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747832346; cv=none; b=Wu16cNC14Jt7t/hQ4zWJ363G4AhQGCtvc8SLvf60eIXpO6nVwnmxsakesc7gaSfYGOx2n4VXWPEfv4CYCKCnsC/BTlS3lJ72zxgkoFehkCW0ACMPhaHcAOhvOUg8xrZIe295gzlCQdjMSMlZp8SDAsBT8AQqPmN2y2KzJbBSNHM=
+	t=1747832387; cv=none; b=KWKxfPxp/dyJwfR0iiLC+ubN6E1RQlRqJWuwdapTOPALB1aexBZ6S5SVkjAiN7vm/zCxflcBTIaOQuTKf/5efLiikC/sY5Po2cVNOYElP2PlmizG9d43nIzjPItpIx+vYfjia2xDECi0lMzyKCx+uwkXZHrPJbs5smniWcirC4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747832346; c=relaxed/simple;
-	bh=bNwOd62uldLrd0Oo1ZUt+cxdvOJNKGn9/3zegQjYUbk=;
+	s=arc-20240116; t=1747832387; c=relaxed/simple;
+	bh=fNLPFd4xKlr3/lYdDZ86ImLr1zSXSvfTKD+9/Z5sUPQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pSRNbWHXJUQzK9Q3/KR+tnJ3pdzpTNpmHOooBfCRf0Fosf3rdyFM6ptVy3Df2sq6FFYjDd+8MapHAvMLKqlfWmShVT+TBtCzlce1z4/2knWN8Zzxc4RNOndtZQNN4ps74uxNAi18D16N3Qs38jUaWQqbRAVPmRm5/ecAHkrMSuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=flMAcnKw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA16AC4CEE4;
-	Wed, 21 May 2025 12:59:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747832345;
-	bh=bNwOd62uldLrd0Oo1ZUt+cxdvOJNKGn9/3zegQjYUbk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=flMAcnKwMJccwzaxfmgqrSXfLtQm/Tylh7IIH4uTzTSwBLEbNTZe7r7MsRikh9irc
-	 dUfgEJb76ZfJyWoZcIH1c88cbDwY4FkPwGWZPRF6HiTEjums3cik6eQ4tI4fMuXIt8
-	 L5cIUym5Or5Mr7IKwwSlDctQ8uVQ3R08TeIpM4xM=
-Date: Wed, 21 May 2025 14:59:02 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: David Wang <00107082@163.com>
-Cc: mathias.nyman@intel.com, oneukum@suse.com, stern@rowland.harvard.edu,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] USB: core: add a memory pool to urb caching
- host-controller private data
-Message-ID: <2025052132-sloped-strewn-397a@gregkh>
-References: <20250517083819.6127-1-00107082@163.com>
- <2025052148-cannot-football-74e1@gregkh>
- <572f1814.9a08.196f2971eea.Coremail.00107082@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e8BiNCiv1L50oGL6vLEh8gJOfd7Kr5+bmc3AkQ/P7OZL28BIRb5MqzISgWMhAGSKOQhpFuhTjcx3CpvD0+hSB9PZOIMphXum2YrydB300ONaBmuxvaPi8iv1cgu4WhRGJtlrlLfRO15tH6TgHWAyPaPQsC41Tlolx8D3MYZ95FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OHLUsocq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9XIan013410
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:59:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=PQ8FelBJqVusuKqI01bafP6p
+	gE/hxiJzISLHy0HpwSk=; b=OHLUsocqu+9QxrOtGR5b1KSyVIms2jesL2go7drl
+	2ooIQ74FhKamY66Q2+4rbF/CcVtFhncW+d7IjQGlfS/6WxyhWco7BJM/fZfSbJSQ
+	/jtP+SKQFdAmBjeaHs4qKhYeafhEr8G0H0NOpSco7EhBK61YtcRHRiy6zORt3dFA
+	R9jpsIOb9YKPn99a/MzAs5bTku9R5dGOMcCVGZxnRFu/ajVq87JZRvC8SmJaygPo
+	TturjWUKQhInUc8Xt0Jqc29IZc4VAv/Iq++KpDV7DW0hmSWfAULknkUOFReShf3y
+	1wbqL4KTNLWE2IJXFHKjvMkZuXuJTuF077AiM2JOiy1cwg==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwh5b1mj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:59:44 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6f8c9552514so69238906d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:59:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747832383; x=1748437183;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PQ8FelBJqVusuKqI01bafP6pgE/hxiJzISLHy0HpwSk=;
+        b=jZKqF+JJ+s4h0kbt4ZYV6xF9l83LPPNRvLiVrj9f1qyCZ4MIFXbbrkEFVD8oVzQgWh
+         RZXEonw9WTPLkNXmvqtyHFpMTZXYf2YmDC536ft8tU/kV/IgCgv0tsefK+CkX+wFqWbc
+         /jHao4SalEmS5emwLeNw61fOc0rWg+Nw9UPkZXew9X85J6LxVg1+9bq9wZNi3/jDVFiz
+         1HWbJIgOx7qjWD+Y1KH65slKlFw9bPjfoMDneDdJlAA6qDTy96OWbmGOV8tn7oVfbMBE
+         54goPnUJT6PJIsnY2j/p5e9o+wGxit/2O8ilGXNc4+j0P+twFphjs/81OBsv7WUC2GFS
+         Gu2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVpQz2eFjYujuYawHFZMQd3ZiSQ+w8k2fwu9azYtOiOmMclDSXZaIDxfaaAP0T2/hjXXiqZYyAA4p3knE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhSGmIXAXmYS+jg4ggff6a6KwNJpKK8bXyY7h7ofsKau97U8K8
+	Pa3a9xrDH6B7qTc/YAIVsweKSQDHr6FP+ymvupadnLJFELRqFDY5Opi7j9m324kVQNfgh+DcZLC
+	nRx8iQlUumNGJ0BnZJ+tqx4RAYa16BaBFkMCnF8SV68ZLMPFNPLqMMJvHKttv1CLCPpY=
+X-Gm-Gg: ASbGncugZtvI9AgrbZVVnJ+YCTb5tiW3lNO79moe0fz/ULRCXL1R/grkQin+NNJWvjy
+	2JP9h0pVVsWEBUgBogwYDrxCYA4nacc7K/z7bHGuP6OzTEuhsUyxJPFkIA3UIE6yqirMbCCAMMy
+	D0OOBLRxwvyX977e3UJYbioAvZi/xw+zYUuDzm9uVx2q68iwuU+iZPwCu2ASj5u+tpkwaH6xdsj
+	9W+AKfRHTNESoNDxE18cjLgPVScBxtWP3sBl3ltNyvBqK+v1Kb5uDRgPTTcq0ApyJnHyS2L4o27
+	ClyL8R/+CvxIzaLTKdZzx0/GMPmFfh3IZpot5K5bifEIbrSWdORNyAdxQoPYr7N710MX9Tnr9IY
+	=
+X-Received: by 2002:a05:6214:226d:b0:6f8:d035:7222 with SMTP id 6a1803df08f44-6f8d03572a0mr205090386d6.15.1747832383552;
+        Wed, 21 May 2025 05:59:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHUhnGy4gCGjXLtSemtXuIIR5DTpA42yEm9njhcNzOkanHSgLeUZ3VEd2gBEl+hjJ8sTmWA7w==
+X-Received: by 2002:a05:6214:226d:b0:6f8:d035:7222 with SMTP id 6a1803df08f44-6f8d03572a0mr205090066d6.15.1747832383172;
+        Wed, 21 May 2025 05:59:43 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e702c9d8sm2856946e87.181.2025.05.21.05.59.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 May 2025 05:59:42 -0700 (PDT)
+Date: Wed, 21 May 2025 15:59:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/dsi/dsi_phy_10nm: Fix missing initial VCO rate
+Message-ID: <ybbyhri7vydiyowr3iqrizefblrfpedk5it723o254vyklcd5c@cdx7rhx2f3rn>
+References: <20250520111325.92352-2-krzysztof.kozlowski@linaro.org>
+ <3ywacd4x23zadvwikw4hdprgbgxxdmbcar3lyayy4ezmd5lcyw@3h2oosmbk6yb>
+ <87af51dd-a35c-460a-af4c-813427cdaf84@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,163 +101,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <572f1814.9a08.196f2971eea.Coremail.00107082@163.com>
+In-Reply-To: <87af51dd-a35c-460a-af4c-813427cdaf84@linaro.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDEyNiBTYWx0ZWRfX5ZfWnJv5guc6
+ s+meY8JNeyPO5xNQj8xhjsANN7eoDkB4SEnMSFIb7I8DVAQrXmjX30F4ev2YCNAMy/XCRivH1vW
+ JBFp1ynQLTz9k7r+kjCerbH2skCEBLFVspEZvg5JtUANitJQwsQS5x4sGn6v5UVEGAfy88fgIWT
+ YlugkPv3j5X/ufQPgAGg8BzO+9X+cEYIh5XJbWEJYvZAH2/r7b4+EqvbF8YePw9TDR2uyRH9f9n
+ jm5IropmffjeV+EXpneE5g6Vo0F+3WOR9cm0ARo/Pb3bvcKp6J9EgfQgKYnLjCqkuQevmmqik35
+ uQhSYr3gYGVQiazORkIEZz46GCo+b2aC/Xjda3r2GIDgESga7oTR8FjtCFZridOtVR1yGNtudn1
+ GZN/8J1zOG/hsSOvOWNhs9XT3PMywjS/TMC6NgOznA8hNBtHe+s0eC436JQioNgawJ/OOZTI
+X-Authority-Analysis: v=2.4 cv=XeWJzJ55 c=1 sm=1 tr=0 ts=682dce40 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
+ a=afxxqWxysUDinfw8BOsA:9 a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: DSttNmL_y9MhdgrKK8nubQn-w1F50hkh
+X-Proofpoint-ORIG-GUID: DSttNmL_y9MhdgrKK8nubQn-w1F50hkh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_04,2025-05-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1015 mlxlogscore=662 mlxscore=0 bulkscore=0 spamscore=0
+ suspectscore=0 impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505210126
 
-On Wed, May 21, 2025 at 07:25:12PM +0800, David Wang wrote:
-> At 2025-05-21 18:32:09, "Greg KH" <gregkh@linuxfoundation.org> wrote:
-> >On Sat, May 17, 2025 at 04:38:19PM +0800, David Wang wrote:
-> >> ---
-> >> Changes since v2:
-> >> 1. activat the pool only when the urb object is created via
-> >> usb_alloc_urb()
-> >> Thanks to Oliver Neukum <oneukum@suse.com>'s review.
-> >
-> >Changes go below the bottom --- line, not at the top.  Please read the
-> >documentation for how to do this.
-> >
-> >Also, these are not "threaded" together, making them hard to pick out.
-> >Please when you resend, make them be together using git send-email or
-> >some such tool.
+On Wed, May 21, 2025 at 08:09:14AM +0200, Krzysztof Kozlowski wrote:
+> On 20/05/2025 22:06, Dmitry Baryshkov wrote:
+> > On Tue, May 20, 2025 at 01:13:26PM +0200, Krzysztof Kozlowski wrote:
+> >> Driver unconditionally saves current state on first init in
+> >> dsi_pll_10nm_init(), but does not save the VCO rate, only some of the
+> >> divider registers.  The state is then restored during probe/enable via
+> >> msm_dsi_phy_enable() -> msm_dsi_phy_pll_restore_state() ->
+> >> dsi_10nm_pll_restore_state().
+> >>
+> >> Restoring calls dsi_pll_10nm_vco_set_rate() with
+> >> pll_10nm->vco_current_rate=0, which basically overwrites existing rate of
+> >> VCO and messes with clock hierarchy, by setting frequency to 0 to clock
+> >> tree.  This makes anyway little sense - VCO rate was not saved, so
+> >> should not be restored.
+> >>
+> >> If PLL was not configured configure it to minimum rate to avoid glitches
+> >> and configuring entire in clock hierarchy to 0 Hz.
+> >>
+> >> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> >> Link: https://lore.kernel.org/r/sz4kbwy5nwsebgf64ia7uq4ee7wbsa5uy3xmlqwcstsbntzcov@ew3dcyjdzmi2/
+> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > 
+> > Fixes?
 > 
-> >
-> 
-> Roger that~
-> 
-> 
-> >> ---
-> >> URB objects have long lifecycle, an urb can be reused between
-> >> submit loops; The private data needed by some host controller
-> >> has very short lifecycle, the memory is alloced when enqueue, and
-> >> released when dequeue. For example, on a system with xhci, in
-> >> xhci_urb_enqueue:
-> >> Using a USB webcam would have ~250/s memory allocation;
-> >> Using a USB mic would have ~1K/s memory allocation;
-> >> 
-> >> High frequent allocations for host-controller private data can be
-> >> avoided if urb take over the ownership of memory, the memory then shares
-> >> the longer lifecycle with urb objects.
-> >> 
-> >> Add a mempool to urb for hcpriv usage, the mempool only holds one block
-> >> of memory and grows when larger size is requested.
-> >> 
-> >> The mempool is activated only when the URB object is created via
-> >> usb_alloc_urb() in case some drivers create a URB object by other
-> >> means and manage it lifecycle without corresponding usb_free_urb.
-> >> 
-> >> The performance difference with this change is insignificant when
-> >> system is under no memory pressure or under heavy memory pressure.
-> >> There could be a point inbetween where extra 1k/s memory alloction
-> >> would dominate the preformance, but very hard to pinpoint it.
-> >> 
-> >> Signed-off-by: David Wang <00107082@163.com>
-> >> ---
-> >>  drivers/usb/core/urb.c | 45 ++++++++++++++++++++++++++++++++++++++++++
-> >>  include/linux/usb.h    |  5 +++++
-> >>  2 files changed, 50 insertions(+)
-> >> 
-> >> diff --git a/drivers/usb/core/urb.c b/drivers/usb/core/urb.c
-> >> index 5e52a35486af..53117743150f 100644
-> >> --- a/drivers/usb/core/urb.c
-> >> +++ b/drivers/usb/core/urb.c
-> >> @@ -23,6 +23,8 @@ static void urb_destroy(struct kref *kref)
-> >>  
-> >>  	if (urb->transfer_flags & URB_FREE_BUFFER)
-> >>  		kfree(urb->transfer_buffer);
-> >> +	if (urb->hcpriv_mempool_activated)
-> >> +		kfree(urb->hcpriv_mempool);
-> >>  
-> >>  	kfree(urb);
-> >>  }
-> >> @@ -77,6 +79,8 @@ struct urb *usb_alloc_urb(int iso_packets, gfp_t mem_flags)
-> >>  	if (!urb)
-> >>  		return NULL;
-> >>  	usb_init_urb(urb);
-> >> +	/* activate hcpriv mempool when urb is created via usb_alloc_urb */
-> >> +	urb->hcpriv_mempool_activated = true;
-> >>  	return urb;
-> >>  }
-> >>  EXPORT_SYMBOL_GPL(usb_alloc_urb);
-> >> @@ -1037,3 +1041,44 @@ int usb_anchor_empty(struct usb_anchor *anchor)
-> >>  
-> >>  EXPORT_SYMBOL_GPL(usb_anchor_empty);
-> >>  
-> >> +/**
-> >> + * urb_hcpriv_mempool_zalloc - alloc memory from mempool for hcpriv
-> >> + * @urb: pointer to URB being used
-> >> + * @size: memory size requested by current host controller
-> >> + * @mem_flags: the type of memory to allocate
-> >> + *
-> >> + * Return: NULL if out of memory, otherwise memory are zeroed
-> >> + */
-> >> +void *urb_hcpriv_mempool_zalloc(struct urb *urb, size_t size, gfp_t mem_flags)
-> >> +{
-> >> +	if (!urb->hcpriv_mempool_activated)
-> >> +		return kzalloc(size, mem_flags);
-> >> +
-> >> +	if (urb->hcpriv_mempool_size < size) {
-> >> +		kfree(urb->hcpriv_mempool);
-> >> +		urb->hcpriv_mempool_size = size;
-> >> +		urb->hcpriv_mempool = kmalloc(size, mem_flags);
-> >> +	}
-> >> +	if (urb->hcpriv_mempool)
-> >> +		memset(urb->hcpriv_mempool, 0, size);
-> >> +	else
-> >> +		urb->hcpriv_mempool_size = 0;
-> >> +	return urb->hcpriv_mempool;
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(urb_hcpriv_mempool_zalloc);
-> >> +
-> >> +/**
-> >> + * urb_free_hcpriv - free hcpriv data if necessary
-> >> + * @urb: pointer to URB being used
-> >> + *
-> >> + * If mempool is activated, private data's lifecycle
-> >> + * is managed by urb object.
-> >> + */
-> >> +void urb_free_hcpriv(struct urb *urb)
-> >> +{
-> >> +	if (!urb->hcpriv_mempool_activated) {
-> >> +		kfree(urb->hcpriv);
-> >> +		urb->hcpriv = NULL;
-> >
-> >You seem to set this to NULL for no reason, AND check for
-> >hcpriv_mempool_activated.  Only one is going to be needed, you don't
-> 
-> >need to have both, right?  Why not just rely on hcdpriv being set?
-> 
-> I needs to distinguish two situations;
-> 1.  the memory pool is used, then the urb_free_hcpriv should do nothing
-> 2.  the memory was alloced by hcd,  then the memory should be kfreed
-> 
-> Using hcpriv_mempool_activated does look confusing...
-> what about following changes:
-> 
-> +	if (urb->hcpriv != urb->hcpriv_mempool) {
-> +		kfree(urb->hcpriv);
-> +		urb->hcpriv = NULL;
-> +	}
-> 
-> >
-> >And are you sure that the hcd can actually use a kmalloced "mempool"?  I
-> 
-> The patch for xhci is here:  https://lore.kernel.org/lkml/20250517083750.6097-1-00107082@163.com/
-> xhci was kzallocing memory for its private data, and when using USB webcam/mic, I can observe 1k+/s kzallocs
-> And with this patch, during my obs session(with USB webcam/mic), no memory allocation
-> observed for usb sub system;
-> 
-> >don't understand why xhci can't just do this in its driver instead of
-> >this being required in the usb core and adding extra logic and size to
-> >every urb in the system.
-> 
-> Yes, it is possible to make a mempool in hcds. But the lifecycle management would not be an easy one,
-> basically a "mempool" would need to be build up from zero-ground, lots of details need to be addressed,
-> e.g. when should resize the mempool when mempool is too big.
+> Probably:
+> Fixes: a4ccc37693a2 ("drm/msm/dsi_pll_10nm: restore VCO rate during
+> restore_state")
 
-That's up to the HCD to manage, IF they need this.  Otherwise this is a
-burden on all other systems with the increased memory size for no needed
-reason.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-thanks,
+> But CC stable would not be appropriate, since this was never reproduced
+> on this PHY/hardware and we only guess a visible issue being fixed here.
 
-greg k-h
+Agreed.
+
+-- 
+With best wishes
+Dmitry
 
