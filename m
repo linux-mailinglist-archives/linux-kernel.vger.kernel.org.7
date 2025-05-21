@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-658320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017B6AC0034
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 00:57:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9622CAC0035
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 00:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 476698C0CEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 22:57:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA47A189F00A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 22:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161DD23D286;
-	Wed, 21 May 2025 22:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7678123E320;
+	Wed, 21 May 2025 22:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1dPv3eh6"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tI2qyITC"
 Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7883C23C8CD
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 22:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2201323D2AD
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 22:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747868058; cv=none; b=Fx9f8AdyylruugzaOYJxoUZKHzsCBUca9/mcHiegeJU+Mcn6ASUzE+00SCoMIKqndbYJUEiPwn8S0B/a30JLai3AO8Utclx6CAHBVfDYGE6EpYhWLmMxHiF/C8dSzTbctynWTW2C7hmBqcl9dX9K1bOQ/HJr1BJLk15JEBQ+DS8=
+	t=1747868060; cv=none; b=kaA9vgoTLhZsI/DamKD5DDkqr4SsY+i4FGLlJJfP2JDgcMxKtlrJq6gjCrv+JEmpQBCs0DTsMyH/mE3j1EaaWVHu4i42FlS21gGVqylXIbjEQiMmQPaCMrJsdfmUIvBbezXA+yQfWLGXIvsaSK3rqcUQz7FFS3DGMI+ObPik8eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747868058; c=relaxed/simple;
-	bh=+AUYSNahAWGf9W1tBYRZu9JyCsHrw3J+A7EkvETxE5o=;
+	s=arc-20240116; t=1747868060; c=relaxed/simple;
+	bh=/IZuOYb6jOm8wv3pZnvemwOfZFQ2a3K5E2hJWe/msQk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=L0/zHCqvin6RU4WZ4s1/+utTz3vlfRKeRsee2pbf98isS9xi/8o7qb4SznPhaV+rdZJuwDWmDvCl+43Ge9orJExjmehRUi3EbXiD8nmVXa/dws5jHP1646ziroYP1SyBmya1znHUdLM7P+KyPfTUaEWvaL6FucS8dTBuWGHqTJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1dPv3eh6; arc=none smtp.client-ip=209.85.210.201
+	 To:Content-Type; b=T94P4jKlvinvJw/uXpY/w6t5IEx/a4U/qRarXTxq6M33IWDzTzI2DKIjQDNIonVJchhY7vUoTwyfcWe4RPah3PvAsKusoa6kB01ZENSazgBMxWhlo3PFf6ZFNpy1TxRD2eyQDv16amrE+wxDofqQv9j1S0C86wzryvGc3Ury5bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tI2qyITC; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-74299055c3dso10043518b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:54:16 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7377139d8b1so6290281b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:54:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747868055; x=1748472855; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747868057; x=1748472857; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=y5iEOEtDGQjkBBG8+IR+GBcP08I1z1xCE1eB2Wanmvw=;
-        b=1dPv3eh6DxGR7kFDDGZT45Z1Kvt/N0uinbb+If1cuSxfnLdvcn+yV9d5cGiIUTz3c+
-         OUOVWXLgjPvgw3GqU407+IIsOkR1MkUxM37HJW2ElRNrzY9lbOL3Y3/Mfm2j3UbklwKk
-         cfl8MsUFrTWHG1wCDejE1le19f9dGYQ/HD6L4fY3fFH9l5mfEk14XxkFqd311SHwBTzl
-         38WAzWYN8lYDzdN0Mxg3i1aDxOqCHyE8pn6OVVFooMQvGoJobEO2sBcaSAusuwNj8VVW
-         2O45rfmSpsmLjj3XvdGThTapWNC+t9eZDSEkbg8KGgtEaUBEpo2SPT8kKyoKM19LiNN1
-         ZacA==
+        bh=0ihLi7PZYZBdDuLpPbH4KRd+Os7j6d6WLAwKlSBj2Ys=;
+        b=tI2qyITC95EBNOVTBYH1sqPs40H7U+DB7SkxuVQ9Nlb4p2MfH9zDu175S9L82AKMrR
+         uxHt69BOr1rXKXMjrsYg2/vLq0NC6TYjZ/NvMDkjgATQUkahYM8vCHogRH44DnD1FGeB
+         lMCZJrFTJZ+ceDCGBz1yigJYsgoC4ceWlgs4OnRp0DA1H7Wk/8L3jTd8gvgi6uVwpkzI
+         KLGh04LojMmejKIXVs9cNpB8lRHP63PuS32MiyJzIHFfD0rpwCq+RIGR3fJoyRo12VKS
+         ILNT2M9UQ5hMYOSXonbb2/F1055HCfE6WDHyk8rRScfQgqkWlbTYRyP6eSlnZoszheaZ
+         x9yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747868055; x=1748472855;
+        d=1e100.net; s=20230601; t=1747868057; x=1748472857;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y5iEOEtDGQjkBBG8+IR+GBcP08I1z1xCE1eB2Wanmvw=;
-        b=cyu5wFmDdPuK/y+9EpNPig2t86haiiyAr631/hvwY652eiol7qS6BepP4YFfjEtdAW
-         5BXUIe21P3p5z981uPMiX5pYjBtjcadhOhnTQw09Az+G05jVoZY5ollqbJnMkoTqtoPO
-         mGYzX3ut4+b3SnnibR3A3D1X46fBHkOj3wcqHeVda11aVSXfVfSaKECQzADLmi5KO+np
-         R7+t+S4Vtg6dCx8vLELwa/j+mjZ5wR8uNz+0jGqcPQRYDex9vhbuAcgq1euwQRZi3DxM
-         L3AxwT1MpNBpng/MHH3B6f1OrjaKy2LVTArO837RftH1lJMXlFq7EKtQhskucj5984Rg
-         imqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdH/yKT0YkOY1RxwlrOaMAa7aN+5oc+PW3zLjLBex06/YV1R1ABMdFnqzBk4rvUUYaT+AT3T47yn9TALw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx/iCLGg7vMNaHf4Zpk6fT8VxgoFWDt8Ks9rKsnWOudAlsHY/W
-	7MaHsYjZGikb4qy1DPfhGeuqeVoX2bMDTS5L7CkujQV3ryuAWA3rAOFcfJe4TVCyTkmEGrUE+zo
-	Uva4toA==
-X-Google-Smtp-Source: AGHT+IEK2MKOxh7O7TqCVhedlN7LWirgEvC2NFjssFnsIa6UXUWSiPhGiHliRMQVf82CzHliIwdjxuvaB50=
-X-Received: from pfbjw12.prod.google.com ([2002:a05:6a00:928c:b0:736:b2a2:5bfe])
- (user=yuzhuo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d12:b0:1f5:59e5:8ada
- with SMTP id adf61e73a8af0-2162187a945mr31068430637.4.1747868055561; Wed, 21
- May 2025 15:54:15 -0700 (PDT)
-Date: Wed, 21 May 2025 15:53:06 -0700
+        bh=0ihLi7PZYZBdDuLpPbH4KRd+Os7j6d6WLAwKlSBj2Ys=;
+        b=i1IfyQXXh21yYdSJnehZsU0OiFnhw8qz23tXrt08/Ud+tYAh72zO6ZUHyCOTKED2SX
+         xsR2QI5epy5xHRI2Xm0hiRL+2c1dgXIqstgOox9HwyBKE1eXaekJWQA/Y9MkkvoA79Vv
+         hL5YFPMxdWydGwk028pOAM6YhTvia8RXKCH2+r/9GmLx4pyaFTNKVZiih2rM1sNjwc99
+         UA/pYBDMqPyYFEFH4kiC3aX+uri4hlnZ4hAt7K9DrlLlNRviB60duM/QbtqVWbx/+R+b
+         +4+VS/oHZHRpTrE4thbE4TnnPpp5unXVPlvBcg6og0cyEF4MnlSSJ10Zpo/x5hBdZZXW
+         WQKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXoGzZGuAQL4cSwraEw0pqK+9LZa5Oq7TaSckHBHPQmLr1AlVHkm6OncLnVJ3+VCCaRknIhGr0HA2R445U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdObFpMy4FuBELHar7aDE2cGbsWvKGtCJ//E0Fc+rwk/jxtRw2
+	KtH7oDQCVuTA2zN5TcOHVCjPR0VAorB07mTxH0RLwNWD2Ti4h0q+LDT2WTROIi3eDCdM73eeEnm
+	MdSoaqQ==
+X-Google-Smtp-Source: AGHT+IFlqvDhagDgmm0am0QLyt1D9KzRRnWhzPMiMPi+OaIJxmlzZsP5oeZWd2bbp+CX0XipedfHv+KHA/o=
+X-Received: from pfqz29.prod.google.com ([2002:aa7:9e5d:0:b0:740:6f6:7346])
+ (user=yuzhuo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:c8d:b0:740:aa31:fe66
+ with SMTP id d2e1a72fcca58-742a97768f0mr32694402b3a.4.1747868057262; Wed, 21
+ May 2025 15:54:17 -0700 (PDT)
+Date: Wed, 21 May 2025 15:53:07 -0700
 In-Reply-To: <20250521225307.743726-1-yuzhuo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250521225307.743726-1-yuzhuo@google.com>
 X-Mailer: git-send-email 2.49.0.1164.gab81da1b16-goog
-Message-ID: <20250521225307.743726-4-yuzhuo@google.com>
-Subject: [PATCH v1 3/4] perf genelf: Remove libcrypto dependency and use sha1 utils
+Message-ID: <20250521225307.743726-5-yuzhuo@google.com>
+Subject: [PATCH v1 4/4] tools: Remove libcrypto dependency
 From: Yuzhuo Jing <yuzhuo@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -98,119 +98,216 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 
-genelf is the only file in perf that depends on libcrypto (or openssl)
-which only calculates a Build ID (SHA1, MD5, or URANDOM).  SHA1 was
-expected to be the default option, but MD5 was used by default due to
-previous issues when linking against Java.  This commit switches genelf
-to use in-house SHA1 utils, and also removes MD5 and URANDOM options
-since we have a reliable SHA1 implementation to rely on.  It passes the
-tools/perf/tests/shell/test_java_symbol.sh test.
+Remove all occurrence of libcrypto in the build system.
 
 Signed-off-by: Yuzhuo Jing <yuzhuo@google.com>
 ---
- tools/perf/util/genelf.c | 72 ++++------------------------------------
- 1 file changed, 6 insertions(+), 66 deletions(-)
+ tools/build/Makefile.feature            |  2 --
+ tools/build/feature/Makefile            |  4 ----
+ tools/build/feature/test-all.c          |  5 -----
+ tools/build/feature/test-libcrypto.c    | 25 -------------------------
+ tools/perf/Documentation/perf-check.txt |  1 -
+ tools/perf/Makefile.config              | 13 -------------
+ tools/perf/Makefile.perf                |  3 ---
+ tools/perf/builtin-check.c              |  1 -
+ tools/perf/tests/make                   |  4 +---
+ 9 files changed, 1 insertion(+), 57 deletions(-)
+ delete mode 100644 tools/build/feature/test-libcrypto.c
 
-diff --git a/tools/perf/util/genelf.c b/tools/perf/util/genelf.c
-index cdce7f173d00..cfedb29260ef 100644
---- a/tools/perf/util/genelf.c
-+++ b/tools/perf/util/genelf.c
-@@ -28,24 +28,7 @@
- #define NT_GNU_BUILD_ID 3
- #endif
+diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+index 57bd995ce6af..bbadfb5568eb 100644
+--- a/tools/build/Makefile.feature
++++ b/tools/build/Makefile.feature
+@@ -86,7 +86,6 @@ FEATURE_TESTS_BASIC :=                  \
+         libtraceevent                   \
+         libtracefs                      \
+         libcpupower                     \
+-        libcrypto                       \
+         pthread-attr-setaffinity-np     \
+         pthread-barrier     		\
+         reallocarray                    \
+@@ -152,7 +151,6 @@ FEATURE_DISPLAY ?=              \
+          numa_num_possible_cpus \
+          libperl                \
+          libpython              \
+-         libcrypto              \
+          libcapstone            \
+          llvm-perf              \
+          zlib                   \
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index b8b5fb183dd4..04a4aa0341aa 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -38,7 +38,6 @@ FILES=                                          \
+          test-libtraceevent.bin                 \
+          test-libcpupower.bin                   \
+          test-libtracefs.bin                    \
+-         test-libcrypto.bin                     \
+          test-libunwind.bin                     \
+          test-libunwind-debug-frame.bin         \
+          test-libunwind-x86.bin                 \
+@@ -246,9 +245,6 @@ $(OUTPUT)test-libcpupower.bin:
+ $(OUTPUT)test-libtracefs.bin:
+ 	 $(BUILD) $(shell $(PKG_CONFIG) --cflags libtracefs 2>/dev/null) -ltracefs
  
--#define BUILD_ID_URANDOM /* different uuid for each run */
+-$(OUTPUT)test-libcrypto.bin:
+-	$(BUILD) -lcrypto
 -
--#ifdef HAVE_LIBCRYPTO_SUPPORT
+ $(OUTPUT)test-gtk2.bin:
+ 	$(BUILD) $(shell $(PKG_CONFIG) --libs --cflags gtk+-2.0 2>/dev/null) -Wno-deprecated-declarations
+ 
+diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
+index 03ddaac6f4c4..ce72e2061ac0 100644
+--- a/tools/build/feature/test-all.c
++++ b/tools/build/feature/test-all.c
+@@ -138,10 +138,6 @@
+ # include "test-bpf.c"
+ #undef main
+ 
+-#define main main_test_libcrypto
+-# include "test-libcrypto.c"
+-#undef main
 -
--#define BUILD_ID_MD5
--#undef BUILD_ID_SHA	/* does not seem to work well when linked with Java */
--#undef BUILD_ID_URANDOM /* different uuid for each run */
--
--#ifdef BUILD_ID_SHA
--#include <openssl/sha.h>
--#endif
--
--#ifdef BUILD_ID_MD5
+ #define main main_test_sdt
+ # include "test-sdt.c"
+ #undef main
+@@ -206,7 +202,6 @@ int main(int argc, char *argv[])
+ 	main_test_lzma();
+ 	main_test_get_cpuid();
+ 	main_test_bpf();
+-	main_test_libcrypto();
+ 	main_test_scandirat();
+ 	main_test_sched_getcpu();
+ 	main_test_sdt();
+diff --git a/tools/build/feature/test-libcrypto.c b/tools/build/feature/test-libcrypto.c
+deleted file mode 100644
+index bc34a5bbb504..000000000000
+--- a/tools/build/feature/test-libcrypto.c
++++ /dev/null
+@@ -1,25 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
 -#include <openssl/evp.h>
+-#include <openssl/sha.h>
 -#include <openssl/md5.h>
--#endif
--#endif
 -
-+#include "sha1_base.h"
- 
- typedef struct {
-   unsigned int namesz;  /* Size of entry's owner string */
-@@ -92,64 +75,21 @@ static Elf_Sym symtab[]={
- 	}
- };
- 
--#ifdef BUILD_ID_URANDOM
--static void
--gen_build_id(struct buildid_note *note,
--	     unsigned long load_addr __maybe_unused,
--	     const void *code __maybe_unused,
--	     size_t csize __maybe_unused)
--{
--	int fd;
--	size_t sz = sizeof(note->build_id);
--	ssize_t sret;
--
--	fd = open("/dev/urandom", O_RDONLY);
--	if (fd == -1)
--		err(1, "cannot access /dev/urandom for buildid");
--
--	sret = read(fd, note->build_id, sz);
--
--	close(fd);
--
--	if (sret != (ssize_t)sz)
--		memset(note->build_id, 0, sz);
--}
--#endif
--
--#ifdef BUILD_ID_SHA
- static void
- gen_build_id(struct buildid_note *note,
- 	     unsigned long load_addr __maybe_unused,
- 	     const void *code,
- 	     size_t csize)
- {
--	if (sizeof(note->build_id) < SHA_DIGEST_LENGTH)
--		errx(1, "build_id too small for SHA1");
--
--	SHA1(code, csize, (unsigned char *)note->build_id);
--}
--#endif
--
--#ifdef BUILD_ID_MD5
--static void
--gen_build_id(struct buildid_note *note, unsigned long load_addr, const void *code, size_t csize)
+-int main(void)
 -{
 -	EVP_MD_CTX *mdctx;
-+	struct sha1_state sctx;
- 
--	if (sizeof(note->build_id) < 16)
--		errx(1, "build_id too small for MD5");
-+	if (sizeof(note->build_id) < SHA1_DIGEST_SIZE)
-+		errx(1, "build_id too small for SHA1");
- 
+-	unsigned char md[MD5_DIGEST_LENGTH + SHA_DIGEST_LENGTH];
+-	unsigned char dat[] = "12345";
+-	unsigned int digest_len;
+-
 -	mdctx = EVP_MD_CTX_new();
 -	if (!mdctx)
--		errx(2, "failed to create EVP_MD_CTX");
-+	sha1_base_init(&sctx);
- 
+-		return 0;
+-
 -	EVP_DigestInit_ex(mdctx, EVP_md5(), NULL);
--	EVP_DigestUpdate(mdctx, &load_addr, sizeof(load_addr));
--	EVP_DigestUpdate(mdctx, code, csize);
--	EVP_DigestFinal_ex(mdctx, (unsigned char *)note->build_id, NULL);
+-	EVP_DigestUpdate(mdctx, &dat[0], sizeof(dat));
+-	EVP_DigestFinal_ex(mdctx, &md[0], &digest_len);
 -	EVP_MD_CTX_free(mdctx);
-+	crypto_sha1_finup(&sctx, code, csize, (unsigned char *)note->build_id);
- }
--#endif
+-
+-	SHA1(&dat[0], sizeof(dat), &md[0]);
+-
+-	return 0;
+-}
+diff --git a/tools/perf/Documentation/perf-check.txt b/tools/perf/Documentation/perf-check.txt
+index a764a4629220..2b96cb578658 100644
+--- a/tools/perf/Documentation/perf-check.txt
++++ b/tools/perf/Documentation/perf-check.txt
+@@ -53,7 +53,6 @@ feature::
+                 auxtrace                /  HAVE_AUXTRACE_SUPPORT
+                 libbfd                  /  HAVE_LIBBFD_SUPPORT
+                 libcapstone             /  HAVE_LIBCAPSTONE_SUPPORT
+-                libcrypto               /  HAVE_LIBCRYPTO_SUPPORT
+                 libdw-dwarf-unwind      /  HAVE_LIBDW_SUPPORT
+                 libelf                  /  HAVE_LIBELF_SUPPORT
+                 libnuma                 /  HAVE_LIBNUMA_SUPPORT
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index d1ea7bf44964..d19d1f132726 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -130,8 +130,6 @@ ifndef NO_LIBUNWIND
+   FEATURE_CHECK_LDFLAGS-libunwind-x86_64 += -lunwind -llzma -lunwind-x86_64
+ endif
  
- static int
- jit_add_eh_frame_info(Elf *e, void* unwinding, uint64_t unwinding_header_size,
+-FEATURE_CHECK_LDFLAGS-libcrypto = -lcrypto
+-
+ ifdef CSINCLUDES
+   LIBOPENCSD_CFLAGS := -I$(CSINCLUDES)
+ endif
+@@ -772,17 +770,6 @@ ifneq ($(NO_LIBTRACEEVENT),1)
+   $(call detected,CONFIG_TRACE)
+ endif
+ 
+-ifndef NO_LIBCRYPTO
+-  ifneq ($(feature-libcrypto), 1)
+-    $(warning No libcrypto.h found, disables jitted code injection, please install openssl-devel or libssl-dev)
+-    NO_LIBCRYPTO := 1
+-  else
+-    CFLAGS += -DHAVE_LIBCRYPTO_SUPPORT
+-    EXTLIBS += -lcrypto
+-    $(call detected,CONFIG_CRYPTO)
+-  endif
+-endif
+-
+ ifndef NO_SLANG
+   ifneq ($(feature-libslang), 1)
+     ifneq ($(feature-libslang-include-subdir), 1)
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index d4c7031b01a7..9246c94656e0 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -61,9 +61,6 @@ include ../scripts/utilities.mak
+ #
+ # Define NO_LIBBIONIC if you do not want bionic support
+ #
+-# Define NO_LIBCRYPTO if you do not want libcrypto (openssl) support
+-# used for generating build-ids for ELFs generated by jitdump.
+-#
+ # Define NO_LIBDW_DWARF_UNWIND if you do not want libdw support
+ # for dwarf backtrace post unwind.
+ #
+diff --git a/tools/perf/builtin-check.c b/tools/perf/builtin-check.c
+index 9a509cb3bb9a..ad49f2564aae 100644
+--- a/tools/perf/builtin-check.c
++++ b/tools/perf/builtin-check.c
+@@ -44,7 +44,6 @@ struct feature_status supported_features[] = {
+ 	FEATURE_STATUS("auxtrace", HAVE_AUXTRACE_SUPPORT),
+ 	FEATURE_STATUS_TIP("libbfd", HAVE_LIBBFD_SUPPORT, "Deprecated, license incompatibility, use BUILD_NONDISTRO=1 and install binutils-dev[el]"),
+ 	FEATURE_STATUS("libcapstone", HAVE_LIBCAPSTONE_SUPPORT),
+-	FEATURE_STATUS("libcrypto", HAVE_LIBCRYPTO_SUPPORT),
+ 	FEATURE_STATUS("libdw-dwarf-unwind", HAVE_LIBDW_SUPPORT),
+ 	FEATURE_STATUS("libelf", HAVE_LIBELF_SUPPORT),
+ 	FEATURE_STATUS("libnuma", HAVE_LIBNUMA_SUPPORT),
+diff --git a/tools/perf/tests/make b/tools/perf/tests/make
+index 0ee94caf9ec1..e3651e5b195a 100644
+--- a/tools/perf/tests/make
++++ b/tools/perf/tests/make
+@@ -91,7 +91,6 @@ make_no_auxtrace    := NO_AUXTRACE=1
+ make_no_libbpf	    := NO_LIBBPF=1
+ make_libbpf_dynamic := LIBBPF_DYNAMIC=1
+ make_no_libbpf_DEBUG := NO_LIBBPF=1 DEBUG=1
+-make_no_libcrypto   := NO_LIBCRYPTO=1
+ make_no_libllvm     := NO_LIBLLVM=1
+ make_with_babeltrace:= LIBBABELTRACE=1
+ make_with_coresight := CORESIGHT=1
+@@ -122,7 +121,7 @@ make_minimal        := NO_LIBPERL=1 NO_LIBPYTHON=1 NO_GTK2=1
+ make_minimal        += NO_DEMANGLE=1 NO_LIBELF=1 NO_BACKTRACE=1
+ make_minimal        += NO_LIBNUMA=1 NO_LIBBIONIC=1
+ make_minimal        += NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1
+-make_minimal        += NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1 NO_LIBZSTD=1
++make_minimal        += NO_SDT=1 NO_JVMTI=1 NO_LIBZSTD=1
+ make_minimal        += NO_LIBCAP=1 NO_CAPSTONE=1
+ 
+ # $(run) contains all available tests
+@@ -160,7 +159,6 @@ run += make_no_libbionic
+ run += make_no_auxtrace
+ run += make_no_libbpf
+ run += make_no_libbpf_DEBUG
+-run += make_no_libcrypto
+ run += make_no_libllvm
+ run += make_no_sdt
+ run += make_no_syscall_tbl
 -- 
 2.49.0.1164.gab81da1b16-goog
 
