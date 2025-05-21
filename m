@@ -1,149 +1,99 @@
-Return-Path: <linux-kernel+bounces-657319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644AAABF281
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:13:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9548ABF288
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 394B61BA1221
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:13:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38BDF1BA571B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC54C262D00;
-	Wed, 21 May 2025 11:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4AE262FCA;
+	Wed, 21 May 2025 11:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kMySf8Ho"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S2WUr5Bm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBB521D585;
-	Wed, 21 May 2025 11:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670453CF58;
+	Wed, 21 May 2025 11:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747825987; cv=none; b=XsEqLm9XEZp/HExJv+C4sqyJ2Vm3rUBKHRS5SZ7yqJ4voDU9TVulnp7DcbruG1OKRayg/iyQLMiS5GOc7eNGttx7ek8QhPTNEa45UaW8fxm65scsl3d0dFor01mFAEDiUnrC0ev0imqtDFAgjzD51AA8lCjuHvChgIkacEWI234=
+	t=1747826167; cv=none; b=QcggHzTGFL4ZxuobxsHZ9Y4sU+SKWWMQbgobDwpmHdv3GPYLhT168clv4HEcbpZHOSSg9eZuLenMAz1fJ4A1IXnumUqorrKDbgvT+RJwFhQ8tw8sR8frPf1/IMsE/FxaVFZipkZmjqJiinf+Zbn8ASJVcIPCIEz/trzpy9GsTCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747825987; c=relaxed/simple;
-	bh=KMwk5bRKMU/LebBXEB9eWTnbBr+EpsbBuq9K0VaAGrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bhSAYizkA4j9ujFuz3arsAPQG/pmU5PEvJKjroIIYMbQBx1nWPhk5avvWBommd4pBjl5ZtZCyw0bw4vE1IjiUz7dq+zUX2PMJTztMgNSsib0eNf/sgTPNiJurHBZt99ujFbPEZvVmrLo3LOno1SSzuBBO2P404esM+0GB6QsA7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kMySf8Ho; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DDAAC4CEEA;
-	Wed, 21 May 2025 11:13:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747825985;
-	bh=KMwk5bRKMU/LebBXEB9eWTnbBr+EpsbBuq9K0VaAGrg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kMySf8HosZyaikPVyIScMp+hB3GqOkFWvUhUNKNKszxfbdGteSbO/Did8aatavUP/
-	 IVpBECjdkejEW911PVNXLhTcN6/ZZ72r1s4qEnDO9YKo+tJta8kNRqZciZyL/5vV+2
-	 ofuSl2tloNUKku7oWkrkFEPgGP22W1lrK+xhozxCOC2b1njBTke9/u9S4/pxfvYBYA
-	 SVV/8v73C3z7NUcy90QNLvNCT49BRRtjpFjHEh4AHuVuLQjA+I97kwL9WZprWPpMlM
-	 YXsa1+T7S7ISGFCFEBwFxwHJ8VaaJDdMuxltl60vtx+rnLAaYHamn4wkpoX6oPJtFp
-	 RYv0C3ly7qyhQ==
-Date: Wed, 21 May 2025 13:12:57 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
-	Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <luca.boccassi@gmail.com>, 
-	Mike Yuan <me@yhndnzj.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
-	Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH v8 0/9] coredump: add coredump socket
-Message-ID: <20250521-urenkel-panne-b19f93234e6f@brauner>
-References: <20250516-work-coredump-socket-v8-0-664f3caf2516@kernel.org>
- <20250520122838.29131f04@hermes.local>
+	s=arc-20240116; t=1747826167; c=relaxed/simple;
+	bh=MFYDkB4OiOP3s0xg9Lmc791GfWg3RvLOwt7pbTrsDJU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rSqe1nP0jZs+NBMn73ohQTbHIhE8eOmXVvhwxaXRVWXa1yz4JDiyQM6Y4vzgi1tsfd7l1C1zj1YC1SWFAdIpV1c/pjVx/Me6Trh4E4yczQkk+OWrlEWJmYiB3REqqguf+eQOk9ksW7DjYEGYveKMxrBw8zJenC3DTKWyu70Mlbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S2WUr5Bm; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747826167; x=1779362167;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=MFYDkB4OiOP3s0xg9Lmc791GfWg3RvLOwt7pbTrsDJU=;
+  b=S2WUr5BmH1OzkyDKOVsqk+tE65lZeEG9ObnelsRViWbE3gJq5X0iavhK
+   OsL5oSOthSLuchx4mP2gZo0JExNrvnYq52XTPuopSeV7aVtzUK8koM/VP
+   pulwBArJBKnqc6yNIxtS359TLB1njaLr89F4GQ0rLqocmmL2dM+j+Ig3C
+   M8zGt+kHtMq+M9LTGIGQkwzwfO6FWOdLa48Q7BnCDOvH667jhQxaLVPoj
+   w59gQovootCpzoYeLiX/snDLfiHgBi1xou0KR6JKrlJukcfuhPPsY7AKJ
+   Atb+79u/duBwEnfN/LNnteil3pvJugMKGx1XMEWBAv+pN/l+M4k20uB7H
+   g==;
+X-CSE-ConnectionGUID: OsILRmCGSceNh11N+jrKtw==
+X-CSE-MsgGUID: jG7vBgp6R6eRqu+QkvxHEQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="52425897"
+X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
+   d="scan'208";a="52425897"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 04:16:06 -0700
+X-CSE-ConnectionGUID: RnmvDbZ8Tt2QCaNUeG5oXw==
+X-CSE-MsgGUID: Ebua7goRT9ufhW4zklc3Ow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
+   d="scan'208";a="144013300"
+Received: from dalessan-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.221])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 04:16:03 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: skhan@linuxfoundation.org, W_Armin@gmx.de, 
+ Sumanth Gavini <sumanth.gavini@yahoo.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250517175626.1363502-1-sumanth.gavini@yahoo.com>
+References: <20250517175626.1363502-1-sumanth.gavini.ref@yahoo.com>
+ <20250517175626.1363502-1-sumanth.gavini@yahoo.com>
+Subject: Re: [PATCH] docs: ABI: Fix "aassociated" to "associated"
+Message-Id: <174782615869.1966.1791685145921891234.b4-ty@linux.intel.com>
+Date: Wed, 21 May 2025 14:15:58 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250520122838.29131f04@hermes.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Tue, May 20, 2025 at 12:28:38PM -0700, Stephen Hemminger wrote:
-> On Fri, 16 May 2025 13:25:27 +0200
-> Christian Brauner <brauner@kernel.org> wrote:
-> 
-> > Coredumping currently supports two modes:
-> > 
-> > (1) Dumping directly into a file somewhere on the filesystem.
-> > (2) Dumping into a pipe connected to a usermode helper process
-> >     spawned as a child of the system_unbound_wq or kthreadd.
-> > 
-> > For simplicity I'm mostly ignoring (1). There's probably still some
-> > users of (1) out there but processing coredumps in this way can be
-> > considered adventurous especially in the face of set*id binaries.
-> > 
-> > The most common option should be (2) by now. It works by allowing
-> > userspace to put a string into /proc/sys/kernel/core_pattern like:
-> > 
-> >         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
-> > 
-> > The "|" at the beginning indicates to the kernel that a pipe must be
-> > used. The path following the pipe indicator is a path to a binary that
-> > will be spawned as a usermode helper process. Any additional parameters
-> > pass information about the task that is generating the coredump to the
-> > binary that processes the coredump.
-> > 
-> > In the example core_pattern shown above systemd-coredump is spawned as a
-> > usermode helper. There's various conceptual consequences of this
-> > (non-exhaustive list):
-> > 
-> > - systemd-coredump is spawned with file descriptor number 0 (stdin)
-> >   connected to the read-end of the pipe. All other file descriptors are
-> >   closed. That specifically includes 1 (stdout) and 2 (stderr). This has
-> >   already caused bugs because userspace assumed that this cannot happen
-> >   (Whether or not this is a sane assumption is irrelevant.).
-> > 
-> > - systemd-coredump will be spawned as a child of system_unbound_wq. So
-> >   it is not a child of any userspace process and specifically not a
-> >   child of PID 1. It cannot be waited upon and is in a weird hybrid
-> >   upcall which are difficult for userspace to control correctly.
-> > 
-> > - systemd-coredump is spawned with full kernel privileges. This
-> >   necessitates all kinds of weird privilege dropping excercises in
-> >   userspace to make this safe.
-> > 
-> > - A new usermode helper has to be spawned for each crashing process.
-> > 
-> > This series adds a new mode:
-> > 
-> > (3) Dumping into an AF_UNIX socket.
-> > 
-> > Userspace can set /proc/sys/kernel/core_pattern to:
-> > 
-> >         @/path/to/coredump.socket
-> > 
-> > The "@" at the beginning indicates to the kernel that an AF_UNIX
-> > coredump socket will be used to process coredumps.
-> > 
-> > The coredump socket must be located in the initial mount namespace.
-> > When a task coredumps it opens a client socket in the initial network
-> > namespace and connects to the coredump socket.
+On Sat, 17 May 2025 10:56:04 -0700, Sumanth Gavini wrote:
+
+> Fix misspelling reported by codespell
 > 
 > 
-> There is a problem with using @ as naming convention.
-> The starting character of @ is already used to indicate abstract
-> unix domain sockets in some programs like ss.
 
-This shouldn't be a problem. First because @ isn't part of the actual
-AF_UNIX path. But mostly because ss and other network related tools have
-no relationship with /proc/sys/kernel/core_pattern whatsoever. I'm not
-opposed to changing it if people do care strongly about it and send a
-patch. But that will happen as a fixup after the merge window.
 
-> And will the new coredump socekt allow use of abstrace unix
-> domain sockets?
+Thank you for your contribution, it has been applied to my local
+review-ilpo-next branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-next branch only once I've pushed my
+local branch there, which might take a while.
 
-No. There's no safe permission model without involving LSMs.
-Unprivileged attackers can recycle the socket address and use it to get
-(suid) coredumps forwarded to them when the server crashes or restarts.
+The list of commits applied:
+[1/1] docs: ABI: Fix "aassociated" to "associated"
+      commit: cad37faac66c3822add86caf02fa0884d309a45f
+
+--
+ i.
+
 
