@@ -1,112 +1,192 @@
-Return-Path: <linux-kernel+bounces-657940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FD91ABFACF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:09:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53DCCABFAD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 545477BCAD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:58:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49E027BAEB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A3C212FB0;
-	Wed, 21 May 2025 15:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F21289364;
+	Wed, 21 May 2025 15:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l32UhK7f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IA294N4V"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F478221F1C;
-	Wed, 21 May 2025 15:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCFE202F7C;
+	Wed, 21 May 2025 15:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747842623; cv=none; b=H4CZdfGoD6Z5OO0eVfKlZLC7c3V9IxEjYKIQtEhSJdx465UgNB5GKRJUHm8GTg8PZME3phrmwCdeLrHeAvhrv8ItzbrnLM4mWGK0WcldnSh2NQ5/pILj8qGN+Af+I+ZADpEB87xq5QMdMIoPraHgaMNjT/AizbuJSRJxT/rxntw=
+	t=1747842744; cv=none; b=MQ201BBVE9KZH4rFOZAeWJXGnVGznCWHCy1yVtD/XVCH4fOs9g3fJwwoYIzq0XPTqYgzrhBS9UX1EXjRoFNUh5F3mu33w/89HvJA9rEJt4IL8MnaRv1vuLcpH89KIoA6r/B+yvj/+BgygysMAESo7bOE7hs8WEnd1qBvjfjW4xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747842623; c=relaxed/simple;
-	bh=nhhhjr3ZsIPlHboQ0WAI79csQhBTmrt+G+gEWWUy9AM=;
+	s=arc-20240116; t=1747842744; c=relaxed/simple;
+	bh=G3q19HiN669ttmrnizWZ+QjhZHbzZgAeZ5tO1aNwb8M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A4wd/iDDi5YH/bfxTulrX7WB4B8RbqLsAmC+3uB7UQYcQQGxYrbl3wuQG96ALK8uMPcAlkNuswwSK/UoFU/wxOTWqShgclcNynwuQyhqb7j8ntP3j0pjMXrihjN11/RB+7/9jCT494qxI0thhBlVuOIfCC4J1SosBVpIEZFof5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l32UhK7f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A30C4CEE4;
-	Wed, 21 May 2025 15:50:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747842622;
-	bh=nhhhjr3ZsIPlHboQ0WAI79csQhBTmrt+G+gEWWUy9AM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l32UhK7fB3bt4qTi87Y9k9ADVMu1chT7/U3WUgudrGPmm++LMMIn9JYghsMRHgsxT
-	 aIuRB+IdUlZzbRC8nYvx3KxEDCH1zYFfNnipqxQshMIpdAQPGLX2HgkFTUpDOKPREY
-	 VN2lWQ1Mdr8PBt1xDeWSMiuLO/g1IXcW+Wey3ATrExTmccfqAUXTJz8b8oHlx15+ey
-	 zpzo6WvmCiO0OLkUiTvg3XpYwgKpZlmd+4e79cwsn9eClOn2hI4JNAM3cBMOxqPXj+
-	 2qTwwKM3DVYZriMwr2UME9WPMvG/3FXN9Zg3wYUVecOOFL/Q9nJR73gvVU8FeerbLj
-	 CsUSKn1fa1TVA==
-Date: Wed, 21 May 2025 16:50:18 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, jic23@kernel.org,
-	krzk+dt@kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, robh@kernel.org,
-	~lkcamp/patches@lists.sr.ht
-Subject: Re: [PATCH v2] dt-bindings:iio:adc:st,spear600-adc: txt to yaml
- format conversion.
-Message-ID: <20250521-grew-rotting-7081d2939477@spud>
-References: <20250506-equivocal-snooper-8a7d1ce931c8@spud>
- <20250520204720.11448-1-rodrigo.gobbi.7@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hjUr+C/epiqXT6jV09mQ2Gfc05OG/DDt5IhBaB/FmOnua3iYW4Z9GcyKkV+E8FW0eA7biN9BQzBXNH9htNLXAX6qPTzUYxOKUyE9DbZ26wZt3/6yRj1dS6OqlzmL/QLDSA5H0mE+F8mOCuyHAmuZew/Jcvb+BVLcu7Q4afu44V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IA294N4V; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54LAmYob030456;
+	Wed, 21 May 2025 15:52:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=gDHHhtfQbx1ibmUx3WjgdrsAL3LQpt
+	CHzJzATlXUBLk=; b=IA294N4VIYz7Xl9khOmSndHrrcCfrEEriWXkB4zsnxTCsz
+	e7fUQm8MrpzHcCH3xwZvbvFHKLjrUWBl3oJX6Uay3oO/igoOPCE597YI6IogQcu7
+	fpffqH44RXhag6eHpqJLb8KttVugdQzBJmf+sonKyUMfZBu3d5HLMAYKGCayaJna
+	5TQ3/tKs0UbCPYP6PZo5YhZzPH7tlmLucg5jDI5EVzIP7LHSsNsM31gPK1NZT0iZ
+	SqCl/p93HKtxXSRFG3MGvoo03bZnQZlI0WgUO9C9FULibcAaD0nm7EGKUkpfArqo
+	ln8cvbnxkE2Jq1pyAgwjmfbpLypc3WVgcEdK8LpQ==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46s3d5m54n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 15:52:20 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54LDfsI8010640;
+	Wed, 21 May 2025 15:52:19 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46rwnmcvv1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 15:52:19 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54LFqFfn42009004
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 May 2025 15:52:15 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ED7F220043;
+	Wed, 21 May 2025 15:52:14 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4A57A20040;
+	Wed, 21 May 2025 15:52:14 +0000 (GMT)
+Received: from osiris (unknown [9.87.128.135])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 21 May 2025 15:52:14 +0000 (GMT)
+Date: Wed, 21 May 2025 17:52:12 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, frankja@linux.ibm.com,
+        borntraeger@de.ibm.com, seiden@linux.ibm.com, nsg@linux.ibm.com,
+        nrb@linux.ibm.com, david@redhat.com, agordeev@linux.ibm.com,
+        svens@linux.ibm.com, gor@linux.ibm.com, schlameuss@linux.ibm.com
+Subject: Re: [PATCH v2 3/5] KVM: s390: refactor some functions in priv.c
+Message-ID: <20250521155212.11483Da8-hca@linux.ibm.com>
+References: <20250520182639.80013-1-imbrenda@linux.ibm.com>
+ <20250520182639.80013-4-imbrenda@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+INKktWV1RqG/D4m"
-Content-Disposition: inline
-In-Reply-To: <20250520204720.11448-1-rodrigo.gobbi.7@gmail.com>
-
-
---+INKktWV1RqG/D4m
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250520182639.80013-4-imbrenda@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: S7fu4XbAOMOOqfUWSoTbebCrKoHHOhPb
+X-Proofpoint-ORIG-GUID: S7fu4XbAOMOOqfUWSoTbebCrKoHHOhPb
+X-Authority-Analysis: v=2.4 cv=cM/gskeN c=1 sm=1 tr=0 ts=682df6b4 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=5jWV00l8V3tV8VPG5IkA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDE1MyBTYWx0ZWRfXww4dJDpaXsUr Nv2v0WaTNoS9cvU+oe7AewTWCw9nQWwXBZEC1Xeuw6dOSvfcpcHPpLBO8XGuXzVgTAuOZ/kJTfW EqsfgDYx+o/xkmPLblFaFPm7mk7FeknU3ynulPoCY5Q6ZyEmP22H89lp8FHbsxy7QH0uWDtgeAr
+ 6e+fhCH0fSnimr3L4Dd1E2qi2CbSzXCX1dVwtw4y0EGJopG5kAcLb8A6O8M2nc/WTSyJvVnxt3A 05NU0/Xlh+mUW9XzCgARJKq6QylW8hD9YJq92xQ01Mfl4SRLk1EsRJfEZV2J1Ot7l/MnvtxdzTm xgWp8es4ERV32cVDvHXligaY7NrcQF9F/FZIzpuFQ/ElGB0WELZa9+wbpTqPLpRqQYi2yd3o+Fq
+ aHt7EmuLOOsXKKm7Zu7TRvwLU44bV/sf9WaZ5fFheX1WGU6ofcynL2ijcLkRN6HgmNLjXRnA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_05,2025-05-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 malwarescore=0
+ impostorscore=0 bulkscore=0 clxscore=1015 spamscore=0 mlxscore=0
+ priorityscore=1501 mlxlogscore=647 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2505210153
 
-On Tue, May 20, 2025 at 05:43:45PM -0300, Rodrigo Gobbi wrote:
-> > Sounds like it's a 4-bit register where the samples is (1 + written val=
-ue),
-> > and the property is expected to be written directly to the register.
-> > I'd then expect the property to be min 0, default 0, max 127. If you
-> > write 128 to the register, you'll accidentally set the external vref
-> > bit. I'd maybe go as far as &ing the value to make sure out of range
-> > stuff is not permitted?
->=20
-> Well, it looks like 4bit as you said (bits 5,6,7 and 8) and 9th bit is vr=
-ef.
-> But, in this case, it looks to me that we can only configure 0x15 as a ma=
-x value,
-> (didn`t see that before) which doesn`t fit the datasheet sentence that I`=
-ve mentioned before:
->=20
-> "Programmable averaging of results from 1 (No averaging) up to 128"
->=20
-> I mean, I`m not sure how many samples are configured when using
-> SPEAR_ADC_STATUS_AVG_SAMPLE(0xD) since we don`t have a register map descr=
-ibing
-> how it encodes that internally. Maybe we can change the requirements for =
-this field to be
-> min 0, default 0, max 15?
+On Tue, May 20, 2025 at 08:26:37PM +0200, Claudio Imbrenda wrote:
+> Refactor some functions in priv.c to make them more readable.
+> 
+> handle_{iske,rrbe,sske}: move duplicated checks into a single function.
+> handle{pfmf,epsw}: improve readability.
+> handle_lpswe{,y}: merge implementations since they are almost the same.
+> 
+> Use a helper function to replace open-coded bit twiddling operations.
+> 
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
 
-I think so, since that matches the behaviour that's been there in the
-driver since the property was introduced.
+...since you asked me to look into this... :)
 
---+INKktWV1RqG/D4m
-Content-Type: application/pgp-signature; name="signature.asc"
+For the sake of reviewability: I guess this really should be split
+into separate patches which address one function each.
 
------BEGIN PGP SIGNATURE-----
+> +static inline void replace_selected_bits(u64 *w, unsigned long mask, unsigned long val)
+> +{
+> +	*w = (*w & ~mask) | (val & mask);
+> +}
+> +
+> +struct skeys_ops_state {
+> +	int reg1;
+> +	int reg2;
+> +	u64 *r1;
+> +	u64 *r2;
+> +	unsigned long effective;
+> +	unsigned long absolute;
+> +};
+> +
+> +static void get_regs_rre_ptr(struct kvm_vcpu *vcpu, int *reg1, int *reg2, u64 **r1, u64 **r2)
+> +{
+> +	kvm_s390_get_regs_rre(vcpu, reg1, reg2);
+> +	*r1 = vcpu->run->s.regs.gprs + *reg1;
+> +	*r2 = vcpu->run->s.regs.gprs + *reg2;
+> +}
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaC32OgAKCRB4tDGHoIJi
-0pMwAQCDZihQlhX5Bi8Mg+rqgAd6gPrq3eDco7Kd2Lhz0Kr3RQD+NWNDjNsRH6au
-nI8rDj4s3sx4QI7SadpcRWJL/jvOSwQ=
-=VqKC
------END PGP SIGNATURE-----
+Ewww...
 
---+INKktWV1RqG/D4m--
+> +static int skeys_common_checks(struct kvm_vcpu *vcpu, struct skeys_ops_state *state)
+> +{
+> +	int rc;
+> +
+> +	if (vcpu->arch.sie_block->gpsw.mask & PSW_MASK_PSTATE) {
+> +		rc = kvm_s390_inject_program_int(vcpu, PGM_PRIVILEGED_OP);
+> +		return rc ? rc : -EAGAIN;
+> +	}
+
+Hm.. first you introduce helper functions which use psw_bits() and now
+this is open-coded again?
+
+> +	rc = try_handle_skey(vcpu);
+> +	if (rc)
+> +		return rc;
+> +
+> +	get_regs_rre_ptr(vcpu, &state->reg1, &state->reg2, &state->r1, &state->r2);
+> +
+> +	state->effective = vcpu->run->s.regs.gprs[state->reg2] & PAGE_MASK;
+> +	state->effective = kvm_s390_logical_to_effective(vcpu, state->effective);
+> +	state->absolute = kvm_s390_real_to_abs(vcpu, state->effective);
+> +
+> +	return 0;
+> +}
+
+So a function which is called "*common_checks" actually may or may not
+set up a state which is later used. This is anything but obvious.
+
+>  static int handle_iske(struct kvm_vcpu *vcpu)
+>  {
+
+...
+
+> -	vcpu->run->s.regs.gprs[reg1] &= ~0xff;
+> -	vcpu->run->s.regs.gprs[reg1] |= key;
+> +	replace_selected_bits(state.r1, 0xff, key);
+
+Who is supposed to understand that this replace_selected_bits() call
+actually changes vcpu->run->s.regs.gprs[reg1]? To me this obfuscates
+the code and makes it much less understandable.
+
+From my point of view this state structure and passing it back and
+forth is a mistake, since it hides way too much what is actually going
+on.
+
+Anyway, just my 0.02. :)
 
