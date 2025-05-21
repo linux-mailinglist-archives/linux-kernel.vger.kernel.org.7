@@ -1,128 +1,129 @@
-Return-Path: <linux-kernel+bounces-657075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C693DABEEE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:01:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB64BABEEDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D34E54E0C58
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F3F63BC788
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83CB0239E9C;
-	Wed, 21 May 2025 09:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LgGfjdai"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007D9238C0A;
+	Wed, 21 May 2025 09:00:43 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADBA2397A4;
-	Wed, 21 May 2025 09:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602C321CFF6;
+	Wed, 21 May 2025 09:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747818062; cv=none; b=O/1Klax2zB1EyIKjxINwHmjdp+gPAX3zwELNhJfcDP1uqpRHvV0fEbpJxzrsMubtSuxO6AY4yL4lBKJBwGtKIpgmxb/CMflSJdRYLAAfHT2NU3wCusXHlnl+cUW/hLfjVt+ON3e1TM1psBnj52WD2aFDG1zq6kGthVGoPOEeuzc=
+	t=1747818042; cv=none; b=Jg0TUF9qUtHZpXALCn9JMJobX7uJiqwtomgtvJGGQn7x5sMlnjdbUIuOmEAdwM54vV30NmBOWdHHh0QI61X8FFXHzReNTcPPmZtbrabxS4QvTSgybIFvy/TvSl2NaSr+64B3prHFytm9wru/pUDOLRdxdL0/f7UQ6/gJQvqZMuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747818062; c=relaxed/simple;
-	bh=CuiAzH8TWBQ6hsj1XQd5STMsT5oYgE3ZD+GMYGuQ7p8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MRqYCyYGCmkJKMd0Edk+B2/J3V6vzSp262E/1Qe8BLAFtgpB+JwQCHQqRCqmcY90DPgF4E0l1wUdHhHZJde7FAK8IZkxzddGgpJAVrHzH82APKULFhmvcaNoc0PsHzBPWAQTgo/OeROSOGM9dRM8+amWkSwdultjPPZNn7PiR9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LgGfjdai; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-30e93626065so4282300a91.1;
-        Wed, 21 May 2025 02:01:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747818060; x=1748422860; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N387pxHdVSd/OCAm1SX+gl4E1/rug0lWTP4/Ovt1H+c=;
-        b=LgGfjdaiGUME4poUwEia3tju22NuUMR3gJ1Jj5yNsk5oHQ7F1HdqXrTVfZzAsA+Nqs
-         PgpmK8DHW93vVNVJPR/4ed8lmMjSOlaVbxVWDXUV/jjTi86bRm9ZvFCGS/Ae6NQf4tiR
-         S3qH5/C5eL0924hqAj45ZQLzsH9BJEulAs91JLwi/8RQ3H7y45ndLOUJK44pMJGuT28O
-         icWxeMqh3zU/jR1GndMvp1bUiMAp0ChojcgkMeWbSziIHkM0P8zACbUmhTd42uOlzSpv
-         4cj13F8qxFG3d540RVdIkwh7yZsxk9QyUSRTHNpIUBzbp0hBPMq3y58mk2X0mnSEfnms
-         Bd3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747818060; x=1748422860;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N387pxHdVSd/OCAm1SX+gl4E1/rug0lWTP4/Ovt1H+c=;
-        b=Id0ZVFDTZEdIXMevsCiK45CylLGr9qqpzGjzXi0sWYppaBU2zKE60iW/argy8yzyoq
-         HKrBUmx4x1MCuf/Nw/0Btu2ri/A+VjMl9DwJYJybu6erH+O0cHWySbs7sQAiVQtMMxlO
-         GuYYb6chcUmyGBVNiMq1XJJG57Vhf1zAn2ti4d2Pui8e8msPDwB6e5FGigxH3dBJrvn0
-         N6zPgBFtPhXNPJZDZCJxa58erLsOOdM/chhwalV71iDsvPBiGJpyJ0x7FHK42Kiv6JIX
-         p1BscD+gI7xWb9+SMLmRtd/jhhm9Pq6e96SwxL/+hLtpshW3y4biu5rKfom6TtDSOQLE
-         h94g==
-X-Forwarded-Encrypted: i=1; AJvYcCVgsfCh3OEk4MULdUeRuM9N7Jz9ZNkC5GkkqPPdxZLtW92BUb5vzhbSTAYbQXhOpgnWw3c=@vger.kernel.org, AJvYcCXOajifMMW1MfmDrzN3kG0jMmn3v4YzUdrimuLh8L80lXkkfHTUG3NhMFoyNavF6EAtxdZT/Ox0GNPUUnZ7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzETSLgjzW17/u8Yivk16gFAZ35VsmC7zlIDNCfIFSkwp/r1lUn
-	3S9IFNmVbodEWmfosU+DewL5Pl7a5rAaSHLpYojA0/K44Mfj04QlsiMfdehsuQ==
-X-Gm-Gg: ASbGnctCyD8uynPND664VC7tDkpvG+u51zLdkYDG7VFyNHVA06fcj8HUsDXfzzKWtbv
-	5iwnwreFqt90vyk9qxT92Hor11HPn0b9gQpKr2735cTclDAHTjISrECsHNAv79/voyAeGHDg35E
-	ka5StZ98FM8qx6BgfZKBjZKpViLPN/gPlL7pJ2+s9ie7qOa/I8M+hdgqJJ91cSYhCIFkyD3y/rf
-	wo2pkmqrPFEYXKFgRuK4+GdEmKyqgQmkFIH9SJcZR4aqQT5isvGYWKkvQEE2bb0lNwJDZXe4b8j
-	URwqsRi3vOdn++yLlQD/GwjHcKvUpoQyVNVW+52Oq9bu+ILDSUOUuHkYijug3FDPkQ==
-X-Google-Smtp-Source: AGHT+IHsVrB4VaPypsN+4SUe+MXj56+UFYuHbv7zeRdMWmi8YxnssZs5wXVFVeeG89P0ORa0XxusUg==
-X-Received: by 2002:a17:90b:528d:b0:2fa:15ab:4de7 with SMTP id 98e67ed59e1d1-30e830ebd92mr34998497a91.12.1747818059382;
-        Wed, 21 May 2025 02:00:59 -0700 (PDT)
-Received: from minh.192.168.1.1 ([2001:ee0:4f0e:fb30:3140:a3fe:81b6:f3a6])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-30f36491625sm3170276a91.25.2025.05.21.02.00.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 02:00:58 -0700 (PDT)
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bui Quang Minh <minhquangbui99@gmail.com>
-Subject: [REPOST PATCH net-next] xsk: add missing virtual address conversion for page
-Date: Wed, 21 May 2025 16:00:35 +0700
-Message-ID: <20250521090035.92592-1-minhquangbui99@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1747818042; c=relaxed/simple;
+	bh=o1yi9i40n6Ti/5ccUtRvwf9FtcowpxHS5L7Ezdark0c=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GETFM7QcZ1xJTBDtJcGYvnmsbsUFOicG7Ss3k0fobw3gJJs40ry2phXBLQgWglWJQzNPFaZn9/CTPNZhIYw3fNOqvp5PBtJ0De9vaSvl+05t/F4MzsLPt9Jo0mP3dmhm7sMjS7ZY3xjKGX9W9g/qe7lBPkR+GXC23rSAqDSFh6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b2QNK2mzjz6GDGS;
+	Wed, 21 May 2025 16:59:45 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 06F41140557;
+	Wed, 21 May 2025 17:00:38 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 May
+ 2025 11:00:36 +0200
+Date: Wed, 21 May 2025 10:00:35 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: <linux-pci@vger.kernel.org>, Jon Pan-Doh <pandoh@google.com>, "Karolina
+ Stolarek" <karolina.stolarek@oracle.com>, Weinan Liu <wnliu@google.com>,
+	Martin Petersen <martin.petersen@oracle.com>, Ben Fuller
+	<ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>, "Anil
+ Agrawal" <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>, Ilpo
+ =?UTF-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, "Sathyanarayanan
+ Kuppuswamy" <sathyanarayanan.kuppuswamy@linux.intel.com>, Lukas Wunner
+	<lukas@wunner.de>, Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney"
+	<paulmck@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, "Oliver
+ O'Halloran" <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>, "Keith
+ Busch" <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>, Terry Bowman
+	<terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>, Dave Jiang
+	<dave.jiang@intel.com>, <linux-kernel@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Subject: Re: [PATCH v7 02/17] PCI/DPC: Log Error Source ID only when valid
+Message-ID: <20250521100035.0000544e@huawei.com>
+In-Reply-To: <20250520215047.1350603-3-helgaas@kernel.org>
+References: <20250520215047.1350603-1-helgaas@kernel.org>
+	<20250520215047.1350603-3-helgaas@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-In commit 7ead4405e06f ("xsk: convert xdp_copy_frags_from_zc() to use
-page_pool_dev_alloc()"), when converting from netmem to page, I missed a
-call to page_address() around skb_frag_page(frag) to get the virtual
-address of the page. This commit uses skb_frag_address() helper to fix
-the issue.
+On Tue, 20 May 2025 16:50:19 -0500
+Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
----
- net/core/xdp.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> From: Bjorn Helgaas <bhelgaas@google.com>
+>=20
+> DPC Error Source ID is only valid when the DPC Trigger Reason indicates
+> that DPC was triggered due to reception of an ERR_NONFATAL or ERR_FATAL
+> Message (PCIe r6.0, sec 7.9.14.5).
+>=20
+> When DPC was triggered by ERR_NONFATAL (PCI_EXP_DPC_STATUS_TRIGGER_RSN_NF=
+E)
+> or ERR_FATAL (PCI_EXP_DPC_STATUS_TRIGGER_RSN_FE) from a downstream device,
+> log the Error Source ID (decoded into domain/bus/device/function).  Don't
+> print the source otherwise, since it's not valid.
+>=20
+> For DPC trigger due to reception of ERR_NONFATAL or ERR_FATAL, the dmesg
+> logging changes:
+>=20
+>   - pci 0000:00:01.0: DPC: containment event, status:0x000d source:0x0200
+>   - pci 0000:00:01.0: DPC: ERR_FATAL detected
+>   + pci 0000:00:01.0: DPC: containment event, status:0x000d, ERR_FATAL re=
+ceived from 0000:02:00.0
+>=20
+> and when DPC triggered for other reasons, where DPC Error Source ID is
+> undefined, e.g., unmasked uncorrectable error:
+>=20
+>   - pci 0000:00:01.0: DPC: containment event, status:0x0009 source:0x0200
+>   - pci 0000:00:01.0: DPC: unmasked uncorrectable error detected
+>   + pci 0000:00:01.0: DPC: containment event, status:0x0009: unmasked unc=
+orrectable error detected
+>=20
+> Previously the "containment event" message was at KERN_INFO and the
+> "%s detected" message was at KERN_WARNING.  Now the single message is at
+> KERN_WARNING.
+>=20
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Tested-by: Krzysztof Wilczy=C5=84ski <kwilczynski@kernel.org>
+> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux=
+.intel.com>
+Matches the spec conditions as far as I can tell.
 
-diff --git a/net/core/xdp.c b/net/core/xdp.c
-index e6f22ba61c1e..491334b9b8be 100644
---- a/net/core/xdp.c
-+++ b/net/core/xdp.c
-@@ -709,8 +709,7 @@ static noinline bool xdp_copy_frags_from_zc(struct sk_buff *skb,
- 			return false;
- 		}
- 
--		memcpy(page_address(page) + offset,
--		       skb_frag_page(frag) + skb_frag_off(frag),
-+		memcpy(page_address(page) + offset, skb_frag_address(frag),
- 		       LARGEST_ALIGN(len));
- 		__skb_fill_page_desc_noacc(sinfo, i, page, offset, len);
- 
--- 
-2.43.0
+I guess interesting debate on whether providing extra garbage info is
+a bug or not. Maybe a fixes tag for this one as well?
 
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+I briefly wondered if it makes sense to have a prefix string initialized
+outside the switch with "containment event, status:%#06x:"
+made sense but it's probably not worth the effort and maybe makes it
+harder to grep for the error messages.  So in the end
+I think your code here is the best option.
+
+Jonathan
 
