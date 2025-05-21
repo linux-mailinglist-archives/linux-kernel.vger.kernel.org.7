@@ -1,148 +1,133 @@
-Return-Path: <linux-kernel+bounces-657041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10778ABEE3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:43:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EDD4ABEE75
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378D6189C7D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:43:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46FF71889CA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF847237704;
-	Wed, 21 May 2025 08:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7DA2376E0;
+	Wed, 21 May 2025 08:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="mvEUbNZR"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GCwY3wbF"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CE322B59D;
-	Wed, 21 May 2025 08:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573A11D8E07
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 08:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747817005; cv=none; b=dScmo7xSZeVBCdRz2WzywGBTY9yMYruJsPVt92yb8/lbTx1THD01m6pA2hXqmxOgMuRtJbm849nIAtRxVQlSbPCkXT9kk25Lm8H1pagwgT0cKxAsNXEEYQbxTtaszN5791H0KjvS5GoKi837mM+ai5W7VLnDfJUV0xuUK3vtN5I=
+	t=1747817204; cv=none; b=YCDgbabeZgRCgjuTmaRKaUcBVXngVvMxDyASnN06RnIkT7kWocYE4SdI7r8+cNw0nypHPyt9wZk5EU925TdK6u3HOKEHnF0GC8oLUb4bzNNxxAfR2cHzYxW7V36Po2STybASPykFzx3z8PjMqsHp8Hg0dp/splnqNy9GtOvu+RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747817005; c=relaxed/simple;
-	bh=9X4AwLZlGBar+bM/Xw9R6KRT90pYbUVpPgLXzn3SK2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DM5ajhHl0dGPql5cfScWGFdvDmnQuPgkDHmUZ+SQw6deWrbQcSGibqMD39NbBqWbRjhtOtYFWNIWKyLsTmLyNHupWAOQwUh20aeFuV/FZBaA3Z8HwGAAFHcncZ0CAexv0uzKGHeF+wQkiUHKKbFfxavf8IMiVBtAhjgf8ysLu9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=mvEUbNZR; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1747816996; x=1748421796; i=wahrenst@gmx.net;
-	bh=9X4AwLZlGBar+bM/Xw9R6KRT90pYbUVpPgLXzn3SK2Y=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=mvEUbNZRPSruuJmCOuz0yv8xe0pMx6Ka/wXVBMiFW7x/9+OEe5KxPqfBoTu4J9EV
-	 yvDtI27X8LLtjzfWCCl620oSoY4TW3qejH0WS3D8wp+RNWnZDaPdc6j4ky47RDgAC
-	 WkNOu/8Z7cUuxiznpOm4XBeQnChPZ1BPmFF1HTB78SF9+j7NEwy3bnD8FKHjOXvcz
-	 jduPF37aN4j/laoPzLbwNPB0HttMtLl1ZhKOFeJJW4vkqUjp9LxpRGf8Kn637jr65
-	 vL28ucVpehoT2lwWbo4K/Wimqhd6wo6BYILiExrauaBwpVyCtavCZVUti6K7cWlD0
-	 FM7criDzDTIZ804xew==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.105] ([91.41.216.208]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N4QwW-1uz4oU1moI-013Hww; Wed, 21
- May 2025 10:43:16 +0200
-Message-ID: <f726766f-29ed-45d7-b6ea-a78b0ee82cf0@gmx.net>
-Date: Wed, 21 May 2025 10:43:15 +0200
+	s=arc-20240116; t=1747817204; c=relaxed/simple;
+	bh=WnhL7uoBNqMZ3Cbebs3yyWF/yxiYNx9JjYSDc3RKJZs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=QWYtbwRCTP7aMQYGjRcdCLjdHZSRqQ4+cMMw4ciACPUjj/r/8y3d/rV2Oovo6ybMvwWAMGKjCxnnN6V+q7MReqNZvkK0x93gWbLVQwJRywz0xMYc/e2VCEFC9A397Fe/UcZb/CtvMw7VxbJnjdhRu7uFf7guIvY6Jct2mB66XdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GCwY3wbF; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250521084639epoutp02ec0de7adb51f5f8bcebae9a42df3d89a~BfnuJUXI12633426334epoutp026
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 08:46:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250521084639epoutp02ec0de7adb51f5f8bcebae9a42df3d89a~BfnuJUXI12633426334epoutp026
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1747817199;
+	bh=shbECNWSz86NpuLRg7p7TU1AfWaNOBZLxT9Qlix0Iyw=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=GCwY3wbFiUvS5MlwKmYAu0tp1ZNdGfc87EuGYRJHtZlkST5CnseL2oNkdSq4+QN97
+	 oKeMm+4LNou75HPrEmdOAixUL7t+tBXZLLDQY6IMksv4yHwyO7PpIZszpOdFK+N9+U
+	 XTVW+Ym4mUPFt0oVkHEg2Y2R8iGkC2V3+OsDVq6g=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250521084638epcas5p3c250d169b4a59ed73f9af721159bd62c~BfntdVWms0169101691epcas5p3Q;
+	Wed, 21 May 2025 08:46:38 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4b2Q572nhDz6B9mH; Wed, 21 May
+	2025 08:46:35 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250521083341epcas5p243dac11e4c5f2221473b8df8c3d7f060~BfcZpYq3P0049100491epcas5p2Q;
+	Wed, 21 May 2025 08:33:41 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250521083341epsmtrp15d2cf9fc5d29a621b7b9c91d2dda336e~BfcZffJTZ0709607096epsmtrp1L;
+	Wed, 21 May 2025 08:33:41 +0000 (GMT)
+X-AuditID: b6c32a52-f0cb424000004c16-ba-682d8fe55e25
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	5C.15.19478.5EF8D286; Wed, 21 May 2025 17:33:41 +0900 (KST)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250521083339epsmtip19122db928827b44efd1a728582b64fef~BfcXjjrho0917109171epsmtip1M;
+	Wed, 21 May 2025 08:33:39 +0000 (GMT)
+From: Faraz Ata <faraz.ata@samsung.com>
+To: andi.shyti@kernel.org, tudor.ambarus@linaro.org, broonie@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alim.akhtar@samsung.com, rosa.pila@samsung.com, dev.tailor@samsung.com,
+	faraz.ata@samsung.com
+Subject: [PATCH v1] dt-bindings: spi: samsung: add exynosautov920-spi
+ compatible
+Date: Wed, 21 May 2025 14:13:24 +0530
+Message-Id: <20250521084324.2759530-1-faraz.ata@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: Convert brcm,bcm2835-aux to DT schema
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250521004634.1792167-1-robh@kernel.org>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-Autocrypt: addr=wahrenst@gmx.net; keydata=
- xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
- IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
- NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
- JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
- TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
- f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
- V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
- aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
-In-Reply-To: <20250521004634.1792167-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:yXAdK3YajtukF5g06xV/psZcbHT4KoM4MuiqxNJHn+dnWh4elfV
- qOaSjL/Rg1q5CrtIXIj04KBL8481jj5YiVIWOEggKYwTIvfx8t+RfBboDHFyFP3RqSxEzFY
- p0RET54OEIS7w9VryuzCAQp3Q1OoiYjv5hFqHBM1GlMqvuLVe0a/Ysp9wH+y3q99xc+PFt0
- k0pGrxhkKBemTK6CkWXkQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LOt0DK2UpQI=;oItIS52uS510wP97iuEORSh31+R
- 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
- +auYg5/G+LDMM=
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsWy7bCSnO7Tft0Mg5nbBS0ezNvGZnH/awej
+	xdSHT9gs1uw9x2Rxb8cydov5R86xWly7sZDd4uWse2wWl3fNYbOYcX4fk0Xjx5vsFv/37GC3
+	+PLzAbPFp1txDnwem1Z1snncubaHzaNvyypGj8+b5AJYorhsUlJzMstSi/TtErgy5q7cz1iw
+	nq2icc5elgbGPtYuRk4OCQETiW+nHrF0MXJxCAlsZ5Q4tXonC0RCUuLw07tQRcISK/89Zwex
+	hQTeMko0HY8GsdkE1CVm3jgC1iwi0M0o0T/jEDOIwyzwnFHi+KY/TCBVwgIBErubfgNVcXCw
+	CKhKnJ8dChLmFbCRuLSthR1igbzE/oNnmSHighInZz4BO4IZKN68dTbzBEa+WUhSs5CkFjAy
+	rWIUTS0ozk3PTS4w1CtOzC0uzUvXS87P3cQIDmytoB2My9b/1TvEyMTBeIhRgoNZSYQ3doVO
+	hhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe5ZzOFCGB9MSS1OzU1ILUIpgsEwenVANTp5GChMFE
+	PRsu8f3Nkzh1L946LZd4Pz/8zJtMxSI/8zihlN9K7V+/5J76Oi942s+ShU5iqSqhws/ZzDaX
+	pXl4ekTGeNlU2cpEd0+NS/xj9LvFYdKmPyuf+h3lOpthuzTszPEfx3tLU8wC8u6vvW7L+6mZ
+	x5Kj3DrzQUNgybPFRwV5LQVluWKMWTgPhbMyhRy4+iPxto2wQYn6I283kSAlBY77T26wX7m6
+	hs3L7sJ3GQuO140FJ/8fi9+5yvuYRsLBt2U84fqLtWbPPT3XfmVtbfLyg/9MjAvWfGb2F5+3
+	0KI0OZaFyb9auDxPbXkx8/H2TEaz7b6N30+5v7HujS5ptVutvr/hs3fb3h+nlViKMxINtZiL
+	ihMBSxZgnNsCAAA=
+X-CMS-MailID: 20250521083341epcas5p243dac11e4c5f2221473b8df8c3d7f060
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250521083341epcas5p243dac11e4c5f2221473b8df8c3d7f060
+References: <CGME20250521083341epcas5p243dac11e4c5f2221473b8df8c3d7f060@epcas5p2.samsung.com>
 
-Hi Rob,
+Add "samsung,exynosautov920-spi" dedicated compatible for
+SPI found in ExynosAutov920 SoC.
 
-Am 21.05.25 um 02:46 schrieb Rob Herring (Arm):
-> Convert the Broadcom BCM2835 auxiliary peripheral clock binding to DT
-> schema format. It's a straight forward conversion.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-a similar patch has already been applied:
+Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
+---
+ Documentation/devicetree/bindings/spi/samsung,spi.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-https://lore.kernel.org/all/20250503080949.3945-1-wahrenst@gmx.net/
+diff --git a/Documentation/devicetree/bindings/spi/samsung,spi.yaml b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
+index 3c206a64d60a..fe298d47b1a9 100644
+--- a/Documentation/devicetree/bindings/spi/samsung,spi.yaml
++++ b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
+@@ -29,6 +29,7 @@ properties:
+       - items:
+           - enum:
+               - samsung,exynos8895-spi
++              - samsung,exynosautov920-spi
+           - const: samsung,exynos850-spi
+       - const: samsung,exynos7-spi
+         deprecated: true
+-- 
+2.34.1
+
 
