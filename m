@@ -1,51 +1,62 @@
-Return-Path: <linux-kernel+bounces-657222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1761FABF136
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:16:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCCFABF13C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE408E1332
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:15:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7834A4E54CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51DB25393B;
-	Wed, 21 May 2025 10:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KfjlYKLM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A41D25CC48;
+	Wed, 21 May 2025 10:16:20 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35374B1E4B;
-	Wed, 21 May 2025 10:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03CC25A2C7;
+	Wed, 21 May 2025 10:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747822559; cv=none; b=gYErn16eaF5O6yd1zWGCsU6ie5wCxN8qFg4mafw8oRzAKiZJzg+o2+eGuqngAB+Qx0FZ4rmOptD9dy277BckhnJaK00DboNk6VQakeF3A9vUUpIw19150SEi4D5J2nA+nHl5LjgdsM4Lj8jDqfivvbOMcWwoE6JGdREDfb07ADc=
+	t=1747822579; cv=none; b=EeW9mjueRlJVpFefOUhvLxpnNfID+z4gIKw6z128Z5oU8ItR39XbuZ/e9wUasgEskQdPU+/g3orRmjWvs8IUGfV3vbDO7mFw62I/QvLgi5249JlNMwqkfunNDemH0iAdz4ODY2tOCCT7MPYDCdIlUkgLQ2PjTGFaiHq1ds1qClY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747822559; c=relaxed/simple;
-	bh=WhNcDNdcCMFkjyOz5BitAckHGsx6PxeBfTOFhl9JO2g=;
+	s=arc-20240116; t=1747822579; c=relaxed/simple;
+	bh=6T1QUc/amUE5rsNgEE10e/znSfETAyKzzFtKKUT26m0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tzIHWChvujn6oF7Df0VhaZDOeXl05LQlp/ijKSRBmjotLzUYSN49iBjH+mf9BcGPMIlHDQoV1E/uJqA/6DxVisdl+ubevgU7Y4iLwL5sweTLvD2oep8sssHL4IxFAKf37wi15cXGF6yTAhFfsIMI5D2lIc9JbMTyJD8ogbKzREc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KfjlYKLM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F076C4CEEA;
-	Wed, 21 May 2025 10:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747822558;
-	bh=WhNcDNdcCMFkjyOz5BitAckHGsx6PxeBfTOFhl9JO2g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KfjlYKLMxSUbkITeMe8nQ7FBxzw/VlsLZcQJ9FKcvN0BOTnfT3Qk17dOQu/YaorxE
-	 oNbYDyesaSdDpWNrIhIWF+HfOIE+YaVB1Gc9UxezSgABde3dH9h0oqY3wCirK1Cq9m
-	 1HVsHlNTxXh4AJJONpXvAgMEtDENLOFevoFMUsxk=
-Date: Wed, 21 May 2025 12:15:49 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Rujra Bhatt <braker.noob.kernel@gmail.com>
-Cc: johan@kernel.org, elder@kernel.org, greybus-dev@lists.linaro.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V1] staging : greybus : Documentation : firmware :
- Replace deprecated strncpy() with strscpy()
-Message-ID: <2025052128-patronage-drowsily-8e2c@gregkh>
-References: <aC2dO1QKTVMOJQ8K@brak3r-Ubuntu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nt+qgXFpuhtGqO4xlIiNSDK5Cpai9I1qUaY3wnSgzTSLGWWJrk2hYAkDiC/yoLcxhDjQZx1UzYpd3v7kYQ29Q09vAZLmnxyLSSKJ4kNWzIhB0wvZK49VQExEeeCHhSa0gYxx4gN+yYKiZSSbD9fmP/Bwjnf0hvlWbaFbdvnY5oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: 2ow+Ga8wT1eXx7zNMU8Auw==
+X-CSE-MsgGUID: HBFHxumzSmuthN6rNTvMhg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49667007"
+X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
+   d="scan'208";a="49667007"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 03:16:06 -0700
+X-CSE-ConnectionGUID: BXhdV1A+QI2fjeweGsmcRA==
+X-CSE-MsgGUID: rNvr0/6OSvCAuxoonGGq5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
+   d="scan'208";a="140937255"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 03:16:04 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andy@kernel.org>)
+	id 1uHgUS-00000003aGi-1Na8;
+	Wed, 21 May 2025 13:16:00 +0300
+Date: Wed, 21 May 2025 13:16:00 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	corbet@lwn.net, lucas.p.stankus@gmail.com, lars@metafoo.de,
+	Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 08/12] iio: accel: adxl313: add FIFO watermark
+Message-ID: <aC2n4OuzzcMTxudT@smile.fi.intel.com>
+References: <20250520225007.10990-1-l.rubusch@gmail.com>
+ <20250520225007.10990-9-l.rubusch@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,55 +65,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aC2dO1QKTVMOJQ8K@brak3r-Ubuntu>
+In-Reply-To: <20250520225007.10990-9-l.rubusch@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, May 21, 2025 at 03:00:35PM +0530, Rujra Bhatt wrote:
-> ----------------------------------------------------------
-> This is the new Patch for the earlier Patch hence made V1. 
-> 
-> [Note: there will be no significant changes.]
-> ----------------------------------------------------------
-> 
-> Changes: 
-> 
-> To ensuring that the firmware tag is properly null-terminated. When copying firmware tag strings to prevent buffer overflows and ensure data integrity.
-> 
-> 
-> Changes has been made in 3 positions:
-> 1: update firmware tag
-> 2: backend update firmware tag
-> 3: backend update firmware tag with unipro
-> 
-> Signed-off-by: Rujra Bhatt <braker.noob.kernel@gmail.com>
-> ---
->  drivers/staging/greybus/Documentation/firmware/firmware.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+On Tue, May 20, 2025 at 10:50:03PM +0000, Lothar Rubusch wrote:
+> Add FIFO watermark configuration and evaluation. Let a watermark to be
+> configured. Evaluate the interrupt accordingly. Read out the FIFO content
+> and push the values to the IIO channel.
 
-Hi,
+...
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+> +	const unsigned int fifo_mask = 0x1f, watermark_mask  = 0x02;
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+Seems you have some (wrong) setting in the text editor?
+One space too many again...
 
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
+...
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+> +static int adxl313_fifo_push(struct iio_dev *indio_dev, int samples)
+> +{
+> +	struct adxl313_data *data = iio_priv(indio_dev);
+> +	int i, ret;
 
-thanks,
+Why is 'i' signed?
 
-greg k-h's patch email bot
+> +	if (samples <= 0)
+
+What is the semantics of the negative samples? Is it an error code? Why not?
+I believe it's ignored again from my previous review.
+
+> +		return -EINVAL;
+> +
+> +	ret = adxl313_fifo_transfer(data, samples);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i  < ADXL313_NUM_AXIS * samples; i += ADXL313_NUM_AXIS)
+
+Ouch, one space too many, *again*!
+
+> +		iio_push_to_buffers(indio_dev, &data->fifo_buf[i]);
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int adxl313_push_event(struct iio_dev *indio_dev, int int_stat)
+> +{
+> +	struct adxl313_data *data =  iio_priv(indio_dev);
+> +	int samples;
+> +	int ret = -ENOENT;
+> +
+> +	if (FIELD_GET(ADXL313_INT_WATERMARK, int_stat)) {
+> +		samples = adxl313_get_samples(data);
+> +		if (samples < 0)
+> +			return -EINVAL;
+> +
+> +		ret = adxl313_fifo_push(indio_dev, samples);
+> +	}
+> +
+> +	return ret;
+> +}
+
+...and again... If you are going to ignore most of the comments, do not expect
+your patches to be applied. I'm stopping here.
+
+...
+
+Also note, try to avoid sending a new version until the review is settled down
+on a previous round.
+
+...
+
+With this being said, I stopped here. Take your time (you have now a few weeks)
+and carefully address / discuss all mentioned pieces of the code in both review
+rounds.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
