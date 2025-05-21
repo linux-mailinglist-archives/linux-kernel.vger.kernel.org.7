@@ -1,110 +1,137 @@
-Return-Path: <linux-kernel+bounces-656841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F37ABEB77
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:45:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3097ABEB83
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A66716978E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 05:45:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89584175D84
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 05:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1305522D781;
-	Wed, 21 May 2025 05:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6B523184A;
+	Wed, 21 May 2025 05:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="1/3ow9bb"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vVI4FQgY"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1702221573;
-	Wed, 21 May 2025 05:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3FC22FDE8
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747806284; cv=none; b=RwLDnH1JmP2Whq3/q/9QEq2flNI8iHC6dw9kKu3EhFlxLtaxNMyCqNo43ca2qAs/MWm/79ChL+P7B9Nj71onE4/bDzwGk4pkGuJm9qrZmEz2+Ejh3YmuMInzUCl4p48px5/+59fwcLcukJbY1OkzG1qkeoIAQRB+zuT8ZjOkcU4=
+	t=1747806768; cv=none; b=Ab1SmrA9c4bKBWI2haHr/df8dpnVd5YsytTp1NykI/sXAuejWptuj2Q3s7Re15KXe2LNfVsiZ6mux1K9n2h5dGEPThLoo3VuQ8SswDNmHgf2hwQ7f9kHJAfYS6qZ4zsl4Anlh++aobF+reggOiWYqwNaxbCLtXQXz0pRTlmgvuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747806284; c=relaxed/simple;
-	bh=K7bMnq0n3jG5IfmeVwyzBiEB38kEhphyrlTYWLlNtKw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M9klPJKrPM2E7YIxwymzMVtZQmYygjnJEysfPWW+UgzIfPpahnXKouGoWYN401MYJcfVybuoz8REmUyfqjTjEML2SP6l8agKILTR0mUUc5kwvT2VkvbN3tlsCHvbTsQfsWl2BJIQA73ES19aalmyCaFWHDcKcJ9iVQ3dlkTBOvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=1/3ow9bb; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1747806282; x=1779342282;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=K7bMnq0n3jG5IfmeVwyzBiEB38kEhphyrlTYWLlNtKw=;
-  b=1/3ow9bbFTYuLiAdCNPx4CzZibAFXKgDWBEN5dbIsOVDKezScHVYfDWf
-   vWll7FHiWxanJC7l+eQsFeUaV0+lEebdGaZ5do1ANwZKsH32vplGpQcDb
-   IRDhkvF0JcXFTXsV0z3TKwt5+fWvdlgqkvHVBMEOe4t3fa/bfD6fE11jF
-   IXjHexFaJV5SA15CzcuyILOMZ5NCtCjt9uSConhI3UV6BR/4p0Jr7T826
-   qZTvBjkyVfLHthaoYj3kC+Ny+r3TN54XALn7L/iLgHySbQJPoOYmgRO1h
-   6GEGE3qpmAbgfN5DEDkZZT0xmiJ561FxB0GxpB1vEZ+GnMWM145Y6TyGO
-   g==;
-X-CSE-ConnectionGUID: OHsW4HofReOO8QjhtcrDLg==
-X-CSE-MsgGUID: 9ssiEkXmRVWT+8rHJ/me/g==
-X-IronPort-AV: E=Sophos;i="6.15,303,1739862000"; 
-   d="scan'208";a="41428790"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 May 2025 22:44:41 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 20 May 2025 22:43:45 -0700
-Received: from che-lt-i67131.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Tue, 20 May 2025 22:43:40 -0700
-From: Manikandan Muralidharan <manikandan.m@microchip.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <tudor.ambarus@linaro.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Manikandan Muralidharan <manikandan.m@microchip.com>
-Subject: [PATCH v2 4/4] ARM: dts: microchip: sama5d2_icp: rename spi-cs-setup-ns property to spi-cs-setup-delay-ns
-Date: Wed, 21 May 2025 11:13:09 +0530
-Message-ID: <20250521054309.361894-4-manikandan.m@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250521054309.361894-1-manikandan.m@microchip.com>
-References: <20250521054309.361894-1-manikandan.m@microchip.com>
+	s=arc-20240116; t=1747806768; c=relaxed/simple;
+	bh=XK36jMGVzHFAZgmjJ27ea0/5+ipW+lWL7+7Z1Xg4B7I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WM04eh+oIpHzfKJ4cMiKm0ZDbirHpWr1K4fYlgZhK1pN2dGCwvoM5uFeMqpZFKB1Ppla9WpCsg+I4KXSAw1nMfR9C3AhSEC3P57pevrbljVUyMLw+rAgyYaj5kifWQNKw66URTojQzX9/bFQozBM1eqIj0wD59FwJ1Ur2QdoS9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vVI4FQgY; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-551ee6831d0so556835e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 22:52:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747806765; x=1748411565; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y+6EfRxcF6nuSTzFfX95UFC3FA7d4vYOazasa3XUuf4=;
+        b=vVI4FQgYbHGS07oqkP+suv1E+Ur4SKl4SO1CHd2ajs0atL4HTpw7WSMFidMKTAnX6u
+         1ynFH3xt/CAsBca2Y2JcI8uk1LKt3wZIZ8I1NiZQFSyVgUSo2q4K2r6HquaPurhxRwY8
+         oQ1RU+ap6BXe0HOckvQkXkXaMvRHGD9CwF5JjatPBcePdGVVMWZ/Sz3bd9HoMa4FWEY0
+         TEdLFq7rptGj+u4j+79cwNvVgXsLlSryvGs0rat5vgtQZPHmUtKGva7XcmJnlcLzpmXs
+         JcfZaRtWTpmAG5yu/5fKGqXnpurp7QKinfMv3/WPEDQE8ZXypxVP1fwrzC8AaWIn0aAQ
+         qAXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747806765; x=1748411565;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y+6EfRxcF6nuSTzFfX95UFC3FA7d4vYOazasa3XUuf4=;
+        b=rHE6F8Vrz3XRACV66Gx35/igd8D0W+8K5zwLeBgoU0hCau5GQoCfBacLAoynApHzrY
+         ngZ2eNIIWcqbyYdz1K1m81ZgpWN5uDSCBsSj1wx3s3Vfe4D6b/V8Vh64pvgceGGXjnMn
+         +mmmklr/xHK6Sq+TMzIb+wS8RdaTdgdj8EvSKnmaHAbwhhVBgVtadW2GPLOC7339xdQF
+         FguhuEN6zpQApu+phx/hP/GpvND6Fpcu0DF/F21RGMwqyN3lURyDrHxWMcrP6LN9HiDG
+         xm7M97RRi2fZWdOog943w1uPUUeru975ItAAhxsEe21WEpoHb8THU/jkYMP0xaDbYPmU
+         TL0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXJKktXdqFRtnu4t/NBOqJiCRkdSVXkppBN4YOO/Cy7l7/hBKLuWUAEyBvtbz9iEV2iEuwLaIJBjNTgYGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yymzw8v+a0QFHNW1RIvVEIkM+bJTrC4k5eTi/M91A9UpHTHdvwu
+	Qy/85W8Sc7eoKCgcU81lYpiJbLxeojY7dXfQqM1sX7y6OTm79LpZJyftjGnnIkkAjq0=
+X-Gm-Gg: ASbGnctfDHuhi+95U/xjvRVVuWrdC7eOYxmXm6shme3yDWNzOlF9wfBx5Yzm/EnxEMR
+	aeKNgQlmz8CI8INsl2/o+mCwICCOK+o2MQL/WlqOZXyrPJRb5GSD++KSYkCZVy/y8E4pGsZaVUt
+	5LZ5KioCXIa9hinWPV22rbcpLKjO1MZEqtCehWrsAcMXPVMyeCrHo6OEXx3djveIpc/qDbX/1Hx
+	AMvRTvdvPTRXLj+HigW8RAFrwOVLcngjCZHJmafh1No494GPHoS1Y3novNYA6PcQbciIVtke/Sb
+	K7AmjpQVqv7UAdhWajS/+FPDSBpnSt5hopYdU7K/0yCpRgDLrXqZWLM6qvwOGELg0TIS0wAoPJo
+	lxtEb1CdNOMiZA5IuE+b+Y9YrhMqqWA==
+X-Google-Smtp-Source: AGHT+IFfkKSuF3lu5EAykJJmWP101sRAftrK7GAUTkyq+we+sis+bJZidTWqi/zTuN0t5a5RTdKujA==
+X-Received: by 2002:a05:6512:1382:b0:54f:bdfe:ece1 with SMTP id 2adb3069b0e04-550e7248054mr2031565e87.16.1747806764709;
+        Tue, 20 May 2025 22:52:44 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55206407368sm246913e87.212.2025.05.20.22.52.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 May 2025 22:52:44 -0700 (PDT)
+Message-ID: <76052af9-96c2-46d6-85c6-65998c389554@linaro.org>
+Date: Wed, 21 May 2025 08:52:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: qcs615: Enable camss for
+ qcs615-adp-air
+Content-Language: ru-RU
+To: Wenmeng Liu <quic_wenmliu@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, bryan.odonoghue@linaro.org, todor.too@gmail.com,
+ rfoss@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+References: <20250520-qcs615-adp-air-camss-v1-0-ac25ca137d34@quicinc.com>
+ <20250520-qcs615-adp-air-camss-v1-2-ac25ca137d34@quicinc.com>
+ <748f96f7-d690-4823-845f-67642db97a06@linaro.org>
+ <dabed183-6907-4483-8c79-616aafaf2851@quicinc.com>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <dabed183-6907-4483-8c79-616aafaf2851@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The naming scheme for delay properties includes "delay" in the name,
-so renaming spi-cs-setup-ns property to spi-cs-setup-delay-ns.
+Hi Wenmeng.
 
-Fixes: 46a8a137d8f6 ("ARM: dts: at91: sama5d2_icp: Set sst26vf064b SPI NOR flash at its maximum frequency")
-Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
----
-changes in v2:
-- add fixes tag
----
- arch/arm/boot/dts/microchip/at91-sama5d2_icp.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 5/21/25 04:32, Wenmeng Liu wrote:
+> 
+> 
+> On 2025/5/20 20:19, Vladimir Zapolskiy wrote:
+>> Hello Wenmeng,
+>>
+>> On 5/20/25 11:56, Wenmeng Liu wrote:
+>>> This change enables camera driver for QCS615 ADP AIR board.
+>>
+>> what is the rationale of enabling CAMSS on the board without giving any
+>> description of any sensors connected to the SoC?
+>>
+> 
+> Hi Vladimir,
+> 
+> We can perform validation through the CSID TPG(Test Pattern Generator),
+> so I enabled CAMSS.
+> 
 
-diff --git a/arch/arm/boot/dts/microchip/at91-sama5d2_icp.dts b/arch/arm/boot/dts/microchip/at91-sama5d2_icp.dts
-index 9fa6f1395aa6..fbae6a9af6c3 100644
---- a/arch/arm/boot/dts/microchip/at91-sama5d2_icp.dts
-+++ b/arch/arm/boot/dts/microchip/at91-sama5d2_icp.dts
-@@ -714,7 +714,7 @@ flash@0 {
- 		compatible = "jedec,spi-nor";
- 		reg = <0>;
- 		spi-max-frequency = <104000000>;
--		spi-cs-setup-ns = <7>;
-+		spi-cs-setup-delay-ns = <7>;
- 		spi-tx-bus-width = <4>;
- 		spi-rx-bus-width = <4>;
- 		m25p,fast-read;
--- 
-2.25.1
+Since this is just a test of CAMSS without any sensors/CSIPHY, then
 
+1. camss-csiphy-3ph-1-0.c changes from the series have never been tested
+    and added as dead code, it shall be removed from the series,
+2. adding voltage regulators to the board dts is void and shall be removed.
+
+Not to substitute but in addition to the above it's still doubtful, if just
+a hardware/driver test configuration deserves to be added into the dts.
+
+--
+Best wishes,
+Vladimir
 
