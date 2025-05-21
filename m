@@ -1,55 +1,61 @@
-Return-Path: <linux-kernel+bounces-657461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16E1ABF460
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:34:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBFF4ABF466
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFBD8C5742
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:33:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB8C24E71BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BE0266EFC;
-	Wed, 21 May 2025 12:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB803266584;
+	Wed, 21 May 2025 12:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vlNsk5rG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ef//jObW"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0FD266584;
-	Wed, 21 May 2025 12:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1353923909C;
+	Wed, 21 May 2025 12:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747830833; cv=none; b=Yu98VyCvi/WPMcIAc6/cLswlmdnEwciY6ixR6IP90oPq0BWe5kRyWn8R/FzNm70aFCuGXdET+DOXmgYuUZdFahHNyF2tC1p06gCicgFeLuFwIDueFb8AATh2eFE2mvQaGh7V7g3l7hI9NQH19Z0/z/QUpeIKIRlv1nMhjmmDCpQ=
+	t=1747830864; cv=none; b=IwuvnAAOswvuM1oA5E3Q4k/nW61umAxiL7zsJCMtqqWiSM36LGPXUTAQlAsRAZvspqpbFeClrBiFbSIl9mEzxeovOAIte5tjNDaxFT4SYykt1OhsJH2Hv0gTl5aeqFL9TD4HCQlBmQ0nO128Tnz5CYfRi0zqZXbhT6MrBYesN4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747830833; c=relaxed/simple;
-	bh=IQ7D5d13ogQRrujdTaDoGuXHAM/pLSWmE8ThTe1Btn0=;
+	s=arc-20240116; t=1747830864; c=relaxed/simple;
+	bh=/+8NUsmoNssJxYA0RzXXY7/+dbkVqd/qvdK98c4x3UM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sVAkSwcgt7i1V1FQTeq/E4/bQtPmE+ctIfgJjnEL/v9wFCuRvEIzARUM4gnKthoaRwJDfsF5tiEmgtkzmEvNjIrgEyBU3ql8VE3yaqmzp6DHthrEUquL3AhGLB29Jic2e8D/3waykHqqNGBQgY+VCLdffv3IZAo4EKjTUcCxMM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vlNsk5rG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E226DC4CEED;
-	Wed, 21 May 2025 12:33:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747830832;
-	bh=IQ7D5d13ogQRrujdTaDoGuXHAM/pLSWmE8ThTe1Btn0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vlNsk5rGtJUkle4lhgVUI8lIyN+eHAEjFc1tDz6Als66sNcjLeqodI9gdYFpRRQRB
-	 To7mD4kI0W5BExYGjfYTGKBbCBYrdtGho0ObJOKlI/SPsUqN3pHgfAiPKDAFgwgGeQ
-	 MEPu8IppmXSAznu+U2C5CRTwiyAGIT9q6uTvC/gM=
-Date: Wed, 21 May 2025 14:33:49 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] ALSA: qc_audio_offload: address space cleanups
-Message-ID: <2025052139-passport-trembling-4db5@gregkh>
-References: <20250513123442.159936-1-arnd@kernel.org>
- <8734d7va5t.wl-tiwai@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8sT9DEnjpDDEdfto+7cBVk5VoDrxit8KxnWdAaDnPY0ZkQy6czmttF21OS3eH2KDq7iCAnSPnhXbZPCAC/JAYziFupZ/evNOhd9nD7DExbgli94LvxzGANsJkolFbr4FPOYMjInNCmYgGUK7XD9Ty7sW9RYuayr7j1tmVNxkk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ef//jObW; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=qEPg1tXQmSMVouRlKQXAp5F4RbrwowS/jmvNYKyuEDc=; b=ef//jObWa5RZuUnWZB/+bJUiO4
+	YYfsG6SmPTzUD4W1/CLQe0QXcnJcatMoDITomTyP5fC8uzzcS8pq4BBFLNRQgpSqEmyuvE7DzKuy0
+	ObcfgwpNW9+kuEALtqGJHIfQ5+dX/kYTbfBh7E477Q7P+6zAJW1Si31HfyN7onQSuZK8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uHie4-00DGkL-D2; Wed, 21 May 2025 14:34:04 +0200
+Date: Wed, 21 May 2025 14:34:04 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+3b6b9ff7b80430020c7b@syzkaller.appspotmail.com,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH net-next] net: usb: aqc111: fix error handling of usbnet
+ read calls
+Message-ID: <39e2951b-6e57-4003-b1c7-c68947f579be@lunn.ch>
+References: <20250520113240.2369438-1-n.zhandarovich@fintech.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,36 +64,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8734d7va5t.wl-tiwai@suse.de>
+In-Reply-To: <20250520113240.2369438-1-n.zhandarovich@fintech.ru>
 
-On Wed, May 14, 2025 at 11:01:02AM +0200, Takashi Iwai wrote:
-> On Tue, 13 May 2025 14:34:39 +0200,
-> Arnd Bergmann wrote:
-> > 
-> > From: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > I ran into a build time warning and spent some time trying to
-> > gently rewrite the new driver to avoid the warning and make it
-> > behave more like other drivers.
-> > 
-> > I'm still a bit confused about what the driver actually does
-> > and why a buffer has to be mapped into a two devices, but I hope
-> > that either my patches clear this up enough, or if they are wrong
-> > are helpful to have someone else sort it out properly.
-> > 
-> > The patches are currently queued for v6.16 in Greg's usb-next
-> > tree, so my fixes look correct, I hope he can apply them there
-> > before the merge window.
-> > 
-> > Arnd Bergmann (3):
-> >   ALSA: qc_audio_offload: rename dma/iova/va/cpu/phys variables
-> >   ALSA: qc_audio_offload: avoid leaking xfer_buf allocation
-> >   ALSA: qc_audio_offload: try to reduce address space confusion
+On Tue, May 20, 2025 at 02:32:39PM +0300, Nikita Zhandarovich wrote:
+> Syzkaller, courtesy of syzbot, identified an error (see report [1]) in
+> aqc111 driver, caused by incomplete sanitation of usb read calls'
+> results. This problem is quite similar to the one fixed in commit
+> 920a9fa27e78 ("net: asix: add proper error handling of usb read errors").
 > 
-> JFYI, the qcom offload stuff is currently only on Greg's USB tree, not
-> on Mark's or my sound git tree.
+> For instance, usbnet_read_cmd() may read fewer than 'size' bytes,
+> even if the caller expected the full amount, and aqc111_read_cmd()
+> will not check its result properly. As [1] shows, this may lead
+> to MAC address in aqc111_bind() being only partly initialized,
+> triggering KMSAN warnings.
 
-Ok, I'll take this through the usb tree now, thanks.
+It looks like __ax88179_read_cmd() has the same issue? Please could
+you have a look around and see if more of the same problem exists.
 
-greg k-h
+Are there any use cases where usbnet_read_cmd() can actually return
+less than size and it not being an error? Maybe this check for ret !=
+size can be moved inside usbnet_read_cmd()?
+
+	Andrew
 
