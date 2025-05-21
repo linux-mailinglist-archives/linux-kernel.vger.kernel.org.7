@@ -1,257 +1,164 @@
-Return-Path: <linux-kernel+bounces-657770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED35ABF8BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:05:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8EDABF8B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3325C188C2DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:01:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E457A9E6D0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFAF21D3C9;
-	Wed, 21 May 2025 14:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC39217679;
+	Wed, 21 May 2025 14:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bEG+QU3s"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6651421CC71;
-	Wed, 21 May 2025 14:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VIEvLMp1"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796711E25E8
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747839359; cv=none; b=KN1yV4JzPF9vpqpKBDK/DsLbYG6yp0g27jO50hqzMXAfMGrJ1PFauzluT3Y+yraZZyBpX3I2LofhLuOFBNJrsvU1tYkkugDvAmP7LCtmktwSGvU8HA6BUVTnBHRYIs1JmdrXTLJbla1wjYbnU9oJPH9KL0cc2gvb/61e1sUol7Y=
+	t=1747839289; cv=none; b=dLZoxyjy+bKlalwoSL4ZYC8kf89xYhrOO6o+Wj5+aTwYLIJfveiacdqGhulvNemFfNiAENnuVG1+L0Xwcm+cjXK4gzDEdawXvI4RxxQQKlBUEipW6Zyoh6qWI2WFWaBYcbQ09h2cq1kc6I6DfDvxN2W6lXDf6h7fPSw3E//64oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747839359; c=relaxed/simple;
-	bh=LkusQmqOpI75o2Q1VxnAhBjBHjhBv81PTj17PfR973Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EDz5D6YHMTOWKFnPLIQKZ+TaCofmnVy1UIbcT9siSaHroZHXQOWF+7a160lDjcaBaRbAt/XDtYaiz0iQjP33OfxI7E7+6jpXAwtMtFM+uD2CsAxj6lFw8FaSaL0usBWA2oDAcW/NPlaiz2dYmJBTs05kgYNOe9TTMZ6CmhOMN1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bEG+QU3s; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=nhOxlgQ7+nfY4fwX45DJfisexcraDE8HthO3m6cUSD8=;
-	b=bEG+QU3sKSN/NuvpbocLmTAFjn3OMDEwDPaUnaC4kS0C3iK4mzIwaEF4HmcXVO
-	ZnavcnhanmaTbXJVe895+oOvXpEvoByrtyGULwfs5LbkZZWGHlKzzDNA9uV/SDpM
-	sPf/8zRaFqw9/a8dXV2ei6j7Fyqo0BTA7lfmWG7yDChVg=
-Received: from [192.168.71.93] (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDX_2cp6S1oyxI2DA--.34395S2;
-	Wed, 21 May 2025 22:54:34 +0800 (CST)
-Message-ID: <1c21ec0b-ca89-4f7e-85f2-bdb48edb8055@163.com>
-Date: Wed, 21 May 2025 22:54:33 +0800
+	s=arc-20240116; t=1747839289; c=relaxed/simple;
+	bh=g5o3Nqq+12QtnhdnyLa71d3lmoiKsw+P4TPbuoPLHZ8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=V2JagRay0aJRxmcI8RXtw8YwYuC3iIeUS7Uu7l1xyvPgOjayDxaRrlh/PEuR8YXF5NwawGImZLkSEeJ/kRNOZ2jTgiIaNn2KD0sdHJl0cPUPC+AXBUYnrTLcvF+NvspHfHLJHfvmNMGR/YqbnO9LpEpHocSCYdseZ0pVwWmmi0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VIEvLMp1; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-af534e796baso4302404a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 07:54:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747839287; x=1748444087; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=thYs3889Ousb7k+ZZfQYw/dD0hy82Q8J9WVoVEq9Omc=;
+        b=VIEvLMp1i1MqExyDjT+LlPoAMtoBa7szBruNgrHtopq/NW78LLoZBvMULgt3b+/zJp
+         PMW25Uv35Xfg/Ry/S++uNZmI/4fQX9vv40M0ljlNFIhx2tDXTztL1vk+SnsiSoJFaRnl
+         sc1IdEDw+08048naNNnYDruD8vvwwOXpdKBTEj3CtR4Ib6BM1hsFy5iSNoSyrqcGTHAu
+         3q8OUBY8dKv8YCHJ28XseFU9mv6xs7c+oY38c3b5Amgor7U5jd0qjxcMPNrZPre8f8xF
+         xvizVEqguw5wP9dK93eYL7rsK9Sr0TwsbiMm85UX9wfnATzCeLVrCfdmyRyPevZ2rUdU
+         TrjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747839287; x=1748444087;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=thYs3889Ousb7k+ZZfQYw/dD0hy82Q8J9WVoVEq9Omc=;
+        b=Zhd1fQAqYs5QGex1lTHI3W/r/oCKTsNNS3gqqzZ3aUHK9rgX2BikM2r4A8Bgfwar1k
+         bqce/FTP35lD1F5W3Gp8jXYKemfH9gYRFRkp9wOW513PRLnkyrlSeti2OViVoBbII/16
+         lTjycpEfAKj35bWpc9O1K9egsBlY67G4uFdCHY/CX8iyMcOexylLp5Qsj+AY119EYcIh
+         +VG9SqF8aKx77mSgD/d86FzNtZCC34wRV9eQ4vyNV1GvkMc0XnLz5qW5u7ppiSDxd2yB
+         mJ63BBffNzlMQ+8e+PC2N64ic3SMDg8YfcUA6SMVfDVZHYcnjZllRTpnnGay+p0b+jI+
+         JHwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWAxeGopSRIc8UUaOv0uTbjqMtx+eqaHO5nIiaFAAgkQagbu8RECTx+7ZRnaWHKb/ekxPXoGNLmDeHaYuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy98vSL/KQh7Q5saxpvIBQyudaFBODN5z5jjOZmYgpulT1h3pYN
+	9r2A04yMPYW7lSGMnY/db5Qg+LfssmL7iPes0tVIvC+EVIPQW8/SGxD28/DNC/z7VV3HPpC5Nku
+	3g32YqQ==
+X-Google-Smtp-Source: AGHT+IF6SYrFe7nPRPAq7TPWgFsw7aSxwiQ8XUDXD5y3+wwBUIEf+xIrrkqqONC3ZB2dH96qLqBKSiFqODw=
+X-Received: from pjj13.prod.google.com ([2002:a17:90b:554d:b0:2fc:11a0:c549])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3c45:b0:30a:4c29:4c9c
+ with SMTP id 98e67ed59e1d1-30e7d4eeecdmr31100671a91.6.1747839286735; Wed, 21
+ May 2025 07:54:46 -0700 (PDT)
+Date: Wed, 21 May 2025 07:54:45 -0700
+In-Reply-To: <aC2Z1X0tcJiAMWSV@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] pci: implement "pci=aer_panic"
-To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
- bhelgaas@google.com, tglx@linutronix.de, kw@linux.com,
- manivannan.sadhasivam@linaro.org, mahesh@linux.ibm.com
-Cc: oohall@gmail.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <20250516165518.125495-1-18255117159@163.com>
- <a1fdd6e1-8cd9-46b0-bd27-526729a1199d@linux.intel.com>
- <8434dc81-5d2d-4ce1-ab73-ca1cf16cb550@163.com>
- <e6ad7ef5-de9c-49bc-9882-5e97bd549168@163.com>
- <3dd17a45-2305-4ac4-a195-4c54ce357ddc@linux.intel.com>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <3dd17a45-2305-4ac4-a195-4c54ce357ddc@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDX_2cp6S1oyxI2DA--.34395S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3GFy3GrW7tF1fZF13XF1DKFg_yoWxAw1rpa
-	yrAa1jkr4DJFyxAFn2yw1xXryYyasrJwn8Wrn5Jr1agrn0vryUXr4SvF45CF98WrnrWw1U
-	ZF40v3srWr15ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U1rWwUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOg5Uo2gt4OzfkwAAsG
+Mime-Version: 1.0
+References: <20250516213540.2546077-1-seanjc@google.com> <20250516213540.2546077-6-seanjc@google.com>
+ <aC2Z1X0tcJiAMWSV@yzhao56-desk.sh.intel.com>
+Message-ID: <aC3pNVfgNcnuJXUG@google.com>
+Subject: Re: [PATCH v3 5/6] KVM: Use mask of harvested dirty ring entries to
+ coalesce dirty ring resets
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Xu <peterx@redhat.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, James Houghton <jthoughton@google.com>, 
+	Pankaj Gupta <pankaj.gupta@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-
-
-On 2025/5/21 00:09, Sathyanarayanan Kuppuswamy wrote:
+On Wed, May 21, 2025, Yan Zhao wrote:
+> On Fri, May 16, 2025 at 02:35:39PM -0700, Sean Christopherson wrote:
+> > @@ -141,42 +140,42 @@ int kvm_dirty_ring_reset(struct kvm *kvm, struct kvm_dirty_ring *ring,
+> >  		ring->reset_index++;
+> >  		(*nr_entries_reset)++;
+> >  
+> > -		/*
+> > -		 * While the size of each ring is fixed, it's possible for the
+> > -		 * ring to be constantly re-dirtied/harvested while the reset
+> > -		 * is in-progress (the hard limit exists only to guard against
+> > -		 * wrapping the count into negative space).
+> > -		 */
+> > -		if (!first_round)
+> > +		if (mask) {
+> > +			/*
+> > +			 * While the size of each ring is fixed, it's possible
+> > +			 * for the ring to be constantly re-dirtied/harvested
+> > +			 * while the reset is in-progress (the hard limit exists
+> > +			 * only to guard against the count becoming negative).
+> > +			 */
+> >  			cond_resched();
+> >  
+> > -		/*
+> > -		 * Try to coalesce the reset operations when the guest is
+> > -		 * scanning pages in the same slot.
+> > -		 */
+> > -		if (!first_round && next_slot == cur_slot) {
+> > -			s64 delta = next_offset - cur_offset;
+> > +			/*
+> > +			 * Try to coalesce the reset operations when the guest
+> > +			 * is scanning pages in the same slot.
+> > +			 */
+> > +			if (next_slot == cur_slot) {
+> > +				s64 delta = next_offset - cur_offset;
+> >  
+> > -			if (delta >= 0 && delta < BITS_PER_LONG) {
+> > -				mask |= 1ull << delta;
+> > -				continue;
+> > -			}
+> > +				if (delta >= 0 && delta < BITS_PER_LONG) {
+> > +					mask |= 1ull << delta;
+> > +					continue;
+> > +				}
+> >  
+> > -			/* Backwards visit, careful about overflows!  */
+> > -			if (delta > -BITS_PER_LONG && delta < 0 &&
+> > -			    (mask << -delta >> -delta) == mask) {
+> > -				cur_offset = next_offset;
+> > -				mask = (mask << -delta) | 1;
+> > -				continue;
+> > +				/* Backwards visit, careful about overflows! */
+> > +				if (delta > -BITS_PER_LONG && delta < 0 &&
+> > +				(mask << -delta >> -delta) == mask) {
+> > +					cur_offset = next_offset;
+> > +					mask = (mask << -delta) | 1;
+> > +					continue;
+> > +				}
+> >  			}
+> > -		}
+> >  
+> > -		/*
+> > -		 * Reset the slot for all the harvested entries that have been
+> > -		 * gathered, but not yet fully processed.
+> > -		 */
+> > -		if (mask)
+> > +			/*
+> > +			 * Reset the slot for all the harvested entries that
+> > +			 * have been gathered, but not yet fully processed.
+> > +			 */
+> >  			kvm_reset_dirty_gfn(kvm, cur_slot, cur_offset, mask);
+> Nit and feel free to ignore it :)
 > 
-> On 5/19/25 7:41 AM, Hans Zhang wrote:
->>
->>
->> On 2025/5/19 22:21, Hans Zhang wrote:
->>>
->>>
->>> On 2025/5/17 02:10, Sathyanarayanan Kuppuswamy wrote:
->>>>
->>>> On 5/16/25 9:55 AM, Hans Zhang wrote:
->>>>> The following series introduces a new kernel command-line option 
->>>>> aer_panic
->>>>> to enhance error handling for PCIe Advanced Error Reporting (AER) in
->>>>> mission-critical environments. This feature ensures deterministic 
->>>>> recover
->>>>> from fatal PCIe errors by triggering a controlled kernel panic when 
->>>>> device
->>>>> recovery fails, avoiding indefinite system hangs.
->>>>
->>>> Why would a device recovery failure lead to a system hang? Worst case
->>>> that device may not be accessible, right?  Any real use case?
->>>>
->>>
->>>
->>> Dear Sathyanarayanan,
->>>
->>> Due to Synopsys and Cadence PCIe IP, their AER interrupts are usually 
->>> SPI interrupts, not INTx/MSI/MSIx interrupts.  (Some customers will 
->>> design it as an MSI/MSIx interrupt, e.g.: RK3588, but not all 
->>> customers have designed it this way.)  For example, when many mobile 
->>> phone SoCs of Qualcomm handle AER interrupts and there is a link 
->>> down, that is, a fatal problem occurs in the current PCIe physical 
->>> link, the system cannot recover.  At this point, a system restart is 
->>> needed to solve the problem.
->>>
->>> And our company design of SOC: http://radxa.com/products/orion/o6/, 
->>> it has 5 road PCIe port.
->>> There is also the same problem.  If there is a problem with one of 
->>> the PCIe ports, it will cause the entire system to hang.  So I hope 
->>> linux OS can offer an option that enables SOC manufacturers to choose 
->>> to restart the system in case of fatal hardware errors occurring in 
->>> PCIe.
->>>
->>> There are also products such as mobile phones and tablets.  We don't 
->>> want to wait until the battery is completely used up before 
->>> restarting them.
->>>
->>> For the specific code of Qualcomm, please refer to the email I sent.
->>>
->>
->>
->> Dear Sathyanarayanan,
->>
->> Supplementary reasons:
->>
->> drivers/pci/controller/cadence/pcie-cadence-host.c
->> cdns_pci_map_bus
->>     /* Clear AXI link-down status */
->>     cdns_pcie_writel(pcie, CDNS_PCIE_AT_LINKDOWN, 0x0);
->>
->> https://elixir.bootlin.com/linux/v6.15-rc6/source/drivers/pci/controller/cadence/pcie-cadence-host.c#L52
->>
->> If there has been a link down in this PCIe port, the register 
->> CDNS_PCIE_AT_LINKDOWN must be set to 0 for the AXI transmission to 
->> continue.  This is different from Synopsys.
->>
->> If CPU Core0 runs to code L52 and CPU Core1 is executing NVMe SSD 
->> saving files, since the CDNS_PCIE_AT_LINKDOWN register is still 1, it 
->> causes CPU Core1 to be unable to send TLP transfers and hang. This is 
->> a very extreme situation.
->> (The current Cadence code is Legacy PCIe IP, and the HPA IP is still 
->> in the upstream process at present.)
->>
->> Radxa O6 uses Cadence's PCIe HPA IP.
->> http://radxa.com/products/orion/o6/
->>
-> 
-> It sounds like a system level issue to me. Why not they rely on watchdog 
-> to reboot for
-> this case ?
+> Would it be better to move the "cond_resched()" to here, i.e., executing it for
+> at most every 64 entries?
 
-Dear Sathyanarayanan,
-
-Thank you for your reply. Yes, personally, I think it's also a problem 
-at the system level. I conducted a local test. When I directly unplugged 
-the EP device on the slot, the system would hang. It has been tested 
-many times. Since we don't have a bus timeout response mechanism for 
-PCIe, it hangs easily.
-
-> 
-> Even if you want to add this support, I think it is more appropriate to 
-> add this to your
-> specific PCIe controller driver.  I don't see why you want to add it 
-> part of generic
-> AER driver.
-> 
-Because we want to use the processing logic of the general AER driver. 
-If the recovery is successful, there will be no problem. If the recovery 
-fails, my original intention was to restart the system.
-
-If added to the specific PCIe controller driver, a lot of repetitive AER 
-processing logic will be written. So I was thinking whether the AER 
-driver could be changed to be compiled as a KO module.
-
-
-If this series is not reasonable, I'll drop it.
-
-
-Best regards,
-Hans
-
->>>
->>>>>
->>>>> Problem Statement
->>>>> In systems where unresolved PCIe errors (e.g., bus hangs) occur,
->>>>> traditional error recovery mechanisms may leave the system 
->>>>> unresponsive
->>>>> indefinitely. This is unacceptable for high-availability environment
->>>>> requiring prompt recovery via reboot.
->>>>>
->>>>> Solution
->>>>> The aer_panic option forces a kernel panic on unrecoverable AER 
->>>>> errors.
->>>>> This bypasses prolonged recovery attempts and ensures immediate 
->>>>> reboot.
->>>>>
->>>>> Patch Summary:
->>>>> Documentation Update: Adds aer_panic to kernel-parameters.txt, 
->>>>> explaining
->>>>> its purpose and usage.
->>>>>
->>>>> Command-Line Handling: Implements pci=aer_panic parsing and state
->>>>> management in PCI core.
->>>>>
->>>>> State Exposure: Introduces pci_aer_panic_enabled() to check if the 
->>>>> panic
->>>>> mode is active.
->>>>>
->>>>> Panic Trigger: Modifies recovery logic to panic the system when 
->>>>> recovery
->>>>> fails and aer_panic is enabled.
->>>>>
->>>>> Impact
->>>>> Controlled Recovery: Reduces downtime by replacing hangs with 
->>>>> immediate
->>>>> reboots.
->>>>>
->>>>> Optional: Enabled via pci=aer_panic; no default behavior change.
->>>>>
->>>>> Dependency: Requires CONFIG_PCIEAER.
->>>>>
->>>>> For example, in mobile phones and tablets, when there is a problem 
->>>>> with
->>>>> the PCIe link and it cannot be restored, it is expected to provide an
->>>>> alternative method to make the system panic without waiting for the
->>>>> battery power to be completely exhausted before restarting the system.
->>>>>
->>>>> ---
->>>>> For example, the sm8250 and sm8350 of qcom will panic and restart the
->>>>> system when they are linked down.
->>>>>
->>>>> https://github.com/DOITfit/xiaomi_kernel_sm8250/blob/d42aa408e8cef14f4ec006554fac67ef80b86d0d/drivers/pci/controller/pci-msm.c#L5440
->>>>>
->>>>> https://github.com/OnePlusOSS/android_kernel_oneplus_sm8350/blob/13ca08fdf0979fdd61d5e8991661874bb2d19150/drivers/net/wireless/cnss2/pci.c#L950
->>>>>
->>>>>
->>>>> Since the design schemes of each SOC manufacturer are different, 
->>>>> the AXI
->>>>> and other buses connected by PCIe do not have a design to prevent 
->>>>> hanging.
->>>>> Once a FATAL error occurs in the PCIe link and cannot be restored, the
->>>>> system needs to be restarted.
->>>>>
->>>>>
->>>>> Dear Mani,
->>>>>
->>>>> I wonder if you know how other SoCs of qcom handle FATAL errors 
->>>>> that occur
->>>>> in PCIe link.
->>>>> ---
->>>>>
-
+Hmm, yeah, I think that makes sense.  The time spent manipulating the ring and
+mask+offset is quite trivial, so checking on every single entry is unnecessary.
 
