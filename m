@@ -1,178 +1,104 @@
-Return-Path: <linux-kernel+bounces-658202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD146ABFE73
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 22:50:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF8C7ABFE8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 22:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8815A3ADA87
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 20:50:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C29D7A71A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 20:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C059B1DE8B6;
-	Wed, 21 May 2025 20:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079932C031C;
+	Wed, 21 May 2025 20:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="EzuXmvb+"
-Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeCANrss"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA07621E082;
-	Wed, 21 May 2025 20:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB782BEC5B;
+	Wed, 21 May 2025 20:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747860445; cv=none; b=mbFbp9uZCJ5W5Uv/tqEQB78wLgD4nubt4+TOwRvWUxmI7VoGwQpm7Nqe4zr8KiU9dUF8J1yXbeuLKbaoDgYZ0WQDAey7741gA9auayEqz6wSqE0+sbMX1ok4Wq+qfiRrnAACjJfk0khNIrriLrO5OkZZYsB8KzSpEe1MY2QmkOY=
+	t=1747860553; cv=none; b=OAIOi+mimEmF9HDVnasfMh4dwaP2hzI4sBMjfVYDj4xRpOVVXLOelYOQRNd3sjtWebV9ayuPIsY94lYA11d5Pk92XjMFdyYe2SeHh8ThkA0erIifmCAjq4pIZFgTWWpxrKSxXSxnZXgyX+jvjq/RuDJIeP8L71v6idQ+30sz3ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747860445; c=relaxed/simple;
-	bh=R5UrvnJSbJbZMQwpQnUujUXpVO4b+CbB3tii1mKba+Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KN3YbrzLLIf9CZIRTo2VmEBx0JBqiOdEDptyBkI+/PNis0FbEkUSlgwn1sEykc71OO15rMK7+6ypzLu2sS+QviJG3mEUj6BFetd+86Uz9YwUxfRsDT1QOHSAfKhF0C5iGHnIIPamYSG+GAJ7T1HCgyQ+sQ8Ae/kuO4ISA6+oh9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=EzuXmvb+; arc=none smtp.client-ip=168.119.26.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
-	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
-	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=R5UrvnJSbJbZMQwpQnUujUXpVO4b+CbB3tii1mKba+Q=; b=EzuXmvb+oCLBNU2dzGpKU3FikY
-	bUgCN1gXpYtI2o5euipuEqyAdvJ1RTzF4K8HB6eXZKMpTm9ZF+ul69S9xYxFmm3bQW6wxZGp7COQi
-	aTVC2dlGRZ0qHmBjMXC5rtiLmF22MtK4Xpeuk7XRG6aFf7Ul1rdC2e5oyyO9yt6RCaYRK/uoCQKJb
-	CCYy9V/Z0nxjoRADi7zKTixzy+JvzYZxGVhTWRM1D2kSyfDkCv6pOYXElN/KPVOh8WMQmPV0Tajtt
-	q9BHHmFHKNX44hxIFLVbE0GANkoD7uQF7aLrQxR3n+WsD1XcLOgnJYP3TeIlS7yDYSrCl+ec64lRG
-	hML1XtJA==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <git@apitzsch.eu>)
-	id 1uHqLG-0004fB-26;
-	Wed, 21 May 2025 22:47:10 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <git@apitzsch.eu>)
-	id 1uHqLG-0000Jl-0v;
-	Wed, 21 May 2025 22:47:10 +0200
-Message-ID: <3eb4769eac757428d6ff2bd82f16834c46344ac6.camel@apitzsch.eu>
-Subject: Re: [PATCH v3 1/2] dt-bindings: media: i2c: Add DW9719 and DW9761
- VCM
-From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Daniel Scally <djrscally@gmail.com>, Mauro Carvalho Chehab
-	 <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 21 May 2025 22:47:08 +0200
-In-Reply-To: <Z6nMl7vXPkICysSJ@kekkonen.localdomain>
-References: <20250209-dw9761dts-v3-0-14d3f00f0585@apitzsch.eu>
-	 <20250209-dw9761dts-v3-1-14d3f00f0585@apitzsch.eu>
-	 <Z6nMl7vXPkICysSJ@kekkonen.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+	s=arc-20240116; t=1747860553; c=relaxed/simple;
+	bh=mrTRctOtUcJ84jXnO+310QFcU1Kwrn6jVHOd5Jr/N04=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eJCiJAFTGnHFDqIFJpXA0Ilx3EiWfP9Gp06i3ghUGK7dQt3GLiCHOc7U1DRjPCatNTnhJcHhhb0seGQ6+eLykQDsO1SJMFNiI1ywmggySC3o5t2pzOOOyhsxmPAIWK//n95Ep8mQNKwZvCJkKvme1u0Sew1umx/WPB9UqgzG/c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeCANrss; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A2B8C4CEEF;
+	Wed, 21 May 2025 20:49:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747860553;
+	bh=mrTRctOtUcJ84jXnO+310QFcU1Kwrn6jVHOd5Jr/N04=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CeCANrss13lMVCYBd303dahYRRcP3//oNIADAYeh5uCMFUZtTRhayH/Co0HajWv+D
+	 u6iAXUucctnfWL5Hrl1fH0TmHgSt4WGZZhYenvzWRjJcDHtTvnUEG0Hi/CgxiJM3Rt
+	 vno4OZKrpdmnKVQwYINlqMII4GBp/Nm8PWGMp2tHeyUnjoYuQfIFcqe/hPp4LIeG6V
+	 psd8XVvba1B8XaNtK2/C1dzv2+y1/p9FT+pRyAhQOm4SagJAqv6Sz53LVgonXvoNuA
+	 GvWAN/nGbGb01WHJaZCBMHtcVDZxYoaHfMJXc9n3WbWajoGT/HUpe8zG8ej/ReE+IM
+	 1JhWbuYa0YJyg==
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-6060167af73so4591752eaf.2;
+        Wed, 21 May 2025 13:49:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWtwlr9xGdnwJAn7MeGWZ+wPbriWqWdGbHav3CyWzfxS/ns8OoVL/eD3MxmfS7vEtjCE9pLt46jgM+213Y=@vger.kernel.org, AJvYcCXbaelE+1qFHiew9/NUr119HSJ7hyY0j2V/7C9CyeUFTIlIS1k94tfxlsd134YMsFnWtn//TBakDG8=@vger.kernel.org, AJvYcCXcrUHgrGM7mb7+YNpaesMas4DI2Xf7rghg5xJiI0Juu3Ld+XXiShBcFJ6VCsJY47fnZbk0X+PhW1oqm2Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR+pJNdTVxc/hfBZ7F1QXmopVj/rPp3yOetdT166IHvixqV6MK
+	qft2qw0s45yd6/0Ow4LeURHOBAAIifcQXKww0y9jXmU3MXXIo6GqTqMsz6zCgchntmPdjyJ+G0X
+	DdbAFxxkgfGyypJexDTs/SGWuch7T25s=
+X-Google-Smtp-Source: AGHT+IEPkrPQfl18bWldZIboDlU0gNEGDMtQpM0dlHeO2zo12vGpxSU7I22tRnNIM6pQuZZbb4xC4aKhvh+4ma/DDkI=
+X-Received: by 2002:a05:6820:1b09:b0:606:9ed9:c38 with SMTP id
+ 006d021491bc7-609f3615b68mr14252127eaf.0.1747860552552; Wed, 21 May 2025
+ 13:49:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Authenticated-Sender: andre@apitzsch.eu
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27644/Wed May 21 10:56:21 2025)
+References: <20250507031941.2812701-1-zhenglifeng1@huawei.com>
+ <98c87824-2c77-4ae3-b466-badd8e8187ad@nvidia.com> <20250521104831.6a3qfhzrwf2mcnyu@vireshk-i7>
+In-Reply-To: <20250521104831.6a3qfhzrwf2mcnyu@vireshk-i7>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 21 May 2025 22:49:01 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jtar_refDoYQ0vFm1pWGu-DmFTaoHH-Rv+vGBvuMnL2g@mail.gmail.com>
+X-Gm-Features: AX0GCFtWB6FomTG9jILgelbT-29sCuyvYJpoU4Cz84DNwUvy6rzN3Xu2B_ybQQE
+Message-ID: <CAJZ5v0jtar_refDoYQ0vFm1pWGu-DmFTaoHH-Rv+vGBvuMnL2g@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: CPPC: Support for autonomous selection in cppc_cpufreq
+To: Viresh Kumar <viresh.kumar@linaro.org>, Lifeng Zheng <zhenglifeng1@huawei.com>
+Cc: Sumit Gupta <sumitg@nvidia.com>, pierre.gondois@arm.com, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linuxarm@huawei.com, mario.limonciello@amd.com, 
+	yumpusamongus@gmail.com, srinivas.pandruvada@linux.intel.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, lihuisong@huawei.com, 
+	cenxinghai@h-partners.com, yubowen8@huawei.com, hepeng68@huawei.com, 
+	linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sakari,
+On Wed, May 21, 2025 at 12:48=E2=80=AFPM Viresh Kumar <viresh.kumar@linaro.=
+org> wrote:
+>
+> On 21-05-25, 16:13, Sumit Gupta wrote:
+> >
+> >
+> > On 07/05/25 08:49, Lifeng Zheng wrote:
+> > > External email: Use caution opening links or attachments
+> > >
+> > >
+> > > Add sysfs interfaces for CPPC autonomous selection in the cppc_cpufre=
+q
+> > > driver.
+> > >
+> > > Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+> >
+> > Looks good to me.
+> >
+> > Reviewed-by: Sumit Gupta <sumitg@nvidia.com>
+>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>
+> Rafael, since I have already sent the pull request, can you please
+> take it directly ? Thanks.
 
-Am Montag, dem 10.02.2025 um 09:53 +0000 schrieb Sakari Ailus:
-> Hi Andr=C3=A9,
->=20
-> Thanks for the update.
->=20
-> On Sun, Feb 09, 2025 at 10:51:57PM +0100, Andr=C3=A9 Apitzsch via B4 Rela=
-y
-> wrote:
-> > From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> >=20
-> > Document Dongwoon DW9719 and DW9761 VCM devicetree bindings.
-> >=20
-> > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> > ---
-> > =C2=A0.../bindings/media/i2c/dongwoon,dw9719.yaml=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 45
-> > ++++++++++++++++++++++
-> > =C2=A01 file changed, 45 insertions(+)
-> >=20
-> > diff --git
-> > a/Documentation/devicetree/bindings/media/i2c/dongwoon,dw9719.yaml
-> > b/Documentation/devicetree/bindings/media/i2c/dongwoon,dw9719.yaml
-> > new file mode 100644
-> > index
-> > 0000000000000000000000000000000000000000..b38d22bf09713a7999e1f9ce6
-> > 553de7587dbe5d2
-> > --- /dev/null
-> > +++
-> > b/Documentation/devicetree/bindings/media/i2c/dongwoon,dw9719.yaml
-> > @@ -0,0 +1,45 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/media/i2c/dongwoon,dw9719.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Dongwoon Anatech DW9719 Voice Coil Motor (VCM) Controller
-> > +
-> > +maintainers:
-> > +=C2=A0 - devicetree@vger.kernel.org
-> > +
-> > +description:
-> > +=C2=A0 The Dongwoon DW9719 is a 10-bit digital-to-analog (DAC)
-> > converter. The DAC
-> > +=C2=A0 is controlled via a 2-wire (I2C-compatible) serial interface.
-> > +
-> > +properties:
-> > +=C2=A0 compatible:
-> > +=C2=A0=C2=A0=C2=A0 enum:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - dongwoon,dw9719
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - dongwoon,dw9761
-> > +
-> > +=C2=A0 reg:
-> > +=C2=A0=C2=A0=C2=A0 maxItems: 1
-> > +
-> > +=C2=A0 vdd-supply:
-> > +=C2=A0=C2=A0=C2=A0 description: Regulator providing power to the "VDD"=
- pin.
->=20
-> The driver uses dongwoon,sac-mode and dongwoon,vcm-freq properties.
-> Could you document them as well, please, including the defaults? Are
-> the values the same for both chips?
->=20
-It is difficult to say, because I couldn't find the datasheet for any
-of the chips. Maybe someone could provide them.
-
-Best regards,
-Andr=C3=A9
-
-> > +
-> > +required:
-> > +=C2=A0 - compatible
-> > +=C2=A0 - reg
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +=C2=A0 - |
-> > +=C2=A0=C2=A0=C2=A0 i2c {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <1>;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <0>;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 camera-lens@c {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 com=
-patible =3D "dongwoon,dw9761";
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg=
- =3D <0x0c>;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 vdd=
--supply =3D <&pm8916_l10>;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
-> > +=C2=A0=C2=A0=C2=A0 };
-> >=20
+Done, thanks!
 
