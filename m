@@ -1,152 +1,105 @@
-Return-Path: <linux-kernel+bounces-657298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABBE2ABF23C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:59:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26672ABF23F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C9B3A9856
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:58:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04A621BC2E97
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA222609DE;
-	Wed, 21 May 2025 10:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B487D261580;
+	Wed, 21 May 2025 10:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ft9qK69F"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M3RALjd4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6432620FC;
-	Wed, 21 May 2025 10:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1413C253B5E;
+	Wed, 21 May 2025 10:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747825115; cv=none; b=aHZTQzQWx7yhAIJnCB3/C80r5CG0Im6IRC91m8Nhmnf0i6VNdnrXNWgT6bDBYYGTE/NoEyDHqhFS45/+H7H4OkNoRtUC4/q8/yOAAD7Pwuw4L+/+0uhTFdVEP1A+2fMPXrqB4+aOQU0Nvc/PxR1pQdMQRplg5DCZmBlP2eu+Yw8=
+	t=1747825154; cv=none; b=dLENtx0ekZA+E/88OUz9IDYfSR8Wa7FopBEvIg/7TcPideILwiyB3DoeVhzeqDM4xTIQL+EEPHkF3Ev9VwW4+cMl6AL7rlbxayPcyO63AJAB3N59W6XR5AKyaGBcoONVpAX/+I/xBB1ISM0JU1YNxi5cvSinmbz5+6Oh1FtdnTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747825115; c=relaxed/simple;
-	bh=WH8RQf6bUZn016PysqDM75R3nB09GwE/tGFYUasp/ww=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oCE8d0d7iR/IgG8HHFejYh9KiDJUZ9RlM88khjAPAHV+JUMukLsY1COE0G4oBBd2WzZP6DEG01zOBpBKdLrMgKu2hiD8yBrBgfYczwCSpoo6Y77p5dPBEI2RAgrG/F9FJ6ATdNaeZgRYjbO5WuC0q/LRk+teuxvyjnNlpEaGWis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ft9qK69F; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L8pRJE014308;
-	Wed, 21 May 2025 10:58:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=qwvXwgQXJIkG0QGSj
-	4RsHe537NK9WFzkfnyk5v2o2AI=; b=Ft9qK69Fuso5iibjRn/GxJn8vISX62iBk
-	fuS9F+p1k9VAxxn06YI2lW8xzYpu0tan/+A9O4fkuX2+Azc9p9/Wt8jXcc2cDgyt
-	J0j0/mLHL7UNhcPyr168gLDkZjurfV/BJ/iOadPFqSM+AWJcsanRFH5htPnjmZ0N
-	jfNbrZlbHYYGWmogsgbTtvook0WotKBhl/3mdVUdaU77Uq5Bj7rxMs4hssR2/n3u
-	WfYoMJ31PguNwnO0zgMkdX2l4LOSB8lE6qif7McX62hPEB+7/RgKoRLyh+Z1qf7T
-	snGO6WUdblhTe7tJl5dRtunAJHZ2Arf+E7Kw4vdOfLJoRWrhX4ySg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46sbph0j2y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 10:58:16 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54LArXmJ023166;
-	Wed, 21 May 2025 10:58:15 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46sbph0j2t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 10:58:15 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9d7a5031996;
-	Wed, 21 May 2025 10:58:14 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46rwmq3t9e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 10:58:14 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54LAwA6P54460686
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 21 May 2025 10:58:10 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5978520043;
-	Wed, 21 May 2025 10:58:10 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DDEDC20040;
-	Wed, 21 May 2025 10:58:07 +0000 (GMT)
-Received: from li-fc74f8cc-3279-11b2-a85c-ef5828687581.in.ibm.com (unknown [9.204.203.112])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 21 May 2025 10:58:07 +0000 (GMT)
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, ajd@linux.ibm.com,
-        zohar@linux.ibm.com, nayna@linux.ibm.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] integrity/platform_certs: Allow loading of keys in the static key management mode
-Date: Wed, 21 May 2025 16:27:59 +0530
-Message-ID: <20250521105759.8408-4-ssrish@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250521105759.8408-1-ssrish@linux.ibm.com>
-References: <20250521105759.8408-1-ssrish@linux.ibm.com>
+	s=arc-20240116; t=1747825154; c=relaxed/simple;
+	bh=OAPtjhvGq2rqLYOSN3p3U2UsnP7gFs9SLcjeVDkoB/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NPalB9NUrUGm6e8N8UpuLsrokSuPsbpv9uMwJNmw/BA2TR/+kWvNK61U991PbO1QNn6+Lml4Xq6ni8UTyFboijnwP7XJ9qkvgP25hGCYRXPVwBH0H6fXttshdAZmFzsfs5xuHtPhkWH+88hBao5khCcWql/9UNiZG+d8Aj9Ye70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=M3RALjd4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2B4DC4CEED;
+	Wed, 21 May 2025 10:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747825153;
+	bh=OAPtjhvGq2rqLYOSN3p3U2UsnP7gFs9SLcjeVDkoB/w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M3RALjd4MZ6xII4SHpXnUz/mbl1P+P6a6UUibxCyRdMuN5yZqkZnZutqsVGCAv/vR
+	 nJOjQYrs76Y0llc6g+8rpiOrob2kXzWXVODvK7ubB9ghsPmVrp7c87WE3Ksi+iqj57
+	 kruH+X8BD4pV87/VXXNqrWPrOrHyIdD4mgdduJwo=
+Date: Wed, 21 May 2025 12:59:10 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Ethan Carter Edwards <ethan@ethancedwards.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: misc: adutux: replace kmalloc() with kmalloc_array()
+Message-ID: <2025052111-able-unfocused-cdcf@gregkh>
+References: <20250503-adutux_kmalloc_array-v1-1-80c74c4bd3e7@ethancedwards.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDEwNSBTYWx0ZWRfX3GkG9UUHZUy9 livt8OcJDQIVDJMd/MNG3TiU2jLdlkx4oKtyR98xTsZPuEJJcnbUK+hUVW4bbIrAdauk6TrtVr2 TKfCYyqGw8Iw1JIaRf5Aj8vyhN3zu3y2skpU/1+yn+zYR0FkomTc/M3Xkw8ByX1mGUCVqLOAUYo
- +ZXyi8P0bO62OISNuYgyCBKaEQ43i3C4l9Ejad9HRFAs0oMYVRNTSSxlcQyce7DmmEs335017TK bOo4QOmmGu+tuarqxNm+qNIu2sotwo2gRjNBhOKio9+5pZb5U9/L7DSKkjIXJx/YKgFUPinUY/T 2VCQ4riJV0BvsXZT5S7CXKKyu3FpKpX6lXnMLmYpj+xV2HKCrfOMpfz6kLxKZltthkoo4x/xXSv
- t1WGhcCqofAQWpL5OiwgWw68sZue9gpwkq8x16QxLGEYyS9+Je9SY8n27fuT6F+5PQUb3zbP
-X-Proofpoint-ORIG-GUID: ZEowoLJegkq3_yvN2FQDjrR4hOkpLnUy
-X-Authority-Analysis: v=2.4 cv=L5kdQ/T8 c=1 sm=1 tr=0 ts=682db1c8 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=AtMIOgTZpS777Q0Lz8kA:9
-X-Proofpoint-GUID: 2iT4jmr_S-xxe10ezReX3mPakJehOwXr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_03,2025-05-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 lowpriorityscore=0 spamscore=0 clxscore=1015
- mlxlogscore=999 suspectscore=0 phishscore=0 impostorscore=0 malwarescore=0
- mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505210105
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250503-adutux_kmalloc_array-v1-1-80c74c4bd3e7@ethancedwards.com>
 
-On PLPKS enabled PowerVM LPAR, there is no provision to load signed
-third-party kernel modules when the key management mode is static. This
-is because keys from secure boot secvars are only loaded when the key
-management mode is dynamic.
+On Sat, May 03, 2025 at 04:43:21PM -0400, Ethan Carter Edwards wrote:
+> Replace kmalloc with internal multiplication with kmalloc_array to
+> improve code readability and prevent potential overflows.
 
-Allow loading of the trustedcadb and moduledb keys even in the static
-key management mode, where the secvar format string takes the form
-"ibm,plpks-sb-v0".
+But this is not an array of a structure size.
 
-Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
-Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
----
- security/integrity/platform_certs/load_powerpc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+> ---
+>  drivers/usb/misc/adutux.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/misc/adutux.c b/drivers/usb/misc/adutux.c
+> index ed6a19254d2ff9fead898adad0b3996822e10167..000a3ade743258f381d85397395a43c28a8481cc 100644
+> --- a/drivers/usb/misc/adutux.c
+> +++ b/drivers/usb/misc/adutux.c
+> @@ -680,7 +680,7 @@ static int adu_probe(struct usb_interface *interface,
+>  	in_end_size = usb_endpoint_maxp(dev->interrupt_in_endpoint);
+>  	out_end_size = usb_endpoint_maxp(dev->interrupt_out_endpoint);
+>  
+> -	dev->read_buffer_primary = kmalloc((4 * in_end_size), GFP_KERNEL);
+> +	dev->read_buffer_primary = kmalloc_array(4, in_end_size, GFP_KERNEL);
 
-diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
-index c85febca3343..714c961a00f5 100644
---- a/security/integrity/platform_certs/load_powerpc.c
-+++ b/security/integrity/platform_certs/load_powerpc.c
-@@ -75,12 +75,13 @@ static int __init load_powerpc_certs(void)
- 		return -ENODEV;
- 
- 	// Check for known secure boot implementations from OPAL or PLPKS
--	if (strcmp("ibm,edk2-compat-v1", buf) && strcmp("ibm,plpks-sb-v1", buf)) {
-+	if (strcmp("ibm,edk2-compat-v1", buf) && strcmp("ibm,plpks-sb-v1", buf) &&
-+	    strcmp("ibm,plpks-sb-v0", buf)) {
- 		pr_err("Unsupported secvar implementation \"%s\", not loading certs\n", buf);
- 		return -ENODEV;
- 	}
- 
--	if (strcmp("ibm,plpks-sb-v1", buf) == 0)
-+	if (strcmp("ibm,plpks-sb-v1", buf) == 0 || strcmp("ibm,plpks-sb-v0", buf) == 0)
- 		/* PLPKS authenticated variables ESL data is prefixed with 8 bytes of timestamp */
- 		offset = 8;
- 
--- 
-2.47.1
+This is a buffer and you need the size to be correct based on the
+commands, right?  It's not an array of a structure, but rather a stream
+of bytes.
 
+
+>  	if (!dev->read_buffer_primary)
+>  		goto error;
+>  
+> @@ -690,7 +690,7 @@ static int adu_probe(struct usb_interface *interface,
+>  	memset(dev->read_buffer_primary + (2 * in_end_size), 'c', in_end_size);
+>  	memset(dev->read_buffer_primary + (3 * in_end_size), 'd', in_end_size);
+>  
+> -	dev->read_buffer_secondary = kmalloc((4 * in_end_size), GFP_KERNEL);
+> +	dev->read_buffer_secondary = kmalloc_array(4, in_end_size, GFP_KERNEL);
+
+Same here.
+
+I think the original code is just fine as there's no bug here or way it
+can overflow, right?
+
+thanks,
+
+greg k-h
 
