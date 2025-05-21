@@ -1,130 +1,90 @@
-Return-Path: <linux-kernel+bounces-657810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A20ABF91C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:23:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49EE9ABF920
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2744E1BA1052
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:23:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E27A94A00A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61B020FA98;
-	Wed, 21 May 2025 15:22:30 +0000 (UTC)
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966B21EB18D;
+	Wed, 21 May 2025 15:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bAXkDsC/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FB51E47C7
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD34118CBFB;
+	Wed, 21 May 2025 15:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747840950; cv=none; b=GuOc2foy/FVZ2cVGyhd9L9o9gvJFC5TyETcW8QL5AeU695FpJusM453FAvu1bQQu9m846lMU2FSAwsL0g1r4GPkzJN97LStKfN6kcTan45poty5b3kJ/valFsnoFT39WRqzHJTD0ABtvVXve1v0nYowZiJOR7hVsf/+lCxfNg4s=
+	t=1747840999; cv=none; b=DRrcFWVnNKSj+9rVzqIensNUwa6o3SLgmg/oOi5SyA2vEEUpe0VgDKULa2jprvaCHpPKxg/aXagVt4jTu4V6ke0b8OFB4ahiXXRqSlw5n/T7veIkjKsWKfH6iFx69zB+U6ZMOWhi3qy5NYURBSbH/LnO/XZeCuIwoQDVTtOEoGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747840950; c=relaxed/simple;
-	bh=US6Qn/YPFfEQVJh/yquwxVsdo6yHequvshtAvfNQRnc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GXfSI54Z+cMTdA9PgPcruilehk5fl7sYDw8CBwZ1NmTa8qg5RLNomKHF0+wnuX1G/Q48Vtt1KuDIbnzCNAL1DuAbqs2/V7S4lJS1++l+6MUWaM7kyNHylgXPEY2nqiIXJGlYXb1jh8c9Fin5ffZa5gg9UsoGYseuBUiytIucF6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=84.16.66.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b2Zsk0B0Bz3fC;
-	Wed, 21 May 2025 17:22:18 +0200 (CEST)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b2Zsh2wFGz8KK;
-	Wed, 21 May 2025 17:22:16 +0200 (CEST)
-From: Quentin Schulz <foss+kernel@0leil.net>
-Date: Wed, 21 May 2025 17:21:59 +0200
-Subject: [PATCH net] net: stmmac: platform: guarantee uniqueness of bus_id
+	s=arc-20240116; t=1747840999; c=relaxed/simple;
+	bh=h3GAfnHqQdjYb8KerfxcMvxAQu/1JesrqC8XxoefLB8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=N18MSmd1sBsGCN9w++OVhvd0FXDpkbJxgUZMf6O3AbQ/kdemxBZR1dbWkmLNT9KJxbmEEdEFFdp6ndVIVW+ypawA/+hhG0W7cP8aXyh49lc2uVt/a0txNl1wnJaZCn9Drxx9ffa7ZSehV8I5tq2ZLRS/4+7yXy8ADyNrNj4bX3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bAXkDsC/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F893C4CEE4;
+	Wed, 21 May 2025 15:23:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747840998;
+	bh=h3GAfnHqQdjYb8KerfxcMvxAQu/1JesrqC8XxoefLB8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bAXkDsC/cnA0VecY2wJBf4tmIpStq23KiR5PSsUguOpRKAw8o3H7/pskGwaAIzAgx
+	 TuN6bZsJeY6sMZS/QpWtA56N/lNt97NaVNAhREYmlv3jDsE2V3BmoTfAnXWdqAFn9z
+	 nGYwmmLzy9eeq6tGbMBA02yTX+UoxWYuesEhML8gK/GzVgd5TtUWPnXdoe0z1OBCk0
+	 XLp8UbfOMbQVol3GeJJuTvbxh3av6fPgONRFrziESf4eeu2QvKek8+ZV4boK4+R0U/
+	 6pZBHzrPA8GiC+QMbMs8tBOs3CudkMf36w+pHMpTtloIjvJQ6d7+sLv/IeAjgDyeAj
+	 QhxB6xZWNzNeA==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: richard120310@gmail.com,
+	aliceryhl@google.com
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	benno.lossin@proton.me,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	jserv@ccns.ncku.edu.tw,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	tmgross@umich.edu
+Subject: Re: [PATCH] rust: list: Use "List::is_empty()" to perform checking when possible
+Date: Wed, 21 May 2025 17:23:07 +0200
+Message-ID: <20250521152307.1055810-1-ojeda@kernel.org>
+In-Reply-To: <20250310073853.427954-1-richard120310@gmail.com>
+References: <20250310073853.427954-1-richard120310@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250521-stmmac-mdio-bus_id-v1-1-918a3c11bf2c@cherry.de>
-X-B4-Tracking: v=1; b=H4sIAJbvLWgC/x3MQQqEMAxA0atI1gZsO1L0KiKDtlGzaJWmI4J49
- yku3+L/G4QSk0Bf3ZDoZOE9Fqi6ArdNcSVkXwy60W3TaoWSQ5gcBs87zj/5skejzGw/ztrOGCj
- hkWjh650OECnD+Dx/ttnzIGkAAAA=
-X-Change-ID: 20250521-stmmac-mdio-bus_id-313b74c77933
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>, 
- Heiko Stuebner <heiko@sntech.de>, netdev@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Quentin Schulz <quentin.schulz@cherry.de>
-X-Mailer: b4 0.14.2
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
 
-From: Quentin Schulz <quentin.schulz@cherry.de>
+On Mon, 10 Mar 2025 15:38:52 +0800 I Hsin Cheng <richard120310@gmail.com> wrote:
+>
+> "List::is_empty()" provides a straight forward convention to check
+> whether a given "List" is empty or not. There're numerous places in the
+> current implementation still use "self.first.is_null()" to perform the
+> equivalent check, replace them with "List::is_empty()".
+>
+> Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
 
-bus_id is currently derived from the ethernetX alias. If one is missing
-for the device, 0 is used. If ethernet0 points to another stmmac device
-or if there are 2+ stmmac devices without an ethernet alias, then bus_id
-will be 0 for all of those.
+There are a couple cases that still apply here (i.e. after the cursor
+between elements change), so I will pick it up.
 
-This is an issue because the bus_id is used to generate the mdio bus id
-(new_bus->id in drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-stmmac_mdio_register) and this needs to be unique.
+By the way, for some reason, your email did not reach my inbox.
 
-This allows to avoid needing to define ethernet aliases for devices with
-multiple stmmac controllers (such as the Rockchip RK3588) for multiple
-stmmac devices to probe properly.
+Thanks!
 
-Obviously, the bus_id isn't guaranteed to be stable across reboots if no
-alias is set for the device but that is easily fixed by simply adding an
-alias if this is desired.
-
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
----
-Unsure if I should cc stable since people who encountered that issue for
-sure had to add an ethernet alias to make things work with their DT so
-shouldn't be too much of an actual issue?
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index c73eff6a56b87a3783c91b2ffbf5807a27df303f..15205a47cafc276442c3759a36d115d8da1fe51d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -430,6 +430,7 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
- 	struct device_node *np = pdev->dev.of_node;
- 	struct plat_stmmacenet_data *plat;
- 	struct stmmac_dma_cfg *dma_cfg;
-+	static int bus_id = -ENODEV;
- 	int phy_mode;
- 	void *ret;
- 	int rc;
-@@ -465,8 +466,14 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
- 	of_property_read_u32(np, "max-speed", &plat->max_speed);
- 
- 	plat->bus_id = of_alias_get_id(np, "ethernet");
--	if (plat->bus_id < 0)
--		plat->bus_id = 0;
-+	if (plat->bus_id < 0) {
-+		if (bus_id < 0)
-+			bus_id = of_alias_get_highest_id("ethernet");
-+		/* No ethernet alias found, init at -1 so first bus_id is 0 */
-+		if (bus_id < 0)
-+			bus_id = -1;
-+		plat->bus_id = ++bus_id;
-+	}
- 
- 	/* Default to phy auto-detection */
- 	plat->phy_addr = -1;
-
----
-base-commit: 4a95bc121ccdaee04c4d72f84dbfa6b880a514b6
-change-id: 20250521-stmmac-mdio-bus_id-313b74c77933
-
-Best regards,
--- 
-Quentin Schulz <quentin.schulz@cherry.de>
-
+Cheers,
+Miguel
 
