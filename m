@@ -1,140 +1,162 @@
-Return-Path: <linux-kernel+bounces-657212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB317ABF112
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:12:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5F5ABF118
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4392A1BA2FBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94B288C40F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D12D25B1CB;
-	Wed, 21 May 2025 10:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDC425B1E9;
+	Wed, 21 May 2025 10:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLXOzE9H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Cmi+n+YB";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vrAuruo2";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Cmi+n+YB";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vrAuruo2"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C80250BED;
-	Wed, 21 May 2025 10:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD94223D285
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 10:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747822344; cv=none; b=Kjd/6/ncJD9W6+FQSVdt4jnsxZxxyU30mZp863u/SlIQ3o0TFYzp9U9pBJ3Qplb7B5bmsXg2naR4i3eD1W9bEZNabBbqLuqBEwFgysp/c1F5LFZ4CtTOKOwZ+snUy/8FDjfy6BgQTV71gunRTpxEf/OdjUH4cc/9xf/vcAREX+8=
+	t=1747822388; cv=none; b=l/29YTHLP5vbp8L0XpD3VK4gORH+F1bINH59/UsejPB/SLrsWrq143w2WpLAAjuzA7H+de1eFknf5WNTEcpzsC/MvY8y2vGa2nuCgLu8T1z1CFZMdbmOQ6mgALfMlwLMT+Lkz4Qz5az4Wtf3jCor6lCoQnBktc+/AGwyW/GRXWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747822344; c=relaxed/simple;
-	bh=21cNdzYwUJJBEkAHlt7+sFsml8d7DmKbNlD2kUZGKoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uys+MivWxrDAhKCtWUm7m5uPR0nGz5eTY/C7hFJ98swMXV9jS2JREOrlyDQ1nkly9ztqPsmSgP/aev6P9cph8iWJiWhRu/tU6pF0I1I3pjWukgR0XgHro0BnSWtupWccRpTOmb9r5RkOtlQINEAggjZw6YwMC20cNSzQMdEUXjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLXOzE9H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA7E2C4CEED;
-	Wed, 21 May 2025 10:12:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747822344;
-	bh=21cNdzYwUJJBEkAHlt7+sFsml8d7DmKbNlD2kUZGKoQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YLXOzE9HyCy+kC79+nUGLtvp+0cxfR2TUqkZ6h0MDnnvdFk9pskQlEjRl/46ec7W2
-	 TH/x2jlNbam+Us8NSZrtDSx/HbFXHChCs8KdGoSNvyu+6GIK/tABEAfZ5EIJ9jmwiU
-	 W1JLhNCmMAminpUveLFmvUvUzyFGZbmBJ7QRISsH67ON2Eldjw5CzZuxmWFFKjhaMG
-	 5hnpVMxcr0ovTQjUkq13+jJoGGK4Rsio37/Sc3vS01CWAzkYtLStJsFev+cYzyIB6D
-	 cA1Q961SLiRbMcoD6c9XC2jiHOXhz5nQrAyKFReCRaKuiywBNVKDMxR59cSAmmioWM
-	 B1TrXzju+oOcQ==
-Date: Wed, 21 May 2025 13:12:20 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: linuxppc-dev@lists.ozlabs.org, Peter Huewe <peterhuewe@gmx.de>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	linux-integrity@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Sumit Garg <sumit.garg@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH v5 4/4] tpm/tpm_svsm: support TPM_CHIP_FLAG_SYNC
-Message-ID: <aC2nBCxkvWWz5y5E@kernel.org>
-References: <20250514134630.137621-1-sgarzare@redhat.com>
- <20250514134630.137621-5-sgarzare@redhat.com>
- <aCVHQ-LRqHeEVEAW@kernel.org>
- <CAGxU2F5AsNY5mQPd=qajW1seFYHSYpB0Fa1iuR_f2QavtoB6sA@mail.gmail.com>
- <aCzf6aoJAC-IdS_n@kernel.org>
- <CAGxU2F6rfqGV_gJk-JxrCk3f9dWtYn_3o9RODh7cVG0X_oQWaA@mail.gmail.com>
+	s=arc-20240116; t=1747822388; c=relaxed/simple;
+	bh=RByzAZMOLQNZEFtHbsKpgp1amQTVNJDbBgHinyMlwSU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VCYHER1GftwPeADk3Re5Dz2HaLpE82K3pde3cqrdSPnkkVuFhUEsnH5V36VM1ioa9lvd1UEiH9lyvaOVxjvQsyFTDbM9JrygxojtgRuXbPw0EctuV9a/HC5cxGD3axLQpGkSNJa5IuNQP5k+wqJWCobQn6NWtIXOKSqnxHS5SJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Cmi+n+YB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vrAuruo2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Cmi+n+YB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vrAuruo2; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2709F20922;
+	Wed, 21 May 2025 10:13:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747822385; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CLYsdgB3uf5e5BJCk5J+2wDtYUN+97pTdoUS/ZfGn7c=;
+	b=Cmi+n+YBZA+ZZOwbg22YbtkbpAvJkjXoXQGRfTxHu6cMDhQ/X3gEGiRavHs4gQe7ZwxxmF
+	K9Y2u5jD3UXRzNIXLDOpfHXO+IsXVd08vs8ywrRrxBWfsPokerRmW4LcU67NLbDLiyyJcQ
+	tsNG/z5NZGZMyWssyz8GnZK5iTvKyYo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747822385;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CLYsdgB3uf5e5BJCk5J+2wDtYUN+97pTdoUS/ZfGn7c=;
+	b=vrAuruo2cIf9bjUYr46d33GAeCYFFd+6NfNcwBLii7Ci+VFyxwAZaYa9vEnCzQu4Ka9Sog
+	vWxtJFA3aLdqu2Cg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747822385; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CLYsdgB3uf5e5BJCk5J+2wDtYUN+97pTdoUS/ZfGn7c=;
+	b=Cmi+n+YBZA+ZZOwbg22YbtkbpAvJkjXoXQGRfTxHu6cMDhQ/X3gEGiRavHs4gQe7ZwxxmF
+	K9Y2u5jD3UXRzNIXLDOpfHXO+IsXVd08vs8ywrRrxBWfsPokerRmW4LcU67NLbDLiyyJcQ
+	tsNG/z5NZGZMyWssyz8GnZK5iTvKyYo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747822385;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CLYsdgB3uf5e5BJCk5J+2wDtYUN+97pTdoUS/ZfGn7c=;
+	b=vrAuruo2cIf9bjUYr46d33GAeCYFFd+6NfNcwBLii7Ci+VFyxwAZaYa9vEnCzQu4Ka9Sog
+	vWxtJFA3aLdqu2Cg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E835C13AA0;
+	Wed, 21 May 2025 10:13:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fJLFNzCnLWguTAAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 21 May 2025 10:13:04 +0000
+Message-ID: <c5807d92-3820-4d82-8937-06cd2ecd3d1d@suse.de>
+Date: Wed, 21 May 2025 12:13:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGxU2F6rfqGV_gJk-JxrCk3f9dWtYn_3o9RODh7cVG0X_oQWaA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/10] net: use skb_crc32c() in skb_crc32c_csum_help()
+To: Eric Biggers <ebiggers@kernel.org>, netdev@vger.kernel.org
+Cc: linux-nvme@lists.infradead.org, linux-sctp@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+ Sagi Grimberg <sagi@grimberg.me>, Ard Biesheuvel <ardb@kernel.org>
+References: <20250519175012.36581-1-ebiggers@kernel.org>
+ <20250519175012.36581-4-ebiggers@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250519175012.36581-4-ebiggers@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[lists.infradead.org,vger.kernel.org,iogearbox.net,gmail.com,grimberg.me,kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spam-Level: 
 
-On Wed, May 21, 2025 at 09:13:34AM +0200, Stefano Garzarella wrote:
-> On Tue, 20 May 2025 at 22:02, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > On Tue, May 20, 2025 at 06:06:50PM +0200, Stefano Garzarella wrote:
-> > > On Thu, 15 May 2025 at 03:45, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > > > On Wed, May 14, 2025 at 03:46:30PM +0200, Stefano Garzarella wrote:
-> > > > > From: Stefano Garzarella <sgarzare@redhat.com>
-> > > > >
-> > > > > This driver does not support interrupts, and receiving the response is
-> > > > > synchronous with sending the command.
-> > > > >
-> > > > > Enable synchronous send() with TPM_CHIP_FLAG_SYNC, which implies that
-> > > > > ->send() already fills the provided buffer with a response, and ->recv()
-> > > > > is not implemented.
-> > > > >
-> > > > > Keep using the same pre-allocated buffer to avoid having to allocate
-> > > > > it for each command. We need the buffer to have the header required by
-> > > > > the SVSM protocol and the command contiguous in memory.
-> > > > >
-> > > > > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> > > > > ---
-> > > > > v5:
-> > > > > - changed order and parameter names to match tpm_try_transmit() [Jarkko]
-> > > > > v4:
-> > > > > - reworked commit description [Jarkko]
-> > > > > ---
-> > > > >  drivers/char/tpm/tpm_svsm.c | 27 +++++++++++----------------
-> > > > >  1 file changed, 11 insertions(+), 16 deletions(-)
-> > > > >
+On 5/19/25 19:50, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> [...]
+> Instead of calling __skb_checksum() with a skb_checksum_ops struct that
+> does CRC32C, just call the new function skb_crc32c().  This is faster
+> and simpler.
 > 
-> > > >
-> > > > I can pick this for 6.16.
-> > >
-> > > Great, thanks!
-> >
-> > Can you rebase this on top of my next branch and send one more version
-> > of the series (fake ancestor crap)?
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>   net/core/dev.c | 8 +++-----
+>   1 file changed, 3 insertions(+), 5 deletions(-)
 > 
-> I tried, but the last patch (this one) is based on the series merged
-> on the tip tree, where I introduced tpm_svsm.
-> I can see that series in linux-next merged with commit
-> 16a56ee59ab8ee05e67de35bbb5782ef9cfb4f07,
-> but I can't see it in your next tree [1].
-> 
-> How do we proceed in such cases?
-> 
-> Just to be sure, did I use the right tree?
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Thanks for the remark. Lemme check tonight. Hold on doing
-anything ;-) We'll get there...
+Cheers,
 
-> 
-> Thanks,
-> Stefano
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=next
-> 
-> 
-
-BR, Jarkko
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
