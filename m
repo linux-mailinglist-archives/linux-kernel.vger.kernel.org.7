@@ -1,233 +1,312 @@
-Return-Path: <linux-kernel+bounces-657476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58FC6ABF496
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:44:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8187BABF48E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 098237A856E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:43:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D28263AC69F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC802673A8;
-	Wed, 21 May 2025 12:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D73266EF9;
+	Wed, 21 May 2025 12:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="WR4fOisG"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="grJL9NXA"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4D6266562;
-	Wed, 21 May 2025 12:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2BF25393B
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747831448; cv=none; b=fXSXjOLco4fczYCGJ+eu9T+JhrU1WTsH3QQDQ6vEq56vRvrYnqmUYv/ujvbk6rzwbjQ7t/gdCBEgnR0ejjfeSSzS7rqp/Y9+h6fNYugllJ10l17BfnxpIycsUaMpIg/BJXx8MOCqUI4fD/rvkJPE5ELl/u6t1HYN6yFxIU0FUwk=
+	t=1747831389; cv=none; b=sVvyenOyoDNCVhXc4jnLRIfagJgG+fRhIL7FEIEgT6mIQYpMohcOlPKkfkhW0lsCHOiOS4jtTyAM80hWVujaSmxg7t8iaEADlnizurokNo7z/D7aDvSYbjTseCRgGEitFP53AX7IcDOp5XkGLidGBtpG8Vykxiq7el4TtjOv/2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747831448; c=relaxed/simple;
-	bh=tbVvEWwUPQ0G7AjWNLe9xc646p0TUIopt3jZzBbJx40=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ggJmG24pjj2150BcB64DPZ2/HVJIXcBf8+AHfN9km8588vLq+v2LWlQTBY07RmxcJJEtoqCLjSrHRBNFdes3d3uZgkpRAel7zUnL/EOh3W5W3ITI6p8/F6CEraWvhsG2gsAD6auCwb18YE1qmVtnR/n/92MJAd8yikluyT3777A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=WR4fOisG; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1747831446; x=1779367446;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=tbVvEWwUPQ0G7AjWNLe9xc646p0TUIopt3jZzBbJx40=;
-  b=WR4fOisGQxeCgVjMYDZsY6THhdgi90aAcDykXABgaViR6j88DSjb4gaS
-   M4BuzLKKJrJUr1J0cwRYvE632N2DRWSAX0HszTm9tl9iM4kyL0VHcy2m5
-   k7RZoM1dPeSqmTKA/kLsgEJRaTCWCFg2GJ8EDI4lqo5lOIyYk3RHUo5O0
-   70GxmLxYDETa5MD/7RoWfF6fPKzpBEvdKl3Y5mLHbujTDixHTdTSWASC7
-   bbWwqwUrKbojfZ/ACS1u3E4tcatV/f3wmAwZyrchu2/624AamuxxuFWC1
-   qh+t1vGMhZuHuzKDcratISmg1Tw/RuCgY9aopNaf1G7Ge6GDK6CVz2orI
-   A==;
-X-CSE-ConnectionGUID: 8vLVWBVUQ369tMbve2m25Q==
-X-CSE-MsgGUID: l5aKfXWFRLywCIoNkSfgew==
-X-IronPort-AV: E=Sophos;i="6.15,303,1739862000"; 
-   d="scan'208";a="41899942"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 May 2025 05:44:04 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 21 May 2025 05:43:41 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Wed, 21 May 2025 05:43:39 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <horatiu.vultur@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <richardcochran@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net] net: lan966x: Fix 1-step timestamping over ipv4 or ipv6
-Date: Wed, 21 May 2025 14:41:59 +0200
-Message-ID: <20250521124159.2713525-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747831389; c=relaxed/simple;
+	bh=4Nfdjo7U/R1hnWKVkBbsT6n6NMMwY5GJ+8aptBW0JEw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=R6UycOnhMUGMtZs5ZSnTXkp5jU3iX6cqBR9CDRNO5sHf4dZCzEO5KhcURKS8JceC6a6yETuxHzCQKnu7DJVM18+uOMgtOUwWndMw3b1eBwoA7zi1eHNvQxU20znRr3u8mpnFXvtEIShC42tjMp1/D5hD2mQhoHabL6N3QIJwh1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=grJL9NXA; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-442ccf0e1b3so83788765e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:43:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747831385; x=1748436185; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WI5PoJxy96uWl5f75YFdyVxVfp6nrVQ06CpDL3zHu6Q=;
+        b=grJL9NXAsVLSEUZogZoo5fwrdPpH8Toe0JIRFicjkr7F5goSO/YId2GP+ax+P9E2Ax
+         KzZ9A2PMcM3e5csc3USuNPNjkJ/WbgVCF2i+ZBOhr6FrGVaBI7SOUwJpZJLsG54Y0weC
+         SxE/jto7D7Pjgh5wJVsId+RjRKDP0ffn6N2tvi+3ggv2DUamGQJXm+DnCMSXqjs5LVAc
+         Gpctt5UJoAm0SDlOGYNx3DOH9WY/nH0bBhVD00i/Td3sU4VotqOW3X5/UpCjFk18PI0S
+         Vq1CF2cRhwGfOjX4gtgS/N3H31bMhoGc3NuIKhIKbdc+h3geVuTZsf7CKVyna5ulxBpI
+         TfVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747831385; x=1748436185;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WI5PoJxy96uWl5f75YFdyVxVfp6nrVQ06CpDL3zHu6Q=;
+        b=FaB1KL6EOEE/D6mehVbQBqEGj9i6WNsSSmm7UTU45og0UrJ+5VFO7HWgZijCGwuyg0
+         32BaiebTSL/thCPzHfNyEKU5OVMsWW8R54RulFWcffBhFBaImHGzg0bahK6VGuWv034m
+         AJlLzPBKxn15fxd5XvLtDAkKZ04VZGhYIPCGUrjZkhcjwJB2SYSfAOlrph21VZ65eDRe
+         oBc13dgAG+OPPKGDQpssdkrzDTbb9fqjgFoNfydhgN4JzvJY/MFjHtxp5TUtVuu/nhnF
+         kus3B7kaJVy/Kg0dx5QPHsUwaRgQ41LREtv3q+8kbYwzEcHZqPak1ZTBJhuhWIqtJUQA
+         cXdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU95vUszvaHBzVa3Pl6jY9kLnSx5okjUIGL6PQ1G3Ifx5tGK8GodVqsjVn96RgHuEKF9Gj3XQOAlHS8qic=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySXq7tH2Cnj8GNtBsoWa2n0vXzAOsXU15DyNDCaJZsJ2dLS0iJ
+	zus3QIRtro1W5GyPNcD7N+eL1U5uy+M+9jlR67mvPs+MoElqK9AQclWrnjxkXLLUU5o=
+X-Gm-Gg: ASbGnct89WLiegWyCjbAjm54+vXR/kDrbJMzrN0R6Ym8CPsgFDmxT9Rlya7ywMMI+gm
+	a8j7fsifwAV8s4HljpY2Y4JPTScZBB10jy3YbN6z99b7rDJ9042oqP1W/gTXmRlyT6VQUQ4ZfWu
+	gGApW17oxT6vJzqMFikjI7BRwgSXIPIAWk+0dTr3caoxA86rXuP6jK3m2skvYFrTG/2Fd7BbJUl
+	229wI4qp1kYkAc34mHN1XfnXJmIZxyVGS/IjMSA18I3h8Hzaq4ddk0oQ4PHp/8aJ/UNygHtDVpu
+	4FoVr1SDWlJPOtbo0At6V/4Ymp/ZCcx9mXdcqX6EB/NXZ3I6+acgXvUHR5Jd9wpKw2akr5p1QeY
+	20sV7wGj+F83IcxsZb86Fgnxx7gEX
+X-Google-Smtp-Source: AGHT+IFQ18d8pZSDqB/VT7oEO/bp9Dn+8qAFnGv54kCnHZJEQfRsbBOpN6ws67q8Y7sy8IUfkW9k9Q==
+X-Received: by 2002:a05:600c:a016:b0:441:d2d8:bd8b with SMTP id 5b1f17b1804b1-442fd622c81mr209724965e9.8.1747831385316;
+        Wed, 21 May 2025 05:43:05 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:80b6:c1af:bc94:958d? ([2a01:e0a:3d9:2080:80b6:c1af:bc94:958d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f7bae847sm65925785e9.36.2025.05.21.05.43.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 May 2025 05:43:04 -0700 (PDT)
+Message-ID: <d455a8d0-0a43-4bb5-8592-f22f1835a3c6@linaro.org>
+Date: Wed, 21 May 2025 14:43:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sm8650: Add support for Oneplus Pad
+ Pro (caihong)
+To: Pengyu Luo <mitltlatltl@gmail.com>, konrad.dybcio@oss.qualcomm.com
+Cc: andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ konradybcio@kernel.org, krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, robh@kernel.org
+References: <e4d65994-89dd-4068-a8db-050e698f9bb3@oss.qualcomm.com>
+ <20250521083746.666228-1-mitltlatltl@gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250521083746.666228-1-mitltlatltl@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-When enabling 1-step timestamping for ptp frames that are over udpv4 or
-udpv6 then the inserted timestamp is added at the wrong offset in the
-frame, meaning that will modify the frame at the wrong place, so the
-frame will be malformed.
-To fix this, the HW needs to know which kind of frame it is to know
-where to insert the timestamp. For that there is a field in the IFH that
-says the PDU_TYPE, which can be NONE  which is the default value,
-IPV4 or IPV6. Therefore make sure to set the PDU_TYPE so the HW knows
-where to insert the timestamp.
-Like I mention before the issue is not seen with L2 frames because by
-default the PDU_TYPE has a value of 0, which represents the L2 frames.
+On 21/05/2025 10:37, Pengyu Luo wrote:
+> On Wed, May 21, 2025 at 5:54 AM Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> wrote:
+>> On 5/20/25 6:42 PM, Pengyu Luo wrote:
+>>> The OnePlus Pad Pro is an Android tablet based on the Qualcomm SM8650
+>>> platform. Its device codename is "caihong". This patch adds an initial
+>>> devicetree for basic functionality.
+>>>
+>>> Currently working components include:
+>>> - Backlight
+>>> - Bluetooth
+>>> - Battery charging (up to 5v 0.5a) & reporting via pmic-glink (There
+>>> are many unknown notifications)
+>>> - Display panel ([1])
+>>> - Keyboard (via BT)
+>>> - Power key & volume keys
+>>> - Touchscreen & stylus ([2])
+>>> - USB Type-c port
+>>> - UFS storage
+>>> - Wi-Fi
+>>>
+>>> The following components are currently non-functional:
+>>> - Audio
+>>> - Cameras
+>>> - Charging pump (dual sc8547)
+>>> - Keyboard (via pogo pin)
+>>> - Stylus wireless charger (cps8601)
+>>> - UCSI over GLINK (PPM init fails)
+>>>
+>>> [1]: The panel is a dual-DSI, dual-DSC display that requires setting
+>>>       'slice_per_pkt = 2' in the DPU configuration. The panel driver
+>>>       will be submitted separately later.
+>>> [2]: Touchscreen/stylus driver available at:
+>>>       https://github.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_sm8650/blob/oneplus/sm8650_v_15.0.0_pad_pro/vendor/oplus/kernel/touchpanel/oplus_touchscreen_v2/Novatek/NT36532_noflash/nvt_drivers_nt36532_noflash.c
+>>>       The downstream driver has been ported and tested locally, but
+>>>       requires cleanup, it may be submitted separately later.
+>>
+>> I have a Lenovo Tab P11 with a nt36523w (-23, not -32) for which I have once
+>> poked at the driver for.. I see the driver you posted mentions -23 as well,
+>> please keep me in the loop if you're going to upstream it
+>>
+> 
+> I see. Actually, they share the most part of nt36xxx, but with
+> different memory maps. See
+> https://github.com/MiCode/Xiaomi_Kernel_OpenSource/blob/elish-r-oss/drivers/input/touchscreen/nt36xxx/nt36xxx_mem_map.h
+> 
+>> [...]
+>>
+>>> +             /*
+>>> +              * This memory region is required to initialize the backlight
+>>> +              * and display for bootloader. Normally, this region is not
+>>> +              * needed. However, due to limitations in the current mainline
+>>> +              * KTZ8866 driver, dual backlight ICs cannot be properly
+>>> +              * initialized.
+>>> +              *
+>>> +              * A workaround involving secondary registration was proposed,
+>>> +              * but rejected by reviewers. This reserved region is kept as
+>>> +              * a temporary solution until a proper initialization method
+>>> +              * that satisfies upstream requirements is found.
+>>> +              */
+>>> +             splash_region {
+>>> +                     reg = <0 0xd5100000 0 0x2b00000>;
+>>> +                     no-map;
+>>> +             };
+>>
+>> I assume this means "if the bootloader sees /reserved-memory/splash_region,
+>> it keeps the display online" - let's not do that, as underscores are not
+>> allowed in node names (kernel coding style, not dt syntax)
+>>
+> 
+> Right, without it, BL won't initialize backlight and display. We need
+> it to initialize backlight here since mainline ktz8866 won't program
+> partial registers properly. If there is no other workaround, I will
+> remove it to keep kernel coding style.
 
-Fixes: 77eecf25bd9d2f ("net: lan966x: Update extraction/injection for timestamping")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- .../ethernet/microchip/lan966x/lan966x_main.c |  6 +++
- .../ethernet/microchip/lan966x/lan966x_main.h |  5 ++
- .../ethernet/microchip/lan966x/lan966x_ptp.c  | 49 ++++++++++++++-----
- 3 files changed, 47 insertions(+), 13 deletions(-)
+Can't you add a simple-framebuffer for v1 and drop all the DSI stuff until
+you figured out the backlight and upstreamed the panel driver ?
 
-diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-index 0af143ec0f869..427bdc0e4908c 100644
---- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-+++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-@@ -353,6 +353,11 @@ static void lan966x_ifh_set_rew_op(void *ifh, u64 rew_op)
- 	lan966x_ifh_set(ifh, rew_op, IFH_POS_REW_CMD, IFH_WID_REW_CMD);
- }
- 
-+static void lan966x_ifh_set_oam_type(void *ifh, u64 oam_type)
-+{
-+	lan966x_ifh_set(ifh, oam_type, IFH_POS_PDU_TYPE, IFH_WID_PDU_TYPE);
-+}
-+
- static void lan966x_ifh_set_timestamp(void *ifh, u64 timestamp)
- {
- 	lan966x_ifh_set(ifh, timestamp, IFH_POS_TIMESTAMP, IFH_WID_TIMESTAMP);
-@@ -380,6 +385,7 @@ static netdev_tx_t lan966x_port_xmit(struct sk_buff *skb,
- 			return err;
- 
- 		lan966x_ifh_set_rew_op(ifh, LAN966X_SKB_CB(skb)->rew_op);
-+		lan966x_ifh_set_oam_type(ifh, LAN966X_SKB_CB(skb)->pdu_type);
- 		lan966x_ifh_set_timestamp(ifh, LAN966X_SKB_CB(skb)->ts_id);
- 	}
- 
-diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.h b/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
-index 1efa584e71077..1f9df67f05044 100644
---- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
-+++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
-@@ -75,6 +75,10 @@
- #define IFH_REW_OP_ONE_STEP_PTP		0x3
- #define IFH_REW_OP_TWO_STEP_PTP		0x4
- 
-+#define IFH_PDU_TYPE_NONE		0
-+#define IFH_PDU_TYPE_IPV4		7
-+#define IFH_PDU_TYPE_IPV6		8
-+
- #define FDMA_RX_DCB_MAX_DBS		1
- #define FDMA_TX_DCB_MAX_DBS		1
- 
-@@ -254,6 +258,7 @@ struct lan966x_phc {
- 
- struct lan966x_skb_cb {
- 	u8 rew_op;
-+	u8 pdu_type;
- 	u16 ts_id;
- 	unsigned long jiffies;
- };
-diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_ptp.c b/drivers/net/ethernet/microchip/lan966x/lan966x_ptp.c
-index 63905bb5a63a8..87e5e81d40dc6 100644
---- a/drivers/net/ethernet/microchip/lan966x/lan966x_ptp.c
-+++ b/drivers/net/ethernet/microchip/lan966x/lan966x_ptp.c
-@@ -322,34 +322,55 @@ void lan966x_ptp_hwtstamp_get(struct lan966x_port *port,
- 	*cfg = phc->hwtstamp_config;
- }
- 
--static int lan966x_ptp_classify(struct lan966x_port *port, struct sk_buff *skb)
-+static void lan966x_ptp_classify(struct lan966x_port *port, struct sk_buff *skb,
-+				 u8 *rew_op, u8 *pdu_type)
- {
- 	struct ptp_header *header;
- 	u8 msgtype;
- 	int type;
- 
--	if (port->ptp_tx_cmd == IFH_REW_OP_NOOP)
--		return IFH_REW_OP_NOOP;
-+	if (port->ptp_tx_cmd == IFH_REW_OP_NOOP) {
-+		*rew_op = IFH_REW_OP_NOOP;
-+		*pdu_type = IFH_PDU_TYPE_NONE;
-+		return;
-+	}
- 
- 	type = ptp_classify_raw(skb);
--	if (type == PTP_CLASS_NONE)
--		return IFH_REW_OP_NOOP;
-+	if (type == PTP_CLASS_NONE) {
-+		*rew_op = IFH_REW_OP_NOOP;
-+		*pdu_type = IFH_PDU_TYPE_NONE;
-+		return;
-+	}
- 
- 	header = ptp_parse_header(skb, type);
--	if (!header)
--		return IFH_REW_OP_NOOP;
-+	if (!header) {
-+		*rew_op = IFH_REW_OP_NOOP;
-+		*pdu_type = IFH_PDU_TYPE_NONE;
-+		return;
-+	}
- 
--	if (port->ptp_tx_cmd == IFH_REW_OP_TWO_STEP_PTP)
--		return IFH_REW_OP_TWO_STEP_PTP;
-+	if (type & PTP_CLASS_L2)
-+		*pdu_type = IFH_PDU_TYPE_NONE;
-+	if (type & PTP_CLASS_IPV4)
-+		*pdu_type = IFH_PDU_TYPE_IPV4;
-+	if (type & PTP_CLASS_IPV6)
-+		*pdu_type = IFH_PDU_TYPE_IPV6;
-+
-+	if (port->ptp_tx_cmd == IFH_REW_OP_TWO_STEP_PTP) {
-+		*rew_op = IFH_REW_OP_TWO_STEP_PTP;
-+		return;
-+	}
- 
- 	/* If it is sync and run 1 step then set the correct operation,
- 	 * otherwise run as 2 step
- 	 */
- 	msgtype = ptp_get_msgtype(header, type);
--	if ((msgtype & 0xf) == 0)
--		return IFH_REW_OP_ONE_STEP_PTP;
-+	if ((msgtype & 0xf) == 0) {
-+		*rew_op = IFH_REW_OP_ONE_STEP_PTP;
-+		return;
-+	}
- 
--	return IFH_REW_OP_TWO_STEP_PTP;
-+	*rew_op = IFH_REW_OP_TWO_STEP_PTP;
- }
- 
- static void lan966x_ptp_txtstamp_old_release(struct lan966x_port *port)
-@@ -374,10 +395,12 @@ int lan966x_ptp_txtstamp_request(struct lan966x_port *port,
- {
- 	struct lan966x *lan966x = port->lan966x;
- 	unsigned long flags;
-+	u8 pdu_type;
- 	u8 rew_op;
- 
--	rew_op = lan966x_ptp_classify(port, skb);
-+	lan966x_ptp_classify(port, skb, &rew_op, &pdu_type);
- 	LAN966X_SKB_CB(skb)->rew_op = rew_op;
-+	LAN966X_SKB_CB(skb)->pdu_type = pdu_type;
- 
- 	if (rew_op != IFH_REW_OP_TWO_STEP_PTP)
- 		return 0;
--- 
-2.34.1
+Neil
+
+> 
+>>> +     };
+>>> +
+>>> +     /* No Modem */
+>>> +     smp2p-modem {
+>>> +             status = "disabled";
+>>> +     };
+>>
+>> There shouldn't be any harm in keeping this node enabled
+>>
+> 
+> Ack
+> 
+>> [...]
+>>
+>>> +
+>>> +     vph_pwr: vph-pwr-regulator {
+>>> +             compatible = "regulator-fixed";
+>>> +
+>>> +             regulator-name = "vph_pwr";
+>>> +             regulator-min-microvolt = <3700000>;
+>>> +             regulator-max-microvolt = <3700000>;
+>>> +
+>>> +             regulator-always-on;
+>>> +             regulator-boot-on;
+>>> +     };
+>>> +
+>>> +     wcn7850-pmu {
+>>> +             compatible = "qcom,wcn7850-pmu";
+>>> +
+>>> +             pinctrl-names = "default";
+>>> +             pinctrl-0 = <&wlan_en>, <&bt_default>;
+>>
+>> property-n
+>> property-names
+>>
+>> please
+>>
+> 
+> Ack
+> 
+>> [...]
+>>
+>>> +&i2c_hub_0 {
+>>> +     clock-frequency = <400000>;
+>>> +
+>>> +     status = "okay";
+>>> +
+>>> +     /* sc8547-charger-secondary@6F */
+>>> +};
+>>> +
+>>> +&i2c_hub_2 {
+>>> +     clock-frequency = <400000>;
+>>> +
+>>> +     status = "okay";
+>>> +
+>>> +     /* sc8547-charger-primary@6F */
+>>> +};
+>>> +
+>>> +&i2c_hub_3 {
+>>> +     status = "okay";
+>>> +
+>>> +     /* pencil-wireless-charger-cps8601@41 */
+>>> +};
+>>> +
+>>> +&i2c_hub_4 {
+>>> +     clock-frequency = <400000>;
+>>> +
+>>> +     status = "okay";
+>>> +
+>>> +     /* awinic,aw88261_smartpa @34,35,37 */
+>>
+>> We have drivers for these!
+>>
+>> sound/soc/codecs/aw88261.c
+>>
+> 
+> I noticed that. But I have not looked into the sound yet. I may add
+> the nodes after test. BTW the mainline one is quite simple compared
+> to the downstream, doubting if it is really working
+> https://github.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_sm8650/tree/oneplus/sm8650_v_15.0.0_pad_pro/vendor/oplus/kernel/audio/codecs/aw882xx
+> 
+>>> +};
+>>> +
+>>> +&i2c_hub_7 {
+>>> +     clock-frequency = <400000>;
+>>> +
+>>> +     status = "okay";
+>>> +
+>>> +     /* awinic,aw88261_smartpa @34,35,37 */
+>>> +};
+>>> +
+>>> +&i2c2 {
+>>> +     status = "okay";
+>>> +
+>>> +     /* secondary kinetic,ktz8866@11 */
+>>
+>> You can describe it, the driver sets some nonzero default brightness
+>>
+> 
+> But the backlight framework won't index them, which causes sysfs
+> collision when the second instance is registering.
+> 
+> Best wishes,
+> Pengyu
+> 
 
 
