@@ -1,215 +1,118 @@
-Return-Path: <linux-kernel+bounces-657382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EEFDABF38A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:57:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FE5BABF3AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:06:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 330404A6BFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:57:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA2384E56E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672DE264614;
-	Wed, 21 May 2025 11:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C5B265CA8;
+	Wed, 21 May 2025 12:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dYaScVOV"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ynUzWTmk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mUVRrs54"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA95A256C9F;
-	Wed, 21 May 2025 11:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E753264FA6;
+	Wed, 21 May 2025 12:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747828625; cv=none; b=nPQx0G4pwANIRhZuZ8tyT9T9BkdH72CmntWlN99HMkjA1AtKr8kg93fcm24AtdRM/HtG5klyLf53idYISEVrjfzbuae8aW8d3v4am6/d7T+JHu83GEcTgE13essgDp6AlOa63OOSxCzwaID2t1zaf1Ltl9kWwGy0alcPiWrKpmo=
+	t=1747829171; cv=none; b=EUNMKdcfb0NMGH+9y42Oq1c8qM+ltoXUMWY1iAdf775boXwEPDj4ggMjiwoETnTIfTKFtKWkGlVLIFs8Q82yVi32MfKIa0k2HXQpT19RO1Eao/sTaOHmuuOFiidJ+Orve3mz2HOZQqUL9esRU53Li7yK01GUaBRTC8Y6y9F78xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747828625; c=relaxed/simple;
-	bh=H7tka3wJf1QGS7YJfOe3so9uCmt6OfTvEwQrEsDXtMQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mc/i0e5DA9XAD8GL6zq0xASvA6ufGKIaE5ACAb29eE+c9TVkhqmRxXDQsws2xtbdEA0vlPebi6wNU+7DBtWrDuvOCqRu6LKfyfn7+F7rxxZzzrcD2uoMeJ9QS62pAfZkRC7YnFzqZszmnTU9hs2Pe/+pjq4LCBpsP8u1XAAKmN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dYaScVOV; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6019b564d0bso8606208a12.2;
-        Wed, 21 May 2025 04:57:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747828622; x=1748433422; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/adlGvCb5MNbmrGHbVV4yYng8LO7Mr1poA+A93TwMjI=;
-        b=dYaScVOVOcawFjoWu1BRGaXsyKTLDiXC3r+XngTfaunOlLKKYZ3rg7n/tl0AZpg/Z5
-         lCQbkh3vgjCXjJO7K4aCr+r+tth4wXCaf1BK85QIsCmF+CmK4Ob44FrwL8JvEKx64Enc
-         QWmQKXIBc3Do9tDgm65yIAVzypOYF7653dvyc9g7q82xVJ+VBNXtfkJ6n4zjAW/Wo7aP
-         Hdbd2L4Vbnuy9Z9R4fUloyLRMY4PaAbjXNGNN2T/N34sVWGb6LzX63uv11lKL710gnQE
-         AyBjeYxCP0m7y6m8Z5C11hTO85AJizO/BcKNzOe8jzOlrn1bK7mpv9NOPBQfUf4cFQGK
-         bs/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747828622; x=1748433422;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/adlGvCb5MNbmrGHbVV4yYng8LO7Mr1poA+A93TwMjI=;
-        b=QrJ42TsksQE/HvqvzW3plN4/kDteuS0Xn8v+qaNw9/kLYO0Lf/yaEwkhUHC3nlUyiA
-         MPocbFpxkUtNcyrEh24Bxp3eBsNQGqF3ZE/R2cXs2P/Ll+7f+AdX08xkMcdlWRHHRsAl
-         96+ts1oJAM3Gt1pPKPsB9GjLPUsTq6FgQgqqLgIBcAqqC4uJovUIW2E+zD4LahtoPWvb
-         FRkJu5u/4J2XtyLDOKOBYQIKTSofPJkCeZxfSfziN/dTcaf1vFWrispkMAYCv30Ke5bw
-         5EyITU0TTD3Ul9/RU7v10Hrb3AaioUfHjG+/A5JFWNpAPgttO2xCpJ9QDFQlG6vc2Hys
-         EV4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWrXGdefaxG+fXl+I9Bp5AIOpExMA0swAayZngwkOMURrd5dNU/2Pk4S/fEtMdXGHGW+w22/sELrAo5ExM=@vger.kernel.org, AJvYcCXeSUDD/CVDc/lgrHXogg//HO1XASe4CDCD5rBPVAHQ/WYJyCcHb5rWNXcitcGj/7DH8vYwwuI/nTPzpBM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw1Be0aeCHJz43l/FRM5xVltUjNZy7oR7GQtRJRTECvJFEtXbY
-	Le+i3x1DWS7QOFMbG4nCFbOrBIIbI5vgww3YMVja5hPVuhEAfu8ZRSy0
-X-Gm-Gg: ASbGncsENYBhn6CZgBAFhV1wavBJk2kQeo9ykxBuju84epKuroLdms/R1ps5MdEaGNm
-	8HE8esDrDbntKT43/EifP7jmP/8wuMjqZJUELvqa3i7qqHKQJiCF7NSMPRIvIKuN2FKu4gZ+TUQ
-	x+oHUN00odgomnUWSlJI+ctHHngw/lrEQpK1b+ws0+JCZdFUjZzCgy69M1sqAuMnh7hoL2enkQf
-	LQRgmDpLSO/iRB0pjYOoco0gBkKddDJ5KfsoIKulc6zRcmM47kmE7/bxYUePMfWpC49BlaIDlaQ
-	vsJEshdPzV6UFDa0ClzBxoiVa/jFwLn52s6JfTbLpufMAZtS5jzDsl0kV3wiBOpZy4VC0ikpn8V
-	fQ1W5
-X-Google-Smtp-Source: AGHT+IHK39Que8B/UTnefmzsZ6iu5J25oa/W4ZeUS/rX0JY6r8nQ4BS0ZCOq1nZC475b0yOL+2dKvA==
-X-Received: by 2002:a17:907:3f1c:b0:ad5:5b2e:655b with SMTP id a640c23a62f3a-ad55b2e7968mr1186993666b.25.1747828621936;
-        Wed, 21 May 2025 04:57:01 -0700 (PDT)
-Received: from [192.168.5.82] ([92.120.5.1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad53603a369sm845847866b.47.2025.05.21.04.57.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 May 2025 04:57:01 -0700 (PDT)
-Message-ID: <fc2cbb54-58aa-4362-9b84-20df510b9038@gmail.com>
-Date: Wed, 21 May 2025 15:15:20 +0300
+	s=arc-20240116; t=1747829171; c=relaxed/simple;
+	bh=fElIRFETYZzr4Ifj+c9+g9RbSIsYDdiYEI5XALhK2k8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=VkywhV1PxVVR83INWELcfYo1M08LR9D3PcFQIb95By88wq3giu/naw5fOcj2q6xhV9EtIgInGfN9X96g0bDWbqa4DHIsL1uFzhIKW90CIZsoolmQXp5TEL3LQ6wnACvMBpBp52ERIE6+wyHd7egOizbzw4wA9fkbN++5hZiT98o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ynUzWTmk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mUVRrs54; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 21 May 2025 12:06:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747829167;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hif6vAmtKI+jSy7f55iVzWHZ92pzeGZk8llFmJ+6oy4=;
+	b=ynUzWTmkn6xQ/j31/qrSYvZJSv/vllWroqu131GTK/UwlEV+YyWsozKosQvvs40FoDHSWD
+	wk1zbER5+fhx23EdvNMCKDmmLDZjrzIQCRcIUnz4GSc5cqinqhFvjcKZwSO/46nyzZeDiV
+	e+sU6nQz5lCZxZl63R7zu/x+2VhVhULvZxwbit0o2JSSsWeAOJHRCZwIG1WQ3SGXpNz1lj
+	dJC5Ibv8LMILWU9bQN2TneroYUgReqhoPUYHKlpykG9eZZaFdYUJrGsHaGjkwaO72hFVrc
+	dBMNyAy9va32kOZRdO4WdU921lD0qa6zjqn+uicOEDCiN5Wf2EpBv1MdAewYJA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747829167;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hif6vAmtKI+jSy7f55iVzWHZ92pzeGZk8llFmJ+6oy4=;
+	b=mUVRrs54zpR7n2lvBxFfXxDdu0xhujabC17Q77fQfdyoyLeczocNNefpMBF/tI7eDMalgd
+	5/LtCdlJCJHg+MDg==
+From: "tip-bot2 for Colin Ian King" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/futex] selftests/futex: Fix spelling mistake
+ "unitiliazed" -> "uninitialized"
+Cc: Colin Ian King <colin.i.king@gmail.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250520080657.30726-1-colin.i.king@gmail.com>
+References: <20250520080657.30726-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/3] ASoC: audio-graph-card2: support explicitly
- disabled links
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-References: <20250515153128.147457-1-laurentiumihalcea111@gmail.com>
- <20250515153128.147457-3-laurentiumihalcea111@gmail.com>
- <874ixltjzw.wl-kuninori.morimoto.gx@renesas.com>
- <0aa11ef6-4166-41d8-98bc-6c7687d10b11@gmail.com>
- <871psls8nw.wl-kuninori.morimoto.gx@renesas.com>
- <e6d88cbc-accb-4423-80e4-3972766047f4@gmail.com>
- <87o6vonmjw.wl-kuninori.morimoto.gx@renesas.com>
-Content-Language: en-GB
-From: Mihalcea Laurentiu <laurentiumihalcea111@gmail.com>
-In-Reply-To: <87o6vonmjw.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <174782916588.406.1506324316964417274.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the locking/futex branch of tip:
 
-On 20.05.2025 03:38, Kuninori Morimoto wrote:
-> Hi Laurentiu
->
->> so, the problem with this is the fact that (assuming you've used a DT overlay
->> for the PLUGIN) you won't be able to use the DT overlay on other boards because
->> you've also added the "Headphone0", "Codec0" route which is specific to BASE's
->> Codec0. We have multiple boards so our system would look like this:
->>
->> 	BASE0			  PLUGIN
->> 	+-----------------+
->> 	| CPU0 <-> Codec0 |     +--------+
->> 	| CPU1		  | <-> | Codec1 |
->> 	+-----------------+     +--------+
->>
->>
->> 	BASE1			  PLUGIN
->> 	+-----------------+
->> 	| CPU0 <-> Codec3 |     +--------+
->> 	| CPU1		  | <-> | Codec1 |
->> 	+-----------------+     +--------+
->>
->>
->> The plugin is the same. The only difference between BASE1 and BASE0 is the fact that CPU0
->> is connected to Codec0 on BASE0, while, on BASE1, CPU0 is connected to a different codec: Codec3.
-> Ah, OK, that it the reason why you added the route on BASE side...
+Commit-ID:     78272d44970c07899c78661f6b7492b5a7e14a90
+Gitweb:        https://git.kernel.org/tip/78272d44970c07899c78661f6b7492b5a7e14a90
+Author:        Colin Ian King <colin.i.king@gmail.com>
+AuthorDate:    Tue, 20 May 2025 09:06:57 +01:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 21 May 2025 13:57:41 +02:00
 
+selftests/futex: Fix spelling mistake "unitiliazed" -> "uninitialized"
 
-exactly!
+There is a spelling mistake in a fail error message. Fix it.
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Link: https://lore.kernel.org/r/20250520080657.30726-1-colin.i.king@gmail.com
+---
+ tools/testing/selftests/futex/functional/futex_numa_mpol.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> Hmm... I think my previous suggested idea (new flag) is reasonable, but you
-> mentioned that you want to check whether it was "disabled" or not.
-> So, how about to add "plugin-route" and "plugin-links" instead ?
->
-> BASE
-> 	my_card: card {
-> 		links = <&cpu0>;
-> 		routing = "Headphone0", "Codec0"; /* for CPU0-Codec0 */
-> 	};
->
-> PLUGIN
-> 	&my_card {
-> 		plugin-links = <&cpu1>, <&cpu2>
-> 		plugin-routing = "Headphone1", "Codec1", /* for CPU1-Codec1 */
-> 		^^^^^^		 "Headphone2", "Codec2"; /* for CPU2-Codec2 */
-> 	};
->
-> Audio Card2 parses "links" + "plugin-links", and
-> "routing" + "plugin-routing". It is more intuitive ?
-
-
-hm, I believe this _should_ work. I also think that we can just drop the whole
-
-"ignore_route_check" flag idea since you can just use "plugin-routing" in
-
-your DT overlay to specify the CODEC-specific routes (instead of having
-
-them in your BASE DTS). This way, you'll avoid having routes that might
-
-not exist in your BASE DTS.
-
-
-if we go for this though I think we need to clarify the usage of the
-
-"plugin-links" and "plugin-routing" properties. For me, these properties
-
-only make sense if you use them in a DT overlay to add additional links/routes
-
-introduced by the PLUGIN board. This is basically a workaround the fact
-
-that DT overlays don't support appending to the properties of the BASE
-
-DTS.
-
-
-also, I believe we can drop the whole "explicitly disabled links" idea
-
-since IMO, links passed via the "plugin-links" property _must_ exist.
-
-
-anyhow, I will have test out this new idea on our particular scenario and see
-
-how well it works. Thank you very much for this discussion! It was really, really
-
-helpful!
-
-
->
->>> 	BASE			  PLUGIN
->>> 	+-----------------+			^
->>> 	| CPU0 <-> Codec0 |			| Card1
->>> 	|		  |			v
->>> 	|		  |     +--------+	^
->>> 	| CPU1		  | <-> | Codec1 |	| Card2
->>> 	| CPU2		  | <-> | Codec2 |	|
->>> 	+-----------------+     +--------+	v
->> one important thing to note here is the fact that we can only
->> have 1 sound card because all DAIs (CPU0, CPU1, CPU2) belong
->> to the same component.
-> Indeed it depens on the CPU side driver style.
-> I have updated my driver to allow to be multi components by checking DT.
->
-> I'm not sure which one (= use plugin-xxx flag or use multi Cards) is
-> more intuitive, but supporting both is not bad idea ?
->
-> Thank you for your help !!
->
-> Best regards
-> ---
-> Kuninori Morimoto
+diff --git a/tools/testing/selftests/futex/functional/futex_numa_mpol.c b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
+index d18949e..20a9d3e 100644
+--- a/tools/testing/selftests/futex/functional/futex_numa_mpol.c
++++ b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
+@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
+ 	test_futex(futex_ptr, 0);
+ 
+ 	if (futex_numa->numa == FUTEX_NO_NODE)
+-		ksft_exit_fail_msg("NUMA node is left unitiliazed\n");
++		ksft_exit_fail_msg("NUMA node is left uninitialized\n");
+ 
+ 	ksft_print_msg("Memory too small\n");
+ 	test_futex(futex_ptr + mem_size - 4, 1);
 
