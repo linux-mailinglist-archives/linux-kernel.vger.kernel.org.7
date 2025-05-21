@@ -1,175 +1,253 @@
-Return-Path: <linux-kernel+bounces-656731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF133ABEA3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 05:12:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75ADABEA91
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28C8E8A08DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 03:12:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA8CB3B0C54
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 04:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F98F22D9F0;
-	Wed, 21 May 2025 03:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1D122DA00;
+	Wed, 21 May 2025 04:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="nbuy5KAw"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2046.outbound.protection.outlook.com [40.107.247.46])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S0SeOj5I"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62174C74;
-	Wed, 21 May 2025 03:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747797160; cv=fail; b=geRlgJCpnoJEVC67dpP5/0Ew/Tz7mTXU+sPb4kBe2zC9aMRnFH7v0pQYjJZdYTVYuzeAMoR0ndRbVH8fJd455VuoN86WWqdCESrAs7STl8TSNQ1bsxlVC76DN9mJdo0jgcDUpCPgMxBIsv2H/1KE6RwPJ94VSV0EyAkMvEpxP4c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747797160; c=relaxed/simple;
-	bh=5sIAcO2VlagMRzSpcMWpDKzltjBm6agroIzBpGDU1Bw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=YxV1Agpf+TBGB1bsWTagNvv8tAad8rJhr8Iu76DdEQJbR1NjShOlc/rEz3PfSC35x4/t8qCx3ku0c98u0yWhFt8YKpr8CZbq4yyHaKokIHk67OIcxv97xP0JgniSCqvDfMI22KR4Irx/equzfuZMomUzROV7ymBYjneXrFwQ54g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=nbuy5KAw; arc=fail smtp.client-ip=40.107.247.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pdaIibmrlvvlrALUCaeynWcdZRuHmxtH7bvpf/k7Rt227+gQbuulpG8xsyes6vF8p1DOYT4hs7z9B8OAYlDDaVOGktKJKxbPzf015bgJbDAb37c3n7AmioqF6u5fFUh1a2c/XiI+UkiD5wdZf84fYCPmbBW5FfINIqjJbe6K2Lw0v5QqdRuApxEnGY4oaLa1EsUPt9MxtaVt9hYaN8ErX3n7M8oXpMq36wMpKSsXy6VtuhbzVjPlLULBE7xz4C+mwueLrHy001XY5mk6yHYNbte2QJema56PkkQYtBSbJRg2hx3xZd/H6uNwB6uICa4Ttr0ewScu829SuxziAo6qAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5sIAcO2VlagMRzSpcMWpDKzltjBm6agroIzBpGDU1Bw=;
- b=xvjW+LyDDI/54QUXruX5CHAroN6Sfo5WoOrprDV6SlWFI3RgS6UXF4h140lED6n3BAH6pI08AOSddf27N8argW4UH2+We/EL88292UAirFH+WkDavPpxZZgLfa0DYfxiE6EfCMV0tbcuDiPBqWSL2p31W0ouHvQOogsXUSbFi5QuVwoprY/PxqSz9pIYYPNAWLDvOorcjn5T1tTyyzDy9xhxmqX8eIKfKMdT3bf4rcYMrn5/O4lqOjtar7Q5og43T9NBPKylV+bG/2KeXXbjmpmr1wohSFx4A8+grwgG8dx9AjCD8YOUef/eoULlcWYwzTFr7XXJqNjUsr3YY9faMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5sIAcO2VlagMRzSpcMWpDKzltjBm6agroIzBpGDU1Bw=;
- b=nbuy5KAw5kRf9IiHyHZiOhMhl02HcdDSuCFu3U6RCZpTC0g2Ev+SoogXQBLgHY/EckUJAhJguZQK7Hk9n/jJjAcHqbqOOOV4P76qOr0OVoZITuNkOigjdSnIUAEQRQoS88jkLbfrFnsTzeafzbvP3nJYOD4cj6A/tGLurHnXW5GD6veamV3LhvrxaYs/md1dzurwmfKP3NbwAq7JfD4aYEUCtKPzwyWLjGNVOd7qTgWXd9d9Z0LdfSQOc2MS1OtVMltKiTC49gt7NmlfnhKeLxZWEXOpokCwk7coPbaySSwb7E4pSf7P99Mjwi+2inmijW5tfHP9m0uI2dqWBTxQVw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PAWPR04MB9957.eurprd04.prod.outlook.com (2603:10a6:102:385::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.31; Wed, 21 May
- 2025 03:12:35 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.8722.031; Wed, 21 May 2025
- 03:12:35 +0000
-Date: Wed, 21 May 2025 12:22:11 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Hiago De Franco <hiagofranco@gmail.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com,
-	Fabio Estevam <festevam@gmail.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH v3 0/3] remoteproc: imx_rproc: allow attaching to running
- core kicked by the bootloader
-Message-ID: <20250521042211.GC28017@nxa18884-linux>
-References: <20250519171514.61974-1-hiagofranco@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250519171514.61974-1-hiagofranco@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SI2PR02CA0038.apcprd02.prod.outlook.com
- (2603:1096:4:196::22) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0ADA33993
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 04:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747800547; cv=none; b=hiUC6QtdBuOM4X9FypKykLNFF/7cuZ0YfMY034z7CnBwsJvYuHuzcvAbfhvX5WABYFJTH8JBLjp7mmMTC+JXsukCP3YosWsH1ZF7PuPv3uYIomPjh+gdR+t3IxfDfJT1xH7Vp3tOQvZg+K0lJU4tC/G71i/EXZRdrY2OAjQjGFk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747800547; c=relaxed/simple;
+	bh=a2+Bt61n+wOA4hRqO3Q4hLaEsYkSNk9/KNmQwwiPqbY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jZadY7COMhK3E3W9ZL5rPi1Z9f+SmKpX8KyERPoeZ9jXCL2QjIpXqviY2hac1RlL8N7nmKM7w6qLttMu4e7zk0hunam4VV5qsEdKZ+5EZefasEQltJ909g9hLVn6OUMn85Mc52mfoRNIyoBYCLmPfKcJWd1ObnHv0lm4EuhWck4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S0SeOj5I; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747800544;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cwFXFsBgLWO76M4EzHYB+vdHBmj0O4/k6dIiXIgNwXA=;
+	b=S0SeOj5IqpmAXJxHvaHkv2QZgy85v3URWyXUPhY+PFIJTGRMlD7ssllHJCLNNcBzGDp7y8
+	zlMkpxnGBWhXlYaqZcaqgGCpTAFzl6J5SKf/AbTgByHzvRDGxyEmyOIXN3dhVeOBl2D3B1
+	njUEnrcWB9jvtkmR0vbwi8KT82Zyf6s=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-6-wOqS_yLZPpq-x5VQjf1inQ-1; Wed,
+ 21 May 2025 00:09:00 -0400
+X-MC-Unique: wOqS_yLZPpq-x5VQjf1inQ-1
+X-Mimecast-MFC-AGG-ID: wOqS_yLZPpq-x5VQjf1inQ_1747800537
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C32571800446;
+	Wed, 21 May 2025 04:08:55 +0000 (UTC)
+Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.184])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AFE22195608F;
+	Wed, 21 May 2025 04:08:48 +0000 (UTC)
+From: Anusha Srivatsa <asrivats@redhat.com>
+Subject: [PATCH v3 00/30] drm/panel: Use refcounted allocation in place of
+ devm_kzalloc() - Part2
+Date: Tue, 20 May 2025 22:03:31 -0500
+Message-Id: <20250520-drivers-mass-convert-part2-v3-0-f7ae7b723c68@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PAWPR04MB9957:EE_
-X-MS-Office365-Filtering-Correlation-Id: babc76d1-ea0d-486d-6b4b-08dd981555a3
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|376014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jFrvnqs9jb3TpV0feCkV6xquz3h5WWy6XQHH4dpPEarBs52kT2V5iYd5vOtB?=
- =?us-ascii?Q?hbCj5Q8HJ8drZVo1NezezsOEvRrOB6LcZn2mwiaZSsSYb/0GnyrIWHwPoRPz?=
- =?us-ascii?Q?f5jWkV309rn+HYi5W+vZgaigFTAF7sq7ao39fAUezny1hT8Wwoy4LEZrMICw?=
- =?us-ascii?Q?WzJZLerWJJuf+BbWshuZSkTuZf+PS4U96mkWR5TmPJsKB4CDh7JmmbdVVLI5?=
- =?us-ascii?Q?x/GXObEICocVVqoJS0rw+KP8Jqg1NGGIsfCNjcl2Zwc/jO8F9wLeskT53cx9?=
- =?us-ascii?Q?Bc6FikcCZl2lUwnnxZIaUI4I+qW8n+bC7NqtX+lAC/I2gn577vc3K8pAouK5?=
- =?us-ascii?Q?1ERLVp7WKYtDmUvdbskWyp0yoDM7lPlGWMlWBM9phdM28l0V3MrQ7OsUIcLQ?=
- =?us-ascii?Q?pscEYV/qMU7aXi+KIxPB/ZNUo8/DRELaGO3iFw23IQTGHhwkw9BzCfvbS78g?=
- =?us-ascii?Q?/M97dF687AFzlb175vkftdgUQnsiF9d2Wna1wpbDdC396cJWISALX/49Nl7s?=
- =?us-ascii?Q?WWeusrUK+pkxUf/fmEOkNg6HVp3ZPnEisoacIiXQ9B/ZiNOzN/9CsA+/Uc5B?=
- =?us-ascii?Q?fJPl2IoHdWFWvWb4QOnqqkMv4aPeGytDCdJwZp9GlUQP+DlZ8bHJDr8eSx8l?=
- =?us-ascii?Q?1dpR/59xGoPpqmdlw4aQ0RJXhiCoWeXJEVKP394As3L3piYJrDLdyWuFAFmJ?=
- =?us-ascii?Q?3AvYpiCz2iDdFkjW3CnUtvSXOSTzOI8pEAhp5ko8b9VxC33mGYYld86mp3NT?=
- =?us-ascii?Q?0Q20rU0e2pwnZnd9y7NmBYBXjtIZm0YVGWviyZJutYO40KW2LK0kP69qvkb8?=
- =?us-ascii?Q?Y2ECfko2Qu+V9wfdngKA+mU+qpXfMKvwkwBBzrWIu1G+9lCyQl1Tj/eDUHly?=
- =?us-ascii?Q?oRJkHKoOkKPRUZe7dhbIZdIxVlsKia1NWba3KBIgJoe+0F4T/wiaaRUPk0x2?=
- =?us-ascii?Q?BCeFXMF5bHywXgSZHLSMFFCT7MfTA7QfcYGeJ/u0QI+8zG2Kc7fpm27kdEBp?=
- =?us-ascii?Q?FS2zbnKOtg4rA/a8sp8idp2i9HA+CafGFzP4xD2OXhJ09GGdtwiDFiqL1fdB?=
- =?us-ascii?Q?IpBiesVghJVuScmo2tIkGJauZNoK9S10X9hC3eQ6O22PqvIL+wta+pGtZtrZ?=
- =?us-ascii?Q?lRctaM/xOucp5l/15+Ycxm+oKlsMW0r9t9HniFfDvuonqjWGizOT14bUMjkI?=
- =?us-ascii?Q?vu7p+8MHA7/PIpaX4TAmKB18JKm0jmLM3ThnoK3MfyRRK1XS5cnEifkyiAWo?=
- =?us-ascii?Q?gi4iOgofiw9GrKtYLcXUc/54bHP8ViNlAU4MtAyTv6+61YLFPVDttq5H34Ve?=
- =?us-ascii?Q?SxSZWpMDrY8Z187V0M14Kbs22cUYOwA45e5pNquM7jlKsv+vdp7KI5hgm+W6?=
- =?us-ascii?Q?DQol5naUaQ4pTGR8QFJH3vioiM7AmSINHAz5CEfbTCuPMIARWGmYuW9DcjKF?=
- =?us-ascii?Q?x1c3bcY1e86Wi0OZ6tEfEs0RmGnvkETpcY+IEE8JPFF1ZWCEZrx/rw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?oDhEg2h5//5vmhRqZpwHMdrsyfxDCywTLVNRxEcKk9IWf0gRmnL9etv4M1JC?=
- =?us-ascii?Q?kpSPHtEn2/bA2qIBZV5QCXqXsEz2V1t26pF9d1mQ9I81Ey7Gh6lnilHnCWM7?=
- =?us-ascii?Q?XcpezijF6gTzPGY6EKh6yMI9r3buYrcE/N1O12Cshh653FBlNGa4M9mRe8AO?=
- =?us-ascii?Q?nUqIJc72afR/nYyrQGRT/eNJ6PzrKpbAnb9+gGCp7ocCKXzhd5hBD8nHHAkY?=
- =?us-ascii?Q?v6nXLeWjKvO6r+YuhXout80dG/i4KI+JdbjpFCt1XsIyi2MqdYkUv5k+ZQ39?=
- =?us-ascii?Q?bbtjvD39fwkI0wPP/TqUPZRdqgordMVmWpe6tMgcEY8E6hgVaGYvZwJZsKdu?=
- =?us-ascii?Q?Dy45/NiXqG87Nv5hT+Lh0PGZEdl7sijuQ15prE/tdJI9ibJ8riKvWXLqo+2o?=
- =?us-ascii?Q?G8z5/SqwnBeLwwpeJ1AYsjwOv4iX3dl+GRXKGKUoRAW5rs6MSInhj5p0D3rA?=
- =?us-ascii?Q?y0jJEqt1dlhmaxEpYZeegFIRlnbeXZ8nOoABHo0e2i/A/YvpiZrgN0BWs+aH?=
- =?us-ascii?Q?c2Wd0HGptnJRdn6P0lNjyZD9Fnkz+0Kg950LkppY4FcsK1GAPE/vTzOBUIw5?=
- =?us-ascii?Q?zjgfseuKzPFM0WTVhfjwMi64U61MLAD6lId/+I4ui6PRp0L3UxW4gOkE8/DW?=
- =?us-ascii?Q?ylLAxXEIwcC+f6ytePqbYEqPgzhkgsoolyjmbNkRmAs1DRzFPWukukSLvM5p?=
- =?us-ascii?Q?nk1MzsBuqyOojr2KGpBXOsPdW0jC71dqcj+78MqQl9lYes4S2p2WC7U49Enw?=
- =?us-ascii?Q?aa5xkMWkcXVUhL/JKCr+/CFOL58ByM7RBC+8YRV78pjVXdae0COYj0hhrFZh?=
- =?us-ascii?Q?5Url7kOu9Ae3nixK9vpTOz+LqlZqL3LJOcZejwIER+XVavMsTe2w0nBlsf+v?=
- =?us-ascii?Q?jvKPtsKrAYjekkZMxyitg1MoX+LMR1jVhHy9nAlvaVGoc9pPO59xa0gxDgL0?=
- =?us-ascii?Q?TMQUloZdlU0+IEeV3xmo2YtcHilJYMlZOtv6C05ImipaE/4HzICWVTyVMg/4?=
- =?us-ascii?Q?cWk2Y7dIJJCUaq948D7SyvpdjltWclMLOFpoy44M1YWzIlhxiPvokwXdhwNJ?=
- =?us-ascii?Q?GXa0b5J6wViP6hpLWD/Ji8EwvfQx9Tw+hn5NZlbwTfQJMo2C6alv5oY6eOqC?=
- =?us-ascii?Q?1L5vdjAM32YnHCqbd9VewDFhfRWE8VlToM+oHxHn/X+BLLSwLzL87zgR1s05?=
- =?us-ascii?Q?1PCvBvP0qfGg1fDhrN/uzLI5Gyn4giX44mcSQ9QiTiGH8lxKom2IDgiAuBuO?=
- =?us-ascii?Q?OqZhXmBxC0SA1gBYV8rQdcLFlK8q5wQ/sHypwA2K4ONKOSMDXlZPT36oAkIY?=
- =?us-ascii?Q?uPZnTROMVB2KB06yzfYkVLgnMiIsk83f0PQnEFfyKEU/TuXcx+xQIDBjwRG0?=
- =?us-ascii?Q?21fgx0AeaMEWnLX9zNxo4tcZE058RyA4Gb4cgpNsS/6Dn/Oje4oaU1RkTO2M?=
- =?us-ascii?Q?L+IFaE3gOuiveY+Qu2Mh7DSr5TMdymuxVOkGyMyXn7Ogp/izjZpNl65k2WTk?=
- =?us-ascii?Q?MmXSiVZEhWMric6HWokKlAjBCGwRpua4U+bCzSwT/BbYva+fF6dHhFtHE3qD?=
- =?us-ascii?Q?vWfgiIS+fWxsEMrQpS1TtC7R7uD16wSZzy2TjLAg?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: babc76d1-ea0d-486d-6b4b-08dd981555a3
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2025 03:12:35.7585
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M+O/r0jcxmhLn8sIUhOG0ikCePaPPPct4aQU1IUNQtZtK8s9HKXQC1oztLyKMFGYY5vbbv9ERAy6qxLfMTnTSQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9957
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIRCLWgC/y3NSw7CIBSF4a0Yxl5DKX3oyH2YhlB6tSQWmgshm
+ qZ7l7YO/zP4zsICksXAbqeFESYbrHc5yvOJmVG7F4IdcjPBRcUrwWEgm5ACTDoEMN7liDBrigI
+ K3dT82hZNa0qWgZnwaT87/uhyjzZET9/9KxXberCSl9DLLE9q1g7farPV31aHnQRwEDU3rZbSV
+ HV/JxxGHS/GT6xb1/UHtDsM7MoAAAA=
+X-Change-ID: 20250520-drivers-mass-convert-part2-1a76098178c3
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Icenowy Zheng <icenowy@aosc.io>, Jagan Teki <jagan@amarulasolutions.com>, 
+ Ondrej Jirman <megi@xff.cz>, Javier Martinez Canillas <javierm@redhat.com>, 
+ Michael Trimarchi <michael@amarulasolutions.com>, 
+ Michael Walle <mwalle@kernel.org>, Jagan Teki <jagan@edgeble.ai>, 
+ =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+ Purism Kernel Team <kernel@puri.sm>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Jianhua Lu <lujianhua000@gmail.com>, Stefan Mavrodiev <stefan@olimex.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Anusha Srivatsa <asrivats@redhat.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747796667; l=7046;
+ i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
+ bh=a2+Bt61n+wOA4hRqO3Q4hLaEsYkSNk9/KNmQwwiPqbY=;
+ b=CpFxfcJ81nHgVZvsi2sfwFoGgPa20Vt1zGnLTsbJXuTAK7YIJs4wKF/7sxLCuT/ZHAlO/ZmfB
+ 9z/fMUi2UqVBCJz6nUswZqsid+t6WCrkaT2i84SFC4k86vh0xS/X7dU
+X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
+ pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, May 19, 2025 at 02:15:11PM -0300, Hiago De Franco wrote:
->From: Hiago De Franco <hiago.franco@toradex.com>
+Convert drivers to use the API - devm_drm_panel_alloc().
+There are a lot of occurences of the panel allocation across the
+subsystem. Much thanks to Maxime for the semanic patch which actually
+gives a list of panels allocated unsafely.
 
-Let's wait for V2 discussion a bit, then I will give a look if we reach
-an agreement on using firmware power API here.
+virtual report
 
-Thanks,
-Peng
+@ find_add @
+identifier add_f;
+identifier c;
+identifier b;
+expression d;
+position p;
+identifier r;
+type T;
+@@
+add_f(...)
+{
+...
+- T *c;
++ T *c;
+...
+(
+drm_panel_add(&c->b)@p;
+)
+...
+}
+@ find_allocation depends on find_add @
+identifier alloc_f;
+type find_add.T;
+identifier cal;
+position p;
+@@
+alloc_f(...)
+{
+...
+- T *cal;
++ T *cal;
+...
+(
+ cal = kzalloc(...)@p;
+|
+ cal = devm_kzalloc(...)@p;
+)
+...
+}
+@ script:python depends on report && (find_add && find_allocation) @
+add_f << find_add.add_f;
+alloc_f << find_allocation.alloc_f;
+add_p << find_add.p;
+alloc_p << find_allocation.p;
+@@
+coccilib.report.print_report(alloc_p[0], "ERROR: Panel Driver is unsafely allocated in %s and added in %s" % (alloc_f, add_f))
+
+The changes to the list of panels that this script gives is done manually.
+
+Part 1 of the series : https://patchwork.freedesktop.org/series/147082/
+is already merged. Sending this next part that covers next 30 drivers.
+
+Sending in batches for easier review.
+
+Minor changes in this version: 2 alignment fixes and 2 refactor and
+1 compilation fix.
+
+This took a while to resend mainly due to being away (out of office),
+workstation issues because of which lost the work directory that dim
+had created and had to start afresh.
+
+Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+---
+Changes in v3:
+- Alignment fixes - patch 13 and 22.
+- Refactors: patch 15 and 18.
+- Compilation fix: Patch 18.
+- Link to v2: https://lore.kernel.org/all/20250403-b4-drm_panel_mass_convert_part2-v2-0-260c8a44c56b@redhat.com/
+
+Changes in v2:
+- Remove drm_panel_init() from probe function in ilitek-ili9341 driver. 
+- Link to v1: https://lore.kernel.org/r/20250402-b4-drm_panel_mass_convert_part2-v1-0-903b70999ea6@redhat.com
+
+Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+
+---
+Anusha Srivatsa (30):
+      panel/panel-elida-kd35t133: Use refcounted allocation in place of devm_kzalloc()
+      panel/feixin-k101-im2ba02: Use refcounted allocation in place of devm_kzalloc()
+      panel/fy07024di26a30d: Use refcounted allocation in place of devm_kzalloc()
+      panel/himax-hx83112a: Use refcounted allocation in place of devm_kzalloc()
+      panel/himax-hx8394: Use refcounted allocation in place of devm_kzalloc()
+      panel/ilitek-ili9322: Use refcounted allocation in place of devm_kzalloc()
+      panel/ilitek-ili9341: Use refcounted allocation in place of devm_kzalloc()
+      panel/panel-ili9805: Use refcounted allocation in place of devm_kzalloc()
+      panel/ilitek-ili9806e: Use refcounted allocation in place of devm_kzalloc()
+      panel/ilitek-ili9881c: Use refcounted allocation in place of devm_kzalloc()
+      panel/innolux-ej030na: Use refcounted allocation in place of devm_kzalloc()
+      panel/innolux-p079zca: Use refcounted allocation in place of devm_kzalloc()
+      panel/jadard-jd9365da-h3: Use refcounted allocation in place of devm_kzalloc()
+      panel/jdi-fhd-r63452: Use refcounted allocation in place of devm_kzalloc()
+      panel/ltk050h3146w: Use refcounted allocation in place of devm_kzalloc()
+      panel/ltk500hd1829: Use refcounted allocation in place of devm_kzalloc()
+      panel/lg-lg4573: Use refcounted allocation in place of devm_kzalloc()
+      panel/lincolntech-lcd197: Use refcounted allocation in place of devm_kzalloc()
+      panel/magnachip-d53e6ea8966: Use refcounted allocation in place of devm_kzalloc()
+      panel/mantix-mlaf057we51: Use refcounted allocation in place of devm_kzalloc()
+      panel/newvision-nv3051d: Use refcounted allocation in place of devm_kzalloc()
+      panel/newvision-nv3052c: Use refcounted allocation in place of devm_kzalloc()
+      panel/novatek-nt35510: Use refcounted allocation in place of devm_kzalloc()
+      panel/novatek-nt35560: Use refcounted allocation in place of devm_kzalloc()
+      panel/novatek-nt35950: Use refcounted allocation in place of devm_kzalloc()
+      panel/novatek-nt36523: Use refcounted allocation in place of devm_kzalloc()
+      panel/novatek-nt36672e: Use refcounted allocation in place of devm_kzalloc()
+      panel/novatek-nt39016: Use refcounted allocation in place of devm_kzalloc()
+      panel/lcd-olinuxino: Use refcounted allocation in place of devm_kzalloc()
+      panel/orisetech-ota5601a: Use refcounted allocation in place of devm_kzalloc()
+
+ drivers/gpu/drm/panel/panel-elida-kd35t133.c          | 10 ++++------
+ drivers/gpu/drm/panel/panel-feixin-k101-im2ba02.c     | 11 +++++------
+ drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c | 10 ++++------
+ drivers/gpu/drm/panel/panel-himax-hx83112a.c          | 10 +++++-----
+ drivers/gpu/drm/panel/panel-himax-hx8394.c            | 11 +++++------
+ drivers/gpu/drm/panel/panel-ilitek-ili9322.c          | 10 ++++------
+ drivers/gpu/drm/panel/panel-ilitek-ili9341.c          | 10 +++++-----
+ drivers/gpu/drm/panel/panel-ilitek-ili9805.c          | 12 ++++++------
+ drivers/gpu/drm/panel/panel-ilitek-ili9806e.c         | 10 ++++------
+ drivers/gpu/drm/panel/panel-ilitek-ili9881c.c         | 11 +++++------
+ drivers/gpu/drm/panel/panel-innolux-ej030na.c         | 11 +++++------
+ drivers/gpu/drm/panel/panel-innolux-p079zca.c         | 11 +++++------
+ drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c      | 10 ++++------
+ drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c          | 10 +++++-----
+ drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c    | 11 +++++------
+ drivers/gpu/drm/panel/panel-leadtek-ltk500hd1829.c    | 11 +++++------
+ drivers/gpu/drm/panel/panel-lg-lg4573.c               | 11 +++++------
+ drivers/gpu/drm/panel/panel-lincolntech-lcd197.c      | 11 +++++------
+ drivers/gpu/drm/panel/panel-magnachip-d53e6ea8966.c   | 11 +++++------
+ drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c      | 11 +++++------
+ drivers/gpu/drm/panel/panel-newvision-nv3051d.c       | 11 +++++------
+ drivers/gpu/drm/panel/panel-newvision-nv3052c.c       | 10 ++++------
+ drivers/gpu/drm/panel/panel-novatek-nt35510.c         | 12 ++++++------
+ drivers/gpu/drm/panel/panel-novatek-nt35560.c         | 12 ++++++------
+ drivers/gpu/drm/panel/panel-novatek-nt35950.c         | 10 ++++------
+ drivers/gpu/drm/panel/panel-novatek-nt36523.c         |  9 +++++----
+ drivers/gpu/drm/panel/panel-novatek-nt36672e.c        | 10 +++++-----
+ drivers/gpu/drm/panel/panel-novatek-nt39016.c         | 10 ++++------
+ drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c    | 11 +++++------
+ drivers/gpu/drm/panel/panel-orisetech-ota5601a.c      | 11 +++++------
+ 30 files changed, 145 insertions(+), 174 deletions(-)
+---
+base-commit: a4b4e3fd536763b3405c70ef97a6e7f9af8a00dc
+change-id: 20250520-drivers-mass-convert-part2-1a76098178c3
+
+Best regards,
+-- 
+Anusha Srivatsa <asrivats@redhat.com>
+
 
