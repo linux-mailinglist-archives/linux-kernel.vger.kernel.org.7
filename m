@@ -1,145 +1,84 @@
-Return-Path: <linux-kernel+bounces-657423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0FC0ABF3EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:14:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C2EABF3F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4A616A7E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:14:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B95957A9A3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4D926462E;
-	Wed, 21 May 2025 12:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5E825F7B5;
+	Wed, 21 May 2025 12:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="nZQf6y2D"
-Received: from out.smtpout.orange.fr (out-66.smtpout.orange.fr [193.252.22.66])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cNt/SIIZ"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F342221D8D;
-	Wed, 21 May 2025 12:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EA325D8FC
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747829678; cv=none; b=IH/DURN40t3/MoowjpMS4JBOKsqn0wk1A+vhJKPIoLUbjQ7dnivnSusLIkhm6O8/YKC3RGI1c86Qrb/7tYrxEH+NwVwmROkpgH20cgFi1C9f/snGQvSrVYtU2zRUloL1lHJ6voPUxgm1tl6JqZ83JmgV3q5OKSfthD1vGxeiWsA=
+	t=1747829718; cv=none; b=ufClvMBzlqkWh0T0ok+PDzNvoROtUi+e9ZNWv7Is6wK/MbKMLKjXvwTAAzOF+rNy1Fu933xsGl2wk83UXFMk15HS8KuBUUOsWe+QGuM5CnqddfgD8VWKjEd3ORf31o9Gt0KudW2kjO+UObaVEPNfeQkJZ9+pWIa7ViKM4ijDYHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747829678; c=relaxed/simple;
-	bh=jYHxqaFVXTDmKACrAKeH0s0kCrj27dHQEfoqXdtAXUY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nu85Oy9unGygR7qKAJ3TA27MLCi0mcamiameOTYC+93LyF9MIe1rYUIaDqHm0uR+VVNqc2Kb/qNH1h5Qt+5CT3fgb+x5GcT9H4EEVOSEPC145IxGKZMubaCTS1T4KStFXN6WKdOyV0tp3i7hjwwlERdLQhi0/hRURsK8ieU/0hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=nZQf6y2D; arc=none smtp.client-ip=193.252.22.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id HiL5upFGFAiZ4HiL6uxpGd; Wed, 21 May 2025 14:14:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1747829670;
-	bh=h4DcQovfptu9scaQr7PaHj5iQU+exolK1M2m9CxTu/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=nZQf6y2D9LdRMhuRpaHzIUT7eBzs+pTIxOEETKcmQB+IM1cjnUGtTGG31Us9qS2CE
-	 iNjAuwvHpRBx2qxuT4BcIF8zFGAityzIKUtCGyFATHuaETYQABqCBAIpwhFeAPWctx
-	 C/ZpE5w1g6eCAG3VUXxGLI0GPRgZ5MxmAENNw+vQEG9ebaFwdbpAdkkevqNajfx+x9
-	 T0KmS3eJgGcmF9CXh486kOtvPxIVJFX5O7hAlbHSiG7YLuhOpRNvAqqXCEf+KA3fv7
-	 v+SlST8nbqr70CS6MDbM44NMqqnr/+vWAIBYhUFuHIm+v46292/SmMOsw6bMWJ8WMK
-	 2ulIavhb5cUZA==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 21 May 2025 14:14:30 +0200
-X-ME-IP: 124.33.176.97
-Message-ID: <4b5e3351-9435-4d4c-9553-98b7d0112fd8@wanadoo.fr>
-Date: Wed, 21 May 2025 21:14:26 +0900
+	s=arc-20240116; t=1747829718; c=relaxed/simple;
+	bh=IKBa4fdDM5m3n0gUqcpAHTOYK8EQ+UNtqzJMikfZ9YE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HG16wNLPXZUC7cyzp4mbIyVFyPbU543pL6XVbte0nqjP8xIDgwYQ8ewjQSg0rL/zxoMDWf594Z1KCR4Vvz1OnQM5IsEBx4gsNtoDkvU2lyhnuppCFZ+HKsBLHnqdesCtXWaIIE/3mFItjA4zMWXDjLE1/B8Dy8T88pIZZh9GC9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cNt/SIIZ; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747829714;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=eMlnqWclCfnWGbyuoWPGL3n3kDlUTflxlSnTbzTPBEY=;
+	b=cNt/SIIZhqIlNqYfQg+Ihk76ghzd2d4sq9Zb585uRIDjysML5sY+Tx5+Q52pSiqGqBQLDv
+	ZuLZFhxOI7Oql/PJvnSMhPDMctGsayjX80xh2WUde4WXlwnNfllA1FMt2/eeW5+joNiS6H
+	qVGLXFaxYgv38OAESe0mM8Ep1E2Ri+I=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: "David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	sparclinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] sparc: Remove commented out code
+Date: Wed, 21 May 2025 14:15:01 +0200
+Message-ID: <20250521121503.5175-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] can: dev: add struct data_bittiming_params to group FD
- parameters
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>, linux-can@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250501171213.2161572-2-mailhol.vincent@wanadoo.fr>
- <20250502-scrupulous-sunfish-of-attack-ca0160-mkl@pengutronix.de>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <20250502-scrupulous-sunfish-of-attack-ca0160-mkl@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Marc,
+The struct fields have been commented out ever since commit 1da177e4c3f4
+("Linux-2.6.12-rc2") - remove them.
 
-On 02/05/2025 at 21:34, Marc Kleine-Budde wrote:
-> On 02.05.2025 02:12:10, Vincent Mailhol wrote:
->> This is a preparation patch for the introduction of CAN XL.
->>
->> CAN FD and CAN XL uses similar bittiming parameters. Add one level of
->> nesting for all the CAN FD parameters. Typically:
->>
->>   priv->can.data_bittiming;
->>
->> becomes:
->>
->>   priv->can.fd.data_bittiming;
->>
->> This way, the CAN XL equivalent (to be introduced later) would be:
->>
->>   priv->can.xl.data_bittiming;
->>
->> Add the new struct data_bittiming_params which contains all the data
->> bittiming parameters, including the TDC and the callback functions.
->>
->> This done, update all the CAN FD drivers to make use of the new
->> layout.
-> 
-> Thanks for the series!
-> 
->> Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
->> Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
->> ---
->> The CAN XL series is still blocked because of lack of information on
->> the PWMS and PWML calculations, c.f.:
->>
->>   https://lore.kernel.org/linux-can/68e8c449-a6ab-4958-af3c-852ece2694c2@wanadoo.fr/
->>
->> Regardless, the above patch will be needed at some time. And instead
->> of constantly rebasing it, I would rather have it merged early.
->>
->> The other CAN XL preparation patches target a smaller subset of the
->> tree and rebasing those is not an issue.
->>
->> ** Changelog **
->>
->> v1 -> v2:
->>
->>   - add Oliver's Acked-by tag
->>   - rebase on top of:
->>
->>       [PATCH v5] can: mcp251xfd: fix TDC setting for low data bit rates
->>       Link: https://lore.kernel.org/linux-can/20250430161501.79370-1-kelsey@vpprocess.com/T/#u
->>
->>   Link: https://lore.kernel.org/linux-can/20250320144154.56611-2-mailhol.vincent@wanadoo.fr/
-> 
-> As "mcp251xfd: fix TDC setting for low data bit rates" will go through
-> the "can" and "net" tree, we have to wait until "net" is merged back to
-> "net-next".
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ arch/sparc/include/asm/pbm.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-That commit now reached the net tree. Do you think that my patch can now be applied?
-
-
-Yours sincerely,
-Vincent Mailhol
+diff --git a/arch/sparc/include/asm/pbm.h b/arch/sparc/include/asm/pbm.h
+index 0c86261721e7..a26d9d5e0631 100644
+--- a/arch/sparc/include/asm/pbm.h
++++ b/arch/sparc/include/asm/pbm.h
+@@ -28,8 +28,6 @@
+ struct linux_pbm_info {
+ 	int		prom_node;
+ 	char		prom_name[64];
+-	/* struct linux_prom_pci_ranges	pbm_ranges[PROMREG_MAX]; */
+-	/* int		num_pbm_ranges; */
+ 
+ 	/* Now things for the actual PCI bus probes. */
+ 	unsigned int	pci_first_busno;	/* Can it be nonzero? */
+-- 
+2.49.0
 
 
