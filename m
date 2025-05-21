@@ -1,137 +1,176 @@
-Return-Path: <linux-kernel+bounces-656703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84A57ABE9E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 04:26:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC43FABE9F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 04:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA69B4A1B3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 02:25:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A9383B0F78
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 02:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA2D233727;
-	Wed, 21 May 2025 02:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E8922B8CC;
+	Wed, 21 May 2025 02:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="pM6X6wth"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="iex3AFRz"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A4E23026F;
-	Wed, 21 May 2025 02:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7C62D600;
+	Wed, 21 May 2025 02:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747794222; cv=none; b=l+GH+k1iJBDHSk75ZAdgog5iuWYGIJ1eI7bo/lUJXE60rL0vVPPhOMcPUWIyZ+PROrrCY4wPAlez8djzZhH+OtVuQrcvJHNevw9U5efcEEuZ2e66Y5wyES02oRhgMbNCq+xJiDvKPpVjs26JwF9uY55YtMkMZTc0YT71k63fdU8=
+	t=1747794441; cv=none; b=B9HYuRNHA0vd7hETF20shXGhDQcLaopbzmRrkXlQbBMfojvA6JlAM0j64ZopvtDhZdjzKQ+3oP9cSGIHp7qsJqFekvpZsSN0s0tKbnTyc02+9Ub4fQ7CIcr4wpSpyW96b4of0CKdSOTNxiFeAmqQlCfqomSyWFztj3Ds/F+Pjjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747794222; c=relaxed/simple;
-	bh=vbgGqaUjmC7X3jr8emhPQRlwWfsREiCDK2Qcp0HoCw0=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gpFeeywDBw9da0hpnEHo6QgYs2ojUr+4MhhUlq2Lz8FCunoiu2HNr8Or3y2STzkLaEO424C5dn2n0+k4I4AkqDbIHznGck/LbQw725GRBUsxMlnhyXpu9GiTEEpaKRkGVRIh5ZJynXLd9aAADpkjV4E8tCeZDUW4ic/3xlNG55k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=pM6X6wth; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 99e49ee435ea11f0813e4fe1310efc19-20250521
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:To:From; bh=voJtxz07cvFdIZAVC3CJIYYyf2kty3bRZc+zfXUZii8=;
-	b=pM6X6wthAQKjmkg03Cs6barY5kl4XkF52H9uSjem1IoYZwXZS2B39UVDCk5eTlzhVdhVdbqdLXSg1fb3TyKbNCUrp4q3Ozup5H7Cffvw9OI383RBZW0i2cQ313iMZsnZuGKC1ijqU/52vqSdBhiAKRPCF2g0ntm3FQUII9YU8Q8=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:fc426ebb-bab7-4db2-b796-a0b1a5abb61d,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:479cd0a0-0aa5-46e0-8e34-50f0206e6f15,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 99e49ee435ea11f0813e4fe1310efc19-20250521
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
-	(envelope-from <kyrie.wu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 159924216; Wed, 21 May 2025 10:23:36 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Wed, 21 May 2025 10:23:34 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Wed, 21 May 2025 10:23:34 +0800
-From: Kyrie Wu <kyrie.wu@mediatek.com>
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Kyrie Wu <kyrie.wu@mediatek.com>,
-	<linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>
-Subject: [PATCH v4 12/12] media: mediatek: jpeg: fix remove buffer operation for multi-core
-Date: Wed, 21 May 2025 10:23:22 +0800
-Message-ID: <20250521022322.27576-13-kyrie.wu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250521022322.27576-1-kyrie.wu@mediatek.com>
-References: <20250521022322.27576-1-kyrie.wu@mediatek.com>
+	s=arc-20240116; t=1747794441; c=relaxed/simple;
+	bh=uynU6P2rot4uafnvWQDI8RKCr3IPZZ3LS41NhE+S4sE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UEoORATySZg6Q5wq1UBvzMlxPcmOiuVTyv7o8JX7DoPyNHc1rmlqCiJFo6p7sDUHO2cwPNUia+16tsdBmlsn+gcpCdUC2mutDZ4qesRXIJN3O/Q69D5vRc4vW69CqjDcWtAFLOLMBPobbPv8YAS8PWcZVsgtApaML278dfs4kOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=iex3AFRz; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 9139525F81;
+	Wed, 21 May 2025 04:27:16 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id okZ1Ld-0Nx5j; Wed, 21 May 2025 04:27:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1747794435; bh=uynU6P2rot4uafnvWQDI8RKCr3IPZZ3LS41NhE+S4sE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=iex3AFRz+Gx1/hMg4ww6RLlp29PSfbIx3tRA+ixkIiY1d83Jx8R1JsThAYZRcPTUQ
+	 /1huVKBGcpZtVrhw19IJV0gITW9pU5C9oCFypexaAUPIfTuihShUzH8p2+WZO4SguT
+	 VeTi922bclzO2bGu6XhrZZdX6uSVog+eeUjmASuSJvCArHfPoHqx2jNwNT5c9nIXwL
+	 1Rno4kVaoFa5nhIoUhPeFcBnnUDk+mw79fMSv6o20dURjRtOjsJa4HVPtRdeh7YY26
+	 Q8TFna9BnpmZqUc6Lj14Ua/HQ3qzscAeCHS70i8/2yI8rn9kGMNGNZ6Mkb01Rvk5c0
+	 iEftsaQ/fO52A==
+Date: Wed, 21 May 2025 02:27:00 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Shresth Prasad <shresthprasad7@gmail.com>,
+	Chukun Pan <amadeus@jmu.edu.cn>, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] arm64: dts: rockchip: Add naneng-combphy for
+ RK3528
+Message-ID: <aC059MLlfeUT2a18@pie>
+References: <20250519161612.14261-1-ziyao@disroot.org>
+ <20250519161612.14261-6-ziyao@disroot.org>
+ <079c08bc-e8cc-4ed6-a71e-7ef103f635c0@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <079c08bc-e8cc-4ed6-a71e-7ef103f635c0@kwiboo.se>
 
-move remove buffer code to spinlock protect area for multi-core
+On Tue, May 20, 2025 at 07:51:57PM +0200, Jonas Karlman wrote:
+> On 2025-05-19 18:16, Yao Zi wrote:
+> > Rockchip RK3528 ships a naneng-combphy that is shared by PCIe and USB
+> > 3.0 controllers. Describe it and the pipe-phy grf which it depends on.
+> > 
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 22 ++++++++++++++++++++++
+> >  1 file changed, 22 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > index b2724c969a76..314afb94e19b 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > @@ -318,6 +318,11 @@ vpu_grf: syscon@ff340000 {
+> >  			reg = <0x0 0xff340000 0x0 0x8000>;
+> >  		};
+> >  
+> > +		pipe_phy_grf: syscon@ff348000 {
+> > +			compatible = "rockchip,rk3528-pipe-phy-grf", "syscon";
+> > +			reg = <0x0 0xff348000 0x0 0x8000>;
+> > +		};
+> > +
+> >  		vo_grf: syscon@ff360000 {
+> >  			compatible = "rockchip,rk3528-vo-grf", "syscon";
+> >  			reg = <0x0 0xff360000 0x0 0x10000>;
+> > @@ -867,6 +872,23 @@ dmac: dma-controller@ffd60000 {
+> >  			arm,pl330-periph-burst;
+> >  		};
+> >  
+> > +		combphy: phy@ffdc0000 {
+> > +			compatible = "rockchip,rk3528-naneng-combphy";
+> > +			reg = <0x0 0xffdc0000 0x0 0x10000>;
+> > +			#phy-cells = <1>;
+> 
+> Should probably be sorted at end or before resets prop.
 
-Signed-off-by: Kyrie Wu <kyrie.wu@mediatek.com>
----
- drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Will sort the properties.
 
-diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-index eba9f58b9198..34fa03bcfdd3 100644
---- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-+++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-@@ -1684,9 +1684,6 @@ static void mtk_jpegenc_worker(struct work_struct *work)
- 		goto enc_end;
- 	}
- 
--	v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
--	v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
--
- 	schedule_delayed_work(&comp_jpeg[hw_id]->job_timeout_work,
- 			      msecs_to_jiffies(MTK_JPEG_HW_TIMEOUT_MSEC));
- 
-@@ -1707,6 +1704,8 @@ static void mtk_jpegenc_worker(struct work_struct *work)
- 			     &src_buf->vb2_buf);
- 	mtk_jpeg_set_enc_params(ctx, comp_jpeg[hw_id]->reg_base);
- 	mtk_jpeg_enc_start(comp_jpeg[hw_id]->reg_base);
-+	v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
-+	v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
- 	jpeg_buf_queue_inc(ctx);
- 	v4l2_m2m_job_finish(jpeg->m2m_dev, ctx->fh.m2m_ctx);
- 	spin_unlock_irqrestore(&comp_jpeg[hw_id]->hw_lock, flags);
-@@ -1803,9 +1802,6 @@ static void mtk_jpegdec_worker(struct work_struct *work)
- 		goto dec_end;
- 	}
- 
--	v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
--	v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
--
- 	mtk_jpeg_set_dec_src(ctx, &src_buf->vb2_buf, &bs);
- 	if (mtk_jpeg_set_dec_dst(ctx,
- 				 &jpeg_src_buf->dec_param,
-@@ -1833,6 +1829,8 @@ static void mtk_jpegdec_worker(struct work_struct *work)
- 				jpeg_src_buf->bs_size,
- 				&bs,
- 				&fb);
-+	v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
-+	v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
- 	mtk_jpeg_dec_start(comp_jpeg[hw_id]->reg_base);
- 	jpeg_buf_queue_inc(ctx);
- 	v4l2_m2m_job_finish(jpeg->m2m_dev, ctx->fh.m2m_ctx);
--- 
-2.46.0
+> 
+> > +			clocks = <&cru CLK_REF_PCIE_INNER_PHY>, <&cru PCLK_PCIE_PHY>,
+> This break the ~80 line length limit mostly kept in this file.
 
+Oops, I didn't notice it. Will split them into lines.
+
+> > +				 <&cru PCLK_PIPE_GRF>;
+> > +			clock-names = "ref", "apb",
+> > +				      "pipe";
+> 
+> Could be kept on a single line.
+> 
+> > +			assigned-clocks = <&cru CLK_REF_PCIE_INNER_PHY>;
+> > +			assigned-clock-rates = <100000000>;
+> 
+> Other assigned-clock props are sorted before clocks props in this file.
+> 
+> This is also missing power-domains information (also missing from
+> dt-bindings patch):
+> 
+> 	power-domains = <&power RK3528_PD_VPU>;
+
+I didn't expect your power-domain series when writing v1, thanks for the
+reminder.
+
+As the power-domain series just came out, I'd like to wait until it
+merges and then work further on RK3528 support for naneng-combphy.
+
+I'm not sure whether it's possible to get the combphy cleanup patch (3th
+in this series) merged first. It should be ready for merging and I think
+this may avoid possible conflicts in the future, Any suggestions will be
+appreciated.
+
+> > +			resets = <&cru SRST_PCIE_PIPE_PHY>, <&cru SRST_P_PCIE_PHY>;
+> 
+> This also break the ~80 line length limit mostly kept in this file.
+
+I'm willing to keep the ~80 limit and will split the line.
+
+> Regards,
+> Jonas
+> 
+> > +			reset-names = "phy", "apb";
+> > +			rockchip,pipe-grf = <&vpu_grf>;
+> > +			rockchip,pipe-phy-grf = <&pipe_phy_grf>;
+> > +			status = "disabled";
+> > +		};
+> > +
+> >  		pinctrl: pinctrl {
+> >  			compatible = "rockchip,rk3528-pinctrl";
+> >  			rockchip,grf = <&ioc_grf>;
+> 
+
+Best regards,
+Yao Zi
 
