@@ -1,104 +1,129 @@
-Return-Path: <linux-kernel+bounces-657152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC81ABEFFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:34:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0786EABF006
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 908FD3AA226
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:34:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEE1B4E3246
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3314248868;
-	Wed, 21 May 2025 09:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Y9MbHTJL"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA51124887D;
+	Wed, 21 May 2025 09:35:33 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E4823C505;
-	Wed, 21 May 2025 09:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63072475F7
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 09:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747820060; cv=none; b=Z3h16NiuAHOe6mZ5VLbFL2R8pdRb5LyDZSBhGFupO5ufSRhndT0WBb7gbRdIIl/MYqcl1VV0CgN6sMe27a0JNMW3yEggdoxcca4lUOvkEeQl9Xju7368af5LhO73OepR3ijtF5/bbba4QiWEGVuA3YezHi/ZxTuVU6W8/0P+8AA=
+	t=1747820133; cv=none; b=T82ZCJOtosNWVGSm6oT1pnfUmJNmJB5Se5+ecU/n6tCE3u0+sZVT0V0MaFghe6CeB/jR39ycNLKplZEhsl4bmyQzhK51UgeryVnYK+8CPxSWRyeaxyTNCRnDpv+XTPWpyeuJecNELg1uPO/Sh9VeyBW11a0TKBRj2Ta7PzTy/tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747820060; c=relaxed/simple;
-	bh=hMK6oGrTkZibku5CYpSqz7qna9Y+Jn1piiIv79urESk=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=t4EEEIKk8If0kZ6UZ/8Lbp/Dw+EuQTjeWRC+ZUGrWnR6hZdf4d0MvzHYyU2IjN8oD40bs/Xgwo4/MTu/e7vndg7PoF2C+atMODamgWpqf2kqPTlvPonbsWe3hUld+vQuUbn9NNca9pS0FbfwBv49603ez52ka9AJlioXE49AegE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Y9MbHTJL; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1747820055; h=Message-ID:Subject:Date:From:To;
-	bh=6aoUvVd5gpjDt2TqSa/A0a/gJ8BZD0DlDqhcgfp4UUM=;
-	b=Y9MbHTJLVOjOYUSEPklCOx5VbaUJRBCzEJLLm/Ibj/41vCWVA1C+uZSkSv6VaBH1ToUGg+CXz693m9h3jLmnlPhSHfy9XoaxoCL2R9ZMOIP4j3shfiRcFVx09Os/0iAauMg7GUsvVi8Yqij2Q+NOA1XJJaOt3g9/P6LF1wJRJug=
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WbRFQ9t_1747820054 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 21 May 2025 17:34:15 +0800
-Message-ID: <1747820047.4914944-3-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v2 3/3] virtio_net: Enforce minimum TX ring size for reliability
-Date: Wed, 21 May 2025 17:34:07 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Laurent Vivier <lvivier@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
- netdev@vger.kernel.org,
- Jason Wang <jasowang@redhat.com>,
- linux-kernel@vger.kernel.org
-References: <20250521092236.661410-1-lvivier@redhat.com>
- <20250521092236.661410-4-lvivier@redhat.com>
-In-Reply-To: <20250521092236.661410-4-lvivier@redhat.com>
+	s=arc-20240116; t=1747820133; c=relaxed/simple;
+	bh=ldy3lqqkdQ8O42SSNi98DGRMwNCFB9KvnWLzokONCAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nqQzD6UnYzYI+F//uqAno32BtwedWABPHWlslBsFZClmel2i7vnPcqB+YPCxwLhJCG32dEypt58+KojoYav6i5jT1gDFDyUBRnUAlqJYQTFCTsANoGdgeOvGy0VLBj8XL1LbTMkgVybI/swSFnAKe9hQ3hoI/jTyEu0ZPb7RwNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uHfr3-0001Lu-7G; Wed, 21 May 2025 11:35:17 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uHfr2-000YAT-34;
+	Wed, 21 May 2025 11:35:16 +0200
+Received: from pengutronix.de (unknown [IPv6:2a03:2260:2009:2000::])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id F299741679B;
+	Wed, 21 May 2025 09:35:15 +0000 (UTC)
+Date: Wed, 21 May 2025 11:35:15 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Sascha Hauer <s.hauer@pengutronix.de>, imx@lists.linux.dev, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, michael@amarulasolutions.com, Fabio Estevam <festevam@gmail.com>, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/3] ARM: dts: mxs: support i.MX28 Amarula rmm board
+Message-ID: <20250521-quizzical-tidy-worm-1fe67d-mkl@pengutronix.de>
+References: <20250521092826.1035448-1-dario.binacchi@amarulasolutions.com>
+ <20250521092826.1035448-4-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iltdsbk26xo7g47t"
+Content-Disposition: inline
+In-Reply-To: <20250521092826.1035448-4-dario.binacchi@amarulasolutions.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, 21 May 2025 11:22:36 +0200, Laurent Vivier <lvivier@redhat.com> wrote:
-> The `tx_may_stop()` logic stops TX queues if free descriptors
-> (`sq->vq->num_free`) fall below the threshold of (`MAX_SKB_FRAGS` + 2).
-> If the total ring size (`ring_num`) is not strictly greater than this
-> value, queues can become persistently stopped or stop after minimal
-> use, severely degrading performance.
->
-> A single sk_buff transmission typically requires descriptors for:
-> - The virtio_net_hdr (1 descriptor)
-> - The sk_buff's linear data (head) (1 descriptor)
-> - Paged fragments (up to MAX_SKB_FRAGS descriptors)
->
-> This patch enforces that the TX ring size ('ring_num') must be strictly
-> greater than (MAX_SKB_FRAGS + 2). This ensures that the ring is
-> always large enough to hold at least one maximally-fragmented packet
-> plus at least one additional slot.
->
-> Reported-by: Lei Yang <leiyang@redhat.com>
-> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
 
-Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+--iltdsbk26xo7g47t
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 3/3] ARM: dts: mxs: support i.MX28 Amarula rmm board
+MIME-Version: 1.0
 
-> ---
->  drivers/net/virtio_net.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index ff4160243538..50b851834ae2 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -3481,6 +3481,12 @@ static int virtnet_tx_resize(struct virtnet_info *vi, struct send_queue *sq,
->  {
->  	int qindex, err;
->
-> +	if (ring_num <= MAX_SKB_FRAGS + 2) {
-> +		netdev_err(vi->dev, "tx size (%d) cannot be smaller than %d\n",
-> +			   ring_num, MAX_SKB_FRAGS + 2);
-> +		return -EINVAL;
-> +	}
-> +
->  	qindex = sq - vi->sq;
->
->  	virtnet_tx_pause(vi, sq);
-> --
-> 2.49.0
->
+On 21.05.2025 11:28:22, Dario Binacchi wrote:
+> The board includes the following resources:
+>  - 256 Mbytes NAND Flash
+>  - 256 Mbytes SRAM
+>  - LCD-TFT controller
+>  - CAN
+
+[...]
+
+> +&can0 {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&can0_pins_a>;
+> +	xceiver-supply =3D <&reg_3v3>;
+
+Since v6.15-rc1 (d80bfde3c57a ("can: flexcan: add transceiver
+capabilities")), the flexcan driver supports CAN transceivers via the
+phy framework, see drivers/phy/phy-can-transceiver.c. Can you make use
+of it?
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--iltdsbk26xo7g47t
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmgtnlAACgkQDHRl3/mQ
+kZxqfwgArcPARaZe5fCyem7ScC0CD03Xge91Id9cL6A9oCHQPIUaTJXStmGpgEPZ
+p13vybE5uN1qhF25l4ALMsw76XVtydokAWgZ0/G2+tDVaP2BSfxJ+hwcfRmT4Mcc
+n39D3dO/DWz1mFWJenJDMGrc0JUQVENF5ab4ixItQ0UtCb9QWffEv6iRDevafmJl
+r+57pk+GzQkvauQLHelULhGlZeWTtfyTXSxUQwzEzXyhBRJ7RTCB3NjQUMvyRfRv
+14tMcmQf3/5SzCScR2OaiPDrEUFLxv42y2W8UmU2swha32vvEq33ILw5bBTA+IW8
+wKWmSI2jxnFb0dX2cNAoPq+8UYGv6w==
+=1fHO
+-----END PGP SIGNATURE-----
+
+--iltdsbk26xo7g47t--
 
