@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-658217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC76ABFE86
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 22:54:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2CD7ABFE8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 22:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50748168749
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 20:54:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A6C9E778B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 20:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A652C0332;
-	Wed, 21 May 2025 20:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5CB29C356;
+	Wed, 21 May 2025 20:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CKPcSpX/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="g+0YMcZc"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641EF2BFC9E;
-	Wed, 21 May 2025 20:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7982121E082
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 20:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747860607; cv=none; b=ZZ9Yj/7QoFrDHyNboCZ56OHFWilKnCDOs71+jfWlBbKOtUVgeT0UcmPdXWGVgVY5ZEwSBbL7eJ/4rLmVQaG4ONbBtE+IR9vMfx1++sLE9FM1Xhx/JKrjIl0SV6+05KwQaK2vcBWL8K91KLw4ycC1l+oaRaUkcuJFWDDXsbbr7Nk=
+	t=1747860699; cv=none; b=OLUwvQ2DskPxJTJpRvO38Oz/QlHOxkUHYVDVebryldzdbsoeslAFPYiUiIY+jwgRKPmh76YgurUptcEPfPyDQqzKwgiN9BkvTPAwakm1qWjADsnP1W7xG+vflqaWleToxHPLBWy3/wEBtbxSrMRkzlzFmh6EbsjfX67L3xoUsU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747860607; c=relaxed/simple;
-	bh=N37wVWerWd7nPL9xYaWJ8SxgWS4N6DGwmoe0dWApv00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oHHLCyZ2p3LVvAfKVbBGvzqRiFzdDD1iTyeE/S1jprqGcY40/usz2WRe1TY8DM1EBnRToo2Oin4DFW6ChhFESezzrP4er0crVbsA+EzbX8N8Uh4RC5BKGe4t/VKGAjnj17GsDa4May1iTjBFZftKzzGJ7vS/PEwGHEkeWNbiqu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CKPcSpX/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9632DC4CEE4;
-	Wed, 21 May 2025 20:50:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747860605;
-	bh=N37wVWerWd7nPL9xYaWJ8SxgWS4N6DGwmoe0dWApv00=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CKPcSpX/yIYRaer7liv4CXUHA7V7Ta7MCATogpw0v9rA0EU9pEj9A7wFMcqD/zGzy
-	 fHvepn9nPxp6sMOCGN+uoriHnD/DBeSKHp+j8rj4t285Lb/bZ0XblGxq1BmqPn4HlU
-	 NE+wJpTYbvVtaql7Q889wccn/fx+wNK4k1B/GD+5Vif1vvjUWqJloVepynyvxWl9lX
-	 woea6R/HBqoctf51eJZq+cOAVEu2sAipNG4MLfMZAFkFTqGMogMeZg5dwM65zYtis1
-	 Bwx1wOJHrzmIoV4d3LxH3/Ag3UR+OZsb2j5mPWNiDdrSSj7ohapxmrwRuQTh3z5lDL
-	 24XEcn5WrMO8Q==
-Date: Wed, 21 May 2025 13:50:04 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ravi Bangoria <ravi.bangoria@amd.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>
-Subject: Re: IBS perf test failures on 9950x3d
-Message-ID: <aC48fFyR1NN4RPz8@google.com>
-References: <aCfuGXUnNIbnYo_r@x1>
- <33e86415-c90d-420a-b7a8-6a360769aea4@amd.com>
- <aColYM3RqE4T5t5c@google.com>
- <aCt4akGLsuuC4aLP@x1>
- <804ac0d6-22f7-40c3-9ff5-e5f9d863d37e@amd.com>
- <aCzqdn3AJji_yPpQ@x1>
+	s=arc-20240116; t=1747860699; c=relaxed/simple;
+	bh=8uDOe37qq2LydZAJXt4UL4X0VtnTft0SmIuc+RVfywA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F8FUvtg3tZ8z26+q+D4Q6QRMEzYAeluGdYxG4WfqJL6Ms0gtlp9I7NSeJxBYdEGQkBjy319xk+E4Ro5BW53+1fwefOLKMW4hEQrW5kaNrcgUxqyu9TrEDPeGz4MKPvp0goXLkuEMI3Rkoir2eBK+aXmjJNN6TR/GZxXYRQdhu8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=g+0YMcZc; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1747860689; x=1748119889;
+	bh=shLth5GYiA0/oF5VkTKOAhq5KcX03Q9lknDocYKhcV8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=g+0YMcZcj4W2qbq5FaD6gIC7oq5ln5Av3cJHL4/iIqMAdMuKtm8TGxe1L+cfYic4u
+	 bJp55SRZG9ghzbUfzt5SWcuMV6i8uV15wyfwJWSL7n2lq1MCLEvKhYUKNHxUNoNE8Q
+	 SFhUP7w0wKmrbSAy016XUSLxQaO0fA0a6IXRO5a25s2GUAAZfY+5UyC0DBS4TOJUHd
+	 KzIJ4Yjvq3W9WxY5bMhAHsn+R2q888L4XhadcppCXKjKU+SokXWGgBdj6kqNQDmSiv
+	 suXhM6O7/nvb/+/rlhQXThqLW5EkHB8nh3sw/GBOPgMgLl12NV/Xqw3YQc0sg9+APl
+	 cYSI83jb7ZYtg==
+Date: Wed, 21 May 2025 20:51:24 +0000
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+From: Harry Austen <hpausten@protonmail.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, =?utf-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH v4] drm/xe: Allow building as kernel built-in
+Message-ID: <DA24WEEONQS4.2KGRJLM9YNTG3@protonmail.com>
+In-Reply-To: <s43s6p2p6frhqg64r42s5owhyiczkfrsgmt5fecosmout73x5m@aq22nie755nt>
+References: <20250516104210.17969-1-hpausten@protonmail.com> <32da3736-9ac1-4524-94e6-28a81f23bf31@linux.intel.com> <DA1P8NCLUFU8.N64BOSMN6G9J@protonmail.com> <s43s6p2p6frhqg64r42s5owhyiczkfrsgmt5fecosmout73x5m@aq22nie755nt>
+Feedback-ID: 53116287:user:proton
+X-Pm-Message-ID: c36c5d77ccb5adfb61a9d1cfe8fb0d9f2efaadf9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,43 +59,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aCzqdn3AJji_yPpQ@x1>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 20, 2025 at 05:47:50PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Tue, May 20, 2025 at 04:31:29PM +0530, Ravi Bangoria wrote:
-> > > Telling that to the user and possibly skipping the test if viable using
-> > > uname to get the version and if less than v6.15-rc1 print "Skip (needs
-> > > v6.15-rc1 or newer)" may be an option.
->  
-> > > Then if the bug somehow reappears, people running 'perf test' will flag
-> > > it.
->  
-> > Sure. Attaching a patch at the end.
-> 
-> Thanks, I'm applying it.
-> 
-> But now that I think about it, it may well be the case that, say, RHEL
-> backports the fixes in v6.15 for an enterprise kernel that has an
-> "older" version, so probably the best is for execute the test, if it
-> fails, then do the version check to decide if it is an unexpected
-> failure.
+On Wed May 21, 2025 at 4:11 PM BST, Lucas De Marchi wrote:
+> On Wed, May 21, 2025 at 08:35:05AM +0000, Harry Austen wrote:
+> >On Mon May 19, 2025 at 4:14 PM BST, Maarten Lankhorst wrote:
+> >> Hey,
+> >>
+> >> On 2025-05-16 12:42, Harry Austen wrote:
+> >>> Fix Kconfig symbol dependency on KUNIT, which isn't actually required
+> >>> for XE to be built-in. However, if KUNIT is enabled, it must be built=
+-in
+> >>> too.
+> >>>
+> >>> Also, allow DRM_XE_DISPLAY to be built-in. But only as long as DRM_I9=
+15
+> >>> isn't, since that results in duplicate symbol errors.
+> >>>
+> >>> Fixes: 08987a8b6820 ("drm/xe: Fix build with KUNIT=3Dm")
+> >>> Cc: Lucas De Marchi <lucas.demarchi@intel.com>
+> >>> Cc: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
+> >>> Cc: Jani Nikula <jani.nikula@linux.intel.com>
+> >>> Signed-off-by: Harry Austen <hpausten@protonmail.com>
+> >>> Acked-by: Jani Nikula <jani.nikula@intel.com>
+> >>> ---
+> >>> v4: Add Jani Nikula's Acked-by tag
+> >>> v3: Simplify KUNIT dependency, as suggested by Jani Nikula
+> >>> v2: Ensure DRM_XE_DISPLAY and DRM_I915 can't both be built-in
+> >>>
+> >>>  drivers/gpu/drm/xe/Kconfig | 5 +++--
+> >>>  1 file changed, 3 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
+> >>> index 9bce047901b22..214f40264fa12 100644
+> >>> --- a/drivers/gpu/drm/xe/Kconfig
+> >>> +++ b/drivers/gpu/drm/xe/Kconfig
+> >>> @@ -1,7 +1,8 @@
+> >>>  # SPDX-License-Identifier: GPL-2.0-only
+> >>>  config DRM_XE
+> >>>  =09tristate "Intel Xe Graphics"
+> >>> -=09depends on DRM && PCI && MMU && (m || (y && KUNIT=3Dy))
+> >>> +=09depends on DRM && PCI && MMU
+> >>> +=09depends on KUNIT || KUNIT=3Dn
+> >>>  =09select INTERVAL_TREE
+> >>>  =09# we need shmfs for the swappable backing store, and in particula=
+r
+> >>>  =09# the shmem_readpage() which depends upon tmpfs
+> >>> @@ -51,7 +52,7 @@ config DRM_XE
+> >>>
+> >>>  config DRM_XE_DISPLAY
+> >>>  =09bool "Enable display support"
+> >>> -=09depends on DRM_XE && DRM_XE=3Dm && HAS_IOPORT
+> >>> +=09depends on DRM_XE && (DRM_XE=3Dm || DRM_I915!=3Dy) && HAS_IOPORT
+> >>>  =09select FB_IOMEM_HELPERS if DRM_FBDEV_EMULATION
+> >>>  =09select I2C
+> >>>  =09select I2C_ALGOBIT
+> >> Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> >
+> >Thanks!
+> >
+> >>
+> >> Can we also get rid of the IOSF_MBI select? Not even xe_display depend=
+s on it, leftover from initial porting. :)
+> >
+> >As this seems unrelated, I'd be happy to submit a separate patch for thi=
+s
+> >afterwards. Thanks for the suggestion.
+>
+> same comment as in the previous version of this patch. What I don't like
+> is that it doesn't prevent you to do a bad selection. Instead if you set
+> DRM_XE=3Dy and DRM_I915=3Dy, you lose DRM_XE_DISPLAY. Silently. This is
+> equivalent of chosing the options via make menuconfig:
+>
+> =09# initial state
+> =09./scripts/config --state CONFIG_DRM_XE --state CONFIG_DRM_XE_DISPLAY -=
+-state CONFIG_DRM_I915
+> =09m
+> =09y
+> =09m
+>
+> =09# set CONFIG_DRM_XE to built-in
+> =09./scripts/config -e CONFIG_DRM_XE && make -s olddefconfig
+> =09./scripts/config --state CONFIG_DRM_XE --state CONFIG_DRM_XE_DISPLAY -=
+-state CONFIG_DRM_I915
+> =09y
+> =09y
+> =09m
+>
+> =09# set CONFIG_DRM_I915 to built-in, we lose display with xe
+> =09$ ~/p/linux-dim/drm-xe-next/scripts/config --state CONFIG_DRM_XE --sta=
+te CONFIG_DRM_XE_DISPLAY --state CONFIG_DRM_I915
+> =09y
+> =09undef
+> =09y
+>
+> I'm not sure how to prevent setting CONFIG_DRM_I915=3Dy if
+> CONFIG_DRM_XE_DISPLAY is selected.
 
-Yeah, that was my concern too.  I'm fine with having it in perf test and
-skip older kernels though.
+Ah interesting, thanks for the example. I'll try a few different things and=
+ see
+if I can get more sensible behaviour.
 
-> 
-> But this can be done on top, lets make progress and apply your patch.
-> 
-> > > And I think having it in 'perf test' as well may make the feature to be
-> > > tested more widely, both by those who run selftests as well as by people
-> > > trying just 'perf test'.
-> > 
-> > Yeah, that was precisely the reason I did it in 'perf test'.
+>
+> Lucas De Marchi
+>
+> >
+> >Harry
+> >
 
-+1.
-
-Thanks,
-Namhyung
 
 
