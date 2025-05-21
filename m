@@ -1,154 +1,124 @@
-Return-Path: <linux-kernel+bounces-657541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2760AABF5A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EBDEABF5B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18E88C6276
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:10:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A4E73ABE9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5EE2673BA;
-	Wed, 21 May 2025 13:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CYAarRUY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E240D2741C2;
+	Wed, 21 May 2025 13:12:11 +0000 (UTC)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A2E268FCC
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3DE264616;
+	Wed, 21 May 2025 13:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747833048; cv=none; b=qjZweqG7SLKWG0dOTKbyLWwcTItjgV5pJpDQBqIW6iV5tnmDdgLZFVTxgRPRLvtkdHI+VDCo96esdFjWj8qYYCmI3ztJ0XAwINNBbLJ8rpeZZ2/7wqWSJYZN1Ym3kQ1mf+U0psnzTsnn7dh0tsCcFfD27o6Vzp11xus84py8/AE=
+	t=1747833131; cv=none; b=bL2SBZFRFSA0IoRU9PO0H8m++0n9jqO1Gtbe6ghIcejpzWiUTMTT0oWlK0pmZ0RS9P2M7KjTNMAsEo7CrKRXXh5+RwxAJ8VZp39nXc0Zg3QjS/YT4b2z4XY/M698H9Fqps0uZ+7NHSOUvgA66ErovviGAky0ZthYPnMQfcfEh/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747833048; c=relaxed/simple;
-	bh=Pou7Zf1nWdBAa81MsiRtS+CcK5ufoZZj5UNXInbNfnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q5p7TvbkgKTqpGauwXxO2P89pLAXrkexEBFr1Sb0WpBOyBCwjgv1tvC7gAe9Bgtck81Kq3C4+GD8TVEumuv1K7LBkXFhqkQGhkZfBSlVi7Q6F1NziiwAb/6EVzTrXPHAlwTlia7pnYjmqXvVSaXznDXGCd7rN5hXVVqzoV2Jz/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CYAarRUY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9XLQf000850
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:10:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=3Ny/4RwhOxpOmW4rwp1crSoL
-	yoLz1hawgITXEILYp1I=; b=CYAarRUY8eShDDQQXm6E0pYbgAweu46zPiHfIjrr
-	usOr/DM0N7EwsWUIg+Iymx3dX0gXNBrol+ymBwYrGpiLPnIVx0hA+R4Jl5iDLrp4
-	Bx/c1KspxwplPilU/4XCnFD90aACtX+6zm9BJyYAy/enjoj3EYHAZZYaaiaIYrDU
-	qPjrxd0/MnV+XBdeTP17ZvgNtPfIMhdCWb9d1BQ6d1RGi/XKlnxopDNUZm54ck6t
-	vjlIcVswgbpWbheZGedHegPoHyVyx/JsBYWOijQMmz6uuFJEHccmvUeX/Q5IS9ce
-	F/si2F38Uj9qtChmHpPlXOLWxjMk7WIVwro/6NYo4/G5kA==
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf6u0qm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:10:45 +0000 (GMT)
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3dc8ab0ac67so339485ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 06:10:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747833044; x=1748437844;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3Ny/4RwhOxpOmW4rwp1crSoLyoLz1hawgITXEILYp1I=;
-        b=X0FUQ+SgFSZibkBd06GJruUn3dQ51m/4C8KkAFUzs2YO4xEyTCiS04CVd2ikqp6TQE
-         gZEUaArzeWLQ5GzGhlLinvWbC88o7osZ79yPRmynlxha9/+yez9m6FnSBD5QDX+YyvEp
-         iDYsI+C0xRIfGq7y9O6jsWBSyR/8grcXgPH3eh5qAlqeExOM45iY8F6VV0GWcuzb2/qo
-         n+N4p3gA1Gg+evweiHaSFfMdvV3wAdCLoASG1p8utdPuVT5/YZxZRdXxezTuOpCWPqS4
-         Q8owS2jlZqmVTGH1xPQG3ZsFsvYddWKgtCDr/U48IlLoM+NRHQM/GupwdCkH9IxVyT1b
-         /GMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSa1LiyT+SFAG86uCC3AZnbs/P+vVYcSqkNY/FLvgQkG3E3zBwbPWH3fmIbLd3HXybtVTdwGHdfrdWV68=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTslV6H04v6ZItg2VSqAGvlVsOkzVIRHu0PhGZCUPHlWVn2xSm
-	ywYvnGWFHJkUzAS/JCg6Xnw+OEJaJM6Rs+rqgJhCAYSbdiTSdH9YPZJFROeY9y+h/0XQ/kpQ6TA
-	qj1VeZEV3tc1bcJXbC/XheElhEPV1Yyhhi6MrdJAp3fUaBTu4ELadVm5uEnTy++EZVK8=
-X-Gm-Gg: ASbGncvhqvJnhiz8egiHSa3Q3S+gh3k1+Zxt42P3DMaxcuX5cLZEDIhsIATcO9Usq22
-	Kf8ECqkMiNm4MOwkcsybzKif6Aml1d+kRM2xwtGCrZmWdGoNjaxWEmPJclG/35wZCLiIEVggEsC
-	gpySgWCpsgda19hCm4CBc4DC/dEb/t98m5LC3HPmuL8LUxJsiPNfhnChpNUtxGWWpKIoCXn47aS
-	aJRfqeEMwPvPSUgygQTxPi4XHgtsQJ+XEluik8v44WQa6mwzR8gpMknqcw3/itbCxKtLdcNQcsw
-	hNk/unhkewQ0z8fyPPGscJoWkURQ33efADYrxZoPXZShliYXRUHdp9ghbV28pJQG/yjyIcJ1idE
-	=
-X-Received: by 2002:a05:6e02:5e07:b0:3dc:757b:3fb2 with SMTP id e9e14a558f8ab-3dc757b446fmr75183425ab.7.1747833044285;
-        Wed, 21 May 2025 06:10:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFKoNhtb+5owKr4FzQyiElr9BMC7t8S+TkjVWacZxR6aDGOYdAfaPB2hP5Fm4Afpv3YSeiSkw==
-X-Received: by 2002:a05:6e02:5e07:b0:3dc:757b:3fb2 with SMTP id e9e14a558f8ab-3dc757b446fmr75183255ab.7.1747833043939;
-        Wed, 21 May 2025 06:10:43 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e7017e79sm2826647e87.154.2025.05.21.06.10.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 06:10:43 -0700 (PDT)
-Date: Wed, 21 May 2025 16:10:41 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Nitin Rawat <quic_nitirawa@quicinc.com>, vkoul@kernel.org,
-        kishon@kernel.org, manivannan.sadhasivam@linaro.org,
-        James.Bottomley@hansenpartnership.com, bvanassche@acm.org,
-        andersson@kernel.org, neil.armstrong@linaro.org,
-        konrad.dybcio@oss.qualcomm.com, quic_rdwivedi@quicinc.com,
-        quic_cang@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH V5 00/11] Refactor ufs phy powerup sequence
-Message-ID: <ni7kedpcz7vchztb5qrs5msdt37mfdoabtt4gdqsaiwmbxlb2a@im4wurr77z43>
-References: <20250515162722.6933-1-quic_nitirawa@quicinc.com>
- <yq1msb6lowo.fsf@ca-mkp.ca.oracle.com>
+	s=arc-20240116; t=1747833131; c=relaxed/simple;
+	bh=hF+oG7v1AWVhgu9lPf1uizRbLhlMrZBB343LLtoUJhk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ugCwFkyz27hugPR0g/6hsYkMNQYWxXDCayEwFwu7lxxkTH9bVDTItfK5n8okd7CzCadrsFPjkTPtL7EvIr/ji4Ln2mL3vIk3iZYZ6/u8IGcmgI14Bw1jKUBx99sN4jVnrJ/MJ8HXjlLKRGu4xeGxKFeIx3ftMGU4E9JKMHtr7Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chainsx.cn; spf=none smtp.mailfrom=chainsx.cn; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chainsx.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chainsx.cn
+X-QQ-mid: esmtpgz16t1747833073t96ab1b52
+X-QQ-Originating-IP: eJZV5Pq/27UhC6wbS5MVd9IwULhg6bRfY+vB2uhghy0=
+Received: from chainsx-ubuntu-server.lan ( [116.249.112.84])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 21 May 2025 21:11:10 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 16382578765588849597
+EX-QQ-RecipientCnt: 16
+From: Hsun Lai <i@chainsx.cn>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: i@chainsx.cn,
+	heiko@sntech.de,
+	andrew@lunn.ch,
+	inindev@gmail.com,
+	quentin.schulz@cherry.de,
+	jonas@kwiboo.se,
+	sfr@canb.auug.org.au,
+	nicolas.frattaroli@collabora.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH v4 0/3] Add support for Sakura Pi RK3308B
+Date: Wed, 21 May 2025 21:11:05 +0800
+Message-Id: <20250521131108.5710-1-i@chainsx.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq1msb6lowo.fsf@ca-mkp.ca.oracle.com>
-X-Proofpoint-GUID: rAG2olxWqpk3yt4klPZst5auv466eau-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDEyNyBTYWx0ZWRfX+vMJ8MWWz4+v
- 76hyXNX/RzU565vfJepxLeAWKJB2kCWl1RIFLOcq9ptEQVY70uQZim1obpOjokWb7CO0afl64WB
- KjmWZ2ZOIuUqIQra0JSUSdQBxt2y4TXuUHRvNR/g+v4HfKAS1f3XGWkWN3BnH6cgTwac6Ei8ziQ
- f2nkvh78gwkNoYzYoxgPepLMiVg7SCR3MOdplNfEYpcyWKmhGK9+3Gfo3mkf+yjc/zSimQjrpl6
- 3qJUfCpY83BTbYKbm5HlHJwmaWEtaup2sDsJEkCF3yZJ6Q9rI7+15nJDNhqOLwHAF7o4tmDqa6I
- jPZTWqANGBfHHo098ogNsSCZZbYKG0iHj/TarrGGVfES46toYtf4rdqJE4NjSyvfSKZPFaaIK6F
- qOri72xy6ecWSeh3lSrFUhhEmctmzfZQdyAmfgunOV7iijrYBLreJ39Rq9NQodQqTgcA3m9+
-X-Authority-Analysis: v=2.4 cv=fZOty1QF c=1 sm=1 tr=0 ts=682dd0d5 cx=c_pps
- a=vy3nvQW9C2dqy/lMnN3IYg==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=66i0CxVaxzDmHRmSCfsA:9 a=CjuIK1q_8ugA:10
- a=mHQ74H5e8mo-RpSg_uaF:22
-X-Proofpoint-ORIG-GUID: rAG2olxWqpk3yt4klPZst5auv466eau-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_04,2025-05-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxscore=0 adultscore=0 spamscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 priorityscore=1501 impostorscore=0 mlxlogscore=852
- lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505160000 definitions=main-2505210127
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:chainsx.cn:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: NbLKFbIf58WKJLsowGlccw++xJ0jWmihH0hHJ2pWLJMAh4lyqgcKpCIW
+	Ux8uRet127EE3Z3XWUQBJOAV+u/5KHv2b2nNalcLINhC6Py2+UPx+Rzv7Ay21A3/rnTFqro
+	GFZo16UCrdfh2+/AZmuSNVVGFIMf0FXSqgIYHjN18agbgMQzLRtpb+nSBIHDby3TCgCcoox
+	XuBIGyPu3zdUddY0sySb72ViiWIEgxdNygwRNbWv7NX1R89ps/0nkBlphiAQBpzp8xaXufJ
+	auLlwuuVV4uGi6WJ4s42dKwZBrMXug7hmzkuGEqdAlusS3HgkrZlzHH75cOZbZFxIfkhJLW
+	9EVjfrJRg/Ea8Lw/X4jOPTUpPx4yhZYwCrda6K9makaqxu9Vnani2Lk2uYBCpGI9Pd7nd5o
+	YYLBs3w9BoRTc6JGutIVhBpB+rJBocngZ8NYmrtAe12xIc/0QqyRw3WGUkMcOYZzTF5yybM
+	r15+kl1uYLoDsUXYVq7qvqGqguwmzLwi9sj6/ob39v5Cm9TaYzF8M591Jirw5GKwN6IiIYg
+	6TU/08iZGpOoK41o2b5zWL07AR8fuGIT/OEQnuICBMdga1uQ4+bYjM0xUbEp1DLS0DICsZ0
+	rukC1sKk38z+TpRHMSNZiLJUto9sRGaaJfFJHsX9x7Ib9zISMXQHONlR3elcs8AH49Gcsl5
+	TCG4RlBsVwR6G3wckMH3+O1sY2uLs/y21lP7EaJeuXVM5Vc7+jnYLFuXUX5/YzxJllhzmLM
+	k4tT43ynl+vrYOFM8KZRwGuNdj+icuuNfbmnu/qLDa44zT0oHS+cJPV8F0Vo/AAgGFYbcaZ
+	AqTpjJb4c9pQZGiTVVWs7B+m/tei4rotQjhd2fIGH7D28p+FfzO/PCvBexOcE9vpWaIcsTi
+	FDY1X61fuosJnw8OmrxARSjgL8TzDJdHFLUKkUBQY2F8tmRkdht3d0dyHnNSl9XUCqv0pnM
+	rlrHfUO5K21C26WTzzKO3xPM0ZwCmyzx47evi6dAk4dvwbXf6S9AP+3QDzEL0GUoJK/ctyO
+	2BCZ++ww==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
-On Tue, May 20, 2025 at 09:45:40PM -0400, Martin K. Petersen wrote:
-> 
-> Hi Nitin!
-> 
-> > Nitin Rawat (11):
-> >   scsi: ufs: qcom: add a new phy calibrate API call
-> >   phy: qcom-qmp-ufs: Rename qmp_ufs_enable and qmp_ufs_power_on
-> >   phy: qcom-qmp-ufs: Refactor phy_power_on and phy_calibrate callbacks
-> >   phy: qcom-qmp-ufs: Refactor UFS PHY reset
-> >   phy: qcom-qmp-ufs: Remove qmp_ufs_com_init()
-> >   phy: qcom-qmp-ufs: Rename qmp_ufs_power_off
-> >   phy: qcom-qmp-ufs: Remove qmp_ufs_exit() and Inline qmp_ufs_com_exit()
-> >   phy: qcom-qmp-ufs: refactor qmp_ufs_power_off
-> >   scsi: ufs: qcom : Refactor phy_power_on/off calls
-> >   scsi: ufs: qcom : Introduce phy_power_on/off wrapper function
-> >   scsi: ufs: qcom: Prevent calling phy_exit before phy_init
-> 
-> What is your intent wrt. getting this series merged? Can the phy: and
-> scsi: patches be merged independently?
+This series add support for Sakura Pi RK3308B.
 
-Unfortunately PHY patches depend on the first scsi patch.
+Info of device can be found at:
+https://docs.sakurapi.org/article/sakurapi-rk3308b/introduce
+
+Changes in v4:
+- Fix vendor prefixes error (Krzysztof Kozlowski v2)
+
+Changes in v3:
+- Remove empty i2c controller (Heiko Stuebner, v1)
+- Remove unused spi nodes (Heiko Stuebner, v1)
+- Sort nodes alphabetically (Heiko Stuebner, v1)
+- Put status as last property (Heiko Stuebner, v1)
+
+Changes in v2:
+- Update the names of the regulators (Heiko Stuebner, v1)
+
+Changes in v1:
+- Add support for Sakura Pi RK3308B
+- Patch 2: Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Hsun Lai (3):
+  dt-bindings: vendor-prefixes: Add SakuraPi prefix
+  dt-bindings: arm: rockchip: Add Sakura Pi RK3308B
+  arm64: dts: rockchip: add DTs for Sakura Pi RK3308B
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../dts/rockchip/rk3308-sakurapi-rk3308b.dts  | 274 ++++++++++++++++++
+ 4 files changed, 282 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3308-sakurapi-rk3308b.dts
 
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
