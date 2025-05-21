@@ -1,209 +1,134 @@
-Return-Path: <linux-kernel+bounces-657047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3D5ABEE7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:48:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 208CAABEE99
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27AAD4E2CCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:47:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14FF67B52BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A982367D0;
-	Wed, 21 May 2025 08:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36FC237A3B;
+	Wed, 21 May 2025 08:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTlsrRpJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cs7us6L7"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A48237173;
-	Wed, 21 May 2025 08:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889A1231852
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 08:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747817267; cv=none; b=rC16cS8X3T56hVR8vwEV/xJoSM4ocF/Hb7JMyQq4Jqnh29usESwIHtoQ3mflDI2fJlEP59Z3XzBsWBDfmrWu38xq5heDKafM5vPuCU/6F/RAiNlwe/mn13qG3Ul2bnkdwgHpF5wRUzUh8+ZnAm7hS91lct/FE8Jm3RrdAx6MEZ0=
+	t=1747817551; cv=none; b=ksyOlybtUmSijuiGWX/Hu1pHRYatzuDPDHK8LZTxtWNKM8XgtqBKwGK2AYjrcKmPJtKG4h9aej/iLuGGcUDNLSml7P00a5xMmEVNLDtHedKnYzczjshUf1byBmBwr23Mmp2iiTsMwMHQYWwogd1jPGvPKw9AYglm100rkld9RA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747817267; c=relaxed/simple;
-	bh=Z+DbRsu4BCqlhGXMmulSIqXan3jSfGw/K2SHdYnl8lg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nb25xdM0yMuR9gJQdCcefk4fv6ftRLJiKfOe3MXT+3oVP5bDfPotUybyvegQznYucZ73AlFBr4t5FDMU9uCWTdHYT5T8WQ7JFwd9ConTFSF7itE6fw6G/OQNw7gDdy3hChTxNMCqDf4yLRw8Lba4VMaEGM46tpWVN3LhyOQ1w1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTlsrRpJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BEBBC4CEE4;
-	Wed, 21 May 2025 08:47:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747817266;
-	bh=Z+DbRsu4BCqlhGXMmulSIqXan3jSfGw/K2SHdYnl8lg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BTlsrRpJmvudDwvB5CiouCMJ2hIQHlNeWFTnQKQvyC3p4oViYCR+vkV9lFD+o+cEl
-	 FGQxZWsy7M/ilINtBb8rC0Vs9s1jaljtIrWA4UH0EWpc/jqxYnuUEvhYoeaZ63pCnY
-	 kcGCwYGidKATCkL1eXHgiFey08DkMy188XqTT+5FNLClc3nGWGgHfG+WgBRMP6lp8t
-	 xjk6r2W/bOEJGpv2RL8eCtnTO4fkJRoNYJaFI8VeuYcNJ3NPCkefD95HvcKCFjuvdB
-	 w8s+qWI8+2yGbJHyqndBJKtjSkT7cELxUrlqedf2b2SjYYKWMq6OZ/rqyQJNzyhZMM
-	 WD05VeMqmxCPg==
-Message-ID: <7fec4945-eec5-4247-9979-a6ee2229626d@kernel.org>
-Date: Wed, 21 May 2025 10:47:39 +0200
+	s=arc-20240116; t=1747817551; c=relaxed/simple;
+	bh=9qbVefbWbV2zZGdirlqvoBU/l65faijkYV9zOWdF4rg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=SRG4tPkOuUszcoVChsHiXBMjnI0eUeb+jk6yOY+qjpnAxkA81zK9N/TPhpnc0qn2UHZBpLnWRVWx3zmgwts8QeJtTcT6Hxne26jrD2mkEhr2x9vuY4PaFptq1uvqDzRspVgg08BcmxBpo72j/hGCTBydVDQU7d8uZ8k0cGBl8wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Cs7us6L7; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-39ee4b91d1cso3553695f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 01:52:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747817548; x=1748422348; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XC+W4o+p+6DbLw0tBU+P2qOTmCU3FTC9WwjkJm3x+AM=;
+        b=Cs7us6L75XbgKcr7XkPCjyfgXMfzwosTE9ACN6roB/Qa5SsYvfxnropfp9zBd46HQv
+         tqoVyiJLJBrawPB4BC98nwx6b4qI3cNsUCIuaUMYEbeEaWdtxF/UOBMLX50M/s7cjfKA
+         lBP9OGjuF/LrWxLCG/qxHP2y7SO/7fAes2hkD4hDmTamidxtguseqOvYjnlIhvHS7eDf
+         e70RPeDA9ae7E0IWWRbAYH0fc1fUJIGZ7s/RupfFeY4INer6vTDXCbDo8rbqIfCN5Nnd
+         woaz+wE6flitJNXVq/DwbvVHm90FkYrH0z4U2pgJxBHRKbXOM9RY0+PwSUq3JzyrUTy+
+         Db/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747817548; x=1748422348;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XC+W4o+p+6DbLw0tBU+P2qOTmCU3FTC9WwjkJm3x+AM=;
+        b=THWEhMpraCOg4AStv15iFHFo3UtfevCmSn7BSKOEx2ohQgZEgwxQbCM1c4A6PAkHfV
+         bJV0BROaj+QFQx9aFF1tKiY4FCnXH466XJeHg0V4etdBpKKzefyfQ1yiOIGEeiby+M4O
+         CV9hpie9FQ+GAxiO4GK01d1+SnbWnIy/Gae22LZb07q6o3Tqg7Y2e/nEXlV38+Y9AjSM
+         A97NLcpxkoXgGlCxp4Mjkwo0NY/gJ+Diys/Qmb1rAuS9c2gHHCh3q+UyYyg41JTMyWmz
+         XgvXskz+TyF1EGXRC3s0hsnqjPHzkBzLSLoPx8Tg/ORWLAcxshFP0Pnpmq/oCSnVmpcm
+         j1gA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFQ9N0yR+TzELcsYmwelfy0PDoh8NWbIKfT5W8qxz/UodapWrZ8l99RZCXVHamh4ihLK01RpQmiKKuPUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzSqtYPF0V3J3mYu0rRMtdLfM9ENGAg4CYgO5WTat/iWHOpVgI
+	wayZe9SNv6s9WVa+jnt++nGoWD1nj4ZBWH7QDaWeu0U1qX6pOiY5Hab8ybwehwgTet666QHU8wK
+	lWMS1o4vqhA==
+X-Google-Smtp-Source: AGHT+IFbehhCRY7NvnpW3JUgzVeIQqUvAhfq6MFk4peA0cS7HBSe6ugWHEoRrwMIRmzNHPzwzV9VDpdy3xX8
+X-Received: from wrbee18.prod.google.com ([2002:a05:6000:2112:b0:3a3:66c9:9231])
+ (user=dvyukov job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:2004:b0:3a4:7382:d262
+ with SMTP id ffacd0b85a97d-3a47382d2d7mr694886f8f.13.1747817547857; Wed, 21
+ May 2025 01:52:27 -0700 (PDT)
+Date: Wed, 21 May 2025 10:47:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] phy: exyons5-usbdrd: support HS phy for
- ExynosAutov920
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>,
- 'Neil Armstrong' <neil.armstrong@linaro.org>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
- kauschluss@disroot.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
- dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
- selvarasu.g@samsung.com
-References: <20250516102650.2144487-1-pritam.sutar@samsung.com>
- <CGME20250516101803epcas5p2d9403d89d840dcad88a03d437a48aceb@epcas5p2.samsung.com>
- <20250516102650.2144487-3-pritam.sutar@samsung.com>
- <a5c1a064-d760-4140-9e78-d74823b400a8@linaro.org>
- <1f63af35-7d10-434b-b802-115611ce2ed6@kernel.org>
- <000201dbca1f$737647d0$5a62d770$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <000201dbca1f$737647d0$5a62d770$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.1143.g0be31eac6b-goog
+Message-ID: <cover.1747817128.git.dvyukov@google.com>
+Subject: [PATCH v7 0/4] rseq: Make rseq work with protection keys
+From: Dmitry Vyukov <dvyukov@google.com>
+To: mathieu.desnoyers@efficios.com, peterz@infradead.org, boqun.feng@gmail.com, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, aruna.ramakrishna@oracle.com, 
+	elver@google.com
+Cc: Dmitry Vyukov <dvyukov@google.com>, "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 21/05/2025 09:10, Pritam Manohar Sutar wrote:
-> Hi Krzysztof,
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 20 May 2025 01:13 PM
->> To: Neil Armstrong <neil.armstrong@linaro.org>; Pritam Manohar Sutar
->> <pritam.sutar@samsung.com>; vkoul@kernel.org; kishon@kernel.org;
->> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
->> alim.akhtar@samsung.com; andre.draszik@linaro.org; peter.griffin@linaro.org;
->> kauschluss@disroot.org; m.szyprowski@samsung.com;
->> s.nawrocki@samsung.com
->> Cc: linux-phy@lists.infradead.org; devicetree@vger.kernel.org; linux-
->> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
->> soc@vger.kernel.org; rosa.pila@samsung.com; dev.tailor@samsung.com;
->> faraz.ata@samsung.com; muhammed.ali@samsung.com;
->> selvarasu.g@samsung.com
->> Subject: Re: [PATCH v2 2/2] phy: exyons5-usbdrd: support HS phy for
->> ExynosAutov920
->>
->> On 20/05/2025 09:39, neil.armstrong@linaro.org wrote:
->>>> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c
->>>> b/drivers/phy/samsung/phy-exynos5-usbdrd.c
->>>> index 634c4310c660..b440b56c6595 100644
->>>> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
->>>> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
->>>> @@ -177,6 +177,9 @@
->>>>   #define HSPHYPLLTUNE_PLL_P_TUNE			GENMASK(3,
->> 0)
->>>>
->>>>   /* Exynos850: USB DRD PHY registers */
->>>> +#define EXYNOSAUTOv920_DRD_CTRL_VER		0x00
->>>> +#define CTRL_VER_MAJOR_VERSION			GENMASK(31,
->> 24)
->>>> +
->>>>   #define EXYNOS850_DRD_LINKCTRL			0x04
->>>>   #define LINKCTRL_FORCE_RXELECIDLE		BIT(18)
->>>>   #define LINKCTRL_FORCE_PHYSTATUS		BIT(17)
->>>> @@ -1772,6 +1775,10 @@ static const char * const
->> exynos5_regulator_names[] = {
->>>>   	"vbus", "vbus-boost",
->>>>   };
->>>>
->>>> +static const char * const exynosautov920_clk_names[] = {
->>>> +	"ext_xtal",
->>>> +};
->>>> +
->>>>   static const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy =
->> {
->>>>   	.phy_cfg		= phy_cfg_exynos5,
->>>>   	.phy_ops		= &exynos5_usbdrd_phy_ops,
->>>> @@ -1847,6 +1854,81 @@ static const struct exynos5_usbdrd_phy_drvdata
->> exynos850_usbdrd_phy = {
->>>>   	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
->>>>   };
->>>>
->>>> +static void exynosautov920_usbdrd_utmi_init(struct
->>>> +exynos5_usbdrd_phy *phy_drd) {
->>>> +	u32 version;
->>>> +
->>>> +	version = readl(phy_drd->reg_phy +
->> EXYNOSAUTOv920_DRD_CTRL_VER);
->>>> +	dev_info(phy_drd->dev, "usbphy: version:0x%x\n", version);
->>>
->>> Please do not add mode info to boot log, use dev_dbg instead.
->>
->> Just drop entirely, not even worth dbg (see coding style, driver development
->> debugging guide). It is fixed per given compatible, isn't it? If not, there is entire
->> commit msg to explain unusual things.
-> 
-> This SoC has a single USB 3.1 DRD combo v400 phy and three USB2.0 DRD phy v303
+If an application registers rseq, and ever switches to another pkey
+protection (such that the rseq becomes inaccessible), then any
+context switch will cause failure in __rseq_handle_notify_resume()
+attempting to read/write struct rseq and/or rseq_cs. Since context
+switches are asynchronous and are outside of the application control
+(not part of the restricted code scope), temporarily enable access
+to 0 (default) PKEY to read/write rseq/rseq_cs.
+0 is the only PKEY supported for rseq for now.
+Theoretically other PKEYs can be supported, but it's unclear
+how/if that can work. So for now we don't support that to simplify
+code.
+
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+Cc: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+Dmitry Vyukov (4):
+  pkeys: add API to switch to permissive/zero pkey register
+  x86/signal: Use write_permissive_pkey_val() helper
+  rseq: Make rseq work with protection keys
+  selftests/rseq: Add test for rseq+pkeys
+
+ arch/x86/Kconfig                         |   1 +
+ arch/x86/include/asm/pkeys.h             |  30 +++++++
+ arch/x86/include/asm/pkru.h              |  10 ++-
+ arch/x86/kernel/signal.c                 |   6 +-
+ include/linux/pkeys.h                    |  31 +++++++
+ include/uapi/linux/rseq.h                |   4 +
+ kernel/rseq.c                            |  11 +++
+ mm/Kconfig                               |   2 +
+ tools/testing/selftests/rseq/Makefile    |   2 +-
+ tools/testing/selftests/rseq/pkey_test.c | 101 +++++++++++++++++++++++
+ tools/testing/selftests/rseq/rseq.h      |   1 +
+ 11 files changed, 191 insertions(+), 8 deletions(-)
+ create mode 100644 tools/testing/selftests/rseq/pkey_test.c
 
 
-That's a different device, no? Look at the compatible here - it says
-usb31drd.
+base-commit: 4a95bc121ccdaee04c4d72f84dbfa6b880a514b6
+-- 
+2.49.0.1143.g0be31eac6b-goog
 
-What does 31 stand for?
-
-> controllers those only support the UTMI+ interface. Currently, supporting only 
-> v303 phy in this patch-set, and planning v400 phy later (soon). Same may be 
-> also updated in commit  message. 
-> 
-> If there's any issue in phy init, dbg print is needed to debug which phy caused it. 
-No, rethink rather this makes sense at all. Please read carefully
-writing bindings, which will tell you that you cannot have different
-devices under the same compatible. Unless you say these are the same
-devices and it differs by other phy? But this is a phy... so many questions.
-
-Best regards,
-Krzysztof
 
