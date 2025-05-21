@@ -1,171 +1,129 @@
-Return-Path: <linux-kernel+bounces-658064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 020E9ABFC47
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 19:31:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50066ABFC4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 19:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAECD1786D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:31:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1542E189C6DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF754265CC2;
-	Wed, 21 May 2025 17:30:55 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE521E3DE8;
+	Wed, 21 May 2025 17:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="1tsEYU7z"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95ED218DF8D;
-	Wed, 21 May 2025 17:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E3818DF8D
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 17:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747848655; cv=none; b=n8LmQP3Zk0ri8tPBAtYLNZ9I+wEkpkSRTaqmaWEsxOIhZ/Inuvsfp63740AZbbJ5HAXBpSV9e9xqJcft4LK350HHo2SxPjekMGZ/iB1RZfnMUQZB/6hQPUS6PRZlKaBAppSQmKni32DFX7JFhyl6yPGaavArEzbl+zfw5RLa4k0=
+	t=1747848728; cv=none; b=p9USsicXr+4t6A21Uu+p1DDT0amQ4YAmpeRmZvJnVVLqZSdQR8P1Yg8Mfddl0KFuk7e7VuliusuuPnclQEWi40Z5i53yVX97nn1LOGy7LzY4ZwvuySFMMfOc4iDcJG3nydfcNhqHibuKJ9q+LJBSVPA3/tW9GxNILUQVuJcmGl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747848655; c=relaxed/simple;
-	bh=3j1dEns/ysP04rHFNrID0DSREkdArRli7uOeEBQIntI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G4lj3Hdit3NBvoArY5ejAUL7mXEiMpjPrmYDVgWMVa9KNplLdrgpvMf0fJoJI2gx1NKC1HUrhKdS9oHiqkJFnsBlNCHxuPqc/wj+y6EbtCF3doNlJUyOUGJIfep34IgdDnpQvxB4Evs4V6oKzCR9rIColl81b+0YY1+YWphawCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69940C4CEE4;
-	Wed, 21 May 2025 17:30:54 +0000 (UTC)
-Date: Wed, 21 May 2025 13:31:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: John <john.cs.hey@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [Bug] soft lockup in syscall_exit_to_user_mode in Linux kernel
- v6.15-rc5
-Message-ID: <20250521133137.1b2f2cac@gandalf.local.home>
-In-Reply-To: <CAP=Rh=OFdom8bL-KiWf88AyVZkJWnAJ+HBO7rE_74sOFzK=apQ@mail.gmail.com>
-References: <CAP=Rh=OFdom8bL-KiWf88AyVZkJWnAJ+HBO7rE_74sOFzK=apQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1747848728; c=relaxed/simple;
+	bh=1HQ9Vk3NQYjK9IEulVHhOScSL+1dpYQJqOo9HGzxIQk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jFhH/ctTH8gIX5S7L0oQkSamJ1MsStTeH8nJtLjOuaQ/lFfkx/N28PbM3kcqvt50ZoO2h3iO9yR5yZRj7+mOwC2DNVPFbxYnGWfJm+vHZ+s9uQl35hE8rqRzhoTr0whrOIhoJfjBhldTJRR1d0Lx+EsHnV/Cwy/grWIASbXEh94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=1tsEYU7z; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6f0c30a1cb6so50888346d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 10:32:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1747848724; x=1748453524; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=suXlybax90mobQ6FosQJnDKub0BKfCnpHnlxsWJzblg=;
+        b=1tsEYU7z43Dwg+/8xlTeYe3ZG+L6L5okyI6H5oAouwJUzX9ANJJAFZykWDnNYkc6Wi
+         u0yy706A+dW5w+8uZZqHF0ct7IBHgKTRKoNhSgLCIliuxtooiWJBGZ+QYh+WZMUaIYhS
+         ZD3cYcWzukGc+QQZ8ezq88m/RMH5/FnYsfCYJylCgpV4HYbSVcGil6ethZf6uPNvGsvR
+         OCESnuy/d6AUkyXduih+0KdaNGrY/wKp3YwYR1/re7HdS6eqma247SZbEEv7LYUJxMks
+         KQEXfQlOWYxj4cC++25a2bGSz+HBDix1NWmaUCvBcH/8q7R0YPL40bIhNAar9bSfgkJP
+         7llg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747848724; x=1748453524;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=suXlybax90mobQ6FosQJnDKub0BKfCnpHnlxsWJzblg=;
+        b=w8OnqcClQeksbKYycRy6dvlan1Q4cLwSS7L/tohv927KIoVgV2sxOFxPpGghA4z/6y
+         XRr52w5xrsPmxs86CTN91YqrCbJlwiFacu/DPrdnLcTt8Y9WUimg3aIEBqUreojVbw3g
+         BYY7qKoJfA1tOJlCUFHBuu+G3TdmCOR/GW+LEnelwaIF/HIi3L7fSL97VMPdIHf5W1t9
+         ACWXp3sAs635m4K1O685VnZSmH/n19UZCvNQdrkEWrfTiMISm1ROm/x1WBVcB148xASy
+         GOcxdFbu85fwQPB7yWKk+aWusTnS8jBaTJyAtGKSuSIR5YYPRkNKPcek8sl9n7O07WEO
+         Gf0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWl3mX+Rq0FOPniFqcXymDTt03R9B652lYCs+up9yOyZj8psd9ARDnfN3MYFdIvhXj73rcGiJnyWVZBiho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXc/Zm4X3CArGdjv8ifzpxzeIEQsc07mhsoCOn8H8aPllGXtrZ
+	NQx3VQLh+nBYELgI10cytEIJ0GIJ1I/pBG0eTDYHWhnHGtPGOu+cVphAAWirgUNtTBQ=
+X-Gm-Gg: ASbGncuBovP1fh6p8Q9M+jDhA1c8GPv6M1WBp0eY39EiW/B2XLWaK21P0b8my6+JjzY
+	bwE1cuic9AKgMH/gDxb6AlyzT+M89oe6G9JsR2aL9UPS2+SXR+aOZEXgTiouqYofsQ5KEY4PQOc
+	/jezsT6a3dhg2obdGSOk3DIK0EFmZIrDmDNyPP466Qp5+8PhHliPtXxFOwZIKOcCgOzLOnuz/c1
+	kSwUPN2KnS7lVnCh677+09cZyOSnrrjtQ27eRflUMDIJUC+anRpQ6pEsVEhKw0m799/GHVeH6IN
+	x/ZISwS4nk5e047p4NcYrpQS33+E4GYStlRwzdXTDyJzq/xUsw==
+X-Google-Smtp-Source: AGHT+IHk89lrfDbD1tLE6FdDmqd8y2oQPYVuXSrTJcpIGCApzYr4tb3ZCZ1X828zDO3Ual08cgJMXw==
+X-Received: by 2002:ad4:5f0d:0:b0:6e8:ddf6:d136 with SMTP id 6a1803df08f44-6f8b096db83mr339660526d6.45.1747848724463;
+        Wed, 21 May 2025 10:32:04 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:365a:60ff:fe62:ff29])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f8b08bf817sm87730646d6.62.2025.05.21.10.32.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 May 2025 10:32:03 -0700 (PDT)
+Date: Wed, 21 May 2025 13:32:00 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>, linux-mm@kvack.org,
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	SeongJae Park <sj@kernel.org>, Usama Arif <usamaarif642@gmail.com>
+Subject: Re: [RFC PATCH 0/5] add process_madvise() flags to modify behaviour
+Message-ID: <20250521173200.GA1065351@cmpxchg.org>
+References: <cover.1747686021.git.lorenzo.stoakes@oracle.com>
+ <7tzfy4mmbo2utodqr5clk24mcawef5l2gwrgmnp5jmqxmhkpav@jpzaaoys6jro>
+ <5604190c-3309-4cb8-b746-2301615d933c@lucifer.local>
+ <uxhvhja5igs5cau7tomk56wit65lh7ooq7i5xsdzyqsv5ikavm@kiwe26ioxl3t>
+ <e8c459cb-c8b8-4c34-8f94-c8918bef582f@lucifer.local>
+ <226owobtknee4iirb7sdm3hs26u4nvytdugxgxtz23kcrx6tzg@nryescaj266u>
+ <7a214bee-d184-460f-88d6-2249b9d513ba@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7a214bee-d184-460f-88d6-2249b9d513ba@lucifer.local>
 
-On Thu, 22 May 2025 00:40:29 +0800
-John <john.cs.hey@gmail.com> wrote:
-
-> Root Cause Analysis:
-> The root cause is unbounded recursion or excessive iteration in
-> lock_acquire() initiated via perf tracepoints that fire during slab
-> allocations and trace buffer updates. Specifically:
-> tracing_gen_ctx_irq_test() is invoked while tracing kernel contexts
-> (e.g., IRQ/softirq nesting).
-> This tracepoint triggers perf_trace_lock_acquire() and further invokes
-> lock_acquire() from lockdep.
-
-tracing_gen_ctx_irq_test() is not a tracepoint. It's a simple routine to
-find out how to fill the "common_flags" part of a trace event.
-
-Here's the entire function:
-
-unsigned int tracing_gen_ctx_irq_test(unsigned int irqs_status)
-{
-	unsigned int trace_flags = irqs_status;
-	unsigned int pc;
-
-	pc = preempt_count();
-
-	if (pc & NMI_MASK)
-		trace_flags |= TRACE_FLAG_NMI;
-	if (pc & HARDIRQ_MASK)
-		trace_flags |= TRACE_FLAG_HARDIRQ;
-	if (in_serving_softirq())
-		trace_flags |= TRACE_FLAG_SOFTIRQ;
-	if (softirq_count() >> (SOFTIRQ_SHIFT + 1))
-		trace_flags |= TRACE_FLAG_BH_OFF;
-
-	if (tif_need_resched())
-		trace_flags |= TRACE_FLAG_NEED_RESCHED;
-	if (test_preempt_need_resched())
-		trace_flags |= TRACE_FLAG_PREEMPT_RESCHED;
-	if (IS_ENABLED(CONFIG_ARCH_HAS_PREEMPT_LAZY) && tif_test_bit(TIF_NEED_RESCHED_LAZY))
-		trace_flags |= TRACE_FLAG_NEED_RESCHED_LAZY;
-	return (trace_flags << 16) | (min_t(unsigned int, pc & 0xff, 0xf)) |
-		(min_t(unsigned int, migration_disable_value(), 0xf)) << 4;
-}
-
-The functions it calls are:
-
-static __always_inline int preempt_count(void)
-{
-	return raw_cpu_read_4(__preempt_count) & ~PREEMPT_NEED_RESCHED;
-}
-
-# define softirq_count()	(preempt_count() & SOFTIRQ_MASK)
-#define in_serving_softirq()	(softirq_count() & SOFTIRQ_OFFSET)
-
-static __always_inline bool tif_need_resched(void)
-{
-	return tif_test_bit(TIF_NEED_RESCHED);
-}
-
-static __always_inline bool test_preempt_need_resched(void)
-{
-	return !(raw_cpu_read_4(__preempt_count) & PREEMPT_NEED_RESCHED);
-}
-
-static unsigned short migration_disable_value(void)
-{
-#if defined(CONFIG_SMP)
-	return current->migration_disabled;
-#else
-	return 0;
-#endif
-}
-
-Nothing there should cause any recursion or issue. It's basically testing
-various states and then returns a flags value.
-
-It does not call lock_acquire().
-
-
-> Inside lock_acquire(), the kernel attempts to inspect instruction
-> addresses via __kernel_text_address(), which cascades into
-> unwind_get_return_address() and stack_trace_save().
-> However, these introspection functions are not expected to run in
-> real-time-sensitive softirq context and they do not contain preemption
-> or rescheduling points. With sufficient recursion or stress (e.g.,
-> slab allocation with tracepoints and lockdep active), CPU#0 gets
-> trapped and triggers the watchdog.
+On Wed, May 21, 2025 at 05:21:19AM +0100, Lorenzo Stoakes wrote:
+> So, something Liam mentioned off-list was the beautifully named
+> 'mmadvise()'. Idea being that we have a system call _explicitly for_
+> mm-wide modifications.
 > 
-> At present, I have not yet obtained a minimal reproducer for this
-> issue. However, I am actively working on reproducing it, and I will
-> promptly share any additional findings or a working reproducer as soon
-> as it becomes available.
-> 
-> Thank you very much for your time and attention to this matter. I
-> truly appreciate the efforts of the Linux kernel community.
-> 
+> With Barry's series doing a prctl() for something similar, and a whole host
+> of mm->flags existing for modifying behaviour, it would seem a natural fit.
 
-Looking at the backtrace you have:
+That's an interesting idea.
 
-kernel_text_address+0x35/0xc0 kernel/extable.c:94
- __kernel_text_address+0xd/0x40 kernel/extable.c:79
- unwind_get_return_address arch/x86/kernel/unwind_orc.c:369 [inline]
- unwind_get_return_address+0x59/0xa0 arch/x86/kernel/unwind_orc.c:364
- arch_stack_walk+0x9c/0xf0 arch/x86/kernel/stacktrace.c:26
- stack_trace_save+0x8e/0xc0 kernel/stacktrace.c:122
- kasan_save_stack+0x24/0x50 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:319 [inline]
- __kasan_slab_alloc+0x59/0x70 mm/kasan/common.c:345
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4147 [inline]
+So we'd have THP policies and Barry's FADE_ON_DEATH to start; and it
+might also be a good fit for the coredump stuff and ksm if we wanted
+to incorporate them into that (although it would duplicate the
+existing proc/prctl knobs). The other MMF_s are internal AFAICS.
 
-KASAN is a very intrusive debugging utility that often causes soft lockups
-and such when used with other debugging utilities.
+I think my main concern would be making something very generic and
+versatile without having sufficiently broad/popular usecases for it.
 
-If you can reproduce a softlockup without KASAN enabled, I'd then be more
-worried about this. Usually when I trigger a softlockup and have KASAN
-enabled, I just disable KASAN.
+But no strong feelings either way. Like I said, I don't have a strong
+dislike for prctl(), but this idea would obviously be cleaner if we
+think there is enough of a demand for a new syscall.
 
--- Steve
+> I guess let me work that up so we can see how that looks?
+
+I think it's worth exploring!
 
