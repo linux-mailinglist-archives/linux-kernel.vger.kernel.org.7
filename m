@@ -1,108 +1,277 @@
-Return-Path: <linux-kernel+bounces-657026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DEC6ABEE0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:37:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99FAABEE20
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F4234E0C1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3682F3B61FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7695B2367D5;
-	Wed, 21 May 2025 08:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EC4236A8B;
+	Wed, 21 May 2025 08:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOF9PUkn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fTPRg/21"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B4421ABB9;
-	Wed, 21 May 2025 08:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011FC1799F;
+	Wed, 21 May 2025 08:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747816640; cv=none; b=IfkkpYNBaWveK2P04ZWiq99nVPHf5SyvXHGLV5pjvW4LZyBM+UZuIgkZz2ZMOi+1DZMLRXBx7Pz1C3KrbqCzASe6D9UnFGVLYIyLyNqdl5fan12S5yn9WFKtl+Z8LBfZ+Wn1TCU1DqQsoFB2xzABlwTjGqq/JgmYXav8N232xIQ=
+	t=1747816814; cv=none; b=mDlvxcun5POJ+DS7N8P89zJ5pj94oNgQjDpUi9luhY5QljLVCSQSRJctKW715kwfHYnFAUp8jbyIACexBktABtrcYJ3nPOvkwIfJQNmYvdactSvHO4zDofcNKjXe1XyIceSWXvxhf/w1f0/v8mX0QV8t6f8mcT33LUrW6iKky5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747816640; c=relaxed/simple;
-	bh=vHs0uFXE4QDWJyTB2uO5NgtTvDkhWOmq0wYfhjspCDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=finzXXiKNyFPA3XMYJH2tfnHQp+RE9/o5aQTMSysQPa9nzXdxxAyFYd9Ki3GS3ZhRWocoMGErTm1iWjbEwr91t/PHGHnEABHSqZeH3BZV61kfzignJyNhCYpjhoM+F3s178OpTelGUrXiMDRVPCQyrHKaKeWm4Kwzo04q1GDqa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOF9PUkn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00873C4CEE4;
-	Wed, 21 May 2025 08:37:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747816640;
-	bh=vHs0uFXE4QDWJyTB2uO5NgtTvDkhWOmq0wYfhjspCDU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JOF9PUknCG3XoxV5ePcPOdk+//R8CCQdYie0iZpzXV9MI8mwqXJiisyPEfgZ5UbxN
-	 GyG/z+L6of5ZHzq4P9yJCLudMmVhuzFD8DHgXnixz5aJ0KyNYlhZt+EZAXTkHj76o1
-	 o1pDTYiv8VAAkd+OclJ2Mqidu/qzBW7p6cDSGegP6wvun74nrcTJhqSwegsF098jvU
-	 yvOzCfxkO6bZCTSoFVbCl7ngiZr+jzN9sIej5xoYo7974GCsTZ/mVs8SPYJpQsCvMv
-	 yBdxP7RLYSfPnTPmhXnIe0aYj3/mRM9ZaxzvdnpXgGXCti8TrDXaovXCEpEy1P4qdg
-	 uvwm6TjHcdDlw==
-Date: Wed, 21 May 2025 10:37:13 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 08/20] gpu: nova-core: allow register aliases
-Message-ID: <aC2Quag3HYN70D8p@pollux>
-References: <20250521-nova-frts-v4-0-05dfd4f39479@nvidia.com>
- <20250521-nova-frts-v4-8-05dfd4f39479@nvidia.com>
+	s=arc-20240116; t=1747816814; c=relaxed/simple;
+	bh=prPuohwI+Mx1qO9jheq0v68uTEiCGdKQtjR4A2uzvkU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B4JWtk7uM+yvJIl6AhkU+0QHZ2pXJ4Zj9okl2jAlY+/vPxT+LFTvWsKy2jm+5ihPX6DIsdbEexsL3d1yHrqgHccS8MknFsKck2VGXAfSysWK7zzwsNEbYSZPlTmYD3DAIBQVSIGYqgOkSgRohdau5NH2/5ZdQuYT4vfQkU6nXys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fTPRg/21; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-231bf5851b7so50700625ad.0;
+        Wed, 21 May 2025 01:40:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747816811; x=1748421611; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6TJUBt0PQT/0MqXl3YQcZJaW2RHiYQHMpm5oG/g8io0=;
+        b=fTPRg/21LMB+lr6TgZ1eXLFl5MBlK8sOnWutM7ycA1cJaMIkoWPKnVzUy6NEaCqu18
+         eHgUlmK3zMz02zUaIaeaDSB40Ee62LCfGHlVex6LJlNwNOu6Mpo+B32bBmOMzA7+D4Ly
+         Sncn9Ga8RBk48d/AkUhPk9XfumgumEA8AvINPZhH7pwDvtzgbriISviego2Q9FXbmWnG
+         gChZJ7gwU4uaI/DS2lUBPDVb/5+VxrpW0Brak0HvgwkUivQWuWtxlEHRhCQBqfjmsYZ7
+         6h124stg6yetStDKOXNshtXqoUOWC/awWHzNuct5O+GRqwMum3t1qowAUBAEBvgGFwlZ
+         hh0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747816811; x=1748421611;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6TJUBt0PQT/0MqXl3YQcZJaW2RHiYQHMpm5oG/g8io0=;
+        b=r7WHIW449B95dhnJ4SyC/nn5gA2qHUsX9u/sOyLLGlgRsEkcDz34NyofRQTX5n3MFm
+         keyTm+nb5eM4hyXC4YfWik3PWSSvOFGI5u6F+I1wt2eEQFA6DIyPkgNYZipEs2H71KFs
+         rhqGX6x8Ebg70M8W7HsHYrTTF6DjgdDVjfS3On0s1y6ECRnwwO9T/cWWvFJppuzpfmYP
+         pyir3s6BI9nCwXIYV0QZ1wyNiEdg87Qw9GwjVP9xjB7zFuppWdeWVsVmx0/foMF+z2jR
+         ZsVwt37qzfsQMk1BukxrKzBx5nSEYBiFxen7hJgH4rAK+msZGSiY2B5zY1z2NPdtKaiu
+         a57g==
+X-Forwarded-Encrypted: i=1; AJvYcCUM8D83JtBswQ/dL/Sk3YC/N1+eGZQ8wxrJZhYg5B0Ka4hIP/dmGYOjyqxPdAjl/9WWfLjPN3A+3JdTkHK8@vger.kernel.org, AJvYcCUW0347vKvM5hfsfHjhsiHrpg+S1GY6b++zK/KODWKzFVZE+QcuRkx4gwnHbbAlYvophrSi+gPdaJa6@vger.kernel.org, AJvYcCXlidaIShYGBs6eJqmEgMVbPrssA5VsP7B7VetwnDS5IhEubBlVBa10b82xzsVu7SevBzK18mBtxPIfO3dtDQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHl/IeeP5DaDBHrfuZNP1LLSRsq1aNpDqeeoOY3l8FjMx4OlQm
+	zlZ9w4UFlZbC5dbeRDZhdDYE1fR3Wl+nwbnLQj//Ytoo4Fnps93gRhNv
+X-Gm-Gg: ASbGncs+pJhcLa+Gi+caNeu9KvZg8zFdPw3LwgQprzu030aeuwIbeWDejwgEiNZ3ILd
+	rbFtAf2qg32BleOdyi99qHNNkc03bWNeNO6frLbuW8lYuFR7NwMZfS9ynmf0iiyIwg8ZAm3mkPK
+	KGimSXVlY6MtN+yxhPmk5i1fOoWb69234+njlq+GFZhFt0fRUqsdHuQ9wWO2JMomTcQn1lpZd/b
+	qe/67Yr/Vf1xTYGtPLCLRr7qe+7GTJC/D+7hHbBHXAAPYjkGMHsVxayJtHXdpGuAiDu2b6dEMhf
+	+CK3GjdStKSwu/01LEuKwN49c+d+igbZYlVSBnVNhVQBeoYKJXXQoB6D5gvo
+X-Google-Smtp-Source: AGHT+IHor/Q3irw/xtS9W76V6U/4pYcQFpOGtCJAgsOcZxnFuGJ0xvRl2F09RuZWoUs+d6mOC9dQFg==
+X-Received: by 2002:a17:903:1b2d:b0:224:1943:c5c with SMTP id d9443c01a7336-231d44e66b1mr262377695ad.15.1747816811014;
+        Wed, 21 May 2025 01:40:11 -0700 (PDT)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4e97fa6sm87974975ad.135.2025.05.21.01.40.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 May 2025 01:40:10 -0700 (PDT)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: konrad.dybcio@oss.qualcomm.com
+Cc: andersson@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	konradybcio@kernel.org,
+	krzk+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mitltlatltl@gmail.com,
+	robh@kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sm8650: Add support for Oneplus Pad Pro (caihong)
+Date: Wed, 21 May 2025 16:37:45 +0800
+Message-ID: <20250521083746.666228-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <e4d65994-89dd-4068-a8db-050e698f9bb3@oss.qualcomm.com>
+References: <e4d65994-89dd-4068-a8db-050e698f9bb3@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250521-nova-frts-v4-8-05dfd4f39479@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 21, 2025 at 03:45:03PM +0900, Alexandre Courbot wrote:
-> Some registers (notably scratch registers) don't have a definitive
-> purpose, but need to be interpreted differently depending on context.
-> 
-> Expand the register!() macro to support a syntax indicating that a
-> register type should be at the same offset as another one, but under a
-> different name, and with different fields and documentation.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  drivers/gpu/nova-core/regs/macros.rs | 40 ++++++++++++++++++++++++++++++++++--
->  1 file changed, 38 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/nova-core/regs/macros.rs b/drivers/gpu/nova-core/regs/macros.rs
-> index 7cd013f3c90bbd8ca437d4072cae8f11d7946fcd..64dda1d4d93d3c7022ef02b6f6fb81b58e90dd44 100644
-> --- a/drivers/gpu/nova-core/regs/macros.rs
-> +++ b/drivers/gpu/nova-core/regs/macros.rs
-> @@ -71,6 +71,20 @@
->  /// pr_info!("CPU CTL: {:#x}", cpuctl);
->  /// cpuctl.set_start(true).write(&bar, CPU_BASE);
->  /// ```
-> +///
-> +/// It is also possible to create a alias register by using the `=> PARENT` syntax. This is useful
-> +/// for cases where a register's interpretation depends on the context:
-> +///
-> +/// ```no_run
-> +/// register!(SCRATCH_0 @ 0x0000100, "Scratch register 0" {
-> +///    31:0     value as u32, "Raw value";
-> +///
-> +/// register!(SCRATCH_0_BOOT_STATUS => SCRATCH_0, "Boot status of the firmware" {
+On Wed, May 21, 2025 at 5:54 AM Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> wrote:
+> On 5/20/25 6:42 PM, Pengyu Luo wrote:
+> > The OnePlus Pad Pro is an Android tablet based on the Qualcomm SM8650
+> > platform. Its device codename is "caihong". This patch adds an initial
+> > devicetree for basic functionality.
+> >
+> > Currently working components include:
+> > - Backlight
+> > - Bluetooth
+> > - Battery charging (up to 5v 0.5a) & reporting via pmic-glink (There
+> > are many unknown notifications)
+> > - Display panel ([1])
+> > - Keyboard (via BT)
+> > - Power key & volume keys
+> > - Touchscreen & stylus ([2])
+> > - USB Type-c port
+> > - UFS storage
+> > - Wi-Fi
+> >
+> > The following components are currently non-functional:
+> > - Audio
+> > - Cameras
+> > - Charging pump (dual sc8547)
+> > - Keyboard (via pogo pin)
+> > - Stylus wireless charger (cps8601)
+> > - UCSI over GLINK (PPM init fails)
+> >
+> > [1]: The panel is a dual-DSI, dual-DSC display that requires setting
+> >      'slice_per_pkt = 2' in the DPU configuration. The panel driver
+> >      will be submitted separately later.
+> > [2]: Touchscreen/stylus driver available at:
+> >      https://github.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_sm8650/blob/oneplus/sm8650_v_15.0.0_pad_pro/vendor/oplus/kernel/touchpanel/oplus_touchscreen_v2/Novatek/NT36532_noflash/nvt_drivers_nt36532_noflash.c
+> >      The downstream driver has been ported and tested locally, but
+> >      requires cleanup, it may be submitted separately later.
+>
+> I have a Lenovo Tab P11 with a nt36523w (-23, not -32) for which I have once
+> poked at the driver for.. I see the driver you posted mentions -23 as well,
+> please keep me in the loop if you're going to upstream it
+>
 
-NIT: I'd put the arrow the other way around, i.e. SCRATCH_0_BOOT_STATUS is
-derived from SCRATCH_0, not the other way around.
+I see. Actually, they share the most part of nt36xxx, but with
+different memory maps. See
+https://github.com/MiCode/Xiaomi_Kernel_OpenSource/blob/elish-r-oss/drivers/input/touchscreen/nt36xxx/nt36xxx_mem_map.h
+
+> [...]
+>
+> > +             /*
+> > +              * This memory region is required to initialize the backlight
+> > +              * and display for bootloader. Normally, this region is not
+> > +              * needed. However, due to limitations in the current mainline
+> > +              * KTZ8866 driver, dual backlight ICs cannot be properly
+> > +              * initialized.
+> > +              *
+> > +              * A workaround involving secondary registration was proposed,
+> > +              * but rejected by reviewers. This reserved region is kept as
+> > +              * a temporary solution until a proper initialization method
+> > +              * that satisfies upstream requirements is found.
+> > +              */
+> > +             splash_region {
+> > +                     reg = <0 0xd5100000 0 0x2b00000>;
+> > +                     no-map;
+> > +             };
+>
+> I assume this means "if the bootloader sees /reserved-memory/splash_region,
+> it keeps the display online" - let's not do that, as underscores are not
+> allowed in node names (kernel coding style, not dt syntax)
+>
+
+Right, without it, BL won't initialize backlight and display. We need
+it to initialize backlight here since mainline ktz8866 won't program
+partial registers properly. If there is no other workaround, I will
+remove it to keep kernel coding style.
+
+> > +     };
+> > +
+> > +     /* No Modem */
+> > +     smp2p-modem {
+> > +             status = "disabled";
+> > +     };
+>
+> There shouldn't be any harm in keeping this node enabled
+>
+
+Ack
+
+> [...]
+>
+> > +
+> > +     vph_pwr: vph-pwr-regulator {
+> > +             compatible = "regulator-fixed";
+> > +
+> > +             regulator-name = "vph_pwr";
+> > +             regulator-min-microvolt = <3700000>;
+> > +             regulator-max-microvolt = <3700000>;
+> > +
+> > +             regulator-always-on;
+> > +             regulator-boot-on;
+> > +     };
+> > +
+> > +     wcn7850-pmu {
+> > +             compatible = "qcom,wcn7850-pmu";
+> > +
+> > +             pinctrl-names = "default";
+> > +             pinctrl-0 = <&wlan_en>, <&bt_default>;
+>
+> property-n
+> property-names
+>
+> please
+>
+
+Ack
+
+> [...]
+>
+> > +&i2c_hub_0 {
+> > +     clock-frequency = <400000>;
+> > +
+> > +     status = "okay";
+> > +
+> > +     /* sc8547-charger-secondary@6F */
+> > +};
+> > +
+> > +&i2c_hub_2 {
+> > +     clock-frequency = <400000>;
+> > +
+> > +     status = "okay";
+> > +
+> > +     /* sc8547-charger-primary@6F */
+> > +};
+> > +
+> > +&i2c_hub_3 {
+> > +     status = "okay";
+> > +
+> > +     /* pencil-wireless-charger-cps8601@41 */
+> > +};
+> > +
+> > +&i2c_hub_4 {
+> > +     clock-frequency = <400000>;
+> > +
+> > +     status = "okay";
+> > +
+> > +     /* awinic,aw88261_smartpa @34,35,37 */
+>
+> We have drivers for these!
+>
+> sound/soc/codecs/aw88261.c
+>
+
+I noticed that. But I have not looked into the sound yet. I may add
+the nodes after test. BTW the mainline one is quite simple compared
+to the downstream, doubting if it is really working
+https://github.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_sm8650/tree/oneplus/sm8650_v_15.0.0_pad_pro/vendor/oplus/kernel/audio/codecs/aw882xx
+
+> > +};
+> > +
+> > +&i2c_hub_7 {
+> > +     clock-frequency = <400000>;
+> > +
+> > +     status = "okay";
+> > +
+> > +     /* awinic,aw88261_smartpa @34,35,37 */
+> > +};
+> > +
+> > +&i2c2 {
+> > +     status = "okay";
+> > +
+> > +     /* secondary kinetic,ktz8866@11 */
+>
+> You can describe it, the driver sets some nonzero default brightness
+>
+
+But the backlight framework won't index them, which causes sysfs
+collision when the second instance is registering.
+
+Best wishes,
+Pengyu
 
