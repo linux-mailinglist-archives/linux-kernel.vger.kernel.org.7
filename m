@@ -1,108 +1,126 @@
-Return-Path: <linux-kernel+bounces-656958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD809ABED17
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:31:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8884ABED1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3218D3B4675
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:31:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7834A4E209E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F5423505F;
-	Wed, 21 May 2025 07:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7150C232785;
+	Wed, 21 May 2025 07:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="g0XjGnbs"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ujti79Wi"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A56F22B8B9;
-	Wed, 21 May 2025 07:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE9B1FF7B3
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 07:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747812704; cv=none; b=HVYeMS/Mjv0YxzZnpSgbo534LqY8vz6CxnZ8OT3iCG2dF4MofwPX2xfeW4zeFsL3ctN5uACX6bcYGhMX0rOVmvcGKADp12Mt4mGbxcnJVEAxVHWEGxpwlnwvFKOzcQNdSCm0LzUTM79qPmf07bpPjCnO09SFbSwwRQKFAjAAEt0=
+	t=1747812795; cv=none; b=LaL02uAVvzMp2E4zTUBRhazHeCxk9d17bi8xtX3uz+uXkXQDDdLkS+uuoYL5mXLTHa6OKkFfyIqruFpO80ElaewSSuat7AfRgS7iUO7k3kEA0G2DFOPviP3NCvZxufIDtc5q077zcrvEL5lHui1FVTGxKqAyq/uouzNL/vJ7ekE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747812704; c=relaxed/simple;
-	bh=m88lqQJ1ivvA36g7P3O18bCRbixD3RDFJ8xZLwXrm0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iKzHMJmfp5Un/bGxETiRlp+gl5OrC7Oa5malK4sPxzk+u3UIKF06cAdJc9R7cEMEH5GvFnq2Us8ZVR8yFK/DOR3L0KtWwizlhB1Fa1lNDdxH5YQrGod8KtUlTnkUwxCCSbqkmxq8DCLKnN8Wu0ORfpuFHHTGNid9RHlpfWikM5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=g0XjGnbs; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9ED0E1483EA6;
-	Wed, 21 May 2025 09:31:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1747812700; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=vQJzbvORYC3qBJW5bkNYYbLB/XMom/qkj5UONQP+FfI=;
-	b=g0XjGnbsgpvNRMG+QRiSHGkKupascOtHMHBsxB1DJMyIKHlEX0gMY3tzgzOt+F6GW6MBj4
-	TrAIRx3z7QjRY0LF2B5sNJPrSVmZjkNDCwb+doQyB2ROUoHxAQbAVxdOQBa0X/uG4weZCT
-	WMExvCvZW9gFzxy5+H3SdL1GBcJL/ucyTWSeHTPbgeb0AWOSsAEYjJjt/V2qRaExN/wCqg
-	xjW+QXt0pdNzXFSndEFTqhvgl5GY7S8vOyP5Rc+b0fEbR2lC6vdHa/riz1gsB8VVQTVWQI
-	Td2+bRb2z39L9tN0EYFJ04egtO7BLrBWgFiUqbvyVCMQyr8mcD3Xfw9kXqKbUg==
-Date: Wed, 21 May 2025 09:31:38 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: Manikandan Muralidharan <manikandan.m@microchip.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, tudor.ambarus@linaro.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] ARM: dts: microchip: sama5d27_som1: rename
- spi-cs-setup-ns property to spi-cs-setup-delay-ns
-Message-ID: <20250521-outsource-unholy-8c063337eb6f@thorsis.com>
-Mail-Followup-To: Manikandan Muralidharan <manikandan.m@microchip.com>,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, tudor.ambarus@linaro.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-References: <20250521054309.361894-1-manikandan.m@microchip.com>
- <20250521054309.361894-2-manikandan.m@microchip.com>
+	s=arc-20240116; t=1747812795; c=relaxed/simple;
+	bh=8eNFkqYc1Q8avbmUfFXD/nGdSz90QYLnWsLeQWK1Klw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G8f9bsECnUP8JRIhXPFFimfXQhPU14wOQfpQL+VsHsibuuThWA3icrWz3i5PoxHzBUekrTuhuqro5dQ5DVr7/SBGhqY9OF7+THCAFZWr2Z3ppJ/hHmYbopOLRVUoOqr7vaFg23kMUDx3RGNO4TuASJOSt/VguS0rfqGtGWCw/nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Ujti79Wi; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54L7WeEF237978;
+	Wed, 21 May 2025 02:32:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1747812760;
+	bh=I/pBmbcMK9Gqr1yMd2AESklnL6wyupNBCH9Ky8K4Fe8=;
+	h=From:To:CC:Subject:Date;
+	b=Ujti79Wit6AfDQE9DGAYbPlOfuzLqAze+UcGIs528qO/Qs/Xm3na6ZHmQWVCYA+xf
+	 d2rrOgggoTce1CGcO2kdNOpnvbY1Ql7ZqWzPcnn97pfF1vCmjHhFjlQ1nnjg8N+R28
+	 7DaE5nbDF8WdCAnVgMkoKUsZMgcUCV1En5qDD/D4=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54L7We0T2557592
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 21 May 2025 02:32:40 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 21
+ May 2025 02:32:39 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 21 May 2025 02:32:39 -0500
+Received: from localhost (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.72.182])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54L7WcPR068559;
+	Wed, 21 May 2025 02:32:38 -0500
+From: Jayesh Choudhary <j-choudhary@ti.com>
+To: <dianders@chromium.org>, <andrzej.hajda@intel.com>,
+        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+        <Laurent.pinchart@ideasonboard.com>, <dri-devel@lists.freedesktop.org>,
+        <tomi.valkeinen@ideasonboard.com>, <alexander.stein@ew.tq-group.com>
+CC: <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+        <lumag@kernel.org>, <jani.nikula@intel.com>, <andy.yan@rock-chips.com>,
+        <mordan@ispras.ru>, <linux@treblig.org>, <viro@zeniv.linux.org.uk>,
+        <yamonkar@cadence.com>, <sjakhade@cadence.com>,
+        <quentin.schulz@free-electrons.com>, <jsarha@ti.com>,
+        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>,
+        <j-choudhary@ti.com>
+Subject: [RFC PATCH v2 0/3] CDNS-MHDP8546 minor cleanups
+Date: Wed, 21 May 2025 13:02:34 +0530
+Message-ID: <20250521073237.366463-1-j-choudhary@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250521054309.361894-2-manikandan.m@microchip.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello,
+Hello All,
 
-Am Wed, May 21, 2025 at 11:13:07AM +0530 schrieb Manikandan Muralidharan:
-> The naming scheme for delay properties includes "delay" in the name,
-> so renaming spi-cs-setup-ns property to spi-cs-setup-delay-ns.
-> 
-> Fixes: 09ce8651229b ("ARM: dts: at91-sama5d27_som1: Set sst26vf064b SPI NOR flash at its maximum frequency")
-> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
-> ---
-> changes in v2:
-> - add fixes tag
-> ---
->  arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi b/arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi
-> index 8ac85dac5a96..13c28e92b17e 100644
-> --- a/arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi
-> +++ b/arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi
-> @@ -44,7 +44,7 @@ flash@0 {
->  					compatible = "jedec,spi-nor";
->  					reg = <0>;
->  					spi-max-frequency = <104000000>;
-> -					spi-cs-setup-ns = <7>;
-> +					spi-cs-setup-delay-ns = <7>;
->  					spi-tx-bus-width = <4>;
->  					spi-rx-bus-width = <4>;
->  					m25p,fast-read;
+These 3 patches does some fixup for the cdns-mhdp8546 bridge.
+- First of all, it removes the legacy !DRM_BRIDGE_ATTACH_NO_CONNECTOR
+  usecase.
+- Then it fixes possible NULL POINTER in cdns_mhdp_modeset_retry_fn
+  function call where the connector mutex is called. Since we cannot
+  use the atomic_state in these worker threads, we cannot get to
+  connector state in the worker thread. So we ensure that connector
+  field is propagated before the first possible call for this worker
+  thread by using pointer to the drm_connector.
+- Then it reduces log level inside cdns_mhdp_transfer to avoid flooding
+  of these logs.
 
-Reviewed-by: Alexander Dahl <ada@thorsis.com>
+v1 patch:
+<https://lore.kernel.org/all/20250116111636.157641-1-j-choudhary@ti.com/>
 
-Greets
-Alex
+Changelog v1->v2:
+- Remove !DRM_BRIDGE_ATTACH_NO_CONNECTOR entirely
+- Add mode_valid in drm_bridge_funcs[0]
+- Fix NULL POINTER differently since we cannot access atomic_state
+- Reduce log level in cdns_mhdp_transfer call
+
+[0]: https://lore.kernel.org/all/20240530091757.433106-1-j-choudhary@ti.com/
+
+Jayesh Choudhary (3):
+  drm/bridge: cadence: cdns-mhdp8546-core: Remove legacy support for
+    connector initialisation in bridge
+  drm/bridge: cadence: cdns-mhdp8546*: Change drm_connector from pointer
+    to structure
+  drm/bridge: cadence: cdns-mhdp8546-core: Reduce log level for DPCD
+    read/write
+
+ .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 218 ++++--------------
+ .../drm/bridge/cadence/cdns-mhdp8546-core.h   |   2 +-
+ .../drm/bridge/cadence/cdns-mhdp8546-hdcp.c   |   8 +-
+ 3 files changed, 46 insertions(+), 182 deletions(-)
+
+-- 
+2.34.1
 
 
