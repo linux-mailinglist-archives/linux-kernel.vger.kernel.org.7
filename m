@@ -1,255 +1,84 @@
-Return-Path: <linux-kernel+bounces-657310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B391ABF25E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:06:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5406DABF20D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D29F1799F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:06:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89E277A2775
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0DB25F980;
-	Wed, 21 May 2025 11:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z1RXqq0U"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835DD25A2AE;
+	Wed, 21 May 2025 10:49:13 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0CA1F1302;
-	Wed, 21 May 2025 11:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78616253B7C;
+	Wed, 21 May 2025 10:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747825572; cv=none; b=qgxEms9Y52LYDOj/Z/Zh625g7S4JT27R4HFIYHf+RHkNgpZyvHNMvyLqCm6stVIPb8S0985o6GpzbB2nIqtrEsb2fmLQ6uL+IP0xMa75Ox5YK0u01h1rfa/A9GylehVkJXjXFciDRGypeSzScWXGytGUhGPBTEK8lFf1b9M0yoo=
+	t=1747824553; cv=none; b=qWV9ws2fsB0z4ofRWvcLq34GsOF3OQ02GieBQj/Y6Y6gQ6jTK8ua0LcXr4r/92jP5yOCYJbVzuLIBPZOLwE/i0ZnJEfQEv4o0OvPiavG7JOCdkoDaH3vyeTCcHSHsyKEKrdxDy1wAFm6W1uBPF7pzYf0qc3iQEry8dX300VNADM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747825572; c=relaxed/simple;
-	bh=utfKUeejFLvJbdLWTRYs6J3vHpGRVnI8RSEnIEARCWQ=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=LCMAoBiORUfn2WctEY9XjMOem1S7VKKBBDfNIGtG7nsV+snHLQJ/7zayjMEkH17XlVirtfvOZrhuUTwg2uX90mx4xyY8+4PCG0YDCQhspeWGkxPBhOKQAhHTaxBRQjR6RzPMh1qgHXN5EIrr/ltyLemYxAzUxZXxfPLOEBIXWBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z1RXqq0U; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747825571; x=1779361571;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=utfKUeejFLvJbdLWTRYs6J3vHpGRVnI8RSEnIEARCWQ=;
-  b=Z1RXqq0UhPhdgiUxP0BNTjtBHmTSYUf8Bp13CbtiLpsDXcDW0zwX02PK
-   Wzy5imt99Y4MuWd6cakcATmRCTP8E2AS0Q1TQfceJJzgKPM3cjYWpwKRT
-   SE5vzNHiNO0pW8shtDEV11KZ6ZL+uAfvudbwgdh/XocfbhpFdyx93Y75g
-   CsnrKgdlWBy7FEqH9w9wO0nIG/u6mHBR8gADtlMFZLw9dMGMatn6vIS9D
-   mKwP99JxHEXTcAJP07xiF0yW84XMw4/2fz/EescIqhldpwcNNZ1oZz8SR
-   joIxI9EfClJio5vskkQKFF/9YBRlbwYK2GFxY2FPqfd9VA5ohq/EtZgqn
-   w==;
-X-CSE-ConnectionGUID: z014iHJSRuCxgJszyDNlbQ==
-X-CSE-MsgGUID: dggh41SETXSjD7W+jL+Vlw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="37418474"
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="37418474"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 04:06:10 -0700
-X-CSE-ConnectionGUID: dafv0W/nR22u+DF84vjbWQ==
-X-CSE-MsgGUID: DqV9Ekb3RyGrP/3IuGZTHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="140529464"
-Received: from dalessan-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.221])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 04:06:01 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 21 May 2025 14:05:57 +0300 (EEST)
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-cc: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org, 
-    Jon Pan-Doh <pandoh@google.com>, 
-    Karolina Stolarek <karolina.stolarek@oracle.com>, 
-    Weinan Liu <wnliu@google.com>, 
-    Martin Petersen <martin.petersen@oracle.com>, 
-    Ben Fuller <ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>, 
-    Anil Agrawal <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>, 
-    Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-    Lukas Wunner <lukas@wunner.de>, Sargun Dhillon <sargun@meta.com>, 
-    "Paul E . McKenney" <paulmck@kernel.org>, 
-    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-    Oliver O'Halloran <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>, 
-    Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>, 
-    Terry Bowman <terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>, 
-    Dave Jiang <dave.jiang@intel.com>, LKML <linux-kernel@vger.kernel.org>, 
-    linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kwilczynski@kernel.org>
-Subject: Re: [PATCH v7 17/17] PCI/AER: Add sysfs attributes for log
- ratelimits
-In-Reply-To: <20250521114600.00007010@huawei.com>
-Message-ID: <5f9fee34-1db6-d30b-688f-040570cc651a@linux.intel.com>
-References: <20250520215047.1350603-1-helgaas@kernel.org> <20250520215047.1350603-18-helgaas@kernel.org> <20250521114600.00007010@huawei.com>
+	s=arc-20240116; t=1747824553; c=relaxed/simple;
+	bh=pe/FziX/p5X9TigZYd9m9E01F33tnNfqTmuA0QeWwhc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UHl+YK3uvzHBdIPtsFTC/UWyPEPIXJqQHKahg8rhf6XVii9bA4m36jyUbYAlMqhpWaMgGcemk08ivCT8f6qtod0Mrw7QY/9KFUA7YMkR7tb32G0GGFsQgjJ4dZnazh91ZYDOAqnuILe6KpYUoyZf0iU7fK6SO+issgA1bajkbY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b2Shw0drZz6D9My;
+	Wed, 21 May 2025 18:44:16 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6687E1400F4;
+	Wed, 21 May 2025 18:49:07 +0800 (CST)
+Received: from china (10.220.118.114) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 May
+ 2025 12:49:02 +0200
+From: Gur Stavi <gur.stavi@huawei.com>
+To: Gur Stavi <gur.stavi@huawei.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>
+Subject: [PATCH net-next v1 0/1] queue_api: add subqueue variant netif_subqueue_sent
+Date: Wed, 21 May 2025 14:06:11 +0300
+Message-ID: <cover.1747824040.git.gur.stavi@huawei.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1454175955-1747825557=:946"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ frapeml500005.china.huawei.com (7.182.85.13)
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Add a new macro, netif_subqueue_sent, which is a wrapper for
+netdev_tx_sent_queue.
 
---8323328-1454175955-1747825557=:946
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Drivers that use the subqueue variant macros, netif_subqueue_xxx,
+identify queue by index and are not required to obtain
+struct netdev_queue explicitly.
 
-On Wed, 21 May 2025, Jonathan Cameron wrote:
+Such drivers still need to call netdev_tx_sent_queue which is a
+counterpart of netif_subqueue_completed_wake. Allowing drivers to use a
+subqueue variant for this purpose improves their code consistency by
+always referring to queue by its index.
 
-> On Tue, 20 May 2025 16:50:34 -0500
-> Bjorn Helgaas <helgaas@kernel.org> wrote:
->=20
-> > From: Jon Pan-Doh <pandoh@google.com>
-> >=20
-> > Allow userspace to read/write log ratelimits per device (including
-> > enable/disable). Create aer/ sysfs directory to store them and any
-> > future aer configs.
-> >=20
-> > Update AER sysfs ABI filename to reflect the broader scope of AER sysfs
-> > attributes (e.g. stats and ratelimits).
-> >=20
-> >   Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats ->
-> >     sysfs-bus-pci-devices-aer
-> >=20
-> > Tested using aer-inject[1]. Configured correctable log ratelimit to 5.
-> > Sent 6 AER errors. Observed 5 errors logged while AER stats
-> > (cat /sys/bus/pci/devices/<dev>/aer_dev_correctable) shows 6.
-> >=20
-> > Disabled ratelimiting and sent 6 more AER errors. Observed all 6 errors
-> > logged and accounted in AER stats (12 total errors).
-> >=20
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/gong.chen/aer-injec=
-t.git
-> >=20
-> > [bhelgaas: note fatal errors are not ratelimited, "aer_report" -> "aer_=
-info"]
-> > Signed-off-by: Karolina Stolarek <karolina.stolarek@oracle.com>
-> > Signed-off-by: Jon Pan-Doh <pandoh@google.com>
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > Tested-by: Krzysztof Wilczy=C5=84ski <kwilczynski@kernel.org>
->=20
-> There is some relatively new SYSFS infra that I think will help
-> make this slightly nicer by getting rid of the extra directory when
-> there is nothing to be done with it.
->=20
-> > ---
-> >  ...es-aer_stats =3D> sysfs-bus-pci-devices-aer} | 34 +++++++
-> >  Documentation/PCI/pcieaer-howto.rst           |  5 +-
-> >  drivers/pci/pci-sysfs.c                       |  1 +
-> >  drivers/pci/pci.h                             |  1 +
-> >  drivers/pci/pcie/aer.c                        | 99 +++++++++++++++++++
-> >  5 files changed, 139 insertions(+), 1 deletion(-)
-> >  rename Documentation/ABI/testing/{sysfs-bus-pci-devices-aer_stats =3D>=
- sysfs-bus-pci-devices-aer} (77%)
->=20
->=20
-> > diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> > index f9e684ac7878..9b8dea317a79 100644
-> > --- a/drivers/pci/pcie/aer.c
-> > +++ b/drivers/pci/pcie/aer.c
-> > @@ -627,6 +627,105 @@ const struct attribute_group aer_stats_attr_group=
- =3D {
-> >  =09.is_visible =3D aer_stats_attrs_are_visible,
-> >  };
->=20
-> > +#define aer_ratelimit_burst_attr(name, ratelimit)=09=09=09\
-> > +=09static ssize_t=09=09=09=09=09=09=09\
-> > +=09name##_show(struct device *dev, struct device_attribute *attr,=09\
-> > +=09=09    char *buf)=09=09=09=09=09=09\
-> > +{=09=09=09=09=09=09=09=09=09\
->=20
-> A little odd looking to indent this less than the line above.
->=20
-> > +=09struct pci_dev *pdev =3D to_pci_dev(dev);=09=09=09=09\
-> > +=09=09=09=09=09=09=09=09=09\
-> > +=09return sysfs_emit(buf, "%d\n",=09=09=09=09=09\
-> > +=09=09=09  pdev->aer_info->ratelimit.burst);=09=09\
-> > +}=09=09=09=09=09=09=09=09=09\
-> > +=09=09=09=09=09=09=09=09=09\
-> > +=09static ssize_t=09=09=09=09=09=09=09\
-> > +=09name##_store(struct device *dev, struct device_attribute *attr,=09\
-> > +=09=09     const char *buf, size_t count)=09=09=09\
-> > +{=09=09=09=09=09=09=09=09=09\
-> > +=09struct pci_dev *pdev =3D to_pci_dev(dev);=09=09=09=09\
-> > +=09int burst;=09=09=09=09=09=09=09\
-> > +=09=09=09=09=09=09=09=09=09\
-> > +=09if (!capable(CAP_SYS_ADMIN))=09=09=09=09=09\
-> > +=09=09return -EPERM;=09=09=09=09=09=09\
-> > +=09=09=09=09=09=09=09=09=09\
-> > +=09if (kstrtoint(buf, 0, &burst) < 0)=09=09=09=09\
-> > +=09=09return -EINVAL;=09=09=09=09=09=09\
-> > +=09=09=09=09=09=09=09=09=09\
-> > +=09pdev->aer_info->ratelimit.burst =3D burst;=09=09=09\
-> > +=09=09=09=09=09=09=09=09=09\
-> > +=09return count;=09=09=09=09=09=09=09\
-> > +}=09=09=09=09=09=09=09=09=09\
-> > +static DEVICE_ATTR_RW(name)
-> > +
-> > +aer_ratelimit_burst_attr(ratelimit_burst_cor_log, cor_log_ratelimit);
-> > +aer_ratelimit_burst_attr(ratelimit_burst_uncor_log, uncor_log_ratelimi=
-t);
-> > +
-> > +static struct attribute *aer_attrs[] =3D {
-> > +=09&dev_attr_ratelimit_log_enable.attr,
-> > +=09&dev_attr_ratelimit_burst_cor_log.attr,
-> > +=09&dev_attr_ratelimit_burst_uncor_log.attr,
-> > +=09NULL
-> > +};
-> > +
-> > +static umode_t aer_attrs_are_visible(struct kobject *kobj,
-> > +=09=09=09=09     struct attribute *a, int n)
-> > +{
-> > +=09struct device *dev =3D kobj_to_dev(kobj);
-> > +=09struct pci_dev *pdev =3D to_pci_dev(dev);
-> > +
-> > +=09if (!pdev->aer_info)
-> > +=09=09return 0;
-> > +
-> > +=09return a->mode;
-> > +}
-> > +
-> > +const struct attribute_group aer_attr_group =3D {
-> > +=09.name =3D "aer",
-> > +=09.attrs =3D aer_attrs,
-> > +=09.is_visible =3D aer_attrs_are_visible,
-> > +};
->=20
-> There are a bunch of macros to simplify cases where
-> a whole group is either enabled or not and make the group
-> itself go away if there is nothing to be shown.
->=20
-> DEFINE_SIMPLE_SYSFS_GROUP_VISIBLE() combined with
-> SYSFS_GROUP_VISIBLE() around the assignment does what we
-> want here I think.
->=20
-> Whilst we can't retrofit that stuff onto existing ABI
-> as someone may be assuming directory presence,
+Gur Stavi (1):
+  queue_api: add subqueue variant netif_subqueue_sent
 
-Are you sure about this? That empty directories are part of ABI as well?
-Are any of these directories listed under Documentation/ABI ?
+ include/net/netdev_queues.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-I can see somebody could in theory rely on the existance of empty=20
-directories but it's not like it contains any real substance without
-a file with the actual content of interest so it seems somewhat strange
-to check for directory and not the file of interest itself.
 
-> we can make sysfs less cluttered for new stuff.
->=20
-> Maybe I'm missing why that doesn't work here though!
->=20
-> J
->=20
-> > +
-> >  static void pci_dev_aer_stats_incr(struct pci_dev *pdev,
-> >  =09=09=09=09   struct aer_err_info *info)
-> >  {
->=20
+base-commit: e6b3527c3b0a676c710e91798c2709cc0538d312
+-- 
+2.45.2
 
---=20
- i.
-
---8323328-1454175955-1747825557=:946--
 
