@@ -1,138 +1,124 @@
-Return-Path: <linux-kernel+bounces-656876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4CF3ABEBF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:26:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F1AABEC00
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 672424A8585
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:26:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 526637A6BEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06147233151;
-	Wed, 21 May 2025 06:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F6B235043;
+	Wed, 21 May 2025 06:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T6+FYMQl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="lfySYCtq"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B84621B1AB;
-	Wed, 21 May 2025 06:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C0E233D88;
+	Wed, 21 May 2025 06:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747808800; cv=none; b=nUn2Y2kCZmoo0wWZeytzcO+N/j72YbztFKLBwM6KOCu+Y94YEtHaAdmIoUuHwUt8rJ1gY0SuLJ1Wz3j37RT0gpwT/qFmrHXL7nZ1JRcw+qhJPMesZIehY+nGjFTbyWVhTjQvOB0h9j9LKNZA9rSMsHnFNNfoWQM4/5womRvmVEI=
+	t=1747809244; cv=none; b=HydxCi6Vxs27adXDkP7F39D+ia30yk9GYQkUCJqCxRoyQsChKfW+WiuwkaEhbpdPFIOkvW99pZtKa8ViKzEmwKtWWqdPOX+O+2HOxYvALU6xHScaNXnLlVgYJ0r1cSv8Ehjj3etc5DBhYnBt1UEvJF8AgT7Y9z/BWo52k3WjeUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747808800; c=relaxed/simple;
-	bh=G7NyHqoxMUFHKaynfPZqxOQJz6ix7f6OCz2eY2/zINI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SXGIYAbR2F8kFJ2BukiZOfrV5pZqd9my33r2GwbnmWhuZxOi0R694812z2AMyqk7A0euohUhWuHK6Mqv1aqEsLRZSVEVzTVktRhO0JS79g4e6pm+Zw+kFj0vtBAmU2cjS7o6mUdmXfD3YcyOdjdjhkQk/jChBu0KWo3TxBsxTgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T6+FYMQl; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747808799; x=1779344799;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=G7NyHqoxMUFHKaynfPZqxOQJz6ix7f6OCz2eY2/zINI=;
-  b=T6+FYMQlyWI2QZuwXRIyS8xr/j09LYYcY6KwzIJz3Hb63w/h366INvci
-   nM7wi5SNHl6w8yABVRSl9+WyRSQz341b7GWOe7r1SbYM6NWewabWTGh/g
-   wD+EHmxGSNtIECwqwdXt1tSW1l9ZmW1kCNwqxADCpNPaSdSHMpTTzJ41V
-   R94yrlT2VuWpwIpgkdK4BLvurCUoaRBM1fJQlCWRPie5O8fJLpaMqWv2A
-   HUzm5BjqSdRvP5VWJigN2cnkyJhtVaBkGEELuLjhiwJDDo1Y4Be2w2tCf
-   vi37398Gs8CK0GKr5fTeCHsWhRM66YBkm5R3xCMOfy3Apid0uITBjT9um
-   w==;
-X-CSE-ConnectionGUID: wnBdyg9TQB2BswMuzcSguw==
-X-CSE-MsgGUID: kJjBFdH1QzK12GGoLn7pUg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="60425766"
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="60425766"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 23:26:36 -0700
-X-CSE-ConnectionGUID: A2Jt7UeGTe6Hc9xr9aD3Gg==
-X-CSE-MsgGUID: WH1yTpN1QQmGyApzkmaNiA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
-   d="scan'208";a="143919338"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 23:26:29 -0700
-Date: Wed, 21 May 2025 08:25:51 +0200
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Nelson Escobar <neescoba@cisco.com>
-Cc: Christian Benvenuti <benve@cisco.com>,
-	Satish Kharat <satishkh@cisco.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	John Daley <johndale@cisco.com>
-Subject: Re: [PATCH net-next] net/enic: Allow at least 8 RQs to always be used
-Message-ID: <aC1x74D+eYJtvHQi@mev-dev.igk.intel.com>
-References: <20250521-enic_min_8rq-v1-1-691bd2353273@cisco.com>
+	s=arc-20240116; t=1747809244; c=relaxed/simple;
+	bh=kROxZMu/nh6HWdn2287ETRvS/NrNq1Dh6NlPCnmP4ck=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OphsT5sOYmgjjNrJ/922P2HR+rUtBgTt4VGs6S1rc+qA6K6qgXnWcatkzGmI55T4NHBQ8Vs8QIL/NGQeUMFojt5X7m78JHh0FWGxBsPT8iKQSNVszPq9czorCjD//cflV6+m4TdWBAc7AvFHTWHCcjX86Qgh+EJFbtYkMZb+Yr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=lfySYCtq; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 8f72bad6360d11f0813e4fe1310efc19-20250521
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=/h4DXeSlHBOHr57ehL6D/b100MsQndsK0xj/jOkD2Ew=;
+	b=lfySYCtqZ525CdCtqNeKUjBQ2icdqIb5HVx+6hP1hjvSB9W5i12b0mHV5FpJqMEc/VpBEVqIUFnAHxGK3fljp0iW6EYMeyyAnZKXLQ7EzpFcXuLuT41vmoMM/9Fxjxu9gE8MFnay2j/PlpBCbzOOb+Pq+XRAhY1FYWlyINJn9OI=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:d65b8953-4de1-40f7-9088-9d8711477c3b,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:b8958e47-ee4f-4716-aedb-66601021a588,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,
+	LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 8f72bad6360d11f0813e4fe1310efc19-20250521
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <friday.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1630861245; Wed, 21 May 2025 14:33:51 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Wed, 21 May 2025 14:33:50 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Wed, 21 May 2025 14:33:48 +0800
+From: Friday Yang <friday.yang@mediatek.com>
+To: Yong Wu <yong.wu@mediatek.com>, Krzysztof Kozlowski <krzk@kernel.org>, Rob
+ Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias
+ Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Philipp Zabel
+	<p.zabel@pengutronix.de>
+CC: Friday Yang <friday.yang@mediatek.com>,
+	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v8 0/2] Add SMI reset and clamp for MediaTek MT8188 SoC
+Date: Wed, 21 May 2025 14:33:34 +0800
+Message-ID: <20250521063347.31578-1-friday.yang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250521-enic_min_8rq-v1-1-691bd2353273@cisco.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, May 21, 2025 at 01:19:29AM +0000, Nelson Escobar wrote:
-> Enic started using netif_get_num_default_rss_queues() to set the number
-> of RQs used in commit cc94d6c4d40c ("enic: Adjust used MSI-X
-> wq/rq/cq/interrupt resources in a more robust way")
-> 
-> This resulted in machines with less than 16 cpus using less than 8 RQs.
-> Allow enic to use at least 8 RQs no matter how many cpus are in the
-> machine to not impact existing enic workloads after a kernel upgrade.
-> 
-> Reviewed-by: John Daley <johndale@cisco.com>
-> Reviewed-by: Satish Kharat <satishkh@cisco.com>
-> Signed-off-by: Nelson Escobar <neescoba@cisco.com>
-> ---
->  drivers/net/ethernet/cisco/enic/enic.h      | 1 +
->  drivers/net/ethernet/cisco/enic/enic_main.c | 3 ++-
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/cisco/enic/enic.h b/drivers/net/ethernet/cisco/enic/enic.h
-> index 9c12e967e9f1299e1cf3e280a16fb9bf93ac607b..301b3f3114afa8f60c34c05661ee3cf67d4d6808 100644
-> --- a/drivers/net/ethernet/cisco/enic/enic.h
-> +++ b/drivers/net/ethernet/cisco/enic/enic.h
-> @@ -26,6 +26,7 @@
->  
->  #define ENIC_WQ_MAX		256
->  #define ENIC_RQ_MAX		256
-> +#define ENIC_RQ_MIN_DEFAULT	8
->  
->  #define ENIC_WQ_NAPI_BUDGET	256
->  
-> diff --git a/drivers/net/ethernet/cisco/enic/enic_main.c b/drivers/net/ethernet/cisco/enic/enic_main.c
-> index c753c35b26ebd12c500f2056b3eb583de8c6b076..6ef8a0d90bce38781d931f62518cf9bafb223288 100644
-> --- a/drivers/net/ethernet/cisco/enic/enic_main.c
-> +++ b/drivers/net/ethernet/cisco/enic/enic_main.c
-> @@ -2296,7 +2296,8 @@ static int enic_adjust_resources(struct enic *enic)
->  		 * used based on which resource is the most constrained
->  		 */
->  		wq_avail = min(enic->wq_avail, ENIC_WQ_MAX);
-> -		rq_default = netif_get_num_default_rss_queues();
-> +		rq_default = max(netif_get_num_default_rss_queues(),
-> +				 ENIC_RQ_MIN_DEFAULT);
->  		rq_avail = min3(enic->rq_avail, ENIC_RQ_MAX, rq_default);
->  		max_queues = min(enic->cq_avail,
->  				 enic->intr_avail - ENIC_MSIX_RESERVED_INTR);
-> 
-> ---
-> base-commit: ae605349e1fa5a29cdeecf52f92aa76850900d90
-> change-id: 20250513-enic_min_8rq-421f23897dc2
-> 
-> Best regards,
+Based on tag: next-20250521, linux-next/master
 
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+On the MediaTek MT8188 SoC platform, we encountered power-off failures
+and SMI bus hang issues during camera stress tests. The issue arises
+because bus glitches are sometimes produced when MTCMOS powers on or
+off. While this is fairly normal, the software must handle these
+glitches to avoid mistaking them for transaction signals. What's
+more, this issue emerged only after the initial upstreaming of SMI
+driver.
 
-> -- 
-> Nelson Escobar <neescoba@cisco.com>
+The software solutions can be summarized as follows:
+
+1. Use CLAMP to disable the SMI sub-common port after turning off the
+   LARB CG and before turning off the LARB MTCMOS.
+2. Use CLAMP to disable/enable the SMI sub-common port.
+3. Implement an AXI reset for SMI LARBs.
+
+Changes v8:
+- We replaced 'pm_runtime_enable' with 'devm_pm_runtime_enable' in the
+  v6 patch. This changed the order of cleanup, and reviewers expressed
+  concerns that it could introduce unexpected issues. So I discard this
+  change and continue using 'pm_runtime_enable'. We need to conduct
+  further investigation to determine if there are any issues related
+  to the cleanup order. This might be resolved in the future, but for
+  now, we just maintain the current status.
+
+v7:
+https://lore.kernel.org/lkml/20250430094545.23932-2-friday.yang@mediatek.com/
+https://lore.kernel.org/lkml/20250430094545.23932-3-friday.yang@mediatek.com/
+
+friday.yang (2):
+  dt-bindings: memory: mediatek: Add SMI reset and clamp for MT8188
+  memory: mtk-smi: mt8188: Add SMI reset and clamp for MT8188
+
+ .../mediatek,smi-common.yaml                  |   2 +
+ .../memory-controllers/mediatek,smi-larb.yaml |  19 +++
+ drivers/memory/mtk-smi.c                      | 133 ++++++++++++++++++
+ 3 files changed, 154 insertions(+)
+
+--
+2.46.0
+
 
