@@ -1,174 +1,216 @@
-Return-Path: <linux-kernel+bounces-657729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D799BABF823
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:47:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2FCABF82D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40AA51B65297
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:47:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB61E9E2452
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF11F1DC9B5;
-	Wed, 21 May 2025 14:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFBB1E3769;
+	Wed, 21 May 2025 14:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NrxpGQCs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Km/MRYd+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246F217C21B;
-	Wed, 21 May 2025 14:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1781C1E25E8
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747838823; cv=none; b=PSHlW9UGdbdu8/mCqKYx3Hd7okOJyC2Tg2DHsoWFXQ1Pzx5aQrqhb9fhnWHHTk5XX6PBl8dolnJakTvxUQ8ILD0WI4BCKPc9BSd495eMl2V0TbseFQd9RbhHbgbzwpuImDz2KtATJbSl6CWee/jr0bIhGOkEvejyiK7AoswhcLc=
+	t=1747838970; cv=none; b=Wv8y9Waa1LYlCu8qE3QC3kEQBsc48BKNY5uW7IWfBlNlOllhPq52zOVvSIu2bdmwIVpIUqC8akY6MPlp6YX2oyiBunQWlJB+QVp5uVbMvwVU5zum+vLUKh8WVf5EToLH3Y/M6Sh/9EGHuiMnYII1j8OUuilxMfUYBCwt21j4KP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747838823; c=relaxed/simple;
-	bh=wceNbE82aRL6dk03/moFFtc9ICxSDqGxhtj33U1LJrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SPVivgDiYpCb8MJFMB3P1LpdWqpzRFUTdcxG6JcmzVeTmQAx/AxtgjDoYjAPKYVOdbqrHroD4De/vV1Effaz2sLe5XOwIH+A8MLpFz/48Yjuq4vaMdjomhtjVplkIrap8EKJq8TApVozrE+PndKv6y54chX2fu6QS9iMhrH/r88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NrxpGQCs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 113A7C4CEE7;
-	Wed, 21 May 2025 14:47:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747838822;
-	bh=wceNbE82aRL6dk03/moFFtc9ICxSDqGxhtj33U1LJrE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NrxpGQCsGMnpB2mqtmJiF7sv9/AHwyeh/WLP3Y+vBM55w4kNrNF27219aktHe4Gch
-	 njN5n7+XC5OnYOlkpDuBcRD9avDlxb6uD66rwiy58Udd5PvQQ4dHRdDjLJb3VUQozU
-	 obsnwM0M0nQHsMZ08cmEbTkY6nbioNoY6V/tKvSxaGhMf85l+3VgcRXCLS6uU6m3A1
-	 BYiaXmAICImJRnXekKiC8t4HX00Ie+3kt/myk+TN2k1B9z1VUgf6VcgctKMOUn8B+S
-	 pvJCqOW1Ov8TumjHufNDGN4PVdm2bHUE9BDSIDBGhi9HhvL38N7cTemHkofFYiVDBW
-	 n+UwWlTGtKFzQ==
-Date: Wed, 21 May 2025 11:46:59 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Gautam Menghani <gautam@linux.ibm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, maddy@linux.ibm.com
-Subject: Re: [PATCH v3 7/7] perf python: Add counting.py as example for
- counting perf events
-Message-ID: <aC3nY4jVQ9ufeXqn@x1>
-References: <20250519195148.1708988-1-irogers@google.com>
- <20250519195148.1708988-8-irogers@google.com>
+	s=arc-20240116; t=1747838970; c=relaxed/simple;
+	bh=9LDK/QKPWZKQXdNon4+5Vf1nRHt0rEU96RIWKx4oniI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PfhZeaZ+eUHPqkEb+8rGJNb0w0yn9OwTG3xO/laJvKF8Tt9BoaQRUazmXV1CSW2WlkvrQUDlcnbw+XdCoTCy7TjXyd0KMou5UqP5MDICF/DLqRYNGVntm3YA5bpbG3OgIIpR/7uu5pWQopL5iLe3g/KvZ3qOPIX+y9U6HLYTLYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Km/MRYd+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9XM8V000862
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:49:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wzz8YAG+jzGwPnznc9rRApuGlOIZqX/coqLODea7HoY=; b=Km/MRYd+hcUDDrDD
+	y2JpRVEC8uUzuLODglF5ZCmkBbVr0EFGud/9aCGtCxGjUPQsyXiD0gNLyl6UskEe
+	Up++paC6g0Ah7kj7zDJX8mPwBb/W5DVPWMWk+p4RSdADVkdW8Lb3nQaNiUqiNVqy
+	xD8Bn1RqvaWeXLg0K1yNheHjuA4IKODc1V4T3ZD8GvhAj4CpA4BVCrmnsn4gBRci
+	nDyEC1IWHCU/NU8+Dn7UvntEpM3RUAeKIYZsBw4+VJqqUdZ9wA0yo+p0E5B+3tsd
+	5l2WIy/F1ZqjiAvUnhoho8ReIbcrPCuB51zsJibIQnLExs3oGsVykdg01zFiLQgJ
+	1b90GA==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf6u9p0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:49:27 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6f8df8d4585so54464366d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 07:49:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747838966; x=1748443766;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wzz8YAG+jzGwPnznc9rRApuGlOIZqX/coqLODea7HoY=;
+        b=SxyGz710JgVmuMH2bydX4qcxj/gAx52go2BjXUURm9jLP/QbZQMscoOjiDjUpjip95
+         U0hsy95RxBSwxmHZxpKlNQIuhcynYCDc+NICDVYN2y1+S866luUSpU8uKIg0i9Zaf84F
+         i3mthMxsQvztHfnik4DhJOx201mQUvJX7nD1h5f67+YZDsVDAZIViZKx4ndZx2exYsdf
+         Tp2Q7zY+HZZc1venQ+IbO/hZV6sbxAN1zY+2G29kvYwALgU0Co2iyv7b3mbcH17+DT7o
+         JW0D4+NGqi0KEUFsW4MbpzvT+OA/Z7AWT+PlutZ05y2Kx6u2yJm1CIqBFsH+UZD8gyAq
+         11Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6whr+Q3QwRB4QcOBIrbzFW1bSEMWEQl0a88XF3TLSEsR10hm0krVlBioGAfgDR+8CSEaToS0amK0nrzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoMKFAo3PJ4hDwazvU9HO0kteiYu8q0BfkUHc3muWIP/3LheD5
+	PORoPpNOFeNheOZwgqix4L8dJs5AEvvPiFLHZwNdt5DRDBUNkSzUnlsCzF8ctSMYuteuoASKoKW
+	osjyeLZlbuYWOQ0AtKDs0r5/gn8zDIMLc0KZbS+FLMt3sA93ovKQo1fA8ew450IZn8dTtpZowXD
+	g=
+X-Gm-Gg: ASbGncs4s6ppkKtVxQX32iFvhzglkXBfS1IEZty3GWkEPY9ElQaxfqRaXpTzimrgqRY
+	AHxyDVYn8subfON7sjj/oTECDijrE2tDvXACWpOKzjvSYcEtxOESCjsg2V7zQMyUInIthuP/D87
+	2HznP+d39ueE+AJ9Uch3PaZoaVc5P5aTd5+tvz/Q84kCX/CYbvAHLGGTuXRcoRpIsDbS7Es0P1f
+	tGoDMw1WrTs8WyOcQvi+J0lCPfLnd2nIpIRUWcA9jLlfxsGoW+LBPTaMhp+BopZc1H/lGXweU1G
+	kh1XRbdvndfgf+nTwrh7qubTjVtfsPRGPISfbfLTZFI26rANrCEKrktIviU4GXhNtGe5L6Ao+xu
+	1aYaNe+g2pJiec3zJXCG+lFcnVrMXOJv+cbr72ELVN1zRYhGHJDZaIA/kf4YFtWxv
+X-Received: by 2002:a05:6214:f05:b0:6e8:ed7f:1a79 with SMTP id 6a1803df08f44-6f8b08d8672mr389817926d6.32.1747838965628;
+        Wed, 21 May 2025 07:49:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGADVYs6P1p5D3eHx76IOayTjYi+ijzrqjc/PCEns20DtYTMFID31WEtYs4tZlh7+gviqZqpg==
+X-Received: by 2002:a05:6214:f05:b0:6e8:ed7f:1a79 with SMTP id 6a1803df08f44-6f8b08d8672mr389816406d6.32.1747838963560;
+        Wed, 21 May 2025 07:49:23 -0700 (PDT)
+Received: from ?IPV6:2001:14bb:c7:69ba:b852:d3f4:8957:5a1e? (2001-14bb-c7-69ba-b852-d3f4-8957-5a1e.rev.dnainternet.fi. [2001:14bb:c7:69ba:b852:d3f4:8957:5a1e])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-328084b30easm28014581fa.6.2025.05.21.07.49.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 May 2025 07:49:22 -0700 (PDT)
+Message-ID: <c1ebdaf1-92bb-4f73-bca9-35246d7c10e1@oss.qualcomm.com>
+Date: Wed, 21 May 2025 17:49:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250519195148.1708988-8-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1] mmc: sdhci-msm: Enable MMC_CAP_AGGRESSIVE_PM for
+ qualcomm controllers
+To: Sarthak Garg <quic_sartgarg@quicinc.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
+        quic_rampraka@quicinc.com, quic_pragalla@quicinc.com,
+        quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
+        quic_bhaskarv@quicinc.com, kernel@quicinc.com
+References: <20241104060722.10642-1-quic_sartgarg@quicinc.com>
+ <konkbi4hvd7qc4rhokwrymzqntroy7gijk3ndwv5rluswdrykp@xsafrtrjzmuq>
+ <10c90fee-ce7f-4034-9028-4252f19cb67f@quicinc.com>
+ <CAA8EJpoLLDXFQk-ViuaioKrECzMV0aUrcOj4v+Ufs4oHY53mrw@mail.gmail.com>
+ <064d3eed-c2ea-4b41-85b2-d2a5a922f8c7@quicinc.com>
+ <ehgjdszjr34xppmkrkicb4pnq326nor26tqu2ekop6ew2j3y3h@pm45aiipzuc5>
+ <48c73675-a73f-46f1-81a9-f701a2cf00a5@quicinc.com>
+Content-Language: en-US
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+In-Reply-To: <48c73675-a73f-46f1-81a9-f701a2cf00a5@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: BArjquE5frznz3WhqcuPHApJ1ruZmuDk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDE0NSBTYWx0ZWRfX3SVerUKcKFsg
+ B0WazJOU+Wpt26ztnHhPDs37N0DqnQ+HgcWbdxCZr1lg5aiBiyTq3lQgHYG3L+L6FEX5703KJ1D
+ DTnu04AkL5CYt153eRUzvmEv82VUB+3piSwztvHsermgDdtm1zvdF3mweOz8i+S+tyAbcgr4rOs
+ wfdnIhqStfSThQaCZnJ8DOdOrdvkJD8esgpCuU534TJHzQx+ps+2JlHIoGwPOYyDPhZb7qnFk5q
+ /QD5fd9vSDroMDqJ2oTY5jSCt/Zk+KZpxTMfbWvpVXJ90n8gM4hrrSqwjOJpoaDJxC1mwVZcRzN
+ /niCBOQkS9GTlC/GyCiX6BitLAcXNPJ7cBoNThyGko82Kd/4UmaIBsAKOVLTLGcfBhAlcKKAxOW
+ LLMfd2JqLHivpj6yF78wb0rvfo09k2xRR65vpYe2pvkbvIb1cu0+uV2nC5qLESPJxL+19sVn
+X-Authority-Analysis: v=2.4 cv=fZOty1QF c=1 sm=1 tr=0 ts=682de7f7 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=3-RhneuVAAAA:8
+ a=JVpan6spTK3LsyV6_coA:9 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+ a=TjNXssC_j7lpFel5tvFf:22 a=VLVLkjT_5ZicWzSuYqSo:22
+X-Proofpoint-ORIG-GUID: BArjquE5frznz3WhqcuPHApJ1ruZmuDk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_04,2025-05-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 mlxscore=0 adultscore=0 spamscore=0 bulkscore=0 suspectscore=0
+ malwarescore=0 priorityscore=1501 impostorscore=0 mlxlogscore=999
+ lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2505210145
 
-On Mon, May 19, 2025 at 12:51:44PM -0700, Ian Rogers wrote:
-> From: Gautam Menghani <gautam@linux.ibm.com>
+On 21/05/2025 17:35, Sarthak Garg wrote:
 > 
-> Add counting.py - a python version of counting.c to demonstrate
-> measuring and reading of counts for given perf events.
 > 
-> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
-> Signed-off-by: Ian Rogers <irogers@google.com>
-
-Tested and applied:
-
-Committer testing:
-
-Build perf and make the generated python binding somewhere you can point
-to to avoid using the one in the distro python3-perf (fedora, may be
-different in other distros):
-
-  $ make -k O=/tmp/build/$(basename $PWD)/ -C tools/perf install-bin
-
-Copy /tmp/build/perf-tools-next/python/perf.cpython-313-x86_64-linux-gnu.so to
-somewhere outside this toolbox container and then use it with root:
-
-  # export PYTHONPATH=/root/python/
-  # ls -la /root/python/
-  total 10640
-  drwxr-xr-x. 1 root root       72 May 21 11:40 .
-  dr-xr-x---. 1 root root      574 May 21 11:40 ..
-  -rwxr-xr-x. 1 acme acme 10894360 May 21 11:40 perf.cpython-313-x86_64-linux-gnu.so
-  # tools/perf/python/counting.py | head -5
-  For evsel(software/cpu-clock/) val: 2930946 enable: 2932479 run: 2932479
-  For evsel(software/cpu-clock/) val: 2924975 enable: 2926267 run: 2926267
-  For evsel(software/cpu-clock/) val: 2921017 enable: 2922430 run: 2922430
-  For evsel(software/cpu-clock/) val: 2914966 enable: 2916549 run: 2916549
-  For evsel(software/cpu-clock/) val: 2910027 enable: 2911589 run: 2911589
-  #
-
-It would be nice to have something that compares the output for some
-envent obtained from both 'perf stat' and using these new python
-counting classes, but that can be done later.
-
-Applied to perf-tools-next,
-
-- Arnaldo
-
-> ---
-> Ian modified from v2 to make the API take a CPU and thread then
-> compute from these the appropriate indices. This was discussed as the
-> preferred API with Arnaldo:
-> https://lore.kernel.org/linux-perf-users/20250512055748.479786-1-gautam@linux.ibm.com/
-> The use of a thread_map and cpu_map was also removed to make the code
-> cleaner, instead the cpus and threads of the parsed evsel are
-> used. Support for command line events is also added. The indent is
-> reduced from 8 to 4 to match the preferred python PEP8 indent.
-> ---
->  tools/perf/python/counting.py | 36 +++++++++++++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100755 tools/perf/python/counting.py
+> On 5/21/2025 6:25 PM, Dmitry Baryshkov wrote:
+>> On Wed, May 21, 2025 at 12:46:49PM +0530, Sarthak Garg wrote:
+>>>
+>>>
+>>> On 11/15/2024 6:53 PM, Dmitry Baryshkov wrote:
+>>>> On Fri, 15 Nov 2024 at 12:23, Sarthak Garg 
+>>>> <quic_sartgarg@quicinc.com> wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>> On 11/4/2024 4:19 PM, Dmitry Baryshkov wrote:
+>>>>>> On Mon, Nov 04, 2024 at 11:37:22AM +0530, Sarthak Garg wrote:
+>>>>>>> Enable MMC_CAP_AGGRESSIVE_PM for qualcomm controllers.
+>>>>>>> This enables runtime PM for eMMC/SD card.
+>>>>>>
+>>>>>> Could you please mention, which platforms were tested with this 
+>>>>>> patch?
+>>>>>> Note, upstream kernel supports a lot of platforms, including 
+>>>>>> MSM8974, I
+>>>>>> think the oldest one, which uses SDHCI.
+>>>>>>
+>>>>>
+>>>>> This was tested with qdu1000 platform.
+>>>>
+>>>> Are you sure that it won't break other platforms?
+>>>>
+>>>
+>>> Thanks for your valuable comment.
+>>> I am not sure about the older platforms so to avoid issues on older
+>>> platforms we can enable this for all SDCC version 5.0 targets ?
+>>
+>> No, there are still a lot of platforms. Either explain why this is
+>> required for all v5 platforms (and won't break those) or find some other
+>> way, e.g. limit the change to QDU1000, explaining why it is _not_
+>> applicable to other platforms.
+>>
 > 
-> diff --git a/tools/perf/python/counting.py b/tools/perf/python/counting.py
-> new file mode 100755
-> index 000000000000..02121d2bb11d
-> --- /dev/null
-> +++ b/tools/perf/python/counting.py
-> @@ -0,0 +1,36 @@
-> +#!/usr/bin/env python3
-> +# SPDX-License-Identifier: GPL-2.0
-> +# -*- python -*-
-> +# -*- coding: utf-8 -*-
-> +
-> +import argparse
-> +import perf
-> +
-> +def main(event: str):
-> +    evlist = perf.parse_events(event)
-> +
-> +    for evsel in evlist:
-> +        evsel.read_format = perf.FORMAT_TOTAL_TIME_ENABLED | perf.FORMAT_TOTAL_TIME_RUNNING
-> +
-> +    evlist.open()
-> +    evlist.enable()
-> +
-> +    count = 100000
-> +    while count > 0:
-> +        count -= 1
-> +
-> +    evlist.disable()
-> +
-> +    for evsel in evlist:
-> +        for cpu in evsel.cpus():
-> +            for thread in evsel.threads():
-> +                counts = evsel.read(cpu, thread)
-> +                print(f"For {evsel} val: {counts.val} enable: {counts.ena} run: {counts.run}")
-> +
-> +    evlist.close()
-> +
-> +if __name__ == '__main__':
-> +    ap = argparse.ArgumentParser()
-> +    ap.add_argument('-e', '--event', help="Events to open", default="cpu-clock,task-clock")
-> +    args = ap.parse_args()
-> +    main(args.event)
-> -- 
-> 2.49.0.1101.gccaa498523-goog
+> Thanks for your comment.
+
+No need to.
+
+> I agree with your concern but for me also its not possible to test on 
+> all the platforms.
+
+Sure.
+
+> Lets say if I want to enable this caps for QDU1000 for which it has been 
+> tested and on any other upcoming target after testing, then how can I 
+> proceed to enable?
+
+Let's start from the beginning: why do you want to enable it on QDU1000?
+
 > 
+> One option I had thought of was to implement this using compatible 
+> string, then for all the upcoming platforms using this compatible string 
+> as a fallback.
+> But this doesn't look optimal to use compatible string for just one flag 
+> and also this capability is not platform specific and we will be needing 
+> for all the platforms. Please share your opinion on this.
+> 
+> Another option that I could have thought of is using device tree based 
+> approach but seems that was not accepted earlier :
+> https://patchwork.kernel.org/project/linux-mmc/ 
+> patch/20230129023630.830764-1-chenhuiz@axis.com/
+> 
+> So it would be helpful if you can suggest some approach?
+
+Worst case, just tie it to the SoC-specific compat string that is 
+already a part of the bindings.
+
+
+-- 
+With best wishes
+Dmitry
 
