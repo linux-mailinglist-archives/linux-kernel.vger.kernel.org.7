@@ -1,95 +1,132 @@
-Return-Path: <linux-kernel+bounces-657235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADF2AABF163
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:20:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CD3ABF167
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 626FC177AF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:20:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C47EF16C277
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5490825B660;
-	Wed, 21 May 2025 10:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ex0bH7QS"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3402405F5;
-	Wed, 21 May 2025 10:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6BD25B695;
+	Wed, 21 May 2025 10:21:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266B52405F5;
+	Wed, 21 May 2025 10:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747822832; cv=none; b=Nzf+Kxd7SNxIsM3YXWQlWllZTq/EMSENEZnRr/0pmDUMBcZWVqIbA/MMoRXHxE1DH9j0vRTt3O3yQHyopYHxGOvdwlq/UV2wRrQ9a+KHSf0FDTlZHNXxidtzGLP6RR0EXPCpyY6Aa84vUmXYfWpiQ0Os9wKM+nsmwD6qW4OmwtU=
+	t=1747822881; cv=none; b=hWSRk5zXSyk76qUjYoI7SILxvcnWPYVZFLisEnQcjTWUn0xnKfTYNkbxQ7+ei5MSnORVKIfsbxQVrguGZfBTY3pqHGFv4yy4vmiynVYFFkAYH4w/SVKbbShs5XfzQlHNFjFZIm515n8xuYsKyLKlepFxr+m7jxaMTqdH2qeI538=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747822832; c=relaxed/simple;
-	bh=WkS58Au0FdDS6AKeNRjZwZmOF69mjuuXGMj2tbsRlBo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gv7vH6sqLAAinH0QaO0i+HpCtX9vlJjfQEp9YxAzS8CKTkEsT6L18PpSYt79BJSiy9S28fuN0EPa9DrioWBbj70+wiMjtnb4Dl9eKm+jNzsaowHrh3LKROIXZ3vL2r9Jr2uiCHeucrrvRn5wONQZ6bcZWvhU2JGHUI+rtoyw8lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ex0bH7QS; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net BB2D741A9E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1747822830; bh=OBCQ2+DiSFRmOVA09FWKPuM111yHHYZRrK684DrBWMk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ex0bH7QSsM0DbKe7V/6IHp5GvNRjSiuycEaGVCPLl5X1hMXquoQg7zFZ+PRvzviaN
-	 wLmgSXx/ZOIoAi3EXhAj8qF30MW2GAP1CFaPi05IqgIpNqBlcMFDgdpkzPIhUyguau
-	 6sy4pg9IquOpdYtzFcD41/hqKYi0Vz7EaDL8Fd7atbkSPhnAOUP4R1fL6OkI7y4XgE
-	 cm9hKe2WlAeTnT1Br+fzqmmSiHXpLDJZNVJ+Wjif0xQ/orE7uRSzT84LlUi7EWqR1H
-	 qLZFxlWIC0zRORvhKJJaMyuBO2bX0IyvOlaVBIooail+3/Wjue6/hnh91T/cQyR8AT
-	 wnDx+lQp4+zOA==
-Received: from localhost (unknown [93.187.88.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id BB2D741A9E;
-	Wed, 21 May 2025 10:20:29 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Swapnil Sapkal
- <swapnil.sapkal@amd.com>
-Cc: linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Madadi
- Vineeth Reddy <vineethr@linux.ibm.com>
-Subject: Re: [PATCH] Documentation/scheduler: Fix typo in sched-stats domain
- field description
-In-Reply-To: <20250520100752.39921-1-vineethr@linux.ibm.com>
-References: <20250520100752.39921-1-vineethr@linux.ibm.com>
-Date: Wed, 21 May 2025 04:20:26 -0600
-Message-ID: <871psigt91.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1747822881; c=relaxed/simple;
+	bh=O0M/Knc1SstOgP9f+/1lfj76rztByzOvmpyIseFRX8w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GpvCd08oq03ilqyriNEqYhI1Z0FZdtvQ0Ra0FWBWv8Kq3SiioC+XcqskIXW5+ZJ6KMPjceHJrOzWDWdBUyuZ9w3CxoPh1Lwucq+nP7gvQORTBv5iKtzlQfqNm3x0wY1icSfNlTiA6g6zsTsIy4Vs0v0rWtDVk8eia1nolnBXW1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 962AF1515;
+	Wed, 21 May 2025 03:21:05 -0700 (PDT)
+Received: from [10.57.23.70] (unknown [10.57.23.70])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 460CB3F6A8;
+	Wed, 21 May 2025 03:21:15 -0700 (PDT)
+Message-ID: <0906c39b-2e67-4f5f-86fb-aa8d5abde0ed@arm.com>
+Date: Wed, 21 May 2025 11:21:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 21/43] KVM: arm64: Handle realm VCPU load
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
+ <aneesh.kumar@kernel.org>
+References: <20250416134208.383984-1-steven.price@arm.com>
+ <20250416134208.383984-22-steven.price@arm.com>
+ <9a09a3fe-c91c-457f-b6da-9fccbf98e649@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <9a09a3fe-c91c-457f-b6da-9fccbf98e649@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Madadi Vineeth Reddy <vineethr@linux.ibm.com> writes:
+On 19/05/2025 18:48, Suzuki K Poulose wrote:
+> On 16/04/2025 14:41, Steven Price wrote:
+>> When loading a realm VCPU much of the work is handled by the RMM so only
+>> some of the actions are required. Rearrange kvm_arch_vcpu_load()
+>> slightly so we can bail out early for a realm guest.
+>>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> Reviewed-by: Gavin Shan <gshan@redhat.com>
+>> ---
+>>   arch/arm64/kvm/arm.c | 13 +++++++++----
+>>   1 file changed, 9 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+>> index cf707130ef66..08d5e0d76749 100644
+>> --- a/arch/arm64/kvm/arm.c
+>> +++ b/arch/arm64/kvm/arm.c
+>> @@ -644,10 +644,6 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu,
+>> int cpu)
+> 
+> I think we use the pkvm hook to skip to the nommu goto, to avoid
+> the VMID allocation and context flush.
+> 
+> 
+>>       kvm_timer_vcpu_load(vcpu);
+>>       kvm_vgic_load(vcpu);
+>>       kvm_vcpu_load_debug(vcpu);
+>> -    if (has_vhe())
+>> -        kvm_vcpu_load_vhe(vcpu);
+>> -    kvm_arch_vcpu_load_fp(vcpu);
+>> -    kvm_vcpu_pmu_restore_guest(vcpu);
+>>       if (kvm_arm_is_pvtime_enabled(&vcpu->arch))
+>>           kvm_make_request(KVM_REQ_RECORD_STEAL, vcpu);
+> 
+> We could also move thise pvtime to the bottom too ?
+> 
+>>   @@ -671,6 +667,15 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu,
+>> int cpu)
+>>                    &vcpu->arch.vgic_cpu.vgic_v3);
+>>       }
+>>   +    /* No additional state needs to be loaded on Realmed VMs */
+>> +    if (vcpu_is_rec(vcpu))
+>> +        return;
+>> +
+>> +    if (has_vhe())
+>> +        kvm_vcpu_load_vhe(vcpu);
+>> +    kvm_arch_vcpu_load_fp(vcpu);
+>> +    kvm_vcpu_pmu_restore_guest(vcpu);
+>> +
+> 
+> With the above addressed:
+> 
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-> Fixes a typo in the description of the 23rd field of the scheduling
-> domain statistics, which was missing the word "cpu".
->
-> Fixes: 7c8cd569ff66 ("docs: Update Schedstat version to 17")
-> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-> ---
->  Documentation/scheduler/sched-stats.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/scheduler/sched-stats.rst b/Documentation/scheduler/sched-stats.rst
-> index 08b6bc9a315c..d82e7d2b54f0 100644
-> --- a/Documentation/scheduler/sched-stats.rst
-> +++ b/Documentation/scheduler/sched-stats.rst
-> @@ -135,7 +135,7 @@ of idleness (busy, idle and newly idle):
->          cpu was idle but no busier group was found
->  
->      23) # of times in this domain sched_balance_rq() was called when the
-> -        was just becoming idle
-> +        cpu was just becoming idle
->      24) # of times in this domain sched_balance_rq() checked but found the
+Thanks, the suggestions above seem sensible, I'll make those changes.
 
-Applied, thanks.
+Thanks,
+Steve
 
-jon
+> 
+> 
+>>       if (!cpumask_test_cpu(cpu, vcpu->kvm->arch.supported_cpus))
+>>           vcpu_set_on_unsupported_cpu(vcpu);
+>>   }
+> 
+
 
