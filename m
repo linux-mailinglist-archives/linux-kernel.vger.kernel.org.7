@@ -1,109 +1,158 @@
-Return-Path: <linux-kernel+bounces-658186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01431ABFDEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 22:29:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94474ABFE74
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 22:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADF1E500B17
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 20:29:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D0E9E6E04
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 20:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CFC2957B6;
-	Wed, 21 May 2025 20:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935762BD01C;
+	Wed, 21 May 2025 20:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GI1nlRSN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TV8mT1hO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942D92957A9;
-	Wed, 21 May 2025 20:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB5328F955
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 20:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747859348; cv=none; b=il0tA/eZJB46Jmmy96ufOGrd7Sb7Um15K+8+zV/FRu98zN7YXsuggv4f0YkoK3/SudammiOifbYw98CeW1ogZi+FAZi1zuebGQxXaPjmy0T8immaM1D1cHBA/LHz4I9C0aY8FTrLhGDKdlIXr2JTGyfSvDDLZHVnzVy5aaFmdwY=
+	t=1747860446; cv=none; b=BMdyXwerRs4bIK2XIWKYrOPgsN+5Ahb+EjYmkUY6+UUgmSiXNV18SGkdVIJ6piJ3+lzNruFWrsNxtImrYYxJX5bcWP/cMZ/uklxYORtUyXeFWS4YUdb/YxUeuG4FlJQlj/FXrwyirbVuzMYaNyFgSUsh/XH/MYhOukg9bn3Z6DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747859348; c=relaxed/simple;
-	bh=iu+hCyFeCKJW17PT9Xd5uMSXx8mgEQQ6H1fesLWdJas=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YY0gsgzls9P2CevQy237fiuRwlCGcKZcP8kNalwsKrajoottg7wmo0U9UrXbcw3YvLgEBQpGbiPmaNR5cpb7JCNJjv80VZV6D/8++ztEKV8SZdzE+824lCT5OhPLiwRq54fY7X7nM3VsvddgP66KmReq24MB6Wguc98WALtJ2Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GI1nlRSN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E565C4AF0B;
-	Wed, 21 May 2025 20:29:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747859348;
-	bh=iu+hCyFeCKJW17PT9Xd5uMSXx8mgEQQ6H1fesLWdJas=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GI1nlRSN6dCZSm5FhnpgTjP6O4k8W0sSYjPoLJvXHTy0bC+RpSuUZZJtaG5ic7OEe
-	 PEkVVWkUf/N1nyOTq/Wp9dPn2VT0v/Si+yD5KF9+7rw5zf4TCdRUaNs0xyU7XAfsTq
-	 VTstCkH7m8hCTEl/C6VDaTsE6Bys5vi89JHSTE93EJT0rDKqoopZ605/wspZUmmQ+o
-	 2gOSq7D5cjJZvNNIsnSwrI7ZOF0CvXSQBRhCC7//1TxO3E8BoVdBxZBZgeDj5Ei+0L
-	 u2YZifY2pgBNARB5g+XgNQQdNltq/MXBaTlZdBAnAvTtAZdrGRvZVPR5DbY7VsLKKm
-	 BF025/XghFutA==
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-605f7d3215cso3845866eaf.0;
-        Wed, 21 May 2025 13:29:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCQv6A8b/rOF10NXG8OkZ5A//m+2SWBkzIZ940MR5kxmn+djDRn6qjBWX9UT8mr0gsg92MUQss3xsqxGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDt0nhotJD486ZD0Pwym4lDq/K/0IE95Yozl8nbbRbYdfQg9qH
-	QPdI98QxS1qM0l5om3rDPMeLGvSsYLtcI0YXtz0x0MuMh8p9qYuj7i8qpQx5k6y1HkZSPJw0NgD
-	3G7ADjN5kNO2RQjvnblh7SyzTqlLx4C8=
-X-Google-Smtp-Source: AGHT+IG47wmNc5V54Hgi72WMzCPM4pBQy/jJdSIvXoZiZIGQjPa5Fej9+y0GVx8U82lwWrRjyxri/mEfUeBBORZwQK8=
-X-Received: by 2002:a05:6820:290c:b0:60a:9c7:e8e6 with SMTP id
- 006d021491bc7-60a09c7eab4mr8513105eaf.4.1747859347442; Wed, 21 May 2025
- 13:29:07 -0700 (PDT)
+	s=arc-20240116; t=1747860446; c=relaxed/simple;
+	bh=tTrqFtKgFyfWmG/8ZckfcJJSYF4f6jrsg8m0/dT/gEk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B0me8bCXUq5VwB/nvPkDe+mT/oXpyJmT/FXU/wC/fUNYqn3Onyo/sDXe0fofakyXg9w1WFBuzZrs5REWiHRnDzt0l6H4uWq72gjKA5iLCAg8bitJLEO/bPInCqDVJF0KAMAqMuQ3gLPgPiLpTJRSiWSKUrzpCL51iEpzaCn/VX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TV8mT1hO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747860443;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gFQBf3kZxhcw4apyjcJ1zWnId76v45p2hqlMqonSnO8=;
+	b=TV8mT1hOvKeP91Eb2GQAJqRT2Op9VzkjRaIDwRZ1gu9XZsjmHsHTod/0XhvF7qnCgf201K
+	1MC4LoXXHl+atPRXCD1AteOVWn6j+IHqQMPRpzExoIKRJmoGQyiAyawOroWJX8ktg056f+
+	REZ139XYfhigv+CAk+g3iYw0PSO7wUQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-596-w1o_npdaN4S7qmHN0LBCVg-1; Wed,
+ 21 May 2025 16:47:17 -0400
+X-MC-Unique: w1o_npdaN4S7qmHN0LBCVg-1
+X-Mimecast-MFC-AGG-ID: w1o_npdaN4S7qmHN0LBCVg_1747860435
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4CF7B1800361;
+	Wed, 21 May 2025 20:47:15 +0000 (UTC)
+Received: from chopper.redhat.com (unknown [10.22.80.100])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A0F3019560B7;
+	Wed, 21 May 2025 20:47:10 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: dri-devel@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
+	linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b)
+Subject: [PATCH v2 00/12] Rust abstractions for shmem-backed GEM objects
+Date: Wed, 21 May 2025 16:29:07 -0400
+Message-ID: <20250521204654.1610607-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250519070938.931396-1-yubowen8@huawei.com> <20250519100416.fjixyqgbgk44pgps@vireshk-i7>
-In-Reply-To: <20250519100416.fjixyqgbgk44pgps@vireshk-i7>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 21 May 2025 22:28:56 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i8tF8iGHfgX84ro7kFiYOq5kVSyfEoj_KE1mf=CN5SPw@mail.gmail.com>
-X-Gm-Features: AX0GCFuEirXZbmumz-pS6DkTsaMyqseAR4OLi_bvgDb12LFIiINhRplZgjteEBo
-Message-ID: <CAJZ5v0i8tF8iGHfgX84ro7kFiYOq5kVSyfEoj_KE1mf=CN5SPw@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: Update sscanf() to kstrtouint()
-To: Viresh Kumar <viresh.kumar@linaro.org>, Bowen Yu <yubowen8@huawei.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linuxarm@huawei.com, zhanjie9@hisilicon.com, jonathan.cameron@huawei.com, 
-	lihuisong@huawei.com, zhenglifeng1@huawei.com, cenxinghai@h-partners.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon, May 19, 2025 at 12:04=E2=80=AFPM Viresh Kumar <viresh.kumar@linaro.=
-org> wrote:
->
-> On 19-05-25, 15:09, Bowen Yu wrote:
-> > In store_scaling_setspeed(), sscanf is still used to read to sysfs.
-> > Newer kstrtox provide more features including overflow protection,
-> > better errorhandling and allows for other systems of numeration. It
-> > is therefore better to update sscanf() to kstrtouint().
-> >
-> > Signed-off-by: Bowen Yu <yubowen8@huawei.com>
-> > ---
-> >  drivers/cpufreq/cpufreq.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > index be727da0be4d..0c842edd1a76 100644
-> > --- a/drivers/cpufreq/cpufreq.c
-> > +++ b/drivers/cpufreq/cpufreq.c
-> > @@ -920,9 +920,9 @@ static ssize_t store_scaling_setspeed(struct cpufre=
-q_policy *policy,
-> >       if (!policy->governor || !policy->governor->store_setspeed)
-> >               return -EINVAL;
-> >
-> > -     ret =3D sscanf(buf, "%u", &freq);
-> > -     if (ret !=3D 1)
-> > -             return -EINVAL;
-> > +     ret =3D kstrtouint(buf, 0, &freq);
-> > +     if (ret)
-> > +             return ret;
-> >
-> >       policy->governor->store_setspeed(policy, freq);
->
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+This is the next version of the shmem backed GEM objects series
+originally from Asahi, previously posted by Daniel Almeida. Along with
+bindings for shmem backed GEM objects, it also adds a few features that
+various users like Tyr and Asahi are interested in:
 
-Applied as 6.16 material, thanks!
+* The ability to pass custom arguments to new GEM objects (needed by
+  Tyr)
+* OpaqueObject (to enable the use of custom private GEM objects, which I
+  believe asahi wanted)
+
+And replaces some of the hand-rolled API bindings (sg_table mainly) with
+some of the WIP patch series for adding kernel-wide bindings. It also
+addresses the comments from the code review of the last version of this
+patch series.
+
+Currently doesn't apply on an upstream branch, but should very soon as
+all of the dependencies in this series are on a mailing list already.
+
+The current branch this can be applied on top of is here:
+  https://gitlab.freedesktop.org/lyudess/linux/-/commits/rust%2Fgem-shmem-base
+
+Which is based on top of nova/nova-next with the following patch series
+applied:
+  * My (hopefully final) gem bindings cleanup:
+    https://lkml.org/lkml/2025/5/20/1541
+  * Benno's derive Zeroable series:
+    https://lkml.org/lkml/2025/5/20/1446
+  * Abdiel's sg_table series:
+    https://lwn.net/Articles/1020986/
+    Also, there is one FIXES patch on top of Abdiel's work to fix some
+    iterator bugs. These fixes have already been mentioned on the
+    mailing list and should not be needed for their V2 version
+
+Asahi Lina (3):
+  rust: helpers: Add bindings/wrappers for dma_resv_lock
+  rust: drm: gem: shmem: Add DRM shmem helper abstraction
+  rust: drm: gem: shmem: Add share_dma_resv to ObjectConfig
+
+Lyude Paul (9):
+  rust: drm: gem: Add raw_dma_resv() function
+  drm/gem/shmem: Extract drm_gem_shmem_init() from
+    drm_gem_shmem_create()
+  drm/gem/shmem: Extract drm_gem_shmem_release() from
+    drm_gem_shmem_free()
+  rust: gem: Introduce BaseDriverObject::Args
+  rust: drm: gem: Add OpaqueObject
+  rust: drm: gem: Introduce OwnedSGTable
+  rust: Add dma_buf stub bindings
+  rust: drm: gem: Add export() callback
+  rust: drm: gem: Add BaseObject::prime_export()
+
+ drivers/gpu/drm/drm_gem_shmem_helper.c |  98 +++++--
+ drivers/gpu/drm/nova/gem.rs            |   6 +-
+ include/drm/drm_gem_shmem_helper.h     |   2 +
+ rust/bindings/bindings_helper.h        |   4 +
+ rust/helpers/dma-resv.c                |  13 +
+ rust/helpers/drm.c                     |  48 +++-
+ rust/helpers/helpers.c                 |   1 +
+ rust/kernel/dma_buf.rs                 |  39 +++
+ rust/kernel/drm/gem/mod.rs             | 187 ++++++++++++-
+ rust/kernel/drm/gem/shmem.rs           | 370 +++++++++++++++++++++++++
+ rust/kernel/lib.rs                     |   1 +
+ 11 files changed, 727 insertions(+), 42 deletions(-)
+ create mode 100644 rust/helpers/dma-resv.c
+ create mode 100644 rust/kernel/dma_buf.rs
+ create mode 100644 rust/kernel/drm/gem/shmem.rs
+
+-- 
+2.49.0
+
 
