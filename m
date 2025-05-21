@@ -1,175 +1,395 @@
-Return-Path: <linux-kernel+bounces-658259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C09ABFF2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 23:53:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 595D2ABFF32
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 23:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D8B29E5DC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 21:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F4479E629F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 21:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726BF237713;
-	Wed, 21 May 2025 21:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8168633F;
+	Wed, 21 May 2025 21:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Kt2v5Unu"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xWbinlM3"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEC61C32
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 21:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1902367CF
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 21:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747864394; cv=none; b=JONqP68ZEbLq7VJWnwLkNKt7WoyZfTmigurTKtxj4zl73gctmSgXeRySNeI1r1iA2hGifrFjPHR1ekrCnxzeSV67MaY/C/k6xokbF0JjAQcxn5tpcwKbav0nRLibZ9+dP5E4ytxceEX2TZW//V/ycFnVd+aOi2dZbKxwDftWgJo=
+	t=1747864693; cv=none; b=toxEln9g9yO3nqIySWB7KgRWlVfHHf4AQt+rujfHGyCJSfMoSmeRRTzc/SNegakBH5I4SFHQxGuCBForVF8lRiGB+Ry2Vxp/ZRS3LMv2yS4O16vSz7/OOi8rgi059Dd4kbiwdjZ7cE9rZICRct4X27nDTjFTUESr7oNZWaq0sCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747864394; c=relaxed/simple;
-	bh=BvIsBbwn0SKcvYkOO338WYpFgAmu5GvxT3H9FH1mRVc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pcuIPSlV9vCfobwfitNab0mv9znQ6diTC/fkgDp5luXWP6srx7zwHW/8iyhF5YLzi4FnTkxFtDUu7ks/z3rDZcTVcaXvOvZhRcsnlwFQz0F63mIl6L6ZSSTcCgnfCMp/BcQyi4w8pPs615DgDnEu1Drdscs4zx/2SeaL9ycd1ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Kt2v5Unu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54LHoxre016644
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 21:53:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	r8+jvNPvz+gKJvrG+VMFVXzwjJgRjgR2KNGBsLzgH4E=; b=Kt2v5UnuN2VKv8Tp
-	yOb9KGlmvOjkKdhjYysv7t1ruJO3/lFqMcDxC/kdU8dISYVRpSEIYR6P7fHJL29C
-	qIM+sMJ3SucL+Se/S/kKhsYf6bKx4ApScSRvTrJG7FAZd4tWGrG/qOTMzlbiMVqY
-	COCfsvfFcOlEIV1+x+kx2+hWaKXlSrJfsjYZQw2Owj/Y2FtSyIe++Zxrbui3dy2x
-	W/QEOdJAJ1FjvMrz41edgr2IRGxsrxzrGa0m96wQLySkq2TroB6HA5NYoOAYjW6Q
-	dCHkMsMxm0BqBilcY3xALjz+y8l+cA8yXgNBW5NI2jAS6VWtskKNuQxslxO8oJOR
-	vykdZA==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf9va9u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 21:53:11 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c54be4b03aso180691785a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:53:11 -0700 (PDT)
+	s=arc-20240116; t=1747864693; c=relaxed/simple;
+	bh=F8ldumZNG6TdtaLY0kXWVWu78ZAGFEBcpDQNxt/iU2w=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=c3Q2lt8H+RkFPjWbZO4tA9ysM7FMfB36N04RmcxIQg04tP+GZgfiGZd+SV4bmE+gohOCCLNFWiSjvYTFAG3KiXfCHWgO/q8FTIuueE/bMBvKsbeuo11h+2MEqWHrs6MU+T8Dh3oXLYm1/Qnx89QFFfGEvVCMmwahmnVpYjwEZ9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jyescas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xWbinlM3; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jyescas.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7394772635dso5363892b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:58:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747864691; x=1748469491; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=el4Dd0m8a/fOGplojvOcuXYWIbG/ywyVgqHsfpMvSSI=;
+        b=xWbinlM3F/iuyuZX5DnXw6iX3BRCwQuLCZmXyQVWfdQVaCmuc9gNnHBrpXIZSWpyKO
+         FleFB+u/St+G/xAgTMt24cH/uOkHLVIK06ydV5/p6T7potWxbxwbyEK3PUvNJB+iW+hh
+         RPD3UgUXr3Ry8gaShgrDJmiExij5UTR+p76Uyb2teJY/+/Wz/InS+qZdglhLpGMvSwn6
+         BAkWVUumG3KzAGXRz1TntubAN+SnJZJ7oT+Q0ju9LE7kcMhJ48RHaRn1VUmapx4G8hT4
+         xocwSMMOXYNouAajHq9cWbpsGvsHy0gc3KSWcLVQZcUHo/q1Wq4y/QgbhQ6xAStBUJ5E
+         Ba1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747864391; x=1748469191;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r8+jvNPvz+gKJvrG+VMFVXzwjJgRjgR2KNGBsLzgH4E=;
-        b=ARkv7JVK0w6CsSrMSqqkBmS+B2BB+mBFCCpk+sW1opyAo44HXEIp1do/EyFiRvJCjn
-         u7uiHExRtzKxQeLZQ4umysSuGiJh/s1342h5Br3V/7UkrtfjsrYnWO8KRiKi5NMC4dxd
-         crSHTh+UPHUqqsQaYKsVqRSRa4wWxCSNsnBBn6MlfaZ9WY3m7lk8/VcvBglkNkRuaZt1
-         7mV8YVmHzLf2ZBo+2gNuI1shHoC+lla2W2A3S/rkcpank5jK/jgFn1+yZA+qjlqHwfn1
-         XFarYoReH+8LmjQf/tIRbaoee3mbYv53USVlEUqEMLGe8OzTWPfWoIot+pjfVk66YXbu
-         ur6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUkfggZVQh6rRKcgJy2zSpnzt/muGGrMSf2lVY/cpJiZLvVmbHVrX1WMPA1w4zqyTuJhIDdb4DNN2WI3NM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNNlAChSpEk/KqCVHZvmvGqs3I/X+ST3LbWpdAai2flY7L9F33
-	BqG3DQ6CInQ188dfg0bQjd4XPCEO1dsL+okC7kiCFGIPTzrzsf3DTuWW0pmEvEk/CaoGv9oOfOu
-	mC6S+aNvbkba2TLVut/PedzZVxSzzFM7kOmKIYR4aeip0XMdIrjum/wJ6kIzNT8B4z+g=
-X-Gm-Gg: ASbGncvr1u+7ZrZ0nDYuiuqZ9h4kouXcEUgB5CU7NXAm2fY6+Rv/PNiWT2Itouvb+K8
-	HkrgTLwyzPLztI7YHCJ96sZNYsICNFwA4qkZ7YQm/9LRHW6Tqez48iMP3WQKw5wljzeTP0RZ4cr
-	FsUKKFZy/ZTA0enrl7zdKkEFHDfFAuvwgVc2iLk0SWSUJp1X4k3uhnjE/t20BUGD3BkowTA5hlx
-	7KpDmaOryudXTL7YDvyH95QHXHFqyTtBavhh3WdO4Is74m1FUllvgIsfq6gzNP4hLK37ZAWFjZJ
-	eAs/8P45/o/8c6CJ0JDhghuS92KsBbvT211wOmkoyTGAXB6PDl9y5M2rYC1cwZ1+DQ==
-X-Received: by 2002:a05:620a:6202:b0:7cd:4a08:ea12 with SMTP id af79cd13be357-7cd4a08ee21mr955948385a.0.1747864391089;
-        Wed, 21 May 2025 14:53:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEZErIhRYY6jF+JvSB4t+dlNMKFZObvQZFGcRiUHU3xjKYKiQb8V70t/qYNriwOJKByWmXCFw==
-X-Received: by 2002:a05:620a:6202:b0:7cd:4a08:ea12 with SMTP id af79cd13be357-7cd4a08ee21mr955947085a.0.1747864390697;
-        Wed, 21 May 2025 14:53:10 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d438c10sm968332266b.101.2025.05.21.14.53.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 May 2025 14:53:10 -0700 (PDT)
-Message-ID: <fc6f2ac6-c6a5-4661-b5c5-e1cc75a7d955@oss.qualcomm.com>
-Date: Wed, 21 May 2025 23:53:07 +0200
+        d=1e100.net; s=20230601; t=1747864691; x=1748469491;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=el4Dd0m8a/fOGplojvOcuXYWIbG/ywyVgqHsfpMvSSI=;
+        b=SFguLnn2cJndcJSjkwxbBq2Dt6i6iboG3aZSHhN/cQfamrYE6H+0Wst7SE3m5tvp++
+         QU1XEszIBaw2U8KdosvFIzDN/2wI9F663RVi6z6hXxoDnEaaljcstpxRbYi8vOl9IoZX
+         LSJ2WS2aY8uSFe2s0K5CqC73XcKYW3za8Bv6R8fZEaeAhoKOj5G5B+2Q8qaaD9wXBt33
+         wuUan6+5tKLV6eCYqXf7F9wl+I40Q+LknE2oY7xXfIVgrgWYPuHVVxmoEl+Ryc0q622p
+         2y6DljVohFy25XJSWOLIURXf5zWquvZsMflfybVQXVvf+dM5AnI0QJnggcTduzm6gbl6
+         eIRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOivrEwCRUD63AUBaZ8QJ2kR9VmdIDdbhlHYeu5fhzgZkT2gSYTF+ZcV+6orHwwFmAMQFsEacQZ4MfMiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6qz96ToUNyAhVadrVMqvrejb6f6HUIZSUBtPKRe+KZXYCxyek
+	3HyQc6eholDTYAMmAmOtOJ4A77OSyjFBVD0Ilxw5NcrNgvtyqnJmkJt4XwzJvIAWPmnJcJ+/p/z
+	cnrKvb0VxXw==
+X-Google-Smtp-Source: AGHT+IEZn6rur6/gnO9De4Zq3up1HMcj0eMjKblw43oh13iMWFKMc9F0JoX/YucCsBiBQbky93ivlA4HozSw
+X-Received: from pfbeg26.prod.google.com ([2002:a05:6a00:801a:b0:742:a83f:bc00])
+ (user=jyescas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:3492:b0:740:596e:1489
+ with SMTP id d2e1a72fcca58-742acd736e4mr28533320b3a.23.1747864691174; Wed, 21
+ May 2025 14:58:11 -0700 (PDT)
+Date: Wed, 21 May 2025 14:57:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] soc: qcom: qcom_stats: Add QMP support for syncing
- ddr stats
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Maulik Shah <maulik.shah@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Doug Anderson <dianders@chromium.org>
-References: <20250521-ddr_stats_-v2-0-2c54ea4fc071@oss.qualcomm.com>
- <20250521-ddr_stats_-v2-2-2c54ea4fc071@oss.qualcomm.com>
- <jl4g7mutb65ifxuv3covropjntziv5enxyc3lgz2fi7ddu64bd@e726p6by3vfh>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <jl4g7mutb65ifxuv3covropjntziv5enxyc3lgz2fi7ddu64bd@e726p6by3vfh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=V9990fni c=1 sm=1 tr=0 ts=682e4b47 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=ARcffcqOct04O5k4gLUA:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-ORIG-GUID: SJXlTMrWOb2BWmsUDaFB9fOWvUfonO3E
-X-Proofpoint-GUID: SJXlTMrWOb2BWmsUDaFB9fOWvUfonO3E
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDIxNyBTYWx0ZWRfXxpPdrcetopmb
- HhTb6oHvAow0qU6g9LaOpZodFUtUQWrnPn2yYlC/xxgsoWINMs/93Tb0immBcayMZu8zMcR0xXq
- mxfBcmBrKeSdjfWTh7Zdo/Do6C7RI2DFoWCSS3cm24ceRUR92a5hL2+88+XoQLTNNYg3kfttNMq
- HfeT1L7xhAfjLeLAon+hNRwmhBioUUI732NrQPvjHN0RGF8R/Fs6+i/WadzpJPdIyuYvN+RzgNB
- dAkFLC3/J2p40EGdgQDH3WxYvZgRwncuuhe4K/KekvV51lw0kpMFmpw5ZivrSMascAbRVTGwJb5
- yH1ZriDMUn2R9hjL2mOBzLHvMtNacNNYtnU4h2CR32SWDKUEqalQtAqv/adDk/eMcGmgsSFz0gi
- BF2/ajhkfqV5qmjoXzQshS89MfJCdpsh/GIVBkjzRUcMxZSbsKg3ZMI/HQnY3tz5NWuAde9o
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_07,2025-05-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=999 bulkscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 spamscore=0 phishscore=0 suspectscore=0
- adultscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505210217
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.1143.g0be31eac6b-goog
+Message-ID: <20250521215807.1860663-1-jyescas@google.com>
+Subject: [PATCH v7] mm: Add CONFIG_PAGE_BLOCK_ORDER to select page block order
+From: Juan Yescas <jyescas@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Juan Yescas <jyescas@google.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: tjmercier@google.com, isaacmanjarres@google.com, kaleshsingh@google.com, 
+	masahiroy@kernel.org, Minchan Kim <minchan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/21/25 2:52 PM, Dmitry Baryshkov wrote:
-> On Wed, May 21, 2025 at 02:02:11PM +0530, Maulik Shah wrote:
->> Recent SoCs (SM8450 onwards) require QMP command to be sent before reading
->> ddr stats. The duration field of ddr stats will get populated only if QMP
->> command is sent.
->>
->> Add support to send ddr stats freqsync QMP command.
->>
->> Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
->> ---
->>  drivers/soc/qcom/qcom_stats.c | 29 ++++++++++++++++++++++++++++-
->>  1 file changed, 28 insertions(+), 1 deletion(-)
->>
->> @@ -310,6 +329,14 @@ static int qcom_stats_probe(struct platform_device *pdev)
->>  	qcom_create_subsystem_stat_files(root, config);
->>  	qcom_create_soc_sleep_stat_files(root, reg, d, config);
->>  	qcom_create_ddr_stat_files(root, reg, config);
->> +	/*
->> +	 * QMP is used for DDR stats syncing to MSG RAM for recent SoCs (SM8450 onwards).
->> +	 * The prior SoCs do not need QMP handle as the required stats are already present
->> +	 * in MSG RAM, provided the DDR_STATS_MAGIC_KEY matches.
->> +	 */
->> +	qcom_stats_qmp = qmp_get(&pdev->dev);
->> +	if (IS_ERR(qcom_stats_qmp))
->> +		qcom_stats_qmp = NULL;
-> 
-> Don't we need to handle QMP being not probed _yet_? In other words,
-> there are several distinct cases:
-> 
-> - No QMP defined, proceed without it
-> - QMP defined, not probed yet, return -EPROBE_DEFER here
-> - QMP defined, qmp_get() returns an error, return that error code
-> - QMP defined, qmp_get() returned valid pointer, proceed with using it.
+Problem: On large page size configurations (16KiB, 64KiB), the CMA
+alignment requirement (CMA_MIN_ALIGNMENT_BYTES) increases considerably,
+and this causes the CMA reservations to be larger than necessary.
+This means that system will have less available MIGRATE_UNMOVABLE and
+MIGRATE_RECLAIMABLE page blocks since MIGRATE_CMA can't fallback to them.
 
-I was thinking we could get rid of the qcom,qmp get-by-phandle mess
-and replace it with a single static global instance.. But it's hard
-to determine from the aossqmp driver whether we should ever expect
-it to come up. A sufficient discriminator is "is_rpmh", but I'm not
-sure we can rely on e.g. cmd_db_ready() to get an answer
+The CMA_MIN_ALIGNMENT_BYTES increases because it depends on
+MAX_PAGE_ORDER which depends on ARCH_FORCE_MAX_ORDER. The value of
+ARCH_FORCE_MAX_ORDER increases on 16k and 64k kernels.
 
-Konrad
+For example, in ARM, the CMA alignment requirement when:
+
+- CONFIG_ARCH_FORCE_MAX_ORDER default value is used
+- CONFIG_TRANSPARENT_HUGEPAGE is set:
+
+PAGE_SIZE | MAX_PAGE_ORDER | pageblock_order | CMA_MIN_ALIGNMENT_BYTES
+-----------------------------------------------------------------------
+   4KiB   |      10        |       9         |  4KiB * (2 ^  9) =   2MiB
+  16Kib   |      11        |      11         | 16KiB * (2 ^ 11) =  32MiB
+  64KiB   |      13        |      13         | 64KiB * (2 ^ 13) = 512MiB
+
+There are some extreme cases for the CMA alignment requirement when:
+
+- CONFIG_ARCH_FORCE_MAX_ORDER maximum value is set
+- CONFIG_TRANSPARENT_HUGEPAGE is NOT set:
+- CONFIG_HUGETLB_PAGE is NOT set
+
+PAGE_SIZE | MAX_PAGE_ORDER | pageblock_order |  CMA_MIN_ALIGNMENT_BYTES
+------------------------------------------------------------------------
+   4KiB   |      15        |      15         |  4KiB * (2 ^ 15) = 128MiB
+  16Kib   |      13        |      13         | 16KiB * (2 ^ 13) = 128MiB
+  64KiB   |      13        |      13         | 64KiB * (2 ^ 13) = 512MiB
+
+This affects the CMA reservations for the drivers. If a driver in a
+4KiB kernel needs 4MiB of CMA memory, in a 16KiB kernel, the minimal
+reservation has to be 32MiB due to the alignment requirements:
+
+reserved-memory {
+    ...
+    cma_test_reserve: cma_test_reserve {
+        compatible = "shared-dma-pool";
+        size = <0x0 0x400000>; /* 4 MiB */
+        ...
+    };
+};
+
+reserved-memory {
+    ...
+    cma_test_reserve: cma_test_reserve {
+        compatible = "shared-dma-pool";
+        size = <0x0 0x2000000>; /* 32 MiB */
+        ...
+    };
+};
+
+Solution: Add a new config CONFIG_PAGE_BLOCK_ORDER that
+allows to set the page block order in all the architectures.
+The maximum page block order will be given by
+ARCH_FORCE_MAX_ORDER.
+
+By default, CONFIG_PAGE_BLOCK_ORDER will have the same
+value that ARCH_FORCE_MAX_ORDER. This will make sure that
+current kernel configurations won't be affected by this
+change. It is a opt-in change.
+
+This patch will allow to have the same CMA alignment
+requirements for large page sizes (16KiB, 64KiB) as that
+in 4kb kernels by setting a lower pageblock_order.
+
+Tests:
+
+- Verified that HugeTLB pages work when pageblock_order is 1, 7, 10
+on 4k and 16k kernels.
+
+- Verified that Transparent Huge Pages work when pageblock_order
+is 1, 7, 10 on 4k and 16k kernels.
+
+- Verified that dma-buf heaps allocations work when pageblock_order
+is 1, 7, 10 on 4k and 16k kernels.
+
+Benchmarks:
+
+The benchmarks compare 16kb kernels with pageblock_order 10 and 7. The
+reason for the pageblock_order 7 is because this value makes the min
+CMA alignment requirement the same as that in 4kb kernels (2MB).
+
+- Perform 100K dma-buf heaps (/dev/dma_heap/system) allocations of
+SZ_8M, SZ_4M, SZ_2M, SZ_1M, SZ_64, SZ_8, SZ_4. Use simpleperf
+(https://developer.android.com/ndk/guides/simpleperf) to measure
+the # of instructions and page-faults on 16k kernels.
+The benchmark was executed 10 times. The averages are below:
+
+           # instructions         |     #page-faults
+    order 10     |  order 7       | order 10 | order 7
+--------------------------------------------------------
+ 13,891,765,770	 | 11,425,777,314 |    220   |   217
+ 14,456,293,487	 | 12,660,819,302 |    224   |   219
+ 13,924,261,018	 | 13,243,970,736 |    217   |   221
+ 13,910,886,504	 | 13,845,519,630 |    217   |   221
+ 14,388,071,190	 | 13,498,583,098 |    223   |   224
+ 13,656,442,167	 | 12,915,831,681 |    216   |   218
+ 13,300,268,343	 | 12,930,484,776 |    222   |   218
+ 13,625,470,223	 | 14,234,092,777 |    219   |   218
+ 13,508,964,965	 | 13,432,689,094 |    225   |   219
+ 13,368,950,667	 | 13,683,587,37  |    219   |   225
+-------------------------------------------------------------------
+ 13,803,137,433  | 13,131,974,268 |    220   |   220    Averages
+
+There were 4.85% #instructions when order was 7, in comparison
+with order 10.
+
+     13,803,137,433 - 13,131,974,268 = -671,163,166 (-4.86%)
+
+The number of page faults in order 7 and 10 were the same.
+
+These results didn't show any significant regression when the
+pageblock_order is set to 7 on 16kb kernels.
+
+- Run speedometer 3.1 (https://browserbench.org/Speedometer3.1/) 5 times
+ on the 16k kernels with pageblock_order 7 and 10.
+
+order 10 | order 7  | order 7 - order 10 | (order 7 - order 10) %
+-------------------------------------------------------------------
+  15.8	 |  16.4    |         0.6        |     3.80%
+  16.4	 |  16.2    |        -0.2        |    -1.22%
+  16.6	 |  16.3    |        -0.3        |    -1.81%
+  16.8	 |  16.3    |        -0.5        |    -2.98%
+  16.6	 |  16.8    |         0.2        |     1.20%
+-------------------------------------------------------------------
+  16.44     16.4            -0.04	          -0.24%   Averages
+
+The results didn't show any significant regression when the
+pageblock_order is set to 7 on 16kb kernels.
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Hildenbrand <david@redhat.com>
+CC: Mike Rapoport <rppt@kernel.org>
+Cc: Zi Yan <ziy@nvidia.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Signed-off-by: Juan Yescas <jyescas@google.com>
+Acked-by: Zi Yan <ziy@nvidia.com>
+---
+Changes in v7:
+  - Update alignment calculation to 2MiB as per David's
+    observation.
+  - Update page block order calculation in mm/mm_init.c for
+    powerpc when CONFIG_HUGETLB_PAGE_SIZE_VARIABLE is set.
+
+Changes in v6:
+  - Applied the change provided by Zi Yan to fix
+    the Kconfig. The change consists in evaluating
+    to true or false in the if expression for range:
+    range 1 <symbol> if <expression to eval true/false>.
+
+Changes in v5:
+  - Remove the ranges for CONFIG_PAGE_BLOCK_ORDER. The
+    ranges with config definitions don't work in Kconfig,
+    for example (range 1 MY_CONFIG).
+  - Add PAGE_BLOCK_ORDER_MANUAL config for the
+    page block order number. The default value was not
+    defined.
+  - Fix typos reported by Andrew.
+  - Test default configs in powerpc. 
+
+Changes in v4:
+  - Set PAGE_BLOCK_ORDER in incluxe/linux/mmzone.h to
+    validate that MAX_PAGE_ORDER >= PAGE_BLOCK_ORDER at
+    compile time.
+  - This change fixes the warning in:
+    https://lore.kernel.org/oe-kbuild-all/202505091548.FuKO4b4v-lkp@intel.com/
+
+Changes in v3:
+  - Rename ARCH_FORCE_PAGE_BLOCK_ORDER to PAGE_BLOCK_ORDER
+    as per Matthew's suggestion.
+  - Update comments in pageblock-flags.h for pageblock_order
+    value when THP or HugeTLB are not used.
+
+Changes in v2:
+  - Add Zi's Acked-by tag.
+  - Move ARCH_FORCE_PAGE_BLOCK_ORDER config to mm/Kconfig as
+    per Zi and Matthew suggestion so it is available to
+    all the architectures.
+  - Set ARCH_FORCE_PAGE_BLOCK_ORDER to 10 by default when
+    ARCH_FORCE_MAX_ORDER is not available.
+
+ include/linux/mmzone.h          | 16 ++++++++++++++++
+ include/linux/pageblock-flags.h |  8 ++++----
+ mm/Kconfig                      | 34 +++++++++++++++++++++++++++++++++
+ mm/mm_init.c                    |  2 +-
+ 4 files changed, 55 insertions(+), 5 deletions(-)
+
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 6ccec1bf2896..05610337bbb6 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -37,6 +37,22 @@
+ 
+ #define NR_PAGE_ORDERS (MAX_PAGE_ORDER + 1)
+ 
++/* Defines the order for the number of pages that have a migrate type. */
++#ifndef CONFIG_PAGE_BLOCK_ORDER
++#define PAGE_BLOCK_ORDER MAX_PAGE_ORDER
++#else
++#define PAGE_BLOCK_ORDER CONFIG_PAGE_BLOCK_ORDER
++#endif /* CONFIG_PAGE_BLOCK_ORDER */
++
++/*
++ * The MAX_PAGE_ORDER, which defines the max order of pages to be allocated
++ * by the buddy allocator, has to be larger or equal to the PAGE_BLOCK_ORDER,
++ * which defines the order for the number of pages that can have a migrate type
++ */
++#if (PAGE_BLOCK_ORDER > MAX_PAGE_ORDER)
++#error MAX_PAGE_ORDER must be >= PAGE_BLOCK_ORDER
++#endif
++
+ /*
+  * PAGE_ALLOC_COSTLY_ORDER is the order at which allocations are deemed
+  * costly to service.  That is between allocation orders which should
+diff --git a/include/linux/pageblock-flags.h b/include/linux/pageblock-flags.h
+index fc6b9c87cb0a..e73a4292ef02 100644
+--- a/include/linux/pageblock-flags.h
++++ b/include/linux/pageblock-flags.h
+@@ -41,18 +41,18 @@ extern unsigned int pageblock_order;
+  * Huge pages are a constant size, but don't exceed the maximum allocation
+  * granularity.
+  */
+-#define pageblock_order		MIN_T(unsigned int, HUGETLB_PAGE_ORDER, MAX_PAGE_ORDER)
++#define pageblock_order		MIN_T(unsigned int, HUGETLB_PAGE_ORDER, PAGE_BLOCK_ORDER)
+ 
+ #endif /* CONFIG_HUGETLB_PAGE_SIZE_VARIABLE */
+ 
+ #elif defined(CONFIG_TRANSPARENT_HUGEPAGE)
+ 
+-#define pageblock_order		MIN_T(unsigned int, HPAGE_PMD_ORDER, MAX_PAGE_ORDER)
++#define pageblock_order		MIN_T(unsigned int, HPAGE_PMD_ORDER, PAGE_BLOCK_ORDER)
+ 
+ #else /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 
+-/* If huge pages are not used, group by MAX_ORDER_NR_PAGES */
+-#define pageblock_order		MAX_PAGE_ORDER
++/* If huge pages are not used, group by PAGE_BLOCK_ORDER */
++#define pageblock_order		PAGE_BLOCK_ORDER
+ 
+ #endif /* CONFIG_HUGETLB_PAGE */
+ 
+diff --git a/mm/Kconfig b/mm/Kconfig
+index e113f713b493..13a5c4f6e6b6 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -989,6 +989,40 @@ config CMA_AREAS
+ 
+ 	  If unsure, leave the default value "8" in UMA and "20" in NUMA.
+ 
++#
++# Select this config option from the architecture Kconfig, if available, to set
++# the max page order for physically contiguous allocations.
++#
++config ARCH_FORCE_MAX_ORDER
++	int
++
++#
++# When ARCH_FORCE_MAX_ORDER is not defined,
++# the default page block order is MAX_PAGE_ORDER (10) as per
++# include/linux/mmzone.h.
++#
++config PAGE_BLOCK_ORDER
++	int "Page Block Order"
++	range 1 10 if ARCH_FORCE_MAX_ORDER = 0
++	default 10 if ARCH_FORCE_MAX_ORDER = 0
++	range 1 ARCH_FORCE_MAX_ORDER if ARCH_FORCE_MAX_ORDER != 0
++	default ARCH_FORCE_MAX_ORDER if ARCH_FORCE_MAX_ORDER != 0
++	help
++	  The page block order refers to the power of two number of pages that
++	  are physically contiguous and can have a migrate type associated to
++	  them. The maximum size of the page block order is limited by
++	  ARCH_FORCE_MAX_ORDER.
++
++	  This config allows overriding the default page block order when the
++	  page block order is required to be smaller than ARCH_FORCE_MAX_ORDER
++	  or MAX_PAGE_ORDER.
++
++	  Reducing pageblock order can negatively impact THP generation
++	  success rate. If your workloads uses THP heavily, please use this
++	  option with caution.
++
++	  Don't change if unsure.
++
+ config MEM_SOFT_DIRTY
+ 	bool "Track memory changes"
+ 	depends on CHECKPOINT_RESTORE && HAVE_ARCH_SOFT_DIRTY && PROC_FS
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 327764ca0ee4..ada5374764e4 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -1511,7 +1511,7 @@ static inline void setup_usemap(struct zone *zone) {}
+ /* Initialise the number of pages represented by NR_PAGEBLOCK_BITS */
+ void __init set_pageblock_order(void)
+ {
+-	unsigned int order = MAX_PAGE_ORDER;
++	unsigned int order = PAGE_BLOCK_ORDER;
+ 
+ 	/* Check that pageblock_nr_pages has not already been setup */
+ 	if (pageblock_order)
+-- 
+2.49.0.1143.g0be31eac6b-goog
+
 
