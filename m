@@ -1,234 +1,220 @@
-Return-Path: <linux-kernel+bounces-657723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6072EABF816
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:43:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B876DABF819
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D46A51BC3381
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:43:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AFEB18945DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC2F1DB346;
-	Wed, 21 May 2025 14:43:03 +0000 (UTC)
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF3F1DD543;
+	Wed, 21 May 2025 14:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="q+LYHson"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04olkn2018.outbound.protection.outlook.com [40.92.46.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2B31D7989;
-	Wed, 21 May 2025 14:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747838582; cv=none; b=LqoGPvVwa/kYXsKvSKsxcMvkjyNPf8yep7fSxvpr31kcALg5XPunCW36FgrB2lM9yCD4F2/W8waP5rwVXIGf6gxBYt/Ine3rykrA7U8GBfeMcYL5XrFqWekaMU1mR3vGgID9hatXdr2pE7NTtYLSltaJY+fWpwaKutKEUVpxuUU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747838582; c=relaxed/simple;
-	bh=D5RhzRWw4d0omBLnLJq7eWCJqJ16WamE4002P45GfM4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FifzLXnliZkE2mSQ1tJqm/WoD8LnE6cJmn1N6RWCiyrZt4cPE/FzvgqFFApl4zOJxxUFXiFPGP+7sRJvIQmDBAYJQCs88V1FBsDCap2nbcU5EBH8sLo+VnBQQK7aMfD7ULdZI6S1E908973Hbim84zSjL6ubBUAONluwuyfSBnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AEF7A43137;
-	Wed, 21 May 2025 14:42:56 +0000 (UTC)
-Message-ID: <3be862ef-f8b7-40d6-a3b1-5e8161801ba1@ghiti.fr>
-Date: Wed, 21 May 2025 16:42:56 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E89311185;
+	Wed, 21 May 2025 14:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.46.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747838649; cv=fail; b=VE+73EcSiSrrrjtjzJ3n+n2SB09AmaMy5NcSeAch8GwcVohz5NBWRdd1TlxP5u3MGiXtAYEBClynPgRhtoo4UPxyMRJT45i7ib0D42lDzs+izB5uZkJ/OsXtq942I/qNvFrPemc+CchnkvYebPxapEVLQh11wspoMBzITkMdPEs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747838649; c=relaxed/simple;
+	bh=pm5wRmLzHggTXRXtZ6bwxsbgWGQJQBW0pH0YNsAJHS4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Hfo04ScRh0bVKlRas41X4ly3CoY5XwEpsY/VBEVJyvO2I62LwFDg/Czm2akqbiWg2DyhgG0AN70KPi1L4zCa5m777jjin/hYqXcHoDkdiAzQvEV6JhdnXaP7Paxb49Okodr57+bI6qPBJ7D56mjFfKeq6sG97JrdasTCqmDTHvA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=q+LYHson; arc=fail smtp.client-ip=40.92.46.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a2KqJ8cDD47TlIeIOpkLya++RiVASD63mW0AVsNNg5e6HO8AjTXWYYvf+y+ciDj8MKgSwPsEdwpDQMZJ4o168eXJo7K8j/YxbX20sEe0o52gQF0rLfGwS+qfnt/sXHWBhU42w8MRVGJX2VtBMI0wdiTRvkMf9YEwHQeOUDnsbV4mZgHebSMJYs3MEc/ntKvYZ9uq9DpYHfupmigu/UkSlfWau82WN/4cTdfhhIuqLg7h3ToSNjLak50S8qsbsNWOIBuwxT8UX7bkFO9tCG3AvqK9ei0cjncgHIrEuOX5PLjBDT2Kg0NjetRknRMRYmyNI5YDUzNfMi1oRI3RqpD8HA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KTAG9DlCiu852RhH2SB+zmVVSOyAKmkh3iagedbB5tU=;
+ b=jVeWwFXKz5Am6F3HdAT9GrBZIyNx7EQI3JjknVjDHonGcrSdp4AIHMLfbylyCyUOXGhrVdL/LAnXU17XH1yqQ42pQhJF9JuAnmVjBYUn9T/UkTvlrMda1YhynlHV4GEsIJOwkXkbN4ze0VEDLxTgw7DRN6c40+uhkWpt5xgklKeW0BTd52KFs1Qwa0ucJ2Xh+RuwKL+CPl1O3vHkIjSW3UH/6hlMkqrcy8ZMvJJMeNrSclzaiticd4dZEzUMLNlNo5CnA1LOaqrbFyqnH6KY4Fo+TfN3oWi+9iOJxqSPE6JME2XUPqLTTzzJBZSEmAka+M8z0jvSOK8MvYh8s0ECmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KTAG9DlCiu852RhH2SB+zmVVSOyAKmkh3iagedbB5tU=;
+ b=q+LYHsonf0OktJGcyOMBUkPyGonFLrU1CudsFhMkfmHvFpK3cLD0A/baYyMJUYOb3whM3UWtb09M7vumJAcAImWWOZuH/lVffTkkjdAF1aNwrBQK+PBcvxZ6zqmzhHcVR/aUG24Qq3UP2YDHjBZ0mJFkZnh6fdO00hXm4JbSxHeZsMRQEeS4JqqS4Tapsgjag4r8RNeNChljEG5piSiny0YIFQ7zba9uz+bGv/jSHZvtkp4RIK6oMQQlzzfigbOt4sb8dTrbiVTtF/zt/cT2q+lBn//OIx236oRsCgbV/fThmc+skbFMYlTnpbgNzddEjsn74TaGu2VfrWCjAwwcsQ==
+Received: from BN7PR02MB4148.namprd02.prod.outlook.com (2603:10b6:406:f6::17)
+ by CO6PR02MB8722.namprd02.prod.outlook.com (2603:10b6:303:135::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.28; Wed, 21 May
+ 2025 14:44:04 +0000
+Received: from BN7PR02MB4148.namprd02.prod.outlook.com
+ ([fe80::1c3a:f677:7a85:4911]) by BN7PR02MB4148.namprd02.prod.outlook.com
+ ([fe80::1c3a:f677:7a85:4911%6]) with mapi id 15.20.8746.021; Wed, 21 May 2025
+ 14:44:04 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Peter Zijlstra <peterz@infradead.org>, Sean Christopherson
+	<seanjc@google.com>, Nuno Das Neves <nunodasneves@linux.microsoft.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>, Juri
+ Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, K Prateek Nayak <kprateek.nayak@amd.com>, David
+ Matlack <dmatlack@google.com>, Juergen Gross <jgross@suse.com>, Stefano
+ Stabellini <sstabellini@kernel.org>, Oleksandr Tyshchenko
+	<oleksandr_tyshchenko@epam.com>
+Subject: RE: [PATCH v2 08/12] sched/wait: Drop WQ_FLAG_EXCLUSIVE from
+ add_wait_queue_priority()
+Thread-Topic: [PATCH v2 08/12] sched/wait: Drop WQ_FLAG_EXCLUSIVE from
+ add_wait_queue_priority()
+Thread-Index: AQHbyO/u4dGyNPKAQkyMYO6LuyJ7vLPb5gAAgAAyxgCAAOA7gIAAMB+A
+Date: Wed, 21 May 2025 14:44:04 +0000
+Message-ID:
+ <BN7PR02MB4148503E1599C1310F408863D49EA@BN7PR02MB4148.namprd02.prod.outlook.com>
+References: <20250519185514.2678456-1-seanjc@google.com>
+ <20250519185514.2678456-9-seanjc@google.com>
+ <20250520191816.GJ16434@noisy.programming.kicks-ass.net>
+ <aC0AEJX0FIMl9lDy@google.com>
+ <20250521114233.GC39944@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250521114233.GC39944@noisy.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN7PR02MB4148:EE_|CO6PR02MB8722:EE_
+x-ms-office365-filtering-correlation-id: cc0e37c0-73b4-4829-6a24-08dd9875ef15
+x-ms-exchange-slblob-mailprops:
+ 7J/vb0KDx3hRy7lV+CYJkolW21Iq60BX6PUWK5vDQoybldZ+522gbMQwlIyxBn0ibYkxOXso5Ekmqtp7vqNbJZE7xjBoNjoQUGj20xKZFGOs08mS6F0A7qjf/ychbTKBJ5FWs80udI53ou+lIk+ZIvnM/aB3cELdAdeFKM+wx8uwK8Jf5L5hn8g97HBhcF2TM6eGjeeSZV81K19tQqsY7/s8uyR5ewfairvfs0Gd5LNrJHXv2Q6yut55cLDVaMP4+C9GncN9Xx5uaMA9FWHeLgsKrP5yw2DjqW7jCwVNo93kOvTaLcCRWlUOq3GKa+wSLvePr6GIInSXHyqktYJWRvUQRqT1p9QOwE0HrMJkAMPZHPfLpN6/npgIcjNVH1rx1NPi0fqa1jYfnzqQ7Iuk3a6TyVQ9QIVdubcSfawXsxsO0L7nsJhKhhZbnVpTc0e3UfPd3G8VjoDyoqBVivQhA5CXPMllCl7icdvI5aXlHzmPY4wJAp9O+j2IMZ9n5weInBhG3G8UpmQCNN8jOXyGzO2b3X1rJaHcrhHPptHs7s2FaLr0KDTJ4XXQXn2Hyo7sHazv39Z8DlM/zL5rSc2XF88RBJm1zznt1yNjOjL8JXgEtQTlvt8gS5q/y3e66N95asAcUCRRfghZOSDwDuvLna+j9isOVFHqRXHd45dsUn/+9yM4hES5SYaDcoop9yg1LFjeGDu6jWZyGqoCGNy3jcJ3FmoJOob8BynJ4uxe90Kj1dwzcBF8nFjFaNz8JyxOS+T8YszG36hHNnlYXEp0/5KWyMEKbgXgAtLsd0nLM+Q=
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|19110799006|15080799009|8060799009|8062599006|461199028|3412199025|440099028|11031999003|12091999003|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?mJs26c8eFNMqG5Ruo44qmZ0iTnncdG7SXn+nG5NJAbYN/YqU1pOoFpJk/spy?=
+ =?us-ascii?Q?OQr7xPO2cP9I0ZZYuOoUyAhEBu3xLVkZkWy7IV0JWWu5ilkkDxOTUhlOBWqY?=
+ =?us-ascii?Q?iyljKUeSKGaOVH1uHV5pw/ndTFgSY8diNhXpdMd+9aFr0MgO5wr0pEUCMPCy?=
+ =?us-ascii?Q?2M22KPMcWBvbQgK4nsXPa/dhab4Kl/fB1yLOBuI568cCgT2eetjlaDaAC0DE?=
+ =?us-ascii?Q?mP8LmvhPLq741EGXL3VXsf2uRz8Fpt/xHtdNclqEwpda3z8HQ++vfTJh4NMU?=
+ =?us-ascii?Q?F1iK6Fv8wkyJQCob0LtM1w9KcosFoaeB74SnEcbI96/0+YvwiLTIzLJBYJVF?=
+ =?us-ascii?Q?hLs10jDYS/gQHl8EizhGX3hWngjFL5Ucd94+5GuGo0owi5OIrrk0ZVwN1Cgg?=
+ =?us-ascii?Q?OUO/sjxL3Cj+N8slJAn1vo9dSPlI2hN1paNhQrIo8QnCc5wW1c6DJ9TU1PQa?=
+ =?us-ascii?Q?FeOhRFuNHxm66IUd+yF/fRKot/SNwcnTowQJJYQRh1YEIIdDvhd4xBeZdqf6?=
+ =?us-ascii?Q?a/MxDT52PedjC5Tuf4gwZMl1OhyJpiatweVRg+O6PIjehCUQLBOAx3jMETyE?=
+ =?us-ascii?Q?GTgu6xxpo+4MSmS2f7RSgu7zmaV3vTDpBjyDnD/dPRMkLphmpUlSat6hW1aj?=
+ =?us-ascii?Q?Q0N7Z6dpEWjGhQrY9phjijY9bI0Rc+UyjSl9x0Xn7l6pIVIzN8ijV6qAbLYk?=
+ =?us-ascii?Q?IKHRZ4i7BIvGzcj7E0b19weG8bOYGgbxGB5fS31KBZwBxxtoDhB5qXRRw8vR?=
+ =?us-ascii?Q?Xcs3TGyHAO4QDuivcAy5AnY9Q0iR0iQ1blWaVmKvyCG+n/WGX3QUBSr83Yvx?=
+ =?us-ascii?Q?JUqrvz+xAOe5EfqoL2jjyIYIFkwpuPde57QFdAaiORlacSIaV6LB6lBbzKkG?=
+ =?us-ascii?Q?uEw+gpkdL4VmAHzynRe/jPmEpPA2ROK392izUWN2JyhmTMHZAfQ+NheptsMs?=
+ =?us-ascii?Q?ZAeIJntW94jbpKfzf/oKKp/ICuIWC0KIQ2ube1+HX/19wVDvir/vHfOwwDrm?=
+ =?us-ascii?Q?Le0acbVggqjrWj1wQIgNeP1jYHalTffSQieGlCUe/d2nvbE7IOJe1A/nnvQq?=
+ =?us-ascii?Q?mgD56U1jVQqwKKLjnBdTSWi4UMiwh+Opm63qWnN5+XJkL7bweB6emJXn5mzp?=
+ =?us-ascii?Q?ZPLsxVJ39/fLQMn4t5FX1avsFfyOBj/IfQ=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?fwC879NcSwQeuRZcem3YXJS1jQDgFanjUTz1wvne4eSBrq8L8B/CaJpwdIXr?=
+ =?us-ascii?Q?JoG/I1d0IRi1Q/r5qAMoY4S4HbkCvzaMbIMTSHKTiNGi2gvrMqMe4xzPYpCO?=
+ =?us-ascii?Q?WP1jPbHwJW13ccxYzozxuHBI3xYL0csW32zkvlqj/GS8X1qoqrvtFDVT0bJ0?=
+ =?us-ascii?Q?p69U7afkCWMi/V0sTuXP0wwo9bDxjrevBNCI2XhxpBCAbn/d5qB5e3n9T7Jp?=
+ =?us-ascii?Q?7z5QN70AxPtXuFadBrYsRtXg7i0nUg5pfH//iyA/XmFCd48XXEo77A8uwjhx?=
+ =?us-ascii?Q?dy+NmcYMmxkzAT19JtSgLfMFJopatCI7aJx8mQmF9xbcyVxsLd/vJBUGrFi5?=
+ =?us-ascii?Q?Kn7d5UnroKgDZ4MZFVO+URqNYMox9kBHcYct9hXxj/d1EKL/ZpecgJ9N/EXX?=
+ =?us-ascii?Q?2XNT+eHM8bVHwQZjhX/MQt4VtqXpCBJNNSqHSLwndbpg1eaiNMTbq8SROngb?=
+ =?us-ascii?Q?2iWe/fTZsi5uke1oNpsHpOlQawlLYsThY4AI9pXA8OYh+2lcZ8Tv9MEPP+6Q?=
+ =?us-ascii?Q?e/42+n7aPVtaAh+9+TO6LxyvSjtQcdEOlX1gCPRf4StVX4aTYnWraEBgp8u1?=
+ =?us-ascii?Q?c9THv556f8QXWU4x3+5z5io/wthwvg9lkn4KL3m5we3wL9zlkrfbjxA5QGJA?=
+ =?us-ascii?Q?Iix8td8Mmb5BgA+VEyGpPnRnDZiCz4VZORv4wSAZfMVsAXdCwY1QzMOO6ASf?=
+ =?us-ascii?Q?T1ffqGBLGIGXjDCjTRJEwREl6HrgXLwZrZl0Tfygxxk0UjW5byGTPxCTCyB7?=
+ =?us-ascii?Q?Hv2/8XQSk9T1wlkyGeFYs4SrwZk5qn1ILPOECgYixqdwQ/MHQAMMSiJM2b3U?=
+ =?us-ascii?Q?Tn0ZwL5IM0sqzS3uWM/MMDeCYv9Ox2MwyBT88u6VtUO+dj8Kox16j+VfRX4s?=
+ =?us-ascii?Q?lJshEw0f+xgaPO3IdsaYT+smE7GGJujdsSn7pcXh9loVqE4CSE/k52whHWNB?=
+ =?us-ascii?Q?KkX1ovCodS0aWfe3XAweClMK8iCYEMm3dYpUFaoCvYGmyopEFPYHhRWEjLSO?=
+ =?us-ascii?Q?tZ4wXPvBmllaN4o1m4sZRlj1UJGhiLE8mLi2FYdG8mS88zHqGV+FADBvMc7q?=
+ =?us-ascii?Q?Z9AlS/WZmdgnaYwyCWMbQn0lAMtj0P1Wt59GoSFHPvD6AXP5PNCvU8NxVwRm?=
+ =?us-ascii?Q?9XHctv2CPaGbhBcySka7y3CwIywvfH5m7UQsCKu0WjpoDPdFAdG86hO6u8gs?=
+ =?us-ascii?Q?niIJse/H7S8M3XDPA/QHE/joyLphIXLbkInVkGxGx8TDiNJTPrqVR/scwwQ?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: enable mseal sysmap for RV64
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Palmer Dabbelt <palmer@dabbelt.com>
-Cc: jeffxu@chromium.org, jszhang@kernel.org, akpm@linux-foundation.org,
- Liam.Howlett@oracle.com, kees@kernel.org,
- Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-hardening@vger.kernel.org
-References: <5e7f2acd-2eef-4e69-9c11-ba8d1ec0bbc5@lucifer.local>
- <mhng-db41d38d-d3ec-4515-99f9-7368c82d46ca@palmer-ri-x1c9a>
- <26e04390-058f-4174-ad6f-3f0afd803fb1@lucifer.local>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <26e04390-058f-4174-ad6f-3f0afd803fb1@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdeffeehucdltddurdegfedvrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeefueejtdegkedvhefhudfhgeefieevheeugeehgedvgfejhfetjeeiudelvdefteenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghdpihhnfhhrrgguvggrugdrohhrghenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeduheehvdemtgdviedvmegvsgejsgemvdhfudefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeduheehvdemtgdviedvmegvsgejsgemvdhfudefpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeduheehvdemtgdviedvmegvsgejsgemvdhfudefngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdrt
- ghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopehjvghffhiguhestghhrhhomhhiuhhmrdhorhhgpdhrtghpthhtohepjhhsiihhrghngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopefnihgrmhdrjfhofihlvghtthesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomh
-X-GND-Sasl: alex@ghiti.fr
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN7PR02MB4148.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc0e37c0-73b4-4829-6a24-08dd9875ef15
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2025 14:44:04.5791
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR02MB8722
 
-Hi Lorenzo,
+From: Peter Zijlstra <peterz@infradead.org> Sent: Wednesday, May 21, 2025 4=
+:43 AM
+>=20
+> On Tue, May 20, 2025 at 03:20:00PM -0700, Sean Christopherson wrote:
+> > On Tue, May 20, 2025, Peter Zijlstra wrote:
+> > > On Mon, May 19, 2025 at 11:55:10AM -0700, Sean Christopherson wrote:
+> > > > Drop the setting of WQ_FLAG_EXCLUSIVE from add_wait_queue_priority(=
+) to
+> > > > differentiate it from add_wait_queue_priority_exclusive().  The one=
+ and
+> > > > only user add_wait_queue_priority(), Xen privcmd's irqfd_wakeup(),
+> > > > unconditionally returns '0', i.e. doesn't actually operate in exclu=
+sive
+> > > > mode.
+> > >
+> > > I find:
+> > >
+> > > drivers/hv/mshv_eventfd.c:      add_wait_queue_priority(wqh, &irqfd->=
+irqfd_wait);
+> > > drivers/xen/privcmd.c:  add_wait_queue_priority(wqh, &kirqfd->wait);
+> > >
+> > > I mean, it might still be true and all, but hyperv seems to also use
+> > > this now.
+> >
+> > Oh FFS, another "heavily inspired by KVM".  I should have bribed someon=
+e to take
+> > this series when I had the chance.  *sigh*
+> >
+> > Unfortunately, the Hyper-V code does actually operate in exclusive mode=
+.  Unless
+> > you have a better idea, I'll tweak the series to:
+> >
+> >   1. Drop WQ_FLAG_EXCLUSIVE from add_wait_queue_priority() and have the=
+ callers
+> >      explicitly set the flag,
+> >   2. Add a patch to drop WQ_FLAG_EXCLUSIVE from Xen privcmd entirely.
+> >   3. Introduce add_wait_queue_priority_exclusive() and switch KVM to us=
+e it.
+> >
+> > That has an added bonus of introducing the Xen change in a dedicated pa=
+tch, i.e.
+> > is probably a sequence anyways.
+> >
+> > Alternatively, I could rewrite the Hyper-V code a la the KVM changes, b=
+ut I'm not
+> > feeling very charitable at the moment (the complete lack of documentati=
+on for
+> > their ioctl doesn't help).
+>=20
+> Works for me. Michael is typically very responsive wrt hyperv (but you
+> probably know this).
 
-On 5/8/25 20:08, Lorenzo Stoakes wrote:
-> On Thu, May 08, 2025 at 10:39:35AM -0700, Palmer Dabbelt wrote:
->> On Wed, 07 May 2025 09:22:09 PDT (-0700), lorenzo.stoakes@oracle.com wrote:
->>> On Wed, May 07, 2025 at 09:18:31AM -0700, Jeff Xu wrote:
->>>> Hi Jisheng
->>>>
->>>> It seems mm maintainers might prefer arch change reviewed by arch
->>>> maintainer and goes to arch tree, according to discussion in [1], I
->>>> don't have an opinion on this,  adding mm maintainers as FYI.
->>> Thanks Jeff, appreciate the ping!
->>>
->>> Jisheng - the main point here is to ensure that the arch doesn't rely in any way
->>> on, within the arch code itself, relocating any of these mappings. It's pretty
->>> easy to eyeball it and get a sense.
->>>
->>> Because if this is the case, the arch will be broken by this change should a
->>> user enable it, and obviously we'd rather avoid that! :)
->>>
->>> It's really likely that you're fine, as it'd be unusual for an arch to do this,
->>> but I strongly suggest you do so.
->>>
->>> And yes, I think these should really go through arch trees as explicitly arch
->>> code.
->>>
->>> Thanks, Lorenzo
->>>
->>>> On Sat, Apr 26, 2025 at 7:16 AM Jisheng Zhang <jszhang@kernel.org> wrote:
->>>>> Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS for RV64, covering the
->>>>> vdso, vvar.
->>>>>
->>>>> Passed sysmap_is_sealed and mseal_test self tests.
->>>>> Passed booting a buildroot rootfs image and a cli debian rootfs image.
->>>>>
->>>> mm maintainers like to get confirmation that the arch doesn't rely on
->>>> remapping the VDSO, VVAR, or any other special mappings, see
->>>> discussion in [2]
->> Do you have some description of what remapping is disallowed here?  There's
->> not a ton in that referenced thread.
-> Any remapping of these special VMAs that would be disallowed by mseal that is
-> being performed by kernel code.
->
->> We play a few tricks with remapping, including some aliasing to handle
->> different VA widths and text patching (via poke pages).  IIRC those are
->> similar in spirit to what's going on in x86/arm64 land, though sometimes the
->> exact flavor of the trick matters.  If you've got something I can look at it
->> might save me from having to read though the mm code...
-> To risk sounding grumpy, and it's not your fault of course, but... this is
-> the... fifth? Architecture where somebody's enabled this without seeming to
-> understand what the feature does, and I'm a bit tired of it. And every time it's
-> been _me_ who goes to check :)
->
-> Anyway, I guess let me go check again.
->
-> So it looks fine to me - the initial mapping to mm->context.vdso done by
-> __setup_additional_pages() in arch/riscv/kernel/vdso.c appears to be final,
-> except when vdso_mremap() is invoked, but that's when _userland_ does it,
-> which this feature strictly disables, but that's fine.
->
-> Note that the patch simply indicates that the architecture _supports_ this
-> feature, the feature itself is disabled by default as it breaks a bunch of
-> userland, which is why I insisted on it being put behind a config flag for
-> users who really know what they're doing.
->
-> So perhaps I can link to this again in future, what I'm talking about is:
->
-> - Any instance of the architecture code, NOT at the behest of userland
->    (which we expect the sealing to break), but for its OWN purposes, for
->    whatever reason, moving the VDSO, VVAR or other special mapping around in
->    virtual memory.
->
-> - So you'd really need to be doing something _weird_ for this to be the
->    case. It's unlikely but until each architecture is checked we are being
->    conservative - so as not to break the kernel (!) - and disabling
->    architectures until we know they're safe.
->
-> - Sending a patch setting ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS is _very
->    explicitly_ stating that you have checked and are certain there are _no
->    problems_ with the architecture doing this.
->
-> So this is why it's quite annoying to have people enable this with a commit
-> message like 'enable mseal system mappings' rather than 'I have carefully
-> checked the architecture code and the architecture does not manipulate the
-> VDSO, VVAR or special mappings after establishing them, I have also tested
-> the feature in practice'.
->
-> I feel like anybody setting 'ARCH_SUPPORTS_xxx' should - you know - have
-> determined that the architecture supports xxx. But maybe that's
-> unreasonable...
->
->> and ya, we'll pick it up through the arch tree once one of us can be
->> convinced this works ;)
->>
-> Thanks! :) Your skepticism is appropriate. But I do think this will be fine
-> for risc v.
->
-> I'd ideally like to hear from somebody who's checked this on a risc v
-> system with CONFIG_MSEAL_SYSTEM_MAPPINGS enabled just to be doubly sure.
+I can't be much help on this issue. This Hyper-V code is for Linux running =
+in
+the root partition (i.e., "dom0") and I don't have a setup where I can run =
+and
+test that configuration.
 
+Adding Nuno Das Neves from Microsoft for his thoughts.
 
-So I double checked and tested this so I'll merge it for 6.16 and:
-
-Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
-
-
->
-> Thanks, Lorenzo
->
->>>>> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
->>>>> Cc: Jeff Xu <jeffxu@chromium.org>
->>>>> ---
->>>>>   arch/riscv/Kconfig       | 1 +
->>>>>   arch/riscv/kernel/vdso.c | 2 +-
->>>>>   2 files changed, 2 insertions(+), 1 deletion(-)
->>>> Please consider updating document as part of your patch:
->>>> features/core/mseal_sys_mappings/arch-support.txt
->>>> Documentation/userspace-api/mseal.rst
->>>>
->>>> Sample change in [3]
->>>>
->>>>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->>>>> index bbec87b79309..3cb0b05eef62 100644
->>>>> --- a/arch/riscv/Kconfig
->>>>> +++ b/arch/riscv/Kconfig
->>>>> @@ -70,6 +70,7 @@ config RISCV
->>>>>          # LLD >= 14: https://github.com/llvm/llvm-project/issues/50505
->>>>>          select ARCH_SUPPORTS_LTO_CLANG if LLD_VERSION >= 140000
->>>>>          select ARCH_SUPPORTS_LTO_CLANG_THIN if LLD_VERSION >= 140000
->>>>> +       select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS if 64BIT && MMU
->>>> The "if 64BIT && MMU" are not needed here.
->>>>
->>>> MMU is not checked by MSEAL_SYSTEM_MAPPINGS, which we should,  this
->>>> can go to security/Kconfig separately. If you'd like, please submit a
->>>> fix to mm tree directly.
->>>>
->>>> [1] https://lore.kernel.org/all/7EB087B72C4FBDD3+20250417132410.404043-1-wangyuli@uniontech.com/,
->>>> [2] https://lore.kernel.org/all/3de559d6-be19-44bc-ba8f-4c52d4bca684@lucifer.local/
->>>> [3] https://lore.kernel.org/all/648AB3031B5618C0+20250415153903.570662-1-wangyuli@uniontech.com/
->>>>
->>>> Thanks
->>>> -Jeff
->>>>
->>>>>          select ARCH_SUPPORTS_PAGE_TABLE_CHECK if MMU
->>>>>          select ARCH_SUPPORTS_PER_VMA_LOCK if MMU
->>>>>          select ARCH_SUPPORTS_RT
->>>>> diff --git a/arch/riscv/kernel/vdso.c b/arch/riscv/kernel/vdso.c
->>>>> index cc2895d1fbc2..3a8e038b10a2 100644
->>>>> --- a/arch/riscv/kernel/vdso.c
->>>>> +++ b/arch/riscv/kernel/vdso.c
->>>>> @@ -136,7 +136,7 @@ static int __setup_additional_pages(struct mm_struct *mm,
->>>>>
->>>>>          ret =
->>>>>             _install_special_mapping(mm, vdso_base, vdso_text_len,
->>>>> -               (VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC),
->>>>> +               (VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC | VM_SEALED_SYSMAP),
->>>>>                  vdso_info->cm);
->>>>>
->>>>>          if (IS_ERR(ret))
->>>>> --
->>>>> 2.47.2
->>>>>
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Michael
 
