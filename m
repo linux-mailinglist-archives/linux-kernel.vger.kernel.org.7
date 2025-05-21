@@ -1,134 +1,153 @@
-Return-Path: <linux-kernel+bounces-657963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE1CABFAFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:16:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B53E8ABFAF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859ADA27DE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:05:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F3EA281C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5003A2222CE;
-	Wed, 21 May 2025 16:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827BB226D03;
+	Wed, 21 May 2025 16:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vQccBGwV"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1wREfmJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161261E51E0
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 16:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC711221265
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 16:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747843389; cv=none; b=bk9XfDMI6CDE1bOK3fV0GjJ8og2CK4a/6w5VxJotuCQBbxbZwHrApG/5I+MicxhVqUFWw1WYCdmA/5C1BPfPqo9Fy7oX2U/Kj3VwN1U3Jg+deHFOfeeZHn3Wfls9+W81Sy7QEaLS8685kUnISvzUmTeycQFZ7I3WE/afQZE1jVw=
+	t=1747843466; cv=none; b=cVbWGBlGSxdfY5SVhTwyCsK62usGtAYHycTCHARTLC02QkDtAm+sr1KDZF8RXQJ49wQ4gG1fRwSlX47SEwS/610WaJ4v8IfCiKhiMMFtmICiCfKXoKdPsSmv0J3w1g3KTllf0jo6L2FyCtipRJI7WdMDw9HJL1k9/+gqHWCW6DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747843389; c=relaxed/simple;
-	bh=Pz0A25gFXiiCnMqeLC0p5Rp5lvtM/J3LFMSpqFnzyms=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aeFW4osemVWMBCZjR+bkwhwd7JrwQf4DGnIP3wVSZPOA6e9kpdC29E+B22zQ1yFH4uSgJmcJvWcxtCGQ7EaEyZeB9MNG+hS2Y+H9hDIETXJwL4YI2zBDhHFw/k7x4C+PG/8EehfmOgWlR4t8ZxCLTbvWxgWrnXOadyelSnvnN8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vQccBGwV; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-47e9fea29easo1775481cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 09:03:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747843387; x=1748448187; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vap2Fmp/jup7NN2/6dTRhAYx6PUX7E7GIsmSa7sRMi8=;
-        b=vQccBGwV204AxLbW7Vze970ODl+OWdagAIue74swtiJqXiBy67O6w1jtvg9a0o57Ag
-         7IEip0Odua+OZmguK0ccjjbcd8KQlmyEIs78MksVZ72c5DyVo5wDVbz/vj8owYhdBzW9
-         6jUF6oVgRi31W5169nwOEkgMyJgkj7ZMA+ukT73SEjdCfXMW7Z8oyadhUGHElgn0/3Tn
-         1mu1+C6Gpp1esAuIR+YoxNYQmoBg+TYnDfvcMFZJVpMlLE/CZQJwqaB4hVbUy1LDjMFc
-         OYzT7evmbik6jTPD+jGCkJQ2kTZMxI0zabLVTW1Sbigvxfvdb4EfmYiTI+9BK11NX6vE
-         3peA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747843387; x=1748448187;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vap2Fmp/jup7NN2/6dTRhAYx6PUX7E7GIsmSa7sRMi8=;
-        b=Bzi87FAkG6Inwo3FmW2Kz5G1ZrapniFQrGjcZvMZ7Ifv1WKZZNV+95MYKwwDj8pT6a
-         xFkssKvQXgb+n15TyPRHodqLOi2iPege+eKEupujrnn/1gP+Z6fqmxwndOKrORePhE5d
-         54CXv7YIyeD6PPBc/YBx9HA/nkNUWYxtFzLS6lmP9jnyg5ym+7H4MwrZ4+D8+qgajQsW
-         pZpxoM4v9zizGR0pBP7PdNAtnhKUMs9AoQLB7VWHhdxmWeRYf/lykVZbh6aSw5MXVVXw
-         w/HWnTMklamhcPsc+m6fHtFhmepeCnyHt4vzklfT//F/hSkyVkEpC3+IqsRt4IpwrB3O
-         o71A==
-X-Forwarded-Encrypted: i=1; AJvYcCWX3cmr4rSEeP5wO8fOu705+CkecYp3N2edGOkh0jCcaLZ2OluPX1pJHxFJFXxlEYcVwe+OV5PQ/tDzUdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrT4H4bfJ1oYZSEkJBN7qgP5Vc2VisD6HyH3wssCvsWbNvY6y/
-	JGXWkZU1cZM9OQQsLxSJzNz3OWCH3fPxdoJL+KxtfvHayPrlGV4oxqEhuQqLK5YwW0KmHTj4XrS
-	k4P3MLyAsaenzdU2S7ZiHlUHnQ89eOcpdiezu99rt
-X-Gm-Gg: ASbGncvbhe20oqQAExqpq6AL0Qlw5zkPSg5LaubSYNow5YTSp5qfPwD77oBSUTuLc2r
-	kD1JxCe+y0V7mfR5+GQHO9zrArgVxvY34X9iRAKx1xKlaXEy7FS9HDMtoTZK+I5plJahLzHJdRz
-	+vtOIynwyYM4oJCL9eTpBqaX0dfVKoRRMz/55/S1Z5NRW9//XtroJ37TkVLLQ6GuQ2adh8E1QEf
-	vfuXzSHZW8Z
-X-Google-Smtp-Source: AGHT+IFC8a5TXdX0qE1svILjR510sIlYvhF6hDRbDWibNGaSaoJrbmftu3GRHLkFT+HvyYn1OHcdW3MbY8Nto1AcWok=
-X-Received: by 2002:a05:622a:28c:b0:47e:b278:2e07 with SMTP id
- d75a77b69052e-49595c5da5bmr15670171cf.20.1747843386476; Wed, 21 May 2025
- 09:03:06 -0700 (PDT)
+	s=arc-20240116; t=1747843466; c=relaxed/simple;
+	bh=rywf19OsznyC+v7V4zAzSM3BjlccRhSLtmaCmitX/Dg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KR6/TJOzD5tr5+AQzotGrRKZDYWjsoN7uZUExuWKF1fGEXJPD30Mg+Mp2t2OJ+Hz+gisyAy+WWFTGdrRs9XH7rYLjvRaCmaO9Rg3j8/4XgFzZzlz8UX8g/FBS+0lFOWwSqv7G0n8dU1CEadNe8g27aMrUK8gd0D1L1Tdf2+vgZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a1wREfmJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08EBBC4CEE4;
+	Wed, 21 May 2025 16:04:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747843466;
+	bh=rywf19OsznyC+v7V4zAzSM3BjlccRhSLtmaCmitX/Dg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=a1wREfmJir1pOx2iCobdRb1DIDyAgPtTxED+OvaqDLjW5q3YhHJQckxBzMQKdiQwP
+	 Zkd5Knn9olzOSxC6xFLTPpwyhk8/6ERckuXflpOHJjUOCox7RXmP72dFF3rbIJfLkD
+	 IvJVidp8XUhAnqzESMBqUkBcRdYcvwDdcyuHNzvneVG0IS3HwsNnP1eUGvpfPu1ULQ
+	 MgW0h19jYnsDwJz/ISoUL4Di29k41KlDWAr0nyofe+Ic+GzvB/HL3B/7f0i7xAvtKJ
+	 6YsD6CP1hgjeW2vjq9ZWevHuo1ccJmJr7kaKgzUcGwNcK/xJvpDPfmEK/bfvDbvhvi
+	 eG3TeW84AJnSA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Coiby Xu <coxu@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Breno Leitao <leitao@debian.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] crash_dump, nvme: select CONFIGFS_FS as built-in
+Date: Wed, 21 May 2025 18:03:19 +0200
+Message-Id: <20250521160359.2132363-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250521142521.3033264-1-usamaarif642@gmail.com>
-In-Reply-To: <20250521142521.3033264-1-usamaarif642@gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 21 May 2025 09:02:54 -0700
-X-Gm-Features: AX0GCFvCyckIBVk8R4I8PhbM_DdMu4qHvhXwrSomWLj3BYkkVkexsCZcenpHFPg
-Message-ID: <CAJuCfpGtb9j1y93bksErU4NfjPX6tGrP6qvMrazx3+M7dJWtxQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: slub: do not warn when allocating slab obj extensions fails
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, hannes@cmpxchg.org, shakeel.butt@linux.dev, 
-	vlad.wing@gmail.com, linux-mm@kvack.org, kent.overstreet@linux.dev, 
-	cl@gentwo.org, rientjes@google.com, vbabka@suse.cz, roman.gushchin@linux.dev, 
-	harry.yoo@oracle.com, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 21, 2025 at 7:25=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
- wrote:
->
-> In memory bound systems, a large number of warnings for failing this
-> allocation repeatedly may mask any real issues in the system
-> during memory pressure being reported in dmesg. Failing this
-> allocation is not indicative of a bug, so remove the warning.
->
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> Reported-by: Vlad Poenaru <vlad.wing@gmail.com>
-> Closes: https://lore.kernel.org/all/17fab2d6-5a74-4573-bcc3-b75951508f0a@=
-gmail.com/
-> ---
-> v1 -> v2:
-> - remove the warning completely. We will have a way in the
->   future to indicate that the mem alloc profile is inaccurate.
-> ---
->  mm/slub.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/mm/slub.c b/mm/slub.c
-> index dc9e729e1d26..06ab9a558b73 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -2102,9 +2102,7 @@ prepare_slab_obj_exts_hook(struct kmem_cache *s, gf=
-p_t flags, void *p)
->
->         slab =3D virt_to_slab(p);
->         if (!slab_obj_exts(slab) &&
-> -           WARN(alloc_slab_obj_exts(slab, s, flags, false),
-> -                "%s, %s: Failed to create slab extension vector!\n",
-> -                __func__, s->name))
-> +           alloc_slab_obj_exts(slab, s, flags, false))
+From: Arnd Bergmann <arnd@arndb.de>
 
-I thought we agreed to having pr_warn_once() here. Did I miss something?
+Configfs can be configured as a loadable module, which causes a link-time
+failure for dm-crypt crash dump support:
 
->                 return NULL;
->
->         return slab_obj_exts(slab) + obj_to_index(s, slab, p);
-> --
-> 2.47.1
->
+crash_dump_dm_crypt.c:(.text+0x3a4): undefined reference to `config_item_init_type_name'
+aarch64-linux-ld: kernel/crash_dump_dm_crypt.o: in function `configfs_dmcrypt_keys_init':
+crash_dump_dm_crypt.c:(.init.text+0x90): undefined reference to `config_group_init'
+aarch64-linux-ld: crash_dump_dm_crypt.c:(.init.text+0xb4): undefined reference to `configfs_register_subsystem'
+aarch64-linux-ld: crash_dump_dm_crypt.c:(.init.text+0xd8): undefined reference to `configfs_unregister_subsystem'
+
+This could be avoided with a dependency on CONFIGFS_FS=y, but the dependency has
+an additional problem of causing Kconfig dependency loops since most other uses
+select the symbol.
+
+Using a simple 'select CONFIGFS_FS' here in turn fails with CONFIG_DM_CRYPT=m,
+because that still only causes configfs to be a loadable module.
+
+The only version I found that fixes this reliably uses an additional Kconfig
+symbol to ensure the 'select' actually turns on configfs as builtin, with
+two additional changes to avoid dependency loops with nvme and sysfs.
+
+There is no compile-time dependency between configfs and sysfs, so selecting
+configfs from a driver with sysfs disabled does not cause link failures, only
+the default /sys/kernel/config mount point will not be created.
+
+Fixes: 6b23858fd63b ("crash_dump: make dm crypt keys persist for the kdump kernel")
+Fixes: 1fb470408497 ("nvme-loop: add configfs dependency")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/nvme/target/Kconfig | 2 +-
+ fs/configfs/Kconfig         | 1 -
+ kernel/Kconfig.kexec        | 8 +++++++-
+ 3 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/nvme/target/Kconfig b/drivers/nvme/target/Kconfig
+index 4c253b433bf7..4904097dfd49 100644
+--- a/drivers/nvme/target/Kconfig
++++ b/drivers/nvme/target/Kconfig
+@@ -3,7 +3,7 @@
+ config NVME_TARGET
+ 	tristate "NVMe Target support"
+ 	depends on BLOCK
+-	depends on CONFIGFS_FS
++	select CONFIGFS_FS
+ 	select NVME_KEYRING if NVME_TARGET_TCP_TLS
+ 	select KEYS if NVME_TARGET_TCP_TLS
+ 	select SGL_ALLOC
+diff --git a/fs/configfs/Kconfig b/fs/configfs/Kconfig
+index 272b64456999..1fcd761fe7be 100644
+--- a/fs/configfs/Kconfig
++++ b/fs/configfs/Kconfig
+@@ -1,7 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config CONFIGFS_FS
+ 	tristate "Userspace-driven configuration filesystem"
+-	select SYSFS
+ 	help
+ 	  configfs is a RAM-based filesystem that provides the converse
+ 	  of sysfs's functionality. Where sysfs is a filesystem-based
+diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
+index 4e7cee4e4ffc..e64ce21f9a80 100644
+--- a/kernel/Kconfig.kexec
++++ b/kernel/Kconfig.kexec
+@@ -134,12 +134,18 @@ config CRASH_DM_CRYPT
+ 	depends on KEXEC_FILE
+ 	depends on CRASH_DUMP
+ 	depends on DM_CRYPT
+-	depends on CONFIGFS_FS
+ 	help
+ 	  With this option enabled, user space can intereact with
+ 	  /sys/kernel/config/crash_dm_crypt_keys to make the dm crypt keys
+ 	  persistent for the dump-capture kernel.
+ 
++config CRASH_DM_CRYPT_CONFIGS
++	def_tristate CRASH_DM_CRYPT
++	select CONFIGFS_FS
++	help
++	  CRASH_DM_CRYPT cannot directly select CONFIGFS_FS, because that
++	  is required to be built-in.
++
+ config CRASH_HOTPLUG
+ 	bool "Update the crash elfcorehdr on system configuration changes"
+ 	default y
+-- 
+2.39.5
+
 
