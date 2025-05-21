@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-657782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABA00ABF8C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:05:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73853ABF8DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 598647B64A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:03:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D3BF7B9326
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F92213D8A0;
-	Wed, 21 May 2025 15:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bAQK1R9J"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A16143C69
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9961D63C2;
+	Wed, 21 May 2025 15:08:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10509189513
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747839886; cv=none; b=SmwyP5a9yVICPV3NMxEM0H3bu494hXdhNI3MIvDfE7dhOkdsFHdcQQxWN3KhPTnZz0y3I834mtIfhMvkS2I6CrqOFo0Otys4sz+0kDKEJhls0LPkOKWw7TXhSN/OOIR01FFuAdulhbsNxSVx372gODRcv+JM/bhxNJm3NjCiO90=
+	t=1747840102; cv=none; b=OGuA70L/+Hd5mEZjAdRucq5bnBcTrS3DwTHChUI4Fvark9oCZszPQiIztxEr/f/r03hFKm8hU6XQzImhUfk811BKhMvJT0jnc+nNlYI/SzHZnmI9xGPu8zc9snTqJ3Qof+PAwJ5rFZheFerriuMMWcMRSpkQvrA15pkqxBJ0oA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747839886; c=relaxed/simple;
-	bh=q9tHTExnf3cNbpfcUNsJ4hfobtVJGEmcSXBRXYS0vUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZSJrG+AkS/+9HnZge97CDly2KHCp/aqqLBySBOsxdfo28tgHmfDm55wfpXbcS7odnNUYVcbuq+8Cxu0JAHeKpZr3uSRuMOpLeZlhph6fnNCWJ5Rv29JLXafUnnyc8DjaS9gDgTEFuIkOoWUH+VCpbUB9doR/1XUZANpTB4kQZ20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bAQK1R9J; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-742b0840d98so3995092b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 08:04:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747839884; x=1748444684; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q9tHTExnf3cNbpfcUNsJ4hfobtVJGEmcSXBRXYS0vUU=;
-        b=bAQK1R9JNS8CZGRJE9IFvb+tJ0d/Trk5/elAJWoyzHyre03Fx5QXAlk1iW04mEsbta
-         aDLGQuvUK54oiFBdehSZiD3Jgy//uIO3uVYcJRDFtRDaRJPOFfHmgnajJRai5b4Q3CnW
-         TmesnnczaL2sbsBBHMvhtWsRB67MUdBoCbrjw6RxnE8zxbFUSh/Rn/yvQvyjFcJlTa3r
-         hiMUgR0sLOvMC8ClzoM8iJuoVKcM9XmV143MkXHUOUjMOKXJswgsLg7C5+Ew28ubB28F
-         JeRTMoFkA0quEVMv/uvexauXLKt2bPQ4lvw/uaNL/X8eYPl1O5++UamAcuXguqxrNyqF
-         Y0Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747839884; x=1748444684;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q9tHTExnf3cNbpfcUNsJ4hfobtVJGEmcSXBRXYS0vUU=;
-        b=AQ52Qxvlam/Gs5ZiT7bD4G7O8nf9bs3zgaT+qi1daJ0VerCc6za7Gp8wBX0XiGhOFT
-         VgQryRDOLF+Kr7xZHBBnnEwUZQrJ+pMDjuggMj059OZbu8CCskeKxFDGB+ViRYHm76co
-         JdHA++/uvp77Y4TqQXmoRSKvnDfej/+KzLrZ4k7dtNqTVaW9X1HQqxTWwS1fGXebATJs
-         IomWGfFBl8agv3HNYHg6ICsMNyCvl9pk7tbx+IH/EZQeDJDeva032tr4UAuP9lQn2Tri
-         k8/sobvL84T5gCdEXHTr9O82cMpJmyUSbX7hXjqOAjF6rOVe9hVtGRo77uO/Z3PtlY7i
-         iPeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWj+5mQ02bZnhNGDXI/Yl1ufmeW/AJ9rt3n47HhB1kVvHTqumgysfN5MXquJX9OUuUhfzXp+/cNg3+RWrw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKJW4f8gp0Z3fvKM9sNCv3MZPZ/zBFGCt+vyXBiwaQI2yGoD8l
-	Ovq8WsyjUybtPHSASH5Z84fIhjWTaaytY5n2ok9WJejy/amHIjW6K68R2O0HyEQk
-X-Gm-Gg: ASbGnct05/JHvi/E7KKXHPDiYJRioLRnhgYHMLzTGN3oLnU6OhuYThsStbBmH0F6X7L
-	/YwQradwvoK2+612GNUr661j2+ZgTr70CQZtIp+qzDOL0fQSlPjK25HTOJbAx/Pbw7Ke8N1NFLX
-	a8QVfcJblvsaREu0rMtijI1DX0Pzk9Rj/uFyCQ24yCfS2t9pIri5hWz3TjnKuGkFri3f/L+3SN8
-	2S3dyUpfeCjbFfdPPKq5eTO1uvUejQpBpSazvgbA3pyOjXM6/QW3yn9VCvHROj3vjMbgvfqvY3y
-	Cl4LDPBDCz4JUG0HlilxiyP3KEwGPElMWRJPAfqIavl9hwg5zSwQ6OetYjdYgVkeq47g5EY5T8j
-	+2+19uY2GIOJw4g==
-X-Google-Smtp-Source: AGHT+IEjGUTqHb5NWIMvtvGZkJbc7R1HW0J1hE1aCq3tEY5gctFQ+ulCehqVQi+uXSiUTqWJAMnJIQ==
-X-Received: by 2002:a17:90b:3f8f:b0:310:8d51:c427 with SMTP id 98e67ed59e1d1-3108d51c444mr6066662a91.0.1747839883716;
-        Wed, 21 May 2025 08:04:43 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f36366219sm3768202a91.6.2025.05.21.08.04.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 08:04:43 -0700 (PDT)
-Date: Wed, 21 May 2025 23:04:40 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Matthew Sakai <msakai@redhat.com>
-Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-	jserv@ccns.ncku.edu.tw
-Subject: Potential heapify performance issue in dm-vdo
-Message-ID: <aC3riPZ6GV/dlr7Y@visitorckw-System-Product-Name>
+	s=arc-20240116; t=1747840102; c=relaxed/simple;
+	bh=Ri95T1scPzaCxq0FHdnogfmI3VLOGHsMFZMfcgUs0lI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m0uUg6dKaayJsUkyREx/sCBNUiNofQ5AlXnU7Hc5WQPtqM32DqVwmGzhp7cScrDWOW75eZHNYvg1oxHcBXqiCyt3CR3So9riFe6QpvhWRnOZvS7NNcLVoI+PhDALdrBhM31AXIdFnF6HvvKsq2k86w2eIoq5eothrovZziSFZAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B7D01515;
+	Wed, 21 May 2025 08:08:04 -0700 (PDT)
+Received: from [10.57.23.70] (unknown [10.57.23.70])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DEABC3F6A8;
+	Wed, 21 May 2025 08:08:15 -0700 (PDT)
+Message-ID: <4dd05f07-7824-4e1b-ad4c-928a8861b2c4@arm.com>
+Date: Wed, 21 May 2025 16:04:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/panthor: Reset queue slots if termination fails
+To: Ashley Smith <ashley.smith@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250519145150.2265020-1-ashley.smith@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250519145150.2265020-1-ashley.smith@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Matthew,
+On 19/05/2025 15:50, Ashley Smith wrote:
+> This fixes a bug where if we timeout after a suspend and the termination
+> fails, due to waiting on a fence that will never be signalled for
+> example, we do not resume the group correctly. The fix forces a reset
+> for groups that are not terminated correctly.
+> 
+> Signed-off-by: Ashley Smith <ashley.smith@collabora.com>
 
-Recently noticed that the current heapify method in min_heap.h may
-degrade performance when the heap contains many compare-equal elements,
-compared to the previous version.
+Reviewed-by: Steven Price <steven.price@arm.com>
 
-In detail, the new heapify reduces the number of comparisons by about
-50% when all elements are distinct. However, when all elements are
-equal, the comparison count can degrade from O(1) to O(log n).
+> ---
+> Changes in v2:
+>  - Fixed syntax error
+> ---
+>  drivers/gpu/drm/panthor/panthor_sched.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index 43ee57728de5..65d8ae3dcac1 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -2727,8 +2727,17 @@ void panthor_sched_suspend(struct panthor_device *ptdev)
+>  			 * automatically terminate all active groups, so let's
+>  			 * force the state to halted here.
+>  			 */
+> -			if (csg_slot->group->state != PANTHOR_CS_GROUP_TERMINATED)
+> +			if (csg_slot->group->state != PANTHOR_CS_GROUP_TERMINATED) {
+>  				csg_slot->group->state = PANTHOR_CS_GROUP_TERMINATED;
+> +
+> +				/* Reset the queue slots manually if the termination
+> +				 * request failed.
+> +				 */
+> +				for (i = 0; i < group->queue_count; i++) {
+> +					if (group->queues[i])
+> +						cs_slot_reset_locked(ptdev, csg_id, i);
+> +				}
+> +			}
+>  			slot_mask &= ~BIT(csg_id);
+>  		}
+>  	}
+> 
+> base-commit: 9934ab18051118385c7ea44d8e14175edbe6dc9c
 
-I don't have enough domain knowledge of dm-vdo, so I'd like to ask
-whether it uses heaps with many compare-equal elements. If so, I'll
-work on fixing the issue.
-
-Regards,
-Kuan-Wei
 
