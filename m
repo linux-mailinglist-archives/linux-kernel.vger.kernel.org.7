@@ -1,216 +1,123 @@
-Return-Path: <linux-kernel+bounces-657196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 464E5ABF0D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:06:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9FADABF182
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7C8B4A89D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:06:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 987CD16C8E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334B825D20E;
-	Wed, 21 May 2025 10:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E99225CC59;
+	Wed, 21 May 2025 10:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="BwKsgdgJ"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="VJnkaVeU"
+Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E84B25B1EA;
-	Wed, 21 May 2025 10:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A756C25C81A
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 10:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747821923; cv=none; b=VGT/G2PzgoQRQF4TA9XoUL+kXRYItgjal3BDfyEqIui/gNdf+pE0N7BO9t3rrYIdcD80k3BHLza3F/FiOoRXlu1R/dxpY9f1cJOkxxp6JxXbK8NHeuswZ9TzOG4WCaUp2m8K0Ygycjm6K2x2iFNEJg/Ett0LnxQZsszRscnv5JY=
+	t=1747823143; cv=none; b=FSmAOOw2V2DFtqR9svYf+zxGdI8B6vEDUa9qLSWK2tR/vNoJYN6ABolYXz6xZNzjYHt0ncSoKCi9MM45BVwuECZpwNaVEqG3OwI34535PFSnAlUrdL+Ec2+IpZpFuL7G32vAk7nNrQQT+NYHl2j9HHbp7abk1A6gXwrdAiL8jVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747821923; c=relaxed/simple;
-	bh=2H03yKDDvvwtWlinswlpG3uXjN8cIEkKDUEOnDM+ajA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DZBmglhimAOauubleJ9AbQZAeNzsompo0vUF+cW1idz2Za1tYmcOgBojGNQofnUAX4dsxWXR8F//rTpDTw1dM9m+ARl6Ds9SzFwwUzv0u8tYKxuqcak0n/rphwFHlFfV9YhHi4HFVhsUKElR/5U8szh7qiGoEjuODwyECuor0O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=BwKsgdgJ; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9qf7s001293;
-	Wed, 21 May 2025 03:05:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=5
-	h67ACRos9ZKJi9QI0mKH4MWoBBeFr3X92v5NevNtLY=; b=BwKsgdgJfmvCsonly
-	cNdAZQeenPCea93V3tk76Mn52f9D3oL/Cv/SrOsE3iNS4dhLa2D3J5rvjZgT1Vai
-	SgQNzNcUox/jCg7bUWw22MYs9BDWp1aZJpczyodN/MyEi97oAmNw21w1GzxaVHMv
-	9V/vmWeJ6LRY/N9Twss+gRLPiv06d2wEbj5wlHdF/azD6TdXnYmLPFREXaahAVul
-	QyTQO0Oss0sTV4DvghaWze7WK6l1Yd2txJNz5AavqzS7BUWZE4RaoH3Jy1sBrA4J
-	f61pbr6bJXNT8B+2qPx8S2mIIvDI9PmZBiAXVNx3a9GIAzUyhxXf89JRX1dUWLQL
-	fmVtA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46sbxkr31q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 03:05:09 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 21 May 2025 03:05:09 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 21 May 2025 03:05:09 -0700
-Received: from bharat-OptiPlex-Tower-Plus-7020.. (unknown [10.28.34.254])
-	by maili.marvell.com (Postfix) with ESMTP id 75C763F70B3;
-	Wed, 21 May 2025 03:05:05 -0700 (PDT)
-From: Bharat Bhushan <bbhushan2@marvell.com>
-To: <bbrezillon@kernel.org>, <schalla@marvell.com>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <giovanni.cabiddu@intel.com>, <linux@treblig.org>,
-        <bharatb.linux@gmail.com>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Bharat Bhushan <bbhushan2@marvell.com>, <stable@vger.kernel.org>
-Subject: [PATCH 4/4 v3] crypto: octeontx2: Fix address alignment on CN10KB and CN10KA-B0
-Date: Wed, 21 May 2025 15:34:47 +0530
-Message-ID: <20250521100447.94421-5-bbhushan2@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250521100447.94421-1-bbhushan2@marvell.com>
-References: <20250521100447.94421-1-bbhushan2@marvell.com>
+	s=arc-20240116; t=1747823143; c=relaxed/simple;
+	bh=FYnukv3VeEDqI4pq2QZXunHbphA5wqnAYQJEHlf4QJw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fpUAqdSdE7dEL813AxlJkPTCe2dVdqB82fGP8vhFXngK1Tp6oGmoO7Gi8VIVKLLJMdovstarlw/imnPmZNyVII4k/2GwztRpWDbUL7g87cOoAzEwIli8aVRQ9r+e1B9AQ5OpNFXITG5BuUq21YadD935IxAU5+Nth/Yh+rzc55Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=VJnkaVeU; arc=none smtp.client-ip=78.40.148.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap5-20230908; h=Sender:MIME-Version:
+	Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From
+	:Subject:Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=y5gb8snpxnE3UW1FV5U1uFEXhfqKCYqeWB6yjHgL6DA=; b=VJnkaVeUN8qfX39/T1FcdYITKg
+	qvFQHzo6iG6NwilviORMxGGGA9cB4JCAVPZWVIIlfQhx8pYQPGV7/aAP/8C45STBkwEseiEv27f80
+	O+j3ienvorl4/WXLmnSJZF7/SfPTTy+QkkHSKqGVs74T5cjF2hgbR8P5OUnlTRhRLh/Hsmk2POSqe
+	R32+yBa+f9WldH1YnIdmKLynl3dZ/x2NZeIzzx2iHC7pCrsPtDQrWyHyN6jKpV5jTqo0JSSE48Lfm
+	u3d5TZnjQyqzjoPuJF7NbiZryg8oWvKlysmM0u/CzBfYvL7Z31lgNfiqTYcBR65iSWD6PqeLABTsZ
+	hFKDDpvQ==;
+Received: from [178.38.100.64] (helo=[10.10.1.154])
+	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1uHgEK-001Ng4-9D; Wed, 21 May 2025 10:59:20 +0100
+Message-ID: <8936377a2d70c2cfb93072ff10e8e42e52bd8655.camel@codethink.co.uk>
+Subject: Re: SCHED_DEADLINE tasks missing their deadline with
+ SCHED_FLAG_RECLAIM jobs in the mix (using GRUB)
+From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
+To: luca abeni <luca.abeni@santannapisa.it>
+Cc: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org, Ingo
+ Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Vineeth
+ Pillai	 <vineeth@bitbyteword.org>
+Date: Wed, 21 May 2025 11:59:18 +0200
+In-Reply-To: <20250520180915.16ba1c5c@nowhere>
+References: <ce8469c4fb2f3e2ada74add22cce4bfe61fd5bab.camel@codethink.co.uk>
+		<aBTO3r6Py_emwf1Y@jlelli-thinkpadt14gen4.remote.csb>
+		<f532441d8b3cf35e7058305fd9cd3f2cbd3a9fac.camel@codethink.co.uk>
+		<20250507222549.183e0b4a@nowhere>
+		<92690eb9158c1019dc0945f8298800cad17cae05.camel@codethink.co.uk>
+	 <20250520180915.16ba1c5c@nowhere>
+Organization: Codethink
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: T-ZA3YICQCQWRdu41o4EuZmPu5SxJows
-X-Proofpoint-GUID: T-ZA3YICQCQWRdu41o4EuZmPu5SxJows
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDA5OSBTYWx0ZWRfX7OhwUDQvbuyg NrVfVVSm4k7LJqG300VL+m/XkMUN8nLkK7jvleRr0nQp10SoMsPqsLBu/kIlxAZ2YBwGiiTDP7h fFtIqacdY51m+pxGE2FS2Kx+pLB3AJo2EBIZsabHnVCeMWSfPKx2BvWXxav5AbXfocDrMWpL/SS
- 0HHbg6N3itSdgOKh8RbKutnOheoGUicSIsAqgc8RmI75rtiPsWEACFlkuseeAhKMifPwbOOeNa1 HsI6oFn4blWLFd3H234NE6ULea5k8aD+OMtJyXagf13lwSD7mD5K6pk+zn7aw4Alu8lJa7y2Neu 7zNAEYQOB7MCTKuyUCYrbQpQisLtgjQoR2wNnpspCjG5qHLplpe74Eb3yyv+1qh/N67yr8+eFhb
- u5gMOCPGddD6XxMr8370KyFioz50XeRfaswjZJocjQM8tIxv7k7+76FLjtkwQEXa0lv2g2gI
-X-Authority-Analysis: v=2.4 cv=U72SDfru c=1 sm=1 tr=0 ts=682da555 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=VwQbUJbxAAAA:8 a=BhrP5AWxFkdJNdVQK0QA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_03,2025-05-20_03,2025-03-28_01
+Sender: marcel.ziswiler@codethink.co.uk
 
-octeontx2 crypto driver allocates memory using kmalloc/kzalloc,
-and uses this memory for dma (does dma_map_single()). It assumes
-that kmalloc/kzalloc will return 128-byte aligned address. But
-kmalloc/kzalloc returns 8-byte aligned address after below changes:
-  "9382bc44b5f5 arm64: allow kmalloc() caches aligned to the
-   smaller cache_line_size()
+Hi Luca
 
-Memory allocated are used for following purpose:
- - Input data or scatter list address - 8-Byte alignment
- - Output data or gather list address - 8-Byte alignment
- - Completion address - 32-Byte alignment.
+On Tue, 2025-05-20 at 18:09 +0200, luca abeni wrote:
+> Hi Marcel,
+>=20
+> On Mon, 19 May 2025 15:32:27 +0200
+> Marcel Ziswiler <marcel.ziswiler@codethink.co.uk> wrote:
+>=20
+> > Hi Luca
+> >=20
+> > Thanks and sorry, for my late reply. I was traveling the Cretan
+> > wilderness without access to any work related infrastructure.
+> >=20
+> > On Wed, 2025-05-07 at 22:25 +0200, luca abeni wrote:
+> > > Hi Marcel,
+> > >=20
+> > > just a quick question to better understand your setup (and check
+> > > where the issue comes from):
+> > > in the email below, you say that tasks are statically assigned to
+> > > cores; how did you do this? Did you use isolated cpusets,=C2=A0=20
+> >=20
+> > Yes, we use the cpuset controller from the cgroup-v2 APIs in the
+> > linux kernel in order to partition CPUs and memory nodes. In detail,
+> > we use the AllowedCPUs and AllowedMemoryNodes in systemd's slice
+> > configurations.
+>=20
+> OK, I never tried the v2 API, but if it allows creating a new root
+> domain (which is an isolated cpuset, I think), then it should work
+> without issues.
 
-This patch ensures all addresses are aligned as mentioned above.
+Yes and it works fine with everything else :)
 
-Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
-Cc: <stable@vger.kernel.org> #v6.8+
----
-v2->v3:
- - Align DMA memory to ARCH_DMA_MINALIGN as that is mapped as
-   bidirectional
- 
-v1->v2:
- - Fixed memory padding size calculation as per review comment
+> So, since you are seeing unexpected deadline misses, there is a bug
+> somewhere... I am going to check.
 
- .../marvell/octeontx2/otx2_cpt_reqmgr.h       | 58 ++++++++++++++-----
- 1 file changed, 43 insertions(+), 15 deletions(-)
+Thanks you very much and let me know if you need any further information fi=
+guring out what might be going on.
 
-diff --git a/drivers/crypto/marvell/octeontx2/otx2_cpt_reqmgr.h b/drivers/crypto/marvell/octeontx2/otx2_cpt_reqmgr.h
-index 204a31755710..8e95036e91d9 100644
---- a/drivers/crypto/marvell/octeontx2/otx2_cpt_reqmgr.h
-+++ b/drivers/crypto/marvell/octeontx2/otx2_cpt_reqmgr.h
-@@ -350,22 +350,47 @@ static inline struct otx2_cpt_inst_info *
- cn10k_sgv2_info_create(struct pci_dev *pdev, struct otx2_cpt_req_info *req,
- 		       gfp_t gfp)
- {
--	u32 dlen = 0, g_len, sg_len, info_len;
--	int align = OTX2_CPT_DMA_MINALIGN;
-+	u32 dlen = 0, g_len, s_len, sg_len, info_len;
- 	struct otx2_cpt_inst_info *info;
--	u16 g_sz_bytes, s_sz_bytes;
- 	u32 total_mem_len;
- 	int i;
- 
--	g_sz_bytes = ((req->in_cnt + 2) / 3) *
--		      sizeof(struct cn10kb_cpt_sglist_component);
--	s_sz_bytes = ((req->out_cnt + 2) / 3) *
--		      sizeof(struct cn10kb_cpt_sglist_component);
-+	/* Allocate memory to meet below alignment requirement:
-+	 *  ----------------------------------
-+	 * |    struct otx2_cpt_inst_info     |
-+	 * |    (No alignment required)       |
-+	 * |     -----------------------------|
-+	 * |    | padding for 8B alignment    |
-+	 * |----------------------------------|
-+	 * |    SG List Gather/Input memory   |
-+	 * |    Length = multiple of 32Bytes  |
-+	 * |    Alignment = 8Byte             |
-+	 * |----------------------------------|
-+	 * |    SG List Scatter/Output memory |
-+	 * |    Length = multiple of 32Bytes  |
-+	 * |    Alignment = 8Byte             |
-+	 * |    (padding for below alignment) |
-+	 * |     -----------------------------|
-+	 * |    | padding for 32B alignment   |
-+	 * |----------------------------------|
-+	 * |    Result response memory        |
-+	 *  ----------------------------------
-+	 */
-+
-+	info_len = sizeof(*info);
-+
-+	g_len = ((req->in_cnt + 2) / 3) *
-+		 sizeof(struct cn10kb_cpt_sglist_component);
-+	s_len = ((req->out_cnt + 2) / 3) *
-+		 sizeof(struct cn10kb_cpt_sglist_component);
-+	sg_len = g_len + s_len;
- 
--	g_len = ALIGN(g_sz_bytes, align);
--	sg_len = ALIGN(g_len + s_sz_bytes, align);
--	info_len = ALIGN(sizeof(*info), align);
--	total_mem_len = sg_len + info_len + sizeof(union otx2_cpt_res_s);
-+	/* Allocate extra memory for SG and response address alignment */
-+	total_mem_len = ALIGN(info_len, ARCH_DMA_MINALIGN) + sg_len;
-+	total_mem_len = ALIGN(total_mem_len, OTX2_CPT_DPTR_RPTR_ALIGN);
-+	total_mem_len += (OTX2_CPT_RES_ADDR_ALIGN - 1) &
-+			  ~(OTX2_CPT_DPTR_RPTR_ALIGN - 1);
-+	total_mem_len += sizeof(union otx2_cpt_res_s);
- 
- 	info = kzalloc(total_mem_len, gfp);
- 	if (unlikely(!info))
-@@ -375,7 +400,8 @@ cn10k_sgv2_info_create(struct pci_dev *pdev, struct otx2_cpt_req_info *req,
- 		dlen += req->in[i].size;
- 
- 	info->dlen = dlen;
--	info->in_buffer = (u8 *)info + info_len;
-+	info->in_buffer = PTR_ALIGN((u8 *)info + info_len, ARCH_DMA_MINALIGN);
-+	info->out_buffer = info->in_buffer + g_len;
- 	info->gthr_sz = req->in_cnt;
- 	info->sctr_sz = req->out_cnt;
- 
-@@ -387,7 +413,7 @@ cn10k_sgv2_info_create(struct pci_dev *pdev, struct otx2_cpt_req_info *req,
- 	}
- 
- 	if (sgv2io_components_setup(pdev, req->out, req->out_cnt,
--				    &info->in_buffer[g_len])) {
-+				    info->out_buffer)) {
- 		dev_err(&pdev->dev, "Failed to setup scatter list\n");
- 		goto destroy_info;
- 	}
-@@ -404,8 +430,10 @@ cn10k_sgv2_info_create(struct pci_dev *pdev, struct otx2_cpt_req_info *req,
- 	 * Get buffer for union otx2_cpt_res_s response
- 	 * structure and its physical address
- 	 */
--	info->completion_addr = info->in_buffer + sg_len;
--	info->comp_baddr = info->dptr_baddr + sg_len;
-+	info->completion_addr = PTR_ALIGN((info->in_buffer + sg_len),
-+					  OTX2_CPT_RES_ADDR_ALIGN);
-+	info->comp_baddr = ALIGN((info->dptr_baddr + sg_len),
-+				 OTX2_CPT_RES_ADDR_ALIGN);
- 
- 	return info;
- 
--- 
-2.34.1
+> In the meantime, enjoy the Cretan wilderness :)
 
+Thanks, I already made it back and, yes, I enjoyed it very much :)
+
+> 				Luca
+
+Cheers
+
+Marcel
 
