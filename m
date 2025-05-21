@@ -1,173 +1,154 @@
-Return-Path: <linux-kernel+bounces-657499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC68DABF4DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:55:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D225ABF4D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB79C8E671A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:53:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD9BC7AA2B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436A726B949;
-	Wed, 21 May 2025 12:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD10A26FA47;
+	Wed, 21 May 2025 12:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="I2+5K89a"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bhDTcpxO"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123AD267B10
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB7426FA40
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747831951; cv=none; b=WwIzKNlFQjrrIFke1fiXz2ukCg6pL06HvzSedAPHAUHCfC+TBZe6JRxdgXx4sthAyDhs0lQm++OvTeaVK4/fe/d5uQ948aoYzjxA1OCFue9aNjHIljurfVOMvsIZ5Ab7WQlL+N1DTbuCTq/gM/lvIuC+4F1c6AzcfkCSCOV29z8=
+	t=1747831972; cv=none; b=eAqHtqe6HqgYar2WE8Dy6coWs/KiH4AphABsA+DutR8VZhPa8nac7GwvcXL6M5sl4jqlNTVZiD0ROcDBmHiS3ZwlknXsoHD8cNgFEESjMqJMEFDUc1rUmJRga3oCjvXdzyjNAb296utINfQt3gKVaTf7C0MkGd7pYLefl5Ho3ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747831951; c=relaxed/simple;
-	bh=ubr0IoG6QxDImEoRbYeRtQ/EWZKK2tR2JQKhedixIks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TPp1lVW4XFb3VTSQBNxFrL6pa00Ug9wzaxc+zJxoelvRDX7DvF1kl6HM07xOiKidpl2/OLVS5F5RWHa9DW5bdWaWEXLt61z7OYN/nFCKnmnsMfR2vjYnQdru71O267pwhj/O9EAp4K7DYjBNP8OqMnwJnecwusHkSU75Tzxz9do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=I2+5K89a; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9Xn71016898
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:52:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=tZm1FcnWYSxqGc6IW3xjphoG
-	JpTqJodC7MLjwn9TjHc=; b=I2+5K89aoGBs7qFoEkVBHrm9duJlO+OREk4tVzZN
-	bN78S83KHmUIrZSlzqpDD4XlIIUnqmGThqZOCSUxQlOrAU+qmTtYVrLeLdEPV2GR
-	YMho5mIM6UyTLiODbPn4xmrUwYSfz9GQERP0kRbiaZhnYZAR3A679uq8loBZcc3B
-	L1/j6JtwzecCR16ca6EgfeslWqbmFKw3cm6PefVsbmxli/PWWHSs9YJo43/vh5sf
-	DmbCLSwz33iVp/jODtCXYKGS9ptuGuYbwuzoyygHISkb6wW7znl1tv5iK1nMEX1m
-	Kr++J7svvc+ctNhMkEpxwudiqknRYQq54iz6A8VLR0MRaA==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf9u03w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:52:28 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5c82c6d72so1212105385a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:52:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747831948; x=1748436748;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1747831972; c=relaxed/simple;
+	bh=ex8fec4lSvRbizAHGxTk9eHxJUEJr45NNb5J8gjLy/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BrHA1wpVYRaQ074YLVT3mkfL+i9UdN+sLCKVfQP2GLwEv3pwTIPgiM+GHKKTDUBRA+7A7VfACujD1i6zYZ83wjFxkG15mOb3JJpEJjjGzDPIhBPpNtSPhJz4e5YXYCSTkCyF3D3iNgcsptt0kxrbhV7/y4kpwFoa01IDVRWRH14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bhDTcpxO; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cf680d351so47028605e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:52:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747831968; x=1748436768; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tZm1FcnWYSxqGc6IW3xjphoGJpTqJodC7MLjwn9TjHc=;
-        b=Zrl62HdApBSc/3uhi7rJXRTk7V9KzHTiOMz0s966fur3i9LD/cbnhPhczH+2vUSa3E
-         zX8javtCLfGuqZYnTm6bS1VJxQiRi5fTElfXDkMf5y4IZrvouRex8OeLp6fjRkIKEorv
-         +Yd2Ut37yU+t08Ob/1NPyNYnXeLrIv5Cv6Le+68y6Egp/W6a/ofIJ15/nIlpnNzUgNOV
-         dbl9TNk0K/cBQJCUb8a+tPQvqmMeGRM4sC1AQmAhOpo1E1Wp5pyxalQ8k7zIippqBVNd
-         G9/JxvKXfHP+ecHMO9X9f7PwsHDiVZdEOCnl2FhBGvn3oB7fwmzaaf45r9+8/5fZm+2i
-         Mz3w==
-X-Forwarded-Encrypted: i=1; AJvYcCU3Oa/3d96pQjaFxoDd4DYoiR28iUbh03NmfYIVH6Po+A+tu1Qg6PsK7Q5Rva2iu22tmtxzyh5px/EC1vk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5+aDqArFqMX+Y7K+MSWJl15h88mBjen0u/alCKfy6NCC5CVDP
-	zzkgdnZqZq0gCz4l/0iZnXaKrZhJp+QZFS1cITHvygPEtL7bsxQ/D0ikbAIfnOW2UUiiU3DzSWk
-	otKHJwQbyr0zAF1AUq4reUwY8SslP8aJlOMRZJnwI8jyKXbvSI/b6aYbQmwh1yQWX8Ss=
-X-Gm-Gg: ASbGncvhkulXC9h0X+is7kX11VnDfmBtjCyxQxJdHoF1LinCMQIPQnvZVWlzD01hLhE
-	FGCsJ1nxPOYG3TBb6iJvBCXcKAvkxvLpCDWfk9gkD5i2xUdwUE3Kc7+Jfn4ji3us+hUHRxBPZxL
-	rl//MyO0NDTSKHXxHJdzprlo21EuQK+tWoJ/L+62UcyxPYDj6nZrJaOYc3klgU98F2Xrkfb1rKL
-	w4EYuwRX4aG74GOzfFiJO2jvZk2F1+37Z5gIxOu1UNyPC0rEBhdjphmA8XgQIET12IUUL44xlZi
-	2SLt5066p4pgGyfrnwiL32J+CsH0XbheC80gzvpoxspmZWYDk8IePSTOlEJ9MOdrDOBSXgP7R/A
-	=
-X-Received: by 2002:a05:620a:459f:b0:7cd:31ca:d81 with SMTP id af79cd13be357-7cd4673b9e8mr2611202085a.27.1747831947943;
-        Wed, 21 May 2025 05:52:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IElTuLwfN5LBdLDm3L5ftLVYf4GR8LqxAuo0yz1nHnyhymUVMITO1eRg42xfg0uzDWWAlCCaQ==
-X-Received: by 2002:a05:620a:459f:b0:7cd:31ca:d81 with SMTP id af79cd13be357-7cd4673b9e8mr2611198585a.27.1747831947533;
-        Wed, 21 May 2025 05:52:27 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e6f16394sm2826161e87.5.2025.05.21.05.52.26
+        bh=s2Q5akduCpfDqsqlBatix18/uxsvR0mlb10E3tY0o/A=;
+        b=bhDTcpxOaNbgXzjZ3lKI6e/Mk0QzcX/rfuqtDl/D5O2VWzH2zpPe3Jj4Vp7Z1MzIDq
+         Gpcslx0Vrt00zGjYRsh+O4zciweXuA0f8zowKzc6/p3TmVdiDsvKl6YniFZZ9iaryyrF
+         GY7QxwmOcLiPq+zklcyR6ktpVM3th72v6cNcNrNIaNWnRpdeTBvdW09Wad+ZIF//aLKp
+         d1xYqEUzVbXqMYshYBdrtiA3Q3dLPqgu/nSFu+LBp15/LAJrZBj+WKgbmM/pRjgRDJep
+         c5ThhUI6077Cln6xACX/FV85O6jNMqajjwcs45ED6oAS4Gpc0CRAULsRv2mX4GKaRyaC
+         ZLhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747831968; x=1748436768;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s2Q5akduCpfDqsqlBatix18/uxsvR0mlb10E3tY0o/A=;
+        b=ZWbf9fQ2blBAVPi2J1dbqWXcl9V1qePvSOGHpjEDh/Lkf12urYdaK72w2TLm2ZqAFe
+         MRN4h94Wz+9svneeIBN1LGu/ZLcMbPn4wZm6aFNrakx0E6xfTzKILWs0d6E/Ks9BrNSy
+         JW3xpcaJwJOKfDbtSi9HH8n+PNESMTI+sLhSTAhhkDv9jwuSgt2d8sozgDKPCWjwVFaJ
+         STkCgz5Ayoz6ouU6QNo5Eivh/gfRYDAkV1Onsu+pAzjSgZQyFLUaIYvw3N7MYy2hLQrY
+         l2A6eB+hURe9W2DmtLOVFhsuXIKp70vhcyLEVTea9/iqkcawv267FpgXErrDFs6WOCwN
+         Tx0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVAu3ksKoMZdIKaGhCFBzPemBc2p9oBFe962fuHLvmv7oLeL5wh3nS1W8znWq6i7BJ6Jy6aG2Axy58r7g0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnm2tyecIf9wzWF87Bxsr5nGaYHwV1gKPt7eT/xhsXWdlhSTKO
+	ykBToWCAHzB3yJbHHNxWycV9BM2ak4fxSSs9msByyk7XTGeXoOvemB+M
+X-Gm-Gg: ASbGncvJPOJPXO+gEFDR5bGA4tsUMGth3xczJ0gmHqSVcbwbZPxU4KRjFvhFQu0wude
+	HqGSMed77Po6T/HXaxWTxOugHS7Dt9QpL2IknlVjvvKoxgpkmyhxTmiAt+4c9IF6Q8lfpCl1xRd
+	v3KdcRwtZmyqsBwaX1ipTr3IKD2/iSOS/f+yv50ecmI/yh9PYX5noQhPXJdE27fFEGoXck77hfh
+	r/p0YIFua4sYF4onKsbuzW9eLYHmKfrQtjwH1WhtScYiFm04ZpUxemZrXujNnsDHjsc4Cp7j29y
+	u10eRPtanUbfgGF8cZBSxGR9F/+I8NiLv56LYIyEI76EI3+3sMhzZAm5Ww6QblJK5DrOvHgdq4f
+	kCRYC5duytWI5oA==
+X-Google-Smtp-Source: AGHT+IHpc2l2SfVRc0jgMEt9V5illJo3BE9u9sMuf0NrsqS1uKt+nwi8QhzuuqN+dnknkaKa3RFBGQ==
+X-Received: by 2002:a05:6000:40db:b0:3a3:7465:7e60 with SMTP id ffacd0b85a97d-3a374657eb0mr9527460f8f.26.1747831968274;
+        Wed, 21 May 2025 05:52:48 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f7d975f4sm67311505e9.39.2025.05.21.05.52.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 05:52:26 -0700 (PDT)
-Date: Wed, 21 May 2025 15:52:25 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Maulik Shah <maulik.shah@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 2/3] soc: qcom: qcom_stats: Add QMP support for
- syncing ddr stats
-Message-ID: <jl4g7mutb65ifxuv3covropjntziv5enxyc3lgz2fi7ddu64bd@e726p6by3vfh>
-References: <20250521-ddr_stats_-v2-0-2c54ea4fc071@oss.qualcomm.com>
- <20250521-ddr_stats_-v2-2-2c54ea4fc071@oss.qualcomm.com>
+        Wed, 21 May 2025 05:52:47 -0700 (PDT)
+Date: Wed, 21 May 2025 13:52:46 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Nicolas Pitre <npitre@baylibre.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ u.kleine-koenig@baylibre.com, Oleg Nesterov <oleg@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v2 next 3/4] lib: Add mul_u64_add_u64_div_u64() and
+ mul_u64_u64_div_u64_roundup()
+Message-ID: <20250521135246.7dab6bda@pumpkin>
+In-Reply-To: <148nop5q-s958-n0q4-66r8-o91ns4pnr4on@onlyvoer.pbz>
+References: <20250518133848.5811-1-david.laight.linux@gmail.com>
+	<20250518133848.5811-4-david.laight.linux@gmail.com>
+	<321rs9r7-8858-p195-263n-49q78q8rn25o@onlyvoer.pbz>
+	<20250520223700.2ec735fd@pumpkin>
+	<148nop5q-s958-n0q4-66r8-o91ns4pnr4on@onlyvoer.pbz>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250521-ddr_stats_-v2-2-2c54ea4fc071@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=V9990fni c=1 sm=1 tr=0 ts=682dcc8c cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=Prqm17leZL3r9GWXGqMA:9 a=CjuIK1q_8ugA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-ORIG-GUID: z19GdLSs27QjKjCJ5hfEagI8-KEXPd8I
-X-Proofpoint-GUID: z19GdLSs27QjKjCJ5hfEagI8-KEXPd8I
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDEyNCBTYWx0ZWRfX63ZEDKZYTfMV
- GNwksFRI/WhOL3gfpdCY/4aAzkq1skNO/JTEt4SfeJjPEXGa0QnVNsH2zFgSyN4qCwQY3TG5VJR
- Y/k4/zfuzs2uF5M//Mr0HyCVBzICf3wWrEZeG/JUbsiXRnSDoNux1U3ctsnGfLMXR1zLa8EMF/i
- 2rqRqu5kRwLf5mCJva4A2s7JJMMd7mUFZUE82traoFp4vI31LqnKY9zZzCzVeAHMVxkiMsEr4mj
- LTdcpAYSy4Iwl9hfYJo+/zudi1+n3UCEoVgqMPxcz3KgL/U2avlPtaQyWvlaltro08Ah/7jNsQu
- QcKkcPH60PjfWh+IsbPtCwQtKekdQ03FRNrriIXzK9h0aS8J9hpeO57ksY88RYHMsUwktAD70It
- 7HrO2bjYFs6NizxsIU44nsKct6mqbAtVFoUD0erz19ey/RzSTHVIBfe+qVVSATFRgb2ACvf/
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_04,2025-05-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=999 bulkscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 spamscore=0 phishscore=0 suspectscore=0
- adultscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505210124
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 21, 2025 at 02:02:11PM +0530, Maulik Shah wrote:
-> Recent SoCs (SM8450 onwards) require QMP command to be sent before reading
-> ddr stats. The duration field of ddr stats will get populated only if QMP
-> command is sent.
-> 
-> Add support to send ddr stats freqsync QMP command.
-> 
-> Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
-> ---
->  drivers/soc/qcom/qcom_stats.c | 29 ++++++++++++++++++++++++++++-
->  1 file changed, 28 insertions(+), 1 deletion(-)
-> 
-> @@ -310,6 +329,14 @@ static int qcom_stats_probe(struct platform_device *pdev)
->  	qcom_create_subsystem_stat_files(root, config);
->  	qcom_create_soc_sleep_stat_files(root, reg, d, config);
->  	qcom_create_ddr_stat_files(root, reg, config);
-> +	/*
-> +	 * QMP is used for DDR stats syncing to MSG RAM for recent SoCs (SM8450 onwards).
-> +	 * The prior SoCs do not need QMP handle as the required stats are already present
-> +	 * in MSG RAM, provided the DDR_STATS_MAGIC_KEY matches.
-> +	 */
-> +	qcom_stats_qmp = qmp_get(&pdev->dev);
-> +	if (IS_ERR(qcom_stats_qmp))
-> +		qcom_stats_qmp = NULL;
+On Tue, 20 May 2025 18:24:58 -0400 (EDT)
+Nicolas Pitre <npitre@baylibre.com> wrote:
 
-Don't we need to handle QMP being not probed _yet_? In other words,
-there are several distinct cases:
-
-- No QMP defined, proceed without it
-- QMP defined, not probed yet, return -EPROBE_DEFER here
-- QMP defined, qmp_get() returns an error, return that error code
-- QMP defined, qmp_get() returned valid pointer, proceed with using it.
-
->  
->  	platform_set_drvdata(pdev, root);
->  
+> On Tue, 20 May 2025, David Laight wrote:
 > 
-> -- 
-> 2.34.1
+> > On Mon, 19 May 2025 23:03:21 -0400 (EDT)
+> > Nicolas Pitre <npitre@baylibre.com> wrote:
+> >   
+...
+> > > Here you should do:
+> > > 
+> > > 	if (ilog2(a) + ilog2(b) <= 62) {
+> > > 		u64 ab = a * b;
+> > > 		u64 abc = ab + c;
+> > > 		if (ab <= abc)
+> > > 			return div64_u64(abc, d);
+> > > 	}
+> > > 
+> > > This is cheap and won't unconditionally discard the faster path when c != 0;  
+> > 
+> > That isn't really cheap.
+> > ilog2() is likely to be a similar cost to a multiply
+> > (my brain remembers them both as 'latency 3' on x86).  
 > 
+> I'm not discussing the ilog2() usage though. I'm just against limiting 
+> the test to !c. My suggestion is about supporting all values of c.
 
--- 
-With best wishes
-Dmitry
+I've had further thoughts on that test.
+Most (but not all - and I've forgotten which) 64bit cpu have a 64x64=>128
+multiple and support u128.
+So the 'multiply in parts' code is mostly for 32bit.
+That means that the 'a * b' for the call to div64_u64() has to be three
+32x32=>64 multiplies with all the extra 'add' and 'adc $0' to generate
+a correct 64bit result.
+This is (well should be) much the same as the multiply coded in the
+function - except it is generated by the compiler itself.
+The only parts it can ignore are the those that set 'z' and 'y_hi'.
+If my clock sequence (in the other email) is correct it saves 3 of 10
+clocks - so test to avoid the multiply has to be better than that.
+That probably means the only worthwhile check is for a and b being 32bit
+so a single multiply can be used.
+
+The generated code for 32bit x86 isn't as good as one might hope.
+partially due to only having 7 (6 if %bp is a stack frame) registers.
+clang makes a reasonable job of it, gcc doesn't.
+There is already a mul_u32_u32() wrapper in arch/x86/include/asm/div64.h.
+There needs to be a similar add_u64_u32() (contains add %s,%d_lo, adc $0,%d_hi).
+Without them gcc spills a lot of values to stack - including constant zeros.
+
+I might add those and use them in v3 (which I need to send anyway).
+They'll match what my 'pending' faster code does.
+
+	David
+
 
