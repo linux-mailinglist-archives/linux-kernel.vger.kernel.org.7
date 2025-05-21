@@ -1,127 +1,153 @@
-Return-Path: <linux-kernel+bounces-658033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76782ABFBCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:59:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4D5ABFBD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D02F7A7655
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:57:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1A1E500B5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B59242D66;
-	Wed, 21 May 2025 16:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0955C263F2C;
+	Wed, 21 May 2025 16:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hEcWuyg8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="qemtN66r"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CA71CEEB2;
-	Wed, 21 May 2025 16:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9C925B1DA;
+	Wed, 21 May 2025 16:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747846728; cv=none; b=tEbkGt7/6OGr6EBv7p7NgUyt6Z36tFBpzulfKsuTCHnxuO2jg4D/QLliC6Ke7P5+rMx26/YOSXN/GnZ3V8+IZx1s2/NEuqZWQT8VZP51Vfd6/2LnegHhrESgUEgp+uclQO/SfBWriYJEIYdbHLplpESXH+7eLnpl+e6GvnQ56CA=
+	t=1747846771; cv=none; b=dLLgis0PofZI6zW+Il/cgDoTYO0ZDVOfBKX3Z12YMQTsDgRe5IEgceAV6Fl6wJ3ordMSihvmj9n9S1EqUbE83dkULbkx0+0egwHeW0vl2k0+rPCX9d6t7pC7gUwRfT8PQkyrKJtouZCV5omImtv74xinwzVdGfZdFNhPQy3xr/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747846728; c=relaxed/simple;
-	bh=59oAJcTJpmR8OLFJ0gR8UPLguvkoStgGoffZseDex2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CdA4isKl49KyCq693+7uLkH4Kvk29L+b6xrtLYfhXJPPZ3wwyuQfSDCLUcMs8eD9tk+5TXqqrWtEA1ezqUy2U1yE4zbw7WecL3WyVO2MQFDPL8HL6ASBbPJvWfvABOP1aYu8xGQPzlm55ig4A6MwW9d29s2IZKCMr8YYf5h2FDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hEcWuyg8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CCC2C4CEE4;
-	Wed, 21 May 2025 16:58:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747846728;
-	bh=59oAJcTJpmR8OLFJ0gR8UPLguvkoStgGoffZseDex2g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hEcWuyg8NDZHwjwFdz1hKQdHeyloCDmxGf4ySMcqClZTIFYnrGv6Z9k/7vxobndeY
-	 Md28uGshRkdCxLeXocEiFhcg6/0elgPtySg9cy6VIV/5+F5+2LUCmiCXqnjZVjABcP
-	 C6+723bA/Ct345PLSLtIS7Zl2V/BSKfJ2MrU2n7A=
-Date: Wed, 21 May 2025 18:58:45 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Remo Senekowitsch <remo@buenzli.dev>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v5 4/9] rust: device: Enable printing fwnode name and path
-Message-ID: <2025052116-gem-blend-2585@gregkh>
-References: <20250520200024.268655-1-remo@buenzli.dev>
- <20250520200024.268655-5-remo@buenzli.dev>
- <2025052153-steadier-bargraph-e81a@gregkh>
- <DA1UXY2O47Y2.1ND9MC6L01217@buenzli.dev>
+	s=arc-20240116; t=1747846771; c=relaxed/simple;
+	bh=7Of1OA5Yxg182QnsgLL7TbVWRBf475bH06Jde+Nb2M8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jBRkkFW/FC03DwadJKeGExF/p9wTC80OH4gUgWZ/5c7MolciPxCS7g0iWDEtMT3ueKXAHaWZ02E88S/xuzeo3nyT15RCOF6X9zUuSgorBe+USp2dZ8xjlFGvMFCSCs5e4P2JHlN4WeFUA34IIA0S3heInp8lv6uw+X3VPfjOlYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=qemtN66r; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fedora.intra.ispras.ru (unknown [10.10.165.10])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 5A9D2552F546;
+	Wed, 21 May 2025 16:59:19 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 5A9D2552F546
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1747846759;
+	bh=HLmlo26sE/2rMaJzaKatd95yXazpO/4KJbkvVO+Dkks=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qemtN66rg0n1LI5VCSYeOkDkVEOVabDx5Va1tkujpytq9DCvdo5viIUzzXvwHWnAN
+	 AV9MOHJf0DXH8oYVAVNL3MaZW0DKTuSyfle3qa6KKME3ArkOVSfAOp4tmxsHgudyw+
+	 acmhYVLY9utOmtg5phLsA8HBckC0BYsYLWw3IphE=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH 6.1 0/1] Oopses on module unload seen on 6.1.y
+Date: Wed, 21 May 2025 19:59:07 +0300
+Message-ID: <20250521165909.834545-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DA1UXY2O47Y2.1ND9MC6L01217@buenzli.dev>
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 21, 2025 at 03:03:07PM +0200, Remo Senekowitsch wrote:
-> On Wed May 21, 2025 at 2:02 PM CEST, Greg Kroah-Hartman wrote:
-> > On Tue, May 20, 2025 at 10:00:19PM +0200, Remo Senekowitsch wrote:
-> >> Add two new public methods `display_name` and `display_path` to
-> >> `FwNode`. They can be used by driver authors for logging purposes. In
-> >> addition, they will be used by core property abstractions for automatic
-> >> logging, for example when a driver attempts to read a required but
-> >> missing property.
-> >> 
-> >> Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
-> >> ---
-> >>  rust/kernel/device/property.rs | 72 ++++++++++++++++++++++++++++++++++
-> >>  1 file changed, 72 insertions(+)
-> >> 
-> >> diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
-> >> index 70593343bd811..6ccc7947f9c31 100644
-> >> --- a/rust/kernel/device/property.rs
-> >> +++ b/rust/kernel/device/property.rs
-> >> @@ -32,6 +32,78 @@ pub(crate) fn as_raw(&self) -> *mut bindings::fwnode_handle {
-> >>          self.0.get()
-> >>      }
-> >>  
-> >> +    /// Returns an object that implements [`Display`](core::fmt::Display) for
-> >> +    /// printing the name of a node.
-> >> +    pub fn display_name(&self) -> impl core::fmt::Display + '_ {
-> >> +        struct FwNodeDisplayName<'a>(&'a FwNode);
-> >> +
-> >> +        impl core::fmt::Display for FwNodeDisplayName<'_> {
-> >> +            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-> >> +                // SAFETY: self is valid by its type invariant
-> >> +                let name = unsafe { bindings::fwnode_get_name(self.0.as_raw()) };
-> >> +                if name.is_null() {
-> >> +                    return Ok(());
-> >
-> > So if there is no name, you are returning Ok()?  Are you sure that's ok
-> > to do?  What will the result of the string look like then?
-> 
-> In that case we're not writing anything to the formatter, which is
-> equivalent to an empty string. `Ok(())` means that writing succeeded.
-> 
-> I assumed that a valid node would always have a name. And we're
-> guaranteed to have a valid node. So I assumed this case would never
-> happen and didn't think too hard about it. But even if a valid node has
-> not name, empty string is probably the correct thing, right?
+Hi,
 
-I don't know what this "name" is used for.  An empty string might not be
-what you want to use here, given that you could be naming something
-based on it, right?  fwnode_get_name() is used for many things,
-including the detection if a name is not present at all, and if not,
-then the code needs to clean up and abort.
+commit 959cadf09dbae7b304f03e039b8d8e13c529e2dd
+Author: Peter Zijlstra <peterz@infradead.org>
+Date:   Mon Oct 14 10:05:48 2024 -0700
 
-So what exactly are you going to be using this for?
+    x86/its: Use dynamic thunks for indirect branches
+    
+    commit 872df34d7c51a79523820ea6a14860398c639b87 upstream.
 
-thanks,
+was ported at v6.1.139 and leads to kernel crashes there after module
+unload operations.
 
-greg k-h
+Example trace:
+ BUG: unable to handle page fault for address: ffff8fcb47dd4000
+ #PF: supervisor write access in kernel mode
+ #PF: error_code(0x0003) - permissions violation
+ PGD 34801067 P4D 34801067 PUD 100148063 PMD 107dd5063 PTE 8000000107dd4161
+ Oops: 0003 [#1] PREEMPT SMP NOPTI
+ CPU: 3 PID: 378 Comm: modprobe Not tainted 6.1.139-01446-g753bd4a5f9a9 #1
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+ RIP: 0010:__change_page_attr_set_clr+0x49d/0x1280
+ Call Trace:
+  <TASK>
+  ? free_unref_page_prepare+0x80/0x4b0
+  set_direct_map_invalid_noflush+0x6e/0xa0
+  __vunmap+0x18c/0x3e0
+  __vfree+0x21/0xb0
+  vfree+0x2b/0x90
+  module_memfree+0x1b/0x50
+  free_module+0x17c/0x250
+  __do_sys_delete_module+0x337/0x4b0
+  __x64_sys_delete_module+0x15/0x30
+  x64_sys_call+0x3f9a/0x43a0
+  do_syscall_64+0x33/0x80
+  entry_SYSCALL_64_after_hwframe+0x6e/0xd8
+ RIP: 0033:0x7f70755c0807
+  </TASK>
+ Modules linked in: dm_multipath scsi_dh_rdac scsi_dh_emc scsi_dh_alua [last unloaded: scsi_debug]
+
+
+As mentioned in the blamed patch comment describing the backport
+adaptations:
+
+[ pawan: CONFIG_EXECMEM and CONFIG_EXECMEM_ROX are not supported on
+        backport kernel, made changes to use module_alloc() and
+        set_memory_*() for dynamic thunks. ]
+
+module_alloc/module_memfree in conjunction with memory protection routines
+were used. The allocated memory is vmalloc-based, and it ends up being ROX
+upon release inside its_free_mod().
+
+Freeing of special permissioned memory in vmalloc requires its own
+handling. VM_FLUSH_RESET_PERMS flag was introduced for these purposes.
+
+In-kernel users dealing with the stuff had to care about this explicitly
+before commit 4c4eb3ecc91f ("x86/modules: Set VM_FLUSH_RESET_PERMS in
+module_alloc()").
+
+More recent kernels starting from 6.2 have the commit and are not affected.
+
+So port it as a followup for ITS mitigation 6.1-series to fix the
+aforementioned failures.
+
+The problem concerns 5.15-series (currently in stable-queue) as well. It
+needs its own patch to apply cleanly. Will send it shortly, too.
+
+Found by Linux Verification Center (linuxtesting.org).
+
+
+Thomas Gleixner (1):
+  x86/modules: Set VM_FLUSH_RESET_PERMS in module_alloc()
+
+ arch/x86/kernel/ftrace.c       | 2 --
+ arch/x86/kernel/kprobes/core.c | 1 -
+ arch/x86/kernel/module.c       | 9 +++++----
+ 3 files changed, 5 insertions(+), 7 deletions(-)
+
+-- 
+2.49.0
+
 
