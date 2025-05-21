@@ -1,94 +1,64 @@
-Return-Path: <linux-kernel+bounces-657217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6318CABF125
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:14:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17B5ABF142
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A2D8E117C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:14:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A43418848B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744AF25B66E;
-	Wed, 21 May 2025 10:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E32B25D55D;
+	Wed, 21 May 2025 10:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zO5kmzAA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KO5Gk4LY";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zO5kmzAA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KO5Gk4LY"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="L9Lrz04i"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D8125A342
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 10:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F64B2472B4;
+	Wed, 21 May 2025 10:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747822457; cv=none; b=D1pRbe2w1ybU06FXPZSU3XVENUTDFoxl2/DiwR9A/L5rMcX35xT8VWCo5VCTsXn3YcKr9hkYtDEvqAjcLmHr5opSA9dPU+gfchZ7KUz1SU7EhrDGdVrsL44+PEkXKo1vzT1n2VAXS5Uxnszl2rVei8uiwwitwUU3ydqT9Im47B4=
+	t=1747822581; cv=none; b=aMhwNx9ccpJtYRP+jwPsMNY6N//aNMUbzdoSopyoTfRm72n1aZVN4w266E6mSp+WXiaM/qUoOrepDwBIkkM7fugt3482N2XAVA8FvRq5KBjQwJ8jzHIWFVy52DpEdX21PxQ/BBEbjLtVW7jtUDCVderaWsY0NPgmuu53sy/hN/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747822457; c=relaxed/simple;
-	bh=QSYzhxKHNiRVf7MWkU8qPPMNn3E4qW2hVkRu+GbDBLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dIYIaITy8+1GLqRn/KSk4Ay3mgVUpUbJk0RJ4BzdxB8LOXfV47Q58YplxfTZ7XYr3M6szgDOG58Q0S54Sib8lXttbsNtti+Rb0ntkpT57bAA5mf1Jtuo0ibS7p71noU8uD1mcdupcTclVtOa/SHplltU0NeN4mZIgDjaLOrhFxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zO5kmzAA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KO5Gk4LY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zO5kmzAA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KO5Gk4LY; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8D6BC337CA;
-	Wed, 21 May 2025 10:14:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747822454; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+PrZkWoI3Zcmg+KJUSVPn4YmbY051hcyvk4GeLO925c=;
-	b=zO5kmzAA4npNdFOn8h1xlOap/xBbEQ7usSNhVspHr6k3aQyGWUkFOpqpCUNJVuhsiWitq5
-	16V0ixnjTN+zoQY8ldyGhFZi6nxZmqCG4Tw4V9OHlvdtsC+Hac2iaTzPm6SrHE9BhPTBfV
-	jZq95B7+gl7FfkecEpGzLIa6RUdbgUg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747822454;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+PrZkWoI3Zcmg+KJUSVPn4YmbY051hcyvk4GeLO925c=;
-	b=KO5Gk4LYCOziRirBR3yFIo1o6QJMsBbOGS29WJMlwbwXAJvF4epiDX1bpk9agR9a85Cz4t
-	DawXOTzObN20bHAQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747822454; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+PrZkWoI3Zcmg+KJUSVPn4YmbY051hcyvk4GeLO925c=;
-	b=zO5kmzAA4npNdFOn8h1xlOap/xBbEQ7usSNhVspHr6k3aQyGWUkFOpqpCUNJVuhsiWitq5
-	16V0ixnjTN+zoQY8ldyGhFZi6nxZmqCG4Tw4V9OHlvdtsC+Hac2iaTzPm6SrHE9BhPTBfV
-	jZq95B7+gl7FfkecEpGzLIa6RUdbgUg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747822454;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+PrZkWoI3Zcmg+KJUSVPn4YmbY051hcyvk4GeLO925c=;
-	b=KO5Gk4LYCOziRirBR3yFIo1o6QJMsBbOGS29WJMlwbwXAJvF4epiDX1bpk9agR9a85Cz4t
-	DawXOTzObN20bHAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5B09F13AA0;
-	Wed, 21 May 2025 10:14:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id igNZFXanLWh8TAAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 21 May 2025 10:14:14 +0000
-Message-ID: <faacdc3b-260a-46b5-b244-ff1575d5e6ef@suse.de>
-Date: Wed, 21 May 2025 12:14:06 +0200
+	s=arc-20240116; t=1747822581; c=relaxed/simple;
+	bh=/k/a4J1ZQRWcPa1nH/vET9PeEU5HG1j8mbumv3W+SpQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=bt735nEqfocNsR/nTOfjlNDXNDBnJA9kzMLAQzFriSLW9AspyoJieypEoDMpsiEsyBEPTfFN6QzVnkzvIYnw9ubQcfE8CsKVTD1lhb7DZen95dsfRyFcg/ZjZw4s62iwrkMIkJZUQerGwKNkrIoRCHHFi2qRMO58NDNyDlJr+EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=L9Lrz04i; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9l708029646;
+	Wed, 21 May 2025 12:16:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	mzFSpe7hA7gsH1lLUxy+lsRSjB0E3F7awJ9YqjsAY4c=; b=L9Lrz04iPTNTANgU
+	AKn3QsTq5dcgGz47H847d41uhxzoY61n5IoRI0nrz4Co/AAerPLM1nXJl+Gka6Mc
+	xpuoprRQrzPLxjwWcHd9ywcv89aIa8MmPt+Uy52O5UtBbHAlI3XGZRunVv4vpF5T
+	zoLxA2NfNvHX6g/Qp+eIgppFFmFngRtaNv7H2b5BG3ao/A0ir6Ne6QOhq1UU4MwP
+	dMw0y5vMCCR+2d5Cce7ik92e1mbry3KRzGFu/EMaQIJG+1Tj1ohirKJRub5LVpxF
+	K19jwKBV9gMhfIVdLueGckH8Dmzc9uU7fB4TW8smZAsFyOZNmin++aI5/zBp2a03
+	Ni/JnA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46rwff3fgh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 12:16:04 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B70F940045;
+	Wed, 21 May 2025 12:14:55 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 14265BAEB1E;
+	Wed, 21 May 2025 12:14:10 +0200 (CEST)
+Received: from [10.48.81.67] (10.48.81.67) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 21 May
+ 2025 12:14:09 +0200
+Message-ID: <929f6f1f-d47f-4954-8c8b-91c932127975@foss.st.com>
+Date: Wed, 21 May 2025 12:14:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,74 +66,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/10] sctp: use skb_crc32c() instead of
- __skb_checksum()
-To: Eric Biggers <ebiggers@kernel.org>, netdev@vger.kernel.org
-Cc: linux-nvme@lists.infradead.org, linux-sctp@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Daniel Borkmann <daniel@iogearbox.net>,
- Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
- Sagi Grimberg <sagi@grimberg.me>, Ard Biesheuvel <ardb@kernel.org>
-References: <20250519175012.36581-1-ebiggers@kernel.org>
- <20250519175012.36581-6-ebiggers@kernel.org>
+Subject: Re: [PATCH v2 2/8] pinctrl: stm32: Introduce HDP driver
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250520-hdp-upstream-v2-0-53f6b8b5ffc8@foss.st.com>
+ <20250520-hdp-upstream-v2-2-53f6b8b5ffc8@foss.st.com>
+ <CACRpkdZp6D-duzyVRLv5+PURb3Nu69njJx_33D-2aYS4DjmsoQ@mail.gmail.com>
+ <94795d0c-0c73-41eb-ada6-9a01b2ac5892@foss.st.com>
 Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250519175012.36581-6-ebiggers@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <94795d0c-0c73-41eb-ada6-9a01b2ac5892@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_CC(0.00)[lists.infradead.org,vger.kernel.org,iogearbox.net,gmail.com,grimberg.me,kernel.org];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_03,2025-05-20_03,2025-03-28_01
 
-On 5/19/25 19:50, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On 5/21/25 11:49, Clement LE GOFFIC wrote:
+> On 5/21/25 00:34, Linus Walleij wrote:
+>> Hi Clément,
+>>
+>> thanks for your patch!
+>>
+>> On Tue, May 20, 2025 at 5:04 PM Clément Le Goffic
+>> <clement.legoffic@foss.st.com> wrote:
+>>
+>>> This patch introduce the driver for the Hardware Debug Port available on
+>>> STM32MP platforms. The HDP allows the observation of internal SoC
+>>> signals by using multiplexers. Each HDP port can provide up to 16
+>>> internal signals (one of them can be software controlled as a GPO).
+>>>
+>>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+>>
+>> (...)
+>>> +static int stm32_hdp_gpio_get_direction(struct gpio_chip *gc, 
+>>> unsigned int offset)
+>>> +{
+>>> +       return GPIO_LINE_DIRECTION_OUT;
+>>> +}
+>>
+>> That's reasonable.
+>>
+>>> +static int stm32_hdp_gpio_get(struct gpio_chip *gc, unsigned int 
+>>> offset)
+>>> +{
+>>> +       struct stm32_hdp *hdp = gpiochip_get_data(gc);
+>>> +
+>>> +       if (((hdp->mux_conf & HDP_MUX_MASK(offset))) == 
+>>> HDP_MUX_GPOVAL(offset))
+>>> +               return !!(readl_relaxed(hdp->base + HDP_GPOVAL) & 
+>>> BIT(offset));
+>>> +       else
+>>> +               return !!(readl_relaxed(hdp->base + HDP_VAL) & 
+>>> BIT(offset));
+>>> +}
+>>
+>> ...but you still make it possible to read the value of the line
+>> if it's not muxed as GPO?
+>>
+>> Should it not stm32_hdp_gpio_get_direction() return
+>> GPIO_LINE_DIRECTION_IN if HDP_MUX_MASK(offset))) != 
+>> HDP_MUX_GPOVAL(offset)?
 > 
-> Make sctp_compute_cksum() just use the new function skb_crc32c(),
-> instead of calling __skb_checksum() with a skb_checksum_ops struct that
-> does CRC32C.  This is faster and simpler.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->   include/net/sctp/checksum.h | 29 +++--------------------------
->   net/netfilter/Kconfig       |  4 ++--
->   net/netfilter/ipvs/Kconfig  |  2 +-
->   net/openvswitch/Kconfig     |  2 +-
->   net/sched/Kconfig           |  2 +-
->   net/sctp/Kconfig            |  1 -
->   net/sctp/offload.c          |  1 -
->   7 files changed, 8 insertions(+), 33 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Hi, oops, you're right !
 
-Cheers,
+I've answer too quickly. All the pins are "out" in fact.
+The hardware is not able to read input signal.
+I wanted to implement a way to read the register value in any case by 
+leaving the line direction unchanged.
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+>>
+>>> +static void stm32_hdp_gpio_set(struct gpio_chip *gc, unsigned int 
+>>> offset, int value)
+>>> +{
+>>> +       struct stm32_hdp *hdp = gpiochip_get_data(gc);
+>>> +
+>>> +       if (value)
+>>> +               writel_relaxed(BIT(offset), hdp->base + HDP_GPOSET);
+>>> +       else
+>>> +               writel_relaxed(BIT(offset), hdp->base + HDP_GPOCLR);
+>>> +}
+>>
+>> Can't you just use GPIO_GENERIC for this?
+>>
+>> bgpio_init(gc, dev, ARRAY_SIZE(stm32_hdp_pins), // == 8
+>>      hdp->base + HDP_VAL,
+>>      hdp->base + HDP_GPOSET,
+>>      hdp->base + HDP_GPOCLR,
+>>      NULL,
+>>      NULL,
+>>      0);
+>>
+>> The default behaviour of GPIO MMIO is to read the output register
+>> for the value if the line is in output mode.
+>>
+>> You may wanna override the .get_direction() callback after bgpio_init()
+>> and before registering the chip, either with what you have or what
+>> I described above.
+> 
+> I didn't know about it, I'll take a look and provide a V3.
+> 
+> Thank you,
+> 
+> Clément
+> 
+>> Yours,
+>> Linus Walleij
+> 
+
 
