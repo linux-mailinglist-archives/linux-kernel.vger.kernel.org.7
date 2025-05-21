@@ -1,171 +1,222 @@
-Return-Path: <linux-kernel+bounces-656708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1841ABE9F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 04:36:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E36B7ABE9FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 04:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D369C1BA7B5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 02:36:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F13D21B64384
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 02:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB2622B8AD;
-	Wed, 21 May 2025 02:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C0622B8C6;
+	Wed, 21 May 2025 02:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Z81FHlM8"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MplO6qD9"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9BF1A5BAC
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 02:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8D54430;
+	Wed, 21 May 2025 02:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747794997; cv=none; b=q0yDOPEwHvP7dgv8epQkTDpX+kyQYkeSCZIO0V4gkOxa5ESzRmvqmYATIzNtVgYk36ynrPQlQCVMc4i1J5dP3yj3eZaOZ/T69Wa0hUGJHT03JdBEi11w8QeWnhJVQcYGvNE7Hm3G7pXsdKDnIBJhRjqUC5smcApSag4pXAbdpz0=
+	t=1747795295; cv=none; b=Oun3F6S1PqrYkGCGIt08nH8tMzHVip86BPWhGG1lgtGowgL65Sccyaoq4GELhXwCTaq1I/Vjw9lg2X5iv/wVpYIHm7BqWg9xa6dHCgeTcyDtU0clLHfc/zoewtKONbkBqrUrmNKjLbkT8jqBq62OTE/T93SW4ufrNY8fxIyVyUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747794997; c=relaxed/simple;
-	bh=3LlIVLVn2XJ3bMks/YIj5H5Gooj2k3xn5/ho7pAcaJ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h+mVF4f89EvfWRytMnL5jdEaQA9X6EKUhxHatoOD5DoaHmoxmTtKNLJOhn6a/pqwfal7bESGr5nSaFBBS6fu69RQL/IddZYZyFNqrAtNpX1mPeUROrfqoinsTXx2zclvOh1z9qgoGeyXpCekCivpZFiiabOM2SnXYX3AEPlBu1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Z81FHlM8; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-551f14dc30dso2936397e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 May 2025 19:36:35 -0700 (PDT)
+	s=arc-20240116; t=1747795295; c=relaxed/simple;
+	bh=+/sRfFIsqUcfo9dusVUZk/wm5YQcmXYfkjbZgIdtTgc=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=Jd37kYbfRA4hbf6lc57442o0hmuh5phncBBQCaj52BgJboK31UsRFGN0Ll7DZrviCSHesiUJnVqDspNnqQSP8kAtU5ymEphCIhj4adpj4ChvJGSwDjlhnoB5GL/mQRHvC0LrH3p1RIjDPYtiORpu2L9ZrLXsJ+lKw3F3RhEc6gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MplO6qD9; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6f8aabbffaeso58365396d6.0;
+        Tue, 20 May 2025 19:41:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1747794993; x=1748399793; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1747795291; x=1748400091; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qM0G5JhOcdolicLe8qE3SREPLKhOhXvUArudMo2s51o=;
-        b=Z81FHlM8AL7io41PK5/8o+Wpu+4y+GIEsKMMgfN362nu1It+WN2+J7y1LLw3Z8/7US
-         aae/hrGrcYrAlw6uidhsqBtxoVrG9O/WnAfh1MGj/qb9CfEMsDkWFcVfYPsfX4ae8Uzi
-         ntPqYWnWeBHnLNOV91NTDEuP7qiHDwFGow3b7maWB6+MdTEkZIu0A5jLq5CK1lv1p0aN
-         cLsWno6R8VzmOIEQ71zV5dkZW6pNFABfOuh1NI21tcdB9SsUjvqZuzxpT+RXeYR4vTMK
-         xajs+OMiQua98ddphvJ2kWBjqffuzzF9TCvJIYWL9RBzAAvT7d8htSRP6SMw56SCTL+W
-         DuJw==
+        bh=aWGHJsw/qanQe5H1eio/FueQXZVPYyAwMXBqZf2HXGA=;
+        b=MplO6qD9ifxxwfumr8uPX/aqIz5barW34VxDwO8rFvG/gq+JSs6YgxxqrrmBK7lPYo
+         TXJjDjdeMZWffxR5sjZLA/vkM0X73hUhP1w1rlJJ7Zr/nyd1MvJksxClIy/tvakHbAGs
+         g7pb1p33rQYMMAlUgvS17i9xwbtGMaM6ByrVCwrjy1HuMbzUzF2mf7GmmyUnkDT+pueh
+         jkrJVPKbrCn7wz/Dd+8FB9BHf4MHjVAf/0TPg950gu+y9BN2a+wY0xFGgul13IzTJGWH
+         htakvnxH/j1kq5Yw/mz+P5yED3tEiJRbM2I031MPwpAeCgqm1TMjocEdbLVtnFGXvcrd
+         0FPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747794993; x=1748399793;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qM0G5JhOcdolicLe8qE3SREPLKhOhXvUArudMo2s51o=;
-        b=CCoikMaQEe36NVYLTOFpHVSM/tQjGSPOEaY22I/PgAWhOYeuIMAV6daJ9uqdoLUQ0y
-         +gi9PKj1GNw8HQhzjejxOrf8xiOoXHrFyzoGUVjfLTO+ZSoBVnGV+lFSr0p4/e/9/qpY
-         ex4Z9Ns+GTw1/tvqljYBF2Oyx57WElMIM6cQMYmgoddVL2scUOsXui2zkgqpuuZ6F3AE
-         bezR3uDjwjFj2Izntz1qTeuJP2ltsg2nkMT8S5JOmurNxMY0RHUaRCTy0Y2kItlFbfBk
-         iySyQQ50wUn1DK7WnkKBrSACnUetOF72Km1x7A8+Ugyf7lB9syLEKlTNKmAsnwCh9hBq
-         kOqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsfE0/2TTMuMSyR63oACuIJFV+93/E///NZxaV8W19tj0Z1OG3pGLbGfYuFslMy1LyQti5hzSy7eGveU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg3ZXI4bvd3zdMJ8t94dJLO5wx8oli4IGoL2z921e48AmBiaIR
-	A3H854vgQTrdMTcP5np3ZX3lFMSr840WtcAQ6wUqf6/uPsHq40Am7BmRKSa4BHCblKtAcjL5DpQ
-	mazlYuZdwYntDxmKlpa0HHWFVGVzgm2z0qVpDqbKFdg==
-X-Gm-Gg: ASbGncs4ecvyu3Fi0PDMyBJm9ClM9qiairde6tl3Oro0Kj1VL9YZzkIpKSaUiwCSNKw
-	8OAaFat5a7k0Zx6EqA8zEj0l92dIorH/05E4SEmSdTL4jUghtYaeEm35dm93FOfeJ0ht5l0KfSQ
-	IZDLF6c2LAPYWR0ZDH6W6/sd519a13zNgj5qE41z0zNSFEt9c=
-X-Google-Smtp-Source: AGHT+IFMmXewRgXmjMlS3bxDt2y7GJT60G7EnBYDGZNqy8uaRaWPsxnVln1J9UYx1YxOtQE5xrFUWK1Pch5pIN1ljkA=
-X-Received: by 2002:a05:6512:3995:b0:551:eb1b:f41d with SMTP id
- 2adb3069b0e04-551eb1bf4c0mr4190306e87.27.1747794993380; Tue, 20 May 2025
- 19:36:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747795291; x=1748400091;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=aWGHJsw/qanQe5H1eio/FueQXZVPYyAwMXBqZf2HXGA=;
+        b=IiSHE8S+CYPKLJX/ivjrSo140bAD9KHion4+KlU/EWzBo5mNkOufokLy75QLncUtBy
+         Jnvqh6ke6fxs49mBhM2wabL4YVVgtehaBuoYJTMWS5MpsBXjba/zWdC8CYWuRJl/b93a
+         gm4ObSkohDu9+sbji8/TXsb8pWwwXDL4jUGYS9lB3SL9bFHw+QebB8rSJf8rgvGaBwGs
+         PtFxTxDlllE3KInUAiBH3Xl6oG662CY3hd52fvOIEGYBowiQLFRYtHsb4eqNb18TYf8U
+         btI6WZL/+GPZHoz+rY6Ep6L8lc6Ev+uKh63IDlOkKKfLP40rFqYp5d+SmaLXj6ljBvN8
+         7vTA==
+X-Forwarded-Encrypted: i=1; AJvYcCWa/3ZsthczSzE+s563DB0mwNcK3fXuzASBjXpdwt3f3QjY4S527kawP1aaXLtX0ewFweldOnA9ds4d+rI=@vger.kernel.org, AJvYcCXqG8LSXf0mjjB5WI2iUyyOZ9BAOB02ea4E2JIgB/TJ+FuDhXMqkQyiNQUaa6f321NaoqVKYXyQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw+Da9Pl77uETSOBqGyXj+DreSSG82Nq+7kcPN0HRStQ+QY61F
+	VVEgk+cfS/tWTr+CiMeVOmyXEHKyGNDIW/DVJG1BOhO44uRdRbItCcYa
+X-Gm-Gg: ASbGncuJ7R8s55oNKQyHYqKVhxU4eN+nHU6I6K4n8jO+sfTXDJb4Vf3sw0Nu2J03KeN
+	9suB9JeGbyW1A7abfr4YUWAsOwT1fS5zsyXEdVSwlchdYljdmghl0Kqy5dChDgDCMaEgkk8p6Fq
+	clHWVL02dfawQp29tXklA8byKpHeUiPGTxKtzXeghqBoy8B0GMOLwLQgTKXQXLx4dE3J8Tp2hkf
+	mCAQWxU8TrL+BPZye64/3PrC3FOiFtAt3P4upeyXS5arPsju9p1s2NZwq5cpD6GcdOz0PH+6YZq
+	dy0M2jFlNCpz22ttCVpxuUMd05nzYqnjQBjBEV9NCxbZiqMC6I/P7OS539MvafJ+GAkIu2tEpX/
+	uk+JrPWq3/Pdgw9yImZYhOAc=
+X-Google-Smtp-Source: AGHT+IF7Y4gTrg3WIMTBFet7GetU7N+rYSRJy+X6b2dvv0ufu7dTmNyzwUHPodMoH31XjTrQ5Rs6wg==
+X-Received: by 2002:a05:6214:2608:b0:6e8:f672:ace9 with SMTP id 6a1803df08f44-6f8b2d82abfmr329361456d6.29.1747795291568;
+        Tue, 20 May 2025 19:41:31 -0700 (PDT)
+Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f8b096571esm79418316d6.73.2025.05.20.19.41.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 19:41:30 -0700 (PDT)
+Date: Tue, 20 May 2025 22:41:30 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Stanislav Fomichev <stfomichev@gmail.com>, 
+ netdev@vger.kernel.org
+Cc: davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ willemdebruijn.kernel@gmail.com, 
+ horms@kernel.org, 
+ stfomichev@gmail.com, 
+ linux-kernel@vger.kernel.org, 
+ syzbot+b191b5ccad8d7a986286@syzkaller.appspotmail.com
+Message-ID: <682d3d5a77189_97c02294a3@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20250520202046.2620300-1-stfomichev@gmail.com>
+References: <20250520202046.2620300-1-stfomichev@gmail.com>
+Subject: Re: [PATCH net] af_packet: move notifier's packet_dev_mc out of rcu
+ critical section
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250520031552.1931598-1-hezhongkun.hzk@bytedance.com> <8029d719-9dc2-4c7d-af71-4f6ae99fe256@redhat.com>
-In-Reply-To: <8029d719-9dc2-4c7d-af71-4f6ae99fe256@redhat.com>
-From: Zhongkun He <hezhongkun.hzk@bytedance.com>
-Date: Wed, 21 May 2025 10:35:57 +0800
-X-Gm-Features: AX0GCFtf0DIpERFZQTx7FOHjO5TPfEvgqV99Xyao4ksnN0_IE5VVyJ-ZpLeiARg
-Message-ID: <CACSyD1Mmt54dVRiBibcGsum_rRV=_SwP=dxioAxq=EDmPRnY2Q@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] cpuset: introduce non-blocking cpuset.mems
- setting option
-To: Waiman Long <llong@redhat.com>
-Cc: tj@kernel.org, hannes@cmpxchg.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, muchun.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 20, 2025 at 9:35=E2=80=AFPM Waiman Long <llong@redhat.com> wrot=
-e:
->
-> On 5/19/25 11:15 PM, Zhongkun He wrote:
-> > Setting the cpuset.mems in cgroup v2 can trigger memory
-> > migrate in cpuset. This behavior is fine for newly created
-> > cgroups but it can cause issues for the existing cgroups.
-> > In our scenario, modifying the cpuset.mems setting during
-> > peak times frequently leads to noticeable service latency
-> > or stuttering.
-> >
-> > It is important to have a consistent set of behavior for
-> > both cpus and memory. But it does cause issues at times,
-> > so we would hope to have a flexible option.
-> >
-> > This idea is from the non-blocking limit setting option in
-> > memory control.
-> >
-> > https://lore.kernel.org/all/20250506232833.3109790-1-shakeel.butt@linux=
-.dev/
-> >
-> > Signed-off-by: Zhongkun He <hezhongkun.hzk@bytedance.com>
-> > ---
-> >   Documentation/admin-guide/cgroup-v2.rst |  7 +++++++
-> >   kernel/cgroup/cpuset.c                  | 11 +++++++++++
-> >   2 files changed, 18 insertions(+)
-> >
-> > diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/ad=
-min-guide/cgroup-v2.rst
-> > index 1a16ce68a4d7..d9e8e2a770af 100644
-> > --- a/Documentation/admin-guide/cgroup-v2.rst
-> > +++ b/Documentation/admin-guide/cgroup-v2.rst
-> > @@ -2408,6 +2408,13 @@ Cpuset Interface Files
-> >       a need to change "cpuset.mems" with active tasks, it shouldn't
-> >       be done frequently.
-> >
-> > +     If cpuset.mems is opened with O_NONBLOCK then the migration is
-> > +     bypassed. This is useful for admin processes that need to adjust
-> > +     the cpuset.mems dynamically without blocking. However, there is
-> > +     a risk that previously allocated pages are not within the new
-> > +     cpuset.mems range, which may be altered by move_pages syscall or
-> > +     numa_balance.
-> > +
-> >     cpuset.mems.effective
-> >       A read-only multiple values file which exists on all
-> >       cpuset-enabled cgroups.
-> > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> > index 24b70ea3e6ce..2a0867e0c6d2 100644
-> > --- a/kernel/cgroup/cpuset.c
-> > +++ b/kernel/cgroup/cpuset.c
-> > @@ -3208,7 +3208,18 @@ ssize_t cpuset_write_resmask(struct kernfs_open_=
-file *of,
-> >               retval =3D update_exclusive_cpumask(cs, trialcs, buf);
-> >               break;
-> >       case FILE_MEMLIST:
-> > +             bool skip_migrate_once =3D false;
-> > +
-> > +             if ((of->file->f_flags & O_NONBLOCK) &&
-> > +                     is_memory_migrate(cs) &&
-> > +                     !cpuset_update_flag(CS_MEMORY_MIGRATE, cs, 0))
-> > +                     skip_migrate_once =3D true;
-> > +
-> >               retval =3D update_nodemask(cs, trialcs, buf);
-> > +
-> > +             /* Restore the migrate flag */
-> > +             if (skip_migrate_once)
-> > +                     cpuset_update_flag(CS_MEMORY_MIGRATE, cs, 1);
-> >               break;
-> >       default:
-> >               retval =3D -EINVAL;
->
-> I would prefer to temporarily make is_memory_migrate() helper return
-> false by also checking an internal variable, for example, instead of
-> messing with the cpuset flags.
->
+Stanislav Fomichev wrote:
+> Calling `PACKET_ADD_MEMBERSHIP` on an ops-locked device can trigger
+> the `NETDEV_UNREGISTER` notifier,
 
-Sounds reasonable, thanks for the feedback. I'll give it a try later.
+This made it sound to me as if the notifier is called as a result of
+the setsockopt.
 
-> Cheers,
-> Longman
->
+If respinning, please rewrite to make clear that the two are
+independent events. The stack trace in the bug also makes clear
+that the notifier trigger is a device going away.
+
+> which may require disabling promiscuous
+> and/or allmulti mode. Both of these operations require acquiring the netdev
+> instance lock. Move the call to `packet_dev_mc` outside of the RCU critical
+> section.
+> 
+> Closes: https://syzkaller.appspot.com/bug?extid=b191b5ccad8d7a986286
+> Reported-by: syzbot+b191b5ccad8d7a986286@syzkaller.appspotmail.com
+> Fixes: ad7c7b2172c3 ("net: hold netdev instance lock during sysfs operations")
+> Signed-off-by: Stanislav Fomichev <stfomichev@gmail.com>
+> ---
+>  net/packet/af_packet.c | 20 +++++++++++++++-----
+>  net/packet/internal.h  |  1 +
+>  2 files changed, 16 insertions(+), 5 deletions(-)
+> 
+> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+> index d4dba06297c3..5a6132816b2e 100644
+> --- a/net/packet/af_packet.c
+> +++ b/net/packet/af_packet.c
+> @@ -3713,15 +3713,15 @@ static int packet_dev_mc(struct net_device *dev, struct packet_mclist *i,
+>  }
+>  
+>  static void packet_dev_mclist_delete(struct net_device *dev,
+> -				     struct packet_mclist **mlp)
+> +				     struct packet_mclist **mlp,
+> +				     struct list_head *list)
+>  {
+>  	struct packet_mclist *ml;
+>  
+>  	while ((ml = *mlp) != NULL) {
+>  		if (ml->ifindex == dev->ifindex) {
+> -			packet_dev_mc(dev, ml, -1);
+> +			list_add(&ml->remove_list, list);
+>  			*mlp = ml->next;
+> -			kfree(ml);
+>  		} else
+>  			mlp = &ml->next;
+>  	}
+> @@ -4233,9 +4233,11 @@ static int packet_getsockopt(struct socket *sock, int level, int optname,
+>  static int packet_notifier(struct notifier_block *this,
+>  			   unsigned long msg, void *ptr)
+>  {
+> -	struct sock *sk;
+>  	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
+>  	struct net *net = dev_net(dev);
+> +	struct packet_mclist *ml, *tmp;
+> +	LIST_HEAD(mclist);
+> +	struct sock *sk;
+>  
+>  	rcu_read_lock();
+>  	sk_for_each_rcu(sk, &net->packet.sklist) {
+> @@ -4244,7 +4246,8 @@ static int packet_notifier(struct notifier_block *this,
+>  		switch (msg) {
+>  		case NETDEV_UNREGISTER:
+>  			if (po->mclist)
+> -				packet_dev_mclist_delete(dev, &po->mclist);
+> +				packet_dev_mclist_delete(dev, &po->mclist,
+> +							 &mclist);
+>  			fallthrough;
+>  
+>  		case NETDEV_DOWN:
+> @@ -4277,6 +4280,13 @@ static int packet_notifier(struct notifier_block *this,
+>  		}
+>  	}
+>  	rcu_read_unlock();
+> +
+> +	/* packet_dev_mc might grab instance locks so can't run under rcu */
+> +	list_for_each_entry_safe(ml, tmp, &mclist, remove_list) {
+> +		packet_dev_mc(dev, ml, -1);
+> +		kfree(ml);
+> +	}
+> +
+
+Just verifying my understanding of the not entirely obvious locking:
+
+po->mclist modifications (add, del, flush, unregister) are all
+protected by the RTNL, not the RCU. The RCU only protects the sklist
+and by extension the sks on it. So moving the mclist operations out of
+the RCU is fine.
+
+The delayed operation on the mclist entry is still within the RTNL
+from unregister_netdevice_notifier. Which matter as it protects not
+only the list, but also the actual operations in packet_dev_mc, such
+as inc/dec on dev->promiscuity and associated dev_change_rx_flags.
+And new packet_mclist.remove_list too.
+
+>  	return NOTIFY_DONE;
+>  }
+>  
+> diff --git a/net/packet/internal.h b/net/packet/internal.h
+> index d5d70712007a..1e743d0316fd 100644
+> --- a/net/packet/internal.h
+> +++ b/net/packet/internal.h
+> @@ -11,6 +11,7 @@ struct packet_mclist {
+>  	unsigned short		type;
+>  	unsigned short		alen;
+>  	unsigned char		addr[MAX_ADDR_LEN];
+> +	struct list_head	remove_list;
+
+INIT_LIST_HEAD on alloc in packet_mc_add?
+
+>  };
+>  
+>  /* kbdq - kernel block descriptor queue */
+> -- 
+> 2.49.0
+> 
+
+
 
