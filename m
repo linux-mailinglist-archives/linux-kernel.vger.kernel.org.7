@@ -1,159 +1,96 @@
-Return-Path: <linux-kernel+bounces-657607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0FAABF680
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:45:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9429DABF682
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CAE51BA7A3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:45:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F1C71BA824C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF4D78F59;
-	Wed, 21 May 2025 13:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067124A21;
+	Wed, 21 May 2025 13:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWtJfAFz"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="jFXO8i7Z"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2530326AE4;
-	Wed, 21 May 2025 13:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3150F4A3C;
+	Wed, 21 May 2025 13:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747835133; cv=none; b=jtzlGd8+u1Rp/DGb2T9czOEMG8vgQdcFoukt8gBIKPuPuhziADkSvEasVSl9Ay/a32WFh0YnYrkBdCBvg3iaRssx++VjVDf37Y9Aduh0CE4hji2BCu4iQnJ8faAC44X7LuWkjgsOnPc21ICLdEyzkR4/2kUZkX/0rtav4xLXpUw=
+	t=1747835147; cv=none; b=lzxkvwg2UdMv+VB8dMCM7rwczy1B/gdmNwMicCb/1Rwq/GRlr752YQ+taPpT1yLWd0RgC0qoblJCzQL8EIz9M0wt95WT56oNtPJ0O3BU7UqEKTHn70J8gVnV5W7zrm7+2w9C5HnrUoCczRmi6f2aAsR/hRlrR9SwXXibmE4gvFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747835133; c=relaxed/simple;
-	bh=FxQfM36iuvDamyyfqC0jliSjTLRBVIUW69BqTmz6h/I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=txi4ULV+2X6ATJcdZBhd4vO877H6JYrivFWSWNYA8/TAR4zhlnbselkkDLsCZ2hnmoyfPfhQCXQH2bOgBMTCB6nmdtgFKL1BjcO1RDCOscV+Oaam/ahmIjTsDYWztT3yD3qP779hxu79wx5jLe7uKvz5AZg3OdM+wcgqJYrNx+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LWtJfAFz; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22e17b7173bso4483925ad.3;
-        Wed, 21 May 2025 06:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747835131; x=1748439931; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tqeO+b0MwZruALSzGBi/axWBZuamPPMaMT8p8zPZkxQ=;
-        b=LWtJfAFzyizp0o/hTSXBqwv1TcCzoYp6a8sPOqE1bWwaGam1/7nqGyoCdTij2boJnc
-         Y9X/cCFjohzpzsv3PVej2loMdZhUa8EuTRT1HgIoeDYQqLoct2YIZMvLmBjkQ2fbB8U6
-         njLRUNz5dJbp/OIw+Fsgr+CskB9p38wCrNjxmSXqsqJC+XQ98NnNhPe6y6yXQPqeGbVq
-         +t6Dfvx+woM97tFvcTnnGcUX6lGdgqLEf8flVXYtMltO4hnVHQisizf6DSkHm2ZYQn+e
-         yYwfgkC7YJEnQ9yl5fDysQXYvWmbZrN6Afq6OR8HvWpRReor0e/ZDMC3E8/QAtLFCQc4
-         SnrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747835131; x=1748439931;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tqeO+b0MwZruALSzGBi/axWBZuamPPMaMT8p8zPZkxQ=;
-        b=S5nZZ6Ljm2JhF8xr8ddMH1guRdSGjFy/c3P7V6yhaiXyKGz6deHQdXRpts54HqlTmS
-         NKqMq3+VvvrUDvTiJ3hj6a47Iy1/wTjLp4NOv52qkdiFYCVdNRaBiB5UwDDKofgOBgbK
-         1Dkv9qhmZ9MjhVQpcxFHVys3/9lLsr6D9nEcBjBR5PJeBo9+r0B2tLaLShzyFPqnFObc
-         UaqTKNdW+rUJgBFwxg7SUPv96/8IpV2afK/ERXAFKgh7HA+nUXYHAzvXOv6p4lJSAFut
-         wC+eA94D+Zb26kpSUSc4fVom/GcWvr6ejYCN8GIl6RsvfISbn8IZoKfcjAYG7/gNlQRs
-         ND7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUsoHA3pBHb4JIBVZmqLT45audQHSGnkQs2dBLa5ldgCaZpq7TFpCZQwhr2h1WwgNMXGhkl8p3Vuwb11rgqXm8=@vger.kernel.org, AJvYcCW9WC5OziFkUwclxKZVf6RVqUzEPu54O7CnJZja2l6jCei7miwrkJmNa43DNrMDDP2p07JDl3gp9t7kUGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxmk1vYJz9q411eycBVkJEGeVap3yZW/mvthvI2a7nnnzjciP34
-	vEJ6Vbn1Mh/zuHhPbiLPQBd3nTsMZvDkR9c1LWPTbjydpR3wU5h0Mr9aO5r0F3zmKp47X/rKO5f
-	i3iXy42lGSmbXL6V6w+AXM+UNwMylbjw=
-X-Gm-Gg: ASbGncv4h8bv6xkLtnLOVWMw8T7B9gOkytSFZzfMg1nw+aA+liuUZx3YzzxF0ABKP/q
-	tnRrzY0PFfTpFGDlPpIHo0VAi/YHo048y80HVxzw4t/S1adRQvhs3TBYFZ2abPq+aVyR4EByQlD
-	qG12zoWgVaEwSHf4hdwBZXnxoyDi8ZnuZl
-X-Google-Smtp-Source: AGHT+IEd6DsdwrSmmjCd7810ousDSSQK3PDaq3AuoW7wry1YdEav/d6efL+6DobgheFh5YsZPOOvlPQ1fuaqgwzW2gE=
-X-Received: by 2002:a17:903:24e:b0:22e:62da:2e58 with SMTP id
- d9443c01a7336-231d4526b5fmr115017765ad.10.1747835131225; Wed, 21 May 2025
- 06:45:31 -0700 (PDT)
+	s=arc-20240116; t=1747835147; c=relaxed/simple;
+	bh=hx9EAyMNBqoj/aG1NmgHhN/MjwuVyWn7maaU7B7ayuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kA9RZxQxGA3XG1xjX22OLgE2LZYvJ1XOVnu33SAZElrB99FoPv2qubPE6WMnK7b5CcrKXOLMZZY9O77tquv7Q8hhGjJadEWhir/8DPR1TpxBeBL1Q8tL3hzv1NMbiIub8CBBORLCkpdUREf8dr5vu8Px/2c3g9k0vV0fqgDl/ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=jFXO8i7Z; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1747835143;
+	bh=hx9EAyMNBqoj/aG1NmgHhN/MjwuVyWn7maaU7B7ayuU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jFXO8i7Z7jC48u8qWZRrNqVJtjA9N8sr2YcLKGWhMrWSQ/OPiJMB4j7B4/Rjebmu6
+	 ELu826BpMc18fIvPyzP/xXSMB4H5AY89zvvHmgb6SOKlZHVH+QDVneBWd9ccIhn1IY
+	 lcf8qIuSr/PNo7aYbvSV5K1SX+BfgjWp32wuGUOY=
+Date: Wed, 21 May 2025 15:45:42 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/9] tools/nolibc: move ioctl() to sys/ioctl.h
+Message-ID: <198bf1a8-98d0-4693-a4cf-234cad728c9b@t-8ch.de>
+References: <20250515-nolibc-sys-v1-0-74f82eea3b59@weissschuh.net>
+ <20250515-nolibc-sys-v1-1-74f82eea3b59@weissschuh.net>
+ <eda3af4a-8dfe-4f82-a934-2d0256b754e2@sirena.org.uk>
+ <89bb5a3e-dd6c-475d-9c5d-0bd1595be735@t-8ch.de>
+ <744a1aa8-1efc-4c20-b45e-070fc038f6e8@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325184309.97170-1-ojeda@kernel.org>
-In-Reply-To: <20250325184309.97170-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 21 May 2025 15:45:18 +0200
-X-Gm-Features: AX0GCFurjaXVVR2SMph-zlE4anDutDZ-hG_2Vo7FkceNywf_0ew3Zm4BUxeccDQ
-Message-ID: <CANiq72nDtkpC6zKLT3dNH-u8uUXRqTGpS+GPotOrSV=pNR-39A@mail.gmail.com>
-Subject: Re: [PATCH] rust: workaround `bindgen` issue with forward references
- to `enum` types
-To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <744a1aa8-1efc-4c20-b45e-070fc038f6e8@sirena.org.uk>
 
-On Tue, Mar 25, 2025 at 7:43=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> `bindgen` currently generates the wrong type for an `enum` when there
-> is a forward reference to it. For instance:
->
->     enum E;
->     enum E { A };
->
-> generates:
->
->     pub const E_A: E =3D 0;
->     pub type E =3D i32;
->
-> instead of the expected:
->
->     pub const E_A: E =3D 0;
->     pub type E =3D ffi::c_uint;
->
-> The issue was reported to upstream `bindgen` [1].
->
-> Now, both GCC and Clang support silently these forward references to
-> `enum` types, unless `-Wpedantic` is passed, and it turns out that some
-> headers in the kernel depend on them.
->
-> Thus, depending on how the headers are included, which in turn may depend
-> on the kernel configuration or the architecture, we may get a different
-> type on the Rust side for a given C `enum`.
->
-> That can be quite confusing, to say the least, especially since
-> developers may only notice issues when building for other architectures
-> like in [2]. In particular, they may end up forcing a cast and adding
-> an `#[allow(clippy::unnecessary_cast)]` like it was done in commit
-> 94e05a66ea3e ("rust: hrtimer: allow timer restart from timer handler"),
-> which isn't great.
->
-> Instead, let's have a section at the top of our `bindings_helper.h` that
-> `#include`s the headers with the affected types -- hopefully there are
-> not many cases and there is a single ordering that covers all cases.
->
-> This allows us to remove the cast and the `#[allow]`, thus keeping the
-> correct code in the source files. When the issue gets resolved in upstrea=
-m
-> `bindgen` (and we update our minimum `bindgen` version), we can easily
-> remove this section at the top.
->
-> Link: https://github.com/rust-lang/rust-bindgen/issues/3179 [1]
-> Link: https://lore.kernel.org/rust-for-linux/87tt7md1s6.fsf@kernel.org/ [=
-2]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+On 2025-05-21 14:22:30+0100, Mark Brown wrote:
+> On Wed, May 21, 2025 at 03:08:05PM +0200, Thomas Weißschuh wrote:
+> > On 2025-05-21 14:03:37+0100, Mark Brown wrote:
+> 
+> > > > +/* make sure to include all global symbols */
+> > > > +#include "nolibc.h"
+> 
+> > > assumes that the nolibc include directory is in the include path, or
+> > > otherwise set up with a -I path, previously you just had to include
+> > > nolibc.h with the includes that are there working due to being relative
+> > > to nolibc.h.  I'll send a patch for the arm64 tests.
+> 
+> > Thanks for the report.
+> > Inside sys/ this should actually be #include "../nolibc.h".
+> > I'll doublecheck all of sys/ and see why our new header checks didn't
+> > catch this.
+> 
+> Ah, you expect what's currently there to work - good.  I noticed that
+> the vDSO tests had a -I for the nolibc directory which made me think it
+> was expected that it be there, it's the only user on most arches.
 
-Andreas: are you OK with something along the lines of this change?
+The -I is useful to compile applications without guarding the system
+includes with #ifndef NOLIBC.
 
-If you don't have anything against it, then I think it would be nice
-to put it in, mainly so that the issue is documented, and so that we
-don't forget about this possible workaround. Plus it removes an
-`allow` and a cast, which is also nice.
+What do I have to do to cross-compile these selftests?
+I get various compiler errors.
+Or you could run your testsuite with the new nolibc for-next branch
+which should be fixed now.
 
-The only downside, as far as I know, is that the workaround cannot be
-always applied (see my sibling reply), but at least for this case, it
-can be.
+<snip>
 
-Thanks!
 
-Cheers,
-Miguel
+Thomas
 
