@@ -1,829 +1,207 @@
-Return-Path: <linux-kernel+bounces-658027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DEDABFBB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:55:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D69D7ABFBB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03D40500F5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:55:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0298A1BC5416
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788F7272E42;
-	Wed, 21 May 2025 16:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180A4264A96;
+	Wed, 21 May 2025 16:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2FFBY9qA"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HFC49Mrf"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184CC259C8A
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 16:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A91C23A987
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 16:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747846429; cv=none; b=cow2f9YjeVkpFpRD+nH/0iBzItmal00qcRVyBiWqcBDkNOEfjUhWtkp7oh+FlhqI0V+J1LeljwGoL85r3xNNrE2xToTS5N2Peb5wgQ53sQ8pXkMTOQ2sleEEp58StKwidrLKFzbHqNLJ585Y10g5FIie0gNhuNYCYui5Gmy3MGY=
+	t=1747846427; cv=none; b=TuQhYFrlQ89l33jrzO/d3JAoJB+eSTFPzwKpSELZUsECVvaZbK5vCQDj42WN9FCgOTfO1AM/iUgYIuVUM0L995CF7lsWazvR0fu5HpfjKEgbGaqDsOS15DLB/S5sQHXqRR7y9GjG3JKtUtwuYGrLtdygkpx/Ju2rtazrrjQSDoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747846429; c=relaxed/simple;
-	bh=ZaTi6j4OcQSrkEYrxM4hgnOHlrd5NzwZpNWmSakOa/g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=sMSXqK4yCcC+Bx3/rTUFEQQ0Jvo7UorVlqasqschBNs9W0MIa55qRt4FGmJPpn6rXHIFoY4+l8FJR7NqFuK/2GKsGfSHN0BJmYkA4PxP+W2AeR520g4o+qz1nqGavlExtKQ5b0TrblgSHCG1/VzAofwZ5Me2LgO4+Q9k2NMGwnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2FFBY9qA; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1747846427; c=relaxed/simple;
+	bh=qHopfEyt81fEf/y8iQKjmcmiqXO3gugN6MkVzAFAIFE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H2JV7d6w0EDoxQ300DPUJUBG2bMSwL3cXa78hQDPX59hBpigWxP9BlsOOHR7JIkI86Va29oIVamuUPHHtVneognrcvUfTqQCTCaf4eAmexpjwenP32T2lQogU1QsHnEBWzsnXhDJT9nOwHul/X65SkWeQTfIQVi8tRUi/ZxZw8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HFC49Mrf; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-23202dacd94so53385075ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 09:53:44 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-601a67c6e61so35636a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 09:53:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747846424; x=1748451224; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6Oi3XdC5EMQps4EhmMRtE1S9hidSkU0ZG20BTCDk/Sw=;
-        b=2FFBY9qAC+3ws05BltdxYe5u5cZPrSAlf2DdWS6xUVvxfB4KYch9Jx51TCqlkG+XHN
-         F1E7e//Ek4+uQfh14J0cmZhMO5d/qXUnLGaQqamL1P31P9rEXSias7E5xpgrNoVakMqY
-         pkGDP+Lv7WHNlb8/VvvmKQoaUrSgVX56EgpwIFQnAXyvuphoNJ6kG704iIEMZ5zi9Xk/
-         R8d5r5RLW1MIljQFfWDtZxBXmbdPwuWtYHIjApF9qjVNuDAqSFDf1r0xxfnX8cOVqHVx
-         DZwMb0hcvFCdY8/D8zLMO7Wg0pPKvrH+sb9hauJ9owy6EWfN+spBwVvFaQ4izId3W0Hv
-         7tlA==
+        d=google.com; s=20230601; t=1747846423; x=1748451223; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gt2BJWIq8eUeGltZpFipvyHVPXsIRm7HCk10rPc4uGk=;
+        b=HFC49Mrff31yVR0qUjGCthAU5kSCfIb0Fccpe2r41ocl4EnK8Jl8wYFquNegHhMDqV
+         INI6PELFlj9l5BzpZ3sKnsrVUa94Y2NInVoED0torQvSHesYnUZZtlB2ucvCinTHdefd
+         mKLkNv7FO34PwoGs90odDLBtCIKSxWAe3QkFWtVQnoQEiUev0CAIfr4S+0XVx+Hxeu6w
+         Qu+TW4FkUEBdArLBE8oEXPJHKC1VUSY5EW/a2MXreezOhWk65w7wiqhsqZn8WI4xnUSg
+         Q7ubnxSY3K8dAbYzMBQY5A/fZwGjhE/G8tuowf5VgckDPeI2ueFLsYVmx9J6itLxAapr
+         alFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747846424; x=1748451224;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Oi3XdC5EMQps4EhmMRtE1S9hidSkU0ZG20BTCDk/Sw=;
-        b=mm6FuelmVLQ9vxc5RPBkFyoQMvKqY9ax4Xh8ERe5TbM1e1rKm4SsRShQWVFYf67Nso
-         TpCgtNOaxxnhZgD0SCJrZwvSBbiAKOzo/5xiT79a0BDUiTfwTjM43pVlxqafPHaFeH6X
-         ik0H4xyWbz7JEZM0M5iXBt2iRNCGfJCPO5AA6+7o+aIyDNPJblgRS3cbIfqwOm5Q/sVA
-         LeYEfFa51gwq4VOoVoQdToiQKolGmdFY2/I7tznb3fNhwuH0OnbRx/RJT3tZNjO2E9xK
-         p7ZR2gHT+TS5UBMxVbwKSIjq8+6gxX5a0BAFoprBfwPP/KM3MUDsHoI1H63DDfjPYrCA
-         3Txg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFkkrtcAxMi9ppjYYSRdkK95op2alrJHcBSvSqkDoFOqFgRGfGYJkVVnDZudW6GE1U/3QAo9FvpSszVk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmLR2PS5OljvpU40Za6ph5D/nU5TvorEPC+i0qxCl3ygoNWWrT
-	L1rjje+J2Dxz/z0zSfA9E9rZlUzZsq6mIvPBK/udt9Kto5Orc5LrRRGYQir3rdF7tV4T2u1jMcR
-	gGogL/pyHtA==
-X-Google-Smtp-Source: AGHT+IEnBkr9BnkJcD8YmkDfxFooGZfdTJRvdTmrNhWWK18mG78Bbm1fTJ+G7rZ3qlvj9/B+S7WMLDulUcj+
-X-Received: from plht11.prod.google.com ([2002:a17:903:2f0b:b0:220:d81a:8975])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2303:b0:223:52fc:a15a
- with SMTP id d9443c01a7336-231d452d4ddmr299326845ad.33.1747846423634; Wed, 21
- May 2025 09:53:43 -0700 (PDT)
-Date: Wed, 21 May 2025 09:53:17 -0700
-In-Reply-To: <20250521165317.713463-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1747846423; x=1748451223;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gt2BJWIq8eUeGltZpFipvyHVPXsIRm7HCk10rPc4uGk=;
+        b=W83kaCre5vCi5wuAgd3S8EIoEb7/pVvStyZiHVuY1c/Mszt6FkPkf15vSPsdGxqOeb
+         gYBNxI17t8AeQLFEOGsPMEtXgvUp73XRvTpgd3i2jzrKRoz8dHC3iGAd4SRONDgxtQ/g
+         iQTSf3HphFsO2HMwJ/G9PLNP6Q87CYAt1PTSqMdcy/Nu64qhDgbyTXGYbKtFSkwF7DOi
+         KYENbbSXhgCYZDPuYLuHXCrZ9C4nvJTbDibMB42GwdDq1NdT4WhfEDZKBdJlmKu7CIEn
+         ffSTnViOSykhtH5uVjvBX56oDR5W55C3j/PkTb0prEUSettwyJl9GZi+fJR6sStq1Pzy
+         3Grw==
+X-Forwarded-Encrypted: i=1; AJvYcCVoNcIOv41SBMqYHxpuM6rsBfOIqaQbPW1DTfpafH+UPVw6LlILjFKz90gNX1664L6ARtiBD5SXAZXL5hA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5LWq22wWs9D6b1IYYbtCNZT+bWakWnb8vAF2KwaLbyWqJagt2
+	YRGdMLi4ePnBmLhzOlU9EVakxIp+EjDiZxeaEyyD+Yt1eoFFuwBe00XsmdnA5sR2tmVS33XOEJo
+	GD2PBfVZwJLjrEQzW4nfNcvoDSmGr/Pwooudc76Vf
+X-Gm-Gg: ASbGncvAQK8ucfI6h+QujEepnm1dD6uxpgKUdQHy/fklXEVqKwAQTBxhcqtqJrnDRj7
+	gU58Fzr3S9bqhQ8z30xOGTRFu003vU8sPxT/hmCNCpACyCK0khm4jnG1nHZc4Gd2cTFEcmTjWjv
+	zAFlAkTfpb26hX7NDIyxCX3QrhpT5gT0n0U9dH0NIRXdYAczbhxembGhERIniZvYJ01/sBJVEOw
+	Q==
+X-Google-Smtp-Source: AGHT+IEk1qK5pfCS9TiWiAJqcWHO+q4BDVFceePf5Pmj4GkZsf/xtSVgoYl2UGzFjXqYDQsYvRGQjsnQ0SmoCtpQU/I=
+X-Received: by 2002:aa7:cfc9:0:b0:602:3bf:ce73 with SMTP id
+ 4fb4d7f45d1cf-60203bfcf5fmr309381a12.1.1747846423421; Wed, 21 May 2025
+ 09:53:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250521165317.713463-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.1143.g0be31eac6b-goog
-Message-ID: <20250521165317.713463-4-irogers@google.com>
-Subject: [PATCH v3 3/3] perf sort: Use perf_env to set arch sort keys and header
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Ravi Bangoria <ravi.bangoria@amd.com>, Leo Yan <leo.yan@arm.com>, 
-	Yujie Liu <yujie.liu@intel.com>, Graham Woodward <graham.woodward@arm.com>, 
-	Howard Chu <howardchu95@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Andi Kleen <ak@linux.intel.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Matt Fleming <matt@readmodwrite.com>, 
-	Chun-Tse Shao <ctshao@google.com>, Ben Gainey <ben.gainey@arm.com>, Song Liu <song@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	Kajol Jain <kjain@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+MIME-Version: 1.0
+References: <20250507205504.2017028-1-xur@google.com> <a2db22a3-6d66-481d-9432-b38b83e17183@cachyos.org>
+ <CAF1bQ=Sh+N1ifCHK-15zeqt1tyzFtr-+nEJmSjEJOgfXgK9ufg@mail.gmail.com>
+In-Reply-To: <CAF1bQ=Sh+N1ifCHK-15zeqt1tyzFtr-+nEJmSjEJOgfXgK9ufg@mail.gmail.com>
+From: Rong Xu <xur@google.com>
+Date: Wed, 21 May 2025 09:53:30 -0700
+X-Gm-Features: AX0GCFseOE_jhX8D3KglAvvruKoN_xZx_2C0u0wtd6LAGK11cpGwHfJ0lJ57Nkg
+Message-ID: <CAF1bQ=TQSQ75qCyQYegW7kq8WdyB-SNViraOuBvgGgAyUPS54Q@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: distributed build support for Clang ThinLTO
+To: Eric Naim <dnaim@cachyos.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Alice Ryhl <aliceryhl@google.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
+	Rafael Aquini <aquini@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Stafford Horne <shorne@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Teresa Johnson <tejohnson@google.com>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Previously arch_support_sort_key and arch_perf_header_entry used a
-weak symbol to compile as appropriate for x86 and powerpc. A
-limitation to this is that the handling of a data file could vary in
-cross-platform development. Change to using the perf_env of the
-current session to determine the architecture kind and set the sort
-key and header entries as appropriate.
+On Wed, May 21, 2025 at 9:40=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+>
+> On Mon, May 19, 2025 at 10:22=E2=80=AFPM Eric Naim <dnaim@cachyos.org> wr=
+ote:
+> >
+> > Hi Rong Xu,
+> >
+> > On 5/8/25 04:55, xur@google.com wrote:
+> > > From: Rong Xu <xur@google.com>
+> > >
+> > > Add distributed ThinLTO build support for the Linux kernel.
+> > > This new mode offers several advantages: (1) Increased
+> > > flexibility in handling user-specified build options.
+> > > (2) Improved user-friendliness for developers. (3) Greater
+> > > convenience for integrating with objtool and livepatch.
+> > >
+> > > Note that "distributed" in this context refers to a term
+> > > that differentiates in-process ThinLTO builds by invoking
+> > > backend compilation through the linker, not necessarily
+> > > building in distributed environments.
+> > >
+> > > Distributed ThinLTO is enabled via the
+> > > `CONFIG_LTO_CLANG_THIN_DIST` Kconfig option. For example:
+> > >  > make LLVM=3D1 defconfig
+> > >  > scripts/config -e LTO_CLANG_THIN_DIST
+> > >  > make LLVM=3D1 oldconfig
+> > >  > make LLVM=3D1 vmlinux -j <..>
+> > >
+> > > The implementation changes the top-level Makefile with a
+> > > macro for generating `vmlinux.o` for distributed ThinLTO
+> > > builds. It uses the existing Kbuild infrastructure to
+> > > perform two recursive passes through the subdirectories.
+> > > The first pass generates LLVM IR object files, similar to
+> > > in-process ThinLTO. Following the thin-link stage, a second
+> > > pass compiles these IR files into the final native object
+> > > files. The build rules and actions for this two-pass process
+> > > are primarily implemented in `scripts/Makefile.build`.
+> > >
+> > > Currently, this patch focuses on building the main kernel
+> > > image (`vmlinux`) only. Support for building kernel modules
+> > > using this method is planned for a subsequent patch.
+> > >
+> > > Tested on the following arch: x86, arm64, loongarch, and
+> > > riscv.
+> > >
+> > > Some implementation details can be found here:
+> > > https://discourse.llvm.org/t/rfc-distributed-thinlto-build-for-kernel=
+/85934
+> > >
+> > > Signed-off-by: Rong Xu <xur@google.com>
+> > > ---
+> > > Changelog since v1:
+> > > - Updated the description in arch/Kconfig based on feedback
+> > >   from Nathan Chancellor
+> > > - Revised file suffixes: .final_o -> .o.thinlto.native, and
+> > >   .final_a -> .a.thinlto.native
+> > > - Updated list of ignored files in .gitignore
+> > > ---
+> > >  .gitignore                        |  2 ++
+> > >  MAINTAINERS                       |  5 +++
+> > >  Makefile                          | 40 ++++++++++++++++++++---
+> > >  arch/Kconfig                      | 19 +++++++++++
+> > >  scripts/Makefile.build            | 52 +++++++++++++++++++++++++++--=
+-
+> > >  scripts/Makefile.lib              |  7 +++-
+> > >  scripts/Makefile.vmlinux_o        | 16 +++++++---
+> > >  scripts/Makefile.vmlinux_thinlink | 53 +++++++++++++++++++++++++++++=
+++
+> > >  scripts/head-object-list.txt      |  1 +
+> > >  9 files changed, 180 insertions(+), 15 deletions(-)
+> > >  create mode 100644 scripts/Makefile.vmlinux_thinlink
+> > >
+> >
+> > I noticed that both Makefile.autofdo and Makefile.propeller add extra l=
+inker flags when building with ThinLTO. Did you miss updating that or is th=
+e omission there intentional?
+>
+> Thanks for catching this! One good aspect of distributed build mode is
+> that we no longer need the extra linker flags -- most of them are just
+> to pass the options to the BE compilation.
+> So this patch does not need these linker options.  But for the
+> Propeller build, we still need to pass one of the two profiles to the
+> final link, and I'll be sure to incorporate that into the patch.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/arch/powerpc/util/Build   |  1 -
- tools/perf/arch/powerpc/util/event.c | 34 ----------------
- tools/perf/arch/x86/util/event.c     | 19 ---------
- tools/perf/builtin-annotate.c        |  2 +-
- tools/perf/builtin-c2c.c             | 53 +++++++++++++-----------
- tools/perf/builtin-diff.c            |  2 +-
- tools/perf/builtin-report.c          |  2 +-
- tools/perf/builtin-top.c             | 16 ++++----
- tools/perf/tests/hists_cumulate.c    |  8 ++--
- tools/perf/tests/hists_filter.c      |  8 ++--
- tools/perf/tests/hists_link.c        |  8 ++--
- tools/perf/tests/hists_output.c      | 10 ++---
- tools/perf/util/event.h              |  3 --
- tools/perf/util/sort.c               | 61 ++++++++++++++++++++--------
- tools/perf/util/sort.h               |  5 ++-
- 15 files changed, 104 insertions(+), 128 deletions(-)
- delete mode 100644 tools/perf/arch/powerpc/util/event.c
+One clarification: We don't need to change scripts/Makefile.propeller
+as the link
+ordering profile is already passed to the final link under
+CLANG_PROPELLER_PROFILE_PREFIX.
 
-diff --git a/tools/perf/arch/powerpc/util/Build b/tools/perf/arch/powerpc/util/Build
-index ed82715080f9..fdd6a77a3432 100644
---- a/tools/perf/arch/powerpc/util/Build
-+++ b/tools/perf/arch/powerpc/util/Build
-@@ -5,7 +5,6 @@ perf-util-y += mem-events.o
- perf-util-y += pmu.o
- perf-util-y += sym-handling.o
- perf-util-y += evsel.o
--perf-util-y += event.o
- 
- perf-util-$(CONFIG_LIBDW) += skip-callchain-idx.o
- 
-diff --git a/tools/perf/arch/powerpc/util/event.c b/tools/perf/arch/powerpc/util/event.c
-deleted file mode 100644
-index 024ac8b54c33..000000000000
---- a/tools/perf/arch/powerpc/util/event.c
-+++ /dev/null
-@@ -1,34 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--#include <linux/types.h>
--#include <linux/string.h>
--#include <linux/zalloc.h>
--
--#include "../../../util/event.h"
--#include "../../../util/synthetic-events.h"
--#include "../../../util/machine.h"
--#include "../../../util/tool.h"
--#include "../../../util/map.h"
--#include "../../../util/debug.h"
--#include "../../../util/sample.h"
--
--const char *arch_perf_header_entry(const char *se_header)
--{
--	if (!strcmp(se_header, "Local INSTR Latency"))
--		return "Finish Cyc";
--	else if (!strcmp(se_header, "INSTR Latency"))
--		return "Global Finish_cyc";
--	else if (!strcmp(se_header, "Local Pipeline Stage Cycle"))
--		return "Dispatch Cyc";
--	else if (!strcmp(se_header, "Pipeline Stage Cycle"))
--		return "Global Dispatch_cyc";
--	return se_header;
--}
--
--int arch_support_sort_key(const char *sort_key)
--{
--	if (!strcmp(sort_key, "p_stage_cyc"))
--		return 1;
--	if (!strcmp(sort_key, "local_p_stage_cyc"))
--		return 1;
--	return 0;
--}
-diff --git a/tools/perf/arch/x86/util/event.c b/tools/perf/arch/x86/util/event.c
-index 576c1c36046c..3cd384317739 100644
---- a/tools/perf/arch/x86/util/event.c
-+++ b/tools/perf/arch/x86/util/event.c
-@@ -91,22 +91,3 @@ int perf_event__synthesize_extra_kmaps(const struct perf_tool *tool,
- }
- 
- #endif
--
--const char *arch_perf_header_entry(const char *se_header)
--{
--	if (!strcmp(se_header, "Local Pipeline Stage Cycle"))
--		return "Local Retire Latency";
--	else if (!strcmp(se_header, "Pipeline Stage Cycle"))
--		return "Retire Latency";
--
--	return se_header;
--}
--
--int arch_support_sort_key(const char *sort_key)
--{
--	if (!strcmp(sort_key, "p_stage_cyc"))
--		return 1;
--	if (!strcmp(sort_key, "local_p_stage_cyc"))
--		return 1;
--	return 0;
--}
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index 9833c2c82a2f..a2d41614ef5e 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -947,7 +947,7 @@ int cmd_annotate(int argc, const char **argv)
- 			annotate_opts.show_br_cntr = true;
- 	}
- 
--	if (setup_sorting(NULL) < 0)
-+	if (setup_sorting(/*evlist=*/NULL, &annotate.session->header.env) < 0)
- 		usage_with_options(annotate_usage, options);
- 
- 	ret = __cmd_annotate(&annotate);
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index e2e257bcc461..324368aabfa2 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -195,12 +195,14 @@ static struct hist_entry_ops c2c_entry_ops = {
- 
- static int c2c_hists__init(struct c2c_hists *hists,
- 			   const char *sort,
--			   int nr_header_lines);
-+			   int nr_header_lines,
-+			   struct perf_env *env);
- 
- static struct c2c_hists*
- he__get_c2c_hists(struct hist_entry *he,
- 		  const char *sort,
--		  int nr_header_lines)
-+		  int nr_header_lines,
-+		  struct perf_env *env)
- {
- 	struct c2c_hist_entry *c2c_he;
- 	struct c2c_hists *hists;
-@@ -214,7 +216,7 @@ he__get_c2c_hists(struct hist_entry *he,
- 	if (!hists)
- 		return NULL;
- 
--	ret = c2c_hists__init(hists, sort, nr_header_lines);
-+	ret = c2c_hists__init(hists, sort, nr_header_lines, env);
- 	if (ret) {
- 		free(hists);
- 		return NULL;
-@@ -350,7 +352,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
- 
- 		mi = mi_dup;
- 
--		c2c_hists = he__get_c2c_hists(he, c2c.cl_sort, 2);
-+		c2c_hists = he__get_c2c_hists(he, c2c.cl_sort, 2, machine->env);
- 		if (!c2c_hists)
- 			goto free_mi;
- 
-@@ -1966,7 +1968,8 @@ static struct c2c_fmt *get_format(const char *name)
- 	return c2c_fmt;
- }
- 
--static int c2c_hists__init_output(struct perf_hpp_list *hpp_list, char *name)
-+static int c2c_hists__init_output(struct perf_hpp_list *hpp_list, char *name,
-+				  struct perf_env *env __maybe_unused)
- {
- 	struct c2c_fmt *c2c_fmt = get_format(name);
- 	int level = 0;
-@@ -1980,14 +1983,14 @@ static int c2c_hists__init_output(struct perf_hpp_list *hpp_list, char *name)
- 	return 0;
- }
- 
--static int c2c_hists__init_sort(struct perf_hpp_list *hpp_list, char *name)
-+static int c2c_hists__init_sort(struct perf_hpp_list *hpp_list, char *name, struct perf_env *env)
- {
- 	struct c2c_fmt *c2c_fmt = get_format(name);
- 	struct c2c_dimension *dim;
- 
- 	if (!c2c_fmt) {
- 		reset_dimensions();
--		return sort_dimension__add(hpp_list, name, NULL, 0);
-+		return sort_dimension__add(hpp_list, name, /*evlist=*/NULL, env, /*level=*/0);
- 	}
- 
- 	dim = c2c_fmt->dim;
-@@ -2008,7 +2011,7 @@ static int c2c_hists__init_sort(struct perf_hpp_list *hpp_list, char *name)
- 										\
- 		for (tok = strtok_r((char *)_list, ", ", &tmp);			\
- 				tok; tok = strtok_r(NULL, ", ", &tmp)) {	\
--			ret = _fn(hpp_list, tok);				\
-+			ret = _fn(hpp_list, tok, env);				\
- 			if (ret == -EINVAL) {					\
- 				pr_err("Invalid --fields key: `%s'", tok);	\
- 				break;						\
-@@ -2021,7 +2024,8 @@ static int c2c_hists__init_sort(struct perf_hpp_list *hpp_list, char *name)
- 
- static int hpp_list__parse(struct perf_hpp_list *hpp_list,
- 			   const char *output_,
--			   const char *sort_)
-+			   const char *sort_,
-+			   struct perf_env *env)
- {
- 	char *output = output_ ? strdup(output_) : NULL;
- 	char *sort   = sort_   ? strdup(sort_) : NULL;
-@@ -2052,7 +2056,8 @@ static int hpp_list__parse(struct perf_hpp_list *hpp_list,
- 
- static int c2c_hists__init(struct c2c_hists *hists,
- 			   const char *sort,
--			   int nr_header_lines)
-+			   int nr_header_lines,
-+			   struct perf_env *env)
- {
- 	__hists__init(&hists->hists, &hists->list);
- 
-@@ -2066,15 +2071,16 @@ static int c2c_hists__init(struct c2c_hists *hists,
- 	/* Overload number of header lines.*/
- 	hists->list.nr_header_lines = nr_header_lines;
- 
--	return hpp_list__parse(&hists->list, NULL, sort);
-+	return hpp_list__parse(&hists->list, /*output=*/NULL, sort, env);
- }
- 
- static int c2c_hists__reinit(struct c2c_hists *c2c_hists,
- 			     const char *output,
--			     const char *sort)
-+			     const char *sort,
-+			     struct perf_env *env)
- {
- 	perf_hpp__reset_output_field(&c2c_hists->list);
--	return hpp_list__parse(&c2c_hists->list, output, sort);
-+	return hpp_list__parse(&c2c_hists->list, output, sort, env);
- }
- 
- #define DISPLAY_LINE_LIMIT  0.001
-@@ -2207,8 +2213,9 @@ static int filter_cb(struct hist_entry *he, void *arg __maybe_unused)
- 	return 0;
- }
- 
--static int resort_cl_cb(struct hist_entry *he, void *arg __maybe_unused)
-+static int resort_cl_cb(struct hist_entry *he, void *arg)
- {
-+	struct perf_env *env = arg;
- 	struct c2c_hist_entry *c2c_he;
- 	struct c2c_hists *c2c_hists;
- 	bool display = he__display(he, &c2c.shared_clines_stats);
-@@ -2222,7 +2229,7 @@ static int resort_cl_cb(struct hist_entry *he, void *arg __maybe_unused)
- 		c2c_he->cacheline_idx = idx++;
- 		calc_width(c2c_he);
- 
--		c2c_hists__reinit(c2c_hists, c2c.cl_output, c2c.cl_resort);
-+		c2c_hists__reinit(c2c_hists, c2c.cl_output, c2c.cl_resort, env);
- 
- 		hists__collapse_resort(&c2c_hists->hists, NULL);
- 		hists__output_resort_cb(&c2c_hists->hists, NULL, filter_cb);
-@@ -2333,7 +2340,7 @@ static int resort_shared_cl_cb(struct hist_entry *he, void *arg __maybe_unused)
- 	return 0;
- }
- 
--static int hists__iterate_cb(struct hists *hists, hists__resort_cb_t cb)
-+static int hists__iterate_cb(struct hists *hists, hists__resort_cb_t cb, void *arg)
- {
- 	struct rb_node *next = rb_first_cached(&hists->entries);
- 	int ret = 0;
-@@ -2342,7 +2349,7 @@ static int hists__iterate_cb(struct hists *hists, hists__resort_cb_t cb)
- 		struct hist_entry *he;
- 
- 		he = rb_entry(next, struct hist_entry, rb_node);
--		ret = cb(he, NULL);
-+		ret = cb(he, arg);
- 		if (ret)
- 			break;
- 		next = rb_next(&he->rb_node);
-@@ -2448,7 +2455,7 @@ static void print_cacheline(struct c2c_hists *c2c_hists,
- 	hists__fprintf(&c2c_hists->hists, false, 0, 0, 0, out, false);
- }
- 
--static void print_pareto(FILE *out)
-+static void print_pareto(FILE *out, struct perf_env *env)
- {
- 	struct perf_hpp_list hpp_list;
- 	struct rb_node *nd;
-@@ -2473,7 +2480,7 @@ static void print_pareto(FILE *out)
- 			    "dcacheline";
- 
- 	perf_hpp_list__init(&hpp_list);
--	ret = hpp_list__parse(&hpp_list, cl_output, NULL);
-+	ret = hpp_list__parse(&hpp_list, cl_output, /*evlist=*/NULL, env);
- 
- 	if (WARN_ONCE(ret, "failed to setup sort entries\n"))
- 		return;
-@@ -2538,7 +2545,7 @@ static void perf_c2c__hists_fprintf(FILE *out, struct perf_session *session)
- 	fprintf(out, "=================================================\n");
- 	fprintf(out, "#\n");
- 
--	print_pareto(out);
-+	print_pareto(out, &session->header.env);
- }
- 
- #ifdef HAVE_SLANG_SUPPORT
-@@ -3095,7 +3102,7 @@ static int perf_c2c__report(int argc, const char **argv)
- 		goto out_session;
- 	}
- 
--	err = c2c_hists__init(&c2c.hists, "dcacheline", 2);
-+	err = c2c_hists__init(&c2c.hists, "dcacheline", 2, &session->header.env);
- 	if (err) {
- 		pr_debug("Failed to initialize hists\n");
- 		goto out_session;
-@@ -3179,13 +3186,13 @@ static int perf_c2c__report(int argc, const char **argv)
- 	else if (c2c.display == DISPLAY_SNP_PEER)
- 		sort_str = "tot_peer";
- 
--	c2c_hists__reinit(&c2c.hists, output_str, sort_str);
-+	c2c_hists__reinit(&c2c.hists, output_str, sort_str, &session->header.env);
- 
- 	ui_progress__init(&prog, c2c.hists.hists.nr_entries, "Sorting...");
- 
- 	hists__collapse_resort(&c2c.hists.hists, NULL);
- 	hists__output_resort_cb(&c2c.hists.hists, &prog, resort_shared_cl_cb);
--	hists__iterate_cb(&c2c.hists.hists, resort_cl_cb);
-+	hists__iterate_cb(&c2c.hists.hists, resort_cl_cb, &session->header.env);
- 
- 	ui_progress__finish();
- 
-diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
-index ae490d58af92..f6735cf02329 100644
---- a/tools/perf/builtin-diff.c
-+++ b/tools/perf/builtin-diff.c
-@@ -2003,7 +2003,7 @@ int cmd_diff(int argc, const char **argv)
- 		sort__mode = SORT_MODE__DIFF;
- 	}
- 
--	if (setup_sorting(NULL) < 0)
-+	if (setup_sorting(/*evlist=*/NULL, &data__files[0].session->header.env) < 0)
- 		usage_with_options(diff_usage, options);
- 
- 	setup_pager();
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index f0299c7ee025..8be6e7c3bd22 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -1776,7 +1776,7 @@ int cmd_report(int argc, const char **argv)
- 	}
- 
- 	if ((last_key != K_SWITCH_INPUT_DATA && last_key != K_RELOAD) &&
--	    (setup_sorting(session->evlist) < 0)) {
-+	    (setup_sorting(session->evlist, &session->header.env) < 0)) {
- 		if (sort_order)
- 			parse_options_usage(report_usage, options, "s", 1);
- 		if (field_order)
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 7b6cde87d2af..13ef0d188a96 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1747,7 +1747,14 @@ int cmd_top(int argc, const char **argv)
- 
- 	setup_browser(false);
- 
--	if (setup_sorting(top.evlist) < 0) {
-+	top.session = perf_session__new(/*data=*/NULL, /*tool=*/NULL);
-+	if (IS_ERR(top.session)) {
-+		status = PTR_ERR(top.session);
-+		top.session = NULL;
-+		goto out_delete_evlist;
-+	}
-+
-+	if (setup_sorting(top.evlist, &top.session->header.env) < 0) {
- 		if (sort_order)
- 			parse_options_usage(top_usage, options, "s", 1);
- 		if (field_order)
-@@ -1820,13 +1827,6 @@ int cmd_top(int argc, const char **argv)
- 		signal(SIGWINCH, winch_sig);
- 	}
- 
--	top.session = perf_session__new(NULL, NULL);
--	if (IS_ERR(top.session)) {
--		status = PTR_ERR(top.session);
--		top.session = NULL;
--		goto out_delete_evlist;
--	}
--
- 	if (!evlist__needs_bpf_sb_event(top.evlist))
- 		top.record_opts.no_bpf_event = true;
- 
-diff --git a/tools/perf/tests/hists_cumulate.c b/tools/perf/tests/hists_cumulate.c
-index 1e0f5a310fd5..3eb9ef8d7ec6 100644
---- a/tools/perf/tests/hists_cumulate.c
-+++ b/tools/perf/tests/hists_cumulate.c
-@@ -295,7 +295,7 @@ static int test1(struct evsel *evsel, struct machine *machine)
- 	symbol_conf.cumulate_callchain = false;
- 	evsel__reset_sample_bit(evsel, CALLCHAIN);
- 
--	setup_sorting(NULL);
-+	setup_sorting(/*evlist=*/NULL, machine->env);
- 	callchain_register_param(&callchain_param);
- 
- 	err = add_hist_entries(hists, machine);
-@@ -442,7 +442,7 @@ static int test2(struct evsel *evsel, struct machine *machine)
- 	symbol_conf.cumulate_callchain = false;
- 	evsel__set_sample_bit(evsel, CALLCHAIN);
- 
--	setup_sorting(NULL);
-+	setup_sorting(/*evlist=*/NULL, machine->env);
- 	callchain_register_param(&callchain_param);
- 
- 	err = add_hist_entries(hists, machine);
-@@ -500,7 +500,7 @@ static int test3(struct evsel *evsel, struct machine *machine)
- 	symbol_conf.cumulate_callchain = true;
- 	evsel__reset_sample_bit(evsel, CALLCHAIN);
- 
--	setup_sorting(NULL);
-+	setup_sorting(/*evlist=*/NULL, machine->env);
- 	callchain_register_param(&callchain_param);
- 
- 	err = add_hist_entries(hists, machine);
-@@ -684,7 +684,7 @@ static int test4(struct evsel *evsel, struct machine *machine)
- 	symbol_conf.cumulate_callchain = true;
- 	evsel__set_sample_bit(evsel, CALLCHAIN);
- 
--	setup_sorting(NULL);
-+	setup_sorting(/*evlist=*/NULL, machine->env);
- 
- 	callchain_param = callchain_param_default;
- 	callchain_register_param(&callchain_param);
-diff --git a/tools/perf/tests/hists_filter.c b/tools/perf/tests/hists_filter.c
-index 4b2e4f2fbe48..1cebd20cc91c 100644
---- a/tools/perf/tests/hists_filter.c
-+++ b/tools/perf/tests/hists_filter.c
-@@ -131,10 +131,6 @@ static int test__hists_filter(struct test_suite *test __maybe_unused, int subtes
- 		goto out;
- 	err = TEST_FAIL;
- 
--	/* default sort order (comm,dso,sym) will be used */
--	if (setup_sorting(NULL) < 0)
--		goto out;
--
- 	machines__init(&machines);
- 
- 	/* setup threads/dso/map/symbols also */
-@@ -145,6 +141,10 @@ static int test__hists_filter(struct test_suite *test __maybe_unused, int subtes
- 	if (verbose > 1)
- 		machine__fprintf(machine, stderr);
- 
-+	/* default sort order (comm,dso,sym) will be used */
-+	if (setup_sorting(evlist, machine->env) < 0)
-+		goto out;
-+
- 	/* process sample events */
- 	err = add_hist_entries(evlist, machine);
- 	if (err < 0)
-diff --git a/tools/perf/tests/hists_link.c b/tools/perf/tests/hists_link.c
-index 5b6f1e883466..996f5f0b3bd1 100644
---- a/tools/perf/tests/hists_link.c
-+++ b/tools/perf/tests/hists_link.c
-@@ -303,10 +303,6 @@ static int test__hists_link(struct test_suite *test __maybe_unused, int subtest
- 		goto out;
- 
- 	err = TEST_FAIL;
--	/* default sort order (comm,dso,sym) will be used */
--	if (setup_sorting(NULL) < 0)
--		goto out;
--
- 	machines__init(&machines);
- 
- 	/* setup threads/dso/map/symbols also */
-@@ -317,6 +313,10 @@ static int test__hists_link(struct test_suite *test __maybe_unused, int subtest
- 	if (verbose > 1)
- 		machine__fprintf(machine, stderr);
- 
-+	/* default sort order (comm,dso,sym) will be used */
-+	if (setup_sorting(evlist, machine->env) < 0)
-+		goto out;
-+
- 	/* process sample events */
- 	err = add_hist_entries(evlist, machine);
- 	if (err < 0)
-diff --git a/tools/perf/tests/hists_output.c b/tools/perf/tests/hists_output.c
-index 33b5cc8352a7..ee5ec8bda60e 100644
---- a/tools/perf/tests/hists_output.c
-+++ b/tools/perf/tests/hists_output.c
-@@ -146,7 +146,7 @@ static int test1(struct evsel *evsel, struct machine *machine)
- 	field_order = NULL;
- 	sort_order = NULL; /* equivalent to sort_order = "comm,dso,sym" */
- 
--	setup_sorting(NULL);
-+	setup_sorting(/*evlist=*/NULL, machine->env);
- 
- 	/*
- 	 * expected output:
-@@ -248,7 +248,7 @@ static int test2(struct evsel *evsel, struct machine *machine)
- 	field_order = "overhead,cpu";
- 	sort_order = "pid";
- 
--	setup_sorting(NULL);
-+	setup_sorting(/*evlist=*/NULL, machine->env);
- 
- 	/*
- 	 * expected output:
-@@ -304,7 +304,7 @@ static int test3(struct evsel *evsel, struct machine *machine)
- 	field_order = "comm,overhead,dso";
- 	sort_order = NULL;
- 
--	setup_sorting(NULL);
-+	setup_sorting(/*evlist=*/NULL, machine->env);
- 
- 	/*
- 	 * expected output:
-@@ -378,7 +378,7 @@ static int test4(struct evsel *evsel, struct machine *machine)
- 	field_order = "dso,sym,comm,overhead,dso";
- 	sort_order = "sym";
- 
--	setup_sorting(NULL);
-+	setup_sorting(/*evlist=*/NULL, machine->env);
- 
- 	/*
- 	 * expected output:
-@@ -480,7 +480,7 @@ static int test5(struct evsel *evsel, struct machine *machine)
- 	field_order = "cpu,pid,comm,dso,sym";
- 	sort_order = "dso,pid";
- 
--	setup_sorting(NULL);
-+	setup_sorting(/*evlist=*/NULL, machine->env);
- 
- 	/*
- 	 * expected output:
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index 119bce37f4fd..3b97a31736c5 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -390,9 +390,6 @@ extern unsigned int proc_map_timeout;
- #define PAGE_SIZE_NAME_LEN	32
- char *get_page_size_name(u64 size, char *str);
- 
--const char *arch_perf_header_entry(const char *se_header);
--int arch_support_sort_key(const char *sort_key);
--
- static inline bool perf_event_header__cpumode_is_guest(u8 cpumode)
- {
- 	return cpumode == PERF_RECORD_MISC_GUEST_KERNEL ||
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index dda4ef0b5a73..ccab10cd24a5 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -2526,19 +2526,44 @@ struct sort_dimension {
- 	int			taken;
- };
- 
--int __weak arch_support_sort_key(const char *sort_key __maybe_unused)
-+static int arch_support_sort_key(const char *sort_key, struct perf_env *env)
- {
-+	const char *arch = perf_env__arch(env);
-+
-+	if (!strcmp("x86", arch) || !strcmp("powerpc", arch)) {
-+		if (!strcmp(sort_key, "p_stage_cyc"))
-+			return 1;
-+		if (!strcmp(sort_key, "local_p_stage_cyc"))
-+			return 1;
-+	}
- 	return 0;
- }
- 
--const char * __weak arch_perf_header_entry(const char *se_header)
--{
-+static const char *arch_perf_header_entry(const char *se_header, struct perf_env *env)
-+{
-+	const char *arch = perf_env__arch(env);
-+
-+	if (!strcmp("x86", arch)) {
-+		if (!strcmp(se_header, "Local Pipeline Stage Cycle"))
-+			return "Local Retire Latency";
-+		else if (!strcmp(se_header, "Pipeline Stage Cycle"))
-+			return "Retire Latency";
-+	} else if (!strcmp("powerpc", arch)) {
-+		if (!strcmp(se_header, "Local INSTR Latency"))
-+			return "Finish Cyc";
-+		else if (!strcmp(se_header, "INSTR Latency"))
-+			return "Global Finish_cyc";
-+		else if (!strcmp(se_header, "Local Pipeline Stage Cycle"))
-+			return "Dispatch Cyc";
-+		else if (!strcmp(se_header, "Pipeline Stage Cycle"))
-+			return "Global Dispatch_cyc";
-+	}
- 	return se_header;
- }
- 
--static void sort_dimension_add_dynamic_header(struct sort_dimension *sd)
-+static void sort_dimension_add_dynamic_header(struct sort_dimension *sd, struct perf_env *env)
- {
--	sd->entry->se_header = arch_perf_header_entry(sd->entry->se_header);
-+	sd->entry->se_header = arch_perf_header_entry(sd->entry->se_header, env);
- }
- 
- #define DIM(d, n, func) [d] = { .name = n, .entry = &(func) }
-@@ -3590,7 +3615,7 @@ int hpp_dimension__add_output(unsigned col, bool implicit)
- }
- 
- int sort_dimension__add(struct perf_hpp_list *list, const char *tok,
--			struct evlist *evlist,
-+			struct evlist *evlist, struct perf_env *env,
- 			int level)
- {
- 	unsigned int i, j;
-@@ -3603,7 +3628,7 @@ int sort_dimension__add(struct perf_hpp_list *list, const char *tok,
- 	 */
- 	for (j = 0; j < ARRAY_SIZE(arch_specific_sort_keys); j++) {
- 		if (!strcmp(arch_specific_sort_keys[j], tok) &&
--				!arch_support_sort_key(tok)) {
-+		    !arch_support_sort_key(tok, env)) {
- 			return 0;
- 		}
- 	}
-@@ -3616,7 +3641,7 @@ int sort_dimension__add(struct perf_hpp_list *list, const char *tok,
- 
- 		for (j = 0; j < ARRAY_SIZE(dynamic_headers); j++) {
- 			if (sd->name && !strcmp(dynamic_headers[j], sd->name))
--				sort_dimension_add_dynamic_header(sd);
-+				sort_dimension_add_dynamic_header(sd, env);
- 		}
- 
- 		if (sd->entry == &sort_parent && parent_pattern) {
-@@ -3712,13 +3737,13 @@ int sort_dimension__add(struct perf_hpp_list *list, const char *tok,
- }
- 
- /* This should match with sort_dimension__add() above */
--static bool is_hpp_sort_key(const char *key)
-+static bool is_hpp_sort_key(const char *key, struct perf_env *env)
- {
- 	unsigned i;
- 
- 	for (i = 0; i < ARRAY_SIZE(arch_specific_sort_keys); i++) {
- 		if (!strcmp(arch_specific_sort_keys[i], key) &&
--		    !arch_support_sort_key(key)) {
-+		    !arch_support_sort_key(key, env)) {
- 			return false;
- 		}
- 	}
-@@ -3740,7 +3765,7 @@ static bool is_hpp_sort_key(const char *key)
- }
- 
- static int setup_sort_list(struct perf_hpp_list *list, char *str,
--			   struct evlist *evlist)
-+			   struct evlist *evlist, struct perf_env *env)
- {
- 	char *tmp, *tok;
- 	int ret = 0;
-@@ -3769,7 +3794,7 @@ static int setup_sort_list(struct perf_hpp_list *list, char *str,
- 		}
- 
- 		if (*tok) {
--			if (is_hpp_sort_key(tok)) {
-+			if (is_hpp_sort_key(tok, env)) {
- 				/* keep output (hpp) sort keys in the same level */
- 				if (prev_was_hpp) {
- 					bool next_same = (level == next_level);
-@@ -3782,7 +3807,7 @@ static int setup_sort_list(struct perf_hpp_list *list, char *str,
- 				prev_was_hpp = false;
- 			}
- 
--			ret = sort_dimension__add(list, tok, evlist, level);
-+			ret = sort_dimension__add(list, tok, evlist, env, level);
- 			if (ret == -EINVAL) {
- 				if (!cacheline_size() && !strncasecmp(tok, "dcacheline", strlen(tok)))
- 					ui__error("The \"dcacheline\" --sort key needs to know the cacheline size and it couldn't be determined on this system");
-@@ -3911,7 +3936,7 @@ static char *setup_overhead(char *keys)
- 	return keys;
- }
- 
--static int __setup_sorting(struct evlist *evlist)
-+static int __setup_sorting(struct evlist *evlist, struct perf_env *env)
- {
- 	char *str;
- 	const char *sort_keys;
-@@ -3951,7 +3976,7 @@ static int __setup_sorting(struct evlist *evlist)
- 		}
- 	}
- 
--	ret = setup_sort_list(&perf_hpp_list, str, evlist);
-+	ret = setup_sort_list(&perf_hpp_list, str, evlist, env);
- 
- 	free(str);
- 	return ret;
-@@ -4187,16 +4212,16 @@ static int __setup_output_field(void)
- 	return ret;
- }
- 
--int setup_sorting(struct evlist *evlist)
-+int setup_sorting(struct evlist *evlist, struct perf_env *env)
- {
- 	int err;
- 
--	err = __setup_sorting(evlist);
-+	err = __setup_sorting(evlist, env);
- 	if (err < 0)
- 		return err;
- 
- 	if (parent_pattern != default_parent_pattern) {
--		err = sort_dimension__add(&perf_hpp_list, "parent", evlist, -1);
-+		err = sort_dimension__add(&perf_hpp_list, "parent", evlist, env, -1);
- 		if (err < 0)
- 			return err;
- 	}
-diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
-index a742ab7f3c67..d7787958e06b 100644
---- a/tools/perf/util/sort.h
-+++ b/tools/perf/util/sort.h
-@@ -6,6 +6,7 @@
- #include "hist.h"
- 
- struct option;
-+struct perf_env;
- 
- extern regex_t parent_regex;
- extern const char *sort_order;
-@@ -130,7 +131,7 @@ extern struct sort_entry sort_thread;
- 
- struct evlist;
- struct tep_handle;
--int setup_sorting(struct evlist *evlist);
-+int setup_sorting(struct evlist *evlist, struct perf_env *env);
- int setup_output_field(void);
- void reset_output_field(void);
- void sort__setup_elide(FILE *fp);
-@@ -145,7 +146,7 @@ bool is_strict_order(const char *order);
- int hpp_dimension__add_output(unsigned col, bool implicit);
- void reset_dimensions(void);
- int sort_dimension__add(struct perf_hpp_list *list, const char *tok,
--			struct evlist *evlist,
-+			struct evlist *evlist, struct perf_env *env,
- 			int level);
- int output_field_add(struct perf_hpp_list *list, const char *tok, int *level);
- int64_t
--- 
-2.49.0.1143.g0be31eac6b-goog
+All the --lto-* options are only for in-process thinlto builds.
 
+>
+> However, I do need to make a change regarding file suffixes. The
+> is_kernel_obj macro in the Makefile.build uses the basename command.
+> The issue is that basename extracts everything before the last period
+> in a filename. So, for a file named "foo.o.thinlto.native", basename
+> returns "foo.o.thinlto", but kbuild expects it to return "foo".
+>
+> To fix this, I'll adjust the suffixes to ".a_thinlto_native" and
+> ".o_thinlto_native". I'll send the patch v3 shortly.
+>
+> Thanks,
+>
+> -Rong
+> >
+> > --
+> > Regards,
+> >   Eric
 
