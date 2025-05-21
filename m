@@ -1,187 +1,198 @@
-Return-Path: <linux-kernel+bounces-657225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17B5ABF142
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:17:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 845A2ABF12E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A43418848B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:17:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62AD81BA849F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E32B25D55D;
-	Wed, 21 May 2025 10:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323BB25C814;
+	Wed, 21 May 2025 10:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="L9Lrz04i"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mb5N++UC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F64B2472B4;
-	Wed, 21 May 2025 10:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D021E25B66E;
+	Wed, 21 May 2025 10:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747822581; cv=none; b=aMhwNx9ccpJtYRP+jwPsMNY6N//aNMUbzdoSopyoTfRm72n1aZVN4w266E6mSp+WXiaM/qUoOrepDwBIkkM7fugt3482N2XAVA8FvRq5KBjQwJ8jzHIWFVy52DpEdX21PxQ/BBEbjLtVW7jtUDCVderaWsY0NPgmuu53sy/hN/E=
+	t=1747822493; cv=none; b=g+VkFGaPWL0raCDOajrxYKOwQlolGid8qZqDZwaZoNES2l1FYcmDC/Tc/0Ug87wcZuaIXpjQHqjNIdEjVuU6h+axWxW4SVIXw3Z12o9NhlfOFYSy1X6iYSNQ6bMe5oolITReeX4YlBMCx4beXdfBODExgSRhj1pLXkV0l/tTCWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747822581; c=relaxed/simple;
-	bh=/k/a4J1ZQRWcPa1nH/vET9PeEU5HG1j8mbumv3W+SpQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=bt735nEqfocNsR/nTOfjlNDXNDBnJA9kzMLAQzFriSLW9AspyoJieypEoDMpsiEsyBEPTfFN6QzVnkzvIYnw9ubQcfE8CsKVTD1lhb7DZen95dsfRyFcg/ZjZw4s62iwrkMIkJZUQerGwKNkrIoRCHHFi2qRMO58NDNyDlJr+EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=L9Lrz04i; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9l708029646;
-	Wed, 21 May 2025 12:16:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	mzFSpe7hA7gsH1lLUxy+lsRSjB0E3F7awJ9YqjsAY4c=; b=L9Lrz04iPTNTANgU
-	AKn3QsTq5dcgGz47H847d41uhxzoY61n5IoRI0nrz4Co/AAerPLM1nXJl+Gka6Mc
-	xpuoprRQrzPLxjwWcHd9ywcv89aIa8MmPt+Uy52O5UtBbHAlI3XGZRunVv4vpF5T
-	zoLxA2NfNvHX6g/Qp+eIgppFFmFngRtaNv7H2b5BG3ao/A0ir6Ne6QOhq1UU4MwP
-	dMw0y5vMCCR+2d5Cce7ik92e1mbry3KRzGFu/EMaQIJG+1Tj1ohirKJRub5LVpxF
-	K19jwKBV9gMhfIVdLueGckH8Dmzc9uU7fB4TW8smZAsFyOZNmin++aI5/zBp2a03
-	Ni/JnA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46rwff3fgh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 12:16:04 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B70F940045;
-	Wed, 21 May 2025 12:14:55 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 14265BAEB1E;
-	Wed, 21 May 2025 12:14:10 +0200 (CEST)
-Received: from [10.48.81.67] (10.48.81.67) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 21 May
- 2025 12:14:09 +0200
-Message-ID: <929f6f1f-d47f-4954-8c8b-91c932127975@foss.st.com>
-Date: Wed, 21 May 2025 12:14:08 +0200
+	s=arc-20240116; t=1747822493; c=relaxed/simple;
+	bh=uekFzqz99LLjLHspdti1ivZB7yPyONTYgHYGnDu/3bU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=FpdMDmV1GFDRKk5L/TgcVr7XUoHuGYbss5U3NYkIp+NfpxH+9cx6yhgWttVqiUH0C6QGCfha/66kGrCBKJylUSeQgGKQ+nVJLmOaHQEnT3gnxU73mLGB95K2S1wKf2F0MPvsSazO+8PgqgaX5BZc63Gl1z2z9w8V15Blp6iVfY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mb5N++UC; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747822492; x=1779358492;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=uekFzqz99LLjLHspdti1ivZB7yPyONTYgHYGnDu/3bU=;
+  b=Mb5N++UC1gkRKkAVEyQSYphHI8lQDjVx6P+0UNmCLXysPiK4mtzvXweb
+   ko+i/eNRIOiwC5zoHIkfktaDa6+2uo/x1/O3BI7K7DQt58wTdOwHaP92P
+   7O1KqxNiMSquvjpneRkJX05G8VTnQQmNps5aBjd1rtyMzYuU3fpXDz27y
+   o6fWsOZE6jdru/mP50++F/yh/j12SxmYWsNCyaXu+szPwtRWS+S6Gyqr1
+   wY3M3KWL8V1b/3t+37f8CpVt53PmqCc40B4jkvXRXIpoc2e88wQZyWfsj
+   A4sPl9LU4dzVgVdEVZH1eSZNp72RyoPqxk7/IK8lpIkVUueNkTe6kLSEz
+   g==;
+X-CSE-ConnectionGUID: VAC3pOd8RN6r9OJ2QUOafw==
+X-CSE-MsgGUID: SJ9djBikR7eEiu5IUxA/dg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="53457026"
+X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
+   d="scan'208";a="53457026"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 03:14:51 -0700
+X-CSE-ConnectionGUID: Sryv4vM8T8e2lM82CkAKLw==
+X-CSE-MsgGUID: Lc+DeZb6Rtq4K8oH+oXTTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
+   d="scan'208";a="144735805"
+Received: from dalessan-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.221])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 03:14:42 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 21 May 2025 13:14:38 +0300 (EEST)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: linux-pci@vger.kernel.org, Jon Pan-Doh <pandoh@google.com>, 
+    Karolina Stolarek <karolina.stolarek@oracle.com>, 
+    Weinan Liu <wnliu@google.com>, 
+    Martin Petersen <martin.petersen@oracle.com>, 
+    Ben Fuller <ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>, 
+    Anil Agrawal <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>, 
+    Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>, 
+    Lukas Wunner <lukas@wunner.de>, 
+    Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+    Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
+    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+    Oliver O'Halloran <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>, 
+    Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>, 
+    Terry Bowman <terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>, 
+    Dave Jiang <dave.jiang@intel.com>, LKML <linux-kernel@vger.kernel.org>, 
+    linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v7 04/17] PCI/AER: Consolidate Error Source ID logging
+ in aer_isr_one_error_type()
+In-Reply-To: <20250520215047.1350603-5-helgaas@kernel.org>
+Message-ID: <e2e1c971-b85d-bef9-7d9b-e4126a9a9e77@linux.intel.com>
+References: <20250520215047.1350603-1-helgaas@kernel.org> <20250520215047.1350603-5-helgaas@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] pinctrl: stm32: Introduce HDP driver
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250520-hdp-upstream-v2-0-53f6b8b5ffc8@foss.st.com>
- <20250520-hdp-upstream-v2-2-53f6b8b5ffc8@foss.st.com>
- <CACRpkdZp6D-duzyVRLv5+PURb3Nu69njJx_33D-2aYS4DjmsoQ@mail.gmail.com>
- <94795d0c-0c73-41eb-ada6-9a01b2ac5892@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <94795d0c-0c73-41eb-ada6-9a01b2ac5892@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_03,2025-05-20_03,2025-03-28_01
+Content-Type: multipart/mixed; boundary="8323328-520110086-1747822478=:946"
 
-On 5/21/25 11:49, Clement LE GOFFIC wrote:
-> On 5/21/25 00:34, Linus Walleij wrote:
->> Hi Clément,
->>
->> thanks for your patch!
->>
->> On Tue, May 20, 2025 at 5:04 PM Clément Le Goffic
->> <clement.legoffic@foss.st.com> wrote:
->>
->>> This patch introduce the driver for the Hardware Debug Port available on
->>> STM32MP platforms. The HDP allows the observation of internal SoC
->>> signals by using multiplexers. Each HDP port can provide up to 16
->>> internal signals (one of them can be software controlled as a GPO).
->>>
->>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->>
->> (...)
->>> +static int stm32_hdp_gpio_get_direction(struct gpio_chip *gc, 
->>> unsigned int offset)
->>> +{
->>> +       return GPIO_LINE_DIRECTION_OUT;
->>> +}
->>
->> That's reasonable.
->>
->>> +static int stm32_hdp_gpio_get(struct gpio_chip *gc, unsigned int 
->>> offset)
->>> +{
->>> +       struct stm32_hdp *hdp = gpiochip_get_data(gc);
->>> +
->>> +       if (((hdp->mux_conf & HDP_MUX_MASK(offset))) == 
->>> HDP_MUX_GPOVAL(offset))
->>> +               return !!(readl_relaxed(hdp->base + HDP_GPOVAL) & 
->>> BIT(offset));
->>> +       else
->>> +               return !!(readl_relaxed(hdp->base + HDP_VAL) & 
->>> BIT(offset));
->>> +}
->>
->> ...but you still make it possible to read the value of the line
->> if it's not muxed as GPO?
->>
->> Should it not stm32_hdp_gpio_get_direction() return
->> GPIO_LINE_DIRECTION_IN if HDP_MUX_MASK(offset))) != 
->> HDP_MUX_GPOVAL(offset)?
-> 
-> Hi, oops, you're right !
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I've answer too quickly. All the pins are "out" in fact.
-The hardware is not able to read input signal.
-I wanted to implement a way to read the register value in any case by 
-leaving the line direction unchanged.
+--8323328-520110086-1747822478=:946
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
->>
->>> +static void stm32_hdp_gpio_set(struct gpio_chip *gc, unsigned int 
->>> offset, int value)
->>> +{
->>> +       struct stm32_hdp *hdp = gpiochip_get_data(gc);
->>> +
->>> +       if (value)
->>> +               writel_relaxed(BIT(offset), hdp->base + HDP_GPOSET);
->>> +       else
->>> +               writel_relaxed(BIT(offset), hdp->base + HDP_GPOCLR);
->>> +}
->>
->> Can't you just use GPIO_GENERIC for this?
->>
->> bgpio_init(gc, dev, ARRAY_SIZE(stm32_hdp_pins), // == 8
->>      hdp->base + HDP_VAL,
->>      hdp->base + HDP_GPOSET,
->>      hdp->base + HDP_GPOCLR,
->>      NULL,
->>      NULL,
->>      0);
->>
->> The default behaviour of GPIO MMIO is to read the output register
->> for the value if the line is in output mode.
->>
->> You may wanna override the .get_direction() callback after bgpio_init()
->> and before registering the chip, either with what you have or what
->> I described above.
-> 
-> I didn't know about it, I'll take a look and provide a V3.
-> 
-> Thank you,
-> 
-> Clément
-> 
->> Yours,
->> Linus Walleij
-> 
+On Tue, 20 May 2025, Bjorn Helgaas wrote:
 
+> From: Bjorn Helgaas <bhelgaas@google.com>
+>=20
+> Previously we decoded the AER Error Source ID in aer_isr_one_error_type()=
+,
+> then again in find_source_device() if we didn't find any devices with
+> errors logged in their AER Capabilities.
+>=20
+> Consolidate this so we only decode and log the Error Source ID once in
+> aer_isr_one_error_type().  Add a "details" parameter so we can add a note
+> when we didn't find any downstream devices with errors logged in their AE=
+R
+> Capability.
+>=20
+> This changes the dmesg logging when we found no devices with errors logge=
+d:
+>=20
+>   - pci 0000:00:01.0: AER: Correctable error message received from 0000:0=
+2:00.0
+>   - pci 0000:00:01.0: AER: found no error details for 0000:02:00.0
+>   + pci 0000:00:01.0: AER: Correctable error message received from 0000:0=
+2:00.0 (no details found)
+>=20
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  drivers/pci/pcie/aer.c | 22 +++++++++-------------
+>  1 file changed, 9 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index 568229288ca3..488a6408c7a8 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -733,16 +733,17 @@ void aer_print_error(struct pci_dev *dev, struct ae=
+r_err_info *info)
+>  =09=09=09info->severity, info->tlp_header_valid, &info->tlp);
+>  }
+> =20
+> -static void aer_print_port_info(struct pci_dev *dev, struct aer_err_info=
+ *info)
+> +static void aer_print_port_info(struct pci_dev *dev, struct aer_err_info=
+ *info,
+> +=09=09=09=09const char *details)
+>  {
+>  =09u8 bus =3D info->id >> 8;
+>  =09u8 devfn =3D info->id & 0xff;
+> =20
+> -=09pci_info(dev, "%s%s error message received from %04x:%02x:%02x.%d\n",
+> +=09pci_info(dev, "%s%s error message received from %04x:%02x:%02x.%d%s\n=
+",
+>  =09=09 info->multi_error_valid ? "Multiple " : "",
+>  =09=09 aer_error_severity_string[info->severity],
+>  =09=09 pci_domain_nr(dev->bus), bus, PCI_SLOT(devfn),
+> -=09=09 PCI_FUNC(devfn));
+> +=09=09 PCI_FUNC(devfn), details);
+>  }
+> =20
+>  #ifdef CONFIG_ACPI_APEI_PCIEAER
+> @@ -926,15 +927,8 @@ static bool find_source_device(struct pci_dev *paren=
+t,
+>  =09else
+>  =09=09pci_walk_bus(parent->subordinate, find_device_iter, e_info);
+> =20
+> -=09if (!e_info->error_dev_num) {
+> -=09=09u8 bus =3D e_info->id >> 8;
+> -=09=09u8 devfn =3D e_info->id & 0xff;
+> -
+> -=09=09pci_info(parent, "found no error details for %04x:%02x:%02x.%d\n",
+> -=09=09=09 pci_domain_nr(parent->bus), bus, PCI_SLOT(devfn),
+> -=09=09=09 PCI_FUNC(devfn));
+> +=09if (!e_info->error_dev_num)
+>  =09=09return false;
+> -=09}
+>  =09return true;
+>  }
+> =20
+> @@ -1281,9 +1275,11 @@ static inline void aer_process_err_devices(struct =
+aer_err_info *e_info)
+>  static void aer_isr_one_error_type(struct pci_dev *root,
+>  =09=09=09=09   struct aer_err_info *info)
+>  {
+> -=09aer_print_port_info(root, info);
+> +=09bool found;
+> =20
+> -=09if (find_source_device(root, info))
+> +=09found =3D find_source_device(root, info);
+> +=09aer_print_port_info(root, info, found ? "" : " (no details found");
+> +=09if (found)
+>  =09=09aer_process_err_devices(info);
+>  }
+> =20
+>=20
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+--8323328-520110086-1747822478=:946--
 
