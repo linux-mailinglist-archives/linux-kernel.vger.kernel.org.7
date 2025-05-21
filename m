@@ -1,90 +1,111 @@
-Return-Path: <linux-kernel+bounces-657368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8D2ABF344
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:47:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39597ABF347
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C2987B52AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:46:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF67E17142F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37484262FD9;
-	Wed, 21 May 2025 11:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185E825F99F;
+	Wed, 21 May 2025 11:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1LJnR73k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SV/yLK9B"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8841D25C71B;
-	Wed, 21 May 2025 11:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C6D1F03D4
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 11:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747828063; cv=none; b=h1jqCIeTV7xHZfgblExHAhsWonUx9/VzRN35u2uMu64UHylB6q/XO4gV/3zzBHCIF1Ud/iy6GEcuc68/93RzaZvmY27FsEbzuU2oDXUNlvirZILBO9bV3xSngLIBfuLiXhZEAcGtLIayhJhdbDc/bVhN63S+GITiaP9/LDqBZT4=
+	t=1747828164; cv=none; b=oIvLPXK/D1c3OLN5KPnJ3FHmMQGq9I8CKlUjkR4iwDdQ0P5u9rzYmJcz7UD86ytrPWZ9l2nsOwvyhhNh+G/lIiyhh0LgrPIOZg2+vxxqpjeOogzxAQRTm0kVGd4Ml8Uy0Xh1OUHUC7zWgxSAlY3q/OdSq6wTbmxeEegl4oOr8SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747828063; c=relaxed/simple;
-	bh=uXrilJHBDaHOBHpW7qJc4xMuL1Nc9bvJlaRVyvML5Vw=;
+	s=arc-20240116; t=1747828164; c=relaxed/simple;
+	bh=K8iq3wIWjw5+yzIUIuxBrpHJlXY5ubLt/wYdH1DHRac=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IrDHKYSaf4pYhqLd9U0VSz4A9mGCJRqf9gsDL/lSxorLXluy0cn5RpI+ovr0fjKl+4Sh4YfqjtJ9iXYdZ6fjQzYgJAnLKN5psNCW9qzwd4kty6dXgDWDy+C8UiZceTPBU6R6ppuTxOWLcQ47U/i7zIbgRulFfZ8Kv+SGoSPfTc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1LJnR73k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 947DAC4CEE4;
-	Wed, 21 May 2025 11:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747828063;
-	bh=uXrilJHBDaHOBHpW7qJc4xMuL1Nc9bvJlaRVyvML5Vw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=EB558HGfIprPQUfm0Cn9NyD+LTHY4Od7iwYf0YTaMKLeI3qSLFbkvDDviJh6silJ0Sg3u2SoWFgongFpM7KIWekbTUAF3tp/G1AfcC+Y1cLHvCXMAsAlCybCUQyfxZnV5wvQKiqd2s/lNV7Db8OsyTBDhjQe+T6uw957dmPn2SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SV/yLK9B; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2867840E0192;
+	Wed, 21 May 2025 11:49:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id inqKgx3IRbsX; Wed, 21 May 2025 11:49:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1747828155; bh=TnUQViyDsDpCUhgL+8ReWJseLBGKCHyxzaXt1yW5R78=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1LJnR73kzLlIqm6VSqYPZvKZLw2mCLFscvebEB786L7MSylrCwut6cbNrJB7rVdlF
-	 e4kv2mQDGfC1JBp/y7L7kM7BdxkFGxELgD+3jbOdQnOtFbMTeBu+uuupRmoYMR1Qqu
-	 dS4aphEekR+v7zmySNOhsa0GlkCxpOr6/lAdnBvw=
-Date: Wed, 21 May 2025 13:47:40 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Eric Florin <ericflorin@google.com>
-Cc: teddy.wang@siliconmotion.com, sudipm.mukherjee@gmail.com,
-	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] staging: sm750fb: rename dpPortBase in lynx_accel
-Message-ID: <2025052125-stew-customs-4ca9@gregkh>
-References: <cover.1747605658.git.ericflorin@google.com>
- <97fcc39f3e63f465c49e8725d10f7c43fd35cd85.1747605658.git.ericflorin@google.com>
+	b=SV/yLK9BK6kzHobkSeD9W8ayMe6vKdnLQ3qYdIe8UGeO/B0yFpsds8F3HYdzkBnas
+	 Sh0fiwZN4f/aNHW9Nob2kxo1Mr+qhdjhVJsAK5OKSAsHnmtFYx6hH1m3EP0frMwnGo
+	 9PCMIsqsuCsRIcd+7vMRlPkSu6sdeSkMe+5UfPgY09s2GdHaKkTCF4S16rodMDlJ+H
+	 llxouLjViAvWs99C3wFpydlH0bocynKMCak9yn8wz4kiz4DUpdKQKhId+K5oPqUdp1
+	 dNjIiYIusXMR4rusXMf8pt3CY1xGB55UQXHOaqwJzAjkmb/6rUQt24Nx8veklIMFeE
+	 DocG2iu/WU1rwNTlOVBKW8c4yiY/p9fsjhxg1Nu/X40oqcUGWWSha0DM+XGbiAzPWF
+	 XqPb4qFtuejp5Q8yOg4GlPC6k9weu3IyAq6yHuQ4sqi5kPljsH50Hjh5q/szILzjLm
+	 +lC7LaRiBKJSkjJGaGwUVa+4YuzZB5q84ngMpixka16oWKNKH0jIocZC4VnNO3FA44
+	 2OM/RqvCCEV7fDIf7yI8HJ5uuiXslIYCGVVL8qzxaKJkfL56oJIRpEc5oP4/bU39Nh
+	 dYxyXrwJN6eWo3NR2RThKsv/QyCByfaVBMa8UsncVLXpF90qfu1IHHvRxEzILMZiCO
+	 /UHqPFagYMfQ8mRmQFfDMMYU=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8658740E0163;
+	Wed, 21 May 2025 11:49:02 +0000 (UTC)
+Date: Wed, 21 May 2025 13:49:01 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+	kernel-team@meta.com, dave.hansen@linux.intel.com, luto@kernel.org,
+	peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+	hpa@zytor.com, nadav.amit@gmail.com,
+	Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: Re: [RFC v2 2/9] x86/mm: Introduce Remote Action Request MSRs
+Message-ID: <20250521114901.GBaC29rWZ4IyVyZacP@fat_crate.local>
+References: <20250520010350.1740223-1-riel@surriel.com>
+ <20250520010350.1740223-3-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <97fcc39f3e63f465c49e8725d10f7c43fd35cd85.1747605658.git.ericflorin@google.com>
+In-Reply-To: <20250520010350.1740223-3-riel@surriel.com>
 
-On Sun, May 18, 2025 at 03:09:47PM -0700, Eric Florin wrote:
-> Rename `dpPortBase` to `dp_port_base` to conform with kernel style
-> guidelines as reported by checkpatch.pl
+On Mon, May 19, 2025 at 09:02:27PM -0400, Rik van Riel wrote:
+> From: Yu-cheng Yu <yu-cheng.yu@intel.com>
 > 
-> CHECK: Avoid CamelCase: <dpPortBase>
+> Remote Action Request (RAR) is a TLB flushing broadcast facility.
+> This patch introduces RAR MSRs.  RAR is introduced in later patches.
 > 
-> Signed-off-by: Eric Florin <ericflorin@google.com>
+> There are five RAR MSRs:
+> 
+>   MSR_CORE_CAPABILITIES
+>   MSR_IA32_RAR_CTRL
+>   MSR_IA32_RAR_ACT_VEC
+>   MSR_IA32_RAR_PAYLOAD_BASE
+>   MSR_IA32_RAR_INFO
+> 
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> Signed-off-by: Rik van Riel <riel@surriel.com>
 > ---
->  drivers/staging/sm750fb/sm750.h       | 2 +-
->  drivers/staging/sm750fb/sm750_accel.c | 2 +-
->  drivers/staging/sm750fb/sm750_hw.c    | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/sm750fb/sm750.h b/drivers/staging/sm750fb/sm750.h
-> index a2342c69a65a..0ed1e18611ba 100644
-> --- a/drivers/staging/sm750fb/sm750.h
-> +++ b/drivers/staging/sm750fb/sm750.h
-> @@ -52,7 +52,7 @@ struct lynx_accel {
->  	/* base virtual address of DPR registers */
->  	volatile unsigned char __iomem *dpr_base;
->  	/* base virtual address of de data port */
-> -	volatile unsigned char __iomem *dpPortBase;
-> +	volatile unsigned char __iomem *dp_port_base;
+>  arch/x86/include/asm/msr-index.h | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 
-Same here, are you sure this doesn't come directly from the hardware
-spec?
+You can merge this one with the previous one.
 
-thanks,
+-- 
+Regards/Gruss,
+    Boris.
 
-greg k-h
+https://people.kernel.org/tglx/notes-about-netiquette
 
