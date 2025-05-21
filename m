@@ -1,160 +1,390 @@
-Return-Path: <linux-kernel+bounces-656916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D40D4ABEC83
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:54:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A498ABEC8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 08:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBFF98A4780
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:53:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E6613BA50B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 06:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DF322B8C3;
-	Wed, 21 May 2025 06:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87952343AF;
+	Wed, 21 May 2025 06:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BT9AhCy1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1NyJNoqC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gAZyev3B"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA20623184A;
-	Wed, 21 May 2025 06:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FCF201266;
+	Wed, 21 May 2025 06:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747810413; cv=none; b=ahswjWoOpNJXJ1U4Md253FrytjbFC2LYqRfEcY+/tOgpf4dV9C5C/PQKBtytuuKP/4O+6x9mk87CowbdWYDn0uGErlXzCTCQc9d8M+hrxmx6jS0TxKE3gTbjPCK8UnSl9X6Cha9iNuebUij9Pc1+2ASPTym3xNOecSL413P6Rdc=
+	t=1747810605; cv=none; b=NxnpDPqNILiS0t1JAk78MrzJqVbrNR+CHs2nDomhvtUKhHGVTcxXbPRfP22tckWH6q4bBJHy0Lrt8Hxn0gsuC0frn85CAFYaODpFO5r07PWAqNsjSUchVMWtFDzhV7EV9Hpijoin1EIsKIco3CphPzRSYUetzSB32S0uvPB6NEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747810413; c=relaxed/simple;
-	bh=Q+Sd4eOk0jd48CvkzoRG923+qvQRtH20pp/6Vw0a1WY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=INQ+1mG3QfHakttcGnvR8C9mKA+ao1SPpW8or1VTTHKisbSfHzwvA3DKfTj0S8IT1F3N1pGtBpgw1VunBmCaA/x+QzrfwCm/CTZO+GGFVeP7Lvt8CJcunLLaXl2/n1Ox+lHaYPvU06OfeN5JBzDz55sG079OPkDfoKyxm3kMnK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BT9AhCy1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0AD0C4CEE4;
-	Wed, 21 May 2025 06:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747810412;
-	bh=Q+Sd4eOk0jd48CvkzoRG923+qvQRtH20pp/6Vw0a1WY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BT9AhCy1ECmPOvr6cevMtyD7RcLB2vWDD4YfEixS0d7we08SdWPS4iMniDaA8V6Lb
-	 PK2R6maJWrdGCf1lDSr2lIM42Vvy/BdpfXoqxFIIaJ5fuBzhKhS4/Nd9Bx+sDwDVAv
-	 2V7l7buF1XlXYkmCddBOUltllqrbJGVJR5fsArteat0HR6ifyHd9wnCyCxFsGdJ1nJ
-	 nZm8eebbug+TbvHpvL4uBTUagXq0M7vn+L+EwFZGdpP8u91p/yln3gq0c4A6/vUfR7
-	 vW/dBcrZTVHXnz5E9lxUaoWuxH/oLo80rTMEjNhZzfpRCRSGiKQOwTpf3S4BMm2wsP
-	 dlQ/C33PlbquA==
-Message-ID: <b8003fdf-66a1-47e1-8c78-069f0739ea37@kernel.org>
-Date: Wed, 21 May 2025 08:53:26 +0200
+	s=arc-20240116; t=1747810605; c=relaxed/simple;
+	bh=tqdtDhnlzy6YdOODtMk30ooPSibNXswrxTGYE7byeW4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=DaVQb+8zVAMrKDuhxNCYwodOO7PNhAc+hCdQ2ssRfIxJdI1VPbR/tw012mGTBDOGypKawf0+naH+WYYgboRtZIl+mS+TTrI8NIy6nXN+/exW5LCNFPwmeGPsH/echypWSA6JHTYyWAlCqsOtA0am5CHSvf3x3fGjzsZba6L5Od8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1NyJNoqC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gAZyev3B; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 21 May 2025 06:56:39 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747810600;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VXoXAo4wUxw50VKFS3FaNdh2gtY10JcNGm0jTgyjPG8=;
+	b=1NyJNoqCVuYjrYQmAxYJ2jdnhq4K/tGMUzeHDmE+TOfKKr82s5TvwPE8QEJaFoyxXaPKQu
+	2v6K9UPPvBwgQ5qZzvg8XPxOykz9C9XACerBGDehUMw7HiUZ6oeLU9bvYbLZfGZcx5vNZE
+	c/Fug5iVxNwztinUdSvcA3TjyDJ326w26a9oBS5KTi1K8s0sdY+XK9kvE9GHD2Drjeasr0
+	OgZ9rzbE8qn3loxMavf5Wf/ga81VhZp0Tgu9qRaJCtp/yYAmBQDn6Y3K3dBVN4U71gF0qf
+	utVxmjtjgYYDt9QR/VQl+ReDuAyjhwS4ZZENTVcVJYEuKBgYZikrDpfSbUOtCQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747810600;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VXoXAo4wUxw50VKFS3FaNdh2gtY10JcNGm0jTgyjPG8=;
+	b=gAZyev3BpmnJUOQp2/y8msQWA4lF6vGlgrFl4gEMYyko/0/aXXH+JBlQNAaGGcYe9hVy1b
+	zpBvb1+u+uwzRGDw==
+From: "tip-bot2 for David Kaplan" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/core] x86/bugs: Restructure ITS mitigation
+Cc: David Kaplan <david.kaplan@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250516193212.128782-1-david.kaplan@amd.com>
+References: <20250516193212.128782-1-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/5] dt-bindings: watchdog: qcom-wdt: Document
- qcom,imem property
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Rajendra Nayak <quic_rjendra@quicinc.com>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
-References: <20250519-wdt_reset_reason-v4-0-d59d21275c75@oss.qualcomm.com>
- <20250519-wdt_reset_reason-v4-3-d59d21275c75@oss.qualcomm.com>
- <20250520-portable-anteater-of-respect-c7be5c@kuoka>
- <37bd619d-242e-4488-8d45-c2c85612bee9@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <37bd619d-242e-4488-8d45-c2c85612bee9@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <174781059941.406.2237870351760542190.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 20/05/2025 18:00, Konrad Dybcio wrote:
-> On 5/20/25 9:25 AM, Krzysztof Kozlowski wrote:
->> On Mon, May 19, 2025 at 02:04:03PM GMT, Kathiravan Thirumoorthy wrote:
->>> Document the "qcom,imem" property for the watchdog device on Qualcomm
->>> IPQ platforms. Use this property to extract the restart reason from
->>> IMEM, which is updated by XBL. Populate the watchdog's bootstatus sysFS
->>> entry with this information, when the system reboots due to a watchdog
->>> timeout.
->>>
->>> Describe this property for the IPQ5424 watchdog device and extend support
->>> to other targets subsequently.
->>>
->>> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
->>> ---
->>> Changes in v4:
->>> 	- New patch
->>> ---
->>>  .../devicetree/bindings/watchdog/qcom-wdt.yaml       | 20 ++++++++++++++++++++
->>>  1 file changed, 20 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
->>> index 49e2b807db0bc9d3edfc93ec41ad0df0b74ed032..bbe9b68ff4c8b813744ffd86bb52303943366fa2 100644
->>> --- a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
->>> +++ b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
->>> @@ -81,6 +81,16 @@ properties:
->>>      minItems: 1
->>>      maxItems: 5
->>>  
->>> +  qcom,imem:
->>
->> Shoouldn't this be existing 'sram' property? If IMEM is something
->> similar to OCMEM, then we already use sram for that.
-> 
-> We specifically want a handle to a predefined byte in IMEM, something akin
-> to qcom,4ln-config-sel in
-> 
-> Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+The following commit has been merged into the x86/core branch of tip:
 
-Nothing stops that with sram. Above example is poor, because it mentions
-syscon. There is no hardware as syscon. Does not exist. What is IMEM
-here, what is this relationship?
+Commit-ID:     61ab72c2c6bf24f28b3dbfd3126e984d5afa8424
+Gitweb:        https://git.kernel.org/tip/61ab72c2c6bf24f28b3dbfd3126e984d5afa8424
+Author:        David Kaplan <david.kaplan@amd.com>
+AuthorDate:    Fri, 16 May 2025 14:32:11 -05:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 21 May 2025 08:45:27 +02:00
 
-Best regards,
-Krzysztof
+x86/bugs: Restructure ITS mitigation
+
+Restructure the ITS mitigation to use select/update/apply functions like
+the other mitigations.
+
+There is a particularly complex interaction between ITS and Retbleed as CDT
+(Call Depth Tracking) is a mitigation for both, and either its=stuff or
+retbleed=stuff will attempt to enable CDT.
+
+retbleed_update_mitigation() runs first and will check the necessary
+pre-conditions for CDT if either ITS or Retbleed stuffing is selected.  If
+checks pass and ITS stuffing is selected, it will select stuffing for
+Retbleed as well.
+
+its_update_mitigation() runs after and will either select stuffing if
+retbleed stuffing was enabled, or fall back to the default (aligned thunks)
+if stuffing could not be enabled.
+
+Enablement of CDT is done exclusively in retbleed_apply_mitigation().
+its_apply_mitigation() is only used to enable aligned thunks.
+
+Signed-off-by: David Kaplan <david.kaplan@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/20250516193212.128782-1-david.kaplan@amd.com
+---
+ arch/x86/kernel/cpu/bugs.c | 167 +++++++++++++++++++-----------------
+ 1 file changed, 90 insertions(+), 77 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index d1a03ff..3d5796d 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -92,6 +92,8 @@ static void __init bhi_select_mitigation(void);
+ static void __init bhi_update_mitigation(void);
+ static void __init bhi_apply_mitigation(void);
+ static void __init its_select_mitigation(void);
++static void __init its_update_mitigation(void);
++static void __init its_apply_mitigation(void);
+ 
+ /* The base value of the SPEC_CTRL MSR without task-specific bits set */
+ u64 x86_spec_ctrl_base;
+@@ -235,6 +237,11 @@ void __init cpu_select_mitigations(void)
+ 	 * spectre_v2=ibrs.
+ 	 */
+ 	retbleed_update_mitigation();
++	/*
++	 * its_update_mitigation() depends on spectre_v2_update_mitigation()
++	 * and retbleed_update_mitigation().
++	 */
++	its_update_mitigation();
+ 
+ 	/*
+ 	 * spectre_v2_user_update_mitigation() depends on
+@@ -263,6 +270,7 @@ void __init cpu_select_mitigations(void)
+ 	srbds_apply_mitigation();
+ 	srso_apply_mitigation();
+ 	gds_apply_mitigation();
++	its_apply_mitigation();
+ 	bhi_apply_mitigation();
+ }
+ 
+@@ -1115,6 +1123,17 @@ enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init = SPECTRE_V2_NONE;
+ #undef pr_fmt
+ #define pr_fmt(fmt)     "RETBleed: " fmt
+ 
++enum its_mitigation {
++	ITS_MITIGATION_OFF,
++	ITS_MITIGATION_AUTO,
++	ITS_MITIGATION_VMEXIT_ONLY,
++	ITS_MITIGATION_ALIGNED_THUNKS,
++	ITS_MITIGATION_RETPOLINE_STUFF,
++};
++
++static enum its_mitigation its_mitigation __ro_after_init =
++	IS_ENABLED(CONFIG_MITIGATION_ITS) ? ITS_MITIGATION_AUTO : ITS_MITIGATION_OFF;
++
+ enum retbleed_mitigation {
+ 	RETBLEED_MITIGATION_NONE,
+ 	RETBLEED_MITIGATION_AUTO,
+@@ -1242,11 +1261,19 @@ static void __init retbleed_update_mitigation(void)
+ 	/*
+ 	 * retbleed=stuff is only allowed on Intel.  If stuffing can't be used
+ 	 * then a different mitigation will be selected below.
++	 *
++	 * its=stuff will also attempt to enable stuffing.
+ 	 */
+-	if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF) {
++	if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF ||
++	    its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF) {
+ 		if (spectre_v2_enabled != SPECTRE_V2_RETPOLINE) {
+ 			pr_err("WARNING: retbleed=stuff depends on spectre_v2=retpoline\n");
+ 			retbleed_mitigation = RETBLEED_MITIGATION_AUTO;
++		} else {
++			if (retbleed_mitigation != RETBLEED_MITIGATION_STUFF)
++				pr_info("Retbleed mitigation updated to stuffing\n");
++
++			retbleed_mitigation = RETBLEED_MITIGATION_STUFF;
+ 		}
+ 	}
+ 	/*
+@@ -1338,20 +1365,6 @@ static void __init retbleed_apply_mitigation(void)
+ #undef pr_fmt
+ #define pr_fmt(fmt)     "ITS: " fmt
+ 
+-enum its_mitigation_cmd {
+-	ITS_CMD_OFF,
+-	ITS_CMD_ON,
+-	ITS_CMD_VMEXIT,
+-	ITS_CMD_RSB_STUFF,
+-};
+-
+-enum its_mitigation {
+-	ITS_MITIGATION_OFF,
+-	ITS_MITIGATION_VMEXIT_ONLY,
+-	ITS_MITIGATION_ALIGNED_THUNKS,
+-	ITS_MITIGATION_RETPOLINE_STUFF,
+-};
+-
+ static const char * const its_strings[] = {
+ 	[ITS_MITIGATION_OFF]			= "Vulnerable",
+ 	[ITS_MITIGATION_VMEXIT_ONLY]		= "Mitigation: Vulnerable, KVM: Not affected",
+@@ -1359,11 +1372,6 @@ static const char * const its_strings[] = {
+ 	[ITS_MITIGATION_RETPOLINE_STUFF]	= "Mitigation: Retpolines, Stuffing RSB",
+ };
+ 
+-static enum its_mitigation its_mitigation __ro_after_init = ITS_MITIGATION_ALIGNED_THUNKS;
+-
+-static enum its_mitigation_cmd its_cmd __ro_after_init =
+-	IS_ENABLED(CONFIG_MITIGATION_ITS) ? ITS_CMD_ON : ITS_CMD_OFF;
+-
+ static int __init its_parse_cmdline(char *str)
+ {
+ 	if (!str)
+@@ -1375,16 +1383,16 @@ static int __init its_parse_cmdline(char *str)
+ 	}
+ 
+ 	if (!strcmp(str, "off")) {
+-		its_cmd = ITS_CMD_OFF;
++		its_mitigation = ITS_MITIGATION_OFF;
+ 	} else if (!strcmp(str, "on")) {
+-		its_cmd = ITS_CMD_ON;
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
+ 	} else if (!strcmp(str, "force")) {
+-		its_cmd = ITS_CMD_ON;
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
+ 		setup_force_cpu_bug(X86_BUG_ITS);
+ 	} else if (!strcmp(str, "vmexit")) {
+-		its_cmd = ITS_CMD_VMEXIT;
++		its_mitigation = ITS_MITIGATION_VMEXIT_ONLY;
+ 	} else if (!strcmp(str, "stuff")) {
+-		its_cmd = ITS_CMD_RSB_STUFF;
++		its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
+ 	} else {
+ 		pr_err("Ignoring unknown indirect_target_selection option (%s).", str);
+ 	}
+@@ -1395,85 +1403,90 @@ early_param("indirect_target_selection", its_parse_cmdline);
+ 
+ static void __init its_select_mitigation(void)
+ {
+-	enum its_mitigation_cmd cmd = its_cmd;
+-
+ 	if (!boot_cpu_has_bug(X86_BUG_ITS) || cpu_mitigations_off()) {
+ 		its_mitigation = ITS_MITIGATION_OFF;
+ 		return;
+ 	}
+ 
+-	/* Retpoline+CDT mitigates ITS, bail out */
+-	if (boot_cpu_has(X86_FEATURE_RETPOLINE) &&
+-	    boot_cpu_has(X86_FEATURE_CALL_DEPTH)) {
+-		its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
+-		goto out;
+-	}
++	if (its_mitigation == ITS_MITIGATION_AUTO)
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
++
++	if (its_mitigation == ITS_MITIGATION_OFF)
++		return;
+ 
+-	/* Exit early to avoid irrelevant warnings */
+-	if (cmd == ITS_CMD_OFF) {
+-		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
+-	}
+-	if (spectre_v2_enabled == SPECTRE_V2_NONE) {
+-		pr_err("WARNING: Spectre-v2 mitigation is off, disabling ITS\n");
+-		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
+-	}
+ 	if (!IS_ENABLED(CONFIG_MITIGATION_RETPOLINE) ||
+ 	    !IS_ENABLED(CONFIG_MITIGATION_RETHUNK)) {
+ 		pr_err("WARNING: ITS mitigation depends on retpoline and rethunk support\n");
+ 		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
++		return;
+ 	}
++
+ 	if (IS_ENABLED(CONFIG_DEBUG_FORCE_FUNCTION_ALIGN_64B)) {
+ 		pr_err("WARNING: ITS mitigation is not compatible with CONFIG_DEBUG_FORCE_FUNCTION_ALIGN_64B\n");
+ 		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
+-	}
+-	if (boot_cpu_has(X86_FEATURE_RETPOLINE_LFENCE)) {
+-		pr_err("WARNING: ITS mitigation is not compatible with lfence mitigation\n");
+-		its_mitigation = ITS_MITIGATION_OFF;
+-		goto out;
++		return;
+ 	}
+ 
+-	if (cmd == ITS_CMD_RSB_STUFF &&
+-	    (!boot_cpu_has(X86_FEATURE_RETPOLINE) || !IS_ENABLED(CONFIG_MITIGATION_CALL_DEPTH_TRACKING))) {
++	if (its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF &&
++	    !IS_ENABLED(CONFIG_MITIGATION_CALL_DEPTH_TRACKING)) {
+ 		pr_err("RSB stuff mitigation not supported, using default\n");
+-		cmd = ITS_CMD_ON;
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
+ 	}
+ 
+-	switch (cmd) {
+-	case ITS_CMD_OFF:
++	if (its_mitigation == ITS_MITIGATION_VMEXIT_ONLY &&
++	    !boot_cpu_has_bug(X86_BUG_ITS_NATIVE_ONLY))
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
++}
++
++static void __init its_update_mitigation(void)
++{
++	if (!boot_cpu_has_bug(X86_BUG_ITS) || cpu_mitigations_off())
++		return;
++
++	switch (spectre_v2_enabled) {
++	case SPECTRE_V2_NONE:
++		pr_err("WARNING: Spectre-v2 mitigation is off, disabling ITS\n");
+ 		its_mitigation = ITS_MITIGATION_OFF;
+ 		break;
+-	case ITS_CMD_VMEXIT:
+-		if (boot_cpu_has_bug(X86_BUG_ITS_NATIVE_ONLY)) {
+-			its_mitigation = ITS_MITIGATION_VMEXIT_ONLY;
+-			goto out;
+-		}
+-		fallthrough;
+-	case ITS_CMD_ON:
+-		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
+-		if (!boot_cpu_has(X86_FEATURE_RETPOLINE))
+-			setup_force_cpu_cap(X86_FEATURE_INDIRECT_THUNK_ITS);
+-		setup_force_cpu_cap(X86_FEATURE_RETHUNK);
+-		set_return_thunk(its_return_thunk);
++	case SPECTRE_V2_RETPOLINE:
++		/* Retpoline+CDT mitigates ITS */
++		if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF)
++			its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
+ 		break;
+-	case ITS_CMD_RSB_STUFF:
+-		its_mitigation = ITS_MITIGATION_RETPOLINE_STUFF;
+-		setup_force_cpu_cap(X86_FEATURE_RETHUNK);
+-		setup_force_cpu_cap(X86_FEATURE_CALL_DEPTH);
+-		set_return_thunk(call_depth_return_thunk);
+-		if (retbleed_mitigation == RETBLEED_MITIGATION_NONE) {
+-			retbleed_mitigation = RETBLEED_MITIGATION_STUFF;
+-			pr_info("Retbleed mitigation updated to stuffing\n");
+-		}
++	case SPECTRE_V2_LFENCE:
++	case SPECTRE_V2_EIBRS_LFENCE:
++		pr_err("WARNING: ITS mitigation is not compatible with lfence mitigation\n");
++		its_mitigation = ITS_MITIGATION_OFF;
++		break;
++	default:
+ 		break;
+ 	}
+-out:
++
++	/*
++	 * retbleed_update_mitigation() will try to do stuffing if its=stuff.
++	 * If it can't, such as if spectre_v2!=retpoline, then fall back to
++	 * aligned thunks.
++	 */
++	if (its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF &&
++	    retbleed_mitigation != RETBLEED_MITIGATION_STUFF)
++		its_mitigation = ITS_MITIGATION_ALIGNED_THUNKS;
++
+ 	pr_info("%s\n", its_strings[its_mitigation]);
+ }
+ 
++static void __init its_apply_mitigation(void)
++{
++	/* its=stuff forces retbleed stuffing and is enabled there. */
++	if (its_mitigation != ITS_MITIGATION_ALIGNED_THUNKS)
++		return;
++
++	if (!boot_cpu_has(X86_FEATURE_RETPOLINE))
++		setup_force_cpu_cap(X86_FEATURE_INDIRECT_THUNK_ITS);
++
++	setup_force_cpu_cap(X86_FEATURE_RETHUNK);
++	set_return_thunk(its_return_thunk);
++}
++
+ #undef pr_fmt
+ #define pr_fmt(fmt)     "Spectre V2 : " fmt
+ 
 
