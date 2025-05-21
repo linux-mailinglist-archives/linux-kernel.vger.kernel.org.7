@@ -1,242 +1,179 @@
-Return-Path: <linux-kernel+bounces-657102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6927ABEF48
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:14:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CC4ABEF51
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29FEC3A9679
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:14:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D146516603E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329B9239E74;
-	Wed, 21 May 2025 09:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0cq9G0s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900A4238174;
+	Wed, 21 May 2025 09:15:36 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824E021CA04;
-	Wed, 21 May 2025 09:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D7735893;
+	Wed, 21 May 2025 09:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747818857; cv=none; b=A+cmHTF+aHbzMQv+Uue+1tj/caxlXGUdJnQj86rPsRdud4V5D1CThASr2z3VozAokVzp0JmgGiBdXpXpPyNey1puisrlkTHZxKEYIxQk7oP7ZGFsNZDQrhZth6pXsKibPjqH8RK/o1uRhOGJdaiiah753nbDoFe8FEhOP9qdxXc=
+	t=1747818936; cv=none; b=sBt2hNH5IGNbhaKEhViz1LLWvPPZIhtyhtkkkLHsHXFEDz6A+uieEc0QIEmuY7FKPSjbOQ3v/UhEE7NIsfVvX5x/OrmkKxq8YOtUP9nbLSR1B4jiL18RwERFxsdv667vGdcQaP4kJpNiunbGyO1EuOBcq8sD3NVsAwvtK8Arrl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747818857; c=relaxed/simple;
-	bh=tYRJUOPfNGsvrTGCxbsmOXCb/gzW8sQ71iGyz2Pu0GY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PAEfMLuDyKUCAXTT0DsghvkfD2ZZFknGJ0DoqNJIdb2e1tA3O33xUabIYoLL3cclEccERNLaMjZ/2K/KAT6H3/COO17HKbqnS7GW2AZXmiVctnEBd6q0vuW3E+unOserqd8uEBIPH8UZ3IHSFhaIFAmgGQNYRwlK/DNtPRlIHlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0cq9G0s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D64EC4CEE4;
-	Wed, 21 May 2025 09:14:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747818856;
-	bh=tYRJUOPfNGsvrTGCxbsmOXCb/gzW8sQ71iGyz2Pu0GY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z0cq9G0s8SFScGuuBh9JbnvFXY//UN+Qd8WClmF5MqvQQcYjfEZ9EYccKZXvLzun0
-	 hNC+C/wrabE17Ds8v16dKMTxhxwf9FWY0oqg4oWRgALSNSGR1WlXBbIwELavAP/QQD
-	 DIvYmvA1U+GlzGAhIRXc+1KECRpsuk1YsE1l6xTVEObg7B27bClUNFJbjMFcVxX0Ov
-	 ot5gDPkE7JRJQd/RLyCNgQNxSMsdrFfSXml1MNnALRM2HtZwFwWbUJJCQ9stPKDoXH
-	 pnlfQ0fDREeMlN11H80S5rYO6Fl0k+9tOtzem2+VR/d4cvM/6SaT3JKO1DgbTW3X99
-	 U5dpGqjCk++Yw==
-Date: Wed, 21 May 2025 11:14:13 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Shubhi Garg <shgarg@nvidia.com>
-Cc: jonathanh@nvidia.com, lee@kernel.org, robh@kernel.org, 
-	alexandre.belloni@bootlin.com, thierry.reding@gmail.com, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 4/6] rtc: nvvrs: add NVIDIA VRS PSEQ RTC device driver
-Message-ID: <20250521-dazzling-myrtle-flounder-a9e57d@kuoka>
-References: <20250520090832.3564104-1-shgarg@nvidia.com>
- <20250520090832.3564104-5-shgarg@nvidia.com>
+	s=arc-20240116; t=1747818936; c=relaxed/simple;
+	bh=t1yobnBcqQaDcoFbIHLQ8LdSWAixACdgskTO/gNDpp0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DZv2YGJGVgoxXTOkFqtnfLQZWQz7gUyTYBsLYfdCChYlVMrszJpexrXi+K8vZy0vS9h4ETE86xVVxwOrPp5ItZUCWu+G78jLJjx3mD2+DpJy7hO9H5ZW+pheFdbGLLYRxd79f2uptcAn1FHq9cFueO97Dr070d5fcbDf0E+NWb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b2Qfq4j1Bz6H7Ps;
+	Wed, 21 May 2025 17:12:19 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 88B57140519;
+	Wed, 21 May 2025 17:15:30 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 May
+ 2025 11:15:29 +0200
+Date: Wed, 21 May 2025 10:15:27 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: <linux-pci@vger.kernel.org>, Jon Pan-Doh <pandoh@google.com>, "Karolina
+ Stolarek" <karolina.stolarek@oracle.com>, Weinan Liu <wnliu@google.com>,
+	Martin Petersen <martin.petersen@oracle.com>, Ben Fuller
+	<ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>, "Anil
+ Agrawal" <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>, Ilpo
+ =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Sathyanarayanan
+ Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>, Lukas Wunner
+	<lukas@wunner.de>, Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney"
+	<paulmck@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Oliver
+ O'Halloran <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>, Keith
+ Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>, "Terry Bowman"
+	<terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>, "Dave Jiang"
+	<dave.jiang@intel.com>, <linux-kernel@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v7 03/17] PCI/AER: Factor COR/UNCOR error handling out
+ from aer_isr_one_error()
+Message-ID: <20250521101527.000026b4@huawei.com>
+In-Reply-To: <20250520215047.1350603-4-helgaas@kernel.org>
+References: <20250520215047.1350603-1-helgaas@kernel.org>
+	<20250520215047.1350603-4-helgaas@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250520090832.3564104-5-shgarg@nvidia.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, May 20, 2025 at 09:08:30AM GMT, Shubhi Garg wrote:
-> Add support for NVIDIA VRS (Voltage Regulator Specification) Power
-> Sequencer RTC device driver. This RTC can be used to get/set system
-> time, retain system time across boot, wake system from suspend and
-> shutdown state.
+On Tue, 20 May 2025 16:50:20 -0500
+Bjorn Helgaas <helgaas@kernel.org> wrote:
+
+> From: Bjorn Helgaas <bhelgaas@google.com>
 > 
-> Signed-off-by: Shubhi Garg <shgarg@nvidia.com>
+> aer_isr_one_error() duplicates the Error Source ID logging and AER error
+> processing for Correctable Errors and Uncorrectable Errors.  Factor out the
+> duplicated code to aer_isr_one_error_type().
+> 
+> aer_isr_one_error() doesn't need the struct aer_rpc pointer, so pass it the
+> Root Port or RCEC pci_dev pointer instead.
+> 
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+One passing comment inside (on neighbouring code)
+Otherwise it is a sensible bit of cleanup.
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
 > ---
+>  drivers/pci/pcie/aer.c | 36 +++++++++++++++++++++++-------------
+>  1 file changed, 23 insertions(+), 13 deletions(-)
 > 
-> v2:
-> - removed regmap struct since it is not required
-> - removed rtc_map definition to directly use register definition
-> - removed unnecessary dev_err logs
-> - fixed dev_err logs to dev_dbg
-> - used rtc_lock/unlock in irq handler
-> - changed RTC allocation and register APIs as per latest kernel
-> - removed nvvrs_rtc_remove function since it's not required
-> 
->  drivers/rtc/Kconfig               |  10 +
->  drivers/rtc/Makefile              |   1 +
->  drivers/rtc/rtc-nvidia-vrs-pseq.c | 456 ++++++++++++++++++++++++++++++
->  3 files changed, 467 insertions(+)
->  create mode 100644 drivers/rtc/rtc-nvidia-vrs-pseq.c
-> 
-> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-> index 838bdc138ffe..3b6dc27a50af 100644
-> --- a/drivers/rtc/Kconfig
-> +++ b/drivers/rtc/Kconfig
-> @@ -406,6 +406,16 @@ config RTC_DRV_MAX77686
->  	  This driver can also be built as a module. If so, the module
->  	  will be called rtc-max77686.
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index a1cf8c7ef628..568229288ca3 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -1273,17 +1273,32 @@ static inline void aer_process_err_devices(struct aer_err_info *e_info)
+>  }
 >  
-> +config RTC_DRV_NVVRS_PSEQ
-> +	tristate "NVIDIA VRS Power Sequencer RTC device"
-> +	depends on MFD_NVVRS_PSEQ
-
-I bet this fails when MFD_NVVRS_PSEQ is a module.
-
-> +	help
-> +	  If you say yes here you will get support for the battery backed RTC device
-> +	  of NVIDIA VRS Power Sequencer. The RTC is connected via I2C interface and
-> +	  supports alarm functionality.
-> +	  This driver can also be built as a module. If so, the module will be called
-> +	  rtc-nvidia-vrs-pseq.
-> +
-
-...
-
-> +static int nvvrs_rtc_probe(struct platform_device *pdev)
+>  /**
+> - * aer_isr_one_error - consume an error detected by Root Port
+> - * @rpc: pointer to the Root Port which holds an error
+> + * aer_isr_one_error_type - consume a Correctable or Uncorrectable Error
+> + *			    detected by Root Port or RCEC
+> + * @root: pointer to Root Port or RCEC that signaled AER interrupt
+> + * @info: pointer to AER error info
+> + */
+> +static void aer_isr_one_error_type(struct pci_dev *root,
+> +				   struct aer_err_info *info)
 > +{
-> +	struct nvvrs_rtc_info *info;
-> +	struct device *parent;
-> +	struct i2c_client *client;
-> +	int ret;
+> +	aer_print_port_info(root, info);
 > +
-> +	info = devm_kzalloc(&pdev->dev, sizeof(struct nvvrs_rtc_info), GFP_KERNEL);
-
-sizeof(*)
-
-> +	if (!info)
-> +		return -ENOMEM;
-> +
-> +	mutex_init(&info->lock);
-> +
-> +	ret = platform_get_irq(pdev, 0);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "Failed to get irq\n");
-
-return dev_err_probe
-
-> +		return ret;
-> +	}
-> +	info->rtc_irq = ret;
-> +
-> +	info->dev = &pdev->dev;
-> +	parent = info->dev->parent;
-> +	client = to_i2c_client(parent);
-> +	client->flags |= I2C_CLIENT_PEC;
-> +	i2c_set_clientdata(client, info);
-> +	info->client = client;
-> +	info->rtc_irq_chip = &nvvrs_rtc_irq_chip;
-> +	platform_set_drvdata(pdev, info);
-> +
-> +	/* Allocate RTC device */
-> +	info->rtc_dev = devm_rtc_allocate_device(info->dev);
-> +	if (IS_ERR(info->rtc_dev))
-> +		return PTR_ERR(info->rtc_dev);
-> +
-> +	info->rtc_dev->ops = &nvvrs_rtc_ops;
-> +	info->rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_2000;
-> +	info->rtc_dev->range_max = RTC_TIMESTAMP_END_2099;
-> +
-> +	ret = devm_request_threaded_irq(info->dev, info->rtc_irq, NULL,
-> +					nvvrs_rtc_irq_handler, 0, "rtc-alarm", info);
-> +	if (ret < 0)
-> +		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
-> +			info->rtc_irq, ret);
-> +
-> +	/* RTC as a wakeup source */
-> +	device_init_wakeup(info->dev, true);
-
-You leak wakeup.
-
-> +
-> +	return devm_rtc_register_device(info->rtc_dev);
+> +	if (find_source_device(root, info))
+> +		aer_process_err_devices(info);
 > +}
 > +
-> +#ifdef CONFIG_PM_SLEEP
-> +static int nvvrs_rtc_suspend(struct device *dev)
-> +{
-> +	struct nvvrs_rtc_info *info = dev_get_drvdata(dev);
-> +	int ret = 0;
-> +
-> +	if (device_may_wakeup(dev)) {
-> +		/* Set RTC_WAKE bit for auto wake system from suspend state */
-> +		ret = nvvrs_update_bits(info, NVVRS_PSEQ_REG_CTL_2,
-> +					NVVRS_PSEQ_REG_CTL_2_RTC_WAKE,
-> +					NVVRS_PSEQ_REG_CTL_2_RTC_WAKE);
-> +		if (ret < 0) {
-> +			dev_err(info->dev, "Failed to set RTC_WAKE bit (%d)\n", ret);
-> +			return ret;
-> +		}
-> +
-> +		ret = enable_irq_wake(info->rtc_irq);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int nvvrs_rtc_resume(struct device *dev)
-> +{
-> +	struct nvvrs_rtc_info *info = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	if (device_may_wakeup(dev)) {
-> +		/* Clear FORCE_ACT bit */
-> +		ret = nvvrs_update_bits(info, NVVRS_PSEQ_REG_CTL_1,
-> +					NVVRS_PSEQ_REG_CTL_1_FORCE_ACT, 0);
-> +		if (ret < 0) {
-> +			dev_err(info->dev, "Failed to clear FORCE_ACT bit (%d)\n", ret);
-> +			return ret;
-> +		}
-> +
-> +		return disable_irq_wake(info->rtc_irq);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +#endif
-> +static SIMPLE_DEV_PM_OPS(nvvrs_rtc_pm_ops, nvvrs_rtc_suspend, nvvrs_rtc_resume);
-> +
-> +static const struct platform_device_id nvvrs_rtc_id[] = {
-> +	{ "nvvrs-pseq-rtc", },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(platform, nvvrs_rtc_id);
-> +
-> +static struct platform_driver nvvrs_rtc_driver = {
-> +	.driver		= {
-> +		.name   = "nvvrs-pseq-rtc",
-> +		.pm     = &nvvrs_rtc_pm_ops,
-> +	},
-> +	.probe		= nvvrs_rtc_probe,
-> +	.id_table       = nvvrs_rtc_id,
-> +};
-> +
-> +module_platform_driver(nvvrs_rtc_driver);
-> +
-> +MODULE_AUTHOR("Shubhi Garg <shgarg@nvidia.com>");
-> +MODULE_DESCRIPTION("NVVRS PSEQ RTC driver");
-> +MODULE_LICENSE("GPL");
-> \ No newline at end of file
+> +/**
+> + * aer_isr_one_error - consume error(s) signaled by an AER interrupt from
+> + *		       Root Port or RCEC
+> + * @root: pointer to Root Port or RCEC that signaled AER interrupt
+>   * @e_src: pointer to an error source
+>   */
+> -static void aer_isr_one_error(struct aer_rpc *rpc,
+> +static void aer_isr_one_error(struct pci_dev *root,
+>  		struct aer_err_source *e_src)
+>  {
+> -	struct pci_dev *pdev = rpc->rpd;
+>  	struct aer_err_info e_info;
 
-You have patch warnings.
+I wonder if, in the interests of readability this should be
+initialized.  That would allows some conditions to set
+only the valid case (ones) rather than explicit zeros.
+ 
+>  
+> -	pci_rootport_aer_stats_incr(pdev, e_src);
+> +	pci_rootport_aer_stats_incr(root, e_src);
+>  
+>  	/*
+>  	 * There is a possibility that both correctable error and
+> @@ -1297,10 +1312,8 @@ static void aer_isr_one_error(struct aer_rpc *rpc,
+>  			e_info.multi_error_valid = 1;
+>  		else
+>  			e_info.multi_error_valid = 0;
+> -		aer_print_port_info(pdev, &e_info);
+>  
+> -		if (find_source_device(pdev, &e_info))
+> -			aer_process_err_devices(&e_info);
+> +		aer_isr_one_error_type(root, &e_info);
+>  	}
+>  
+>  	if (e_src->status & PCI_ERR_ROOT_UNCOR_RCV) {
+> @@ -1316,10 +1329,7 @@ static void aer_isr_one_error(struct aer_rpc *rpc,
+>  		else
+>  			e_info.multi_error_valid = 0;
+>  
+> -		aer_print_port_info(pdev, &e_info);
+> -
+> -		if (find_source_device(pdev, &e_info))
+> -			aer_process_err_devices(&e_info);
+> +		aer_isr_one_error_type(root, &e_info);
+>  	}
+>  }
+>  
+> @@ -1340,7 +1350,7 @@ static irqreturn_t aer_isr(int irq, void *context)
+>  		return IRQ_NONE;
+>  
+>  	while (kfifo_get(&rpc->aer_fifo, &e_src))
+> -		aer_isr_one_error(rpc, &e_src);
+> +		aer_isr_one_error(rpc->rpd, &e_src);
+>  	return IRQ_HANDLED;
+>  }
+>  
 
-> -- 
-> 2.43.0
-> 
 
