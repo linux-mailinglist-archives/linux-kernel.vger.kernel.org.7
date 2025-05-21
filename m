@@ -1,197 +1,220 @@
-Return-Path: <linux-kernel+bounces-657559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54B4EABF5E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:20:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBDEABF5E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 731BE1BC4098
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21F039E1569
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E39D268FCC;
-	Wed, 21 May 2025 13:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C8C26FA4D;
+	Wed, 21 May 2025 13:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uNQGANQn"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mz1xdeY/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37D94B1E6D
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021E02356B8;
+	Wed, 21 May 2025 13:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747833598; cv=none; b=u8du4WXZTcjtTJYjxUQhVO+55nwnlIYfBytneo0p4IdeJT4AG9gysyoJugTxdjA+oBRrrU1P5/STqGRD7xga1Cicl2fdc91s2taetA5Giqc1UCa0kKYqVBiqKAULWLDJOyw9EA3IxcHy3Hx8/Zxk4tQZ71A7iV+nDBlIDSEhyQE=
+	t=1747833655; cv=none; b=r+PLZ3oQ5Giscmv7GhTbePYO49JpU4cgzmYo1Y7G+DeShkLLqcDxe4F3Lz5KJa4SZyAsJjyBWAQN2Flgzkm5JColRZGX0gU1OsT8v8NC05NL3nQjcXv/Mtzqc3bC4j/DuCxoNFq47u7ZUmpqlo+LQF93mLQR94KsPyBxDA5DIXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747833598; c=relaxed/simple;
-	bh=zxb4XuRb5OL7RbkFWFx6WphiL7nedhvIK2jhu21lh1E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WfP4P08B6RJyHc7bzmru7n0vzxsXy+XHyXwKg5z2mq8nmUjLEPzjzsQmPLqYwWJRQpMzSuG5qLFuC3FhqC1POdlEjSnMkN7qNAQ3TSLmzLw3ZY/BIm2oNJcNFQX1SC4ftXjA6E7OfD08pCkAKHsj9GLaDCKdFoeqzKetuJOMkmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uNQGANQn; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-6021e3daeabso3643330eaf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 06:19:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747833595; x=1748438395; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vqHAwKXGDB470rizfijZUWFboiXZOZHB3mYiVWRIm+0=;
-        b=uNQGANQn+VcDbM9bqffpTG/ZuvCWHNtmKHJ8PdQ4CXUf1++5OoJ6C4ce1a0RRZHgZw
-         URkZ+y1nud19ploFIgfyTh+52NsP/YKRS7rKpTF7AiEqG0YBRSBfZ2H5QRWZgPCREfrN
-         6925zM+OSo9zLJ2dz1ZLm9ReFhxDorM55vw75nBdDMi/RW+Zmgs/D4ogaXVZUoXYZsf3
-         NkIRiR/r5FKmNLXOKVRXL2rmtHMwjQqi7B4HuUftB1xxYTvbBEE2ic7Iv8kweIQEPxHl
-         Q2J8lf/w7azDV6v45/cEo2/oqRaGIg12FJi3hgJYQPqh/yqyj6/Cet/+XZUygoqe+7fo
-         51Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747833595; x=1748438395;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vqHAwKXGDB470rizfijZUWFboiXZOZHB3mYiVWRIm+0=;
-        b=gE/hm+nk8cB5LEtpTR7Db7rmCtzB0rsWGKUaEw7R4wjHqlo+CC6+cvzuIt2pZxIhn4
-         gO1eYsxJJCMDvicSOTjtWO/YrMhG1VoXSyy3qV2aN+ReflLOEY33WpvLhkINcNkL0qrM
-         dbL/z0Hnb6EbX+VGA10jmdiLpzm5gIK+eBC7VKOh2GalPDSlzewjs5IqDi/mVI+r1/Q1
-         zG83FSjfx5NpzrCp4C5N7LelonRX676RNmBKW4PAVcBh8MxGxkvZ48gdXkI6B2JqPSCH
-         DjhKMSu9knj+Ozybh8eOfpdyVY4srtG2x7y6beK3AVDLdY8aFZ95sFGSWfgiGq7I3tEO
-         b7OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXN3oAY2G4ByzyhPsp1q4RXINFXIpA8LO/h9MU+L0FwE8hDpRWc5VvAs9Fzstp+3vxHaWt6FNF3c8hsSFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9wOjR6CQlPgIVE+FWlCxFAPloGoWdFmTgKDGAfixc5RvWXjsB
-	SawOTFkZSMX0HUzRcQ8pBvbMn+031OIloW3gfjWO4icz6A6PsxZ1KTFnPcpUDwSX43Y=
-X-Gm-Gg: ASbGncvtKwjbAHHKzhGgE9qwXvU5nacZ/dKKr322InTR3vxttEJdcawocpTQ6mZb7Uv
-	wp3tTE2ADzsIbZSuqAkAbyGgbPbS0k8KvLtKEK9/WJC3KfUGkzPbM0FKMznu4QUXtsT3Jws0qPc
-	FJ6urKDdyBHE9w0oxOwb0OOpAhkaeuzj4k3Ik11Xqyps9FAw/UdgZK8fJYbDoi0KU/IXeWqCGyn
-	Huvz5aD8g2I/RzszFBkCnOBS0lD/smFG34QcIOgrtFviYoUSRCnHS/HEb0l5TC/rKUSMPk1zGKq
-	TAZXa/ZNdGcFblP+UU2h3VqoZLwsUWV4TkIOvGYnJzus+oUrIZfxqu8oe9kj4lpbcdC1V2at1XW
-	J+fW+ayNhNleKcnaa+CRqOW8OHw==
-X-Google-Smtp-Source: AGHT+IFlO2y1ouZt315gbUk3Y6YIYIDNy5KFOP0whnds4skxAXxnCCpG1q9rhgZvtK70Het4S+QSwQ==
-X-Received: by 2002:a05:6820:1806:b0:606:5531:d903 with SMTP id 006d021491bc7-609f36b742bmr12050006eaf.2.1747833594667;
-        Wed, 21 May 2025 06:19:54 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:d77b:6acc:2ad1:8ff? ([2600:8803:e7e4:1d00:d77b:6acc:2ad1:8ff])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-60a03f5bcbasm1675485eaf.19.2025.05.21.06.19.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 May 2025 06:19:53 -0700 (PDT)
-Message-ID: <0dd1a97e-ff7c-4d09-b18e-5df9944488c6@baylibre.com>
-Date: Wed, 21 May 2025 08:19:51 -0500
+	s=arc-20240116; t=1747833655; c=relaxed/simple;
+	bh=QV4yK2hdnVnPbG4+FrwDEmlzNcQ54yHXdjN0E1nJArg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nBvWEjbzSD3ZlezFCjtqHeiKy47moaKeAKbMBydj4j4cfhD9F5VgQi2Ot1b5q9l8JTIcqr0e3/N6Cso9DdR5CReN14c7zcLTNIcyqc+bnv5uao1nRCJZ6ASZI/4d7WMGYV0Zys1UfHlPdGFPWWbpn3jVcu+OQex5TYNpW03hFEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mz1xdeY/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24134C4CEE4;
+	Wed, 21 May 2025 13:20:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747833653;
+	bh=QV4yK2hdnVnPbG4+FrwDEmlzNcQ54yHXdjN0E1nJArg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mz1xdeY/QPHCQbpqW9YLMXj3bxMFPssdJH0C0K4GT/BUMmGTR93G0dgcis8DMBozs
+	 YP/b8B2bWkXH60z94+TQqwmsGm8EGUJWwqHuZAkdGKzGvKAyjteKhGt6wRYNV8FO1e
+	 D9jHd2m+QL7iRIVq5PlMru57TVJOvDsQWpaWxpfJsN1DOMBImxx1XNCjWyDCJZW7ZC
+	 qXtl8M49PS/HmPEyyZa+ak/8H+1qaASVYLxEAcvWa2SuSxP3hdX6RuCgCtz/JlU0cs
+	 qePwY7H6A8GENPHxze8c1fs3U32wvtz+q79I1SiiV7eXXKYtTdbgXg6CQQr0uIZt83
+	 S8G/9xtNsJtPQ==
+Date: Wed, 21 May 2025 10:20:50 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Gautam Menghani <gautam@linux.ibm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, maddy@linux.ibm.com
+Subject: Re: [PATCH v3 4/7] perf python: Add support for perf_counts_values
+ to return counter data
+Message-ID: <aC3TMl2MJL1_BASE@x1>
+References: <20250519195148.1708988-1-irogers@google.com>
+ <20250519195148.1708988-5-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] pwm: axi-pwmgen: add support for external clock
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Trevor Gamblin <tgamblin@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-pwm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250520-pwm-axi-pwmgen-add-external-clock-v1-0-6cd63cc001c8@baylibre.com>
- <20250520-pwm-axi-pwmgen-add-external-clock-v1-3-6cd63cc001c8@baylibre.com>
- <zdltaexty6pzbqesoluuyluygyt6w7nq7r2wccmtfktppwuw3e@qb36fsu3jq4k>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <zdltaexty6pzbqesoluuyluygyt6w7nq7r2wccmtfktppwuw3e@qb36fsu3jq4k>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250519195148.1708988-5-irogers@google.com>
 
-On 5/21/25 4:22 AM, Uwe Kleine-König wrote:
-> On Tue, May 20, 2025 at 04:00:46PM -0500, David Lechner wrote:
->> Add support for external clock to the AXI PWM generator driver.
->>
->> In most cases, there is a separate external clock that drives the PWM
->> output separate from the peripheral clock. This allows enabling both
->> clocks.
->>
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
->> ---
->>  drivers/pwm/pwm-axi-pwmgen.c | 23 ++++++++++++++++++++---
->>  1 file changed, 20 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/pwm/pwm-axi-pwmgen.c b/drivers/pwm/pwm-axi-pwmgen.c
->> index 4337c8f5acf055fc87dc134f2a70b99b0cb5ede6..67992a7561ec0440b1c1fa327f844a0602872771 100644
->> --- a/drivers/pwm/pwm-axi-pwmgen.c
->> +++ b/drivers/pwm/pwm-axi-pwmgen.c
->> @@ -280,9 +280,26 @@ static int axi_pwmgen_probe(struct platform_device *pdev)
->>  	ddata = pwmchip_get_drvdata(chip);
->>  	ddata->regmap = regmap;
->>  
->> -	clk = devm_clk_get_enabled(dev, NULL);
->> -	if (IS_ERR(clk))
->> -		return dev_err_probe(dev, PTR_ERR(clk), "failed to get clock\n");
->> +	/* When clock-names is present, there is a separate ext clock. */
->> +	if (device_property_present(dev, "clock-names")) {
->> +		struct clk *axi_clk;
->> +
->> +		axi_clk = devm_clk_get_enabled(dev, "axi");
->> +		if (IS_ERR(axi_clk))
->> +			return dev_err_probe(dev, PTR_ERR(axi_clk),
->> +					     "failed to get axi clock\n");
->> +
->> +		clk = devm_clk_get_enabled(dev, "ext");
->> +		if (IS_ERR(clk))
->> +			return dev_err_probe(dev, PTR_ERR(clk),
->> +					     "failed to get ext clock\n");
->> +	} else {
->> +		/* Otherwise, a single clock does everything. */
->> +		clk = devm_clk_get_enabled(dev, NULL);
->> +		if (IS_ERR(clk))
->> +			return dev_err_probe(dev, PTR_ERR(clk),
->> +					     "failed to get clock\n");
->> +	}
+On Mon, May 19, 2025 at 12:51:41PM -0700, Ian Rogers wrote:
+> From: Gautam Menghani <gautam@linux.ibm.com>
 > 
-> Can you achieve the same effect with the (IMHO slightly nicer but
-> hand-crafted) following patch:
+> Add support for perf_counts_values struct to enable the python
+> bindings to read and return the counter data.
+
+This (and another one in this series) are coming from Ian, that didn't
+modify them, so we need a Signed-off-by: Ian, as per:
+
+Documentation/process/submitting-patches.rst
+
+---
+Any further SoBs (Signed-off-by:'s) following the author's SoB are from
+people handling and transporting the patch, but were not involved in its
+development. SoB chains should reflect the **real** route a patch took
+as it was propagated to the maintainers and ultimately to Linus, with
+the first SoB entry signalling primary authorship of a single author.
+---
+
+I'm adding them to my local branch, please ack this,
+
+Thanks,
+
+- Arnaldo
+ 
+> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+> ---
+>  tools/perf/util/python.c | 92 +++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 91 insertions(+), 1 deletion(-)
 > 
->  	ddata = pwmchip_get_drvdata(chip);
->  	ddata->regmap = regmap;
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index ead3afd2d996..1cbddfe77c7c 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -626,6 +626,92 @@ static int pyrf_thread_map__setup_types(void)
+>  	return PyType_Ready(&pyrf_thread_map__type);
+>  }
 >  
-> -	clk = devm_clk_get_enabled(dev, NULL);
-> -	if (IS_ERR(clk))
-> -		return dev_err_probe(dev, PTR_ERR(clk), "failed to get clock\n");
-> +	axi_clk = devm_clk_get_enabled(dev, "axi");
-> +	if (IS_ERR(axi_clk))
-> +		return dev_err_probe(dev, PTR_ERR(axi_clk), "failed to get axi clock\n");
-> 
-> +	clk = devm_clk_get_enabled_optional(dev, "ext");
-> +	if (IS_ERR(clk))
-> +		return dev_err_probe(dev, PTR_ERR(clk), "failed to get ext clock\n");
+> +struct pyrf_counts_values {
+> +	PyObject_HEAD
+> +
+> +	struct perf_counts_values values;
+> +};
+> +
+> +static const char pyrf_counts_values__doc[] = PyDoc_STR("perf counts values object.");
+> +
+> +static void pyrf_counts_values__delete(struct pyrf_counts_values *pcounts_values)
+> +{
+> +	Py_TYPE(pcounts_values)->tp_free((PyObject *)pcounts_values);
+> +}
+> +
+> +#define counts_values_member_def(member, ptype, help) \
+> +	{ #member, ptype, \
+> +	  offsetof(struct pyrf_counts_values, values.member), \
+> +	  0, help }
+> +
+> +static PyMemberDef pyrf_counts_values_members[] = {
+> +	counts_values_member_def(val, Py_T_ULONG, "Value of event"),
+> +	counts_values_member_def(ena, Py_T_ULONG, "Time for which enabled"),
+> +	counts_values_member_def(run, Py_T_ULONG, "Time for which running"),
+> +	counts_values_member_def(id, Py_T_ULONG, "Unique ID for an event"),
+> +	counts_values_member_def(lost, Py_T_ULONG, "Num of lost samples"),
+> +	{NULL}
+> +};
+> +
+> +static PyObject *pyrf_counts_values_get_values(struct pyrf_counts_values *self, void *closure)
+> +{
+> +	PyObject *vals = PyList_New(5);
+> +
+> +	if (!vals)
+> +		return NULL;
+> +	for (int i = 0; i < 5; i++)
+> +		PyList_SetItem(vals, i, PyLong_FromLong(self->values.values[i]));
+> +
+> +	return vals;
+> +}
+> +
+> +static int pyrf_counts_values_set_values(struct pyrf_counts_values *self, PyObject *list,
+> +					 void *closure)
+> +{
+> +	Py_ssize_t size;
+> +	PyObject *item = NULL;
+> +
+> +	if (!PyList_Check(list)) {
+> +		PyErr_SetString(PyExc_TypeError, "Value assigned must be a list");
+> +		return -1;
 > +	}
-
-The trouble with this is that it would not work with existing .dtbs
-that don't have clock-names set. I think it would need to be more like this:
-
-
-	axi_clk = devm_clk_get_enabled(dev, NULL);
-	if (IS_ERR(axi_clk))
-		return dev_err_probe(dev, PTR_ERR(axi_clk), "failed to get axi clock\n");
-
-	clk = devm_clk_get_enabled_optional(dev, "ext");
-	if (IS_ERR(clk))
-		return dev_err_probe(dev, PTR_ERR(clk), "failed to get ext clock\n");
-
-	if (!clk)
-		clk = axi_clk
-
-
-> 
->  	ret = devm_clk_rate_exclusive_get(dev, clk);
->  	if (ret)
-> 
-> with the only side effect that for machines with a single clk we get
-> axi_clk == clk and it's enabled twice.
-> 
-> Another upside is that
-> 
-> 	clock-names = "axi";
-> 	clocks = <...>;
-> 
-> still works.
-> 
-> Best regards
-> Uwe
-
+> +
+> +	size = PyList_Size(list);
+> +	for (Py_ssize_t i = 0; i < size; i++) {
+> +		item = PyList_GetItem(list, i);
+> +		if (!PyLong_Check(item)) {
+> +			PyErr_SetString(PyExc_TypeError, "List members should be numbers");
+> +			return -1;
+> +		}
+> +		self->values.values[i] = PyLong_AsLong(item);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static PyGetSetDef pyrf_counts_values_getset[] = {
+> +	{"values", (getter)pyrf_counts_values_get_values, (setter)pyrf_counts_values_set_values,
+> +		"Name field", NULL},
+> +	{NULL}
+> +};
+> +
+> +static PyTypeObject pyrf_counts_values__type = {
+> +	PyVarObject_HEAD_INIT(NULL, 0)
+> +	.tp_name	= "perf.counts_values",
+> +	.tp_basicsize	= sizeof(struct pyrf_counts_values),
+> +	.tp_dealloc	= (destructor)pyrf_counts_values__delete,
+> +	.tp_flags	= Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,
+> +	.tp_doc		= pyrf_counts_values__doc,
+> +	.tp_members	= pyrf_counts_values_members,
+> +	.tp_getset	= pyrf_counts_values_getset,
+> +};
+> +
+> +static int pyrf_counts_values__setup_types(void)
+> +{
+> +	pyrf_counts_values__type.tp_new = PyType_GenericNew;
+> +	return PyType_Ready(&pyrf_counts_values__type);
+> +}
+> +
+>  struct pyrf_evsel {
+>  	PyObject_HEAD
+>  
+> @@ -1475,7 +1561,8 @@ PyMODINIT_FUNC PyInit_perf(void)
+>  	    pyrf_evlist__setup_types() < 0 ||
+>  	    pyrf_evsel__setup_types() < 0 ||
+>  	    pyrf_thread_map__setup_types() < 0 ||
+> -	    pyrf_cpu_map__setup_types() < 0)
+> +	    pyrf_cpu_map__setup_types() < 0 ||
+> +	    pyrf_counts_values__setup_types() < 0)
+>  		return module;
+>  
+>  	/* The page_size is placed in util object. */
+> @@ -1520,6 +1607,9 @@ PyMODINIT_FUNC PyInit_perf(void)
+>  	Py_INCREF(&pyrf_cpu_map__type);
+>  	PyModule_AddObject(module, "cpu_map", (PyObject*)&pyrf_cpu_map__type);
+>  
+> +	Py_INCREF(&pyrf_counts_values__type);
+> +	PyModule_AddObject(module, "counts_values", (PyObject *)&pyrf_counts_values__type);
+> +
+>  	dict = PyModule_GetDict(module);
+>  	if (dict == NULL)
+>  		goto error;
+> -- 
+> 2.49.0.1101.gccaa498523-goog
 
