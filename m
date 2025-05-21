@@ -1,107 +1,135 @@
-Return-Path: <linux-kernel+bounces-657233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C08ABABF15E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:19:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 334AFABF166
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9311F3B4D82
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:19:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B83747B6212
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2EA25B668;
-	Wed, 21 May 2025 10:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49EC25C805;
+	Wed, 21 May 2025 10:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="KLbvwtRd"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=beims.me header.i=@beims.me header.b="EVT8lniS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sC1Gpnwl"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708FC23D285;
-	Wed, 21 May 2025 10:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D49225C82A;
+	Wed, 21 May 2025 10:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747822781; cv=none; b=jdBZvBQDlAacb8Rm9B6PfCTPUC5On8PYH4DwQZt29zgkmRF8prGFyTFgRisrpgcDwluF/X9Kbewl4qtCGkajpDZCm6rYafbXIM6heU7TcNbQBw/LbocMPbsMrRR2YyVvkTmFB001dxyJLKk9JUCZwHk+6OfudKvu7nHHZk8SuOE=
+	t=1747822838; cv=none; b=YG6uComjCJkFAwzCLvYuAWgyWIBtRKJq/maG45S4B0nGW1qY6BU+T8h8Co4QDFcEnA2uX174a7TLOcwbUa+Mh0g6MzUCnJLQafSpTmCfu5pqEgqFGTb+JVyjT3s2WtoFoBTMPU1KcKberYXqKtXxESrej151/Ba90uqk987f47A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747822781; c=relaxed/simple;
-	bh=+iFhBXf0vbCbL+XqEy89NDjV9grPFRpL54vjJA7X/Ew=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pC5ztnyrxCe3Fn8oxVfRF41AZy0xs9XWzg2zsiEfs7zqQ7CFokcB4mwZn5jke3EZ//LwbPD4Q0cxYRHafT/njOlwaX5sKbHMT60cxozr/SsqG0ai5FLEsC/fAsbVNAiiAEpPj7xFZk+KjNIpCmLP6Y9M+5WdCThFYfOuLW8CFDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=KLbvwtRd; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E368A41A9E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1747822773; bh=4Rpc61MxhtsPFZeepnU8k+b9p0Cplh44VpM/YqieauU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=KLbvwtRd8red76Ln7sMFAksJUB3m0CxUDf2hBjNbowmRIxxxj6y/ENGapzU+nKtfy
-	 VX1FErAjt/DFgbda6zW3WDqIuhIilvsO9ZLg2rR9QuAuckRq7NddDhNhDWfZr4j5WH
-	 WYOzfPL0fkcV7QRy++XN01D45b1TcT5Fs3ZMfBV3BtdiGtwbDxFrUGMSPpvWaZYJuv
-	 fYIffx4yAh06T9lOZGBfHbI8HGdNphT/pXBSeOFl0bAPbCHrbLpbD9b3TtZl7PFXst
-	 QVDFwqlNNV9tL7Y5mp5lS569TEVXV4z4rDrQIuiw8mRFoy3/+NaF7uDXLXqt9KRAIL
-	 Fx/mcnGBdU2Og==
-Received: from localhost (unknown [93.187.88.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id E368A41A9E;
-	Wed, 21 May 2025 10:19:32 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Akira Yokosawa
- <akiyks@gmail.com>, linux-doc@vger.kernel.org, Masahiro Yamada
- <mchehab+huawei@kernel.org>, Nathan Chancellor
- <mchehab+huawei@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stephen Rothwell
- <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] Some kernel-doc fixes
-In-Reply-To: <cover.1747817887.git.mchehab+huawei@kernel.org>
-References: <cover.1747817887.git.mchehab+huawei@kernel.org>
-Date: Wed, 21 May 2025 04:19:29 -0600
-Message-ID: <875xhugtam.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1747822838; c=relaxed/simple;
+	bh=hgO/tUb6I/7A3eZ1GUbTujtom76PxW0NEx2daJdEgWE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gX+t8GLzPeMm25dWrXF52AeSdA7icBHitb02+yop7IJsRzDcDU/7Xl552DTyGlp2IvRl4KWF9cW0zo02OYAhUhbMPewr1fUnKKF5J2RH+8wVsO91FzPrrOvZ9a0hyBwDJaUglmaLterWsO0ppYYkiqpJRmJfEJv0MFegA24YqfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=beims.me; spf=pass smtp.mailfrom=beims.me; dkim=pass (2048-bit key) header.d=beims.me header.i=@beims.me header.b=EVT8lniS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=sC1Gpnwl; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=beims.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=beims.me
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id ED6731140190;
+	Wed, 21 May 2025 06:20:34 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Wed, 21 May 2025 06:20:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=beims.me; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm3; t=1747822834; x=1747909234; bh=NI0XmhRBWdAqcvMsZeFHc
+	aGIu0yjQa3Cy0NnWsMz3rg=; b=EVT8lniSCPgfDyLQ1Lspm/w/jYrWcwxsH0Xe6
+	8ixtSSbBCu9RIh/usUv+0yDw/nRgtaZxJo192xQFhDtAGhguaIgvuVhs3/QSqZmJ
+	iphgGjNL7k/9Gd25sbQFHPt8zVH3Zyn7wzcCbM7si3oSHXMux80iN8kQUhZVyb9o
+	aEURQlzmAViU2EmqMXB894yKrD1s6XzPsXOHUxiepikin7ssVm7FU885bkoMtD4T
+	54ObH/ur5AGebLLQqv/xpwFdTSz9sqd+Uw2jRlPhqQ4fLduWMr5n+fBIxvkTG3hA
+	G81VkilFCaagqEpvx0u0aXTiz8Rwcej55KLXh/i8uc9ypIhvg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1747822834; x=1747909234; bh=NI0XmhRBWdAqcvMsZeFHcaGIu0yjQa3Cy0N
+	nWsMz3rg=; b=sC1GpnwlXsv+sJmUWcqYB5mQdmopYM9YWyz4RZ88SVrP2NBJuyx
+	KK7URAMsB+iFnI+f1V7U3u5uGTUhsWetMgLChXhmH06AnIBNaaHLhFrRpGK//6Fi
+	LV5mIslWVh4HvE7h3khw7lphJFa9QHUQVPqtCTXwIW6u6BS8ucHTWvqPF7dUIF1e
+	krUMsvbYVmQbpRScXyqKAuSs4jGengUITE7db8TQH2+0e2Zipw8ywU///ZzuYTSy
+	96KB+ayykj79fCZXSsfZndtaM53xO+d0rtrbFP2O/T+FCLUXkpF12nFz/hbPup8B
+	ulLJUg2uIXcPK8z+sUqpu6pNFDP4IHDdMuA==
+X-ME-Sender: <xms:8qgtaILJWD_JFiHGSL8H3qeu7jyX4uM1raZzkPebppDEOp5h1007hQ>
+    <xme:8qgtaIK0poXZPxP4LwpSNwY5q4-Bbz5oGO9N45h8rjyvaCOfzH1qkMfArdUIJJ_Pj
+    X92DW22fOJWCiP5OBQ>
+X-ME-Received: <xmr:8qgtaIv_X8m9g5-774kU2f3p9njcz5D7sfqQv6LYcT0rNWHv4SdUdR-y-6g5xJLZp0E>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvkedvucdltddurdegfedvrddttd
+    dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
+    nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
+    enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgg
+    gfestdekredtredttdenucfhrhhomheprhgrfhgrvghlsegsvghimhhsrdhmvgenucggtf
+    frrghtthgvrhhnpeefkeekgfdvhefhfefgleethfduudeuffejvedvkefhgffhleejgeel
+    keehtddtieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehrrghfrggvlhessggvihhmshdrmhgvpdhnsggprhgtphhtthhopeehpdhmohguvgep
+    shhmthhpohhuthdprhgtphhtthhopegsrhhirghnnhhorhhrihhssegthhhrohhmihhumh
+    drohhrghdprhgtphhtthhopehfrhgrnhgtvghstghoseguohhltghinhhirdhithdprhgt
+    phhtthhopehrrghfrggvlhdrsggvihhmshesthhorhgruggvgidrtghomhdprhgtphhtth
+    hopehlihhnuhigqdifihhrvghlvghsshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:8qgtaFYcfmDzKsVfb6NNKlJpCqH3_2zdBaYns1sEyK6wSfFtQL1gOg>
+    <xmx:8qgtaPYYs1LVwecx6sScTahQSi4JCFTz3YzYfq8vHt0PCQW25ZDz0g>
+    <xmx:8qgtaBBBXfa1cpepqC9CTgwrg8_AeS8Z9x7G7dTBFCgQ2bdtoV6eTA>
+    <xmx:8qgtaFalhvtHZCK2cP0PDjKq9ftjw1h0Vad-8FQ4CijvNmZ_KSmuUA>
+    <xmx:8qgtaB0n4Zwsg4SH8nC1jwfN80F83nq7q0W1IKGNPlXLVQbP3XUqdaTm>
+Feedback-ID: idc214666:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 21 May 2025 06:20:33 -0400 (EDT)
+From: rafael@beims.me
+To: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>
+Cc: Rafael Beims <rafael.beims@toradex.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] wifi: mwifiex: enable host mlme on sdio W8997 chipsets
+Date: Wed, 21 May 2025 07:19:34 -0300
+Message-ID: <20250521101950.1220793-1-rafael@beims.me>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+From: Rafael Beims <rafael.beims@toradex.com>
 
-> Hi Jon,
->
-> That's the third version of the kernel-doc fixup patch series.
->
-> It address the root cause why Sphinx logger was not working: there
-> was a call there for logger.verbose(). According with:
->
-> 	https://www.sphinx-doc.org/en/master/extdev/logging.html
->
-> This is a valid call, but it doesn't verbose messages. Instead, it is
-> crashing with modern Sphinx versions, causing the log to not work.
->
-> I got rid of it, replacing by logger.info().  I took the time to also
-> address an issue pointed by Andy: not having the same log message
-> placed everywhere. With such change, we can keep using Sphinx
-> logger (which produces colored messages) inside kernel-doc
-> classes.
->
-> With that, we have:
->
-> Patch 1:	makes Lore and kernel-doc ML receive patches related
-> 	to kernel-doc.py and get_abi.py.
-> Patch 2:	cleanup try/except logic and get rid of logger.verbose();
-> Patch 3:	fix a KeyError when trying to acess data from non-existing files;
+Enable the host mlme flag for W8997 chipsets so WPA3 can be used.
+This feature depends on firmware support (V2 API key), which may not be
+available in all available firmwares.
 
-OK, I've applied the series, thanks.
+Signed-off-by: Rafael Beims <rafael.beims@toradex.com>
+---
+Tested on a Verdin iMX8MP (SDIO-UART) and Verdin iMX8MM (SDIO-SDIO):
+    - created AP's requiring WPA2 and WPA3 authentication and successfully
+      connected clients to them.
+    - connected as a client to AP's requiring WPA2 and WPA3 authentication
+---
+ drivers/net/wireless/marvell/mwifiex/sdio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sorry for my relative absence through all of this - I've been out of the
-country and poorly connected for the last three weeks; done with that
-now.
+diff --git a/drivers/net/wireless/marvell/mwifiex/sdio.c b/drivers/net/wireless/marvell/mwifiex/sdio.c
+index c1fe48448839..f039d6f19183 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sdio.c
++++ b/drivers/net/wireless/marvell/mwifiex/sdio.c
+@@ -438,7 +438,7 @@ static const struct mwifiex_sdio_device mwifiex_sdio_sd8997 = {
+ 	.can_auto_tdls = false,
+ 	.can_ext_scan = true,
+ 	.fw_ready_extra_delay = false,
+-	.host_mlme = false,
++	.host_mlme = true,
+ };
+ 
+ static const struct mwifiex_sdio_device mwifiex_sdio_sd8887 = {
+-- 
+2.47.2
 
-Thanks,
-
-jon
 
