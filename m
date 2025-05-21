@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-658309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A55FAC0027
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 00:54:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85DACAC0025
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 00:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 075EE7A9B7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 22:53:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A3427A9B57
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 22:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC7B24A044;
-	Wed, 21 May 2025 22:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDD4248F70;
+	Wed, 21 May 2025 22:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dymt+6s6"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JKH9A6YE"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC04523AE9A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA1B2459F3
 	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 22:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747867874; cv=none; b=swb/54OyNla7z4qp4i2TmjM74E2Ko0y+PbfTFnX8mUUzQSH/YLu/C/8zpIuFOxKTBIQu+mqO2q4ILyttdm3TOd+QXFnfzgUDZKirLIQKYsav6L94qvH7dswUAUFTJm9TjFS+iwTOXDrIuC+kX5gKt/CfIMhCLosLCimtcrqaz/g=
+	t=1747867873; cv=none; b=m/mWiZRmYqbKCt75DA8WDTRLlv4gSI1L/7uy4LUn3mtED9CRYAROs9PNGjaF6TBXsvczzjWBei69YieLxXuouMGaouto+uPT+lOIkOva1kQ8yChcD09kUW2jXy0f/CyUykInO7t3GqreOln3OKjMjtYPgX1xu/AT4O5LoYlFNjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747867874; c=relaxed/simple;
-	bh=Vuq2Y1X1WqGtNgyMA65DiHUQ7pD0Ew/rt+rgo5WAH70=;
+	s=arc-20240116; t=1747867873; c=relaxed/simple;
+	bh=tFZIOgmF1yBHMePyVDJXVVS9f4ngI3WXCqT1ILeychM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W7X3uC6rdJU70uPUic2bZEKd+PZB2q+ZjhY4RTRgUtLMknKaLtopVUnbq1URuIHk6XbL0gOeHVT/mUyUCt0XOXRXkArOfkbQoGQpboOiaXGQXGhIo/qKPHESR16HQM2cU79/begMBfvUqwy+R2n/xhgTswlxvFzvveYJ+xK1fZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dymt+6s6; arc=none smtp.client-ip=198.175.65.14
+	 MIME-Version; b=HqgnIjatD6YK/DHwWBAVYvC4Uu7KtoriGREBQ2nXVP+3jlFr9MQInN/18ugQB6ocNKXLGQ5GjJM1F9IfPJUoXvt+PfXTd1if1U6WmWvDC1akEoAgLsdI9qWJZSfEUR9B07L5Hya8X1EFfVnwD1qR2QlTDViZyehAj6MCaI15FUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JKH9A6YE; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747867872; x=1779403872;
+  t=1747867871; x=1779403871;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Vuq2Y1X1WqGtNgyMA65DiHUQ7pD0Ew/rt+rgo5WAH70=;
-  b=dymt+6s6EfW2rn7AZSkQZ+ZkyvLHyzKfiC6wU82jrC2q4iIlOiUAnfdU
-   pqJApZ9HtuIQwuR7wftp3wizqCHfHAsB/HJDPO5SrMeAxn1feOw6IDpTA
-   hL8pczEQvQQeTgT9XCufxpOuGzw+nNtoKfSQJbOx/EjCX4fE3UZwRrr/N
-   fhaKHZ7FH1AnLqiT717QlGWf1jdEV98lodsgjPb5DZbS/25LOWdJmioT6
-   dPON2usUthsFnlP6oSK78RQiPYJ8b6hRkbzU7vsGU+ftFawaCTZbbzjYS
-   VNrlNwA3KERpV6J0kmtt8Y2/+h+WV/TlT1gZYJlgnNJvbKuxR17DyQt9y
-   Q==;
-X-CSE-ConnectionGUID: Bf/BEhsCQFe9SEwu6AqWnw==
-X-CSE-MsgGUID: md+9ZUvjRWWQqTTuN6G7Gg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11440"; a="53677822"
+  bh=tFZIOgmF1yBHMePyVDJXVVS9f4ngI3WXCqT1ILeychM=;
+  b=JKH9A6YEYZpwmJIA+v5tf0aVUtXEf0o6Br758hQ4onY4yjVMYZ21K6Gu
+   dFPvgToeIV7WEess179b3fJjFWMqfwl/SyaU9NPG0GqGdm15k4u8JSlrm
+   /Z2TRjcTHjicsuCtZib+lSAnK910owbjrZj0Seqzc7mI+W1dVzJDsnB5X
+   0hIQOAoNSHRymjxaH6a7RVBDWX5WIANuupxbpVxK7wxLQ9+hN9LoyDcDa
+   dRa+oHMGMbUNbiCmYpvCcDzgGf0JYjcdXvVexrLEOmnFkNIpoagamHR+S
+   zjW0+9f/GUyKabshvTSQ8IXVlLZCZ2i/krDhvoTHTZP/85gTTRicNcC/l
+   w==;
+X-CSE-ConnectionGUID: i4JHuDsbSpyHOIRu96O9rQ==
+X-CSE-MsgGUID: hYoUU38SQpOJfelW7q4Ttw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11440"; a="53677823"
 X-IronPort-AV: E=Sophos;i="6.15,304,1739865600"; 
-   d="scan'208";a="53677822"
+   d="scan'208";a="53677823"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
   by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 15:51:00 -0700
-X-CSE-ConnectionGUID: pC9+aHUnSQ6Kze+YGjV2dA==
-X-CSE-MsgGUID: 3cV8fQp7TGaBMx0MQwIr6A==
+X-CSE-ConnectionGUID: UCwfJBwyQdy9Xpy3VZxTQg==
+X-CSE-MsgGUID: BLn1/SjZTgaA+zcfYnixXQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,304,1739865600"; 
-   d="scan'208";a="141352193"
+   d="scan'208";a="141352197"
 Received: from agluck-desk3.sc.intel.com ([172.25.103.51])
   by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 15:50:59 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -72,9 +72,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v5 23/29] x86/resctrl: Enable RDT_RESOURCE_PERF_PKG
-Date: Wed, 21 May 2025 15:50:41 -0700
-Message-ID: <20250521225049.132551-24-tony.luck@intel.com>
+Subject: [PATCH v5 24/29] x86/resctrl: Add energy/perf choices to rdt boot option
+Date: Wed, 21 May 2025 15:50:42 -0700
+Message-ID: <20250521225049.132551-25-tony.luck@intel.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250521225049.132551-1-tony.luck@intel.com>
 References: <20250521225049.132551-1-tony.luck@intel.com>
@@ -86,52 +86,151 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The RDT_RESOURCE_PERF_PKG resource is not marked as "mon_capable" during
-early resctrl initialization. This means that the domain lists for the
-resource are not built when the CPU hot plug notifiers are registered.
+Users may want to force either of the telemetry features on
+(in the case where they are disabled due to erratum) or off
+(in the case that a limited number of RMIDs for a telemetry
+feature reduces the number of monitor groups that can be
+created.)
 
-Mark the resource as mon_capable and call domain_add_cpu_mon() for
-each online CPU to build the domain lists in the first call to the
-resctrl_arch_pre_mount() hook.
+Unlike other options that are tied to X86_FEATURE_* flags,
+these must be queried by name. Add a function to do that.
+
+Add checks for users who forced either feature off.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/kernel/cpu/resctrl/core.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ .../admin-guide/kernel-parameters.txt         |  2 +-
+ arch/x86/kernel/cpu/resctrl/internal.h        |  4 +++
+ arch/x86/kernel/cpu/resctrl/core.c            | 28 +++++++++++++++++++
+ arch/x86/kernel/cpu/resctrl/intel_aet.c       |  6 ++++
+ 4 files changed, 39 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index d9fd26b95b34..4811bc812f0f 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -5988,7 +5988,7 @@
+ 	rdt=		[HW,X86,RDT]
+ 			Turn on/off individual RDT features. List is:
+ 			cmt, mbmtotal, mbmlocal, l3cat, l3cdp, l2cat, l2cdp,
+-			mba, smba, bmec.
++			mba, smba, bmec, energy, perf.
+ 			E.g. to turn on cmt and turn off mba use:
+ 				rdt=cmt,!mba
+ 
+diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+index 42da0a222c7c..524f3c183900 100644
+--- a/arch/x86/kernel/cpu/resctrl/internal.h
++++ b/arch/x86/kernel/cpu/resctrl/internal.h
+@@ -167,6 +167,10 @@ void __init intel_rdt_mbm_apply_quirk(void);
+ 
+ void rdt_domain_reconfigure_cdp(struct rdt_resource *r);
+ 
++bool rdt_is_option_force_enabled(char *option);
++
++bool rdt_is_option_force_disabled(char *option);
++
+ bool intel_aet_get_events(void);
+ void __exit intel_aet_exit(void);
+ int intel_aet_read_event(int domid, int rmid, enum resctrl_event_id evtid, u64 *val);
 diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 18d84c497ee4..f07f5b58639a 100644
+index f07f5b58639a..b23309566500 100644
 --- a/arch/x86/kernel/cpu/resctrl/core.c
 +++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -763,14 +763,27 @@ static int resctrl_arch_offline_cpu(unsigned int cpu)
+@@ -797,6 +797,8 @@ enum {
+ 	RDT_FLAG_MBA,
+ 	RDT_FLAG_SMBA,
+ 	RDT_FLAG_BMEC,
++	RDT_FLAG_ENERGY,
++	RDT_FLAG_PERF,
+ };
  
- void resctrl_arch_pre_mount(void)
- {
-+	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_PERF_PKG].r_resctrl;
- 	static atomic_t only_once;
--	int old = 0;
-+	int cpu, old = 0;
+ #define RDT_OPT(idx, n, f)	\
+@@ -822,6 +824,8 @@ static struct rdt_options rdt_options[]  __ro_after_init = {
+ 	RDT_OPT(RDT_FLAG_MBA,	    "mba",	X86_FEATURE_MBA),
+ 	RDT_OPT(RDT_FLAG_SMBA,	    "smba",	X86_FEATURE_SMBA),
+ 	RDT_OPT(RDT_FLAG_BMEC,	    "bmec",	X86_FEATURE_BMEC),
++	RDT_OPT(RDT_FLAG_ENERGY,    "energy",	0),
++	RDT_OPT(RDT_FLAG_PERF,	    "perf",	0),
+ };
+ #define NUM_RDT_OPTIONS ARRAY_SIZE(rdt_options)
  
- 	if (!atomic_try_cmpxchg(&only_once, &old, 1))
- 		return;
- 
- 	if (!intel_aet_get_events())
- 		return;
-+
-+	/*
-+	 * Late discovery of telemetry events means the domains for the
-+	 * resource were not built. Do that now.
-+	 */
-+	cpus_read_lock();
-+	mutex_lock(&domain_list_lock);
-+	r->mon_capable = true;
-+	for_each_online_cpu(cpu)
-+		domain_add_cpu_mon(cpu, r);
-+	mutex_unlock(&domain_list_lock);
-+	cpus_read_unlock();
+@@ -871,6 +875,30 @@ bool rdt_cpu_has(int flag)
+ 	return ret;
  }
  
- enum {
++bool rdt_is_option_force_enabled(char *name)
++{
++	struct rdt_options *o;
++
++	for (o = rdt_options; o < &rdt_options[NUM_RDT_OPTIONS]; o++) {
++		if (!strcmp(name, o->name))
++			return o->force_on;
++	}
++
++	return false;
++}
++
++bool rdt_is_option_force_disabled(char *name)
++{
++	struct rdt_options *o;
++
++	for (o = rdt_options; o < &rdt_options[NUM_RDT_OPTIONS]; o++) {
++		if (!strcmp(name, o->name))
++			return o->force_off;
++	}
++
++	return false;
++}
++
+ bool resctrl_arch_is_evt_configurable(enum resctrl_event_id evt)
+ {
+ 	if (!rdt_cpu_has(X86_FEATURE_BMEC))
+diff --git a/arch/x86/kernel/cpu/resctrl/intel_aet.c b/arch/x86/kernel/cpu/resctrl/intel_aet.c
+index be52c9302a80..c1fc85dbf0d8 100644
+--- a/arch/x86/kernel/cpu/resctrl/intel_aet.c
++++ b/arch/x86/kernel/cpu/resctrl/intel_aet.c
+@@ -51,6 +51,7 @@ struct pmt_event {
+ 
+ /**
+  * struct event_group - All information about a group of telemetry events.
++ * @name:		Name for this group (used by boot rdt= option)
+  * @pfg:		Points to the aggregated telemetry space information
+  *			within the OOBMSM driver that contains data for all
+  *			telemetry regions.
+@@ -62,6 +63,7 @@ struct pmt_event {
+  */
+ struct event_group {
+ 	/* Data fields used by this code. */
++	char				*name;
+ 	struct pmt_feature_group	*pfg;
+ 	struct mmio_info		**pkginfo;
+ 
+@@ -77,6 +79,7 @@ struct event_group {
+  * File: xml/CWF/OOBMSM/RMID-ENERGY/cwf_aggregator.xml
+  */
+ static struct event_group energy_0x26696143 = {
++	.name		= "energy",
+ 	.guid		= 0x26696143,
+ 	.mmio_size	= (576 * 2 + 3) * 8,
+ 	.num_events	= 2,
+@@ -91,6 +94,7 @@ static struct event_group energy_0x26696143 = {
+  * File: xml/CWF/OOBMSM/RMID-PERF/cwf_aggregator.xml
+  */
+ static struct event_group perf_0x26557651 = {
++	.name		= "perf",
+ 	.guid		= 0x26557651,
+ 	.mmio_size	= (576 * 7 + 3) * 8,
+ 	.num_events	= 7,
+@@ -247,6 +251,8 @@ static bool get_pmt_feature(enum pmt_feature_id feature)
+ 	for (peg = &known_event_groups[0]; peg < &known_event_groups[NUM_KNOWN_GROUPS]; peg++) {
+ 		for (int i = 0; i < p->count; i++) {
+ 			if ((*peg)->guid == p->regions[i].guid) {
++				if (rdt_is_option_force_disabled((*peg)->name))
++					return false;
+ 				ret = configure_events(*peg, p);
+ 				if (!ret) {
+ 					(*peg)->pfg = no_free_ptr(p);
 -- 
 2.49.0
 
