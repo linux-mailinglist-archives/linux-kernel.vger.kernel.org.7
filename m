@@ -1,115 +1,252 @@
-Return-Path: <linux-kernel+bounces-657108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E1CABEF5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:17:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265D1ABEF71
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEB42188A68E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:17:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7E417B1426
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA8F239E80;
-	Wed, 21 May 2025 09:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E752823D2AF;
+	Wed, 21 May 2025 09:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="O+USdRL2"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3zEhHnMq"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5DC2376F4;
-	Wed, 21 May 2025 09:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CEA23D285
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 09:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747819019; cv=none; b=HZMUVPN/wRuzwnx46d19TwQVfkoOUGU4WPBI4XqNnW0nI1i9Tr1yA5kAPdjwjrcqwq0nVt/+XuICPXuaQLk8Gp9kBar1YZImmteB/7+r1ymMl59u10jKOPA8tgA3Cei/oFchCzWeU6873yMjVAdhCtFh3pZDQviRWlQDNv379JM=
+	t=1747819146; cv=none; b=DyWRUBeuB2TpD3+GySiJgIOuNligp90r9WS8MoheMNJoYtpbMeaByyab2s7Ia0NPqqjOkYTOaW5MfFJYyvvZeKlyekO5I+1OsSt2lkvQPSnjSoEGvEpCMBnbLxiKazGOXbLDoifkD9JTPKut86gTi0uord5G+I9kkZnLTEKj6AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747819019; c=relaxed/simple;
-	bh=EOYxf7rwGWIxwQKIXZUZH9u+8ExhAtv5kLTSo4XFdhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B0TzkpBhAaEj4VOliMQFpUT7zvs74XH0iuYgNnweYPZU4srBQk/oR9874RDe3ZyGuK+9BQtHQ3037OwAelUWzWkao2FIlNFRQZ5ZR/BhEKqtbHtRd+RPlzGL2A/2UkVSavfiLnARgcK1klhuAZTx2eTelGEgelBRScKJR798Bk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=O+USdRL2; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=uoJqCLXWE5jO/v/8BjuFoyBj5zpl+Y/YmxOaV/Prcn0=; b=O+USdRL2X6np4UEcAL+BrsXnPL
-	9XmnWEzuTYVkrbh005HjdbJYPILiwp/nIKEQ3TytLuQebr/ZXFqbM48rUwKaHVrPbmdrKcYEipBg1
-	uWDQYkSLSWxtafPM//N30/ByssD2mzAL1aCnNNAtplUlnqlNns3vQGceZgQH0n/94vVvCjf88tOmE
-	CrtKQBH/qWx+Yqxbf+YnYtMW4M9SDVwgqb1bzgi6VBadEiGJ9Nj54f+pS8rISqMVIyXyLXtcPntN0
-	p+uUuhleoqmOetVEvEj3rrg9dINEPVhWS1EsqFqHMGQNZd3+994+jivte0QYCI2sNQ0TbW6ZhFguB
-	eJEf5ECg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uHfZC-007lLq-2K;
-	Wed, 21 May 2025 17:16:51 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 21 May 2025 17:16:50 +0800
-Date: Wed, 21 May 2025 17:16:50 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc: Klaus Kudielka <klaus.kudielka@gmail.com>,
-	Eric Biggers <ebiggers@kernel.org>, regressions@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	EBALARD Arnaud <Arnaud.Ebalard@ssi.gouv.fr>,
-	Romain Perier <romain.perier@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] crypto: marvell/cesa - Avoid empty transfer descriptor
-Message-ID: <aC2aAvX07Aaho08d@gondor.apana.org.au>
-References: <aCQm0aHYnI6ciyPz@gondor.apana.org.au>
- <20dde00750d803a9a364ded99dab1e3e22daec77.camel@gmail.com>
- <20250515182131.GC1411@quark>
- <f0dc235e3d7bfa1f60cc01fd527da52024af54e0.camel@gmail.com>
- <aCZ3_ZMAFu6gzlyt@gondor.apana.org.au>
- <aCcyXkeBvHQYvf2d@Red>
- <aCczV6MF6xk5rRA3@gondor.apana.org.au>
- <aChx_ODF_hYKL8XO@Red>
- <aCmTQoJw6XG1CkuZ@gondor.apana.org.au>
- <aC1fY6IP-8MzVIbx@gondor.apana.org.au>
+	s=arc-20240116; t=1747819146; c=relaxed/simple;
+	bh=TGJZe2hADz53s7Skz8ypv8Bu8bz+ehqEub2mIKZwff4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IlLjXvv/gv/u9WBwob/X4LcUXe9muwsLzlPHfVg3Ni1HQwXf1P3fILQA0L7FGFLZFmJYfOjGkxaUgnkzHABY25RmD4aTaTEFxs3YDag5M0OnAA04p8g3zc9JdxZ1pzh7ADtpQGdegJSAQWWZeOWd6PDqYlTtZ/irNBSkjc2z6RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3zEhHnMq; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-600210e4219so10193961a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 02:19:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747819142; x=1748423942; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TGJZe2hADz53s7Skz8ypv8Bu8bz+ehqEub2mIKZwff4=;
+        b=3zEhHnMqrj9iq852phk/0npUnMMjkr/UwFIKdix7mjUf8RVIQrwO4eqZXdS6hxw7Dz
+         k4FNybin1mBso4nRyR65C8SeC3Biz6qiJSW0clx13Ab2Uh3X3Kk+54fBaMTJ4MpzuNij
+         tuvv37NN6FqXQtGp0E5vUMy1+Dz/vqKLLSLS38lO38rpLBswi5rVW3yLwREtRsEjSLtw
+         NVR4+Xv03SAg8D60oIDt8yQAVrVm1irbj1GrTAxW5fCh8kzCZcecqJM7xF0j2FWbdLur
+         zHxj/HhRXxTvXgEoXYwJnwsfAneOuuggLbCgkSQJ6uiW7StgMJ8Eb8Z5CVdG56aSsjZn
+         cAaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747819142; x=1748423942;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TGJZe2hADz53s7Skz8ypv8Bu8bz+ehqEub2mIKZwff4=;
+        b=H2E9ybpEHCyC+K1TOEtEEY1yAuaLjtz/KnkXk3dbKvIh4R07OcOeOFQxtH1IzCW/Mv
+         ZznHWyV4uFNPhfn2n9zAIv9lXAMVO0J240qlHLIj1kUunxXi++tF0ms2ftsYrTPdXUEX
+         P/sW4nqnQ4bW+zHMZDpICXnRvECM2Uk7RECAr2XLObkdOEiotMwZzbSlHwKGaW1PDhRJ
+         Djh2d9udrLxOYrLaBC342zg8nbgw7GQRI92d/ntGI2FjAAb7IZOBwpcVlx7q6PWqywja
+         lPxS8tYi7CedGK1DvnBgtLoWXB0fcIxeWfMdZybAsokKsgPDPIEIkigUauyCt0+0ZJtA
+         rYbw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0Bp+lH4WNYXNER/ysWZr74xJVquKU7zUT+UEDZM1l/dg9bemQ3EfCkIxvDx+79Wmo6UeiaSOzEMIIbNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4ivJt1SYPgILluu13U+E8yRZkQx/x3IHMh8J9Lf8SOjldsGeP
+	ROf8DQwbZPqBoql6prjiNkCM81ZvrifsP9lai0kMg5rvrXBznY7SHqyGnCS2sfpjhT3sCpti8r1
+	B67uf/OIBlxxQQE68nOtgW7+IacopGO2Jy5No0t3X
+X-Gm-Gg: ASbGncuMqXL47ubXnTmwG9ReqKWOWD1YYPG9xOS64XBhvfVZ2Wa7Nw6Pckoh9PaXCDF
+	PDBZQFq7wAtnTTDR+5qMr9zLv1CkpD/uCplfgZ+657yV/BrAW+op2z9Oc2lGlSLqocPR6qbeCVu
+	tLx/C1vxpN7M+Q2N1dMshOHK2jhNJtuy+scuhtAfaeFMfoOMcyUjnP6vt1++FPO83pCfji57E5M
+	dpgOHK3GWx2
+X-Google-Smtp-Source: AGHT+IGmzCCy6OjzmNxLo5QdkmHLYIuxkB7QJ1oH0jls8zqR52SthXRQfAiW+6WIKuVMB893qU0KG07gLhApmR1xq9c=
+X-Received: by 2002:a17:907:8dc3:b0:acb:37ae:619c with SMTP id
+ a640c23a62f3a-ad52f8ac2ccmr1674496266b.15.1747819142210; Wed, 21 May 2025
+ 02:19:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aC1fY6IP-8MzVIbx@gondor.apana.org.au>
+References: <cover.1747349530.git.babu.moger@amd.com> <CALPaoChSzzU5mzMZsdT6CeyEn0WD1qdT9fKCoNW_ty4tojtrkw@mail.gmail.com>
+ <4dbcea13-382e-4af2-960d-0e66652cc2f5@amd.com> <8dd6e3a0-b2e1-48a7-8fa4-62e78b1407ae@intel.com>
+ <6c77b065-a54e-4b9c-a4cf-8b81676f2ab2@amd.com> <f4178258-f7ad-4db2-9284-3f28e8ee8d00@intel.com>
+ <92bcab75-72c6-46d4-97a2-119e7124c90c@amd.com> <11465976-f030-4c1b-88c6-3eebf0c8f13b@intel.com>
+In-Reply-To: <11465976-f030-4c1b-88c6-3eebf0c8f13b@intel.com>
+From: Peter Newman <peternewman@google.com>
+Date: Wed, 21 May 2025 11:18:51 +0200
+X-Gm-Features: AX0GCFttPDhQ0or8oVTQeTMZRPPCUAhMm7SYvYK6LJpIiQPETDwHbV25FkcQJQ8
+Message-ID: <CALPaoCjTwySGX9i7uAtCWLKQpmELKP55xDLJhHmUve8ptsfFTw@mail.gmail.com>
+Subject: Re: [PATCH v13 00/27] x86/resctrl : Support AMD Assignable Bandwidth
+ Monitoring Counters (ABMC)
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: "Moger, Babu" <bmoger@amd.com>, babu.moger@amd.com, corbet@lwn.net, tony.luck@intel.com, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, james.morse@arm.com, dave.martin@arm.com, 
+	fenghuay@nvidia.com, x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, 
+	akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org, 
+	ardb@kernel.org, gregkh@linuxfoundation.org, daniel.sneddon@linux.intel.com, 
+	jpoimboe@kernel.org, alexandre.chartre@oracle.com, 
+	pawan.kumar.gupta@linux.intel.com, thomas.lendacky@amd.com, 
+	perry.yuan@amd.com, seanjc@google.com, kai.huang@intel.com, 
+	xiaoyao.li@intel.com, kan.liang@linux.intel.com, xin3.li@intel.com, 
+	ebiggers@google.com, xin@zytor.com, sohil.mehta@intel.com, 
+	andrew.cooper3@citrix.com, mario.limonciello@amd.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	maciej.wieczor-retman@intel.com, eranian@google.com, Xiaojian.Du@amd.com, 
+	gautham.shenoy@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 21, 2025 at 01:06:43PM +0800, Herbert Xu wrote:
+Hi Babu/Reinette,
+
+On Wed, May 21, 2025 at 1:44=E2=80=AFAM Reinette Chatre
+<reinette.chatre@intel.com> wrote:
 >
-> Can you please try this patch to see if it makes a difference?
+> Hi Babu,
+>
+> On 5/20/25 4:25 PM, Moger, Babu wrote:
+> > Hi Reinette,
+> >
+> > On 5/20/2025 1:23 PM, Reinette Chatre wrote:
+> >> Hi Babu,
+> >>
+> >> On 5/20/25 10:51 AM, Moger, Babu wrote:
+> >>> Hi Reinette,
+> >>>
+> >>> On 5/20/25 11:06, Reinette Chatre wrote:
+> >>>> Hi Babu,
+> >>>>
+> >>>> On 5/20/25 8:28 AM, Moger, Babu wrote:
+> >>>>> On 5/19/25 10:59, Peter Newman wrote:
+> >>>>>> On Fri, May 16, 2025 at 12:52=E2=80=AFAM Babu Moger <babu.moger@am=
+d.com> wrote:
+> >>>>
+> >>>> ...
+> >>>>
+> >>>>>>> /sys/fs/resctrl/info/L3_MON/num_mbm_cntrs: Reports the number of =
+monitoring
+> >>>>>>> counters available for assignment.
+> >>>>>>
+> >>>>>> Earlier I discussed with Reinette[1] what num_mbm_cntrs should
+> >>>>>> represent in a "soft-ABMC" implementation where assignment is
+> >>>>>> implemented by assigning an RMID, which would result in all events
+> >>>>>> being assigned at once.
+> >>>>>>
+> >>>>>> My main concern is how many "counters" you can assign by assigning
+> >>>>>> RMIDs. I recall Reinette proposed reporting the number of groups w=
+hich
+> >>>>>> can be assigned separately from counters which can be assigned.
+> >>>>>
+> >>>>> More context may be needed here. Currently, num_mbm_cntrs indicates=
+ the
+> >>>>> number of counters available per domain, which is 32.
+> >>>>>
+> >>>>> At the moment, we can assign 2 counters to each group, meaning each=
+ RMID
+> >>>>> can be associated with 2 hardware counters. In theory, it's possibl=
+e to
+> >>>>> assign all 32 hardware counters to a group=E2=80=94allowing one RMI=
+D to be linked
+> >>>>> with up to 32 counters. However, we currently lack the interface to
+> >>>>> support that level of assignment.
+> >>>>>
+> >>>>> For now, the plan is to support basic assignment and expand functio=
+nality
+> >>>>> later once we have the necessary data structure and requirements.
+> >>>>
+> >>>> Looks like some requirements did not make it into this implementatio=
+n.
+> >>>> Do you recall the discussion that resulted in you writing [2]? Looks=
+ like
+> >>>> there is a question to Peter in there on how to determine how many "=
+counters"
+> >>>> are available in soft-ABMC. I interpreted [3] at that time to mean t=
+hat this
+> >>>> information would be available in a future AMD publication.
+> >>>
+> >>> We already have a method to determine the number of counters in soft-=
+ABMC
+> >>> mode, which Peter has addressed [4].
+> >>>
+> >>> [4]
+> >>> https://lore.kernel.org/lkml/20250203132642.2746754-1-peternewman@goo=
+gle.com/
+> >>>
+> >>> This appears to be more of a workaround, and I doubt it will be inclu=
+ded
+> >>> in any official AMD documentation. Additionally, the long-term direct=
+ion
+> >>> is moving towards ABMC.
+> >>>
+> >>> I don=E2=80=99t believe this workaround needs to be part of the curre=
+nt series. It
+> >>> can be added later when soft-ABMC is implemented.
+> >>
+> >> Agreed. What about the plans described in [2]? (Thanks to Peter for
+> >> catching this!).
+> >>
+> >> It is important to keep track of requirements while working on a featu=
+re to
+> >> ensure that the implementation supports the planned use cases. Re-read=
+ing that
+> >> thread it is not clear to me how soft-ABMC's per-group assignment woul=
+d look.
+> >> Could you please share how you see it progress from this implementatio=
+n?
+> >> This includes the single event vs. multiple event assignment. I would =
+like to
+> >> highlight that this is not a request for this to be supported in this =
+implementation
+> >> but there needs to be a plan for how this can be supported on top of i=
+nterfaces
+> >> established by this work.
+> >>
+> >
+> > Here=E2=80=99s my current understanding of soft-ABMC. Peter may have a =
+more in-depth perspective on this.
+> >
+> > Soft-ABMC:
+> > a. num_mbm_cntrs: This is a software-defined limit based on the number =
+of active RMIDs that can be supported. The value can be obtained using the =
+code referenced in [4].
 
-Actually, please try this one instead.
+I would call it a hardware-defined limit that can be probed by software.
+
+The main question is whether this file returns the exact number of
+RMIDs hardware can track or double that number (mbm_total_bytes +
+mbm_local_bytes) so that the value is always measured in events.
+
+There's also the mongroup-RMID overcommit use case I described
+above[1]. On Intel we can safely assume that there are counters to
+back all RMIDs, so num_mbm_cntrs would be calculated directly from
+num_rmids.
+
+I realized this use case is more difficult to implement on MPAM,
+because a PARTID is effectively a CLOSID+RMID, so deferring assigning
+a unique PARTID to a group also results in it being in a different
+allocation group. It will work if the unmonitored groups could find a
+way to share PARTIDs, but this has consequences on allocation - but
+hopefully no worse than sharing CLOSIDs on x86.
+
+There's a lot of interest in monitoring ID overcommit in Google, so I
+think it's worth it for me to investigate the additional structural
+changes needed in resctrl (i.e., breaking the FS-level association
+between mongroups and HW monitoring IDs). Such a framework could be a
+better fit for soft-ABMC. For example, if overcommit is allowed, we
+would just report the number of simultaneous RMIDs we were able to
+probe as num_rmids. I would want the same shared assignment scheduler
+to be able to work with RMIDs and counters, though.
 
 Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
---
-diff --git a/drivers/crypto/marvell/cesa/hash.c b/drivers/crypto/marvell/cesa/hash.c
-index 6815eddc9068..8a9ea83372c9 100644
---- a/drivers/crypto/marvell/cesa/hash.c
-+++ b/drivers/crypto/marvell/cesa/hash.c
-@@ -15,6 +15,7 @@
- #include <crypto/sha2.h>
- #include <linux/device.h>
- #include <linux/dma-mapping.h>
-+#include <linux/dma-map-ops.h>
- 
- #include "cesa.h"
- 
-@@ -532,6 +533,7 @@ mv_cesa_ahash_dma_add_cache(struct mv_cesa_tdma_chain *chain,
- 		return ret;
- 
- 	memcpy(ahashdreq->cache, creq->cache, creq->cache_ptr);
-+	arch_sync_dma_for_device(ahashdreq->cache_dma, creq->cache_ptr, DMA_TO_DEVICE);
- 
- 	return mv_cesa_dma_add_data_transfer(chain,
- 					     CESA_SA_DATA_SRAM_OFFSET,
+-Peter
+
+[1] https://lore.kernel.org/lkml/CALPaoChSzzU5mzMZsdT6CeyEn0WD1qdT9fKCoNW_t=
+y4tojtrkw@mail.gmail.com/
 
