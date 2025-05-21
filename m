@@ -1,124 +1,227 @@
-Return-Path: <linux-kernel+bounces-657744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADEABABF84B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:53:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B434ABF8A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FB677B2C07
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:52:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84147189F338
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36154221719;
-	Wed, 21 May 2025 14:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C408C22A1CB;
+	Wed, 21 May 2025 14:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lHki9TFk"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pFk1IfYN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F9A221710;
-	Wed, 21 May 2025 14:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB7722126A;
+	Wed, 21 May 2025 14:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747839054; cv=none; b=UtRXOwJfUj0iZkEYiI2H3gohCww5grB/MlAW1eAXkgk6QMdhxAR47zEUXRxYPoT9PJeh60zI2uEwb1NoC6p6qqPUplAPeAeb6DDc1doQHPFomJhuquaDJrUS3nWZGylSs8wXd2G8NqpXOVomNZyTGlmyWGGgWZ4jBzK1k2huZgY=
+	t=1747839174; cv=none; b=DbYCadLu6d76HP0BDn1lMv3bjCYzjLyWOvaw6tEDJs0oB9tEd5xEL039P/ZTOVcd1kQIhaqJXYHiWU8aRkidiqJqD2QeTjiZ4P/uNpsjC16NQAIPMoXv10/9GsIyItDxf/cxrVePhvP1Sm0AqTIkbU2jcXAfKafUAhDQO7SKkA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747839054; c=relaxed/simple;
-	bh=QxneKmmr3mJI+3YYUP0u3PQHesj8NFPMVLk5slN/ZNM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=lquwxuFrpP6FbG92S82xIWMb60HsOZ3F8rNsoRIG4AeF464V/iY/K4x9/CLSvDQP6RY+fHzMkiDLY4TS3SMtxKNm/Hst239XoibbSuT0SaDiWV08JjjRcMW6fhZX4/hLqlGQij+m+2J2InQPGBDiApxKBGFAJTafhFTi8HWwS4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lHki9TFk; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30bf7d0c15eso65140181fa.0;
-        Wed, 21 May 2025 07:50:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747839051; x=1748443851; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QxneKmmr3mJI+3YYUP0u3PQHesj8NFPMVLk5slN/ZNM=;
-        b=lHki9TFkCaLnxyqmiua8fpSnEf/gVtPPtfzNgHao9BcIl0kESQIX3Ij3eM0PgQamhT
-         QH38nAARU4GcRf5Cxd4H84H9uO9XXSDAr1S/QN8Mqws4KC6nuORxu6RRr8F4iQjPUfhR
-         W1GqcdJjnu1udw/jV7c7zNr0hYy+7cr1v30i4cFq+hdBAvZLe+WyUeRXkBJG4rESyC7Z
-         NpArZf3wjIdvJmvs5K0ETN8r8DVlDuCNa9TSnlT8ARwlO4HOwiEz2vximluQZwqNbQWo
-         /lHKvR/TZdfPKZcX6/VNFacIsPhA7rc+eeeT74hqi26JXEuTmBKT3qDXfqRytIN/agxG
-         63gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747839051; x=1748443851;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QxneKmmr3mJI+3YYUP0u3PQHesj8NFPMVLk5slN/ZNM=;
-        b=nHqAtShy9lzOBzD+VHv4MhOhZli1MuxRUkf2DQsdFmwhXyi1u9OVJwQm4tH6MZz+3F
-         3OD/azCMaMWxO9m756hYPe6JqgyOemDRRP8Ch1oqennwk3DJBa8dZCZi0uY5+Cb61eZW
-         4JmboF63UtWhPoLaebMHR7NSumvRJNlotlBd0dMYFrQsOEEBidd8Sr0BDPqdNHfl9PKR
-         MAXBRuvDyeXkCKVd2FiP1gUUkoyf7E93IKU+uygGtgL6UFgN7Rx+XxKfGTpUczMEH1k2
-         mduuVUKlBKeaJeaSn5r8NDTeuuwIiZ38znxfjWxqc/yjnMxnGcysBxERff1Vur/XkjPd
-         yPkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfAOic3iKkDATYq1eqSf3vF4GWPQSaseUK8Te2U0r4+kiWCduVSzhPEzyAInIfGn6eM/CuFpPUoONnPGs=@vger.kernel.org, AJvYcCVnS4+yaRVuUo8B26EFYRzLtcTj6I5SpcgQx2SCYXYVw16+0JBLyvCSwksMh4rXQ8NyZ2s0lfHi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbBp7bfAHp7SOBfouVtVB9ezonykcKMiMdHhOVjHIIU/FAthGA
-	zyJqSHgsii1sV20w/O5BkxPtHqEfMvBpji5+68XRg9cleNeSFLaPqchDiIAT7czwGU6mmSRbuVl
-	6KwuHQ4+9l/1Ose8K4/0mdEnAMd2BjzeSdYpLpg==
-X-Gm-Gg: ASbGncvFdCGcl6FwmlROxjuWbTdkXiJ2+A8EPIr0HNEJmg+TgKy4OGRHw15WU+ZVQEv
-	YJrYqujqdI6bQh2rk//Mi+50MgL1yLTLTNPsMDICpcDfznNLQjjVlFAzlEG1mdh9HA2/h9MYMOc
-	cONHNsvuPP5Drwyk6imOJ9qI1EVp/A7uBMSiwt65u4angJQJzSqqPaNQ==
-X-Google-Smtp-Source: AGHT+IGXeK2bJRSHq9+X9/weSD2S5DZ8I+axVPCz9+wAKg8SVazBUsA9ngz7AgsmmG9o6rp80Q5eMh9W5Cb2/VPt5ng=
-X-Received: by 2002:a2e:bcc1:0:b0:31f:8659:dc23 with SMTP id
- 38308e7fff4ca-32809780216mr94716521fa.33.1747839050704; Wed, 21 May 2025
- 07:50:50 -0700 (PDT)
+	s=arc-20240116; t=1747839174; c=relaxed/simple;
+	bh=WLDWeiD6ADAKu53SIAClrIwXxM68N8o3/ZFh0r242jU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Xwc2iEgHcbjFqLSn6E09Vcb5iK1v2iYYX3tPxm6an4coceiHV/bsuNpyFwnzMVcklPqfmS7ir7xt/Kg85hCWPt4CKa6Nx6ltSrvkQVJlH1KBvc99jEDgg/kxKdszQtGWxS1SOPSTsVL2ja5Tbq4mwpz99WIvO3oUiTeAHUICMaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pFk1IfYN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9XMXe024816;
+	Wed, 21 May 2025 14:52:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SdsgstMIdU3g6wwrbjZnLWpwKvICMJd1ZoQalcYim8s=; b=pFk1IfYNBTOt7iUr
+	PRqbzChNk4400R51z7u3OyjLRVTjlhSnRbySXZTk2U6DFGOuyxzj5vCqDqyv4/h7
+	pKY4Mvzh2icgfeaB+5aq9LT2yqtTMrGMbjsPO6ntL6u+QnxDzMeEBo/nZLEDsx7Q
+	DDBdApL1wL1DcO+l6/WgF7RnkCDLQ74lEm0g9GD2FXb1A1dRQi2Xp2wtprIy7Sa1
+	9gYoJTiyunOlSaxhxzjghhN4V+2jVxxSYjYJ6ydfM/4Cl16Cr8ztiw2F7/blBEJA
+	6CAErPaDPMAbL+MrRkJnxVSS/GTJwTn+uidXLPPDHIaxaeZu9KHWtDfjLZmu86bx
+	Tx6Bcg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf4u9m8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 14:52:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54LEqWYo007457
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 14:52:32 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 May
+ 2025 07:52:30 -0700
+Message-ID: <aa45ff83-bc8f-4cef-a82c-9a868396d19d@quicinc.com>
+Date: Wed, 21 May 2025 08:52:29 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: John <john.cs.hey@gmail.com>
-Date: Wed, 21 May 2025 22:50:38 +0800
-X-Gm-Features: AX0GCFvNK6mL5qUAhg-uU6jliFdjaxqXLBL71sgv5-Tzci-EyZvQHvg1ssoNlxw
-Message-ID: <CAP=Rh=M1LzunrcQB1fSGauMrJrhL6GGps5cPAKzHJXj6GQV+-g@mail.gmail.com>
-Subject: [Bug] "general protection fault in calipso_sock_setattr" in Linux
- kernel v6.12
-To: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/11] bus: mhi: host: Add support to read MHI
+ capabilities
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        "Bjorn
+ Helgaas" <bhelgaas@google.com>,
+        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+	<ilpo.jarvinen@linux.intel.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+	<kw@linux.com>,
+        Rob Herring <robh@kernel.org>,
+        Johannes Berg
+	<johannes@sipsolutions.net>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        "Bartosz
+ Golaszewski" <brgl@bgdev.pl>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <mhi@lists.linux.dev>,
+        <linux-wireless@vger.kernel.org>, <ath11k@lists.infradead.org>,
+        <qiang.yu@oss.qualcomm.com>, <quic_vbadigan@quicinc.com>,
+        <quic_vpernami@quicinc.com>, <quic_mrana@quicinc.com>,
+        Jeff Johnson
+	<jeff.johnson@oss.qualcomm.com>
+References: <20250519-mhi_bw_up-v3-0-3acd4a17bbb5@oss.qualcomm.com>
+ <20250519-mhi_bw_up-v3-7-3acd4a17bbb5@oss.qualcomm.com>
+Content-Language: en-US
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20250519-mhi_bw_up-v3-7-3acd4a17bbb5@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fxrs8dZ9kRawyfjjg5wdyvwEH6rkQL3M
+X-Proofpoint-ORIG-GUID: fxrs8dZ9kRawyfjjg5wdyvwEH6rkQL3M
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDE0NCBTYWx0ZWRfX9SjuTT+ee+g+
+ /GASVjVY2ENXk1MSVLLkTtSk5izXs6pLdPGNjQaczlIX2BA5X88Rcx70K7Q8fuPfsrEy2YFW1Og
+ 64EFiwReGlkcMYqO2FPvSIh+M+7AnrAbzQkzwhN5xvemAYSCh4FtMLo1AtZSQ8FefWmWgKRd6ir
+ SgZBeLaHUh1y1cR3VMtcdyLDkrOKcS7n0066kRJ2BEkJSn1D8MKCxKj6pMJiYx+ZOiM1RZv+HRE
+ Qx15ksBQB6qG9uvbOD7cY0uLZEEKIz+KMuNddUjUQOwUd4jKOkSFev4zYIvsl4AOyzzIiyWOaX7
+ cPdhNidRI91ikTpzfM3UozbwX5k1on9FXnByw1yPHBVfy6ZpcqLpdMX4foffmYoA6w1rRfIi6YL
+ JwwZfa+nLvwKZqOIsk30y3xhjGNVgPtQDS7iB4NzESbMmgYwn8gXndQriUplyikd3XHI0adD
+X-Authority-Analysis: v=2.4 cv=R7UDGcRX c=1 sm=1 tr=0 ts=682de8b1 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=3N43v1ldxO06oT20SBYA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_04,2025-05-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1011 mlxlogscore=999 priorityscore=1501 spamscore=0
+ bulkscore=0 lowpriorityscore=0 malwarescore=0 suspectscore=0 mlxscore=0
+ impostorscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505210144
 
-Dear Linux Kernel Maintainers,
+On 5/19/2025 3:42 AM, Krishna Chaitanya Chundru wrote:
+> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> 
+> As per MHI spec v1.2,sec 6.6, MHI has capability registers which are
+> located after the ERDB array. The location of this group of registers is
+> indicated by the MISCOFF register. Each capability has a capability ID to
+> determine which functionality is supported and each capability will point
+> to the next capability supported.
+> 
+> Add a basic function to read those capabilities offsets.
+> 
+> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+>   drivers/bus/mhi/common.h    |  4 ++++
+>   drivers/bus/mhi/host/init.c | 29 +++++++++++++++++++++++++++++
+>   2 files changed, 33 insertions(+)
+> 
+> diff --git a/drivers/bus/mhi/common.h b/drivers/bus/mhi/common.h
+> index dda340aaed95a5573a2ec776ca712e11a1ed0b52..eedac801b80021e44f7c65d33cd50760e06c02f2 100644
+> --- a/drivers/bus/mhi/common.h
+> +++ b/drivers/bus/mhi/common.h
+> @@ -16,6 +16,7 @@
+>   #define MHICFG				0x10
+>   #define CHDBOFF				0x18
+>   #define ERDBOFF				0x20
+> +#define MISCOFF				0x24
+>   #define BHIOFF				0x28
+>   #define BHIEOFF				0x2c
+>   #define DEBUGOFF			0x30
+> @@ -113,6 +114,9 @@
+>   #define MHISTATUS_MHISTATE_MASK		GENMASK(15, 8)
+>   #define MHISTATUS_SYSERR_MASK		BIT(2)
+>   #define MHISTATUS_READY_MASK		BIT(0)
+> +#define MISC_CAP_MASK			GENMASK(31, 0)
+> +#define CAP_CAPID_MASK			GENMASK(31, 24)
+> +#define CAP_NEXT_CAP_MASK		GENMASK(23, 12)
+>   
+>   /* Command Ring Element macros */
+>   /* No operation command */
+> diff --git a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
+> index 13e7a55f54ff45b83b3f18b97e2cdd83d4836fe3..a7137a040bdce1c58c98fe9c2340aae4cc4387d1 100644
+> --- a/drivers/bus/mhi/host/init.c
+> +++ b/drivers/bus/mhi/host/init.c
+> @@ -467,6 +467,35 @@ int mhi_init_dev_ctxt(struct mhi_controller *mhi_cntrl)
+>   	return ret;
+>   }
+>   
+> +static int mhi_find_capability(struct mhi_controller *mhi_cntrl, u32 capability, u32 *offset)
+> +{
+> +	u32 val, cur_cap, next_offset;
+> +	int ret;
+> +
+> +	/* Get the 1st supported capability offset */
 
-I hope this message finds you well.
+"first"?  Does not seem like you are short on space here.
 
-I am writing to report a potential vulnerability I encountered during
-testing of the Linux Kernel version v6.12.
+> +	ret = mhi_read_reg_field(mhi_cntrl, mhi_cntrl->regs, MISCOFF,
+> +				 MISC_CAP_MASK, offset);
 
-Git Commit: adc218676eef25575469234709c2d87185ca223a (tag: v6.12)
+This fits on one line.
 
-Bug Location: calipso_sock_setattr+0xf6/0x380 net/ipv6/calipso.c:1128
+> +	if (ret)
+> +		return ret;
 
-Bug report: https://hastebin.com/share/iredodibar.yaml
+Blank line here would be nice.
 
-Complete log: https://hastebin.com/share/biqowozonu.perl
+> +	do {
+> +		if (*offset >= mhi_cntrl->reg_len)
+> +			return -ENXIO;
+> +
+> +		ret = mhi_read_reg(mhi_cntrl, mhi_cntrl->regs, *offset, &val);
+> +		if (ret)
+> +			return ret;
 
-Entire kernel config: https://hastebin.com/share/huqucavidu.ini
 
-Root Cause Analysis:
-The crash is caused by a NULL pointer dereference in txopt_get() (at
-include/net/ipv6.h:390) due to an uninitialized struct inet6_opt *opt
-field.
-The function is indirectly invoked during an SELinux policy
-enforcement path via calipso_sock_setattr(), which expects an
-initialized inet6_sk(sk)->opt structure.
-However, the socket in question does not have IPv6 tx options set up
-at the time of the call, likely due to missing or out-of-order
-initialization during socket creation or connection setup.
-This leads to an invalid access at offset +0x70, detected by KASAN,
-and results in a general protection fault.
+There is no sanity checking we can do on val?  We've had plenty of 
+issues blindly trusting the device.  I would like to avoid having more.
 
-At present, I have not yet obtained a minimal reproducer for this
-issue. However, I am actively working on reproducing it, and I will
-promptly share any additional findings or a working reproducer as soon
-as it becomes available.
+Also looks like if we find the capability we are looking for, we return 
+the offset without validating it.
 
-Thank you very much for your time and attention to this matter. I
-truly appreciate the efforts of the Linux kernel community.
+> +
+> +		cur_cap = FIELD_GET(CAP_CAPID_MASK, val);
+> +		next_offset = FIELD_GET(CAP_NEXT_CAP_MASK, val);
+> +		if (cur_cap == capability)
+> +			return 0;
+> +
+> +		*offset = next_offset;
+> +	} while (next_offset);
+> +
+> +	return -ENXIO;
+> +}
+> +
+>   int mhi_init_mmio(struct mhi_controller *mhi_cntrl)
+>   {
+>   	u32 val;
+> 
 
-Best regards,
-John
 
