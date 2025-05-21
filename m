@@ -1,96 +1,131 @@
-Return-Path: <linux-kernel+bounces-657951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C21FABFAC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:08:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF0EABFAE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E7E11C016FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:03:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B78EA2286D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207BE22CBE3;
-	Wed, 21 May 2025 15:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B98B26462A;
+	Wed, 21 May 2025 15:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VnXi/AlJ"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FLs6pzax"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9FD22A7F1;
-	Wed, 21 May 2025 15:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FE7221FAF
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747843006; cv=none; b=RYufftd5yYyI6TxmVGE5bh9BZWWjKdtNR9cBo6mOYnspFbh8EYRoZCc/jCMP9XTDwfdLafVXTg+oluGb/hrdHWPrOzNGdnXj9y0yUES6pOizu4L3fjsBhMcyo5xS8gtGqOY/hcSrTw3mVkSSixPxdpLEzEJte7LA8dTiNtyKNik=
+	t=1747843043; cv=none; b=bPwdfBE4bQZUI3+80QdFwE3koQmjE32SaAo6dbWoomLqLEjiQiz+e4Wcuklr47FGBZlAK4NIrD6N5rzn3QPcw2u/4urpfAh5I5mjuNJ6AuEDhfozfvqhPv4XZTALrSo41PcHsOEl8qTR4cF+dk/Dq5fPFx528AwEKZ/bsTK5AgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747843006; c=relaxed/simple;
-	bh=yJ9/X43KMZHFpownfVvDmm7ntUx5NZaTJWs64dTYo1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VCiCzvvu37GlzaTLt3P6PwLP4ihzapmqSB7/KKKYFcA+ZxXtvh5SqVvvFk4/yjxd35pPu3dOmnGVEVCSUPo0MJ9RYMcYvGvpXiRcnYriKt0BMhP7ocU/cYdW47FA2WiVQpE3TIDcjt+aJhXG0VCoADh0meei5VY6xewunmPo4Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VnXi/AlJ; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9D3D743944;
-	Wed, 21 May 2025 15:56:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1747843000;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RWRLMRWo16jpVRYnJdVly8AWOZADjFL/Y7YUgRpYoes=;
-	b=VnXi/AlJgIjoOUrlGyrmHsAOwVof7q8B6WXkpHxpgPxm2UQOi1pg8atYMgkpJxkvBjo/YA
-	KChgIuBw74gM9EY7BpgcILaNZsnEPm6oEEBt2tHsFvsjqYVnzgXYmCw9eMNyye+hsdUxnq
-	QcBb2WVk17dRDccOJmYzOlZV38QXB3QxyezSL9ssm2SsMkM6ROr+ppDsoCLj11qBehfTTQ
-	83cTgAr3IVRYk89ZU5O/hQOP0hoEx0tPeqrDVJO/frlbcM8gN4dSJjwJkk3EK5LP+Br0Nr
-	JgRDDSjavf0qWqWjOAc3SzGtncs51+qtqP8u3ksHF/jisdQhdVXmhjc9phIWLg==
-Date: Wed, 21 May 2025 17:56:37 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Tomi Valkeinen
- <tomi.valkeinen@ideasonboard.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>, Arnd
- Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-Subject: Re: [PATCH v5 6/9] i2c: atr: allow replacing mappings in
- attach_addr()
-Message-ID: <20250521175637.610245e3@booty>
-In-Reply-To: <20250507121917.2364416-7-demonsingur@gmail.com>
-References: <20250507121917.2364416-1-demonsingur@gmail.com>
-	<20250507121917.2364416-7-demonsingur@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1747843043; c=relaxed/simple;
+	bh=cu+NuJemimQYmwhNsSM3z/pVnmIZv/JSAilKNPCIcvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=iUsb2XnepYOqMUJaq6uvd3/KoDtmRMRmIj5+CzgO5saQiq67LcxoTSpBzkbUTjuYbRsyVOHUSM3mnmll6zlZZdAOtk2WZ/FVtoy7iLtHLaBdQyJfXiKfnURw4B6NgNmVz350m+eGA5ppXhncTNmNas9qj2tJJbIFFELRCYOV1OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FLs6pzax; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747843038; x=1779379038;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=cu+NuJemimQYmwhNsSM3z/pVnmIZv/JSAilKNPCIcvY=;
+  b=FLs6pzaxFx6o5PGPUBO6eD2bYGQghWXF6jbNwwur9pAb0FznejKKYPTI
+   +KMHfHNRDJ+/zisa5tXSR6UFUUPQIfbF5t+yEowbCLlxFeLXtyi/SGd4Z
+   dmEpsStoDIhJjb3kGr4hYNlOZyWPBWb2x2kF590+ZHtF391GMelOI+4LF
+   lVsq/qPmyNRR3Z7gy40i9KZ7V/A4OYEDZjY2dIJvtwby2pXpXdOF9X4K4
+   QSqKzzkKyU3NzFF9MYeXWFGLrjRZvrlcf1UxYJT/fk256my/K+R0Fw1gk
+   D/o7+rPIbr3nOCrdN5wJEpvyRNmEaHbfLJM8cxSaUWvEbTrG2+5+ik88a
+   w==;
+X-CSE-ConnectionGUID: YxLhxAdtS4S7xM+XwRUgBg==
+X-CSE-MsgGUID: w3KBIYrFTjqF62/C9xIOaw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11440"; a="49088879"
+X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
+   d="scan'208";a="49088879"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 08:57:17 -0700
+X-CSE-ConnectionGUID: thJYo7RuQ3aTMXIseYI9RA==
+X-CSE-MsgGUID: T4hGK9ZRRlOgA33Gev9T1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,303,1739865600"; 
+   d="scan'208";a="145391427"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 21 May 2025 08:57:16 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uHlof-000OPw-2T;
+	Wed, 21 May 2025 15:57:13 +0000
+Date: Wed, 21 May 2025 23:57:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Baisong Zhong <zhongbaisong@huawei.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Luis Chamberlain <mcgrof@kernel.org>
+Subject: kernel/sched/rt.c:9:18: warning: 'max_rt_runtime' defined but not
+ used
+Message-ID: <202505212328.gm09NHiP-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefhedtucdltddurdegfedvrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepuggvmhhonhhsihhnghhurhesghhmrghilhdrtghomhdprhgtphhtthhopeifshgrodhrvghnvghsrghssehsrghnghdqvghnghhinhgvvghrihhnghdrtghomhdprhgtphhtt
- hhopehtohhmihdrvhgrlhhkvghinhgvnhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhivdgtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed,  7 May 2025 15:19:12 +0300
-Cosmin Tanislav <demonsingur@gmail.com> wrote:
+Hi Baisong,
 
-> It is possible for aliases to be exhausted while we are still attaching
-> children.
-> 
-> Allow replacing mapping on attach by calling
-> i2c_atr_replace_mapping_by_addr() if i2c_atr_create_mapping_by_addr()
-> fails.
-> 
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+FYI, the error/warning still remains.
 
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   4a95bc121ccdaee04c4d72f84dbfa6b880a514b6
+commit: 28f152cd0926596e69d412467b11b6fe6fe4e864 sched/rt: fix build error when CONFIG_SYSCTL is disable
+date:   3 years, 2 months ago
+config: csky-randconfig-r001-20230826 (https://download.01.org/0day-ci/archive/20250521/202505212328.gm09NHiP-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250521/202505212328.gm09NHiP-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505212328.gm09NHiP-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from kernel/sched/build_policy.c:43:
+   kernel/sched/rt.c:309:6: warning: no previous prototype for 'unregister_rt_sched_group' [-Wmissing-prototypes]
+     309 | void unregister_rt_sched_group(struct task_group *tg) { }
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~~
+   kernel/sched/rt.c:311:6: warning: no previous prototype for 'free_rt_sched_group' [-Wmissing-prototypes]
+     311 | void free_rt_sched_group(struct task_group *tg) { }
+         |      ^~~~~~~~~~~~~~~~~~~
+   kernel/sched/rt.c:313:5: warning: no previous prototype for 'alloc_rt_sched_group' [-Wmissing-prototypes]
+     313 | int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent)
+         |     ^~~~~~~~~~~~~~~~~~~~
+   kernel/sched/rt.c:716:6: warning: no previous prototype for 'sched_rt_bandwidth_account' [-Wmissing-prototypes]
+     716 | bool sched_rt_bandwidth_account(struct rt_rq *rt_rq)
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>> kernel/sched/rt.c:9:18: warning: 'max_rt_runtime' defined but not used [-Wunused-const-variable=]
+       9 | static const u64 max_rt_runtime = MAX_BW;
+         |                  ^~~~~~~~~~~~~~
+
+
+vim +/max_rt_runtime +9 kernel/sched/rt.c
+
+d505b8af58912a Huaixin Chang  2020-04-25  @9  static const u64 max_rt_runtime = MAX_BW;
+ce0dbbbb30aee6 Clark Williams 2013-02-07  10  
+
+:::::: The code at line 9 was first introduced by commit
+:::::: d505b8af58912ae1e1a211fabc9995b19bd40828 sched: Defend cfs and rt bandwidth quota against overflow
+
+:::::: TO: Huaixin Chang <changhuaixin@linux.alibaba.com>
+:::::: CC: Peter Zijlstra <peterz@infradead.org>
 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
