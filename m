@@ -1,95 +1,130 @@
-Return-Path: <linux-kernel+bounces-657122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31112ABEF8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:23:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979D4ABEF8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 11:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 335FE7A0D26
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:22:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 547A717D750
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F43523D282;
-	Wed, 21 May 2025 09:22:41 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941D023E226;
+	Wed, 21 May 2025 09:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EmShdhTr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6188221549;
-	Wed, 21 May 2025 09:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6396423D2B1
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 09:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747819361; cv=none; b=uTopTBnEPN4jUnHdRADPQkZy/WHGgOoJe1Ml6dKKSbpAzYPJ27u/12UeY97qBu/Khka2l73O6/4jLPTO1Oo5Ftg3Xnn+pnRJDvAIXxIskDpOYlu71Zj1S8u9XYP5CDhWjeXgwqmWAMgtwMTYw8LCBYpLds2K8mcqmSe0gxeCab4=
+	t=1747819368; cv=none; b=ao2QpC30SgEgn+cj7bPJh6988tTvSIRXwx6KU1yoWE0QJz89U6PdFCXLt+5xidfV//fTV1OyaFMxu1fy4qquFlMx/P0yGh+jlcnPKYB0vrZ0ePdf01VO9hPGKMb+ygbu5FzEJLjthPMc9bX5XO42uH06zV7DE1LA9TR0Nz0JeeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747819361; c=relaxed/simple;
-	bh=bCmT3vfeUi4izEBzYuy7AQHOHeQpWT2kMw2gXQ95Ijk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ayszRb1gq+3RYlKWFSTYjDP8MvkV6OWv38oyrDVJzeL4ueHMkUAMDEY3tkIcO9m8F0gwMcqllyw5TveHEDEUZFesbGCQDEqQUCKAbYRpFpJNxh1BkyAIpEyOQuL8K9CgnluWlIiI83Y4LH+YY0EWuUNiiouZktcYBddZ2rbw5aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b2Qn60w5Xz6D9Cy;
-	Wed, 21 May 2025 17:17:46 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 597331400F4;
-	Wed, 21 May 2025 17:22:37 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 May
- 2025 11:22:36 +0200
-Date: Wed, 21 May 2025 10:22:34 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <linux-pci@vger.kernel.org>, Jon Pan-Doh <pandoh@google.com>, "Karolina
- Stolarek" <karolina.stolarek@oracle.com>, Weinan Liu <wnliu@google.com>,
-	Martin Petersen <martin.petersen@oracle.com>, Ben Fuller
-	<ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>, "Anil
- Agrawal" <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>, Ilpo
- =?UTF-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, "Sathyanarayanan
- Kuppuswamy" <sathyanarayanan.kuppuswamy@linux.intel.com>, Lukas Wunner
-	<lukas@wunner.de>, Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney"
-	<paulmck@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, "Oliver
- O'Halloran" <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>, "Keith
- Busch" <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>, Terry Bowman
-	<terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>, Dave Jiang
-	<dave.jiang@intel.com>, <linux-kernel@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: Re: [PATCH v7 06/17] PCI/AER: Rename aer_print_port_info() to
- aer_print_source()
-Message-ID: <20250521102234.00005ba9@huawei.com>
-In-Reply-To: <20250520215047.1350603-7-helgaas@kernel.org>
-References: <20250520215047.1350603-1-helgaas@kernel.org>
-	<20250520215047.1350603-7-helgaas@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1747819368; c=relaxed/simple;
+	bh=yk/3MKALOEYeKqVKhUIAAn8SXbS+jf00AOomxrFgLpg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ywg5mY8eOetLtrbqfoZuwNHsEIXiV7T7Y2nBFrCvqiRrEgqPTPT37RNKfPiODm4oZ04RPGnvOTHD0BX/qvTR5co1KvYitWcjTpEXNRDxYIx2UEALtftSbsRL7VPyubVIhDxnz4mfyMm4gRCx+ywf+Zi8WPP20bhuIpDYdr6hkho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EmShdhTr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747819365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=88rZqcHfyQL70LO9q5pA/dk/SVH44MpHD6BYGbaF9Sw=;
+	b=EmShdhTry2PVgqMsmArF8/g1ac4n42SwDJzJdFTK7lltEHkDPfhxtDsIM/oHt7M6ynejuf
+	7HaPsjJdyXqpfTTe7fBQbBhG5m3PtZaTlYwuhHDmZp+lgQ6q1ZpvO/qlub462nnVTtZYe2
+	qaNjHD2dB+Ny8Qx4DUEKiYNvHHM3v+E=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-107-orLpTRb5O2K5J7NVD2KzCw-1; Wed,
+ 21 May 2025 05:22:44 -0400
+X-MC-Unique: orLpTRb5O2K5J7NVD2KzCw-1
+X-Mimecast-MFC-AGG-ID: orLpTRb5O2K5J7NVD2KzCw_1747819363
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DB1201956050;
+	Wed, 21 May 2025 09:22:42 +0000 (UTC)
+Received: from lenovo-t14s.redhat.com (unknown [10.44.33.64])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CC57D195608F;
+	Wed, 21 May 2025 09:22:40 +0000 (UTC)
+From: Laurent Vivier <lvivier@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+	netdev@vger.kernel.org,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Subject: [PATCH v2 1/3] virtio_ring: Fix error reporting in virtqueue_resize
+Date: Wed, 21 May 2025 11:22:34 +0200
+Message-ID: <20250521092236.661410-2-lvivier@redhat.com>
+In-Reply-To: <20250521092236.661410-1-lvivier@redhat.com>
+References: <20250521092236.661410-1-lvivier@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, 20 May 2025 16:50:23 -0500
-Bjorn Helgaas <helgaas@kernel.org> wrote:
+The virtqueue_resize() function was not correctly propagating error codes
+from its internal resize helper functions, specifically
+virtqueue_resize_packet() and virtqueue_resize_split(). If these helpers
+returned an error, but the subsequent call to virtqueue_enable_after_reset()
+succeeded, the original error from the resize operation would be masked.
+Consequently, virtqueue_resize() could incorrectly report success to its
+caller despite an underlying resize failure.
 
-> From: Jon Pan-Doh <pandoh@google.com>
->=20
-> Rename aer_print_port_info() to aer_print_source() to be more descriptive.
-> This logs the Error Source ID logged by a Root Port or Root Complex Event
-> Collector when it receives an ERR_COR, ERR_NONFATAL, or ERR_FATAL Message.
->=20
-> [bhelgaas: aer_print_rp_info() -> aer_print_source()]
-> Signed-off-by: Jon Pan-Doh <pandoh@google.com>
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> Tested-by: Krzysztof Wilczy=C5=84ski <kwilczynski@kernel.org>
-> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux=
-.intel.com>
-Makes sense.
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+This change restores the original code behavior:
+
+       if (vdev->config->enable_vq_after_reset(_vq))
+               return -EBUSY;
+
+       return err;
+
+Fix: commit ad48d53b5b3f ("virtio_ring: separate the logic of reset/enable from virtqueue_resize")
+Cc: xuanzhuo@linux.alibaba.com
+Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+---
+ drivers/virtio/virtio_ring.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index b784aab66867..4397392bfef0 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -2797,7 +2797,7 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
+ 		     void (*recycle_done)(struct virtqueue *vq))
+ {
+ 	struct vring_virtqueue *vq = to_vvq(_vq);
+-	int err;
++	int err, err_reset;
+ 
+ 	if (num > vq->vq.num_max)
+ 		return -E2BIG;
+@@ -2819,7 +2819,11 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
+ 	else
+ 		err = virtqueue_resize_split(_vq, num);
+ 
+-	return virtqueue_enable_after_reset(_vq);
++	err_reset = virtqueue_enable_after_reset(_vq);
++	if (err_reset)
++		return err_reset;
++
++	return err;
+ }
+ EXPORT_SYMBOL_GPL(virtqueue_resize);
+ 
+-- 
+2.49.0
+
 
