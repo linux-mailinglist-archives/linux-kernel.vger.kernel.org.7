@@ -1,152 +1,139 @@
-Return-Path: <linux-kernel+bounces-658145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ACC0ABFD4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 21:30:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8868AABFD6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 21:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AF8A1B60912
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 19:30:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D22B71B6208F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 19:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0B928F95B;
-	Wed, 21 May 2025 19:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E053428FFE2;
+	Wed, 21 May 2025 19:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GB+efAut"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2GoH/v7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFECA21E082;
-	Wed, 21 May 2025 19:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8EB23183D;
+	Wed, 21 May 2025 19:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747855790; cv=none; b=ZN3Um3HPoIBY2+YzM7VE42FqZSDeuUbh2X1RLqmvXGAEYzwOFoZmt8NcWYSptEtCZw0wJgruLGNeUvtNa89VD5dUtiS9D5eXmrl9ZiIVruC6KU8+xybzXsR+XK87hOgSWO9Nsr1nDykEzooSSDCPetGNHxuC0ubcUbQcjAgwW6Q=
+	t=1747856151; cv=none; b=Md2qx0wK8ulb8sy/YQmG51b4cPjhn7atDT135/NOZmtWCwd3POYEO30OuKwlW3Kxm8H6s+uVZzCC8JH4pPu90ulU5PDn09oKVq3PqKfj7mGeJpWx/esJJyaPsrNpLBcY+pCuI/f8rgrfK9pEd9IXfGEIvBsQ0FLQT4wdLiHeLUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747855790; c=relaxed/simple;
-	bh=6Si74kOQLLzphPiJW/CEcu2dBkIBSgSw9ej8JwTKC0k=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ISY/gTA3nNzD0MmuVpKaZHy8EQVdR3aQvUr6lNq0AxYGjsOLMtCEpW1zx+a4OmgnGiMkND8okQeN9oVUfx4pVdBSPvKmVKLsFuN9PMGxJsp0UWdIT3I193sT+i+uHc51StS3LKas+eXOZDF085g6eFIOnrNKGbJaA7ggGpO9GIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GB+efAut; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54LI81CX006647;
-	Wed, 21 May 2025 19:29:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=KqyTUZn2LTlnFot12B2jQVct
-	SAruIabNXa1waF5TVUA=; b=GB+efAutLMxYjePt54TjTJgOIsfe9c/ZoOSU8UtP
-	zPu6CykstlSkIB1odiF0t5JlOul4eW6wUhmDpWkrKg/ezD3wGJIvLN1YWcHfGqC3
-	DNOFZEe58jbUKgWBiTdUHxh+M6+cxjcw4D4x8iio9Jjd2tXzo85PhOltZhxJcwrv
-	Ddm4LkrhSz3pqr5EvNTCufE+fNbuiPnGpyakzdlPkEiNveZ3yqqWKgPc8dKjVc/c
-	a9p2xAI0DGLtKQodi+B2aG/OnDAyZziV/IxBOon/K0XDW91DUMEOXHtrPq3Lj430
-	L+OeQ3EzXuBwj4B9WaepaRa3yUkfJpmZQEzIR7Q/JS0n3g==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf0m306-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 19:29:45 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54LJTj73013503
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 19:29:45 GMT
-Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 21 May 2025 12:29:39 -0700
-Date: Thu, 22 May 2025 00:59:35 +0530
-From: Wasim Nazir <quic_wasimn@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, <kernel@oss.qualcomm.com>
-Subject: Re: [PATCH v7 4/6] arm64: dts: qcom: Add support for qcs9075
- IQ-9075-EVK
-Message-ID: <aC4pnz6XgT/RqfLU@hu-wasimn-hyd.qualcomm.com>
-References: <20250521140807.3837019-1-quic_wasimn@quicinc.com>
- <20250521140807.3837019-5-quic_wasimn@quicinc.com>
- <3f3d8c46-e7f3-42d1-a186-29a034d509be@oss.qualcomm.com>
+	s=arc-20240116; t=1747856151; c=relaxed/simple;
+	bh=YCdymVDth/prPqkIK7W4QDnBSw+ChQ0vJvm38czsFpg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=js7EvzI4EgvC/3Xg3yXEhBMz1aD2eBH+AM94Mos23q28wcsodXqZ9cY98JYlHMqhmii4nYil7HnVh1tXhUO3LxDmr0C8b6dvYcayN3CbR+r3q0jrxY8immijG8i05JbBBE9fUIuMLvWocCcog8Yz4bZ7v5kuiTPhCFw1nm4ebdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2GoH/v7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 00428C4CEE4;
+	Wed, 21 May 2025 19:35:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747856151;
+	bh=YCdymVDth/prPqkIK7W4QDnBSw+ChQ0vJvm38czsFpg=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=a2GoH/v7NCUwJStHohhcwr7SDmdK+nqKj00Ld255vw6AaGS7s2evcP2kdLUZ/05SL
+	 2g20KNGo37e6VbYkYB8+46wQLYBrmvwRYRgISjAdK9QIWeB1RBluxINAWT9FOpiPUY
+	 kRjkkFJrwjzJHhgV3ecyN1rt1LnPgR5+YEQharZlZqTIuEqvy0JEdq5VgKS8bDW8m3
+	 8dBIuQQHgdFjnPZ08lcAqhEzv8dDOZTzmLdJG/HX8F00S0t0uENuDlxDe4r5jAWz9n
+	 itthYIeR1peS47wUKaIaftFlSc5D60TnvetGhfh9pjCzprCVbNPWXb7xlasEzHFSf5
+	 23F8xhPYlCSfA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E08C54E90;
+	Wed, 21 May 2025 19:35:50 +0000 (UTC)
+From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
+Subject: [PATCH v3 0/5] media: i2c: imx214: Add support for more clock
+ frequencies
+Date: Wed, 21 May 2025 21:34:23 +0200
+Message-Id: <20250521-imx214_ccs_pll-v3-0-bfb4a2b53d14@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <3f3d8c46-e7f3-42d1-a186-29a034d509be@oss.qualcomm.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 2yq_xZo_T2LpwsW2DoQkxLpQi1xtXqMV
-X-Authority-Analysis: v=2.4 cv=J/Sq7BnS c=1 sm=1 tr=0 ts=682e29a9 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
- a=smROnvcLH1czrS76FVkA:9 a=CjuIK1q_8ugA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 2yq_xZo_T2LpwsW2DoQkxLpQi1xtXqMV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDE5MiBTYWx0ZWRfX3HTWNHH96Akh
- pp5FPEl+Tpl6F1exP5r7EJZ74wku1zyUiEl5AbIpWQUw2cVTaGE2hUyGhdzpDHOYUxMeNktggLZ
- i2mMLvs2XxSLW+wDD2pAOTPN8rMQFCyNPjx0gImQnbGAHKMjJT8dHzyEJplSHNEhO5l5MfhnOOu
- CtQImh7qlWWAlZ6a/mcDhS8WzMPjP63JvV6GNReGMYgqi3Dcuy5Y7xK8cptJTJZedpaBGTe+2no
- S0pEfRXQv+zzhWLREYdZX1vq7SOPiJcusfzhRqjWJX3AEk/YZEDbpz7+jlBcKG9BK3bF9pCGfoS
- xqb6ELjvEC54Dyl7tJqAka69qwlsqDb+QMPcImstCYbARnddkpdIwk3u6Wzr9zplTyqaCP8gmHz
- 8sXQ9jYrIEqpNACMVvhZ/YZzAqGj854H6l4r53uMJuD7uHKXELE44+wALtLkq+PjbdOhWArW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_06,2025-05-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 clxscore=1015 mlxlogscore=781 suspectscore=0 spamscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 impostorscore=0
- lowpriorityscore=0 malwarescore=0 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505160000 definitions=main-2505210192
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAL8qLmgC/2XM0QqCMBTG8VeRXbfY5qbVVe8RIbad5QHTsdmwx
+ HdvShAV5+p/4PtNJIBHCOSQTcRDxIB9lyLfZEQ3dXcFiiY1EUwoJllB8TYKLiutQ+XaloKswTD
+ Yg8oFSSPnweK4gqdz6gbD0PvH6ke+fN8UV79U5JRRk5uylDtQ9mKOtcPhGXSzhTtZsCg+QLo/Q
+ CTAJlsJVnBr+Tcwz/MLkEYpUO8AAAA=
+X-Change-ID: 20250406-imx214_ccs_pll-e4aed0e9e532
+To: Ricardo Ribalda <ribalda@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ devicetree@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747856148; l=1895;
+ i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
+ bh=YCdymVDth/prPqkIK7W4QDnBSw+ChQ0vJvm38czsFpg=;
+ b=syVQLuePuGfp3dACqYgN2W+Ayfo4zcFv5KgkcjstEAWtm0hlQX+CxxZbPIZe6GwMN6KyO86Ns
+ /0lOZW8RTyTAklCrce5sVjlA8tuwqb/AzmNUrP5MyZOt5LtV/+4+vuG
+X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
+ pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
+X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
+ auth_id=142
+X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Reply-To: git@apitzsch.eu
 
-On Wed, May 21, 2025 at 06:57:03PM +0200, Konrad Dybcio wrote:
-> On 5/21/25 4:08 PM, Wasim Nazir wrote:
-> > Add initial device tree support for IQ-9075-EVK board,
-> > based on Qualcomm's QCS9075 SOC.
-> > 
-> > Implement basic changes to enable boot to shell.
-> > 
-> > Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
-> > ---
-> 
-> [...]
-> 
-> two nits:
-> 
-> > +&tlmm {
-> > +	qup_uart10_default: qup-uart10-state {
-> > +		pins = "gpio46", "gpio47";
-> > +		function = "qup1_se3";
-> > +	};
-> 
-> Feel free to move it over to sa8775p.dtsi
+The imx214 driver currently supports only a 24 MHz external clock. But
+there are devices, like Qualcomm-MSM8916-based phones, which cannot
+provide this frequency. To make the sensor usable by those devices, add
+support for additional clock frequencies.
 
-Thanks for pointing it out. Will move this to SOC file.
+This series supersedes
+https://lore.kernel.org/linux-media/20250308-imx214_clk_freq-v1-0-467a4c083c35@apitzsch.eu/
 
-> 
-> > +};
-> > +
-> > +&uart10 {
-> > +	compatible = "qcom,geni-debug-uart";
-> > +	pinctrl-0 = <&qup_uart10_default>;
-> > +	pinctrl-names = "default";
-> > +	status = "okay";
-> 
-> Please keep a newline before 'status'
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
+---
+Changes in v3:
+- Limit range of pll_ip_clk_freq_hz (Sakari)
+- Drop unneeded 'ret'
+- Use pll.pixel_rate_csi for bit rate calculation
+- Add patch that deprecates the clock-frequency property
+- Link to v2: https://lore.kernel.org/r/20250505-imx214_ccs_pll-v2-0-f50452061ff1@apitzsch.eu
 
-Sure.
+Changes in v2:
+- Add A-b tags
+- Switch to v4l2_ctrl_s_ctrl_int64() to acquire the control handler mutex
+- Add error handling for v4l2_ctrl_s_ctrl_int64() and
+  imx214_pll_update()
+- Replace "read clock frequency from dt" patch by "remove hard-coded
+  external clock frequency" patch
+- Link to v1:
+  https://lore.kernel.org/r/20250415-imx214_ccs_pll-v1-0-d3d7748e5fbd@apitzsch.eu
 
-> 
-> Konrad
+---
+André Apitzsch (5):
+      media: i2c: imx214: Reorder imx214_parse_fwnode call
+      media: i2c: imx214: Prepare for variable clock frequency
+      media: i2c: imx214: Make use of CCS PLL calculator
+      media: dt-bindings: sony,imx214: Deprecate property clock-frequency
+      media: i2c: imx214: Remove hard-coded external clock frequency
 
-Regards,
-Wasim
+ .../devicetree/bindings/media/i2c/sony,imx214.yaml |  29 ++-
+ drivers/media/i2c/Kconfig                          |   1 +
+ drivers/media/i2c/imx214.c                         | 263 ++++++++++++++++-----
+ 3 files changed, 217 insertions(+), 76 deletions(-)
+---
+base-commit: ae0384b772a260975af192746d900c328392e525
+change-id: 20250406-imx214_ccs_pll-e4aed0e9e532
+
+Best regards,
+-- 
+André Apitzsch <git@apitzsch.eu>
+
+
 
