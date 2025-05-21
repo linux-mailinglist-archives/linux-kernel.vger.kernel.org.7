@@ -1,85 +1,154 @@
-Return-Path: <linux-kernel+bounces-657578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169B7ABF61F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:31:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF6D1ABF61A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69AAF3AB273
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:31:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8591A3A664D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F19327F4D6;
-	Wed, 21 May 2025 13:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C92F267B04;
+	Wed, 21 May 2025 13:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="pDOV2AOZ"
-Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G8aP/npv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B8438F80
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B55838F80;
+	Wed, 21 May 2025 13:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747834264; cv=none; b=ItL1UbVwc+7malFm1/Vay7PY1Iv1c8pRxMPu2D3fhjiSDvvMcatbZX6PrxYKfeVa4qCQDrNgH+5yZfMsblPtMyH1brjRWlsF8oxMADsRt7rkHQqHx1sUJluU+zZkbQF7Hzdg5Iu6glims/YAUoRnDmgVQjG6FlwEOVz4ROMNQVQ=
+	t=1747834255; cv=none; b=hDiSOOk7mF3yAbrxv/zZudH0M0cNiILes2DBlIOQ6clmHFT3RNcOOuDCWZJWh8U4Yx9KLh+V4gJHK4/Hf1rOTxsgxopt8xNV/n9dFt8Mv63TI0IzzhsU6JgORegbq0nlpsUALrTiD/TUxNevKSbbHqWRX4pZLijShF9bo+STrA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747834264; c=relaxed/simple;
-	bh=P44aB8a1enw1Q7BLrCYUQEhkhj0QPfIw9MrqF9vRoLQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kTPFOf5f1dxSaH6qDCMlC273BHIejqHVlLKOmoRm+TsRwvNAYh5LDgsNcKwycVGE3XMPFb3Cxu0EA4Lh9jn5uk2JiGa5eyl51om8vvmKCCPb81GJH4zIYmYcCsYLiSuevSjU4bamusTHixGYV6r7vZ0GZ/g6KgTUspTajBdBf+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=pDOV2AOZ; arc=none smtp.client-ip=99.78.197.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1747834263; x=1779370263;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=P44aB8a1enw1Q7BLrCYUQEhkhj0QPfIw9MrqF9vRoLQ=;
-  b=pDOV2AOZ14M04fOrUpvvRSsXqrw8RmcTS31mr0qaJqllXI9ZGzYVJ45K
-   4Rc34ev20sfrkUpJkrTKZroOVQjumGbJ4QNHU0ZR9KHAdjyJTN1a5GfIA
-   kk5ZGap9LJvZ7XUc+7NQFWs7MKvRRr6CSH6VdeDYUYRPf3Ipk4NhWiDiE
-   5KCd3YHz9YT4V3mRXdLBfuPTjQhOV5neU9WwT+7McO37UczCIv8t/y8ic
-   7/jjB1ifQjQUE58vEy1iEllyhUvxhs+2A08IX+kjaFEkQjDDkU1B+fBGt
-   3JSnfZZUBUSkHYtAIQY2ScZG6Y6uvYh8lubtpUUDWqAry+005B2l9xA2S
-   Q==;
-X-IronPort-AV: E=Sophos;i="6.15,303,1739836800"; 
-   d="scan'208";a="52411332"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 13:31:03 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:25288]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.33.138:2525] with esmtp (Farcaster)
- id 18b2b7c1-d798-4e19-82a7-cf54732f9f2d; Wed, 21 May 2025 13:31:02 +0000 (UTC)
-X-Farcaster-Flow-ID: 18b2b7c1-d798-4e19-82a7-cf54732f9f2d
-Received: from EX19D016UWA004.ant.amazon.com (10.13.139.119) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 21 May 2025 13:31:02 +0000
-Received: from 7cf34dda9133.amazon.com (10.106.239.34) by
- EX19D016UWA004.ant.amazon.com (10.13.139.119) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 21 May 2025 13:31:01 +0000
-From: Cristian Prundeanu <cpru@amazon.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Cristian Prundeanu <cpru@amazon.com>
-Subject: Re: EEVDF regression still exists
-Date: Wed, 21 May 2025 08:30:18 -0500
-Message-ID: <20250521133018.99124-1-cpru@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <6a83c7fb-dbfa-49df-be8b-f1257ad1a47a@amd.com>
-References: <20250520181451.18994-1-cpru@amazon.com>
+	s=arc-20240116; t=1747834255; c=relaxed/simple;
+	bh=FbftMvFzXBf+sBlRHMUppUqDkvlQbcnS3dG1NEYpdxE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rpbH4eJykIa2ZTJMkaJpRdiB3PcGzfnaFXzgcDkiPlDMtSxusMiVqE+nYuf/+UeJxKQPiz3R51BUBjgKr3LKQMSQrFG5+xOd5jn3W3v6oX0Z+T1eMUcABhEYORck0L/tHQnIkw2G9ynb3jEG+FwhM67SwSEVAMbJG5dJTNKJ5iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G8aP/npv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F868C4CEE4;
+	Wed, 21 May 2025 13:30:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747834255;
+	bh=FbftMvFzXBf+sBlRHMUppUqDkvlQbcnS3dG1NEYpdxE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G8aP/npvm651s6qpzUgatkERAVuimNo5EZyl+sPW/pLYwNl9E3B/ZFVmk4lhc4OmS
+	 scM5zQ9uYZCxDqI+crmbSP8FaACKqA6gYYn/60q6vnHnJEXs9t5hU+XzCToysw9rkk
+	 U91M4Xq+GgR2SKfiyGYqttR9xqtP4FerzZ0Q44xKAUie3ziIY69llrTj4huuRjJ3Xr
+	 ygvDp2U1T9Z/WPtXeVtnU+5PtRdBWH8dBgX7rSlIyP+x7cqySOpR7JGPfYdyBxa7bM
+	 Kl7kj/Quwph9EAFOdBCJH1wjZI5uxDQeYbX43UkM85OA27jnzAiPe//pukxU9YML07
+	 vzthoMfjuFFAw==
+Message-ID: <17a9ee62-8185-4833-acfc-1639fd17efc5@kernel.org>
+Date: Wed, 21 May 2025 15:30:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D031UWA004.ant.amazon.com (10.13.139.19) To
- EX19D016UWA004.ant.amazon.com (10.13.139.119)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] pwm: axi-pwmgen: add support for external clock
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <michael.hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250520-pwm-axi-pwmgen-add-external-clock-v1-0-6cd63cc001c8@baylibre.com>
+ <20250520-pwm-axi-pwmgen-add-external-clock-v1-3-6cd63cc001c8@baylibre.com>
+ <20250521-nostalgic-pretty-hedgehog-d08a77@kuoka>
+ <dc9c370c-e1e7-4ef9-8738-e6ac8887ee61@baylibre.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <dc9c370c-e1e7-4ef9-8738-e6ac8887ee61@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Apologies for the loose threading, accidentally posted a detached reply [1].
+On 21/05/2025 15:23, David Lechner wrote:
+> On 5/21/25 5:10 AM, Krzysztof Kozlowski wrote:
+>> On Tue, May 20, 2025 at 04:00:46PM GMT, David Lechner wrote:
+>>> Add support for external clock to the AXI PWM generator driver.
+>>>
+>>> In most cases, there is a separate external clock that drives the PWM
+>>> output separate from the peripheral clock. This allows enabling both
+>>> clocks.
+>>>
+>>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+>>> ---
+>>>  drivers/pwm/pwm-axi-pwmgen.c | 23 ++++++++++++++++++++---
+>>>  1 file changed, 20 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/pwm/pwm-axi-pwmgen.c b/drivers/pwm/pwm-axi-pwmgen.c
+>>> index 4337c8f5acf055fc87dc134f2a70b99b0cb5ede6..67992a7561ec0440b1c1fa327f844a0602872771 100644
+>>> --- a/drivers/pwm/pwm-axi-pwmgen.c
+>>> +++ b/drivers/pwm/pwm-axi-pwmgen.c
+>>> @@ -280,9 +280,26 @@ static int axi_pwmgen_probe(struct platform_device *pdev)
+>>>  	ddata = pwmchip_get_drvdata(chip);
+>>>  	ddata->regmap = regmap;
+>>>  
+>>> -	clk = devm_clk_get_enabled(dev, NULL);
+>>> -	if (IS_ERR(clk))
+>>> -		return dev_err_probe(dev, PTR_ERR(clk), "failed to get clock\n");
+>>> +	/* When clock-names is present, there is a separate ext clock. */
+>>> +	if (device_property_present(dev, "clock-names")) {
+>>
+>> No. List is ordered, you do not need such dance at all.
+> 
+> I should have added more to the comment here. This is also needed for
+> backwards compatibility where only what should be the "ext" clock is
+> given as clocks = <&spi_clk>; and the AXI clock was missing.
 
-[1] https://lore.kernel.org/all/20250520181451.18994-1-cpru@amazon.com/
+I do not see this needed at all. That's already handled by old code. You
+only need to take new optional, second clock - axi clk. You take it by
+index.
+
+Best regards,
+Krzysztof
 
