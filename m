@@ -1,182 +1,173 @@
-Return-Path: <linux-kernel+bounces-657497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC3CDABF4D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:53:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC68DABF4DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A82A91767C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:52:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB79C8E671A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41398270EB8;
-	Wed, 21 May 2025 12:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436A726B949;
+	Wed, 21 May 2025 12:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oeetkTu0"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="I2+5K89a"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A80E27055D
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123AD267B10
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747831887; cv=none; b=ogfAa6xQlm8fjiOk/kuevrt/B0QQFXjVPIU5/h3GMErPAQDLhudPG83HBGXlBY4VjJSwHxXY5SS81tD945EKuYMmzROw6JbMdkGF/DLrYQIltQE4AmpYacWR/lfvgWn9kl9YoUQ3oOklF1Ts3/FkBiCoAM8VeVHyB281MdfeENo=
+	t=1747831951; cv=none; b=WwIzKNlFQjrrIFke1fiXz2ukCg6pL06HvzSedAPHAUHCfC+TBZe6JRxdgXx4sthAyDhs0lQm++OvTeaVK4/fe/d5uQ948aoYzjxA1OCFue9aNjHIljurfVOMvsIZ5Ab7WQlL+N1DTbuCTq/gM/lvIuC+4F1c6AzcfkCSCOV29z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747831887; c=relaxed/simple;
-	bh=RpXIv4XP5GQbx2x/ivsSKrbBklFUfVf3wXJHcRFWkos=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GQ+2afFUuNPTykOG9IrJ+QvEEkxZgRXX4l+SFP+n/NxIPPuhDfOLQLpL2xogV7QniVuSNz3uFae7L4UITgfOVvxi+qdImV08h37LtGw6gfpLooH2faHE2h/e2SPHIN4mF3K7DpaH0dDgWhvpYjTQAqeqbPVNEaSVUk1bE+r1/kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oeetkTu0; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-442ccf0e1b3so83905905e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:51:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747831884; x=1748436684; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e/jHmzzVj7avj1EieVfvkWdGnf23YVTEruZCNzw90qE=;
-        b=oeetkTu0qPm4mN9XWNnaPTzt0Sw6iMCRCUaRWVmHSJq/Dzz7TBwHrRhjJ3MDizQXVO
-         CTehW9jHEYegD2ZxKdALg/2IEIH7IcEKbL4G14+QBtztR06O4T6oMrs57Bm/0oAlthjx
-         VCzdXpjwd821HbNUdkpow67fQrWH4zfjAuq94F4GERlVQ8Pr7Jg5fHUxMyDkJ8ErPK/3
-         LrwrLpHK6cI1ZeK+WCVJk5FGYcKmrIEO7Wj8AAbbivSSkkC01Iq/ZjR0eJoDqsNECV5l
-         SXso5xJPCrsAeNEhz9iokn77XQN3k5Kdh7htwE7qsAunDf5NcEzDqPmFEOFX7FaJ7MN7
-         eIXw==
+	s=arc-20240116; t=1747831951; c=relaxed/simple;
+	bh=ubr0IoG6QxDImEoRbYeRtQ/EWZKK2tR2JQKhedixIks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TPp1lVW4XFb3VTSQBNxFrL6pa00Ug9wzaxc+zJxoelvRDX7DvF1kl6HM07xOiKidpl2/OLVS5F5RWHa9DW5bdWaWEXLt61z7OYN/nFCKnmnsMfR2vjYnQdru71O267pwhj/O9EAp4K7DYjBNP8OqMnwJnecwusHkSU75Tzxz9do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=I2+5K89a; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9Xn71016898
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:52:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=tZm1FcnWYSxqGc6IW3xjphoG
+	JpTqJodC7MLjwn9TjHc=; b=I2+5K89aoGBs7qFoEkVBHrm9duJlO+OREk4tVzZN
+	bN78S83KHmUIrZSlzqpDD4XlIIUnqmGThqZOCSUxQlOrAU+qmTtYVrLeLdEPV2GR
+	YMho5mIM6UyTLiODbPn4xmrUwYSfz9GQERP0kRbiaZhnYZAR3A679uq8loBZcc3B
+	L1/j6JtwzecCR16ca6EgfeslWqbmFKw3cm6PefVsbmxli/PWWHSs9YJo43/vh5sf
+	DmbCLSwz33iVp/jODtCXYKGS9ptuGuYbwuzoyygHISkb6wW7znl1tv5iK1nMEX1m
+	Kr++J7svvc+ctNhMkEpxwudiqknRYQq54iz6A8VLR0MRaA==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf9u03w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 12:52:28 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5c82c6d72so1212105385a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 05:52:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747831884; x=1748436684;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=e/jHmzzVj7avj1EieVfvkWdGnf23YVTEruZCNzw90qE=;
-        b=mgwlyL2aeExbyg/PD/Ckwwf+lWc6dKteXXc9an4wh4XjaHKl284/OnLL367zm1nmJz
-         NtJgT3309hkTEg0Bm20a4EeKjSoecet6I6Ah2ZBF7ffta3cqrpbu+1AOryrpD0s5R58H
-         tBWpbNGMnZ+TTVMKFP1hc9uOd4JwdZP2QsvsReZ3f0mxpg8mEbTDMFZ46NLduaStpwCU
-         7F5DpCPaCrjqPL7CJxyx9P4EQfIOLN0z5FrVwcS56KVcTPYqVZBlO/Q6CEIwbDQ7ZwEN
-         UsaBeNlpOlaMotlkApWi5AZz08eNkjzEAPPX0BEfb/cuTRqLl3EUEJTgATIvTKYAFmyl
-         9fBw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5rDeRGGfnqaDvPgF7osoSWmEEaX4iJgjj6x3F+9PWHFf/iaCtEPZyVyxppN6oJMBcGEyenttUyp40slY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9zJmUNbTZCCMTJacmmOJDTKyUTP/M/q9VAAJ+ea1m7dLDbysQ
-	xqPmIiIf4j2I6evrZXEVrZXEclQN0F1PkVtgWAw8Vprcpy3t1oEAH7ZWEtFcxeMwhhQ=
-X-Gm-Gg: ASbGncvtqHndQU96MgJg8BcWTYn/2BHT8L6ZR1VKVYhggxBl28GrPl6aNuZsdk1/ORK
-	LIQe9e7sFJrrcFKR/o/zpmwio+Bc3TmKTrCz4rZfXlJOYDLmfa3cpGL5EQTY1u7uslUyTRQLFFJ
-	4bIBakOT/8IqCRMBkekFXJlQabbcjI/sJEFnziBymSffHn7SKo0DGIjbb6Rg87SMUxXeJ9IxzqH
-	aa5fEBX9lWfm0lQIsHMqX9xZNiP3hTkSo6U6VbjkBOWLvej6gszDO9QdKd1T0AitIKSz7Tvgg5Z
-	lDLo+D/MNP5jWhLrjWoNuRfN0siudUuZJgSSi1Z/4itNy/9WjaYmPzTPNnLLn6i8x5VZmFa1UWQ
-	DjxeBCRUUIcLWlwhzU9zZeLtvoqnZ
-X-Google-Smtp-Source: AGHT+IFnVyqqduGLFeoeuylj/zZQ1NZU8qcb9cwDLm6nbxo5hFKroW6gCdx5Z9rdFWlJAbhHaS7W0A==
-X-Received: by 2002:a05:600c:a016:b0:441:d2d8:bd8b with SMTP id 5b1f17b1804b1-442fd622c81mr210080505e9.8.1747831883562;
-        Wed, 21 May 2025 05:51:23 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:80b6:c1af:bc94:958d? ([2a01:e0a:3d9:2080:80b6:c1af:bc94:958d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f3ce483bsm67820435e9.33.2025.05.21.05.51.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 May 2025 05:51:23 -0700 (PDT)
-Message-ID: <e2173a8f-db10-4fd3-8bdb-ea5e6664237e@linaro.org>
-Date: Wed, 21 May 2025 14:51:22 +0200
+        d=1e100.net; s=20230601; t=1747831948; x=1748436748;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tZm1FcnWYSxqGc6IW3xjphoGJpTqJodC7MLjwn9TjHc=;
+        b=Zrl62HdApBSc/3uhi7rJXRTk7V9KzHTiOMz0s966fur3i9LD/cbnhPhczH+2vUSa3E
+         zX8javtCLfGuqZYnTm6bS1VJxQiRi5fTElfXDkMf5y4IZrvouRex8OeLp6fjRkIKEorv
+         +Yd2Ut37yU+t08Ob/1NPyNYnXeLrIv5Cv6Le+68y6Egp/W6a/ofIJ15/nIlpnNzUgNOV
+         dbl9TNk0K/cBQJCUb8a+tPQvqmMeGRM4sC1AQmAhOpo1E1Wp5pyxalQ8k7zIippqBVNd
+         G9/JxvKXfHP+ecHMO9X9f7PwsHDiVZdEOCnl2FhBGvn3oB7fwmzaaf45r9+8/5fZm+2i
+         Mz3w==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Oa/3d96pQjaFxoDd4DYoiR28iUbh03NmfYIVH6Po+A+tu1Qg6PsK7Q5Rva2iu22tmtxzyh5px/EC1vk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5+aDqArFqMX+Y7K+MSWJl15h88mBjen0u/alCKfy6NCC5CVDP
+	zzkgdnZqZq0gCz4l/0iZnXaKrZhJp+QZFS1cITHvygPEtL7bsxQ/D0ikbAIfnOW2UUiiU3DzSWk
+	otKHJwQbyr0zAF1AUq4reUwY8SslP8aJlOMRZJnwI8jyKXbvSI/b6aYbQmwh1yQWX8Ss=
+X-Gm-Gg: ASbGncvhkulXC9h0X+is7kX11VnDfmBtjCyxQxJdHoF1LinCMQIPQnvZVWlzD01hLhE
+	FGCsJ1nxPOYG3TBb6iJvBCXcKAvkxvLpCDWfk9gkD5i2xUdwUE3Kc7+Jfn4ji3us+hUHRxBPZxL
+	rl//MyO0NDTSKHXxHJdzprlo21EuQK+tWoJ/L+62UcyxPYDj6nZrJaOYc3klgU98F2Xrkfb1rKL
+	w4EYuwRX4aG74GOzfFiJO2jvZk2F1+37Z5gIxOu1UNyPC0rEBhdjphmA8XgQIET12IUUL44xlZi
+	2SLt5066p4pgGyfrnwiL32J+CsH0XbheC80gzvpoxspmZWYDk8IePSTOlEJ9MOdrDOBSXgP7R/A
+	=
+X-Received: by 2002:a05:620a:459f:b0:7cd:31ca:d81 with SMTP id af79cd13be357-7cd4673b9e8mr2611202085a.27.1747831947943;
+        Wed, 21 May 2025 05:52:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IElTuLwfN5LBdLDm3L5ftLVYf4GR8LqxAuo0yz1nHnyhymUVMITO1eRg42xfg0uzDWWAlCCaQ==
+X-Received: by 2002:a05:620a:459f:b0:7cd:31ca:d81 with SMTP id af79cd13be357-7cd4673b9e8mr2611198585a.27.1747831947533;
+        Wed, 21 May 2025 05:52:27 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e6f16394sm2826161e87.5.2025.05.21.05.52.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 May 2025 05:52:26 -0700 (PDT)
+Date: Wed, 21 May 2025 15:52:25 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Maulik Shah <maulik.shah@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 2/3] soc: qcom: qcom_stats: Add QMP support for
+ syncing ddr stats
+Message-ID: <jl4g7mutb65ifxuv3covropjntziv5enxyc3lgz2fi7ddu64bd@e726p6by3vfh>
+References: <20250521-ddr_stats_-v2-0-2c54ea4fc071@oss.qualcomm.com>
+ <20250521-ddr_stats_-v2-2-2c54ea4fc071@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v4 09/30] drm/msm/dpu: get rid of DPU_CTL_ACTIVE_CFG
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Vinod Koul <vkoul@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250519-dpu-drop-features-v4-0-6c5e88e31383@oss.qualcomm.com>
- <20250519-dpu-drop-features-v4-9-6c5e88e31383@oss.qualcomm.com>
- <f6a10e14-de53-43e1-a887-4a4ba4aa0d63@linaro.org>
- <w3i22a7magzaseje3j7o4qjvkxeslj7wm2uhdcn3o3nrotsrzs@gzdgfrl55qsz>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <w3i22a7magzaseje3j7o4qjvkxeslj7wm2uhdcn3o3nrotsrzs@gzdgfrl55qsz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250521-ddr_stats_-v2-2-2c54ea4fc071@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=V9990fni c=1 sm=1 tr=0 ts=682dcc8c cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=Prqm17leZL3r9GWXGqMA:9 a=CjuIK1q_8ugA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-ORIG-GUID: z19GdLSs27QjKjCJ5hfEagI8-KEXPd8I
+X-Proofpoint-GUID: z19GdLSs27QjKjCJ5hfEagI8-KEXPd8I
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDEyNCBTYWx0ZWRfX63ZEDKZYTfMV
+ GNwksFRI/WhOL3gfpdCY/4aAzkq1skNO/JTEt4SfeJjPEXGa0QnVNsH2zFgSyN4qCwQY3TG5VJR
+ Y/k4/zfuzs2uF5M//Mr0HyCVBzICf3wWrEZeG/JUbsiXRnSDoNux1U3ctsnGfLMXR1zLa8EMF/i
+ 2rqRqu5kRwLf5mCJva4A2s7JJMMd7mUFZUE82traoFp4vI31LqnKY9zZzCzVeAHMVxkiMsEr4mj
+ LTdcpAYSy4Iwl9hfYJo+/zudi1+n3UCEoVgqMPxcz3KgL/U2avlPtaQyWvlaltro08Ah/7jNsQu
+ QcKkcPH60PjfWh+IsbPtCwQtKekdQ03FRNrriIXzK9h0aS8J9hpeO57ksY88RYHMsUwktAD70It
+ 7HrO2bjYFs6NizxsIU44nsKct6mqbAtVFoUD0erz19ey/RzSTHVIBfe+qVVSATFRgb2ACvf/
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_04,2025-05-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 bulkscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 mlxscore=0 spamscore=0 phishscore=0 suspectscore=0
+ adultscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505210124
 
-On 20/05/2025 23:29, Dmitry Baryshkov wrote:
-> On Tue, May 20, 2025 at 09:57:38AM +0200, neil.armstrong@linaro.org wrote:
->> On 19/05/2025 18:04, Dmitry Baryshkov wrote:
->>> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>
->>> Continue migration to the MDSS-revision based checks and replace
->>> DPU_CTL_ACTIVE_CFG feature bit with the core_major_ver >= 5 check.
->>>
->>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
->>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->>> ---
->>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h  | 6 ------
->>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h | 6 ------
->>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h  | 6 ------
->>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h  | 6 ------
->>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h  | 6 ------
->>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h  | 6 ------
->>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_2_sc7180.h  | 3 ---
->>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_3_sm6115.h  | 1 -
->>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_4_sm6350.h  | 4 ----
->>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_5_qcm2290.h | 1 -
->>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_9_sm6375.h  | 1 -
->>>    drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c    | 2 +-
->>>    drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c    | 2 +-
->>>    drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c     | 7 ++-----
->>>    drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c          | 3 +--
->>>    drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h          | 1 -
->>>    drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c              | 2 +-
->>>    17 files changed, 6 insertions(+), 57 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
->>> index a0ba55ab3c894c200225fe48ec6214ae4135d059..25ba5d9bfff2b3f7a5054ae26511d05917f72d8b 100644
->>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
->>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
->>> @@ -69,7 +69,7 @@ static void _dpu_encoder_phys_cmd_update_intf_cfg(
->>>    	ctl->ops.setup_intf_cfg(ctl, &intf_cfg);
->>>    	/* setup which pp blk will connect to this intf */
->>> -	if (test_bit(DPU_CTL_ACTIVE_CFG, &ctl->caps->features) && phys_enc->hw_intf->ops.bind_pingpong_blk)
->>> +	if (phys_enc->hw_intf->ops.bind_pingpong_blk)
->>
->> Why did you drop the version test here ?
+On Wed, May 21, 2025 at 02:02:11PM +0530, Maulik Shah wrote:
+> Recent SoCs (SM8450 onwards) require QMP command to be sent before reading
+> ddr stats. The duration field of ddr stats will get populated only if QMP
+> command is sent.
 > 
-> bind_pingpong_blk is only available since DPU 5.x, the same set of
-> hardware as the DPU having DPU_CTL_ACTIVE_CFG.
+> Add support to send ddr stats freqsync QMP command.
+> 
+> Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
+> ---
+>  drivers/soc/qcom/qcom_stats.c | 29 ++++++++++++++++++++++++++++-
+>  1 file changed, 28 insertions(+), 1 deletion(-)
+> 
+> @@ -310,6 +329,14 @@ static int qcom_stats_probe(struct platform_device *pdev)
+>  	qcom_create_subsystem_stat_files(root, config);
+>  	qcom_create_soc_sleep_stat_files(root, reg, d, config);
+>  	qcom_create_ddr_stat_files(root, reg, config);
+> +	/*
+> +	 * QMP is used for DDR stats syncing to MSG RAM for recent SoCs (SM8450 onwards).
+> +	 * The prior SoCs do not need QMP handle as the required stats are already present
+> +	 * in MSG RAM, provided the DDR_STATS_MAGIC_KEY matches.
+> +	 */
+> +	qcom_stats_qmp = qmp_get(&pdev->dev);
+> +	if (IS_ERR(qcom_stats_qmp))
+> +		qcom_stats_qmp = NULL;
+
+Don't we need to handle QMP being not probed _yet_? In other words,
+there are several distinct cases:
+
+- No QMP defined, proceed without it
+- QMP defined, not probed yet, return -EPROBE_DEFER here
+- QMP defined, qmp_get() returns an error, return that error code
+- QMP defined, qmp_get() returned valid pointer, proceed with using it.
+
+>  
+>  	platform_set_drvdata(pdev, root);
+>  
+> 
+> -- 
+> 2.34.1
 > 
 
-I think it deserves a comment in the code or the commit msg.
-
-Neil
-
+-- 
+With best wishes
+Dmitry
 
