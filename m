@@ -1,152 +1,180 @@
-Return-Path: <linux-kernel+bounces-657287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876F4ABF216
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:50:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A3DABF20A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 12:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2211BC2B7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:50:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F26D4E1D39
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 10:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0586261584;
-	Wed, 21 May 2025 10:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B379925F7B7;
+	Wed, 21 May 2025 10:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XiIQegOR"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GtasTSQy"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960A425F7B7;
-	Wed, 21 May 2025 10:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5892D2309B9;
+	Wed, 21 May 2025 10:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747824593; cv=none; b=csChInlRdtLJp/LKlDxW4UQchC6wqLOtuQVHinF7jTCHfkfQAHFIPe6U8cX5Oml0h140h0xNQ5/nACJjoQhodH9Q9Og0M2nhx2EnEVmD81whJl68yW+7XVbww8VuV+BZc3eRqc3toE4uoLFhB3B0mtfCEZqpjAWZk/BvXMZ1l5E=
+	t=1747824532; cv=none; b=PKwd8RWloGrLzqBB7zrEEr7Z3LLhH4oiKoPEKY+l8QY+xXH/z/VVOLa+USPHx7HF0RFI9OVs0jR+Lqy5YrZtigwU2v5Pin5jUDdEcHppbDy8QV73fkOCxNycdS7a/n4NOSG9OnjsRvaYQQvWG6u0Hba5gHt8xNlkJ1H+aFwzmOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747824593; c=relaxed/simple;
-	bh=K6OSHOvN8xKXv1PQv/W3lpylYIuNyEiiSXA3YxNEO1Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JdNiCar7Y/okvcTS+hiL79WcByg7HXYh/NaPLvICmhkBQIRiyQvjR4vd3EvOLt1oZ6A5Gzo/hO9UMz6URSP1cOmgA2CO2qLqgdKYmlCMUeZtjb6bhUgkOPV6aRMKnfus+KRVr+DU7lc/SUWMMssU4S4mqRPNEYjc10fn/7wSwFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XiIQegOR; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b26f67f10ddso3709553a12.3;
-        Wed, 21 May 2025 03:49:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747824591; x=1748429391; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DhMvQPsr7BqEJ8gDSGi5LI70uKf+QgEr+Y8tLGpjGRs=;
-        b=XiIQegOR34t4XecuhWCJlN1K2n6VU+xIYKnZhaUFQNVBhs6F4pl479zquYeui0alIl
-         BgKfp81FaaOsLNhkUMkuZjZmo7ijW3sYPE2DcPkfXFxclz1n6DOsxDYnus0Ixkgjkw9N
-         CmKoHha1AUOEACHQoE3+5Rnk6CK9Au5jdLwhVeEKFEOX2dj6LxECLIMLYJfjPDghZlC7
-         kbZLYbPOgaV0RWAmL7eiZj+ZRBvJlhCdTziYm4/5T9qRMR9yRgrePsaip/HWGlBnpWDl
-         OWRPoJ6dTvxTXWiWyVxjDHcBN8r4aOIzF/ki1aqHDi/dmBvBXWuM1VXga9GTFqSj5fll
-         GjQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747824591; x=1748429391;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DhMvQPsr7BqEJ8gDSGi5LI70uKf+QgEr+Y8tLGpjGRs=;
-        b=ZlONoo5hp0gLWsQrm1P8hXowR6QK9zONphvvAGCOYOxtlEEUWxiSwaVMpTfd+wWzbH
-         9RLANJnWtxNQ4DAO9DVx9VZFNc6hSylnxbPBK8XWus//RJjQAi/n5fIw7RVxRaw7W9xJ
-         ewtR48NdCzLphW6qX2FgmOifFfGUE7663O+9Q1dXIyWuLxanXd7giB+gWH75aK6vezzq
-         hYZiis5crTdbAGgjLtAUvYguCjJXRzmZxSWqiFDEURh9dDdHCeaPG65r55SSZw3zHzXp
-         eBO/sclpxXOYGnzObcOJy1jFMP63m+Zqz07zm84+gO4nC84YGRuktMoiu8wMp5M9+JRW
-         ahqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIgrXZh2fBQOJYOXkm6DvXlzz5KGh7IqcpniGwOar2k07XbeWhoz8laR7ngzczqKf7CdfYZmb/qEsnGKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPkcCmBB0cgRwmXhBbAGuvP6QOEX+TyQnTTmqKNaahTyC6lhsA
-	AAwPC+P4/9+iW02Tk9YKFa8Sxu4CbStIBBoxOIsv5ZbOZte6i4aVC+5I
-X-Gm-Gg: ASbGnct4ijwZ3MGBgsGFuptXajgtAKZqSFOAXMF47EbFDgY3LYGI8qorEA9bt8Ry0Ig
-	by8lIyNd/gxqxOWbKT0m0GzhoONDEjb9qGeauSc6/4R3FuDN7MrwcgtXm14hR24uRzNSNnBzESa
-	4m2QobUYamXCVxJvHmDmXzEzBI6BQAA27p385YVVkYiiZ4928YshrZrvobfNOnsLv4JX5IHHtFl
-	FQBTaOPq9YEkff40lTIunnr2fOSyqrazVPJz4FBSNWJkED/V6B1sySNauexj21taRPamfnljQ/e
-	0rpIl47TaQkxqeZkOYn17PEQ7W49Dx2cBcDc3pvbbGtOCP75bJeU5R7PGv9J47s3vaha10Sp+7W
-	2WEzve1dUzl0iEenQjKYguoSkcMNNQMrKSDXyZg6D1htX
-X-Google-Smtp-Source: AGHT+IEcmvFcK/Uyyico+0ngdPnG6xEbSk1Q+QMKRfKMGjA56rbH6wvvzZ4PB7cYUmlfM/jH4TyVcw==
-X-Received: by 2002:a17:903:41c7:b0:22e:37b8:7972 with SMTP id d9443c01a7336-231de3514dcmr283226995ad.10.1747824590715;
-        Wed, 21 May 2025 03:49:50 -0700 (PDT)
-Received: from localhost.localdomain (123-194-189-72.dynamic.kbronet.com.tw. [123.194.189.72])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4ac9588sm90457315ad.24.2025.05.21.03.49.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 03:49:50 -0700 (PDT)
-From: Jay Chen <shawn2000100@gmail.com>
-To: mathias.nyman@intel.com,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jay.chen@siemens.com,
-	Jay Chen <shawn2000100@gmail.com>
-Subject: [PATCH v4] usb: xhci: Set avg_trb_len = 8 for EP0 during Address Device Command
-Date: Wed, 21 May 2025 18:48:34 +0800
-Message-ID: <20250521104838.15215-1-shawn2000100@gmail.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1747824532; c=relaxed/simple;
+	bh=6CUKKKeDgV9smgXKUu4MFaeCrIIsIn96LxsfZEQVSL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q54aGIG+x+tCY/7dem0vBUwH9/ZlMm+pi/cWIfKjpQJQFY0EbtjiPfrsGbVsm6sAoLIQUH2ZjUA7l5B7OjUIBMJiD0ynBNNBHkBAoJIOIyyBm77JYGgPwCulgmGDSdZWfaZXSWJKSuOKCKvxeJsOzF+8U2Bm9Ev+Rx3JFLYwUOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GtasTSQy; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (179.218-130-109.adsl-dyn.isp.belgacom.be [109.130.218.179])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DFC5F6B5;
+	Wed, 21 May 2025 12:48:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1747824507;
+	bh=6CUKKKeDgV9smgXKUu4MFaeCrIIsIn96LxsfZEQVSL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GtasTSQy9odMOr5GuEV23Ne/Vn1MDqVTrfBDGCVGkd0j/AqG+sEF5h4HIxSZUVnLW
+	 3oIpZ2H7yKxhUFSB6JuMM8Ct8IL/zzBGCVdh8KyZm+++uIto1Ipu4BXR9atXSKDOPv
+	 VZnTNlgInKsOwcr30nHFnRmLMM21id0ufEOufO/k=
+Date: Wed, 21 May 2025 12:48:42 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Mehdi Djait <mehdi.djait@linux.intel.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	sakari.ailus@linux.intel.com, tomi.valkeinen@ideasonboard.com,
+	jacopo.mondi@ideasonboard.com, hverkuil@xs4all.nl,
+	kieran.bingham@ideasonboard.com, naush@raspberrypi.com,
+	mchehab@kernel.org, dave.stevenson@raspberrypi.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v4] media: v4l2-common: Add a helper for obtaining
+ the clock producer
+Message-ID: <20250521104842.GE12514@pendragon.ideasonboard.com>
+References: <20250321130329.342236-1-mehdi.djait@linux.intel.com>
+ <f467e4a8-fcb2-4345-b8f7-7557c1a7552b@redhat.com>
+ <dhbbpogydqclblzpd2qn2tr2cyyh5gq5cgostzbiq6ygsixj46@oopsp75svt4c>
+ <1fe6d5fa-d379-4b1b-832c-31923d729833@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1fe6d5fa-d379-4b1b-832c-31923d729833@redhat.com>
 
-There is a subtle contradiction between sections of the xHCI 1.2 spec
-regarding the initialization of Input Endpoint Context fields. Section
-4.8.2 ("Endpoint Context Initialization") states that all fields should
-be initialized to 0. However, Section 6.2.3 ("Endpoint Context", p.453)
-specifies that the Average TRB Length (avg_trb_len) field shall be
-greater than 0, and explicitly notes (p.454): "Software shall set
-Average TRB Length to '8' for control endpoints."
+Hi Hans,
 
-Strictly setting all fields to 0 during initialization conflicts with
-the specific recommendation for control endpoints. In practice, setting
-avg_trb_len = 0 is not meaningful for the hardware/firmware, as the
-value is used for bandwidth calculation.
+On Tue, May 20, 2025 at 10:45:17AM +0200, Hans de Goede wrote:
+> On 14-May-25 10:25 AM, Mehdi Djait wrote:
+> > On Sat, May 10, 2025 at 04:21:09PM +0200, Hans de Goede wrote:
+> >> On 21-Mar-25 2:03 PM, Mehdi Djait wrote:
+> >>> Introduce a helper for v4l2 sensor drivers on both DT- and ACPI-based
+> >>> platforms to retrieve a reference to the clock producer from firmware.
+> >>>
+> >>> This helper behaves the same as clk_get_optional() except where there is
+> >>> no clock producer like in ACPI-based platforms.
+> >>>
+> >>> For ACPI-based platforms the function will read the "clock-frequency"
+> >>> ACPI _DSD property and register a fixed frequency clock with the frequency
+> >>> indicated in the property.
+> >>>
+> >>> Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+> >>
+> >> This certainly looks quite useful, thank you for working
+> >> on this.
+> >>
+> >> Note on some IPU3 platforms where the clk is provided by
+> >> a clk-generator which is part of a special sensor-PMIC
+> >> the situation is a bit more complicated.
+> >>
+> >> Basically if there is both a clk provider and a clock-frequency
+> >> property then the clock-frequency value should be set as freq
+> >> to the clk-provider, see:
+> > 
+> > is it even possible to get a reference to the clock producer in ACPI
+> > systems or am I missing something here ?
+> 
+> Yes in some special cases it is possible to get a reference to
+> a clock provider on ACPI. E.g. one is provided by:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/platform/x86/intel/int3472/tps68470.c
+> 
+> on x86 ACPI systems using that sensor PMIC such as the
+> "Microsoft Surface Go" and "Microsoft Surface Go 2"
+> 
+> > Here is what I gathered online for the discussion leading to this patch:
+> > ----------------------------------------------------------------------------------------------------------------------------------------------
+> > ClockInput resource added to ACPI v6.5: https://uefi.org/specs/ACPI/6.5/19_ASL_Reference.html#clockinput-clock-input-resource-descriptor-macro
+> > - commit adding ClockInput resource to acpica: https://github.com/acpica/acpica/commit/661feab5ee01a34af95a389a18c82e79f1aba05a
+> > - commit kernel upstream: 520d4a0ee5b6d9c7a1258ace6caa13a94ac35ef8 "ACPICA: add support
+> >   for ClockInput resource (v6.5)"
+> 
+> Ah I see where the confusion is coming from, the clk-provider does not come
+> directly from ACPI, it comes from the PMIC driver and the PMIC driver also
+> adds a clk-lookup table entry to associate it with the PMIC.
+> 
+> > this does not mean we can use it: I found this out-of-tree patch to supports fixed clock sources
+> > https://github.com/niyas-sait/linux-acpi/blob/main/0001-acpi-add-clock-bindings-for-fixed-clock-resources.patch
+> > it was not sent to the acpi mailing list. It was mentioned in this
+> > dicussion: https://lore.kernel.org/linux-kernel/78763d69bae04204b2af37201b09f8b5@huawei.com/
+> >
+> > Another interesting link: https://linaro.atlassian.net/wiki/spaces/CLIENTPC/pages/28822175758/ACPI+Clock+Input+Resources
+> > ----------------------------------------------------------------------------------------------------------------------------------------------
+> > 
+> > link for the dicussion: https://lore.kernel.org/linux-media/20250220154909.152538-1-mehdi.djait@linux.intel.com/
+> 
+> These 2 links are not relevant, the clk-provider is not directly coming from
+> ACPI instead the clk is registered by the PMIC driver for the clk-generator
+> part of the PMIC.
+> 
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/i2c/ov8865.c#n3020
+> >>
+> >> for an example of a driver which handles this case.
+> > 
+> > So if I understood the above correctly: in the ov8865 IPU3/ACPI case:
+> > 
+> > 1) sensor->extclk is NULL because the clock producer is not available in
+> > ACPI systems. ClockInput() ACPI resource was introduced to acpica after
+> > the ov8865 patch and the resource is not even being used in the upstream kernel.
+> 
+> In this specific case it will be not NULL because the PMIC driver
+> provides a clk-provider and creates a clk-lookup to match that
+> to the ov8865 sensor.
+> 
+> > 2) the sensor->extclk_rate will be set from reading
+> > the clock-frequency _DSD property in:
+> > 
+> > 	ret = fwnode_property_read_u32(dev_fwnode(dev), "clock-frequency", &rate);
+> 
+> This bit is correct, the special thing here is that the PMIC
+> clk-provider is programmable so the sensor-driver needs to
+> set it to the rate returned by reading "clock-frequency"/
+> 
+> So basically first call both:
+> 
+> 1. devm_get_clk()
+> 2. fwnode_property_read_u32(dev_fwnode(dev), "clock-frequency", &rate);
+> 
+> and in the special case when *both* succeed do a clk_set_rate()
+> call on the returned clk setting it to "rate".
 
-Motivation: Our company is developing a custom Virtual xHC hardware
-platform that strictly follows the xHCI spec and its recommendations.
-During validation, we observed that enumeration fails and a parameter
-error (TRB Completion Code = 5) is reported if avg_trb_len for EP0 is
-not set to 8 as recommended by Section 6.2.3. This demonstrates the
-importance of assigning a meaningful, non-zero value to avg_trb_len,
-even in virtualized or emulated environments.
+An idea that struck me just now: if the ipu-bridge driver creates the
+clock-frequency swnode property, couldn't it also (or instead) set the
+clock frequency, in a similar way that the assigned-clock-rates property
+is handled in DT ? That would unify the ACPI and DT cases for sensor
+drivers.
 
-This patch explicitly sets avg_trb_len to 8 for EP0 in
-xhci_setup_addressable_virt_dev(), as recommended in Section 6.2.3, to
-prevent potential issues with xHCI host controllers that enforce the
-spec strictly.
+I don't know how difficult this would be to implement, but I see there's
+already a call to of_clk_set_defaults() in i2c_device_probe(), so maybe
+this could "just" be turned into a fwnode_clk_set_defaults() ?
 
-v4:
-- Clarify relevant spec sections and document their conflict.
-- Remove language about "ensuring compliance with the spec" per reviewer
-  suggestion.
-- Update assignment to use '=' instead of '|='.
-
-v3:
-- Corrected author name in commit metadata and added changelog.
-
-v2:
-- Fixed malformed patch formatting issue.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=220033
-Signed-off-by: Jay Chen <shawn2000100@gmail.com>
----
- drivers/usb/host/xhci-mem.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-index d698095fc88d..26d0ab37bd5b 100644
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -1166,6 +1166,8 @@ int xhci_setup_addressable_virt_dev(struct xhci_hcd *xhci, struct usb_device *ud
- 	ep0_ctx->deq = cpu_to_le64(dev->eps[0].ring->first_seg->dma |
- 				   dev->eps[0].ring->cycle_state);
- 
-+	ep0_ctx->tx_info = cpu_to_le32(EP_AVG_TRB_LENGTH(8));
-+
- 	trace_xhci_setup_addressable_virt_device(dev);
- 
- 	/* Steps 7 and 8 were done in xhci_alloc_virt_device() */
 -- 
-2.43.5
+Regards,
 
+Laurent Pinchart
 
