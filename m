@@ -1,170 +1,225 @@
-Return-Path: <linux-kernel+bounces-657760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 061CAABF888
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:59:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E41F2ABF882
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0577B16B75C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:58:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 797C67A20D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 14:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1E61E25F8;
-	Wed, 21 May 2025 14:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5236E22126A;
+	Wed, 21 May 2025 14:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XpZJc3Nk"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FaWZvNGI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v5NoVv3J"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40419220F46
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEC520FA98;
+	Wed, 21 May 2025 14:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747839171; cv=none; b=UaDQT+UEnd+QIjRpzPFekAO+M3LdxypP7xDkxysJ9lnDDu88Z3oKICptBcOGujtJYD+/IYNdkQlYCdOyvUzfZpUYp9Zr5EoK/+dhh9Tudk73GeCTU/Jvl0HtjTJQBD8P8jwr0Bmj1AvQITYoYAoUVax6Y74ds7l1O0FdNEFgq/M=
+	t=1747839205; cv=none; b=QthTmGid/Gkecah5j/7GSiXd0CrflgvDYArTsYqeDerVB9XogzSnIRRx85Tp5V1VrChoObnG2LRTUUjnk+iHyyPVv/Gyw1lEnGj3QNmPaP53CgprM54UBukVyadp1Hgxwb2uJ6mXMPcL+8W4daVINIhd15snxwLizS4HuhqQBXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747839171; c=relaxed/simple;
-	bh=aNzroqIxURgqE3w48N8JYf0Tg2XM1K6UlHLDOl3M1i0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GIDMOk1NuxPF/qLF9vYvsg0qUboLZkZhWmElFgX38a+Yh9CxESFSLjA9swtW6FoZK2NfsAwCmEmZgO/rGLgzoFl/bZiWuDLFfbRzcf+UQRKuLYj+jiayio1U3Pzoo2GYvlpYqNo5/0867xEbJ94f6F57JKQ1GpKaM9vC4Be0/uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XpZJc3Nk; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9XMJ5000805
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:52:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	u4Zvv4Lve36XriRiQpKqbCb+vrtuRWZbxGxM5SWigA4=; b=XpZJc3NkPQt8OtDT
-	GLE+y7ZeRuA01WtsNGl6DONfKQuKvfC4im+3olz3RgzjKmCzFR/EOvQknYo0VMML
-	S3KNpxtOaXqX4IfdUUlqBuaily69GBZT2haLwjm0FRxUdSl2okPbsm7QcYv3DIdG
-	8rdLQdI8mUfq3VwYpJ40Ly+FcJqRX8cJr1SzMiV5a+15Gb7tX2SV1IoHnB5yRvmt
-	HpZt+ZT+NMhq/Dmhw8PtqDKIbGdiuHaGu+v6HklTUocnJEcqsH10XRN/WTPj4Ztr
-	df+dA+ORoGr9wW43cROAHBia/duLMc27GItA66o5/8wpbXIJit08qlA0MCf3tfUZ
-	JYQNEA==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46s95thnrk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 14:52:48 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6f8cb4b1861so67434396d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 07:52:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747839168; x=1748443968;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u4Zvv4Lve36XriRiQpKqbCb+vrtuRWZbxGxM5SWigA4=;
-        b=Yw8c5qX+goE0SugmBlbXC2SUh1XofIp9uDEaD6Z4rLG4ZK2Jd4z8+Y8/WWauhiBqWq
-         yBAdaCN4aDo350ZMZEBTfdn48DXvD+5PVSSey6/VdhkUMDVnUkiOjvANrLJD3XNW1wa0
-         WHorGkxkCBM4k2z7ejuSQQ+KyZg0hqPUAQA68MW185M/X4Z/H/ckeakMHLNpyWiMPLTn
-         u5yw9DIq9MkxmJnEcHV718UeqeikWjURfS6CrjX/HD4Gyy6UtAYPYYyWu5ZI4cIh62jv
-         7GaoSR5PTnIw6n6F/osmbfmtTD9Nd5KCIYVRnnr8wJhz2CyNhLJayjWdEL3iSV81ZUMS
-         8a8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUlgQmmEJCWJc+iajS6bew0Lkr2hcltX3s8+aL/nPvv6Zk9DEIQ/sCbcsbn/yLJnPirE9iytBfKogZLPmM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9wIx0souUOupKDLMVl/g6gU1KlMNuyDPmRM3F49WLfLPO5o3M
-	eLF9Ty7RHErMRwTyjtkD3UPvGBBej8ryUK/ooZLXhuXuLBjbrk5FWKQ39DLGfkSk7bJk7GKCLuJ
-	/9+4ez1pFQLc0FG05QP8C9NjA2jcxirckNGMnJoQF0luoiLzUI0GZI7kNr4CsW1b8IjQ=
-X-Gm-Gg: ASbGncviEa5BNTnilXKe5YTerV2bY9UKteDOw/nn5xX93q8hRyQGjJBb6loMOogAff7
-	QzVdEstXGJW5ZUVKMCo7j58KbojODzT3uqfW6a1jtQPqCS+tsOfWzCN2z4LFuk2t+S+Fvtd7HdS
-	Yeee1nQzOs8SL2WOOYdbNKrU+BiiiHL98yvRgjM9kTsTZ8ePM2PIzdTBAosVufldZ8CWNULYyUh
-	QQbW9wsbcLkU0C2ddYln2Du55VPwq0G1mJHkZgqOFNpycEAK9bBv6ppa3Du7IOW7V5z26T+1ppB
-	psPV/2jKtpPuZcUHcfM74nr4vWhbRX7HvKZKweULVuM9CEK/uqWM+yMaG3GzvYePuATr/nctFKp
-	jviyQ7tM/tO6BZA/NTCdQ1U9S8CquOmLKnHuHwf3O0it/wD0+WHwVm30dPYh3XdBA
-X-Received: by 2002:a05:6214:1ccf:b0:6f8:b011:cbac with SMTP id 6a1803df08f44-6f8b08ceae1mr337215436d6.35.1747839168064;
-        Wed, 21 May 2025 07:52:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEY5yP0CLnTt//gohFf5UwR7ErzPhdBiAag+ixC0szgLaww/eW1j4yyAr2W8/zdejzufNwJ2g==
-X-Received: by 2002:a05:6214:1ccf:b0:6f8:b011:cbac with SMTP id 6a1803df08f44-6f8b08ceae1mr337215096d6.35.1747839167522;
-        Wed, 21 May 2025 07:52:47 -0700 (PDT)
-Received: from ?IPV6:2001:14bb:c7:69ba:b852:d3f4:8957:5a1e? (2001-14bb-c7-69ba-b852-d3f4-8957-5a1e.rev.dnainternet.fi. [2001:14bb:c7:69ba:b852:d3f4:8957:5a1e])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-328084dc67bsm27690351fa.59.2025.05.21.07.52.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 May 2025 07:52:46 -0700 (PDT)
-Message-ID: <045c2ba8-3ac5-4773-ac7b-a6d8625891c8@oss.qualcomm.com>
-Date: Wed, 21 May 2025 17:52:45 +0300
+	s=arc-20240116; t=1747839205; c=relaxed/simple;
+	bh=HdHZ+GZxvRQ8ukrgIxElrOk6u+xpJOILJEbe3C7fOtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jYeBfwXynndcCh6R8z9OOSTJO9Mgu73MdLlQidu6U1KuGZlawkXKcCcf1oYDFxqDmOfPNzl1KJ4y75sHfSrufkuF+RpI7yD4FOsKtMYfke+qgTgnTxN3DFuTr34lKtQP+wTOVWBRKlFZyE8k37nHF/n3pOWeGsrWxzw5TBvY7ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FaWZvNGI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v5NoVv3J; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 21 May 2025 16:53:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747839201;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D86Wz2y6QUxOmJHz72oCX5H2kzf71CnW/bwyrbGaFDk=;
+	b=FaWZvNGIv1or7u8xnJbhu5qwENB/o38MU3LLx+maV/xJRYZbHj+pVsm+J0IfjK4wG7pjaE
+	/XZakmIoWiU2Y49oDr+vWpR4Hp0u8h/9gAiE6LNrHPjaTiF0Gka68ww449sDGAGrHLlVnc
+	8sSXrChrI8ETBcmWuFVYpUKK3Hxq5StzLFO5q3Z1GXnQky22gFsqhfaL8HDKkpkxktvM8x
+	qwgHG4ej4uG8Gp44N67jYj2hRRTOHzcdj+pysc1unfg2+MVzIvmxqVWu0/owhiw7nL37Qg
+	O+3ChZ4AwmIBzCqaNN8tgF8R/86rXDImNVVOokFcfKWThGSgtPDUr9qoywXd1Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747839201;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D86Wz2y6QUxOmJHz72oCX5H2kzf71CnW/bwyrbGaFDk=;
+	b=v5NoVv3J3aBrPArsCIRill2BVfiTV3wWC/KlMvAlGXX36r9WA4OPXDoV/cH4HHQmGNJiIW
+	MRb6+y1IHg3cPNAQ==
+From: Nam Cao <namcao@linutronix.de>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>,
+	Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH] eventpoll: Fix priority inversion problem
+Message-ID: <20250521145320.oqUIOaRG@linutronix.de>
+References: <20250519074016.3337326-1-namcao@linutronix.de>
+ <xhsmh8qmq9h37.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sc7280: Mark FastRPC context banks as
- dma-coherent
-To: Xilin Wu <sophon@radxa.com>
-Cc: cros-qcom-dts-watchers@chromium.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250416-sc7280-fastrpc-dma-v1-1-60ca91116b1e@radxa.com>
- <tqddtxx25bi6xb5jilpbgfccn7qz4qkonmstfbpz36rl3pnrwt@u4lv2tn46e5z>
- <DAC123579553F487+1871efee-51e7-4049-8a15-9cf8bd286f03@radxa.com>
-Content-Language: en-US
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-In-Reply-To: <DAC123579553F487+1871efee-51e7-4049-8a15-9cf8bd286f03@radxa.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=QKBoRhLL c=1 sm=1 tr=0 ts=682de8c0 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=ksxQWNrZAAAA:8
- a=mSK3FFS5vNSzVinocfkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=iYH6xdkBrDN1Jqds4HTS:22 a=TjNXssC_j7lpFel5tvFf:22 a=l7WU34MJF0Z5EO9KEJC3:22
-X-Proofpoint-ORIG-GUID: pT_ZXy5wPpPZPXTO5hGgtd_5XmTU7pYX
-X-Proofpoint-GUID: pT_ZXy5wPpPZPXTO5hGgtd_5XmTU7pYX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDE0NSBTYWx0ZWRfX6X10tc0ryPLV
- gKsKF51KaxPNxE+itbqb+I4EAz4padhYF6vv/hHYk7qx8YDJ0HmWBQn1X2WvGedNPAOTpUagCdk
- vv26ZNasvkC0ax8rIAU14L/zij6q/nfd5nJw/4k+dCVN/U0vhv7pLPswYciCIoiANvMCx8bVLbf
- /FSoT6v+o3kv0Sp7mCE2oJ3ZJy8n9Csdr7nlW9uIUPaoC+OEbOtORkXqzEcx+x0DS7tVtQOxnJA
- ShKhnivqp3nSNImgi9Zt9utBI2H/4JdDFIw2FPpfofLBfbWq/tPyipd3madQlGDgCqDj2DdcZai
- KOw4JSJCjyctCrIhy39V0CvRcpynRZvsSKK8q7oxM3GnEL9c5rxSK0SQ35jnS6YGwUi+ZlSOwIa
- uUnj7WoZ6/MCBDSdq0T9iHx9Ztv3o9WJnjouqFt5gUl033ksyncrn7rQagIltbzj1kHma3QM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_04,2025-05-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 spamscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
- adultscore=0 mlxlogscore=623 suspectscore=0 bulkscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505160000 definitions=main-2505210145
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xhsmh8qmq9h37.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 
-On 21/05/2025 17:08, Xilin Wu wrote:
-> On 2025/5/21 05:34:08, Dmitry Baryshkov wrote:
->> On Wed, Apr 16, 2025 at 06:54:18PM +0800, Xilin Wu wrote:
->>> The FastRPC context banks are DMA-coherent on sc7280 platform. Mark them
->>> as such.
->>>
->>> This allows LLM inferencing on the CDSP using Qualcomm AI Engine Direct
->>> SDK on the qcs6490 platform.
->>>
->>> Signed-off-by: Xilin Wu <sophon@radxa.com>
->>> ---
->>>   arch/arm64/boot/dts/qcom/sc7280.dtsi | 15 +++++++++++++++
->>>   1 file changed, 15 insertions(+)
->>
->> Are context banks coherent on FP5? On Herobrine? Or Nothing Phone?
->>
+On Wed, May 21, 2025 at 04:25:00PM +0200, Valentin Schneider wrote:
+> On 19/05/25 09:40, Nam Cao wrote:
+> > @@ -136,14 +136,28 @@ struct epitem {
+> >               struct rcu_head rcu;
+> >       };
+> >
+> > -	/* List header used to link this structure to the eventpoll ready list */
+> > -	struct list_head rdllink;
+> > +	/*
+> > +	 * Whether this item can be added to the eventpoll ready list. Adding to the list can be
+> > +	 * blocked for two reasons:
+> > +	 *
+> > +	 *  1. This item is already on the list.
+> > +	 *  2. A waiter is consuming the ready list and has consumed this item. The waiter therefore
+> > +	 *     is blocking this item from being added again, preventing seeing the same item twice.
+> > +	 *     If adding is blocked due to this reason, the waiter will add this item to the list
+> > +	 *     once consuming is done.
+> > +	 */
+> > +	bool link_locked;
 > 
-> Hi,
+> Nit: IIUC it's not just the readylist, it's anytime the link is used
+> (e.g. to punt it on a txlist), so how about:
 > 
-> This was tested on an upcoming SBC (Radxa Dragon Q6A) with the Qualcomm 
-> Linux cdsp firmware. There would be an error in the LLM demo app without 
-> this patch.
+>         /*
+>          * Whether epitem.rdllink is currently used in a list. When used, it
+>          * cannot be detached or inserted elsewhere.
+>          *
+>          * It may be in use for two reasons:
+>          *
+>          * 1. This item is on the eventpoll ready list
+>          * 2. This item is being consumed by a waiter and stashed on a temporary
+>          *    list. If adding is blocked due to this reason, the waiter will add
+>          *    this item to the list once consuming is done.
+>          */
+>          bool link_used;
+
+Acked.
+
+> >
+> >       /*
+> > -	 * Works together "struct eventpoll"->ovflist in keeping the
+> > -	 * single linked chain of items.
+> > +	 * Indicate whether this item is ready for consumption. All items on the ready list has this
+> > +	 * flag set. Item that should be on the ready list, but cannot be added because of
+> > +	 * link_locked (in other words, a waiter is consuming the ready list), also has this flag
+> > +	 * set. When a waiter is done consuming, the waiter will add ready items to the ready list.
+> >        */
+> > -	struct epitem *next;
+> > +	bool ready;
+> > +
+> > +	/* List header used to link this structure to the eventpoll ready list */
+> > +	struct llist_node rdllink;
+> >
+> >       /* The file descriptor information this item refers to */
+> >       struct epoll_filefd ffd;
 > 
-> I'm honestly not sure about the devices that you mentioned, since I 
-> don't have any other sc7280 devices to test.
+> > @@ -361,10 +368,27 @@ static inline int ep_cmp_ffd(struct epoll_filefd *p1,
+> >               (p1->file < p2->file ? -1 : p1->fd - p2->fd));
+> >  }
+> >
+> > -/* Tells us if the item is currently linked */
+> > -static inline int ep_is_linked(struct epitem *epi)
+> > +static void epitem_ready(struct epitem *epi)
+> >  {
+> > -	return !list_empty(&epi->rdllink);
+> > +	/*
+> > +	 * Mark it ready, just in case a waiter is blocking this item from going into the ready
+> > +	 * list. This will tell the waiter to add this item to the ready list, after the waiter is
+> > +	 * finished.
+> > +	 */
+> > +	xchg(&epi->ready, true);
+> 
+> Perhaps a stupid question, why use an xchg() for .ready and .link_locked
+> (excepted for that epitem_ready() cmpxchg()) writes when the return value
+> is always discarded? Wouldn't e.g. smp_store_release() suffice, considering
+> the reads are smp_load_acquire()?
 
-You have enabled dma-coherency for the several families of devices using 
-SC7280, QCM/QCS6490 and SM7350. Some of them might have older firmware, 
-etc. We had this issue with SDM845 / RB3 boards.
+That's me being stupid, smp_store_release() is good enough.
 
-Bjorn, do we need to revert this patch? See corresponding discussion at 
-https://lore.kernel.org/linux-arm-msm/70ffec25-17c9-4424-9d0b-da6560f7160d@quicinc.com
+> > +
+> > +	/*
+> > +	 * If this item is not blocked, add it to the ready list. This item could be blocked for two
+> > +	 * reasons:
+> > +	 *
+> > +	 * 1. It is already on the ready list. Then nothing further is required.
+> > +	 * 2. A waiter is consuming the ready list, and has consumed this item. The waiter is now
+> > +	 *    blocking this item, so that this item won't be seen twice. In this case, the waiter
+> > +	 *    will add this item to the ready list after the waiter is finished.
+> > +	 */
+> > +	if (!cmpxchg(&epi->link_locked, false, true))
+> > +		llist_add(&epi->rdllink, &epi->ep->rdllist);
+> > +
+> >  }
+> >
+> >  static inline struct eppoll_entry *ep_pwq_from_wait(wait_queue_entry_t *p)
+> 
+> > @@ -1924,19 +1874,39 @@ static int ep_send_events(struct eventpoll *ep,
+> >                        * Trigger mode, we need to insert back inside
+> >                        * the ready list, so that the next call to
+> >                        * epoll_wait() will check again the events
+> > -			 * availability. At this point, no one can insert
+> > -			 * into ep->rdllist besides us. The epoll_ctl()
+> > -			 * callers are locked out by
+> > -			 * ep_send_events() holding "mtx" and the
+> > -			 * poll callback will queue them in ep->ovflist.
+> > +			 * availability.
+> >                        */
+> > -			list_add_tail(&epi->rdllink, &ep->rdllist);
+> > +			xchg(&epi->ready, true);
+> > +		}
+> > +	}
+> > +
+> > +	llist_for_each_entry_safe(epi, tmp, txlist.first, rdllink) {
+> > +		/*
+> > +		 * We are done iterating. Allow the items we took to be added back to the ready
+> > +		 * list.
+> > +		 */
+> > +		xchg(&epi->link_locked, false);
+> > +
+> > +		/*
+> > +		 * In the loop above, we may mark some items ready, and they should be added back.
+> > +		 *
+> > +		 * Additionally, someone else may also attempt to add the item to the ready list,
+> > +		 * but got blocked by us. Add those blocked items now.
+> > +		 */
+> > +		if (smp_load_acquire(&epi->ready)) {
+> >                       ep_pm_stay_awake(epi);
+> > +			epitem_ready(epi);
+> >               }
+> 
+> Isn't this missing a:
+> 
+>                 list_del_init(&epi->rdllink);
+> 
+> AFAICT we're always going to overwrite that link when next marking the item
+> as ready, but I'd say it's best to exit this with a clean state. That would
+> have to be before the clearing of link_locked so it doesn't race with a
+> concurrent epitem_ready() call.
 
--- 
-With best wishes
-Dmitry
+To confirm I understand you: there is no functional problem, and your
+comment is more of a "just to be safe"?
+
+Thanks so much for the review,
+Nam
 
