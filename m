@@ -1,108 +1,137 @@
-Return-Path: <linux-kernel+bounces-657970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE5CABFAF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:14:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A314ABFAD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 18:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F8E418845CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:09:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BD2B16404C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 16:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5817A211710;
-	Wed, 21 May 2025 16:09:38 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BD61A5B86;
+	Wed, 21 May 2025 16:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="ROM1aknv"
+Received: from mail-pg1-f227.google.com (mail-pg1-f227.google.com [209.85.215.227])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BF91EB9E1
-	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 16:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24FC1804A
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 16:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747843778; cv=none; b=fKK+XJU+E7vlmjVeH2UXDbXDIED5dZwiFTIOlL6coFAfht1H2ROMWJH0IbX3ooNT0TjRP1BtavpOUzz6uGEkFRBTl2TjEA1HytiPg9QO9IfM4RNRmiqxRAxvE32rCrk7R/HIKjJrcZNf4w88q3wdD7VUrhHB2oVSUl/mFF50drY=
+	t=1747843644; cv=none; b=B2H4rGzKjYjdW82vVTjEzPT8s+mWoNhHbEtvuZAPyMV7eNUZc2dtIrLIIa8vnjdBAMOmr5bk39Swon8u+3i2Kz+3voQskEvgu4F/nHLvb1UpM2hBoqLoeHAYvKg+xDzUJ2Kj5mWG+9np/+Hs+pIFLkDIma9Jsk/AY6SZecN1SVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747843778; c=relaxed/simple;
-	bh=OQOw5twbXTjvTuw+IQ5PdOn6eO5Xr5Ggn/ieZOTC5Xs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=piZprYvwwKRSxpoMQyP4Pvm9iV5cbTpvfxzXpZfF1bKoDBG+zD7fJC/umiYqldGqqY9qq15jZsjSNwr5REvMBCecuQ7oerATH0yeZSdrNLtDlxlx3E4r280y53wD8/pphsB0azI4vxjO+fCMWaks1SvwtodzPU5aqVapWPSu15I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1uHly7-000000008Ci-0Y6q;
-	Wed, 21 May 2025 12:06:59 -0400
-Message-ID: <bdf83ab6f5149678ba08cfc52ef806ed705aa283.camel@surriel.com>
-Subject: Re: [RFC v2 4/9] x86/mm: Introduce X86_FEATURE_RAR
-From: Rik van Riel <riel@surriel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org, 
-	kernel-team@meta.com, dave.hansen@linux.intel.com, luto@kernel.org, 
-	peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, 
-	nadav.amit@gmail.com, Rik van Riel <riel@fb.com>, Yu-cheng Yu
-	 <yu-cheng.yu@intel.com>
-Date: Wed, 21 May 2025 12:06:59 -0400
-In-Reply-To: <20250521145339.GCaC3o87kpaouLZ_3D@fat_crate.local>
-References: <20250520010350.1740223-1-riel@surriel.com>
-	 <20250520010350.1740223-5-riel@surriel.com>
-	 <20250521115343.GCaC2-x8LsmMApUkjQ@fat_crate.local>
-	 <cb657cabbc3c87e0a821c7c3fcc16e62b7d854f4.camel@surriel.com>
-	 <20250521145339.GCaC3o87kpaouLZ_3D@fat_crate.local>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1747843644; c=relaxed/simple;
+	bh=3ThejoLiMkpabs5CE1WBPTbZj0YfkJafUiYWBh0n+rk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BofQeoUCerNsRlzG+78xQBxmTc/bxdTbNCeOs2DbwMgDo/t9IfuR+sBgC/JyPPqHD8PmGca44SbvXYmMnxJLA0XyBmPth3vIRK5RU+V46Ld3Uu7/g4VhBTcoHYhTSwUmMYqxPRUOi4u08WNYnoEKxHrEarmD5GLUD+Ln7YU3QVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=ROM1aknv; arc=none smtp.client-ip=209.85.215.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f227.google.com with SMTP id 41be03b00d2f7-b26e6c551f8so673231a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 09:07:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1747843642; x=1748448442; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FGAacLh9ZKO/sc4ZekzKsbI6RbRxPuIDS876rsFYht0=;
+        b=ROM1aknvM+SaYX+c5n6KqNQm79ZNACIqE2fApnudDZOEvewj4ZvQ6dWdCsndFLHQMr
+         7E7V+oJlw2NYqGbpSGuNh6AtGyHNhsdsE4yK8trq/NygGpsXUfTcn+Pp8WW6Z3XoPXt/
+         09cKmNfvNZQKkWHMBQLEdjTGdW+6sGBbut6EudT4iAJ/pg9MelqpmDJJXIhjJXP/evEr
+         e9tk7UZ5MgfZsfYDXlwZCk6fyoV2KL4Ms1x3uOPUNOAMKLm6yWteAGntJcnnT/916mEt
+         n4CsQ+6/4obLv7OW3gJ1ObnOqGyly0rSFq22gwS99cy5BsvGL4CSCgVRBSlKf+VkVJVV
+         u48A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747843642; x=1748448442;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FGAacLh9ZKO/sc4ZekzKsbI6RbRxPuIDS876rsFYht0=;
+        b=JODcHGK0HM2GgMaA4qtK7HrBYW6d9n24hfQC2vd0PZVHKKW1uwmxX3ZiVd2tB7KZ3Y
+         qEkMUYtpotO+r6zmZYBCURbRpAk+Gk2tTbErCBvjI8OdeRsQhfC0ryFaZB/70bN7IwlQ
+         Tb/EjIM8bt/CoqyxoQ1EAZ+aGtse/FkcBuga+X9aTzbdvdMXaoSbhVQcdk8LG9NymYPw
+         izhVAwros1q0+1/iP35TNVwOQFZEB18nmfioNEj2MQb0SB58Xa6fwP9fkBqSs/3987b2
+         ehiDoIDoxO1lHjm8z1A3ToDbQoc3Sindnlk8BIt0nruQElfT/9EkK5wDFxCQ60dH8e4v
+         LSFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrWjUKKFRitX9qVjavwTWcikdbLE98CnCnjVmGDizoll5OFVg2YuVC/TIAY/7QrA9tnCecjSM2+ifMkdc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUQCFDsIQFYl1FNAThp7SSaMqonx3vlHQzVN13cYffvE3FoldR
+	+IuFbZcPklcbEc7PWdD78KXtvu+8gfuerTJv+0VI/RerCGh/SPxm9ITQB9yWCycfbvkYdtFV3/0
+	ZQa5Myll2jxYGlRydELbttrD7PooaUtuk/FjCipBw9fyZ6cyQxT+3
+X-Gm-Gg: ASbGncvSWqnM+7TgNTkfbSRy/UiPtfMeneP7nsTbUsSE/jNp0lSZR2ZSzeVUZVWVZgB
+	mud+ZaSiHekzaPbHnm/K7bVeZ9Z6CaNz7vstXNyjJ7NJqPfzMNARSA2e4JD34aRBmTBTE/3v5MG
+	NDBTJWBmO16xlEOBixwrnveBr7FpKeKsW8pjGwQcJq05+TkW96SU/+2WEC7NjPDsytRqsEfZuFA
+	+Evap8i93KrvDLQ1Nl27Z0d54wgyQoAURlVc24mKfoHZlLrq2azl9Rn1aQWi53ZnSAR1YWVkLkN
+	B4Z+0ZfjEFzAftfkGHGP9Luovso8WQ==
+X-Google-Smtp-Source: AGHT+IF2kF1m9LkkoJKrZ/FEcg38Fj39w2AzGUaOy5/vh7l4c0L6fk/PMc5E0B4+fMIoji+2MmlqVClPh6k8
+X-Received: by 2002:a17:902:ea0d:b0:224:1579:b347 with SMTP id d9443c01a7336-231d43c6220mr113533045ad.7.1747843642133;
+        Wed, 21 May 2025 09:07:22 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-231d4ecf61bsm6804655ad.123.2025.05.21.09.07.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 May 2025 09:07:22 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::418a])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 87F6E3400E9;
+	Wed, 21 May 2025 10:07:21 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 81A95E41D24; Wed, 21 May 2025 10:07:21 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Ming Lei <ming.lei@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ublk: remove io argument from ublk_auto_buf_reg_fallback()
+Date: Wed, 21 May 2025 10:07:19 -0600
+Message-ID: <20250521160720.1893326-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-05-21 at 16:53 +0200, Borislav Petkov wrote:
-> On Wed, May 21, 2025 at 09:57:52AM -0400, Rik van Riel wrote:
-> > I had the same thought, and tried that already.
-> >=20
-> > It didn't work.
->=20
-> Care to share why?
->=20
-It resulted in RAR not being properly initialized,
-and the system hanging when trying to use RAR to
-flush the TLB.
+The argument has been unused since the function was added, so remove it.
 
-I don't remember exactly what sequence of events
-was happening here, maybe something with the
-boot CPU per-cpu RAR initialization being called
-(or not, due to X86_FEATURE_RAR not being set)
-before the systemwide initialization?
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ drivers/block/ublk_drv.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---=20
-All Rights Reversed.
+diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+index 1800cb14677e..7dffddd3fc7a 100644
+--- a/drivers/block/ublk_drv.c
++++ b/drivers/block/ublk_drv.c
+@@ -1181,11 +1181,11 @@ static inline void __ublk_abort_rq(struct ublk_queue *ubq,
+ 		blk_mq_requeue_request(rq, false);
+ 	else
+ 		blk_mq_end_request(rq, BLK_STS_IOERR);
+ }
+ 
+-static void ublk_auto_buf_reg_fallback(struct request *req, struct ublk_io *io)
++static void ublk_auto_buf_reg_fallback(struct request *req)
+ {
+ 	const struct ublk_queue *ubq = req->mq_hctx->driver_data;
+ 	struct ublksrv_io_desc *iod = ublk_get_iod(ubq, req->tag);
+ 	struct ublk_rq_data *data = blk_mq_rq_to_pdu(req);
+ 
+@@ -1207,11 +1207,11 @@ static bool ublk_auto_buf_reg(struct request *req, struct ublk_io *io,
+ 
+ 	ret = io_buffer_register_bvec(io->cmd, req, ublk_io_release,
+ 				      pdu->buf.index, issue_flags);
+ 	if (ret) {
+ 		if (pdu->buf.flags & UBLK_AUTO_BUF_REG_FALLBACK) {
+-			ublk_auto_buf_reg_fallback(req, io);
++			ublk_auto_buf_reg_fallback(req);
+ 			return true;
+ 		}
+ 		blk_mq_end_request(req, BLK_STS_IOERR);
+ 		return false;
+ 	}
+-- 
+2.45.2
+
 
