@@ -1,98 +1,264 @@
-Return-Path: <linux-kernel+bounces-657811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69249ABF91E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:23:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C02DABF91F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 17:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B18A4E7C17
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:23:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A621F7A1A27
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A1F1E572F;
-	Wed, 21 May 2025 15:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B411DE896;
+	Wed, 21 May 2025 15:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpSmW5Pz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pqnQvMHW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NOBK1jzq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDF51DE896;
-	Wed, 21 May 2025 15:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B622AF1E
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 15:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747840975; cv=none; b=scjpzgwKxJxYkXQ8svvu9MS7HwOSKt2BhKK0yvaaso7hh0QoJy2X8CpYAblcBZbtAXAiYkh+icP4p0+6sZhKAA+jhBZO3JWlZctFOdezNnt58sFoP7Upkpa4LFshsMjZkR9MVJ56rmZU2/rASCOmA9m8SMuZxU8exTenGd9P+7s=
+	t=1747841023; cv=none; b=tb+D4C4cWonzVGR7PECPqBlUY55qvgQ4xQpRcj1eX2qA6KZJY1lQwpxphVp+Fs+XMgNLX+GIP41S67njawrsPi69xbDaQwjhI3DDawUFugW4uPHprdnW16Hj99OT2ehcI4OCmuVwSQDwfkWalFj2kWKdOGWAcWd/nyxSXGZQv50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747840975; c=relaxed/simple;
-	bh=0YkU9yBX6AgOPZ0Q3G1oIsGva2J1rIZ+xv0Abib7XUE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=tW1TLWyEoXnXCFgrpUqD5iiSVtbqv8u2Toy11Wikj7lINdPjnd68LawVUXkpJh/SwpUkF81oRKPw1kKVJ5PS9EMCY0kRdfJ6eAHbdwqOkO/0OJ+lfnzGc6qBeBb6hMY8tf4aO179iruP7zirkdLzsbDyITH9kUv9zDkiXeEqcX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpSmW5Pz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07533C4CEE4;
-	Wed, 21 May 2025 15:22:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747840975;
-	bh=0YkU9yBX6AgOPZ0Q3G1oIsGva2J1rIZ+xv0Abib7XUE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=LpSmW5PzppS0+oUOdkAxjwbHcHslytnqF7fAp2wxDBaSKWM+r/in36Mm2TAlWUpos
-	 FxakUGCGY+8Ge42bQMEmNglcaiZ7UtHsuOrD4yzHsA5CuJ1D1626ghUtRIAh7YjSOn
-	 UU2lOAdcMrMk/tSsLoknSm5MHdgkq7sxw0Mrlwbvu/g1OiCiL6/UyDwcKsmiMEYIdt
-	 3UYDPKTUC2nV5iesVd0nKbzehKD1ut+lDAOmVu5+4gSxfhpI73uZGb9VgJ0YFzezM4
-	 zk4bZgzJqyrE14FZu3qRsIj8OhHzkd2o32pNZSl3AiUGySAfvAwo+SywyS/KgP7ov9
-	 SgGCguBOCi40g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB115380CEEF;
-	Wed, 21 May 2025 15:23:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1747841023; c=relaxed/simple;
+	bh=1CcDQ4m97A4Xe4o6j6Cwv75N0aejjAIt2M6JDL02s4s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fNuCzjK+NJku5zUwYGTaISQosbDlko3NkdZmnZ0Cw7JracLH1vdWDh4ysxfYcLuawnP9Q0hQ/x6mdlszQsB9GH3h24zzIUfRzkPPxmtkW3WdNIVifCh60QmAnVARe09vZBdIHNfpb3fbtuvCIrttf7JnM5w1j0KdHqVf5xHxDnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pqnQvMHW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NOBK1jzq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747841019;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ppp2TqJLky1I3rI+t/8setko+mbIUJDKf5b7IN96CTw=;
+	b=pqnQvMHWsGLDzizqBRmWsKBOxrbR2TU2QgKAwFxmUX26jl3JokfCUrOt337zrhwDCk6kFs
+	dJo/crtMiajdUPTBAAxNdVOvKwF9lMg9coPOINTDuDeF5fCiLGkrotuhMkPYAPLBi92Gbf
+	hKUTzmPghBxUpGu/+dELL5/cpMzZ57bPQ6SED6fDQmeM1DMN0fqYiZA1PZ6eDkSef1OCeu
+	lbJAo5ZVkHNIWYBIggFh7rgfZjIbKrUggzpL3PbR8dFtsz3OB60JjwRdUMcYplsYN9wG/y
+	k2U/CAtI0KmHtmCk7WgslUkAlOhvzXmQ6aYDLhhkChYrhnIEmVjtaR+YEQRayw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747841019;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ppp2TqJLky1I3rI+t/8setko+mbIUJDKf5b7IN96CTw=;
+	b=NOBK1jzqPcQjElSGrnWXnpslV1McrR0ojnLMWaPO1MOFCiiuAGzJsR62K5NfMy3Z60Q0sG
+	sPyXNSJNxPxD+jAA==
+To: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>, "Ahmed
+ S. Darwish" <darwi@linutronix.de>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Brian Gerst <brgerst@gmail.com>, "Kirill
+ A. Shutemov" <kirill@shutemov.name>
+Subject: Re: [PATCH v4 1/6] x86/cpu: Use a new feature flag for 5 level paging
+In-Reply-To: <20250519131944.GCaCsv8A71vn21AB1W@fat_crate.local>
+References: <20250517091639.3807875-8-ardb+git@google.com>
+ <20250517091639.3807875-9-ardb+git@google.com>
+ <20250519094038.GIaCr8ltHvLBYjk8iI@fat_crate.local>
+ <aCstaIBSfcHXpr8D@gmail.com>
+ <20250519131944.GCaCsv8A71vn21AB1W@fat_crate.local>
+Date: Wed, 21 May 2025 17:23:37 +0200
+Message-ID: <874ixernra.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/2] Bluetooth: btmtksdio: ensure btmtksdio_close is
- executed before btmtksdio_remove
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <174784101076.2084440.12163879869679696734.git-patchwork-notify@kernel.org>
-Date: Wed, 21 May 2025 15:23:30 +0000
-References: <20250422012156.586600-1-chris.lu@mediatek.com>
-In-Reply-To: <20250422012156.586600-1-chris.lu@mediatek.com>
-To: Chris Lu <chris.lu@mediatek.com>
-Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
- sean.wang@mediatek.com, jiande.lu@mediatek.com, will-cy.lee@mediatek.com,
- ss.wu@mediatek.com, steve.lee@mediatek.com, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain
 
-Hello:
+On Mon, May 19 2025 at 15:19, Borislav Petkov wrote:
+> On Mon, May 19, 2025 at 03:08:56PM +0200, Ingo Molnar wrote:
+>> The second best thing we can do is to have a sane, constant LA57 flag 
+>> for the hardware capability, and introduce a synthethic flag that is 
+>> set conditionally (X86_FEATURE_5LEVEL_PAGING) - which is how it should 
+>> have been done originally, and to maintain compatibility, expose the 
+>> synthethic flag in /proc/cpuinfo as 'la57' to maintain the ABI.
+>
+> - we don't expose every CPUID flag in /proc/cpuinfo for obvious reasons:
+>
+>   Documentation/arch/x86/cpuinfo.rst
+>
+> - if you want to mirror CPUID *capability* flags with X86_FEATURE flags *and*
+>   use the same alternatives infrastructure to test *enabled* feature flags,
+>   then you almost always must define *two* flags - a capability one or an
+>   enabled one. I don't think we want that.
+>
+> And since we're dealing with ancient infrastructure which has grown warts over
+> the years, we all - x86 maintainers - need to decide here how we should go
+> forward. I have raised these questions multiple times but we have never
+> discussed it properly.
+>
+> Also, Ahmed and tglx are working on a unified CPUID view where you can test
+> capability.  Which means, what is enabled can be used solely by the
+> X86_FEATURE flags but I haven't looked at his set yet.
+>
+> So it is high time we sit down and hammer out the rules for the feature flags
+> as apparently what we have now is a total mess.
 
-This series was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+There are several issues with the handling of CPUID and feature flags:
 
-On Tue, 22 Apr 2025 09:21:54 +0800 you wrote:
-> If Bluetooth SDIO card is unexpectedly removed due to hardware removal
-> or SDIO issue, it is possible for remove to be called before close.
-> If an interrupt occurs during this process, it may cause kernel panic.
-> Therefore, it is necessary to ensure that close is executed before
-> remove to stop interrupts and cancel txrx workqueue.
-> 
-> Chris Lu (2):
->   Bluetooth: btmtksdio: Check function enabled before doing close
->   Bluetooth: btmtksdio: Do close if SDIO card removed without close
-> 
-> [...]
+   1) The evaluation of the CPUID information is a complete maze and
+      has been expanded as people see fit without ever thinking about
+      a proper design.
 
-Here is the summary with links:
-  - [v2,1/2] Bluetooth: btmtksdio: Check function enabled before doing close
-    https://git.kernel.org/bluetooth/bluetooth-next/c/07e90048e356
-  - [v2,2/2] Bluetooth: btmtksdio: Do close if SDIO card removed without close
-    https://git.kernel.org/bluetooth/bluetooth-next/c/0b6d58bc6ea8
+      As a result many CPUID instances are read out a gazillion times
+      to evaluate only parts of them and most of it is done with
+      magically hardcoded constants and the most convoluted macros.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+   2) The in memory representation is as stupid as it gets. Some CPUID
+      features are stored as is, others are analyzed and individual bits
+      are stored in some artifical bit field.
 
+   3) There is no clear seperation between global and per CPU
+      information. Real CPUID features are supposed to be global and
+      identical accross all CPUs. Per CPU data in CPUID is information
+      which is related to topologies of all sorts (APIC, caches, TLBs,
+      power etc.)
 
+   4) Drivers having access to CPUID is just wrong. We've had issues
+      with that in the past because drivers evaluated CPUID themself and
+      missed that the core code had stuff disabled.
+
+So what we (mostly Ahmed) are trying to do here is to create a 1:1 view
+of the CPUID information in memory with proper data structures, which
+are generated out of the CPUID data base.
+
+I know people will whine that this is waste of memory, but we are
+talking about a few kilobytes of data and not about insane large structs.
+
+That means we end up with something like this:
+
+	union cpuid_info {
+		unsigned long		bits[SIZE];
+		struct cpuid_data	data;
+        };
+
+        struct cpuid_data {
+        	struct leaf_0		leaf_0;
+                struct leaf_1		leaf_1;
+                ....
+                struct leaf_N		leaf_N;
+        };
+
+Some of the leafs will be arrays, but that's a implementation
+detail. Versus CPU feature bits this means that we are not longer
+looking at a condensed linear bitmap of feature bits. but at a sparse
+populated bitmap. The bitmap offsets of the individual feature bits are
+computed at build time and not longer hardcoded in some horribly
+formatted header file.
+
+This allows to:
+
+     1) Read _all_ CPUID information once into memory
+
+     2) Make _all_ subsequent CPUID related operations memory based
+
+     3) Remove CPUID() from drivers and other places and let them retrieve
+        the information out of the relevant leaf structures by doing
+
+            if (!info->data.leaf_N.foo_enabled)
+            	return;
+            foo = info->data.leaf_N.foo;
+
+        instead of
+
+            cpuid($N, eax, ebx, dummy1, dummy2);
+            if (!(eax & MAGIC_NUMBER))
+            	return;
+            foo = MAGIC_MACRO_MESS(ebx);
+
+        That also makes sure that everything in the kernel looks at a
+        consistent piece of information, especially when the boot code,
+        mitigations, command line options etc. disabled certain features.
+
+Now what about software defined (artificial) feature bits including BUG
+bits?
+
+We still need them and there is no reason why we would replace them with
+something else. But, what we want to do here, is basically the same as
+we do for the real CPUID information:
+
+   Create and document real artifical leafs (there is enough reserved
+   number space in the CPUID numbering scheme) and put those into the
+   CPUID database as well.
+
+   That allows to handle this stuff in the same way as any other CPUID
+   data and the autogeneration of bit offsets and text information for
+   cpuinfo just works the same way.
+
+Coming back to the original question with the example of LA57 and the
+actual enablement. There is no reason why we can't have the actual CPUID
+bit and a software defined bit.
+
+The way how this should work is:
+
+    1) The CPUID info is in data.leaf_07.la57
+
+    2) The enablement bit is in data.leaf_linux_N.la57 or such
+
+The CPUID database contains the entries for those in leaf_07:
+
+      <bit16 len="1"  id="la57"                    desc="57-bit linear addresses (five-level paging)">
+        <vendors>
+          <vendor>Intel</vendor>
+          <vendor>AMD</vendor>
+        </vendors>
+        <linux        feature="true"               proc="false" />
+      </bit16>
+
+and leaf_linux_N:
+
+      <bit3 len="1"  id="la57"                     desc="57-bit linear addresses (five-level paging)">
+        <vendors>
+          <vendor>Linux</vendor>
+        </vendors>
+        <linux        feature="true"               proc="true" />
+      </bit3>
+
+As the "proc" property of leaf_07.la57 is false, the bit won't be
+exposed in cpuinfo, but the software defined bit will.
+
+This also means, that we switch to a model where the software defined
+bits are not longer subject to random introduction and removal. We
+simply keep them around, mark them as not longer used and introduce new
+ones with proper documentation. That requires due process, which
+prevents the adhoc messing around with feature bits, which has us bitten
+more than once in the past.
+
+Aside of code clarity and simplification there is another benefit of
+having such a proper defined and documented view:
+
+  Analysis in crash dumps becomes easy for tooling because both the
+  kernel and the tools can rely on machine generated data which comes
+  from a single source, i.e. the x86 cpuid data base.
+
+Versus global and per CPU information.
+
+Global information contains:
+
+  - all feature bits, which can be mapped into the X86_FEATURE machinery
+
+  - all globally valid information which is only accessed via software,
+    e.g. the name string or some numerical data, which is the same on
+    all CPUs
+
+Per CPU information contains:
+
+  - all leafs which truly contain per CPU information (topology, caches,
+    power ...)
+
+This will obviously take some time to hash out and implement, but in the
+long run this is the right thing to do.
+
+Thanks,
+
+        tglx
 
