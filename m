@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-656931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-656930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A36FABECAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:04:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E55ABECAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 09:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 355F33BA525
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:04:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 265B4177F07
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 07:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40AD235058;
-	Wed, 21 May 2025 07:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D474E233D88;
+	Wed, 21 May 2025 07:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="gieykq6l"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="SMRTIU4T"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B152235067;
-	Wed, 21 May 2025 07:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26C3233738;
+	Wed, 21 May 2025 07:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747811072; cv=none; b=YXkspipymkCUkZw6rtdE5Wq/udY5vbhUtE8EiozDNC2U4t6TZahShtUo4GVNLplkRfyGfmYuVBKzZIdWTbiIQRW5svxc//lA10DeS2ZMrdewya+5GxKo0KJb4zXiM+2LJR4SCdC6eaXevBX3zqFmj0QVvtT2L4uhxvcM8S0duhM=
+	t=1747811068; cv=none; b=k3k77mmvmpqNrdfl0xnvejdmlPPlyRBV/LghhKhYhxCfYcab84MbWDO5WASiIXnTKIYo53zJi/K0yGjGVBev4pjFPN8fgYzYa85bEywvScACgWKBypCoXDtSnwpQzILEgrV0qxAbS5pQp308jDoGfqiV8PX+TCQq+Y+mifD8YKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747811072; c=relaxed/simple;
-	bh=2DeoV9NVpmkJFiAHnImpl+I7mTrck3WLp13yWezHkLk=;
+	s=arc-20240116; t=1747811068; c=relaxed/simple;
+	bh=Iv5T9qJGjAuYhEOrek8F9qUC06vafgVKFIQs02HNtUo=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ie/HViboX5N+355PZXqw35yyG8fdlz2QSIZ4WXL3vhMRQfta8/9QNx/ydyhWFY5bBqvZ5Uqe0JtvBD3GS7GWA6OV0PS8OFgVdwoGi7f/E1XkW6NS8XjWHdecD2EaGc0eA8djG8U2AoWi8ONa4sLv+451KFRcPRKUoqlNfIkp0WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=gieykq6l; arc=none smtp.client-ip=68.232.154.123
+	 MIME-Version:Content-Type; b=L11XpF2IpyWqR/08cnmJzlnzUBjEQEjuO9jWQEWjJrXsuHlijgXx6DvsO3ZGB1Q2Z8EWRokgbDpb9j7y8YkT6e9r/6CR7dKBC9Hd2Qk6GE8aYxvA3NWVHUG/sqVDbsjusYYfNlAIQPKYHn4/48rJG6hMk9au4yZSRIRpVQKvIoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=SMRTIU4T; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1747811070; x=1779347070;
+  t=1747811067; x=1779347067;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=2DeoV9NVpmkJFiAHnImpl+I7mTrck3WLp13yWezHkLk=;
-  b=gieykq6lw9OpeJxXT2XQEfu8PgL1Z3ecAXeKjXpLq2dI5YK4vJHV0LPn
-   9tx2mk6NG/E+ctCnFqel7CM4BTWo0viqpFf+bf3KIi7zdGzZmJ5e7Z1/t
-   lU1sa2N+owhbEocE57U0e5g4pVWfcalVKQolCYYi9xw+UkQKzn2KFKMDZ
-   TJs3mYP/fTyvTA4slBQK2Z8JVLPexAa2Uk3YsQpXYsWIb2LfwaOFV7E6O
-   7HcZ92pljZDu6LbRUG8ijCYKLSgRYhxOQsfWx0mtq+Vi9h9hLmwx0ajMy
-   akvSo+KlEoYOIbt24QvfZgcRACkPKnpQigifmEiJJDc7q50ClmLpS/jl4
-   Q==;
-X-CSE-ConnectionGUID: 3KNJWgZeSmKF61v88cWcwA==
-X-CSE-MsgGUID: QpdtkuDUR3aPep0UaKoi9w==
+  bh=Iv5T9qJGjAuYhEOrek8F9qUC06vafgVKFIQs02HNtUo=;
+  b=SMRTIU4TloJqvgfOz0RwlYAd+hz57gl7iSdsnreMl7gDwr5Gk8WR5U8T
+   xD+bQF/ggoDzjDFhI93z5Ckb2g9A3r+PFC7YHCT8guEM9JSdiqg92Yfky
+   EIe/bRQI5KM0z/DHWiUVrMBke9vyx8wE+C8yOaecb9sLeD8S+I/+/X76W
+   ihGvOrFfydyZCkEMU+wz5stFjKoM01zC8UWzGBLikqRd209Qw+nuFZnHH
+   8sUtnmdGLCxD+R6PUBvi8Q541A6K718EC1yKTpeSchqaJqebwWyIcUp4p
+   vfuY9HQ16BokDlcHeAQQqS3JJ/fLLro5PLEjeekeEqGkEjDhZkUNH6xSE
+   w==;
+X-CSE-ConnectionGUID: FbsnMwfxQ/m/aHhgRKMOWQ==
+X-CSE-MsgGUID: ZgkLjbi9R16/ingWuhQZ9g==
 X-IronPort-AV: E=Sophos;i="6.15,303,1739862000"; 
-   d="scan'208";a="42432076"
+   d="scan'208";a="41888230"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 May 2025 00:04:29 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 May 2025 00:04:25 -0700
 Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 21 May 2025 00:04:09 -0700
+ 15.1.2507.44; Wed, 21 May 2025 00:04:16 -0700
 Received: from che-lt-i67131.microchip.com (10.10.85.11) by
  chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Wed, 21 May 2025 00:04:02 -0700
+ 15.1.2507.44 via Frontend Transport; Wed, 21 May 2025 00:04:09 -0700
 From: Manikandan Muralidharan <manikandan.m@microchip.com>
 To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
 	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
@@ -66,9 +66,9 @@ To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<linux-mtd@lists.infradead.org>
 CC: Manikandan Muralidharan <manikandan.m@microchip.com>
-Subject: [PATCH v3 2/3] ARM: dts: microchip: sama5d27_wlsom1: update the QSPI partitions using "fixed-partition" binding
-Date: Wed, 21 May 2025 12:33:35 +0530
-Message-ID: <20250521070336.402202-3-manikandan.m@microchip.com>
+Subject: [PATCH v3 3/3] ARM: dts: microchip: sama5d27_wlsom1: Add nvmem-layout in QSPI for EUI48 MAC Address
+Date: Wed, 21 May 2025 12:33:36 +0530
+Message-ID: <20250521070336.402202-4-manikandan.m@microchip.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250521070336.402202-1-manikandan.m@microchip.com>
 References: <20250521070336.402202-1-manikandan.m@microchip.com>
@@ -81,90 +81,50 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-update the QSPI partitions using "fixed-partition" binding
+Add nvmem-layout in QSPI to read the EUI48 Mac address by the
+net drivers using the nvmem property.The offset is set to 0x0
+since the factory programmed address is available in the
+resource managed space and the size determine if the requested
+address is of EUI48 (0x6) or EUI-64 (0x8) type.
+This is useful for cases where U-Boot is skipped and the Ethernet
+MAC address is needed to be configured by the kernel
 
 Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
 ---
- .../dts/microchip/at91-sama5d27_wlsom1.dtsi   | 54 ++++++++++---------
- 1 file changed, 29 insertions(+), 25 deletions(-)
+ .../boot/dts/microchip/at91-sama5d27_wlsom1.dtsi    | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi b/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi
-index 9543214adc9f..b34c5072425a 100644
+index b34c5072425a..be06df1b7d66 100644
 --- a/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi
 +++ b/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi
-@@ -229,8 +229,6 @@ &qspi1 {
- 	status = "disabled";
+@@ -210,6 +210,9 @@ &macb0 {
+ 	#size-cells = <0>;
+ 	phy-mode = "rmii";
  
- 	qspi1_flash: flash@0 {
--		#address-cells = <1>;
--		#size-cells = <1>;
- 		compatible = "jedec,spi-nor";
- 		reg = <0>;
- 		spi-max-frequency = <104000000>;
-@@ -240,34 +238,40 @@ qspi1_flash: flash@0 {
++	nvmem-cells = <&mac_address_eui48>;
++	nvmem-cell-names = "mac-address";
++
+ 	ethernet-phy@0 {
+ 		reg = <0x0>;
+ 		interrupt-parent = <&pioA>;
+@@ -238,6 +241,16 @@ qspi1_flash: flash@0 {
  		m25p,fast-read;
  		status = "disabled";
  
--		at91bootstrap@0 {
--			label = "at91bootstrap";
--			reg = <0x0 0x40000>;
--		};
-+		partitions {
-+			compatible = "fixed-partitions";
++		nvmem-layout {
++			compatible = "fixed-layout";
 +			#address-cells = <1>;
 +			#size-cells = <1>;
- 
--		bootloader@40000 {
--			label = "bootloader";
--			reg = <0x40000 0xc0000>;
--		};
-+			at91bootstrap@0 {
-+				label = "at91bootstrap";
-+				reg = <0x0 0x40000>;
-+			};
- 
--		bootloaderenvred@100000 {
--			label = "bootloader env redundant";
--			reg = <0x100000 0x40000>;
--		};
-+			bootloader@40000 {
-+				label = "bootloader";
-+				reg = <0x40000 0xc0000>;
-+			};
- 
--		bootloaderenv@140000 {
--			label = "bootloader env";
--			reg = <0x140000 0x40000>;
--		};
-+			bootloaderenvred@100000 {
-+				label = "bootloader env redundant";
-+				reg = <0x100000 0x40000>;
-+			};
- 
--		dtb@180000 {
--			label = "device tree";
--			reg = <0x180000 0x80000>;
--		};
-+			bootloaderenv@140000 {
-+				label = "bootloader env";
-+				reg = <0x140000 0x40000>;
-+			};
- 
--		kernel@200000 {
--			label = "kernel";
--			reg = <0x200000 0x600000>;
-+			dtb@180000 {
-+				label = "device tree";
-+				reg = <0x180000 0x80000>;
-+			};
 +
-+			kernel@200000 {
-+				label = "kernel";
-+				reg = <0x200000 0x600000>;
++			mac_address_eui48: mac-address@0 {
++				reg = <0x0 0x6>;
 +			};
- 		};
- 	};
- };
++		};
++
+ 		partitions {
+ 			compatible = "fixed-partitions";
+ 			#address-cells = <1>;
 -- 
 2.25.1
 
