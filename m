@@ -1,285 +1,283 @@
-Return-Path: <linux-kernel+bounces-657583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE4BABF62D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:33:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4493ABF632
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEC823AA71B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:33:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA7CD1BC488D
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EF127EC6A;
-	Wed, 21 May 2025 13:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C98D27E7FE;
+	Wed, 21 May 2025 13:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sz1LfQmF"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JitxMd/z";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HuCtZxF+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JitxMd/z";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HuCtZxF+"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E6227C17F;
-	Wed, 21 May 2025 13:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFE02798ED
+	for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 13:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747834395; cv=none; b=Hh8H41oN7etwLbO06H8VcxI3XSbYrPkDokRYKnAIsX4xbNZN//+nkIuKkAplICsQZxc/fU0IXf1aY4AQ/mrTtIssg7QA1HBxymCT2nIyG6oIRmZcj1iV5gsfxmhYnRf/S+38f7eFyIMUR9H/Zrn95DFgVAPgi/AbTB99u6IWefQ=
+	t=1747834424; cv=none; b=aZmwuM3oyJktiC9dJlkKFui9JP+HEWKBPfGeQHpLg0tA7w2zbYTTyNwfqJBNfwRdL9Tay1bqo078ocR7IB2yR+4bU2nZOaMZRiYr4wO9i8a1Z8FQ6vrb2nw5N5X9yMM9Mid6Y9cR8Ty+n2fRcTCysMRk8MfFm4rOzbhS1d6j1Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747834395; c=relaxed/simple;
-	bh=C3XhlSQg/irimBSGACZo3nTwrABRi3wUjNmj/bg37js=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BmP7P14jdS3j3wLvKf3vsamFEBwzaqvPDXqMdjlm+EHIO5MGCWzbUM6bmdDTL286/OPGv8exSqRYo8Hv6fxa5lHYiuUhsua7jHOCKNIQM7fjtD5iHG1FNaoWJo4/QwomT8buRIhmBVvrymD7YBwlpEP31e8ZworaD6EhJ9qD+e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sz1LfQmF; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7370a2d1981so5287362b3a.2;
-        Wed, 21 May 2025 06:33:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747834392; x=1748439192; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=mPWdoFecdc2MfMc/n7LgSs8D6os+jhSdfWxgej28200=;
-        b=Sz1LfQmFd2n12sexUYvNRGGp9MgLI3lWUjNnRXtzj1Gl0kxWIDE+mGEtrpSf7zRNQL
-         fdMdwbHTm60wBwNp6yU3FlsiIJJR+EeC1KcEEA2zqGucFBUOHV501VHTb/3PIJogmZ0k
-         NBs0ud2rzEDc/FzQdDGAOSP6NPMqe6B6FmCX6KFbp1BGQunEZVRmh1UPhzNR/VNdnXN1
-         FuXGED9Hq5S5JpXEljAQLj/FlZiiY7KF0nt71DfHbIspCEDdjEAXBu6oCKEH2B39x7/V
-         bHxovRA4opCURmhxv35Bng3E2KpkomyxC31i+kkb8z6rs/TyRbLMJYJli8hr5YJGrXJi
-         UuNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747834392; x=1748439192;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mPWdoFecdc2MfMc/n7LgSs8D6os+jhSdfWxgej28200=;
-        b=ddGSN2DehgRJc5UAPOToDBIO5jmUFCkhrBPriosaNZ5v6yk/qQSOpGVYS+spGdPuq+
-         XA5tlwW+oBDk7iuwC15yY8JQ4crcj7QJCbQ/nhWfY8NWiyYUTsDrlLM1NwzYZx/zZwUC
-         qZ9aYblX/j6W+cXbFPCnw03UWt2d5jiBeltGuHsMbJivc4K9iV8FM6axMCmjULcSqCaB
-         SNmf0t16PUgKJa8KwgTGbBtg7ENKEm/4pIkJcfYL1FzBukWxDazQi4/lPOYYy6CEmqu1
-         XOxAM4PuOaCigV7KtwwDGcNDJ+icrnuAN5B6zkNk75mFHP8RmO0D4uuhWeNuTN4eg5xa
-         59Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYZxUvT7qvIx7MykB0Ba1NdAXn9sd/RPNrfQSSSe+OW3WAoutiMpfP9139msiPIxapBusT0p81/OQ6@vger.kernel.org, AJvYcCUiHlFc6YXYcaHNjAnZkNRA/1wrseVFBD76ewmBZ2IzohWB2TLWR6G/VMWpR5lw3AFkvHr8hRTFyVERiDpa@vger.kernel.org, AJvYcCUq4+nOBeLmN4jtfSeWupDMf0c5/Qp+vBr0eIFP3UqSNoxilBTDIKHlqSLRkiZ0T/cOmJ5lUQqN0Y2Iak8ziiU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyFdhHy6yP6Ov1h3S0E9rsAITVyrQbEn18fWRXSwbWim+cWw56
-	OXL11M1lhuoOTa4oIr3VyJ4eKrr7Vhsp72BIKR8E4GSWzQ366IzDBKQT
-X-Gm-Gg: ASbGncugdyHtPlVPnQHUI4Hi9P8gTJlu0KsX9StUBqjx9QCEZVX7L9rB5bwBh8jNc0u
-	Hdb9AGWNndnDJkBANRjS6qa+x94sLq/EZjwX/gN9YSpR8d5cZWxFrpndGlDlFjkPAukrFy2nB0G
-	4oHldWj0bqOJsUNoye6QIasDA5bMyLagMg/6MFXr4InP0rTSKW3M8q6vMa/892XOzQhZeg3gOD/
-	tfFusdKopDnakyOTi8bmaZbpcdTKoMaZLDHt1VJ7/GuLAPK0WGKXysalALSoIaDqa7Fe7DTT6P5
-	ibPMddlAHi4o5kpyVIvsPSkC0aVKDIsYkIYO8CtR/a/pPopSS16AsomKOogWTWeTet87v3dB9rK
-	AGoUd1wPDKBVlL4dMQj141cF/
-X-Google-Smtp-Source: AGHT+IGFkJiaJbqiYwggMHn731DfZj84x94VQNiW1co7LmBgrVQ+jHH2JFGp04j6FK9ukP7//F9AYg==
-X-Received: by 2002:a05:6a00:a81:b0:73e:96f:d4c1 with SMTP id d2e1a72fcca58-742acce29f3mr27233123b3a.13.1747834392168;
-        Wed, 21 May 2025 06:33:12 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a96e2106sm9875941b3a.17.2025.05.21.06.33.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 May 2025 06:33:11 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <ad056ba1-8fce-4735-b71e-f22c22eacc18@roeck-us.net>
-Date: Wed, 21 May 2025 06:33:10 -0700
+	s=arc-20240116; t=1747834424; c=relaxed/simple;
+	bh=rieLMTjrQAsXfOo6NiyH//Ig54cxECs3IPCFH0Szeyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZBwhCkQSD5SeTw9rbA9+ME7cSForrLmWqbernm5P6jXN3ySCzafh4mAdEeAY752rEE31aO7aBrwnACQNEo2AHPHmmk8dANVzVfSXVncTYxLcHBZGVG5t/c1Jy6N1bHicEl/B8/D+4bkL63KU0+Wii/qwiMZI9inKbDIeUu9GZTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JitxMd/z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HuCtZxF+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JitxMd/z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HuCtZxF+; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5F2341F88A;
+	Wed, 21 May 2025 13:33:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747834420; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+GpFh+YzT6LkTyhq1+ztaaJC5X679keKrZkWxYGe3Tk=;
+	b=JitxMd/zbUTlCWCL3mWGGQnXpIZd9ujBtRqslfPlmATt4lUoaPWfbbCRetOd5079TwCkEv
+	6rJAXipG/by9/vVWH1iyNBp0X7NpUj5pLnWmyWbZyOyiL/lpF68BdOk6j/JSNuzAxxyXkF
+	7oPEf6ba3P3zhDcoQ9GVp9M2xV/Gjgs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747834420;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+GpFh+YzT6LkTyhq1+ztaaJC5X679keKrZkWxYGe3Tk=;
+	b=HuCtZxF+CRF+yNPT7ats0Ii7fiZJ7dgLjPOfOhXmJ5BzW5+POzitpimz9ESdHJpSgcnuNv
+	IwninOUJh2RLcBDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="JitxMd/z";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=HuCtZxF+
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747834420; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+GpFh+YzT6LkTyhq1+ztaaJC5X679keKrZkWxYGe3Tk=;
+	b=JitxMd/zbUTlCWCL3mWGGQnXpIZd9ujBtRqslfPlmATt4lUoaPWfbbCRetOd5079TwCkEv
+	6rJAXipG/by9/vVWH1iyNBp0X7NpUj5pLnWmyWbZyOyiL/lpF68BdOk6j/JSNuzAxxyXkF
+	7oPEf6ba3P3zhDcoQ9GVp9M2xV/Gjgs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747834420;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+GpFh+YzT6LkTyhq1+ztaaJC5X679keKrZkWxYGe3Tk=;
+	b=HuCtZxF+CRF+yNPT7ats0Ii7fiZJ7dgLjPOfOhXmJ5BzW5+POzitpimz9ESdHJpSgcnuNv
+	IwninOUJh2RLcBDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 27C3513888;
+	Wed, 21 May 2025 13:33:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8dDxCDTWLWgXBgAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Wed, 21 May 2025 13:33:40 +0000
+Date: Wed, 21 May 2025 15:33:34 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Gavin Guo <gavinguo@igalia.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, muchun.song@linux.dev,
+	akpm@linux-foundation.org, mike.kravetz@oracle.com,
+	kernel-dev@igalia.com, stable@vger.kernel.org,
+	Hugh Dickins <hughd@google.com>, Florent Revest <revest@google.com>,
+	Gavin Shan <gshan@redhat.com>
+Subject: Re: [PATCH v2] mm/hugetlb: fix a deadlock with pagecache_folio and
+ hugetlb_fault_mutex_table
+Message-ID: <aC3WLsdsiXM0M-C2@localhost.localdomain>
+References: <20250521115727.2202284-1-gavinguo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] watchdog: Add support for VIA/WonderMedia SoC
- watchdog functionality
-To: Alexey Charkov <alchark@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org
-References: <20250521-vt8500-timer-updates-v4-0-2d4306a16ae4@gmail.com>
- <20250521-vt8500-timer-updates-v4-4-2d4306a16ae4@gmail.com>
- <38df2f02-efc4-465b-aa64-4c9e2c1919d8@roeck-us.net>
- <CABjd4YxZVQSuavEYojc8U4AqwUN3GkweiNNHqn=NDTE70xZm8w@mail.gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAmgrMyQFCSbODQkACgkQyx8mb86fmYGcWRAA
- oRwrk7V8fULqnGGpBIjp7pvR187Yzx+lhMGUHuM5H56TFEqeVwCMLWB2x1YRolYbY4MEFlQg
- VUFcfeW0OknSr1s6wtrtQm0gdkolM8OcCL9ptTHOg1mmXa4YpW8QJiL0AVtbpE9BroeWGl9v
- 2TGILPm9mVp+GmMQgkNeCS7Jonq5f5pDUGumAMguWzMFEg+Imt9wr2YA7aGen7KPSqJeQPpj
- onPKhu7O/KJKkuC50ylxizHzmGx+IUSmOZxN950pZUFvVZH9CwhAAl+NYUtcF5ry/uSYG2U7
- DCvpzqOryJRemKN63qt1bjF6cltsXwxjKOw6CvdjJYA3n6xCWLuJ6yk6CAy1Ukh545NhgBAs
- rGGVkl6TUBi0ixL3EF3RWLa9IMDcHN32r7OBhw6vbul8HqyTFZWY2ksTvlTl+qG3zV6AJuzT
- WdXmbcKN+TdhO5XlxVlbZoCm7ViBj1+PvIFQZCnLAhqSd/DJlhaq8fFXx1dCUPgQDcD+wo65
- qulV/NijfU8bzFfEPgYP/3LP+BSAyFs33y/mdP8kbMxSCjnLEhimQMrSSo/To1Gxp5C97fw5
- 3m1CaMILGKCmfI1B8iA8zd8ib7t1Rg0qCwcAnvsM36SkrID32GfFbv873bNskJCHAISK3Xkz
- qo7IYZmjk/IJGbsiGzxUhvicwkgKE9r7a1rOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAmgrMyQFCSbODQkACgkQyx8mb86fmYHlgg/9
- H5JeDmB4jsreE9Bn621wZk7NMzxy9STxiVKSh8Mq4pb+IDu1RU2iLyetCY1TiJlcxnE362kj
- njrfAdqyPteHM+LU59NtEbGwrfcXdQoh4XdMuPA5ADetPLma3YiRa3VsVkLwpnR7ilgwQw6u
- dycEaOxQ7LUXCs0JaGVVP25Z2hMkHBwx6BlW6EZLNgzGI2rswSZ7SKcsBd1IRHVf0miwIFYy
- j/UEfAFNW+tbtKPNn3xZTLs3quQN7GdYLh+J0XxITpBZaFOpwEKV+VS36pSLnNl0T5wm0E/y
- scPJ0OVY7ly5Vm1nnoH4licaU5Y1nSkFR/j2douI5P7Cj687WuNMC6CcFd6j72kRfxklOqXw
- zvy+2NEcXyziiLXp84130yxAKXfluax9sZhhrhKT6VrD45S6N3HxJpXQ/RY/EX35neH2/F7B
- RgSloce2+zWfpELyS1qRkCUTt1tlGV2p+y2BPfXzrHn2vxvbhEn1QpQ6t+85FKN8YEhJEygJ
- F0WaMvQMNrk9UAUziVcUkLU52NS9SXqpVg8vgrO0JKx97IXFPcNh0DWsSj/0Y8HO/RDkGXYn
- FDMj7fZSPKyPQPmEHg+W/KzxSSfdgWIHF2QaQ0b2q1wOSec4Rti52ohmNSY+KNIW/zODhugJ
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <CABjd4YxZVQSuavEYojc8U4AqwUN3GkweiNNHqn=NDTE70xZm8w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250521115727.2202284-1-gavinguo@igalia.com>
+X-Rspamd-Action: no action
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 5F2341F88A
+X-Spam-Score: -1.51
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-1.51 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,localhost.localdomain:mid]
 
-On 5/20/25 23:20, Alexey Charkov wrote:
-> On Wed, May 21, 2025 at 3:15 AM Guenter Roeck <linux@roeck-us.net> wrote:
->>
->> On 5/20/25 13:01, Alexey Charkov wrote:
->>> VIA/WonderMedia SoCs can use their system timer's first channel as a
->>> watchdog device which will reset the system if the clocksource counter
->>> matches the value given in its match register 0 and if the watchdog
->>> function is enabled.
->>>
->>> Since the watchdog function is tightly coupled to the timer itself, it
->>> is implemented as an auxiliary device of the timer device
->>>
->>> Signed-off-by: Alexey Charkov <alchark@gmail.com>
->>> ---
->>>    MAINTAINERS                   |  1 +
->>>    drivers/watchdog/Kconfig      | 15 ++++++++
->>>    drivers/watchdog/Makefile     |  1 +
->>>    drivers/watchdog/vt8500-wdt.c | 80 +++++++++++++++++++++++++++++++++++++++++++
->>>    4 files changed, 97 insertions(+)
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index 5362095240627f613638197fda275db6edc16cf7..97d1842625dbdf7fdca3556260662dab469ed091 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -3447,6 +3447,7 @@ F:      drivers/tty/serial/vt8500_serial.c
->>>    F:  drivers/video/fbdev/vt8500lcdfb.*
->>>    F:  drivers/video/fbdev/wm8505fb*
->>>    F:  drivers/video/fbdev/wmt_ge_rops.*
->>> +F:   drivers/watchdog/vt8500-wdt.c
->>>    F:  include/linux/vt8500-timer.h
->>>
->>>    ARM/ZYNQ ARCHITECTURE
->>> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
->>> index 0d8d37f712e8cfb4bf8156853baa13c23a57d6d9..8049ae630301a98123f97f6e3ee868bd3bf1534a 100644
->>> --- a/drivers/watchdog/Kconfig
->>> +++ b/drivers/watchdog/Kconfig
->>> @@ -2003,6 +2003,21 @@ config PIC32_DMT
->>>          To compile this driver as a loadable module, choose M here.
->>>          The module will be called pic32-dmt.
->>>
->>> +config VT8500_WATCHDOG
->>> +     tristate "VIA/WonderMedia VT8500 watchdog support"
->>> +     depends on ARCH_VT8500 || COMPILE_TEST
->>> +     select WATCHDOG_CORE
->>> +     select AUXILIARY_BUS
->>> +     help
->>> +       VIA/WonderMedia SoCs can use their system timer as a hardware
->>> +       watchdog, as long as the first timer channel is free from other
->>> +       uses and respective function is enabled in its registers. To
->>> +       make use of it, say Y here and ensure that the device tree
->>> +       lists at least two interrupts for the VT8500 timer device.
->>> +
->>> +       To compile this driver as a module, choose M here.
->>> +       The module will be called vt8500-wdt.
->>> +
->>>    # PARISC Architecture
->>>
->>>    # POWERPC Architecture
->>> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
->>> index c9482904bf870a085c7fce2a439ac5089b6e6fee..3072786bf226c357102be3734fe6e701f753d45b 100644
->>> --- a/drivers/watchdog/Makefile
->>> +++ b/drivers/watchdog/Makefile
->>> @@ -101,6 +101,7 @@ obj-$(CONFIG_MSC313E_WATCHDOG) += msc313e_wdt.o
->>>    obj-$(CONFIG_APPLE_WATCHDOG) += apple_wdt.o
->>>    obj-$(CONFIG_SUNPLUS_WATCHDOG) += sunplus_wdt.o
->>>    obj-$(CONFIG_MARVELL_GTI_WDT) += marvell_gti_wdt.o
->>> +obj-$(CONFIG_VT8500_WATCHDOG) += vt8500-wdt.o
->>>
->>>    # X86 (i386 + ia64 + x86_64) Architecture
->>>    obj-$(CONFIG_ACQUIRE_WDT) += acquirewdt.o
->>> diff --git a/drivers/watchdog/vt8500-wdt.c b/drivers/watchdog/vt8500-wdt.c
->>> new file mode 100644
->>> index 0000000000000000000000000000000000000000..54fe5ad7695de36f6b3c1d28e955f00bef00e9db
->>> --- /dev/null
->>> +++ b/drivers/watchdog/vt8500-wdt.c
->>> @@ -0,0 +1,80 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/* Copyright (C) 2025 Alexey Charkov <alchark@gmail.com */
->>> +
->>> +#include <linux/auxiliary_bus.h>
->>> +#include <linux/container_of.h>
->>> +#include <linux/io.h>
->>> +#include <linux/limits.h>
->>> +#include <linux/module.h>
->>> +#include <linux/types.h>
->>> +#include <linux/watchdog.h>
->>> +#include <linux/vt8500-timer.h>
->>> +
->>> +static int vt8500_watchdog_start(struct watchdog_device *wdd)
->>> +{
->>> +     struct vt8500_wdt_info *info = watchdog_get_drvdata(wdd);
->>> +     u64 deadline = info->timer_next(wdd->timeout * VT8500_TIMER_HZ);
->>> +
->>
->> wdd->timeout is the soft timeout, which may be larger
->> than the maximum hardware timeout. That means you'll need
->> to use something like "min(wdd->timeout, U32_MAX / VT8500_TIMER_HZ)
->> * VT8500_TIMER_HZ" as parameter to the timer_next call.
+On Wed, May 21, 2025 at 07:57:27PM +0800, Gavin Guo wrote:
+> The patch fixes a deadlock which can be triggered by an internal
+> syzkaller [1] reproducer and captured by bpftrace script [2] and its log
+> [3] in this scenario:
 > 
-> Indeed. For some reason I thought the core splits up large user
-> requested timeout values into at most max_hw_heartbeat_ms long chunks
-> and feeds those to the driver via the timeout field, but now I see it
-> doesn't.
+> Process 1                              Process 2
+> ---				       ---
+> hugetlb_fault
+>   mutex_lock(B) // take B
+>   filemap_lock_hugetlb_folio
+>     filemap_lock_folio
+>       __filemap_get_folio
+>         folio_lock(A) // take A
+>   hugetlb_wp
+>     mutex_unlock(B) // release B
+>     ...                                hugetlb_fault
+>     ...                                  mutex_lock(B) // take B
+>                                          filemap_lock_hugetlb_folio
+>                                            filemap_lock_folio
+>                                              __filemap_get_folio
+>                                                folio_lock(A) // blocked
+>     unmap_ref_private
+>     ...
+>     mutex_lock(B) // retake and blocked
 > 
-> Do I get it right that the core worker will try and do its last ping
-> of the hardware at exactly max_hw_heartbeat_ms before the user
-> specified deadline?
+> This is a ABBA deadlock involving two locks:
+> - Lock A: pagecache_folio lock
+> - Lock B: hugetlb_fault_mutex_table lock
 > 
-
-Where do you see that ? In the watchdog core:
-
-         hw_heartbeat_ms = min_not_zero(timeout_ms, wdd->max_hw_heartbeat_ms);
-         keepalive_interval = ms_to_ktime(hw_heartbeat_ms / 2);
-
->>> +     writel((u32)deadline, info->wdt_match);
->>
->> Can deadline overflow ?
+> The deadlock occurs between two processes as follows:
+> 1. The first process (let’s call it Process 1) is handling a
+> copy-on-write (COW) operation on a hugepage via hugetlb_wp. Due to
+> insufficient reserved hugetlb pages, Process 1, owner of the reserved
+> hugetlb page, attempts to unmap a hugepage owned by another process
+> (non-owner) to satisfy the reservation. Before unmapping, Process 1
+> acquires lock B (hugetlb_fault_mutex_table lock) and then lock A
+> (pagecache_folio lock). To proceed with the unmap, it releases Lock B
+> but retains Lock A. After the unmap, Process 1 tries to reacquire Lock
+> B. However, at this point, Lock B has already been acquired by another
+> process.
 > 
-> Yes. The underlying hardware counter is a u32 value incrementing at
-> VT8500_TIMER_HZ and continuing past wraparound. This register sets the
-> next match value: once the hardware counter reaches the value of
-> (u32)deadline (which might be after the counter wrapping around iff
-> deadline > U32_MAX) the system resets. Perhaps it warrants a comment
-> in code.
+> 2. The second process (Process 2) enters the hugetlb_fault handler
+> during the unmap operation. It successfully acquires Lock B
+> (hugetlb_fault_mutex_table lock) that was just released by Process 1,
+> but then attempts to acquire Lock A (pagecache_folio lock), which is
+> still held by Process 1.
 > 
-
-Ok. Yes, a comment would help.
-
-Thanks,
-Guenter
-
-> Thanks for your review, Guenter!
+> As a result, Process 1 (holding Lock A) is blocked waiting for Lock B
+> (held by Process 2), while Process 2 (holding Lock B) is blocked waiting
+> for Lock A (held by Process 1), constructing a ABBA deadlock scenario.
 > 
-> Best regards,
-> Alexey
+> The error message:
+> INFO: task repro_20250402_:13229 blocked for more than 64 seconds.
+>       Not tainted 6.15.0-rc3+ #24
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:repro_20250402_ state:D stack:25856 pid:13229 tgid:13228 ppid:3513   task_flags:0x400040 flags:0x00004006
+> Call Trace:
+>  <TASK>
+>  __schedule+0x1755/0x4f50
+>  schedule+0x158/0x330
+>  schedule_preempt_disabled+0x15/0x30
+>  __mutex_lock+0x75f/0xeb0
+>  hugetlb_wp+0xf88/0x3440
+>  hugetlb_fault+0x14c8/0x2c30
+>  trace_clock_x86_tsc+0x20/0x20
+>  do_user_addr_fault+0x61d/0x1490
+>  exc_page_fault+0x64/0x100
+>  asm_exc_page_fault+0x26/0x30
+> RIP: 0010:__put_user_4+0xd/0x20
+>  copy_process+0x1f4a/0x3d60
+>  kernel_clone+0x210/0x8f0
+>  __x64_sys_clone+0x18d/0x1f0
+>  do_syscall_64+0x6a/0x120
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> RIP: 0033:0x41b26d
+>  </TASK>
+> INFO: task repro_20250402_:13229 is blocked on a mutex likely owned by task repro_20250402_:13250.
+> task:repro_20250402_ state:D stack:28288 pid:13250 tgid:13228 ppid:3513   task_flags:0x400040 flags:0x00000006
+> Call Trace:
+>  <TASK>
+>  __schedule+0x1755/0x4f50
+>  schedule+0x158/0x330
+>  io_schedule+0x92/0x110
+>  folio_wait_bit_common+0x69a/0xba0
+>  __filemap_get_folio+0x154/0xb70
+>  hugetlb_fault+0xa50/0x2c30
+>  trace_clock_x86_tsc+0x20/0x20
+>  do_user_addr_fault+0xace/0x1490
+>  exc_page_fault+0x64/0x100
+>  asm_exc_page_fault+0x26/0x30
+> RIP: 0033:0x402619
+>  </TASK>
+> INFO: task repro_20250402_:13250 blocked for more than 65 seconds.
+>       Not tainted 6.15.0-rc3+ #24
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:repro_20250402_ state:D stack:28288 pid:13250 tgid:13228 ppid:3513   task_flags:0x400040 flags:0x00000006
+> Call Trace:
+>  <TASK>
+>  __schedule+0x1755/0x4f50
+>  schedule+0x158/0x330
+>  io_schedule+0x92/0x110
+>  folio_wait_bit_common+0x69a/0xba0
+>  __filemap_get_folio+0x154/0xb70
+>  hugetlb_fault+0xa50/0x2c30
+>  trace_clock_x86_tsc+0x20/0x20
+>  do_user_addr_fault+0xace/0x1490
+>  exc_page_fault+0x64/0x100
+>  asm_exc_page_fault+0x26/0x30
+> RIP: 0033:0x402619
+>  </TASK>
+> 
+> Showing all locks held in the system:
+> 1 lock held by khungtaskd/35:
+>  #0: ffffffff879a7440 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x30/0x180
+> 2 locks held by repro_20250402_/13229:
+>  #0: ffff888017d801e0 (&mm->mmap_lock){++++}-{4:4}, at: lock_mm_and_find_vma+0x37/0x300
+>  #1: ffff888000fec848 (&hugetlb_fault_mutex_table[i]){+.+.}-{4:4}, at: hugetlb_wp+0xf88/0x3440
+> 3 locks held by repro_20250402_/13250:
+>  #0: ffff8880177f3d08 (vm_lock){++++}-{0:0}, at: do_user_addr_fault+0x41b/0x1490
+>  #1: ffff888000fec848 (&hugetlb_fault_mutex_table[i]){+.+.}-{4:4}, at: hugetlb_fault+0x3b8/0x2c30
+>  #2: ffff8880129500e8 (&resv_map->rw_sema){++++}-{4:4}, at: hugetlb_fault+0x494/0x2c30
+> 
+> Link: https://drive.google.com/file/d/1DVRnIW-vSayU5J1re9Ct_br3jJQU6Vpb/view?usp=drive_link [1]
+> Link: https://github.com/bboymimi/bpftracer/blob/master/scripts/hugetlb_lock_debug.bt [2]
+> Link: https://drive.google.com/file/d/1bWq2-8o-BJAuhoHWX7zAhI6ggfhVzQUI/view?usp=sharing [3]
+> Fixes: 40549ba8f8e0 ("hugetlb: use new vma_lock for pmd sharing synchronization")
+> Cc: stable@vger.kernel.org
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Florent Revest <revest@google.com>
+> Cc: Gavin Shan <gshan@redhat.com>
+> Suggested-by: Oscar Salvador <osalvador@suse.de>
+> Signed-off-by: Gavin Guo <gavinguo@igalia.com>
 
+Acked-by: Oscar Salvador <osalvador@suse.de>
+
+
+
+-- 
+Oscar Salvador
+SUSE Labs
 
