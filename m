@@ -1,160 +1,103 @@
-Return-Path: <linux-kernel+bounces-657593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-657596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333AAABF645
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:37:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F589ABF64C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 15:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A51977AA89B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:36:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BF6A1BA6F59
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 May 2025 13:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CAD27C141;
-	Wed, 21 May 2025 13:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B110F27F759;
+	Wed, 21 May 2025 13:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVVgx5wr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KqYCxOqL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393D42798F1;
-	Wed, 21 May 2025 13:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EDA27C875;
+	Wed, 21 May 2025 13:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747834665; cv=none; b=En+ORTHS2f8l/hw0T3MGMwEmjSon6TScVKI8Vp3ol+xY0HViz4avERU/JJmmB0vMRmczIZb/OYHRahdj+xohHl/8g45P9srEcl2s5H7ps/8z1JnzrIn9Cwys21BoMjShB7Yqyh7hS1A7nTdTvLKIeYNKa9/qWTGcLq10r20jalg=
+	t=1747834737; cv=none; b=Qkvzc/4OSONtzq1WuW3rvU83HC9KMhpHjuKAZjweaG4eCtd3CFON4APTv6jd3c+4/aILl7cDPwhE0u3aDFOS7BakkoJcyxhRZzmBsZDgThQ1UuidOilhVrSwWNEy6vfmqqotF5/ag/a/zuUv9lYXw5y5oSZYaAz/QkEuYRKCfMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747834665; c=relaxed/simple;
-	bh=Q3vxupo3Dpy/q0eLFgkdBNBH9G50vEGn7yWruuYgOC4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FlxWeZLQtn5g4APi4XMyJ2rPSGMYBo7HRHmj16dfjIgn591fr6pEYJjA8tAbKlX/GMyDTt+ni3ca+wq9bvVHbn6Ty75V19UcHRVLME+T9N7DjL7MQFU3paVN/uTStST362vAdQfqwYmLzIGqLF94IljkwWXsRvZ+0Mp7R8PMpUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVVgx5wr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B61C4CEE7;
-	Wed, 21 May 2025 13:37:44 +0000 (UTC)
+	s=arc-20240116; t=1747834737; c=relaxed/simple;
+	bh=1+QzCuOqllZpR2M2g5vpAg8VG9l9Srm2BHPfriaKwPo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TjF4UYwvxCM0mFC/OTizMAni2np9AA5oZC4wjCwAUwB343dQFrZnRAV2gXFTZBuzMzgsE2d8YUiU8t5Ab9FdJzIWwYNAMwFChMGBLS6s72dbsVI4NVSOwBSTNtbtkfj5zqK1MI3t7UAMUXa6Zx+2413mlT+TPdyA7+erlUpt+8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KqYCxOqL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C5E1C4CEE4;
+	Wed, 21 May 2025 13:38:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747834664;
-	bh=Q3vxupo3Dpy/q0eLFgkdBNBH9G50vEGn7yWruuYgOC4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SVVgx5wrku55voQSdFauIP8usiUXUr5MELLxr0pcNBqBflh9V01F7vVT0jOMwgx6u
-	 Y8L8CXrJDKrT28wbvbhRisK28d5iTKU/MT/vDNQzVqqluzjNrJd9aGndHI0Jcaocug
-	 4FidPWcv2jsms/G4tatxEovQy6vdmz8wRiWXYdfdkp+dDUndF3v7wZSsszxyVjgsIu
-	 4uRwLQVm0q0IAbifEdbp2cFm5pVFj2OkiGm5u/0bS3bhX4DvVZm+kQs3+bwTv5QBiX
-	 GIQZNXp205YCjLh427WaaJQCfS2zu2pSk9+39CUfmW6Evb6QRjY0s7iSOLLzMeQ1l5
-	 qrEdhsAGsKpcw==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54b10594812so8008321e87.1;
-        Wed, 21 May 2025 06:37:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW5expP0WGCUAk1eXS/jjvixggWIgO4cPCj4xzm5uGfTayHWCf3h3jmDkp79MJ0LYODPU7fCjgaqWI=@vger.kernel.org, AJvYcCXlfPPY4Q39Smeo/3VZDg110prUFa0LMGkXcKjk3y/OIWYSe0AR0TQ1lWM3Ye8i8aPLD7rgkdxo2D7M5lVQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUpSgOvRj2RceX/Zyw3YGp1kZ3ucUgvkgjKMe8E+RWr29rPjQ1
-	Jz3B9rhTtOq6jfW/KyftPrCAcwZyQTge1JhYalAOJD1OAj35GnIQFtt+qE+JxRfqpAzFtzaPnKq
-	cOO94zfPXisFc8z7l3pYkl8ekx/Qqank=
-X-Google-Smtp-Source: AGHT+IFko07FZvPd74P0BaT3/07hpt0YPXFdNbTcXRR7nkC4AEknVdNNihDaVx9qsxC6R3pVF5cdVeKlVFZ1xKYjWM0=
-X-Received: by 2002:ac2:4c4a:0:b0:545:243e:e2dc with SMTP id
- 2adb3069b0e04-550e7232305mr6204447e87.39.1747834662956; Wed, 21 May 2025
- 06:37:42 -0700 (PDT)
+	s=k20201202; t=1747834736;
+	bh=1+QzCuOqllZpR2M2g5vpAg8VG9l9Srm2BHPfriaKwPo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=KqYCxOqL1FbYfzcLf3jIZ/E/gAkCYTWkWKFFiC0VihTejeFk8QvypqRkXbhtVDuYQ
+	 /oxS3Bbui7PUeCCe4bk5ELzrgo79N6FRMakaMjx9j/UqCdzoMBN8klYFVAxXy2rr+O
+	 iJfsSrqb7gQ64P8IPoblo6gR2NCXRmiTZk6K2CpaA+nwgvY14BWcl4kC5xiEIvZVN1
+	 07Y123NquizwGF2B71crsl1jAb+LeH1FgCSQ6HtX44M5DXrRaWil23/qmPy6geUIB5
+	 Rk0Vd8jpcEBFuz7lseNDpLhJtRIamHMg+ZZj4wt8ci3jNRozpj/8k6fvTerj58ncfb
+	 w0kndaOZ61Kvw==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH 0/4] Drop unrelated clocks from SM8150/SC8180X PCIe RCs
+Date: Wed, 21 May 2025 15:38:09 +0200
+Message-Id: <20250521-topic-8150_pcie_drop_clocks-v1-0-3d42e84f6453@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250513125808.75510-1-vkuznets@redhat.com>
-In-Reply-To: <20250513125808.75510-1-vkuznets@redhat.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 21 May 2025 15:37:31 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGBgkjEseNTaFewCwM=0h_zOVfnqshOouHPTTkmeiZN1w@mail.gmail.com>
-X-Gm-Features: AX0GCFuY7joIXpf1EEnLZX1Mth4aBM4HKeH5hTeI3S0S81xmI8PHJi0gLhbIlL0
-Message-ID: <CAMj1kXGBgkjEseNTaFewCwM=0h_zOVfnqshOouHPTTkmeiZN1w@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] efi: Add a mechanism for embedding SBAT section
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: x86@kernel.org, linux-efi@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Peter Jones <pjones@redhat.com>, Daniel Berrange <berrange@redhat.com>, 
-	Emanuele Giuseppe Esposito <eesposit@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
-	Greg KH <gregkh@linuxfoundation.org>, Luca Boccassi <bluca@debian.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEHXLWgC/x3MSwqAIBAA0KvErBPUkD5XiRAZpxqKFI0IorsnL
+ d/mPZApMWUYqgcSXZw5HAWqrgBXdywk2BeDltpIo5U4Q2QUnTLSRmSyPoVocQ+4ZTGb1vWyIex
+ 8A2WIiWa+/32c3vcDBuWns20AAAA=
+X-Change-ID: 20250521-topic-8150_pcie_drop_clocks-f57a903ec8d3
+To: Bjorn Helgaas <bhelgaas@google.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Qiang Yu <quic_qianyu@quicinc.com>, 
+ Ziyue Zhang <quic_ziyuzhan@quicinc.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747834731; l=983;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=1+QzCuOqllZpR2M2g5vpAg8VG9l9Srm2BHPfriaKwPo=;
+ b=sDuEZUlODpLMpvGWu7/L0wo/2AauzZd0u6bL2FdnUI+fi0wwEGUbKAJf90/De7eDIaA5CjuQ3
+ qqQw45HSFKCD2FIl8fkUsKvuiMRajGfMUdx9+xYSgROhtgh0UWcGDki
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Tue, 13 May 2025 at 14:58, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->
-> Changes since v2 (Ard):
-> (https://lore.kernel.org/linux-efi/20250505154523.231233-1-vkuznets@redhat.com/)
-> - Use 'textsize' intermediary in arch/x86/boot/header.S to avoid additional
->  '#ifdef CONFIG_EFI_SBAT'.
-> - Fix indentation.
-> - Added R-b tags.
->
-> Original description:
->
-> SBAT is a mechanism which improves SecureBoot revocations of UEFI binaries
-> by introducing a generation-based technique. Compromised or vulnerable UEFI
-> binaries can be prevented from booting by bumping the minimal required
-> generation for the specific component in the bootloader. More information
-> on the SBAT can be obtained here:
->
-> https://github.com/rhboot/shim/blob/main/SBAT.md
->
-> Currently, shim checks .sbat data for itself in self-test and for second
-> stage bootloaders (grub, sd-boot, UKIs with sd-stub, ...) but kernel
-> revocations require cycling signing keys or adding kernel hashes to shim's
-> internal dbx. Adding .sbat to kernel and enforcing it on kernel loading
-> will allow to do the same tracking and revocation distros are already
-> doing with a simplified mechanism, and without having to keep lists of
-> kernels outside of the git repos.
->
-> Previously, an attempt was made to add ".sbat" section to the linux kernel:
->
-> https://lwn.net/Articles/938422/
->
-> The approach was rejected mainly because currently there's no policy on how
-> to update SBAT generation number when a new vulnerability is discovered. In
-> particular, it is unclear what to do with stable kernels which may or may
-> not backport certain patches making it impossible to describe the current
-> state with a simple number.
->
-> This series suggests a different approach: instead of defining SBAT
-> information, provide a mechanism for downstream kernel builders (distros)
-> to include their own SBAT data. This leaves the decision on the policy to
-> the distro vendors. Basically, each distro implementing SecureBoot today,
-> will have an option to inject their own SBAT data during kernel build and
-> before it gets signed by their SecureBoot CA. Different distro do not need
-> to agree on the common SBAT component names or generation numbers as each
-> distro ships its own 'shim' with their own 'vendor_cert'/'vendor_db'. Linux
-> upstream will never, ever need to care about the data unless they choose in
-> the future to participate in that way.
->
-> Vitaly Kuznetsov (2):
->   efi: zboot specific mechanism for embedding SBAT section
+Smoke tested on both, but more is always welcome.
 
-I've picked up the first patch for the next cycle. The second one can
-then go via the -tip tree for v6.17
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Konrad Dybcio (4):
+      dt-bindings: PCI: qcom,pcie-sc8180x: Drop unrelated clocks from PCIe hosts
+      dt-bindings: PCI: qcom,pcie-sm8150: Drop unrelated clocks from PCIe hosts
+      arm64: dts: qcom: sc8180x: Drop unrelated clocks from PCIe hosts
+      arm64: dts: qcom: sm8150: Drop unrelated clocks from PCIe hosts
 
-Or if team-tip is happy to pick it up now, I've created a separate
-efi-sbat branch with only the first patch, so it can be merged into
--tip and the second patch applied on top.
+ .../devicetree/bindings/pci/qcom,pcie-sc8180x.yaml | 14 +++-------
+ .../devicetree/bindings/pci/qcom,pcie-sm8150.yaml  | 14 +++-------
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi              | 32 ++++++----------------
+ arch/arm64/boot/dts/qcom/sm8150.dtsi               | 16 +++--------
+ 4 files changed, 20 insertions(+), 56 deletions(-)
+---
+base-commit: edef457004774e598fc4c1b7d1d4f0bcd9d0bb30
+change-id: 20250521-topic-8150_pcie_drop_clocks-f57a903ec8d3
 
-git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git efi-sbat
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-
->   x86/efi: Implement support for embedding SBAT data for x86
->
->  arch/x86/boot/Makefile                      |  2 +-
->  arch/x86/boot/compressed/Makefile           |  5 ++++
->  arch/x86/boot/compressed/sbat.S             |  7 +++++
->  arch/x86/boot/compressed/vmlinux.lds.S      |  8 ++++++
->  arch/x86/boot/header.S                      | 31 +++++++++++++++------
->  drivers/firmware/efi/Kconfig                | 24 ++++++++++++++++
->  drivers/firmware/efi/libstub/Makefile.zboot |  4 +++
->  drivers/firmware/efi/libstub/zboot-header.S | 22 +++++++++++++--
->  drivers/firmware/efi/libstub/zboot.lds      | 11 ++++++++
->  9 files changed, 102 insertions(+), 12 deletions(-)
->  create mode 100644 arch/x86/boot/compressed/sbat.S
->
-> --
-> 2.49.0
->
 
