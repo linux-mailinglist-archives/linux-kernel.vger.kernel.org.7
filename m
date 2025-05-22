@@ -1,111 +1,177 @@
-Return-Path: <linux-kernel+bounces-659138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1AAEAC0BE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:48:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D61F7AC0BF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14A14189B434
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 12:48:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 896BB500BB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 12:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD55328B7C5;
-	Thu, 22 May 2025 12:47:57 +0000 (UTC)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEE328BA89;
+	Thu, 22 May 2025 12:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gldOz9op"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFC97485;
-	Thu, 22 May 2025 12:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8344928B4E7
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 12:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747918077; cv=none; b=FZySSrby29AolMc4nu8EcJvqvTZbILXL/hH8GzOkzYAwA+9QtcnxgbmLi9qfyXfNJTa0IG/d8dulyzrOVwDTkfqfmgI6yazpFrpuM0zG9LAy0KWNcM63OdjkooikBY0TsUVENwA7Ya6x2oTC4E0McPE/Cai3PR2gMJp/icwUJ7o=
+	t=1747918141; cv=none; b=uKmpvEH3EsbDxDXZE9oOA8et18QkokYKy2i5tYGB0DpeJ1kRwD//n31pXS9K0qhkpuTjYPGAS6zt10bBNV/RdYgGvOMS2IVp58Q7573mImG6aeMqG5EAU2nEWtRBKuWXkeTrEuSVbvIq3/S9erYiR7MNAcbfXULOcOUhu8tR4+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747918077; c=relaxed/simple;
-	bh=hP0ZVfCB6JynjgSxdlf8Ytn61msPqRO9wKxhpLuC+w0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=um0L/SQr6LfLAbui6U6FEa2nMapVjsGTlqGEuADrKgbrgl1sm/JzxPy51Wz887LkFNXjyvdgwB+RrE0DQ3+v5BkHWoQqmvu2MFctmPw33P9ZaAUvD9oCyeH0G2TpU1RfwCVTXYYp8RiPNdjdebEY0WRMVqVryAKal/ZrwUK+kp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-86d5e3ddb66so2018965241.2;
-        Thu, 22 May 2025 05:47:55 -0700 (PDT)
+	s=arc-20240116; t=1747918141; c=relaxed/simple;
+	bh=+sOgwvsatgoXqEWnTWEoK+wqY6J5WR6rnVFfwBiNzm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t5t8GN1JzUxFB2Dte8//lda1dOkYxB/Gagk52mnvjhlG8tL2mEa80wZNCeNuTIKwQ9+HBZGFIuGX/lwsEaacULXOUyWeTrdfBKPhgEAiChIlGbP08RALG72EuxUoD1tUd/jDOE2GrVVM0gh+pB3QPJyvSH/mmW5UEqzuLOXavsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gldOz9op; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-443a787bd14so42105935e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 05:48:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747918138; x=1748522938; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2PQIZi4PiKgy3h8l3aBRGvp5efW4SvnzfR9lcBVtAa4=;
+        b=gldOz9opknqf5IqKRO6+QXvhDmPhDFl9ToLFGE09oGiQhf8mO2n6eMITjc7UqjcXbb
+         PnqdDzFEpTWbUqBz0QVOQeGOE8h6VGOQZcZYwMPDoi3GuuFcZPiJOS0NgR8a30pwui+G
+         XZ/zyzKNAWz9mflj4O/moaA3/H7X7JLuY/vTk3r3nSm8gcPdhARWbIWZqGn0apilelTo
+         m+MQ23jYRDs7YR9p9WgsfLN8e/E/U45FOi1P8BoE4UN8xl1p/uN8RMMbqNaYunFvv6ie
+         Z5EA1jJ4z9LcG5HBQQ86JyBUeXV3x8Ty9vQPiHIAxiOhSLhXvWqeFypuBDdVbYEHD4AY
+         mgAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747918074; x=1748522874;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YCJg9GT5uNyVe/VWlDDnpoIcbRgnzipWItRk7Im4Jr8=;
-        b=f0GNFVuMxRB5wxTQ+BtHInZ3LIWgQckrGzGwkMyQYYLeyFJr6T3eYpTvATl010thyn
-         hINvhcl1biXtkZ/MKWBASHxiz2RHVTmWxo47jDJzTrWP/PBZZiNiC+OkxGmAbq8zQQUJ
-         BT8V2KSH4vObCX0ZIQKreeHl4FMBL5sdeGsaZK+jy2eQU5sPmxYvwMH3vSBAFj0CO/PV
-         aGSnXxN1TqaExtrvCsD9oWwkNTc4hAXZgc6LzdbEOjELhOEuamj/y+2MZFVMyjh/rBtY
-         AXaXj/HrZFreAz0JhPbepz2ca3+JnPMaEYfWwvzVpjN1Ha/E7HOE6bjv8DhS8cJmJDXA
-         mi/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVrvDW2WKYqEb8blT5ix7JaR3iZal3wlGgUmUIyuaf+5nMRY8v6Rfnx5nZHJroff4HmMeGKCypZNe/1LThF@vger.kernel.org, AJvYcCWmQZFWTRWlFiY87KTg8PdrtKLX3oaqxpXBhWOO0AmseufslY2CzrKnwcrzSHi6Y6oB0F2ZPCSUJvCJ@vger.kernel.org, AJvYcCXBgvRkVkhBNWAzRk06tywqtaWEZoHj1BjZOp1DR5fRFB/DUQMfWpJZ7G+YeO/JrZesSchq0c+b4DjIO16doOc1cGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylM614htM1VDXbHTXtZP5cF3GLCFLaYjEpF2jKmx0BtJ5RWHnQ
-	W++axv48y0KCIu9sDI51ySBr1zRZSzibZuF5yNBq5WE4w05QGyDUZDsSDQzGZbKJ
-X-Gm-Gg: ASbGncseyEbldbTY8ZLEbuSXWNWQ9qaQuFmWYF7BjZ58HvKr4DT1HcTdk/q8jvvQSIJ
-	7/iZgrFt/0NDBiFcwsUin9k1T0M4ccJF8aF3NTMi34zNpNtZ6tXjxbU/QQMqF+GIimjO/EksOp9
-	HYKcl0LHt1Eou63Ts0uYqGY/9soqsgU8DqFscB40nKoK/hr0rCRzaPWBwN6nJIIfHCiqgzJs+A8
-	3vCMNxawCsw0rpYlZXBNO4XYIOQUQPzv0zNRa5cALCZxiOEL3y72USBoETbW5LdNAZcd8Mh04kn
-	27S+Az0Kfe5andBC7F45+eBa4tUAOAkWeA7OkqcPux1W0OTnkXJxj+xjB5i3OY5BH6nACC3V779
-	KMzlei8QOcQreXw==
-X-Google-Smtp-Source: AGHT+IHdyOva4wIfCYOZ2IwTqqrQSOJi3nWgpbJGYZ9TfW15OZILniaRNPYF8bUq4WCmYYEw/qb0NA==
-X-Received: by 2002:a05:6122:4d12:b0:529:373:fcb7 with SMTP id 71dfb90a1353d-52dba971e52mr22453769e0c.10.1747918073929;
-        Thu, 22 May 2025 05:47:53 -0700 (PDT)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52dbaa5a310sm11894717e0c.36.2025.05.22.05.47.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 May 2025 05:47:53 -0700 (PDT)
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4e2b21d1b46so1098682137.3;
-        Thu, 22 May 2025 05:47:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVHCyRxbAUe+Rietez2pNJFH565pMAnuKo70qTYzn7aDzlJe6WUj3qkJvqRjP64mX/7dtSewtgXFldoP+Q8VI+YiSI=@vger.kernel.org, AJvYcCVnSi4qDsE767qauJNHLF+r9yr93EAQVdZdtoVhGVkJ7+Ln9UbFnpRh8PQi4zhuWwTiBMYiiMYhrhWz@vger.kernel.org, AJvYcCWFJeA476Iv7UfLTYkl1w8S0RaT2XIJNIONAGdLIJIAVWPuIbV+dsAEGvvpTuxmuYZMF/QNewNeK9s7GH7X@vger.kernel.org
-X-Received: by 2002:a05:6102:50a4:b0:4bc:82f:b4e0 with SMTP id
- ada2fe7eead31-4dfa6c4654bmr22684749137.22.1747918073159; Thu, 22 May 2025
- 05:47:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747918138; x=1748522938;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2PQIZi4PiKgy3h8l3aBRGvp5efW4SvnzfR9lcBVtAa4=;
+        b=bMrMEaEV8VccgQaA7f3wE3FnqpVv85hsQTCUl3A2Y9i+hIr7Uo+CkdocafIk5A52in
+         EyxZGmn1E1rH+NBVVt3C4e4ONh1ZhkCbyi9AkQZ95TYSBP6pgIBPytXiHSMjmBtV1rXp
+         VY+vijy/ompMm1b4X/VbHN3NeyTIDR+G5El+F/RZFIFUn/QDgs0RWg0r0D7oq6JPDe3b
+         qx32Fru4fTDew3Yud2xspj3w7DwByyxi/6TjYNCt0SV8yFv3i10FSeToLEQoRA0Tiu4b
+         9jvOCJXyJH1Pk1Y/YNc/yFStZCpgtuRzcA0+dhxYCO8rQGw0fk0JCzSrjv1E3LNaHZ8G
+         qh7w==
+X-Forwarded-Encrypted: i=1; AJvYcCXIiaFa8JyDLY3FA1edaYe7yCzhF5Y30467t1PFPjl8nXmaefc1hpWZAeK1mkVvcdLQhSVoOjtFUXLLA08=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz25fNCfle6iD6w6L+Jt2xHxtgopkeCdyJs5TtlR0SoC5bDWlPC
+	FH7hCM+GnFaOMtNT1dK+9eltNhI1Tv8P1mnPGWAnbHeY0ewUmcIq2RF4G2ybWx20Z2w=
+X-Gm-Gg: ASbGncuYLoO7lmqM/SizgKQGSAceRwVKsJ7Y8Xt4Je2gcuUDqHIjB2uIroL8IdjvMeg
+	dZhiZe98ncY1LPXA1zJgLgpicHeybeGD84SCJvU0RHwd/dWhjyrLpjE87eLLmMtmA9iOw669B3e
+	1PwffozhmuDwY0MEQy0rD9pg5mDeUOCGxPEBJdoyePy2c03au1HFjBRAE5JsXAdnUnPLwVP21k0
+	eqS4GOLD0vTS8gRleUP20r3HZaQWt5ZNpp7UHfAN6rnNZUuh6X64GIbQP1kFaDJNqagFabB7BxX
+	Uce3Yf4ctCNdtpBVSF94F42RWUmaPvxFqFfVIrfu6d3eNWlWrxc3e/YA7QFpIoGb6mF4tLFXW1/
+	dbjgj7yEBFmhAbd5NIjZzAWk5Rw==
+X-Google-Smtp-Source: AGHT+IGwOMBtRoR9wZDDhiLbv0hq7Tr2RTlAi7lWQeJAGufW+olLnnQ2bNPFnFVvuby1Hp4QfTgrBA==
+X-Received: by 2002:a05:600c:3d07:b0:442:f904:1305 with SMTP id 5b1f17b1804b1-442fd93d54emr238025925e9.6.1747918137812;
+        Thu, 22 May 2025 05:48:57 -0700 (PDT)
+Received: from archlinux (host-80-116-51-117.retail.telecomitalia.it. [80.116.51.117])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f7ca2de7sm102494745e9.35.2025.05.22.05.48.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 05:48:57 -0700 (PDT)
+Date: Thu, 22 May 2025 14:47:41 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 5/5] iio: adc: ad7606: add gain calibration support
+Message-ID: <r2tlw3yhjjqwytyswv7onglo7rvedyyireofyiqkwxiosrbiyl@tlk6ijhbr3cp>
+References: <20250508-wip-bl-ad7606-calibration-v4-0-91a3f2837e6b@baylibre.com>
+ <20250508-wip-bl-ad7606-calibration-v4-5-91a3f2837e6b@baylibre.com>
+ <aBz_Nlgx18UK2GIc@smile.fi.intel.com>
+ <shzx67wrpzaxje4vj6owwnof3pi5cuipdavd3k5svucyt5y527@mvytnov6zunk>
+ <aCsEeQQyGdBg2ex9@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250514162422.910114-1-tommaso.merciai.xr@bp.renesas.com> <20250514162422.910114-5-tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <20250514162422.910114-5-tommaso.merciai.xr@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 22 May 2025 14:47:40 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW6kesMP3iMtH2jSqjSAnk_x89qpjtyoPQGdPmUbtMkyA@mail.gmail.com>
-X-Gm-Features: AX0GCFtXLO5BdQeF_IoiBnjuZu-VH9hFwehgjj5K52FoECNfBeZfmLwxMOWCN78
-Message-ID: <CAMuHMdW6kesMP3iMtH2jSqjSAnk_x89qpjtyoPQGdPmUbtMkyA@mail.gmail.com>
-Subject: Re: [PATCH 4/4] arm64: dts: renesas: r9a09g047e57-smarc: Enable CRU,
- CSI support
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aCsEeQQyGdBg2ex9@smile.fi.intel.com>
 
-On Wed, 14 May 2025 at 18:25, Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
-> Enable CRU, I2C0 and CSI on RZ/G3E SMARC EVK and tie the CSI to the
-> OV5645 sensor using Device Tree overlay. RZ/G3E SMARK EVK is a RZ/G2L
-> alike EVKs then reuse rz-smarc-cru-csi-ov5645.dtsi.
+Hi Andy,
+
+On 19.05.2025 13:14, Andy Shevchenko wrote:
+> On Mon, May 19, 2025 at 11:40:09AM +0200, Angelo Dureghello wrote:
+> > On 08.05.2025 22:00, Andy Shevchenko wrote:
+> > > On Thu, May 08, 2025 at 12:06:09PM +0200, Angelo Dureghello wrote:
+> 
+> ...
+> 
+> > > > +	device_for_each_child_node_scoped(dev, child) {
+> > > > +		u32 reg, r_gain;
+> > > > +
+> > > > +		ret = fwnode_property_read_u32(child, "reg", &reg);
+> > > > +		if (ret)
+> > > > +			continue;
+> > > 
+> > > > +		/* Chan reg is a 1-based index. */
+> > > > +		if (reg < 1 || reg > num_channels) {
+> > > > +			dev_warn(dev, "wrong ch number (ignoring): %d\n", reg);
+> > > > +			continue;
+> > > > +		}
+> > > 
+> > > But this will allow to have a broken DT. This check basically diminishes the
+> > > effort of the DT schema validation. If there are limits one still would be able
+> > > to create a DT that passes the driver but doesn't pass the validation.
+> > 
+> > fixed all your points on other patches of this patch-set. Still your
+> > emails are going to google spam, just could catch them on friday. 
+> > Really not clear why.
+> 
+> DKIM which I still need to configure...
+> 
+> > About the above, i understand, but the check is actually the same as
+> > in ad7606_get_chan_config(), a warning that fdt is not correct, 
+> > i dont see a blocking issue here now, so not going to change it
+> > in this next patchset.
+> 
+> I think the 'continue' above is simply wrong. We should not allow to have
+> broken tables. And I think it's kinda blocking issue.
 >
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.17.
+Actually the driver is informing of an incorrect channel node and passes
+to the next channel, instead of a probe-fail. It is not introducing any 
+non-functionality, just skipping that channel.
 
-Gr{oetje,eeting}s,
+Not a big issue for me to fix it and issue a v6. 
 
-                        Geert
+If it's really wrong and needed, then i should fix this same issue that
+is there in other previously accepted parts.
+ 
+> > > > +		ret = fwnode_property_read_u32(child, "adi,rfilter-ohms",
+> > > > +					       &r_gain);
+> > > > +		if (ret)
+> > > > +			/* Keep the default register value. */
+> > > > +			continue;
+> > > > +
+> > > > +		if (r_gain > AD7606_CALIB_GAIN_MAX) {
+> > > > +			dev_warn(dev, "wrong gain calibration value");
+> > > > +			continue;
+> > > > +		}
+> > > > +
+> > > > +		ret = st->bops->reg_write(st, AD7606_CALIB_GAIN(reg - 1),
+> > > > +			DIV_ROUND_CLOSEST(r_gain, AD7606_CALIB_GAIN_STEP));
+> > > > +		if (ret) {
+> > > > +			dev_warn(dev, "error writing r_gain");
+> > > > +			continue;
+> > > > +		}
+> > > > +	}
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+angelo
 
