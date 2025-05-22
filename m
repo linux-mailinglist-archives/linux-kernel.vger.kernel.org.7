@@ -1,60 +1,56 @@
-Return-Path: <linux-kernel+bounces-658642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B43AC0544
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:09:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C6DAC059B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 341277A8858
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:07:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 478F5167FB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6529221FCC;
-	Thu, 22 May 2025 07:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AD3221F0C;
+	Thu, 22 May 2025 07:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oIgK5zXL"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2395B222581
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 07:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bKGm0jYx"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C6B320F;
+	Thu, 22 May 2025 07:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747897704; cv=none; b=huqXCyYIpd1/pF6l2RheGjvjjzXaZbnE9t0j6IACXmpdC3vyX/zCZDSPBi0PW8EKuJqgsuOOd7pr7mKIRzLo6UbZm3HHmdY9/SBMurarojL0dF82AJ5RLrd8W1J0wfk89TN4m8/aygW4Z95waZVfVdKHF4TtyZtjnbSO+eG/ijs=
+	t=1747898735; cv=none; b=grbWBT3wYU8Pr6+pFuKrz5+hEnWyg36xAaTSGiAyvEupxhPMWFlTjeTwhENmn3sbCXfEmWTBjVr99LVzNOp6dq4Ol7AR2ido+LLMbtliTzzEGZhOCQeZCNx8pyA4w/wQZ4OkbyQGgurThwKPzfFA/v3ZWRc+giyH4XSGR0WwX/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747897704; c=relaxed/simple;
-	bh=i8odHOEXZ0/LlWqOD2Rsw7l00C6F6tf4TIPTTOf/pXM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PqSAszE+UEgzmb/bJ90mnpFnl72vGeG8B4fYn+b9JQlnAYwOX8LQE1+3NoErLzyUmiWfDJ5EjoLdDKuKpcnFiLgXJghFT5TxKQw0UtvC2pDL8bJ4Q1Qpne/5KzTv3MnyhXj0Cdgb1xbSqA1dYetoPs54qn9ktHWkUXF2pbX8DNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oIgK5zXL; arc=none smtp.client-ip=117.135.210.4
+	s=arc-20240116; t=1747898735; c=relaxed/simple;
+	bh=gtcQiVv8C/ThkqirllVBFHa40vSa2FjD+GV/VeHq2io=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mD/kTzmD6EKWMkkrJXDJSlE3FESSSJHXyF4nPRfNQzs6BB9mU4yBLQxTEE2a+i7ODA7fhkGNsYQ1xBT9titE2Pp/cTlZ7iWqn4NMV1+JhCmif2E1YApUcw8xdGN9M8+uACtO7c/s75NUjdXxV6nmaB++Y8oJI/EHV5kBrqnIFvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bKGm0jYx; arc=none smtp.client-ip=220.197.31.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=oS
-	HaCqpmVSZUCNlkJRRPH5arZH3pbbqhuy+IBmltDeI=; b=oIgK5zXLDWhi7b0u04
-	A73gTuhWH5THecc7SgmkJUtfJdAYNA2vghGQgaRjuEFR4xiM3BlI0+5I5AmD9KpP
-	eQstfhQvTX5ZUdHrlUk6Wq1GMTR/xYXSzJ4mEv4JGWdFJvZYl9F6FCVV/3oFSja+
-	GNugqQZ2Rx8F3N7l7OgwHLipY=
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Yy
+	XzRmLJrmjlX+RlPnQIdYO0P6MdtW6Vfq9iIZQfCt4=; b=bKGm0jYxNcq65xY5n9
+	JQD3/rdf2N5k7OZuMgL49/Uyi2tEc4RO7ZmKqBt/1+GxgbMBlVLxk3bz13SAkJMy
+	lYG0NruLAw/md26m+yDMkdkVLc5s1LYVRoGJz0nlRfI69IngpoipngfvMZe+BpWA
+	L0qoXNcTm1IDjb+uXCbM4gBUY=
 Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wC3TPQpzS5oHcJjDA--.17971S4;
-	Thu, 22 May 2025 15:07:27 +0800 (CST)
-From: oushixiong1025@163.com
-To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sean Paul <sean@poorly.run>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
-	dri-devel@lists.freedesktop.org,
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgDnl2O4zS5oEWbhBQ--.29592S4;
+	Thu, 22 May 2025 15:09:55 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: gregkh@linuxfoundation.org,
+	mathias.nyman@intel.com
+Cc: oneukum@suse.com,
+	stern@rowland.harvard.edu,
+	hminas@synopsys.com,
+	rui.silva@linaro.org,
+	jgross@suse.com,
+	linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Shixiong Ou <oushixiong@kylinos.cn>
-Subject: [PATCH v5 RESEND 3/3] drm/udl: use DRM_GEM_SHMEM_DRIVER_OPS_NO_MAP_SGT
-Date: Thu, 22 May 2025 15:07:14 +0800
-Message-Id: <20250522070714.439824-3-oushixiong1025@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250522070714.439824-1-oushixiong1025@163.com>
-References: <20250522070714.439824-1-oushixiong1025@163.com>
+	David Wang <00107082@163.com>
+Subject: [PATCH v4 1/2] USB: core: add a memory pool to urb caching host-controller private data
+Date: Thu, 22 May 2025 15:09:43 +0800
+Message-Id: <a235e322e270942dc3d607d4b46ff7db29abeb2d.1747897366.git.00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,37 +58,171 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wC3TPQpzS5oHcJjDA--.17971S4
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZFWDtrWrArykJF13Xw4fZrb_yoW3urg_uF
-	4ftwsrWFZ8u34Dur1IyFy5Zry29a4ruF4IgF4rta4Syw4xtw1jvryIvrs2v3WUKF4rCF9x
-	J397XFsxAF4kCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8YsjUUUUUU==
-X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/xtbBYxFVD2guxOrYlAAAsM
+X-CM-TRANSID:PCgvCgDnl2O4zS5oEWbhBQ--.29592S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Xr47CF15uryrtryftw1UKFg_yoWxWF4UpF
+	WfJwn3tF18XrW3JrZ3GF4kuayfta1kCFy2kFyfu34UZwnFywn5Aas2yFyrur9Fyr4fJwsI
+	qa1DKFn8Ww1UA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piJGYdUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBkBxVqmguzbwBUwAAsW
 
-From: Shixiong Ou <oushixiong@kylinos.cn>
+When using USB devices, there are lots of memory allocations for
+host controller's private data. For example, on a system with xhci,
+using a webcam and a mic would needs ~250 and ~1k kzallocs per
+second, respectively.
 
-Import dmabuf without mapping its sg_table to avoid issues likes:
-   udl 2-1.4:1.0: swiotlb buffer is full (sz: 2097152 bytes), total 65536 (slots), used 1 (slots)
+Some HCDs use kmem_cache to handle the high frequency of memory
+allocation during device usages. There are several drawbacks:
+1. The lifespan of kmem_cache entry has weak correlation with
+device usages: when devices are in idle, those memory is still
+kept in slab until system decide to reclaim it, if reclaimable.
+2. kmem_cache is only used for fix-sized memory allocation, if a
+HCD needs private data of m different sizes, m different kmem_cache
+would be needed, and the overhead of kmem_cache is multiplied by m.
+When m is large, as some HCD needs variable length private data,
+kmem_cache approach is inflexible to use.
+3. A system may have multiple HCDs in use, then the overhead of
+kmem_cache would be multiplied again by the number of HCDs.
 
-Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+URB objects have long lifespans, an urb can be reused between
+submit loops while the devices are being used. And with following
+premise:
+1. Each URB cannot be used by more than one HCDs at the same time.
+2. The lifespan of HC private data is contained in its URB object's
+lifespan.
+
+high frequent allocations for HCD private data can be avoided if
+urb take over the ownership of memory, the memory then shares
+the longer lifespan with urb objects.
+
+The memory pool in URB works this way:
+1. A URB object holds only one slot of memory pool.
+2. When created, memory pool is NULL. If no private data requested,
+no memory pool alloced for the URB.
+3. The memory pool slot will grow when larger size is requested.
+4. Memory pool slot will be released only when URB is destroyed.
+
+Normally the hcpriv pointer in URB structure is the same as memory
+pool slot, but considering some drivers may still have its own
+management of urb->hcpriv, a hcpriv_mempool pointer is added, to make
+sure no impact on existing drivers.
+
+A hcpriv_mempool_size field is needed for making sure that the mempool
+slot is big enough, if not, more memory would be requested from system.
+
+Existing drivers may have it own allocation of URB object, not via
+usb_alloc_urb(), this may cause memory leak if URB has a active mempool
+slot but it is not released via usb_free_urb(); A hcpriv_mempool_activated
+flag is added to address this issue, it is set only in usb_alloc_urb().
+When requesting a hcpriv memory to a URB which has hcpriv_mempool_activated
+not set, the memory will be requested from system directly.
+
+One of the drawbacks is URB object now have 3 more fields even if the
+object would never be requested for HCD private data.
+
+From an end-user's perspective, the performance difference with this change
+is insignificant when system is under no memory pressure, and when under
+heavy memory pressure. When system is under heavy memory pressure,
+everything is slow.  There could be a point in-between no memory pressure
+and heavy memory pressure where these 1k+/s memory allocations would
+dominate the performance, but very hard to pinpoint it.
+
+Signed-off-by: David Wang <00107082@163.com>
 ---
- drivers/gpu/drm/udl/udl_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/core/urb.c | 45 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/usb.h    |  5 +++++
+ 2 files changed, 50 insertions(+)
 
-diff --git a/drivers/gpu/drm/udl/udl_drv.c b/drivers/gpu/drm/udl/udl_drv.c
-index 1922988625eb..ce5ae7cacb90 100644
---- a/drivers/gpu/drm/udl/udl_drv.c
-+++ b/drivers/gpu/drm/udl/udl_drv.c
-@@ -57,7 +57,7 @@ static const struct drm_driver driver = {
+diff --git a/drivers/usb/core/urb.c b/drivers/usb/core/urb.c
+index 5e52a35486af..2cf218d4fb73 100644
+--- a/drivers/usb/core/urb.c
++++ b/drivers/usb/core/urb.c
+@@ -23,6 +23,8 @@ static void urb_destroy(struct kref *kref)
  
- 	/* GEM hooks */
- 	.fops = &udl_driver_fops,
--	DRM_GEM_SHMEM_DRIVER_OPS,
-+	DRM_GEM_SHMEM_DRIVER_OPS_NO_MAP_SGT,
- 	DRM_FBDEV_SHMEM_DRIVER_OPS,
+ 	if (urb->transfer_flags & URB_FREE_BUFFER)
+ 		kfree(urb->transfer_buffer);
++	if (urb->hcpriv_mempool_activated)
++		kfree(urb->hcpriv_mempool);
  
- 	.name = DRIVER_NAME,
+ 	kfree(urb);
+ }
+@@ -77,6 +79,8 @@ struct urb *usb_alloc_urb(int iso_packets, gfp_t mem_flags)
+ 	if (!urb)
+ 		return NULL;
+ 	usb_init_urb(urb);
++	/* activate hcpriv mempool when urb is created via usb_alloc_urb */
++	urb->hcpriv_mempool_activated = true;
+ 	return urb;
+ }
+ EXPORT_SYMBOL_GPL(usb_alloc_urb);
+@@ -1037,3 +1041,44 @@ int usb_anchor_empty(struct usb_anchor *anchor)
+ 
+ EXPORT_SYMBOL_GPL(usb_anchor_empty);
+ 
++/**
++ * urb_hcpriv_mempool_zalloc - alloc memory from mempool for hcpriv
++ * @urb: pointer to URB being used
++ * @size: memory size requested by current host controller
++ * @mem_flags: the type of memory to allocate
++ *
++ * Return: NULL if out of memory, otherwise memory are zeroed
++ */
++void *urb_hcpriv_mempool_zalloc(struct urb *urb, size_t size, gfp_t mem_flags)
++{
++	if (!urb->hcpriv_mempool_activated)
++		return kzalloc(size, mem_flags);
++
++	if (urb->hcpriv_mempool_size < size) {
++		kfree(urb->hcpriv_mempool);
++		urb->hcpriv_mempool_size = size;
++		urb->hcpriv_mempool = kmalloc(size, mem_flags);
++	}
++	if (urb->hcpriv_mempool)
++		memset(urb->hcpriv_mempool, 0, size);
++	else
++		urb->hcpriv_mempool_size = 0;
++	return urb->hcpriv_mempool;
++}
++EXPORT_SYMBOL_GPL(urb_hcpriv_mempool_zalloc);
++
++/**
++ * urb_free_hcpriv - free hcpriv data if necessary
++ * @urb: pointer to URB being used
++ *
++ * If mempool is activated, private data's lifecycle
++ * is managed by urb object.
++ */
++void urb_free_hcpriv(struct urb *urb)
++{
++	if (urb->hcpriv != urb->hcpriv_mempool) {
++		kfree(urb->hcpriv);
++		urb->hcpriv = NULL;
++	}
++}
++EXPORT_SYMBOL_GPL(urb_free_hcpriv);
+diff --git a/include/linux/usb.h b/include/linux/usb.h
+index b46738701f8d..27bc394b8141 100644
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -1602,6 +1602,9 @@ struct urb {
+ 	struct kref kref;		/* reference count of the URB */
+ 	int unlinked;			/* unlink error code */
+ 	void *hcpriv;			/* private data for host controller */
++	void *hcpriv_mempool;           /* a single slot of cache for HCD's private data */
++	size_t hcpriv_mempool_size;     /* current size of the memory pool */
++	bool hcpriv_mempool_activated;  /* flag the mempool usage */
+ 	atomic_t use_count;		/* concurrent submissions counter */
+ 	atomic_t reject;		/* submissions will fail */
+ 
+@@ -1790,6 +1793,8 @@ extern int usb_wait_anchor_empty_timeout(struct usb_anchor *anchor,
+ extern struct urb *usb_get_from_anchor(struct usb_anchor *anchor);
+ extern void usb_scuttle_anchored_urbs(struct usb_anchor *anchor);
+ extern int usb_anchor_empty(struct usb_anchor *anchor);
++extern void *urb_hcpriv_mempool_zalloc(struct urb *urb, size_t size, gfp_t mem_flags);
++extern void urb_free_hcpriv(struct urb *urb);
+ 
+ #define usb_unblock_urb	usb_unpoison_urb
+ 
 -- 
-2.17.1
+2.39.2
 
 
