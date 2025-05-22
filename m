@@ -1,148 +1,176 @@
-Return-Path: <linux-kernel+bounces-659992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86966AC17C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:25:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB286AC18DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 02:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F7344E420F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 23:25:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 133783A16A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584D02D3A6C;
-	Thu, 22 May 2025 23:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AJiY9s6O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1832F22;
+	Fri, 23 May 2025 00:05:40 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9975C2D323F;
-	Thu, 22 May 2025 23:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AD419A;
+	Fri, 23 May 2025 00:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747956236; cv=none; b=sUWxBt+PJ1X4Vq3DX2C3lKDk1JaZcXpX0/4a5NJMYXAKO/leutf+ecCIXWuJkWNnd7pFsmureYhMy6+tJNI0T4+jh/o7rybaEBCvT5V/UjGH4Y03mZqVi6VOMwRznhjfOQSHkbxzF7PWuzoofww+/nJbkTKDjrgapWlaNYrrAAE=
+	t=1747958740; cv=none; b=PBeTV1ehs/Unx79Z/t/QWrkVKzBJayIF+lrli7tTP/bv1DEIGKfsYWoZ3Jx91fabed7yuvNF5XF0r+FxBYHF2zcj2u+Y15znLpjFRMlfwdGVkE3IKwwdoxGkzGmirWaBH3VFnYPwttJDfCE4mDQhcs9K7DFEQteChYEkrK2yplk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747956236; c=relaxed/simple;
-	bh=0WV3S2hggEo8UB79jSOkfPluYQMTTXi8KwtvSdvTY18=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MKBvChy9k8DcbTFQ0RyGI1o8pS/7m0/V/W3WKgoJ4wcv3eUMg08MHf9d3EEcRDiXNBMmV6MPnmjaXMjxEzcLi9D0busAiSQJVk9GZO0sZiRKCrtT5dWOQtBIVbwNjekZkR1Fgpe3vhEKLGVh5G637wOdEIl4rbSfZ77sq9hF70w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AJiY9s6O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC70DC4CEE4;
-	Thu, 22 May 2025 23:23:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747956236;
-	bh=0WV3S2hggEo8UB79jSOkfPluYQMTTXi8KwtvSdvTY18=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AJiY9s6OH7qIicXuS2Ll0QHIyK6j/AWpefUUSdt4LQ8yVlNr6r7iGmcfjJspy//UT
-	 jgaj7B41td+8JM3OWqEiS6RXnYRM3z3RUfzS0psqsia66YER2qk0nNDZ5OvejnXPUD
-	 IetaDWdOi8KHzJujxUQIjzh5a48tnUttgj3L3a/A4a1eG0609Tp7G1fM1frR+kT3Rs
-	 TH6SOIdq6VWqnjbkOJc4abab2sCHcYURXPg0goPTRyEEXrJ3CIkCB+Txy0aTFkKAMh
-	 KG+4EYdIPQkdKIWsvoNC5oqxexQCSZDyG0/AlE+V/1OVG6XW0Ie8/vrovK6d8w+H2R
-	 KH0Sm/rRbQHcQ==
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Jon Pan-Doh <pandoh@google.com>,
-	Karolina Stolarek <karolina.stolarek@oracle.com>,
-	Weinan Liu <wnliu@google.com>,
-	Martin Petersen <martin.petersen@oracle.com>,
-	Ben Fuller <ben.fuller@oracle.com>,
-	Drew Walton <drewwalton@microsoft.com>,
-	Anil Agrawal <anilagrawal@meta.com>,
-	Tony Luck <tony.luck@intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Sargun Dhillon <sargun@meta.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Kai-Heng Feng <kaihengf@nvidia.com>,
-	Keith Busch <kbusch@kernel.org>,
-	Robert Richter <rrichter@amd.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: [PATCH v8 07/20] PCI/AER: Move aer_print_source() earlier in file
-Date: Thu, 22 May 2025 18:21:13 -0500
-Message-ID: <20250522232339.1525671-8-helgaas@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250522232339.1525671-1-helgaas@kernel.org>
-References: <20250522232339.1525671-1-helgaas@kernel.org>
+	s=arc-20240116; t=1747958740; c=relaxed/simple;
+	bh=FKJEwrRMLguey2BvAvV40YEjlFi9E5GX6RFzd6ghb0I=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=XSwCzJhcO4iD2HzSTUS/5AOMPinvwfIwVrSCUW+27K8EHR8KK3UgYF5+JeXQ1sKMaH1IBwFOzZqVHUB7yqG8B/Yw91jv/0P6HfG/d/zv3EChNIuQaaRyaWRt2R5oWWaB4R2MOXEd5Sfw7DbDnyC9ZW/vE0s9UjLolVIdnL30WNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uIFDv-008Vm2-4u;
+	Thu, 22 May 2025 23:21:15 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: "NeilBrown" <neil@brown.name>
+To: "Haixiao Yan" <haixiao.yan.cn@windriver.com>
+Cc:
+ chuck.lever@oracle.com, stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: nfs mount failed with ipv6 addr
+In-reply-to: <faf777ea-3667-45c7-b7f2-111b9f789e73@windriver.com>
+References: <>, <faf777ea-3667-45c7-b7f2-111b9f789e73@windriver.com>
+Date: Fri, 23 May 2025 09:21:14 +1000
+Message-id: <174795607490.608730.5673295992775861610@noble.neil.brown.name>
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Thu, 22 May 2025, Haixiao Yan wrote:
+> On 2025/5/22 07:32, NeilBrown wrote:
+> > CAUTION: This email comes from a non Wind River email account!
+> > Do not click links or open attachments unless you recognize the sender an=
+d know the content is safe.
+> >
+> > On Thu, 22 May 2025, Yan, Haixiao (CN) wrote:
+> >> On linux-5.10.y, my testcase run failed:
+> >>
+> >> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mount -=
+t nfs [::1]:/mnt/nfs_root /mnt/v6 -o nfsvers=3D3
+> >> mount.nfs: requested NFS version or transport protocol is not supported
+> >>
+> >> The first bad commit is:
+> >>
+> >> commit 7229200f68662660bb4d55f19247eaf3c79a4217
+> >> Author: Chuck Lever <chuck.lever@oracle.com>
+> >> Date:   Mon Jun 3 10:35:02 2024 -0400
+> >>
+> >>     nfsd: don't allow nfsd threads to be signalled.
+> >>
+> >>     [ Upstream commit 3903902401451b1cd9d797a8c79769eb26ac7fe5 ]
+> >>
+> >>
+> >> Here is the test log:
+> >>
+> >> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# dd if=
+=3D/dev/zero of=3D/tmp/nfs.img bs=3D1M count=3D100
+> >> 100+0 records in
+> >> 100+0 records out
+> >> 104857600 bytes (105 MB, 100 MiB) copied, 0.0386658 s, 2.7 GB/s
+> >> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mkfs /t=
+mp/nfs.img
+> >> mke2fs 1.46.1 (9-Feb-2021)
+> >> Discarding device blocks:   1024/102400=08=08=08=08=08=08=08=08=08=08=08=
+=08=08             =08=08=08=08=08=08=08=08=08=08=08=08=08done
+> >> Creating filesystem with 102400 1k blocks and 25688 inodes
+> >> Filesystem UUID: 77e3bc56-46bb-4e5c-9619-d9a0c0999958
+> >> Superblock backups stored on blocks:
+> >>        8193, 24577, 40961, 57345, 73729
+> >>
+> >> Allocating group tables:  0/13=08=08=08=08=08     =08=08=08=08=08done
+> >> Writing inode tables:  0/13=08=08=08=08=08     =08=08=08=08=08done
+> >> Writing superblocks and filesystem accounting information:  0/13=08=08=
+=08=08=08     =08=08=08=08=08done
+> >> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mount /=
+tmp/nfs.img /mnt
+> >>
+> >> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mkdir /=
+mnt/nfs_root
+> >>
+> >> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# touch /=
+etc/exports
+> >>
+> >> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# echo '/=
+mnt/nfs_root *(insecure,rw,async,no_root_squash)' >> /etc/exports
+> >>
+> >> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# /opt/wr=
+-test/bin/svcwp.sh nfsserver restart
+> >> stopping mountd: done
+> >> stopping nfsd: ..........failed
+> >>    using signal 9:
+> >> ..........failed
+> > What does your "nfsserver" script do to try to stop/restart the nfsd?
+> > For a very long time the approved way to stop nfsd has been to run
+> > "rpc.nfsd 0".  My guess is that whatever script you are using still
+> > trying to send a signal to nfsd.  That no longer works.
+> >
+> > Unfortunately the various sysv-init scripts for starting/stopping nfsd
+> > have never been part of nfs-utils so we were not able to update them.
+> > nfs-utils *does* contain systemd unit files for sites which use systemd.
+> >
+> > If you have a non-systemd way of starting/stopping nfsd, we would be
+> > happy to make the relevant scripts part of nfs-utils so that we can
+> > ensure they stay up to date.
+>=20
+> Actually, we use=C2=A0 service nfsserver restart=C2=A0 =3D>
+> /etc/init.d/nfsserver =3D>
+>=20
+> stop_nfsd(){
+>  =C2=A0=C2=A0 =C2=A0# WARNING: this kills any process with the executable
+>  =C2=A0=C2=A0 =C2=A0# name 'nfsd'.
+>  =C2=A0=C2=A0 =C2=A0echo -n 'stopping nfsd: '
+>  =C2=A0=C2=A0 =C2=A0start-stop-daemon --stop --quiet --signal 1 --name nfsd
+>  =C2=A0=C2=A0 =C2=A0if delay_nfsd || {
+>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 echo failed
+>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 echo ' using signal 9: '
+>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 start-stop-daemon --stop --quiet --s=
+ignal 9 --name nfsd
+>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 delay_nfsd
+>  =C2=A0=C2=A0 =C2=A0}
+>  =C2=A0=C2=A0 =C2=A0then
+>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 echo done
+>  =C2=A0=C2=A0 =C2=A0else
+>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 echo failed
+>  =C2=A0=C2=A0 =C2=A0fi
+The above should all be changed to
+   echo -n 'stopping nfsd: '
+   rpc.nfsd 0
+   echo done
 
-Move aer_print_source() earlier in the file so a future change can use it
-from aer_print_error(), where it's easier to rate limit it.
+or similar.  What distro are you using?
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Tested-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Link: https://patch.msgid.link/20250520215047.1350603-8-helgaas@kernel.org
----
- drivers/pci/pcie/aer.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+I can't see how this would affect your problem with IPv6 but it would be
+nice if you could confirm that IPv6 still doesn't work even after
+changing the above.
+What version of nfs-utils are you using?
+Are you should that the kernel has IPv6 enabled?  Does "ping6 ::1" work?
 
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index 8b23ef90345b..c0481550363b 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -696,6 +696,19 @@ static void __aer_print_error(struct pci_dev *dev,
- 	pci_dev_aer_stats_incr(dev, info);
- }
- 
-+static void aer_print_source(struct pci_dev *dev, struct aer_err_info *info,
-+			     bool found)
-+{
-+	u16 source = info->id;
-+
-+	pci_info(dev, "%s%s error message received from %04x:%02x:%02x.%d%s\n",
-+		 info->multi_error_valid ? "Multiple " : "",
-+		 aer_error_severity_string[info->severity],
-+		 pci_domain_nr(dev->bus), PCI_BUS_NUM(source),
-+		 PCI_SLOT(source), PCI_FUNC(source),
-+		 found ? "" : " (no details found");
-+}
-+
- void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
- {
- 	int layer, agent;
-@@ -733,19 +746,6 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
- 			info->severity, info->tlp_header_valid, &info->tlp);
- }
- 
--static void aer_print_source(struct pci_dev *dev, struct aer_err_info *info,
--			     bool found)
--{
--	u16 source = info->id;
--
--	pci_info(dev, "%s%s error message received from %04x:%02x:%02x.%d%s\n",
--		 info->multi_error_valid ? "Multiple " : "",
--		 aer_error_severity_string[info->severity],
--		 pci_domain_nr(dev->bus), PCI_BUS_NUM(source),
--		 PCI_SLOT(source), PCI_FUNC(source),
--		 found ? "" : " (no details found");
--}
--
- #ifdef CONFIG_ACPI_APEI_PCIEAER
- int cper_severity_to_aer(int cper_severity)
- {
--- 
-2.43.0
+NeilBrown
+
+
+> }
+>=20
+> Thanks,
+>=20
+> Haixiao
+>=20
+> > Thanks,
+> > NeilBrown
+>=20
 
 
