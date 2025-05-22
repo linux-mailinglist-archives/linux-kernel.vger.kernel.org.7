@@ -1,229 +1,180 @@
-Return-Path: <linux-kernel+bounces-659024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E741AC0A78
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:17:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51878AC0A83
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3539A1BC55D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:17:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C3143BF040
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEB6288C0C;
-	Thu, 22 May 2025 11:17:32 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C94289E33;
+	Thu, 22 May 2025 11:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="N9vJaIUX"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F130D231859;
-	Thu, 22 May 2025 11:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9379D28A408;
+	Thu, 22 May 2025 11:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747912652; cv=none; b=kMi61bmuy4e9Jwm81ZFdlnbvnjK48SW+Qq6KIiY/pmhXzqpvqMcDCwT0X20VHDdQgpnX7SDAb9zFAnmgLVTOiYgwuJ4lVcmPjFppVMvi2NsIMSvZBTbsI9gq5rjRWKjwg1BcXg+rXYAKeuzvJhCMBxB+EHOG9GuaMhZ0TwVtrGE=
+	t=1747912833; cv=none; b=ErkUC6Ai/ocEdrt8GJINr2mV7rtNcEIyuQAtdz8751jttkpv/BLvTtNlCIs1JrQhZNlhoPef8kB1tsDSnfCjN4bywW3BvB+ONLEjxsVK/XVUT1KxJBzz5FZVQLCfEIQD2TMxa/ASg5jErdTY6/6u7ZQn0iB36S1WLogtAEdzDE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747912652; c=relaxed/simple;
-	bh=cJHVVEwCyg2HFGmy3+awErBpn5aR10k/YzTfGYQ+0a0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sWcoZVu0NbvujKriMMVHA6F8qxl9E43VzlUSTZ1ZZj44zEWwL9IL06+TyB756a8NNzKzcWI2VUGq6fQpxZ0xRnLg2OwTRqAGFtl3RRil8OJhUE8JKSOZ14NOvoQ98GmxyRAU1l+LjHbDFeElIJsiYmRiIIXWXQTdY6Ukzuu6wMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b35Jv3sz3z6L5Fm;
-	Thu, 22 May 2025 19:14:07 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id DE1141402EE;
-	Thu, 22 May 2025 19:17:21 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 22 May
- 2025 13:17:20 +0200
-Date: Thu, 22 May 2025 12:17:18 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <linux-pci@vger.kernel.org>, Jon Pan-Doh <pandoh@google.com>, "Karolina
- Stolarek" <karolina.stolarek@oracle.com>, Weinan Liu <wnliu@google.com>,
-	Martin Petersen <martin.petersen@oracle.com>, Ben Fuller
-	<ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>, "Anil
- Agrawal" <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>, Ilpo
- =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Sathyanarayanan
- Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>, Lukas Wunner
-	<lukas@wunner.de>, Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney"
-	<paulmck@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Oliver
- O'Halloran <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>, Keith
- Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>, "Terry Bowman"
-	<terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>, "Dave Jiang"
-	<dave.jiang@intel.com>, <linux-kernel@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v7 15/17] PCI/AER: Ratelimit correctable and non-fatal
- error logging
-Message-ID: <20250522121718.00005fa2@huawei.com>
-In-Reply-To: <20250521225430.GA1442014@bhelgaas>
-References: <20250521113121.000067ce@huawei.com>
-	<20250521225430.GA1442014@bhelgaas>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1747912833; c=relaxed/simple;
+	bh=ISSgg2ni57m/DyPvzZYGJQINx6jPbdPqORJsDObz3x4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GzGRJPJp/hf0VcW8rqUxsuIccZf2/4OZmB2CZGAb7i/jJS8RLedsWWz94RKxGeBL8v+afcJeI7HfbBcomu6mJa137Lh/8dyc/5njHOma0gYygVTUxc0Mcr6Tco7HL7IJNUqhhls97ukztp9bS/tHlY6OtHD3AeeWZJlX++rTbFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=N9vJaIUX; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1747912829; x=1779448829;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ISSgg2ni57m/DyPvzZYGJQINx6jPbdPqORJsDObz3x4=;
+  b=N9vJaIUXmxkhPfqgyt8YUSEXtklW6rTm42C+/V8LxQ09mUeLJZN7JWZX
+   DMwl4PDl8nX5nAs3/+nqp/4/GUcwy/msO1macOIAuCw+KVxJNEoehQbiq
+   xB4O3Flsr3ngFo/zPOAOnMeU/q2ruv/n92CWWNeLFuNOODCJc8O7KhXcj
+   PfhnQbX6YNpVcnMjCyWwxbxap872R9OnpCJfuoB6Xfae9W6rHvwHgyo6B
+   zZlEJTjqQx7haaccVFhbJITw5Kk1fVSHCZKYR7rHr5kWDILCiYci3i0e/
+   Q4TZNdUHPcNFhqoN0PvUgu3qMSyNeTviWMTdcduMoxqMW2/peMKdhvLE8
+   w==;
+X-CSE-ConnectionGUID: RlPMJyqTQP+hBDG1surljg==
+X-CSE-MsgGUID: fFeDH56rTpe7gLksoS26hg==
+X-IronPort-AV: E=Sophos;i="6.15,305,1739862000"; 
+   d="scan'208";a="273316516"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 May 2025 04:20:22 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 22 May 2025 04:20:18 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Thu, 22 May 2025 04:20:18 -0700
+Date: Thu, 22 May 2025 13:18:39 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+CC: <UNGLinuxDriver@microchip.com>, <andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <richardcochran@gmail.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net] net: lan966x: Fix 1-step timestamping over ipv4 or
+ ipv6
+Message-ID: <20250522111839.tlieiy5s7qfrqxbb@DEN-DL-M31836.microchip.com>
+References: <20250521124159.2713525-1-horatiu.vultur@microchip.com>
+ <c770157f-4175-45b3-836e-ecf59f9ab8e0@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <c770157f-4175-45b3-836e-ecf59f9ab8e0@linux.dev>
 
-On Wed, 21 May 2025 17:54:30 -0500
-Bjorn Helgaas <helgaas@kernel.org> wrote:
+The 05/22/2025 11:47, Vadim Fedorenko wrote:
 
-> On Wed, May 21, 2025 at 11:31:21AM +0100, Jonathan Cameron wrote:
-> > On Tue, 20 May 2025 16:50:32 -0500
-> > Bjorn Helgaas <helgaas@kernel.org> wrote:
-> >   
-> > > From: Jon Pan-Doh <pandoh@google.com>
-> > > 
-> > > Spammy devices can flood kernel logs with AER errors and slow/stall
-> > > execution. Add per-device ratelimits for AER correctable and non-fatal
-> > > uncorrectable errors that use the kernel defaults (10 per 5s).  Logging of
-> > > fatal errors is not ratelimited.  
+Hi Vadim,
+
+
+> > -static int lan966x_ptp_classify(struct lan966x_port *port, struct sk_buff *skb)
+> > +static void lan966x_ptp_classify(struct lan966x_port *port, struct sk_buff *skb,
+> > +                              u8 *rew_op, u8 *pdu_type)
+> >   {
+> >       struct ptp_header *header;
+> >       u8 msgtype;
+> >       int type;
 > > 
-> > See below. I'm not sure that logging of fatal error should affect the rate
-> > for non fatal errors + the rate limit infrastructure kind of assumes
-> > that you only call it if you are planning to respect it's decision.
+> > -     if (port->ptp_tx_cmd == IFH_REW_OP_NOOP)
+> > -             return IFH_REW_OP_NOOP;
+> > +     if (port->ptp_tx_cmd == IFH_REW_OP_NOOP) {
+> > +             *rew_op = IFH_REW_OP_NOOP;
+> > +             *pdu_type = IFH_PDU_TYPE_NONE;
+> > +             return;
+> > +     }
 > > 
-> > Given overall aim is to restrict rates, maybe we don't care if we sometimes
-> > throttle earlier that we might expect with a simpler separation of what
-> > is being limited.
+> >       type = ptp_classify_raw(skb);
+> > -     if (type == PTP_CLASS_NONE)
+> > -             return IFH_REW_OP_NOOP;
+> > +     if (type == PTP_CLASS_NONE) {
+> > +             *rew_op = IFH_REW_OP_NOOP;
+> > +             *pdu_type = IFH_PDU_TYPE_NONE;
+> > +             return;
+> > +     }
 > > 
-> > I don't mind strongly either way.  
-> 
-> > > @@ -593,7 +593,8 @@ struct aer_err_info {
-> > >  	unsigned int id:16;
-> > >  
-> > >  	unsigned int severity:2;	/* 0:NONFATAL | 1:FATAL | 2:COR */
-> > > -	unsigned int __pad1:5;
-> > > +	unsigned int ratelimit:1;	/* 0=skip, 1=print */  
+> >       header = ptp_parse_header(skb, type);
+> > -     if (!header)
+> > -             return IFH_REW_OP_NOOP;
+> > +     if (!header) {
+> > +             *rew_op = IFH_REW_OP_NOOP;
+> > +             *pdu_type = IFH_PDU_TYPE_NONE;
+> > +             return;
+> > +     }
 > > 
-> > That naming is less than intuitive.  Maybe expand it to ratelimit_print or
-> > something like that.  
+> > -     if (port->ptp_tx_cmd == IFH_REW_OP_TWO_STEP_PTP)
+> > -             return IFH_REW_OP_TWO_STEP_PTP;
+> > +     if (type & PTP_CLASS_L2)
+> > +             *pdu_type = IFH_PDU_TYPE_NONE;
+> > +     if (type & PTP_CLASS_IPV4)
+> > +             *pdu_type = IFH_PDU_TYPE_IPV4;
+> > +     if (type & PTP_CLASS_IPV6)
+> > +             *pdu_type = IFH_PDU_TYPE_IPV6;
 > 
-> True, although it does match uses like "if (aer_ratelimit(...))"
-> 
-> I'll try ratelimit_print and see how you like it :)
-> 
-> > > +	unsigned int __pad1:4;
-> > >  	unsigned int multi_error_valid:1;
-> > >  
-> > >  	unsigned int first_error:5;
-> > > diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> > > index 4f1bff0f000f..f9e684ac7878 100644
-> > > --- a/drivers/pci/pcie/aer.c
-> > > +++ b/drivers/pci/pcie/aer.c  
-> >   
-> > > @@ -815,8 +843,19 @@ EXPORT_SYMBOL_NS_GPL(pci_print_aer, "CXL");
-> > >   */
-> > >  static int add_error_device(struct aer_err_info *e_info, struct pci_dev *dev)
-> > >  {
-> > > +	/*
-> > > +	 * Ratelimit AER log messages.  "dev" is either the source
-> > > +	 * identified by the root's Error Source ID or it has an unmasked
-> > > +	 * error logged in its own AER Capability.  If any of these devices
-> > > +	 * has not reached its ratelimit, log messages for all of them.
-> > > +	 * Messages are emitted when "e_info->ratelimit" is non-zero.
-> > > +	 *
-> > > +	 * Note that "e_info->ratelimit" was already initialized to 1 for the
-> > > +	 * ERR_FATAL case.
-> > > +	 */
-> > >  	if (e_info->error_dev_num < AER_MAX_MULTI_ERR_DEVICES) {
-> > >  		e_info->dev[e_info->error_dev_num] = pci_dev_get(dev);
-> > > +		e_info->ratelimit |= aer_ratelimit(dev, e_info->severity);  
-> > 
-> > So this is a little odd.  I think it works but there is code inside
-> > __ratelimit that I think we should not be calling for that
-> > ERROR_FATAL case (whether we should call lots of times for each
-> > device isn't obvious either but maybe that is more valid).
-> > 
-> > In the event of it already being 1 due to ERROR_FATAL you will
-> > falsely trigger a potential print from inside __ratelimit() if we
-> > were rate limited and no longer are but only skipped FATAL prints.
-> > My concern is that function is kind of assuming it's only called in
-> > cases where a rate limit decision is being made and the
-> > implementation may change in future).  
-> 
-> Hmmm.  That's pretty subtle, thanks for catching this.
-> 
-> In the light of day, ".ratelimit = fatal ? 1 : 0" looks a bit sketchy.
-> If we want to avoid ratelimiting AER_FATAL, maybe aer_ratelimit()
-> should just return 1 ("print") unconditionally in that case, without
-> calling __ratelimit():
-> 
->   static int aer_ratelimit(struct pci_dev *dev, unsigned int severity)
->   {
->     struct ratelimit_state *ratelimit;
-> 
->     if (severity == AER_FATAL)
->       return 1;       /* AER_FATAL not ratelimited */
-> 
->     if (severity == AER_CORRECTABLE)
->       ratelimit = &dev->aer_info->cor_log_ratelimit;
->     else
->       ratelimit = &dev->aer_info->uncor_log_ratelimit;
-> 
->     return __ratelimit(ratelimit);
->   }
+> ptp_classify_raw() will also return PTP_CLASS_IPV4 or PTP_CLASS_IPV6
+> flags set for (PTP_CLASS_VLAN|PTP_CLASS_IPV4) and
+> (PTP_CLASS_VLAN|PTP_CLASS_IPV6) cases. Will the hardware support proper
+> timestamp placing in these cases?
 
-Neat solution so go with that.
+Yes, the HW seems to be working also in that case.
+I just created a vlan interface and then start ptp4l on that interface
+and I could see that the frames were updated correctly.
 
 > 
-> That still leaves this question of how to deal with info->dev[] when
-> there's more than one entry, which is kind of an annoying case that
-> only happens for the native AER path.
-> 
-> I think it's because for a single AER interrupt from an RP/RCEC, we
-> collect the root info in one struct aer_err_info and scrape all the
-> downstream devices for anything interesting.  We visit each downstream
-> device and is_error_source() reads its status register, but we only
-> keep the pci_dev pointer, so aer_get_device_error_info() has to read
-> the status registers *again*.  This all seems kind of obtuse.
-> 
-> The point of the OR above in add_error_device() was to try to match up
-> RP/RCEC logging with downstream device logging so they're ratelimited
-> the same.  If we ratelimit the Error Source ID based on the RP/RCEC
-> and the details based on the downstream devices individually, they'll
-> get out of sync, so sometimes we'll print an Error Source ID and elide
-> the details and vice versa.
-> 
-> I wanted to make it so that if we log downstream details, we also log
-> the Error Source ID.  But maybe we should ratelimit downstream devices
-> individually (instead of doing this weird union) and make the RP/RCEC
-> part more explicit, e.g.,
-> 
->   add_error_device(...)
->   {
->     int i = e_info->error_dev_num;
-> 
->     e_info->dev[i] = pci_dev_get(dev);
->     e_info->error_dev_num++;
-> 
->     if (aer_ratelimit(dev, e_info->severity)) {
->       e_info->root_ratelimit_print = 1;
->       e_info->ratelimit_print[i] = 1;
->     }
->   }
-
-As it's a weird corner case, I don't really mind how you handle it.
-I'm not sure I grasp this last suggestion fully but can look at the full
-code if you do go with something like that.
-
-Jonathan
-
-> 
-> > https://elixir.bootlin.com/linux/v6.14.7/source/lib/ratelimit.c#L56
+> > +
+> > +     if (port->ptp_tx_cmd == IFH_REW_OP_TWO_STEP_PTP) {
+> > +             *rew_op = IFH_REW_OP_TWO_STEP_PTP;
+> > +             return;
+> > +     }
 > > 
-> > Maybe, 
-> > 		if (!info->ratelimit)
-> > 			e_info->ratelimit = aer_ratelimit(dev, e_info->severity);
-> > is an alternative option.
-> > That allows a multiplication factor on the rate as all device count for 1.  
+> >       /* If it is sync and run 1 step then set the correct operation,
+> >        * otherwise run as 2 step
+> >        */
+> >       msgtype = ptp_get_msgtype(header, type);
+> > -     if ((msgtype & 0xf) == 0)
+> > -             return IFH_REW_OP_ONE_STEP_PTP;
+> > +     if ((msgtype & 0xf) == 0) {
+> > +             *rew_op = IFH_REW_OP_ONE_STEP_PTP;
+> > +             return;
+> > +     }
+> > 
+> > -     return IFH_REW_OP_TWO_STEP_PTP;
+> > +     *rew_op = IFH_REW_OP_TWO_STEP_PTP;
+> >   }
+> > 
+> >   static void lan966x_ptp_txtstamp_old_release(struct lan966x_port *port)
+> > @@ -374,10 +395,12 @@ int lan966x_ptp_txtstamp_request(struct lan966x_port *port,
+> >   {
+> >       struct lan966x *lan966x = port->lan966x;
+> >       unsigned long flags;
+> > +     u8 pdu_type;
+> >       u8 rew_op;
+> > 
+> > -     rew_op = lan966x_ptp_classify(port, skb);
+> > +     lan966x_ptp_classify(port, skb, &rew_op, &pdu_type);
+> >       LAN966X_SKB_CB(skb)->rew_op = rew_op;
+> > +     LAN966X_SKB_CB(skb)->pdu_type = pdu_type;
+> > 
+> >       if (rew_op != IFH_REW_OP_TWO_STEP_PTP)
+> >               return 0;
+> 
 
+-- 
+/Horatiu
 
