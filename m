@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-659669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D203CAC135D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:31:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29BECAC1360
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11FE71BC6BEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:31:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C70754E1402
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DF719CC1C;
-	Thu, 22 May 2025 18:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AF81B4159;
+	Thu, 22 May 2025 18:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bx+oUthQ"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gYlmNE34"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7E5770FE
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D2318A6A9
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747938658; cv=none; b=lVy8SVo3iUUNt+gdgZtC+fDb/JZTLWWobgYCX+VyvzEoTirMLSfj07s5RYRLNYjeXrKXtsnh5hkrMEVL09rQDU96zpIIMNWAsigDVL5WtRapmu6DLY1qZJLmPEvV57V3td/uRcX8Fypr6vOmrOu044O1SHqzYwrztaboL8BlMRc=
+	t=1747938740; cv=none; b=gV9t4U77GCpI9Z5LmoGcDI30oqNadbxTz62AsJhiWlsrSjoRSe25IalubdVqxVb0xK6/qvhDEZaqibDlz3rVE7SnVhHuURqDorrnjCBLbdAJMOzUzt9Ome7i8Pyv16ChqLU8gs/D0YaCm55vmlzNVWhhmC0bjGvbA2AYYSXGJDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747938658; c=relaxed/simple;
-	bh=wqUV9nRzA1232FDEPURilN1rVOb3n5UdnlfYdPzPtIs=;
+	s=arc-20240116; t=1747938740; c=relaxed/simple;
+	bh=utZbOKXUpsVCUiSXZg10bx3I+v3jj2dHl7w4DDwLeCY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fF4KSqOIGeEf2igt9KekuP4xkHTGpk9twXl+9GREO4IeNcePJkYP/MKt3aAc1gkhMOUcS/01Zu83RnImMRHeaBmNaM9M5qKabxfaYp52u8+gd1Ax1I5gNzaAMZa/fUgxQXoumGQqjk7KmwPWlOGCOnTAJ5/+hyPIeiubIWz2ACQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bx+oUthQ; arc=none smtp.client-ip=209.85.221.54
+	 In-Reply-To:Content-Type; b=jt/glqsZXnw8QEs3/PTGrleRF49DusBDxNESlRHL7Ez3rUVbxY7o1XKmqdCjcASEGZ9VzXpjp+g9ZGRh3h5k9mMpt0t0zd23xEa/t0wS6pa6SWYtHhKK4xk93xR+kYKy3ulT4YIuWAdbG/w+ILuWsLwveZVHtPxSfhfLCeRNElU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gYlmNE34; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a361c8a830so1057377f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 11:30:55 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a374754e03so333714f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 11:32:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747938654; x=1748543454; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1747938736; x=1748543536; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=KTYGQrxKhWMUTsF5Gw0UW3F/dL/eiQO+aStihSPsKa0=;
-        b=bx+oUthQoSs3L282g2VG6/2aG73MxAk30x7IJ8TPQQ68BFZfZ3UVeovsslznHSdRun
-         RUd07cJODfYEnCi00uMXTX7JRsOI8jB8PmWR4XivP8PIBNblzhomMZXAZPjFUWUxNAZx
-         3nvJY+BveCE6oAPiiVvRoi8+pKZmTT3LegOVc0bBuA9FwqXOUPhiErcTDuPfLYebsqOp
-         a6ZgjuN4SvX+CCCQNU6jwp19EAetKz+7BJtffhq/Y+tUf50IAq8KoTjvIBKnjgWhA8Z5
-         o9w0TVB/Oyv5vzWKNhxGssx53grHEPfNlkoOJYfqOFUTGOpIObNIUq+L1v/Ry8f3ae/i
-         F1qA==
+        bh=rOYkb8ARNGoWzGK6NIRQbMqEIL4sIWgyEMwNFCwUiPs=;
+        b=gYlmNE340Ewez03Nhl09xe1ud665Z2lUlD62HRlRK7vJoY/YN/2Mnh6ueSz9sPi7Sb
+         5KtIwXMCbAZ/LX/665xTHJUJGwY9hV1bwF1IffoHvlLfKqTgfBdo0NhKSlGItoDwHTh/
+         Vlq6RI1J7mLIsXuyRAoZOgSw4BtUpsxvnVbXNr7pooMW/Ejdg2f0nWC6BH45ZrQ/HiAe
+         qcXRkwWj0zeDhlo9BnrBtPE7f23lICocFh4/9bT5bveAtVioHNhASxhldKUfHtaJnT1J
+         ttzM9hIWxRGwqU7sXDRIMxNlCtBCslSS2kQDXxVJEycvxLEj9+N/FedtrJ4RzrX5DUHX
+         Vj6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747938654; x=1748543454;
+        d=1e100.net; s=20230601; t=1747938736; x=1748543536;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KTYGQrxKhWMUTsF5Gw0UW3F/dL/eiQO+aStihSPsKa0=;
-        b=DkwwtlR2qjm8+edof+bWkywS7K6CdEXRM/tvU2VCArlCqsTEZwmQ5sGpr0oah/ocpZ
-         LZgMb1pFQkIIzqwff3G+uhe/JKY9XiL5AG96tbP7oU6pZKFmuZuH+WsibakGl/NC7D5d
-         mPbGzo1M7OV1Ur/hV7bqz4qeX+0zHkGFgvvGynsoeVi/gn4IZsUSlZRuUP0ruKpTC49k
-         hHINhrgpDcVCjbPH3efz8GPNTLys7MPgVI7oXl8EzjjkGHyASdvXfdatE6vwfX0Ah7IP
-         ntZXEe3N02dS5F0DestF27TLhGvwGUcqSDP2oLlXAnJ3CCPR3bKgKmBJJhfUcSIHAHoo
-         YseQ==
-X-Gm-Message-State: AOJu0YxXkB3rs0WjAiFsLWx5iu2etMqYz6e7IFLnRE8z9u9RR6j5z8HB
-	JZxWLPs3YbRypFtMzQSYQpkfisZQaWDohmG92uIee9D8mfzWrqX39kNYjyQBpDFrmSQ=
-X-Gm-Gg: ASbGnctMtfz9Dr+PAAlJ12Z8HQ9TvJ3IZAMsQQA3bm/pHHJsXGVXrNfLbmbtvJrUhoM
-	D0ith/Gmws9xdoQDNq7BwL1EgbdmFYrt8JAJeDChj6F/DX3EgHhdw3s8LRTZz8ye4LiKFx0zE0b
-	pQ0RySMUIOMwD0sXivvBzq8+SZmN/lAvLRJU7ZcL5Atg2DHBw2bv+V1CcjtGl0pdKvemHTnwNdS
-	snnhGw4dE5m0l0RJll4ENNdnrc5noQ+6fSOWFuDl6Oqc8CpLgsZdcSKCdd8GMKrA7o81gkzFy4J
-	BJqA0b1W57asWWoTxqX34rSJfM5piCYbSvtH/zXiGlVYQLv0ADLGIy60kQlLSlo9Q+NpM1o=
-X-Google-Smtp-Source: AGHT+IHUs2Eu+mTEMKrL4TMiyindURl2/0CTkWWJut1Hw24NlGXm91RyEAtilIdvD3RQZ0gNVroCng==
-X-Received: by 2002:a05:6000:2308:b0:3a3:4b8a:73ab with SMTP id ffacd0b85a97d-3a35c845000mr8309793f8f.12.1747938654107;
-        Thu, 22 May 2025 11:30:54 -0700 (PDT)
+        bh=rOYkb8ARNGoWzGK6NIRQbMqEIL4sIWgyEMwNFCwUiPs=;
+        b=BkOpky3O79uEIxTzh5PExkxKTFypkHCqf0zrz74p1Gggie4xgj9pNgo/RWX6PdHcGU
+         3Oe3Qtjxp82/r41ieg5HvBDaa+xUw3ffPjmEV+EZbM5wAekxKCjHtrBySeRN+l9/FvGc
+         zk8yfD1D/QceMRVHirVbUS1oQsvJuuWclf5ccwWckewk6oYh3FTz8t9rnBeyIlDfLET6
+         wRaeITFmIME7QPxeB9m5j2arCvfSDtW2YZUfzIwjMk/CzJFVOHO5ZufjHM+qKKFW1icg
+         esIPMAfzuwCRTsiGqEJ9vGAVcs0DIgbOkx1gfyCK3hl2UAiud6dZNlmHAyMGSzUWcE43
+         eI1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVsO7yLwkWOO7BwSugztXHfRL8mztX/mBw9P0bOUeb/OuE2hryMLBqEv1pNKK+v0OAlcgqw4FpaEW72XcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqib77TAmQWH0+icUlgMBaLl7qz7z+dMXp45ESWgep3CAavFni
+	mTB6sAi3aXFErAeSCp9J3TOUGKxPerdCYmbASflGCkQ/16yfp4Y3hHUsw0SwJNd4Agw=
+X-Gm-Gg: ASbGncttyJBn0W//vpbrd8Q0+CPXuRwMAEOqSotkNOk6+RViEW2CmBClTouAYPQNUtc
+	KVDeybdSIHJwYCvPrnqf0seW3RRWfyerOKfmdQtel+IITZkn1rd7d+wy3lUSKVGPx2KWxULJn6n
+	PhzezKa4FxwnPH28Q9YYI4BzajjBu6skvQMGJMkTE5MvfMQ0Sd8KerUNNyg7JvIUNbF/lh4CjAS
+	ezCxNomy4pwgRAJlNrMhJEm8yJc0nr2iO0ckwlYiZAztzUZBkHDxNnepkLPEWFDy0ws/Dnb6m7u
+	X8Pb4tIqgHuNTRYYcw91KKv2V25zC4q2NSYcPpPJX59Zwl9RsbZjEC+65I4zOfg9cIA3V0TdUNK
+	/SzvDwQ==
+X-Google-Smtp-Source: AGHT+IElOSB5BApnFcPON4k3G6fN+T3e6tCMODFfwlTj5KlbfM3fgpMePZRiUwP9/6DJMNlIdFOSPQ==
+X-Received: by 2002:a5d:404a:0:b0:3a3:62e1:a7dc with SMTP id ffacd0b85a97d-3a362e1ab39mr6921412f8f.1.1747938736169;
+        Thu, 22 May 2025 11:32:16 -0700 (PDT)
 Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f7d975f4sm112778865e9.39.2025.05.22.11.30.52
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a3ca066eb7sm5955103f8f.2.2025.05.22.11.32.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 May 2025 11:30:53 -0700 (PDT)
-Message-ID: <5c43b201-68ed-4d6f-8595-bd3df203e81f@linaro.org>
-Date: Thu, 22 May 2025 20:30:51 +0200
+        Thu, 22 May 2025 11:32:15 -0700 (PDT)
+Message-ID: <24905725-21ca-4408-9822-285f0a96b4da@linaro.org>
+Date: Thu, 22 May 2025 20:32:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,12 +82,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] cdx: Minor cleanups
-To: "Agarwal, Nikhil" <nikhil.agarwal@amd.com>,
- "Gupta, Nipun" <Nipun.Gupta@amd.com>, Greg KH <gregkh@linuxfoundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250502-cdx-clean-v3-0-6aaa5b369fc5@linaro.org>
- <BL1PR12MB53333E728D0A5837E453ED629D892@BL1PR12MB5333.namprd12.prod.outlook.com>
+Subject: Re: [PATCH 2/5] clk: nuvoton: Do not enable by default during compile
+ testing
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, =?UTF-8?Q?Emilio_L=C3=B3pez?=
+ <emilio@elopez.com.ar>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev
+References: <20250404-kconfig-defaults-clk-v1-0-4d2df5603332@linaro.org>
+ <20250404-kconfig-defaults-clk-v1-2-4d2df5603332@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -132,42 +145,24 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
  vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
  2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <BL1PR12MB53333E728D0A5837E453ED629D892@BL1PR12MB5333.namprd12.prod.outlook.com>
+In-Reply-To: <20250404-kconfig-defaults-clk-v1-2-4d2df5603332@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06/05/2025 12:59, Agarwal, Nikhil wrote:
->> Changes in v3:
->> - Drop maintainer's update, on Greg's request
->> - Link to v2: https://lore.kernel.org/r/20250430-cdx-clean-v2-0-
->> 7dbfda9364a9@linaro.org
->>
->> Changes in v2:
->> - Patch #1: Add HAS_DMA dependency
->> - Patch #5: New patch, split from previous
->> - Link to v1: https://lore.kernel.org/r/20250425-cdx-clean-v1-0-
->> ea2002dd400d@linaro.org
->>
->> Few simple cleanups for CDX drivers.
->>
->> Best regards,
->> Krzysztof
->>
->> ---
->> Krzysztof Kozlowski (5):
->>       cdx: Enable compile testing
->>       cdx: controller: Simplify with dev_err_probe()
->>       cdx: controller: Drop useless probe success message
->>       cdx: controller: Do not open-code module_platform_driver()
->>       cdx: controller: Drop unneeded driver.pm NULL assignment
->>
+On 04/04/2025 13:56, Krzysztof Kozlowski wrote:
+> Enabling the compile test should not cause automatic enabling of all
+> drivers.  Restrict the default to ARCH also for individual driver, even
+> though its choice is not visible without selecting parent Kconfig
+> symbol, because otherwise selecting parent would select the child during
+> compile testing.
 > 
-> For series
-> Acked-by: Nikhil Agarwal <nikhil.agarwal@amd.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/clk/nuvoton/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-This was sent 20 days ago, got acked and still did not reach linux-next.
-Are there any more comments? What is happening here with cdx and this
-patchset?
+Ping. Any Nuvoton maintainers are going to pick this up?
 
 Best regards,
 Krzysztof
