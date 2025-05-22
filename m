@@ -1,171 +1,255 @@
-Return-Path: <linux-kernel+bounces-659806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104DCAC152E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:02:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB817AC1536
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C21A27EA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:02:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A291BC2D18
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3363C2BEC3A;
-	Thu, 22 May 2025 20:02:32 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530BD1EB5D9;
+	Thu, 22 May 2025 20:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="sZAL/ND0"
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256C63234
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 20:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9972BF3DF
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 20:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747944151; cv=none; b=TJYWG5AiSh3vS+ZD3nXvEVCh4JJADkdcHEwiPIQiqJGGklcfO92AW5tPcBs7yMxrqJw9UFsdpnASXsR1/8bEBGWIbYQ97mvmefQibMkv+SqoaHgre4xcaruXPW5LhTVahy3YhM7DCcC5bzexI3aR2MgupF8YvLuJ8EY0dJ1xupU=
+	t=1747944213; cv=none; b=MZmwgqNmyIjbQTezfCeqEANWQqknOSy4g+P/d8og4ulYR8uKB5GexlJ2b1Fs8Wj8kR/lvc0MF/XZPsV/TWCs6GnwM+fwT+hrS/WeiFHJ0av85U3u4767pCaXUoGFqjugP8zCyJqbrAw/zhIULX2msGfaEdT0e2oF5nRtDCOX+JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747944151; c=relaxed/simple;
-	bh=ZbLz0aigG2CqWlzRsBAceLbkWdDfukRzYBfZELcVX4E=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EqtL9vc5dUVLZEUJoSyLIzTIV3tMuex+MJcV5qlXcaUAjHvb/r7baZhMsR9+6M1jH+RHVAd3E/RnDe8Dvw5C/iUZp3F2PbGVY1c1mXJtwOFbSqjyJSVjzJtlWivod5RFEvTyKmJEQatjuLHjHKxZlvZd1C8D/S8dRgGJ+qHV5Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-86195b64df7so1273321639f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 13:02:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747944149; x=1748548949;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sANU+i1yHQJ8eLkUe/wuKN/p4nzPeX9SqeYtXD4DOf8=;
-        b=Eftz5EUX0BZ0f3Ods4Rvr5oIJfozkLPwWmi/9+5i8yXxWjwtG0aP0yvRRlcDinDtDS
-         rZU2vY1A1IdBJ3QR1+NzziKLMxOW7+3+bWQwGrC6s3h73AFIpu9ZtwGyapP2fYZ/qIY9
-         ldT5bnioZzN7tskRlbYWw77zUvX0mOR38RfLTdN0VxjPtqlHp1dkm9qX3+RktSSifc0E
-         c4xQiolpOAEJc3EbwkUrhodfNsPY3JNhfFzuQ/VovNAd58dsnWqjhE4SQJGy8cWOJtRA
-         WYEMv2o6OlEwTDUJHtNaQ/d7X/12ZrOJa0XeDz5A+iu6tqjR70CLzMZpZcnmJLuerMpM
-         oHrA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2x1KBmdX2Jt0gxEr5qNeLUCqrYlkny1LMiuDWZbHdleDNFgZL5aBC+CCAj7A53ZHIOx7eZi7AGqtbrps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZslKJAO1mVOevdyh91B+vtlL0sZNAJV2vyXyW9/LyEd4yKYhj
-	JzJWFvazjsGTqp1H5n47hCj5Y1WUD8ZOuLuJJJxOPC3IjV4ZAZCokP5SCrDLS5202FQtdkIIYGD
-	qhPvO5x6J62llo0PtEaUB3mVcjy4TM1zpw317LJ/gc1INNyQCp1IciD33VAM=
-X-Google-Smtp-Source: AGHT+IH33bLlzy1+UNZG5udf0fx8+zOBiW1lSbuHHfa2hoADVo9cTA3wpIX3nm4W1KOjIxcEJ+nLic7IHwG1aaTZYcd1sMlUyMna
+	s=arc-20240116; t=1747944213; c=relaxed/simple;
+	bh=JosPJvpRh/NgQ0NpOwqec6dkBGy+XSuFPBiRxmnah2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gsoqZ/mTF4BcuVyvO5U8SZiECBql6BWArcHgqpUrffU7m9WjqjEpFxJ91C/72cHL8I4JYhq3tepXonfZ6+jPbQIg5CjJx7ntRtpjt5biVrl3P2SZ2Jqr5shC8uLva18MXKbEvtXO3IJUtIKtwmKNFNnKQs8A5Ijy0GVv0F96OFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=sZAL/ND0; arc=none smtp.client-ip=188.40.203.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap4-20230908; h=Sender:Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=whPVdRW90Uq7P8jdzr92MHqEADsPnt/XYxyLRyhHXE0=; b=sZAL/ND0xKsx4j/CvSURgabriz
+	UDdFwjcXpD7VjEQa8EhHqdSRXrfdibD2957UYVH29tqn9Ytu9Wwee9XJjS1F2i/5/F2qQZElu5RSg
+	5xhbJucwxWhr528zcwKip07Sj5shF/j7JFapFB6Y/6XWx1zmqj4JO97nSwatGKONgg8LFTKYrJGcs
+	YUIabTGVqpgtZXT+niqL/TxuFBUWPSkB/Sy0QL5KOUAIFIncBKvnZ3AME694wN1MEhvYnWskyieSt
+	+DqwSLv9PrcO7+RC/uJBc5p1mqXlw6Mi1fxkZBOICkUO1r8+K4jxcJsk5sfPTHeiDlqC0Ha0+UDBs
+	e23cwxxg==;
+Received: from [63.135.74.212] (helo=[192.168.1.249])
+	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1uIC8G-000ggc-B2; Thu, 22 May 2025 21:03:13 +0100
+Message-ID: <61ce249d-4c3e-4b49-b29a-3f04865e083b@codethink.co.uk>
+Date: Thu, 22 May 2025 21:03:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:4189:b0:864:4ab4:adf1 with SMTP id
- ca18e2360f4ac-86caf12c204mr46314739f.13.1747944149212; Thu, 22 May 2025
- 13:02:29 -0700 (PDT)
-Date: Thu, 22 May 2025 13:02:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <682f82d5.a70a0220.1765ec.0143.GAE@google.com>
-Subject: [syzbot] [net?] BUG: unable to handle kernel NULL pointer dereference
- in vcc_sendmsg
-From: syzbot <syzbot+e34e5e6b5eddb0014def@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/5] riscv: save the SR_SUM status over switches
+To: Andy Chiu <andybnac@gmail.com>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: Samuel Holland <samuel.holland@sifive.com>, palmer@dabbelt.com,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ jszhang@kernel.org, syzbot+e74b94fe601ab9552d69@syzkaller.appspotmail.com,
+ Cyril Bur <cyrilbur@tenstorrent.com>, aou@eecs.berkeley.edu,
+ paul.walmsley@sifive.com, charlie@rivosinc.com, jrtc27@jrtc27.com
+References: <20250410070526.3160847-1-cyrilbur@tenstorrent.com>
+ <20250410070526.3160847-2-cyrilbur@tenstorrent.com>
+ <d09e80c2-024c-4fe0-b71e-6af88e239ea9@ghiti.fr>
+ <145b6e37-bbb3-47ec-b9dc-3450a7f3da2b@codethink.co.uk>
+ <923f3653-3df6-4587-aef1-c449f0fa3377@sifive.com>
+ <ea862473-8e8d-4d1b-8236-f8ce75d2589f@ghiti.fr>
+ <CAFTtA3NXatSV91_iAqj5+vxnMi14+TFNSET6Pm-UY7YrhspAfw@mail.gmail.com>
+Content-Language: en-GB
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Organization: Codethink Limited.
+In-Reply-To: <CAFTtA3NXatSV91_iAqj5+vxnMi14+TFNSET6Pm-UY7YrhspAfw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Sender: ben.dooks@codethink.co.uk
 
-Hello,
+On 22/05/2025 18:40, Andy Chiu wrote:
+> Hi Samuel and Alex,
+> 
+> On Wed, May 21, 2025 at 10:35 PM Alexandre Ghiti <alex@ghiti.fr> wrote:
+>>
+>> Hi Samuel,
+>>
+>> On 5/21/25 15:38, Samuel Holland wrote:
+>>> Hi Alex, Ben,
+>>>
+>>> On 2025-05-21 3:26 AM, Ben Dooks wrote:
+>>>> On 22/04/2025 11:22, Alexandre Ghiti wrote:
+>>>>> Hi Cyril,
+>>>>>
+>>>>> On 10/04/2025 09:05, Cyril Bur wrote:
+>>>>>> From: Ben Dooks <ben.dooks@codethink.co.uk>
+>>>>>>
+>>>>>> When threads/tasks are switched we need to ensure the old execution's
+>>>>>> SR_SUM state is saved and the new thread has the old SR_SUM state
+>>>>>> restored.
+>>>>>>
+>>>>>> The issue was seen under heavy load especially with the syz-stress tool
+>>>>>> running, with crashes as follows in schedule_tail:
+>>>>>>
+>>>>>> Unable to handle kernel access to user memory without uaccess routines
+>>>>>> at virtual address 000000002749f0d0
+>>>>>> Oops [#1]
+>>>>>> Modules linked in:
+>>>>>> CPU: 1 PID: 4875 Comm: syz-executor.0 Not tainted
+>>>>>> 5.12.0-rc2-syzkaller-00467-g0d7588ab9ef9 #0
+>>>>>> Hardware name: riscv-virtio,qemu (DT)
+>>>>>> epc : schedule_tail+0x72/0xb2 kernel/sched/core.c:4264
+>>>>>>     ra : task_pid_vnr include/linux/sched.h:1421 [inline]
+>>>>>>     ra : schedule_tail+0x70/0xb2 kernel/sched/core.c:4264
+>>>>>> epc : ffffffe00008c8b0 ra : ffffffe00008c8ae sp : ffffffe025d17ec0
+>>>>>>     gp : ffffffe005d25378 tp : ffffffe00f0d0000 t0 : 0000000000000000
+>>>>>>     t1 : 0000000000000001 t2 : 00000000000f4240 s0 : ffffffe025d17ee0
+>>>>>>     s1 : 000000002749f0d0 a0 : 000000000000002a a1 : 0000000000000003
+>>>>>>     a2 : 1ffffffc0cfac500 a3 : ffffffe0000c80cc a4 : 5ae9db91c19bbe00
+>>>>>>     a5 : 0000000000000000 a6 : 0000000000f00000 a7 : ffffffe000082eba
+>>>>>>     s2 : 0000000000040000 s3 : ffffffe00eef96c0 s4 : ffffffe022c77fe0
+>>>>>>     s5 : 0000000000004000 s6 : ffffffe067d74e00 s7 : ffffffe067d74850
+>>>>>>     s8 : ffffffe067d73e18 s9 : ffffffe067d74e00 s10: ffffffe00eef96e8
+>>>>>>     s11: 000000ae6cdf8368 t3 : 5ae9db91c19bbe00 t4 : ffffffc4043cafb2
+>>>>>>     t5 : ffffffc4043cafba t6 : 0000000000040000
+>>>>>> status: 0000000000000120 badaddr: 000000002749f0d0 cause:
+>>>>>> 000000000000000f
+>>>>>> Call Trace:
+>>>>>> [<ffffffe00008c8b0>] schedule_tail+0x72/0xb2 kernel/sched/core.c:4264
+>>>>>> [<ffffffe000005570>] ret_from_exception+0x0/0x14
+>>>>>> Dumping ftrace buffer:
+>>>>>>       (ftrace buffer empty)
+>>>>>> ---[ end trace b5f8f9231dc87dda ]---
+>>>>>>
+>>>>>> The issue comes from the put_user() in schedule_tail
+>>>>>> (kernel/sched/core.c) doing the following:
+>>>>>>
+>>>>>> asmlinkage __visible void schedule_tail(struct task_struct *prev)
+>>>>>> {
+>>>>>> ...
+>>>>>>            if (current->set_child_tid)
+>>>>>>                    put_user(task_pid_vnr(current), current->set_child_tid);
+>>>>>> ...
+>>>>>> }
+>>>>>>
+>>>>>> the put_user() macro causes the code sequence to come out as follows:
+>>>>>>
+>>>>>> 1:    __enable_user_access()
+>>>>>> 2:    reg = task_pid_vnr(current);
+>>>>>> 3:    *current->set_child_tid = reg;
+>>>>>> 4:    __disable_user_access()
+>>>>>>
+>>>>>> The problem is that we may have a sleeping function as argument which
+>>>>>> could clear SR_SUM causing the panic above. This was fixed by
+>>>>>> evaluating the argument of the put_user() macro outside the user-enabled
+>>>>>> section in commit 285a76bb2cf5 ("riscv: evaluate put_user() arg before
+>>>>>> enabling user access")"
+>>>>>>
+>>>>>> In order for riscv to take advantage of unsafe_get/put_XXX() macros and
+>>>>>> to avoid the same issue we had with put_user() and sleeping functions we
+>>>>>> must ensure code flow can go through switch_to() from within a region of
+>>>>>> code with SR_SUM enabled and come back with SR_SUM still enabled. This
+>>>>>> patch addresses the problem allowing future work to enable full use of
+>>>>>> unsafe_get/put_XXX() macros without needing to take a CSR bit flip cost
+>>>>>> on every access. Make switch_to() save and restore SR_SUM.
+>>>>>>
+>>>>>> Reported-by: syzbot+e74b94fe601ab9552d69@syzkaller.appspotmail.com
+>>>>>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+>>>>>> Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
+>>>>>> ---
+>>>>>>     arch/riscv/include/asm/processor.h | 1 +
+>>>>>>     arch/riscv/kernel/asm-offsets.c    | 5 +++++
+>>>>>>     arch/riscv/kernel/entry.S          | 8 ++++++++
+>>>>>>     3 files changed, 14 insertions(+)
+>>>>>>
+>>>>>> diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/ asm/
+>>>>>> processor.h
+>>>>>> index 5f56eb9d114a..58fd11c89fe9 100644
+>>>>>> --- a/arch/riscv/include/asm/processor.h
+>>>>>> +++ b/arch/riscv/include/asm/processor.h
+>>>>>> @@ -103,6 +103,7 @@ struct thread_struct {
+>>>>>>         struct __riscv_d_ext_state fstate;
+>>>>>>         unsigned long bad_cause;
+>>>>>>         unsigned long envcfg;
+>>>>>> +    unsigned long status;
+>>>>>>         u32 riscv_v_flags;
+>>>>>>         u32 vstate_ctrl;
+>>>>>>         struct __riscv_v_ext_state vstate;
+>>>>>> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm- offsets.c
+>>>>>> index 16490755304e..969c65b1fe41 100644
+>>>>>> --- a/arch/riscv/kernel/asm-offsets.c
+>>>>>> +++ b/arch/riscv/kernel/asm-offsets.c
+>>>>>> @@ -34,6 +34,7 @@ void asm_offsets(void)
+>>>>>>         OFFSET(TASK_THREAD_S9, task_struct, thread.s[9]);
+>>>>>>         OFFSET(TASK_THREAD_S10, task_struct, thread.s[10]);
+>>>>>>         OFFSET(TASK_THREAD_S11, task_struct, thread.s[11]);
+>>>>>> +    OFFSET(TASK_THREAD_STATUS, task_struct, thread.status);
+>>>>>>         OFFSET(TASK_TI_CPU, task_struct, thread_info.cpu);
+>>>>>>         OFFSET(TASK_TI_PREEMPT_COUNT, task_struct, thread_info.preempt_count);
+>>>>>> @@ -346,6 +347,10 @@ void asm_offsets(void)
+>>>>>>               offsetof(struct task_struct, thread.s[11])
+>>>>>>             - offsetof(struct task_struct, thread.ra)
+>>>>>>         );
+>>>>>> +    DEFINE(TASK_THREAD_STATUS_RA,
+>>>>>> +          offsetof(struct task_struct, thread.status)
+>>>>>> +        - offsetof(struct task_struct, thread.ra)
+>>>>>> +    );
+>>>>>>         DEFINE(TASK_THREAD_F0_F0,
+>>>>>>               offsetof(struct task_struct, thread.fstate.f[0])
+>>>>>> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+>>>>>> index 33a5a9f2a0d4..00bd0de9faa2 100644
+>>>>>> --- a/arch/riscv/kernel/entry.S
+>>>>>> +++ b/arch/riscv/kernel/entry.S
+>>>>>> @@ -397,9 +397,17 @@ SYM_FUNC_START(__switch_to)
+>>>>>>         REG_S s9,  TASK_THREAD_S9_RA(a3)
+>>>>>>         REG_S s10, TASK_THREAD_S10_RA(a3)
+>>>>>>         REG_S s11, TASK_THREAD_S11_RA(a3)
+>>>>>> +
+>>>>>> +    /* save the user space access flag */
+>>>>>> +    li    s0, SR_SUM
+>>>>>
+>>>>> This is not needed anymore ^ but I'll remove it when merging your patchset.
+>>>>>
+>>>> Could you be more specific about what "this" is?
+>>>>
+>>>> If we don't save/restore the SR_SUM bit I think our old friend
+>>>> the sched_tail bug will just return.
+>>> I think Alex is saying the `li` instruction above is not needed because s0 is
+>>> unused. But instead I think there is an `and` instruction missing here. The
+>>> patch as merged ORs the entirety of the old sstatus with the new sstatus, not
+>>> just the SUM bit, which seems extremely dangerous.
+>>
+> 
+> Thanks for noticing this. I've also spent a bit of time pondering...
+> 
+> If this were an "and" instruction, I think we should rename the struct
+> to "status_sum" to prevent confusions, as it only holds the SUM bit
+> now. Or maybe we could create a bitfield "any only touch "and
+> save/restore" the specified bit.
+> 
+> Thanks,
+> Andy
 
-syzbot found the following issue on:
+So, is it worth just saving/restoring all the flags in the SSTATUS
+or do we need to have some sort of mask (and if so, are there other
+flags we should make sure get saved?)
 
-HEAD commit:    5723cc3450bc Merge tag 'dmaengine-fix-6.15' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13b6df68580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c3f0e807ec5d1268
-dashboard link: https://syzkaller.appspot.com/bug?extid=e34e5e6b5eddb0014def
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+I don't have time to setup a test system at the moment and I am out
+of office until Tuesday 27th anyway with limited email access to my
+codethink emails.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-5723cc34.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f3e578ec2139/vmlinux-5723cc34.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8576c2d15d72/bzImage-5723cc34.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e34e5e6b5eddb0014def@syzkaller.appspotmail.com
-
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-#PF: supervisor instruction fetch in kernel mode
-#PF: error_code(0x0010) - not-present page
-PGD 0 P4D 0 
-Oops: Oops: 0010 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5324 Comm: syz.0.0 Not tainted 6.15.0-rc6-syzkaller-00346-g5723cc3450bc #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc9000d3cf778 EFLAGS: 00010246
-RAX: 1ffffffff1910dd1 RBX: 00000000000000c0 RCX: dffffc0000000000
-RDX: ffffc9000dc82000 RSI: ffff88803e4c4640 RDI: ffff888052cd0000
-RBP: ffffc9000d3cf8d0 R08: ffff888052c9143f R09: 1ffff1100a592287
-R10: dffffc0000000000 R11: 0000000000000000 R12: 1ffff92001a79f00
-R13: ffff888052cd0000 R14: ffff88803e4c4640 R15: ffffffff8c886e88
-FS:  00007fbc762566c0(0000) GS:ffff88808d6c2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 0000000041f1b000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- vcc_sendmsg+0xa10/0xc50 net/atm/common.c:644
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:727
- ____sys_sendmsg+0x52d/0x830 net/socket.c:2566
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
- __sys_sendmmsg+0x227/0x430 net/socket.c:2709
- __do_sys_sendmmsg net/socket.c:2736 [inline]
- __se_sys_sendmmsg net/socket.c:2733 [inline]
- __x64_sys_sendmmsg+0xa0/0xc0 net/socket.c:2733
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbc7538e969
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fbc76256038 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
-RAX: ffffffffffffffda RBX: 00007fbc755b5fa0 RCX: 00007fbc7538e969
-RDX: 0000000000000001 RSI: 0000200000001f40 RDI: 0000000000000004
-RBP: 00007fbc75410ab1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000004008801 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fbc755b5fa0 R15: 00007fffd7d24cf8
- </TASK>
-Modules linked in:
-CR2: 0000000000000000
----[ end trace 0000000000000000 ]---
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc9000d3cf778 EFLAGS: 00010246
-RAX: 1ffffffff1910dd1 RBX: 00000000000000c0 RCX: dffffc0000000000
-RDX: ffffc9000dc82000 RSI: ffff88803e4c4640 RDI: ffff888052cd0000
-RBP: ffffc9000d3cf8d0 R08: ffff888052c9143f R09: 1ffff1100a592287
-R10: dffffc0000000000 R11: 0000000000000000 R12: 1ffff92001a79f00
-R13: ffff888052cd0000 R14: ffff88803e4c4640 R15: ffffffff8c886e88
-FS:  00007fbc762566c0(0000) GS:ffff88808d6c2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 0000000041f1b000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+https://www.codethink.co.uk/privacy.html
 
