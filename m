@@ -1,381 +1,246 @@
-Return-Path: <linux-kernel+bounces-659846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6D7AC15A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:52:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1B58AC15AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8052DA26027
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:52:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132991BC4438
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C5D24C66A;
-	Thu, 22 May 2025 20:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13A024EAB9;
+	Thu, 22 May 2025 20:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E6BEGq+f"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T8PlSSkx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3A424BC1C
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 20:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747947137; cv=none; b=nBMMkCEWfBUOCfm24HYpilrZslqDPjZ/VeWt8AmBIv7z6HjtZPmK/8yIeSvRZgksdp3hrgTWDCd4GTRyYQCsRJ3clWtCfHET8FF9YHBCu00Oekg66XB26Tq/XL7nEJLJt8j+5wMsEGWY+U0xXt+qQyaNENT2eUh59SSySlTKG/g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747947137; c=relaxed/simple;
-	bh=fTyOrHsaj9R+TJydwhIoSj0lr/PnJ4ql3kdA0+P9sT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q7AwDHfVwi9gN2j7Yci+oOUafW9paLXeMgwJGyR/amk82JFPmQfgt8DorD5V+5BOh6gdoqwXJAXzP/3487k+eQ6XPI/Ms6Jkl3rrWZv0wDHibJ4nEm4Dg8DphpyVBSQzv1CHTZMewfhDrSc7cAxOxoGPadn6vRD1uGPOiQOn/m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E6BEGq+f; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747947133;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EGTLhJpx3F9M/hH1CASqtNzMI3BHbenDsF+z7qqWDjM=;
-	b=E6BEGq+fN+33znvRF0qjSiHvVJKTWSyb7XDqykqXORjYXE4PDVBONxelqqV3X5I9DAJKny
-	6LV/jeF6fU41PU5Yxbd3jo1bkhjhFY4YKrUZEL6zxQ8blt/30CtDfIlrC2tcyHwCA+owRi
-	0O0cXArpWpnnszSIntXwToKTaWIVgoA=
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
- [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-194-rs5s5JEtN5OEccdfEI-kIw-1; Thu, 22 May 2025 16:52:12 -0400
-X-MC-Unique: rs5s5JEtN5OEccdfEI-kIw-1
-X-Mimecast-MFC-AGG-ID: rs5s5JEtN5OEccdfEI-kIw_1747947131
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-85e7be4c906so103829739f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 13:52:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747947131; x=1748551931;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EGTLhJpx3F9M/hH1CASqtNzMI3BHbenDsF+z7qqWDjM=;
-        b=hOnKddiJhGJoDZ4K69o+fdH5RGtd1F2+k5kv6y2Egg4P9RUKEy0WnVSUoVOVQENSno
-         ntddOjXjtjNj7Gmn248fQwhU88fDZIIo8LgRkH1IutHx/Tcs2m96qJihsyZqYbG2HdY/
-         ts1wuS8exAzq98a70LPVwC5ylyT98IvA8gNHoO3K7wk2PadvMMEP7kntqPMGiGB/m4lH
-         GRuLh4nE/HEG7P/SIHaFJkzjqb7rhXGD2VQrUMLbfZo9zqv7x+eht7vtgJqnOAv1onTm
-         ljvnpotQCfQK2v1JECBNfZLQ77egHHesxYdS3CClzLqsnyaxrCagR3wVMU87GJawbbFk
-         cQLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLTzP6wwfkYoEoaMcLOPjZQi4ieovpaAtbmXjtA2rVYTYCjv20QkM5fnCBIkwCE/sQvv4g53yOKW6aOj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbzJ9TJpwZ9qOi5dTU9C3An8dDyqzsBnciyNMu5IjksR7fE/bW
-	hnu3TXn8092b2klMNKiLWC7QJdBg7IuOQbUt8sCt5EAirEDkJfaQwFTXbkqnzhoTg6akcJUd/VS
-	Sacj8nwEPbVhS3Bw+vpbl4qfPnlefPRHY0eJL8V7sudfhTBBf2N5cbxM9sDayGzkoFQ==
-X-Gm-Gg: ASbGncscQzKU7l+piPjV9Ynr4nrQuHrJFL4BwTO58wkKH+iq/55lyrEzAbS0T3pbUGV
-	7Iw1nKUgG0lNRPghRfCmaOR22uOEV+SLhQ0GLc2OSW6rXg/fEVysN8QxpMMtqC3zmGd8Dwn5Gtw
-	xGSxpt9iToZZySrKDedXKwWBLE1QR8FmfycIo2uRQ9rl4gzXJk41eGS0WwIHPpP726Dov2O8q8a
-	yguW4zJIJm+7ovDjsE0wTb2quWmeCvVa2e11AvTJJSHFMGWFGQEzVSrHRZLe/QeWB1hq6py1rof
-	iCw52/63qfv7Bnc=
-X-Received: by 2002:a05:6602:160d:b0:867:ddd:bc54 with SMTP id ca18e2360f4ac-86a232cc36cmr868072939f.5.1747947131501;
-        Thu, 22 May 2025 13:52:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFtqLwL4EEjWZoWfka1PUDhJ6Av3HiQxMuLS5exKoiu8NhmzKLHGUSY5WGyjCe+HoDAstPLNg==
-X-Received: by 2002:a05:6602:160d:b0:867:ddd:bc54 with SMTP id ca18e2360f4ac-86a232cc36cmr868072039f.5.1747947131065;
-        Thu, 22 May 2025 13:52:11 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fbcc48c897sm3331713173.98.2025.05.22.13.52.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 13:52:10 -0700 (PDT)
-Date: Thu, 22 May 2025 14:52:07 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: lizhe.67@bytedance.com
-Cc: david@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- muchun.song@linux.dev, peterx@redhat.com
-Subject: Re: [PATCH v4] vfio/type1: optimize vfio_pin_pages_remote() for
- large folio
-Message-ID: <20250522145207.01734386.alex.williamson@redhat.com>
-In-Reply-To: <20250522082524.75076-1-lizhe.67@bytedance.com>
-References: <81d73c4c-28c4-4fa0-bc71-aef6429e2c31@redhat.com>
-	<20250522082524.75076-1-lizhe.67@bytedance.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282D024E4A8;
+	Thu, 22 May 2025 20:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747947148; cv=fail; b=emYMMOlIaQeovfsY9uQ8hHSk/otTetGijzESthoPyUl8dg3+DLY1kbXRBabCdPbzSlHRFM0UAHtIIbK0qpNvyj0zAgW3iYklrHMtg27l70pEMsRNKz0JkjPPKtKDUTwrrfe5jlUfy3BusKHahCRUZ82OFtPu1wIIsiuFoJ0PEzY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747947148; c=relaxed/simple;
+	bh=gjNZdPxamPNFg6fG7ykM/LL8sTwQMlhTQF9uHkL0onM=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pzVFa/6KmyKUrBDsL3/juzelY1ak09CN2tF2GpaReyoVJqMgP27EjCiAecfkXqdZTPx9X65idKiu7mFjafGGAhhsudcrl/iRMg2UvhFpq6TCabYbZ5s2ik5RoOVB7zBS6w9qbsTmFZwEE6mm5sE/Pa8Cf9xgm0JWXui/yipWBuU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T8PlSSkx; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747947147; x=1779483147;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=gjNZdPxamPNFg6fG7ykM/LL8sTwQMlhTQF9uHkL0onM=;
+  b=T8PlSSkxLX2cL26YZ7PrrX4LTRPSrN8NF+3tzzTH4TB6TMiBn3Wjjs6s
+   ji4JySjIlI8puTstUsYZvKXN5eOFVGDWhnDEPCKBqpNCEoJxGWBQwbUij
+   BtvxOIHI0eME/urkNujX5pn5GXcEsar1P+53Puqy9IbIHUhCsGCa8bC/R
+   z+Gq1XMcyTcrMthHOX9qGDRoMCWoVayvtqlkF38qp0xGH+lVTeDE1saQ+
+   negzvY6EFVwQXGGDXnfCW+rik9mJpoZwCYp/dF6wiTRK2JqsYDyFYNJjY
+   5VCyLEbcf3vgBndJYR7Lb6ZJZxPSd7EFrYFRvSzt1LINXda65PAmRK/ia
+   Q==;
+X-CSE-ConnectionGUID: Hhf9haWARaGarvCBNdKYig==
+X-CSE-MsgGUID: uURuaQ4XSKalN7sSTmoBmQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="75392482"
+X-IronPort-AV: E=Sophos;i="6.15,306,1739865600"; 
+   d="scan'208";a="75392482"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 13:52:26 -0700
+X-CSE-ConnectionGUID: qJWRj+szQ6KZke+ycM2L3w==
+X-CSE-MsgGUID: iG/Z3o9lTMW/A0dDXpDHfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,306,1739865600"; 
+   d="scan'208";a="171654670"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 13:52:26 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 22 May 2025 13:52:25 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Thu, 22 May 2025 13:52:25 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.88)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.55; Thu, 22 May 2025 13:52:25 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pDkK8e6KZKKZKavjXeHYuOA9pCHnZK0Dr61uTwXElSF1pcl6oNaRfTdNY0mb4h0GnLU+oDXURRlNh00JSHAs7DFUZguXkyHwJOucabzxDTqiRUYwjAXW267MTkYUoeC0UjUnrHVyE4h8LAdStg7PfyMYk1LtoFl9MrrymKlM8slS/jJtpRoQ+nS15qU4emHEGLlSFae91L1/mkZfBdknOqPKTq8SBaTIBZttPtWM1FXN2u7dY6g3/SrFNMVVPohocXDn/EpRZVle4/G5CHlyyOh8+tEUs7FCjL70ktVfOkjk07mnFwZgdDK55zKti+YyMu+boG8vfqgE+z8MW/L+9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Xhie54xaWpIckdAOizOhD3ITRRoK0hhNYlYlMQkN3Qk=;
+ b=CziyF91i58Ymgd4yx/KvHaQPQh4PH1YYPGlRmEISAlzlgF5XZpXIqS6Y6bGC9Z1X+Gt0vu1vEQs8z7FlLvDfaLjYnCpj0pZI1q1G2aryKZYKFw3QMRh+mY1mfSbFhfFQoyTdK3hLTSAoCKsbkaAtR0j2VMZgDB5OXTBEZrXhfEf/aG2Bld0C9d1NtTSVN+gx0rMzr30uzJ20bzw/kHdZJIniQv4UJy7r3gdvrSTvFfvfXOGa6LpWnvyms+fnMwlDJYOi4SQFSZ54ApR1RlkUuz8AfNhAMNADVrKC4Ns005jjuRpkJ/Qaz/tbIuUpchwU8m6kPdFHdMpIdwjn0XH46A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by CY8PR11MB7396.namprd11.prod.outlook.com (2603:10b6:930:87::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.33; Thu, 22 May
+ 2025 20:52:22 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.8746.030; Thu, 22 May 2025
+ 20:52:22 +0000
+Message-ID: <1fc88c6f-65e6-46fd-b1b0-1efbdb6c5b05@intel.com>
+Date: Thu, 22 May 2025 13:52:19 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 03/27] x86/resctrl: Consolidate monitoring related
+ data from rdt_resource
+To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <tony.luck@intel.com>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>
+CC: <james.morse@arm.com>, <dave.martin@arm.com>, <fenghuay@nvidia.com>,
+	<x86@kernel.org>, <hpa@zytor.com>, <paulmck@kernel.org>,
+	<akpm@linux-foundation.org>, <thuth@redhat.com>, <rostedt@goodmis.org>,
+	<ardb@kernel.org>, <gregkh@linuxfoundation.org>,
+	<daniel.sneddon@linux.intel.com>, <jpoimboe@kernel.org>,
+	<alexandre.chartre@oracle.com>, <pawan.kumar.gupta@linux.intel.com>,
+	<thomas.lendacky@amd.com>, <perry.yuan@amd.com>, <seanjc@google.com>,
+	<kai.huang@intel.com>, <xiaoyao.li@intel.com>, <kan.liang@linux.intel.com>,
+	<xin3.li@intel.com>, <ebiggers@google.com>, <xin@zytor.com>,
+	<sohil.mehta@intel.com>, <andrew.cooper3@citrix.com>,
+	<mario.limonciello@amd.com>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <peternewman@google.com>,
+	<maciej.wieczor-retman@intel.com>, <eranian@google.com>,
+	<Xiaojian.Du@amd.com>, <gautham.shenoy@amd.com>
+References: <cover.1747349530.git.babu.moger@amd.com>
+ <cb8425c73f57280b0b4f22e089b2912eede42f7a.1747349530.git.babu.moger@amd.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <cb8425c73f57280b0b4f22e089b2912eede42f7a.1747349530.git.babu.moger@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0235.namprd03.prod.outlook.com
+ (2603:10b6:a03:39f::30) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CY8PR11MB7396:EE_
+X-MS-Office365-Filtering-Correlation-Id: f2a4e765-d0f2-4ecf-946f-08dd99728c7b
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZzRhcGdEdEc2MHhSQlljUGlVek5kdDVUR1Fad293b29IZWIxbXhwaUFTM2kv?=
+ =?utf-8?B?c05tM1I5Ymd3UjRrS29oMU15U3Nkem5wZFl3SFArbTd3NW91UW1mazAxTDR1?=
+ =?utf-8?B?MkZpUFU5UmlBR3RXbFRhSlBKbERRWTFRWEVBUDZ0WTg4MzJWcTRVTVJtcmVY?=
+ =?utf-8?B?S3pMTUhyem83SDBNaWxCeVN6THRCSS81STVlUnBEUk5mUTlmckxPVFVvZGhp?=
+ =?utf-8?B?aTJmcUFiV0ZMbmZkbGd1RTBUdk9uS05aYmpvWTkyN1dJaHl3aHI1YzRHVXlQ?=
+ =?utf-8?B?NnozWExUeTJQY3gxL1IxNEVOYnVvRGp4ZEQ4OVNKTy96aExuNXZDTC9QMnIx?=
+ =?utf-8?B?RnVqeS9nb0xvQnIzNFBlaDllRVJid0dKeStLL2pEak52N1NhcXRQd0RwZ1Q2?=
+ =?utf-8?B?eWEvZmRXb2xCc21sdmIrN0I5NDV3cXVMYjlDRmpBZGxPa3hVTUFFcTBQNmJS?=
+ =?utf-8?B?Z2hudTZ1QXFkbzBieFlvWm9qempmeGVmQzU0dVVJeGFEUms3c3pmN1FPVi9t?=
+ =?utf-8?B?UjkzbmcvZlF3N25sSGU2eUJXaUEyaTdWSlpNT1VlTnorbmFEbG4xbm9TMEwv?=
+ =?utf-8?B?RXZGWllDaEkvc1dQMGMvcCtiakUwRW8wVHVrbWlIR3c5cWsxcmNlSFlUSXY2?=
+ =?utf-8?B?VzAxakQ4c3N2QVBLTE5uOWN3L0o5bit0KzNPbG02T2hMNTdaQnlwTExQVUQ4?=
+ =?utf-8?B?aHlTL2RkRXcrMkxhN3BXWDhhSk41TC9zQzZweGtGakRFNTV2RG1kL1Z0emV6?=
+ =?utf-8?B?eVZPVlU4a1FMTDhrTDQ0NzB6N2RFWGFUS3Z5UlFrTnY0OStvdC9tUS9hVEpV?=
+ =?utf-8?B?Sy9IQlBVdVJDdlBMazNjYlVlV01mZVh6aVBxeTZFd29uSHU2OGNVdyt1ZC9R?=
+ =?utf-8?B?WEx2aE5xc1plNUtpZkZNdlRHdGI5UGZiVHpLNXdVWjY0SXRBTG5Tc3gwck43?=
+ =?utf-8?B?RzhoWmVaR1BNNEpxdmJWK09DQ2U0bjNPaGpSQnlOU0FSRXFrdG1vSUVoUGgy?=
+ =?utf-8?B?NTVVRjFHaGtHdHZFd3dHZUNTREF3clVvQ2w0aUIySjZuSmZxd2pJc29ma0R6?=
+ =?utf-8?B?K1M3aWxZemxZb1BBNUZCV3o2bDZhcTBoWUNBd1VLdjg4N1hRSXNrL1IvdlF2?=
+ =?utf-8?B?eWZBY0R1TzM0QkxMbDRRaUJ5M2ZXQU9iZGVvdVNQSkd5OWZmVTNoSEFoSm9t?=
+ =?utf-8?B?b3I0eUNrK1Z2M3c5TDRTVFJJbFRkMVA2MWcxWHdTTEJQZFlaNUtrMEJ5THZq?=
+ =?utf-8?B?S3RCdVk5MGVVa3ZFaEpaaWVIRk84akJLTHFZSkQvQ1FmSEYwKzY3eWpEWnJ3?=
+ =?utf-8?B?RkhTeVZpZDZtbDBOUUcvWEViZ0w1RVlCMEdIZHdQSUNlbWtuczJhRE93cGZJ?=
+ =?utf-8?B?RHdBYnRoOHNiTzJJNkV2di8zeG4vTGNROHZVbVdobDhmYi9xazBhSVdMZHRs?=
+ =?utf-8?B?bzNtSkxJNndSczlTVFdUNlNzVzFmVnNNSFVOcGVNNEJ4VUR3Wk5xaVdSS1B5?=
+ =?utf-8?B?czhFbEpBWElpZklJbDFreXFFN0RXNTJTeFoyWmhHYUF4ay9mVFB3d2ljWjR0?=
+ =?utf-8?B?N3lmQUlJMlFpYTY3bksrWWpGYzQ0QS9HK0V5VHErVEFYVmFaN0w2M3FTMjVi?=
+ =?utf-8?B?d1RhckpKSmhudGdFWU1pR3FHamNDWHg0TFZmcnF0OVJHb01nZ2ZEbEdWQWRU?=
+ =?utf-8?B?YXdQZU53OXdMbWVtVFZSUmdwYTAxTzN5OE5GMHRWWitqNE5pQmtJVXNjNlgv?=
+ =?utf-8?B?K3ZnTllFdHlaTjdNcUU2V2lSZEFZV1FidjF4S01uYzJkZjlDRnJFQTZvZjJU?=
+ =?utf-8?B?UWo2dHdreEpvcTZ3MjFWbEpvUXZrRTI0SXIrdktxY2taYzNNZy8wbUFMOWp0?=
+ =?utf-8?B?Z0ljdU5QQUNQRDFsS0loMUlZWC93dHhjZE5hQlZQdlZZUXVZSzVISHIwTEVj?=
+ =?utf-8?Q?z+kXp7PbFno=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YThaUElFanRKQ1ZKVTlwc3J3dXZTVnUxcW56YzZMYy8yMXJaeUI0K3lHVGNQ?=
+ =?utf-8?B?Z2RPd1o5cGsxSjJkNUJJaXplSDE5Q2pDOU0rSW5lblhjZEFzSC9XMGFQdlpK?=
+ =?utf-8?B?amJNU2dFQllMcjBRdVh3QisrdG12VXE5MGo4Sm1XTWN3N0lhSGNzOVMwdDhv?=
+ =?utf-8?B?QWtVS1kvc2M4SURvcmhVK0RjZEdKdTBuM0FBckx3SXIzNVZWVHFDZjdJWERG?=
+ =?utf-8?B?WlhDeTZoVVVZSXQyUTc0VDRZUnEvYUZuc0lDcVRwNS9uck55V3lQaklTeGdI?=
+ =?utf-8?B?bTFnRHNEenVzMW0wRlowbitkVXBleHltZS9ROFRVbCt6aXRvSUFCTnhWbVA3?=
+ =?utf-8?B?YlhJZklRYkRVN3B4S1lKOVU0SHJzNlVBSmpzd2JGNmtHWkJ5ZmJYOEpLTUY2?=
+ =?utf-8?B?T0kvSnM0eWFsTGI0N3NnWXUvOUpkV3o5MHYvWTFMeVMybUlBYkViVnQwN082?=
+ =?utf-8?B?WGczT080amVGYTNuNXZ6eE9aeFA5QkhIaU5EQy91YVlYenQ4VjlpczduZG93?=
+ =?utf-8?B?WnRPdWdUeCtJS1FZdjdnblQxVUN2YVFGL2VBbmV5bWphM3R0UHhvTHdLOXQ4?=
+ =?utf-8?B?R3B3UGhWRUxCVDJSeU44eVVFK3VpMWdKWTVhcUxTQzVhRjBBZit4ZWR3bE5q?=
+ =?utf-8?B?OE1wYjRhd3FZaFM4ejZvakN3VkJ1TGhKMDFRTmVQdVpzRVh5Vy9pTE9VMVR6?=
+ =?utf-8?B?aTFzQnNZZ1YyRXlNYXdBbXo0ekc0Sm9rRnhZTGg1TFlJcDhIL0NuM210T3Bz?=
+ =?utf-8?B?b3JsZm9hU3NtSVUvVloxd0h4NU0xYS9tMVdtakFQMHVoanZKYnpTbUpjN0Mv?=
+ =?utf-8?B?N1RtZys5QStJcW1LZU1wdUxOUWhOTVl0dkFxSzcyQU9CZjZpR3ZVdUpNNUdO?=
+ =?utf-8?B?MzlabFl2S2hEMnErM0dEQWdqdDl2dWdKa2w1Mnd0dlhTUmwwWWNkakY0Syt6?=
+ =?utf-8?B?SnkzK2VWZjVNeUVZR3UybVYyd1BCQjkzOStrVFhCamVhbWp3RzBVV3hKVXZV?=
+ =?utf-8?B?SDI1TmhnWFJRaUdSSTVnRmJ3eUVnOEZEVmhUTk1aa1YyM3kzcCtvOTZXVTcr?=
+ =?utf-8?B?SFkyc21mV1Z6cVVWWUl4ZW9Pb2JybUpmN0I4OGV3WTBBTWJvTzhLVGlONXMv?=
+ =?utf-8?B?ek1YYVh2QThYOEdSa05mQ01IckJPYUxwM3g4ZTRyZDVEaVJ4K3o1bnFNcVo1?=
+ =?utf-8?B?eWVydy83QUJueUdQVmFxbnEzMVJGa1RiWWZ0R1VxVGZNUFg4ZGNOd3FoZW5S?=
+ =?utf-8?B?Q3FDWGRHbzg1TlV5aGJ4TmVIbFdYRXZHSUhKMVh6NEVHYTJDYnBIVUE2K2R1?=
+ =?utf-8?B?SGpuNUE5WVVwSDZSZC9HdVVHdUtNNEtDVmlqZURUbnV2Z3J6ODFjOHptTm1R?=
+ =?utf-8?B?OE5qWnRNRWNnVnc5SDRlZnE0M2NUbmpwR1BweHVVU3ZsK0tJMEpRSnlraW95?=
+ =?utf-8?B?R3A5T0I2WXZLcHluTmlod1p2MXp4T1JybGlObXhrSngzTVpaazVZRld3Vms4?=
+ =?utf-8?B?TzZiYmEvWjhmMyt4dndaT0lGUjVVdUFGc0QycEg2eW5KUjBjOERDWHdwRW8y?=
+ =?utf-8?B?RFFvdytxaDdvZS84TU9ock1NQjRuclhqbTBZajVTUjJ1TnBmQno5MmQwSjNr?=
+ =?utf-8?B?VDlkWTIxVW00TExvUjg2ZERZNVpSRldIbWxiZ3RaQmY1SEZDV0ZiYVBpT1dv?=
+ =?utf-8?B?QXBUbFVFd2JYYWI4T2dDZ0grSUM2SGMvUkNzU0VNWExJZzd0Slkva2NOQ1B1?=
+ =?utf-8?B?SHc1RWJDZVBHcnNXYy81Z1lQY1JuSHZjSDRtQjA4aTFLd2hOVHNHN0V4N2RV?=
+ =?utf-8?B?L1ZHcWVBOGo0djRoekszUTI0dmhuS00xYkRCTHUvZUpsQ0wwb09rMzRWU1Vr?=
+ =?utf-8?B?Tys0eVhsWUV4R1E2aWpia3NQcTJCdngyS0ROb2ZiYTcvVkxNWCtrL1VtS3dX?=
+ =?utf-8?B?eUpqenRSZjJ3K0pWNS9IZnFHQzRNYU0ybExoL3VON3czMFVhWmg2UmNVaG9U?=
+ =?utf-8?B?R1pEMXpweHo5ZFd6ZUVwWUFYWlZGQ3M3cGo0SG5SQnV2cGZpWERieGsxWS9J?=
+ =?utf-8?B?emdSaUJoRjlzbk1GZjdDZDN4ZTgyZGM0Q1pKVEMrRExFZlFadzFEenpTZCsy?=
+ =?utf-8?B?MklWcVJ0RHQ5ejJyNW90eFhhRFVDSVdIZlV3dWZMd3JEU3hIdjRUWWhJNTBR?=
+ =?utf-8?B?eHc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2a4e765-d0f2-4ecf-946f-08dd99728c7b
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2025 20:52:22.0700
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: waJQ83DyARDfYvMTpBd4RC3HDNXXYQrSqSOCMMcZxM7hN4fJrujkMQxuKBir2uCR+f3pd5alo8xBY9/C0uVsELbX24z9HK5LhM+vngCOCPo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7396
+X-OriginatorOrg: intel.com
 
-On Thu, 22 May 2025 16:25:24 +0800
-lizhe.67@bytedance.com wrote:
+Hi Babu,
 
-> On Thu, 22 May 2025 09:22:50 +0200, david@redhat.com wrote:
-> 
-> >On 22.05.25 05:49, lizhe.67@bytedance.com wrote:  
-> >> On Wed, 21 May 2025 13:17:11 -0600, alex.williamson@redhat.com wrote:
-> >>   
-> >>>> From: Li Zhe <lizhe.67@bytedance.com>
-> >>>>
-> >>>> When vfio_pin_pages_remote() is called with a range of addresses that
-> >>>> includes large folios, the function currently performs individual
-> >>>> statistics counting operations for each page. This can lead to significant
-> >>>> performance overheads, especially when dealing with large ranges of pages.
-> >>>>
-> >>>> This patch optimize this process by batching the statistics counting
-> >>>> operations.
-> >>>>
-> >>>> The performance test results for completing the 8G VFIO IOMMU DMA mapping,
-> >>>> obtained through trace-cmd, are as follows. In this case, the 8G virtual
-> >>>> address space has been mapped to physical memory using hugetlbfs with
-> >>>> pagesize=2M.
-> >>>>
-> >>>> Before this patch:
-> >>>> funcgraph_entry:      # 33813.703 us |  vfio_pin_map_dma();
-> >>>>
-> >>>> After this patch:
-> >>>> funcgraph_entry:      # 16071.378 us |  vfio_pin_map_dma();
-> >>>>
-> >>>> Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
-> >>>> Co-developed-by: Alex Williamson <alex.williamson@redhat.com>
-> >>>> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-> >>>> ---  
-> >>>
-> >>> Given the discussion on v3, this is currently a Nak.  Follow-up in that
-> >>> thread if there are further ideas how to salvage this.  Thanks,  
-> >> 
-> >> How about considering the solution David mentioned to check whether the
-> >> pages or PFNs are actually consecutive?
-> >> 
-> >> I have conducted a preliminary attempt, and the performance testing
-> >> revealed that the time consumption is approximately 18,000 microseconds.
-> >> Compared to the previous 33,000 microseconds, this also represents a
-> >> significant improvement.
-> >> 
-> >> The modification is quite straightforward. The code below reflects the
-> >> changes I have made based on this patch.
-> >> 
-> >> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> >> index bd46ed9361fe..1cc1f76d4020 100644
-> >> --- a/drivers/vfio/vfio_iommu_type1.c
-> >> +++ b/drivers/vfio/vfio_iommu_type1.c
-> >> @@ -627,6 +627,19 @@ static long vaddr_get_pfns(struct mm_struct *mm, unsigned long vaddr,
-> >>          return ret;
-> >>   }
-> >>   
-> >> +static inline long continuous_page_num(struct vfio_batch *batch, long npage)
-> >> +{
-> >> +       long i;
-> >> +       unsigned long next_pfn = page_to_pfn(batch->pages[batch->offset]) + 1;
-> >> +
-> >> +       for (i = 1; i < npage; ++i) {
-> >> +               if (page_to_pfn(batch->pages[batch->offset + i]) != next_pfn)
-> >> +                       break;
-> >> +               next_pfn++;
-> >> +       }
-> >> +       return i;
-> >> +}  
-> >
-> >
-> >What might be faster is obtaining the folio, and then calculating the 
-> >next expected page pointer, comparing whether the page pointers match.
-> >
-> >Essentially, using folio_page() to calculate the expected next page.
-> >
-> >nth_page() is a simple pointer arithmetic with CONFIG_SPARSEMEM_VMEMMAP, 
-> >so that might be rather fast.
-> >
-> >
-> >So we'd obtain
-> >
-> >start_idx = folio_idx(folio, batch->pages[batch->offset]);  
-> 
-> Do you mean using folio_page_idx()?
-> 
-> >and then check for
-> >
-> >batch->pages[batch->offset + i] == folio_page(folio, start_idx + i)  
-> 
-> Thank you for your reminder. This is indeed a better solution.
-> The updated code might look like this:
-> 
-> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> index bd46ed9361fe..f9a11b1d8433 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -627,6 +627,20 @@ static long vaddr_get_pfns(struct mm_struct *mm, unsigned long vaddr,
->         return ret;
->  }
+On 5/15/25 3:51 PM, Babu Moger wrote:
+
+> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+> index 9ba771f2ddea..2a8fa454d3e6 100644
+> --- a/include/linux/resctrl.h
+> +++ b/include/linux/resctrl.h
+> @@ -255,40 +255,48 @@ enum resctrl_schema_fmt {
+>  	RESCTRL_SCHEMA_RANGE,
+>  };
 >  
-> +static inline long continuous_pages_num(struct folio *folio,
-> +               struct vfio_batch *batch, long npage)
+> +/**
+> + * struct resctrl_mon - Monitoring related data of a resctrl resource
+> + * @num_rmid:		Number of RMIDs available
+> + * @mbm_cfg_mask:	Bandwidth sources that can be tracked when bandwidth
+> + *			monitoring events can be configured.
+> + * @evt_list:		List of monitoring events
+> + */
 
-Note this becomes long enough that we should just let the compiler
-decide whether to inline or not.
+Nit: this new comment portion can start with a clean slate by all sentences
+having good structure by starting with upper case and ending with period.
 
-> +{
-> +       long i;
-> +       unsigned long start_idx =
-> +                       folio_page_idx(folio, batch->pages[batch->offset]);
-> +
-> +       for (i = 1; i < npage; ++i)
-> +               if (batch->pages[batch->offset + i] !=
-> +                               folio_page(folio, start_idx + i))
-> +                       break;
-> +       return i;
-> +}
-> +
->  /*
->   * Attempt to pin pages.  We really don't want to track all the pfns and
->   * the iommu can only map chunks of consecutive pfns anyway, so get the
-> @@ -708,8 +722,12 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
->                          */
->                         nr_pages = min_t(long, batch->size, folio_nr_pages(folio) -
->                                                 folio_page_idx(folio, batch->pages[batch->offset]));
-> -                       if (nr_pages > 1 && vfio_find_vpfn_range(dma, iova, nr_pages))
-> -                               nr_pages = 1;
-> +                       if (nr_pages > 1) {
-> +                               if (vfio_find_vpfn_range(dma, iova, nr_pages))
-> +                                       nr_pages = 1;
-> +                               else
-> +                                       nr_pages = continuous_pages_num(folio, batch, nr_pages);
-> +                       }
-
-
-I think we can refactor this a bit better and maybe if we're going to
-the trouble of comparing pages we can be a bit more resilient to pages
-already accounted as vpfns.  I took a shot at it, compile tested only,
-is there still a worthwhile gain?
-
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 0ac56072af9f..e8bba32148f7 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -319,7 +319,13 @@ static void vfio_dma_bitmap_free_all(struct vfio_iommu *iommu)
- /*
-  * Helper Functions for host iova-pfn list
-  */
--static struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
-+
-+/*
-+ * Find the first vfio_pfn that overlapping the range
-+ * [iova_start, iova_end) in rb tree.
-+ */
-+static struct vfio_pfn *vfio_find_vpfn_range(struct vfio_dma *dma,
-+		dma_addr_t iova_start, dma_addr_t iova_end)
- {
- 	struct vfio_pfn *vpfn;
- 	struct rb_node *node = dma->pfn_list.rb_node;
-@@ -327,9 +333,9 @@ static struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
- 	while (node) {
- 		vpfn = rb_entry(node, struct vfio_pfn, node);
- 
--		if (iova < vpfn->iova)
-+		if (iova_end <= vpfn->iova)
- 			node = node->rb_left;
--		else if (iova > vpfn->iova)
-+		else if (iova_start > vpfn->iova)
- 			node = node->rb_right;
- 		else
- 			return vpfn;
-@@ -337,6 +343,11 @@ static struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
- 	return NULL;
- }
- 
-+static inline struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
-+{
-+	return vfio_find_vpfn_range(dma, iova, iova + PAGE_SIZE);
-+}
-+
- static void vfio_link_pfn(struct vfio_dma *dma,
- 			  struct vfio_pfn *new)
- {
-@@ -615,6 +626,43 @@ static long vaddr_get_pfns(struct mm_struct *mm, unsigned long vaddr,
- 	return ret;
- }
- 
-+static long contig_pages(struct vfio_dma *dma,
-+			 struct vfio_batch *batch, dma_addr_t iova)
-+{
-+	struct page *page = batch->pages[batch->offset];
-+	struct folio *folio = page_folio(page);
-+	long idx = folio_page_idx(folio, page);
-+	long max = min_t(long, batch->size, folio_nr_pages(folio) - idx);
-+	long nr_pages;
-+
-+	for (nr_pages = 1; nr_pages < max; nr_pages++) {
-+		if (batch->pages[batch->offset + nr_pages] !=
-+		    folio_page(folio, idx + nr_pages))
-+			break;
-+	}
-+
-+	return nr_pages;
-+}
-+
-+static long vpfn_pages(struct vfio_dma *dma,
-+		       dma_addr_t iova_start, long nr_pages)
-+{
-+	dma_addr_t iova_end = iova_start + (nr_pages << PAGE_SHIFT);
-+	struct vfio_pfn *vpfn;
-+	long count = 0;
-+
-+	do {
-+		vpfn = vfio_find_vpfn_range(dma, iova_start, iova_end);
-+		if (likely(!vpfn))
-+			break;
-+
-+		count++;
-+		iova_start = vpfn->iova + PAGE_SIZE;
-+	} while (iova_start < iova_end);
-+
-+	return count;
-+}
-+
- /*
-  * Attempt to pin pages.  We really don't want to track all the pfns and
-  * the iommu can only map chunks of consecutive pfns anyway, so get the
-@@ -681,32 +729,40 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 		 * and rsvd here, and therefore continues to use the batch.
- 		 */
- 		while (true) {
-+			long nr_pages, acct_pages = 0;
-+
- 			if (pfn != *pfn_base + pinned ||
- 			    rsvd != is_invalid_reserved_pfn(pfn))
- 				goto out;
- 
-+			nr_pages = contig_pages(dma, batch, iova);
-+			if (!rsvd) {
-+				acct_pages = nr_pages;
-+				acct_pages -= vpfn_pages(dma, iova, nr_pages);
-+			}
-+
- 			/*
- 			 * Reserved pages aren't counted against the user,
- 			 * externally pinned pages are already counted against
- 			 * the user.
- 			 */
--			if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-+			if (acct_pages) {
- 				if (!dma->lock_cap &&
--				    mm->locked_vm + lock_acct + 1 > limit) {
-+				    mm->locked_vm + lock_acct + acct_pages > limit) {
- 					pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n",
- 						__func__, limit << PAGE_SHIFT);
- 					ret = -ENOMEM;
- 					goto unpin_out;
- 				}
--				lock_acct++;
-+				lock_acct += acct_pages;
- 			}
- 
--			pinned++;
--			npage--;
--			vaddr += PAGE_SIZE;
--			iova += PAGE_SIZE;
--			batch->offset++;
--			batch->size--;
-+			pinned += nr_pages;
-+			npage -= nr_pages;
-+			vaddr += PAGE_SIZE * nr_pages;
-+			iova += PAGE_SIZE * nr_pages;
-+			batch->offset += nr_pages;
-+			batch->size -= nr_pages;
- 
- 			if (!batch->size)
- 				break;
-
-
+Reinette
 
