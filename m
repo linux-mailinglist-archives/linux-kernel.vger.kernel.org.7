@@ -1,190 +1,107 @@
-Return-Path: <linux-kernel+bounces-659601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA42BAC1286
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:45:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07196AC1287
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 361113B0733
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:44:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7E6F502E77
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C33A19ADA4;
-	Thu, 22 May 2025 17:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB8B19EEBD;
+	Thu, 22 May 2025 17:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MYaIqgit"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cBJXvqDE"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1486191484
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 17:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4CE2512D8
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 17:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747935747; cv=none; b=jXgKeHOTmSBA/NVeThKIAcMmYaIDLdqOSt4GW7MjcvD57yv8fY17+PZQ6fdrdcx8vKsjN3KtG3shbZt6VfyYJUBBl4Opz4I7+2WsAO4OHziycbkQVlGwSYwa+e+RJgrQl3ABx0n4C8z9bVHjw8FxpsreMbH6B8Lfq1dsy1rhdWY=
+	t=1747935757; cv=none; b=MwnTuw+elIBxc5SnKfdZsW+vnn9RnqSzjKUU+vnHEJ/lkZK8MMEzlDDNgXD8g2K3FtcnwaBycUkj3hu6pb7EmU/cWecSBBbEyhDU4DAvvDGayFmlS17W63if5OsnazFE4gul1EKZvJqs+mMGSqC7bl8dMU0Jn4/IpMFTm74Py+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747935747; c=relaxed/simple;
-	bh=T1pbeFr6ibkAx6wVwmr8gE3+At6mxdPNyNkPrZk5aso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fv6/ZwSlI6TFHKpDJ3poQyWJUSWCKyuAYPoDpXOhXcFAEY/tvAg/1pdIi+kuA1ztehsYka1yVZT84XZKS5EfJJf7gEykI1sXcnQLawQwHRFxB8xFvI8BiBZgR8FULi+RTs2z0kKDNT+R/g62jlDLEqA8NATVX65M/UkZjVZl1Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MYaIqgit; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747935746; x=1779471746;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=T1pbeFr6ibkAx6wVwmr8gE3+At6mxdPNyNkPrZk5aso=;
-  b=MYaIqgitGiB7WRpCkyM+l5Yq7sgvZyWfBc5AsIUA03GXcauOa+Z6Dzur
-   nxRugOewIO5cRsz/wXQG+vzRmqYqVvQNHDSSUPHEyfNacBzNDXk1z6Zyj
-   ljPj4zhKmWqI117OCrABEcK5zZk5rFSEmSXp+CoffL4c+TLKssvIOfd4+
-   r+s37pMKXY0kXRyxfNNCMEpZs4QOYJPQMuW+JgJA0DwHbC2Oj8dmmBSSh
-   mgssaa1DmWaq2vJcW9kUaLB0JYW6zB6XMzi5qRWqa4TdhITj2URYgCwQe
-   MGSG1jnB5sRup+pkyOJfXDvXDWjUOJTY/bPTwgLRc8msHykYV5sr6fNqe
-   w==;
-X-CSE-ConnectionGUID: wKKDy8mcRp+nvSAY960tIg==
-X-CSE-MsgGUID: FCOaEWPzRXqgy8dnkcTLHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="61330297"
-X-IronPort-AV: E=Sophos;i="6.15,306,1739865600"; 
-   d="scan'208";a="61330297"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 10:42:25 -0700
-X-CSE-ConnectionGUID: TIAfqjB0TUiQQ+tx45ohEg==
-X-CSE-MsgGUID: 2HTGqIpbS4Kb9J0FHPnQ5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,306,1739865600"; 
-   d="scan'208";a="140564938"
-Received: from lindenmc-mobl.amr.corp.intel.com (HELO desk) ([10.125.146.24])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 10:42:25 -0700
-Date: Thu, 22 May 2025 10:42:19 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, David Kaplan <david.kaplan@amd.com>,
-	linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>
-Subject: Re: [PATCH v2 1/7] x86/retbleed: Check for AUTO in all cases
-Message-ID: <20250522174219.75uajbghvnnnvcmk@desk>
-References: <20250521-eibrs-fix-v2-0-70e2598e932c@linux.intel.com>
- <20250521-eibrs-fix-v2-1-70e2598e932c@linux.intel.com>
- <20250522112730.GFaC8KIk7jbj4EyoV7@fat_crate.local>
+	s=arc-20240116; t=1747935757; c=relaxed/simple;
+	bh=T193aeRyJ1OGv0+6AYB8t+pbinpVG0oKPxn8mbqLW6U=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ef+JmsvE3wG0JanjRuZLNsFbAROv+Z6vVHiYO9Glaip5xWJqYhBUZAWKRs5FJ5uKyNBwnJlHofMijSWlQIxg+79xFPr3amcbT1Qu6sQok2qGULpRKkMWEJQ8DOo6sQ95A5v2rjWHhaViGHMgyBOlxtUQknf2H2Gt4Szw8XM909U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cBJXvqDE; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-231e6e1d988so87589095ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 10:42:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747935755; x=1748540555; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JTZzTjxME0+T407CR9T2jnDVgTWuq2jRrI32jdizTLI=;
+        b=cBJXvqDEqJIxW7JlmSh8HwYJaAeJCwpZZdrzzV6AqwElBgTsOg7RECpAVDDINCwiax
+         l4T0i3VcXZA7bv9FxQaI0xAjrd9cEr2DwN7UOPz++d5Ah+v8GtXAT04UGqmkC5SGo0lW
+         Uj7LN8/i8f6zIwFpFjH6ZRJn8g5XSnUC6HKR47ojTYjQkiR0WCfo7B5e89Ngh5Zqrduy
+         fDBSEvdMIi0IOOD+jm3sTHG9mhzZ4W4hCPtAFlc+V9SVaZUnfydQk1b1NQJpUeVKryGd
+         2jbKgGynOqctBoKqMPbYbjp8SPQAtIttIiT1jJo1JPuleIXXhjIh6qlX4wWQXN+vf/y9
+         Jc9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747935755; x=1748540555;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JTZzTjxME0+T407CR9T2jnDVgTWuq2jRrI32jdizTLI=;
+        b=N4jIVhw7Ftbci0kEUBEktdArw4W7ICc3gBV2u8YHAKtL/ABbKKeHifwtngLi0T3P0j
+         kc+hCKA2XO0jJnuWupuyczjq90M/mltqxzgVSRXo0SCbvT3fycBsdscZfMLA+V8k2mdI
+         ITC70P6s/htYSaq8zb/RmPMOAJkBuwSnnhGC4EjkCJkFcSwb4vJHQvPGw2QDGjKnHUKT
+         Y4eWP7S2UbSIOdv7v12DDhs8m+JkPZwlP6dp5bjNGNQ7pv3n6r2RcL1y2H0WDt4oHco+
+         VkddIDQl4YF/odxabUg3LmhedQ+YeTyksF0S4pLSRUmiB4V8Znq39xRSI7kxH5b5yU/i
+         kzew==
+X-Forwarded-Encrypted: i=1; AJvYcCWOY9MsOGOzbmULOpLs6VENNSc/A9vtD7sS9OEcIDMcnH7/ehnUTLpCp3GWqZE8wXLSrjKWaoBQK4bcfYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqKOe99SGMuuWJ8UrpV/nufcNB0nT/wwHv6g2UnJOL092A5d5E
+	gOZXvKC6FKn1n+PNe6+PHgPC6iEiH05621NGriSwPPAK5fWE90QrKem69e+xVNo9kMhrsr/RYnT
+	8cwoykQ==
+X-Google-Smtp-Source: AGHT+IEitcbqn8Ct6EIf9jvCMYvrO0otsPo/CrQ4mPp/jVLneyxQpCIIYoWk6Q6DEqLI2Pu1VXOQ/PvNORU=
+X-Received: from pjbph7.prod.google.com ([2002:a17:90b:3bc7:b0:30a:9cb5:7622])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:54ce:b0:306:b593:4557
+ with SMTP id 98e67ed59e1d1-30e830ca012mr41799466a91.4.1747935744786; Thu, 22
+ May 2025 10:42:24 -0700 (PDT)
+Date: Thu, 22 May 2025 10:42:23 -0700
+In-Reply-To: <20250522005555.55705-3-mlevitsk@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522112730.GFaC8KIk7jbj4EyoV7@fat_crate.local>
+Mime-Version: 1.0
+References: <20250522005555.55705-1-mlevitsk@redhat.com> <20250522005555.55705-3-mlevitsk@redhat.com>
+Message-ID: <aC9h_9CyZ4DMAAi_@google.com>
+Subject: Re: [PATCH v5 2/5] KVM: x86: Drop kvm_x86_ops.set_dr6() in favor of a
+ new KVM_RUN flag
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, May 22, 2025 at 01:27:30PM +0200, Borislav Petkov wrote:
-> On Wed, May 21, 2025 at 07:44:22PM -0700, Pawan Gupta wrote:
-> > When none of mitigation option is selected, AUTO gets converted to NONE.
-> > This is currently only being done for Intel. The check is useful in
-> > general, make it common.
-> > 
-> > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> > ---
-> >  arch/x86/kernel/cpu/bugs.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-> > index 7f94e6a5497d9a2d312a76095e48d6b364565777..19ff705b3128eacad5659990ed345d7a19bcb0f4 100644
-> > --- a/arch/x86/kernel/cpu/bugs.c
-> > +++ b/arch/x86/kernel/cpu/bugs.c
-> > @@ -1294,15 +1294,15 @@ static void __init retbleed_update_mitigation(void)
-> >  			if (retbleed_mitigation != RETBLEED_MITIGATION_STUFF)
-> >  				pr_err(RETBLEED_INTEL_MSG);
-> >  		}
-> > -		/* If nothing has set the mitigation yet, default to NONE. */
-> > -		if (retbleed_mitigation == RETBLEED_MITIGATION_AUTO)
-> > -			retbleed_mitigation = RETBLEED_MITIGATION_NONE;
-> >  	}
-> > +
-> > +	/* If nothing has set the mitigation yet, default to NONE. */
-> > +	if (retbleed_mitigation == RETBLEED_MITIGATION_AUTO)
-> > +		retbleed_mitigation = RETBLEED_MITIGATION_NONE;
-> >  out:
-> >  	pr_info("%s\n", retbleed_strings[retbleed_mitigation]);
-> >  }
+On Wed, May 21, 2025, Maxim Levitsky wrote:
+> From: Sean Christopherson <seanjc@google.com>
 > 
-> So, the way I see it is, AUTO means user didn't select anything so we will
-> select the default thing.
->  
-> And we do that in the select function.
+> Instruct vendor code to load the guest's DR6 into hardware via a new
+> KVM_RUN flag, and remove kvm_x86_ops.set_dr6(), whose sole purpose was to
+> load vcpu->arch.dr6 into hardware when DR6 can be read/written directly
+> by the guest.
 > 
-> But then in the update function we bring back AUTO from the dead again,
-> forcing us to having to deal with it, well, again.
-> 
-> So can we simply set to RETBLEED_MITIGATION_NONE in the retbleed + its = stuff
-> option when SPECTRE_V2_RETPOLINE not selected?
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/include/asm/kvm-x86-ops.h |  1 -
+>  arch/x86/include/asm/kvm_host.h    |  2 +-
+>  arch/x86/kvm/svm/svm.c             | 10 ++++++----
+>  arch/x86/kvm/vmx/main.c            |  9 ---------
+>  arch/x86/kvm/vmx/vmx.c             |  9 +++------
+>  arch/x86/kvm/x86.c                 |  2 +-
+>  6 files changed, 11 insertions(+), 22 deletions(-)
 
-That can be done.
-
-> This'll get rid of the AUTO crap.
-
-Yup.
-
-> For that, the select function should probably select something else from AUTO
-> on Intel too.
-> 
-> My point is, let's deal with AUTO in the select functions only and then forget
-> it from then on...
-> 
-> Right?
-
-Yes, makes sense to me.
-
-This is how it is looking:
-
----
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index ad04da8711b2..156fee146228 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1264,6 +1264,13 @@ static void __init retbleed_select_mitigation(void)
- 			retbleed_mitigation = RETBLEED_MITIGATION_IBPB;
- 		else
- 			retbleed_mitigation = RETBLEED_MITIGATION_NONE;
-+	} else if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL) {
-+		if (boot_cpu_has(X86_FEATURE_IBRS_ENHANCED))
-+			retbleed_mitigation = RETBLEED_MITIGATION_EIBRS;
-+		else if (boot_cpu_has(X86_FEATURE_IBRS))
-+			retbleed_mitigation = RETBLEED_MITIGATION_IBRS;
-+		else
-+			retbleed_mitigation = RETBLEED_MITIGATION_NONE;
- 	}
- }
- 
-@@ -1272,9 +1279,6 @@ static void __init retbleed_update_mitigation(void)
- 	if (!boot_cpu_has_bug(X86_BUG_RETBLEED) || cpu_mitigations_off())
- 		return;
- 
--	if (retbleed_mitigation == RETBLEED_MITIGATION_NONE)
--		goto out;
--
- 	 /* ITS can also enable stuffing */
- 	if (its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF)
- 		retbleed_mitigation = RETBLEED_MITIGATION_STUFF;
-@@ -1282,7 +1286,7 @@ static void __init retbleed_update_mitigation(void)
- 	if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF &&
- 	    !cdt_possible(spectre_v2_enabled)) {
- 		pr_err("WARNING: retbleed=stuff depends on retpoline\n");
--		retbleed_mitigation = RETBLEED_MITIGATION_AUTO;
-+		retbleed_mitigation = RETBLEED_MITIGATION_NONE;
- 	}
- 
- 	/*
-@@ -1305,10 +1309,6 @@ static void __init retbleed_update_mitigation(void)
- 		}
- 	}
- 
--	/* If nothing has set the mitigation yet, default to NONE. */
--	if (retbleed_mitigation == RETBLEED_MITIGATION_AUTO)
--		retbleed_mitigation = RETBLEED_MITIGATION_NONE;
--out:
- 	pr_info("%s\n", retbleed_strings[retbleed_mitigation]);
- }
- 
+As alluded to in the previous patch, TDX should WARN, because guest DR6 is owned
+by the TDX module (the KVM_DEBUGREG_AUTO_SWITCH guard prevents KVM_RUN_LOAD_GUEST_DR6
+from being set).
 
