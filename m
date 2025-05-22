@@ -1,207 +1,218 @@
-Return-Path: <linux-kernel+bounces-658890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7204AC08C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:32:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D65CAC08D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AB994A5FAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:32:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4EAB3B1ADD
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827CA286D6A;
-	Thu, 22 May 2025 09:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57D12853FF;
+	Thu, 22 May 2025 09:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qEXcKL4T"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2041.outbound.protection.outlook.com [40.107.94.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA22137C2A;
-	Thu, 22 May 2025 09:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747906299; cv=fail; b=UJscxN81YQXqSb/YW9hmxG9D3AHxFvvr3LNjlmcAMtSC4eIf0XywQAD4W1EKljU0SYPJktgvdvps1yadH+AWFepZLV+C1dt5KxncO6c59+42zDh/6u0IdwFr8h9Tk5yTizHq3Y62W9VYp8ByNjaG4WUam1SpM8vkB3uG3WtRyDM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747906299; c=relaxed/simple;
-	bh=7epp4AdYoBenimOmfcMrKkbbmlb68XyEvRatlPJiNiU=;
-	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
-	 In-Reply-To:MIME-Version; b=hhnogrxCf8JqSaBI4u7aANF5NILMb0Nq6KSL0vHrr6ZqjF/MErvqB1gJRV0YA6hiuMFPF2DHKq5scD0zLnVwY9xsSYjApfTSVzTlo2h3/gQI/UhI6pGrTswG6ozfHn8YHURtpy6QkKjOZE/butOL5NhV/C1i1nMkyuj8TOHUVNY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qEXcKL4T; arc=fail smtp.client-ip=40.107.94.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vhxKcXLdILZ4L8HFHnovsfKOoLFYZMukjzOqEWARkZxgr8mtWZcgCPxvfbFslTjTqmjo2KtSweTQ7ojGbXF1HlGUwPNtR1MMLZjE1HwsZws7JclhTf0rPuE4vWmliDRechZkJmDBzJl8mkyYCgBeCV0H/J9uxu21348787OBBfkzO3Rs5GG2svdexZB1YyPW/+yKorkjJfTlO8ZsRF3dxV5Pqy062+dfmIjoBBI+yZKSP+94vYOjdOY5jFSivN1oAIiLCzER5jSl3UdXa05sxw8iGUfteVTSvcIzGGIPSHPJyBJP++XW0rsbIdVmHAApNF6D0/VyUMjdiz1jI3ZrCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7epp4AdYoBenimOmfcMrKkbbmlb68XyEvRatlPJiNiU=;
- b=zIj2IPi22zVnol8+9NAD4M1yV3vBSH535HkopOv17kyADWmoMk18u7ikQ0zKARZKenUwLB6XetpZV/npqw11FoN4rKg4Oapb5wUTS82AzHjNXQJvkKySBOhLtOoUSPbYYzdcbismtgI73QAPEbkpycVhG1PGIKclcETG723uxzvJlQ42h7qcwVxCh3sZUQhCpogzm0tMlxyv3pI31/hEcCnXbr3lhLEakq0c0jWFSaoFSRVqwkuiYf8jSReeIw2IbgIgYq/f0w8ivAVtNahvhz5v+E1C6bhc2w1Sua4oDSpfpTeyo1kFBh0P1FIb5S+LrUTWE7NjpevGaheLVXmKow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7epp4AdYoBenimOmfcMrKkbbmlb68XyEvRatlPJiNiU=;
- b=qEXcKL4TpEKiD/K8p9QmgnY+RCPbk4mwxIPIkuj8hccgdjErXbdiaUGaSepzUBQQNNb3U9Nk7UlBYhAO1P/CHlDXvx140svfmg6bZsGNlEsAUchxjkFSBFYHet6HfdiqjlQ4HadHfWdg+4+8/x5rTMmeKZW93QsFQ9DLGFluc7225K/k5puVhXNTsmhgUOUd7reRbWO7mjo9CTCVC6CwOat96XxT1xe6Lmdos3AYQ8T3T3E/2wcoVzRV8Hs94jnxaZSVAAuSou7RR5P+H3/E3fyprQOJAiK+Fe0O8Ib8K0zluscmfs60RzTU0EUCTrTICbxtOqTQxFTLBc/avO3YsA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by CH2PR12MB9544.namprd12.prod.outlook.com (2603:10b6:610:280::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Thu, 22 May
- 2025 09:31:33 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%5]) with mapi id 15.20.8769.019; Thu, 22 May 2025
- 09:31:33 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 22 May 2025 18:31:29 +0900
-Message-Id: <DA2L2GAOD145.RU9FFI13VWCK@nvidia.com>
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
- Krummrich" <dakr@kernel.org>, "David Airlie" <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, "John Hubbard" <jhubbard@nvidia.com>, "Ben
- Skeggs" <bskeggs@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>,
- "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v4 04/20] rust: add new `num` module with useful integer
- operations
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250521-nova-frts-v4-0-05dfd4f39479@nvidia.com>
- <20250521-nova-frts-v4-4-05dfd4f39479@nvidia.com>
- <DA2E1BNC668R.MMCARZ3K2NTS@nvidia.com>
- <CANiq72nQwxqeRGWBW2WSHijUKLs4c26UGQvJFjt-_SpnJJaaYQ@mail.gmail.com>
-In-Reply-To: <CANiq72nQwxqeRGWBW2WSHijUKLs4c26UGQvJFjt-_SpnJJaaYQ@mail.gmail.com>
-X-ClientProxiedBy: TYCP286CA0365.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:79::12) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fw+AoSAq"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94BF33DB;
+	Thu, 22 May 2025 09:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747906480; cv=none; b=hYnp70etgNHvaBz17Gtv55FsB4BefMRTLIxA96XNtWzHLl33Y+VM4v1VDi5RWZaR2L9PlULG5BuGS58h1Q8vE2u1ECEtWkXhjlYfQBxJI1ZdnbehbBo6tv6CNOMdetIOuZIVaEylPnYXId097kSTlF/Y6Ds8xRYTQh1115XCVIU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747906480; c=relaxed/simple;
+	bh=yeBGKLcED5Dq1hPYIJzbyPGNOX9+l3fp0mMhiRy5aPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hnvi0zo87fHf4F/r8uqgosV/bAnPOCsdYc5TrpqgJSxcqKmtQLUx9xOjSrsZJMRuHmVNy5kRa1RRHFcrVcdpa7Tkfg1wd09yRoz2bxfJCkLWyKHmdzGRlMtr6epxR+ztnO509JjSubDB+Bmtue7Y0NWsNmHVGQeKJPNOnB4kPJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fw+AoSAq; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=5joGvSMwoogVlNO6iG3yyrQRJaGl4pOo4UfrlDIsfzo=;
+	b=fw+AoSAqF+Qy+D//w43Bpup1HrzL/gV326OincHmp3P90CZQhps46uOHrvDZL2
+	pd9vToAHpWN2PTnxV9gkl9tKSrl5+xndBHdC/PTnE+DZw7WGdqrJD7dDB946JJbH
+	Inxta77WOucOpzKUjcPi9iBWRP/vH27rZj1osuLITwJO8=
+Received: from [192.168.18.52] (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wC3T8tx7y5oT9UADQ--.40824S2;
+	Thu, 22 May 2025 17:33:38 +0800 (CST)
+Message-ID: <dd887a30-4bdc-4e7d-ba04-1f417a082a9f@163.com>
+Date: Thu, 22 May 2025 17:33:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CH2PR12MB9544:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ae3274b-f3e0-4bc2-bbc2-08dd991370b2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|10070799003|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UThGcjZIR1E0UFdpUlYybjBneGZJT1VZR3pPb05QQkJVYm9WRlBjZWJCdm9u?=
- =?utf-8?B?QWhPMWVrcC9yd1IwVG5YTVhsQ2tkQ1Fta2pVQTVwZFZxNkJER1o2OEZwVEVz?=
- =?utf-8?B?V0dQa1JoNkIrVktyQ2FIWkFOSkZqMk1ZMW1haDFKT0U5L0hDMnVKZnlia283?=
- =?utf-8?B?ZXo3TFNqUUVqa1B1OEtTckxxMm1CRjQxRktKMUNkUlJiNHFjWTR0MlZWWlNU?=
- =?utf-8?B?ZEc1aGtPZkt6eHlKTU96eTlnNVZyRWZuUUoya3BIYkhiT0djZ1ZYMEZ5NGw4?=
- =?utf-8?B?RDZDNVdHZ1R0NkVkbWdrSnBpSlA3VGZYK0hkTW5scS94SDBrdlZrYXRTMURK?=
- =?utf-8?B?Zm40WE5vWTBSZjFQQXN1emI1ZEFTZm1FUEQ0MXoxSGZaT0pBejNTcTlzRklh?=
- =?utf-8?B?M1gxZkZLWUxRT0UwTFRDanlnek1tcHpvdzFNVW9NNG94V2lrK0hGM1NkUW5h?=
- =?utf-8?B?R0lvTnZIaUFFdVhvSmpGeWpRQ2t1MnFDMWwrbk94K0N0WXczdkRHZ1cyVDBT?=
- =?utf-8?B?Rmg5TTJJOTNvMWk4UEFyMDBWSEF6azlnT05IaDhIZ3ZTNHpHRU5iV0d1Tk9H?=
- =?utf-8?B?WlNvenpOaDIxMVN1RVEzVWdjMG9UNEpwNHRjeUxNWGVOZlBPVE10cWtjZjgz?=
- =?utf-8?B?OEE4am5hVklqM0grT20yZlNzVXBUaDk5L0FGQkcwa0VvNzVac1gwWThmT014?=
- =?utf-8?B?cmlLR0xJZlQzc3FWbkZyQVU5OUI1Vktrcnl6alNaZkE4dVhOcHNzYXhuQVl2?=
- =?utf-8?B?OEM0dkxlNnNPY1Vqc0ovck15eHdLdEw0TGlna3c2WmRUd3I1WWxzVzNLL0JY?=
- =?utf-8?B?M0w2azZZVEVmZ2lxZ29Eek10QVc0QThNLzNxcVNJcjJUVmlGMmxZR3dJcjlE?=
- =?utf-8?B?bUtKSGRiN3B4MlBsNk12SS92cE1vUUtFSmRXL3RlazVzNktWdExGQlVRdEhB?=
- =?utf-8?B?c0o5RlN0WlFCM2lZRnFLbnB6SVZpNUZuUDJMR2Z5c3I5MGNIdExRclBjeW95?=
- =?utf-8?B?c3ZxM3BGNVQ0d3lUK3dwWDlxQkE3a3dOQ2dnbXdld04ySXY0aXF6WmZocHZK?=
- =?utf-8?B?WjNsME5MK0NjRzN4UlA1dFI2UzMvMEE5b2VNVFNUZk9id2VEY21VSXNJbUdF?=
- =?utf-8?B?T1hBVTZHYjlBUGNTbUYxLzcweTU1clR2YS9iNGhuQnBnRmVHNjJHcXNTZncx?=
- =?utf-8?B?L2p1U0tJcFN0MlIyYlNHdlJrOWtSalZHZHpaeHYvQXZEY3ptbG5rclJad3VC?=
- =?utf-8?B?TU1PallmYUpndlBUTVUrQ2pNdWJCeSt5dmIrS0pGNU5xamNrVHZhMVRqOGR5?=
- =?utf-8?B?REV5NzJrVE9aT3BVQ1dSa2s2c0VBUWY2RE54b2ZJdVB5ZXhxTDBwSXRBNFRw?=
- =?utf-8?B?Y0VqRGdpN3ZYeUtUaHlCcVVhRnAza25CcXNyTHhwYnlDaU5ORk16RGF3MFkz?=
- =?utf-8?B?R2FIbFlTRG1hUFpCaEFJMmJ0REdXN2JQVzZtdWJYbFBRWkg0MER3QlhuTS9Q?=
- =?utf-8?B?ZXVpNXArb2phRkc3MzlLRWJiRExucDBMSmNSUlJpVUFDb2Z1SnM2anFmZWNv?=
- =?utf-8?B?WUcxUUdZcmtaYmFyMDVza1lRVCsxRjVzSFhKbGx6alB3UEIydmV5TFFwNlp4?=
- =?utf-8?B?dmZwQ1pVeC9ETUQzaVZsOHVleGRhR1krd1kvQ1g4NGNrOHIyMW9xOElFK1A0?=
- =?utf-8?B?VEllZ3I1d1lmL3JGdmVUUldpMWlCWUFiNG4zNXhJMTNYSFI2cU95Y1pTTUdO?=
- =?utf-8?B?WXNyNEp5ODJKaTF2ZnF5NDhYdlJjcENmdEYvSmV4YzlxcHhLQ3dOY01hNzh0?=
- =?utf-8?B?UGxpK3ErSlQwWEZQcEZDY2NmcVFrbko2cjN0VldlYmgxQmJsWjV1TGc0RUxs?=
- =?utf-8?B?SUNkN01nSXJMeGptS3hnQ1NKVGpCOVFLME1vUEFOdDdVNHh3NGl6QmhmQmdi?=
- =?utf-8?Q?wMv7elHsEFM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(10070799003)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QjgvSVlQcndhMG03QkxwOFA0U3NRcWRvU0xITXJPUExuSVhIaG5kd3ZmdGx0?=
- =?utf-8?B?VTRNSE9YSnhyZGgwQnF6cy9vZU15K0JRbFpWbS9scEpQRnc4TFNLSkFUeU01?=
- =?utf-8?B?MlphREp2bkdPSFU5RmEwTFI1dFJiWmMwaDRRcUtVUVVHdzljQkNxSy93d3c2?=
- =?utf-8?B?M3EvQWk3TzFRb2FxUTlkbzNIRjhvdERpNi9RUjJ5UGVTeDI1Vit1LzZUMTM3?=
- =?utf-8?B?aS9vZzVNalFONjlDWkcrRHBSaXBqanJCZ0tTbnc1TkpmSHR1Vk9jcC9IL0Fq?=
- =?utf-8?B?TEU3RXMrK2dPWVc5TENpVmcvVkNzOXI1MHBFbTk4SHNiLzErTksvUytHYmpu?=
- =?utf-8?B?cWtVU3FCdkJjdGxIM2dKZjk2UFhKOENmV3YvUWtIVW1ESDhvTlBXcWFIeXlH?=
- =?utf-8?B?V1pzSlVNVUJQUy81c3pBWHZjVnJxYSs1NDBCL1dCOGNET2xFTEZoNFJmempW?=
- =?utf-8?B?bTJjR25WTkpiNkljdWI1N0drWGlqOTdDU0lGYXUrU0tYNlR4MEVBaFFSblBK?=
- =?utf-8?B?eG9JQUt4MThGY3VIMXh0aEJKQjFlMVFaQkJQUE5VSnc3OUxXU0VpbFAvc3pj?=
- =?utf-8?B?NEY2TVplRzVRdXJscGJFNkwwbUpYM25PYVdGaWlzUmRwcE94ZHdzTmp2YnVN?=
- =?utf-8?B?Nm9VM3hZbEpoV09tM1h1RUtQMzV4VEkzUWx0MFhPNDhsSGRFbXJJUlNmbVBk?=
- =?utf-8?B?UitERjJnWWdrUkJxSG9NaUhvU2xNVHVUaGVEUXZOeldpRGNRczF5RVNveitF?=
- =?utf-8?B?WHE2NkZjUEtOeW93NEo4S2lhUHdDY1dLaEZOVzN1K0VtWFdNR29GRFdwVkdV?=
- =?utf-8?B?SlVNYWsxUGhIaFpsNUlxRGxrU1JTeDhiT0NJYU1JZVlYeEJHTXp0Q0ZhUy9p?=
- =?utf-8?B?aCtRcXZLUC9JQTJsRUpvck9oM1pUajB1VHZEalIwcVpBeCtjcE5CRDR0TmxK?=
- =?utf-8?B?STgvY0tvRGlTd2pQR3VvT0hob3BxRnMwWjQ4TmtmODJ5eitlMzBYaE5KTDFr?=
- =?utf-8?B?bU51Y0hYMmZNMGFYcWU0TERWT3R5azNzNllYanhNYWs1NWlNd0dCMndIV2ty?=
- =?utf-8?B?OGNJakwrSDZQMHBtRjZ0cXhtYlJZQVNYOTdsQXM5Tm5lRzVtN3JpK2hYaWlT?=
- =?utf-8?B?NmNtZ1c2eFhQcGtJd0FJY1psRHJ4S2NYa0hnWml4YkNnUFRib1I4L3d5UXN3?=
- =?utf-8?B?ci90L1R5Y0pWTGQ3eFYxVzV5TDZKWlROODlpV3gzT01ucU1DOVRRdklOZm9k?=
- =?utf-8?B?YjEwUzJQclAxK1RGYmhJNTlWUVZuOVJzSVNnK0tsQ3owektER2VvMUVody9y?=
- =?utf-8?B?YTdVLzU4NTk4bExYMnl1QUQ1dFZqZ3ZTSmJ3ckkrYzk0THZVOThWOXVnSDVl?=
- =?utf-8?B?UThLVmd0MmZSWVpqV3l3bVJsRnJVeVd6UTlGTjRzMWl1SjdhNE02bUVnN0JW?=
- =?utf-8?B?MDRsTHdueFpwdWg0YVE2cmtOYWphb1NNNEYyZzVkY3BvdzVXTjhVNkhJQWRx?=
- =?utf-8?B?S3pFZWpvMW9XMlRaOGhCRWIzQ1l2OUhrQ1hLV20xT1psbk12amtmcXZ1RnRt?=
- =?utf-8?B?V1YzTDJxVDZvQUxlSmxTY20wTFNMMVFaYzZsUWVWdGZkQ291d01sQjdiNUFP?=
- =?utf-8?B?azQ2bXVUT1VxQXFuNnZlUHgzMlB5aGNzZU1NRXhCU1VGUzM3aVAzWG5wY3Jl?=
- =?utf-8?B?LzBJcTU5YjVlRWM0Uzg1QU82ZlBQR2dGaDk0WkJzWkwxTmNzamNkQ0hIN29t?=
- =?utf-8?B?TnZQK0R0UGl5bHAzWHFQU1BKZ0JDczFJM3k0SG8xSUQrMENtdDZYYlNTcDZP?=
- =?utf-8?B?ayt6QWk0c3JZVnNPQ3BxWVd5TXpjK3UyR1F2MXFYN3RRUGpXZXZJM0IwTXYy?=
- =?utf-8?B?RkQ2K0ZSUVA1ZWw4S0ozc1doVURDN1ZqRXdVRE9DY2pMMjFjMC9uVVZubXJi?=
- =?utf-8?B?c1krOXkreUk4V0FMNnd4TTZSdmRMVUVlY1ZPb09qLzdxSkJrbTIzVG8vOFpH?=
- =?utf-8?B?SWZxVXdsRXdqR3F3clpmZDhYVGdJSFJWVFkxVTZWSGR1dGNnWW9NZFdwcTV3?=
- =?utf-8?B?L09wdTFwTFBLL1VGaitoaGQ4YnNQbVdtYVB2NlVDSzYrQ1J4ZjBkemZNelcv?=
- =?utf-8?B?aCsvYjY2WHRFYUhoWm8wNVRwVHJQUG5LT09ta3VNeWhiN2hYbU84WFQ1R0Na?=
- =?utf-8?Q?sGz7G2f14yks7x3sh5nj3+JddkqjqqubeIlsoimk6gD1?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ae3274b-f3e0-4bc2-bbc2-08dd991370b2
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2025 09:31:33.4957
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YwkgCpAbAe6Ul/7St+ueIkQz/zy9YyhQvqPZb/56HUsae0dySWLkgxE3E179duruk2SKYpoGZWdzh6cTZGNfNA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB9544
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] pci: implement "pci=aer_panic"
+To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ bhelgaas@google.com, tglx@linutronix.de, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, mahesh@linux.ibm.com
+Cc: oohall@gmail.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <20250516165518.125495-1-18255117159@163.com>
+ <a1fdd6e1-8cd9-46b0-bd27-526729a1199d@linux.intel.com>
+ <8434dc81-5d2d-4ce1-ab73-ca1cf16cb550@163.com>
+ <e6ad7ef5-de9c-49bc-9882-5e97bd549168@163.com>
+ <3dd17a45-2305-4ac4-a195-4c54ce357ddc@linux.intel.com>
+ <1c21ec0b-ca89-4f7e-85f2-bdb48edb8055@163.com>
+ <97e9850f-8a74-425f-93ab-5017599c98b5@linux.intel.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <97e9850f-8a74-425f-93ab-5017599c98b5@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wC3T8tx7y5oT9UADQ--.40824S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtrWktF1kArWfAFy7Zry7ZFb_yoW7XrWDpa
+	yrAa1jyr4DJFW2vFnFvw10qry5ta4DJw15Wrn8Jr13Kr90yr1UJr42vF4jkasrGrnrWw1j
+	vF4Ut347WFy5JaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRJ8n5UUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxlVo2gu7XhKJQAAsc
 
-On Thu May 22, 2025 at 5:44 PM JST, Miguel Ojeda wrote:
-> On Thu, May 22, 2025 at 6:01=E2=80=AFAM Alexandre Courbot <acourbot@nvidi=
-a.com> wrote:
+
+
+On 2025/5/22 00:17, Sathyanarayanan Kuppuswamy wrote:
+> 
+> On 5/21/25 7:54 AM, Hans Zhang wrote:
 >>
->> Either that, or we enable `#![feature(const_trait_impl)]`. I just tried
->> and with it we could indeed define and implement `NumExt` as const,
->> which looks like the cleanest way to do this to me.
->
-> Hmm... I think that one is actively being worked on, with a possible
-> syntax change in the works. We would need to speak to upstream Rust to
-> see when we could reasonably stat to use it, and consider the older
-> compilers (e.g. if the syntax changes).
+>>
+>> On 2025/5/21 00:09, Sathyanarayanan Kuppuswamy wrote:
+>>>
+>>> On 5/19/25 7:41 AM, Hans Zhang wrote:
+>>>>
+>>>>
+>>>> On 2025/5/19 22:21, Hans Zhang wrote:
+>>>>>
+>>>>>
+>>>>> On 2025/5/17 02:10, Sathyanarayanan Kuppuswamy wrote:
+>>>>>>
+>>>>>> On 5/16/25 9:55 AM, Hans Zhang wrote:
+>>>>>>> The following series introduces a new kernel command-line option 
+>>>>>>> aer_panic
+>>>>>>> to enhance error handling for PCIe Advanced Error Reporting (AER) in
+>>>>>>> mission-critical environments. This feature ensures deterministic 
+>>>>>>> recover
+>>>>>>> from fatal PCIe errors by triggering a controlled kernel panic 
+>>>>>>> when device
+>>>>>>> recovery fails, avoiding indefinite system hangs.
+>>>>>>
+>>>>>> Why would a device recovery failure lead to a system hang? Worst case
+>>>>>> that device may not be accessible, right?  Any real use case?
+>>>>>>
+>>>>>
+>>>>>
+>>>>> Dear Sathyanarayanan,
+>>>>>
+>>>>> Due to Synopsys and Cadence PCIe IP, their AER interrupts are 
+>>>>> usually SPI interrupts, not INTx/MSI/MSIx interrupts. (Some 
+>>>>> customers will design it as an MSI/MSIx interrupt, e.g.: RK3588, 
+>>>>> but not all customers have designed it this way.)  For example, 
+>>>>> when many mobile phone SoCs of Qualcomm handle AER interrupts and 
+>>>>> there is a link down, that is, a fatal problem occurs in the 
+>>>>> current PCIe physical link, the system cannot recover.  At this 
+>>>>> point, a system restart is needed to solve the problem.
+>>>>>
+>>>>> And our company design of SOC: http://radxa.com/products/orion/o6/, 
+>>>>> it has 5 road PCIe port.
+>>>>> There is also the same problem.  If there is a problem with one of 
+>>>>> the PCIe ports, it will cause the entire system to hang.  So I hope 
+>>>>> linux OS can offer an option that enables SOC manufacturers to 
+>>>>> choose to restart the system in case of fatal hardware errors 
+>>>>> occurring in PCIe.
+>>>>>
+>>>>> There are also products such as mobile phones and tablets. We don't 
+>>>>> want to wait until the battery is completely used up before 
+>>>>> restarting them.
+>>>>>
+>>>>> For the specific code of Qualcomm, please refer to the email I sent.
+>>>>>
+>>>>
+>>>>
+>>>> Dear Sathyanarayanan,
+>>>>
+>>>> Supplementary reasons:
+>>>>
+>>>> drivers/pci/controller/cadence/pcie-cadence-host.c
+>>>> cdns_pci_map_bus
+>>>>     /* Clear AXI link-down status */
+>>>>     cdns_pcie_writel(pcie, CDNS_PCIE_AT_LINKDOWN, 0x0);
+>>>>
+>>>> https://elixir.bootlin.com/linux/v6.15-rc6/source/drivers/pci/controller/cadence/pcie-cadence-host.c#L52
+>>>>
+>>>> If there has been a link down in this PCIe port, the register 
+>>>> CDNS_PCIE_AT_LINKDOWN must be set to 0 for the AXI transmission to 
+>>>> continue.  This is different from Synopsys.
+>>>>
+>>>> If CPU Core0 runs to code L52 and CPU Core1 is executing NVMe SSD 
+>>>> saving files, since the CDNS_PCIE_AT_LINKDOWN register is still 1, 
+>>>> it causes CPU Core1 to be unable to send TLP transfers and hang. 
+>>>> This is a very extreme situation.
+>>>> (The current Cadence code is Legacy PCIe IP, and the HPA IP is still 
+>>>> in the upstream process at present.)
+>>>>
+>>>> Radxa O6 uses Cadence's PCIe HPA IP.
+>>>> http://radxa.com/products/orion/o6/
+>>>>
+>>>
+>>> It sounds like a system level issue to me. Why not they rely on 
+>>> watchdog to reboot for
+>>> this case ?
+>>
+>> Dear Sathyanarayanan,
+>>
+>> Thank you for your reply. Yes, personally, I think it's also a problem 
+>> at the system level. I conducted a local test. When I directly 
+>> unplugged the EP device on the slot, the system would hang. It has 
+>> been tested many times. Since we don't have a bus timeout response 
+>> mechanism for PCIe, it hangs easily.
+> 
+> Any comment on why watchdog is not used to reboot the unresponsive system?
 
-Yeah that could be a problem. Which is a bit sad as with this approach
-we only need one method name instead of having multiple const functions
-suffixed with `_u8`, `_u16`, etc. for each type we want to extend.
+Dear Sathyanarayanan,
+
+Thank you very much for your reply.
+
+After my testing, the watchdog doesn't work properly every time. There 
+might be other reasons causing the entire system to hang.
+
+
+> 
+>>
+>>>
+>>> Even if you want to add this support, I think it is more appropriate 
+>>> to add this to your
+>>> specific PCIe controller driver.  I don't see why you want to add it 
+>>> part of generic
+>>> AER driver.
+>>>
+>> Because we want to use the processing logic of the general AER driver. 
+>> If the recovery is successful, there will be no problem. If the 
+>> recovery fails, my original intention was to restart the system.
+>>
+>> If added to the specific PCIe controller driver, a lot of repetitive 
+>> AER processing logic will be written. So I was thinking whether the 
+>> AER driver could be changed to be compiled as a KO module.
+> 
+> May be you can rely on err handler callbacks to get notification on 
+> fatal errors or you can even use uevent handler to detect the 
+> disconnected device event and handle it there.
+
+I will try the method you suggested.
+
+> 
+>>
+>>
+>> If this series is not reasonable, I'll drop it.
+> 
+> Adding new kernel param to solve a specific system issue is not 
+> recommended. Try to find some custom solution for your chip/controller.
+> 
+
+Ok. Understood. Thank you again for your reply.
+
+Best regards,
+Hans
+
 
