@@ -1,156 +1,130 @@
-Return-Path: <linux-kernel+bounces-658581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED48AC044F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:57:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA8EAC045A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 08:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C350A20744
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:57:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12CC9A20D4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 06:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EE81F1513;
-	Thu, 22 May 2025 05:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D448221299;
+	Thu, 22 May 2025 06:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6WKU6eE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a/o7v4Zk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAC41A5B99;
-	Thu, 22 May 2025 05:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E0A157A67
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 06:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747893470; cv=none; b=S0y21lzObNBOWYwrdR1jjY5r+5FzccSC/S57/DSzeTH6ecXlRnRsEpAD5qipkUFX13S/jbWNsSQymCzv41svZuxwOamA1p1D1ijWrXTS5ClXanZdIIeGZOE7LBtNmSmerBvwboKzkXHT4koSLqyKRFbd2lW3NOJMWsdZ3EAHbyw=
+	t=1747893954; cv=none; b=gxDJIuAJOzy+4SiYWfiC5wOiIM8eKTeJ3D/M70yR8jUI0vMDFQv+qdYB+Or6bFbnzyzUDiiHyEmaZWZjQqEutSr9krWNjHv48Yuq0rEm2XqGbItnrlsLigvAdSswWBAV7hde41/fqd8EFZOcm64fhr2gMMJ5TZYJr9oMt7GZU4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747893470; c=relaxed/simple;
-	bh=wZ3nSp367uambbTpMXWrlg/9Nez+UZ3eJxW/W6K1/NA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A6AQWcAzQz2PTiDfKu3bJYi88XKJh0diObWGIAw1162lOXHm0Ov3CwPPv6dfbgQ3zBJG+fYwaJzM3OMiS5CFAlF6VxZKU5JmReGDku518oQEMGCpe8V/nqOwEHnjwvBNkSopDu84T6ufR1urPFRIOEdbovOYMlblATB5pSl7yRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6WKU6eE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B7E5C4CEE4;
-	Thu, 22 May 2025 05:57:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747893469;
-	bh=wZ3nSp367uambbTpMXWrlg/9Nez+UZ3eJxW/W6K1/NA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=X6WKU6eEI/YH+uk++5IV+g48jHbWlQBW4cOcSHokmxsp4w2u0l1Uy9l12wR0tqYCj
-	 6kJiogFfr94JK0kS+kN922Mz/a2fnPm5w/I2a0tC0Jklcs5ySepwTUrcUYH7DBrBHm
-	 JjsGFbxSz2YEv8KwBkzSoZL80LQjE40WIMzdqDzduVh0NZgUtAKOKrq9UdMHX5uhv0
-	 GvsYR5yr5Lqs+8Iz9426LEebUBpApx2PIO2OYBZJ3UkAU52lz9O4iK+kpsz2JTwnMQ
-	 sAQSHUbOMNKr9RZqREdfPyEmVS6tuLtJcx2dJa3Q/DV4swn3Ol5oBjD1Y3XnTLVYE1
-	 i7LaDr5O09Hxw==
-Message-ID: <b43fea90-2406-4c8a-a499-4da276883a68@kernel.org>
-Date: Thu, 22 May 2025 07:57:45 +0200
+	s=arc-20240116; t=1747893954; c=relaxed/simple;
+	bh=I+7T0XWA3psCI0S3YgG5g5cyv/Ez0iIKfqzxER3LdUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bjzYeHU13LFS05SDVDOFaM3o30FzvMy27A/3QK0jQ20j9nPJCXcVB71G4Gweha8RE5JSjpCFjUHwcFy/q6aNyJ6wyKkiyXPe1Kd3CAo6sjcbRRTM+FVcGsZkn8X3YTpycumtoz4dGqKI5OUSPPXDqqUVW6gMJGfXzImyMG80kCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a/o7v4Zk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747893951;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T5UcmE338HgvT5w4WTQ/s8ig0Q1beM5AA/bl1F3aF54=;
+	b=a/o7v4ZkwmBXwwC5djpQGh5E3iE7kPwsGSehez+eqvdE1PI4tM0QCW4vxC1N52f80gzasr
+	MFAPb0E4Ht7tTFAbYx1UlI9eMCArXgaGA15+l7sfAltxz2lTaO/YH84OIEJvt358qdrvh1
+	+1Fs9b/FCcHmiWkB9tqKCU1eVN8EAGc=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-483-CdF6DqvHMuiXAR_1IN2xJQ-1; Thu, 22 May 2025 02:05:49 -0400
+X-MC-Unique: CdF6DqvHMuiXAR_1IN2xJQ-1
+X-Mimecast-MFC-AGG-ID: CdF6DqvHMuiXAR_1IN2xJQ_1747893948
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b1ffc678adfso4943800a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 23:05:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747893948; x=1748498748;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T5UcmE338HgvT5w4WTQ/s8ig0Q1beM5AA/bl1F3aF54=;
+        b=PyE8wJeOt8OCcwnqcj9tWbLDMuMo4RFPIkptFEV7dewHbm0EUeGI/JQhrYAnOK54jt
+         7s5fmMEpbQ1aEXo+vXH9M/GmLMFiURO2x0KxzGFPMAgqHpzqC53thoXj3Kt6Q2UjtSo8
+         zyITSR2DBFExs7o5Cd7hd1wIpJ/KLvPm632A5FqBDhs8yCt/pmX3C1KFBHKM8vgfvVA1
+         RI1Otrva6r6dIUbY7ltmqU83tKqW0XR3ChMqAkvy5hwazaXqYbR75PlBgOV7gsX+K+Of
+         Ss06EXmtuYbQhztd91geG8Cy56cxDW8E6XA1WGgn4wMhu2J8sW5iIgrLVo1VbnPOe4GI
+         AFnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZf3AXFqDrpvJXPEa6+HVJgSmQJ+TT4jfDZnPMvhwO2DxwYSzsk+2NLd/LJTabqhbpgnTVWhdiyKotIdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr613HJPEuAY5RL1f9YH7eFskGeF0fJHnJ9N9WXzfi7+ZFQszC
+	wSpQu7rIn4DRFw6ENweOwumd23bObmqy51A9mPIQHK9XaOznlKisq1aP2cocwpkwcBm912gtyWh
+	7p6XkB97uOJKepTeLiRfZE59gerPtTLs/EH1gJ0PFt+oL8l3DM3TsqJtseG21z4DM4Q==
+X-Gm-Gg: ASbGncs60+13b2w7XEPCcx9KDIEsI7ODosVx40cbEWzCTRYTT3Nzz/3TMsFkyZcI4Vz
+	JDuC6cA+1HgK9BzC6vUNuanyPcn+8Kb1OETwrVhPPo6QilnroQsMj7xOi/u5JZfzt7jnKl2TCpx
+	qZVgVnascMVkN8+PEFUVVbY52AeQCZxy5HwAnHfHiME/GQLCN3qTfiPROxjY3TjblYgxdRO0Ck1
+	vtq1A5R5zVQnm6oVA3YrH8o+GyCVLKWT1lfASFTxKpVKG7D1Fj0WkfjR5VfuxTlEqVctooYlPIe
+	Ycs=
+X-Received: by 2002:a05:6a20:12ca:b0:1f3:418c:6281 with SMTP id adf61e73a8af0-21621875ab8mr35263900637.4.1747893948575;
+        Wed, 21 May 2025 23:05:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHTFkdwaFGdarcTnLubzQX5o2FjgnhFMq7UwYkJHfRvH9tVaqvdnFp2FCz6WDEjhRKA3X+QBA==
+X-Received: by 2002:a05:6a20:12ca:b0:1f3:418c:6281 with SMTP id adf61e73a8af0-21621875ab8mr35263873637.4.1747893948226;
+        Wed, 21 May 2025 23:05:48 -0700 (PDT)
+Received: from localhost ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eb0a0b19sm10539159a12.74.2025.05.21.23.05.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 May 2025 23:05:47 -0700 (PDT)
+Date: Thu, 22 May 2025 14:02:43 +0800
+From: Coiby Xu <coxu@redhat.com>
+To: Baoquan He <bhe@redhat.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org, 
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org, pmenzel@molgen.mpg.de, 
+	ruyang@redhat.com, chenste@linux.microsoft.com
+Subject: Re: [PATCH] ima: add a knob ima= to make IMA be able to be disabled
+Message-ID: <wzquib7u5sycaf5prdgztlcudvaa2kma6jv3zmyfw7krzgnbkp@x2u5vnumfl4v>
+References: <20250515233953.14685-1-bhe@redhat.com>
+ <aCaFNvHbYxrCaPbe@MiWiFi-R3L-srv>
+ <1d2848fe45dbf58707cecf16c4fc46b179e24415.camel@linux.ibm.com>
+ <aC6Y3S9hEB1snvwj@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mfd: fix building without CONFIG_OF
-To: Arnd Bergmann <arnd@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>,
- Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade
- <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Chen Ni <nichen@iscas.ac.cn>, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org
-References: <20250520154106.2019525-1-arnd@kernel.org>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250520154106.2019525-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <aC6Y3S9hEB1snvwj@MiWiFi-R3L-srv>
 
-On 20. 05. 25, 17:40, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Using the of_fwnode_handle() means that local 'node' variables are unused
-> whenever CONFIG_OF is disabled for compile testing:
-> 
-> drivers/mfd/88pm860x-core.c: In function 'device_irq_init':
-> drivers/mfd/88pm860x-core.c:576:29: error: unused variable 'node' [-Werror=unused-variable]
->    576 |         struct device_node *node = i2c->dev.of_node;
->        |                             ^~~~
-> drivers/mfd/max8925-core.c: In function 'max8925_irq_init':
-> drivers/mfd/max8925-core.c:659:29: error: unused variable 'node' [-Werror=unused-variable]
->    659 |         struct device_node *node = chip->dev->of_node;
->        |                             ^~~~
-> drivers/mfd/twl4030-irq.c: In function 'twl4030_init_irq':
-> drivers/mfd/twl4030-irq.c:679:46: error: unused variable 'node' [-Werror=unused-variable]
->    679 |         struct                  device_node *node = dev->of_node;
->        |                                              ^~~~
-> 
-> Replace these with the corresponding dev_fwnode() lookups that
-> keep the code simpler in addition to avoiding the warnings.
+On Thu, May 22, 2025 at 11:24:13AM +0800, Baoquan He wrote:
+>On 05/21/25 at 08:54am, Mimi Zohar wrote:
+>> On Fri, 2025-05-16 at 08:22 +0800, Baoquan He wrote:
+>> > CC kexec list.
+>> >
+>> > On 05/16/25 at 07:39am, Baoquan He wrote:
+>> > > Kdump kernel doesn't need IMA functionality, and enabling IMA will cost
+>> > > extra memory. It would be very helpful to allow IMA to be disabled for
+>> > > kdump kernel.
+>
+>Thanks a lot for careufl reviewing and great suggestions.
+>
+>>
+>> The real question is not whether kdump needs "IMA", but whether not enabling
+>> IMA in the kdump kernel could be abused.  The comments below don't address
+>> that question but limit/emphasize, as much as possible, turning IMA off is
+>> limited to the kdump kernel.
+>
+>Are you suggesting removing below paragraph from patch log because they
+>are redundant? I can remove it in v2 if yes.
 
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+I understand Mimi's suggestion as the commit message should answer the
+question why disabling IMA should be limited to kdump.
 
-Exactly the same as I have, except:
-
-...
-> --- a/drivers/mfd/max8925-core.c
-> +++ b/drivers/mfd/max8925-core.c
-
-> @@ -682,8 +681,9 @@ static int max8925_irq_init(struct max8925_chip *chip, int irq,
->   		return -EBUSY;
->   	}
->   
-> -	irq_domain_create_legacy(of_fwnode_handle(node), MAX8925_NR_IRQS, chip->irq_base, 0,
-> -				 &max8925_irq_domain_ops, chip);
-> +	irq_domain_create_legacy(dev_fwnode(chip->dev), MAX8925_NR_IRQS,
-> +				 chip->irq_base, 0, &max8925_irq_domain_ops,
-> +				 chip);
-
-I used 100 columns -- without actually adding a line break and reflowing.
-
-thanks,
 -- 
-js
-suse labs
+Best regards,
+Coiby
+
 
