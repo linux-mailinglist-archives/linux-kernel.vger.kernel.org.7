@@ -1,76 +1,74 @@
-Return-Path: <linux-kernel+bounces-659893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9CF8AC1640
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 23:52:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E708AC1644
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 23:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D6593B47F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:52:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F22151730CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085AF25C710;
-	Thu, 22 May 2025 21:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3BC25E446;
+	Thu, 22 May 2025 21:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Mhjb2SQV"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Vd7ThP8u"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C7225A2C5
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 21:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B574025D53F
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 21:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747950747; cv=none; b=T7iguv7wYP6PdBCdREj4QgtNO0QEvH53ALbh0o7LNIw2esf6gjPj46+YUsgy7whIzfO7w89yN9u+VLkzhRUzITr3r3SpFvlBO8VhiHpg4fgHTD4O6wpNV+bgoBFKmBUTYEec0O8StsoShLecCAp/tYnx/gRtVwst5LO1MRyt13Q=
+	t=1747950927; cv=none; b=u3FPYWEeRPjGCmD+ROFCdnpPe+TF6vMioxtPAHV+AAJmuc5x1b4ptJLQjC6Dk8Xw83cB9SUu2dIHPXagODV0npAIKnEROUqKExaVSwV+AxLDNmnRgBfm7S8rXpLrBJe2MqlI3pwkEx89aEKrHCrM6mjLiExfGUPM83h8Uk60M8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747950747; c=relaxed/simple;
-	bh=h3gxn9cuXoddDKHE83elseHrpfGuY2/pgmGAoap5d/8=;
+	s=arc-20240116; t=1747950927; c=relaxed/simple;
+	bh=XmeeadVd6Z+Q4b8dcysuWdnWYCDg66vF0EY5hAY70Fg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HS4EbV4+zr8wScyHNf9aawgjSDvnrh+KIwx5rhooVPxlK+c1XCQ3lf6ZAn15N8ijf3lcYZTHCETlXfvpYJrukxlrGPVfWF1QnVGV2FdbQzHbBmkPKZJ2paZfiJEGRdqdQf2dTMH/QkjVcMA8Ke5VDVdULEu8GDb0kDixGjfKKFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Mhjb2SQV; arc=none smtp.client-ip=209.85.166.182
+	 In-Reply-To:Content-Type; b=TvY6p7YGzfa2JWDwCUgsi9/R4RxbxqlSbMoZxRqrgz3Sir41nb0GHgaLvSfrUoHjfmTbNPIfwzjB++1wHfD6qU25xgc0cFsnkyJiTvYe4yIHKB0ERKzsX0cPrQ6+uHEinytjx/K2n0GtynbG55+xBZKRkZ2tUUg/k5iuSW43WJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Vd7ThP8u; arc=none smtp.client-ip=209.85.166.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3da8e1259dfso61597705ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 14:52:25 -0700 (PDT)
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3dc6f653152so15997355ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 14:55:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1747950744; x=1748555544; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1747950925; x=1748555725; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=h3gxn9cuXoddDKHE83elseHrpfGuY2/pgmGAoap5d/8=;
-        b=Mhjb2SQVX3bac/4Vqm0LaturAOnByhS4eol6tJIAV/nrLWV5x51Fs8dBj2ird/PMjP
-         aj44G5thvQUXI5Ek2xKom7BHNvY3xcPCgS3QYUHQ6N/1fG4kpmzlt5TVSxV3xcKj2fE7
-         yeXYaHonkl2TsGkGMPYCWcPB/42KD6hPyptFE=
+        bh=OsNTc721PK66RA8sSI/Jw77VKtdJQEKr1LL6A2sC2Jw=;
+        b=Vd7ThP8u0CyqKnx8DDFovRIgsCsOSvWJfQZzX6fLg/d5Ce6GntXS+/eT8VG/zA8K8g
+         W9o9skbnzAG97r16QcM0RAnUoD+Pn0XFmMyI0cud7bTwg4zmSRpiek6+WLiI2B+moSMN
+         aj2yi5qn3vO7uRCRnIBYyTYXaUWB/o2qFlbJ4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747950744; x=1748555544;
+        d=1e100.net; s=20230601; t=1747950925; x=1748555725;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h3gxn9cuXoddDKHE83elseHrpfGuY2/pgmGAoap5d/8=;
-        b=atlJTC5USyn+/H9dsHJA4G/1ZcJQQND/k+bvDX0dWUHWkJWrBEosFPEih6QWYRWvwW
-         1g2MrA9xRstOHcARck6EvA6f3NcPJECnO0yfaLSHMNy0J9EiC+ivlQNe4/gACsBkRmG/
-         wRGA5DEHT9fjZZ1nZrlBdaSDb4w/TYglXKdnWuVbARz7eGbuUsi9kBo2OvGue/c98Lew
-         BTvXOSUsWTZFk3rK77P8dtPVsZz4o0ysq3swFGhRTTI1JGq4PyI8brgfhDLe1oM9oNsj
-         CrSgGyCP1co7uQb+1L1EwIVTm1TuDqu9NfvxqL7UAt9L1s5swAdAATw6o9sVkFeTynS7
-         50tA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyQi8abPxF5tmiHKSC2vF6ocKKWN4NlCRl4KQjvgvKY2huuoLZBJHGKrbSKMju/dJmPmxbBivCDJTq8dE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaxjOZbiBckjKrWMrjfP5eil0tnF+oDoR1fIoHoLGiFMJh7C30
-	WqaFnyuogloPNwNYz1KCSAeVgxx8j+PDEesJwQbiNM/oZ8cq67/S0ml69K/UUK9pPXp86kzp7+g
-	m6DKI
-X-Gm-Gg: ASbGncvTWRgaTqfikggEisegcO+pttsrk0yleWyB5XQCnWpbW+ik98gIrYdyTDGsIMa
-	trJBD96cneUdEa6vaeGOC23uWi7T8gL0ytm8khFJSOwf2n5TIljuCVOLW4XRPkG4rbu0uD7TwPT
-	lLXYuUF0xY11pbs31AnuWklKxLp6BTXQ2RkQR4MnuA9L1VgaZaAtlJ1TNn938JDR8q7EIHEBGlV
-	5KpiavorVrRcW3eeAZ8ARg3wgSlSMLxobcmGbkQqlXcsrVvlSYJZ+XffjnLsAWKSkm4kV/QfPq9
-	uLL5vOaa9IwqedbYv+E9EPPI8Ne8sw2tEPQ1VrWSsVsrYKJvBXkyz5kyJfk1kg==
-X-Google-Smtp-Source: AGHT+IGDkDoKX26+mZpUKHL9ezkJ1Wm3f/pt0o5Qwk3JRyWzB8+ExKX2tHk3jPeY0mXqaoYvPkV82A==
-X-Received: by 2002:a05:6e02:380c:b0:3dc:7df8:c822 with SMTP id e9e14a558f8ab-3dc7df8cf18mr116514675ab.14.1747950744575;
-        Thu, 22 May 2025 14:52:24 -0700 (PDT)
+        bh=OsNTc721PK66RA8sSI/Jw77VKtdJQEKr1LL6A2sC2Jw=;
+        b=smVnib+rGr4btPmisBQbmA8WnSrR2IkPOqgINw4Jw3DTTH3RTWmVEyTvwN1Ez75KIn
+         rc8TAe3Q/7LL72XnKuOHT6y/a4o2V5Sor1nGggUt0CmMI1ohNHLdkp8YerRaFNUD7gQC
+         Kj/nFkqlk6pBFT758MwkhW+sjJjED2aJOh1pQAGb9o97vl0cm3BaldpLr4XY4VmYN9+M
+         2hE42qEWPfhyZHakziEjvHnMvAmuHMLTuTcr4I7M5Ue6VMuzCLclCCmmK7xtX0bzz9f0
+         mQcLXu6L4LisJB4GMTUw07dbXOj0PQkCQVMQpHa/nNHl32RUiXAEMy23OekSMKQ6xJ3G
+         qB7g==
+X-Gm-Message-State: AOJu0YwvGTBxEoWHxt6eZu/YivYwhsk5UcCF7dzkYQp3XsyGnu4QWNeb
+	Uo7h1zXJSscSk0SWEArm08TQpo94ViXxhr9PP8aUmH9qxjZ8rG2EgkURu8hkqB8DSSo=
+X-Gm-Gg: ASbGnctFLk4Lhx8t+4de95JWMCZygef9ICBSyPiJSdsdXepIHJwrQ/SnJfrwsqB2rve
+	B8sImJAR0oI4lvWfcq7efmmP1a1lnFJIOSDP2U+K8BDRXyk6dsYhWhzo9RKNXRGrD4zZ3ewjQgX
+	EeMEL06GyvPQh6yWMwDagktWPqPrH4OMy7t0bkGO51hji7N5vhS7BEgi+CnO9AQ440zqd6Npy8c
+	CY+ka9q0efJW63ld76HiWqVMVIrHU2jM3UG9l08vuDUIVHz69C0lTvphMJX9AIC/7eocE/xTuX0
+	h9LRh/yhxOwtVzdMZVfxKwbR8VSMnWN0bIy+p9YdhOdqIyeQy5+2DCoINpcqkQ==
+X-Google-Smtp-Source: AGHT+IGTZWRdRAPzUj9NunbARRKcbmYiwV5p5BdqQMJqFvX9jNL1fBlhQhdNQn649bTrCNVyXMQ+HQ==
+X-Received: by 2002:a05:6e02:1569:b0:3dc:8a5f:7cbf with SMTP id e9e14a558f8ab-3dc9323abf9mr8551935ab.1.1747950924712;
+        Thu, 22 May 2025 14:55:24 -0700 (PDT)
 Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3db8444924bsm37442605ab.72.2025.05.22.14.52.23
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dc899a580asm8532895ab.9.2025.05.22.14.55.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 May 2025 14:52:24 -0700 (PDT)
-Message-ID: <d1908709-dc6e-48cf-8a94-d03e173c6cea@linuxfoundation.org>
-Date: Thu, 22 May 2025 15:52:23 -0600
+        Thu, 22 May 2025 14:55:24 -0700 (PDT)
+Message-ID: <d51263a0-50df-490c-84c9-ebd0ac49d7d1@linuxfoundation.org>
+Date: Thu, 22 May 2025 15:55:23 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,24 +76,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: timers: Fix grammar and clarify comments in
- nanosleep.c
-To: Rahul Kumar <rk0006818@gmail.com>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+Subject: Re: Fwd: [PATCH] selftests : timers : valid-adjtimex.c : Fixed style
+ checks
+To: rujra <braker.noob.kernel@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
  linux-kernel-mentees@lists.linux.dev, Shuah Khan <skhan@linuxfoundation.org>
-References: <20250514222112.396705-1-rk0006818@gmail.com>
+References: <CAG+54DbGpNn-Ps=djpsUy+K-6V+eoNcMbTcJoW8W5upz2OKn+g@mail.gmail.com>
+ <CAG+54DZ1wDTdWPQSw01G4YgTdihezQ966LGa6ttmBgT2D2gTyg@mail.gmail.com>
 Content-Language: en-US
 From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250514222112.396705-1-rk0006818@gmail.com>
+In-Reply-To: <CAG+54DZ1wDTdWPQSw01G4YgTdihezQ966LGa6ttmBgT2D2gTyg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/14/25 16:21, Rahul Kumar wrote:
-> Improved the clarity and grammar in the header comment of nanosleep.c
-> for better readability and consistency with kernel documentation style.
+On 5/15/25 19:44, rujra wrote:
+> fixed style checks according to Linux Kernel Coding Style standards.
 
-This patch isn't really fixing anything. I won't be taking this one.
-Sorry.
+Fixes
+
+> 
+> 
+> 1 : fixed alignment of parenthesis.
+> LOG : CHECK: Alignment should match open parenthesis
+> +                       printf("ERROR: out of range value %ld actually set!\n",
+> +                                       tx.freq);
+> 
+> 2 : fixed alignment of parenthesis.
+> LOG : CHECK: Alignment should match open parenthesis
+> +                               printf("Error: No failure on invalid
+> ADJ_FREQUENCY %ld\n",
+> +                                       invalid_freq[i]);
+> 
+> 3 : fixed line length of 106 to 100 and less.
+> LOG :  CHECK: line length of 106 exceeds 100 columns
+> +               printf("Invalid (sec: %ld  usec: %ld) did not fail! ",
+> tmx.time.tv_sec, tmx.time.tv_usec);
+
+Please refer to a few logs for examples on how to write change logs.
+Also check kernel documentation on submitting patches.
 
 thanks,
 -- Shuah
