@@ -1,149 +1,189 @@
-Return-Path: <linux-kernel+bounces-659267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E41AC0DD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:14:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68350AC0DD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 347AD162BC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:14:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948353B5A08
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC0D28C2D6;
-	Thu, 22 May 2025 14:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C05328C024;
+	Thu, 22 May 2025 14:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="VBbe1Rxu"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="UFLMoJpr"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2058.outbound.protection.outlook.com [40.107.105.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3834928A700
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 14:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747923260; cv=none; b=qkF4xRAKdMQlYMtGNL7/XXlMBouXB6DwmPvW+MvTXJJz4zI2dhWmdkxNFPPwJHbLugP0Jm2EGW3Eh/ijeAt2Q82u8qaDgOUpk9j5nERLQemRAX/h4/xGEoCTS9zjLB0Qulqnn7jBGX01pi49Db9H5EOBvFuM8HalYr2DRY9vjGc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747923260; c=relaxed/simple;
-	bh=NjkTfzFMyAGXuhOgKQ109s7ClQHXKV1V0DZBGG1rmro=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=juHnaFeRGD6VRAhGc1Bmj8wFMrUa4sUYxjI2agxVaE0yWMYUV+nq7ewM9LQUck/THVyDHFIdjK9JKIkfn7KaopynBxnoTDqoXcAmgPp4VhMAB4oTdddnAhNNvI7AHSU1GYLum6ypDVDoEhOTQSYxiH9X8SK5pC57kGNT5IpmLR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=VBbe1Rxu; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43d0618746bso66113985e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 07:14:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1747923256; x=1748528056; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U/uSymK2KQolRGNG/Zro5bwOoIkGZ6ivjeaFlFxOB+M=;
-        b=VBbe1RxuogT4M7dGw5g/JO+q6uFqQQjq45rIOCEPBobNpjeSt/zkOF6wleASLMktpR
-         bIJczm+Helt1zdrU08kASnyelExoeJGAt+gO6rIM4fMie0Lkhn8ngEYFpGfECyICgFW7
-         HEdts/JRwNQGKuGw8DN7nfukmbGJp577TdJOeeotVP2MTERpCGRmL/B0GSWBoNk5ZdSV
-         EhyKpdn7jehwwwyM9LXl1ZHaRk5d08GIDcbjOmUL33nYFVy2Q+9mQ7Q9iMmQsnKln2jk
-         NJ3/nPXT+8B9lzMrVLpxK/o61rX2/0Fk5hGEppxESLhzBwp+zrY/LLQoDp1X1z6NQvjC
-         pzVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747923256; x=1748528056;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U/uSymK2KQolRGNG/Zro5bwOoIkGZ6ivjeaFlFxOB+M=;
-        b=QmUqJxNTVroQObanx51YH2lSl4eZWetBgXi/YVDWcc/wqzVg7H0/ZW4hCEkYqkYRCS
-         ZSMAhv79yiNODmXHC/SewnBZFyryICS0Gn4bIhgd9aKkd6SayLn5VoveZi+p86iuyOj3
-         o9Y24PJgWDWERPYFrf+c88Jf6t6QREy8o6mzwVoQhkCNgR0HNjY+HBPvAsQE62sYD405
-         Xx4kqieAnkR5NqWl8XKPYzxNelfdYdhGusQjYzxhJdGi2SneA7xkEk1vZUKjGkvnVs3J
-         1nyXKBFEYI2bMdPKlVAjOBOpbMXa707A4I+w9Pyow5V0Rrb9ECHOZHNYiaS535Iv+ByZ
-         9plw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtx0/qIwWrnzcQtd47BbSdn9fBkIKBTwe+ja2rMj2eZZCvOj4tlqTmmciemgYIIebT/WaFlP76XgYj/JU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM2JUE22GleLWOeC8HfYyR5160JJXBbaY3UKYqp9WBtBIYmjlS
-	I1XNSh1KRZSNROuMnusrojXXeOvfSXVsVNyx8ykz7Pg+H9w+aYqhAE7GZvFkgbwiXc8=
-X-Gm-Gg: ASbGnct4a2/yDfSe4ZRrN7fmg5gBvnWuV6IPcIikmVcycTCDsXtlYSB9ya+Whi8SQD/
-	u7AIfbIfy8KH63I3R2TSaRvmkFH8st7jx6tij/qY70QoJW/Ra4EQixuNhXNFspxkfCgxB+IL5ex
-	XY/gkhy0VQ84Dyh7j8OqJOp29DlAPVCpo5u89DcmD2VrqmI2tcjz5njrz0ZbmU14DRXzyeEDygS
-	kjKHzWhihPkHob3Cen6yURbPGTainpOgJE91xePGRFb4yPNvJDf3xwXxRt2/D0lnnP9kS6LZABa
-	m0U1rSXvY+mLCqDC2vZThawh/tI/Q/i66ktWJ5xq5kA6f9ZBnzyoymxuQtC2/Z3stqyaiyvOx1r
-	e2l+DFw==
-X-Google-Smtp-Source: AGHT+IG0f08eYuSPxr3k77OUaqNYl8jJN0PAzE7LLLCfL4pu+eoqr3PWdm1MbbqN3+STTYtiLTQqeQ==
-X-Received: by 2002:a05:6000:26d3:b0:3a4:7373:7147 with SMTP id ffacd0b85a97d-3a473737314mr6667933f8f.25.1747923255863;
-        Thu, 22 May 2025 07:14:15 -0700 (PDT)
-Received: from localhost.localdomain ([2001:861:3382:ef90:a754:c956:d8da:801c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca8caaasm22910191f8f.83.2025.05.22.07.14.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 07:14:15 -0700 (PDT)
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	Armin Wolf <W_Armin@gmx.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: [PATCH] drivers: acpi: Fix platform profile driver on !acpi platforms
-Date: Thu, 22 May 2025 16:13:56 +0200
-Message-ID: <20250522141410.31315-1-alexghiti@rivosinc.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A246A28C5A6;
+	Thu, 22 May 2025 14:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747923303; cv=fail; b=Yw4bqF8tsh0nukpCI+4mnIFE12hhtiodlEStxHgsD2gf5JdPM/H4j05B+UOLEeo+ymrC5qiG1zoIqrj2b8IZ2ycyETsUbCZrQu9Rlg5/n7AC3r631f4/kTMP1z/EJbSe7vMffVPTzesXd/I1/oCFNKh9X7sA3BNtPviF0Y+mEeU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747923303; c=relaxed/simple;
+	bh=CcK7ocC778Eqgpc5Jtb46D//yva3DsVhDcio1XHbXy0=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=aO7PNgSihm99tXFi+aoyKiF+j4ZmYjxfhCX/qgdELDAc+yzRNfDrevC1AhDkkq5c8fOH2163vnP+zxKi5t3O6/UF8A2n6cuWulxRAut5UKenrA5/0n0+k4yj/zvVAM5opvWKOaGBWBDX4bxTE8x2NWVGU8GzsXza9rjvw5taT/8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=UFLMoJpr; arc=fail smtp.client-ip=40.107.105.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cxJn6QnWxTRXN2QeyvtQjDZ7mNaqMPJcuodpPcimqGyIYPzKMwD3QpQkyxp0sx4re0rDNlYUkfm8QaOV1x9ivSsN24OKn3+SEvhIZKVZtXHjtXtyNH5kchdENx63HPfNTpflm7s6qzgurU6mky2562vYfVrjpVhRGCvxrRdp55jLnJPXSPAllrpmoBnaJxKoq6v+KR9j8qBdV0i2yUpmeAMawgl4CGxxe9WCWJ5dJ+TujUj94/PzmolC3l2S18rA2/xz+AKWN1Gq8Zn+ywBaVXw9VaoWaNSp39PsOR+R/3xJ5hoLNvZ1V5d/Ebgt3r/NmK8lXTaH/QM0QojHH4l/gA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DlJ7DEzKXpMjHbvLOQsIgXkwcm4cQiH8R7CKHN1W/eY=;
+ b=lIriajYiubaVUHIoC/4fxjMiKDDCdhq9P5xStFhN9J1d4KWhtIwM5sUFxStqJZ86vZPCV0jlw5WKBp/SqSUg7LsQj5A/JZBqRVVA71U3x663ur/ik7A381G7GzghveaYSUlLPmjVQUq2kzcz0W7ZAkKUqE6F1W4W4zxfznMQQzpuRdkXngsgfeEA0rwuQYYqPGd2B1S+yAxr3r6zzYbNxXbxp5FEPxaVOBAOpidhe5F/6nLFubr7u9Ox2GlLFBSMKIqyi+7cEhSzGcyUiHTKFxKIzKFxrt67pnp41hhqnL5oLYsbjC/CyAUxJatEElHtS+dVZrjF5/+uGVTRvltOjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=gmail.com smtp.mailfrom=axis.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=axis.com; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DlJ7DEzKXpMjHbvLOQsIgXkwcm4cQiH8R7CKHN1W/eY=;
+ b=UFLMoJprSx/jwo1P05hYoDHWoP1ujyurob6N2ozXfgaWPsJms4oHNKdRgpYtfozhpQmHTAPxw1s1WQoHqqMsSv0Yfm7gUFUMShWffN7FiSIxvfFDQX6Xjp0a6DPHDle9i+oG5PCNShqjNQ8b63H5ONpBmUHkH73y/VZuqsBcCNU=
+Received: from DU2PR04CA0248.eurprd04.prod.outlook.com (2603:10a6:10:28e::13)
+ by AM7PR02MB6305.eurprd02.prod.outlook.com (2603:10a6:20b:1b3::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.21; Thu, 22 May
+ 2025 14:14:55 +0000
+Received: from DB1PEPF00050A01.eurprd03.prod.outlook.com
+ (2603:10a6:10:28e:cafe::35) by DU2PR04CA0248.outlook.office365.com
+ (2603:10a6:10:28e::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.28 via Frontend Transport; Thu,
+ 22 May 2025 14:14:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ DB1PEPF00050A01.mail.protection.outlook.com (10.167.242.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8769.18 via Frontend Transport; Thu, 22 May 2025 14:14:55 +0000
+Received: from se-mail01w.axis.com (10.20.40.7) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Thu, 22 May
+ 2025 16:14:54 +0200
+Received: from se-intmail01x.se.axis.com (10.4.0.28) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Thu, 22 May 2025 16:14:54 +0200
+Received: from pc51235-2237.se.axis.com (pc51235-2237.se.axis.com [10.96.29.3])
+	by se-intmail01x.se.axis.com (Postfix) with ESMTP id 58F3A2F47;
+	Thu, 22 May 2025 16:14:54 +0200 (CEST)
+Received: by pc51235-2237.se.axis.com (Postfix, from userid 3319)
+	id 5DE0840364C8; Thu, 22 May 2025 16:14:54 +0200 (CEST)
+From: Johan Adolfsson <johan.adolfsson@axis.com>
+Subject: [PATCH RFC v2 0/2] leds-lp50xx: Support reg to set multi_index.
+Date: Thu, 22 May 2025 16:14:47 +0200
+Message-ID: <20250522-led-fix-v2-0-652046323ec3@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFcxL2gC/z3Myw7CIBCF4VdpZu0YQKZeVr6H6YJSsJNoacCQm
+ oZ3F2vi8j85+VZILrJLcGlWiC5z4jDVULsG7Gimu0MeaoMSioRShA83oOcFtda+J63ppA3U9xx
+ dnTfp1tUeOb1CfG9wlt/1Z5Bo/0aWKJFaczj3RObo7dUsnPY2PKErpXwAaDth9J0AAAA=
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, "Jacek
+ Anaszewski" <jacek.anaszewski@gmail.com>
+CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Johan
+ Adolfsson" <johan.adolfsson@axis.com>, <kernel@axis.com>
+X-Mailer: b4 0.13.0
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB1PEPF00050A01:EE_|AM7PR02MB6305:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4018055b-3dcb-4160-ecef-08dd993b06b8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aURibHdaRDZJMjFQTUdJZitMNUkzenU3a1ZyVVdIclIvV0J1cndSSXdqcGxj?=
+ =?utf-8?B?T2RFc3poWnE3bE51VTI5T3JoZkYyUTNtUmVnMnVVSzlIMVBDZE5MYk5kZGhj?=
+ =?utf-8?B?TG1laU9Eek0yNkZNOC9WYW9BT3U4dXcvU0JMb25Zc2NaNExMbjMrMVZTa21s?=
+ =?utf-8?B?eURxY0VpaVpJNmJGZlRhOGlWeHAxS0FFNU8rS25nTHgyWWZuOW8rcUFyd3hh?=
+ =?utf-8?B?WFB2ZjJEbS9OYkpJdzZBc1YrUlVZaUxPMGIxcnVnQmhxQUpIYzZjbnNDOUFG?=
+ =?utf-8?B?K0sxVmlTcG9xYVdIbUxVeXpIYUhTRFUwZER0U0JBb2Z3UWxVYU42MGx4aDNt?=
+ =?utf-8?B?emdWdE9RZFl6bUg3M0VUUkFCUmVqSkRXa3Z4c3B3V0NLYzFFVmdkTGJ0MlI4?=
+ =?utf-8?B?aHhMcy9HK2FBclpqeURUQjlWQkZ4ZXBVWDNudHVpSzdKOS9ESVhIVzVrWjBM?=
+ =?utf-8?B?cTkybGZ3VGpQVmNNeTJNbkdTYTZiSVFTY1FFeFV1MFNvYzlIVG1RSjAzcHhW?=
+ =?utf-8?B?dndTdjM0cnhjZVhFUkFuNTNoQXB6ODFmMXVsZi9idlp2MWhRVFA0RHJKOWlO?=
+ =?utf-8?B?eVF2TjI0WjE5VDVUVXhNMFBndkxDdjJBd0N6dU10c2dUUHNSd2xOaDVqWnQ5?=
+ =?utf-8?B?b2g2TzZzeEtLd0s5NlZReVVHeDRJczM5VHNNL29HeG1LUGhqM0dSQ3JQOHdU?=
+ =?utf-8?B?QjRoQjNqdGF5Z2wzRFhkK2FPb1ZaNEtVT2p1aXpMMXZlM3JCRWk1enAzNDBL?=
+ =?utf-8?B?bnVJM0p2UWJPaTBEOHp3MlNVdDBXdmRGVW4yNHF6MVNHemV6MVlYV2F5RkFO?=
+ =?utf-8?B?WDhqUk0vaURESWpBME1MWTR5MlJTeUw4MXBjNy9Xbkc3TGFxckxNYzMwbFFz?=
+ =?utf-8?B?UE5nMGxicEJWdktYbHhWZjIyWFRjaVRQbzdVU3ZDUWxTVmxNU2U5SDZLOFFp?=
+ =?utf-8?B?YVVJV2hWQnFWdUNYMko0cTJZWGdWUndRbVJhbFRSNFdzWFNSRnBMdXA2bzZm?=
+ =?utf-8?B?VUVpMUppRSt1NXova203angyamZEUDZpbnBhRkMzVElsQ0ZGRUt3anQ0VVhG?=
+ =?utf-8?B?bzF0K1VJOEROUTZldUlNSUpCbFowcDlndEpTN2J1R1IxVDd4YkJFeUluTHlJ?=
+ =?utf-8?B?VW80WHFmeWpOc0EzZFJHaVFjNVhMd2tWZDBBSDVIOFpNZCtBOU1tVFphQmJT?=
+ =?utf-8?B?ZFBSRG1Sa0dWMStQY3JKYXpqc1RkM1ZocExSYUdiQmRDTlNyaGRLbzJEb0hZ?=
+ =?utf-8?B?cDZuS21nNTQvajdDcHNkMnJIUmZjdHRWT3J2eHB0U3IycW9JMnBTQS9iV05q?=
+ =?utf-8?B?Y0JaSEJEYnhCcnkydDJGS1FlRUpHT3RlQWh0eDh5eUdQU2ZoU3Y5cTFxRm10?=
+ =?utf-8?B?WVR6Qi81MWVrRmgxL3JVTkRJRW0yMklCTWozaVR0aHlzTFBSdGJEanlCVnQ4?=
+ =?utf-8?B?OVd1V1R5OG1CeEZlTERSSGJ0R3IzUm1tUzVJLytUN0h0N25kRVZsMEtpWFcy?=
+ =?utf-8?B?UHdrUGNXUmdrWEVtMmhBalNIMU1XbkxyOHRCcGRpRHRydjZFbzVzMTVNVitJ?=
+ =?utf-8?B?WHQ0cVZXcmhoaytiRGtndis0RGFYR1NodjVqZHhWVTZqZWtxcXd2RXZWdk9R?=
+ =?utf-8?B?QzFGV0YrSkZsTVpYOWhxSE1xYlhyVDV2Q002Yk9PODd2REtFWngxcjgxdCtu?=
+ =?utf-8?B?ZE1FVGtLZWVUTUtnL3RCZ0hBS0E4ZUt1WWQrUUIwQ29YMDk2cFpTUkVXQUll?=
+ =?utf-8?B?bnFxVlYwS3ZZcUhxREttR3Z4VTRaRFk4dlk5NmxVVWx0TGlPVkp1YTBWY0RJ?=
+ =?utf-8?B?WFdnMFpxSTRVVjdMZlBheXQxQXpET2NWelBENCtqUXJ0MVlRZXI0L1EvYVNj?=
+ =?utf-8?B?d1Q4ME1RZkpwZDJBWkhsSFp4L3RlcWkyMFhldmlnUlRmczRLMTM5WExKNzBD?=
+ =?utf-8?B?RW5ubWduWlV5T2ZnYmhTTUliU1lWZFk1a0hvQlpwVG5scElnS3FWLzloRnlP?=
+ =?utf-8?B?RWJTMmxZRXpBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2025 14:14:55.0889
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4018055b-3dcb-4160-ecef-08dd993b06b8
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF00050A01.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR02MB6305
 
-The platform profile driver is loaded even on platforms that do not have
-acpi enabled. The initialization of the sysfs entries was recently moved
-from platform_profile_register() to the module init call, and those
-entries need acpi_kobj to be initialized which is not the case when acpi
-is disabled.
+Since devicetree nodes are (sometimes?) processed in reverse order,
+support reg as the actual multi_index index so yo get well defined
+color order presented in the multi_index file.
+Not sure if reusing reg for this is the correct way or if another
+property such as "multi_index" or similar should be used instead.
+Looks like reg is used for similar things at least.
+Or should the whole "reverse the devicetree" problem be fixed instead?
+Update bindings to match implementation, and add description for the
+reg property.
 
-This results in the following warning:
-
- WARNING: CPU: 5 PID: 1 at fs/sysfs/group.c:131 internal_create_group+0xa22/0xdd8
- Modules linked in:
- CPU: 5 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W           6.15.0-rc7-dirty #6 PREEMPT
- Tainted: [W]=WARN
- Hardware name: riscv-virtio,qemu (DT)
- epc : internal_create_group+0xa22/0xdd8
-  ra : internal_create_group+0xa22/0xdd8
-
- Call Trace:
-
- internal_create_group+0xa22/0xdd8
- sysfs_create_group+0x22/0x2e
- platform_profile_init+0x74/0xb2
- do_one_initcall+0x198/0xa9e
- kernel_init_freeable+0x6d8/0x780
- kernel_init+0x28/0x24c
- ret_from_fork+0xe/0x18
-
-Fix this by checking if acpi is enabled before trying to create sysfs
-entries.
-
-Fixes: 77be5cacb2c2 ("ACPI: platform_profile: Create class for ACPI platform profile")
-Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Signed-off-by: Johan Adolfsson <johan.adolfsson@axis.com>
 ---
- drivers/acpi/platform_profile.c | 3 +++
- 1 file changed, 3 insertions(+)
+Changes in v2:
+- Avoid duplicate assignment. dev_err and return -EINVAL on error.
+- Update bindings doc.
+- Link to v1: https://lore.kernel.org/r/20250506-led-fix-v1-1-56a39b55a7fc@axis.com
 
-diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-index ffbfd32f4cf1..b43f4459a4f6 100644
---- a/drivers/acpi/platform_profile.c
-+++ b/drivers/acpi/platform_profile.c
-@@ -688,6 +688,9 @@ static int __init platform_profile_init(void)
- {
- 	int err;
- 
-+	if (acpi_disabled)
-+		return -EOPNOTSUPP;
-+
- 	err = class_register(&platform_profile_class);
- 	if (err)
- 		return err;
+---
+Johan Adolfsson (2):
+      leds: leds-lp50xx: Handle reg to get correct multi_index
+      dt-bindings: leds: lp50xx: Document child reg, fix example
+
+ Documentation/devicetree/bindings/leds/leds-lp50xx.yaml | 11 ++++++++---
+ drivers/leds/leds-lp50xx.c                              |  8 +++++++-
+ 2 files changed, 15 insertions(+), 4 deletions(-)
+---
+base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
+change-id: 20250225-led-fix-444fb544584a
+
+Best regards,
 -- 
-2.43.0
+Johan Adolfsson <johan.adolfsson@axis.com>
 
 
