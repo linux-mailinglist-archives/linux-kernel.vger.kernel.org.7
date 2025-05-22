@@ -1,109 +1,228 @@
-Return-Path: <linux-kernel+bounces-659908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308B6AC168D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:20:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64577AC1696
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0AB47AC78C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:18:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E350505FB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D2A26FA42;
-	Thu, 22 May 2025 22:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FE32701A9;
+	Thu, 22 May 2025 22:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4xUTCq9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XnfRoa1J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BBE26B968;
-	Thu, 22 May 2025 22:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F8D26B96F;
+	Thu, 22 May 2025 22:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747952405; cv=none; b=Y0kquuKIzWS1run+edeYATE7HnzPAm6TEfhidP9yHuuYCYzJJMlD/B5aLY7t+qJiiB7FPRp25cJburLoxjMpklRjKG2aJbObOnSF+QeLI4bsGXRMGwWbuitO6EfFO2siskivDkKaJnGjuwbspiHdL4d2c+7KM+I6IxNvvPWV/4o=
+	t=1747952457; cv=none; b=denvYE8tnxcnLBrK8RamzZbzB4bLNBMMSeHHAm7lBoXUJj92zxag80mxW2wGZxjbQxoxowTvvOo2K3PHKynzjmC3AHpElyDMj7d9ckeHLgppYIoTpYGgzLwS/fnAmuC/P53PXLAn3W2mFdVCfphvpHKdmwwlf36z6qObOiY7Mkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747952405; c=relaxed/simple;
-	bh=PwYK2yYeLn+Oou4JsY36nhUzSuMSbtdBTpEgutARMqk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=pDcVfhYbY9+WFb1dG6AaVgX9rrRTfbQ9qjk1MSvp6sAwPCGoyR/ONxZtb6vdM9p1M+wOyuNDeOsI1/YFNVE01Icu4rAKrXG0uNuYYAB30v7YjmVY0WFFZ5zs5GfkyGUnAz5+YwKRi8KMupxf3+ZLiGLgbWy5q1XwG79PEwbD4bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4xUTCq9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5C3AC4CEE4;
-	Thu, 22 May 2025 22:20:04 +0000 (UTC)
+	s=arc-20240116; t=1747952457; c=relaxed/simple;
+	bh=dVDrWKoaeesLRoXCHObxVsyqMqgIy+JXfIFLh9pO2d0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pFxGeE1DCGVkoIfT91sQQtmvHArkC/Y/HOKbCv4m3meto6OxUYbLU0NWKQ1Zz4gBoRyqZJbn1TxheKSmn02Sg4f6G6hOA9qSFJYMJRTBfRyWaAJ/EwUWjaHpMwjzv/uKYdOA7fjgUmXluaRetcR9fiPrDThXeQAHnO0oj18uOoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XnfRoa1J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5526CC4CEEB;
+	Thu, 22 May 2025 22:20:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747952404;
-	bh=PwYK2yYeLn+Oou4JsY36nhUzSuMSbtdBTpEgutARMqk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=K4xUTCq9L/f9q5t09qgMqOhjW5B9jn5+55XxG9/AMRiIqFkYHzxhV4oFCeiUiMKPC
-	 kx3Hpcidc5gISWI/zx9uppOssfDkoeehyil5/XSUt112fb+MgMdHm76l64JoJSy6u0
-	 0w97zpTGtqzQ8iu3lqyTwVNfGMsR3nwzQLXxKLsQ9Ehfu7OsEHBjlMdwFbtNEbMdHV
-	 KuCvubzaJk1ZUolnsd1nvgojSyQ0TQcNmjLHbcU6oVYq5bkOMnrwPVwlhteE0RmpKc
-	 j3NTofxXCTBysNbk9VgJAcmoXf8sxJYBTKNwe2UCljHYBViESGbJBLTlSFPAWBl2lh
-	 oT4KAhx3sMsqQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E2C3805D89;
-	Thu, 22 May 2025 22:20:41 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1747952457;
+	bh=dVDrWKoaeesLRoXCHObxVsyqMqgIy+JXfIFLh9pO2d0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XnfRoa1JVaE5HSMaUwOq4y9ptbtkDVd0gwCUZd74m0Sg0aDm6uG9UzMBH6Qs+pqOe
+	 Sdmsd9NmgYOCZVP2D9POGPRM950b0RddA5BltuJVgdUHTyzPHikL++CfF6YAZmngwG
+	 cJs9suQ/WeqOZ2obt3Rkx6aWtuXfH7o4otvVvfzDNkQrZ/CRqQqz+u7gD0Ux3u+Cef
+	 o2u2NOsr7Fc7CABVBIUHHwJJfHs/3CNvvN0fZ7hA2PRmUNsOu95b3H+TBSi4nsPYQR
+	 s7Y/RK/5ocVEx1zT9FegZ9wwCALpSXPJS/3lOTVWkCv22fpdz4M0ft/LjczR8v2Kiq
+	 uvRHNnNPL6RqA==
+Date: Thu, 22 May 2025 19:20:55 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Gautam Menghani <gautam@linux.ibm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, maddy@linux.ibm.com
+Subject: Re: [PATCH v3 4/7] perf python: Add support for perf_counts_values
+ to return counter data
+Message-ID: <aC-jR0b3mji4oJ7Q@x1>
+References: <20250519195148.1708988-1-irogers@google.com>
+ <20250519195148.1708988-5-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v3 0/8] selftests/bpf: Test sockmap/sockhash
- redirection
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174795244025.3035914.3223968241025374027.git-patchwork-notify@kernel.org>
-Date: Thu, 22 May 2025 22:20:40 +0000
-References: <20250515-selftests-sockmap-redir-v3-0-a1ea723f7e7e@rbox.co>
-In-Reply-To: <20250515-selftests-sockmap-redir-v3-0-a1ea723f7e7e@rbox.co>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, jakub@cloudflare.com, mrpre@163.com
+In-Reply-To: <20250519195148.1708988-5-irogers@google.com>
 
-Hello:
-
-This series was applied to bpf/bpf-next.git (master)
-by Martin KaFai Lau <martin.lau@kernel.org>:
-
-On Thu, 15 May 2025 00:15:23 +0200 you wrote:
-> John, this revision introduces one more patch: "selftests/bpf: Introduce
-> verdict programs for sockmap_redir". I've kept you cross-series Acked-by. I
-> hope it's ok.
+On Mon, May 19, 2025 at 12:51:41PM -0700, Ian Rogers wrote:
+> From: Gautam Menghani <gautam@linux.ibm.com>
 > 
-> Jiayuan, I haven't heard back from you regarding [*], so I've kept things
-> unchanged for now. Please let me know what you think.
+> Add support for perf_counts_values struct to enable the python
+> bindings to read and return the counter data.
 > 
-> [...]
+> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+> ---
+>  tools/perf/util/python.c | 92 +++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 91 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index ead3afd2d996..1cbddfe77c7c 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -626,6 +626,92 @@ static int pyrf_thread_map__setup_types(void)
+>  	return PyType_Ready(&pyrf_thread_map__type);
+>  }
+>  
+> +struct pyrf_counts_values {
+> +	PyObject_HEAD
+> +
+> +	struct perf_counts_values values;
+> +};
+> +
+> +static const char pyrf_counts_values__doc[] = PyDoc_STR("perf counts values object.");
+> +
+> +static void pyrf_counts_values__delete(struct pyrf_counts_values *pcounts_values)
+> +{
+> +	Py_TYPE(pcounts_values)->tp_free((PyObject *)pcounts_values);
+> +}
+> +
+> +#define counts_values_member_def(member, ptype, help) \
+> +	{ #member, ptype, \
+> +	  offsetof(struct pyrf_counts_values, values.member), \
+> +	  0, help }
+> +
+> +static PyMemberDef pyrf_counts_values_members[] = {
+> +	counts_values_member_def(val, Py_T_ULONG, "Value of event"),
+> +	counts_values_member_def(ena, Py_T_ULONG, "Time for which enabled"),
+> +	counts_values_member_def(run, Py_T_ULONG, "Time for which running"),
+> +	counts_values_member_def(id, Py_T_ULONG, "Unique ID for an event"),
+> +	counts_values_member_def(lost, Py_T_ULONG, "Num of lost samples"),
+> +	{NULL}
+> +};
 
-Here is the summary with links:
-  - [bpf-next,v3,1/8] selftests/bpf: Support af_unix SOCK_DGRAM socket pair creation
-    https://git.kernel.org/bpf/bpf-next/c/fb1131d5e181
-  - [bpf-next,v3,2/8] selftests/bpf: Add socket_kind_to_str() to socket_helpers
-    https://git.kernel.org/bpf/bpf-next/c/d87857946ded
-  - [bpf-next,v3,3/8] selftests/bpf: Add u32()/u64() to sockmap_helpers
-    https://git.kernel.org/bpf/bpf-next/c/b57482b0fe8e
-  - [bpf-next,v3,4/8] selftests/bpf: Introduce verdict programs for sockmap_redir
-    https://git.kernel.org/bpf/bpf-next/c/f266905bb3d8
-  - [bpf-next,v3,5/8] selftests/bpf: Add selftest for sockmap/hashmap redirection
-    https://git.kernel.org/bpf/bpf-next/c/f0709263a07e
-  - [bpf-next,v3,6/8] selftests/bpf: sockmap_listen cleanup: Drop af_vsock redir tests
-    https://git.kernel.org/bpf/bpf-next/c/9266e49d608c
-  - [bpf-next,v3,7/8] selftests/bpf: sockmap_listen cleanup: Drop af_unix redir tests
-    https://git.kernel.org/bpf/bpf-next/c/f3de1cf621f7
-  - [bpf-next,v3,8/8] selftests/bpf: sockmap_listen cleanup: Drop af_inet SOCK_DGRAM redir tests
-    https://git.kernel.org/bpf/bpf-next/c/c04eeeb2af8e
+So the above is failing on a aarch64 debian (rpi5):
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+acme@raspberrypi:~/git/perf-tools-next $ dpkg -S /usr/include/python3.11/structmember.h
+libpython3.11-dev:arm64: /usr/include/python3.11/structmember.h
+acme@raspberrypi:~/git/perf-tools-next $
 
+Where it only has:
 
+acme@raspberrypi:~/git/perf-tools-next $ grep -r Py_T_ULONG /usr/include/
+acme@raspberrypi:~/git/perf-tools-next $ grep -rw Py_T_ULONG /usr/include/
+acme@raspberrypi:~/git/perf-tools-next $ grep -rw T_ULONG /usr/include/
+/usr/include/python3.11/structmember.h:#define T_ULONG     12
+acme@raspberrypi:~/git/perf-tools-next $
+
+while on fedora 42 x86_64:
+
+⬢ [acme@toolbx perf-tools-next]$ grep -rw Py_T_ULONG /usr/include/
+/usr/include/python3.13/descrobject.h:#define Py_T_ULONG     12
+/usr/include/python3.13/structmember.h:#define T_ULONG     Py_T_ULONG
+⬢ [acme@toolbx perf-tools-next]$
+
+So I'm making it use the T_ULONG and others as all the other PyMemberDef
+arrays in tools/perf/util/python.c, ok?
+
+- Arnaldo
+
+> +static PyObject *pyrf_counts_values_get_values(struct pyrf_counts_values *self, void *closure)
+> +{
+> +	PyObject *vals = PyList_New(5);
+> +
+> +	if (!vals)
+> +		return NULL;
+> +	for (int i = 0; i < 5; i++)
+> +		PyList_SetItem(vals, i, PyLong_FromLong(self->values.values[i]));
+> +
+> +	return vals;
+> +}
+> +
+> +static int pyrf_counts_values_set_values(struct pyrf_counts_values *self, PyObject *list,
+> +					 void *closure)
+> +{
+> +	Py_ssize_t size;
+> +	PyObject *item = NULL;
+> +
+> +	if (!PyList_Check(list)) {
+> +		PyErr_SetString(PyExc_TypeError, "Value assigned must be a list");
+> +		return -1;
+> +	}
+> +
+> +	size = PyList_Size(list);
+> +	for (Py_ssize_t i = 0; i < size; i++) {
+> +		item = PyList_GetItem(list, i);
+> +		if (!PyLong_Check(item)) {
+> +			PyErr_SetString(PyExc_TypeError, "List members should be numbers");
+> +			return -1;
+> +		}
+> +		self->values.values[i] = PyLong_AsLong(item);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static PyGetSetDef pyrf_counts_values_getset[] = {
+> +	{"values", (getter)pyrf_counts_values_get_values, (setter)pyrf_counts_values_set_values,
+> +		"Name field", NULL},
+> +	{NULL}
+> +};
+> +
+> +static PyTypeObject pyrf_counts_values__type = {
+> +	PyVarObject_HEAD_INIT(NULL, 0)
+> +	.tp_name	= "perf.counts_values",
+> +	.tp_basicsize	= sizeof(struct pyrf_counts_values),
+> +	.tp_dealloc	= (destructor)pyrf_counts_values__delete,
+> +	.tp_flags	= Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,
+> +	.tp_doc		= pyrf_counts_values__doc,
+> +	.tp_members	= pyrf_counts_values_members,
+> +	.tp_getset	= pyrf_counts_values_getset,
+> +};
+> +
+> +static int pyrf_counts_values__setup_types(void)
+> +{
+> +	pyrf_counts_values__type.tp_new = PyType_GenericNew;
+> +	return PyType_Ready(&pyrf_counts_values__type);
+> +}
+> +
+>  struct pyrf_evsel {
+>  	PyObject_HEAD
+>  
+> @@ -1475,7 +1561,8 @@ PyMODINIT_FUNC PyInit_perf(void)
+>  	    pyrf_evlist__setup_types() < 0 ||
+>  	    pyrf_evsel__setup_types() < 0 ||
+>  	    pyrf_thread_map__setup_types() < 0 ||
+> -	    pyrf_cpu_map__setup_types() < 0)
+> +	    pyrf_cpu_map__setup_types() < 0 ||
+> +	    pyrf_counts_values__setup_types() < 0)
+>  		return module;
+>  
+>  	/* The page_size is placed in util object. */
+> @@ -1520,6 +1607,9 @@ PyMODINIT_FUNC PyInit_perf(void)
+>  	Py_INCREF(&pyrf_cpu_map__type);
+>  	PyModule_AddObject(module, "cpu_map", (PyObject*)&pyrf_cpu_map__type);
+>  
+> +	Py_INCREF(&pyrf_counts_values__type);
+> +	PyModule_AddObject(module, "counts_values", (PyObject *)&pyrf_counts_values__type);
+> +
+>  	dict = PyModule_GetDict(module);
+>  	if (dict == NULL)
+>  		goto error;
+> -- 
+> 2.49.0.1101.gccaa498523-goog
 
