@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-658887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E278AC08B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:31:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62AF2AC08B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54804A266E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:30:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35689A26840
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2C1280CE5;
-	Thu, 22 May 2025 09:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E7328851A;
+	Thu, 22 May 2025 09:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGi745s1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9GiZgYK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2377F1AB6F1;
-	Thu, 22 May 2025 09:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1776287509;
+	Thu, 22 May 2025 09:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747906260; cv=none; b=lNXOUZRfdMbnpo2WNFnHKqfkPsqAgHCzyXwO6iGBAualCpG+KQbOgQrb0bVPDgVb5xuZF/mBQ17FdC7L3bQUoWUASYCqw1yxvU+vGPVmjGbo2LZfrnspB7c6/k8iOSCkFWEMx64QXKFJhxOLImkvnjstnLChxtzeh8eJg6jCsuA=
+	t=1747906202; cv=none; b=Ts8ywTPfZ8BhT+FNE2l2Z4YkvoFFx/Q2IxGlYQj3r1xrUoH+fWnTYAehzCZz7zWmHF/Ihqjnei2a7kbzhMcnptDVf6R4ZL6TDdUYXjy/od/aNThXZZMJ1RjfkxjnJNNU+SZlSPA04Q1DkllfAsPILTfsr8oWjfuLD7nJL8HreH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747906260; c=relaxed/simple;
-	bh=jCPrtR+co5QtXIxUKcx9Ji16YPvD1Y1ViAthhJhUujg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ssGVYz6S1DQ5dEi2feigBv/u5OQPWJsVGAArMTb3XvH5JCYtg6WYRWidmfv0npOtdpEKVBC74p8/ZMtpWN+3iUhIIefhMRlc3zUK6nmwl80qM9NiGH0Wz5huVHB/55qaN8TUUHQjvoGZ3AMAWaZuHEMQf2B/On3Fl3AWVxyHzqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGi745s1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B7DAC4CEED;
-	Thu, 22 May 2025 09:30:53 +0000 (UTC)
+	s=arc-20240116; t=1747906202; c=relaxed/simple;
+	bh=LrhHBtCAj/5rfvAU6Fbhhc46QRBAOG5iW0o66arOxSA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=DHeL9KKBJm326dL1xaBTuV8SkcW5pq1luE3U3ZLc5GwKVj+uvLxkHCSAVI5ym8tdxDATzCqfKrD4YQKVCX+p+GkV+67ybEHNwQHL2OIapX13VwlaAiIWmMIMlImqOCsT1Kzi5cDDTDeP+2J7ngdg/YmJ4ovyCK6seNEhpAW8M5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N9GiZgYK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B1EEC4CEE4;
+	Thu, 22 May 2025 09:30:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747906259;
-	bh=jCPrtR+co5QtXIxUKcx9Ji16YPvD1Y1ViAthhJhUujg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TGi745s1u4AYsh830wUJ5LwNma9da8VcSNHHE3eCXCOIM3KqoaAzLr3RM8Pdn2Elz
-	 13k6JuqkiI0UyQn5GVY69GZyRfgunfJkKM5ibuJUEMxUU2YDFm04xhAALbntxMNJ8n
-	 2yNa86G2RO5WsliYpEWjZhA1+1CNx6uZj3f8nVhA4lAWZsb1xPeWrlDVikn5W8PdRh
-	 nYHGgorgjevnqSA+YlKvsOHSMKXBhJXNNQIdpSVBErGyf/aQprFU2ucRtqb/JPxeWN
-	 rXQMR839P/Q4cVH41/ScCApzd7uUh+fI2pcEmvu+q/CnQFYpUyv3iETRfmApwuPkM5
-	 bay6YxeZh3u/A==
-From: alexs@kernel.org
-To: si.yanteng@linux.dev,
-	corbet@lwn.net,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jiang.kun2@zte.com.cn
-Cc: Alex Shi <alexs@kernel.org>,
-	xu.xin16@zte.com.cn,
-	yang.yang29@zte.com.cn,
-	wang.yaxin@zte.com.cn,
-	fan.yu9@zte.com.cn,
-	he.peilin@zte.com.cn,
-	tu.qiang35@zte.com.cn,
-	qiu.yutan@zte.com.cn,
-	zhang.yunkai@zte.com.cn,
-	ye.xingchen@zte.com.cn
-Subject: Re: [PATCH linux next v3] Docs/zh_CN: Translate napi.rst to Simplified Chinese
-Date: Thu, 22 May 2025 17:30:25 +0800
-Message-ID: <174790621596.181766.8318425479251968426.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <202505202059281560ibnRharfZKdmfk-fERTt@zte.com.cn>
-References: <202505202059281560ibnRharfZKdmfk-fERTt@zte.com.cn>
+	s=k20201202; t=1747906202;
+	bh=LrhHBtCAj/5rfvAU6Fbhhc46QRBAOG5iW0o66arOxSA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=N9GiZgYKeDy7G+8i4LVBVfN7QIjlWCRGEY6UDWzR2KmXMG1Boe4gOCKVQ4W+Z84eN
+	 ibg9KA58HkfVZIw0u5lWjkIeV9rwQuZ4k3S4EElQTIBpWBtXRcJkRuGSYGEGBrBGcW
+	 v0jE66SegD0wJvCVSRLfaT+7FJssFLiY7xNRIURrzOrz6lCN8rLn0Je5o/DVcU8h/u
+	 fxKM1Ls2KhA9XQeuNsULS9Zm/xrl4xekf6IPnOCGm64L1dkNlB/eF2+a+2m0IElMTr
+	 dydRWwK/JTdiqnO6VKJJopoFoX1pHanQUaBghZC4TU7dPAuZimELZTNTor6IMgDpzn
+	 VHYgkalemZy3Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB1E7380AA7C;
+	Thu, 22 May 2025 09:30:38 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Subject: Re: [net PATCH] octeontx2-pf: Avoid adding dcbnl_ops for LBK and SDP vf
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174790623774.2464246.16312456507750189389.git-patchwork-notify@kernel.org>
+Date: Thu, 22 May 2025 09:30:37 +0000
+References: <20250519072658.2960851-1-sumang@marvell.com>
+In-Reply-To: <20250519072658.2960851-1-sumang@marvell.com>
+To: Suman Ghosh <sumang@marvell.com>
+Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+ hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, bbhushan2@marvell.com,
+ andrew+netdev@lunn.ch, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Alex Shi <alexs@kernel.org>
+Hello:
 
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-On Tue, 20 May 2025 20:59:28 +0800, jiang.kun2@zte.com.cn wrote:
-> translate the "napi.rst" into Simplified Chinese.
+On Mon, 19 May 2025 12:56:58 +0530 you wrote:
+> Priority flow control is not supported for LBK and SDP vf. This patch
+> adds support to not add dcbnl_ops for LBK and SDP vf.
 > 
-> Update to commit bf1b8e0abc39("documentation: networking: Add NAPI config")
-> 
-> 
+> Fixes: 8e67558177f8 ("octeontx2-pf: PFC config support with DCBx")
+> Signed-off-by: Suman Ghosh <sumang@marvell.com>
+> ---
+>  drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 
-Applied, thanks!
+Here is the summary with links:
+  - [net] octeontx2-pf: Avoid adding dcbnl_ops for LBK and SDP vf
+    https://git.kernel.org/netdev/net/c/184fb40f731b
 
-[1/1] Docs/zh_CN: Translate napi.rst to Simplified Chinese
-      commit: 4276b69fcd84f3130552210f6c3be87689bcdb29
-
-Best regards,
+You are awesome, thank you!
 -- 
-Alex Shi <alexs@kernel.org>
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
