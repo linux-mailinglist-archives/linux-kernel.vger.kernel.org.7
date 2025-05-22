@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-659835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B56AC158C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:35:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C0B0AC1592
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D09BB7AF236
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:34:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 205AF7AFB88
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D09D23A564;
-	Thu, 22 May 2025 20:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D387123C4FF;
+	Thu, 22 May 2025 20:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="p9PYFjVp"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="fgjlF1VP"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79C923909C
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 20:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D18239E67
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 20:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747946140; cv=none; b=tRLeSVyCRRixt2g12FysgGbrkqdhh6ScYrYHNP01YxwTyzzROkjO1WQEB1qJqbAMc3yjZsZ8MeQs9+7C1+PeX48LqOj5PrB+o+edu6WS0UiBLZdwT4TQvGRuiijD90dDn/SKRa2MgIIHuwnoYQWKrmIBwE7Y+DEk9gCm6hnsbWc=
+	t=1747946142; cv=none; b=d92qJolLS2QH5Xiw3/nUbdbYzmH18nioF0BzuHTZsgkXWORSmvdpqhFJy+HqurFqMcYHcTgPVa+yLAToJ9B5ruqFx4wpg5JpFZyGLZIJN+a97O/vbrlpfX3RBo4hoDEBdAiEJ8ceA+XcSD7x0sV8gqR5ZgBFD0juljpcgugXtS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747946140; c=relaxed/simple;
-	bh=5PhR4Cke8yMwoA4uPKJBWa65xrmcQt00CtfyS9bPFCo=;
+	s=arc-20240116; t=1747946142; c=relaxed/simple;
+	bh=G5DjctQXgpnKHi8p8ajBugWNHkXnFCRfVVal3XFToIg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hIeCPTDpxItpCNHSzjYIqPbJA2jY3igGk2svoTBLKp6U4+BGJM5rWrOVK7arnBV6uIVC6SvWnM8Ipir6MqPibLQFZKEB343ND8Da8zV03s7ld7ATkslx2w/jwZfvzna8blTwmZmzQTzNxLrVZPcT0sMfOYWecZ9aeSpxx6MgDoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=p9PYFjVp; arc=none smtp.client-ip=209.85.215.180
+	 In-Reply-To:To:Cc; b=VRAXmpp19d/JHgHCDpS2O1kexjpSKaJpshILqlUenU8HHVIPyvHHaKAXP/YZzJz7RM+YFHQyiQRj24F/6AbtMH4XI1N0wHblbDTs+AloRpxU5feu2OTXETiVt6sHUyCefLhyzAjRUil8JGNZD3PpngjDpDcjVIGbvoaLdCEyOx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=fgjlF1VP; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b1a1930a922so5741526a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 13:35:38 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-73bf5aa95e7so7493725b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 13:35:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1747946138; x=1748550938; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1747946139; x=1748550939; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GuR/z1GpxuJ9rGb2JSweVgvKX4SVj6nkkUnTCjHYUz4=;
-        b=p9PYFjVpWX9JdpITTcooJzggyOMBFTxu2a/wfBC0DuCYsToyDhCgYNcqnbo5TCnvLp
-         1edNhMSKNBhyx04BV+hNQI7JPwa2t8eXRXCMcCk7jciWt/slwS0XNXLCsA+TOU3Y3aX7
-         fW0SaZ5lL1GRVRkl3bGxt/cgyFgvvysCmhdxbZA4ttS4Gfj7WGpqWfHC5Dhqto2vl4lQ
-         zJIM1DnMp5Lin5xehfLYQvjh9V1cTsfiXnJk0XF/W5sPGxeLD5eMOIu42hkE4umZgLyf
-         TCyR5ZRF8wniQNYtx0vjuCiYGCRhuDBjSQnp6QFAJC0q4OoxDC5QWzVRWxOUYr2pJgmx
-         aFGQ==
+        bh=9U/5M+ajo+Gkj1tgfbc1vbd2oCHGdy+fsgX0VrxxjDQ=;
+        b=fgjlF1VP9G0aHiVcaBbmbjk6X83+LQJc1GShZHyVup4TMTbHMhs+sLZZWK2/0tthgX
+         Jv/ETPVtJ7T+y7f8w9VffxJk/W5AzchnNBNeHqju0xsiB2jF8H+ZPX91dKY/amy/yrC0
+         yRvln8CSHsLWdZt9q1gzWqVbxcQ96QfZ9nfDdGaqLGZGudcd+klSccRS1bIj3prLqhyK
+         qwE/W3fPisuUc9my7z1gSQwDyb7CKbZ22qj3C+/6MX9yggtXV5127YSBWhrAsbCkkk58
+         VelxSW4orGGo2Ner1XSpwx1EpYX+LtSnky8m/RCtAgnabaGYT4cOfGN1rkrTVXJI8/dR
+         hXNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747946138; x=1748550938;
+        d=1e100.net; s=20230601; t=1747946139; x=1748550939;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GuR/z1GpxuJ9rGb2JSweVgvKX4SVj6nkkUnTCjHYUz4=;
-        b=rDcNVwQDBObpaX7oI6ISrapj7MiX6Me6uLy7qaDHBD07jqZm6szLTnTDnYzbO/E7mJ
-         6MIzC2W2maRHylg3xyKLR1YTw0iJo+d+cNo/0mKUJSgihNyiAypR1UrrZBp7QvgzjUCV
-         pbp6uReUtalJV9+6JivWr2pc61K47bq9d4sPAbP95da8rI1GAlpFYGrxl+xKLeZi69em
-         5WQsSlp38Pk3KF2NI/9khRVBFosnFGqD0aKu68DRYexdk0CRIh9fLqVnpEwVBoj5PCHz
-         SUpRsrSiMLxcceK5kRGu/H/NtM21IftmTYfz6bzBJcOWdw0RNyov2Qqk4VZW1qeFlCJi
-         tDPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWp2WEzD5GP3A5YMpeBxZJqnXVrPpkVZQ7z1lM3mm0co6emzFryZLmnwdni9D3jB+7LG8MqXamuCzJRw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUL+GzfLn/nxwA4jgyT5cu6gEY0WSA5VjQ3W2EFo7lScP48JvO
-	M7PeSOQJIMmnRTgMYkt1CNRUklBBUhwhMJxil7iDcAIwG5gFje58aeH5sZP1uUrjrFFrLHIYesD
-	tGs+f
-X-Gm-Gg: ASbGncuLDs8x8oO9YMn8jAZ6j3UBihdv4+bgfJV0sH1jD0JS0+8TqJ6AQA0ZhFOqCm4
-	OXKbSHWv+hPEFDoS1gMEMN+slMbi9im27kfYSO4sK295AeeCTIfO94qeJXObeWg3DzhsHXZA3YF
-	2stR7ntaxUP7anfMLu+1aEjbt9Vxn2dhyNzrxcXX80dJ7wnTyf8uQmbn8TfaLIQfS+mWk8kVjCY
-	8vScipfW89hw+4OKg+aQu66ZzcNqEHcXi8RShfzb7wIvm3+gT4iecqTDI84yv1NjidYimzatIke
-	n20ts03xN7U5ihHCk91Tn5bFbhq+g3cRwhoZGTvfsFJHu9+m57FF1hkUJJgZv5Ku
-X-Google-Smtp-Source: AGHT+IF8umjnswXbCK9h2ygGRuvFLfM+6wDcV4ZgplnSPknSDclMZnijppDTERnvVHLPyJpY/CvMbw==
-X-Received: by 2002:a17:90b:1dc9:b0:30a:3e8e:492c with SMTP id 98e67ed59e1d1-30e7d5be2ccmr33662120a91.32.1747946137764;
-        Thu, 22 May 2025 13:35:37 -0700 (PDT)
+        bh=9U/5M+ajo+Gkj1tgfbc1vbd2oCHGdy+fsgX0VrxxjDQ=;
+        b=PWlLp90jab5XepZ3kOOqH4vWsBWwnCKv24Qhw5EK2FAyCFa3H/vmy/w1s5k3N9fu0q
+         rtNfT2DhDHjAkhycPqQHTx1es9jIo9KX2c7rc30IaKINIrHnlCQvUtb2e680oUGK8IyR
+         /rG4xg3cGtdjK8omdDKq3q6v4O0087hDQjeiw7rYGRl4kIjoljhBZjIy/+cZNUhr8QmB
+         0pxWnAWDeuv8fIQnSPoCBjitEhjbNjoH9jPGlphJldPAMxlGJaiL4/4LH/gQjxDw/ZFX
+         NgNLpplxxPKSFQ81AXHVN/895mbHesBc/28ixG797Jo943+5Z9r1yRJibbkvwS68KWq4
+         z0WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqWJyVBPeoy3PDeWLv5l8AQusKoTwGuILbt8veI/jJTCzwaxn1AlK9iCvYKySbODFdWyjWZ7SXuRZW+ns=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5wOchS4biQhOghXVeR1lpMhaq8IJs3OKweMVVQ9fJh9A86wpR
+	K3ITcyzaAqNHdxoUKK8+3DGE6HaSQWenoGJtRPGneC7HJtACye6Zk4JNo35a5gsogZ0=
+X-Gm-Gg: ASbGncuzwlMMG041inZ53AQDrT60CXTRb6/643Zs5EtCnLztKs76YTxbU+Od8D32KuH
+	dyp0jopG5zuBwvzyDjGcu78ljDrj3XzsqPHanspQbkE/n87tKrV6UvZbmnTqUttImaQCPsjqHAT
+	k3Y+AUzwlWPRF/S+/XJs4SiJx3OF4l9gk8KlfVv+co474SaBiG/TYEnQOpc/8IC5Isfbmvm1xnu
+	NflC10G4Uq2cjLhvyIfDXPy25eXM4sUPGNVxNRHxLTShivg6rDop1p6wNebg16CVXEuf4n1A+L/
+	lm00mQWFCYCRw9vmS68iEe0p4iDRwju01NoFrXsTVwI8p2OVTbfaEZ1PQ+1jzbnZ
+X-Google-Smtp-Source: AGHT+IELwMEFwHhuScHHyQ7/U0noZU5+9NnOKAusz1Utvndq2rvsq/J8AdaP7d6jJo94bLP1ogTjNw==
+X-Received: by 2002:a17:90b:17cc:b0:30e:9349:2d99 with SMTP id 98e67ed59e1d1-310e96b5ff6mr767848a91.5.1747946138723;
+        Thu, 22 May 2025 13:35:38 -0700 (PDT)
 Received: from atishp.ba.rivosinc.com ([64.71.180.162])
         by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f365b229csm5932754a91.10.2025.05.22.13.35.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 13:35:37 -0700 (PDT)
+        Thu, 22 May 2025 13:35:38 -0700 (PDT)
 From: Atish Patra <atishp@rivosinc.com>
-Date: Thu, 22 May 2025 13:35:25 -0700
-Subject: [PATCH v2 1/5] RISC-V: KVM: Lazy enable hstateen IMSIC & ISEL bit
+Date: Thu, 22 May 2025 13:35:26 -0700
+Subject: [PATCH v2 2/5] RISC-V: KVM: Add a hstateen lazy enabler helper
+ function
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250522-kvm_lazy_enable_stateen-v2-1-b7a84991f1c4@rivosinc.com>
+Message-Id: <20250522-kvm_lazy_enable_stateen-v2-2-b7a84991f1c4@rivosinc.com>
 References: <20250522-kvm_lazy_enable_stateen-v2-0-b7a84991f1c4@rivosinc.com>
 In-Reply-To: <20250522-kvm_lazy_enable_stateen-v2-0-b7a84991f1c4@rivosinc.com>
 To: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
@@ -94,124 +94,84 @@ Cc: kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
  Atish Patra <atishp@rivosinc.com>
 X-Mailer: b4 0.15-dev-42535
 
-Currently, we enable the smstateen bit at vcpu configure time by
-only checking the presence of required ISA extensions.
+Hstateen has different bits that can be enabled lazily at runtime.
+Most of them have similar functionality where the hstateen bit must
+be enabled if not enabled already. The correpsonding config bit in
+vcpu must be enabled as well so that hstateen CSR is updated correctly
+during the next vcpu load. In absesnce of Smstateen extension, exit
+to the userspace in the trap because CSR access control exists
+architecturally only if Smstateen extension is available.
 
-These bits are not required to be enabled if the guest never uses
-the corresponding architectural state. Enable the smstaeen bits
-at runtime lazily upon first access.
+Add a common helper function to achieve the above said objective.
 
 Signed-off-by: Atish Patra <atishp@rivosinc.com>
 ---
- arch/riscv/include/asm/kvm_aia.h |  1 +
- arch/riscv/kvm/aia.c             | 43 ++++++++++++++++++++++++++++++++++++++++
- arch/riscv/kvm/aia_imsic.c       |  8 ++++++++
- 3 files changed, 52 insertions(+)
+ arch/riscv/include/asm/kvm_vcpu_insn.h |  4 ++++
+ arch/riscv/kvm/vcpu_insn.c             | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-diff --git a/arch/riscv/include/asm/kvm_aia.h b/arch/riscv/include/asm/kvm_aia.h
-index 1f37b600ca47..760a1aef09f7 100644
---- a/arch/riscv/include/asm/kvm_aia.h
-+++ b/arch/riscv/include/asm/kvm_aia.h
-@@ -112,6 +112,7 @@ int kvm_riscv_aia_aplic_has_attr(struct kvm *kvm, unsigned long type);
- int kvm_riscv_aia_aplic_inject(struct kvm *kvm, u32 source, bool level);
- int kvm_riscv_aia_aplic_init(struct kvm *kvm);
- void kvm_riscv_aia_aplic_cleanup(struct kvm *kvm);
-+bool kvm_riscv_aia_imsic_state_hw_backed(struct kvm_vcpu *vcpu);
+diff --git a/arch/riscv/include/asm/kvm_vcpu_insn.h b/arch/riscv/include/asm/kvm_vcpu_insn.h
+index 350011c83581..1125f3f1c8c4 100644
+--- a/arch/riscv/include/asm/kvm_vcpu_insn.h
++++ b/arch/riscv/include/asm/kvm_vcpu_insn.h
+@@ -6,6 +6,8 @@
+ #ifndef __KVM_VCPU_RISCV_INSN_H
+ #define __KVM_VCPU_RISCV_INSN_H
  
- #ifdef CONFIG_32BIT
- void kvm_riscv_vcpu_aia_flush_interrupts(struct kvm_vcpu *vcpu);
-diff --git a/arch/riscv/kvm/aia.c b/arch/riscv/kvm/aia.c
-index 19afd1f23537..1e0d2217ade7 100644
---- a/arch/riscv/kvm/aia.c
-+++ b/arch/riscv/kvm/aia.c
-@@ -241,6 +241,8 @@ int kvm_riscv_vcpu_aia_rmw_topei(struct kvm_vcpu *vcpu,
- 				 unsigned long new_val,
- 				 unsigned long wr_mask)
- {
-+	bool vsfile_present = kvm_riscv_aia_imsic_state_hw_backed(vcpu);
++#include <linux/kvm_types.h>
 +
- 	/* If AIA not available then redirect trap */
- 	if (!kvm_riscv_aia_available())
- 		return KVM_INSN_ILLEGAL_TRAP;
-@@ -249,6 +251,26 @@ int kvm_riscv_vcpu_aia_rmw_topei(struct kvm_vcpu *vcpu,
- 	if (!kvm_riscv_aia_initialized(vcpu->kvm))
- 		return KVM_INSN_EXIT_TO_USER_SPACE;
+ struct kvm_vcpu;
+ struct kvm_run;
+ struct kvm_cpu_trap;
+@@ -44,5 +46,7 @@ int kvm_riscv_vcpu_mmio_store(struct kvm_vcpu *vcpu, struct kvm_run *run,
+ 			      unsigned long fault_addr,
+ 			      unsigned long htinst);
+ int kvm_riscv_vcpu_mmio_return(struct kvm_vcpu *vcpu, struct kvm_run *run);
++int kvm_riscv_vcpu_hstateen_lazy_enable(struct kvm_vcpu *vcpu, unsigned int csr_num,
++					uint64_t hstateen_feature_bit_mask);
  
-+	/* Continue if smstaeen is not present */
-+	if (!riscv_has_extension_unlikely(RISCV_ISA_EXT_SMSTATEEN))
-+		goto skip_hstateen;
-+
-+	/* Enable the bit in hstateen0 lazily upon first access */
-+	if (!(vcpu->arch.cfg.hstateen0 & SMSTATEEN0_AIA_IMSIC)) {
-+		vcpu->arch.cfg.hstateen0 |= SMSTATEEN0_AIA_IMSIC;
-+		if (IS_ENABLED(CONFIG_32BIT))
-+			csr_set(CSR_HSTATEEN0H, SMSTATEEN0_AIA_IMSIC >> 32);
-+		else
-+			csr_set(CSR_HSTATEEN0, SMSTATEEN0_AIA_IMSIC);
-+		if (vsfile_present)
-+			return KVM_INSN_CONTINUE_SAME_SEPC;
-+	} else if (vsfile_present) {
-+		pr_err("Unexpected trap for CSR [%x] with hstateen0 enabled and valid vsfile\n",
-+		       csr_num);
-+		return KVM_INSN_EXIT_TO_USER_SPACE;
-+	}
-+
-+skip_hstateen:
- 	return kvm_riscv_vcpu_aia_imsic_rmw(vcpu, KVM_RISCV_AIA_IMSIC_TOPEI,
- 					    val, new_val, wr_mask);
- }
-@@ -400,11 +422,32 @@ int kvm_riscv_vcpu_aia_rmw_ireg(struct kvm_vcpu *vcpu, unsigned int csr_num,
- 				unsigned long wr_mask)
- {
- 	unsigned int isel;
-+	bool vsfile_present = kvm_riscv_aia_imsic_state_hw_backed(vcpu);
- 
- 	/* If AIA not available then redirect trap */
- 	if (!kvm_riscv_aia_available())
- 		return KVM_INSN_ILLEGAL_TRAP;
- 
-+	/* Continue if smstaeen is not present */
-+	if (!riscv_has_extension_unlikely(RISCV_ISA_EXT_SMSTATEEN))
-+		goto skip_hstateen;
-+
-+	/* Enable the bit in hstateen0 lazily upon first access */
-+	if (!(vcpu->arch.cfg.hstateen0 & SMSTATEEN0_AIA_ISEL)) {
-+		vcpu->arch.cfg.hstateen0 |= SMSTATEEN0_AIA_ISEL;
-+		if (IS_ENABLED(CONFIG_32BIT))
-+			csr_set(CSR_HSTATEEN0H, SMSTATEEN0_AIA_ISEL >> 32);
-+		else
-+			csr_set(CSR_HSTATEEN0, SMSTATEEN0_AIA_ISEL);
-+		if (vsfile_present)
-+			return KVM_INSN_CONTINUE_SAME_SEPC;
-+	} else if (vsfile_present) {
-+		pr_err("Unexpected trap for CSR [%x] with hstateen0 enabled and valid vsfile\n",
-+		       csr_num);
-+		return KVM_INSN_EXIT_TO_USER_SPACE;
-+	}
-+
-+skip_hstateen:
- 	/* First try to emulate in kernel space */
- 	isel = ncsr_read(CSR_VSISELECT) & ISELECT_MASK;
- 	if (isel >= ISELECT_IPRIO0 && isel <= ISELECT_IPRIO15)
-diff --git a/arch/riscv/kvm/aia_imsic.c b/arch/riscv/kvm/aia_imsic.c
-index 29ef9c2133a9..d8e6f14850c0 100644
---- a/arch/riscv/kvm/aia_imsic.c
-+++ b/arch/riscv/kvm/aia_imsic.c
-@@ -361,6 +361,14 @@ static int imsic_mrif_rmw(struct imsic_mrif *mrif, u32 nr_eix,
- 	return 0;
+ #endif
+diff --git a/arch/riscv/kvm/vcpu_insn.c b/arch/riscv/kvm/vcpu_insn.c
+index 97dec18e6989..0a7e229cfd34 100644
+--- a/arch/riscv/kvm/vcpu_insn.c
++++ b/arch/riscv/kvm/vcpu_insn.c
+@@ -235,6 +235,36 @@ static int seed_csr_rmw(struct kvm_vcpu *vcpu, unsigned int csr_num,
+ 	return KVM_INSN_EXIT_TO_USER_SPACE;
  }
  
-+bool kvm_riscv_aia_imsic_state_hw_backed(struct kvm_vcpu *vcpu)
++int kvm_riscv_vcpu_hstateen_lazy_enable(struct kvm_vcpu *vcpu, unsigned int csr_num,
++					uint64_t hstateen_feature_bit_mask)
 +{
-+	struct kvm_vcpu_aia *vaia = &vcpu->arch.aia_context;
-+	struct imsic *imsic = vaia->imsic_state;
++	/* Access from VS shouldn't trap if smstaeen is not present */
++	if (!riscv_has_extension_unlikely(RISCV_ISA_EXT_SMSTATEEN))
++		return KVM_INSN_EXIT_TO_USER_SPACE;
 +
-+	return imsic && imsic->vsfile_cpu >= 0;
++	/*
++	 * Make sure that KVM doesn't enable any guest visible state via sstateen (lower 32 bits)
++	 * yet. Access is restricted to prevent unintended behavior.
++	 */
++	if (hstateen_feature_bit_mask & GENMASK(31, 0)) {
++		pr_err("Unexpected access from lower 32 bits of hstateen0\n");
++		return KVM_INSN_EXIT_TO_USER_SPACE;
++	}
++
++	/* Enable the bit in hstateen0 lazily upon first access */
++	if (!(vcpu->arch.cfg.hstateen0 & hstateen_feature_bit_mask)) {
++		vcpu->arch.cfg.hstateen0 |= hstateen_feature_bit_mask;
++		csr_set(CSR_HSTATEEN0, hstateen_feature_bit_mask);
++		if (IS_ENABLED(CONFIG_32BIT))
++			csr_set(CSR_HSTATEEN0H, hstateen_feature_bit_mask >> 32);
++	} else {
++		return KVM_INSN_EXIT_TO_USER_SPACE;
++	}
++
++	/* Let the guest retry the instruction read after hstateen0 is modified */
++	return KVM_INSN_CONTINUE_SAME_SEPC;
 +}
 +
- struct imsic_vsfile_read_data {
- 	int hgei;
- 	u32 nr_eix;
+ static const struct csr_func csr_funcs[] = {
+ 	KVM_RISCV_VCPU_AIA_CSR_FUNCS
+ 	KVM_RISCV_VCPU_HPMCOUNTER_CSR_FUNCS
 
 -- 
 2.43.0
