@@ -1,112 +1,157 @@
-Return-Path: <linux-kernel+bounces-658904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92FB8AC08F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:47:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51415AC08F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF6FEA2665A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:47:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 846339E3915
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9E528750C;
-	Thu, 22 May 2025 09:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49C72882A4;
+	Thu, 22 May 2025 09:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FLoARL14"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="edMA7H0G"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF1919ABDE
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 09:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A89286D65;
+	Thu, 22 May 2025 09:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747907252; cv=none; b=MzHjDyt7kgz6sJz3RlNyLrvk3oVJK+OWxYs3RBXS8RYOaM7fBYMyGaMCz0yrSG2FuxDZoZNbjr2ZIJYz55BEE0CWWFp6moXMUVZxF3tSkWsVHkCmsnrChey6sv/xjMylTht2UIAEnnbq1rD08vzR0oaeJ+Y4Zfxasc/mlZZGwDg=
+	t=1747907285; cv=none; b=kbg18/ywF6YDzKPX+CRjUyfWqUnN08I2L/4VfYjjzgVu01MjJpQjAX0eZUKlFvQfKKPEexPnrEuQdg+eoUg3H4BB1B3nGZY0ZK5iPmAhucN5vSr8AZGNi9b1mPd2FLXYGV07a7PrM4PeDfcoivyLIst0fYrbWSrw9bKmpU0ydMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747907252; c=relaxed/simple;
-	bh=KG+s4PtaPgSpBFVQKiFr3oBf0P0d1Ti4Oj0Puwts4+I=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=n+rzFJNlGAV42CntvdhTfrLzeZDrifZ6tUBHtvttgOzhuHdXPpakaiT39Mg0X4PuzgADPqOtgQ4KQy0+dZda7yeyVCziyxeEFrZDMsUhFG20QlHb4MTK2quUoCL+McWELz9r2RWoAK2RxhPXr2/Dg8vG/83MYBYX7exHZ2OXJTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FLoARL14; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747907250; x=1779443250;
-  h=date:from:to:cc:subject:message-id;
-  bh=KG+s4PtaPgSpBFVQKiFr3oBf0P0d1Ti4Oj0Puwts4+I=;
-  b=FLoARL14BWzkAkwb6eKkm8kVFKYMdz8U5S9k4LyV2vpf0PVf6xd6UCF3
-   ZveXYoWp+YDcXF9/bO8txc7uSSeVpf1SfSzEBGKGixyGjns0LI78hdZpQ
-   4JAKnw9UM5d1cNlAcB56aEFTlQsc8bKCLZwBvAaVrP3ZG1Rkq/LgmuPve
-   gVkidPjVTnMPDTISH5e6KImNNXrzFK50jEqKMrZIuJJtN3322ULmnN1gj
-   dh1cAthGUMQ3Q4CrbqPp+56nlID3/vswCzqPHg4rP9/Vn8RA4A/hcr9in
-   va3IVw7kauRzTbc0ozQ3H6fC2/f5etNXqc3FMbdyfJwVZMQndEXQLmDDX
-   A==;
-X-CSE-ConnectionGUID: i9GF/Y1jTiSOyy+hzZ2UEA==
-X-CSE-MsgGUID: UhT9HgBARKWTN4w3PrYFRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11440"; a="50025396"
-X-IronPort-AV: E=Sophos;i="6.15,305,1739865600"; 
-   d="scan'208";a="50025396"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 02:47:29 -0700
-X-CSE-ConnectionGUID: Sd8YD10bTkC5mJSiYEtDnQ==
-X-CSE-MsgGUID: 3D9+ih0fSH2G2p6bICUB9Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,305,1739865600"; 
-   d="scan'208";a="141044026"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 22 May 2025 02:47:28 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uI2WM-000PBM-0f;
-	Thu, 22 May 2025 09:47:26 +0000
-Date: Thu, 22 May 2025 17:47:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/core] BUILD SUCCESS
- 6a7c3c2606105a41dde81002c0037420bc1ddf00
-Message-ID: <202505221713.V97AdmW3-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1747907285; c=relaxed/simple;
+	bh=G9A/bzc76W4/RQ4cu1m8gGGqgrDhVN9o7y4ose9SmmY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HxdLp+/saeHOqD0MFpOm7SR9fP1ZmWbNd29F55Sx4fsGlTwLVLS0ONnped8eBFCpZ5PjXox+g2Suo228q5TMVV+TbsrILLJM5q5WxApfJjvzfKRf2OwybBtVw6QIGEaycj9XlcfuS2UkXBQW8JYoK4a+gyJ6Mq9XrA7DvE2s7a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=edMA7H0G; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54M9H80q007487;
+	Thu, 22 May 2025 02:47:51 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=TvoyCFumHT95HRjOX9WJN6h
+	LU3in6RU6bCAECQQ4Cb4=; b=edMA7H0Gtn1ad9cnDszkszmQ5JVNV5hm6we/RyB
+	FRcQHKoqy4VH8KpSE9Qn9atHfL7QsXiyZNNDLucWm+hkV+3BA23wA0w72x2Itn8z
+	FomJ9jcInZLVawG2vM4pzE+Jfw1me70VJgiz6xvKUW0NangR1Nxa8wixnEa6uKea
+	9LDVkkmTIeRBwIMNqY1eqvNcjeB2q0U/M6KbNsQknL+OQP0zXxcbBSIRgb30UisZ
+	GVlPDJEGB0ouRkQe2ANUFYDy42TxCWtuBrjTsr2m4SGGP0R+F8+Cd7/+H7JURrW6
+	NnkqTpTwdzdXujAPo3TWcpuAbsp2nB8ZjIEGze4HdX+jg0A==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46t15jr1sa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 May 2025 02:47:51 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 22 May 2025 02:47:50 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 22 May 2025 02:47:50 -0700
+Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with ESMTP id 64FD65B694A;
+	Thu, 22 May 2025 02:47:45 -0700 (PDT)
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Hariprasad Kelam <hkelam@marvell.com>,
+        Sunil Goutham
+	<sgoutham@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        "Subbaraya
+ Sundeep" <sbhatta@marvell.com>,
+        Bharat Bhushan <bbhushan2@marvell.com>,
+        "Andrew Lunn" <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Jacob Keller
+	<jacob.e.keller@intel.com>,
+        Simon Horman <horms@kernel.org>
+Subject: [net Patch v2] octeontx2-pf: QOS: Perform cache sync on send queue teardown
+Date: Thu, 22 May 2025 15:17:41 +0530
+Message-ID: <20250522094742.1498295-1-hkelam@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: 8SSgxDmwSVKfxR3bSTYvgOrrfv8XvJ8m
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDA5OCBTYWx0ZWRfXzNXzM0yDULKr CNyZmokn79kMP+TQyhwI353peadXqT6fIVoAPOQSYOV86fWhfyhy8VFSo7ZsUyrsMb68Ogmq7vw OkRqoy+qUjpj2rVN/2tyEMrIor8gXUUcX2fkirzHY1hXwuQiGF/lXIR6GVZ7AWGMwEzq0aDdRyy
+ oKOrXH4dZ/DPKVBbM2Y6mq7ZUtQGLo7rOYHZ07phn6yAEN27jeIx+zRHOLO0x0cZPnIKDS+T53y Vw0ECvOKogO7hUCqAvt+COl0WlfnwQGxwxD3EQbEC7ZcvzOcfdfxUKcGTIfarwdP85PY/VBOsiu Ye0Uwklbc8AfBiL9WNZ/UtWc3otGONmbt4EH3Zn88ubzhW2xWb7E1N8i5V+k+waeCzeiZVDhfkl
+ BF3YSO3Grad7n7p2nILVF+mduaVYULv0HxOof+SUDeNWJdSFEsNms8s6/E8NgMpMV1e1+865
+X-Authority-Analysis: v=2.4 cv=HOrDFptv c=1 sm=1 tr=0 ts=682ef2c7 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=QY2NK7KhZwvVfJmNNlwA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: 8SSgxDmwSVKfxR3bSTYvgOrrfv8XvJ8m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-22_05,2025-05-22_01,2025-03-28_01
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/core
-branch HEAD: 6a7c3c2606105a41dde81002c0037420bc1ddf00  x86/bugs: Fix spectre_v2 mitigation default on Intel
+QOS is designed to create a new send queue whenever  a class
+is created, ensuring proper shaping and scheduling. However,
+when multiple send queues are created and deleted in a loop,
+SMMU errors are observed.
 
-elapsed time: 1395m
+This patch addresses the issue by performing an data cache sync
+during the teardown of QOS send queues.
 
-configs tested: 20
-configs skipped: 127
+Fixes: ab6dddd2a669 ("octeontx2-pf: qos send queues management")
+Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
+---
+v2: Push the change to net
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+ .../ethernet/marvell/octeontx2/nic/qos_sq.c   | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-tested configs:
-i386                         allmodconfig    gcc-12
-i386                          allnoconfig    gcc-12
-i386                         allyesconfig    gcc-12
-i386    buildonly-randconfig-001-20250521    clang-20
-i386    buildonly-randconfig-002-20250521    clang-20
-i386    buildonly-randconfig-003-20250521    gcc-12
-i386    buildonly-randconfig-004-20250521    clang-20
-i386    buildonly-randconfig-005-20250521    gcc-12
-i386    buildonly-randconfig-006-20250521    gcc-12
-i386                            defconfig    clang-20
-x86_64                        allnoconfig    clang-20
-x86_64                       allyesconfig    clang-20
-x86_64  buildonly-randconfig-001-20250521    clang-20
-x86_64  buildonly-randconfig-002-20250521    clang-20
-x86_64  buildonly-randconfig-003-20250521    gcc-12
-x86_64  buildonly-randconfig-004-20250521    gcc-12
-x86_64  buildonly-randconfig-005-20250521    clang-20
-x86_64  buildonly-randconfig-006-20250521    clang-20
-x86_64                          defconfig    gcc-11
-x86_64                      rhel-9.4-rust    clang-18
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/qos_sq.c b/drivers/net/ethernet/marvell/octeontx2/nic/qos_sq.c
+index c5dbae0e513b..58d572ce08ef 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/qos_sq.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/qos_sq.c
+@@ -256,6 +256,26 @@ int otx2_qos_enable_sq(struct otx2_nic *pfvf, int qidx)
+ 	return err;
+ }
+ 
++static int otx2_qos_nix_npa_ndc_sync(struct otx2_nic *pfvf)
++{
++	struct ndc_sync_op *req;
++	int rc;
++
++	mutex_lock(&pfvf->mbox.lock);
++
++	req = otx2_mbox_alloc_msg_ndc_sync_op(&pfvf->mbox);
++	if (!req) {
++		mutex_unlock(&pfvf->mbox.lock);
++		return -ENOMEM;
++	}
++
++	req->nix_lf_tx_sync = true;
++	req->npa_lf_sync = true;
++	rc = otx2_sync_mbox_msg(&pfvf->mbox);
++	mutex_unlock(&pfvf->mbox.lock);
++	return rc;
++}
++
+ void otx2_qos_disable_sq(struct otx2_nic *pfvf, int qidx)
+ {
+ 	struct otx2_qset *qset = &pfvf->qset;
+@@ -285,6 +305,8 @@ void otx2_qos_disable_sq(struct otx2_nic *pfvf, int qidx)
+ 
+ 	otx2_qos_sqb_flush(pfvf, sq_idx);
+ 	otx2_smq_flush(pfvf, otx2_get_smq_idx(pfvf, sq_idx));
++	/* NIX/NPA NDC sync */
++	otx2_qos_nix_npa_ndc_sync(pfvf);
+ 	otx2_cleanup_tx_cqes(pfvf, cq);
+ 
+ 	mutex_lock(&pfvf->mbox.lock);
+-- 
+2.34.1
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
