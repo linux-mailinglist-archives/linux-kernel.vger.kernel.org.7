@@ -1,269 +1,524 @@
-Return-Path: <linux-kernel+bounces-658908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D07AC0902
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:49:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE8C5AC0907
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 545BA1BC3DB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:49:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0F833B5D35
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DDA280321;
-	Thu, 22 May 2025 09:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="dgm6F4R3"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A2F288C0D;
+	Thu, 22 May 2025 09:49:48 +0000 (UTC)
+Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892D1280A32
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 09:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7B72620C1
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 09:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747907339; cv=none; b=YqDc1UrjsOOJ4sIor3m6KSmFKvypCBi7j/d1m2I3Osw9tJ83QTmzQY5IOot0DKRE9j3FmwCUFeWjcJzEtPveU0rBbHT9jVKF26YzQW97SpaIcij2qVStwhAX7mCKJi1j6Bm0R2xZYcFTJVTXf4lHTjWrhFqrH1pDsWw8WccPdHg=
+	t=1747907388; cv=none; b=sxhJDmCY7ZDXVAOhhwcerY6K7DqT/mbVcUDDcBa2AF8hg+IFtxjmyOxary4EnIGWaYRC112UzdusvapqYerZnzMK1HT6+aWJFVazD6GYeHQgjAySxdhKEVzNHlZszWtgQLrq18G7NFJXZshu8FaKTCVbfVb0nyOH0m/mMptMoPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747907339; c=relaxed/simple;
-	bh=qdGgntxIIjfcvQxUD7MkNPywpqkarEzTXwYkWCvLQjA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RizuwVwhPO8wHQqUxsZGXo5Nt2eMPy8+Tu/LRLCmfcRcFr7rNfERQ5V+2ba7zzemmwz9tSQ4W39YMzEUc7NarnUKW0JPIE2EBRbWjmPSRiMZVexrFlwmFj4U/keYpzlF1GLmNZsuERJw+VEmaGxpMEfEzW7wc7FJFScJF1PRhb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=dgm6F4R3; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ad563b69908so746677966b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 02:48:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1747907336; x=1748512136; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=klE7E1sXnfwhBGRUczKqI9pMXJRo0twyYdkymVqjNqM=;
-        b=dgm6F4R3vfZWOv//68H/pqtnnjo3/wP4hmTqw8WMXYHhgRkPedDTEtsmq2LHi0b6iy
-         wEWmsCIOcTsRPH/2Jv7XLk+HCmFSj9rIiyvzndkrEni9fZWevgzlgW9U/W6HfDqMgh6F
-         PesVYmrcufFJ7Dtvp0mRcavRZmvFufYsDFej8kiVbd91IOPiTgjyLDIJdOT7YVqoIyYD
-         wW5j8RRo/v7ck6/dV24VLYuxLm44U2GWqOUrIjAJDLY99SjbmXfX70CXwNdoY6KUJBQf
-         OxRQ15e3KNG8caw/UZsaELvEqnRpnjeY2Ip1pxUQWPXWrI5C1xSb4cptUOn0FYTLXdhZ
-         Y8tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747907336; x=1748512136;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=klE7E1sXnfwhBGRUczKqI9pMXJRo0twyYdkymVqjNqM=;
-        b=rO8TFxwnJ+jh47gLAkrN9n7KrGYrWXuJeErP/6X7x/gEbHUyKAipiDV9dABbdAK/cc
-         ZJsGbaHqTsNbwqLDzdKKyE5JQcn5v7k2hTxGq/ANk7L9UArWRmsDVqvWxpgugqeMFKgZ
-         wslNf4JmCI55OiQxVa+zkdhK9Wk/C4OJqo8Xx0SN+xWrrrwT0yfCu8i7g19MFxpsoFAv
-         UCCJH3u09JUsZqnUNQfpW81sXNu5741kyCZ5nNkyT59GogHusg4enqLhfN6VFas7bpw5
-         JHZWUuqFUY4DYbIzQJrIH2fqNFU0RP99uUtpFl8jXU3gznWsbGGQpATNIi0BLpKHnCDk
-         5nVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBPz+8Gg3Z7H+bUrLi9lg7LiNHlemUlarA5SisUqIOF1en6/f8XczkAf5khnCyUUFIqQ2FDhTYuNNAeTo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyewURxoR4zytvVykWRrCOPtR3avF1So62xDV+ercG6G2bFIFBO
-	TRWRQatfjNsogqe6LrZf+vsc/kv/m22ljaMGwP965t2AGHqoIxkrTsLRry9pYoV1Crb5y3vEYCM
-	z4UIu
-X-Gm-Gg: ASbGnctEWpniOPnBocXptN/bJg5GUaluA7j8bvcf2f/eG4DCNonmirvYhuld22i5X42
-	W8bVaICre6vQN7/4oc86cO9/S0WCicTdw+itM+1JqnadYWd7pqJdiynJ6d8JHHLNOQCwWUV0aTL
-	67oACZcHMNXAMPrHTHC4mR0P4aK6JpeTDvyaEKnJXdtrUErSfi+unaPVUvyoIOhnlcPd+QjWJsT
-	tMscuEnZxUW/V7jNVdSdp9qVRmLV9me9/lmsi03R2+86WDqgX0WCLns3h33UfE+xkM1N+aBms2K
-	InffvskEo5OtQCul2N0RKwhyGZnpZsxEt72ALa6savPYRCC57FTsfPYmtzA=
-X-Google-Smtp-Source: AGHT+IGR5u6qykqEC57e3nACLD+fywuUN8Jcwlf4E/4zcXLVu7BeLHKEwlYarei9wxiFcWeh77KjeA==
-X-Received: by 2002:a17:906:230a:b0:ad4:f6d2:431b with SMTP id a640c23a62f3a-ad536dce6cfmr1624516166b.44.1747907335489;
-        Thu, 22 May 2025 02:48:55 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.58])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d438403sm1040645066b.123.2025.05.22.02.48.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 May 2025 02:48:55 -0700 (PDT)
-Message-ID: <3b1963ba-f93f-48f2-8fb0-a485dd80ffcb@tuxon.dev>
-Date: Thu, 22 May 2025 12:48:53 +0300
+	s=arc-20240116; t=1747907388; c=relaxed/simple;
+	bh=ieCN/kkFH7YgZPt5a5YaQqkF76EV090X6KrW0fP0I8o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A878JfIq4viX3EGEwPvw9VLBfHDmBUfHHhYWcZ0aAeZFVybmUhGY8eGB3qBzLi/6sUXl5czQhivL0GJrDt2Mjc6xXIGypHt1hvI9yrzTFsVrysotRQul3CzOd7ovzF6li8o5g3KxdCieaHBVc/HjUrz8oMnQ/o4S82UvVyG8eAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201603.home.langchao.com
+        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202505221749371185;
+        Thu, 22 May 2025 17:49:37 +0800
+Received: from localhost.localdomain (10.94.10.248) by
+ jtjnmail201603.home.langchao.com (10.100.2.3) with Microsoft SMTP Server id
+ 15.1.2507.39; Thu, 22 May 2025 17:49:36 +0800
+From: Bo Liu <liubo03@inspur.com>
+To: <xiang@kernel.org>, <chao@kernel.org>
+CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, Bo Liu
+	<liubo03@inspur.com>
+Subject: [PATCH v9] erofs: support deflate decompress by using Intel QAT
+Date: Thu, 22 May 2025 05:49:31 -0400
+Message-ID: <20250522094931.28956-1-liubo03@inspur.com>
+X-Mailer: git-send-email 2.18.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] driver core: platform: Use devres group to free driver
- probe resources
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- dakr@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org,
- bhelgaas@google.com
-References: <20250330163129.02f24afb@jic23-huawei>
- <5bca6dfd-fe03-4c44-acf4-a51673124338@tuxon.dev>
- <95f5923f-7a8f-4947-b588-419525930bcb@tuxon.dev>
- <CAPDyKFoMqmCFBoO8FwQe2wHh2kqQi4jUZNFyiNckK7QhGVgmvg@mail.gmail.com>
- <c3a2950a-17ff-444a-bee7-af5e7e10e2bf@tuxon.dev>
- <CAPDyKFozR4qDq4mzcZBK-LcoPf=fGyuJTXwdt=Ey+_DcQOAp0g@mail.gmail.com>
- <4o3wo76st7w6qwyye3rrayuo2qx773i6jfzcnbkhdj76ouh7ds@3e2mblehkgwf>
- <CAPDyKFqMB7XutXba73YHx1X4rm6uc3Fz6yMZ8yM=wgduEmgUDg@mail.gmail.com>
- <a20fc6ee-c6c3-4013-b175-4918b9a44380@tuxon.dev>
- <CAPDyKFpbeLJUiB_xQbqDib+-8Q3AcJNVg+DuEcqmVGMbFdNxwA@mail.gmail.com>
- <fgl4w5uhxci7rrbdigtni72vveb2gqemh6iccz4qruqkek5rja@rzwkcjg6hkid>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <fgl4w5uhxci7rrbdigtni72vveb2gqemh6iccz4qruqkek5rja@rzwkcjg6hkid>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+tUid: 20255221749375436ebd88f2243eb20e51e3fc7ffdcf1
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Hi, Ulf,
+This patch introdueces the use of the Intel QAT to decompress compressed
+data in the EROFS filesystem, aiming to improve the decompression speed
+of compressed datea.
 
-On 21.05.2025 17:57, Dmitry Torokhov wrote:
-> On Wed, May 21, 2025 at 02:37:08PM +0200, Ulf Hansson wrote:
->> On Wed, 21 May 2025 at 07:41, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
->>>
->>> Hi, Ulf,
->>>
->>> On 20.05.2025 15:09, Ulf Hansson wrote:
->>>> For example, even if the order is made correctly, suppose a driver's
->>>> ->remove() callback completes by turning off the resources for its
->>>> device and leaves runtime PM enabled, as it relies on devres to do it
->>>> some point later. Beyond this point, nothing would prevent userspace
->>>> for runtime resuming/suspending the device via sysfs.
->>>
->>> If I'm not wrong, that can't happen? The driver_sysfs_remove() is called
->>> before device_remove() (which calls the driver remove) is called, this
->>> being the call path:
->>>
->>> device_driver_detach() ->
->>>   device_release_driver_internal() ->
->>>     __device_release_driver() ->
->>>       driver_sysfs_remove()
->>>       // ...
->>>       device_remove()
->>>
->>> And the driver_sysfs_remove() calls in the end __kernfs_remove() which
->>> looks to me like the place that actually drops the entries from sysfs, this
->>> being a call path for it:
->>>
->>> driver_sysfs_remove() ->
->>>   sysfs_remove_link() ->
->>>     kernfs_remove_by_name() ->
->>>       kernfs_remove_by_name_ns() ->
->>>         __kernfs_remove() ->
->>>
->>> activating the following line in __kernfs_remove():
->>>
->>> pr_debug("kernfs %s: removing\n", kernfs_rcu_name(kn));
->>>
->>> leads to the following prints when unbinding the watchdog device from its
->>> watchdog driver (attached to platform bus) on my board:
->>> https://p.fr33tux.org/935252
->>
->> Indeed this is a very good point you make! I completely overlooked
->> this fact, thanks a lot for clarifying this!
->>
->> However, my main point still stands.
->>
->> In the end, there is nothing preventing rpm_suspend|resume|idle() in
->> drivers/base/power/runtime.c from running (don't forget runtime PM is
->> asynchronous too) for the device in question. This could lead to that
->> a ->runtime_suspend|resume|idle() callback becomes executed at any
->> point in time, as long as we haven't called pm_runtime_disable() for
->> the device.
-> 
-> So exactly the same may happen if you enter driver->remove() and
-> something calls runtime API before pm_runtime_disable() is called.
-> The driver has (as they should be doing currently) be prepared for this.
+We created a 285MiB compressed file and then used the following command to
+create EROFS images with different cluster size.
+     # mkfs.erofs -zdeflate,level=9 -C16384
 
-I took the time and tried to do a comparison of the current solutions
-(describing the bad and good things I see), trying to understand your
-concerns with regards to RPM suspend|resume|idle while unbinding a device
-from its driver.
+fio command was used to test random read and small random read(~5%) and
+sequential read performance.
+     # fio -filename=testfile  -bs=4k -rw=read -name=job1
+     # fio -filename=testfile  -bs=4k -rw=randread -name=job1
+     # fio -filename=testfile  -bs=4k -rw=randread --io_size=14m -name=job1
 
-I see the following cases:
+Here are some performance numbers for reference:
 
-Case 1/ the current approach when devm_pm_runtime_enable() is used in
-driver's ->probe() with the current code base:
+Processors: Intel(R) Xeon(R) 6766E(144 core)
+Memory:     521 GiB
 
-- right after driver ->remove() finish its execution clocks are detached
-  from the PM domain, through dev_pm_domain_detach() call in
-  platform_remove()
+|-----------------------------------------------------------------------------|
+|           | Cluster size | sequential read | randread  | small randread(5%) |
+|-----------|--------------|-----------------|-----------|--------------------|
+| Intel QAT |    4096      |    538  MiB/s   | 112 MiB/s |     20.76 MiB/s    |
+| Intel QAT |    16384     |    699  MiB/s   | 158 MiB/s |     21.02 MiB/s    |
+| Intel QAT |    65536     |    917  MiB/s   | 278 MiB/s |     20.90 MiB/s    |
+| Intel QAT |    131072    |    1056 MiB/s   | 351 MiB/s |     23.36 MiB/s    |
+| Intel QAT |    262144    |    1145 MiB/s   | 431 MiB/s |     26.66 MiB/s    |
+| deflate   |    4096      |    499  MiB/s   | 108 MiB/s |     21.50 MiB/s    |
+| deflate   |    16384     |    422  MiB/s   | 125 MiB/s |     18.94 MiB/s    |
+| deflate   |    65536     |    452  MiB/s   | 159 MiB/s |     13.02 MiB/s    |
+| deflate   |    131072    |    452  MiB/s   | 177 MiB/s |     11.44 MiB/s    |
+| deflate   |    262144    |    466  MiB/s   | 194 MiB/s |     10.60 MiB/s    |
 
-- any subsequent RPM resume|suspend|idle will lead to failure if the driver
-  specific RPM APIs access directly registers and counts on PM domain to
-  enable/disable the clocks
+Signed-off-by: Bo Liu <liubo03@inspur.com>
+---
+v1: https://lore.kernel.org/linux-erofs/20250410042048.3044-1-liubo03@inspur.com/
+v2: https://lore.kernel.org/linux-erofs/20250410042048.3044-1-liubo03@inspur.com/T/#t
+v3: https://lore.kernel.org/linux-erofs/20250516082634.3801-1-liubo03@inspur.com/
+v4: https://lore.kernel.org/linux-erofs/20250521100326.2867828-1-hsiangkao@linux.alibaba.com/
+v5: https://lore.kernel.org/linux-erofs/f245b9edfc1b4205804c415cc0608558@inspur.com/T/#t
+v6: https://lore.kernel.org/linux-erofs/20250522081433.16812-1-liubo03@inspur.com/T/#u
+v7: https://lore.kernel.org/linux-erofs/20250522083920.19855-1-liubo03@inspur.com/T/#u
+v8: https://lore.kernel.org/linux-erofs/7fa71441-a5b0-40aa-aee8-8f251ea96f75@linux.alibaba.com/T/#t
 
-- at this point, if the IRQs are shared (but not only) and devm requested
-  the driver's IRQ handler can still be called asynchronously; driver
-  should be prepared for such events and should be written to work for such
-  scenarios; but as the clocks are not in the PM domain anymore and RPM is
-  still enabled at this point, if the driver don't run runtime suspend on
-  probe (and runtime resume/suspend on runtime), I think (because I haven't
-  investigated this yet) it can't rely on pm_runtime_active()/
-  pm_runtime_suspended() checks in interrupt handlers
-  and can't decide if it can interrogate registers or not; interrogating
-  should lead to failure at this stage as the clocks are disabled; drivers
-  should work in such scenario and the CONFIG_DEBUG_SHIRQ is a way to check
-  they can; I previously debugged a similar issue on drivers/net/ethernet/
-  renesas/ravb driver where using devm_pm_runtime_enable() in probe and
-  pm_runtime_suspended() checks in IRQ handlers was the way to make this
-  scenario happy; at that time I wasn't able to find that
-  dev_pm_domain_detach() have the impact discussed in this thread
+change since v8:
+ - update code style
 
-Case 2/ What is proposed in this patch: devm_pm_runtime_enable() used +
-open devres group after dev_pm_domain_attach() (in probe) and close the
-devres group before dev_pm_domain_attach() (in remove):
+ Documentation/ABI/testing/sysfs-fs-erofs |   8 +
+ fs/erofs/Kconfig                         |  14 ++
+ fs/erofs/Makefile                        |   1 +
+ fs/erofs/compress.h                      |  10 ++
+ fs/erofs/decompressor_crypto.c           | 182 +++++++++++++++++++++++
+ fs/erofs/decompressor_deflate.c          |  20 ++-
+ fs/erofs/sysfs.c                         |  35 ++++-
+ fs/erofs/zdata.c                         |   1 +
+ 8 files changed, 266 insertions(+), 5 deletions(-)
+ create mode 100644 fs/erofs/decompressor_crypto.c
 
-- right after the driver ->remove() is executed only the driver allocated
-  devres resources are freed; this happens before dev_pm_domain_deattach()
-  is called, though the proposed devres_release_group() call in this patch
-
-- while doing this, driver can still get async RPM suspend|resume|idle
-  requests; is like the execution is in the driver ->remove()
-  but the pm_runtime_disable() hasn't been called yet
-
-- as the runtime PM is enabled in driver's ->probe() mostly after the HW is
-  prepared to take requests and all the other devm resources are allocated,
-  the RPM disable is going to be among the first things to be called by the
-  devres_release_group()
-
-- then, after RPM disable, all the devres resources allocated only in the
-  driver's ->probe() are cleaned up in reverse order, just like
-  device_unbind_cleanup() -> devres_release_all() call in
-  __device_release_driver() is doing, but limited only to the resources
-  allocated by the driver itself; I personally see this like manually
-  allocating and freeing resources in the driver itself w/o relying on
-  devres
-
-- then it comes the turn of dev_pm_domain_detach() call in
-  platform_remove(): at the time dev_pm_domain_detach() is executed the
-  runtime PM is disabled and all the devres resources allocated by driver
-  are freed as well
-
-- after the dev_pm_domain_detach() is executed all the driver resources
-  are cleaned up, the driver can't get IRQs as it's handler was already
-  unregistered, no other user can execute rpm suspend|resume|idle
-  as the RPM is disabled at this time
-
-Case 3/ devm_pm_runtime_enabled() dropped and replaced by manual cleanup:
-- the driver code is going be complicated, difficult to maintain and error
-  prone
-
-I may have missed considering things when describing the case 2 (which is
-what is proposed by this patch) as I don't have the full picture behind the
-dev_pm_domain_detach() call in platform bus remove. If so, please correct me.
-
-Thank you,
-Claudiu
-
-> 
->>
->> That's why the devm_pm_runtime_enable() should be avoided as it simply
->> introduces a race-condition. Drivers need to be more careful and use
->> pm_runtime_enable|disable() explicitly to control the behaviour.
-> 
-> You make it sound like we are dealing with some non-deterministic
-> process, like garbage collector, where runtime disable done by devm
-> happens at some unspecified point in the future. However we are dealing
-> with very well defined order of operations, all happening within
-> __device_release_driver() call. It is the same scope as when using
-> manual pm_runtime_disable(). Just the order is wrong, that is it.
-> 
-> Thanks.
-> 
+diff --git a/Documentation/ABI/testing/sysfs-fs-erofs b/Documentation/ABI/testing/sysfs-fs-erofs
+index b134146d735b..bf3b6299c15e 100644
+--- a/Documentation/ABI/testing/sysfs-fs-erofs
++++ b/Documentation/ABI/testing/sysfs-fs-erofs
+@@ -27,3 +27,11 @@ Description:	Writing to this will drop compression-related caches,
+ 		- 1 : invalidate cached compressed folios
+ 		- 2 : drop in-memory pclusters
+ 		- 3 : drop in-memory pclusters and cached compressed folios
++
++What:		/sys/fs/erofs/accel
++Date:		May 2025
++Contact:	"Bo Liu" <liubo03@inspur.com>
++Description:	Used to set or show hardware accelerators in effect
++		and multiple accelerators are separated by '\n'.
++		Supported accelerator(s): qat_deflate.
++		Disable all accelerators with an empty string (echo > accel).
+diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
+index 331e49cd1b8d..74e878a9784a 100644
+--- a/fs/erofs/Kconfig
++++ b/fs/erofs/Kconfig
+@@ -144,6 +144,20 @@ config EROFS_FS_ZIP_ZSTD
+ 
+ 	  If unsure, say N.
+ 
++config EROFS_FS_ZIP_ACCEL
++	bool "EROFS hardware decompression support"
++	depends on EROFS_FS_ZIP
++	help
++	  Saying Y here includes hardware accelerator support for reading
++	  EROFS file systems containing compressed data.  It gives better
++	  decompression speed than the software-implemented decompression, and
++	  it costs lower CPU overhead.
++
++	  Hardware accelerator support is an experimental feature for now and
++	  file systems are still readable without selecting this option.
++
++	  If unsure, say N.
++
+ config EROFS_FS_ONDEMAND
+ 	bool "EROFS fscache-based on-demand read support (deprecated)"
+ 	depends on EROFS_FS
+diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
+index 4331d53c7109..549abc424763 100644
+--- a/fs/erofs/Makefile
++++ b/fs/erofs/Makefile
+@@ -7,5 +7,6 @@ erofs-$(CONFIG_EROFS_FS_ZIP) += decompressor.o zmap.o zdata.o zutil.o
+ erofs-$(CONFIG_EROFS_FS_ZIP_LZMA) += decompressor_lzma.o
+ erofs-$(CONFIG_EROFS_FS_ZIP_DEFLATE) += decompressor_deflate.o
+ erofs-$(CONFIG_EROFS_FS_ZIP_ZSTD) += decompressor_zstd.o
++erofs-$(CONFIG_EROFS_FS_ZIP_ACCEL) += decompressor_crypto.o
+ erofs-$(CONFIG_EROFS_FS_BACKED_BY_FILE) += fileio.o
+ erofs-$(CONFIG_EROFS_FS_ONDEMAND) += fscache.o
+diff --git a/fs/erofs/compress.h b/fs/erofs/compress.h
+index 2704d7a592a5..510e922c5193 100644
+--- a/fs/erofs/compress.h
++++ b/fs/erofs/compress.h
+@@ -76,4 +76,14 @@ int z_erofs_fixup_insize(struct z_erofs_decompress_req *rq, const char *padbuf,
+ 			 unsigned int padbufsize);
+ int __init z_erofs_init_decompressor(void);
+ void z_erofs_exit_decompressor(void);
++int z_erofs_crypto_decompress(struct z_erofs_decompress_req *rq,
++			      struct page **pgpl);
++int z_erofs_crypto_enable_engine(const char *name, int len);
++#ifdef CONFIG_EROFS_FS_ZIP_ACCEL
++void z_erofs_crypto_disable_all_engines(void);
++int z_erofs_crypto_show_engines(char *buf, int size, char sep);
++#else
++static inline void z_erofs_crypto_disable_all_engines(void) {}
++static inline int z_erofs_crypto_show_engines(char *buf, int size, char sep) { return 0; }
++#endif
+ #endif
+diff --git a/fs/erofs/decompressor_crypto.c b/fs/erofs/decompressor_crypto.c
+new file mode 100644
+index 000000000000..5bb28a1237e3
+--- /dev/null
++++ b/fs/erofs/decompressor_crypto.c
+@@ -0,0 +1,182 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++#include <linux/scatterlist.h>
++#include <crypto/acompress.h>
++#include "compress.h"
++
++static int __z_erofs_crypto_decompress(struct z_erofs_decompress_req *rq,
++				       struct crypto_acomp *tfm)
++{
++	struct sg_table st_src, st_dst;
++	struct acomp_req *req;
++	struct crypto_wait wait;
++	u8 *headpage;
++	int ret;
++
++	headpage = kmap_local_page(*rq->in);
++	ret = z_erofs_fixup_insize(rq, headpage + rq->pageofs_in,
++				min_t(unsigned int, rq->inputsize,
++				      rq->sb->s_blocksize - rq->pageofs_in));
++	kunmap_local(headpage);
++	if (ret)
++		return ret;
++
++	req = acomp_request_alloc(tfm);
++	if (!req)
++		return -ENOMEM;
++
++	ret = sg_alloc_table_from_pages_segment(&st_src, rq->in, rq->inpages,
++			rq->pageofs_in, rq->inputsize, UINT_MAX, GFP_KERNEL);
++	if (ret < 0)
++		goto failed_src_alloc;
++
++	ret = sg_alloc_table_from_pages_segment(&st_dst, rq->out, rq->outpages,
++			rq->pageofs_out, rq->outputsize, UINT_MAX, GFP_KERNEL);
++	if (ret < 0)
++		goto failed_dst_alloc;
++
++	acomp_request_set_params(req, st_src.sgl,
++				 st_dst.sgl, rq->inputsize, rq->outputsize);
++
++	crypto_init_wait(&wait);
++	acomp_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
++				   crypto_req_done, &wait);
++
++	ret = crypto_wait_req(crypto_acomp_decompress(req), &wait);
++	if (ret) {
++		erofs_err(rq->sb, "failed to decompress %d in[%u, %u] out[%u]",
++			  ret, rq->inputsize, rq->pageofs_in, rq->outputsize);
++		ret = -EIO;
++	}
++
++	sg_free_table(&st_dst);
++failed_dst_alloc:
++	sg_free_table(&st_src);
++failed_src_alloc:
++	acomp_request_free(req);
++	return ret;
++}
++
++struct z_erofs_crypto_engine {
++	char *crypto_name;
++	struct crypto_acomp *tfm;
++};
++
++struct z_erofs_crypto_engine *z_erofs_crypto[Z_EROFS_COMPRESSION_MAX] = {
++	[Z_EROFS_COMPRESSION_LZ4] = (struct z_erofs_crypto_engine[]) {
++		{},
++	},
++	[Z_EROFS_COMPRESSION_LZMA] = (struct z_erofs_crypto_engine[]) {
++		{},
++	},
++	[Z_EROFS_COMPRESSION_DEFLATE] = (struct z_erofs_crypto_engine[]) {
++		{ .crypto_name = "qat_deflate", },
++		{},
++	},
++	[Z_EROFS_COMPRESSION_ZSTD] = (struct z_erofs_crypto_engine[]) {
++		{},
++	},
++};
++
++static DECLARE_RWSEM(z_erofs_crypto_rwsem);
++
++static struct crypto_acomp *z_erofs_crypto_get_engine(int alg)
++{
++	struct z_erofs_crypto_engine *e;
++
++	for (e = z_erofs_crypto[alg]; e->crypto_name; ++e)
++		if (e->tfm)
++			return e->tfm;
++	return NULL;
++}
++
++int z_erofs_crypto_decompress(struct z_erofs_decompress_req *rq,
++			      struct page **pgpl)
++{
++	struct crypto_acomp *tfm;
++	int i, err;
++
++	down_read(&z_erofs_crypto_rwsem);
++	tfm = z_erofs_crypto_get_engine(rq->alg);
++	if (!tfm) {
++		err = -EOPNOTSUPP;
++		goto out;
++	}
++
++	for (i = 0; i < rq->outpages; i++) {
++		struct page *const page = rq->out[i];
++		struct page *victim;
++
++		if (!page) {
++			victim = __erofs_allocpage(pgpl, rq->gfp, true);
++			if (!victim) {
++				err = -ENOMEM;
++				goto out;
++			}
++			set_page_private(victim, Z_EROFS_SHORTLIVED_PAGE);
++			rq->out[i] = victim;
++		}
++	}
++	err = __z_erofs_crypto_decompress(rq, tfm);
++out:
++	up_read(&z_erofs_crypto_rwsem);
++	return err;
++}
++
++int z_erofs_crypto_enable_engine(const char *name, int len)
++{
++	struct z_erofs_crypto_engine *e;
++	struct crypto_acomp *tfm;
++	int alg;
++
++	down_write(&z_erofs_crypto_rwsem);
++	for (alg = 0; alg < Z_EROFS_COMPRESSION_MAX; ++alg) {
++		for (e = z_erofs_crypto[alg]; e->crypto_name; ++e) {
++			if (!strncmp(name, e->crypto_name, len)) {
++				if (e->tfm)
++					break;
++				tfm = crypto_alloc_acomp(e->crypto_name, 0, 0);
++				if (IS_ERR(tfm)) {
++					up_write(&z_erofs_crypto_rwsem);
++					return -EOPNOTSUPP;
++				}
++				e->tfm = tfm;
++				break;
++			}
++		}
++	}
++	up_write(&z_erofs_crypto_rwsem);
++	return 0;
++}
++
++void z_erofs_crypto_disable_all_engines(void)
++{
++	struct z_erofs_crypto_engine *e;
++	int alg;
++
++	down_write(&z_erofs_crypto_rwsem);
++	for (alg = 0; alg < Z_EROFS_COMPRESSION_MAX; ++alg) {
++		for (e = z_erofs_crypto[alg]; e->crypto_name; ++e) {
++			if (!e->tfm)
++				continue;
++			crypto_free_acomp(e->tfm);
++			e->tfm = NULL;
++		}
++	}
++	up_write(&z_erofs_crypto_rwsem);
++}
++
++int z_erofs_crypto_show_engines(char *buf, int size, char sep)
++{
++	struct z_erofs_crypto_engine *e;
++	int alg, len = 0;
++
++	for (alg = 0; alg < Z_EROFS_COMPRESSION_MAX; ++alg) {
++		for (e = z_erofs_crypto[alg]; e->crypto_name; ++e) {
++			if (!e->tfm)
++				continue;
++			len += scnprintf(buf + len, size - len, "%s%c",
++					 e->crypto_name, sep);
++		}
++	}
++	return len;
++}
+diff --git a/fs/erofs/decompressor_deflate.c b/fs/erofs/decompressor_deflate.c
+index c6908a487054..6909b2d529c7 100644
+--- a/fs/erofs/decompressor_deflate.c
++++ b/fs/erofs/decompressor_deflate.c
+@@ -97,8 +97,8 @@ static int z_erofs_load_deflate_config(struct super_block *sb,
+ 	return -ENOMEM;
+ }
+ 
+-static int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
+-				      struct page **pgpl)
++static int __z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
++					struct page **pgpl)
+ {
+ 	struct super_block *sb = rq->sb;
+ 	struct z_erofs_stream_dctx dctx = { .rq = rq, .no = -1, .ni = 0 };
+@@ -178,6 +178,22 @@ static int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
+ 	return err;
+ }
+ 
++static int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
++				      struct page **pgpl)
++{
++#ifdef CONFIG_EROFS_FS_ZIP_ACCEL
++	int err;
++
++	if (!rq->partial_decoding) {
++		err = z_erofs_crypto_decompress(rq, pgpl);
++		if (err != -EOPNOTSUPP)
++			return err;
++
++	}
++#endif
++	return __z_erofs_deflate_decompress(rq, pgpl);
++}
++
+ const struct z_erofs_decompressor z_erofs_deflate_decomp = {
+ 	.config = z_erofs_load_deflate_config,
+ 	.decompress = z_erofs_deflate_decompress,
+diff --git a/fs/erofs/sysfs.c b/fs/erofs/sysfs.c
+index dad4e6c6c155..5338243b5b88 100644
+--- a/fs/erofs/sysfs.c
++++ b/fs/erofs/sysfs.c
+@@ -7,12 +7,14 @@
+ #include <linux/kobject.h>
+ 
+ #include "internal.h"
++#include "compress.h"
+ 
+ enum {
+ 	attr_feature,
+ 	attr_drop_caches,
+ 	attr_pointer_ui,
+ 	attr_pointer_bool,
++	attr_accel,
+ };
+ 
+ enum {
+@@ -60,14 +62,25 @@ static struct erofs_attr erofs_attr_##_name = {			\
+ EROFS_ATTR_RW_UI(sync_decompress, erofs_mount_opts);
+ EROFS_ATTR_FUNC(drop_caches, 0200);
+ #endif
++#ifdef CONFIG_EROFS_FS_ZIP_ACCEL
++EROFS_ATTR_FUNC(accel, 0644);
++#endif
+ 
+-static struct attribute *erofs_attrs[] = {
++static struct attribute *erofs_sb_attrs[] = {
+ #ifdef CONFIG_EROFS_FS_ZIP
+ 	ATTR_LIST(sync_decompress),
+ 	ATTR_LIST(drop_caches),
+ #endif
+ 	NULL,
+ };
++ATTRIBUTE_GROUPS(erofs_sb);
++
++static struct attribute *erofs_attrs[] = {
++#ifdef CONFIG_EROFS_FS_ZIP_ACCEL
++	ATTR_LIST(accel),
++#endif
++	NULL,
++};
+ ATTRIBUTE_GROUPS(erofs);
+ 
+ /* Features this copy of erofs supports */
+@@ -128,12 +141,14 @@ static ssize_t erofs_attr_show(struct kobject *kobj,
+ 		if (!ptr)
+ 			return 0;
+ 		return sysfs_emit(buf, "%d\n", *(bool *)ptr);
++	case attr_accel:
++		return z_erofs_crypto_show_engines(buf, PAGE_SIZE, '\n');
+ 	}
+ 	return 0;
+ }
+ 
+ static ssize_t erofs_attr_store(struct kobject *kobj, struct attribute *attr,
+-						const char *buf, size_t len)
++				const char *buf, size_t len)
+ {
+ 	struct erofs_sb_info *sbi = container_of(kobj, struct erofs_sb_info,
+ 						s_kobj);
+@@ -181,6 +196,19 @@ static ssize_t erofs_attr_store(struct kobject *kobj, struct attribute *attr,
+ 		if (t & 1)
+ 			invalidate_mapping_pages(MNGD_MAPPING(sbi), 0, -1);
+ 		return len;
++#endif
++#ifdef CONFIG_EROFS_FS_ZIP_ACCEL
++	case attr_accel:
++		buf = skip_spaces(buf);
++		z_erofs_crypto_disable_all_engines();
++		while (*buf) {
++			t = strcspn(buf, "\n");
++			ret = z_erofs_crypto_enable_engine(buf, t);
++			if (ret < 0)
++				return ret;
++			buf += buf[t] != '\0' ? t + 1 : t;
++		}
++		return len;
+ #endif
+ 	}
+ 	return 0;
+@@ -199,12 +227,13 @@ static const struct sysfs_ops erofs_attr_ops = {
+ };
+ 
+ static const struct kobj_type erofs_sb_ktype = {
+-	.default_groups = erofs_groups,
++	.default_groups = erofs_sb_groups,
+ 	.sysfs_ops	= &erofs_attr_ops,
+ 	.release	= erofs_sb_release,
+ };
+ 
+ static const struct kobj_type erofs_ktype = {
++	.default_groups = erofs_groups,
+ 	.sysfs_ops	= &erofs_attr_ops,
+ };
+ 
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index 0671184d9cf1..f02bf95aeb3f 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -409,6 +409,7 @@ void z_erofs_exit_subsystem(void)
+ 	erofs_destroy_percpu_workers();
+ 	destroy_workqueue(z_erofs_workqueue);
+ 	z_erofs_destroy_pcluster_pool();
++	z_erofs_crypto_disable_all_engines();
+ 	z_erofs_exit_decompressor();
+ }
+ 
+-- 
+2.31.1
 
 
