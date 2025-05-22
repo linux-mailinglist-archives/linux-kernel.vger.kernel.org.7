@@ -1,49 +1,90 @@
-Return-Path: <linux-kernel+bounces-659493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F721AC1108
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:30:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D659AC1112
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8432EA40A4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:29:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E56F81BC7E82
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176A4299A97;
-	Thu, 22 May 2025 16:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2443429A330;
+	Thu, 22 May 2025 16:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6TVzgvA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZR4VBNGu"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C57623C510;
-	Thu, 22 May 2025 16:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC30299A91;
+	Thu, 22 May 2025 16:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747931402; cv=none; b=ucjagqH4u6pgM5msf9vjbmEFWvpjuH+RTCP8Y6NzhEO5wXeX68cypzWO6hnb68WyTv8uTF5b65+cScOZeiMS0020/ufFfX1etuqEjmoyW4gc9yE+fj0ARv6oN16gg207rUq5+tsFyEEIC6TqL80PRJt4Kyzc+nogwZhUzO1UI70=
+	t=1747931538; cv=none; b=feyqblDU9+8ucN0id7eTiQ9MfPDIRDH+b9Ek+75p5FveWaMoM/kRvOkEa3rcWmWTwJfJz66nm1IzQlya/vFEc3FuWttp34oRrc4PjisKRRurLxYTM1AZvz8VwLP0ejEpavzSCJK/SiBi+K7xxvGB/oNgdpCERMD2DK9dat0ucHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747931402; c=relaxed/simple;
-	bh=QauHD26f0xVLSJ2R78w8tIAsbID5M+Dr2BROMlraE/c=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=iabQ4+ySi5TZsBb7Nc/FW/abgMtYRAvsw14wzyDzSuSBqyz5hiNt6PnC/MnD/yxedbLh4WhWKDQPMvbD3lUji5w4w3n9CnfjPS1JxpkAWP/g1E2GcttU4UCZ7jHP8FUjCus67gUWX3vi4l+jHk7AfY+ipOtqrnOgrD+6lM6s7gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6TVzgvA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0B38C4CEE4;
-	Thu, 22 May 2025 16:30:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747931401;
-	bh=QauHD26f0xVLSJ2R78w8tIAsbID5M+Dr2BROMlraE/c=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=V6TVzgvAVW7k4qchP56bP0HtsYvO1J/m4eA/vIA4PFum5z/HSdgPM3XVJ6STN88Hc
-	 GlLM6ZcGcyajLLz6y11aG7bsuTyodV7xQzYkZE37WbovUNUAp3tqWBfm70FWcaFe3Q
-	 BSs68FjZcJSyc5w9DLLjW7dEwRZyQWyaxttMG0VENubzpfnq1sPWublTirIaORJBVA
-	 gJjaF7p1MhwetcY9S+gAIu/1fGzUQhKhiUVPKQmS0G9zcS8ypFWzs9Xl2AwqYjIFLU
-	 vw+m/5HeIhR+fyi5qaOHiU5SjMZylvqYzHqnBKZ4x+0wbLvVtIWMrbb9VuR0zkt6nC
-	 1dY/RtsftCopQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710DD3805D89;
-	Thu, 22 May 2025 16:30:38 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1747931538; c=relaxed/simple;
+	bh=ugZWyd+MpiEbRrvATX3tXiaqFMwOaMpoKNTpv90bqRY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p4kfq0La0EyWCFvrQ6C1WEI+8H9Y/tPANd01WUectw69xOgMG1JgDdfH6t0D+TzzcMUfwEv4zjQf+PhBSrzwzyywX6lW2uiSZ9dMuoPpgZuXmifSzKpa7+a4pXg0jisnaSxhtCkCIyuA5SKpfo2hY0AHnU8fXYjFpT8hGM6rpRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZR4VBNGu; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3dc6945e109so40768555ab.2;
+        Thu, 22 May 2025 09:32:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747931535; x=1748536335; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PAxpSYKdkfgTyZH6GURFgmBwxsusiZ10fT+8H4MQeGU=;
+        b=ZR4VBNGulbeVrYH6QkhTtOCD+zDP0avHJPD/yQeA/NR7hUi3m5zfzN0DCvCXV5IKve
+         ErxgMGzP5GWtkeFEMJj5qWWe9YGSTag+AzRczyCILqjeS0612FNeseo8vreMgHVFS+l8
+         1NC00ULKxGrg+m1x3KCoO/FZo8aeHyMxnnLDkrdHFgOGXWqTsVbgrBYMKdX7h1e4RonG
+         dGFWHqcey04EW53IB6EOQCu/ifa8F3bK/14R16NYo5Eh69y/w7XCFS6y1wzppi1mu77Q
+         E3XE0orbq4+XB/R8lxMySSgIMXgSBp++CoYBmvJnEBCwx7kUqM4ap00Xo0vSvGex9cSG
+         RH0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747931535; x=1748536335;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PAxpSYKdkfgTyZH6GURFgmBwxsusiZ10fT+8H4MQeGU=;
+        b=u51TUAWrbot7bxvCNwkZo0FqY+FTY4ZuvKTE+L20tpdI5UpRRUX+ARMDqpF7d73RnI
+         3rQCEbXSDgl+prOCMACdtSHkYGRZfUu8AoYQ+sFYym+9FqCZj1hiQT6UAcqBpI3TktdY
+         6/JINORtaFWsWhfq5nlc7pxbZzXuY7l6p/F0NuDKuJ+owoVEGqgDGtbxz8RtAeto30Su
+         XWvxjURspJrrMTNwziy23NDUQs9pmdGrpaeW7m5pIDcCxt2DK6etGbL147hdxquJO0Ry
+         fGoSm29LdZXp97Gncne6N3uOYhj69fmmacsxrL2FFxQF7g/0nF8a9UCOmHgT4aRCilME
+         64aA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2NqHMYPJMtt5ycSJui7yDjYacUjgiUf816QJ2unXmf0saLPuaYvpvNurLqX4Yvk7MlAQMn6duoW4db42z@vger.kernel.org, AJvYcCXlnWxxawu2VG3McSEf411/pKx5n93M6NnTQ4xsjr3Xi8cYzxRWW8C0Lv5ix0wcsXTeyj1jDBs/JXJQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw99UPID1APaOAD5gdR2w4cMncD0xEz3RILjZ21yJkigtv7PEns
+	GlaoBLvr9kpWKFtJoAqtyJMgwgCUXIfR0q/rUEQQgtIqLdOxgOZjShAH3CT2j9a/
+X-Gm-Gg: ASbGncvTMiNfWvmQkjGUnYv5hAN7RWqMyZtOUleKX8HaQeCZyhuC9NWGXhY9BBcmV9I
+	5CW8qcypiZrPrh4ULYYFQqHh5962+3x41+fsoOwwthUZc8OO1C/iz05nroJiaBngqtpws+RXoAT
+	rqIVBYZXgpeedZ2rO09sONmU4F3hsGzJzqDiRnrhkNeY+4xYLRF9nxSO3SsDpC9mm2hKmKEHjBm
+	A9ryom6nmk0yjzF+VvcEGVvvCkYhZ46HFNgjllD9x6wBe7jWBHG/BLFxLxtY48ZOIoDq0MwhCWH
+	ALwXUW1C//5Guls/ykxswTZJvWcG+p2Zz7HFo9l0+qQz6Nk5FcSd5BQrtdNjQB3emwxZ+ZsWJKL
+	tWoGR20mFSXYdKtNmxrqF
+X-Google-Smtp-Source: AGHT+IGfALx19+p3iAKUN1K3JLgHy3CFPDh/VGZVV4poOdRe0ch1cjL0wSFQaFQElQj9VhFBZIlxxQ==
+X-Received: by 2002:a17:903:2345:b0:22e:1a41:a6de with SMTP id d9443c01a7336-231d452d109mr382806645ad.32.1747931524838;
+        Thu, 22 May 2025 09:32:04 -0700 (PDT)
+Received: from wig-Precision-3660.. (125-227-154-99.hinet-ip.hinet.net. [125.227.154.99])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4e980c0sm110750145ad.126.2025.05.22.09.32.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 09:32:04 -0700 (PDT)
+From: Wig Cheng <onlywig@gmail.com>
+To: robh@kernel.org
+Cc: krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	neil.armstrong@linaro.org,
+	heiko@sntech.de,
+	onlywig@gmail.com,
+	kever.yang@rock-chips.com,
+	manivannan.sadhasivam@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: vendor-prefixes: Add Mayqueen name
+Date: Fri, 23 May 2025 00:31:42 +0800
+Message-ID: <20250522163142.3421893-1-onlywig@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,54 +92,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 0/5] net/mlx5: Convert mlx5 to netdev instance
- locking
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174793143726.2938999.16490486121028128951.git-patchwork-notify@kernel.org>
-Date: Thu, 22 May 2025 16:30:37 +0000
-References: <1747829342-1018757-1-git-send-email-tariqt@nvidia.com>
-In-Reply-To: <1747829342-1018757-1-git-send-email-tariqt@nvidia.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
- edumazet@google.com, andrew+netdev@lunn.ch, jgg@ziepe.ca, leon@kernel.org,
- saeedm@nvidia.com, richardcochran@gmail.com, ast@kernel.org,
- daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, bpf@vger.kernel.org, moshe@nvidia.com,
- mbloch@nvidia.com, gal@nvidia.com, cratiu@nvidia.com
 
-Hello:
+Mayqueen is a Taiwan-based company primarily focused on the development
+of arm64 development boards and e-paper displays. They will be working on
+mainlining the DTS for their boards and e-paper DRM drivers,
+necessitating the addition of their vendor prefix.
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+This vendor prefix will be used in upcoming DRM driver patches for their
+e-paper displays, such as the pixpaper-213-c and future models.
 
-On Wed, 21 May 2025 15:08:57 +0300 you wrote:
-> Hi,
-> 
-> This series by Cosmin converts mlx5 to use the recently added netdev
-> instance locking scheme.
-> 
-> Find detailed description by Cosmin below [1].
-> 
-> [...]
+Website: https://www.mayqueentech.com
 
-Here is the summary with links:
-  - [net-next,1/5] IB/IPoIB: Enqueue separate work_structs for each flushed interface
-    https://git.kernel.org/netdev/net-next/c/5f85120e7462
-  - [net-next,2/5] IB/IPoIB: Replace vlan_rwsem with the netdev instance lock
-    https://git.kernel.org/netdev/net-next/c/463e51769697
-  - [net-next,3/5] IB/IPoIB: Allow using netdevs that require the instance lock
-    https://git.kernel.org/netdev/net-next/c/fd07ba1680ba
-  - [net-next,4/5] net/mlx5e: Don't drop RTNL during firmware flash
-    https://git.kernel.org/netdev/net-next/c/d7d4f9f7365a
-  - [net-next,5/5] net/mlx5e: Convert mlx5 netdevs to instance locking
-    https://git.kernel.org/netdev/net-next/c/8f7b00307bf1
+pixpaper-213-c e-paper:
+https://github.com/MayQueenTechCommunity/PIXPAPER-213-C
 
-You are awesome, thank you!
+Signed-off-by: Wig Cheng <onlywig@gmail.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 5d2a7a8d3ac6..9207c25a3490 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -916,6 +916,8 @@ patternProperties:
+     description: Maxim Integrated Products
+   "^maxlinear,.*":
+     description: MaxLinear Inc.
++  "^mayqueen,.*":
++    description: Mayqueen Technologies Ltd.
+   "^mbvl,.*":
+     description: Mobiveil Inc.
+   "^mcube,.*":
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.43.0
 
 
