@@ -1,83 +1,89 @@
-Return-Path: <linux-kernel+bounces-658918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123F3AC0917
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:53:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A8ADAC091C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21BCE17D2F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:53:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B0021BC4B0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A635288CBE;
-	Thu, 22 May 2025 09:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0A12874FF;
+	Thu, 22 May 2025 09:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXwiSJnG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RevpVodL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1622882DF;
-	Thu, 22 May 2025 09:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4533018027;
+	Thu, 22 May 2025 09:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747907582; cv=none; b=Ex3isqvyQ6UpQvMT/L5nVvqHHPqUN8bnThkJi/6dbrBs0n8m2/j2lPtMCqFomy7OL5GmdzxnNIjc7ZC//gZYUw+y1fMvbmwEy09TXtOkAubCdajEia2pIw3F4FJ63wkXwpayp3OBRTFxOGtPlKlNwV9S3wyyvaAOMgXBKqArTbU=
+	t=1747907637; cv=none; b=N/G4/r7M6YrYqjpU8FD20yfI5/lxevvC+ks8Uu6AsiPX+iB+z4cZKUHIroD8IfEagc1dV+ZBPV5lZG1UJHFa5UaJfkfMi49asQiR/98jA6Oqrn9v4lXJpwSTy3ROzFF5LC1KSRf2JylGSuZbDKKIoOnikg5TYhDz/jhcNkaq8JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747907582; c=relaxed/simple;
-	bh=Kth+fgiaIltG9Hsh+2bZlDKyUt9RmeE2dnuT81/pJSw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=U+h+3f2pSiebI8IUeAwOjD1IdvRpfT3IyyNNsU1uXk893Q/XpopbyqfVoiEsxT7CYoMxoM/kjL4J6nQ/rrqvcq+m9UJ8d5l3PqwyFesN/9EfDXlLxORruLjcaJlPtX/gGrrbsKAtTFjUeGx7i69j+Zr5NpAbt2HcXUqTaUNHFOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXwiSJnG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4CEFC4CEED;
-	Thu, 22 May 2025 09:52:58 +0000 (UTC)
+	s=arc-20240116; t=1747907637; c=relaxed/simple;
+	bh=T0pbowsOjTPIPmPLHltgm1guTj5BuJMB/woFP9FHf2k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QUoja4TjZnwKd+/pxEC+QQN34e6LRZlGEapZnl+VTTt/bleImHF6z1PIDSj+N681QTtBX/R2CZkn9wN+oEJp8ryPVHoBG5iL/HupFNkaZXk0mK3fdOtSPbAzNzUITV6LLgEFDCjGz1WDHI+zKE3NM0CIyIY+XXDpBWtL9JZfixk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RevpVodL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9711CC4CEE4;
+	Thu, 22 May 2025 09:53:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747907581;
-	bh=Kth+fgiaIltG9Hsh+2bZlDKyUt9RmeE2dnuT81/pJSw=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=sXwiSJnGQjjdzQJT/VBdLGxc/7z5xoepc4jFSDwzSVxrZG9E/3zT8XTxG2K6XxpGk
-	 sfN1Xiov4AYwAfjbNgSvA5/680vTA3zW57SXW3EdFQ1EWDMHwLN/Zh+bY54BGLKuX3
-	 mUDkk1ftSyx6TIvsZaUTUJeY6O04yGuAQqn8aNpJlPHu7MZGzuMs3ZDHLOZkYcB08b
-	 ihE6VU4X4+f1rfXgdEimo8nc6yN7QJSQ8zIsTt9FEYGxqq9nT11UIU7apqW0wS5UAf
-	 aICqaM3ko0E804n3ZO2phivYjrLTHuKBUns420XIaiom6yEuhT1rFZ5olaMQPoAY7d
-	 QCNVu2leHi4TA==
+	s=k20201202; t=1747907636;
+	bh=T0pbowsOjTPIPmPLHltgm1guTj5BuJMB/woFP9FHf2k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=RevpVodLJXvQ0wS4ohgmz+wxoibCLUyT1275uRa6QccMU+8LK1bt6ZpQjjvBEvKnf
+	 c49Huy+IAD1uiDKI/VlGR1afy/itNlkQ7csiD2VnwOkHbzL3v0mCUBDsowNBIfuWAG
+	 UC97AHv1x63ukf7b6uARgSKznbyJ2eG1o3lilPdqxmxSPfQmIWjeTjmgcuy4Qzscrm
+	 ACtfsMnd/TMYzawjRjEnfr5Gp59D9f2seXtsEHfmiRvv2zYVCXSTaJ3bTxembmvJ3V
+	 cw7G5l7JeN7yIIXXkX81T1iwgbLU7VmdisGZyKJxIjSFkceAp/rTDvxJ6vb4dGqxJa
+	 ZrNJezcfwwrig==
+From: William Breathitt Gray <wbg@kernel.org>
+To: Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Dharma Balasubiramani <dharma.b@microchip.com>
+Cc: William Breathitt Gray <wbg@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] counter: microchip-tcb-capture: Add watch validation support
+Date: Thu, 22 May 2025 18:53:43 +0900
+Message-ID: <174790756290.777945.12152629166611050360.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250520-counter-tcb-v3-1-4631e2aff7ed@microchip.com>
+References: <20250520-counter-tcb-v3-1-4631e2aff7ed@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 22 May 2025 11:52:56 +0200
-Message-Id: <DA2LIVGXSOVX.25YPFFEHM5CQB@kernel.org>
-To: "I Hsin Cheng" <richard120310@gmail.com>, <ojeda@kernel.org>
-Cc: <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>,
- <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <skhan@linuxfoundation.org>, <linux-kernel-mentees@lists.linux.dev>,
- <jserv@ccns.ncku.edu.tw>
-Subject: Re: [PATCH] rust: list: Use "List::is_empty()" to perform checking
- when possible
-From: "Benno Lossin" <lossin@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250310073853.427954-1-richard120310@gmail.com>
-In-Reply-To: <20250310073853.427954-1-richard120310@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=716; i=wbg@kernel.org; h=from:subject:message-id; bh=FyrqgtuhplOt4MO8YUx+XOl66iMHGL1vISika9BhmV0=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDBl6XwSC4tMesbNKbmq4G8K5PaLweNfJJUlXvz3ZJ9/E/ U9pusmJjlIWBjEuBlkxRZZe87N3H1xS1fjxYv42mDmsTCBDGLg4BWAiUd6MDPP2X7u90yKySKzG S9BX4eQRwXv+Z1InrWmrTon//ZrdaDYjw4xpW36f85+7XvDyNDvmhYcatELPqh66OLnf/23qvXS hPn4A
+X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
+Content-Transfer-Encoding: 8bit
 
-On Mon Mar 10, 2025 at 8:38 AM CET, I Hsin Cheng wrote:
-> "List::is_empty()" provides a straight forward convention to check
-> whether a given "List" is empty or not. There're numerous places in the
-> current implementation still use "self.first.is_null()" to perform the
-> equivalent check, replace them with "List::is_empty()".
->
-> Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
-> ---
->  rust/kernel/list.rs | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
 
-Reviewed-by: Benno Lossin <lossin@kernel.org>
+On Tue, 20 May 2025 20:51:46 +0530, Dharma Balasubiramani wrote:
+> The Timer Counter Block (TCB) exposes several kinds of events to the
+> Counter framework, but not every event is meaningful on every hardware
+> channel. Add a `watch_validate()` callback so userspace may register only
+> the combinations actually supported:
+> 
+> * Channel 0 (COUNTER_MCHP_EVCHN_CV, COUNTER_MCHP_EVCHN_RA)
+>    - COUNTER_EVENT_CAPTURE
+>    - COUNTER_EVENT_CHANGE_OF_STATE
+>    - COUNTER_EVENT_OVERFLOW
+> 
+> [...]
 
----
-Cheers,
-Benno
+Applied, thanks!
+
+[1/1] counter: microchip-tcb-capture: Add watch validation support
+      commit: ae3392c0f12f179b969ce17856ed18bf8d69a35e
+
+Best regards,
+-- 
+William Breathitt Gray <wbg@kernel.org>
 
