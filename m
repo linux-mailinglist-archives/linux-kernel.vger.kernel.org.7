@@ -1,138 +1,157 @@
-Return-Path: <linux-kernel+bounces-659841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACA72AC1599
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:39:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27E15AC159D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63F73502F75
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:39:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6270F1898362
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C08C24168B;
-	Thu, 22 May 2025 20:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7A71E521A;
+	Thu, 22 May 2025 20:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qz+tznIS"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SkfljHa4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Yy0XL3yq";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="V48WQ0a9";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bOiITXi5"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF84F188713;
-	Thu, 22 May 2025 20:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1977241697
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 20:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747946389; cv=none; b=se0qq5qJmiqBmsdIa2pRVEa3bZuMpzG2mOcUuvQsn/rsQ6lrbICOs1ZjiUXQjP4JLhueg7Ixx6tMW0NhsA+fXKZfUNJ5FKFr7EHt1gUWRqHqhy28cCD39BQr6kvJvx770O0lrYGYNeMiWGijDrA9EV0IF87UgXurh+TM2bgYgTU=
+	t=1747946545; cv=none; b=DvNb4F5he+Te2SDl6pErojKLQ1B0QXl7gUSuWDRKC+Ruv21O6yCkDGEgW9um++7GYtJFT5gXWO4c81KOSxlvgvXr5CjeN7jutv5SoBegvcR6tVu9DTZWDwy/bTlbSjM1JG5Luqz2UUqfP9mU6AoZVFxQ2nGSIIfrnuNXZY0UpmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747946389; c=relaxed/simple;
-	bh=cMzwioh17gENmm2R6XQJtayjD6KpeVsQzAG0gP6JKzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UJCubsFJ2eCiEJPSeXl9nyMDp5bz2cYoCdr77ebgYQIDqv+rtG1hjeW/QsMV4O5nGCDoxSkJbcAGRnRfCPinSkc6LfmsDuWrhIMqEiKMAyzPKqwTXgTpvrkaiuhQFUpavnXXGhBOnmFGgLlYeZITop1FLPcbvXhBEoLiQIzb2Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qz+tznIS; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a37a243388so3396353f8f.1;
-        Thu, 22 May 2025 13:39:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747946386; x=1748551186; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iY91vjGYq1YGLlhS2Op+EncNJMVLvjFIbtv4AV1m54M=;
-        b=Qz+tznISWBpd6P35dyE8B2vslk02Lzd4gMMntKRojgx/scK9Ize1LueGXzjEYTcBXK
-         cDhJXHbkj8BCgpW8H+hyOtn9kvGg/YNztmS6AtXcwA1JEAvh/xPXnQDAYDQgfKS91jcK
-         +TS0JSYoqpcg0muLbqGOqK7TMx8sT7PTe7W4/8O/TvBzQqidUwRgwCg3y/2iGkQBr+il
-         ds5vr7oCb1E1GhfRK4TiTZKXLwF5YfG3LWRiFua12g0QkKZOyClOEbFAlexNSKX2nq4l
-         HyUvFaQl17k/5Cb7mkff3HCptf0Luam6WMOXGga/J/lJTabwjY375fyZcEENyy74vX3p
-         cbsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747946386; x=1748551186;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iY91vjGYq1YGLlhS2Op+EncNJMVLvjFIbtv4AV1m54M=;
-        b=umQ6EUqqyJXde4TP4ekB9Ntog621oYfngBluO4RwSFsT4WDACjFURIa6rwdcuMJhzu
-         xnH99wyHRsvK2bnKGNg5GwV3j+JcfbqqHSv3DoQNUpJWhSzYd6iJH9P39ouqXgHbzUHL
-         1tfMwd8BIGs4SkxYwvYelUlajMwQ4yTPHX/EC9i2HTIDnqCq6/F9FbYI+9TZ0rwsCNSr
-         MomDMc5YslRhE6ImNC7HjLinqzCzkPShZB3PwTnXv9Q5tXOq1nDdHoOz0tHWFCYJ0nTp
-         TGhEf6ZSONoCoExEbIskrId3GLseLgZtSVATaIUWHLYziLPLDv0F6H42Atbmw+w8VN4A
-         yJ0g==
-X-Forwarded-Encrypted: i=1; AJvYcCULT1YXKuulT7VqjjmobtHuvVBRDDE3TucgAawFl54tsoRENyerCPgy+cBECZahZ75Qhjm00e7HsntZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxnr/XhQJ9VbdykpK3uEKOCq6iky65JkiC2DEfkHapeu2pVu7Lr
-	d2oXZtqNFe0Ok6a5Rnk2hMMD3Dq2g1ZeYpR3FL0RzDYEmLji1TCihaHo
-X-Gm-Gg: ASbGncuQ3vodydsSpLSP+QfMZWOY190l36Re3LKou7SaxSnVyeTDh+11vXQrRUSh2Yq
-	35vjbLcY3mlQPh4EsLN5Q4Xi8bjBDwlMDMGjpiio74VO3iQWpbsFC9FhVqOwMpgOqn03v8w5yp+
-	5btW+11DqfEFKOzsavTQdh1YueW7+fTlMtqZ6DWIwn51MzFxoIc8Izl/WIeHHm+8fkvHWxV95HC
-	vQb2EgNCGvQnPE4psXkkt9v9SN2YifpD0czVFoex72vdPwt7x1ooEgO6Ap7aluB6xYSZ6tAwwne
-	asagRyU3VXHU0aqiIA61nvPyS1f7Kj1Tq6FDOkIdzh0f4Onr3FcsY/U4m/eDk9sv/U0CFgaPFdv
-	31y3ysU9Mq6afIQ==
-X-Google-Smtp-Source: AGHT+IHZKykx5QpTbOJ39X2Y8rlRcInjFkmlVDDOcIVZ9NAz79zmTmz0NgNUWcgHnZ4KBbSgnmrrAg==
-X-Received: by 2002:a05:6000:3111:b0:3a3:75fa:a0f6 with SMTP id ffacd0b85a97d-3a375faa340mr14824005f8f.50.1747946385913;
-        Thu, 22 May 2025 13:39:45 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a3622b8a3esm23506026f8f.14.2025.05.22.13.39.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 13:39:45 -0700 (PDT)
-Date: Thu, 22 May 2025 21:39:44 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linus Torvalds
- <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>,
- linux-arch@vger.kernel.org
-Subject: Re: [PATCH 00/15] Implement CONFIG_DEBUG_BUGVERBOSE_DETAILED=y, to
- improve WARN_ON_ONCE() output by adding the condition string
-Message-ID: <20250522213944.5ba1eabc@pumpkin>
-In-Reply-To: <20250515124644.2958810-1-mingo@kernel.org>
-References: <20250515124644.2958810-1-mingo@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1747946545; c=relaxed/simple;
+	bh=dp/jIYM6WqZk+vcAH0XvJduAuAkOD7KEaEg1Q9V2gcI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XnDihLOhX7SeqDBgH0sc57CQGO/EPc6XIsq/FwxRJFArK17U9POlTrk2jpKWs3NOrqK2LAfo7pjRJ/Zi2vTRwHA/kAauUk9qiINdNyE9q1z3g3D/qKUslxAJW+Ej3wLMwUC3KCGj4D347wOuzONhZc4onabT2okT5k35tF00BWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SkfljHa4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Yy0XL3yq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=V48WQ0a9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bOiITXi5; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DEA2F21B91;
+	Thu, 22 May 2025 20:42:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747946542; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gLNpYFc+mlgcAA1tWX8OkQ12UIgugg0qcebMpSoFN74=;
+	b=SkfljHa42fe6n7UzehWFIT63xMvxAvas7SjMvfBWb47cqj5fNgifLC9Hjkg/5+KBYMvdfd
+	XBhgITFCBsZmn2pB8ImKvas39mpQEfJ5uZMtzP0j3iMe8k+5T2e/RlANZcHf/pxqrGtXai
+	1lYZj7n2FNFwJX3h147YM4hwzlM6ev8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747946542;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gLNpYFc+mlgcAA1tWX8OkQ12UIgugg0qcebMpSoFN74=;
+	b=Yy0XL3yqIOaXuf/R3eIcfbdeVhtPPCI7A7rxNZycOgT0FonVwTpBO2gmpBYzoceFJfepKx
+	9t7MmLK5eySJ+sBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747946541; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gLNpYFc+mlgcAA1tWX8OkQ12UIgugg0qcebMpSoFN74=;
+	b=V48WQ0a9LGgCtsw3AaQKf7zTzsXr7Hn3fqNQrPUb6KJ5Hs49ufbNgX9262eu4BQ5qj7Zqz
+	+4o8775FKVy12AkM7EcN0oiIfGABu6K3AWrV6oGo2MYKfPFbt24OKgczzl42/D+A2/+/y+
+	LOyfwO9SjlMtwdx7iMPRllwgOxObx/U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747946541;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gLNpYFc+mlgcAA1tWX8OkQ12UIgugg0qcebMpSoFN74=;
+	b=bOiITXi56mBxnrCq3sSlbqUAsgAeuCTuBs38gJcyPhgFKh3AcDKxj6hWHD7DcqwsqCVGMl
+	ahRSGir2D0dP6NDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C7678137B8;
+	Thu, 22 May 2025 20:42:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id La4TMC2ML2g2fQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 22 May 2025 20:42:21 +0000
+Date: Thu, 22 May 2025 22:42:17 +0200
+Message-ID: <87r00g74ye.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+	Daniel Dadap <ddadap@nvidia.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Jaroslav Kysela <perex@perex.cz>,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda_acpi: eliminate defined but not used warnings
+In-Reply-To: <20250522203020.1478369-1-rdunlap@infradead.org>
+References: <20250522203020.1478369-1-rdunlap@infradead.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -0.30
+X-Spamd-Result: default: False [-0.30 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_FIVE(0.00)[6]
 
-On Thu, 15 May 2025 14:46:29 +0200
-Ingo Molnar <mingo@kernel.org> wrote:
+On Thu, 22 May 2025 22:30:20 +0200,
+Randy Dunlap wrote:
+> 
+> When CONFIG_PM_SLEEP is not set, the hda_acpi_suspend() and
+> hda_acpi_resume() functions are not used and cause build warnings:
+> 
+> sound/pci/hda/hda_acpi.c:282:12: warning: 'hda_acpi_resume' defined but not used [-Wunused-function]
+>   282 | static int hda_acpi_resume(struct device *dev)
+> sound/pci/hda/hda_acpi.c:269:12: warning: 'hda_acpi_suspend' defined but not used [-Wunused-function]
+>   269 | static int hda_acpi_suspend(struct device *dev)
+> 
+> Enclose these functions inside an ifdef CONFIG_PM_SLEEP block to
+> prevent the warnings.
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Daniel Dadap <ddadap@nvidia.com>
+> Cc: Takashi Iwai <tiwai@suse.de>
+> Cc: Jaroslav Kysela <perex@perex.cz>
+> Cc: linux-sound@vger.kernel.org
 
-> Changes in -v2:
-> 
->  - Incorporated review feedback:
-> 
->     - Make the expanded strings conditional on the new
->       CONFIG_DEBUG_BUGVERBOSE_DETAILED=y switch, to address concerns
->       about the +100K kernel size increase, disabled by default.
-> 
->     - Expanded the Cc: fields
-> 
->  - Rebased to v6.15-rc6
-> 
-> This tree can also be found at:
-> 
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/mingo/tip.git WIP.core/bugs
-> 
-> Thanks,
-> 
-> 	Ingo
-> 
-> =========================>  
-> Original -v1 announcement:
-> 
-> This series improves the current WARN_ON_ONCE() output, if
-> the new CONFIG_DEBUG_BUGVERBOSE_DETAILED=y option is enabled,
-> from:
-> 
->   WARN_ON_ONCE(idx < 0 && ptr);
->   ...
-> 
->   WARNING: CPU: 0 PID: 0 at kernel/sched/core.c:8511 sched_init+0x20/0x410
+Err, it just an incorrect use of SET_SYSTEM_SLEEP_PM_OPS() instead of
+SYSTEM_SLEEP_OPS().  It seems that v5 patch went back to a wrong
+macro, likely mistakenly.
 
-What happens if the condition contains #defines?
-Does it output what is in the source file, or the (bloated) expanded text?
-For instance:
-	WARN_ON_ONCE(min(foo, bar) < baz);
-doesn't really want to show the expansion of min().
+A fix patch will follow.
 
-	David
+
+thanks,
+
+Takashi
 
