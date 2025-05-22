@@ -1,118 +1,109 @@
-Return-Path: <linux-kernel+bounces-659911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED377AC1695
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:21:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308B6AC168D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56C031C02F91
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:21:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0AB47AC78C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08ACE26FDAA;
-	Thu, 22 May 2025 22:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D2A26FA42;
+	Thu, 22 May 2025 22:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DHtiU/rg"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4xUTCq9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C1F26FD8B
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 22:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BBE26B968;
+	Thu, 22 May 2025 22:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747952443; cv=none; b=nhlopm4SD7sV73dtg6Qj1/oGZuTCuU8hbQHtrYwVYhHvIVXp+UUXbjDZWU4nP3TRXO6uZ7pWr1RTlVj3WTz05uJX3bVccLhZlIbdrY+aU/Pvarh8Pj64Ry1OiWU3DBZRcLng8xF5TK3O3wogAZ54MluSpW7s/D6HJmYxUvhn8WA=
+	t=1747952405; cv=none; b=Y0kquuKIzWS1run+edeYATE7HnzPAm6TEfhidP9yHuuYCYzJJMlD/B5aLY7t+qJiiB7FPRp25cJburLoxjMpklRjKG2aJbObOnSF+QeLI4bsGXRMGwWbuitO6EfFO2siskivDkKaJnGjuwbspiHdL4d2c+7KM+I6IxNvvPWV/4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747952443; c=relaxed/simple;
-	bh=mnHKE1BUo31x7AyUtPinsLwcx+oySEsRQhIFnGP6ry4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gNji78b5wjSPk0VLc3nKxNHVUELwyrVcgFyym/7RFr5S3T55EgiXugIH2aPcX9PYpMCKJZW8yiJHwN8VLpOSruDunKYSeVbxhirw6BVBbpd/cmaYTucc/6MI73mYGq1F6D5w06Y6FNSywJy80wLqhwpozsX2FmsBE5AZL32G0IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DHtiU/rg; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3dc75fe4e9bso1328335ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 15:20:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1747952439; x=1748557239; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L5BNM50paBCJ37VNYgPqSl677v0Imj9cFeeb/Yu2EZA=;
-        b=DHtiU/rg9UHDrIoAolmV1etUXS4B8DXyupmcqavapjXEAq2NhCUkDKi9oglV3if5rP
-         RDkcmJGOnsMc+DwIhjjpMb53eOM/lH2bRdXzV0LYZNm4trYer/5jEYRcdrLkFcFTxfOW
-         2n+LHhd1FkquURNgGhMz/G4ojyFdvskrDvVdY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747952439; x=1748557239;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L5BNM50paBCJ37VNYgPqSl677v0Imj9cFeeb/Yu2EZA=;
-        b=pmzY3SJCQ+rEjN/URNKd1Po1Vo26+Vuh32eveOOX/OwkEVZbaDQWQ5d6Q2LPOifU5h
-         88nPff4sgC/Zjchvcl37M9IGfDl71gqLFd811d6JeTCEHBC9sshG7MCdP/rY4EFXXEiI
-         6rs3gHnAgIgSpLpfz6jUubE2Ljqe/JlLtNIF2i4v2ql3llGEq2dGL1AL8Z+POSmvOupY
-         Bi2Vq0YCf8850oFQDtZzRVH5FnZZiIUqlrnfHmUqwXO9Qhz2OIDozx1WxFDbznhVGSf4
-         Ox/VdtfCmj9ygqTKwUt963gTEC1EshTXZeMqJ5i1t2aez8NtI59ERA3B1xSk4K+GRqYC
-         xcVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCrgJui1mIzi5c/bHEi74y5ODSgWeofuD9jtJp91tSM3FhQxWuep9Qqcnm0jRVreGYjp4rCJTYMiCLI6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTZ2D5cA0h5aCh0C2Sy9jgblc5nE068Ip4ZdYvZ/++sxGNvbZD
-	zmO7VZT2sT4kmHXM1oh/JVczbV69zHQydOxMWRsz97ZlFkY3ELrjzqn0sYoQ11iaKco=
-X-Gm-Gg: ASbGncuEqOcFNUZy72z7jqeBoyDwrT0GikoMnr32rH+WAHIvyrDc7O+3hXfemdvY6Za
-	rFaTyAXKlzMVUpOT32feCXHRLDnHo2XQpidcyUDFf5liIDM4abvMIzCzO2LVWI5LoOH0mIHe6n4
-	IRRftS64JxeaCEu2BBkxWiGTfM85EuyqOHPw/vbtO6LmwN+z7Gn6WMAvjC9itr+LvJI6fpDzf15
-	ItC6g1m9qqc62+U/tcc+1SRs69T+PSSlRdcgYEqbAw7nipkApCkvcBH9I0L2Wab/u4q/R2H8fpd
-	5VssllK1XqIUyiShw50TAb6Ua5Fv6wpOB1SPwfv7WJzoT7PnzxdCQ2vgDFktFfIMolETO3np
-X-Google-Smtp-Source: AGHT+IGYLQ2LO5QOfE62VgsMxmlKAhEOBopbDS6A7t9QHHagvVdXFcgpgAg/8sKLAv9dg/KeRHZBUw==
-X-Received: by 2002:a05:6e02:16ce:b0:3dc:8e8b:42af with SMTP id e9e14a558f8ab-3dc92bf6514mr15590275ab.7.1747952439346;
-        Thu, 22 May 2025 15:20:39 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dc85440323sm10378805ab.50.2025.05.22.15.20.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 May 2025 15:20:38 -0700 (PDT)
-Message-ID: <2973cc3d-a4e2-4120-ae89-730581090ef8@linuxfoundation.org>
-Date: Thu, 22 May 2025 16:20:38 -0600
+	s=arc-20240116; t=1747952405; c=relaxed/simple;
+	bh=PwYK2yYeLn+Oou4JsY36nhUzSuMSbtdBTpEgutARMqk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=pDcVfhYbY9+WFb1dG6AaVgX9rrRTfbQ9qjk1MSvp6sAwPCGoyR/ONxZtb6vdM9p1M+wOyuNDeOsI1/YFNVE01Icu4rAKrXG0uNuYYAB30v7YjmVY0WFFZ5zs5GfkyGUnAz5+YwKRi8KMupxf3+ZLiGLgbWy5q1XwG79PEwbD4bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4xUTCq9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5C3AC4CEE4;
+	Thu, 22 May 2025 22:20:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747952404;
+	bh=PwYK2yYeLn+Oou4JsY36nhUzSuMSbtdBTpEgutARMqk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=K4xUTCq9L/f9q5t09qgMqOhjW5B9jn5+55XxG9/AMRiIqFkYHzxhV4oFCeiUiMKPC
+	 kx3Hpcidc5gISWI/zx9uppOssfDkoeehyil5/XSUt112fb+MgMdHm76l64JoJSy6u0
+	 0w97zpTGtqzQ8iu3lqyTwVNfGMsR3nwzQLXxKLsQ9Ehfu7OsEHBjlMdwFbtNEbMdHV
+	 KuCvubzaJk1ZUolnsd1nvgojSyQ0TQcNmjLHbcU6oVYq5bkOMnrwPVwlhteE0RmpKc
+	 j3NTofxXCTBysNbk9VgJAcmoXf8sxJYBTKNwe2UCljHYBViESGbJBLTlSFPAWBl2lh
+	 oT4KAhx3sMsqQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E2C3805D89;
+	Thu, 22 May 2025 22:20:41 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: filesystems: removed repeated word
-To: Nidhish Chauhan <solemnsquire@gmail.com>
-Cc: linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250516164648.15396-1-solemnsquire@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250516164648.15396-1-solemnsquire@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v3 0/8] selftests/bpf: Test sockmap/sockhash
+ redirection
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174795244025.3035914.3223968241025374027.git-patchwork-notify@kernel.org>
+Date: Thu, 22 May 2025 22:20:40 +0000
+References: <20250515-selftests-sockmap-redir-v3-0-a1ea723f7e7e@rbox.co>
+In-Reply-To: <20250515-selftests-sockmap-redir-v3-0-a1ea723f7e7e@rbox.co>
+To: Michal Luczaj <mhal@rbox.co>
+Cc: andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jakub@cloudflare.com, mrpre@163.com
 
-On 5/16/25 10:46, Nidhish Chauhan wrote:
-> Removed a repeated word 'at' from journalling.rst at line no. 96 in
-> filesystems directory.
+Hello:
+
+This series was applied to bpf/bpf-next.git (master)
+by Martin KaFai Lau <martin.lau@kernel.org>:
+
+On Thu, 15 May 2025 00:15:23 +0200 you wrote:
+> John, this revision introduces one more patch: "selftests/bpf: Introduce
+> verdict programs for sockmap_redir". I've kept you cross-series Acked-by. I
+> hope it's ok.
 > 
-> Signed-off-by: Nidhish Chauhan <solemnsquire@gmail.com>
-> ---
->   Documentation/filesystems/journalling.rst | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Jiayuan, I haven't heard back from you regarding [*], so I've kept things
+> unchanged for now. Please let me know what you think.
 > 
-> diff --git a/Documentation/filesystems/journalling.rst b/Documentation/filesystems/journalling.rst
-> index 863e93e623f7..2825f6c030c2 100644
-> --- a/Documentation/filesystems/journalling.rst
-> +++ b/Documentation/filesystems/journalling.rst
-> @@ -93,7 +93,7 @@ easily as on jbd2_journal_start().
->   
->   Try to reserve the right number of blocks the first time. ;-). This will
->   be the maximum number of blocks you are going to touch in this
-> -transaction. I advise having a look at at least ext4_jbd.h to see the
-> +transaction. I advise having a look at least ext4_jbd.h to see the
->   basis on which ext4 uses to make these decisions.
->   
->   Another wriggle to watch out for is your on-disk block allocation
+> [...]
 
-Please run get_maintainers.pl to get the correct list of recipients for
-this patch.
+Here is the summary with links:
+  - [bpf-next,v3,1/8] selftests/bpf: Support af_unix SOCK_DGRAM socket pair creation
+    https://git.kernel.org/bpf/bpf-next/c/fb1131d5e181
+  - [bpf-next,v3,2/8] selftests/bpf: Add socket_kind_to_str() to socket_helpers
+    https://git.kernel.org/bpf/bpf-next/c/d87857946ded
+  - [bpf-next,v3,3/8] selftests/bpf: Add u32()/u64() to sockmap_helpers
+    https://git.kernel.org/bpf/bpf-next/c/b57482b0fe8e
+  - [bpf-next,v3,4/8] selftests/bpf: Introduce verdict programs for sockmap_redir
+    https://git.kernel.org/bpf/bpf-next/c/f266905bb3d8
+  - [bpf-next,v3,5/8] selftests/bpf: Add selftest for sockmap/hashmap redirection
+    https://git.kernel.org/bpf/bpf-next/c/f0709263a07e
+  - [bpf-next,v3,6/8] selftests/bpf: sockmap_listen cleanup: Drop af_vsock redir tests
+    https://git.kernel.org/bpf/bpf-next/c/9266e49d608c
+  - [bpf-next,v3,7/8] selftests/bpf: sockmap_listen cleanup: Drop af_unix redir tests
+    https://git.kernel.org/bpf/bpf-next/c/f3de1cf621f7
+  - [bpf-next,v3,8/8] selftests/bpf: sockmap_listen cleanup: Drop af_inet SOCK_DGRAM redir tests
+    https://git.kernel.org/bpf/bpf-next/c/c04eeeb2af8e
 
-thanks,
--- Shuah
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
