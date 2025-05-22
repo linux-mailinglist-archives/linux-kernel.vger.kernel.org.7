@@ -1,89 +1,80 @@
-Return-Path: <linux-kernel+bounces-659745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93202AC147B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:14:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D94AAC143B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E82A16CB59
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:14:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11D6173413
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0602D190E;
-	Thu, 22 May 2025 19:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFD52BCF4A;
+	Thu, 22 May 2025 19:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TBFI5z+K"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Jvv0HrfZ"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377812C3752
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70C029C322
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747940697; cv=none; b=cKp9gwZoEwf5GbqjCLwW4yJkDzyiaqPEL4AeYWONGjbHgE/TNvsqpuKZIUxigAMA6Z7/5znVnVhzlxCCbjP9pbupcAQ/BQxlMzVRdYn1cy+XYDadpU3B8fr1gsB6R4jeOvSZtEPEgeb0o05g7/PIJYoAX47l1nFUWTwvimEp2kY=
+	t=1747940636; cv=none; b=IcDcnG3vjILAuZ7G2vo6DPc+NonADZJ9Fi94LlucmGrqvLuyO4vlSOWwCgIZ00COuUsuvQ1m42jMvmBWrpF+9QaimHdKTTKkc4we6euua759RwDomsm4W37Ymwa3Bw6eOgy28/q8nVP/rL1HjVQdjw6d8Ni0uHKuYvQR4enbt6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747940697; c=relaxed/simple;
-	bh=yMylM5q2SumCKQICfch3yCGCj/FmvjrEEGOz3RHRJig=;
+	s=arc-20240116; t=1747940636; c=relaxed/simple;
+	bh=15uNoWw1oFmc2RxCK2PSoncmAe9FQepCxYJUbSkoVrQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BhyHIlsGtmZLpf4jzdiJmLUC4BDVCSfwUG5DhBN1jrfOlLRfdBwBDZEu5axrJJIAVFkYEtTc+iT75kP8dXHu9y6mAfcD/Ma90RsC1bJI5piQ33kA9cEXA1RPVX6taS2bXHbD7T5Z52RJ6fliUXiYQPNZ8ZUj2kr1ACh4pcDmxX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TBFI5z+K; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54MFkNwT020598
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:04:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VwZo5rFO+Fo9r6sEtki6tvyPanlZZDkaCTSawEXgDN4=; b=TBFI5z+KMHDRskSj
-	weQJV7F0bCw4LJtVyGTJw7N5bPxs9hQBWXl4uDhzgEgV/NXBfXIJt8RUTcYPP2Lk
-	uCAXE7JdhM8PuxEZDCYVyE2W9w6RCmFskkDApA5lqERN+4fSNiRjJXIc9aeY+BmI
-	0IrbikpE0FpuzISCR/uWrp/4Xi95bVGbbLS4QNoENnKrHSTHN1pquir1xs7zAO/S
-	Fe/EqeFr5oLDhTUvRKEmrUu2G+etBMwLaZV15uxSISyrLfpJCGdJWFutpE2+xrTU
-	sCzH1DGcw+Oc7aL24lUPxwHRtcd+80Q/MlWcjFeu3y26/ACEACOvku2/zGltw2ae
-	zl735Q==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46s9pb5v61-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:04:53 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5f3b8b1a1so1363559985a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 12:04:53 -0700 (PDT)
+	 In-Reply-To:To:Cc; b=MHjwzb7J4zRGnRS/oZ/jO3IqRWyg2x/0ReZMekWGPXcph7HeD6XSJh1Ky/jijshGoFeRGheP5uetXbmsBEs1xh2yhuZYqU69Je1Yei0/izk638J7o0S8Q0BlYPY8AvGHBq3rs9p9rBdmNTPqeYU0j3Db3l/7El23yZdKrDAnai8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Jvv0HrfZ; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b13e0471a2dso5445216a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 12:03:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1747940632; x=1748545432; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hlpauo+rroktx9kyAnwP3yRkffTzlKUHEtIrSQJtdwQ=;
+        b=Jvv0HrfZiLEVmlP0FLF2oJo4pr+TqEaSjswrUwy7iqfS3VKpYHVEFc5OFRnxo9pK/t
+         yqgdQfE5z5SQt2yEnvdyzdmY/C0QbZhAysbAsoXgFtIjwJBbFpBntMHAaCN8fR4yukA7
+         sPpUf3JIgkuL46DO16eUvi2lMgYAOd2k7cxgAE8Wr6SSGsLNx7hu7ZwAd/78/XebEsPG
+         qRT30LBXKpWeO3jHHAtMfntlbMP8mGUOKrjBj4qy8Jinda/RRMS8qHGqdyppZRIK1adw
+         QBYGYdDygrX2gUr1TLICAlZ5HNdvKx7qJUGDkUm3oR3Aiu7567zbitNQbRzFo7DnyG8y
+         N9mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747940691; x=1748545491;
+        d=1e100.net; s=20230601; t=1747940632; x=1748545432;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VwZo5rFO+Fo9r6sEtki6tvyPanlZZDkaCTSawEXgDN4=;
-        b=O4ulxar9yNO7msFgbCt2M9hvGnWIg4doM/6QNuCNuZ3UrvmWE8cO9wmFFvOKMlA8/w
-         zFalcLbM7Wmu8qkxXU3LvyXYwjToT2cbeNfLOOYzcxdkA1FsZMo2vQxcciN+dAZ/ECHS
-         TO0dug9+VGphvVhgymLPQeQ+wq+LZ+J1Xj3h14fiGD7/5wstS2P+EYB7bV6rcpuE+AO6
-         O6pKV8WK6BV6e5Kjjpq/UVjH8C3iJ6RqXcopk76DvCif4+f9nn9JVsfX4qNErxeVWNqk
-         jfD+dI0LaFSya4ivDMkimLn5LeJA96QfxFGFQtQhVOMRuvwIMf0clLTrnqFopRkcTsVq
-         YeMA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0yVsbfn2zep83mBvkYBm7QCP5yggEUrG8c1wv7NdR3MliKKd04VsFtAvpyPrWLOY1HrDc6wmed+Q4lzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD4+dlwx5Io/mZgHA99pSM07hO4FKWk0HChHO76Ev9SfbUx4p6
-	64fE2L9h2iNtP5OOjUnmo9avBUJwrl2HSX1X5eqLqdhp2pIR6bWo+g7kYM+VPbOzktgtYl8INxE
-	u5kuOH8MvjQPOxhVYZNHumSraf19HP4Ao2r1qft3B/e62+JE0X38Ell3pUhvMeTSKvOD8t8uZjs
-	0=
-X-Gm-Gg: ASbGncsiuoMyoq4Ms+xNvI+x5mmoWYGO9cY/7/lXGaDoPbBiOvCNjn/rl7wxnxFhdFn
-	wx63vP4pBlNuSEW78BUq2Vp/AtAnUFwQTNoUyB6ivF6BCsGfeb6p7NwvPe584aKyB2w4Lt2MLEw
-	Cp98gBM4dch0JosU50dp7aq5zwm60AGxgHGXIYaa7l3/v8LQKi0qbjyCEOB9PJ+rWlo9w/Wk/aD
-	osKBHVxCwbdDKC2h4tlO/DQOR0+1m59cz8lvy4sXSpbG/lofSYGbTe4R8/ebTbDctNvBBENAExL
-	ahg3S73w15p0YaTLz339sa9H8nTgAGLI1XfutqVeNDt1gQ3xe0aFl3qLjRlTLAN772eJuG8BHHa
-	t+oz9apRdhiEqMpnVo2PGP5DL
-X-Received: by 2002:a05:620a:1999:b0:7c5:5003:81b0 with SMTP id af79cd13be357-7cee31f6a61mr9208785a.23.1747940690938;
-        Thu, 22 May 2025 12:04:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGyBoxBiQu+R7TxjU/9FO7jh834AKrFaGdFjzBhtfd5AnK14VFdGaOTFWnZJjxCGXUmmEqvA==
-X-Received: by 2002:a05:620a:4445:b0:7c8:4634:51d3 with SMTP id af79cd13be357-7cee3297985mr6441085a.55.1747940679606;
-        Thu, 22 May 2025 12:04:39 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e703c2f3sm3482506e87.214.2025.05.22.12.04.35
+        bh=hlpauo+rroktx9kyAnwP3yRkffTzlKUHEtIrSQJtdwQ=;
+        b=tHYviEoQIp14AW5nq2uevAFtdKUAxiVfyzFng2282Qlq0oDUqK6Dh1v2TYaHw59yqF
+         aDBg48eG0OG3OLcFKENXO0SDRs5EJc3tCTDphqq1D+JhvvnO+xoGhq4v3Axn8B9wvLCl
+         0T/RL4wycAYr/5RGPf5Pl/kBCFOCUAPC22LnU+/kprWK94ESiceG3wGEDmzAje6EfTDa
+         4F3+OTRYEBNXbbDMovBXI1XkMuwLnwj8vJ6bVWNPQbk5wk4A1hKuHMDAJAa+jrCRZ+hW
+         F7Y42StRtZ5WuSDMiH6JYAYZQyw4fGNWw/fQLmP9gI6X04umaAYpO3qL6XonSihTTEFr
+         95PA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmIWcSgUKCE3BSUJxdMBHhWesDnllqvEmpeJCk282dbJ159xiLX9FRYCba0r1iMqnBcPNCetEYidQQe1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmZEqDl3JZRWZxPrMPYXE7krukuLO//hKnzEaE5CQUHX88XIk1
+	wmMysyjHFDGlVoKLbuQCsnuBogheiVqKzjAZVOf+WU5Jlfl873ufUYwHBFKbtb1j5ro=
+X-Gm-Gg: ASbGncvwl8IzQoJxbwsmvwjuF1hPCaavN4LPdwb6h/A24KM+Y2U2U23XqsY1AEe8qKh
+	1AoPFBdQKNH5Z5jP4UuCG74BeKrk/YZi1N3jbBH6uQekRwly7NBo5vvYXRTTlEN5OBCuYFPpNAG
+	Qq+KEXfVfftQXs0RaJd3xNfmUNfOWRy5A43u/1x65yMej2toZUvQHyV+DFlz0uT0iQULR7znzAC
+	Inw6Thmt43ES10/iYLI2S5WET9YIp/g3K9gs8WTBqwe092yiMtSK3YIsdNjDByBhTdFe1UayKzc
+	uU5JAPwySWLUnWKSsyA69UiCGbJKjJdiVN0cDx/T15Url/YlszBm4PDoAOOQfebq
+X-Google-Smtp-Source: AGHT+IFokfHrS0cqFKUDrcGnm0bjUiSThIlPHjvO9RTk66q9cyYFiPgwK1o9zc41Z294fx1ovdpLTA==
+X-Received: by 2002:a17:903:1aec:b0:22d:e57a:27a2 with SMTP id d9443c01a7336-231de36bb6bmr358484745ad.23.1747940632165;
+        Thu, 22 May 2025 12:03:52 -0700 (PDT)
+Received: from atishp.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4e9736esm111879155ad.149.2025.05.22.12.03.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 12:04:37 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Thu, 22 May 2025 22:03:41 +0300
-Subject: [PATCH v5 22/30] drm/msm/dpu: get rid of DPU_DIM_LAYER
+        Thu, 22 May 2025 12:03:51 -0700 (PDT)
+From: Atish Patra <atishp@rivosinc.com>
+Date: Thu, 22 May 2025 12:03:41 -0700
+Subject: [PATCH v3 7/9] RISC-V: KVM: Use the new gpa range validate helper
+ function
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,1027 +83,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250522-dpu-drop-features-v5-22-3b2085a07884@oss.qualcomm.com>
-References: <20250522-dpu-drop-features-v5-0-3b2085a07884@oss.qualcomm.com>
-In-Reply-To: <20250522-dpu-drop-features-v5-0-3b2085a07884@oss.qualcomm.com>
-To: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Vinod Koul <vkoul@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=36957;
- i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=qFUB/zmAszMmoynn89d0rjEkbVCuOItarDz5KzyErKg=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoL3T/OwHbV96aoTlGL0NlD2cJajjKIVY9RPMl1
- ee2KAeiLT+JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaC90/wAKCRCLPIo+Aiko
- 1Wq9B/4rUrCsa4sz/a1bhywLG2mDQ91bdn4WzsTtbHKwRWfJvfwwfVtbH30yH531fhRlGVzgLSj
- YioVgsrFu6+0Lvm144bAeCFW4J8xD2JwxxutXw1WohtNqMKpNd64m2apN9TNtpe1xuMErhpfPAs
- b6ciRtTHZvRe4RoLfh3L4/I7W+NUWhdtuL7AVMQRrCz+c0DLU6Ey51CiV3Nq6Mv5bmU/n0DAWTf
- mdiOxB+T0z50KJ0A/Jrfhuai6w05OVWpqZY0offyXO4amf+4mxgjNPcPdFTpwBndKr8oKlIGJfq
- omrfborAx9dFHGY2MOIheMDrORKcKnwpCj5hLpKGVo8HoELD
-X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Authority-Analysis: v=2.4 cv=WJl/XmsR c=1 sm=1 tr=0 ts=682f7555 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=kQUVcpSUXEBHcVziRcEA:9
- a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: 31T4pHmam_bleDZiMz2fTLXHWjj_sNNt
-X-Proofpoint-GUID: 31T4pHmam_bleDZiMz2fTLXHWjj_sNNt
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDE5MiBTYWx0ZWRfX2SWOXpQk7jHD
- yqFekNMnmIM3N5Fi3CWTbYA+GSMon2MYHpgVi/aOyH/huaYsuKmfVo0FYrwGIJAS5rQZ+b5Zu7g
- EyfUp/QD7AbNVo+rC4Gx6O2LkBciTg/f7E1knz1t+mSgNjmRgp/cuN7tEU71C98PKKoRJSRAhXa
- HgbMuUAPgW1+avNDrGaKmhXEdljP8wLml0IrrZvPwElomf3dlSWNZu389O4onzhEn/2waFWK+nP
- lwgs0DWDYqwKNUfXH61osZ19Wy4i9w5nmWBNbIAyKQi3R98cPJmsJ2Y6xFw79Wi5Xv804hYGOQA
- GWI/wt1ffqpk41rUpUzoypyRVsN9mSdQ5PAkKl5Yifxht2jVaZCCcIwA4eEhz/Ir0l4M6IFmdFy
- mWTiyL6s7u5cCuW3UH4dAnQIybYQuvzcqurGZUkZ0q/6Vy/wvVy/ixttulRyE5aFgJgPc1Q1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-22_09,2025-05-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 bulkscore=0
- malwarescore=0 impostorscore=0 mlxscore=0 adultscore=0 phishscore=0
- mlxlogscore=999 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505160000 definitions=main-2505220192
+Message-Id: <20250522-pmu_event_info-v3-7-f7bba7fd9cfe@rivosinc.com>
+References: <20250522-pmu_event_info-v3-0-f7bba7fd9cfe@rivosinc.com>
+In-Reply-To: <20250522-pmu_event_info-v3-0-f7bba7fd9cfe@rivosinc.com>
+To: Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, 
+ Mayuresh Chitale <mchitale@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>, 
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+ Atish Patra <atishp@rivosinc.com>
+X-Mailer: b4 0.15-dev-42535
 
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Remove the duplicate code and use the new helper function to validate
+the shared memory gpa address.
 
-Continue migration to the MDSS-revision based checks and drop the
-DPU_DIM_LAYER feature bit. It is currently unused, but can be replaed
-with the core_major_ver >= 4 check.
-
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Signed-off-by: Atish Patra <atishp@rivosinc.com>
 ---
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h  | 12 ++++++------
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_4_0_sdm845.h   |  8 ++++----
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_4_1_sdm670.h   |  8 ++++----
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h   | 12 ++++++------
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h  | 12 ++++++------
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h   |  8 ++++----
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h   |  3 ---
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h   |  2 --
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h   | 12 ++++++------
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_2_sc7180.h   |  4 ++--
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_3_sm6115.h   |  1 -
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_4_sm6350.h   |  4 ++--
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_5_qcm2290.h  |  1 -
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_9_sm6375.h   |  1 -
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h   | 12 ++++++------
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_2_sc7280.h   |  6 +++---
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h | 12 ++++++------
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h   | 12 ++++++------
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h  | 12 ++++++------
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h   | 12 ++++++------
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_1_sar2130p.h | 12 ++++++------
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h | 12 ++++++------
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c           |  6 ------
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h           |  2 --
- 24 files changed, 85 insertions(+), 101 deletions(-)
+ arch/riscv/kvm/vcpu_pmu.c     | 5 +----
+ arch/riscv/kvm/vcpu_sbi_sta.c | 6 ++----
+ 2 files changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
-index ae66c338250664f9306a7d431cfa18ca07a916a5..9a8f6043370997cb12414c4132eb68cc73f7030a 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
-@@ -132,7 +132,7 @@ static const struct dpu_lm_cfg sm8650_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x400,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -140,7 +140,7 @@ static const struct dpu_lm_cfg sm8650_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x400,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-@@ -148,7 +148,7 @@ static const struct dpu_lm_cfg sm8650_lm[] = {
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x400,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_3,
- 		.pingpong = PINGPONG_2,
-@@ -156,7 +156,7 @@ static const struct dpu_lm_cfg sm8650_lm[] = {
- 	}, {
- 		.name = "lm_3", .id = LM_3,
- 		.base = 0x47000, .len = 0x400,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-@@ -164,14 +164,14 @@ static const struct dpu_lm_cfg sm8650_lm[] = {
- 	}, {
- 		.name = "lm_4", .id = LM_4,
- 		.base = 0x48000, .len = 0x400,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_5,
- 		.pingpong = PINGPONG_4,
- 	}, {
- 		.name = "lm_5", .id = LM_5,
- 		.base = 0x49000, .len = 0x400,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_4,
- 		.pingpong = PINGPONG_5,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_4_0_sdm845.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_4_0_sdm845.h
-index 72a7257b4d7ba5bfe89ec76bac19550e023a2b50..5cc9f55d542b79bd2859cdd13d7f9640bf385866 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_4_0_sdm845.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_4_0_sdm845.h
-@@ -133,7 +133,7 @@ static const struct dpu_lm_cfg sdm845_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -141,7 +141,7 @@ static const struct dpu_lm_cfg sdm845_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-@@ -149,7 +149,7 @@ static const struct dpu_lm_cfg sdm845_lm[] = {
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_5,
- 		.pingpong = PINGPONG_2,
-@@ -157,7 +157,7 @@ static const struct dpu_lm_cfg sdm845_lm[] = {
- 	}, {
- 		.name = "lm_5", .id = LM_5,
- 		.base = 0x49000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_4_1_sdm670.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_4_1_sdm670.h
-index ce169a610e195cbb6f0fee1362bcaaf05df777cb..0f5e9babdeea837c77546cd60cf9b545434c9746 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_4_1_sdm670.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_4_1_sdm670.h
-@@ -68,7 +68,7 @@ static const struct dpu_lm_cfg sdm670_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -76,7 +76,7 @@ static const struct dpu_lm_cfg sdm670_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-@@ -84,14 +84,14 @@ static const struct dpu_lm_cfg sdm670_lm[] = {
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_5,
- 		.pingpong = PINGPONG_2,
- 	}, {
- 		.name = "lm_5", .id = LM_5,
- 		.base = 0x49000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
-index 23a3a458dd5c260399a42e5f4d4361b3c4e82c4f..8e37c40620b62aacdcb47c7a04bcfce944ab0b4c 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
-@@ -136,7 +136,7 @@ static const struct dpu_lm_cfg sm8150_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -144,7 +144,7 @@ static const struct dpu_lm_cfg sm8150_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-@@ -152,7 +152,7 @@ static const struct dpu_lm_cfg sm8150_lm[] = {
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_3,
- 		.pingpong = PINGPONG_2,
-@@ -160,7 +160,7 @@ static const struct dpu_lm_cfg sm8150_lm[] = {
- 	}, {
- 		.name = "lm_3", .id = LM_3,
- 		.base = 0x47000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-@@ -168,14 +168,14 @@ static const struct dpu_lm_cfg sm8150_lm[] = {
- 	}, {
- 		.name = "lm_4", .id = LM_4,
- 		.base = 0x48000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_5,
- 		.pingpong = PINGPONG_4,
- 	}, {
- 		.name = "lm_5", .id = LM_5,
- 		.base = 0x49000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_4,
- 		.pingpong = PINGPONG_5,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
-index 75f8f69123a4a6afe8234a9de21ce68b23c11605..a05d2ef8fc9d217898b8c12d4639563b28b4477b 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
-@@ -136,7 +136,7 @@ static const struct dpu_lm_cfg sc8180x_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -144,7 +144,7 @@ static const struct dpu_lm_cfg sc8180x_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-@@ -152,7 +152,7 @@ static const struct dpu_lm_cfg sc8180x_lm[] = {
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_3,
- 		.pingpong = PINGPONG_2,
-@@ -160,7 +160,7 @@ static const struct dpu_lm_cfg sc8180x_lm[] = {
- 	}, {
- 		.name = "lm_3", .id = LM_3,
- 		.base = 0x47000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-@@ -168,14 +168,14 @@ static const struct dpu_lm_cfg sc8180x_lm[] = {
- 	}, {
- 		.name = "lm_4", .id = LM_4,
- 		.base = 0x48000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_5,
- 		.pingpong = PINGPONG_4,
- 	}, {
- 		.name = "lm_5", .id = LM_5,
- 		.base = 0x49000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_4,
- 		.pingpong = PINGPONG_5,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h
-index 6b895eca2fac53505f7a1d857d30bb8a5d23d4c8..cb0b5687b5239418f50c539447f9cfa56e81fcc6 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h
-@@ -109,7 +109,7 @@ static const struct dpu_lm_cfg sm7150_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -117,7 +117,7 @@ static const struct dpu_lm_cfg sm7150_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-@@ -125,14 +125,14 @@ static const struct dpu_lm_cfg sm7150_lm[] = {
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_3,
- 		.pingpong = PINGPONG_2,
- 	}, {
- 		.name = "lm_3", .id = LM_3,
- 		.base = 0x47000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
-index e2306d314ef8f8b59078a8ca8c529f2e56385c98..8fb926bff36d32fb4ce1036cb69513599dc7b6b7 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
-@@ -107,20 +107,17 @@ static const struct dpu_lm_cfg sm6150_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_QCM2290_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.pingpong = PINGPONG_0,
- 		.dspp = DSPP_0,
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_QCM2290_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.pingpong = PINGPONG_1,
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
--		.features = MIXER_QCM2290_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.pingpong = PINGPONG_2,
- 	},
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h
-index 62136811a530a6072accbd1ab3e02e7e24220ccb..5c2c8c5f812347970c534769d72f9699e6e7049a 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h
-@@ -91,7 +91,6 @@ static const struct dpu_lm_cfg sm6125_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_QCM2290_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.pingpong = PINGPONG_0,
- 		.dspp = DSPP_0,
-@@ -99,7 +98,6 @@ static const struct dpu_lm_cfg sm6125_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_QCM2290_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.pingpong = PINGPONG_1,
- 		.dspp = 0,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h
-index 34f11fb084c02cf994c272196299bb9f7bced4f1..17fa0ef9ac03e4649a218cd837b296211ef4506c 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h
-@@ -135,7 +135,7 @@ static const struct dpu_lm_cfg sm8250_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -143,7 +143,7 @@ static const struct dpu_lm_cfg sm8250_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-@@ -151,7 +151,7 @@ static const struct dpu_lm_cfg sm8250_lm[] = {
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_3,
- 		.pingpong = PINGPONG_2,
-@@ -159,7 +159,7 @@ static const struct dpu_lm_cfg sm8250_lm[] = {
- 	}, {
- 		.name = "lm_3", .id = LM_3,
- 		.base = 0x47000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-@@ -167,14 +167,14 @@ static const struct dpu_lm_cfg sm8250_lm[] = {
- 	}, {
- 		.name = "lm_4", .id = LM_4,
- 		.base = 0x48000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_5,
- 		.pingpong = PINGPONG_4,
- 	}, {
- 		.name = "lm_5", .id = LM_5,
- 		.base = 0x49000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_4,
- 		.pingpong = PINGPONG_5,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_2_sc7180.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_2_sc7180.h
-index 135b4f8171360493e58a1945105f8722d513d720..f6a0f1a39dcc3c9e82c07889d71905434274cdf9 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_2_sc7180.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_2_sc7180.h
-@@ -84,7 +84,7 @@ static const struct dpu_lm_cfg sc7180_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sc7180_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -92,7 +92,7 @@ static const struct dpu_lm_cfg sc7180_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sc7180_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_3_sm6115.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_3_sm6115.h
-index 1189a5ecb3b7b50430eb275280c2309ee9d90b63..343ff5482382645fbd440d18d7ee46e5b3fc868c 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_3_sm6115.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_3_sm6115.h
-@@ -57,7 +57,6 @@ static const struct dpu_lm_cfg sm6115_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_QCM2290_MASK,
- 		.sblk = &qcm2290_lm_sblk,
- 		.pingpong = PINGPONG_0,
- 		.dspp = DSPP_0,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_4_sm6350.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_4_sm6350.h
-index 13ff6bdcc517fd566e7701f7a7cefe5ff19c5421..06bcaf4d8b0db74c349112af6884f7f3139a7ff8 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_4_sm6350.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_4_sm6350.h
-@@ -91,7 +91,7 @@ static const struct dpu_lm_cfg sm6350_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sc7180_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -99,7 +99,7 @@ static const struct dpu_lm_cfg sm6350_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sc7180_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_5_qcm2290.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_5_qcm2290.h
-index d4c2d2da91aac0bce46c4d65079f01484a769ae3..47053bf9b0a205302b3937e625fbeca8d17f0c82 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_5_qcm2290.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_5_qcm2290.h
-@@ -57,7 +57,6 @@ static const struct dpu_lm_cfg qcm2290_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_QCM2290_MASK,
- 		.sblk = &qcm2290_lm_sblk,
- 		.pingpong = PINGPONG_0,
- 		.dspp = DSPP_0,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_9_sm6375.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_9_sm6375.h
-index 9135853a0225fa60acb80d17f627153d25c612e6..9c4e8450b67760c880d9bd2528c6a954a0282e08 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_9_sm6375.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_9_sm6375.h
-@@ -58,7 +58,6 @@ static const struct dpu_lm_cfg sm6375_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_QCM2290_MASK,
- 		.sblk = &qcm2290_lm_sblk,
- 		.lm_pair = 0,
- 		.pingpong = PINGPONG_0,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h
-index 6503f11f65c11806c5b9558a0f9fd05b228340be..e81a2a02e0a6379382058fd89500cf2064a2193f 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h
-@@ -135,7 +135,7 @@ static const struct dpu_lm_cfg sm8350_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -143,7 +143,7 @@ static const struct dpu_lm_cfg sm8350_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-@@ -151,7 +151,7 @@ static const struct dpu_lm_cfg sm8350_lm[] = {
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_3,
- 		.pingpong = PINGPONG_2,
-@@ -159,7 +159,7 @@ static const struct dpu_lm_cfg sm8350_lm[] = {
- 	}, {
- 		.name = "lm_3", .id = LM_3,
- 		.base = 0x47000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-@@ -167,14 +167,14 @@ static const struct dpu_lm_cfg sm8350_lm[] = {
- 	}, {
- 		.name = "lm_4", .id = LM_4,
- 		.base = 0x48000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_5,
- 		.pingpong = PINGPONG_4,
- 	}, {
- 		.name = "lm_5", .id = LM_5,
- 		.base = 0x49000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_4,
- 		.pingpong = PINGPONG_5,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_2_sc7280.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_2_sc7280.h
-index 202de6f9b0c65c6f2caa9e9d5232f5b92d8bdf01..b0e94ccf7f83e9c3c41f1df363cb6a8c24f1503d 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_2_sc7280.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_2_sc7280.h
-@@ -88,21 +88,21 @@ static const struct dpu_lm_cfg sc7280_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sc7180_lm_sblk,
- 		.pingpong = PINGPONG_0,
- 		.dspp = DSPP_0,
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sc7180_lm_sblk,
- 		.lm_pair = LM_3,
- 		.pingpong = PINGPONG_2,
- 	}, {
- 		.name = "lm_3", .id = LM_3,
- 		.base = 0x47000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sc7180_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h
-index 85778071bc1347008dbe4522aeb9ca4fd21aa097..2cf30234e45da8a7776d61c49c26abd75d070941 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h
-@@ -134,7 +134,7 @@ static const struct dpu_lm_cfg sc8280xp_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -142,7 +142,7 @@ static const struct dpu_lm_cfg sc8280xp_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-@@ -150,7 +150,7 @@ static const struct dpu_lm_cfg sc8280xp_lm[] = {
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_3,
- 		.pingpong = PINGPONG_2,
-@@ -158,7 +158,7 @@ static const struct dpu_lm_cfg sc8280xp_lm[] = {
- 	}, {
- 		.name = "lm_3", .id = LM_3,
- 		.base = 0x47000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-@@ -166,14 +166,14 @@ static const struct dpu_lm_cfg sc8280xp_lm[] = {
- 	}, {
- 		.name = "lm_4", .id = LM_4,
- 		.base = 0x48000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_5,
- 		.pingpong = PINGPONG_4,
- 	}, {
- 		.name = "lm_5", .id = LM_5,
- 		.base = 0x49000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_4,
- 		.pingpong = PINGPONG_5,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h
-index f9676f804f9132296467bc751e11036696afa942..dcef56683224b5715c2608b5472d2d5a0da62010 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h
-@@ -135,7 +135,7 @@ static const struct dpu_lm_cfg sm8450_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -143,7 +143,7 @@ static const struct dpu_lm_cfg sm8450_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-@@ -151,7 +151,7 @@ static const struct dpu_lm_cfg sm8450_lm[] = {
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_3,
- 		.pingpong = PINGPONG_2,
-@@ -159,7 +159,7 @@ static const struct dpu_lm_cfg sm8450_lm[] = {
- 	}, {
- 		.name = "lm_3", .id = LM_3,
- 		.base = 0x47000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-@@ -167,14 +167,14 @@ static const struct dpu_lm_cfg sm8450_lm[] = {
- 	}, {
- 		.name = "lm_4", .id = LM_4,
- 		.base = 0x48000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_5,
- 		.pingpong = PINGPONG_4,
- 	}, {
- 		.name = "lm_5", .id = LM_5,
- 		.base = 0x49000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_4,
- 		.pingpong = PINGPONG_5,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
-index 7462cfc4cf8de4a10326c83d3341dbee76e437e8..5f5987d5fc602df29c5eb289823de5dd359df014 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
-@@ -134,7 +134,7 @@ static const struct dpu_lm_cfg sa8775p_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x400,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -142,7 +142,7 @@ static const struct dpu_lm_cfg sa8775p_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x400,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-@@ -150,7 +150,7 @@ static const struct dpu_lm_cfg sa8775p_lm[] = {
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x400,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_3,
- 		.pingpong = PINGPONG_2,
-@@ -158,7 +158,7 @@ static const struct dpu_lm_cfg sa8775p_lm[] = {
- 	}, {
- 		.name = "lm_3", .id = LM_3,
- 		.base = 0x47000, .len = 0x400,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-@@ -166,14 +166,14 @@ static const struct dpu_lm_cfg sa8775p_lm[] = {
- 	}, {
- 		.name = "lm_4", .id = LM_4,
- 		.base = 0x48000, .len = 0x400,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_5,
- 		.pingpong = PINGPONG_4,
- 	}, {
- 		.name = "lm_5", .id = LM_5,
- 		.base = 0x49000, .len = 0x400,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_4,
- 		.pingpong = PINGPONG_5,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h
-index 695ae7581a88b36fa1f28aa3cd0c9166090e940c..6f310216fbccb985308f617db20c1878e622340a 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h
-@@ -132,7 +132,7 @@ static const struct dpu_lm_cfg sm8550_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -140,7 +140,7 @@ static const struct dpu_lm_cfg sm8550_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-@@ -148,7 +148,7 @@ static const struct dpu_lm_cfg sm8550_lm[] = {
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_3,
- 		.pingpong = PINGPONG_2,
-@@ -156,7 +156,7 @@ static const struct dpu_lm_cfg sm8550_lm[] = {
- 	}, {
- 		.name = "lm_3", .id = LM_3,
- 		.base = 0x47000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-@@ -164,14 +164,14 @@ static const struct dpu_lm_cfg sm8550_lm[] = {
- 	}, {
- 		.name = "lm_4", .id = LM_4,
- 		.base = 0x48000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_5,
- 		.pingpong = PINGPONG_4,
- 	}, {
- 		.name = "lm_5", .id = LM_5,
- 		.base = 0x49000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_4,
- 		.pingpong = PINGPONG_5,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_1_sar2130p.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_1_sar2130p.h
-index 9a25113df5aec527baa514aaa61f2b47c2443d27..ba8a2c5dc5e2b3474b295c86afbbbe8f8d416ccd 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_1_sar2130p.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_1_sar2130p.h
-@@ -132,7 +132,7 @@ static const struct dpu_lm_cfg sar2130p_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -140,7 +140,7 @@ static const struct dpu_lm_cfg sar2130p_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-@@ -148,7 +148,7 @@ static const struct dpu_lm_cfg sar2130p_lm[] = {
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_3,
- 		.pingpong = PINGPONG_2,
-@@ -156,7 +156,7 @@ static const struct dpu_lm_cfg sar2130p_lm[] = {
- 	}, {
- 		.name = "lm_3", .id = LM_3,
- 		.base = 0x47000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-@@ -164,14 +164,14 @@ static const struct dpu_lm_cfg sar2130p_lm[] = {
- 	}, {
- 		.name = "lm_4", .id = LM_4,
- 		.base = 0x48000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_5,
- 		.pingpong = PINGPONG_4,
- 	}, {
- 		.name = "lm_5", .id = LM_5,
- 		.base = 0x49000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_4,
- 		.pingpong = PINGPONG_5,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h
-index 54815c613f087454aa7b4befc84462265d8dfc23..77986a7bd62c1b6323482426e596e5974ba40865 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h
-@@ -131,7 +131,7 @@ static const struct dpu_lm_cfg x1e80100_lm[] = {
- 	{
- 		.name = "lm_0", .id = LM_0,
- 		.base = 0x44000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_1,
- 		.pingpong = PINGPONG_0,
-@@ -139,7 +139,7 @@ static const struct dpu_lm_cfg x1e80100_lm[] = {
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_0,
- 		.pingpong = PINGPONG_1,
-@@ -147,7 +147,7 @@ static const struct dpu_lm_cfg x1e80100_lm[] = {
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_3,
- 		.pingpong = PINGPONG_2,
-@@ -155,7 +155,7 @@ static const struct dpu_lm_cfg x1e80100_lm[] = {
- 	}, {
- 		.name = "lm_3", .id = LM_3,
- 		.base = 0x47000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_2,
- 		.pingpong = PINGPONG_3,
-@@ -163,14 +163,14 @@ static const struct dpu_lm_cfg x1e80100_lm[] = {
- 	}, {
- 		.name = "lm_4", .id = LM_4,
- 		.base = 0x48000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_5,
- 		.pingpong = PINGPONG_4,
- 	}, {
- 		.name = "lm_5", .id = LM_5,
- 		.base = 0x49000, .len = 0x320,
--		.features = MIXER_SDM845_MASK,
-+		.features = MIXER_MSM8998_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.lm_pair = LM_4,
- 		.pingpong = PINGPONG_5,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-index d64ebc729bfb589bf90af89c094181f879d5b1ef..ad0460aa5b5ce5a373dab18c89e4159855da4d2b 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-@@ -89,12 +89,6 @@
- #define MIXER_MSM8998_MASK \
- 	(BIT(DPU_MIXER_SOURCESPLIT))
+diff --git a/arch/riscv/kvm/vcpu_pmu.c b/arch/riscv/kvm/vcpu_pmu.c
+index 15d71a7b75ba..163bd4403fd0 100644
+--- a/arch/riscv/kvm/vcpu_pmu.c
++++ b/arch/riscv/kvm/vcpu_pmu.c
+@@ -409,8 +409,6 @@ int kvm_riscv_vcpu_pmu_snapshot_set_shmem(struct kvm_vcpu *vcpu, unsigned long s
+ 	int snapshot_area_size = sizeof(struct riscv_pmu_snapshot_data);
+ 	int sbiret = 0;
+ 	gpa_t saddr;
+-	unsigned long hva;
+-	bool writable;
  
--#define MIXER_SDM845_MASK \
--	(BIT(DPU_MIXER_SOURCESPLIT) | BIT(DPU_DIM_LAYER))
--
--#define MIXER_QCM2290_MASK \
--	(BIT(DPU_DIM_LAYER))
--
- #define WB_SDM845_MASK (BIT(DPU_WB_LINE_MODE) | \
- 			 BIT(DPU_WB_UBWC) | \
- 			 BIT(DPU_WB_YUV_CONFIG) | \
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-index 5e4608d10c6d4fee387c9a599a73b15661148430..cc17b20a7d4c15b0cd9c5dc8b9a4b78d4cb78315 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-@@ -84,14 +84,12 @@ enum {
-  * @DPU_MIXER_LAYER           Layer mixer layer blend configuration,
-  * @DPU_MIXER_SOURCESPLIT     Layer mixer supports source-split configuration
-  * @DPU_MIXER_GC              Gamma correction block
-- * @DPU_DIM_LAYER             Layer mixer supports dim layer
-  * @DPU_MIXER_MAX             maximum value
-  */
- enum {
- 	DPU_MIXER_LAYER = 0x1,
- 	DPU_MIXER_SOURCESPLIT,
- 	DPU_MIXER_GC,
--	DPU_DIM_LAYER,
- 	DPU_MIXER_MAX
- };
+ 	if (!kvpmu || flags) {
+ 		sbiret = SBI_ERR_INVALID_PARAM;
+@@ -432,8 +430,7 @@ int kvm_riscv_vcpu_pmu_snapshot_set_shmem(struct kvm_vcpu *vcpu, unsigned long s
+ 		goto out;
+ 	}
  
+-	hva = kvm_vcpu_gfn_to_hva_prot(vcpu, saddr >> PAGE_SHIFT, &writable);
+-	if (kvm_is_error_hva(hva) || !writable) {
++	if (kvm_vcpu_validate_gpa_range(vcpu, saddr, PAGE_SIZE, true)) {
+ 		sbiret = SBI_ERR_INVALID_ADDRESS;
+ 		goto out;
+ 	}
+diff --git a/arch/riscv/kvm/vcpu_sbi_sta.c b/arch/riscv/kvm/vcpu_sbi_sta.c
+index 5f35427114c1..67dfb613df6a 100644
+--- a/arch/riscv/kvm/vcpu_sbi_sta.c
++++ b/arch/riscv/kvm/vcpu_sbi_sta.c
+@@ -85,8 +85,6 @@ static int kvm_sbi_sta_steal_time_set_shmem(struct kvm_vcpu *vcpu)
+ 	unsigned long shmem_phys_hi = cp->a1;
+ 	u32 flags = cp->a2;
+ 	struct sbi_sta_struct zero_sta = {0};
+-	unsigned long hva;
+-	bool writable;
+ 	gpa_t shmem;
+ 	int ret;
+ 
+@@ -111,8 +109,8 @@ static int kvm_sbi_sta_steal_time_set_shmem(struct kvm_vcpu *vcpu)
+ 			return SBI_ERR_INVALID_ADDRESS;
+ 	}
+ 
+-	hva = kvm_vcpu_gfn_to_hva_prot(vcpu, shmem >> PAGE_SHIFT, &writable);
+-	if (kvm_is_error_hva(hva) || !writable)
++	/* The spec requires the shmem to be 64-byte aligned. */
++	if (kvm_vcpu_validate_gpa_range(vcpu, shmem, 64, true))
+ 		return SBI_ERR_INVALID_ADDRESS;
+ 
+ 	ret = kvm_vcpu_write_guest(vcpu, shmem, &zero_sta, sizeof(zero_sta));
 
 -- 
-2.39.5
+2.43.0
 
 
