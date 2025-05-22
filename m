@@ -1,358 +1,462 @@
-Return-Path: <linux-kernel+bounces-659860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2230AC15C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 23:03:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7AEAC15D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 23:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FC6F1B67A63
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:03:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A54A504C5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A60F2512C8;
-	Thu, 22 May 2025 21:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0A0252911;
+	Thu, 22 May 2025 21:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b8CUSzQb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N7Hb6G44"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBCD17B506;
-	Thu, 22 May 2025 21:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747947803; cv=fail; b=Hj6eOhxNZ3H3lOdQdildK9LEILUVrUIQF+3VmQdfLTGC1XBbeGG/G/3EK1wLNdxD6zi9O/6M2x/BDExw5bPgDSs/6xCfl6uMkPDtyWLpUgnkW+pw4OKjfCTtnXxVEHF8pkI5dg1gs2jEYKtg/JjMcZBVvyR1Dt2Mh3SdENum1OY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747947803; c=relaxed/simple;
-	bh=kSiPw1k7se4v1AabZ0092+ZIUFwwi9lJBxhLEUon6FQ=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=C53WVuDUpxTUj0J21ljatGndcpur/scnpRlVe4A+84rMZCcrGPkpJ09uSdpcJrqdGO8AM3FmbMVKdQLLW1XGwpXxji/jvsj754OKjFR/vDz/O85NVuFaLI8vHXzGSMWaRTjKNADBrmmdJhdd1t6+FwG6eRsEsHs4Z8cpJNXUt6w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b8CUSzQb; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747947801; x=1779483801;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=kSiPw1k7se4v1AabZ0092+ZIUFwwi9lJBxhLEUon6FQ=;
-  b=b8CUSzQboggqFFrZ6HMzlcU7B5ysVOkB4JTPWczpIYu/CKgNrE1EYTiU
-   3jDR8Q1snQ4DQnBkIQ10C4dd9bm97KWc3wOBLNkAqj4hr+GRZ9uXgAiQ+
-   hk+ckaee7xrxe90lioi/bCZLRTCE9gpIaPi6GEEQUm+wyQtAEgZJDdwho
-   4c//Bxz2BnupPLjfizwml+ew4PAJx23MjRNEpjuT3XFOqnM2dHZFGWX9l
-   E8fP/nX31QPfEMDP12G7MW05tJCD+VVdz2rqSRQvC+BhAbPLsCqprPsIF
-   GUKifz9g62Ici0GaFfQsCDU1RWLLcvZbI3gjE5sG6KNIyVUvzL/LxHeKT
-   Q==;
-X-CSE-ConnectionGUID: 0g8CRCsQT7ypeRvObMtZmg==
-X-CSE-MsgGUID: 4dl0L1lETEGtK3KOS36ZzA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="49914305"
-X-IronPort-AV: E=Sophos;i="6.15,306,1739865600"; 
-   d="scan'208";a="49914305"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 14:03:20 -0700
-X-CSE-ConnectionGUID: MnSHvR4xQQG7HyYk1z7LMw==
-X-CSE-MsgGUID: 4QUiv4IbTq6774jSvGX2xg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,306,1739865600"; 
-   d="scan'208";a="140652125"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 14:03:19 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 22 May 2025 14:03:19 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Thu, 22 May 2025 14:03:19 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.54) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Thu, 22 May 2025 14:03:19 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NZB4Mi6YoVrTd46R3GGgs1G1VpIRbN7n53Q6/R2Gi4eoUaXNDMCPZZ8BykQaBf07Pk2NC0b1qiC3jC/Stspr9g8HLX8B8y8XLwhZF+VGKqlSmAontWZm6Pk6WieZwOviwh7RFvuvLqryDtA7HkoiHiXPfUlCbKZgLbj9Iu9dOqPwz/+VgUPBZaqfy12ELA9bbQq3jIZNhvCL6WmGZAFQZZnfUmr8e2HhQ7U3v6e1iKGTHcPvY2F9/lU3j3YJFpHj5VCwNtMjljWiTbRmjt6T7zPBxmEZ+f2hhSteLBdFY/7yQOF19WiaGcvMxYsbg4Q/vyAcTAZJr6hBl/ryb4JkvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0iUFi6FKNOUvn2oQ8vWf1P4UDMXVLN3gYguVY3gULWQ=;
- b=suLVj7QNdgiRnuLdryTSUakhbtqEjt16mgRNoUWOb8334AypMJLarR6BQR3efbCwu8JELDxBPm+aPyOAhYzEheHocbY8HDo8EUHaaiFPI7lcbG7SsiO2d4txqjM19+jdgrQznNMVEzZ2Hs4+x/Ou1cpaS3L38nGYi3lSVcoLkbgcnHOE2nLiy6KQFhMpzBzdL3YTccWV7m+KeOVskoCGuZ+EFX2qje/Sv3axX7tNegOa6EqheVlZZkVNF4l2l2OxNHF6VPyeHV3tNiqkih8mV8/V2Rbig2H6bD61sZMGYUH45jFIsEr9tw23rZPJ/jM5m1JulrWdO3KDjPaE64T38g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by IA0PR11MB7211.namprd11.prod.outlook.com (2603:10b6:208:43f::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.31; Thu, 22 May
- 2025 21:02:43 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.8746.030; Thu, 22 May 2025
- 21:02:43 +0000
-Message-ID: <5636898e-78dc-4eb1-b226-ced62372e09a@intel.com>
-Date: Thu, 22 May 2025 14:02:40 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 08/27] x86/resctrl: Introduce mbm_cntr_cfg to track
- assignable counters at domain
-To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <tony.luck@intel.com>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>
-CC: <james.morse@arm.com>, <dave.martin@arm.com>, <fenghuay@nvidia.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <paulmck@kernel.org>,
-	<akpm@linux-foundation.org>, <thuth@redhat.com>, <rostedt@goodmis.org>,
-	<ardb@kernel.org>, <gregkh@linuxfoundation.org>,
-	<daniel.sneddon@linux.intel.com>, <jpoimboe@kernel.org>,
-	<alexandre.chartre@oracle.com>, <pawan.kumar.gupta@linux.intel.com>,
-	<thomas.lendacky@amd.com>, <perry.yuan@amd.com>, <seanjc@google.com>,
-	<kai.huang@intel.com>, <xiaoyao.li@intel.com>, <kan.liang@linux.intel.com>,
-	<xin3.li@intel.com>, <ebiggers@google.com>, <xin@zytor.com>,
-	<sohil.mehta@intel.com>, <andrew.cooper3@citrix.com>,
-	<mario.limonciello@amd.com>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <peternewman@google.com>,
-	<maciej.wieczor-retman@intel.com>, <eranian@google.com>,
-	<Xiaojian.Du@amd.com>, <gautham.shenoy@amd.com>
-References: <cover.1747349530.git.babu.moger@amd.com>
- <79efa13654a6f1a308622bd13e0d2bc21ffb4367.1747349530.git.babu.moger@amd.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <79efa13654a6f1a308622bd13e0d2bc21ffb4367.1747349530.git.babu.moger@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY1P220CA0018.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:a03:5c3::8) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746A1252283
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 21:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747948285; cv=none; b=YiRQdJI5daZpt/82cXhVi7Sk843z+W9Ok7TfuExuh15H9x8FfgOGW7MrtJgOHrEJ0NcPtNlGVyawm0Y/q222YJCeA1x3+EvD46qtTBc7quRp4TKZeodqUAPlGFGF3iG56vbHQ0CoecGaSFnDlKzafdF2XrgvVK1RlfISuIli1IE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747948285; c=relaxed/simple;
+	bh=QLvrvYa+K4xMZOP6tQSp3+YrkeZ18pnkKpf69bcEBQA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tVA/PnZeodmwebL972i5IkmuHMnOYloCyscGFDsPaAxLjq4QemY2DWGpK8O5SONxLhBrVzGnx+KuK/H5CFklLMgcLKGiXFw9DoA3bD2mRsz49KWOUnLUZpTtshTEqv8WmbnWvJKCzluGNaepqcPGp92gOE+1co+b6CyFE6juZoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=N7Hb6G44; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-742af84818cso5215499b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 14:11:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1747948282; x=1748553082; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x0FQBsyoOxisdMVX2Dd68JeQWUs4aaEzR6oODlwuSvU=;
+        b=N7Hb6G44S6xQsdgk2V1TwJt70WYzsd9Jfyi2WLtr9b/YoFR535+IgVOELFCgk3ouWI
+         gswRk1Mt91GxcHsswcku6h6IHiM4zvctB2v7mM7s+LLxbs2lU4AR3zN4G8LVblWqHtL2
+         oFZTq9UV2V+K3YIzaDp8yr2KCh5H/bddLRJ2E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747948282; x=1748553082;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x0FQBsyoOxisdMVX2Dd68JeQWUs4aaEzR6oODlwuSvU=;
+        b=ZKS7xExPjHbP6tgN67BL3Q5ktSy2LL6wwC24PevFbVpQsVFEqhCDsgrWB6h2nQQ29F
+         xM1mGMj3tPbe1agRt+UnQr2Hhq7qaHKt0g2E0d0TMQOm0BGO6dRW/KenD/rfVEN+Jqvx
+         wUpfi+VdKPJREnzfj4fxibvDrhXy4V8NKzwQJhySmGr8gNYmJvstlm99191Oc1mffPKI
+         9vXsvH3ZJfRLQFTqurMo9vSxmcWnDCoLz9RnCLc/yVVAH20bl1+gvmNvH8Prh7ULHYAr
+         Je9RKIR+DwvHmQ8G5lH0cnMCpG+vg31VtwbjQli1dL/ZTdaRPF940hwNb67K2i1vK6X6
+         Cvpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSeuMd4w6KYk+7uIZlvokf23fR98lC1HinKqTKuoyZjElH5gkfagAnCuV0bw6xFubGp26k0Vt2ojG2X4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAFkXE6cF/Ai0znKW/8ggNscLUdjGBRk6Qs2JJlolRQ56gt6tq
+	Z7Fb9bsqkakql8xn5cTNTS7hCxk2+Atn9KHDViOXPb6EyYbbeWBJCUaNRaJYXBgXGw==
+X-Gm-Gg: ASbGncu1hvRv4mjmTEXw2uvKu++lUP27bbzDoMfyi4GQh2IoSOjwIB+VJlSMkBt/OAw
+	al0iVG2PhpZ872Lu3owQQz0c23F4K5xleyQ4Iw7iqKt/PzT5Ve7PG/vH9IvAIHfcO7BkdcJjIh+
+	AJsFEOs8iyJFIu5kcfrHtjQkqZNNfU6vgcoThZHCSShIXTaflkT1ix61mrWjVa9Igi+fT8vsdUf
+	f69ZUx20eAWPeIpqTcwNmvjrrsfIepYSggGxRnMeHY74AptPp+9R5gNMVuIU+3hOY+oFiSKQcG0
+	/8GsyEiSQvD3G2Ktqbrj6U9PNEsQBVAabwkkU0eNGb3p2aZKGHJp0Rpv66LC3CAbcnsFE2gn6cl
+	jKUf6Enw7YShkRA==
+X-Google-Smtp-Source: AGHT+IEBRExg9sR7EX0eqcxrI718yswIBPOmbVQ5N3ytMZ1b7a5MtEAgWqedxgLNA0K0zHVPFHrTqQ==
+X-Received: by 2002:a05:6a20:cf82:b0:216:67e:bf09 with SMTP id adf61e73a8af0-21621934db1mr39293165637.22.1747948282578;
+        Thu, 22 May 2025 14:11:22 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:b00a:2db0:715b:9b95])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b26eaf8de24sm11758882a12.36.2025.05.22.14.11.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 May 2025 14:11:21 -0700 (PDT)
+From: Brian Norris <briannorris@chromium.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tsai Sung-Fu <danielsftsai@google.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	Brian Norris <briannorris@chromium.org>
+Subject: [PATCH v4] genirq: Add kunit tests for depth counts
+Date: Thu, 22 May 2025 14:08:01 -0700
+Message-ID: <20250522210837.4135244-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.49.0.1151.ga128411c76-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|IA0PR11MB7211:EE_
-X-MS-Office365-Filtering-Correlation-Id: 45a87d79-1fa1-401e-b2e8-08dd9973fe98
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?SGJLcDFNMGlieU9QSWlvbE43OWRtQTFhZ3Vydm1xU2FtdHN4NzRCWlRXTnVi?=
- =?utf-8?B?QUZYVzVyblNKUDZ4NndXcElBTWFFUTRWNTg3dEZOclQwaXUzb01wdG9la0hO?=
- =?utf-8?B?VkkwVlI3ajlZVUJKMlhvVVBRTkZRNEdxRGhIc05EMWtDb2k1N080dllxZ0dz?=
- =?utf-8?B?ajZ5K2FmOHRvREs1V0JkYXpjVTJTWkIySStWZ1doamwyRWlpZTFIelZWYitY?=
- =?utf-8?B?Ylg0eHN6NnJqSU5wQjdhYWgxZXpva1M1QVVSR0lLVWRITmpUTWdVZ1Nkb085?=
- =?utf-8?B?NWd4dklQbk9uckpuZFF2M3dpbFJMZFhnNngzVW9LR3hYNG9WVlk5aGlPY1Nq?=
- =?utf-8?B?T2x5aFFtcnNOVWI4L0ZKd1c0TG9iYlNNVFdxYWZjc0U4bTJIWHROeEVpS1ZI?=
- =?utf-8?B?NlFqNVlHSGFuUzRXQmtPWWg1ajJBZHdORWh3c2hUQzViejlzZ1k5c21yWlE2?=
- =?utf-8?B?eU1Vd0JnRGpBQWt1eVdlMGpNTlBvN05DMEhSdTJBR2dxalAyd0hiYmtkKzFh?=
- =?utf-8?B?SUZtU1N4R29mMllicXJ6dFBDVkVwVndDVUJxR0RBRUVEMHlmQzA2M2xTeWN2?=
- =?utf-8?B?N3dlNlgxejdJV3plTExDN2ljZkg5bnNmTGhVWWFFaUdBdEZjVGtHaG1aTGhq?=
- =?utf-8?B?OGtHc1pTNlhNNUZsMUY4cTAvWDk0MFBxZDJkaEdKL1IwY081cmZOMWE2OXlu?=
- =?utf-8?B?MWNiUkFzd2lzdDU3RlZCTmJXQmxpdnJrVWMyNERNN3ZqSjNieXhtN09CNngz?=
- =?utf-8?B?c2Z2K0FTMUQwaHViWTZ3NHVSY0twcENSQk8waEhOSlA1bXM5RU83cXlGL1Rx?=
- =?utf-8?B?OVBVYW5pUHFaazdDV25NQi82UGtWVEpxNlYraWJWaTI3M1M0ZnpWMEIrYmlF?=
- =?utf-8?B?dFBPVWY5K2NXZkljRC9OUTF0c3FJRTl2OWFmbnQ5M2swODZWZ3JkeU1RN2Q1?=
- =?utf-8?B?QXo2Z2d5MFBzaW14VlBpYTRHdFc4T3AremVaaHdCaGFwSEoxdlFXYjZDVFM5?=
- =?utf-8?B?ZGQwMVFVcVpUbHVyZ2FueTRMYlNQNWpubkZCa1ltT1V6TzQ5MVpkWFRVUGtG?=
- =?utf-8?B?TU1jZStXSjZSY0FZcWx0d3pRVDhuWWxKU0Z2aTBlWCt5SEJkQ0h6cmE5Rjk4?=
- =?utf-8?B?anBibk5zK2svQWNzRVR3MWFTczNNNWRaRlBjb05uZS9rZkIvSWk2M0o3THdI?=
- =?utf-8?B?U3BIWisxckIyeXl6VEphN3ZsTlB1WlIrb29yMDc5dW9vclA4U016Mm1TQ1I4?=
- =?utf-8?B?aU9zZzVOVkk4ckt5cmRVbC81QkV0dzNxMVJIMS9teWNabzFMNVdoQTc0cVVF?=
- =?utf-8?B?S3FuaXVmYjhHMUEyY2Z0MkhLdmJzcThySnI5eUdXZW9aRmdkUncxYmxoTHR1?=
- =?utf-8?B?QnRGVjg5cVdGZkhGM2J0MDdwTWNEZFVLUVBITUx6dnRqRm1sZEhjNTM0RzBo?=
- =?utf-8?B?M0xHUEh4Q3VTYzlwRHBKWWxxK0FHSVJDS1NIZU1WeDlPSW0wU1JWQ3BFWEJO?=
- =?utf-8?B?VUxiekd5MTVMODkveng2SjJlT0pzQ1FNYW1UV0RTamFvdmY1anBZaW05SFBI?=
- =?utf-8?B?NEIxV2pDb0dORVRzR2dqa0xVRGNObE5iS2UzR3lCeGNnRjhReWRWM0ZsZ0pE?=
- =?utf-8?B?RXpVc2x0VzNKeVdGN2NHc2xvUWFiUnovS1NmdkZYT1d6cjl2bnZ0Z0g2ZmNv?=
- =?utf-8?B?dWErWmtoZVlrY3J4RkJ5cEtYTEtreHlJSEs5b2k2bWhNWjJ2RVpjMzZnS2Jq?=
- =?utf-8?B?WFFQWlRMMXJUdDRiclpjU1N2a3ZaajE1dUpyUXVzWmFZdy83OUd4RlN3c2NQ?=
- =?utf-8?Q?qmGzomLbSe17LIRQVvb1yF6eBF8s6IbHAm7zM=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VytEMVkxaDJWMjVLMnVFN3o0ZWhMVll5NzY2aFowNk1SSkU1TW1OT3ZFMnNu?=
- =?utf-8?B?clFpU0hla3YrZU5BUWN2NjNPZjlwcVplbzRRbmVtRmRsYm9Vdk5Xa1dZa2Rz?=
- =?utf-8?B?Q0dqZUVEQkNkMXJOK21QeTBBRVQvMDY0NjBhTkNSVUdTUjZLaW1ZQ2laNm5C?=
- =?utf-8?B?bXQvdEQvdjJidHBteHBvRFY0MENCSElzZUhnbXJkMzBrbWRoVXlDR2t1MUMx?=
- =?utf-8?B?c2xBcUpUdXFmL3NYQTExWUxDWFlLMzVENW1JYWhoYkhuY2dvS2U1cm1DVkUx?=
- =?utf-8?B?UXRPTGpTeFo1MW1xZnBJUm80ejlyQU9XZlhqcWEyRndSYlJZUDdodHREcDhp?=
- =?utf-8?B?OFNaWmM4R2s4cjZOcHBjMjRRdllJYjBlbVZrK2E0cGdXTWVNQlMzSzVkN2or?=
- =?utf-8?B?QWhtdlc4bE1EOEwyQVZCOThOTmo4Vk1YeTA2SE1GcVVPME04WVhXTlBEeEdk?=
- =?utf-8?B?UE5BYm5FNkZQSGptSk5xR3pBZ0lqL3pwdmZ6UlBySC9jUXpCZ1hnOUtZYkti?=
- =?utf-8?B?KzAzVG5MUkFHMmVFbEdiMWJFNlNaSGgrTFcyNDUvbUNhZUp0bFpSSEtVYnJr?=
- =?utf-8?B?cVFiVmtOSVhsZXNhYktpSm1xbVlTUWpKVHpTL3RYNFhmbzFCU01UbG5EZGpr?=
- =?utf-8?B?WVppYXVvWFlUajJ2V0VFMTNLVkdyUGhnbmx1M3FESUVvL3BhTWV3OTVheGxw?=
- =?utf-8?B?ZnY2MkRhNi9xN0svRFc4cTdtWm9WRWI3Y09tOWh4cndVZFFwWlp0MjVPRFl3?=
- =?utf-8?B?dEhFRnFvUXROY1dnM25aTkdpVUN0R0czYTR1bkVXWVd2dm4vTnFiNTNYdFQx?=
- =?utf-8?B?akNDWVlnMC9BaFBVRUxVWTZSYTdLTkEwTTBvQjJ4cVFTNU9hcXQwdHM3UTM5?=
- =?utf-8?B?MElXQ2hjTGdYNWNmV3Q1ZEJUSjY3cEI5S0pDc3FOZGF5c1BqZFVhS21yemk2?=
- =?utf-8?B?UDJyY0kwRTUySjRpQnY5cFFoeTJsZDUwVWNUWlRLbWdHUWUvY29OcjNWMWx1?=
- =?utf-8?B?UGhXRkZYUUM0VC9vSEJaVDdZdXdrL1lOSmVJSEZpaWFLWjJoblBGeGtXdk9j?=
- =?utf-8?B?dlBZMGlGcndhVlhMVllnbEtmSGd4dytJLzhlK0htRDVmbjZhWVRXVjFvOG9p?=
- =?utf-8?B?UVVRUFNVaFRaL1BZUXUvRHFBdm9xWmczcStoMjlIN29xbFNCeW9CcnlTTCtL?=
- =?utf-8?B?RkRzRFZUSGoyS044SzZacE16eHZRanpZa29vVzZvb1JkQUNuL2JwbUE4ZGcy?=
- =?utf-8?B?bkdwUS95ZjVMUjRTUUttMThIVWlvTG1zSEptMTNyS3Q5NWVqb1hUbnM3c0Ja?=
- =?utf-8?B?WXRJTDhjUU40V0djampJakVUMk9Bc3MvOUJjbnFhcWk4N0VCaWF3YW1QVG1S?=
- =?utf-8?B?UGFTTVlmbzFMUTFoSHkwSTkwcDIwVXZZWU5VTTFYNGdtQ291U2xhNWJITVl6?=
- =?utf-8?B?N3ZBb2FMZGxXczU3TmRab25IYWRYVVFqUTErUFRJV1JkT3BERVdsM2dTYWZ5?=
- =?utf-8?B?QWc3Mlh3ckZwc1dBMThKbjBFTDRRRityaDRIMHI0UmFHY1FtNlhhT0NQRStO?=
- =?utf-8?B?MVJWazdnemo1ajJuSlplTVFXNEs0b1pseDd1VThjVTNFMXdLZDNLdGRPem5r?=
- =?utf-8?B?T1orekNXTnJJSlN3blRHMXd3WHpwK0tlazN5YlAvL1NMWUZHZ0ppV2Z2S2VQ?=
- =?utf-8?B?TzhLdUZsT05IcWw5Vmp6Si9BN3R1WVFmSFpTdTFaM0pHODRvZ0hkT3lDNEJm?=
- =?utf-8?B?eTlNb3VFVTZURzNMMm0ybGRENERNQStFNmZObUJLQ0s0OFBYazF2djErTHFy?=
- =?utf-8?B?RzFZeWZEdFNBYzlDZVJNTG9pTTd1ZTJaV3hSejBxNjlHbTc5RjRFKzV5NHJE?=
- =?utf-8?B?bHM4bXJ1ekFFbDRxM0d6R1c2b1VUTlcyNXczcmlPSHlwdGhuZEUydFhGeVpt?=
- =?utf-8?B?SFhSMVZHdzNIOEorUWw3Y1ZGQ2lzNjRPaUZ3Z0UxV3k2VktvS3d0VjIvMG1Z?=
- =?utf-8?B?MEpyc3BVTnRuTWtvcUZyR1IrRS9nMUpHMDlyMlNIdTEvYWl6QmNiVlFGeU9r?=
- =?utf-8?B?Ym5yK2x0RHJiWi9EUDR4d3ROUUtZdHF5eWVmYVlOUnFnencwcVBjSGxHbnZl?=
- =?utf-8?B?bVJXNDkwT3pHVGl3UTRBNUcxMmpjby90UWR2eVk5bVhjVEpuV081U0JRNWVX?=
- =?utf-8?B?V3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 45a87d79-1fa1-401e-b2e8-08dd9973fe98
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2025 21:02:42.9739
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PcjV+dS2IUdAJPPcKLv4LYvh+D+J6iQ9w9pa6NGWbAJ6r6Mx/Xk33CdDEKQ9C0y3OuO7Tz6Yfh4Yd8g+45LFgkliWojrz3c7CCNMgj2I7Ho=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7211
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-Hi Babu,
+There have been a few bugs and/or misunderstandings about the reference
+counting, and startup/shutdown behaviors in the IRQ core and related CPU
+hotplug code. These 4 test cases try to capture a few interesting cases.
 
-shortlog: "at domain" -> "per domain"?
+* irq_disable_depth_test: basic request/disable/enable sequence
 
-On 5/15/25 3:51 PM, Babu Moger wrote:
-> In mbm_cntr_assign mode hardware counters are assigned/unassigned to an
-> MBM event of a monitor group. Hardware counters are assigned/unassigned
-> at monitoring domain level.
-> 
-> Manage a monitoring domain's hardware counters using a per monitoring
-> domain array of struct mbm_cntr_cfg that is indexed by the hardware
-> counter ID. A hardware counter's configuration contains the MBM event
-> ID and points to the monitoring group that it is assigned to, with a
-> NULL pointer meaning that the hardware counter is available for assignment.
-> 
-> There is no direct way to determine which hardware counters are assigned
-> to a particular monitoring group. Check every entry of every hardware
-> counter configuration array in every monitoring domain to query which
-> MBM events of a monitoring group is tracked by hardware. Such queries are
-> acceptable because of a very small number of assignable counters (32
-> to 64).
-> 
-> Suggested-by: Peter Newman <peternewman@google.com>
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
-> ---
-> v13: Resolved conflicts caused by the recent FS/ARCH code restructure.
->      The files monitor.c/rdtgroup.c have been split between FS and ARCH directories.
-> 
-> v12: Fixed the struct mbm_cntr_cfg code documentation.
->      Removed few strange charactors in changelog.
->      Added the counter range for better understanding.
->      Moved the struct mbm_cntr_cfg definition to resctrl/internal.h as
->      suggested by James.
-> 
-> v11: Refined the change log based on Reinette's feedback.
->      Fixed few style issues.
-> 
-> v10: Patch changed completely to handle the counters at domain level.
->      https://lore.kernel.org/lkml/CALPaoCj+zWq1vkHVbXYP0znJbe6Ke3PXPWjtri5AFgD9cQDCUg@mail.gmail.com/
->      Removed Reviewed-by tag.
->      Did not see the need to add cntr_id in mbm_state structure. Not used in the code.
-> 
-> v9: Added Reviewed-by tag. No other changes.
-> 
-> v8: Minor commit message changes.
-> 
-> v7: Added check mbm_cntr_assignable for allocating bitmap mbm_cntr_map
-> 
-> v6: New patch to add domain level assignment.
-> ---
->  fs/resctrl/rdtgroup.c   | 11 +++++++++++
->  include/linux/resctrl.h | 16 ++++++++++++++++
->  2 files changed, 27 insertions(+)
-> 
-> diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-> index 51f8f8d3ccbc..e2005fc9acd9 100644
-> --- a/fs/resctrl/rdtgroup.c
-> +++ b/fs/resctrl/rdtgroup.c
-> @@ -4085,6 +4085,7 @@ static void rdtgroup_setup_default(void)
->  
->  static void domain_destroy_mon_state(struct rdt_mon_domain *d)
->  {
-> +	kfree(d->cntr_cfg);
->  	bitmap_free(d->rmid_busy_llc);
->  	kfree(d->mbm_total);
->  	kfree(d->mbm_local);
-> @@ -4171,6 +4172,16 @@ static int domain_setup_mon_state(struct rdt_resource *r, struct rdt_mon_domain
->  			return -ENOMEM;
->  		}
->  	}
-> +	if (resctrl_is_mbm_enabled() && r->mon.mbm_cntr_assignable) {
-> +		tsize = sizeof(*d->cntr_cfg);
-> +		d->cntr_cfg = kcalloc(r->mon.num_mbm_cntrs, tsize, GFP_KERNEL);
-> +		if (!d->cntr_cfg) {
-> +			bitmap_free(d->rmid_busy_llc);
-> +			kfree(d->mbm_total);
-> +			kfree(d->mbm_local);
-> +			return -ENOMEM;
-> +		}
-> +	}
->  
->  	return 0;
->  }
-> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-> index bdb264875ef6..d77981d1fcb9 100644
-> --- a/include/linux/resctrl.h
-> +++ b/include/linux/resctrl.h
-> @@ -156,6 +156,20 @@ struct rdt_ctrl_domain {
->  	u32				*mbps_val;
->  };
->  
-> +/**
-> + * struct mbm_cntr_cfg - Assignable counter configuration
-> + * @evtid:		MBM event to which the counter is assigned. Only valid
-> + *			if @rdtgroup is not NULL.
-> + * @evt_cfg:		Event configuration value.
+* irq_free_disabled_test: request/disable/free/re-request sequence -
+  this catches errors on previous revisions of my work
 
-@evt_cfg is not introduced in changelog nor defined here. Please add a snippet here
-on what @evt_cfg's values represent. This is important since this is exposed
-as resctrl fs API to architectures so all architectures need to use same values when
-interacting with resctrl.
+* irq_cpuhotplug_test: exercises managed-affinity IRQ + CPU hotplug.
+  This captures a problematic test case that I've fixed.
+  This test requires CONFIG_SMP and a hotpluggable CPU#1.
 
-> + * @rdtgrp:		resctrl group assigned to the counter. NULL if the
-> + *			counter is free.
-> + */
-> +struct mbm_cntr_cfg {
-> +	enum resctrl_event_id   evtid;
-> +	u32                     evt_cfg;
-> +	struct rdtgroup         *rdtgrp;
+* irq_shutdown_depth_test: exercises similar behavior from
+  irq_cpuhotplug_test, but directly using irq_*() APIs instead of going
+  through CPU hotplug. This still requires CONFIG_SMP, because
+  managed-affinity is stubbed out (and not all APIs are even present)
+  without it.
 
-Please align struct member names using TABs.
+Note the use of 'imply SMP': ARCH=um doesn't support SMP, and kunit is
+often exercised there. Thus, 'imply' will force SMP on where possible
+(such as ARCH=x86_64), but leave it off where it's not.
 
-> +};
-> +
->  /**
->   * struct rdt_mon_domain - group of CPUs sharing a resctrl monitor resource
->   * @hdr:		common header for different domain types
-> @@ -167,6 +181,7 @@ struct rdt_ctrl_domain {
->   * @cqm_limbo:		worker to periodically read CQM h/w counters
->   * @mbm_work_cpu:	worker CPU for MBM h/w counters
->   * @cqm_work_cpu:	worker CPU for CQM h/w counters
-> + * @cntr_cfg:		assignable counters configuration
+Behavior on various SMP and ARCH configurations:
 
-"array of assignable counters' configuration (indexed by counter ID)"
+  $ tools/testing/kunit/kunit.py run 'irq_test_cases*' --arch x86_64 --qemu_args '-smp 2'
+  [...]
+  [11:12:24] Testing complete. Ran 4 tests: passed: 4
 
->   */
->  struct rdt_mon_domain {
->  	struct rdt_domain_hdr		hdr;
-> @@ -178,6 +193,7 @@ struct rdt_mon_domain {
->  	struct delayed_work		cqm_limbo;
->  	int				mbm_work_cpu;
->  	int				cqm_work_cpu;
-> +	struct mbm_cntr_cfg		*cntr_cfg;
->  };
->  
->  /**
+  $ tools/testing/kunit/kunit.py run 'irq_test_cases*' --arch x86_64
+  [...]
+  [11:13:27] [SKIPPED] irq_cpuhotplug_test
+  [11:13:27] ================= [PASSED] irq_test_cases ==================
+  [11:13:27] ============================================================
+  [11:13:27] Testing complete. Ran 4 tests: passed: 3, skipped: 1
 
-Reinette
+  # default: ARCH=um
+  $ tools/testing/kunit/kunit.py run 'irq_test_cases*'
+  [11:14:26] [SKIPPED] irq_shutdown_depth_test
+  [11:14:26] [SKIPPED] irq_cpuhotplug_test
+  [11:14:26] ================= [PASSED] irq_test_cases ==================
+  [11:14:26] ============================================================
+  [11:14:26] Testing complete. Ran 4 tests: passed: 2, skipped: 2
+
+Without commit 788019eb559f ("genirq: Retain disable depth for managed
+interrupts across CPU hotplug"), we fail as follows:
+
+  [11:18:55] =============== irq_test_cases (4 subtests) ================
+  [11:18:55] [PASSED] irq_disable_depth_test
+  [11:18:55] [PASSED] irq_free_disabled_test
+  [11:18:55]     # irq_shutdown_depth_test: EXPECTATION FAILED at kernel/irq/irq_test.c:147
+  [11:18:55]     Expected desc->depth == 1, but
+  [11:18:55]         desc->depth == 0 (0x0)
+  [11:18:55] ------------[ cut here ]------------
+  [11:18:55] Unbalanced enable for IRQ 26
+  [11:18:55] WARNING: CPU: 1 PID: 36 at kernel/irq/manage.c:792 __enable_irq+0x36/0x60
+  ...
+  [11:18:55] [FAILED] irq_shutdown_depth_test
+  [11:18:55]  #1
+  [11:18:55]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:202
+  [11:18:55]     Expected irqd_is_activated(data) to be false, but is true
+  [11:18:55]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:203
+  [11:18:55]     Expected irqd_is_started(data) to be false, but is true
+  [11:18:55]     # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:204
+  [11:18:55]     Expected desc->depth == 1, but
+  [11:18:55]         desc->depth == 0 (0x0)
+  [11:18:55] ------------[ cut here ]------------
+  [11:18:55] Unbalanced enable for IRQ 27
+  [11:18:55] WARNING: CPU: 0 PID: 38 at kernel/irq/manage.c:792 __enable_irq+0x36/0x60
+  ...
+  [11:18:55] [FAILED] irq_cpuhotplug_test
+  [11:18:55]     # module: irq_test
+  [11:18:55] # irq_test_cases: pass:2 fail:2 skip:0 total:4
+  [11:18:55] # Totals: pass:2 fail:2 skip:0 total:4
+  [11:18:55] ================= [FAILED] irq_test_cases ==================
+  [11:18:55] ============================================================
+  [11:18:55] Testing complete. Ran 4 tests: passed: 2, failed: 2
+
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+
+Changes in v4:
+ * depend on KUNIT=y: CONFIG_IRQ_KUNIT_TEST=y is incompatible with
+   CONFIG_KUNIT=m -- same problem as in commit 35c57fc3f8ea ("kunit:
+   building kunit as a module breaks allmodconfig")
+
+Changes in v3:
+ * send as standalone patch, since dependent patch was merged
+ * make IRQ_KUNIT_TEST bool; we depend on a few internal functions that
+   are not exported to modules. Reported:
+   https://lore.kernel.org/oe-kbuild-all/202505152136.y04AHovS-lkp@intel.com/
+
+Changes in v2:
+ * add request_irq()/disable_irq()/free_irq()/request_irq() test
+   sequence
+ * clean up more resources in tests
+ * move tests to patch 2 (i.e., after bugs are fixed and tests pass)
+ * adapt to irq_startup_managed() (new API)
+
+ kernel/irq/Kconfig    |  11 ++
+ kernel/irq/Makefile   |   1 +
+ kernel/irq/irq_test.c | 229 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 241 insertions(+)
+ create mode 100644 kernel/irq/irq_test.c
+
+diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
+index 3f02a0e45254..1da5e9d9da71 100644
+--- a/kernel/irq/Kconfig
++++ b/kernel/irq/Kconfig
+@@ -144,6 +144,17 @@ config GENERIC_IRQ_DEBUGFS
+ config GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
+ 	bool
+ 
++config IRQ_KUNIT_TEST
++	bool "KUnit tests for IRQ management APIs" if !KUNIT_ALL_TESTS
++	depends on KUNIT=y
++	default KUNIT_ALL_TESTS
++	imply SMP
++	help
++	  This option enables KUnit tests for the IRQ subsystem API. These are
++	  only for development and testing, not for regular kernel use cases.
++
++	  If unsure, say N.
++
+ endmenu
+ 
+ config GENERIC_IRQ_MULTI_HANDLER
+diff --git a/kernel/irq/Makefile b/kernel/irq/Makefile
+index c0f44c06d69d..6ab3a4055667 100644
+--- a/kernel/irq/Makefile
++++ b/kernel/irq/Makefile
+@@ -19,3 +19,4 @@ obj-$(CONFIG_GENERIC_IRQ_IPI_MUX) += ipi-mux.o
+ obj-$(CONFIG_SMP) += affinity.o
+ obj-$(CONFIG_GENERIC_IRQ_DEBUGFS) += debugfs.o
+ obj-$(CONFIG_GENERIC_IRQ_MATRIX_ALLOCATOR) += matrix.o
++obj-$(CONFIG_IRQ_KUNIT_TEST) += irq_test.o
+diff --git a/kernel/irq/irq_test.c b/kernel/irq/irq_test.c
+new file mode 100644
+index 000000000000..5161b56a12f9
+--- /dev/null
++++ b/kernel/irq/irq_test.c
+@@ -0,0 +1,229 @@
++// SPDX-License-Identifier: LGPL-2.1+
++
++#include <linux/cpu.h>
++#include <linux/cpumask.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/irqdesc.h>
++#include <linux/irqdomain.h>
++#include <linux/nodemask.h>
++#include <kunit/test.h>
++
++#include "internals.h"
++
++static irqreturn_t noop_handler(int irq, void *data)
++{
++	return IRQ_HANDLED;
++}
++
++static void noop(struct irq_data *data) { }
++static unsigned int noop_ret(struct irq_data *data) { return 0; }
++
++static int noop_affinity(struct irq_data *data, const struct cpumask *dest,
++			 bool force)
++{
++	irq_data_update_effective_affinity(data, dest);
++
++	return 0;
++}
++
++static struct irq_chip fake_irq_chip = {
++	.name           = "fake",
++	.irq_startup    = noop_ret,
++	.irq_shutdown   = noop,
++	.irq_enable     = noop,
++	.irq_disable    = noop,
++	.irq_ack        = noop,
++	.irq_mask       = noop,
++	.irq_unmask     = noop,
++	.irq_set_affinity = noop_affinity,
++	.flags          = IRQCHIP_SKIP_SET_WAKE,
++};
++
++static void irq_disable_depth_test(struct kunit *test)
++{
++	struct irq_desc *desc;
++	int virq, ret;
++
++	virq = irq_domain_alloc_descs(-1, 1, 0, NUMA_NO_NODE, NULL);
++	KUNIT_ASSERT_GE(test, virq, 0);
++
++	irq_set_chip_and_handler(virq, &dummy_irq_chip, handle_simple_irq);
++
++	desc = irq_to_desc(virq);
++	KUNIT_ASSERT_PTR_NE(test, desc, NULL);
++
++	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
++	KUNIT_EXPECT_EQ(test, ret, 0);
++
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	disable_irq(virq);
++	KUNIT_EXPECT_EQ(test, desc->depth, 1);
++
++	enable_irq(virq);
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	free_irq(virq, NULL);
++}
++
++static void irq_free_disabled_test(struct kunit *test)
++{
++	struct irq_desc *desc;
++	int virq, ret;
++
++	virq = irq_domain_alloc_descs(-1, 1, 0, NUMA_NO_NODE, NULL);
++	KUNIT_ASSERT_GE(test, virq, 0);
++
++	irq_set_chip_and_handler(virq, &dummy_irq_chip, handle_simple_irq);
++
++	desc = irq_to_desc(virq);
++	KUNIT_ASSERT_PTR_NE(test, desc, NULL);
++
++	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
++	KUNIT_EXPECT_EQ(test, ret, 0);
++
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	disable_irq(virq);
++	KUNIT_EXPECT_EQ(test, desc->depth, 1);
++
++	free_irq(virq, NULL);
++	KUNIT_EXPECT_GE(test, desc->depth, 1);
++
++	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
++	KUNIT_EXPECT_EQ(test, ret, 0);
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	free_irq(virq, NULL);
++}
++
++static void irq_shutdown_depth_test(struct kunit *test)
++{
++	struct irq_desc *desc;
++	struct irq_data *data;
++	int virq, ret;
++	struct irq_affinity_desc affinity = {
++		.is_managed = 1,
++		.mask = CPU_MASK_ALL,
++	};
++
++	if (!IS_ENABLED(CONFIG_SMP))
++		kunit_skip(test, "requires CONFIG_SMP for managed shutdown");
++
++	virq = irq_domain_alloc_descs(-1, 1, 0, NUMA_NO_NODE, &affinity);
++	KUNIT_ASSERT_GE(test, virq, 0);
++
++	irq_set_chip_and_handler(virq, &dummy_irq_chip, handle_simple_irq);
++
++	desc = irq_to_desc(virq);
++	KUNIT_ASSERT_PTR_NE(test, desc, NULL);
++
++	data = irq_desc_get_irq_data(desc);
++	KUNIT_ASSERT_PTR_NE(test, data, NULL);
++
++	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
++	KUNIT_EXPECT_EQ(test, ret, 0);
++
++	KUNIT_EXPECT_TRUE(test, irqd_is_activated(data));
++	KUNIT_EXPECT_TRUE(test, irqd_is_started(data));
++	KUNIT_EXPECT_TRUE(test, irqd_affinity_is_managed(data));
++
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	disable_irq(virq);
++	KUNIT_EXPECT_EQ(test, desc->depth, 1);
++
++	irq_shutdown_and_deactivate(desc);
++
++	KUNIT_EXPECT_FALSE(test, irqd_is_activated(data));
++	KUNIT_EXPECT_FALSE(test, irqd_is_started(data));
++
++	KUNIT_EXPECT_EQ(test, irq_activate(desc), 0);
++#ifdef CONFIG_SMP
++	irq_startup_managed(desc);
++#endif
++
++	KUNIT_EXPECT_EQ(test, desc->depth, 1);
++
++	enable_irq(virq);
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	free_irq(virq, NULL);
++}
++
++static void irq_cpuhotplug_test(struct kunit *test)
++{
++	struct irq_desc *desc;
++	struct irq_data *data;
++	int virq, ret;
++	struct irq_affinity_desc affinity = {
++		.is_managed = 1,
++	};
++
++	if (!IS_ENABLED(CONFIG_SMP))
++		kunit_skip(test, "requires CONFIG_SMP for CPU hotplug");
++	if (!get_cpu_device(1))
++		kunit_skip(test, "requires more than 1 CPU for CPU hotplug");
++	if (!cpu_is_hotpluggable(1))
++		kunit_skip(test, "CPU 1 must be hotpluggable");
++
++	cpumask_copy(&affinity.mask, cpumask_of(1));
++
++	virq = irq_domain_alloc_descs(-1, 1, 0, NUMA_NO_NODE, &affinity);
++	KUNIT_ASSERT_GE(test, virq, 0);
++
++	irq_set_chip_and_handler(virq, &fake_irq_chip, handle_simple_irq);
++
++	desc = irq_to_desc(virq);
++	KUNIT_ASSERT_PTR_NE(test, desc, NULL);
++
++	data = irq_desc_get_irq_data(desc);
++	KUNIT_ASSERT_PTR_NE(test, data, NULL);
++
++	ret = request_irq(virq, noop_handler, 0, "test_irq", NULL);
++	KUNIT_EXPECT_EQ(test, ret, 0);
++
++	KUNIT_EXPECT_TRUE(test, irqd_is_activated(data));
++	KUNIT_EXPECT_TRUE(test, irqd_is_started(data));
++	KUNIT_EXPECT_TRUE(test, irqd_affinity_is_managed(data));
++
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	disable_irq(virq);
++	KUNIT_EXPECT_EQ(test, desc->depth, 1);
++
++	KUNIT_EXPECT_EQ(test, remove_cpu(1), 0);
++	KUNIT_EXPECT_FALSE(test, irqd_is_activated(data));
++	KUNIT_EXPECT_FALSE(test, irqd_is_started(data));
++	KUNIT_EXPECT_GE(test, desc->depth, 1);
++	KUNIT_EXPECT_EQ(test, add_cpu(1), 0);
++
++	KUNIT_EXPECT_FALSE(test, irqd_is_activated(data));
++	KUNIT_EXPECT_FALSE(test, irqd_is_started(data));
++	KUNIT_EXPECT_EQ(test, desc->depth, 1);
++
++	enable_irq(virq);
++	KUNIT_EXPECT_TRUE(test, irqd_is_activated(data));
++	KUNIT_EXPECT_TRUE(test, irqd_is_started(data));
++	KUNIT_EXPECT_EQ(test, desc->depth, 0);
++
++	free_irq(virq, NULL);
++}
++
++static struct kunit_case irq_test_cases[] = {
++	KUNIT_CASE(irq_disable_depth_test),
++	KUNIT_CASE(irq_free_disabled_test),
++	KUNIT_CASE(irq_shutdown_depth_test),
++	KUNIT_CASE(irq_cpuhotplug_test),
++	{}
++};
++
++static struct kunit_suite irq_test_suite = {
++	.name = "irq_test_cases",
++	.test_cases = irq_test_cases,
++};
++
++kunit_test_suite(irq_test_suite);
++MODULE_DESCRIPTION("IRQ unit test suite");
++MODULE_LICENSE("GPL");
+-- 
+2.49.0.1151.ga128411c76-goog
+
 
