@@ -1,118 +1,153 @@
-Return-Path: <linux-kernel+bounces-659382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA0AAC0F84
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:10:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8770AC0FA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D05DB4E145F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:10:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAC88A4284E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B8028FAB8;
-	Thu, 22 May 2025 15:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396DF29009A;
+	Thu, 22 May 2025 15:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pQZWRqNz"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="B2GK1GUp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bGJiC52+"
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED9A28C2DE
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 15:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2470C290091;
+	Thu, 22 May 2025 15:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747926629; cv=none; b=UJ4aQgD7wh453aMkqawXqoG6x0mJ0+tFLUGWxUMH6arQ0QnGyo/gFCIb9btf1WPHJGc4G77moZbt45EKIFSS8LfufelDi2qpxd4gxcRL+PNcW8LU8rvtQIFGagStYDC8CAWNn2RtPEqkcnfcxypsJ0Nyq6hQJ0PrtVafsf6ADxM=
+	t=1747926669; cv=none; b=BIHIMmwysjZiCmAw9lsKKggnRVvrzYN2UV4NlSh531z4Zf5mJeCXqZhot/lFqhEaUyheWpx3PAHr7DknjKv5u+oft/cSrX6Np49afMA0Puf+IRhdfbo+dE7J5pgmJlAMwNeomYt42fn9qM5jNmh9TGb1dAoIveB9gKEaJluERvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747926629; c=relaxed/simple;
-	bh=YYhrOE1cK+L81lVnUGA6LqsneHvzz45zuQOEB0EhEjY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=los3twaa/L/6D9h1W4Muf9ft8NiiQv2dv7oCD391OR92vMeh+q4G4J20FDwHy3OPNAHq7ukyP9KuqSgC9uJVJ2eoZA44YP017+PL7NaBr6vfAUIv4vlSlwcWcC7yLq8E5wjrz9KIF9aX2No57zlM6sm1yNj1gPySNmuxWL/wI1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pQZWRqNz; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-310c5c2c38cso1106252a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 08:10:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747926627; x=1748531427; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+MYLNSxvlV/2+XNrO4U7Ev/b8Mi/FTtmMOlrIf+bWP4=;
-        b=pQZWRqNz8pwpMmKGPM+c3++Whbtn3wyI4PuyF6E51My7hWAnZSKBp2qOuvn4SPVsXa
-         W/eiWoQMXESAREJgNiWUV8kAjHvyzGR3He+M2HPMPbW3AeWDFZnCTTilK6SArfrAXt4f
-         vdqFE7aBC5ipEtNnX4IojY7W1Iw9JeQTeiKFY+n30t6l0EMZOZvbDmHL2EAaX9qsbfBO
-         fQwkxPtUIfw7xUsNzHSlgYj9Pk2q+JUY0lGO7jbuT0371oPWlRABhJlsuemzqkPblQAz
-         l/tG/owIaXDC6kuD8kL/cP7goPsN468L43tmJkb9SMkl3uF87EwlODTA0nyq+IxeaoZV
-         5YbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747926627; x=1748531427;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+MYLNSxvlV/2+XNrO4U7Ev/b8Mi/FTtmMOlrIf+bWP4=;
-        b=RCK5hPoziSHt3tZ0MPNkwJftAZ67CE7Rtfys/3cqvLbLaZvGLEI4PaPiq6MXp/fnI7
-         ThYUEFL4FKsLZEQjzfkw3bJEehy0CI/f86YFRXUj2QFIxuZF4R0SwkDUznvXe3gkZ7Se
-         Ujnl0xDMQGrewniV4URAK3jbCRZmsiOinY+gh/4JbtcxSO4M2foMc0xwNqYaKL7I44os
-         U8DPz/eIQvp3gLd8hXk8KwcayYN3d9mF+BePbFprPfF7Tn7gg1+wWY4zxo3W8nK7CCDb
-         ZUNsuGYQ8nj8lH2mowLCQlrVdb+/KSaua/0aYFnO8HmHsvW9hVsJI2m2gp0eRs3fYH0F
-         TVTA==
-X-Gm-Message-State: AOJu0YyDxcTE4a9bKD2jDEZRJ2MH3214xdQtTRggD68tgNnjW0XNniu/
-	g/wXWFepdXx3L42A4kWrgFNK57yulPeyfi2Pu3hJ0hYC8PzY2fSfYDJGzVwlj3btSvfP0HCa6Ks
-	Sh1G9UA==
-X-Google-Smtp-Source: AGHT+IGyNus3uPamyzA/fzloTmnqZDo6TIV08eJiG5wgx8Ug60jO9xsyHNoV300qiYR//Na4Yg4/B2E98Pk=
-X-Received: from pjbsw15.prod.google.com ([2002:a17:90b:2c8f:b0:301:4260:4d23])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:55cc:b0:30c:4f95:e0c
- with SMTP id 98e67ed59e1d1-30e830ec32emr43593450a91.9.1747926626934; Thu, 22
- May 2025 08:10:26 -0700 (PDT)
-Date: Thu, 22 May 2025 08:10:25 -0700
-In-Reply-To: <20250520010350.1740223-2-riel@surriel.com>
+	s=arc-20240116; t=1747926669; c=relaxed/simple;
+	bh=uT56pjrvDODLrsQoFu8ndFFw9NrNmImgPMsOSNIgUjE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=oLMzmh3tqGOoQieVqF9x2t1qoXZns2T2NmvhRrVXpbCMhj/rgA4W9S85XKm6TmJNm+SEX+hvI76YSOlTCXhXo+z01/il9yEJB7+addDli43E/zYtmRRewuOCHDs/hkMI4rmWD0ZHxjJjF/x4u7eYAyC6txx3EpLsmJ+aRrqU47k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=B2GK1GUp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bGJiC52+; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id D11AB2540182;
+	Thu, 22 May 2025 11:11:05 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-06.internal (MEProxy); Thu, 22 May 2025 11:11:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1747926665;
+	 x=1748013065; bh=uT56pjrvDODLrsQoFu8ndFFw9NrNmImgPMsOSNIgUjE=; b=
+	B2GK1GUpl1NA51b5vZybgjb0RTZcOWylp/B5hN3M4O9JNmFfLw3pyh3N0qGDnMNF
+	CRxa7frGRcSV4ktbMyQLUTEEnHqV6bR2Dyba3Z4uAVlB/H7MbWl5CUlovQxCfPJu
+	so+UpCHnTTl2C6zorDQDs+ZPYkpGXR7onPO8pC3VmWsNdmTI0luryH81nqWY+DYg
+	tV6gYiYEZj74MqZx/127b3mpUA9YFmzvwSWksg5XGjaxQHx1yi6S3RY978g5M/2b
+	o4iUkXWf+5QaxXlJbTHUW7vzI0bDXJoLIzWg46pSMFCeKCei2nL2Q+v1nMegpVPu
+	PDoACfGyNgRSBXZvXmChJQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1747926665; x=
+	1748013065; bh=uT56pjrvDODLrsQoFu8ndFFw9NrNmImgPMsOSNIgUjE=; b=b
+	GJiC52+Ov2Cj0OsrEFthR4S9pWr+SAa+j9PUYes+EpPWiw7ehXzGaInKCnN1cBYN
+	Vr5GDJdBRnUosGCfbL0+/krsZS5TFwVNrqzc/OCfNd7DV5yDbsewLEbCT4zlExqN
+	wAnnmzvHpAar9OkQB3aU3FIGb2Z9FjLJMENJcoKTpyAVb1nVedI4Q17xW40FDAsf
+	gv2aSP5tGT5aYPnRPF4Wg0a+h22xI8p2mjEpUXX+DqlWaIoNpaLjJq+UfatuChS0
+	8wik7mZopgVNkHhA/IPeaYdj0UH2aXBxbxS2spX50MdgVGDlSyAYBWc0qedSEb9R
+	GVIHGXCVVRgnQDWNF1uoQ==
+X-ME-Sender: <xms:iD4vaLCaxgREniukd5ATkkW_UDwR57rAgHEElglqxMptk8_m46PDgQ>
+    <xme:iD4vaBgZwPnB2ZRx0pwyOPFHAdnI6sF1Xfn2tTcnSAo1IBnOQLO5kjPz1Wt0dzj0i
+    pxc0fwU7-AyIkXjcnA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdeivdekucdltddurdegfedvrddttd
+    dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
+    nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
+    enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgj
+    fhfutgfgsehtqhertdertdejnecuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojh
+    hirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhep
+    jeehfeduvddtgffgvdffkeethefhlefgvdevvdekuefffeekheehgeevhfevteejnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhn
+    rdihrghnghesfhhlhihgohgrthdrtghomhdpnhgspghrtghpthhtohepkedpmhhouggvpe
+    hsmhhtphhouhhtpdhrtghpthhtohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhk
+    vghnrdguvgdprhgtphhtthhopehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlih
+    hnrdgtohhmpdhrtghpthhtohepthhhvghordhlvggsrhhunhessghoohhtlhhinhdrtgho
+    mhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtg
+    homhdprhgtphhtthhopehtrgiffhhikhdrsggrhihouhhksehmohgsihhlvgihvgdrtgho
+    mhdprhgtphhtthhopehvlhgrughimhhirhdrkhhonhgurhgrthhivghvsehmohgsihhlvg
+    ihvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmihhpshesvhhgvghrrdhkvghrnh
+    gvlhdrohhrgh
+X-ME-Proxy: <xmx:iD4vaGmX1tYX0lxyVdxc39QVqV6oB-ykSztby7N0wP1xhqLojzBsaw>
+    <xmx:iD4vaNw5Fi2pciKbSs4d6LaDyiD-9ac11q3_25pWznvUQ114mRbUng>
+    <xmx:iD4vaAQPhoXk6QRYU-5SjSFgAOlfwj_BRNjt5AHsXapKEsNVtYRl6A>
+    <xmx:iD4vaAaZKByr_I3aEr0cAO-eAfH4wEZQkJwyuTrFZ_3p1vtlqb8jMA>
+    <xmx:iT4vaGbNj6f8ASmfLGRnt0cl30ZQaQEAh_uAN55DyVGp5Bux8lGSs7-g>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B93A11060060; Thu, 22 May 2025 11:11:04 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250520010350.1740223-1-riel@surriel.com> <20250520010350.1740223-2-riel@surriel.com>
-Message-ID: <aC8-YaH3eNhtKnnS@google.com>
-Subject: Re: [RFC v2 1/9] x86/mm: Introduce MSR_IA32_CORE_CAPABILITIES
-From: Sean Christopherson <seanjc@google.com>
-To: Rik van Riel <riel@surriel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org, 
-	kernel-team@meta.com, dave.hansen@linux.intel.com, luto@kernel.org, 
-	peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	hpa@zytor.com, nadav.amit@gmail.com, Yu-cheng Yu <yu-cheng.yu@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-ThreadId: Tfc8a567c59a896e5
+Date: Thu, 22 May 2025 16:10:35 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Gregory CLEMENT" <gregory.clement@bootlin.com>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Message-Id: <bc3dd9ed-0fab-4f62-a55b-8ce33fea10f0@app.fastmail.com>
+In-Reply-To: <87iklsofih.fsf@BLaptop.bootlin.com>
+References: <20250520-smp_calib-v1-1-cd04f0a78648@bootlin.com>
+ <8c4ef90e-82db-4711-a5f3-446bcca00e9d@app.fastmail.com>
+ <87ecwipfr2.fsf@BLaptop.bootlin.com>
+ <105ed884-9ee8-429a-9937-d8f58a221faa@app.fastmail.com>
+ <87iklsofih.fsf@BLaptop.bootlin.com>
+Subject: Re: [PATCH] MIPS: CPS: Optimise delay CPU calibration for SMP
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 19, 2025, Rik van Riel wrote:
-> From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> 
-> MSR_IA32_CORE_CAPABILITIES indicates the existence of other MSRs.
-> Bit[1] indicates Remote Action Request (RAR) TLB registers.
-> 
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> ---
->  arch/x86/include/asm/msr-index.h | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-> index b7dded3c8113..c848dd4bfceb 100644
-> --- a/arch/x86/include/asm/msr-index.h
-> +++ b/arch/x86/include/asm/msr-index.h
-> @@ -220,6 +220,12 @@
->  						     * their affected status.
->  						     */
->  
-> +#define MSR_IA32_CORE_CAPABILITIES	0x000000cf
-> +#define CORE_CAP_RAR			BIT(1)	/*
-> +						 * Remote Action Request. Used to directly
-> +						 * flush the TLB on remote CPUs.
-> +						 */
 
-CORE_CAPABILITIES is already supported and enumerated, it's just abbreviated:
 
-/* Abbreviated from Intel SDM name IA32_CORE_CAPABILITIES */
-#define MSR_IA32_CORE_CAPS			  0x000000cf
-#define MSR_IA32_CORE_CAPS_INTEGRITY_CAPS_BIT	  2
-#define MSR_IA32_CORE_CAPS_INTEGRITY_CAPS	  BIT(MSR_IA32_CORE_CAPS_INTEGRITY_CAPS_BIT)
-#define MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT_BIT  5
-#define MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT	  BIT(MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT_BIT)
+=E5=9C=A82025=E5=B9=B45=E6=9C=8822=E6=97=A5=E5=91=A8=E5=9B=9B =E4=B8=8B=E5=
+=8D=884:02=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
+[...]
+>
+> I didn't notice this function initially, but upon closer inspection, it
+> appears that although the scan process is optimized, it still performs=
+ a
+> full scan for each CPU during boot. In contrast, with the mask, the
+> information is created only once and within an existing loop.
+>
+> I believe this function would benefit from __cpu_primary_cluster_mask,
+> which is why I prefer my current implementation over using
+> mips_cps_first_online_in_cluster().
+
+Thanks for clarification!
+
+My concern is __cpu_primary_cluster_mask is pretty limited and the conce=
+pt
+of "primary cpu" is kind of fragile.
+
+To optimize mips_cps_first_online_in_cluster I think the best way forward
+would be produce cpumask for each cluster and perform cpumask_or with on=
+line
+cpu mask at runtime. cluster_cpumask can be reused by other logic later.
+
+Anyway, it's just my two cents.
+
+Thanks
+--=20
+- Jiaxun
 
