@@ -1,94 +1,164 @@
-Return-Path: <linux-kernel+bounces-659646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB84AC1301
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:06:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E06D4AC1307
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8925E1893E94
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:06:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E4AD1BA56A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553DB19E83C;
-	Thu, 22 May 2025 18:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B730D19DF61;
+	Thu, 22 May 2025 18:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x9XMkhaV"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ADF208AD
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="oH1DSp/F"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9703833F3;
+	Thu, 22 May 2025 18:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747937193; cv=none; b=buOKvUTnQdNNkE+ivD96FO9tJQuK8vF+97M8rHoG/uCqY/tJEXHF0wH1i3DhJnB4DJAKA3j+bVVeYkEULHizXEC1FXxwBmjDipRacpFtdeRZzcs+M5eoAEtnQhw/HnFYVHWLf2BP95h6l2x0eyRT1tKZeqrnj0+xGEbSER4TQ1A=
+	t=1747937405; cv=none; b=icMyqO9Xl94iu9Buyks8JCEmy62cf3QWihgRgnHpGY63gyri/6T7PwR25o90jr/HcbKpBtxYeMupLsFrhjvAsTapa16RrinrrUgu1m8f8XHXHMdTfA3NixSSr8UwrRUwLs5kAK0kKc+peHCaUMzOcWlQBW1ecK3+zvuZdP8tHvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747937193; c=relaxed/simple;
-	bh=SEyxKtglVMvhRRYrc8pRddx1p/+gcB0X1Nzyva2dm2Q=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ikGjMi32aFz6aAzb4oBzmN7lFGHVLgstCioGsfTm4kAuS7MOaX0JH54jKG7PQQusQ95Jt08coiMXqREAJgm6mY5VtWrVghEITy2pXZW9uoVjbmVp1fP4y6lV/mkn8i/5125NfCYgaYeUgtY67fMrUxOgzt1xIYC0bBIJCU01aMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x9XMkhaV; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30e8346b49cso6935455a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 11:06:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747937191; x=1748541991; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=egdJflRBmmuE1AnATRR+AKgbnICiGADQnaXxcKCGu7A=;
-        b=x9XMkhaVvUkQ4qTE8ZInwVUOuCCKlqK2z+VAwEKEytZThZpMZQ9EOpmHvcvGu9OXyQ
-         46ynvyf4rJ8Q4tbECZlI4zPZWTvCuTTRE2LccDS6YccpHaZQQgGAUbMDLmeOyoZfZbSR
-         j9yDeXeQnoOBjsF89f/OatXjP8bLEtA2KcRkSFgzPpsuZBDEvTWDzIzTWurNRD74oTgi
-         jTZnkHCgHD+LjXua5fAyY4IObqmkzUtNpU+4bNfcpIbjVP8LwffloquvVJhmL3zPwrw/
-         g/qGbUf6yyamHe8zsS0N6j85fxo8Ujx7CcDcoFDiVKdyW15drZrvYwFA2L4G9YRb6Zdt
-         EAhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747937191; x=1748541991;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=egdJflRBmmuE1AnATRR+AKgbnICiGADQnaXxcKCGu7A=;
-        b=QMmIUXwzKptkAC+4yjblRuTEQ+BV6WjulGVeOQ/LHzz+enoWqTrTr5MuV2tICrJRqZ
-         4ceI+Py+Z55h11QTmQKe4v7f5T7YC/lV5unUtq4F7Dda2lQX/sS6OlnuDZdcolo+Tv+v
-         MB4XjK6Xk8JjenqXBgiiUAnuwbB1vH78OiwX1E9eqkZ4D5r8IcTkbn21VxgcqmNht/8a
-         4XFxiYcwgYfrYWIhSf0yP83jYktrTMiZd/EoxaonXM46SSi5Gjwd61dy7IERmRZ168zM
-         +1kKjHwNcfdpICVX75xzQ6a7Mo4UxN9dKhlyQCn/KoHfYnogoL6mAkL16yLk8tlnd+i2
-         brWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIPokfugBAhFPYekZl0ti1iNLHU3fUlh0oUtnGLczQVhPun2U7PMOyJwJPg3dxRIzizeCtAair/YOUwVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXJ9sS2JVe8u1/LTB9QY/mzruCyLODx8zVXlQYVJ0JBN3G6JK0
-	mYe1stYQIOAegeTaRtb1YWDpdB/ISXNwKNjr2+tx4G+4zjW+5XuuWPHURV1+Wcqfze+EDnhLhBz
-	FOhVeUQ==
-X-Google-Smtp-Source: AGHT+IFf2nW0YeWspiaZpD52+klhe1Y1/os4fO9+/xoNTczxZ8E3/lhN7bUPZD1ezQfPFJGEqi+KoWVKvig=
-X-Received: from pjbdy5.prod.google.com ([2002:a17:90b:6c5:b0:2ff:6e58:89f7])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:c883:b0:305:5f25:fd30
- with SMTP id 98e67ed59e1d1-30e830c515amr38836348a91.4.1747937191700; Thu, 22
- May 2025 11:06:31 -0700 (PDT)
-Date: Thu, 22 May 2025 11:06:30 -0700
-In-Reply-To: <20250522005555.55705-1-mlevitsk@redhat.com>
+	s=arc-20240116; t=1747937405; c=relaxed/simple;
+	bh=MD5KJq3xPJPOvEt1jbGXI8dTkIRIaaOxZdxZhx34yjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PHFCmez2Nkakal+x1sEknc2gUd8t4csky1dLgYqDWmn7qAiDJEpjp77xRSmvB7XXEVmKkegKIfXDPc+yG0+wNmj7Fq4UODml47J2xI/WHShdDLWYG8IeItP0Sx2mcCXlT+fc0cV40FYeqlNxCdvNyGUEZt2ZEyVkxebh8S28yYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=oH1DSp/F; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii. (unknown [20.236.10.129])
+	by linux.microsoft.com (Postfix) with ESMTPSA id D3833211CFAC;
+	Thu, 22 May 2025 11:10:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D3833211CFAC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1747937403;
+	bh=idVisYYe/w991BM/hJuvBP6Q3CZkk9VCPKdJIOFknD4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oH1DSp/FutoWNwGNHtqpGL//4xt1b5If34PQM9zqCl59E4csloLyqfvSV/e0YcFdJ
+	 NVt6ZvWx/4ZJzdm3tu8aDFEhtuO0Qd3buWV8evnmZMpKUl7QlRQtVZotmKdRSQ35W8
+	 becguvbl3u+YqMvlrzfHfjOwPRbRflH1PvIZNfhg=
+Date: Thu, 22 May 2025 11:10:00 -0700
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Roman Kisel <romank@linux.microsoft.com>,
+	Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	ALOK TIWARI <alok.a.tiwari@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] Drivers: hv: Introduce mshv_vtl driver
+Message-ID: <aC9oeJPFynyYg9pU@skinsburskii.>
+References: <20250519045642.50609-1-namjain@linux.microsoft.com>
+ <20250519045642.50609-3-namjain@linux.microsoft.com>
+ <aCzQMuwQZ1Lkk7eH@skinsburskii.>
+ <80853cdb-fd34-4a5e-99a0-1a71b8ce8226@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250522005555.55705-1-mlevitsk@redhat.com>
-Message-ID: <aC9npqQAAdowxfsn@google.com>
-Subject: Re: [PATCH v5 0/5] KVM: x86: allow DEBUGCTL.DEBUGCTLMSR_FREEZE_IN_SMM passthrough
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: kvm@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <80853cdb-fd34-4a5e-99a0-1a71b8ce8226@linux.microsoft.com>
 
-On Wed, May 21, 2025, Maxim Levitsky wrote:
-> V5: addressed the review feedback. Thanks.
+On Wed, May 21, 2025 at 11:33:29AM +0530, Naman Jain wrote:
+> 
+> 
+> On 5/21/2025 12:25 AM, Stanislav Kinsburskii wrote:
+> > On Mon, May 19, 2025 at 10:26:42AM +0530, Naman Jain wrote:
+> > > Provide an interface for Virtual Machine Monitor like OpenVMM and its
+> > > use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
+> > > Expose devices and support IOCTLs for features like VTL creation,
+> > > VTL0 memory management, context switch, making hypercalls,
+> > > mapping VTL0 address space to VTL2 userspace, getting new VMBus
+> > > messages and channel events in VTL2 etc.
+> > > 
+> > > Co-developed-by: Roman Kisel <romank@linux.microsoft.com>
+> > > Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> > > Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> > > Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> > > Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+> > > Reviewed-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+> > > Message-ID: <20250512140432.2387503-3-namjain@linux.microsoft.com>
+> > > Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+> > > ---
+> > >   drivers/hv/Kconfig          |   20 +
+> > >   drivers/hv/Makefile         |    7 +-
+> > >   drivers/hv/mshv_vtl.h       |   52 +
+> > >   drivers/hv/mshv_vtl_main.c  | 1783 +++++++++++++++++++++++++++++++++++
+> > >   include/hyperv/hvgdk_mini.h |   81 ++
+> > >   include/hyperv/hvhdk.h      |    1 +
+> > >   include/uapi/linux/mshv.h   |   82 ++
+> > >   7 files changed, 2025 insertions(+), 1 deletion(-)
+> > >   create mode 100644 drivers/hv/mshv_vtl.h
+> > >   create mode 100644 drivers/hv/mshv_vtl_main.c
+> > > 
+> > > diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
+> > > index eefa0b559b73..21cee5564d70 100644
+> > > --- a/drivers/hv/Kconfig
+> > > +++ b/drivers/hv/Kconfig
+> > > @@ -72,4 +72,24 @@ config MSHV_ROOT
+> > >   	  If unsure, say N.
+> > > +config MSHV_VTL
+> > > +	tristate "Microsoft Hyper-V VTL driver"
+> > > +	depends on HYPERV && X86_64
+> > > +	depends on TRANSPARENT_HUGEPAGE
+> > 
+> > Why does it depend on TRANSPARENT_HUGEPAGE?
+> > 
+> 
 
-I'll send v6 later today.  I want to include the TDX fix[*] in this series, and
-hopefully we can save some back-and-forth on the series (I want to get this into
-6.16-rc1).  My plan is to shove this into a dedicated topic branch by end of week,
-and then send a separate pull request for the branch sometime next week.
+Let me rephrase: can this driver work without transparent huge pages?
+If yes, then it shouldn't depend on the option and rather select it.
+If not, then it should be either fixed to be able to or have an
+expalanation why this dependecy was introduced.
 
-[*] https://lore.kernel.org/all/aC0IwYfNvuo_vUDU@google.com
+> > > +
+> > > +/* vtl device */
+> > > +#define MSHV_CREATE_VTL			_IOR(MSHV_IOCTL, 0x1D, char)
+> > > +#define MSHV_VTL_ADD_VTL0_MEMORY	_IOW(MSHV_IOCTL, 0x21, struct mshv_vtl_ram_disposition)
+> > > +#define MSHV_VTL_SET_POLL_FILE		_IOW(MSHV_IOCTL, 0x25, struct mshv_vtl_set_poll_file)
+> > > +#define MSHV_VTL_RETURN_TO_LOWER_VTL	_IO(MSHV_IOCTL, 0x27)
+> > > +#define MSHV_GET_VP_REGISTERS		_IOWR(MSHV_IOCTL, 0x05, struct mshv_vp_registers)
+> > > +#define MSHV_SET_VP_REGISTERS		_IOW(MSHV_IOCTL, 0x06, struct mshv_vp_registers)
+> > > +
+> > > +/* VMBus device IOCTLs */
+> > > +#define MSHV_SINT_SIGNAL_EVENT    _IOW(MSHV_IOCTL, 0x22, struct mshv_vtl_signal_event)
+> > > +#define MSHV_SINT_POST_MESSAGE    _IOW(MSHV_IOCTL, 0x23, struct mshv_vtl_sint_post_msg)
+> > > +#define MSHV_SINT_SET_EVENTFD     _IOW(MSHV_IOCTL, 0x24, struct mshv_vtl_set_eventfd)
+> > > +#define MSHV_SINT_PAUSE_MESSAGE_STREAM     _IOW(MSHV_IOCTL, 0x25, struct mshv_sint_mask)
+> > > +
+> > > +/* hv_hvcall device */
+> > > +#define MSHV_HVCALL_SETUP        _IOW(MSHV_IOCTL, 0x1E, struct mshv_vtl_hvcall_setup)
+> > > +#define MSHV_HVCALL              _IOWR(MSHV_IOCTL, 0x1F, struct mshv_vtl_hvcall)
+> > 
+> > How many of these ioctls are actually used by the mshv root driver?
+> > Should those which are VTl-specific be named as such (like MSHV_VTL_SET_POLL_FILE)?
+> > Another option would be to keep all the names generic.
+> > 
+> > Thanks,
+> > Stanislav
+> 
+> None of the IOCTLs in mshv_vtl section, introduced in this patch is used
+> by mshv_root driver. Since IOCTLs of mshv_root does not have MSHV_ROOT
+> prefix, I am OK with removing MSHV_VTL_* prefix from these IOCTL names.
+> You can let me know if you want me to prefix them with MSHV_VTL.
+> 
+> Thanks again for reviewing.
+> 
+> Regards,
+> Naman
+> 
+
+As these ioctls share the same "namespace" (MSHV_IOCTL), removal os the
+VTL suffix looks a better optio to me.
+
+Thanks,
+Stanislav.
 
