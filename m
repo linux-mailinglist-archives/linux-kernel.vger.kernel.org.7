@@ -1,92 +1,124 @@
-Return-Path: <linux-kernel+bounces-658885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62AF2AC08B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:30:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C41C1AC08BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35689A26840
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:30:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 709723A9810
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E7328851A;
-	Thu, 22 May 2025 09:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EA32857C5;
+	Thu, 22 May 2025 09:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9GiZgYK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7FcfkXe"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1776287509;
-	Thu, 22 May 2025 09:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CB2267F5D;
+	Thu, 22 May 2025 09:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747906202; cv=none; b=Ts8ywTPfZ8BhT+FNE2l2Z4YkvoFFx/Q2IxGlYQj3r1xrUoH+fWnTYAehzCZz7zWmHF/Ihqjnei2a7kbzhMcnptDVf6R4ZL6TDdUYXjy/od/aNThXZZMJ1RjfkxjnJNNU+SZlSPA04Q1DkllfAsPILTfsr8oWjfuLD7nJL8HreH0=
+	t=1747906284; cv=none; b=tgLA+VqmFpPeJ7rKdftQatdWPPsof/7H9FFp74JVGbPBVQE3QlF9/HMZ/olPASN/zeQzXch3Rnk2N2ccyUwvQMjyniC33qaa93xS2gloBqtjYLeIC91zMExKJ2QngE+Hru2tURc6UigC1P28aaTzIuXpDl42hJ/kg5F4gWQf/gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747906202; c=relaxed/simple;
-	bh=LrhHBtCAj/5rfvAU6Fbhhc46QRBAOG5iW0o66arOxSA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=DHeL9KKBJm326dL1xaBTuV8SkcW5pq1luE3U3ZLc5GwKVj+uvLxkHCSAVI5ym8tdxDATzCqfKrD4YQKVCX+p+GkV+67ybEHNwQHL2OIapX13VwlaAiIWmMIMlImqOCsT1Kzi5cDDTDeP+2J7ngdg/YmJ4ovyCK6seNEhpAW8M5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N9GiZgYK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B1EEC4CEE4;
-	Thu, 22 May 2025 09:30:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747906202;
-	bh=LrhHBtCAj/5rfvAU6Fbhhc46QRBAOG5iW0o66arOxSA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=N9GiZgYKeDy7G+8i4LVBVfN7QIjlWCRGEY6UDWzR2KmXMG1Boe4gOCKVQ4W+Z84eN
-	 ibg9KA58HkfVZIw0u5lWjkIeV9rwQuZ4k3S4EElQTIBpWBtXRcJkRuGSYGEGBrBGcW
-	 v0jE66SegD0wJvCVSRLfaT+7FJssFLiY7xNRIURrzOrz6lCN8rLn0Je5o/DVcU8h/u
-	 fxKM1Ls2KhA9XQeuNsULS9Zm/xrl4xekf6IPnOCGm64L1dkNlB/eF2+a+2m0IElMTr
-	 dydRWwK/JTdiqnO6VKJJopoFoX1pHanQUaBghZC4TU7dPAuZimELZTNTor6IMgDpzn
-	 VHYgkalemZy3Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB1E7380AA7C;
-	Thu, 22 May 2025 09:30:38 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1747906284; c=relaxed/simple;
+	bh=okF8eloeLFd1bFYhuUEEsGhYaohgBX6WS8P1YZ34JCI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=CctcvXzEdOwa79lG3pFEbLO9PRDYha8ZGsR9mwBPSYsHnES1X4aiKNXkUDiSkfqf12jDpWMMiNf9Xz4KIiYAc2La5Ul2HFJQ54ju3TXOIJzpKSqd6j81PF9PvW1jjJ+YLvfbH48WPWhjtGm60uYjp8LNaLwiFBECHH97cXGlpfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7FcfkXe; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ad5273c1fd7so1305967366b.1;
+        Thu, 22 May 2025 02:31:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747906281; x=1748511081; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Msz1IKR3lqodHeTxu3YAVwhDtWS68xerTrTCn/LhVYU=;
+        b=V7FcfkXeSW+Pr1C8jqO/aWnpiEr01uNkAzG6TrA5YtxADyVtB0SvDSxTcDlUJ110Oi
+         Rq6T/hNuy2hgZqNsBwyVptJc6Gmqmeria3C24WoGNY75NdvZYN6Fn8HkA9WbR5iT9MmW
+         gwgAgPmlccZlCjxP74LpU3s7U2d8jQhczXxT+TliaIP6bZ5wluutqdFY3II3dk0fLBCa
+         bVdTwVwsD0DfICABwJVEj8+rq/8K2Lx5eNkbcKUqGpepmGqu17zxxZ7tjQwVqGN8USkX
+         GPjP8Q2ta8wPnx08ZNPAIGLlbPhAVwy4PyWmkGpZJUgvCF9nVcdiB0BWVLDnexUg+kWG
+         sxMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747906281; x=1748511081;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Msz1IKR3lqodHeTxu3YAVwhDtWS68xerTrTCn/LhVYU=;
+        b=m8X30jtBKYFqcJ4Q53kyAeODcHf7aPEOnpy/uqdmAqTURzEvNNS1GdogdsEYCuF818
+         7Q0dFyL6s2dy/gzHI9OygHJleQO9AJbUx30/ErdbpAM5TOHCsQZEQ4rawuXxZiQdn5pg
+         NgbW3mmKUpGdGhb9Syb5evv2Jd3iLwEb9PqjEHwYwxxynPJ5KbSfaaR7rgZjvcZEkVQq
+         zpNiahEsIZmW9V6jO1QMbL9ullJ/6KYh3SE5PorCW0yHV0OwZ75DC7bbRHUEFRav2Cwh
+         0oD7FYQ8FAZRBl7SFc/w+41sBJp1B594b14/so0fpLN76AumH6c7DDPL5Wp1KNOl3BFq
+         qCKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWPztuTaHnQAuK60uEkMv7CPIp/proRsbLYvJMa2NynScYmyAkNlyMyPkSoYO/FGr57dVTKwz/KPmY1N3E=@vger.kernel.org, AJvYcCWve0iWarFJI7lfzLhgJN6BT7AjE4s0boCGcfbA4SFqRpR+SXlJ25V2Q30l6Goqq0QkmZ7dfP7ptDI=@vger.kernel.org, AJvYcCXQpu5jYxNB+jWhoVUJqEbnq1vE/09NBilVh25sOdC1sHHpog9hiAXQuwtViBb7zx53ypdfJdDSpPUxVIBr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKV/lEDBOEUhnenToMZQQeZHK97Ud5OWCferIRhEmz8f1F13m6
+	ec6xo0NTTofBlcmgHm9FQK8a7gcAfSgNzQGUfLo4IIx1irHhqGNzagoUxIwsqA==
+X-Gm-Gg: ASbGncuuVruICZPG52joU8q+lE7RqUu5cz3dkVFa6e/0zLVJ9gOSW9N4A5PAO9b6znk
+	BPdDe+MFAGgrRZvTDUbXlaJcbfQL6earmniWg8X9m+2UmcdsHWTsuRTnCOh5xGCiv2tbM9FZHo+
+	2A+PjO09ICiGPSXqceXECL9FZ84bQ9Oi5Lr0x13T4Sc2wZsu27pXHA7Ex9Wel7pq+hZ6s9nPC/6
+	8+VFWO9LDT3wAJtclSDuFaezfvKEQCQpElQOuSP7M03QxrE50ck722gA5MWxVYb9L4GbjY3F/Gt
+	J80dhTlGVJpWbRYlOHvPcr1bsZ5+omuPnQyIzPs7yPugW0zRWea0g/y7gOk=
+X-Google-Smtp-Source: AGHT+IGh3Hx+XYmsGbpx6CTFfH5NBsd1tODfW2p2cobFZzc43u/RkbEH8UQPNQ4GEXxvgxMcqiKoHA==
+X-Received: by 2002:a17:907:97cd:b0:ad5:bbcb:e3f2 with SMTP id a640c23a62f3a-ad5bbcbe62fmr362866566b.39.1747906280873;
+        Thu, 22 May 2025 02:31:20 -0700 (PDT)
+Received: from [192.168.0.100] ([188.27.131.188])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d4382ccsm1043253566b.118.2025.05.22.02.31.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 May 2025 02:31:20 -0700 (PDT)
+Message-ID: <6060a629-0fe5-4d66-8c37-7c9919a5548e@gmail.com>
+Date: Thu, 22 May 2025 12:31:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [net PATCH] octeontx2-pf: Avoid adding dcbnl_ops for LBK and SDP vf
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174790623774.2464246.16312456507750189389.git-patchwork-notify@kernel.org>
-Date: Thu, 22 May 2025 09:30:37 +0000
-References: <20250519072658.2960851-1-sumang@marvell.com>
-In-Reply-To: <20250519072658.2960851-1-sumang@marvell.com>
-To: Suman Ghosh <sumang@marvell.com>
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
- hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, bbhushan2@marvell.com,
- andrew+netdev@lunn.ch, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/9] i2c: atr: Fix lockdep for nested ATRs
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Romain Gantois <romain.gantois@bootlin.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+References: <20250507121917.2364416-1-demonsingur@gmail.com>
+ <20250507121917.2364416-2-demonsingur@gmail.com> <aC7o_obqzBlhW0tE@shikoro>
+From: Cosmin Tanislav <demonsingur@gmail.com>
+Content-Language: en-US
+In-Reply-To: <aC7o_obqzBlhW0tE@shikoro>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
 
-On Mon, 19 May 2025 12:56:58 +0530 you wrote:
-> Priority flow control is not supported for LBK and SDP vf. This patch
-> adds support to not add dcbnl_ops for LBK and SDP vf.
+On 5/22/25 12:06 PM, Wolfram Sang wrote:
+> On Wed, May 07, 2025 at 03:19:07PM +0300, Cosmin Tanislav wrote:
+>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>>
+>> When we have an ATR, and another ATR as a subdevice of the first ATR,
+>> we get lockdep warnings for the i2c_atr.lock and
+>> i2c_atr_chan.orig_addrs_lock. This is because lockdep uses a static key
+>> for the locks, and doesn't see the locks of the separate ATR instances
+>> as separate.
+>>
+>> Fix this by generating a dynamic lock key per lock instance.
+>>
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 > 
-> Fixes: 8e67558177f8 ("octeontx2-pf: PFC config support with DCBx")
-> Signed-off-by: Suman Ghosh <sumang@marvell.com>
-> ---
->  drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+> Your SoB is missing. I will add it for you if you confirm here.
+> 
 
-Here is the summary with links:
-  - [net] octeontx2-pf: Avoid adding dcbnl_ops for LBK and SDP vf
-    https://git.kernel.org/netdev/net/c/184fb40f731b
+My bad.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
 
 
