@@ -1,122 +1,92 @@
-Return-Path: <linux-kernel+bounces-659241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC7EAC0D6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:59:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D2D9AC0D77
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06675176C66
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:59:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 051B2A23A6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431BB28C2BD;
-	Thu, 22 May 2025 13:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aluGZemL"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3487528C2D8;
+	Thu, 22 May 2025 14:01:05 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4BA28C2B1
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 13:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D8812E7E;
+	Thu, 22 May 2025 14:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747922355; cv=none; b=LFOO0zlsQws5Zp3nonFHsgygnSMN6EMxyFRi1XMx5ow4Q/l+sydBiyBs43AYBptRb2VjhgsRvZqkFMxOMjID+Uz5W+l0q/92g7bei0bg9RKNrBIimTxFvbjFL03/SpeB0QfvnlHOHCd/RqELW6ZPcbd1bYz5O6U8Qz+WvyUf72k=
+	t=1747922464; cv=none; b=FJ6Z6QfEqldy8ELbv4yXCnOxISn6Df/6oV/IgaVsG04p5UdtzxhaLfY0e/IFGuERYjlc0ioAcs5Ha+xZ0HKl1MisbHU+GofZ1bIaDAfnIW4Nfg0gP0TGEQCdGIcKmX6t2PpFgOCEASm0KrLrRRvGEG0cVxNdXar5PGg6HQDNiEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747922355; c=relaxed/simple;
-	bh=VgVZFlJbbO8gVWDD6POpyMTYahmpyFKPPKnI3MI5cv0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dXyOdUxWfn0O+PQjrQWKaxrLPwRVtJG7hq9eSm0P6D9Lvs6Ij0dcnP9WNMq2DietmwlARoFWEENJhbXwncXAMQ0oWNoAY9RZtafD0clWm3x6glzpWyeL0U5XQCKhfVgrwkOMBXPMK4Lh1FFnlCsdu1/hgzNeOuJB2b8CYXNG+9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aluGZemL; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <85c18336-f029-457c-ad75-ab15e05050ee@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747922340;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JfrNA2h8hoGkFc6ifKeWxZfX62Ca0zc75XtAmNAQVYc=;
-	b=aluGZemLvtjhu5NzJhDxB1gLzpUuYUkED7TS83WodjXzigil4zgly0i3wZAE0Vyo3857Bb
-	1HfsO0l3tyFU7EIcFjVSwP7kcKjnyZlrEu2yCzTmc9fz7BkShJlmvxzMN3hqzyv1SsnlsD
-	FodZEs9hKRLdC6XPoc+Y3sZgosxGaCM=
-Date: Thu, 22 May 2025 21:58:41 +0800
+	s=arc-20240116; t=1747922464; c=relaxed/simple;
+	bh=3JzNh4XaOmJeSctKDFPAISlkbTaeCwFwhtXzxqm1R74=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KAHRDXA380xQzuWiqaMZchxmm0XafdeNTEdCiyqmlVv6cp5Au4MzcEAGGdTVr7ZpAnijwqkJSn2CLpyX83oErsJo2T3+LPWxSSif3fKDrViYyQl6dRNmkXGWKG96QoxyqlWGsl//ThlR0WXMxrDsmOisggLqNwvBbHEABJGK+dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 22 May
+ 2025 17:00:55 +0300
+Received: from localhost (10.0.253.101) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 22 May
+ 2025 17:00:54 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Hillf Danton
+	<hdanton@sina.com>, <syzbot+b466336413a1fba398a5@syzkaller.appspotmail.com>
+Subject: [PATCH] media: usb: siano: do not free urb-specific transfer buffer
+Date: Thu, 22 May 2025 17:00:47 +0300
+Message-ID: <20250522140048.2811356-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RESEND PATCH 1/1] netfilter: load nf_log_syslog on enabling
- nf_conntrack_log_invalid
-Content-Language: en-US
-To: Florian Westphal <fw@strlen.de>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, Lance Yang
- <ioworker0@gmail.com>, kadlec@netfilter.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- coreteam@netfilter.org, linux-kernel@vger.kernel.org,
- netfilter-devel@vger.kernel.org, Zi Li <zi.li@linux.dev>
-References: <20250514053751.2271-1-lance.yang@linux.dev>
- <aC2lyYN72raND8S0@calendula> <aC23TW08pieLxpsf@strlen.de>
- <6f35a7af-bae7-472d-8db6-7d33fb3e5a96@linux.dev> <aC4aNCpZMoYJ7R02@strlen.de>
- <1c21a452-e1f4-42e0-93c0-0c49e4612dcd@linux.dev> <aC7Fg0KGari3NQ3Z@strlen.de>
- <ac51507e-28ca-404d-a784-7cc3721ee624@linux.dev>
- <0e89bc09-c0ee-49d0-bbde-430cca361fd6@linux.dev> <aC8keoPd6oj4-zIV@strlen.de>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <aC8keoPd6oj4-zIV@strlen.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
+Since siano driver uses separately allocated buffers for urb tranfers,
+such as smscore_buffer_t *cb, and deals with them accordingly
+via calls to smscore_putbuffer() in smsusb_stop_streaming(), there is
+no need to attempt to free urb->transfer_buffer by adding a
+URB_FREE_BUFFER to urb transfer flags. As syzkaller shows, it triggers
+a warning which will bring about proper crash on systems with
+'panic_on_warn' set.
 
+Therefore, skip the flag setting step to fix the issue. This change
+was tested exclusively with syz-repros and KMEMLEAK sanitizer.
 
-On 2025/5/22 21:19, Florian Westphal wrote:
-> Lance Yang <lance.yang@linux.dev> wrote:
->> Does this helper look correct?
-> 
-> Yes, but ...
->> /**
->>    * nf_log_is_registered - Check if NF_LOG is registered for a protocol
->>    * family
->>    *
->>    * @pf: protocol family (e.g., NFPROTO_IPV4)
->>    *
->>    * Returns true if NF_LOG is registered, false otherwise.
->>    */
->> bool nf_log_is_registered(int pf)
->> {
->>           struct nf_logger *logger;
->>
->>           logger = nf_logger_find_get(pf, NF_LOG_TYPE_LOG);
->>           if (logger) {
->>                   nf_logger_put(pf, NF_LOG_TYPE_LOG);
->>                   return true;
->>           }
->>
->>           logger = nf_logger_find_get(pf, NF_LOG_TYPE_ULOG);
->>           if (logger) {
->>                   nf_logger_put(pf, NF_LOG_TYPE_ULOG);
->>                   return true;
->>           }
->>
->>           return false;
->> }
-> 
-> Why not simply do:
-> 
-> bool nf_log_is_registered(int pf)
-> {
-> 	int i;
-> 
-> 	for (i = 0; i < NF_LOG_TYPE_MAX; i++) {
-> 		if (rcu_access_pointer(loggers[pf][i]))
-> 			return true;
-> 	}
-> 
-> 	return false;
-> }
+The idea for this patch was originally devised by Hillf Danton.
 
-Yeah, it's simpler and better. Thanks!
+Suggested-by: Hillf Danton <hdanton@sina.com>
+Reported-by: syzbot+b466336413a1fba398a5@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=b466336413a1fba398a5
+Fixes: 564246fd3ff4 ("media: siano: Fix coherent memory allocation failure on arm64")
+Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+---
+ drivers/media/usb/siano/smsusb.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/media/usb/siano/smsusb.c b/drivers/media/usb/siano/smsusb.c
+index 2c8179a84991..a78b1c233aad 100644
+--- a/drivers/media/usb/siano/smsusb.c
++++ b/drivers/media/usb/siano/smsusb.c
+@@ -168,7 +168,6 @@ static int smsusb_submit_urb(struct smsusb_device_t *dev,
+ 		smsusb_onresponse,
+ 		surb
+ 	);
+-	surb->urb->transfer_flags |= URB_FREE_BUFFER;
+ 
+ 	return usb_submit_urb(surb->urb, GFP_ATOMIC);
+ }
 
