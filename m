@@ -1,392 +1,336 @@
-Return-Path: <linux-kernel+bounces-659582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 144F0AC1246
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:39:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50AD0AC1249
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66BAB7AE505
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:38:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1FD25020ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2811A239A;
-	Thu, 22 May 2025 17:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3258191484;
+	Thu, 22 May 2025 17:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OPMm+v0C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rv0IiaOj"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E43E198E75;
-	Thu, 22 May 2025 17:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F1E17C21B
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 17:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747935563; cv=none; b=Nm5WZtUkFPR1Yd2rKssWYVzb2f3i9M4MP818C1rZqdQpE/V/1CUK8i62Qogs8pOQy8nVvKh6u5VqQbRWq3qmIOfaBNLRUoN5ENXW1OmyKBSAWYGMy6L3rYga7GP3VyMeK1JbtllLdZkAMD6SDZxPZMWyEwR1myLV6Oo3br0na58=
+	t=1747935640; cv=none; b=UvtWvD+mvap6b09KJfhOoPzCJw8NY7p4ql0Hi21d56XFTeD3Px6qHsU5VrUxio/RfEiuLO15Seeg8iMJs71G1tc0gAeeAEA3E9OfNhJ/cb+XfZWsS95I8RJ0A7Belx8mirhQQoZxjC9XZhUztI0qMRwoiNnGtNbzcjx/ZYD8rZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747935563; c=relaxed/simple;
-	bh=cHjqIjTqNNckbvYuzAVxs6zjA2YNzuxtFHwb8hivo1k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lYIqPqazgZz9xuQta+Qh1XtYs9+N3JN8mf7BxiRMWY8090L5/WHtiZGgbucZTV0xEwGzRkIlsjMTiON18H8MUHcAgN2v5VZaPjxcU0qmtYB+TgweKS1gdx/xLt2PwgQULBhat4n0GnQWEBg8ASAtPOawHAyXzHL6VKP4Dfdo49M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OPMm+v0C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03F50C4CEF5;
-	Thu, 22 May 2025 17:39:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747935561;
-	bh=cHjqIjTqNNckbvYuzAVxs6zjA2YNzuxtFHwb8hivo1k=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=OPMm+v0Cnq0C5+AAGfHtutPNGqMIJn+4/l/UdX/Q2R9bl1e45NmHuqeF6fHMXyzN8
-	 4e7pZRBsHnxPafCEenbO6z2uwnDjOcJLAXUwo1vKCE1Am9O99ThZB+0mXsJn2UzQIR
-	 03Ss1Ic7s+QV+lcBt6VWtat59crRNvNSqV5mSBOaa/pq3dS0Kd7OXe2b0FKOXp0kB6
-	 AHnaAO34cV/PJ0d9peSoSZdqRINPP1gcrSTdvrE8kc2PL4MUz4x2bhTQJu9PfAPWL+
-	 y6yXSQS+HsFo+0ZQkN9Yn/eGxE1hU/OeyKUFP+oPePWcGYMznHk7vcF3w3ioA44xKb
-	 zpNnubg0KoRAw==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 22 May 2025 18:38:53 +0100
-Subject: [PATCH 4/4] selftests/mm: Fix test result reporting in
- gup_longterm
+	s=arc-20240116; t=1747935640; c=relaxed/simple;
+	bh=r2zi+wiXqzho98Wh9xu654BzSxOXnnRYOJ2MYF3q6HU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P4b0LlHJFTydvW178yzzaLPJOnqTwhc+9o4diI5eWR+/UutsknvQTs0y+hTZ6fcyPBy8reVGOkQ+xN4P/chthU9q8ySYhuxuOiNFFbGG7yT5CcW3ztGvhfr3DY3rebflzZcNt9MFMgdo84Rn0tw1rxHFTRVXUKd6NyMNuc/Ve6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rv0IiaOj; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b0b2d0b2843so6120698a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 10:40:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747935637; x=1748540437; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GzWx6399FL6U++eqgzqXfd1y7VHTUn8Bi5azs/ECv78=;
+        b=Rv0IiaOjRrv0Fj40nZVsEcepM7BYA/HF80yuQYvJNFbOLHixVMbzInRcKfF59hnI88
+         y9GjzKJdqrHgHxs1HNj6cMJL5k0ffMqnWlIfVB+7UvPYBQweh/ay54RBHGp4FbxEXN5f
+         JxU1+Jfrp2OAS7OxTsakCrCwjCFu14coNDOF528xQqk6bFuA4cgHv8L4oN5Jc9D/hkX+
+         ZWm/4M4qt38UlNvjwVQNIEpqJenDR7EgweLXutI6lqW1WMqvdwcOjATYJHX+s8/+hAIC
+         YMxfjOlChoYGeONY8R1fMNyuA4lFw3p0bDez/cAWDjtAiETYiYnne2UnBPkr+JzzxGx5
+         itgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747935637; x=1748540437;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GzWx6399FL6U++eqgzqXfd1y7VHTUn8Bi5azs/ECv78=;
+        b=vqg8Iwc6CghoxR4K46WkkKC40RxoNJCZO+locLJwFKjdYTfrctQmNwAam/3wuvpYQl
+         n2VzT8F8J1Dk6Hs3rWyByf7/NxGZxj8vwrhkIskWK24FQsaX0n21bI43wzwelUJoDOff
+         +QKcPj53L2KLCp462teuGcJtr4FBcGCx/4qiqe6J+Euc2A9MEmZz0TwWvdfWmpWO72PP
+         EzQp5lKo9nkMik5Tap2pbfxowPvbIvzy4oaFoxCiHtsQ7jn/deGDWmeATzFdSSdWyHwW
+         rhBoW4NUuuiz53xnqubKF1jAdQoXuYJ/r5gIDvfoFM5lG683Brw9elv6A1LT/WcQCPgI
+         bzaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCA5vGFYQF1x43+Mez3Sb/jymoghHaxT1O8hFCMO70LFEMF75WGmBWIjyICl3H6sXTkYcz2WP5weovajE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3Xpkgo6AJTaJQFQKNHGdyiXumr0BUgHsTDvR/0O71cpGYYTGA
+	ULhANL5fshGlhgUnNlHsXaGQVSlqJc3JpnbmNU3GCaMKcMgsbPNXh4crhkKJZu8WoId5emg5n8l
+	pcqHU6cGIEdpr076jnXE11AxRSmTQsN/Rag==
+X-Gm-Gg: ASbGnctN7fEjcTchtpVBvKD+8nUOfbWKBTRnzg6MkJ51DcXApSYrDndUK0DKb6cxvR8
+	GfaH58L5hr0/uiWK3kQrDijGYZPxrWExy7HuMHkFJaYC2E1Carvo/fTWSpjagGVqPtACph/id8i
+	k8ye3lRdARX8M+8G1gnH8wR7D3ximMFTOXo5o93O+KGw==
+X-Google-Smtp-Source: AGHT+IFG+lEV34BosOenMIYGBjPspXtvy/Kp3R9utgl1DKTRoXOAgDJYvMOXEUtjhmUmh+De2N6TZKc159q8Ix2mY5o=
+X-Received: by 2002:a17:902:c951:b0:220:c911:3f60 with SMTP id
+ d9443c01a7336-231d454eb37mr322080845ad.47.1747935637267; Thu, 22 May 2025
+ 10:40:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250522-selftests-mm-cow-dedupe-v1-4-713cee2fdd6d@kernel.org>
-References: <20250522-selftests-mm-cow-dedupe-v1-0-713cee2fdd6d@kernel.org>
-In-Reply-To: <20250522-selftests-mm-cow-dedupe-v1-0-713cee2fdd6d@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9917; i=broonie@kernel.org;
- h=from:subject:message-id; bh=cHjqIjTqNNckbvYuzAVxs6zjA2YNzuxtFHwb8hivo1k=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoL2E9Z3GLvXX9j/Zj6pEPY2WH14S5p6WXILcc5xZG
- LZTnACWJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaC9hPQAKCRAk1otyXVSH0E1wB/
- 9H9L+ofO7mB7KQHgFVq4IYJkW1aqTTPwMDZjTc/HvZmislDF7jBRyHsv5YD0/HagCbRTp6Y8lIB0G/
- lBY4iVg1uhtjIzdMepIYj6/PsyK193og0OAe7h60Au4Tznz5a/IUYLHShC4+HW4e6lXD9knCmVlGDP
- EQIGTj4fqVxKwqdU7cwGKnhjz1VGT8dbqxY3VzBLQnhwo3zP/VBtU5QQrxsxSs1t8sc7eYQDdhI8kY
- b97E0V/1Y+i9cHfkwFVBLer41yWIKysF2Ejgi+Ue45KPImIDAC1MB7LX3+a4b1WhjEbvwbXwTukvoU
- 6OxbzxrOfUDfMb9pAsLD0x7nc256x1
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20250410070526.3160847-1-cyrilbur@tenstorrent.com>
+ <20250410070526.3160847-2-cyrilbur@tenstorrent.com> <d09e80c2-024c-4fe0-b71e-6af88e239ea9@ghiti.fr>
+ <145b6e37-bbb3-47ec-b9dc-3450a7f3da2b@codethink.co.uk> <923f3653-3df6-4587-aef1-c449f0fa3377@sifive.com>
+ <ea862473-8e8d-4d1b-8236-f8ce75d2589f@ghiti.fr>
+In-Reply-To: <ea862473-8e8d-4d1b-8236-f8ce75d2589f@ghiti.fr>
+From: Andy Chiu <andybnac@gmail.com>
+Date: Fri, 23 May 2025 01:40:25 +0800
+X-Gm-Features: AX0GCFsImY46t7wI9z4D6gsrW7WYSsyne3E5-77rqZ5ucak7LHSHGIudzV-e5To
+Message-ID: <CAFTtA3NXatSV91_iAqj5+vxnMi14+TFNSET6Pm-UY7YrhspAfw@mail.gmail.com>
+Subject: Re: [PATCH v6 1/5] riscv: save the SR_SUM status over switches
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Samuel Holland <samuel.holland@sifive.com>, Ben Dooks <ben.dooks@codethink.co.uk>, 
+	palmer@dabbelt.com, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, jszhang@kernel.org, 
+	syzbot+e74b94fe601ab9552d69@syzkaller.appspotmail.com, 
+	Cyril Bur <cyrilbur@tenstorrent.com>, aou@eecs.berkeley.edu, paul.walmsley@sifive.com, 
+	charlie@rivosinc.com, jrtc27@jrtc27.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The kselftest framework uses the string logged when a test result is
-reported as the unique identifier for a test, using it to track test
-results between runs. The gup_longterm test fails to follow this
-pattern, it runs a single test function repeatedly with various
-parameters but each result report is a string logging an error message
-which is fixed between runs.
+Hi Samuel and Alex,
 
-Since the code already logs each test uniquely before it starts refactor
-to also print this to a buffer, then use that name as the test result.
-This isn't especially pretty but is relatively straightforward and is a
-great help to tooling.
+On Wed, May 21, 2025 at 10:35=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wr=
+ote:
+>
+> Hi Samuel,
+>
+> On 5/21/25 15:38, Samuel Holland wrote:
+> > Hi Alex, Ben,
+> >
+> > On 2025-05-21 3:26 AM, Ben Dooks wrote:
+> >> On 22/04/2025 11:22, Alexandre Ghiti wrote:
+> >>> Hi Cyril,
+> >>>
+> >>> On 10/04/2025 09:05, Cyril Bur wrote:
+> >>>> From: Ben Dooks <ben.dooks@codethink.co.uk>
+> >>>>
+> >>>> When threads/tasks are switched we need to ensure the old execution'=
+s
+> >>>> SR_SUM state is saved and the new thread has the old SR_SUM state
+> >>>> restored.
+> >>>>
+> >>>> The issue was seen under heavy load especially with the syz-stress t=
+ool
+> >>>> running, with crashes as follows in schedule_tail:
+> >>>>
+> >>>> Unable to handle kernel access to user memory without uaccess routin=
+es
+> >>>> at virtual address 000000002749f0d0
+> >>>> Oops [#1]
+> >>>> Modules linked in:
+> >>>> CPU: 1 PID: 4875 Comm: syz-executor.0 Not tainted
+> >>>> 5.12.0-rc2-syzkaller-00467-g0d7588ab9ef9 #0
+> >>>> Hardware name: riscv-virtio,qemu (DT)
+> >>>> epc : schedule_tail+0x72/0xb2 kernel/sched/core.c:4264
+> >>>>    ra : task_pid_vnr include/linux/sched.h:1421 [inline]
+> >>>>    ra : schedule_tail+0x70/0xb2 kernel/sched/core.c:4264
+> >>>> epc : ffffffe00008c8b0 ra : ffffffe00008c8ae sp : ffffffe025d17ec0
+> >>>>    gp : ffffffe005d25378 tp : ffffffe00f0d0000 t0 : 0000000000000000
+> >>>>    t1 : 0000000000000001 t2 : 00000000000f4240 s0 : ffffffe025d17ee0
+> >>>>    s1 : 000000002749f0d0 a0 : 000000000000002a a1 : 0000000000000003
+> >>>>    a2 : 1ffffffc0cfac500 a3 : ffffffe0000c80cc a4 : 5ae9db91c19bbe00
+> >>>>    a5 : 0000000000000000 a6 : 0000000000f00000 a7 : ffffffe000082eba
+> >>>>    s2 : 0000000000040000 s3 : ffffffe00eef96c0 s4 : ffffffe022c77fe0
+> >>>>    s5 : 0000000000004000 s6 : ffffffe067d74e00 s7 : ffffffe067d74850
+> >>>>    s8 : ffffffe067d73e18 s9 : ffffffe067d74e00 s10: ffffffe00eef96e8
+> >>>>    s11: 000000ae6cdf8368 t3 : 5ae9db91c19bbe00 t4 : ffffffc4043cafb2
+> >>>>    t5 : ffffffc4043cafba t6 : 0000000000040000
+> >>>> status: 0000000000000120 badaddr: 000000002749f0d0 cause:
+> >>>> 000000000000000f
+> >>>> Call Trace:
+> >>>> [<ffffffe00008c8b0>] schedule_tail+0x72/0xb2 kernel/sched/core.c:426=
+4
+> >>>> [<ffffffe000005570>] ret_from_exception+0x0/0x14
+> >>>> Dumping ftrace buffer:
+> >>>>      (ftrace buffer empty)
+> >>>> ---[ end trace b5f8f9231dc87dda ]---
+> >>>>
+> >>>> The issue comes from the put_user() in schedule_tail
+> >>>> (kernel/sched/core.c) doing the following:
+> >>>>
+> >>>> asmlinkage __visible void schedule_tail(struct task_struct *prev)
+> >>>> {
+> >>>> ...
+> >>>>           if (current->set_child_tid)
+> >>>>                   put_user(task_pid_vnr(current), current->set_child=
+_tid);
+> >>>> ...
+> >>>> }
+> >>>>
+> >>>> the put_user() macro causes the code sequence to come out as follows=
+:
+> >>>>
+> >>>> 1:    __enable_user_access()
+> >>>> 2:    reg =3D task_pid_vnr(current);
+> >>>> 3:    *current->set_child_tid =3D reg;
+> >>>> 4:    __disable_user_access()
+> >>>>
+> >>>> The problem is that we may have a sleeping function as argument whic=
+h
+> >>>> could clear SR_SUM causing the panic above. This was fixed by
+> >>>> evaluating the argument of the put_user() macro outside the user-ena=
+bled
+> >>>> section in commit 285a76bb2cf5 ("riscv: evaluate put_user() arg befo=
+re
+> >>>> enabling user access")"
+> >>>>
+> >>>> In order for riscv to take advantage of unsafe_get/put_XXX() macros =
+and
+> >>>> to avoid the same issue we had with put_user() and sleeping function=
+s we
+> >>>> must ensure code flow can go through switch_to() from within a regio=
+n of
+> >>>> code with SR_SUM enabled and come back with SR_SUM still enabled. Th=
+is
+> >>>> patch addresses the problem allowing future work to enable full use =
+of
+> >>>> unsafe_get/put_XXX() macros without needing to take a CSR bit flip c=
+ost
+> >>>> on every access. Make switch_to() save and restore SR_SUM.
+> >>>>
+> >>>> Reported-by: syzbot+e74b94fe601ab9552d69@syzkaller.appspotmail.com
+> >>>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> >>>> Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
+> >>>> ---
+> >>>>    arch/riscv/include/asm/processor.h | 1 +
+> >>>>    arch/riscv/kernel/asm-offsets.c    | 5 +++++
+> >>>>    arch/riscv/kernel/entry.S          | 8 ++++++++
+> >>>>    3 files changed, 14 insertions(+)
+> >>>>
+> >>>> diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include=
+/ asm/
+> >>>> processor.h
+> >>>> index 5f56eb9d114a..58fd11c89fe9 100644
+> >>>> --- a/arch/riscv/include/asm/processor.h
+> >>>> +++ b/arch/riscv/include/asm/processor.h
+> >>>> @@ -103,6 +103,7 @@ struct thread_struct {
+> >>>>        struct __riscv_d_ext_state fstate;
+> >>>>        unsigned long bad_cause;
+> >>>>        unsigned long envcfg;
+> >>>> +    unsigned long status;
+> >>>>        u32 riscv_v_flags;
+> >>>>        u32 vstate_ctrl;
+> >>>>        struct __riscv_v_ext_state vstate;
+> >>>> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm=
+- offsets.c
+> >>>> index 16490755304e..969c65b1fe41 100644
+> >>>> --- a/arch/riscv/kernel/asm-offsets.c
+> >>>> +++ b/arch/riscv/kernel/asm-offsets.c
+> >>>> @@ -34,6 +34,7 @@ void asm_offsets(void)
+> >>>>        OFFSET(TASK_THREAD_S9, task_struct, thread.s[9]);
+> >>>>        OFFSET(TASK_THREAD_S10, task_struct, thread.s[10]);
+> >>>>        OFFSET(TASK_THREAD_S11, task_struct, thread.s[11]);
+> >>>> +    OFFSET(TASK_THREAD_STATUS, task_struct, thread.status);
+> >>>>        OFFSET(TASK_TI_CPU, task_struct, thread_info.cpu);
+> >>>>        OFFSET(TASK_TI_PREEMPT_COUNT, task_struct, thread_info.preemp=
+t_count);
+> >>>> @@ -346,6 +347,10 @@ void asm_offsets(void)
+> >>>>              offsetof(struct task_struct, thread.s[11])
+> >>>>            - offsetof(struct task_struct, thread.ra)
+> >>>>        );
+> >>>> +    DEFINE(TASK_THREAD_STATUS_RA,
+> >>>> +          offsetof(struct task_struct, thread.status)
+> >>>> +        - offsetof(struct task_struct, thread.ra)
+> >>>> +    );
+> >>>>        DEFINE(TASK_THREAD_F0_F0,
+> >>>>              offsetof(struct task_struct, thread.fstate.f[0])
+> >>>> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> >>>> index 33a5a9f2a0d4..00bd0de9faa2 100644
+> >>>> --- a/arch/riscv/kernel/entry.S
+> >>>> +++ b/arch/riscv/kernel/entry.S
+> >>>> @@ -397,9 +397,17 @@ SYM_FUNC_START(__switch_to)
+> >>>>        REG_S s9,  TASK_THREAD_S9_RA(a3)
+> >>>>        REG_S s10, TASK_THREAD_S10_RA(a3)
+> >>>>        REG_S s11, TASK_THREAD_S11_RA(a3)
+> >>>> +
+> >>>> +    /* save the user space access flag */
+> >>>> +    li    s0, SR_SUM
+> >>>
+> >>> This is not needed anymore ^ but I'll remove it when merging your pat=
+chset.
+> >>>
+> >> Could you be more specific about what "this" is?
+> >>
+> >> If we don't save/restore the SR_SUM bit I think our old friend
+> >> the sched_tail bug will just return.
+> > I think Alex is saying the `li` instruction above is not needed because=
+ s0 is
+> > unused. But instead I think there is an `and` instruction missing here.=
+ The
+> > patch as merged ORs the entirety of the old sstatus with the new sstatu=
+s, not
+> > just the SUM bit, which seems extremely dangerous.
+>
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/mm/gup_longterm.c | 150 +++++++++++++++++++-----------
- 1 file changed, 94 insertions(+), 56 deletions(-)
+Thanks for noticing this. I've also spent a bit of time pondering...
 
-diff --git a/tools/testing/selftests/mm/gup_longterm.c b/tools/testing/selftests/mm/gup_longterm.c
-index e60e62809186..f84ea97c2543 100644
---- a/tools/testing/selftests/mm/gup_longterm.c
-+++ b/tools/testing/selftests/mm/gup_longterm.c
-@@ -93,33 +93,48 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
- 	__fsword_t fs_type = get_fs_type(fd);
- 	bool should_work;
- 	char *mem;
-+	int result = KSFT_PASS;
- 	int ret;
- 
-+	if (fd < 0) {
-+		result = KSFT_FAIL;
-+		goto report;
-+	}
-+
- 	if (ftruncate(fd, size)) {
- 		if (errno == ENOENT) {
- 			skip_test_dodgy_fs("ftruncate()");
- 		} else {
--			ksft_test_result_fail("ftruncate() failed (%s)\n", strerror(errno));
-+			ksft_print_msg("ftruncate() failed (%s)\n",
-+				       strerror(errno));
-+			result = KSFT_FAIL;
-+			goto report;
- 		}
- 		return;
- 	}
- 
- 	if (fallocate(fd, 0, 0, size)) {
--		if (size == pagesize)
--			ksft_test_result_fail("fallocate() failed (%s)\n", strerror(errno));
--		else
--			ksft_test_result_skip("need more free huge pages\n");
--		return;
-+		if (size == pagesize) {
-+			ksft_print_msg("fallocate() failed (%s)\n", strerror(errno));
-+			result = KSFT_FAIL;
-+		} else {
-+			ksft_print_msg("need more free huge pages\n");
-+			result = KSFT_SKIP;
-+		}
-+		goto report;
- 	}
- 
- 	mem = mmap(NULL, size, PROT_READ | PROT_WRITE,
- 		   shared ? MAP_SHARED : MAP_PRIVATE, fd, 0);
- 	if (mem == MAP_FAILED) {
--		if (size == pagesize || shared)
--			ksft_test_result_fail("mmap() failed (%s)\n", strerror(errno));
--		else
--			ksft_test_result_skip("need more free huge pages\n");
--		return;
-+		if (size == pagesize || shared) {
-+			ksft_print_msg("mmap() failed (%s)\n", strerror(errno));
-+			result = KSFT_FAIL;
-+		} else {
-+			ksft_print_msg("need more free huge pages\n");
-+			result = KSFT_SKIP;
-+		}
-+		goto report;
- 	}
- 
- 	/* Fault in the page such that GUP-fast can pin it directly. */
-@@ -134,7 +149,8 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
- 		 */
- 		ret = mprotect(mem, size, PROT_READ);
- 		if (ret) {
--			ksft_test_result_fail("mprotect() failed (%s)\n", strerror(errno));
-+			ksft_print_msg("mprotect() failed (%s)\n", strerror(errno));
-+			result = KSFT_FAIL;
- 			goto munmap;
- 		}
- 		/* FALLTHROUGH */
-@@ -147,12 +163,14 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
- 				type == TEST_TYPE_RW_FAST;
- 
- 		if (gup_fd < 0) {
--			ksft_test_result_skip("gup_test not available\n");
-+			ksft_print_msg("gup_test not available\n");
-+			result = KSFT_SKIP;
- 			break;
- 		}
- 
- 		if (rw && shared && fs_is_unknown(fs_type)) {
--			ksft_test_result_skip("Unknown filesystem\n");
-+			ksft_print_msg("Unknown filesystem\n");
-+			result = KSFT_SKIP;
- 			return;
- 		}
- 		/*
-@@ -169,14 +187,19 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
- 		args.flags |= rw ? PIN_LONGTERM_TEST_FLAG_USE_WRITE : 0;
- 		ret = ioctl(gup_fd, PIN_LONGTERM_TEST_START, &args);
- 		if (ret && errno == EINVAL) {
--			ksft_test_result_skip("PIN_LONGTERM_TEST_START failed (EINVAL)n");
-+			ksft_print_msg("PIN_LONGTERM_TEST_START failed (EINVAL)n");
-+			result = KSFT_SKIP;
- 			break;
- 		} else if (ret && errno == EFAULT) {
--			ksft_test_result(!should_work, "Should have failed\n");
-+			if (should_work)
-+				result = KSFT_FAIL;
-+			else
-+				result = KSFT_PASS;
- 			break;
- 		} else if (ret) {
--			ksft_test_result_fail("PIN_LONGTERM_TEST_START failed (%s)\n",
--					      strerror(errno));
-+			ksft_print_msg("PIN_LONGTERM_TEST_START failed (%s)\n",
-+				       strerror(errno));
-+			result = KSFT_FAIL;
- 			break;
- 		}
- 
-@@ -189,7 +212,10 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
- 		 * some previously unsupported filesystems, we might want to
- 		 * perform some additional tests for possible data corruptions.
- 		 */
--		ksft_test_result(should_work, "Should have worked\n");
-+		if (should_work)
-+			result = KSFT_PASS;
-+		else
-+			result = KSFT_FAIL;
- 		break;
- 	}
- #ifdef LOCAL_CONFIG_HAVE_LIBURING
-@@ -199,8 +225,9 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
- 
- 		/* io_uring always pins pages writable. */
- 		if (shared && fs_is_unknown(fs_type)) {
--			ksft_test_result_skip("Unknown filesystem\n");
--			return;
-+			ksft_print_msg("Unknown filesystem\n");
-+			result = KSFT_SKIP;
-+			goto report;
- 		}
- 		should_work = !shared ||
- 			      fs_supports_writable_longterm_pinning(fs_type);
-@@ -208,8 +235,9 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
- 		/* Skip on errors, as we might just lack kernel support. */
- 		ret = io_uring_queue_init(1, &ring, 0);
- 		if (ret < 0) {
--			ksft_test_result_skip("io_uring_queue_init() failed (%s)\n",
--					      strerror(-ret));
-+			ksft_print_msg("io_uring_queue_init() failed (%s)\n",
-+				       strerror(-ret));
-+			result = KSFT_SKIP;
- 			break;
- 		}
- 		/*
-@@ -222,17 +250,28 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
- 		/* Only new kernels return EFAULT. */
- 		if (ret && (errno == ENOSPC || errno == EOPNOTSUPP ||
- 			    errno == EFAULT)) {
--			ksft_test_result(!should_work, "Should have failed (%s)\n",
--					 strerror(errno));
-+			if (should_work) {
-+				ksft_print_msg("Should have failed (%s)\n",
-+					       strerror(errno));
-+				result = KSFT_FAIL;
-+			} else {
-+				result = KSFT_PASS;
-+			}
- 		} else if (ret) {
- 			/*
- 			 * We might just lack support or have insufficient
- 			 * MEMLOCK limits.
- 			 */
--			ksft_test_result_skip("io_uring_register_buffers() failed (%s)\n",
--					      strerror(-ret));
-+			ksft_print_msg("io_uring_register_buffers() failed (%s)\n",
-+				       strerror(-ret));
-+			result = KSFT_SKIP;
- 		} else {
--			ksft_test_result(should_work, "Should have worked\n");
-+			if (should_work) {
-+				result = KSFT_PASS;
-+			} else {
-+				ksft_print_msg("Should have worked\n");
-+				result = KSFT_FAIL;
-+			}
- 			io_uring_unregister_buffers(&ring);
- 		}
- 
-@@ -246,6 +285,8 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
- 
- munmap:
- 	munmap(mem, size);
-+report:
-+	log_test_result(result);
- }
- 
- typedef void (*test_fn)(int fd, size_t size);
-@@ -254,13 +295,11 @@ static void run_with_memfd(test_fn fn, const char *desc)
- {
- 	int fd;
- 
--	ksft_print_msg("[RUN] %s ... with memfd\n", desc);
-+	log_test_start("%s ... with memfd", desc);
- 
- 	fd = memfd_create("test", 0);
--	if (fd < 0) {
--		ksft_test_result_fail("memfd_create() failed (%s)\n", strerror(errno));
--		return;
--	}
-+	if (fd < 0)
-+		ksft_print_msg("memfd_create() failed (%s)\n", strerror(errno));
- 
- 	fn(fd, pagesize);
- 	close(fd);
-@@ -271,23 +310,23 @@ static void run_with_tmpfile(test_fn fn, const char *desc)
- 	FILE *file;
- 	int fd;
- 
--	ksft_print_msg("[RUN] %s ... with tmpfile\n", desc);
-+	log_test_start("%s ... with tmpfile", desc);
- 
- 	file = tmpfile();
- 	if (!file) {
--		ksft_test_result_fail("tmpfile() failed (%s)\n", strerror(errno));
--		return;
--	}
--
--	fd = fileno(file);
--	if (fd < 0) {
--		ksft_test_result_fail("fileno() failed (%s)\n", strerror(errno));
--		goto close;
-+		ksft_print_msg("tmpfile() failed (%s)\n", strerror(errno));
-+		fd = -1;
-+	} else {
-+		fd = fileno(file);
-+		if (fd < 0) {
-+			ksft_print_msg("fileno() failed (%s)\n", strerror(errno));
-+		}
- 	}
- 
- 	fn(fd, pagesize);
--close:
--	fclose(file);
-+
-+	if (file)
-+		fclose(file);
- }
- 
- static void run_with_local_tmpfile(test_fn fn, const char *desc)
-@@ -295,22 +334,22 @@ static void run_with_local_tmpfile(test_fn fn, const char *desc)
- 	char filename[] = __FILE__"_tmpfile_XXXXXX";
- 	int fd;
- 
--	ksft_print_msg("[RUN] %s ... with local tmpfile\n", desc);
-+	log_test_start("%s ... with local tmpfile", desc);
- 
- 	fd = mkstemp(filename);
--	if (fd < 0) {
--		ksft_test_result_fail("mkstemp() failed (%s)\n", strerror(errno));
--		return;
--	}
-+	if (fd < 0)
-+		ksft_print_msg("mkstemp() failed (%s)\n", strerror(errno));
- 
- 	if (unlink(filename)) {
--		ksft_test_result_fail("unlink() failed (%s)\n", strerror(errno));
--		goto close;
-+		ksft_print_msg("unlink() failed (%s)\n", strerror(errno));
-+		close(fd);
-+		fd = -1;
- 	}
- 
- 	fn(fd, pagesize);
--close:
--	close(fd);
-+
-+	if (fd >= 0)
-+		close(fd);
- }
- 
- static void run_with_memfd_hugetlb(test_fn fn, const char *desc,
-@@ -319,15 +358,14 @@ static void run_with_memfd_hugetlb(test_fn fn, const char *desc,
- 	int flags = MFD_HUGETLB;
- 	int fd;
- 
--	ksft_print_msg("[RUN] %s ... with memfd hugetlb (%zu kB)\n", desc,
-+	log_test_start("%s ... with memfd hugetlb (%zu kB)", desc,
- 		       hugetlbsize / 1024);
- 
- 	flags |= __builtin_ctzll(hugetlbsize) << MFD_HUGE_SHIFT;
- 
- 	fd = memfd_create("test", flags);
- 	if (fd < 0) {
--		ksft_test_result_skip("memfd_create() failed (%s)\n", strerror(errno));
--		return;
-+		ksft_print_msg("memfd_create() failed (%s)\n", strerror(errno));
- 	}
- 
- 	fn(fd, hugetlbsize);
+If this were an "and" instruction, I think we should rename the struct
+to "status_sum" to prevent confusions, as it only holds the SUM bit
+now. Or maybe we could create a bitfield "any only touch "and
+save/restore" the specified bit.
 
--- 
-2.39.5
+Thanks,
+Andy
 
+
+>
+> I should have checked the definition of csrs, I thought it would write
+> the csr, but you're right it ORs with the current csr value which isn't
+> good at all.
+>
+> @Cyril Can you send a patch for that? Which also removes the `li`
+> instruction that I forgot to remove :) I think we can even ask Palmer to
+> squash those fixes directly into the patch.
+>
+> Let me know if you can't do it and I'll do.
+>
+> Thanks Samuel for noticing,
+>
+> Alex
+>
+>
+> >
+> > Regards,
+> > Samuel
+> >
+> >>>> +    csrr  s1, CSR_STATUS
+> >>>> +    REG_S s1, TASK_THREAD_STATUS_RA(a3)
+> >>>> +
+> >>>>        /* Save the kernel shadow call stack pointer */
+> >>>>        scs_save_current
+> >>>>        /* Restore context from next->thread */
+> >>>> +    REG_L s0,  TASK_THREAD_STATUS_RA(a4)
+> >>>> +    csrs  CSR_STATUS, s0
+> >>>>        REG_L ra,  TASK_THREAD_RA_RA(a4)
+> >>>>        REG_L sp,  TASK_THREAD_SP_RA(a4)
+> >>>>        REG_L s0,  TASK_THREAD_S0_RA(a4)
+> >>> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> >>>
+> >>> Thanks for the multiple revisions!
+> >>>
+> >>> Alex
+> >>>
+> >>>
+> >>> _______________________________________________
+> >>> linux-riscv mailing list
+> >>> linux-riscv@lists.infradead.org
+> >>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> >>>
+> >>
+> >
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
