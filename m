@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-659837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0EFFAC158F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:36:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D6DAC1594
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D96A69E4A42
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:35:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C29B50451E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54E023CEE5;
-	Thu, 22 May 2025 20:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1F323ED76;
+	Thu, 22 May 2025 20:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="fYdRAPVX"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="M9aWZq8t"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACE4239E81
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 20:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634CD23C502
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 20:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747946142; cv=none; b=HbWLQjwodxwm++5S9Jw+zcQ2NdvGwv0TMkhdkHaensIM9I5zCpVVuuNwUk63PGkTAryRMNdeXfwyKp8TUPy40aTxRE66/CqilEF+pm88a9V3esPZATQbrhRbeDeFlXwzi+iZumdhQxzJkjEKqkzelB0EkPnJiRuYCXIoyxv53QY=
+	t=1747946143; cv=none; b=NbtnTjwEVHjAT8Ucml4AvFgjZ3Sb+6Ie3NA9cJv0fKbTw5ju2AqYR1mDfGj5UcE9ZyuuZcwyJOCIgvdBLBXTFTsUlz+s2DSaFvqgwzy3puzYe+781CnajLF/rfALAfYK7abhCdhtPgyNH8kQ7tw+OJjOwnxQdC5oRix3XFTdpi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747946142; c=relaxed/simple;
-	bh=7mDtsgyySwkRziza7x9PbAf9WF1pkgbuZLDuvpNfiiM=;
+	s=arc-20240116; t=1747946143; c=relaxed/simple;
+	bh=LSgyb36sQWDSbDvQ0g/qxWY7gx9lY/2NHbvCnZ4+FcI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nrWtM3EG39SHMfky1ca0cTrZSxG56DH6zxk6s32TV5mFJEEKTQxKBESVrX02yLb1oM92VwHJ/sX20XpMXK4Nj4heN9Cau/Pei5rqs0m4qAx4BDR01ariOuy7aWr2ECNqUOKBRad4Ic4Mu1yd5SBWGF6N1/u4hojP21dmfrQX0MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=fYdRAPVX; arc=none smtp.client-ip=209.85.216.42
+	 In-Reply-To:To:Cc; b=gbWhsjTI4f9f86YOUfN6Ug6d8h5x0V4MCLMl7c7CwzibDJgZ57K6EC9LiXOl9r2IpDZ9gEoaY//lsTZTOoCKdMtTzTOF3OoDwWjC0w6ULHfHi7yqe1NzSYl1H5c0V+QwPtZaZJlzNvlbyAT2bdgmyuzHERD/JwvNWgIATZfY69M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=M9aWZq8t; arc=none smtp.client-ip=209.85.215.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-30ea8b7c5c2so5453641a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 13:35:40 -0700 (PDT)
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-af6a315b491so6958621a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 13:35:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1747946140; x=1748550940; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1747946141; x=1748550941; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hlpsjtQ1jfPZ6A9TfjhS6qtbiSt0LuxjR82iYs+98kk=;
-        b=fYdRAPVX4NHf9fuQDtQ1lV0uf4Iuz0nTnL1SZLLWFoH3MvH3ue8MH+KFuhlM7ZzwIV
-         GJBHmHKRNDZ2meruxyVseZdDHV97In4+TX/ZSe9MJWSTme3lu9UYtCuG8+X78P81V5I3
-         EIO3Sps+CQQ6HlSIFKOOLkpJeSne4Q0P391SOhmtRupY1yBPtu3FGCy9yggatBEM+TfW
-         0VAKEyCPYWqk74l78vBVwmjXyXb3Y50YuVSIJdLl4+YVOHPOqrSET6AklZ89aAWh8n/9
-         o/LkrxEPNlnq5yKea3ko4pxP/MBfW6ZBybPjV03b2+G7RzZV3opM+gJWwW66ScNg4kmV
-         X4Sw==
+        bh=6M4N3dwNsXzDfzq+X21m8iWPwOjiKI12kvM05IYIXOY=;
+        b=M9aWZq8tsUY49L7xWKdPBnB/eJ0N6KqyQ9tbmKpcDWXZ7nsF5+OcPw/584UItwf9LE
+         QpQ6+O7PWJJs6rWsQ1dZjJKRC37YvEsnpPPqNrSNy1MvZ23M1L5yy/oTyIW0c/0HvtHr
+         uTtQCTdU52mZWTPbj1TI773F9jguTkt2YCuQG7Q3WKtzsjEzcj+HsfFZJq1RnXQ9FJiS
+         93G7y4EmgpzNsgYF92TVyQf6m9Tu6H0juziJmqtmaE9BxzuUhiiqsx0ApyamMYXkta9W
+         MdrU705hjsujviju/TzaUmUymsYh8sDXfCaqn7dmtBQCtoAhkSPuvBILXgpQQwRiyi7p
+         7UnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747946140; x=1748550940;
+        d=1e100.net; s=20230601; t=1747946141; x=1748550941;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hlpsjtQ1jfPZ6A9TfjhS6qtbiSt0LuxjR82iYs+98kk=;
-        b=ko7aKFv5fT7GrzEcCv4fQ1ryz7mHx8g2QSYFZsr/evBwn3PBo2j6arA+q0Tc07x9d7
-         4+k9udoSUuNiLX2Ny30MQHcgmFZzQomOJtvOTJFKjDPDBskL6x5XrWDIajZ3Ud+hb8on
-         bgKo2mIX/pCEauXYr3fGW4jiSlU2MGIt194wzSXU7D0rP2yjq2P+njZ/EAoMt6sdIfV9
-         pRUTk1wYdnslvcfEVAF7WlDFDI32ZVuVgz7OeItpySY2W+qPc5aT7BmcK917os4CCi2l
-         qvTF2uFGQLrmbcv4NsUWjHxMdtDYVUc21fBoI5AyfP+0T1ejKZDbXVOvhJXlsti2h1Ig
-         9BXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgI/VdePwDo/hd5C5+hQkAB2WN5zafj/noB3ovYZxwtMA1jw/arJq4khqdsqsOXSTauhrsmSasqZCjyC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxzq/sJxagknYKpUuV2qztrq+dSrU+xM5As6Fea8UJYkO4g9sC3
-	b1VE8baTD8/KchlFYDBKi7cFPo2UXeYMMdVBtx8yBuWzfn2FsHmL3W9rEP45tHC2mmw=
-X-Gm-Gg: ASbGncsXptQ0XA2fP6ZJaUGE4OkzQ4i163S/vhLhqq96aEKQnNlW+Yr6bUs5N/ssqpq
-	LSXXicZ28d0gouUGdiWF1POSAf618pu9L+Xcfk+s1jkTy33g/v8ZlabqiNgGCJ36BiJ/OfHFh3j
-	bAMLAcSf9xzvD87wyrjPUv+hccQBcVAY2uwy76RbCrfu68SOBzKph6do/IWkxO7o7WrTB1tpdUC
-	os4MwsAKWc/qWqgdMe3Xu1cQqwpv4Vla8ftavRH1g/Bwcx69Sos23gPZDG6FMviMR//VcCszHzJ
-	9QfFIsrf/TREQkPao4jXzJo1oWW7Z9NNOCoib2OMpE2e73gQAV5Ri6LwBjHcCO2Z
-X-Google-Smtp-Source: AGHT+IGCOYKh0vp5GpK/3nS4xafj8YOx8BCMj+SatngsU14XSWFqRaCBH400PBoR5UfD0rXZqAojdA==
-X-Received: by 2002:a17:90a:e706:b0:30e:5c7f:5d26 with SMTP id 98e67ed59e1d1-30e7d5aca67mr42085164a91.24.1747946139700;
-        Thu, 22 May 2025 13:35:39 -0700 (PDT)
+        bh=6M4N3dwNsXzDfzq+X21m8iWPwOjiKI12kvM05IYIXOY=;
+        b=bJ2Uvg8qGg1W3Wdgf40Qium856B3G7SXWD4wWIcBzUb4OXvZ2oNykk9/tCAd2d91mD
+         w6AyTtsFyW/gtga7ogS79IS8pMo9unD9y5cKXHtCMk9zqOG+7QQxWbpi84gbzRJS30Ih
+         j9YImwjzlwzB/Tm4HnRJESDRgp5WkotUreUdOOINHOdCYdRaM3gdV4lL4w/wvIveqd0w
+         ZDypoQ6ho1B71NCVRSe3YjFL+aZ469ykiztWc6yZFTFJ9BXPvZbL3F1gnTfdIz3NqoNa
+         SjOoxpu09SuRuoDQgppoC+CkxpZM8CfMoMUYmiEmB+mxhUU/Y3mUyVxjykuKl7VK8O5y
+         AAOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXb+8tQrUohYmMFiQbvsYGfHz62TNglfAQ5OoC+LZLtroUiUhZ+dYtSKgRHUQE+e6TVS4+2xfskJ3fTgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9YX0WfxN/A3wnIKWCdcu6MdfbH2Rcf5gjh8XbqLQv5AHfdyHu
+	UrrFQ2Mi+Yw14W2Oc9b/uj5Bsu28fQdOsJ1Oc7y/++3pB53KLtPKMF67vrPgVonUrY0=
+X-Gm-Gg: ASbGncvk0pf7BwiG404QwUr9xjyqV724mI7v8uRjx8nom3t3plxA6E/YUHb0FlpvT+t
+	Ho4qxO8gIDkk1pScOK6YD/XWmkKqhPW8DGcv+NrWMfgX1n0RJTCJImVbBPyv5qiyXs8bDOu29pc
+	cPTI2I0C5WFlFrCB2UP3SC/Bcq6RHLcRHkAEv4U8qO0g6qvQQyDjWb+Mvvy7TTY1/T06kanbsYJ
+	8OgUlIRo0NHL3YhOPo6t7AjguNDf/ksoLj5no8Ja4EdueYstXtBa7N5Im0gTg9nh01wzVEqu04u
+	i1A4gZicZsJaHGmfcurNXkZin0HMImvt0pSk4jvGpZ4LhSr6red9QLA7LxShXAtt
+X-Google-Smtp-Source: AGHT+IEPv0Jsk9/CNfphfSQDZY9W54shdTdCOSDBaPAfZ6W//0FD3oLt9iY0h2MagdZeDpunR5yq+Q==
+X-Received: by 2002:a17:902:e54e:b0:22e:4b74:5f67 with SMTP id d9443c01a7336-231de376f05mr364633155ad.31.1747946140619;
+        Thu, 22 May 2025 13:35:40 -0700 (PDT)
 Received: from atishp.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f365b229csm5932754a91.10.2025.05.22.13.35.38
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f365b229csm5932754a91.10.2025.05.22.13.35.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 13:35:39 -0700 (PDT)
+        Thu, 22 May 2025 13:35:40 -0700 (PDT)
 From: Atish Patra <atishp@rivosinc.com>
-Date: Thu, 22 May 2025 13:35:27 -0700
-Subject: [PATCH v2 3/5] RISC-V: KVM: Support lazy enabling of siselect and
- aia bits
+Date: Thu, 22 May 2025 13:35:28 -0700
+Subject: [PATCH v2 4/5] RISC-V: KVM: Enable envcfg and sstateen bits lazily
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250522-kvm_lazy_enable_stateen-v2-3-b7a84991f1c4@rivosinc.com>
+Message-Id: <20250522-kvm_lazy_enable_stateen-v2-4-b7a84991f1c4@rivosinc.com>
 References: <20250522-kvm_lazy_enable_stateen-v2-0-b7a84991f1c4@rivosinc.com>
 In-Reply-To: <20250522-kvm_lazy_enable_stateen-v2-0-b7a84991f1c4@rivosinc.com>
 To: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
@@ -94,105 +93,57 @@ Cc: kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
  Atish Patra <atishp@rivosinc.com>
 X-Mailer: b4 0.15-dev-42535
 
-Smstateen extension controls the SISELECT and SIPH/SIEH register
-through hstateen.AIA bit (58). Add lazy enabling support for those
-bits.
+SENVCFG and SSTATEEN CSRs are controlled by HSENVCFG(62) and
+SSTATEEN0(63) bits in hstateen. Enable them lazily at runtime
+instead of bootime.
 
 Signed-off-by: Atish Patra <atishp@rivosinc.com>
 ---
- arch/riscv/include/asm/kvm_aia.h | 13 ++++++++++++-
- arch/riscv/kvm/aia.c             | 34 ++++++++++++++++++++++++++++++++++
- arch/riscv/kvm/vcpu_insn.c       |  3 +++
- 3 files changed, 49 insertions(+), 1 deletion(-)
+ arch/riscv/kvm/vcpu_insn.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/arch/riscv/include/asm/kvm_aia.h b/arch/riscv/include/asm/kvm_aia.h
-index 760a1aef09f7..9e39b0e15169 100644
---- a/arch/riscv/include/asm/kvm_aia.h
-+++ b/arch/riscv/include/asm/kvm_aia.h
-@@ -142,12 +142,23 @@ int kvm_riscv_vcpu_aia_rmw_topei(struct kvm_vcpu *vcpu,
- 				 unsigned long *val,
- 				 unsigned long new_val,
- 				 unsigned long wr_mask);
-+int kvm_riscv_vcpu_aia_hstateen_enable(struct kvm_vcpu *vcpu,
-+				       unsigned int csr_num, unsigned long *val,
-+				       unsigned long new_val, unsigned long wr_mask);
-+int kvm_riscv_vcpu_aia_rmw_isel(struct kvm_vcpu *vcpu, unsigned int csr_num, unsigned long *val,
-+				unsigned long new_val, unsigned long wr_mask);
- int kvm_riscv_vcpu_aia_rmw_ireg(struct kvm_vcpu *vcpu, unsigned int csr_num,
- 				unsigned long *val, unsigned long new_val,
- 				unsigned long wr_mask);
- #define KVM_RISCV_VCPU_AIA_CSR_FUNCS \
- { .base = CSR_SIREG,      .count = 1, .func = kvm_riscv_vcpu_aia_rmw_ireg }, \
--{ .base = CSR_STOPEI,     .count = 1, .func = kvm_riscv_vcpu_aia_rmw_topei },
-+{ .base = CSR_SISELECT,   .count = 1, .func = kvm_riscv_vcpu_aia_rmw_isel }, \
-+{ .base = CSR_STOPEI,     .count = 1, .func = kvm_riscv_vcpu_aia_rmw_topei }, \
-+{ .base = CSR_STOPI,      .count = 1, .func = kvm_riscv_vcpu_aia_hstateen_enable }, \
-+
-+#define KVM_RISCV_VCPU_AIA_CSR_32BIT_FUNCS \
-+{ .base = CSR_SIPH,	  .count = 1, .func = kvm_riscv_vcpu_aia_hstateen_enable }, \
-+{ .base = CSR_SIEH,	  .count = 1, .func = kvm_riscv_vcpu_aia_hstateen_enable }, \
- 
- int kvm_riscv_vcpu_aia_update(struct kvm_vcpu *vcpu);
- void kvm_riscv_vcpu_aia_reset(struct kvm_vcpu *vcpu);
-diff --git a/arch/riscv/kvm/aia.c b/arch/riscv/kvm/aia.c
-index 1e0d2217ade7..3dfabf51a4d2 100644
---- a/arch/riscv/kvm/aia.c
-+++ b/arch/riscv/kvm/aia.c
-@@ -235,6 +235,40 @@ int kvm_riscv_vcpu_aia_set_csr(struct kvm_vcpu *vcpu,
- 	return 0;
- }
- 
-+int kvm_riscv_vcpu_aia_hstateen_enable(struct kvm_vcpu *vcpu,
-+				       unsigned int csr_num,
-+				       unsigned long *val,
-+				       unsigned long new_val,
-+				       unsigned long wr_mask)
-+{
-+	/* If AIA not available then redirect trap */
-+	if (!kvm_riscv_aia_available())
-+		return KVM_INSN_ILLEGAL_TRAP;
-+
-+	/* If AIA not initialized then forward to user space */
-+	if (!kvm_riscv_aia_initialized(vcpu->kvm))
-+		return KVM_INSN_EXIT_TO_USER_SPACE;
-+
-+	return kvm_riscv_vcpu_hstateen_lazy_enable(vcpu, csr_num, SMSTATEEN0_AIA);
-+}
-+
-+int kvm_riscv_vcpu_aia_rmw_isel(struct kvm_vcpu *vcpu,
-+				unsigned int csr_num,
-+				unsigned long *val,
-+				unsigned long new_val,
-+				unsigned long wr_mask)
-+{
-+	/* If AIA not available then redirect trap */
-+	if (!kvm_riscv_aia_available())
-+		return KVM_INSN_ILLEGAL_TRAP;
-+
-+	/* If AIA not initialized then forward to user space */
-+	if (!kvm_riscv_aia_initialized(vcpu->kvm))
-+		return KVM_INSN_EXIT_TO_USER_SPACE;
-+
-+	return kvm_riscv_vcpu_hstateen_lazy_enable(vcpu, csr_num, SMSTATEEN0_AIA_ISEL);
-+}
-+
- int kvm_riscv_vcpu_aia_rmw_topei(struct kvm_vcpu *vcpu,
- 				 unsigned int csr_num,
- 				 unsigned long *val,
 diff --git a/arch/riscv/kvm/vcpu_insn.c b/arch/riscv/kvm/vcpu_insn.c
-index 0a7e229cfd34..ef4fcb641f1c 100644
+index ef4fcb641f1c..6f2bba7533cf 100644
 --- a/arch/riscv/kvm/vcpu_insn.c
 +++ b/arch/riscv/kvm/vcpu_insn.c
-@@ -269,6 +269,9 @@ static const struct csr_func csr_funcs[] = {
+@@ -265,9 +265,37 @@ int kvm_riscv_vcpu_hstateen_lazy_enable(struct kvm_vcpu *vcpu, unsigned int csr_
+ 	return KVM_INSN_CONTINUE_SAME_SEPC;
+ }
+ 
++static int kvm_riscv_vcpu_hstateen_enable_senvcfg(struct kvm_vcpu *vcpu,
++						  unsigned int csr_num,
++						  unsigned long *val,
++						  unsigned long new_val,
++						  unsigned long wr_mask)
++{
++	return kvm_riscv_vcpu_hstateen_lazy_enable(vcpu, csr_num, SMSTATEEN0_HSENVCFG);
++}
++
++static int kvm_riscv_vcpu_hstateen_enable_stateen(struct kvm_vcpu *vcpu,
++						  unsigned int csr_num,
++						  unsigned long *val,
++						  unsigned long new_val,
++						  unsigned long wr_mask)
++{
++	const unsigned long *isa = vcpu->arch.isa;
++
++	if (riscv_isa_extension_available(isa, SMSTATEEN))
++		return kvm_riscv_vcpu_hstateen_lazy_enable(vcpu, csr_num, SMSTATEEN0_SSTATEEN0);
++	else
++		return KVM_INSN_EXIT_TO_USER_SPACE;
++}
++
++#define KVM_RISCV_VCPU_STATEEN_CSR_FUNCS \
++{ .base = CSR_SENVCFG,    .count = 1, .func = kvm_riscv_vcpu_hstateen_enable_senvcfg }, \
++{ .base = CSR_SSTATEEN0,  .count = 1, .func = kvm_riscv_vcpu_hstateen_enable_stateen },\
++
+ static const struct csr_func csr_funcs[] = {
  	KVM_RISCV_VCPU_AIA_CSR_FUNCS
  	KVM_RISCV_VCPU_HPMCOUNTER_CSR_FUNCS
++	KVM_RISCV_VCPU_STATEEN_CSR_FUNCS
  	{ .base = CSR_SEED, .count = 1, .func = seed_csr_rmw },
-+#ifdef CONFIG_32BIT
-+	KVM_RISCV_VCPU_AIA_CSR_32BIT_FUNCS
-+#endif
- };
- 
- /**
+ #ifdef CONFIG_32BIT
+ 	KVM_RISCV_VCPU_AIA_CSR_32BIT_FUNCS
 
 -- 
 2.43.0
