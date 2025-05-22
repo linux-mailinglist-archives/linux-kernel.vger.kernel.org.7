@@ -1,141 +1,168 @@
-Return-Path: <linux-kernel+bounces-659584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B7BAAC124A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:41:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 551D6AC1253
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49B63A40422
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:40:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FF407B5603
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE245195808;
-	Thu, 22 May 2025 17:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD96D1A2C06;
+	Thu, 22 May 2025 17:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YbkBSbb1"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rOe4Hinx"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D45D189F57
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 17:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A80119D8A8
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 17:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747935649; cv=none; b=c97qjdAKc7d/VQDDO/JCF4w5mYGL4N78rtOTfpWiobyQcX6OOVnF38g/lEd4m9bSs3H2jRm+o3ZR22eFvfaCaf+KBSYCbf8rNrriFkZnJnZFn1a76qIJgXz9J/CSksCDi7xEwi9V9zssm7HNyRrlMUGvs8YESNXORXuk8tL7Rok=
+	t=1747935658; cv=none; b=PTjRqqESijsxVelAkmWTqyPQMBY7+PMprsIa+KvFq9s5Jg8rUVlX4ZtiqATztz5p41dSVtKTTrWS2JjbQ7QyHth3bilKdAzjLMPFL8K18Zj9T2fWWQtygcPMiE0VY0tMAX8HElfcmOwCYjC/usTKvIMeS3R5DdtOZUnltr21Vwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747935649; c=relaxed/simple;
-	bh=2q+nvK98glNS1OrImQ40LpGSURdNbFHXEYA7zULYzG4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uo5AB/KqNmIPoiW/WNap5q3w68bDBvIfZdrcxl2Ku+l5hRtkThK9u5n3uRjQp2QYC8hQunjbG9KqjJ1Vb6rUkyfSVI/a+QOFuohQwQSGEj7WqhKiInWh+TMGr6RlnIUgF9R7uT/8VY11iRxuVELESLbN1ajZzpU5nRyM3nDYNFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YbkBSbb1; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43cf172ffe1so61804135e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 10:40:47 -0700 (PDT)
+	s=arc-20240116; t=1747935658; c=relaxed/simple;
+	bh=Gx8rat0F5gGYg4tYeBd9EDyzRXpBbhu3rhNTcZhiZH0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OFItlZKXh5gggyqlDopVBTSe4GOI3bdX17ul4svRYs5ZIPjpA8M6ObKTkVpwq4aITt566YEdHyYfvfGQ+uZGF8jBrH2G4ACGZXBdZOJKlWzqqKSd2/igEa0yEvtJrjRxfI7hbR409NrhRcT+NSsZs2dY8QB/7vmty4L7oS0tuC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rOe4Hinx; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-442e9c00bf4so61597445e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 10:40:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747935645; x=1748540445; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RztcMjTLHfY23vLuGORKKnjudgJGslj+PjsonErxbkQ=;
-        b=YbkBSbb1mEzi6aqU6gllICn+Fyw9MC9XtTaannSOalUilo+1B3IppTq4AsXtAN5BrP
-         bL5aaJJn1eWVQA/cRTBq2FQ5ngJ82ySUyrd/2QsR0Ubs7dEl3drmsdcy7evEK4ojMr1N
-         LPCu5B9Gj0DlW4hCXRv1a0QDurNAWnD6sk9NTSNQTMEFAkJ+rFkASow85obMwoQgvINS
-         sKgwpzLfoMroztM5h0bCiFzzlMY4TyDGKJGAv+33UlRwNUz3xQcBen1w7bfXPici2exb
-         SsNaAIZXS71cyJ/uALvODrgkr+wwFDM18MHe19dVxM1zckcNPuyeq66QtXrd1vo3viA2
-         bTWA==
+        d=linaro.org; s=google; t=1747935654; x=1748540454; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7NPUIJScbl2wo5u3vE+t7s0/ylzAg/M0wI+ubRZFTc8=;
+        b=rOe4HinxoTlFgGf5eDTyYcj/Zuzhla5daG70e3i2i+QZ0KOUt65ainVzvnAEyAr57l
+         /CO8JRKS7MBZwQARq4iT3IySEJ1ZqyLq/xGhAm6HPTKjx/u2ZpuXVMb6vVNQ13M1dnDi
+         Cowk2iTizfOC7e7UVGXvxj764kH0wqvXNLLarjzsnZOr/RX5uDkhA26VYCM/DgVo9X+8
+         LspNm4zF2mS4kd1li+F545nX9ZUBvCoacCxcPWxYH1gtdFv9yCQc0s6ZwYolHCZsK9b8
+         A7M+uZqTpmBfggPXXDRa7hRKhjEvTUwDq33clwvWIXiVyNpmRnF5pqjIwqgNLPR1ZR9m
+         HkNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747935645; x=1748540445;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RztcMjTLHfY23vLuGORKKnjudgJGslj+PjsonErxbkQ=;
-        b=GRpp06WiKsE3xpsUt3oJSBokeSbohjAgtIrTbIXRodXWnGZ4mz9x6FqyWNqggYkjGE
-         GDXe3SBSNBjzJ1L/z2t8VVBYlJo4SunwZXq99zWXJzDSRsmjf7oxvLrb1d6kwtVdE9r2
-         RTA3nPuiYMPSkvgqtvt4k+hP4sB3GEES5d/rMXbfm2BPT5zVogQp47DuEznKRn3CIQO9
-         MP1jaGKfd1eK+1NuaFoVyJpnRQsEYK+/u/R13ieiSbc6ppvTc/7jYy3XWRUlj0pBQ+PM
-         /y/QnqEb870CyCADB/9eXtdvhIxa3Akk/yKFh+fDAauqkcoTDgKz7LaZG9lk8Zb5h2eZ
-         6TQw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/3knXWBKeJciulVhxf+z0s6moclVcdGd7FgXFDpXWAVP9BJinY9sYWIXLeyj+ChmwXrZlQpe3APO6gu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycY8hJqjPcQxwLuuXYWbChpTxR/cSuNXaDKHlZpr9+zWfJo9L8
-	pSNJ24X60kOpl51GP8TIAuWfeI/szeMTLI4FpyV6/RCwAtXUs+OIW/9xMhB4zXbwSW5aFtbkGKc
-	aBI8cGo+o7taxsIdfYA==
-X-Google-Smtp-Source: AGHT+IF9OwV6oxhkvb6hFcvf8W+yXowqsFL3Y+t3gINXRCXBioOEg1RYheJvI1SMPeCdKIHlD7kguFPVoKDHOUE=
-X-Received: from wmbhj14.prod.google.com ([2002:a05:600c:528e:b0:442:f9ef:e460])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:37cf:b0:442:f485:6fa4 with SMTP id 5b1f17b1804b1-442ff03c45amr286843375e9.31.1747935645775;
- Thu, 22 May 2025 10:40:45 -0700 (PDT)
-Date: Thu, 22 May 2025 17:40:43 +0000
-In-Reply-To: <2025052201-return-reprogram-add9@gregkh>
+        d=1e100.net; s=20230601; t=1747935654; x=1748540454;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7NPUIJScbl2wo5u3vE+t7s0/ylzAg/M0wI+ubRZFTc8=;
+        b=e+AisF3O6ZOK/4X1UdIQ1cpgEwjpwcgYsAeXQPY063EmBUmx7+fB4iqjdOYO4NVkmu
+         lBee/Dh8WjV3NcFHcYcieWhHMfNsvhOfl94ObDuoQcupZ4JlBKDcMlfvYQAmSfnSFsAb
+         2KIpLh238Gia3hZQoIJmLzhU6iZmzGt/rnYreuyh0AKmd1aEv70qEFoPH40/9En7MYXG
+         sTEwZ7tqd2mc+mrT8X5WZ6+NU7f2tEGivpUD+OjyEKsNO/hIMqavvKtjpm/s0tvgDQcr
+         4Ogd5RWufDbRlIZSlmIDitWOyYucgorgND65Lpc4BI4gme+trp2EeUSkrbrJvddwBLfo
+         lqKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtnamJRGhq0wtvnMQqSskG2wXVFGcGMFzulEmasp07wED3tHNHAxqpnIK2GmGzwQIVlf+B+uB1kYFZmKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN4jDykCGmhMM6xamGEtfBvoOHOX8taDtutLyzw8hq7JUG89wk
+	cldlXm+E1C6HnIDXPoM9ojpg3d8RvO7LZz2O/Xpru2yp0eVcyLRKuYXYIZRu0e5ww5A=
+X-Gm-Gg: ASbGncuGdgLd2vqxh16wvh0QobF7vNMl7Bwzj5HysKFzwp50fUMDrE3rNASzbuSUY+t
+	l0MCoSe4ctjE5J2BXwnppL6lBpWRfxLJJ4iFgHljmD3nx1vMg9lNv38x/ST+6xILeemmJJPv3il
+	m3Bci3/ykwnXrv/0rTdkckzQ3b3yZrSPf/g1u/lTAq/mQCuKck575GPDWyHBpix8oqeZuJ5Pwz+
+	E2p+dlwZgXKrUhgtNLA9Z24lx895F0srRmsk7zOoPFvYwguxk/ylue4k4H4nT4DLS3WS0D4mlTG
+	Myjf+32lYGMQ4MGJrRKiLjJ+/ylw/P6jv7yr0i6LODzp0zk08VSujl3ik5M=
+X-Google-Smtp-Source: AGHT+IGGhVpRpV0KK+9csxjRQAa7427Mshc5zMSpLcRZ9lrj8a5WqdPgOzbFmkpOpGEFcPdmgHYleQ==
+X-Received: by 2002:a05:600c:c8c:b0:442:f4a3:b5ec with SMTP id 5b1f17b1804b1-442fefd5f8dmr271581325e9.4.1747935654432;
+        Thu, 22 May 2025 10:40:54 -0700 (PDT)
+Received: from orion.home ([2a02:c7c:7213:c700:6c33:c245:91e5:a9f4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f7bae847sm109563195e9.36.2025.05.22.10.40.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 10:40:53 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Subject: [PATCH v3 00/12] qrb4210-rb2: add wsa audio playback and capture
+ support
+Date: Thu, 22 May 2025 18:40:50 +0100
+Message-Id: <20250522-rb2_audio_v3-v3-0-9eeb08cab9dc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <aCRdNJ2oq-REBotd@pollux> <CAGSQo0204_Dz65G33pAN3_iY=ejPXJRdAiB4ioM-nvMkAh0YXQ@mail.gmail.com>
- <D9WM0BP5446N.1NVNDCZ4Y2QN1@kernel.org> <2025051524-festival-afterglow-8483@gregkh>
- <aCzzBT96ktapP03e@google.com> <aC2HacSU7j5d9bzu@pollux> <aC5XDi7SaDJeUaAC@google.com>
- <aC7DVewqqWIKetmk@pollux> <aC8uNmrLUSS8sxHU@google.com> <2025052201-return-reprogram-add9@gregkh>
-Message-ID: <aC9hm9D458C6LsRW@google.com>
-Subject: Re: [PATCH v5 4/4] rust: samples: Add debugfs sample
-From: Alice Ryhl <aliceryhl@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Benno Lossin <lossin@kernel.org>, 
-	Matthew Maurer <mmaurer@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
-	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKJhL2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDUyMj3aIko/jE0pTM/PgyY920tERDo5TkZDNDEwsloJaCotS0zAqwcdG
+ xtbUAU/wbnV4AAAA=
+X-Change-ID: 20250522-rb2_audio_v3-ffa12dcc6148
+To: Srinivas Kandagatla <srini@kernel.org>, Mark Brown <broonie@kernel.org>, 
+ linux-sound@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Srinivas Kandagatla <srini@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+X-Mailer: b4 0.14.2
 
-On Thu, May 22, 2025 at 04:15:46PM +0200, Greg Kroah-Hartman wrote:
-> > > Well, take the case I described above, where the debugfs "root" is created in
-> > > the module scope, but subsequent entries are created by driver instances. If a
-> > > driver would use keep() in such a case, we'd effectively the file / directory
-> > > (and subsequently also the corresponding memory) everytime a device is unplugged
-> > > (or unbound in general)."
-> > > 
-> > > If the module is built-in the directory from the module scope is *never*
-> > > removed, but the entries the driver e.g. creates in probe() for a particular
-> > > device with keep() will pile up endlessly, especially for hot-pluggable devices.
-> > > 
-> > > (It's getting even worse when there's data bound to such a leaked file, that
-> > > might even contain a vtable that is entered from any of the fops of the file.)
-> > > 
-> > > That'd be clearly a bug, but for the driver author calling keep() seems like a
-> > > valid thing to do -- to me that's clearly a built-in footgun.
-> > 
-> > I mean, for cases such as this, I could imagine that you use `keep()` on
-> > the files stored inside of the driver directory, but don't use it on the
-> > directory. That way, you only have to keep a single reference to an
-> > entire directory around, which may be more convenient.
-> 
-> No, sorry, but debugfs files are "create and forget" type of things.
-> The caller has NO reference back to the file at all in the C version,
-> let's not add that functionality back to the rust side after I spent a
-> long time removing it from the C code :)
-> 
-> If you really want to delete a debugfs file that you have created in the
-> past, then look it up and delete it with the call that is present for
-> that.
-> 
-> The only thing I think that might be worth "keeping" in some form, as an
-> object reference as discussed, is a debugfs directory.
+Rebased, updated, re-tested. This implements the playback support via the
+following path: RX1 from DSP is connected to rxmacro which communicates
+with wcd codec using soundwire. This goes into AUX input of wcd. Wcd codec
+outputs analog audio into wsa8815 amplifier. Capturing works through vamacro
+using one onboard DMIC which is directly connected to vamacro codec.
 
-That could work if we don't have any Rust value for files at all. The
-problem is that if we do have such values, then code like this:
+Changes since v2:
+-- dropped [PATCH v2 08/14] dt-bindings: arm: qcom-soc: extend pattern matching
+to support qcom,wsa881x and replaced with new one;
+-- dropped [PATCH v2 14/14] ASoC: qcom: sm8250: force single channel via RX_1 output for qrb4210
+-- reordered as suggested by Krzysztof;
+-- updates to wsa881x-common.h registers descriptions and corresponding updates
+to wsa881x-common.c (Konrad);
+-- sorted subnodes in DT alphabetically as suggested by Konrad;
+-- wsa881x bindings updates (as suggested by Krzysztof);
+-- ASoC: dt-bindings: qcom: Add SM6115 LPASS rxmacro and vamacro codecs
+is still present;
+-- added "qcom,wsa8810" compatible to wsa881x-i2c.c;
+-- wsa881x is still present in wsa881x_probe_common();
 
-let my_file = dir.create_file("my_file_name");
-dir.delete_file("my_file_name");
-my_file.do_something();
+Second version:
+https://lore.kernel.org/linux-arm-msm/20241212004727.2903846-1-alexey.klimov@linaro.org/
 
-would be a UAF on the last line. We have to design the Rust API to avoid
-such UAF, which is why I suggested the ghost objects; the delete_file()
-call leaves my_file in a valid but useless state. And as a ghost object,
-the .do_something() call becomes a no-op since the file is now missing
-from the filesystem.
+First version:
+https://lore.kernel.org/linux-sound/20241101053154.497550-1-alexey.klimov@linaro.org/
 
-Alice
+---
+Alexey Klimov (12):
+      ASoC: dt-bindings: qcom: Add SM6115 LPASS rxmacro and vamacro codecs
+      dt-bindings: arm: qcom-soc: ignore "wsa" from being selected as SoC component
+      ASoC: dt-bindings: qcom,wsa881x: extend description to analog mode
+      ASoC: codecs: lpass-rx-macro: add sm6115 compatible
+      ASoC: codecs: wsa881x: split into common and soundwire drivers
+      ASoC: codecs: add wsa881x-i2c amplifier codec driver
+      arm64: dts: qcom: sm6115: add LPASS devices
+      arm64: dts: qcom: sm4250: add description of soundwire and dmic pins
+      arm64: dts: qcom: qrb4210-rb2: add wcd937x codec support
+      arm64: dts: qcom: qrb4210-rb2: enable wsa881x amplifier
+      arm64: dts: qcom: qrb4210-rb2: add WSA audio playback support
+      arm64: dts: qcom: qrb4210-rb2: add VA capture support
+
+ .../devicetree/bindings/arm/qcom-soc.yaml          |    2 +-
+ .../bindings/sound/qcom,lpass-rx-macro.yaml        |   19 +
+ .../bindings/sound/qcom,lpass-va-macro.yaml        |   22 +-
+ .../devicetree/bindings/sound/qcom,wsa881x.yaml    |   66 +-
+ arch/arm64/boot/dts/qcom/qrb4210-rb2.dts           |  113 ++
+ arch/arm64/boot/dts/qcom/sm4250.dtsi               |   62 +
+ arch/arm64/boot/dts/qcom/sm6115.dtsi               |  132 ++
+ sound/soc/codecs/Kconfig                           |   15 +
+ sound/soc/codecs/Makefile                          |    4 +
+ sound/soc/codecs/lpass-rx-macro.c                  |    4 +-
+ sound/soc/codecs/wsa881x-common.c                  |  193 +++
+ sound/soc/codecs/wsa881x-common.h                  |  478 +++++++
+ sound/soc/codecs/wsa881x-i2c.c                     | 1353 ++++++++++++++++++++
+ sound/soc/codecs/wsa881x.c                         |  493 +------
+ 14 files changed, 2459 insertions(+), 497 deletions(-)
+---
+base-commit: 7bac2c97af4078d7a627500c9bcdd5b033f97718
+change-id: 20250522-rb2_audio_v3-ffa12dcc6148
+
+Best regards,
+-- 
+Alexey Klimov <alexey.klimov@linaro.org>
+
 
