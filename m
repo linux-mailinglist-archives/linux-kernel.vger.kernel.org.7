@@ -1,90 +1,115 @@
-Return-Path: <linux-kernel+bounces-658437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC33EAC0266
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 04:17:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6B17AC0269
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 04:17:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F34121894077
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 02:17:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4DEB4A095F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 02:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC5E4A1A;
-	Thu, 22 May 2025 02:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E010845038;
+	Thu, 22 May 2025 02:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="Q4C3+Lhr"
-Received: from jpms-ob02.noc.sony.co.jp (jpms-ob02.noc.sony.co.jp [211.125.140.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrFIXvN8"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193041854;
-	Thu, 22 May 2025 02:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D810ADDAB
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 02:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747880220; cv=none; b=NRuY/u8nOqoh+swj3nklNOd/IdqRrY+c0A1fsk/3ulgu6uiUiBDMxQ354oq2i/7h/pv3gtfSdq8S5UbZIfZZlogHE45D0JgGX9GubjBWqM/wIRcVTn9rWpj9Bl0WGGRbiM4gr+0S9iP92Ow7Aatb1vD5HyKHZbRl+l55uFVtfWk=
+	t=1747880252; cv=none; b=GObUU55GNphiO/9Q6i/EKUe0e1WoGwn1utarsV8QY30BRfH5RTCRsTepgbUOalSdXB9w/fyiKtsaPBordIYEI4mXbR3SIaxgYBJa8l/fZMqs3l3ngq2jUeTCSTLXWG5xUIraZXW69oavj8B7xB7+Bz+A4PQXQ3oxV17RdgHkIDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747880220; c=relaxed/simple;
-	bh=yLUmlP7DaNAVtrWCSbOK7YUSTa1ul9w87aAbB+oebN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gT0G0bG0bQQCtZCJv1BbzXBwRjga1w6gLAr5WfTQvrRUunyQrWlejt19qSY+uGsoGWM2Bqn3Dcea5PNDPlcOwOC4MLRv1SogILpsiaaWIXp07BxP2ORM3av9WqivW3vRkc5wNKsl3o0Ou0EBjqILUnCJEGWRq6xmlJFAMoLP2Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=Q4C3+Lhr; arc=none smtp.client-ip=211.125.140.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+	s=arc-20240116; t=1747880252; c=relaxed/simple;
+	bh=QGo1LBga1vpUEKc+8qjsPWTMysADMWrG32qHjuDbXb8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LBbIiz/NhO1QnM2y9ojdJOirIZUf/6mF7+M4tHFx/xr6DXuioLTqO4K1Q7HmzylQD6WBfVCr0leSUwzRifPTOTx+SX8rbHU0TrJ54xpCNM6fs+wpGmI69v/x1ZtCbb5fl58t6Xoo59DTobBwnaMrRqK3vlqtu22Lco8AElEzuuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FrFIXvN8; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e7b8673ff36so4985563276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 19:17:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=sony.com; s=s1jp; t=1747880218; x=1779416218;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qyFEWQvfFcI7M33d2V0gAbJnT7bAeiGW1d15NiaUM58=;
-  b=Q4C3+LhrGZHZtKVj/ayX7N5hwsLYGQIyuCAwZqXfzSwTYQDYVkpGwVC2
-   MlQJ+ChDnek6PjecFPx2Vm75enFZb5epVErsYAPhuxZN0XeHF7DG+nQSU
-   sZLxVpj+pBX3+eT0x/D3md4HiHRke63glDR2EvygNBH6mk/866Q0WNRmY
-   t5SEc/Lq1i09Lu7jOOGZLZkjAAmmWsa0zYwGS7fc2jF6NeYxQ3kfXCJk8
-   6oTJXRE21JajSlpm+9aeY2ZIJGj9IyppX8lfJbQ5HCR00/KHh4Y0CHrxZ
-   bszTXf7ec+dXiNKX4MUtiSeTqWfO5hlxEARiyrJgQRjRWldn3DEBZaN+V
-   w==;
-Received: from unknown (HELO jpmta-ob02.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::7])
-  by jpms-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 11:16:55 +0900
-X-IronPort-AV: E=Sophos;i="6.15,304,1739804400"; 
-   d="scan'208";a="532597744"
-Received: from unknown (HELO JPC00244420) ([IPv6:2001:cf8:1:573:0:dddd:6b3e:119e])
-  by jpmta-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 11:16:56 +0900
-Date: Thu, 22 May 2025 11:16:52 +0900
-From: Shashank Balaji <shashank.mahadasyam@sony.com>
-To: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+        d=gmail.com; s=20230601; t=1747880250; x=1748485050; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WDr3eISUVPW2GSYKg/ARqYypW2g9PgYCPGEerPGGiic=;
+        b=FrFIXvN8zj6L3un0cy6DBXC9MxCA3MnhONJvCTejw7T78FUbnTsMtdNrhVLeO6KMyT
+         QJG/ey1+2VEUxDJeXLXRvcfdMu2aO9MJzpKxuf49F1WfjShDEmy1y9nhP/htnirKpo+Y
+         whTucL+sgjNSYQ8YW7jr2PWDrmAeeaGpadMO2MhVqgq8bylqkU6wxAGWpcRk4EZN0Cv0
+         dhUH1PfenF0tgNgvXmwbytFqH08GFrvn50uFFC+QN9ANMCxVqnQ+V+Yh4I+gCXHE2/5z
+         FLz3HeQDH7gwK3eTsnpNHCCLIt+H/Hph1AA80sOTxQtq2FVQPwTqIlL0LJ+qzgE+VYl/
+         NFzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747880250; x=1748485050;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WDr3eISUVPW2GSYKg/ARqYypW2g9PgYCPGEerPGGiic=;
+        b=ju+ySIdsUz8BzLMs5sm8xV3rhOGeDpdhZhGm/6fepQK9q5etiqzV6OacvYl1/lvDyd
+         mcX3C9TTRPpr7HCRAoEpscdJxsGioKmkomecFjGhnGxKySrintCR2tqgNAt/7nncKCnh
+         pxe0y1BqKnw0r64m64vgNOZVvK+Tc9mvJxL+jo+iU7HsYtfStbIGEsoTBvBwqqiHAldU
+         uY1WeQfM2qWyk4UHfZb+5tJxCodDjK4XdLEyXRzDQrYg9VEDPpEX0bpogLC1Xppt2OhF
+         FzLlO5qr6yYm4x+tgNpk3IvvjvQuBStbRGmIOMHQTWoNlHFNk6ROJUsaDnQXAsWbFOd5
+         LYKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrweo3vtTJOc8++bH+a/D8PIk26xsaaPR/0HeIHVEcOXmWApaPc9vK8UjPrrKwYiGb2svpp3KM41syI7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyGZJZcqT55t0umchhwk9ypAVbSnWqNBjHHUfcjT6n0Obu5kHC
+	HcVVeH9XkP70pfxzwGeY9LE+o5yMQV/7yGw7KSgBy08gp9Wd0ZDUNSTi
+X-Gm-Gg: ASbGncs2s+Ic8EGn8afkIz0POQ/fRixM6bRXnFnHnwtDhR9OaUu+u2NeYfuJJg78d2m
+	OlLnCw7Xs2is764OxuVS8L8TKyj2yaCrVwna0b2jvD8a1c9RljE8UaOkntE7MKUns7gdGHD2giI
+	Kvg/eLGWYmNKOaIAcWBr/8F5vj6zeXdFvB9Te7X0NqXpij09gVLvP6KPTOFt8GIpT0vsMMPEOXo
+	yGpUR1bxxeUcBWPnb/OcU0o+a0coF7S41Pzv3lVRnD1B3cGqNCwYGZ/44GIEBOgN4tRsOWr80sO
+	YRbWiZ72KBgmCNJGwi5fWgMZjhFaqg4Z60BhYwk/dN3ueIVQv03N0ARxpJN5MwGuSkpCFldoMiD
+	CNIY=
+X-Google-Smtp-Source: AGHT+IFMHQ9v2R61v5zZ2TO7ToSlglABVgGGVkYA8Vyhw+Z6nBks3GAw2e0C0fTNlgVAx5EORt3hSA==
+X-Received: by 2002:a05:6902:6c12:b0:e7d:585d:6aac with SMTP id 3f1490d57ef6-e7d585d6f25mr8408781276.39.1747880249710;
+        Wed, 21 May 2025 19:17:29 -0700 (PDT)
+Received: from maquina-virtual-para-linux.. ([191.156.33.198])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e7b6adaa721sm4365837276.44.2025.05.21.19.17.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 May 2025 19:17:29 -0700 (PDT)
+From: Donny Turizo <donnyturizo13@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Shinya Takumi <shinya.takumi@sony.com>
-Subject: Re: [PATCH v3 3/3] cgroup, docs: cpu controller's interaction with
- various scheduling policies
-Message-ID: <aC6JFEBfMzsUrChn@JPC00244420>
-References: <20250522-rt-and-cpu-controller-doc-v3-0-483fc9cca591@sony.com>
- <20250522-rt-and-cpu-controller-doc-v3-3-483fc9cca591@sony.com>
+	Donny-Dev <donnyturizo13@gmail.com>
+Subject: [PATCH] drivers/staging/rtl8723bs: Fix camelCase to snake_case style in core files
+Date: Thu, 22 May 2025 02:17:22 +0000
+Message-ID: <20250522021722.28178-1-donnyturizo13@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522-rt-and-cpu-controller-doc-v3-3-483fc9cca591@sony.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Donny-Dev <donnyturizo13@gmail.com>
 
-On Thu, May 22, 2025 at 11:08:14AM +0900, Shashank Balaji wrote:
-> +* Processes under the fair-class scheduler
-> +* Processes under a BPF scheduler with the ``cgroup_set_weight`` callback
-> +* Everything else: ``SCHED_{FIFO,RR,DEADLINE}`` and processes under a BPF scheduler
-> +  without the ``cgroup_set_weight`` callback
+Signed-off-by: Donny Turizo <donnyturizo13@gmail.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_cmd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Though `cgroup_set_weight` is referred to here, CONFIG_EXT_GROUP_SCHED
-is not yet documented in sched-ext.rst. But I don't understand it well
-enough to add that documentation myself.
+diff --git a/drivers/staging/rtl8723bs/core/rtw_cmd.c b/drivers/staging/rtl8723bs/core/rtw_cmd.c
+index 437934dd255e..49bcefb5e8d2 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_cmd.c
++++ b/drivers/staging/rtl8723bs/core/rtw_cmd.c
+@@ -9,8 +9,8 @@
+ #include <linux/jiffies.h>
+ 
+ static struct _cmd_callback rtw_cmd_callback[] = {
+-	{GEN_CMD_CODE(_Read_MACREG), NULL}, /*0*/
+-	{GEN_CMD_CODE(_Write_MACREG), NULL},
++	{GEN_CMD_CODE(_read_macreg), NULL}, /*0*/
++	{GEN_CMD_CODE(_write_macreg), NULL},
+ 	{GEN_CMD_CODE(_Read_BBREG), &rtw_getbbrfreg_cmdrsp_callback},
+ 	{GEN_CMD_CODE(_Write_BBREG), NULL},
+ 	{GEN_CMD_CODE(_Read_RFREG), &rtw_getbbrfreg_cmdrsp_callback},
+-- 
+2.43.0
 
-Thanks
-
-Regards,
-Shashank
 
