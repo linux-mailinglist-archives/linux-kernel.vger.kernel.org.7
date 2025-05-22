@@ -1,313 +1,206 @@
-Return-Path: <linux-kernel+bounces-659376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75175AC0F6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:08:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25D9AAC0F6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FBB218857B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D9DFA22DE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCD528FAB8;
-	Thu, 22 May 2025 15:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805E328D843;
+	Thu, 22 May 2025 15:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LrVyzu8H"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMpC8U7w"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9BF28FAA5
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 15:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371D835977;
+	Thu, 22 May 2025 15:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747926490; cv=none; b=c5S2iU/nLjBn8EQJur20DmiKyCIMZglxlZzycAuVs1GZlcmK5q9aObtmuYvLMGkzbrvp+jBwIJUZyhP/encrPHmK77QoXpJJ3yaO4oW1qv0aGhng0Sxzn1ieS3RnTO+Y+k9GeY6AJlgqQHt3auz3tIJK/9u/kSbwd/gYAPtYgaU=
+	t=1747926375; cv=none; b=X3j4SsrCwsy58R18XFHJRm7/1VIVb0XMNjTdtLeo4XfOVQ41f4GPjqGDdFTw0d3eJbnAXp/DwTkBENlpaFJaIHD0/lu2eX6YMnwhksiglrYXN5uqU78K6p9a2Ylm5nEUkKJoxJRSfJMa96J3Muubv7hBAgAukiZOj6AM2kQji+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747926490; c=relaxed/simple;
-	bh=mS5GgND8UuontDSj6ihHGCoTUwpMjYc0hUM5E0VMdiw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H4+z0cNyt+oeMOsQwKyNJ+NMHy+KfFsKCHMGWDl6Ei9qu9O6/koXDNd2NNijHOYUBsq/CMI+aLtr3j9TU8zZTYbBtALMXNo4/qulLJniETwWiahBglFG2IMlvGKLmcambzXfm25v7ulhU8+N8+9kHVJk2hhU/SjWpsh6OmV63JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LrVyzu8H; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-47666573242so1886671cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 08:08:08 -0700 (PDT)
+	s=arc-20240116; t=1747926375; c=relaxed/simple;
+	bh=JELcEZ/TME5qKjvZHCLNOg6aOGWhfNkmlW2l4alWeGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C5af6MsjGu11r5QeYjkVT7rAVM8E6PRVxatvMvYOq7Y9EV+zY/Kcr90sly9hZtptBdz8WKKOoDdR0NTNk1VbChVSzfBnw9fH/0lLmoO2q6WAkT9f+fTXJPt2YBvQ88xLqaMO3sbrNbSRMkh+7rvMQHxAH8ZuE1DMFEALxj/izXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZMpC8U7w; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-525b44b7720so2401361e0c.0;
+        Thu, 22 May 2025 08:06:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747926487; x=1748531287; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qD45WleDxaKRfdFYJAyThj8STlU1fBlpeISFDoR8AxE=;
-        b=LrVyzu8HKZceJUPRGikNvFqLtgrq3CtpXTZOnut4Ti2CSlZ7AW8x8ceV6svNQ34NR7
-         Z5cK6UaaLQKvbCU/Va4oRUuK/9I0V5wfTvoS7AWWzRXBZF4QhNYYBumiLP2Khr9qIT2n
-         TWTVPg3ujukyWTNMCasiVYTy0vQ1WB4b/rck+m/h+su5q7tg/GeLk4BMNeb0WnNzCt5D
-         uccLY2HH+inF5bgXSWskxjX07U8UMegufT1dDEGwiXbridstBQO6gG43PaGGamqJakad
-         FkHzdf1ft+WpxeQrZakbYXDMODodNstm7D1f5+5qXRDKri7yuJycSHgit6DEsbUQeLBK
-         CT8A==
+        d=gmail.com; s=20230601; t=1747926373; x=1748531173; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MhO/6L47DHlWm2lUAbO+SfxVgyXO64vz/MUsE8Thqlk=;
+        b=ZMpC8U7wT5wa2bNl4Hp+f9SrNgX6v8VBCenU7W7MfoghHvJBTnDiCVB+3by0ck5kn4
+         H8/GcdwD7lTE/wnPk1PFxJ4cSzJ7BWnV1MZ2bDti8ZQVRaPfP1lH+NpnijNBs0qoSfRE
+         A31VdrnivqgctxhVEJSgnY+IWMEtx6sud6t3Y6YJGsz1h9UvKzgqQLKpsBSEeOR72ZMU
+         KpF8gvq319jCsvhrK7K/UsdUUjs6fj40f9JH+Guei/jA00j5gxWNfABHXr9CRQIAPqY6
+         4P+6jbRA3YobNOfOYwl+Nd769VyXQ4VNNfVb6Fl2CqFc8mS7+lIrASjBAHGw0/S0cYES
+         mKSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747926487; x=1748531287;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qD45WleDxaKRfdFYJAyThj8STlU1fBlpeISFDoR8AxE=;
-        b=vqKA3kvAhBmr/IfUT4bTcJn40Pedk3vmbbM5ZL8wZeEswUeMPXzJ3+TP7eQzJCbqCX
-         QrSZzZzRHQHB8R3Vcw54otrDl+fUq/2QQKFBppMcOUcbWSNVvR24+uiu1V1jAkv6BPED
-         70bw1eRhQpjzP5232PzCJBIYBsFeTq1GLHgXPAICLi3iVz42tYP0tBJsaec1QaPCLIVT
-         r8ccqW24Q67t0qu5xKPWIUNUtu3vwuIJwaMX47pF30KLXAPz2z28sFJotKBdp/DOyW+X
-         JVeG61oHXTILHm3n9VcBX0yAq8TpT8U33218nkoJ2ZYKkV1P7qW17ZAXQT3aBK4/Qo7F
-         5WGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhOw7Q+7lW68Lc1Mi2yYDgfgaAy81eUuEsxmWKtfnkVxwXWnNN74ioDcoKyxD7gpl2iPiCXSM+QhPkRII=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwAb1vBpCBSwJwBjJNQY6rSYA2q0KtxD4i9u6UeYQ+J9u0efvp
-	BPgz98XnOaNCJNsDxKPlv8M1JWGytdeEvXXqaj41ZvYzjhBxpv60tnLIEuN1n6yup1s5bv3Vi4Z
-	HsoB9oqrasEYRSAyGzEtC0f6j0y3WjLwBTqrG9F76
-X-Gm-Gg: ASbGncusPc7FqyK0v3BMj+ybwmiMbVdBoywyUz+bW5LT+n8F4m5+CwuXbz+T38nYMrm
-	gBD+Fq+4Hw6sHxqtvxmoZezrTAoA02OGyi/HWsm5a8Zd8/iRLgdyFCj7tjm7j+MW2KYYiFgfYaf
-	5gZdClj9f4kECXctfkQQhVh3YmPcu+jbNaf1+aoh+kETM=
-X-Google-Smtp-Source: AGHT+IExWgZ/kprFJR2qUAmAvBSuiZQwIp3xVKHZZRhAngXGir6bXeq3t/Qwhx3C/I2QsXxLMQlJK+hvAoH5fIBVNiQ=
-X-Received: by 2002:a05:622a:1356:b0:497:2f60:4ca4 with SMTP id
- d75a77b69052e-49cf05d4f7cmr3910441cf.15.1747926486878; Thu, 22 May 2025
- 08:08:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747926373; x=1748531173;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MhO/6L47DHlWm2lUAbO+SfxVgyXO64vz/MUsE8Thqlk=;
+        b=cMoKJqCJHxh9qIlrCgMBL2XQNWqIrKwID+NMCYm6TsFvHYzPOvbuNqdCgq2EhZK5+v
+         50j/SJ6ryCJXrf460MB5yXZTEhE8KO/piQxSAmFvhN33ivw2jHZB57QQRJmGcDjzBDJE
+         p6oZzn3aZJSoeV25CH41/vF9jJmH9o/m/yRxg/UYitJghrQnKleXOIqPqfnqyFZRJbAs
+         m3oCQlovLZOgv01SeJSCX/ipNKbNC1ohtMICBW3NAZPondyny43m1A8KoRt2mb0zm3Kt
+         64fZ/sbixst4CA/pCKuVJV3SkWLjenGm8d/lZaozuy79HQIPLJ99n+wNCYVJ4QVH5rai
+         /ZfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwSi+jUamO0yEmJmJuDo7iQ6UCBjANf0123HKX7Yxk1mz5Dr3Q3p2ImyAj1gq0YZLRkjc5iAX2O+r+@vger.kernel.org, AJvYcCWVrgBPNwx5j69nA1k6aWwokIowByk7yyaHXpZaV8lEZ7L0f8uL71Uzqroi9XisexlWigyTMHemxKlzF74z@vger.kernel.org, AJvYcCXZ+7126Ub0W5+lZiYV7v4DqQn3qIvqL+0mkgT0Af/OZnat0QhLqXP8Fag5FRgHIjSuDvfYXkHSFjQ0@vger.kernel.org, AJvYcCXhU6t5HKvW7S5xtIlDaR3YdyZ5UQMFDN/MXL6Xe7/zG6Sf1vHbzuFqD11nBN9Wsi8q/VoroaMTwj/iwA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy90yhmNlLcklUDP1FWN2Gre455O4+hRnu0dtxlkGmS/zn6Mw4L
+	wSgIBB3FyjVVn/eP09AeSFyPYrjyKjehlDLraAo2HTPFerEj9T5xvKN5
+X-Gm-Gg: ASbGnctQVhDgQwPJJH+xFpRRp5b6SXY1g355dtWKMy118o0mW9DZ5DRRwIqb4YNlXSx
+	4vxP4+o3SMqheGRdh53MyWA8lHPERbDXQdRJu5HGaeD3wZ3dCfjypcdDjmLDH0jB1QWBTZRkgW8
+	S5f4ng2Gli4a3s9gKIOdztG0NirR5vbogitKP/OmIpU0XNPL0xFB3T8Jg/Da9NlpSEtFxKkd+HP
+	/zijljVFCDutHRQ2EraSmqrJDukFFl0zo7FpDMZIA0T56Y2f66tC2thJ6APJBjEmrV7cVozDFIO
+	7emJ0W8/fCLXOCionsD+2vmMdpi1RKGdBPT6knxRoJhSiWYLPCcnWZHkbxil
+X-Google-Smtp-Source: AGHT+IGVSYQaIrfc6pltnx1rK27FglZF+ks/le0K2Fg4I+5tBWSoi/sZ5ic22CKtQlDD8kJDWEJXRg==
+X-Received: by 2002:a05:6122:4b86:b0:526:1ddd:7603 with SMTP id 71dfb90a1353d-52dbcad485dmr19053355e0c.0.1747926372853;
+        Thu, 22 May 2025 08:06:12 -0700 (PDT)
+Received: from localhost ([2804:30c:1623:d000:b599:2ab9:58bc:e4e3])
+        by smtp.gmail.com with UTF8SMTPSA id 71dfb90a1353d-52dba9408f5sm11914596e0c.15.2025.05.22.08.06.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 08:06:11 -0700 (PDT)
+Date: Thu, 22 May 2025 12:07:41 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jic23@kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
+	brgl@bgdev.pl
+Subject: Re: [PATCH v3 01/10] dt-bindings: iio: adc: Add AD4170
+Message-ID: <aC89ve8FgIK4gej4@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1747083143.git.marcelo.schmitt@analog.com>
+ <5fa867cff437c0c6d3f0122af823e1677a12d189.1747083143.git.marcelo.schmitt@analog.com>
+ <20250521-colorful-paper-coot-ce9ffb@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
- <CA+EHjTy7iBNBb9DRdtgq8oYmvgykhSNvZL3FrRV4XF90t3XgBg@mail.gmail.com>
- <CAGtprH_7jSpwF77j1GW8rjSrbtZZ2OW2iGck5=Wk67+VnF9vjQ@mail.gmail.com>
- <CA+EHjTzMhKCoftfJUuL0WUZW4DdqOHgVDcn0Cmf-0r--8rBdbg@mail.gmail.com>
- <diqzecwjnk95.fsf@ackerleytng-ctop.c.googlers.com> <CA+EHjTyY5C1QgkoAqvJ0kHM4nUvKc1e1nQ0Uq+BANtVEnZH90w@mail.gmail.com>
- <CAGtprH-fE=G923ctBAcq5zFna+2WULhmHDSbXUsZKUrin29b4g@mail.gmail.com>
- <CA+EHjTxvufYVA8LQWRKEX7zA0gWLQUHVO2LvwKc5JXVu-XAEEA@mail.gmail.com>
- <CAGtprH_TfKT3oRPCLbh-ojLGXSfOQ2XA39pVhr47gb3ikPtUkw@mail.gmail.com>
- <CA+EHjTxJZ_pb7+chRoZxvkxuib2YjbiHg=_+f4bpRt2xDFNCzQ@mail.gmail.com> <aC86OsU2HSFZkJP6@google.com>
-In-Reply-To: <aC86OsU2HSFZkJP6@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Thu, 22 May 2025 16:07:29 +0100
-X-Gm-Features: AX0GCFtxE_5yf3JaUaANLr_bOaaQ7-YRdImpBrNEqDFWm2pmOqea-YH30YgPCtI
-Message-ID: <CA+EHjTxjt-mb_WbtVymaBvCb1EdJAVMV_uGb4xDs_ewg4k0C4g@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-To: Sean Christopherson <seanjc@google.com>
-Cc: Vishal Annapurve <vannapurve@google.com>, Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	linux-fsdevel@vger.kernel.org, aik@amd.com, ajones@ventanamicro.com, 
-	akpm@linux-foundation.org, amoorthy@google.com, anthony.yznaga@oracle.com, 
-	anup@brainfault.org, aou@eecs.berkeley.edu, bfoster@redhat.com, 
-	binbin.wu@linux.intel.com, brauner@kernel.org, catalin.marinas@arm.com, 
-	chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com, 
-	david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk, 
-	erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com, 
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, thomas.lendacky@amd.com, 
-	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org, 
-	willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com, 
-	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250521-colorful-paper-coot-ce9ffb@kuoka>
 
-Hi Sean,
+...
+> 
+> > +  sensor-node:
+> > +    type: object
+> > +    $ref: '#/$defs/ad4170-channel'
+> 
+> I do not understand this binding. channel@ node is a channel and sensors
+> like rtd@ is also channel but also sensor. What is the point of channel@
+> which is not a sensor?
+> 
+The sensor node is meant to describe a channel that has extra setup
+configuration. For example, a common ADC channel could look like this
 
-On Thu, 22 May 2025 at 15:52, Sean Christopherson <seanjc@google.com> wrote=
-:
->
-> On Wed, May 21, 2025, Fuad Tabba wrote:
-> > On Wed, 21 May 2025 at 16:51, Vishal Annapurve <vannapurve@google.com> =
-wrote:
-> > > On Wed, May 21, 2025 at 8:22=E2=80=AFAM Fuad Tabba <tabba@google.com>=
- wrote:
-> > > > On Wed, 21 May 2025 at 15:42, Vishal Annapurve <vannapurve@google.c=
-om> wrote:
-> > > > > On Wed, May 21, 2025 at 5:36=E2=80=AFAM Fuad Tabba <tabba@google.=
-com> wrote:
-> > > > > There are a bunch of complexities here, reboot sequence on x86 ca=
-n be
-> > > > > triggered using multiple ways that I don't fully understand, but =
-few
-> > > > > of them include reading/writing to "reset register" in MMIO/PCI c=
-onfig
-> > > > > space that are emulated by the host userspace directly. Host has =
-to
-> > > > > know when the guest is shutting down to manage it's lifecycle.
-> > > >
-> > > > In that case, I think we need to fully understand these complexitie=
-s
-> > > > before adding new IOCTLs. It could be that once we understand these
-> > > > issues, we find that we don't need these IOCTLs. It's hard to justi=
-fy
-> > > > adding an IOCTL for something we don't understand.
-> > > >
-> > >
-> > > I don't understand all the ways x86 guest can trigger reboot but I do
-> > > know that x86 CoCo linux guest kernel triggers reset using MMIO/PCI
-> > > config register write that is emulated by host userspace.
-> > >
-> > > > > x86 CoCo VM firmwares don't support warm/soft reboot and even if =
-it
-> > > > > does in future, guest kernel can choose a different reboot mechan=
-ism.
-> > > > > So guest reboot needs to be emulated by always starting from scra=
-tch.
-> > > > > This sequence needs initial guest firmware payload to be installe=
-d
-> > > > > into private ranges of guest_memfd.
-> > > > >
-> > > > > >
-> > > > > > Either the host doesn't (or cannot even) know that the guest is
-> > > > > > rebooting, in which case I don't see how having an IOCTL would =
-help.
-> > > > >
-> > > > > Host does know that the guest is rebooting.
-> > > >
-> > > > In that case, that (i.e., the host finding out that the guest is
-> > > > rebooting) could trigger the conversion back to private. No need fo=
-r an
-> > > > IOCTL.
-> > >
-> > > In the reboot scenarios, it's the host userspace finding out that the=
- guest
-> > > kernel wants to reboot.
-> >
-> > How does the host userspace find that out? If the host userspace is cap=
-able
-> > of finding that out, then surely KVM is also capable of finding out the=
- same.
->
-> Nope, not on x86.  Well, not without userspace invoking a new ioctl, whic=
-h would
-> defeat the purpose of adding these ioctls.
->
-> KVM is only responsible for emulating/virtualizing the "CPU".  The chipse=
-t, e.g.
-> the PCI config space, is fully owned by userspace.  KVM doesn't even know=
- whether
-> or not PCI exists for the VM.  And reboot may be emulated by simply creat=
-ing a
-> new KVM instance, i.e. even if KVM was somehow aware of the reboot reques=
-t, the
-> change in state would happen in an entirely new struct kvm.
->
-> That said, Vishal and Ackerley, this patch is a bit lacking on the docume=
-ntation
-> front.  The changelog asserts that:
->
->   A guest_memfd ioctl is used because shareability is a property of the m=
-emory,
->   and this property should be modifiable independently of the attached st=
-ruct kvm
->
-> but then follows with a very weak and IMO largely irrelevant justificatio=
-n of:
->
->   This allows shareability to be modified even if the memory is not yet b=
-ound
->   using memslots.
->
-> Allowing userspace to change shareability without memslots is one relativ=
-ely minor
-> flow in one very specific use case.
->
-> The real justification for these ioctls is that fundamentally, shareabili=
-ty for
-> in-place conversions is a property of a guest_memfd instance and not a st=
-ruct kvm
-> instance, and so needs to owned by guest_memfd.
+  -------- +VREF ------         +-------------------+
+    ´ `       ´ `              /                    |
+  /     \   /     \   /   --- <  IN+                |
+         `-´       `-´         |                    |
+  -------- -VREF ------        |                    |
+                               |            ADC     |
+  -------- +VREF ------        |                    |
+        ´ `       ´ `          |                    |
+  \   /     \   /     \   --- <  IN-                |
+   `-´       `-´               \       +VREF  -VREF |
+  -------- -VREF ------         +-------------------+
+                                         ^       ^
+                                         |       +---- External -VREF
+                                  External +VREF
 
-Thanks for the clarification Sean. I have a couple of followup
-questions/comments that you might be able to help with:
+The the channel@ node for that would look like
+    adc@0 {
+        ...
+        channel@0 {
+            reg = <0>;
+            bipolar;
+            diff-channels = <0 1>;
+        };
+    };
 
-From a conceptual point of view, I understand that the in-place
-conversion is a property of guest_memfd. But that doesn't necessarily
-mean that the interface between kvm <-> guest_memfd is a userspace
-IOCTL. We already communicate directly between the two. Other, even
-less related subsystems within the kernel also interact without going
-through userspace. Why can't we do the same here? I'm not suggesting
-it not be owned by guest_memfd, but that we communicate directly.
+Though, some sigma-delta ADCs (including AD4170) are fancy and have features
+that relate to what is connected to the ADC inputs. For example, an RTD would
+be connected like
 
-From a performance point of view, I would expect the common case to be
-that when KVM gets an unshare request from the guest, it would be able
-to unmap those pages from the (cooperative) host userspace, and return
-back to the guest. In this scenario, the host userspace wouldn't even
-need to be involved. Having a userspace IOCTL as part of this makes
-that trip unnecessarily longer for the common case.
+                                     External +VREF
+                                          |
+       +----------------------------------|-------+---- External -VREF
+       |           +----------------------+       |
+       +---Rref----+                +-----v-------v----+
+       |           |               /    REFIN+  REFIN- |
+   +---+-----------|------------> <  IN+               |
+   |               |              |                    |
+3-wire RTD         |              |            ADC     |
+   |               |              |                    |
+   +--------------------+-------> <  IN-               |
+   |               |    |          \      GPIO2 GPIO3  |
+   v               |    |           +-------v-----v----+
+  GND              |    +-------------------+     |
+                   |       <--- IOUT1             |
+                   +------------------------------+
+                           <--- IOUT0
 
-Cheers,
-/fuad
+A better drawing can be found in AD4170 datasheet Figure 115. 3-Wire RTD Application.
+https://www.analog.com/media/en/technical-documentation/data-sheets/ad4170-4.pdf#unique_151_Connect_42_ID10430
 
-> I.e. focus on justifying the change from a design and conceptual perspect=
-ive,
-> not from a mechanical perspective of a flow that likely's somewhat unique=
- to our
-> specific environment.  Y'all are getting deep into the weeds on a random =
-aspect
-> of x86 platform architecture, instead of focusing on the overall design.
->
-> The other issue that's likely making this more confusing than it needs to=
- be is
-> that this series is actually two completely different series bundled into=
- one,
-> with very little explanation.  Moving shared vs. private ownership into
-> guest_memfd isn't a requirement for 1GiB support, it's a requirement for =
-in-place
-> shared/private conversion in guest_memfd.
->
-> For the current guest_memfd implementation, shared vs. private is tracked=
- in the
-> VM via memory attributes, because a guest_memfd instance is *only* privat=
-e.  I.e.
-> shared vs. private is a property of the VM, not of the guest_memfd instan=
-ce.  But
-> when in-place conversion support comes along, ownership of that particula=
-r
-> attribute needs to shift to the guest_memfd instance.
->
-> I know I gave feedback on earlier posting about there being too series fl=
-ying
-> around, but shoving two distinct concepts into a single series is not the=
- answer.
-> My complaints about too much noise wasn't that there were multiple series=
-, it was
-> that there was very little coordination and lots of chaos.
->
-> If you split this series in two, which should be trivial since you've alr=
-eady
-> organized the patches as a split, then sans the selftests (thank you for =
-those!),
-> in-place conversion support will be its own (much smaller!) series that c=
-an focus
-> on that specific aspect of the design, and can provide a cover letter tha=
-t
-> expounds on the design goals and uAPI.
->
->   KVM: guest_memfd: Add CAP KVM_CAP_GMEM_CONVERSION
->   KVM: Query guest_memfd for private/shared status
->   KVM: guest_memfd: Skip LRU for guest_memfd folios
->   KVM: guest_memfd: Introduce KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
->   KVM: guest_memfd: Introduce and use shareability to guard faulting
->   KVM: guest_memfd: Make guest mem use guest mem inodes instead of anonym=
-ous inodes
->
-> And then you can post the 1GiB series separately.  So long as you provide=
- pointers
-> to dependencies along with a link to a repo+branch with the kitchen sink,=
- I won't
-> complain about things being too chaotic :-)
+Since the RTD sensor requires additional hardware connections, the proposed
+dt-binding describes those differently, e.g. 
+
+    adc@0 {
+        ...
+        rtd@0 {
+            reg = <0>;
+            bipolar;
+            diff-channels = <0 1>;
+            adi,sensor-type = /bits/ 8 <1>;
+            adi,reference-select = <0>;
+            adi,excitation-pins = <19 20>;
+            adi,excitation-current-microamp = <500>;
+        };
+
+That allows the ADC chip to be configured to provide the excitation signals to
+properly handle the RTD sensor. Because the hardware connections and
+operation requirements vary among those external sensor types (RTDs,
+thermocouples, load cell weigh scales), some properties are only applicable to
+specific sensor types. Also, because those are extra connections, the related
+properties are not meaningful to typical ADC channels.
+
+Though, the supported features are not different from those described in
+Documentation/devicetree/bindings/iio/adc/adi,ad4130.yaml.
+In that binding, the properties related to external sensor support are set
+on the device node (not related to any channel). The binding proposed on AD4170
+RFC patch was more similar to adi,ad4130.yaml and somehow avoiding to introduce
+custom/new properties, but that lead to a lot of duplication.
+
+The currently proposed dt-binding for ad4170 avoids repetition and, to some
+degree, tries to provide better description of connected bridge sensors and
+their related properties as that seemed to be one of Jonathan's suggestions
+to the RFC version.
+https://lore.kernel.org/linux-iio/20241219140353.787ffccc@jic23-huawei/
+
+Even though I'm naturally biased in favor of my own code, I see this is fairly
+different from bindings describing the exact same features and that can lead
+to confusion. I'll use the same types for properties that describe the same
+things/features. Would it also be preferred to drop the defs and just have 
+channel nodes?
+
+Thanks,
+Marcelo
 
