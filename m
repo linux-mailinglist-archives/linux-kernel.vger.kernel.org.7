@@ -1,284 +1,272 @@
-Return-Path: <linux-kernel+bounces-659705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DFA4AC13D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:00:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A110AC142C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12CD4A4680
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:00:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43711171366
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E335211499;
-	Thu, 22 May 2025 19:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA75929C326;
+	Thu, 22 May 2025 19:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kyY291I5";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="OiOLLbZA"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ICUZxNiF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C482101A0;
-	Thu, 22 May 2025 19:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747940430; cv=fail; b=ae2LuYIjqDhXBHF7odgb+7Djz7GEToCKHN4bvfrzYAqLIHvd/nhYywTB5B9mDZnZX7qY9ZWzMbFyY5xpgTwaj2wwPs8KMw5973cs6V0hb2JdC1YQjzVt6gEHVDpwx6EA6ro7+JTuv5TGYOrUOyL7sFp1+rGchOeo+wvzsZ7MfCQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747940430; c=relaxed/simple;
-	bh=ifdAKCqykPzQazwqnqz0PI7ZYXJ1VgDE9I/iF82IBZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=j4AUZ6djQ0ge29PDBmEyDsqTzRADF5VPlr9WmUpUjBDVcV/UsnXeylc2cKx/I0X/bYt91v+JVCFO+5PUykILn1e8zf39a5BRFQo9SqVnaU6qt7jgMrSnHttooW5+Ihf8/TCi+ttZ+gYej2REGm6B2ndOufZhoF9UfjeAXBUBJnY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kyY291I5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=OiOLLbZA; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54MIpkpn006628;
-	Thu, 22 May 2025 19:00:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=DlZhDj1zbQJONW5/Qn
-	8Mj2+0PC6dibNfdz1Skv9otWk=; b=kyY291I58CnBVoXiqEsLwMI6UL7R9RRhY3
-	I8Z+hBtu6i0H5VxPklDlwONsLEcXO+GIijwSijE2gnB4OCLcHv/xqvzfqw8qH1fy
-	wCPTw7RveNkU2aTO6DQOKytwYa2fCHHGtsUK8cEqpKQru6NR5QdvooZJdFL7zqBo
-	6CnlkymqG+o3W85WaV29PdnooOqJd6Psa1Jf2cjNCXQNLlkKRcr1t5qayGZ+wOSm
-	mwQIzie5ye0HdWI4Plk32mi/EidjhsZWCtXlrvLoZzWsUxIuR1IWi05EyBJE7CRJ
-	yKAl02tUqhrWs1shPI/V8+3ZZE6MayRvgRpoaen7jAgd7lwG7KCg==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46t9c081ab-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 22 May 2025 19:00:09 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54MI3HDb032287;
-	Thu, 22 May 2025 19:00:08 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2078.outbound.protection.outlook.com [40.107.220.78])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46rwep2hur-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 22 May 2025 19:00:08 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=afr7NvWH0ZHSVTWY8pAUSXTcSXjqjVMWwTWP0EKGniXFRRt0N6kiXDIdzzFO64uzxw1GL0QOj+uOBNqnqC4n9PIOLDN92SoYdMD+vdPISe22SFyizpttj1OfkNXoeTtT7sYqkCmt7rz1+i1hpx5024egy1HMRwCkfT3qOYc0E4PuFhUummEL1hNsWf6ieZ9EHsIgDezk3b1TtcuzA2wPpsJw/xlkIKT1Ud0kcsM1QUpGfXMra912Rc83zgNG/PVBssoJSWpoL3dSE4yTFhBnuBGrDbdoGxx0OhWLdwtANizEEy+sSE0VpsU2lhfburDDrE1JqU0DZyy1n3sqk9p2sQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DlZhDj1zbQJONW5/Qn8Mj2+0PC6dibNfdz1Skv9otWk=;
- b=A9PIvGIDXjpF3A2CUe9XNh3LM4TzhCvUow2QBGsjpt4TzBNsnb0peLETU7E9CbcFkOiwLnixLHr7VfLGmdRirywkzZmAX8Ab/haSEtISdufLjV6A2XsNoNHgBoQe3x4x10Ab7yxGBLb96lz3l5oFTESibLmSsDy1xhkg/oqD2rOwNrGEpgyQ0DO76At2ObiyTnBkBwjgzroRZThIWjmw5rM/VQcHSYlFjEkFMbRShCPhP5z6yaVVYudxpKufCGM6DU5IugjcXCjjfcMqkY09ZB3pE0EjmrtFzk0oyX5iy9uNjX/Eo/goKnyfHDfs+dzdkx8wFvDpmMLuXbF+8ZpkMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DlZhDj1zbQJONW5/Qn8Mj2+0PC6dibNfdz1Skv9otWk=;
- b=OiOLLbZALGwhsQovf4wutIIjTTPGFHmyUFr9b2/73V3SKjz5dBhQe1fsB4KjwjPxkZx4Yp6lAv/HNHf+e1xkkHhZWJDn7p59yfpaluAeXbIFlBrQpcnEmEyCWVRbmhcROGmfqOkl0g5w8OrNHd6BESFh/VZ2JpE5NlKd9tmPueM=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by CY8PR10MB6633.namprd10.prod.outlook.com (2603:10b6:930:57::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.32; Thu, 22 May
- 2025 19:00:04 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c%6]) with mapi id 15.20.8746.030; Thu, 22 May 2025
- 19:00:04 +0000
-Date: Thu, 22 May 2025 14:59:45 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
-        David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/mm: Deduplicate test names in madv_populate
-Message-ID: <aboathzpwqqgy5j3jw53cubmrtlzelazdysksqnfb5niruto43@ptubjb5ptakg>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250522-selftests-mm-madv-populate-dedupe-v1-1-fd1dedd79b4b@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522-selftests-mm-madv-populate-dedupe-v1-1-fd1dedd79b4b@kernel.org>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YT4P288CA0029.CANP288.PROD.OUTLOOK.COM
- (2603:10b6:b01:d3::15) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6811029A332
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747940632; cv=none; b=daWMw0uuJxU+9V/YRq2x5RT3eWrHEq2YC+o38CCcLxkG3W3qQLACQJNwmMwEL9tVmqw2G7LhD1T5xjidHfJdrEoTRNVGKsw5p3x9w4dUL1GvO6WBMfB2+6OFI5iRFkyu4hgtb50RabSKIUcdVkgsmvAU41QUWmXOzAy2U+ji6mk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747940632; c=relaxed/simple;
+	bh=LvHpzkBXpQpS6a1CNyb0eHhKR06FkrHNFz2Vb8Rs+HI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Uk2/q0O/P4umLrYql6EmjbrYeJdOr9rDYY6FaIG2MvN4+sdf6yZ/CcjkxRoHixpZJozTTrUShohtL4x3z8RIqPSQs4zvt7iIfo0WQj2oLxGC7r4jYkDr6jkT/uXZrv2mTSbL8vFlBGCZQkywZIcOisnIxawma7BHOf6E7xDttL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ICUZxNiF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54MH3peV024821
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:03:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=UkdtLDWPWV86WMIXjh/84M
+	WseBY4yX2yXHBPJxMZ3kk=; b=ICUZxNiFZgYqtRmX8jYmbzvBUWf4j0U1zyTYei
+	Xr0unvWTNsM76pf6SWTw5P8OETXqmV2f6VS1eiwcumXNQ8F9YTKaVm2pUoLNWwFQ
+	bpnvs7H7zs2hLYBOI6Xl3XIegqYBJ4t1RtSfl2i7Dlu1nffl8+qv89ebNngVpuZp
+	hw+kipCWog8G2uNxBaXXYRzogqInOQ0fN5CGCQjyn+qy/q3U8Yb3ZZurRGfKoo+y
+	59heevnpSqxuXUsnuARs8y9RV0ew4vurOZ45q36d7eErdciYpCRv/lzDEImUWTtG
+	0hb1iyNrQeX15NAGRNC9fdBpv4oyCn2ocq/b0+vyfCecSvwQ==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf4ycxa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:03:47 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7ceb5b5140eso974440185a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 12:03:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747940613; x=1748545413;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UkdtLDWPWV86WMIXjh/84MWseBY4yX2yXHBPJxMZ3kk=;
+        b=hLGbwtFESh3zJ7IYSJSmYcTdiQb8ehJsB33P+PkNjT+27EafrFPArRvLwV1lvSSZ1E
+         O8/qLYppLoqFKGwr79j1UYga3fzDQMpu0pIMnbtxa/NUFaM8IsgrNkIhAOQTcS05Oiay
+         VVNYA2osUHRAtPTkJC91wBOUaVwxe7U5d+0KgMvuJ4193QrXoR2rUzWitQFsESygWtoT
+         N7F+fITvHMirQv0LiJnCYlsHIx1211vJ7HK87nJnKgl5JyjyOckN45vH0oPb6Gp56+/E
+         dhUGZ3G0Pwa/1+ngLC7P+n/YJcFu5IM0xn25rJCYM8ZP6tVfOtmJXJGmrRoCqvE0jlnD
+         fXVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZUxWYLJkskGTYhX9eLkgpiJ+zKN/lSx2pkZZg28wdQ6TcZzL+Pyv0WP3wXB+MRQIiBSwLMSIiPhoBD30=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoXVAZkyPPX3G7TvBuFu+1GHnD11yppT8QzPj2WjYQNcpC+AyL
+	nXUJsoPE1KdR/+0LdxOZv4WPkeZpNTsPQMWMJ+y/fo1U2xOljSzS5c8MVdaTBZvYk8Ssqr6OAat
+	4O1kAAlnfnVuCM1n4LJGgLPndo9WFXh0EeJZn6C6Pa8tatBDidOGlxVw1RQWMijJQk/k=
+X-Gm-Gg: ASbGnctzJVcabgvEWW56RsqYlRkWfbFDxQW4PUbT7nx1O6rFvudldUY1RBzBz2GoWfQ
+	uU9m1a+b2dgcZsJdjmnYPo0ze/O/7db5wl72dAFsHMTgmW48ht4Ou3YYWAHuLMpqWb5kHncg8Nx
+	xNkhU5D0Sp4Gik6qTZ7Mn0sRxuqcnGGvqIFcabi77HA92bjXygH4uL+rVVV0B0s3OlRl7AT4gKv
+	sfNqiRMBf4iL5iAdPj2ki62aPWg2KWp1gVShuqibOiWATytJ+ueFXlHxTjX5rn/fr4ohkVF1x3U
+	7/+ObZl8El/TZ9AqpfDB4R+64AZD9p7qVxXrhfy0oNrKD77MwScpwAFYE/EPKtEyvh4+TXspm/Q
+	Po6Ee3YE1jtjWOxkgjEzsdiky
+X-Received: by 2002:a05:620a:2549:b0:7c7:93ae:fe56 with SMTP id af79cd13be357-7cd467a9b62mr3939271385a.51.1747940612568;
+        Thu, 22 May 2025 12:03:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEy/n5ztww6OKTyWk1l8kEgne9HO2Dpgd6If8J3vYhRa+Ry7rHzuHnJj7UGH+LV1945QHf4sw==
+X-Received: by 2002:a05:620a:2549:b0:7c7:93ae:fe56 with SMTP id af79cd13be357-7cd467a9b62mr3939266585a.51.1747940612101;
+        Thu, 22 May 2025 12:03:32 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e703c2f3sm3482506e87.214.2025.05.22.12.03.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 12:03:30 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: [PATCH v5 00/30] drm/msm/dpu: rework HW block feature handling
+Date: Thu, 22 May 2025 22:03:19 +0300
+Message-Id: <20250522-dpu-drop-features-v5-0-3b2085a07884@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|CY8PR10MB6633:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac39ee2d-e6de-43c8-a0b1-08dd9962dc5e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wldm4nGFAY3Vl23s/QbYXdk3DcUidqyFe8Xxci0orRFisHx69eGK0JltfNCS?=
- =?us-ascii?Q?Nzi+kijBU/YEM7rVnBAGHTbtMBpmPKb6QQ2ApfETdKPnRxJRCtXVr4CcYREv?=
- =?us-ascii?Q?eyztxmTNlLnkzlvJM8L+D7Ju5la/y8V0eh/ksR9NdzOMrp5D5dEBO//9hL9a?=
- =?us-ascii?Q?RBiQL2ro+Spd/Lh2DcHVk4YBMZGrsMwbWWVjGvJjVo4jjipi1M8huQSF9Uqs?=
- =?us-ascii?Q?4xMQZwVItOsg7m/laBudrSpGbcISaAcwGxFRGgIPitGmh66XqndLIfGlp5M2?=
- =?us-ascii?Q?2Y27g52d8LHRunKGhAOJ3kehnIqzUJVFBevLfBi3RgbBjYD0WdbFDZ6yasZG?=
- =?us-ascii?Q?3RddLttB8PIhCMwPG0yuPNYC6ieXQboy/PPdthuWYqg9kC1PxWrhzylSObTR?=
- =?us-ascii?Q?lBxF7L6rfG2GXDiPsFJC093YVpqJJOhO7Z5ijiGPiguZQfCXWloMq1VmYtd8?=
- =?us-ascii?Q?ZrslFeix9UdovOTe4W6gTLCjuwwuIYYEGmUwOaAf8JYJn0AUD+81/Ef+1FEO?=
- =?us-ascii?Q?oPURbfxn1PJKIT7I+bUbycoRmdv77l29PxMj85Y/mBKx6SKnPnE2nKNA9/In?=
- =?us-ascii?Q?YITr9hf927gNc1hwCrka/qqLZSzE6/KZhI/zIVy35XWwDDPAnf6OdDBXxYal?=
- =?us-ascii?Q?hBUeiSe5xvgrVVkGxCq1FhIdczRQebmiadtPPjcyMryZM1uxA2KfsJaz/wwA?=
- =?us-ascii?Q?rkeRispKX+NUC2otjO64qD+jeJtTef5trZ6nqAizyNuu9olU3rKxkyYEeXiU?=
- =?us-ascii?Q?Xy/CF3rNsVPs3xCmKHFcdg4/4tESfxKcjcksA2BwMNCYhc2zoxObplDjMumh?=
- =?us-ascii?Q?YObft957ZedIgHDZCFMEo2Aun9BRV7EhkTnjx6WcnuP/N6Xlr5gjEYzzVBEJ?=
- =?us-ascii?Q?b0F1kAFBlInp6xZPMs86e+lkDzGApyykhh71Pm8fPHw/o2O8+k189V8RSEtn?=
- =?us-ascii?Q?D1Vrd+j3Z8X7n2IlHoHeSh/1po/680hz4qUpKix8hbAURA14wrCgboQKzrxY?=
- =?us-ascii?Q?2DXgxNCmrblYe3NeViMiSAEpx9ItIL/RBjuptJ6nKwVA65i4s+Tdadp36WKT?=
- =?us-ascii?Q?kI/mOFc6Oy6Av+lXlOupA1vJZB0t65IlDTK0nBrYRuYHsEz3Nqg9aGq5eB+T?=
- =?us-ascii?Q?63RmFNCyNn7PgRcfGtpVImP5RuKZxD9dG8nULCNkVZ5BbWTCp/eXOtW3hbpU?=
- =?us-ascii?Q?FTHxHn+J5HTFx/QOUQBQ8tYRou1QTPP/3ENtzUu+AIy2sT1dXFTVT+jchJzg?=
- =?us-ascii?Q?spLAEBCk9ut6m++BgNVcgGGEt8PTku7FuJecE3WQ+EZW29Jpw+U+cumEmgiB?=
- =?us-ascii?Q?5kkW4Z3SG0y61mHXRMYIaoUZ24FzAWD2EG0dAqCarH9oZtfp5j+WSnl7VgEB?=
- =?us-ascii?Q?tPGxDO9f+hgioQP+9QgqX/Fhi0s/1X2ggD07AZOBVL7WD6WpUinJ5VabCspP?=
- =?us-ascii?Q?1FufGL1y8+c=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rT3xL/HzgCBskG5/h7TJlNuGN6zCBOVTEENXMPjwPj7gqotfVS/WqmiEHN5k?=
- =?us-ascii?Q?/la1/J/KLOTcIE2Orxuido2hkxpxM6lyfyozvZd82Sa01inDsEsQH53gwdzT?=
- =?us-ascii?Q?5oE2lQisBwR0+74mXA6fmHVGi09lMG1QOQy1HgDQqsU5gAkEx9uY69IisiOE?=
- =?us-ascii?Q?H7TxkJOq9kkhFuUi/DPg8bWg7g6nkeE/6moSR/+rQR+d3om2BhDhbFGKLNRj?=
- =?us-ascii?Q?+BuNJgfiHX62s2XUDxVRTus6qV3acVYGM2nODjzDbdm6WTh7R9/L1avkbusT?=
- =?us-ascii?Q?ICL1uNrT17E/sPWkPrsTvNeJ+zL0mw1FmROFddxXEhjUAoFEMesdbogMlm4/?=
- =?us-ascii?Q?zDLUmFe3KXjzIXakmhj3gF0HB+VDkoxA81FNqMbxNVF1d32+zab53ccZqA40?=
- =?us-ascii?Q?EBazFEpwd6VDLQuXGsiR3TpFEJPHjVYVGvoXh0hMiNXnT45hcRcJGE+ezoN2?=
- =?us-ascii?Q?fCOxHjep31VDdelPtnyHHdu7QddGpdHIQegeaxQB96z03B436K88JzsjIhig?=
- =?us-ascii?Q?3mrqumBqosaHp74m6FCDgDMX+G4smfFKvA0atjcYZFnTjIbm5XeZo9JIrlDM?=
- =?us-ascii?Q?8MXGGyUeXCpIm74fwXLTsBjJxuYLC8712rBPjkQjmTFOzlYUAXTwfVSThTq8?=
- =?us-ascii?Q?I8yfu5s0IQOQJuaBvQpjwoyeziP+4Tr8jhAKUCWoiESqO1/W0Oi7ixShQavs?=
- =?us-ascii?Q?KfMjBwnbPiKFLZ8GZu/UruHnXVShjPBvXK3LwRn7IT7JXRE+0DsvikUqPHHn?=
- =?us-ascii?Q?k5IYiyieu5Yz6mKy1znVCwLqojggLQfhkLfdZ53rwsfqrD61YYFeWxvaZqkL?=
- =?us-ascii?Q?Ilr6f08PpBwPPVVjln1zmVkXBrFmLPBuTUvzImOutVi1InzKzrfoP8m9NsqV?=
- =?us-ascii?Q?DKFBPuygd0C/Qi0cP+7IOHl8sopCysMQipMtyZlDWgsoOtsCt64ozNy07M4t?=
- =?us-ascii?Q?O+fE3Zn6ZlpyhxqeReD/dwDhM/IFjb3ZO49/Q+MNGtImtP0lurxZB1yX3fOV?=
- =?us-ascii?Q?aZ76o6JgCqJ77T0g1x+8aw4UKt9Ygi2CRuWoJBlt2P6eVCVMP7jL0L9Fb0RG?=
- =?us-ascii?Q?j89Xqq1KNQZr96QCRMQazjR775DrCTPQHOZO/CRSzSfmK38/Co2vOd2BVQoq?=
- =?us-ascii?Q?Hf6pH17m69QMd/3naAqDqM1wxmhb5A3Dq5eNAhaf0DSsf5GGQZgr6ryoqxJn?=
- =?us-ascii?Q?jVXUWv6d2TN8Ibd7o52Lu6taWaFgG6zvDONaKD/48ik0AVN1eQ1feHcV+c9G?=
- =?us-ascii?Q?wsqxpTiZrjXqx1r06wlACpcYcb0NOnAU+ccEREFfERqZ6beiSu7XDxFSpzve?=
- =?us-ascii?Q?TT0iRvBpMCMuWWCvGIWHBzviA8e/poRm02qn+m4+vs67EYv3RrddZMYNb725?=
- =?us-ascii?Q?PUEskC662RPeXm6tLgNCeab+soYXCzou+WmU4azTASiR0IU3gQuEBOFq6tYi?=
- =?us-ascii?Q?g2HgA90NUFesaQLnVuXgCJ2CUMwRvtQ5M+BabP22g0pxIPJMqgjzmpFgeJ0b?=
- =?us-ascii?Q?sZX8CR6WAmkLutuq6MwkYZRxb+B1SkgSZPMXQiu5LSOLxeXpYQ2lgs6gpmMd?=
- =?us-ascii?Q?CD1WGwxcjg40u0eeZLKtCyvsMyxJaZCQ5NEFTTIr?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	hdAqjNw2Lhj/u8CnPHstz3T+LUsilsb76SY4Cl5G+jlTeMPKaqA8MlEQWI93zOZbUcIx8Qp9JuxiBCBmZQQibVUNmDhIzFibuYWyesqTBbVYoD1CN11Bbmnl70hFoBHYbkOXPYAt0HiLwR81ZyCLQH7NSow8RkkU7GnGkd+QPjWR8U/KL5U44sVPeR6Fc2xKWuiwCGl3e+VWN1hpeFkjJ7I5HIGYUv3vEO2nLyugGYi+tBhdY8hkhXu81oUOtDOv9LrBvi0sAgd9l2VLDcRa528cgb5r857RIwmbWOb4YD0FsKptakf9rJWVktBSc5MFDRZm6cQ9e2Mtrz8J71ogABqH7S+a4w9KDw/j6QfP2LTo2Q0azMX8G+0kQrCWa6Na0/RKMW36X1QKnk8CMjFDguW0jlxMYPfiXJ1AMiatgLhBcJNFaEr+EpuEET8as0u8Ff4pGCT6ubM3Mw4saW24cthRYh8f8mv+CFiSYFZcx9WcmL9y2wHAWinuVcsuBSPPgKCSNKSo/1m+PgPhRkl3VRNIJhZy1CC2TyH3SfrNWiwzPGtfgowjDudpA7eO4zcbNdKXjaP/LMW3r5DmEdjuSpfOkcYPG08OSn0GSVnCaQM=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac39ee2d-e6de-43c8-a0b1-08dd9962dc5e
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2025 19:00:04.1119
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4L3EjfhQ9HSA8/rXuG7IP6mSotyQS6xymjIX1Kh2BqBt9qy+N4bXHHW1et6Lf7onJW7qj7sS8w7awBuhC333lA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6633
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPd0L2gC/4XNwY7CIBCA4VcxnKUBBijdk++x2cMIUyXR0gXb7
+ Mb03UWN2Us3Xib5J5lvrqxQjlTYx+bKMs2xxDTUMNsN80ccDsRjqM2UUFoqCTyMEw85jbwnvEy
+ ZCm+tgOCBSLqO1bsxUx9/HubnV+1jLJeUfx8vZnnfvjS9os2SC9451wtrld+3tDvFAXNqUj6wO
+ zerF2GEVquEqoTADq3Fdg+odqmU5nvCk0/nc1PHE4K3EFTIB/ToZABj+38g/QcZ2a1BukLWG3K
+ OQIKDFWhZlhteW8P/jgEAAA==
+X-Change-ID: 20241213-dpu-drop-features-7603dc3ee189
+To: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Vinod Koul <vkoul@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6762;
+ i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
+ bh=LvHpzkBXpQpS6a1CNyb0eHhKR06FkrHNFz2Vb8Rs+HI=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoL3T790+sMC1fTh8sf4v2cPnQ2YpE/MKGy7u7q
+ 8uc9hDMus6JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaC90+wAKCRCLPIo+Aiko
+ 1VgACAChGrC/R4NUQTnzHLFYbc0EkGkOD2LbpA7jOehjTtJ7O3jaWmQDFKiz4BMfqlRCptcBXb2
+ 0R6QpdXB3PZNG7SloFQYzZn0OI85ze6TBTQRMIprq2yFPCJWQdKHrJp/onLTwNl5IApkIo7jQRV
+ clcOz1/TFLuKKdHSn5LueLfFfHggD+c3U1Z5rhE6bZfIkomtBL/MUA1LKV4xdK8nDwunfeZPeNs
+ I1J4eWleTcXgDJZyPOCl1wir9p1ANy26kogPbIzCMCVR4noqttb1ZUTJUQaJnSUnatePYSE3mpE
+ r71VPk96fq/WR6b8YyJVzyS5aRhGd+coYI+KmO55iJ7LqWB0
+X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Proofpoint-GUID: OBkUMRR1x99c-MVxywaudzhBtOjIFNDq
+X-Proofpoint-ORIG-GUID: OBkUMRR1x99c-MVxywaudzhBtOjIFNDq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDE5MiBTYWx0ZWRfXwc8cUpZ8LQAa
+ JN9Tq8bU9dOddlWhVXqOkh1/XVWU6pw/wQ5T218lgHh2pPUO6EVAt5kSyY7mOSnoU+ZISA8YKvA
+ hY4rYRZqAW4CJ9K4vJqb7AdJLKvDdonBcE3rrFUcTlnIVsWshzAgXac5i9xi0QqY49BtqgXZLrF
+ 9TmVNcnDa1lLH7IKd5YoMD9cqvRYs7Kqk/8Uq0/ZZnYDJaWmzM/wp1/iI2s3jT4DBEme6ukiubu
+ WkWx3dC1XZaU7JXce46WGCWD0nttS2yi3Tw2AUlSfTZZJC8wS4Jyy8moEe2n1gw9Ni7kzyE0fIh
+ IxMx/LNCJzlhNce+oHNROtkcTUGvqB+svMXPyjAXI/phE5D0furQ62RF4p8pgxCSlS8jKDBUrt7
+ N8m+r3U51eZh7JmPyZoeO919OH7cmKr6oV+mVMXzAb+0bIGjzDgeErmPePPHqI8ZjyqSYefK
+X-Authority-Analysis: v=2.4 cv=R7UDGcRX c=1 sm=1 tr=0 ts=682f7513 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
+ a=t8tNeZB39Io7CcBQPAcA:9 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+ a=cvBusfyB2V15izCimMoJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-22_09,2025-05-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
- suspectscore=0 phishscore=0 mlxscore=0 malwarescore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2505220191
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDE5MSBTYWx0ZWRfX0BAW58SlkLzk GM4vj8Ci15MyrmkdF5h+xEoufIUJL7NxBeHlUQw2S7URe/lilaHq7gEImkWksUSZ6NCcNdbwlug nfSnK6QCBCoEwD4TnS6SebFvrWYsjW1owxMiQzGr1TEazVaERknnhxuu2PJEBaFTXP6FkAV/+aj
- VcoqpmCDxuWl0NxAnjQMtt7ARahZ36h6m5Xwvb/NUJ5/TI3nFj77D+XFQIEvAZ6+XJ/QZD4TxtV loVwPGJQozy+1BNFlrGkKElsbgTbWB8lqSJ2aQjccjiavu0/RobOK176HP6yYqkACAk2MoGA7xA +puQz1O91fLGBIlKhh8VDBcGZAA+YkVFn4bpwFTQz1lBaFEOEI2l3TYnjI/0o+b3x40Zz0kNsvE
- wCR6fNFBIsS8mGrmyF0mczjLj14MBLL6t7ZLfth+ohtYvGBjrBTv1o52Xz7B9j/4MDeo1Xe0
-X-Authority-Analysis: v=2.4 cv=DrdW+H/+ c=1 sm=1 tr=0 ts=682f7439 cx=c_pps a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10
- a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=nWcIhLms-qcmK6hE4mgA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: RlGEho1VLamJLy8N7B2XKAiMh3S6l0OM
-X-Proofpoint-ORIG-GUID: RlGEho1VLamJLy8N7B2XKAiMh3S6l0OM
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1015 mlxlogscore=999 priorityscore=1501 spamscore=0
+ bulkscore=0 lowpriorityscore=0 malwarescore=0 suspectscore=0 mlxscore=0
+ impostorscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505220192
 
-* Mark Brown <broonie@kernel.org> [250522 12:30]:
-> The madv_populate selftest has some repetitive code for several different
-> cases that it covers, included repeated test names used in ksft_test_result()
-> reports. This causes problems for automation, the test name is used to both
-> track the test between runs and distinguish between multiple tests within
-> the same run. Fix this by tweaking the messages with duplication to be more
-> specific about the contexts they're in.
-> 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+Some time ago we started the process of converting HW blocks to use
+revision-based checks instead of having feature bits (which are easy to
+miss or to set incorrectly). Then the process of such a conversion was
+postponed. (Mostly) finish the conversion. The only blocks which still
+have feature bits are SSPP, WB and VBIF. In the rare cases where
+behaviour actually differs from platform to platform (or from block to
+block) use unsigned long bitfields, they have simpler syntax to be
+checked and don't involve test_bit() invocation.
 
-Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+---
+Changes in v5:
+- Added version check in _dpu_encoder_phys_cmd_update_intf_cfg() (Neil)
+  Technically it's not necessary, but it makes it easier to follow the
+  code.
+- Fixed commit message for the DPU_MDP_AUDIO_SELECT patch (Neil)
+- Link to v4: https://lore.kernel.org/r/20250519-dpu-drop-features-v4-0-6c5e88e31383@oss.qualcomm.com
 
-> ---
->  tools/testing/selftests/mm/madv_populate.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/mm/madv_populate.c b/tools/testing/selftests/mm/madv_populate.c
-> index ef7d911da13e..b6fabd5c27ed 100644
-> --- a/tools/testing/selftests/mm/madv_populate.c
-> +++ b/tools/testing/selftests/mm/madv_populate.c
-> @@ -172,12 +172,12 @@ static void test_populate_read(void)
->  	if (addr == MAP_FAILED)
->  		ksft_exit_fail_msg("mmap failed\n");
->  	ksft_test_result(range_is_not_populated(addr, SIZE),
-> -			 "range initially not populated\n");
-> +			 "read range initially not populated\n");
->  
->  	ret = madvise(addr, SIZE, MADV_POPULATE_READ);
->  	ksft_test_result(!ret, "MADV_POPULATE_READ\n");
->  	ksft_test_result(range_is_populated(addr, SIZE),
-> -			 "range is populated\n");
-> +			 "read range is populated\n");
->  
->  	munmap(addr, SIZE);
->  }
-> @@ -194,12 +194,12 @@ static void test_populate_write(void)
->  	if (addr == MAP_FAILED)
->  		ksft_exit_fail_msg("mmap failed\n");
->  	ksft_test_result(range_is_not_populated(addr, SIZE),
-> -			 "range initially not populated\n");
-> +			 "write range initially not populated\n");
->  
->  	ret = madvise(addr, SIZE, MADV_POPULATE_WRITE);
->  	ksft_test_result(!ret, "MADV_POPULATE_WRITE\n");
->  	ksft_test_result(range_is_populated(addr, SIZE),
-> -			 "range is populated\n");
-> +			 "write range is populated\n");
->  
->  	munmap(addr, SIZE);
->  }
-> @@ -247,19 +247,19 @@ static void test_softdirty(void)
->  	/* Clear any softdirty bits. */
->  	clear_softdirty();
->  	ksft_test_result(range_is_not_softdirty(addr, SIZE),
-> -			 "range is not softdirty\n");
-> +			 "cleared range is not softdirty\n");
->  
->  	/* Populating READ should set softdirty. */
->  	ret = madvise(addr, SIZE, MADV_POPULATE_READ);
-> -	ksft_test_result(!ret, "MADV_POPULATE_READ\n");
-> +	ksft_test_result(!ret, "softdirty MADV_POPULATE_READ\n");
->  	ksft_test_result(range_is_not_softdirty(addr, SIZE),
-> -			 "range is not softdirty\n");
-> +			 "range is not softdirty after MADV_POPULATE_READ\n");
->  
->  	/* Populating WRITE should set softdirty. */
->  	ret = madvise(addr, SIZE, MADV_POPULATE_WRITE);
-> -	ksft_test_result(!ret, "MADV_POPULATE_WRITE\n");
-> +	ksft_test_result(!ret, "softdirty MADV_POPULATE_WRITE\n");
->  	ksft_test_result(range_is_softdirty(addr, SIZE),
-> -			 "range is softdirty\n");
-> +			 "range is softdirty after MADV_POPULATE_WRITE \n");
->  
->  	munmap(addr, SIZE);
->  }
-> 
-> ---
-> base-commit: a5806cd506af5a7c19bcd596e4708b5c464bfd21
-> change-id: 20250521-selftests-mm-madv-populate-dedupe-95faf16c3c8f
-> 
-> Best regards,
-> -- 
-> Mark Brown <broonie@kernel.org>
-> 
-> 
+Changes in v4:
+- Rebased on top of linux-next
+- Dropped three controversial patches, will be submitted separately
+- Folded MIXER_SDM845_MASK into MIXER_MSM8998_MASK as they are equal
+  now.
+- Link to v3: https://lore.kernel.org/r/20250424-dpu-drop-features-v3-0-cdaca81d356f@oss.qualcomm.com
+
+Changes in v3:
+- Repost, fixing email/author issues caused by b4 / mailmap interaction
+- Link to v2: https://lore.kernel.org/r/20250424-dpu-drop-features-v2-0-0a9a66a7b3a2@oss.qualcomm.com
+
+Changes in v2:
+- Rebased on top of the current msm-next
+- Link to v1: https://lore.kernel.org/r/20241214-dpu-drop-features-v1-0-988f0662cb7e@linaro.org
+
+---
+Dmitry Baryshkov (30):
+      drm/msm/dpu: stop passing mdss_ver to setup_timing_gen()
+      drm/msm/dpu: drop INTF_SC7280_MASK
+      drm/msm/dpu: inline _setup_ctl_ops()
+      drm/msm/dpu: inline _setup_dsc_ops()
+      drm/msm/dpu: inline _setup_dspp_ops()
+      drm/msm/dpu: inline _setup_mixer_ops()
+      drm/msm/dpu: remove DSPP_SC7180_MASK
+      drm/msm/dpu: get rid of DPU_CTL_HAS_LAYER_EXT4
+      drm/msm/dpu: get rid of DPU_CTL_ACTIVE_CFG
+      drm/msm/dpu: get rid of DPU_CTL_FETCH_ACTIVE
+      drm/msm/dpu: get rid of DPU_CTL_DSPP_SUB_BLOCK_FLUSH
+      drm/msm/dpu: get rid of DPU_CTL_VM_CFG
+      drm/msm/dpu: get rid of DPU_DATA_HCTL_EN
+      drm/msm/dpu: get rid of DPU_INTF_STATUS_SUPPORTED
+      drm/msm/dpu: get rid of DPU_INTF_INPUT_CTRL
+      drm/msm/dpu: get rid of DPU_PINGPONG_DSC
+      drm/msm/dpu: get rid of DPU_PINGPONG_DITHER
+      drm/msm/dpu: get rid of DPU_MDP_VSYNC_SEL
+      drm/msm/dpu: get rid of DPU_MDP_PERIPH_0_REMOVED
+      drm/msm/dpu: get rid of DPU_MDP_AUDIO_SELECT
+      drm/msm/dpu: get rid of DPU_MIXER_COMBINED_ALPHA
+      drm/msm/dpu: get rid of DPU_DIM_LAYER
+      drm/msm/dpu: get rid of DPU_DSC_HW_REV_1_2
+      drm/msm/dpu: get rid of DPU_DSC_OUTPUT_CTRL
+      drm/msm/dpu: get rid of DPU_WB_INPUT_CTRL
+      drm/msm/dpu: get rid of DPU_SSPP_QOS_8LVL
+      drm/msm/dpu: drop unused MDP TOP features
+      drm/msm/dpu: drop ununused PINGPONG features
+      drm/msm/dpu: drop ununused MIXER features
+      drm/msm/dpu: move features out of the DPU_HW_BLK_INFO
+
+ .../drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h    |  49 +++-------
+ .../drm/msm/disp/dpu1/catalog/dpu_1_14_msm8937.h   |   2 -
+ .../drm/msm/disp/dpu1/catalog/dpu_1_15_msm8917.h   |   2 -
+ .../drm/msm/disp/dpu1/catalog/dpu_1_16_msm8953.h   |   2 -
+ .../drm/msm/disp/dpu1/catalog/dpu_1_7_msm8996.h    |   7 --
+ .../drm/msm/disp/dpu1/catalog/dpu_3_0_msm8998.h    |   7 --
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_3_2_sdm660.h |   7 --
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_3_3_sdm630.h |   4 -
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_4_0_sdm845.h |  17 +---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_4_1_sdm670.h |  11 +--
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h |  39 ++------
+ .../drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h    |  43 ++-------
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h |  29 +-----
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h |  19 +---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h |  16 +---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h |  38 ++------
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_6_2_sc7180.h |  14 +--
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_6_3_sm6115.h |   5 -
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_6_4_sm6350.h |  16 +---
+ .../drm/msm/disp/dpu1/catalog/dpu_6_5_qcm2290.h    |   5 -
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_6_9_sm6375.h |   6 --
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h |  40 ++------
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_7_2_sc7280.h |  22 +----
+ .../drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h   |  46 ++-------
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h |  43 ++-------
+ .../drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h    |  49 ++--------
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h |  43 ++-------
+ .../drm/msm/disp/dpu1/catalog/dpu_9_1_sar2130p.h   |  43 ++-------
+ .../drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h   |  48 ++--------
+ .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c   |   3 +-
+ .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c   |   5 +-
+ .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c    |   7 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |  42 +--------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     | 102 ++------------------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c         | 105 ++++++++++-----------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h         |   4 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc.c         |  21 ++---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc.h         |   3 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc_1_2.c     |   5 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c        |  10 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.c        |  14 +--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_intf.h        |   5 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c          |  28 +++---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.h          |   3 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_merge3d.c     |   5 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_pingpong.c    |   4 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.c        |   5 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h        |   2 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c         |  11 ++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_wb.c          |   2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   4 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c             |   8 +-
+ 52 files changed, 257 insertions(+), 813 deletions(-)
+---
+base-commit: de63bbeb5af60172f1dd4d45bdc897816753fa69
+change-id: 20241213-dpu-drop-features-7603dc3ee189
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
 
