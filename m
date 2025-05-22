@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-658837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033BDAC081C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:01:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 100E2AC0822
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F8277AA6CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:00:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEAB4189DCE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4318E176ADE;
-	Thu, 22 May 2025 09:01:49 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867C0286899;
+	Thu, 22 May 2025 09:03:06 +0000 (UTC)
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFDB219EB
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 09:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A9025487C;
+	Thu, 22 May 2025 09:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747904508; cv=none; b=fpMHcRtvKo1Zz7kCeLdS9FA8kpOrWy1zzu7tQwp7R8PNZrcBloUq3nqU3ZZZHc/5CyJznEkpJvEZL2q7R2SVA1C25VnWI11eNAw0n0Y3HbEcOjp/wOaZDMtaP0YjeqCXoHxsi4VppBXqMvqBS6GR0TnVLFPw4lvnaJEUf8vMlDU=
+	t=1747904586; cv=none; b=CF6Y/Gqfp0lTZKk/ytCR1ZDels5DjnFGvn//0sEhdBjsfUU0eTz3htogHU94sNs7iPoj0qtfWpPnYOXDErY/vMocg9+APwKeGWfD4QNYwHbA9wvaTT2/wxgERfX2zgC3XgenCgsJJbir282tCLAsMv8su7EszlZsWyeBk48G43Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747904508; c=relaxed/simple;
-	bh=Y2u3Tf3ZtpKkFGrUn/yAhih7xStQrfI/befKd6X4mzc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qrsPrmQ89huEFWgW8983KYLKuzBqPzoic9enhdkiKRsQBY8qRz/HRVaRl1sOcbQx+QrpIDidosWq+bep++LGcFTShn3LwkjZE8I+uyLwqwKXOfPpFnMaDAekBIzyGxUg/Kx2EmQOY2Qs5G7M4VSPj5eM+WIgsAFvvgWor0hCoYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 5ae5a60036eb11f0b29709d653e92f7d-20250522
-X-CTIC-Tags:
-	HR_CC_AS_FROM, HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
-	HR_FROM_NAME, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_TRUSTED
-	SA_EXISTED, SN_TRUSTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS
-	DMARC_NOPASS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:ac8dba5b-05ec-4fbc-bab5-e9c9af5f1536,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:15
-X-CID-INFO: VERSION:1.1.45,REQID:ac8dba5b-05ec-4fbc-bab5-e9c9af5f1536,IP:0,URL
-	:0,TC:0,Content:-5,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:15
-X-CID-META: VersionHash:6493067,CLOUDID:c0436d343feae5af07daef3ffbf139ee,BulkI
-	D:250522170134V7A8COOO,BulkQuantity:0,Recheck:0,SF:17|19|38|66|78|102,TC:n
-	il,Content:0|50,EDM:5,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil
-	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-UUID: 5ae5a60036eb11f0b29709d653e92f7d-20250522
-X-User: xiaopei01@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1413325579; Thu, 22 May 2025 17:01:31 +0800
-From: Pei Xiao <xiaopei01@kylinos.cn>
-To: gregkh@linuxfoundation.org,
+	s=arc-20240116; t=1747904586; c=relaxed/simple;
+	bh=yT1vovEWxBKzhS4iI2jBKX2WkXj4S3BUZDAob//KnbY=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=CWd4NhENw9grYkC75XVi6t+x466paBzona/WoTp4R8ca8G9pUp/9chFqmkrGh/itjM0sMXiMC/NrwhpFyFeCFDlp3fmlZIgKBiHK3AzRpjuyKzI/rcGf5M/gGgsgCcs/7OvN9WnvpzyOL4MEeuxDumjJL9G/wOrWswHoKCgeYn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4b32PV1rhnz9sc4;
+	Thu, 22 May 2025 11:02:54 +0200 (CEST)
+From: Pankaj Raghav <p.raghav@samsung.com>
+To: Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Michal Hocko <mhocko@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Nico Pache <npache@redhat.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	gost.dev@samsung.com,
+	kernel@pankajraghav.com,
+	hch@lst.de,
 	linux-kernel@vger.kernel.org,
-	rafael@kernel.org,
-	dakr@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	bartosz.golaszewski@linaro.org
-Cc: Pei Xiao <xiaopei01@kylinos.cn>
-Subject: [PATCH] devres: Move remaining devm_alloc_percpu and devm_device_add_group to devres.h
-Date: Thu, 22 May 2025 17:01:26 +0800
-Message-Id: <5ac1e2a127c9df7233ca8ba0696ebb08960d0fc3.1747903894.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	linux-mm@kvack.org,
+	willy@infradead.org,
+	x86@kernel.org,
+	mcgrof@kernel.org,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: [RFC v2 0/2] add THP_HUGE_ZERO_PAGE_ALWAYS config option
+Date: Thu, 22 May 2025 11:02:41 +0200
+Message-ID: <20250522090243.758943-1-p.raghav@samsung.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,104 +76,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4b32PV1rhnz9sc4
 
-Since commit f5e5631df596("devres: Move devm_*_action*() APIs to
-devres.h"), But devm_alloc_percpu() and devm_device_add_group didn't be
-moved.
+There are many places in the kernel where we need to zeroout larger
+chunks but the maximum segment we can zeroout at a time by ZERO_PAGE
+is limited by PAGE_SIZE.
 
-so move it.The changes improve header organization by keeping all
-resource-managed device APIs in the dedicated devres.h header,
-reducing cross-header dependencies and making the interfaces
-easier to locate.
+This concern was raised during the review of adding Large Block Size support
+to XFS[1][2].
 
-Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
----
- include/linux/device.h        | 21 ---------------------
- include/linux/device/devres.h | 24 ++++++++++++++++++++++++
- 2 files changed, 24 insertions(+), 21 deletions(-)
+This is especially annoying in block devices and filesystems where we
+attach multiple ZERO_PAGEs to the bio in different bvecs. With multipage
+bvec support in block layer, it is much more efficient to send out
+larger zero pages as a part of a single bvec.
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 4940db137fff..6dd6ae8f405b 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -281,25 +281,6 @@ int __must_check device_create_bin_file(struct device *dev,
- void device_remove_bin_file(struct device *dev,
- 			    const struct bin_attribute *attr);
- 
--/**
-- * devm_alloc_percpu - Resource-managed alloc_percpu
-- * @dev: Device to allocate per-cpu memory for
-- * @type: Type to allocate per-cpu memory for
-- *
-- * Managed alloc_percpu. Per-cpu memory allocated with this function is
-- * automatically freed on driver detach.
-- *
-- * RETURNS:
-- * Pointer to allocated memory on success, NULL on failure.
-- */
--#define devm_alloc_percpu(dev, type)      \
--	((typeof(type) __percpu *)__devm_alloc_percpu((dev), sizeof(type), \
--						      __alignof__(type)))
--
--void __percpu *__devm_alloc_percpu(struct device *dev, size_t size,
--				   size_t align);
--void devm_free_percpu(struct device *dev, void __percpu *pdata);
--
- struct device_dma_parameters {
- 	/*
- 	 * a low level driver may set these to teach IOMMU code about
-@@ -1127,8 +1108,6 @@ static inline void device_remove_group(struct device *dev,
- 	device_remove_groups(dev, groups);
- }
- 
--int __must_check devm_device_add_group(struct device *dev,
--				       const struct attribute_group *grp);
- 
- /*
-  * get_device - atomically increment the reference count for the device.
-diff --git a/include/linux/device/devres.h b/include/linux/device/devres.h
-index ae696d10faff..624ba81d4d8b 100644
---- a/include/linux/device/devres.h
-+++ b/include/linux/device/devres.h
-@@ -7,8 +7,10 @@
- #include <linux/numa.h>
- #include <linux/overflow.h>
- #include <linux/stdarg.h>
-+#include <linux/sysfs.h>
- #include <linux/types.h>
- #include <asm/bug.h>
-+#include <asm/percpu.h>
- 
- struct device;
- struct device_node;
-@@ -167,4 +169,26 @@ static inline int __devm_add_action_or_reset(struct device *dev, void (*action)(
- 
- bool devm_is_action_added(struct device *dev, void (*action)(void *), void *data);
- 
-+/**
-+ * devm_alloc_percpu - Resource-managed alloc_percpu
-+ * @dev: Device to allocate per-cpu memory for
-+ * @type: Type to allocate per-cpu memory for
-+ *
-+ * Managed alloc_percpu. Per-cpu memory allocated with this function is
-+ * automatically freed on driver detach.
-+ *
-+ * RETURNS:
-+ * Pointer to allocated memory on success, NULL on failure.
-+ */
-+#define devm_alloc_percpu(dev, type)      \
-+	((typeof(type) __percpu *)__devm_alloc_percpu((dev), sizeof(type), \
-+						      __alignof__(type)))
-+
-+void __percpu *__devm_alloc_percpu(struct device *dev, size_t size,
-+				   size_t align);
-+void devm_free_percpu(struct device *dev, void __percpu *pdata);
-+
-+int __must_check devm_device_add_group(struct device *dev,
-+				       const struct attribute_group *grp);
-+
- #endif /* _DEVICE_DEVRES_H_ */
+Some examples of places in the kernel where this could be useful:
+- blkdev_issue_zero_pages()
+- iomap_dio_zero()
+- vmalloc.c:zero_iter()
+- rxperf_process_call()
+- fscrypt_zeroout_range_inline_crypt()
+- bch2_checksum_update()
+...
+
+We already have huge_zero_folio that is allocated on demand, and it will be
+deallocated by the shrinker if there are no users of it left.
+
+But to use huge_zero_folio, we need to pass a mm struct and the
+put_folio needs to be called in the destructor. This makes sense for
+systems that have memory constraints but for bigger servers, it does not
+matter if the PMD size is reasonable (like x86).
+
+Add a config option THP_HUGE_ZERO_PAGE_ALWAYS that will always allocate
+the huge_zero_folio, and it will never be freed. This makes using the
+huge_zero_folio without having to pass any mm struct and a call to put_folio
+in the destructor.
+
+I have converted blkdev_issue_zero_pages() as an example as a part of
+this series.
+
+I will send patches to individual subsystems using the huge_zero_folio
+once this gets upstreamed.
+
+Looking forward to some feedback.
+
+[1] https://lore.kernel.org/linux-xfs/20231027051847.GA7885@lst.de/
+[2] https://lore.kernel.org/linux-xfs/ZitIK5OnR7ZNY0IG@infradead.org/
+
+Changes since v1:
+- Added the config option based on the feedback from David.
+- Removed iomap patches so that I don't clutter this series with too
+  many subsystems.
+
+Pankaj Raghav (2):
+  mm: add THP_HUGE_ZERO_PAGE_ALWAYS config option
+  block: use mm_huge_zero_folio in __blkdev_issue_zero_pages()
+
+ arch/x86/Kconfig |  1 +
+ block/blk-lib.c  | 15 +++++++++---
+ mm/Kconfig       | 12 +++++++++
+ mm/huge_memory.c | 63 ++++++++++++++++++++++++++++++++++++++----------
+ 4 files changed, 74 insertions(+), 17 deletions(-)
+
+
+base-commit: f1f6aceb82a55f87d04e2896ac3782162e7859bd
 -- 
-2.25.1
+2.47.2
 
 
