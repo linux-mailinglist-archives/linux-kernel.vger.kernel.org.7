@@ -1,232 +1,139 @@
-Return-Path: <linux-kernel+bounces-659670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A64AC135E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:31:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF083AC1305
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C1033A72C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:31:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4136D1BA5597
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2CA1D5AB5;
-	Thu, 22 May 2025 18:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6522719E83C;
+	Thu, 22 May 2025 18:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="EmusxnN0";
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="Qu/MrA5m"
-Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qyXKv5K9"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6B2158874
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0B133F3;
+	Thu, 22 May 2025 18:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747938679; cv=none; b=CHgv0nvuooFhESLfFODqMdQRLl8Hwcbp9jvN4+ROUIa8E3A/HdAN5935BmCFqZf1PsQ8QCtYZWPzB7Y8lVwYXxqWvO8bMZIslEjRLVbkm1hAOhm4fsRS7dSuP/BOjtD4f/zWoD4blVj02xhPSs8Ql7hv5jdFbrQoRWs+7BTWyv0=
+	t=1747937349; cv=none; b=Lc9VVrzdOGCxNpiXvbG2tuHusPMsKCVJ+4icidUMeduCsoDIqRR7aL/1/QCbTVgBhLwtFeI9mExTJTGI9VamqtqDjDQ9dxb7e9uSTrhxCHi0HbfHm7fmzXsHqj5w4WzKfUCZ6HrFu4Yg6ojGluNd6AgVV76hBFRimA74ddggFTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747938679; c=relaxed/simple;
-	bh=ExiGtKKlNl5omI6u/F8jfCRa/a4eEg7GmAo4NYEvkek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uqolQBh1hUGzjlvcq8s0/4pZMrAdFGt2OE5ivFEwOR3FU7Rtr2bMU+WV4pp8Ryq5d/zkxdDdMMgQEZ+AHMT+Q5d/NeGdL3CA5V+eVqetFSnBfASkmVrYQ6jII0hQ+01V0oreugbCC9GwIPSSnHbIusLvzi2CYiIu7H6fbTFCBmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=EmusxnN0 reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=Qu/MrA5m; arc=none smtp.client-ip=103.2.141.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1747939576; h=Feedback-ID:
-	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
-	List-Unsubscribe:List-Unsubscribe-Post;
-	bh=7qN1T9wqy0WbqzOLQtkE0Dw7RBPwgU3gOcnLNpwdHSI=; b=EmusxnN0aslPQUS9Zh6L8ePeb3
-	63mNyiuyFxV4mk662CBAhtF4TudiOOwBN13FgYNuHBbh7w9PagAcRXznODeboX9W5V3b2Wqbh19+8
-	9e1oLjVP6JfgTQQelhvjo0YwN+hKcIxPdCVb8CC+mXjAQETtZy/6rwBpuUOwIVvastKM52OTEzne1
-	ZMU9EqqShzYAmIr6l5kpYloZvMXYOyKJglxzff5Sjrhyhn66YoLFIoikPuiYm91+IPP1wI2bkNmWt
-	sAbq0ncXzOLRqybxX6S7Se5dXtsr/hWzFcUvETI0TttiGuRxoFELu0UHqaatpnVWt4hXepAib5ao0
-	uFU15hqA==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
- i=@triplefau.lt; q=dns/txt; s=s510616; t=1747938676; h=from : subject
- : to : message-id : date;
- bh=7qN1T9wqy0WbqzOLQtkE0Dw7RBPwgU3gOcnLNpwdHSI=;
- b=Qu/MrA5m4/J30OjGZtTzoR0SrQv/Mzz2RkzTzwu2M0MTjfGgdnHdOuzuqLGMUijxK+lJQ
- keKm11VRgYvjvIbJguZL8uKyDlD+xo2TjkYPQoOg8arTVlumEPaAJsfNhH9uT9SFyQ3Sucf
- pfjhyHnOUBo2DXCBgSFUMmfGIUtqoHuWvsZ+g+590BO/OvCvM2JUjv84T6kIvCBuQWY7ehr
- 43KbdJ7C3+kZ4GBxBEZXa0NUKOBxjr9qfAl+ILa2xO4wvc7PiNt19CZnaqLu1LRKLKeOdUN
- SB99COYPyR2YCDbaxmt0/7dz417U+EngwrqWYcURiKbHbA8HoytUHrgT+yhA==
-Received: from [10.139.162.187] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
- id 1uI7hh-TRk6pL-O5; Thu, 22 May 2025 15:19:29 +0000
-Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.97.1-S2G) (envelope-from <repk@triplefau.lt>)
- id 1uI7hh-4o5NDgrofwj-m1A6; Thu, 22 May 2025 15:19:29 +0000
-Date: Thu, 22 May 2025 17:11:21 +0200
-From: Remi Pommarel <repk@triplefau.lt>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Jeff Johnson <jjohnson@kernel.org>,
- Miaoqing Pan <quic_miaoqing@quicinc.com>,
- Steev Klimaszewski <steev@kali.org>, Clayton Craft <clayton@craftyguy.net>,
- Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
- Nicolas Escande <nico.escande@gmail.com>,
- ath12k@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH] wifi: ath12k: fix ring-buffer corruption
-Message-ID: <aC8-mUinxA6y688X@pilgrim>
-References: <20250321095219.19369-1-johan+linaro@kernel.org>
+	s=arc-20240116; t=1747937349; c=relaxed/simple;
+	bh=yx8wirbv3GmgI2hwWldT11GYkYT7cmgzIiTZzNPfXaQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Cc:To:Subject:
+	 References:In-Reply-To; b=Q3ueacnVBx1oWvKNsYTYf0PXOKsUO+JmG3BP6zXJ+/etIapZaf5Ndk0dQ7Vw6rE9OvtCkfBGIRDrwIVKfkNuhETuHgNAecMQSZWRw7tvelLY5EvuAnIlARRR2kR6cQXfoKmVkG24uoTbIWPIyNoIrvtwAtFZ2yIahdhvPkLtWQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qyXKv5K9; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54MGP7ob002078;
+	Thu, 22 May 2025 18:09:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=QMm4Lz
+	PhZaEwABNl/ln9PbBfJIcFMIQwImJ2MjSmi3E=; b=qyXKv5K9CwBV1pPrXPLOBD
+	8RUAtJVFvK7mjD+es8SVm1gZLy3bgJtOMEeMc/0+MI3CTODGEXL7XS+iEhORd1yc
+	eqlNVId4cKPnfQA0b3QSSp6r9XiXC4MEvNd3zp+YNjYAhnHDm6o+DhhpgSswkac/
+	EK9fmSjnH2jAzRTA5Ypi7qzSfIYBxTPM2pdtcyPt6M1xERx9efE428bir4y9rJPW
+	NwwKvIh2ipd8GZsPUFnHf1kb5yID6cOKVhvsg/cPjYAD8peX24K/rOx0p3SaybZz
+	i90ZLwLD8Iix4e81loUbQraDJDiJd/0asGwvYwFEn0NQOkqBh/FeYl3XTTwcCAag
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46smh75qww-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 May 2025 18:09:05 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54MI3jZk015431;
+	Thu, 22 May 2025 18:09:05 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 46rwnnjmp4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 May 2025 18:09:04 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54MI91mQ34144990
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 22 May 2025 18:09:01 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3A17020049;
+	Thu, 22 May 2025 18:09:01 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 01F8720040;
+	Thu, 22 May 2025 18:09:01 +0000 (GMT)
+Received: from darkmoore (unknown [9.111.55.188])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 22 May 2025 18:09:00 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250321095219.19369-1-johan+linaro@kernel.org>
-X-Smtpcorp-Track: lqrm299UtZm5.IL9siydqSV79.uE2p-Az_j1F
-Feedback-ID: 510616m:510616apGKSTK:510616sQ6vhuulVJ
-X-Report-Abuse: Please forward a copy of this message, including all headers,
- to <abuse-report@smtp2go.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 22 May 2025 20:04:20 +0200
+Message-Id: <DA2VZ43MN9WS.I6PHR04W4WKV@linux.ibm.com>
+From: "Christoph Schlameuss" <schlameuss@linux.ibm.com>
+Cc: <kvm@vger.kernel.org>, <linux-s390@vger.kernel.org>,
+        <frankja@linux.ibm.com>, <borntraeger@de.ibm.com>,
+        <seiden@linux.ibm.com>, <nsg@linux.ibm.com>, <nrb@linux.ibm.com>,
+        <david@redhat.com>, <hca@linux.ibm.com>, <agordeev@linux.ibm.com>,
+        <svens@linux.ibm.com>, <gor@linux.ibm.com>
+To: "Claudio Imbrenda" <imbrenda@linux.ibm.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 3/4] KVM: s390: refactor and split some gmap helpers
+X-Mailer: aerc 0.20.1
+References: <20250522132259.167708-1-imbrenda@linux.ibm.com>
+ <20250522132259.167708-4-imbrenda@linux.ibm.com>
+In-Reply-To: <20250522132259.167708-4-imbrenda@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDE4MiBTYWx0ZWRfXxV4QAwtMj3t2 WzZkdQQSPGxOv40kbORXLgd8Tcxv6NG8MHzo9DPwxppF5C2w0f042QwC9TeC82q3OD3sv97QDIv dPUNDCzlNnZRJLI6Hbt0ZDycBwxiMXEBtiyZtrhmz6Ny2rMKqh1uywbk58Ql674PnuycRE9bahX
+ QZEBfluw14C8Mtq1QabJbJi0QPlfj95HtmZyUaR160Ov2yS9tzr4L1RZhhKYLz+VawmeHUxhMHw OM0YRP5CFdqB/494XHzjr2enp6hrhXAV2fLnFJr3Fo6f42ApWHZFkDa5to38Zj7XGmWG5N/dnQ5 zan2NeQPvaVqEa9GklvlxtWBBomYVxtgqzV85bJV/oMpCRxFjR41r6Kfu8IgxsqXrfcpERqwd78
+ r0ffZG5PqIMGrMix1Lcinv+npVGjau+VBCXU8OFbCg8PIhCnHyjO37EwP3yKwoZQf8NbVzzx
+X-Proofpoint-GUID: yezTXriS3D2-VcHpTiOr0eHA7hdw9ktY
+X-Proofpoint-ORIG-GUID: yezTXriS3D2-VcHpTiOr0eHA7hdw9ktY
+X-Authority-Analysis: v=2.4 cv=EdfIQOmC c=1 sm=1 tr=0 ts=682f6841 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=fDxGR4FE8qlWS1JHXvMA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-22_08,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ phishscore=0 priorityscore=1501 bulkscore=0 clxscore=1015 mlxlogscore=781
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505220182
 
-Hi Johan,
+On Thu May 22, 2025 at 3:22 PM CEST, Claudio Imbrenda wrote:
+> Refactor some gmap functions; move the implementation into a separate
+> file with only helper functions. The new helper functions work on vm
+> addresses, leaving all gmap logic in the gmap functions, which mostly
+> become just wrappers.
+>
+> The whole gmap handling is going to be moved inside KVM soon, but the
+> helper functions need to touch core mm functions, and thus need to
+> stay in the core of kernel.
+>
 
-On Fri, Mar 21, 2025 at 10:52:19AM +0100, Johan Hovold wrote:
-> Users of the Lenovo ThinkPad X13s have reported that Wi-Fi sometimes
-> breaks and the log fills up with errors like:
-> 
->     ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1484, expected 1492
->     ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
-> 
-> which based on a quick look at the ath11k driver seemed to indicate some
-> kind of ring-buffer corruption.
-> 
-> Miaoqing Pan tracked it down to the host seeing the updated destination
-> ring head pointer before the updated descriptor, and the error handling
-> for that in turn leaves the ring buffer in an inconsistent state.
-> 
-> While this has not yet been observed with ath12k, the ring-buffer
-> implementation is very similar to the ath11k one and it suffers from the
-> same bugs.
+Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
 
-Thanks for the fix. We have actually seen reports that could be related
-to this issue with ath12k. I know that this series has already been
-applied yet I do have a couple of question on how you fixed that if you
-don't mind. That would be much appreciated and would help me understand
-if mentionned reports are actually linked to this.
-
-> 
-> Add the missing memory barrier to make sure that the descriptor is read
-> after the head pointer to address the root cause of the corruption while
-> fixing up the error handling in case there are ever any (ordering) bugs
-> on the device side.
-
-Just as a personal note, driver doing that kind of ring buffer
-communication seems to generally use MMIO to store the ring indices,
-readl() providing sufficient synchronization mechanism to avoid that
-kind of issue.
-
-> 
-> Note that the READ_ONCE() are only needed to avoid compiler mischief in
-> case the ring-buffer helpers are ever inlined.
-> 
-> Tested-on: WCN7850 hw2.0 WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
-> 
-> Fixes: d889913205cf ("wifi: ath12k: driver for Qualcomm Wi-Fi 7 devices")
-> Cc: stable@vger.kernel.org	# 6.3
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=218623
-> Link: https://lore.kernel.org/20250310010217.3845141-3-quic_miaoqing@quicinc.com
-> Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
 > ---
->  drivers/net/wireless/ath/ath12k/ce.c  | 11 +++++------
->  drivers/net/wireless/ath/ath12k/hal.c |  4 ++--
->  2 files changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath12k/ce.c b/drivers/net/wireless/ath/ath12k/ce.c
-> index be0d669d31fc..740586fe49d1 100644
-> --- a/drivers/net/wireless/ath/ath12k/ce.c
-> +++ b/drivers/net/wireless/ath/ath12k/ce.c
-> @@ -343,11 +343,10 @@ static int ath12k_ce_completed_recv_next(struct ath12k_ce_pipe *pipe,
->  		goto err;
->  	}
->  
-> +	/* Make sure descriptor is read after the head pointer. */
-> +	dma_rmb();
-> +
+>  MAINTAINERS                          |   2 +
+>  arch/s390/include/asm/gmap.h         |   2 -
+>  arch/s390/include/asm/gmap_helpers.h |  15 ++
+>  arch/s390/kvm/diag.c                 |  13 +-
+>  arch/s390/kvm/kvm-s390.c             |   5 +-
+>  arch/s390/mm/Makefile                |   2 +
+>  arch/s390/mm/gmap.c                  | 157 +------------------
+>  arch/s390/mm/gmap_helpers.c          | 223 +++++++++++++++++++++++++++
+>  8 files changed, 259 insertions(+), 160 deletions(-)
+>  create mode 100644 arch/s390/include/asm/gmap_helpers.h
+>  create mode 100644 arch/s390/mm/gmap_helpers.c
 
-That does not seem to be the only place descriptor is read just after
-the head pointer, ath12k_dp_rx_process{,err,reo_status,wbm_err} seem to
-also suffer the same sickness.
+[...]
 
-Why not move the dma_rmb() in ath12k_hal_srng_access_begin() as below,
-that would look to me as a good place to do it.
-
-@@ -2133,6 +2133,9 @@ void ath12k_hal_srng_access_begin(struct
-ath12k_base *ab, struct hal_srng *srng)
-                        *(volatile u32 *)srng->u.src_ring.tp_addr;
-        else
-                srng->u.dst_ring.cached_hp = *srng->u.dst_ring.hp_addr;
-+
-+       /* Make sure descriptors are read after the head pointer. */
-+       dma_rmb();
- }
-
- /* Update cached ring head/tail pointers to HW.
- * ath12k_hal_srng_access_begin()
-
-This should ensure the issue does not happen anywhere not just for
-ath12k_ce_recv_process_cb().
-
-Note that ath12k_hal_srng_dst_get_next_entry() does not need a barrier
-as it uses cached_hp from ath12k_hal_srng_access_begin().
-
->  	*nbytes = ath12k_hal_ce_dst_status_get_length(desc);
-> -	if (*nbytes == 0) {
-> -		ret = -EIO;
-> -		goto err;
-> -	}
->  
->  	*skb = pipe->dest_ring->skb[sw_index];
->  	pipe->dest_ring->skb[sw_index] = NULL;
-> @@ -380,8 +379,8 @@ static void ath12k_ce_recv_process_cb(struct ath12k_ce_pipe *pipe)
->  		dma_unmap_single(ab->dev, ATH12K_SKB_RXCB(skb)->paddr,
->  				 max_nbytes, DMA_FROM_DEVICE);
->  
-> -		if (unlikely(max_nbytes < nbytes)) {
-> -			ath12k_warn(ab, "rxed more than expected (nbytes %d, max %d)",
-> +		if (unlikely(max_nbytes < nbytes || nbytes == 0)) {
-> +			ath12k_warn(ab, "unexpected rx length (nbytes %d, max %d)",
->  				    nbytes, max_nbytes);
->  			dev_kfree_skb_any(skb);
->  			continue;
-> diff --git a/drivers/net/wireless/ath/ath12k/hal.c b/drivers/net/wireless/ath/ath12k/hal.c
-> index cd59ff8e6c7b..91d5126ca149 100644
-> --- a/drivers/net/wireless/ath/ath12k/hal.c
-> +++ b/drivers/net/wireless/ath/ath12k/hal.c
-> @@ -1962,7 +1962,7 @@ u32 ath12k_hal_ce_dst_status_get_length(struct hal_ce_srng_dst_status_desc *desc
->  {
->  	u32 len;
->  
-> -	len = le32_get_bits(desc->flags, HAL_CE_DST_STATUS_DESC_FLAGS_LEN);
-> +	len = le32_get_bits(READ_ONCE(desc->flags), HAL_CE_DST_STATUS_DESC_FLAGS_LEN);
->  	desc->flags &= ~cpu_to_le32(HAL_CE_DST_STATUS_DESC_FLAGS_LEN);
->  
->  	return len;
-> @@ -2132,7 +2132,7 @@ void ath12k_hal_srng_access_begin(struct ath12k_base *ab, struct hal_srng *srng)
->  		srng->u.src_ring.cached_tp =
->  			*(volatile u32 *)srng->u.src_ring.tp_addr;
->  	else
-> -		srng->u.dst_ring.cached_hp = *srng->u.dst_ring.hp_addr;
-> +		srng->u.dst_ring.cached_hp = READ_ONCE(*srng->u.dst_ring.hp_addr);
-
-dma_rmb() acting also as a compiler barrier why the need for both
-READ_ONCE() ?
-
->  }
->  
->  /* Update cached ring head/tail pointers to HW. ath12k_hal_srng_access_begin()
-> -- 
-> 2.48.1
-
-Regards,
-
--- 
-Remi
 
