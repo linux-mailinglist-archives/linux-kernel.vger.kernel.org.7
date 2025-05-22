@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-658483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A36AC0302
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:32:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 246DDAC0304
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3A6E1BA66A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:32:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 121FBA240B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E825115B54C;
-	Thu, 22 May 2025 03:31:58 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF51189BB5;
+	Thu, 22 May 2025 03:32:04 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB40E29CE6
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 03:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8BB1885B8
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 03:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747884718; cv=none; b=Uz1crWie/USfmCLikLUbfzXQrQ9ldL5HYGjbfwbEsTIQ0M4FYTqRJuIet4hA5VQrGEA/aleZZmyWnSrVFsrqyVju3CKumy5ka5iMGYV4pPGzMMdnFFyxnB/tc3a0NOtoNPTLyfV9M4fyMUbu1DZodCWd+pru+XiL1k6hgxLwrTs=
+	t=1747884723; cv=none; b=W/bp4tozdDmcRHILLN3JP5mqykn5nngzTQNjben22dEcQszIJEaYcludCuCrifresoEBNeLOtJ79dO3B7M9COrmTr51c6n38mS16nzz/RO/EXGQcZC34LDFZG/8W0/tx7VICuQZUyZvTO9MqsYvKbB6GilPHwzqcFkNWsk6UYwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747884718; c=relaxed/simple;
-	bh=UXwlqC7O8+HrgPAr/FR4rcNv+SzUHHJYf5FmJhcdYGg=;
+	s=arc-20240116; t=1747884723; c=relaxed/simple;
+	bh=gbclfI4Iqifj6sDmzq8wra3KKIr/tGZrpKJaaFJjYnM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bReTM7ySVlpN00WBZqBQzXTV/iC9QClUuqmhbcq8RonvuZEQ1X/Kkr7nzU2BJCJTmL87TGfiMUPWkEIAE/lZJG7/l2w2nbvsRvtp9EP/mJP2cDM46nJXueNmZrdvrtjwGt49E9hPX6e1SmWgiUZHPsMmaZ/eWGayMH8JucK89cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	 MIME-Version; b=iT79Jeqk3ZDLWVBOwPcV7pbOr/S7vK37b5SJh98AwlMn0CzhdfNiE4EihA8nIYAaR7uCvuz0jbb/WNo9zFYAz5rD6s3QyswDIwkwPbuj6WpWqvFfCm4iIR9APxDE/cBUGazcbUm9B5keUF5jULRDUNi63fvQ/xdhDluPFSIHlSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4b2v333dGxz4f3l7n
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 11:31:27 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4b2v390DCKz4f3jq5
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 11:31:33 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 8E6E11A0BAD
+	by mail.maildlp.com (Postfix) with ESMTP id E584F1A08FC
 	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 11:31:52 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP1 (Coremail) with SMTP id cCh0CgC3Z3immi5okKq2Mw--.19487S4;
+	by APP1 (Coremail) with SMTP id cCh0CgC3Z3immi5okKq2Mw--.19487S5;
 	Thu, 22 May 2025 11:31:52 +0800 (CST)
 From: Kemeng Shi <shikemeng@huaweicloud.com>
 To: akpm@linux-foundation.org
@@ -44,9 +44,9 @@ Cc: kasong@tencent.com,
 	hannes@cmpxchg.org,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] mm: swap: correctly use maxpages in swapon syscall to avoid potensial deadloop
-Date: Thu, 22 May 2025 20:25:52 +0800
-Message-Id: <20250522122554.12209-3-shikemeng@huaweicloud.com>
+Subject: [PATCH 3/4] mm: swap: fix potensial buffer overflow in setup_clusters()
+Date: Thu, 22 May 2025 20:25:53 +0800
+Message-Id: <20250522122554.12209-4-shikemeng@huaweicloud.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20250522122554.12209-1-shikemeng@huaweicloud.com>
 References: <20250522122554.12209-1-shikemeng@huaweicloud.com>
@@ -57,13 +57,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgC3Z3immi5okKq2Mw--.19487S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxGrWkAF17XryUWFWrGw4kWFg_yoWrCry7pF
-	W3WF90kr4kJryftw17A3WDCry3Gr1fCa17tF43Ja4Sv3WDJrySgFy8tFnYkryfKFykJFyD
-	trs7t343uFs0va7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmlb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+X-CM-TRANSID:cCh0CgC3Z3immi5okKq2Mw--.19487S5
+X-Coremail-Antispam: 1UD129KBjvJXoW7uFyrtw17JF13KFy8GryDKFg_yoW8Jw4fpF
+	15Kas8GF4UJr9xKr47CF1kCry3Grn5uay7KFyfAw1a9F1kWrWIgF1Dtrn0yryDKwn5JFyv
+	9rsrG34UuFsYvwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUmlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
-	8IrcIa0xkI8VA2jI8067AKxVWUXwA2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK
+	8IrcIa0xkI8VA2jI8067AKxVWUWwA2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK
 	0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4
 	x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l
 	84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I
@@ -74,131 +74,42 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxGrWkAF17XryUWFWrGw4kWFg_yoWrCry7pF
 	WUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_
 	Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rV
 	WUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4U
-	JbIYCTnIWIevJa73UjIFyTuYvjxUaknYDUUUU
+	JbIYCTnIWIevJa73UjIFyTuYvjxUa75rDUUUU
 X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-We use maxpages from read_swap_header() to initialize swap_info_struct,
-however the maxpages might be reduced in setup_swap_extents() and the
-si->max is assigned with the reduced maxpages from the
-setup_swap_extents().
-Obviously, this could lead to memory waste as we allocated memory based on
-larger maxpages, besides, this could lead to a potensial deadloop as
-following:
-1) When calling setup_clusters() with larger maxpages, unavailable pages
-within range [si->max, larger maxpages) are not accounted with
-inc_cluster_info_page(). As a result, these pages are assumed available
-but can not be allocated. The cluster contains these pages can be moved
-to frag_clusters list after it's all available pages were allocated.
-2) When the cluster mentioned in 1) is the only cluster in frag_clusters
-list, cluster_alloc_swap_entry() assume order 0 allocation will never
-failed and will enter a deadloop by keep trying to allocate page from the
-only cluster in frag_clusters which contains no actually available page.
+In setup_swap_map(), we only ensure badpages are in range (0, last_page].
+As maxpages might be < last_page, setup_clusters() will encounter a
+buffer overflow when a badpage is >= maxpages.
+Only call inc_cluster_info_page() for badpage which is < maxpages to
+fix the issue.
 
-Call setup_swap_extents() to get the final maxpages before swap_info_struct
-initialization to fix the issue.
-
-Fixes: 661383c6111a3 ("mm: swap: relaim the cached parts that got scanned")
+Fixes: b843786b0bd01 ("mm: swapfile: fix SSD detection with swapfile on btrfs")
 Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 ---
- mm/swapfile.c | 47 ++++++++++++++++++++---------------------------
- 1 file changed, 20 insertions(+), 27 deletions(-)
+ mm/swapfile.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 75b69213c2e7..a82f4ebefca3 100644
+index a82f4ebefca3..63ab9f14b2c6 100644
 --- a/mm/swapfile.c
 +++ b/mm/swapfile.c
-@@ -3141,43 +3141,30 @@ static unsigned long read_swap_header(struct swap_info_struct *si,
- 	return maxpages;
- }
- 
--static int setup_swap_map_and_extents(struct swap_info_struct *si,
--					union swap_header *swap_header,
--					unsigned char *swap_map,
--					unsigned long maxpages,
--					sector_t *span)
-+static int setup_swap_map(struct swap_info_struct *si,
-+			  union swap_header *swap_header,
-+			  unsigned char *swap_map,
-+			  unsigned long maxpages)
- {
--	unsigned int nr_good_pages;
- 	unsigned long i;
--	int nr_extents;
--
--	nr_good_pages = maxpages - 1;	/* omit header page */
- 
-+	swap_map[0] = SWAP_MAP_BAD; /* omit header page */
- 	for (i = 0; i < swap_header->info.nr_badpages; i++) {
- 		unsigned int page_nr = swap_header->info.badpages[i];
- 		if (page_nr == 0 || page_nr > swap_header->info.last_page)
- 			return -EINVAL;
- 		if (page_nr < maxpages) {
- 			swap_map[page_nr] = SWAP_MAP_BAD;
--			nr_good_pages--;
-+			si->pages--;
- 		}
- 	}
- 
--	if (nr_good_pages) {
--		swap_map[0] = SWAP_MAP_BAD;
--		si->max = maxpages;
--		si->pages = nr_good_pages;
--		nr_extents = setup_swap_extents(si, span);
--		if (nr_extents < 0)
--			return nr_extents;
--		nr_good_pages = si->pages;
--	}
--	if (!nr_good_pages) {
-+	if (!si->pages) {
- 		pr_warn("Empty swap-file\n");
- 		return -EINVAL;
- 	}
- 
--	return nr_extents;
-+	return 0;
- }
- 
- #define SWAP_CLUSTER_INFO_COLS						\
-@@ -3217,7 +3204,7 @@ static struct swap_cluster_info *setup_clusters(struct swap_info_struct *si,
- 	 * Mark unusable pages as unavailable. The clusters aren't
- 	 * marked free yet, so no list operations are involved yet.
- 	 *
--	 * See setup_swap_map_and_extents(): header page, bad pages,
-+	 * See setup_swap_map(): header page, bad pages,
+@@ -3208,9 +3208,13 @@ static struct swap_cluster_info *setup_clusters(struct swap_info_struct *si,
  	 * and the EOF part of the last cluster.
  	 */
  	inc_cluster_info_page(si, cluster_info, 0);
-@@ -3354,6 +3341,15 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 		goto bad_swap_unlock_inode;
- 	}
- 
-+	si->max = maxpages;
-+	si->pages = maxpages - 1;
-+	nr_extents = setup_swap_extents(si, &span);
-+	if (nr_extents < 0) {
-+		error = nr_extents;
-+		goto bad_swap_unlock_inode;
-+	}
-+	maxpages = si->max;
+-	for (i = 0; i < swap_header->info.nr_badpages; i++)
+-		inc_cluster_info_page(si, cluster_info,
+-				      swap_header->info.badpages[i]);
++	for (i = 0; i < swap_header->info.nr_badpages; i++) {
++		unsigned int page_nr = swap_header->info.badpages[i];
 +
- 	/* OK, set up the swap map and apply the bad block list */
- 	swap_map = vzalloc(maxpages);
- 	if (!swap_map) {
-@@ -3365,12 +3361,9 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 	if (error)
- 		goto bad_swap_unlock_inode;
++		if (page_nr >= maxpages)
++			continue;
++		inc_cluster_info_page(si, cluster_info, page_nr);
++	}
+ 	for (i = maxpages; i < round_up(maxpages, SWAPFILE_CLUSTER); i++)
+ 		inc_cluster_info_page(si, cluster_info, i);
  
--	nr_extents = setup_swap_map_and_extents(si, swap_header, swap_map,
--						maxpages, &span);
--	if (unlikely(nr_extents < 0)) {
--		error = nr_extents;
-+	error = setup_swap_map(si, swap_header, swap_map, maxpages);
-+	if (error)
- 		goto bad_swap_unlock_inode;
--	}
- 
- 	/*
- 	 * Use kvmalloc_array instead of bitmap_zalloc as the allocation order might
 -- 
 2.30.0
 
