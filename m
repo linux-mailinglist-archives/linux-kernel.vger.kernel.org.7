@@ -1,165 +1,115 @@
-Return-Path: <linux-kernel+bounces-658699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA2AAC0607
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:45:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4D1AC0673
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12E164A08AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:45:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D2083B26E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 08:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3FB2236F0;
-	Thu, 22 May 2025 07:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE0825D1ED;
+	Thu, 22 May 2025 08:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvSA7QOS"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ZHgASNrq"
+Received: from mail-m32100.qiye.163.com (mail-m32100.qiye.163.com [220.197.32.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790891990B7;
-	Thu, 22 May 2025 07:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9DD25A2CA;
+	Thu, 22 May 2025 08:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747899949; cv=none; b=tI7cn+yq+REWFywZV9+kYCXJBlOM+iZ3nfwyDM5lMhnSPoMJlSB3aSLf1PVFEI3iZWFfaSY3Sqtwl7YTr9RdD6od3JojfUXOBCT7ZV12a1OBFLCb4Lka3CHU8iLJeoOJa5c5e2xRi0XW1tXoECeZ8TIKs23hk0Y8H5WtJXHrF5E=
+	t=1747900909; cv=none; b=CVMBFYLD4oV+VYBFKwGD6SisXcLybyD8CAkezOxXsMEoMED2NcG0nQhKRBzSXfdge3JKYtIr9kXA1oP6y+J9aggPX5vFLfztUS5JHB0dD6UXYkLTcE48BCqUmaNlUo7ZiqnIyHFJStdTgn3UuP3+NOIqNdjkbGjDlbToIDxJqXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747899949; c=relaxed/simple;
-	bh=zY+lXrRwgKHQKa2ZtuH4yodp16PGhqZFM1RmRq3oX9k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sMcQJXNTlvGCQrvTiu1KqJEVJN3AEPL6/pmPipWN2w/Qa2DxyQNjp8wksjhNTJXeVAY4uH9nsnYsvoiy/OlRorOyft+TKIzq9QuVlfY3Un4EN2DdgqBlr1OHFvLbBGG+RHItqRNtGkB45+y29pV75uXM9K+cWskWNl6u8UFYaAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvSA7QOS; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-604f0d27c24so4044289eaf.2;
-        Thu, 22 May 2025 00:45:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747899946; x=1748504746; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dzW20nwC4VuWDQE29Tj4IgyVUfkVJ+JnWCtTS9PiDHI=;
-        b=UvSA7QOSfSq/Qaq5y0YdXWVEgLYXJzYbb0maA5Mkqv3KkJ2a00frG2WxQVU/xt4j00
-         8a1jtXkr9EE4SDVQLxVeq+rYy//WMDNj20Ix/nmpVmPcVY0aGQY9J4tu955DmqUTQFIB
-         nBkxJIsEP7eTlnr02Lwe4L5Hc6IPBY9sEEQs7wMMeYkpkqw74Qc88nD1PaEm2keqMq7z
-         uPJKfda70dDW2MvRv/LejTHqIQyG2q8+H3K5UWDpY8U/TaoUqUrPR7cTToUMd4kx1M7r
-         66nesz9fQ0VJJA3qWD9317SR6wHmWDXqRQFIrZcNpLkPyrIu7uAUF6YjJ3GE50/RoxF/
-         HmwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747899946; x=1748504746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dzW20nwC4VuWDQE29Tj4IgyVUfkVJ+JnWCtTS9PiDHI=;
-        b=uZMy1uEYjiQzs0p6dleX4Rk0YSRakzKG0umbIkB7EDr4+OfDreN14sW5yOfpVynpHL
-         azurAMtY84KgA560rvv4DBRqiSnR7/iMKBpFdMk1z3u+HcpuqA41+/O3f9RcjhJRor6s
-         TraGoY5jS7R+W6LY2gDbkBOXE1qtl/U8nD0luFBRyv7Q25vzaOUl2BZqnXP2yLS9+I96
-         uFZPWQsQoqjHpx2JigpFmA0MkezWzhu+VH9KA3yJoR32zIoM16U8iu2c75jb0QI4dZJN
-         MMeEvIwaNc2a4396sax4aOdZshv7aMYolfk3wSnfLl3hL0tVS+pGkvwiynf/ABYJisxT
-         1F6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUMHwHGfIkgWRqQ3DBjBeNgW8NcXUrVm/qtZzmaxlwFWkramxDnb3pFExg+WYLTLZlPJC0GXIauj7QMemLKQVM=@vger.kernel.org, AJvYcCW14VVqrjZc06INkDtKesf/tQNsRt/CFgdViIISw/x9jwbV737pVw6DN+FT5eVQ43v0kTJ9V6ZPB/v0nIHq@vger.kernel.org, AJvYcCWS5suHYgD10xOu7/rzuWB2OYje3C6ZbixdzmWYa8ye6MwKDnTRvgccHVa2lV/Fcr3uQh0gNQd8sl60@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx55civ+CyX0QJWHumdNOL55W/DNO6j+EgiS8OCJxrKCbRLwAKC
-	ydf8xBzUOxjvk2s4Wdhk0ETcACV01FoDUnDgWXRjMN57Kwx9p7vK60XAFqOPFQL3PW6qjpZEtzo
-	T0XVQhySbucmWyWk+gtRFv+eTqx7KH+W7XfSfxJY=
-X-Gm-Gg: ASbGncvO8j5OBOSxmZkHOF58MC4/ppsBIYxnPawg8vrOJV3IHVW7f9fEowaVq/DmExW
-	vuUVbty2KI00848lbiIVgj4sPyjbD/9qlUqLqG90QH+hoOjYjEPtk/OSexjg4Sq/HqpkCqtJg97
-	WZ0lfHEJYoTfc+qyz3oIJ10Ghz2QdDihnSr34Rd/44DQ5Q1L47aY1qEQ+2ZlRQTALT9A==
-X-Google-Smtp-Source: AGHT+IHx9WwGAeBBgIJ2VZAo/LAtKYEWKxbcrPGYRDL9PPLwEM0HTBz1LK7Lmmv50E3X9O8VXiDRpGFVmpONGdmsjyE=
-X-Received: by 2002:a05:622a:244f:b0:494:7ab9:60ad with SMTP id
- d75a77b69052e-494b09397ebmr403217461cf.38.1747899936138; Thu, 22 May 2025
- 00:45:36 -0700 (PDT)
+	s=arc-20240116; t=1747900909; c=relaxed/simple;
+	bh=T061gL6o7OkK/X1Mo1vcCclwUdfWutRgh766GnDxY84=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mXH7ldoQj/HfBaCqPiaAYOPM9zbfr/Bi0C5waX3SbZ9gAUIdjZAwav0tSkTr3uRomZPfR1F5xwcJfmREC7MdynyKNfmSjAebpg8aW0ySftuzu+E233l4GmSkKjFEN1iGQxcG40k0qZsNli2Blwm0DrE7PukHP7COms/oNe8AjF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ZHgASNrq; arc=none smtp.client-ip=220.197.32.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1605e660e;
+	Thu, 22 May 2025 15:46:17 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: zhangqing@rock-chips.com,
+	mkl@pengutronix.de,
+	kernel@pengutronix.de,
+	mailhol.vincent@wanadoo.fr,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	cl@rock-chips.com,
+	kever.yang@rock-chips.com
+Cc: linux-can@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v4 0/3] rockchip: add can for RK3576 Soc
+Date: Thu, 22 May 2025 15:46:13 +0800
+Message-Id: <20250522074616.3115348-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250521-vt8500-timer-updates-v5-0-7e4bd11df72e@gmail.com>
- <20250521-vt8500-timer-updates-v5-4-7e4bd11df72e@gmail.com> <aC4MNjZxnQu8b0kR@mai.linaro.org>
-In-Reply-To: <aC4MNjZxnQu8b0kR@mai.linaro.org>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Thu, 22 May 2025 11:45:33 +0400
-X-Gm-Features: AX0GCFv6jhcev6GhPYo0l88C_vd8Mhb7eF6cQfp7Ylfbkj6Kxv47qMniq6WrRRE
-Message-ID: <CABjd4Yzv6-9KFC1fXcLQ5XPcbWDWdpYgkZJgNr1ygipVd0PV3A@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] watchdog: Add support for VIA/WonderMedia SoC
- watchdog functionality
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUseGlYaGBhKHUMYHx1KH0hWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a96f6f50f7903a3kunm9938470210de792
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NBg6Izo6ETE0LhIcSTgpDiov
+	GDRPCSlVSlVKTE9MQ0JCQkxCSk9NVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUlKSks3Bg++
+DKIM-Signature:a=rsa-sha256;
+	b=ZHgASNrqMdf+4b6cLuXsZ1XZEP5++2a9VJU5ozLQi+Y5vCkl5jmy/SzODsHuLCwVANNEto4TcXitwR/kMnZaLfcRXXrL06j2FbOeiZUL4FPlmQXDP0+M4Jwv3HPitH+wsKnczxWwDnUGUScTkRzpiC/fqmZbx5KWpuVH3R5BlE0=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=sIsz51ve9WD6EIYt9+H904kIrnIh/0ETD/TqyTo6/IU=;
+	h=date:mime-version:subject:message-id:from;
 
-On Wed, May 21, 2025 at 9:24=E2=80=AFPM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On Wed, May 21, 2025 at 05:00:12PM +0400, Alexey Charkov wrote:
-> > VIA/WonderMedia SoCs can use their system timer's first channel as a
-> > watchdog device which will reset the system if the clocksource counter
-> > matches the value given in its match register 0 and if the watchdog
-> > function is enabled.
-> >
-> > Since the watchdog function is tightly coupled to the timer itself, it
-> > is implemented as an auxiliary device of the timer device
-> >
-> > Signed-off-by: Alexey Charkov <alchark@gmail.com>
-> > ---
-> >  MAINTAINERS                   |  1 +
-> >  drivers/watchdog/Kconfig      | 15 ++++++++
-> >  drivers/watchdog/Makefile     |  1 +
-> >  drivers/watchdog/vt8500-wdt.c | 88 +++++++++++++++++++++++++++++++++++=
-++++++++
-> >  4 files changed, 105 insertions(+)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 5362095240627f613638197fda275db6edc16cf7..97d1842625dbdf7fdca3556=
-260662dab469ed091 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -3447,6 +3447,7 @@ F:      drivers/tty/serial/vt8500_serial.c
-> >  F:   drivers/video/fbdev/vt8500lcdfb.*
-> >  F:   drivers/video/fbdev/wm8505fb*
-> >  F:   drivers/video/fbdev/wmt_ge_rops.*
-> > +F:   drivers/watchdog/vt8500-wdt.c
-> >  F:   include/linux/vt8500-timer.h
-> >
-> >  ARM/ZYNQ ARCHITECTURE
-> > diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> > index 0d8d37f712e8cfb4bf8156853baa13c23a57d6d9..2e59303306feba7e15a015c=
-2fce25b1290dc4cbc 100644
-> > --- a/drivers/watchdog/Kconfig
-> > +++ b/drivers/watchdog/Kconfig
-> > @@ -1115,6 +1115,21 @@ config SUNPLUS_WATCHDOG
-> >         To compile this driver as a module, choose M here: the
-> >         module will be called sunplus_wdt.
-> >
-> > +config VT8500_WATCHDOG
-> > +     tristate "VIA/WonderMedia VT8500 watchdog support"
-> > +     depends on ARCH_VT8500 || COMPILE_TEST
-> > +     select WATCHDOG_CORE
-> > +     select AUXILIARY_BUS
-> > +     help
-> > +       VIA/WonderMedia SoCs can use their system timer as a hardware
-> > +       watchdog, as long as the first timer channel is free from other
-> > +       uses and respective function is enabled in its registers. To
-> > +       make use of it, say Y here and ensure that the device tree
-> > +       lists at least two interrupts for the VT8500 timer device.
-> > +
-> > +       To compile this driver as a module, choose M here.
-> > +       The module will be called vt8500-wdt.
->
-> Module is not supported by the timers. That will change in a very near
-> future but unloading won't be supported, you should consider tying the
-> wdt life cycle with the subsystem it is connected to.
+rk3576 can is a new controller:
+Support CAN and CANFD protocol.
+Support Dma.
 
-But there's an auxiliary bus between the timer and this module, so it
-should be possible to boot a system with the timer initialized as
-usual, and then load the watchdog if/when needed. Which also saves a
-bit of space in the main kernel image.
+There are major differences from the previous rk3568. All errata on the
+rk3568 have been fixed and redesigned.
 
-Or am I missing anything here?
+Change in V4:
+[PATCH v4 1/3]: Correct the format and add explanations.
+[PATCH v4 2/3]: No change.
+[PATCH v4 3/3]: No change.
 
-Best regards,
-Alexey
+Change in V3:
+[PATCH v3 1/3]: Add documentation for the rk3576 CAN-FD.
+[PATCH v3 2/3]: Adjust the differentiated code section and add dma
+function.
+[PATCH v3 3/3]: Remove dma, no use dma by default.
+
+Change in V2:
+[PATCH v2 1/2]: remove rk3576_canfd.c, use the rockchip_canfd driver
+[PATCH v2 2/2]: code style.
+
+Elaine Zhang (3):
+  dt-bindings: can: rockchip_canfd: add rk3576 CAN-FD controller
+  net: can: rockchip: add can for RK3576 Soc
+  arm64: dts: rockchip: rk3576: add can dts nodes
+
+ .../net/can/rockchip,rk3576-canfd.yaml        |  86 +++
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi      |  22 +
+ .../net/can/rockchip/rockchip_canfd-core.c    | 637 ++++++++++++++++--
+ drivers/net/can/rockchip/rockchip_canfd-rx.c  | 193 ++++++
+ drivers/net/can/rockchip/rockchip_canfd-tx.c  |  29 +
+ drivers/net/can/rockchip/rockchip_canfd.h     | 312 +++++++++
+ 6 files changed, 1234 insertions(+), 45 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/can/rockchip,rk3576-canfd.yaml
+
+-- 
+2.34.1
+
 
