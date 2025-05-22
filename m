@@ -1,116 +1,116 @@
-Return-Path: <linux-kernel+bounces-658778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D45AC0726
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:32:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 778B2AC072C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1AA41BA5C5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 08:32:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22B2117725E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 08:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB0E267F44;
-	Thu, 22 May 2025 08:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336802620F1;
+	Thu, 22 May 2025 08:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YM0ss1GM"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="cxed8hOH"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344DE195;
-	Thu, 22 May 2025 08:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678AD221DB4;
+	Thu, 22 May 2025 08:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747902732; cv=none; b=YLK6Y6P0E33LTGa1/5ErZ13D+588njshHLEBzPAQLuK+efPcWqprLAVqjEema+vwtnmwEVPHtAkOUyO/eULyjnrYu1yBx1svKItFZ3wxF3M8Q6NIlj9xf2GLtym2iY9y17AQKR2NU3gdggyeq2bE0pTCOCpqYyoUd8Ync0JU0Io=
+	t=1747902770; cv=none; b=QZ7WhISQ5tZ6w/idUd0GKjAGuJL89AimR38JP2EeLCu+Pxf7RIkg3HXy85dzPwixYnSFvIF9ADmc+O3UW+0bINT32H4Gvb/NNNxNCDcK9AAnuqRzKAaW1B7U6Srw5BPenaeU3qI/IBOiyvJw0Mu4Z1RvRJGGTd5Nk/Pb4gCX2/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747902732; c=relaxed/simple;
-	bh=WZQ6HWfccKpwFuwd6OP4pxDr+2OU5kN37ioPZebYFl8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iwUN/XBEfbYopsDe4MWszv/f9vMwfC3d9oEMdjG+/yjI3oV7FDkAsceb8/AkIUR2JaPPTerNWgN+QkPHxVo368bRGYmdYP1GgQmRF+JhyktYyc8t+E1P0szjOogBug2a7Rk5TECgurjnCBglWCnvizI0QlTpG+7B6bSEuyUsTLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YM0ss1GM; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-44a57d08bbfso4392485e9.2;
-        Thu, 22 May 2025 01:32:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747902729; x=1748507529; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SrIJdQiEhSsbGgqftG4sW4hqql7zVGZrpv/yvD1/dGY=;
-        b=YM0ss1GM3VIAb1pDTO8vPvQVtWKTnCSHMogESU1yixqLQDUlCdM8Q0BjCvjw2G5iHk
-         WxX+jy2IpIDbHU6kfIf7LQAGDHCa2Ak7TOhLVZuisID/0B4ukAVgjgFjlW/HK0OQA1Ma
-         elBLHmSc915XNtMy2cLXOk3NLqKLGIQyI9QfaVAXoR1dOs+6wNEVntBNKiPoMm4ZbvB4
-         n+n5GXDJmib7AxLZuwV+j/lpUPljea98f1JWQdDdeuhu4VuASZAmVaSe4eJrIqS/qCan
-         xwNFG9InQJXwkkqUkbhLGH18Tup2pp4/QLmrm8e/KPMRF8l3aPz2yeQvRZ1922fR82yR
-         FsSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747902729; x=1748507529;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SrIJdQiEhSsbGgqftG4sW4hqql7zVGZrpv/yvD1/dGY=;
-        b=g7xjfiUxUgJtCB/OcQxnMpScxiCMMBGJ60ReCXFeGSCm5SDDWUz0A/p97xSxBPwYE8
-         ewzubPEn1K1TXICAamdssbswGk9BMI7+3xVM2s4ZOAtAcaL5UFXKedPAp0YaPX+aEcCV
-         BGb6OlItg8OP6IRvzAzD1koaNqSsY2/FdUC21KF1+0UWLE+YS8Fcbs5D4Xnvwx2159ZN
-         dP0SS2hbAi2V7Iear1SEJ/MoU5NAmidBDJ57DKxHGYsItsblMCW7IS5ht+GI4NXobkzE
-         NOAC1EtMAen3Qs1Qo/PsSUEb+8UOFhFZ15KgvfnqmGG5wbLTubqfgNF/eLoI5HobWzQ3
-         ToRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUE8UTYHb3LAqzqFxlx5cC6wT5IJX63ml6YtQPNI7kv1b8xxZ5iBvLZLrFNfHEnWvCNPvdiiT7ZT5Oz27g=@vger.kernel.org, AJvYcCWWPwJQQ6jQM5xzhPvUEdqHr/SgMnwQfYqnjBlztDe0fmYnmS/CL1O3nLYxzputzazZa2oK1nFrKYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx00v79L5vWhep+sVPVoVlmiRjqtS9cdDkeiHpDg+qtDAifSQ9g
-	tMvO0Ok+h6GRKIaglbHQ6vy1dSL5p1Ln6QSjgsOxEbAYgRFo/Q07f//d
-X-Gm-Gg: ASbGncuHf+8/KeSimNFaTqyfJeLxU2JO/eq8fHB8av/BHu6W6n1qAuj83Z/saYJXgrs
-	bDRFDpFjm7IRg9jsooIRWJhX6n8hLjC1gNw+LZvnQROnXrGWmhvmZ8PvZPalDDM/Ueln/q/4IFS
-	lDTw6zQxfguiwQlbhoGxNA0HsydQk6xnrRlj3Y31AGt+LX0TXSKUu6UFKVN49HPX5PBk4nf+2Aa
-	4YZcfZ+JWjWdZtZgLNNn5XCEhsK6wqPo0fHHyUcV38ezwyGp41ceNSaA3Y0piUR7tTGWgOHLed8
-	8LcYHiL3olx6xh7VHlIohnrwiKP7xx6saOZ6NiLqgyhs5piFPg==
-X-Google-Smtp-Source: AGHT+IEWxTNbNldirqzkPayemAcdRy+LiGEXRQOfWvBP6iR1PKB5wnbTpTszol6POISM5nSMgXTsUA==
-X-Received: by 2002:a05:600c:8709:b0:44a:b478:1387 with SMTP id 5b1f17b1804b1-44ab48784e8mr9569075e9.17.1747902729154;
-        Thu, 22 May 2025 01:32:09 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-447f7ca2dd9sm93544565e9.37.2025.05.22.01.32.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 01:32:08 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] thermal/drivers/airoha: Fix spelling mistake "calibrarion" -> "calibration"
-Date: Thu, 22 May 2025 09:31:57 +0100
-Message-ID: <20250522083157.1957240-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1747902770; c=relaxed/simple;
+	bh=X2s9zB3vrc6f1K8NE3e9/CuFnSq5Bh+SMebUKzLhdZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fxtcrlIyRbPsVYYAYIO5trqWzMHaYTZK4cqAEUOR3IiZDYqh88z6etgMhWSklTLALuI/QRdl6HaNRiWUZn/K6OEXa0Iex7nP3acq7DBOkypAuXCIdAF6s7PTHrPHy6aMaYRjwxmXW5NuncLPkh9IETNs3RT4HLWffsDQV+Xi1eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=cxed8hOH; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=WuJth4b7mSGrp3rbiwhR274TXr1yLV08nwiXwf4KD8c=; b=cxed8hOHQAkc9ggZiVrM4KL4Fq
+	Ohi3DyZ6gcYYOOCui+NtxigZS7eDiz3YSDAs7ws6Gs8/tIHOKIfDqqoO3v3VR+906Y8o9eZN8DeeU
+	11U7Gbsjq0SYEqtR10yLiwPJu++N8vHDfx8tf8MdTRTrl5TK5z/WRCEeiZosv9Z5UZCQWZFyA2bzn
+	QIh/sGh0lhzvlcBVzc8Gu7sqR+SjY2LiXm+B+jOd6lxSBiREDgLKxWkWI214+umu2a6F0X/an6o7s
+	x1Yt2CBiyG9gHCwjK5ZbMDYwpIbM0wiP5Q/b3DgZ4gf49oZeNWUIE7a+wOt1kRJl3UQxf7MYqIawo
+	HexnBV7A==;
+Received: from i53875b2e.versanet.de ([83.135.91.46] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uI1Lu-0005jc-D5; Thu, 22 May 2025 10:32:34 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Quentin Schulz <foss+kernel@0leil.net>
+Cc: Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Quentin Schulz <quentin.schulz@cherry.de>
+Subject:
+ Re: [PATCH 1/2] arm64: dts: rockchip: add ethernet1 alias to RK3588 Jaguar
+Date: Thu, 22 May 2025 10:32:33 +0200
+Message-ID: <2901570.AiC22s8V5E@diego>
+In-Reply-To: <20250521-jaguar-mezz-eth-switch-v1-1-9b5c48ebb867@cherry.de>
+References:
+ <20250521-jaguar-mezz-eth-switch-v1-0-9b5c48ebb867@cherry.de>
+ <20250521-jaguar-mezz-eth-switch-v1-1-9b5c48ebb867@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a dev_info message. Fix it.
+Am Mittwoch, 21. Mai 2025, 17:44:19 Mitteleurop=C3=A4ische Sommerzeit schri=
+eb Quentin Schulz:
+> From: Quentin Schulz <quentin.schulz@cherry.de>
+>=20
+> The RK3588 Jaguar exposes pins that can be muxed for GMAC1 functions to
+> the Mezzanine proprietary connector, so let's add the alias to prepare
+> for adapters using those signals in that function.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/thermal/airoha_thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+In light of the discussion about unused aliases in [0], always adding an
+ethernet1 alias for something that may never be used is probably not
+the way to go.
 
-diff --git a/drivers/thermal/airoha_thermal.c b/drivers/thermal/airoha_thermal.c
-index 9a7a702a17de..b9fd6bfc88e5 100644
---- a/drivers/thermal/airoha_thermal.c
-+++ b/drivers/thermal/airoha_thermal.c
-@@ -352,7 +352,7 @@ static void airoha_thermal_setup_adc_val(struct device *dev,
- 		priv->default_offset = airoha_get_thermal_ADC(priv);
- 		priv->default_slope = EN7581_SLOPE_X100_DIO_DEFAULT;
- 		priv->init_temp = EN7581_INIT_TEMP_NONK_X10;
--		dev_info(dev, "missing thermal calibrarion EFUSE, using non calibrated value\n");
-+		dev_info(dev, "missing thermal calibration EFUSE, using non calibrated value\n");
- 	}
- }
- 
--- 
-2.49.0
+
+Heiko
+
+[0] https://lore.kernel.org/linux-rockchip/df6003e3-7fc3-4e50-a702-f0aa8d66=
+3dff@app.fastmail.com/
+
+> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts b/arch/arm64/=
+boot/dts/rockchip/rk3588-jaguar.dts
+> index 9fceea6c1398e92114dcb735cf2babb7d05d67a5..70a2569478f6165f067befb6c=
+dfb4f58f00dd17d 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
+> @@ -33,6 +33,7 @@ button-bios-disable {
+> =20
+>  	aliases {
+>  		ethernet0 =3D &gmac0;
+> +		ethernet1 =3D &gmac1;
+>  		i2c10 =3D &i2c10;
+>  		mmc0 =3D &sdhci;
+>  		mmc1 =3D &sdmmc;
+>=20
+>=20
+
+
+
 
 
