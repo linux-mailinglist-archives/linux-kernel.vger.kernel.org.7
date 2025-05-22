@@ -1,117 +1,132 @@
-Return-Path: <linux-kernel+bounces-659054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB67AC0ACF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:51:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395F1AC0AB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F23511BA7640
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:51:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E30354A506C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA9328A3E1;
-	Thu, 22 May 2025 11:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B2D28A3EF;
+	Thu, 22 May 2025 11:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="TP1WDE6e"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFCC1EEA28;
-	Thu, 22 May 2025 11:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CAgWslIJ"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C171C32;
+	Thu, 22 May 2025 11:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747914652; cv=none; b=sPWMqTM0lcLxY3FzfqmSQQT7FZryOTV0pc0urOMzfP89OY9uIJuk3u9Kpoq6q2EDm8ahEj9/QH6VLya1o35ThNqsQhETjXutm5FECZzEWfdwaxbgwhC7iRKEphR5zy0g3EzbFLuzQdhOQqI2Hwzv9LBf5yOoPwZPwtBCuCV/EOk=
+	t=1747913729; cv=none; b=rcqpOXj04Gue9OXwNnmwMyDPpvHPPGAaQMoCCG5V9B0NbcmYEHYphQ7f4Hjt5s1IvfP1EUgnKLB800AHnAjGRCgjb4KuBKSmptw+oTvW6GfgmDzzqB5IKlr/dsuCK9r6sntRI50+cbKrA5X5+X8rDdFTJpKDNxwirVjuWFsKHqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747914652; c=relaxed/simple;
-	bh=m1aYqpnYR3p47ZZC7i88pquhuOJRKBIaUCM/8zSDaLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PUTyCcQZKudyAuicr9HqAoG5xPHL6SWi8lhIebeE3egUhatWTAyD2iGzqJi4actGFvFbIgJQKem6kBUHafi1G4uoWRNvipDvtiotla/+i3g0YKZPvf0oqwy9wDpHSaf3m1MauVeRAp6iypbcv4FEK9MnSAB8/ngptyM6afCqCK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=TP1WDE6e; arc=none smtp.client-ip=220.197.31.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=+2YR3SBQV4q9Lx7C2ALD+oH2dckWuf9RbQ/n1pINFmI=;
-	b=TP1WDE6e5efu4PqMX/PdpVITZahk/W7M6eIoxd2qOJybqRliUO7zGy77BHQR9k
-	uCXjhdX7wWnS/HJVhDPkuC7JGrq/iAYyrk5X7gOt+6q4cKB0/3hjTV8H4PDYr953
-	ngZNEsMf7WplyzT+zZmwEs2txoK8QOtyg2um5GjdkGHl8=
-Received: from [172.19.20.199] (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSkvCgD3R1vgCy9o0ZusAQ--.12490S2;
-	Thu, 22 May 2025 19:34:57 +0800 (CST)
-Message-ID: <ff6bd560-d249-418f-81f4-7cbe055a25ec@126.com>
-Date: Thu, 22 May 2025 19:34:56 +0800
+	s=arc-20240116; t=1747913729; c=relaxed/simple;
+	bh=1mi/NDU0aKbsozc3jYCQAHLcdyjrMvttxybx/KU1JuQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Aai0jTozsaPTyfmjeeUmeUc82Yi1M5F33OIztjSB40luvJ6Wc8digiWn0h5G6nl6VkI+SEyVgX+n9Gqz6PbkRNqUtNCMOI8fl3g4r9DalS5aYI6JFKglb6LO4eQwoX+uCCOTvr2tj0ERB7+vxarwUUz6D+oVr4mOw2Q46Dqh8Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CAgWslIJ; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so48539275e9.2;
+        Thu, 22 May 2025 04:35:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747913726; x=1748518526; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kLr3eAhXdgkzpChTY6FdqlkPivT9WEeZ1GLLVzMKFQs=;
+        b=CAgWslIJvm38lfrRFtN2RleYHaixCdf4HXDUlHILzes4k/+qlOpmDGgPx3WWKr/JpE
+         ERCX998o6jUHMdqLymy6MimY5Bo/geyzpPU7dBAtP3VNCXw98HdyQPt895QtuW2DnFtz
+         +YobyOqmtGOmONpDXSimnp96w3zh6EUl11fAdkywNj5MEVMfz5MS88Znhpy9QGoxc6zY
+         mvd3Ku/zSMpLJhaTO69iF6etQNAsmXWaJDJIsUpOKu0zL2HHR5ovhYCH7sFKVolqNbc5
+         O6y8AGVvQBOLsPWr7zPArFfB46V4Q5JbFj2VXGrTWZvroWX/v1cLlgEhkrZcl3kcftjU
+         Z/xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747913726; x=1748518526;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kLr3eAhXdgkzpChTY6FdqlkPivT9WEeZ1GLLVzMKFQs=;
+        b=fEdnB7RNkAKmegIW+l/Wv06Mpf4NnskN76PYErLBu4/5ASyxhfo4+r2cn7+9qdllr5
+         hROTTV5w7aYmjWs3Arwj1hvYil+z7u2JWGoT4mVYprqekRuBwi3vo1fyZgM58eC9jE6T
+         FOfOWdVangFYozKDTkRz1EGhav1s/enCwfkA88j2AAr23ZRoUoKWmBVJNoaZq+VBmqYw
+         LeEiRhijYKitj4Pk1fKv5Rv+vtBikNW5hHQQ+Y0v5qKtSvE05mgfYtjhmersqjHAtjKE
+         FWclMei2YiUhEe96PUrrHoTt0koKzBsjx4JR+d8lSkHHsx+1IN6MQ3o2L+MdQtpQJAEt
+         dYHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVC4OlRmKle5ZknDPZ0qM8B06RQatPtuSJ+y9e9QavT4igCbQ0cvHEYdJQBDvpm8Y9v3lipvHG24ETyrVY=@vger.kernel.org, AJvYcCW53/hX2AKdqmE1dcb/ep9ldsfSgaahcTYuIjDcQOakzEcc/xkQ3JJENDrxExKP6e6C3qj4yoGEUfV17P8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhrF071p0yco9CzKEXOBA1waOM0sSAWis6SUaQ6z8bi97ovi0F
+	PKMwcUB/N3N5N2gIzVrHp+o4WvOrJZHbGq+fJXsBB77FhBD/WMM5gZII
+X-Gm-Gg: ASbGncsoewMxPMeYcV1V/CnjFPszAeGZmF5JjaOZI1UQoWnGgqP10fXJYqbxv+muRbD
+	c/+qk1cMnRjQkFQu5+jlaOAgwwHS3+PNz61b+m+B9c53LOQjViWAHsfuyaZxCQomY26t1rR9iy1
+	KJss630lXroZLxKvhxgnIycrgQtE0hA1c8DZfm9/lIiugtxMQevYLUZ3zL33AvcIxAptTPzAH3a
+	gSJElTCNpu/easedgjI00NucIWXJDFqt4BPMNQtpTuw0lSwi6NQlGxHduQdj9rJ3i/d6qKYcdlU
+	/kmN4svp/MrUCA2CU4vq0mXuiuZSoVf3BXCNnq0QsW6xT+TUhO4VxIRcVPq9
+X-Google-Smtp-Source: AGHT+IG35j29cID0hRVTZF2DdCxFefjSKCTDWxo9pbHWIK560K/Y/owNj1t5S4/NC4Dnby5ITiXM7A==
+X-Received: by 2002:a05:600c:37c5:b0:442:e9eb:cb9e with SMTP id 5b1f17b1804b1-442fd66f0cfmr223193225e9.26.1747913726173;
+        Thu, 22 May 2025 04:35:26 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-447f38142aasm99630045e9.27.2025.05.22.04.35.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 04:35:25 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Yasunari Takiguchi <Yasunari.Takiguchi@sony.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] media: dvb-frontends: cxd2880: Fix spelling mistake "ts_clk_manaul_on" -> "ts_clk_manual_on"
+Date: Thu, 22 May 2025 12:35:15 +0100
+Message-ID: <20250522113515.2764759-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/hugetlb: fix kernel NULL pointer dereference when
- replacing free hugetlb folios
-To: Oscar Salvador <osalvador@suse.de>, Muchun Song <muchun.song@linux.dev>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 21cnbao@gmail.com,
- david@redhat.com, baolin.wang@linux.alibaba.com, liuzixing@hygon.cn
-References: <1747884137-26685-1-git-send-email-yangge1116@126.com>
- <644FF836-9DC7-42B4-BACE-C433E637B885@linux.dev>
- <aC63fmFKK84K7YiZ@localhost.localdomain>
-From: Ge Yang <yangge1116@126.com>
-In-Reply-To: <aC63fmFKK84K7YiZ@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PSkvCgD3R1vgCy9o0ZusAQ--.12490S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uF15AFyruFWUZr4UZrW3trb_yoW8AF1kpF
-	W7KrnxXF4DJas8ur4Iyw1kJr15ArWUXa45GFWxGr43ZF43XasrKr1jqws0qayfCrn3Ja1I
-	vF4IgF4vgF1qkaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jbmiiUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiih9VG2gvBbqcNwAAsI
 
+There is a spelling mistake in variable ts_clk_manaul_on. Fix it.
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/media/dvb-frontends/cxd2880/cxd2880_tnrdmd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-在 2025/5/22 13:34, Oscar Salvador 写道:
-> On Thu, May 22, 2025 at 11:47:05AM +0800, Muchun Song wrote:
->> Thanks for fixing this problem. BTW, in order to catch future similar problem,
->> it is better to add WARN_ON into folio_hstate() to assert if hugetlb_lock
->> is not held when folio's reference count is zero. For this fix, LGTM.
-> 
-> Why cannot we put all the burden in alloc_and_dissolve_hugetlb_folio(),
-> which will again check things under the lock?
-> I mean, I would be ok to save cycles and check upfront in
-> replace_free_hugepage_folios(), but the latter has only one user which
-> is alloc_contig_range(), which is not really an expected-to-be optimized
-> function.
-> 
->   diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->   index bd8971388236..b4d937732256 100644
->   --- a/mm/hugetlb.c
->   +++ b/mm/hugetlb.c
->   @@ -2924,13 +2924,6 @@ int replace_free_hugepage_folios(unsigned long start_pfn, unsigned long end_pfn)
->   
->    	while (start_pfn < end_pfn) {
->    		folio = pfn_folio(start_pfn);
->   -		if (folio_test_hugetlb(folio)) {
->   -			h = folio_hstate(folio);
->   -		} else {
->   -			start_pfn++;
->   -			continue;
->   -		}
->   -
->    		if (!folio_ref_count(folio)) {
->    			ret = alloc_and_dissolve_hugetlb_folio(h, folio,
->    							       &isolate_list);
-> 
->   
-> 
-It seems that we cannot simply remove the folio_test_hugetlb() check. 
-The reasons are as follows:
-
-1）If we remove it, we will be unable to obtain the hstat corresponding 
-to the folio, and consequently, we won't be able to call 
-alloc_and_dissolve_hugetlb_folio().
-
-2）The alloc_and_dissolve_hugetlb_folio() function is also called within 
-the isolate_or_dissolve_huge_folio() function. However, the 
-folio_test_hugetlb() check within the isolate_or_dissolve_huge_folio() 
-function cannot be removed.
+diff --git a/drivers/media/dvb-frontends/cxd2880/cxd2880_tnrdmd.c b/drivers/media/dvb-frontends/cxd2880/cxd2880_tnrdmd.c
+index 0a1f3899d72c..9506d55eb83b 100644
+--- a/drivers/media/dvb-frontends/cxd2880/cxd2880_tnrdmd.c
++++ b/drivers/media/dvb-frontends/cxd2880/cxd2880_tnrdmd.c
+@@ -1709,7 +1709,7 @@ static int set_ts_clk_mode_and_freq(struct cxd2880_tnrdmd *tnr_dmd,
+ 	struct cxd2880_tnrdmd_ts_clk_cfg ts_clk_cfg;
+ 	u8 ts_rate_ctrl_off = 0;
+ 	u8 ts_in_off = 0;
+-	u8 ts_clk_manaul_on = 0;
++	u8 ts_clk_manual_on = 0;
+ 	u8 data = 0;
+ 
+ 	static const struct cxd2880_tnrdmd_ts_clk_cfg srl_ts_clk_stgs[2][2] = {
+@@ -1742,7 +1742,7 @@ static int set_ts_clk_mode_and_freq(struct cxd2880_tnrdmd *tnr_dmd,
+ 	}
+ 
+ 	if (tnr_dmd->ts_byte_clk_manual_setting) {
+-		ts_clk_manaul_on = 1;
++		ts_clk_manual_on = 1;
+ 		ts_rate_ctrl_off = 0;
+ 	}
+ 
+@@ -1760,7 +1760,7 @@ static int set_ts_clk_mode_and_freq(struct cxd2880_tnrdmd *tnr_dmd,
+ 
+ 	ret = cxd2880_io_set_reg_bits(tnr_dmd->io,
+ 				      CXD2880_IO_TGT_DMD,
+-				      0xda, ts_clk_manaul_on, 0x01);
++				      0xda, ts_clk_manual_on, 0x01);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.49.0
 
 
