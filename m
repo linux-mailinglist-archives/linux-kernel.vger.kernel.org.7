@@ -1,119 +1,127 @@
-Return-Path: <linux-kernel+bounces-659103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 705E6AC0B7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:17:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E35AC0B75
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7A387AFCA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 12:16:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DBF27AD50A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 12:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F9928B40A;
-	Thu, 22 May 2025 12:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C94228A404;
+	Thu, 22 May 2025 12:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJU2l+/V"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="AY1gHKJF"
+Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2B128AB1E;
-	Thu, 22 May 2025 12:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3915E1E485
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 12:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747916238; cv=none; b=LIftqxUifY4kk+T/NppkF0G5U+KUutDiMjl88Sl31t64N7WR6xDHF8lQTl716Erp4M/WtwM77P4Kk2+/PNXhkcvhj36Rvw/plqzKZYmqiFgn8RlMEXlBSWB5cLW0THNDE3jWEXH3oOuRiT/whueQzbTcOcbfO/xzKCgBaxf5k7c=
+	t=1747916232; cv=none; b=mhmucKKcyz6H1NbZpvGTUcPA+AVsBRI8vffV6QeXyhvDODUBxEq+5bgzVWJIOaYTpPG8Z+3k5nMUIu4U2ztwP+ddffWRUxGcS8+/5mJHVogW+HRbotp4THGLQICnhUDaS2I66HNXttPJIT42w5jlSanZ4xsmhIyd+fuYq1jq0AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747916238; c=relaxed/simple;
-	bh=ybrI75a9RN1E/0+uLOs2ARYJ2nlAKkqM2SIhQcdDZ5k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TbDEw3w5ba50VNd/EXarRDoLpcxgZQwu/K09JDKUtrpGfICIZ6cKrTO5zIIhqMsLCPEDQeT/DNo+UFOkQCOuMjItSrG2TYzN2VtQ0LvQNWMqWgFez846bBMJb9ju7EoWM7NqIjDS7kwW1X571WiBhxI9vi/EnT07T6Zn79XjPG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SJU2l+/V; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a064a3e143so4514832f8f.3;
-        Thu, 22 May 2025 05:17:16 -0700 (PDT)
+	s=arc-20240116; t=1747916232; c=relaxed/simple;
+	bh=eiUAPtWkklVAkMrYR4Bk7yeefVmpei03jtQi4YPJahM=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=nNNpxLdOgRVmb5jgqQblEx6wHZihyQB3Kxz3UG8M+v2lfFxGC6pd1c8OYB/5bSIovH+GJcdPgrR/SRllX4ajF9IiXpccsFfOK+tWwifXoamdmpnVot9EofdAQa9CMdQIgQUJ/OgL87/KmsVUCILlufOk/3tnuP9+x8ZAKfLWPIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=AY1gHKJF; arc=none smtp.client-ip=209.85.208.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-60169001e0cso1216758a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 05:17:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747916235; x=1748521035; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=p4ccgbumLuRGNhw1wu4Pws8lLAmQ2dpUvbInDT1mq2k=;
-        b=SJU2l+/VPDBRYLTpjjOX/fEcsxGyI5Bd26TStpejM/zuJ8aVzRJzwSJvkiH5E7OapD
-         ZrQXraOq9r1de2NhMNyHW0ym2px761w1+nI+KUsKiHWfvCBCvtAiAXDu/QWFhfXInAjQ
-         3riDQZbTyKFEPefEMKqdSpghOWpZURWrYJXON/L255vz9+aAK0p/3qIZ1CZxyFbKmsgd
-         YEwlRDCxqQZ8NrOAFvrmUjIHWWe1OyCj5mkwW5NY3maPTi932yrVR3fzndNDzcGOP/y/
-         VeEgeTTgPplWAOvN6BtE3CRsKk8AHIi6Mk7Zf7DmM52hfhrZdQAYOeSKKc+nEhymXRfx
-         kAZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747916235; x=1748521035;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=ionos.com; s=google; t=1747916228; x=1748521028; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :subject:cc:to:from:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=p4ccgbumLuRGNhw1wu4Pws8lLAmQ2dpUvbInDT1mq2k=;
-        b=pXqfjaN/EBw8F24eyNEmygYZgrvPFOL8OE9HNSIp9Uprza6xG1NzG+HOTfoJN5vZNJ
-         IRM9Y9kEGVm4S6X6F9xrAilBJswwh/w5WACGv5SSFaRf7BODw7D/We3FkeSUFBUHgY3+
-         Kr1BygErdLOFtd1sjopjzJSYGHz9vPa8t/EaP0xzX4qTDVSJmgRJvmkuhRFG2y+sHN6g
-         eCBCF21xh3aRErlICTxSwJDx3f3rsMoiB0fnRGjfbMBUIx1r7RW1VQTIxGfnKpVcurqz
-         VU+U35rpN40chz+BdeWP4ZJDtaiQPGA4SPlP6zasBNB+CC5n/GYYVJn2DZsCdQi0wPw6
-         pDEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWj9V9y6sMOF+UITjgyZkMBlX5MBzQ1CE11CEknGgTb7AqzAM0afu+XrA6I4EcOxtV3ZT/hnFnldYXm1FUlDq8=@vger.kernel.org, AJvYcCXPyogreJXGMba73R240KsrkBK5htNWQz6SQhO6YQFpwSjRsgrqKldcSMZL24fuqmvi7I9Vn6jIkey4NRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAC32sU3RtXmdkK6kJt4YxnLRSXQQYCrb6AbFYYBO7HzluhK1Z
-	rCAdtSfHRl3I9HKrogOoN8ptMJueuIQXeu9kLLsCNknOKvFn5c+g7LMx5IU1lHm2Yo5LOA==
-X-Gm-Gg: ASbGnctaqJU5RKJuwH2256wriy3Vg9UMNRbEjRWRQlDBXH3s2dc82htYehueBu7Dh5x
-	3phOkJTHuvbiZKejomGfkonhXc0uPG8Z9aXNMxOBZMr/tfThi1UbcnhhnfZzQIcYEyUSVBG5jGd
-	TaZncptW1qWAnkXGbeswpUEajd4jtQgcaOHLwyAwYjwN2uNVXX5B68Pk8+Y5zjaDg/gB8PM59AQ
-	WL0zBkZFDeUTX8JUySduU8LKa9pVoaGiGyRQYou1XflrnRO0rsKUH/ZZUjiGWEWG1+AIFZvz0Gn
-	6x6d9RTiG07BCWpKbjJLfRiGxTJyuWED46+kuZDHHfUfD6akJON6nCsi72gI
-X-Google-Smtp-Source: AGHT+IFkOdZ+GSdpjX1YgFUwQ6nomqhDvBeozfmiqqIvQVXgOMOJmKj8zOCKqygDltErIiabx2znJA==
-X-Received: by 2002:a05:6000:2586:b0:3a3:6a58:6f99 with SMTP id ffacd0b85a97d-3a36a587093mr16305481f8f.19.1747916235086;
-        Thu, 22 May 2025 05:17:15 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a35ca889a7sm23122754f8f.72.2025.05.22.05.17.13
+        bh=eiUAPtWkklVAkMrYR4Bk7yeefVmpei03jtQi4YPJahM=;
+        b=AY1gHKJFaUKV1+1KsHChtdmUTfeaq/+H16DnkSa1m5DDXNl/HWhdJMBGVfhbh1V79x
+         3YkMTNCWAru9XSIKBjkKHKgRbPtQ+iAAIefvK9g5l6IldZpr9u0Iplk9jjPdB8FLdaly
+         b7k7R3uV7dtKeUD3xCg5KFJZCBs2QQXXsSPl8SQY65L8GpJG9NspaO9U8hx2ToUmdSQd
+         9Z2SPFBjLPwtheRGFVB087xtrwsp6oNe0cmIHkwdia4YE1+5zCx2Yn7oFHtdMZ5X84fG
+         ogFsyBk7NHGUPjPD3SC737mSu6QdnOBUDSdKa8OxUWlN6bG7Uq/kPLpg75wjek0iezUP
+         tRzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747916228; x=1748521028;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :subject:cc:to:from:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eiUAPtWkklVAkMrYR4Bk7yeefVmpei03jtQi4YPJahM=;
+        b=cd6seZV7K7Nmv61oRd/WltqI5F14uS7Vy+Z8FTstwl6yIxphsDygmGA39wsYXaQ2/6
+         Sb0ZDKDC8WVednn7AnVnHv4e9SA1PPfqoO5n0hS9AJsSlIFgiir2+jM6/GGOKP1+aFe8
+         J56w1oszp6nDbyKAMQs33JdjPDcTIec2P5Z9xRaQiOriNf4DvDp3Qng4yjvB3tkyOIRf
+         q9ta2eGLpooTxGCPDyQJMYASzvmiIaDyvAY9fLyxSaKJTloG5rs1Vlw2lprwVPzrKyxz
+         ohimsbo2g4YN3CBdXC+pB/joanCuONppcOyV4iavEhT5itcv/9sRABJIHFjph8yG8lRJ
+         x7Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkUHUEmjsRCeoMqpDpE19H//OhP98MSCmN+lmW8+ANcHChCtKm7QAb/zmhvFO/uv6XTAdtOyQt58NEJxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+oZSP2kjYGhcQ/KRKSInsL9QK90x4XDKtrnqb/y8zPMqekz3j
+	77mW9H9b6yKX/9i+MrJ3n3lD+lI39EqNuEbpw40PchXNjGf209SCetTwmNgxozY5JeM=
+X-Gm-Gg: ASbGnctkgnJrGDTs+XHlkyedIVLxs56bnQYPQlcFY0rIRP7yKjub/UFdSIO3KwcdGVv
+	wMXMQgpvqJYuPTSKMXuKqYjMrj7YoT0YEgPkY3/Oz0eCgwP0ddPn8rd2xkiuUbc+fzLvD/JwyeS
+	Ek6SIrn66DryFSLnwCT+E6GLnoKH5myK+enK2lGAPcKustQZZnIb4oDe+1B7bcuJMNzHPqnaNw2
+	qK1DA4pF4eDmtm1DzQSIMBeqkpmWyjzm+dn84jIHafx9+xjEQWAVH+bs0HHiln7H+E7R0yTkwU3
+	DLDHuoBltfn0oj5qkTdJGy6ICGsmXUyVrw+6mY1F2WsO2Rvdc2bx7rJ4BPzWPYrq1gn3EoaPbw=
+	=
+X-Google-Smtp-Source: AGHT+IGlOm7kKNiIMa4LYQU01uE9DXQXr/EXxT9p4EDhhkg8mLhr6eFDmP3LkE+YOmae5nnJZU74TQ==
+X-Received: by 2002:a17:907:28d1:b0:acb:7de1:28b9 with SMTP id a640c23a62f3a-ad52d49b404mr686859466b.5.1747916228283;
+        Thu, 22 May 2025 05:17:08 -0700 (PDT)
+Received: from lb02065.fkb.profitbricks.net ([212.227.34.98])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d047bd6sm1055733066b.29.2025.05.22.05.17.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 05:17:13 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
-	linux-wireless@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] wifi: iwlwifi: Fix incorrect logic on cmd_ver range checking
-Date: Thu, 22 May 2025 13:17:03 +0100
-Message-ID: <20250522121703.2766764-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Thu, 22 May 2025 05:17:08 -0700 (PDT)
+Message-ID: <682f15c4.170a0220.3893a.e498@mx.google.com>
+X-Google-Original-Message-ID: <20250521165909.834545-2-pchelkin@ispras.ru> (raw)
+From: Jack Wang <jinpu.wang@ionos.com>
+To: pchelkin@ispras.ru,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org
+Cc: bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	mark.rutland@arm.com,
+	mhiramat@kernel.org,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	rppt@kernel.org,
+	tglx@linutronix.de,
+	x86@kernel.org
+Subject: [PATCH 6.1 1/1] x86/modules: Set VM_FLUSH_RESET_PERMS in module_alloc()
+Date: Thu, 22 May 2025 14:17:06 +0200
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250521165909.834545-1-pchelkin@ispras.ru>
+References: <20250521165909.834545-2-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The current cmd_ver range checking on cmd_ver < 1 && cmd_ver > 3 can
-never be true because the logical operator && is being used, cmd_ver
-can never be less than 1 and also greater than 3. Fix this by using
-the logical || operator.
+From: Fedor Pchelkin <pchelkin@ispras.ru>
 
-Fixes: df6146a0296e ("wifi: iwlwifi: Add a new version for mac config command")
+From: Thomas Gleixner <tglx@linutronix.de>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/wireless/intel/iwlwifi/mvm/mld-mac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+commit 4c4eb3ecc91f4fee6d6bf7cfbc1e21f2e38d19ff upstream.
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mld-mac.c b/drivers/net/wireless/intel/iwlwifi/mvm/mld-mac.c
-index 81ca9ff67be9..3c255ae916c8 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mld-mac.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mld-mac.c
-@@ -34,7 +34,7 @@ static void iwl_mvm_mld_mac_ctxt_cmd_common(struct iwl_mvm *mvm,
- 					    WIDE_ID(MAC_CONF_GROUP,
- 						    MAC_CONFIG_CMD), 0);
- 
--	if (WARN_ON(cmd_ver < 1 && cmd_ver > 3))
-+	if (WARN_ON(cmd_ver < 1 || cmd_ver > 3))
- 		return;
- 
- 	cmd->id_and_color = cpu_to_le32(mvmvif->id);
--- 
-2.49.0
+Instead of resetting permissions all over the place when freeing module
+memory tell the vmalloc code to do so. Avoids the exercise for the next
+upcoming user.
 
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20220915111143.406703869@infradead.org
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+
+I confirm this patch fixed the random crashing ontop of 6.1.139 I've experienced
+on our Icelake and Cascadelake servers, servers are working fine after appling
+the fix, thx!
+
+Tested-by: Jack Wang <jinpu.wang@ionos.com>
 
