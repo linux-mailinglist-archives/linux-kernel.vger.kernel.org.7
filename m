@@ -1,128 +1,122 @@
-Return-Path: <linux-kernel+bounces-659008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEF32AC0A4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:09:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E98CAC0A54
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4A24178A60
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:09:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13BE817DB78
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B62289361;
-	Thu, 22 May 2025 11:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27625289349;
+	Thu, 22 May 2025 11:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IjYkln8c"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVvRRaVa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1652690C0;
-	Thu, 22 May 2025 11:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A2C17BB6
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 11:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747912132; cv=none; b=MA2/DZqiRf+flqS/zQDquw3qyXTVz8UuD8IHJcnlX2uPwMCB/MKTBgwXUTyQppT+jkiuJtb39+0YgiUYpSHclnX+1vr+kq0rRL9c6lLFzuiOMK5F4parmGJ1kxvYEdai2LWKzzam0gXlcz1MvhyAM1LzAHWUEd/pXiSFPkQGbWI=
+	t=1747912278; cv=none; b=mvIUkZTvYyOsESYCuMJJv+XgaZ22l3EgGtbTSTb8olCDEehmMM6LZGPRm6eXe0v0kiXrxLMPQgq71u2pvsRNHppHvNKP8lVNbpnwR3b8eKwEYPnPKUCV0+88k2t/xbk7zSI3JYBhuqnBfHDI4kBY8Z8gRb3EAJtiVA00fUl+vqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747912132; c=relaxed/simple;
-	bh=2V58GQ6phC02BvHZJ4qnetRi+UjN+Yv2PP8AsO8zeS0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fi7v+EN/7K6VYeOR43kHnrV5rGLu5D4fLiv/J3+8iPzDjaCebCaIJC55WrSuanWPzhCMuzvhsCizId4YnHUj7M4ZLwvdW/Pkl+/O3v2UtFZ2HU+yp+fGcUw+qc+CVjkzqxbdIzOwcC0i71vlJAcU07rQbjY+jKwi0g3sMp9KVNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IjYkln8c; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-30dfd9e7fa8so9342126a91.2;
-        Thu, 22 May 2025 04:08:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747912130; x=1748516930; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2V58GQ6phC02BvHZJ4qnetRi+UjN+Yv2PP8AsO8zeS0=;
-        b=IjYkln8ceH3e6KiXWpbJugVwnpbH376etq+7V6z3REWFuyWOL35wPOkxU2bvTZUR3k
-         v1d3iEdDqzSSSOSDzEmQ5QUY97LQlGiCdIjnJgru4gwcZCHAvw3uQ4bju9DBgo+dJZD3
-         u4iqXQicKJQn+ziXQY3L8bpBEr5x7a+7z+8QCPB2uyAL1tpQeIIZJu30GHW7mJlkJx86
-         3HcMoB02lO66IYusBri93jN64i9xVL2hv+B9i+8ETjLehpAIM2JEFva7d9oBrbkPpHsJ
-         MalRQ2Hkil6GfQ6dzsHXk6P0BzZWbcm8rV+Re+Qlr0GBsPLqJkVbKeVZKPiUkwzVeRmS
-         Tfpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747912130; x=1748516930;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2V58GQ6phC02BvHZJ4qnetRi+UjN+Yv2PP8AsO8zeS0=;
-        b=be4sVWFfHR8UsOrVHNCRWBA5Lcmk1+fA9Pf9ZzXTviXyl9OSyxxeUIp21kqGexfWwb
-         Th3NEmwO4q++hZojziVsW5P0U/yA3OtHa93fmgvxbpBo4LkIwYXA2WPGYRuy8TdIz1lH
-         580E8gIi8MLOrNUHiXVREzuC1hZfvN08FFCvg74E4QILPTnCqTm00znHeYMqlxdPlm9v
-         OgtpRIpQZZmjXu2c89817MQ50de6i8QUgkqJtR+A+bKrUzkuPXu5jjeb4VEbbHoDTwd0
-         MAJSDleViYcxgRbDuUIOPfZf297hbw5Zbs9GCuRr1oSmPmcewYsvACcDxiEhPSQRxaUW
-         haVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwXpVzjO0Bt7NObCTVj4ZTVgMbFUPTcPN8zSjZP/Iy0O+LJ/N9YIBGEQBQNDFEqhzCMgpzUTKW0djS@vger.kernel.org, AJvYcCV1RdXc2D+6mttb6hphRUVSOAE/o74yq49iBwrOROzah5ASsvBXwkkTM/pDlQD1KCE9P/AG1nc8akuFBmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjgIGV/U3FsMqmrGucGZ0ljwHyB7kZ2LbH3Sy4pWRuCnQQc2M8
-	Gn2lDiQF7Laak2R1J9yZYtgtzw7qUHYl1vp/z3s6dQcqlv9e6FjqItiQy5/eLs2A2mJ6mR2EqVo
-	L8bbHUW/c7q/5e2/ctkupcJ7yS6RBJA==
-X-Gm-Gg: ASbGnctAMiIxFrQcwT2ae8XL5X2XlSeMBaC0qNwOWSgxYyBNarbxTf748U5akhn05tt
-	3JUiGSuwZN80m3H0MdLJ/o4xUXLQ4QY+/4Xd1Y9zHi2Pef+WQVUHQn0+31cEdIedBBNQyDcjFnw
-	JAWhYhoYmjLKJtwAl/6bbYh7FHHkPohRXv
-X-Google-Smtp-Source: AGHT+IFPeY2LRD2+abl0nYii9cYBw9bGVXUsb9X3lJAl/vpr0oP00uQJBGJx72QLpLXu8XCe0nYpeTJpokPn1VMHkXU=
-X-Received: by 2002:a17:90a:e18b:b0:2fe:a515:4a98 with SMTP id
- 98e67ed59e1d1-30e8323ecdfmr29636628a91.31.1747912130575; Thu, 22 May 2025
- 04:08:50 -0700 (PDT)
+	s=arc-20240116; t=1747912278; c=relaxed/simple;
+	bh=aHgtBI7v+S81AM2CaYELSl4mkDoqDdn1xSKhIL81RAo=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gcMruWPLDP8nLfPb0m5Ws158DoZvIctq5LEfhNybfR5iW+LAsuMivAP+3KBiivtJjEsPxwhsdJjbxNp8RejF29RZ+nW1MDzihROl5Wr2A6w0WpskRNRtb+jZ/HNP6zx9GZpSjuCkBnOAEr87pt38Uqpg/sLxPOJrMKhhaH+tgdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVvRRaVa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13A4FC4CEE4;
+	Thu, 22 May 2025 11:11:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747912277;
+	bh=aHgtBI7v+S81AM2CaYELSl4mkDoqDdn1xSKhIL81RAo=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=jVvRRaVar+06zB2qK/iHi4yi0IU1sMlKvzmJRawmtVtiTsa1hhEEDTIPe48NJdHYW
+	 tvg8Ih33kas/6QxuYdmxVrkbKB6E9d/mEnu6AysBNRDNBQNaNERVlZXYR+1h6nPJCD
+	 vUTv4BAq2tuhMLW+06Zoz+su+1Rp+puTpDWnVMhLezdlxbANmZ4p/uU3hEgDUX+NPR
+	 T4BWvo4lOoIsjckr7KeNSlF7uZAcN7feyYQFxiYXF/alEBV02Z1+Ou1DRzcLP1nlZr
+	 lDW6CvLRd6p8pWDoanjvOCkWUr0LbuyYbe5Q130vAUWPQ8vCUt2M7uDNAYU6JgTMTv
+	 /lk52c3qmGc8A==
+Message-ID: <e73ac805-b51e-4457-9f7d-7d3feaff32d8@kernel.org>
+Date: Thu, 22 May 2025 19:11:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250521214851.386796-1-jihed.chaibi.dev@gmail.com>
- <DA2IV4ZGT2M8.3QXO3L57VXSA5@brighamcampbell.com> <2025052234-brewing-recall-a7ed@gregkh>
-In-Reply-To: <2025052234-brewing-recall-a7ed@gregkh>
-From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-Date: Thu, 22 May 2025 13:10:37 +0200
-X-Gm-Features: AX0GCFsvGHSsGIxobg0c8FTEHWDyusmXNeoPwzeRw5AJKnBxbb5CTC7cg7hAh8E
-Message-ID: <CANBuOYpm86aJtk9ubkjVSOeM=tctF7upbsyPYOP-Bf8bNnv-0w@mail.gmail.com>
-Subject: Re: [PATCH 1/1] usb: typec: tipd: fix typo in TPS_STATUS_HIGH_VOLAGE_WARNING
- macro
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Brigham Campbell <me@brighamcampbell.com>, heikki.krogerus@linux.intel.com, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] f2fs: fix missing small discard in fstrim
+To: Chunhai Guo <guochunhai@vivo.com>, jaegeuk@kernel.org
+References: <20250102101310.580277-1-guochunhai@vivo.com>
+ <20250102101310.580277-2-guochunhai@vivo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250102101310.580277-2-guochunhai@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 22, 2025 at 10:30=E2=80=AFAM Greg KH <gregkh@linuxfoundation.or=
-g> wrote:
->
-> On Thu, May 22, 2025 at 01:47:54AM -0600, Brigham Campbell wrote:
-> > On Wed May 21, 2025 at 3:48 PM MDT, Jihed Chaibi wrote:
-> > > "VOLAGE" should become "VOLTAGE"
-> > >
-> > > Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-> >
-> > Nice work! I was able to successfully compile this driver with your
-> > changes and I don't see any further references to the misspelled macro.
-> >
-> > Patches which fix issues which were introduced in some previous commit
-> > typically indicate the offending commit via the "Fixes" tag. Admittedly=
-,
-> > I don't know if the tag is reserved for technical bugs rather than typo=
-s
-> > such as the one you addressed, but such a tag would look like the
-> > following for this patch:
-> >
-> > Fixes: e011178579b57c03 ("usb: typec: tipd: fix typo in TPS_STATUS_HIGH=
-_VOLAGE_WARNING macro")
->
-> Too many characters for that sha1 value :)
->
-> thanks,
->
-> greg k-hj
+On 1/2/25 18:13, Chunhai Guo wrote:
+> If userspace issues an fstrim with a range that does not include all
+> segments with small discards, these segments will be reused without being
+> discarded. This patch fixes this issue.
+> This patch is somewhat similar to commit 650d3c4e56e1 ("f2fs: fix a missing
+> discard prefree segments").
 
-Thanks for the feedback!
-I assumed this tiny typo fix might not need a "Fixes:" tag since it
-doesn=E2=80=99t really "fix" any functional issue=E2=80=94just let me know =
-if you
-disagree. I=E2=80=99m just beginning my kernel contribution journey, so I
-appreciate any guidance.
-Cheers,
+I guess it's better to update commit message as we discussed?
+
+> 
+> Fixes: d7bc2484b8d4 ("f2fs: fix small discards not to issue redundantly")
+> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
+> ---
+>  fs/f2fs/segment.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 8fe9f794b581..af9a62591c49 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -4552,6 +4552,8 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	struct list_head *head = &SM_I(sbi)->sit_entry_set;
+>  	bool to_journal = !is_sbi_flag_set(sbi, SBI_IS_RESIZEFS);
+>  	struct seg_entry *se;
+> +	bool force = (cpc->reason & CP_DISCARD);
+> +	__u64 trim_start = cpc->trim_start;
+>  
+>  	down_write(&sit_i->sentry_lock);
+>  
+> @@ -4609,7 +4611,9 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  #endif
+>  
+>  			/* add discard candidates */
+> -			if (!(cpc->reason & CP_DISCARD)) {
+> +			if (!force || (force &&
+
+if (!force || (f2fs_realtime_discard_enable() &&
+		(segno < trim_start || segno > trim_end)))
+
+Thanks,
+
+> +					(segno < trim_start ||
+> +					 segno > cpc->trim_end))) {
+>  				cpc->trim_start = segno;
+>  				add_discard_addrs(sbi, cpc, false, false);
+>  			}
+> @@ -4649,8 +4653,8 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	f2fs_bug_on(sbi, !list_empty(head));
+>  	f2fs_bug_on(sbi, sit_i->dirty_sentries);
+>  out:
+> -	if (cpc->reason & CP_DISCARD) {
+> -		__u64 trim_start = cpc->trim_start;
+> +	if (force) {
+> +		cpc->trim_start = trim_start;
+>  
+>  		for (; cpc->trim_start <= cpc->trim_end; cpc->trim_start++)
+>  			add_discard_addrs(sbi, cpc, true, false);
+
 
