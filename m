@@ -1,56 +1,92 @@
-Return-Path: <linux-kernel+bounces-659523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2930AC1161
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:49:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 257D0AC116A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:50:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1AEB3BB9B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:49:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D64E84E25BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37ED29AAEC;
-	Thu, 22 May 2025 16:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66DBF9DA;
+	Thu, 22 May 2025 16:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UKUCUp0u"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NDMhW3rA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541622980CD
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 16:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD5628B503;
+	Thu, 22 May 2025 16:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747932551; cv=none; b=jhi6EgnWAh9zte8yYYUA/t4us56DHY+yDnsj68aeJnMk64vJn/038A5CdCOuOOn95X3mstkD9vR980t9ofU7Huqu0I8tC9pDY8w1UbZCQ+5179IyTZmrD3dAwBpdjKgnb5/ruLKrDn9jdH10Ctbs4AM27E2fDs81EgqRCpy62EI=
+	t=1747932617; cv=none; b=IHqaI0XWxLofNLhoMcdeg6q2W+H/T+mTwsCqTFm0DUKGGrGtoU6ochIje6lK2IQzGNjZqzdfw3DkbKxRE1IsUFemmLFlxngLR78MYkE4EPwLrTAsUyG0R4+x2dFNdn3ItdzwRypUlY1kcxbELvvJf64kFLeLzHUqEoMZaTPR5cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747932551; c=relaxed/simple;
-	bh=j35fmLgetkmSXQUe+NPZE0gq2nxVdxLHs49rTm9DE9g=;
+	s=arc-20240116; t=1747932617; c=relaxed/simple;
+	bh=WAQaKse2ihBxfu0TJ9aEs4/TLMUkglE0FPdyzXEACyg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NzmJ5oegzR09OW5uZfvpCHWSZS5cJPADeMTVDDoHk3liCTvCmF7Yahl6nQQJcnEUc5bkj/d7ozkCQNjgtYoe2l+C4teWju8WIbILZI0paGn1B5jDIg+eBmu7ZtJfu/jpKQ+czGU1STjTjIIMYqH7n/upqtcLGjN7Dcu4zeQ4oVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UKUCUp0u; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 22 May 2025 12:48:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747932537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RQIsaiqTMB+Ttm8nI69su9Y65q0oEsoQR0Y/F7m8Jk0=;
-	b=UKUCUp0uKZRsL5+TEW9oPVweOe+3qwmHQ0BIgxfxOh6xgIoImjNIXGE5TFIh+CYqYSy+6P
-	hT5cl70b/uEtdPLr2XmR/1pg9zoqMM5sius7lj4bnhv87w3YyzZa82eCqMuD7LEKweZge0
-	1ckWib6i12JVhhXDiDs+PGBY/cUp4o8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: linux-bcache@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: riscv gcc-13 allyesconfig error the frame size of 2064 bytes is
- larger than 2048 bytes [-Werror=frame-larger-than=]
-Message-ID: <6tgxbull5sqlxbpiw3jafxtio2a3kc53yh27td4g2otb6kae5t@lr6wjawp6vfa>
-References: <CA+G9fYv08Rbg4f8ZyoZC9qseKdRygy8y86qFvts5D=BoJg888g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ugn534+toqhQRuRAH06ap94NiJ2aBt+i6lXNX0o2265AptKfIFsN6MrSYvRiFrlbjqX3gdYNhPgbEAc86RQvr3R4wGF9yie9t72kcWbqKD4N79XEm8CmL788CtN2ag60tagtPtIhcKuzMbsN5oPhSwrlghXzZ5wLpzsoAUt6sN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NDMhW3rA; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747932615; x=1779468615;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WAQaKse2ihBxfu0TJ9aEs4/TLMUkglE0FPdyzXEACyg=;
+  b=NDMhW3rAbFiuePF43ilafJA4YtWevh8/3hfTA/q0jyR9Br5ERanu+jeg
+   bb+T40cDLpB2CNLUB3aMz+Qfu/AgRJizyZZ29SlAHgvuR9VOaKnqnkiMs
+   HAK38Rqbq/Vj5yIF94k+35Bx6eke3c6Jp/GpafkMk6hurKz8klNimoedM
+   dWpJDpvZVQTaqlu/PwworLUCXibbKmRGb7GHCAWqyRJ+BzulZw9DBjWWL
+   sKGZF2W2jd2wwgSERNweRrrTBjDKkbisVMullrhxOIM9MR95qkoS+XaHx
+   OaK1x5gl3fIT8KCS3u/tI7YKDKoyepsBDrAcNLCverkf3zpy/o1rCv7RG
+   g==;
+X-CSE-ConnectionGUID: 9ZvJMLx/QLar4Xmhr/mrTA==
+X-CSE-MsgGUID: D3jOHAtBRA6jggFvzo4aag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="53783824"
+X-IronPort-AV: E=Sophos;i="6.15,306,1739865600"; 
+   d="scan'208";a="53783824"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 09:50:14 -0700
+X-CSE-ConnectionGUID: k2um+OxgQP2XgqQbU3n+og==
+X-CSE-MsgGUID: BSIuWrpQQNafNT2SQQcBPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,306,1739865600"; 
+   d="scan'208";a="145550047"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 22 May 2025 09:50:05 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uI97L-000PWq-2Q;
+	Thu, 22 May 2025 16:50:03 +0000
+Date: Fri, 23 May 2025 00:49:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jens Wiklander <jens.wiklander@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	op-tee@lists.trustedfirmware.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, Olivier Masse <olivier.masse@nxp.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T . J . Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Sumit Garg <sumit.garg@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	azarrabi@qti.qualcomm.com, Simona Vetter <simona.vetter@ffwll.ch>,
+	Daniel Stone <daniel@fooishbar.org>,
+	Rouven Czerwinski <rouven.czerwinski@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>
+Subject: Re: [PATCH v9 6/9] tee: add tee_shm_alloc_dma_mem()
+Message-ID: <202505230242.8jtn9m5R-lkp@intel.com>
+References: <20250520152436.474778-7-jens.wiklander@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,27 +95,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYv08Rbg4f8ZyoZC9qseKdRygy8y86qFvts5D=BoJg888g@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250520152436.474778-7-jens.wiklander@linaro.org>
 
-On Thu, May 22, 2025 at 06:59:53PM +0530, Naresh Kamboju wrote:
-> Regressions on riscv allyesconfig build failed with gcc-13 on the Linux next
-> tag next-20250516 and next-20250522.
-> 
-> First seen on the next-20250516
->  Good: next-20250515
->  Bad:  next-20250516
-> 
-> Regressions found on riscv:
->  - build/gcc-13-allyesconfig
-> 
-> Regression Analysis:
->  - New regression? Yes
->  - Reproducible? Yes
-> 
-> Build regression: riscv gcc-13 allyesconfig error the frame size of
-> 2064 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
+Hi Jens,
 
-Is this a kmsan build? kmsan seems to inflate stack usage by quite a
-lot.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on b4432656b36e5cc1d50a1f2dc15357543add530e]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jens-Wiklander/optee-sync-secure-world-ABI-headers/20250520-232546
+base:   b4432656b36e5cc1d50a1f2dc15357543add530e
+patch link:    https://lore.kernel.org/r/20250520152436.474778-7-jens.wiklander%40linaro.org
+patch subject: [PATCH v9 6/9] tee: add tee_shm_alloc_dma_mem()
+config: um-randconfig-r123-20250522 (https://download.01.org/0day-ci/archive/20250523/202505230242.8jtn9m5R-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250523/202505230242.8jtn9m5R-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505230242.8jtn9m5R-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+ERROR: modpost: "memremap" [drivers/tee/tee.ko] undefined!
+ERROR: modpost: "memunmap" [drivers/tee/tee.ko] undefined!
+>> ERROR: modpost: "dma_alloc_pages" [drivers/tee/tee.ko] undefined!
+>> ERROR: modpost: "dma_free_pages" [drivers/tee/tee.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
