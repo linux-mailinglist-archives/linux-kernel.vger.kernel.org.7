@@ -1,140 +1,134 @@
-Return-Path: <linux-kernel+bounces-659557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90F0AC1204
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:21:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA44AC11FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46E2B3AFC16
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:21:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09ACB4E2017
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B3019DF5B;
-	Thu, 22 May 2025 17:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77E7192D8A;
+	Thu, 22 May 2025 17:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DwlKrwD1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dImguw1T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D724C19ADA2;
-	Thu, 22 May 2025 17:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4916018CC1D;
+	Thu, 22 May 2025 17:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747934474; cv=none; b=OkaMvqE1fpvmAGk19WqaEAsmHFkGdKZMkSny9ykAq64zDBcmeWRQmhF5YyjLDZYa03Z6VORAKSW8pwHM2UId0I3r1o03uefZQwImQaa3Fm96PDT+jKXL4YwahgbfLpaUGsMVlZ2ZGev25ARQYF6l1Pd0XhuipYUhEUouJhgArQg=
+	t=1747934448; cv=none; b=AreDKDJJqbv0y/XX40w7R1XK02GCEu4/HszTRf+j9Yf7hN0dr1LNiAOc38ekv6Rt0Q5BIT6RsMNOI/sBzBtdaPXLJxjrzbUBWK7yEiocrJ9CZx3VbyykXw1ti7w2qELHQBu4M598nC2JFsAaFhzrPAm47vAe0M/FcO/FVm2UxlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747934474; c=relaxed/simple;
-	bh=jRhI6mNMqW4aCK+zaS2xWMJWg0sThwYybWKRyZTWHd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3Gn72i5LR2Z4zX9RvgSO1Iffymco06fo/envRkYIT4u14vuVC42PdKGaMID3s0IDfGwi9+eZL0RXzlLZvfpFuXEtLhZomHPeY/vmVTKVpLeb56i3dOQ593YrIahdFvycv5pT3XT2ihFI6FoBqPMCjNqsHmRFbMDoAoR14LrvU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DwlKrwD1; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747934473; x=1779470473;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jRhI6mNMqW4aCK+zaS2xWMJWg0sThwYybWKRyZTWHd4=;
-  b=DwlKrwD1ikVPkbkPeIPpqeIdi2VosC8RVNACgZAmzQp1cZ727USyWfAI
-   QsLqH/nGeYnbbLzY2bh7TGMfj7La/D2fYWvWChEkTbIlvSG7umEjxgSCr
-   8PyD5uP3ZzrH+SzaxruraAUApXfiVlmw55Yd/92QqZN+plrmeQ209JfuR
-   0FKmq1GUW0X3fFwrlwchkzr//LhdaQMh1gzaTery+UF5sp+AGplfplm2t
-   UWCmwkXsZsV6aCixt9S8BEbR9I8yuLSKvi6rTC9EBOM3Aqg/DC86lWSZF
-   KdYYgOuD6tIBmU99ffBHAjDrI7kmzqu3LaMZJd6oLmIRZmhjVbnHNR0h8
-   Q==;
-X-CSE-ConnectionGUID: j3KkLsFUSgK2rTOYLrzNAg==
-X-CSE-MsgGUID: HHwQHdVIQEeSe24A5KAQjw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="53639000"
-X-IronPort-AV: E=Sophos;i="6.15,306,1739865600"; 
-   d="scan'208";a="53639000"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 10:21:13 -0700
-X-CSE-ConnectionGUID: KM+Gcn/3Truqm25Vc/G7Bw==
-X-CSE-MsgGUID: vtqoCIuuQu62amGJbMlDaw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,306,1739865600"; 
-   d="scan'208";a="140560505"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 22 May 2025 10:21:09 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uI9bP-000PYO-0m;
-	Thu, 22 May 2025 17:21:07 +0000
-Date: Fri, 23 May 2025 01:20:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, andrew.cooper3@citrix.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] x86/fred/signal: Prevent single-step upon ERETU
- completion
-Message-ID: <202505230141.4YBHhrPI-lkp@intel.com>
-References: <20250522060549.2882444-1-xin@zytor.com>
+	s=arc-20240116; t=1747934448; c=relaxed/simple;
+	bh=f0XMvMxyxmQO+2lM8j8iwFTLKsVl26kGRvuGKeTW2FI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gyHmQX0vd0PIGZgmFP39WP/rP9xk9LaF6ieCw8TDDZ6yb21osWHHURjkmjbyXoOLOJ3p9Vs8Axd5+eJL1rxRpPvDJCRboz24hibjljLIuNSm9avBk7o4xikaILaVpKeDi/h3i9cX/j1TQyT/UEQltPIYd7LBJ18Yi4cFqCSeTOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dImguw1T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0759C4CEF4;
+	Thu, 22 May 2025 17:20:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747934447;
+	bh=f0XMvMxyxmQO+2lM8j8iwFTLKsVl26kGRvuGKeTW2FI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dImguw1T60mad+h3HSsvAIAGBZoPyTPvysg0PLKfbw7ZusucDBwWkXb/t8dv8WMOU
+	 ZZ6aAsxZ3NJaHzMeK/jILjLP3f8g/G5mfEWuPVyaHDO7YU2O0/3emWRgm3pOcU/MoM
+	 JmlGrDbi1bgSs7VKOTVEUhua/5BFdd5TCnrm1JsexjraKyYjwoxxR/waR0FmqALK7U
+	 xbqfkbyRGTquiPEsVtBNQYh/T7x6txLXkXBg1QEvdEh+0GNyr9mlk8LW4muXOp/J3t
+	 wYvzYg2cpvpsRfSGiwFDKDnCHx7VRengnDHNYN1c1iRuk7Zj09NcuXByPiXItZX38l
+	 KVc5EXz0yFjaw==
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac34257295dso1339062266b.2;
+        Thu, 22 May 2025 10:20:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVXT1/6UD6XBHV1JonEYQL83WmOLTqSbLuSoXXgaYBLlGMDKtdWHtPOqDV39cvtHgvoVS2QCpRiAS0=@vger.kernel.org, AJvYcCVgpdCRHCeBWsPqcw4v0ko0LAS0O/yxV7mAdAKLLo15EzOWmfRZeA9i36m6ThmJBZcYaMENVugZUgwO/AfaJU6a8A==@vger.kernel.org, AJvYcCWHsSwGOiHjE6vkKn7iKwfN2UTTtLgRspCyQIPzw7DY8BzjuReaomOD5TZcV8XMMOtUH3PJ/Kn5wlhQw5HB@vger.kernel.org
+X-Gm-Message-State: AOJu0YydNwJe1+3AVpaKYlVtmtTdUIpYPn8qRTGXsZY+w8SbAmcZzGvU
+	f541O1zAvQYPeW+SG1YLN6jtQFX0yCDUZUTJJXbE8shoJIDjB/SwqzQLn0JP2cg7kDgK5JDUQ+0
+	g4HGjV1J6GOV9l5pQqDhpmNBytDqQ8A==
+X-Google-Smtp-Source: AGHT+IGAYYG+vIgGuI/ayC2uGqWgyniPCcMHhUSyeQcygsPjUjSYmhf9rYJn77siFd52fYZ5ibkezDZJq/F4ygapM/I=
+X-Received: by 2002:a17:907:3f08:b0:ad5:6939:8333 with SMTP id
+ a640c23a62f3a-ad569398704mr1462923066b.37.1747934446333; Thu, 22 May 2025
+ 10:20:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522060549.2882444-1-xin@zytor.com>
+References: <20250520-arm-brbe-v19-v22-0-c1ddde38e7f8@kernel.org>
+ <20250520-arm-brbe-v19-v22-2-c1ddde38e7f8@kernel.org> <aC9NhvYzajduVm7y@e133380.arm.com>
+In-Reply-To: <aC9NhvYzajduVm7y@e133380.arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 22 May 2025 12:20:35 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKWY7rRGTbHXTmm4RC9F8fqrs133=75XFkVdm91bLHfaw@mail.gmail.com>
+X-Gm-Features: AX0GCFvVXljRLS6CQowdkTNTXjrD3dK31miPdgViETu3tYaW68KPRqx4Jf1fUa0
+Message-ID: <CAL_JsqKWY7rRGTbHXTmm4RC9F8fqrs133=75XFkVdm91bLHfaw@mail.gmail.com>
+Subject: Re: [PATCH v22 2/5] arm64: el2_setup.h: Make __init_el2_fgt labels
+ consistent, again
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	James Clark <james.clark@linaro.org>, Anshuman Khandual <anshuman.khandual@arm.com>, 
+	Leo Yan <leo.yan@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Xin,
+On Thu, May 22, 2025 at 11:15=E2=80=AFAM Dave Martin <Dave.Martin@arm.com> =
+wrote:
+>
+> On Tue, May 20, 2025 at 05:27:37PM -0500, Rob Herring (Arm) wrote:
+> > From: Anshuman Khandual <anshuman.khandual@arm.com>
+> >
+> > Commit 5b39db6037e7 ("arm64: el2_setup.h: Rename some labels to be more
+> > diff-friendly") reworked the labels in __init_el2_fgt to say what's
+> > skipped rather than what the target location is. The exception was
+> > "set_fgt_" which is where registers are written. In reviewing the BRBE
+> > additions, Will suggested "set_debug_fgt_" where HDFGxTR_EL2 are
+> > written. Doing that would partially revert commit 5b39db6037e7 undoing
+> > the goal of minimizing additions here, but it would follow the
+> > convention for labels where registers are written.
+> >
+> > So let's do both. Branches that skip something go to a "skip" label and
+> > places that set registers have a "set" label. This results in some
+> > double labels, but it makes things entirely consistent.
+> >
+> > While we're here, the SME skip label was incorrectly named, so fix it.
+> >
+> > Reported-by: Will Deacon <will@kernel.org>
+> > Cc: Dave Martin <Dave.Martin@arm.com>
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> > This one can be applied even if the rest of the series is not.
+> >
+> > v22:
+> >  - New patch
+> > ---
+> >  arch/arm64/include/asm/el2_setup.h | 10 +++++++---
+> >  1 file changed, 7 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/as=
+m/el2_setup.h
+> > index ebceaae3c749..30f57b0334a3 100644
+> > --- a/arch/arm64/include/asm/el2_setup.h
+> > +++ b/arch/arm64/include/asm/el2_setup.h
+> > @@ -204,19 +204,21 @@
+> >       orr     x0, x0, #(1 << 62)
+> >
+> >  .Lskip_spe_fgt_\@:
+> > +
+> > +.Lset_debug_fgt_\@:
+>
+> Dangling label?  There doesn't seem to be any branch to it in this
+> series, unless I've missed something.
 
-kernel test robot noticed the following build errors:
+I tried to explain that in the commit message. To have both what you
+wanted and what Will suggested, you end up with 2 labels in between
+the last skip and setting registers.
 
-[auto build test ERROR on 6a7c3c2606105a41dde81002c0037420bc1ddf00]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Xin-Li-Intel/x86-fred-signal-Prevent-single-step-upon-ERETU-completion/20250522-140954
-base:   6a7c3c2606105a41dde81002c0037420bc1ddf00
-patch link:    https://lore.kernel.org/r/20250522060549.2882444-1-xin%40zytor.com
-patch subject: [PATCH v1 1/1] x86/fred/signal: Prevent single-step upon ERETU completion
-config: i386-buildonly-randconfig-003-20250522 (https://download.01.org/0day-ci/archive/20250523/202505230141.4YBHhrPI-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250523/202505230141.4YBHhrPI-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505230141.4YBHhrPI-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/x86/kernel/signal_32.c:32:
-   arch/x86/include/asm/sighandling.h: In function 'prevent_single_step_upon_eretu':
->> arch/x86/include/asm/sighandling.h:44:21: error: 'struct pt_regs' has no member named 'fred_ss'
-      44 |                 regs->fred_ss.swevent = 0;
-         |                     ^~
-
-
-vim +44 arch/x86/include/asm/sighandling.h
-
-    26	
-    27	/*
-    28	 * To prevent infinite SIGTRAP handler loop if TF is used without an external
-    29	 * debugger, clear the software event flag in the augmented SS, ensuring no
-    30	 * single-step trap is pending upon ERETU completion.
-    31	 *
-    32	 * Note, this function should be called in sigreturn() before the original state
-    33	 * is restored to make sure the TF is read from the entry frame.
-    34	 */
-    35	static __always_inline void prevent_single_step_upon_eretu(struct pt_regs *regs)
-    36	{
-    37		/*
-    38		 * If the trap flag (TF) is set, i.e., the sigreturn() SYSCALL instruction
-    39		 * is being single-stepped, do not clear the software event flag in the
-    40		 * augmented SS, thus a debugger won't skip over the following instruction.
-    41		 */
-    42		if (IS_ENABLED(CONFIG_X86_FRED) && cpu_feature_enabled(X86_FEATURE_FRED) &&
-    43		    !(regs->flags & X86_EFLAGS_TF))
-  > 44			regs->fred_ss.swevent = 0;
-    45	}
-    46	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Rob
 
