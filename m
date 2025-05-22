@@ -1,446 +1,381 @@
-Return-Path: <linux-kernel+bounces-659850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1E4AC15B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:53:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6D7AC15A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2C041BC1B37
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:53:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8052DA26027
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C154E24CEFD;
-	Thu, 22 May 2025 20:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C5D24C66A;
+	Thu, 22 May 2025 20:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oA6/x0Xb"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E6BEGq+f"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDCC1EDA2C
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 20:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3A424BC1C
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 20:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747947158; cv=none; b=Wo0UvbRZ+UZxzMd3j4snzC1VQMjNc6N0fTb4qcfNgRE4aYKGCGWdyTgbe5VWoQGxNQV+M2ziXhHd1Y0tj65XTNPxk50ZJStZ/3PVWtutWytTN3sKP8tuqAcH9kWGDOyaH7aTAWrnkhNnNQAFx5uK4vJRj/ujmxtg6eRq6TYEE2s=
+	t=1747947137; cv=none; b=nBMMkCEWfBUOCfm24HYpilrZslqDPjZ/VeWt8AmBIv7z6HjtZPmK/8yIeSvRZgksdp3hrgTWDCd4GTRyYQCsRJ3clWtCfHET8FF9YHBCu00Oekg66XB26Tq/XL7nEJLJt8j+5wMsEGWY+U0xXt+qQyaNENT2eUh59SSySlTKG/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747947158; c=relaxed/simple;
-	bh=/JWcbcDYagEJwqIBFUDGDPOzK1KiThgFemj8KvsRScw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QPwnuXiojC9l3uJv3dVKKAcb4hOEsrWcaDAFYiMGMYBVEfcFhw9SoYpnF9ZfgFqg8xn2u2nADX9ZkpNDSvkhUSHf8Xw7O/RW5IM7PmEMqfldayD2WYfvBn1lkEBV4oATXUQJ5UyPRDuGuwyOC819hP04yX6MLwBfOUkgW+6ezbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dylanbhatch.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oA6/x0Xb; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dylanbhatch.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-742c5f7a70bso6573165b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 13:52:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747947156; x=1748551956; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cWYoVzvQ6STUKhn2Vc8frMtmKXO0VCTvjkbpcHqtiks=;
-        b=oA6/x0XbKpcV5aiiJ+/ZYi4wb8aPA7qMJtKMUD9UJIAb4jD3roeTdB1tM19eh0RRT7
-         W+lHseImWSQjipY6addknj+7oqHUP+HdiJcaIJQioPEaEmEBRO3bVbmpG1QteyVK9ck7
-         Nnmrq/kmsoNQ7v4OFOOWv6bt+9u//pWIV4/i0x/NZtBnyhokAGVIhqegYD1Sc8W/A/qX
-         uFQyGje5H3WbZaQtdNHpLNjSDq0JXzTZiga5PTBbv2Yol2oAzLLRlVioaquOEGBND/yY
-         qB4nLy+aTUMeOeK7ZY3zEsw1qXFQCUPD8SP3ae10BFBssFxH1Wyt/S9z+hH+/9YNhyAY
-         dyJA==
+	s=arc-20240116; t=1747947137; c=relaxed/simple;
+	bh=fTyOrHsaj9R+TJydwhIoSj0lr/PnJ4ql3kdA0+P9sT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q7AwDHfVwi9gN2j7Yci+oOUafW9paLXeMgwJGyR/amk82JFPmQfgt8DorD5V+5BOh6gdoqwXJAXzP/3487k+eQ6XPI/Ms6Jkl3rrWZv0wDHibJ4nEm4Dg8DphpyVBSQzv1CHTZMewfhDrSc7cAxOxoGPadn6vRD1uGPOiQOn/m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E6BEGq+f; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747947133;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EGTLhJpx3F9M/hH1CASqtNzMI3BHbenDsF+z7qqWDjM=;
+	b=E6BEGq+fN+33znvRF0qjSiHvVJKTWSyb7XDqykqXORjYXE4PDVBONxelqqV3X5I9DAJKny
+	6LV/jeF6fU41PU5Yxbd3jo1bkhjhFY4YKrUZEL6zxQ8blt/30CtDfIlrC2tcyHwCA+owRi
+	0O0cXArpWpnnszSIntXwToKTaWIVgoA=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-194-rs5s5JEtN5OEccdfEI-kIw-1; Thu, 22 May 2025 16:52:12 -0400
+X-MC-Unique: rs5s5JEtN5OEccdfEI-kIw-1
+X-Mimecast-MFC-AGG-ID: rs5s5JEtN5OEccdfEI-kIw_1747947131
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-85e7be4c906so103829739f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 13:52:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747947156; x=1748551956;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cWYoVzvQ6STUKhn2Vc8frMtmKXO0VCTvjkbpcHqtiks=;
-        b=IMgQCEZkz1ttzYtj7rDw9+RN60i351EY2SQpxen42ncjP6nc3H1AKkxMFwGOn0jHPx
-         hIaOBE3fDtUM9qz4g1po81Rcsiu/6FTSBTVerpuyJ6+jSe4cX1rBwyIdsJ5LYZrobbxi
-         gMWemzsQcSJ4/4tPBwSW3jDIwQBMtz5q4DlGq4lP/xEs3q7Ty9o0OncD3ew9sddcJoQk
-         UxaVDaCMb/0IwuI50uwdvR+3CHCBVjB/ud9UAb94psyD7wUijFzSQWaWaVaH2+5xoHBG
-         UaQXPNxf7JhTHtYnLyyoLiL89X1f4CzF+zqXJaHuMzOkcrPG7WxD1LmOngntegBbDxdj
-         GkSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVolYD382szKRDbbUM6kWNKb5Ukp2RpHbocgpTqTsfZkMDoJCuuvzTiADpV80LurCF6bOjm5N/wzYgAZLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5g7N/6hfj4QUHGmsRHs/Pj0ibW2Wzp/J+2da0aBf3OGOGWBjO
-	tzXvoti4AARoq+4xvANJ8JxGI3HIDg1tzIw6MULWc1ACUM4WKixwi3/S5nnPzwQW/d5VPQsvitM
-	IjaNf1MUKXbCuyi79oGwTLxURFw==
-X-Google-Smtp-Source: AGHT+IGOBP1QWLAjqGBXaEVYKfIQz7EmWzeImIKyBDG97cpV+TYdXMQ/DNzDl1jq/lQ+Tg3g2TZsVlojOS7T0fT+Qw==
-X-Received: from pfch21.prod.google.com ([2002:a05:6a00:1715:b0:742:4f82:f929])
- (user=dylanbhatch job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:94a7:b0:740:91eb:c66 with SMTP id d2e1a72fcca58-742acc906b0mr36990652b3a.3.1747947156420;
- Thu, 22 May 2025 13:52:36 -0700 (PDT)
-Date: Thu, 22 May 2025 20:52:05 +0000
-In-Reply-To: <20250522205205.3408764-1-dylanbhatch@google.com>
+        d=1e100.net; s=20230601; t=1747947131; x=1748551931;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EGTLhJpx3F9M/hH1CASqtNzMI3BHbenDsF+z7qqWDjM=;
+        b=hOnKddiJhGJoDZ4K69o+fdH5RGtd1F2+k5kv6y2Egg4P9RUKEy0WnVSUoVOVQENSno
+         ntddOjXjtjNj7Gmn248fQwhU88fDZIIo8LgRkH1IutHx/Tcs2m96qJihsyZqYbG2HdY/
+         ts1wuS8exAzq98a70LPVwC5ylyT98IvA8gNHoO3K7wk2PadvMMEP7kntqPMGiGB/m4lH
+         GRuLh4nE/HEG7P/SIHaFJkzjqb7rhXGD2VQrUMLbfZo9zqv7x+eht7vtgJqnOAv1onTm
+         ljvnpotQCfQK2v1JECBNfZLQ77egHHesxYdS3CClzLqsnyaxrCagR3wVMU87GJawbbFk
+         cQLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLTzP6wwfkYoEoaMcLOPjZQi4ieovpaAtbmXjtA2rVYTYCjv20QkM5fnCBIkwCE/sQvv4g53yOKW6aOj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbzJ9TJpwZ9qOi5dTU9C3An8dDyqzsBnciyNMu5IjksR7fE/bW
+	hnu3TXn8092b2klMNKiLWC7QJdBg7IuOQbUt8sCt5EAirEDkJfaQwFTXbkqnzhoTg6akcJUd/VS
+	Sacj8nwEPbVhS3Bw+vpbl4qfPnlefPRHY0eJL8V7sudfhTBBf2N5cbxM9sDayGzkoFQ==
+X-Gm-Gg: ASbGncscQzKU7l+piPjV9Ynr4nrQuHrJFL4BwTO58wkKH+iq/55lyrEzAbS0T3pbUGV
+	7Iw1nKUgG0lNRPghRfCmaOR22uOEV+SLhQ0GLc2OSW6rXg/fEVysN8QxpMMtqC3zmGd8Dwn5Gtw
+	xGSxpt9iToZZySrKDedXKwWBLE1QR8FmfycIo2uRQ9rl4gzXJk41eGS0WwIHPpP726Dov2O8q8a
+	yguW4zJIJm+7ovDjsE0wTb2quWmeCvVa2e11AvTJJSHFMGWFGQEzVSrHRZLe/QeWB1hq6py1rof
+	iCw52/63qfv7Bnc=
+X-Received: by 2002:a05:6602:160d:b0:867:ddd:bc54 with SMTP id ca18e2360f4ac-86a232cc36cmr868072939f.5.1747947131501;
+        Thu, 22 May 2025 13:52:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFtqLwL4EEjWZoWfka1PUDhJ6Av3HiQxMuLS5exKoiu8NhmzKLHGUSY5WGyjCe+HoDAstPLNg==
+X-Received: by 2002:a05:6602:160d:b0:867:ddd:bc54 with SMTP id ca18e2360f4ac-86a232cc36cmr868072039f.5.1747947131065;
+        Thu, 22 May 2025 13:52:11 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fbcc48c897sm3331713173.98.2025.05.22.13.52.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 13:52:10 -0700 (PDT)
+Date: Thu, 22 May 2025 14:52:07 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: lizhe.67@bytedance.com
+Cc: david@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ muchun.song@linux.dev, peterx@redhat.com
+Subject: Re: [PATCH v4] vfio/type1: optimize vfio_pin_pages_remote() for
+ large folio
+Message-ID: <20250522145207.01734386.alex.williamson@redhat.com>
+In-Reply-To: <20250522082524.75076-1-lizhe.67@bytedance.com>
+References: <81d73c4c-28c4-4fa0-bc71-aef6429e2c31@redhat.com>
+	<20250522082524.75076-1-lizhe.67@bytedance.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250522205205.3408764-1-dylanbhatch@google.com>
-X-Mailer: git-send-email 2.49.0.1151.ga128411c76-goog
-Message-ID: <20250522205205.3408764-3-dylanbhatch@google.com>
-Subject: [PATCH v4 2/2] arm64/module: Use text-poke API for late relocations.
-From: Dylan Hatch <dylanbhatch@google.com>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
-	Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, 
-	Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Dylan Hatch <dylanbhatch@google.com>, Song Liu <song@kernel.org>, 
-	Ard Biesheuvel <ardb@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	live-patching@vger.kernel.org, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Toshiyuki Sato <fj6611ie@aa.jp.fujitsu.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-To enable late module patching, livepatch modules need to be able to
-apply some of their relocations well after being loaded. In this
-scenario, use the text-poking API to allow this, even with
-STRICT_MODULE_RWX.
+On Thu, 22 May 2025 16:25:24 +0800
+lizhe.67@bytedance.com wrote:
 
-This patch is partially based off commit 88fc078a7a8f6 ("x86/module: Use
-text_poke() for late relocations").
+> On Thu, 22 May 2025 09:22:50 +0200, david@redhat.com wrote:
+> 
+> >On 22.05.25 05:49, lizhe.67@bytedance.com wrote:  
+> >> On Wed, 21 May 2025 13:17:11 -0600, alex.williamson@redhat.com wrote:
+> >>   
+> >>>> From: Li Zhe <lizhe.67@bytedance.com>
+> >>>>
+> >>>> When vfio_pin_pages_remote() is called with a range of addresses that
+> >>>> includes large folios, the function currently performs individual
+> >>>> statistics counting operations for each page. This can lead to significant
+> >>>> performance overheads, especially when dealing with large ranges of pages.
+> >>>>
+> >>>> This patch optimize this process by batching the statistics counting
+> >>>> operations.
+> >>>>
+> >>>> The performance test results for completing the 8G VFIO IOMMU DMA mapping,
+> >>>> obtained through trace-cmd, are as follows. In this case, the 8G virtual
+> >>>> address space has been mapped to physical memory using hugetlbfs with
+> >>>> pagesize=2M.
+> >>>>
+> >>>> Before this patch:
+> >>>> funcgraph_entry:      # 33813.703 us |  vfio_pin_map_dma();
+> >>>>
+> >>>> After this patch:
+> >>>> funcgraph_entry:      # 16071.378 us |  vfio_pin_map_dma();
+> >>>>
+> >>>> Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
+> >>>> Co-developed-by: Alex Williamson <alex.williamson@redhat.com>
+> >>>> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+> >>>> ---  
+> >>>
+> >>> Given the discussion on v3, this is currently a Nak.  Follow-up in that
+> >>> thread if there are further ideas how to salvage this.  Thanks,  
+> >> 
+> >> How about considering the solution David mentioned to check whether the
+> >> pages or PFNs are actually consecutive?
+> >> 
+> >> I have conducted a preliminary attempt, and the performance testing
+> >> revealed that the time consumption is approximately 18,000 microseconds.
+> >> Compared to the previous 33,000 microseconds, this also represents a
+> >> significant improvement.
+> >> 
+> >> The modification is quite straightforward. The code below reflects the
+> >> changes I have made based on this patch.
+> >> 
+> >> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> >> index bd46ed9361fe..1cc1f76d4020 100644
+> >> --- a/drivers/vfio/vfio_iommu_type1.c
+> >> +++ b/drivers/vfio/vfio_iommu_type1.c
+> >> @@ -627,6 +627,19 @@ static long vaddr_get_pfns(struct mm_struct *mm, unsigned long vaddr,
+> >>          return ret;
+> >>   }
+> >>   
+> >> +static inline long continuous_page_num(struct vfio_batch *batch, long npage)
+> >> +{
+> >> +       long i;
+> >> +       unsigned long next_pfn = page_to_pfn(batch->pages[batch->offset]) + 1;
+> >> +
+> >> +       for (i = 1; i < npage; ++i) {
+> >> +               if (page_to_pfn(batch->pages[batch->offset + i]) != next_pfn)
+> >> +                       break;
+> >> +               next_pfn++;
+> >> +       }
+> >> +       return i;
+> >> +}  
+> >
+> >
+> >What might be faster is obtaining the folio, and then calculating the 
+> >next expected page pointer, comparing whether the page pointers match.
+> >
+> >Essentially, using folio_page() to calculate the expected next page.
+> >
+> >nth_page() is a simple pointer arithmetic with CONFIG_SPARSEMEM_VMEMMAP, 
+> >so that might be rather fast.
+> >
+> >
+> >So we'd obtain
+> >
+> >start_idx = folio_idx(folio, batch->pages[batch->offset]);  
+> 
+> Do you mean using folio_page_idx()?
+> 
+> >and then check for
+> >
+> >batch->pages[batch->offset + i] == folio_page(folio, start_idx + i)  
+> 
+> Thank you for your reminder. This is indeed a better solution.
+> The updated code might look like this:
+> 
+> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> index bd46ed9361fe..f9a11b1d8433 100644
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -627,6 +627,20 @@ static long vaddr_get_pfns(struct mm_struct *mm, unsigned long vaddr,
+>         return ret;
+>  }
+>  
+> +static inline long continuous_pages_num(struct folio *folio,
+> +               struct vfio_batch *batch, long npage)
 
-Signed-off-by: Dylan Hatch <dylanbhatch@google.com>
-Acked-by: Song Liu <song@kernel.org>
----
- arch/arm64/kernel/module.c | 113 ++++++++++++++++++++++---------------
- 1 file changed, 69 insertions(+), 44 deletions(-)
+Note this becomes long enough that we should just let the compiler
+decide whether to inline or not.
 
-diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
-index 06bb680bfe975..6fbc3dbdcb425 100644
---- a/arch/arm64/kernel/module.c
-+++ b/arch/arm64/kernel/module.c
-@@ -18,11 +18,13 @@
- #include <linux/moduleloader.h>
- #include <linux/random.h>
- #include <linux/scs.h>
-+#include <linux/memory.h>
- 
- #include <asm/alternative.h>
- #include <asm/insn.h>
- #include <asm/scs.h>
- #include <asm/sections.h>
-+#include <asm/text-patching.h>
- 
- enum aarch64_reloc_op {
- 	RELOC_OP_NONE,
-@@ -48,7 +50,8 @@ static u64 do_reloc(enum aarch64_reloc_op reloc_op, __le32 *place, u64 val)
- 	return 0;
- }
- 
--static int reloc_data(enum aarch64_reloc_op op, void *place, u64 val, int len)
-+static int reloc_data(enum aarch64_reloc_op op, void *place, u64 val, int len,
-+		      struct module *me)
- {
- 	s64 sval = do_reloc(op, place, val);
- 
-@@ -66,7 +69,11 @@ static int reloc_data(enum aarch64_reloc_op op, void *place, u64 val, int len)
- 
- 	switch (len) {
- 	case 16:
--		*(s16 *)place = sval;
-+		if (me->state != MODULE_STATE_UNFORMED)
-+			aarch64_insn_copy(place, &sval, sizeof(s16));
-+		else
-+			*(s16 *)place = sval;
+> +{
+> +       long i;
+> +       unsigned long start_idx =
+> +                       folio_page_idx(folio, batch->pages[batch->offset]);
+> +
+> +       for (i = 1; i < npage; ++i)
+> +               if (batch->pages[batch->offset + i] !=
+> +                               folio_page(folio, start_idx + i))
+> +                       break;
+> +       return i;
+> +}
+> +
+>  /*
+>   * Attempt to pin pages.  We really don't want to track all the pfns and
+>   * the iommu can only map chunks of consecutive pfns anyway, so get the
+> @@ -708,8 +722,12 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+>                          */
+>                         nr_pages = min_t(long, batch->size, folio_nr_pages(folio) -
+>                                                 folio_page_idx(folio, batch->pages[batch->offset]));
+> -                       if (nr_pages > 1 && vfio_find_vpfn_range(dma, iova, nr_pages))
+> -                               nr_pages = 1;
+> +                       if (nr_pages > 1) {
+> +                               if (vfio_find_vpfn_range(dma, iova, nr_pages))
+> +                                       nr_pages = 1;
+> +                               else
+> +                                       nr_pages = continuous_pages_num(folio, batch, nr_pages);
+> +                       }
+
+
+I think we can refactor this a bit better and maybe if we're going to
+the trouble of comparing pages we can be a bit more resilient to pages
+already accounted as vpfns.  I took a shot at it, compile tested only,
+is there still a worthwhile gain?
+
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 0ac56072af9f..e8bba32148f7 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -319,7 +319,13 @@ static void vfio_dma_bitmap_free_all(struct vfio_iommu *iommu)
+ /*
+  * Helper Functions for host iova-pfn list
+  */
+-static struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
 +
- 		switch (op) {
- 		case RELOC_OP_ABS:
- 			if (sval < 0 || sval > U16_MAX)
-@@ -82,7 +89,11 @@ static int reloc_data(enum aarch64_reloc_op op, void *place, u64 val, int len)
- 		}
- 		break;
- 	case 32:
--		*(s32 *)place = sval;
-+		if (me->state != MODULE_STATE_UNFORMED)
-+			aarch64_insn_copy(place, &sval, sizeof(s32));
-+		else
-+			*(s32 *)place = sval;
++/*
++ * Find the first vfio_pfn that overlapping the range
++ * [iova_start, iova_end) in rb tree.
++ */
++static struct vfio_pfn *vfio_find_vpfn_range(struct vfio_dma *dma,
++		dma_addr_t iova_start, dma_addr_t iova_end)
+ {
+ 	struct vfio_pfn *vpfn;
+ 	struct rb_node *node = dma->pfn_list.rb_node;
+@@ -327,9 +333,9 @@ static struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
+ 	while (node) {
+ 		vpfn = rb_entry(node, struct vfio_pfn, node);
+ 
+-		if (iova < vpfn->iova)
++		if (iova_end <= vpfn->iova)
+ 			node = node->rb_left;
+-		else if (iova > vpfn->iova)
++		else if (iova_start > vpfn->iova)
+ 			node = node->rb_right;
+ 		else
+ 			return vpfn;
+@@ -337,6 +343,11 @@ static struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
+ 	return NULL;
+ }
+ 
++static inline struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
++{
++	return vfio_find_vpfn_range(dma, iova, iova + PAGE_SIZE);
++}
 +
- 		switch (op) {
- 		case RELOC_OP_ABS:
- 			if (sval < 0 || sval > U32_MAX)
-@@ -98,7 +109,10 @@ static int reloc_data(enum aarch64_reloc_op op, void *place, u64 val, int len)
- 		}
- 		break;
- 	case 64:
--		*(s64 *)place = sval;
-+		if (me->state != MODULE_STATE_UNFORMED)
-+			aarch64_insn_copy(place, &sval, sizeof(s64));
-+		else
-+			*(s64 *)place = sval;
- 		break;
- 	default:
- 		pr_err("Invalid length (%d) for data relocation\n", len);
-@@ -113,7 +127,8 @@ enum aarch64_insn_movw_imm_type {
- };
- 
- static int reloc_insn_movw(enum aarch64_reloc_op op, __le32 *place, u64 val,
--			   int lsb, enum aarch64_insn_movw_imm_type imm_type)
-+			   int lsb, enum aarch64_insn_movw_imm_type imm_type,
-+			   struct module *me)
+ static void vfio_link_pfn(struct vfio_dma *dma,
+ 			  struct vfio_pfn *new)
  {
- 	u64 imm;
- 	s64 sval;
-@@ -145,7 +160,10 @@ static int reloc_insn_movw(enum aarch64_reloc_op op, __le32 *place, u64 val,
- 
- 	/* Update the instruction with the new encoding. */
- 	insn = aarch64_insn_encode_immediate(AARCH64_INSN_IMM_16, insn, imm);
--	*place = cpu_to_le32(insn);
-+	if (me->state != MODULE_STATE_UNFORMED)
-+		aarch64_insn_set(place, cpu_to_le32(insn), sizeof(insn));
-+	else
-+		*place = cpu_to_le32(insn);
- 
- 	if (imm > U16_MAX)
- 		return -ERANGE;
-@@ -154,7 +172,8 @@ static int reloc_insn_movw(enum aarch64_reloc_op op, __le32 *place, u64 val,
+@@ -615,6 +626,43 @@ static long vaddr_get_pfns(struct mm_struct *mm, unsigned long vaddr,
+ 	return ret;
  }
  
- static int reloc_insn_imm(enum aarch64_reloc_op op, __le32 *place, u64 val,
--			  int lsb, int len, enum aarch64_insn_imm_type imm_type)
-+			  int lsb, int len, enum aarch64_insn_imm_type imm_type,
-+			  struct module *me)
- {
- 	u64 imm, imm_mask;
- 	s64 sval;
-@@ -170,7 +189,10 @@ static int reloc_insn_imm(enum aarch64_reloc_op op, __le32 *place, u64 val,
++static long contig_pages(struct vfio_dma *dma,
++			 struct vfio_batch *batch, dma_addr_t iova)
++{
++	struct page *page = batch->pages[batch->offset];
++	struct folio *folio = page_folio(page);
++	long idx = folio_page_idx(folio, page);
++	long max = min_t(long, batch->size, folio_nr_pages(folio) - idx);
++	long nr_pages;
++
++	for (nr_pages = 1; nr_pages < max; nr_pages++) {
++		if (batch->pages[batch->offset + nr_pages] !=
++		    folio_page(folio, idx + nr_pages))
++			break;
++	}
++
++	return nr_pages;
++}
++
++static long vpfn_pages(struct vfio_dma *dma,
++		       dma_addr_t iova_start, long nr_pages)
++{
++	dma_addr_t iova_end = iova_start + (nr_pages << PAGE_SHIFT);
++	struct vfio_pfn *vpfn;
++	long count = 0;
++
++	do {
++		vpfn = vfio_find_vpfn_range(dma, iova_start, iova_end);
++		if (likely(!vpfn))
++			break;
++
++		count++;
++		iova_start = vpfn->iova + PAGE_SIZE;
++	} while (iova_start < iova_end);
++
++	return count;
++}
++
+ /*
+  * Attempt to pin pages.  We really don't want to track all the pfns and
+  * the iommu can only map chunks of consecutive pfns anyway, so get the
+@@ -681,32 +729,40 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 		 * and rsvd here, and therefore continues to use the batch.
+ 		 */
+ 		while (true) {
++			long nr_pages, acct_pages = 0;
++
+ 			if (pfn != *pfn_base + pinned ||
+ 			    rsvd != is_invalid_reserved_pfn(pfn))
+ 				goto out;
  
- 	/* Update the instruction's immediate field. */
- 	insn = aarch64_insn_encode_immediate(imm_type, insn, imm);
--	*place = cpu_to_le32(insn);
-+	if (me->state != MODULE_STATE_UNFORMED)
-+		aarch64_insn_set(place, cpu_to_le32(insn), sizeof(insn));
-+	else
-+		*place = cpu_to_le32(insn);
- 
- 	/*
- 	 * Extract the upper value bits (including the sign bit) and
-@@ -189,17 +211,17 @@ static int reloc_insn_imm(enum aarch64_reloc_op op, __le32 *place, u64 val,
- }
- 
- static int reloc_insn_adrp(struct module *mod, Elf64_Shdr *sechdrs,
--			   __le32 *place, u64 val)
-+			   __le32 *place, u64 val, struct module *me)
- {
- 	u32 insn;
- 
- 	if (!is_forbidden_offset_for_adrp(place))
- 		return reloc_insn_imm(RELOC_OP_PAGE, place, val, 12, 21,
--				      AARCH64_INSN_IMM_ADR);
-+				      AARCH64_INSN_IMM_ADR, me);
- 
- 	/* patch ADRP to ADR if it is in range */
- 	if (!reloc_insn_imm(RELOC_OP_PREL, place, val & ~0xfff, 0, 21,
--			    AARCH64_INSN_IMM_ADR)) {
-+			    AARCH64_INSN_IMM_ADR, me)) {
- 		insn = le32_to_cpu(*place);
- 		insn &= ~BIT(31);
- 	} else {
-@@ -211,7 +233,10 @@ static int reloc_insn_adrp(struct module *mod, Elf64_Shdr *sechdrs,
- 						   AARCH64_INSN_BRANCH_NOLINK);
- 	}
- 
--	*place = cpu_to_le32(insn);
-+	if (me->state != MODULE_STATE_UNFORMED)
-+		aarch64_insn_set(place, cpu_to_le32(insn), sizeof(insn));
-+	else
-+		*place = cpu_to_le32(insn);
- 	return 0;
- }
- 
-@@ -255,23 +280,23 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
- 		/* Data relocations. */
- 		case R_AARCH64_ABS64:
- 			overflow_check = false;
--			ovf = reloc_data(RELOC_OP_ABS, loc, val, 64);
-+			ovf = reloc_data(RELOC_OP_ABS, loc, val, 64, me);
- 			break;
- 		case R_AARCH64_ABS32:
--			ovf = reloc_data(RELOC_OP_ABS, loc, val, 32);
-+			ovf = reloc_data(RELOC_OP_ABS, loc, val, 32, me);
- 			break;
- 		case R_AARCH64_ABS16:
--			ovf = reloc_data(RELOC_OP_ABS, loc, val, 16);
-+			ovf = reloc_data(RELOC_OP_ABS, loc, val, 16, me);
- 			break;
- 		case R_AARCH64_PREL64:
- 			overflow_check = false;
--			ovf = reloc_data(RELOC_OP_PREL, loc, val, 64);
-+			ovf = reloc_data(RELOC_OP_PREL, loc, val, 64, me);
- 			break;
- 		case R_AARCH64_PREL32:
--			ovf = reloc_data(RELOC_OP_PREL, loc, val, 32);
-+			ovf = reloc_data(RELOC_OP_PREL, loc, val, 32, me);
- 			break;
- 		case R_AARCH64_PREL16:
--			ovf = reloc_data(RELOC_OP_PREL, loc, val, 16);
-+			ovf = reloc_data(RELOC_OP_PREL, loc, val, 16, me);
- 			break;
- 
- 		/* MOVW instruction relocations. */
-@@ -280,88 +305,88 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
- 			fallthrough;
- 		case R_AARCH64_MOVW_UABS_G0:
- 			ovf = reloc_insn_movw(RELOC_OP_ABS, loc, val, 0,
--					      AARCH64_INSN_IMM_MOVKZ);
-+					      AARCH64_INSN_IMM_MOVKZ, me);
- 			break;
- 		case R_AARCH64_MOVW_UABS_G1_NC:
- 			overflow_check = false;
- 			fallthrough;
- 		case R_AARCH64_MOVW_UABS_G1:
- 			ovf = reloc_insn_movw(RELOC_OP_ABS, loc, val, 16,
--					      AARCH64_INSN_IMM_MOVKZ);
-+					      AARCH64_INSN_IMM_MOVKZ, me);
- 			break;
- 		case R_AARCH64_MOVW_UABS_G2_NC:
- 			overflow_check = false;
- 			fallthrough;
- 		case R_AARCH64_MOVW_UABS_G2:
- 			ovf = reloc_insn_movw(RELOC_OP_ABS, loc, val, 32,
--					      AARCH64_INSN_IMM_MOVKZ);
-+					      AARCH64_INSN_IMM_MOVKZ, me);
- 			break;
- 		case R_AARCH64_MOVW_UABS_G3:
- 			/* We're using the top bits so we can't overflow. */
- 			overflow_check = false;
- 			ovf = reloc_insn_movw(RELOC_OP_ABS, loc, val, 48,
--					      AARCH64_INSN_IMM_MOVKZ);
-+					      AARCH64_INSN_IMM_MOVKZ, me);
- 			break;
- 		case R_AARCH64_MOVW_SABS_G0:
- 			ovf = reloc_insn_movw(RELOC_OP_ABS, loc, val, 0,
--					      AARCH64_INSN_IMM_MOVNZ);
-+					      AARCH64_INSN_IMM_MOVNZ, me);
- 			break;
- 		case R_AARCH64_MOVW_SABS_G1:
- 			ovf = reloc_insn_movw(RELOC_OP_ABS, loc, val, 16,
--					      AARCH64_INSN_IMM_MOVNZ);
-+					      AARCH64_INSN_IMM_MOVNZ, me);
- 			break;
- 		case R_AARCH64_MOVW_SABS_G2:
- 			ovf = reloc_insn_movw(RELOC_OP_ABS, loc, val, 32,
--					      AARCH64_INSN_IMM_MOVNZ);
-+					      AARCH64_INSN_IMM_MOVNZ, me);
- 			break;
- 		case R_AARCH64_MOVW_PREL_G0_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_movw(RELOC_OP_PREL, loc, val, 0,
--					      AARCH64_INSN_IMM_MOVKZ);
-+					      AARCH64_INSN_IMM_MOVKZ, me);
- 			break;
- 		case R_AARCH64_MOVW_PREL_G0:
- 			ovf = reloc_insn_movw(RELOC_OP_PREL, loc, val, 0,
--					      AARCH64_INSN_IMM_MOVNZ);
-+					      AARCH64_INSN_IMM_MOVNZ, me);
- 			break;
- 		case R_AARCH64_MOVW_PREL_G1_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_movw(RELOC_OP_PREL, loc, val, 16,
--					      AARCH64_INSN_IMM_MOVKZ);
-+					      AARCH64_INSN_IMM_MOVKZ, me);
- 			break;
- 		case R_AARCH64_MOVW_PREL_G1:
- 			ovf = reloc_insn_movw(RELOC_OP_PREL, loc, val, 16,
--					      AARCH64_INSN_IMM_MOVNZ);
-+					      AARCH64_INSN_IMM_MOVNZ, me);
- 			break;
- 		case R_AARCH64_MOVW_PREL_G2_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_movw(RELOC_OP_PREL, loc, val, 32,
--					      AARCH64_INSN_IMM_MOVKZ);
-+					      AARCH64_INSN_IMM_MOVKZ, me);
- 			break;
- 		case R_AARCH64_MOVW_PREL_G2:
- 			ovf = reloc_insn_movw(RELOC_OP_PREL, loc, val, 32,
--					      AARCH64_INSN_IMM_MOVNZ);
-+					      AARCH64_INSN_IMM_MOVNZ, me);
- 			break;
- 		case R_AARCH64_MOVW_PREL_G3:
- 			/* We're using the top bits so we can't overflow. */
- 			overflow_check = false;
- 			ovf = reloc_insn_movw(RELOC_OP_PREL, loc, val, 48,
--					      AARCH64_INSN_IMM_MOVNZ);
-+					      AARCH64_INSN_IMM_MOVNZ, me);
- 			break;
- 
- 		/* Immediate instruction relocations. */
- 		case R_AARCH64_LD_PREL_LO19:
- 			ovf = reloc_insn_imm(RELOC_OP_PREL, loc, val, 2, 19,
--					     AARCH64_INSN_IMM_19);
-+					     AARCH64_INSN_IMM_19, me);
- 			break;
- 		case R_AARCH64_ADR_PREL_LO21:
- 			ovf = reloc_insn_imm(RELOC_OP_PREL, loc, val, 0, 21,
--					     AARCH64_INSN_IMM_ADR);
-+					     AARCH64_INSN_IMM_ADR, me);
- 			break;
- 		case R_AARCH64_ADR_PREL_PG_HI21_NC:
- 			overflow_check = false;
- 			fallthrough;
- 		case R_AARCH64_ADR_PREL_PG_HI21:
--			ovf = reloc_insn_adrp(me, sechdrs, loc, val);
-+			ovf = reloc_insn_adrp(me, sechdrs, loc, val, me);
- 			if (ovf && ovf != -ERANGE)
- 				return ovf;
- 			break;
-@@ -369,46 +394,46 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
- 		case R_AARCH64_LDST8_ABS_LO12_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_imm(RELOC_OP_ABS, loc, val, 0, 12,
--					     AARCH64_INSN_IMM_12);
-+					     AARCH64_INSN_IMM_12, me);
- 			break;
- 		case R_AARCH64_LDST16_ABS_LO12_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_imm(RELOC_OP_ABS, loc, val, 1, 11,
--					     AARCH64_INSN_IMM_12);
-+					     AARCH64_INSN_IMM_12, me);
- 			break;
- 		case R_AARCH64_LDST32_ABS_LO12_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_imm(RELOC_OP_ABS, loc, val, 2, 10,
--					     AARCH64_INSN_IMM_12);
-+					     AARCH64_INSN_IMM_12, me);
- 			break;
- 		case R_AARCH64_LDST64_ABS_LO12_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_imm(RELOC_OP_ABS, loc, val, 3, 9,
--					     AARCH64_INSN_IMM_12);
-+					     AARCH64_INSN_IMM_12, me);
- 			break;
- 		case R_AARCH64_LDST128_ABS_LO12_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_imm(RELOC_OP_ABS, loc, val, 4, 8,
--					     AARCH64_INSN_IMM_12);
-+					     AARCH64_INSN_IMM_12, me);
- 			break;
- 		case R_AARCH64_TSTBR14:
- 			ovf = reloc_insn_imm(RELOC_OP_PREL, loc, val, 2, 14,
--					     AARCH64_INSN_IMM_14);
-+					     AARCH64_INSN_IMM_14, me);
- 			break;
- 		case R_AARCH64_CONDBR19:
- 			ovf = reloc_insn_imm(RELOC_OP_PREL, loc, val, 2, 19,
--					     AARCH64_INSN_IMM_19);
-+					     AARCH64_INSN_IMM_19, me);
- 			break;
- 		case R_AARCH64_JUMP26:
- 		case R_AARCH64_CALL26:
- 			ovf = reloc_insn_imm(RELOC_OP_PREL, loc, val, 2, 26,
--					     AARCH64_INSN_IMM_26);
-+					     AARCH64_INSN_IMM_26, me);
- 			if (ovf == -ERANGE) {
- 				val = module_emit_plt_entry(me, sechdrs, loc, &rel[i], sym);
- 				if (!val)
- 					return -ENOEXEC;
- 				ovf = reloc_insn_imm(RELOC_OP_PREL, loc, val, 2,
--						     26, AARCH64_INSN_IMM_26);
-+						     26, AARCH64_INSN_IMM_26, me);
++			nr_pages = contig_pages(dma, batch, iova);
++			if (!rsvd) {
++				acct_pages = nr_pages;
++				acct_pages -= vpfn_pages(dma, iova, nr_pages);
++			}
++
+ 			/*
+ 			 * Reserved pages aren't counted against the user,
+ 			 * externally pinned pages are already counted against
+ 			 * the user.
+ 			 */
+-			if (!rsvd && !vfio_find_vpfn(dma, iova)) {
++			if (acct_pages) {
+ 				if (!dma->lock_cap &&
+-				    mm->locked_vm + lock_acct + 1 > limit) {
++				    mm->locked_vm + lock_acct + acct_pages > limit) {
+ 					pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n",
+ 						__func__, limit << PAGE_SHIFT);
+ 					ret = -ENOMEM;
+ 					goto unpin_out;
+ 				}
+-				lock_acct++;
++				lock_acct += acct_pages;
  			}
- 			break;
  
--- 
-2.49.0.1151.ga128411c76-goog
+-			pinned++;
+-			npage--;
+-			vaddr += PAGE_SIZE;
+-			iova += PAGE_SIZE;
+-			batch->offset++;
+-			batch->size--;
++			pinned += nr_pages;
++			npage -= nr_pages;
++			vaddr += PAGE_SIZE * nr_pages;
++			iova += PAGE_SIZE * nr_pages;
++			batch->offset += nr_pages;
++			batch->size -= nr_pages;
+ 
+ 			if (!batch->size)
+ 				break;
+
 
 
