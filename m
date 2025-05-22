@@ -1,138 +1,140 @@
-Return-Path: <linux-kernel+bounces-659304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DF0AC0E74
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:40:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C65AC0E7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AD29A260D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:39:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C84A6A40D46
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97A628CF68;
-	Thu, 22 May 2025 14:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859A928CF44;
+	Thu, 22 May 2025 14:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="kmMxV6h8"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QCvAumpQ"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E9828A402;
-	Thu, 22 May 2025 14:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6410928A1E3
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 14:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747924775; cv=none; b=WZ6B0mxU1W7JfN7B+dQnWFuM8/lVFy8TZmD9B/wyKhZj0ebSIPureZUPwuCXHhHO8yYW5fRaSa336rknlAzSRasQSOBmjPHKM6UiaJ6Q78TfpKVrGofoVFv6gO1ft9P7QXW2RMEMoVSlcBTqsP5Y5f8mvcZ1CFVv9HxnzqyNQ7g=
+	t=1747924793; cv=none; b=c9rMpwxcXC8tWGzA9poM1Vb1pjVlxcJG+P9MAjYT1FgO+cFieTuTxp89kRewmG7kSFdK9R0t1c3w38ai1qjmiuYHDJ2fDJgR77H/q1ZC6hMi8IX9oTPbjUb477IN15ooGkd9jnLJhvclOVuFlMjG0ST1hLi+46erkWMlMJk653Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747924775; c=relaxed/simple;
-	bh=Q54gcv8GTTG3n+DbOFd2Nu8bCCMUkr75rkCiPxbFzEY=;
-	h=From:To:Cc:Date:Message-Id:In-Reply-To:References:MIME-Version:
-	 Subject; b=OOBL/c8XM0XpWHu8PnjFhDc9Gz1V5pZuLUDHAmyQ9R9meSzru+9fxZ6LUfwSQjTE7StNNM3+IPKnU7VtE1xtMJowcZa/P/5CEWmSXgMoGowhxa5Z3rYfyTeQtmQ9rzYl7wa3KMj7zOYlkpojHxQ05Eo6aNbsFp9LPVspn89ELLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=kmMxV6h8; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
-	:From:subject:date:message-id:reply-to;
-	bh=37ltNrDm/SQxtBtReU+dzvAvwRTeydEOy/6HO4fUSEY=; b=kmMxV6h8CX6wWpsfmwF5Jl1o/c
-	my7Q40vkqUzyx2Wcq+t0inyd950IfjagSp1WVY2a6c7z+42N9KDxfzn1elwidC2jI9uLj1LRnQUvx
-	HyCSpoOG39SOw0aTDjVCCo0kAU9OVM0/LwQM94MqxkvQ1i/3ygMNiFiY66ipIi62sXOY=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:33178 helo=pettiford.lan)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1uI74x-0006Gk-RM; Thu, 22 May 2025 10:39:28 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: biju.das.jz@bp.renesas.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	hugo@hugovil.com,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Chris Brandt <chris.brandt@renesas.com>
-Date: Thu, 22 May 2025 10:39:11 -0400
-Message-Id: <20250522143911.138077-3-hugo@hugovil.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250522143911.138077-1-hugo@hugovil.com>
-References: <20250522143911.138077-1-hugo@hugovil.com>
+	s=arc-20240116; t=1747924793; c=relaxed/simple;
+	bh=YKlbXnURs97TmbTpjUezNbI938aiKGi/vqj82PNrfgw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TMFY+NFBQ5P19zUsbzdh6bMsIoHyXh6rBaEdPjO+k2PiBNCKMvEh1Xh1k4iFpZjdW/Peafx7f091A6C37xSG7VqVe/u1elVP6VQ5Jg9yC7tHrnKO9KpUjjNKyswCjwdkaSeEt5+mZkMxZQWXVzWDF0weqLUMkbiOTTJqRidmKXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QCvAumpQ; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5fff52493e0so9564004a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 07:39:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1747924791; x=1748529591; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5dUW3XcT56QSO6IzrjYqsZTqvCBor25DIllhfgnMqf8=;
+        b=QCvAumpQmugaw0sbSIj8flMl4Rjm4dyNn71jU06GSadnbIFiluK9vVU1TkWoVf+MM7
+         CYLILaNBEi8emIR3xNY6MN/CKcpuGpa549RPt83W0qQLaYSFiVlfZ12vt3i7Selu1Cqy
+         fixKIP2nVTwQkLC1hg/vwgQMjat2mBbN3O1EWHvzpMQPWpqg0C6NPVRcARO6g4XuldHs
+         a6cjWspkl2+reFmJKmkCkVh945GqIv3HZAMdztT1taodPCzSqOtkrNVBq/JV2YjhcYVu
+         uz8BbByVeP+GsJEBQ/HVjBcCnQS2bwkIWr62sXDq3miABZtUMGRiXso7KK54e+2ejKpU
+         hUgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747924791; x=1748529591;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5dUW3XcT56QSO6IzrjYqsZTqvCBor25DIllhfgnMqf8=;
+        b=S5nT6QImfpgx2IMIjd2rbchU9tEvPBbyQq9TVsQEYiZ962ASz60TIEijKATl38vUek
+         a95YnxUTHkSemkENXntSuu70xD1axQwSXTbll8yzkJ8OS8bvI/NvpP+ntp8s8pa0sLrM
+         YZ/LFvPGyVTK4JuPvmeWaFBB6pRySWKIuvcONsDDAgtjBWwwsLgwjSqLOheMbzX38i9D
+         yQ1Q264S5frDIAZwKobG6zcuOW96ksDjtAWo2tMKarKVs1B9s+Zl0D5wlb4ZRH/5yNCG
+         qh2ppLbKcciA0PHHPaHewcRSStTVpWy7+dprb4nHOjr4RIdpTuiCHHB1n0UTbWsMX/hT
+         wNOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZq0vbGMGUkRs/IEAz5rmU6JPEpuOHLWvODIl/qLat1yiOGbdNCODkHgNaerPG9MXi2WlRaPnK0pQeSrw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpstyfOuIPPsLSaTo6svkvE8wPWW9rHCcZlnHGc8J+v0Pw1bud
+	oe37ZLVftcr1EQoBjDZGPGp+nRyZr2O/2Z/f+h6Yz7KR8r+nIQJ/AhB+OsUje9goMYQ=
+X-Gm-Gg: ASbGnctzaiWGYqXHVcO/HdIASCB+BGuAzNHw3wkZnzsW4bPp8OQjHFy0RgZtuHd0d3z
+	R83TuGGJQ+CPPeXwgm0xQnx3wsNnusqUExjrr/d9jQjJvaaqxdjwfFlzoLNQhoiQNgh4t2i+PAY
+	YxoabANTdML/Xe3JyYpWrGk1Iy0M/Mq88CMfz+oH+t4grZqVKEa1KxY5Us58o4EF0xZZ+jPBbd9
+	h+4L+6yq1b9aizLHYPsFXmnVErI4bX9kkSNgdMYM1t8e4rn9jz9TEoeIFrQSb+9x+Mf9KtygSr5
+	6RBMU9bPmkR7R5h/VWth6kCxNy4D+mJwbWg+RX1PekM0kGsaFcDWkZsSA2A=
+X-Google-Smtp-Source: AGHT+IE/RdKTMZdYx9F6yx1Kzprvz+cSKkMQRkLYiOsz7mEXFrIWg/Hdk4IKesUgJcilzgg+XPJrLQ==
+X-Received: by 2002:a05:6402:34c8:b0:602:4405:777b with SMTP id 4fb4d7f45d1cf-602440578f8mr5149377a12.24.1747924790721;
+        Thu, 22 May 2025 07:39:50 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.58])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6004d4f1c7esm10543212a12.14.2025.05.22.07.39.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 May 2025 07:39:50 -0700 (PDT)
+Message-ID: <797611e1-3786-45c4-9103-3ee8f96cec6d@tuxon.dev>
+Date: Thu, 22 May 2025 17:39:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-Subject: [PATCH v3 2/2] drm: renesas: rz-du: Set DCS maximum return packet size
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/12] dt-bindings: phy: renesas,usb2-phy: Add
+ renesas,sysc-signals
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
+ magnus.damm@gmail.com, yoshihiro.shimoda.uh@renesas.com, kees@kernel.org,
+ gustavoars@kernel.org, biju.das.jz@bp.renesas.com,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-hardening@vger.kernel.org, john.madieu.xa@bp.renesas.com,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250521140943.3830195-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250521140943.3830195-6-claudiu.beznea.uj@bp.renesas.com>
+ <20250522-evasive-unyielding-quoll-dbc9b2@kuoka>
+ <b22e7a46-7e35-4840-aae3-a855c97fbde4@tuxon.dev>
+ <4a07048a-c55a-4fd3-b4e5-7f9d218de76f@kernel.org>
+ <68d83aaf-280a-4c19-becf-c6e1d9c2432b@kernel.org>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <68d83aaf-280a-4c19-becf-c6e1d9c2432b@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-The default value of 1 will result in long read commands payload not being
-saved to memory.
 
-Fix by setting this value to the DMA buffer size.
+On 22.05.2025 15:48, Krzysztof Kozlowski wrote:
+> On 22/05/2025 14:46, Krzysztof Kozlowski wrote:
+>>>>>  
+>>>>> +  - if:
+>>>>> +      properties:
+>>>>> +        compatible:
+>>>>> +          contains:
+>>>>> +            const: renesas,usb2-phy-r9a08g045
+>>>>> +    then:
+>>>>> +      required:
+>>>>> +        - renesas,sysc-signals
+>>>>
+>>>> That's ABI break.
+>>>
+>>> There is no in kernel device tree users of "renesas,usb2-phy-r9a08g045"
+>>> compatible. It is introduced in patch 11/12 from this series. With this do
+>>> you still consider it ABI break?
+>>
+>> Then this patch cannot be split from binding introducing the user. Don't
+>> add unused/undocumented compatibles.
+>>
+> Or you meant DTS?
 
-Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Chris Brandt <chris.brandt@renesas.com>
-Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
----
- drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c      | 10 ++++++++++
- drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h |  4 ++++
- 2 files changed, 14 insertions(+)
+Yes, I meant in tree DTS.
 
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index a048d473db00b..745aae63af9d8 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -549,6 +549,7 @@ static void rzg2l_mipi_dsi_atomic_enable(struct drm_bridge *bridge,
- 	const struct drm_display_mode *mode;
- 	struct drm_connector *connector;
- 	struct drm_crtc *crtc;
-+	u32 value;
- 	int ret;
- 
- 	connector = drm_atomic_get_new_connector_for_encoder(state, bridge->encoder);
-@@ -561,6 +562,15 @@ static void rzg2l_mipi_dsi_atomic_enable(struct drm_bridge *bridge,
- 
- 	rzg2l_mipi_dsi_set_display_timing(dsi, mode);
- 
-+	/*
-+	 * The default value of 1 will result in long read commands payload
-+	 * not being saved to memory. Set to the DMA buffer size.
-+	 */
-+	value = rzg2l_mipi_dsi_link_read(dsi, DSISETR);
-+	value &= ~DSISETR_MRPSZ;
-+	value |= FIELD_PREP(DSISETR_MRPSZ, RZG2L_DCS_BUF_SIZE);
-+	rzg2l_mipi_dsi_link_write(dsi, DSISETR, value);
-+
- 	ret = rzg2l_mipi_dsi_start_hs_clock(dsi);
- 	if (ret < 0)
- 		goto err_stop;
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
-index 0e432b04188d0..26d8a37ee6351 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
-@@ -81,6 +81,10 @@
- #define RSTSR_SWRSTLP			(1 << 1)
- #define RSTSR_SWRSTHS			(1 << 0)
- 
-+/* DSI Set Register */
-+#define DSISETR				0x120
-+#define DSISETR_MRPSZ			GENMASK(15, 0)
-+
- /* Rx Result Save Slot 0 Register */
- #define RXRSS0R				0x240
- #define RXRSS0R_RXPKTDFAIL		BIT(28)
--- 
-2.39.5
+> I asked about ABI which is not about in-kernel users.
+> You can always change in-kernel users, so what would be any point of a
+> binding and its ABI?
+> 
+> Best regards,
+> Krzysztof
 
 
