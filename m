@@ -1,125 +1,106 @@
-Return-Path: <linux-kernel+bounces-659011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5FBAC0A56
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:11:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B39AC0A60
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A6D34E7491
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:11:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F091F17C5EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A864289812;
-	Thu, 22 May 2025 11:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C402328981E;
+	Thu, 22 May 2025 11:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="L3RFVWSn"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="jeCCMYFx"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B0C17BB6;
-	Thu, 22 May 2025 11:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998E22874F5;
+	Thu, 22 May 2025 11:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747912303; cv=none; b=jIy5Xj9s7upNT5hTH7oFRHvoxZLPvWysGlg6x0b5cVcM97ReQ7LN7b6J13ASfcQDzysaeQLX3nqV0v4vXoyIaXN+/icVHAOUuOnHt3nMIvHJpN2rVxOl6AGGIFnB2T4A3A63VTU9VqsMIyGFCVgpFZJ1cSEorHKe0MDOw3PMmls=
+	t=1747912393; cv=none; b=Qu+Np8Fsrbp27VAeFMkC6RJO2jbx+bWuD/PnxsplRMhRdzO+HQdtJVd/guDkgXiqyYSmcP2sapKkCCYmwCV3Zkh/H+K8TJ+9g98nwcscIsH3t81sTbXyblNwafbfsBfFZQGDFRjiWnUX5r74b/AYBTQJJDflPRVlyEsGftIZRo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747912303; c=relaxed/simple;
-	bh=USl4YUVkSxfb7TfRutGSKttDMNWN/XNiBVJUodRetOc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HfeundFXype6CMegzp+Wq3OVO6Ib+bdqXVvZQqOsnaxY/uGusqR4DLkHjOz0ICnU/PAfh+D12kJa5MQtrAqmaDtNTemFSguN4P8DvDLr0KTgxBdm1Yro5P+sxJ9h4vIFSrZCRZlpQMKXwU086FjXghRfHeUArmrI+mUQXL+JwDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=L3RFVWSn; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54LM67l6010041;
-	Thu, 22 May 2025 04:11:32 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=7RUf8XA3/mKUg3y1MmIWqtItv
-	jOGVG+m/4ggFiuOdAs=; b=L3RFVWSn+PGJFwbUDl8o4mVMxI+3YPWFHBD8UIDTN
-	hskFRKuTYRYRsaNTQr6gu2sk30bOKxWRovXHWUjTX5BSVwjmJVeRZU60DIAuyM0+
-	DM8ERC9EBffEruW6x/PGC/ig1kZGRAryM4SS7DkoDeH5T5gwRPW/7G3YoMbDgkUl
-	MQUcuLJtbSF2gn/n577iCVWtgLQ+webWfYZL8Dc+AL5Yj4rf763yNbd+i/ijC+H0
-	OWUzfXA9U8+chrlQc0/6SSQnJTp5K7uyfcdWrKiyljocmFwLTX7OEnU5TZ83DvVX
-	eOZEy0q8dPGn1b3s1gad6zmng/UB7CpvnDh2QYtIPTEaw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46sqap99bb-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 May 2025 04:11:32 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 22 May 2025 04:11:26 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 22 May 2025 04:11:26 -0700
-Received: from test-OptiPlex-Tower-Plus-7010 (unknown [10.29.37.157])
-	by maili.marvell.com (Postfix) with SMTP id 08EBA3F7085;
-	Thu, 22 May 2025 04:11:21 -0700 (PDT)
-Date: Thu, 22 May 2025 16:41:20 +0530
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sunil Goutham
-	<sgoutham@marvell.com>,
-        Linu Cherian <lcherian@marvell.com>,
-        Geetha sowjanya
-	<gakula@marvell.com>,
-        Jerin Jacob <jerinj@marvell.com>,
-        Subbaraya Sundeep
-	<sbhatta@marvell.com>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Paolo Abeni
-	<pabeni@redhat.com>,
-        Bharat Bhushan <bbhushan2@marvell.com>
-Subject: Re: [net-next] octeontx2-pf: ethtool: Display "Autoneg" and "Port"
- fields
-Message-ID: <aC8GWDelB9YwOKIz@test-OptiPlex-Tower-Plus-7010>
-References: <20250519112333.1044645-1-hkelam@marvell.com>
- <20250520165019.6d075176@kernel.org>
+	s=arc-20240116; t=1747912393; c=relaxed/simple;
+	bh=9WNUn200Zhm7LY+Bv/Jeb7Hod+CbFvsfj8rQ52Cnu8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=foqH2oE8DU1R4akbe8pYl0ZazC/wseHpURQ/gfTnyTGwpbt/mU6FEfSa2WQGjXBAlw0N5sVxkd5ipKSODfOGgyodr3d4u1XMIyQ4by7uSl8fjM0c3kFcA59IckmZH2sFJ+7EBowPzSNpJd26RuLdJlkX43mJ/DsEe3TowsDtlBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=jeCCMYFx; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=KH74wmGLc54o0i5rjNjmqUs5fM3qKFnqrHsxffM9KDo=; b=jeCCMYFxLDpYdZD6fyoctsww45
+	fPrz5Sv+jhpWhYMGu53J0tUYQq5q4tgPeVWp3aMvZ23A9r3kJ5VZ0cbOCLFcZl56F/kUO5dgkgXDS
+	UvL44BHCbziAil+UHZIVGNBniUFFhSnXrm6n3UB2Gx1GTL6tHHwZdTsCSrSYCOPcbwXI2RchYpw1a
+	J2Yw5A2d6/qNcr9Ctn9wyKn52M7M/OT1zGrCu+eOFWAM7s3F+BrQ7f2VDJvSCCxp/v+qzItOCMh57
+	pyTnN6YfRIT7fDwHUCPWJ3ZTcqcITLmIqwzli6vspCLqprWnTg+Cv1x+k/HjeLpfCXlZcdqyW9t6w
+	00PBX16g==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uI3rD-0084SL-3B;
+	Thu, 22 May 2025 19:13:05 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 22 May 2025 19:13:03 +0800
+Date: Thu, 22 May 2025 19:13:03 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc: Klaus Kudielka <klaus.kudielka@gmail.com>,
+	Eric Biggers <ebiggers@kernel.org>, regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	EBALARD Arnaud <Arnaud.Ebalard@ssi.gouv.fr>,
+	Romain Perier <romain.perier@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: crypto: marvell/cesa - dma_alloc_coherent broken but kmalloc +
+ dma_map_single works
+Message-ID: <aC8Gv5HT_bflcEbo@gondor.apana.org.au>
+References: <aCcyXkeBvHQYvf2d@Red>
+ <aCczV6MF6xk5rRA3@gondor.apana.org.au>
+ <aChx_ODF_hYKL8XO@Red>
+ <aCmTQoJw6XG1CkuZ@gondor.apana.org.au>
+ <aC1fY6IP-8MzVIbx@gondor.apana.org.au>
+ <aC2aAvX07Aaho08d@gondor.apana.org.au>
+ <aC2uvvzlR89iVFGW@Red>
+ <aC2xTI1ZuXoZjgjX@gondor.apana.org.au>
+ <aC3cF0-bWb-Jiz4i@Red>
+ <aC6TkPM6mOuFwvkD@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250520165019.6d075176@kernel.org>
-X-Proofpoint-GUID: NNbiD_89UzvgdfwUFqFFQ7RyTwLTr-TP
-X-Authority-Analysis: v=2.4 cv=HfgUTjE8 c=1 sm=1 tr=0 ts=682f0664 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=i3f_dDYzph6c6JWobKwA:9 a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
- a=lhd_8Stf4_Oa5sg58ivl:22
-X-Proofpoint-ORIG-GUID: NNbiD_89UzvgdfwUFqFFQ7RyTwLTr-TP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDExMyBTYWx0ZWRfX5wRxiW88lpKY r6yqAPf6P3IhrzGrEYmFZ5c8Az7twndLJgfZ+z7t0J/Xawb4iVevdK4+ZeWMho5mzHjXJR4PFkk aNWC6MSeYdL0VV4DG9iUbJ7baUV6b+3irnHWLhP4FbnGYCPEJuiZSYCZXAJ6PN6Ob71RyJmdhaX
- HnSyf3F23vQGdAn84WV1rd4SBaAuQcrZ2cKds/MW2byMHRDcNAooZSmSxDmL07tKVpWOwFfeS8A FUn2NjRedNVkwX7rBQeQd1QJ09rAz/BqRI4Jk3B4PntpwaQwpyfAUaU/qJii4T1XbL6qmIEAejt hlOyC/7LS9mTeK2YbMa3kinJrsnygUQkfTKSs1cw01+qa+oFN2rR2eS/CF4cQirEamBQ3eGUCmP
- QIE7Rr3Gw64pUpDNUR89UlwdapiqUfuLvdsyvgJu1Ag4icu/4cYBtpjacAOR/XR6nqDuhsMS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-22_06,2025-05-22_01,2025-03-28_01
+In-Reply-To: <aC6TkPM6mOuFwvkD@gondor.apana.org.au>
 
-On 2025-05-21 at 05:20:19, Jakub Kicinski (kuba@kernel.org) wrote:
-> On Mon, 19 May 2025 16:53:33 +0530 Hariprasad Kelam wrote:
-> > The Octeontx2/CN10k netdev drivers access a shared firmware structure
-> > to obtain link configuration details, such as supported and advertised
-> > link modes.
-> > 
-> > This patch updates the shared firmware data to include additional
-> > fields like 'Autonegotiation' and 'Port type'.
-> > 
-> > example output:
-> >   ethtool ethx
-> > 	 Advertised auto-negotiation: Yes
-> > 	 Port: Twisted Pair
-> 
-> Can you add the real output without trimming please?
-  Ack
-> 
-> > +	cmd->base.port = rsp->fwdata.port;
-> 
-> Do you validate somewhere this value is within the legitimate values
-> from kernel uAPI?
-  No, missed adding validation.
-  Will address this in next version.
+On Thu, May 22, 2025 at 11:01:36AM +0800, Herbert Xu wrote:
+>
+> I think we've made progress.  All the simple hashes have passed
+> and now we're only failing on hmac.  So it looks it was the
+> coherent memory being incoherent.
+
+I've analysed the hmac errors and the good news is that they
+all appear to be caused by a genuine bug in the driver.  When
+the final update is zero-length which the hardware can't handle,
+the driver fallback code is broken for hmac.
+
+I'm working on a fix.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
