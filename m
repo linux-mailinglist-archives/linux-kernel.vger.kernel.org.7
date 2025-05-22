@@ -1,204 +1,155 @@
-Return-Path: <linux-kernel+bounces-658688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14174AC05D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:34:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EACFAC05D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A69E017ECAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:34:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5419E3AE4DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2772222CA;
-	Thu, 22 May 2025 07:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D172222CE;
+	Thu, 22 May 2025 07:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="apYiFh4R"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZorswpZN"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEA53234;
-	Thu, 22 May 2025 07:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FEF2222C0;
+	Thu, 22 May 2025 07:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747899289; cv=none; b=aS5rgwAGIkT5HpGLTq+7b2OSPy5wBZXbgaT4T0a1f4RuIceUnMRJQoGuR7/HKmDhw3NctebB7No93xZbqGodT0yQOLOcX0kyZnmTxD+lTb0JZg5hMXMvuhog6bgSc8dN8dkE34e4s+c18XGOweOCQJCMk5OxKDwvOLboKratPUs=
+	t=1747899327; cv=none; b=n2jTttgiLpeWHZNUyJ9rw4of5Q6MCmGl9ErTxkDn0oML55nBjZ3JOA9sC9vBPuy26E2r8sk3XjPJhRoyaOjnRizfYrD6Hl4Gn/n6xkhXv8+HhSSFD7ooWq94nFev0Xzg4J82OiUkmNmivbhqnu81pOPJnuPHMDZwIIrwOeB/AIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747899289; c=relaxed/simple;
-	bh=tmXSjXeY3Rsp4TFJtH8ucpXsQ2FpoX0la7ZMecvwW+E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TTMVgUACNUmJlORs/ZY6u2F/hW3h/gAATzaL/AGO7u3RN6PV5vVi/B0unVfGmGoMSda30yFIOYlZb/H2oZPC/caZqTlhDyEk3/QahsaxHFIOY4b5s+WLcin6nGMyEb9V4TpEvyPrTcm89YbLDWQV1DJIQeRpExZzlQvY6m5eOBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=apYiFh4R; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54M7Ye0E530792;
-	Thu, 22 May 2025 02:34:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1747899280;
-	bh=F6MDUPj39cYfdScK6l2pJt36hKiuoFRjVjXtKbkUBx8=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=apYiFh4Rw52KZRBS0DE5xP3F9v6lrEX0KScl3fMBSnVtwgvfOjJ6xpoxvHjlUELaJ
-	 4o2VCDUbY0ZozOWforGdAUX5fF2Z7wYFhOmX0ZNHqLFE+Ap1LPIk5RkvbNcAYL8tdj
-	 N+Hcj9M5e0f4+45ke6ghPaJcjyXZiU6kwHFQt1H0=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54M7Yec33319980
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 22 May 2025 02:34:40 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 22
- May 2025 02:34:40 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 22 May 2025 02:34:40 -0500
-Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 54M7YQ4o475080;
-	Thu, 22 May 2025 02:34:36 -0500
-From: Beleswar Padhi <b-padhi@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <afd@ti.com>, <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
-        <b-padhi@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 2/2] arm64: dts: ti: k3: Switch MCU R5F cluster to Split-mode
-Date: Thu, 22 May 2025 13:04:26 +0530
-Message-ID: <20250522073426.329344-3-b-padhi@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250522073426.329344-1-b-padhi@ti.com>
-References: <20250522073426.329344-1-b-padhi@ti.com>
+	s=arc-20240116; t=1747899327; c=relaxed/simple;
+	bh=zOiIKPDu5GGuR/JA38cKv0rMyKIQRAkOPp5exaDW1uY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=t5hOv6RRpvx2wksa3K+atrmi1oWRGKxESU4+Um4aB4Owwd5HTVLy9E07RwuLrzZLzqzGcpLHZ8Gsy4uJcbmWCfHivF4lD9XA8N0mY7Q8ti4mDI3g3NrdDdih580G+eskWhrPmGefS5rx12a0jAu+pkhXmMoyCjfekzp9lBeOTgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZorswpZN; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1747899320;
+	bh=wUzRbwPG5veR38xd8T1OVRRRbHwgdMdIMBd9nL3Cfgc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ZorswpZNOdQTp33PE6jwlBEe9yWxZPGni5oZ8SH/Dwq4SxPe42oD70KXGGCem7qZM
+	 HhEp9BMNOVJcb5mcBTb3L48QOoTypp8rU6unZe5fEb4pgFt08agf1Nvoxqpz4t9pAH
+	 0Pz87T0CIIp47ibA6MzejzqmxYElxHj2d2NwMCGgMRdichu4x594pQnpFkTzJJxSlU
+	 k4hbB7IGQoVew1BQryocbqousZf5RfHRV0WbMQJUhC7esjKeTE29IEsbmfFSRXbm38
+	 IcQ6F1xzYUvSgNzibE5aij5EWrOp7Fk/ehcFOPAuICrg/E+fPCnKisnB8w7mm661xG
+	 0gSqm4zQ/MObw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4b30SR6hyqz4xM1;
+	Thu, 22 May 2025 17:35:19 +1000 (AEST)
+Date: Thu, 22 May 2025 17:35:18 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: JP Kobryn <inwardvessel@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>
+Subject: linux-next: manual merge of the cgroup tree with the mm-stable,
+ mm-unstable trees
+Message-ID: <20250522173518.68d11f41@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: multipart/signed; boundary="Sig_/Ys7k0AK0AmHU=BNRblVpYDB";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Several TI K3 SoCs like J7200, J721E, J721S2, J784S4 and J742S2 have a
-R5F cluster in the MCU domain which is configured for LockStep mode at
-the moment. Switch this R5F cluster to Split mode by default in all
-corresponding board level DTs to maximize the number of R5F cores.
+--Sig_/Ys7k0AK0AmHU=BNRblVpYDB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi              | 4 ++++
- arch/arm64/boot/dts/ti/k3-am69-sk.dts                   | 4 ++++
- arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi             | 4 ++++
- arch/arm64/boot/dts/ti/k3-j721e-sk.dts                  | 4 ++++
- arch/arm64/boot/dts/ti/k3-j721e-som-p0.dtsi             | 4 ++++
- arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi            | 4 ++++
- arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi | 4 ++++
- 7 files changed, 28 insertions(+)
+Hi all,
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi b/arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi
-index 4ca2d4e2fb9b..fe3dc035c067 100644
---- a/arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi
-@@ -303,6 +303,10 @@ &mcu_r5fss0_core1 {
- 			<&mcu_r5fss0_core1_memory_region>;
- };
- 
-+&mcu_r5fss0 {
-+	ti,cluster-mode = <0>;
-+};
-+
- &main_r5fss0 {
- 	ti,cluster-mode = <0>;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am69-sk.dts b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-index f28375629739..57404882cc89 100644
---- a/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-@@ -992,6 +992,10 @@ &mcu_r5fss0_core1 {
- 			<&mcu_r5fss0_core1_memory_region>;
- };
- 
-+&mcu_r5fss0 {
-+	ti,cluster-mode = <0>;
-+};
-+
- &main_r5fss0 {
- 	ti,cluster-mode = <0>;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
-index 291ab9bb414d..7c3899d608b8 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
-@@ -266,6 +266,10 @@ &mcu_r5fss0_core1 {
- 			<&mcu_r5fss0_core1_memory_region>;
- };
- 
-+&mcu_r5fss0 {
-+	ti,cluster-mode = <0>;
-+};
-+
- &main_r5fss0 {
- 	ti,cluster-mode = <0>;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
-index ffef3d1cfd55..2b26471a9181 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
-@@ -1361,6 +1361,10 @@ &mcu_r5fss0_core1 {
- 			<&mcu_r5fss0_core1_memory_region>;
- };
- 
-+&mcu_r5fss0 {
-+	ti,cluster-mode = <0>;
-+};
-+
- &main_r5fss0 {
- 	ti,cluster-mode = <0>;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-som-p0.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-som-p0.dtsi
-index 0722f6361cc8..72fd5d39e145 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-som-p0.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-som-p0.dtsi
-@@ -566,6 +566,10 @@ &mcu_r5fss0_core1 {
- 			<&mcu_r5fss0_core1_memory_region>;
- };
- 
-+&mcu_r5fss0 {
-+	ti,cluster-mode = <0>;
-+};
-+
- &main_r5fss0 {
- 	ti,cluster-mode = <0>;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
-index 54fc5c4f8c3f..2d420041c0e5 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi
-@@ -560,6 +560,10 @@ &mcu_r5fss0_core1 {
- 			<&mcu_r5fss0_core1_memory_region>;
- };
- 
-+&mcu_r5fss0 {
-+	ti,cluster-mode = <0>;
-+};
-+
- &main_r5fss0 {
- 	ti,cluster-mode = <0>;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-index fa656b7b13a1..0d45ca9d92e2 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-@@ -1122,6 +1122,10 @@ &mcu_r5fss0_core1 {
- 			<&mcu_r5fss0_core1_memory_region>;
- };
- 
-+&mcu_r5fss0 {
-+	ti,cluster-mode = <0>;
-+};
-+
- &main_r5fss0 {
- 	ti,cluster-mode = <0>;
- };
--- 
-2.34.1
+Today's linux-next merge of the cgroup tree got a conflict in:
 
+  mm/memcontrol.c
+
+between commits:
+
+  60cada258dfe ("memcg: optimize memcg_rstat_updated")
+  ff9798e05d33 ("memcg: memcg_rstat_updated re-entrant safe against irqs")
+
+from the mm-stable tree,
+
+  dc1bc55490f4 ("memcg: make memcg_rstat_updated nmi safe")
+
+from the mm-unstable tree and commit:
+
+  a97915559f5c ("cgroup: change rstat function signatures from cgroup-based=
+ to css-based")
+
+from the cgroup tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc mm/memcontrol.c
+index 4e9771e6e340,fde0934e2837..000000000000
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@@ -573,22 -582,11 +573,22 @@@ static inline void memcg_rstat_updated(
+  	if (!val)
+  		return;
+ =20
+ -	css_rstat_updated(&memcg->css, cpu);
+ -	statc =3D this_cpu_ptr(memcg->vmstats_percpu);
+ -	for (; statc; statc =3D statc->parent) {
+ -		stats_updates =3D READ_ONCE(statc->stats_updates) + abs(val);
+ -		WRITE_ONCE(statc->stats_updates, stats_updates);
+ +	/* TODO: add to cgroup update tree once it is nmi-safe. */
+ +	if (!in_nmi())
+- 		cgroup_rstat_updated(memcg->css.cgroup, cpu);
+++		css_rstat_updated(&memcg->css, cpu);
+ +	statc_pcpu =3D memcg->vmstats_percpu;
+ +	for (; statc_pcpu; statc_pcpu =3D statc->parent_pcpu) {
+ +		statc =3D this_cpu_ptr(statc_pcpu);
+ +		/*
+ +		 * If @memcg is already flushable then all its ancestors are
+ +		 * flushable as well and also there is no need to increase
+ +		 * stats_updates.
+ +		 */
+ +		if (memcg_vmstats_needs_flush(statc->vmstats))
+ +			break;
+ +
+ +		stats_updates =3D this_cpu_add_return(statc_pcpu->stats_updates,
+ +						    abs(val));
+  		if (stats_updates < MEMCG_CHARGE_BATCH)
+  			continue;
+ =20
+
+--Sig_/Ys7k0AK0AmHU=BNRblVpYDB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgu07YACgkQAVBC80lX
+0GypyQgAkzvzqjc4/6Iuhb/k0MTk/pYu7TrVRbQ4SCWPn60jlx/VfYvL3YihJUFF
+HjkGKnIQ7H3D/TpbGghEhupZ/zEDjB2qmxe9fP45aRscsrSSaZoiRQbREHS4U6Lz
+Zx4i/26yxxiHdS4cs81mpls9e9JQC4qWVe+NjKAR5T3/Rh6KxeNnbBRIEvYfmeC5
+LvzTmnJsK253+6mGh6oHJG73C7NfiZrhEAGGEW8bW4OczgWsd+EoB+D1tm6UlNhg
+70nITN9f1o3CwiGG+HWv47cuigTyhiv/E1fNBr/Tg19ThC0RwlnK+hJpC1uJsocj
+cWbAAOj3AtqkfKYdq2M7841rfBX2iA==
+=cQdU
+-----END PGP SIGNATURE-----
+
+--Sig_/Ys7k0AK0AmHU=BNRblVpYDB--
 
