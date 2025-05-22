@@ -1,110 +1,126 @@
-Return-Path: <linux-kernel+bounces-659480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC27AC10E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:19:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A605AC10E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F71A22BC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:19:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9CC3A22E8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4947299AB6;
-	Thu, 22 May 2025 16:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A239B299939;
+	Thu, 22 May 2025 16:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QSiK299A"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="g2o6a9L6"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A384C7DA73;
-	Thu, 22 May 2025 16:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8DD3CF58;
+	Thu, 22 May 2025 16:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747930771; cv=none; b=NAaZaE+fScSAC/OXRVMwfBqF7zs6XOddsoYmlIILg5rZ/3k4yqVprqt1mPKj3nRgMMnRLiBW8FA6NMxkVyR9GzRnlN3D1snXTXHTrPK389SpzK6Iyi0Y7QP244f4VnldJfSM2m6UimWHRAR1rgiTJbxWRM9xqLEesktxE0UvmYU=
+	t=1747930841; cv=none; b=iePqOWF4u0x7rYsXD9Qqr6FtqrDpwTX7LbXq6Wpyh12Y3sWS08vxh+GQg5r4tWB4FJKAsllCKFBHvQi0Ie5n5njNKHu+elxcebZWlLCnVcdVAeYInVxAJgWCsj66dN9wzkW023Xy+B/iDiWw3bhCfyakotVQMtXtrh2ASwkJiSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747930771; c=relaxed/simple;
-	bh=iBE7Lob++OOfoLrW8v5UQ4fc6DSc6z/13VLQ6i+h49Q=;
+	s=arc-20240116; t=1747930841; c=relaxed/simple;
+	bh=vjDOkbQJPeCHQdLjzb80j6kReUjfQOyax0Exyv33VFI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJ4vEijIG2SYI6w3fEyyQV98VbPkyYD3tdqguY4X6Mn1qQAABII5bn9WXtwrNDpSxRLsJD+SyikNetbRYEpmLt2Fc82UFD3jxQwEPrGuGXFWg6a/S4qO5LS711cO1OLW67dAWaJ4Sge4fuUciztmG8/KPhngBxXOLsbdtHkHJMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QSiK299A; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=xW2yJXrDkikvHHO+re2mbxIzKOAy7tNs68ZEuANiRbo=; b=QSiK299AFsqBJlUww7GUw0Xbav
-	DFIs2FP+PpruzGhrbynwbH4dpD8UNSvZZzuumJad5A4OK0SbjGSoNalO9pTsXp5Isa35noZ76C9UX
-	7T2t8YnDsfzQIqH1KeC4XDSkOtQdpKmQWG9Sqa+O2VHaCAFSYSS1EPgNy+V+HTDSFmr4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uI8dV-00DVwB-N0; Thu, 22 May 2025 18:19:13 +0200
-Date: Thu, 22 May 2025 18:19:13 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-	"xiaolei.wang@windriver.com" <xiaolei.wang@windriver.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH net] net: phy: clear phydev->devlink when the link is
- deleted
-Message-ID: <d8cb2a8f-af3d-4042-96a3-a762df1876a9@lunn.ch>
-References: <20250522064253.3653521-1-wei.fang@nxp.com>
- <f19659d4-444c-4f44-9bff-4c83a8c5a7e9@lunn.ch>
- <PAXPR04MB851054C5E1049B5361A46C108899A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AsgGVPZplnUp5L9RXgopYr37vCWGzlKkbDujJAsFLYN//VZzIi4MIwq03fOmdH3I0OecLpAknR3tlKdFOWW2TQxVbpa8l97++5AWD69hK6AW45ZVoSkRkcvVxD62P1q2aW08ky5tTm/0/iRjB4QRgXb30hqKD0tt3+B2IVVEfUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=g2o6a9L6; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4681940E0238;
+	Thu, 22 May 2025 16:20:35 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ZEKBJU_o0Asi; Thu, 22 May 2025 16:20:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1747930829; bh=jup7dp1wpyFPvMkHA2/0L8YCzJUVV1Xivs6Wtb8oDF8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g2o6a9L60Zrk/VI3OcCkCom+2Hn9WIJnCAJEFxlPT0YzQjhW538GToiaBL21HncjJ
+	 mcrKukMGkzjurLXePvSiJLZ8ZWIS9KLFanKG75FXzv/VbySS+wKb77fkvGsAFziKGS
+	 E3flmgW8nqQxfwc3qCoN4E3Yn1PNOVxPfLZFTe7Y9+vxN4hz9NO2TfHhNn6d4GEg+/
+	 GWtH/GBS5+x4/OOLo6qD6vtYl7Q/jN6RAad3DIkqJvLS9AeRPWvgdYhcG163SZVDtD
+	 zb8LSfH6SOkmI/QUJOVgYg2f0X1B+wy3jZZ4u+Sk+yDBA0a7n6hOrKfy371SLSVda3
+	 c2S+GQHcU1xj9O2euwII+AakDlOB6gulERLS9CXT9Rs/FLl4iY2Kli//p/HyQ1onVP
+	 2A1iUB/AOf7R/GCPFm/hHWGViR8xU1bNdqPlyC/lMpxxJqceFnaPhwjpewrDnzSH5b
+	 8ADsEFmcrfG8QzyfXVla4/1Gtm0fPKPbBYUSkCFspzOyNrkmmFqgDC9gnlrkSh9fNN
+	 ksDRlRHRQhW1NpkTq4jrWTlQ4EjQ/lHzx4cz8g/Dci05zoXu8f49olCnMqThi0FzmF
+	 OS46elbeIaR78RhewYxXF5Dclxe0Yd2lRH5BAdG0PSF2uiOOBXtw7T3xrJP7Q7Lar9
+	 c53EguIlmNSThsIW2A4gOG8w=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7A9BA40E0192;
+	Thu, 22 May 2025 16:20:21 +0000 (UTC)
+Date: Thu, 22 May 2025 18:20:15 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: David Thompson <davthompson@nvidia.com>
+Cc: Shravan Ramani <shravankr@nvidia.com>,
+	"tony.luck@intel.com" <tony.luck@intel.com>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"mchehab@kernel.org" <mchehab@kernel.org>,
+	"rric@kernel.org" <rric@kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] EDAC/bluefield: dont use bluefield_edac_readl result on
+ error
+Message-ID: <20250522162015.GEaC9Ov72e1AEPivj4@fat_crate.local>
+References: <20250318214747.12271-1-davthompson@nvidia.com>
+ <PH7PR12MB590226280DF463501FA9D0F8C799A@PH7PR12MB5902.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <PAXPR04MB851054C5E1049B5361A46C108899A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+In-Reply-To: <PH7PR12MB590226280DF463501FA9D0F8C799A@PH7PR12MB5902.namprd12.prod.outlook.com>
 
-On Thu, May 22, 2025 at 01:57:20PM +0000, Wei Fang wrote:
-> > On Thu, May 22, 2025 at 02:42:53PM +0800, Wei Fang wrote:
-> > > The phydev->devlink is not cleared when the link is deleted, so calling
-> > > phy_detach() again will cause a crash.
+On Thu, May 22, 2025 at 03:41:23PM +0000, David Thompson wrote:
+> > -----Original Message-----
+> > From: David Thompson <davthompson@nvidia.com>
+> > Sent: Tuesday, March 18, 2025 5:48 PM
+> > To: Shravan Ramani <shravankr@nvidia.com>; bp@alien8.de;
+> > tony.luck@intel.com; james.morse@arm.com; mchehab@kernel.org;
+> > rric@kernel.org
+> > Cc: linux-edac@vger.kernel.org; linux-kernel@vger.kernel.org; David Thompson
+> > <davthompson@nvidia.com>
+> > Subject: [PATCH] EDAC/bluefield: dont use bluefield_edac_readl result on error
 > > 
-> > I would say crashing is correct. You have done something you should
-> > not do, and the crash helped you find it. phy_attach() and
-> > phy_detach() should always be in pairs.
+> > The "bluefield_edac_readl()" routine returns an uninitialized result during error
+> > paths. In those cases the calling routine should not use the uninitialized result.
+> > The driver should simply log the error, and then return early.
+> > 
+> > Fixes: e41967575474 ("EDAC/bluefield: Use Arm SMC for EMI access on
+> > BlueField-2")
+> > Signed-off-by: David Thompson <davthompson@nvidia.com>
+> > Reviewed-by: Shravan Kumar Ramani <shravankr@nvidia.com>
+> > ---
+> >  drivers/edac/bluefield_edac.c | 20 +++++++++++++++-----
+> >  1 file changed, 15 insertions(+), 5 deletions(-)
 > > 
 > 
-> phy_attach() and phy_detach() are called in pairs in my case. When
-> re-enabling the network port, if an error occurs in the phy_attach_direct(),
-> For example, if phy_init_hw() returns an error, it will jump to the error
-> path and call phy_detach(). Because phy_detach() did not clear the
-> phydev->devlink pointer when the network port was disabled,
-> device_link_del() will access a NULL pointer and cause a crash. And this
-> crash may cause the CPU to hang. I don't think it is reasonable to cause
-> the CPU to hang.
+> Refreshing this review...
+> 
+> Does anyone have feedback on this EDAC driver patch?
 
-Ah, now i get it...
+Looks like it fell through the cracks... :-\
 
-phy_attach_direct() runs, but fails early, before the call to:
+Queued now.
 
-phydev->devlink = device_link_add(dev->dev.parent, &phydev->mdio.dev,
-						  DL_FLAG_PM_RUNTIME | DL_FLAG_STATELESS);
+Thx.
 
-So it has its old value, from a previous attach/detach cycle. At the
-error: label, it calls phy_detach(phydev), which does a
-device_link_del(), using the old value...
+-- 
+Regards/Gruss,
+    Boris.
 
-Please improve your changelog message, add more details.
-
-    Andrew
-
----
-pw-bot: cr
+https://people.kernel.org/tglx/notes-about-netiquette
 
