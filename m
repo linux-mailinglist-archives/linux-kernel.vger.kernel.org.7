@@ -1,142 +1,111 @@
-Return-Path: <linux-kernel+bounces-659435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1D2AC103D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:48:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C74F9AC104A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74044500F40
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:48:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09F93A26E34
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7E0299959;
-	Thu, 22 May 2025 15:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FFB299A8A;
+	Thu, 22 May 2025 15:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KkhS5PYY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aK6kKI9l"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103362F41;
-	Thu, 22 May 2025 15:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF482126BF1;
+	Thu, 22 May 2025 15:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747928881; cv=none; b=JVk8uN5uAw5zOVBXhJtYfwn1axUO/Xq14Msk4xOp0qnWbJX/ansDNRYzKuDobAzaRD2KvJljNVz4//573RvvF1/3QBA5qnaEM0mBieBw+hyVPQQ0mMXUNu9EAqd5wcjR0vG/uQqrf2OQrlzcBEiu59b9yEiuUH8/OWPFj3IaipQ=
+	t=1747929048; cv=none; b=cnxO96KGblmY6KLcg86URHTEBoIhSorD6Rxh1LejmvxH18S24Fqy34XnErKwIkb96gv80POzFPDHWqfGLEinlKVSZV3uQnf2Wtd+75rAbigzHC4iGWmMT4k7aaQrHjF/L3p+nWhufKxdSBmzO+uA84bHFmOWv3wVFQ4B44kNhTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747928881; c=relaxed/simple;
-	bh=wbxc4JwRzpP3kx5hp10mJ7GeRgcNbH5lUjtcxhlkZ0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=laW52qVBn3JrrTv9WmnYYQwn7nXvOy/4r2t6L9oYP68bWNbtPqmMOT61inUC7eXL/6BnzUo0Poo3P7xwO9Abx5av6BWeQLaJqux+RzCwxRT00ltLa62o7m2zd8NCOR6BCMv84Cdf7xQwmvDY/87Q+YK8o/5hcxCNMI978nkw/nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KkhS5PYY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F31EC4CEE4;
-	Thu, 22 May 2025 15:48:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747928880;
-	bh=wbxc4JwRzpP3kx5hp10mJ7GeRgcNbH5lUjtcxhlkZ0w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KkhS5PYYz27fI9lOOd8NHWR9ZnWyeYmfbfNCrhulJUeDY0LREXpRPkr/NBKrhfPfz
-	 paqhqkA/Zstn4KCbHxupKK3uuohpy3pY1hdNFy9kvtgxgav4HASArfLyJRyoH9lAxQ
-	 52PFay8xee8FuyuM4mnKJJE3VV9XRQ6tmnGynNFGc5MI/ecfgrE6D5ShJdKW2fO+lw
-	 6vOlH+//qTVoXPlhr2ehwsowng+4kxVnsf05rRTFpBl6uwMwArbHpU1oG/8BEUcPEn
-	 lg9q5/WbSnjYxB6pFiGVtwSjdmOjGDvQa3ob2xKFcKVtgQy2N2Osd+zX+i9giwBR0B
-	 cz9p2SSLarZqg==
-Date: Thu, 22 May 2025 08:47:59 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "dongchenchen (A)" <dongchenchen2@huawei.com>
-Cc: Mina Almasry <almasrymina@google.com>, <hawk@kernel.org>,
- <ilias.apalodimas@linaro.org>, <davem@davemloft.net>,
- <edumazet@google.com>, <pabeni@redhat.com>, <horms@kernel.org>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <zhangchangzhong@huawei.com>
-Subject: Re: [BUG Report] KASAN: slab-use-after-free in
- page_pool_recycle_in_ring
-Message-ID: <20250522084759.6cfe3f6d@kernel.org>
-In-Reply-To: <29d3e8fa-8cd0-4c93-a685-619758ab5af4@huawei.com>
-References: <20250513083123.3514193-1-dongchenchen2@huawei.com>
-	<CAHS8izOio0bnLp3+Vzt44NVgoJpmPTJTACGjWvOXvxVqFKPSwQ@mail.gmail.com>
-	<34f06847-f0d8-4ff3-b8a1-0b1484e27ba8@huawei.com>
-	<CAHS8izPh5Z-CAJpQzDjhLVN5ye=5i1zaDqb2xQOU3QP08f+Y0Q@mail.gmail.com>
-	<20250519154723.4b2243d2@kernel.org>
-	<CAHS8izMenFPVAv=OT-PiZ-hLw899JwVpB-8xu+XF+_Onh_4KEw@mail.gmail.com>
-	<20250520110625.60455f42@kernel.org>
-	<29d3e8fa-8cd0-4c93-a685-619758ab5af4@huawei.com>
+	s=arc-20240116; t=1747929048; c=relaxed/simple;
+	bh=HieFrw78viik/mNeGsiMtWSV8haZ6nV5KUbTQ/BctgI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BjSCHZiFRZqe5HAJ4XLGnxuKtoW/4005W2x5+0CTw+HIC93Rq/Jx37bGeap9+z1lPnmIOTPAk/2+13ZRb7sBf0NZP1LCxrIqldZHAcO1H0b7B9iUlW1WXBeBvSP8Msqm+o23J48Ygo6yuNZ5yqNdcTz8kBK0nAfhQaVIm2AzM4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aK6kKI9l; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-742af848148so4869043b3a.1;
+        Thu, 22 May 2025 08:50:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747929046; x=1748533846; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bXxDPs6mqD10etya1zY6US3+TrWhWmXHSYfy4AVSsyY=;
+        b=aK6kKI9lg4nCoWLvF5VvUDWy6Q2BjWofCIl8TKLS8lSHYdIfGxKANAtasla5qq7cmL
+         F63lMATNFRErOSpPKhB/8iJZjyuYbKgXUk0jSdFLcq19QZi5F05zaefnARrQsPsTuEYp
+         SLzMsscnaTgp4Qq0uTybWoukMWtk9hWPMSnSQXBFlzB2a29MdHSpFlfuYTRERKn0kRop
+         60AQNAqx22Meoimb1Q5gtT9gZoKinaacw7P8pabEj2EvDFihJ5FiWtjHq/VyvwsBBNV5
+         WF1oCQ9o/rmUAlS8+t1vUusfAo/VYlSLdOsqWqogP2v5sUysubFEw9sYWcIB/ixBsEaq
+         v3ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747929046; x=1748533846;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bXxDPs6mqD10etya1zY6US3+TrWhWmXHSYfy4AVSsyY=;
+        b=PFVLNl8zlpZl3BWu4bDFWK4r/eZCjcp+u1Ga0EOWDvkYeqlKjKSpCojQ3Jpu8qauEF
+         EmoNp/rqVpbI0ZD7g+8FDGdh6bzb4geGPIdAY6DzCIhwZmRMjM7/pM3ovtzI13U8H9AF
+         mBTDN/k3XbGpjqXGn/1Ne6TaAawnTBuzjfl2eSA9T3D5AGMPejORz5ytOO7dr+HPyA67
+         UmNkJ25aYu4ZqRVKm5SZdf8zlnCk/H5NbmcR3XM9nQb5ADWkkYuQW65vl1qVf/HMz2tl
+         n+r9I08+YkihLy5XIbIMr/i3oB4L1Vq2PBtNhZ+HcDuLtlBb/b19xVSMfwf4/ZAkRfSz
+         28Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2207l18FyrVX1/+D1lwgPQYyG4sdDWCoPutoNDIodlnveVczMBbwXMwsXN5WH82ezISUCsE2ptMon@vger.kernel.org, AJvYcCW6REHUkeWB4cx5kUQ49w1rEVrGj+uyNUV7Ga4HvusRgK1Jf+IbU0Ogz7pZR6M5HesGUKCLv02sQxXNNjzg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4awVv/mGmyMl07LLaHn1Q2FkjDamzaBGxaKFOH1r6CRtrhfmi
+	c1f6/NZXVCw6FYVpBOk/SWTNew8eexfkAYpidq11fX3wDuW+aFeUEF6gvg4FfuQz
+X-Gm-Gg: ASbGncvDsILZ31lV3D26KWmD94anfyDle3jkH2bgbibHSLYIhX8Xp1VESc5z7robOTz
+	7/LGSVHZXvbAXoiWbPS7mFm6vJALQV9JilbbYZ5eezEjSTHigf/bueeTGZhXzn6jFskWK6JagxS
+	wDdZZRM0xXMj0ZaX2ECVtBuGcvBxhnsHhXR/N2+hEl6/WfMc5YPaUK/EOP4BpJM88KseJnYZzVh
+	iaZ/P7YiEqW6CBuoMtpIDAOtcnVm4xEfGdoZ2n7CtewimGzjO6/PgB/YCnOdOUzVKxN8gUHJXEp
+	0B7+fBQDuOcrBxxySE7jLWdsswQSRpRkV1cV9w6faPnxud9dxuBsXfyxw20exUjXdAk1GTeDY0I
+	ww/slnigRBI3XKb4p9kOx3YWipgWN+E0=
+X-Google-Smtp-Source: AGHT+IE/4uJlUKfJ1lBNm4F3zrP30ofOqjG0ZQIkuIfHT+6H0l21LQm7Iel/rOgyCw7xg+YRpixsLw==
+X-Received: by 2002:a05:6300:218b:b0:206:ad2b:aa9a with SMTP id adf61e73a8af0-21621a03161mr41708416637.36.1747929046032;
+        Thu, 22 May 2025 08:50:46 -0700 (PDT)
+Received: from wig-Precision-3660.. (125-227-154-99.hinet-ip.hinet.net. [125.227.154.99])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a9829c7asm11459919b3a.85.2025.05.22.08.50.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 08:50:45 -0700 (PDT)
+From: Wig Cheng <onlywig@gmail.com>
+To: robh@kernel.org
+Cc: conor@kernel.org,
+	onlywig@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: vendor-prefixes: rename nutsboard to mayqueen
+Date: Thu, 22 May 2025 23:50:06 +0800
+Message-ID: <20250522155027.3412993-1-onlywig@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250522-difficult-yummy-84376495b270@spud>
+References: <20250522152220.3408999-1-onlywig@gmail.com> <20250522-difficult-yummy-84376495b270@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 22 May 2025 23:17:32 +0800 dongchenchen (A) wrote:
-> Hi, Jakub
-> Maybe we can fix the problem as follow:
+Hi Rob,
 
-Yes! a couple of minor nit picks below..
+Thanks for the clarification and guidance on the rules.
 
-> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> index 7745ad924ae2..de3fa33d6775 100644
-> --- a/net/core/page_pool.c
-> +++ b/net/core/page_pool.c
-> @@ -707,19 +707,18 @@ void page_pool_return_page(struct page_pool *pool, netmem_ref netmem)
->   
->   static bool page_pool_recycle_in_ring(struct page_pool *pool, netmem_ref netmem)
->   {
-> +	bool in_softirq;
->   	int ret;
-> -	/* BH protection not needed if current is softirq */
-> -	if (in_softirq())
-> -		ret = ptr_ring_produce(&pool->ring, (__force void *)netmem);
-> -	else
-> -		ret = ptr_ring_produce_bh(&pool->ring, (__force void *)netmem);
->   
-> -	if (!ret) {
-> +	/* BH protection not needed if current is softirq */
-> +	in_softirq = page_pool_producer_lock(pool);
-> +	ret = __ptr_ring_produce(&pool->ring, (__force void *)netmem);
+I believe the nutsboard prefix is no longer in use, as the related device tree files were removed from mainline starting from kernel 6.1. Additionally, we have informed all our customers to upgrade to the new hardware. However, I appreciate your explanation and will mark the old prefix as deprecated instead of removing it.
 
-Maybe we can flip the return value here we won't have to negate it below
-and at return? Like this:
+I also have a question regarding the new prefix. The reason for this change is that we’ve developed a DRM driver, and the platform device in the driver uses a compatible string referring to the device tree. Without a vendor prefix, I’m unable to upstream the DRM driver because it lacks a valid compatible string.
 
-	ret = !__ptr_ring_produce(&pool->ring, (__force void *)netmem);
+How should this situation be handled? Is it acceptable to introduce the new vendor prefix first for this purpose?
 
-and adjust subsequent code
+Product page:
+https://github.com/MayQueenTechCommunity/PIXPAPER-213-C
 
-> +	if (!ret)
->   		recycle_stat_inc(pool, ring);
-> -		return true;
-> -	}
->   
-> -	return false;
-> +	page_pool_producer_unlock(pool, in_softirq);
-> +
-> +	return ret ? false : true;
->   }
->   
->   /* Only allow direct recycling in special circumstances, into the
-> 
-> @@ -1091,10 +1090,16 @@ static void page_pool_scrub(struct page_pool *pool)
->   
->   static int page_pool_release(struct page_pool *pool)
->   {
-> +	bool in_softirq;
->   	int inflight;
->   
-> +	/* Acquire producer lock to make sure we don't race with another thread
-> +	 * returning a netmem to the ptr_ring.
-> +	 */
-> +	in_softirq = page_pool_producer_lock(pool);
->   	page_pool_scrub(pool);
->   	inflight = page_pool_inflight(pool, true);
-> +	page_pool_producer_unlock(pool, in_softirq);
-
-As I suggested earlier we don't have to lock the consumer, taking both
-locks has lock ordering implications. My preference would be:
-
-  	page_pool_scrub(pool);
-  	inflight = page_pool_inflight(pool, true);
-+	/* Acquire producer lock to make sure producers have exited. */
-+	in_softirq = page_pool_producer_lock(pool);
-+	page_pool_producer_unlock(pool, in_softirq);
+Best regards,  
+Wig
 
