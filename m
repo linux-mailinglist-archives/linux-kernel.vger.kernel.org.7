@@ -1,265 +1,110 @@
-Return-Path: <linux-kernel+bounces-658928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588F7AC0932
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 12:00:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDF77AC0939
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 12:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4900A1BC3D6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:00:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BBD67ABF56
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA9E286423;
-	Thu, 22 May 2025 10:00:29 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFD2288C91;
+	Thu, 22 May 2025 10:00:49 +0000 (UTC)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5D917BD9
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 10:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E57286D7B;
+	Thu, 22 May 2025 10:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747908028; cv=none; b=sRk13lS6LbxLCnbs4E9Hp8kpgXLuKXmYZvHGLXKveKu8Z0FFkXTvi5I1c8NvoZLBKxT6qiiVZ+ZASf3XSKH4WoVSuKJRKMynLpfPgsW7q9n+dhG8o6SzYsQHf9Mfv/dMoweaAS7JT6eXzITuaQqMm4kZN8vg3Cs15YnJNqwlRNQ=
+	t=1747908049; cv=none; b=Usjo7Glpml9jqudelue5euYY/K1iAskudRdJe4YQXTW5siUI+Sjz9fMJ4GeWmA8KsdzCRUDusVF6502tCPr4xzZ8wuP4ZnxWHluRnAE93C/8Sq1eWP65b/Kgz9Yokkrd0X494ltNTnjBP1oojytdJmr1jjMxY0glcqK2ueJmOXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747908028; c=relaxed/simple;
-	bh=G0s8ehLv/laQIT0Lceu4qyIEtrAWgMjq2TKbqXX99xE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZG08czP5E2yDR5pE267BTetaHv7S+FSrcKTVQ/PWLttdZFHvheqRzF3MsG6tJWKkO3i0kEWHckvv/PaDmKq9fDMjVMXgGRN0PUu82uYb8XYaHcw1osoYadj0HJREuppvxcG/yAMnxfsEayUHO8t9jwJNY6H3GH6T3HC76z/fUM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-85e7e0413c2so705467639f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 03:00:26 -0700 (PDT)
+	s=arc-20240116; t=1747908049; c=relaxed/simple;
+	bh=drDuFP8elgaanqXpYaCIjXYAUCK1v3unDiYKeRYxjbo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u8ziCD8+JHP+5BykJiaeSRguQpmEWidf66+WMIrW7oE1X/UvRCPfqybY8jAH6i4ZafyOjvzoPRXDFjz+ju8+7vTrmcrf9hIyEBd+RaQxXf3+kPFA0cG4Im0f7UGFspXQtZiKHBcmCsJbSz+8pR6a8DdbRA59PS62ESzN77sewZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4e11ee95b2cso4419833137.3;
+        Thu, 22 May 2025 03:00:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747908025; x=1748512825;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=N9SPmBVOYISy/x3e5fpt7fXl47e2yZMZoJ4GUSrI/KA=;
-        b=qifLlOx/LJW7D0E5xg2OJiGuAt/c1r49/17/FokRqBz2T/Tq7u2CsXJNDsAfowH8Yq
-         U28jMkP2f+0MIYpxx2fVLig0vIZCQNxEkNvEGhFTCv5QnWWcj258+juJQKIaC9V/67Qu
-         Jvw00nJapvJWCfTYGQ4g7D2DNydB8cUNmwW9tbP28RHh0AI9J/NlrEEbh1weNXO1z2KP
-         vzsNeEnvNcd8KnMA70jImy8B4oxfR3Iu45ZnTl5150JSvu1vx+c8HO6fJ/4p8egPTX/d
-         0MuanGwXuU1GH6gAOvR8gPsV1d+9khPwNONSQo8WThHOHWvt7HlYJGfiBsqRn6NiB+W2
-         MjDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUw6ZRkEc8uhma5d2LhrdR+nJjG+7/B2rFteM6e/qp1GweT6dCJ6nmsUwZX1PaPQWgJwRBOQinqfcswNrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJjl45ZUD2duyY/i1KBTnAbjRgOBOrMOSV4u0I4kBYWZAEx9ss
-	MmDNrBZKaKe6NMr9jf9Ivi1kk7gMmmcGL+LQnPpWmttt7AMqwuiN2dQ7bREOZq64ne2HpBymeUG
-	ieOrMeBkSKRoRoDWQUH++HkoWijZZbr+yddZ3RX5//N95dLeyVx6mjAHrat4=
-X-Google-Smtp-Source: AGHT+IGeGrB5s+NjhCyMRV5Jxyd9Xy3QjecK2rDYBdUmmu9gL2eyjPpYHNoaeu5Fxlbw8G7iKIAu8EIbS6QXDi5dO9NkpCoyzr6h
+        d=1e100.net; s=20230601; t=1747908045; x=1748512845;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XoblhsMk0V3JqpiubAvMkWbYBcCGAhlUNkOion5qgWA=;
+        b=cGu/WxIWWi08pbXdQ+hdZk9Y4wYcnc9sLzdzaim4gGElLjUBIuMw6VW2dncX9oIg3T
+         QU8QT6D2U+HhzQFSSb3IU6fvxnTQZZYWAjNpyNDYT/lYBIcYuol2L47R8FxMvl6iohCg
+         VFyy1E52gwX7DesnXMKj13d3qDQi1G1LkD7tSiwcCK+kcfXtjUBN4Fkg59t0qayPWkeL
+         eOdnNvgZF/3Fd0wzlQ5TvilVGfp4swVBt7ImlEf+tvhJimkZYABYvgRdu92ogd/pqOT+
+         aT/ci1WVIz/AWjz1nPqK4k+grlI71/aBI7t1nUBfgPaOximgGiOgxmNxr9rJKV81j1jF
+         xz8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVE77SnOB+JLr+6IG3g7v9FpXZEFkA7poy/i/ZrC0bMD3fcws5CMaDHns9E3MuE8XyH/5iLfTxfpzDx@vger.kernel.org, AJvYcCWWULMU0vnw1GviXgQr40/SOQw4H9GnqierY8QiZ3zb0j0nLAcnUT+iabZ5ArnAR9CTuCCQaPHlFFh3CHK8@vger.kernel.org, AJvYcCXcVdTrTWENStwcbucX3H8loqeFx8wh78JWbbyYnNzLoxPErWxBKxp3KQQzsZsI6UCjqcW6BxTDQFbiRNtoyPdUpas=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyS5Jgq7TyZyLn4Ljvx2s/sDSJv6rDhADldq0kOldBGSF5EmuX
+	lgROMCXxmnTiDdr7/2/GwHxXkbNk8pWwqw/gnj+8GLxGqaV/MXAOfgotg/1vxX5f
+X-Gm-Gg: ASbGncuPlzeex1O2by9/GDrli2i9061RhoomhlsDp/2lZzZx5yiKT7gmT2mNJjbO+Uj
+	pSDrKiAuij+iKZLY6aIyQ1i19l0QxR4fzEy0PKBYGaHrCcUol5kDGD3qLC28iLj/XEVfmaY5Wpu
+	C4TPHlZ+/owCfTf/2/WOedhggb+I4q6E0FDrc3Cz1bOIi+HTrzZrHYGxonCIpTHvNt8Wf9i+mJD
+	diBBOqBf/L4c+XmzSZT5VJH+VYKSFYMBjL+6VDWh5pgARK5WLD45BmVWUB+WM2F7jc2cjx7Y7+2
+	Wtl0AT4An2SiQbTWvQsSx1pfjW1rg9KTyv2Pui0BCyyJgoGXe0EDo3c01p4kZKOfCvQex4azn8N
+	D6hFRZud8hGLD9PfohA==
+X-Google-Smtp-Source: AGHT+IFo/MlDmlIfw0TqxjT7phHVgFNsqhlgqDzjKpmITyI0aSHafvVyi+dhB8r9XbDZfa3fiAVY/Q==
+X-Received: by 2002:a05:6102:5714:b0:4c1:94df:9aea with SMTP id ada2fe7eead31-4dfa6bebe78mr21468275137.15.1747908045343;
+        Thu, 22 May 2025 03:00:45 -0700 (PDT)
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87bec2299a2sm10306149241.32.2025.05.22.03.00.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 May 2025 03:00:42 -0700 (PDT)
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-52934f4fb23so5270736e0c.1;
+        Thu, 22 May 2025 03:00:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVO195qs2fUTetY7O2n2fcdO87x9H74f/IURZ8zoiJuRAKmN3IaO3kpfXsmCi90/g8oh2fLAuiz1VtK93A0Lbp74N8=@vger.kernel.org, AJvYcCVXJ2wXLPPA5RR7oAFP1mxhRtRC//KobbyZy9gJarK/Gii+v/5sV2aQaDrNoFpf/cosql39bSvedbT8@vger.kernel.org, AJvYcCX3vaXHfOr9dE54N3S51MfEpTDdOnM7ysh40iFX5OCQoWGxzmw+eD7kOylicFd/ZMys86fWV/r9ggtKJ03b@vger.kernel.org
+X-Received: by 2002:a05:6122:88c:b0:52a:cdd8:fc33 with SMTP id
+ 71dfb90a1353d-52dba614e02mr19107010e0c.0.1747908042255; Thu, 22 May 2025
+ 03:00:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3805:b0:867:6680:cfd with SMTP id
- ca18e2360f4ac-86a2316ec56mr3262082439f.1.1747908025663; Thu, 22 May 2025
- 03:00:25 -0700 (PDT)
-Date: Thu, 22 May 2025 03:00:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <682ef5b9.a00a0220.2a3337.0012.GAE@google.com>
-Subject: [syzbot] [net?] BUG: corrupted list in __hw_addr_del_entry
-From: syzbot <syzbot+30468d31a80c716b0152@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+References: <20250514101528.41663-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250514101528.41663-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250514101528.41663-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 May 2025 12:00:30 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdViBg45_JGwBvETxOwCk5a_6e97WRNwiu=BrH=gnAHCfQ@mail.gmail.com>
+X-Gm-Features: AX0GCFvUskLiE52IcoYxsMlcd0ZSP1eMjQRGOpw9t5TC41kqHOSJaMDdN-Skzzc
+Message-ID: <CAMuHMdViBg45_JGwBvETxOwCk5a_6e97WRNwiu=BrH=gnAHCfQ@mail.gmail.com>
+Subject: Re: [PATCH 02/10] arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable GBETH
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Wed, 14 May 2025 at 12:15, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Enable GBETH nodes on RZ/V2N EVK.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-syzbot found the following issue on:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.17.
 
-HEAD commit:    5723cc3450bc Merge tag 'dmaengine-fix-6.15' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1631cef4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4f080d149583fe67
-dashboard link: https://syzkaller.appspot.com/bug?extid=30468d31a80c716b0152
-compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm
+Gr{oetje,eeting}s,
 
-Unfortunately, I don't have any reproducer for this issue yet.
+                        Geert
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/98a89b9f34e4/non_bootable_disk-5723cc34.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1e90c68d0eb2/vmlinux-5723cc34.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ee3140eb6a4e/zImage-5723cc34.xz
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+30468d31a80c716b0152@syzkaller.appspotmail.com
-
-veth0_vlan: left promiscuous mode
- slab kmalloc-128 start 84d20900 pointer offset 0 size 128
-list_del corruption. next->prev should be 84d20780, but was 00000122. (next=84d20900)
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:65!
-Internal error: Oops - BUG: 0 [#1] SMP ARM
-Modules linked in:
-CPU: 0 UID: 0 PID: 16584 Comm: kworker/u8:0 Not tainted 6.15.0-rc6-syzkaller #0 PREEMPT 
-Hardware name: ARM-Versatile Express
-Workqueue: netns cleanup_net
-PC is at __list_del_entry_valid_or_report+0x8c/0x108 lib/list_debug.c:65
-LR is at __wake_up_klogd.part.0+0x7c/0xac kernel/printk/printk.c:4556
-pc : [<808c8ba4>]    lr : [<802eaa70>]    psr: 60000113
-sp : e8831a58  ip : e88319a0  fp : e8831a74
-r10: 00000000  r9 : 84d20788  r8 : 84b2424c
-r7 : 84d20780  r6 : 84d20780  r5 : 856ea200  r4 : 84d20900
-r3 : 832e8c00  r2 : 00000000  r1 : 00000000  r0 : 00000055
-Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
-Control: 30c5387d  Table: 84770480  DAC: fffffffd
-Register r0 information: non-paged memory
-Register r1 information: NULL pointer
-Register r2 information: NULL pointer
-Register r3 information: slab task_struct start 832e8c00 pointer offset 0 size 3072
-Register r4 information: slab kmalloc-128 start 84d20900 pointer offset 0 size 128
-Register r5 information: slab kmalloc-128 start 856ea200 pointer offset 0 size 128
-Register r6 information: slab kmalloc-128 start 84d20780 pointer offset 0 size 128
-Register r7 information: slab kmalloc-128 start 84d20780 pointer offset 0 size 128
-Register r8 information: slab kmalloc-cg-2k start 84b24000 pointer offset 588 size 2048
-Register r9 information: slab kmalloc-128 start 84d20780 pointer offset 8 size 128
-Register r10 information: NULL pointer
-Register r11 information: 2-page vmalloc region starting at 0xe8830000 allocated at kernel_clone+0xac/0x3e4 kernel/fork.c:2845
-Register r12 information: 2-page vmalloc region starting at 0xe8830000 allocated at kernel_clone+0xac/0x3e4 kernel/fork.c:2845
-Process kworker/u8:0 (pid: 16584, stack limit = 0xe8830000)
-Stack: (0xe8831a58 to 0xe8832000)
-1a40:                                                       84d20780 84b2424c
-1a60: 00000001 00000004 e8831a8c e8831a78 8155a1b8 808c8b24 e8831af4 00000006
-1a80: e8831ac4 e8831a90 8155a2bc 8155a140 e8831ac4 00000000 e8831af4 84b24000
-1aa0: e8831af4 84b24238 00000000 00000000 00000000 80000010 e8831aec e8831ac8
-1ac0: 8155adc4 8155a220 00000000 00000000 00000000 84d20380 84b24000 84d20380
-1ae0: e8831b34 e8831af0 81834e9c 8155ad84 849ef540 00ff3333 00002e00 00000000
-1b00: 00000000 00000000 00000000 00000000 00000000 47b2c705 e8831b34 84e14800
-1b20: 84e14930 84d20380 e8831b64 e8831b38 81836c58 81834d98 e8831b64 e8831b48
-1b40: 848a5e80 854e2c00 000002ff 00000000 848a5e80 849ef540 e8831bd4 e8831b68
-1b60: 8180237c 81836bb8 00000000 00000820 81805424 00000000 00000000 00000000
-1b80: 00000015 00000000 ffffffff 00000000 00000000 00000000 000002ff 00000000
-1ba0: 01000000 2e0000ff 8026b438 47b2c705 84e14800 854e2c24 854e2c00 00000000
-1bc0: 84e14948 854e2c8c e8831c3c e8831bd8 81805454 81802128 81a5c5b0 0000002e
-1be0: 848a5e80 84b24000 00000000 84e14948 e8831bf0 e8831bf0 80797b44 e8831c8c
-1c00: e8831c70 8029eb0c 80797b44 47b2c705 00000000 84b24000 84e14800 848a5e80
-1c20: 00000002 8180b828 00000000 e8831d14 e8831c8c e8831c40 8180b8c0 8180501c
-1c40: e8831c8c e8831c50 81671994 8030cb14 e8831c8c e8831c60 816e9bd8 47b2c705
-1c60: 81c00000 829e57a4 829e494c ffffffd1 00000000 8180b828 00000000 e8831d14
-1c80: e8831cc4 e8831c90 802926d4 8180b834 832e8c00 00000002 00000cc0 e8831d14
-1ca0: 00000002 848a5e80 00000001 84b24000 00000000 8241df54 e8831cdc e8831cc8
-1cc0: 8029290c 80292680 00000000 802da2e4 e8831d04 e8831ce0 8154bfb4 802928f8
-1ce0: 00000000 00000000 00000000 84b24114 84b1c000 e8831d88 e8831d44 e8831d08
-1d00: 8154c5c4 8154bf6c 00000000 00000000 00000000 84b24000 00000000 47b2c705
-1d20: e8831cfc 85b14114 85ada114 e8831e08 e8831d88 00000001 e8831ddc e8831d48
-1d40: 815571e8 8154c4d4 829d1f04 e8831e70 e8831da4 e8831d60 80505bb4 80505568
-1d60: 00000001 819dadd8 829d255c 00000000 00000000 00000000 832e8c00 8241ebb4
-1d80: 81557c50 808c8a4c 84b24114 85ada114 e8831e08 85ada000 e8831ddc e8831da8
-1da0: 81557c50 808c8a4c 00000000 47b2c705 e8831ddc 848a5e7c 848a5f78 e8831e70
-1dc0: 82c1f980 e8831e90 829d1f04 e8831e70 e8831e54 e8831de0 81558928 8155700c
-1de0: e8831dfc e8831df0 81a5c3e0 e8831e90 848a5e80 8241ec70 81a4eeb4 81a5c3c0
-1e00: 848a5e7c 61c88647 84a7e90c 85ada10c 8122b314 00000000 00000000 00000000
-1e20: 00000000 47b2c705 e8831e54 829d25c4 e8831e90 829d25c4 e8831e90 829d1f04
-1e40: 829d1f04 848a6c00 e8831e74 e8831e58 8153a0e0 81558630 829d25c4 82c1f940
-1e60: 829d1ec0 e8831e90 e8831ed4 e8831e78 8153c540 8153a088 81a5c4d4 8029ce24
-1e80: 82c1f940 829d1ec0 808c9c70 8153a0e4 848a5ea0 848a5ea0 00000100 00000122
-1ea0: 00000000 47b2c705 81c01f84 8578b580 829d1ed8 8301bc00 8300e600 832e8c00
-1ec0: 8301bc15 8300f070 e8831f2c e8831ed8 802873bc 8153c29c 81c01a44 832e8c00
-1ee0: e8831f14 e8831ef0 829d1edc 829d1ed8 829d1edc 829d1ed8 e8831f2c 00000000
-1f00: 80282cf8 8578b580 8300e620 8300e600 82804d40 8578b5ac 832e8c00 61c88647
-1f20: e8831f6c e8831f30 80288004 80287214 81a5c4d4 61c88647 82804d40 61c88647
-1f40: 8028eb98 00000001 832e8c00 854fa580 ec6dde60 80287e08 8578b580 00000000
-1f60: e8831fac e8831f70 8028f07c 80287e14 80274ea8 81a5c45c 832e8c00 47b2c705
-1f80: e8831fac 85523e40 8028ef50 00000000 00000000 00000000 00000000 00000000
-1fa0: 00000000 e8831fb0 80200114 8028ef5c 00000000 00000000 00000000 00000000
-1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-1fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-Call trace: 
-[<808c8b18>] (__list_del_entry_valid_or_report) from [<8155a1b8>] (__list_del_entry_valid include/linux/list.h:124 [inline])
-[<808c8b18>] (__list_del_entry_valid_or_report) from [<8155a1b8>] (__list_del_entry include/linux/list.h:215 [inline])
-[<808c8b18>] (__list_del_entry_valid_or_report) from [<8155a1b8>] (list_del_rcu include/linux/rculist.h:168 [inline])
-[<808c8b18>] (__list_del_entry_valid_or_report) from [<8155a1b8>] (__hw_addr_del_entry+0x84/0xe0 net/core/dev_addr_lists.c:160)
- r7:00000004 r6:00000001 r5:84b2424c r4:84d20780
-[<8155a134>] (__hw_addr_del_entry) from [<8155a2bc>] (__hw_addr_del_ex+0xa8/0xb0 net/core/dev_addr_lists.c:200)
- r5:00000006 r4:e8831af4
-[<8155a214>] (__hw_addr_del_ex) from [<8155adc4>] (__dev_mc_del net/core/dev_addr_lists.c:909 [inline])
-[<8155a214>] (__hw_addr_del_ex) from [<8155adc4>] (dev_mc_del+0x4c/0x74 net/core/dev_addr_lists.c:927)
- r10:80000010 r9:00000000 r8:00000000 r7:00000000 r6:84b24238 r5:e8831af4
- r4:84b24000
-[<8155ad78>] (dev_mc_del) from [<81834e9c>] (igmp6_group_dropped+0x110/0x238 net/ipv6/mcast.c:719)
- r6:84d20380 r5:84b24000 r4:84d20380
-[<81834d8c>] (igmp6_group_dropped) from [<81836c58>] (__ipv6_dev_mc_dec+0xac/0x1a0 net/ipv6/mcast.c:1018)
- r6:84d20380 r5:84e14930 r4:84e14800
-[<81836bac>] (__ipv6_dev_mc_dec) from [<8180237c>] (addrconf_leave_solict net/ipv6/addrconf.c:2254 [inline])
-[<81836bac>] (__ipv6_dev_mc_dec) from [<8180237c>] (addrconf_leave_solict net/ipv6/addrconf.c:2246 [inline])
-[<81836bac>] (__ipv6_dev_mc_dec) from [<8180237c>] (__ipv6_ifa_notify+0x260/0x358 net/ipv6/addrconf.c:6302)
- r9:849ef540 r8:848a5e80 r7:00000000 r6:000002ff r5:854e2c00 r4:848a5e80
-[<8180211c>] (__ipv6_ifa_notify) from [<81805454>] (addrconf_ifdown+0x444/0x764 net/ipv6/addrconf.c:3981)
- r9:854e2c8c r8:84e14948 r7:00000000 r6:854e2c00 r5:854e2c24 r4:84e14800
-[<81805010>] (addrconf_ifdown) from [<8180b8c0>] (addrconf_notify+0x98/0x770 net/ipv6/addrconf.c:3780)
- r10:e8831d14 r9:00000000 r8:8180b828 r7:00000002 r6:848a5e80 r5:84e14800
- r4:84b24000
-[<8180b828>] (addrconf_notify) from [<802926d4>] (notifier_call_chain+0x60/0x1b4 kernel/notifier.c:85)
- r10:e8831d14 r9:00000000 r8:8180b828 r7:00000000 r6:ffffffd1 r5:829e494c
- r4:829e57a4
-[<80292674>] (notifier_call_chain) from [<8029290c>] (raw_notifier_call_chain+0x20/0x28 kernel/notifier.c:453)
- r10:8241df54 r9:00000000 r8:84b24000 r7:00000001 r6:848a5e80 r5:00000002
- r4:e8831d14
-[<802928ec>] (raw_notifier_call_chain) from [<8154bfb4>] (call_netdevice_notifiers_info+0x54/0xa0 net/core/dev.c:2176)
-[<8154bf60>] (call_netdevice_notifiers_info) from [<8154c5c4>] (call_netdevice_notifiers_extack net/core/dev.c:2214 [inline])
-[<8154bf60>] (call_netdevice_notifiers_info) from [<8154c5c4>] (call_netdevice_notifiers net/core/dev.c:2228 [inline])
-[<8154bf60>] (call_netdevice_notifiers_info) from [<8154c5c4>] (dev_close_many+0xfc/0x150 net/core/dev.c:1731)
- r6:e8831d88 r5:84b1c000 r4:84b24114
-[<8154c4c8>] (dev_close_many) from [<815571e8>] (unregister_netdevice_many_notify+0x1e8/0xbc4 net/core/dev.c:11942)
- r9:00000001 r8:e8831d88 r7:e8831e08 r6:85ada114 r5:85b14114 r4:e8831cfc
-[<81557000>] (unregister_netdevice_many_notify) from [<81558928>] (unregister_netdevice_many net/core/dev.c:12036 [inline])
-[<81557000>] (unregister_netdevice_many_notify) from [<81558928>] (default_device_exit_batch+0x304/0x384 net/core/dev.c:12530)
- r10:e8831e70 r9:829d1f04 r8:e8831e90 r7:82c1f980 r6:e8831e70 r5:848a5f78
- r4:848a5e7c
-[<81558624>] (default_device_exit_batch) from [<8153a0e0>] (ops_exit_list+0x64/0x68 net/core/net_namespace.c:177)
- r10:848a6c00 r9:829d1f04 r8:829d1f04 r7:e8831e90 r6:829d25c4 r5:e8831e90
- r4:829d25c4
-[<8153a07c>] (ops_exit_list) from [<8153c540>] (cleanup_net+0x2b0/0x49c net/core/net_namespace.c:654)
- r7:e8831e90 r6:829d1ec0 r5:82c1f940 r4:829d25c4
-[<8153c290>] (cleanup_net) from [<802873bc>] (process_one_work+0x1b4/0x4f4 kernel/workqueue.c:3238)
- r10:8300f070 r9:8301bc15 r8:832e8c00 r7:8300e600 r6:8301bc00 r5:829d1ed8
- r4:8578b580
-[<80287208>] (process_one_work) from [<80288004>] (process_scheduled_works kernel/workqueue.c:3319 [inline])
-[<80287208>] (process_one_work) from [<80288004>] (worker_thread+0x1fc/0x3d8 kernel/workqueue.c:3400)
- r10:61c88647 r9:832e8c00 r8:8578b5ac r7:82804d40 r6:8300e600 r5:8300e620
- r4:8578b580
-[<80287e08>] (worker_thread) from [<8028f07c>] (kthread+0x12c/0x280 kernel/kthread.c:464)
- r10:00000000 r9:8578b580 r8:80287e08 r7:ec6dde60 r6:854fa580 r5:832e8c00
- r4:00000001
-[<8028ef50>] (kthread) from [<80200114>] (ret_from_fork+0x14/0x20 arch/arm/kernel/entry-common.S:137)
-Exception stack(0xe8831fb0 to 0xe8831ff8)
-1fa0:                                     00000000 00000000 00000000 00000000
-1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
- r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:8028ef50
- r4:85523e40
-Code: e1a01006 e30f0a2c e348022a ebe4ef86 (e7f001f2) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	e1a01006 	mov	r1, r6
-   4:	e30f0a2c 	movw	r0, #64044	@ 0xfa2c
-   8:	e348022a 	movt	r0, #33322	@ 0x822a
-   c:	ebe4ef86 	bl	0xff93be2c
-* 10:	e7f001f2 	udf	#18 <-- trapping instruction
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
