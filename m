@@ -1,284 +1,209 @@
-Return-Path: <linux-kernel+bounces-659250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D6EAC0D8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:06:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74213AC0D99
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75DDF1BC6623
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:06:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E22491BC7EF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9913C28B3F7;
-	Thu, 22 May 2025 14:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2AA28C867;
+	Thu, 22 May 2025 14:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kFkEowyM"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="Ve/3tFsU"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012006.outbound.protection.outlook.com [52.101.71.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B7C12E7E
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 14:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747922787; cv=none; b=WO18EODTrH+2L3FUmM4uZ5lz9krRwGo9S0sxKEbysQ5a2SJmKvrm6nBY3OthFJq5wY87ihyqnv1RojNWWTvce2v4hXMtm41YwaN16ouagdQgjqJ0ZECIhxcXkgXYbDxxpqtS9llC4mXu4NnikZGMsbiXmeTzcT7SvEC2jnVw1qE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747922787; c=relaxed/simple;
-	bh=xfBF38J9bt5VGneQgc7FSBpY7hg7BcB+R4X03vn0Zos=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=npMBjMtZKUvkb7fBShU19NyyXpMo1Bo4615at0f9EVW6pA7A/bl5ngU/I4TvwBBYxO1jYIztiNgNPZRJQ0OwciaE2FAKrsUjXgkoSlELDa/VZl3ELEmW3DKlfr6L/lCkpYbDN5uOJK6dge/WSNUxjCqeaM7oFlO69hCX/dU8hLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kFkEowyM; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=LxOfN+DgOQopqmC4mkMS08LT54mgjKxByXwstgI4G8s=; b=kFkEowyM9Vldo661qcdTjfNBfx
-	GUhng8/9JUlG13fKp23524PA+l8FGHkMxMX3lmNHAAFIkKF69Fe/fQuqYwgvnNmYPRVUVuXNKGgbS
-	D4C+8v7K607lDmpEYd8CxZ0KJzVpYmnyT77PzlrNMf9xsax9qrEghNBkxOJO+BrAmKz6h4yUR/U/g
-	HtAUDJ9mKZspFyVyaqNQbaVhHihSVndRTj3hZLSs2AP7rXYKw3OJu60Q8SxfKZ6C6nPuEZzPo9WgT
-	nHBinRnRkZAmN3W3VWY35CSl479nCmGoZeNwSDuSNXgbE1hF2mzI2Mfgj4HIYMEiRyVRstWhgJqj9
-	IYk9AIlg==;
-Received: from [81.79.92.254] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uI6Yi-00Bk71-4Z; Thu, 22 May 2025 16:06:08 +0200
-Message-ID: <b24d5c5e-8a9e-4dfb-886b-b3ad70e62e76@igalia.com>
-Date: Thu, 22 May 2025 15:06:07 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A1928C02B;
+	Thu, 22 May 2025 14:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747922798; cv=fail; b=oDfW+yiLWolkc8Di9kuFswEXALY6Ck3dggV6NeYAHprVownNqsg390nEt2tB9ryT5R9cdjhtUk7KNP2rHLcVKz2NPbTE9KLbhZIpvs/sbXJoUp2V6D5Lt/ozOEX+qhlq/o6ANgmFvKRl++CRfGU4QtvBSMT+7+Shwnh13ZCVNbo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747922798; c=relaxed/simple;
+	bh=r/16opGlPi/HMt0ohz4XmRjc8gvcu8GFBqyg3ZeS3JU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=O0hseOX7NXt6Vi1tsV9r9XXZ9qWKDAAucGvt2d90FGq4ADBPsBTBrBMsQjgdHkZb+DbkfbWGCS74vGxuBAxFQ/W2Vx7TH4RWnwGWxi8bDs8YzaHHIWSJCqdlSrVpj9aEl9QWkMVQ+lGPTvbvU1inn/yT3364loUbCU1Q0OT4cR4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com; spf=fail smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=Ve/3tFsU; arc=fail smtp.client-ip=52.101.71.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mt.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=l09WvoyobOdUMiIOT1uUa7KMjnVyDpDQJ1hrwJi60fSTzFQU7ofO5KS711w8Ou+zCwkmfvO98pWolLQbkzpSSa2kDhzMKH5nPb8FgwB2nimyF+J6udbOOtpdTGHY/GE9+iowMbFUhESyETuFSdeas0MCVSn/mcJnk8Wd/WXGLcJk2aqAFlx8plSVTEzLObVKvf3nlJMnqOYVDudlbV2ykweIL+8vPlTZuf0ohz+ZBAs4+akNcOz8TjVbkElAbO1xy1me1fJaTJ2PX7TRh2qJ4/AORhuKd+N0toLqgm48OEhtKkpBgTiHqTCW4oxbMGm9iJh7xbWLIssgE1dMRaMqDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b2d8lBGUMmM5wk/O1wf1v0HaSQEp2NcTq09RRa3tsd8=;
+ b=kWdD4VzwCVUHvSFOYSRu3TBqRxDvUMc9GuspgvNWOfMrAT3jMz4+aqLlpBx2JFJNqF49TYz5lH5h40Seq2YS3JEZCc2v1R4O85z2bkNgyx2U2sr2nnPJ9j5L+Dr3+kmT5lGyzY7a2VNaoQNjPG7K8T3gkSe8djAIShAuodpEGZXj4ziFg0Rm+9OjDjKkkzpuWRkgSbaYzy6pKk4WZGa3LrUU1/YBanWwJ1XYy8sVSR+x7+edAEhYwREKTTkKqNKXn/K3+uk5rqDiw6bMMU4ozqHbWBA63UvzEBdF952Yc+Iocd/8oLW+63Wg6noK2gtclmHB/ay/4mnPkrexUNxT3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
+ header.d=mt.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b2d8lBGUMmM5wk/O1wf1v0HaSQEp2NcTq09RRa3tsd8=;
+ b=Ve/3tFsUXQbkSjWq5INhi1YWVH4l9mBBRJAQRKyWuJW9MrX084tZFlePrna3nI7zG02VVMdNKW/8/lVdvgK25bp5KOZtPf/69gZcgB/YvV7rGwjeX0HfaBXbJhmdvNC2X5VnaqVNXTzG9aRA6aakAUIKCAARa66JxtIGhtEqUUnwTCV1MJHO2ZJLlOF8U7hcP80cjFaV/5kFYWEhKqvMvMHa2gdFO5/M8+f3xoZEIKhlgnE0re0M+IkSKCwWwG1z57Lqgy+jD58X+2QQxrUM67TcARCla8CrAsRKAis6yjz1iuzENe3n8vqUaE729EpW9ikUoX7P/VsWy6qNGzXu2A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mt.com;
+Received: from DBBPR03MB10396.eurprd03.prod.outlook.com (2603:10a6:10:53a::11)
+ by PAXPR03MB8252.eurprd03.prod.outlook.com (2603:10a6:102:23e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Thu, 22 May
+ 2025 14:06:34 +0000
+Received: from DBBPR03MB10396.eurprd03.prod.outlook.com
+ ([fe80::ee3c:c9be:681:c0bf]) by DBBPR03MB10396.eurprd03.prod.outlook.com
+ ([fe80::ee3c:c9be:681:c0bf%2]) with mapi id 15.20.8746.030; Thu, 22 May 2025
+ 14:06:33 +0000
+From: Mathis Foerst <mathis.foerst@mt.com>
+To: linux-kernel@vger.kernel.org
+Cc: Mathis Foerst <mathis.foerst@mt.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	manuel.traut@mt.com,
+	mathis.foerst@zuehlke.com
+Subject: [PATCH v5 1/7] media: dt-bindings: mt9m114: Add slew-rate DT-binding
+Date: Thu, 22 May 2025 16:06:07 +0200
+Message-Id: <20250522140613.104963-2-mathis.foerst@mt.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250522140613.104963-1-mathis.foerst@mt.com>
+References: <20250522140613.104963-1-mathis.foerst@mt.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ZR0P278CA0078.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:22::11) To DBBPR03MB10396.eurprd03.prod.outlook.com
+ (2603:10a6:10:53a::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] drm/sched/tests: Port tests to new cleanup method
-To: Philipp Stanner <phasta@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Matthew Brost <matthew.brost@intel.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250522082742.148191-2-phasta@kernel.org>
- <20250522082742.148191-4-phasta@kernel.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <20250522082742.148191-4-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DBBPR03MB10396:EE_|PAXPR03MB8252:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67b1e265-997e-4352-e6ef-08dd9939dbdb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TYuwWk9so6EfPLge1KY86AHw4H0wUAQihdhCHGSnJ725E6qwshee50O2WwJW?=
+ =?us-ascii?Q?+j9AZsPjs9tW0jB+/qFyi8kjieTTPY7jrBktH478ohLse5BcMIymLzcgqpDi?=
+ =?us-ascii?Q?D0A4epm06I7jnDE3uuncyyO6hfj5G/B7wNsI7e5Bh/YEN10hP4uDOTiAMxR9?=
+ =?us-ascii?Q?6oGWT4oRpZE6WoHCgEVNwS6bPHNfLywVXpJ+fBYT937rysSft7iH49m+nVxD?=
+ =?us-ascii?Q?LUiN95nZHEyiNCWd2ie+tyI+AlD2BBfumSLClUzhs+JTsPrRgUUW2xnyEBGS?=
+ =?us-ascii?Q?Xw/mOFBJY404SMMTEALlU7tbtL+NNu58JCWWZXjxGF0XyKmMb6j8Ul7O0A0S?=
+ =?us-ascii?Q?sWMWM3h3LU0LAcZiCADbfLLId9Z5t1VyS8GmhZxvmGhqX7cYHOrw8bPYfnji?=
+ =?us-ascii?Q?OxZM2X930Pa/lvo91pj6tTfHvSV8lfFq7Q1tlDKZruhTNaLwdQPyB0Atym0h?=
+ =?us-ascii?Q?tPdyIyPnJT1epqDw4ponE3HzuB7eTfqc82PAgpVZkcRyYV9UFlYDIcswVwfo?=
+ =?us-ascii?Q?MFf2J2b6uPB8/lYh2oY5hVg1r1iipB7eWnIZ5WXFm3cF+784BqSWpWI6egBn?=
+ =?us-ascii?Q?XLm1w9L5OcySQnCzFUIMCwtAY7OTL4/mhGs8tWHBKqzrqrtqR01jcqpM8Z0Q?=
+ =?us-ascii?Q?3dDHsaaVITNBrBOjbiPZ8KzJVBiaX0ynOT7FXPh4//3afYqtgzooWcn8gMKC?=
+ =?us-ascii?Q?PBG+QHBuoXJlez0MJbOvLNaW+0OPEs2wOaWrN+hV3/ge/j4qmJSiSi3ZELxg?=
+ =?us-ascii?Q?+T/NQ7+HPNlAHDuLIXBd4/YnqSOTVMiTKUXSI+8cNsRe01RJ0RdchaIGjTXE?=
+ =?us-ascii?Q?KFhY13Revu2nS43trZe5r1C/aIzFNgwhFKGbep91qJw1+YdTNCZZkCJK0DHL?=
+ =?us-ascii?Q?uz5PikWV7jd1Z/QmTxsefpnRA4nrOaTtPT2zi3tEUGgD8kms/AumEkVHzz9w?=
+ =?us-ascii?Q?Vqns2PB/9to5PErIx8FySEA5QYieZDVCZHrsaB1F6IWcR/ABkZroBIee2jBq?=
+ =?us-ascii?Q?3uRz+qwLGH0O3cwH2nkFLoUGnDdYL2y5ENhf64eY2goVT6RACdvGLB6two2o?=
+ =?us-ascii?Q?WQBWtPwKKcL0ttbrsOsKnncZUcfOSZ7+jvHHEr1MkS2WIjMwYpdvXuzA5u1Z?=
+ =?us-ascii?Q?fIUxCzeOkSdOYoRZUr/bUEG/L0ncAz5TOgrksEBIgdzUSSdMnFsgMHkVMooR?=
+ =?us-ascii?Q?hDMBKCL3SKoUiKWkdMpU5b4wNvWJ0ob+ahPzqBOHSTaQG5zQW/+2Q9pVDHYi?=
+ =?us-ascii?Q?YjC8xK40fdoD6Zyv+IlIA+fjYqnv5Z3UWUJ9mm4ahDA2AK1hBoKsWmSwI1iu?=
+ =?us-ascii?Q?LE3ZaYAx5T/Q2hQ4w5EUX1DFQROyBYuAxW6HF8de4p1hBXLNxfbHQj/oUGpq?=
+ =?us-ascii?Q?ihINHb/amA2NUgRJ7w0DUNilyCvogzsSole37+N1BLjVlHFz15ykolxBtqTI?=
+ =?us-ascii?Q?7Q2jzuJXvUeSyPm8chSiav1nVXjLRxqDG1mZbRrtsE3c2LxkuJnMvw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR03MB10396.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tLOUPDj7gmAb6xVng8BLRIGzqDD+w/2qDN3JRDKm5o5HU/qQEA8brrKocR8g?=
+ =?us-ascii?Q?j72t8mD/AZHb63AmQwxKoX1ksv0M/aF2BLpWXbYLGjpdDDu6tLihMxOkRrjc?=
+ =?us-ascii?Q?SDk1V4j1S1tRHp+kDWZoqzHNR4zOEtNzEYusvRtOILZO7Bs86w5J0qjbwYmo?=
+ =?us-ascii?Q?A/ZttAUrxJtplGDTB34Fr8VjRjQM/iwbNQrqoHPkA2Y9G+JesY2D4OhB0vdu?=
+ =?us-ascii?Q?iidljstD2PLB1nJ4ZF9n8m7IdBRPk5QnIi6uQmAOwkeDz2WAa27pHOtCK34s?=
+ =?us-ascii?Q?ty5vdKTJMRFiRxqU6BIZtZQQSwwQRKSuctnGM8UOz1s7pqNcirT53W7VLJwT?=
+ =?us-ascii?Q?zUppGwLqeLqQAL2AnLoPRxcWEVz1N7/EK2xlFuGC7sQ0PAjN8BaoI+7Ugfec?=
+ =?us-ascii?Q?7B4f/42+G4jn8jh7Jb3nyufT1cM+E7sins+li/Ehcw/QBp0jD9h1tNbN8rZY?=
+ =?us-ascii?Q?3B4E1f3sZj9fA7vYwxvaaAz5PIt0cFh0sIhjYlyHw4l+a5mBdyE0fOgtNK0i?=
+ =?us-ascii?Q?0aRx1tTRvXtz9AgsGxPLX9wMTFE56GT9bbCQ2/srhcC0Yk1Icl+qj/S1ewC4?=
+ =?us-ascii?Q?bRS/lAhYTYDc07AzwkgiscPGYNg0snWhO1hwPn8liPfjl77AkQeyGFwelZfF?=
+ =?us-ascii?Q?Hu5JteFWWCHbksF75gilUS0ZnXcxITTsbvshKXWN8mn34zIQ3Sxud1xwMDRq?=
+ =?us-ascii?Q?Y+yTQSmp2syXqyWpWv4JJYkahUgLA3RXb556e2h+WPrnfaZQJLjKof6DmGuT?=
+ =?us-ascii?Q?nAbiSWA1rxcs13OFDC2efBPmp+nyr6e+rtpJ/CfJcmiO1ZSlQJT3wyOcSyIq?=
+ =?us-ascii?Q?+/goJ4Tirm6+L7nkeQupfE1D8o+HlNAaKwubGZWygbgCp89X72/1hG9RBp1N?=
+ =?us-ascii?Q?9vo01/MJRHjF1tRDzn3hD7qB8MnUF6/dIMZ0kq5FI54Lekkly69pkQNQ7uWJ?=
+ =?us-ascii?Q?UvnKXX1jbOAmsr0DATK2J1ROfUqf4gZBJqiYIfUMOuPf+kPQfdrAFGVMtSSQ?=
+ =?us-ascii?Q?PaPlAfRri61cD9mzR46CvNmHQPMk4zCkovQ3pMXgfdhrFJKlEEHFlOnPpPkU?=
+ =?us-ascii?Q?fLdgx7VRhZFsh2gDlkFAQV6hwK1sIDHSi4DBdklAO7mFPK1DRcJgHkiaa7hf?=
+ =?us-ascii?Q?yM/gTaxNS6361gx8piminyFuiiJrXn5AorJh/4q7GJmgQdq0MOB4iP3dOsR4?=
+ =?us-ascii?Q?wuc3PPL9UjbPXAMnImL6LlOSWaRUKClzDu1t2ZWHH+6RU373gre//xvg51qe?=
+ =?us-ascii?Q?ocCfDAPaLVZg4ryy/kRSUpV6Lch1c8ggIoplw+V7S2Y0nPSd6GTV7RrboJDK?=
+ =?us-ascii?Q?HCjALlUgnno7kL5Z5qqjGQar9VKm6roTiRIM3ZCcmsjWYLWg007inE09tOuX?=
+ =?us-ascii?Q?d4xaXa5PWZ2lbIioGYsMMsOcopyL2se3dYHdCgBghNTNqXRrNWgUrhV63asm?=
+ =?us-ascii?Q?9a50fynC3RXTReE9o0IkSOQRqS0bjUmMRlxIy1KO+eFTZpinU6/3d5tmKB/E?=
+ =?us-ascii?Q?r1359Dmd8z0nEWKIZctUZLqwtV00irtx1MX6nW+3/TPnchLZ5F88YpdPaWqZ?=
+ =?us-ascii?Q?19ZmD5vqq0WovL1tcww+nccwlBKkXn0k2QDKKqzr?=
+X-OriginatorOrg: mt.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67b1e265-997e-4352-e6ef-08dd9939dbdb
+X-MS-Exchange-CrossTenant-AuthSource: DBBPR03MB10396.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2025 14:06:33.8901
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5271gBM6DVd0NFCy9rlYkg6CBOwVwJtoZEzT8vFqkY52V44eoHT3qBi7vwLf5EW0zjWCKhUL/TIKKzWlv5uHMQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR03MB8252
 
+The MT9M114 supports the different slew rates (0 to 7) on the output pads.
+At the moment, this is hardcoded to 7 (the fastest rate).
+The user might want to change this values due to EMC requirements.
 
-On 22/05/2025 09:27, Philipp Stanner wrote:
-> The drm_gpu_scheduler now supports a callback to help drm_sched_fini()
-> avoid memory leaks. This callback instructs the driver to signal all
-> pending hardware fences.
-> 
-> Implement the new callback
-> drm_sched_backend_ops.cancel_pending_fences().
-> 
-> Have the callback use drm_mock_sched_job_complete() with a new error
-> field for the fence error.
-> 
-> Keep the job status as DRM_MOCK_SCHED_JOB_DONE for now, since there is
-> no party for which checking for a CANCELED status would be useful
-> currently.
-> 
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> ---
->   .../gpu/drm/scheduler/tests/mock_scheduler.c  | 67 +++++++------------
->   drivers/gpu/drm/scheduler/tests/sched_tests.h |  4 +-
->   2 files changed, 25 insertions(+), 46 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> index f999c8859cf7..eca47f0395bc 100644
-> --- a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> +++ b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> @@ -55,7 +55,7 @@ void drm_mock_sched_entity_free(struct drm_mock_sched_entity *entity)
->   	drm_sched_entity_destroy(&entity->base);
->   }
->   
-> -static void drm_mock_sched_job_complete(struct drm_mock_sched_job *job)
-> +static void drm_mock_sched_job_complete(struct drm_mock_sched_job *job, int err)
->   {
->   	struct drm_mock_scheduler *sched =
->   		drm_sched_to_mock_sched(job->base.sched);
-> @@ -63,7 +63,9 @@ static void drm_mock_sched_job_complete(struct drm_mock_sched_job *job)
->   	lockdep_assert_held(&sched->lock);
->   
->   	job->flags |= DRM_MOCK_SCHED_JOB_DONE;
-> -	list_move_tail(&job->link, &sched->done_list);
-> +	list_del(&job->link);
-> +	if (err)
-> +		dma_fence_set_error(&job->hw_fence, err);
->   	dma_fence_signal(&job->hw_fence);
->   	complete(&job->done);
->   }
-> @@ -89,7 +91,7 @@ drm_mock_sched_job_signal_timer(struct hrtimer *hrtimer)
->   			break;
->   
->   		sched->hw_timeline.cur_seqno = job->hw_fence.seqno;
-> -		drm_mock_sched_job_complete(job);
-> +		drm_mock_sched_job_complete(job, 0);
->   	}
->   	spin_unlock_irqrestore(&sched->lock, flags);
->   
-> @@ -212,26 +214,33 @@ mock_sched_timedout_job(struct drm_sched_job *sched_job)
->   
->   static void mock_sched_free_job(struct drm_sched_job *sched_job)
->   {
-> -	struct drm_mock_scheduler *sched =
-> -			drm_sched_to_mock_sched(sched_job->sched);
->   	struct drm_mock_sched_job *job = drm_sched_job_to_mock_job(sched_job);
-> -	unsigned long flags;
->   
-> -	/* Remove from the scheduler done list. */
-> -	spin_lock_irqsave(&sched->lock, flags);
-> -	list_del(&job->link);
-> -	spin_unlock_irqrestore(&sched->lock, flags);
->   	dma_fence_put(&job->hw_fence);
-> -
->   	drm_sched_job_cleanup(sched_job);
->   
->   	/* Mock job itself is freed by the kunit framework. */
->   }
->   
-> +static void mock_sched_cancel_pending_fences(struct drm_gpu_scheduler *gsched)
+Add the 'slew-rate' property to the MT9M114 DT-bindings for selecting
+the desired slew rate.
 
-"gsched" feels like a first time invention. Maybe drm_sched?
+Signed-off-by: Mathis Foerst <mathis.foerst@mt.com>
+---
+ .../devicetree/bindings/media/i2c/onnn,mt9m114.yaml      | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> +{
-> +	struct drm_mock_sched_job *job, *next;
-> +	struct drm_mock_scheduler *sched;
-> +	unsigned long flags;
-> +
-> +	sched = container_of(gsched, struct drm_mock_scheduler, base);
-> +
-> +	spin_lock_irqsave(&sched->lock, flags);
-> +	list_for_each_entry_safe(job, next, &sched->job_list, link)
-> +		drm_mock_sched_job_complete(job, -ECANCELED);
-> +	spin_unlock_irqrestore(&sched->lock, flags);
-
-Canceling of the timers belongs in this call back I think. Otherwise 
-jobs are not fully cancelled.
-
-Hm, I also think, conceptually, the order of first canceling the timer 
-and then signaling the fence should be kept.
-
-At the moment it does not matter hugely, since the timer does not signal 
-the jobs directly and will not find unlinked jobs, but if that changes 
-in the future, the reversed order could cause double signaling. So if 
-you keep it in the correct logical order that potential gotcha is 
-avoided. Basically just keep the two pass approach verbatim, as is in 
-the current drm_mock_sched_fini.
-
-The rest of the conversion is I think good.
-
-Only a slight uncertainty after I cross-referenced with my version 
-(->cancel_job()) around why I needed to add signaling to 
-mock_sched_timedout_job() and manual job cleanup to the timeout test. It 
-was more than a month ago that I wrote it so can't remember right now. 
-You checked for memory leaks and the usual stuff?
-
-Regards,
-
-Tvrtko
-
-> +}
-> +
->   static const struct drm_sched_backend_ops drm_mock_scheduler_ops = {
->   	.run_job = mock_sched_run_job,
->   	.timedout_job = mock_sched_timedout_job,
-> -	.free_job = mock_sched_free_job
-> +	.free_job = mock_sched_free_job,
-> +	.cancel_pending_fences = mock_sched_cancel_pending_fences,
->   };
->   
->   /**
-> @@ -265,7 +274,6 @@ struct drm_mock_scheduler *drm_mock_sched_new(struct kunit *test, long timeout)
->   	sched->hw_timeline.context = dma_fence_context_alloc(1);
->   	atomic_set(&sched->hw_timeline.next_seqno, 0);
->   	INIT_LIST_HEAD(&sched->job_list);
-> -	INIT_LIST_HEAD(&sched->done_list);
->   	spin_lock_init(&sched->lock);
->   
->   	return sched;
-> @@ -280,38 +288,11 @@ struct drm_mock_scheduler *drm_mock_sched_new(struct kunit *test, long timeout)
->    */
->   void drm_mock_sched_fini(struct drm_mock_scheduler *sched)
->   {
-> -	struct drm_mock_sched_job *job, *next;
-> -	unsigned long flags;
-> -	LIST_HEAD(list);
-> +	struct drm_mock_sched_job *job;
->   
-> -	drm_sched_wqueue_stop(&sched->base);
-> -
-> -	/* Force complete all unfinished jobs. */
-> -	spin_lock_irqsave(&sched->lock, flags);
-> -	list_for_each_entry_safe(job, next, &sched->job_list, link)
-> -		list_move_tail(&job->link, &list);
-> -	spin_unlock_irqrestore(&sched->lock, flags);
-> -
-> -	list_for_each_entry(job, &list, link)
-> +	list_for_each_entry(job, &sched->job_list, link)
->   		hrtimer_cancel(&job->timer);
->   
-> -	spin_lock_irqsave(&sched->lock, flags);
-> -	list_for_each_entry_safe(job, next, &list, link)
-> -		drm_mock_sched_job_complete(job);
-> -	spin_unlock_irqrestore(&sched->lock, flags);
-> -
-> -	/*
-> -	 * Free completed jobs and jobs not yet processed by the DRM scheduler
-> -	 * free worker.
-> -	 */
-> -	spin_lock_irqsave(&sched->lock, flags);
-> -	list_for_each_entry_safe(job, next, &sched->done_list, link)
-> -		list_move_tail(&job->link, &list);
-> -	spin_unlock_irqrestore(&sched->lock, flags);
-> -
-> -	list_for_each_entry_safe(job, next, &list, link)
-> -		mock_sched_free_job(&job->base);
-> -
->   	drm_sched_fini(&sched->base);
->   }
->   
-> @@ -346,7 +327,7 @@ unsigned int drm_mock_sched_advance(struct drm_mock_scheduler *sched,
->   		if (sched->hw_timeline.cur_seqno < job->hw_fence.seqno)
->   			break;
->   
-> -		drm_mock_sched_job_complete(job);
-> +		drm_mock_sched_job_complete(job, 0);
->   		found++;
->   	}
->   unlock:
-> diff --git a/drivers/gpu/drm/scheduler/tests/sched_tests.h b/drivers/gpu/drm/scheduler/tests/sched_tests.h
-> index 27caf8285fb7..22e530d87791 100644
-> --- a/drivers/gpu/drm/scheduler/tests/sched_tests.h
-> +++ b/drivers/gpu/drm/scheduler/tests/sched_tests.h
-> @@ -32,9 +32,8 @@
->    *
->    * @base: DRM scheduler base class
->    * @test: Backpointer to owning the kunit test case
-> - * @lock: Lock to protect the simulated @hw_timeline, @job_list and @done_list
-> + * @lock: Lock to protect the simulated @hw_timeline and @job_list
->    * @job_list: List of jobs submitted to the mock GPU
-> - * @done_list: List of jobs completed by the mock GPU
->    * @hw_timeline: Simulated hardware timeline has a @context, @next_seqno and
->    *		 @cur_seqno for implementing a struct dma_fence signaling the
->    *		 simulated job completion.
-> @@ -49,7 +48,6 @@ struct drm_mock_scheduler {
->   
->   	spinlock_t		lock;
->   	struct list_head	job_list;
-> -	struct list_head	done_list;
->   
->   	struct {
->   		u64		context;
+diff --git a/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml b/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
+index f6b87892068a..a89f740214f7 100644
+--- a/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
++++ b/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
+@@ -70,6 +70,15 @@ properties:
+           - bus-type
+           - link-frequencies
+ 
++  slew-rate:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Slew rate ot the output pads DOUT[7:0], LINE_VALID, FRAME_VALID and
++      PIXCLK. Higher values imply steeper voltage-flanks on the pads.
++    minimum: 0
++    maximum: 7
++    default: 7
++
+ required:
+   - compatible
+   - reg
+-- 
+2.34.1
 
 
