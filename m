@@ -1,196 +1,141 @@
-Return-Path: <linux-kernel+bounces-659757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31BA1AC149B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:17:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF565AC1491
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E58E93B242A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:16:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 205321C017ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B289B2BD5BB;
-	Thu, 22 May 2025 19:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF25C2BCF53;
+	Thu, 22 May 2025 19:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s13bjxhY"
-Received: from mail-qk1-f201.google.com (mail-qk1-f201.google.com [209.85.222.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jRhiQbUd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD282BD59E
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0F72882C6
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747940966; cv=none; b=jgfKrN2nY9CO9gAa9q8veN/ftmQLDEv5ZF6BEhUFPUyIQNzq14oGUB6PTnfiGN5+9Q0MRb+eaa6x/yvT+yU3jamdaDgcdimqxiqqeCeZgopyUTX/02htnLFNGHAia+/MSAsu9MJU+Sl+6xpyUC4D1fHSMyVSe5AGXW9N2bGSH9g=
+	t=1747940960; cv=none; b=JWB+Yp+0dt68NDVBYq+kfB/XHegOaNThcq+P3ZBxmLfTTbjrEkobKqMvOJg1hoE1mfGEuV6UBouxyE6m8c1ZlMIT6x2kqLR59fYgnGRd2RRJdabuFqspvftg1m5ahpv0gpdm2f6bYXHCdgJmwKLDAA9EfZ2QJV/Nh49BylWXPPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747940966; c=relaxed/simple;
-	bh=WO4yUAw+su70NbYhyuD4qnYOCPCFP3n4d0s5FXv6Zuw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=B2nWYNlJWRCAkCBNy2G+jedrmJENH+Jfc7zFp6Tg01NlhngDz6Mc0xoA8KncJZXxYMtFbyHZh6xG9Nh7TtKVs3DaYrx0N2N0P6e31ExekA6USH/AVHJH2mCR1Nq2sJqeol+0woThQhgMH6hv3ICOTDZXYGJwU2jidgNcK8ubGzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s13bjxhY; arc=none smtp.client-ip=209.85.222.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com
-Received: by mail-qk1-f201.google.com with SMTP id af79cd13be357-7c5b9333642so1021114385a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 12:09:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747940963; x=1748545763; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Zf5c74izM5BGS8SL0XWGLm8rGTcUQnZ8yCeCPbSnhc=;
-        b=s13bjxhYOeMltsFGaLlMMZgXZhbVYhjMJuOSjYfc8s9xNXtokS8YqSYaXsvKWAue34
-         fbH0C4M+TXA18vLopSyXGjGqq42NIyqzrmJuu6t6uWvSW+Lxa3HO8/i5ZDntdMZzbEKJ
-         OoDbkaMkQj4CWwXM0wQbCSJPNk7bPDE80loRAzETIErmQ1Wh5oihWkIqt/7pF6U3U0mJ
-         reDV59tRwA8rT41ZVw23ASpumUh4fJ703W89SNwoLeDHC11mGEC/4Jj9qgwaN80WOl99
-         gCxCOgmh5+/RK9Q1rW55irV9K1/5kFBTKHAm/40zjyC06ga20m3HIjXZVaf6S/JkT9x2
-         H80w==
+	s=arc-20240116; t=1747940960; c=relaxed/simple;
+	bh=iR/ei+4GCGFyzSKBBR0B/UyQeY7n58BxQ7bQCa72dRs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qJ76E0xrqurkZKwz9dmKExu+NE2FFUH3uzexTPGbyuSa4jJc21tKCDlieIxPV4aotzWgx6bGiXNugeZsl3KSX4cP7x9Gr7T0GH3KtBzA63/azf96ca8nSiwKGKfr3Dy9147CBHvHmtfQBjKUcC31i9FOy4pbjXa9dCS4i9RK3o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jRhiQbUd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54MEsRfN013436
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:09:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=kR4XZ/Uqh0bO1jSX7A4FytxV
+	cw2LfMFSByGLKy9VaL4=; b=jRhiQbUdIWbT6Wkk7y3evz5vM0y8dyEA0fiK0T9j
+	G1rQcXYKzuGKqxqoaZOZBi9bFU6kyvgj9jQthJVdxsk1CnrdocTadPxjBFZJUFgc
+	mcVq5hA+fgCMgJPT+PZagsBs1Ldbt6uolXwxwOUCJpja8EuOX6El8bZDzk0xyZJM
+	aqGYidKJTQcVgmq8VXWlSPUSTT+LVNeQTSj0g6ZDHdKrfU+YmxOYdN477QvdjZde
+	IJKUSivGoE9bVm/sWr0qblMgC+od/rQlWzt4AlfdDoXc1AtCCnkNgzaZh3Gi5oQ1
+	dS7D0XEO8utuAS2hl1XLjhGzkf3su2LC6AHfBGCn24G/oA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwh5fp7y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:09:17 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7caee988153so1512939285a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 12:09:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747940963; x=1748545763;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Zf5c74izM5BGS8SL0XWGLm8rGTcUQnZ8yCeCPbSnhc=;
-        b=JunuKPwMYf+B2f+BlgngZTx0XvSRklTJ17ip+GfebIBazuqaqKdm8TZbCf8BEaEmdy
-         /uyj7iLeuRgyPhDA1GmOot/DoBx/TLDvDyyTyOU4lD3Yp2CNNRBbLU0wlkH+jRQLm4yU
-         B9dqZ5/outpJzBLgJHUO4rHRaLkQ0ynKawCsfS0SkgivBXg9ngwkEQTBn0QeyM5bJEzq
-         rsrwbLmAG7h0WjYPejKZ8B4a9WsiOdobDskBQTfzT9WiAcnekRwBTOHRQfSie3BvVT4v
-         7AMNZ57739nkhbezdsUO1ruvFZ+CboD4XxLThCXAFB91Pwk9GVUnf9ZyxX5cU3UDucHZ
-         dr/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWmS8tZayg9Ms66L1zDlRfhWsOKxgO5K+B3jo79yYSPwWNbtg37NpkhuTD/Qzro2EOsOc12pSKXZSTNcQU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPDtpNJSDPidvImn8lHgSv+wYcRouq1mrOSIt3/XO8rI9oMAgB
-	qf2c88MyCXKP2gf9weeNS9UPHQ5JBx+NLIR/AvcJtHU2ksW2XYciPcZK9K1YztklcLyiiFCWxqc
-	0ujRkIw==
-X-Google-Smtp-Source: AGHT+IGssf3horES+ZFWfYrsp2J0jNuYivC0L84W/Dzj2s2fpL61DJ6Zle4Xi1IXLbeenEp+WtiR64d7624=
-X-Received: from qknqk16.prod.google.com ([2002:a05:620a:8890:b0:7ca:f59d:a84a])
- (user=royluo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:620a:2994:b0:7cd:25:8a77
- with SMTP id af79cd13be357-7cee31cf967mr11408485a.9.1747940963104; Thu, 22
- May 2025 12:09:23 -0700 (PDT)
-Date: Thu, 22 May 2025 19:09:12 +0000
-In-Reply-To: <20250522190912.457583-1-royluo@google.com>
+        d=1e100.net; s=20230601; t=1747940956; x=1748545756;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kR4XZ/Uqh0bO1jSX7A4FytxVcw2LfMFSByGLKy9VaL4=;
+        b=tsTg75r6CUYo/u7PCg03WcQhsVR3mohXKz1JNrn4lgZO5ttQc0nwLJ1YGIA2p4TFir
+         PXZYOWIahbV3t35GsCmNX8XNoPYjq3MF6W66wPZg/OA2JH5zOATGzrDaB8uYRbv8hji3
+         lenLnIYY9705KbV0Py3nQndiQvs1A8I8IVEK4CwlpEVn+7EYr6N1XjwwXBcBinAsXDk2
+         O2/4hPiP0Xye+mFHzak/IGd/2ieniADqu8umm8zN4PWegrHS2wyTEqaSYFMOf8aDhzm6
+         rPJ8iGmlK3HryLKohhcVxvbceFVb2VOvTleqz3R8YVPD9fsh9BUYUOnRd6AABC+BCcLg
+         BR6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVhDb4QBjTF0rSLnrHpk+TsDNswtVSj/Jaf0yUmJEfBvb6t9WO+yYNVKHVpWjGRWIWSa0woyJ+80mZnJjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXgip5cOHwGmqXZfqa6+8V3nE8zfj5aCsnMiwPH6CgWdEJFz2i
+	44x51dAPZqfoep8je+jFXpQFctSB12m2NYk5CG8BVQ+IgxXFgKiIY4KbbWwSHLr9N5oNJUS0UG/
+	aSZmMKtQOkRNo1ThicEiVYj9TKVu5Xrcl7sGrNj4NGpSEFpn+bj2JukjptEd8+Yjg8n4=
+X-Gm-Gg: ASbGncvFCeEJEFW/Uln2D6a7rNzOC+VZ2Ic/Sr8loDZoL3rXa7wrgx0mq9v7rNzZtlh
+	JIRyaIXQhtP1OXRzvY3FgwA8b1D2hK7ye9kNOKw63S8rInyT3nX+CpJ8CfQCKupT9BluidADEs2
+	I+ZjEQbcW6+rXI7mK6vUr9+ca5Z4XF58wafo5uAMl4GpCJ0Aic5yqfDt81rVRz+JBkebDYpDeCa
+	gKA64AZvTAWjaEyKSzhXPRYMhSYpERifwfdqfqXPq34Zonr7uhC828SPdcPtRy2EZQx1GrVi/h8
+	q9iYVJz+/F3OI6ZzgpJLqMrZYOc1MPUeQj7CuSbgz6pb6cXgEJdPCi1qjyA9aZroh4uFuFP5faI
+	=
+X-Received: by 2002:a05:620a:4446:b0:7cd:45ed:c4a5 with SMTP id af79cd13be357-7cd4608d095mr3152050485a.0.1747940956334;
+        Thu, 22 May 2025 12:09:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEcwp9Lh575kGkbAvNK5+YIa2S86CpRt5DELbK2TDbmJcyvYQaP/lTl0n4FCeBsrJ+aoxyyMA==
+X-Received: by 2002:a05:620a:4446:b0:7cd:45ed:c4a5 with SMTP id af79cd13be357-7cd4608d095mr3152046785a.0.1747940955841;
+        Thu, 22 May 2025 12:09:15 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e703f6e0sm3542537e87.223.2025.05.22.12.09.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 12:09:14 -0700 (PDT)
+Date: Thu, 22 May 2025 22:09:13 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Alexander Wilhelm <alexander.wilhelm@westermo.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] soc: qcom: fix endianness for QMI header
+Message-ID: <vf7fb7jxxwy25wzow4pbzvh26xqd7hkx4edqmcts2tzoyrnxqs@u3lev7ergjb2>
+References: <20250522143530.3623809-1-alexander.wilhelm@westermo.com>
+ <20250522143530.3623809-3-alexander.wilhelm@westermo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250522190912.457583-1-royluo@google.com>
-X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
-Message-ID: <20250522190912.457583-3-royluo@google.com>
-Subject: [PATCH v1 2/2] Revert "usb: xhci: Implement xhci_handshake_check_state()
- helper"
-From: Roy Luo <royluo@google.com>
-To: royluo@google.com, mathias.nyman@intel.com, quic_ugoswami@quicinc.com, 
-	Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, michal.pecio@gmail.com, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250522143530.3623809-3-alexander.wilhelm@westermo.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDE5MyBTYWx0ZWRfX4Qc/MFS8ahXe
+ aFhRBgQ43frftOBwOC/oW47Z0EztnBpfl2bDxhlFqHSdLJkljDq2GtaDyg6OLKAylT17hgmrnas
+ KN/ZsGX0a/0wBBdoMm2WhNKM623LJ9yc/5Ddi+GZyFILe9TBMKftSWr3Q04kGAehgoj6XvrWRUz
+ puNguqnZX+lNgQSxeT2nAB6buqs6cQwYGyF+B967lOa1dMLTQK4m+wuMj2A/JA7gMfRD9lqfWdU
+ vItyrE6tNlrGK+D1txIZVgp2nL8V9l+M4KlGAyIQ2Ogy9IYx2c1pA0gEQs/vMo4HAdQSW6ZIxWe
+ KNE5MRh02W00O2fl0vZxNy//z9asl1UH45Nz+MvmBwuW3/MDybmQUYH9eGOKPzQS2gv3wu/0NXc
+ uhiGDqssRwc+8O2y/oMUNKC6+9lAHOQ7NxEjbhjLbb+SY/oNSeEcICMfv+6rk3BP9a0UwZQW
+X-Authority-Analysis: v=2.4 cv=XeWJzJ55 c=1 sm=1 tr=0 ts=682f765d cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=dt9VzEwgFbYA:10 a=N9GNhs4bAAAA:8 a=XW_CCpt8tLB4Xc_L39sA:9 a=CjuIK1q_8ugA:10
+ a=IoWCM6iH3mJn3m4BftBB:22 a=PZhj9NlD-CKO8hVp7yCs:22
+X-Proofpoint-GUID: 4McG4aZNYdcfIGLxuwQ8aRxkR0a56R7c
+X-Proofpoint-ORIG-GUID: 4McG4aZNYdcfIGLxuwQ8aRxkR0a56R7c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-22_09,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1015 mlxlogscore=739 mlxscore=0 bulkscore=0 spamscore=0
+ suspectscore=0 impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505220193
 
-This reverts commit 6ccb83d6c4972ebe6ae49de5eba051de3638362c.
+On Thu, May 22, 2025 at 04:35:30PM +0200, Alexander Wilhelm wrote:
+> The members of QMI header have to be swapped on big endian platforms. Use
+> __le16 types instead of u16 ones.
+> 
+> Signed-off-by: Alexander Wilhelm <alexander.wilhelm@westermo.com>
+> ---
+>  drivers/soc/qcom/qmi_encdec.c    | 6 +++---
+>  drivers/soc/qcom/qmi_interface.c | 6 +++---
+>  include/linux/soc/qcom/qmi.h     | 6 +++---
+>  3 files changed, 9 insertions(+), 9 deletions(-)
 
-Commit 6ccb83d6c497 ("usb: xhci: Implement xhci_handshake_check_state()
-helper") was introduced to workaround watchdog timeout issues on some
-platforms, allowing xhci_reset() to bail out early without waiting
-for the reset to complete.
+Just out of curiosity, is there a usecase for running QMI helpers on BE
+platforms?
 
-Skipping the xhci handshake during a reset is a dangerous move. The
-xhci specification explicitly states that certain registers cannot
-be accessed during reset in section 5.4.1 USB Command Register (USBCMD),
-Host Controller Reset (HCRST) field:
-"This bit is cleared to '0' by the Host Controller when the reset
-process is complete. Software cannot terminate the reset process
-early by writinga '0' to this bit and shall not write any xHC
-Operational or Runtime registers until while HCRST is '1'."
-
-This behavior causes a regression on SNPS DWC3 USB controller with
-dual-role capability. When the DWC3 controller exits host mode and
-removes xhci while a reset is still in progress, and then tries to
-configure its hardware for device mode, the ongoing reset leads to
-register access issues; specifically, all register reads returns 0.
-These issues extend beyond the xhci register space (which is expected
-during a reset) and affect the entire DWC3 IP block, causing the DWC3
-device mode to malfunction.
-
-Cc: stable@vger.kernel.org
-Fixes: 6ccb83d6c497 ("usb: xhci: Implement xhci_handshake_check_state() helper")
-Signed-off-by: Roy Luo <royluo@google.com>
----
- drivers/usb/host/xhci-ring.c |  5 ++---
- drivers/usb/host/xhci.c      | 26 +-------------------------
- drivers/usb/host/xhci.h      |  2 --
- 3 files changed, 3 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 423bf3649570..b720e04ce7d8 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -518,9 +518,8 @@ static int xhci_abort_cmd_ring(struct xhci_hcd *xhci, unsigned long flags)
- 	 * In the future we should distinguish between -ENODEV and -ETIMEDOUT
- 	 * and try to recover a -ETIMEDOUT with a host controller reset.
- 	 */
--	ret = xhci_handshake_check_state(xhci, &xhci->op_regs->cmd_ring,
--			CMD_RING_RUNNING, 0, 5 * 1000 * 1000,
--			XHCI_STATE_REMOVING);
-+	ret = xhci_handshake(&xhci->op_regs->cmd_ring,
-+			CMD_RING_RUNNING, 0, 5 * 1000 * 1000);
- 	if (ret < 0) {
- 		xhci_err(xhci, "Abort failed to stop command ring: %d\n", ret);
- 		xhci_halt(xhci);
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 244b12eafd95..cb9f35acb1f9 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -83,29 +83,6 @@ int xhci_handshake(void __iomem *ptr, u32 mask, u32 done, u64 timeout_us)
- 	return ret;
- }
- 
--/*
-- * xhci_handshake_check_state - same as xhci_handshake but takes an additional
-- * exit_state parameter, and bails out with an error immediately when xhc_state
-- * has exit_state flag set.
-- */
--int xhci_handshake_check_state(struct xhci_hcd *xhci, void __iomem *ptr,
--		u32 mask, u32 done, int usec, unsigned int exit_state)
--{
--	u32	result;
--	int	ret;
--
--	ret = readl_poll_timeout_atomic(ptr, result,
--				(result & mask) == done ||
--				result == U32_MAX ||
--				xhci->xhc_state & exit_state,
--				1, usec);
--
--	if (result == U32_MAX || xhci->xhc_state & exit_state)
--		return -ENODEV;
--
--	return ret;
--}
--
- /*
-  * Disable interrupts and begin the xHCI halting process.
-  */
-@@ -226,8 +203,7 @@ int xhci_reset(struct xhci_hcd *xhci, u64 timeout_us)
- 	if (xhci->quirks & XHCI_INTEL_HOST)
- 		udelay(1000);
- 
--	ret = xhci_handshake_check_state(xhci, &xhci->op_regs->command,
--				CMD_RESET, 0, timeout_us, XHCI_STATE_REMOVING);
-+	ret = xhci_handshake(&xhci->op_regs->command, CMD_RESET, 0, timeout_us);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 242ab9fbc8ae..5e698561b96d 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1855,8 +1855,6 @@ void xhci_remove_secondary_interrupter(struct usb_hcd
- /* xHCI host controller glue */
- typedef void (*xhci_get_quirks_t)(struct device *, struct xhci_hcd *);
- int xhci_handshake(void __iomem *ptr, u32 mask, u32 done, u64 timeout_us);
--int xhci_handshake_check_state(struct xhci_hcd *xhci, void __iomem *ptr,
--		u32 mask, u32 done, int usec, unsigned int exit_state);
- void xhci_quiesce(struct xhci_hcd *xhci);
- int xhci_halt(struct xhci_hcd *xhci);
- int xhci_start(struct xhci_hcd *xhci);
 -- 
-2.49.0.1204.g71687c7c1d-goog
-
+With best wishes
+Dmitry
 
