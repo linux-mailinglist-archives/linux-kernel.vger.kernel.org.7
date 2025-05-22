@@ -1,154 +1,160 @@
-Return-Path: <linux-kernel+bounces-659462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 254C0AC10AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:05:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DFF1AC0DE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EEAF1BC811D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:05:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C4D77AFBA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7581429A300;
-	Thu, 22 May 2025 16:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ynU8/xW4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28372286410;
+	Thu, 22 May 2025 14:17:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78181F94C;
-	Thu, 22 May 2025 16:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB8F41AAC
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 14:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747929931; cv=none; b=TJuEQhHGqpYjj37lWaWaQnmCFY3DIdByo7plQe857oZU+zSxJI3oJWDNehL80EE1qxp/FjCESKTQb7CP2o6Z2z48sbnVgBrZH5VXYJXdb6L1aR0gOqoEId64y1QUCEB0YcuDpWZgCg8bkBTgCO9Cw0dW/c3QfHJA79cAhwXP27g=
+	t=1747923424; cv=none; b=Q4S+p4DgPWwPpW4tl+SIGGyjdvEdG8vPUug2wiNfa2EpVPy+Q9l27a7A5rYoYyI+kQdXS+5/42OXyWzJ8IEAONZN6a5SIKSoyHdFjMv8HNirtw1fyVDmmk3874cWW428+N1oy2qYZEg2IuwE2rhy9AFS7BLAXH4iZSHH/96jjOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747929931; c=relaxed/simple;
-	bh=lXcZo/Pm+/t88dRoboEWB2Dhb1AAlhDP0aV2NXjyjVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksGZV7kVvNyfkmuMdPMvLOEKvanzGlIaK/PXJwjhwkr2fPAmXldMmDZYfyBZOXuAc8hFBnNmvy3n1d8HsslYCHZ6Qcz3nzcwJXYn6Oef58hJSWUPxITRLm7suSabsBSSiFr31ryvmLLlH9EMiO+TRI12O3BufnPwZP9nlEJ5F20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ynU8/xW4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 623F6C4CEE4;
-	Thu, 22 May 2025 16:05:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747929931;
-	bh=lXcZo/Pm+/t88dRoboEWB2Dhb1AAlhDP0aV2NXjyjVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ynU8/xW4jYhimq8ZQZJXx3PAr/speS4llL7jGk7Zw810zunMth1fyw+YThm476U/W
-	 hRKKHArAJCXspS6S4OnpFbvhLP8o/s9nle4Q/iNBcNt1drSFpdCVuxtHPh/tjAZMbQ
-	 mQR09Ma6W+Er9cS/pjqFFwaP2EtreRmNLq8enKgs=
-Date: Thu, 22 May 2025 16:15:46 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Benno Lossin <lossin@kernel.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] rust: samples: Add debugfs sample
-Message-ID: <2025052201-return-reprogram-add9@gregkh>
-References: <D9VPA1M45WBK.1TB4KOUXD24BD@kernel.org>
- <aCRdNJ2oq-REBotd@pollux>
- <CAGSQo0204_Dz65G33pAN3_iY=ejPXJRdAiB4ioM-nvMkAh0YXQ@mail.gmail.com>
- <D9WM0BP5446N.1NVNDCZ4Y2QN1@kernel.org>
- <2025051524-festival-afterglow-8483@gregkh>
- <aCzzBT96ktapP03e@google.com>
- <aC2HacSU7j5d9bzu@pollux>
- <aC5XDi7SaDJeUaAC@google.com>
- <aC7DVewqqWIKetmk@pollux>
- <aC8uNmrLUSS8sxHU@google.com>
+	s=arc-20240116; t=1747923424; c=relaxed/simple;
+	bh=V0l6Z7w33PZpewWBFsGJ7P1kFzsFpAJX+LDsIrWFihc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=lnHgx0z8p/uMDNn2GvOKFew4Aq/lNb2INcSdXmnJ55R04p2lPLMF+LyjxSBpdayWRfmsF7BC1hNSotsXMok0moYZZT/PMeBpeR6dEbnPWE2w2e15z2MdnJgq9rtk+Vo0SxztfNzDXMy1IwkRCjiXNFI0l7ttgl1yS/zJPnETkdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-85e4f920dacso670646339f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 07:17:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747923422; x=1748528222;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9Sfq/lUq7/4vCCOnZ2qCfA7grzyChvgxUkP/l2Ik7zo=;
+        b=i4egXSuTXCnNfOblALwUCQB9KyRwvZZleI3w189ESAMFisCT5APrX/p4CfNglgro8p
+         jfDwUYt4yQihWY9qaqGvFhb7Ax3TtQLCew7oxFj9E13o4lb2JMeAxLDM0ikoAZtB77yP
+         XeEDyhvjUHBa7LLsnBBN1knDDzYnzGBD2BrDtthRMAaKWsxy4vP0yZE5U9KWL58r2xSi
+         qV0PVgKTs0msKTMJDQT9vpj1aHLt5HGxqZXlgnFzuBSN7lzIS+8xHtnDtTNMFzgRibyc
+         K22/RpIRowRlZDDkG0Lu7pGP6p/RqGCzepYXBHaMHuEYaYszUaO3C15f0AagYVZ7G33j
+         FlCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9ea6o6A5D37FBhCvWVh/NqbOADWsrF6B5N10qaP8ZtewVhyrKpz6O8swlse0i4ugXIjz5k/CuNLUX6AA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZuduqGr69LeyB2W0b6chr/XepE3A+JQ6a2/2yHiSW0z8dgc5n
+	Nu7L8nJLa7ruYI0frrxYKODBSIorOqqR3cBh7EqP3tHh1BaWydmJH/xUWgE3GQ+xg2mSQZUwnFv
+	0ZyGpdS+nwdYX3fzW2nyT8nC5RqmbxaqQC8ViWlbJGS6QUy4Mx8qMKdMZeF0=
+X-Google-Smtp-Source: AGHT+IHRObJRJiznU4QGNjNqK3Kpaim9SEIIN+tX1OvGbqd10g2eKBEkAYly0275E7qks7AwLtMHriGMlZn0ewiiEeAXC1mB5kvS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aC8uNmrLUSS8sxHU@google.com>
+X-Received: by 2002:a05:6602:4192:b0:864:4b3a:9e3a with SMTP id
+ ca18e2360f4ac-86a2324e6afmr3070582039f.13.1747923422201; Thu, 22 May 2025
+ 07:17:02 -0700 (PDT)
+Date: Thu, 22 May 2025 07:17:02 -0700
+In-Reply-To: <CAMj1kXEUW2arc4E1z5VkqUm6yi_bPyPwUtvg99PpM4bQLpct5w@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <682f31de.a00a0220.2a3337.001d.GAE@google.com>
+Subject: Re: [syzbot] [fs?] [efi?] BUG: unable to handle kernel paging request
+ in alloc_fs_context
+From: syzbot <syzbot+52cd651546d11d2af06b@syzkaller.appspotmail.com>
+To: ardb@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, May 22, 2025 at 02:01:26PM +0000, Alice Ryhl wrote:
-> On Thu, May 22, 2025 at 08:25:25AM +0200, Danilo Krummrich wrote:
-> > On Wed, May 21, 2025 at 10:43:26PM +0000, Alice Ryhl wrote:
-> > > > > * Possibly we have a way to drop a Rust object without removing it from
-> > > > >   the file system. In this case, it can never be accessed from Rust
-> > > > >   again, and the only way to remove it is to drop its parent directory.
-> > > > 
-> > > > I'm not sure about this one.
-> > > > 
-> > > > IIUC, this basically brings back the "keep() logic", which I still think is a
-> > > > footgun and should be avoided.
-> > > > 
-> > > > Also, we only needed this, since due to the borrowing design we couldn't store
-> > > > parent and child nodes in the same structure. With reference counting (or the
-> > > > logic above) this goes away.
-> > > > 
-> > > > I wrote the following in a previous conversation [1].
-> > > > 
-> > > > --
-> > > > 
-> > > > What I see more likely to happen is a situation where the "root" directory
-> > > > (almost) lives forever, and hence subsequent calls, such as
-> > > > 
-> > > > 	root.subdir("foo").keep()
-> > > > 
-> > > > effectively are leaks.
-> > > > 
-> > > > One specific example for that would be usb_debug_root, which is created in the
-> > > > module scope of usb-common and is used by USB host / gadget / phy drivers.
-> > > > 
-> > > > The same is true for other cases where the debugfs "root" is created in the
-> > > > module scope, but subsequent entries are created by driver instances. If a
-> > > > driver would use keep() in such a case, we'd effectively leak memory everytime a
-> > > > device is unplugged (or unbound in general).
-> > > 
-> > > Where is the leak? If the file is still visible in the file system, then
-> > > it's not a leak to still have the memory. If the file got removed by
-> > > removing its parent, then my intent is that this should free the memory
-> > > of the child object.
-> > 
-> > Well, take the case I described above, where the debugfs "root" is created in
-> > the module scope, but subsequent entries are created by driver instances. If a
-> > driver would use keep() in such a case, we'd effectively the file / directory
-> > (and subsequently also the corresponding memory) everytime a device is unplugged
-> > (or unbound in general)."
-> > 
-> > If the module is built-in the directory from the module scope is *never*
-> > removed, but the entries the driver e.g. creates in probe() for a particular
-> > device with keep() will pile up endlessly, especially for hot-pluggable devices.
-> > 
-> > (It's getting even worse when there's data bound to such a leaked file, that
-> > might even contain a vtable that is entered from any of the fops of the file.)
-> > 
-> > That'd be clearly a bug, but for the driver author calling keep() seems like a
-> > valid thing to do -- to me that's clearly a built-in footgun.
-> 
-> I mean, for cases such as this, I could imagine that you use `keep()` on
-> the files stored inside of the driver directory, but don't use it on the
-> directory. That way, you only have to keep a single reference to an
-> entire directory around, which may be more convenient.
+Hello,
 
-No, sorry, but debugfs files are "create and forget" type of things.
-The caller has NO reference back to the file at all in the C version,
-let's not add that functionality back to the rust side after I spent a
-long time removing it from the C code :)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+BUG: unable to handle kernel paging request in alloc_fs_context
 
-If you really want to delete a debugfs file that you have created in the
-past, then look it up and delete it with the call that is present for
-that.
+Bluetooth: hci0: Opcode 0x0c1a failed: -4
+efivarfs: resyncing variable state
+Unable to handle kernel paging request at virtual address dfff800000000005
+KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+Mem abort info:
+  ESR = 0x0000000096000005
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x05: level 1 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[dfff800000000005] address between user and kernel address ranges
+Internal error: Oops: 0000000096000005 [#1]  SMP
+Modules linked in:
+CPU: 1 UID: 0 PID: 7789 Comm: syz.0.174 Not tainted 6.15.0-rc7-syzkaller-gd7fa1af5b33e #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : alloc_fs_context+0x1b4/0x76c fs/fs_context.c:294
+lr : __lse_atomic64_add arch/arm64/include/asm/atomic_lse.h:134 [inline]
+lr : arch_atomic64_add arch/arm64/include/asm/atomic.h:67 [inline]
+lr : raw_atomic64_add include/linux/atomic/atomic-arch-fallback.h:2672 [inline]
+lr : raw_atomic_long_add include/linux/atomic/atomic-long.h:121 [inline]
+lr : atomic_long_add include/linux/atomic/atomic-instrumented.h:3261 [inline]
+lr : get_cred_many include/linux/cred.h:203 [inline]
+lr : get_cred include/linux/cred.h:218 [inline]
+lr : alloc_fs_context+0x150/0x76c fs/fs_context.c:293
+sp : ffff80009b8c7440
+x29: ffff80009b8c7470 x28: dfff800000000000 x27: ffff0000cbd6a758
+x26: 0000000000000028 x25: ffff0000d6dd9cc8 x24: ffff80008fba8a20
+x23: 0000000000000000 x22: ffff0000d6dd9c98 x21: ffff0000cbd69e80
+x20: 0000000000000000 x19: ffff0000d6dd9c00 x18: ffff800090e6c920
+x17: ffff800092f39000 x16: ffff80008adbda98 x15: 0000000000000001
+x14: 1fffe00019683fa0 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff600019683fa1 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : 0000000000000005 x7 : ffff80008020cba8 x6 : ffff8000803f41e0
+x5 : ffff0000d95932c8 x4 : ffff80009b8c71f8 x3 : ffff800080dfffa8
+x2 : 0000000000000001 x1 : 0000000000000008 x0 : 0000000000000001
+Call trace:
+ alloc_fs_context+0x1b4/0x76c fs/fs_context.c:294 (P)
+ fs_context_for_mount+0x34/0x44 fs/fs_context.c:332
+ vfs_kern_mount+0x38/0x178 fs/namespace.c:1309
+ efivarfs_pm_notify+0x1c4/0x4b4 fs/efivarfs/super.c:529
+ notifier_call_chain+0x1b8/0x4e4 kernel/notifier.c:85
+ blocking_notifier_call_chain+0x70/0xa0 kernel/notifier.c:380
+ pm_notifier_call_chain+0x2c/0x3c kernel/power/main.c:109
+ snapshot_release+0x104/0x1c4 kernel/power/user.c:125
+ __fput+0x340/0x75c fs/file_table.c:465
+ ____fput+0x20/0x58 fs/file_table.c:493
+ task_work_run+0x1dc/0x260 kernel/task_work.c:227
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0x4e8/0x1998 kernel/exit.c:953
+ do_group_exit+0x194/0x22c kernel/exit.c:1102
+ get_signal+0x11dc/0x12f8 kernel/signal.c:3034
+ do_signal+0x274/0x4438 arch/arm64/kernel/signal.c:1615
+ do_notify_resume+0xac/0x1ec arch/arm64/kernel/entry-common.c:148
+ exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
+ el0_svc+0xb4/0x17c arch/arm64/kernel/entry-common.c:768
+ el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+Code: 97f8aa83 f9400368 9100a11a d343ff48 (387c6908) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	97f8aa83 	bl	0xffffffffffe2aa0c
+   4:	f9400368 	ldr	x8, [x27]
+   8:	9100a11a 	add	x26, x8, #0x28
+   c:	d343ff48 	lsr	x8, x26, #3
+* 10:	387c6908 	ldrb	w8, [x8, x28] <-- trapping instruction
 
-The only thing I think that might be worth "keeping" in some form, as an
-object reference as discussed, is a debugfs directory.
 
-thanks,
+Tested on:
 
-greg k-h
+commit:         d7fa1af5 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1689aad4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=89c13de706fbf07a
+dashboard link: https://syzkaller.appspot.com/bug?extid=52cd651546d11d2af06b
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+userspace arch: arm64
+
+Note: no patches were applied.
 
