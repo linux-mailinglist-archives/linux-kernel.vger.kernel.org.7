@@ -1,238 +1,114 @@
-Return-Path: <linux-kernel+bounces-658712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 839FAAC0637
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:54:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6233AC063B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E10317A720F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:53:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 916D5170EE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DD524E4C6;
-	Thu, 22 May 2025 07:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OPxbpUmX"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4637424EAB7;
+	Thu, 22 May 2025 07:54:29 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FBB221FB3;
-	Thu, 22 May 2025 07:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C37124EA8E
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 07:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747900456; cv=none; b=dQiqfESgoyYrCRLDemJlc1oX9fT40Rx0cOW+Atm7IqM2/AeAUd+oxH10AIf8ojKG6eZogo8hQrHvkN6cDqURVHNq0B3+HajYEldQo358ylB56KyrsOBL+y+lbiI4ybhjRza0RF3x9hstAHYM8BnpOkx00bVXcikgJbZeANRUpVc=
+	t=1747900468; cv=none; b=XZtZkOt2pGuUMupWQXaolgXaB8DD4NaqjHKMzlxjb6T3p7HjdZv9+xhRO3LsCpugD1Ki8LLE5LHJFnn8TJrrbmbqpb1H2I2COz99GMUCsMItGCVNebwzg3FSyaz4AMaaNr2iL0WPh8YjtIO4HBVueii1yu+r+tcpi0HRK36c5HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747900456; c=relaxed/simple;
-	bh=uU8nG00Q2stbTwE2Gh2fD6nuqa9pOcbvuOaudFx+OdA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gQoBCricegnD4cC9iCLGul1qdP+O4Lj4/ArbC60neD8i6JgJbEcDKI6rUq3PXtD+bnqdYW9vEf3wEvXPmsGirDTfeMX6czOcChKFvkJONQBfdvCX1u9bAO8E+XcccspLzbQPoton8a6SKxOVUjtU9ZA2ZSirfZRZ5hQOX8QKvWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OPxbpUmX; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-742c9907967so4441664b3a.1;
-        Thu, 22 May 2025 00:54:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747900454; x=1748505254; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LsrhGlQGDRsN50osPmG62nNMbsUeNwxrE0PRWOPkej4=;
-        b=OPxbpUmXwvIkubpv72ig3HRppNPjsmfEhlDH/IFR0+y1dBsTWMJ9wn03P1OhjHpyMb
-         uXcw+6v+zGVSXgMRCmqieMlOxbZDrENN0de4YdDROyY5BAmDLHauuEuJ7ck/RCIxacVR
-         oFDD7T/3PxSVd9Rzj+2xin8RS0dmu5591iSzoaV1uy0LNb4DlzZgxnLo/WvivtrUWvtY
-         XCA2EiCqW3puUqHY9FW221TGJ8CAgxT14jKK+51++T66dzMbwl1xFdn9Q19T1lLgQYlj
-         SkYPjeGBwQY+IoR9auEADa5fDVcA491/GWK4M6XgAmpp/Dsa7C5GTLKJJADwFWHSOzlb
-         eIhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747900454; x=1748505254;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LsrhGlQGDRsN50osPmG62nNMbsUeNwxrE0PRWOPkej4=;
-        b=cYjtqn9sepbVYpFHOohBwD2l8pXSVyV/dqpelBH+SGeGJEb5tzBwQhEzd4n1Z7LJRP
-         3o5I6Xfv6DbV8BGIOdr32Wr38QhT7AUAFjMkY4uxBS7AsA/mT7uJep8AV5V7UdRF03N9
-         SwPa08jp3iZgM/2ei8Vm/oSgWoDXK4P3PD7kQ3irtKihEzK4D6OPw9LxF39ZxX2X/I9s
-         Um+IC7GH6NZzIJGmFfrJMace8xRnP7cmETnIKsnZb6gQdqMlYAOo0yfaDxAqax4m686z
-         z/SNMJpOLaB7kpyEXWEJnGwfgTaVkruSvlBdCXcIvoPIi+wvugiWKHwBUv61mEBdEpcq
-         Ud6A==
-X-Forwarded-Encrypted: i=1; AJvYcCV57twAv2eqDuHu7yTPKwgyTFTCcashbMD38e5hnS5TCqk3z1NCs466FmSqtdENi8g5ejZcoNHBD8ml@vger.kernel.org, AJvYcCVe3Qfx4A6I76OXTqIZem9q1P45zRDu9bxW3ylbWIugs3E+GXV3BCqRhcQn+TdldsxBss8WDErDWGK6ASZN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBURsyVvwMGBThW28sxtyL01J9XvelJLreH2WRes4KqLxfusRQ
-	WiD3V3Wja+zSCsV9WEMvbvmZsxmpO7Ryfz8wUXISJgIhQrCMK5WlBQ/h+wkCZA==
-X-Gm-Gg: ASbGnctMY5DCJx5WbEnVZY2knQRmbQWswTE6+UpdM1gXrQlisIaP7mZfsxmKSeouOvp
-	Ti4tYU+OXRgL748lD98Ijj07OCAI99CcNL8TTW3N2gxVsisguu70SNtFcw5EA+e65oUpx4xT7m/
-	W7QjIyRQkuHOBj7rSysczgVrxdZ2fspBfec7nrh84GLXAY9MObtDnzYXhRWC7Xg6gXkSWXCi6vN
-	t0uy9FduAb/xCg8qZpzQFJUUpUoyFvNjbYUm+7LL80bqKwUIrZHDF3LlQfJDZE8fkqMmSHNjtyP
-	NSr6Y7UOFNrKb5CVlr/xWepDr2TuHdb8B1i9t8bl+ATwZDtPHusHF3dDs97T7niY/+AXsP/N
-X-Google-Smtp-Source: AGHT+IE6pv3MvDAHJqmt1doTPQEc7o8d+ZdNoLUOa96MB1SE5IZNE2q0Gy0vbHP6F7AbiuPNzlRZGg==
-X-Received: by 2002:a05:6a00:944e:b0:736:5b85:a911 with SMTP id d2e1a72fcca58-742a97dba4bmr37381909b3a.8.1747900454370;
-        Thu, 22 May 2025 00:54:14 -0700 (PDT)
-Received: from Black-Pearl. ([122.164.166.145])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-742a96def25sm10723661b3a.24.2025.05.22.00.54.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 00:54:13 -0700 (PDT)
-From: Charan Pedumuru <charan.pedumuru@gmail.com>
-Date: Thu, 22 May 2025 07:54:01 +0000
-Subject: [PATCH v4] dt-bindings: mmc: ti-omap2420-mmc: convert text based
- binding to json schema
+	s=arc-20240116; t=1747900468; c=relaxed/simple;
+	bh=+Y+F6VWNCIM+4oj4V50MLAa/CNm8t4AJOEhW33J3exo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bMuJuJVClSuUt9L57Yg/1IA90qyYPae5+G4E7v3nmjZ2l6oEbzR/boSMBEIQGdEnuWBzKOSngtkw8p51S+jobjdvDXSmSE2b1AwWLmnXyoRpUXgiph12/oAWeww59THC+Xmp0y+ysT+RaDHUHAWvpilDlGcTyhcbhpJv/ODhm8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uI0kj-00037i-NU; Thu, 22 May 2025 09:54:09 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uI0kj-000hFH-1A;
+	Thu, 22 May 2025 09:54:09 +0200
+Received: from pengutronix.de (unknown [IPv6:2a03:2260:2009:2000::])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 6662941714B;
+	Thu, 22 May 2025 07:54:08 +0000 (UTC)
+Date: Thu, 22 May 2025 09:54:06 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: kernel@pengutronix.de, mailhol.vincent@wanadoo.fr, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, cl@rock-chips.com, 
+	kever.yang@rock-chips.com, linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] dt-bindings: can: rockchip_canfd: add rk3576
+ CAN-FD controller
+Message-ID: <20250522-ultra-anaconda-of-engineering-b70332-mkl@pengutronix.de>
+References: <20250522074616.3115348-1-zhangqing@rock-chips.com>
+ <20250522074616.3115348-2-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250522-ti-omap-v4-1-5d261a661b05@gmail.com>
-X-B4-Tracking: v=1; b=H4sIABjYLmgC/13N0Q6CIBTG8VdxXEc7HKRhV71H6wIQlS3FgWM15
- 7uHrpV1+Z3x+zOTaIOzkZyLmQSbXHR+yKM8FMR0amgtdXXeBAEFCEA6Oep7NVKGJyEaVdWaW5J
- fj8E27rGVrre8OxcnH55bOLH1+m4w+DQSo4wKKTUYo5lEfml75e5H43uyNhLuXfV1mB0qqLUB2
- ejK/Du+c7j7j2enlCyF5sBM+eOWZXkBfuD0Tw4BAAA=
-X-Change-ID: 20250502-ti-omap-12655fa9db3e
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Tony Lindgren <tony@atomide.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Charan Pedumuru <charan.pedumuru@gmail.com>
-X-Mailer: b4 0.14.2
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="el3mxqe2wkjylcyv"
+Content-Disposition: inline
+In-Reply-To: <20250522074616.3115348-2-zhangqing@rock-chips.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Convert TI MMC host controller binding to YAML format. Define ti,hwmods
-with $ref definition, description and a pattern under properties.
 
-Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
----
-Changes in v4:
-- Removed dma, dma-names from required as it is not necessary for all compatibles in DTS.
-- Changed the commit message.
-- Changed the description for ti,hwmods property.
-- Link to v3: https://lore.kernel.org/r/20250520-ti-omap-v3-1-aa845b301c4c@gmail.com
+--el3mxqe2wkjylcyv
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 1/3] dt-bindings: can: rockchip_canfd: add rk3576
+ CAN-FD controller
+MIME-Version: 1.0
 
-Changes in v3:
-- Changed maintainer to Tony Lindgren.
-- Redefine 'ti,hwmods' with $ref under properties.
-- Modify subject prefix with ti,omap2420-mmc.
-- Link to v2: https://lore.kernel.org/r/20250519-ti-omap-v2-1-2a0dbc08fb9c@gmail.com
+On 22.05.2025 15:46:14, Elaine Zhang wrote:
+> Add documentation for the rockchip rk3576 CAN-FD controller.
 
-Changes in v2:
-- Added include statement for irq interrupt controller and
-  modified the interrupts under property to use header.
-- Changed maintainer to Rob Herring.
-- Defined two seperate phandles for 'dmas' under examples.
-- Rename the YAML file name to the compatible 'ti,omap2420-mmc'.
-- Added missing type and maxItems to 'ti,hwmods' under properties.
-- Link to v1: https://lore.kernel.org/r/20250510-ti-omap-v1-1-588b0ccb1823@gmail.com
----
- .../devicetree/bindings/mmc/ti,omap2420-mmc.yaml   | 64 ++++++++++++++++++++++
- Documentation/devicetree/bindings/mmc/ti-omap.txt  | 26 ---------
- 2 files changed, 64 insertions(+), 26 deletions(-)
+This should go into the existing rockchip,rk3568v2-canfd.yaml.
 
-diff --git a/Documentation/devicetree/bindings/mmc/ti,omap2420-mmc.yaml b/Documentation/devicetree/bindings/mmc/ti,omap2420-mmc.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..705d388a1e64f64005c28b41cc27583fefeb2829
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/ti,omap2420-mmc.yaml
-@@ -0,0 +1,64 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/ti,omap2420-mmc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI MMC host controller for OMAP1 and 2420
-+
-+description:
-+  The MMC Host controller for TI OMAP1 and 2420 family provides
-+  an interface for MMC, SD and SDIO types of memory cards.
-+
-+allOf:
-+  - $ref: mmc-controller.yaml
-+
-+maintainers:
-+  - Tony Lindgren <tony@atomide.com>
-+
-+properties:
-+  compatible:
-+    const: ti,omap2420-mmc
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  dmas:
-+    maxItems: 2
-+
-+  dma-names:
-+    items:
-+      - const: tx
-+      - const: rx
-+
-+  ti,hwmods:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description:
-+      This field is used to fetch the information such as
-+      address range, irq lines, dma lines, interconnect, PRCM register,
-+      clock domain, input clocks associated with MMC.
-+    pattern: "^msdi[0-9]+$"
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - ti,hwmods
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    mmc@4809c000 {
-+        compatible = "ti,omap2420-mmc";
-+        ti,hwmods = "msdi1";
-+        reg = <0x4809c000 0x80>;
-+        interrupts = <83 IRQ_TYPE_LEVEL_HIGH>;
-+        dmas = <&sdma 61>, <&sdma 62>;
-+        dma-names = "tx", "rx";
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/mmc/ti-omap.txt b/Documentation/devicetree/bindings/mmc/ti-omap.txt
-deleted file mode 100644
-index 02fd31cf361d6ed893ec2f9eb8368b358ab2bae1..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/mmc/ti-omap.txt
-+++ /dev/null
-@@ -1,26 +0,0 @@
--* TI MMC host controller for OMAP1 and 2420
--
--The MMC Host Controller on TI OMAP1 and 2420 family provides
--an interface for MMC, SD, and SDIO types of memory cards.
--
--This file documents differences between the core properties described
--by mmc.txt and the properties used by the omap mmc driver.
--
--Note that this driver will not work with omap2430 or later omaps,
--please see the omap hsmmc driver for the current omaps.
--
--Required properties:
--- compatible: Must be "ti,omap2420-mmc", for OMAP2420 controllers
--- ti,hwmods: For 2420, must be "msdi<n>", where n is controller
--  instance starting 1
--
--Examples:
--
--	msdi1: mmc@4809c000 {
--		compatible = "ti,omap2420-mmc";
--		ti,hwmods = "msdi1";
--		reg = <0x4809c000 0x80>;
--		interrupts = <83>;
--		dmas = <&sdma 61 &sdma 62>;
--		dma-names = "tx", "rx";
--	};
+Marc
 
----
-base-commit: 3e039dcc9c1320c0d33ddd51c372dcc91d3ea3c7
-change-id: 20250502-ti-omap-12655fa9db3e
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-Best regards,
--- 
-Charan Pedumuru <charan.pedumuru@gmail.com>
+--el3mxqe2wkjylcyv
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmgu2BoACgkQDHRl3/mQ
+kZxoWggArVZQebS0V1C2TAYZ7DUzq/S/iKGXct7O+HQ5EPqqVj4F+UFWZCg2iipl
+kAjfp2wQwHDEjyKhF4nHiyAvdNzhszSPSsSJ1mNyOQlVdD2qoAbmo77mWLQ2t5Pr
+ItlW3UvSpa0r9aBLznVabAjLarhTCFUoRbF4VJJcm2hCb7s/ZTfUC2UyOLJ+55vO
+byQdkco3aGzexYU7DYwbFmYPcmz588qdUR2TsoDlJChJLZrghSZKZICY/IhJ+Ii+
+3lq2nJCR1MPExVq2Qf49FjVXYlybt9qxilf9EUYhBWhDWJJVLiRU3MEDjuTdus5T
+ktILX+FYsjoDFsss95L55yEwKAvJZQ==
+=jbb9
+-----END PGP SIGNATURE-----
+
+--el3mxqe2wkjylcyv--
 
