@@ -1,171 +1,95 @@
-Return-Path: <linux-kernel+bounces-658706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B25EAC0621
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:52:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F15AC061D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E193F4A2681
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:51:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1CDB4A21C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E4324E4C6;
-	Thu, 22 May 2025 07:51:38 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECECC24E4AD;
+	Thu, 22 May 2025 07:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ikkB023H"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D483524EAB2;
-	Thu, 22 May 2025 07:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8CD241693;
+	Thu, 22 May 2025 07:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747900297; cv=none; b=l7L4dDW7kdtDsoqySUGI4qZc43PMYQ8qrMKYp0dho/k/y/yg0TSG6cuNUQsW3C4dPmGr5UmaqHva917Yr1KrzHS+U+hZ4dJb+3zAeaWAHsj/y9Bv6TcZq5CSVqzC9970TJpHybJ+w3Sxj2N3NnVHdB8HF5quW02/RGTaycZznAc=
+	t=1747900287; cv=none; b=ATQsY/c2WzF7fv3kov/dlPIPykoGzjzOId1IWEVQ/Wwmf8QxPeikP8Prt/hETTr6M01dZgLIbQOTMMQH4o1n09N09Vo25Eynic53SimUKd3Fr4fdqBWwADo8YyaoblLoAS/MvhZw6cGLODOUsGEe97Ze+67FQFvFj3ux6z4MQHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747900297; c=relaxed/simple;
-	bh=W6VVxh2JpTxWEhh/uRyWVQH9raW6GeHBVsleuONtBUE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TQisnTnm/AxrTXms/9R/tkvbuGMYc9d3LOeLqlmT54oJidyN8s2wDfqk2VR0cjicIMpYnowecIzczXSvxFTwKIPqf+eJe+hYXhULxP1EhRlr/JarAvE7lTbhQFyw9TMGnudA2V959Xkimk6BpUt70i1+s87r9AuwtPHmsw+y+yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from inp1wst086.omp.ru (81.22.207.138) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Thu, 22 May
- 2025 10:51:13 +0300
-From: Dmitriy Privalov <d.privalov@omp.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, Joseph Qi
-	<joseph.qi@linux.alibaba.com>, <ocfs2-devel@oss.oracle.com>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Mohammed
- Anees <pvmohammedanees2003@gmail.com>,
-	<syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com>, Junxiao Bi
-	<junxiao.bi@oracle.com>, Changwei Ge <gechangwei@live.cn>, Gang He
-	<ghe@suse.com>, Jun Piao <piaojun@huawei.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Dmitriy Privalov <d.privalov@omp.ru>
-Subject: [PATCH 5.10 1/1] ocfs2: fix deadlock in ocfs2_get_system_file_inode
-Date: Thu, 22 May 2025 10:50:46 +0300
-Message-ID: <20250522075046.2672852-1-d.privalov@omp.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747900287; c=relaxed/simple;
+	bh=/aYhT8vM2cDXmeV1vWj3lHW7/qM3cYogO7PhzIceLb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lNBDeqYKCCcXh6yRrwIrCGyNjHjU2DhtRy3LELuAsqsRU+HCIaghMW6n1UhOcpT7hKIpsMkK4+RxMMjU36c9wOhPIRWVDnmWGMmunttrFFXc257lu6/v0+r8WbYrCn+Semsd/WMGl3P/OmgIE5prVJm3aBeEQ42QwFry0/JyFe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ikkB023H; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=JNtiODZQ5XMXnuwJKYtkx+44LK5XAKVKSFPKx4Ql4GM=; b=ikkB023HEBCMo4GcGGzELvxPza
+	AQRWbHZzoFQU6IVmFzVLnRytXGjtKXMy7QjSEMtI31OtlyxHvZNnoerklamCBbO5vsCwrAfB5HAZH
+	fyB2avBm5YOl4QSZgvdGee7qXJG95CXdHswEKs1Q6TR238al9kdf/KxCqpZTOiZyfhgEAsE1PQCOG
+	ZjnC9+vfNMYgrz/037KDvrgFZAi8n1MgO4sumlF00r+HcXvUEtCejtwQ1pD1UX+akbJmqktlKOUEu
+	aNXZ7PPwHra4So2z87WImFQm/0fs+lBIT6IUgrZ81XwkKjhtBNyXOAynN9Pk+tTFd2AZTGEN+fHXi
+	VV5wFUSg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uI0hm-00000005nXa-2sLP;
+	Thu, 22 May 2025 07:51:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 00DBE300677; Thu, 22 May 2025 09:51:05 +0200 (CEST)
+Date: Thu, 22 May 2025 09:51:05 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Chao Gao <chao.gao@intel.com>,
+	x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	tglx@linutronix.de, seanjc@google.com, pbonzini@redhat.com,
+	rick.p.edgecombe@intel.com, weijiang.yang@intel.com,
+	john.allen@amd.com, bp@alien8.de, chang.seok.bae@intel.com,
+	xin3.li@intel.com, Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Eric Biggers <ebiggers@google.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	Kees Cook <kees@kernel.org>, Maxim Levitsky <mlevitsk@redhat.com>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Stanislav Spassov <stanspas@amazon.de>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Vignesh Balasubramanian <vigbalas@amd.com>,
+	Zhao Liu <zhao1.liu@intel.com>
+Subject: Re: [PATCH v7 0/6] Introduce CET supervisor state support
+Message-ID: <20250522075105.GF24938@noisy.programming.kicks-ass.net>
+References: <20250512085735.564475-1-chao.gao@intel.com>
+ <aCYLMY00dKbiIfsB@gmail.com>
+ <ed3adddc-50a9-4538-9928-22dea0583e24@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 05/22/2025 07:40:56
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 193519 [May 22 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: d.privalov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 59 0.3.59
- 65f85e645735101144875e459092aa877af15aaa
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 81.22.207.138 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lkml.kernel.org:7.1.1;syzkaller.appspot.com:5.0.1,7.1.1;inp1wst086.omp.ru:7.1.1;omp.ru:7.1.1;127.0.0.199:7.1.2;81.22.207.138:7.1.2
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 81.22.207.138
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 05/22/2025 07:43:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 5/22/2025 1:37:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ed3adddc-50a9-4538-9928-22dea0583e24@intel.com>
 
-From: Mohammed Anees <pvmohammedanees2003@gmail.com>
+On Fri, May 16, 2025 at 08:20:54AM -0700, Dave Hansen wrote:
 
-commit 7bf1823e010e8db2fb649c790bd1b449a75f52d8 upstream.
+> It's getting into shape, but it has a slight shortage of reviews. For
+> now, it's an all-Intel patch even though I _thought_ AMD had this
+> feature too. 
 
-syzbot has found a possible deadlock in ocfs2_get_system_file_inode [1].
-
-The scenario is depicted here,
-
-	CPU0					CPU1
-lock(&ocfs2_file_ip_alloc_sem_key);
-                               lock(&osb->system_file_mutex);
-                               lock(&ocfs2_file_ip_alloc_sem_key);
-lock(&osb->system_file_mutex);
-
-The function calls which could lead to this are:
-
-CPU0
-ocfs2_mknod - lock(&ocfs2_file_ip_alloc_sem_key);
-.
-.
-.
-ocfs2_get_system_file_inode - lock(&osb->system_file_mutex);
-
-CPU1 -
-ocfs2_fill_super - lock(&osb->system_file_mutex);
-.
-.
-.
-ocfs2_read_virt_blocks - lock(&ocfs2_file_ip_alloc_sem_key);
-
-This issue can be resolved by making the down_read -> down_read_try
-in the ocfs2_read_virt_blocks.
-
-[1] https://syzkaller.appspot.com/bug?extid=e0055ea09f1f5e6fabdd
-
-Link: https://lkml.kernel.org/r/20240924093257.7181-1-pvmohammedanees2003@gmail.com
-Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-Reported-by: <syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=e0055ea09f1f5e6fabdd
-Tested-by: syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Changwei Ge <gechangwei@live.cn>
-Cc: Gang He <ghe@suse.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Cc:  <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Dmitriy Privalov <d.privalov@omp.ru>
----
- fs/ocfs2/extent_map.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
-index 70a768b623cf..f7672472fa82 100644
---- a/fs/ocfs2/extent_map.c
-+++ b/fs/ocfs2/extent_map.c
-@@ -973,7 +973,13 @@ int ocfs2_read_virt_blocks(struct inode *inode, u64 v_block, int nr,
- 	}
- 
- 	while (done < nr) {
--		down_read(&OCFS2_I(inode)->ip_alloc_sem);
-+		if (!down_read_trylock(&OCFS2_I(inode)->ip_alloc_sem)) {
-+			rc = -EAGAIN;
-+			mlog(ML_ERROR,
-+				 "Inode #%llu ip_alloc_sem is temporarily unavailable\n",
-+				 (unsigned long long)OCFS2_I(inode)->ip_blkno);
-+			break;
-+		}
- 		rc = ocfs2_extent_map_get_blocks(inode, v_block + done,
- 						 &p_block, &p_count, NULL);
- 		up_read(&OCFS2_I(inode)->ip_alloc_sem);
--- 
-2.34.1
+Yeah, AMD should have this. While AMD does not implement IBT, they did
+do implement SS, and as such, they should be having this stuff as well.
 
 
