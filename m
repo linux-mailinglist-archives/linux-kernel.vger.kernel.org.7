@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-660040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02F4EAC1854
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:53:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86821AC187D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4401D17D29C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 23:53:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD52B4E26AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 23:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56F22D29B5;
-	Thu, 22 May 2025 23:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCC82D29DE;
+	Thu, 22 May 2025 23:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FO48EHXM"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4MZpCHZ/"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5BA2D1F50
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 23:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B282D1F70
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 23:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747957960; cv=none; b=VcOMfaR0Zkbf1SDUmyGAV0j1eW1GWwFEfpzrOuAOvvOZuxVm89Am8fgExHvhRoFW/gTCB3cb+dKcd9BfnrX1+dMLVhnWij4aV7OyjIJwXp8+QfykrRaMrOJFbfTuMW9nvYOJbsfPQTOKFR/Eis8pjoXIa8JbV4WyHS1TbPZT9bo=
+	t=1747957961; cv=none; b=UcTuYDa0ryDx9ZhZDFtIgRQXo9uAgGR1f42pT/bf7IkoRSJxft0jhHsn7ha7D8TONerDhLYK7ZepGtsiCyL+Q/LtX9C2DkV+VnlrC+hQCP6RB82TWBNM8dujgvOp1bYjkJJAT3uHymki3gPfssxpoID2dQh9riBzvBJX20ZDDro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747957960; c=relaxed/simple;
-	bh=FDCJRuUBom6tgSithRuLUJxsTxJG1RjcxbgGSLyCb6Y=;
+	s=arc-20240116; t=1747957961; c=relaxed/simple;
+	bh=p0PPeyoesUCt5v+rFyNj8jJ5WSx3eI7L2/HQ4wMbmx8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mpTAW4wdXJmlmV1lYXSPNm3P3+eQSY7OExfvBEAn6F2uv/sW1YI6fv7xEFgBdmS8N7c16PMooO2FiFC+8bgptTKpPaRBaFvah0wjdMJ3CY70T06Fs2Mfi7fZIOdDrpWAg1DH7zHL4GVrixxOb2A5Le8d4pnraOorJTPcoJawT5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FO48EHXM; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=Py/i61MASxp0eWnWPc3ghcjRR5pTPSFYR3ETiKmuqTqrFOsSO6HW486s2pDQqbP5l7G6GpsVS9sCZBefCCNnsBK5cIRSezA0qdIAWRo2xH+ie0LmPcyuL1DpemHqTGPbqmX9mGOJb2FB+vEa9IA3EQDaVTfr/2Ubub8vCmtvr0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4MZpCHZ/; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30ebfc28a1eso8055833a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 16:52:38 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b240fdc9c20so8799851a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 16:52:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747957958; x=1748562758; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747957959; x=1748562759; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=tVNl4A6Kx8naMJGZ1E0eQITkQbAsVFllM1f24lX+kzQ=;
-        b=FO48EHXM3g4ZCLKZEK3LbIF73cPjmm7e7Liu+jQ4qHBcU9RASxWUpo24FrXLalqjZo
-         zNrmjloD79YSVN/3ylTp49dIRs+LCFLNOr2ctT0sR8xG6WC0EHRQE6QrV1yLul/NyJha
-         3DeoBzeUuezIpkgWc/kCAZMEt6p7C1Hfxg+Om1l7uw+CrpTU+WWizv/SKvJsgXwutFsr
-         58w7q7qULVR90RZFRLcKzqul4S8Rli0v4wUTm75SfNUqhKgISaRsaXGG+v8K3SD/MBbQ
-         nWH48Pk5iOLXz3t13TqeOXhdd6NCgYNciT2daZq7gOjci9JB+lcAlpuHknarcHQLguu4
-         wNNQ==
+        bh=xAZka5nPnl0zzhBog63136UQG1pDC/RMIYFF12/LKjA=;
+        b=4MZpCHZ/m2GJF3yEIMe5tjLIGx5zWx9E8da5m9TtUsiRfZbbh1iZ9VeXlleZQKBgLe
+         ErRoMouyckaat/Gjl3+C6DoRFMM86OaPErCMvNeAhkGozVWPtx+i3XKto7GbZK56x25f
+         uDDzbA7ansslFuS5fGTA9eQd7NSI/738Wj4yoN0pknBf5H/IdKbLRRvHVSZ1MC8vnlrL
+         CHQHai+FkWbmaV/l0WXjZpdyvEz1UThGepr3RTNDTAhI/4HBeskIILtsUrPNtY4htt9+
+         PWLv8pRyMZvOGdVQO8jCQlewETJ/s5yjfwokTm5C/1XWMunPIq9oFVh4kXNJ+3NchU0V
+         pZzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747957958; x=1748562758;
+        d=1e100.net; s=20230601; t=1747957959; x=1748562759;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tVNl4A6Kx8naMJGZ1E0eQITkQbAsVFllM1f24lX+kzQ=;
-        b=qaV/ULPNRqBNi0t7VqUq91xLA+crycLeGmbABJA5VwG2rUGtSoUKESOikEYkmZh/G3
-         GSYHbMKbyxKsr9aVm3+rGKvk3pcAMuTLRY5TTn/qJ+P78E6WM+ZiqGc9+xkWrS8UI4zK
-         PaPYa3Y9Kd4qRwEy3IlxC73iVEwfalVKeko5Q3YY9WlPxEyOawCEEowzhvAyW8A4g0ZT
-         VGW603mrKrsEjz8+Eno7kkFpGKLQZvWmOGb72HEptW0Sd6k2p/U3mRWtxYY7xMHljpWY
-         s6O6jCFUz31uHFqBGaJ2gPEDMcM8B6HRTOy8QMtnn1qkHTf7xIMfRtwnFp5grWmpKVb4
-         4oHA==
-X-Gm-Message-State: AOJu0YxeNKCt3IsFMYx6PNFT98NfMoWcc/POPppx1jjO0vTcqWall3cr
-	EWIu7+hSDAvimPYwZGpHSh/NGXB0YFXGULoLfQxspCbOwivjsQl92nsmQlI2NbWAbyN6AY3nOPy
-	srheCJA==
-X-Google-Smtp-Source: AGHT+IE81WM2WL+8EnB/6FCP5IRyDnOFUDXq+HJraLf558ghdMXYLyDo9m5RHDzKNMgflX319IgqoMhIQGU=
-X-Received: from pjg13.prod.google.com ([2002:a17:90b:3f4d:b0:2ee:4a90:3d06])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:e70f:b0:30a:2173:9f0b
- with SMTP id 98e67ed59e1d1-30e8322596bmr38028577a91.28.1747957957818; Thu, 22
- May 2025 16:52:37 -0700 (PDT)
+        bh=xAZka5nPnl0zzhBog63136UQG1pDC/RMIYFF12/LKjA=;
+        b=ZJiF+74tRP2mr6oD4LxALM3nx6w2n+TDil9RFU/fnHB5xPZ6Iw39kXJ+t934c/iqiQ
+         BeA858J8nZFRIba6J2VvM8WzohBbmKG0+DLxi73PjIaTnVz/HhcimANo6M5O/E/BpyG2
+         gYwXxJbNsG42M7H95p5xfze4Cg9GyYYLhs3gmTe523UE7t7ZbpfCpimBoZrbSMChqHQv
+         Ap7TblPEmPcBMmfYDlr2YGW1TmW+MpGzGrMYwaE0dexsS5Xr0h7AgEfO0rTeukS3yKVV
+         XihMO1n9X4L2VRQhBPOqZpgw+b0nxT4g3dozNeLJrd+H5wECOG7qepBK81CYYiD0Blqj
+         piCw==
+X-Gm-Message-State: AOJu0YzWiNVJgZ59BDUDUrr/0MdP09mr4AAjFtq8EyBLixRd8M4sMe9/
+	Gj8CgMTPsJv1YM4GvDRc181GlJmVb9MVCXIBApXTquJEszdK2lgpkd8r2RCvDMc0UCPa6g+oNnQ
+	OXfJmrA==
+X-Google-Smtp-Source: AGHT+IFTlML74x7TQE+fmnLc60J6Zc3gXJFbZA8aAHEiRQLh+dPZA/uq2RIsrb3gSzl5/rJlFLqbanul+U8=
+X-Received: from pja13.prod.google.com ([2002:a17:90b:548d:b0:2ef:786a:1835])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:51cb:b0:2ee:fa0c:cebc
+ with SMTP id 98e67ed59e1d1-310e96e87e5mr1351003a91.20.1747957959540; Thu, 22
+ May 2025 16:52:39 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 22 May 2025 16:52:12 -0700
+Date: Thu, 22 May 2025 16:52:13 -0700
 In-Reply-To: <20250522235223.3178519-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -74,8 +74,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250522235223.3178519-1-seanjc@google.com>
 X-Mailer: git-send-email 2.49.0.1151.ga128411c76-goog
-Message-ID: <20250522235223.3178519-3-seanjc@google.com>
-Subject: [PATCH v3 02/13] KVM: Acquire SCRU lock outside of irqfds.lock during assignment
+Message-ID: <20250522235223.3178519-4-seanjc@google.com>
+Subject: [PATCH v3 03/13] KVM: Initialize irqfd waitqueue callback when adding
+ to the queue
 From: Sean Christopherson <seanjc@google.com>
 To: "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
 	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
@@ -92,60 +93,48 @@ Cc: linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
 	David Matlack <dmatlack@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Acquire SRCU outside of irqfds.lock so that the locking is symmetrical,
-and add a comment explaining why on earth KVM holds SRCU for so long.
+Initialize the irqfd waitqueue callback immediately prior to inserting the
+irqfd into the eventfd's waitqueue.  Pre-initializing the state in a
+completely different context is all kinds of confusing, and incorrectly
+suggests that the waitqueue function needs to be initialize prior to
+vfs_poll().
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- virt/kvm/eventfd.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ virt/kvm/eventfd.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
-index 39e42b19d9f7..42c02c35e542 100644
+index 42c02c35e542..8b9a87daa2bb 100644
 --- a/virt/kvm/eventfd.c
 +++ b/virt/kvm/eventfd.c
-@@ -401,6 +401,18 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
- 	 */
- 	init_waitqueue_func_entry(&irqfd->wait, irqfd_wakeup);
+@@ -256,6 +256,13 @@ static void kvm_irqfd_register(struct file *file, wait_queue_head_t *wqh,
+ 	struct kvm_irqfd_pt *p = container_of(pt, struct kvm_irqfd_pt, pt);
+ 	struct kvm_kernel_irqfd *irqfd = p->irqfd;
  
 +	/*
-+	 * Set the irqfd routing and add it to KVM's list before registering
-+	 * the irqfd with the eventfd, so that the routing information is valid
-+	 * and stays valid, e.g. if there are GSI routing changes, prior to
-+	 * making the irqfd visible, i.e. before it might be signaled.
-+	 *
-+	 * Note, holding SRCU ensures a stable read of routing information, and
-+	 * also prevents irqfd_shutdown() from freeing the irqfd before it's
-+	 * fully initialized.
++	 * Add the irqfd as a priority waiter on the eventfd, with a custom
++	 * wake-up handler, so that KVM *and only KVM* is notified whenever the
++	 * underlying eventfd is signaled.
 +	 */
-+	idx = srcu_read_lock(&kvm->irq_srcu);
++	init_waitqueue_func_entry(&irqfd->wait, irqfd_wakeup);
 +
- 	spin_lock_irq(&kvm->irqfds.lock);
+ 	add_wait_queue_priority(wqh, &irqfd->wait);
+ }
  
- 	ret = 0;
-@@ -409,11 +421,9 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
- 			continue;
- 		/* This fd is used for another irq already. */
- 		ret = -EBUSY;
--		spin_unlock_irq(&kvm->irqfds.lock);
--		goto fail;
-+		goto fail_duplicate;
+@@ -395,12 +402,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ 		mutex_unlock(&kvm->irqfds.resampler_lock);
  	}
  
--	idx = srcu_read_lock(&kvm->irq_srcu);
- 	irqfd_update(kvm, irqfd);
- 
- 	list_add_tail(&irqfd->list, &kvm->irqfds.items);
-@@ -449,6 +459,9 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
- 	srcu_read_unlock(&kvm->irq_srcu, idx);
- 	return 0;
- 
-+fail_duplicate:
-+	spin_unlock_irq(&kvm->irqfds.lock);
-+	srcu_read_unlock(&kvm->irq_srcu, idx);
- fail:
- 	if (irqfd->resampler)
- 		irqfd_resampler_shutdown(irqfd);
+-	/*
+-	 * Install our own custom wake-up handling so we are notified via
+-	 * a callback whenever someone signals the underlying eventfd
+-	 */
+-	init_waitqueue_func_entry(&irqfd->wait, irqfd_wakeup);
+-
+ 	/*
+ 	 * Set the irqfd routing and add it to KVM's list before registering
+ 	 * the irqfd with the eventfd, so that the routing information is valid
 -- 
 2.49.0.1151.ga128411c76-goog
 
