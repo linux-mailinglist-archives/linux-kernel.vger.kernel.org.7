@@ -1,95 +1,52 @@
-Return-Path: <linux-kernel+bounces-658509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 579A6AC034F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 06:02:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60604AC0300
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 741F03B3865
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 04:01:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EA791BA65DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E2A170A11;
-	Thu, 22 May 2025 04:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="grjSF6bL"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5A9137C37;
+	Thu, 22 May 2025 03:31:58 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D5A184E;
-	Thu, 22 May 2025 04:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48959C2EF
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 03:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747886529; cv=none; b=pkCxAt9fAfBg8YuNj/xgO2iTpynkG2OUcG0bOhBhh/k9V+0OvtiVXAqyLKiuOTK5sw4bS2cxActRjWu/zJQpVrVe+/3W8/mkzEVw6uq3MM6rZGx5Djd3NLlLI0MWZJuY9yN7kRTgbrmns8Cf+6ui9ly6UkZ6vrGqf6oKx43NotU=
+	t=1747884717; cv=none; b=ZCKt0x9clBCxSpTMmreOVf2Naj+ZKGctJRT/faMOhGIuBO96rbrWSLb+YtWyZVUuGuMvW6aRJBVUdocT7UP0Pqsk4FcqQgUWJXbohutWGwOacwKJk7CAUSnSpctGkuhKQ+/82oaMf1J5BkBK9/K2jPCvFTCbtC0U4lcqHa+AVAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747886529; c=relaxed/simple;
-	bh=VaCm9odT9ZRMdbNFJ0psuY8WZxzOUA90QWzgpSQSWew=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=guuI8wuJcogsNXZWauDeyed6NOiiwhG0c5nAfWrXDH8VZSCkG1CsyY+WoFokIgogBU7OTC+nvX8Xm60/U++c0NK2NM+OF2RUkHgUJHoi4GbcfCQSZajxCdOmpMw7prxFaxXiBC7MQK7G2pjZsHS63RJkkKT5c49w/+CRKNZfSt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=grjSF6bL; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23211e62204so36694975ad.3;
-        Wed, 21 May 2025 21:02:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747886526; x=1748491326; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PZhUzfOUEweTXHf5T0hPVYO2QZbak8VcGiB8Zx0TkCQ=;
-        b=grjSF6bLDdJl0xSQUo/0exCd/+roUR2k+yClevT11Ce1OEgqGYE6Lf9mhveAVCVi4q
-         Hmb5tt97JyvojuvWK4NKx8lI7+/ME3xq4q1i6B7IXLy/tUPau7NtRXYhvVXxefljNAYU
-         mtkGQGux1poMOz+4yuZHeT3MI2QdBj31/q6CtlWd+bS+W8zgVfxJHyi7Q/HNByvIPKbT
-         l+qwSH8Bpi9LnTayJU882noMqurQVGC3/6O4rhhcXm/7M7DOPkPRYzIlbH9g/wmcUHa1
-         G69UWG2xjyx/tUfw23P20QgOyV8Sufd/xUM45ibqKLs6xqHzhff1jUVfSE0qRzsQyYYV
-         i6fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747886526; x=1748491326;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PZhUzfOUEweTXHf5T0hPVYO2QZbak8VcGiB8Zx0TkCQ=;
-        b=XYafQb/0BVWDgRgfLMEDJ6/nzVznQ0M4nvw0OaCjEn9E/TdnvKY2+fQSUQ4Kxh7STR
-         wRFqLliePcG1ksv/RbXFZjKBzYPKe51jQak2/bYqCzhzJA7CRLnB9r0lDM6ATW54if0D
-         P93AsGWKG/mlFHLCSm3bhxoAgP56U3WALKJXOyMXYEgHxZE2ANmxAqwfwH4aLPBGdYXP
-         O1UXD/9rFgVO6PCRvUKP1UWJ4L+joK8k3pvXe9maVE/pkYzBSGwWBPHgQ2qPIuDJD7RB
-         V1YTbCg68Wpk1wcW9We8NUisHRptLOx3ztPSSMYIlRWxI76Q/b40lgM8zRCrmPP1YoVd
-         CeJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsxyG46gZ8sOsBseIH0UN1TBq7hq01BrocFeaw7Vn1eMWCGR4DFPXcbvwB2jy2ANkB7kQ=@vger.kernel.org, AJvYcCVg8DU5q/n86XM3Ee2AxOiuG4nud1tE018T144TI/F6+NpVm9uFRGhkYBOIA3q4EkezCFFMvT+AHtJMG5Xf@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCfEETt+Jc6bIHPeGE4RThFEtd883GDUzu1nlee6Ofd5bPLT/D
-	u1BpI8Asc9NS6sKM9w+OMPOSa8ISyPLBlQzgCXAJ/gbK86jtYmXdqPsBv7nGCQ==
-X-Gm-Gg: ASbGnctybxOCYGdlcDaazO/Pxa8MIzoPyR7YQcUOsSHk5kJymjbTJa6GB3QknOizZBN
-	XseHibN9od61UAOkTIDpQwxCEJohTixAS2eCbxI1LTK580uHA/KZ+dGilcpwg7PrSQemmKxTFYK
-	KrP6djho307JwIGcKyrC9qXSyTloXz3KHUSCPF3mWvnDNlQ7dmyrMEXIgpE0HHBt5LB8zXVptA/
-	UeHikpfbee1hV3nGT7vG50qgkeXyBrfxpGkEC7b0sVG855HlBr5VDy6iW9sH/U+heX8mxDjqs+a
-	iBwvEcJtitBeKS0bLhTTBhGqiAy9y4uxHuUAvbOcw+kR+AlLkTuAYw8mLawcZPNRfNM9Ld65EGd
-	g
-X-Google-Smtp-Source: AGHT+IHN4e8t0B8D9y55dtrTUEzkuMGlnFb8gkeKQPNLgOGCM3vx8v2UVamtSCZqaJLxtwmhUS6DIA==
-X-Received: by 2002:a17:902:e74c:b0:231:d0c4:e806 with SMTP id d9443c01a7336-231d459a971mr360062605ad.32.1747886526384;
-        Wed, 21 May 2025 21:02:06 -0700 (PDT)
-Received: from minh.192.168.1.1 ([2001:ee0:4f0e:fb30:e79e:1a85:fe3:abe2])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-30f36364f9asm4532890a91.4.2025.05.21.21.02.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 21:02:05 -0700 (PDT)
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bui Quang Minh <minhquangbui99@gmail.com>
-Subject: [PATCH v2 net-next] xsk: add missing virtual address conversion for page
-Date: Thu, 22 May 2025 11:01:15 +0700
-Message-ID: <20250522040115.5057-1-minhquangbui99@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1747884717; c=relaxed/simple;
+	bh=9WXWpq6p5CxnpaZUcu2c6bPZyeseTy1tkdDIOFq42aQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KOAbcMUFYA0kgZZuohBg4F00QPgiw5TJF53PXdHhBSyuyeSvUf6TpE+d7HClF50/A/cEnpShSvchm6ADsspQo2uwNb6yGlZmbCcl915xmZhYW9eAr+cZ5WZR9lPb8QYci0qwonzZjNk0FtQSXS6YoaXT9/aJT3dtA+QvFEnOn+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4b2v325z96z4f3jdQ
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 11:31:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id DFABD1A0F7C
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 11:31:51 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.101.6])
+	by APP1 (Coremail) with SMTP id cCh0CgC3Z3immi5okKq2Mw--.19487S2;
+	Thu, 22 May 2025 11:31:51 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: akpm@linux-foundation.org
+Cc: kasong@tencent.com,
+	bhe@redhat.com,
+	hannes@cmpxchg.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] Some randome fixes and cleanups to swapfile
+Date: Thu, 22 May 2025 20:25:50 +0800
+Message-Id: <20250522122554.12209-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,38 +54,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgC3Z3immi5okKq2Mw--.19487S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYa7kC6x804xWl14x267AKxVWUJVW8JwAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2jI8I6cxK62
+	vIxIIY0VWUZVW8XwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xII
+	jxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjc
+	xK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IY
+	c4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI
+	0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY
+	0x0EwIxGrwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVWUAVWUtwCFx2IqxV
+	CFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r10
+	6r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxV
+	WUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG
+	6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_Gr
+	UvcSsGvfC2KfnxnUUI43ZEXa7IU0miiDUUUUU==
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-In commit 7ead4405e06f ("xsk: convert xdp_copy_frags_from_zc() to use
-page_pool_dev_alloc()"), when converting from netmem to page, I missed a
-call to page_address() around skb_frag_page(frag) to get the virtual
-address of the page. This commit uses skb_frag_address() helper to fix
-the issue.
+Patch 0-3 are some random fixes. Patch 4 is a cleanup. More details can
+be found in respective patches. Thanks.
 
-Fixes: 7ead4405e06f ("xsk: convert xdp_copy_frags_from_zc() to use page_pool_dev_alloc()")
-Reviewed-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
----
-Changes in v2:
-- Add Fixes tag
+Kemeng Shi (4):
+  mm: swap: move nr_swap_pages counter decrement from folio_alloc_swap()
+    to swap_range_alloc()
+  mm: swap: correctly use maxpages in swapon syscall to avoid potensial
+    deadloop
+  mm: swap: fix potensial buffer overflow in setup_clusters()
+  mm: swap: remove stale comment stale comment in
+    cluster_alloc_swap_entry()
 
- net/core/xdp.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ mm/swapfile.c | 64 ++++++++++++++++++++++++---------------------------
+ 1 file changed, 30 insertions(+), 34 deletions(-)
 
-diff --git a/net/core/xdp.c b/net/core/xdp.c
-index e6f22ba61c1e..491334b9b8be 100644
---- a/net/core/xdp.c
-+++ b/net/core/xdp.c
-@@ -709,8 +709,7 @@ static noinline bool xdp_copy_frags_from_zc(struct sk_buff *skb,
- 			return false;
- 		}
- 
--		memcpy(page_address(page) + offset,
--		       skb_frag_page(frag) + skb_frag_off(frag),
-+		memcpy(page_address(page) + offset, skb_frag_address(frag),
- 		       LARGEST_ALIGN(len));
- 		__skb_fill_page_desc_noacc(sinfo, i, page, offset, len);
- 
 -- 
-2.43.0
+2.30.0
 
 
