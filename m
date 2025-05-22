@@ -1,95 +1,118 @@
-Return-Path: <linux-kernel+bounces-658940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0311BAC0957
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 12:04:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26852AC095F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 12:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B361D16FBFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:04:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4FA817AA38
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB33288C03;
-	Thu, 22 May 2025 10:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F03288C22;
+	Thu, 22 May 2025 10:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="se5hit4f"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gg2xpJpW"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583BF23496B;
-	Thu, 22 May 2025 10:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC5526A09A;
+	Thu, 22 May 2025 10:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747908277; cv=none; b=IImn5rYhpXrjKEuRdmJJRllMzH58x5Z5uuOVQMgZKoIvYBTtkBfutnOahqRBRbFOhqr6GZKIUnbqYbbiS5mM6fkV9Fw1q7z0gGrIk0/Hs6jj7k/EtKh5njbRg9BgisZi8olKBZuvZWP3P0v/yedIXK4rLOPFbqVZ6YSMcsHEajc=
+	t=1747908337; cv=none; b=MAAzS8HOpmHw529IszPKzVRuH5ZgOwtP4HFNNu9UXyFGECFR8Lc6m10hLTthATBVZ/PkFHvkRk8MWtfTB+OBFN2NJCLRXJumJHw57w1nuP+sCoVT8Tf/c9XaLhigEBPsQVJ7Gz5ptfGwZHVjwcSkg8ck24dIb7eO/D+2yw/8hFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747908277; c=relaxed/simple;
-	bh=InhhMxNFIQ0YLLJDL2Gl9Q+2MAVGPnLn4WsrFUhRBlw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IBbXa11IC8E5ZgASzt0fmrmlPQZ+VVCAc9FW2IgH1T+g68TFdaYmkOERWV5GyI4zyDMxvT2oj6zXKNkSxAGOyY6SNEfmQiuxVa20skdTQXaqujJbOpnp9LUHNHF7GLfTykIaQTLU05IqmU6YYAfO2Ke7CfTvJ/I/j40RMrap5n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=se5hit4f; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=BEvqtXUoRY2MtYTRcX5uBf01lX2zWH/6+T3j+WmGUyc=;
-	t=1747908276; x=1749117876; b=se5hit4fhMs1V9H6LVAuUsWeqjjYdNJhk8CM3QpCAEp4wG0
-	ownKbcGCYJmSPtFonD1DCaxzwUOMlkEdztstRZvC87qAm728xKImzJPB09fpi1Yu1hv/h26DLmRq1
-	2aPgVNGCZ2QwmbD/Qfeo+YVpUvlDnxORGFqCnWz8z08x/ioGI0SlTP3MgeqSNn5Fm2XS2VmuNs08q
-	ySoHSG/u++9/66O+uOU/vy2iO33fWC/w7QamvlCcAxAFM6K96G6Te3FdiTiXtf1R4q90YxdQU3gGb
-	nKwKpVePz/Sy5hh7sh90dAIrmDJDdhS0ObPk7ugt4QYrJErty7dwmUj6DJJzEAdw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uI2mm-0000000GdCj-3E2p;
-	Thu, 22 May 2025 12:04:25 +0200
-Message-ID: <3fa189cfc0a52572008590efbf5f4ad05c81dbc6.camel@sipsolutions.net>
-Subject: Re: [PATCH v2 2/6] ASoC: aoa: Use helper function
- for_each_child_of_node_scoped()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Ai Chao <aichao@kylinos.cn>, perex@perex.cz, tiwai@suse.com, 
-	kuninori.morimoto.gx@renesas.com, lgirdwood@gmail.com, broonie@kernel.org, 
-	jbrunet@baylibre.com, neil.armstrong@linaro.org, khilman@baylibre.com, 
-	martin.blumenstingl@googlemail.com, shengjiu.wang@gmail.com,
- Xiubo.Lee@gmail.com, 	festevam@gmail.com, nicoleotsuka@gmail.com,
- shawnguo@kernel.org, 	s.hauer@pengutronix.de, srinivas.kandagatla@linaro.org
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	imx@lists.linux.dev, kernel@pengutronix.de, linux-arm-msm@vger.kernel.org
-Date: Thu, 22 May 2025 12:04:23 +0200
-In-Reply-To: <20250522050300.519244-3-aichao@kylinos.cn>
-References: <20250522050300.519244-1-aichao@kylinos.cn>
-	 <20250522050300.519244-3-aichao@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1747908337; c=relaxed/simple;
+	bh=Q5rKfS08I9tmyMlVsdBeqRVKnBYaF6She4DjZREHtTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TsydPng8Mf1sVVmbRnKS3f9a3i+g3uRwhk+Q03HOJsvx8lrtK2dSvSOVqAdWr4+O7ePA3npv8S8kjiPfySSTHHmJQ7mazfPRNpcXPo8s5LkOh8uzGPn8zuq6fWs5LCpP9g1Uu9nLSu9sZ5AHE+K7JhjvLn3XHqBpunk2A0yvvI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gg2xpJpW; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-30e5438316bso743444a91.1;
+        Thu, 22 May 2025 03:05:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747908335; x=1748513135; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=huYiCXvropVk/UdG9szLyVWmJqN+PwWYW44mWKZJz3w=;
+        b=Gg2xpJpWdjjne1c8WJPzXKxWFJhFHntWzpm5zbEPt/OyKED9Wkl2aVLNVT/R8IFgNy
+         MNKIC6WrdqL+GCLHsQkz/WlW9GMrTQPqczYcDzoCaHFQaRmsJseLzhFL3g0mT0biHrP0
+         CjRMn64LqDS9RA9LFE3hUYllC5LmRcoRRCj8cKvBASu2FfIFekn/whp8Sz4IH/gfsnMc
+         VSfRQIqAPcKxOJWBixhS0LmTfoZh2Lc0NDOKWM6IupQ0OiSSr0amokaCwLlFe5ubw9k8
+         xRc00vSftEXfpHsXYq0wtvX2R6VSKPsgakWn8lLY8M0o7kcR+lRbY4wvWHM4vJE3aeSa
+         igxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747908335; x=1748513135;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=huYiCXvropVk/UdG9szLyVWmJqN+PwWYW44mWKZJz3w=;
+        b=iergiy3gv3wYqh6sPOyCcfHyZxli7YS9CvAP0/bNc6mtNim3h4f+5KbfqKQRfF/iu/
+         ahGRPUOlBS6I8P/w7+dan0u24PvBm6joe4uN0Ou56m/IER3Z7XzMHbjBef8iGDQ5F0Pm
+         NkdRyuQmoTRgBH9o8Wpe7a+TgD0vUAcuhjCxP8g8Gr3Vk9+bYvTi1lJI6QdaRt/IUhnV
+         N78tox5GKOEe7QGlNSvUfzpcT+Vgr/iJOS+hPRPVcENcykeXHDGUU14wSaTrDLcEux10
+         19ClXqiwmpOf6RqgbQGisdxRlbEIH2Oxv6I+Q8O/kHUcBUv794CRGLAl0GGYAyyfPyu1
+         tXrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhR/TSSPQbkcvtCiHACYy8am5IDm+IcC43frwLnL7NS4CxNn0Q+V5BIdLLruwaOJHGhiIFbqga/qnVdLIaZZc=@vger.kernel.org, AJvYcCXr/kdngLScd+A/efXOfavSTvkdYAN3FyAmgubh01G+Wig6rpW9+Qn40WTE9ffE0k73CO4QKmVR+2KzzUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAsoSLkwU7rOocXfja5XX8vCLVMuPc31pEozkwoD49o8eF835r
+	ItAk/bKgN/J0Eo9rj0vXi1P3kLW95XPDt9UynyxUsBr9pv3II0VviLF2rJdhsdYZn0p2Mf0nCVx
+	iXV3GEURz/JSQKLcTA2nsofD56jcTK8g=
+X-Gm-Gg: ASbGncsMKYNPrQr+1AG8VjibfCCOLlOkBUhdqbL4lhAIrgrIXOXNWT5N32AAEmkhino
+	r5V8tmAgIJWQc/mAWV1Zfd7nVLcxKs6ByK2TEty6JyGZH6N3cogFpGu8f5bi+yj+bWGcsuCzIpc
+	saRVdBJ155uiRwRvkR1SwM8O1l9ZllmQOH
+X-Google-Smtp-Source: AGHT+IFDr5rCbfwHsJDqEWFc9eAKzj0qbyDgyUEXbR4okIzS8MsNsg5uv3Mhf6WDlgcslUPjVg7TF0XfI+FkBFNY1uI=
+X-Received: by 2002:a17:90b:4a10:b0:305:5f31:6c63 with SMTP id
+ 98e67ed59e1d1-30e7d5d0691mr14551414a91.6.1747908335085; Thu, 22 May 2025
+ 03:05:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+References: <20250311133357.90322-1-richard120310@gmail.com> <DA2LI55W3BY8.14DMW9GGSAEY5@kernel.org>
+In-Reply-To: <DA2LI55W3BY8.14DMW9GGSAEY5@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 22 May 2025 12:05:22 +0200
+X-Gm-Features: AX0GCFvKq5iif3WqR8hzEtxiweft8Mm7j9J3lEiG80DsyMI5IhoRTKas8HKxJbE
+Message-ID: <CANiq72n71k-KJ7krcOXL+fU0x+hU0vzrJTDNb-qT4rjR_JQ=OA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] rust: list: Add examples for linked list
+To: Benno Lossin <lossin@kernel.org>
+Cc: I Hsin Cheng <richard120310@gmail.com>, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com, 
+	tmgross@umich.edu, dakr@kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev, jserv@ccns.ncku.edu.tw
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-05-22 at 13:02 +0800, Ai Chao wrote:
-> The for_each_child_of_node_scoped() helper provides a scope-based
-> clean-up functionality to put the device_node automatically, and
-> as such, there is no need to call of_node_put() directly.
->=20
-> Thus, use this helper to simplify the code.
+On Thu, May 22, 2025 at 11:52=E2=80=AFAM Benno Lossin <lossin@kernel.org> w=
+rote:
+>
+> This is a nice example, so
+>
+> Reviewed-by: Benno Lossin <lossin@kernel.org>
+>
+> It uses `unwrap` a lot, which might confuse newcomers that that is ok in
+> normal code. I'm wondering if we can do something about that though...
 
-> -	for_each_child_of_node(dev->ofdev.dev.of_node, np) {
-> +	for_each_child_of_node_scoped(dev->ofdev.dev.of_node, np) {
->  		if (of_device_is_compatible(np, "i2sbus") ||
->  		    of_device_is_compatible(np, "i2s-modem")) {
->  			got +=3D i2sbus_add_dev(dev, control, np);
+Yeah, Danilo et al. mentioned this yesterday in the call.
 
-Given the structure of this code, this either fixes a leak, or is wrong.
-I really don't know which of those two it is, it's been decades, but
-either way it's not a change that simply "simplif[ies] the code".
+I think it is not a big deal here since they are inside the
+`assert*!`s (which one should not use anyway in normal code) -- the
+other lines use `?`, which is good.
 
-johannes
+But as we discussed, I created a good first issue to tackle this for
+both examples (since this one followed the cursor one):
+
+    https://github.com/Rust-for-Linux/linux/issues/1164
+
+I added your tag, by the way.
+
+Cheers,
+Miguel
 
