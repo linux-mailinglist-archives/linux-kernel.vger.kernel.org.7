@@ -1,486 +1,118 @@
-Return-Path: <linux-kernel+bounces-658502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30105AC0338
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:54:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11602AC0249
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 04:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B61B87A4F34
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:53:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 550191BC30B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 02:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC361531E1;
-	Thu, 22 May 2025 03:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204B6770FE;
+	Thu, 22 May 2025 02:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="eQHZt4xR"
-Received: from mail-m49244.qiye.163.com (mail-m49244.qiye.163.com [45.254.49.244])
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="g1FtZDTQ"
+Received: from jpms-ob02.noc.sony.co.jp (jpms-ob02.noc.sony.co.jp [211.125.140.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D48BF9DA
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 03:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.244
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B92610D;
+	Thu, 22 May 2025 02:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747886049; cv=none; b=Ib/Os9WW4WxMJExJnoLkomZ5BcoUD3Mya2Oto7M7mKdaOoOx8tBV1akazXi/2BsYmMwLerDzhYRdafmvyYgdU3hWen10eHYAAhQIAShMiH6mJIXkj4YV+vE3gZkjZZ/4zLDsyzuh7puCwUZW+skJkzDYCR2OEJVj5ZcpgGejPK0=
+	t=1747879721; cv=none; b=JerMdV1w95iPTkHigEapjUR10gflL15pREbYjp5w6/J3jkb78abb4HcGQ5h6zq6UVmNVcKF1O06+HVEt7mcX84BiogT2pbjVSstVO+MdHSYF7e1XTzADvqJCxrU6TfPPVTm1tfYGpXRnSKxZeyJz7+PS6RPKzQ/D5txpLwfvReo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747886049; c=relaxed/simple;
-	bh=wJaY5C03JfAZu0VGeKo1nNsHyesmXorQWUQuFE9UdAA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mApICEgotmOnUpHayu2n84+Fqb8hSliU0DwfzylzhFlQTG9+E/2/7xQ2mS+x9fH4ewvJEZhVTzn2e8meL2YESiN0evD/6I7jw3Q7vdBQ0Z2jg2ZhDNjJRwkLB6ddvfgru3d1mPOXpUqW7uIGz5daEEnlsN5u+yGKCALk4MPS8t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=eQHZt4xR; arc=none smtp.client-ip=45.254.49.244
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-4-entmail-virt151.gy.ntes [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 15f79d846;
-	Thu, 22 May 2025 09:31:31 +0800 (GMT+08:00)
-Message-ID: <155d4ef8-6cd1-43d7-b2b3-57facf3b946a@rock-chips.com>
-Date: Thu, 22 May 2025 09:31:02 +0800
+	s=arc-20240116; t=1747879721; c=relaxed/simple;
+	bh=/2xv4T5GnAsCDJLXVz2LJBcpTe9h0DDljTwugSSUNK0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=i+Co8ddMlyptNPwGrCu0y9H4Aiiak6rCK2FgIFykUfCl3AzEsfZUj+8TpBEwsEuHk9+BTbohIlxtrf1vgLoPup2qJAJzCa6sJIVbpCnUfdEYUgM5+0fyHES0TpW0+yBRbQzHJU5Sbw4304bT508IOUgWgJl309/Bl+hZpIZJzyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=g1FtZDTQ; arc=none smtp.client-ip=211.125.140.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=sony.com; s=s1jp; t=1747879719; x=1779415719;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=CM0gkP0omB3y7XaEysVhdhhpKRTQjedl49eUwjMubMo=;
+  b=g1FtZDTQFUqllWcj/c32q9pCWeHvwiTANk6PgGLeb5P+ZlVSUNQvizey
+   rAprzTqv+vnJ8lqT3A8uHLCKiU73w5JRejiywsBAkQyzgENB5cmRx8ZMB
+   O7LB7M7XLI9JXS85QrlkivQ7K06w2Wx0mY4Vm7hNaJ+2QAUJYhBc78GS5
+   0jxLgzBjnOapfXnAXdb1qHSXR+XXh3U+/uPr2CwEHYxEfZx4wlH0rgZWA
+   nfk2rLKuzcyGRpWRvp+FydN3id6eE9esh3sgadxMF2akei9MYJNq8xyWd
+   ZYIUd5LENS+KHPbhnldo10un1PCvHSFmLWDGiEv54cYL3OX0S/WsNCn/R
+   Q==;
+Received: from unknown (HELO jpmta-ob1.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::6])
+  by jpms-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 11:08:37 +0900
+X-IronPort-AV: E=Sophos;i="6.15,304,1739804400"; 
+   d="scan'208";a="562451313"
+Received: from unknown (HELO [127.0.1.1]) ([IPv6:2001:cf8:1:573:0:dddd:6b3e:119e])
+  by jpmta-ob1.noc.sony.co.jp with ESMTP; 22 May 2025 11:08:37 +0900
+From: Shashank Balaji <shashank.mahadasyam@sony.com>
+Subject: [PATCH v3 0/3] cgroup, docs: cpu controller interaction with
+ various scheduling policies
+Date: Thu, 22 May 2025 11:08:11 +0900
+Message-Id: <20250522-rt-and-cpu-controller-doc-v3-0-483fc9cca591@sony.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/rockchip: cdn-dp: Convert to drm bridge
-To: Andy Yan <andyshrk@163.com>
-Cc: Sandy Huang <hjc@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250507035148.415-1-kernel@airkyi.com>
- <110d136.9fc9.196f2bf47dd.Coremail.andyshrk@163.com>
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <110d136.9fc9.196f2bf47dd.Coremail.andyshrk@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQx9NSFZJGk5DHU0fTB9DTBlWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a96f59df2c903abkunm2575b90dc4d006
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NSI6SBw6FTE2LhwxIgERCBY0
-	PwhPCxxVSlVKTE9MQ0xMT0JMSUpKVTMWGhIXVRgTGhQCElUYEx4VOwkUGBBWGBMSCwhVGBQWRVlX
-	WRILWUFZTkNVSUlVTFVKSk9ZV1kIAVlBSk1LS083Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=eQHZt4xRyPZKaV5RtNu8XlgNHrEW4UAKyChfquvAQcRpx7BhJ+S1RzSWLyjINvqHQtr8aRsGGGv1W8uV3GZRpigb3OPwFRDH0BxKEXz+Ss8gjnbYOZ3eiaIHSxPLWpx/c6nkILFTOJxGozkEcgjbixUQvqdwj7siUdMM+saqJvc=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=X8H+jzQCc7Q5Ny+wJGB6p4R/NWcX4dRa0ydfWpYbt0M=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAuHLmgC/33NTQ6CMBCG4auQrh1TphaIK+5hXJT+SBNsSYuNh
+ HB3Cy50xfL9knlmIVEHqyO5FgsJOtlovcvBTgWRvXAPDVblJkiRU8QKwgTCKZDjC6R3U/DDoAM
+ oL6ERjRCS12iYJvl+DNrY927f7rl7Gycf5v1VKrf1qzLKD9RUAoW6q0RluDEXptro3XyW/kk2N
+ OEP4kiPINwgKjBbZVdT9get6/oBmC6nEAoBAAA=
+X-Change-ID: 20250226-rt-and-cpu-controller-doc-8a8aac572f3e
+To: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+ =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Shinya Takumi <shinya.takumi@sony.com>, 
+ Shashank Balaji <shashank.mahadasyam@sony.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1350;
+ i=shashank.mahadasyam@sony.com; h=from:subject:message-id;
+ bh=/2xv4T5GnAsCDJLXVz2LJBcpTe9h0DDljTwugSSUNK0=;
+ b=owGbwMvMwCV2mPH4Ij++H1mMp9WSGDL02pWlfgVO+1v8TuLHVbPngc5PrC/LPeXjlTtYwr2tb
+ u4t3u7dHaUsDGJcDLJiiizvZNZdOGhl2fT1OMM3mDmsTCBDGLg4BWAiJVMYGY5wc5gorXy6bXak
+ dLF1x52p3dsST/iv+cQeOM0+l93L+TJQxW2zhWdXuLF5PXizZtts72ndN9YHBrrnWTDaunkFLhH
+ mAQA=
+X-Developer-Key: i=shashank.mahadasyam@sony.com; a=openpgp;
+ fpr=EE1CAED0C13A3982F5C700F6C301C7A24E0EF86A
 
-Hi Andy,
+The cgroup v2 cpu controller interface files interact with processes
+differently based on their scheduling policy and the underlying
+scheduler used (fair-class vs. BPF scheduler). This patchset
+documents these differences.
 
-On 2025/5/21 20:09, Andy Yan wrote:
-> Hi Chaoyi，
->
-> At 2025-05-07 11:51:48, "Chaoyi Chen" <kernel@airkyi.com> wrote:
->> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>
->> Convert it to drm bridge driver, it will be convenient for us to
->> migrate the connector part to the display driver later.
->>
->> Tested with RK3399 EVB IND board.
->>
->> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->> ---
->> drivers/gpu/drm/rockchip/cdn-dp-core.c | 163 +++++++++++++------------
->> drivers/gpu/drm/rockchip/cdn-dp-core.h |   5 +-
->> 2 files changed, 86 insertions(+), 82 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
->> index 292c31de18f1..bc70dae8ff72 100644
->> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
->> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
->> @@ -25,9 +25,9 @@
->> #include "cdn-dp-core.h"
->> #include "cdn-dp-reg.h"
->>
->> -static inline struct cdn_dp_device *connector_to_dp(struct drm_connector *connector)
->> +static inline struct cdn_dp_device *bridge_to_dp(struct drm_bridge *bridge)
->> {
->> -	return container_of(connector, struct cdn_dp_device, connector);
->> +	return container_of(bridge, struct cdn_dp_device, bridge);
->> }
->>
->> static inline struct cdn_dp_device *encoder_to_dp(struct drm_encoder *encoder)
->> @@ -231,9 +231,9 @@ static bool cdn_dp_check_sink_connection(struct cdn_dp_device *dp)
->> }
->>
->> static enum drm_connector_status
->> -cdn_dp_connector_detect(struct drm_connector *connector, bool force)
->> +cdn_dp_bridge_detect(struct drm_bridge *bridge)
->> {
->> -	struct cdn_dp_device *dp = connector_to_dp(connector);
->> +	struct cdn_dp_device *dp = bridge_to_dp(bridge);
->> 	enum drm_connector_status status = connector_status_disconnected;
->>
->> 	mutex_lock(&dp->lock);
->> @@ -244,41 +244,26 @@ cdn_dp_connector_detect(struct drm_connector *connector, bool force)
->> 	return status;
->> }
->>
->> -static void cdn_dp_connector_destroy(struct drm_connector *connector)
->> +static const struct drm_edid *
->> +cdn_dp_connector_edid_read(struct drm_bridge *bridge, struct drm_connector *connector)
-> This should be cdn_dp_bridge_edid_read
+Signed-off-by: Shashank Balaji <shashank.mahadasyam@sony.com>
+---
+Changes in v3:
+- Refer to sched-ext.rst for fair-class vs. BPF scheduler instead of repeating
+the details in cgroup-v2.rst
+- Link to v2: https://lore.kernel.org/r/20250520-rt-and-cpu-controller-doc-v2-0-70a2b6a1b703@sony.com
 
-Will fix in v2.
+Changes in v2:
+- Expanded scope from only RT processes to all scheduling policies
+- Link to v1: https://lore.kernel.org/all/20250305-rt-and-cpu-controller-doc-v1-0-7b6a6f5ff43d@sony.com/
 
+---
+Shashank Balaji (3):
+      cgroup, docs: convert space indentation to tab indentation
+      sched_ext, docs: convert mentions of "CFS" to "fair-class scheduler"
+      cgroup, docs: cpu controller's interaction with various scheduling policies
 
->
->> {
->> -	drm_connector_unregister(connector);
->> -	drm_connector_cleanup(connector);
->> -}
->> -
->> -static const struct drm_connector_funcs cdn_dp_atomic_connector_funcs = {
->> -	.detect = cdn_dp_connector_detect,
->> -	.destroy = cdn_dp_connector_destroy,
->> -	.fill_modes = drm_helper_probe_single_connector_modes,
->> -	.reset = drm_atomic_helper_connector_reset,
->> -	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
->> -	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
->> -};
->> -
->> -static int cdn_dp_connector_get_modes(struct drm_connector *connector)
->> -{
->> -	struct cdn_dp_device *dp = connector_to_dp(connector);
->> -	int ret = 0;
->> +	struct cdn_dp_device *dp = bridge_to_dp(bridge);
->> +	const struct drm_edid *drm_edid;
->>
->> 	mutex_lock(&dp->lock);
->> -
->> -	ret = drm_edid_connector_add_modes(connector);
->> -
->> +	drm_edid = drm_edid_read_custom(dp->connector,
->> +					cdn_dp_get_edid_block, dp);
-> Use drm_edid_read_ddc
+ Documentation/admin-guide/cgroup-v2.rst | 77 ++++++++++++++++++++++++---------
+ Documentation/scheduler/sched-ext.rst   |  8 ++--
+ 2 files changed, 60 insertions(+), 25 deletions(-)
+---
+base-commit: 036ee8a17bd046d7a350de0aae152307a061cc46
+change-id: 20250226-rt-and-cpu-controller-doc-8a8aac572f3e
 
-drm_edid_read_ddc() need a i2c_adapter, but cdn-dp doesn't have it.
+Best regards,
+-- 
+Shashank Balaji <shashank.mahadasyam@sony.com>
 
-
->
->> 	mutex_unlock(&dp->lock);
->>
->> -	return ret;
->> +	return drm_edid;
->> }
->>
->> static enum drm_mode_status
->> -cdn_dp_connector_mode_valid(struct drm_connector *connector,
->> -			    const struct drm_display_mode *mode)
->> +cdn_dp_bridge_mode_valid(struct drm_bridge *bridge,
->> +			 const struct drm_display_info *display_info,
->> +			 const struct drm_display_mode *mode)
->> {
->> -	struct cdn_dp_device *dp = connector_to_dp(connector);
->> -	struct drm_display_info *display_info = &dp->connector.display_info;
->> +	struct cdn_dp_device *dp = bridge_to_dp(bridge);
->> 	u32 requested, actual, rate, sink_max, source_max = 0;
->> 	u8 lanes, bpc;
->>
->> @@ -323,11 +308,6 @@ cdn_dp_connector_mode_valid(struct drm_connector *connector,
->> 	return MODE_OK;
->> }
->>
->> -static struct drm_connector_helper_funcs cdn_dp_connector_helper_funcs = {
->> -	.get_modes = cdn_dp_connector_get_modes,
->> -	.mode_valid = cdn_dp_connector_mode_valid,
->> -};
->> -
->> static int cdn_dp_firmware_init(struct cdn_dp_device *dp)
->> {
->> 	int ret;
->> @@ -360,7 +340,7 @@ static int cdn_dp_firmware_init(struct cdn_dp_device *dp)
->>
->> static int cdn_dp_get_sink_capability(struct cdn_dp_device *dp)
->> {
->> -	const struct drm_display_info *info = &dp->connector.display_info;
->> +	const struct drm_display_info *info = &dp->connector->display_info;
->> 	int ret;
->>
->> 	if (!cdn_dp_check_sink_connection(dp))
->> @@ -374,9 +354,9 @@ static int cdn_dp_get_sink_capability(struct cdn_dp_device *dp)
->> 	}
->>
->> 	drm_edid_free(dp->drm_edid);
->> -	dp->drm_edid = drm_edid_read_custom(&dp->connector,
->> +	dp->drm_edid = drm_edid_read_custom(dp->connector,
->> 					    cdn_dp_get_edid_block, dp);
->> -	drm_edid_connector_update(&dp->connector, dp->drm_edid);
->> +	drm_edid_connector_update(dp->connector, dp->drm_edid);
->>
->> 	dp->sink_has_audio = info->has_audio;
->>
->> @@ -416,11 +396,11 @@ static int cdn_dp_enable_phy(struct cdn_dp_device *dp, struct cdn_dp_port *port)
->> 		goto err_power_on;
->> 	}
->>
->> -	ret = extcon_get_property(port->extcon, EXTCON_DISP_DP,
->> -				  EXTCON_PROP_USB_TYPEC_POLARITY, &property);
->> -	if (ret) {
->> -		DRM_DEV_ERROR(dp->dev, "get property failed\n");
->> -		goto err_power_on;
->> +		ret = extcon_get_property(port->extcon, EXTCON_DISP_DP,
->> +					EXTCON_PROP_USB_TYPEC_POLARITY, &property);
->> +		if (ret) {
->> +			DRM_DEV_ERROR(dp->dev, "get property failed\n");
->> +			goto err_power_on;
->> 	}
->>
->> 	port->lanes = cdn_dp_get_port_lanes(port);
->> @@ -551,7 +531,7 @@ static void cdn_dp_encoder_mode_set(struct drm_encoder *encoder,
->> 				    struct drm_display_mode *adjusted)
->> {
->> 	struct cdn_dp_device *dp = encoder_to_dp(encoder);
->> -	struct drm_display_info *display_info = &dp->connector.display_info;
->> +	struct drm_display_info *display_info = &dp->connector->display_info;
->> 	struct video_info *video = &dp->video_info;
->>
->> 	switch (display_info->bpc) {
->> @@ -599,12 +579,12 @@ static void cdn_dp_audio_handle_plugged_change(struct cdn_dp_device *dp,
->> 		dp->plugged_cb(dp->codec_dev, plugged);
->> }
->>
->> -static void cdn_dp_encoder_enable(struct drm_encoder *encoder)
->> +static void cdn_dp_bridge_atomic_enable(struct drm_bridge *bridge, struct drm_atomic_state *state)
->> {
->> -	struct cdn_dp_device *dp = encoder_to_dp(encoder);
->> +	struct cdn_dp_device *dp = bridge_to_dp(bridge);
->> 	int ret, val;
->>
->> -	ret = drm_of_encoder_active_endpoint_id(dp->dev->of_node, encoder);
->> +	ret = drm_of_encoder_active_endpoint_id(dp->dev->of_node, &dp->encoder.encoder);
->> 	if (ret < 0) {
->> 		DRM_DEV_ERROR(dp->dev, "Could not get vop id, %d", ret);
->> 		return;
->> @@ -625,7 +605,7 @@ static void cdn_dp_encoder_enable(struct drm_encoder *encoder)
->>
->> 	ret = cdn_dp_enable(dp);
->> 	if (ret) {
->> -		DRM_DEV_ERROR(dp->dev, "Failed to enable encoder %d\n",
->> +		DRM_DEV_ERROR(dp->dev, "Failed to enable bridge %d\n",
->> 			      ret);
->> 		goto out;
->> 	}
->> @@ -661,9 +641,9 @@ static void cdn_dp_encoder_enable(struct drm_encoder *encoder)
->> 	mutex_unlock(&dp->lock);
->> }
->>
->> -static void cdn_dp_encoder_disable(struct drm_encoder *encoder)
->> +static void cdn_dp_bridge_atomic_disable(struct drm_bridge *bridge, struct drm_atomic_state *state)
->> {
->> -	struct cdn_dp_device *dp = encoder_to_dp(encoder);
->> +	struct cdn_dp_device *dp = bridge_to_dp(bridge);
->> 	int ret;
->>
->> 	mutex_lock(&dp->lock);
->> @@ -672,7 +652,7 @@ static void cdn_dp_encoder_disable(struct drm_encoder *encoder)
->> 	if (dp->active) {
->> 		ret = cdn_dp_disable(dp);
->> 		if (ret) {
->> -			DRM_DEV_ERROR(dp->dev, "Failed to disable encoder %d\n",
->> +			DRM_DEV_ERROR(dp->dev, "Failed to disable bridge %d\n",
->> 				      ret);
->> 		}
->> 	}
->> @@ -703,13 +683,31 @@ static int cdn_dp_encoder_atomic_check(struct drm_encoder *encoder,
->> 	return 0;
->> }
->>
->> +static void cdn_dp_hpd_notify(struct drm_bridge *bridge,
->> +			   enum drm_connector_status status)
->> +{
->> +	struct cdn_dp_device *dp = bridge_to_dp(bridge);
->> +
->> +	schedule_work(&dp->event_work);
->> +}
->> +
->> static const struct drm_encoder_helper_funcs cdn_dp_encoder_helper_funcs = {
->> 	.mode_set = cdn_dp_encoder_mode_set,
->> -	.enable = cdn_dp_encoder_enable,
->> -	.disable = cdn_dp_encoder_disable,
->> 	.atomic_check = cdn_dp_encoder_atomic_check,
->> };
->>
->> +static const struct drm_bridge_funcs cdn_dp_bridge_funcs = {
->> +	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
->> +	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
->> +	.atomic_reset = drm_atomic_helper_bridge_reset,
->> +	.detect = cdn_dp_bridge_detect,
->> +	.edid_read = cdn_dp_connector_edid_read,
->> +	.atomic_enable = cdn_dp_bridge_atomic_enable,
->> +	.atomic_disable = cdn_dp_bridge_atomic_disable,
->> +	.mode_valid = cdn_dp_bridge_mode_valid,
->> +	.hpd_notify = cdn_dp_hpd_notify,
->> +};
->> +
->> static int cdn_dp_parse_dt(struct cdn_dp_device *dp)
->> {
->> 	struct device *dev = dp->dev;
->> @@ -859,7 +857,7 @@ static int cdn_dp_audio_get_eld(struct device *dev, void *data,
->> {
->> 	struct cdn_dp_device *dp = dev_get_drvdata(dev);
->>
->> -	memcpy(buf, dp->connector.eld, min(sizeof(dp->connector.eld), len));
->> +	memcpy(buf, dp->connector->eld, min(sizeof(dp->connector->eld), len));
->>
->> 	return 0;
->> }
->> @@ -1006,7 +1004,6 @@ static void cdn_dp_pd_event_work(struct work_struct *work)
->>
->> out:
->> 	mutex_unlock(&dp->lock);
->> -	drm_connector_helper_hpd_irq_event(&dp->connector);
->> }
->>
->> static int cdn_dp_pd_event(struct notifier_block *nb,
->> @@ -1030,7 +1027,6 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
->> {
->> 	struct cdn_dp_device *dp = dev_get_drvdata(dev);
->> 	struct drm_encoder *encoder;
->> -	struct drm_connector *connector;
->> 	struct cdn_dp_port *port;
->> 	struct drm_device *drm_dev = data;
->> 	int ret, i;
->> @@ -1053,6 +1049,15 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
->> 							     dev->of_node);
->> 	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
->>
->> +	/*
->> +	 * If we failed to find the CRTC(s) which this encoder is
->> +	 * supposed to be connected to, it's because the CRTC has
->> +	 * not been registered yet. Defer probing, and hope that
->> +	 * the required CRTC is added later.
->> +	 */
->> +	if (encoder->possible_crtcs == 0)
->> +		return -EPROBE_DEFER;
->> +
->> 	ret = drm_simple_encoder_init(drm_dev, encoder,
->> 				      DRM_MODE_ENCODER_TMDS);
->> 	if (ret) {
->> @@ -1062,26 +1067,31 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
->>
->> 	drm_encoder_helper_add(encoder, &cdn_dp_encoder_helper_funcs);
->>
->> -	connector = &dp->connector;
->> -	connector->polled = DRM_CONNECTOR_POLL_HPD;
->> -	connector->dpms = DRM_MODE_DPMS_OFF;
->> +	dp->bridge.driver_private = dp;
->> +	dp->bridge.funcs = &cdn_dp_bridge_funcs;
-> Try use devm_drm_bridge_alloc
-
-Okay, I will try to use this in v2.
-
-
->
->> +	dp->bridge.ops = DRM_BRIDGE_OP_DETECT |
->> +			   DRM_BRIDGE_OP_EDID |
->> +			   DRM_BRIDGE_OP_HPD;
->> +	dp->bridge.of_node = dp->dev->of_node;
->> +	dp->bridge.type = DRM_MODE_CONNECTOR_DisplayPort;
->>
->> -	ret = drm_connector_init(drm_dev, connector,
->> -				 &cdn_dp_atomic_connector_funcs,
->> -				 DRM_MODE_CONNECTOR_DisplayPort);
->> -	if (ret) {
->> -		DRM_ERROR("failed to initialize connector with drm\n");
->> -		goto err_free_encoder;
->> -	}
->> +	ret = devm_drm_bridge_add(dev, &dp->bridge);
->> +	if (ret)
->> +		return ret;
->>
->> -	drm_connector_helper_add(connector, &cdn_dp_connector_helper_funcs);
->> +	ret = drm_bridge_attach(encoder, &dp->bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
->> +	if (ret)
->> +		return ret;
->>
->> -	ret = drm_connector_attach_encoder(connector, encoder);
->> -	if (ret) {
->> -		DRM_ERROR("failed to attach connector and encoder\n");
->> -		goto err_free_connector;
->> +	dp->connector = drm_bridge_connector_init(drm_dev, encoder);
->> +	if (IS_ERR(dp->connector)) {
->> +		ret = PTR_ERR(dp->connector);
->> +		dev_err(dp->dev, "failed to init bridge connector: %d\n", ret);
->> +		return ret;
->> 	}
->         Don't store connector here, we will move connector init to display controller side in the future.
->
->        You can get connector by: connector = drm_atomic_get_new_connector_for_encoder(state, bridge->encoder);
->        at atomic enable.
-
-Will fix in v2.
-
-
->
->> +	drm_connector_attach_encoder(dp->connector, encoder);
->> +
->> 	for (i = 0; i < dp->ports; i++) {
->> 		port = dp->port[i];
->>
->> @@ -1092,7 +1102,7 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
->> 		if (ret) {
->> 			DRM_DEV_ERROR(dev,
->> 				      "register EXTCON_DISP_DP notifier err\n");
->> -			goto err_free_connector;
->> +			return ret;
->> 		}
->> 	}
->>
->> @@ -1101,24 +1111,15 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
->> 	schedule_work(&dp->event_work);
->>
->> 	return 0;
->> -
->> -err_free_connector:
->> -	drm_connector_cleanup(connector);
->> -err_free_encoder:
->> -	drm_encoder_cleanup(encoder);
->> -	return ret;
->> }
->>
->> static void cdn_dp_unbind(struct device *dev, struct device *master, void *data)
->> {
->> 	struct cdn_dp_device *dp = dev_get_drvdata(dev);
->> 	struct drm_encoder *encoder = &dp->encoder.encoder;
->> -	struct drm_connector *connector = &dp->connector;
->>
->> 	cancel_work_sync(&dp->event_work);
->> -	cdn_dp_encoder_disable(encoder);
->> 	encoder->funcs->destroy(encoder);
->> -	connector->funcs->destroy(connector);
->>
->> 	pm_runtime_disable(dev);
->> 	if (dp->fw_loaded)
->> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.h b/drivers/gpu/drm/rockchip/cdn-dp-core.h
->> index 17498f576ce7..d2778f7a5b31 100644
->> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.h
->> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.h
->> @@ -8,6 +8,8 @@
->> #define _CDN_DP_CORE_H
->>
->> #include <drm/display/drm_dp_helper.h>
->> +#include <drm/drm_bridge.h>
->> +#include <drm/drm_bridge_connector.h>
->> #include <drm/drm_panel.h>
->> #include <drm/drm_probe_helper.h>
->> #include <sound/hdmi-codec.h>
->> @@ -65,7 +67,8 @@ struct cdn_dp_port {
->> struct cdn_dp_device {
->> 	struct device *dev;
->> 	struct drm_device *drm_dev;
->> -	struct drm_connector connector;
->> +	struct drm_bridge bridge;
->> +	struct drm_connector *connector;
->> 	struct rockchip_encoder encoder;
->> 	struct drm_display_mode mode;
->> 	struct platform_device *audio_pdev;
->> -- 
->> 2.49.0
 
