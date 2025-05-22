@@ -1,181 +1,209 @@
-Return-Path: <linux-kernel+bounces-659126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3792AC0BC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:40:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFEAAC0BCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04A743ABCBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 12:39:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7F8F4A754B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 12:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8FC28A40A;
-	Thu, 22 May 2025 12:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDB128B412;
+	Thu, 22 May 2025 12:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ibEvbdoc"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIDYPxl6"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16682135CB
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 12:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCE527C869
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 12:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747917612; cv=none; b=R7bkVtLhHEBxK4dTmgm1jbbfolgy5Nt5MTx2E1ZCKEvWahvpervQSEkh/80HnXFLmteK7qMMupU5Xc3eA5JJYggyAetlQcsLtY21xgwWNTLI2gsGR2HCGc/lpcRtJpXtbH1TC2EJeXDNpiQV5cpGHcxeli7KjnrYBSCp9mcWoFc=
+	t=1747917729; cv=none; b=Q16s/X+kUa4ntxJy5HFh8rOVpBIuhUaTvjm7ga/qg6zfqcbnzoA3GrRtq2UZ2FjQrTE0xhlSGSexOR0ZxMk8cm3lhphlHbvXZQQ594TMSjuqx1zCj7jmZwlj8zIN7a5FHFODJSejTCpD2sWBajUMwfURIHu1eaHUCsi7mGMfujQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747917612; c=relaxed/simple;
-	bh=xxeMNBKgdkvG1JJS5CMBf0LTtznMrRONcuoazgT63+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KGLn9AsyUE4o+JOoZ9bea3uOQhfEP5vlyBUE7lJKn0i0mi2ETMS/rByMhRzsoBcWoBD70yVzoERJwC8y9tz36tR39ErTgoHJMnSWSc2JqkEnoh2vQ+bEBfxe7IM67/Ll77p3iXsiEZSvJV/R7VPiUG8pwxMuFP2h3QzDwJtJj/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ibEvbdoc; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-742c73f82dfso4098024b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 05:40:10 -0700 (PDT)
+	s=arc-20240116; t=1747917729; c=relaxed/simple;
+	bh=PVTUo9RUEI3NicCxY4KVL5G9/OumzmFOnSVPqggv7i0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A1D0NYAVZaEx8aLxo19JKsggibbDLv2zH0JR2B+GRmIjQPfKK72sgBg9Q8Yerl5fl7+NKNUIAV6UyaFLvdT1UxblukKR3degPYEbGrozdjD4SEa4gKRtALy9FsSs+556itRB67J4s1D0hHrpJZVuuK2/OWQEhw6LGd7HXv61iPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IIDYPxl6; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ad545e74f60so968479366b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 05:42:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1747917610; x=1748522410; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HdCqFR+56Tm/a3nq0h1iEa05d7szVIy1HdZA4sLbGm4=;
-        b=ibEvbdocn4ty4/1W/XjN5MHOEc0WsUKzJOilN3a9Oqy+38D1QDyeYqW8CghnsA+LEO
-         Dq73CBhgordT+V1ZSmmfoRvslexxd7PG32N9yE9CAnuUK5m5Lh0UW+5wE1BInpoiA7kA
-         PstkJuU+XZFusDC+r2hyU4TTuXWzg3nnvYojTECGqhzKEyfdC2yCK1CUCguOj7LcsaTK
-         v/WdCp+EmwR4NcMboz5zelddRdhQirrsPLp4zoNpGu981fwbC+mR18OpGpvwUaK7FNui
-         TtpSvmnVQ9xjTQE2ssIzwFdIZ/kipc5V5dUjzzGNotM04w52bNtwOzHiR0cd2ltNGI73
-         hVKQ==
+        d=gmail.com; s=20230601; t=1747917726; x=1748522526; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=k8h8VMy7nG682XM9lhzNlq6IHy3T2cGrxMUNGDBFIHI=;
+        b=IIDYPxl6X1hT9VdR74tWXMs5fMkkabnC3O+cx+2RiiIf9OWNqdEbmT+fahea00LCT4
+         EejtFcOYsTzqV/kKTDf9BlEQoTKblNYpVs1O9rOG+fljpw7/iYHLQgwEmDW5WOn+/KFR
+         /8UEuSGzI2IziG57kKZBtWCAdEyg+65WTAmxqUr684fwp4q3SfCP2lo9X6PFTGRs/88B
+         XSf9z0SOWOAv7a6aDu5HfLR/s+1GL4CA/e70ngWmIvHo8VEBdBroALj5iDkkp2JCisgO
+         BCyHi2Um9CDBC0Bw5WLLtFU6BL8G2ksyRd6eKfS4Ozb9PMSInL7ObsopPkOHHbLLBfZb
+         QwXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747917610; x=1748522410;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HdCqFR+56Tm/a3nq0h1iEa05d7szVIy1HdZA4sLbGm4=;
-        b=Di30RX/Dh3sDB7upDOYZJ0uQJ+0DSpMa2ttmOeQK09aHtAlrABwaoL8yyhCnSBlYLo
-         oUEQrj4XQv6cJiE3SMl/6gH94IwpvDtp5ywmKIXtJUKdQ6hpiepwExul/pVcitHSMO2q
-         U31QsY21FYVivrY13vH9jqX775Dnxo9DvjRRul6hvNYc0QN6Ki9wW41bjAXM/QeV65CG
-         7h8Iy11Wv21eeohdRmoNYB6fmpBCBmTk8oTZOneq6fKLsuzwXP1eKDNijeGfUEn0BVpq
-         qiDGT1rF4vsZhX/LQckZhXrIdmS/MkriYPt4U+nZuHotOPNKGdDpxFZ/d7dynaWGAJ31
-         A0Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCXJpGBm4cyPMrvKloy6rLsb9QDKaNil3pGEWzUxMPNYRNNwSVL5l3dLMsiTvUSJdHny/rarUuQvtERhenc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV7+9jd6e9PKHmwaxhSIN04Ed4y8DaUd+owvVjvQe6wf7R0iVW
-	PsuAf+V0f7DQNwAoEdywLDNx96LlN5iWeBFGj1AY1px9uuatQNdK+16dyDAlLK9LKA==
-X-Gm-Gg: ASbGncse+dmIuc/ZsfYXzMxgQgHNTSF8emhRlcWV5NMVE5SYhj5x9Br8l/FImnMVthN
-	av2HXPH3ZqtXQvhh43Hl96duE7qNTsGW3SKHo+d1rD+QfRW8ihR6c13JgJUXTK+GByPS/1I1v3a
-	QLlibwU4Ileq+Q5Mb0ffbp4uZt+K6J2HdkXHQz6VFJgpl3+rROVTGV+t2q947bpQYUkO2x/c6G1
-	C671RQycjXk/V2G3zwLkM3n9e40EE8a84aklNIauRmm7yR9HaHE5w+sL7IMPDP9EzfNFts6Qej4
-	lKSv0jp10ysRs7eizTTSLt5Z4fBhWBnZ2Dulen/sPHFnhiQIJYhJrUxLECWYLA==
-X-Google-Smtp-Source: AGHT+IFvfNkLYHvdfOeMZtqhv+9UDSE7Df/03ZlRb7wnPgT/zwiZsJHssiyPtkwOhlkcmugZlgJLMg==
-X-Received: by 2002:a05:6a20:d04e:b0:218:17c4:248c with SMTP id adf61e73a8af0-21817c4f2b6mr31809810637.22.1747917610145;
-        Thu, 22 May 2025 05:40:10 -0700 (PDT)
-Received: from bytedance ([115.190.40.11])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eadc0889sm11153588a12.0.2025.05.22.05.40.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 05:40:09 -0700 (PDT)
-Date: Thu, 22 May 2025 20:40:02 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>
-Subject: Re: [PATCH 2/7] sched/fair: prepare throttle path for task based
- throttle
-Message-ID: <20250522123750.GB672414@bytedance>
-References: <20250520104110.3673059-1-ziqianlu@bytedance.com>
- <20250520104110.3673059-3-ziqianlu@bytedance.com>
- <20250522104843.GG39944@noisy.programming.kicks-ass.net>
- <20250522114012.GA672414@bytedance>
- <20250522115418.GI24938@noisy.programming.kicks-ass.net>
+        d=1e100.net; s=20230601; t=1747917726; x=1748522526;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k8h8VMy7nG682XM9lhzNlq6IHy3T2cGrxMUNGDBFIHI=;
+        b=AX+05p/p7uroVpv6l3SELMToL/8AyEN7pNXYgNQFkUUyACL+v2B5MlFB7U/oNB4Vnt
+         Awjty8Ucj8hXJyaQc2szE23FsJ0RUtCmo7feX0mz1Gnvssh1qm2UfoV2ipdFUxvgkuHA
+         XmE5IhYYgBmxUjQawwRyNiKn4BzZ6lOLjsBSZQICBFDBlpRNgao2DDJtLjhESxZW1nH1
+         VeqY10UYXdNiAKEl81ohzw1ZjZytxim21QBtJnogKf25XwthC93tu+mX3+s4VJ16YIRW
+         ZAqqMYCGRRv4RqZCdr2n6p+k/D6GAiH3UhaxrajimuqEceWwH8kVW1NldrrS47apSEZM
+         yqBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQsOPeLT0WX9g7Pp1LSQ7osW2OUpR4T7mM+5X/xQnX5UABd5CbsUwcteuHwfw6zfYsFG9TCqHQ6cMpybw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeL/Z8ODZEb6JHaGyhLY8WwWsBY8WH275t5yB2SWw/KuiMOnit
+	H7uhGjmSCuiSdku0Bneq729VJHFNpR6g91QUUy6hW/dU6uSrM36kdQcm
+X-Gm-Gg: ASbGnctx9EJtttZJ0Y8HToFeInvhyDC6PSYuADF1UPjsJGCtgqDj1Xp8DYzICJ3gA0Z
+	D/yEOEsWhmxyM4gK4U1GBXNG1Sn6odfZWdJkWOyOHpViulFrmImJ6ngmC1IJwgmM/ay81uihHc9
+	52pgVVNfRWrNwOl+huXU6Ck7fGCULvqieijJX8C9KU3bQ61/UQOl5xNBZhwXsNdCrdgnpKOlCsT
+	c+/FUUSOmA2wo0iSEFNQLIdJ2v56eceL3IahGjkDM/JAVL0hd6wxfO3uppoB4/caCBtHtY30X+m
+	w3lhyO61OwfbeIWXsA+iRFsNLxWeOEb0aPknJ+Irsn52a5SDNAzIKc+LXjCKkLe1Z7IKfFye+Mm
+	1nlLQsY9dlYW+5TMShFoZAQtx/wYm
+X-Google-Smtp-Source: AGHT+IHLAVBPibuhf8QzjbXW44030B4EB047Zq+RDL9gWkT9nEi3cm3/MnD48ZG0WtiuwILtclqN+A==
+X-Received: by 2002:a17:907:1c92:b0:ad5:59ef:7f56 with SMTP id a640c23a62f3a-ad559ef8c28mr1973309466b.48.1747917725536;
+        Thu, 22 May 2025 05:42:05 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:58:b3b6:ff61:e825? ([2620:10d:c092:600::1:d7d1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d06b532sm1064205466b.43.2025.05.22.05.42.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 May 2025 05:42:05 -0700 (PDT)
+Message-ID: <5d8afe59-497b-4ff9-bea1-ede1f48772e0@gmail.com>
+Date: Thu, 22 May 2025 13:42:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522115418.GI24938@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] mm: slub: only warn once when allocating slab obj
+ extensions fails
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, surenb@google.com,
+ Andrew Morton <akpm@linux-foundation.org>, hannes@cmpxchg.org,
+ vlad.wing@gmail.com, linux-mm@kvack.org, kent.overstreet@linux.dev,
+ linux-kernel@vger.kernel.org, kernel-team@meta.com, vbabka@suse.cz,
+ cl@gentwo.org, rientjes@google.com, roman.gushchin@linux.dev
+References: <20250520122547.1317050-1-usamaarif642@gmail.com>
+ <20250520122547.1317050-2-usamaarif642@gmail.com> <aCyEyxHEXQ7DU9I1@harry>
+ <cf17cfde-cd1a-4217-a09a-1aa86347f830@gmail.com>
+ <h7mwe4tr4r233zewdqaoehmmoktaljslgcxvr2qybon2vnxhrz@pbwpt253olkd>
+ <64b19c8f-e02e-490b-b987-9a996f36be21@gmail.com> <aC5s0CQMHeud3LDa@hyeyoo>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <aC5s0CQMHeud3LDa@hyeyoo>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 22, 2025 at 01:54:18PM +0200, Peter Zijlstra wrote:
-> On Thu, May 22, 2025 at 07:44:55PM +0800, Aaron Lu wrote:
-> > On Thu, May 22, 2025 at 12:48:43PM +0200, Peter Zijlstra wrote:
-> > > On Tue, May 20, 2025 at 06:41:05PM +0800, Aaron Lu wrote:
-> > > 
-> > > >  static void throttle_cfs_rq_work(struct callback_head *work)
-> > > >  {
-> > > > +	struct task_struct *p = container_of(work, struct task_struct, sched_throttle_work);
-> > > > +	struct sched_entity *se;
-> > > > +	struct cfs_rq *cfs_rq;
-> > > > +	struct rq *rq;
-> > > > +
-> > > > +	WARN_ON_ONCE(p != current);
-> > > > +	p->sched_throttle_work.next = &p->sched_throttle_work;
-> > > > +
-> > > > +	/*
-> > > > +	 * If task is exiting, then there won't be a return to userspace, so we
-> > > > +	 * don't have to bother with any of this.
-> > > > +	 */
-> > > > +	if ((p->flags & PF_EXITING))
-> > > > +		return;
-> > > > +
-> > > > +	scoped_guard(task_rq_lock, p) {
-> > > > +		se = &p->se;
-> > > > +		cfs_rq = cfs_rq_of(se);
-> > > > +
-> > > > +		/* Raced, forget */
-> > > > +		if (p->sched_class != &fair_sched_class)
-> > > > +			return;
-> > > > +
-> > > > +		/*
-> > > > +		 * If not in limbo, then either replenish has happened or this
-> > > > +		 * task got migrated out of the throttled cfs_rq, move along.
-> > > > +		 */
-> > > > +		if (!cfs_rq->throttle_count)
-> > > > +			return;
-> > > > +		rq = scope.rq;
-> > > > +		update_rq_clock(rq);
-> > > > +		WARN_ON_ONCE(!list_empty(&p->throttle_node));
-> > > > +		dequeue_task_fair(rq, p, DEQUEUE_SLEEP | DEQUEUE_SPECIAL);
-> > > > +		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
-> > > > +		resched_curr(rq);
-> > > > +	}
-> > > > +
-> > > > +	cond_resched_tasks_rcu_qs();
-> > > >  }
-> > > 
-> > > What's that cond_resched thing about? The general plan is to make
-> > > cond_resched go away.
-> > 
-> > Got it.
-> > 
-> > The purpose is to let throttled task schedule and also mark a task rcu
-> > quiescent state. Without this cond_resched_tasks_rcu_qs(), this task
-> > will be scheduled by cond_resched() in task_work_run() and since that is
-> > a preempt schedule, it didn't mark a task rcu quiescent state.
-> > 
-> > Any suggestion here? Perhaps a plain schedule()? Thanks.
+
+
+On 22/05/2025 01:16, Harry Yoo wrote:
+> On Tue, May 20, 2025 at 04:22:16PM +0100, Usama Arif wrote:
+>>
+>>
+>> On 20/05/2025 15:18, Shakeel Butt wrote:
+>>> On Tue, May 20, 2025 at 02:42:09PM +0100, Usama Arif wrote:
+>>>>
+>>>>
+>>>> On 20/05/2025 14:34, Harry Yoo wrote:
+>>>>> On Tue, May 20, 2025 at 01:25:47PM +0100, Usama Arif wrote:
+>>>>>> In memory bound systems, a large number of warnings for failing this
+>>>>>> allocation repeatedly may mask any real issues in the system
+>>>>>> during memory pressure being reported in dmesg. Change this to
+>>>>>> WARN_ONCE.
+>>>>>>
+>>>>>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>>>>>> Reported-by: Vlad Poenaru <vlad.wing@gmail.com>
+>>>>>> Closes: https://lore.kernel.org/all/17fab2d6-5a74-4573-bcc3-b75951508f0a@gmail.com/
+>>>>>> ---
+>>>>>
+>>>>> Hi,
+>>>>>
+>>>>> Please Cc SLAB ALLOCATOR folks in MAINTAINERS on patches that touch
+>>>>> slab code ;)
+>>>>>
+>>>>
+>>>> Thanks for adding them to CC! I was just thinking of this as a memory
+>>>> allocation profiling issue and added the maintainers for it,
+>>>> but should have added slab maintainers as well.
+>>>>
+>>>>
+>>>>>>  mm/slub.c | 2 +-
+>>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/mm/slub.c b/mm/slub.c
+>>>>>> index bf43c403ead2..97cb3d9e8d00 100644
+>>>>>> --- a/mm/slub.c
+>>>>>> +++ b/mm/slub.c
+>>>>>> @@ -2102,7 +2102,7 @@ prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
+>>>>>>  
+>>>>>>  	slab = virt_to_slab(p);
+>>>>>>  	if (!slab_obj_exts(slab) &&
+>>>>>> -	    WARN(alloc_slab_obj_exts(slab, s, flags, false),
+>>>>>> +	    WARN_ONCE(alloc_slab_obj_exts(slab, s, flags, false),
+>>>>>>  		 "%s, %s: Failed to create slab extension vector!\n",
+>>>>>>  		 __func__, s->name))
+>>>>>
+>>>>> I think this should be pr_warn_once()?
+>>>>> I'm not sure why this was WARN() in the first place.
+>>>>>
+>>>>
+>>>> Isn't WARN_ONCE the same as pr_warn_once but with needing the condition
+>>>> of the first arg to be true? We only want to warn if alloc_slab_obj_exts
+>>>> returns non-zero. So WARN_ONCE should be ok?
+>>>>
+>>>
+>>> The difference is the impact on panic_on_warn users which are mostly
+>>> testing bots. This warning is not actionable, so I agree with Harry to
+>>> covert this to pr_warn_once().
+>>>
+>>
+>> Sounds good! Will change it to below for the next revision.
+>> Will wait for the kvmalloc conversation to conclude before sending
+>> the next revision.
+>>
+>> diff --git a/mm/slub.c b/mm/slub.c
+>> index 08804d2f2ead..ab0b7ee87159 100644
+>> --- a/mm/slub.c
+>> +++ b/mm/slub.c
+>> @@ -2101,11 +2101,13 @@ prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
+>>                 return NULL;
+>>  
+>>         slab = virt_to_slab(p);
+>> -       if (!slab_obj_exts(slab) &&
+>> -           WARN(alloc_slab_obj_exts(slab, s, flags, false),
+>> -                "%s, %s: Failed to create slab extension vector!\n",
+>> -                __func__, s->name))
+>> -               return NULL;
+>> +       if (!slab_obj_exts(slab)) {
+>> +               if(alloc_slab_obj_exts(slab, s, flags, false))
+>> +                       pr_warn_once("%s, %s: Failed to create slab extension vector!\n",
+>> +                               __func__, s->name);
+>> +               else
+>> +                       return NULL;
 > 
-> I am confused, this is task_work_run(), that is ran from
-> exit_to_user_mode_loop(), which contains a schedule().
+> Returning NULL when alloc_slab_obj_exts() succeeds doesn't make sense.
+> I think you meant something like this?
+> 
+> if (!slab_obj_exts(slab) &&
+>     alloc_slab_obj_exts(slab, s, flags, false)) {
+> 	pr_warn_once("%s, %s: Failed to create slab extension vector!\n",
+> 		__func__, s->name);
+> 	return NULL;
+> }
+> 
+Yes, Thank you!
 
-There is a cond_resched() in task_work_run() loop:
+>> +       }
+>>  
+>>         return slab_obj_exts(slab) + obj_to_index(s, slab, p);
+>>  }
+>>
+> 
 
-		do {
-			next = work->next;
-			work->func(work);
-			work = next;
-			cond_resched();
-		} while (work);
-
-And when this throttle work returns with need_resched bit set,
-cond_resched() will cause a schedule but that didn't mark a task
-quiescent state...
 
