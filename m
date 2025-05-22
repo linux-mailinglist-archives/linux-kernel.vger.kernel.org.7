@@ -1,131 +1,103 @@
-Return-Path: <linux-kernel+bounces-658705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C372AC0620
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:51:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03AFEAC062C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D7F41883BA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:52:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177241BC306E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E746024EF85;
-	Thu, 22 May 2025 07:51:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA0D241693
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 07:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F522500DE;
+	Thu, 22 May 2025 07:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ri6YzF+7"
+Received: from out.smtpout.orange.fr (out-13.smtpout.orange.fr [193.252.22.13])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28DE24E014;
+	Thu, 22 May 2025 07:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747900292; cv=none; b=cXk3KPh5r7kW+M19teXKUhSbF7Pi5DMG4sjYWrrNgjlPmmo+37erCTdJthCeG8SrtpSbJgxNEfcavQV6OJ/3uQAa8CUa2bcXhYm0rPjuS5HLxr3avLCIZOyH5fPTlPWdpNXzD8cCGmHHiL4lZBDd7d2Wqq/LMOz6poH6HR5ivJA=
+	t=1747900318; cv=none; b=RyfjEWiQ+JvhLyFfCfKjY1T6ySzQSrxjDLXF5VcHjStI8o/5J/CRkHpEtVVjRA57fri4yP3WVO2RfrFuKut0PPJn96QX1WeRWpL796Wdp2J+sLS+oLVdrIZYOsCkF2V3L7olkottUs3b8dzi4SjeFfUQFUfj+aTlLBdZq+C9yF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747900292; c=relaxed/simple;
-	bh=5Er2Se0J/OYgKRlrGNVO3MlntzBG01vQWKegNQrLvfQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gcjfu4Y5s4rl70eQEcP9Pp2L64Oo3JWGSs/v8EpBOEjQMZOKwVMxbswUkjHD4FdTdbQBhr5jGouyLN5ec+EoFSD6tgDhyimVbpMcw7DjBZQG/UEPIQLE/MKMwoupC5hfln3EKwpVVk2xG263KdI9OhDuouVAznPzpBLbGzsyEDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 78BDE1A2D;
-	Thu, 22 May 2025 00:51:15 -0700 (PDT)
-Received: from [10.57.94.227] (unknown [10.57.94.227])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE2BD3F673;
-	Thu, 22 May 2025 00:51:25 -0700 (PDT)
-Message-ID: <1ab00224-cca4-4442-a346-eb8a6797e09e@arm.com>
-Date: Thu, 22 May 2025 08:51:24 +0100
+	s=arc-20240116; t=1747900318; c=relaxed/simple;
+	bh=K1Ju9ChBoPJtQqkm13X9ek0t/vFqTZS0ihzaKbzH1mE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KIm/Plq2/Tzt27x46UjcWnLI1ArhCEWf4pQMDO4/EXt2WdRjRycwHCZhGCWngvgxmcSGdpsEWR48a8pzyG6AwMwZ3/GobDsDwqIQtGNThOUEBhVvA15WNHXk/3Cw+INdR8yD5sD2xfHRkh/pXsycDK1KN7vbgfXUZ9tErKDYnto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ri6YzF+7; arc=none smtp.client-ip=193.252.22.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from mail-ej1-f49.google.com ([209.85.218.49])
+	by smtp.orange.fr with ESMTPA
+	id I0iWud0W2MqmCI0iWu8Y86; Thu, 22 May 2025 09:51:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1747900312;
+	bh=K1Ju9ChBoPJtQqkm13X9ek0t/vFqTZS0ihzaKbzH1mE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To;
+	b=ri6YzF+7GstVZB0kzcCkrFZ75d1ioyyvh3/A+wP4virKKkiouaG5/8wwzTeRWCFc6
+	 WL1VFRf3YzNNkSqIaW3cdb2bb4punx1k37y2w6qw1TOo9OK2BKcBYkeDo8/wXQ4Z9z
+	 8Lw2fo1+p8ye5c0qJw9/Be2nknj/qkvlmXLHI6R5dqP3YeLu7KdIzH9lE05MPYqgrz
+	 AKhPZFf84WuGdgnUfMlkCEKLQuViOrshvZcxe79ZU6R5qP7PozJ99WSLunDJPi58KQ
+	 i3jxDcukf5l5NZgT4cAvk/ZxS3c+WswQypz7TBTA6p1wSSQD2o+aB3PzDQkVetOYny
+	 HrnuXVily4How==
+X-ME-Helo: mail-ej1-f49.google.com
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 22 May 2025 09:51:52 +0200
+X-ME-IP: 209.85.218.49
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ad5574b59c0so885981166b.2;
+        Thu, 22 May 2025 00:51:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVepbA7txDmo3AqUEe6Lyn4DhQ2fHGq0HyWwjEn8CFh1lNu99ICaWD5Yc5WtPfbKa2ewvgo+yeEiMnvlCve@vger.kernel.org, AJvYcCWy24wDbms+a9TFohKAHPAWXe5LtgCZXVLEL0q39vr+h9IqMyZWzQBGJyezcppul9/M3JP2oOahStn1@vger.kernel.org, AJvYcCX1uaIgzwk9VoJIEfkZffS9pgk9xeeP7TQjefjVcwzsEu7Xo6i2tQrShbwujUx4ZBDNKZERiBEm/k2x@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLJ/GPxiciOFddTn2js5e4o4i7ATk13mj3v0qjgxSdqftLT/W+
+	wsyD/ouqO+7YepzGwS8OimtkK3MhmTcz8cde0Yq37LJzK6bSBe409Fsk9uHcYL0Bhdf4igAf9CG
+	6httQu4Mp82lLrD0UwCsGm3E3fHMhdM4=
+X-Google-Smtp-Source: AGHT+IH+G1RV6f4XSiIEPdRrb6TPdOE7pGKLKdSwxOPEVBL4YFwSKpBYuEYJEJFRYIUgbOU8zKhMjLiGuFzdQ8+OFcE=
+X-Received: by 2002:a17:907:7252:b0:ad2:39f2:3aa8 with SMTP id
+ a640c23a62f3a-ad536f9d574mr2255053666b.38.1747900312547; Thu, 22 May 2025
+ 00:51:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] mm: Add batched versions of
- ptep_modify_prot_start/commit
-Content-Language: en-GB
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
-Cc: david@redhat.com, willy@infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org,
- Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
- jannh@google.com, anshuman.khandual@arm.com, peterx@redhat.com,
- joey.gouly@arm.com, ioworker0@gmail.com, baohua@kernel.org,
- kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
- christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
- linux-arm-kernel@lists.infradead.org, hughd@google.com,
- yang@os.amperecomputing.com, ziy@nvidia.com
-References: <20250519074824.42909-1-dev.jain@arm.com>
- <20250519074824.42909-3-dev.jain@arm.com>
- <59242559-5e90-4422-82f7-179a44eb968a@arm.com>
- <7a1ae902-d97c-41ae-a3e7-5b6258ced1c5@arm.com>
- <fc219152-f771-41b0-8857-42de5e6dd35e@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <fc219152-f771-41b0-8857-42de5e6dd35e@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250522063232.2197432-1-zhangqing@rock-chips.com> <20250522063232.2197432-3-zhangqing@rock-chips.com>
+In-Reply-To: <20250522063232.2197432-3-zhangqing@rock-chips.com>
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Date: Thu, 22 May 2025 16:51:40 +0900
+X-Gmail-Original-Message-ID: <CAMZ6RqJzR6ucRnCHFq8ZFRnznRsFYq6BMQY24aaROJMLWigU4A@mail.gmail.com>
+X-Gm-Features: AX0GCFswcIk3OPc4Qw6f7CtNFw58HMRmuvPUjxlDYToAYSRWrO6-0BPCSk3B_vg
+Message-ID: <CAMZ6RqJzR6ucRnCHFq8ZFRnznRsFYq6BMQY24aaROJMLWigU4A@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] net: can: rockchip: add can for RK3576 Soc
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mkl@pengutronix.de, kernel@pengutronix.de, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, cl@rock-chips.com, 
+	kever.yang@rock-chips.com, linux-can@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 22/05/2025 07:33, Dev Jain wrote:
-> 
-> On 21/05/25 5:15 pm, Ryan Roberts wrote:
->> On 21/05/2025 12:16, Ryan Roberts wrote:
->>> On 19/05/2025 08:48, Dev Jain wrote:
->>>> Batch ptep_modify_prot_start/commit in preparation for optimizing mprotect.
->>>> Architecture can override these helpers; in case not, they are implemented
->>>> as a simple loop over the corresponding single pte helpers.
->>>>
->>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->> [...]
->>
->>> I have some general concerns about the correctness of batching these functions.
->>> The support was originally added by Commit 1ea0704e0da6 ("mm: add a
->>> ptep_modify_prot transaction abstraction"), and the intent was to make it easier
->>> to defer the pte updates for XEN on x86.
->>>
->>> Your default implementations of the batched versions will match the number of
->>> ptep_modify_prot_start() calls with the same number of ptep_modify_prot_commit()
->>> calls, even if modify_prot_commit_ptes() is called incrementally for sub-batches
->>> of the batch used for modify_prot_start_ptes(). That's a requirement and you've
->>> met it. But in the batched case, there are 2 differences;
->>>
->>>    - You can now have multiple PTEs within a start-commit block at one time. I
->>> hope none of the specialized implementations care about that (i.e. XEN).
->> I had a look; this isn't a problem.
->>
->>>    - when calling ptep_modify_prot_commit(), old_pte may not be exactly what
->>> ptep_modify_prot_start() returned for that pte. You have collected the A/D bits,
->>> and according to your docs "PTE bits in the PTE range besides the PFN can
->>> differ" when calling modify_prot_start_ptes() so R/W and other things could
->>> differ here.
->> It looks like powerpc will break if you provide old_pte which has different
->> permissions to the "real" old_pte, see radix__ptep_modify_prot_commit(). So I
->> think you need to at least spec modify_prot_start_ptes() to require that all
->> bits of the PTE except the PFN, access and dirty are identical. And perhaps you
->> can VM_WARN if found to be otherwise? And perhaps modify
->> ptep_modify_prot_commit()'s documentation to explcitly allow old_pte's
->> access/dirty to be "upgraded" from what was actually read in
->> ptep_modify_prot_start()?
-> 
-> 
-> Got it, so we just need to document that, the permissions for all ptes must be
-> identical
+On Thu. 22 May 2025 at 15:38, Elaine Zhang <zhangqing@rock-chips.com> wrote:
+>
+> Is new controller:
+> Support CAN and CANFD protocol.
+> Support Dma.
 
-Not just permissions; all bits (inc SW bits) except PFN and A/D.
+Please write a more verbose description with proper sentences.
 
-> 
-> when using modify_prot_start_ptes(). And that we may be smearing extra a/d bits in
-> 
-> modify_prot_commit_ptes().
-> 
-> 
->>
->> XEN/x86 and arm64 don't care about old_pte.
->>
->> Thanks,
->> Ryan
->>
->>> I'm not sure if these are problems in practice; they probably are not. But have
->>> you checked the XEN implementation (and any other specialized implementations)
->>> are definitely compatible with your batched semantics?
->>>
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 
+You need to break this into several patches and several files.
+
+You can not put everything in rockchip_canfd-core.c. Create a
+rockchip_rk3568.c in which you will move all the already existing
+rk3568 specific functions. Then, in another patch, create a
+rockchip_rk3576.c that will contain all the new code. Also adjust the
+headers accordingly.
+
+
+Yours sincerely,
+Vincent Mailhol
 
