@@ -1,600 +1,298 @@
-Return-Path: <linux-kernel+bounces-659620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B223EAC12BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:56:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35E6AC12DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D249E3B3998
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:56:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B971895B93
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CDE19D88B;
-	Thu, 22 May 2025 17:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8017629B767;
+	Thu, 22 May 2025 17:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOYgcR2u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="EydrhKQf"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2065.outbound.protection.outlook.com [40.107.20.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA97B19ABD8;
-	Thu, 22 May 2025 17:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747936609; cv=none; b=WczRD653UWykw7eeQ6gPF2acgAj3xkkxr7UQprKE9FlxBXcSmqWc3a90oWX+Mj85LvhQAp6ztEsZWFXE6uFeQbvBZAo9euOhJshoEOWu5zNDlHLvbYMP+9AXCSrMMZZW+pMxsHUeiyEsiGBWvbkMlHBmwCgrxTQZB/Gy+vHs2bY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747936609; c=relaxed/simple;
-	bh=4G7HKlnYzqOyqT3PwXNh3VoXc5qbeOTbfTuBuxgoag8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HaBMp8o27fQSWggnM4enbyU7F6nQ4tTMJcQmagAC3IIt2A7TPZoZPeNSG7+TySrmzoagGj05KSvRITPgmWwPHPViJI76chqsiWCR2Kxs/bjFv1eUXUWQKECFLx0+E20QuWVWNIJXMqurmhZaYe4lijWEF8DdMp+str5FtZn3yV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOYgcR2u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA446C4CEE4;
-	Thu, 22 May 2025 17:56:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747936609;
-	bh=4G7HKlnYzqOyqT3PwXNh3VoXc5qbeOTbfTuBuxgoag8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vOYgcR2uqMGWHlPxFubBy3Zknpd6dOwCk43BoK9gVUvGgGWWzGLtvCU8laPmuM9xE
-	 CDU0MSTE4Eh9Z1qIuKes6DVH+94bzwxpScySn2PZmF/oXvjFXmZtNmf7t0cTUjgTm1
-	 +bwO2kpLSuM8EYiEtIGZcvKzpAfz5tN5mIYgvP003PTh6t1d97R4m6YY5QJCSy3NK0
-	 m7ceeRoywSfv6GrUjyFl9iPX9cJ14ob9pH+xj3Ci6I1VUuBQovtBP9xBK/OKDUjAmC
-	 MTsN5PoFAyjbqKDZcpGdrLeDXd7CHLwAJnEX4jjPkkVD12lR0cQbmo1eFZsuvgBFHJ
-	 pXRAOowGvOm5Q==
-Date: Thu, 22 May 2025 14:56:46 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Yuzhuo Jing <yuzhuo@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Liang Kan <kan.liang@linux.intel.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
-	James Clark <james.clark@linaro.org>,
-	Tomas Glozar <tglozar@redhat.com>, Leo Yan <leo.yan@arm.com>,
-	Guilherme Amadio <amadio@gentoo.org>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Aditya Gupta <adityag@linux.ibm.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v1 2/4] perf tools: Add sha1 utils
-Message-ID: <aC9lXhPFcs5fkHWH@x1>
-References: <20250521225307.743726-1-yuzhuo@google.com>
- <20250521225307.743726-3-yuzhuo@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E30E29B221;
+	Thu, 22 May 2025 17:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747936660; cv=fail; b=M9gM8PAB/1R2k91CLrv1PHNsrIM+RIurvoMPpIs8xDegPBEt11rYTqWRxBMXeu/DF+4ZOD9hm7oovv85I9wHOYETDKS/DpqiUGchMItFTBgcLZ4AaFRgONn3OzymFTHfL0oQhokQr98k7hpG3t7TFpqHymXwK/HVsPFA+H0By8c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747936660; c=relaxed/simple;
+	bh=dN8ODpN+tTAy8TgZSSH3Lz1SaGinboLijPzWlhqnxNI=;
+	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
+	 To:Cc:MIME-Version; b=DLUvcV6DvrvW/DNGBKSTedenEznrVtQlqvuAIqorm7oP004L4AYwjAh/1fRIW0m4mEJYcko3URpOUCc5WU2/+u3cCwRckjCf2cmG0zajiA74KBj1aBn0BySUi/xBygEuvRJnsxquhLAcPTiIyNRBLVY+yIdS4KIFxKLtGTg9tJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=EydrhKQf; arc=fail smtp.client-ip=40.107.20.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ct84xf/B6Hr0v9KyH0NcTd4xIxNXoO72u6nkv88ig+++59eCpch12FjNUx/t0nZd4yQ99H5jCu1OxpHO/OCGVi3t0DCLH2C1/7KejAxTIaBz7PQuNPx+yP9lPSZ5aj7xMahgoGMYasOi6rRsED0ft1bNWdQmAfiohDkgPTiDPotj9RWwwyOWiESELYxoTihDUsLKk8Jc4nDvUi96I1YHeCEklCpwW9UDc3k5SCEZ+BmwjJ8gUTMTfN74fzBEKLMQYHilNT8Gqo0+DCTZ/NW2qcxyDan9IUYTKpcG+yaslRF4Dsv8Hnf/ZfV+FI7zY1UKVdT1xOpyozHTNQoWTTjiiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YvWS0oe93wfZfydGOkO4YkhPPDcZkq+glSSo3ZgQAOQ=;
+ b=VZrRkobVawOp45qNKPvdoZ0Me8lD0ZQCTfr/yBlYLOphGiOrCjcIb1tilgsCYcZaevhwLGrl9V/EDsBgu3EQ1F3zlHWQT/U3nd9THI6WMtbOj+hNJ34UaNT4RYE+eQaTiL1h7Cwd/1XuB8zWg8m5q79IGSP2Wa9FRlBLFhxD+qDxtPLdt4aACwBVAq9c1mqNrURVxsM4o0b9IRAJ8UW5B8810jEyKzb47VIyh7yBnwK0o9VLsw49uzT+J8yslYrKVvoGijGM4RbfinhovL+CmjQGjgnuaccnMxqUmC0yG0a4XuwtqcdhAbJCBrgA/oMF3cA4B/OM7osJSRPoAGZF7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YvWS0oe93wfZfydGOkO4YkhPPDcZkq+glSSo3ZgQAOQ=;
+ b=EydrhKQfuA8JSOECjKbhLuE8otUwGlooGc+kUaMPausA4RwRta1S/b4a66oEkCJVRAqiAd5g3I+jtllYHTDZeyoTWmvFXb5/LY96BHrQR4i1/u8FAY+xwR9C6pYyi013U/oV/oR6FcjN9eBBQHiKZJW/ajzynWBTTjIgVRiRcg8RXnR+JXhFWdtGfmzxMJftBofMhVMcNMXf622N/ncc+NRJHDfQg9w3RPK5zudkJcDWqB2KZxv/ZiLPcirfXiFuI6JeXxO1kvAZrV8pG1T/Q/Q5fbgkLSfNVIFqCaBOt7QiZv7GGtlgAYkqVjPJItvdvZU3MFfCKfa1TFV6g0+6+w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by FRWPR04MB11272.eurprd04.prod.outlook.com (2603:10a6:d10:19c::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.21; Thu, 22 May
+ 2025 17:57:36 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8746.030; Thu, 22 May 2025
+ 17:57:36 +0000
+From: Frank Li <Frank.Li@nxp.com>
+Date: Thu, 22 May 2025 13:56:46 -0400
+Subject: [PATCH v5 08/13] media: dt-bindings: nxp,imx8mq-mipi-csi2: Add
+ i.MX8QM(QXP) compatible strings
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250522-8qxp_camera-v5-8-d4be869fdb7e@nxp.com>
+References: <20250522-8qxp_camera-v5-0-d4be869fdb7e@nxp.com>
+In-Reply-To: <20250522-8qxp_camera-v5-0-d4be869fdb7e@nxp.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+ Rui Miguel Silva <rmfrfs@gmail.com>, Martin Kepplinger <martink@posteo.de>, 
+ Purism Kernel Team <kernel@puri.sm>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Robert Chiras <robert.chiras@nxp.com>, 
+ "Guoniu.zhou" <guoniu.zhou@nxp.com>
+X-Mailer: b4 0.13-dev-e586c
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747936611; l=2983;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=zaB/XpRgTLtOf/8XnErKPHAjG6EGhnt3Df6Vz1XFRo8=;
+ b=aQDp87hjJQODu+MaXk6bhbU2gWOL6r4ifrGS9B3ArrC9sLPnhjG2KZ7D5YF/AD5XIMb7hr7Hq
+ Eid61iHRe7tBCHx1mxHI6m1z3hxH93sQAYr899LPlqqew3vCxxfpSFc
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: BY5PR04CA0006.namprd04.prod.outlook.com
+ (2603:10b6:a03:1d0::16) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250521225307.743726-3-yuzhuo@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|FRWPR04MB11272:EE_
+X-MS-Office365-Filtering-Correlation-Id: ef19b122-bd19-4b6b-5a19-08dd995a2267
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|366016|7416014|52116014|376014|1800799024|921020|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?VFJoZ1NUeUZpRDlLeHowRGtvZDFsUDJrRTFUL2RuRHR1OGtqR29NL0ZnZUV5?=
+ =?utf-8?B?QW1yTnd2VUdYMkZTa3M5akswUno2NDBmZUlVYzFSQTFkbkwydm9LMkNjRFAv?=
+ =?utf-8?B?d0VMdnE4SW1Bc3B3SUdQZmNWOHFsN24vUTBYeVQzb1UxVHp3UnFqTFNpNDY2?=
+ =?utf-8?B?ejIzZDJnOFpkWTY1MmZTYzQxNlhpUVlBd2FBQVhic2JSMUkrdWdXVXZlQnJT?=
+ =?utf-8?B?ZG84bk5meU55N2VRaWxqbkZRUzl1S1BhMkl3MURqYUt5b0Nsd3FsTSt0RWdX?=
+ =?utf-8?B?MGxROTRTSkNVMlJ2NEhvMXJDalNrcTlsNWVYNlBjbWpsSFVQemdGYW5DVXF2?=
+ =?utf-8?B?YldaVXB4UFpvdkQzMFNZajZLbkpFMGZnYjVtRy9wOXpOalorbDY4Y0tnRE1w?=
+ =?utf-8?B?SHVMREcvcEVwZEVPNmFDQ0NKelBPSG1VNmJZWUw4ZWs4TGVMSGlGM3JsVmNa?=
+ =?utf-8?B?TUwvVjVhRzNJbXdhdTNpNm1ZenA2eW4vSnByakhaYWpKcHUwY1FvNDQ0M0JT?=
+ =?utf-8?B?ZnRUYzY2YXBrTk9LRDJMZXViSkJva0lSWGlPTkRyRzI1OVFVR0pBbzFVV2Yw?=
+ =?utf-8?B?VGxQRnRZeGk2TUdLdDZvY2lvMHk5Q0FtYTVUcklqVmJwTVY1TkFqdkx0NjRw?=
+ =?utf-8?B?Mm1yYit0dmMxRm9qdGlsN2w0bXZXTElQQlRaNElPa01kMmdxN2gvZ0hmeko3?=
+ =?utf-8?B?bXFNNVN2L1M5UkFDL3F2QmdMRHZmTjlPeHZ1N0had2krL2ZUVEM1ZjhOV0dG?=
+ =?utf-8?B?Z0tJVnBPblFZOSt4R2J3dVFwMENheDVHTkFqbDlzM0FldmhPdkpGQlptYlg0?=
+ =?utf-8?B?aGw4UTFldnh5Qkk5eG1UcXFGdUxUR1BBelRtazFpZkwyRG5UTG9UODZSV095?=
+ =?utf-8?B?MWV3dE5UTkVEejhoYWpXTGtHVDd1RmRJUkNGYzdQYjAvbXM2SVl2OTB6akFX?=
+ =?utf-8?B?a2hjeE9HMlp6cmVFSzBDU3FwQ1lqcFhrRkF0SUl2My90Tm03YVdkeU9XKzFy?=
+ =?utf-8?B?a3BOQXlJVmNRZElGVjlmRzVoRjZ6cWovV1Q3Nk02cmQ5azk0K25SVURXaEZD?=
+ =?utf-8?B?Wm40WlptRngrQVVGQzVQWjd2aXlETHU2VUlpYlljQldudlNmQ3FLT0ZrUEg0?=
+ =?utf-8?B?VUxnaXFVelBMRHdIWEVRRUNvSVZxKytKNWJCY0Y3c0U3OEhPdUNqWXV5RW1G?=
+ =?utf-8?B?Z2FsLzB1NjVqMURjWFVHdmpIdTVqRVU3ZkRVWlRRTFZ2djFyTDRXaDRobWM0?=
+ =?utf-8?B?emRxR3k4aXB0QmFveVRwK09pYkpKVWJsRkw2cFBWTEtyQXgrRTRLV2c0OHho?=
+ =?utf-8?B?STIvc0IwVU83OTVUaTNRenpFNGtBeThlRTRDZFFIdEdYdnd6U0luMHlSUlZJ?=
+ =?utf-8?B?VitDc2Y2OUpGblc5cHlGYXVKMmtkN3JEcFBJMG10V2hFSlZuUkxPdnVYRTRW?=
+ =?utf-8?B?NmVvUDdIRi9lb2F2NHBudEpzNzdpT1pvRld5YTRXdzl2V3ErQ1EyVzBNKzAz?=
+ =?utf-8?B?YkpiY0ZiTnRxSXZONDdGWkZ0ZnorRG9xK0pDbnRLSExTZnZESXJJODZLeC8v?=
+ =?utf-8?B?RXg5a2hySnZJb2k3SWtndUtMczhJZ0lYWVdXcXRZWitPQkJHU00vU1lNVVlX?=
+ =?utf-8?B?L2hLQzQvN3pSQ3FoblYxQ3V3ektwVmlHM0FaUWlYenFnMzhuejJ3cGQ5WlAv?=
+ =?utf-8?B?L1JvdzRDZFJYMnBBc2VFbERBUk5KTjZucTFlSW5wV1B4UVdwc2ZNOGZ4aWQ1?=
+ =?utf-8?B?V3ZRWldZU0cvRyszSkVMTjYzT3F5REdFUzBZVFBJRmxZbVUzR3JiaFNUR2VX?=
+ =?utf-8?B?em44V2hlam15Q3lmZlFpWXdoNVVBbGVIOUpIdmJaRStvRnJGOEVTREY2OVNn?=
+ =?utf-8?B?RElLeGdUNm9lL1VQMnFmaFZ4R2ZwTWNVZWpsc29YSlhjQ1BvTm1MR2JpZStX?=
+ =?utf-8?B?RXU3RlcyVDhlcm9sOTlEdmVWUEVHQjV4aDUreUQvQmhEdjcvZkt5SFNqZlor?=
+ =?utf-8?Q?j97nNgl7+BMl9KMQutUann8uBUs79o=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(52116014)(376014)(1800799024)(921020)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?MVoybWpOZHFOdzJBV3NydzdTMUcxY1hnY3NlSXRUa0FIb0pSTmd4VHkzL3Jq?=
+ =?utf-8?B?Q2pyUDh2OUduTEJGZUVnUStlckd2L3BvbGNBR01PekY5N21ON3VRNVJ1TFZ2?=
+ =?utf-8?B?eU4rQ0diMkZQSksrd1B5eDUzekZkZ0l6NUVIQk1Jb1B4cS9xbjMxN2M2eHFK?=
+ =?utf-8?B?Z09MODNZYWhmelkwSGFTcVNKRms2cXM1ODVXbHpsL2tDNWRubVcxeXZld09w?=
+ =?utf-8?B?TVZ0cHljQ1VLM1QxenBndzVOSEgwTXJwbXBzYVpNeXJyRDR6VnBxZzlYTVVI?=
+ =?utf-8?B?MzR5ai9qZ0lOd29nMnFESWtYQWtWTjA0K01lRVhlUkhxUC9QVTNxc201VUIw?=
+ =?utf-8?B?dnhxMDNYcXlxSzR2cmZxd2pTYnJxL2xKVXJINU1pUkNUMHVkRlhaeVJLQmlr?=
+ =?utf-8?B?Nmd4MGR6aXg2WkpEWXJnT2I4QWhsa3I2ODN5L1ZmZGVGNllyMGQzV2oxSDZX?=
+ =?utf-8?B?eHVGUG50Nk41eDFEajRVelF5OE5iSk55K3F0STdpVVNHR3dSNllteTJZVWl6?=
+ =?utf-8?B?Ykd3KzBPMnZIOTRObFFZVE1WSk5neXE0Ym5MMFBYRWo2QmVsT0plWWxEVlFp?=
+ =?utf-8?B?Y09BNHNOUE5qeWdqYitOSmhXUjl0L2Vza0toUXZZaW9FOGZHWnNsR0x0cTJ5?=
+ =?utf-8?B?aVlsMzlkY3RQNWdTMU01TCt6YXd1TDU4QVBTUWhLSFIzSFBtb1FlM09vOVhE?=
+ =?utf-8?B?OGZXOGUyYVYvMGFiZTNvVFlwQW9aRWlPWDVyWHlmSzhRNko3NzhXU2dtWGN6?=
+ =?utf-8?B?M0k3SVN5Nng3V2piQ2RqVVRVNmZoOE9xMU5ZM29RTFBqSUJFZE0yR0JRNUJ3?=
+ =?utf-8?B?Zm9iQ3d1emYxVFpocFRQbFJjMWEyWkxhbU1Weis0ZHpuVFdTbnJIR0UxRlpH?=
+ =?utf-8?B?eEVadjVuQ3ZVUUxnZG1SWk4rUmtBNHowVTlaclk2TDNLQTBIQ1U5VFl1eWNs?=
+ =?utf-8?B?UkFybGowSW1zVy93L212R1NGQWNZZ1ZXS1hkWkNQV0JzZVEvaUlvRXpGK0lu?=
+ =?utf-8?B?SnY1WmtYMXBlV0N1SVJDUkNJMjh3NUk3Qk1pOUo2KzVWVXdhNU9DNDJqQXVk?=
+ =?utf-8?B?T3BkWE9Kb0FEdU54ZmFZdWttYXoxdkIxQ1FyZkNHRnBlYU80QVdaTTJtTWJp?=
+ =?utf-8?B?cmx3eGs5RzVFaFJZK1IwK3M5c1orN25haEl5SU52QWprWWJzRUd3QVpOZ3pR?=
+ =?utf-8?B?M3c0dm9Ia0h3b0dmQnZiZ00zUFNNSVdIMno2WVFZWk1sSllsYjRPOTE4Skll?=
+ =?utf-8?B?SXA2K056V0RreHFWaVVhRmVjYURoVEtpdlNFOGs2clBSUUg0VzB6ZUhjZzAw?=
+ =?utf-8?B?WXNUZzVDeUd0QThKbjRZVDA5a04wMjB5dk54S20xZ05rTUNzMjZrZEFjVmUx?=
+ =?utf-8?B?RlUyaVIybWhWcFFEOFFZaXd2NWJLTHZzenFRMkVvUHYvSjU0N1ljbUI0UTNQ?=
+ =?utf-8?B?MC9FcU9ENUx5QlVMS2I5SWV2SENGeEhxNXYrNERZQjcvRlBnS3cwNmRkLzAv?=
+ =?utf-8?B?THRMaDBaTjFDc25IblphQkY2UGhsOUYza3NMZWJxUnJFWGRHL1d4dloyVVJT?=
+ =?utf-8?B?N1NJbGhCOEZHK2N1L3VYWEpoQ1BSc0w2enpOenJDMWtYNk11VjdrcXBMN1Va?=
+ =?utf-8?B?ak0rSTNqcWdHS0txbkpCWENRL2dFYVNGVUNxenhmUkYrejJpVFRrVVFxdmll?=
+ =?utf-8?B?d1YwV1VKa3RNQ3dBYWRsdWI3S1NXb2tUM3lURGh5YzYwcjJCNCszN3BRYWNT?=
+ =?utf-8?B?NGVTQzFiQlE5VGNkZk14Yys0dDAzMnROejRRcCtBNVlWbkZ3djZPcUxnc2ox?=
+ =?utf-8?B?UEFUWE5uWGlUOWFDTlZxb05Kc0lJRW1sWjFiWWNWUW9sSmxJYjBuZU00UTlC?=
+ =?utf-8?B?MkNUN2pNOExGeVhsR2xESmpBSmw2OGxiU01xRGdkN24zMUlxdXplRjArclVY?=
+ =?utf-8?B?VUJZbGpWZmVFbTRnQXBoMzJIdkptcTIrZTdWUTVwUTExZG5id21Scm5UUERO?=
+ =?utf-8?B?c3dxajMxaDYzY3ZHQ2NwdTd2MjVxdnZJUzMwYkhUejdTcXZFK0JYSFRsbk1W?=
+ =?utf-8?B?UE1iUS9Db3YxU0pTbk44Zm5nWDhCbGNHbUpzOXVOQ29xdkhwUlhCeHgxZEF6?=
+ =?utf-8?Q?EjCi/y5B/rebR+OJK6OzpcaJO?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef19b122-bd19-4b6b-5a19-08dd995a2267
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2025 17:57:36.1638
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +/PbSi34zE3iInH4Pq1Zqqzx5AuP55KExBv5ZRwAhplD0xWobck3jmJ8cFTAkgNQXEJTh7EkABYoPFL4Lhagvw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRWPR04MB11272
 
-On Wed, May 21, 2025 at 03:53:05PM -0700, Yuzhuo Jing wrote:
-> Those new files are derived from the kernel tree, namely:
-> 
->   tools/perf/util/sha1.c          from  lib/crypto/sha1.c
->   tools/perf/util/sha1.h          from  include/crypto/sha1.h
->   tools/perf/util/sha1_base.h     from  include/crypto/sha1_base.h
->   tools/perf/util/sha1_generic.c  from  crypto/sha1_generic.c
-> 
-> The reason that we are not syncing them with the kernel tree like other
-> tools header files is because of the deep dependency in
-> include/crypto/hash.h.  It's painful to import the whole kernel crypto
-> driver infrastructure into tools.
+From: Robert Chiras <robert.chiras@nxp.com>
 
-This is failing:
+Add compatible strings for i.MX8QM/i.MX8QXP platform. Remove
+fsl,mipi-phy-gpr from required properties and add new reg space, since
+i.MX8QM and i.MX8QXP use dedicate control and status register(csr) space.
 
-⬢ [acme@toolbx perf-tools-next]$ git log --oneline -1 ; time make -C tools/perf build-test
-<SNIP>
-           make_no_scripts_O: cd . && make NO_LIBPYTHON=1 NO_LIBPERL=1 FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j32 O=/tmp/tmp.aknNhb7DZp DESTDIR=/tmp/tmp.8qecgbhwKa
-          make_extra_tests_O: cd . && make EXTRA_TESTS=1 FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j32 O=/tmp/tmp.C1nM6OCHSS DESTDIR=/tmp/tmp.iWigrG5sDJ
-                make_debug_O: cd . && make DEBUG=1 FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j32 O=/tmp/tmp.z8p7Unts6E DESTDIR=/tmp/tmp.k9856UvMRF
-cd . && make DEBUG=1 FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j32 O=/tmp/tmp.z8p7Unts6E DESTDIR=/tmp/tmp.k9856UvMRF
-  BUILD:   Doing 'make -j32' parallel build
-Warning: Kernel ABI header differences:
-  diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/cputype.h
-Makefile.config:955: No libllvm 13+ found, slower source file resolution, please install llvm-devel/llvm-dev
-Makefile.config:1134: No openjdk development package found, please install JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
+Keep the same restriction for other compatible strings.
 
-  GEN     /tmp/tmp.z8p7Unts6E/common-cmds.h
-  CC      /tmp/tmp.z8p7Unts6E/dlfilters/dlfilter-test-api-v0.o
-  CC      /tmp/tmp.z8p7Unts6E/dlfilters/dlfilter-test-api-v2.o
-<SNIP>
-  CC      /tmp/tmp.z8p7Unts6E/util/strlist.o
-  CC      /tmp/tmp.z8p7Unts6E/tests/demangle-java-test.o
-  LD      /tmp/tmp.z8p7Unts6E/trace/beauty/tracepoints/perf-in.o
-In file included from util/sha1_generic.c:18:
-util/sha1_base.h: In function ‘sha1_base_do_finalize’:
-util/sha1_base.h:77:21: error: comparison of integer expressions of different signedness: ‘unsigned int’ and ‘int’ [-Werror=sign-compare]
-   77 |         if (partial > bit_offset) {
-      |                     ^
-cc1: all warnings being treated as errors
-  CC      /tmp/tmp.z8p7Unts6E/tests/demangle-ocaml-test.o
-  CC      /tmp/tmp.z8p7Unts6E/util/strfilter.o
-make[6]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:86: /tmp/tmp.z8p7Unts6E/util/sha1_generic.o] Error 1
-make[6]: *** Waiting for unfinished jobs....
-  LD      /tmp/tmp.z8p7Unts6E/trace/beauty/perf-in.o
-  CC      /tmp/tmp.z8p7Unts6E/tests/demangle-rust-v0-test.o
-<SNIP>
-  LD      /tmp/tmp.z8p7Unts6E/util/scripting-engines/perf-util-in.o
-make[5]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:142: util] Error 2
-make[4]: *** [Makefile.perf:795: /tmp/tmp.z8p7Unts6E/perf-util-in.o] Error 2
-make[4]: *** Waiting for unfinished jobs....
-  CC      /tmp/tmp.z8p7Unts6E/pmu-events/pmu-events.o
-  LD      /tmp/tmp.z8p7Unts6E/pmu-events/pmu-events-in.o
-make[3]: *** [Makefile.perf:287: sub-make] Error 2
-make[2]: *** [Makefile:76: all] Error 2
-make[1]: *** [tests/make:339: make_debug_O] Error 1
-make: *** [Makefile:109: build-test] Error 2
-make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
+Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+change in v5
+- none
 
-real	2m10.250s
-user	20m47.352s
-sys	3m50.484s
-⬢ [acme@toolbx perf-tools-next]$
+Change from v3 to v4
+- use MIPI CSI-2
+- Add Laurent Pinchart reviewed-by tags. Reset description is not very
+accurate, but it should be good enough since use SCU reset. SCU reset do
+reset for PHY and controller.
 
-Humm that part is the same as in the kernel...
+change from v2 to v3
+- use dedicate csr register space
+change from v1 to v2
+- remove internal review tags
+- remove reg maxitems:1
+- remove 8ulp part
+- add 8qxp compatible string and make 8qm failback to 8qxp
+- limit reset and power domain number to 1 for 8qxp and 8qm
+- remove power-domains change because 8qm/8qxp only need 1 power domain
+---
+ .../bindings/media/nxp,imx8mq-mipi-csi2.yaml       | 38 +++++++++++++++++++---
+ 1 file changed, 34 insertions(+), 4 deletions(-)
 
-⬢ [acme@toolbx perf-tools-next]$ line=$(ctags -x --c-kinds=f include/crypto/sha1_base.h | awk '$1 == "sha1_base_do_finalize" {print $3}')
-⬢ [acme@toolbx perf-tools-next]$ sed -n $line,\$p include/crypto/sha1_base.h | awk '{print} /\{/ {c++} /\}/ {c--; if (c==0) exit}' > /tmp/original
-⬢ [acme@toolbx perf-tools-next]$ line=$(ctags -x --c-kinds=f tools/perf/util/sha1_base.h | awk '$1 == "sha1_base_do_finalize" {print $3}')
-⬢ [acme@toolbx perf-tools-next]$ sed -n $line,\$p include/crypto/sha1_base.h | awk '{print} /\{/ {c++} /\}/ {c--; if (c==0) exit}' > /tmp/copy
-⬢ [acme@toolbx perf-tools-next]$ diff -u /tmp/original /tmp/copy
---- /tmp/original	2025-05-22 14:48:31.338406860 -0300
-+++ /tmp/copy	2025-05-22 14:48:58.401603439 -0300
-@@ -1,3 +1,7 @@
+diff --git a/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml b/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
+index 2a14e3b0e0040..3389bab266a9a 100644
+--- a/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
++++ b/Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
+@@ -16,11 +16,19 @@ description: |-
+ 
+ properties:
+   compatible:
+-    enum:
+-      - fsl,imx8mq-mipi-csi2
++    oneOf:
++      - enum:
++          - fsl,imx8mq-mipi-csi2
++          - fsl,imx8qxp-mipi-csi2
++      - items:
++          - const: fsl,imx8qm-mipi-csi2
++          - const: fsl,imx8qxp-mipi-csi2
+ 
+   reg:
+-    maxItems: 1
++    items:
++      - description: MIPI CSI-2 RX host controller register.
++      - description: MIPI CSI-2 control and status register (csr).
++    minItems: 1
+ 
+   clocks:
+     items:
+@@ -46,6 +54,7 @@ properties:
+       - description: CORE_RESET reset register bit definition
+       - description: PHY_REF_RESET reset register bit definition
+       - description: ESC_RESET reset register bit definition
++    minItems: 1
+ 
+   fsl,mipi-phy-gpr:
+     description: |
+@@ -113,9 +122,30 @@ required:
+   - clock-names
+   - power-domains
+   - resets
+-  - fsl,mipi-phy-gpr
+   - ports
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - fsl,imx8qxp-mipi-csi2
++    then:
++      properties:
++        reg:
++          minItems: 2
++        resets:
++          maxItems: 1
++    else:
++      properties:
++        reg:
++          maxItems: 1
++        resets:
++          minItems: 3
++      required:
++        - fsl,mipi-phy-gpr
 +
-+	return 0;
-+}
-+
- static inline int sha1_base_do_finalize(struct shash_desc *desc,
- 					sha1_block_fn *block_fn)
- {
-@@ -13,10 +17,3 @@
+ additionalProperties: false
  
- 		block_fn(sctx, sctx->buffer, 1);
- 	}
--
--	memset(sctx->buffer + partial, 0x0, bit_offset - partial);
--	*bits = cpu_to_be64(sctx->count << 3);
--	block_fn(sctx, sctx->buffer, 1);
--
--	return 0;
--}
-⬢ [acme@toolbx perf-tools-next]$ 
+ examples:
 
-If I try the quick fix:
+-- 
+2.34.1
 
-⬢ [acme@toolbx perf-tools-next]$ git diff
-diff --git a/tools/perf/util/sha1_base.h b/tools/perf/util/sha1_base.h
-index cea22c5a49520998..5994c55748e40a79 100644
---- a/tools/perf/util/sha1_base.h
-+++ b/tools/perf/util/sha1_base.h
-@@ -71,7 +71,7 @@ static inline int sha1_base_do_finalize(struct sha1_state *sctx,
- {
-        const int bit_offset = SHA1_BLOCK_SIZE - sizeof(__be64);
-        __be64 *bits = (__be64 *)(sctx->buffer + bit_offset);
--       unsigned int partial = sctx->count % SHA1_BLOCK_SIZE;
-+       int partial = sctx->count % SHA1_BLOCK_SIZE;
- 
-        sctx->buffer[partial++] = 0x80;
-        if (partial > bit_offset) {
-⬢ [acme@toolbx perf-tools-next]$
-
-IT works, to test it quicker try, before the above:
-
-$ make -C tools/perf -f tests/make make_debug
-<SNIP>
- CC      util/bpf_map.o
-In file included from util/sha1_generic.c:18:
-util/sha1_base.h: In function ‘sha1_base_do_finalize’:
-util/sha1_base.h:77:21: error: comparison of integer expressions of different signedness: ‘unsigned int’ and ‘int’ [-Werror=sign-compare]
-   77 |         if (partial > bit_offset) {
-      |                     ^
-cc1: all warnings being treated as errors
-<SNIP>
-
-After the above patch:
-
-⬢ [acme@toolbx perf-tools-next]$ rm -f tools/perf/make_debug tools/perf/make_debug_O
-⬢ [acme@toolbx perf-tools-next]$ make -C tools/perf -f tests/make make_debug
-make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
-Testing Makefile
-                  make_debug: cd . && make DEBUG=1   DESTDIR=/tmp/tmp.yfg6I4SlFY
-make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
-⬢ [acme@toolbx perf-tools-next]$ 
-
-- Arnaldo
-
- 
-> The derived files get rid of struct shash_desc definition, and directly
-> operates on the struct sha1_state.
-> 
-> Signed-off-by: Yuzhuo Jing <yuzhuo@google.com>
-> ---
->  tools/perf/util/Build          |   2 +
->  tools/perf/util/sha1.c         | 122 +++++++++++++++++++++++++++++++++
->  tools/perf/util/sha1.h         |  41 +++++++++++
->  tools/perf/util/sha1_base.h    | 103 ++++++++++++++++++++++++++++
->  tools/perf/util/sha1_generic.c |  49 +++++++++++++
->  5 files changed, 317 insertions(+)
->  create mode 100644 tools/perf/util/sha1.c
->  create mode 100644 tools/perf/util/sha1.h
->  create mode 100644 tools/perf/util/sha1_base.h
->  create mode 100644 tools/perf/util/sha1_generic.c
-> 
-> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-> index 7910d908c814..ecee96b3f3fa 100644
-> --- a/tools/perf/util/Build
-> +++ b/tools/perf/util/Build
-> @@ -41,6 +41,8 @@ perf-util-y += rbtree.o
->  perf-util-y += libstring.o
->  perf-util-y += bitmap.o
->  perf-util-y += hweight.o
-> +perf-util-y += sha1.o
-> +perf-util-y += sha1_generic.o
->  perf-util-y += smt.o
->  perf-util-y += strbuf.o
->  perf-util-y += string.o
-> diff --git a/tools/perf/util/sha1.c b/tools/perf/util/sha1.c
-> new file mode 100644
-> index 000000000000..5ae658afb56b
-> --- /dev/null
-> +++ b/tools/perf/util/sha1.c
-> @@ -0,0 +1,122 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * SHA1 routine optimized to do word accesses rather than byte accesses,
-> + * and to avoid unnecessary copies into the context array.
-> + *
-> + * This was based on the git SHA1 implementation.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/bitops.h>
-> +#include <linux/string.h>
-> +#include <linux/unaligned.h>
-> +
-> +#include "sha1.h"
-> +
-> +/*
-> + * If you have 32 registers or more, the compiler can (and should)
-> + * try to change the array[] accesses into registers. However, on
-> + * machines with less than ~25 registers, that won't really work,
-> + * and at least gcc will make an unholy mess of it.
-> + *
-> + * So to avoid that mess which just slows things down, we force
-> + * the stores to memory to actually happen (we might be better off
-> + * with a 'W(t)=(val);asm("":"+m" (W(t))' there instead, as
-> + * suggested by Artur Skawina - that will also make gcc unable to
-> + * try to do the silly "optimize away loads" part because it won't
-> + * see what the value will be).
-> + *
-> + * Ben Herrenschmidt reports that on PPC, the C version comes close
-> + * to the optimized asm with this (ie on PPC you don't want that
-> + * 'volatile', since there are lots of registers).
-> + *
-> + * On ARM we get the best code generation by forcing a full memory barrier
-> + * between each SHA_ROUND, otherwise gcc happily get wild with spilling and
-> + * the stack frame size simply explode and performance goes down the drain.
-> + */
-> +
-> +#ifdef CONFIG_X86
-> +  #define setW(x, val) (*(volatile __u32 *)&W(x) = (val))
-> +#elif defined(CONFIG_ARM)
-> +  #define setW(x, val) do { W(x) = (val); __asm__("":::"memory"); } while (0)
-> +#else
-> +  #define setW(x, val) (W(x) = (val))
-> +#endif
-> +
-> +/* This "rolls" over the 512-bit array */
-> +#define W(x) (array[(x)&15])
-> +
-> +/*
-> + * Where do we get the source from? The first 16 iterations get it from
-> + * the input data, the next mix it from the 512-bit array.
-> + */
-> +#define SHA_SRC(t) get_unaligned_be32((__u32 *)data + t)
-> +#define SHA_MIX(t) rol32(W(t+13) ^ W(t+8) ^ W(t+2) ^ W(t), 1)
-> +
-> +#define SHA_ROUND(t, input, fn, constant, A, B, C, D, E) do { \
-> +	__u32 TEMP = input(t); setW(t, TEMP); \
-> +	E += TEMP + rol32(A,5) + (fn) + (constant); \
-> +	B = ror32(B, 2); \
-> +	TEMP = E; E = D; D = C; C = B; B = A; A = TEMP; } while (0)
-> +
-> +#define T_0_15(t, A, B, C, D, E)  SHA_ROUND(t, SHA_SRC, (((C^D)&B)^D) , 0x5a827999, A, B, C, D, E )
-> +#define T_16_19(t, A, B, C, D, E) SHA_ROUND(t, SHA_MIX, (((C^D)&B)^D) , 0x5a827999, A, B, C, D, E )
-> +#define T_20_39(t, A, B, C, D, E) SHA_ROUND(t, SHA_MIX, (B^C^D) , 0x6ed9eba1, A, B, C, D, E )
-> +#define T_40_59(t, A, B, C, D, E) SHA_ROUND(t, SHA_MIX, ((B&C)+(D&(B^C))) , 0x8f1bbcdc, A, B, C, D, E )
-> +#define T_60_79(t, A, B, C, D, E) SHA_ROUND(t, SHA_MIX, (B^C^D) ,  0xca62c1d6, A, B, C, D, E )
-> +
-> +/**
-> + * sha1_transform - single block SHA1 transform (deprecated)
-> + *
-> + * @digest: 160 bit digest to update
-> + * @data:   512 bits of data to hash
-> + * @array:  16 words of workspace (see note)
-> + *
-> + * This function executes SHA-1's internal compression function.  It updates the
-> + * 160-bit internal state (@digest) with a single 512-bit data block (@data).
-> + *
-> + * Don't use this function.  SHA-1 is no longer considered secure.  And even if
-> + * you do have to use SHA-1, this isn't the correct way to hash something with
-> + * SHA-1 as this doesn't handle padding and finalization.
-> + *
-> + * Note: If the hash is security sensitive, the caller should be sure
-> + * to clear the workspace. This is left to the caller to avoid
-> + * unnecessary clears between chained hashing operations.
-> + */
-> +void sha1_transform(__u32 *digest, const char *data, __u32 *array)
-> +{
-> +	__u32 A, B, C, D, E;
-> +	unsigned int i = 0;
-> +
-> +	A = digest[0];
-> +	B = digest[1];
-> +	C = digest[2];
-> +	D = digest[3];
-> +	E = digest[4];
-> +
-> +	/* Round 1 - iterations 0-16 take their input from 'data' */
-> +	for (; i < 16; ++i)
-> +		T_0_15(i, A, B, C, D, E);
-> +
-> +	/* Round 1 - tail. Input from 512-bit mixing array */
-> +	for (; i < 20; ++i)
-> +		T_16_19(i, A, B, C, D, E);
-> +
-> +	/* Round 2 */
-> +	for (; i < 40; ++i)
-> +		T_20_39(i, A, B, C, D, E);
-> +
-> +	/* Round 3 */
-> +	for (; i < 60; ++i)
-> +		T_40_59(i, A, B, C, D, E);
-> +
-> +	/* Round 4 */
-> +	for (; i < 80; ++i)
-> +		T_60_79(i, A, B, C, D, E);
-> +
-> +	digest[0] += A;
-> +	digest[1] += B;
-> +	digest[2] += C;
-> +	digest[3] += D;
-> +	digest[4] += E;
-> +}
-> diff --git a/tools/perf/util/sha1.h b/tools/perf/util/sha1.h
-> new file mode 100644
-> index 000000000000..9da4ece49bc6
-> --- /dev/null
-> +++ b/tools/perf/util/sha1.h
-> @@ -0,0 +1,41 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Common values for SHA-1 algorithms
-> + */
-> +
-> +#ifndef _CRYPTO_SHA1_H
-> +#define _CRYPTO_SHA1_H
-> +
-> +#include <linux/types.h>
-> +
-> +#define SHA1_DIGEST_SIZE        20
-> +#define SHA1_BLOCK_SIZE         64
-> +
-> +#define SHA1_H0		0x67452301UL
-> +#define SHA1_H1		0xefcdab89UL
-> +#define SHA1_H2		0x98badcfeUL
-> +#define SHA1_H3		0x10325476UL
-> +#define SHA1_H4		0xc3d2e1f0UL
-> +
-> +struct sha1_state {
-> +	u32 state[SHA1_DIGEST_SIZE / 4];
-> +	u64 count;
-> +	u8 buffer[SHA1_BLOCK_SIZE];
-> +};
-> +
-> +extern int crypto_sha1_update(struct sha1_state *desc, const u8 *data,
-> +			      unsigned int len);
-> +
-> +extern int crypto_sha1_finup(struct sha1_state *desc, const u8 *data,
-> +			     unsigned int len, u8 *hash);
-> +
-> +/*
-> + * An implementation of SHA-1's compression function.  Don't use in new code!
-> + * You shouldn't be using SHA-1, and even if you *have* to use SHA-1, this isn't
-> + * the correct way to hash something with SHA-1 (use crypto_shash instead).
-> + */
-> +#define SHA1_DIGEST_WORDS	(SHA1_DIGEST_SIZE / 4)
-> +#define SHA1_WORKSPACE_WORDS	16
-> +void sha1_transform(__u32 *digest, const char *data, __u32 *W);
-> +
-> +#endif /* _CRYPTO_SHA1_H */
-> diff --git a/tools/perf/util/sha1_base.h b/tools/perf/util/sha1_base.h
-> new file mode 100644
-> index 000000000000..cea22c5a4952
-> --- /dev/null
-> +++ b/tools/perf/util/sha1_base.h
-> @@ -0,0 +1,103 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * sha1_base.h - core logic for SHA-1 implementations
-> + *
-> + * Copyright (C) 2015 Linaro Ltd <ard.biesheuvel@linaro.org>
-> + */
-> +
-> +#ifndef _CRYPTO_SHA1_BASE_H
-> +#define _CRYPTO_SHA1_BASE_H
-> +
-> +#include <linux/string.h>
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/unaligned.h>
-> +
-> +#include "sha1.h"
-> +
-> +typedef void (sha1_block_fn)(struct sha1_state *sst, u8 const *src, int blocks);
-> +
-> +static inline int sha1_base_init(struct sha1_state *sctx)
-> +{
-> +	sctx->state[0] = SHA1_H0;
-> +	sctx->state[1] = SHA1_H1;
-> +	sctx->state[2] = SHA1_H2;
-> +	sctx->state[3] = SHA1_H3;
-> +	sctx->state[4] = SHA1_H4;
-> +	sctx->count = 0;
-> +
-> +	return 0;
-> +}
-> +
-> +static inline int sha1_base_do_update(struct sha1_state *sctx,
-> +				      const u8 *data,
-> +				      unsigned int len,
-> +				      sha1_block_fn *block_fn)
-> +{
-> +	unsigned int partial = sctx->count % SHA1_BLOCK_SIZE;
-> +
-> +	sctx->count += len;
-> +
-> +	if (unlikely((partial + len) >= SHA1_BLOCK_SIZE)) {
-> +		int blocks;
-> +
-> +		if (partial) {
-> +			int p = SHA1_BLOCK_SIZE - partial;
-> +
-> +			memcpy(sctx->buffer + partial, data, p);
-> +			data += p;
-> +			len -= p;
-> +
-> +			block_fn(sctx, sctx->buffer, 1);
-> +		}
-> +
-> +		blocks = len / SHA1_BLOCK_SIZE;
-> +		len %= SHA1_BLOCK_SIZE;
-> +
-> +		if (blocks) {
-> +			block_fn(sctx, data, blocks);
-> +			data += blocks * SHA1_BLOCK_SIZE;
-> +		}
-> +		partial = 0;
-> +	}
-> +	if (len)
-> +		memcpy(sctx->buffer + partial, data, len);
-> +
-> +	return 0;
-> +}
-> +
-> +static inline int sha1_base_do_finalize(struct sha1_state *sctx,
-> +					sha1_block_fn *block_fn)
-> +{
-> +	const int bit_offset = SHA1_BLOCK_SIZE - sizeof(__be64);
-> +	__be64 *bits = (__be64 *)(sctx->buffer + bit_offset);
-> +	unsigned int partial = sctx->count % SHA1_BLOCK_SIZE;
-> +
-> +	sctx->buffer[partial++] = 0x80;
-> +	if (partial > bit_offset) {
-> +		memset(sctx->buffer + partial, 0x0, SHA1_BLOCK_SIZE - partial);
-> +		partial = 0;
-> +
-> +		block_fn(sctx, sctx->buffer, 1);
-> +	}
-> +
-> +	memset(sctx->buffer + partial, 0x0, bit_offset - partial);
-> +	*bits = cpu_to_be64(sctx->count << 3);
-> +	block_fn(sctx, sctx->buffer, 1);
-> +
-> +	return 0;
-> +}
-> +
-> +static inline int sha1_base_finish(struct sha1_state *sctx, u8 *out)
-> +{
-> +	__be32 *digest = (__be32 *)out;
-> +	int i;
-> +
-> +	for (i = 0; i < SHA1_DIGEST_SIZE / (int)sizeof(__be32); i++)
-> +		put_unaligned_be32(sctx->state[i], digest++);
-> +
-> +	memzero_explicit(sctx, sizeof(*sctx));
-> +	return 0;
-> +}
-> +
-> +#endif /* _CRYPTO_SHA1_BASE_H */
-> diff --git a/tools/perf/util/sha1_generic.c b/tools/perf/util/sha1_generic.c
-> new file mode 100644
-> index 000000000000..b0a7af370d59
-> --- /dev/null
-> +++ b/tools/perf/util/sha1_generic.c
-> @@ -0,0 +1,49 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Cryptographic API.
-> + *
-> + * SHA1 Secure Hash Algorithm.
-> + *
-> + * Derived from cryptoapi implementation, adapted for in-place
-> + * scatterlist interface.
-> + *
-> + * Copyright (c) Alan Smithee.
-> + * Copyright (c) Andrew McDonald <andrew@mcdonald.org.uk>
-> + * Copyright (c) Jean-Francois Dive <jef@linuxbe.org>
-> + */
-> +#include <linux/types.h>
-> +#include <linux/string.h>
-> +#include <asm/byteorder.h>
-> +
-> +#include "sha1_base.h"
-> +
-> +static void sha1_generic_block_fn(struct sha1_state *sst, u8 const *src,
-> +				  int blocks)
-> +{
-> +	u32 temp[SHA1_WORKSPACE_WORDS];
-> +
-> +	while (blocks--) {
-> +		sha1_transform(sst->state, (const char *)src, temp);
-> +		src += SHA1_BLOCK_SIZE;
-> +	}
-> +	memzero_explicit(temp, sizeof(temp));
-> +}
-> +
-> +int crypto_sha1_update(struct sha1_state *desc, const u8 *data,
-> +		       unsigned int len)
-> +{
-> +	return sha1_base_do_update(desc, data, len, sha1_generic_block_fn);
-> +}
-> +
-> +static int sha1_final(struct sha1_state *desc, u8 *out)
-> +{
-> +	sha1_base_do_finalize(desc, sha1_generic_block_fn);
-> +	return sha1_base_finish(desc, out);
-> +}
-> +
-> +int crypto_sha1_finup(struct sha1_state *desc, const u8 *data,
-> +		      unsigned int len, u8 *out)
-> +{
-> +	sha1_base_do_update(desc, data, len, sha1_generic_block_fn);
-> +	return sha1_final(desc, out);
-> +}
-> -- 
-> 2.49.0.1164.gab81da1b16-goog
 
