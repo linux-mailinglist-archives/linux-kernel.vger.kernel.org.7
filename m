@@ -1,209 +1,110 @@
-Return-Path: <linux-kernel+bounces-658858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32147AC086B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:19:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5CEAC0859
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A8CDA25C40
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:18:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B40E37A5A18
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18482289342;
-	Thu, 22 May 2025 09:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dikqZ495"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060302638BC;
+	Thu, 22 May 2025 09:17:49 +0000 (UTC)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61332288CBE
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 09:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39277219EB;
+	Thu, 22 May 2025 09:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747905498; cv=none; b=u7x3HxNYQN0BGezn9Q4OhaZtn0K1WAqa0/UFuQ9sONsU4YJIze8ZpwbbCa2t2FdlFnWL8YP2Nqxvm6ZSPhVzpPT/0PemU2gTiGtf+jEfVeB6jXtjvHeD6cX+jg5pPGfdOwjQ4FkF+/vZHsdRKQ6MW6jWnzhDVEiFXglC1EmP5iY=
+	t=1747905468; cv=none; b=IdNsGlbCrc3vV/1iyuJSrSydW+fOnZzd7l07eBL/wZEGYrk7nWKGew3Ua/jbVaSJyqg/z0vQvhpWF+yN7rTMXM+x4LfVdM7ErWhX/f23H0RFNKmyqyMTw0lJwXhhjV4L/H/+LauxfcvcJKci1+zJ0XiAV81avmI74Po9IXGSTqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747905498; c=relaxed/simple;
-	bh=5C7zGS2V3bJGrbJSaGM15IPI3yesRppaPH4GfppApto=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OKl9yI46EwmjQxwYUtIGVI/xIGS9T5FaRUGJuE1ThjhN7pOL/zuZybptlHc7sFB/53AaoQjHE8crONYmAnOyfUTsq+TzFfJAZ3oUlGiiaYw5m2DVl9g+w40afOcJ37D5EK8V/7GoE+dkZ/TY0k5zIVxIZmi40ShW7L5eBaN5tfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dikqZ495; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54M6G5mg005437;
-	Thu, 22 May 2025 09:17:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=rWaAiDWPrg8jjAFfZ
-	H8NkCi00pTyPIdq5c1PN1pWnZw=; b=dikqZ495MaKGwbKFqMT4ngWMvB1bLrGDO
-	hPS3pEBB26zb0c2LvApo8d6MfNhKEBxJo2DNVhKoIWhSDTTwZ/8TYVpz6brPGcJl
-	slqssabxJlnvuYXUtYIpNtoUmDCsxXWhoEznTVqAaYKIvd9o3vv9lNvScI4+tnsG
-	NrO909BvjlWs+qVyLIvEmzXImAEWfOcdiXDReg7jUBQQRgh7oywCeC9PnIJQ2Z55
-	4+Agw7nnwwKo4NgRGS85qIV8N2y0tzBPVCU+545nlIlmGuVZOM5O0RSGWKRHjMvm
-	hQihFpRBPKbcvhD6tTsXMod+ofpHwftvgauBbrn9pbMr0CTYjhKjw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46smf9bbdk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 May 2025 09:17:51 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54M9Hprg032684;
-	Thu, 22 May 2025 09:17:51 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46smf9bbdh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 May 2025 09:17:51 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54M5VBeU032076;
-	Thu, 22 May 2025 09:17:50 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46rwnmgqbd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 May 2025 09:17:50 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54M9HmT932375072
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 22 May 2025 09:17:48 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6FA8E2004E;
-	Thu, 22 May 2025 09:17:48 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4300620043;
-	Thu, 22 May 2025 09:17:46 +0000 (GMT)
-Received: from ltczz402-lp1.aus.stglabs.ibm.com (unknown [9.40.194.31])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 22 May 2025 09:17:46 +0000 (GMT)
-From: Donet Tom <donettom@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>, Oscar Salvador <osalvador@suse.de>,
-        Zi Yan <ziy@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
-        Danilo Krummrich <dakr@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Yury Norov <yury.norov@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
-        Donet Tom <donettom@linux.ibm.com>
-Subject: [PATCH v5 4/4] drivers/base/node : Rename register_memory_blocks_under_node() and remove context argument
-Date: Thu, 22 May 2025 04:17:31 -0500
-Message-ID: <8394a530c01fbc38607e392ef9ffcdaaa3a8d3da.1747904868.git.donettom@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <d2490e807b2c13950bc1d4199f22ec078cc4c56a.1747904868.git.donettom@linux.ibm.com>
-References: <d2490e807b2c13950bc1d4199f22ec078cc4c56a.1747904868.git.donettom@linux.ibm.com>
+	s=arc-20240116; t=1747905468; c=relaxed/simple;
+	bh=HSUx6qacFlsNoVXztbzW+1krhTHlX/wYw9+bh9Z/sbU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XtZ20O7ER6Voih3ACUglVwS4iuknKl0JaaFehbEZd7Q17wcIcefz+MMkEpOtO3Pep2vR1CMfizSXRlfgrVFjZHq5V5t7rl71KFReVrE4666hHIMjvPflFnsRuHkoDKRC2PutLIAHKMnBCipyaf1RfDqpQXOavzptCVxrr/Zpc0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-52e728960c3so1733369e0c.2;
+        Thu, 22 May 2025 02:17:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747905466; x=1748510266;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XDLgNDQthld98uV/bKYP2veOUQ1O3B0A2qf/QehmhkU=;
+        b=MymHLdQI8jCecyDhWvMVR3hvPN5o+oHLTheH3NtDhDKemwde1vAAKOe+tVMnHdoH4O
+         tE52Npwg/30/2I9fprmoUSRUtUIWu5iv6d37dBOJ1RybbIe95lHR+Y7TMVG7Q7ZXgak+
+         xIkE1zRZaiN/3/3AyRyQUGIfA4kQfjrYVXUMxJ7KEJyTrKyly1cZA0ONRmdJrmdb4qiq
+         dfPhCRh8HTESu21DHPezdcngjkkrXT+en/wiYT1kUrV8XmuNYZet+gf/acLcwNhBSuk+
+         0+RQwjoFqDjjDMP2S8/kB1b96h8WeFp0fvk4cgBV1Qo5wM7JvCeAJlRxHhDm2ApfyX6x
+         1tUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9yVL4ZPBzyCHP0X4owNfW1vceIkFbFmP45440wf/f/HUb00kOir10DjpsM+/nRNFAzdf0NRaeUsIpH3GK@vger.kernel.org, AJvYcCWdbwEv7cw6+adWu+e8tGITNnVoKzyI8zQH/MBwdq+nqP9jfvKcotBqSV9lxOYJg6IbimCYpMszqeSz@vger.kernel.org, AJvYcCXRmwTrT1zddnUcV6n4EX6H/o3eI1FnMAQZZBnhn6SCsxNKzf07l3ykRqQ97R4LNH7RsBPy7nBT7C9eXKeQNEJc7Uo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUsf+Z77vhNaoH8atz3o/oK7es+Z1ivyzP5X6UoMO05N3250Fn
+	4U5HdxX330fkvZBryzHS1Y/NJB/dwKn9J42Fut1DSdr74g81XES12VhdQBxh3GER
+X-Gm-Gg: ASbGncslLliLpnmKu7pPvIW/itZKDJ9YgwWIlMp+E4aHywOVDlGKaZxekgfydBLMAmR
+	OZesB3UUQ8IL2+LYYU952RGJYoLsw78cU3pA5xDVxNj35nsruptdwi2ETkJMZiQTMqiiFeQnbH2
+	fQ+Fa2mJPGVy3yhgQ1rrznFezsUqaRsH7np2kAePvT3B87hGUd+Pn6VJr8VaH8CvJk1RlflVBaR
+	jLC+kthl9AkVUpNWyq5nFYzPLFbzNpg21A18jhag9bSXotQvbIB2WEz3Gwo8bV9EzubTOPwotNB
+	bdsbbemkqo09aihznoW0GAJAiLjxFs1FkavBXI5skenUFv1xxQfI9fIDzXdHw4KqK8FIkYiFINu
+	eqE2R1ki4MjzSpw==
+X-Google-Smtp-Source: AGHT+IGyLtIE8DWOgT2ksh+2llrhQIPmpAdHIXbEfT49WsFJKjpBeSCnNfbu3WtqJJXObgFTldvRcg==
+X-Received: by 2002:a05:6122:8c0f:b0:525:aecb:6306 with SMTP id 71dfb90a1353d-52dba970130mr21797748e0c.11.1747905465743;
+        Thu, 22 May 2025 02:17:45 -0700 (PDT)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52dbab4ebddsm11449210e0c.33.2025.05.22.02.17.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 May 2025 02:17:45 -0700 (PDT)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4e130b8b9acso2297786137.3;
+        Thu, 22 May 2025 02:17:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUEPzqpGip3ohJZZmtnH78Z+3gGBev4vIeoSb421O/wOer7aPwtqJTEo82dajdojJLzXDpLJLayeky3KcfNG3YaslM=@vger.kernel.org, AJvYcCUIImaQE+wqGWIr99xnXE+4ORLu9b6XAHzZMqP8wCSfICrfTZ8uEi6l2HghVoRLYgWkPPxU64x15U7Rn6Wd@vger.kernel.org, AJvYcCX4gSkGLL2OaRqYFan7WHo80weplYsIreVZcZezLqkide1bmPu/Z1pBzmwxJ1ZTxY4g4eqPbU0Ho4UX@vger.kernel.org
+X-Received: by 2002:a05:6102:5798:b0:4da:fc9d:f00 with SMTP id
+ ada2fe7eead31-4dfa6ba8da8mr22229082137.13.1747905465351; Thu, 22 May 2025
+ 02:17:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Pa_7H_jzah6JRAGZGES_e-t1MQBr14UB
-X-Proofpoint-ORIG-GUID: NO1FuBF6KTFc06MF5QgLWWLovuDPQkx_
-X-Authority-Analysis: v=2.4 cv=TbqWtQQh c=1 sm=1 tr=0 ts=682eebbf cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=20KFwNOVAAAA:8 a=Ikd4Dj_1AAAA:8 a=xjaU-GFjuEzJSOh1rDoA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDA4NiBTYWx0ZWRfXzzyrnHtgZHpk cnIWXk4ib1sr9YcO7Q/dQ3mvBa1xe3hCW332hYj8ARFbFVS9+d8LetHX80ubRUhwo3NcaeSWOtA 7QHdKO3G29CkcUCH5byEVpnxdsBwkUk1rBdLCgPYQxrFel+qh208kKxkWeRnO3a4H8HsHPTvtMx
- BQ7F4TeGzTbYsZiRFSGKVqi+1YFOnMrQQ7Ss+kGN/syr9nEH5RCZL37V1TA5j6OH5x9U2DjDYuK BPsMzBQrkvmEsf9/BXZ3/4zxbsPCF4V6rHgcbCV6xmPGVPw6pe5b+MtYixxwO292B/CO9JfTcaN MAZOEZpn6R8yJLmULZhNFruNAh8CiIOBpjTFMIkpgySCJ7nMw8aU8Rtv045COOovHJK9ioWpQDU
- cH3yi1drBrlCTM3UmdKhft8kyUHLwWzCqhVNqh4qYG/OseCJM/ijNbT1EJwM/FDoGYXuzWNq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-22_04,2025-05-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- phishscore=0 adultscore=0 spamscore=0 mlxlogscore=999 malwarescore=0
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505220086
+References: <20250514101528.41663-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250514101528.41663-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250514101528.41663-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 May 2025 11:17:33 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX=VWJQis+pnz34aRYT+z55uDouyK2+7nkiy-HX-QE3TA@mail.gmail.com>
+X-Gm-Features: AX0GCFsEN46Uz_6vObEQBTbh3NaeTfTBRkp2Xkfca-7F03gFRNItOXAVWENFqRs
+Message-ID: <CAMuHMdX=VWJQis+pnz34aRYT+z55uDouyK2+7nkiy-HX-QE3TA@mail.gmail.com>
+Subject: Re: [PATCH 07/10] arm64: dts: renesas: r9a09g056: Add WDT0-WDT3 nodes
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The function register_memory_blocks_under_node() is now only called from
-the memory hotplug path, as register_memory_blocks_under_node_early()
-handles registration during early boot. Therefore, the context argument
-used to differentiate between early boot and hotplug is no longer needed
-and was removed.
+On Wed, 14 May 2025 at 12:15, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add WDT0-WDT3 nodes to RZ/V2N ("R9A09G056") SoC DTSI.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Since the function is only called from the hotplug path, we renamed
-register_memory_blocks_under_node() to
-register_memory_blocks_under_node_hotplug()
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.17.
 
-Acked-by: Oscar Salvador <osalvador@suse.de>
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-Acked-by: David Hildenbrand <david@redhat.com>
-Acked-by: Zi Yan <ziy@nvidia.com>
-Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+Gr{oetje,eeting}s,
 
----
+                        Geert
 
-v4->v5
-
-Added Acked-by tag
-
-V4 - https://lore.kernel.org/all/f94685be9cdc931a026999d236d7e92de29725c7.1747376551.git.donettom@linux.ibm.com/
-v3 - https://lore.kernel.org/all/b49ed289096643ff5b5fbedcf1d1c1be42845a74.1746250339.git.donettom@linux.ibm.com/
-v2 - https://lore.kernel.org/all/fbe1e0c7d91bf3fa9a64ff5d84b53ded1d0d5ac7.1745852397.git.donettom@linux.ibm.com/
-v1 - https://lore.kernel.org/all/50142a29010463f436dc5c4feb540e5de3bb09df.1744175097.git.donettom@linux.ibm.com/
----
- drivers/base/node.c  |  5 ++---
- include/linux/node.h | 11 +++++------
- mm/memory_hotplug.c  |  5 ++---
- 3 files changed, 9 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index 0c97523e7b7d..3f7c8662696a 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -837,9 +837,8 @@ static void register_memory_blocks_under_node_early(void)
- 	}
- }
- 
--void register_memory_blocks_under_node(int nid, unsigned long start_pfn,
--				       unsigned long end_pfn,
--				       enum meminit_context context)
-+void register_memory_blocks_under_node_hotplug(int nid, unsigned long start_pfn,
-+					       unsigned long end_pfn)
- {
- 	walk_memory_blocks(PFN_PHYS(start_pfn), PFN_PHYS(end_pfn - start_pfn),
- 			   (void *)&nid, register_mem_block_under_node_hotplug);
-diff --git a/include/linux/node.h b/include/linux/node.h
-index 6cf349c26780..fb567e5aef1c 100644
---- a/include/linux/node.h
-+++ b/include/linux/node.h
-@@ -111,13 +111,12 @@ struct memory_block;
- extern struct node *node_devices[];
- 
- #if defined(CONFIG_MEMORY_HOTPLUG) && defined(CONFIG_NUMA)
--void register_memory_blocks_under_node(int nid, unsigned long start_pfn,
--				       unsigned long end_pfn,
--				       enum meminit_context context);
-+void register_memory_blocks_under_node_hotplug(int nid, unsigned long start_pfn,
-+					       unsigned long end_pfn);
- #else
--static inline void register_memory_blocks_under_node(int nid, unsigned long start_pfn,
--						     unsigned long end_pfn,
--						     enum meminit_context context)
-+static inline void register_memory_blocks_under_node_hotplug(int nid,
-+							     unsigned long start_pfn,
-+							     unsigned long end_pfn)
- {
- }
- static inline void register_memory_blocks_under_node_early(void)
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 8305483de38b..f734cc924b51 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1575,9 +1575,8 @@ int add_memory_resource(int nid, struct resource *res, mhp_t mhp_flags)
- 		BUG_ON(ret);
- 	}
- 
--	register_memory_blocks_under_node(nid, PFN_DOWN(start),
--					  PFN_UP(start + size - 1),
--					  MEMINIT_HOTPLUG);
-+	register_memory_blocks_under_node_hotplug(nid, PFN_DOWN(start),
-+					  PFN_UP(start + size - 1));
- 
- 	/* create new memmap entry */
- 	if (!strcmp(res->name, "System RAM"))
 -- 
-2.43.5
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
