@@ -1,78 +1,121 @@
-Return-Path: <linux-kernel+bounces-659751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68776AC14C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:23:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69456AC148F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A2CD7AFDE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:14:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5F7D1C01317
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4ED29CB36;
-	Thu, 22 May 2025 19:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0690029B783;
+	Thu, 22 May 2025 19:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFlHGESg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZQT87wyx"
+Received: from mail-vk1-f202.google.com (mail-vk1-f202.google.com [209.85.221.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AC5288C1B;
-	Thu, 22 May 2025 19:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF3D29B235
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747940839; cv=none; b=umg0zi3ZZROcJItCJzWk3rGErT6ykeuNvW6ZqIL9++L6P3IL71f/JgQ+unLzzmub6A5BLvJFi32aokCtYf2p49evat+nLljR3bRMe6aDkwBETgLFvmxxRG7q7ysa4+gwULda5aacpfqYT+G2nvgNgWKCYp2n7jzF4cJ+aceBASk=
+	t=1747940958; cv=none; b=L98fq3h23LC19hpOoRq4HqQwjaEUKMIS6+CyhDvxKNVPKIKLQk6+nw8F8JfDYekTMpxYD2U4xxLCeWNMa8l86obXUTcJkACmqvXsTs1v8dKjwRP56F+jTjVUO+SYE6Cw/NVOxdkJArSJbhONfIZdh2D9P1sx1ya52ooqoJHSqJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747940839; c=relaxed/simple;
-	bh=z93fW9aX4RSW6HmAdGJNE/kIRHN+vMqn5oOrqhHiTxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LqXohvLsy7kbv3i1LCBFQ9QNtvsiJ81uCOiK7AE+qK6z/7JMSaR0KcrnEwHBqV+oswyHQp6FsgMAfbZTPymkc34z+3NM/sFJ/VeyhQEwg9z9cBpNQU6bR9ujj7wK6Hp3P5YSlOrgI8AQoSQxVs+h+RqyRJ4lEOq0pquY05jzH1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFlHGESg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F006CC4CEE4;
-	Thu, 22 May 2025 19:07:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747940838;
-	bh=z93fW9aX4RSW6HmAdGJNE/kIRHN+vMqn5oOrqhHiTxk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mFlHGESg+0CfUVh/rMMW1dFrG57yuISW86zQM+GbLzzTQJLKi+mB3/RMIvb7lDtEF
-	 tTIN2AT2eHl+GWN47LwiBlw/389Br9wnc33VdpbyOPwa/8Ab0wO6W2ZpDcxPC9ugeb
-	 vSyKrOTxJvowlt1jZ3Q+5S9yKa3fd9ww1fzhle3JOkwinFq6MWTsk6JN8rwRkZKH/N
-	 6yGdMOqy9lk7rkDaEl9y6JHj9JPyXJ6AZwZLtSYzmvzkB8Ps+teIheynZmA10LNYlt
-	 s8a5JdZpYtY6IdGHJYQ7u2ywiW15W1Ce3jQjjYomshNAyD8yqG+uCLbH6fdmjCCe04
-	 b4ot7Apa/kH5g==
-Date: Thu, 22 May 2025 09:07:16 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Shashank Balaji <shashank.mahadasyam@sony.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Shinya Takumi <shinya.takumi@sony.com>
-Subject: Re: [PATCH v3 1/3] cgroup, docs: convert space indentation to tab
- indentation
-Message-ID: <aC915Bge2uzZ8Q6A@slm.duckdns.org>
-References: <20250522-rt-and-cpu-controller-doc-v3-0-483fc9cca591@sony.com>
- <20250522-rt-and-cpu-controller-doc-v3-1-483fc9cca591@sony.com>
+	s=arc-20240116; t=1747940958; c=relaxed/simple;
+	bh=rd2TKWkpjNygAIzO3J8bWjHQCANcSDcjgOTEjNNUvTY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=MD929oPZTrEmuYFuiYpYcAXm5dZIjokP9jBrXobMiGkmGCOGWRnp4U6fQrjGPgLRxhKs+3FxqsebkGGPhEWFUWyypyToX8t15gBU6rlVoXtNydia0flmJjZyjEBhU1pbTlchXTnU0n4/44dH42ZB6+0gsnaSRp4+UxLf7KOj52o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZQT87wyx; arc=none smtp.client-ip=209.85.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com
+Received: by mail-vk1-f202.google.com with SMTP id 71dfb90a1353d-52db9f96cdfso90444e0c.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 12:09:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747940955; x=1748545755; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+rcwnMFYARkjpSO5lxv4nnGGy5qtWxEQl19fHNd1GiU=;
+        b=ZQT87wyxazGEE2qqJXWorhTYty+e9YB28LzeB1f7s1t2wbrK6kuTpgvFwZBs2+paaA
+         mD/fy0vsiaEdQSpdq0BHHF87/1p9wneoyq/V++eyhmIBXIsJfH68LjqA2JOrd1Gmlb/9
+         oo1Cu64PrVXnIHz0/xMUMpaWEJ8x8ZOegisolncTFCcy2F512fYykMt5JbDeW63Ug8Ul
+         XnF+uOUhONFhmvOsVX3Kl8yOT54iI6tlqHBB2V3PZUJZHnWyUJ0Hr4BszPnf3gaL4ySe
+         FmpPFQz08g0JiMHKrL93HXuXrjzbp4Pupuj199gmHtNsMNIaq6BUl9/cqcZ4odyUsF4X
+         Roaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747940955; x=1748545755;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+rcwnMFYARkjpSO5lxv4nnGGy5qtWxEQl19fHNd1GiU=;
+        b=l/HXDb3mXbxgDLs0yO7bzK+AT75cRzI/nmxXm8gT/QHp4d9URDHckP+al8VzGItaR7
+         VkoT6ii3BMojfAgPR5LHKg2I8oLhPOnJ8rL3sth8/skFpnVxWrGU7DO3+K+axAyWkYwp
+         NHVR7sPmLEtgVx4fdcXoTaOeMyXMZq7aEZ4ExsVeypvr62Y6zU2l3r+IrGtTQ9GBZWbf
+         cIzPbxuPFGLRX01ywQEDZm7P+Z+PBZ9B1aiWMZDG7Jf6gzQJMR1FqtFsDjdAA2aESo53
+         Qxen7EV85azAVkF+tgpIkj9te6lawBv0FzkXtUBzvgTdaAqHMUQ+zak4sPiltOHl7dC5
+         lA4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUl6j5IIp0bTXr8Ov+S4Uecm0tJwOw/Tc3/6EtspHEg0FZ2Qqu8GSmYAHAUGhOop42wamXS59CGO+L4eY8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfdKviZGN1auld+AXYQpTKoepU0gQjW47bop8nGZL7LwXxe2us
+	7dGXXokUlCDTnXgYx64UfJOZCqC2QMZT4J6b1r9rPAsW5ODhoMdaerPemYx+7KglNHal+Fp7mUj
+	Qed2qmA==
+X-Google-Smtp-Source: AGHT+IFm0IXIKDX36/Vm6Fn59iLE+XZ7oZkGFNh0Ftsp0H2grUjVc9yINSe6gprwqD3+1SSCiKn5S4qLV98=
+X-Received: from vkbi11.prod.google.com ([2002:a05:6122:8b8b:b0:52a:65f4:937e])
+ (user=royluo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6122:2007:b0:52d:bcd1:ab55
+ with SMTP id 71dfb90a1353d-52f1ed6fa19mr967326e0c.2.1747940955164; Thu, 22
+ May 2025 12:09:15 -0700 (PDT)
+Date: Thu, 22 May 2025 19:09:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522-rt-and-cpu-controller-doc-v3-1-483fc9cca591@sony.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
+Message-ID: <20250522190912.457583-1-royluo@google.com>
+Subject: [PATCH v1 0/2] Revert commit 6ccb83d6c497 to fix DWC3 dual-role regression
+From: Roy Luo <royluo@google.com>
+To: royluo@google.com, mathias.nyman@intel.com, quic_ugoswami@quicinc.com, 
+	Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, michal.pecio@gmail.com, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, May 22, 2025 at 11:08:12AM +0900, Shashank Balaji wrote:
-> The paragraphs on cpu.uclamp.{min,max} are space indented. Convert them to
-> tab indentation to make them uniform with the other paragraphs.
-> 
-> Signed-off-by: Shashank Balaji <shashank.mahadasyam@sony.com>
+Commit 6ccb83d6c497 ("usb: xhci: Implement xhci_handshake_check_state()
+helper") was introduced to workaround watchdog timeout issues on some
+platforms, allowing xhci_reset() to bail out early without waiting
+for the reset to complete.
 
-Applied to cgroup/for-6.16.
+This behavior causes a regression on SNPS DWC3 USB controller with
+dual-role capability. When the DWC3 controller exits host mode and
+removes xhci while a reset is still in progress, and then tries to
+configure its hardware for device mode, the ongoing reset leads to
+register access issues; specifically, all register reads returns 0.
+These issues extend beyond the xhci register space (which is expected
+during a reset) and affect the entire DWC3 IP block, causing the DWC3
+device mode to malfunction.
 
-Thanks.
+To fix this regression without reintroducing the watchdog timeout issue,
+the first patchset "usb: xhci: Skip xhci_reset in xhci_resume if
+xhci is being removed" skips xhci_reset() in xhci_resume() reinit
+path when xhci is being removed, which should address the watchdog
+timeout issue. Then we can safely revert commit 6ccb83d6c497 ("usb:
+xhci: Implement xhci_handshake_check_state() helper").
 
+---
+Changes in v1:
+- Link to previous discussion: https://lore.kernel.org/r/20250517043942.372315-1-royluo@google.com/
+---
+
+Roy Luo (2):
+  usb: xhci: Skip xhci_reset in xhci_resume if xhci is being removed
+  Revert "usb: xhci: Implement xhci_handshake_check_state() helper"
+
+ drivers/usb/host/xhci-ring.c |  5 ++---
+ drivers/usb/host/xhci.c      | 31 +++++--------------------------
+ drivers/usb/host/xhci.h      |  2 --
+ 3 files changed, 7 insertions(+), 31 deletions(-)
+
+
+base-commit: 4a95bc121ccdaee04c4d72f84dbfa6b880a514b6
 -- 
-tejun
+2.49.0.1204.g71687c7c1d-goog
+
 
