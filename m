@@ -1,85 +1,86 @@
-Return-Path: <linux-kernel+bounces-658625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01121AC04D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 08:53:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DAD8AC04AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 08:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CCE81BA12EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 06:53:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2012D7B4CF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 06:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220BB221D8F;
-	Thu, 22 May 2025 06:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZOT7iJcl"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84209221D9A;
+	Thu, 22 May 2025 06:37:54 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EB7146D65
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 06:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784301ACEA6;
+	Thu, 22 May 2025 06:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747896818; cv=none; b=BFjmXhFOGU3jH2lgN3igG6VACube+1Sy7FzM/DcomPgmQ/OqlfTz17Yg9rRo1PfASwthFbneOSEIncL81mLsH69Pk8UbYiyD6Ic9GVF22O+2j9nLJD78cZvfBcpH/qPxuvb5PkHBm6k+XhzycsLvIac/3DkQP2rib1bHrAYoChA=
+	t=1747895874; cv=none; b=dMMVtm3Zpgka94a1kv8TMxRJOrKkOXPnQTIhZctxG7PvWPz5cJE1tYejXf0cEWNeqkk4nqilGiItdydh7ty3pB3CyIMY6xN4+SpPXVDsHCCHPhcWejzP8Q+mrc/MpwEicDbAQDlaK862m8RvXlyXB6JwJv0WdFyHC+Pb6xoOrEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747896818; c=relaxed/simple;
-	bh=A4aq7rfJSbDi2ECwhOiqnmSsUJPsO9Fahi37lji8zdU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UFDfcWtBhgMbFNBECNuDfadBrhrQmnu4tVP7FIc+pT2+234l/PwNRLDdWW8+5xjDgceaPuCz2qyHg0xQMzqHYph5N/v9akb6Sqa6s8djZv9Y7rj+UOSRyQB7dGnC6rrpMj8TVKOrF4Ecna7y/LfbGR0Kj23W6exb1gr4JqnfbLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZOT7iJcl; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ac51507e-28ca-404d-a784-7cc3721ee624@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747896812;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9iDfmp442exRibmgYm7jFqsHJ8k6DlxteDlGN/PmVPk=;
-	b=ZOT7iJclIMgS6F0Xm4agKEsJ5wDbqoVQri7oVt4u5amMmn29VnjWfoLqimbAXTJNQe4NQQ
-	2L1v7CelvTNxZ0FLM49kHMB85NpzNzWIIcfNCrocEcKFJMhZ+JTXgFBOK1mcPhBhbxn4mr
-	M+38FoXZ+Rlj0/d4X45j+UVd3Uf2PpE=
-Date: Thu, 22 May 2025 14:53:23 +0800
+	s=arc-20240116; t=1747895874; c=relaxed/simple;
+	bh=awsg4yO3SRHKC8llTafIGAlDFyGcLYFGSAV2e81IRI0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Oup/FlWLa4vKkalOzJwUWikh66NK5E4PRJPck3kjcId9fMuNkW0s4esdLoO+JeL0xST5n9lmvEEETkj5CAtWUyrCGMzznieYX+WJiT3nBkfKNIu2Qv26u/7kPfOYYq3zNvZkuSxyTZA53Tftdx+36BkleZpp5nVbelny0hx7fsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b2z914PPfz6HJh7;
+	Thu, 22 May 2025 14:36:53 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id A83DE1402FC;
+	Thu, 22 May 2025 14:37:48 +0800 (CST)
+Received: from china (10.220.118.114) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 22 May
+ 2025 08:37:43 +0200
+From: Gur Stavi <gur.stavi@huawei.com>
+To: Gur Stavi <gur.stavi@huawei.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Fan Gong <gongfan1@huawei.com>
+Subject: [PATCH net-next v2 0/3] hinic3: queue_api related fixes
+Date: Thu, 22 May 2025 09:54:40 +0300
+Message-ID: <cover.1747896423.git.gur.stavi@huawei.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RESEND PATCH 1/1] netfilter: load nf_log_syslog on enabling
- nf_conntrack_log_invalid
-Content-Language: en-US
-To: Florian Westphal <fw@strlen.de>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, Lance Yang
- <ioworker0@gmail.com>, kadlec@netfilter.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- coreteam@netfilter.org, linux-kernel@vger.kernel.org,
- netfilter-devel@vger.kernel.org, Zi Li <zi.li@linux.dev>
-References: <20250514053751.2271-1-lance.yang@linux.dev>
- <aC2lyYN72raND8S0@calendula> <aC23TW08pieLxpsf@strlen.de>
- <6f35a7af-bae7-472d-8db6-7d33fb3e5a96@linux.dev> <aC4aNCpZMoYJ7R02@strlen.de>
- <1c21a452-e1f4-42e0-93c0-0c49e4612dcd@linux.dev> <aC7Fg0KGari3NQ3Z@strlen.de>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <aC7Fg0KGari3NQ3Z@strlen.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ frapeml500005.china.huawei.com (7.182.85.13)
+
+This patch series contains improvement to queue_api and 2 queue_api
+related patches to the hinic3 driver.
+
+Changes:
+
+v1: http://lore.kernel.org/netdev/cover.1747824040.git.gur.stavi@huawei.com
+
+v2:
+* Update cover letter subject and text.
+* Add 2 patches for user code related to queue api.
+
+Gur Stavi (3):
+  queue_api: add subqueue variant netif_subqueue_sent
+  hinic3: use netif_subqueue_sent api
+  hinic3: remove tx_q name collision hack
+
+ .../net/ethernet/huawei/hinic3/hinic3_tx.c    | 23 ++++++++-----------
+ include/net/netdev_queues.h                   |  8 +++++++
+ 2 files changed, 18 insertions(+), 13 deletions(-)
 
 
-
-On 2025/5/22 14:34, Florian Westphal wrote:
-> Lance Yang <lance.yang@linux.dev> wrote:
->> Nice, thanks for jumping in! I'll hold until the helper lands, then
->> rebase and send the v2.
-> 
-> Please just add this new helpre yourself in v2.
-
-Ah, got it. I'll do that.
-
-Thanks,
-Lance
+base-commit: 3da895b23901964fcf23450f10b529d45069f333
+-- 
+2.45.2
 
 
