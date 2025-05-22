@@ -1,223 +1,217 @@
-Return-Path: <linux-kernel+bounces-659703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A584CAC13CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:57:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716A0AC1489
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08BB3B1E25
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:57:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8F3A2351A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C6B1FDE14;
-	Thu, 22 May 2025 18:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fRVjCTHR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A69288CA2;
+	Thu, 22 May 2025 19:06:53 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71DE1F4CB6
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B975288C1B
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747940266; cv=none; b=TGQ31edDwbbZuiKSVrtFcj2HhXjdRmPuNsA+N64s3gYx/BbHPIQGS1VBwnHcNTL0KOtEK7P4rQpzNspb8EQ2/gfb/BFC+dKi+BFjp2h+3AjtseJDtAXZhV2j0U3Or4Jt0PEJ7KqW40cUUxLxpeSJv2yBQrsXma8VZi6G81A9EJw=
+	t=1747940812; cv=none; b=AcmwRC9/DljsJ1m8ggWpaHBwhrB2T9/8/+9M63YQvEgkByv64Lq1rObBP5inHyy7mCdYC2rkoHgfa6CijyUgqBAowP1fdsCy4G7SZFOnBfC/PKQPTdZWRxyTJqKCr3JH7u/XPzVfplKEjVsTah1/6hgVtkMAF4U10dOuYmT3UDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747940266; c=relaxed/simple;
-	bh=mPlNrrCI141hViqbpNn117gV9qNMkImYPGI0pNIto0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z0cEEooYtRH67Q5GSpai2oss6BqBh+BRS/UmadM/zKc3n63jsAi/mXGyETKwhw/ueMuNnL6nc7mUD359oYAliWVwolqS4+5RLe65MoponFKnYd/rUXyUXRWDoMuaKbAgnFap9/GO4pI1qVK3mkY8iaE8cYt1GrlVrGd5Wtt+ZTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fRVjCTHR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54MHDbwW027524
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:57:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	71LWWlp5SYfChnA55iTdDO5g05kpTKpC2r6RSF9U7JA=; b=fRVjCTHRmvLWpxzO
-	GxgNgfIailcJT6v997Rzt+cf6KApN0CnkkaH62WHoRvEhrlYfROGKcsTLNgZvD/h
-	+tVmmncATVwk82BWh24H18khkEKcoiO/mXwaSgkRWBxlqGhBTe6fKSkBYrg1s8Aw
-	dosLO53XzHxkQS3drObfjbhrZD0T/kX5tgbbKWneGM9nafY3pDHSR4d117w4BTBt
-	1WZUB8vcGSHCp/RARaMpBvZdFh6HxemmDDad2/8/iREwKQVY3TkRJnbOuT4wT9cO
-	FTznE/cIvuv2zVXK4fVR2K8DnHSVLyNKX+berPyciXwpieFCm/OnXHuOgq0KXzL/
-	mFZ4lA==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46s8c263x7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:57:43 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6f8ca9286d9so12858336d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 11:57:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747940262; x=1748545062;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=71LWWlp5SYfChnA55iTdDO5g05kpTKpC2r6RSF9U7JA=;
-        b=CRdAqaF/6ENd+stB2ox6hB78grRn6cfYSfUUkUe3riWSIVwtEREkpdg1jqaVkGu26H
-         XolycIzMJasg0jckQ5/vblyg5FBvO1MR82fKHzN++mYjozaMQDtwJN3aZ5iF1hfWl6R9
-         jf6nBaCh4KFyw8vlAkz5m8Oa97eBPGylSVdcFpG8vvqMiq2Jczw+B0QgtLMqT9PmPXmQ
-         iU/wxC0xV7umx4JzUnY52WqWbJr2WiLlUrlZXljhWxOR7C1eoYHaN314ChQfEjdwchIz
-         I3SSNWFtKYs9tCKt9/MnOvJOwqFPAhLjrZTe8sRtCJ6NJYkU3/K4uwt6FvtnfEoaM1lZ
-         v79g==
-X-Forwarded-Encrypted: i=1; AJvYcCWldhYiRPLtfXggAs/Ib5VxRWcfr1E7KZDMPui+4zV1UrAgOvuKpOxgfA31cShZbMteXWTAwG13vDBI9aw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVj8mV8mH8CEUGUuhmokfrDkpc1D7N8JJTHVXQZNq8OF2ZCs5E
-	kohDfS0X3qpWhnKwPGXxG0WaxMGcClvMGTJqI0q5+rFoN4nS25PwBwB6tNHGwvHu6ZgJ2hdO7/r
-	gkKKPRCtLiL0ZZVkyQAjxMIpWnSC4trn8MJUeLiOPABq49umTnkULSNAreVneTX3mEUk=
-X-Gm-Gg: ASbGncvjFF46UPaVE0cDF3OfMbIQZqRiS15R4abskRVQ2Z2craCTK/ekiaM9kgWZHPk
-	XQFmTD/Jwlk3Ajl1wlyDKkswS9BK9T232sQV7dOiHp1BlNR2hRYMmWfOEzIauVn1ddp+V/kxzkF
-	RS7OpqBJ1XX4cHlMoS5YJGcTpy6iWdB7ysY76diLTuqmBoCby8bO5d5z6A9tzI0O8fJVUyRa4fq
-	COI6JgvnjGqHD/RtMfwxv3YiXL1qbFFXQTg/VK3BDECVn+zR1QueX5YJlWIC1ViAAvcJPrszG+K
-	jPo17Y6bDMDzbQ/TuDShgs6IOvMRq4Yd6hS9xQULauf20iVhipQzzjHoaEiqfUyp3w==
-X-Received: by 2002:ad4:5f8e:0:b0:6f5:3c5e:27fc with SMTP id 6a1803df08f44-6f8b089442dmr133321806d6.4.1747940262403;
-        Thu, 22 May 2025 11:57:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH5Tg78//GXVGyUOTwSdhWdbldHlKHurX2DdCfZUSaKQB4eMLZOcnriL6F1zLK9zyfr5P5G/Q==
-X-Received: by 2002:ad4:5f8e:0:b0:6f5:3c5e:27fc with SMTP id 6a1803df08f44-6f8b089442dmr133321656d6.4.1747940262015;
-        Thu, 22 May 2025 11:57:42 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6004d4f1c90sm10947316a12.12.2025.05.22.11.57.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 May 2025 11:57:41 -0700 (PDT)
-Message-ID: <23b2c6bf-1dc5-442d-b276-9f55ba00980f@oss.qualcomm.com>
-Date: Thu, 22 May 2025 20:57:39 +0200
+	s=arc-20240116; t=1747940812; c=relaxed/simple;
+	bh=bBhYpBnnlJ48DquQjyTd36KeKeZQQqR3HpYL5/M82Ew=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=f9qcZVwlxlLu5Ygi26otRzm81iNFMBbphzKh2ieGD5wvrQFwzW1r1I7Zr9JCiK7ycl9bREHsgApvfs3jQNZ3MHJCbDTOoumjs+VmaTJ62viGpSBRdEwApr8N3beajh2e/q5eLU2YyvNNIG+hDPsb9B6SuvGUI1MwyFbBwxLNVY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 58C6C298562;
+	Thu, 22 May 2025 20:58:53 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id UZefIIiQruAo; Thu, 22 May 2025 20:58:52 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 6F172298565;
+	Thu, 22 May 2025 20:58:52 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id tlJbsa5qzCRX; Thu, 22 May 2025 20:58:52 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 4049F298562;
+	Thu, 22 May 2025 20:58:52 +0200 (CEST)
+Date: Thu, 22 May 2025 20:58:52 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: Ilya Shchipletsov <rabbelkin@mail.ru>
+Cc: linux-mtd <linux-mtd@lists.infradead.org>, 
+	David Woodhouse <dwmw2@infradead.org>, 
+	chengzhihao1 <chengzhihao1@huawei.com>, 
+	Nikita Marushkin <hfggklm@gmail.com>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	lvc-project <lvc-project@linuxtesting.org>
+Message-ID: <1348351513.83509530.1747940332116.JavaMail.zimbra@nod.at>
+In-Reply-To: <20250404080018.2472-3-rabbelkin@mail.ru>
+References: <20250404080018.2472-3-rabbelkin@mail.ru>
+Subject: Re: [PATCH] jffs2: silence lockdep warning on evict path
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: qcs615: Add support for camss
-To: Wenmeng Liu <quic_wenmliu@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, bryan.odonoghue@linaro.org,
-        todor.too@gmail.com, rfoss@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-References: <20250520-qcs615-adp-air-camss-v1-0-ac25ca137d34@quicinc.com>
- <20250520-qcs615-adp-air-camss-v1-1-ac25ca137d34@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250520-qcs615-adp-air-camss-v1-1-ac25ca137d34@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDE5MSBTYWx0ZWRfX8DDpj75BLt89
- v1gzHpyO6clTwvrjrKGDCZgBeHIOUU8OhlSMhl0wHjURcpwJLOHyR7ScGkCniJGH7jrbiK8O08Y
- Gd6pg0WRBNrnOVfzYt+vsIJbeS5e//4Aid83el4lKvyDid0eVtv/tc4T3hZ2Lg6k0KOpZAxOuh4
- CbSOk2vdY/E8/LEY8d2ogXXL/9KC7GWV/n2NjN8ZuazG5oLB/+dzaOWQhVpGSi7VuLuN9y557CC
- htCajeimlhWD9JGlXCdWQsa8P2+GfQgda1rfLfMLIqRj6Gvw54fOuEw4Fsr4ZH5c5vS2gpY3O6v
- t0VdyfNeknTAUBjWpeZi/qCLqEXr/kOBPcKscWlhOjFSSt6+nweTPKUmGdimqAZnP3FOHfkWbuB
- YL59VqRbCN2lL+M0WB08PUQyabKXdpJ8cOXJYTimjWDhz927gVnSvlalKQWouBA4WDxwaSg7
-X-Authority-Analysis: v=2.4 cv=RIuzH5i+ c=1 sm=1 tr=0 ts=682f73a7 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=op7gvYc-dbaEY5YB2yQA:9
- a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: SiOaF12PCoUqd_YW8eA9sWnJ-CoNKVS5
-X-Proofpoint-GUID: SiOaF12PCoUqd_YW8eA9sWnJ-CoNKVS5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-22_09,2025-05-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 suspectscore=0 malwarescore=0 bulkscore=0
- mlxlogscore=934 spamscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501
- adultscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505220191
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF138 (Linux)/8.8.12_GA_3809)
+Thread-Topic: jffs2: silence lockdep warning on evict path
+Thread-Index: 5mFHifbun1qI6cUBHTj3Qjf8FXuhog==
 
-On 5/20/25 10:56 AM, Wenmeng Liu wrote:
-> Add support for the camera subsystem on the QCS615 Qualcomm SoC. This
-> includes bringing up the CSIPHY, CSID, VFE/RDI interfaces.
-> 
-> QCS615 provides
-> - 2 x VFE, 3 RDI per VFE
-> - 1 x VFE Lite, 4 RDI per VFE
-> - 2 x CSID
-> - 1 x CSID Lite
-> - 3 x CSI PHY
-> 
-> Signed-off-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Ilya Shchipletsov" <rabbelkin@mail.ru>
+> An: "linux-mtd" <linux-mtd@lists.infradead.org>
+> CC: "Ilya Shchipletsov" <rabbelkin@mail.ru>, "David Woodhouse" <dwmw2@inf=
+radead.org>, "richard" <richard@nod.at>,
+> "chengzhihao1" <chengzhihao1@huawei.com>, "Nikita Marushkin" <hfggklm@gma=
+il.com>, "linux-kernel"
+> <linux-kernel@vger.kernel.org>, "lvc-project" <lvc-project@linuxtesting.o=
+rg>
+> Gesendet: Freitag, 4. April 2025 10:00:18
+> Betreff: [PATCH] jffs2: silence lockdep warning on evict path
+
+> Syzkaller detected a possible deadlock in jffs2_do_clear_inode that happe=
+ns
+> in kswapd's evict path. This is however a false positive because in
+> jffs2_evict_inode we are the only holder of inode and nobody else should =
+be
+> touching any locks of such inode.
+>=20
+> WARNING: possible circular locking dependency detected
+> 6.1.128-syzkaller-00157-gf31f96bd278e #0 Not tainted
+> ------------------------------------------------------
+> kswapd0/72 is trying to acquire lock:
+> ffff8880945d6998 (&f->sem){+.+.}-{3:3}, at: jffs2_do_clear_inode+0x56/0x5=
+70
+> fs/jffs2/readinode.c:1419
+>=20
+> but task is already holding lock:
+> ffffffff8a68b100 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0xa15/0x1510
+> mm/vmscan.c:7173
+>=20
+> which lock already depends on the new lock.
+>=20
+>=20
+> the existing dependency chain (in reverse order) is:
+>=20
+> -> #1 (fs_reclaim){+.+.}-{0:0}:
+>       __fs_reclaim_acquire mm/page_alloc.c:4719 [inline]
+>       fs_reclaim_acquire+0x100/0x150 mm/page_alloc.c:4733
+>       might_alloc include/linux/sched/mm.h:271 [inline]
+>       slab_pre_alloc_hook mm/slab.h:710 [inline]
+>       slab_alloc_node mm/slub.c:3318 [inline]
+>       slab_alloc mm/slub.c:3406 [inline]
+>       __kmem_cache_alloc_lru mm/slub.c:3413 [inline]
+>       kmem_cache_alloc+0x43/0x360 mm/slub.c:3422
+>       jffs2_do_read_inode+0x300/0x510 fs/jffs2/readinode.c:1372
+>       jffs2_iget+0x1bb/0xcb0 fs/jffs2/fs.c:276
+>       jffs2_do_fill_super+0x449/0xa60 fs/jffs2/fs.c:575
+>       jffs2_fill_super+0x27e/0x370 fs/jffs2/super.c:290
+>       mtd_get_sb+0x16f/0x220 drivers/mtd/mtdsuper.c:80
+>       mtd_get_sb_by_nr drivers/mtd/mtdsuper.c:111 [inline]
+>       get_tree_mtd+0x5ff/0x750 drivers/mtd/mtdsuper.c:164
+>       vfs_get_tree+0x8e/0x300 fs/super.c:1573
+>       do_new_mount fs/namespace.c:3056 [inline]
+>       path_mount+0x6a6/0x1e90 fs/namespace.c:3386
+>       do_mount fs/namespace.c:3399 [inline]
+>       __do_sys_mount fs/namespace.c:3607 [inline]
+>       __se_sys_mount fs/namespace.c:3584 [inline]
+>       __x64_sys_mount+0x283/0x300 fs/namespace.c:3584
+>       do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+>       do_syscall_64+0x35/0x80 arch/x86/entry/common.c:81
+>       entry_SYSCALL_64_after_hwframe+0x6e/0xd8
+>=20
+> -> #0 (&f->sem){+.+.}-{3:3}:
+>       check_prev_add kernel/locking/lockdep.c:3090 [inline]
+>       check_prevs_add kernel/locking/lockdep.c:3209 [inline]
+>       validate_chain kernel/locking/lockdep.c:3825 [inline]
+>       __lock_acquire+0x2a29/0x5320 kernel/locking/lockdep.c:5049
+>       lock_acquire kernel/locking/lockdep.c:5662 [inline]
+>       lock_acquire+0x194/0x4b0 kernel/locking/lockdep.c:5627
+>       __mutex_lock_common kernel/locking/mutex.c:603 [inline]
+>       __mutex_lock+0x14c/0x19f0 kernel/locking/mutex.c:747
+>       jffs2_do_clear_inode+0x56/0x570 fs/jffs2/readinode.c:1419
+>       evict+0x32c/0x810 fs/inode.c:705
+>       dispose_list+0xd7/0x1a0 fs/inode.c:738
+>       prune_icache_sb+0xe7/0x150 fs/inode.c:941
+>       super_cache_scan+0x38a/0x590 fs/super.c:106
+>       do_shrink_slab+0x412/0xa00 mm/vmscan.c:853
+>       shrink_slab+0x178/0x670 mm/vmscan.c:1013
+>       shrink_node_memcgs mm/vmscan.c:6147 [inline]
+>       shrink_node+0x957/0x1fb0 mm/vmscan.c:6176
+>       kswapd_shrink_node mm/vmscan.c:6968 [inline]
+>       balance_pgdat+0x8ed/0x1510 mm/vmscan.c:7158
+>       kswapd+0x5d4/0xb80 mm/vmscan.c:7418
+>       kthread+0x2e1/0x3a0 kernel/kthread.c:376
+>       ret_from_fork+0x22/0x30 arch/x86/entry/entry_64.S:295
+>=20
+> other info that might help us debug this:
+>=20
+> Possible unsafe locking scenario:
+>=20
+>       CPU0                    CPU1
+>       ----                    ----
+>  lock(fs_reclaim);
+>                               lock(&f->sem);
+>                               lock(fs_reclaim);
+>  lock(&f->sem);
+>=20
+> *** DEADLOCK ***
+>=20
+> Fix this false positive by using mutex_trylock instead of mutex_lock to
+> avoid creating a false locking dependency.
+>=20
+> jffs2_do_crccheck_inode also calls this function, with local mutex,
+> which should be safe, but to be extremely sure and to make code more
+> future-proof WARN_ON_ONCE was used.
+>=20
+> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+>=20
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Co-developed-by: Nikita Marushkin <hfggklm@gmail.com>
+> Signed-off-by: Nikita Marushkin <hfggklm@gmail.com>
+> Signed-off-by: Ilya Shchipletsov <rabbelkin@mail.ru>
 > ---
-
-[...]
-
-> +			clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-> +				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-> +				 <&camcc CAM_CC_CPHY_RX_CLK_SRC>,
-> +				 <&camcc CAM_CC_CSIPHY0_CLK>,
-> +				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY1_CLK>,
-> +				 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY2_CLK>,
-> +				 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
-> +				 <&gcc GCC_CAMERA_HF_AXI_CLK>,
-> +				 <&camcc CAM_CC_SLOW_AHB_CLK_SRC>,
-> +				 <&camcc CAM_CC_SOC_AHB_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_AXI_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_CPHY_RX_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_CSID_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_CLK_SRC>,
-> +				 <&camcc CAM_CC_IFE_1_CLK>,
-> +				 <&camcc CAM_CC_IFE_1_AXI_CLK>,
-> +				 <&camcc CAM_CC_IFE_1_CPHY_RX_CLK>,
-> +				 <&camcc CAM_CC_IFE_1_CSID_CLK>,
-> +				 <&camcc CAM_CC_IFE_1_CLK_SRC>,
-> +				 <&camcc CAM_CC_IFE_LITE_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CSID_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CLK_SRC>;
-
-Drop all _src clocks, the common clock framework has been handling
-turning these on when their children need it for 13 years now :D
-
-[...]
-
-> +			interconnects = <&gem_noc MASTER_APPSS_PROC 0
-> +					 &config_noc SLAVE_CAMERA_CFG 0>,
-
-QCOM_ICC_TAG_ACTIVE_ONLY
-
-> +					<&mmss_noc MASTER_CAMNOC_HF0 0
-> +					 &mc_virt SLAVE_EBI1 0>;
-
-QCOM_ICC_TAG_ALWAYS
-
-> +			interconnect-names = "ahb",
-> +					     "hf_0_mnoc";
+> fs/jffs2/readinode.c | 12 +++++++++++-
+> 1 file changed, 11 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/jffs2/readinode.c b/fs/jffs2/readinode.c
+> index 03b4f99614be..3d2b2e5fc2c5 100644
+> --- a/fs/jffs2/readinode.c
+> +++ b/fs/jffs2/readinode.c
+> @@ -1416,7 +1416,17 @@ void jffs2_do_clear_inode(struct jffs2_sb_info *c,=
+ struct
+> jffs2_inode_info *f)
+> =09int deleted;
+>=20
+> =09jffs2_xattr_delete_inode(c, f->inocache);
+> -=09mutex_lock(&f->sem);
 > +
-> +			interrupts = <GIC_SPI 464 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 466 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>;
-> +			interrupt-names = "csid0",
-> +					  "csid1",
-> +					  "csid_lite",
-> +					  "csiphy0",
-> +					  "csiphy1",
-> +					  "csiphy2",
-> +					  "vfe0",
-> +					  "vfe1",
-> +					  "vfe_lite";
+> +=09/*
+> +=09 * We should be the only ones having a reference to this struct
+> +=09 * jffs2_inode_info. So the locking is actually unnecessary. Besides,
+> +=09 * lockdep triggers a false-positive warning on &f->sem here about
+> +=09 * reclaim circular dependency. Play it safe and bump a warning if
+> +=09 * this doesn't hold true.
+> +=09 */
+> +=09if (WARN_ON_ONCE(!mutex_trylock(&f->sem)))
+> +=09=09return;
 > +
-> +			iommus = <&apps_smmu 0x820 0x40>,
-> +				 <&apps_smmu 0x840 0x0>,
-> +				 <&apps_smmu 0x860 0x40>;
 
-x1e defines a bunch more streams than its phy/csid count
+Hmm, I thought we have lockdep classes or other annotations to fix such iss=
+ues?
+Adding a mutex_trylock/return here feels odd.
 
-plus entries 1 and 3 are equal after the mask is applied
-
-(0x860 &~ 0x40 == 0x820 ~& 0x40 == 0x820)
-
-
-Konrad
+Thanks,
+//richard
 
