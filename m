@@ -1,179 +1,155 @@
-Return-Path: <linux-kernel+bounces-658822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632F6AC07C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:53:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3BC0AC07D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971E83A6B50
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 08:53:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B85F27A3FDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 08:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEA9281531;
-	Thu, 22 May 2025 08:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0539A2868BE;
+	Thu, 22 May 2025 08:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RnuX/zGR"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZoXyZgte"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3A9279902
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 08:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3519280309;
+	Thu, 22 May 2025 08:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747904005; cv=none; b=QheltrnoCE2bKsSay33yc/AA0z/kwUKC9fpHRiFNh5PihI688WH+23RwA/BpaI3Fg8ayVs9q/8KCKqyA4RXuSKstEpB2UkfVEcctgQ74ikOf6KTvn7YeuuS33pXzb+pf2sdZ/AwhpUThhAV5kYRskYDcH5PgppetzLTM0pGR3QI=
+	t=1747904091; cv=none; b=pMt6/zVMY1QdlvxHpSL3AxnVVS74woSsB/H9Q5tr5XmS2/acmSu914qnYPT+h0Xbq9jWzdJ8auPLCkhJTTyebN/p9/g2PDJr4IaRTgFJNifOpB6OFGUEiJ8ntqgQvbNWIfvBYIDyTZQhrNkSKEtvIK2oyOwAjOsxH8C0wfPGKDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747904005; c=relaxed/simple;
-	bh=zU/z3bLOlzuSQkcMtTCVJsX995ruiIR5eHpPKYALmb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nZBXYEw7zTqZII9kGNjXXuzZ+an968h8tm5m+BEbjTLOiQqtBaoRuniqbZBjWEJoKXinhwT3FLdjXOhUcCYS6TBFh+WeuQh8D/Lwqco19WuRkYLJ/KgMOT9kYgdS7mNtLaqU/7YNG3dIRlV43NTUFIz8WDZsk+neRWyKhvUiZ7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RnuX/zGR; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-73712952e1cso7172549b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 01:53:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747904003; x=1748508803; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wE/Nk3n7Qj543anMoi03EY1HELsp/mGZ1M/Gx4pgSIs=;
-        b=RnuX/zGRB42yAzoOnJoC9hdHdh+bsle5+JSaKcpc2ibo+JJMx9xPSbBjo7nrpIzpQc
-         U/4wrr29Xqbb/Eh5aIfwAIR4+CKP8YeWRVbx+SNaqvBoSRkPaZZ+XhmJ76Z1HY9vohx8
-         etjvMKtG6Pzrou0QopWMHprnOih2psTbhlWbnaE1O6jUfOchpt+WikIFQDJHhH1Wwdqj
-         qkIM1cfDz2WMVl2B8LduEdfOpsmlaf0kmAzVjYtpBRyl7QfIpmDDuTu2aT2w8aJUtemD
-         Iln4cfv8nqW2DHJcdbnEwX/wgqgPmHkhFdzRGbETKIpzKZAlbzI2fLhFqSM4plgjCKos
-         +BCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747904003; x=1748508803;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wE/Nk3n7Qj543anMoi03EY1HELsp/mGZ1M/Gx4pgSIs=;
-        b=LPPKH7HGfYyMQ2S7aCU/QbNCerrXbE92fM1j5PNYh+7Mi/Qfm1lpyjSv+2gLEdhets
-         MkbVrgY+9LEA6s2mPtA6t0WZWR9Kxs0HQt4twBxdD5jXuJXziDQLkRjeMUnH62JQUyme
-         d5QaXKmBMBHFqsxmF+QM+y0QdNGpL3LwDDG+Q/DLLZIj9thZsnGVaczNgYxLtZMLP7+u
-         3TccfYjT//+zCb8L8In/9c9UyxQXypHmLW4gK4BNthECJNa038jaPPpxn5ZrUXE5sH0z
-         RHw5TzigQoa9gWpFd2+r3lDJprAto2aoMJ+ZvXh519Rk0hXecilyOt/eCjhe97s0miJo
-         si9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVcxCi/tHK8e59CHZk622zvcIzV/Yhrm3EBuXAieFBu7JcLFeptFRobCk9QyGsxdI0IY6rMD2SkYv002ms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrDpIKqA5r/oLV0WBl5cvW0wM3ZVSuabVQrk/qaG4MgtflbKYX
-	Px2uFeuMyCI07Bv3FlAe89VLv/uOocKHSUeUUwYgrRx+Gj/kTdW+FRIBz38lEWL3lw==
-X-Gm-Gg: ASbGnctx6MpmIpa1qlqPAPKamqk/51GK163BXt7h0/L8epdGQGZNo3ctD+AWpuVW9zu
-	eNGCpI4u2l19TkJrHxOVgSyBdpM58PBvbMKKihUalvs2Y8Ir5NJ78rRlerWdHtGlLnP5fPjC2Aj
-	Qdwzrw6rQCqfBfim6HTmHVQxrLPEqv6KXkfq4tKzg3Lw9f7kpTUYyvoY11qiHCoRUX39rXXE5dc
-	ZbtGGvbXQoEWJvhk6fOebV1jj66FVj0s1W4ctBxl8Tnf2emkXwLl6ROYlqB/p7M6990DPpCs9fy
-	a9pEV5eKF/jo1pJ4qZLr7QfBUqzpIp/bfBDa+28L+5+5XpnnY7kXB3VUwUtf/g==
-X-Google-Smtp-Source: AGHT+IF5uWmk4PnvIThnJSvV0zNx6s2lAIFa7Qq/vftR90Qhtr6lQ7tpJ/xet55CCmVXUt9jRfsojQ==
-X-Received: by 2002:a05:6a21:3385:b0:20d:df67:4921 with SMTP id adf61e73a8af0-2170cafa33dmr33994739637.4.1747904003020;
-        Thu, 22 May 2025 01:53:23 -0700 (PDT)
-Received: from thinkpad ([120.60.130.60])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a96e589esm10810267b3a.9.2025.05.22.01.53.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 01:53:22 -0700 (PDT)
-Date: Thu, 22 May 2025 14:23:16 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Nitin Rawat <quic_nitirawa@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, 
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, bvanassche@acm.org, 
-	andersson@kernel.org, neil.armstrong@linaro.org, dmitry.baryshkov@oss.qualcomm.com, 
-	konrad.dybcio@oss.qualcomm.com, quic_rdwivedi@quicinc.com, quic_cang@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-scsi@vger.kernel.org
-Subject: Re: [PATCH V5 07/11] phy: qcom-qmp-ufs: Remove qmp_ufs_exit() and
- Inline qmp_ufs_com_exit()
-Message-ID: <qrope222shpeqvhe2dnh4p4jmznuu7tr3jh2zujwbbd3khg4yo@wm2epj5ydefc>
-References: <20250515162722.6933-1-quic_nitirawa@quicinc.com>
- <20250515162722.6933-8-quic_nitirawa@quicinc.com>
- <untqxy76skl53c55bdjz5usk4seuypjqbxkfub2qeqz42mewqr@r4cutmkvy235>
- <79d2f373-ee53-4cd2-b228-171daf3adcb7@quicinc.com>
+	s=arc-20240116; t=1747904091; c=relaxed/simple;
+	bh=1Vzg8UVPGrRwq1dC5LNbmjSyIlGe4h+JtavAxwIVD2A=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=EvTQg2EESkCG+jmYe5O2IP8ub9yLYqoTFqB/lKiGjkzEKNbMB+dKl48yI42zD7kHCCjowlB1ZWIkskuA6NuGxAarLt6l2RYuv184VE2dYeQpwqh9LXQlnmekDaRAbL8b+VT8Pi9twy2SK1OfMg2CjX3ZKG1xsRd8eBEh+7tRoxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZoXyZgte; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54M7dVU5011357;
+	Thu, 22 May 2025 08:54:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=OckLQkscblUa0jO7cYvJ9n
+	hknYHqymLVkX0FHZVQmHA=; b=ZoXyZgteMl4IgnoaMRP8steKa5R5TYnaT1ZrRG
+	xnR0r58f5Bb77/DO5T8AZ4nPHXN0mOg85UeqNdPQd73Mnn6sxeDrzBiiMpL2/Fah
+	UYAqnyqmXRzOOs7mZAKqKIhUSIuHpq9eHTLz/6QQxVra2iQC79U7sBHUCKZ5+JDx
+	hClw7a2/WdXaxNhulAu6JUCooxXwLTQ0vBt/H7i33xgc8Jfcl7Wp380ESb4agJvK
+	OmKRm5WQYJiKS642xBCyNShBIaFh8AE8ViYkAg+AuKoW6S3M1Ee7ugT3jmgtVDkf
+	aZ8etwEHI6jdK+pInoQsd/aIp/24boS1DNaNPZviY3b2lEZA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwfb5mmc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 May 2025 08:54:43 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54M8sgfI019591
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 May 2025 08:54:42 GMT
+Received: from [127.0.1.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 22 May
+ 2025 01:54:21 -0700
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+Subject: [PATCH ath-next 0/6] wifi: ath12k: handle link select and
+ inactivate
+Date: Thu, 22 May 2025 16:54:09 +0800
+Message-ID: <20250522-ath12k-sbs-dbs-v1-0-54a29e7a3a88@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <79d2f373-ee53-4cd2-b228-171daf3adcb7@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADLmLmgC/x2MSwqAMAwFryJZG6jV+ruKuFAbNQhVGhFBvLvBx
+ SwG5r0HhCKTQJs8EOli4T2oZGkC0zqEhZC9OlhjnXHW4HCumd1QRkGv1I1p8qosaypm0NERaeb
+ 7P+xAWwx0n9C/7wcvgoaVagAAAA==
+X-Change-ID: 20250520-ath12k-sbs-dbs-890937668e4f
+To: Jeff Johnson <jjohnson@kernel.org>
+CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Baochen Qiang <quic_bqiang@quicinc.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: DtFE29Z5zle4Oi0mqdMcG6Gui04oP6VP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDA4OCBTYWx0ZWRfX/nTP61xi+vJP
+ KYeiV9rSPbq693pNdZv3AQCv2BpEheN+Atala5sD+mAECWRBLFEGsAx7YRBo7BXc/+L4JX/6LSE
+ MsKS38t3VG4N6K1TvCqSKqkHj2nCRVvGf7jWE6VMWtOY8Kh8Jx+K+YTAddJOZCYe+3ERebbG7PK
+ tsHBKHNWc/kGgjhKSD5LfMuTWHFqDgt+xTpSFow9/L0INX2f+SF2+kw+Olu8+OrWs45/M80iRFe
+ +JNrletjvsY2Snp/pVn6tIz5cOYDd3C7kLQ+oZQnk1WuappgCeXdlVGCaOO1CEGK5+fw47bMNZc
+ 4oc3lpYDt48uu4lhppW8p/chZMdonDKJqgAEJt1iA0jpQpfo3p92iGUtct/gniM3YZX6M18te5f
+ qgcJ979tj3o7e61ePv9elCV1wwv5atXLthB8QMEcvMCALuMPP5WaV6Gq9HNChAG8wzkb2j8w
+X-Proofpoint-GUID: DtFE29Z5zle4Oi0mqdMcG6Gui04oP6VP
+X-Authority-Analysis: v=2.4 cv=dLCmmPZb c=1 sm=1 tr=0 ts=682ee653 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
+ a=l_BK76kwmV097mJrsh0A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-22_04,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 clxscore=1015 adultscore=0 bulkscore=0 phishscore=0 suspectscore=0
+ impostorscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=923 spamscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505220088
 
-On Thu, May 22, 2025 at 03:49:12AM +0530, Nitin Rawat wrote:
-> 
-> 
-> On 5/21/2025 7:19 PM, Manivannan Sadhasivam wrote:
-> > On Thu, May 15, 2025 at 09:57:18PM +0530, Nitin Rawat wrote:
-> > > qmp_ufs_exit() is a wrapper function. It only calls qmp_ufs_com_exit().
-> > > Remove it to simplify the ufs phy driver.
-> > > 
-> > 
-> > Okay, so you are doing it now...
-> 
-> Yes
-> 
-> > 
-> > > Additonally partial Inline(dropping the reset assert) qmp_ufs_com_exit
-> > > into qmp_ufs_power_off function to avoid unnecessary function call.
-> > > 
-> > 
-> > Why are you dropping the reset_assert()?
-> 
-> This was not aligning to Phy programming guide .
-> 
+Currently host activate all useful links:
 
-You should mention it in the description.
+	ieee80211_set_active_links(vif, ieee80211_vif_usable_links(vif))
 
-> 
-> > 
-> > > Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-> > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > > ---
-> > >   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 19 +++++--------------
-> > >   1 file changed, 5 insertions(+), 14 deletions(-)
-> > > 
-> > > diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> > > index a5974a1fb5bb..fca47e5e8bf0 100644
-> > > --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> > > +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> > > @@ -1758,19 +1758,6 @@ static void qmp_ufs_init_registers(struct qmp_ufs *qmp, const struct qmp_phy_cfg
-> > >   		qmp_ufs_init_all(qmp, &cfg->tbls_hs_b);
-> > >   }
-> > > -static int qmp_ufs_com_exit(struct qmp_ufs *qmp)
-> > > -{
-> > > -	const struct qmp_phy_cfg *cfg = qmp->cfg;
-> > > -
-> > > -	reset_control_assert(qmp->ufs_reset);
-> > > -
-> > > -	clk_bulk_disable_unprepare(qmp->num_clks, qmp->clks);
-> > > -
-> > > -	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
-> > > -
-> > > -	return 0;
-> > > -}
-> > > -
-> > >   static int qmp_ufs_power_on(struct phy *phy)
-> > >   {
-> > >   	struct qmp_ufs *qmp = phy_get_drvdata(phy);
-> > > @@ -1851,7 +1838,11 @@ static int qmp_ufs_power_off(struct phy *phy)
-> > >   	qphy_clrbits(qmp->pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
-> > >   			SW_PWRDN);
-> > > -	qmp_ufs_com_exit(qmp);
-> > > +	/* Turn off all the phy clocks */
-> > 
-> > You should drop this and below comment. They add no value.
-> 
-> Comments are actually provided for each operation within qmp_ufs_power_off
-> which actually facilitate understanding of all actions performed by the
-> function which may not be fully clear by code. Hence
-> I thought to keep the comments. But If you insist i'll remove.
-> 
+this leads to 2 issues:
 
-For complex code, comment should be added indeed. But for
-clk_bulk_disable_unprepare() and regulator_bulk_disable(), NO. It is obvious
-that they turn off clock and regulators.
+1#: If 2 links are created/activated on the same device, and both channels
+used by them fall on the same hardware MAC, throughput would be lower
+compared with even one link due to MAC switching between them.
 
-- Mani
+2#: If there are more than 2 useful links, WCN7850 firmware crashes when
+host tries to bringup the 3rd link, because firmware supports at most 2
+links for a ML connection.
 
+To address the first issue, host needs to send
+WMI_MLO_LINK_SET_ACTIVE_CMDID command to firmware such that firmware can
+deactivate one of the links. This is done in patches 4 and 5.
+
+To address the second issue, host needs to make decision to select 2
+links out of the useful links to activate. This is done in patch 6.
+
+The link select and inactivate are both based on the knowledge of hardware
+modes, which are advertised by firmware in WMI_SERVICE_READY_EXT_EVENTID
+and WMI_SERVICE_READY_EXT2_EVENTID events. Such preparation work is done
+in the first three patches.
+
+Signed-off-by: Baochen Qiang <quic_bqiang@quicinc.com>
+---
+Baochen Qiang (6):
+      wifi: ath12k: parse and save hardware mode info from WMI_SERVICE_READY_EXT_EVENTID event for later use
+      wifi: ath12k: parse and save sbs_lower_band_end_freq from WMI_SERVICE_READY_EXT2_EVENTID event
+      wifi: ath12k: update freq range for each hardware mode
+      wifi: ath12k: support WMI_MLO_LINK_SET_ACTIVE_CMDID command
+      wifi: ath12k: update link active in case two links fall on the same MAC
+      wifi: ath12k: don't activate more links than firmware supports
+
+ drivers/net/wireless/ath/ath12k/core.h |   6 +
+ drivers/net/wireless/ath/ath12k/mac.c  | 364 +++++++++++++++-
+ drivers/net/wireless/ath/ath12k/mac.h  |   2 +
+ drivers/net/wireless/ath/ath12k/wmi.c  | 759 ++++++++++++++++++++++++++++++++-
+ drivers/net/wireless/ath/ath12k/wmi.h  | 180 +++++++-
+ 5 files changed, 1305 insertions(+), 6 deletions(-)
+---
+base-commit: db5a2f8ef8d4be926d29ed62182d003110c1a6ca
+change-id: 20250520-ath12k-sbs-dbs-890937668e4f
+
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Baochen Qiang <quic_bqiang@quicinc.com>
+
 
