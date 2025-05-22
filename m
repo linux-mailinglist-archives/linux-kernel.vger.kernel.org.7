@@ -1,217 +1,203 @@
-Return-Path: <linux-kernel+bounces-659750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716A0AC1489
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:15:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AEC4AC13D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8F3A2351A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:14:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 883F83AFB37
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A69288CA2;
-	Thu, 22 May 2025 19:06:53 +0000 (UTC)
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E4B20F078;
+	Thu, 22 May 2025 18:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KZr6OBVV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B975288C1B
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3EF1E7C38
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747940812; cv=none; b=AcmwRC9/DljsJ1m8ggWpaHBwhrB2T9/8/+9M63YQvEgkByv64Lq1rObBP5inHyy7mCdYC2rkoHgfa6CijyUgqBAowP1fdsCy4G7SZFOnBfC/PKQPTdZWRxyTJqKCr3JH7u/XPzVfplKEjVsTah1/6hgVtkMAF4U10dOuYmT3UDo=
+	t=1747940369; cv=none; b=e2MgygoToPwf+tURkWg+4H2XA6AUc7NSu7/dvRr1/LuEyWK3qIMVeedBoROaxVrBqJCxkTewNNg892KOnTBgcVA8E8MqjIe97CXwK1s3Iv4ToNC4xBk7n4VZeWrddajWulPvmWT7z7RHSy+PjJKo3qMJ7PL5k7CYo+ZDH2VhwF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747940812; c=relaxed/simple;
-	bh=bBhYpBnnlJ48DquQjyTd36KeKeZQQqR3HpYL5/M82Ew=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=f9qcZVwlxlLu5Ygi26otRzm81iNFMBbphzKh2ieGD5wvrQFwzW1r1I7Zr9JCiK7ycl9bREHsgApvfs3jQNZ3MHJCbDTOoumjs+VmaTJ62viGpSBRdEwApr8N3beajh2e/q5eLU2YyvNNIG+hDPsb9B6SuvGUI1MwyFbBwxLNVY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 58C6C298562;
-	Thu, 22 May 2025 20:58:53 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id UZefIIiQruAo; Thu, 22 May 2025 20:58:52 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 6F172298565;
-	Thu, 22 May 2025 20:58:52 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id tlJbsa5qzCRX; Thu, 22 May 2025 20:58:52 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 4049F298562;
-	Thu, 22 May 2025 20:58:52 +0200 (CEST)
-Date: Thu, 22 May 2025 20:58:52 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: Ilya Shchipletsov <rabbelkin@mail.ru>
-Cc: linux-mtd <linux-mtd@lists.infradead.org>, 
-	David Woodhouse <dwmw2@infradead.org>, 
-	chengzhihao1 <chengzhihao1@huawei.com>, 
-	Nikita Marushkin <hfggklm@gmail.com>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	lvc-project <lvc-project@linuxtesting.org>
-Message-ID: <1348351513.83509530.1747940332116.JavaMail.zimbra@nod.at>
-In-Reply-To: <20250404080018.2472-3-rabbelkin@mail.ru>
-References: <20250404080018.2472-3-rabbelkin@mail.ru>
-Subject: Re: [PATCH] jffs2: silence lockdep warning on evict path
+	s=arc-20240116; t=1747940369; c=relaxed/simple;
+	bh=ur7YbUqNfAfABg/WZQGZKIefNXNm7QwnkWAijkrsaMg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gF2jzX5IWOnl69PCwdRxF2NHPZhGTZi3fdaf5kFN71HBF1YluyInMzn+aTJPyUJ+KLlExAQTeUFl2qSUB/RXM7BWN68rI/TgcvNFOugzF6ljYt0d2fl3oz8f7S9DmfC6E584CNagEsptg2JMkl4vDjgFYxgtXVAUS6Cb4kPu5BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KZr6OBVV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54MHlSs6027677
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:59:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	D3hythJW7O3Ln+CjN8TBZmcFFx5xKO2LTaidnlRHNd4=; b=KZr6OBVVTRIRwofL
+	PF04cRXBMhOQiM1kMLiIsfCxis7pzSS7wV6Kkeocb3LgfWV1Wp27h1f32ZMBu+hn
+	m4rpH7rv4DW/yh9UHWqn5KVwqjL4VUtxK1v5F3Tzp4D79g9v1sKxK1Z+gfJ72QzK
+	6xTg/eM/k1mxpNvT7eI6l2jTWlAreYjKQxnQSb8XTRD2LiqERJyqDPchRWGuT3nb
+	6ipihpJhunUY2ln5sHf45qVJlvYhBpNEBiiMKaL1NGQ451Xfd1qdnZlaHmGRIt/v
+	vGb/ZvZSGM1q8tGHCupGQLAaLnKb45sEo9uFMIoq2Mnu7t+NJGJhHU8xapdCJWFR
+	ix5eMw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf9fapg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:59:26 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5ad42d6bcso226360685a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 11:59:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747940365; x=1748545165;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D3hythJW7O3Ln+CjN8TBZmcFFx5xKO2LTaidnlRHNd4=;
+        b=rhi8Wy2LTDHY8eTlTvJYOKRN5MgRZzlhAEF57bpcNnrSV9cDut7A5jyOh1HerMx7A0
+         u8zvOJrP1gVzADnxtg+qzN9s53W3MWE2BW3BZsbJsgoIM8PAjpJlZuQPgYDuS93d7ujd
+         sxf5Km+zK9ziaJcfQSPw7qO1MKSJ/6pEj4Tjl06dYd+u47BSxXVlUyAAW4q0wAuGn1U4
+         puLK72hAN419pKQ7AsC85BzrZH4ECnb2N1QMOW2VVOU+WtR1iVh4j1PUfmU7xYO2gZzs
+         w9qpd+okJxSKBQZJqyGKUusMqi/v0GF3Qm9Ith5cAjcGdYzKxSESeqn2jgf21NFT+sbY
+         1pNg==
+X-Forwarded-Encrypted: i=1; AJvYcCXTvOthBtuqzjUG4tY5G/loWFvs7yPqorNlR+Wxreh7LvdSI+I/vIprA8wdnbWyvEN0HUFkoBNZuVOTtRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnErG4gVRdZvcqw2+0s8UnFDo2St7HuYk/3NdMhEzW3eTYIxU5
+	jyvWtDvnjm4tYbW7lq9rLcwsBYN715lHd6Xoh+QgAHWyUAzOJrF7dNb+D6spKO5nQeQq9i/bk67
+	5T887BTKX/Q5DwozPDRpcznkaw6GEOS5ilG3CSXWNIJPPfIeD4hXXPUVf2NWIMbVAJak=
+X-Gm-Gg: ASbGncsj64YZSulEYNHb/bivZCRVG2ujWtPa/hyxVGs7ooA3STO7mz5zJLoZImUkDq7
+	jYqm5Y7npkIRexf8IpY0W2Ut4eotJy1n0Fjmjfz4bp0ImeWYkH4q4u2jG0k3dV/GrL//PDjGMM6
+	Km6FZ9VU4hdI8j5gDoHgP02jUt1t3GyPYf0VjfGaQN0Mlrn7Vc041T6RQKdDn859Y40MgNN20Qq
+	yuORw3PD+xcZpj61hcxenwplrwQIAmC6RffdEUYFUZ2qOyAOHzJU8z8PdgIvSkwnJ8unyIolcD4
+	G5iiMvCMSfDmfhcyX/gydGkOHGFtJqBDXQ7ac/6+X4usXS44FG50Un3ZMtcJsPVpRA==
+X-Received: by 2002:a05:620a:6202:b0:7cd:4a08:ea12 with SMTP id af79cd13be357-7cd4a08ee21mr1100097085a.0.1747940365559;
+        Thu, 22 May 2025 11:59:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEQOAYGhe6K1LjGcBN6vbBiDnDIWsN+lmRlqcPeMkJaP1WJt5jFRdI44FsjYiPFQzGx3Bjnlw==
+X-Received: by 2002:a05:620a:6202:b0:7cd:4a08:ea12 with SMTP id af79cd13be357-7cd4a08ee21mr1100094885a.0.1747940365191;
+        Thu, 22 May 2025 11:59:25 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6005a6e746csm11208840a12.47.2025.05.22.11.59.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 May 2025 11:59:24 -0700 (PDT)
+Message-ID: <e3033f51-9837-44e6-904a-9fef6b108252@oss.qualcomm.com>
+Date: Thu, 22 May 2025 20:59:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF138 (Linux)/8.8.12_GA_3809)
-Thread-Topic: jffs2: silence lockdep warning on evict path
-Thread-Index: 5mFHifbun1qI6cUBHTj3Qjf8FXuhog==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] arm64: dts: qcom: sc7280: Add memory region for
+ audiopd
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Ling Xu <quic_lxu5@quicinc.com>, cros-qcom-dts-watchers@chromium.org,
+        andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ekansh.gupta@oss.qualcomm.com, Eugene Lepshy <fekz115@gmail.com>
+References: <20250516110029.1637270-1-quic_lxu5@quicinc.com>
+ <20250516110029.1637270-2-quic_lxu5@quicinc.com>
+ <uzyxagnmxz5tsjy32mfro2alwdpcq5kybwzcbsysul7u6adgdf@x7katw7eme6u>
+ <b90ee18a-5e88-4c36-a623-ae9447c53a46@quicinc.com>
+ <2mu3bncxoq57rxi22dyd6ys2wa5n3wmtadfvixozshxgenutai@dlkbqgplzrrd>
+ <46caa88e-790b-4733-83bc-75ed6c7ca2d8@quicinc.com>
+ <CAO9ioeVoqQhDhBW_fVU8kkt=3trV9YhEDUO0izdf8cuCDqU4Tw@mail.gmail.com>
+ <76071cc9-b052-4628-9890-239b0acd260f@oss.qualcomm.com>
+ <fd2vic3g5jjk22y7yv24mtwr27ies2my5lih3zfj6yw4zd2obo@artndh3vepbb>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <fd2vic3g5jjk22y7yv24mtwr27ies2my5lih3zfj6yw4zd2obo@artndh3vepbb>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: 3rDvhkBPSMHG6mkTIbIpyIWn2_34gQiG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDE5MSBTYWx0ZWRfX3WwJn9lszbFt
+ srWYi7jtIA4EpuRxvTVZzESxlyLtC/bQ9uz5Te76D3Ff84NIVl4kMYtASK6ojqbOPSkvq5c+DEs
+ f9imlxwh+sV2Nd6HNBu6w2N10khvAqWuy8OXl0Lr1XGTUaZrJ1xEXhTgjd0V1tPUsIN5Rhlqxpj
+ 3peg5gaN7WuQnHNeCoXKfHxHjsrmzuP3kJe2FSOdslp4r0Lz6MEtiRTJA9Z0X3ybc7OL59aw6B5
+ pNJjfn1phIWjhJX5L4f2ULfSyve0/NEKiwlEDQE2E3C7YlI7ciKhwZeXy8Z2Q0rS18cQgslTKeS
+ n5LPZ2qxVdQYQAY3zj5AqCsX/Lm3/pgeNF7Xu8JNRVzuWFDCtOExfhFJADRKSURFpZkDQeLYiGJ
+ LmE8dM9InSQ9S8lQcGXhLJPvAFpnFS2kgec7CHhe5QVjOPgqf/P9KssZQKBhnGo2YYok9Six
+X-Authority-Analysis: v=2.4 cv=GawXnRXL c=1 sm=1 tr=0 ts=682f740e cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=COk6AnOGAAAA:8 a=WcJvuXKDj7ErHkShSZUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 3rDvhkBPSMHG6mkTIbIpyIWn2_34gQiG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-22_09,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 mlxlogscore=956 lowpriorityscore=0 impostorscore=0
+ priorityscore=1501 clxscore=1015 malwarescore=0 phishscore=0 bulkscore=0
+ spamscore=0 suspectscore=0 adultscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2505220191
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Ilya Shchipletsov" <rabbelkin@mail.ru>
-> An: "linux-mtd" <linux-mtd@lists.infradead.org>
-> CC: "Ilya Shchipletsov" <rabbelkin@mail.ru>, "David Woodhouse" <dwmw2@inf=
-radead.org>, "richard" <richard@nod.at>,
-> "chengzhihao1" <chengzhihao1@huawei.com>, "Nikita Marushkin" <hfggklm@gma=
-il.com>, "linux-kernel"
-> <linux-kernel@vger.kernel.org>, "lvc-project" <lvc-project@linuxtesting.o=
-rg>
-> Gesendet: Freitag, 4. April 2025 10:00:18
-> Betreff: [PATCH] jffs2: silence lockdep warning on evict path
+On 5/22/25 8:51 PM, Dmitry Baryshkov wrote:
+> On Thu, May 22, 2025 at 08:27:40PM +0200, Konrad Dybcio wrote:
+>> On 5/22/25 2:16 PM, Dmitry Baryshkov wrote:
+>>> On Thu, 22 May 2025 at 13:44, Ling Xu <quic_lxu5@quicinc.com> wrote:
+>>>>
+>>>> 在 5/20/2025 9:53 PM, Dmitry Baryshkov 写道:
+>>>>> On Tue, May 20, 2025 at 02:41:22PM +0800, Ling Xu wrote:
+>>>>>> 在 5/17/2025 5:47 AM, Dmitry Baryshkov 写道:
+>>>>>>> On Fri, May 16, 2025 at 04:30:27PM +0530, Ling Xu wrote:
+>>>>>>>> Add reserved memory region and VMIDs for audio PD dynamic loading and
+>>>>>>>> remote heap memory requirements.
+>>>>>>>
+>>>>>>> Why? Was it not working without this heap?
+>>>>>>
+>>>>>> yes, it will not working without this heap.
+>>>>>> Memory region is required for audio PD for dynamic loading and remote heap memory
+>>>>>> requirements. For more info, please refer below patches, it has provided a more
+>>>>>> detailed explanation.
+>>>>>> https://lore.kernel.org/all/bb68da04-ef52-4172-8b6e-f4027bcc2786@oss.qualcomm.com/
+>>>>>> https://lore.kernel.org/all/effea02f-6ffb-42e9-87df-081caafab728@oss.qualcomm.com/
+>>>>>
+>>>>> This triggers a bunch of questions:
+>>>>>
+>>>>> - What is audio PD?
+>>>>>
+>>>> Audio PD is a protection domain which is running on DSP for audio
+>>>> specific processing.
+>>>>> - Is it a required component?
+>>>> yes. it is needed wherever there is some audio use cases where
+>>>> DSP audio PD dynamic loading is needed.
+>>>
+>>> Which use cases?
+>>>
+>>>>> - For which platforms ?
+>>>>>
+>>>> For platforms that require dynamic loading of DSP audio PD.
+>>>
+>>> Please be more specific, we are not playing a guessing game here.
+>>>
+>>>>> - What happens if there is a memory region, but it is not used by the
+>>>>>   driver (SM8650, SM8550).
+>>>>>
+>>>> It won't be used.
+>>>
+>>> So, what happens? DSP crash? system reboot? blue smoke coming from the SoC?
+>>>
+>>> I'm asking all those questions to understand:
+>>> - whether this is applicable to previous SC7280 platforms or just RB3Gen2 / IDP
+>>> - whether this needs to be backported or not
+>>> - whether a similar fix should be applied to other platforms.
+>>
+>> I wouldn't worry about FP5 too much (albeit it's apparently not easy
+>> to test it out and even having spent some time trying to, I couldn't
+>> figure out how these things connect), but the chromebooks may be
+>> potentially problematic. That said, we can overwrite it in sc7280-chrome
+>> if necessary
+> 
+> What about NothingPhone?
 
-> Syzkaller detected a possible deadlock in jffs2_do_clear_inode that happe=
-ns
-> in kswapd's evict path. This is however a false positive because in
-> jffs2_evict_inode we are the only holder of inode and nobody else should =
-be
-> touching any locks of such inode.
->=20
-> WARNING: possible circular locking dependency detected
-> 6.1.128-syzkaller-00157-gf31f96bd278e #0 Not tainted
-> ------------------------------------------------------
-> kswapd0/72 is trying to acquire lock:
-> ffff8880945d6998 (&f->sem){+.+.}-{3:3}, at: jffs2_do_clear_inode+0x56/0x5=
-70
-> fs/jffs2/readinode.c:1419
->=20
-> but task is already holding lock:
-> ffffffff8a68b100 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0xa15/0x1510
-> mm/vmscan.c:7173
->=20
-> which lock already depends on the new lock.
->=20
->=20
-> the existing dependency chain (in reverse order) is:
->=20
-> -> #1 (fs_reclaim){+.+.}-{0:0}:
->       __fs_reclaim_acquire mm/page_alloc.c:4719 [inline]
->       fs_reclaim_acquire+0x100/0x150 mm/page_alloc.c:4733
->       might_alloc include/linux/sched/mm.h:271 [inline]
->       slab_pre_alloc_hook mm/slab.h:710 [inline]
->       slab_alloc_node mm/slub.c:3318 [inline]
->       slab_alloc mm/slub.c:3406 [inline]
->       __kmem_cache_alloc_lru mm/slub.c:3413 [inline]
->       kmem_cache_alloc+0x43/0x360 mm/slub.c:3422
->       jffs2_do_read_inode+0x300/0x510 fs/jffs2/readinode.c:1372
->       jffs2_iget+0x1bb/0xcb0 fs/jffs2/fs.c:276
->       jffs2_do_fill_super+0x449/0xa60 fs/jffs2/fs.c:575
->       jffs2_fill_super+0x27e/0x370 fs/jffs2/super.c:290
->       mtd_get_sb+0x16f/0x220 drivers/mtd/mtdsuper.c:80
->       mtd_get_sb_by_nr drivers/mtd/mtdsuper.c:111 [inline]
->       get_tree_mtd+0x5ff/0x750 drivers/mtd/mtdsuper.c:164
->       vfs_get_tree+0x8e/0x300 fs/super.c:1573
->       do_new_mount fs/namespace.c:3056 [inline]
->       path_mount+0x6a6/0x1e90 fs/namespace.c:3386
->       do_mount fs/namespace.c:3399 [inline]
->       __do_sys_mount fs/namespace.c:3607 [inline]
->       __se_sys_mount fs/namespace.c:3584 [inline]
->       __x64_sys_mount+0x283/0x300 fs/namespace.c:3584
->       do_syscall_x64 arch/x86/entry/common.c:51 [inline]
->       do_syscall_64+0x35/0x80 arch/x86/entry/common.c:81
->       entry_SYSCALL_64_after_hwframe+0x6e/0xd8
->=20
-> -> #0 (&f->sem){+.+.}-{3:3}:
->       check_prev_add kernel/locking/lockdep.c:3090 [inline]
->       check_prevs_add kernel/locking/lockdep.c:3209 [inline]
->       validate_chain kernel/locking/lockdep.c:3825 [inline]
->       __lock_acquire+0x2a29/0x5320 kernel/locking/lockdep.c:5049
->       lock_acquire kernel/locking/lockdep.c:5662 [inline]
->       lock_acquire+0x194/0x4b0 kernel/locking/lockdep.c:5627
->       __mutex_lock_common kernel/locking/mutex.c:603 [inline]
->       __mutex_lock+0x14c/0x19f0 kernel/locking/mutex.c:747
->       jffs2_do_clear_inode+0x56/0x570 fs/jffs2/readinode.c:1419
->       evict+0x32c/0x810 fs/inode.c:705
->       dispose_list+0xd7/0x1a0 fs/inode.c:738
->       prune_icache_sb+0xe7/0x150 fs/inode.c:941
->       super_cache_scan+0x38a/0x590 fs/super.c:106
->       do_shrink_slab+0x412/0xa00 mm/vmscan.c:853
->       shrink_slab+0x178/0x670 mm/vmscan.c:1013
->       shrink_node_memcgs mm/vmscan.c:6147 [inline]
->       shrink_node+0x957/0x1fb0 mm/vmscan.c:6176
->       kswapd_shrink_node mm/vmscan.c:6968 [inline]
->       balance_pgdat+0x8ed/0x1510 mm/vmscan.c:7158
->       kswapd+0x5d4/0xb80 mm/vmscan.c:7418
->       kthread+0x2e1/0x3a0 kernel/kthread.c:376
->       ret_from_fork+0x22/0x30 arch/x86/entry/entry_64.S:295
->=20
-> other info that might help us debug this:
->=20
-> Possible unsafe locking scenario:
->=20
->       CPU0                    CPU1
->       ----                    ----
->  lock(fs_reclaim);
->                               lock(&f->sem);
->                               lock(fs_reclaim);
->  lock(&f->sem);
->=20
-> *** DEADLOCK ***
->=20
-> Fix this false positive by using mutex_trylock instead of mutex_lock to
-> avoid creating a false locking dependency.
->=20
-> jffs2_do_crccheck_inode also calls this function, with local mutex,
-> which should be safe, but to be extremely sure and to make code more
-> future-proof WARN_ON_ONCE was used.
->=20
-> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
->=20
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Co-developed-by: Nikita Marushkin <hfggklm@gmail.com>
-> Signed-off-by: Nikita Marushkin <hfggklm@gmail.com>
-> Signed-off-by: Ilya Shchipletsov <rabbelkin@mail.ru>
-> ---
-> fs/jffs2/readinode.c | 12 +++++++++++-
-> 1 file changed, 11 insertions(+), 1 deletion(-)
->=20
-> diff --git a/fs/jffs2/readinode.c b/fs/jffs2/readinode.c
-> index 03b4f99614be..3d2b2e5fc2c5 100644
-> --- a/fs/jffs2/readinode.c
-> +++ b/fs/jffs2/readinode.c
-> @@ -1416,7 +1416,17 @@ void jffs2_do_clear_inode(struct jffs2_sb_info *c,=
- struct
-> jffs2_inode_info *f)
-> =09int deleted;
->=20
-> =09jffs2_xattr_delete_inode(c, f->inocache);
-> -=09mutex_lock(&f->sem);
-> +
-> +=09/*
-> +=09 * We should be the only ones having a reference to this struct
-> +=09 * jffs2_inode_info. So the locking is actually unnecessary. Besides,
-> +=09 * lockdep triggers a false-positive warning on &f->sem here about
-> +=09 * reclaim circular dependency. Play it safe and bump a warning if
-> +=09 * this doesn't hold true.
-> +=09 */
-> +=09if (WARN_ON_ONCE(!mutex_trylock(&f->sem)))
-> +=09=09return;
-> +
+I got Nothing to say, we can ask +Eugene to test it
 
-Hmm, I thought we have lockdep classes or other annotations to fix such iss=
-ues?
-Adding a mutex_trylock/return here feels odd.
+But I suppose you should be able to check if 845/8150 needs it
+and we can probably assume the base-7280's config matches
 
-Thanks,
-//richard
+Konrad
 
