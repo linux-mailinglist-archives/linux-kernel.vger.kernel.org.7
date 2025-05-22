@@ -1,163 +1,113 @@
-Return-Path: <linux-kernel+bounces-659476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9460AC10D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:15:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311B4AC10D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B154A5028A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:15:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3A93A7EEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE09929A9EA;
-	Thu, 22 May 2025 16:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="B9bi2B7C";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uLmBJdr8"
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADE01494DF;
-	Thu, 22 May 2025 16:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9775B29A330;
+	Thu, 22 May 2025 16:15:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE9686358;
+	Thu, 22 May 2025 16:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747930522; cv=none; b=doaGAPbQQ17bpJd01v9Ta+ij+rjDGm9f1076NZZcmWOSLG/XTrUASfEZPCL5Ag3gdHNJXk5K5rxKdRcDVEcdFMGeL93/5PX35D653RIpeTWTT8vArD8d5cIEgGqenYHnMre7KPvLkb5cDrEjginCl3cZvT3Rrjwn/71LHVR4ajg=
+	t=1747930514; cv=none; b=leUn1qh8Cf+jOwwayjRAgkcG+xQGSyVBg7w41tkTOvHoE3ucCDAJYPkspPVgnKs933/xMykYXkGz6HltlXSFDlMMWig8EV8SPvMfce4EVx8ZQXTV7inT+GcBCHlPPYFAcF2OGJsTPBeX/PTKPOT7Muug3ztsUoy2DkeHJqgpAyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747930522; c=relaxed/simple;
-	bh=tQIbf2HlOErPFVkOx0MHQsWayH4MzvMxKiwqgNM+gIw=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=LQ6RlSAlS9QnlioysmXdV7aHl3osgV/gPj/Qq6EjFVAPenqR5jD5wgyA42wVEPpV/jXz8xv2Y8UHgDXtulZElXdqINpET+AaS2TkoTEvsQ8KyRx6HPFLZeXdxU2OrDMejW/pZIevuc3sU6kFT1VkhAFV6zqL+hy/4EQ2CBAacXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=B9bi2B7C; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uLmBJdr8; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 0CE1B1140132;
-	Thu, 22 May 2025 12:15:18 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-04.internal (MEProxy); Thu, 22 May 2025 12:15:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1747930518; x=1748016918; bh=MBTpQbywQFLmTTQkFgXTxm8iWE7BxybC
-	g7tJBMmOGUE=; b=B9bi2B7CnXLp+kb3svPCNRju5PNb1KDnU3lYD+Av3i6+nC9u
-	ZvsKUnNz8B3qR+bpqQhrRkJ/tNK/EPeHwR3q0HvbrP4o5t0ZI9NOBGq8SAd97b4U
-	IRk0o5K6L/EVV3clXwO75WQyPrYaN+AOVlkaJAgWowzoiV9WHZwKnpxyMIB96H2u
-	Xz1JKahUhemA57TD5aQlD12gabc5tSKsLg1m5JKrSPZrhx6UwNv4kcHAi91tBJGk
-	QVrN9HXlxmP8FOOigVYyOxreG4sndqgq9mdd7SgoRWykdarUtQr/3KKd/di1oLmT
-	Bu01KhgXsmm+Y3YkYzmBzq37R3DpLTPkpbMyag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1747930518; x=
-	1748016918; bh=MBTpQbywQFLmTTQkFgXTxm8iWE7BxybCg7tJBMmOGUE=; b=u
-	LmBJdr8kFFwLUwi/cjQSCYXQVB9Uz1AyTJsKsdyUvCLeV4Cajkel7vYFbr44H8H2
-	2wN6DGAWhh0bX6dVycyKg0CVxvxqVL660C+WECr9YRhSk/fdJH59JJvU+dkLQqjx
-	r65gVedaz3Rd1TAa+86Y35yvz+1WFbs4KS8AFegqg6cBGiEcCFV5xjPZ4ZWS9Ols
-	AYNOnNxia1ESHyABFa1SymftWehQlH8CDYfTqottz1EMpfTVpjzMdh7cOcRCXc51
-	zL3TFaEUM2SiA7uYx6AKQhvK04FNd8ew5BffznD3NgMN9p1yCsoAxD1KJgoBZYyQ
-	ul24bFzAir4OBJUQFh94g==
-X-ME-Sender: <xms:lE0vaMLwUSNRHe9rOlIek5IH5yF1gV8ngvEu7TxwvM_2pAWd44KyeQ>
-    <xme:lE0vaMLq_x5JbBPSX3_vyoDwGlpR8hotcQFKCwrTyPXFDdIsKBSn-ICtAL5soh1sD
-    PEY4DxEt_yo36F9Pfs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdeigedvucdltddurdegfedvrddttd
-    dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
-    nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
-    enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgj
-    fhfutgfgsehtjeertdertddtnecuhfhrohhmpedfufhvvghnucfrvghtvghrfdcuoehsvh
-    gvnhesshhvvghnphgvthgvrhdruggvvheqnecuggftrfgrthhtvghrnhepleefteeugedu
-    udeuudeuhfefheegveekueefffdvffektdffffelveffvddvueffnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshhvvghnsehsvhgvnhhpvght
-    vghrrdguvghvpdhnsggprhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtoheprhhmkhdokhgvrhhnvghlsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghp
-    thhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopehsvggsrghsthhirghnrd
-    hrvghitghhvghlsegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohepnhgvrghlsehg
-    ohhmphgrrdguvghvpdhrtghpthhtohepjhesjhgrnhhnrghurdhnvghtpdhrtghpthhtoh
-    eptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdought
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehmrgiisehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:lU0vaMuYGb6UxDNM1d0uvsMQ1SVzVN0tQzwa7-l5gpNzDQ3Ywa-1YA>
-    <xmx:lU0vaJbcMxqM-lsGnAR5bi1sA-GIq1fseQpq0MuUrw8aihaAhFgVaw>
-    <xmx:lU0vaDZ0z2pFdHEn4tFzNMqjza0UtBIudtqWGeF_bzARYUjoBzHDFg>
-    <xmx:lU0vaFCba1PF5PlMgKRZ3JWfKdbvKkCHSNIDnChfdYzrmXHTxSSsdQ>
-    <xmx:lk0vaFK4eE6CWoBCW1Z_aUsWMLN7jZMKiOpnCa_bOWHa5-zsFSGz4dof>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D14D01060063; Thu, 22 May 2025 12:15:16 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1747930514; c=relaxed/simple;
+	bh=B86oQzXDGwPGfXAvGevtUP+BpvzTXxAlz1S8MFh34Us=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b4O0+sVXLayAAnXQym913ogFHPeUuwnSuJdivn0OqCrtoTLKcifHawioCzcs/8bmF/y68kprIuyZ2k1r8fcNxLnKIwq+Whi9kaDU5W/gU9yB6Ge2ZxNz1zpmGUt3f6+A8AXDLWVkIv6Wyo/Gktr6j6nnWzKrQQ4hFvagN9sdQwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 312CA1A2D;
+	Thu, 22 May 2025 09:14:56 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.52])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D9E8D3F5A1;
+	Thu, 22 May 2025 09:15:07 -0700 (PDT)
+Date: Thu, 22 May 2025 17:15:02 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Leo Yan <leo.yan@arm.com>, linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v22 2/5] arm64: el2_setup.h: Make __init_el2_fgt labels
+ consistent, again
+Message-ID: <aC9NhvYzajduVm7y@e133380.arm.com>
+References: <20250520-arm-brbe-v19-v22-0-c1ddde38e7f8@kernel.org>
+ <20250520-arm-brbe-v19-v22-2-c1ddde38e7f8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T6f92ed75002c46d1
-Date: Thu, 22 May 2025 18:14:56 +0200
-From: "Sven Peter" <sven@svenpeter.dev>
-To: "Sebastian Reichel" <sebastian.reichel@collabora.com>
-Cc: "Janne Grunau" <j@jannau.net>, "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
- "Neal Gompa" <neal@gompa.dev>, "Hector Martin" <marcan@marcan.st>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Lee Jones" <lee@kernel.org>,
- "Marc Zyngier" <maz@kernel.org>, "Russell King" <rmk+kernel@armlinux.org.uk>,
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Message-Id: <706858ca-7ebf-4419-a096-3907aab923bf@app.fastmail.com>
-In-Reply-To: 
- <gk656zq44i6ls6bbcb6qpd42typzkw3hqbft6b6rvfaw5aocsd@2fsiokbcnbtf>
-References: <20250515-smc-6-15-v6-0-c47b1ef4b0ae@svenpeter.dev>
- <20250515-smc-6-15-v6-7-c47b1ef4b0ae@svenpeter.dev>
- <gk656zq44i6ls6bbcb6qpd42typzkw3hqbft6b6rvfaw5aocsd@2fsiokbcnbtf>
-Subject: Re: [PATCH v6 07/10] power: reset: macsmc-reboot: Add driver for rebooting via
- Apple SMC
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250520-arm-brbe-v19-v22-2-c1ddde38e7f8@kernel.org>
 
-Hi Sebastian,
+On Tue, May 20, 2025 at 05:27:37PM -0500, Rob Herring (Arm) wrote:
+> From: Anshuman Khandual <anshuman.khandual@arm.com>
+> 
+> Commit 5b39db6037e7 ("arm64: el2_setup.h: Rename some labels to be more
+> diff-friendly") reworked the labels in __init_el2_fgt to say what's
+> skipped rather than what the target location is. The exception was
+> "set_fgt_" which is where registers are written. In reviewing the BRBE
+> additions, Will suggested "set_debug_fgt_" where HDFGxTR_EL2 are
+> written. Doing that would partially revert commit 5b39db6037e7 undoing
+> the goal of minimizing additions here, but it would follow the
+> convention for labels where registers are written.
+> 
+> So let's do both. Branches that skip something go to a "skip" label and
+> places that set registers have a "set" label. This results in some
+> double labels, but it makes things entirely consistent.
+> 
+> While we're here, the SME skip label was incorrectly named, so fix it.
+> 
+> Reported-by: Will Deacon <will@kernel.org>
+> Cc: Dave Martin <Dave.Martin@arm.com>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> This one can be applied even if the rest of the series is not.
+> 
+> v22:
+>  - New patch
+> ---
+>  arch/arm64/include/asm/el2_setup.h | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
+> index ebceaae3c749..30f57b0334a3 100644
+> --- a/arch/arm64/include/asm/el2_setup.h
+> +++ b/arch/arm64/include/asm/el2_setup.h
+> @@ -204,19 +204,21 @@
+>  	orr	x0, x0, #(1 << 62)
+>  
+>  .Lskip_spe_fgt_\@:
+> +
+> +.Lset_debug_fgt_\@:
 
-On Thu, May 22, 2025, at 15:06, Sebastian Reichel wrote:
-> Hi,
->
-> On Thu, May 15, 2025 at 06:21:19AM +0000, Sven Peter via B4 Relay wrote:
->> From: Hector Martin <marcan@marcan.st>
->> 
->> This driver implements the reboot/shutdown support exposed by the SMC
->> on Apple Silicon machines, such as Apple M1 Macs.
->> 
+Dangling label?  There doesn't seem to be any branch to it in this
+series, unless I've missed something.
 
 [...]
 
->> +
->> +static int macsmc_reboot_probe(struct platform_device *pdev)
->> +{
->> +	struct apple_smc *smc = dev_get_drvdata(pdev->dev.parent);
->> +	struct macsmc_reboot *reboot;
->> +	int ret, i;
->> +
->> +	/* Ignore devices without this functionality */
->> +	if (!apple_smc_key_exists(smc, SMC_KEY(MBSE)))
->> +		return -ENODEV;
->
-> Is that a leftover? I would expect that you do not have the
-> 'apple,smc-reboot' sub-device described in DT for such a case.
-
-Yup, that's another leftover, will remove it for v7 as well.
-
->
-> Otherwise
->
-> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-
-
-Thanks for the review!
-
-
-Sven
+Cheers
+---Dave
 
