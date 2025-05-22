@@ -1,131 +1,234 @@
-Return-Path: <linux-kernel+bounces-659839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A658BAC1593
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:36:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95286AC159C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEA655043AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:36:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6160188C47E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6231E23E336;
-	Thu, 22 May 2025 20:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7429241CAF;
+	Thu, 22 May 2025 20:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="EmodXX6G"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MsOfove4"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAF323C4F7
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 20:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F41723E344;
+	Thu, 22 May 2025 20:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747946143; cv=none; b=kY5PmC3D0IjQX7EUJY8wY1f+gNryc4M2vZZcqBzYd0SWqegiqdHJOf27F+7HpEIqGqfloygcdDzvPxo84k+Yl46o9b7OPqowLURBQ0cm9x8TcCZTaR2kVj04GV1uk1A8B0W9cjOjCkMQi4dZJJ1V3k5HYC6muM+vt/dltI1mW+U=
+	t=1747946502; cv=none; b=KscN7V4TRY7Hr2xWhtpwNzY/CdJBWEayg4F6GDKGCEpSmd8AwgeWDnI2Nu9+EPwUw37YpIuAPL9ofp20WNtzlD4QZdYiKz96aJpOOZpeLrp+EEv0WXJno4F9m9oiL9vdBD1gse8kbDsmSts+ci/uMTYWaKkzr224Vluyk4+npzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747946143; c=relaxed/simple;
-	bh=Kfu3qjguXcD15PsXrkFssgDsTb4P7cLTlIpPbs5OhkA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hMyZzz/LOPruP4N7j4697qlCfM4IaviElZThtlOyYBFH9ODeySR0qnEFd33stXhBxHrmCuPj5aacsq3ph1koFT2jyZHKDNah9/2jdOtkqI0hVuUyklY1n245JRw27bCyzs1hVm7MyyPAVTg01QDwN5GG2cDhuWwjLdT2EIac6Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=EmodXX6G; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3081fe5987eso7034172a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 13:35:41 -0700 (PDT)
+	s=arc-20240116; t=1747946502; c=relaxed/simple;
+	bh=DY4mrB6YDD//Bfgcx9Eh8hKnn2LDA9Ci4LgBPodML5w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kG6x2xntQ03KS6crkPvnMpYaz0gami34LY2TwiBvxPZy3BiJ2SGTiyg/6mEfTdzt/lbGAl8i51poBf73rXpIXmVHz+AaSPjHo7MvKRBFDg7h6FscnlYtwWMjwdI3yQkk5hCXbpLif5Rj8/vdDDHVtp98FZJ1SOjL0xQnLZI2po4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MsOfove4; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5242f137a1eso2627024e0c.1;
+        Thu, 22 May 2025 13:41:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1747946141; x=1748550941; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VtEdIrem9+Yu9wt2wQL5f6sWXSENwBasckRwFklDCAs=;
-        b=EmodXX6GOsjziBt63toFQYDVo+ze5Gs8xvGtwStneRItik17ii+Zm+0u5XfDznzJDl
-         4T+gDJKRf4zacs1SJ0wsLl4qNYcUfgSMmeR2WRUTo2QJxnK+RS89gchZBPMiR2wf3Gxa
-         X5IgK/BwKzm+A9zjs4TwQWbwc/yJviG8j9RWStmPADYyl/fjiEcklZgcs0qBgf5kebEK
-         0QfuUc/H/gbtkSyRGAKkt344UGqxY4ek24fkcLOIIOleMk4uy90q+749kqz/W0BDaxlu
-         MErYTa6WYFCwvLzs3quUtARKP73ntj/Dy75VHh5Hpx4/KJMVqOUzXjjMH0NhyoXX3kd8
-         ACtQ==
+        d=gmail.com; s=20230601; t=1747946499; x=1748551299; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UOJ++JRwDLRv5kHakUABnXwxcqziSYlZ6Fbqfxdk8HU=;
+        b=MsOfove4G3sp2Xxwh438a+A+h71/RLoaAmm7q9Z941hhu04/wA7/zuL7hls4Yrd86a
+         RM/JB5KGDVJjd4jgEh/Dk0d3TFJ9vFGE6O9sX4/0kBMfzuqdbJ4pD9ilWVMkLGVwykOY
+         m5s96J/cNOxxRETUufckgtvD1ZF98FXjr2f5s2YgGntk8h2CMIGgPbQXCYtw8BYHFTq4
+         dShnUfWUpp+3HlGSpA95mkuxmniLMaUvTvdDafTZjKg9ZV52FY4lYAfKSauPVlz+wL9J
+         lRDxSmivYZNWbK/hxXynjo/MUPAIOVZukErKO4q8XgITyxE/vO7emn3RzHGXsPB4Kpg2
+         Kv+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747946141; x=1748550941;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VtEdIrem9+Yu9wt2wQL5f6sWXSENwBasckRwFklDCAs=;
-        b=B+8et83MVd/+P56JDCUmUTpfR4u5NCnmAQ8T0PeS5wL2Gx2TJF6bKiTc8YIoKaHXIo
-         9jMANJImiWo7YMM8oypi69Mxa7gAW9piJcqkGrZ328lMfiI7btIBtZfo2t3neO8dLsyn
-         4r+e/+jovBRHPmZPJT6E/DiiBCvTyEihS2kskz8/6rBFCcpkzV5wamb5jBZVpb6w0GNQ
-         yaCZdDmOkT1SEuJKUVY0JSFW36uZyoqGdrjlaI2ON9DB0oGPx+dq+khfJhEl9cIjXuyz
-         W64ZERmJQ4daQ+HQQa8qnQ7pNmsMN4LoZAdZc7ytSDbPkByaATA2g6JyFW7f0v8M4/HQ
-         ZIOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKWUt7BGvvHV05mL2muzYJ17S5zctRiDOWDLIl4jAjFm2s68JgLtF6ux36+Aqn1q9Wj/mj9pkJ0rFw4pc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKmpXtUGoZCJlBc95s+ALS+Rl+51AN5X41LOmhRMcgW7bKIhz/
-	3IbP/LsQLhtXq2WuS31k0d4uwqpoFiIsiQsmo+qJUgBMsKj5sVTQuMcDl4DHTmESc9jusrH6F3K
-	5W3/D
-X-Gm-Gg: ASbGncsGuRC83soETn/ffEYPmH7d9e7JGZnO1tTRQT6c8slnozYijaJlIWLKBXTHKgH
-	MbHBX8wrPz/3EO1TpysNIGpOWFjCyg315GquYLBpddruYsR07GpxwvBD0/5yig+/qsPRZEEcF9E
-	w7keMbx6nLA62EyYT/UkOji1NTYBUMpBkEGqGG87Hs74FbaxIKSFQpZK3hl+88zYONT2s08pASL
-	h8B0nYz/7mtp1ZA3UtQ+nPfamre5q6G8iOFVcPhhk5ffKDWDZ4KK7dXQ85u5oPf8chM1Z6KcSZS
-	l3kkUnCV0L3sKKJ0J/ktOE/GKh19ua5XoItHizAKDb86STOEPSGvONmNk4TDDGy4
-X-Google-Smtp-Source: AGHT+IGqDOgucStiU9mIVygqIjkW9gQFkzXHNqcolrSvYh0x1SWTXJ0keMr/XGvbvYLot1jB1dLQqg==
-X-Received: by 2002:a17:90b:3dc7:b0:310:8d73:d9d9 with SMTP id 98e67ed59e1d1-3108d73da51mr15859023a91.18.1747946141494;
-        Thu, 22 May 2025 13:35:41 -0700 (PDT)
-Received: from atishp.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f365b229csm5932754a91.10.2025.05.22.13.35.40
+        d=1e100.net; s=20230601; t=1747946499; x=1748551299;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UOJ++JRwDLRv5kHakUABnXwxcqziSYlZ6Fbqfxdk8HU=;
+        b=I44vs/wZaAfi0IO88ycHlDlX7nxfZtab6YvuefNJ6xcL6yJCgkDsseBe5dt1D9jmxt
+         Ss4itZbn8UfihgJeqaNm4fzWWshqczN2yESU7E405tdXbOqM3FTnRVh+hcn0zBoVsoBJ
+         Hy6Duq2t+Qw+gfPx7qsZ48VAQ+VcNDl1YCjMlkk7mUrmCX/iuAdzynLdabWa7aPM5/vC
+         8gcQ1mhbClwDw1a7ypuiw3AfEBHeQPbp2kAm9kxzk3TF7VpG6GhKwK0KSCoPOkAq1KK/
+         atQjXcYgXcgEXkykKR2xGgefN+SR/m6+VD7FdCZdms7Vdwj4PnfmvQ29JSW1MbzHqx5i
+         MTFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUH+zmgubuoSQLPavcVwQ/smzG5M9Fh0ktw7c4AhMGg1LgimSyf07HJfV+BwalPry3Gkqe31G6YdIsm@vger.kernel.org, AJvYcCUzFNQG6G/tlCw+NqoRIe6zWJxCGrWy7kNP04fE/8FMD/S1DBDUCQe3/4J7+YlXimXGE6Wa600UvPiOl6xS@vger.kernel.org, AJvYcCWdwQZf8xuMqhiiqjDLHPnWuuS3DLteKT5vJpr1BOXPaF3fYFP+jWQcp7mw9I3I/lugodwztj9FWr1y@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNE86biQ4ZrK6kPaNmB1QP5YS89AQE153eWv/TZl7W8iSrHGaQ
+	TLeNXLqSCQ6TuLUtHHQqFM/E0Aj+NPVxYjzBrCNhLabaarZMaKgXCNnF
+X-Gm-Gg: ASbGnctigaXXXWQlZPThgOu3vLKW2UraDgkocHOR+wOdoM846gLmQXV2gUH61dU9Kic
+	kkoVGtUWoTwJiGSPu1td98Yj8kgZJWsFzjZFGYiYUTJVx3asFAvXmlHsrrV2XYmM0rRIR07R+ES
+	JZXpr7/8QZW5aGMayXr+vnhrGe5jPIKsHvsFqVi2NIOH3b713FwTANUmQWKXEnQ0WKV9k9xaYpz
+	3DXVwUr/7Vkf8Do2oH6/BcuslAH5d89RS2dFkskUgH+eaPrwaIUsWsfCmQ/8pGgD4bz1TGi17Oa
+	MebnMjGRqRPzxTv7pcF2SfFCOUyuoAiZgBP2vExBO3T10FnQbfgAGD+AqTXOXfwuHDpH2EEBrYY
+	=
+X-Google-Smtp-Source: AGHT+IEPTYGwYNGHl1Brz2nJoKhimJ3nW2UXmVoXuR/6aFxu/hxMQ1+VbCl8CocBg5N5v8SR2crwhg==
+X-Received: by 2002:a05:6122:792:b0:529:2644:9118 with SMTP id 71dfb90a1353d-52dbcde8621mr23702729e0c.9.1747946499031;
+        Thu, 22 May 2025 13:41:39 -0700 (PDT)
+Received: from localhost.localdomain ([2804:14d:4c64:81ec:7409:107a:a63b:a3da])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52dba94000esm12435697e0c.12.2025.05.22.13.41.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 13:35:41 -0700 (PDT)
-From: Atish Patra <atishp@rivosinc.com>
-Date: Thu, 22 May 2025 13:35:29 -0700
-Subject: [PATCH v2 5/5] RISC-V: KVM: Remove the boot time enabling of
- hstateen bits
+        Thu, 22 May 2025 13:41:38 -0700 (PDT)
+From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+To: jic23@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org
+Cc: ~lkcamp/patches@lists.sr.ht,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] dt-bindings: iio: adc: st,spear600-adc: txt to yaml format conversion.
+Date: Thu, 22 May 2025 17:37:16 -0300
+Message-ID: <20250522204130.21604-1-rodrigo.gobbi.7@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250522-kvm_lazy_enable_stateen-v2-5-b7a84991f1c4@rivosinc.com>
-References: <20250522-kvm_lazy_enable_stateen-v2-0-b7a84991f1c4@rivosinc.com>
-In-Reply-To: <20250522-kvm_lazy_enable_stateen-v2-0-b7a84991f1c4@rivosinc.com>
-To: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Atish Patra <atishp@rivosinc.com>
-X-Mailer: b4 0.15-dev-42535
+Content-Transfer-Encoding: 8bit
 
-All the existing hstateen bits can be enabled at runtime upon
-first access now. Remove the default enabling at bootime now.
+Straight forward conversion from spear-adc.txt into yaml format.
 
-Signed-off-by: Atish Patra <atishp@rivosinc.com>
+Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
 ---
- arch/riscv/kvm/vcpu.c | 10 ----------
- 1 file changed, 10 deletions(-)
+Changelog:
+v3: some yaml style, constraints and units pointed at v2.
+    also, remove duplicated ref at MAINTAINERS file
+v2: https://lore.kernel.org/linux-devicetree/20250430020248.26639-1-rodrigo.gobbi.7@gmail.com/
+v1: https://lore.kernel.org/linux-devicetree/20250423022956.31218-1-rodrigo.gobbi.7@gmail.com/
+---
+ .../bindings/iio/adc/st,spear600-adc.yaml     | 69 +++++++++++++++++++
+ .../bindings/staging/iio/adc/spear-adc.txt    | 24 -------
+ MAINTAINERS                                   |  1 -
+ 3 files changed, 69 insertions(+), 25 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/st,spear600-adc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/staging/iio/adc/spear-adc.txt
 
-diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-index 02635bac91f1..aa8f7f67646a 100644
---- a/arch/riscv/kvm/vcpu.c
-+++ b/arch/riscv/kvm/vcpu.c
-@@ -562,16 +562,6 @@ static void kvm_riscv_vcpu_setup_config(struct kvm_vcpu *vcpu)
- 	    !riscv_isa_extension_available(isa, SVADE))
- 		cfg->henvcfg |= ENVCFG_ADUE;
- 
--	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SMSTATEEN)) {
--		cfg->hstateen0 |= SMSTATEEN0_HSENVCFG;
--		if (riscv_isa_extension_available(isa, SSAIA))
--			cfg->hstateen0 |= SMSTATEEN0_AIA_IMSIC |
--					  SMSTATEEN0_AIA |
--					  SMSTATEEN0_AIA_ISEL;
--		if (riscv_isa_extension_available(isa, SMSTATEEN))
--			cfg->hstateen0 |= SMSTATEEN0_SSTATEEN0;
--	}
+diff --git a/Documentation/devicetree/bindings/iio/adc/st,spear600-adc.yaml b/Documentation/devicetree/bindings/iio/adc/st,spear600-adc.yaml
+new file mode 100644
+index 000000000000..dd9ec3038703
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/st,spear600-adc.yaml
+@@ -0,0 +1,69 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/adc/st,spear600-adc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ST SPEAr ADC device driver
++
++maintainers:
++  - Jonathan Cameron <jic23@kernel.org>
++
++description: |
++  Integrated ADC inside the ST SPEAr SoC, SPEAr600, supporting
++  10-bit resolution. Datasheet can be found here:
++  https://www.st.com/resource/en/datasheet/spear600.pdf
++
++properties:
++  compatible:
++    enum:
++      - st,spear600-adc
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  sampling-frequency:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 2500000
++    maximum: 20000000
++    description:
++      Default sampling frequency of the ADC in Hz.
++
++  vref-external:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 1000
++    maximum: 2800
++    description:
++      External voltage reference in milli-volts. If omitted the internal voltage
++      reference will be used.
++
++  average-samples:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 0
++    maximum: 15
++    default: 0
++    description:
++      Number of samples to generate an average value. If omitted, single data
++      conversion will be used.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - sampling-frequency
++
++additionalProperties: false
++
++examples:
++  - |
++    adc@d8200000 {
++        compatible = "st,spear600-adc";
++        reg = <0xd8200000 0x1000>;
++        interrupt-parent = <&vic1>;
++        interrupts = <6>;
++        sampling-frequency = <5000000>;
++        vref-external = <2500>;	/* 2.5V VRef */
++    };
+diff --git a/Documentation/devicetree/bindings/staging/iio/adc/spear-adc.txt b/Documentation/devicetree/bindings/staging/iio/adc/spear-adc.txt
+deleted file mode 100644
+index 88bc94fe1f6d..000000000000
+--- a/Documentation/devicetree/bindings/staging/iio/adc/spear-adc.txt
++++ /dev/null
+@@ -1,24 +0,0 @@
+-* ST SPEAr ADC device driver
 -
- 	cfg->hedeleg = KVM_HEDELEG_DEFAULT;
- 	if (vcpu->guest_debug)
- 		cfg->hedeleg &= ~BIT(EXC_BREAKPOINT);
-
+-Required properties:
+-- compatible: Should be "st,spear600-adc"
+-- reg: Address and length of the register set for the device
+-- interrupts: Should contain the ADC interrupt
+-- sampling-frequency: Default sampling frequency
+-
+-Optional properties:
+-- vref-external: External voltage reference in milli-volts. If omitted
+-  the internal voltage reference will be used.
+-- average-samples: Number of samples to generate an average value. If
+-  omitted, single data conversion will be used.
+-
+-Examples:
+-
+-	adc: adc@d8200000 {
+-		compatible = "st,spear600-adc";
+-		reg = <0xd8200000 0x1000>;
+-		interrupt-parent = <&vic1>;
+-		interrupts = <6>;
+-		sampling-frequency = <5000000>;
+-		vref-external = <2500>;	/* 2.5V VRef */
+-	};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 906881b6c5cb..96760a05a5c5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -23213,7 +23213,6 @@ STAGING - INDUSTRIAL IO
+ M:	Jonathan Cameron <jic23@kernel.org>
+ L:	linux-iio@vger.kernel.org
+ S:	Odd Fixes
+-F:	Documentation/devicetree/bindings/staging/iio/
+ F:	drivers/staging/iio/
+ 
+ STAGING - NVIDIA COMPLIANT EMBEDDED CONTROLLER INTERFACE (nvec)
 -- 
-2.43.0
+2.49.0
 
 
