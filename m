@@ -1,354 +1,316 @@
-Return-Path: <linux-kernel+bounces-659778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20F02AC14D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:30:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1525EAC14C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6780750359B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:30:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00FDAA2072E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1644267AED;
-	Thu, 22 May 2025 19:29:41 +0000 (UTC)
-Received: from mail.prodrive-technologies.com (mail.prodrive-technologies.com [212.61.153.67])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B80287510;
+	Thu, 22 May 2025 19:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="H/XNdmFs";
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="aI9QrZzi"
+Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BAE293B6A
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.61.153.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC01E20E6E3;
+	Thu, 22 May 2025 19:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747942181; cv=none; b=mnwsqfZ639mVps1R9j0TqVddT8v5dYNjrtrI0se+cYDJVNC8ENrB15inpgNgV0+z5JXLbp31r9QrGJsLTVZwjIsucAW4QPWQ+AGMiekCgBsu9nXWhY2osB5/X4DlNl7OFuphEM7bfZkk8wvrd2uo1Ju9Xdl1KDYnS/VOP/YRq9Y=
+	t=1747941902; cv=none; b=pgMD0JBrzeRP5dTXhbnXyZ8ZZEyADumljgyJJpUFBxeomuQnX5XV831gWZbhhR/hDBqWIL7Q7fruy6jw8EII+j3fObroXBawTQXXI58MqqQJjkZVNYXcTVx4HuoybOiQkvUIM+18BHHTMWFzlPuHwK6MndTfzHj973pgESifZng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747942181; c=relaxed/simple;
-	bh=f0CThEofp2oEXig7whGZBebXbnXs/kIgckyxj66bSEk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L3SVNJ28K20wr5c68B0lplDrcKztDCMCsp5Na+JD8nLuJYBNNj4K5/54uUYXHEE9zyQHxI5nNtImVrQ4veIT2ITnowu3OI4Orc/jtmb6NGkdFgSQAph0yYCQBF8JUv2mtZnRcWoUTw0QGVdLpFb4wgJEUL00eq1jpzT5ilKh51Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com; spf=pass smtp.mailfrom=prodrive-technologies.com; arc=none smtp.client-ip=212.61.153.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prodrive-technologies.com
-Received: from EXCOP01.bk.prodrive.nl (10.1.0.22) by EXCOP01.bk.prodrive.nl
- (10.1.0.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 22 May
- 2025 21:24:28 +0200
-Received: from lnxdevrm02.prodrive.nl (10.1.1.121) by EXCOP01.bk.prodrive.nl
- (10.1.0.22) with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport;
- Thu, 22 May 2025 21:24:28 +0200
-From: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-CC: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] regulator: pca9450: Add support for mode operations
-Date: Thu, 22 May 2025 21:23:24 +0200
-Message-ID: <20250522192325.1099680-3-martijn.de.gouw@prodrive-technologies.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250522192325.1099680-1-martijn.de.gouw@prodrive-technologies.com>
-References: <20250522192325.1099680-1-martijn.de.gouw@prodrive-technologies.com>
+	s=arc-20240116; t=1747941902; c=relaxed/simple;
+	bh=KG1Jja0n0UrMwxefm4bdFF3JgNAo8tKJq9EJ7r6+Ud4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HxqYtd19OTGwc6q+fZ72ygk9cWvE1Q1TzNXNhQbcl4AoDPpGSOnySnMzyECi1rz7RydVtRUGcf+DXZwIGKOxM27o4+pbB9hforAgmi5WyBv+cxchA3zzBd/UTvebkGm7Elhgxkrtoytm7fIYFj9oPfJxnQIyIW0NODiSu04la1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=H/XNdmFs; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=aI9QrZzi; arc=none smtp.client-ip=217.70.190.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+Received: by mail.netfilter.org (Postfix, from userid 109)
+	id 1B49460702; Thu, 22 May 2025 21:24:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1747941897;
+	bh=01VDqd0ZfEmw/7MqDTZbhRjwp4vzisbjEHiab4aspTg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H/XNdmFskWdbg4SxQy/CDwuJiL/bY85MMKUXyrVU1JSa1WGYRL+AzwpEM59qCuj6H
+	 9gz1KxY53YM34VU7a0rPcRVYbGD8O5H3sRFKG4MC+z9H4YxaWUCXruEY6tIXKZZZUz
+	 OoGibhu4S7iPt9rhQYKSW259eoH5wKX/VRmsszdRPGHndep7WctZUuK/C+94qGCbp6
+	 ABzzKPzZKMfmz/P6TLpq/qbDCaZ6CEqG3JhS4hmS4r2VzHl9/Ydw5IeaqUdY2DNxxe
+	 cDVYUN3xltk/jRgTn72wBAyIIM4XzaDIhlvA+NHYeafm8RYkgYehZ2xAGy+GDutLdG
+	 5v31m5FxV6tKw==
+X-Spam-Level: 
+Received: from netfilter.org (mail-agni [217.70.190.124])
+	by mail.netfilter.org (Postfix) with ESMTPSA id 12B7D606F6;
+	Thu, 22 May 2025 21:24:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1747941891;
+	bh=01VDqd0ZfEmw/7MqDTZbhRjwp4vzisbjEHiab4aspTg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aI9QrZziZzKaA30a3EQPXTUb1kznOrr7LybujBzXjIJaxToT8I1QlfglZA9w9I2LS
+	 s83LmjSktsxVBPf8Yh3QPY7OdxSXg/Ixu6P6EYPLVcsaDvr9gA3i+d/Gqo9BR0NJcE
+	 NZirVKSZhxZxdRZ/+WDxDCtwC1oMPRAnTsyLGIlrPBUVD+zJwRaz0iM1t9tp7KoUSV
+	 ledHeVCHE0L9jfXX9a16bhLCWARgidVqBQnAf3c5UrUz4GULDdEtZQLPyqu0htKjFt
+	 0YTpfVsD49UW1aScTk82fA9LRV8UNN5Lbzv39QatMUkbZ/FI/i3v3zovHyPDeCDJY/
+	 DuwT5Qnuy6CpQ==
+Date: Thu, 22 May 2025 21:24:48 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: lvxiafei <xiafei_xupt@163.com>
+Cc: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com,
+	horms@kernel.org, kadlec@netfilter.org, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, lvxiafei@sensetime.com,
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	pabeni@redhat.com
+Subject: Re: [PATCH V6] netfilter: netns nf_conntrack: per-netns
+ net.netfilter.nf_conntrack_max sysctl
+Message-ID: <aC96AHaQX9WVtln5@calendula>
+References: <20250407095052.49526-1-xiafei_xupt@163.com>
+ <20250415090834.24882-1-xiafei_xupt@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250415090834.24882-1-xiafei_xupt@163.com>
 
-The PCA9450 has support for forced PWM mode on the buck controllers. Add
-support to control this mode.
+On Tue, Apr 15, 2025 at 05:08:34PM +0800, lvxiafei wrote:
+> diff --git a/Documentation/networking/nf_conntrack-sysctl.rst b/Documentation/networking/nf_conntrack-sysctl.rst
+> index 238b66d0e059..6e7f17f5959a 100644
+> --- a/Documentation/networking/nf_conntrack-sysctl.rst
+> +++ b/Documentation/networking/nf_conntrack-sysctl.rst
+> @@ -93,12 +93,29 @@ nf_conntrack_log_invalid - INTEGER
+>  	Log invalid packets of a type specified by value.
+>  
+>  nf_conntrack_max - INTEGER
+> -        Maximum number of allowed connection tracking entries. This value is set
+> -        to nf_conntrack_buckets by default.
+> -        Note that connection tracking entries are added to the table twice -- once
+> -        for the original direction and once for the reply direction (i.e., with
+> -        the reversed address). This means that with default settings a maxed-out
+> -        table will have a average hash chain length of 2, not 1.
+> +    - 0 - disabled (unlimited)
 
-Signed-off-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
----
- drivers/regulator/pca9450-regulator.c | 120 +++++++++++++++++++++++++-
- 1 file changed, 116 insertions(+), 4 deletions(-)
+unlimited is too much, and the number of buckets is also global, how
+does this work?
 
-diff --git a/drivers/regulator/pca9450-regulator.c b/drivers/regulator/pca9450-regulator.c
-index a56f3ab754fa9..8aed8c858a47b 100644
---- a/drivers/regulator/pca9450-regulator.c
-+++ b/drivers/regulator/pca9450-regulator.c
-@@ -16,12 +16,18 @@
- #include <linux/regulator/machine.h>
- #include <linux/regulator/of_regulator.h>
- #include <linux/regulator/pca9450.h>
-+#include <dt-bindings/regulator/nxp,pca9450-regulator.h>
-+
-+static unsigned int pca9450_buck_get_mode(struct regulator_dev *rdev);
-+static int pca9450_buck_set_mode(struct regulator_dev *rdev, unsigned int mode);
- 
- struct pc9450_dvs_config {
- 	unsigned int run_reg; /* dvs0 */
- 	unsigned int run_mask;
- 	unsigned int standby_reg; /* dvs1 */
- 	unsigned int standby_mask;
-+	unsigned int mode_reg; /* ctrl */
-+	unsigned int mode_mask;
- };
- 
- struct pca9450_regulator_desc {
-@@ -78,6 +84,8 @@ static const struct regulator_ops pca9450_dvs_buck_regulator_ops = {
- 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
- 	.set_voltage_time_sel = regulator_set_voltage_time_sel,
- 	.set_ramp_delay	= regulator_set_ramp_delay_regmap,
-+	.set_mode = pca9450_buck_set_mode,
-+	.get_mode = pca9450_buck_get_mode,
- };
- 
- static const struct regulator_ops pca9450_buck_regulator_ops = {
-@@ -88,6 +96,8 @@ static const struct regulator_ops pca9450_buck_regulator_ops = {
- 	.set_voltage_sel = regulator_set_voltage_sel_regmap,
- 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
- 	.set_voltage_time_sel = regulator_set_voltage_time_sel,
-+	.set_mode = pca9450_buck_set_mode,
-+	.get_mode = pca9450_buck_get_mode,
- };
- 
- static const struct regulator_ops pca9450_ldo_regulator_ops = {
-@@ -283,7 +293,64 @@ static int pca9450_set_dvs_levels(struct device_node *np,
- 	return ret;
- }
- 
--static const struct pca9450_regulator_desc pca9450a_regulators[] = {
-+static inline unsigned int pca9450_map_mode(unsigned int mode)
-+{
-+	switch (mode) {
-+	case PCA9450_BUCK_MODE_AUTO:
-+		return REGULATOR_MODE_NORMAL;
-+	case PCA9450_BUCK_MODE_FORCE_PWM:
-+		return REGULATOR_MODE_FAST;
-+	default:
-+		return REGULATOR_MODE_INVALID;
-+	}
-+}
-+
-+static int pca9450_buck_set_mode(struct regulator_dev *rdev, unsigned int mode)
-+{
-+	struct pca9450_regulator_desc *desc = container_of(rdev->desc,
-+					struct pca9450_regulator_desc, desc);
-+	const struct pc9450_dvs_config *dvs = &desc->dvs;
-+	int val;
-+
-+	switch (mode) {
-+	case REGULATOR_MODE_FAST:
-+		val = dvs->mode_mask;
-+		break;
-+	case REGULATOR_MODE_NORMAL:
-+		val = 0;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	dev_dbg(&rdev->dev, "pca9450 buck set_mode %#x, %#x, %#x\n",
-+		dvs->mode_reg, dvs->mode_mask, val);
-+
-+	return regmap_update_bits(rdev->regmap, dvs->mode_reg,
-+				  dvs->mode_mask, val);
-+}
-+
-+static unsigned int pca9450_buck_get_mode(struct regulator_dev *rdev)
-+{
-+	struct pca9450_regulator_desc *desc = container_of(rdev->desc,
-+					struct pca9450_regulator_desc, desc);
-+	const struct pc9450_dvs_config *dvs = &desc->dvs;
-+	int ret = 0, regval;
-+
-+	ret = regmap_read(rdev->regmap, dvs->mode_reg, &regval);
-+	if (ret != 0) {
-+		dev_err(&rdev->dev,
-+			"Failed to get pca9450 buck mode: %d\n", ret);
-+		return ret;
-+	}
-+
-+	if ((regval & dvs->mode_mask) == dvs->mode_mask)
-+		return REGULATOR_MODE_FAST;
-+
-+	return REGULATOR_MODE_NORMAL;
-+}
-+
-+static struct pca9450_regulator_desc pca9450a_regulators[] = {
- 	{
- 		.desc = {
- 			.name = "buck1",
-@@ -306,12 +373,15 @@ static const struct pca9450_regulator_desc pca9450a_regulators[] = {
- 			.enable_val = BUCK_ENMODE_ONREQ,
- 			.owner = THIS_MODULE,
- 			.of_parse_cb = pca9450_set_dvs_levels,
-+			.of_map_mode = pca9450_map_mode,
- 		},
- 		.dvs = {
- 			.run_reg = PCA9450_REG_BUCK1OUT_DVS0,
- 			.run_mask = BUCK1OUT_DVS0_MASK,
- 			.standby_reg = PCA9450_REG_BUCK1OUT_DVS1,
- 			.standby_mask = BUCK1OUT_DVS1_MASK,
-+			.mode_reg = PCA9450_REG_BUCK1CTRL,
-+			.mode_mask = BUCK1_FPWM,
- 		},
- 	},
- 	{
-@@ -336,12 +406,15 @@ static const struct pca9450_regulator_desc pca9450a_regulators[] = {
- 			.n_ramp_values = ARRAY_SIZE(pca9450_dvs_buck_ramp_table),
- 			.owner = THIS_MODULE,
- 			.of_parse_cb = pca9450_set_dvs_levels,
-+			.of_map_mode = pca9450_map_mode,
- 		},
- 		.dvs = {
- 			.run_reg = PCA9450_REG_BUCK2OUT_DVS0,
- 			.run_mask = BUCK2OUT_DVS0_MASK,
- 			.standby_reg = PCA9450_REG_BUCK2OUT_DVS1,
- 			.standby_mask = BUCK2OUT_DVS1_MASK,
-+			.mode_reg = PCA9450_REG_BUCK2CTRL,
-+			.mode_mask = BUCK2_FPWM,
- 		},
- 	},
- 	{
-@@ -366,12 +439,15 @@ static const struct pca9450_regulator_desc pca9450a_regulators[] = {
- 			.n_ramp_values = ARRAY_SIZE(pca9450_dvs_buck_ramp_table),
- 			.owner = THIS_MODULE,
- 			.of_parse_cb = pca9450_set_dvs_levels,
-+			.of_map_mode = pca9450_map_mode,
- 		},
- 		.dvs = {
- 			.run_reg = PCA9450_REG_BUCK3OUT_DVS0,
- 			.run_mask = BUCK3OUT_DVS0_MASK,
- 			.standby_reg = PCA9450_REG_BUCK3OUT_DVS1,
- 			.standby_mask = BUCK3OUT_DVS1_MASK,
-+			.mode_reg = PCA9450_REG_BUCK3CTRL,
-+			.mode_mask = BUCK3_FPWM,
- 		},
- 	},
- 	{
-@@ -391,6 +467,11 @@ static const struct pca9450_regulator_desc pca9450a_regulators[] = {
- 			.enable_mask = BUCK4_ENMODE_MASK,
- 			.enable_val = BUCK_ENMODE_ONREQ,
- 			.owner = THIS_MODULE,
-+			.of_map_mode = pca9450_map_mode,
-+		},
-+		.dvs = {
-+			.mode_reg = PCA9450_REG_BUCK4CTRL,
-+			.mode_mask = BUCK4_FPWM,
- 		},
- 	},
- 	{
-@@ -410,6 +491,11 @@ static const struct pca9450_regulator_desc pca9450a_regulators[] = {
- 			.enable_mask = BUCK5_ENMODE_MASK,
- 			.enable_val = BUCK_ENMODE_ONREQ,
- 			.owner = THIS_MODULE,
-+			.of_map_mode = pca9450_map_mode,
-+		},
-+		.dvs = {
-+			.mode_reg = PCA9450_REG_BUCK5CTRL,
-+			.mode_mask = BUCK5_FPWM,
- 		},
- 	},
- 	{
-@@ -429,6 +515,11 @@ static const struct pca9450_regulator_desc pca9450a_regulators[] = {
- 			.enable_mask = BUCK6_ENMODE_MASK,
- 			.enable_val = BUCK_ENMODE_ONREQ,
- 			.owner = THIS_MODULE,
-+			.of_map_mode = pca9450_map_mode,
-+		},
-+		.dvs = {
-+			.mode_reg = PCA9450_REG_BUCK6CTRL,
-+			.mode_mask = BUCK6_FPWM,
- 		},
- 	},
- 	{
-@@ -527,7 +618,7 @@ static const struct pca9450_regulator_desc pca9450a_regulators[] = {
-  * Buck3 removed on PCA9450B and connected with Buck1 internal for dual phase
-  * on PCA9450C as no Buck3.
-  */
--static const struct pca9450_regulator_desc pca9450bc_regulators[] = {
-+static struct pca9450_regulator_desc pca9450bc_regulators[] = {
- 	{
- 		.desc = {
- 			.name = "buck1",
-@@ -550,12 +641,15 @@ static const struct pca9450_regulator_desc pca9450bc_regulators[] = {
- 			.n_ramp_values = ARRAY_SIZE(pca9450_dvs_buck_ramp_table),
- 			.owner = THIS_MODULE,
- 			.of_parse_cb = pca9450_set_dvs_levels,
-+			.of_map_mode = pca9450_map_mode,
- 		},
- 		.dvs = {
- 			.run_reg = PCA9450_REG_BUCK1OUT_DVS0,
- 			.run_mask = BUCK1OUT_DVS0_MASK,
- 			.standby_reg = PCA9450_REG_BUCK1OUT_DVS1,
- 			.standby_mask = BUCK1OUT_DVS1_MASK,
-+			.mode_reg = PCA9450_REG_BUCK1CTRL,
-+			.mode_mask = BUCK1_FPWM,
- 		},
- 	},
- 	{
-@@ -580,12 +674,15 @@ static const struct pca9450_regulator_desc pca9450bc_regulators[] = {
- 			.n_ramp_values = ARRAY_SIZE(pca9450_dvs_buck_ramp_table),
- 			.owner = THIS_MODULE,
- 			.of_parse_cb = pca9450_set_dvs_levels,
-+			.of_map_mode = pca9450_map_mode,
- 		},
- 		.dvs = {
- 			.run_reg = PCA9450_REG_BUCK2OUT_DVS0,
- 			.run_mask = BUCK2OUT_DVS0_MASK,
- 			.standby_reg = PCA9450_REG_BUCK2OUT_DVS1,
- 			.standby_mask = BUCK2OUT_DVS1_MASK,
-+			.mode_reg = PCA9450_REG_BUCK2CTRL,
-+			.mode_mask = BUCK2_FPWM,
- 		},
- 	},
- 	{
-@@ -605,6 +702,11 @@ static const struct pca9450_regulator_desc pca9450bc_regulators[] = {
- 			.enable_mask = BUCK4_ENMODE_MASK,
- 			.enable_val = BUCK_ENMODE_ONREQ,
- 			.owner = THIS_MODULE,
-+			.of_map_mode = pca9450_map_mode,
-+		},
-+		.dvs = {
-+			.mode_reg = PCA9450_REG_BUCK4CTRL,
-+			.mode_mask = BUCK4_FPWM,
- 		},
- 	},
- 	{
-@@ -624,6 +726,11 @@ static const struct pca9450_regulator_desc pca9450bc_regulators[] = {
- 			.enable_mask = BUCK5_ENMODE_MASK,
- 			.enable_val = BUCK_ENMODE_ONREQ,
- 			.owner = THIS_MODULE,
-+			.of_map_mode = pca9450_map_mode,
-+		},
-+		.dvs = {
-+			.mode_reg = PCA9450_REG_BUCK5CTRL,
-+			.mode_mask = BUCK5_FPWM,
- 		},
- 	},
- 	{
-@@ -643,6 +750,11 @@ static const struct pca9450_regulator_desc pca9450bc_regulators[] = {
- 			.enable_mask = BUCK6_ENMODE_MASK,
- 			.enable_val = BUCK_ENMODE_ONREQ,
- 			.owner = THIS_MODULE,
-+			.of_map_mode = pca9450_map_mode,
-+		},
-+		.dvs = {
-+			.mode_reg = PCA9450_REG_BUCK6CTRL,
-+			.mode_mask = BUCK6_FPWM,
- 		},
- 	},
- 	{
-@@ -737,7 +849,7 @@ static const struct pca9450_regulator_desc pca9450bc_regulators[] = {
- 	},
- };
- 
--static const struct pca9450_regulator_desc pca9451a_regulators[] = {
-+static struct pca9450_regulator_desc pca9451a_regulators[] = {
- 	{
- 		.desc = {
- 			.name = "buck1",
-@@ -969,7 +1081,7 @@ static int pca9450_i2c_probe(struct i2c_client *i2c)
- {
- 	enum pca9450_chip_type type = (unsigned int)(uintptr_t)
- 				      of_device_get_match_data(&i2c->dev);
--	const struct pca9450_regulator_desc	*regulator_desc;
-+	const struct pca9450_regulator_desc *regulator_desc;
- 	struct regulator_config config = { };
- 	struct regulator_dev *ldo5;
- 	struct pca9450 *pca9450;
--- 
-2.39.2
+Is your goal to allow a netns to have larger table than netns? There
+should be a cap for this.
 
+> +    - not 0 - enabled
+> +
+> +    Maximum number of allowed connection tracking entries per netns. This value
+> +    is set to nf_conntrack_buckets by default.
+> +
+> +    Note that connection tracking entries are added to the table twice -- once
+> +    for the original direction and once for the reply direction (i.e., with
+> +    the reversed address). This means that with default settings a maxed-out
+> +    table will have a average hash chain length of 2, not 1.
+> +
+> +    The limit of other netns cannot be greater than init_net netns.
+> +    +----------------+-------------+----------------+
+> +    | init_net netns | other netns | limit behavior |
+> +    +----------------+-------------+----------------+
+> +    | 0              | 0           | unlimited      |
+> +    +----------------+-------------+----------------+
+> +    | 0              | not 0       | other          |
+> +    +----------------+-------------+----------------+
+> +    | not 0          | 0           | init_net       |
+> +    +----------------+-------------+----------------+
+> +    | not 0          | not 0       | min            |
+> +    +----------------+-------------+----------------+
+>  
+>  nf_conntrack_tcp_be_liberal - BOOLEAN
+>  	- 0 - disabled (default)
+> diff --git a/include/net/netfilter/nf_conntrack.h b/include/net/netfilter/nf_conntrack.h
+> index 3f02a45773e8..594439b2f5a1 100644
+> --- a/include/net/netfilter/nf_conntrack.h
+> +++ b/include/net/netfilter/nf_conntrack.h
+> @@ -320,7 +320,6 @@ int nf_conntrack_hash_resize(unsigned int hashsize);
+>  extern struct hlist_nulls_head *nf_conntrack_hash;
+>  extern unsigned int nf_conntrack_htable_size;
+>  extern seqcount_spinlock_t nf_conntrack_generation;
+> -extern unsigned int nf_conntrack_max;
+>  
+>  /* must be called with rcu read lock held */
+>  static inline void
+> @@ -360,6 +359,17 @@ static inline struct nf_conntrack_net *nf_ct_pernet(const struct net *net)
+>  	return net_generic(net, nf_conntrack_net_id);
+>  }
+>  
+> +static inline unsigned int nf_conntrack_max(const struct net *net)
+> +{
+> +#if IS_ENABLED(CONFIG_NF_CONNTRACK)
+> +	return likely(init_net.ct.sysctl_max && net->ct.sysctl_max) ?
+> +	    min(init_net.ct.sysctl_max, net->ct.sysctl_max) :
+> +	    max(init_net.ct.sysctl_max, net->ct.sysctl_max);
+> +#else
+> +	return 0;
+> +#endif
+> +}
+> +
+>  int nf_ct_skb_network_trim(struct sk_buff *skb, int family);
+>  int nf_ct_handle_fragments(struct net *net, struct sk_buff *skb,
+>  			   u16 zone, u8 family, u8 *proto, u16 *mru);
+> diff --git a/include/net/netns/conntrack.h b/include/net/netns/conntrack.h
+> index bae914815aa3..d3fcd0b92b2d 100644
+> --- a/include/net/netns/conntrack.h
+> +++ b/include/net/netns/conntrack.h
+> @@ -102,6 +102,7 @@ struct netns_ct {
+>  	u8			sysctl_acct;
+>  	u8			sysctl_tstamp;
+>  	u8			sysctl_checksum;
+> +	unsigned int		sysctl_max;
+>  
+>  	struct ip_conntrack_stat __percpu *stat;
+>  	struct nf_ct_event_notifier __rcu *nf_conntrack_event_cb;
+> diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
+> index 7f8b245e287a..a738564923ec 100644
+> --- a/net/netfilter/nf_conntrack_core.c
+> +++ b/net/netfilter/nf_conntrack_core.c
+> @@ -202,8 +202,6 @@ static void nf_conntrack_all_unlock(void)
+>  unsigned int nf_conntrack_htable_size __read_mostly;
+>  EXPORT_SYMBOL_GPL(nf_conntrack_htable_size);
+>  
+> -unsigned int nf_conntrack_max __read_mostly;
+> -EXPORT_SYMBOL_GPL(nf_conntrack_max);
+>  seqcount_spinlock_t nf_conntrack_generation __read_mostly;
+>  static siphash_aligned_key_t nf_conntrack_hash_rnd;
+>  
+> @@ -1498,7 +1496,7 @@ static bool gc_worker_can_early_drop(const struct nf_conn *ct)
+>  
+>  static void gc_worker(struct work_struct *work)
+>  {
+> -	unsigned int i, hashsz, nf_conntrack_max95 = 0;
+> +	unsigned int i, hashsz;
+>  	u32 end_time, start_time = nfct_time_stamp;
+>  	struct conntrack_gc_work *gc_work;
+>  	unsigned int expired_count = 0;
+> @@ -1509,8 +1507,6 @@ static void gc_worker(struct work_struct *work)
+>  	gc_work = container_of(work, struct conntrack_gc_work, dwork.work);
+>  
+>  	i = gc_work->next_bucket;
+> -	if (gc_work->early_drop)
+> -		nf_conntrack_max95 = nf_conntrack_max / 100u * 95u;
+>  
+>  	if (i == 0) {
+>  		gc_work->avg_timeout = GC_SCAN_INTERVAL_INIT;
+> @@ -1538,6 +1534,7 @@ static void gc_worker(struct work_struct *work)
+>  		}
+>  
+>  		hlist_nulls_for_each_entry_rcu(h, n, &ct_hash[i], hnnode) {
+> +			unsigned int nf_conntrack_max95 = 0;
+>  			struct nf_conntrack_net *cnet;
+>  			struct net *net;
+>  			long expires;
+> @@ -1567,11 +1564,14 @@ static void gc_worker(struct work_struct *work)
+>  			expires = clamp(nf_ct_expires(tmp), GC_SCAN_INTERVAL_MIN, GC_SCAN_INTERVAL_CLAMP);
+>  			expires = (expires - (long)next_run) / ++count;
+>  			next_run += expires;
+> +			net = nf_ct_net(tmp);
+> +
+> +			if (gc_work->early_drop)
+> +				nf_conntrack_max95 = nf_conntrack_max(net) / 100u * 95u;
+>  
+>  			if (nf_conntrack_max95 == 0 || gc_worker_skip_ct(tmp))
+>  				continue;
+>  
+> -			net = nf_ct_net(tmp);
+>  			cnet = nf_ct_pernet(net);
+>  			if (atomic_read(&cnet->count) < nf_conntrack_max95)
+>  				continue;
+> @@ -1648,13 +1648,14 @@ __nf_conntrack_alloc(struct net *net,
+>  		     gfp_t gfp, u32 hash)
+>  {
+>  	struct nf_conntrack_net *cnet = nf_ct_pernet(net);
+> -	unsigned int ct_count;
+> +	unsigned int ct_max, ct_count;
+>  	struct nf_conn *ct;
+>  
+>  	/* We don't want any race condition at early drop stage */
+>  	ct_count = atomic_inc_return(&cnet->count);
+> +	ct_max = nf_conntrack_max(net);
+>  
+> -	if (nf_conntrack_max && unlikely(ct_count > nf_conntrack_max)) {
+> +	if (ct_max && unlikely(ct_count > ct_max)) {
+>  		if (!early_drop(net, hash)) {
+>  			if (!conntrack_gc_work.early_drop)
+>  				conntrack_gc_work.early_drop = true;
+> @@ -2650,7 +2651,7 @@ int nf_conntrack_init_start(void)
+>  	if (!nf_conntrack_hash)
+>  		return -ENOMEM;
+>  
+> -	nf_conntrack_max = max_factor * nf_conntrack_htable_size;
+> +	init_net.ct.sysctl_max = max_factor * nf_conntrack_htable_size;
+>  
+>  	nf_conntrack_cachep = kmem_cache_create("nf_conntrack",
+>  						sizeof(struct nf_conn),
+> diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
+> index 2cc0fde23344..73e6bb1e939b 100644
+> --- a/net/netfilter/nf_conntrack_netlink.c
+> +++ b/net/netfilter/nf_conntrack_netlink.c
+> @@ -2608,7 +2608,7 @@ ctnetlink_stat_ct_fill_info(struct sk_buff *skb, u32 portid, u32 seq, u32 type,
+>  	if (nla_put_be32(skb, CTA_STATS_GLOBAL_ENTRIES, htonl(nr_conntracks)))
+>  		goto nla_put_failure;
+>  
+> -	if (nla_put_be32(skb, CTA_STATS_GLOBAL_MAX_ENTRIES, htonl(nf_conntrack_max)))
+> +	if (nla_put_be32(skb, CTA_STATS_GLOBAL_MAX_ENTRIES, htonl(nf_conntrack_max(net))))
+>  		goto nla_put_failure;
+>  
+>  	nlmsg_end(skb, nlh);
+> diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
+> index 2f666751c7e7..5db6df0e4eb3 100644
+> --- a/net/netfilter/nf_conntrack_standalone.c
+> +++ b/net/netfilter/nf_conntrack_standalone.c
+> @@ -615,7 +615,7 @@ enum nf_ct_sysctl_index {
+>  static struct ctl_table nf_ct_sysctl_table[] = {
+>  	[NF_SYSCTL_CT_MAX] = {
+>  		.procname	= "nf_conntrack_max",
+> -		.data		= &nf_conntrack_max,
+> +		.data		= &init_net.ct.sysctl_max,
+>  		.maxlen		= sizeof(int),
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_dointvec_minmax,
+> @@ -948,7 +948,7 @@ static struct ctl_table nf_ct_sysctl_table[] = {
+>  static struct ctl_table nf_ct_netfilter_table[] = {
+>  	{
+>  		.procname	= "nf_conntrack_max",
+> -		.data		= &nf_conntrack_max,
+> +		.data		= &init_net.ct.sysctl_max,
+>  		.maxlen		= sizeof(int),
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_dointvec_minmax,
+> @@ -1063,6 +1063,7 @@ static int nf_conntrack_standalone_init_sysctl(struct net *net)
+>  
+>  	table[NF_SYSCTL_CT_COUNT].data = &cnet->count;
+>  	table[NF_SYSCTL_CT_CHECKSUM].data = &net->ct.sysctl_checksum;
+> +	table[NF_SYSCTL_CT_MAX].data = &net->ct.sysctl_max;
+>  	table[NF_SYSCTL_CT_LOG_INVALID].data = &net->ct.sysctl_log_invalid;
+>  	table[NF_SYSCTL_CT_ACCT].data = &net->ct.sysctl_acct;
+>  #ifdef CONFIG_NF_CONNTRACK_EVENTS
+> @@ -1087,7 +1088,6 @@ static int nf_conntrack_standalone_init_sysctl(struct net *net)
+>  
+>  	/* Don't allow non-init_net ns to alter global sysctls */
+>  	if (!net_eq(&init_net, net)) {
+> -		table[NF_SYSCTL_CT_MAX].mode = 0444;
+>  		table[NF_SYSCTL_CT_EXPECT_MAX].mode = 0444;
+>  		table[NF_SYSCTL_CT_BUCKETS].mode = 0444;
+>  	}
+> @@ -1139,6 +1139,7 @@ static int nf_conntrack_pernet_init(struct net *net)
+>  	int ret;
+>  
+>  	net->ct.sysctl_checksum = 1;
+> +	net->ct.sysctl_max = init_net.ct.sysctl_max;
+>  
+>  	ret = nf_conntrack_standalone_init_sysctl(net);
+>  	if (ret < 0)
+> -- 
+> 2.40.1
+> 
 
