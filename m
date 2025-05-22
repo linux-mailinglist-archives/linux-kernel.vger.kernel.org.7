@@ -1,147 +1,87 @@
-Return-Path: <linux-kernel+bounces-658723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07D6AAC065D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:57:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE93AC0663
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459E41B66339
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:57:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D83D8C5EDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555F525394E;
-	Thu, 22 May 2025 07:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D9B2505D2;
+	Thu, 22 May 2025 07:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="aRD7Wxif"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dVCtjV+Q"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8CE24EAB3;
-	Thu, 22 May 2025 07:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBBE2505D8
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 07:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747900534; cv=none; b=GBnYgTPFhZcEBjYvWmS+jE9V0Komhs402KSar/FKtXjt8HmorB13B+5iP0oOrrENrGX0Vhv54FK4i124lfTyLlSRv2v133xmFXGlxBPEbYfCiB7M/LAhGv48VX+Nb+bWP+DlAptxSmEuqFhLU56z08JjB30mmTlL59X4ChD27ko=
+	t=1747900562; cv=none; b=WYs0rXD9YR3RBkXyJAHJb83VSz80KempKvJeseruhhINYfhkfzboq/QpGNQ6DmQ0qBHpN7JCCToTrACGnDCAmzOIlvIanx687P2Q70VwcvgPFulDqIqKmFdMNCoy6RN81RrtpUyiho55VIwPGpcjFRVSeQAf31vxR8CktDav8mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747900534; c=relaxed/simple;
-	bh=Ko5BzjsIWNyfzA6NaY8ak3afoz8yLDjUoJFNglsP0R8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q8vEIJspJZzEWY3zuyJORUq10UP5Q2zSsyBppfMrwRTUObX8bGLvLfnbS+xqPmGbrhuY4ZwNHEaoO9NC5g5mhcfjhWRW0S4I83tLTxHHUNfBifqcZsLmwTBJPolzLECMEK+vfJC90OK0EfoI2y/GUIjrBgvu+aWtH7FShFVBWVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=aRD7Wxif; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AA08C103972A7;
-	Thu, 22 May 2025 09:55:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1747900531; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=EKthtVOjKwRAL4r8sGzEyQlPs4VqBO1mEaddwoggnqk=;
-	b=aRD7WxifY5qzQHF6QUxhkTdsqpjsO8LF5wa8u2QGIDtnBZ6JGda8xFEspRMUuasN5gfN0G
-	a0c5X8HYwUNi8nSuyc31REEDseq5i2vI5i6PC+/1Ka8HynWnJwZA1ySnpsLxBmcpBtqvLK
-	tel+HvdwoshlYgmG3zw7PpOKdQarc8PvAsQbLQpPSzzroewACvT0IQkOfiH6KJPteqgQV4
-	hMJWwiPtgEDISHvdaH9QTxdn4sUC7A4lPTPiCplWni2vtiPwOvprp+lDG2l/xM2CuscByt
-	AclarNLjX7a/bviwYUZ/65hclQXP54y/rft3Wi9/6iAWWbxoxS+WkoMbd6QP5Q==
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Simon Horman <horms@kernel.org>,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [net-next v12 7/7] ARM: mxs_defconfig: Enable CONFIG_FEC_MTIP_L2SW to support MTIP L2 switch
-Date: Thu, 22 May 2025 09:54:55 +0200
-Message-Id: <20250522075455.1723560-8-lukma@denx.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250522075455.1723560-1-lukma@denx.de>
-References: <20250522075455.1723560-1-lukma@denx.de>
+	s=arc-20240116; t=1747900562; c=relaxed/simple;
+	bh=Y0bZYcvF9+9lkjpYmSvsSDY9TlAaGUiBHyHcnL0xFa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fwDFTXpHcFY9eZ1u1+ObRFYUooHqCy5vUm/o0dpbvKn4g9dBDptMuad85+lJKi7UMwxPpgq3CClJoHUE6VRfpUaY7igHot6DwBd0eceFF+Z1ydwjqUqp7w4Mp+GXv0PXnVRdUtGI4FKb2tUp3MtoLlMYLAGxPBYnEDmqp/O395M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dVCtjV+Q; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EousAwX9Gy0M7mH5mXeFXdv8f2FFIrnywnmZSDBYFhQ=; b=dVCtjV+QTuO0vMFK243xaj1Kye
+	ypCyVNHWmPZldy6NwFeX4t3GiN+OnOU8hShrZZdhRcmIjZg210SlCn9m5mLD1+8KQ1CvY/hA6zHoD
+	HcDD01KMxHbFrPdwkwMbI6tAJ4vqkDTDAnMAJJAkoyJENiPgUlJ8jFCWB2GwKfIwjen0ZqdpfqgCf
+	t0E8f4+L/OXDXSGL2QLv8CV31KeJXuy2jXAdJKgDCjC9fyBM4otO1OLTHnbZQBBhE0ENqcLuiGYFn
+	1NVw6uoAHn2qyk2Pj9ov0VvnmNoBFhJWk9dGufflMQGpwC8xaTwi9ESQ3iIjrTnjQolYBr54Lk5CK
+	u3Ku8lGw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uI0mP-00000005noY-3X9f;
+	Thu, 22 May 2025 07:55:53 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 561CC30035E; Thu, 22 May 2025 09:55:53 +0200 (CEST)
+Date: Thu, 22 May 2025 09:55:53 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>,
+	Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Brian Gerst <brgerst@gmail.com>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>
+Subject: Re: [PATCH v4 1/6] x86/cpu: Use a new feature flag for 5 level paging
+Message-ID: <20250522075553.GG24938@noisy.programming.kicks-ass.net>
+References: <20250517091639.3807875-8-ardb+git@google.com>
+ <20250517091639.3807875-9-ardb+git@google.com>
+ <20250519094038.GIaCr8ltHvLBYjk8iI@fat_crate.local>
+ <aCstaIBSfcHXpr8D@gmail.com>
+ <20250519131944.GCaCsv8A71vn21AB1W@fat_crate.local>
+ <874ixernra.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <874ixernra.ffs@tglx>
 
-This patch enables support for More Than IP L2 switch available on some
-imx28[7] devices.
+On Wed, May 21, 2025 at 05:23:37PM +0200, Thomas Gleixner wrote:
 
-Moreover, it also enables CONFIG_SWITCHDEV and CONFIG_BRIDGE required
-by this driver for correct operation.
+>    4) Drivers having access to CPUID is just wrong. We've had issues
+>       with that in the past because drivers evaluated CPUID themself and
+>       missed that the core code had stuff disabled.
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
----
-Changes for v4:
-- New patch
+I had this patch that read the module instructions and failed loading if
+they used 'fancy' instructions. Do you want me to revive that?
 
-Changes for v5:
-- Apply this patch on top of patch, which updates mxs_defconfig to
-  v6.15-rc1
-- Add more verbose commit message with explanation why SWITCHDEV and
-  BRIDGE must be enabled as well
-
-Changes for v6:
-- None
-
-Changes for v7:
-- None
-
-Changes for v8:
-- None
-
-Changes for v9:
-- None
-
-Changes for v10:
-- None
-
-Changes for v11:
-- None
-
-Changes for v12:
-- None
----
- arch/arm/configs/mxs_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/configs/mxs_defconfig b/arch/arm/configs/mxs_defconfig
-index b1a31cb914c8..ef4556222274 100644
---- a/arch/arm/configs/mxs_defconfig
-+++ b/arch/arm/configs/mxs_defconfig
-@@ -34,6 +34,8 @@ CONFIG_IP_PNP_DHCP=y
- CONFIG_SYN_COOKIES=y
- # CONFIG_INET_DIAG is not set
- # CONFIG_IPV6 is not set
-+CONFIG_BRIDGE=y
-+CONFIG_NET_SWITCHDEV=y
- CONFIG_CAN=m
- # CONFIG_WIRELESS is not set
- CONFIG_DEVTMPFS=y
-@@ -52,6 +54,7 @@ CONFIG_EEPROM_AT24=y
- CONFIG_SCSI=y
- CONFIG_BLK_DEV_SD=y
- CONFIG_NETDEVICES=y
-+CONFIG_FEC_MTIP_L2SW=y
- CONFIG_ENC28J60=y
- CONFIG_ICPLUS_PHY=y
- CONFIG_MICREL_PHY=y
--- 
-2.39.5
 
 
