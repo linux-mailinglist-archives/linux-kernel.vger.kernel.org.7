@@ -1,138 +1,84 @@
-Return-Path: <linux-kernel+bounces-658775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68014AC0721
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:30:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7BFAC0722
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE2287A8874
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 08:28:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1735E4A80AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 08:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06F1267F76;
-	Thu, 22 May 2025 08:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9B4262800;
+	Thu, 22 May 2025 08:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="RPtMmyV6"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CzSOAiWp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC53145C14
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 08:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AC045C14;
+	Thu, 22 May 2025 08:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747902591; cv=none; b=UXQgy+XzhdUAb//3QqbJ7oI0pKUUfqMCXjNnW1e32NTA7/KG8wuGQ/M6eGSf7jin5aQXz6FuGOL8DsFE1InsK4etDb2+V/zAUbv89KWm0zAYvkfdCguTRj4k9c51pKftMfQq+aZUC0iBbt9BOFYsg9nltknV/ACAStFlDk0v0Ck=
+	t=1747902652; cv=none; b=C2j0ZJceEUqhGiqcSBG1rn4qSd8C4yTBqvtCaqqKY+zxIdSR1Z8QJ063nR+4IZ05l6KvSAGRt44eUEcTuZ/9gMnIl+nOw9oT3uRsZdHr5bI69rYg8m37BHBDBWemoHw0SpBpnjo6Xca4IMsUrbVYtrSQk8LNfJNd17m/cxxT+1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747902591; c=relaxed/simple;
-	bh=+++rNcCrZpYJOjXXNijoSBRCpnxwrFwpMxCFuSdVPe4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=U8i6Xmvr+s9aYWGMUx1kjtiDVsoB+hSKB0yUmrjFliRBv08uXk52E7ZP9okuCvAxkCBeXYJENxXLK9xOefLIqV49+lk961TQm/4Pl5+T7nAIfw3j5FffgwlBCmANHO88YSGWHgdQKLqKfdtcOc06swWz5KlqdhG5rCWvGlrm/RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=RPtMmyV6; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KlvMbyIisUufkr+UShy6jIRQb1Rk4h8UzMbl5KnE9fo=; b=RPtMmyV6zqsMpsD75NkJj+2L0L
-	5muFsn/Br4gBUyAOmt2aR3i5r2WK/1oQlY+E0ml9zmSEM2EnIvI/hxf8UkC8VXU0sbY7ji9tysIzw
-	lrPPO2VVHNM4m8CRvFuZS0PzD1tBGqyC7ljGfrOCS4dt8nBbrTjX5IMu+Ab/PUieEN9CR7SLeVAGP
-	E6D8ekPeVThkrnUNKcH/9BGSpCcjnn2rtk1mafXDMP1Cx0pYmbLcy28prPba4sQtw3nUzeXKHb51N
-	d36S9g6V7hMbrT7NYFTLrEumZASjHsLl1e6yLP9DwwBJTQ+bst9ya7cDAwavHV443MMi7i2nMPPc8
-	2XqKRT3Q==;
-Received: from [106.101.7.122] (helo=[192.168.210.21])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uI1J6-00BcXQ-8o; Thu, 22 May 2025 10:29:40 +0200
-Message-ID: <ee5db302-07f6-4e09-8de4-0c1358e0a297@igalia.com>
-Date: Thu, 22 May 2025 17:29:33 +0900
+	s=arc-20240116; t=1747902652; c=relaxed/simple;
+	bh=MRJHNZRt9utLQVgyJmGAvzAudoQRvVSqgUZWOLGd3q8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jv1rrlGf73afUFrKSjcGK7LQlpHqCiRWqGXbva6y7ntXc2nqu44GosObSwF5RJddAnyqS5MQt55z9hpzQ8T7gUw7JC8eN/HjPh0r2/M7mF1OIfbcqv2rJkvs1+4jR1LbFfnrAvbJqLHiDWHjNJBl2l5lC481GzpbtYIuJsvjfJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CzSOAiWp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B94D1C4CEE4;
+	Thu, 22 May 2025 08:30:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747902651;
+	bh=MRJHNZRt9utLQVgyJmGAvzAudoQRvVSqgUZWOLGd3q8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CzSOAiWpzq2SF4bRdzcZra8Y0lJ9jYJsXDPzTyeKMwBj3YL5xWevgvOYL1kGdJXxP
+	 +0Y6IF0wYPml8dytGbDEex0dbCaNv8XxGtbNQz8CbwM7Z1sgOThHQ4nLjnY/eqWskY
+	 YTIJKgza7PNoKC7rN7PuED5q59C9aCRFub2SVkuo=
+Date: Thu, 22 May 2025 10:30:48 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Brigham Campbell <me@brighamcampbell.com>
+Cc: Jihed Chaibi <jihed.chaibi.dev@gmail.com>,
+	heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH 1/1] usb: typec: tipd: fix typo in
+ TPS_STATUS_HIGH_VOLAGE_WARNING macro
+Message-ID: <2025052234-brewing-recall-a7ed@gregkh>
+References: <20250521214851.386796-1-jihed.chaibi.dev@gmail.com>
+ <DA2IV4ZGT2M8.3QXO3L57VXSA5@brighamcampbell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH sched_ext/for-6.16] sched_ext: Call ops.update_idle()
- after updating builtin idle bits
-To: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
- Andrea Righi <arighi@nvidia.com>, linux-kernel@vger.kernel.org,
- sched-ext@meta.com
-References: <aC5SSv5Ne5IZPPl0@slm.duckdns.org>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <aC5SSv5Ne5IZPPl0@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DA2IV4ZGT2M8.3QXO3L57VXSA5@brighamcampbell.com>
 
-Thank you, Tejun, for the change!
-The change makes sense semantcially.
+On Thu, May 22, 2025 at 01:47:54AM -0600, Brigham Campbell wrote:
+> On Wed May 21, 2025 at 3:48 PM MDT, Jihed Chaibi wrote:
+> > "VOLAGE" should become "VOLTAGE"
+> >
+> > Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+> 
+> Nice work! I was able to successfully compile this driver with your
+> changes and I don't see any further references to the misspelled macro.
+> 
+> Patches which fix issues which were introduced in some previous commit
+> typically indicate the offending commit via the "Fixes" tag. Admittedly,
+> I don't know if the tag is reserved for technical bugs rather than typos
+> such as the one you addressed, but such a tag would look like the
+> following for this patch:
+> 
+> Fixes: e011178579b57c03 ("usb: typec: tipd: fix typo in TPS_STATUS_HIGH_VOLAGE_WARNING macro")
 
-Acked-by: Changwoo Min <changwoo@igalia.com>
+Too many characters for that sha1 value :)
 
-On 5/22/25 07:23, Tejun Heo wrote:
-> BPF schedulers that use both builtin CPU idle mechanism and
-> ops.update_idle() may want to use the latter to create interlocking between
-> ops.enqueue() and CPU idle transitions so that either ops.enqueue() sees the
-> idle bit or ops.update_idle() sees the task queued somewhere. This can
-> prevent race conditions where CPUs go idle while tasks are waiting in DSQs.
-> 
-> For such interlocking to work, ops.update_idle() must be called after
-> builtin CPU masks are updated. Relocate the invocation. Currently, there are
-> no ordering requirements on transitions from idle and this relocation isn't
-> expected to make meaningful differences in that direction.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> ---
->   kernel/sched/ext_idle.c |   25 +++++++++++++++----------
->   1 file changed, 15 insertions(+), 10 deletions(-)
-> 
-> diff --git a/kernel/sched/ext_idle.c b/kernel/sched/ext_idle.c
-> index ae30de383913..66da03cc0b33 100644
-> --- a/kernel/sched/ext_idle.c
-> +++ b/kernel/sched/ext_idle.c
-> @@ -738,16 +738,6 @@ void __scx_update_idle(struct rq *rq, bool idle, bool do_notify)
->   
->   	lockdep_assert_rq_held(rq);
->   
-> -	/*
-> -	 * Trigger ops.update_idle() only when transitioning from a task to
-> -	 * the idle thread and vice versa.
-> -	 *
-> -	 * Idle transitions are indicated by do_notify being set to true,
-> -	 * managed by put_prev_task_idle()/set_next_task_idle().
-> -	 */
-> -	if (SCX_HAS_OP(sch, update_idle) && do_notify && !scx_rq_bypassing(rq))
-> -		SCX_CALL_OP(sch, SCX_KF_REST, update_idle, rq, cpu_of(rq), idle);
-> -
->   	/*
->   	 * Update the idle masks:
->   	 * - for real idle transitions (do_notify == true)
-> @@ -765,6 +755,21 @@ void __scx_update_idle(struct rq *rq, bool idle, bool do_notify)
->   	if (static_branch_likely(&scx_builtin_idle_enabled))
->   		if (do_notify || is_idle_task(rq->curr))
->   			update_builtin_idle(cpu, idle);
-> +
-> +	/*
-> +	 * Trigger ops.update_idle() only when transitioning from a task to
-> +	 * the idle thread and vice versa.
-> +	 *
-> +	 * Idle transitions are indicated by do_notify being set to true,
-> +	 * managed by put_prev_task_idle()/set_next_task_idle().
-> +	 *
-> +	 * This must come after builtin idle update so that BPF schedulers can
-> +	 * create interlocking between ops.update_idle() and ops.enqueue() -
-> +	 * either enqueue() sees the idle bit or update_idle() sees the task
-> +	 * that enqueue() queued.
-> +	 */
-> +	if (SCX_HAS_OP(sch, update_idle) && do_notify && !scx_rq_bypassing(rq))
-> +		SCX_CALL_OP(sch, SCX_KF_REST, update_idle, rq, cpu_of(rq), idle);
->   }
->   
->   static void reset_idle_masks(struct sched_ext_ops *ops)
-> 
-> 
+thanks,
 
+greg k-hj
 
