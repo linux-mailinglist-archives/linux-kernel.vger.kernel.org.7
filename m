@@ -1,83 +1,120 @@
-Return-Path: <linux-kernel+bounces-659220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A8BBAC0CF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:39:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37EB7AC0D01
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A31277A7C3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:38:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E87E54A028E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0411B28C00D;
-	Thu, 22 May 2025 13:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382FB28C01C;
+	Thu, 22 May 2025 13:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rrzlMLxh"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I+8a1fqs"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D827F3010C;
-	Thu, 22 May 2025 13:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D0228BABD
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 13:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747921162; cv=none; b=FXhRpCinn3g+ef2Fx0J/KzwLFepu8tCwHBQbMEIPpQrx3r//FRjS3JfRV/FcWwz78eNSoqAiejY3rGmQovOjmCg1GyZNlpzg8/FlMRvNqardjC5dcFA7isY3zImvBVrgb/jqbo7r9GO/GeS6INRTN0apItEvwqlrx/B5huoTsus=
+	t=1747921229; cv=none; b=qzLOyopr0v2aw+G6LU+QBW6P3C+eqUrIwDnptC4Q4oMz530DA+MVEF83kevDmBEEJCJFIcHvgczYs8QtOp4SznOVj4RfnjcL1OEON88MQUNPWsGcmTRMABn9CoTSdYpt4rmjqoxhTotJjlIoCdb8SjQ9TcXQyyflFv5sXCfLa1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747921162; c=relaxed/simple;
-	bh=xjuI21sO+TkhCNbE2k5F8Z+xtDLNQU3EzZ3ixPfOWQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n6q+s/JoRGB17ryMr6yeJUKjKMMP9qgf1LM7gsx0tUduGKk1x7vvapYhRvkFKNryCZQ36x0vh7uq9esZ70ON9dx7F3UGrrtwBM+LJPb20Kllxy/ChKB8tuSrOGAXwYnTDuXNC4a0z4c5hgmJkutTQUBqiP/bG2Q+FxnVdW24+Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rrzlMLxh; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=1XM5xDv7Bj0KgXxesCWne38qDPbZ7vxIDgzhvd1vrEo=; b=rrzlMLxh8Hx9cgD9w87ouAY1xO
-	AVWTxMwXua/Jo5x8nUFPPncHmgyuztKmpv0F5mpLsZ4xpYcQ0LhcTGINkM99g3KxjK1e8DU2OeVjA
-	r9n5/HH5DWSKhT/Zv1e7amfiH4V+GAj7DoarKyeZZBiP9HM0ULt5HquWc2a9EulwLlqg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uI68W-00DUwk-0m; Thu, 22 May 2025 15:39:04 +0200
-Date: Thu, 22 May 2025 15:39:04 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yajun Deng <yajun.deng@linux.dev>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: Synchronize c45_ids to phy_id
-Message-ID: <831a5923-5946-457e-8ff6-e92c8a0818fd@lunn.ch>
-References: <20250522131918.31454-1-yajun.deng@linux.dev>
+	s=arc-20240116; t=1747921229; c=relaxed/simple;
+	bh=HIJOUS/SI5zizYzwJsYcPa7qjCgV1iQMnyL/rktJGaM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uzh8xYbqygVx1Zbtg9yxupSpSYr93F717c2+sk7xzkftBh75uhKusIawRzZRCosKlUs9iygr/CjvnQBhuAESPWrvg62vreJuLZoOQj17vIxIyTKKTi8XCRpnUSPQnFa7KXU9r8wTOG8LeOdT/+B+yzZzaCQMfc9O6Zh86v+OoQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I+8a1fqs; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30ed0017688so4362492a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 06:40:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747921227; x=1748526027; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aqO62Y5pWG1JJqOi/r2q3uFDPeVJg8go7AMfsfoRjEM=;
+        b=I+8a1fqseEkpXm17vr8kkFKzpRiMNbiMdPST55FY7IGIZdu0LNdguQabuibySGnO2t
+         S1YZ6CNzmgO428sgmKyDq+mLTSb63U43GJr1yta+wNCQsn+ZDzv/0IwP4U9PuG50OwlW
+         5HPBWprY22jgL1kVZmSRDRMZubcXWQNSeNqRpeOJjlPchLX0Ke0ge6Ew9INccJutNcG/
+         0xd54RLM7Mmh+7y/w4aUO3iM/SqIOprate97CKOUI/oUEiHMgsvdcICGmMSHpIfrIdB2
+         IoPeWUBjq7r+DSa7lhMUdutCKHS1LwCKjivlDDCglMOBhsdqmfRDnWDCWNqCjDKsO0H9
+         gLFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747921227; x=1748526027;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aqO62Y5pWG1JJqOi/r2q3uFDPeVJg8go7AMfsfoRjEM=;
+        b=hdLlLI2VU2Wurwn83t4Ov42F4kCeTsqbwwOor63G/N2b7stG8teqjZuSWMnxYS8fH9
+         1Isf6xqDftHZMvoA/hhvDrJG0jkh4PewYOmMB6N7/j7f+mZtd/dEub3qgV2zhxrU7ibj
+         dYdGOSnoNDER3rxY59Ii7IaeJfabHxN8e3Vaq1gZMSEGCjr6uZ6T/1LyuC2ShjrxzndT
+         IogoDvEEC8OpCXCnm1NdzAioEDA46k3muW27FOTlX6PfO22AYjgATyXtFndVkSSYgXHo
+         dpsqxjTmf2DF73d35Wz7hOYDf7r5IQj6Zfv5fHk2ei+QL/ZYvS6/jw0ryEHO8Zdtj9kN
+         e/5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUnO3DY8GucqdqYvJdKKP/GYCZB/+95nrEuJOrp3cLiGTw3PHagUOeXA7Ulcipm3d/d76Kx9lGPflCtxdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPrmz2/DGkAfLvBUhGFHkT7hkHxYOxcB9TzIsdqbNd8tLzYrla
+	vLgr80yTg9Sa3iEDIAS3MqaI9/eIXTX/F4FbzwCdCv3txuJkGTBejMko7txYMETJop2yipwkQBa
+	qwA32Kg==
+X-Google-Smtp-Source: AGHT+IE64zivoR2emdXwJ1T3MMEGcmnkzNfS2y3g4Vr0ca/KiMD1OOUdmLrhWv278ITvYeVE5xsmeM1Oibc=
+X-Received: from pjbee16.prod.google.com ([2002:a17:90a:fc50:b0:2fa:15aa:4d1e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:28c5:b0:2ee:f076:20f1
+ with SMTP id 98e67ed59e1d1-30e7d2def4fmr44928647a91.0.1747921227482; Thu, 22
+ May 2025 06:40:27 -0700 (PDT)
+Date: Thu, 22 May 2025 06:40:25 -0700
+In-Reply-To: <918715044bf0aa6fb51ce511667bf7bb4ccbabea.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522131918.31454-1-yajun.deng@linux.dev>
+Mime-Version: 1.0
+References: <20250516215422.2550669-1-seanjc@google.com> <20250516215422.2550669-3-seanjc@google.com>
+ <219b6bd5-9afe-4d1c-aaab-03e5c580ce5c@redhat.com> <aCtQlanun-Kaq4NY@google.com>
+ <dca247173aace1269ce8512ae2d3797289bb1718.camel@intel.com>
+ <aC0MIUOTQbb9-a7k@google.com> <5546ad0e36f667a6b426ef47f1f40aee8d83efc9.camel@intel.com>
+ <aC4JZ4ztJiFGVMkB@google.com> <918715044bf0aa6fb51ce511667bf7bb4ccbabea.camel@intel.com>
+Message-ID: <aC8pSfEBdHZW9Ze7@google.com>
+Subject: Re: [PATCH v3 2/3] KVM: x86: Use kvzalloc() to allocate VM struct
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"vipinsh@google.com" <vipinsh@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, May 22, 2025 at 09:19:18PM +0800, Yajun Deng wrote:
-> The phy_id_show() function emit the phy_id for the phy device. If the phy
-> device is a c45 device, the phy_id is empty. In other words, phy_id_show()
-> only works with the c22 device.
+On Wed, May 21, 2025, Kai Huang wrote:
+> On Wed, 2025-05-21 at 10:12 -0700, Sean Christopherson wrote:
+> > > e.g., if we export kvm_x86_ops, we could unwind them.
+> > 
+> > Maaaybe.  I mean, yes, we could fully unwind kvm_x86_ops, but doing so would make
+> > the overall code far more brittle.  E.g. simply updating kvm_x86_ops won't suffice,
+> > as the static_calls also need to be patched, and we would have to be very careful
+> > not to touch anything in kvm_x86_ops that might have been consumed between here
+> > and the call to tdx_bringup().
 > 
-> Synchronize c45_ids to phy_id, phy_id_show() will work with both the c22
-> and c45 devices.
+> Right.  Maybe exporting kvm_ops_update() is better.
 
-First off, they are different things. A device can have both a C22 and
-a collection of C45 IDs. So they should not be mixed up in one sysfs
-attribute.
+A bit, but KVM would still need to be careful not to modify the parts of
+vt_x86_ops that have already been consumed.
 
-The second point has already been made by Russell, there are lots of
-different C45 IDs, and phylib will try to find a driver based on any
-of them.
+While I agree that leaving TDX breadcrumbs in kvm_x86_ops when TDX is disabled is
+undesirable, the behavior is known, i.e. we know exactly what TDX state is being
+left behind.  And failure to load the TDX Module should be very, very rare for
+any setup that is actually trying to enable TDX.
 
-If you want to export the C45 IDs, please think about adding new sysfs
-attributes.
+Whereas providing a way to modify kvm_x86_ops creates the possibility for "bad"
+updates.  KVM's initialization code is a lot like the kernel's boot code (and
+probably most bootstrapping code): it's inherently fragile because avoiding
+dependencies is practically impossible.
 
-	Andrew
+E.g. I ran into a relevant ordering problem[*] just a few days ago, where checking
+for VMX capabilities during PMU initialization always failed because the VMCS
+config hadn't yet been parsed.  Those types of bugs are especially dangerous
+because they're very easy to overlook when modifying existing code, e.g. the
+only sign that anything is broken is an optional feature being missing.
+
+[*] https://lore.kernel.org/all/aCU2YEpU0dOk7RTk@google.com
 
