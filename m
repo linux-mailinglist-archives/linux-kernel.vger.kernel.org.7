@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-659404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCCA9AC0FC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:19:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2BFAC0FCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9AEB7A9241
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:17:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92D4D16FCB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8466F2980D7;
-	Thu, 22 May 2025 15:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FDB2980C7;
+	Thu, 22 May 2025 15:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LqNDR519"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pTg5BNhU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97741C4609;
-	Thu, 22 May 2025 15:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AAB2980CF;
+	Thu, 22 May 2025 15:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747927137; cv=none; b=R7fQshMVHuTlm2C8gjXTF5JzcTIbCV7l47Z3WboIi+MBmAj/DFJtZMIrNwQuw2ZrgbpW4kYRZ+YPl0eE5JdWjMNsXdL9Ivy/Ba2ZJps22qRhzVyw3pmbY3F08JWTjtObxAj1Ye0JyMck8f1lMbAWd5Irk48ZC4cShNLhnKpUwoQ=
+	t=1747927193; cv=none; b=GuaPpkmvu3p6a/TUB7wgJ1+T2nXyWdrcJqUZ5Kui856ENb3JaV/tcUMNJQ/beADfY+9kt7KTrzEo1iOFNYZis6YR3CUdzLQLnwmMTryq1Ep3l6MQhdtMwuc4OA8w5gXui7WlCW4dptuFx+L381kleyvnebYkhc88//m+D8z+hg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747927137; c=relaxed/simple;
-	bh=5L58+Tu2chRzAN5OWtY0WKHcRc5vFU8rORSgK4V0vcs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Lqhsf6Gsd3SDEQSTJdQpLNB1xY62BVpXqVoUJ6cee5uPjvjTEC6/yz8eyn6hwOIuN3RVqzwX6BWpLf+I8IT/ipoylVOapQzS0w1Wi+qE4gRjhrQ6AQnL0hdIDtwPGImlC0uceL9jmY1oO+iijjIL8hESjglak2V1q5jD8ZIw7i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LqNDR519; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81EB0C4CEE4;
-	Thu, 22 May 2025 15:18:52 +0000 (UTC)
+	s=arc-20240116; t=1747927193; c=relaxed/simple;
+	bh=i/Js2zX68Eh3W7lgqs/TTe1lrc9T8F5QtriTzSirtG0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fExNiPD8Ft45GKco7ln5Y3D6r8wmF28tO4eQZkk5P4j3CpIP9ZpO/F+vIQChc8l7Ou6b7fxbMz02gQkJv1HGdbj5sA1n5QfK7ln+CgHLe6unVQ4gp47MND2EO+fFOjAdz6i1nXBXVkhWl2lADioLl2iwihn3jfYD5tflad2ONcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pTg5BNhU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21E11C4CEE4;
+	Thu, 22 May 2025 15:19:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747927136;
-	bh=5L58+Tu2chRzAN5OWtY0WKHcRc5vFU8rORSgK4V0vcs=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=LqNDR519/RLauVT/laSrjf8blh+FNPwiu3FNRYhStQ5YV7VbAur/V+c7zzTbBBL56
-	 HTulrb9RnEg1bxs2iRdKV+YylpgGTSvg8IIzwhHTQlsE/iHTX4BESB6rMaSgax1BFn
-	 gz4Dj/gMYEpaVWVHgtzzx21eYYirc6calMDZ8VydkwxpVuszPvDMUJuDI+5mPSnJtH
-	 MOajw4+kM9XfjvSwydQo5aYyOBXUGOdkuajxIlyomDE3d4KmIfQF7BrQyiEga+0waU
-	 3QI3Sgg7Qg2m7/VA0N4ZwREMbKSSZt4OfHMFmVGsE3CvTsHUgctW+mrlNE8F2ktW19
-	 DKIKqYB9CpQhg==
-Message-ID: <42a7222b-43be-490a-95ed-fb506c55fbcb@kernel.org>
-Date: Thu, 22 May 2025 17:18:50 +0200
+	s=k20201202; t=1747927192;
+	bh=i/Js2zX68Eh3W7lgqs/TTe1lrc9T8F5QtriTzSirtG0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pTg5BNhUAoee/xVitjxTjED/pewWLkBcqEfv3UrU7AE+0Vypb4uTWXUb6QP7J27wy
+	 aBrw3MG/LcF6k1DC8wEsCP8MA1Dk1jKj/ZjXxSW51Ieqa4Q1IjQfbRWct30uIM5NMr
+	 P3opyo5kculIdphJU8RjY7+UJQx7S8tRM/W+o8n1BluvWTS5BuF91aVNg3IYCtIoCz
+	 6zxVNbzrZOGwADbF5RG3qYurpxFx3ONXmzzt4LhwTpDvdW8T8088Bt+N0D2ZFFcv+z
+	 crQoboux33gGvJqH7RsctVCBk0khmYdISxkpwUK0IS8oYfsxmx0Gv0rwOcgGvEV5D7
+	 B7eUfSbV8yv2g==
+Message-ID: <b538701d-cfb1-4e86-994b-0a8f394e8335@kernel.org>
+Date: Thu, 22 May 2025 17:19:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: regulator: mediatek: Add MT8196 vmm
- controller
+Subject: Re: [PATCH v2 2/3] dt-bindings: pwm: adi,axi-pwmgen: fix clocks
+To: David Lechner <dlechner@baylibre.com>,
+ Michael Hennerich <michael.hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250522-pwm-axi-pwmgen-add-external-clock-v2-0-086ea9e6ecf0@baylibre.com>
+ <20250522-pwm-axi-pwmgen-add-external-clock-v2-2-086ea9e6ecf0@baylibre.com>
+ <4ed39a7f-bfca-4095-98ea-56b3c183b8f1@kernel.org>
+ <a364f588-03aa-4fac-a35e-d1cf201e924f@baylibre.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "Nancy.Lin" <nancy.lin@mediatek.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, Liam Girdwood
- <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Mark Brown <broonie@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com,
- jason-jh.lin@mediatek.com, singo.chang@mediatek.com,
- paul-pl.chen@mediatek.com
-References: <20250522150426.3418225-1-nancy.lin@mediatek.com>
- <20250522150426.3418225-2-nancy.lin@mediatek.com>
- <d21e1775-d5d4-4f58-865e-0cb33d14f371@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -111,31 +108,58 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <d21e1775-d5d4-4f58-865e-0cb33d14f371@kernel.org>
+In-Reply-To: <a364f588-03aa-4fac-a35e-d1cf201e924f@baylibre.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/05/2025 17:09, Krzysztof Kozlowski wrote:
-> On 22/05/2025 17:03, Nancy.Lin wrote:
->> From: Nancy Lin <nancy.lin@mediatek.com>
+On 22/05/2025 17:17, David Lechner wrote:
+> On 5/22/25 10:00 AM, Krzysztof Kozlowski wrote:
+>> On 22/05/2025 16:49, David Lechner wrote:
+>>> Fix a shortcoming in the bindings that doesn't allow for a separate
+>>> external clock.
+>>>
+>>> The AXI PWMGEN IP block has a compile option ASYNC_CLK_EN that allows
+>>> the use of an external clock for the PWM output separate from the AXI
+>>> clock that runs the peripheral.
+>>>
+>>> This was missed in the original bindings and so users were writing dts
+>>> files where the one and only clock specified would be the external
+>>> clock, if there was one, incorrectly missing the separate AXI clock.
+>>>
+>>> The correct bindings are that the AXI clock is always required and the
+>>> external clock is optional (must be given only when HDL compile option
+>>> ASYNC_CLK_EN=1).
+>>>
+>>> Fixes: 1edf2c2a2841 ("dt-bindings: pwm: Add AXI PWM generator")
+>>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/pwm/adi,axi-pwmgen.yaml | 14 ++++++++++++--
+>>>  1 file changed, 12 insertions(+), 2 deletions(-)
 >>
->> Add a device tree binding document for the MediaTek MT8196 VMM (Vcore
->> for MultiMedia) regulator controller. The VMM controller acts as the
->> main power supplier for multimedia power domains, such as those used
->> by display, video encode and decode subsystems. It provides virtual
->> regulators that serve as the power sources for various multimedia IPs,
+>> Please test your patches. This does not pass build (binding_check). :/
+>>
 > 
-> Virtual regulators do not sound real, so feels like you want some sort
-> of power domains?
+> Oh no, I knew I was forgetting something. :-(
 > 
-> A nit, subject: drop second/last, redundant "bindings". The
-> "dt-bindings" prefix is already stating that these are bindings.
-> See also:
-> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-Wrong keyword... Please fix the subject prefixes:
+> Maybe time to see about building this into b4 prep --check so it won't
+> be so easy to forget.
+> 
+> The correct will be:
+> 
+> 
+>   clock-names:
+>     oneOf:
+>       - const: axi
+>       - items:
+>           - const: axi
+>           - const: ext
 
-For bindings, the preferred subjects are explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
+Then just
+minItems: 1
+items:
+  - foo
+  - bar
 
 Best regards,
 Krzysztof
