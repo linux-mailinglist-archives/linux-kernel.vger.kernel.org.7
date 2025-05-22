@@ -1,129 +1,121 @@
-Return-Path: <linux-kernel+bounces-659526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 257D0AC116A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:50:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C56BBAC1166
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D64E84E25BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:50:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269FC9E0A15
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66DBF9DA;
-	Thu, 22 May 2025 16:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45ADA29A317;
+	Thu, 22 May 2025 16:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NDMhW3rA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOOJskH+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD5628B503;
-	Thu, 22 May 2025 16:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBD9227EAE;
+	Thu, 22 May 2025 16:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747932617; cv=none; b=IHqaI0XWxLofNLhoMcdeg6q2W+H/T+mTwsCqTFm0DUKGGrGtoU6ochIje6lK2IQzGNjZqzdfw3DkbKxRE1IsUFemmLFlxngLR78MYkE4EPwLrTAsUyG0R4+x2dFNdn3ItdzwRypUlY1kcxbELvvJf64kFLeLzHUqEoMZaTPR5cE=
+	t=1747932581; cv=none; b=XrU1oRYokhdWAwYS7fX5JrXGOsBsPkvqi8PGt2Xl/4R1Z40uqgsxcUXNrmFWRWFCskGqHinwuVvqxkdhcxuowOmTlwTRH/1rACwgTIaqSLcy7KEbwffnJVthAfqgXRarwaAZaN5c4XT7OCGHwWcvBPfz8DETofzqFXpfIWWflHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747932617; c=relaxed/simple;
-	bh=WAQaKse2ihBxfu0TJ9aEs4/TLMUkglE0FPdyzXEACyg=;
+	s=arc-20240116; t=1747932581; c=relaxed/simple;
+	bh=LP7ImiblbThAhgrPjhOSsoI6CFpyGCPkg+vE95DbX3k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ugn534+toqhQRuRAH06ap94NiJ2aBt+i6lXNX0o2265AptKfIFsN6MrSYvRiFrlbjqX3gdYNhPgbEAc86RQvr3R4wGF9yie9t72kcWbqKD4N79XEm8CmL788CtN2ag60tagtPtIhcKuzMbsN5oPhSwrlghXzZ5wLpzsoAUt6sN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NDMhW3rA; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747932615; x=1779468615;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WAQaKse2ihBxfu0TJ9aEs4/TLMUkglE0FPdyzXEACyg=;
-  b=NDMhW3rAbFiuePF43ilafJA4YtWevh8/3hfTA/q0jyR9Br5ERanu+jeg
-   bb+T40cDLpB2CNLUB3aMz+Qfu/AgRJizyZZ29SlAHgvuR9VOaKnqnkiMs
-   HAK38Rqbq/Vj5yIF94k+35Bx6eke3c6Jp/GpafkMk6hurKz8klNimoedM
-   dWpJDpvZVQTaqlu/PwworLUCXibbKmRGb7GHCAWqyRJ+BzulZw9DBjWWL
-   sKGZF2W2jd2wwgSERNweRrrTBjDKkbisVMullrhxOIM9MR95qkoS+XaHx
-   OaK1x5gl3fIT8KCS3u/tI7YKDKoyepsBDrAcNLCverkf3zpy/o1rCv7RG
-   g==;
-X-CSE-ConnectionGUID: 9ZvJMLx/QLar4Xmhr/mrTA==
-X-CSE-MsgGUID: D3jOHAtBRA6jggFvzo4aag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="53783824"
-X-IronPort-AV: E=Sophos;i="6.15,306,1739865600"; 
-   d="scan'208";a="53783824"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 09:50:14 -0700
-X-CSE-ConnectionGUID: k2um+OxgQP2XgqQbU3n+og==
-X-CSE-MsgGUID: BSIuWrpQQNafNT2SQQcBPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,306,1739865600"; 
-   d="scan'208";a="145550047"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 22 May 2025 09:50:05 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uI97L-000PWq-2Q;
-	Thu, 22 May 2025 16:50:03 +0000
-Date: Fri, 23 May 2025 00:49:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jens Wiklander <jens.wiklander@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-	op-tee@lists.trustedfirmware.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, Olivier Masse <olivier.masse@nxp.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T . J . Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Sumit Garg <sumit.garg@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	azarrabi@qti.qualcomm.com, Simona Vetter <simona.vetter@ffwll.ch>,
-	Daniel Stone <daniel@fooishbar.org>,
-	Rouven Czerwinski <rouven.czerwinski@linaro.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>
-Subject: Re: [PATCH v9 6/9] tee: add tee_shm_alloc_dma_mem()
-Message-ID: <202505230242.8jtn9m5R-lkp@intel.com>
-References: <20250520152436.474778-7-jens.wiklander@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JZdFQL6HhbZL0Z/hQd2h3i1nOrN0WeRnZg429aWIHBnEhcjqw21nJgD00MPxOuYRa4dbm4iddNakt2FGwLBVYCKeBeWIgusDaa1lkLzmvWg6jdVjW9VPbbuqNcgEoLBm8FPxiJ3cGH/mcc1zw8pXDwXe88XjXaJFFL5Kx+UbiO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOOJskH+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 805E7C4CEE4;
+	Thu, 22 May 2025 16:49:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747932581;
+	bh=LP7ImiblbThAhgrPjhOSsoI6CFpyGCPkg+vE95DbX3k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jOOJskH+ALMUEVBISyhXWJQuT34ek29MKVCCCCj92Gn2G3lePbm6bKCvtCxSdxN8R
+	 ODc/V5V6MC3cUgTR/VDg67fB+hUXdlvmpjRV7Wmpc4XaJ3oTF7ku412KLLcyb4umzY
+	 E6mESzVODo0xKq95zQwa9i3yW+DzZkpoYRpXRg0i8c4uboT+fZ+/ACCS73Ooqia47v
+	 Q+hfLcso4XfILh0S3GEDl3OMUeY2amaG161VGnZGA2Z8awhkI9WjwJGwCd7eDjokkp
+	 fK7h/jptGeiDE2D4NrDe7eknkHKNMhULO1OR8uzN/hx8xiBRIwwM2NBSRPy9S5oj1p
+	 UfsXHL3J9iCjA==
+Date: Thu, 22 May 2025 13:49:37 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf test: Add cgroup summary test case for perf trace
+Message-ID: <aC9VoTL_Cv4R7J-j@x1>
+References: <20250522142551.1062417-1-namhyung@kernel.org>
+ <CAH0uvoiZ2difXdPsjkdLikHTRwYROYUeuCdZ+gQ5uRfQ2rzwGQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250520152436.474778-7-jens.wiklander@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH0uvoiZ2difXdPsjkdLikHTRwYROYUeuCdZ+gQ5uRfQ2rzwGQ@mail.gmail.com>
 
-Hi Jens,
+On Thu, May 22, 2025 at 08:33:16AM -0700, Howard Chu wrote:
+> Hello Namhyung,
+> 
+> $ sudo /tmp/perf/perf test -vv 112
+> 112: perf trace summary:
+> 112: perf trace summary
+> --- start ---
+> test child forked, pid 1574993
+> testing: perf trace -s -- true
+> testing: perf trace -S -- true
+> testing: perf trace -s --summary-mode=thread -- true
+> testing: perf trace -S --summary-mode=total -- true
+> testing: perf trace -as --summary-mode=thread --no-bpf-summary -- true
+> testing: perf trace -as --summary-mode=total --no-bpf-summary -- true
+> testing: perf trace -as --summary-mode=thread --bpf-summary -- true
+> testing: perf trace -as --summary-mode=total --bpf-summary -- true
+> testing: perf trace -aS --summary-mode=total --bpf-summary -- true
+> testing: perf trace -as --summary-mode=cgroup --bpf-summary -- true
+> testing: perf trace -aS --summary-mode=cgroup --bpf-summary -- true
+> ---- end(0) ----
+> 112: perf trace summary                                              : Ok
 
-kernel test robot noticed the following build errors:
+Thanks, tested and applied to perf-tools-next,
 
-[auto build test ERROR on b4432656b36e5cc1d50a1f2dc15357543add530e]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jens-Wiklander/optee-sync-secure-world-ABI-headers/20250520-232546
-base:   b4432656b36e5cc1d50a1f2dc15357543add530e
-patch link:    https://lore.kernel.org/r/20250520152436.474778-7-jens.wiklander%40linaro.org
-patch subject: [PATCH v9 6/9] tee: add tee_shm_alloc_dma_mem()
-config: um-randconfig-r123-20250522 (https://download.01.org/0day-ci/archive/20250523/202505230242.8jtn9m5R-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250523/202505230242.8jtn9m5R-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505230242.8jtn9m5R-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-ERROR: modpost: "memremap" [drivers/tee/tee.ko] undefined!
-ERROR: modpost: "memunmap" [drivers/tee/tee.ko] undefined!
->> ERROR: modpost: "dma_alloc_pages" [drivers/tee/tee.ko] undefined!
->> ERROR: modpost: "dma_free_pages" [drivers/tee/tee.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+- Arnaldo
+ 
+> 
+> On Thu, May 22, 2025 at 7:25 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> >   $ sudo ./perf test -vv 112
+> >   112: perf trace summary:
+> >   --- start ---
+> >   test child forked, pid 1018940
+> >   testing: perf trace -s -- true
+> >   testing: perf trace -S -- true
+> >   testing: perf trace -s --summary-mode=thread -- true
+> >   testing: perf trace -S --summary-mode=total -- true
+> >   testing: perf trace -as --summary-mode=thread --no-bpf-summary -- true
+> >   testing: perf trace -as --summary-mode=total --no-bpf-summary -- true
+> >   testing: perf trace -as --summary-mode=thread --bpf-summary -- true
+> >   testing: perf trace -as --summary-mode=total --bpf-summary -- true
+> >   testing: perf trace -aS --summary-mode=total --bpf-summary -- true
+> >   testing: perf trace -as --summary-mode=cgroup --bpf-summary -- true
+> >   testing: perf trace -aS --summary-mode=cgroup --bpf-summary -- true
+> >   ---- end(0) ----
+> >   112: perf trace summary                                              : Ok
+> >
+> > Cc: Howard Chu <howardchu95@gmail.com>
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> 
+> Reviewed-by: Howard Chu <howardchu95@gmail.com>
+> 
+> Thanks,
+> Howard
 
