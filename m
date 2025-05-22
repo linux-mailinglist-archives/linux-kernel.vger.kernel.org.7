@@ -1,190 +1,123 @@
-Return-Path: <linux-kernel+bounces-658418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED65AC01EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:55:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7B1AC01F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E02A11B67FBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 01:55:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92FB13B3EF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 01:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292593595B;
-	Thu, 22 May 2025 01:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7523595B;
+	Thu, 22 May 2025 01:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZqjyS+UC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OxnFszlc"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE3E482EF
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 01:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DEF12B94
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 01:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747878931; cv=none; b=YHfNrsBGXpEROTtgHS7H5E6WeJGWAPS3LEYdO6h1ni43QQxHZxNOZiLA3Z5WPr4GFKGLsJA+V6CW6YTAw6qqKzKuPYqtP/BkNx+KBkyTCO+uP2CgxG/LeapGDXYQERK4/ncXz6Tv32mg5HklQhf2iWBonoSXC0/YfBLMBI0P2aI=
+	t=1747878980; cv=none; b=O9b6Alv1JEAmpVGpSbBjrMHL6HNGHAmFH0jHtLh8s5CMeMHVOV2OKm/qUugjdGdUDFz7UxZ5Lkl+Ae8Udr3cbNZAaGoxpW2QalqV2AAmE/8X8VP5Z8vBIOcOTi9RizhA3777UEMDe41PhUy8FeOkI/qqQoBkp1sN6x5GRK6379M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747878931; c=relaxed/simple;
-	bh=lTa/ncMxSJ23HEwwxo9vqj+1qB7P74qJQPqHqzNdht4=;
+	s=arc-20240116; t=1747878980; c=relaxed/simple;
+	bh=H5AGpXFkOjiqm0mIQhiYkitJE6OcKeVywqSZXg2cGe0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GKGQmYng59RG7W/vt6AbLNNlGBU8t3lNf2JZpU1NUlJHlhri4q/gxzT8YU06HS8DJeHJGWDVfi+q17en2X4LoWyq00N6K04a8lKR6gnHBFwoPyXFUJzy7eQeKOxPd+IB/aEx5PqAZ3/bcYsPuOqjExnPz7rEjLcoXRQgjm7iBso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZqjyS+UC; arc=none smtp.client-ip=170.10.129.124
+	 To:Cc:Content-Type; b=s8Nrv+ywQAGy9x4MpnmHzKFyj6RVYy8hevyef9BneKkrqcs6zprDTEE68tcbmUPanq7L782JmvVG7u5cdsyupClJcVOzWs1O/Kj+4fOkk/O0fqlJnslsKqohXqCyQfWR1fugx29aeL7S0TRIBBw6F4Nwff39cjRHVW4I//7QiXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OxnFszlc; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747878928;
+	s=mimecast20190719; t=1747878977;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5p6niAmsA49GKKuxaQzP63RobFGTOxmdcSlTneNzlWA=;
-	b=ZqjyS+UC80w4E1r+v4yXlkdmqZl3gnvouSfklgJKCcU1PHtJ7FxN6EcU94AMeqCFsNIGxc
-	q3SjuqsVJap9HlmXEWc9gu8KQGaFVHlEFgce37RWyKDnIvlilum4MEXEvyeoZHrhvt0aF/
-	9h4bC7RXnp4desZFQ6PR9mCHNP7Uo04=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=NW1557HPhPEiq5XsZNPrPBkBNdkeXJBTcWKSIzVke6M=;
+	b=OxnFszlcDNwtKcd1iRDwmqemrn8BfC0E1DVlPefbulCrmwNEbzzj305TySKhfc8mCRO/92
+	iDjoe9arOuL5LyUbGf01zCwMUIdhMaic+XqdHDQC7WlBKKG/NvH8cFo93i02F+c9BkWBdT
+	JmdU7fobyTejOMvmZ5JYSdQP3h/ACR8=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-557-EIvKSJ8gMb2G95ibPaI6tw-1; Wed, 21 May 2025 21:55:26 -0400
-X-MC-Unique: EIvKSJ8gMb2G95ibPaI6tw-1
-X-Mimecast-MFC-AGG-ID: EIvKSJ8gMb2G95ibPaI6tw_1747878926
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-30e7f19c8cfso8049883a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 18:55:26 -0700 (PDT)
+ us-mta-661-Ew7tjaoQPDOnqs8kATKreQ-1; Wed, 21 May 2025 21:56:15 -0400
+X-MC-Unique: Ew7tjaoQPDOnqs8kATKreQ-1
+X-Mimecast-MFC-AGG-ID: Ew7tjaoQPDOnqs8kATKreQ_1747878974
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-310a0668968so1160691a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 18:56:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747878926; x=1748483726;
+        d=1e100.net; s=20230601; t=1747878974; x=1748483774;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5p6niAmsA49GKKuxaQzP63RobFGTOxmdcSlTneNzlWA=;
-        b=XfkQNuv3O0XWsudvool6JQ9EK9/V+CTTzPd0YpVrSzjZx1/fcACxlfPf8pp8X42BZy
-         pjjP6oTWScKPsLebAcPA9CN2+NHrEgBeMtNia+juD5otuBOlluyOO3dTQCtveuvCnqKS
-         1kmrfvfRrm5MC2RP/WnONTFvphnGNcPWqa9T/d/kPM+IMeoLyDNlBYD2jAjSbCmXvYJr
-         m/6WQYalAp/rzhc7+dAEuveakZfoPBlSswnDVIQdEF9xG4wqr2SgqWhmcz7GKZ8hrwPp
-         00VnN2/BJOZNUAstcU7Oo+IDfJUWEmAOwlf8Sde9xmvICqAke2JKsNiUbzcv2d8VwCYv
-         2swQ==
-X-Gm-Message-State: AOJu0YxmQgofaJ8EM3hSBdW2caFmbEWdiaTQZ+EXYnB0z+9Pcnxlj2vP
-	7s+a6lFNB5SnbnbaU5rtZZhdNlZi4vrpJLB+oe9ooCqoUPvDoVzbk9sY+vntsBvD8Sz4O854SOO
-	2rJ/TCjGIKx7z105+SIG14Wney5j802/mie8vTJriC6347kXrV0Ro4bmtUma8zRxM1FuD0J5otF
-	VXorIqK05OhnxLj+wi8t0zr0yDq8u5N4ZOah+EDIs2
-X-Gm-Gg: ASbGncvYqKWtfZGLzP7baflg/wf/FlMFEX4hhAkHN29GkYeiDk5HCWnagnMcLyDL736
-	0coZUFjccq7WK5JmjOMBW5KWtwClW4l0uADJn492X8J7baD4aV/nv+ctOBH2snwylpgVbYw==
-X-Received: by 2002:a17:90b:4b0f:b0:2f6:be57:49d2 with SMTP id 98e67ed59e1d1-30e7d545920mr40201618a91.17.1747878925637;
-        Wed, 21 May 2025 18:55:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEEZdAF/K3AxA6D+lZBWg1vtRPNFwaImx+KwrixRafFi2yqI13mXEGAuap0K+TLCkX4QpfLLC8MCWV91G2CgRs=
-X-Received: by 2002:a17:90b:4b0f:b0:2f6:be57:49d2 with SMTP id
- 98e67ed59e1d1-30e7d545920mr40201585a91.17.1747878925224; Wed, 21 May 2025
- 18:55:25 -0700 (PDT)
+        bh=NW1557HPhPEiq5XsZNPrPBkBNdkeXJBTcWKSIzVke6M=;
+        b=SruS9ayAta2ngYNNY7kVkYJCRsbuq+Qpc6vlPPSSioiFPTaXoUrSDkF773lKFMh/En
+         P/LY8ye6vyAvTc7bl/nT7cMuh03zhu8v/km56gW+ZOiaJ55EbKv/Z+NuQvkBnYHGQEmf
+         0G3+gi90aW9jZ2LW+b1LOrx2OM3cV3h18gKvZzpWazG6AtkdozmMGt6+DoyZj69KNoxU
+         tYnHhZ8SJbGpF6sYSffdcY0MtgzUi2J20+wuA87jIner1GUajyCLqME5FJU296MNcS6d
+         1xeGB7kjHYgcpNVAGQmFlE7HeT1/9is7mxR6jfaNVu2wTDIBBGekqng558pHf8acqcrn
+         neuw==
+X-Gm-Message-State: AOJu0YxxFXy1bNr4Rpz5mF/acN3go6BDzpdj0EEJmLKSz4id8mh6C1cc
+	8Ki0yDaAlOZn6yWw2N6z0Ka0udqPlsj+Ryisr+WGaeYWUf7KwlUt1sjO03CybIUTYP0UACTGtSq
+	fqi/ptTsPykUMy/ZxQpsRTuzfy5WfoFsHRAuZR7QxchKAx/fQpqmt4xAUZ3rrrFDnpQE2NAvSm1
+	sA8KaOXvv7jdmcoD+eDJila9ZDpbeZdz8TcLVUXigD
+X-Gm-Gg: ASbGncuXX5BRgNDUiqMwcINNBQknRLdo0b0nk3QQqeEisGwqp5ng69syNGaLWTCvYf6
+	n55+DXuhhSuJLY/L8BeYhJxV6EZmQcH8Idm3JJ+F1UlvMH/onA/C+2haOxxauyse7tEtQSw==
+X-Received: by 2002:a17:90a:dfc7:b0:310:89e8:c7ba with SMTP id 98e67ed59e1d1-31089e8c7e6mr9243384a91.2.1747878974132;
+        Wed, 21 May 2025 18:56:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH9nY1imNdOY1fcMkW5165nto+x/L6mYFFJjGVHS0ov9+6/DqssyAmH+DkYaeCMnk9KynCvxnLw2cMUX/UbDDA=
+X-Received: by 2002:a17:90a:dfc7:b0:310:89e8:c7ba with SMTP id
+ 98e67ed59e1d1-31089e8c7e6mr9243348a91.2.1747878973727; Wed, 21 May 2025
+ 18:56:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250520110526.635507-1-lvivier@redhat.com> <20250520110526.635507-3-lvivier@redhat.com>
- <CACGkMEudOrbPjwLbQKXeLc9K4oSq8vDH5YD-hbrsJn1aYK6xxQ@mail.gmail.com> <4085eec2-6d1c-4769-9b0e-5b5771b3e4bf@redhat.com>
-In-Reply-To: <4085eec2-6d1c-4769-9b0e-5b5771b3e4bf@redhat.com>
+References: <20250521092236.661410-1-lvivier@redhat.com> <20250521092236.661410-2-lvivier@redhat.com>
+In-Reply-To: <20250521092236.661410-2-lvivier@redhat.com>
 From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 22 May 2025 09:55:13 +0800
-X-Gm-Features: AX0GCFsI-RHUVMOpNpFz6B59ePV0fkZx_9XGRIMqoQe4ffj9q7Qt8i8HQBzGKic
-Message-ID: <CACGkMEv7PczQpxY79jQ_EMwmRvhq8JFdr40UmzAoHOKV2OCRjQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] virtio_net: Enforce minimum TX ring size for reliability
+Date: Thu, 22 May 2025 09:56:02 +0800
+X-Gm-Features: AX0GCFvAN5m910f9nvI8DBz7vO_Z6Tqq5Z-RhLtNuP933xBCKM48QQKj3szEI_4
+Message-ID: <CACGkMEvvNcnDvsowuEKOxK9W+un3dYWP+YxtNd4Z1XsUU-ZrUA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] virtio_ring: Fix error reporting in virtqueue_resize
 To: Laurent Vivier <lvivier@redhat.com>
 Cc: linux-kernel@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org, 
 	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 21, 2025 at 3:45=E2=80=AFPM Laurent Vivier <lvivier@redhat.com>=
+On Wed, May 21, 2025 at 5:22=E2=80=AFPM Laurent Vivier <lvivier@redhat.com>=
  wrote:
 >
-> On 21/05/2025 03:01, Jason Wang wrote:
-> > On Tue, May 20, 2025 at 7:05=E2=80=AFPM Laurent Vivier <lvivier@redhat.=
-com> wrote:
-> >>
-> >> The `tx_may_stop()` logic stops TX queues if free descriptors
-> >> (`sq->vq->num_free`) fall below the threshold of (2 + `MAX_SKB_FRAGS`)=
-.
-> >> If the total ring size (`ring_num`) is not strictly greater than this
-> >> value, queues can become persistently stopped or stop after minimal
-> >> use, severely degrading performance.
-> >>
-> >> A single sk_buff transmission typically requires descriptors for:
-> >> - The virtio_net_hdr (1 descriptor)
-> >> - The sk_buff's linear data (head) (1 descriptor)
-> >> - Paged fragments (up to MAX_SKB_FRAGS descriptors)
-> >>
-> >> This patch enforces that the TX ring size ('ring_num') must be strictl=
-y
-> >> greater than (2 + MAX_SKB_FRAGS). This ensures that the ring is
-> >> always large enough to hold at least one maximally-fragmented packet
-> >> plus at least one additional slot.
-> >>
-> >> Reported-by: Lei Yang <leiyang@redhat.com>
-> >> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
-> >> ---
-> >>   drivers/net/virtio_net.c | 6 ++++++
-> >>   1 file changed, 6 insertions(+)
-> >>
-> >> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> >> index e53ba600605a..866961f368a2 100644
-> >> --- a/drivers/net/virtio_net.c
-> >> +++ b/drivers/net/virtio_net.c
-> >> @@ -3481,6 +3481,12 @@ static int virtnet_tx_resize(struct virtnet_inf=
-o *vi, struct send_queue *sq,
-> >>   {
-> >>          int qindex, err;
-> >>
-> >> +       if (ring_num <=3D 2+MAX_SKB_FRAGS) {
-> >
-> > Nit: space is probably needed around "+"
+> The virtqueue_resize() function was not correctly propagating error codes
+> from its internal resize helper functions, specifically
+> virtqueue_resize_packet() and virtqueue_resize_split(). If these helpers
+> returned an error, but the subsequent call to virtqueue_enable_after_rese=
+t()
+> succeeded, the original error from the resize operation would be masked.
+> Consequently, virtqueue_resize() could incorrectly report success to its
+> caller despite an underlying resize failure.
 >
-> I agree, but I kept the original syntax used everywhere in the file. It e=
-ases the search
-> of the value in the file.
+> This change restores the original code behavior:
 >
-> >
-> >> +               netdev_err(vi->dev, "tx size (%d) cannot be smaller th=
-an %d\n",
-> >> +                          ring_num, 2+MAX_SKB_FRAGS);
-> >
-> > And here.
-> >
-> >> +               return -EINVAL;
-> >> +       }
-> >> +
-> >>          qindex =3D sq - vi->sq;
-> >>
-> >>          virtnet_tx_pause(vi, sq);
-> >> --
-> >> 2.49.0
-> >>
-> >
-> > Other than this.
-> >
-> > Acked-by: Jason Wang <jasowang@redhat.com>
-> >
-> > (Maybe we can proceed on don't stall if we had at least 1 left if
-> > indirect descriptors are supported).
+>        if (vdev->config->enable_vq_after_reset(_vq))
+>                return -EBUSY;
 >
-> But in this case, how to know when to stall the queue?
+>        return err;
+>
+> Fix: commit ad48d53b5b3f ("virtio_ring: separate the logic of reset/enabl=
+e from virtqueue_resize")
+> Cc: xuanzhuo@linux.alibaba.com
+> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+> ---
 
-I meant something like:
-
-        if (sq->vq->num_free < virito_has_feature(INDIRECT) ? 1 :
-2+MAX_SKB_FRAGS) {
-        }
-
-This might be useful for the case where MAX_SKB_FRAGS is greater than
-17 as well.
-
-(But it's an independent topic anyhow)
+Acked-by: Jason Wang <jasowang@redhat.com>
 
 Thanks
-
->
-> Thank,
-> Laurent
-> >
-> > Thanks
-> >
->
 
 
