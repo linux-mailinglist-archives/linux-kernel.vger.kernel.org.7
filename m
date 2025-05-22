@@ -1,128 +1,84 @@
-Return-Path: <linux-kernel+bounces-658903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478FBAC08F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:47:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF9BFAC08F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8437D9E6490
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:47:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E67D3A26598
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFFD28851A;
-	Thu, 22 May 2025 09:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485A92882DF;
+	Thu, 22 May 2025 09:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/YJ7Weh"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8D119ABDE;
-	Thu, 22 May 2025 09:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="MGX/qAUj"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE4119ABDE;
+	Thu, 22 May 2025 09:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747907246; cv=none; b=J/1fCxsgNFgt9rXSy+h67jshKcVXEaP02cikaG0zlNmGiMcaTuWYVyRreFLe3rVhlhHHukwJPMV98+df8RShgPXgyF8TWFaqbmOAtg4aS96dA7rQO8PFsnjF1FVymlimrgOZwDaXJlXLCrKYR0tybJhf3MfwsGfpo4Laz59RLi0=
+	t=1747907260; cv=none; b=nYou9YFtdrtR2vIOHE/TLiSL8N2wwtIOXyFV/E+fEf5l5xUJ2CqvdOv3a5YrDruV0CfNLov9SrOQs+YLlbKA/rP/l4CNy0k3w67cBnQYjjp8L/9gqAb0vEZYq/PpFAOseFGx4BaE/0aXstNqiUrVdzE64QfqTn+mC/+xGfPOmIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747907246; c=relaxed/simple;
-	bh=4Mi//bmqCitlsd1rQzDuiS76DZ9pyq2kmydmOzYN5jw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cK3y6xQggniDnEY82rduAHQDgYhctgFIbZRvbZB/lUn6OTOQzyc8VijqTSeW4U7UKUwL4HAT7K3uH+6JARBFjZgeChxGzTsdULZA53lQsDEEzZlvERdSoWTztc7jYcfV9vT7zu0EJ+Qou9+rQXrcGhG5gmBetjUJZFHVAu6hzxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E/YJ7Weh; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-231ecbe2a5dso5685595ad.0;
-        Thu, 22 May 2025 02:47:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747907244; x=1748512044; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ipAwY8ZxlvEf1nakEvQVnIk9cDkKI8+OAel+80ahbDs=;
-        b=E/YJ7WehRFVOuqchMTDdvFDk6Alkq7Il6ryhrxCJfHvQTrtpTLzAqSr1gaclOlqcNn
-         /7mKJKgsE2sPHKPMCOdVXxpz2RURymaIa9vTFFNsz+yokYgipeQoKP0npt4dX9iJTJHs
-         30Wr7Udb1gR/rRnxSm1U9tK9rqSccdwWMvfOSR9/bq3FMap/FonrAs+rzV65AEKLxtZl
-         GDyLKzgJ9BwOCe7sytaGVvsYcsAbICu+OhG+L2tFNWKwyQmNK/1wSghzJ4+q0Uji4cgl
-         ConOcbezkbjmekFdeoCXUn7RcqLzVFPPcMtG9k1ARMmznNNNCllAx3BGRHSJKM7o/S7F
-         rGlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747907244; x=1748512044;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ipAwY8ZxlvEf1nakEvQVnIk9cDkKI8+OAel+80ahbDs=;
-        b=LlOlzG4v77yFyoxA+kXlRa7AVCQWO4knSFZKhNx9FhAFnp2zD59hLW7Gxg9c+6CsGS
-         UQpj1JfAmmx1CKYGXLGlKIIjqNT4KR2NACzYjbW3Y0OCFqpUSwuVuNYD2MhBbFjWjf/e
-         OxmyvCKPWn0QjWx+mQKXAqQIcVEmpyL4LmBKzt/9v2PS0ub+UvBx3xqOSZiLzNGTySwy
-         Uvdn5vFqcsVotHCD/ZMnCKM4ghtfO/anPxQxChiebdb9PqPHfcIHhpIkJc2yGYNqcKgT
-         VbMce+7VwmEpgRqqT/cqtOwgMUcNedE/YCuGs7nsUGVHz+KvltgIBYIMf6pmOxAuVygj
-         2eIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbTMfJtlhzKGV3mV9nukIdzH5n2nF4fCr5QMOWdimzeccyc8vg0Imfz+a7ptDWhuPyX3OCrQpEUf5QuOwyanA=@vger.kernel.org, AJvYcCWfWTmTeTRAEQb8fQpg5WkrzdxbrhdKYLVMhs6oU2qfb5nHSPRiTxZELS30vSQDCAKw60ynH1KnZl3byUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEO8FHJhJATtOubcdq6Orkh5qdzdsrs4B960Vn3++PIy6I5IcU
-	PSyfluZx0cMfy5nssyxbI3+HosvnbvU723yNLNnBNN/5o085W2oHKK1NuisYdNfdsF0Q9Io4uBa
-	sltz1gmaGaIC2YfztOsC+YHC6dKWpnww=
-X-Gm-Gg: ASbGncv2L8FAEp/t5oTWFq4LOjy4F2X2Nby/baTpZO1szlovHUKvJbRTkiKN5o+JWU8
-	6+G6uLo6RtlZ4uOscqmQxion+ThU8tuKLV4FkmJ8ZO6MD+BOxjTkH5z2QXgEEekvF946irBLhAi
-	1kFUBkezaKWCbvXpCacP2EqVOH65yQOx9j
-X-Google-Smtp-Source: AGHT+IHKkMNeaj6kG+RCv22d49KV67QvtWhnBvQaNqs96AouSRNF37SPJJw4Y6hGaON6FpFmZHUqDu6VOEZ338Aktx8=
-X-Received: by 2002:a17:903:2285:b0:22f:b00d:fe59 with SMTP id
- d9443c01a7336-231d450fd20mr120664705ad.9.1747907244533; Thu, 22 May 2025
- 02:47:24 -0700 (PDT)
+	s=arc-20240116; t=1747907260; c=relaxed/simple;
+	bh=Q/JtzSsynX2wUmCK1eEor5G/XtxF0d+v18cJ5Ise+c8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=LETHg81pEvr62CKM2LI6+SpvNwmRjWCFE4GYUaI3OtxFMlsl5VVlWT8bwdpnMxLrRF3gvlP4aSj9ChWbRjzxX60ri28eVjZ7Mu50aWVIeEsWSGOljWSnvHhoPpGkvCuDCMWRmTie+QhhCdoIefVRKIe5RtrzfTtbGuydBzkXdNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=MGX/qAUj reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=UkSR7r/KpcJT49OPCs8Qy98yUDr2Bj0rxe+RJe/hqD0=; b=M
+	GX/qAUjDTJgIUt2mcAIMmT6/3vBpiJSnPYHJWlw0PebKeO18qfPYACXADub4SZmm
+	qUlntSYcmtF76KizoD906deKxvJ76WMLybu1ykQaHR8zeNti9nq3eTO1dc9jZhqP
+	A5tEJ4sDdZQksUP8LN+xBFUKrAQ/d/EpLIzCKe+Xtc=
+Received: from 00107082$163.com ( [111.35.189.95] ) by
+ ajax-webmail-wmsvr-40-100 (Coremail) ; Thu, 22 May 2025 17:47:17 +0800
+ (CST)
+Date: Thu, 22 May 2025 17:47:17 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Greg KH" <gregkh@linuxfoundation.org>, mathias.nyman@intel.com,
+	oneukum@suse.com, stern@rowland.harvard.edu
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] USB: core: add a memory pool to urb caching
+ host-controller private data
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <2025052257-expectant-macarena-69ee@gregkh>
+References: <a235e322e270942dc3d607d4b46ff7db29abeb2d.1747897366.git.00107082@163.com>
+ <2025052257-expectant-macarena-69ee@gregkh>
+X-NTES-SC: AL_Qu2fBfWbuEoo4SOQYOkZnEYQheY4XMKyuPkg1YJXOp80siTL9w4MZm9zFkDN986wFQWhoAiIdylMx/1of7R9bZKdajeYGU2/DaUyEP9X97ij
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250520182125.806758-1-ojeda@kernel.org>
-In-Reply-To: <20250520182125.806758-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 22 May 2025 11:47:10 +0200
-X-Gm-Features: AX0GCFudr69K7Ker-OBq61Wf5eeUt338xEQM0BHHVJyg1bvCHsTu9tjB29wkrAQ
-Message-ID: <CANiq72=p4P9MuFKNy28PdHSqznvW_8Tep1wjm3zPXqbZVrujfg@mail.gmail.com>
-Subject: Re: [PATCH] rust: remove unneeded Rust 1.87.0 `allow(clippy::ptr_eq)`
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <2ffd5bed.9108.196f763d60d.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZCgvCgDnzwOm8i5oi8oKAA--.22741W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBkBBVqmgu58u1pQACsH
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Tue, May 20, 2025 at 8:22=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> Before a change to relax the lint was backported to Rust 1.87.0 before
-> its release, Clippy was expected to warn with:
->
->     error: use `core::ptr::eq` when comparing raw pointers
->        --> rust/kernel/list.rs:438:12
->         |
->     438 |         if self.first =3D=3D item {
->         |            ^^^^^^^^^^^^^^^^^^ help: try: `core::ptr::eq(self.fi=
-rst, item)`
->         |
->         =3D help: for further information visit https://rust-lang.github.=
-io/rust-clippy/master/index.html#ptr_eq
->         =3D note: `-D clippy::ptr-eq` implied by `-D warnings`
->         =3D help: to override `-D warnings` add `#[allow(clippy::ptr_eq)]=
-`
->
-> The backported finally landed indeed, thus remove the `allow`s we added
-> back then, which were added just in case the backport did not land
-> in time.
->
-> See commit a39f30870927 ("rust: allow Rust 1.87.0's `clippy::ptr_eq`
-> lint") for details.
->
-> Link: https://github.com/rust-lang/rust/pull/140859 [1]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-
-Applied to `rust-next` -- thanks everyone!
-
-    [ Reworded for clarity. - Miguel ]
-
-Cheers,
-Miguel
+CkF0IDIwMjUtMDUtMjIgMTY6MzM6NDIsICJHcmVnIEtIIiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlv
+bi5vcmc+IHdyb3RlOgo+T24gVGh1LCBNYXkgMjIsIDIwMjUgYXQgMDM6MDk6NDNQTSArMDgwMCwg
+RGF2aWQgV2FuZyB3cm90ZToKPj4gRnJvbSBhbiBlbmQtdXNlcidzIHBlcnNwZWN0aXZlLCB0aGUg
+cGVyZm9ybWFuY2UgZGlmZmVyZW5jZSB3aXRoIHRoaXMgY2hhbmdlCj4+IGlzIGluc2lnbmlmaWNh
+bnQgd2hlbiBzeXN0ZW0gaXMgdW5kZXIgbm8gbWVtb3J5IHByZXNzdXJlLCBhbmQgd2hlbiB1bmRl
+cgo+PiBoZWF2eSBtZW1vcnkgcHJlc3N1cmUuIFdoZW4gc3lzdGVtIGlzIHVuZGVyIGhlYXZ5IG1l
+bW9yeSBwcmVzc3VyZSwKPj4gZXZlcnl0aGluZyBpcyBzbG93LiAgVGhlcmUgY291bGQgYmUgYSBw
+b2ludCBpbi1iZXR3ZWVuIG5vIG1lbW9yeSBwcmVzc3VyZQo+PiBhbmQgaGVhdnkgbWVtb3J5IHBy
+ZXNzdXJlIHdoZXJlIHRoZXNlIDFrKy9zIG1lbW9yeSBhbGxvY2F0aW9ucyB3b3VsZAo+PiBkb21p
+bmF0ZSB0aGUgcGVyZm9ybWFuY2UsIGJ1dCB2ZXJ5IGhhcmQgdG8gcGlucG9pbnQgaXQuCj4KPkZv
+ciB0aGlzIHJlYXNvbiBhbG9uZSBJIGNhbid0IHRha2UgdGhpcyBjaGFuZ2UsIHNvcnJ5LgoKU3Rp
+bGwsIHJlYXNvbmFibGUgdG8gbWUuLi4uCj4KPkFsc28sIGFzIG90aGVycyBoYXZlIHN0YXRlZCwg
+dGhpcyBjb3VsZCBiZSBkb25lIGluIHRoZSBoY2QgZHJpdmVycwo+dGhlbXNlbHZlcyBpZiB0aGV5
+IHdhbnQgdG8sIG5vIG5lZWQgdG8gcHVzaCB0aGlzIGludG8gdGhlIHVzYiBjb3JlLgoKCj4KPnRo
+YW5rcywKPgo+Z3JlZyBrLWgKCgpUaGFua3MgYWxsIHlvdSBndXlzIGZvciB0YWtpbmcgdGltZSBy
+ZXZpZXdpbmcvZGlzY3Vzc2luZyB0aGlzLgoKRGF2aWQK
 
