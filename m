@@ -1,218 +1,149 @@
-Return-Path: <linux-kernel+bounces-659028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC350AC0A81
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:20:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D688EAC0A86
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E67561BC6587
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:21:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C5984E5CA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AEDC289E10;
-	Thu, 22 May 2025 11:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PRMJ9NgO"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD85289361;
+	Thu, 22 May 2025 11:21:20 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FBF28A1F0;
-	Thu, 22 May 2025 11:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3E3238C3D;
+	Thu, 22 May 2025 11:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747912826; cv=none; b=FXEjFO2tauFdbvShjug21/zFlodlzpG1humq1ObrW/T4C3GiHhzvlvcu5fWe2vKmW7eOvpsPZzPm2Kjx0RD7GDYyPnqoHbyOVfPFlfWlNgP3e2E5spoiUAbtoPCjXjRcT/u0KP2a/e4Kz2DyfDd6TpRsg/NedA1DBT5DfmQBd9g=
+	t=1747912880; cv=none; b=Tj+to6+2Z+7+N4d/E2Jhu3nkZCpOQbaPplMzq1mvw8hw7WBGmENx4/FzAYm/kdyos9BfVUrvbswjLDR/e9EDmUtU6V9U+UccpHHp52nmH8hL4uZc4qCHjWw9upHlvXun5SPuCrU1D57gwqB6brrKGjEuDN5dSUMQ2yvg/PoGYSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747912826; c=relaxed/simple;
-	bh=B5b52Gxbl6cfi05GskfaE62/PK/gBhMM9exzJDKRnBM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K7hfAnMDVZD4vhDNipDXL1wpVsGhm3P2e6ZJn9xxDDptwrI3YRmvjrAKv0rPaQ22eRQA/eBmKHmpi9x/3ezgepbT6JEYk0bXhxCq3q2WqIrungz0h6inR6X9EIvnqUZ6zUz6vKiNG/z2guPqNCKxys9ENobrBc2oMD65K4KPwBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PRMJ9NgO; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23274dbcbc2so29090265ad.1;
-        Thu, 22 May 2025 04:20:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747912824; x=1748517624; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wyMHELK/W37ReKJqaI5CZ8imY31+a8EBxUQ+RkojFSw=;
-        b=PRMJ9NgOFHMaFGUzgBuQQuAxyQmrgzx3IHj57WjP06KQhzRteAtScDwr+DbkpcZJZo
-         JJdtd37u/p6LUm6PbbrAnVkq6YoVQgruVdCc9WRSzt7qQ3pegfdld1Yzggrp6U/DftbJ
-         AbQZ83XCJwvwcRZ468wPT9v2+mILGzuzJ2Q8o1BdOOiP7D+ALMMR0PHZ6qRbiqA2WK2l
-         cvP5gBI7fbrG0dD36+6o5VD7FeZi+IpZFPKjRsbjQwMHGm/ztg6H7IkvkcoF8wQ0O5Gq
-         TpakcZngwWnlXfrTDqjEOevuRmje2KCX7y7pfjJAyLuctWr+ojYeLDgaYl15G3pVEzOf
-         XHLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747912824; x=1748517624;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wyMHELK/W37ReKJqaI5CZ8imY31+a8EBxUQ+RkojFSw=;
-        b=xIdmcxB1qsG9H/j9YKmm9m2iBDvHMIUcR1f5ARG8iB6AN8CmOUNe73jzjQzhEX8qTx
-         4JwRUZgZ3wbt7KuA7LDvm9RNmio3azK6u2taVL1ExAM+d5vPU4kO5ptgiNkl9vmBbE4h
-         uoFxNuYf4OlQyoWGtjBR8emzKLhQzwSurvsuYYg0WrcsdwuSd6vCwRQfZjVxZXoJX+Zc
-         wkhY/C3w4xaEWWw8tBDF54PMEwdUOggb8QVYDHiQa53HYdjADoAL/Ow+Ei0On8TO+3ec
-         xbm7Sgodp+15Pn/aXzxDz0ljUHQ/3ilcNl+jEmZf2xmsVh5x1fmfp+WrtrGIs8pPgThD
-         Az7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW+rls6wwvTKNML3osHTpwN1ZfKV+4/KjvW2OClFeNXkBglF2MoraDgs1Qz0DcGH5vs0RyCVlBUN0WF@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPZiTDDvQJxPvEV8QlQaxvVF/Ku4Fj1NBmm8hSfzXRXY5z9t4t
-	2OSdA8YuoFhYxBUGrNgegwNDQgaEz8tAxix89NCtSpegswOWClJsjq23EluLoHOL
-X-Gm-Gg: ASbGnct9gwIGEjF2lEhAnQxCb3VFCsXzHtVz53fLlCIuk/7dhYc5K5DJmrgHLT3NZl5
-	l1WHNd/MPDxNwJ7mqQBqSfRIbTLMy9cS2+ckTs7FVd2lsXkHnMOdRAimwnpwgVDfGviElSxZwae
-	f25KDKqqXw+2n2vjyK8TdS+ZrrzatH1wubPPlwZTQCCDTu1zEOHXTqRzUGeyCZkeTZz6PnnRWV2
-	/SK4c6LWBGMwNlvAK8B+eY4r+AHgRyiPg1jDkdTkHSUwsCs9/3UyzAseyGQCpa5/m6QKtDLEUWe
-	iCXkBrKXduVHYwbqn00GMPZfB3t7prsz3+mWrj9P06ni0sxQsd00CifNkprFkVK0ANjP064hHbj
-	abA7OTg==
-X-Google-Smtp-Source: AGHT+IEvfYpzq+KtCnA48kgadaoajRidcVSbbuTuYcaFBRD35if4dtavF9FBXrZza+w4uOtV1v8BkQ==
-X-Received: by 2002:a17:903:41c7:b0:231:7fbc:19d8 with SMTP id d9443c01a7336-231de35159bmr323077995ad.5.1747912824106;
-        Thu, 22 May 2025 04:20:24 -0700 (PDT)
-Received: from trigkey.. (FL1-119-244-79-106.tky.mesh.ad.jp. [119.244.79.106])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4ac93b3sm107730145ad.4.2025.05.22.04.20.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 04:20:23 -0700 (PDT)
-From: Daisuke Matsuda <dskmtsd@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	leon@kernel.org,
-	jgg@ziepe.ca,
-	zyjzyj2000@gmail.com
-Cc: Daisuke Matsuda <dskmtsd@gmail.com>
-Subject: [PATCH for-next v4 2/2] RDMA/rxe: Enable asynchronous prefetch for ODP MRs
-Date: Thu, 22 May 2025 11:19:55 +0000
-Message-ID: <20250522111955.3227-3-dskmtsd@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250522111955.3227-1-dskmtsd@gmail.com>
-References: <20250522111955.3227-1-dskmtsd@gmail.com>
+	s=arc-20240116; t=1747912880; c=relaxed/simple;
+	bh=sNrvtk1BUA4pyk8WW5vjsyMF2BGrf0flGH/whATon1k=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iUNvYUbxdgx7aQSF0jb7xFtKqSFyIdFDYcbjcj7M7fcvbw98yp9G5o7mZUluEfhJNDqbh1N7GmI2yeDOTY2vYGXT4fNk/8z4g+8PnRXpVjWAnItkiyHJOpsSmyxwppTW7tMJua+rTs7Vojkrpir6bkSmGYaWyeAVTY1HRCj4Pdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b35S43W3Nz6GD5w;
+	Thu, 22 May 2025 19:20:20 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3C409140142;
+	Thu, 22 May 2025 19:21:16 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 22 May
+ 2025 13:21:15 +0200
+Date: Thu, 22 May 2025 12:21:13 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: <linux-pci@vger.kernel.org>, Jon Pan-Doh <pandoh@google.com>, "Karolina
+ Stolarek" <karolina.stolarek@oracle.com>, Weinan Liu <wnliu@google.com>,
+	Martin Petersen <martin.petersen@oracle.com>, Ben Fuller
+	<ben.fuller@oracle.com>, Drew Walton <drewwalton@microsoft.com>, "Anil
+ Agrawal" <anilagrawal@meta.com>, Tony Luck <tony.luck@intel.com>, Ilpo
+ =?UTF-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, "Sathyanarayanan
+ Kuppuswamy" <sathyanarayanan.kuppuswamy@linux.intel.com>, Lukas Wunner
+	<lukas@wunner.de>, Sargun Dhillon <sargun@meta.com>, "Paul E . McKenney"
+	<paulmck@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, "Oliver
+ O'Halloran" <oohall@gmail.com>, Kai-Heng Feng <kaihengf@nvidia.com>, "Keith
+ Busch" <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>, Terry Bowman
+	<terry.bowman@amd.com>, Shiju Jose <shiju.jose@huawei.com>, Dave Jiang
+	<dave.jiang@intel.com>, <linux-kernel@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Subject: Re: [PATCH v7 17/17] PCI/AER: Add sysfs attributes for log
+ ratelimits
+Message-ID: <20250522122113.000030c0@huawei.com>
+In-Reply-To: <20250521225942.GA1452275@bhelgaas>
+References: <20250521114600.00007010@huawei.com>
+	<20250521225942.GA1452275@bhelgaas>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Calling ibv_advise_mr(3) with flags other than IBV_ADVISE_MR_FLAG_FLUSH
-invokes an asynchronous request. It is best-effort, and thus can safely be
-deferred to the system-wide workqueue.
+On Wed, 21 May 2025 17:59:42 -0500
+Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-The reference counter in rxe_mr is used to ensure that the MRs persist and
-that rxe is not terminated until the queued work is done.
+> On Wed, May 21, 2025 at 11:46:00AM +0100, Jonathan Cameron wrote:
+> > On Tue, 20 May 2025 16:50:34 -0500
+> > Bjorn Helgaas <helgaas@kernel.org> wrote:
+> >   
+> > > From: Jon Pan-Doh <pandoh@google.com>
+> > > 
+> > > Allow userspace to read/write log ratelimits per device (including
+> > > enable/disable). Create aer/ sysfs directory to store them and any
+> > > future aer configs.  
+> > ...  
+> 
+> > There is some relatively new SYSFS infra that I think will help
+> > make this slightly nicer by getting rid of the extra directory when
+> > there is nothing to be done with it.  
+> 
+> > > +#define aer_ratelimit_burst_attr(name, ratelimit)			\
+> > > +	static ssize_t							\
+> > > +	name##_show(struct device *dev, struct device_attribute *attr,	\
+> > > +		    char *buf)						\
+> > > +{									\  
+> > 
+> > A little odd looking to indent this less than the line above.  
+> 
+> Yep, fixed.
+> 
+> > > +const struct attribute_group aer_attr_group = {
+> > > +	.name = "aer",
+> > > +	.attrs = aer_attrs,
+> > > +	.is_visible = aer_attrs_are_visible,
+> > > +};  
+> > 
+> > There are a bunch of macros to simplify cases where
+> > a whole group is either enabled or not and make the group
+> > itself go away if there is nothing to be shown.
+> > 
+> > DEFINE_SIMPLE_SYSFS_GROUP_VISIBLE() combined with
+> > SYSFS_GROUP_VISIBLE() around the assignment does what we
+> > want here I think.
+> > 
+> > Whilst we can't retrofit that stuff onto existing ABI
+> > as someone may be assuming directory presence, we can
+> > make sysfs less cluttered for new stuff.
+> > 
+> > Maybe I'm missing why that doesn't work here though!  
+> 
+> Is this something we can fix later, or are we locking ourselves into
+> user-visible ABI that's hard to change?  I'm kind of against the wall
+> relative to the v6.16 merge window and haven't had time to dig into
+> this part.
 
-Signed-off-by: Daisuke Matsuda <dskmtsd@gmail.com>
----
- drivers/infiniband/sw/rxe/rxe_odp.c | 81 ++++++++++++++++++++++++++++-
- 1 file changed, 79 insertions(+), 2 deletions(-)
+That comes down to Ilpo's question of whether empty directories
+are ABI (specifically if anyone notices us removing them).
+It seems unlikely anyone will code against requirement for an empty
+dir, but you never know.
 
-diff --git a/drivers/infiniband/sw/rxe/rxe_odp.c b/drivers/infiniband/sw/rxe/rxe_odp.c
-index c723d8a6cfec..2b112b07ec8c 100644
---- a/drivers/infiniband/sw/rxe/rxe_odp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_odp.c
-@@ -423,6 +423,46 @@ enum resp_states rxe_odp_do_atomic_write(struct rxe_mr *mr, u64 iova, u64 value)
- 	return RESPST_NONE;
- }
- 
-+struct prefetch_mr_work {
-+	struct work_struct work;
-+	u32 pf_flags;
-+	u32 num_sge;
-+	struct {
-+		u64 io_virt;
-+		struct rxe_mr *mr;
-+		size_t length;
-+	} frags[];
-+};
-+
-+static void rxe_ib_prefetch_mr_work(struct work_struct *w)
-+{
-+	struct prefetch_mr_work *work =
-+		container_of(w, struct prefetch_mr_work, work);
-+	int ret;
-+	u32 i;
-+
-+	/* We rely on IB/core that work is executed if we have num_sge != 0 only. */
-+	WARN_ON(!work->num_sge);
-+	for (i = 0; i < work->num_sge; ++i) {
-+		struct ib_umem_odp *umem_odp;
-+
-+		ret = rxe_odp_do_pagefault_and_lock(work->frags[i].mr, work->frags[i].io_virt,
-+						    work->frags[i].length, work->pf_flags);
-+		if (ret < 0) {
-+			rxe_dbg_mr(work->frags[i].mr, "failed to prefetch the mr\n");
-+			goto deref;
-+		}
-+
-+		umem_odp = to_ib_umem_odp(work->frags[i].mr->umem);
-+		mutex_unlock(&umem_odp->umem_mutex);
-+
-+deref:
-+		rxe_put(work->frags[i].mr);
-+	}
-+
-+	kvfree(work);
-+}
-+
- static int rxe_ib_prefetch_sg_list(struct ib_pd *ibpd,
- 				   enum ib_uverbs_advise_mr_advice advice,
- 				   u32 pf_flags, struct ib_sge *sg_list,
-@@ -472,7 +512,11 @@ static int rxe_ib_advise_mr_prefetch(struct ib_pd *ibpd,
- 				     enum ib_uverbs_advise_mr_advice advice,
- 				     u32 flags, struct ib_sge *sg_list, u32 num_sge)
- {
-+	struct rxe_pd *pd = container_of(ibpd, struct rxe_pd, ibpd);
- 	u32 pf_flags = RXE_PAGEFAULT_DEFAULT;
-+	struct prefetch_mr_work *work;
-+	struct rxe_mr *mr;
-+	u32 i;
- 
- 	if (advice == IB_UVERBS_ADVISE_MR_ADVICE_PREFETCH)
- 		pf_flags |= RXE_PAGEFAULT_RDONLY;
-@@ -485,8 +529,41 @@ static int rxe_ib_advise_mr_prefetch(struct ib_pd *ibpd,
- 		return rxe_ib_prefetch_sg_list(ibpd, advice, pf_flags, sg_list,
- 					       num_sge);
- 
--	/* Asynchronous call is to be added in the next patch */
--	return -EOPNOTSUPP;
-+	/* Asynchronous call is "best-effort" and allowed to fail */
-+	work = kvzalloc(struct_size(work, frags, num_sge), GFP_KERNEL);
-+	if (!work)
-+		return -ENOMEM;
-+
-+	INIT_WORK(&work->work, rxe_ib_prefetch_mr_work);
-+	work->pf_flags = pf_flags;
-+	work->num_sge = num_sge;
-+
-+	for (i = 0; i < num_sge; ++i) {
-+		/* takes a reference, which will be released in the queued work */
-+		mr = lookup_mr(pd, IB_ACCESS_LOCAL_WRITE,
-+			       sg_list[i].lkey, RXE_LOOKUP_LOCAL);
-+		if (IS_ERR(mr))
-+			goto err;
-+
-+		work->frags[i].io_virt = sg_list[i].addr;
-+		work->frags[i].length = sg_list[i].length;
-+		work->frags[i].mr = mr;
-+	}
-+
-+	queue_work(system_unbound_wq, &work->work);
-+
-+	return 0;
-+
-+ err:
-+	/* rollback reference counts for the invalid request */
-+	while (i > 0) {
-+		i--;
-+		rxe_put(work->frags[i].mr);
-+	}
-+
-+	kvfree(work);
-+
-+	return PTR_ERR(mr);
- }
- 
- int rxe_ib_advise_mr(struct ib_pd *ibpd,
--- 
-2.43.0
+Given we probably have a bunch of these in PCI anyway that predate
+that magic, one more isn't a problem even if we decide we can't
+tidy it up later.
+
+So I'm fine with not bothering to hide the dir for now (and maybe for
+ever).
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+
+Jonathan
+
+> 
 
 
