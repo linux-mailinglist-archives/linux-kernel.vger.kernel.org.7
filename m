@@ -1,180 +1,147 @@
-Return-Path: <linux-kernel+bounces-659477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A90AAC10DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:16:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37620AC10E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B0483A4894
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:15:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 916001BA4490
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C52A170A23;
-	Thu, 22 May 2025 16:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBD429A9DD;
+	Thu, 22 May 2025 16:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9krYB+y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y4evEDLK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72CB4594A
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 16:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8689C29A33D;
+	Thu, 22 May 2025 16:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747930567; cv=none; b=ueMn7KlIi53o8mebOQhFW9VSOGq2RjClee2X7mTuoHH/viRI60/mOp0vRN5LEvk73qpI2Y3RNU31s9xVVoIEQWsfikJ8yyP9n0RvnSI9Umho0WCbjypRDaRSGORH6RmsKqKy/pV3X00PxDl228vJ+4CQI2CQlq9PzGU+6yww9os=
+	t=1747930773; cv=none; b=SF7W6BL/Ueq41R+I9dU7j/GNUvan5lnxN76xADveGuH81ReQ+PcbwcYMQVNo4SfXFsErE5WXtubLJoFUrZch7qw0otFJ6jPjs7fwsCrBFGfPI0mZa2v+ybh0nX7/r3mOYdkzoFp5MwntxkEphS4YzwJWrEA/JxuatZEK2BgfuI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747930567; c=relaxed/simple;
-	bh=iP2PagZOuTlQYwtXEIS3nGBd1jiTN2n+OxpL1RH6JzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HeTA+hG7PBilMTRK3YZgoBdVSDwid86lYDACfUc/PVkHqpjpRsr+AeCiNENQdBd1DBmtQN6KBW+A54tDNQNjFaMQCVJpaaLfB4YAhmSet81ChKy/hjM7FffPIlSCV0HpkfiE3iyqBg87RVlqZN5wBip1U5sJZZF++lFfzWE8GlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9krYB+y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3CA5C4CEE4;
-	Thu, 22 May 2025 16:16:06 +0000 (UTC)
+	s=arc-20240116; t=1747930773; c=relaxed/simple;
+	bh=5sGsWn9w8s+oMgEYou4FZnNBF76aTQSa8acdMWwrMmw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qQYGK8KRw41dcHqrlFIZsG/LVKVBJgGun0J6kV3BEOgM3lof0OXHrbOcKbr+AFFZuducm/+ft+hPRe5ZuRnTdYOkzu/BbrkXOmvFUaXz9EEdBm8ZJFtpWFQvMbRmNjI9ZqAyndsWZBx9ekM7t/7J95osxNSnZB5IuYQp7Jdth2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y4evEDLK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E7D17C4CEEA;
+	Thu, 22 May 2025 16:19:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747930567;
-	bh=iP2PagZOuTlQYwtXEIS3nGBd1jiTN2n+OxpL1RH6JzI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a9krYB+yegW8QS+CzT2jy2VOeai+gZWIgsOomVsu4KP6hx3eUwEmasI6pwmvoXMxT
-	 3RaZBVYYh0frxxZy+qO1/XI9dvcbEEA/ymZkHFcjKDH145dnJ5lkLl/xKQAkPbR0zE
-	 /EGCopAhHyKSLFFMcL2VHiWags8bc7eCaPo6lnZ2f+7kVIUSQrmV+zlmwiR+WGTF+t
-	 UVqon5koKJhYPeD8RhX0h4eRktk9Zyca+R6mrIPanPTLrDGjlGJdqyIAkaukKR+MuN
-	 sHXw1pUKQUc/n3U/fKpdou3yQvsu++/kdkuzzhtWt4DV2GQbosR3cs6ause3WbmMM8
-	 qor8PMLjHaMwA==
-Date: Thu, 22 May 2025 18:16:04 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, kernel@collabora.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 23/23] drm/tests: hdmi: Add test for unsupported
- RGB/YUV420 mode
-Message-ID: <20250522-mutant-emu-of-youth-ae70cd@houat>
-References: <20250425-hdmi-conn-yuv-v4-0-5e55e2aaa3fa@collabora.com>
- <20250425-hdmi-conn-yuv-v4-23-5e55e2aaa3fa@collabora.com>
- <20250519-classy-millipede-of-competence-4bb6ad@houat>
- <a37b4045-0d94-4148-bb1e-fc08104e6173@collabora.com>
+	s=k20201202; t=1747930773;
+	bh=5sGsWn9w8s+oMgEYou4FZnNBF76aTQSa8acdMWwrMmw=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=Y4evEDLKmUbymXxPSdPalM8Gh0KqQs+91ELJfJyzSyINWB0ZhZRytcCMW8LAAzHvU
+	 flD067BB/x2fAX9aiOvYWcSWunn4zR6khsZMYMlllDA0rTZTphzKx0QDrILP9e3VFn
+	 j2YzyVnpHUxEuAfKO4V08lfDz4w9WPNEWd/+UG4Ehiv2TXiZ/Q1zAwTip5/ieHJDU9
+	 hYDYkrk05vHxo+g0wWRCMSDSEAJ1be/whuvOKzWiGT4t9Qb1AO0uNpaQ79O9YZ9wJC
+	 c3a5YsU5/imkQeqysV52UP+UW2sgcIcDCr3urJj3f9nhv2w+Nep+T3KAKGypmCngJJ
+	 Vu1W6Bx9OoByA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B37C54E90;
+	Thu, 22 May 2025 16:19:32 +0000 (UTC)
+From: Alejandro Enrique via B4 Relay <devnull+alejandroe1.geotab.com@kernel.org>
+Date: Thu, 22 May 2025 18:18:53 +0200
+Subject: [PATCH v2] dt-bindings: gnss: add u-blox,neo-9m compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="mhdrv5hb2rwnvz46"
-Content-Disposition: inline
-In-Reply-To: <a37b4045-0d94-4148-bb1e-fc08104e6173@collabora.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250522-ubx-m9-v2-1-6ecd470527bc@geotab.com>
+X-B4-Tracking: v=1; b=H4sIAGxOL2gC/2XMSw6DIBSF4a2YOy4NL6N05D4aB4AXZaA0YImNY
+ e+lTjv8T06+ExJGjwkezQkRs08+bDX4rQG76G1G4qfawClvacskeZuDrIp0dHLUTb2VvYF6fkV
+ 0/rig51h78WkP8XO5mf3WPyIzQglTQnVCSyesHmYMuzZ3G1YYSylfcOKvU50AAAA=
+X-Change-ID: 20250514-ubx-m9-70df0fd8c48b
+To: Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Alejandro Enrique <alejandroe1@geotab.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747930772; l=2006;
+ i=alejandroe1@geotab.com; s=20250514; h=from:subject:message-id;
+ bh=t0h9nv36tZoG6bCZ31dIAWWzsXZFdgQLmDpUFpX3zjs=;
+ b=EhlRZpfjBQLxmdyD8lQdg6w8IHy+r4AlzNb+4MatuJ3P0EVtYYbxqRBPgFdJfFxnOxavcDWEH
+ hmJj0sr1djpDg9WMCqanO1aja/WbhQUJt7KJ4MT1i+xqUdV6lcE6w0l
+X-Developer-Key: i=alejandroe1@geotab.com; a=ed25519;
+ pk=xzHMPbqczL/tMsjXr26iLoHwIzLveHVnT+GIU4p1k38=
+X-Endpoint-Received: by B4 Relay for alejandroe1@geotab.com/20250514 with
+ auth_id=404
+X-Original-From: Alejandro Enrique <alejandroe1@geotab.com>
+Reply-To: alejandroe1@geotab.com
+
+From: Alejandro Enrique <alejandroe1@geotab.com>
+
+Add compatible for u-blox NEO-9M GPS module.
+
+Signed-off-by: Alejandro Enrique <alejandroe1@geotab.com>
+---
+This series just add the compatible string for u-blox NEO-9M module,
+using neo-m8 as fallback. I have tested the driver with such a module
+and it is working fine.
+---
+Changes in v2:
+- Modify the binding to allow falling back to neo-m8
+- Remove compatible string from u-blox driver
+- Link to v1: https://lore.kernel.org/r/20250514-ubx-m9-v1-0-193973a4f3ca@geotab.com
+---
+ Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml | 25 +++++++++++++++++++++----
+ 1 file changed, 21 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml b/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
+index 7d4b6d49e5eea2201ac05ba6d54b1c1721172f26..215f8931ca08c1b0954fc2f70eabe3ec8d89edea 100644
+--- a/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
++++ b/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
+@@ -18,10 +18,16 @@ description: >
+ 
+ properties:
+   compatible:
+-    enum:
+-      - u-blox,neo-6m
+-      - u-blox,neo-8
+-      - u-blox,neo-m8
++    oneOf:
++      - items:
++          - enum:
++              - u-blox,neo-6m
++              - u-blox,neo-8
++              - u-blox,neo-m8
++
++      - items:
++          - const: u-blox,neo-m9
++          - const: u-blox,neo-m8
+ 
+   reg:
+     description: >
+@@ -63,3 +69,14 @@ examples:
+             reset-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
+         };
+     };
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    serial {
++        gnss {
++            compatible = "u-blox,neo-m9", "u-blox,neo-m8";
++            v-bckp-supply = <&gnss_v_bckp_reg>;
++            vcc-supply = <&gnss_vcc_reg>;
++            reset-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
++        };
++    };
+
+---
+base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
+change-id: 20250514-ubx-m9-70df0fd8c48b
+
+Best regards,
+-- 
+Alejandro Enrique <alejandroe1@geotab.com>
 
 
---mhdrv5hb2rwnvz46
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 23/23] drm/tests: hdmi: Add test for unsupported
- RGB/YUV420 mode
-MIME-Version: 1.0
-
-Hi,
-
-On Mon, May 19, 2025 at 01:55:10PM +0300, Cristian Ciocaltea wrote:
-> On 5/19/25 11:42 AM, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Fri, Apr 25, 2025 at 01:27:14PM +0300, Cristian Ciocaltea wrote:
-> >> Provide a test to verify that if both driver and screen support RGB and
-> >> YUV420 formats, drm_atomic_helper_connector_hdmi_check() cannot succeed
-> >> when trying to set a mode unsupported by the display.
-> >>
-> >> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> >> ---
-> >>  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 66 +++++++++++++=
-+++++++++
-> >>  1 file changed, 66 insertions(+)
-> >>
-> >> diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/driv=
-ers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-> >> index d79084cfb516b69c4244098c0767d604ad02f2c3..6337a1c52b86810c638f44=
-6c4995e7ee63dbc084 100644
-> >> --- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-> >> +++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-> >> @@ -1622,6 +1622,71 @@ static void drm_test_check_driver_unsupported_f=
-allback_yuv420(struct kunit *test
-> >>  	drm_modeset_acquire_fini(&ctx);
-> >>  }
-> >> =20
-> >> +/*
-> >> + * Test that if a driver and screen supports RGB and YUV420 formats, =
-but the
-> >> + * chosen mode cannot be supported by the screen, we end up with unsu=
-ccessful
-> >> + * fallback attempts.
-> >> + */
-> >> +static void drm_test_check_display_unsupported_fallback_rgb_yuv420(st=
-ruct kunit *test)
-> >> +{
-> >> +	struct drm_atomic_helper_connector_hdmi_priv *priv;
-> >> +	struct drm_modeset_acquire_ctx ctx;
-> >> +	struct drm_crtc_state *crtc_state;
-> >> +	struct drm_atomic_state *state;
-> >> +	struct drm_display_info *info;
-> >> +	struct drm_display_mode *preferred, *unsupported_mode;
-> >> +	struct drm_connector *conn;
-> >> +	struct drm_device *drm;
-> >> +	struct drm_crtc *crtc;
-> >> +	int ret;
-> >> +
-> >> +	priv =3D drm_kunit_helper_connector_hdmi_init_with_edid_funcs(test,
-> >> +				BIT(HDMI_COLORSPACE_RGB) |
-> >> +				BIT(HDMI_COLORSPACE_YUV420),
-> >> +				10,
-> >> +				&dummy_connector_hdmi_funcs,
-> >> +				test_edid_hdmi_4k_rgb_yuv420_dc_max_340mhz);
-> >> +	KUNIT_ASSERT_NOT_NULL(test, priv);
-> >> +
-> >> +	drm =3D &priv->drm;
-> >> +	crtc =3D priv->crtc;
-> >> +	conn =3D &priv->connector;
-> >> +	info =3D &conn->display_info;
-> >> +	KUNIT_ASSERT_TRUE(test, info->is_hdmi);
-> >> +	KUNIT_ASSERT_TRUE(test, conn->ycbcr_420_allowed);
-> >> +
-> >> +	preferred =3D find_preferred_mode(conn);
-> >> +	KUNIT_ASSERT_NOT_NULL(test, preferred);
-> >> +
-> >> +	unsupported_mode =3D drm_kunit_display_mode_from_cea_vic(test, drm, =
-96);
-> >> +	KUNIT_ASSERT_NOT_NULL(test, unsupported_mode);
-> >=20
-> > I'm not sure what this one is supposed to test. If the mode is
-> > unsupported by the screen, it will be for both YUV and RGB, right? So
-> > what are we testing here?
->=20
-> That would be the case suggested at [1]:
->=20
-> "We still need to do the same with a driver that supports both, but the
-> monitor doesn't."
->=20
-> Should we drop it?
-
-Ah, I see. I meant that we should normally end up with YUV420 (so mode
-is supported by the monitor, but the resolution is too high for RGB and
-we should pick YUV instead), but the monitor doesn't support it and thus
-we fail.
-
-Maxime
-
---mhdrv5hb2rwnvz46
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaC9NxAAKCRAnX84Zoj2+
-dvjcAYCrIYbp+3gtUVmOEXvLPcHTGaV8voIHR/Yy2Kan41uLSiJ/9x91JrV3fB25
-cSaXAgwBfje3/Oq4Y9XCr7RjoyQ+0XDtYtEe2NtJ8toIvJm4auAiJV+gWAGhrYJP
-p0pHi8mFRw==
-=HtM9
------END PGP SIGNATURE-----
-
---mhdrv5hb2rwnvz46--
 
