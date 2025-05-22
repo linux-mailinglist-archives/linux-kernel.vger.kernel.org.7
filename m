@@ -1,124 +1,109 @@
-Return-Path: <linux-kernel+bounces-659245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C902AAC0D7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:02:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35537AC0D81
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E78C14E6DD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:02:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC143166B57
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B9128C017;
-	Thu, 22 May 2025 14:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A694B28B7F4;
+	Thu, 22 May 2025 14:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+Jxa7Bg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="pLhhpuHs"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F2A12E7E;
-	Thu, 22 May 2025 14:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68C912E7E;
+	Thu, 22 May 2025 14:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747922540; cv=none; b=LSo3HQJaCerxoFLoj3SINZmW8yxqVVbQs6Y3IG5LeJ/iU9KXvA67fuDmatuK3rLzKWMSiDwmDRn2FZRTCKKZnnjnHCgKLsmTpHyS1pLch2qPX0oLQQyLkP1wKImGRhJbc5LuICDoHhc3W/vZ7wIfbKLWMfdkckxHVMehbbzah0E=
+	t=1747922621; cv=none; b=eKShDWHtX8w7ei4iu67A1h7RUV6HhjVVPDFCeRV6OcvaklK2lE/ILs+6+q1nXIpON3pqB2gUqQRiDInhBaPAjcFRJPPjGWe9Kg2J7S1FhXvBBQn4LIjQA0UvYsy43MSQzU2iddeR0FQtjvk/DJh40WeNYN8G4JLW0DjIveOcUA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747922540; c=relaxed/simple;
-	bh=IJBDYm1zhobgeh9FbERBRVBW1Hyn1CyU2Bq6di3Qdho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VkOr1Nmmvvn9JpWF77njr2tyC39hXG5hRgwM5ruy8Iha0FiwC5E+W8yc5BCebGyIFqe0qnZ/UZ4r7rTS9V5f4tFJeF40z/oMsxjueEcCd5BC801Cmbwn0zawweDeFU8dEO9jqvyuVx+poqAfLWPpdVCsgLHfUljTYLZMKSzNXr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+Jxa7Bg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69425C4CEE4;
-	Thu, 22 May 2025 14:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747922539;
-	bh=IJBDYm1zhobgeh9FbERBRVBW1Hyn1CyU2Bq6di3Qdho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z+Jxa7BgqX5yaqfQMZm+zQfmmGE45WibC0f+oVthi6nBydWGRwPIq+0SuRFbtVBJO
-	 X+7eAfEccTg2LQi/im1fdNIgghMZH0GkD0jMapRQrNRmyjMTZe3glMIWnzwUk677KE
-	 +iyRWJYrBiEa1ECXuLt6nNDAuah8IoTtsGrxrLgHhLVTst9morZyA5IuPxKdP6ukrC
-	 bWbqkw7K/WNHnl/Ov64rx0lMNvDsyw65ZZaOLKfgYI/qO8Y5CUp2o9hbAMyprFo6JA
-	 Qir2iT197qKN2IGJNw5vDF3/rMRJHR97y1rnunqyhTZSzFvtiLLOWxqIYhLM2JF70B
-	 mowQhYwrQFbQA==
-Date: Thu, 22 May 2025 15:02:14 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dominik Grzegorzek <dominik.grzegorzek@oracle.com>
-Cc: "aishwarya.tcv@arm.com" <aishwarya.tcv@arm.com>,
-	"chenridong@huawei.com" <chenridong@huawei.com>,
-	Daniel Jordan <daniel.m.jordan@oracle.com>,
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"steffen.klassert@secunet.com" <steffen.klassert@secunet.com>
-Subject: Re: [PATCH] padata: do not leak refcount in reorder_work
-Message-ID: <01bc9f1e-5a49-4387-b0cb-c2f8647e3b6e@sirena.org.uk>
-References: <20250518174531.1287128-1-dominik.grzegorzek@oracle.com>
- <20250522131041.8917-1-aishwarya.tcv@arm.com>
- <afc8bfdaf9f14fa1f77c62f2969c4a5403ad771d.camel@oracle.com>
+	s=arc-20240116; t=1747922621; c=relaxed/simple;
+	bh=F10iyfKFrEJZy08mPbO3oeYhVGn/yzdNssD7jvfQhvY=;
+	h=From:To:Cc:Date:Message-Id:MIME-Version:Subject; b=ubKxAklepEea3fILzWKaRVrinMttGs1R7Y+s5hHB8VtKOyym7oh+ZhbVSPO4BSk7CL55z6tAP/SqzLHDPiUC0K4W8zZJyjQ9sa+A8vGsxdY2JBC2Mj5LrARF7DG8Fg8W2rcGNK/B8PWLZQ7q0uZWQUTOFew5ZcQ7bHbUsKz+XGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=pLhhpuHs; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
+	:From:subject:date:message-id:reply-to;
+	bh=H12sI1rmNNOKWHKGVulEJOamj5YYRT/qF2xDiIqMIWg=; b=pLhhpuHsoKduipSh7gYy4Q9zh3
+	pEjxmBWhZUuY+8yUTVbjEjuLBL+sWWMGfbML7ptDVDCufDaL79wchBjkeBTGJlVkdR7gh6Ry7wQGt
+	tlAFNXA9V+L0o357mKhtLfotpoYmb0jIj5WcOO40Sw/Kg2QjB2gSt7CCOTuUxCDg5HWE=;
+Received: from [70.80.174.168] (port=34044 helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1uI6W7-0005ma-NB; Thu, 22 May 2025 10:03:28 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: biju.das.jz@bp.renesas.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	hugo@hugovil.com,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Date: Thu, 22 May 2025 10:03:20 -0400
+Message-Id: <20250522140322.64667-1-hugo@hugovil.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7v4MFKbpt5VMrkBn"
-Content-Disposition: inline
-In-Reply-To: <afc8bfdaf9f14fa1f77c62f2969c4a5403ad771d.camel@oracle.com>
-X-Cookie: Beware of dog.
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+Subject: [PATCH v2 0/2] drm: rcar-du: rzg2l_mipi_dsi: add MIPI DSI command support
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+
+From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+
+Hello,
+this patch series add support for sending MIPI DSI command packets to the
+Renesas RZ/G2L MIPI DSI driver.
+
+Tested on a custom board with a SolidRun RZ/G2L SOM, with two different LCD
+panels using the jd9365da and st7703 drivers.
+
+Tested short and long writes.
+
+Tested read of 1 byte, 2 bytes and long reads.
+
+Thank you.
+
+Link: [v1] https://lore.kernel.org/all/20250520164034.3453315-1-hugo@hugovil.com
+
+Changes for V2:
+- Change commit message prefix to "drm: renesas: rz-du: "
+- Reorder variables in rzg2l_mipi_dsi_read_response()
+- Remove unused macros
+- Add missing bitfield include (kernel test robot)
+
+Hugo Villeneuve (2):
+  drm: renesas: rz-du: Implement MIPI DSI host transfers
+  drm: renesas: rz-du: Set DCS maximum return packet size
+
+ .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 186 ++++++++++++++++++
+ .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  54 +++++
+ 2 files changed, 240 insertions(+)
 
 
---7v4MFKbpt5VMrkBn
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+base-commit: c4f8ac095fc91084108ec21117eb9c1fff64725d
+-- 
+2.39.5
 
-On Thu, May 22, 2025 at 01:44:29PM +0000, Dominik Grzegorzek wrote:
-> On Thu, 2025-05-22 at 14:10 +0100, Aishwarya wrote:
-
-> > self->n1, self->n2) (-2) =3D=3D 0 (0)
-> > 11213 03:29:55.022519=A0 # # # shared_anon_thp: Test terminated by asse=
-rtion
-> > 11214 03:29:55.022834=A0 # # #=A0=A0=A0=A0=A0=A0=A0=A0=A0 FAIL=A0 migra=
-tion.shared_anon_thp
-> > 11215 03:29:55.027864=A0 # # not ok 4 migration.shared_anon_thp
-> > 11216 03:29:55.028156=A0 # # #=A0 RUN=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 mig=
-ration.private_anon_htlb ...
-> > 11217 03:30:14.595327=A0 # # #=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 OK=A0 m=
-igration.private_anon_htlb
-> > 11218 03:30:14.595777=A0 # # ok 5 migration.private_anon_htlb
-> > 11219 03:30:14.596398=A0 # # #=A0 RUN=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 mig=
-ration.shared_anon_htlb ...
-> > 11220 03:30:34.595239=A0 # # #=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 OK=A0 m=
-igration.shared_anon_htlb
-> > 11221 03:30:34.595623=A0 # # ok 6 migration.shared_anon_htlb
-
-> Looking at the test, I don't think this is related. The test allocates so=
-me
-> pages and attempts to migrate them between two NUMA nodes. It seems to be=
- a
-> selftest for memory management code, and I don't see how this patch could=
- affect
-> its outcome.
-
-The hugepages code does make use of padata and it's a hugepages test so
-there's some potential connection there, definitely not an obvious one
-though.
-
---7v4MFKbpt5VMrkBn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgvLmUACgkQJNaLcl1U
-h9AhaAf+LyJn2mpp5ESkGdGH97HgCPHRgUcmTvPYt7GnnUpgViZsoD8SA8PpeVek
-xfFMEgQvhTw/FPV/CqZHeCIi+O8n2wp0Sdk1oWr/1r6wzjkV0K6g6AGAswT1MTR7
-z78PHvCtip060lAU4xxCNvbsdmD5HO8RyHv3vTId+YFKVN5/dFreudoX9Po7dvwx
-djfKe3lGRFUeph565FoGSVfkicgbQhR7yPKcPrYl7aoLiVfpWADJgVKbfgyHUohD
-xEns4TSVQfBWov/ZxRo/ejakkFWrZLW5p0YNfZ1/FDLfB2oXweUl3f2ovB0Ka93Z
-L6aBFigykJUpRqxV54v5CP8pWV3nuw==
-=wAeE
------END PGP SIGNATURE-----
-
---7v4MFKbpt5VMrkBn--
 
