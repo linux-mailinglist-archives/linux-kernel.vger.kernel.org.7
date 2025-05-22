@@ -1,91 +1,84 @@
-Return-Path: <linux-kernel+bounces-658494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC38AC0325
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DDE2AC0330
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E4FA24160
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:49:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36CD7A24C61
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AA614830F;
-	Thu, 22 May 2025 03:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34E6198A1A;
+	Thu, 22 May 2025 03:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="f72T/MFG"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNRu+7h9"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DF342AA1
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 03:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7859418DB18
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 03:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747885806; cv=none; b=PdRWMLaBU1nBMJ5mDaY3D2xn7Fb/O3uscXKIco4lUqu0OI2U9pDK0Hp6JBvqfApHUkQYDCExs3FObgMgc+2MQMNEbVHDhHscDeAE/ZGw1FLWW9hK9cV2gqPW8fI2VVNS3PtCcgnF/74KWfdoSBl7EeD2Y89iNgoAEUFlZ7y1Qh4=
+	t=1747885814; cv=none; b=LqdV1yzQwBD4GrOLKEe+dvVjZ/7yL3rA0rZEagh/aoyBu8D9O/HV5TMwQCrfKk29D4/YfRVfXFGAcfbNLWazLwc4s96CqVIiYE1X5uLSWXacqfl2FQwEHARmsEHiBUMmK8LNEvbJRicsu1jM18LtKvTFa6DRzc3fo/YNCIwgoxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747885806; c=relaxed/simple;
-	bh=bB2ccB1tvfWV8ZCCgEv0uKtWwqQeKICeZGq4trpOHvE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uDIxUabC6kAMnW9lzd/ydj0BlnEIpUHEv2IUjsV950lvLMzXG6sWdXctDA3wjBmujfGuFXh4RrulXFh8BlzZv3uVyi2p6tookd9FLUdq/jruSJlzQHuZKKZtyy8Zbnr23+vdJfOXmdjVl7OUteE+Tb1JO8h2VPaObc1VbZHA7bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=f72T/MFG; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b26c5fd40a9so6790015a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 20:50:03 -0700 (PDT)
+	s=arc-20240116; t=1747885814; c=relaxed/simple;
+	bh=EhCHW5q0cCFKGYwmnE5zrblG2aU/eCsuzx+ii1jY4aA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ehPdtJjhP9CTJFc5QvdhiIVwc5T0g/HD1jpZRBUttaYKJ6lpVXg7OKWZHno4yr+003CptYt8sYBE8k3wtoHF0fpx7Dwr8oL46WzLt1RaqLK3DtyZcNepQVgfO9/Jf9bWPw7cfTHKQbG7Ymz6fsz4J7tCS55uyQtNcJ/gSAsw/6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UNRu+7h9; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-70df67e1b17so13454437b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 20:50:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1747885803; x=1748490603; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+R8i+ruO2bwbFHlWkEQLot8u+X7+7EHExn8n1fSnYT4=;
-        b=f72T/MFGwLIQ0pvFKkV5x18HShsGqdhFzGn1cVdCRKCAutzu4aKWmED6UMAR2sPqxB
-         WyU/+ZXhJNYsQm+YdvEpw/76cAgvvJ9ItSz4zXDKQCgsM5mfoLGF79fEORir9+Nm2Wsl
-         kx8nigV/VIE4iimVGO4aroOId/p/9TbnnQYam8bWdQW2IgV1AXq9VejWfj5kmj6+pRSa
-         fOJrzgGycA9B2g46M3bOr/WG3xh0Lw2fTmtJbNeqPIRvFKLN150WhR1dcJ1ID3WZRXVG
-         ADV7J0C3ccZYZzVks6sGTM8G0vWSQMhmGVH7Q7sZb3F8KVRCMQOwFU3WeyOvQnb5+tEw
-         J0tQ==
+        d=gmail.com; s=20230601; t=1747885811; x=1748490611; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=arxJV0GpiWBI5/UzljfX3wVd+ClYz7zCQj750146rLk=;
+        b=UNRu+7h9CRBT1XlL+EYkx7HXWmgy293vnZrTkc28Y/pSBHKjJWv8DnQH13isfiYpTE
+         l6j7Ed11O7HTeBAzHxYoTWNc6t4XuE+geZ83BYEvGbyUi8O8RDXfe86tSVFRbdWRmfwV
+         XaZk24oeyYmRtsIa7LuCzaiHgcoYbF0GQtg3GhfcwkmXIexmony223mVs1B1NVzMJk0Q
+         7KEGkdR+nTAYa4GMH+Kia2v9l+S8hbALueQty93c3ThjcCHBw6xGcFkCFVTBXn6+rLCJ
+         ctfsg7c2b5weutuFs1bmuY5WFjAWPK7Q0PG5/OVmL3jysFb/CJgdsnB4xCTivIJ6qP5W
+         e76g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747885803; x=1748490603;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+R8i+ruO2bwbFHlWkEQLot8u+X7+7EHExn8n1fSnYT4=;
-        b=QpkrQbKTBPzZYFK8giYb7CJ02TnYHbWmG7EoijG4lZ1Bv4JROdMzARmiqQDdDaNsqk
-         koCXCvrUH4TzdMMsi2zvLaatUqzvlEhJV6f+8tsCv4KpGyIvAfucLveCQa5IR2PpusNx
-         vh8LT4ysvJ9GUy0GRD6I/Up+HYX3U1T6KpBhbxYxy5lw8BhQy2koDgCWFmwGGoc+Iga+
-         d1kkhJ+rqGxKIQc3t0r5C5Hl4+43PkoXlQZ+ZTfKxCwDD+qM2dmrSXk+pUmC2T8f6Jwr
-         R2DG6/XpYn+l4rwoUDS+V+u1I0FC8I3ebIv7mMZAWT3t2Lvi97UBoZxiBiBWYU5DCE4+
-         NTmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSe5Pf+Wx7yhQSsQKGVTB65R/xTIU6EMFEgT/evO0fdQC8r2m+5JCm8sWKWeV8FP3UvF+kroq+YvfrRA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWxXHQbp6nMLRbQs3AaSleLwWgvlqevoPvV4F8bEHlPkIQbdWv
-	if+7xUuHZTctfvIlXpNU+0YJGaQ4Gct4dvKBG41LzXxdXrTERAhR5Hy3+dvBFAaRNag=
-X-Gm-Gg: ASbGncvzbS+jRfHC+i3DAmvHIF8J8+P5lglweLG7xurXJ7mK3K+s9DbjM9C64bzgtXj
-	VKj4YIqfQQLXifcAjvOXwfLa7cnLz3gLSyMCTzHg5/42GOn7E9TzyrswvO68hdrK5D/NCU/0af1
-	E/1HWpJOhgcRuISHKeYNcKz0pxK9SQk2nSJjVniW+aj5J6+EU4+suznB91ByJo4BTAzmzjWqW95
-	cjRchM98Vr4R3l8ZbH0/C47mXTyqyJeFoU82AmurJzvH6ZtvYsQrUu3QfBmYsyrAlXv2X+GLkAL
-	l/MZ7kTcBPKw1fpWAd1DZwaBIQ7jxPgg/iHDiZHz3VfzVi91A+YdIn1g0F1xrebOUTs57emu+kA
-	h6GN9MYGtw69i
-X-Google-Smtp-Source: AGHT+IGdI6N6cSiPrnvudAajDc7RMApTF2gKv7Qu9c54Cfze8WrNP2JwZnEt2K8maE/GoujLw+psIg==
-X-Received: by 2002:a17:902:d484:b0:231:e413:986c with SMTP id d9443c01a7336-231e4139adamr293625635ad.11.1747885803209;
-        Wed, 21 May 2025 20:50:03 -0700 (PDT)
-Received: from localhost.localdomain ([203.208.189.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4afe887sm100085895ad.88.2025.05.21.20.50.00
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 21 May 2025 20:50:02 -0700 (PDT)
-From: lizhe.67@bytedance.com
-To: alex.williamson@redhat.com
-Cc: david@redhat.com,
-	kvm@vger.kernel.org,
+        d=1e100.net; s=20230601; t=1747885811; x=1748490611;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=arxJV0GpiWBI5/UzljfX3wVd+ClYz7zCQj750146rLk=;
+        b=u250ZGwntMKS+WrNydKyz+rsfVZk/kFYwY6buhJFRiYYCtcW/GCnLmflGcgDmL68zA
+         u+TVKRl7RcX5xha0iFBZXi1fWC5rPO1ioDDnBwDmT5/0ElvveTzM4GLrmoxVaWmIfT5g
+         2K8gkf1pfj4xH1IbQ/LlbHQLNGpa4/tzQ9QGZp9G1ZT8VJy5bsv233hxdoABGhNGhi+U
+         UPbHw2LJSKCfPwhtktCz2ntFDHRdZrH+66loCiBXJ1sOhSTrdsXD991X99yPCJKTq3WF
+         /Zjlcy4LaWH7gf0a0XqbPxnpBkWlGGAUQ6ckWjVIqpUruZy3g81n7PdDkJdUj/dxnwv6
+         Ym3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXsu5BYK9bSYhAEfWOkRQbaWksgHCJ+uNBLxiwmqupO24cDxFX10Q3UEDcMmSslgbb4N6Lqa3oynXTMiaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMIOZVNvOF/JxNhBJOdfcf72jKZy9fS8b55qaazWFrBp4LPaMj
+	vRXEleVLkt+usSOvtYCurcrU1gzfVMPZ/tp+o1P+MYVRAeKjiNjTi8A1tzQlCzme
+X-Gm-Gg: ASbGncsBlKSRL9FJD2VbGgLb42u/lm8UWGBRHuiHBsgRwBobONBLIDV1SwZjhthFih6
+	aSeIgIEjKf1emMBwTIM8nLRKqNwfp7FDo1hPrxOqqo6ysMnq1TE1lmmaxN/+SZunXpscpml9iI/
+	ukCyy/AHUyJh+obKGnrJRgbPkM/jeMhQBu1LGVJqPBk7M/BoQJ1EU8W3vxvfMcGFaZ5VWTFaF3z
+	EpdwFz1MtChv9kK8GKaBe77VsCkZLA7Qmw5z2NuoPB/YJmHLOuphm4LpUWI/EvAYBtjzL2yuolA
+	hb+MaYdLvDHQk4Cw+CMvQwx+upfx+y/iJG5W0UMTqm+Rxx1Lf5risDQSzKezXDRVmT26nsnTP82
+	42y8=
+X-Google-Smtp-Source: AGHT+IHoo/G7hIzty2H/6gOon8Xz+U/wkelfdv6DK4y23vQrHuGLtdPz4NySnwPueu2pM+YzjFbhYw==
+X-Received: by 2002:a05:690c:3390:b0:70c:9364:2c61 with SMTP id 00721157ae682-70ca79bf741mr308111097b3.9.1747885811328;
+        Wed, 21 May 2025 20:50:11 -0700 (PDT)
+Received: from maquina-virtual-para-linux.. ([191.156.43.125])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-70ca8362faasm28876127b3.62.2025.05.21.20.50.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 May 2025 20:50:10 -0700 (PDT)
+From: Donny Turizo <donnyturizo13@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	lizhe.67@bytedance.com,
-	muchun.song@linux.dev,
-	peterx@redhat.com
-Subject: Re: [PATCH v4] vfio/type1: optimize vfio_pin_pages_remote() for large folio
-Date: Thu, 22 May 2025 11:49:56 +0800
-Message-ID: <20250522034956.56617-1-lizhe.67@bytedance.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250521131711.4e0d3f2f.alex.williamson@redhat.com>
-References: <20250521131711.4e0d3f2f.alex.williamson@redhat.com>
+	Donny Turizo <donnyturizo13@gmail.com>
+Subject: [PATCH] staging: rtl8723bs: rename _Read_EEPROM to _read_eeprom
+Date: Thu, 22 May 2025 03:50:03 +0000
+Message-ID: <20250522035003.32314-1-donnyturizo13@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,88 +87,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Wed, 21 May 2025 13:17:11 -0600, alex.williamson@redhat.com wrote:
+Fixes a checkpath warning by renaming the function
+_Read_EEPROM to follow the kernel coding style (snake_case).
 
->> From: Li Zhe <lizhe.67@bytedance.com>
->> 
->> When vfio_pin_pages_remote() is called with a range of addresses that
->> includes large folios, the function currently performs individual
->> statistics counting operations for each page. This can lead to significant
->> performance overheads, especially when dealing with large ranges of pages.
->> 
->> This patch optimize this process by batching the statistics counting
->> operations.
->> 
->> The performance test results for completing the 8G VFIO IOMMU DMA mapping,
->> obtained through trace-cmd, are as follows. In this case, the 8G virtual
->> address space has been mapped to physical memory using hugetlbfs with
->> pagesize=2M.
->> 
->> Before this patch:
->> funcgraph_entry:      # 33813.703 us |  vfio_pin_map_dma();
->> 
->> After this patch:
->> funcgraph_entry:      # 16071.378 us |  vfio_pin_map_dma();
->> 
->> Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
->> Co-developed-by: Alex Williamson <alex.williamson@redhat.com>
->> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
->> ---
->
->Given the discussion on v3, this is currently a Nak.  Follow-up in that
->thread if there are further ideas how to salvage this.  Thanks,
+Signed-off-by: Donny Turizo <donnyturizo13@gmail.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_cmd.c         | 2 +-
+ drivers/staging/rtl8723bs/include/rtw_cmd.h      | 2 +-
+ drivers/staging/rtl8723bs/include/rtw_mlme_ext.h | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-How about considering the solution David mentioned to check whether the
-pages or PFNs are actually consecutive?
+diff --git a/drivers/staging/rtl8723bs/core/rtw_cmd.c b/drivers/staging/rtl8723bs/core/rtw_cmd.c
+index 49bcefb5e8d2..a0b85beffe5d 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_cmd.c
++++ b/drivers/staging/rtl8723bs/core/rtw_cmd.c
+@@ -15,7 +15,7 @@ static struct _cmd_callback rtw_cmd_callback[] = {
+ 	{GEN_CMD_CODE(_Write_BBREG), NULL},
+ 	{GEN_CMD_CODE(_Read_RFREG), &rtw_getbbrfreg_cmdrsp_callback},
+ 	{GEN_CMD_CODE(_Write_RFREG), NULL}, /*5*/
+-	{GEN_CMD_CODE(_Read_EEPROM), NULL},
++	{GEN_CMD_CODE(_read_eeprom), NULL},
+ 	{GEN_CMD_CODE(_Write_EEPROM), NULL},
+ 	{GEN_CMD_CODE(_Read_EFUSE), NULL},
+ 	{GEN_CMD_CODE(_Write_EFUSE), NULL},
+diff --git a/drivers/staging/rtl8723bs/include/rtw_cmd.h b/drivers/staging/rtl8723bs/include/rtw_cmd.h
+index cb44119ce9a9..e4e7e350d0fc 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_cmd.h
++++ b/drivers/staging/rtl8723bs/include/rtw_cmd.h
+@@ -636,7 +636,7 @@ enum {
+ 	GEN_CMD_CODE(_Write_BBREG),
+ 	GEN_CMD_CODE(_Read_RFREG),
+ 	GEN_CMD_CODE(_Write_RFREG), /*5*/
+-	GEN_CMD_CODE(_Read_EEPROM),
++	GEN_CMD_CODE(_read_eeprom),
+ 	GEN_CMD_CODE(_Write_EEPROM),
+ 	GEN_CMD_CODE(_Read_EFUSE),
+ 	GEN_CMD_CODE(_Write_EFUSE),
+diff --git a/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h b/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
+index 2080408743ef..63373d665d4f 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
++++ b/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
+@@ -684,7 +684,7 @@ enum {
+ 	GEN_EVT_CODE(_Read_MACREG) = 0, /*0*/
+ 	GEN_EVT_CODE(_Read_BBREG),
+ 	GEN_EVT_CODE(_Read_RFREG),
+-	GEN_EVT_CODE(_Read_EEPROM),
++	GEN_EVT_CODE(_read_eeprom),
+ 	GEN_EVT_CODE(_Read_EFUSE),
+ 	GEN_EVT_CODE(_Read_CAM),			/*5*/
+ 	GEN_EVT_CODE(_Get_BasicRate),
+-- 
+2.43.0
 
-I have conducted a preliminary attempt, and the performance testing
-revealed that the time consumption is approximately 18,000 microseconds.
-Compared to the previous 33,000 microseconds, this also represents a
-significant improvement.
-
-The modification is quite straightforward. The code below reflects the
-changes I have made based on this patch.
-
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index bd46ed9361fe..1cc1f76d4020 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -627,6 +627,19 @@ static long vaddr_get_pfns(struct mm_struct *mm, unsigned long vaddr,
-        return ret;
- }
- 
-+static inline long continuous_page_num(struct vfio_batch *batch, long npage)
-+{
-+       long i;
-+       unsigned long next_pfn = page_to_pfn(batch->pages[batch->offset]) + 1;
-+
-+       for (i = 1; i < npage; ++i) {
-+               if (page_to_pfn(batch->pages[batch->offset + i]) != next_pfn)
-+                       break;
-+               next_pfn++;
-+       }
-+       return i;
-+}
-+
- /*
-  * Attempt to pin pages.  We really don't want to track all the pfns and
-  * the iommu can only map chunks of consecutive pfns anyway, so get the
-@@ -708,8 +721,12 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
-                         */
-                        nr_pages = min_t(long, batch->size, folio_nr_pages(folio) -
-                                                folio_page_idx(folio, batch->pages[batch->offset]));
--                       if (nr_pages > 1 && vfio_find_vpfn_range(dma, iova, nr_pages))
--                               nr_pages = 1;
-+                       if (nr_pages > 1) {
-+                               if (vfio_find_vpfn_range(dma, iova, nr_pages))
-+                                       nr_pages = 1;
-+                               else
-+                                       nr_pages = continuous_page_num(batch, nr_pages);
-+                       }
- 
-                        /*
-                         * Reserved pages aren't counted against the user,
-
-Thanks,
-Zhe
 
