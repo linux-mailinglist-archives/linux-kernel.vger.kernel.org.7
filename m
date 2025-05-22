@@ -1,126 +1,136 @@
-Return-Path: <linux-kernel+bounces-658580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE8F7AC044C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:56:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E194FAC0451
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7EB74E3D10
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:56:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A7391BA5DC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF51C1F1513;
-	Thu, 22 May 2025 05:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DB91A5B99;
+	Thu, 22 May 2025 05:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWB7+V7t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="CkRQRT6B"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C0C1A5B99;
-	Thu, 22 May 2025 05:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54D91F1522;
+	Thu, 22 May 2025 05:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747893409; cv=none; b=RjxB2iN3U52NeKoE74MxfrKMzjdCHUFz+ZAc0+qqJHqimiauIvDume491Y/jATI0EFFGKhmr6UpPX9/eyslust5s2ztmNfWhIVKcGqown7vJrEHmy1MTBuy709bEsmQM1ZZw3ki+Def3XoprKAV/4StUUEzcjJ5SpCrOOnLCLY0=
+	t=1747893473; cv=none; b=HbEoNjSUrK5Cn24ZUyUZGEgb8B2ghUH2o6d8ESkkjwIS4/Vyj5HHpPfTKaaoHbah+SCi58UzeLOMRNpWlKhYszkkN0eVb6RYpGNe2Du+gbZyRl2VJvHjRccvmTyAb6V5RZOP85u3a7S71jeY1bqnIUm9jOZCBQON35/PujoQQrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747893409; c=relaxed/simple;
-	bh=HQCkhi5OnnxcXIx33M5k6JbunrNSiHB/mQlxg7rf1Ow=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ipQFKKn0LjXw0Xn7g8yQkVsroIt/XAt2ZhhB4Cw8PtpZh/q2FLUa4V0/p9E4YOLKd8R51DptVlxB3QaYTgp5h2kvhGGTXDqxuvIfZzUe0FI71B5h8j4LK/84KLH2N+VDWzDITD/i8Kx2Ap4SPm84RTeTAhX2mNoY3LKbUxbf9Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWB7+V7t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B92BC4CEE4;
-	Thu, 22 May 2025 05:56:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747893408;
-	bh=HQCkhi5OnnxcXIx33M5k6JbunrNSiHB/mQlxg7rf1Ow=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tWB7+V7tgRdXpOrrONheSP06mDFbYJuvzjSUNP3RxMt/Hq1U8Mk1jWIg6PB4j7Q/6
-	 vqYiA49jb2JaG7tb2JVNAn31cr5olswd7QwdgtC4eESdfZRODBRzqqI9GKI7bh4WkJ
-	 UUPwUCTZBYWO2jfdVbkNQQlmT4boEQpxss/5t4fab7a9QLJTQgloAea20M8xc3sWJm
-	 jQgq5FUEb2XWrw9ekJXLdcRL70xx3gN2GuYE9QVp/AHQVE+KSuuoMWPGElINVu8kAe
-	 Qenk1MN4IgwPgMcdvzsoIkWWTCsB43qWLUVpOsBle1pmZyfnjTk8DsPl9UMAHmZpHw
-	 lqg+ubfPULN1A==
-Message-ID: <f2e10c93-eb7e-4fc8-9b45-949ca1b93413@kernel.org>
-Date: Thu, 22 May 2025 07:56:45 +0200
+	s=arc-20240116; t=1747893473; c=relaxed/simple;
+	bh=kPn6f5OVoMXmjB9v5cahFg/5FN5tZ2/LXTi7N789Qj4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WzR8r4WckwcrixpopYeNYHG/s+IyuElVfqLJPVUEuVjBdZv9JnIYKcH0XBu7yHdr5x1p7OeCXvNsSv+QLRk/r+Og34OPiLC670GUW371vvpKHO+nfgSXorVnuA2KKtFqj33gvY9Vx+7DJIWr5fgqVyFuv4wFB4TSHhSmT37/6Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=CkRQRT6B; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54LDroib017518;
+	Wed, 21 May 2025 22:57:33 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=sdKdexUtu+kW9QMg27XpY6n
+	DojyNHDcE+TCJCItY2h8=; b=CkRQRT6BRUisdtBIKN8vhmfwKclGRzMTsN2ApQB
+	CupEQi3TUeD4AsmRCh1+Q9UVEodHX+1fra2vNeM6yuXTFyEepRi6MHtzpk/mUKiW
+	/VaYrJg55HeF3DpysSAWwh8hdBCk+U57pk0sE8sPVEqzpucU89InMGzU3r9OjW0k
+	d7FOFg3Sut9NdP9ye4rM51szc5dDZwUTckl6aZ0Ii7tMw9lfqIxgUtT3Bb72LIvp
+	LcwvvgbV1omBZ/Y1ZTmLHnxypFVW3n8xAMI4S1Frb8U0eG5lwOToS0JdiE8RMj+G
+	eUYD9/y+vguSlkRHr49hNcSFNuUJRUJpfCr40q+H4TushFA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46rwfgkvn4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 May 2025 22:57:32 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 21 May 2025 22:57:31 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 21 May 2025 22:57:31 -0700
+Received: from tx2-sever.caveonetworks.com (unknown [10.110.141.15])
+	by maili.marvell.com (Postfix) with ESMTP id 848AE3F708E;
+	Wed, 21 May 2025 22:57:31 -0700 (PDT)
+From: George Cherian <george.cherian@marvell.com>
+To: <linux@roeck-us.net>, <wim@linux-watchdog.org>, <a.fatoum@pengutronix.de>
+CC: <linux-watchdog@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "George
+ Cherian" <george.cherian@marvell.com>
+Subject: [RESEND PATCH v5 0/2] Add reset_on_panic support for watchdog
+Date: Thu, 22 May 2025 05:57:13 +0000
+Message-ID: <20250522055715.3533356-1-george.cherian@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: duplicate patches in the samsung-krzk tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- ARM <linux-arm-kernel@lists.infradead.org>
-References: <20250522113227.7593f675@canb.auug.org.au>
- <20250522114205.35511096@canb.auug.org.au>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250522114205.35511096@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDA1NyBTYWx0ZWRfX+0Op0H0mDB1H 7PyYissHj+UF3enqkeDdjutyW4cIfVmi2Ddz9eyOU/EMqjNQDLRmAIiCGLbiYWdPvuYjHFT9CD2 OqNkq3X3xAnntdAf555ZmDnnZ2c4/J9sAoJcHjvieSLK+CPWwOD8fnpyqilR+VziZ7JMa8nXTvJ
+ GHTD6nCmJsThK0iIsSU71bCtsDetYuySEMPjWlE9dpYMI0VTSQihVuCxd3puqTqPc8lrUez1i75 Dlxf+j0v6rFfleqz5sWGysU3dr/J4dLtwAQXjtsJdmoJuLr0l4284QP1JW3lJ6tz23kbrD1QC4W 9otAFwLsC205s6Xu2KJfI494JGkuAVyhiUlh8M/F8qy6UlzQnVmtH/nl3inVKbIrPxih4o0xlCc
+ 4t7cs6BiKGsqpGBpEHGTOj9T52UVDYtggm/L3Yft0oPpSZAp/NT74dMjsWox1UQ/U8/SX4m1
+X-Proofpoint-GUID: pXbtxDdkaflOsMzeoDnzi_eC0qXLrqeB
+X-Authority-Analysis: v=2.4 cv=T6OMT+KQ c=1 sm=1 tr=0 ts=682ebccc cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=dt9VzEwgFbYA:10 a=i_2PNuB7HiXbIVo88oEA:9
+X-Proofpoint-ORIG-GUID: pXbtxDdkaflOsMzeoDnzi_eC0qXLrqeB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-22_03,2025-05-20_03,2025-03-28_01
 
-On 22/05/2025 03:42, Stephen Rothwell wrote:
-> Hi all,
-> 
-> [cc arm-soc]
-> 
-> On Thu, 22 May 2025 11:32:27 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> The following commits are also in the arm-soc tree as different commits
->> (but the same patches):
->>
->>   286e6e8787df ("ARM: s3c: stop including gpio.h")
->>   e0d7c81b15e8 ("ARM: dts: samsung: sp5v210-aries: Align wifi node name with bindings")
->>   e83a135a2b2f ("arm64: defconfig: enable ACPM protocol and Exynos mailbox")
+This series adds a new option to watchdog core to reconfigure the
+watchdog timeout on panic. This is useul in certain systems which prevents
+successful loading of kdump kernel due to watchdog reset.
 
-Thanks, that's expected. I dropped them now from my queue.
+Some of the watchdog drivers ops could sleep. For such drivers the 
+reset_on_panic is not valid as the notifier callback happens
+in atomic context. Introduce WDIOF_OPS_ATOMIC flag to watchdog_info
+options to indicate whether the stop/set_timeout function would sleep.
 
-Best regards,
-Krzysztof
+
+Changelog:
+v1 -> v2
+- Remove the per driver flag setting option
+- Take the parameter via kernel command-line parameter to watchdog_core.
+
+v2 -> v3
+- Remove the helper function watchdog_stop_on_panic() from watchdog.h.
+- There are no users for this. 
+
+v3 -> v4
+- Since the panic notifier is in atomic context, watchdog functions
+  which sleep can't be called. 
+- Add an options flag WDIOF_STOP_MAYSLEEP to indicate whether stop
+  function sleeps.
+- Simplify the stop_on_panic kernel command line parsing.
+- Enable the panic notiffier only if the watchdog stop function doesn't
+  sleep
+
+v4 -> v5
+- Remove the kernel command line option.
+- Incorporate the suggestions by Ahamad Fatoum.
+- Give an option to watchdog core to set the timeout in case of panic.
+- This timeout is configurable runtime via sysfs.
+- This way it addresses all the watchdogs as long as they have watchdog
+  ops  atomic.
+- Enable this feature to sbsa watchdog.
+
+George Cherian (2):
+  drivers: watchdog: Introduce watchdog reset timeout on panic
+  drivers: sbsa_gwdt: Enable the reset_on_panic feature
+
+ drivers/watchdog/sbsa_gwdt.c     |  3 +++
+ drivers/watchdog/watchdog_core.c | 33 ++++++++++++++++++++++++++++++++
+ drivers/watchdog/watchdog_dev.c  | 28 +++++++++++++++++++++++++++
+ include/linux/watchdog.h         |  3 +++
+ include/uapi/linux/watchdog.h    |  1 +
+ 5 files changed, 68 insertions(+)
+
+-- 
+2.34.1
+
 
