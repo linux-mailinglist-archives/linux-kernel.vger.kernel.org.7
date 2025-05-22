@@ -1,167 +1,130 @@
-Return-Path: <linux-kernel+bounces-659441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 376DEAC1058
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:53:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5005BAC1063
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 689601892181
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:53:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F7B73AC9CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B73299A9A;
-	Thu, 22 May 2025 15:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36FE126BF1;
+	Thu, 22 May 2025 15:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ps30CyU8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="W3i23DkB"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3735628A402;
-	Thu, 22 May 2025 15:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD39299A99;
+	Thu, 22 May 2025 15:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747929213; cv=none; b=qHz4waSshiKid7RprA0sl/L9kDFdzIMtTfc5ucTxbKoJCqnazlCkldGlc4yBhKnwZF5DtbypdXH0e9jtO8Klq8Q+65ZfQr6H5XYmk3HwZIzhwOGcwRq41iUiiB6GyRc6C1B2tyZsgERxerlh0PxfKRJIuwHT/JZ20uqG7zvRMEg=
+	t=1747929242; cv=none; b=oX+zi8ct2nbvKpqws2mTMXzLSkci1/SLPeZlCuycsOaGdDsb5ROWejaEZo3qKmJ7DbpW00YxG/dIhVFhNec9RSUJRck6hVOEBiExWS+Sgzv/iStOv2hGkDKEark8EBVk8brmxMng/Tw0T0HlPuZaPgNHR0xfdv4MZYIMJDGyX5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747929213; c=relaxed/simple;
-	bh=sER6TUaJO5zCcIJR06Jkz1EP6QGdFEs+tdDFZCI1zxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VTfgthVnBCfg8UKku6bNP7J1gD6qoOvAa5xJ9HxUHNr3KarBoehrfjJjmsgWRvNKM4rFpJxtkoXuF5El+9jSNoIV3w/65cl+IH72c/OK1iUXlI7iKhXd8zlAQv9Ed72jxrk734tkJxicN1QDoq4xZcSXbwAOo4U/ulrN5n4TeCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ps30CyU8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55017C4CEF1;
-	Thu, 22 May 2025 15:53:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747929211;
-	bh=sER6TUaJO5zCcIJR06Jkz1EP6QGdFEs+tdDFZCI1zxk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ps30CyU8dki7pBTSKkw76kLUvEJKyQFEic6MewttYzE+CvgWe/ax+9nq5P3f2QUJP
-	 zf+cvPoPHdTdzqJp3o6GP0aEdCTR87minC7VZb1eAVW5zhBsEdJQd5kNKGx4zmKIc7
-	 sEmc1bReq9hH3nziRpkR84ezFrag397mdYRklpeOMGSj4oV671U3ixUnrM4P3FgXZv
-	 xSqQ8Sd3Ucb0REymlrCPo7VKNcmmzULs3D3i2wDjdmdSQ7Y/h3dUvIFa+rkNtDbu7K
-	 1D23kkjZm3M2n23tIrgBmCL4Rt7ZunjQpuPwILGgHU8FP/NOZoNeCF83G0U7wUTX9+
-	 E+6XK1sOq1J3g==
-Date: Thu, 22 May 2025 17:53:29 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Anusha Srivatsa <asrivats@redhat.com>, Paul Kocialkowski <paulk@sys-base.io>, 
-	Dmitry Baryshkov <lumag@kernel.org>, =?utf-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>, 
-	Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/2] drm/tests: bridge: add a KUnit test for
- devm_drm_bridge_alloc()
-Message-ID: <20250522-fierce-carp-of-competition-1c0ecd@houat>
-References: <20250409-drm-bridge-alloc-doc-test-v7-0-a3ca4b97597f@bootlin.com>
- <20250409-drm-bridge-alloc-doc-test-v7-2-a3ca4b97597f@bootlin.com>
- <20250414-misty-hungry-woodlouse-dbbd64@houat>
- <20250415132214.19b1a4ff@booty>
- <gqe4ov7w54qe7mmfn2ud63g2ema2wh3qvyfvcaycvnh5mts3it@ef7qxryo2ccy>
- <20250516173828.7f1aa70c@booty>
+	s=arc-20240116; t=1747929242; c=relaxed/simple;
+	bh=tgpHzJFSP0rnDppwYe1l14XBM48ZnUDrZRXBK1lQJZE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nF5eC2gwoluC3YpgfcGoNdXF58s7mlFX5C1OQu3poOej5hPVbk4ASVTEkwygW83k33jIEQuK+6U9akWbRWyk8XG15MzUrgaJb/2lpbvwClhhFSF5nnL/bapHw2aokl3mCONjOIdG6ZG8t/hJsSgehmrjVMUzkmkeidSTE1SiiiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=W3i23DkB; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54MFrcMV1855269;
+	Thu, 22 May 2025 10:53:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1747929218;
+	bh=jySRI/8bFMF3lqKUnU42PqyJe/L7FVdEHZlxB5NuuwI=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=W3i23DkBWlVYARl6EhAZFr0Y45cTG7ZQVSO+Qo95JHu11xxtwnszehXoaeDHkiuOU
+	 fUgIE2MxKZ4Y3mMcim1JPH4bgRos4+YfUETWGsWjIrdhzdMfPCgzXk1qD3z8HgPtst
+	 FXjk+uOvdjnrLxy35TlHPzOAJO8oxDoW3up4hLOo=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54MFrcBs3103726
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 22 May 2025 10:53:38 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 22
+ May 2025 10:53:38 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 22 May 2025 10:53:38 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54MFrccP111653;
+	Thu, 22 May 2025 10:53:38 -0500
+Date: Thu, 22 May 2025 10:53:38 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Beleswar Padhi <b-padhi@ti.com>
+CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <afd@ti.com>,
+        <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 0/2] TI: K3: Switch MCU R5F cluster into Split mode
+Message-ID: <20250522155338.gpbcubkvygtju3qc@bagpipe>
+References: <20250522073426.329344-1-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="5dunwaxeeh5jyh5b"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250516173828.7f1aa70c@booty>
+In-Reply-To: <20250522073426.329344-1-b-padhi@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+On 13:04-20250522, Beleswar Padhi wrote:
+> Several TI K3 SoCs like J7200, J721E, J721S2, J784S4 and J742S2 have a
+> R5F cluster in the MCU domain which is configured for LockStep mode at
+> the moment. Switch this R5F cluster to Split mode by default in all
+> corresponding board level DTs to maximize the number of R5F cores.
 
---5dunwaxeeh5jyh5b
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v7 2/2] drm/tests: bridge: add a KUnit test for
- devm_drm_bridge_alloc()
-MIME-Version: 1.0
+Why? I can read the patch to understand what you are trying to do, but
+the rationale needs to be explained.
 
-On Fri, May 16, 2025 at 05:38:28PM +0200, Luca Ceresoli wrote:
-> > > Another way would be adding an optional .destroy a callback in struct
-> > > drm_bridge_funcs that is called in __drm_bridge_free(), and only the
-> > > kunit test code implements it. Maybe looks cleaner, but it would be
-> > > invasive on code that all bridges use. We had discussed a different
-> > > idea of .destroy callback in the past, for different reasons, and it
-> > > was not solving the problem we had in that case. So kunit would be the
-> > > only user for the foreseeable future. =20
-> >=20
-> > Sorry, we've had many conversations about all that work so I can't
-> > recall (or find) what your objections or concerns (or mine, maybe?) were
-> > about thing topic. It looks totally reasonable to me, and consistent
-> > with all the other DRM entities.
->=20
-> That was a long story and I also don't remember all the details,
-> however here's a summary of what I can recollect:
->=20
->  1. initially I proposed a .destroy called in *drm_bridge_free(), i.e.
->     upon the last put [1]
->      * it was used to ask the bridge driver to kfree() the driver struct
->        that embeds the drm_bridge; that was not a good design, putting
->        deallocation duties on each driver's shoulders
->      * it was made unnecessary by devm_drm_bridge_alloc(), which moved
->        the entire kfree into __drm_bridge_free() itself, based on the=20
->        .container pointer
->  2. we re-discussed it as a way to handle the panel_bridge, but in that
->     case it would have been called by drm_bridge_remove() IIRC [2]
->      * you said it was not a good solution (and I agree) and that a much
->        wider rework would be needed for panels, eventually including the
->        panel_bridge
->      * then Anusha sent the patches to start the panel rework
+> 
+> Corresponding support to shutdown MCU R5F core 1 on SoC power on have
+> been posted in U-Boot:
+> https://lore.kernel.org/all/20250522071828.285462-1-b-padhi@ti.com/
+> 
+> While at it, correct the firmware-name property for MCU R5F cores of
+> J742S2 SoC in [PATCH 1/2].
+> 
+> Testing Done:
+> 1. Tested that each patch does not generate any new warnings/errors.
+> 2. Build test on all existing TI K3 platforms.
+> 3. Tested U-Boot and Linux load of MCU R5F core in split mode on all
+> applicable boards (AM68-SK, AM69-SK, J7200-EVM, J721E-EVM, J721S2-EVM,
+> J784S4-evm, J742S2-EVM)
+> 
+> Test logs:
+> https://gist.github.com/3V3RYONE/ee8e3cb9aa5f4c5c00b059b9c14bfa98
+> 
+> Thanks,
+> Beleswar
+> 
+> Beleswar Padhi (2):
+>   arm64: dts: ti: k3-j742s2-mcu-wakeup: Override firmware-name for MCU
+>     R5F cores
+>   arm64: dts: ti: k3: Switch MCU R5F cluster to Split-mode
 
-Thanks for the summary. I still agree with our discussions, however...
+NAK! We are once again churning downstream users again and for what
+reason - coverletter and the patch is vague on that!
 
-> So now we are discussing adding .destroy again, and in
-> __drm_bridge_free(), as it was at step 1, but for a different reason.
->=20
-> [1] https://lore.kernel.org/all/20241231-hotplug-drm-bridge-v5-3-173065a1=
-ece1@bootlin.com/
-> [2] https://oftc.catirclogs.org/dri-devel/2025-02-14#
->=20
-> > I'm also not entirely sure how invasive it would be? Add that callback,
-> > check if it's set and if it is, call it from __drm_bridge_free(), and
-> > you're pretty much done, right?
->=20
-> No much added code indeed. My concern is about the fact that the
-> callback would be used only by kunit test and not "real code". It is
-> possibly worth doing anyway, so I wrote something for v8 and we'll see
-> how it looks.
+I would prefer the entire remote proc dts stuff cleaned up once for all
+in a comprehensive series.
 
-=2E.. It's still useful. With KMS drivers, you usually get two different
-lifetimes: the hardware device and the DRM device. The DRM device will
-outlive the hardware device. Thus, the driver instance will still be
-live even after the device is gone away, and still need to somewhat
-interact with the framework, even if in degraded mode.
+Let me be clear (once again): We DO NOT break backward compatibility.
+We do not break downstream users without a clear cut rationale. We do
+not break all other ecosystems depending on device tree without a very
+very solid reason.
 
-All the resources tied to the device (memory mapping, clocks,
-interrupts, etc.) are handled by devm. We don't have to take care of
-them in destroy, they are long gone before we reach that point.
-
-However, the bridge might still need to allocate memory, create objects,
- to interact with the framework. Things like a private object, or a
- scratch buffer, or... whatever.
-
-But anything that the driver needs to implement what the framework
-expects basically. *Those* are what need to be cleaned up in destroy.
-
-Maxime
-
---5dunwaxeeh5jyh5b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaC9IeAAKCRAnX84Zoj2+
-dogNAYCBWTPdxU7ITy8hdIEHBDmtiUmctJ46NQeWBfdzue2ao3tTwn7pHC34aPQK
-H257clIBf02ghWwpXc0wZ0WMKVGH9aW0+J8MV0GiUEaZPrTGH5ibbNZcKC6XQX+P
-3j9T4rfn1A==
-=GinJ
------END PGP SIGNATURE-----
-
---5dunwaxeeh5jyh5b--
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
