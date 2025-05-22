@@ -1,306 +1,187 @@
-Return-Path: <linux-kernel+bounces-659201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8F7AC0CB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:27:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C55BAC0CC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:29:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0EFE7A47C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:25:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8ED33B0EE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DCA28BAB1;
-	Thu, 22 May 2025 13:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC64286D65;
+	Thu, 22 May 2025 13:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WInItyvI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RcqIlTYI"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993D028A721
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 13:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4D028BAAE
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 13:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747920426; cv=none; b=ku3SoEepP/+lyDuvwoL9a7Ju0sxE9kQeFqdVrAsyrgAoYZugxpeMndIESve0gOLflF6oXhce1L8+vp56hKC82dnVmiVClnPzwxrTaG5M9y0CnCdu2WPUw65GCyWNmYeZXzJWlxpk6ujjrrr0f9S3k4c0Z45fpRY4HiI5Qa5rCZo=
+	t=1747920585; cv=none; b=aw4EPaTEdgpVx6VoysizyE1BFbnurhI6RGsqjCqrAJF1kKI4w3OsSZ5+gvbgaLb2vkrUrFtZ1nngDsQ+w6fl+OpVB215WxFiuhVH+dRM74hK3l9EGY46dUdOf3ICS7VzspyA1hOUF6zrgOIAF8e1cDKyEu+qeJ/pZ/ozhxoWXCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747920426; c=relaxed/simple;
-	bh=7jXywNUlzc1MmLwvPQoNGJwLEr1+Ff8jUu8LgYX1h5o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I3WEp2hY7seQphcXZCI1DtosceRHrUZsFf9TsOD2gVNl+JwHbAui+h1uduK6QusZHctL1Wd7//PC5p84e6F8PojSLxsfPtAQWAysJow645oCOW3eqOC1fqWpn8HZi7eQHpSlVc+EEs4UU8VG1mD2MyU9UCXJLDOGnVhevtn+CY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WInItyvI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747920423;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ioYh4K71wobSHT6+Q/FjdFJoAKJDxW2IKKHl5ZAfDW0=;
-	b=WInItyvIMrc+B3Jen/8xwmkyfJi0gbdZTe7l1eyTDqBW+CKJD3olC19hltRd1mf3mmvicP
-	dzeerPVsddziuhe1SqWBpIjJ9acbqNwT7tazS44nS7HzsVoukqa23tpwlDF76oDK4vILw4
-	wLpOR1bwFnJKI02/dlxSP3Yw0Zc9ubw=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-137-1mu3k9u5MK2d4_Yb00fHCA-1; Thu,
- 22 May 2025 09:27:01 -0400
-X-MC-Unique: 1mu3k9u5MK2d4_Yb00fHCA-1
-X-Mimecast-MFC-AGG-ID: 1mu3k9u5MK2d4_Yb00fHCA_1747920420
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8E8F8195423F;
-	Thu, 22 May 2025 13:26:59 +0000 (UTC)
-Received: from gerbillo.redhat.com (unknown [10.45.225.118])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 772CB30001A1;
-	Thu, 22 May 2025 13:26:56 +0000 (UTC)
-From: Paolo Abeni <pabeni@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Networking for v6.15-rc8
-Date: Thu, 22 May 2025 15:26:47 +0200
-Message-ID: <20250522132647.48139-1-pabeni@redhat.com>
+	s=arc-20240116; t=1747920585; c=relaxed/simple;
+	bh=YvxmOcwXxySke6hJNz3qXEpH82+lpny5SEPaKZ39tzA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iSzRX4Lslt7PKtbNC2qaZlxDlBYHePAu30dHSnb7VOd9NFLV61kzFF25lA88etZPdGKNOTPtjiyDHG5/L1psIkW78dwEztcYUTp6RrIuZUctGmahD8hdxIhM/s99v3CY3lmBIs3cCYEsld42CSjC3+Uz66l2GbbX9ibmv2EoZWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RcqIlTYI; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cfe574976so58744125e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 06:29:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747920581; x=1748525381; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AIzpzapNTYH4VGBko38vkkxsTkjFZRUZnHumpB9vr+c=;
+        b=RcqIlTYIKFM23kLsONtpo1F7YAv0TM+siEzdQkBN7akYsoi+KXx3zwz/qcpU9zhm0t
+         8r7mqpyR926veWXzJiEMtMfUOJPDGNKj3bOYgNoEMpjO/eJMpgvMWBZSr6MoiBCgGriv
+         +oS0xTq+gaQH8FLMjwezwFAegKak1mRaO89swafNAQap7croNxgAhd2Q1+OoFX4iOADE
+         qyntnhLq3vaYugCglzNi8hI8upHOV5qle8nof1SAPGHliQB5bA7EpuHfmwL32LFkrJTP
+         bjghAJ2Xmrc19//3MgKgx7TW93PlFb7mgwq4UCjKJ0wDbEEAPeg3nJLEtX21wOw7tyxG
+         RMzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747920581; x=1748525381;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AIzpzapNTYH4VGBko38vkkxsTkjFZRUZnHumpB9vr+c=;
+        b=jKFv9sOkHzIUicOxyhaOli5597RaqvHeDSJQlD7HmJXUGFslZthlFwpqWW9Iq+NA/b
+         UVzDqH4yG/Urh5+f0AsGOObPFdJJhiqEMAp4N3O+TtIfIsegExI0W/3iJm0zKGfgqwCo
+         5HSVoYmL94LjjxxGjs4sl+RNO14xpsR3vVJTSGDIcepBrtk2R+gUJzTqCVl27es6lP3L
+         kNppwPRGR1yJLO95DM7638AFJaT/u8Gj7IT0i0rYQsrCp1/xg7QapZRyI7lXTrC2yMuY
+         WC0dlCAI5eWPTXLA1y59kP/L+SJfQDk+YsiEY/gUn2Zuz4MxTZSU2JFvG3ZoiV7UP1A5
+         2zFg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8gGJxJ1lN9TAB86QfBMGVNcF59/pvx/6L0znXxCIENqzy/4v3AFZdgu6hjhlLFsixR6e8K2suJZ+iiVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzpNJk6+kqt+DYLX5KvY2hj4eXe4annzCEfhMv32BSCl68CdTC
+	Qyhvi8i+pFojtkArqrhmPCZDzXt6GilGNlEG3Q4Y3cCwYk9Z2U1Aga8hQ0hgu3jOiuA=
+X-Gm-Gg: ASbGncvaUo2xrMYN7d0xCZ6OGNVB5IRoOwIaiRPqvD7EtaE8EkM0uXYuj3ERjfPe4po
+	+3tN1NHjrlaF656GdaNHhfThWPugh+XNQ91hNmd2PLpNVMJRB6OKZFfVtTJIlcRIGEUAgMuH2EZ
+	6+6qlEY9OUtgSqwGll8x5NXUn+tcQNv/Sbswm224nuxh0RVRBOIZeNsGnukC26J1Klz7qsepUoy
+	Q0PPzKHOX/QAEZifltzz5ThpyfzkeO3ZPnjoo56xNQbto5ieR/hpvCDryFQw4IDOgwi80qAuPCO
+	lM2IVzhl+PRMTrWXUoZ8uvZsgg0twSthP7S984wqZ24b7+bG9cf4gLYn93wy8CP4/chOhwp70Ou
+	PTF//WkzNY54UFQOR3jEj0eFWrFReZWU=
+X-Google-Smtp-Source: AGHT+IHj5yBsUYf4YI13lVQPPXM3bDI+sCi+sYh/ZaKSTJgcKvk6X18B9cO02f0AvngeuLfOR95OZA==
+X-Received: by 2002:a05:600c:3d15:b0:43c:f81d:34 with SMTP id 5b1f17b1804b1-442fd625120mr229896315e9.9.1747920580841;
+        Thu, 22 May 2025 06:29:40 -0700 (PDT)
+Received: from [192.168.0.2] (host-80-116-51-117.retail.telecomitalia.it. [80.116.51.117])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f1ef0b20sm109837585e9.14.2025.05.22.06.29.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 06:29:40 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+Subject: [PATCH v6 0/6] iio: adc: add ad7606 calibration support
+Date: Thu, 22 May 2025 15:27:01 +0200
+Message-Id: <20250522-wip-bl-ad7606-calibration-v6-0-487b90433da0@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACUmL2gC/43QzWrDMAwH8FcpPs9Dlm052WnvMXbwh7wauqY4J
+ Vspefc5vSyMEHb8S+gnobsYuRYexcvhLipPZSzDuQV6Ooh49OcPliW1LBDQgsFefpWLDCfpkyM
+ gGf2phOqvbUoieN2TJ9AWRZu/VM7l+2G/vbd8LON1qLfHqkkt1f+ok5IgOZhkOlRBOXwN/ra0+
+ TkOn2KBJ/zFLOAehg1TzoQEPkOnwgam1xjtYbphxMEFYoca3AZm1li3h5mG9crrjJ12TFuX2RW
+ mdn9mG2bAmhxd7LNOf7B5nn8A4uNIaPkBAAA=
+X-Change-ID: 20250429-wip-bl-ad7606-calibration-20a396a60352
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ devicetree@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3048;
+ i=adureghello@baylibre.com; h=from:subject:message-id;
+ bh=YvxmOcwXxySke6hJNz3qXEpH82+lpny5SEPaKZ39tzA=;
+ b=owGbwMvMwCXGf3bn1e/btlsznlZLYsjQVzOoubh0u3WXZvNv/cBjkiKd7rckGu5vedMj/FCe8
+ 3tgV9XKjlIWBjEuBlkxRZa6xAiT0NuhUsoLGGfDzGFlAhnCwMUpABNJMGH4H+f4Tdbe48RmrXq/
+ Q55S3m7fv77Mn+xUXlcisllSr51TjJHhWMCb+ijH/9OYZxca3/KfMME2XP3U/DTFz7apu5zulDn
+ wAAA=
+X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
+ fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
 
-Hi Linus!
+Add gain, offset and phase (as a delay) calibration support, for
+ad7606b, ad7606c16 and ad7606c18.
 
-The following changes since commit ef935650e044fc742b531bf85cc315ff7aa781ea:
+Calibration is available for devices with software mode capability. 
 
-  Merge tag 'net-6.15-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2025-05-15 10:40:49 -0700)
+Offset and phase calibration is configurable by sysfs attributes, while
+gain calibration value in ohms must match the external RFilter value,
+when an external RFilter is available, so implemented through a specific
+devicetree "adi,rfilter-ohms" property.
 
-are available in the Git repository at:
+This patchset depends on:
+https://lore.kernel.org/linux-iio/20250505131544.0a7477a2@jic23-huawei/
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.15-rc8
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+---
+Changes in v6:
+- exit for error in case of fdt that breaks the dt_schema,
+- add (5/6) patch to fix the above on older code too, 
+- Link to v5: https://lore.kernel.org/r/20250519-wip-bl-ad7606-calibration-v5-0-4054fc7c9f3d@baylibre.com
 
-for you to fetch changes up to 3fab2d2d901a87710f691ba9488b3fd284ee8296:
+Changes in v5:
+- fix tab/spaces wrong formatting on ABI doc (1/5),
+- fix description in ABI doc (1/5),
+- fix code multiline alignments (3/5),
+- fix calibration offset calculation as oneliner expression (3/5), 
+- Link to v4: https://lore.kernel.org/r/20250508-wip-bl-ad7606-calibration-v4-0-91a3f2837e6b@baylibre.com
 
-  Merge tag 'linux-can-fixes-for-6.15-20250521' of git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can (2025-05-22 12:32:38 +0200)
+Changes in v4:
+- fix ad7606_chan_calib_gain_setup appropriately to be called once.
+- Link to v3: https://lore.kernel.org/r/20250506-wip-bl-ad7606-calibration-v3-0-6eb7b6e72307@baylibre.com
 
-----------------------------------------------------------------
-This is somewhat larger than what I hoped for, with a few PRs from
-subsystems and follow-ups for the recent netdev locking changes,
-anyhow there are no known pending regressions.
+Changes in v3:
+- fix dt_bindings,
+- change sysfs calib_delay to convdelay,
+- fix sysfs documentation accordingly,
+- used u32 for reg and r_gain,
+- used DIV_ROUND_CLOSEST for setting r_gain,
+- minor syntax fixes,
+- Link to v2: https://lore.kernel.org/r/20250502-wip-bl-ad7606-calibration-v2-0-174bd0af081b@baylibre.com
 
-Including fixes from bluetooth, ipsec and CAN.
+Changes in v2:
+- change phase_delay to calib_delay,
+- fix dt_bindings,
+- fix gain calibarion fdt parsing,
+- fix ad7606c-18 calib offset range,
+- fix calib offset calculation,
+- fix calib gain range,
+- Link to v1: https://lore.kernel.org/r/20250429-wip-bl-ad7606-calibration-v1-0-eb4d4821b172@baylibre.com
 
-Current release - regressions:
+---
+Angelo Dureghello (6):
+      Documentation: ABI: IIO: add calibconv_delay documentation
+      iio: core: add ADC delay calibration definition
+      iio: adc: ad7606: add offset and phase calibration support
+      dt-bindings: iio: adc: adi,ad7606: add gain calibration support
+      iio: adc: ad7606: exit for invalid fdt dt_schema properties
+      iio: adc: ad7606: add gain calibration support
 
-  - eth: team: grab team lock during team_change_rx_flags
+ Documentation/ABI/testing/sysfs-bus-iio            |  24 +++
+ .../devicetree/bindings/iio/adc/adi,ad7606.yaml    |  29 +++
+ drivers/iio/adc/ad7606.c                           | 225 ++++++++++++++++++++-
+ drivers/iio/adc/ad7606.h                           |  12 ++
+ drivers/iio/industrialio-core.c                    |   1 +
+ include/linux/iio/types.h                          |   1 +
+ 6 files changed, 286 insertions(+), 6 deletions(-)
+---
+base-commit: 5f7a3b3aa8dc5fb3103322c30c690d38d1a25071
+change-id: 20250429-wip-bl-ad7606-calibration-20a396a60352
 
-  - eth: bnxt_en: fix netdev locking in ULP IRQ functions
-
-Current release - new code bugs:
-
-  - xfrm: ipcomp: fix truesize computation on receive
-
-  - eth: airoha: fix page recycling in airoha_qdma_rx_process()
-
-Previous releases - regressions:
-
-  - sched: hfsc: fix qlen accounting bug when using peek in hfsc_enqueue()
-
-  - mr: consolidate the ipmr_can_free_table() checks.
-
-  - bridge: netfilter: fix forwarding of fragmented packets
-
-  - xsk: bring back busy polling support in XDP_COPY
-
-  - can:
-    - add missing rcu read protection for procfs content
-    - kvaser_pciefd: force IRQ edge in case of nested IRQ
-
-Previous releases - always broken:
-
-  - xfrm: espintcp: remove encap socket caching to avoid reference leak
-
-  - bluetooth: use skb_pull to avoid unsafe access in QCA dump handling
-
-  - eth: idpf:
-    - fix null-ptr-deref in idpf_features_check
-    - fix idpf_vport_splitq_napi_poll()
-
-  - eth:  hibmcge: fix wrong ndo.open() after reset fail issue
-
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-
-----------------------------------------------------------------
-Axel Forsman (3):
-      can: kvaser_pciefd: Force IRQ edge in case of nested IRQ
-      can: kvaser_pciefd: Fix echo_skb race
-      can: kvaser_pciefd: Continue parsing DMA buf after dropped RX
-
-Carlos Sanchez (1):
-      can: slcan: allow reception of short error messages
-
-Cong Wang (2):
-      sch_hfsc: Fix qlen accounting bug when using peek in hfsc_enqueue()
-      selftests/tc-testing: Add an HFSC qlen accounting test
-
-Dave Ertman (1):
-      ice: Fix LACP bonds without SRIOV environment
-
-En-Wei Wu (1):
-      Bluetooth: btusb: use skb_pull to avoid unsafe access in QCA dump handling
-
-Eric Dumazet (1):
-      idpf: fix idpf_vport_splitq_napi_poll()
-
-Geetha sowjanya (1):
-      octeontx2-af: Fix APR entry mapping based on APR_LMT_CFG
-
-Ido Schimmel (1):
-      bridge: netfilter: Fix forwarding of fragmented packets
-
-Ilia Gavrilov (1):
-      llc: fix data loss when reading from a socket in llc_ui_recvmsg()
-
-Jacob Keller (1):
-      ice: fix vf->num_mac count with port representors
-
-Jakob Unterwurzacher (1):
-      net: dsa: microchip: linearize skb for tail-tagging switches
-
-Jakub Kicinski (3):
-      Merge tag 'for-net-2025-05-15' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
-      Merge branch '100GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
-      Merge branch 'there-are-some-bugfix-for-hibmcge-driver'
-
-Jijie Shao (2):
-      net: hibmcge: fix incorrect statistics update issue
-      net: hibmcge: fix wrong ndo.open() after reset fail issue.
-
-Lorenzo Bianconi (1):
-      net: airoha: Fix page recycling in airoha_qdma_rx_process()
-
-Luiz Augusto von Dentz (1):
-      Bluetooth: L2CAP: Fix not checking l2cap_chan security level
-
-Marc Kleine-Budde (2):
-      Merge patch series "can: bcm: add locking for bcm_op runtime updates"
-      Merge patch series "can: kvaser_pciefd: Fix ISR race conditions"
-
-Michael Chan (1):
-      bnxt_en: Fix netdev locking in ULP IRQ functions
-
-Nishanth Menon (1):
-      net: ethernet: ti: am65-cpsw: Lower random mac address error print to info
-
-Oliver Hartkopp (2):
-      can: bcm: add locking for bcm_op runtime updates
-      can: bcm: add missing rcu read protection for procfs content
-
-Paolo Abeni (6):
-      mr: consolidate the ipmr_can_free_table() checks.
-      Merge tag 'linux-can-fixes-for-6.15-20250520' of git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can
-      Merge branch 'net_sched-fix-hfsc-qlen-backlog-accounting-bug-and-add-selftest'
-      Merge tag 'ipsec-2025-05-21' of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec
-      Merge branch 'octeontx2-af-apr-mapping-fixes'
-      Merge tag 'linux-can-fixes-for-6.15-20250521' of git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can
-
-Paul Barker (1):
-      MAINTAINERS: Drop myself to reviewer for ravb driver
-
-Paul Chaignon (1):
-      xfrm: Sanitize marks before insert
-
-Paul Kocialkowski (1):
-      net: dwmac-sun8i: Use parsed internal PHY address instead of 1
-
-Pavan Kumar Linga (1):
-      idpf: fix null-ptr-deref in idpf_features_check
-
-Rob Herring (Arm) (1):
-      dt-bindings: can: microchip,mcp2510: Fix $id path
-
-Ronak Doshi (1):
-      vmxnet3: update MTU after device quiesce
-
-Sabrina Dubroca (3):
-      espintcp: fix skb leaks
-      espintcp: remove encap socket caching to avoid reference leak
-      xfrm: ipcomp: fix truesize computation on receive
-
-Sagi Maimon (1):
-      ptp: ocp: Limit signal/freq counts in summary output functions
-
-Samiullah Khawaja (1):
-      xsk: Bring back busy polling support in XDP_COPY
-
-Stanislav Fomichev (1):
-      team: grab team lock during team_change_rx_flags
-
-Subbaraya Sundeep (1):
-      octeontx2-af: Set LMT_ENA bit for APR table entries
-
-Suman Ghosh (1):
-      octeontx2-pf: Avoid adding dcbnl_ops for LBK and SDP vf
-
-Thangaraj Samynathan (1):
-      net: lan743x: Restore SGMII CTRL register on resume
-
-Tobias Brunner (1):
-      xfrm: Fix UDP GRO handling for some corner cases
-
-Wang Liang (1):
-      net/tipc: fix slab-use-after-free Read in tipc_aead_encrypt_done
-
- .../bindings/net/can/microchip,mcp2510.yaml        |   2 +-
- MAINTAINERS                                        |   2 +-
- drivers/bluetooth/btusb.c                          |  98 +++++------
- drivers/net/can/kvaser_pciefd.c                    | 182 ++++++++++++---------
- drivers/net/can/slcan/slcan-core.c                 |  26 ++-
- drivers/net/ethernet/airoha/airoha_eth.c           |  22 +--
- drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c      |   9 +-
- drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c   |  16 +-
- .../net/ethernet/hisilicon/hibmcge/hbg_ethtool.c   |   3 +
- drivers/net/ethernet/intel/ice/ice_lag.c           |   6 +
- drivers/net/ethernet/intel/ice/ice_virtchnl.c      |   1 -
- drivers/net/ethernet/intel/idpf/idpf.h             |   2 +
- drivers/net/ethernet/intel/idpf/idpf_lib.c         |  10 +-
- drivers/net/ethernet/intel/idpf/idpf_txrx.c        |  18 +-
- .../net/ethernet/marvell/octeontx2/af/rvu_cn10k.c  |  24 ++-
- .../ethernet/marvell/octeontx2/af/rvu_debugfs.c    |  11 +-
- .../net/ethernet/marvell/octeontx2/nic/otx2_vf.c   |   9 +-
- drivers/net/ethernet/microchip/lan743x_main.c      |  19 ++-
- drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c  |   2 +-
- drivers/net/ethernet/ti/am65-cpsw-nuss.c           |   2 +-
- drivers/net/team/team_core.c                       |   6 +-
- drivers/net/vmxnet3/vmxnet3_drv.c                  |   5 +-
- drivers/ptp/ptp_ocp.c                              |  24 ++-
- include/linux/mroute_base.h                        |   5 +
- include/net/netdev_lock.h                          |   3 +
- include/net/xfrm.h                                 |   1 -
- net/bluetooth/l2cap_core.c                         |  15 +-
- net/bridge/br_nf_core.c                            |   7 +-
- net/bridge/br_private.h                            |   1 +
- net/can/bcm.c                                      |  79 ++++++---
- net/dsa/tag_ksz.c                                  |  19 ++-
- net/ipv4/esp4.c                                    |  53 +-----
- net/ipv4/ipmr.c                                    |  12 +-
- net/ipv4/xfrm4_input.c                             |  18 +-
- net/ipv6/esp6.c                                    |  53 +-----
- net/ipv6/ip6mr.c                                   |  12 +-
- net/ipv6/xfrm6_input.c                             |  18 +-
- net/llc/af_llc.c                                   |   8 +-
- net/sched/sch_hfsc.c                               |   6 +-
- net/tipc/crypto.c                                  |   5 +
- net/xdp/xsk.c                                      |   2 +-
- net/xfrm/espintcp.c                                |   4 +-
- net/xfrm/xfrm_ipcomp.c                             |   3 +-
- net/xfrm/xfrm_policy.c                             |   3 +
- net/xfrm/xfrm_state.c                              |   6 +-
- .../tc-testing/tc-tests/infra/qdiscs.json          |  27 +++
- 46 files changed, 452 insertions(+), 407 deletions(-)
+Best regards,
+-- 
+Angelo Dureghello <adureghello@baylibre.com>
 
 
