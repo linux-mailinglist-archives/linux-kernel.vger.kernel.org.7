@@ -1,98 +1,62 @@
-Return-Path: <linux-kernel+bounces-659797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00968AC1511
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:53:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 145F4AC1518
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85E341BC6D9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:54:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F2943B5F2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA652BEC4C;
-	Thu, 22 May 2025 19:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7BA2BF3C8;
+	Thu, 22 May 2025 19:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QmdQ/BJ5"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c628loJJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78ED913D8B2
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E261E7C2D;
+	Thu, 22 May 2025 19:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747943601; cv=none; b=gMJ3rgPiNDvvyMuTRLXma5Aom6W+FtLbElPHBD9SdJCpNAKR5VNZFjQROysHANqiuBrTGkofV/Uhj4jSOFlH5M8vlnP1lAMYx73Ukl5ll2YXZ71b69NjjD4n86TU221xgNlIFMR6b7GsJqcySQPsCfv9zRperou7BFdC2l6erD4=
+	t=1747943669; cv=none; b=CJXghSO2bdVl2YhBqkVMZHNs54mZaMsU/pG6eJpfJm/0/mO7p0RmswRsKD4aqM4UJ9ndkEhbzxA0Evdz4hfy7QAO68lMPuRF6kWuCEjB8ecP7GLZ07MwGbtay7US0JuyQXjWBhZ31jUnSVGmNOSSTS6CgnOnpPY2yk7uiiO8yBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747943601; c=relaxed/simple;
-	bh=UFlponZZxYkww3GfGrUbDyL3TOTEiG2DwvWqSjHEQHg=;
+	s=arc-20240116; t=1747943669; c=relaxed/simple;
+	bh=jE7aWTubWuL4OocYR+UjHDF6yquzclFCXFwXH1jpYDo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HIMlYjUCNp73YAWNYHmbOeV5pBz2IRYleDgiOX9J9NNeTm+oGeoFACDVf/9v1DunaOGt5pZJILPyjGwqpRJDXmxp1zeCJmJm55FVUqSPjYEtJFAyJTgrL/3EeJW8HEK/iWhD48ayjbwu1TMemQEFAHuDqE+c+50SD3XU42v1Exc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QmdQ/BJ5; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a4bdee0bf7so869238f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 12:53:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747943598; x=1748548398; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=scYVrd373I9MlT/u/1ycHxVnYL+MjqMEz6PW3HBMlFQ=;
-        b=QmdQ/BJ5rzSEnUe/cuISyT0rNHokEz+1pxyuqth4AI3yKY39lNRhDBq1X9ll/kIyqJ
-         WweDG4tzG36eWyaadreGR8LPoyqg04OroRT/LYTyfINjkEuoq1Ct8gJGsuQHDWsiqpYG
-         wi1/3kX1ocuMCVApO+rkLupMCoK2jZ4hlXMJ7SWOhpQU8uuQA5BDsf3ISDchPy+tPJvy
-         NHtOBp+YGJLNjnoht6Au+gDBstbfzIYYYulvNBMtUXFzNZfwEfNATtXr3xh9zcYqILj0
-         G5ewoktA/95yXDTQLBsclmU+7h9NuV+cu6HouE/LwWOTg9S+bbulU6y+dUch1Wt9BAc4
-         0DcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747943598; x=1748548398;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=scYVrd373I9MlT/u/1ycHxVnYL+MjqMEz6PW3HBMlFQ=;
-        b=NjVZ2YuiFAadGhOs2OP3X3J2FDkBKXoHC3syw9GgHb39agc33lw7G67Jdcz+XmJgPd
-         bJYNsQ/xllKOz3DoKIBH0QPVFTlm7PSpx4GPYqswBXWzOrckDjvZVREHj9mo1Hg6FpY0
-         S83UlWK2GNEhPVrqGxEEf1rfTnbMCJ3BX8g+F023FmyMV8QJo96DpadyyvymutPyvkGS
-         y3w5Ne/aPxq4ePkVuje3HTb2/HxiN3KOevv9YAj8qIbN1uNPIFVFwVtL/EMvHohuVLpD
-         xf88ugLUvXy3Rc1MOfEIukcFCzSQQyfszPVkCzVw51aLs/5iUb9ocKMJSnb2Wl7kib5p
-         sxZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXToybMoQq5EfHj0qu1qlO6PkcMrqzWnBbciQScxZJdng08U95/qYxsHUoo/lMPHjfpbrlGJ4VkdV2KwLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDD4eVdPZeF1encEnyhN02pZ0MlSk4t/AifISrMr0PENMnmcMw
-	nMh9qiTG6OnMIAaKDaN+K3mMXuMMTTk+chrbZt+Gj70MUG+66gP8uPyNxGRTS0ycF/g=
-X-Gm-Gg: ASbGnctXfK63Ezu63RFKS3sPyoi0SwhixxoSwqpc/P6VIuVA7UtNOwnXecP6Mg8XLzQ
-	PmVNJWbFcWnELTaYe+nPS/+XSUYZphGQVxubGBifgu1dwi6BPfGAR7Rr+LNrYZ4ltefZ9sfbAvQ
-	Inpha5hP9dvx8wzKRP8UjZVJaeN6LKZIk7Iyzz/Pw09CDRevZK9URM138sRNYEW4JBWBfSQeKDK
-	gHt4wPNCW7UqrsLvlaGJ1uWQNQ2A5NOP8hKTAwKiJMhUcHJOVAxG/lkDoOvySCs4uVJ0VQ+i7jM
-	IouWyJ1ClhXBS6Le3Ys3ra9OCv5+1VE9cncv9bwkzSsL/9oaYlmo9lX1Kdk5XQQ=
-X-Google-Smtp-Source: AGHT+IE27jiIBztRmaRAQVYdgJQjQilKzkMOn7fyKdg3PUi22O9+0AG/mjYx8r/1u1nyhyVc9L73hA==
-X-Received: by 2002:a05:6000:2281:b0:3a3:7be3:cba9 with SMTP id ffacd0b85a97d-3a37be3cebdmr9684954f8f.18.1747943597543;
-        Thu, 22 May 2025 12:53:17 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef30:c340:2dcf:7e37:1be8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f1ef01besm115280035e9.10.2025.05.22.12.53.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 12:53:17 -0700 (PDT)
-Date: Thu, 22 May 2025 21:53:12 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: Rob Herring <robh@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, Georgi Djakov <djakov@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH 1/4] dt-bindings: mailbox: qcom,apcs: Add separate node
- for clock-controller
-Message-ID: <aC-AqDa8cjq2AYeM@linaro.org>
-References: <20250506-qcom-apcs-mailbox-cc-v1-0-b54dddb150a5@linaro.org>
- <20250506-qcom-apcs-mailbox-cc-v1-1-b54dddb150a5@linaro.org>
- <7vszdea2djl43oojvw3vlrip23f7cfyxkyn6jw3wc2f7yowht5@bgsc2pqscujc>
- <aCNGSwL7043GoJBz@linaro.org>
- <20250514160841.GA2427890-robh@kernel.org>
- <aCUHTJGktLFhXq4Q@linaro.org>
- <20250521-psychedelic-cute-grouse-ee1291@kuoka>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eR2F7WmLT3lqC6+qhu6dWAIUiklvQK3lbyeVR4y8t31csvO5FnQGF2IMR7qOHQgq3Sa0bwTWGTjLOZa8lwlVNZBMV24qnCEAjDDoGsPX+m7ypzz0YG7pLLKuj42dUN8108kpbn04gfEvDXgcDwtyFb+abN2Lnny/lw07le0Lr64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c628loJJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF9BBC4CEE4;
+	Thu, 22 May 2025 19:54:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747943669;
+	bh=jE7aWTubWuL4OocYR+UjHDF6yquzclFCXFwXH1jpYDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c628loJJr//eIGr1L0uU8/lULP3/wQwlf//1KgrVWLbe+3XRGpqwj/Uwaa3AVOIFw
+	 hmbUbdxfR4fasCM5pH7H/+IH+hOK6OfhNN51GqfeikaZNHFOHnNzEnukNbXsIDiIlK
+	 d6uaWnbAHllxHaW/TQHnd6RKH4Gq4aDmek0Bu5FUnNQCOAz2l/JwLrs9TNF3SGwmv7
+	 uJMkz+R+ZqouyktX4wwYejidFWduTryYcuP4c8WVqYTtWZ9p8ceriw6QiaaTlwfbHa
+	 3Tx4K9Us7BeFmit78gBhD/XPevLK5f01Fuz0NvV8erfvFDdHAmkpLRLn+2d0+PSpqB
+	 1TnPVRZN2X+WA==
+Date: Thu, 22 May 2025 20:54:24 +0100
+From: Simon Horman <horms@kernel.org>
+To: Hariprasad Kelam <hkelam@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sunil Goutham <sgoutham@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	Bharat Bhushan <bbhushan2@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jacob Keller <jacob.e.keller@intel.com>
+Subject: Re: [net Patch v2] octeontx2-pf: QOS: Perform cache sync on send
+ queue teardown
+Message-ID: <20250522195424.GM365796@horms.kernel.org>
+References: <20250522094742.1498295-1-hkelam@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,142 +65,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250521-psychedelic-cute-grouse-ee1291@kuoka>
+In-Reply-To: <20250522094742.1498295-1-hkelam@marvell.com>
 
-+Saravana
-
-On Wed, May 21, 2025 at 11:20:40AM +0200, Krzysztof Kozlowski wrote:
-> On Wed, May 14, 2025 at 10:12:44PM GMT, Stephan Gerhold wrote:
-> > > > > > The mailbox itself does not need any clocks and should probe early to
+On Thu, May 22, 2025 at 03:17:41PM +0530, Hariprasad Kelam wrote:
+> QOS is designed to create a new send queue whenever  a class
+> is created, ensuring proper shaping and scheduling. However,
+> when multiple send queues are created and deleted in a loop,
+> SMMU errors are observed.
 > 
-> ... so probe it early.
+> This patch addresses the issue by performing an data cache sync
+> during the teardown of QOS send queues.
 > 
-> > > > > > unblock the rest of the boot process. The "clocks" are only needed for the
-> > > > > > separate clock controller. In Linux, these are already two separate drivers
-> > > > > > that can probe independently.
-> 
-> They can probe later, no problem and DT does not stop that. Linux, not
-> DT, controls the ways of probing of devices and their children.
-> 
-> > > > > > 
-> > > > > 
-> > > > > Why does this circular dependency need to be broken in the DeviceTree
-> > > > > representation?
-> > > > > 
-> > > > > As you describe, the mailbox probes and register the mailbox controller
-> > > > > and it registers the clock controller. The mailbox device isn't affected
-> > > > > by the clock controller failing to find rpmcc...
-> > > > > 
-> > > > 
-> > > > That's right, but the problem is that the probe() function of the
-> > > > mailbox driver won't be called at all. The device tree *looks* like the
-> > > > mailbox depends on the clock, so fw_devlink tries to defer probing until
-> > > > the clock is probed (which won't ever happen, because the mailbox is
-> > > > needed to make the clock available).
-> > > > 
-> > > > I'm not sure why fw_devlink doesn't detect this cycle and tries to probe
-> > > > them anyway, but fact is that we need to split this up in order to avoid
-> > > > warnings and have the supplies/consumers set up properly. Those device
-> > > > links are created based on the device tree and not the drivers.
-> > > 
-> > > Does "post-init-providers" providers solve your problem?
-> > > 
-> > 
-> > I would expect that it does, but it feels like the wrong solution to the
-> > problem to me. The clock is not really a post-init provider: It's not
-> > consumed at all by the mailbox and needed immediately to initialize the
-> > clock controller. The real problem in my opinion is that we're
-> > describing two essentially distinct devices/drivers in a single device
-> > node, and there is no way to distinguish that.
-> > 
-> > By splitting up the two distinct components into separate device tree
-> > nodes, the relation between the providers/consumers is clearly
-> > described.
-> 
-> You can split devices without splitting the nodes. I do not see reason
-> why the DT is the problem here.
-> 
+> Fixes: ab6dddd2a669 ("octeontx2-pf: qos send queues management")
+> Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
+> ---
+> v2: Push the change to net
 
-The Linux drivers for this particular mailbox/clock controller already
-work exactly the way you propose. They are split into two devices that
-can probe independently.
+Thanks for the update.
 
-The problem is outside of the drivers, because fw_devlink in Linux
-blocks probing until all resources specified in the device tree nodes
-become available. fw_devlink has no knowledge that the mailbox described
-by this peculiar device tree node does not actually need the clocks:
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-	apcs1_mbox: mailbox@b011000 {
-		compatible = "qcom,msm8939-apcs-kpss-global", "syscon";
-		reg = <0x0b011000 0x1000>;
-		#mbox-cells = <1>;
-		clocks = <&a53pll_c1>, <&gcc GPLL0_VOTE>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
-		clock-names = "pll", "aux", "ref";
-		#clock-cells = <0>;
-	};
-
-Without device-specific quirks in fw_devlink, the fact that these clocks
-are only used by an unrelated clock controller only becomes clear if we
-split the device tree node like I propose in this series:
-
-	apcs1_mbox: mailbox@b011000 {
-		compatible = "qcom,msm8939-apcs-kpss-global", "syscon";
-		reg = <0x0b011000 0x1000>;
-		#mbox-cells = <1>;
-
-		apcs1_clk: clock-controller {
-			clocks = <&a53pll_c1>, <&gcc GPLL0_VOTE>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
-			clock-names = "pll", "aux", "ref";
-			#clock-cells = <0>;
-		};
-	};
-
-It is easy to say that the problem is in Linux (and not the DT), but
-unless you are suggesting to remove fw_devlink from Linux, or to add
-more device-specific quirks to the generic fw_devlink code, I'm only
-aware of the following two options to make this work (both already
-discussed in this email thread):
-
- 1. post-init-providers (as suggested by Rob):
-
-		post-init-providers = <&a53pll_c1>, <&gcc>, <&rpmcc>;
-
-    To repeat my previous email: IMHO this is a crude workaround for
-    this situation. The clock is not really a post-init provider: It's
-    not consumed at all by the mailbox and needed immediately to
-    initialize the clock controller.
-
-    With this approach, there are no device links created for the
-    clocks, so we don't get the proper probe/suspend ordering that
-    fw_devlink normally provides.
-
- 2. Split up device tree node (this patch series): With this approach,
-    the mailbox can probe early and the clock controller child device
-    gets the expected consumer/supplier device links to the clocks. IMHO
-    this is the cleanest solution to go for.
-
-@Saravana: Is there any other option that I missed? Or perhaps you have
-any other suggestions how we should handle this?
-
-To summarize the series and previous emails, the dependency cycle that
-was in msm8939.dtsi before commit d92e9ea2f0f9 ("arm64: dts: qcom:
-msm8939: revert use of APCS mbox for RPM") is:
-
-  1. The clock controller inside &apcs1_mbox needs
-     clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>.
-  2. &rpmcc is a child of remoteproc &rpm
-  3. remoteproc &rpm needs mboxes = <&apcs1_mbox 8>;
-
-This is not a real dependency cycle, the clocks in the mailbox@ node are
-not needed for the mailbox. They are only used and needed for the clock
-controller child device that makes use of the same device tree node.
-
-At runtime this cycle currently results in none of the devices probing:
-
-[   13.281637] platform remoteproc: deferred probe pending: qcom-rpm-proc: Failed to register smd-edge
-[   13.296257] platform b011000.mailbox: deferred probe pending: platform: supplier b016000.clock not ready
-[   13.308397] platform b016000.clock: deferred probe pending: platform: wait for supplier /remoteproc/smd-edge/rpm-requests/clock-controller
-
-Thanks,
-Stephan
 
