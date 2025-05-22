@@ -1,129 +1,128 @@
-Return-Path: <linux-kernel+bounces-658754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BBC7AC06CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:16:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD83EAC068B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27A1E4E303D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 08:16:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929D64E50EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 08:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E84C2638BA;
-	Thu, 22 May 2025 08:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A96B261388;
+	Thu, 22 May 2025 08:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="WMbg7s3o"
-Received: from jpms-ob01.noc.sony.co.jp (jpms-ob01.noc.sony.co.jp [211.125.140.164])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxdGRtTK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970C91B0434;
-	Thu, 22 May 2025 08:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9541524C668;
+	Thu, 22 May 2025 08:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747901753; cv=none; b=kbXFqLkKDH6B6enAtrHn8VocKW+CcAFwxMU5ilQ8PxKJU9/VvVy9zvhROXfRplM9UBLp0q1+YAOKd1KObbuz0vZq/rcyVqv8nUrWy3ZgoVgW8ROxwPzKtu+3iK/LIu5wG92PKg07GM/KdUmSbjA+fCZ5JRnmPvUkttzDPuKKG5o=
+	t=1747901236; cv=none; b=ZU2M/eG6L+S2BoiKKP+BytvsClzxIMI0rT/MXLT5BBmG6xFabjp4F3qwUXFOclNqvwHKWwnpUSA9VeA4qD5oDnJosJARafaQ6gR6gymHydYRClUzQ3aH7vQpPTl+Rb/W4wve3hkRStnHjgbHX1v9A5oeDyEpcN6dlbnrunuJaHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747901753; c=relaxed/simple;
-	bh=7E4VpZaYTeyHmonM9ukVDRJ98qeI0xAsr6LbdRcYv4k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QK+CowQqpO3mNf10QHDC/P9wYfTwyPg5VjcVesZr/x1bOT0HkedsdueEl7SkAnaS6M84mR5IO7cN9A0aiAvYhM947bb7zZ11IugFs1fqwrJq5kBTfbdzO2oD+NeEK6fJdyY0VFxgePnJWw4nuypX+93ZB0IX7OoS/Q3noWYcNME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=WMbg7s3o; arc=none smtp.client-ip=211.125.140.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=sony.com; s=s1jp; t=1747901748; x=1779437748;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:to:cc;
-  bh=1WWTa3On4JPd2OiE7+97JDn9jIPF7/XgeqzVzCmonJQ=;
-  b=WMbg7s3oqbnhLci0corqti8vq/nksYm8JuLweDpUQps/0XTYLVTV2Sp6
-   ppiu8xgXAMEaTopXykMGdLsKEwnFMG+KnA6q37tal5XiJlaRi4Kq3X/4g
-   ipWyyCpajpr4Q/gP131EKIDeQuliDhu81uEYoz5tUd/6tpdiPnkPjRdPw
-   qnoR2D3dddV24f3Kieh9KsKgoXQ2tkcTsyEcE4MwvVyME6FRRfM5l7hQT
-   wIvrJwTaxa4Vg2NsDdFzB4Ii3fAxVZCUszSuwewDdZyoT5VIxmNwwqxd+
-   QdP3juAunrhgsxwekS82IVLFL09cAcBtcT1QQWL3i1ns/0caD+AokidKg
-   Q==;
-Received: from unknown (HELO jpmta-ob1.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::6])
-  by jpms-ob01.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 17:05:37 +0900
-X-IronPort-AV: E=Sophos;i="6.15,305,1739804400"; 
-   d="scan'208";a="562594206"
-Received: from unknown (HELO [127.0.1.1]) ([IPv6:2001:cf8:1:573:0:dddd:6b3e:119e])
-  by jpmta-ob1.noc.sony.co.jp with ESMTP; 22 May 2025 17:05:37 +0900
-From: Shashank Balaji <shashank.mahadasyam@sony.com>
-Date: Thu, 22 May 2025 17:05:33 +0900
-Subject: [PATCH] cpufreq, docs: (userspace governor) add that actual freq
- is >= scaling_setspeed
+	s=arc-20240116; t=1747901236; c=relaxed/simple;
+	bh=gfFWoXtvfq0dOKxLkZYmplPetaqqvPy/+dRBhhnGRHM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nvaRJ+orMuhKMT8cs4+L1+3wqk/dqzekplVcqdIE4CgSbN/lYzlO6NFN97DHOX1fre/D8b2/tIo3snqaOGFsIEoq6md1farMW0+lowSQ891cRNIWYLUSCQ1+aehRdoPRUqZ4/j7CNAShQv8CaNmOKzSYF1ZuJ+PnMTmR1aoyV7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxdGRtTK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B026C4CEE4;
+	Thu, 22 May 2025 08:07:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747901235;
+	bh=gfFWoXtvfq0dOKxLkZYmplPetaqqvPy/+dRBhhnGRHM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pxdGRtTK5fQoKAgAwumAQzBjfmmTcde6P+a38VJT0t2uI2sF9CJaeea+qrI6fqu7s
+	 R38ZPEJCfTsJkzLZj3luHxdiV09Tv+6TWDhyRiuvqDqcnHJRB6UDeGnXlrBoIEwzWc
+	 3RslrjJVAtt3hFgGM7nRD+FTSyfeY9//IbW2qSN/f5Am+jDq8AXPfFUNgbFZWv9Ea6
+	 8jyr964i884Tb30cnwMptbCVUw2mIhRBUCyw/9xjUFskAlVeF1KrRintW6fvlsk8dk
+	 Z4/aGk6Ot1QXQ7uPQT0gW0F0IpyLCfEjEUIpZPRSX+FNbeOCuZ0NU+2OJjvsPIZtiV
+	 IT8FWOgoWFrNQ==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org,
+	Pavel Machek <pavel@kernel.org>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: bettyzhou@google.com,
+	ynaffit@google.com,
+	tkjos@google.com,
+	jacek.anaszewski@gmail.com
+Subject: [PATCH v3 1/5] leds: led-test: Move common LED class registration code into helper function
+Date: Thu, 22 May 2025 09:06:48 +0100
+Message-ID: <20250522080656.1215457-1-lee@kernel.org>
+X-Mailer: git-send-email 2.49.0.1143.g0be31eac6b-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250522-userspace-governor-doc-v1-1-c8a038e39084@sony.com>
-X-B4-Tracking: v=1; b=H4sIAMzaLmgC/x3MPQqAMAxA4atIZgO1UhGvIg79iTVLKymKIL27x
- fEN33uhkDAVWLoXhG4unFOLoe/AHzZFQg6tQSttlNEarwbKaT1hzDdJyoIhe5yncVbBWTcGAw2
- fQjs//3jdav0AAr4h5GgAAAA=
-X-Change-ID: 20250522-userspace-governor-doc-86380dbab3d5
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-pm@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Shinya Takumi <shinya.takumi@sony.com>, 
- Shashank Balaji <shashank.mahadasyam@sony.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2204;
- i=shashank.mahadasyam@sony.com; h=from:subject:message-id;
- bh=7E4VpZaYTeyHmonM9ukVDRJ98qeI0xAsr6LbdRcYv4k=;
- b=owGbwMvMwCV2mPH4Ij++H1mMp9WSGDL0bl04EOm1ZPGGI+3Bvpe9CqsZZu/7bhklo2jw99ok/
- +9Zde8udpSyMIhxMciKKbK8k1l34aCVZdPX4wzfYOawMoEMYeDiFICJnL7K8FcyrilrX8Yi6+PN
- C96vUusUZsk1PKoRd3oSi0zKX7b4XCdGhoP51zUc+JU6A0OfS3MzFfS5f7dw7d7ybs1/JubDL76
- u4AYA
-X-Developer-Key: i=shashank.mahadasyam@sony.com; a=openpgp;
- fpr=EE1CAED0C13A3982F5C700F6C301C7A24E0EF86A
+Content-Transfer-Encoding: 8bit
 
-The userspace governor does not have the CPUFREQ_GOV_STRICT_TARGET flag, which
-means the requested frequency may not strictly be followed. This is true in the
-case of the intel_pstate driver with HWP enabled. When programming the
-HWP_REQUEST MSR, the min_perf is set to `scaling_setspeed`, and the max_perf
-is set to the policy's max. So, the hardware is free to increase the frequency
-beyond the requested frequency.
+Since we will always need to register an LED class, it makes sense to
+avoid duplicating this part over and over.
 
-This behaviour can be slightly surprising, given the current wording "allows
-userspace to set the CPU frequency". Hence, document this.
+Returning void and not propagating errors is expected here since the
+assert will terminate the process early if an error condition is
+encountered.
 
-Signed-off-by: Shashank Balaji <shashank.mahadasyam@sony.com>
+Signed-off-by: Lee Jones <lee@kernel.org>
+Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 ---
- Documentation/admin-guide/pm/cpufreq.rst | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/leds/led-test.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/admin-guide/pm/cpufreq.rst b/Documentation/admin-guide/pm/cpufreq.rst
-index 3950583f2b1549b27f568632547e22e9ef8bc167..066fe74f856699c8dd6aaf5e135162ce70686333 100644
---- a/Documentation/admin-guide/pm/cpufreq.rst
-+++ b/Documentation/admin-guide/pm/cpufreq.rst
-@@ -397,8 +397,15 @@ policy limits change after that.
- -------------
+diff --git a/drivers/leds/led-test.c b/drivers/leds/led-test.c
+index ddf9aa967a6a..0f152fb12dfb 100644
+--- a/drivers/leds/led-test.c
++++ b/drivers/leds/led-test.c
+@@ -22,10 +22,10 @@ static enum led_brightness led_test_brightness_get(struct led_classdev *cdev)
+ 	return LED_TEST_POST_REG_BRIGHTNESS;
+ }
  
- This governor does not do anything by itself.  Instead, it allows user space
--to set the CPU frequency for the policy it is attached to by writing to the
--``scaling_setspeed`` attribute of that policy.
-+to set a target CPU frequency for the policy it is attached to by writing to the
-+``scaling_setspeed`` attribute of that policy. The actual frequency will be
-+greater than or equal to ``scaling_setspeed``, depending on the cpufreq driver.
-+For example, if hardware-managed P-states are enabled, then the ``intel_pstate``
-+driver will set the minimum frequency to the value of ``scaling_setspeed`` and
-+the maximum frequency to the value of ``scaling_max_freq``.  The hardware is
-+free to select any frequency between those two values. If this behavior is not
-+desired, then ``scaling_max_freq`` should be set to the same value as
-+``scaling_setspeed``.
+-static void led_test_class_register(struct kunit *test)
++static void led_test_class_register_helper(struct kunit *test)
+ {
+ 	struct led_test_ddata *ddata = test->priv;
+-	struct led_classdev *cdev_clash, *cdev = &ddata->cdev;
++	struct led_classdev *cdev = &ddata->cdev;
+ 	struct device *dev = ddata->dev;
+ 	int ret;
  
- ``schedutil``
- -------------
-
----
-base-commit: d608703fcdd9e9538f6c7a0fcf98bf79b1375b60
-change-id: 20250522-userspace-governor-doc-86380dbab3d5
-
-Best regards,
+@@ -36,6 +36,17 @@ static void led_test_class_register(struct kunit *test)
+ 
+ 	ret = devm_led_classdev_register(dev, cdev);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
++}
++
++static void led_test_class_register(struct kunit *test)
++{
++	struct led_test_ddata *ddata = test->priv;
++	struct led_classdev *cdev_clash, *cdev = &ddata->cdev;
++	struct device *dev = ddata->dev;
++	int ret;
++
++	/* Register initial device - same as always */
++	led_test_class_register_helper(test);
+ 
+ 	KUNIT_EXPECT_EQ(test, cdev->max_brightness, LED_FULL);
+ 	KUNIT_EXPECT_EQ(test, cdev->brightness, LED_TEST_POST_REG_BRIGHTNESS);
+@@ -63,12 +74,9 @@ static void led_test_class_add_lookup_and_get(struct kunit *test)
+ 	struct led_classdev *cdev = &ddata->cdev, *cdev_get;
+ 	struct device *dev = ddata->dev;
+ 	struct led_lookup_data lookup;
+-	int ret;
+ 
+ 	/* First, register a LED class device */
+-	cdev->name = "led-test";
+-	ret = devm_led_classdev_register(dev, cdev);
+-	KUNIT_ASSERT_EQ(test, ret, 0);
++	led_test_class_register_helper(test);
+ 
+ 	/* Then make the LED available for lookup */
+ 	lookup.provider = cdev->name;
 -- 
-Shashank Balaji <shashank.mahadasyam@sony.com>
+2.49.0.1143.g0be31eac6b-goog
 
 
