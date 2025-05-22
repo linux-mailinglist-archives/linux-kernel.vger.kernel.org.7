@@ -1,165 +1,77 @@
-Return-Path: <linux-kernel+bounces-658713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA04AC0638
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:54:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C25AC0643
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D5AD7A7E89
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:53:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0B503B3341
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C77324E4B3;
-	Thu, 22 May 2025 07:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364EC223DEF;
+	Thu, 22 May 2025 07:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="TouSB+YR"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221FB24EF7B
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 07:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="bruCieqq"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7C724E4BF
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 07:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747900463; cv=none; b=OPX6jbBd/in67EiTxoO/lVrPjjyqfop1xfrW5rGTb6X/DN+awwWezoboiNFz87HkIV6VXydUjTgAk2dOjQol+LNIW8nxN0UuxFvI3502jsRLZSxqQtfOT5bLyABX0vvqyeCEGbA4/qkUTuPiSTsPsQ65DdMRZa6PkXTqNe49FDE=
+	t=1747900504; cv=none; b=P380PbRYG8x4GC9Ln8Qcko5bkkziSWwncaTieLv7Wf6ujnjQU0uX2e4bUygEYDWZ8mSLlGDPcpkThmQMpVATtX2IPaWC1wMJZBL66iutIrQAcc8UHoDHsDkDwVV9CQudq/qYOVusW06ySXpcdanCClU1hE2lhbDQ+fBKmI5fHo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747900463; c=relaxed/simple;
-	bh=VVUw3oKaAQ6tntNNkc8JKfCiK0UaAuJWGgZpck0qfbM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U7iNzyyhuLk7pisNobszqOOjxmsz/08VL2WXyo3gtBr8Po3Zv5pyBRhQSaJmBWC5zWLk1X4mSszaIZ6lmYHXfgWjBmq7porXr3qgC+UmVgphEjcUBvOclXfjokSvJpdw/j88YmIJ5WmZyX27QRtcVKZI6dvAiNVnzJ46cPY/jtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=TouSB+YR; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1747900456; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=xmllp+0pYS+iGPE0L4g0um6TnAHmX6fzEycWTLONE68=;
-	b=TouSB+YR4V4n0ksdgH/KjQlJsDf7yulHOCf6bh7p+5QkxSTEwmdjerFMHJesLbR0WRvb+vdGO0P5OOzCg6N/Lgz4rux2G3VhdlmUoxwICq32bBG/I5T0245/GHUZ97YLlT+JgUgDAv5PQX9l30Il1yKVkxAnjv7oTB4ZYWe21os=
-Received: from 30.170.233.0(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WbV0ft-_1747900454 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 22 May 2025 15:54:15 +0800
-Message-ID: <49ca7ddc-4ea7-4081-84ee-609a23b815e4@linux.alibaba.com>
-Date: Thu, 22 May 2025 15:54:14 +0800
+	s=arc-20240116; t=1747900504; c=relaxed/simple;
+	bh=sdaeGIr7jFwZoAKH5/TjHpYm6fN0BLPvd9XLtFwckBA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=uDjiJZgs7yXIESjS+iG4DdQP4hAADtu4Py22JbtMFoUO8D+c8VlXYepsmeI5ZG2/gQHvPDl4kz2/kLnDIFGOMxC8xL2wvUuJYFReidQ2JNiIy4pgD/3OjDEu6gx2D+t69nV9CzBE+/Ux+LT+zRLs0XRS36Bwcov1npt77qOjqDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=bruCieqq reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=e+mEkABP8C6+wf+XwcSnrlG6wBq+UUqB+lqd2bdio5o=; b=b
+	ruCieqqeBv1bYlQabWWOHA310S/+fR0mxrK7BSyWLs/967jiAmG/gAJTT3EQQx2L
+	h4pBP+kmMzyrr41fQ3oQCUqLZQjrWpFZeFnixFmXw8bp1nBtaZZmspyR8ZUuFDrt
+	bbQy439/B25TXHnfiRgMf8CasZHyH05PRZjLq+bepU=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-123 (Coremail) ; Thu, 22 May 2025 15:54:17 +0800
+ (CST)
+Date: Thu, 22 May 2025 15:54:17 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Daniel Stone" <daniel@fooishbar.org>
+Cc: tzimmermann@suse.de, simona@ffwll.ch, mripard@kernel.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH] drm/gem-framebuffer: log errors when gem size <
+ afbc_size
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <CAPj87rMJgJaj8p_2DLdM8p3phB+eQnMm7iAHgEe_R8sjuGox1w@mail.gmail.com>
+References: <20250508084811.2472877-1-andyshrk@163.com>
+ <CAPj87rMJgJaj8p_2DLdM8p3phB+eQnMm7iAHgEe_R8sjuGox1w@mail.gmail.com>
+X-NTES-SC: AL_Qu2fBfWbv0wu4SCabOkfmkcVgOw9UcO5v/Qk3oZXOJF8jAnp4h0vRHlFF0T18sKdCjuCnh6Rezd+48txc5VhR4MF0Qhd3Wi8+fJVnN4ZAxFIiQ==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] erofs: support deflate decompress by using Intel QAT
-To: Bo Liu <liubo03@inspur.com>, xiang@kernel.org, chao@kernel.org
-Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20250522061611.7038-1-liubo03@inspur.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20250522061611.7038-1-liubo03@inspur.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <6883df90.7132.196f6fc6055.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:eygvCgD3v3op2C5o2ZMKAA--.16852W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkAVVXmgu1QtbtAABso
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Hi Bo,
-
-On 2025/5/22 14:16, Bo Liu wrote:
-> This patch introdueces the use of the Intel QAT to decompress compressed
-> data in the EROFS filesystem, aiming to improve the decompression speed
-> of compressed datea.
-> 
-> We created a 285MiB compressed file and then used the following command to
-> create EROFS images with different cluster size.
->       # mkfs.erofs -zdeflate,level=9 -C16384
-> 
-> fio command was used to test random read and small random read(~5%) and
-> sequential read performance.
->       # fio -filename=testfile  -bs=4k -rw=read -name=job1
->       # fio -filename=testfile  -bs=4k -rw=randread -name=job1
->       # fio -filename=testfile  -bs=4k -rw=randread --io_size=14m -name=job1
-> 
-> Here are some performance numbers for reference:
-> 
-> Processors: Intel(R) Xeon(R) 6766E(144 core)
-> Memory:     521 GiB
-> 
-> |-----------------------------------------------------------------------------|
-> |           | Cluster size | sequential read | randread  | small randread(5%) |
-> |-----------|--------------|-----------------|-----------|--------------------|
-> | Intel QAT |    4096      |    538  MiB/s   | 112 MiB/s |     20.76 MiB/s    |
-> | Intel QAT |    16384     |    699  MiB/s   | 158 MiB/s |     21.02 MiB/s    |
-> | Intel QAT |    65536     |    917  MiB/s   | 278 MiB/s |     20.90 MiB/s    |
-> | Intel QAT |    131072    |    1056 MiB/s   | 351 MiB/s |     23.36 MiB/s    |
-> | Intel QAT |    262144    |    1145 MiB/s   | 431 MiB/s |     26.66 MiB/s    |
-> | deflate   |    4096      |    499  MiB/s   | 108 MiB/s |     21.50 MiB/s    |
-> | deflate   |    16384     |    422  MiB/s   | 125 MiB/s |     18.94 MiB/s    |
-> | deflate   |    65536     |    452  MiB/s   | 159 MiB/s |     13.02 MiB/s    |
-> | deflate   |    131072    |    452  MiB/s   | 177 MiB/s |     11.44 MiB/s    |
-> | deflate   |    262144    |    466  MiB/s   | 194 MiB/s |     10.60 MiB/s    |
-> 
-> Signed-off-by: Bo Liu <liubo03@inspur.com>
-> ---
-> v1: https://lore.kernel.org/linux-erofs/20250410042048.3044-1-liubo03@inspur.com/
-> v2: https://lore.kernel.org/linux-erofs/20250410042048.3044-1-liubo03@inspur.com/T/#t
-> v3: https://lore.kernel.org/linux-erofs/20250516082634.3801-1-liubo03@inspur.com/
-> v4: https://lore.kernel.org/linux-erofs/20250521100326.2867828-1-hsiangkao@linux.alibaba.com/
-> change since v4:
->   - add sysfs documentation.
-> 
->   Documentation/ABI/testing/sysfs-fs-erofs |  12 ++
->   fs/erofs/Kconfig                         |  14 ++
->   fs/erofs/Makefile                        |   1 +
->   fs/erofs/compress.h                      |  10 ++
->   fs/erofs/decompressor_crypto.c           | 186 +++++++++++++++++++++++
->   fs/erofs/decompressor_deflate.c          |  17 ++-
->   fs/erofs/sysfs.c                         |  34 ++++-
->   fs/erofs/zdata.c                         |   1 +
->   8 files changed, 272 insertions(+), 3 deletions(-)
->   create mode 100644 fs/erofs/decompressor_crypto.c
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-fs-erofs b/Documentation/ABI/testing/sysfs-fs-erofs
-> index b134146d735b..95201a62f704 100644
-> --- a/Documentation/ABI/testing/sysfs-fs-erofs
-> +++ b/Documentation/ABI/testing/sysfs-fs-erofs
-> @@ -27,3 +27,15 @@ Description:	Writing to this will drop compression-related caches,
->   		- 1 : invalidate cached compressed folios
->   		- 2 : drop in-memory pclusters
->   		- 3 : drop in-memory pclusters and cached compressed folios
-> +
-> +What:		/sys/fs/erofs/accel
-> +Date:		May 2025
-> +Contact:	"Bo Liu" <liubo03@inspur.com>
-> +Description:	The accel file is read-write and allows to set or show
-> +		hardware decompression accelerators, and it supports writing
-> +		multiple accelerators separated by ‘\n’.
-
-		Used to set or show hardware accelerators in effect and multiple
-		accelerators are separated by '\n'.
-
-		Supported accelerator(s): qat_deflate
-
-		Disable all accelerators with an empty string (echo > accel).
-
-> +		Currently supported accelerators:
-
-...
-
-> +
-> +static int __z_erofs_crypto_decompress(struct z_erofs_decompress_req *rq,
-> +				struct crypto_acomp *tfm)
-> +{
-> +	struct sg_table st_src, st_dst;
-> +	struct acomp_req *req;
-> +	struct crypto_wait wait;
-> +	u8 *headpage;
-> +	int ret;
-> +
-> +	headpage = kmap_local_page(*rq->in);
-> +	ret = z_erofs_fixup_insize(rq, headpage + rq->pageofs_in,
-> +				min_t(unsigned int, rq->inputsize,
-> +							rq->sb->s_blocksize - rq->pageofs_in));
-
-	ret = z_erofs_fixup_insize(rq, headpage + rq->pageofs_in,
-				min_t(unsigned int, rq->inputsize,
-				      rq->sb->s_blocksize - rq->pageofs_in));
-
-Otherwise it looks good to me.
-
-Thanks,
-Gao Xiang
+SGVsbG/vvIwKCgpBdCAyMDI1LTA1LTA4IDE3OjExOjAxLCAiRGFuaWVsIFN0b25lIiA8ZGFuaWVs
+QGZvb2lzaGJhci5vcmc+IHdyb3RlOgo+SGkgQW5keSwKPgo+T24gVGh1LCA4IE1heSAyMDI1IGF0
+IDExOjQ5LCBBbmR5IFlhbiA8YW5keXNocmtAMTYzLmNvbT4gd3JvdGU6Cj4+IExldCB0aGUgdXNl
+ciBrbm93IHdoYXQgd2VudCB3cm9uZyBpbiBkcm1fZ2VtX2ZiX2FmYmNfaW5pdAo+PiBmYWlsdXJl
+IHBhdGhzLgo+Cj5UaGFua3MgZm9yIHRoaXMsIGFuZCB0aGFua3MgYWxzbyBmb3IgdXNpbmcgZHJt
+X2RiZ19rbXMoKSB0byBtYWtlIHN1cmUKPnRoYXQgdXNlcnNwYWNlIGNhbid0IGZsb29kIHRoZSBs
+b2cgd2l0aCBlcnJvcnMuCj4KPlJldmlld2VkLWJ5OiBEYW5pZWwgU3RvbmUgPGRhbmllbHNAY29s
+bGFib3JhLmNvbT4KCgpNYXkgSSBraW5kbHkgYXNrIHdoaWNoIE1haW50YWluZXIgY2FuIHRha2Ug
+dGhpcyBwYXRjaD8KCj4KPkNoZWVycywKPkRhbmllbAo=
 
