@@ -1,164 +1,147 @@
-Return-Path: <linux-kernel+bounces-659598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5CC5AC127F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:43:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D41AC1280
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9D05189D2DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:43:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE4741B60AE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C404029CB51;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D095A29ACC0;
 	Thu, 22 May 2025 17:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KgeLvx+O"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VLBksaEP"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE1F251782
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 17:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D848229B77E
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 17:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747935674; cv=none; b=plMBN7BbjpmIYRXzmsyQDCsLzRj35wFALaar+5CMB+bUdFQBh4k9Fcw8nZndjQWse+C2g1eSc9BqAR44IWyGtv8YgX+ER2EBGeNun09IqBkbLMqjxh+3DtHy/enRwQO06x4NJ5vX1xhWlqs+ckH+WBp1N/v/xu4JA7iU/ii9mCQ=
+	t=1747935674; cv=none; b=D0PH6+4oCe+YBfSaHLSwbOXQmXeQJRRxf9/oH/BsPTttsE9FKbJxi15R+F8gpoopSDEBC5Dp/HJxO/gXghdEphdwSy9r0v990oJoRkqJWfJbonTxpeY3zBcajKtERbA0g/S28NskX3ef+nfHB7/Q5VfcSqTuCAAK3Z1U4Tex9Yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747935674; c=relaxed/simple;
-	bh=lhEc6CmxoeqjBbJ8Pm6+cHPF11xa+fHx4k1bho3h33w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KwzQ5xmkuw7d/Z5UaqAb/pQL+67KnOMRLGGLp41vGD5KjmheYr2AKTtwgn7oN7ko0+sESuzAXLOcG0Oy2OX/6prhHl4PdSd7Ivwd6BQT1b44NMYDZavuukEGxYhCe7Wr1e0bhC4A7o3C0ve6I7YhSZIiZJty0xpV6isfwnpl2+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KgeLvx+O; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso65073055e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 10:41:10 -0700 (PDT)
+	bh=lGBxI9OCtZJuGAq0zcPwd74EgaIQAmyhF8n7m1xT4V8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=WypOZD2KXf8Qz97Smi3BlWVQK34kQN8YJOb9mE3iI+pP5EVPGLCnTAPR0J4OA5fvWwZKpiMLDW9B4nFanhuYKkoXU8aLEBgFLttKu5qI2c+rqVvYhaP8iX90F3qYs4CrROG+xxk7FJiCYxn1NfPj1I5hgIN3xQtad82aC+pw69Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VLBksaEP; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-23222fdb4f2so83622255ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 10:41:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747935668; x=1748540468; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BEEzJQh+mi4rzI2yTuNmUyI1HaStAMzjYAaHLCvcS3s=;
-        b=KgeLvx+OI+jG+o6JN/k0nt7mU7lmKxFh+tO9GjHoHGMwxJL/ggYaa3SCDqYJj/gLZ1
-         nhD72yfmRxBhtCZCshuTyiyug2BBSBr1T5UY9/5F9tagYqU2mgAVRA4DbUBkRaVJ9NWp
-         psp/aZ6OwaNmhF4z1LQSrTsCTC/W46VScNc+Z67JU4mX7FvplFjvxZ+Zx+UETFtp4H4G
-         AKVnVQjgeFmBreKOhVcO0t5XN+mWY+WnWWOzNfqqXZl6BkmUblF3Rh08/sYAj/pDy1Rn
-         s7BsIfN94WV1nUPqDBMN2jpbv1efjeta9BbRCV24F+2O+j+YBUO1QmbJ47ePjVWUvjoI
-         OQZA==
+        d=google.com; s=20230601; t=1747935670; x=1748540470; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ag38dhq4dXm3ibKh0H63wetUkYvwY754FjJDUuyvy8Q=;
+        b=VLBksaEPFPWUMDjP440wnNuiAT2JeUKgmWO2BfVPekPUE6NqAZK6KVmzi44n3ksQnz
+         MVRiMgWENUZu5OrZKREok6T6LuGUrMABqU97ZCX8pTNCr+xGFCgG+WFpeK0L1nogFn3i
+         wg/M/gS9AU6wMbL1yLn+bCoUxlyD2G2g35YSKjrZ1E2ICSeUEByduTvkr5PF/gUoaL97
+         opZyxuRkcw0FYCj3DEy4ze2G0wLA0cPj7W0+GqXQMv/wRlTR+RbUJ5ehlL88val4Bb70
+         Dj/jOhpoHAdRWW+ELA9AAd8qER4tcYi9ZlFDYaSBo3IzWM621DlFQJHenXHyWbIvWpj6
+         AqLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747935668; x=1748540468;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BEEzJQh+mi4rzI2yTuNmUyI1HaStAMzjYAaHLCvcS3s=;
-        b=k4BgQ6FXsMPqArLMMmuJu0FQPJ+wN4dDizC2u4ZiTyFxX1Stlal5Lc8CCbdyNt7hrt
-         PDAL0/yLTc/smQwmTxp846vJiwB7tpl7Ycuh2oe+mX5ARYbX2aIszPpdpRGhFhu7igWO
-         At8jzpWJTuqWRE48rh6wkC8OkJk3Aga8oUmgRWaIGFWaOcgVP9RyCFRQMqj31I1Xyfwo
-         fuwEYLfQ7FNUbWmEjhIPF83Nz39PrOeFomEFxoFYRLr3XXxgYevydzkv5vCS13+sjEHl
-         L5lRWNjQj8x1sBh6fDJehDTK8emF0wRV4UYTrvgfaP3T81MldI+En28aiqyknihIZNKr
-         oxkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJgPy5QIfz+zGUtxe+3VvKbGfsCWsM4R+wSCWFARK2ptLQVsHIC7UdkISJEnkM+ipkE2C150+8H3OttMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwcIvN6cM+RQVyfQOK9AHh11uzbz2ZZWU6eyPny2REmS8sEHg+
-	cHCmI6ZgfduzabrzjzolmJYyJm40SYUfo2ep/RpEbbqcLENlOP0fth5eKe47rDQHP+0=
-X-Gm-Gg: ASbGncsxnEnApneGjZ0GfdKp+37rhQjSg5ILFVausWR4I1TkG+AhsKtPGZxzysyiNBU
-	ADttWdi4QaZ80wOWQ84WpZZUsmXfbfQtcZF8NPFoE38OzxHcIA+07GvLM/4kAXgtPMx890dF9a0
-	YaRq+fGbCFCcY9AQM5stHCSFWhX0V+I18qhhVD7lqsk2aHGpC51K2kenYrLmuR3zq2wFzAr0kAv
-	2CwKprSDykd232KkamYz+IMFP4mE5g7c/L4Ah45k22apLPdXmXWxDKrYHCWI0rxo+iISGBKbPzd
-	WM/9i2CXrHAyfHqdadM9Wcy3ZTo+GOuTm/jxzx27rspMneb1yVfxVngU0Go=
-X-Google-Smtp-Source: AGHT+IGgojgkTlxJMrB0QdTOFW9DwcjfnE2HsPWKTiCh2DyT3aGjZFJfYpsdBpxBzniyJBoPRyM8gg==
-X-Received: by 2002:a05:600c:a369:b0:43c:f1b8:16ad with SMTP id 5b1f17b1804b1-442fd678b83mr295575445e9.30.1747935668030;
-        Thu, 22 May 2025 10:41:08 -0700 (PDT)
-Received: from orion.home ([2a02:c7c:7213:c700:6c33:c245:91e5:a9f4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f7bae847sm109563195e9.36.2025.05.22.10.41.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 10:41:07 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-Date: Thu, 22 May 2025 18:41:02 +0100
-Subject: [PATCH v3 12/12] arm64: dts: qcom: qrb4210-rb2: add VA capture
- support
+        d=1e100.net; s=20230601; t=1747935670; x=1748540470;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ag38dhq4dXm3ibKh0H63wetUkYvwY754FjJDUuyvy8Q=;
+        b=thDrSsc1XBqJLiwPBLm5zNwnG6B+8C8IkxhGstbcRhIzV7J14orx02u54gKSRRRJFO
+         pf6ENd44rWTzSW3PWvsb5+1YSIoDAPrNtao6AS1g8jqqW9t1zWK2GuCq5xl6AtwgnoWr
+         bHMWQGPgeAK0qEh3r7VkUpTlDoKLY2qMCP0EESZgcZGIRYqjntGEhCyJOP7yjHAEUt2M
+         o7XcZwjq717fdRSLW21zOKZzoCXOVHiqhbC5/CnAbfeAt+RgHOIq8eepnLzMGQb5gwYJ
+         jHpn47Rq8TpdNrVPZy2Tk4eQR1XKYxbnxXOD6wmLYWOuh3Lx/GRibvh+WN0YrjdlChEx
+         +UGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBuufODQ0nKcX+0UsxGeYaZvNM06f7nkkBCmzNrhZziJLiquOhrhdbKsvWQbC8UhBMLM6uRtiV9kTxXkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGZWydRXyPFkraUco5H0OGfRRNH5GKutTHCSQGzzG8cshUoKW7
+	MHSjfvHh9V0oBheNiZ0S91t+qNOE8arkF1sulzHcUzrBWwSfPm+YK1FvEiObxhsXpRs1HMbRdPz
+	P8nkwTw==
+X-Google-Smtp-Source: AGHT+IEKYo9T1skkKALkOQM3lragb0fX9j4mssklDqAQEruq37vmejRfGQO+eTiLY330Ywwe86rho3P8czE=
+X-Received: from pjbsn4.prod.google.com ([2002:a17:90b:2e84:b0:2fc:aac:e580])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:483:b0:22e:634b:14cd
+ with SMTP id d9443c01a7336-231de3ae56emr253780405ad.39.1747935670297; Thu, 22
+ May 2025 10:41:10 -0700 (PDT)
+Date: Thu, 22 May 2025 10:41:08 -0700
+In-Reply-To: <20250522005555.55705-2-mlevitsk@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250522-rb2_audio_v3-v3-12-9eeb08cab9dc@linaro.org>
-References: <20250522-rb2_audio_v3-v3-0-9eeb08cab9dc@linaro.org>
-In-Reply-To: <20250522-rb2_audio_v3-v3-0-9eeb08cab9dc@linaro.org>
-To: Srinivas Kandagatla <srini@kernel.org>, Mark Brown <broonie@kernel.org>, 
- linux-sound@vger.kernel.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-X-Mailer: b4 0.14.2
+Mime-Version: 1.0
+References: <20250522005555.55705-1-mlevitsk@redhat.com> <20250522005555.55705-2-mlevitsk@redhat.com>
+Message-ID: <aC9htBtwpBGaPoeu@google.com>
+Subject: Re: [PATCH v5 1/5] KVM: x86: Convert vcpu_run()'s immediate exit
+ param into a generic bitmap
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Add support for audio capture using onboard DMIC. It is directly
-connected to vamacro and txmacro without any soundwire interfaces.
+On Wed, May 21, 2025, Maxim Levitsky wrote:
+> ---
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index b952bc673271..7dbfad28debc 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -1020,8 +1020,9 @@ static void tdx_load_host_xsave_state(struct kvm_vcpu *vcpu)
+>  				DEBUGCTLMSR_FREEZE_PERFMON_ON_PMI | \
+>  				DEBUGCTLMSR_FREEZE_IN_SMM)
+>  
+> -fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
+> +fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
+>  {
+> +	bool force_immediate_exit = run_flags & KVM_RUN_FORCE_IMMEDIATE_EXIT;
 
-The capture was verified using the following commands:
+Talking to myself, but I think it makes sense to drop the local force_immediate_exit
+entirely, specifically so that the WARN_ON_ONCE() can just yell on run_flags being
+non-zero.  All immediate usage of run_flags is mutually exclusive with TDX.
 
-amixer -c0 cset iface=MIXER,name='MultiMedia3 Mixer VA_CODEC_DMA_TX_0' 1
-amixer -c0 cset iface=MIXER,name='VA_AIF1_CAP Mixer DEC0' 1
-amixer -c0 cset iface=MIXER,name='VA_DEC0 Volume' 110
-amixer -c0 cset iface=MIXER,name='VA DMIC MUX0' 2
-
-arecord -D hw:0,2 -f S16_LE -c 2 -r 48000 -d 5 record.wav
-
-Cc: Srinivas Kandagatla <srini@kernel.org>
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
- arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-index 1e2b9d2516b62e2e80c40ed6c3a0c4548a02630c..1c125ae4e2f3eb4f715bd0aac42a60b9132ecfbc 100644
---- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-+++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-@@ -169,6 +169,22 @@ platform {
- 				sound-dai = <&q6routing>;
- 			};
- 		};
-+
-+		va-dai-link {
-+			link-name = "VA Capture";
-+
-+			codec {
-+				sound-dai = <&vamacro 0>;
-+			};
-+
-+			cpu {
-+				sound-dai = <&q6afedai VA_CODEC_DMA_TX_0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6routing>;
-+			};
-+		};
- 	};
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 3cfe89aad68e..9a758d8b38ea 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -1018,20 +1018,20 @@ static void tdx_load_host_xsave_state(struct kvm_vcpu *vcpu)
+                                DEBUGCTLMSR_FREEZE_PERFMON_ON_PMI | \
+                                DEBUGCTLMSR_FREEZE_IN_SMM)
  
- 	wcd937x: codec {
-@@ -833,6 +849,12 @@ &usb_qmpphy_out {
- 	remote-endpoint = <&pmi632_ss_in>;
- };
+-fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
++fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
+ {
+        struct vcpu_tdx *tdx = to_tdx(vcpu);
+        struct vcpu_vt *vt = to_vt(vcpu);
  
-+&vamacro {
-+	pinctrl-0 = <&lpass_dmic01_active>;
-+	pinctrl-names = "default";
-+	qcom,dmic-sample-rate = <2400000>;
-+};
-+
- &wifi {
- 	vdd-0.8-cx-mx-supply = <&vreg_l8a_0p664>;
- 	vdd-1.8-xo-supply = <&vreg_l16a_1p3>;
-
--- 
-2.47.2
-
+        /*
+-        * force_immediate_exit requires vCPU entering for events injection with
+-        * an immediately exit followed. But The TDX module doesn't guarantee
+-        * entry, it's already possible for KVM to _think_ it completely entry
+-        * to the guest without actually having done so.
+-        * Since KVM never needs to force an immediate exit for TDX, and can't
+-        * do direct injection, just warn on force_immediate_exit.
++        * WARN if KVM wants to force an immediate exit, as the TDX module does
++        * not guarantee entry into the guest, i.e. it's possible for KVM to
++        * _think_ it completed entry to the guest and forced an immediate exit
++        * without actually having done so.  Luckily, KVM never needs to force
++        * an immediate exit for TDX (KVM can't do direct event injection, so
++        * just WARN and continue on.
+         */
+-       WARN_ON_ONCE(force_immediate_exit);
++       WARN_ON_ONCE(run_flags);
+ 
+        /*
+         * Wait until retry of SEPT-zap-related SEAMCALL completes before
+@@ -1041,7 +1041,7 @@ fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
+        if (unlikely(READ_ONCE(to_kvm_tdx(vcpu->kvm)->wait_for_sept_zap)))
+                return EXIT_FASTPATH_EXIT_HANDLED;
+ 
+-       trace_kvm_entry(vcpu, force_immediate_exit);
++       trace_kvm_entry(vcpu, run_flags & KVM_RUN_FORCE_IMMEDIATE_EXIT);
+ 
+        if (pi_test_on(&vt->pi_desc)) {
+                apic->send_IPI_self(POSTED_INTR_VECTOR);
 
