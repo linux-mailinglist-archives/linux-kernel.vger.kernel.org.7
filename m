@@ -1,124 +1,269 @@
-Return-Path: <linux-kernel+bounces-659381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42B5AC0F82
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:10:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDF81AC0F7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 291681BA301B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:10:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 021D61885B05
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C19A28FFD0;
-	Thu, 22 May 2025 15:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F55928FAB9;
+	Thu, 22 May 2025 15:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EkPvYaPX"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QNaoBE2H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AE328FAB9
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 15:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8775528FAA4;
+	Thu, 22 May 2025 15:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747926586; cv=none; b=K7VEVqOx1LKmuxXKgNasJI4+v7sWrG4DeVv1hE0mYDX7LjLCpv8NknsTy52vtUqIooUKa4+uRVzHtF0bqMJkg502LFEk1MKVDY2kC2adYRXpo5PKa+xZEnKTPg/LsKr9gWHygcUD42d4xl/ucMRqEnB3TzcN/izFfdllUycMKAo=
+	t=1747926558; cv=none; b=Ajeb1EbYdGOZG9TS36teRhKDK7UX6/oPExWndCYomMH8Gu46oELoPCupMAqLv8/V4d34CEqZInn88KnZ3Bm1e7i96dWjrDxH2yDQOEPxkpMkVKO+G+nJ6FDCfGsAmozzMOtXdPkS18CgdtOwRpv+cz2me5Pep1AJeYF+OdmK128=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747926586; c=relaxed/simple;
-	bh=PuqJ9j7q8er0cMSuUmi6XE/ztP2Qv3UJsX9DeeC1LJk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=aT6CJMzcCPFX6wedqs5vVb80W4/v6H3/GJQa1MM/vcoTW4+CXEc80LpCIjLJyGzYww3af6+9baZwExuRkIldFOW+WTWdygfwaP4WMy2XkNlZpxfN11CmE2capEgYdjOWfZvr6EfS4BpKIrhTKpCeVdqWlefYhnuG/dwfD/ZLPGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EkPvYaPX; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-329107e3f90so53629741fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 08:09:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747926583; x=1748531383; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7LZBf/9xKXNiFt0/ewO9FOxfe29NyLCSWebunW9xbvg=;
-        b=EkPvYaPXkSPDpchDI9uqstd6JbbSYa2+T98LvgzKlZeWcjr7DyVoNx8fsYE11udfAE
-         WnzK+tULhr+7tBHfMLvJB3AhDA4E8sSv2ibDy2VfBEH5fkDT25fTvyaUgx68FJ6jv3o2
-         cHDnB6FQWyguKouF5RhCtMR9ykuE96kKG5kjdalw8hsMnYa1uihRV2IV178GQOf95tzU
-         DLXJzxN+aFHnWmhXdfHAUMWMv1nvbX/k4rxP/VfjubINHHqi/pfSiukJAfMt+m5Uw9Bi
-         oEEAsEoClrSECFB+cgnA7Ilj4PqfHL8E/36xIE34H+2u+V/RZD4wAPXaiUhzgb2Xt+Vf
-         V2ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747926583; x=1748531383;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7LZBf/9xKXNiFt0/ewO9FOxfe29NyLCSWebunW9xbvg=;
-        b=PSknOEQ7ecfdaW6xfjWIZQxu9oZYQD11v0K/eU3H9Gwusyp79jTLCIF6TCyNs2ZzvO
-         6rDyRM8oYuKJk0m5kcI/biPIZ9pJRVvQPkhgQGfMLYGd2a0C+1gaqxSd1pHdi2gspxMk
-         w5ak7C4m/cTD7jvjC8Ec6DSVvy2r465llGz5tjXR6+KDFnXufdbjK+02BfkDEzFdPLm5
-         A6AaVvqZ9xiGvooD+MOCzaIgSyyBOWIcrw3kVUqoqAeKkxRkn4eeEhiezETGLhZ75AuP
-         NHHNuimgxAdHohindbeRaKnzoI8pwJhUBNPbhMNacwa7ZG8dY0QkwZBh5bcYmPjS+YAn
-         m23A==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ9cVggDoJwuxPF+Xjp9wVPI5If5VQeGlbdKTn7Cc/ATKYc3WPsgT0izcYXQ4/Q+6eXy9ubUY3Py4mRJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWn7AP0y/Ejrjmglb5gJTUSHjlmhxhGScl1INm2JxuieHKDrK4
-	EwgzD/CJJI6uof5r6Fzn1hECJoU8G7iubaP1mv+ppj3KlQuknaUPI/+MmFop6e+qmwf5Cn8UHHI
-	3RtUkZJvhOsoCVr1lOa3h6p+r+hJHew==
-X-Gm-Gg: ASbGncsDU1PmNCdNes5dxJK3gEB+WCcCI/gx0HTWc+Up1JeBLyhBLptHl7+IkEe0ot1
-	/E4gEFywvQtEQ/6R3/ZUu3lecWYO6pK8Y9Egs9WLITSlLvKELGstr76s/NULNPzgEdQ535w38lh
-	oYh9pvrIsYrJ8IEWEsIcqehs8Jf42cocsI/3N4RkCQBBepzn8djM9KBHvra1r2zpM8
-X-Google-Smtp-Source: AGHT+IHgwy5iNPU7kCI1JnGEdlKo1Jm9nWx6/7skj5hPD+VYLAk6zrvWUZ7ItT4tJo57qIl2/C5LY0r69JULNg5/yQ0=
-X-Received: by 2002:a2e:a9a5:0:b0:30d:b3f3:bcc6 with SMTP id
- 38308e7fff4ca-328096dd6aemr98343861fa.21.1747926582520; Thu, 22 May 2025
- 08:09:42 -0700 (PDT)
+	s=arc-20240116; t=1747926558; c=relaxed/simple;
+	bh=uYFVsOtceKRwBtgqUW62D5DRh7IV8tiO57Yfb5Gkduw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=rRXFO84fIHfkz6thv3T5SPUF/4MhXowksVOf2libj5Hbbz9w1KJfXMmwjsM0YwJ/jpSCIOsjgckABtXZNkmn8hArzukpJQPwV8vfNI4Ojns/2LwBUJqVbpzsE32szAmFyKYoaF45R4L+KiPhRoV0NS1braUUXclpKIilp08wrEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QNaoBE2H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C0A3C4CEE4;
+	Thu, 22 May 2025 15:09:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747926557;
+	bh=uYFVsOtceKRwBtgqUW62D5DRh7IV8tiO57Yfb5Gkduw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QNaoBE2HwjkWs9DLjkb7T+tY30TN/ZSKfSNbvlrPznRampQOiPjmUt9iUemkep5vB
+	 VyPwfdV0UUFHYGx8qf3Ud3M8hVZUAUP5/rPmarQNGWrpQAhcTPrpExYVf6m8Wjo3m9
+	 QrqwqtLX1uIGCOpzUCIfRbJVxlSHEYNSMnfuu0OSo5/XEEHy1WxfTAgQ78NIMePCe+
+	 BpHiWCFKe0kSfkvHqVGP6y9Bp0r/z+KSDX1i/MFi2PTzSEybolObp5V7c9xoIE1zyn
+	 b8WEO+AS/b/FIa9g0jGf0HCPpwOqVS+041BAaavO/zrtd7WRgeOjV4rXzYU23IATVh
+	 YB3m1iSnjaoYA==
+Date: Fri, 23 May 2025 00:09:14 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tracing: ring_buffer: Rewind persistent ring buffer
+ when reboot
+Message-Id: <20250523000914.de2d8bc1bf39d09f0c0636cd@kernel.org>
+In-Reply-To: <20250521145128.3a776466@gandalf.local.home>
+References: <174730775661.3893490.10420015749079085314.stgit@mhiramat.tok.corp.google.com>
+	<20250521145128.3a776466@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: John <john.cs.hey@gmail.com>
-Date: Thu, 22 May 2025 23:09:13 +0800
-X-Gm-Features: AX0GCFsiCbmYnKmbU1eOjA68zQJHZKoql96cKEyiL1D2AzNGTU200HJ1jJxhtjE
-Message-ID: <CAP=Rh=OLo895nvSSXq5Z2Ubzs-eDtAfg6gHDineqF3NEap+rwQ@mail.gmail.com>
-Subject: [Bug] "BUG: soft lockup in unwind_get_return_address" in Linux kernel v6.15-rc5
-To: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Dear Linux Kernel Maintainers,
+On Wed, 21 May 2025 14:51:28 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-I hope this message finds you well.
+> On Thu, 15 May 2025 20:15:56 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> 
+> > diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+> > index 6859008ca34d..48f5f248eb4c 100644
+> > --- a/kernel/trace/ring_buffer.c
+> > +++ b/kernel/trace/ring_buffer.c
+> > @@ -1358,6 +1358,13 @@ static inline void rb_inc_page(struct buffer_page **bpage)
+> >  	*bpage = list_entry(p, struct buffer_page, list);
+> >  }
+> >  
+> > +static inline void rb_dec_page(struct buffer_page **bpage)
+> > +{
+> > +	struct list_head *p = rb_list_head((*bpage)->list.prev);
+> > +
+> > +	*bpage = list_entry(p, struct buffer_page, list);
+> > +}
+> > +
+> >  static struct buffer_page *
+> >  rb_set_head_page(struct ring_buffer_per_cpu *cpu_buffer)
+> >  {
+> > @@ -1866,10 +1873,11 @@ static int rb_validate_buffer(struct buffer_data_page *dpage, int cpu)
+> >  static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
+> >  {
+> >  	struct ring_buffer_cpu_meta *meta = cpu_buffer->ring_meta;
+> > -	struct buffer_page *head_page;
+> > +	struct buffer_page *head_page, *orig_head;
+> >  	unsigned long entry_bytes = 0;
+> >  	unsigned long entries = 0;
+> >  	int ret;
+> > +	u64 ts;
+> >  	int i;
+> >  
+> >  	if (!meta || !meta->head_buffer)
+> > @@ -1885,8 +1893,93 @@ static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
+> >  	entry_bytes += local_read(&cpu_buffer->reader_page->page->commit);
+> >  	local_set(&cpu_buffer->reader_page->entries, ret);
+> >  
+> > -	head_page = cpu_buffer->head_page;
+> > +	orig_head = head_page = cpu_buffer->head_page;
+> > +	ts = head_page->page->time_stamp;
+> > +
+> > +	/*
+> > +	 * Try to rewind the head so that we can read the pages which already
+> > +	 * read in the previous boot.
+> > +	 */
+> > +	if (head_page == cpu_buffer->tail_page)
+> > +		goto rewound;
+> 
+> Hmm, jumping to a label called "rewound" when you didn't do a rewind seems
+> confusing.
+> 
+> Perhaps call the label "skip_rewind"?
 
-I am writing to report a potential vulnerability I encountered during
-testing of the Linux Kernel version v6.15-rc5.
+Ah, indeed. :-)
 
-Git Commit: 92a09c47464d040866cf2b4cd052bc60555185fb (tag: v6.15-rc5)
+> 
+> > +
+> > +	rb_dec_page(&head_page);
+> > +	for (i = 0; i < meta->nr_subbufs + 1; i++, rb_dec_page(&head_page)) {
+> > +
+> > +		/* Rewind until tail (writer) page. */
+> > +		if (head_page == cpu_buffer->tail_page)
+> > +			break;
+> > +
+> > +		/* Ensure the page has older data than head. */
+> > +		if (ts < head_page->page->time_stamp)
+> > +			break;
+> > +
+> > +		ts = head_page->page->time_stamp;
+> > +		/* Ensure the page has correct timestamp and some data. */
+> > +		if (!ts || rb_page_commit(head_page) == 0)
+> > +			break;
+> > +
+> > +		/* Stop rewind if the page is invalid. */
+> > +		ret = rb_validate_buffer(head_page->page, cpu_buffer->cpu);
+> > +		if (ret < 0)
+> > +			break;
+> > +
+> > +		/* Recover the number of entries and update stats. */
+> > +		local_set(&head_page->entries, ret);
+> > +		if (ret)
+> > +			local_inc(&cpu_buffer->pages_touched);
+> > +		entries += ret;
+> > +		entry_bytes += rb_page_commit(head_page);
+> > +	}
+> > +	pr_info("Rewound %d pages on cpu%d\n", i, cpu_buffer->cpu);
+> 
+> Should state this is coming from the ring buffer and use "[%d]" for cpu
+> number as the other pr_info()'s do. Also only print if it did a rewind:
+> 
+> 	if (i)
+> 		pr_info("Ring buffer [%d] rewound %d pages\n", cpu_buffer->cpu, i);
 
-Bug Location: unwind_get_return_address+0x59/0xa0
-arch/x86/kernel/unwind_orc.c:364
+OK.
 
-Bug report: https://hastebin.com/share/epuwikajob.bash
+> 
+> 
+> > +
+> > +	/* The last rewound page must be skipped. */
+> > +	if (head_page != orig_head)
+> > +		rb_inc_page(&head_page);
+> >  
+> > +	/* If there are rewound pages, rewind the reader page too. */
+> 
+> I would change the comment to:
+> 
+> 	/*
+> 	 * If the ring buffer was rewound, then inject the reader page
+> 	 * into the location just before the original head page.
+> 	 */
 
-Complete log: https://hastebin.com/share/sumefafijo.perl
+OK.
 
-Entire kernel config:  https://hastebin.com/share/padecilimo.ini
+> 
+> > +	if (head_page != orig_head) {
+> > +		struct buffer_page *bpage = orig_head;
+> > +
+> > +		rb_dec_page(&bpage);
+> > +		/*
+> > +		 * Insert the reader_page before the original head page.
+> > +		 * Since the list encode RB_PAGE flags, general list
+> > +		 * operations should be avoided.
+> > +		 */
+> > +		cpu_buffer->reader_page->list.next = &orig_head->list;
+> > +		cpu_buffer->reader_page->list.prev = orig_head->list.prev;
+> > +		orig_head->list.prev = &cpu_buffer->reader_page->list;
+> > +		bpage->list.next = &cpu_buffer->reader_page->list;
+> > +
+> > +		/* Make the head_page tthe new read page */
+> 
+> Typo "tthe" and call it "new reader page", not "read page".
 
-Root Cause Analysis:
-A soft lockup occurred on CPU0 due to a recursion or deadlock
-involving __sanitizer_cov_trace_pc() during KCOV instrumentation.
-The traced path includes slab deallocation (kmem_cache_free), task
-exit handling (exit_task_work), and stack unwinding
-(unwind_next_frame), which eventually leads to a GPF caused by
-dereferencing current in a stale task context (FS=0).
-This can be triggered repeatedly by malformed multicast socket setups
-causing repeated IGMP autojoin failures and entering
-trace-instrumented paths.
+Oops, thanks.
 
-At present, I have not yet obtained a minimal reproducer for this
-issue. However, I am actively working on reproducing it, and I will
-promptly share any additional findings or a working reproducer as soon
-as it becomes available.
+> 
+> > +		cpu_buffer->reader_page = head_page;
+> > +		bpage = head_page;
+> > +		rb_inc_page(&head_page);
+> > +		head_page->list.prev = bpage->list.prev;
+> > +		rb_dec_page(&bpage);
+> > +		bpage->list.next = &head_page->list;
+> > +		rb_set_list_to_head(&bpage->list);
+> > +
+> > +		cpu_buffer->head_page = head_page;
+> > +		meta->head_buffer = (unsigned long)head_page->page;
+> > +
+> > +		/* Reset all the indexes */
+> > +		bpage = cpu_buffer->reader_page;
+> > +		meta->buffers[0] = rb_meta_subbuf_idx(meta, bpage->page);
+> > +		bpage->id = 0;
+> > +
+> > +		for (i = 0, bpage = head_page; i < meta->nr_subbufs;
+> > +		     i++, rb_inc_page(&bpage)) {
+> > +			meta->buffers[i + 1] = rb_meta_subbuf_idx(meta, bpage->page);
+> > +			bpage->id = i + 1;
+> > +		}
+> > +
+> > +		/* We'll restart verifying from orig_head */
+> > +		head_page = orig_head;
+> > +	}
+> > +
+> > + rewound:
+> 
+>  skip_rewind:
+> 
+> Also, I know other's don't like to do this, but I do add a space before
+> labels. It makes patch diffs easier to see which functions they are,
+> otherwise the patch shows the label and not the function.
 
-Thank you very much for your time and attention to this matter. I
-truly appreciate the efforts of the Linux kernel community.
+Ah, that's the reason. Let me fix that.
 
-Best regards,
-John
+Thank you,
+
+> 
+> -- Steve
+> 
+> 
+> >  	/* If the commit_buffer is the reader page, update the commit page */
+> >  	if (meta->commit_buffer == (unsigned long)cpu_buffer->reader_page->page) {
+> >  		cpu_buffer->commit_page = cpu_buffer->reader_page;
+> > @@ -5348,7 +5441,6 @@ rb_get_reader_page(struct ring_buffer_per_cpu *cpu_buffer)
+> >  	 */
+> >  	local_set(&cpu_buffer->reader_page->write, 0);
+> >  	local_set(&cpu_buffer->reader_page->entries, 0);
+> > -	local_set(&cpu_buffer->reader_page->page->commit, 0);
+> >  	cpu_buffer->reader_page->real_end = 0;
+> >  
+> >   spin:
+> > @@ -6642,7 +6734,6 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
+> >  		cpu_buffer->read_bytes += rb_page_size(reader);
+> >  
+> >  		/* swap the pages */
+> > -		rb_init_page(bpage);
+> >  		bpage = reader->page;
+> >  		reader->page = data_page->data;
+> >  		local_set(&reader->write, 0);
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
