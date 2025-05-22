@@ -1,140 +1,88 @@
-Return-Path: <linux-kernel+bounces-658444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95296AC0278
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 04:32:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1C7AC028A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 04:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4DC49E570B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 02:31:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A7259E5ED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 02:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D44F35950;
-	Thu, 22 May 2025 02:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E231D7E105;
+	Thu, 22 May 2025 02:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XorGxnXs"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GoB8ZALZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135FBF9DA
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 02:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C976C2EF
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 02:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747881126; cv=none; b=HJChCpXRSuWEgz8bVEeLJN6Lws5J1xDIcMbPZSIQTmK1tCsdnMBg3wYHtu2zukMPlXjvtwUgacHpj9YoMIR7vM0kp4mZoQxbo67o+eMjGJaKSyCNJ1tMY4iXDU+tBN1YSvxWDY5DhOZnh2ODQaLVLMA9BoijJTbMx6Dw75GsNI0=
+	t=1747881643; cv=none; b=RDzP/o2akFi9squXMyihq8QdOZ8YHRvTjFCpFcNnAi3PwfSluL2QI0QXw249gipIXG06BcIvNGKl90vbT+4jZCtAp8NR/TqSH09I1G8ZNlsTEiTPKhNeb/kn1jwKo/mgiJ8FqT4fgO+4K16s19Ek25p0/nYtyfWN41s0BFVbPNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747881126; c=relaxed/simple;
-	bh=CIkfuXr5e/FFnQf8w7cXy456Pqrq9wN5w94SM65gMCM=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=odgbCzt07m855Z7mQ4H24phKFSDGhv+pPXwpkS7TE29zFnsW6f3LLmU3JlVl37bxR72TSr2ySrfaGIXgYJFc8LImWHQCWp0gkb/Rv4QVNUr0fnSCctjdKn6szNr+bZM6CgNgs/YyD6O/5StQztnLEXdyv7idPaIIhQ4WMg88oTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XorGxnXs; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747881120;
+	s=arc-20240116; t=1747881643; c=relaxed/simple;
+	bh=ZKOHIHDDi6AxMyc2CzMPxN5RVYD91Kp2m/Cz7iSWj78=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ARX7/Dy7Z2U6BdGq11TLfeBN88vb0q2PBIEDcnZ3B2oZe5cjz8gS5+Ysa5LAowqFlqW+tC/nQNdaMzt8KZmDH+DKh0+UmHek5BnTAx34phjgm6qe98gV+0+K1eZ+de/Xs/DE+zpqvUGGbjHrVIlHmOqj2WTNcnh4csE9xFZ2a2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GoB8ZALZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747881640;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=v7OyzNFi4koovf7Ot55c4ptctb/+0JCIucwjXRDLPVY=;
-	b=XorGxnXsae3VA5C2XCc0b1ahJ4y3yZPrGL8iFM61ZfF/bFE72dsoWm1KBWgv8HcBWbInlm
-	Tc35CcCFHdTz7gf3QP37s+aiEutg8fLTRFzwXKgRgckoYYwJ0TnjCDKVEzb4G0cmVdp+ZQ
-	zncFIK9i1r3a1eelRhzVGRbTthLmg2Y=
+	bh=HmCantyUlLY67TPpShcPTsMGfNVblvBqn7EzBXLF2qE=;
+	b=GoB8ZALZttP8gg970CaOvZCA7eB5l5IraN9u27RBu9vAwsV0heZIMdBfnhNMIIAr8BjFzH
+	/yqDPFgjQcnauT+jKfbAjJtpZfH0vxAZ9kZuOsyDBWtjZP20fjPwuz0D15/xI9y5hQ2a6Q
+	EAS7z9P8ujklrnhj5jyE7BT30FUL8Tc=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-593-jLSzU6ccPvyT8xWboeghdQ-1; Wed,
+ 21 May 2025 22:40:38 -0400
+X-MC-Unique: jLSzU6ccPvyT8xWboeghdQ-1
+X-Mimecast-MFC-AGG-ID: jLSzU6ccPvyT8xWboeghdQ_1747881637
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6B60B1956088;
+	Thu, 22 May 2025 02:40:37 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.78])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1A81019560A7;
+	Thu, 22 May 2025 02:40:33 +0000 (UTC)
+Date: Thu, 22 May 2025 10:40:28 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ublk: remove io argument from
+ ublk_auto_buf_reg_fallback()
+Message-ID: <aC6OnAWeFwte_hUa@fedora>
+References: <20250521160720.1893326-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
-Subject: Re: [PATCH RFC 27/28] mm: memcontrol: eliminate the problem of dying
- memory cgroup for LRU folios
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <aCxnFg0VSpd7g_Ju@hyeyoo>
-Date: Thu, 22 May 2025 10:31:20 +0800
-Cc: Muchun Song <songmuchun@bytedance.com>,
- hannes@cmpxchg.org,
- mhocko@kernel.org,
- roman.gushchin@linux.dev,
- shakeel.butt@linux.dev,
- akpm@linux-foundation.org,
- david@fromorbit.com,
- zhengqi.arch@bytedance.com,
- yosry.ahmed@linux.dev,
- nphamcs@gmail.com,
- chengming.zhou@linux.dev,
- linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org,
- linux-mm@kvack.org,
- hamzamahfooz@linux.microsoft.com,
- apais@linux.microsoft.com
-Content-Transfer-Encoding: 7bit
-Message-Id: <3782D28E-B0F0-4CC7-98A6-27E443A92730@linux.dev>
-References: <20250415024532.26632-1-songmuchun@bytedance.com>
- <20250415024532.26632-28-songmuchun@bytedance.com> <aCxnFg0VSpd7g_Ju@hyeyoo>
-To: Harry Yoo <harry.yoo@oracle.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250521160720.1893326-1-csander@purestorage.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-
-
-> On May 20, 2025, at 19:27, Harry Yoo <harry.yoo@oracle.com> wrote:
+On Wed, May 21, 2025 at 10:07:19AM -0600, Caleb Sander Mateos wrote:
+> The argument has been unused since the function was added, so remove it.
 > 
-> On Tue, Apr 15, 2025 at 10:45:31AM +0800, Muchun Song wrote:
->> Pagecache pages are charged at allocation time and hold a reference
->> to the original memory cgroup until reclaimed. Depending on memory
->> pressure, page sharing patterns between different cgroups and cgroup
->> creation/destruction rates, many dying memory cgroups can be pinned
->> by pagecache pages, reducing page reclaim efficiency and wasting
->> memory. Converting LRU folios and most other raw memory cgroup pins
->> to the object cgroup direction can fix this long-living problem.
->> 
->> Finally, folio->memcg_data of LRU folios and kmem folios will always
->> point to an object cgroup pointer. The folio->memcg_data of slab
->> folios will point to an vector of object cgroups.
->> 
->> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
->> ---
->> include/linux/memcontrol.h |  78 +++++--------
->> mm/huge_memory.c           |  33 ++++++
->> mm/memcontrol-v1.c         |  15 ++-
->> mm/memcontrol.c            | 228 +++++++++++++++++++++++++------------
->> 4 files changed, 222 insertions(+), 132 deletions(-)
-> 
-> [...]
-> 
->> +static void lruvec_reparent_lru(struct lruvec *src, struct lruvec *dst,
->> + 				enum lru_list lru)
->> +{
->> + 	int zid;
->> + 	struct mem_cgroup_per_node *mz_src, *mz_dst;
->> +
->> + 	mz_src = container_of(src, struct mem_cgroup_per_node, lruvec);
->> + 	mz_dst = container_of(dst, struct mem_cgroup_per_node, lruvec);
->> +	
->> + 	if (lru != LRU_UNEVICTABLE)
->> + 	list_splice_tail_init(&src->lists[lru], &dst->lists[lru]);
->> +
->> + 	for (zid = 0; zid < MAX_NR_ZONES; zid++) {
->> + 		mz_dst->lru_zone_size[zid][lru] += mz_src->lru_zone_size[zid][lru];
->> + 		mz_src->lru_zone_size[zid][lru] = 0;
->> + 	}
->> +}
-> 
-> I think this function should also update memcg and lruvec stats of
-> parent memcg? Or is it intentional?
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 
-Hi Harry,
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-No. Do not need. Because the statistics are accounted hierarchically.
-
-Thanks.
-
-> 
-> -- 
-> Cheers,
-> Harry / Hyeonggon
-
+Thanks, 
+Ming
 
 
