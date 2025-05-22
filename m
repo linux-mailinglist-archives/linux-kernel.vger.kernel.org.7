@@ -1,288 +1,149 @@
-Return-Path: <linux-kernel+bounces-659320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B19AC0EAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:49:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB494AC0EB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 215DB3AE87A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:49:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59F2E16BF23
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA0E28C870;
-	Thu, 22 May 2025 14:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6997828D8E2;
+	Thu, 22 May 2025 14:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="cgCe7Uvw"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="txGIx7Z+"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97EC1F94C
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 14:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B844E28D838
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 14:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747925372; cv=none; b=IJkvvYd/2+pABBXAUDfNKFn8i0YaETEu1HhQny9dQkMxPCivzmQAh92/kfE7TNLkA3E/bfsncfOaaZeeBw7zLI1geDHShhTR6xIifUrVM7if8ywjrcM0qq08G71tq0SwGPmGxkl0/+jkT/VC/x47/W+OOxsYFrsdNsRnLWgpi9E=
+	t=1747925415; cv=none; b=Y7DD7L68H0H6SFu9D0lvtCn/sjpPwHEhkIph6kC7H5RIeJoH120FFWracob2qN9u0kHkkD+pe51rUkxMGGzOJLULfHRoAHTKW39u++0RYJodAP2gLqkIo+KgNIyUAtbgifBqw1oEFntDWx9bqcHQRXUsi5E0vZhYhNKW4VUoS/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747925372; c=relaxed/simple;
-	bh=+80KRDEMPVa5z3LdWSChWxaczDIog85HkSHAKK4YLbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CgfYv4q4aDeUBfyGGJtGiMnTgmjPC72A/UaYB16TdSGg8abdyELfrFkLG17QGEvR6YFlEI79/Sh9a+zl2yDodyUjkIN+onqgvovSi4dCLuE4RXXHadCF7KCBgH3G8m7qbkbY9K38YJUgPLVx/+aOHvbT9C4uSIsoCJ0GR4NcNkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=cgCe7Uvw; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b13e0471a2dso5265783a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 07:49:30 -0700 (PDT)
+	s=arc-20240116; t=1747925415; c=relaxed/simple;
+	bh=/EynnhopfbTRqZUx18La6mxqssjQJuoyYP67ASJw3dQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SBl2jlYfIr/W9jgF4NBf58Mo+IIvVsO49Mvz6x0eoQ1jT0nlKouzI4vaLVJChPN3ZQTMz/68iUZBsPh4dh+oNAVRl+4n/p5B2qvLgZgPva+l11Rqb0zr/tHjyA8z/yOCTHbqt/v9vVEYwGINHIVb2ICpDBuc0pm/GPzQcdUCRzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=txGIx7Z+; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3feb3f54339so8372966b6e.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 07:50:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1747925370; x=1748530170; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rQ4kj7Mccvnc2GRr0Awe5V2tu56FIeT0AJGWt5wmNLo=;
-        b=cgCe7Uvw9y9/AKOtbFHfn4DM41UmuaWS3v1FP8yKr1lI97uhG/bUrpQ4QgHv/fuR4v
-         FOSnYByUnw01KJBBo5574XRZ7XF7nKGUgJQqGXNb1RYNX2r3aYiACTJwqtYq/GExPHC9
-         RqwNlJSPn56L0dTCTh437uWtOHSZZCSPe6+AJuJHh7zQLtzUhvjTdgnsW02YEg1piG/0
-         hXldjm13+pEUkvJofIKa5WEJNPbyzAppIvax2Oyj977d9P18NB5f/YZF6Y9hWYktqHJp
-         5dOBkTeQ6dUcGC7LMv2sIY1zpgnpWB0WtAA9SOTbI6qtCxl640PjuldYcSb6iOf/bmYs
-         o8Lg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747925412; x=1748530212; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ejTtGZf7vUHOXsjk+JkTm8wtREmvSS0UiwkyQWSFLcc=;
+        b=txGIx7Z+rLEl4yaSJCIv4QuVp1bcTfxFARD9iSFXLS9eOiunHDcgMzW/GlaghVLbDU
+         QVzuAzeBf4/IYp8tRbs2qiFULuX1SvuSeaN/pPhapv1CEuKAC1TxRLlsB+IrTp3VS6me
+         CvVsn6f/2n9hH7hTTN/IXuslsOA7E8SaDTNqaCq4n3kCYp949msySiiQrhBy5kn12Y4n
+         Abc8q+RXnHkdsBp9CKftuSM0iAartj4We/UKg0KB6YDZ0rKjcW2/uFXETBLWtq+UTaU4
+         rxPucju1rU8fFkcncEA1QHB7ott+GITIBOSv5xJb+Ag55+WYxx9VYbP6vXKa3UW3j/OD
+         S6xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747925370; x=1748530170;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rQ4kj7Mccvnc2GRr0Awe5V2tu56FIeT0AJGWt5wmNLo=;
-        b=UygeqKsTjcuXsWsvo+IQAbz/tK+pH5zkcSekNGoEk42y8y+qMcVf3M3rj7U745N/8Q
-         L5TIp+IZzQX+c6slANmej5+8jHIG/iRG2RhQKidSJkW4PNqHeRAh9jVFnwYMLicKQJXX
-         loYgFUN5YNkNxC0XGGaK+7gqay/UAKv/qyXtTQVq+qjAMymspc8JvibRBmHsWfZS9qwZ
-         17xWdkr95HC38GxEFquaSn6vXqP5RbCH1VgcQ2QhgnNXHK0uWrdgMcGASEaqiKGGYIp9
-         l2hYDASKnrcJoixGGV2N63BVVfRibYtX4FK1bkqaL0TC8qGr/1AEjVke5d9Eebt1//1x
-         3LZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQDiZ8TEyjoUeVpK1o76jf3sgU2Zxm2+CtNMtB1ZocIxxxpLdA9NFCgQc/dHPtDF8z+UBXaAGzMIgIDG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW1QhMMTe+X6m7/2SCvos/+8Eyiv8ZbIA+csK+sJ8cRbHJ3uqf
-	Wgy7pd36GUJHJaNsnq/MBXt7p13OgAcY7VIJBXrJTdkjvwElN9SKP+TNTASe3djyZy0=
-X-Gm-Gg: ASbGncvC19QVDE/XeC18GQP8vsX701F2gJGOH60sJfJC982LQ00QUMMrega+Yv6rpHm
-	69zaM3WHDFGXrpfzBl0p97kAfj3QlmUMlM08r7KJ6kR6F83MVQe0Yt8PxU+5A3R43Vw2hh7WVZI
-	Ig39V9zOCB3S9xZb0uRu9eQn6sBab2TId/79kWrd5bQWpwNkbdRMW7ids2XlGvPOEwSg6GmMCB1
-	+1c/7pt5LoLOFJvFAAWpDzs6aNyM74komZF+QxDe1O5emR4hO/9gtPiWWRLhnLSALfLc7fIu6mP
-	kmrpYh2mifKkGlndohRaLeCdUCNjx2mWZ42ytogH/Ny1Egh59VQQthA1b3qSvBuN1PwRYb3X
-X-Google-Smtp-Source: AGHT+IGT45bErk4jZKCTChYcJLaT1SiXW3SHwefo100Glc9Lbj7ePhm2QOKaGa81c6ZFUQWjnmWGPQ==
-X-Received: by 2002:a17:902:ce87:b0:220:e924:99dd with SMTP id d9443c01a7336-231de3ace9emr359176295ad.34.1747925369804;
-        Thu, 22 May 2025 07:49:29 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4ebb084sm109560685ad.201.2025.05.22.07.49.28
+        d=1e100.net; s=20230601; t=1747925412; x=1748530212;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ejTtGZf7vUHOXsjk+JkTm8wtREmvSS0UiwkyQWSFLcc=;
+        b=PxGhlAO5bIu+xmONIb5UqcDOb450NF+JLpN2VGFywmxRtPylirehQFAxrEeTvMJNXx
+         miSF1whp+9Z4Qijs4swuq/clPqWk5oabkiXlCnckHfYbbR+d/RRFSymILq6c8xbSdN66
+         ujG9q/DcUgLMdlRCFvEDcJGND6ZW9Cs1CFlbeV0h5ewnG7QTLKE+vE8IMQykdOMYwkH5
+         pbnd0BS8mwqogAtrvmMyB6A9ma9Fq04/vdt+Xlke5WG5PJry+LTLDZAIDzbzaJujEcf/
+         XxukTAdnetFCseAfFAOxwzb78Dow5G7uYSYrzUI9dsu4uwyx776ab2hHHYh0awN+5Prg
+         RaJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRUM3NeBKUgZY/nf76qBFGvdt2JZyKwJHXPQ8qeRGfKOg9/LV4Gv8itQmbZcKFE6YaqyR8h06IxWgevOE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUiMa+NDqmK2v9FjJ32EppN8RSNGbbWHheK10crtdEoP8XA+GY
+	hDSWlgPZKhePqDde5xPpSIdANMB3/Oej2491uEdFmnYemGRrHHRZQm+FpDmEW6sdTN8=
+X-Gm-Gg: ASbGncuLTb7ZrqitTdd60bqT8JzZeKST3454i2Ej0ffCw96icpUORs04EzgcpVnKNFs
+	ZWwjjF2zV6ask/b4AkYbKWhGLKwr4fOhqfd+AvdRnhXIbGMDH7+MRDhXuajJ3eSoRh39x1rB1C5
+	u/ca1vQzL6c09n3wurdU01HHcfeR4JVlKae5StZXXiVeBByUi9qVsbYdZfBdqtrUu57vYT7n1QK
+	Yg/5ehLf/cuKGdotKiCFGPn6czQUeKVTa4Ni+5W01Tl8zRocgpiKrjYLz0ydNCtNevfB1wOy34e
+	EnUBSHYO68sJ5AeBl12nloWJguJ/vwchUaQ9dycvkcIVM+2eZddNxcdEig==
+X-Google-Smtp-Source: AGHT+IH2N+y8pkPgaDi3tRswr18F+2IgYVvh+GwM6qOt21ptYCccNFRGv2rQ7CTXfqsQL6HJMQvEVA==
+X-Received: by 2002:a05:6808:83c8:b0:3fe:ab15:5ed6 with SMTP id 5614622812f47-404d86d8c97mr11952177b6e.12.1747925412599;
+        Thu, 22 May 2025 07:50:12 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:3407:53d5:68cd:400d])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-404e303ffcasm2228234b6e.4.2025.05.22.07.50.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 07:49:29 -0700 (PDT)
-Date: Thu, 22 May 2025 07:49:27 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Cyril Bur <cyrilbur@tenstorrent.com>, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, paul.walmsley@sifive.com,
-	charlie@rivosinc.com, jrtc27@jrtc27.com, alex@ghiti.fr,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	jszhang@kernel.org,
-	syzbot+e74b94fe601ab9552d69@syzkaller.appspotmail.com
-Subject: Re: [PATCH v6 1/5] riscv: save the SR_SUM status over switches
-Message-ID: <aC85d8Hnstck-_gx@debug.ba.rivosinc.com>
-References: <20250410070526.3160847-1-cyrilbur@tenstorrent.com>
- <20250410070526.3160847-2-cyrilbur@tenstorrent.com>
- <aAgfz69K7wSkKsyJ@debug.ba.rivosinc.com>
- <aCyythZJ2u0SbXVb@debug.ba.rivosinc.com>
- <b39891f0-1e1a-4559-b35b-5262fe5af93c@codethink.co.uk>
+        Thu, 22 May 2025 07:50:11 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH v2 0/3] pwm: axi-pwmgen: add external clock
+Date: Thu, 22 May 2025 09:49:38 -0500
+Message-Id: <20250522-pwm-axi-pwmgen-add-external-clock-v2-0-086ea9e6ecf0@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b39891f0-1e1a-4559-b35b-5262fe5af93c@codethink.co.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAII5L2gC/42NSw6CMBRFt0I69pm2CEFH7sMw6OcBL0JLWoIQw
+ t4txAU4ujl3cM7GIgbCyB7ZxgLOFMm7BPKSMdMp1yKQTcwklwUvRAHjZwC10LEtOlDWAi4TBqd
+ 6ML03b+B5eWu0bSp+1yx5xoANLWfjVSfuKE4+rGdyFsf7s0v+h30WwKE0tsyN4VyY6qnV2pMOe
+ DV+YPW+71/0rloz1QAAAA==
+X-Change-ID: 20250515-pwm-axi-pwmgen-add-external-clock-0364fbdf809b
+To: Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Trevor Gamblin <tgamblin@baylibre.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1627; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=/EynnhopfbTRqZUx18La6mxqssjQJuoyYP67ASJw3dQ=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoLzmFTW/ivzWssbER3tY1m2n9IU5m09Ey/Jm9U
+ 15+EL45EBuJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaC85hQAKCRDCzCAB/wGP
+ wDWzB/9IBW7j3w6siigBYnZVCoMwr8Vz3bO+m0cYpglLO5H4XSWcLfgDygzkOyhHaLVssxO/iQ2
+ fODAXNAq84Y6lNtwyJ9FVZFqjlfIJxbfVqRyYB/qXpkNxtouqHYowjCtlExAw1dwp0uQmDR3jid
+ ppnfglEgBPbbUb51qPHozIoFCzDnbB1EMS0+3IdkD5Jk6O4gEuzrzXxICX2FulW1p+lXh/MmJTA
+ abRwyonqfKbpDclhXnxkpbq6tyqppnSyDqfeFH5VUViEksV2nSxQH5F0fzke/RbfmTsQdhXLfNa
+ dcTH2mripYCZb+b5dTY6aT54Sr0l1U2UZwFSBMwXC3u9tRC6
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Thu, May 22, 2025 at 07:23:32AM +0100, Ben Dooks wrote:
->On 20/05/2025 17:49, Deepak Gupta wrote:
->>I did give this patch my RB and had planned to come back to it to see
->>if it impacts cfi related patches. Thanks to alex for brinigng to my
->>attention again. As it stands today, it doesn't impact cfi related
->>changes but I've some concerns.
->>
->>Overall I do agree we should reduce number of SSTATUS accesses.
->>
->>Couple of questions on introducing new `sstatus` field (inline)
->>
->>On Tue, Apr 22, 2025 at 04:01:35PM -0700, Deepak Gupta wrote:
->>>On Thu, Apr 10, 2025 at 07:05:22AM +0000, Cyril Bur wrote:
->>>>From: Ben Dooks <ben.dooks@codethink.co.uk>
->>>>
->>>>When threads/tasks are switched we need to ensure the old execution's
->>>>SR_SUM state is saved and the new thread has the old SR_SUM state
->>>>restored.
->>>>
->>>>The issue was seen under heavy load especially with the syz-stress tool
->>>>running, with crashes as follows in schedule_tail:
->>>>
->>>>Unable to handle kernel access to user memory without uaccess routines
->>>>at virtual address 000000002749f0d0
->>>>Oops [#1]
->>>>Modules linked in:
->>>>CPU: 1 PID: 4875 Comm: syz-executor.0 Not tainted
->>>>5.12.0-rc2-syzkaller-00467-g0d7588ab9ef9 #0
->>>>Hardware name: riscv-virtio,qemu (DT)
->>>>epc : schedule_tail+0x72/0xb2 kernel/sched/core.c:4264
->>>>ra : task_pid_vnr include/linux/sched.h:1421 [inline]
->>>>ra : schedule_tail+0x70/0xb2 kernel/sched/core.c:4264
->>>>epc : ffffffe00008c8b0 ra : ffffffe00008c8ae sp : ffffffe025d17ec0
->>>>gp : ffffffe005d25378 tp : ffffffe00f0d0000 t0 : 0000000000000000
->>>>t1 : 0000000000000001 t2 : 00000000000f4240 s0 : ffffffe025d17ee0
->>>>s1 : 000000002749f0d0 a0 : 000000000000002a a1 : 0000000000000003
->>>>a2 : 1ffffffc0cfac500 a3 : ffffffe0000c80cc a4 : 5ae9db91c19bbe00
->>>>a5 : 0000000000000000 a6 : 0000000000f00000 a7 : ffffffe000082eba
->>>>s2 : 0000000000040000 s3 : ffffffe00eef96c0 s4 : ffffffe022c77fe0
->>>>s5 : 0000000000004000 s6 : ffffffe067d74e00 s7 : ffffffe067d74850
->>>>s8 : ffffffe067d73e18 s9 : ffffffe067d74e00 s10: ffffffe00eef96e8
->>>>s11: 000000ae6cdf8368 t3 : 5ae9db91c19bbe00 t4 : ffffffc4043cafb2
->>>>t5 : ffffffc4043cafba t6 : 0000000000040000
->>>>status: 0000000000000120 badaddr: 000000002749f0d0 cause:
->>>>000000000000000f
->>>>Call Trace:
->>>>[<ffffffe00008c8b0>] schedule_tail+0x72/0xb2 kernel/sched/core.c:4264
->>>>[<ffffffe000005570>] ret_from_exception+0x0/0x14
->>>>Dumping ftrace buffer:
->>>> (ftrace buffer empty)
->>>>---[ end trace b5f8f9231dc87dda ]---
->>>>
->>>>The issue comes from the put_user() in schedule_tail
->>>>(kernel/sched/core.c) doing the following:
->>>>
->>>>asmlinkage __visible void schedule_tail(struct task_struct *prev)
->>>>{
->>>>...
->>>>      if (current->set_child_tid)
->>>>              put_user(task_pid_vnr(current), current->set_child_tid);
->>>>...
->>>>}
->>>>
->>>>the put_user() macro causes the code sequence to come out as follows:
->>>>
->>>>1:    __enable_user_access()
->>>>2:    reg = task_pid_vnr(current);
->>>>3:    *current->set_child_tid = reg;
->>>>4:    __disable_user_access()
->>>>
->>>>The problem is that we may have a sleeping function as argument which
->>>>could clear SR_SUM causing the panic above. This was fixed by
->>>>evaluating the argument of the put_user() macro outside the user-enabled
->>>>section in commit 285a76bb2cf5 ("riscv: evaluate put_user() arg before
->>>>enabling user access")"
->>>>
->>>>In order for riscv to take advantage of unsafe_get/put_XXX() macros and
->>>>to avoid the same issue we had with put_user() and sleeping functions we
->>>>must ensure code flow can go through switch_to() from within a region of
->>>>code with SR_SUM enabled and come back with SR_SUM still enabled. This
->>>>patch addresses the problem allowing future work to enable full use of
->>>>unsafe_get/put_XXX() macros without needing to take a CSR bit flip cost
->>>>on every access. Make switch_to() save and restore SR_SUM.
->>>>
->>>>Reported-by: syzbot+e74b94fe601ab9552d69@syzkaller.appspotmail.com
->>>>Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
->>>>Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
->>>>---
->>>>arch/riscv/include/asm/processor.h | 1 +
->>>>arch/riscv/kernel/asm-offsets.c    | 5 +++++
->>>>arch/riscv/kernel/entry.S          | 8 ++++++++
->>>>3 files changed, 14 insertions(+)
->>>>
->>>>diff --git a/arch/riscv/include/asm/processor.h 
->>>>b/arch/riscv/include/ asm/processor.h
->>>>index 5f56eb9d114a..58fd11c89fe9 100644
->>>>--- a/arch/riscv/include/asm/processor.h
->>>>+++ b/arch/riscv/include/asm/processor.h
->>>>@@ -103,6 +103,7 @@ struct thread_struct {
->>>>    struct __riscv_d_ext_state fstate;
->>>>    unsigned long bad_cause;
->>>>    unsigned long envcfg;
->>>>+    unsigned long status;
->>
->>Do we really need a new member field in `thread_struct`. We already have
->>`sstatus` in `pt_regs` which reflects overall execution environment 
->>situation
->>for current thread. This gets saved and restored on trap entry and exit.
->>
->>If we put `status` in `thread_struct` it creates ambiguity in terms 
->>of which
->>`status` to save to and pick from from future maintainibility 
->>purposes as the
->>fields get introduced to this CSR.
->>
->>Why can't we access current trap frame's `sstatus` image in 
->>`__switch_to` to
->>save and restore?
->>
->>Let me know if I am missing something obvious here. If there is a 
->>complication,
->>I am missing here and we do end up using this member field, I would 
->>rename it
->>to something like `status_kernel` to reflect that. So that future 
->>changes are
->>cognizant of the fact that we have split `status`. One for kernel 
->>execution env
->>per thread and one for controlling user execution env per thread.
->
->This is so long ago now I cannot remember if there was any sstatus in
->the pt_regs field, 
+When we created the driver for the AXI PWMGEN IP block, we overlooked
+the fact that it can optionally be configured to use an external clock
+in addition to the AXI bus clock. This is easy to miss in testing
+because the bus clock is always on because it is driving other
+peripherals as well.
 
-FS/VS bits encode status of floating point and vector on per-thread basis.
-So `status` has been part of `pt_regs` for quite a while. 
+Up to now, users were specifying the external clock if there was one and
+the AXI bus clock otherwise. But the proper way to do this is to would
+be to always specify the bus clock and only specify the external clock
+if the IP block has been configured to use it.
 
-> and if kernel threads have the same context as their
->userland parts.
+To fix this, we add clock-names to the devicetree bindings and change
+clocks to allow 1 or 2 clocks.
 
-I didn't mean kernel thread. What I meant was kernel execution environment
-per-thread. A userland thread does spend sometime in kernel and kernel does
-things on its behalf. One of those thing is touching user memory and that
-requires mucking with this CSR. So what I meant was are we splitting `status`
-on per-thread basis for their time spent in user and kernel.
+---
+Changes in v2:
+- Consider this a fix rather than a new feature.
+- Make clock-names required.
+- Simplify the logic in the pwm driver to avoid needing to test if
+  clock-names is present in old dtbs that used the broken binding.
+- Link to v1: https://lore.kernel.org/r/20250520-pwm-axi-pwmgen-add-external-clock-v1-0-6cd63cc001c8@baylibre.com
 
-Getting back to original question--
-As I said, each thread spends sometime in user or in kernel. `status` in
-`pt_regs` is saved on trap entry and restored on trap exit. In a sense,
-`status` field in `pt_regs` is reflecting execution status of the thread on per
-trap basis. Introducing `status` in `thread_struct` creates a confusion (if not
-for today, certainly for future) of which `status` to pick from when we are
-doing save/restore.
+---
+David Lechner (3):
+      dt-bindings: pwm: adi,axi-pwmgen: update documentation link
+      dt-bindings: pwm: adi,axi-pwmgen: fix clocks
+      pwm: axi-pwmgen: fix missing separate external clock
 
-So my first question was why not to use `status` in `pt_regs`. It is granular
-as it can get (it is available per thread context per trap basis). 
+ .../devicetree/bindings/pwm/adi,axi-pwmgen.yaml    | 16 ++++++++++++---
+ drivers/pwm/pwm-axi-pwmgen.c                       | 23 +++++++++++++++++++---
+ 2 files changed, 33 insertions(+), 6 deletions(-)
+---
+base-commit: 484803582c77061b470ac64a634f25f89715be3f
+change-id: 20250515-pwm-axi-pwmgen-add-external-clock-0364fbdf809b
 
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
-I did ask Alex as well. I'll ping him again.
-
->
->Does anyone else have any comment on this?
->
->>
->>>>    u32 riscv_v_flags;
->>>>    u32 vstate_ctrl;
->>>>    struct __riscv_v_ext_state vstate;
->>>>diff --git a/arch/riscv/kernel/asm-offsets.c 
->>>>b/arch/riscv/kernel/asm- offsets.c
->>>>index 16490755304e..969c65b1fe41 100644
->>>>--- a/arch/riscv/kernel/asm-offsets.c
->>>>+++ b/arch/riscv/kernel/asm-offsets.c
->>>>@@ -34,6 +34,7 @@ void asm_offsets(void)
->>>>    OFFSET(TASK_THREAD_S9, task_struct, thread.s[9]);
->>>>    OFFSET(TASK_THREAD_S10, task_struct, thread.s[10]);
->>>>    OFFSET(TASK_THREAD_S11, task_struct, thread.s[11]);
->>
->>_______________________________________________
->>linux-riscv mailing list
->>linux-riscv@lists.infradead.org
->>http://lists.infradead.org/mailman/listinfo/linux-riscv
->>
->
->
->-- 
->Ben Dooks				http://www.codethink.co.uk/
->Senior Engineer				Codethink - Providing Genius
->
->https://www.codethink.co.uk/privacy.html
 
