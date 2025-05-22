@@ -1,84 +1,49 @@
-Return-Path: <linux-kernel+bounces-658498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DDE2AC0330
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:51:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12355AC0328
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36CD7A24C61
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:50:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B8217B269C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34E6198A1A;
-	Thu, 22 May 2025 03:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652E317A301;
+	Thu, 22 May 2025 03:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNRu+7h9"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHCFo+N/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7859418DB18
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 03:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECE5178372;
+	Thu, 22 May 2025 03:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747885814; cv=none; b=LqdV1yzQwBD4GrOLKEe+dvVjZ/7yL3rA0rZEagh/aoyBu8D9O/HV5TMwQCrfKk29D4/YfRVfXFGAcfbNLWazLwc4s96CqVIiYE1X5uLSWXacqfl2FQwEHARmsEHiBUMmK8LNEvbJRicsu1jM18LtKvTFa6DRzc3fo/YNCIwgoxs=
+	t=1747885809; cv=none; b=Gc4y5fETorQ356vYdAjxeWk1xzVNsw37LmSC4nFOzqoA+A7l9oQ3C/Pnbf6rR6gkHO+JQwaimEfyIQ1OoTxRd9p2aEjnfAN0NCpKeM5SEl/OSZyWZDxgRjLlLwe1SnHKCjOFZPWHY6gY/1C89M5NkhFChtPWYtAdxh1rAnMpJcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747885814; c=relaxed/simple;
-	bh=EhCHW5q0cCFKGYwmnE5zrblG2aU/eCsuzx+ii1jY4aA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ehPdtJjhP9CTJFc5QvdhiIVwc5T0g/HD1jpZRBUttaYKJ6lpVXg7OKWZHno4yr+003CptYt8sYBE8k3wtoHF0fpx7Dwr8oL46WzLt1RaqLK3DtyZcNepQVgfO9/Jf9bWPw7cfTHKQbG7Ymz6fsz4J7tCS55uyQtNcJ/gSAsw/6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UNRu+7h9; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-70df67e1b17so13454437b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 20:50:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747885811; x=1748490611; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=arxJV0GpiWBI5/UzljfX3wVd+ClYz7zCQj750146rLk=;
-        b=UNRu+7h9CRBT1XlL+EYkx7HXWmgy293vnZrTkc28Y/pSBHKjJWv8DnQH13isfiYpTE
-         l6j7Ed11O7HTeBAzHxYoTWNc6t4XuE+geZ83BYEvGbyUi8O8RDXfe86tSVFRbdWRmfwV
-         XaZk24oeyYmRtsIa7LuCzaiHgcoYbF0GQtg3GhfcwkmXIexmony223mVs1B1NVzMJk0Q
-         7KEGkdR+nTAYa4GMH+Kia2v9l+S8hbALueQty93c3ThjcCHBw6xGcFkCFVTBXn6+rLCJ
-         ctfsg7c2b5weutuFs1bmuY5WFjAWPK7Q0PG5/OVmL3jysFb/CJgdsnB4xCTivIJ6qP5W
-         e76g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747885811; x=1748490611;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=arxJV0GpiWBI5/UzljfX3wVd+ClYz7zCQj750146rLk=;
-        b=u250ZGwntMKS+WrNydKyz+rsfVZk/kFYwY6buhJFRiYYCtcW/GCnLmflGcgDmL68zA
-         u+TVKRl7RcX5xha0iFBZXi1fWC5rPO1ioDDnBwDmT5/0ElvveTzM4GLrmoxVaWmIfT5g
-         2K8gkf1pfj4xH1IbQ/LlbHQLNGpa4/tzQ9QGZp9G1ZT8VJy5bsv233hxdoABGhNGhi+U
-         UPbHw2LJSKCfPwhtktCz2ntFDHRdZrH+66loCiBXJ1sOhSTrdsXD991X99yPCJKTq3WF
-         /Zjlcy4LaWH7gf0a0XqbPxnpBkWlGGAUQ6ckWjVIqpUruZy3g81n7PdDkJdUj/dxnwv6
-         Ym3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXsu5BYK9bSYhAEfWOkRQbaWksgHCJ+uNBLxiwmqupO24cDxFX10Q3UEDcMmSslgbb4N6Lqa3oynXTMiaM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMIOZVNvOF/JxNhBJOdfcf72jKZy9fS8b55qaazWFrBp4LPaMj
-	vRXEleVLkt+usSOvtYCurcrU1gzfVMPZ/tp+o1P+MYVRAeKjiNjTi8A1tzQlCzme
-X-Gm-Gg: ASbGncsBlKSRL9FJD2VbGgLb42u/lm8UWGBRHuiHBsgRwBobONBLIDV1SwZjhthFih6
-	aSeIgIEjKf1emMBwTIM8nLRKqNwfp7FDo1hPrxOqqo6ysMnq1TE1lmmaxN/+SZunXpscpml9iI/
-	ukCyy/AHUyJh+obKGnrJRgbPkM/jeMhQBu1LGVJqPBk7M/BoQJ1EU8W3vxvfMcGFaZ5VWTFaF3z
-	EpdwFz1MtChv9kK8GKaBe77VsCkZLA7Qmw5z2NuoPB/YJmHLOuphm4LpUWI/EvAYBtjzL2yuolA
-	hb+MaYdLvDHQk4Cw+CMvQwx+upfx+y/iJG5W0UMTqm+Rxx1Lf5risDQSzKezXDRVmT26nsnTP82
-	42y8=
-X-Google-Smtp-Source: AGHT+IHoo/G7hIzty2H/6gOon8Xz+U/wkelfdv6DK4y23vQrHuGLtdPz4NySnwPueu2pM+YzjFbhYw==
-X-Received: by 2002:a05:690c:3390:b0:70c:9364:2c61 with SMTP id 00721157ae682-70ca79bf741mr308111097b3.9.1747885811328;
-        Wed, 21 May 2025 20:50:11 -0700 (PDT)
-Received: from maquina-virtual-para-linux.. ([191.156.43.125])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-70ca8362faasm28876127b3.62.2025.05.21.20.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 20:50:10 -0700 (PDT)
-From: Donny Turizo <donnyturizo13@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Donny Turizo <donnyturizo13@gmail.com>
-Subject: [PATCH] staging: rtl8723bs: rename _Read_EEPROM to _read_eeprom
-Date: Thu, 22 May 2025 03:50:03 +0000
-Message-ID: <20250522035003.32314-1-donnyturizo13@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1747885809; c=relaxed/simple;
+	bh=GpMCBjr+80UXi5ii0UN+PxANa+Il8Uwb++7u39HnEA8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=YADBQRlJwgMz9P3HMwtVGF4CBHZSO8A0kF9rsuY3BxhT0r36jV4AF78iSMdGuWPL+MiHhOEiPqghow+17ApiE7Bde4geyB3H24Q4sXn3lXCeQb96J31WYoR0FCQeGgmbOKOU7tlsOM5ldJYsECkJ93EHg2Gz0TVzBUAnQPaMlWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHCFo+N/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20ED8C4CEE4;
+	Thu, 22 May 2025 03:50:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747885809;
+	bh=GpMCBjr+80UXi5ii0UN+PxANa+Il8Uwb++7u39HnEA8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jHCFo+N/szYNJJEugSvgpo3TEuhaEWM3AYZFO+b7ZtPo5RTEMJS7f6Tr6T5oq7DJQ
+	 eoJyFDyfO/wOm/zztV3KzIiEX9rrqt5wlZEHVawIQ2yUsb/8LoWVSJ1Bex17r09Pxi
+	 AhxzIxSEAJlxBf1zjtPaB9K4B8G7xb07SOOzIVCW4UfRdWJIUGfUM8en3u4aWKKCqO
+	 HzKY8VEN2bfoA9GNGR+Wklkot5rCLtcZ9e4t1ohPSKssoSvhpG/0Nc0TYGUm8B5OAo
+	 izRlSAby2c5Up2cTdVYEi2kPRTyJcpfk74wPyTY0nHtk6e8ZPLEV4M7dh+HTu9/BwT
+	 zGJB9n56GDdIQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0A6380AA7C;
+	Thu, 22 May 2025 03:50:45 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,57 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] emulex/benet: correct command version selection in
+ be_cmd_get_stats()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174788584449.2369658.17188848797464910270.git-patchwork-notify@kernel.org>
+Date: Thu, 22 May 2025 03:50:44 +0000
+References: <20250519141731.691136-1-alok.a.tiwari@oracle.com>
+In-Reply-To: <20250519141731.691136-1-alok.a.tiwari@oracle.com>
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>
+Cc: ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com,
+ somnath.kotur@broadcom.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, darren.kenny@oracle.com
 
-Fixes a checkpath warning by renaming the function
-_Read_EEPROM to follow the kernel coding style (snake_case).
+Hello:
 
-Signed-off-by: Donny Turizo <donnyturizo13@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_cmd.c         | 2 +-
- drivers/staging/rtl8723bs/include/rtw_cmd.h      | 2 +-
- drivers/staging/rtl8723bs/include/rtw_mlme_ext.h | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_cmd.c b/drivers/staging/rtl8723bs/core/rtw_cmd.c
-index 49bcefb5e8d2..a0b85beffe5d 100644
---- a/drivers/staging/rtl8723bs/core/rtw_cmd.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_cmd.c
-@@ -15,7 +15,7 @@ static struct _cmd_callback rtw_cmd_callback[] = {
- 	{GEN_CMD_CODE(_Write_BBREG), NULL},
- 	{GEN_CMD_CODE(_Read_RFREG), &rtw_getbbrfreg_cmdrsp_callback},
- 	{GEN_CMD_CODE(_Write_RFREG), NULL}, /*5*/
--	{GEN_CMD_CODE(_Read_EEPROM), NULL},
-+	{GEN_CMD_CODE(_read_eeprom), NULL},
- 	{GEN_CMD_CODE(_Write_EEPROM), NULL},
- 	{GEN_CMD_CODE(_Read_EFUSE), NULL},
- 	{GEN_CMD_CODE(_Write_EFUSE), NULL},
-diff --git a/drivers/staging/rtl8723bs/include/rtw_cmd.h b/drivers/staging/rtl8723bs/include/rtw_cmd.h
-index cb44119ce9a9..e4e7e350d0fc 100644
---- a/drivers/staging/rtl8723bs/include/rtw_cmd.h
-+++ b/drivers/staging/rtl8723bs/include/rtw_cmd.h
-@@ -636,7 +636,7 @@ enum {
- 	GEN_CMD_CODE(_Write_BBREG),
- 	GEN_CMD_CODE(_Read_RFREG),
- 	GEN_CMD_CODE(_Write_RFREG), /*5*/
--	GEN_CMD_CODE(_Read_EEPROM),
-+	GEN_CMD_CODE(_read_eeprom),
- 	GEN_CMD_CODE(_Write_EEPROM),
- 	GEN_CMD_CODE(_Read_EFUSE),
- 	GEN_CMD_CODE(_Write_EFUSE),
-diff --git a/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h b/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
-index 2080408743ef..63373d665d4f 100644
---- a/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
-+++ b/drivers/staging/rtl8723bs/include/rtw_mlme_ext.h
-@@ -684,7 +684,7 @@ enum {
- 	GEN_EVT_CODE(_Read_MACREG) = 0, /*0*/
- 	GEN_EVT_CODE(_Read_BBREG),
- 	GEN_EVT_CODE(_Read_RFREG),
--	GEN_EVT_CODE(_Read_EEPROM),
-+	GEN_EVT_CODE(_read_eeprom),
- 	GEN_EVT_CODE(_Read_EFUSE),
- 	GEN_EVT_CODE(_Read_CAM),			/*5*/
- 	GEN_EVT_CODE(_Get_BasicRate),
+On Mon, 19 May 2025 07:17:19 -0700 you wrote:
+> Logic here always sets hdr->version to 2 if it is not a BE3 or Lancer chip,
+> even if it is BE2. Use 'else if' to prevent multiple assignments, setting
+> version 0 for BE2, version 1 for BE3 and Lancer, and version 2 for others.
+> Fixes potential incorrect version setting when BE2_chip and
+> BE3_chip/lancer_chip checks could both be true.
+> 
+> Fixes: 61000861e860 ("be2net: Call version 2 of GET_STATS ioctl for Skyhawk-R")
+> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - emulex/benet: correct command version selection in be_cmd_get_stats()
+    https://git.kernel.org/netdev/net-next/c/edb888d29748
+
+You are awesome, thank you!
 -- 
-2.43.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
