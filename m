@@ -1,94 +1,78 @@
-Return-Path: <linux-kernel+bounces-659504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0FB7AC111C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:33:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC1CAC1113
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B6249E127B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:33:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 156C61C00981
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2F629AAF0;
-	Thu, 22 May 2025 16:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC19429AAE9;
+	Thu, 22 May 2025 16:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="C+YhtKph"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E66251792;
-	Thu, 22 May 2025 16:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="llFbdymD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B4129A32F;
+	Thu, 22 May 2025 16:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747931607; cv=none; b=uDus6H86Hld7W5/4yqqk20q+rQ7BA8LSKRknBcoqdloe2Q9lXvSC3amyduL/Uh+MkIIpoHv+zl/5X5ljosOwL5ChlbDdQ64049plKPumZ+Dg9YeYzxPIWTg8a6Ij3HwLty+yjsLxyAtVlrbyY0aL/GfnwSiFz/61gQ5i61k4hJE=
+	t=1747931539; cv=none; b=NLwnE3gAZgFOEunhtSKYeg+T1rOrHYkJ0JXgZ4WwG7HFD20VX0LwXK5p3oOERaXiTNolsaqhK74PoJfL4jaS8Mv5xugAQXFk23Y+bhRHNioy4zYhw6wBEXf4B3T3pFo+ikX+/G3G7FjyQsjpHT+yCAXSCVLG8xbXaGsXlzzL+8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747931607; c=relaxed/simple;
-	bh=BNpi2nFBQAFV/WMKJHvYLfcwSSej3dZ3v1djNDve9jk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b2aCMdfvJBBhnvZltpgZsTbOyjUgmATHplAx2NkjHiYWloEO9Bt/nIqnhP171OEDcrLJ+jg/6WXQyHHbrvGTBDKaoLqSe7OZUaAr8RN6ZeDg4V//5AD+KPjEbpDvaYqgYL9GcnbSPo2xHXhHKUnq0zHqE9mqEw7PSXMggWZIVEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=C+YhtKph; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=x3
-	IEnvTJUGCZMysuw/nTm9ZVJwxYs3uYCivFSvi4Vsk=; b=C+YhtKphBx7XusaxS3
-	VHugP6/eurb44OboiEEdxNB+oNmIu14murO4V6R3z7Ms9GMWHFoeLd65krr/uUPv
-	4l2pusa4lBEwsemV9Teo+qk8Qsfew3x1Gzmz/pfKHy1maxzqPe5nA6a0GLHW+2VK
-	08ckQnr9RdW06sZyGDhar3waw=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3FVK0US9oZlrDDA--.28595S2;
-	Fri, 23 May 2025 00:32:53 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: bhelgaas@google.com,
-	kwilczynski@kernel.org,
-	manivannan.sadhasivam@linaro.org
-Cc: ajayagarwal@google.com,
-	ilpo.jarvinen@linux.intel.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH] i2c: tegra: Add missing kernel-doc for dma_dev member
-Date: Fri, 23 May 2025 00:32:51 +0800
-Message-Id: <20250522163251.399223-1-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1747931539; c=relaxed/simple;
+	bh=Ikpfw5DxXatiO8qg05oD4q0i1JtAcl8pQtTE9mpiQPg=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=kr3PItHpkMTj6HGknuZD03iejjC/Qv+qqbitNrRXdx0oBqdfwX2rSIt9BLrDJLj67QnayZBkerCScgvDacvn5FeASN+xH5XOUiJ2NlqPpPKp4Kv+HWnUwV41z7TCvxvtSc0b/DMR5v6mnLERDefg2Ok5tKXzKzyv9Qzban73pcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=llFbdymD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF153C4CEE4;
+	Thu, 22 May 2025 16:32:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747931539;
+	bh=Ikpfw5DxXatiO8qg05oD4q0i1JtAcl8pQtTE9mpiQPg=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=llFbdymDahxgrnprBXWjf2mTo5Rn7iwEc6xKvPYU5l0JiLGIQ2rYSeBBk3x1S794b
+	 zwVci7KE+beKREW15DkCeiJUfBmOCWqx49VnlTNNgpRfVYNumJoymlMyYA6ehDrAW7
+	 fYs/fm5gXzJOPrnFTm2BO01s08W3KL2hsKfjzo0x8NnqR1ipbJDIvHAK3u//pa6xK3
+	 IBAXr2+iWc1+PSTmHlhJQT7871iti+mCyl/PlpKpzY6lZX5EUEo7jZyl5wXQcaAJ+6
+	 g1Due19LjammTN4C02YBxXfSh4OdBsvknDXJ+0VJsQahnX/VZnTSt+MYXp1AxKLC4d
+	 zGjgUCt2k9UsQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFC23805D89;
+	Thu, 22 May 2025 16:32:55 +0000 (UTC)
+Subject: Re: [GIT PULL] pin control late fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CACRpkdaEmKn_0QObo9kFrgm2TajepUFjcgK8CVn-u_zMmoEO8g@mail.gmail.com>
+References: <CACRpkdaEmKn_0QObo9kFrgm2TajepUFjcgK8CVn-u_zMmoEO8g@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CACRpkdaEmKn_0QObo9kFrgm2TajepUFjcgK8CVn-u_zMmoEO8g@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.15-4
+X-PR-Tracked-Commit-Id: 41e452e6933d14146381ea25cff5e4d1ac2abea1
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b1819ae85e7df3dfda1f387f32fb487ca40052ad
+Message-Id: <174793157434.2940668.6700631357282732275.pr-tracker-bot@kernel.org>
+Date: Thu, 22 May 2025 16:32:54 +0000
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Bartosz Golaszewski <brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3FVK0US9oZlrDDA--.28595S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrKr45Kry3trWDZw1rury7trb_yoWkXrgEvF
-	n7WF47tr1q9rnIyF13WF4fXryjkrWYgF1ktas7t39aka4qqw15GF1DZrWfCrW8X3ZrtFsr
-	Wr1DtFWIyrnxAjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRMjg4DUUUUU==
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxxVo2gvTnlNyQAAsF
 
-Fix the kernel-doc warning by describing the 'dma_dev' member in
-the tegra_i2c_dev struct.  This resolves the compilation warning:
+The pull request you sent on Thu, 22 May 2025 10:39:03 +0200:
 
-drivers/i2c/busses/i2c-tegra.c:297: warning: Function parameter or struct member 'dma_dev' not described in 'tegra_i2c_dev'
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.15-4
 
-Fixes: cdbf26251d3b ("i2c: tegra: Allocate DMA memory for DMA engine")
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/i2c/busses/i2c-tegra.c | 1 +
- 1 file changed, 1 insertion(+)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b1819ae85e7df3dfda1f387f32fb487ca40052ad
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 87976e99e6d0..07bb1e7e84cc 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -253,6 +253,7 @@ struct tegra_i2c_hw_feature {
-  * @dma_phys: handle to DMA resources
-  * @dma_buf: pointer to allocated DMA buffer
-  * @dma_buf_size: DMA buffer size
-+ * @dma_dev: DMA device used for transfers
-  * @dma_mode: indicates active DMA transfer
-  * @dma_complete: DMA completion notifier
-  * @atomic_mode: indicates active atomic transfer
+Thank you!
 
-base-commit: fee3e843b309444f48157e2188efa6818bae85cf
 -- 
-2.25.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
