@@ -1,201 +1,90 @@
-Return-Path: <linux-kernel+bounces-658446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56BFAAC0281
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 04:35:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC33EAC0266
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 04:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A48D4E4275
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 02:35:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F34121894077
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 02:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B949713AD1C;
-	Thu, 22 May 2025 02:35:31 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC5E4A1A;
+	Thu, 22 May 2025 02:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="Q4C3+Lhr"
+Received: from jpms-ob02.noc.sony.co.jp (jpms-ob02.noc.sony.co.jp [211.125.140.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643572CCA5;
-	Thu, 22 May 2025 02:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193041854;
+	Thu, 22 May 2025 02:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747881331; cv=none; b=ATq3xno2NM8ElC9Vgi5szqEtxPOMl1sMGRupk0ARnlL+sIEFPOhCVMyH7EvpvcNnFK84gITJTFNPHtrE/T4BWj0a5RJNocE5QcTNbpcx2ixbpUm8ytB1vEPnWeQjKMjCuudFZ9fbznuhsH1r0pSd/gtBoTzrnUt/dX7/ptHPJHw=
+	t=1747880220; cv=none; b=NRuY/u8nOqoh+swj3nklNOd/IdqRrY+c0A1fsk/3ulgu6uiUiBDMxQ354oq2i/7h/pv3gtfSdq8S5UbZIfZZlogHE45D0JgGX9GubjBWqM/wIRcVTn9rWpj9Bl0WGGRbiM4gr+0S9iP92Ow7Aatb1vD5HyKHZbRl+l55uFVtfWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747881331; c=relaxed/simple;
-	bh=X8/nxAlnKfmIilukc3uLUJEJN3++P9YxcsunTFAgtag=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BC00shq5IZZPMLjvEm1yzJi/We6LoOe9GjSL6sOKnNrPNTM/F9FNvXNAW9579mG43QoL1kli5yeraOhvAOytg7dZYkCDE/On7YZUtRbHW+zQVj57aVjb84Z2VWXbh4NJ+IUao154WO9iOvBLyDEQ7hipPyTNHWABdbH1ujvQsyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 6893bc6e36b511f0b29709d653e92f7d-20250522
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:4803fc01-066d-448a-8340-36b1d7bdff29,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:-50
-X-CID-META: VersionHash:6493067,CLOUDID:20bd7ec11e7dd67939d0da93bdc0c57b,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:1,IP:n
-	il,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LE
-	S:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 6893bc6e36b511f0b29709d653e92f7d-20250522
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1973197324; Thu, 22 May 2025 10:35:21 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 3B0C6E00351D;
-	Thu, 22 May 2025 10:17:09 +0800 (CST)
-X-ns-mid: postfix-682E8925-85700445
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 17B3CE00351C;
-	Thu, 22 May 2025 10:17:08 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: rafael@kernel.org,
-	len.brown@intel.com,
-	pavel@kernel.org
-Cc: linux-pm@vger.kernel.org,
+	s=arc-20240116; t=1747880220; c=relaxed/simple;
+	bh=yLUmlP7DaNAVtrWCSbOK7YUSTa1ul9w87aAbB+oebN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gT0G0bG0bQQCtZCJv1BbzXBwRjga1w6gLAr5WfTQvrRUunyQrWlejt19qSY+uGsoGWM2Bqn3Dcea5PNDPlcOwOC4MLRv1SogILpsiaaWIXp07BxP2ORM3av9WqivW3vRkc5wNKsl3o0Ou0EBjqILUnCJEGWRq6xmlJFAMoLP2Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=Q4C3+Lhr; arc=none smtp.client-ip=211.125.140.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=sony.com; s=s1jp; t=1747880218; x=1779416218;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qyFEWQvfFcI7M33d2V0gAbJnT7bAeiGW1d15NiaUM58=;
+  b=Q4C3+LhrGZHZtKVj/ayX7N5hwsLYGQIyuCAwZqXfzSwTYQDYVkpGwVC2
+   MlQJ+ChDnek6PjecFPx2Vm75enFZb5epVErsYAPhuxZN0XeHF7DG+nQSU
+   sZLxVpj+pBX3+eT0x/D3md4HiHRke63glDR2EvygNBH6mk/866Q0WNRmY
+   t5SEc/Lq1i09Lu7jOOGZLZkjAAmmWsa0zYwGS7fc2jF6NeYxQ3kfXCJk8
+   6oTJXRE21JajSlpm+9aeY2ZIJGj9IyppX8lfJbQ5HCR00/KHh4Y0CHrxZ
+   bszTXf7ec+dXiNKX4MUtiSeTqWfO5hlxEARiyrJgQRjRWldn3DEBZaN+V
+   w==;
+Received: from unknown (HELO jpmta-ob02.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::7])
+  by jpms-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 11:16:55 +0900
+X-IronPort-AV: E=Sophos;i="6.15,304,1739804400"; 
+   d="scan'208";a="532597744"
+Received: from unknown (HELO JPC00244420) ([IPv6:2001:cf8:1:573:0:dddd:6b3e:119e])
+  by jpmta-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 11:16:56 +0900
+Date: Thu, 22 May 2025 11:16:52 +0900
+From: Shashank Balaji <shashank.mahadasyam@sony.com>
+To: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	tzungbi@kernel.org,
-	a.fatoum@pengutronix.de,
-	jani.nikula@intel.com,
-	joel.granados@kernel.org,
-	paulmck@kernel.org,
-	zhangguopeng@kylinos.cn,
-	linux@weissschuh.net,
-	Zihuan Zhang <zhangzihuan@kylinos.cn>
-Subject: [PATCH v2 3/3] PM / Sleep: Replace mutex_trylock(&system_transition_mutex) with try_lock_system_sleep()
-Date: Thu, 22 May 2025 10:16:49 +0800
-Message-Id: <20250522021649.55228-4-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250522021649.55228-1-zhangzihuan@kylinos.cn>
-References: <20250522021649.55228-1-zhangzihuan@kylinos.cn>
+	Shinya Takumi <shinya.takumi@sony.com>
+Subject: Re: [PATCH v3 3/3] cgroup, docs: cpu controller's interaction with
+ various scheduling policies
+Message-ID: <aC6JFEBfMzsUrChn@JPC00244420>
+References: <20250522-rt-and-cpu-controller-doc-v3-0-483fc9cca591@sony.com>
+ <20250522-rt-and-cpu-controller-doc-v3-3-483fc9cca591@sony.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250522-rt-and-cpu-controller-doc-v3-3-483fc9cca591@sony.com>
 
-This patch replaces the remaining instances of mutex_trylock(&system_tran=
-sition_mutex)
-that semantically intend to *try* acquiring the lock with the newly intro=
-duced
-try_lock_system_sleep(), which provides a clearer abstraction and avoids =
-direct
-mutex operations in higher-level PM logic.
+Hi,
 
-This improves code readability, keeps synchronization logic consistent ac=
-ross
-all system sleep paths, and helps prepare for future enhancements or lock
-substitutions (e.g., lockdep annotations or switching to a different lock
-primitive).
+On Thu, May 22, 2025 at 11:08:14AM +0900, Shashank Balaji wrote:
+> +* Processes under the fair-class scheduler
+> +* Processes under a BPF scheduler with the ``cgroup_set_weight`` callback
+> +* Everything else: ``SCHED_{FIFO,RR,DEADLINE}`` and processes under a BPF scheduler
+> +  without the ``cgroup_set_weight`` callback
 
-Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
----
- kernel/power/hibernate.c | 6 ++++--
- kernel/power/suspend.c   | 7 +++++--
- kernel/power/user.c      | 6 ++++--
- 3 files changed, 13 insertions(+), 6 deletions(-)
+Though `cgroup_set_weight` is referred to here, CONFIG_EXT_GROUP_SCHED
+is not yet documented in sched-ext.rst. But I don't understand it well
+enough to add that documentation myself.
 
-diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-index cfaa92f24857..c06af4008183 100644
---- a/kernel/power/hibernate.c
-+++ b/kernel/power/hibernate.c
-@@ -1448,9 +1448,11 @@ static const char * const comp_alg_enabled[] =3D {
- static int hibernate_compressor_param_set(const char *compressor,
- 		const struct kernel_param *kp)
- {
-+	unsigned int sleep_flags;
- 	int index, ret;
-=20
--	if (!mutex_trylock(&system_transition_mutex))
-+	sleep_flags =3D try_lock_system_sleep();
-+	if (!sleep_flags)
- 		return -EBUSY;
-=20
- 	index =3D sysfs_match_string(comp_alg_enabled, compressor);
-@@ -1463,7 +1465,7 @@ static int hibernate_compressor_param_set(const cha=
-r *compressor,
- 		ret =3D index;
- 	}
-=20
--	mutex_unlock(&system_transition_mutex);
-+	unlock_system_sleep(sleep_flags);
-=20
- 	if (ret)
- 		pr_debug("Cannot set specified compressor %s\n",
-diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-index 8eaec4ab121d..7d39f1ae9711 100644
---- a/kernel/power/suspend.c
-+++ b/kernel/power/suspend.c
-@@ -564,6 +564,7 @@ static void suspend_finish(void)
-  */
- static int enter_state(suspend_state_t state)
- {
-+	unsigned int sleep_flags;
- 	int error;
-=20
- 	trace_suspend_resume(TPS("suspend_enter"), state, true);
-@@ -577,7 +578,9 @@ static int enter_state(suspend_state_t state)
- 	} else if (!valid_state(state)) {
- 		return -EINVAL;
- 	}
--	if (!mutex_trylock(&system_transition_mutex))
-+
-+	sleep_flags =3D try_lock_system_sleep();
-+	if (!sleep_flags)
- 		return -EBUSY;
-=20
- 	if (state =3D=3D PM_SUSPEND_TO_IDLE)
-@@ -609,7 +612,7 @@ static int enter_state(suspend_state_t state)
- 	pm_pr_dbg("Finishing wakeup.\n");
- 	suspend_finish();
-  Unlock:
--	mutex_unlock(&system_transition_mutex);
-+	unlock_system_sleep(sleep_flags);
- 	return error;
- }
-=20
-diff --git a/kernel/power/user.c b/kernel/power/user.c
-index 3f9e3efb9f6e..a41fb48b3f96 100644
---- a/kernel/power/user.c
-+++ b/kernel/power/user.c
-@@ -249,6 +249,7 @@ static int snapshot_set_swap_area(struct snapshot_dat=
-a *data,
- static long snapshot_ioctl(struct file *filp, unsigned int cmd,
- 							unsigned long arg)
- {
-+	unsigned int sleep_flags;
- 	int error =3D 0;
- 	struct snapshot_data *data;
- 	loff_t size;
-@@ -266,7 +267,8 @@ static long snapshot_ioctl(struct file *filp, unsigne=
-d int cmd,
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
-=20
--	if (!mutex_trylock(&system_transition_mutex))
-+	sleep_flags =3D try_lock_system_sleep();
-+	if (!sleep_flags)
- 		return -EBUSY;
-=20
- 	lock_device_hotplug();
-@@ -417,7 +419,7 @@ static long snapshot_ioctl(struct file *filp, unsigne=
-d int cmd,
- 	}
-=20
- 	unlock_device_hotplug();
--	mutex_unlock(&system_transition_mutex);
-+	unlock_system_sleep(sleep_flags);
-=20
- 	return error;
- }
---=20
-2.25.1
+Thanks
 
+Regards,
+Shashank
 
