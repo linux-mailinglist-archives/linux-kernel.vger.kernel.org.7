@@ -1,144 +1,148 @@
-Return-Path: <linux-kernel+bounces-659062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 579C0AC0AE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:54:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C8ECAC0AE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEC381894D8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:54:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 863C2A244DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277CA28A40A;
-	Thu, 22 May 2025 11:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346D128A41C;
+	Thu, 22 May 2025 11:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SluC6gll"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PIa/Wk9C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FB528A1D5
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 11:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745CF28A1DC;
+	Thu, 22 May 2025 11:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747914876; cv=none; b=Xty1UwzfRyI0Dk2iB1j7MmnlHdJKKa2KwruGBYDbBhtUl7SEs/uqIzl8mT5Jb4uGdNFlXs8VW5T/xljnkLGDFyUyL5YySNmCTPeIVw1Kp5BoSvTW41k6Y7CAY90p344/50MPXPYhI0OVhnShAhfC4iNjsLL81iLDezhx8S91Rbk=
+	t=1747914888; cv=none; b=faaey8VwI52yuRl4vSTHy/AKmZk/HZNhwH1VwiVED95mi9qyffbOORFxDxDR89MyfK5gn8XsOw2LUJGxCnjXliF1zeTisX9vUWmxpOlyz8v5TXNSilmERYo96qwVsBGHuE1XcLAXQkuRNmvLP+mK0yFBg3ZfntpvXSUlf7FnvVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747914876; c=relaxed/simple;
-	bh=5gAmb49IIazbAEJoONsRShX8sNRCkUD2M0GcRQSzMZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fsJXs2VI1V7F8kpbTzIMAWw/BHrULDxBjRCqNkyKtnt4kANjjixX5O+GgjEWs90+JCMUgmlO9PBHwI85R5uZcsNjQKaznrKEjm+QgyRCZJ4BLIXAXjIwXWKZF9+VBkSKTTI2FYPX+ME3Neg7KQHleXrS6QUrOwiIw0mJwTSlMyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SluC6gll; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OaRRngOHy0kK33o+oMOgjYeJSVoBzhiok336J8dzm6g=; b=SluC6glli74tHAo/ZVm/SJwlJL
-	WUQ4HmVN9bmduxda/C5kgVMWxl5Tl2sb8epFML8cDASr7cJ8oSwrX/Owfd/9ePUKe8BDMKSoOdzYX
-	uV9vzVLfVE0p9E+aaUp70XXLEgqD0bJZhZuwOkK84jGuCW8TNtb64kGMepmpA1mPVxelxTIgYPiUN
-	2dmJ88BDj0qUNpBsBe3aLADRvyvhRdEQFb2nWasFX+5Of5FPeiGbY4xCs80HBvOyBb+zxvpvLYcS8
-	amQkMGlw7s0j+2p4INKtxyVCGZx9siKGVVv9XDy4Cb0yjs6DZFNFB5muL4+2Y60CKGmrIoN1/XtU5
-	/fGM+Ebw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1uI4V9-000000011hz-3prp;
-	Thu, 22 May 2025 11:54:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1AEB93002E5; Thu, 22 May 2025 13:54:19 +0200 (CEST)
-Date: Thu, 22 May 2025 13:54:18 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Aaron Lu <ziqianlu@bytedance.com>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>
-Subject: Re: [PATCH 2/7] sched/fair: prepare throttle path for task based
- throttle
-Message-ID: <20250522115418.GI24938@noisy.programming.kicks-ass.net>
-References: <20250520104110.3673059-1-ziqianlu@bytedance.com>
- <20250520104110.3673059-3-ziqianlu@bytedance.com>
- <20250522104843.GG39944@noisy.programming.kicks-ass.net>
- <20250522114012.GA672414@bytedance>
+	s=arc-20240116; t=1747914888; c=relaxed/simple;
+	bh=Nryi9QMkPLKZdjBmO37cvNvIiUIaiZZgJ1/+v4pk0d8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VikqW7HMGNG1+jChKdOwvo+tpwsWWrIE2ozNA06N5F8Le21dtG8BWjKWs02EpTKIAOPyF65riF2KzXaboM7JkprPXIUxkvbgORQ18Tz70k1sHMsrqVGBJG1/+Fd5fO2c7lOXcWt16CmJWvFOhQcje/H4Gy+ECrUMHWXkRJdtnGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PIa/Wk9C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D776FC4CEE4;
+	Thu, 22 May 2025 11:54:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747914887;
+	bh=Nryi9QMkPLKZdjBmO37cvNvIiUIaiZZgJ1/+v4pk0d8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PIa/Wk9CjnaF3EyPtT2yfVbpH2Z65JH/9xkgqm3jEDkoVpf2g9r/U3uxEG1CRexGf
+	 tqRaswH6pXE7VkAw1TQvDMT/r8tykf2aoDwDZ5elmKuH7thq2BUG+U+HMguiaAc99S
+	 rmKpu4r0e6PPKhLX04ttwL03pzdht8uE+/egbj6ny9xxgoZPKWqBl0kysTaZsTTD5C
+	 7tndUIt/j0Pri+Eq3WEvFj2YNJ/GahAPWb5wyE+35tw35laWkimPfsjjndZ1OLchoG
+	 k8XL3DOWYhItT2unOcmqehajtBxcOfSre/HIhAxwKCFWJNSzZbFJDA2xbR7RN1dPNW
+	 hzeg4uOK0z5Lw==
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-606440d92eeso3811771eaf.2;
+        Thu, 22 May 2025 04:54:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVgjJArXxEkv5oiYqAMjXijZQEAM3rTavDv5ZkZY+MZmzzuPptVsmJDf6meTIfySLg8tRybz5sVWUJk4c1O@vger.kernel.org, AJvYcCW+RCRQF9BJKGgdRIz5LgUT4wA9eEvYdv4aWEjgeZrGvZds0T/41QS9+fd5uB3+pGXp/pSHYemNFlU=@vger.kernel.org, AJvYcCWGZgvjepXr1X5JuDLl3mB4+NmzYHM0DgCwhVOx2IEbsvT7XsOf5MohTlTwwU1lv0WklIxmWwzIeR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywVPATnezHyGbFaVFsslU9sON+biia7x/mFSmFlfZzTyAtNsXW
+	b1Vn7vvBTOuBA3aSDK2c6fxPkLcyabX7QL+2D3yAAb7oqq1r8l67iEy/T2x8ofwn4Lz33Iz2+ob
+	pubK2T/dwPM9yxwVKUYf6najWHOareLk=
+X-Google-Smtp-Source: AGHT+IG+KzzlVR5WjMP68KLNL7UutmcZ1GBLYAe3Zls3GG+S92wBlVefQFR7vROwlcJ9qGU+spgYeWgkBLpmk6P7mOw=
+X-Received: by 2002:a05:6820:2705:b0:606:26bd:7208 with SMTP id
+ 006d021491bc7-609f37bc37dmr15131315eaf.7.1747914887086; Thu, 22 May 2025
+ 04:54:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522114012.GA672414@bytedance>
+References: <20250522-userspace-governor-doc-v1-1-c8a038e39084@sony.com>
+ <15871c67-0d18-430f-935e-261b2cda855b@gmail.com> <CAJZ5v0gz3Y+RGqBf9E1hzq9rwfrryd98Xpk51DtLd-uck5y-rw@mail.gmail.com>
+ <b62c0462-8185-4eb8-8ac6-7f2abc387768@gmail.com>
+In-Reply-To: <b62c0462-8185-4eb8-8ac6-7f2abc387768@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 22 May 2025 13:54:36 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jrwDJ-TQuay_OkwfsWr2z9COg=oDY7q0FqRBC-3_br2Q@mail.gmail.com>
+X-Gm-Features: AX0GCFvq_DNusbqq8SXDC-zaNsRp6E6EsPke3RrXzEnZGLbMYlcVyN8Q9_5afVs
+Message-ID: <CAJZ5v0jrwDJ-TQuay_OkwfsWr2z9COg=oDY7q0FqRBC-3_br2Q@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq, docs: (userspace governor) add that actual freq
+ is >= scaling_setspeed
+To: Russell Haley <yumpusamongus@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Shashank Balaji <shashank.mahadasyam@sony.com>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Jonathan Corbet <corbet@lwn.net>, linux-pm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Shinya Takumi <shinya.takumi@sony.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 22, 2025 at 07:44:55PM +0800, Aaron Lu wrote:
-> On Thu, May 22, 2025 at 12:48:43PM +0200, Peter Zijlstra wrote:
-> > On Tue, May 20, 2025 at 06:41:05PM +0800, Aaron Lu wrote:
-> > 
-> > >  static void throttle_cfs_rq_work(struct callback_head *work)
-> > >  {
-> > > +	struct task_struct *p = container_of(work, struct task_struct, sched_throttle_work);
-> > > +	struct sched_entity *se;
-> > > +	struct cfs_rq *cfs_rq;
-> > > +	struct rq *rq;
-> > > +
-> > > +	WARN_ON_ONCE(p != current);
-> > > +	p->sched_throttle_work.next = &p->sched_throttle_work;
-> > > +
-> > > +	/*
-> > > +	 * If task is exiting, then there won't be a return to userspace, so we
-> > > +	 * don't have to bother with any of this.
-> > > +	 */
-> > > +	if ((p->flags & PF_EXITING))
-> > > +		return;
-> > > +
-> > > +	scoped_guard(task_rq_lock, p) {
-> > > +		se = &p->se;
-> > > +		cfs_rq = cfs_rq_of(se);
-> > > +
-> > > +		/* Raced, forget */
-> > > +		if (p->sched_class != &fair_sched_class)
-> > > +			return;
-> > > +
-> > > +		/*
-> > > +		 * If not in limbo, then either replenish has happened or this
-> > > +		 * task got migrated out of the throttled cfs_rq, move along.
-> > > +		 */
-> > > +		if (!cfs_rq->throttle_count)
-> > > +			return;
-> > > +		rq = scope.rq;
-> > > +		update_rq_clock(rq);
-> > > +		WARN_ON_ONCE(!list_empty(&p->throttle_node));
-> > > +		dequeue_task_fair(rq, p, DEQUEUE_SLEEP | DEQUEUE_SPECIAL);
-> > > +		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
-> > > +		resched_curr(rq);
-> > > +	}
-> > > +
-> > > +	cond_resched_tasks_rcu_qs();
-> > >  }
-> > 
-> > What's that cond_resched thing about? The general plan is to make
-> > cond_resched go away.
-> 
-> Got it.
-> 
-> The purpose is to let throttled task schedule and also mark a task rcu
-> quiescent state. Without this cond_resched_tasks_rcu_qs(), this task
-> will be scheduled by cond_resched() in task_work_run() and since that is
-> a preempt schedule, it didn't mark a task rcu quiescent state.
-> 
-> Any suggestion here? Perhaps a plain schedule()? Thanks.
+On Thu, May 22, 2025 at 1:15=E2=80=AFPM Russell Haley <yumpusamongus@gmail.=
+com> wrote:
+>
+>
+>
+> On 5/22/25 4:47 AM, Rafael J. Wysocki wrote:
+> > On Thu, May 22, 2025 at 10:51=E2=80=AFAM Russell Haley <yumpusamongus@g=
+mail.com> wrote:
+> >>
+> >>
+> >> On 5/22/25 3:05 AM, Shashank Balaji wrote:
+> >>> The userspace governor does not have the CPUFREQ_GOV_STRICT_TARGET fl=
+ag, which
+> >>> means the requested frequency may not strictly be followed. This is t=
+rue in the
+> >>> case of the intel_pstate driver with HWP enabled. When programming th=
+e
+> >>> HWP_REQUEST MSR, the min_perf is set to `scaling_setspeed`, and the m=
+ax_perf
+> >>> is set to the policy's max. So, the hardware is free to increase the =
+frequency
+> >>> beyond the requested frequency.
+> >>>
+> >>> This behaviour can be slightly surprising, given the current wording =
+"allows
+> >>> userspace to set the CPU frequency". Hence, document this.
+> >>>
+> >>
+> >> In my opinion, the documentation is correct, and it is the
+> >> implementation in intel_pstate that is wrong. If the user wanted two
+> >> separate knobs that control the minimum and maximum frequencies, they
+> >> could leave intel_pstate in "active" mode and change scaling_min_freq
+> >> and scaling_max_freq.
+> >>
+> >> If the user asks for the frequency to be set from userspace, the
+> >> frequency had damn well better be set from userspace.
+> >
+> > The userspace governor requests a frequency between policy->min and
+> > policy->max on behalf of user space.  In intel_pstate this translates
+> > to setting DESIRED_PERF to the requested value which is also the case
+> > for the other governors.
+>
+> Huh.  On this Skylake box with kernel 6.14.6, it seems to be setting
+> Minimum_Performance, and leaving desired at 0.
+>
+> > echo userspace | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_=
+governor
+> userspace
+> > echo 1400000 | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_se=
+tspeed
+> 1400000
+> > sudo x86_energy_perf_policy &| grep REQ
+> cpu0: HWP_REQ: min 14 max 40 des 0 epp 128 window 0x0 (0*10^0us) use_pkg =
+0
+> cpu1: HWP_REQ: min 14 max 40 des 0 epp 128 window 0x0 (0*10^0us) use_pkg =
+0
+> cpu2: HWP_REQ: min 14 max 40 des 0 epp 128 window 0x0 (0*10^0us) use_pkg =
+0
+> cpu3: HWP_REQ: min 14 max 40 des 0 epp 128 window 0x0 (0*10^0us) use_pkg =
+0
+> cpu4: HWP_REQ: min 14 max 40 des 0 epp 128 window 0x0 (0*10^0us) use_pkg =
+0
+> cpu5: HWP_REQ: min 14 max 40 des 0 epp 128 window 0x0 (0*10^0us) use_pkg =
+0
+> cpu6: HWP_REQ: min 14 max 40 des 0 epp 128 window 0x0 (0*10^0us) use_pkg =
+0
+> cpu7: HWP_REQ: min 14 max 40 des 0 epp 128 window 0x0 (0*10^0us) use_pkg =
+0
 
-I am confused, this is task_work_run(), that is ran from
-exit_to_user_mode_loop(), which contains a schedule().
-
-
+OK, let me double check the code.
 
