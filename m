@@ -1,98 +1,110 @@
-Return-Path: <linux-kernel+bounces-659188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D8FAC0C8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:19:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA80AC0C97
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92F891719C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:19:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDA091BC3286
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AC028B7F9;
-	Thu, 22 May 2025 13:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fkb7+nGF"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFC928BAB5;
+	Thu, 22 May 2025 13:22:54 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D202F85B
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 13:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F1E28983A;
+	Thu, 22 May 2025 13:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747919984; cv=none; b=jWJL25QbMPLOwzPy+jQFX+hyfkTvVQ858JuaRk3SYboVfKMNK7XAnNe/aW3b191MC7J4dYcjujF3ELjfUiWW52Qn/Vce3VVyBOybanml34QPAi62uaGDMNSDbTX2aETn/qrVLsBcfaMXScUfKAzHjeGVYJC7xyxud3whMBMPbXY=
+	t=1747920173; cv=none; b=Z7nZ/YaJNmjkg9NpVqBZZjmfewEyuNUrpqHQOkjcj6syNnl8A7iQBRlSNacct50dNIHI08pYSCgxnI+rnOVwlj0P0zwWpu2wQMFz0sGrDe86rrzs6vR3ssFd42oM5z3YtUhXlWsbTBBNoiJaYO8XIC3UTTV2MdJqFeEDz7UVw5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747919984; c=relaxed/simple;
-	bh=OoUe0D3OUFbjbHWNDKuCTzdMXzlvgmA5IBnMGnJgbk8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xy4CEgS+ebMPEzTgiT0plqHjFl09gUlNrKLEgKhUeC37rwMpPtTuig+EYmzrtDxSGnPdOOhdeH7btDARQW7ItlMp0EWGEMN70oatvvtpU1IWQLCNGse5MaHlSpzf1KjdN+5pclhbZRR9V5JjcEGj0s6rlN8vgedo0xtDCqGiI/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fkb7+nGF; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747919980;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EsWesO4sxz1LlUTR6SNF4pk6GAEisGaVRrkkPirpVNY=;
-	b=fkb7+nGFgpQ17dT1gc1eDBaDeAOGw6YaZVwsIwFOloVzcP/dg2hAbM00XPX92tE1gTmQnM
-	R0dvV0EdrsrA5seBQ9Uf22CQFScPJuMqWvksLJ2r0AetgZU/cijIpgfkLZwjKtUGHea72v
-	/1a8GtD4kx3FifOaOkmgletbOCFIIJs=
-From: Yajun Deng <yajun.deng@linux.dev>
-To: andrew@lunn.ch,
-	hkallweit1@gmail.com,
-	linux@armlinux.org.uk,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yajun Deng <yajun.deng@linux.dev>
-Subject: [PATCH net-next] net: phy: Synchronize c45_ids to phy_id
-Date: Thu, 22 May 2025 21:19:18 +0800
-Message-Id: <20250522131918.31454-1-yajun.deng@linux.dev>
+	s=arc-20240116; t=1747920173; c=relaxed/simple;
+	bh=5FURPwUiKabBhN6PL3QOmJ1rlhPRokHIUYLphhQXZW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tlyDyYKkO03aMv7SdDv6FcWSz1aX5v8F/51/E8xAmr0VR4r9Y5H1yJRMThmtoKgSiLLbnEK+fWMZjz+XQ0vAokALei2iFSs5lLP/nV35TUNz4ItmBCaiA2V2O38qyS6FGGwKZ3t8QCaE2mqjJBBwdsf2pvVV7GUelPiLc92ZVaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: by Chamillionaire.breakpoint.cc (Postfix, from userid 1003)
+	id 2A0856015E; Thu, 22 May 2025 15:22:49 +0200 (CEST)
+Date: Thu, 22 May 2025 15:19:54 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Lance Yang <ioworker0@gmail.com>, kadlec@netfilter.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, coreteam@netfilter.org,
+	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	Zi Li <zi.li@linux.dev>
+Subject: Re: [RESEND PATCH 1/1] netfilter: load nf_log_syslog on enabling
+ nf_conntrack_log_invalid
+Message-ID: <aC8keoPd6oj4-zIV@strlen.de>
+References: <20250514053751.2271-1-lance.yang@linux.dev>
+ <aC2lyYN72raND8S0@calendula>
+ <aC23TW08pieLxpsf@strlen.de>
+ <6f35a7af-bae7-472d-8db6-7d33fb3e5a96@linux.dev>
+ <aC4aNCpZMoYJ7R02@strlen.de>
+ <1c21a452-e1f4-42e0-93c0-0c49e4612dcd@linux.dev>
+ <aC7Fg0KGari3NQ3Z@strlen.de>
+ <ac51507e-28ca-404d-a784-7cc3721ee624@linux.dev>
+ <0e89bc09-c0ee-49d0-bbde-430cca361fd6@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0e89bc09-c0ee-49d0-bbde-430cca361fd6@linux.dev>
 
-The phy_id_show() function emit the phy_id for the phy device. If the phy
-device is a c45 device, the phy_id is empty. In other words, phy_id_show()
-only works with the c22 device.
+Lance Yang <lance.yang@linux.dev> wrote:
+> Does this helper look correct?
 
-Synchronize c45_ids to phy_id, phy_id_show() will work with both the c22
-and c45 devices.
+Yes, but ...
+> /**
+>   * nf_log_is_registered - Check if NF_LOG is registered for a protocol
+>   * family
+>   *
+>   * @pf: protocol family (e.g., NFPROTO_IPV4)
+>   *
+>   * Returns true if NF_LOG is registered, false otherwise.
+>   */
+> bool nf_log_is_registered(int pf)
+> {
+>          struct nf_logger *logger;
+> 
+>          logger = nf_logger_find_get(pf, NF_LOG_TYPE_LOG);
+>          if (logger) {
+>                  nf_logger_put(pf, NF_LOG_TYPE_LOG);
+>                  return true;
+>          }
+> 
+>          logger = nf_logger_find_get(pf, NF_LOG_TYPE_ULOG);
+>          if (logger) {
+>                  nf_logger_put(pf, NF_LOG_TYPE_ULOG);
+>                  return true;
+>          }
+> 
+>          return false;
+> }
 
-Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
----
- drivers/net/phy/phy_device.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Why not simply do:
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 2eb735e68dd8..6fed3e84e1a6 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -690,8 +690,12 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, u32 phy_id,
- 	dev->pma_extable = -ENODATA;
- 	dev->is_c45 = is_c45;
- 	dev->phy_id = phy_id;
--	if (c45_ids)
-+	if (c45_ids) {
- 		dev->c45_ids = *c45_ids;
-+		dev->phy_id = dev->c45_ids.device_ids[MDIO_MMD_PMAPMD];
-+		if (!dev->phy_id)
-+			dev->phy_id = dev->c45_ids.device_ids[MDIO_MMD_PCS];
-+	}
- 	dev->irq = bus->irq[addr];
- 
- 	dev_set_name(&mdiodev->dev, PHY_ID_FMT, bus->id, addr);
--- 
-2.25.1
+bool nf_log_is_registered(int pf)
+{
+	int i;
 
+	for (i = 0; i < NF_LOG_TYPE_MAX; i++) {
+		if (rcu_access_pointer(loggers[pf][i]))
+			return true;
+	}
+
+	return false;
+}
+
+?
 
