@@ -1,72 +1,76 @@
-Return-Path: <linux-kernel+bounces-659645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650C9AC1300
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:04:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A64AC135E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21CE14A4743
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:04:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C1033A72C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E3819DFA7;
-	Thu, 22 May 2025 18:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2CA1D5AB5;
+	Thu, 22 May 2025 18:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XYjvCUz5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="EmusxnN0";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="Qu/MrA5m"
+Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD64D19C554
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6B2158874
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747937054; cv=none; b=ADLlQZQVy6H+MT6VU48neC8qzXYUEkiptiZ5MgZWOmnDbLgUCrP2XAI07Al0Lv/JYIbfk/j8I9+3wcGw6FAY1ng8w0aMUoHsvg9hYRur7cxfnfQq9NoZJ2K1UIoL8+r4SZPzieXfy44jcd9zlKRHDWrwngayxfihoxlmK7cOXGI=
+	t=1747938679; cv=none; b=CHgv0nvuooFhESLfFODqMdQRLl8Hwcbp9jvN4+ROUIa8E3A/HdAN5935BmCFqZf1PsQ8QCtYZWPzB7Y8lVwYXxqWvO8bMZIslEjRLVbkm1hAOhm4fsRS7dSuP/BOjtD4f/zWoD4blVj02xhPSs8Ql7hv5jdFbrQoRWs+7BTWyv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747937054; c=relaxed/simple;
-	bh=LcT2p4P4qvyPV4p+CYgvYOhpRLDPOouyYXsVnJSmR04=;
+	s=arc-20240116; t=1747938679; c=relaxed/simple;
+	bh=ExiGtKKlNl5omI6u/F8jfCRa/a4eEg7GmAo4NYEvkek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O5M04sCEE0WJhJJre65mO/45gtDS3vbonk60bO9Rn7YDafgxlx3k6IEu2BVLtxVE/S37hFXkxIVxw6B5w80uxJmWO8k8rCBjkEyD1OMJPJiI0cbyQllc0RmBf8Wbqd+1YzW+ogw3CxJAzOGY+wYEzZQ7FnOel5KqLQg+vBNM8eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XYjvCUz5; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747937053; x=1779473053;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LcT2p4P4qvyPV4p+CYgvYOhpRLDPOouyYXsVnJSmR04=;
-  b=XYjvCUz5CKDUj0S8il75nK52en+MkhysOvStauRfssreXyM26peUdmbD
-   CcBgWJ698ImU60WMaZpYEXXs/Y/rJ8ji0g1rZxGPyDNYRV8pTpnBtqjPw
-   jdf1Iiamvm0kBongRTlXTSOdzWIe5Hs63t3+oVEqewaw2LlJFvFAYcFXg
-   T5AuDSFPo9Xop2aZlIziBKT0yPFZQoOv+ImsGcNaMLKKvkWWK8S2n1F11
-   8toqom8MqOkYIYAn3g5Zjmf0qfLw4KRYHSuWJQs4YDcsKeg0XX2QBR1DV
-   SA/vGotcXLjcIL6JUWoETZM8TJuHaPKsnlfHJqIO5tJ+OFfRxgv7CqdfL
-   Q==;
-X-CSE-ConnectionGUID: 0ADYeDMTQDyRqXC/LabO3w==
-X-CSE-MsgGUID: cf9TjrJ2QKyvZKpVUWhZmg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="49900177"
-X-IronPort-AV: E=Sophos;i="6.15,306,1739865600"; 
-   d="scan'208";a="49900177"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 11:04:12 -0700
-X-CSE-ConnectionGUID: SnPXLNQQRh+TwFTSKle+6A==
-X-CSE-MsgGUID: WJJcUy8yR7Gdh3pPZEKixg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,306,1739865600"; 
-   d="scan'208";a="145658207"
-Received: from lindenmc-mobl.amr.corp.intel.com (HELO desk) ([10.125.146.24])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 11:04:11 -0700
-Date: Thu, 22 May 2025 11:04:06 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: x86@kernel.org, David Kaplan <david.kaplan@amd.com>,
-	linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/7] x86/its: Use switch/case to apply mitigation
-Message-ID: <20250522180406.fb75u63drvoxj7vb@desk>
-References: <20250521-eibrs-fix-v2-0-70e2598e932c@linux.intel.com>
- <20250521-eibrs-fix-v2-4-70e2598e932c@linux.intel.com>
- <fdcf3b14-2a9b-4f47-a574-7716d9b38eb2@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uqolQBh1hUGzjlvcq8s0/4pZMrAdFGt2OE5ivFEwOR3FU7Rtr2bMU+WV4pp8Ryq5d/zkxdDdMMgQEZ+AHMT+Q5d/NeGdL3CA5V+eVqetFSnBfASkmVrYQ6jII0hQ+01V0oreugbCC9GwIPSSnHbIusLvzi2CYiIu7H6fbTFCBmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=EmusxnN0 reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=Qu/MrA5m; arc=none smtp.client-ip=103.2.141.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1747939576; h=Feedback-ID:
+	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
+	List-Unsubscribe:List-Unsubscribe-Post;
+	bh=7qN1T9wqy0WbqzOLQtkE0Dw7RBPwgU3gOcnLNpwdHSI=; b=EmusxnN0aslPQUS9Zh6L8ePeb3
+	63mNyiuyFxV4mk662CBAhtF4TudiOOwBN13FgYNuHBbh7w9PagAcRXznODeboX9W5V3b2Wqbh19+8
+	9e1oLjVP6JfgTQQelhvjo0YwN+hKcIxPdCVb8CC+mXjAQETtZy/6rwBpuUOwIVvastKM52OTEzne1
+	ZMU9EqqShzYAmIr6l5kpYloZvMXYOyKJglxzff5Sjrhyhn66YoLFIoikPuiYm91+IPP1wI2bkNmWt
+	sAbq0ncXzOLRqybxX6S7Se5dXtsr/hWzFcUvETI0TttiGuRxoFELu0UHqaatpnVWt4hXepAib5ao0
+	uFU15hqA==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1747938676; h=from : subject
+ : to : message-id : date;
+ bh=7qN1T9wqy0WbqzOLQtkE0Dw7RBPwgU3gOcnLNpwdHSI=;
+ b=Qu/MrA5m4/J30OjGZtTzoR0SrQv/Mzz2RkzTzwu2M0MTjfGgdnHdOuzuqLGMUijxK+lJQ
+ keKm11VRgYvjvIbJguZL8uKyDlD+xo2TjkYPQoOg8arTVlumEPaAJsfNhH9uT9SFyQ3Sucf
+ pfjhyHnOUBo2DXCBgSFUMmfGIUtqoHuWvsZ+g+590BO/OvCvM2JUjv84T6kIvCBuQWY7ehr
+ 43KbdJ7C3+kZ4GBxBEZXa0NUKOBxjr9qfAl+ILa2xO4wvc7PiNt19CZnaqLu1LRKLKeOdUN
+ SB99COYPyR2YCDbaxmt0/7dz417U+EngwrqWYcURiKbHbA8HoytUHrgT+yhA==
+Received: from [10.139.162.187] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1uI7hh-TRk6pL-O5; Thu, 22 May 2025 15:19:29 +0000
+Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.97.1-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1uI7hh-4o5NDgrofwj-m1A6; Thu, 22 May 2025 15:19:29 +0000
+Date: Thu, 22 May 2025 17:11:21 +0200
+From: Remi Pommarel <repk@triplefau.lt>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Jeff Johnson <jjohnson@kernel.org>,
+ Miaoqing Pan <quic_miaoqing@quicinc.com>,
+ Steev Klimaszewski <steev@kali.org>, Clayton Craft <clayton@craftyguy.net>,
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+ Nicolas Escande <nico.escande@gmail.com>,
+ ath12k@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] wifi: ath12k: fix ring-buffer corruption
+Message-ID: <aC8-mUinxA6y688X@pilgrim>
+References: <20250321095219.19369-1-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,20 +79,154 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fdcf3b14-2a9b-4f47-a574-7716d9b38eb2@suse.com>
+In-Reply-To: <20250321095219.19369-1-johan+linaro@kernel.org>
+X-Smtpcorp-Track: lqrm299UtZm5.IL9siydqSV79.uE2p-Az_j1F
+Feedback-ID: 510616m:510616apGKSTK:510616sQ6vhuulVJ
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
 
-On Thu, May 22, 2025 at 02:15:36PM +0300, Nikolay Borisov wrote:
-> 
-> 
-> On 5/22/25 05:45, Pawan Gupta wrote:
-> > Prepare to apply stuffing mitigation in its_apply_mitigation(). This is
-> > currently only done via retbleed mitigation. Also using switch/case makes
-> > it evident that mitigation mode like VMEXIT_ONLY doesn't need any special
-> > handling.
-> > 
-> > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> 
-> Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+Hi Johan,
 
-Thanks.
+On Fri, Mar 21, 2025 at 10:52:19AM +0100, Johan Hovold wrote:
+> Users of the Lenovo ThinkPad X13s have reported that Wi-Fi sometimes
+> breaks and the log fills up with errors like:
+> 
+>     ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1484, expected 1492
+>     ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
+> 
+> which based on a quick look at the ath11k driver seemed to indicate some
+> kind of ring-buffer corruption.
+> 
+> Miaoqing Pan tracked it down to the host seeing the updated destination
+> ring head pointer before the updated descriptor, and the error handling
+> for that in turn leaves the ring buffer in an inconsistent state.
+> 
+> While this has not yet been observed with ath12k, the ring-buffer
+> implementation is very similar to the ath11k one and it suffers from the
+> same bugs.
+
+Thanks for the fix. We have actually seen reports that could be related
+to this issue with ath12k. I know that this series has already been
+applied yet I do have a couple of question on how you fixed that if you
+don't mind. That would be much appreciated and would help me understand
+if mentionned reports are actually linked to this.
+
+> 
+> Add the missing memory barrier to make sure that the descriptor is read
+> after the head pointer to address the root cause of the corruption while
+> fixing up the error handling in case there are ever any (ordering) bugs
+> on the device side.
+
+Just as a personal note, driver doing that kind of ring buffer
+communication seems to generally use MMIO to store the ring indices,
+readl() providing sufficient synchronization mechanism to avoid that
+kind of issue.
+
+> 
+> Note that the READ_ONCE() are only needed to avoid compiler mischief in
+> case the ring-buffer helpers are ever inlined.
+> 
+> Tested-on: WCN7850 hw2.0 WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
+> 
+> Fixes: d889913205cf ("wifi: ath12k: driver for Qualcomm Wi-Fi 7 devices")
+> Cc: stable@vger.kernel.org	# 6.3
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=218623
+> Link: https://lore.kernel.org/20250310010217.3845141-3-quic_miaoqing@quicinc.com
+> Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>  drivers/net/wireless/ath/ath12k/ce.c  | 11 +++++------
+>  drivers/net/wireless/ath/ath12k/hal.c |  4 ++--
+>  2 files changed, 7 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath12k/ce.c b/drivers/net/wireless/ath/ath12k/ce.c
+> index be0d669d31fc..740586fe49d1 100644
+> --- a/drivers/net/wireless/ath/ath12k/ce.c
+> +++ b/drivers/net/wireless/ath/ath12k/ce.c
+> @@ -343,11 +343,10 @@ static int ath12k_ce_completed_recv_next(struct ath12k_ce_pipe *pipe,
+>  		goto err;
+>  	}
+>  
+> +	/* Make sure descriptor is read after the head pointer. */
+> +	dma_rmb();
+> +
+
+That does not seem to be the only place descriptor is read just after
+the head pointer, ath12k_dp_rx_process{,err,reo_status,wbm_err} seem to
+also suffer the same sickness.
+
+Why not move the dma_rmb() in ath12k_hal_srng_access_begin() as below,
+that would look to me as a good place to do it.
+
+@@ -2133,6 +2133,9 @@ void ath12k_hal_srng_access_begin(struct
+ath12k_base *ab, struct hal_srng *srng)
+                        *(volatile u32 *)srng->u.src_ring.tp_addr;
+        else
+                srng->u.dst_ring.cached_hp = *srng->u.dst_ring.hp_addr;
++
++       /* Make sure descriptors are read after the head pointer. */
++       dma_rmb();
+ }
+
+ /* Update cached ring head/tail pointers to HW.
+ * ath12k_hal_srng_access_begin()
+
+This should ensure the issue does not happen anywhere not just for
+ath12k_ce_recv_process_cb().
+
+Note that ath12k_hal_srng_dst_get_next_entry() does not need a barrier
+as it uses cached_hp from ath12k_hal_srng_access_begin().
+
+>  	*nbytes = ath12k_hal_ce_dst_status_get_length(desc);
+> -	if (*nbytes == 0) {
+> -		ret = -EIO;
+> -		goto err;
+> -	}
+>  
+>  	*skb = pipe->dest_ring->skb[sw_index];
+>  	pipe->dest_ring->skb[sw_index] = NULL;
+> @@ -380,8 +379,8 @@ static void ath12k_ce_recv_process_cb(struct ath12k_ce_pipe *pipe)
+>  		dma_unmap_single(ab->dev, ATH12K_SKB_RXCB(skb)->paddr,
+>  				 max_nbytes, DMA_FROM_DEVICE);
+>  
+> -		if (unlikely(max_nbytes < nbytes)) {
+> -			ath12k_warn(ab, "rxed more than expected (nbytes %d, max %d)",
+> +		if (unlikely(max_nbytes < nbytes || nbytes == 0)) {
+> +			ath12k_warn(ab, "unexpected rx length (nbytes %d, max %d)",
+>  				    nbytes, max_nbytes);
+>  			dev_kfree_skb_any(skb);
+>  			continue;
+> diff --git a/drivers/net/wireless/ath/ath12k/hal.c b/drivers/net/wireless/ath/ath12k/hal.c
+> index cd59ff8e6c7b..91d5126ca149 100644
+> --- a/drivers/net/wireless/ath/ath12k/hal.c
+> +++ b/drivers/net/wireless/ath/ath12k/hal.c
+> @@ -1962,7 +1962,7 @@ u32 ath12k_hal_ce_dst_status_get_length(struct hal_ce_srng_dst_status_desc *desc
+>  {
+>  	u32 len;
+>  
+> -	len = le32_get_bits(desc->flags, HAL_CE_DST_STATUS_DESC_FLAGS_LEN);
+> +	len = le32_get_bits(READ_ONCE(desc->flags), HAL_CE_DST_STATUS_DESC_FLAGS_LEN);
+>  	desc->flags &= ~cpu_to_le32(HAL_CE_DST_STATUS_DESC_FLAGS_LEN);
+>  
+>  	return len;
+> @@ -2132,7 +2132,7 @@ void ath12k_hal_srng_access_begin(struct ath12k_base *ab, struct hal_srng *srng)
+>  		srng->u.src_ring.cached_tp =
+>  			*(volatile u32 *)srng->u.src_ring.tp_addr;
+>  	else
+> -		srng->u.dst_ring.cached_hp = *srng->u.dst_ring.hp_addr;
+> +		srng->u.dst_ring.cached_hp = READ_ONCE(*srng->u.dst_ring.hp_addr);
+
+dma_rmb() acting also as a compiler barrier why the need for both
+READ_ONCE() ?
+
+>  }
+>  
+>  /* Update cached ring head/tail pointers to HW. ath12k_hal_srng_access_begin()
+> -- 
+> 2.48.1
+
+Regards,
+
+-- 
+Remi
 
