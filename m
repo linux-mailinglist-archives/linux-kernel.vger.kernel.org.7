@@ -1,298 +1,211 @@
-Return-Path: <linux-kernel+bounces-659804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B5BAC152B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:00:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B186AC14BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 21:21:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8455C1C017C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 20:00:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 570E07BD373
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E61E2222A7;
-	Thu, 22 May 2025 20:00:24 +0000 (UTC)
-Received: from mail.aperture-lab.de (mail.aperture-lab.de [116.203.183.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AFA1E9B0B;
+	Thu, 22 May 2025 19:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kz1ddCio"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE64148827;
-	Thu, 22 May 2025 20:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.183.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D39E13D8B2
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 19:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747944023; cv=none; b=boQ7ysrKwvbWLveaI/t7lzYQMOv48yxO4WSY9/e8/1+3hREYzk46+jmMB2Uf09VEprGAjOUbkF02TdAS+7MD6/K2yzX0BE1isdOb6DbTK/3YqHIu2u83IDEOe5OfFJd9XmK2x9e4e3XK/RknJE0lFgeMKbU9N3mt0t5Vbl4z90w=
+	t=1747941619; cv=none; b=dOU96P99+40vBCxKKUf9UQyKh3ol7tMsKikGFprKNRwyal//R1A3TU0uYnHukUKH0raVWC4BujFLw1V6mnHaA89i6TrfA+XdIBI67f/sPxgcOMhYGM9PP0X61mnETn02MGZBDNLITihawgD3gfocg6BC5xi5XHlMUxJ3S+QehTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747944023; c=relaxed/simple;
-	bh=yLDbXO/gSmkNEDZIFZ98m8PJwn3LOwfLyLA3H+5I8X8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kIVUbEMVU0puFP2RBgE2/6c5kxn6TY+fOPwC880QaBiV/Jli6ReDqgtn7eIQZxLXRNNofomrupUwbFONyfLMCRtJ0FviioLsxRfA7/jjsbsNBBpsktZY0hu6gXfMePsRcamrcO6MB9RxckDz7Z3JJuRvHx22yhvYGWbr5Uzoo5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue; spf=pass smtp.mailfrom=c0d3.blue; arc=none smtp.client-ip=116.203.183.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=c0d3.blue
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 31D5E54E733;
-	Thu, 22 May 2025 22:00:16 +0200 (CEST)
-From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
-To: bridge@lists.linux.dev
-Cc: netdev@vger.kernel.org,
-	openwrt-devel@lists.openwrt.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Ido Schimmel <idosch@nvidia.com>,
-	Ivan Vecera <ivecera@redhat.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Simon Horman <horms@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Xiao Liang <shaw.leon@gmail.com>,
-	Markus Stockhausen <markus.stockhausen@gmx.de>,
-	Jan Hoffmann <jan.christian.hoffmann@gmail.com>,
-	Birger Koblitz <git@birger-koblitz.de>,
-	=?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
-	=?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
-Subject: [PATCH net-next 5/5] net: dsa: forward bridge/switchdev mcast active notification
-Date: Thu, 22 May 2025 21:17:07 +0200
-Message-ID: <20250522195952.29265-6-linus.luessing@c0d3.blue>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250522195952.29265-1-linus.luessing@c0d3.blue>
-References: <20250522195952.29265-1-linus.luessing@c0d3.blue>
+	s=arc-20240116; t=1747941619; c=relaxed/simple;
+	bh=Flu/isAmyCbTrz9xwLn13hoRVk9PwsB7V2D3/wlR9aE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F0YjbKi8tXC0DQ4ppiv/jMFoLKKZPAT7Ex7t4BPxJhWBnhxcshZWWjVf3uyrG4jB+50DWWWXk1O32Idit3HNKNZ1LVUFW43Tm2ca/y4B56kVbhoRR8FShvJXh6yVxWPHPDy2fznMfn9DdtV4IOZREgCWV3yBXDylVrfMalJRlgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Kz1ddCio; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c55500cf80so703186085a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 12:20:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747941617; x=1748546417; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PgIZQIPQ0j6raACnSoKFPNh2DzvC29iIOKiCMVH+gE8=;
+        b=Kz1ddCio8Wg6juUFw3ZmZyvlB8xlyqBYYUdchO6LhII0ZV4DRwiyr76eJXnFRG+hoO
+         elC8V1mbezzrlEHIKqZcUfQ3idyrN1jgBnxmbXl6a1JuZ6lowKhRDaTWEETCQ83eaDQS
+         XL17dW1jw7dxZl/UrecyXvGHZJuA9hFYZuo0sIVpQtMWEwn46CxPa+C4KxOh0HOyYNYf
+         SzQTenoVJO7ZtTb12PSKawsXDi/28va9Kqh+qzSIWzQLgx7db3KgJimnSdMv4Uz6DTcT
+         4mDc9vXOlLfHHWyK36rE9/ghJpEXWijuUBtPzGB4uACRmck4NXIcr7n+5/jYHNf/ZWbA
+         v3Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747941617; x=1748546417;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PgIZQIPQ0j6raACnSoKFPNh2DzvC29iIOKiCMVH+gE8=;
+        b=RmYOGKwg5hmBASc1HAMLTSgXWvQ3TAB9JzUiPy39cNUaaiAlQIJLUeVNQ6F9hxaRtn
+         4istyopBwZd2lfUKY5RHA9xhny1qgXd3fKPtkF8FTksntozihkG3ialKdpeKMvx8P6fi
+         7xd/dHy6KlV6bMBF4trF7AJ4fVAxpTl+iLLQh1ODi+/J4qG/m3kovwDMcg4jwyHOeS4f
+         tM/twuJ5FSwC7ppSr5mjXhVrxe5459r2+ym6wkMO8p9/FS5nfM3QjMsKoTgYR2wZlhLd
+         djHUTSlK3AfzqSV7cPJGILaFlH575uwk4hkjpsLSi6ddHU6k2zIcpt0E7oZc6nrv+7hJ
+         49Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCUbBiTdROLBuE36vlyYNUvz1l0KNtBpnSkwwrlzvz0M2kLDetzCNcMdFKpc9ehRNoMu3MmDlRBvrV+GsA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhQP0sizQkOYIYpmvdj1s4qHgmfQGwgxjRwGQPng13qKiOivdz
+	bfUi/hgYD+Zgc1ZSFMUc5ABBr+HswCRpe9I1aBV/rWYnCgAivTLyRPtW3333oYYRw2Bpu7nGOs2
+	c/pzNnxVEyQtIrPh33Jn+ePia6sDB5mOs40dy1XvL
+X-Gm-Gg: ASbGncsBC8jWO7WGLCrcgQvl388ITSV6+Bh8SYwEFclQc2Bgi9Rnc0UD/vEE5JFQgjS
+	MGEZuiV0R+JxEZEWjKNiIPfUB30KDfRS+oUdE5yTZe1vYhd441eQKrdWMnRdHG2LDFdpn/ftMc6
+	ZSuD+Ej4KjELIBYxPtvIAEPzECM7k86Q1wGtsQbXypn9+gtrP6Hy0ZoakCMjC5HV7oms7MOCMiF
+	vdYs5Ad++rr
+X-Google-Smtp-Source: AGHT+IGm1Btmu3cb/tiOOdp0UebQ2jl7A41+6mFY13R7UjK0iunERZC6D0vXs4YT7J5HKX2YgiexhtSR0yQfkPA2JxA=
+X-Received: by 2002:a05:6214:2345:b0:6f8:a7c2:bb11 with SMTP id
+ 6a1803df08f44-6fa93a29fddmr4939596d6.6.1747941616531; Thu, 22 May 2025
+ 12:20:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20250517043942.372315-1-royluo@google.com> <8f023425-3f9b-423c-9459-449d0835c608@linux.intel.com>
+ <CAMTwNXB0QLP-b=RmLPtRJo=T_efN_3H4dd5AiMNYrJDXddJkMA@mail.gmail.com>
+ <fbf92981-6601-4ee9-a494-718e322ac1b9@linux.intel.com> <CA+zupgyU2czaczPcqavYBi=NrPqKqgp7SbrUocy0qbJ0m9np6g@mail.gmail.com>
+ <6bfee225-7519-41ab-8ae9-99267c5ce06e@intel.com>
+In-Reply-To: <6bfee225-7519-41ab-8ae9-99267c5ce06e@intel.com>
+From: Roy Luo <royluo@google.com>
+Date: Thu, 22 May 2025 12:19:40 -0700
+X-Gm-Features: AX0GCFuJzBzMPdmywUarQdKbXYdF5W_yqGe-afth_QCS9OITwqZ39S_C5IBtRsY
+Message-ID: <CA+zupgxkvm9HxG4Aj1avPA-ZgjVxmg3T3GtbfnV=rXk9P7-pFQ@mail.gmail.com>
+Subject: Re: [PATCH v1] Revert "usb: xhci: Implement xhci_handshake_check_state()
+ helper"
+To: Mathias Nyman <mathias.nyman@intel.com>
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, 
+	Udipto Goswami <udipto.goswami@oss.qualcomm.com>, quic_ugoswami@quicinc.com, 
+	Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, michal.pecio@gmail.com, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a new "port_mdb_active()" handler to the DSA API. This allows DSA
-drivers to receive the multicast active notification from the
-bridge. So that switch drivers can act on it accordingly, especially
-to avoid packetloss.
+On Thu, May 22, 2025 at 5:24=E2=80=AFAM Mathias Nyman <mathias.nyman@intel.=
+com> wrote:
+>
+> On 22.5.2025 5.21, Roy Luo wrote:
+> >>>> Udipto Goswami, can you recall the platforms that needed this workar=
+oud?
+> >>>> and do we have an easy way to detect those?
+> >>>
+> >>> Hi Mathias,
+> >>>
+> >>>   From what I recall, we saw this issue coming up on our QCOM mobile
+> >>> platforms but it was not consistent. It was only reported in long run=
+s
+> >>> i believe. The most recent instance when I pushed this patch was with
+> >>> platform SM8650, it was a watchdog timeout issue where xhci_reset() -=
+>
+> >>> xhci_handshake() polling read timeout upon xhci remove. Unfortunately
+> >>> I was not able to simulate the scenario for more granular testing and
+> >>> had validated it with long hours stress testing.
+> >>> The callstack was like so:
+> >>>
+> >>> Full call stack on core6:
+> >>> -000|readl([X19] addr =3D 0xFFFFFFC03CC08020)
+> >>> -001|xhci_handshake(inline)
+> >>> -001|xhci_reset([X19] xhci =3D 0xFFFFFF8942052250, [X20] timeout_us =
+=3D 10000000)
+> >>> -002|xhci_resume([X20] xhci =3D 0xFFFFFF8942052250, [?] hibernated =
+=3D ?)
+> >>> -003|xhci_plat_runtime_resume([locdesc] dev =3D ?)
+> >>> -004|pm_generic_runtime_resume([locdesc] dev =3D ?)
+> >>> -005|__rpm_callback([X23] cb =3D 0xFFFFFFE3F09307D8, [X22] dev =3D
+> >>> 0xFFFFFF890F619C10)
+> >>> -006|rpm_callback(inline)
+> >>> -006|rpm_resume([X19] dev =3D 0xFFFFFF890F619C10,
+> >>> [NSD:0xFFFFFFC041453AD4] rpmflags =3D 4)
+> >>> -007|__pm_runtime_resume([X20] dev =3D 0xFFFFFF890F619C10, [X19] rpmf=
+lags =3D 4)
+> >>> -008|pm_runtime_get_sync(inline)
+> >>> -008|xhci_plat_remove([X20] dev =3D 0xFFFFFF890F619C00)
+> >>
+> >> Thank you for clarifying this.
+> >>
+> >> So patch avoids the long timeout by always cutting xhci reinit path sh=
+ort in
+> >> xhci_resume() if resume was caused by pm_runtime_get_sync() call in
+> >> xhci_plat_remove()
+> >>
+> >> void xhci_plat_remove(struct platform_device *dev)
+> >> {
+> >>          xhci->xhc_state |=3D XHCI_STATE_REMOVING;
+> >>          pm_runtime_get_sync(&dev->dev);
+> >>          ...
+> >> }
+> >>
+> >> I think we can revert this patch, and just make sure that we don't res=
+et the
+> >> host in the reinit path of xhci_resume() if XHCI_STATE_REMOVING is set=
+.
+> >> Just return immediately instead.
+> >>
+> >
+> > Just to be sure, are you proposing that we skip xhci_reset() within
+> > the reinit path
+> > of xhci_resume()? If we do that, could that lead to issues with
+> > subsequent operations
+> > in the reinit sequence, such as xhci_init() or xhci_run()?
+>
+> I suggest to only skip xhci_reset in xhci_resume() if XHCI_STATE_REMOVING=
+ is set.
+>
+> This should be similar to what is going on already.
+>
+> xhci_reset() currently returns -ENODEV if XHCI_STATE_REMOVING is set, unl=
+ess reset
+> completes extremely fast. xhci_resume() bails out if xhci_reset() returns=
+ error:
+>
+> xhci_resume()
+>    ...
+>    if (power_lost) {
+>      ...
+>      retval =3D xhci_reset(xhci, XHCI_RESET_LONG_USEC);
+>      spin_unlock_irq(&xhci->lock);
+>      if (retval)
+>        return retval;
+> >
+> > Do you prefer to group the change to skip xhci_reset() within the
+> > reinit path together
+> > with this revert? or do you want it to be sent and reviewed separately?
+>
+> First a patch that bails out from xhci_resume() if XHCI_STATE_REMOVING is=
+ set
+> and we are in the reinit (power_lost) path about to call xhci_reset();
+>
+> Then a second patch that reverts 6ccb83d6c497 ("usb: xhci: Implement
+> xhci_handshake_check_state()
+>
+> Does this sound reasonable?
+>
+> should avoid the QCOM 10sec watchdog issue as next xhci_rest() called
+> in xhci_remove() path has a short 250ms timeout, and ensure the
+> SNPS DWC3 USB regression won't trigger.
+>
+> Thanks
+> Mathias
+>
 
-The switchdev notifier "handled" attribute is propagated, too, so that a
-DSA based switch driver can decide whether it wants to act on the event
-for each port individually or only on the first one, on behalf of all
-others.
+Thanks for the clarification! SGTM.
+I've sent out a new patchset accordingly
+https://lore.kernel.org/linux-usb/20250522190912.457583-1-royluo@google.com=
+/
 
-Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
----
- Documentation/networking/dsa/dsa.rst |  9 +++++++++
- include/net/dsa.h                    |  5 +++++
- net/dsa/port.c                       | 19 +++++++++++++++++++
- net/dsa/port.h                       |  3 +++
- net/dsa/switch.c                     | 13 +++++++++++++
- net/dsa/switch.h                     | 11 ++++++++++-
- net/dsa/user.c                       | 21 ++++++++++++++++++++-
- 7 files changed, 79 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/networking/dsa/dsa.rst b/Documentation/networking/dsa/dsa.rst
-index 7b2e69cd7ef0..0b0be619be04 100644
---- a/Documentation/networking/dsa/dsa.rst
-+++ b/Documentation/networking/dsa/dsa.rst
-@@ -1025,6 +1025,15 @@ Bridge VLAN filtering
-   the specified MAC address from the specified VLAN ID if it was mapped into
-   this port forwarding database.
- 
-+- ``port_mdb_active``: bridge layer function invoked when the bridge starts (or
-+  stops) to actively apply multicast snooping to multicast payload, i.e. when
-+  multicast snooping is enabled and a multicast querier is present on the link
-+  for a particular protocol family (or not). A switch should (by default) ensure:
-+  To flood multicast packets for the given protocol family if multicast snooping
-+  is inactive - to avoid multicast (and consequently also IPv6 unicast, which
-+  depends on multicast for NDP) packet loss. And should (by default) avoid
-+  forwarding to an active port if there is no listener or multicast router on it.
-+
- Link aggregation
- ----------------
- 
-diff --git a/include/net/dsa.h b/include/net/dsa.h
-index a0a9481c52c2..edc0e6821ba2 100644
---- a/include/net/dsa.h
-+++ b/include/net/dsa.h
-@@ -1080,6 +1080,11 @@ struct dsa_switch_ops {
- 	int	(*port_mdb_del)(struct dsa_switch *ds, int port,
- 				const struct switchdev_obj_port_mdb *mdb,
- 				struct dsa_db db);
-+	int	(*port_mdb_active)(struct dsa_switch *ds, int port,
-+				   const struct switchdev_mc_active mc_active,
-+				   struct netlink_ext_ack *extack,
-+				   bool handled);
-+
- 	/*
- 	 * RXNFC
- 	 */
-diff --git a/net/dsa/port.c b/net/dsa/port.c
-index 5c9d1798e830..a1e692d9122e 100644
---- a/net/dsa/port.c
-+++ b/net/dsa/port.c
-@@ -1290,6 +1290,25 @@ int dsa_port_bridge_host_mdb_del(const struct dsa_port *dp,
- 	return dsa_port_host_mdb_del(dp, mdb, db);
- }
- 
-+int dsa_port_bridge_mdb_active(const struct dsa_port *dp,
-+			       const struct switchdev_mc_active mc_active,
-+			       struct netlink_ext_ack *extack,
-+			       bool handled)
-+{
-+	struct dsa_switch *ds = dp->ds;
-+	struct dsa_notifier_mdb_active_info info = {
-+		.dp = dp,
-+		.mc_active = mc_active,
-+		.extack = extack,
-+		.handled = handled,
-+	};
-+
-+	if (!ds->ops->port_mdb_active)
-+		return -EOPNOTSUPP;
-+
-+	return dsa_port_notify(dp, DSA_NOTIFIER_MDB_ACTIVE, &info);
-+}
-+
- int dsa_port_vlan_add(struct dsa_port *dp,
- 		      const struct switchdev_obj_port_vlan *vlan,
- 		      struct netlink_ext_ack *extack)
-diff --git a/net/dsa/port.h b/net/dsa/port.h
-index 6bc3291573c0..0e92815e7de2 100644
---- a/net/dsa/port.h
-+++ b/net/dsa/port.h
-@@ -75,6 +75,9 @@ int dsa_port_bridge_host_mdb_add(const struct dsa_port *dp,
- 				 const struct switchdev_obj_port_mdb *mdb);
- int dsa_port_bridge_host_mdb_del(const struct dsa_port *dp,
- 				 const struct switchdev_obj_port_mdb *mdb);
-+int dsa_port_bridge_mdb_active(const struct dsa_port *dp,
-+			       const struct switchdev_mc_active mc_active,
-+			       struct netlink_ext_ack *extack, bool handled);
- int dsa_port_pre_bridge_flags(const struct dsa_port *dp,
- 			      struct switchdev_brport_flags flags,
- 			      struct netlink_ext_ack *extack);
-diff --git a/net/dsa/switch.c b/net/dsa/switch.c
-index 3d2feeea897b..5b30dfe4bebd 100644
---- a/net/dsa/switch.c
-+++ b/net/dsa/switch.c
-@@ -652,6 +652,16 @@ static int dsa_switch_host_mdb_del(struct dsa_switch *ds,
- 	return err;
- }
- 
-+static int dsa_switch_mdb_active(struct dsa_switch *ds,
-+				 struct dsa_notifier_mdb_active_info *info)
-+{
-+	if (!ds->ops->port_mdb_active)
-+		return -EOPNOTSUPP;
-+
-+	return ds->ops->port_mdb_active(ds, info->dp->index, info->mc_active,
-+					info->extack, info->handled);
-+}
-+
- /* Port VLANs match on the targeted port and on all DSA ports */
- static bool dsa_port_vlan_match(struct dsa_port *dp,
- 				struct dsa_notifier_vlan_info *info)
-@@ -1026,6 +1036,9 @@ static int dsa_switch_event(struct notifier_block *nb,
- 	case DSA_NOTIFIER_HOST_MDB_DEL:
- 		err = dsa_switch_host_mdb_del(ds, info);
- 		break;
-+	case DSA_NOTIFIER_MDB_ACTIVE:
-+		err = dsa_switch_mdb_active(ds, info);
-+		break;
- 	case DSA_NOTIFIER_VLAN_ADD:
- 		err = dsa_switch_vlan_add(ds, info);
- 		break;
-diff --git a/net/dsa/switch.h b/net/dsa/switch.h
-index be0a2749cd97..69a5004e48c8 100644
---- a/net/dsa/switch.h
-+++ b/net/dsa/switch.h
-@@ -24,6 +24,7 @@ enum {
- 	DSA_NOTIFIER_MDB_DEL,
- 	DSA_NOTIFIER_HOST_MDB_ADD,
- 	DSA_NOTIFIER_HOST_MDB_DEL,
-+	DSA_NOTIFIER_MDB_ACTIVE,
- 	DSA_NOTIFIER_VLAN_ADD,
- 	DSA_NOTIFIER_VLAN_DEL,
- 	DSA_NOTIFIER_HOST_VLAN_ADD,
-@@ -66,13 +67,21 @@ struct dsa_notifier_lag_fdb_info {
- 	struct dsa_db db;
- };
- 
--/* DSA_NOTIFIER_MDB_* */
-+/* DSA_NOTIFIER_MDB_{ADD,DEL} */
- struct dsa_notifier_mdb_info {
- 	const struct dsa_port *dp;
- 	const struct switchdev_obj_port_mdb *mdb;
- 	struct dsa_db db;
- };
- 
-+/* DSA_NOTIFIER_MDB_ACTIVE */
-+struct dsa_notifier_mdb_active_info {
-+	const struct dsa_port *dp;
-+	const struct switchdev_mc_active mc_active;
-+	struct netlink_ext_ack *extack;
-+	int handled;
-+};
-+
- /* DSA_NOTIFIER_LAG_* */
- struct dsa_notifier_lag_info {
- 	const struct dsa_port *dp;
-diff --git a/net/dsa/user.c b/net/dsa/user.c
-index 804dc7dac4f2..231b92d6e7b9 100644
---- a/net/dsa/user.c
-+++ b/net/dsa/user.c
-@@ -603,7 +603,7 @@ static int dsa_user_port_attr_set(struct net_device *dev, const void *ctx,
- 	struct dsa_port *dp = dsa_user_to_port(dev);
- 	int ret;
- 
--	if (ctx && ctx != dp)
-+	if (ctx && ctx != dp && attr->id != SWITCHDEV_ATTR_ID_BRIDGE_MC_ACTIVE)
- 		return 0;
- 
- 	switch (attr->id) {
-@@ -657,6 +657,15 @@ static int dsa_user_port_attr_set(struct net_device *dev, const void *ctx,
- 
- 		ret = dsa_port_vlan_msti(dp, &attr->u.vlan_msti);
- 		break;
-+	case SWITCHDEV_ATTR_ID_BRIDGE_MC_ACTIVE:
-+		const bool *handled = ctx;
-+
-+		if (!dsa_port_offloads_bridge_dev(dp, attr->orig_dev))
-+			return -EOPNOTSUPP;
-+
-+		ret = dsa_port_bridge_mdb_active(dp, attr->u.mc_active, extack,
-+						 *handled);
-+		break;
- 	default:
- 		ret = -EOPNOTSUPP;
- 		break;
-@@ -3758,6 +3767,11 @@ static int dsa_user_switchdev_event(struct notifier_block *unused,
- 
- 	switch (event) {
- 	case SWITCHDEV_PORT_ATTR_SET:
-+		struct switchdev_notifier_port_attr_info *item = ptr;
-+
-+		if (item && item->attr->id == SWITCHDEV_ATTR_ID_BRIDGE_MC_ACTIVE)
-+			item->info.ctx = &item->handled;
-+
- 		err = switchdev_handle_port_attr_set(dev, ptr,
- 						     dsa_user_dev_check,
- 						     dsa_user_port_attr_set);
-@@ -3796,6 +3810,11 @@ static int dsa_user_switchdev_blocking_event(struct notifier_block *unused,
- 							    dsa_user_port_obj_del);
- 		return notifier_from_errno(err);
- 	case SWITCHDEV_PORT_ATTR_SET:
-+		struct switchdev_notifier_port_attr_info *item = ptr;
-+
-+		if (item && item->attr->id == SWITCHDEV_ATTR_ID_BRIDGE_MC_ACTIVE)
-+			item->info.ctx = &item->handled;
-+
- 		err = switchdev_handle_port_attr_set(dev, ptr,
- 						     dsa_user_dev_check,
- 						     dsa_user_port_attr_set);
--- 
-2.49.0
-
+Thanks,
+Roy
 
