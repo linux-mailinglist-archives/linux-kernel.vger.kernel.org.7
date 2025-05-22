@@ -1,61 +1,85 @@
-Return-Path: <linux-kernel+bounces-658867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1733BAC0884
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:22:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7506CAC088D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03A71B670AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:22:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69AE11B6870A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25625280A32;
-	Thu, 22 May 2025 09:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5202A2874FD;
+	Thu, 22 May 2025 09:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rvf8sQ3Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="frOgHyA1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A2970814;
-	Thu, 22 May 2025 09:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A889254873
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 09:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747905733; cv=none; b=WejBbLysCIh2ISyZFOp+SQNKFKUKJcdcu8RZvJt6IICQMKVXosIzA9iphiMQQ/iDvf/+MtJKuhaUZ4M05lySk1orSyAVzDOkDnuuhc04ma3bRmXj8FfvEbspv7rAkl8H95ylr69vtx78itUHqsrLnP58AtzxNkRNdVd1mbdZec4=
+	t=1747905761; cv=none; b=Cl22tEgLAPYuXS6BVvh/uel7B1JGmmeEj6PbY3j4asUsA9CoZX5FXElorgMbzrUNj5uq9Tu7Wwo6T0YoqFI++wddAv1JCDKEh1YuKkOGXN2JY9qGp4/QbPX4Tyr1AwJpHVoTHg6UQJAUzSKP6/LVhCQu/Mz9FKSuO5qHJ78KO54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747905733; c=relaxed/simple;
-	bh=i8dCkvq7F3CC+MwXu1caXMU8e1Ced2QXY+V/762C0us=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EUAM7SPtAUIRWYipnwtICeLpar9DMWG8CrYVglxJLKgNNW9nnTFfEmQx7i/qWzi6mTq0ZTPAA9sg+EkVyI7l2E3UYmOsjydMf2lZBFEyUjvRltvNiYTzSNHRvL9I3EppUYcE9LAshMZupec53XdCiwXdFsUxuX1iT0vb4jB4gIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rvf8sQ3Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB1F6C4CEE4;
-	Thu, 22 May 2025 09:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747905732;
-	bh=i8dCkvq7F3CC+MwXu1caXMU8e1Ced2QXY+V/762C0us=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rvf8sQ3QJCgeX1omXxuD4whjqsxDfAtoPBsLnnHsxiciXqFCLODHbd7H+dngc9K6p
-	 0REgwotVacoRiUR+qkzBnjCWynYenu62Y/bVHjjVXSdjTyoxBLg750KAVPAk3XGbWr
-	 wPDViXnVo7AqhTn6Rh6pcjEZK1hdPtMJHlQ7Hi8ajnHz4YPAes6CGCZl8BYH5HCrJ7
-	 OZTusff9JIQxpiAX95Iucp8QOTzER+moZvZSfyULP7MZP/6+tys+QFxoLpPNH6Ngz/
-	 J915U6eA55BJDa/pQwgRbxReXH4oUigHs/4kggxWZKfedz02hfybU/fwy1hIWTvGzu
-	 +u2CiaPUXviPQ==
-Date: Thu, 22 May 2025 10:22:08 +0100
-From: Lee Jones <lee@kernel.org>
-To: Binbin Zhou <zhoubinbin@loongson.cn>
-Cc: Binbin Zhou <zhoubb.aaron@gmail.com>,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Corey Minyard <minyard@acm.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net,
-	Chong Qiao <qiaochong@loongson.cn>
-Subject: Re: [PATCH v2 1/3] mfd: ls2kbmc: Introduce Loongson-2K BMC MFD Core
- driver
-Message-ID: <20250522092208.GB1199143@google.com>
-References: <cover.1747276047.git.zhoubinbin@loongson.cn>
- <778675bfe1040cd1bf4d281dc5c5f20edc4145c1.1747276047.git.zhoubinbin@loongson.cn>
+	s=arc-20240116; t=1747905761; c=relaxed/simple;
+	bh=a80hXcGHLnEXqoaB3/i3Ak7XE5EBq2FHTMb5YZ4WKkU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=V8zqpgyupKOhoFB2L+zdHesbMpKv0jxpXXU7SLqWvwM2BYsHqW3XasMQY+n9Nd0SKPRZ0ERyiEvdB6Lgqe2wiRzkIL5KNKxN+FTXuOAnAq2vce0VHmtliS30qBS7oKNgO0k35M+qJqfRLQQP/+yQs7DsN6mXp0u0EVCSqCF/Ask=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=frOgHyA1; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747905759; x=1779441759;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=a80hXcGHLnEXqoaB3/i3Ak7XE5EBq2FHTMb5YZ4WKkU=;
+  b=frOgHyA16BZiq/UYUw3xxDdOcUDs7/JkW6M/zC4kF0nZHTi11J6wRrlI
+   V3JYiru+aNZl2MIrFIN2POn/mvf5UTXyGipAPt5b4twouib+9bMKzRzSR
+   L7vHu1DaM9497dU4/BleYZQ/fKtCm1mvGcbc8ExL5OMQEL6+ZzIcvvW2a
+   vwd2qzpJIjvMWvVfkbQ12zcbrsZ5m3SOSaiipB+xx3H7MCiEDP8zMpFWw
+   cueVdNMVdVdxytChv0NzvDCIIcG7xx6qss/roN3sKLf+CqYLXcNE45blF
+   IJTAONcJp8dNN5OEQ3Q7yYKR5b0ZH0aiEWyPlQkkfGNBsX5t9MdnRW2WM
+   A==;
+X-CSE-ConnectionGUID: xyQRhzV/Sauf+MltgqrrPA==
+X-CSE-MsgGUID: +b+yEFQBSp2CMPSRPaAwwQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11440"; a="72445573"
+X-IronPort-AV: E=Sophos;i="6.15,305,1739865600"; 
+   d="scan'208";a="72445573"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 02:22:39 -0700
+X-CSE-ConnectionGUID: ZF/aOTzKS164tKbdKmjWZQ==
+X-CSE-MsgGUID: udRzaoqjTj25RI1WnsRiSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,305,1739865600"; 
+   d="scan'208";a="145661444"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.112])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 02:22:33 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>, Luca
+ Ceresoli <luca.ceresoli@bootlin.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, "Hajda, Andrzej"
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert
+ Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej
+ Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>,
+ Simona
+ Vetter <simona@ffwll.ch>, Ville Syrjala <ville.syrjala@linux.intel.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] drm/bridge: fix build with CONFIG_OF=n
+In-Reply-To: <SJ1PR11MB6129DAE64D41911F049AF98EB999A@SJ1PR11MB6129.namprd11.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250522-devm_drm_put_bridge-fix-non-of-build-v1-1-a05234dea046@bootlin.com>
+ <SJ1PR11MB6129DAE64D41911F049AF98EB999A@SJ1PR11MB6129.namprd11.prod.outlook.com>
+Date: Thu, 22 May 2025 12:22:30 +0300
+Message-ID: <87zff5rodl.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,277 +87,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <778675bfe1040cd1bf4d281dc5c5f20edc4145c1.1747276047.git.zhoubinbin@loongson.cn>
+Content-Transfer-Encoding: quoted-printable
 
-Just "core driver" in the subject line, rather than "MFD core driver".
+On Thu, 22 May 2025, "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.=
+com> wrote:
+>> -----Original Message-----
+>> From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf Of L=
+uca
+>> Ceresoli
+>> Sent: Thursday, May 22, 2025 12:43 PM
+>> To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>; Maxime Ripard
+>> <mripard@kernel.org>; Thomas Zimmermann <tzimmermann@suse.de>;
+>> Hajda, Andrzej <andrzej.hajda@intel.com>; Neil Armstrong
+>> <neil.armstrong@linaro.org>; Robert Foss <rfoss@kernel.org>; Laurent
+>> Pinchart <Laurent.pinchart@ideasonboard.com>; Jonas Karlman
+>> <jonas@kwiboo.se>; Jernej Skrabec <jernej.skrabec@gmail.com>; David
+>> Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; Ville Syrja=
+la
+>> <ville.syrjala@linux.intel.com>
+>> Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>; dri-
+>> devel@lists.freedesktop.org; linux-kernel@vger.kernel.org; Luca Ceresoli
+>> <luca.ceresoli@bootlin.com>
+>> Subject: [PATCH] drm/bridge: fix build with CONFIG_OF=3Dn
+>>=20
+>> Commit 5164553d739e ("drm/bridge: add devm_drm_put_bridge()") adds
+>> two declarations for devm_drm_put_bridge():
+>>=20
+>>  1) an inline declaration in the #else branch of
+>>     '#if defined(CONFIG_OF)...'
+>>  2) one outside of the same #if
+>>=20
+>> This results in a build failure with CONFIG_OF=3Dn:
+>>=20
+>>   ../drivers/gpu/drm/drm_bridge.c:1406:6: error: redefinition of
+>> =E2=80=98devm_drm_put_bridge=E2=80=99
+>>=20
+>> The function has nothing to do with OF, thus fix by removing declaration=
+ 1.
+>
+> LGTM. Fixes the build error.
+>
+> Tested-by: Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>
+> Reviewed-by: Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>
 
-> The Loongson-2K Board Management Controller provides an PCIe
-> interface to the host to access the feature implemented in the BMC.
-> 
-> The BMC is assembled on a server similar to the server machine with
-> Loongson-3C6000 CPUs. It supports multiple sub-devices like DRM.
-> 
-> Co-developed-by: Chong Qiao <qiaochong@loongson.cn>
-> Signed-off-by: Chong Qiao <qiaochong@loongson.cn>
-> Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
-> ---
->  drivers/mfd/Kconfig       |  13 ++++
->  drivers/mfd/Makefile      |   2 +
->  drivers/mfd/ls2kbmc-mfd.c | 156 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 171 insertions(+)
->  create mode 100644 drivers/mfd/ls2kbmc-mfd.c
-> 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 22b936310039..04e40085441d 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -2422,5 +2422,18 @@ config MFD_UPBOARD_FPGA
->  	  To compile this driver as a module, choose M here: the module will be
->  	  called upboard-fpga.
->  
-> +config MFD_LS2K_BMC
-> +	tristate "Loongson-2K Board Management Controller Support"
-> +	depends on LOONGARCH
-> +	default y if LOONGARCH
-> +	select MFD_CORE
-> +	help
-> +	  Say yes here to add support for the Loongson-2K BMC
-> +	  which is a Board Management Controller connected to the PCIe bus.
-> +	  The device supports multiple sub-devices like DRM.
-> +	  This driver provides common support for accessing the devices;
-> +	  additional drivers must be enabled in order to use the
-> +	  functionality of the BMC device.
+Ditto. Please merge.
 
-This paragraph has some odd line breaks.  Please re-align.
+BR,
+Jani.
 
->  endmenu
->  endif
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 948cbdf42a18..18960ea13b64 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -290,3 +290,5 @@ obj-$(CONFIG_MFD_RSMU_I2C)	+= rsmu_i2c.o rsmu_core.o
->  obj-$(CONFIG_MFD_RSMU_SPI)	+= rsmu_spi.o rsmu_core.o
->  
->  obj-$(CONFIG_MFD_UPBOARD_FPGA)	+= upboard-fpga.o
-> +
-> +obj-$(CONFIG_MFD_LS2K_BMC)	+= ls2kbmc-mfd.o
-> diff --git a/drivers/mfd/ls2kbmc-mfd.c b/drivers/mfd/ls2kbmc-mfd.c
-> new file mode 100644
-> index 000000000000..b309f6132c24
-> --- /dev/null
-> +++ b/drivers/mfd/ls2kbmc-mfd.c
-> @@ -0,0 +1,156 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Loongson-2K Board Management Controller (BMC) MFD Core Driver.
+>
+>
+>>=20
+>> Fixes: 5164553d739e ("drm/bridge: add devm_drm_put_bridge()")
+>> Reported-by: Ville Syrjala <ville.syrjala@linux.intel.com>
+>> Closes: https://oftc.catirclogs.org/dri-devel/2025-05-21#34288266;
+>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>> ---
+>>  include/drm/drm_bridge.h | 2 --
+>>  1 file changed, 2 deletions(-)
+>>=20
+>> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h index
+>> 464da28f9134f0fcece5c72a8c5fe7f3e42c7e3d..0af5db244db8580ea0c9af1d9a
+>> 373b7bf62ee699 100644
+>> --- a/include/drm/drm_bridge.h
+>> +++ b/include/drm/drm_bridge.h
+>> @@ -1311,8 +1311,6 @@ static inline struct drm_bridge
+>> *devm_drm_of_get_bridge(struct device *dev,
+>>  	return ERR_PTR(-ENODEV);
+>>  }
+>>=20
+>> -static inline void devm_drm_put_bridge(struct device *dev, struct
+>> drm_bridge *bridge) {}
+>> -
+>>  static inline struct drm_bridge *drmm_of_get_bridge(struct drm_device
+>> *drm,
+>>  						     struct device_node *node,
+>>  						     u32 port,
+>>=20
+>> ---
+>> base-commit: a3436f63aa4f93b043a970cc72a196a501191ecc
+>> change-id: 20250522-devm_drm_put_bridge-fix-non-of-build-fbb67d28494c
+>>=20
+>> Best regards,
+>> --
+>> Luca Ceresoli <luca.ceresoli@bootlin.com>
+>
 
-Remove the MFD part.  It's not a thing - we made it up.
-
-> + * Copyright (C) 2024 Loongson Technology Corporation Limited.
-
-No changes since 2024?
-
-> + *
-> + * Originally written by Chong Qiao <qiaochong@loongson.cn>
-> + * Rewritten for mainline by Binbin Zhou <zhoubinbin@loongson.cn>
-
-"Mainline"
-
-Typically we just do:
-
-Authors:
-	Author One <one@corp.com>
-	Author Two <two@corp.com>
-
-> + */
-> +
-> +#include <linux/aperture.h>
-> +#include <linux/errno.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/module.h>
-> +#include <linux/pci.h>
-> +#include <linux/pci_ids.h>
-> +#include <linux/platform_data/simplefb.h>
-> +#include <linux/platform_device.h>
-> +
-> +#define LS2K_DISPLAY_RES_START (SZ_16M + SZ_2M)
-> +#define LS2K_IPMI_RES_SIZE	0x1c
-> +#define LS2K_IPMI0_RES_START	(SZ_16M + 0xf00000)
-> +#define LS2K_IPMI1_RES_START	(LS2K_IPMI0_RES_START + LS2K_IPMI_RES_SIZE)
-> +#define LS2K_IPMI2_RES_START	(LS2K_IPMI1_RES_START + LS2K_IPMI_RES_SIZE)
-> +#define LS2K_IPMI3_RES_START	(LS2K_IPMI2_RES_START + LS2K_IPMI_RES_SIZE)
-> +#define LS2K_IPMI4_RES_START	(LS2K_IPMI3_RES_START + LS2K_IPMI_RES_SIZE)
-
-Line them _all_ up please.  One more tab should do it.
-
-> +static struct resource ls2k_display_resources[] = {
-> +	DEFINE_RES_MEM_NAMED(LS2K_DISPLAY_RES_START, SZ_4M, "simpledrm-res"),
-> +};
-> +
-> +static struct resource ls2k_ipmi0_resources[] = {
-> +	DEFINE_RES_MEM_NAMED(LS2K_IPMI0_RES_START, LS2K_IPMI_RES_SIZE, "ipmi0-res"),
-> +};
-> +
-> +static struct resource ls2k_ipmi1_resources[] = {
-> +	DEFINE_RES_MEM_NAMED(LS2K_IPMI1_RES_START, LS2K_IPMI_RES_SIZE, "ipmi1-res"),
-> +};
-> +
-> +static struct resource ls2k_ipmi2_resources[] = {
-> +	DEFINE_RES_MEM_NAMED(LS2K_IPMI2_RES_START, LS2K_IPMI_RES_SIZE, "ipmi2-res"),
-> +};
-> +
-> +static struct resource ls2k_ipmi3_resources[] = {
-> +	DEFINE_RES_MEM_NAMED(LS2K_IPMI3_RES_START, LS2K_IPMI_RES_SIZE, "ipmi3-res"),
-> +};
-> +
-> +static struct resource ls2k_ipmi4_resources[] = {
-> +	DEFINE_RES_MEM_NAMED(LS2K_IPMI4_RES_START, LS2K_IPMI_RES_SIZE, "ipmi4-res"),
-> +};
-> +
-> +static struct mfd_cell ls2k_bmc_cells[] = {
-> +	MFD_CELL_RES("simple-framebuffer", ls2k_display_resources),
-> +	MFD_CELL_RES("ls2k-ipmi-si", ls2k_ipmi0_resources),
-> +	MFD_CELL_RES("ls2k-ipmi-si", ls2k_ipmi1_resources),
-> +	MFD_CELL_RES("ls2k-ipmi-si", ls2k_ipmi2_resources),
-> +	MFD_CELL_RES("ls2k-ipmi-si", ls2k_ipmi3_resources),
-> +	MFD_CELL_RES("ls2k-ipmi-si", ls2k_ipmi4_resources),
-> +};
-> +
-> +/*
-> + * Currently the Loongson-2K0500 BMC hardware does not have an i2c interface to
-
-I2C
-
-> + * adapt to the resolution.
-
-Remove the line break here.
-
-> + * We set the resolution by presetting "video=1280x1024-16@2M" to the bmc memory.
-
-BMC
-
-> + */
-> +static int ls2k_bmc_get_video_mode(struct pci_dev *pdev, struct simplefb_platform_data *pd)
-> +{
-> +	char *mode;
-> +	int depth, ret;
-> +
-> +	/* The pci mem bar last 16M is used to store the string. */
-
-PCI
-
-BAR's (maybe?)
-
-> +	mode = devm_ioremap(&pdev->dev, pci_resource_start(pdev, 0) + SZ_16M, SZ_16M);
-> +	if (!mode)
-> +		return -ENOMEM;
-> +
-> +	/* env at last 16M's beginning, first env is "video=" */
-
-This doesn't make sense to me - please reword.
-
-> +	if (!strncmp(mode, "video=", 6))
-> +		mode = mode + 6;
-> +
-> +	ret = kstrtoint(strsep(&mode, "x"), 10, &pd->width);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = kstrtoint(strsep(&mode, "-"), 10, &pd->height);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = kstrtoint(strsep(&mode, "@"), 10, &depth);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pd->stride = pd->width * depth / 8;
-> +	pd->format = depth == 32 ? "a8r8g8b8" : "r5g6b5";
-> +
-> +	return 0;
-> +}
-
-Surely there is a standard format / API for this already?
-
-
-
-> +static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device_id *id)
-> +{
-> +	int ret = 0;
-
-There is no need to pre-initialise this.
-
-> +	resource_size_t base;
-> +	struct simplefb_platform_data pd;
-
-Reverse these please (reverse Christmas tree is preferred).
-> +
-> +	ret = pci_enable_device(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ls2k_bmc_get_video_mode(dev, &pd);
-> +	if (ret)
-> +		goto disable_pci;
-> +
-> +	ls2k_bmc_cells[0].platform_data = &pd;
-> +	ls2k_bmc_cells[0].pdata_size = sizeof(pd);
-> +	base = dev->resource[0].start + LS2K_DISPLAY_RES_START;
-> +
-> +	/* Remove conflicting efifb device */
-> +	ret = aperture_remove_conflicting_devices(base, SZ_4M, "simple-framebuffer");
-> +	if (ret) {
-> +		dev_err(&dev->dev, "Remove firmware framebuffers failed: %d\n", ret);
-
-"Failed to removed firmware framebuffers"
-
-> +		goto disable_pci;
-> +	}
-> +
-> +	return devm_mfd_add_devices(&dev->dev, PLATFORM_DEVID_AUTO,
-> +				    ls2k_bmc_cells, ARRAY_SIZE(ls2k_bmc_cells),
-> +				    &dev->resource[0], 0, NULL);
-> +
-> +disable_pci:
-> +	pci_disable_device(dev);
-> +	return ret;
-> +}
-> +
-> +static void ls2k_bmc_remove(struct pci_dev *dev)
-> +{
-> +	pci_disable_device(dev);
-> +}
-> +
-> +static struct pci_device_id ls2k_bmc_devices[] = {
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, 0x1a05) },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(pci, ls2k_bmc_devices);
-> +
-> +static struct pci_driver ls2k_bmc_driver = {
-> +	.name = "ls2k-bmc",
-> +	.id_table = ls2k_bmc_devices,
-> +	.probe = ls2k_bmc_probe,
-> +	.remove = ls2k_bmc_remove,
-> +};
-> +
-
-Remove this line.
-
-> +module_pci_driver(ls2k_bmc_driver);
-> +
-> +MODULE_DESCRIPTION("Loongson-2K BMC driver");
-> +MODULE_AUTHOR("Loongson Technology Corporation Limited");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.47.1
-> 
-
--- 
-Lee Jones [李琼斯]
+--=20
+Jani Nikula, Intel
 
