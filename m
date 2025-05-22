@@ -1,139 +1,141 @@
-Return-Path: <linux-kernel+bounces-658503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB769AC033B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:54:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70597AC033E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDF643B0133
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:54:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67DFD169C8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4BF15ECDF;
-	Thu, 22 May 2025 03:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0639C17A2E1;
+	Thu, 22 May 2025 03:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CsekdJ0B"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oe36kf2M"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B797713C8EA;
-	Thu, 22 May 2025 03:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4CF61632D7
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 03:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747886077; cv=none; b=HOSRD1411uX1/lCYcw2DMoUiZxJfTSrC8RBm5ywDjIgMFcSr903NwNMY9B6th9Uxm/bUipBUP78bnIYJqqh6Ui4j87OPMMAAlrpREX0lkZdGFzAlfSqImsPyGadhbAHwzrB4spmqSTCTsH4BMKQqYeOkrAdVQ5hmBsuaLjV+kMI=
+	t=1747886122; cv=none; b=ZD2X6zHV0+eEBX8rLBLgGR7jIrg/aBcz1KQYW7V8DUe0kOrSshK16IKFiXqqls/PAz31Gx5lGXvq6Cank8+dUOpB32TH06eowYuXzIflqJ33IFTftNss/Jz/bSVxyAcyJEqHad8okRlsZhc/EwPbP1Z/i9SFoCvVOvntulnAWdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747886077; c=relaxed/simple;
-	bh=2+jQzFNVa5cgzz6j8aCJcHo+8eX7DJJvhxssxR/Deyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RgeeOqa80JHF5Y7xgZU4lt/t0U4drR1c0LXD18ed+LiOx9RtpyeS6De9u9Yf2iqqcnsLZ7cKPp8HCj+zY8Dc6p7o0bKds4M+ihMYlYT7EFBmld0spn2mhB/FgZ5ox8EDegqLax/geIdSvV85/SoD07iZ8vcoUOnvwsb79bwM7SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CsekdJ0B; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1747886068;
-	bh=E5969M2rt8A9H8jXyAe1CRFepbcBCsnguHNEWanyUaM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=CsekdJ0BbTNqTMFXEQe5LFbH2KPAKBh5GP57BjIjX2tO8fsVL9TLlDUB58qnKJtSA
-	 VAB6i/7Uht8V7hwz+w5fbhh8hhdtqDXzpeBGXXKN6Vnn9zC5DOkmuYnE1qMPEftoMo
-	 86Y9wA8IugGY4ey2XaR/Ow4xCxoQWe00I8uIMvKMKF32D3hTd2xxLZmeh3uHaPeLKM
-	 NB7A6sSu0qxQFGKJNP3XiQJ6Nj4Es3OwOU5A4ykzLOmRdEhX+v0X02SyPdqLhho7BQ
-	 aRBb9IEJSb/M8OJJ62WEbIsNcz0p2mos/FZESwaJmB37iZEbxa9/xcz0Brc4MeJkH8
-	 RjXaXfinVoWiw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4b2vYb1RDkz4wcx;
-	Thu, 22 May 2025 13:54:27 +1000 (AEST)
-Date: Thu, 22 May 2025 13:54:26 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux Crypto List <linux-crypto@vger.kernel.org>, ARM
- <linux-arm-kernel@lists.infradead.org>, Eric Biggers <ebiggers@google.com>,
- Fabio Estevam <festevam@denx.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the crypto tree with the arm-soc-fixes
- tree
-Message-ID: <20250522135426.31baa98c@canb.auug.org.au>
+	s=arc-20240116; t=1747886122; c=relaxed/simple;
+	bh=dMIDSkq9lmjK0BifziLCbD4QsCIC2QelupxfG7aKLxc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dkYvnbnC3KVyATjFvy3WEK87XvMPXeBm13javW/WLlagj7CXyVT+j43VdEXJRcvpAIK2S+7KRTZFEBjNvpQOrB5JFMpKDbFPiaXEhCyji3oyiiS47C6b1HDlQjpLsK2QZm+KVn+iaY8krVVLQs8VP3PgNEQAkfGLto1JT4fSJtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oe36kf2M; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-310447fe59aso76483431fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 20:55:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747886119; x=1748490919; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OTy2y9sRpy5Yh47JQdxXy3Q2jyCv/CJLaY/dGfWuzIU=;
+        b=Oe36kf2MqGUtcP3FLTkyd1SNro3UBqlzqPs2Fjkq277gAZaX3emVbFQ8GBZvy7y9v8
+         Jfu1U8tsPtWTK7DrByswuPg4PcGCVFpJxII1J0/m8akKrRQrexpd8ozFgIxUgFBIw55M
+         XskRz0vYJVqt+e2qOTILbsF8EkpxJTsZqJVMLu+uYHszC2nSAGwsolkRm9fTi5soRF7M
+         s1OEBcRqp5fDoz3zp+le3bH9uv+EEUaXoAbEXon7VrwtLL3UD1w9GnFFuKXh/dejCiRS
+         DyBsmCnHraw+F+nt3xDA7et09Xw7nbLtHSWDz3otB/MzLoirKghN34HK0gBvU/5XUFeC
+         z2YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747886119; x=1748490919;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OTy2y9sRpy5Yh47JQdxXy3Q2jyCv/CJLaY/dGfWuzIU=;
+        b=bTzMusFZA5xHeMsx6LJuKVRVbzV16EmakirA4KSs6gaSbpKtJkHnNQqrlQUj6gz/tP
+         yAg2A37mPNCb4hsYK5UfSnoflOJW6UcEAKtPuz7jAjDSRd30x87JI6Qmj61zgcBvX/nk
+         25KLbkgCbvqbY1FFF78kSC0fnlUWmV0HCyGKtrbrfa3YR6mT8Rs5kG0rCmAiQwDlAfZN
+         jf84zR/JFNvYjSzM11kWHsa1/ZWg4lBfBX9Vyk6UhEzlBf8E7emZEKzw0tgeE0iRPX+s
+         NsaTvqa02ELaNnPz9iCwpBu+cVWQloEQs1vZ+y2M06h8yGco2oZleDPaVYxwgdnIbTY7
+         pAdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2bhCuRFToLiNsuMllJC2z8q2OFZcqRzD9jQrzI6kBlwHslnxDp8lzl13sA3AfeexCmqB+HHHp7HH+ZV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr7PUqC0uPB7Z5hfHUkDaKg5DyVztlhoYJIDcI0a3Dt73Jwyuo
+	yID2tyxeqMB/sGQPxjP5vyKvF44qRUpeM7LFnJbDIZ8YZY/ZW+TTz8EWCGy4XgUXhvJyGn5ya+y
+	cC+Rpg9Px2sxq/2DXFigPE7FhOlWgZpZ1OHFa3Ko=
+X-Gm-Gg: ASbGnctqn0MSiFwyjdmKBiIyYhjT3r1x/3oIoqt87u6VS/bkiKayB5tgt3TxmaiwC8g
+	R6E5SSPmrjw0xThBzCAaBBt4LF4Xbx6Xj1mbzedc77ewFSLuWIuMCc+DiFOx9Ccwz9z+v4NUaLq
+	McDzt1+HU8O7wGTJ/xIbAIbxeiwsH0MikbcdTw7JopiMI=
+X-Google-Smtp-Source: AGHT+IGdF3FSVZD5Fi7wP3dVo0YI2cmNqGZYNAOM3JBWdYgK0ARd5VLl/zUPmWQRkQXA5cuMhwSjnkaS20tEJ9ouZdQ=
+X-Received: by 2002:a05:651c:40cd:b0:328:1163:e86a with SMTP id
+ 38308e7fff4ca-3281163eac5mr55777271fa.22.1747886118295; Wed, 21 May 2025
+ 20:55:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ImKYQSiFcD9J_N.rImKCANl";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/ImKYQSiFcD9J_N.rImKCANl
-Content-Type: text/plain; charset=US-ASCII
+References: <20250522122554.12209-1-shikemeng@huaweicloud.com> <20250522122554.12209-2-shikemeng@huaweicloud.com>
+In-Reply-To: <20250522122554.12209-2-shikemeng@huaweicloud.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Thu, 22 May 2025 11:55:01 +0800
+X-Gm-Features: AX0GCFvtYmu3WgITSY2-7KAJSRWbqDXUSJnIAKwATmT-2qsQdK2T3QzMWj7FmTY
+Message-ID: <CAMgjq7A9mwtsdpPOPA0KHpr-ZaOm01r7V0a6NPb1DqhJprB0yg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mm: swap: move nr_swap_pages counter decrement from
+ folio_alloc_swap() to swap_range_alloc()
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: akpm@linux-foundation.org, bhe@redhat.com, hannes@cmpxchg.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, May 22, 2025 at 11:32=E2=80=AFAM Kemeng Shi <shikemeng@huaweicloud.=
+com> wrote:
+>
+> When folio_alloc_swap() encounters a failure in either
+> mem_cgroup_try_charge_swap() or add_to_swap_cache(), nr_swap_pages counte=
+r
+> is not decremented for allocated entry. However, the following
+> put_swap_folio() will increase nr_swap_pages counter unpairly and lead to
+> an imbalance.
+>
+> Move nr_swap_pages decrement from folio_alloc_swap() to swap_range_alloc(=
+)
+> to pair the nr_swap_pages counting.
+>
+> Fixes: 0ff67f990bd45 ("mm, swap: remove swap slot cache")
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> ---
+>  mm/swapfile.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 026090bf3efe..75b69213c2e7 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -1115,6 +1115,7 @@ static void swap_range_alloc(struct swap_info_struc=
+t *si,
+>                 if (vm_swap_full())
+>                         schedule_work(&si->reclaim_work);
+>         }
+> +       atomic_long_sub(nr_entries, &nr_swap_pages);
+>  }
+>
+>  static void swap_range_free(struct swap_info_struct *si, unsigned long o=
+ffset,
+> @@ -1313,7 +1314,6 @@ int folio_alloc_swap(struct folio *folio, gfp_t gfp=
+)
+>         if (add_to_swap_cache(folio, entry, gfp | __GFP_NOMEMALLOC, NULL)=
+)
+>                 goto out_free;
+>
+> -       atomic_long_sub(size, &nr_swap_pages);
+>         return 0;
+>
+>  out_free:
+> --
+> 2.30.0
 
-Today's linux-next merge of the crypto tree got a conflict in:
+Good catch! Moving the counter update to swap_range_alloc makes the
+logic much easier to follow.
 
-  arch/arm64/configs/defconfig
-
-between commit:
-
-  6c9ab811871b ("arm64: defconfig: Ensure CRYPTO_CHACHA20_NEON is selected")
-
-from the arm-soc-fixes tree and commit:
-
-  3357b6c94569 ("crypto: tcrypt - rename CRYPTO_TEST to CRYPTO_BENCHMARK")
-
-from the crypto tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/configs/defconfig
-index e0d6ac7fd91a,4166bc4d3cec..000000000000
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@@ -1724,15 -1729,14 +1724,14 @@@ CONFIG_NLS_CODEPAGE_437=3D
-  CONFIG_NLS_ISO8859_1=3Dy
-  CONFIG_SECURITY=3Dy
-  CONFIG_CRYPTO_USER=3Dy
- +CONFIG_CRYPTO_CHACHA20=3Dm
-- CONFIG_CRYPTO_TEST=3Dm
-+ CONFIG_CRYPTO_BENCHMARK=3Dm
-  CONFIG_CRYPTO_ECHAINIV=3Dy
-  CONFIG_CRYPTO_MICHAEL_MIC=3Dm
-  CONFIG_CRYPTO_ANSI_CPRNG=3Dy
-  CONFIG_CRYPTO_USER_API_RNG=3Dm
- -CONFIG_CRYPTO_CHACHA20_NEON=3Dm
-  CONFIG_CRYPTO_GHASH_ARM64_CE=3Dy
-  CONFIG_CRYPTO_SHA1_ARM64_CE=3Dy
-- CONFIG_CRYPTO_SHA2_ARM64_CE=3Dy
-  CONFIG_CRYPTO_SHA512_ARM64_CE=3Dm
-  CONFIG_CRYPTO_SHA3_ARM64=3Dm
-  CONFIG_CRYPTO_SM3_ARM64_CE=3Dm
-
---Sig_/ImKYQSiFcD9J_N.rImKCANl
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgun/IACgkQAVBC80lX
-0GyPogf9FadLTwEAH1WdTiF1LfsqmcK2B26c+1VO43iD8/S8a2oCTMzPROrwkG57
-f1dO+XZs9ty4ypHdJSa9wO2xPSlxBaOEHYbBhaiMCXrlKcCVqAFyPKQkxBPyyzM+
-j6syCdxJ/ISlshRqhWnMyqusN44d4XlFsC7rOoyLeBwgmv1Cthtzw1yD9zfJIkEX
-rnUiuOgoM7LTyIIZeAtjdr8ADCasWmSTPWfqz+CPXUieMSOU1dFlvT0RIv2L80Zw
-ytUlzcoI2eO+bTk+Ffm+Rbgy8ndnOXSldDYR0K5O0sJkfSMV/cmeBFvfbiRi3phz
-edwWNOjwW+sq1VkG0gVqu+fNFSkRYA==
-=4qkD
------END PGP SIGNATURE-----
-
---Sig_/ImKYQSiFcD9J_N.rImKCANl--
+Reviewed-by: Kairui Song <kasong@tencent.com>
 
