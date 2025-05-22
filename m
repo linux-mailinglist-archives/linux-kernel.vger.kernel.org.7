@@ -1,264 +1,130 @@
-Return-Path: <linux-kernel+bounces-659369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5258CAC0F5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:05:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D5A6AC0F63
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D67FA5028ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:05:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1D4B5036B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A6828DEE5;
-	Thu, 22 May 2025 15:04:49 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB92628D850;
+	Thu, 22 May 2025 15:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="UZjVpM9c"
+Received: from mail-ot1-f100.google.com (mail-ot1-f100.google.com [209.85.210.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33273239E85;
-	Thu, 22 May 2025 15:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9A928C86F
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 15:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747926288; cv=none; b=EbaDBXaRZx3nYDVeFw9LCuArK0EHw1fQtSijEolMqI6IKcPWErD5lO+n325APEUo/n8LMsaVL1cUBzTV/8x0MRNsFsQonCRYiM3JFtwBIni6v/vpn2HgtE9O51dDbjD6rTPeIrF4QNocFcq3tZjyfsh2F1veVB4uyHr+fauJokI=
+	t=1747926349; cv=none; b=GW3lnCrxIptCDumKBCzpbxL4B2iavqHc3RkxULn74RKupzdGPMkJ/WMkuFFLjHPDB2s3aT/nvCQ6xh09mvxtPfefhLt202MYHC5hu18Nc/doV8KVKimDCjx3BEbGF4YthD+O7i0sy8lOkEeev2ySLVlWGhFhp+h2uBG0hGZeAis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747926288; c=relaxed/simple;
-	bh=6T1ttKIMuKzvujI7awY82v5YEXc/9trQlGSmdF2HvQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Z8Dv2NtokkAR82w5RHflHmoZ0p9cqpPD8Trup/lq0L8FLIUj3UqonFAlf+EXCXxUj3n6gnZvHnPBT0VA27sVsDVCZRXBGQr2bToN+2xlFho0N0djKqLr2CiT2cMowGWEBZiNVs3cdzLkcGnEeE4YDTmLKo9eehBfbxGACaqhby8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4b3BP55nltz1d1DG;
-	Thu, 22 May 2025 23:03:05 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 887BD1402EA;
-	Thu, 22 May 2025 23:04:42 +0800 (CST)
-Received: from kwepemq200002.china.huawei.com (7.202.195.90) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 22 May 2025 23:04:42 +0800
-Received: from [10.174.177.223] (10.174.177.223) by
- kwepemq200002.china.huawei.com (7.202.195.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 22 May 2025 23:04:41 +0800
-Message-ID: <76635aef-45e5-4464-908b-57ea0920b01b@huawei.com>
-Date: Thu, 22 May 2025 23:04:40 +0800
+	s=arc-20240116; t=1747926349; c=relaxed/simple;
+	bh=7H2/E89fciRxCRq+D4loQo9VPhae2DqqRu/RRY5fbaw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YjaatowgQldAiV4lyeiEYR3+HwOzbKsz/PaSMmdZWt5+qiee+ptMqz6mgq9ifRVsA33/thueBDn8U0XqkokhAY/90ZFlDAU7RBkp4+1o+eq0Y4izyf/+cIPRoi3IRinP7rPQPfryYCPRbjV6BjZkQDR57ZldebM/h5nVZWRCivI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=UZjVpM9c; arc=none smtp.client-ip=209.85.210.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-ot1-f100.google.com with SMTP id 46e09a7af769-72bd78e6963so948804a34.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 08:05:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1747926345; x=1748531145; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PfVvvdWGG0adnBwzws5Hqth/btOaihCNY1aQF7gASIY=;
+        b=UZjVpM9cu7Ti7Q8ewkdTEhmJqXeQw69vvPJIGnzX5h7ZrezZAZ5Ibj4oIYXZPR9sWy
+         ujHyfYif5Y6xt7mAmrmy3qY1ywPit2EJQX0y0FFWSVgRBdIcMNV3cpYNrgOGguJ3yqls
+         ybXYWcyKZ6RK8mUJ9sOErf/9Lvo4O0wVkoqxn9IgG90EJn/CLqmqLnuLxqovuiau4dIN
+         vsB+qbXgJTCCFHlxfcpxiVSeC+DxtDwJ/8FMTzQyAGbNfpTs2qjpSLJ2a9J21LjjAZVs
+         Nlc66XqKAiF2ii9xSi+jFbtURt32bcM30J22W4K9EuVUnuxUBikoe5a9RgcW4Q8imnDi
+         sAYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747926345; x=1748531145;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PfVvvdWGG0adnBwzws5Hqth/btOaihCNY1aQF7gASIY=;
+        b=eB0o0PouGddykMK1/+V1xbXfLb55EhKSOOdaByBXKIZiGRnN57GpCblFBP2Icq04lu
+         Gyhomp9iJQvP98aiNWAFYdksEHbwviG+vOqNgJS9U4wewNeWiW8/9E2Z6IUcLGZk9OX7
+         4DBKcyAqmPAYc0sxTfaimvXrAjOZEz6w7eHLNxoTwt/ujrkJCPXO49varhVFVnLyj9mk
+         C1BuQTGfByfpRjVB1kdGtwn0ynVzN0/uBMdkUlpXiWwvGQ0rZJPSjdiKlxuFge+OiBKT
+         mwhgWplQpVkV5RhUKQx9UZa1uRGH0lcraNFmbv7GeznFE+ZbehwQgIv26qTi5cPEuoMV
+         ABCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2uuElflZ6JU5Iac+6XFfRpo76+txq1KLFHKx6xs3GQ5r3HRRtQWQFRPvgUQFOpO1rOyGuausFnyW+2xI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykDJWCoQGqAd+ADnhrSugdrS9WPJu+X69n0p/Dwo3OMGadFTVD
+	FZuOQJplpjxzCWw9s20RGaZyjVILLUBtB0i8mQa5gFrtbxAlq5kTil76OZrWOVQ2SY1P9r34H0j
+	jlorCk0anpWhg8AbHwGLZvn0Sv9Wldo0UgcvLZcJ5ZiM6li21OKpH
+X-Gm-Gg: ASbGnctaUEXUj4kqPLvyF9p/Zpqb9DAZ2Gdkew2LBalf+AxnLWI4crV7tAXzsJRB/CL
+	D7485SRn3yYTZb8HupM327LDtA8q/D2u/lg359EwQEcFYyL1OKijnFK7wAwtPQRXwprX2SMCRrT
+	HYPu8VNtCppGu0BX7hsExmJw4IYRqX25bsN4k67qnGQ4bRFnsOrrDJro82NAoQAU3y7A21KGOF9
+	aUB+y3DJW/er6+vy2TqqaueKvUd07VNZ9R3U0Se6gVNWnfaYCUcQasi0ZzShtJXQez1wQzFz/JN
+	4vq8yuJ6LG2wQC9N1taIAr/Qm/g8GQ==
+X-Google-Smtp-Source: AGHT+IEYt0bFnFpqhd2H1XnceM8lYVhuAHUarQy8gh4pLinv73lfLkgJKvqyllIgt5EGZDv1rrVoDWxaCb89
+X-Received: by 2002:a05:6870:fe85:b0:2d6:1e7:f583 with SMTP id 586e51a60fabf-2e3c1b8e07dmr5370430fac.3.1747926345338;
+        Thu, 22 May 2025 08:05:45 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id 006d021491bc7-609f2fbf362sm587638eaf.12.2025.05.22.08.05.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 08:05:45 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 90DE9340286;
+	Thu, 22 May 2025 09:05:44 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 8A9F5E419EF; Thu, 22 May 2025 09:05:44 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] trace/io_uring: fix io_uring_local_work_run ctx documentation
+Date: Thu, 22 May 2025 09:04:50 -0600
+Message-ID: <20250522150451.2385652-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG Report] KASAN: slab-use-after-free in
- page_pool_recycle_in_ring
-To: Mina Almasry <almasrymina@google.com>
-CC: <hawk@kernel.org>, <ilias.apalodimas@linaro.org>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<horms@kernel.org>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<zhangchangzhong@huawei.com>
-References: <20250513083123.3514193-1-dongchenchen2@huawei.com>
- <CAHS8izOio0bnLp3+Vzt44NVgoJpmPTJTACGjWvOXvxVqFKPSwQ@mail.gmail.com>
- <34f06847-f0d8-4ff3-b8a1-0b1484e27ba8@huawei.com>
- <CAHS8izPh5Z-CAJpQzDjhLVN5ye=5i1zaDqb2xQOU3QP08f+Y0Q@mail.gmail.com>
-From: "dongchenchen (A)" <dongchenchen2@huawei.com>
-In-Reply-To: <CAHS8izPh5Z-CAJpQzDjhLVN5ye=5i1zaDqb2xQOU3QP08f+Y0Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemq200002.china.huawei.com (7.202.195.90)
 
+The comment for the tracepoint io_uring_local_work_run refers to a field
+"tctx" and a type "io_uring_ctx", neither of which exist. "tctx" looks
+to mean "ctx" and "io_uring_ctx" should be "io_ring_ctx".
 
-> On Tue, May 13, 2025 at 8:11 PM dongchenchen (A)
-> <dongchenchen2@huawei.com> wrote:
->>
->>> On Tue, May 13, 2025 at 1:28 AM Dong Chenchen <dongchenchen2@huawei.com> wrote:
->>>> Hello,
->>>>
->>>> syzkaller found the UAF issue in page_pool_recycle_in_ring[1], which is
->>>> similar to syzbot+204a4382fcb3311f3858@syzkaller.appspotmail.com.
->>>>
->>>> root cause is as follow:
->>>>
->>>> page_pool_recycle_in_ring
->>>>     ptr_ring_produce
->>>>       spin_lock(&r->producer_lock);
->>>>       WRITE_ONCE(r->queue[r->producer++], ptr)
->>>>         //recycle last page to pool
->>>>                                   page_pool_release
->>>>                                     page_pool_scrub
->>>>                                       page_pool_empty_ring
->>>>                                         ptr_ring_consume
->>>>                                         page_pool_return_page //release all page
->>>>                                     __page_pool_destroy
->>>>                                        free_percpu(pool->recycle_stats);
->>>>                                        kfree(pool) //free
->>>>
->>>>        spin_unlock(&r->producer_lock); //pool->ring uaf read
->>>>     recycle_stat_inc(pool, ring);
->>>>
->>>> page_pool can be free while page pool recycle the last page in ring.
->>>> After adding a delay to the page_pool_recycle_in_ring(), syzlog[2] can
->>>> reproduce this issue with a high probability. Maybe we can fix it by
->>>> holding the user_cnt of the page pool during the page recycle process.
->>>>
->>>> Does anyone have a good idea to solve this problem?
->>>>
->>> Ugh. page_pool_release is not supposed to free the page_pool until all
->>> inflight pages have been returned. It detects that there are pending
->>> inflight pages by checking the atomic stats, but in this case it looks
->>> like we've raced checking the atomic stats with another cpu returning
->>> a netmem to the ptr ring (and it updates the stats _after_ it already
->>> returned to the ptr_ring).
->>>
->>> My guess here is that page_pool_scrub needs to acquire the
->>> r->producer_lock to make sure there are no other producers returning
->>> netmems to the ptr_ring while it's scrubbing them (and checking after
->>> to make sure there are no inflight netmems).
->>>
->>> Can you test this fix? It may need some massaging. I only checked it
->>> builds. I haven't thought through all the possible races yet:
->>>
->>> ```
->>> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
->>> index 2b76848659418..8654608734773 100644
->>> --- a/net/core/page_pool.c
->>> +++ b/net/core/page_pool.c
->>> @@ -1146,10 +1146,17 @@ static void page_pool_scrub(struct page_pool *pool)
->>>
->>>    static int page_pool_release(struct page_pool *pool)
->>>    {
->>> +       bool in_softirq;
->>>           int inflight;
->>>
->>> +
->>> +       /* Acquire producer lock to make sure we don't race with another thread
->>> +        * returning a netmem to the ptr_ring.
->>> +        */
->>> +       in_softirq = page_pool_producer_lock(pool);
->>>           page_pool_scrub(pool);
->>>           inflight = page_pool_inflight(pool, true);
->>> +       page_pool_producer_unlock(pool, in_softirq);
->>>           if (!inflight)
->>>                   __page_pool_destroy(pool);
->>> ```
->> Hi, Mina!
->>
->> I tested this patch and the problem still exists.
->> Although this patch ensures that lock access is safe, the page recycle
->> process
->> can access the page pool after unlock.
->>
-> Sorry for the very late reply; got a bit busy with some work work.
->
-> My initial analysis was wrong as the test shows with the candidate
-> fix. I took another look, and here is what I can tell so far. The full
-> syzbot report is here for reference:
->
-> https://syzkaller.appspot.com/bug?extid=204a4382fcb3311f3858
->
-> page_pool_release_retry is supposed to block freeing the page_pool
-> until all netmems have been freed via page_pool_put_unrefed_netmem
-> using the inflight logic. What is clear from the syzbot report is that
-> this inflight logic didn't work properly, because the
-> page_pool_put_unrefed_netmem call happened after
-> page_pool_release_retry has allowed the page_pool to be freed
-> (__page_pool_destroy has already been called).
->
-> The inflight logic works by taking the diff between
-> `pool->pages_state_release_cnt` and `pool->pages_state_hold_cnt`.
-> pages_state_hold_cnt is incremented when the page_pool allocates a new
-> page from the buddy allocator. pages_state_hold_cnt is incremented at
-> the end of the page_pool_put_unrefed_netmem.
->
-> We don't expect new pages to be allocated by the page_pool owner after
-> page_pool_destroy has been called, so pages_state_hold_cnt is supposed
-> to not move after page_pool_destroy is called I think.
-> pages_state_release_cnt should be <= pages_state_hold_cnt at the time
-> of page_pool_destroy is called. Then when all the inflight netmems
-> have been freed via page_pool_put_unrefed_netmem,
-> pool->pages_state_release_cnt should be == to
-> pool->pages_state_hold_cnt, and the page_pool should be allowed to be
-> freed.
->
-> Clearly this is not working, but I can't tell why. I also notice the
-> syzbot report is from the bpf/test_run.c, but I don't think we have
-> reports from prod, so it may be a test issue. Some possibilities:
->
-> 1. Maybe the test is calling a page_pool allocation like
-> page_pool_dev_alloc_pages in parallel with page_pool_destroy. That may
-> increment pages_state_hold_cnt unexpectedly?
->
-> 2.  Maybe one of the pages_state_*_cnt overflowed or something?
->
-> 3. Memory corruption?
->
-> I'm afraid I'm not sure. Possibly littering the code with warnings for
-> unexpected cases would give some insight. For example, I think this
-> would catch case #1:
->
-> ```
-> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> index 4011eb305cee..9fa70c60f9b5 100644
-> --- a/net/core/page_pool.c
-> +++ b/net/core/page_pool.c
-> @@ -536,6 +536,9 @@ static struct page
-> *__page_pool_alloc_page_order(struct page_pool *pool,
->          alloc_stat_inc(pool, slow_high_order);
->          page_pool_set_pp_info(pool, page_to_netmem(page));
->
-> +       /* Warn if we're allocating a page on a destroyed page_pool */
-> +       DEBUG_NET_WARN_ON(pool->destroy_cnt);
-> +
->          /* Track how many pages are held 'in-flight' */
->          pool->pages_state_hold_cnt++;
->          trace_page_pool_state_hold(pool, page_to_netmem(page),
-> @@ -582,6 +585,8 @@ static noinline netmem_ref
-> __page_pool_alloc_pages_slow(struct page_pool *pool,
->                  page_pool_set_pp_info(pool, netmem);
->                  pool->alloc.cache[pool->alloc.count++] = netmem;
->                  /* Track how many pages are held 'in-flight' */
-> +               /* Warn if we're allocating a page on a destroyed page_pool */
-> +               DEBUG_NET_WARN_ON(pool->destroy_cnt);
->                  pool->pages_state_hold_cnt++;
->                  trace_page_pool_state_hold(pool, netmem,
->                                             pool->pages_state_hold_cnt);
-> @@ -1271,6 +1276,8 @@ void net_mp_niov_set_page_pool(struct page_pool
-> *pool, struct net_iov *niov)
->
->          page_pool_set_pp_info(pool, netmem);
->
-> +       /* Warn if we're allocating a page on a destroyed page_pool */
-> +       DEBUG_NET_WARN_ON(pool->destroy_cnt);
->          pool->pages_state_hold_cnt++;
->          trace_page_pool_state_hold(pool, netmem, pool->pages_state_hold_cnt);
-> ```
->
-> If you have steps to repro this, maybe post them and I'll try to take
-> a look when I get a chance if you can't root cause this further.
-HI, Mina
-Thank you for your rigorous analysis of the problem.
-We can use the config and log in syzkaller to reproduce the problem.
-Enable CONFIG_PAGE_POOL_STATS and add delay to
-page_pool_recycle_in_ring() can make it easier to reproduce the problem.
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ include/trace/events/io_uring.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-static noinline bool page_pool_recycle_in_ring(struct page_pool *pool, 
-netmem_ref netmem)
-{
-         int ret;
-         /* BH protection not needed if current is softirq */
-@@ -715,6 +719,8 @@ static bool page_pool_recycle_in_ring(struct 
-page_pool *pool, netmem_ref netmem)
-                 ret = ptr_ring_produce_bh(&pool->ring, (__force void 
-*)netmem);
+diff --git a/include/trace/events/io_uring.h b/include/trace/events/io_uring.h
+index fb81c533b310..178ab6f611be 100644
+--- a/include/trace/events/io_uring.h
++++ b/include/trace/events/io_uring.h
+@@ -643,11 +643,11 @@ TRACE_EVENT(io_uring_short_write,
+ );
+ 
+ /*
+  * io_uring_local_work_run - ran ring local task work
+  *
+- * @tctx:		pointer to a io_uring_ctx
++ * @ctx:		pointer to an io_ring_ctx
+  * @count:		how many functions it ran
+  * @loops:		how many loops it ran
+  *
+  */
+ TRACE_EVENT(io_uring_local_work_run,
+-- 
+2.45.2
 
-         if (!ret) {
-+               mdelay(2500);
-                 recycle_stat_inc(pool, ring);
-                 return true;
-         }
-> --
-> Thanks,
-> Mina
 
