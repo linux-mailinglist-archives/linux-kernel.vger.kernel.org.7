@@ -1,126 +1,162 @@
-Return-Path: <linux-kernel+bounces-659591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C8F6AC1268
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:42:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1EA3AC1283
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 19:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B011189AE0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:42:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5CF8A418D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73CA529ACFC;
-	Thu, 22 May 2025 17:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AB529CB48;
+	Thu, 22 May 2025 17:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="pL0UsExS"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vh6eOja6"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1D228D854
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 17:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF54F29ACCE
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 17:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747935667; cv=none; b=iDnAW9MvxRzEL3zkmbHGmknGK0vHJBHiREMjFpYXbV8SB+zovX1Ag8gcTI2GkxeopWUo4b5Pe3G1qH0oEdrsf4YqT3FYT7Y2zYr1KTwmI84j+QLeFyVlXyGi9Ln7wUoG93rkdroje9RqOZjTYE0tRxavbYfpakHQqrt0ESOO+2E=
+	t=1747935673; cv=none; b=bf//+A6iip6vNVmeRAPbp/768yThf+qRFQO2PCP/Zkz3mHmPVMgkrSVeFdU4KqGycMuOEOQtjFUwNMsrDB/t5P4eD4eVzmQ2+LRHJ9r5XuefZpGasrpAEEPDhsJMaCsGrUuEZXmbw2EM8CWvZxx3mNtKyGSWz2riF9iBydBtznQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747935667; c=relaxed/simple;
-	bh=Sj853nWirJZ6QksDX60oAkFJsOu2lKgUIMCdKND2jLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gEQtbKfmKWROjUVlrJLhZ8i4AUT8IEbAA9GGxszrcCqTeBH9DC4B3xbX4r0haVbYVTc7ojWfmbjv7djERQGBoc1734sgzsWJ32PDHfKdBG/5Rc4PQF7BZ5ZH52nE3S00L97c9h2To7dxepBUpkl8fh+06jHAq9wjIHtLFrYb9JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=pL0UsExS; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6f0ad74483fso88022596d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 10:41:02 -0700 (PDT)
+	s=arc-20240116; t=1747935673; c=relaxed/simple;
+	bh=KEPTMakCA32PkhOCrneqwQED+KPaxi3ID2lG6vlGRmg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=d7b4ZOURyq1qCItcYmChhN2OG2F8ALz/9o66rpdAistI1/kexRy+JCcMXQEJAfurwt8tw7pCUPBZPxHP3Wt+7XESusUxiJ/ljNb9VZKAtIn/SmrJGKVaE5mln9qYp1q+2twFBupOCWy4dkAeQNdb5SXYjGt9Xg2DxJGlB8Tj7aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vh6eOja6; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a35c894313so5636081f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 10:41:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1747935661; x=1748540461; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gMhkBzyGTXMRs1OF9XX7AjgWmru1ajwfU7z5aXIlDss=;
-        b=pL0UsExSp4eh/fFepZLUTLujyVU0626liwAKsS+pn6wDXNdemz0Qga7MtzDDogcVdG
-         VQ1ZPokZkFm2hwUSnNwfX/BpMmAZQ/tJFiGfJ3JOawMtRGEqBpPVBUsfjJJiaE7Fm2Lu
-         LDZAjqCTUDCX/XgxfudqWT1+aFxQAy0VXskgdbu1po92vAtp9KEKN4nt9y02T/fl5cTH
-         Bn5ZunLXpDWLg1sToNKBnnwRCQNvCHB3j8wdbP2buCQ7iKuFUe2/SfLk2gleUOxKQAKJ
-         m0+5nu34gUkDR5ROUo+Am1PCmYdDdMcfBBJY6obsP3WAhjf0PjzzoEudQfvjW4zx+lRS
-         pwGQ==
+        d=linaro.org; s=google; t=1747935665; x=1748540465; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b6zBILNgMTTruPAKW6TCbU3LqqO81pSI/MBmJZg4XxA=;
+        b=vh6eOja6Pyx0N1mL7J5ArhNCbPg6RCcMCYbJEoiyyjvPI9cheM9vyZ2jmrBvBqKikP
+         4zssXMDJ+pe4wiqXvYAws8tfKAix/8J23/l/urxF8Zf/Darxu+wQH6rpNkhzJy/buiZu
+         PKndfdpYUHmCf42fQ1Za8OQ3eWbmc99/aDe1j1P/lTfYy5HS5GFC8lIkxafRw/RKX6ox
+         h20bB29XG58Qy7LSzhzOaw4PVY1FpOPODj5AfYxzMo6hPTstKZEDP1ODIQ3f5CJy1tf8
+         D4snMholPimtH+GOu8+BKka2vI8iDtkW9XR5hwd83+GD+a8siEEO2MR9KzHKxDNdQSGa
+         ueeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747935661; x=1748540461;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gMhkBzyGTXMRs1OF9XX7AjgWmru1ajwfU7z5aXIlDss=;
-        b=anVw4emriqJUa3fBIhn6QEFGf/6zEBB2upCsbDId/ezYe2XK+5BJSqKqnjQ1KcvrhL
-         z0xqeg/5yE1OcEQ0s1HQGFMr8xHhheEl1xg5T/tsm/0sZI/YqtP6ZK4cQ3/a8C+tJ/cj
-         pFJsE6Op1moiKEUGUuGwkokfnZX8469aWsbnQ6QAb2mJlmkkh117HwHwsWi7Sf1riYju
-         W5paKbA+qlOdVhl2e5/6d2w61zguVKVhUryEMa6FqWr9fPHhpjqtgh5VXRG87ZuVvh8O
-         1JKRKFXTRvDYmYLfya0BVgsCkxOHnhwghGVe+MtoR3lUPDs40UGvWQ8HzVpVkOFbE/sb
-         ZX7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUupmoYPw5S5oCbthN/Buxd+WD0Kbwk7+ZxeKnvbtWkuctseHtcjyH6aXzLP7jxNzk2/APY0xkbCuFUXY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylRNO/33r0TMfHGBye27WVH437w6LCq6OCXXGCJ1cz7MaXapv7
-	oCd4h64grwO9GWKnZjOpmsnOUnsF3hTQfWa989xGf0cYAfTwevrCIPMRBdUbB7bjOPQ=
-X-Gm-Gg: ASbGnctTAk1NISJy+WMR718H+e+xFFdbPVbfgN63TtSk3RfKXaPXtiJn18fFga1GSzf
-	Re9g6RQg2/kfbjwTyIVhUG0PayHD4gLaTwIWQCQ5a3MBhSTiKATIBkacq85JO9SWKaGTwwhsDG8
-	+IsGLqQDM9aaCJZbdBHnSrll7c3udWHwpOF2zR8/E4SrMXbeJGzThZjLgONmnE5ysZemaZTg+09
-	mAa4E574rQOW7C6fQ89LhewhnxwW9GJy2t4SEyMzxUI+BYiUN4ywlh6yJDISKq+iHevBlf6iWr3
-	1tWZsgfjPJCKBjm0Q6aDVm/9R7tSI9nYerKE1XcYUUsbpBiumTcwOosNrTl8IQo3tYwmp6EQF05
-	oWs+Cdb4lTR9B4g0EAi8ejie9ifUl0xI=
-X-Google-Smtp-Source: AGHT+IGOPh8mYT+pu5QrJ65CJWX1L4aK/pTlGD+97CE773zsGlMIhAiXIygW0qdlDm7sog2z09vBFg==
-X-Received: by 2002:a05:6214:e85:b0:6ed:15ce:e33e with SMTP id 6a1803df08f44-6f8b082e9a0mr449807006d6.27.1747935661275;
-        Thu, 22 May 2025 10:41:01 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-42.washdc.ftas.verizon.net. [96.255.20.42])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f8b3f29120sm97782246d6.89.2025.05.22.10.41.00
+        d=1e100.net; s=20230601; t=1747935665; x=1748540465;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b6zBILNgMTTruPAKW6TCbU3LqqO81pSI/MBmJZg4XxA=;
+        b=IiCW+S92lfUakKUPfaqrscKiB35COk/XpwUQ3G0e3KF2FYNJShsFzUW8R+ZtMeJnjr
+         HmI/psA378POyamK5g8OyohN846M5bZd1fxkWaRHOW6axIyG/nDG9AYBqwhzOwY+tFq7
+         3fMlOGE1ukMRKOljQ3MKbf1aFpGtlfxkf3L9M20xLpx/hiWlfahI1s0BgOpyRlyaJNZJ
+         v7vWAGs1VPSBQZcrbtgJ9vLcgNsf8es4hRdEA237BSz/L/uinbc/rvKhEfpClXiKd5fk
+         v4ouwYoBe1e9fD36Hgn//bHDqegRb3ccIdGJiU3hPCpPPNdpB9Y3eeNx0rMLhP2QIdxd
+         KFPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ2ptrGeRstsV0W8rG7O1Qtnc9pDxDjXv3IxxtH8GCMXiVVcvvkAdf2C+HUTMvcHGXEdaSD8bqxv9LDIE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0l9cdC9sylokTC1oQD0VHMrDiFAfvr81t805Mhh8ByikNjBn8
+	2L6DfYBM6FS1sHQMtF4YHMkWSN24BmypKegXPCaAr9K7nO0lYtNuU73B6mZpQDGZpds=
+X-Gm-Gg: ASbGncumHSbQnojtt4HNNrBVDnExirkePDSH4ltox0mGSJ3pNqjWNV3qG+Om0zPVJ2/
+	bHflWJPEobdlOxhpKehLl8GtYzq17UHZWwj9p9kuMni2EMI9AIqWq6PiEs4A57FDFIWUTRpg4kV
+	9h1DiExOFWPC+5MfzI+htLdJD9+R0J8UYtgBwQ+63OghET7s2jJKtvUCd0t8eQlA5ZOf77LzM+C
+	UpMRcjjngvuEqiHGXaJvfUb77kwIG219qNcZceMtBZv9wnQei5CRHQYiediSXQhd5NgabKhrpYs
+	Mkd//x/YHWPRb9qYL/4oyFY5xAuBcA6drzjlSNmv3muorPG8Frn+byB9bl+k8JJcglzQMQ==
+X-Google-Smtp-Source: AGHT+IEF5HaUFQwCelNdRVlj1OZcIfPLTd/t+FpobYKsjTVhFlb/PhZuoCsEx3xvOKWYBUnoGfdrcw==
+X-Received: by 2002:a05:6000:184d:b0:3a0:b84c:52b4 with SMTP id ffacd0b85a97d-3a35c809250mr25368671f8f.10.1747935665397;
+        Thu, 22 May 2025 10:41:05 -0700 (PDT)
+Received: from orion.home ([2a02:c7c:7213:c700:6c33:c245:91e5:a9f4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f7bae847sm109563195e9.36.2025.05.22.10.41.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 10:41:00 -0700 (PDT)
-Date: Thu, 22 May 2025 13:40:59 -0400
-From: Gregory Price <gourry@gourry.net>
-To: SeongJae Park <sj@kernel.org>
-Cc: Bharata B Rao <bharata@amd.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Jonathan.Cameron@huawei.com,
-	dave.hansen@intel.com, hannes@cmpxchg.org,
-	mgorman@techsingularity.net, mingo@redhat.com, peterz@infradead.org,
-	raghavendra.kt@amd.com, riel@surriel.com, rientjes@google.com,
-	weixugc@google.com, willy@infradead.org,
-	ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net,
-	nifan.cxl@gmail.com, joshua.hahnjy@gmail.com,
-	xuezhengchu@huawei.com, yiannis@zptcorp.com,
-	akpm@linux-foundation.org, david@redhat.com
-Subject: Re: [RFC PATCH v0 0/2] Batch migration for NUMA balancing
-Message-ID: <aC9hqyuqeGB457Cq@gourry-fedora-PF4VCD3F>
-References: <aC6VIG7GPnqr3ug-@gourry-fedora-PF4VCD3F>
- <20250522163024.56592-1-sj@kernel.org>
+        Thu, 22 May 2025 10:41:04 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Date: Thu, 22 May 2025 18:41:00 +0100
+Subject: [PATCH v3 10/12] arm64: dts: qcom: qrb4210-rb2: enable wsa881x
+ amplifier
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522163024.56592-1-sj@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250522-rb2_audio_v3-v3-10-9eeb08cab9dc@linaro.org>
+References: <20250522-rb2_audio_v3-v3-0-9eeb08cab9dc@linaro.org>
+In-Reply-To: <20250522-rb2_audio_v3-v3-0-9eeb08cab9dc@linaro.org>
+To: Srinivas Kandagatla <srini@kernel.org>, Mark Brown <broonie@kernel.org>, 
+ linux-sound@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Srinivas Kandagatla <srini@kernel.org>
+X-Mailer: b4 0.14.2
 
-On Thu, May 22, 2025 at 09:30:23AM -0700, SeongJae Park wrote:
-> On Wed, 21 May 2025 23:08:16 -0400 Gregory Price <gourry@gourry.net> wrote:
-> 
-> > 
-> > It seems to me that DAMON might make use of the batch migration
-> > interface, so if you need any changes or extensions, it might be good
-> > for you (SJ) to take a look at that for us.
-> 
-> For batch migration interface, though, to be honest I don't find very clear
-> DAMON's usage of it, since DAMON does region-based sort of batched migration.
-> Again, I took only a glance on migration batching part and gonna take more time
-> to the details.
-> 
+One WSA881X amplifier is connected on QRB4210 RB2 board
+hence only mono speaker is supported. This amplifier is set
+to work in analog mode only. Also add required powerdown
+pin/gpio.
 
-DAMON would identify a set of PFNs or Folios to migrate, at some point,
-wouldn't it be beneficial to DAMON to simply re-use:
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-int migrate_misplaced_folio_batch(struct list_head *folio_list, int node)
+diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+index 6bce63720cfffd8e0e619937fb1f365cbbbcb283..4b878e585227ee6b3b362108be96aad99acba21d 100644
+--- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
++++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+@@ -270,6 +270,24 @@ zap-shader {
+ 	};
+ };
+ 
++&i2c1 {
++	clock-frequency = <400000>;
++	status = "okay";
++
++	wsa881x: amplifier@f {
++		compatible = "qcom,wsa8815";
++		reg = <0x0f>;
++		pinctrl-0 = <&wsa_en_active>;
++		pinctrl-names = "default";
++		clocks = <&q6afecc LPASS_CLK_ID_MCLK_2 LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
++		powerdown-gpios = <&lpass_tlmm 16 GPIO_ACTIVE_LOW>;
++		mclk-gpios = <&lpass_tlmm 18 GPIO_ACTIVE_HIGH>;
++		sound-name-prefix = "SpkrMono";
++		#sound-dai-cells = <0>;
++		#thermal-sensor-cells = <0>;
++	};
++};
++
+ &i2c2_gpio {
+ 	clock-frequency = <400000>;
+ 	status = "okay";
+@@ -736,6 +754,14 @@ wcd_reset_n: wcd-reset-n-state {
+ 		drive-strength = <16>;
+ 		output-high;
+ 	};
++
++	wsa_en_active: wsa-en-active-state {
++		pins = "gpio106";
++		function = "gpio";
++		drive-strength = <16>;
++		bias-disable;
++		output-high;
++	};
+ };
+ 
+ &uart3 {
 
-If not, then why?
+-- 
+2.47.2
 
-That's why I mean by what would DAMON want out of such an interface.
-Not the async part, but the underlying migration functions.
-
-~Gregory
 
