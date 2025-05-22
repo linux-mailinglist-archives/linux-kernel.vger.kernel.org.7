@@ -1,132 +1,94 @@
-Return-Path: <linux-kernel+bounces-659918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 980B0AC16C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:26:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0222AC16D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41FC2506531
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:26:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 738DF506649
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDDF279902;
-	Thu, 22 May 2025 22:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B79C242931;
+	Thu, 22 May 2025 22:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ToVMF8Pc"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="u1MWOB5X"
+Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8784F272E79
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 22:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB57279330;
+	Thu, 22 May 2025 22:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747952773; cv=none; b=lX/fbOicshI7s1Rfz7/RY4whd9vF0O3dHXa9K57h0qXTV5SfF4Act5q07aT1Qr6h+Iwe8g8+ZiVlOrPtXN3uuaGB1em8b4f5xyEdyeQGKRc+Ryv3tYw+2zYjieRyiFi9ZQMmGOB1Jsjfa9XJleniF725SOT8uvyV9Z08S/Ccuec=
+	t=1747953019; cv=none; b=B23+Vy/saP+ERD9HzJN1BCh7nyJHpkKJtlIK8ADa+1jhsqxRAs4fTbuAHOrRcWLeRRppFngESIuO2TlmPq3thAl5EoqM/ceIGr00a7PHgM7XASoYgWeu5tHUKmNdB8BQyd46OuYs/gy5NSli+wR2G3h5djk1HEd/8/vaasCt0IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747952773; c=relaxed/simple;
-	bh=ERIIFgKxrnPwjSVA6jXYtUfeYroUqJBM9v+L48OiIjw=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=n/TYlbqhtAhHnNNN7y4e5fEz+enBoJliVs4c2u/6Df4ZqnrECK9/uZK2iYEwka++6WmswR48HzdRQDYr4KaFLfEK/2+d7CiMkcRVQoJ2ldyF2yRnFn09+P36PvlY6aPqvoJ+V1HdtEuUdwCJJ4AqpK4rFPcm9JGWiQLZtDFhw+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ToVMF8Pc; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c542ffec37so948106985a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 15:26:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1747952768; x=1748557568; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yW4BwrWRPMGZw+m/ri6EFRKCjP4k+SeXSk6ZWrWvJiA=;
-        b=ToVMF8PcVy37DRcyydOqAzRtU8MIfxnsQYcyTujtaPP+6rNuh10GiSxHl8BpEOL7Vl
-         xP549yj/DsBJfMi3qCROE0CjVVteyRyHylhdLw04oGcxRiQntTqkGaj0qxDt91en7Yaf
-         k+SmxoaFBB+G/5sErCk+bkQleUrTH6XQJe2p+LIipbvb4fbPmu1wnSD2q+VMoi0xxJsW
-         gaMrvrcaiHSnHiky9rJUvXODz2114Xg3/bkQmKiZIEtphocJflv5aC1cQ1XzMR2q+5M1
-         e5C3pB8Uc+2bJywG7HLAABdlrHUZ45rP3ykqZkmL5ezlodK/YayNjCLBFI5pn3kcMbPH
-         Giow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747952768; x=1748557568;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yW4BwrWRPMGZw+m/ri6EFRKCjP4k+SeXSk6ZWrWvJiA=;
-        b=d2SBTqZviZrRp2JBTPSpIxI5wVdGtr1wR3pM/+NCTUMZvcQEp9sQ2fciXgpJ1AMHso
-         OaG/I35V4wSh+Yidzja5d59quYCXyzqZ+wVhMs7ZsGcBxzEL8oOBFAd3PAq4oRflictb
-         c3wu9dxuAbFwkcSHYyfsIRw81nQK3okB6MtszcL0RbRc5rCom6z3/dm5qITZGBfQ3Ha9
-         vAebj4tN1H0mbzQ9itUwwv5I55ClEgEomaD9U+AXah1R85nKIwmv29U0VmMwYvFL2R2k
-         /8n+ypHSzqaa3eiCp4gpb/A0v11tA4aGBfh4HrZnEsY8hA20fGeI0xWuLOBhXqKQE5dz
-         p2jA==
-X-Forwarded-Encrypted: i=1; AJvYcCWK1aKfpRb236oOZ8KUFGQ7ZXO0U/M3MhzLuE7H6h9Gyk+8eZNg9Eho2oMLDBYhUOwKPVuMtcUX3Ejj+tU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyktVMtRmOQbpdCv35vfNDHJoArVXIIbbkKT9OGLd9FGq/ycioA
-	IQYL+8WkncsMYnoD+a+R8X+SJeYN6GhY1ae/5z4IN+onOlxkH4u2ywrItXgzwM7WgA==
-X-Gm-Gg: ASbGncsn1LK9cRJxwZRTDuvUqEWzwvt50n3U5JtUng02nQWPS1cnWpHvRN6QK5K5sKv
-	3i3BsKyELz8+b8hCjiV1bRROc9/OK3m12fvP5go4xHwYTQPhqDR2MboslQws80o2X8snIVaV2Lp
-	TIblbqpNzIucxWtQ9MdxfVZyxY5TCVeD3Tx5aqvN7X+JTAFBkhKQQafKRamYjdqqD6ZcPnok5AO
-	czIU0Cfro3qaEhPJ3HK+6DOsVbyICRhc8wGFPWUF4B1LApRePd+G6FJvmDdylyovEanyqGM2kR3
-	eyVaPLoNA9lHBn5QKBiqb95JoiPknVPT8fOT5SzGaLnMIPJ7UoKGRHvSimOt32WVctdxorWqVVC
-	z8jHW+fsosY9FdD2HkHEG
-X-Google-Smtp-Source: AGHT+IHmIlyqjG6e3vdHM+wi0UqPbDaDdVTY/IdBlClNAbyXhci/B2Ul0PB2ozu0sL7+1EWeTaPM2w==
-X-Received: by 2002:a05:620a:408e:b0:7ce:d352:668f with SMTP id af79cd13be357-7ced352670emr1334278485a.47.1747952768087;
-        Thu, 22 May 2025 15:26:08 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7cd468b69dfsm1089029585a.79.2025.05.22.15.26.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 15:26:07 -0700 (PDT)
-Date: Thu, 22 May 2025 18:26:07 -0400
-Message-ID: <8bf36078ef8f3e884a1d3d8415834680@paul-moore.com>
+	s=arc-20240116; t=1747953019; c=relaxed/simple;
+	bh=6nlrUA/fMTKOObBYQK+Gk7I0UmQ0/p3SwQAXUH/DDgo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=i8hSCaRYNmBuNZv0nOJIo/ZzXE5cwCXuA7r9eHxvwNTrDEbzoh2ToVzahdSxkz8Lgxqe76MVYbIbtettgUV9KHovah53oS7KupCoJPGnmuGolye2AkL7JhZcXvkDO5uNVvyX7VokRLoq0hJxtjqzxsUXH8WwJjVYZQRl6viSQWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=u1MWOB5X; arc=none smtp.client-ip=185.226.149.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1uIEQS-007GOP-4r; Fri, 23 May 2025 00:30:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector2; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID;
+	bh=aGuZyX3fslrEUusqSYEFKL1p6x06fg8Wgbqcbb2KmYE=; b=u1MWOB5XWOn6QImSwmqJF4Utap
+	WRmuDzFaLw8ppqdg8znfYdo4n1/qc7bGnEDjfEqOzwvcCHzUWespFsxLqs3/liNG5xlmN11sGSFsI
+	klX80AXVXd9P9GWrRXuCGA/Hp/7OUN4HCeO/q/BuoDnDozy1d5Q4QMDNg9rxequ+Pll8eJkLrMV4N
+	lK4UkRXYIptC3Gy75UreI8kl45hggwfp9kUvjdd7G2JKRcWKENjcGSjZvk9hY73/Mlo56Z/GHCLpy
+	kBKz66JXRn5UcYd08yMJjYDqHUNa6/3rntgksf7/zACbM3SEkou0r61KNB8Th7ZSpaAfrwpGTVhl3
+	3hnBloWg==;
+Received: from [10.9.9.73] (helo=submission02.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1uIEQQ-000437-T4; Fri, 23 May 2025 00:30:07 +0200
+Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1uIEQC-009KRJ-Dv; Fri, 23 May 2025 00:29:52 +0200
+Message-ID: <6d6b2f04-fc4b-436c-a963-f4f8977bed37@rbox.co>
+Date: Fri, 23 May 2025 00:29:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250522_1740/pstg-lib:20250522_1730/pstg-pwork:20250522_1740
-From: Paul Moore <paul@paul-moore.com>
-To: Andrey Albershteyn <aalbersh@redhat.com>, Richard Henderson <richard.henderson@linaro.org>, 
-	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Amir Goldstein <amir73il@gmail.com>
-Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, selinux@vger.kernel.org, ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v5 3/7] selinux: implement inode_file_[g|s]etattr hooks
-References: <20250513-xattrat-syscall-v5-3-22bb9c6c767f@kernel.org>
-In-Reply-To: <20250513-xattrat-syscall-v5-3-22bb9c6c767f@kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Michal Luczaj <mhal@rbox.co>
+Subject: Re: [PATCH net-next v6 0/5] vsock: SOCK_LINGER rework
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+ virtualization@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250522-vsock-linger-v6-0-2ad00b0e447e@rbox.co>
+ <kqm3bdj66qkziz27xsy6k6rnyminleqvebgqoudmufa424jlzm@khnzut7q4nqq>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <kqm3bdj66qkziz27xsy6k6rnyminleqvebgqoudmufa424jlzm@khnzut7q4nqq>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On May 13, 2025 Andrey Albershteyn <aalbersh@redhat.com> wrote:
+On 5/22/25 10:08, Stefano Garzarella wrote:
+> On Thu, May 22, 2025 at 01:18:20AM +0200, Michal Luczaj wrote:
+>> Change vsock's lingerning to wait on close() until all data is sent, i.e.
+>> until workers picked all the packets for processing.
 > 
-> These hooks are called on inode extended attribute retrieval/change.
+> Thanks for the series and the patience :-)
 > 
-> Cc: selinux@vger.kernel.org
-> Cc: Paul Moore <paul@paul-moore.com>
-> 
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> ---
->  security/selinux/hooks.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+> LGTM! There should be my R-b for all patches.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+I think it went smoothly, thanks for the reviews :)
 
---
-paul-moore.com
+Michal
+
 
