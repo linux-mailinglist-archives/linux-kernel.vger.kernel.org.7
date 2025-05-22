@@ -1,219 +1,137 @@
-Return-Path: <linux-kernel+bounces-658870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E40AC088C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:23:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB4E0AC084C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 11:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6C311B671EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:23:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ECBD7A3B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 09:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09992686AF;
-	Thu, 22 May 2025 09:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="MeFKXjiC";
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="H7NRlwt2"
-Received: from mailhub9-fb.kaspersky-labs.com (mailhub9-fb.kaspersky-labs.com [195.122.169.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B98237164;
+	Thu, 22 May 2025 09:15:32 +0000 (UTC)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24A92638BC;
-	Thu, 22 May 2025 09:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.122.169.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A07CC2EF;
+	Thu, 22 May 2025 09:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747905759; cv=none; b=aYlP/7IkhihbEAJkB4SGHXYkpklNEXsHC4aQSwwM2vBgxKkrN8lSmyezEgpkJYZ/TYf//42f3wehnzCzInQFnlSWX46kBI+UIjJPUHuoTVB//WZPZvxqMCN34KEJ8oy6jMtk+ykph1nbGvov9VZE5+cHkSNDwQanOxfK3A40s3w=
+	t=1747905331; cv=none; b=qvD7GyMb6C/l11MKNQ/sdMjsEhYYxd3mqUPRobphpvRd8MpOEsb7gUCp02aqGeJn63smh7JwEanr6Jc6UMyWKTs+B9QcXq/TxLzJO6ce6P9wYaYOEEIKXaLiWqF/jBQTnYRsdMD0lrQb09qBVfB+ynRpOT2KsLKfYQLChJEQhIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747905759; c=relaxed/simple;
-	bh=qigQEnNqaQWtRiBqtpmRRtl7HMDzo/ebfQTJy3XHors=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oihKjGcBYy5fpGeAgLkch98jeyeXCKaSAeP+vLqx5IYaZSwu1XwS++jwH2fU6+73IY3/Y+0YKEyzqfWo5BCR9X9kDqYny5iLOSnO9Irjha2zPRDMDW2SwSdq5+Eiapmd9CzGpOjw6lqdDOgcnX5lRDs1BCjIb90BZn6uurYu+Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=MeFKXjiC; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=H7NRlwt2; arc=none smtp.client-ip=195.122.169.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202502; t=1747905381;
-	bh=xqG5r0/5jevHvz5MUnt00ucOWx3cyvf6DBRXeCPlpz4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=MeFKXjiCaegQfGQuT+JuetKoPMd7t5lP3fd8+bvODAjJY1MzscvaKJzN9VTz/0yjK
-	 k6jeIBv2yIsiY4PRuZ9ADgIRZNWztV3cUzAi+ukvuN1rbO80Fu4zxmyLlSjIknOBBF
-	 R1Zv8BlHn6IiiI6TiGiaoc2xHVetBgJ0H3a3LL/NAm61mUANqA1XKokpS7UQBiSz3i
-	 QJaB3tBSp0tX3LU8LmvkwM5SGQjgnDHikd57yYtnTxabg1ayIGVvWteaC7x4cfMIvE
-	 GYfKdw1GJckfAuY44ikl5biA8L6E+yWLDorBHE+Lppuyc/ForHpZ85efyVqOUz/83I
-	 ed+b56NZKawPQ==
-Received: from mailhub9-fb.kaspersky-labs.com (localhost [127.0.0.1])
-	by mailhub9-fb.kaspersky-labs.com (Postfix) with ESMTP id 28D40906584;
-	Thu, 22 May 2025 12:16:21 +0300 (MSK)
-Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "mx13.kaspersky-labs.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub9-fb.kaspersky-labs.com (Postfix) with ESMTPS id EB21E902838;
-	Thu, 22 May 2025 12:16:20 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202502; t=1747905373;
-	bh=xqG5r0/5jevHvz5MUnt00ucOWx3cyvf6DBRXeCPlpz4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=H7NRlwt2NbcaSDpNOOrPSUWVritlgUKCeDn0dIsswbR4kC5E/NaaOqdeeVW8Rz/7g
-	 cZHdx0zXrTPClkbydACTtgzyTgiL5ugujmEYfbKl/QkZ/TaUYBH1N6vXuIyjbQI0aM
-	 6XOnrpiYqzPxGzuHyOk1MdcEC1gstqBXNIMscJVak6P7AkV61y283CvzDxDG9nv6wj
-	 PFhEnXuS8yZyTbY36MpefkbIXqHiKifWSDKKpLRiuVhNvA2x1+cYj3Uufh7ZFGNrYL
-	 0PHkATdK8p2pc/xRkfEoJldgIyNmJVF7RoFuWN3UgEmlMGpSYTFI2OZ/KtDGc7/vHk
-	 gyRhjMBKjMc3A==
-Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
-	by relay13.kaspersky-labs.com (Postfix) with ESMTP id 40E233E1CA6;
-	Thu, 22 May 2025 12:16:13 +0300 (MSK)
-Received: from mail-hq2.kaspersky.com (unknown [91.103.66.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id 95CFB3E1BEF;
-	Thu, 22 May 2025 12:16:12 +0300 (MSK)
-Received: from moskovkin-pc.avp.ru (10.16.49.191) by HQMAILSRV1.avp.ru
- (10.64.57.51) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 22 May
- 2025 12:15:47 +0300
-From: Vladimir Moskovkin <Vladimir.Moskovkin@kaspersky.com>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>
-CC: Vladimir Moskovkin <Vladimir.Moskovkin@kaspersky.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, =?UTF-8?q?Pawe=C5=82=20Chmiel?=
-	<pawel.mikolaj.chmiel@gmail.com>, Jonathan Bakker <xc-racer2@live.ca>, Tomasz
- Figa <tomasz.figa@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, <stable@vger.kernel.org>
-Subject: [PATCH] extcon: fsa9480: Avoid buffer overflow in fsa9480_handle_change()
-Date: Thu, 22 May 2025 12:14:56 +0300
-Message-ID: <20250522091456.2402795-1-Vladimir.Moskovkin@kaspersky.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1747905331; c=relaxed/simple;
+	bh=YD6GihKh1cczePzoQGpCMcErqyKih26+mFItiyntCnQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VPhrAh8fh8Ctz3zJqoaFOgNjg+AKH1apBmEI5KY3JWK3Fa05OuhRB+3Ed9/TrpYsY8RCaKklSvpmuMH7wKWpacDPvO/JThj+x29y8szYFC9rOFBm4Ha3k8NKs8FKxSD8u8Z0StPCtnZ9w6ShdV/R6Gj9HXAmfiW1HS4MaMa4EXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4dfa2aeec86so2776330137.1;
+        Thu, 22 May 2025 02:15:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747905329; x=1748510129;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mtHcMdP/wOh1XJjpbNuQz6SWOI2tVDt0ecPazsD7iGY=;
+        b=AcPLkPhm2x2so5WJ/piC2b04teuQBgi0tWEtUQkIMKNc3Stg7vhuJcRX+x8FfBClAn
+         WrQPEgxFob7n6EZhceTwJlggdGdvbLMfC2YcB7RHlpBHnWJIHh9yyZqluWQD9t7zIbZ5
+         GxXtXhjqB5/85b2/svhG/OMZ8GqycanUlxEzSh/7PDZdV70g4TzLBpqGIbntqpKL5En2
+         /tRF0tqIDAuz2XVB5cTsY1OU9XPwHfZoc+VlpFTGXGJxC8Vle7bT8l0Nuqvm3jfMKrgh
+         +N/JFSYCkzLZO6AUtKaz7MTRmjQipnm+lyK4MWiWh8A7svzqRWggDFL184bTyA3X2PIb
+         R+Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCWxUdAxb078aPXIwj5NkejiMJNz0V4eOUQ0Z/SsiLGPtm2VPKPm5WzqvJUjyBHxRzha3jx+ugLJqEyu@vger.kernel.org, AJvYcCXUxDO7PUVPNVhByiVPkg8gtlMl275Ap6AMXhlbFdGjB0NfrWNGLHyUyFJh1cicKkcch982vagyMdZKASbx@vger.kernel.org, AJvYcCXqZGeSG8wt30HXV+guyJ2EkqBuD9/KWbE6li0nEUf7GbZ59HzQD5scuFT9r7jQak5UQYkLIlUhXMCb8XCEmUGJ/yE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1b1HxEPd8/ny8fy1OQzRKCvfscioQ6bxQpnVVhxZZrQvbvRwZ
+	bFB4LVpL44tim9H7n4KHSIVYHoboRNaQGAJUOnd5mXG+W+RS2kaXolVCAv97k+sK
+X-Gm-Gg: ASbGncscLnqEnaY1RkbMxZpJKfjOYzbku42oBADyoeCf+M2eiq/u4RDJflNp44EcyJz
+	8uU98YD82Jw2+aQgrX0J9B7b1jxfnxwDCfpdm5Z8QJauPCoU+Rr1/CBnOo/ZGELKYdzcA1dI33f
+	lLwOq09XSyRToN3OszPmxxQnTBEkfT/Z0yZr44ovf1K5e9GDV58osMdmL7PGPooWZg7q14XJnrf
+	21K6x0RYwHz0W3VRIfu9010e87/xYf4SUcWONe9hn7CkaFa+kiZW+XCLxHRyoEX8nHvCv1Hv1+Q
+	DbF4ETbo12LjGr8IKJa5pRvUFn12B6cSQHNmltyVhsU5Q9kMYFtIpUPg3HnG/pnxj8a1l8io618
+	O+1+HbI8zO6fISnZzTptf019T
+X-Google-Smtp-Source: AGHT+IHf4OfjbPqiaHBlrlWV3/y0Fvmk1ldFF6JknHDAJNlawQoiEbDUnsHZPsF6M+0ndfLXyERXYg==
+X-Received: by 2002:a05:6102:f13:b0:4e2:bae4:200 with SMTP id ada2fe7eead31-4e2bae40b81mr5578266137.17.1747905328789;
+        Thu, 22 May 2025 02:15:28 -0700 (PDT)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87bec2299a2sm10273043241.32.2025.05.22.02.15.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 May 2025 02:15:27 -0700 (PDT)
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4e290e420eeso1388297137.0;
+        Thu, 22 May 2025 02:15:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVa7GFpm+AIHTTI2Q2/9flLPDMPtNAnhpib3u5Ry8NarLGvGB6MZbh28W+PII+lqvWdFJHhWGqo1ukK@vger.kernel.org, AJvYcCW+nZrvTrN0qchgvEvo7qyssvh1/3hiisuJ8qXa7DnDb6ZsOSWXsDBEKTmJh0J2nSpF7+LiiZ3GYsr/duJ6@vger.kernel.org, AJvYcCX5LI+LtebKRI4mCCWF5aMmOSk6Gonje4h7j4NV5fZfNOMV0QUnr8+pWnG4qJmBQ5BA+rC9CXp7tsnG+ZvdOTxUWrA=@vger.kernel.org
+X-Received: by 2002:a05:6102:f14:b0:4dc:9486:b055 with SMTP id
+ ada2fe7eead31-4dfa693fba4mr23514102137.0.1747905327490; Thu, 22 May 2025
+ 02:15:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: HQMAILSRV2.avp.ru (10.64.57.52) To HQMAILSRV1.avp.ru
- (10.64.57.51)
-X-KSE-ServerInfo: HQMAILSRV1.avp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 05/22/2025 08:39:06
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 193520 [May 22 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: Vladimir.Moskovkin@kaspersky.com
-X-KSE-AntiSpam-Info: LuaCore: 59 0.3.59
- 65f85e645735101144875e459092aa877af15aaa
-X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;moskovkin-pc.avp.ru:7.1.1,5.0.1;kaspersky.com:7.1.1,5.0.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: {Tracking_white_helo}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Deterministic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 05/22/2025 08:42:00
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 5/22/2025 8:29:00 AM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/05/22 05:45:00 #27780458
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 52
+References: <20250514101528.41663-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250514101528.41663-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250514101528.41663-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 May 2025 11:15:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX7_gBgvvB5GK-CpnPG-dMJYRZhi59xOV6Ejoye-7B6jQ@mail.gmail.com>
+X-Gm-Features: AX0GCFs6z3ntZaEj9BBJdu8JY5gNbcvuBF61v5jnmSlXn3hi_STnjOAxMbGJUEo
+Message-ID: <CAMuHMdX7_gBgvvB5GK-CpnPG-dMJYRZhi59xOV6Ejoye-7B6jQ@mail.gmail.com>
+Subject: Re: [PATCH 01/10] arm64: dts: renesas: r9a09g056: Add GBETH nodes
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Bit 7 of the 'Device Type 2' (0Bh) register is reserved in the FSA9480
-device, but is used by the FSA880 and TSU6111 devices.
+Hi Prabhakar,
 
-From FSA9480 datasheet, Table 18. Device Type 2:
+On Wed, 14 May 2025 at 12:15, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Renesas RZ/V2N SoC is equipped with 2x Synopsys DesignWare Ethernet
+> Quality-of-Service IP block version 5.20. Add GBETH nodes to R9A09G056
+> RZ/V2N SoC DTSI.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Reset Value: x0000000
-===========================================================================
- Bit # |     Name     | Size (Bits) |             Description
----------------------------------------------------------------------------
-   7   |   Reserved   |      1      | NA
+Thanks for your patch!
 
-From FSA880 datasheet, Table 13. Device Type 2:
+> --- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+> @@ -268,6 +268,215 @@ sdhi2_vqmmc: vqmmc-regulator {
+>                                 status = "disabled";
+>                         };
+>                 };
+> +
+> +               eth0: ethernet@15c30000 {
 
-Reset Value: 0xxx0000
-===========================================================================
- Bit # |     Name     | Size (Bits) |             Description
----------------------------------------------------------------------------
-   7   | Unknown      |      1      | 1: Any accessory detected as unknown
-       | Accessory    |             |    or an accessory that cannot be
-       |              |             |    detected as being valid even
-       |              |             |    though ID_CON is not floating
-       |              |             | 0: Unknown accessory not detected
+> +                       mdio0: mdio {
+> +                               compatible = "snps,dwmac-mdio";
+> +                               #address-cells = <0x1>;
 
-From TSU6111 datasheet, Device Type 2:
+1
 
-Reset Value:x0000000
-===========================================================================
- Bit # |     Name     | Size (Bits) |             Description
----------------------------------------------------------------------------
-   7   | Audio Type 3 |      1      | Audio device type 3
+> +                               #size-cells = <0x0>;
 
-So the value obtained from the FSA9480_REG_DEV_T2 register in the
-fsa9480_detect_dev() function may have the 7th bit set.
-In this case, the 'dev' parameter in the fsa9480_handle_change() function
-will be 15. And this will cause the 'cable_types' array to overflow when
-accessed at this index.
+0
 
-Extend the 'cable_types' array with a new value 'DEV_RESERVED' as
-specified in the FSA9480 datasheet. Do not use it as it serves for
-various purposes in the listed devices.
+> +                       };
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.17 with the above fixed.
 
-Fixes: bad5b5e707a5 ("extcon: Add fsa9480 extcon driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Vladimir Moskovkin <Vladimir.Moskovkin@kaspersky.com>
----
- drivers/extcon/extcon-fsa9480.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/extcon/extcon-fsa9480.c b/drivers/extcon/extcon-fsa9480.c
-index b11b43171063..30972a7214f7 100644
---- a/drivers/extcon/extcon-fsa9480.c
-+++ b/drivers/extcon/extcon-fsa9480.c
-@@ -68,6 +68,7 @@
- #define DEV_T1_CHARGER_MASK     (DEV_DEDICATED_CHG | DEV_USB_CHG)
- 
- /* Device Type 2 */
-+#define DEV_RESERVED            15
- #define DEV_AV                  14
- #define DEV_TTY                 13
- #define DEV_PPD                 12
-@@ -133,6 +134,7 @@ static const u64 cable_types[] = {
- 	[DEV_USB] = BIT_ULL(EXTCON_USB) | BIT_ULL(EXTCON_CHG_USB_SDP),
- 	[DEV_AUDIO_2] = BIT_ULL(EXTCON_JACK_LINE_OUT),
- 	[DEV_AUDIO_1] = BIT_ULL(EXTCON_JACK_LINE_OUT),
-+	[DEV_RESERVED] = 0,
- 	[DEV_AV] = BIT_ULL(EXTCON_JACK_LINE_OUT)
- 		   | BIT_ULL(EXTCON_JACK_VIDEO_OUT),
- 	[DEV_TTY] = BIT_ULL(EXTCON_JIG),
-@@ -228,7 +230,7 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
- 		dev_err(usbsw->dev, "%s: failed to read registers", __func__);
- 		return;
- 	}
--	val = val2 << 8 | val1;
-+	val = val2 << 8 | (val1 & 0xFF);
- 
- 	dev_info(usbsw->dev, "dev1: 0x%x, dev2: 0x%x\n", val1, val2);
- 
+                        Geert
+
 -- 
-2.25.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
