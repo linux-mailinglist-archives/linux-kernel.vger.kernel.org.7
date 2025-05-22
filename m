@@ -1,167 +1,119 @@
-Return-Path: <linux-kernel+bounces-658945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A8BAC0960
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 12:06:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD5FAC0966
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 12:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D69D1BC6751
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:06:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2540517C04A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057A12882A4;
-	Thu, 22 May 2025 10:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBEF2857DC;
+	Thu, 22 May 2025 10:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jZ8L8mhu";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OdnzB7To";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jZ8L8mhu";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OdnzB7To"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="LyG5lhXZ"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AF113C918
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 10:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73329286D72;
+	Thu, 22 May 2025 10:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747908371; cv=none; b=YVAZPI2IycGs1NuhPfpn+Hli7diaEkUCR/kaoBAxf+9mZsQYlXWZl0BdRYPFCjnBkhesHG4s0+cCTeUr88BFaIbD0R9da1xBnKHzn4ff7OzCzUjflzPpPLvnDwpj/iW8HYebE1ZFhQx8i9eD441pqV3Ejj9gusYzl/ACTkHDiaA=
+	t=1747908406; cv=none; b=SYEx4DhbOCw/PdBn6dQ8uhQJPKDk2C/UW+lIJkY+9vDdumZ/D9NyW816GAHFWMdewpydbHlI1depNMfTDJ/ZnsRhuWegIYb3bM6/PbL53s61RNAFVy8TP5kpS1MrknPwqONhGqDDFLVr8itim2d1Iv21MK73MO2MyA4YniJXxQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747908371; c=relaxed/simple;
-	bh=hI2PkXg+5nFv0lJw00qYMEYS3IrXQKl1hC5C8cOA9ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fz5QUrss958Piy3tuzhcy07/Pq0Libu4s72XwuGbnFFtPyYNpwjdOdgo7JJx1AwSyqH6kMWT2ffVJQi6pPRIxc7lmS4wBmPL8ex9AGoMRQz8g3SsrA0M2dcmV4DaYcBlF+fIVgtNJYm6nk3fR8+3SxCv1l3tYwn9zQpT/1M5JYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jZ8L8mhu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OdnzB7To; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jZ8L8mhu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OdnzB7To; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BDA3B211E8;
-	Thu, 22 May 2025 10:06:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747908367; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mJfxvIGADykpV/3Aru4pEGNYo+FCqumWO2IR3zGTS1U=;
-	b=jZ8L8mhuCvRJ5aztPiKxC4pHZSoPxuHeZui96DeRNoB3+KIYeXkxUuTfKm/YaAjF2JGeiu
-	GoExPf/qVPSaojW28ljqh7eWiCwrarWW+S248sXh6JNMHLx8J3u0+sIoB8LlLT5XGTgbLI
-	IQwPIKzVW2/PJdKXMMIndmwjXt37kzs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747908367;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mJfxvIGADykpV/3Aru4pEGNYo+FCqumWO2IR3zGTS1U=;
-	b=OdnzB7Tod9A6HmzzvvEUMejqQMWVmYwRrloo4lIJmSXnAKI6sWuacKzE70kMwNGr/3eRzz
-	1Me07idBo3n6BXAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747908367; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mJfxvIGADykpV/3Aru4pEGNYo+FCqumWO2IR3zGTS1U=;
-	b=jZ8L8mhuCvRJ5aztPiKxC4pHZSoPxuHeZui96DeRNoB3+KIYeXkxUuTfKm/YaAjF2JGeiu
-	GoExPf/qVPSaojW28ljqh7eWiCwrarWW+S248sXh6JNMHLx8J3u0+sIoB8LlLT5XGTgbLI
-	IQwPIKzVW2/PJdKXMMIndmwjXt37kzs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747908367;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mJfxvIGADykpV/3Aru4pEGNYo+FCqumWO2IR3zGTS1U=;
-	b=OdnzB7Tod9A6HmzzvvEUMejqQMWVmYwRrloo4lIJmSXnAKI6sWuacKzE70kMwNGr/3eRzz
-	1Me07idBo3n6BXAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7CC3A137B8;
-	Thu, 22 May 2025 10:06:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WqrnHQ/3LmiGOwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 22 May 2025 10:06:07 +0000
-Date: Thu, 22 May 2025 12:06:06 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Donet Tom <donettom@linux.ibm.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@kernel.org>, Zi Yan <ziy@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ritesh Harjani <ritesh.list@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Dave Jiang <dave.jiang@intel.com>
-Subject: Re: [PATCH v5 3/4] drivers/base/node: Remove
- register_memory_blocks_under_node() function call from register_one_node
-Message-ID: <aC73Dp90lDz1PN5T@localhost.localdomain>
-References: <d2490e807b2c13950bc1d4199f22ec078cc4c56a.1747904868.git.donettom@linux.ibm.com>
- <a2cc58f18dc984fc9563b9c10d5708cc92ac579f.1747904868.git.donettom@linux.ibm.com>
+	s=arc-20240116; t=1747908406; c=relaxed/simple;
+	bh=V+HOpa4ZLt1QROCir0lhwmjopu2L6RTP7KP9xQg1uIk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kSi2sSd+wPrzOsolpMVmkI+ujNiID5DGruwom7u9Ng07jQCYXNgXr8O3jlsunHe3Op61RvVzyQIE0j1BBfpTYkZ5WpibziP/Rahe8CTdWZCaV4onUckRvM+CoTTWEyCTlypiXimyOX0vWtklQK6bGl53LZvSB79U9BZ7r6/bGKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=LyG5lhXZ; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54LM5XFp008367;
+	Thu, 22 May 2025 03:06:35 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=1oY3A2J8MYXiGNyA+QlmBsr
+	Ldc2IdL7dWZwQfg2v234=; b=LyG5lhXZPgjAcftpgyGPXVFgEFWsDyUMUHV8nBa
+	3xdpqCh5PQKShi0PggKbjvH7nHJx/IMQmze0nJ0FjEEwdaLoNiktmGLNpzucoiOS
+	mSc+MifdE8I4BpesE7G9dkMaYRu6HpNHUmf1ArJgl65WX6aqYsEMlEk3P8j3DV+q
+	rOJZFAD5bJ7ICldHlu1S3LaObgVJaj7H5Vg5E6XmEGIZ4Atmq4W+Ls0jTgTJ7ZCx
+	HwfK0bVcMX83C+1FWrUlrgnBIep6thIdbsFurc0zUxixRbQ/uwU4O/Yk5VXBMfAt
+	Qm6+0YD7ogLRE/+DjVoLrCUISCAjqfgAcXMOyEp4NEV0hHg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46sqap95m5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 May 2025 03:06:34 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 22 May 2025 03:06:33 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 22 May 2025 03:06:33 -0700
+Received: from bharat-OptiPlex-Tower-Plus-7020.. (unknown [10.28.34.254])
+	by maili.marvell.com (Postfix) with ESMTP id E134D3F7083;
+	Thu, 22 May 2025 03:06:29 -0700 (PDT)
+From: Bharat Bhushan <bbhushan2@marvell.com>
+To: <bbrezillon@kernel.org>, <schalla@marvell.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <giovanni.cabiddu@intel.com>, <linux@treblig.org>,
+        <bharatb.linux@gmail.com>, <linux-crypto@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Bharat Bhushan <bbhushan2@marvell.com>
+Subject: [PATCH 0/4 v4] crypto: octeontx2: Fix hang and address alignment issues
+Date: Thu, 22 May 2025 15:36:23 +0530
+Message-ID: <20250522100627.175210-1-bbhushan2@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a2cc58f18dc984fc9563b9c10d5708cc92ac579f.1747904868.git.donettom@linux.ibm.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: 0.20
-X-Spamd-Result: default: False [0.20 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,linux-foundation.org,kernel.org,nvidia.com,linuxfoundation.org,gmail.com,kvack.org,vger.kernel.org,huawei.com,intel.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[]
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: 56QjARDuFOCbNE-2Yc3azTlz43rYs7bE
+X-Authority-Analysis: v=2.4 cv=HfgUTjE8 c=1 sm=1 tr=0 ts=682ef72a cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=dt9VzEwgFbYA:10 a=31lhjb_RWtGG_5pqcG4A:9
+X-Proofpoint-ORIG-GUID: 56QjARDuFOCbNE-2Yc3azTlz43rYs7bE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDEwMSBTYWx0ZWRfX+ls7ufzMKr3z f8pIslddte1K4vKA+ZcwoXWVvtIc1N88M0/2kFKwEfXVh1xDcH0G/VfFYMGobYKF7RTtZEq3zG7 PUUx8DtQ3YNuJRjWW/gbChmSlTD2qqdf9MVhXmBFKV0UIerybHnxX09UG3ykvrvnOyPdJa1bBUm
+ TrorIxqkpVOK6+m3b0QeSOE5q3CTHehFz1aONtMH1jAyCH1roonsFUC5JiyB5RrEDMkKanxu1iV DaU1aDMyAaDgsRLaGzMRErVMwU0jmOFwUjZIULXe20GRuuMdYpkpuR9AH1JZxCSyn0opsDQZS66 xr8XWbrfpTCCglMgKRb9pbiTPv+PUe+kNTZvplmZwvteAPRmN5V+Ya8lgStibHM96SgoeMo6Ztf
+ +rgNp6EdigY0pD9BWcSecH/6Xd72v9w/S/3CnrEHQG9BFiwi+JUH/p9SPjUJgGZH6LWcNLJd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-22_05,2025-05-22_01,2025-03-28_01
 
-On Thu, May 22, 2025 at 04:17:30AM -0500, Donet Tom wrote:
-> diff --git a/include/linux/node.h b/include/linux/node.h
-> index 5c763253c42c..6cf349c26780 100644
-> --- a/include/linux/node.h
-> +++ b/include/linux/node.h
-> @@ -136,18 +136,8 @@ static inline int register_one_node(int nid)
->  {
->  	int error = 0;
->  
-> -	if (node_online(nid)) {
-> -		struct pglist_data *pgdat = NODE_DATA(nid);
-> -		unsigned long start_pfn = pgdat->node_start_pfn;
-> -		unsigned long end_pfn = start_pfn + pgdat->node_spanned_pages;
-> -
-> +	if (node_online(nid))
->  		error = __register_one_node(nid);
+First patch of the series fixes possible infinite loop.
 
-Heh, remembering this code always brings me joy.
+Remaining three patches fixes address alignment issue observed
+after "9382bc44b5f5 arm64: allow kmalloc() caches aligned to the
+       smaller cache_line_size()"
 
-After this patch, register_one_node() is only called from try_online_node(), right?
-Which, before calling in, explicitly sets the node online, so... we can get rid of
-the node_online() check unless I am missing something.
+First 3 patches applies to Linux version 6.5 onwards.
+Patch-4 applies to Linux version 6.8 onwards
 
+v3->v4:
+ - Again fixed memory size calculation as per review comment
+
+v2->v3:
+ - Align DMA memory to ARCH_DMA_MINALIGN as that is mapped as
+   bidirectional
+
+v1->v2:
+ - Fixed memory padding size calculation as per review comment
+
+Bharat Bhushan (4):
+  crypto: octeontx2: add timeout for load_fvc completion poll
+  crypto: octeontx2: Fix address alignment issue on ucode loading
+  crypto: octeontx2: Fix address alignment on CN10K A0/A1 and OcteonTX2
+  crypto: octeontx2: Fix address alignment on CN10KB and CN10KA-B0
+
+ .../marvell/octeontx2/otx2_cpt_reqmgr.h       | 125 +++++++++++++-----
+ .../marvell/octeontx2/otx2_cptpf_ucode.c      |  51 ++++---
+ 2 files changed, 130 insertions(+), 46 deletions(-)
 
 -- 
-Oscar Salvador
-SUSE Labs
+2.34.1
+
 
