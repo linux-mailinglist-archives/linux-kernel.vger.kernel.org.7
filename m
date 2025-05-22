@@ -1,523 +1,129 @@
-Return-Path: <linux-kernel+bounces-659347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 350B6AC0EFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:56:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 953CDAC0EE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D10B0502486
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:56:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A38411887B24
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F12D28FAA9;
-	Thu, 22 May 2025 14:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF9F28DF2B;
+	Thu, 22 May 2025 14:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D5ajLTTK"
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CLtw3qnB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA1328F933
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 14:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0FE28CF74
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 14:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747925586; cv=none; b=qJXQN3hDRLRH85ZmvZJuO6q0sUdoRzgoopvbNs3agdLp3mUSOcS2dc9nG3pVMAMTdSlaGoyEDly6ZQrH/XN4JfkxWsrVB+fBcIFE8262/ebqty8VB53bZ2k1I4N+lIvjlPkQvl9AW3X0XUTngRBeC4np7qrvXb4hyQlUeq86nN8=
+	t=1747925570; cv=none; b=RJiA2n5MrqN2bm4kGsGTJl4pdqkf+fpl/706h3hxQmJnoD+LIaVADmrqlkH/Fa5fUuub0OAgoE5ZI9z1OC/NJeEAOJG+f6Aaj6aP4GGx4F7pNsvHyQrZCdgoiTGpLggcI7fka3XdJp+oSrDMlHdTFTr+v/VdSHu60yZLFBn1HV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747925586; c=relaxed/simple;
-	bh=voHIdnek2rVWq11x4dHxBsrRBa2u2uSDVw8eZR/HomA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d2OV8wa1XJhQpB38NxIsJzM5sZVo02MlwrB4OGWJSpdwT8Ny4LlzcM/UexS0LTJzPVTCMNMqdDFEucAVj067sdkigZfl04fdve4A9FdzUcIaZZLYUO2OcUJairQZTKFWpBKCOXW1YRfWkYqBl0nS6420pXFeNYs3+EA9NKbWGMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D5ajLTTK; arc=none smtp.client-ip=209.85.128.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-442f5b3c710so67557355e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 07:53:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747925582; x=1748530382; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WYaZ4ifiuCk5/DWThGzMkIsPWpqlx/A/4VaIeK3abLc=;
-        b=D5ajLTTKu8QEqrtLRO6VOCD8MIN5KJau9dhvjrtmEMucEh1BMlinC1U5+KngRyZjNX
-         vU6Y83X/9lCUN3Pi+K16aYjp8zS1Fd+taddD6iJn97SCIs1c8h7OfiQd/8LwWrD+id40
-         NiQTbaKJMx/r3UT3HxPimfac+ws3btuzcDDz4cMeiDS/J8lCIFnF5BArOIsgN0XUT8kM
-         eDpf3UKp1tF/mbyz2GXOhTLCUvde12laoL8bC8TBEQvcMp+atNGpPEhF0jm3/CARVBnp
-         0gWXVzqe0YazQq9bRggpv6XSoqwacOXsb7+hQHapxyvizoWTV7tNaY+IROLAJ0KHAVpj
-         YSbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747925582; x=1748530382;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WYaZ4ifiuCk5/DWThGzMkIsPWpqlx/A/4VaIeK3abLc=;
-        b=ltzY1mB97Am7Udt7/2Bau4wwUPqRlVKfdxC7JHDMJxDRgQVrZLvWfGSy85OeE7l/WH
-         0PNgU+Se+4RtRtb7lBUSyq8DMqOzbm05niah0o073zPngvUGSZVhtRCJSr0y00oa0nW4
-         Hu/BW83zdiBL6aueBrVFO3crHuBSHcLzpZmdC8YnW6iLTYL5W+w7jroi8VZGZMXyUBZ6
-         Vtb+jFZTJAqb+Ex8yxulPaL8uUVNmFc7FDCYBqHyIL50t7rT3NTpT1fzu0pI49SfpCxN
-         XAU9T7lcBMJHkiDYjGVzJKwx6/hI0oBAwuTdGl85CY7sEsZJcGkxrfzpvZUX/z1EyQPm
-         I1qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSq3hZRDCeyzxDF+72TdsgAWC7mEYIj1nt/0WvK2L6cUzKMVmRMolYKDJEaeZ7810kNOvcwnEOCjVLhP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdhkQDIYuJlavpJX3CfgqQtMhjYfS3kMWHIsTPgRdA1uk7mgzA
-	8/Six48gA0k6PYuoCuH+/6mz31cAXe66UylhPp4FDBqtI1TIobHoNMZU1DjOecqrUIo=
-X-Gm-Gg: ASbGncvUHEh6wJiX5Pv2qYtGCbkQg2H0o7fz32EZ4wtLnL7N6nhIZcyBPoBzJbloAXf
-	4ZDsAo2tJ8LEnX9ArbWbR1+robUGvw8GZqVoGrh7Ezjpmsu5j4xc7VxqeEfP2uP6QgZKR9n7rfK
-	hIC6p5ds6JuX7htlKtQ1TaOYybeZYbzmuuKg315Yr0XZiFSSNPWtZDEz3/cEiPTW+OT0YhI8zYK
-	X24JCF7hIysY8GtmlFx2h8XSr7Bj514+dlG59iJuuLwQgidKp33bYEPuVaaSDCM2MMFVfX9nlxt
-	ftBcXCD8NXna+zf6WMMQOyM6An09EwLjBICUqwPfXQ2WwM7QQ1CMqxQ1EIw1
-X-Google-Smtp-Source: AGHT+IHCGO08iUjDoKaqKd1XsFoF23FK31du7ZihSX97aKyIlXUv+uhNYjl/lS+O32YNy8OUI/RSbg==
-X-Received: by 2002:a05:600c:4f42:b0:442:f4d4:522 with SMTP id 5b1f17b1804b1-442fd60a5bemr233790665e9.5.1747925582001;
-        Thu, 22 May 2025 07:53:02 -0700 (PDT)
-Received: from ho-tower-lan.lan ([37.18.136.128])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f78aeb56sm104965555e9.27.2025.05.22.07.53.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 07:53:01 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-Date: Thu, 22 May 2025 15:51:43 +0100
-Subject: [PATCH v2 14/14] arm64: dts: Add DSPI entries for S32G platforms
+	s=arc-20240116; t=1747925570; c=relaxed/simple;
+	bh=7uAUNv82+LtkHA55DSD3QR6OnOrjU66RtE2T6otPNFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MPadByqsHb/sO0F4x1Xg/PByxxuno/iAagFO4QVG+ExuPzpZPJ2DLWSk3Ih0XRpWcHF8V4AoUstEyZfCgi/6dBj7sE8suWJpZFl8v57U1JUl4C5mZ5yjN5ysmHfVMG40/6zC31NbxEEq+/Vb8AlMrMfNf0aFdX76tQZYnDeWa5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CLtw3qnB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747925566;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pRqvAWIG+gW89awdSOcbpmSa/4HXlHRyH1DkS4kHixo=;
+	b=CLtw3qnBKcV53XvXZanT8KqJSCvoV6yMoEWnGpHM4YqvBcmdL+HjWSzbgk2K95wcRXLkrc
+	NYdWMizxnNJaOt5hANVPSlkHnSdfQoav8MQspp488BIkCzU0o6v+eVIMozRo+HGyt7grPb
+	M1HkzAa49Uv8hTtVOg9j4yX16p4gfjw=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-678-CcOIsM9IPI2ikLnRdLq8jw-1; Thu,
+ 22 May 2025 10:52:44 -0400
+X-MC-Unique: CcOIsM9IPI2ikLnRdLq8jw-1
+X-Mimecast-MFC-AGG-ID: CcOIsM9IPI2ikLnRdLq8jw_1747925563
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5D92619560AA;
+	Thu, 22 May 2025 14:52:43 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.172])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 60F0218001D8;
+	Thu, 22 May 2025 14:52:40 +0000 (UTC)
+Date: Thu, 22 May 2025 22:52:37 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, piliu@redhat.com, prudo@redhat.com
+Cc: linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, pmenzel@molgen.mpg.de,
+	coxu@redhat.com, ruyang@redhat.com, chenste@linux.microsoft.com
+Subject: Re: [PATCH] ima: add a knob ima= to make IMA be able to be disabled
+Message-ID: <aC86NSypHlER2C3L@MiWiFi-R3L-srv>
+References: <20250515233953.14685-1-bhe@redhat.com>
+ <aCaFNvHbYxrCaPbe@MiWiFi-R3L-srv>
+ <1d2848fe45dbf58707cecf16c4fc46b179e24415.camel@linux.ibm.com>
+ <aC6Y3S9hEB1snvwj@MiWiFi-R3L-srv>
+ <c0f1df02160138d0782cb897eda844287b3d7792.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250522-james-nxp-spi-v2-14-bea884630cfb@linaro.org>
-References: <20250522-james-nxp-spi-v2-0-bea884630cfb@linaro.org>
-In-Reply-To: <20250522-james-nxp-spi-v2-0-bea884630cfb@linaro.org>
-To: Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
- Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>, 
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
- NXP S32 Linux Team <s32@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Chao Fu <B44548@freescale.com>, 
- Xiubo Li <Li.Xiubo@freescale.com>, Lukasz Majewski <lukma@denx.de>, 
- linux-spi@vger.kernel.org, imx@lists.linux.dev, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Vladimir Oltean <vladimir.oltean@nxp.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>, 
- Larisa Grigore <larisa.grigore@nxp.com>, 
- "Radu Pirea (NXP OSS)" <radu-nicolae.pirea@oss.nxp.com>, 
- Larisa Grigore <Larisa.Grigore@nxp.com>, 
- James Clark <james.clark@linaro.org>
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c0f1df02160138d0782cb897eda844287b3d7792.camel@linux.ibm.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-From: Larisa Grigore <larisa.grigore@nxp.com>
+On 05/22/25 at 07:08am, Mimi Zohar wrote:
+> On Thu, 2025-05-22 at 11:24 +0800, Baoquan He wrote:
+> > On 05/21/25 at 08:54am, Mimi Zohar wrote:
+> > > On Fri, 2025-05-16 at 08:22 +0800, Baoquan He wrote:
+> > > > CC kexec list.
+> > > > 
+> > > > On 05/16/25 at 07:39am, Baoquan He wrote:
+> > > > > Kdump kernel doesn't need IMA functionality, and enabling IMA will cost
+> > > > > extra memory. It would be very helpful to allow IMA to be disabled for
+> > > > > kdump kernel.
+> > 
+> > Thanks a lot for careufl reviewing and great suggestions.
+> > 
+> > > 
+> > > The real question is not whether kdump needs "IMA", but whether not enabling
+> > > IMA in the kdump kernel could be abused.  The comments below don't address
+> > > that question but limit/emphasize, as much as possible, turning IMA off is
+> > > limited to the kdump kernel.
+> > 
+> > Are you suggesting removing below paragraph from patch log because they
+> > are redundant? I can remove it in v2 if yes.
+> 
+> "The comments below" was referring to my comments on the patch, not the next
+> paragraph.  "don't address that question" refers to whether the kdump kernel
+> could be abused.
+> 
+> We're trying to close integrity gaps, not add new ones.  Verifying the UKI's
+> signature addresses the integrity of the initramfs.  What about the integrity of
+> the kdump initramfs (or for that matter the kexec initramfs)?  If the kdump
+> initramfs was signed, IMA would be able to verify it before the kexec.
 
-S32G3 and S32G2 have the same 6 SPI devices, add the DT entries. Devices
-are all the same except spi0 has 8 chip selects instead of 5. Clock
-settings for the chip rely on ATF Firmware [1].
+Kdump initramfs could be generated each time when loading once change is
+detected, e.g newer kernel, kdump config tuning. It's different than
+UNI's normal initramfs. We don't need verify it as far as I know
+according to discussion with UNI dev, so ima=off can be set by default
+in kdump kernel. Even though one day that's really needed, ima=on|off is
+a switch, not a hard code.
 
-[1]: https://github.com/nxp-auto-linux/arm-trusted-firmware
-Co-developed-by: Radu Pirea (NXP OSS) <radu-nicolae.pirea@oss.nxp.com>
-Signed-off-by: Radu Pirea (NXP OSS) <radu-nicolae.pirea@oss.nxp.com>
-Signed-off-by: Larisa Grigore <Larisa.Grigore@nxp.com>
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- arch/arm64/boot/dts/freescale/s32g2.dtsi        | 78 +++++++++++++++++++++++
- arch/arm64/boot/dts/freescale/s32g3.dtsi        | 78 +++++++++++++++++++++++
- arch/arm64/boot/dts/freescale/s32gxxxa-evb.dtsi | 83 +++++++++++++++++++++++++
- arch/arm64/boot/dts/freescale/s32gxxxa-rdb.dtsi | 83 +++++++++++++++++++++++++
- 4 files changed, 322 insertions(+)
+Add people woiking on kdump UKI to CC.
 
-diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-index ea1456d361a3..68848575bf81 100644
---- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
-+++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-@@ -376,6 +376,45 @@ uart1: serial@401cc000 {
- 			status = "disabled";
- 		};
- 
-+		spi0: spi@401d4000 {
-+			compatible = "nxp,s32g2-dspi";
-+			reg = <0x401d4000 0x1000>;
-+			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clks 26>;
-+			clock-names = "dspi";
-+			spi-num-chipselects = <8>;
-+			bus-num = <0>;
-+			dmas = <&edma0 0 7>, <&edma0 0 8>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
-+		spi1: spi@401d8000 {
-+			compatible = "nxp,s32g2-dspi";
-+			reg = <0x401d8000 0x1000>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clks 26>;
-+			clock-names = "dspi";
-+			spi-num-chipselects = <5>;
-+			bus-num = <1>;
-+			dmas = <&edma0 0 10>, <&edma0 0 11>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
-+		spi2: spi@401dc000 {
-+			compatible = "nxp,s32g2-dspi";
-+			reg = <0x401dc000 0x1000>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clks 26>;
-+			clock-names = "dspi";
-+			spi-num-chipselects = <5>;
-+			bus-num = <2>;
-+			dmas = <&edma0 0 13>, <&edma0 0 14>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@401e4000 {
- 			compatible = "nxp,s32g2-i2c";
- 			reg = <0x401e4000 0x1000>;
-@@ -460,6 +499,45 @@ uart2: serial@402bc000 {
- 			status = "disabled";
- 		};
- 
-+		spi3: spi@402c8000 {
-+			compatible = "nxp,s32g2-dspi";
-+			reg = <0x402c8000 0x1000>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clks 26>;
-+			clock-names = "dspi";
-+			spi-num-chipselects = <5>;
-+			bus-num = <3>;
-+			dmas = <&edma0 1 7>, <&edma0 1 8>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
-+		spi4: spi@402cc000 {
-+			compatible = "nxp,s32g2-dspi";
-+			reg = <0x402cc000 0x1000>;
-+			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clks 26>;
-+			clock-names = "dspi";
-+			spi-num-chipselects = <5>;
-+			bus-num = <4>;
-+			dmas = <&edma0 1 10>, <&edma0 1 11>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
-+		spi5: spi@402d0000 {
-+			compatible = "nxp,s32g2-dspi";
-+			reg = <0x402d0000 0x1000>;
-+			interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clks 26>;
-+			clock-names = "dspi";
-+			spi-num-chipselects = <5>;
-+			bus-num = <5>;
-+			dmas = <&edma0 1 13>, <&edma0 1 14>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
- 		i2c3: i2c@402d8000 {
- 			compatible = "nxp,s32g2-i2c";
- 			reg = <0x402d8000 0x1000>;
-diff --git a/arch/arm64/boot/dts/freescale/s32g3.dtsi b/arch/arm64/boot/dts/freescale/s32g3.dtsi
-index 991dbfbfa203..4f883b1a50ad 100644
---- a/arch/arm64/boot/dts/freescale/s32g3.dtsi
-+++ b/arch/arm64/boot/dts/freescale/s32g3.dtsi
-@@ -435,6 +435,45 @@ uart1: serial@401cc000 {
- 			status = "disabled";
- 		};
- 
-+		spi0: spi@401d4000 {
-+			compatible = "nxp,s32g3-dspi", "nxp,s32g2-dspi";
-+			reg = <0x401d4000 0x1000>;
-+			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clks 26>;
-+			clock-names = "dspi";
-+			spi-num-chipselects = <8>;
-+			bus-num = <0>;
-+			dmas = <&edma0 0 7>, <&edma0 0 8>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
-+		spi1: spi@401d8000 {
-+			compatible = "nxp,s32g3-dspi", "nxp,s32g2-dspi";
-+			reg = <0x401d8000 0x1000>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clks 26>;
-+			clock-names = "dspi";
-+			spi-num-chipselects = <5>;
-+			bus-num = <1>;
-+			dmas = <&edma0 0 10>, <&edma0 0 11>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
-+		spi2: spi@401dc000 {
-+			compatible = "nxp,s32g3-dspi", "nxp,s32g2-dspi";
-+			reg = <0x401dc000 0x1000>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clks 26>;
-+			clock-names = "dspi";
-+			spi-num-chipselects = <5>;
-+			bus-num = <2>;
-+			dmas = <&edma0 0 13>, <&edma0 0 14>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@401e4000 {
- 			compatible = "nxp,s32g3-i2c",
- 				     "nxp,s32g2-i2c";
-@@ -524,6 +563,45 @@ uart2: serial@402bc000 {
- 			status = "disabled";
- 		};
- 
-+		spi3: spi@402c8000 {
-+			compatible = "nxp,s32g3-dspi", "nxp,s32g2-dspi";
-+			reg = <0x402c8000 0x1000>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clks 26>;
-+			clock-names = "dspi";
-+			spi-num-chipselects = <5>;
-+			bus-num = <3>;
-+			dmas = <&edma0 1 7>, <&edma0 1 8>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
-+		spi4: spi@402cc000 {
-+			compatible = "nxp,s32g3-dspi", "nxp,s32g2-dspi";
-+			reg = <0x402cc000 0x1000>;
-+			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clks 26>;
-+			clock-names = "dspi";
-+			spi-num-chipselects = <5>;
-+			bus-num = <4>;
-+			dmas = <&edma0 1 10>, <&edma0 1 11>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
-+		spi5: spi@402d0000 {
-+			compatible = "nxp,s32g3-dspi", "nxp,s32g2-dspi";
-+			reg = <0x402d0000 0x1000>;
-+			interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clks 26>;
-+			clock-names = "dspi";
-+			spi-num-chipselects = <5>;
-+			bus-num = <5>;
-+			dmas = <&edma0 1 13>, <&edma0 1 14>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
- 		i2c3: i2c@402d8000 {
- 			compatible = "nxp,s32g3-i2c",
- 				     "nxp,s32g2-i2c";
-diff --git a/arch/arm64/boot/dts/freescale/s32gxxxa-evb.dtsi b/arch/arm64/boot/dts/freescale/s32gxxxa-evb.dtsi
-index d26af0fb8be7..d8bf734aa267 100644
---- a/arch/arm64/boot/dts/freescale/s32gxxxa-evb.dtsi
-+++ b/arch/arm64/boot/dts/freescale/s32gxxxa-evb.dtsi
-@@ -173,6 +173,77 @@ i2c4-gpio-grp1 {
- 			pinmux = <0x2d40>, <0x2d30>;
- 		};
- 	};
-+
-+	dspi1_pins: dspi1-pins {
-+		dspi1-grp0 {
-+			pinmux = <0x72>;
-+			output-enable;
-+			input-enable;
-+			slew-rate = <150>;
-+			bias-pull-up;
-+		};
-+
-+		dspi1-grp1 {
-+			pinmux = <0x62>;
-+			output-enable;
-+			slew-rate = <150>;
-+		};
-+
-+		dspi1-grp2 {
-+			pinmux = <0x83>;
-+			output-enable;
-+			input-enable;
-+			slew-rate = <150>;
-+		};
-+
-+		dspi1-grp3 {
-+			pinmux = <0x5F0>;
-+			input-enable;
-+			slew-rate = <150>;
-+			bias-pull-up;
-+		};
-+
-+		dspi1-grp4 {
-+			pinmux = <0x3D92>,
-+				 <0x3DA2>,
-+				 <0x3DB2>;
-+		};
-+	};
-+
-+	dspi5_pins: dspi5-pins {
-+		dspi5-grp0 {
-+			pinmux = <0x93>;
-+			output-enable;
-+			input-enable;
-+			slew-rate = <150>;
-+		};
-+
-+		dspi5-grp1 {
-+			pinmux = <0xA0>;
-+			input-enable;
-+			slew-rate = <150>;
-+			bias-pull-up;
-+		};
-+
-+		dspi5-grp2 {
-+			pinmux = <0x3ED2>,
-+				 <0x3EE2>,
-+				 <0x3EF2>;
-+		};
-+
-+		dspi5-grp3 {
-+			pinmux = <0xB3>;
-+			output-enable;
-+			slew-rate = <150>;
-+		};
-+		dspi5-grp4 {
-+			pinmux = <0xC3>;
-+			output-enable;
-+			input-enable;
-+			slew-rate = <150>;
-+			bias-pull-up;
-+		};
-+	};
- };
- 
- &can0 {
-@@ -220,3 +291,15 @@ &i2c4 {
- 	pinctrl-1 = <&i2c4_gpio_pins>;
- 	status = "okay";
- };
-+
-+&spi1 {
-+	pinctrl-0 = <&dspi1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&spi5 {
-+	pinctrl-0 = <&dspi5_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/freescale/s32gxxxa-rdb.dtsi b/arch/arm64/boot/dts/freescale/s32gxxxa-rdb.dtsi
-index ba53ec622f0b..b0a21e4468da 100644
---- a/arch/arm64/boot/dts/freescale/s32gxxxa-rdb.dtsi
-+++ b/arch/arm64/boot/dts/freescale/s32gxxxa-rdb.dtsi
-@@ -127,6 +127,77 @@ i2c4-gpio-grp1 {
- 			pinmux = <0x2d40>, <0x2d30>;
- 		};
- 	};
-+
-+	dspi1_pins: dspi1-pins {
-+		dspi1-grp0 {
-+			pinmux = <0x72>;
-+			output-enable;
-+			input-enable;
-+			slew-rate = <150>;
-+			bias-pull-up;
-+		};
-+
-+		dspi1-grp1 {
-+			pinmux = <0x62>;
-+			output-enable;
-+			slew-rate = <150>;
-+		};
-+
-+		dspi1-grp2 {
-+			pinmux = <0x83>;
-+			output-enable;
-+			input-enable;
-+			slew-rate = <150>;
-+		};
-+
-+		dspi1-grp3 {
-+			pinmux = <0x5F0>;
-+			input-enable;
-+			slew-rate = <150>;
-+			bias-pull-up;
-+		};
-+
-+		dspi1-grp4 {
-+			pinmux = <0x3D92>,
-+				 <0x3DA2>,
-+				 <0x3DB2>;
-+		};
-+	};
-+
-+	dspi5_pins: dspi5-pins {
-+		dspi5-grp0 {
-+			pinmux = <0x93>;
-+			output-enable;
-+			input-enable;
-+			slew-rate = <150>;
-+		};
-+
-+		dspi5-grp1 {
-+			pinmux = <0xA0>;
-+			input-enable;
-+			slew-rate = <150>;
-+			bias-pull-up;
-+		};
-+
-+		dspi5-grp2 {
-+			pinmux = <0x3ED2>,
-+				 <0x3EE2>,
-+				 <0x3EF2>;
-+		};
-+
-+		dspi5-grp3 {
-+			pinmux = <0xB3>;
-+			output-enable;
-+			slew-rate = <150>;
-+		};
-+		dspi5-grp4 {
-+			pinmux = <0xC3>;
-+			output-enable;
-+			input-enable;
-+			slew-rate = <150>;
-+			bias-pull-up;
-+		};
-+	};
- };
- 
- &can0 {
-@@ -155,6 +226,18 @@ pcal6524: gpio-expander@22 {
- 	};
- };
- 
-+&spi1 {
-+	pinctrl-0 = <&dspi1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&spi5 {
-+	pinctrl-0 = <&dspi5_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
- &i2c2 {
- 	pinctrl-names = "default", "gpio";
- 	pinctrl-0 = <&i2c2_pins>;
+> 
+> As for the next paragraph, based on Coiby's response, please remove it.
 
--- 
-2.34.1
+Got it, thanks.
 
 
