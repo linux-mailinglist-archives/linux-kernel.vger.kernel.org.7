@@ -1,101 +1,118 @@
-Return-Path: <linux-kernel+bounces-659377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46DFAC0F78
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:09:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DFADAC0FA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE3783A862E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:08:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96CBB4E6354
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F9528FAAD;
-	Thu, 22 May 2025 15:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C890D290D92;
+	Thu, 22 May 2025 15:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B9DGfCRm"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GpshNTa9"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F3A28FAA4
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 15:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A975D23C384;
+	Thu, 22 May 2025 15:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747926511; cv=none; b=aOotqLxmntIL4YnVvy3AaWdWjxB2Beugvbxwcoh9P+G4d5xAhiWKAxUi5mG/MApeODw5GIzrn/J7R/JPBAPT5Bv5c1mOb2zd2OCmnmKnnTDxkOiDBQRS7M7lYll/rtZU70yfiDmg4fgOLkdfptCczFvDe8rCK/oDJB2NKw7iVbc=
+	t=1747926745; cv=none; b=R8Bz3j5a6qs5P0xeyYP+ky3T08Bch8WyyTjCQSxnnxgOZzhOHV5GmVassAg2rXGZv4kmI72oQOrmqbggeLDCM6I7+FGtgtXhf9UCQDemfM4vBdWy2S7/6KWhR0xDwzdYfU/SVjPPqiDVlYFRSPXEXf+Y0EwD9Lc3iYX0Mlzfx28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747926511; c=relaxed/simple;
-	bh=8Ri5WrICyPzPzRSsicf5C3pSlv1MhV9K/oJy5oyMHNI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Wb9QuwzKP0G9zaVitxKXgHl2BrdFWzZsgSOT5B9ddKeSmSYMxxRq7P7Pwjic0cSOYbVCqoYLZkkls277JMgCjULDnWBNPrYqRAE7QsAIDD7uogZfxq+IkdCifbYwwlTeGC7MFBmq1Sdq+WXdBVX/W+qOnwtJdpE3tMxcl5fUcvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B9DGfCRm; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b0f807421c9so4982881a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 08:08:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747926509; x=1748531309; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BEBLuBqQXhmi2BMHkf4ov7bmteqaGfMWaLVMUxnRkMw=;
-        b=B9DGfCRmYe8cE4pG1R9zlVTMVBBZ9hO17rJ7nyTmES7bSxCuElRt7PDOKQ9zJ0sD2b
-         0egua0qxIw8ug9me4ZjIa4rT1aT4tXkhHu5jAx5nY69d4nolQR3OVb6ZSF9cxImczEhi
-         vDABZY0B9rS5EYwP2Hxgm4qjD60QmYZi8N37yBdtIYXk12ZiHPLaIWxEtIsdrq23ssQl
-         qpDoLRHxoGZICyBLiJqnoXpn4Ewo6KsE6VPhY6sMbCYL/PFrCQMTKNpy3BaWW7QABq4J
-         vvTk+gsrkig8nDmrhEWoSru+iMlNnBXl5/n976TIKEeCRE2Eav05NJEPololMCWOlM1Y
-         bD8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747926509; x=1748531309;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BEBLuBqQXhmi2BMHkf4ov7bmteqaGfMWaLVMUxnRkMw=;
-        b=DHF9TTdDfaQbu6DmdBqtrw2RSSgIAbziCYB/p26jRZtQLPdh4jugTZtDQS+34/QQSz
-         U+/GKG8c5cWQWnWa+g+djDDOKeccrPlRQVLblWTd0s52v/Wti63GMR+20Jg5RGvM1Hej
-         YDdTzxZ1ptM9malRDmCczcvYITvHQTs/OKRj5a8kFKW3J5VXSt2zVL36LGjPGfG+L9gt
-         NYiAmFJPd5sQQt/xp5W+tOBXakaUPsK+/aqJJx5ALk6wdMCIj2EXN5LOPD6GnLAn/6VL
-         7ewDXqSo0QLETVApd8xM6+3QDQzY6n6K7I9YJu9vKRaX2A/1t5pLTuT5m5eo+30ryCZb
-         CNlA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUF/5xdSoTDt5AmE3GVofIaPeXx7M+bFxWvdZyjQM4RmmQ4Ulohn4JCJ8wALXJM6bKHXv25ddFGteZSUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1zcJV63lxg3M21gfajdaBqLa6uitzKnXC8U+B5urK4USGckvw
-	Tj0SSU5ZcIeyMLoKzpQkAGgtHiDYmUwhcHgo9U3K8DlyJWv9rHFuTEbgnyFC3q0brnyC3/ibBMs
-	uBaH7XA==
-X-Google-Smtp-Source: AGHT+IHDy4N3kP+9w5FUQWlHqLiOT/W33iU0PkAntA2CZoYSEu1INy5wr5ahi5sgxuNbgy00fBvZ0NKZmd0=
-X-Received: from pjbsp7.prod.google.com ([2002:a17:90b:52c7:b0:2fe:7f7a:74b2])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4ecb:b0:30e:823f:ef34
- with SMTP id 98e67ed59e1d1-30e823ff066mr30586885a91.23.1747926509468; Thu, 22
- May 2025 08:08:29 -0700 (PDT)
-Date: Thu, 22 May 2025 08:08:27 -0700
-In-Reply-To: <20250522075553.GG24938@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1747926745; c=relaxed/simple;
+	bh=pO5u+KDpqe/wtFtfltLT6eyTFZ/IqJJk8xm76d512/8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Hb3DPofgt6C8onwlQFhFpMJOR+THYM0N76ffFyvIdDQPAs8mzfAivggzd8CLxB8XiF83VfXZebnDkqnvkqJin046IOm2e29rlH+S9scbtB+j5dUc2+EJWXEAni/I+D3QCBBt8DlsXveUggekznf4beaoGXpw8FdTbNsOBC9hsak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GpshNTa9; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (unknown [IPv6:2a00:6020:448c:6c00:30c3:8bbb:632f:b0c9])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 93D028FA;
+	Thu, 22 May 2025 17:11:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1747926720;
+	bh=pO5u+KDpqe/wtFtfltLT6eyTFZ/IqJJk8xm76d512/8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GpshNTa9JHOJDRZHdtsC84v5/P02ueCLeCQNUEXgf3AzyBEwFBJjx7BkybbR65VBY
+	 4pinIoeT8j5g1t1nZ6S9AwRdsXXgvB22AKWLW/N2mRlqLJc6Dzcx6DLwe2sfwcWHe/
+	 P4tiv1afJ09/DpY5KEXmVW7dJjqqK6p0d3MIJEQk=
+From: Stefan Klug <stefan.klug@ideasonboard.com>
+To: linux-media@vger.kernel.org,
+	Dafna Hirschfeld <dafna@fastmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Stefan Klug <stefan.klug@ideasonboard.com>,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] media: rkisp1: Cleanup error handling
+Date: Thu, 22 May 2025 17:08:38 +0200
+Message-ID: <20250522150944.400046-3-stefan.klug@ideasonboard.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250522150944.400046-2-stefan.klug@ideasonboard.com>
+References: <20250522150944.400046-2-stefan.klug@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250517091639.3807875-8-ardb+git@google.com> <20250517091639.3807875-9-ardb+git@google.com>
- <20250519094038.GIaCr8ltHvLBYjk8iI@fat_crate.local> <aCstaIBSfcHXpr8D@gmail.com>
- <20250519131944.GCaCsv8A71vn21AB1W@fat_crate.local> <874ixernra.ffs@tglx> <20250522075553.GG24938@noisy.programming.kicks-ass.net>
-Message-ID: <aC896zTw_z7Bx6I2@google.com>
-Subject: Re: [PATCH v4 1/6] x86/cpu: Use a new feature flag for 5 level paging
-From: Sean Christopherson <seanjc@google.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>, 
-	"Ahmed S. Darwish" <darwi@linutronix.de>, Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Brian Gerst <brgerst@gmail.com>, 
-	"Kirill A. Shutemov" <kirill@shutemov.name>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 22, 2025, Peter Zijlstra wrote:
-> On Wed, May 21, 2025 at 05:23:37PM +0200, Thomas Gleixner wrote:
-> 
-> >    4) Drivers having access to CPUID is just wrong. We've had issues
-> >       with that in the past because drivers evaluated CPUID themself and
-> >       missed that the core code had stuff disabled.
-> 
-> I had this patch that read the module instructions and failed loading if
-> they used 'fancy' instructions. Do you want me to revive that?
+Do not call media_entity_cleanup() when media_entity_pads_init() fails.
+As a drive-by fix handle an (very unlikely) error in
+rkisp1_params_init_vb2_queue().
 
-Unless you want to grant exceptions, that's not going to fly for KVM.  KVM makes
-heavy use of CPUID, the consumption/output of which is firmly entrenched in KVM's
-ABI.
+Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
+---
+ .../media/platform/rockchip/rkisp1/rkisp1-params.c    | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
+index b28f4140c8a3..918eb06c7465 100644
+--- a/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
++++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-params.c
+@@ -2763,7 +2763,9 @@ int rkisp1_params_register(struct rkisp1_device *rkisp1)
+ 	vdev->queue = &node->buf_queue;
+ 	vdev->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_META_OUTPUT;
+ 	vdev->vfl_dir = VFL_DIR_TX;
+-	rkisp1_params_init_vb2_queue(vdev->queue, params);
++	ret = rkisp1_params_init_vb2_queue(vdev->queue, params);
++	if (ret)
++		goto err_mutex;
+ 
+ 	params->metafmt = &rkisp1_params_formats[RKISP1_PARAMS_FIXED];
+ 
+@@ -2777,19 +2779,20 @@ int rkisp1_params_register(struct rkisp1_device *rkisp1)
+ 	node->pad.flags = MEDIA_PAD_FL_SOURCE;
+ 	ret = media_entity_pads_init(&vdev->entity, 1, &node->pad);
+ 	if (ret)
+-		goto error;
++		goto err_mutex;
+ 
+ 	ret = video_register_device(vdev, VFL_TYPE_VIDEO, -1);
+ 	if (ret) {
+ 		dev_err(rkisp1->dev,
+ 			"failed to register %s, ret=%d\n", vdev->name, ret);
+-		goto error;
++		goto err_media;
+ 	}
+ 
+ 	return 0;
+ 
+-error:
++err_media:
+ 	media_entity_cleanup(&vdev->entity);
++err_mutex:
+ 	mutex_destroy(&node->vlock);
+ 	return ret;
+ }
+-- 
+2.43.0
+
 
