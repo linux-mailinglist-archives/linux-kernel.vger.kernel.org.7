@@ -1,121 +1,135 @@
-Return-Path: <linux-kernel+bounces-659322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3187CAC0EB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:50:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31196AC0EBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2AD11C004C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:50:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E10B8501CB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 14:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C91428D833;
-	Thu, 22 May 2025 14:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9113628D838;
+	Thu, 22 May 2025 14:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FDg1R4ZM"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cH7Q5Zmz"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D5128CF68;
-	Thu, 22 May 2025 14:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5647D28D854
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 14:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747925390; cv=none; b=JuA3AytzU2ujM0Ocs3kUi8qRs6RGJHhfUF3yKfuFjVvbAS/23oV7yv5oqxJXTHsyHakGa2kJjLKnm15K/UO0/klO0p42sA7N8KeCzIQAnrhWorQbvWgSPZvRKQeIVKbxuNUwZ7Z7NNtxU0vy7lpVC51YeukEcpAq2PvGNFsCVCU=
+	t=1747925418; cv=none; b=Q9+Pe0osrN0v4XPr3xDXOPrN0FKvoDQYxnuE6Ci+hBzRBMq9+mE9FRjkmoi+OZIzpBU3d6rcQ7Z1obQgOVS5a3fLuE8ZMGJpW/yDK0E7OqJKzbC4aEo8TWeUgR28vVhliT2fJd6dZWM0tHExQohK2QH1xQX5CJftBjF0SLbJ1y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747925390; c=relaxed/simple;
-	bh=HFymLVImnEcNAKIV/TlpK1W/DN4hwzhVfTQAET8d+00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s4vggKkLNmYzBRE9rhA5zC9VPoqCSgFA8DrTQCX8YWHmfjHRenRy7lQ+YSLPpYjcXzwN9ajV8Ayi116pTtNa36K4BYp0T7WiSGSW3p7DKaqQNCPmItSEtXdeOuyNs8DXRrXavqwWK7ROjn6I0uEzgCR9evJeJhnsV6960l1jLyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FDg1R4ZM; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54M7XUKJ003165;
-	Thu, 22 May 2025 14:49:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=3+xi4Q1NrRy5+I/Q+gWFXxJF9KfUYW
-	CSTDlT3QV3Bzg=; b=FDg1R4ZM+aQOb/3qjXxLl0vtnvY8i7k6ifoEDmYIrN57yE
-	mOY3zEob6XNdVwXIH5SSf6UJZ03bckBE0Z/69b4BUchAr/cCmCXZBZit8MRORNMY
-	axnd7Z7cuTZXnJmWaWdJEcG03JKNhvrlfrYdnHICCq/KNlcqtqMMxCGJ6AiQaL5N
-	VVF57TgPOBIkIjZXdhs2Ni+fSxBFwVnWdjqxoGtGP7hPHIPxN0gcdPms1c9UTVeo
-	3na2MAxZLZFwA8ePC0BEBWvuQwqqRZ0PGQV2onaZbywfYZP3iln7Ct45SbKdyMHJ
-	xA9N5lbmS2mdcPCYUqegXKWDciBsjRDyezA/TY1A==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46smh74rp5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 May 2025 14:49:46 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54MDrOMp010630;
-	Thu, 22 May 2025 14:49:45 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46rwnmhw92-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 May 2025 14:49:45 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54MEnf9e19530158
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 22 May 2025 14:49:41 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4BEAE2004D;
-	Thu, 22 May 2025 14:49:41 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 12EB220043;
-	Thu, 22 May 2025 14:49:41 +0000 (GMT)
-Received: from osiris (unknown [9.155.199.163])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 22 May 2025 14:49:41 +0000 (GMT)
-Date: Thu, 22 May 2025 16:49:39 +0200
-From: Steffen Eiden <seiden@linux.ibm.com>
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, frankja@linux.ibm.com,
-        borntraeger@de.ibm.com, nsg@linux.ibm.com, nrb@linux.ibm.com,
-        david@redhat.com, hca@linux.ibm.com, agordeev@linux.ibm.com,
-        svens@linux.ibm.com, gor@linux.ibm.com, schlameuss@linux.ibm.com
-Subject: Re: [PATCH v3 3/4] KVM: s390: refactor and split some gmap helpers
-Message-ID: <20250522144939.311722-C-seiden@linux.ibm.com>
-References: <20250522132259.167708-1-imbrenda@linux.ibm.com>
- <20250522132259.167708-4-imbrenda@linux.ibm.com>
+	s=arc-20240116; t=1747925418; c=relaxed/simple;
+	bh=Afxwdef0Jf2HSBiCXGtNVmL7wJWM8CS0UaEkxk3+CTk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=put6u3YKji0diqVnRd1s+bfyB65Qep2pscxjXTrRoJyVpy+iSDEc8CPzneNm0hS9kvUs6tQXbnNAqe/OMfRuaFHo5JnzWpu7Ebk9DWXmTedRMSgx4FDOaflB6JgEtAfFXwGAjTE8izO8z6jtoRkNBre0EHP/f4Hk/5jNX9S7Uzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cH7Q5Zmz; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3f6dccdcadaso6176757b6e.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 07:50:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1747925415; x=1748530215; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fp00wL1Y5X4So9ecfuqEeP+KnSz3366qtgJ3q9p0wb0=;
+        b=cH7Q5ZmzO2xYzDimGDjeSnbsmyL9HpUKR3C7FvwjX0GOaVnaA4y66VY5brWxAs/vSD
+         Z5IC9U7VM9/ddV7SCFk9HxWuz8TUyBXpM1ynA8dPc12hWLx3sTMZ/YP9idV5mPEOyJUH
+         v4Em01TIWD2Lku6CtKKdf5B5TiF854M3Y9rlPdBnRrtkzmaYng4RE1mbCqwjEhka6ozf
+         N/bjOZoB/NPhpuIaaZKM/4vCMlXNXQ5ZaeqgebrBVyYhPj4b/TwE3aUodOzJbcaRL3/0
+         bVM2KMNUD91PWjw2PSJONq+yfoDS50kYUsjR4EkMEGQhIC6W588GsqrhqCIm0jEfVRYO
+         H8Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747925415; x=1748530215;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fp00wL1Y5X4So9ecfuqEeP+KnSz3366qtgJ3q9p0wb0=;
+        b=Juxr5Dm9B2eczQCqtdv4CCgaZ6pAC5q2JZ1/9mopUDLEjKN817/XsRgbC7esL16CaK
+         /mZagXOuGTpTqsdbTsVczWcpeJNvYJeePKpgGfDnvZBEJKBw/9Z6x+fUQLeEHZZMIky3
+         EmlbKDnWgFWsSNpieTZuTg5NVOiwycMiaL1kZtn0DH98bxNRlGRfwgSCZjWhkZgOFEEF
+         ZSgXo0Hn7MW6Y4sLYn+/3ATCVy7006sf5qe1+oEGlWEE7/52C7RcL3rqLR9EehYK9Qqn
+         0nWdlzwXRHFsSlstjIfa4Quew3TPbUaFrMFQTxMfsQQbxNhz492KS2pa0MGuKtLRLkIm
+         jQ6g==
+X-Forwarded-Encrypted: i=1; AJvYcCU00KZujXGcMCBRaD2LNwKaUsj3TTAeYfiBoOQlHkj7yev02hCpChIuIDEONOV2ee1b72hVSAuwjDPl+G8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAXkcyoHoe38lr76OUXPAmgL57voS7sOA8SsX0xI5KU7x1Kd8W
+	puxkiYz2XrEAdt8EX89yDsHIGmnkwYTe3bQSXSpm2c4eMtB9OsQu/AtpIftv0oEmm9Y=
+X-Gm-Gg: ASbGncsmufn+pcMj8Sm/Oh7WKe1vjyP0eJYu9UDoWgHZW/ko1GyvNAXzuCizVD5J/1g
+	8p2Njj6Z4VQn6UHk+Q1q3xp3CMXhuMLshTk2hbBU6rnnd1wrOWaOxW+3n0Z2XpNsxW+O7JUYMYJ
+	xj7agJlz16lcKUOfwUIUrGxIQL2Nhv8A58OHeHgUF8tSV3FQWERTyC9nvTSC8xJQgZVRbEtXiFw
+	n/hATz1gacyrGjBeUZu217zEPu8O/yr1QiIu3EDzx1aV9tcf03GZgY017VHrm7gOxOnkBllucvW
+	mmLY8nkGAWtsgHdPvpIK+STFvKVY5qMZo1xABf5lR28YPnCMRw8rTCCwog==
+X-Google-Smtp-Source: AGHT+IE99qI2igLnDsriHnE/Vd3dM43WKl4zvPdqjymh1RvawHuJ/12e90L8OcmZmHyThgr1FJfBDw==
+X-Received: by 2002:a05:6808:80c5:b0:404:e2fe:eea4 with SMTP id 5614622812f47-404e2fef060mr16898305b6e.8.1747925415387;
+        Thu, 22 May 2025 07:50:15 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:3407:53d5:68cd:400d])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-404e303ffcasm2228234b6e.4.2025.05.22.07.50.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 07:50:14 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Thu, 22 May 2025 09:49:39 -0500
+Subject: [PATCH v2 1/3] dt-bindings: pwm: adi,axi-pwmgen: update
+ documentation link
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522132259.167708-4-imbrenda@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDE0MyBTYWx0ZWRfX+Y7mkMcnqBfA l1DZQR+MwFqcZiFAgsiFRtAVFA9cZ42AGenI0d4pLBCS942fOml7L0F1TG9Iumks0zVqE1vD8NO BDZ83hwnuleWiz5n/frnULAMhBujaRwOID2uaBsKp2s1i2iQeItcJG3v+TkJuxH+vsuf9sWbba1
- xU8HCbubHzdGmSPq78yRDAeeIlyqY1E5akxobOjNXIXohG+sU4S5WxWyKR7H+IuENmy6rKlN7Nb 89S95nLR+/8S16Yrq8wef6Mh41XzYNFZArvbin0g31EbU6tZeKu0RrRJYhmtr3gHM3jdcWvCcQl 2U8U4ZtFE9LCeq3fLnYXWofBidvNqcaTOodiUkLSelH3CeoS8uBP5S4OSivhk/TVakE49hrtB83
- GGVDEBG13WFy4hKYoqh2NoRWV/ux0sIDVmgoQKm0I2Z3E7SsjXcm0WRqvZmiaAS+Te8wscdb
-X-Proofpoint-GUID: dFBhf303j1fsEBbB08K5N8BNWFOxZ5af
-X-Proofpoint-ORIG-GUID: dFBhf303j1fsEBbB08K5N8BNWFOxZ5af
-X-Authority-Analysis: v=2.4 cv=EdfIQOmC c=1 sm=1 tr=0 ts=682f398a cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=5Nf8KAiPOa145nv64qUA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-22_07,2025-05-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_spam_definite policy=outbound score=100 impostorscore=0
- suspectscore=0 adultscore=0 mlxscore=100 lowpriorityscore=0 malwarescore=0
- phishscore=0 priorityscore=1501 bulkscore=0 clxscore=1015 mlxlogscore=-999
- spamscore=100 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505220143
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250522-pwm-axi-pwmgen-add-external-clock-v2-1-086ea9e6ecf0@baylibre.com>
+References: <20250522-pwm-axi-pwmgen-add-external-clock-v2-0-086ea9e6ecf0@baylibre.com>
+In-Reply-To: <20250522-pwm-axi-pwmgen-add-external-clock-v2-0-086ea9e6ecf0@baylibre.com>
+To: Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Trevor Gamblin <tgamblin@baylibre.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=958; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=Afxwdef0Jf2HSBiCXGtNVmL7wJWM8CS0UaEkxk3+CTk=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoLzmNrUCJifl1QcSZ+gTDF2zxU55qVnomA5y6m
+ tDYQUBK0S6JATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaC85jQAKCRDCzCAB/wGP
+ wHM2B/9JRNMQwTLu4nuDNL9qVkt/WIOCiYtI7/wLlaTumz0jd8ffR2Ear1PGMwhCgztoIKsQYyj
+ 1ckmmt2NJYsI7DyufiVL9eVHFOL59b5wACwAwSLbDDFTssMq7bTgJxWqj4qUzzX43AuG1rg2F1x
+ W42/gMK5fh0VM5YM9TJdy6DbsUfezLHVHGxB4XYiqT9BKsVBJFtZ2j3zc7jSH/FMEvd4wD1TCIh
+ wBUxLB72L6qEwObGLZg7znRgQQCnpDVkG+Ir6LKlJWCg3xnKswipsiGJ9sgK2KtA/wqRaRQIMT3
+ Dy6kmHYabFAbjJCjjavBAUHJEUuaM90IR4XBngFbk6GW6UtE
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Thu, May 22, 2025 at 03:22:58PM +0200, Claudio Imbrenda wrote:
-> Refactor some gmap functions; move the implementation into a separate
-> file with only helper functions. The new helper functions work on vm
-> addresses, leaving all gmap logic in the gmap functions, which mostly
-> become just wrappers.
-> 
-> The whole gmap handling is going to be moved inside KVM soon, but the
-> helper functions need to touch core mm functions, and thus need to
-> stay in the core of kernel.
-> 
-> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Change the documentation link to point to the location with the most
+up-to-date information.
 
-Reviewed-by: Steffen Eiden <seiden@linux.ibm.com>
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ Documentation/devicetree/bindings/pwm/adi,axi-pwmgen.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/pwm/adi,axi-pwmgen.yaml b/Documentation/devicetree/bindings/pwm/adi,axi-pwmgen.yaml
+index 45e112d0efb4663bc7fbb3a25a12d66aa8b7492d..bc44381692054f647a160a6573dae4cff2ee3f31 100644
+--- a/Documentation/devicetree/bindings/pwm/adi,axi-pwmgen.yaml
++++ b/Documentation/devicetree/bindings/pwm/adi,axi-pwmgen.yaml
+@@ -14,7 +14,7 @@ description:
+   The Analog Devices AXI PWM generator can generate PWM signals
+   with variable pulse width and period.
+ 
+-  https://wiki.analog.com/resources/fpga/docs/axi_pwm_gen
++  https://analogdevicesinc.github.io/hdl/library/axi_pwm_gen/index.html
+ 
+ allOf:
+   - $ref: pwm.yaml#
+
+-- 
+2.43.0
 
 
