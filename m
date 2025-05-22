@@ -1,275 +1,220 @@
-Return-Path: <linux-kernel+bounces-659393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309E1AC0F9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:13:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77AC9AC0FB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 17:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1892A1888512
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:13:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68A133BA797
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D40290D80;
-	Thu, 22 May 2025 15:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E82E28FFCF;
+	Thu, 22 May 2025 15:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QkYO2ZGx"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lV/suoXl"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D14C28FFF0;
-	Thu, 22 May 2025 15:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E5828FABE;
+	Thu, 22 May 2025 15:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747926726; cv=none; b=QB6oFhtsWplP5/ozl7GScEl9wWQj9ZvMuNsDCWmmtIyZghzwysdTUxllWOsjDVQl4kq6UAeBwwaKz+S2bqjr0iG9/Un/7TOytW/SZcCUwnog3s1BZlsc7+utQ22KqV6D6XQ5yKJZ/ykFdPIRQAK1lIEClez4ewE8jdQ/2xPQ0dY=
+	t=1747926802; cv=none; b=ken+ZEs36l7HbnMU6688R/wC4PItwTFDW9ruIYgvjLnnHA0ZhAle/d/is+MRnjxhQ6lRFYsn8R+UFXPuUdgbitmcaW3TTf3HmEGIos7q9aQoTE3rtikbge7vGZmA7sti30xoisfheQR8TzP+e6iJCoiWWpQ19ZJUnZ0kkXcAt2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747926726; c=relaxed/simple;
-	bh=QIS4unq5VDRUq2UCo4qnvc6+Jxb6VxValqCWbhaiJ1s=;
+	s=arc-20240116; t=1747926802; c=relaxed/simple;
+	bh=+Fdgk1qUC3rxR6AhCY5Vo20VRvmyxneBzAEdVhsu1VM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oPsqdDIkMDlre3BkKoZ6Vf26mJ1Nu6vIY3o1GEsa6TyJA3+p34ChYAFM3B33IPWdrCBg70HHLsb70gPK163Duklg883bWk4i6QFbYKzeofP5VRQUjNfrm9KMtDGWKZlFqkUobzNd9idgkJ2CYaqDXjVGaXuR5bP+JnN4+9m0wXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QkYO2ZGx; arc=none smtp.client-ip=209.85.219.45
+	 To:Cc:Content-Type; b=KTK/voDINQSSeU6EVlFQEDiogSpz5VSW62KflNMCUi2Irr7qlCQKIovw0BfiOIR+xlllRF4/cJPZcBm2xYA6lMUgY/74BDBZvBJ0/xKED6sPioC3sHv8f7hmPr24AQKNgmfT63q+zUjjV5TQJ8fajv50boWua0N8WcArWpFeROo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lV/suoXl; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6f5373067b3so102756806d6.2;
-        Thu, 22 May 2025 08:12:03 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad5297704aaso1354485966b.2;
+        Thu, 22 May 2025 08:13:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747926722; x=1748531522; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1747926799; x=1748531599; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zBpkT+X12qTj4ZXFWwDHYvuVR5JkpgqcjljjqtTRTxw=;
-        b=QkYO2ZGxaVsGt9kZ6pG9IlFEj+SpG75Pz54fxV7Pe+ZHOB5nmzSRtTSlDNTq8zmMTj
-         603h9zmNBKA0ik0A2x5WClb3YvvU7+C2ELzBxzxfF+881BxeP7HIemWHVV97vAI0oiKA
-         CEe90Pv/fSSO48affKFiK7ZNBiijOWnF1xG6yImnUxcFRLj6ed4QXb6ulOGOUuNxntxw
-         5TaKMGdIbUPQi2qtVYdMwIxrHIuD0kCjfdoAa+7q+SPt8338UxGY0m/w3vJiXXRuIa1g
-         cBekTNxRQ6Y7yKRDREt4Lt451cBPCi6HzL9xQ8vHWkPURuI0xdlav/uNkkLcz4ftCNzi
-         ey5A==
+        bh=oHzK0rav1aiTYoCujyOVtfBOZntyVntmfFzAKlovelQ=;
+        b=lV/suoXlDuDtkt8zwjj9W7cnjsEiNSjMoeCaKmEf6j8bvvf6+lQpYu1joeMUJHSsaq
+         JLzbZR4r0aeH1xzOFMHPcxRlKSe21fNNnyB+/FhRn0Pd2AEOBG5j/cR+kExa2hLxCjna
+         O7l1PSpE4Ui3BCMTp2SC4Y7k5KRg8IuFPr/8mOMUkQ8azw7BSqqHLm0vpU3eee1lq+rF
+         lunm9SRYFl8UgfZhf90Qir5acPzzxuHoESTGrAfE2vhYfnaoGVDupmcWvrZhSJLgBO0m
+         9+XZK5H8ofnL+ctk7mwVCvB2OEH7sRC8v7QatiwUvAROxiMhk+4/DkLnYbdJeK7hxBOp
+         dMkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747926722; x=1748531522;
+        d=1e100.net; s=20230601; t=1747926799; x=1748531599;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zBpkT+X12qTj4ZXFWwDHYvuVR5JkpgqcjljjqtTRTxw=;
-        b=HXV2HGTW3FJJ6r0z6BfayYLsP0SKrJh0LLjnz2cFFNpZhLP+CNkiPQXFeBHDoz3lDO
-         W/sTSpWCRqKhKwF6tmxbiviwm0vkzoKxZXIDQg+2n8nxnyEyQWAgVs5bTv+vltq6nabk
-         t8Qycqkmmo+AoXYz3Ig0W3UylrJOR4gVg2wdvVRwe6/+M2aHtou+I8VzMKqMxxiEl11b
-         dW8SGmoCCTMbSSYzd8oNe7NHEaUGwODIIF2S9pKo16R1Hs//axmWpsZKfaeqdfJCXfL2
-         S27BCTxaqsgza8aehjdsChgelH5l43z5/vai10oOJy9X912AFUFTIXSy54ftL4MHPqPE
-         t15g==
-X-Forwarded-Encrypted: i=1; AJvYcCUT3/LQs+qWwoKgaPlzehxb8HOVo3niWjr1bcdAMItjtphNaDLQOyvx481JZOKeYxou514eaxrDoqPf@vger.kernel.org, AJvYcCUpWCiqLn7fYpZOfUVSJOVyUI6fUzEO8sSIiAS4vP4JPMQ/7tWtNHZvOlY4TcdHv5QJidzkEiJOlrdke1J6@vger.kernel.org, AJvYcCV9CJhtyvUtH7cQOig1uX0Bz2f1dRm6UKO3eRd/G0oNccOvD76Ns94Q6cAJPjk0xTBEuwv2PvC0oYquUsL65duFPkg=@vger.kernel.org, AJvYcCVIQw1bibbAb2wU0icJ8RMan2YLnA+CGsNN9B23rLKrRbZNp0bpArztgGVCbhWdESN3dTA/kCIx7L9mrIOzGc/qvwU=@vger.kernel.org, AJvYcCVXcpZkTUtdNyj8CjWyFJmjVsJfLT3rOxTqvAAfpsNdLD+OZCrgOk/p4/ixdZRXgm3ZcbMzIsk7vrzms/AgpAEV9nQXOw==@vger.kernel.org, AJvYcCX0JeepdxWLQw06euqeXqheNFsqMyXlPWlEne5J4MyFtt9rk6OQWi+CulBSJJgsagq52+Br0T1zAAXad8nX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoDcrlwcV8gl4T8DZbW4tPJiU/HnEUKO/uJQksuihPap/GIjw2
-	x5BrqUx16pkQqWIYG5T7v97tR6x/XrhK6SeLYV3rjd7WvHfkHPimHVt1wrT2FopnwrHEBYrjzr7
-	g2xhEJBhnhU2bk4PrdS9wH7P/hGse3CA=
-X-Gm-Gg: ASbGncsvqTnl/7YhyXHUi9ISYroHXIzQZI/3tVW3oFCmHxos+5vNh9XPMY0RrpAtDKz
-	dJR7xnblPaMBHWgP9n4p4R3ZmSppMPd7ROV/Q/zGpKNpFC6X0a1prMV9IShmgjEOTuLZB3mRQtx
-	sULKBZPdzI9aZPiBRyTsmSifv+q4ZiEMQ=
-X-Google-Smtp-Source: AGHT+IFlBlVnRPEejI7uEQI0m4iJ7XD5elQtat++i3WnHxfOw553GLb37rOpDc90WmrXZut9Lu8B9Qiwq9FX49Bc1Ek=
-X-Received: by 2002:a05:6214:f0c:b0:6eb:28e4:8519 with SMTP id
- 6a1803df08f44-6f8b2c7b1d5mr412061496d6.21.1747926722029; Thu, 22 May 2025
- 08:12:02 -0700 (PDT)
+        bh=oHzK0rav1aiTYoCujyOVtfBOZntyVntmfFzAKlovelQ=;
+        b=uErWRJoIScY/zXoZ29nL/A5uODBlRaRY6Y1GEBxMlll4EeclAyTGJYYoryF3TQuS7H
+         8E3ylM1z/zn4Ii6ant2LdKmJco4YPkOjWLnU0x0wHodOz6j728ufHvP8ICNkP5yvGdAh
+         E//1j+1A193k1LngAqrKhUuqTDRMZEtUmYXSKLm4CVURXEhUk5K49oMg9kjE7I/k5HO4
+         1HUM542ETdmWuq8DBIOS5mSO2xu2dlEaXZYSVJMJEDjiKUhHyHcLxwF2EUXzGkyFColM
+         TwwagYvTtFZcnsuRgmZMobpZm47rNnW1KA61/zTBsF2B7Rj1FcNp1tE6df4XSub0fXug
+         mr7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUb/NY1IpkzoxoCh9SQS8bVkUD5X2v6hzCteccpjxZBt/s9dmJalkDsBQnFc5cUJhB8fjm+HGLTaHGkkViVAg==@vger.kernel.org, AJvYcCV1g0Q4/a4fs4mXWQmuMYEUgyzJeati3SVI0jghTSmnav6PVaVgmJJMW99cn5kiVI6BTu+t4RHXBhPQP6Z6@vger.kernel.org, AJvYcCVz4XzV4+ruhxpuArxyQCbG0/pSoEh7TlQ/+nNJcr0HYf+dsYxBI4vUMMZwdRVtaPtpD9ffFhPDwwgWOczs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/nhBUJOza55UZHLe3DkonvVBPQqH3JTEaQpUOl4Gi8DUy2bsl
+	smWhDu0Qc5+/ivOrKw9am1KdkksOVRY8FVsEhZflA2xtv6fqxTbXzGXUIdsH6BH7nk+d5S1seLy
+	1H/hbB7d4HrabUSVnR7+Rd0sN+8dYiRs=
+X-Gm-Gg: ASbGnctkyws9tsnnXooIUuEOCFDoj7eBLNAhSNoOKB3AGsetEEne1s8nwXxISS4Mfgd
+	UUnHShRp3Gszxexb1Fr2zrsElOlP3CMcDMtoQNEHz5ZPRbTclCmatDFmnY9sjiItFRIeiNwAKsy
+	YWVSyQe5/wsQ/Mo6iyhGOqXgvowMGHMuJq
+X-Google-Smtp-Source: AGHT+IG0OQPvETxhP3cE5S4/lxvPmTFwWqv8i5EaVF5tDzbNKfLM/UQAUxPMFR8xjjsirkUbr0UwsVu9BqM5OZU97V4=
+X-Received: by 2002:a17:907:7fac:b0:aca:c4a6:cd90 with SMTP id
+ a640c23a62f3a-ad52d45accemr2412877566b.5.1747926798242; Thu, 22 May 2025
+ 08:13:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250509-drm-bridge-convert-to-alloc-api-v3-0-b8bc1f16d7aa@bootlin.com>
- <20250521162216.79dd3290@booty>
-In-Reply-To: <20250521162216.79dd3290@booty>
-From: Inki Dae <daeinki@gmail.com>
-Date: Fri, 23 May 2025 00:11:24 +0900
-X-Gm-Features: AX0GCFtvRxj4ujyC4Z2jHUwkVIe890MFPlPN-fSj8wgEwb2IYi_zfj6mGd98q30
-Message-ID: <CAAQKjZPX3iQgNhEydDZXMyC9BRuep7kL-XYEsjnkCxSt_1UsQg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/22] drm: convert all bridges to devm_drm_bridge_alloc()
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Jagan Teki <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Douglas Anderson <dianders@chromium.org>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Liu Ying <victor.liu@nxp.com>, 
-	Anusha Srivatsa <asrivats@redhat.com>, Paul Kocialkowski <paulk@sys-base.io>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Hui Pu <Hui.Pu@gehealthcare.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, 
-	asahi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	Louis Chauvet <louis.chauvet@bootlin.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Manikandan Muralidharan <manikandan.m@microchip.com>, Adam Ford <aford173@gmail.com>, 
-	Adrien Grassein <adrien.grassein@gmail.com>, Aleksandr Mishin <amishin@t-argos.ru>, 
-	Andy Yan <andy.yan@rock-chips.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Benson Leung <bleung@chromium.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Christoph Fritz <chf.fritz@googlemail.com>, 
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
-	Detlev Casanova <detlev.casanova@collabora.com>, 
-	Dharma Balasubiramani <dharma.b@microchip.com>, Guenter Roeck <groeck@chromium.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Jani Nikula <jani.nikula@intel.com>, Janne Grunau <j@jannau.net>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Jesse Van Gavere <jesseevg@gmail.com>, 
-	Kevin Hilman <khilman@baylibre.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Phong LE <ple@baylibre.com>, Sasha Finkelstein <fnkl.kernel@gmail.com>, 
-	Sugar Zhang <sugar.zhang@rock-chips.com>, Sui Jingfeng <sui.jingfeng@linux.dev>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Vitalii Mordan <mordan@ispras.ru>, 
-	"Rob Herring (Arm)" <robh@kernel.org>, Hsin-Te Yuan <yuanhsinte@chromium.org>, 
-	Pin-yen Lin <treapking@chromium.org>, Xin Ji <xji@analogixsemi.com>, 
-	Aradhya Bhatia <a-bhatia1@ti.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Ian Ray <ian.ray@gehealthcare.com>, Martyn Welch <martyn.welch@collabora.co.uk>, 
-	Peter Senna Tschudin <peter.senna@gmail.com>, Helge Deller <deller@gmx.de>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Philippe Cornu <philippe.cornu@foss.st.com>, 
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
-	Yannick Fertre <yannick.fertre@foss.st.com>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Raphael Gallais-Pou <rgallaispou@gmail.com>, Michal Simek <michal.simek@amd.com>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+References: <20250521-ovl_ro-v1-1-2350b1493d94@igalia.com> <CAOQ4uxgXP8WrgLvtR6ar+OncP6Fh0JLVO0+K+NtDX1tGa2TVxA@mail.gmail.com>
+ <20250521-blusen-bequem-4857e2ce9155@brauner> <32f30f6d-e995-4f00-a8ec-31100a634a38@igalia.com>
+ <CAOQ4uxg6RCJf6OBzKgaWbOKn3JhtgWhD6t=yOfufHuJ7jwxKmw@mail.gmail.com> <35eded72-c2a0-4bec-9b7f-a4e39f20030a@igalia.com>
+In-Reply-To: <35eded72-c2a0-4bec-9b7f-a4e39f20030a@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 22 May 2025 17:13:06 +0200
+X-Gm-Features: AX0GCFszZsE5XZrpt1_NuhS5Bmf_VZ7QtS0MUeu0yfTHj19lGEu-gx34Syx31Fw
+Message-ID: <CAOQ4uxihs3ORNu7aVijO0_GUKbacA65Y6btcrhdL_A-rH0TkAA@mail.gmail.com>
+Subject: Re: [PATCH] ovl: Allow mount options to be parsed on remount
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	Karel Zak <kzak@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-dev@igalia.com, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello Luca Ceresoli,
+cc libfuse maintainer
 
-2025=EB=85=84 5=EC=9B=94 21=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 11:23, =
-Luca Ceresoli <luca.ceresoli@bootlin.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=
-=B1:
+On Thu, May 22, 2025 at 4:30=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
 >
-> Hello Maxime, Shawn, Liu, all,
+> Em 22/05/2025 06:52, Amir Goldstein escreveu:
+> > On Thu, May 22, 2025 at 8:20=E2=80=AFAM Andr=C3=A9 Almeida <andrealmeid=
+@igalia.com> wrote:
+> >>
+> >> Hi Christian, Amir,
+> >>
+> >> Thanks for the feedback :)
+> >>
+> >> Em 21/05/2025 08:20, Christian Brauner escreveu:
+> >>> On Wed, May 21, 2025 at 12:35:57PM +0200, Amir Goldstein wrote:
+> >>>> On Wed, May 21, 2025 at 8:45=E2=80=AFAM Andr=C3=A9 Almeida <andrealm=
+eid@igalia.com> wrote:
+> >>>>>
+> >>
+> >> [...]
+> >>
+> >>>>
+> >>>> I see the test generic/623 failure - this test needs to be fixed for=
+ overlay
+> >>>> or not run on overlayfs.
+> >>>>
+> >>>> I do not see those other 5 failures although before running the test=
+ I did:
+> >>>> export LIBMOUNT_FORCE_MOUNT2=3Dalways
+> >>>>
+> >>>> Not sure what I am doing differently.
+> >>>>
+> >>
+> >> I have created a smaller reproducer for this, have a look:
+> >>
+> >>    mkdir -p ovl/lower ovl/upper ovl/merge ovl/work ovl/mnt
+> >>    sudo mount -t overlay overlay -o lowerdir=3Dovl/lower,upperdir=3Dov=
+l/
+> >> upper,workdir=3Dovl/work ovl/mnt
+> >>    sudo mount ovl/mnt -o remount,ro
+> >>
+> >
+> > Why would you use this command?
+> > Why would you want to re-specify the lower/upperdir when remounting ro?
+> > And more specifically, fstests does not use this command in the tests
+> > that you mention that they fail, so what am I missing?
+> >
 >
-> On Fri, 09 May 2025 15:53:26 +0200
-> Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+> I've added "set -x" to tests/generic/294 to see exactly which mount
+> parameters were being used and I got this from the output:
 >
-> > devm_drm_bridge_alloc() [0] is the new API to allocate and initialize a=
- DRM
-> > bridge, and the only one supported from now on. It is the first milesto=
-ne
-> > towards removal of bridges from a still existing DRM pipeline without
-> > use-after-free.
+> + _try_scratch_mount -o remount,ro
+> + local mount_ret
+> + '[' overlay =3D=3D overlay ']'
+> + _overlay_scratch_mount -o remount,ro
+> + echo '-o remount,ro'
+> + grep -q remount
+> + /usr/bin/mount /tmp/dir2/ovl-mnt -o remount,ro
+> mount: /tmp/dir2/ovl-mnt: fsconfig() failed: ...
 >
-> I applied on drm-misc-next patches 3-17,20-21 as they match all the
-> criteria:
->  - At least a Acked-by (or R-by maintainers)
->  - patch is for drm-misc
+> So, from what I can see, fstests is using this command. Not sure if I
+> did something wrong when setting up fstests.
 >
-> Being my very first commits to drm-misc, I tried to be careful, and
-> double checked all the patches with Louis (thanks!).
->
-> Here are the pending questions and plan for the remaining patches.
->
-> >       Revert "drm/exynos: mic: convert to devm_drm_bridge_alloc() API"
->
-> This reverts the commit applied my mistake:
-> https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/91c5c7b5bb2dd09b4=
-3b025bce6d790d3c79f4518
->
-> Neither the  original patch nor the revert has been reviewed/acked.
->
-> As the commit was a mistake, I'm applying the revert by the end of this
-> week (i.e. on Friday) unless there are better instructions.
 
-Really sorry for late. I was made aware of it later through a
-colleague's remark. There is no need to proceed with the revert.
-Acked-by : Inki Dae <inki.dae@samsung.com>
+No you are right, I misread your reproducer.
+The problem is that my test machine has older libmount 2.38.1
+without the new mount API.
+
+
+> >> And this returns:
+> >>
+> >>    mount: /tmp/ovl/mnt: fsconfig() failed: overlay: No changes allowed=
+ in
+> >>    reconfigure.
+> >>          dmesg(1) may have more information after failed mount system =
+call.
+> >>
+> >> However, when I use mount like this:
+> >>
+> >>    sudo mount -t overlay overlay -o remount,ro ovl/mnt
+> >>
+> >> mount succeeds. Having a look at strace, I found out that the first
+> >> mount command tries to set lowerdir to "ovl/lower" again, which will t=
+o
+> >> return -EINVAL from ovl_parse_param():
+> >>
+> >>      fspick(3, "", FSPICK_NO_AUTOMOUNT|FSPICK_EMPTY_PATH) =3D 4
+> >>      fsconfig(4, FSCONFIG_SET_STRING, "lowerdir", "/tmp/ovl/lower", 0)=
+ =3D
+> >> -1 EINVAL (Invalid argument)
+> >>
+> >> Now, the second mount command sets just the "ro" flag, which will retu=
+rn
+> >> after vfs_parse_sb_flag(), before getting to ovl_parse_param():
+> >>
+> >>      fspick(3, "", FSPICK_NO_AUTOMOUNT|FSPICK_EMPTY_PATH) =3D 4
+> >>      fsconfig(4, FSCONFIG_SET_FLAG, "ro", NULL, 0) =3D 0
+> >>
+> >> After applying my patch and running the first mount command again, we
+> >> can set that this flag is set only after setting all the strings:
+> >>
+> >>      fsconfig(4, FSCONFIG_SET_STRING, "lowerdir", "/tmp/ovl/lower", 0)=
+ =3D 0
+> >>      fsconfig(4, FSCONFIG_SET_STRING, "upperdir", "/tmp/ovl/upper", 0)=
+ =3D 0
+> >>      fsconfig(4, FSCONFIG_SET_STRING, "workdir", "/tmp/ovl/work", 0) =
+=3D 0
+> >>      fsconfig(4, FSCONFIG_SET_STRING, "uuid", "on", 0) =3D 0
+> >>      fsconfig(4, FSCONFIG_SET_FLAG, "ro", NULL, 0) =3D 0
+> >>
+> >> I understood that the patch that I proposed is wrong, and now I wonder
+> >> if the kernel needs to be fixed at all, or if the bug is how mount is
+> >> using fsconfig() in the first mount command?
+> >
+
+If you ask me, when a user does:
+/usr/bin/mount /tmp/dir2/ovl-mnt -o remount,ro
+
+The library only needs to do the FSCONFIG_SET_FLAG command and has no
+business re-sending the other config commands, but that's just me.
+
+BTW, which version of libmount (mount --version) are you using?
+I think there were a few problematic versions when the new mount api
+was first introduced.
 
 Thanks,
-Inki Dae
-
-
->
-> >       drm: convert many bridge drivers from devm_kzalloc() to devm_drm_=
-bridge_alloc() API
->
-> This patch affects multiple drivers. Running get_maintainers.pl
-> points at Shawn Guo's repository. After reviewing the MAINTAINERS file,
-> this looks like due to the 'N:' line in:
->
-> ARM/FREESCALE IMX / MXC ARM ARCHITECTURE
-> M:      Shawn Guo <shawnguo@kernel.org>
-> M:      Sascha Hauer <s.hauer@pengutronix.de>
-> R:      Pengutronix Kernel Team <kernel@pengutronix.de>
-> ...
-> T:      git git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.=
-git
-> N:      imx
-> ...
->
-> (https://gitlab.freedesktop.org/drm/misc/kernel/-/blob/drm-misc-next/MAIN=
-TAINERS?ref_type=3Dheads#L2511-2528)
->
-> Here 'imx' matches the 'drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c'
-> file that is touched by the patch. That regexp appears overly generic to =
-me.
->
-> Shawn, can it be fixed by making it less generic?
->
-> If not, can we at least add a band-aid 'X:' entry for
-> drivers/gpu/drm/bridge/imx?
->
-> I think the other matching entry is the one to consider:
->
-> DRM DRIVERS FOR FREESCALE IMX BRIDGE
-> M:      Liu Ying <victor.liu@nxp.com>
-> L:      dri-devel@lists.freedesktop.org
-> S:      Maintained
-> F:      Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-ldb.=
-yaml
-> F:      Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-pixe=
-l-combiner.yaml
-> F:      Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-pixe=
-l-link.yaml
-> F:      Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-pxl2=
-dpi.yaml
-> F:      drivers/gpu/drm/bridge/imx/
->
-> (https://gitlab.freedesktop.org/drm/misc/kernel/-/blob/drm-misc-next/MAIN=
-TAINERS?ref_type=3Dheads#L7940-7948)
->
-> However it does not list any trees. I _guess_ drm-misc applies here as
-> a fallback as well as common sense.
->
-> Liu, should this entry have a 'T:' line for drm/misc?
->
-> >       drm/bridge: imx8qxp-pixel-combiner: convert to devm_drm_bridge_al=
-loc() API
->
-> Not acked/reviewed, some discussion happened. I am resending it in v4,
-> possibly with updates based on the discussion.
->
-> But it has the same issue discussed above, with get_maintiners.pl
-> pointing at Shawn Guo's tree, so in the future I'm assuming this goes
-> to drm-misc unless there are news about that.
->
-> >       drm/bridge: tc358767: convert to devm_drm_bridge_alloc() API
->
-> No feedback, resending in v4.
->
-> >       drm/todo: add entry to remove devm_drm_put_bridge()
->
-> This involves documentation maintained on another tree. Where should it
-> be applied? There are two matching entries in MAINTAINERS:
->
->  * DRM DRIVERS -> the drm tree
->  * DRM DRIVERS AND MISC GPU PATCHES -> the drm-misc tree
->
-> To me it looks like the second is obviously the closest match as we are
-> dealing with DRM bridges, so I'm applying this as well on Friday unless
-> there are better instructions.
->
-> Best regards,
-> Luca
->
-> --
-> Luca Ceresoli, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
->
+Amir.
 
