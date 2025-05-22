@@ -1,96 +1,164 @@
-Return-Path: <linux-kernel+bounces-658476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B56C5AC02CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:22:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4974AC0310
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DB341B649B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:22:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97F807AE63C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C112151985;
-	Thu, 22 May 2025 03:21:53 +0000 (UTC)
-Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B987482;
-	Thu, 22 May 2025 03:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EC6137C37;
+	Thu, 22 May 2025 03:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="XGKUyIWg"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2126C1CD3F;
+	Thu, 22 May 2025 03:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747884113; cv=none; b=dMaBEpMiXLgUjXfQje284s/8IMUSCiK+ACsIUlwNMIomXn83XnB8bpOy851Djn5ZizWKKncmMSgqBVnniBaRz3l4XCnUElb1G3ksAb4kI6oAPncrcPpr2P4igwhngXSAkR3X7b4fkWfFkP3aAN8CwKyx031Io2+AgS95TN/etag=
+	t=1747885095; cv=none; b=IRgf+KMGSEZ/RZHfw6VofJfuQRYjudsuwMmXEZRqNJXPvEj70WSDdgivJBmbnXlxYu7I2frRaNXaK+ztRySo3GDIJWN12rnTLsBT1HEic6L8b+vfa0Bzizp+Nq5g5VxMYZQt5GlLfpJuIwJf6lkPWidLkdV5cL5paj4gF6A1Npg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747884113; c=relaxed/simple;
-	bh=G0K09VQ/s+NhLRZWJLBMCGFDaIDKTifiXWCbHH03GHY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TgMI3jtL8anssttebj8ietclXhosrx6PAN7v9ElJX3WoZ7ba8/IFyDC2HfrqCudEk6lW7NWkCOPAZsDzTnt9BdtpQbpg4nqTgSvbBv9rr4oAKvs+XtpbsgYIJI5i8iT711q574NDSzVlYgY8QTbVmdlnZaqXO9nBwFuXXC3pYfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=209.97.181.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
-	by hzbj-icmmx-6 (Coremail) with SMTP id AQAAfwCXn3s8mC5oaCJuCg--.8523S2;
-	Thu, 22 May 2025 11:21:32 +0800 (CST)
-Received: from localhost.localdomain (unknown [219.142.137.151])
-	by mail (Coremail) with SMTP id AQAAfwA3zCU4mC5oAmE4AA--.310S2;
-	Thu, 22 May 2025 11:21:31 +0800 (CST)
-From: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-To: robin.murphy@arm.com,
-	will@kernel.org,
-	mark.rutland@arm.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
+	s=arc-20240116; t=1747885095; c=relaxed/simple;
+	bh=/N6NpaGRC/vAjWVcJTFfLMaFhy7yjofCS0LyfPci9cA=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=eq+rzj3GBCwGh+JT4c5mfxy9BuXAO+P164o2KOLQJ/htRcLEAwgW4JjXBLIlTTcUNMshvUw6Y1eMIVoRpj7u7IDUeTepO5WTV1hmz9yiIwU14EzP/gSC4BmtSYQKimMDF0J6YqFzeIQ2IgzyxU1/3ysMlVlQ/j8dfjr3NHjtRIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=XGKUyIWg; arc=none smtp.client-ip=220.197.31.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id; bh=Cb+hzfIc+9S7u++
+	Rf7aEoQ+l3gR236pxB/DTraEd8HU=; b=XGKUyIWgdrFRtonTjjghJzjzOY7WYg+
+	uAxCSb3JXSgtfAFZ7Ul2YHV3yrGQWm7fGTNnnt+HZX+UYjcyMzKAAF82lDElH9zI
+	mvj1GRjb4G9nIFRE46mY/4u80LGEU3/BRqsHBAmar962kC6aS5Ytb9JF1l21cMfs
+	TI+wRVKMoHgA=
+Received: from hg-OptiPlex-7040.hygon.cn (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD375FsmC5oHGIhAg--.58174S2;
+	Thu, 22 May 2025 11:22:21 +0800 (CST)
+From: yangge1116@126.com
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-Subject: [PATCH] perf/arm-cmn: Broaden module description for wider interconnect support
-Date: Thu, 22 May 2025 11:21:22 +0800
-Message-ID: <20250522032122.949373-1-daizhiyuan@phytium.com.cn>
-X-Mailer: git-send-email 2.43.0
+	stable@vger.kernel.org,
+	21cnbao@gmail.com,
+	david@redhat.com,
+	baolin.wang@linux.alibaba.com,
+	muchun.song@linux.dev,
+	osalvador@suse.de,
+	liuzixing@hygon.cn,
+	Ge Yang <yangge1116@126.com>
+Subject: [PATCH] mm/hugetlb: fix kernel NULL pointer dereference when replacing free hugetlb folios
+Date: Thu, 22 May 2025 11:22:17 +0800
+Message-Id: <1747884137-26685-1-git-send-email-yangge1116@126.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID:_____wD375FsmC5oHGIhAg--.58174S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZw1fJF45uF4rur45urWfXwb_yoW5tr1rpr
+	y7Krs8KrWkJryDAF47JF15Jrn0yrZ8ZF4jqFWxKrnrZFn8Jw1DGryDXw4jva1rArs7JF4x
+	JFs0qa1vqF1UJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRoGQDUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOhBVG2gulPN6iwAAs0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAfwA3zCU4mC5oAmE4AA--.310S2
-X-CM-SenderInfo: hgdl6xpl1xt0o6sk53xlxphulrpou0/
-Authentication-Results: hzbj-icmmx-6; spf=neutral smtp.mail=daizhiyuan
-	@phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvdXoW7Gw1DGryxuF1rZFWDtFyrWFg_yoWkGrg_ur
-	yxWr1xJ3WkJr9Yyw1akw4rZ34S9F48ZryxXF1a9wnxZ3ZrJw1fWr4kZa4Sqw18Jw1xJFs0
-	yFsxuFySyrWUKjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8wcxFpf9Il3svdxBIdaVrnU
-	Uv73VFW2AGmfu7jjvjm3AaLaJ3UjIYCTnIWjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRUUUUU
-	UUUU=
 
-The current MODULE_DESCRIPTION only mentions CMN-600, but this driver
-now supports several Arm mesh interconnects including CMN-650, CMN-700,
-CI-700, and CMN-S3.
+From: Ge Yang <yangge1116@126.com>
 
-Update the MODULE_DESCRIPTION to reflect the expanded scope.
+A kernel crash was observed when replacing free hugetlb folios:
 
-Signed-off-by: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
+BUG: kernel NULL pointer dereference, address: 0000000000000028
+PGD 0 P4D 0
+Oops: Oops: 0000 [#1] SMP NOPTI
+CPU: 28 UID: 0 PID: 29639 Comm: test_cma.sh Tainted 6.15.0-rc6-zp #41 PREEMPT(voluntary)
+RIP: 0010:alloc_and_dissolve_hugetlb_folio+0x1d/0x1f0
+RSP: 0018:ffffc9000b30fa90 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000342cca RCX: ffffea0043000000
+RDX: ffffc9000b30fb08 RSI: ffffea0043000000 RDI: 0000000000000000
+RBP: ffffc9000b30fb20 R08: 0000000000001000 R09: 0000000000000000
+R10: ffff88886f92eb00 R11: 0000000000000000 R12: ffffea0043000000
+R13: 0000000000000000 R14: 00000000010c0200 R15: 0000000000000004
+FS:  00007fcda5f14740(0000) GS:ffff8888ec1d8000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000028 CR3: 0000000391402000 CR4: 0000000000350ef0
+Call Trace:
+<TASK>
+ replace_free_hugepage_folios+0xb6/0x100
+ alloc_contig_range_noprof+0x18a/0x590
+ ? srso_return_thunk+0x5/0x5f
+ ? down_read+0x12/0xa0
+ ? srso_return_thunk+0x5/0x5f
+ cma_range_alloc.constprop.0+0x131/0x290
+ __cma_alloc+0xcf/0x2c0
+ cma_alloc_write+0x43/0xb0
+ simple_attr_write_xsigned.constprop.0.isra.0+0xb2/0x110
+ debugfs_attr_write+0x46/0x70
+ full_proxy_write+0x62/0xa0
+ vfs_write+0xf8/0x420
+ ? srso_return_thunk+0x5/0x5f
+ ? filp_flush+0x86/0xa0
+ ? srso_return_thunk+0x5/0x5f
+ ? filp_close+0x1f/0x30
+ ? srso_return_thunk+0x5/0x5f
+ ? do_dup2+0xaf/0x160
+ ? srso_return_thunk+0x5/0x5f
+ ksys_write+0x65/0xe0
+ do_syscall_64+0x64/0x170
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+There is a potential race between __update_and_free_hugetlb_folio()
+and replace_free_hugepage_folios():
+
+CPU1                              CPU2
+__update_and_free_hugetlb_folio   replace_free_hugepage_folios
+                                    folio_test_hugetlb(folio)
+                                    -- It's still hugetlb folio.
+
+  __folio_clear_hugetlb(folio)
+  hugetlb_free_folio(folio)
+                                    h = folio_hstate(folio)
+                                    -- Here, h is NULL pointer
+
+When the above race condition occurs, folio_hstate(folio) returns
+NULL, and subsequent access to this NULL pointer will cause the
+system to crash. To resolve this issue, execute folio_hstate(folio)
+under the protection of the hugetlb_lock lock, ensuring that
+folio_hstate(folio) does not return NULL.
+
+Fixes: 04f13d241b8b ("mm: replace free hugepage folios after migration")
+Signed-off-by: Ge Yang <yangge1116@126.com>
+Cc: <stable@vger.kernel.org>
 ---
- drivers/perf/arm-cmn.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ mm/hugetlb.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/perf/arm-cmn.c b/drivers/perf/arm-cmn.c
-index d4fe30ff225b..479bc35dccab 100644
---- a/drivers/perf/arm-cmn.c
-+++ b/drivers/perf/arm-cmn.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- // Copyright (C) 2016-2020 Arm Limited
--// CMN-600 Coherent Mesh Network PMU driver
-+// ARM CMN/CI interconnect PMU driver
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 3d3ca6b..6c2e007 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -2924,12 +2924,20 @@ int replace_free_hugepage_folios(unsigned long start_pfn, unsigned long end_pfn)
  
- #include <linux/acpi.h>
- #include <linux/bitfield.h>
-@@ -2699,5 +2699,5 @@ module_init(arm_cmn_init);
- module_exit(arm_cmn_exit);
+ 	while (start_pfn < end_pfn) {
+ 		folio = pfn_folio(start_pfn);
++
++		/*
++		 * The folio might have been dissolved from under our feet, so make sure
++		 * to carefully check the state under the lock.
++		 */
++		spin_lock_irq(&hugetlb_lock);
+ 		if (folio_test_hugetlb(folio)) {
+ 			h = folio_hstate(folio);
+ 		} else {
++			spin_unlock_irq(&hugetlb_lock);
+ 			start_pfn++;
+ 			continue;
+ 		}
++		spin_unlock_irq(&hugetlb_lock);
  
- MODULE_AUTHOR("Robin Murphy <robin.murphy@arm.com>");
--MODULE_DESCRIPTION("Arm CMN-600 PMU driver");
-+MODULE_DESCRIPTION("Arm CMN/CI interconnect PMU driver");
- MODULE_LICENSE("GPL v2");
+ 		if (!folio_ref_count(folio)) {
+ 			ret = alloc_and_dissolve_hugetlb_folio(h, folio,
 -- 
-2.43.0
+2.7.4
 
 
