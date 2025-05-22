@@ -1,189 +1,145 @@
-Return-Path: <linux-kernel+bounces-658461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31667AC029E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 04:47:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9444DAC031B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F14679E42CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 02:46:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3F031B66CF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 03:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28991419A9;
-	Thu, 22 May 2025 02:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A3F13D8B2;
+	Thu, 22 May 2025 03:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="LTPkLNl9"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659327083C
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 02:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="QW8WExN8"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43DCC2EF
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 03:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747882016; cv=none; b=lWR+foHOR1FNiAPt4D3Cid3otJ6W/rV9IjS848il2lBHILf5meBSakoy4Dy8jA+mijnUzql/JGlov8w/KmTIPWJnEIBMCzae8in5hDDFIauR5IgrwSK+bx7enQCCr7AaZEKhzvJpRuaDbj8Hui42KRw7+/N7HgFfYA+sF42T81E=
+	t=1747885397; cv=none; b=IeczoVSzXBzTcNwMMVIz4fdE0WM9YPdYn3BVwv4Nuk5IdZ60/IlN4KTZG2vmcRcMxWFXNhY5ZMm20tdW7XSL8gLgdYw3Xqx8FJ6AzokEfZMz2UH3kLPwg8dJE4C8Y79f4D1+QBIezt9IZ9AIoZGJG4BFBdcW4uSbDxgGympthQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747882016; c=relaxed/simple;
-	bh=ftGpk6Fz3JCw1eA4rznTmTf7rH0rIKHQMlsI9Jo5Gu4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lXSd8Bo4IRnCLihS9UXzzNuQ5Gtw8jhk8iDZAaSuBlaIOv0pvvwq4GHY/lPOBXbxpeb6MfyEAwezBgihgAy+CvktZrZe99EBQdkuMggBT0t6Rz61MfEUh4tk2o+0HOQ0h6Qw7h6mRekqlCGM64Ynx9bB+uZ4NSb8HxHKFPWDyzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=LTPkLNl9; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-476a720e806so68742181cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 May 2025 19:46:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1747882013; x=1748486813; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=adh4juzvKMdVlcyct+CI2gtj5kAxAoCJXrg+y36ibis=;
-        b=LTPkLNl9GVtTIY64xkgdNME98iPXcjj4cmgMEiOg/9lWV0P9LjEbkQQil3Xg6xdHZr
-         JwslDcv+a32JdXTsI2vORoDomQNTy+3YDEprwWI8J3MX3I6cRKRFedX3fw275+z2JmXh
-         hLxojUnRfMxkMISeslaa6a1MoXNDsbpy06kRs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747882013; x=1748486813;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=adh4juzvKMdVlcyct+CI2gtj5kAxAoCJXrg+y36ibis=;
-        b=IuYCmzpqqcayz4TuCxo3J21N1yYAZ44dJZMSntXufXRHrcFledKglD4SW9yhPCwXWP
-         j/5nVp7+/kaWPnyZB4vuQEItwvA6w5wC4rDeWTfzQXBWPgh2War/KI6+5Sog+3s8yreN
-         eWHrCkxOv6Lrffm1jPuKnrPHdYvdU+aiLJ6SdfQcCMkMxz3K1eKR4bsB4weZF3MzE8h6
-         nyJKYqRz6+BCRf1Mb3IOAZ2qTHlZFxHHQq7n6xsVhHzZJ5n1sW05QbCPGFCUr0xTarZ0
-         VfnthwikML3AAa7f47zTQRBuMkt4K41ydwd+miP/fuQGgfTIeP2ADnOv87/wu8hMngcg
-         q7QA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8/Kkuu+hjCeWfx/pjD/jBGl1SlIc3WcnDhAVA8zEoY+7fjZI8xsP3q+9svU8EB9AsuYoG6XfaE0/aMiY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGtd4swjuYikDrHHhl+kccO+k9PcjI44jqno2bxTcMa3idmT4+
-	FNOu2XcIzJztPsK53GeqODAIQBIFS/DjLxq5oNHNejVj9Ktd91Qva81sp40dviAjv4bssG8REbt
-	hYWmCzA==
-X-Gm-Gg: ASbGncvIwvXBAwvg28TG9zwVm3W8xWIpgvBLAhEoIWG4/2SXVE67KBKtW2R57jaGg2y
-	rAlIbmkm2CkscpjxWlX80RZ5DLIRA0dgPSMsToK4p454WMIZcxVSwGIHJEYBgP3aLVOC9fF2D9V
-	XYcn5RvrMg2YXrlxc+kiIXGJcAKX7dz3ZN58vlqUk3l3CxT52KC11Mvj3fb7An+Bbhs/x32mXqU
-	96hcX5iG7lrxU1mtWo6AIVki32TVExTYtJcUztTm/dgKlWUw6FRl3mVqMEqzY+p9qm9WjjYxvQm
-	1ue+E4xeKjMd0ujj7qctKeOf3bP+mb5qU3oPYXpxz8HL4U4M8BRQOZbJUoFrE/tY6eV7skXMCQS
-	q53hMZT7xfA==
-X-Google-Smtp-Source: AGHT+IFlle+O3zdWJKr4Z5wCjPov8E3POIa8Uq26WE0YE0cODpM/RcZxkLgNpi+rNmkGPKr/N5G14A==
-X-Received: by 2002:a05:622a:5805:b0:494:a967:6c4f with SMTP id d75a77b69052e-494ae3375dcmr344161021cf.2.1747882013320;
-        Wed, 21 May 2025 19:46:53 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.googlemail.com with ESMTPSA id d75a77b69052e-494ae3d6d84sm92828951cf.16.2025.05.21.19.46.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 May 2025 19:46:51 -0700 (PDT)
-Message-ID: <15a95ba4-f90b-4bdb-8804-2251879443de@ieee.org>
-Date: Wed, 21 May 2025 21:46:48 -0500
+	s=arc-20240116; t=1747885397; c=relaxed/simple;
+	bh=eeXnAeSOBEgii+mp7uZVK7+/1N/YkEvxeBqbVU707WE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p2mHr2H25QWj3r/aYx5ALIcrjJH2ACJR1SV9o8iI/MpRMgjUPfQHTfbaW6jXDxQ1uxjULgpxOGJC1LbBLfuzLgOQ9kl3itHxaKtXbfVuQyf+OC7+xKX/K267CIaiawuP/+qcmiE+5XfNHh6Dm7nFo/TjSZw6OCp1nrvQeRUuOtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=QW8WExN8; arc=none smtp.client-ip=117.135.210.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=n/
+	LxoFIVdKGgDOu1WgZSbZG6HhwTFyxuyTvafFSab40=; b=QW8WExN82e9gmAfvXz
+	LtCaG5rv67isSj7hSozcjsCmXgcNsECvv1NNk0czaSckI4EiiiEk6EFgX4NpovlE
+	L9Y0GC4L5PlQ5i21qvJlwA54tAcRS9lH/kPvfp58KchAujI2ZHmMyMK31k4AsX0z
+	6fCIDvBsWAWZI/AcNHeJAyYwM=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDXP7+Qki5oq1ccAg--.8168S2;
+	Thu, 22 May 2025 10:57:21 +0800 (CST)
+From: Zhao Mengmeng <zhaomzhao@126.com>
+To: kees@kernel.org,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org
+Cc: zhaomengmeng@kylinos.cn,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] lkdtm: Add DOUBLE_FAULT support for x86_64
+Date: Thu, 22 May 2025 10:56:58 +0800
+Message-ID: <20250522025658.1780923-1-zhaomzhao@126.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC net-next 00/15] Add support for Silicon Labs CPC
-To: Andrew Lunn <andrew@lunn.ch>, =?UTF-8?Q?Damien_Ri=C3=A9gel?=
- <damien.riegel@silabs.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Silicon Labs Kernel Team <linux-devel@silabs.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
- greybus-dev@lists.linaro.org
-References: <6fea7d17-8e08-42c7-a297-d4f5a3377661@lunn.ch>
- <D9VCEGBQWBW8.3MJCYYXOZHZNX@silabs.com>
- <f1a4ab5a-f2ce-4c94-91eb-ab81aea5b413@lunn.ch>
- <D9W93CSVNNM0.F14YDBPZP64O@silabs.com>
- <2025051551-rinsing-accurate-1852@gregkh>
- <D9WTONSVOPJS.1DNQ703ATXIN1@silabs.com>
- <2025051612-stained-wasting-26d3@gregkh>
- <D9XQ42C56TUG.2VXDA4CVURNAM@silabs.com>
- <cbfc9422-9ba8-475b-9c8d-e6ab0e53856e@lunn.ch>
- <DA0LEHFCVRDC.2NXIZKLBP7QCJ@silabs.com>
- <5bc03f50-498e-42c8-9a14-ca15243213bd@lunn.ch>
-Content-Language: en-US
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <5bc03f50-498e-42c8-9a14-ca15243213bd@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXP7+Qki5oq1ccAg--.8168S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWr4ruF1UZw4xGrW8JF47Jwb_yoWrCw45pw
+	4vqr4rKr40qr13AFWUA3W5tw1Utw4Iya4Utr1Ykry2y3W5KryUX3WktrWxJrnxKry7J3W3
+	t3ykXw4IqFyjgw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UvjgsUUUUU=
+X-CM-SenderInfo: 52kd0zp2kd0qqrswhudrp/1tbigRZOd2gljtBSVQACs4
 
-On 5/20/25 8:04 AM, Andrew Lunn wrote:
-> On Mon, May 19, 2025 at 09:21:52PM -0400, Damien Riégel wrote:
->> On Sun May 18, 2025 at 11:23 AM EDT, Andrew Lunn wrote:
->>> This also comes back to my point of there being at least four vendors
->>> of devices like yours. Linux does not want four or more
->>> implementations of this, each 90% the same, just a different way of
->>> converting this structure of operations into messages over a transport
->>> bus.
->>>
->>> You have to define the protocol. Mainline needs that so when the next
->>> vendor comes along, we can point at your protocol and say that is how
->>> it has to be implemented in Mainline. Make your firmware on the SoC
->>> understand it.  You have the advantage that you are here first, you
->>> get to define that protocol, but you do need to clearly define it.
->>
->> I understand that this is the preferred way and I'll push internally for
->> going that direction. That being said, Greybus seems to offer the
->> capability to have a custom driver for a given PID/VID, if a module
->> doesn't implement a Greybus-standardized protocol. Would a custom
->> Greybus driver for, just as an example, our Wifi stack be an acceptable
->> option?
-> 
-> It is not clear to me why a custom driver would be needed. You need to
-> implement a Linux WiFi driver. That API is well defined, although you
-> might only need a subset. What do you need in addition to that?
+From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
 
-This "custom driver" is needed for CPC too, right?
-You need some way to translate what's happening in
-the kernel into directions sent over your transport
-to the hardware on the other side.
+Add DOUBLE_FAULT support for x86_64 by setting rsp to NULL and
+then trigger int3. It is useful for testing the double fault handling
+on x86_64.
 
-Don't worry about proposing changes to Greybus.  But
-please do it incrementally, and share what you would
-like to do, so people can help steer you in the most
-promising direction.
+Test it on qemu x86_64 vm with linux-next-20250516,
+x86_64_defconfig, with cmd:
 
-					-Alex
+insmod lkdtm.ko cpoint_type=DOUBLE_FAULT cpoint_name=DIRECT
 
->>> So long as you are doing your memory management correctly, i don't see
->>> why you cannot implement double buffering in the transport driver.
->>>
->>> I also don't see why you cannot extend the Greybus upper API and add a
->>> true gb_operation_unidirectional_async() call.
->>
->> Just because touching a well established subsystem is scary, but I
->> understand that we're allowed to make changes that make sense.
-> 
-> There are developers here to help review such changes. And extending
-> existing Linux subsystems is how Linux has become the dominant OS. You
-> are getting it for free, building on the work of others, so it is not
-> too unreasonable to contribute a little bit back by making it even
-> better.
-> 
->>
->>> You also said that lots of small transfers are inefficient, and you
->>> wanted to combine small high level messages into one big transport
->>> layer message. This is something you frequently see with USB Ethernet
->>> dongles. The Ethernet driver puts a number of small Ethernet packets
->>> into one USB URB. The USB layer itself has no idea this is going on. I
->>> don't see why the same cannot be done here, greybus itself does not
->>> need to be aware of the packet consolidation.
->>
->> Yeah, so in this design, CPC would really be limited to the transport
->> bus (SPI for now), to do packet consolidation and managing RCP available
->> buffers. I think at this point, the next step is to come up with a proof
->> of concept of Greybus over CPC and see if that works or not.
-> 
-> You need to keep the lower level generic. I would not expect anything
-> Silabs specific in how you transport Greybus over SPI or SDIO. As part
-> of gb_operation_unidirectional_async() you need to think about flow
-> control, you need some generic mechanism to indicate receive buffer
-> availability in the device, and when to pause a while to let the
-> device catch up, but there is no reason TI, Microchip, Nordic, etc
-> should not be able to use the same encapsulation scheme.
-> 
-> 	Andrew
+The console log is:
+
+[  137.722286] traps: PANIC: double fault, error_code: 0x0
+[  137.722295] Oops: double fault: 0000 [#1] SMP PTI
+[  137.722299] CPU: 0 UID: 0 PID: 200 Comm: insmod Not tainted 6.15.0-rc6-next-20250516 #1 PREEMPT(voluntary)
+[  137.722301] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
+[  137.722302] RIP: 0010:lkdtm_DOUBLE_FAULT+0xc/0x20 [lkdtm]
+[  137.722309] Code: 1e fa 48 c7 c7 10 8c 20 c0 e9 e0 00 31 c1 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa fa 48 c7 c4 00 00 00 00 <cc> 48 c7 c7 40 8c 20 c0 e9 b7 00 31 c1 00
+[  137.722316] RSP: 0018:0000000000000000 EFLAGS: 00010086
+[  137.722317] RAX: ffffffffc0000650 RBX: ffffffffc02021c0 RCX: ffffffff82252400
+[  137.722331] RDX: ffffffffc0202030 RSI: ffffffffc0202390 RDI: ffffffffc0202390
+[  137.722332] RBP: ffffffffc0201500 R08: 4555515f49534353 R09: 51525f4555455551
+[  137.722332] R10: ffffffff814f325d R11: 5952544e455f5445 R12: ffffffffc0202390
+[  137.722333] R13: ffff888004349330 R14: ffff888005536400 R15: ffff888003e53148
+[  137.722335] FS:  00007f07f29d6380(0000) GS:ffff8880fa70a000(0000) knlGS:0000000000000000
+[  137.722336] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  137.722337] CR2: fffffffffffffff8 CR3: 00000000044d6000 CR4: 00000000000006f0
+[  137.722338] Call Trace:
+[  137.722338] Modules linked in: lkdtm(+)
+[  137.722341] ---[ end trace 0000000000000000 ]---
+[  137.722341] RIP: 0010:lkdtm_DOUBLE_FAULT+0xc/0x20 [lkdtm]
+[  137.722345] Code: 1e fa 48 c7 c7 10 8c 20 c0 e9 e0 00 31 c1 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa fa 48 c7 c4 00 00 00 00 <cc> 48 c7 c7 40 8c 20 c0 e9 b7 00 31 c1 00
+[  137.722346] RSP: 0018:0000000000000000 EFLAGS: 00010086
+[  137.722347] RAX: ffffffffc0000650 RBX: ffffffffc02021c0 RCX: ffffffff82252400
+[  137.722347] RDX: ffffffffc0202030 RSI: ffffffffc0202390 RDI: ffffffffc0202390
+[  137.722348] RBP: ffffffffc0201500 R08: 4555515f49534353 R09: 51525f4555455551
+[  137.722348] R10: ffffffff814f325d R11: 5952544e455f5445 R12: ffffffffc0202390
+[  137.722349] R13: ffff888004349330 R14: ffff888005536400 R15: ffff888003e53148
+[  137.722350] FS:  00007f07f29d6380(0000) GS:ffff8880fa70a000(0000) knlGS:0000000000000000
+[  137.722351] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  137.722351] CR2: fffffffffffffff8 CR3: 00000000044d6000 CR4: 00000000000006f0
+[  137.722352] Kernel panic - not syncing: Fatal exception in interrupt
+[  137.722457] Kernel Offset: disabled
+[  137.745911] ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+
+Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+---
+ drivers/misc/lkdtm/bugs.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
+index 376047beea3d..d462c77fc1a2 100644
+--- a/drivers/misc/lkdtm/bugs.c
++++ b/drivers/misc/lkdtm/bugs.c
+@@ -647,9 +647,21 @@ static void lkdtm_DOUBLE_FAULT(void)
+ 	asm volatile ("movw %0, %%ss; addl $0, (%%esp)" ::
+ 		      "r" ((unsigned short)(GDT_ENTRY_TLS_MIN << 3)));
+ 
+-	pr_err("FAIL: tried to double fault but didn't die\n");
++	pr_err("FAIL: tried to double fault on x86_32 but didn't die\n");
++#elif IS_ENABLED(CONFIG_X86_64) && !IS_ENABLED(CONFIG_UML)
++	local_irq_disable();
++	/*
++	 * Trigger #DF on x86_64:
++	 * 1. Set RSP to an invalid address (e.g., NULL).
++	 * 2. Execute an instruction that causes a fault (e.g., 'int3' for #BP).
++	 * 3. The CPU attempts to deliver the #BP. This involves pushing an
++	 *    exception frame onto the stack pointed to by RSP.
++	 * 4. Since RSP is invalid, the push operation itself faults (e.g., #PF).
++	 */
++	asm volatile ("movq $0, %%rsp; int3" :: );
++	pr_err("FAIL: tried to double fault on x86_64 but didn't die\n");
+ #else
+-	pr_err("XFAIL: this test is ia32-only\n");
++	pr_err("XFAIL: this test is x86_64 and x86_32 only\n");
+ #endif
+ }
+ 
+-- 
+2.43.0
 
 
