@@ -1,138 +1,107 @@
-Return-Path: <linux-kernel+bounces-659467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D18AC10C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:10:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93848AC10C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 18:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4DAA501DF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:10:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECB5D1C0093F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 16:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C97729A30A;
-	Thu, 22 May 2025 16:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAAA29A9DD;
+	Thu, 22 May 2025 16:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="DKRsxm/h"
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UDG/D7u9"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3ECE19F461
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 16:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E3629A9C0;
+	Thu, 22 May 2025 16:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747930199; cv=none; b=AYH+0ThoNWXdCJxD3gWTqtLvuQghBGoVHnwz0sYr3Zfmsmn7uTXu97DoucBnKnoq6DGW/1iqtp40I1D0EfpiqtVR2A3IU6sMjJwYpDOIqlhOaf5vfqK7HdfuSzfDx20Lhvl0Jq449ibgnf5PkYxniMtLjsBbWY36MqfTXfucgu8=
+	t=1747930208; cv=none; b=T0pV2aFAEv/Nt9LfAXXjEnCKy31dkV6T+rk6tLMF/yxWvwgOpi+GE5GnG89+T/UctniF3aCZanHrb7Bnuw1wnpuRF226vyFbaRrGqtwGte29qnFBruHuDPAyHli2QtLQaowrDlLc7ZvkzInvoU0vOngA/VU9pv0+R3Lw2a7Xy1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747930199; c=relaxed/simple;
-	bh=tst1Po6ozz3pJTzX7J5A5WCysYhemMzcgeMymEJXJ9Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TbQdBjj1PfvkbGuujZIBuUKbRTYpumqe6mOudCRU3P3suU1gWY9gUTJ4IXFx2AkTLkLHd+KzW1O1LUbzlr/zK1DgUCKtt2XZo63TEm2BgNyQly+ZXfG/ljOYJAAITwV/MW3+wDDEl8qP2hzRI2VaS4NmklLjsK5zHKtZ9wU0zzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=DKRsxm/h; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-601a8b6c133so13258eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 09:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1747930197; x=1748534997; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5txajPoK02leRSID3w5St6cITh88qbWPgXm254RBils=;
-        b=DKRsxm/hl9MF+x3P+FDBrZ6hfw0opM9pGPorCml2WlOLfZ9EE5ijJl6/k+p12tykoM
-         QdsYkyYvSLmA1jfPfa09TR/zTb0zN/ITbZcA3WCVpXcEr71Nq/JlVLxBNqMiQtpS5s+a
-         +C76r+0eJBbowYf4dLOAdsG+fNfBaOpwcHT6/Tq7TdaaSBwLxtsyOGkylKhy+PkPpYAi
-         PyqAnilbY8rP31eMJggX/lVLwgUtisezWLTK17qovuT/CW2mGTk1VOvRnZF/GFgFC9yS
-         UeoUK/CrvBj3kgfz5ndD/4Wys2ARnwurLji+pL8Osl7LgVujn2j1w/H+F+0REZVNFP+T
-         lscw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747930197; x=1748534997;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5txajPoK02leRSID3w5St6cITh88qbWPgXm254RBils=;
-        b=oP6JTDTHzfdQhIela510mFS47MmzA4/Gmz+CmAZOvHE26R41sHmSzezV4vm5K+qZJQ
-         D6Yp3g1iyqNQCLapVTkczOAI5BLq2oZ7842zdCyYmZFXRwkOC4jm/Pt3mwVbu7AHue7x
-         fH00V+ZYRGTPymxLWxnAhdia1Sh5gExhSIEDRYZy6p7JjsTy69L74ZhoO1uXHUdREJky
-         ksg4pfOI5KkNCe31dJntHQE/3FeM/Doh4SQWeiXuQASklzIgBWBdnW0GXGVs27g83tqb
-         m5Myb5FNBQCRYoaTKRNSxMZ9ydsqtXtZqKTWbkiCOb8eFmxG7ei2cptk27mMWvrB1jrb
-         EdlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTzuj+XHxJzypUrCxqnupjFxP7Msm+FIEj/hdrU0uRHAlmchMmK88N5Mx3qim5S4audRovzjep+FNUM7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx203kwZ+sSU1nrRMEdJhVkHKnmFqa4bp1j/i4j4uWJ+f3KhiE0
-	fwABhonE4Y95eLdp/OdjKXh+Rw4jP2woe9rmtqiYpXSee31oprOozkJOkIKb9FO8PA==
-X-Gm-Gg: ASbGncvSdYP9VDiDgZIHBRAkOBhYlghmdRtxCuHWsuWc7Ov0lTDSLHkL34Ucmisy3OJ
-	90mpkry9pJf3VGydRa5hbcOVRYDhU/zqBArlK5bQhb0WgmXTUnM7xjnCxjVwheiyxJri1tzK5el
-	OAG20lN4ZPX/0X3I1duklWVEhUz7foEbTdKQhyy2Lr7pltsZ07czJfWcqDcYlyL+BH3lmI+b2/k
-	brjbBASnOgu/YEy70WM5HiqrK8T+pfZaThljDetjHfo6ZGrlemCLIAavs+FjV5xqcM2TIov1yGd
-	dPqW4H/y3tZzlK8JXhVvoJVeNqZJqXH3XgFxs63+pyab1ZOpuwGCM680//S2opGcBNBJWQ==
-X-Google-Smtp-Source: AGHT+IH19b+MIj5PYSfaf6y9UStpP/b5HIL66R1l+D0oZALB8RGrhGav3hq01rMAYcQDEE5AYTNfCA==
-X-Received: by 2002:a05:6870:7302:b0:2e4:9c8e:f59c with SMTP id 586e51a60fabf-2e83e974461mr8522fac.19.1747930196705;
-        Thu, 22 May 2025 09:09:56 -0700 (PDT)
-Received: from aus-ird.tenstorrent.com ([38.104.49.66])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2e3c06af18esm3104863fac.13.2025.05.22.09.09.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 09:09:55 -0700 (PDT)
-From: Cyril Bur <cyrilbur@tenstorrent.com>
-To: samuel.holland@sifive.com,
-	ben.dooks@codethink.co.uk,
-	palmer@dabbelt.com,
-	alex@ghiti.fr,
-	linux-kernel@vger.kernel.org
-Cc: jszhang@kernel.org,
-	paul.walmsley@sifive.com,
-	charlie@rivosinc.com,
-	jrtc27@jrtc27.com,
-	aou@eecs.berkeley.edu
-Subject: [PATCH] riscv: uaccess: Only restore the CSR_STATUS SUM bit
-Date: Thu, 22 May 2025 16:09:54 +0000
-Message-Id: <20250522160954.429333-1-cyrilbur@tenstorrent.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747930208; c=relaxed/simple;
+	bh=m3tpsM/qO3KErY+5snzDSjBp0eX8BQdhOe5n9KjAFNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l23/vmXm+UsFP0XDkY4LpJI3hXVUaxYYm5H5EdbHOZyZzjoJtpt0wCjVICsQXEbVzXLAMg8PuOR9AwkgGSAxOeiDGuOuAz9Mrh8PF5tByZJGYfSa99yF9w+u+EESXOHfSwrnORYtGKfVlWyIN23n/fc2LJ1/GAOrpGNlJS5uypg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UDG/D7u9; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AC04343980;
+	Thu, 22 May 2025 16:09:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1747930199;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4NngisnSwgPZO0ouYjYbwumLRIx30v8UWI9kr/vOCNw=;
+	b=UDG/D7u9BA/lwYSKpoKBwp7LKnx5B9PuowOGyxi5shVQokgm+S6m5Q1oJ0Xw1JtdroUJR5
+	auCOSCprwz7o4aPv1Rmb4gcccGYHW2UhZ0XGhVLwq3ocItCocAI6IakIFyaPojiuvbDyjP
+	3CZUoKUIPltpBTc29qJusCLZgV5dgeFu5aJ3fQsTBBgYCD36GHXagiH2XiX3SixykN4MnI
+	nqcZmjyBBPrp+usNmgJHcEG2GcuI1VTz4KSryyEYCW7W1SsrsrQts/VGEgFWbgbcVI8ylc
+	fSNQ7VN7LTxaMfo11FdvMzgW25ty93NXa8ih4VWYwIiRM7q2lq6HQgjF+3olHw==
+Date: Thu, 22 May 2025 18:09:56 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Louis Chauvet <louis.chauvet@bootlin.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 02/22] drm: convert many bridge drivers from
+ devm_kzalloc() to devm_drm_bridge_alloc() API
+Message-ID: <20250522180956.1ab86afe@booty>
+In-Reply-To: <qkqyfksvimaks4wb4si72shewdc7ccy4n3srpkv3jf5snphepu@zpci2dquivhj>
+References: <20250509-drm-bridge-convert-to-alloc-api-v3-0-b8bc1f16d7aa@bootlin.com>
+	<20250509-drm-bridge-convert-to-alloc-api-v3-2-b8bc1f16d7aa@bootlin.com>
+	<4yeqvg3wnlr2bhb54zutgqpkehrodat5w5x4rr5qjlrc2ts3pz@gr2iosycclpl>
+	<20250512160201.7d0b21d8@booty>
+	<qkqyfksvimaks4wb4si72shewdc7ccy4n3srpkv3jf5snphepu@zpci2dquivhj>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdeigeduucdltddurdegfedvrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudeipdhrtghpthhtohepughmihhtrhihrdgsrghrhihshhhkohhvsehoshhsrdhquhgrlhgtohhmmhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhop
+ ehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-During switch to csrs will OR the value of the register into the
-corresponding csr. In this case we're only interested in restoring the
-SUM bit not the entire register.
+Hi Dmitry,
 
-Fixes: 788aa64c0 ("riscv: save the SR_SUM status over switches")
-Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
----
-I've put the Fixes tag in but I assume this will get squashed into the
-patch. Either way I hope this works to fix the immediate issue.
+On Thu, 22 May 2025 16:08:43 +0300
+Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> wrote:
 
- arch/riscv/kernel/entry.S | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+> > What to do? Proposed plan:
+> > 
+> >  1. Louis immediately applies the revert (patch 1)  
+> 
+> I can't help but notice that both Louis and you have bootlin.com email
+> addresses. Granted the lack of responses, can't you ping him internally?
 
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 00bd0de9faa2..6ed3bd80903d 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -399,14 +399,18 @@ SYM_FUNC_START(__switch_to)
- 	REG_S s11, TASK_THREAD_S11_RA(a3)
- 
- 	/* save the user space access flag */
--	li    s0, SR_SUM
--	csrr  s1, CSR_STATUS
--	REG_S s1, TASK_THREAD_STATUS_RA(a3)
-+	csrr  s0, CSR_STATUS
-+	REG_S s0, TASK_THREAD_STATUS_RA(a3)
- 
- 	/* Save the kernel shadow call stack pointer */
- 	scs_save_current
--	/* Restore context from next->thread */
-+	/*
-+	 * Restore context from next->thread. csrs will OR the bits from s0 and
-+	 * only want to restore the SR_SUM bit
-+	 */
- 	REG_L s0,  TASK_THREAD_STATUS_RA(a4)
-+	li    s1,  SR_SUM
-+	and   s0,  s0, s1
- 	csrs  CSR_STATUS, s0
- 	REG_L ra,  TASK_THREAD_RA_RA(a4)
- 	REG_L sp,  TASK_THREAD_SP_RA(a4)
+Ah, sure, Louis and I were discussing it together. The question was
+quite "which is the correct process to manage an incorrectly-applied
+patch?", i.e. whether the revert itself needs to the Reviewed/Acked-by
+etc.
+
+Luca
+
 -- 
-2.34.1
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
