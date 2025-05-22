@@ -1,97 +1,110 @@
-Return-Path: <linux-kernel+bounces-659221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99B9AC0D00
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:40:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BBBDAC0D11
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 15:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 036881BC1E5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:40:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03ADA1BC49AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 13:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801A028C017;
-	Thu, 22 May 2025 13:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA7C28C00D;
+	Thu, 22 May 2025 13:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tyl08utP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ObjMY9jM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC5B3010C;
-	Thu, 22 May 2025 13:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277413010C;
+	Thu, 22 May 2025 13:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747921203; cv=none; b=ARfHWW3bAMPcfBYC9MeTj9Z9FVV4En9p2NvrArB8dWgfNg9bncCSzEZCfGJnEaWjz1vHkeKVAPLtjPzcNy28L2sQsQTUz95QNBCk1rtJL3/JnZmTZ+NY0yDoyfn6tJgiB75SMAIzE1ZCSNOj4jE0javd0dd7Wn1S/Hjrm3hnFBY=
+	t=1747921325; cv=none; b=hl2KcusOtZ/zOwa+WOBdzcB9ctYSiouRlMp6jYVMexQLf3gXo4UEXXf4spevXdPHK4DraQsotm46PbpACsaapupd1Ho+6JmyL+FXMZoJQyISy2QReO9A5iBlo4WBs+CbNwUfqFO6f6FmnGQkJeSpGvIGWZrKbyAK/4k/fF8WrQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747921203; c=relaxed/simple;
-	bh=iUCQCYd6as19uTwSA890wnNEr95EHckro3Xf9ezf0qs=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=tDoTzZZTkktBDoIkqX4O0PS/YFwuj3k9klOfAjds54uhW1MuFgsNZfHDwHlm+q+DEDwIt/hQ8og8IDEpjllVHmAdBQc98pY4NkDLPeLDr3edoVh0HGDpsYfEg13WL851A0ErbYzUW9XDJjlt7uoo1bUrGWBLru+vfAzOmAkieR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tyl08utP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D372C4CEE4;
-	Thu, 22 May 2025 13:40:02 +0000 (UTC)
+	s=arc-20240116; t=1747921325; c=relaxed/simple;
+	bh=aefwlKfamE6DcffrjNWnfeFHK+8y3ocMVzuWPfH954s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iMj2D4hxNYvCZjO7RdJIipkar00R0E8woF7RADw4C3hNxW/g7dIuuGmUQ/c68hbhMDya58wGwmTgVya52cqxzK2G4SdpyAT/bAXnccZwLBqaWHQZ21wfYSNilZYRgetFgKj5SOwU97S/LfJbddRTzFtKZhCBOYnHwtwGnN/46JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ObjMY9jM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AF16C4CEED;
+	Thu, 22 May 2025 13:42:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747921202;
-	bh=iUCQCYd6as19uTwSA890wnNEr95EHckro3Xf9ezf0qs=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Tyl08utPLLoNQvILkEKXzTTs6aYTUxRymGYHAjNE8Xr8Nm6covXegYejJHLyews0i
-	 s7xaijzYwBPiZ2yDnKyvJaoDbNs7xeTDuvCjqFFhM2R+AEM7m2ITqXBFBE3IP/Ilm0
-	 PIAJxLzaFUMgDX/jn8YdYA2jKJvgu2S4WGRb/UW7QhK70OmXiwW1D39uxZFOsEuy+e
-	 NX1IMXTTrWYlmVH8jTPRMLWeE6fIUwitjAd91y2Ve8G2n+ZnyCaNYb4QN1oRgMCOj5
-	 vB4I8pakBcRSy1tndkkWwMIP860XvRj4eXoYjBicnS1Z6jqmcBwxpNMTe3z2Pv3GCP
-	 cWIdRWUUQrZIw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD903805D89;
-	Thu, 22 May 2025 13:40:38 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1747921324;
+	bh=aefwlKfamE6DcffrjNWnfeFHK+8y3ocMVzuWPfH954s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ObjMY9jM8+iR0WfaQGVtqUs8mWYuWJLr19dnGRpII49sMuQT0btj1FoAvJsQNfIT0
+	 0GH+iILZyxixLeDBM1bjjRpV3Szg3hMtglKlC9VE+PdJ+BWB1OMPKGAeyEdwFtfCmx
+	 2EU4RIebtM5oLlIrL+RJHEXTX+45JcNdxJ6B+Ja5UBEkiz5wV1F9UT/tNSCjazYv0X
+	 6wDeSwFBTwrS2LDGMBkOA/Z+we1vvKq3g9yrKjujeCE2L0eGvky1NAM41DeYx+Kxul
+	 WE3JIjr1cOhpr35d3hawVY/xNrAZ88LfnUHHxAa8yWFSE4mM1sAls6nm3JnMJwCiOL
+	 aznOAGZ/eoVrQ==
+Date: Thu, 22 May 2025 15:41:59 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: phasta@kernel.org, Lyude Paul <lyude@redhat.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/nouveau: Don't signal when killing the fence
+ context
+Message-ID: <aC8pp1tOUkikGPKx@pollux>
+References: <20250522112540.161411-2-phasta@kernel.org>
+ <20250522112540.161411-3-phasta@kernel.org>
+ <af03b541-0b69-4b3d-b498-b68e0beb3dcb@amd.com>
+ <06210b9dc5e5ea8365295b77942c3ca030f02729.camel@mailbox.org>
+ <eae0ff0f-31a6-433a-b255-9bdb4727a940@amd.com>
+ <aC8fpEXYWZ9Oy41J@pollux>
+ <ebedece4-9758-47e9-b621-37b40e3f0fc3@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v4] net: Add support for providing the PTP
- hardware source in tsinfo
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174792123749.2878676.12488958833707087703.git-patchwork-notify@kernel.org>
-Date: Thu, 22 May 2025 13:40:37 +0000
-References: <20250519-feature_ptp_source-v4-1-5d10e19a0265@bootlin.com>
-In-Reply-To: <20250519-feature_ptp_source-v4-1-5d10e19a0265@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: andrew@lunn.ch, kuba@kernel.org, donald.hunter@gmail.com,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, willemdebruijn.kernel@gmail.com, kernelxing@tencent.com,
- richardcochran@gmail.com, thomas.petazzoni@bootlin.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- maxime.chevallier@bootlin.com, linux@armlinux.org.uk
+In-Reply-To: <ebedece4-9758-47e9-b621-37b40e3f0fc3@amd.com>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Mon, 19 May 2025 10:45:05 +0200 you wrote:
-> Multi-PTP source support within a network topology has been merged,
-> but the hardware timestamp source is not yet exposed to users.
-> Currently, users only see the PTP index, which does not indicate
-> whether the timestamp comes from a PHY or a MAC.
+On Thu, May 22, 2025 at 03:09:49PM +0200, Christian König wrote:
+> On 5/22/25 14:59, Danilo Krummrich wrote:
+> > On Thu, May 22, 2025 at 02:34:33PM +0200, Christian König wrote:
+> >> See all the functions inside include/linux/dma-fence.h can be used by everybody. It's basically the public interface of the dma_fence object.
+> > 
+> > As you write below, in certain cases it is valid to call this from drivers, so
+> > it's not unreasonable to have it as part of the public API.
 > 
-> Add support for reporting the hwtstamp source using a
-> hwtstamp-source field, alongside hwtstamp-phyindex, to describe
-> the origin of the hardware timestamp.
+> The question is from which drivers?
+
+Well, any driver that uses it to check its own fences, as you say below.
+
+> >> So testing if a fence is signaled without calling the callback is only allowed by whoever implemented the fence.
+> >>
+> >> In other words nouveau can test nouveau fences, i915 can test i915 fences, amdgpu can test amdgpu fences etc... But if you have the wrapper that makes it officially allowed that nouveau starts testing i915 fences and that would be problematic.
+> > 
+> > In general, I like the  __dma_fence_is_signaled() helper, because this way we
+> > can document in which cases it is allowed to be used, i.e. the ones you descibe
+> > above.
+> > 
+> > test_bit() can be called by anyone and there is no documentation comment
+> > explaining that it is only allowed under certain conditions.
 > 
-> [...]
+> That's a rather good argument.
+> 
+> > Having the __dma_fence_is_signaled() helper properly documented could get you
+> > rid of having to explain in which case the test_bit() dance is allowed to do
+> > over and over again. :-)
+> 
+> That's an even better argument. 
+> 
+> > I also think the name is good, since the '__' prefix already implies that there
+> > are some restrictions on the use of this helper.
+> 
+> I'm still hesitating. Adding something to the API always made it usable by everybody.
 
-Here is the summary with links:
-  - [net-next,v4] net: Add support for providing the PTP hardware source in tsinfo
-    https://git.kernel.org/netdev/net-next/c/4ff4d86f6cce
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+You can't prevent that, the test_bit() dance can be done by anyone, but you can
+document it properly with this helper. :-)
 
