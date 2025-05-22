@@ -1,139 +1,180 @@
-Return-Path: <linux-kernel+bounces-658749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC551AC06B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:10:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E046AAC06C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 10:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E70448C8201
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 08:10:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB4B8C83A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 08:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0AF262813;
-	Thu, 22 May 2025 08:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5754C1F130E;
+	Thu, 22 May 2025 08:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p999o9/z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TqYCmQGU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77E826157D;
-	Thu, 22 May 2025 08:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CE72638BA;
+	Thu, 22 May 2025 08:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747901437; cv=none; b=VWZZ3o7gGgo37Dp13V3FZ9sYBhdD3kDw3bzGsPUPTg1QQ03lNmIOcfRJ0SNYCE7iFmhGsv2TkBTVdS9vXA4awxiKE6IvPpVHC5BMydTB8x83tgiBtlyUOK/I2y9CEOrV2V3d2Z8UbdrDBB7oVDh8oBu3KngpsKHF/+mZkJ6XeXk=
+	t=1747901645; cv=none; b=iMQ7vxpGwEcQuGJqewDDDoxxeWkT6yC7Gl5As8oz5luOSALfG0UqVHVybtUPS0yg0J89kbNhFb7hrJckaDV2zGO/LPEBLagEdgCkYjmB9940R2ewCJQEiA7WcKholDJZx+HUo6sSo+ZGC+65G61zf6WCeuT2kVsTmGEFIgDkmQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747901437; c=relaxed/simple;
-	bh=1GniSVUTPCwPys4jNEIyv0zOvbuav1H47/Cz0GX21NA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xb3ZP3Kj0qzWnaWzDQoHQoxgu5S7PEUnRBgcR3iiv3VVWS1yextokiU8TQ3cM2WgJUzMc/UEjQUVzyLguBqjhmG7XiBpPZ/hrF7s4D1io3XihTuh7Fhr6z5zJDv/P0dImx0mfaaw75F0yq1ErYly0fVU7up3qBMxw9Y+7UBEFcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p999o9/z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B35C4CEE4;
-	Thu, 22 May 2025 08:10:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747901436;
-	bh=1GniSVUTPCwPys4jNEIyv0zOvbuav1H47/Cz0GX21NA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p999o9/zrdwPYEGJJPyNMMmbk2Lw4q1dy7SQ5hPnxxv0gfWAa1HB63QbsLJYpg0r4
-	 FrS4T3TCthfW1Tu6Lp/xQpmTSameuU1qfnVqmprjPLiPjD+rJWrlp02BYwWJ1SSbDu
-	 82buVdAjU1PZBoke0jjyx+7UQaTrXSnv+O7K5XKkuGPOXRyKp4YsnbB+IFKLZJOT7w
-	 1ZrA85MwG2QY1/+xWP1vuFTyooDd+6jqwYCsn2nPV7AqYgr/Re7gEgYNt8ohpF0sWI
-	 zvRT3ivfuYqoBW8sRYAhkgoHBWzp/lmzUi/Humpl/y1uZ/P7Mq0lfwGQQM8UKMaAWk
-	 +U8DHr1IWEecw==
-Message-ID: <6985e216-cdc0-4387-b3f8-e93abd3ee86a@kernel.org>
-Date: Thu, 22 May 2025 10:10:32 +0200
+	s=arc-20240116; t=1747901645; c=relaxed/simple;
+	bh=4mgw9km5mFpRuUTgNjBFlEkd7BF74iSHlGGWra4E0Iw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pB4wffo0v/XcQVyMUVkdgViTd5Y6Sz/SXz/9Mh2D46atlXbfDcFeEijLoaHGhxowfphgmfxqv4MU9UwGfrfRuH3wLixnPQhQa7Ej5zxLDR4QLpoBOeI7zs+MwyszJ2Y1IzwBqQSZtfaSPihHEmvHWktA/8c6nQwQFPfDKm7wOW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TqYCmQGU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54LIk2ji027677;
+	Thu, 22 May 2025 08:13:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=NKZ+l3nSbHSSSKMUKXCppXpZH2g1/C9wrFG
+	L5jgW8Mg=; b=TqYCmQGURnW7LQ9Z9VK7VN0I/QXGSSq4HcWLNsqUFqHroRM5YR4
+	n/ddJ9gxlkUVQpo11MGTahvGpIOat9oS4yqMCxLU+1HpUH35uOAti+BNgyToSYAH
+	W3c062ZKosQX1T8YKqHY8CqFwfhsdc8XMzQH3SL8Hmk+e4v9DWZdlBsfd4mUOHAD
+	Tj8nxoCFTVxQDpSts+1sRn1G7a+Ayxiwe7K91G4m99HlXJmgZIAdK3yPIy+R6o5w
+	6v1odlte3VIICJNycZmwtqcK+VCnXhOYgau+Kolh5jBwXg0kInsIYRj8BkvT55wc
+	c6aD1nPOUF1i78L+gVQCBHEpzniecPC8kjw==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf9dgyw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 May 2025 08:13:01 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 54M8CwsH019012;
+	Thu, 22 May 2025 08:12:58 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 46pkhn78m1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 May 2025 08:12:58 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 54M8CvFl018990;
+	Thu, 22 May 2025 08:12:58 GMT
+Received: from cbsp-sh-gv.ap.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 54M8Cv97018985
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 May 2025 08:12:57 +0000
+Received: by cbsp-sh-gv.ap.qualcomm.com (Postfix, from userid 393357)
+	id 0865140CAD; Thu, 22 May 2025 16:12:56 +0800 (CST)
+From: Ziqi Chen <quic_ziqichen@quicinc.com>
+To: quic_cang@quicinc.com, bvanassche@acm.org, mani@kernel.org,
+        beanhuo@micron.com, avri.altman@wdc.com, junwoo80.lee@samsung.com,
+        martin.petersen@oracle.com, quic_ziqichen@quicinc.com,
+        quic_nguyenb@quicinc.com, quic_nitirawa@quicinc.com,
+        quic_rampraka@quicinc.com, neil.armstrong@linaro.org,
+        luca.weiss@fairphone.com, konrad.dybcio@oss.qualcomm.com,
+        peter.wang@mediatek.com
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4] scsi: ufs: core: Don't perform UFS clkscale if host asyn scan in progress
+Date: Thu, 22 May 2025 16:12:28 +0800
+Message-Id: <20250522081233.2358565-1-quic_ziqichen@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] dt-bindings: mmc: ti-omap2420-mmc: convert text based
- binding to json schema
-To: Charan Pedumuru <charan.pedumuru@gmail.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Tony Lindgren <tony@atomide.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250522-ti-omap-v4-1-5d261a661b05@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250522-ti-omap-v4-1-5d261a661b05@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9C0MC_UeV1nAxCF4HPh3PSWJnIC6D4b2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDA4MSBTYWx0ZWRfXwFnff2lWvPTd
+ cCtojmX6uUUXDu8ZIw3La3i58J7d643YzsBgZVAHfF1+xbE2zoPP03RDhjalGZ7XP4DCYCfSt63
+ /lIACkdAYDrqUhLO0Wp2VXc8dgtuE713YuxXF2jr5Hxo3NconHJJ+5FTEng7vDZB06Y7+4cS/OS
+ tb2x+lzq/BXwJPJtvFMFs2tmFc9Gt9IwllG6GnVldnZ0kU7vlqc7N7Yh+hWC9bxLwLRCIEKqRZB
+ KAWxxAYSoLXZeKDbEShF8jp0pmenmw+i0dUXI35VrpXGB7T7B7I6BzpJfTUnd4o2CNuLWDHXsxF
+ yRgc81RlO78slhqJeGif1nzV88YvlXC18l8dNqlsQrnYte1F01r2V1UFRjAfFTRE5HrCWyR0RiN
+ eklM/A2itjjLHWooBVjbVWEcJmtU+rk2KGNUKVLhWGMgYs4UJqwHcLYiqTkK2A7fhdpWdBmA
+X-Authority-Analysis: v=2.4 cv=GawXnRXL c=1 sm=1 tr=0 ts=682edc8d cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=N54-gffFAAAA:8 a=2qWgUaWB3xuvrwrepqIA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 9C0MC_UeV1nAxCF4HPh3PSWJnIC6D4b2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-22_04,2025-05-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 mlxlogscore=999 lowpriorityscore=0 impostorscore=0
+ priorityscore=1501 clxscore=1015 malwarescore=0 phishscore=0 bulkscore=0
+ spamscore=0 suspectscore=0 adultscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2505220081
 
-On 22/05/2025 09:54, Charan Pedumuru wrote:
-> Convert TI MMC host controller binding to YAML format. Define ti,hwmods
-> with $ref definition, description and a pattern under properties.
-> 
-> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+When preparing for UFS clock scaling, the UFS driver will quiesce all sdevs
+queues in the UFS SCSI host tagset list and then unquiesce them when UFS
+clock scaling unpreparing. If the UFS SCSI host async scan is in progress
+at this time, some LUs may be added to the tagset list between UFS clkscale
+prepare and unprepare. This can cause two issues:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+1. During clock scaling, there may be IO requests issued through new added
+queues that have not been quiesced, leading to task abort issue.
 
-<form letter>
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
+2. These new added queues that have not been quiesced will be unquiesced as
+well when UFS clkscale is unprepared, resulting in warning prints.
 
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
+Therefore, use the mutex lock scan_mutex in ufshcd_clock_scaling_prepare()
+and ufshcd_clock_scaling_unprepare() to protect it.
 
-Full context and explanation:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-</form letter>
+Co-developed-by: Can Guo <quic_cang@quicinc.com>
+Signed-off-by: Can Guo <quic_cang@quicinc.com>
+Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
+Suggested-by: Bart Van Assche <bvanassche@acm.org>
 
+---
+v1 -> v2:
+Move whole clkscale Initialize process out of ufshcd_add_lus().
 
-Best regards,
-Krzysztof
+v2 -> v3:
+Add check for the return value of ufshcd_add_lus().
+
+v3 -> v4:
+1. Using lock 'scan_mutex' instead of checking flag 'scan_mutex'.
+2. Update patch name and commit message.
+---
+ drivers/ufs/core/ufshcd.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index d7ff24b48de3..a7513f256057 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -1397,6 +1397,7 @@ static int ufshcd_clock_scaling_prepare(struct ufs_hba *hba, u64 timeout_us)
+ 	 * make sure that there are no outstanding requests when
+ 	 * clock scaling is in progress
+ 	 */
++	mutex_lock(&hba->host->scan_mutex);
+ 	blk_mq_quiesce_tagset(&hba->host->tag_set);
+ 	mutex_lock(&hba->wb_mutex);
+ 	down_write(&hba->clk_scaling_lock);
+@@ -1407,6 +1408,7 @@ static int ufshcd_clock_scaling_prepare(struct ufs_hba *hba, u64 timeout_us)
+ 		up_write(&hba->clk_scaling_lock);
+ 		mutex_unlock(&hba->wb_mutex);
+ 		blk_mq_unquiesce_tagset(&hba->host->tag_set);
++		mutex_unlock(&hba->host->scan_mutex);
+ 		goto out;
+ 	}
+ 
+@@ -1428,6 +1430,7 @@ static void ufshcd_clock_scaling_unprepare(struct ufs_hba *hba, int err)
+ 	mutex_unlock(&hba->wb_mutex);
+ 
+ 	blk_mq_unquiesce_tagset(&hba->host->tag_set);
++	mutex_unlock(&hba->host->scan_mutex);
+ 	ufshcd_release(hba);
+ }
+ 
+-- 
+2.34.1
+
 
