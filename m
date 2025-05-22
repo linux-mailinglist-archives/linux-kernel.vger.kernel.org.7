@@ -1,96 +1,134 @@
-Return-Path: <linux-kernel+bounces-659919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-659921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE2EAC16CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:30:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C15BAC16D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2E593AFCFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:30:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63E3F3B013B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 22:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92198278764;
-	Thu, 22 May 2025 22:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309A526E14A;
+	Thu, 22 May 2025 22:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="obNWYMD/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P7pLor1Z"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B9913C81B;
-	Thu, 22 May 2025 22:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39B02550BF
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 22:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747953015; cv=none; b=GYLnYJWsIFAMH8dHRPWN7dIGpW6bwlr4/8fzwHcOpWaWwhfx+ESDSMfyrPxieHmy169/gPvLKnAfNcmkKkPDRx4QaQBwDAfRfOJMsQQjjIwtR4x9ETohykOepZPy6J+FDGAJCBxJJ1mCFxFgEELIUJdk7jrHkDHFZg6ofGMb5b0=
+	t=1747953028; cv=none; b=PGZbVgg0I7AOA9ROK09FRLJ4EQa77sLRW6citi5ZLdH/IusL8HHebrfSd20V1ncOcXl6alMjxi95IMpZ3qs7M6EXIIb3ol+/S7JTDbXzZNpqs+d9VO/OVuqLLrb2VpIJlTJagB/pNs2pdGvm1ztPNpGauHjgxLfF9TR40nK91js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747953015; c=relaxed/simple;
-	bh=jW9IdrEDsP9dLKs3o6gfn990nlhAFd7trNmrhCDWRIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=buBPipG/P6cDADPuXYBQlTQdUkHUsDlMo+t21FYjpsHrR/geP20UlzU+W6/NNf/P+kw2vg0OU/PF3F2fI9gygkbA2x8VwHZ+IKspMBO51LWjjrCV9SYgOAjDuqa60Oh3N6BC3VXXc8Mj5t8RdxL0c82HzA6Vdtr1PbgF4ouLa7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=obNWYMD/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDE62C4CEEF;
-	Thu, 22 May 2025 22:30:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747953014;
-	bh=jW9IdrEDsP9dLKs3o6gfn990nlhAFd7trNmrhCDWRIU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=obNWYMD/5Bwx1hqCakZIHjeBBRpDNPMNTHeyi2pqJ7N2SbPNuHw9RUB7B6LCru2vP
-	 z4YEHTiRuzmiDy+lXUoak1zEtryA5CKB+4ZsA+LWH+Lub14ST+gLL3jIzG9alpKyq6
-	 bmp3ry8RO3vmopj8dbGHCf9CW0gW+CrfzeCnFfJnKaoPDyP18xWTB82bffDJGqxKEo
-	 udFbocLtZ06ZyrX5fHE0Q8uKk3M++SMyU3H6X2pUXtFaJrtD8iacCRIpDWwwPQOmCS
-	 2wFxf2ggMriYjO0Mws2AtsBVBfY/E/G8F/kir+YpjA1vDyobuNT6dpVu5GFrczS+uN
-	 5M7oJ3XVbb21g==
-Date: Thu, 22 May 2025 15:30:13 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Paolo Abeni
- <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "Andrew Lunn"
- <andrew+netdev@lunn.ch>, Saeed Mahameed <saeedm@nvidia.com>, Leon
- Romanovsky <leon@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>, <netdev@vger.kernel.org>,
- <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <bpf@vger.kernel.org>, Moshe Shemesh <moshe@nvidia.com>, Mark Bloch
- <mbloch@nvidia.com>, Gal Pressman <gal@nvidia.com>, Cosmin Ratiu
- <cratiu@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>
-Subject: Re: [PATCH net-next V2 06/11] net/mlx5e: SHAMPO: Separate pool for
- headers
-Message-ID: <20250522153013.62ac43be@kernel.org>
-In-Reply-To: <1747950086-1246773-7-git-send-email-tariqt@nvidia.com>
-References: <1747950086-1246773-1-git-send-email-tariqt@nvidia.com>
-	<1747950086-1246773-7-git-send-email-tariqt@nvidia.com>
+	s=arc-20240116; t=1747953028; c=relaxed/simple;
+	bh=an8fPGi94bYvyE1y8p6iS9mxJmsi4pDjOvkbFbfR8xI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Wbokua8ETZK0ofBv29vZPOt3Rdo/ZhNKCRCsAmLykaRVJ6sEzsTvcEwU0TYEc78D6wGDyvR685D3HGyjmsdGdkcCbAoWtcEcuah1w/uKzs8lsZo5DpdFiIwyxJHKoYA09Tm0+8NQpCqeCNXaecFQ6tfjiQz3RIYv8j7VnSXv4Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P7pLor1Z; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-443d4bff5dfso12435e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 15:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747953025; x=1748557825; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ty+aRqD69J6N+JcORepKn7zTsLIxgBrk36Nne2pXGUg=;
+        b=P7pLor1ZziIkootUbJJvSz7XAf/NwDnBE2osuz6y9eNObUSwxHG+nchHRxK9NNvbjf
+         79SQ3DMhe+yCIoagVTFpM8DLk0gf4TB49H1dRtuA3mxsek/410GE2q0YkMobIwO59wvU
+         4i6BWDYqEJ/dXK1wQ1cn0XEld8LuIRrwXPEjDgYiYNOjrzm8mUOFU1qhkFfiyunmGDL8
+         1LMj9tp8wIJA5VB6VQ1Jc5y940NNqvH/3KdizjPz0SwCL7wYr+2gpzWIX+iXlPv+WGQc
+         DSuPxRoLgMsyALqDl+GIKS8SBNnrFwaxWPCoYFyJ6KkBoOV5VN7MWeiw6J1KrECUPQzF
+         kFQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747953025; x=1748557825;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ty+aRqD69J6N+JcORepKn7zTsLIxgBrk36Nne2pXGUg=;
+        b=wl+BOj+WNPSZRW5U8uH6Pq3rYXrmURtESu9TmI+P5dtMRXN5gFU15KHG6+g/dTTktg
+         Y4ZuPbt7J7m3a/IavPFek1z1L1l3oDXqsb9gW/SoJ+CHRDnJF6UsHwzClCREXYfD9ARN
+         zWqEpOKUG0Fdl8exOILHRlxleL+7yz7GkP2o4co43q+swAzVwRDlqKG3M09vFDvyVwoN
+         nkrVFQaEGDeZiQdXfzvGfQl261RgMTQ5v4rmmodCpU2FIEBaBgWPcXQgy2iowNvhA237
+         wBXH8Sp3DUPuStfVA5FXzhAqytgM/1ojocw4+x5n3P3cWAv0Ls4S2Iw6z/nBqxxMJIzD
+         KlGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXv8mTwh+VXOyQef2n3TW0lhzcn62HB3lTk/RbhGYeXrfB2G5Dp9M4Xt1tiyx23LvP6itF/WQwApHp6ATo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWJUgvPhFA8OMCYsPndgP35hf6d35tVvibSFiqJcLT7xYr0GiY
+	rVMb0Ff41vclfps3XuDnW3QvXjbvEG8M0QkkqqUsId/TYJlqg5pRl3es833gKNJKEuv888SuvcX
+	Yf4ufOnTt
+X-Gm-Gg: ASbGnctEdrzh9ZSumwoDjBvKMXFSsAHlFfV08g9K3N+nnudkEpxIxES27u8I1ayLf27
+	WbZUjDtLNEgBXeBw5m07+CFTQJrfX5VvU8OCimxxgj/RW538++HFF///xL/iYLg8aDUZLjRFNHS
+	YkZ30yDTjoLUng7sN6MlfuY9VOxNf6gzQIPLiU3L3F7pCDsPkNt3gIJiQ7G8eKjv5kfUpe7lgcZ
+	l6B9XPh+2F0jFG4M+Vnf4IG4qOq/FWCPxoxRyegf8rsbiI9zXXPtFN5YAUTl2/RIg2QAaO3spla
+	r8OM0XA32EYgpRZhx+jhxn3lb+Pc3er0xlU+3BTOI9Du3i1IyGBDR88I5LOhnw==
+X-Google-Smtp-Source: AGHT+IFPlgqLSsJn0hFdkgXCDckIMyvribsgHCVZ7kCFHIgpVlh62Mq8zGUO3ZzO28SolV+amUUgkQ==
+X-Received: by 2002:a7b:cc95:0:b0:44a:4f96:181b with SMTP id 5b1f17b1804b1-44b85b0c213mr183645e9.4.1747953024675;
+        Thu, 22 May 2025 15:30:24 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:1657:8509:a8cc:c0f0])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a35ca62b47sm24897561f8f.58.2025.05.22.15.30.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 15:30:24 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Date: Fri, 23 May 2025 00:30:17 +0200
+Subject: [PATCH] mmu_notifiers: remove leftover stub macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250523-mmu-notifier-cleanup-unused-v1-1-cc1f47ebec33@google.com>
+X-B4-Tracking: v=1; b=H4sIAHilL2gC/x3MQQqEMAwAwK9IzgZqil3xK+Kh1Lgb0CitFUH8u
+ 2WPc5kbEkfhBH11Q+RTkmxa0NQVhJ/XL6NMxUCGWtOSxXXNqNshs3DEsLDXvGPWnHhCst3HkTX
+ knYMy7JFnuf77MD7PC3V/MJ1tAAAA
+X-Change-ID: 20250523-mmu-notifier-cleanup-unused-238762302a66
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>, 
+ Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747953020; l=1255;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=an8fPGi94bYvyE1y8p6iS9mxJmsi4pDjOvkbFbfR8xI=;
+ b=MS7DKpAJw5VzTdQyEoZXdreu+InUoIPHOYT+zVwwwU74tLxnVo9CLnmoQmzLwekovU8qtXfdf
+ WCADs9xs0NLDfJlkCNy4kinLw/hOinwP3T21nsfzrWbYvd7zBmPqrmg
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-On Fri, 23 May 2025 00:41:21 +0300 Tariq Toukan wrote:
-> Allocate a separate page pool for headers when SHAMPO is enabled.
-> This will be useful for adding support to zc page pool, which has to be
-> different from the headers page pool.
+Commit ec8832d007cb ("mmu_notifiers: don't invalidate secondary TLBs as
+part of mmu_notifier_invalidate_range_end()") removed the main definitions
+of {ptep,pmdp_huge,pudp_huge}_clear_flush_notify; just their
+!CONFIG_MMU_NOTIFIER stubs are left behind, remove them.
 
-Could you explain why always allocate a separate pool? 
-For bnxt we do it only if ZC is enabled (or system pages are large),
-see bnxt_separate_head_pool() and page_pool_is_unreadable().
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+ include/linux/mmu_notifier.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Not sure if page_pool_is_unreadable() existed when this code
-was written.
+diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
+index bc2402a45741..d1094c2d5fb6 100644
+--- a/include/linux/mmu_notifier.h
++++ b/include/linux/mmu_notifier.h
+@@ -654,9 +654,6 @@ static inline void mmu_notifier_subscriptions_destroy(struct mm_struct *mm)
+ #define pmdp_clear_flush_young_notify pmdp_clear_flush_young
+ #define ptep_clear_young_notify ptep_test_and_clear_young
+ #define pmdp_clear_young_notify pmdp_test_and_clear_young
+-#define	ptep_clear_flush_notify ptep_clear_flush
+-#define pmdp_huge_clear_flush_notify pmdp_huge_clear_flush
+-#define pudp_huge_clear_flush_notify pudp_huge_clear_flush
+ 
+ static inline void mmu_notifier_synchronize(void)
+ {
 
-> -	wq_size = BIT(MLX5_GET(wq, wqc, log_wq_sz));
-> -	*pool_size += (rq->mpwqe.shampo->hd_per_wqe * wq_size) /
-> -		     MLX5E_SHAMPO_WQ_HEADER_PER_PAGE;
-> +
-> +	/* separate page pool for shampo headers */
-> +	{
-> +		int wq_size = BIT(MLX5_GET(wq, wqc, log_wq_sz));
-> +		struct page_pool_params pp_params = { };
-> +		u32 pool_size;
+---
+base-commit: e85dea591fbf900330c796579314bfb7cc399d31
+change-id: 20250523-mmu-notifier-cleanup-unused-238762302a66
 
-A free standing code block? I this it's universally understood 
-to be very poor coding style..
+-- 
+Jann Horn <jannh@google.com>
+
 
