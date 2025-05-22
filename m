@@ -1,399 +1,367 @@
-Return-Path: <linux-kernel+bounces-658564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-658567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F1BAC0424
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:45:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C14AC0428
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 07:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D81E1BA188F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:45:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09F591BA1BDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 May 2025 05:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701E51AA1D8;
-	Thu, 22 May 2025 05:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5B23770B;
+	Thu, 22 May 2025 05:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="VIY2GxyH"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="YcXFPl0T";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="YcXFPl0T"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2048.outbound.protection.outlook.com [40.107.20.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A537B1A4E70
-	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 05:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747892698; cv=none; b=QsouOmhNDGf58uQu7EVP8vCp1/AVT00Xow25LHWlnJTEgsXSmHR9eNr/Ipbbjt/Az0p+g1rmqP8+0uja77BXNQh5NRbTcHkLVoKbm0jFI/smPqpNe2+iASV+TRO66G5rB7+7C9HQEDj+FiErra6QThqxp003xgaMy2yBoaemU2g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747892698; c=relaxed/simple;
-	bh=sMM6T+Lz3X2wXsCZZmH9P0KQk3BRY7oGiOm25KqMIn0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZxXH3XnIkjVvNdDYh8faVdiBJOh3qGtVi6f7v4+DM4c2YJwOhVAFeirh/lAhBE6FRnGMnVm626qho0Z50pOrD1jafQ/79VLpUKDmbnAWiHpc3lVLkZmYp/cVPvTJVSRKeUR1mdP0zVwQSpiLb5f3XsRL8YUg+/duWdy31nrgsA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=VIY2GxyH; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54M5JgrM013402;
-	Wed, 21 May 2025 22:44:47 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=9
-	EGIyDYUqUFKTDf6MLIxK/cIfbCO1p9jXW4iLEpu8Xw=; b=VIY2GxyHjwnNPh5vW
-	0r6NE4lyFe5WukGyWFhMKmuC+fq4gDTIfbtu4w1Au/DbkLFcT1b21ri1n0cynvDG
-	mQcJatN7N1LdpYJcQ/NL42uQ6fv1iRQX+bSqDee6qVArP0UHWALS6wJVnBCwwNum
-	+yJuB+UsEZIdPotd6sUpE01kZCYq9SwQX7c9JXQBc1gpp8MMLpkeHaGXsGfDdDgh
-	y+WX1kdIz54cN/pDEd6LdU8Zytr/TVsn1pdrOAzKDw1RoZR+qu439a3rlk0UzBO9
-	UszxYlAr4o7dGrYSXPd/cdM990lBS/drIj4x4WR5xo4HnEB9FVHNj9q+kLuBYmCd
-	wvnpQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46swp68100-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 22:44:46 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 21 May 2025 22:44:45 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 21 May 2025 22:44:45 -0700
-Received: from tx2-sever.caveonetworks.com (unknown [10.110.141.15])
-	by maili.marvell.com (Postfix) with ESMTP id 3C5045B694D;
-	Wed, 21 May 2025 22:44:45 -0700 (PDT)
-From: George Cherian <george.cherian@marvell.com>
-To: <arnd@arndb.de>, <alexander.sverdlin@gmail.com>, <agaur@marvell.com>,
-        <nikita.shubin@maquefel.me>, <vkoul@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <gcherian@marvell.com>
-Subject: [PATCH v6 4/4] soc: marvell: rvu-pf: Handle function level reset (FLR) IRQs for VFs
-Date: Thu, 22 May 2025 05:44:44 +0000
-Message-ID: <20250522054444.3531124-5-george.cherian@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250522054444.3531124-1-george.cherian@marvell.com>
-References: <20250522054444.3531124-1-george.cherian@marvell.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180A0EC5
+	for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 05:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.48
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747892796; cv=fail; b=aspC64SWlN+jXXUKHV45kiB0j3eFOPEYglyUBgUms8Wtca2sEeuWUC2YOcTXhWuql+JMO7KxqF3Yz8RRW6HxIIF1suMmp3w6oljZpMhJQP1fTAJgFU0htSiMKzBpf/sR659pDGpzV8ShedYDDLQq59yqevsb0GJNViTcEN35qV4=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747892796; c=relaxed/simple;
+	bh=2ifpS9q+J9+dnkPqovBTquyTCcIUGWhIomKC1grFTts=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=P5o8+ly3TAWLxH8UufdwtPeKAI5Nj6KopLe1/ACKuYE3eycquuMAn9tVO66Mj1WsSTYj/gRDiLY90r4cdefeG52UJ0Y5VrNWbrpIc2NADb5fgUZPVLrcn2/OV43QaVO2c35V+Bzg+RoKdalecK3h1rDz32L3e1ugChCppcIXecc=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=YcXFPl0T; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=YcXFPl0T; arc=fail smtp.client-ip=40.107.20.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=D4WXKom6c1+9rYUdvfm3xom3sbJszNHwy3NM2hhKehgjnmbdm+Wy8w7/YMAVTNM+QYC1dYI4AVs+zlLkJCkIjpk1HVNfVKVcpmb9twQ25DJPFL0mC3xMEUUYKkW/nPrBiKnnZrdpuNhVAgkZAAz6I7aJGVs/d/JmJgPqjj1b5Eb01JaGTzATBZkNEt6FeUhInQ8LhOnyIHJlcvM6AxAJrBjeZAuNpLTLXBWSOLFaAps1tn1NOKJ0YfWtzN4mRQKfza6g8IvFpTlT4B9pVyC36KZTmn7C87HtNM5z4MzuefrNqamuN7rfxnUcLWKz86O36aUA88y5LFXi34ogLp19zw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t+1rD17r6usVRYbxYwCzJtc/RhPFi0kZH+3HZ3Zw0WM=;
+ b=eaMHDQMYNkyEifH/244yiuZYqZQzMnFKERFT8UPGwmGxhBB7rRjEHPxGQpX3SMTK87p1aOri3tjAcSTq5ZNhzgYD1Q7v4u1vv6yPG6vrshAwQTpKwJiTKWtyuKz7WNZokYapDZu7LEqIpycKDenXbXmYYlYnEXvcZI6v7iGRTz/G5OxcCq5hqHykMBqvv5g5C2q+sGzFw1WnEgwXw6tDoJ5MNYjsUoOrAK1noaIDzBgnXfEDR4zyAOW2U8tHAd8BrNv0/2erh+su6NirSi24jxA/zmgBA4Jmz9cvtyoA5oE+iGr7efcEJYhPK8aCVB8c9XGQMudPI3a/hEF0qGwOcA==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t+1rD17r6usVRYbxYwCzJtc/RhPFi0kZH+3HZ3Zw0WM=;
+ b=YcXFPl0TKaddg8jBOzFsZm9EdrMxM8NxAqm32dzTsDQBB9dho5TsBpZI9YZ8U6kQXtiSDl5XM2ixJz5+xgcm89zkUKPNnHlyt4F2OALAR2Pmb39kns/izfkE8E9f4e+kHnpK3s4ZgD83cBXOI+93D6qUR8jLUR2xEnMKqS0kuYQ=
+Received: from AM6P195CA0012.EURP195.PROD.OUTLOOK.COM (2603:10a6:209:81::25)
+ by AM0PR08MB5409.eurprd08.prod.outlook.com (2603:10a6:208:183::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.21; Thu, 22 May
+ 2025 05:46:30 +0000
+Received: from AM3PEPF0000A79A.eurprd04.prod.outlook.com
+ (2603:10a6:209:81:cafe::7) by AM6P195CA0012.outlook.office365.com
+ (2603:10a6:209:81::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.30 via Frontend Transport; Thu,
+ 22 May 2025 05:46:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ AM3PEPF0000A79A.mail.protection.outlook.com (10.167.16.105) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.18
+ via Frontend Transport; Thu, 22 May 2025 05:46:30 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=k2/0KBTG2M3hgfbcfYWR3QSQ2Nc0qsoFR8ON5VY4ZBCpEJYyiXh1zcFjjJ70miEiBvSuYyEYIcaduYcBg/ZbhZzmk73WmVzJdq3ZSQN3ZLyxBvhzzGoiTiof5C1N2N2cyn6yEWhnRthI5KFmNcDok+e7ksP9nOHr5mUI2O7Hys8xa4sbWVHiXwePtoD8SjHkSd0BudpfqOE7C1y6KnfRFaCitiMX6GWn7myNMCtAxlljS5bkXPLH5WjGd/IhY9qA3bGS41EKZSdO0CmhxiN5NmPohGHTM1kQcL5uOTXr0TLi6eZXM4/QWRbewHkq2BCrKJMdfEhrREP9+Et1rmNvXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t+1rD17r6usVRYbxYwCzJtc/RhPFi0kZH+3HZ3Zw0WM=;
+ b=pHASNYuEA2iZWjIBkuAn5p9Iok8pmko4kUirN+7xMYo+65EDTPBuJFmc+9mjE1uuJcyeUjr5k/KBwtnSxxSFFc6zd4mSTT8OxDsU8a7GpSqXHAMjVu5rIViaxgxDeZi7G+IchpBLGWpnLECY7PPwoVDiqTCx/KhhoAhSociDm04KXLaRSHbBi+41ytwpQ3z8Xih55tEx2YxTOUSkm98EZ4gxRL/7K7vrh3YfqfyL9uSbSvCFJMSg3xWwFkyMFPne0k7F9loiF9DZXyf/El+jsvzNF+A9j8ykaQWMD45QdOPY4/0gTJEGov87CnVYQ0kKw+1VPZhGbA0NVzAIVGHtxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t+1rD17r6usVRYbxYwCzJtc/RhPFi0kZH+3HZ3Zw0WM=;
+ b=YcXFPl0TKaddg8jBOzFsZm9EdrMxM8NxAqm32dzTsDQBB9dho5TsBpZI9YZ8U6kQXtiSDl5XM2ixJz5+xgcm89zkUKPNnHlyt4F2OALAR2Pmb39kns/izfkE8E9f4e+kHnpK3s4ZgD83cBXOI+93D6qUR8jLUR2xEnMKqS0kuYQ=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from AM9PR08MB7120.eurprd08.prod.outlook.com (2603:10a6:20b:3dc::22)
+ by DU4PR08MB11101.eurprd08.prod.outlook.com (2603:10a6:10:576::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.32; Thu, 22 May
+ 2025 05:45:56 +0000
+Received: from AM9PR08MB7120.eurprd08.prod.outlook.com
+ ([fe80::2933:29aa:2693:d12e]) by AM9PR08MB7120.eurprd08.prod.outlook.com
+ ([fe80::2933:29aa:2693:d12e%2]) with mapi id 15.20.8769.019; Thu, 22 May 2025
+ 05:45:56 +0000
+Message-ID: <7244e009-97fb-4f91-8d51-8bd66b367ef4@arm.com>
+Date: Thu, 22 May 2025 11:15:48 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] mm: Optimize mprotect() by batch-skipping PTEs
+To: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org
+Cc: david@redhat.com, willy@infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org,
+ Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+ jannh@google.com, anshuman.khandual@arm.com, peterx@redhat.com,
+ joey.gouly@arm.com, ioworker0@gmail.com, baohua@kernel.org,
+ kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
+ christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
+ linux-arm-kernel@lists.infradead.org, hughd@google.com,
+ yang@os.amperecomputing.com, ziy@nvidia.com
+References: <20250519074824.42909-1-dev.jain@arm.com>
+ <20250519074824.42909-2-dev.jain@arm.com>
+ <00555927-bfa1-4df0-8107-7080447acaa6@arm.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <00555927-bfa1-4df0-8107-7080447acaa6@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA0PR01CA0005.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:80::22) To AM9PR08MB7120.eurprd08.prod.outlook.com
+ (2603:10a6:20b:3dc::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: HvZ9ux4A3woTbvPENqFlu3RmzkyGogp0
-X-Authority-Analysis: v=2.4 cv=DO+P4zNb c=1 sm=1 tr=0 ts=682eb9cf cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=pGLkceISAAAA:8 a=3ie1WVgr3YDlqjzgjNwA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIyMDA1NiBTYWx0ZWRfX6Uo8xHdby6rJ SBAnRyR3X+d9D10i38u6cS6I223/IDriIucwvfTYEkPs/xfaJ9Dx+ysYoDKWjszu10xnP42L7z+ Cu7sv26pP6lCxWiK+C60B/Rbw9BnJC2IyRJyCzUrqFRawtQeCdGet4tyY1WVLRH67EXtPd/lqNN
- gv5I8z6B0srRphbgzhZdw57dexQQrUJY/tvACL/X0IMA9M1nnLE2xvq7OXCuI2YmsLqi/+q6MgP j+friiLSCncMVl6vvQOrr88FQLDLrxCq0n+22fTVwqQSQrSIvCSGKfXY1HdXnTrf9jowsNnwVRB nGGrZXkywz9cZlD0r6kN5wz/h7109IwSVQAOO5krSPgdQ/IwbiJZ4JVvOnNO7ZLkJh6vIxq/uR3
- 0DnOF1pQQXVfuZLr6PPhESJ57Fe1VicheDXx2KuHNGsWQadBCFyvDgzipSSIfdZZcz21OvLK
-X-Proofpoint-ORIG-GUID: HvZ9ux4A3woTbvPENqFlu3RmzkyGogp0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-22_03,2025-05-20_03,2025-03-28_01
+X-MS-TrafficTypeDiagnostic:
+	AM9PR08MB7120:EE_|DU4PR08MB11101:EE_|AM3PEPF0000A79A:EE_|AM0PR08MB5409:EE_
+X-MS-Office365-Filtering-Correlation-Id: 27d24d24-0976-4f7b-19e0-08dd98f40083
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?aVAxOVhhVW1BTVZnSEM4Ulc0S3Q1N2t1SWZFd0hCYXROZnZnQjJYekltZm42?=
+ =?utf-8?B?MU05TEE2c2poY0E0THlUcFhySm1DVWY0Znl4U0ZaZXVSUVhTTXNkTmJ5VzR5?=
+ =?utf-8?B?YVZVTzFoRXpWVGpBTU9iRWUyakZOaERZWWtVQ09zYm1EK1dtenJiLzFMdEMv?=
+ =?utf-8?B?TGxUU1lDbXNiRC9kS2RuRkxUVGFuNlA4TlM3WW45OFJadm5JaGdaZThjNlho?=
+ =?utf-8?B?dVdvMjljZHpQOGdBRDFGYi9UTU80ZlAwblI4c0x0N05ocEUvdUt4a2NFanFT?=
+ =?utf-8?B?aEE0ZTMvRmRxUWFWaDhvUldiaktab2ZtMmZnYzVqN3IxMHRaTFRrY2dRdXpM?=
+ =?utf-8?B?QUN4blJRT2l0cXdZdW1YV0RuOHpFNm54eW5GOG44TW84Rmx4QnoySVR4ck45?=
+ =?utf-8?B?U0pzaEVhRDZROFFlYnlocyt0bEdWNlhPVG1NQXZJRkJuRFVFYllobTFKbzNa?=
+ =?utf-8?B?Z1FBeXBQbDArandYZEFuTmlqZnZuYXlpeUlpdi9pelRzT2liYmxBVWE1elQ0?=
+ =?utf-8?B?YU1CY0lEOFdpdFNsWG5HNXZsbm1VSFdENUJnZ0hocjhBZnZxb0U2OVVIa0dE?=
+ =?utf-8?B?OHBZdTFaV3dXMWNhNm56R1U2UExVRUlQaURJbzFsZ1pmdk44N1BRTmUvUTBN?=
+ =?utf-8?B?ODltTnBLM1hPK25WNFc2WVlkdjJMd0dTSk1NQTJXTmszclVabUx1QlEzN2Ns?=
+ =?utf-8?B?Vk5GUmlob2xQQXRib2s0TEZEWUhmZmkxZ3N2TGJuM3Y0MGdmVXRIK2grYmdQ?=
+ =?utf-8?B?YmdCU1VYZHBZUkpZdUwyYTBHdWV4M0ZGSkZLNVlwQ01taTVjeFFsaXNuMHZB?=
+ =?utf-8?B?THIxZnNaRVlOb1FURkQ5dmUwcjhxYXEwK3hWNXF4TzNid0V2dzIyVldieldP?=
+ =?utf-8?B?T1VYQ0g5K21BdUFCaXdLOXIrYWpIS20vSk55SGxXM2V2VkZaT2k2V1NZaU1q?=
+ =?utf-8?B?U3JZMXU0eUs5WkMwUjBPR0szR3Z1T2dzNmcxNHlXbHZoaXJUclQvT0JKZ0Jo?=
+ =?utf-8?B?YU51eTU5SUF6T2I5WVNYdTRMUytOZUFMVE0wNWIydldRcjVZaklxQ3VKWVB4?=
+ =?utf-8?B?WHdGeVZoTnRYbUMwc1Rmc0JjRTRTRTNqK2l4cU9wZTVJSGhCb0xDN2Rqa3Rq?=
+ =?utf-8?B?bUwzUE42SjV2cmZSNEZMQUxuQWxoTngyRjZFVlNKZ0VTcXp5d2hsWWtZNVJi?=
+ =?utf-8?B?ZFRkYmlIdndrZDdRekJKK1pmM3NFMjgrSDRwR2hVQ0Nsc2ltUU1MendIbzJR?=
+ =?utf-8?B?UmNZZUo1b0Y2WlFLSXhid3h2N00wNXhDYkM2L2pZY2xGM2RqTHlyY2RSOC9G?=
+ =?utf-8?B?NFpYRm5rRkdRR2U2dzJFUEF1TE5jUUxaczlXTDE0OWtZV0lkNVl4RE9yeGMy?=
+ =?utf-8?B?SjR4bkwwaFNTRkxQa2FpTlpiQmI5Tlg3ajc3VTRyblhBMXdkZmdlYkEyVFBk?=
+ =?utf-8?B?NXlKdFVlQlRsSXZYY2xQdkVEdVNick1BeXVKMzJ1M1EvZzV3S1BGUHNLNE4y?=
+ =?utf-8?B?MTFiMEpsQk9WblpEV0JvWmw2Kzg5SHdPNENWeS9aVFNtTjZ3RzFublNYeldZ?=
+ =?utf-8?B?bGtkTlRvdkZBSEwvVVNWRHM3cjNxSUw0WGkrRUdReVcwTGcrckpDbXhiTndZ?=
+ =?utf-8?B?dVpJRjdaQlFvZ1hXSTFBZllXTjUrZXVabGhqMEVvMTM5R0lBVmxQNVJvVURt?=
+ =?utf-8?B?Q1lQeFVvV28rdG1jakxlVHJQN3V5NlViSi96ZWlicHY4cE14SElaclc0cnJL?=
+ =?utf-8?B?cjd0ZG14TkFqNGgrRXpSVlFEc2c5THRVZmlEMHVwSEVpWk5zSU41WnlNUHJn?=
+ =?utf-8?B?VndRUEtGTXlYb2xzZDFRWVQ4UzZKWnhIN0U2MWpES1psYlU5aTFNWWx0WDc5?=
+ =?utf-8?B?bDh5Y014MzFiWWJ1eElkR0pYUnN0YzFpV2Y3RTRjQVQ5WkE9PQ==?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB7120.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR08MB11101
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM3PEPF0000A79A.eurprd04.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	433b08de-d0ed-4f19-048a-08dd98f3ec16
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|14060799003|1800799024|35042699022;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a3BvZ3YxL0hqcE1OclFVOEFFM3JtekludDVuRkU3cXV0TXcxVU5jU2pYL003?=
+ =?utf-8?B?TGRBcWJlU08vcUp3V3pjdUYzRVJDUlNtLzhEZitnNVE3Rkh3cjFVc1hIaWJR?=
+ =?utf-8?B?aGdvbmJaUDFQbE1yZmZBQnBWeFVNYlFuQW95dVlja1FsS0hIckVWa0ViWmFT?=
+ =?utf-8?B?VUdXWURyZWNSaTJ1OG9pMDExK29OYm4wOFZtS1gzS0k1VVpiL0MzVWI0OWRI?=
+ =?utf-8?B?N0QvT2VqTmwxUDVFTjZCYU1oVm5WTElPMmZMejRwS3FWZWovMkJjVFlvaHUw?=
+ =?utf-8?B?OSsyTE1FVlN3QzM5bi9CUkdQMTRXa3ZLNVJxSlk1RzJLem1CVDd1cW9rTHBv?=
+ =?utf-8?B?bEVDdlZkTXFuT0VMVFZrTDlWL284UTRoNXdpN0RBT3puSlZhQ09PVGlDN3Fm?=
+ =?utf-8?B?dy96MDVsbG1jS25oQWVPcTNOZTdGNEI2cktKRzU5UG5TL3k3Q2QrVUNha2Fa?=
+ =?utf-8?B?ZXEyMFY5MGN4Q3l6U3lQbEVhV1c3dS9mQmpIc25ZM1pXRHVPWlNBTWVHKytI?=
+ =?utf-8?B?YlR3cWZIWUVoSmprdHRwSkdvOGlPUDFINHRoK1JRdlFMNkN2ZzVsWS80WWxC?=
+ =?utf-8?B?dnNCMk9BdUhXaE1Id0dZSjIwLzZXMnNqcUVwMGFLMkJZOW1jWTU0Qy9GWDBR?=
+ =?utf-8?B?L0oyUTZ6TVR6ZzNaejFSS1dGUTkvQ0NjVzVCcCsxZ0NidWRkLzRWV21EUUFh?=
+ =?utf-8?B?RGtXSFdFcTFkS0hIK1BHS1MwZEZGSmNOSUkrdzFCS0k4Z2tRZ0FDeTJ1bG80?=
+ =?utf-8?B?R2JhK1REb0JxMGFXKzg0YnZRaW1yNmlubko4d2lIQ0lxVUNOQ295dEwyYnhC?=
+ =?utf-8?B?dCt3TUI0RytieUF1N2VUV29aam1OaDdCK3FVVHZuUnBjL3N6VU9pamxEdVNH?=
+ =?utf-8?B?dWN2eE9lS2E0WjZYMlN6TWVuTC9TSTIzU1IvYWFuaEdLK0JSdndWK3RlMVIv?=
+ =?utf-8?B?L2Q1WVdrc0p1aFU1ZndMZ0NIZDNrZGFxY05TYmpNVWVzcWhUcDYrL2lkdy9W?=
+ =?utf-8?B?bDE2ODJXMEszM1NVek1KWnFqTmJ1NWlzV2RPakVHOG1leEhSMld6YmZEeS9q?=
+ =?utf-8?B?WDk4TnV3Rk9zTVk5KzJsY2daYTEyK0JobmtWdXlHdmh0U3Ftdm5SUmpQKzYx?=
+ =?utf-8?B?bzJXM0RZSkFiNlMvZEh6eE02YjNwSHNBQTY5VnlVdEoyeGRDai9jWjRPTit3?=
+ =?utf-8?B?bk9ZdEFrOGFtMkFsSmFNYmJMblNqdTBGeFJqTlVXbG9RYjhlLzlheHFlODJ4?=
+ =?utf-8?B?bjROSDBNay9ZOWYrS1JRY25hKzRaYWs0a29LNGVqZEFWK1ZPKzFFdFJFUnU3?=
+ =?utf-8?B?UWlFYWx1MjRDMzRKNkY1Tms3Vllod1ZwSlpjNThDU3cvK0NQYzJGOUdxc2Vu?=
+ =?utf-8?B?QTRnQ09mS3Zoa2pwMkJGdzNiQnZYMjRKSmtzVS93aTI5a21YRGNITGducXVl?=
+ =?utf-8?B?ZmhpQTFFZXlJdUIvSk9yVUMvOGg5bXRMcWtMbHpualp1YWFxUUY4a1RERXpY?=
+ =?utf-8?B?TEVLRU9jTXlsMHl3bWNyZ2VqTTJueVhHdTBnQ2I0RzJvU3ZmdEZmL0U3MFNv?=
+ =?utf-8?B?ZExFU2NVRXk2S25HdVREYlNCdVdOTDh1WkV6OUhwZDZzZ2VOVXFaQ0wyMTZu?=
+ =?utf-8?B?dzBsUE1HRy85T0p3cDY0UStELzd3MUE5VUdyeUx1TUhSMEk3RW4xaHBBclJQ?=
+ =?utf-8?B?ak1jUWJHaThDU3k3R0RnSXRxbU1PUWhsTG0wN3JPUUhWYVJiM05kY0VZRHAy?=
+ =?utf-8?B?UWdhSzJSZUxiUWJvS0RZWWFwalNFMmIzNG13cFl0dHdyWUd4UEJlQ09Qc0hS?=
+ =?utf-8?B?OXpGNndhU2RuRGFDd1l3UG1hVmR3QVdqc2hycCtNeDlCc2krRDlWTmRXNXJz?=
+ =?utf-8?B?ckU3bmNDZDZwWWJIRnRpWjNaY2ZEejVTbkZXSEpLL1JxNXp5eWRxKzhpWE81?=
+ =?utf-8?B?T3Q1VngrWDh4M2dROGkyVHZRellqcU5yY3Yvc2dCcjZzUmZ2bUhNU0lFbVcz?=
+ =?utf-8?B?RndRSlhTc3BRRVB0ckErOXVDQ1VFektCWVhzNGowMnpOSVh5MGJ3TkJwWFhY?=
+ =?utf-8?Q?O4Z4Ts?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(14060799003)(1800799024)(35042699022);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2025 05:46:30.3557
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 27d24d24-0976-4f7b-19e0-08dd98f40083
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM3PEPF0000A79A.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB5409
 
-From: Anshumali Gaur <agaur@marvell.com>
 
-Added PCIe FLR interrupt handler for VFs. When FLR is triggered for VFs,
-parent PF gets an interrupt. PF creates a mbox message and sends it to
-RVU Admin function (AF). AF cleans up all the resources attached to that
-specific VF and acks the PF that FLR is handled.
+On 21/05/25 5:28 pm, Ryan Roberts wrote:
+> On 19/05/2025 08:48, Dev Jain wrote:
+>> In case of prot_numa, there are various cases in which we can skip to the
+>> next iteration. Since the skip condition is based on the folio and not
+>> the PTEs, we can skip a PTE batch.
+>>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> ---
+>>   mm/mprotect.c | 36 +++++++++++++++++++++++++++++-------
+>>   1 file changed, 29 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/mm/mprotect.c b/mm/mprotect.c
+>> index 88608d0dc2c2..1ee160ed0b14 100644
+>> --- a/mm/mprotect.c
+>> +++ b/mm/mprotect.c
+>> @@ -83,6 +83,18 @@ bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
+>>   	return pte_dirty(pte);
+>>   }
+>>   
+>> +static int mprotect_batch(struct folio *folio, unsigned long addr, pte_t *ptep,
+> Perhaps it should be called mprotect_folio_pte_batch() to match the existing
+> madvise_folio_pte_batch()?
 
-Signed-off-by: Anshumali Gaur <agaur@marvell.com>
-Signed-off-by: George Cherian <gcherian@marvell.com>
-Reviewed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
----
- drivers/soc/marvell/rvu_gen_pf/gen_pf.c | 232 +++++++++++++++++++++++-
- drivers/soc/marvell/rvu_gen_pf/gen_pf.h |   7 +
- 2 files changed, 238 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/marvell/rvu_gen_pf/gen_pf.c b/drivers/soc/marvell/rvu_gen_pf/gen_pf.c
-index d7f96b9994cb..4f147cd0d43b 100644
---- a/drivers/soc/marvell/rvu_gen_pf/gen_pf.c
-+++ b/drivers/soc/marvell/rvu_gen_pf/gen_pf.c
-@@ -621,6 +621,15 @@ static void rvu_gen_pf_queue_vf_work(struct mbox *mw, struct workqueue_struct *m
- 	}
- }
- 
-+static void rvu_gen_pf_flr_wq_destroy(struct gen_pf_dev *pfdev)
-+{
-+	if (!pfdev->flr_wq)
-+		return;
-+	destroy_workqueue(pfdev->flr_wq);
-+	pfdev->flr_wq = NULL;
-+	devm_kfree(pfdev->dev, pfdev->flr_wrk);
-+}
-+
- static irqreturn_t rvu_gen_pf_pfvf_mbox_intr_handler(int irq, void *pf_irq)
- {
- 	struct gen_pf_dev *pfdev = (struct gen_pf_dev *)(pf_irq);
-@@ -694,6 +703,211 @@ static int rvu_gen_pf_register_pfvf_mbox_intr(struct gen_pf_dev *pfdev, int numv
- 	return 0;
- }
- 
-+static void rvu_gen_pf_flr_handler(struct work_struct *work)
-+{
-+	struct flr_work *flrwork = container_of(work, struct flr_work, work);
-+	struct gen_pf_dev *pfdev = flrwork->pfdev;
-+	struct mbox *mbox = &pfdev->mbox;
-+	struct msg_req *req;
-+	int vf, reg = 0;
-+
-+	vf = flrwork - pfdev->flr_wrk;
-+
-+	mutex_lock(&mbox->lock);
-+	req = gen_pf_mbox_alloc_msg_vf_flr(mbox);
-+	if (!req) {
-+		mutex_unlock(&mbox->lock);
-+		return;
-+	}
-+	req->hdr.pcifunc &= ~RVU_PFVF_FUNC_MASK;
-+	req->hdr.pcifunc |= (vf + 1) & RVU_PFVF_FUNC_MASK;
-+
-+	if (!rvu_gen_pf_sync_mbox_msg(&pfdev->mbox)) {
-+		if (vf >= 64) {
-+			reg = 1;
-+			vf = vf - 64;
-+		}
-+		/* clear transcation pending bit */
-+		writeq(BIT_ULL(vf), pfdev->reg_base + RVU_PF_VFTRPENDX(reg));
-+		writeq(BIT_ULL(vf), pfdev->reg_base + RVU_PF_VFFLR_INT_ENA_W1SX(reg));
-+	}
-+
-+	mutex_unlock(&mbox->lock);
-+}
-+
-+static irqreturn_t rvu_gen_pf_me_intr_handler(int irq, void *pf_irq)
-+{
-+	struct gen_pf_dev *pfdev = (struct gen_pf_dev *)pf_irq;
-+	int vf, reg, num_reg = 1;
-+	u64 intr;
-+
-+	if (pfdev->total_vfs > 64)
-+		num_reg = 2;
-+
-+	for (reg = 0; reg < num_reg; reg++) {
-+		intr = readq(pfdev->reg_base + RVU_PF_VFME_INTX(reg));
-+		if (!intr)
-+			continue;
-+		for (vf = 0; vf < 64; vf++) {
-+			if (!(intr & BIT_ULL(vf)))
-+				continue;
-+			/* clear trpend bit */
-+			writeq(BIT_ULL(vf), pfdev->reg_base + RVU_PF_VFTRPENDX(reg));
-+			/* clear interrupt */
-+			writeq(BIT_ULL(vf), pfdev->reg_base + RVU_PF_VFME_INTX(reg));
-+		}
-+	}
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t rvu_gen_pf_flr_intr_handler(int irq, void *pf_irq)
-+{
-+	struct gen_pf_dev *pfdev = (struct gen_pf_dev *)pf_irq;
-+	int reg, dev, vf, start_vf, num_reg = 1;
-+	u64 intr;
-+
-+	if (pfdev->total_vfs > 64)
-+		num_reg = 2;
-+
-+	for (reg = 0; reg < num_reg; reg++) {
-+		intr = readq(pfdev->reg_base + RVU_PF_VFFLR_INTX(reg));
-+		if (!intr)
-+			continue;
-+		start_vf = 64 * reg;
-+		for (vf = 0; vf < 64; vf++) {
-+			if (!(intr & BIT_ULL(vf)))
-+				continue;
-+			dev = vf + start_vf;
-+			queue_work(pfdev->flr_wq, &pfdev->flr_wrk[dev].work);
-+			/* Clear interrupt */
-+			writeq(BIT_ULL(vf), pfdev->reg_base + RVU_PF_VFFLR_INTX(reg));
-+			/* Disable the interrupt */
-+			writeq(BIT_ULL(vf), pfdev->reg_base + RVU_PF_VFFLR_INT_ENA_W1CX(reg));
-+		}
-+	}
-+	return IRQ_HANDLED;
-+}
-+
-+static int rvu_gen_pf_register_flr_me_intr(struct gen_pf_dev *pfdev, int numvfs)
-+{
-+	char *irq_name;
-+	int ret;
-+
-+	/* Register ME interrupt handler*/
-+	irq_name = &pfdev->irq_name[RVU_PF_INT_VEC_VFME0 * NAME_SIZE];
-+	snprintf(irq_name, NAME_SIZE, "Generic RVUPF%d_ME0", rvu_get_pf(pfdev->pcifunc));
-+	ret = request_irq(pci_irq_vector(pfdev->pdev, RVU_PF_INT_VEC_VFME0),
-+			  rvu_gen_pf_me_intr_handler, 0, irq_name, pfdev);
-+
-+	if (ret) {
-+		dev_err(pfdev->dev,
-+			"Generic RVUPF: IRQ registration failed for ME0\n");
-+	}
-+
-+	/* Register FLR interrupt handler */
-+	irq_name = &pfdev->irq_name[RVU_PF_INT_VEC_VFFLR0 * NAME_SIZE];
-+	snprintf(irq_name, NAME_SIZE, "Generic RVUPF%d_FLR0", rvu_get_pf(pfdev->pcifunc));
-+	ret = request_irq(pci_irq_vector(pfdev->pdev, RVU_PF_INT_VEC_VFFLR0),
-+			  rvu_gen_pf_flr_intr_handler, 0, irq_name, pfdev);
-+	if (ret) {
-+		dev_err(pfdev->dev,
-+			"Generic RVUPF: IRQ registration failed for FLR0\n");
-+		return ret;
-+	}
-+
-+	if (numvfs > 64) {
-+		irq_name = &pfdev->irq_name[RVU_PF_INT_VEC_VFME1 * NAME_SIZE];
-+		snprintf(irq_name, NAME_SIZE, "Generic RVUPF%d_ME1",
-+			 rvu_get_pf(pfdev->pcifunc));
-+		ret = request_irq(pci_irq_vector
-+				  (pfdev->pdev, RVU_PF_INT_VEC_VFME1),
-+				  rvu_gen_pf_me_intr_handler, 0, irq_name, pfdev);
-+		if (ret) {
-+			dev_err(pfdev->dev,
-+				"Generic RVUPF: IRQ registration failed for ME1\n");
-+		}
-+		irq_name = &pfdev->irq_name[RVU_PF_INT_VEC_VFFLR1 * NAME_SIZE];
-+		snprintf(irq_name, NAME_SIZE, "Generic RVUPF%d_FLR1",
-+			 rvu_get_pf(pfdev->pcifunc));
-+		ret = request_irq(pci_irq_vector
-+				(pfdev->pdev, RVU_PF_INT_VEC_VFFLR1),
-+				rvu_gen_pf_flr_intr_handler, 0, irq_name, pfdev);
-+		if (ret) {
-+			dev_err(pfdev->dev,
-+				"Generic RVUPF: IRQ registration failed for FLR1\n");
-+			return ret;
-+		}
-+	}
-+
-+	/* Enable ME interrupt for all VFs*/
-+	writeq(INTR_MASK(numvfs), pfdev->reg_base + RVU_PF_VFME_INTX(0));
-+	writeq(INTR_MASK(numvfs), pfdev->reg_base + RVU_PF_VFME_INT_ENA_W1SX(0));
-+
-+	/* Enable FLR interrupt for all VFs*/
-+	writeq(INTR_MASK(numvfs), pfdev->reg_base + RVU_PF_VFFLR_INTX(0));
-+	writeq(INTR_MASK(numvfs), pfdev->reg_base + RVU_PF_VFFLR_INT_ENA_W1SX(0));
-+
-+	if (numvfs > 64) {
-+		numvfs -= 64;
-+
-+		writeq(INTR_MASK(numvfs), pfdev->reg_base + RVU_PF_VFME_INTX(1));
-+		writeq(INTR_MASK(numvfs), pfdev->reg_base + RVU_PF_VFME_INT_ENA_W1SX(1));
-+
-+		writeq(INTR_MASK(numvfs), pfdev->reg_base + RVU_PF_VFFLR_INTX(1));
-+		writeq(INTR_MASK(numvfs), pfdev->reg_base + RVU_PF_VFFLR_INT_ENA_W1SX(1));
-+	}
-+	return 0;
-+}
-+
-+static void rvu_gen_pf_disable_flr_me_intr(struct gen_pf_dev *pfdev)
-+{
-+	int irq, vfs = pfdev->total_vfs;
-+
-+	/* Disable VFs ME interrupts */
-+	writeq(INTR_MASK(vfs), pfdev->reg_base + RVU_PF_VFME_INT_ENA_W1CX(0));
-+	irq = pci_irq_vector(pfdev->pdev, RVU_PF_INT_VEC_VFME0);
-+	free_irq(irq, pfdev);
-+
-+	/* Disable VFs FLR interrupts */
-+	writeq(INTR_MASK(vfs), pfdev->reg_base + RVU_PF_VFFLR_INT_ENA_W1CX(0));
-+	irq = pci_irq_vector(pfdev->pdev, RVU_PF_INT_VEC_VFFLR0);
-+	free_irq(irq, pfdev);
-+
-+	if (vfs <= 64)
-+		return;
-+
-+	writeq(INTR_MASK(vfs - 64), pfdev->reg_base + RVU_PF_VFME_INT_ENA_W1CX(1));
-+	irq = pci_irq_vector(pfdev->pdev, RVU_PF_INT_VEC_VFME1);
-+	free_irq(irq, pfdev);
-+
-+	writeq(INTR_MASK(vfs - 64), pfdev->reg_base + RVU_PF_VFFLR_INT_ENA_W1CX(1));
-+	irq = pci_irq_vector(pfdev->pdev, RVU_PF_INT_VEC_VFFLR1);
-+	free_irq(irq, pfdev);
-+}
-+
-+static int rvu_gen_pf_flr_init(struct gen_pf_dev *pfdev, int num_vfs)
-+{
-+	int vf;
-+
-+	pfdev->flr_wq = alloc_ordered_workqueue("otx2_pf_flr_wq", WQ_HIGHPRI);
-+	if (!pfdev->flr_wq)
-+		return -ENOMEM;
-+
-+	pfdev->flr_wrk = devm_kcalloc(pfdev->dev, num_vfs,
-+				      sizeof(struct flr_work), GFP_KERNEL);
-+	if (!pfdev->flr_wrk) {
-+		destroy_workqueue(pfdev->flr_wq);
-+		return -ENOMEM;
-+	}
-+
-+	for (vf = 0; vf < num_vfs; vf++) {
-+		pfdev->flr_wrk[vf].pfdev = pfdev;
-+		INIT_WORK(&pfdev->flr_wrk[vf].work, rvu_gen_pf_flr_handler);
-+	}
-+
-+	return 0;
-+}
-+
- static int rvu_gen_pf_sriov_enable(struct pci_dev *pdev, int numvfs)
- {
- 	struct gen_pf_dev *pfdev = pci_get_drvdata(pdev);
-@@ -708,11 +922,25 @@ static int rvu_gen_pf_sriov_enable(struct pci_dev *pdev, int numvfs)
- 	if (ret)
- 		goto free_mbox;
- 
-+	ret = rvu_gen_pf_flr_init(pfdev, numvfs);
-+	if (ret)
-+		goto free_intr;
-+
-+	ret = rvu_gen_pf_register_flr_me_intr(pfdev, numvfs);
-+	if (ret)
-+		goto free_flr;
-+
- 	ret = pci_enable_sriov(pdev, numvfs);
- 	if (ret)
--		return ret;
-+		goto free_flr_intr;
- 
- 	return numvfs;
-+free_flr_intr:
-+	rvu_gen_pf_disable_flr_me_intr(pfdev);
-+free_flr:
-+	rvu_gen_pf_flr_wq_destroy(pfdev);
-+free_intr:
-+	rvu_gen_pf_disable_pfvf_mbox_intr(pfdev, numvfs);
- free_mbox:
- 	rvu_gen_pf_pfvf_mbox_destroy(pfdev);
- 	return ret;
-@@ -728,6 +956,8 @@ static int rvu_gen_pf_sriov_disable(struct pci_dev *pdev)
- 
- 	pci_disable_sriov(pdev);
- 
-+	rvu_gen_pf_disable_flr_me_intr(pfdev);
-+	rvu_gen_pf_flr_wq_destroy(pfdev);
- 	rvu_gen_pf_disable_pfvf_mbox_intr(pfdev, numvfs);
- 	rvu_gen_pf_pfvf_mbox_destroy(pfdev);
- 
-diff --git a/drivers/soc/marvell/rvu_gen_pf/gen_pf.h b/drivers/soc/marvell/rvu_gen_pf/gen_pf.h
-index ad651b97b661..7aacb84df07a 100644
---- a/drivers/soc/marvell/rvu_gen_pf/gen_pf.h
-+++ b/drivers/soc/marvell/rvu_gen_pf/gen_pf.h
-@@ -16,6 +16,11 @@
- 
- struct gen_pf_dev;
- 
-+struct flr_work {
-+	struct work_struct work;
-+	struct gen_pf_dev *pfdev;
-+};
-+
- struct mbox {
- 	struct otx2_mbox	mbox;
- 	struct work_struct	mbox_wrk;
-@@ -33,6 +38,8 @@ struct gen_pf_dev {
- 	struct device		*dev;
- 	void __iomem		*reg_base;
- 	char			*irq_name;
-+	struct workqueue_struct *flr_wq;
-+	struct flr_work		*flr_wrk;
- 	struct work_struct	mbox_wrk;
- 	struct work_struct	mbox_wrk_up;
- 
--- 
-2.34.1
+Thanks, this is better.
 
+
+>
+>> +		pte_t pte, int max_nr_ptes)
+>> +{
+>> +	const fpb_t flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
+>> +
+>> +	if (!folio_test_large(folio) || (max_nr_ptes == 1))
+>> +		return 1;
+>> +
+>> +	return folio_pte_batch(folio, addr, ptep, pte, max_nr_ptes, flags,
+>> +			       NULL, NULL, NULL);
+>> +}
+>> +
+>>   static long change_pte_range(struct mmu_gather *tlb,
+>>   		struct vm_area_struct *vma, pmd_t *pmd, unsigned long addr,
+>>   		unsigned long end, pgprot_t newprot, unsigned long cp_flags)
+>> @@ -94,6 +106,7 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>   	bool prot_numa = cp_flags & MM_CP_PROT_NUMA;
+>>   	bool uffd_wp = cp_flags & MM_CP_UFFD_WP;
+>>   	bool uffd_wp_resolve = cp_flags & MM_CP_UFFD_WP_RESOLVE;
+>> +	int nr_ptes;
+>>   
+>>   	tlb_change_page_size(tlb, PAGE_SIZE);
+>>   	pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
+>> @@ -108,8 +121,10 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>   	flush_tlb_batched_pending(vma->vm_mm);
+>>   	arch_enter_lazy_mmu_mode();
+>>   	do {
+>> +		nr_ptes = 1;
+>>   		oldpte = ptep_get(pte);
+>>   		if (pte_present(oldpte)) {
+>> +			int max_nr_ptes = (end - addr) >> PAGE_SHIFT;
+>>   			pte_t ptent;
+>>   
+>>   			/*
+>> @@ -126,15 +141,18 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>   					continue;
+>>   
+>>   				folio = vm_normal_folio(vma, addr, oldpte);
+>> -				if (!folio || folio_is_zone_device(folio) ||
+>> -				    folio_test_ksm(folio))
+>> +				if (!folio)
+>>   					continue;
+> You modify mprotect_batch() to handle folio == NULL later, perhaps just add that
+> here, then you don't need to unpick this conditional and can just goto
+> skip_branch, even for the !folio case.
+
+
+I'll check this.
+
+
+>
+> Thanks,
+> Ryan
+>
+>>   
+>> +				if (folio_is_zone_device(folio) ||
+>> +				    folio_test_ksm(folio))
+>> +					goto skip_batch;
+>> +
+>>   				/* Also skip shared copy-on-write pages */
+>>   				if (is_cow_mapping(vma->vm_flags) &&
+>>   				    (folio_maybe_dma_pinned(folio) ||
+>>   				     folio_maybe_mapped_shared(folio)))
+>> -					continue;
+>> +					goto skip_batch;
+>>   
+>>   				/*
+>>   				 * While migration can move some dirty pages,
+>> @@ -143,7 +161,7 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>   				 */
+>>   				if (folio_is_file_lru(folio) &&
+>>   				    folio_test_dirty(folio))
+>> -					continue;
+>> +					goto skip_batch;
+>>   
+>>   				/*
+>>   				 * Don't mess with PTEs if page is already on the node
+>> @@ -151,7 +169,7 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>   				 */
+>>   				nid = folio_nid(folio);
+>>   				if (target_node == nid)
+>> -					continue;
+>> +					goto skip_batch;
+>>   				toptier = node_is_toptier(nid);
+>>   
+>>   				/*
+>> @@ -159,8 +177,12 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>   				 * balancing is disabled
+>>   				 */
+>>   				if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_NORMAL) &&
+>> -				    toptier)
+>> +				    toptier) {
+>> +skip_batch:
+>> +					nr_ptes = mprotect_batch(folio, addr, pte,
+>> +								 oldpte, max_nr_ptes);
+>>   					continue;
+>> +				}
+>>   				if (folio_use_access_time(folio))
+>>   					folio_xchg_access_time(folio,
+>>   						jiffies_to_msecs(jiffies));
+>> @@ -280,7 +302,7 @@ static long change_pte_range(struct mmu_gather *tlb,
+>>   				pages++;
+>>   			}
+>>   		}
+>> -	} while (pte++, addr += PAGE_SIZE, addr != end);
+>> +	} while (pte += nr_ptes, addr += nr_ptes * PAGE_SIZE, addr != end);
+>>   	arch_leave_lazy_mmu_mode();
+>>   	pte_unmap_unlock(pte - 1, ptl);
+>>   
 
