@@ -1,191 +1,171 @@
-Return-Path: <linux-kernel+bounces-661301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CEB0AC2933
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 20:00:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A70FAC293B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 20:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F753A27736
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:59:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1DA53B33A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18ED29AB1C;
-	Fri, 23 May 2025 17:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F83529710F;
+	Fri, 23 May 2025 18:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="WKkIG6Ba"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="2Vsmli+d";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SI85RS1b"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CD129AAF2
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 17:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4231721ABD3;
+	Fri, 23 May 2025 18:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748023178; cv=none; b=F+1WhVkCKlCu/X3PHCsKtYbdV9juEdveWQA+0zapOOPM7oAwVB8E48V2uSG1ognrygR/m0wusgY8hbQIY+isZuEw5BWIb3xgkBvqZVQXZLZ1PcmV/94uEhDfuiRrPdU6EMn/O9oRKmntZNgGu2TAqUmQAoqQ/Zku5Ktgxy6FGv4=
+	t=1748023318; cv=none; b=rmv1rP34DWVVITlu7tfcteWwxfVdzQniZgqUgtxFj4+STv7HgMuwcsvXQGx+PcC2cxo9oAVJixmyXs+wDczaEPCfvTtf6hMOcr2W2shfw7lOmSZY59ANMjUMDDvzqCfpMnMyJmFhn1ZtmDHJ5QOOE67/u+H3lYZPLdOZxcHSRAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748023178; c=relaxed/simple;
-	bh=/yzNpMpyyZhhfCj85FSoI7CiSf/qoFm/Fy9Y9bnPFbA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pePPP06p/emGquVUL+HUY7UiDFQQqCB/eSkbv4urRqt/qAn7Nb6as/Ok5LSRpf1jE0pR6Rq4s2vw/QVlzdjOwEEHVC6+dEazstfjmwMQj2/WY+6iAZEy3e4W44/8UFCIPkiuw0ZwH114sD8O0vbm9iSVfQ1sFm2Lhxenj1k6aag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=WKkIG6Ba; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3dc64b08343so591035ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 10:59:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1748023175; x=1748627975; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hhBDaNTzWlvTPxEir4mZRJwdB13jn1nJVWTFTNCoz3o=;
-        b=WKkIG6Ba5lbNM89igSb0YUj758CbWuWcOSSaUd7sMCiV5tIg3DtON5Zs2sstc68XZt
-         LA+HpOVGPBe+lFTJF7LBlRLq0e71UgBoGhFVr9mLNNAjQiSKcx1g2+ha5hjCgduhtl6j
-         J5wWNZskpLP+1JnpPXOnH8op8o0yKPjCQ2z14=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748023175; x=1748627975;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hhBDaNTzWlvTPxEir4mZRJwdB13jn1nJVWTFTNCoz3o=;
-        b=EsvnC1uwV8JSTMOxvWA2K2mnCMuKcxMCjywuQ5LtpxkeuQFm+bokXCfhUNUm5PaUzR
-         3r/sqBGiNQGqUCPizS5N4255GMUBXNpm2Tjl2qcL/AN+lqzPPRdX/wI3v3HgYvcH4CRF
-         xrCcbMa0bRUdqfrbdP2bIhFrMr1+ToEocQgRBJ4u3bO4vmc+/zJP5xbGCkUZN+qXcJtI
-         uEx2gGag/MFa2ggxl4lFEDIxfHEaBrshw0tmjQncPPbOaeR73tnylHQknut7m1+4Ffyj
-         fmWypeEGjsheC2b9NFUvnJt7ceK8OlgHrUhFUiIbQxkqK5umqqCwvBLgbakidsQ2NWN9
-         tiEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAJcYFfH/YxfXOjAzorTsQ8+IgjyOE5782yVMaUAV2qpFVS+0VsO+LJSRkbfFcvFBWT8dGalp6Tvp8PpM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDmKzdoFiovvkbDqmO3OepEboUIZBdOhw4Recx43Pao6pN3s+7
-	vVoex6EDm6rGKe2OMrXT9Rx1a6Dek987wUlxj0t4J0Yl1ujIyaj7YGv9JJ6SJdCYDw==
-X-Gm-Gg: ASbGnctBoBtoVL/SC/KW18Le8aBr9weO7xrErZI2pRS56dBcdixTrzPrVgw2QWZ1m/q
-	lHQJMMEbpxR5thB3w5P3w+Q+jQ5cNGIxlrQzQIj1kKWKWeGOGJQOhXoxdpCQGtHzYw9SI+BJoX5
-	k76hJH2cw8lRuiiJ8xva1CMH7pl56z/Plz7uYBjTT+KOJh0qrTpWBIOEsRvKfMeIEX9RQqoIcT7
-	dog5PN1LNPunESPrJxP4ixA1RwAezoJQmpZJtFnbvX+nKPong5lHC2Ms3OLEjRgnn4Y1+/wmd1p
-	XGvWPrLP6KxBckdEQAUAGsqj9RnLnRdU8X/bKBLYPJSpG3JY/zODPTz6+MhUYd35GMlzq+uQtj9
-	kkPDrkFAWZw==
-X-Google-Smtp-Source: AGHT+IGPHZwu1y3fmBV6/SA9MrxkyTECcIAP4UrpCzWAITxakM2wVnv4idA9gL9CdXIurUt/Yc25DQ==
-X-Received: by 2002:a05:6e02:3e91:b0:3dc:86aa:7ab1 with SMTP id e9e14a558f8ab-3dc9b70989amr798245ab.22.1748023175350;
-        Fri, 23 May 2025 10:59:35 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.googlemail.com with ESMTPSA id e9e14a558f8ab-3dc7f126188sm18218695ab.65.2025.05.23.10.59.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 May 2025 10:59:34 -0700 (PDT)
-Message-ID: <f6174a63-eee9-4138-8923-9f3d587ef548@ieee.org>
-Date: Fri, 23 May 2025 12:59:33 -0500
+	s=arc-20240116; t=1748023318; c=relaxed/simple;
+	bh=eLcMbXdwuNnvAUlO9CRu55Ndn59jGO1rx+ykDT5c1K0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=cioAzFldfDcoEPkOtsDZuWItU4Rg3myfPWzT+LpffgqCMC3TJROMMT+eMEYy+fRwspl20H3BViABAFi0+v9opvon2PSwIwKey1sJsFN91G4sZ6lFnU0XL8H4FBOTwIwJTFnV3ZTM4iE99V2nWDSe1Sm5BeP0kWcaIgwof51ITLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=2Vsmli+d; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SI85RS1b; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 1D75411400C0;
+	Fri, 23 May 2025 14:01:55 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-05.internal (MEProxy); Fri, 23 May 2025 14:01:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1748023314;
+	 x=1748109714; bh=etHm7ib5DqaWFk1XWWYwvr/YNJrq8Y1TAgZzJHn5gcM=; b=
+	2Vsmli+dvja130EpShUHphEGFbPVJDvyPSZb0A6bmhnW1Qk1bru540h09TUFu180
+	z0Wpd4ynhV7Zg6WsLzt834vz9cc+Bqj3Bu+IIfzWCvu9Qx5FqGThCYqwuCssUnHb
+	mxIlEQViPjbaMEU77lnBXzqk6cM0lx1i0chvq5e9p+ifTefEyuObBzvs7L9EXWJP
+	SMHzdKRoa1uDeiBeC2QJ7PUkHkyy1RA+ZMPE8ffZx03qbOnl9qFBjKGoVzsk5OY4
+	YJIoNrBegB0pz0p5oU3N6gsrWM/QU1mE9BFXr4o/MzPwWTmfac2/EQwsRBDe/tN5
+	J0ICFdjaut/iXLn6t18FxA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1748023314; x=
+	1748109714; bh=etHm7ib5DqaWFk1XWWYwvr/YNJrq8Y1TAgZzJHn5gcM=; b=S
+	I85RS1b7dAIRflZ5rplYPidXo6iSIFKUkG5w1XtIPG+/+N8jqx2g1eW1Shu033cY
+	tZS3kiOz5vlzKHjGGC/nC/8Gh+R0av5Z5Tg7EDM6Y222aHgDZghcFyTCSKmo08V2
+	/TbVj7t3SyAFocZ0Imf2/zlEj1wlwkPTuYO8Jt2FBklt80rVbuuej/sOLr4svkHR
+	juSGJIMGbdEeGM2ioOfSeVk72xyWYYKLXKvLj97VctkCS7WdlBSKRWnlIInNSuZb
+	NDBVq2+CgwapxZPnJAuvnr7+fmw4PTNA6ardoEPPx+ows40Ci2c92waFYBjUS1iF
+	clmuN55g0dliBWQdHvoWA==
+X-ME-Sender: <xms:ErgwaF4VTF9t0dXQSdszMmdQTPsVIEdaMlrnUW12ogZiBZJnTv3-0Q>
+    <xme:ErgwaC6pNW2GVsDS5Tm18svA_4fpUbxAV4K8HuwxgFvXfIVJskA6VmGGJmNX7TZjX
+    18RunE6cqA5Vxrv7U8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdelhedvucdltddurdegfedvrddttd
+    dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
+    nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
+    enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgj
+    fhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuc
+    eorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedu
+    keetgefggffhjeeggeetfefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdp
+    nhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnug
+    gvrhhsrdhrohigvghllheslhhinhgrrhhordhorhhgpdhrtghpthhtohepuggrnhdrtggr
+    rhhpvghnthgvrheslhhinhgrrhhordhorhhgpdhrtghpthhtohepnhgrrhgvshhhrdhkrg
+    hmsghojhhusehlihhnrghrohdrohhrghdprhgtphhtthhopehkvghnthdrohhvvghrshht
+    rhgvvghtsehlihhnuhigrdguvghvpdhrtghpthhtoheplhhkfhhtqdhtrhhirghgvgeslh
+    hishhtshdrlhhinhgrrhhordhorhhgpdhrtghpthhtoheprhgvghhrvghsshhiohhnshes
+    lhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgstggrtghhvg
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
+    lhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:ErgwaMe0oIf56Skend13df07ttI1F5HCefs-y414yDoWbgVNcYp6aA>
+    <xmx:ErgwaOIuL6DRKH_C9SemZmzaKVCPykmy1tzHyUMvUJ_08_VIL8Y_zg>
+    <xmx:ErgwaJLG0QhITT5OAV8utOikBh6qLXfQFeErjlPcfzh4f-3L80COZw>
+    <xmx:ErgwaHxUN2VctTz5xzcnIGN_ivhIIu5Zj8krUjNyoUPHVim7Wbo7cA>
+    <xmx:ErgwaEyAFwwaxCURHiIGUPrbRS5uYYsTVgXzbno-g7aXVa2MxdF3XhqA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 6F3C31060063; Fri, 23 May 2025 14:01:54 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] net: ipa: Grab IMEM slice base/size from DTS
-To: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Alex Elder <elder@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250523-topic-ipa_imem-v1-0-b5d536291c7f@oss.qualcomm.com>
- <20250523-topic-ipa_imem-v1-3-b5d536291c7f@oss.qualcomm.com>
-Content-Language: en-US
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <20250523-topic-ipa_imem-v1-3-b5d536291c7f@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-ThreadId: Tddf37e9d72974a2b
+Date: Fri, 23 May 2025 20:01:33 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Kent Overstreet" <kent.overstreet@linux.dev>
+Cc: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+ linux-bcache@vger.kernel.org, "open list" <linux-kernel@vger.kernel.org>,
+ lkft-triage@lists.linaro.org,
+ "Linux Regressions" <regressions@lists.linux.dev>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Anders Roxell" <anders.roxell@linaro.org>
+Message-Id: <692e313d-ea31-45c0-8c66-36b25c9d955d@app.fastmail.com>
+In-Reply-To: 
+ <hplrd5gufo2feylgs4ieufticwemeteaaoilo2jllgauclua2c@o4erpizekm5y>
+References: 
+ <CA+G9fYv08Rbg4f8ZyoZC9qseKdRygy8y86qFvts5D=BoJg888g@mail.gmail.com>
+ <6tgxbull5sqlxbpiw3jafxtio2a3kc53yh27td4g2otb6kae5t@lr6wjawp6vfa>
+ <CA+G9fYsjBXvm9NNKRbVo_7heX1537K8yOjH7OaSEQhGRmkLvgA@mail.gmail.com>
+ <6247de76-d1f5-4357-83bd-4dd9268f44aa@app.fastmail.com>
+ <7tsvzu2mubrpclr75yezqj7ncuzebpsgqskbehhjy6gll73rez@5cj7griclubx>
+ <566aefc9-7cad-4eb8-8eb0-8640d745efa2@app.fastmail.com>
+ <hplrd5gufo2feylgs4ieufticwemeteaaoilo2jllgauclua2c@o4erpizekm5y>
+Subject: Re: riscv gcc-13 allyesconfig error the frame size of 2064 bytes is larger
+ than 2048 bytes [-Werror=frame-larger-than=]
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 5/22/25 6:08 PM, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> This is a detail that differ per chip, and not per IPA version (and
-> there are cases of the same IPA versions being implemented across very
-> very very different SoCs).
-> 
-> This region isn't actually used by the driver, but we most definitely
-> want to iommu-map it, so that IPA can poke at the data within.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Fri, May 23, 2025, at 19:11, Kent Overstreet wrote:
+> On Fri, May 23, 2025 at 05:17:15PM +0200, Arnd Bergmann wrote:
+>> 
+>> - KASAN_STACK adds extra redzones for each variable
+>> - KASAN_STACK further prevents stack slots from getting
+>>   reused inside one function, in order to better pinpoint
+>>   which instance caused problems like out-of-scope access
+>> - passing structures by value causes them to be put on
+>>   the stack on some architectures, even when the structure
+>>   size is only one or two registers
+>
+> We mainly do this with bkey_s_c, which is just two words: on x86_64,
+> that gets passed in registers. Is riscv different?
 
-You need to fix something here, but it otherwise look good.
+Not sure, I think it's mostly older ABIs that are limited,
+either not passing structures in registers at all, or only
+possibly one but not two of them.
 
-Please fix, and assuming you do:
+>> - sanitizers turn off optimizations that lead to better
+>>   stack usage
+>> - in some cases, the missed optimization ends up causing
+>>   local variables to get spilled to the stack many times
+>>   because of a combination of all the above.
+>
+> Yeesh.
+>
+> I suspect we should be running with a larger stack when the sanitizers
+> are running, and perhaps tweak the warnings accordingly. I did a bunch
+> of stack usage work after I found a kmsan build was blowing out the
+> stack, but then running with max stack usage tracing enabled showed it
+> to be a largely non issue on non-sanitizer builds, IIRC.
 
-Reviewed-by: Alex Elder <elder@riscstar.com>
+Enabling KASAN does double the available stack space. However, I don't
+think we should use that as an excuse to raise the per-function
+warning limit, because
 
-> ---
->   drivers/net/ipa/ipa_data.h |  3 +++
->   drivers/net/ipa/ipa_mem.c  | 18 ++++++++++++++++++
->   2 files changed, 21 insertions(+)
-> 
-> diff --git a/drivers/net/ipa/ipa_data.h b/drivers/net/ipa/ipa_data.h
-> index 2fd03f0799b207833f9f2b421ce043534720d718..a384df91b5ee3ed2db9c7812ad43d03424b82a6f 100644
-> --- a/drivers/net/ipa/ipa_data.h
-> +++ b/drivers/net/ipa/ipa_data.h
-> @@ -185,8 +185,11 @@ struct ipa_resource_data {
->   struct ipa_mem_data {
->   	u32 local_count;
->   	const struct ipa_mem *local;
-> +
-> +	/* DEPRECATED (now passed via DT) fallback data, varies per chip and not per IPA version */
->   	u32 imem_addr;
->   	u32 imem_size;
-> +
->   	u32 smem_size;
->   };
->   
-> diff --git a/drivers/net/ipa/ipa_mem.c b/drivers/net/ipa/ipa_mem.c
-> index 835a3c9c1fd47167da3396424a1653ebcae81d40..020508ab47d92b5cca9d5b467e3fef46936b4a82 100644
-> --- a/drivers/net/ipa/ipa_mem.c
-> +++ b/drivers/net/ipa/ipa_mem.c
-> @@ -7,6 +7,7 @@
->   #include <linux/dma-mapping.h>
->   #include <linux/io.h>
->   #include <linux/iommu.h>
-> +#include <linux/of_address.h>
->   #include <linux/platform_device.h>
->   #include <linux/types.h>
->   
-> @@ -617,7 +618,9 @@ static void ipa_smem_exit(struct ipa *ipa)
->   int ipa_mem_init(struct ipa *ipa, struct platform_device *pdev,
->   		 const struct ipa_mem_data *mem_data)
->   {
-> +	struct device_node *ipa_slice_np;
->   	struct device *dev = &pdev->dev;
-> +	u32 imem_base, imem_size;
->   	struct resource *res;
->   	int ret;
->   
-> @@ -656,6 +659,21 @@ int ipa_mem_init(struct ipa *ipa, struct platform_device *pdev,
->   	ipa->mem_addr = res->start;
->   	ipa->mem_size = resource_size(res);
->   
-> +	ipa_slice_np = of_parse_phandle(dev->of_node, "sram", 0);
-> +	if (ipa_slice_np) {
-> +		ret = of_address_to_resource(ipa_slice_np, 0, res);
-> +		of_node_put(ipa_slice_np);
-> +		if (ret)
-> +			return ret;
-> +
-> +		imem_base = res->start;
-> +		imem_size = resource_size(res);
-> +	} else {
-> +		/* Backwards compatibility for DTs lacking an explicit reference */
-> +		imem_base = mem_data->imem_addr;
-> +		imem_size = mem_data->imem_size;
-> +	}
-> +
->   	ret = ipa_imem_init(ipa, mem_data->imem_addr, mem_data->imem_size);
+ - the majority of all function stacks do not grow that much when
+   sanitizers are enabled
+ - allmodconfig enables KASAN and should still catch mistakes
+   where a driver accidentally puts a large structure on the stack
+ - 2KB on 64-bit targes is a really large limit. At some point
+   in the past I had a series that lowered the limit to 1536 byte
+   for 64-bit targets, but I never managed to get all the changes
+   merged.
+  
 
-You want to pass imem_base and imem_size here?
-
-					-Alex
-
->   	if (ret)
->   		goto err_unmap;
-> 
-
+     Arnd
 
