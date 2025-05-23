@@ -1,120 +1,129 @@
-Return-Path: <linux-kernel+bounces-661169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEA94AC2784
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:23:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D56C8AC277E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26DE1A41271
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:22:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836573AE40E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02512296FAE;
-	Fri, 23 May 2025 16:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cRC0UiDN"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8756E2957C1;
+	Fri, 23 May 2025 16:21:36 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D81297B89
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 16:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A760515A85A;
+	Fri, 23 May 2025 16:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748017307; cv=none; b=FjtI5N+OSIgDAb+YTmBYLMMiEbng3R9tgKiBs/CgLAbQ8pC+PJGvNJAwraK6gUUIBTl7dkLFt/R2tuulGfkWaVRNb2yDEDgqef5Tn14EnXXrvAGSqf+c3mIvNAt4BZSPOTsTWQviFUgwTM0EyT5seUaw21hNGakbqqqEqhTG0bU=
+	t=1748017296; cv=none; b=tp3thMAU24XfqnrFFm8qrO9HLtWyfh/Njn71iZINzgYKIpUTTNt/NBkrO4zpwh+NKibpaWk1CjBne0gkQXs2IQibng9beQ8ooBbnucJG0xyA7mFFImRrtJZE2rQ6GoZ6sz2W0rwSP8UEj6kvbRforr3blVogG00U3sGfeZRF70Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748017307; c=relaxed/simple;
-	bh=BujhNJcIfJdCrltgcQz6MNassde82rEbsesI1Wbty8U=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Fc3jjQsjI9BeJWgbomYvCCseTTfOPYX+6EF1srjHVRneICtRp6XP+2xocF+4/thtK/ZEi2FJWNpE0siX3CuvTDvlMsdG2Vu/Cal3UTlN/06XoGkmVBFdXmOGRSyv7cfCrlVQhTCW05t0Nm6QdufHo4FkdFL7z+18hOokd5CIVqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cRC0UiDN; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b35cdeb3-399e-4ca0-a9a4-66bab45bd7e4@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1748017293;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eXlfdMIujoEWEfC9MCFXNwyGXVaiR+vqx4I+fOV2LpA=;
-	b=cRC0UiDNCqZcN6BiCFcSi7WyBG7RHQ/NaavE5iXAjkOSdJagNosatR+NIg0yTNRHOMRQeJ
-	gsLSdNrIvX8gOYYtmOPHCP6Bc2qPiQ2yeewLyrlzKsYAQMe0DEZoNLwaPpytrw/dHjMfY8
-	fbfnntgHadynhOa0PsMl2BmsNbQsvr8=
-Date: Fri, 23 May 2025 12:21:10 -0400
+	s=arc-20240116; t=1748017296; c=relaxed/simple;
+	bh=TrhmAZSZj+zcv4/V5X1Oolly8Kxy3PHsC80uzCkSXQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MTK3LzVMojXJlFMd/pXdkvNpY3xJq6zWnzYycqmrsyz9Qf7kyPd8uVWIaTeX1SEEyENHSu39KBHfa9fMlNsRn/MI3bQOsexZRoruZkwy4UwLah9kNBBRbJfZFJWLOyQRklxJTriaY5qkac4o3VPdb8wrZmd7quQbkCWtG9ts+pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+X-CSE-ConnectionGUID: BkNkIJPqQgaW1+nWtW+CWw==
+X-CSE-MsgGUID: B2MgBHZIT3ucX2f2YL6+PQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="53740178"
+X-IronPort-AV: E=Sophos;i="6.15,309,1739865600"; 
+   d="scan'208";a="53740178"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 09:21:34 -0700
+X-CSE-ConnectionGUID: Z3TVpMQGSI2J/s19a4lvjA==
+X-CSE-MsgGUID: v0Jvt8P2TU2dB/Vpdp2ROw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,309,1739865600"; 
+   d="scan'208";a="142234960"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 09:21:32 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andy.shevchenko@gmail.com>)
+	id 1uIV9F-000000006IG-2TSv;
+	Fri, 23 May 2025 19:21:29 +0300
+Date: Fri, 23 May 2025 19:21:29 +0300
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Victor.Duicu@microchip.com
+Cc: Marius.Cristea@microchip.com, jic23@kernel.org, dlechner@baylibre.com,
+	linux-iio@vger.kernel.org, nuno.sa@analog.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] iio: temperature: add support for MCP998X
+Message-ID: <aDCgiQKL3ySfpkZr@smile.fi.intel.com>
+References: <20250415132623.14913-1-victor.duicu@microchip.com>
+ <20250415132623.14913-3-victor.duicu@microchip.com>
+ <CAHp75VdzVzNV1k8RqG6Rxsg06Oqu_p1o-4QFeT10xBjrFOEZHA@mail.gmail.com>
+ <82538eaeb9bfc8dffe0b67d7dd00826b96ed573c.camel@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net] net: xilinx: axienet: Fix Tx skb circular buffer
- occupancy check in dmaengine xmit
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Suraj Gupta <suraj.gupta2@amd.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, michal.simek@amd.com, radhey.shyam.pandey@amd.com,
- horms@kernel.org
-Cc: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, git@amd.com, harini.katakam@amd.com
-References: <20250521181608.669554-1-suraj.gupta2@amd.com>
- <57443336-2098-42c9-be6d-468cdbd9b312@linux.dev>
-Content-Language: en-US
-In-Reply-To: <57443336-2098-42c9-be6d-468cdbd9b312@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <82538eaeb9bfc8dffe0b67d7dd00826b96ed573c.camel@microchip.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 5/23/25 12:20, Sean Anderson wrote:
-> On 5/21/25 14:16, Suraj Gupta wrote:
->> In Dmaengine flow, driver maintains struct skbuf_dma_descriptor rings each
->> element of which corresponds to a skb. In Tx datapath, compare available
->> space in skb ring with number of skbs instead of skb fragments.
->> Replace x * (MAX_SKB_FRAGS) in netif_txq_completed_wake() and
->> netif_txq_maybe_stop() with x * (1 skb) to fix the comparison.
->> 
->> Fixes: 6a91b846af85 ("net: axienet: Introduce dmaengine support")
->> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
->> ---
->>  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->> 
->> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> index 1b7a653c1f4e..6011d7eae0c7 100644
->> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> @@ -880,7 +880,7 @@ static void axienet_dma_tx_cb(void *data, const struct dmaengine_result *result)
->>  	dev_consume_skb_any(skbuf_dma->skb);
->>  	netif_txq_completed_wake(txq, 1, len,
->>  				 CIRC_SPACE(lp->tx_ring_head, lp->tx_ring_tail, TX_BD_NUM_MAX),
->> -				 2 * MAX_SKB_FRAGS);
->> +				 2);
->>  }
->>  
->>  /**
->> @@ -914,7 +914,7 @@ axienet_start_xmit_dmaengine(struct sk_buff *skb, struct net_device *ndev)
->>  
->>  	dma_dev = lp->tx_chan->device;
->>  	sg_len = skb_shinfo(skb)->nr_frags + 1;
->> -	if (CIRC_SPACE(lp->tx_ring_head, lp->tx_ring_tail, TX_BD_NUM_MAX) <= sg_len) {
->> +	if (CIRC_SPACE(lp->tx_ring_head, lp->tx_ring_tail, TX_BD_NUM_MAX) <= 1) {
->>  		netif_stop_queue(ndev);
->>  		if (net_ratelimit())
->>  			netdev_warn(ndev, "TX ring unexpectedly full\n");
->> @@ -964,7 +964,7 @@ axienet_start_xmit_dmaengine(struct sk_buff *skb, struct net_device *ndev)
->>  	txq = skb_get_tx_queue(lp->ndev, skb);
->>  	netdev_tx_sent_queue(txq, skb->len);
->>  	netif_txq_maybe_stop(txq, CIRC_SPACE(lp->tx_ring_head, lp->tx_ring_tail, TX_BD_NUM_MAX),
->> -			     MAX_SKB_FRAGS + 1, 2 * MAX_SKB_FRAGS);
->> +			     1, 2);
->>  
->>  	dmaengine_submit(dma_tx_desc);
->>  	dma_async_issue_pending(lp->tx_chan);
+On Thu, May 22, 2025 at 09:18:06AM +0000, Victor.Duicu@microchip.com wrote:
+> On Tue, 2025-04-15 at 22:05 +0300, Andy Shevchenko wrote:
+> > On Tue, Apr 15, 2025 at 4:27 PM <victor.duicu@microchip.com> wrote:
+
+...
+
+> > > +#define MCP9982_CHAN(index, si, __address) ({ \
+> > > +       struct iio_chan_spec __chan = { \
+> > > +               .type = IIO_TEMP, \
+> > > +               .info_mask_separate = BIT(IIO_CHAN_INFO_RAW), \
+> > > +               .info_mask_shared_by_all_available =
+> > > BIT(IIO_CHAN_INFO_SAMP_FREQ), \
+> > > +               .info_mask_shared_by_all =
+> > > BIT(IIO_CHAN_INFO_SAMP_FREQ), \
+> > > +               .channel = index, \
+> > > +               .address = __address, \
+> > > +               .scan_index = si, \
+> > > +               .scan_type = { \
+> > > +                       .sign = 'u', \
+> > > +                       .realbits = 8, \
+> > > +                       .storagebits = 8, \
+> > > +                       .endianness = IIO_CPU \
+> > > +               }, \
+> > > +               .indexed = 1, \
+> > > +       }; \
+> > > +       __chan; \
+> > 
+> > Why in this form and not as a compound literal?
 > 
-> Reviwed-by: Sean Anderson <sean.anderson@linux.dev>
+> I can have up to 5 channels, which have very similar specifications.
+> I use this define to simplify definition of channels and avoid
+> repeating code.
+> Is it now preferable to use compound literal?
+> I could implement something like this:
+> 
+> #define put_channel_defaults \
+> 	.type = IIO_TEMP \
+> ...
+> 
+> priv->iio_chan[0] = ((struct iio_chan_spec){put_channel_defaults,
+> 					   .channel = x,
+> ...
+> 
+> This way when initializing the channels I don't have
+> to repeat the common properties.
+> Do you find this approach agreeable?
 
-Reviewed-by: Sean Anderson <sean.anderson@linux.dev>
+No, just find how the compound literal macros are written in the kernel,
+e.g., PINCTRL_PIN_FUNCTION().
 
-*spelling
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
