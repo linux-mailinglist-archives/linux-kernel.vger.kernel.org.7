@@ -1,124 +1,290 @@
-Return-Path: <linux-kernel+bounces-660744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA8A5AC2186
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:52:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C25EDAC2171
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C59371B683DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:52:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34FA2A274C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388D622A7E8;
-	Fri, 23 May 2025 10:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF54E227EAF;
+	Fri, 23 May 2025 10:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="m6Eq7HnK"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vSpaBLkk"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13F72F3E
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 10:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60A1226D04
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 10:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747997544; cv=none; b=lE5AlV0tPwKzeYERiWnoMy75ND0FKPT7TNZC6ReO/tjKnVUgqJJgx3uOZPS4OTVgw8aYNmfpYPUal4eIIs6P9AlurRLr3HaKGUcjIlwLWpTAMgy+S2zeEnPpqWCTTT3PDgLCGuElOOFu/xiSLRT3Eh14gyFONEi8OhbFQHKvXyE=
+	t=1747997282; cv=none; b=YEDIikSpRX6PsP+2QGtn+0ZoMb/cTAnfbX8WUNt7Y0sQ1T5SS08iPx8ZMrN4D3/XD/Zj47x4v6yigDKfe8IsFgyhW8dATCY5tDJkuOKELDIY7NHlkGiVjz/JYfPqx9CheltspnXptFO+3lCMobkN20SJDh5CdDBVLYqf0s+7zws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747997544; c=relaxed/simple;
-	bh=Ekl+hGAB44Rldtp80MChpA/wZATRMQ1Vak431vW9/qk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q9Kc55sY1DitpwJ1Fwv/rhcULeye5fAOghCnUkpUqISj1V0gqtfnSW4cQXkft/+Eub74roacCneLSG/i7Xb5CG97UbSwv8YdMBtGpY3cc8eFG8akIU+Ue/2K0y4Dn9+BCdJ6CF79vVhuorBZlLbF8JoKfRcWwsfoO3tn/4PG7q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=m6Eq7HnK; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a374754e03so409767f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 03:52:22 -0700 (PDT)
+	s=arc-20240116; t=1747997282; c=relaxed/simple;
+	bh=h9gl8jiSjNNaS24VpYZLQX139ohlcrSda5kPPfCth4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=W/psOp5JrOHF9pugvBtefhrhjF81el+iVUt5psnYWLf5zfO6TUTpqxbWIg59PVjEWoktyyBozd5tXJNJ+cM617359YsNcphIF3l4EV5ixaCrTD6o+trOUMvnb9hZ/APXXYDsDVqYrMa+n+/a7Cri8oBbga/BdjCM8FKB4p9UYko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vSpaBLkk; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so72686895e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 03:47:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1747997541; x=1748602341; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qMi4ApElv9UTRXKLCAFiLHeHw33aLOhDiUIk/Js8sWU=;
-        b=m6Eq7HnKZoBo8XLjvhH83fOPp+KwcyUNJTp4kT5iGDUFP6XrhZZi5IQk0Z45udZDpD
-         H1gAkac9vUx2xvQbEPU+lYJfV+KBjUHVUqZyUM93voBBT/XtJYcBcywEtFf8QvithBgw
-         bsaEFwBNHu63bWlHgWf3W5GeqDC8ozJ+teEWwz8rfiqJoYriRifT6alPxIe9l6Kgxgq8
-         wrJ+NYyebIWUNOMLj6OEK/HO354+KLdJCpFBIhGXUshBqM8UriMr3wkIZvkiEzr0AfFX
-         OG7SexElzwLeC2NwVT6rc3Bp5X4wvlZSY01v0K1gr700u/RWADygBIco8ehKzLKUg151
-         13RQ==
+        d=linaro.org; s=google; t=1747997278; x=1748602078; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pvat0/1rMENqBKZhuyO4HhGyQmI630c9sCJbM3sx/VQ=;
+        b=vSpaBLkknxVYWqro/g8fE7oXfV7Vv0lQm3hftYfH0r7Tf5PWavbh0VfaXJrpz5vCAU
+         /Zox9UgrT5CK/2u7fvuzUTxbp2tQDZRYdmhHur9Yw/Tq9zZuGsBzneUaslkknstWyhOy
+         1tzm5wKnCkUZunyDXJJLIFHFkMO2gXcTSL7ZOVMm3OZoRoNopIv56UtVN+JZdddgKgXF
+         OxTik1p8YYlDvRNFUoth0NT4uq1v2DDw14wd6zZE+nTibyScTtydR5gablS/S8ANL8Hu
+         l6xykuvxTVygPrEHeR62QzrN5lQ+hqxwdm2C4LRHT/8zG9SaUVhGX6N2pV8XdnESt/FI
+         fGfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747997541; x=1748602341;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qMi4ApElv9UTRXKLCAFiLHeHw33aLOhDiUIk/Js8sWU=;
-        b=NuiX4vQ/qJUf7ewlJKNNSJXVLXwChqx/mfBFFAX6XAsbTyEtkvXfkveeb8MAmEEnSz
-         4RJO5YAeaoPb4OdROqXAhWuhPl3lAs5O9xk6a8Lbyf9ApXZM/+4ygpYswP1RrdBZnExw
-         1v5U4h7t+dbmG8EoVL3PTg68HSxdHBlvUUsKRa4i9+RhPt7X+hd0PPAC4/JKvaOeqYKq
-         q9tod7CAVAA4GOq7CMvcmWBpEqQm2gf4H3TJs7ra9v8kAjo8PXE6D2hx7j+J5W2SB0+A
-         2UulNaERQHk4SPIjavIQFk6wj7HShze85V/Qo9GmiaSQ1vccjb6bKqLptJTDCiWCaJ3T
-         0aMA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVlgDyr/iV2uOLd0fzDaFE7z6o9ES/2U0EaZ3AWdMadERYdK9Z1DVpqbnzmv77/h9Dz/X6xzRiaRVfTuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJq+LtfVFziIJD53A82gTIGh2LmlvuDcLZs1wi47/qoP1IDKYM
-	0tTRl6CMT2W15GLTDCmBiMqfoGKJfc4OyBTUDEzdDHtP0HGaFOUU8TZ5UKF9iLZD/Fg=
-X-Gm-Gg: ASbGncvK5Z90MJMnMO3U+NHzxmTFJ887KQsVCPWFN+NYvEmRJIcKyLE4+oqzBc1ex1l
-	z8PQDO69WRAhMHf0B/Y/yREE6PRoEqPB1SAMRLF3WiNTTtsbVc9HZjOr97bPnPvXZnZa7iSuMuQ
-	Fu4M/SLvWqOx4E23MwlaZGjmt52vnnFriOkufQ1zXGtmFxNHxOUzz8qxf4J/HuqFalRCBvMjruQ
-	VaUJTNPjWCgCI97OJUEXTJ9su6uZqvD+M/lHHsKKDTGdVAcT1GBYaW9+pMYd+r+KdIfNbiyrxts
-	7X5VI2jQRl9s1tPc/GIjke9xim9Ri1jXoinpQsVJQrgRDpTKUnvJEIZ1Eq0=
-X-Google-Smtp-Source: AGHT+IEZmpBdHidSmMll0Tt/cMd2jy3jhCSZ/4z88K5W2YuxN+ezZzGMi4M3/53vgB32or4XtWGoCA==
-X-Received: by 2002:a05:6000:1acc:b0:3a4:7373:7a6a with SMTP id ffacd0b85a97d-3a4c2e443a3mr745998f8f.10.1747997541137;
-        Fri, 23 May 2025 03:52:21 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200:be84:d9ad:e5e6:f60b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca8cf66sm25590521f8f.87.2025.05.23.03.52.20
+        d=1e100.net; s=20230601; t=1747997278; x=1748602078;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pvat0/1rMENqBKZhuyO4HhGyQmI630c9sCJbM3sx/VQ=;
+        b=KoEy6YtFXnoFkG7RVxriXN7DpdfCoIcrmvOVgrBoFlHfOtRr0VE3FM4ppawVaKyMA/
+         lyqH8pU6xzW2QgjPZa+zDNeMAmQPV6c3pUjzUu/gwTVkiuY+TMAyFZzHDX39e0CYulBc
+         fgyFVEGFlKmf+mmBgroL9sjoPPDcLqMFh0SswtqprfltoDkM+gcgbl2sSxZV+fdjVdV9
+         X8kWfiAS56Q+dczX8EIdmIYehKqFyW6ivA5CsHnTXQRT0I4smFMnhyQitjiwsb8oz5Jc
+         Vf/wDCsvdglPYL7YmRUFyXHJ1gW4oKr7C1gO9/BFlnDR/AcgTxbfjOpvZwetW328YtSA
+         w+nA==
+X-Forwarded-Encrypted: i=1; AJvYcCUr2/Qp/OpxlWRRukjUwjbCes+IfuW4k4NWD6OUw0945AgzecjC5/oHsL6w4/8iVyk1ZwLUlQWQJ4IEIsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI+592iIc5UKn4eF7EnOykfSQxVw/E3ArHgGiOQZrHyVRjVQPf
+	PaKMlEBxFLZ63XzJs+OHW9vpwGClsqhL8dAP7ekHWkOujv2Vxxs34RWGn8XkYTXESog=
+X-Gm-Gg: ASbGncukKwD0pwNufnlsf2wy+3Bvch+cug2pWIBC7Ri9aRexLnP/IWOt1cvDoCYmn2K
+	dRqVLN5sPCD/yM651YZYj7JZuP+IoBh8MvYjcK7jUdb/p1CtNfV/fQkwEyv+AunHRMQdza8fyWi
+	VRwxVwufaqcZt6c083w7kO8cFG/hHV0CUjuEOkpaW+AxNbeC1xLPKbtSUO7BgnmeCZLl9c/zojG
+	eOcWRpuVdivtpKNMVGCjsiGXUNMDzRZA8dTf8cKgWJfU1Yi4GNXlg1KaxBqRhJ3UZjdKjHuo0X7
+	ACBr/erLV6HZ/r2Nf9pydzBnAEOJjQqKDYn1agBhOnBHGSKUReX5ScAF
+X-Google-Smtp-Source: AGHT+IFt9e8O2T7pLeZoZEYVwBiQD0nzYrr6EHcZTpNuvFH8+n2yYk2wVuh+KM2hl9eYxKNkUFfMSw==
+X-Received: by 2002:a05:600c:8185:b0:43d:26e3:f2f6 with SMTP id 5b1f17b1804b1-442fefdab96mr249759215e9.5.1747997277841;
+        Fri, 23 May 2025 03:47:57 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a35ca4d2d1sm26891438f8f.19.2025.05.23.03.47.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 May 2025 03:52:20 -0700 (PDT)
-From: =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-To: kvm-riscv@lists.infradead.org
-Cc: kvm@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
+        Fri, 23 May 2025 03:47:57 -0700 (PDT)
+Date: Fri, 23 May 2025 13:47:54 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Yu Zhao <yuzhao@google.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Anup Patel <anup@brainfault.org>,
-	Atish Patra <atishp@atishpatra.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Subject: [PATCH] RISC-V: KVM: lock the correct mp_state during reset
-Date: Fri, 23 May 2025 12:47:28 +0200
-Message-ID: <20250523104725.2894546-4-rkrcmar@ventanamicro.com>
-X-Mailer: git-send-email 2.49.0
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: mm/vmscan.c:3504 walk_pte_range() error: uninitialized symbol
+ 'dirty'.
+Message-ID: <202505152339.fBOfDPsi-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-We're writing to *tmp, but locking *vcpu.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   088d13246a4672bc03aec664675138e3f5bff68c
+commit: a52dcec56c5b96250f15efbd7de3d3ea6ce863d9 mm/mglru: fix PTE-mapped large folios
+config: sparc-randconfig-r073-20250515 (https://download.01.org/0day-ci/archive/20250515/202505152339.fBOfDPsi-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 8.5.0
 
-Fixes: 2121cadec45a ("RISCV: KVM: Introduce mp_state_lock to avoid lock inversion")
-Signed-off-by: Radim Krčmář <rkrcmar@ventanamicro.com>
----
- arch/riscv/kvm/vcpu_sbi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202505152339.fBOfDPsi-lkp@intel.com/
 
-diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
-index 31fd3cc98d66..6e09b518a5d1 100644
---- a/arch/riscv/kvm/vcpu_sbi.c
-+++ b/arch/riscv/kvm/vcpu_sbi.c
-@@ -143,9 +143,9 @@ void kvm_riscv_vcpu_sbi_system_reset(struct kvm_vcpu *vcpu,
- 	struct kvm_vcpu *tmp;
- 
- 	kvm_for_each_vcpu(i, tmp, vcpu->kvm) {
--		spin_lock(&vcpu->arch.mp_state_lock);
-+		spin_lock(&tmp->arch.mp_state_lock);
- 		WRITE_ONCE(tmp->arch.mp_state.mp_state, KVM_MP_STATE_STOPPED);
--		spin_unlock(&vcpu->arch.mp_state_lock);
-+		spin_unlock(&tmp->arch.mp_state_lock);
- 	}
- 	kvm_make_all_cpus_request(vcpu->kvm, KVM_REQ_SLEEP);
- 
+smatch warnings:
+mm/vmscan.c:3504 walk_pte_range() error: uninitialized symbol 'dirty'.
+mm/vmscan.c:3595 walk_pmd_range_locked() error: uninitialized symbol 'dirty'.
+mm/vmscan.c:4215 lru_gen_look_around() error: uninitialized symbol 'dirty'.
+
+vim +/dirty +3504 mm/vmscan.c
+
+bd74fdaea14602 Yu Zhao        2022-09-18  3450  static bool walk_pte_range(pmd_t *pmd, unsigned long start, unsigned long end,
+bd74fdaea14602 Yu Zhao        2022-09-18  3451  			   struct mm_walk *args)
+bd74fdaea14602 Yu Zhao        2022-09-18  3452  {
+bd74fdaea14602 Yu Zhao        2022-09-18  3453  	int i;
+a52dcec56c5b96 Yu Zhao        2024-12-30  3454  	bool dirty;
+bd74fdaea14602 Yu Zhao        2022-09-18  3455  	pte_t *pte;
+bd74fdaea14602 Yu Zhao        2022-09-18  3456  	spinlock_t *ptl;
+bd74fdaea14602 Yu Zhao        2022-09-18  3457  	unsigned long addr;
+bd74fdaea14602 Yu Zhao        2022-09-18  3458  	int total = 0;
+bd74fdaea14602 Yu Zhao        2022-09-18  3459  	int young = 0;
+a52dcec56c5b96 Yu Zhao        2024-12-30  3460  	struct folio *last = NULL;
+bd74fdaea14602 Yu Zhao        2022-09-18  3461  	struct lru_gen_mm_walk *walk = args->private;
+bd74fdaea14602 Yu Zhao        2022-09-18  3462  	struct mem_cgroup *memcg = lruvec_memcg(walk->lruvec);
+bd74fdaea14602 Yu Zhao        2022-09-18  3463  	struct pglist_data *pgdat = lruvec_pgdat(walk->lruvec);
+cc25bbe10a86a7 Kinsey Ho      2024-02-14  3464  	DEFINE_MAX_SEQ(walk->lruvec);
+a52dcec56c5b96 Yu Zhao        2024-12-30  3465  	int gen = lru_gen_from_seq(max_seq);
+2441774f2d2890 Qi Zheng       2024-09-26  3466  	pmd_t pmdval;
+bd74fdaea14602 Yu Zhao        2022-09-18  3467  
+a52dcec56c5b96 Yu Zhao        2024-12-30  3468  	pte = pte_offset_map_rw_nolock(args->mm, pmd, start & PMD_MASK, &pmdval, &ptl);
+52fc048320adf1 Hugh Dickins   2023-06-08  3469  	if (!pte)
+52fc048320adf1 Hugh Dickins   2023-06-08  3470  		return false;
+a52dcec56c5b96 Yu Zhao        2024-12-30  3471  
+52fc048320adf1 Hugh Dickins   2023-06-08  3472  	if (!spin_trylock(ptl)) {
+52fc048320adf1 Hugh Dickins   2023-06-08  3473  		pte_unmap(pte);
+a52dcec56c5b96 Yu Zhao        2024-12-30  3474  		return true;
+52fc048320adf1 Hugh Dickins   2023-06-08  3475  	}
+bd74fdaea14602 Yu Zhao        2022-09-18  3476  
+2441774f2d2890 Qi Zheng       2024-09-26  3477  	if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(pmd)))) {
+2441774f2d2890 Qi Zheng       2024-09-26  3478  		pte_unmap_unlock(pte, ptl);
+2441774f2d2890 Qi Zheng       2024-09-26  3479  		return false;
+2441774f2d2890 Qi Zheng       2024-09-26  3480  	}
+2441774f2d2890 Qi Zheng       2024-09-26  3481  
+bd74fdaea14602 Yu Zhao        2022-09-18  3482  	arch_enter_lazy_mmu_mode();
+bd74fdaea14602 Yu Zhao        2022-09-18  3483  restart:
+bd74fdaea14602 Yu Zhao        2022-09-18  3484  	for (i = pte_index(start), addr = start; addr != end; i++, addr += PAGE_SIZE) {
+bd74fdaea14602 Yu Zhao        2022-09-18  3485  		unsigned long pfn;
+bd74fdaea14602 Yu Zhao        2022-09-18  3486  		struct folio *folio;
+c33c794828f212 Ryan Roberts   2023-06-12  3487  		pte_t ptent = ptep_get(pte + i);
+bd74fdaea14602 Yu Zhao        2022-09-18  3488  
+bd74fdaea14602 Yu Zhao        2022-09-18  3489  		total++;
+bd74fdaea14602 Yu Zhao        2022-09-18  3490  		walk->mm_stats[MM_LEAF_TOTAL]++;
+bd74fdaea14602 Yu Zhao        2022-09-18  3491  
+1d4832becdc2cd Yu Zhao        2024-10-19  3492  		pfn = get_pte_pfn(ptent, args->vma, addr, pgdat);
+bd74fdaea14602 Yu Zhao        2022-09-18  3493  		if (pfn == -1)
+bd74fdaea14602 Yu Zhao        2022-09-18  3494  			continue;
+bd74fdaea14602 Yu Zhao        2022-09-18  3495  
+798c0330c2ca07 Yu Zhao        2024-12-30  3496  		folio = get_pfn_folio(pfn, memcg, pgdat);
+bd74fdaea14602 Yu Zhao        2022-09-18  3497  		if (!folio)
+bd74fdaea14602 Yu Zhao        2022-09-18  3498  			continue;
+bd74fdaea14602 Yu Zhao        2022-09-18  3499  
+1d4832becdc2cd Yu Zhao        2024-10-19  3500  		if (!ptep_clear_young_notify(args->vma, addr, pte + i))
+1d4832becdc2cd Yu Zhao        2024-10-19  3501  			continue;
+bd74fdaea14602 Yu Zhao        2022-09-18  3502  
+a52dcec56c5b96 Yu Zhao        2024-12-30  3503  		if (last != folio) {
+a52dcec56c5b96 Yu Zhao        2024-12-30 @3504  			walk_update_folio(walk, last, gen, dirty);
+                                                                                                           ^^^^^
+Potentially uninitialized.
+
+It's weird that I didn't report this in Jan because it seems like a
+reasonable warning.  Sorry for that.
+
+bd74fdaea14602 Yu Zhao        2022-09-18  3505  
+a52dcec56c5b96 Yu Zhao        2024-12-30  3506  			last = folio;
+a52dcec56c5b96 Yu Zhao        2024-12-30  3507  			dirty = false;
+a52dcec56c5b96 Yu Zhao        2024-12-30  3508  		}
+bd74fdaea14602 Yu Zhao        2022-09-18  3509  
+a52dcec56c5b96 Yu Zhao        2024-12-30  3510  		if (pte_dirty(ptent))
+a52dcec56c5b96 Yu Zhao        2024-12-30  3511  			dirty = true;
+a52dcec56c5b96 Yu Zhao        2024-12-30  3512  
+a52dcec56c5b96 Yu Zhao        2024-12-30  3513  		young++;
+a52dcec56c5b96 Yu Zhao        2024-12-30  3514  		walk->mm_stats[MM_LEAF_YOUNG]++;
+bd74fdaea14602 Yu Zhao        2022-09-18  3515  	}
+bd74fdaea14602 Yu Zhao        2022-09-18  3516  
+a52dcec56c5b96 Yu Zhao        2024-12-30  3517  	walk_update_folio(walk, last, gen, dirty);
+a52dcec56c5b96 Yu Zhao        2024-12-30  3518  	last = NULL;
+a52dcec56c5b96 Yu Zhao        2024-12-30  3519  
+bd74fdaea14602 Yu Zhao        2022-09-18  3520  	if (i < PTRS_PER_PTE && get_next_vma(PMD_MASK, PAGE_SIZE, args, &start, &end))
+bd74fdaea14602 Yu Zhao        2022-09-18  3521  		goto restart;
+bd74fdaea14602 Yu Zhao        2022-09-18  3522  
+bd74fdaea14602 Yu Zhao        2022-09-18  3523  	arch_leave_lazy_mmu_mode();
+52fc048320adf1 Hugh Dickins   2023-06-08  3524  	pte_unmap_unlock(pte, ptl);
+bd74fdaea14602 Yu Zhao        2022-09-18  3525  
+bd74fdaea14602 Yu Zhao        2022-09-18  3526  	return suitable_to_scan(total, young);
+bd74fdaea14602 Yu Zhao        2022-09-18  3527  }
+bd74fdaea14602 Yu Zhao        2022-09-18  3528  
+b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3529  static void walk_pmd_range_locked(pud_t *pud, unsigned long addr, struct vm_area_struct *vma,
+b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3530  				  struct mm_walk *args, unsigned long *bitmap, unsigned long *first)
+bd74fdaea14602 Yu Zhao        2022-09-18  3531  {
+bd74fdaea14602 Yu Zhao        2022-09-18  3532  	int i;
+a52dcec56c5b96 Yu Zhao        2024-12-30  3533  	bool dirty;
+bd74fdaea14602 Yu Zhao        2022-09-18  3534  	pmd_t *pmd;
+bd74fdaea14602 Yu Zhao        2022-09-18  3535  	spinlock_t *ptl;
+a52dcec56c5b96 Yu Zhao        2024-12-30  3536  	struct folio *last = NULL;
+bd74fdaea14602 Yu Zhao        2022-09-18  3537  	struct lru_gen_mm_walk *walk = args->private;
+bd74fdaea14602 Yu Zhao        2022-09-18  3538  	struct mem_cgroup *memcg = lruvec_memcg(walk->lruvec);
+bd74fdaea14602 Yu Zhao        2022-09-18  3539  	struct pglist_data *pgdat = lruvec_pgdat(walk->lruvec);
+cc25bbe10a86a7 Kinsey Ho      2024-02-14  3540  	DEFINE_MAX_SEQ(walk->lruvec);
+a52dcec56c5b96 Yu Zhao        2024-12-30  3541  	int gen = lru_gen_from_seq(max_seq);
+bd74fdaea14602 Yu Zhao        2022-09-18  3542  
+bd74fdaea14602 Yu Zhao        2022-09-18  3543  	VM_WARN_ON_ONCE(pud_leaf(*pud));
+bd74fdaea14602 Yu Zhao        2022-09-18  3544  
+bd74fdaea14602 Yu Zhao        2022-09-18  3545  	/* try to batch at most 1+MIN_LRU_BATCH+1 entries */
+b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3546  	if (*first == -1) {
+b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3547  		*first = addr;
+b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3548  		bitmap_zero(bitmap, MIN_LRU_BATCH);
+bd74fdaea14602 Yu Zhao        2022-09-18  3549  		return;
+bd74fdaea14602 Yu Zhao        2022-09-18  3550  	}
+bd74fdaea14602 Yu Zhao        2022-09-18  3551  
+b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3552  	i = addr == -1 ? 0 : pmd_index(addr) - pmd_index(*first);
+bd74fdaea14602 Yu Zhao        2022-09-18  3553  	if (i && i <= MIN_LRU_BATCH) {
+bd74fdaea14602 Yu Zhao        2022-09-18  3554  		__set_bit(i - 1, bitmap);
+bd74fdaea14602 Yu Zhao        2022-09-18  3555  		return;
+bd74fdaea14602 Yu Zhao        2022-09-18  3556  	}
+bd74fdaea14602 Yu Zhao        2022-09-18  3557  
+b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3558  	pmd = pmd_offset(pud, *first);
+bd74fdaea14602 Yu Zhao        2022-09-18  3559  
+bd74fdaea14602 Yu Zhao        2022-09-18  3560  	ptl = pmd_lockptr(args->mm, pmd);
+bd74fdaea14602 Yu Zhao        2022-09-18  3561  	if (!spin_trylock(ptl))
+bd74fdaea14602 Yu Zhao        2022-09-18  3562  		goto done;
+bd74fdaea14602 Yu Zhao        2022-09-18  3563  
+bd74fdaea14602 Yu Zhao        2022-09-18  3564  	arch_enter_lazy_mmu_mode();
+bd74fdaea14602 Yu Zhao        2022-09-18  3565  
+bd74fdaea14602 Yu Zhao        2022-09-18  3566  	do {
+bd74fdaea14602 Yu Zhao        2022-09-18  3567  		unsigned long pfn;
+bd74fdaea14602 Yu Zhao        2022-09-18  3568  		struct folio *folio;
+b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3569  
+b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3570  		/* don't round down the first address */
+b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3571  		addr = i ? (*first & PMD_MASK) + i * PMD_SIZE : *first;
+bd74fdaea14602 Yu Zhao        2022-09-18  3572  
+1d4832becdc2cd Yu Zhao        2024-10-19  3573  		if (!pmd_present(pmd[i]))
+bd74fdaea14602 Yu Zhao        2022-09-18  3574  			goto next;
+bd74fdaea14602 Yu Zhao        2022-09-18  3575  
+bd74fdaea14602 Yu Zhao        2022-09-18  3576  		if (!pmd_trans_huge(pmd[i])) {
+1d4832becdc2cd Yu Zhao        2024-10-19  3577  			if (!walk->force_scan && should_clear_pmd_young() &&
+1d4832becdc2cd Yu Zhao        2024-10-19  3578  			    !mm_has_notifiers(args->mm))
+bd74fdaea14602 Yu Zhao        2022-09-18  3579  				pmdp_test_and_clear_young(vma, addr, pmd + i);
+bd74fdaea14602 Yu Zhao        2022-09-18  3580  			goto next;
+bd74fdaea14602 Yu Zhao        2022-09-18  3581  		}
+bd74fdaea14602 Yu Zhao        2022-09-18  3582  
+1d4832becdc2cd Yu Zhao        2024-10-19  3583  		pfn = get_pmd_pfn(pmd[i], vma, addr, pgdat);
+1d4832becdc2cd Yu Zhao        2024-10-19  3584  		if (pfn == -1)
+1d4832becdc2cd Yu Zhao        2024-10-19  3585  			goto next;
+1d4832becdc2cd Yu Zhao        2024-10-19  3586  
+798c0330c2ca07 Yu Zhao        2024-12-30  3587  		folio = get_pfn_folio(pfn, memcg, pgdat);
+bd74fdaea14602 Yu Zhao        2022-09-18  3588  		if (!folio)
+bd74fdaea14602 Yu Zhao        2022-09-18  3589  			goto next;
+bd74fdaea14602 Yu Zhao        2022-09-18  3590  
+1d4832becdc2cd Yu Zhao        2024-10-19  3591  		if (!pmdp_clear_young_notify(vma, addr, pmd + i))
+bd74fdaea14602 Yu Zhao        2022-09-18  3592  			goto next;
+bd74fdaea14602 Yu Zhao        2022-09-18  3593  
+a52dcec56c5b96 Yu Zhao        2024-12-30  3594  		if (last != folio) {
+a52dcec56c5b96 Yu Zhao        2024-12-30 @3595  			walk_update_folio(walk, last, gen, dirty);
+
+Same.
+
+bd74fdaea14602 Yu Zhao        2022-09-18  3596  
+a52dcec56c5b96 Yu Zhao        2024-12-30  3597  			last = folio;
+a52dcec56c5b96 Yu Zhao        2024-12-30  3598  			dirty = false;
+a52dcec56c5b96 Yu Zhao        2024-12-30  3599  		}
+bd74fdaea14602 Yu Zhao        2022-09-18  3600  
+a52dcec56c5b96 Yu Zhao        2024-12-30  3601  		if (pmd_dirty(pmd[i]))
+a52dcec56c5b96 Yu Zhao        2024-12-30  3602  			dirty = true;
+a52dcec56c5b96 Yu Zhao        2024-12-30  3603  
+a52dcec56c5b96 Yu Zhao        2024-12-30  3604  		walk->mm_stats[MM_LEAF_YOUNG]++;
+bd74fdaea14602 Yu Zhao        2022-09-18  3605  next:
+bd74fdaea14602 Yu Zhao        2022-09-18  3606  		i = i > MIN_LRU_BATCH ? 0 : find_next_bit(bitmap, MIN_LRU_BATCH, i) + 1;
+bd74fdaea14602 Yu Zhao        2022-09-18  3607  	} while (i <= MIN_LRU_BATCH);
+bd74fdaea14602 Yu Zhao        2022-09-18  3608  
+a52dcec56c5b96 Yu Zhao        2024-12-30  3609  	walk_update_folio(walk, last, gen, dirty);
+a52dcec56c5b96 Yu Zhao        2024-12-30  3610  
+bd74fdaea14602 Yu Zhao        2022-09-18  3611  	arch_leave_lazy_mmu_mode();
+bd74fdaea14602 Yu Zhao        2022-09-18  3612  	spin_unlock(ptl);
+bd74fdaea14602 Yu Zhao        2022-09-18  3613  done:
+b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3614  	*first = -1;
+bd74fdaea14602 Yu Zhao        2022-09-18  3615  }
+
 -- 
-2.49.0
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
