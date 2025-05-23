@@ -1,95 +1,114 @@
-Return-Path: <linux-kernel+bounces-660903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E925CAC23A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:18:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB9FAC2417
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60A011714EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:18:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E31F7164B84
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A35291860;
-	Fri, 23 May 2025 13:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nGqj+8zx"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE62293733;
+	Fri, 23 May 2025 13:33:47 +0000 (UTC)
+Received: from mail.actia.se (mail.actia.se [212.181.117.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52E12576;
-	Fri, 23 May 2025 13:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A388229290B;
+	Fri, 23 May 2025 13:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.181.117.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748006326; cv=none; b=I+PnrRXlF2kuHlcEkpWP4AL25JXPT4oIUxIumvOgvAmTwKl4NYnrQHdWOmd+gRQ5TiyuTceKMEVQ488hEQtPH0zCbn1/2dPPpvqW4tmTx5G2doop/kbXjYaoKrlqSyID8fxQTP/0zrwOxfn1SPot3JWAv8izYsfRFMwxqa32tqg=
+	t=1748007227; cv=none; b=KEEicv6Myr655/5DLnI6oVLUCMktb0KOWOb0h0gnQTwJnjZN9KertOw+dj4g357YhkDtIXGANlMcUWtWUkKjOqOFo/dWohBr0pEMZaLOV7P7lWi7omVTdyTP4U6DnoJBIUOHUCA+fneHNyX9px5nq6kUGxetF862lwgTApNhauU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748006326; c=relaxed/simple;
-	bh=DmDeA+nW2gQlpsu3R+oK8pnlc3qIeHE0zu4ebeLES2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KCQsLzzl6QiIZ9mqu2L64/ewvwl3wsHhWix1WfkVycZSklp5/YZ2OXiKFtANJYfNtvdUqa3PDzgzexc/2NYLZfnRFtYm9AeheyzbABB/QIpR05XFixhpVnt3ClUwp/MwT7Xh3/ieZxcW7tuPwU7wd9Ru3ByHlCzpx7gH/p52jW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nGqj+8zx; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=XwwCTucFpUGQZ3GkFQaSR7QomxYPcuR84GoGCsG7I2I=; b=nGqj+8zxFi1s+JuMkJ8W9eknuj
-	34NcduvS06e69Pocp/mYknGiJHM00E+VPn1lRNf0iRGS3FmjnrFt4sidp27iveiiaBakT4B94D0Kc
-	8Z6ydGWkh3jNZTVIEjPaqXmAH3RY+KAC+PwZwOjQ3bpsqb2ukwRhIL+sJzeiMI0ctGH4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uISIC-00Dc1Q-I3; Fri, 23 May 2025 15:18:32 +0200
-Date: Fri, 23 May 2025 15:18:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	f.fainelli@gmail.com, xiaolei.wang@windriver.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v2 net] net: phy: clear phydev->devlink when the link is
- deleted
-Message-ID: <2a856f0d-ca86-48d8-be67-e2edb20637bf@lunn.ch>
-References: <20250523083759.3741168-1-wei.fang@nxp.com>
+	s=arc-20240116; t=1748007227; c=relaxed/simple;
+	bh=Co+q6PpYRkb6E4qK5L2gF3DYy5WkCuSQ5lBvt2U66HQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=gKcqafwxqe7UPbR5da/7rs/7cDdJxzdelAHPd8+0T3iCEQbqpiwc/EcPKg49DDIQHipDttknixj1TExecP8St1EhMPHeek6ynAEzAHeobn1RY+B9AZcXmJTAaxmhC4ZcrmoFIX+IbpK4Jpo00ZWuQqLetjhaLeKWPmRguFa2M8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se; spf=pass smtp.mailfrom=actia.se; arc=none smtp.client-ip=212.181.117.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=actia.se
+Received: from S036ANL.actianordic.se (10.12.31.117) by S036ANL.actianordic.se
+ (10.12.31.117) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 23 May
+ 2025 15:18:32 +0200
+Received: from S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69]) by
+ S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69%3]) with mapi id
+ 15.01.2507.039; Fri, 23 May 2025 15:18:32 +0200
+From: John Ernberg <john.ernberg@actia.se>
+To: =?iso-8859-2?Q?Horia_Geant=E3?= <horia.geanta@nxp.com>, Pankaj Gupta
+	<pankaj.gupta@nxp.com>, Gaurav Jain <gaurav.jain@nxp.com>, Herbert Xu
+	<herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>
+CC: Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>, Thomas Richard <thomas.richard@bootlin.com>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, John Ernberg <john.ernberg@actia.se>
+Subject: [PATCH 3/4] dt-bindings: crypto: fsl,sec-v4.0: Allow supplying
+ power-domains
+Thread-Topic: [PATCH 3/4] dt-bindings: crypto: fsl,sec-v4.0: Allow supplying
+ power-domains
+Thread-Index: AQHby+UuZr52Co+Xlk2suQ2a83BBpQ==
+Date: Fri, 23 May 2025 13:18:32 +0000
+Message-ID: <20250523131814.1047662-4-john.ernberg@actia.se>
+References: <20250523131814.1047662-1-john.ernberg@actia.se>
+In-Reply-To: <20250523131814.1047662-1-john.ernberg@actia.se>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: git-send-email 2.49.0
+x-esetresult: clean, is OK
+x-esetid: 37303A2955B14453607162
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250523083759.3741168-1-wei.fang@nxp.com>
 
-On Fri, May 23, 2025 at 04:37:59PM +0800, Wei Fang wrote:
-> There is a potential crash issue when disabling and re-enabling the
-> network port. When disabling the network port, phy_detach() calls
-> device_link_del() to remove the device link, but it does not clear
-> phydev->devlink, so phydev->devlink is not a NULL pointer. Then the
-> network port is re-enabled, but if phy_attach_direct() fails before
-> calling device_link_add(), the code jumps to the "error" label and
-> calls phy_detach(). Since phydev->devlink retains the old value from
-> the previous attach/detach cycle, device_link_del() uses the old value,
-> which accesses a NULL pointer and causes a crash. The simplified crash
-> log is as follows.
-> 
-> [   24.702421] Call trace:
-> [   24.704856]  device_link_put_kref+0x20/0x120
-> [   24.709124]  device_link_del+0x30/0x48
-> [   24.712864]  phy_detach+0x24/0x168
-> [   24.716261]  phy_attach_direct+0x168/0x3a4
-> [   24.720352]  phylink_fwnode_phy_connect+0xc8/0x14c
-> [   24.725140]  phylink_of_phy_connect+0x1c/0x34
-> 
-> Therefore, phydev->devlink needs to be cleared when the device link is
-> deleted.
-> 
-> Fixes: bc66fa87d4fd ("net: phy: Add link between phy dev and mac dev")
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+NXP SoCs like the iMX8QM, iMX8QXP or iMX8DXP use power domains for
+resource management.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: John Ernberg <john.ernberg@actia.se>
+---
+ Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-    Andrew
+diff --git a/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml b/D=
+ocumentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
+index 75afa441e019..47bbf87a5a5a 100644
+--- a/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
++++ b/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
+@@ -77,6 +77,9 @@ properties:
+   interrupts:
+     maxItems: 1
+=20
++  power-domains:
++    maxItems: 1
++
+   fsl,sec-era:
+     description: Defines the 'ERA' of the SEC device.
+     $ref: /schemas/types.yaml#/definitions/uint32
+@@ -116,6 +119,9 @@ patternProperties:
+       interrupts:
+         maxItems: 1
+=20
++      power-domains:
++        maxItems: 1
++
+       fsl,liodn:
+         description:
+           Specifies the LIODN to be used in conjunction with the ppid-to-l=
+iodn
+--=20
+2.49.0
 
