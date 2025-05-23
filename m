@@ -1,97 +1,123 @@
-Return-Path: <linux-kernel+bounces-660683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AABDBAC20C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:17:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 462DAAC20C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B828C1B658A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:17:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00E21170515
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41627226CF8;
-	Fri, 23 May 2025 10:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hx1TUst9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA465D8F0;
-	Fri, 23 May 2025 10:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15AB227E9E;
+	Fri, 23 May 2025 10:20:00 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F0A226CFD;
+	Fri, 23 May 2025 10:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747995450; cv=none; b=RjHwVvgv/VfkWGlgxo81IEh7DWSmblq7s1A/zbgzV6Cdu5zuLeFlBqsrI0DxKMb0ywDgJ+IwJ1ojukUCwNAUctVeBTMWU3BzHsYrE9IoSXAa1LhsCG4j8puP1X3irWUQpYuxaaHlyaWDG2dnZjVmWQHalLmDFN9keE1UyO6KiVU=
+	t=1747995600; cv=none; b=Y3DSErR2nNkSu9+/xNdRRrFhPgvK8HbdSwurLps8aFC3GqTLJ+Ny6MbpAbDsdQCfIaceACvRFtuFMqV/wwaxJ+g7FuiOR82Vlo+segPx7mW5ZsT8BUqiRSH+IIewGSZGd7ba7+ZhNC/03J/UiKJhqbjayvM4NuUZGMSkNlBONFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747995450; c=relaxed/simple;
-	bh=ztALaUqi+Ute0FanMr5lOM16SonCrRr0jnP1n/lAZFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ENNUgknUBlFVsoGOagDTcjgXYZbiAEqfs09W7lWOfxfkj8LdpzZCUfuJiOzYmBcXDN10XDHIk84A5iCLxH0CFx5qoj2QRY9NCmOV+1ReeQrzNhSJi7nM8gtXJWew7p7I3Ss0ym70v0DXnUPM1asL9D/R+YILBeAu+U9wCEFkgk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hx1TUst9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7571DC4CEE9;
-	Fri, 23 May 2025 10:17:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747995450;
-	bh=ztALaUqi+Ute0FanMr5lOM16SonCrRr0jnP1n/lAZFU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hx1TUst9pMuepA4btg4R2JoimdsmvmjFGdwU4xJPzesLO4bDR/yzqm4yAZyUpfy94
-	 lpdeqTho2F6dTShdrSmRLpt+g56viZu6HxX4IvjvqeD32djb9h41A2GntLYhMxqCxn
-	 TBj3UEbHdZNyE2PgBSVsqrB49L5boWH4HH8Z2KTs0m+ob3HbsPPeHfvVoN2rTZl4r2
-	 7/w31CGiQjNnNGl0855gqSoKwIv8+nkfTfsKdBl/Yb/owRJl24ucgF4R1TG7rm7nkH
-	 gV/VP8IZ9zjPT5SDNeuZXOEyshwVNrUo5znvkkeoahZ20GgwdziU/LxOAtzQluhkox
-	 3DC2AU9vCMmPw==
-Date: Fri, 23 May 2025 11:17:25 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Robin Gong <yibin.gong@nxp.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: regulator: add pca9450: Add
- regulator-allowed-modes
-Message-ID: <aDBLNV6JBdtFOgh9@finisterre.sirena.org.uk>
-References: <20250522192325.1099680-1-martijn.de.gouw@prodrive-technologies.com>
+	s=arc-20240116; t=1747995600; c=relaxed/simple;
+	bh=rI1kmj10+1W3pi4V1tUbGPED0j0Ulr5v+uy9FLuoBHs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aIbRn5mSjdgk73a1bRrdUBS3H6Gu+VgxdUF2AiAk73VBBsuCGX0jqC99l8nCRvRko5UYMJpaBU6yfvJrBd7hFmTIHC+4DXkHQxpUdVQDvJ3zKnc5ZcAFfFzMOzs+6cF7PxasLMEqcwW58ucbX5Of0GoZ3XQbCOVP3X7pUr/pmLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.10.34])
+	by gateway (Coremail) with SMTP id _____8BxrnKBSzBodXb4AA--.8618S3;
+	Fri, 23 May 2025 18:18:41 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.10.34])
+	by front1 (Coremail) with SMTP id qMiowMCx7xt9SzBoX+zqAA--.11756S2;
+	Fri, 23 May 2025 18:18:37 +0800 (CST)
+From: Tianyang Zhang <zhangtianyang@loongson.cn>
+To: chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	corbet@lwn.net,
+	alexs@kernel.org,
+	si.yanteng@linux.dev,
+	tglx@linutronix.de,
+	jiaxun.yang@flygoat.com,
+	peterz@infradead.org,
+	wangliupu@loongson.cn,
+	lvjianmin@loongson.cn,
+	maobibo@loongson.cn,
+	siyanteng@cqsoftware.com.cn,
+	gaosong@loongson.cn,
+	yangtiezhu@loongson.cn
+Cc: loongarch@lists.linux.dev,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tianyang Zhang <zhangtianyang@loongson.cn>
+Subject: [PATCH v3 0/2]  Loongarch irq-redirect supprot
+Date: Fri, 23 May 2025 18:18:31 +0800
+Message-Id: <20250523101833.17940-1-zhangtianyang@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SOIDFvsjrlPJIDST"
-Content-Disposition: inline
-In-Reply-To: <20250522192325.1099680-1-martijn.de.gouw@prodrive-technologies.com>
-X-Cookie: Well begun is half done.
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCx7xt9SzBoX+zqAA--.11756S2
+X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7CrW7Ww47KrykXF1kJFW8GrX_yoW8GF4UpF
+	Zru3sYyrsYkFZ3CFn7Ca4Uury5J3WxG3y2gayaq343ury3uryDZry8CF98ZFykGa17t34S
+	gr4FgayUWFyUA3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r126r13M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
+	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+	8JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
+	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
+	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
+	0xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
+	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
+	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8BuWPUUUUU==
+
+This series of patches introduces support for interrupt-redirect
+controllers, and this hardware feature will be supported on 3C6000
+for the first time
+
+change log:
+	v0->v1:
+	1.Rename the model names in the document.
+	2.Adjust the code format.
+	3.Remove architecture - specific prefixes.
+	4.Refactor the initialization logic, and IR driver no longer set AVEC_ENABLE.
+	5.Enhance compatibility under certain configurations.
+	v1->v2:
+	1.Fixed an erroneous enabling issue.
+	v2->v3
+	1.Replace smp_call with address mapping to access registers
+	2.Fix some code style issues
 
 
---SOIDFvsjrlPJIDST
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Tianyang Zhang (2):
+  Docs/LoongArch: Add Advanced Extended-Redirect IRQ model description
+  irq/irq-loongarch-ir:Add Redirect irqchip support
 
-On Thu, May 22, 2025 at 09:23:22PM +0200, Martijn de Gouw wrote:
-> The PCA9450 has support for forced PWM mode on the buck controllers.
-> Add support to control this mode.
+ .../arch/loongarch/irq-chip-model.rst         |  38 ++
+ .../zh_CN/arch/loongarch/irq-chip-model.rst   |  37 ++
+ arch/loongarch/include/asm/cpu-features.h     |   1 +
+ arch/loongarch/include/asm/cpu.h              |   2 +
+ arch/loongarch/include/asm/loongarch.h        |   6 +
+ arch/loongarch/kernel/cpu-probe.c             |   2 +
+ drivers/irqchip/Makefile                      |   2 +-
+ drivers/irqchip/irq-loongarch-avec.c          |  20 +-
+ drivers/irqchip/irq-loongarch-ir.c            | 562 ++++++++++++++++++
+ drivers/irqchip/irq-loongson.h                |  12 +
+ include/linux/cpuhotplug.h                    |   1 +
+ 11 files changed, 669 insertions(+), 14 deletions(-)
+ create mode 100644 drivers/irqchip/irq-loongarch-ir.c
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+-- 
+2.20.1
 
---SOIDFvsjrlPJIDST
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgwSzQACgkQJNaLcl1U
-h9CBeQgAgaLXlRxxWDfDTkWqXSEGlrOgh+l7SPyjmDynLHphWOUxBITxhxkCSfU2
-wt31djnCFZdqzB15QthXSa7nnw0B9JVO2PDjHg+GCG9uqJ/qcUUDa50zZ9RwgXkz
-JZNaDj0V0yCqs5ythWlT25Apz9e/hClm29AMv6iBpPhLD3MDkfnco+zFGDI3KGE6
-aac255fiKtau6KWEGtJyI9yVN/g+0VL6hi16HFue+rhPVD1Iv02Dab1908LkMy1D
-mWd9Kbe0DZNiJFTGQguuGVBm2JhztRfvRu8QKkgSr1SFiWT3L91eOc1iX4eG2DkP
-IGR5lMifJWkKr5nflllLItxmSE6UNw==
-=9C2f
------END PGP SIGNATURE-----
-
---SOIDFvsjrlPJIDST--
 
