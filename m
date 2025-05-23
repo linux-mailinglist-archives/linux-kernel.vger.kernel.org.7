@@ -1,497 +1,210 @@
-Return-Path: <linux-kernel+bounces-660507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28CBBAC1ED3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:38:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2014CAC1F06
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF06D1BC69EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:39:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B7B51BC5475
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0641328935A;
-	Fri, 23 May 2025 08:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E7A223DC6;
+	Fri, 23 May 2025 08:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FDrhMpkd"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FfmWRDU8"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2064.outbound.protection.outlook.com [40.107.21.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B0F205ABA;
-	Fri, 23 May 2025 08:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747989496; cv=none; b=CCt78Q7em0L14FyMO9vJAuwvxeCmVw5gPrfky12sv+5iz7Ghivuq9+sLvtCiE0f7AlpU/zeXDKqhvTDeOAPoueNUIaVrPITSRv3FfcVlp+oqJOi7DA3ZubFXDpEzj/JH7lWDtJrzk48P1kXW1XZ0xj9smOalYUOot4Ab/4t/iPo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747989496; c=relaxed/simple;
-	bh=1cRaW96s87M8tM+Jl8sws21AgqTgmD8L1WB9CR/QbmY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GoMM23cOzOaZ7n9lBwf1O5K1pjSqbC5q9AHe0zp7RKhW1HtAm6CRMwPfLzaLrkxJRbxzMDCIpLGJCu5cy+W+kqhPk86MG8wynk0GIgNlTdPbDmR7iSfpDoTyZbctqlMsKoaiBjAUush5M62lLXMzIBVj9yoZ26DjFnD5BtyvGH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FDrhMpkd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54N2m1TN013427;
-	Fri, 23 May 2025 08:38:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2Yvu7KvEVhXAGVUKN1IFcmhYovGU5CHhkYDtNb6BvT4=; b=FDrhMpkdjmRcLBHc
-	ubNGzWjM+JUoKDzTPS3sq/WSE5TTEiGsIBxiITyVoIad8QbgKTq+DldIS1MaL5c1
-	tgs7WE4r0z5F/LOK3WySHpdhlEn5d/xAuQSS8kNm/opiTyY1rebaDXfHzRjviCQ3
-	2FsqtWTOfmu/tf1I5+5UigY6x00E/cCla0etO1oGnemIpWomWV3lhVpiR96IywSt
-	hD5M67Ei8z01twga4rMT2SfSoofYTUzUvKAHc1k1aO4jgHMb3/LT20Tym2QNE6cZ
-	7hiyVXWnug1qcTXaYJsZrhpUYAcsg1omByyqh1EpeO8vpgOogjyJfVKgGv2obrVF
-	bZy8Xw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwh5hhes-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 08:38:02 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54N8c1Xe004721
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 08:38:01 GMT
-Received: from [10.239.133.114] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 23 May
- 2025 01:37:58 -0700
-Message-ID: <d949c0e7-e791-45cf-89f3-82a26f70382b@quicinc.com>
-Date: Fri, 23 May 2025 16:37:56 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00DF130A73;
+	Fri, 23 May 2025 08:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747990669; cv=fail; b=EO8g7a5ZYEhrjOcwP84gqc2gHnxO5vytWPbucINJE8RBGhr4wt1qu1e10wQirMEdpV4RBHDq/y8CUjZHnbGM7FVDT9Wrs9GUcASJpCDwejNYEoJGQpBhNCV7PBW+/2TFgSVyi6ULWM24hVSAbSVVpztsJfFXuWldOregg/sohdU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747990669; c=relaxed/simple;
+	bh=yuqBqBCgmWq7zcUWeAIoHuYs6cjElm+UK5k51jyVdqA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=qFLwNEIZm/ZfVx4KEZdAuY3hEkEyjC4zguhIE5ggVvBjHu25TYovKMA6izeUuAZEhxT9TW6TyIDSXK8Ws/MVvD1TUvzm10Rjq7Sa7Fa1026p6vkKd52aeFjrll8GZmXo5GGEOEASTFSWQk58tV/4diUbFq8Z+/W9q2yhLkWZ6BA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FfmWRDU8; arc=fail smtp.client-ip=40.107.21.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A3pXLnI7StKEKd2Wh+/svIX1nCoKa69ay0nruvqBVJFYyVs+LBF10zGjh2VD98dG0YJg6RVyXhm5Vtv057DCpER4NbrIwdssaj/9ZiJp/46xJA8DUZ5eMz4eB3pODFuRn1xqXmB+XSHPxocupwyyUjkCfK5m/Xqhm1EcjXwOsV0dB4gNXEy1KmET4tbPg7ynxiK392ciyFXVdpmPL/8CK2jBIzt66lCdNA6D7SKJA4vc5HCFfY+drkeCy8AwQjROH1VrNV+7PC5VTqh73Ei2nVyN44a2vOCT3dnmtp311WrjKijS0d9mJST2j8OaUqia6NO61ZQ2LCO4cCAkfB24bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+ijKgcwqE+mwxbSnhP/MsTyOMcOVUyy0JooIE65zp7E=;
+ b=RpoUJN2w0ja4j20WchvPeYsGKxSoElX6o4KNiRIwNEob2bySAqRZEjXCYCFu7VZR1uRG4ZEgpfOdSK16C/E8UR6ZJHIXwgfqv5i97/DbQhRutDvky4g6IWrU6yYkVwlGTD0eO/tHv6OMb5+fBw8+/ZXjNiPFDL8tTxMZzFLMKbzpEGXLcBmGGZT7vVOLnwvkv/WXOYAfb3IPEQkYDJh6R5SezTsfYM2C/tO6ArLoKY6KRF4smjzZnvrhcKoHiHgQDdfuZSwiqAkUZtLgnq5lqpTkn0kpItd3NPgkfJeHmSudRnUSpuVNv3DegNPaP+GKgrMJqAypUQZCmFo+UGWBIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+ijKgcwqE+mwxbSnhP/MsTyOMcOVUyy0JooIE65zp7E=;
+ b=FfmWRDU89K4iNFjauO2UngIZ2KtWTVeQnZtA/MkZ9wFpLafU2l3Tp9D+ZjJ0BANb/x/7xa5pSk1PCSOu2mnn40bsMMr5MZG7rG/6fUgyGeal3MlbQcljbPHayXGkm2NHNe9glhAtwHmHqlLTXfvS15Jr1WzuEklQgzNNB8jcnIZJqNOT2KBdYDLcosh7Hgvl2VuKge1ge/42PpLYWWX4bd5naOfMoNkm2x3rePVIGidDdkg6j77pJUYYGqT/wakwa3/nNR7T7oHtU/j5FyU2LCKDhJ5DCNzs3AlRLXbGICCgUrdC5zRyFzmE0vL2RZ5qHJLcZT5NFzg/bbZen16OUw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by PAXPR04MB9231.eurprd04.prod.outlook.com (2603:10a6:102:2bb::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.22; Fri, 23 May
+ 2025 08:57:44 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8769.019; Fri, 23 May 2025
+ 08:57:44 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	f.fainelli@gmail.com,
+	xiaolei.wang@windriver.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: [PATCH v2 net] net: phy: clear phydev->devlink when the link is deleted
+Date: Fri, 23 May 2025 16:37:59 +0800
+Message-Id: <20250523083759.3741168-1-wei.fang@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR04CA0009.apcprd04.prod.outlook.com
+ (2603:1096:4:197::8) To PAXPR04MB8510.eurprd04.prod.outlook.com
+ (2603:10a6:102:211::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] coresight: add coresight Trace Network On Chip
- driver
-To: Leo Yan <leo.yan@arm.com>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        <kernel@oss.qualcomm.com>, <linux-arm-msm@vger.kernel.org>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250522-trace-noc-v6-0-f5a9bcae90ee@quicinc.com>
- <20250522-trace-noc-v6-2-f5a9bcae90ee@quicinc.com>
- <20250522130536.GA2566836@e132581.arm.com>
-Content-Language: en-US
-From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-In-Reply-To: <20250522130536.GA2566836@e132581.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDA3NyBTYWx0ZWRfX/kHL1qyDEpQi
- 5rTUGyBO7WfTzr3FFArunfhZ4L75PCC0a+zxi3ElzsV+VMuuH1D1/nkyqOx0Tx+zxv9oterQak+
- Ms0WkOKe0r1AwBdx+ZJTVrcrh4FcKSbmKP8vVUM9Men23pFxxm2FlvkWmrXndoisnEUhJBCu6iZ
- cX9qbpBAEvjKyVX5jfCqSiZ23g+VxaxYA5VoMgz00eyLUxusgERUnfvQen/9ISKh3ed4qlomMz4
- cTA/p+Uv1tJQmB1Ef4Gv8Q2hgWjijXG/GpKIJsdgEZnMXAgzydGqk4lyLbfsOz2MZBb6nCfw4kU
- R+0YTcxiiAlGZD3s7Aip5riGY8A7qj1amCo1lumnlOmRv6uV/a1/12uuuvskLoejOUJJLHpQnuT
- WKsjRa6DMQmLM4hMfuPJqiQzlLy3k+XsWmQNVQDV52NQ1GHc4lzOoLWakYTX2qWbm7K1VOG8
-X-Authority-Analysis: v=2.4 cv=XeWJzJ55 c=1 sm=1 tr=0 ts=683033ea cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
- a=KKAkSRfTAAAA:8 a=pgdA0KJcGQdbBMiMy-UA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: SXz430XGB2XuiYhTuTlqxSLU1TNdFVnw
-X-Proofpoint-ORIG-GUID: SXz430XGB2XuiYhTuTlqxSLU1TNdFVnw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-23_02,2025-05-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 mlxlogscore=999 mlxscore=0 bulkscore=0 spamscore=0
- suspectscore=0 impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505230077
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|PAXPR04MB9231:EE_
+X-MS-Office365-Filtering-Correlation-Id: 41f3536a-4bca-4f3d-b8dc-08dd99d7e166
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dCK8VKSbT7TzAhZlksJyG+0CSV5oXBYakmbugqbhKcO+ehhW3YLMSISF08eY?=
+ =?us-ascii?Q?HN1yg1ibWGq3ZTVg9domWyJJhIVSWRy0PEbNyce1YSaVGJC29/FCrwIO3BAP?=
+ =?us-ascii?Q?VRyRZL8oHJxnYuABj0HNJo7YpY0jclXVSxagQo50AXvuJYQlpIutMoCCbrUP?=
+ =?us-ascii?Q?rAG4wk7x4pBTw6i2s2+ch/TbtYIr0TKwDkUtRBmYrApco4Bt2GYuVoz/C5M3?=
+ =?us-ascii?Q?RN6BULR9pL8HNPhNbgO1XSLbKJ+VR8W6jgG4JJ0yXKeoPCN89Co9xT/89gvx?=
+ =?us-ascii?Q?4Pn1+LLofsxeerRKezXayheGRzoNbONTvXbprSLiWc5fKxEfKcgk2tRLD1g5?=
+ =?us-ascii?Q?NmWtjgyQ2t+NkyD7q2pguX0fKq8DKqKTDlkvmHJbPwiHYAf1jRVS5bdHffWA?=
+ =?us-ascii?Q?I2GqJK+AdTZu91pqHAx2L8Gmq5Ks/Bfs6YITAi/jRBke24gHrtKWuLhBzcbM?=
+ =?us-ascii?Q?RCLaff3ADLXiXyQU9O/yxk0mZqNFuvTSVUCiBs96CQxF32tcmvIejwUUCJrR?=
+ =?us-ascii?Q?F5cLqnPHpr8WZq6ZdAh+0aJS4ozmF/dgumYtUnczluZq9Dko1byarxqBbgGc?=
+ =?us-ascii?Q?K9bFDtFc7AIX/QjPNxqYdAZf979jqMdjNscPKgWyAsT1+Z/0h4yN/+SDp/a4?=
+ =?us-ascii?Q?3mGF4tnGjTz8jCZHAZRlJ9QbuXIryhCDiIBAa0JT5iYy9M//AzPTyAjCB6Jb?=
+ =?us-ascii?Q?z3F9ZEdbCq0XPmcdmlg7FnZA6cb2ePali9DT1EaQbxAu0fGzwcnLv479nL0Y?=
+ =?us-ascii?Q?9H/Ul1vOoevHwXWpsDJtHWyD6jGIPjfy4E5lsHCZ8lcuhKa3jPoUskCRwSxT?=
+ =?us-ascii?Q?tx0amjfwxu1WVhsYC0BT8RzdbXzuNP1bOzSdi8/DNkqnUSZxZrCba+NiDKTn?=
+ =?us-ascii?Q?GRnY42+BkDJNoPcMdzpeyGxX+07t1NGMNHEuLE1u2eMIEAiqGck1Mv80SR5a?=
+ =?us-ascii?Q?LMq1Asp4/R4+HSo77eJdkDz1+5N3xhPB5M9t6AxxD6deu3ea02+rnhRq/JA9?=
+ =?us-ascii?Q?CmQ8Huyh9wtL5FScISsMfI5Xs38F31F+wqMQKDJN1rFRmm4CqiRHv86BOIDk?=
+ =?us-ascii?Q?SWBkGwQsqM91kGtJSDECu3iks1m0eERelEVBy/2Kt7yyeyV+mkUexEDSOMjW?=
+ =?us-ascii?Q?/g+s/DL0qm5UA6SYbYxMUzZbzO1Qcfu7qVPs5ejkkj61/iWAFXbLgaYUvsZM?=
+ =?us-ascii?Q?xcNgYWwJDMga6ht645UE6hd92SdtOQZjp7MjGENM8T8HguI0Dwc93pSbDaLe?=
+ =?us-ascii?Q?pfwFCkXSJNa2Sny1Hk89uPVg1E/MhTHGx8ihWJjQ6G14ygFIrM9WywsQygNw?=
+ =?us-ascii?Q?VQI/qyHR/ue9ub7nCGq9ifQFf51KYECPMW9ZfnbCdtz0J2WhhnhKW8ZG4M2y?=
+ =?us-ascii?Q?gq4HpnQd15I+nQDTObloB3l4ruC6sNJ7WEexTdunt4owlTK33KjzMXjJSlzl?=
+ =?us-ascii?Q?B0i5z40BV+ra28Uaqvu/zu6snWDTmAiMizj+gwaY7wkIl7SpK4Abqg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ryuw/wuyUbSgbNIU6tKURu9x1dcQsmNTLCaH5N91ddWIyvi6zJT0GTtsOWyc?=
+ =?us-ascii?Q?LN726mxpredtbyc+BUhWO7YVZXj8Dx6H7Pi9wx4wSTxxgH+4q0MdMyuP/Pd2?=
+ =?us-ascii?Q?6PmY4C2r9LMapGZMQIHeOQoIqWrv/NgfeBdVhI8zM4FUb0QidBhz9VQE0XrZ?=
+ =?us-ascii?Q?Vf5fzKaPDNVi1evj2OyI2KgLq1ifEp4BtJ63autAxuqn5CJIR+4twKbDWSjp?=
+ =?us-ascii?Q?CxTYljO87BEb4yuxIsALpw8PI8uFXcJl/2Xlb7KdWFdM81WrNXcHSdEmEK92?=
+ =?us-ascii?Q?WzzIG0m8jlW2qoFcnFC0t2m+TwO6rwXuaNEO2lqHovNQPVJJ6QS1W4bnEiSu?=
+ =?us-ascii?Q?yCyKpSekc2kmfabLq4RAeLEatMUIpkO66HyTWS5Ai3EvQKLnxj4JD0JBZyss?=
+ =?us-ascii?Q?8ukbWRjLBoEyfucO0um0BL30+sbNs51Y27IPv3Yv7aBV7cjL3ki+0TG9vYYz?=
+ =?us-ascii?Q?jYPhYAA/NnCcnibTlxbio/F0G8Gp9HXhzRPBYxbUfDIr6MxKFfwudfpib2fl?=
+ =?us-ascii?Q?MvA/vp8m0UnT8L/anWuT99OuSUQDEUJYKY/u0qAYs3Pnplf+Lu20tPfNPLzq?=
+ =?us-ascii?Q?c8hsBXVjxb+7ysRKYqrDHZA7DiTUyVjKnb3FpvwdmAOkMJT6Oe/9QiaYcVNM?=
+ =?us-ascii?Q?F5LlE4/p+FfW8dv+IKZGzv5sXv9kTwcgeXIhp7PZvkL14y3WYCAnJ2vfFm2r?=
+ =?us-ascii?Q?wKSixxhy/lvn6eph2bsPYUDxChomtZQIyxRSi2qGDzbWKWnuONgK5L1S8fqo?=
+ =?us-ascii?Q?bgSx4eJxqCg5guaov7tnuXGhfJwSyKwFV/G7liiikFnqVohOQBcSRwnGNosQ?=
+ =?us-ascii?Q?uP7gPRi/AB8fl1cBZPRRrDwUj9iM527kWIlsu1BaIWc6EzaBM6iK2VuRgMm0?=
+ =?us-ascii?Q?U7QFTjgFd1udayxDwbR73t8yicDP17cQNfwPIerJj4aEn4f9ViOBSzGvXkCI?=
+ =?us-ascii?Q?61akkelaeA6/onX77VomXQ9mEBp+cXkouj/8jEP1fytxhv64gF5Fx7rovR0q?=
+ =?us-ascii?Q?rqiEhP4UcAgPhSHl9fMXqbTKgVYNBX90LFQNviTK5Wy8ehd7HuXv/UroBnWV?=
+ =?us-ascii?Q?NlbwSyiWNXvl/jsBcFrh47UwhSWRb2zipLNlKH7/6A+CPCEI9hb1GFWFBRz2?=
+ =?us-ascii?Q?VApCoZGjKvPtflglujaTf2101NtSjF5qnfefPvaXt9OiAB4l/LresCB/vtCQ?=
+ =?us-ascii?Q?0hkUAosqRy3Gnzn31VlM4YTl/o7GZ/6yVFMroe5MdpnxMLvBW7xr8JbxmjkE?=
+ =?us-ascii?Q?Ob2B+ie+UL0XV2ac1SY8/mnPvCPfDJxaHCeBKe0z7Xkhp9RfYHDgCq84O/5N?=
+ =?us-ascii?Q?ar9h4rEMrAb48FdLeLTnF35rsfx2bBiC5Bo0Fpk9x942cpvjixz0fLUQ8stN?=
+ =?us-ascii?Q?NFRGaZxlXs4SRd2Ydx7FdIMcwMLOSikc2WXcrAIeJt9Wp7vvC0EqX2YNUNJw?=
+ =?us-ascii?Q?B9X5i0m91mlbhW3aX5uAtiekpgh4FK4XiEGfZxbCUNuuCnFTffGHySTcyKGv?=
+ =?us-ascii?Q?i66m3YbjlqjElIyfcca+39obz27sqGvwb6AoR9tw86jiLHrlJ6WGuz192o4Z?=
+ =?us-ascii?Q?SwJwPZOySjHi87Eur7ijzSQSjfdWMaPrKq6LOBk9?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41f3536a-4bca-4f3d-b8dc-08dd99d7e166
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2025 08:57:43.9365
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iQjQKsZdnXPIhzi5nV9X+OyGNvO9UMyorZX+cfnw9x0ok44PLBogeV3JCs1qZcEdCXIT4IfXSBrR5stqfBNGCw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9231
 
+There is a potential crash issue when disabling and re-enabling the
+network port. When disabling the network port, phy_detach() calls
+device_link_del() to remove the device link, but it does not clear
+phydev->devlink, so phydev->devlink is not a NULL pointer. Then the
+network port is re-enabled, but if phy_attach_direct() fails before
+calling device_link_add(), the code jumps to the "error" label and
+calls phy_detach(). Since phydev->devlink retains the old value from
+the previous attach/detach cycle, device_link_del() uses the old value,
+which accesses a NULL pointer and causes a crash. The simplified crash
+log is as follows.
 
+[   24.702421] Call trace:
+[   24.704856]  device_link_put_kref+0x20/0x120
+[   24.709124]  device_link_del+0x30/0x48
+[   24.712864]  phy_detach+0x24/0x168
+[   24.716261]  phy_attach_direct+0x168/0x3a4
+[   24.720352]  phylink_fwnode_phy_connect+0xc8/0x14c
+[   24.725140]  phylink_of_phy_connect+0x1c/0x34
 
-On 5/22/2025 9:05 PM, Leo Yan wrote:
-> Hi Yuanfang,
-> 
-> On Thu, May 22, 2025 at 04:07:52PM +0800, Yuanfang Zhang wrote:
->> Add a driver to support Coresight device Trace Network On Chip (TNOC),
->> which is an integration hierarchy integrating functionalities of TPDA
->> and funnels. It aggregates the trace and transports to coresight trace
->> bus.
-> 
-> The code quality is good for me. However, I still have several minor
-> comments.
-> 
->> Compared to current configuration, it has the following advantages:
->> 1. Reduce wires between subsystems.
->> 2. Continue cleaning the infrastructure.
->> 3. Reduce Data overhead by transporting raw data from source to target.
->>
->>   +------------------------+                +-------------------------+
->>   | Video Subsystem        |                |Video Subsystem          |
->>   |       +-------------+  |                |       +------------+    |
->>   |       | Video TPDM  |  |                |       | Video TPDM |    |
->>   |       +-------------+  |                |       +------------+    |
->>   |            |           |                |              |          |
->>   |            v           |                |              v          |
->>   |   +---------------+    |                |        +-----------+    |
->>   |   | Video funnel  |    |                |        |Video TNOC |    |
->>   |   +---------------+    |                |        +-----------+    |
->>   +------------|-----------+                +------------|------------+
->>                |                                         |
->>                v-----+                                   |
->> +--------------------|---------+                         |
->> |  Multimedia        v         |                         |
->> |  Subsystem   +--------+      |                         |
->> |              |  TPDA  |      |                         v
->> |              +----|---+      |              +---------------------+
->> |                   |          |              |   Aggregator  TNOC  |
->> |                   |          |              +----------|----------+
->> |                   +--        |                         |
->> |                     |        |                         |
->> |                     |        |                         |
->> |              +------v-----+  |                         |
->> |              |  Funnel    |  |                         |
->> |              +------------+  |                         |
->> +----------------|-------------+                         |
->>                  |                                       |
->>                  v                                       v
->>       +--------------------+                    +------------------+
->>       |   Coresight Sink   |                    |  Coresight Sink  |
->>       +--------------------+                    +------------------+
->>
->>        Current Configuration                            TNOC
->>
->> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
->> ---
->>  drivers/hwtracing/coresight/Kconfig          |  13 ++
->>  drivers/hwtracing/coresight/Makefile         |   1 +
->>  drivers/hwtracing/coresight/coresight-tnoc.c | 192 +++++++++++++++++++++++++++
->>  drivers/hwtracing/coresight/coresight-tnoc.h |  34 +++++
->>  4 files changed, 240 insertions(+)
->>
->> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
->> index ecd7086a5b83e86b6bc8ea039d6d26a628334ed3..f20600d58f38568f8178f69d3f678c2df2cbca7e 100644
->> --- a/drivers/hwtracing/coresight/Kconfig
->> +++ b/drivers/hwtracing/coresight/Kconfig
->> @@ -259,4 +259,17 @@ config CORESIGHT_DUMMY
->>  
->>  	  To compile this driver as a module, choose M here: the module will be
->>  	  called coresight-dummy.
->> +
->> +config CORESIGHT_TNOC
->> +	tristate "Coresight Trace Network On Chip driver"
->> +	help
->> +	  This driver provides support for Trace Network On Chip (TNOC) component.
->> +	  TNOC is an interconnect used to collect traces from various subsystems
->> +	  and transport to a coresight trace sink. It sits in the different
->> +	  tiles of SOC and aggregates the trace local to the tile and transports
->> +	  it another tile or to coresight trace sink eventually.
->> +
->> +	  To compile this driver as a module, choose M here: the module will be
->> +	  called coresight-tnoc.
->> +
->>  endif
->> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
->> index 8e62c3150aebd1e82b445fafc97a0a9b44397b0e..880e9ed6bfe9c711492c6a2cd972751f56dd8010 100644
->> --- a/drivers/hwtracing/coresight/Makefile
->> +++ b/drivers/hwtracing/coresight/Makefile
->> @@ -34,6 +34,7 @@ obj-$(CONFIG_CORESIGHT_SINK_TPIU) += coresight-tpiu.o
->>  obj-$(CONFIG_CORESIGHT_SINK_ETBV10) += coresight-etb10.o
->>  obj-$(CONFIG_CORESIGHT_LINKS_AND_SINKS) += coresight-funnel.o \
->>  					   coresight-replicator.o
->> +obj-$(CONFIG_CORESIGHT_TNOC) += coresight-tnoc.o
->>  obj-$(CONFIG_CORESIGHT_SOURCE_ETM3X) += coresight-etm3x.o
->>  coresight-etm3x-y := coresight-etm3x-core.o coresight-etm-cp14.o \
->>  		     coresight-etm3x-sysfs.o
->> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..5658501155d322d28e87ff820c7ba8b787eff7ce
->> --- /dev/null
->> +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
->> @@ -0,0 +1,192 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> + #include <linux/amba/bus.h>
->> + #include <linux/coresight.h>
->> + #include <linux/device.h>
->> + #include <linux/io.h>
->> + #include <linux/kernel.h>
->> + #include <linux/module.h>
->> + #include <linux/of.h>
->> + #include <linux/platform_device.h>
->> +
->> +#include "coresight-priv.h"
->> +#include "coresight-tnoc.h"
->> +#include "coresight-trace-id.h"
->> +
->> +DEFINE_CORESIGHT_DEVLIST(trace_noc_devs, "traceNoc");
->> +
->> +static void trace_noc_enable_hw(struct trace_noc_drvdata *drvdata)
->> +{
->> +	u32 val;
->> +
->> +	/* Set ATID */
->> +	writel_relaxed(drvdata->atid, drvdata->base + TRACE_NOC_XLD);
->> +
->> +	/* Set the data word count between 'SYNC' packets */
->> +	writel_relaxed(TRACE_NOC_SYNC_INTERVAL, drvdata->base + TRACE_NOC_SYNCR);
->> +
->> +	/* Set the Control register:
->> +	 * - Set the FLAG packets to 'FLAG' packets
->> +	 * - Set the FREQ packets to 'FREQ_TS' packets
->> +	 * - Enable generation of output ATB traffic
->> +	 */
->> +
->> +	val = readl_relaxed(drvdata->base + TRACE_NOC_CTRL);
->> +
->> +	val &= ~TRACE_NOC_CTRL_FLAGTYPE;
->> +	val |= TRACE_NOC_CTRL_FREQTYPE;
->> +	val |= TRACE_NOC_CTRL_PORTEN;
->> +
->> +	writel(val, drvdata->base + TRACE_NOC_CTRL);
->> +}
->> +
->> +static int trace_noc_enable(struct coresight_device *csdev, struct coresight_connection *inport,
->> +			    struct coresight_connection *outport)
->> +{
->> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
->> +
->> +	spin_lock(&drvdata->spinlock);
-> 
->         scoped_guard(spinlock, &drvdata->spinlock) {
-> 
->         }
-> 
-Done in next patch.
->> +	if (csdev->refcnt == 0)
->> +		trace_noc_enable_hw(drvdata);
->> +
->> +	csdev->refcnt++;
->> +	spin_unlock(&drvdata->spinlock);
->> +
->> +	dev_dbg(drvdata->dev, "Trace NOC is enabled\n");
->> +	return 0;
->> +}
->> +
->> +static void trace_noc_disable_hw(struct trace_noc_drvdata *drvdata)
->> +{
->> +	writel(0x0, drvdata->base + TRACE_NOC_CTRL);
->> +}
-> 
-> It is not necessary to use a function to encapsulate single operations.
-> 
-> Please drop the function trace_noc_disable_hw() and directly use
-> writel() in the call site.
+Therefore, phydev->devlink needs to be cleared when the device link is
+deleted.
 
-Done in next patch.
-> 
->> +
->> +static void trace_noc_disable(struct coresight_device *csdev, struct coresight_connection *inport,
->> +			      struct coresight_connection *outport)
->> +{
->> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
->> +
->> +	spin_lock(&drvdata->spinlock);
->> +	if (--csdev->refcnt == 0)
->> +		trace_noc_disable_hw(drvdata);
->> +
->> +	spin_unlock(&drvdata->spinlock);
->> +	dev_dbg(drvdata->dev, "Trace NOC is disabled\n");
->> +}
->> +
->> +static int trace_noc_id(struct coresight_device *csdev, __maybe_unused enum cs_mode mode,
->> +			__maybe_unused struct coresight_device *sink)
->> +{
->> +	struct trace_noc_drvdata *drvdata;
->> +
->> +	drvdata = dev_get_drvdata(csdev->dev.parent);
->> +
->> +	return drvdata->atid;
->> +}
->> +
->> +static const struct coresight_ops_link trace_noc_link_ops = {
->> +	.enable		= trace_noc_enable,
->> +	.disable	= trace_noc_disable,
->> +};
->> +
->> +static const struct coresight_ops trace_noc_cs_ops = {
->> +	.trace_id	= trace_noc_id,
->> +	.link_ops	= &trace_noc_link_ops,
->> +};
->> +
->> +static int trace_noc_init_default_data(struct trace_noc_drvdata *drvdata)
->> +{
->> +	int atid;
->> +
->> +	atid = coresight_trace_id_get_system_id();
->> +	if (atid < 0)
->> +		return atid;
->> +
->> +	drvdata->atid = atid;
->> +
->> +	return 0;
->> +}
->> +
->> +static int trace_noc_probe(struct amba_device *adev, const struct amba_id *id)
->> +{
->> +	struct device *dev = &adev->dev;
->> +	struct coresight_platform_data *pdata;
->> +	struct trace_noc_drvdata *drvdata;
->> +	struct coresight_desc desc = { 0 };
->> +	int ret;
->> +
->> +	desc.name = coresight_alloc_device_name(&trace_noc_devs, dev);
->> +	if (!desc.name)
->> +		return -ENOMEM;
->> +
->> +	pdata = coresight_get_platform_data(dev);
->> +	if (IS_ERR(pdata))
->> +		return PTR_ERR(pdata);
->> +	adev->dev.platform_data = pdata;
->> +
->> +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
->> +	if (!drvdata)
->> +		return -ENOMEM;
->> +
->> +	drvdata->dev = &adev->dev;
->> +	dev_set_drvdata(dev, drvdata);
->> +
->> +	drvdata->base = devm_ioremap_resource(dev, &adev->res);
->> +	if (!drvdata->base)
->> +		return -ENOMEM;
->> +
->> +	spin_lock_init(&drvdata->spinlock);
->> +
->> +	ret = trace_noc_init_default_data(drvdata);
->> +	if (ret)
->> +		return ret;
->> +
->> +	desc.ops = &trace_noc_cs_ops;
->> +	desc.type = CORESIGHT_DEV_TYPE_LINK;
->> +	desc.subtype.link_subtype = CORESIGHT_DEV_SUBTYPE_LINK_MERG;
->> +	desc.pdata = adev->dev.platform_data;
->> +	desc.dev = &adev->dev;
->> +	desc.access = CSDEV_ACCESS_IOMEM(drvdata->base);
->> +	drvdata->csdev = coresight_register(&desc);
->> +	if (IS_ERR(drvdata->csdev))
->> +		return PTR_ERR(drvdata->csdev);
-> 
-> Invoke coresight_trace_id_put_system_id() for registration failure.
-> 
-Done in next patch.
->> +
->> +	pm_runtime_put(&adev->dev);
->> +
->> +	return 0;
->> +}
->> +
->> +static void trace_noc_remove(struct amba_device *adev)
->> +{
->> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(&adev->dev);
->> +
->> +	coresight_trace_id_put_system_id(drvdata->atid);
->> +	coresight_unregister(drvdata->csdev);
->> +}
->> +
->> +static struct amba_id trace_noc_ids[] = {
->> +	{
->> +		.id     = 0x000f0c00,
->> +		.mask   = 0x00ffff00,
->> +	},
->> +	{},
->> +};
->> +MODULE_DEVICE_TABLE(amba, trace_noc_ids);
->> +
->> +static struct amba_driver trace_noc_driver = {
->> +	.drv = {
->> +		.name   = "coresight-trace-noc",
->> +		.suppress_bind_attrs = true,
->> +	},
->> +	.probe          = trace_noc_probe,
->> +	.remove		= trace_noc_remove,
->> +	.id_table	= trace_noc_ids,
->> +};
->> +
->> +module_amba_driver(trace_noc_driver);
->> +
->> +MODULE_LICENSE("GPL");
->> +MODULE_DESCRIPTION("Trace NOC driver");
->> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.h b/drivers/hwtracing/coresight/coresight-tnoc.h
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..34c696965ec50e3664d55e04e22d5b854d6937a7
->> --- /dev/null
->> +++ b/drivers/hwtracing/coresight/coresight-tnoc.h
->> @@ -0,0 +1,34 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +#define TRACE_NOC_CTRL      0x008
->> +#define TRACE_NOC_XLD       0x010
->> +#define TRACE_NOC_FREQVAL   0x018
->> +#define TRACE_NOC_SYNCR     0x020
->> +
->> +/* Enable generation of output ATB traffic.*/
->> +#define TRACE_NOC_CTRL_PORTEN   BIT(0)
->> +/* Sets the type of issued ATB FLAG packets.*/
->> +#define TRACE_NOC_CTRL_FLAGTYPE BIT(7)
->> +/* Sets the type of issued ATB FREQ packet*/
->> +#define TRACE_NOC_CTRL_FREQTYPE BIT(8)
->> +
->> +#define TRACE_NOC_SYNC_INTERVAL	0xFFFF
->> +
->> +/*
->> + * struct trace_noc_drvdata - specifics associated to a trace noc component
->> + * @base:	memory mapped base address for this component.
->> + * @dev:	device node for trace_noc_drvdata.
->> + * @csdev:	component vitals needed by the framework.
->> + * @spinlock:	only one at a time pls.
-> 
-> Change to "serialize enable/disable operations" ?
-Done in next patch.
-> 
->> + * @atid:	id for the trace packet.
->> + */
->> +struct trace_noc_drvdata {
->> +	void __iomem		*base;
->> +	struct device		*dev;
->> +	struct coresight_device	*csdev;
->> +	spinlock_t		spinlock; /* lock for the drvdata. */
-> 
-> Remove comment "lock for the drvdata" ?  As it has been described in
-> the head comments.
-it was suggested by "checkpatch.pl", removed in next patch. 
-> 
->> +	u32			atid;
->> +};
-> 
-> Please move the content into coresight-tnoc.c and drop the header.
-> 
-> The definitions are private for the driver, it is not necessary to
-> maintain them in a header.
+Fixes: bc66fa87d4fd ("net: phy: Add link between phy dev and mac dev")
+Signed-off-by: Wei Fang <wei.fang@nxp.com>
+---
+v2: Improve the commit message.
+---
+ drivers/net/phy/phy_device.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Done in next patch.
-> 
-> 
->>
->> -- 
->> 2.34.1
->>
->> _______________________________________________
->> CoreSight mailing list -- coresight@lists.linaro.org
->> To unsubscribe send an email to coresight-leave@lists.linaro.org
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index cc1bfd22fb81..7d5e76a3db0e 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -1727,8 +1727,10 @@ void phy_detach(struct phy_device *phydev)
+ 	struct module *ndev_owner = NULL;
+ 	struct mii_bus *bus;
+ 
+-	if (phydev->devlink)
++	if (phydev->devlink) {
+ 		device_link_del(phydev->devlink);
++		phydev->devlink = NULL;
++	}
+ 
+ 	if (phydev->sysfs_links) {
+ 		if (dev)
+-- 
+2.34.1
 
 
