@@ -1,79 +1,41 @@
-Return-Path: <linux-kernel+bounces-660405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159A7AC1D78
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E875AC1DA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA13C4E7E3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 07:12:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6C264E13BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 07:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312091DDC3E;
-	Fri, 23 May 2025 07:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yTyZ2We+"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EAE221260;
+	Fri, 23 May 2025 07:25:28 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FEE19D8B7
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 07:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63555220F4A;
+	Fri, 23 May 2025 07:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747984334; cv=none; b=I76sk6amGhNxDDrsrxrrW8XsSzHdORvb8UGZDY9mVRNYSX8TkQVt2lpaPXHZJka5Na+aJbKB9i/r1DupoF6SyySuzalBRueUqzpk9cFUSU0KOHNmnpOQOsXscVqnheIebQFo2xwM/OfoLvRwPqNhft0oZAYabfz+ta3ty5lR58Q=
+	t=1747985128; cv=none; b=noaAkSIAOl/olBHPgXBmmL66fm15ChP5BSDBid8bm3Fzsl7pYiHbdfqlXoJs19l9ezYXY/aSQ/EpBBH7sP7I6tc1UJZ2+2egjDrU6EFmCk9kF9ay4Bs/OBhHKTBdvi05sI0w9kmcDtb9dR9qduiKeR/bLeumf+OCXUFVSJVSozI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747984334; c=relaxed/simple;
-	bh=Ht+UV6Z7aQptFNwpD9iPRdTfJSkZpFJfOXbrFp82SPo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZPyVEEqL8MHxSAHACNYUw2V3ZMUFMPXdpTWjVpRMGd8GEu0FwbcZDf2ZGyY0EzKZvxdZ/WJchxZCvbo2Brbjeta/xXbRusYJ7Iv7F2AtiE/vL/kCPlFD7auMbDQqYUdicPhRs0CcuHePP1OqHzYiXq08kR8s1W26omXIyY2MPmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yTyZ2We+; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a367b6ad08so755891f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 00:12:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747984331; x=1748589131; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=y9wcJktofqVWI3CDj0WY+uIWHsaWsvQJKV0vHBPO+mo=;
-        b=yTyZ2We+/slR2m/cCBouCjdMEoH9cy2iklMzPapt9TWWBlqaX2j6Vud1IM1BFYxqpF
-         PzPyrc0PcEb7l3RRwSdSWzUdCGnygdANUBh+7q4KQMv3TH8ZBLGatVkiEALidnHU5Gf3
-         77bkv8WwgBzTMmE/7YAfxAaahr7iXGd/yIPwmhy4xJKuCMFXakdVRQ687+hOd3GGBEmb
-         13d0l7GtpzmuOa+o+0MDPJ5bMK5mKv7GXEfRDOZYC3FlXGKOPDxJvjkRYioW5PiR2N1o
-         sfJ9RUR//KQmg7D7vDpO538aDMY3y7nMJFOcIiALsRHDc0608FYN3lNZvIa+zgmzeNvT
-         wXbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747984331; x=1748589131;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y9wcJktofqVWI3CDj0WY+uIWHsaWsvQJKV0vHBPO+mo=;
-        b=tyzMAjzoqC5MNkkzxgK6xR1+tlVz+uw7pClbdzalr+DwrdQuTPfUhMyRQuIEUawCwZ
-         CPP/pb9CCQD8HuQEcmYLZSue6hEGAlKPjfkRnguLJm2UGRtZ/FMjZEnwB668+fP5r+xs
-         KkCtm5156Nrgg821ZcbPydNNCOLl//CspgIuCQy+qSX390dB+ld0JqkNPkzz/GPBNwLF
-         /Bv2CM3L/yeQrVKMd3AZ6UCXV+QJfueHeHdYN7UJYvNJIJDgVrwLZUyuC0/7x9ZWAoRG
-         H+MNshr4/lAg8A31Dhewu6hREgicP8DWtvtO04e3BYSnPhH/gPP2FOu6BoW+flsdgc/y
-         UETA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnMmSnmEaRkV9uDpbboxIkfxHKaVs9PwTV35/2YLVt8Pexiu6QPle/rvNnkZRkEHmL7+1mFMoX6y2SoM4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp9rrfugBd4vwxrWBYnV6SrHpBVVL1vWsyvqDrYP3Uemj69YrW
-	T4YZpEih+bZewK2bpnbVl9VmqnW3rXRGkyL+EFs68EQj5wGdB9Vu9PwNcJqibsctgVw=
-X-Gm-Gg: ASbGncv+jvYSZEA/uuS2ioxRWp3uofcm4zoy6KW80SgFtPvvaB3lCYthTjOnOaGUW1R
-	9n6JSFLzY62RjutPOz7RUd5G8tBoGB037w3OHhzlvU8bo08iBXrbaBGKkC//uh3SMAyBIJ8jkGO
-	Ska/zuBag+S8SsHoyg4t/uuOXiA5BuM0b3pHjRuqsTb0yV/JXK5w3vldo7Fixtn8InQp1NsXOiT
-	j+AbrAVIgwSl7AV1VKeZGLanABAIF+LM5cRxFbFiaUf4RxhRXiAMxuZmU5CgSU8Os+A13b9UFHa
-	N2RJ6MwkPTtVjGNoAqznfQ7s1cZb7NVd3ErCAoyzL2BrOLAy5NLaq/lZQzW4MH6Husomq/g=
-X-Google-Smtp-Source: AGHT+IGTK8IKeBlrlL85CwrhvZIeTflby+PuZV9bWjkME8T/VeEXqBiD4WNMgdtjoxnbqZZ/5+yCsQ==
-X-Received: by 2002:a05:600c:1c8f:b0:441:d244:1463 with SMTP id 5b1f17b1804b1-44b87a0eeefmr4609045e9.0.1747984330803;
-        Fri, 23 May 2025 00:12:10 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f3ce483bsm129076335e9.33.2025.05.23.00.12.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 May 2025 00:12:09 -0700 (PDT)
-Message-ID: <65f95a57-64cb-4815-8ff2-9021ab7b7ae3@linaro.org>
-Date: Fri, 23 May 2025 09:12:08 +0200
+	s=arc-20240116; t=1747985128; c=relaxed/simple;
+	bh=L5hwYD2GMGyVP6SnLZsdCyv/4gTl9d7s2F5LvXkL4x0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=jaxG0FwuJIJhwdoaFR4ELOfALJqhGEZAZD21EJiB4Ujvham2G7i8OpQbryrDcun8BUVOmSY1BbFsJerM4Jxf3WF2RebwfJbfn+0zaJvz1yF1dQcww+16vvbBtUBEGU/zWqvOeajdHGt/0xCzYT8FZ9x4ThWHB0Ao+BaFW86Qa90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from [IPV6:2a02:8084:255b:aa00:6055:15d5:ba02:27bb] (unknown [IPv6:2a02:8084:255b:aa00:6055:15d5:ba02:27bb])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id C500940A0F;
+	Fri, 23 May 2025 07:15:23 +0000 (UTC)
+Authentication-Results: Plesk;
+        spf=pass (sender IP is 2a02:8084:255b:aa00:6055:15d5:ba02:27bb) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a02:8084:255b:aa00:6055:15d5:ba02:27bb]
+Received-SPF: pass (Plesk: connection is authenticated)
+Message-ID: <8ff76bf6-b5a5-4030-ad02-e0e56acdb730@arnaud-lcm.com>
+Date: Fri, 23 May 2025 08:15:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,78 +43,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] arm64: dts: rockchip: add DTs for Firefly
- ROC-RK3588S-PC
-To: Chukun Pan <amadeus@jmu.edu.cn>, i@chainsx.cn
-Cc: devicetree@vger.kernel.org, heiko@sntech.de, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <20250519075432.2239713-3-i@chainsx.cn>
- <20250523070026.50263-1-amadeus@jmu.edu.cn>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 1/2] checkpatch.pl: warn about // comments on private
+ Rust items
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+ Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ llvm@lists.linux.dev, skhan@linuxfoundation.org
+References: <20250422125633.30413-1-contact@arnaud-lcm.com>
+ <20250422125824.30525-1-contact@arnaud-lcm.com>
+ <CANiq72n41Oj4K-yZCWbNXJQEEjTqjXHYgrkffAg_mUg8dKLWQg@mail.gmail.com>
+ <06dde2dd-5d88-49d4-9e46-72a2e12ab1c2@arnaud-lcm.com>
+ <CANiq72=UOOyf-esnRUCR0_gxFptdpNOymCz02vgesdNL7zTvHg@mail.gmail.com>
+ <32293daf-a6ce-49cc-b41d-1001037444da@arnaud-lcm.com>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+AhsD
- BQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmgXUEoF
- CRaWdJoACgkQG5NDfTtBYpudig/+Inb3Kjx1B7w2IpPKmpCT20QQQstx14Wi+rh2FcnV6+/9
- tyHtYwdirraBGGerrNY1c14MX0Tsmzqu9NyZ43heQB2uJuQb35rmI4dn1G+ZH0BD7cwR+M9m
- lSV9YlF7z3Ycz2zHjxL1QXBVvwJRyE0sCIoe+0O9AW9Xj8L/dmvmRfDdtRhYVGyU7fze+lsH
- 1pXaq9fdef8QsAETCg5q0zxD+VS+OoZFx4ZtFqvzmhCs0eFvM7gNqiyczeVGUciVlO3+1ZUn
- eqQnxTXnqfJHptZTtK05uXGBwxjTHJrlSKnDslhZNkzv4JfTQhmERyx8BPHDkzpuPjfZ5Jp3
- INcYsxgttyeDS4prv+XWlT7DUjIzcKih0tFDoW5/k6OZeFPba5PATHO78rcWFcduN8xB23B4
- WFQAt5jpsP7/ngKQR9drMXfQGcEmqBq+aoVHobwOfEJTErdku05zjFmm1VnD55CzFJvG7Ll9
- OsRfZD/1MKbl0k39NiRuf8IYFOxVCKrMSgnqED1eacLgj3AWnmfPlyB3Xka0FimVu5Q7r1H/
- 9CCfHiOjjPsTAjE+Woh+/8Q0IyHzr+2sCe4g9w2tlsMQJhixykXC1KvzqMdUYKuE00CT+wdK
- nXj0hlNnThRfcA9VPYzKlx3W6GLlyB6umd6WBGGKyiOmOcPqUK3GIvnLzfTXR5DOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCaBdQXwUJFpZbKgAKCRAbk0N9O0Fim07TD/92Vcmzn/jaEBcq
- yT48ODfDIQVvg2nIDW+qbHtJ8DOT0d/qVbBTU7oBuo0xuHo+MTBp0pSTWbThLsSN1AuyP8wF
- KChC0JPcwOZZRS0dl3lFgg+c+rdZUHjsa247r+7fvm2zGG1/u+33lBJgnAIH5lSCjhP4VXiG
- q5ngCxGRuBq+0jNCKyAOC/vq2cS/dgdXwmf2aL8G7QVREX7mSl0x+CjWyrpFc1D/9NV/zIWB
- G1NR1fFb+oeOVhRGubYfiS62htUQjGLK7qbTmrd715kH9Noww1U5HH7WQzePt/SvC0RhQXNj
- XKBB+lwwM+XulFigmMF1KybRm7MNoLBrGDa3yGpAkHMkJ7NM4iSMdSxYAr60RtThnhKc2kLI
- zd8GqyBh0nGPIL+1ZVMBDXw1Eu0/Du0rWt1zAKXQYVAfBLCTmkOnPU0fjR7qVT41xdJ6KqQM
- NGQeV+0o9X91X6VBeK6Na3zt5y4eWkve65DRlk1aoeBmhAteioLZlXkqu0pZv+PKIVf+zFKu
- h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
- vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20250523070026.50263-1-amadeus@jmu.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <32293daf-a6ce-49cc-b41d-1001037444da@arnaud-lcm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <174798452510.11144.1771928608104289286@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-On 23/05/2025 09:00, Chukun Pan wrote:
-> 
->> +&gmac1 {
->> +	clock_in_out = "output";
->> +	phy-handle = <&rgmii_phy1>;
->> +	phy-mode = "rgmii-id";
->> +	pinctrl-0 = ...
->> +	pinctrl-names = "default";
-> 
-> pinctrl-names should be placed before pinctrl-0
-
-That's unusual - not inline with common coding style and with most of
-SoCs. Is this some kind of known rule valid in Rockchip?
+Hi everyone !
+Is there any update so far ?
 
 Best regards,
-Krzysztof
+Arnaud
+
+On 23/04/2025 12:33, Arnaud Lecomte wrote:
+> On 22/04/2025 17:32, Miguel Ojeda wrote:
+>
+>> On Tue, Apr 22, 2025 at 4:37 PM Arnaud Lecomte 
+>> <contact@arnaud-lcm.com> wrote:
+>>> As mentioned earlier, we can reduce the score of any heuristic which
+>>> could lead to any important false positive.
+>>> In my opinion, as long as the heuristic is relevant, we always have the
+>>> possibility to diminish the score associated with the heuristic, hence
+>>> preventing unnecessary false positives.
+>> Definitely (my comment above for this one was just a note, i.e. there
+>> may be nothing to change -- I just thought the commit message referred
+>> to just checking "Return" and not "Returns", since it said
+>> "imperative").
+>>
+>>> I think that you are definitely more experienced with what's done
+>>> commonly in rust code. Let's maybe change this heuristic definition 
+>>> with
+>>> @ related to types or some other annotation. Do you have some example I
+>>> could have a look to come in the next version with a relevant list of @
+>>> we can encounter.
+>> What does "references" mean in that heuristic? If you mean external
+>> links to some URL, then we typically use Markdown for those. The
+>> inline ones like `<https://...>`happen in both comments and docs. The
+>> `[...]: https://...` ones are way less common in comments I think (I
+>> can't find one).
+> We should then remove it. I'll wait for other reviewers for their 
+> feedback and then send a new version of the patch serie. Thanks :)
+>> As for `@`, if you mean the actual character, I grepped for it in Rust
+>> files with the /.*@ regex and found just ~13 matches, and all were the
+>> emails and disambiguators I mentioned. So I don't think we really use
+>> it for "references" (assuming I understand what that means).
+>>
+>> I guess you already looked in some `rust/kernel/` files -- some of
+>> those are really the best examples of how docs and comments should
+>> generally be written.
+>> Thanks!
+>>
+>> Cheers,
+>> Miguel
+>>
 
