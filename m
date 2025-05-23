@@ -1,135 +1,110 @@
-Return-Path: <linux-kernel+bounces-661057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22FFAC2627
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:15:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C225BAC2637
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9477C542420
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:15:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BA4616F5FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B4E29B0;
-	Fri, 23 May 2025 15:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B382620B7EA;
+	Fri, 23 May 2025 15:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGQkJ1lC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1D3184E;
-	Fri, 23 May 2025 15:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bBwVXnXV"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF52F625;
+	Fri, 23 May 2025 15:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748013325; cv=none; b=fYCTMXvypmQCv7kWy0fAjNoZJV4l3cAhzYRjf/cMF5dv8SjSZWheWw5KGvLjmNDFwtfyQ8YSWRNKf+VpQSKcQ67g814RDOxuxRQTe0gqhUqRKxL1FDDu+RVjuTv74lQ9tPgRIOZAlhi1PG3buWdAHXsUqMYlOAYMhpMWDvZPXvU=
+	t=1748013459; cv=none; b=uI6EQ5TuQO3197N+nWr8DM4UqYd3plYciBfEkCgyTicm5J7e2HAmO4kqUkNEqTWp0YMh3kdWeUPMHTIQSLjnNpr/jW8hsPHsKfFhrQWxC+tSw6r76WzYU4JBh1B4Pr6ReM1zSfAUhUb+XMNH/oIoWX8ZqGr57QumuzJWXSaySHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748013325; c=relaxed/simple;
-	bh=8VAZ+KkDBpgajXwea43E3Jxb6kQkvjoqXTpZNv0Qq/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qoocdpi1T2eQ3gI+I1KLIb9ICi7CVWyPtwcAq2DfpFUXniW4rhxEQnoz/f1QLPgOSAT1g+btRcomoFzEqXncyPF4G2DKpYXyXWngCu6jkvqjg0LmtNUz59FNkP+Xopeg4iBi2Tc0V5nHydm7ALWwrhkuOlHZVI0NdP9esaQTFRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGQkJ1lC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A632BC4CEE9;
-	Fri, 23 May 2025 15:15:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748013324;
-	bh=8VAZ+KkDBpgajXwea43E3Jxb6kQkvjoqXTpZNv0Qq/I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pGQkJ1lC2/A+T2pz2yWocsEtvsiqUZZrEeNtanIv8DT3RFBAWPuP02jbRJFNFDE48
-	 GPc9LopvR4eQb5iPOTsgmVrNhJK5RNWA8Z+yd3hTrF2m77McGnQ9/5QuxbMW/FxrNc
-	 2ZDgRw10qC8TiiQmZtLDUdSWao72gM270Um0KAHv07hw3TbFOx+Savswqx7MRCqSDy
-	 3mDPWLDYDimovIXkUlDJBztZv9zymx/F2+r48fjhnLX8OBeQYHYG7IlKluNy/IOgAJ
-	 uJUPEJSPOS0ilK4HrOdJghDxRLydoNNXRPPxayHHhOTb8qNjaIDMdAAW1Es2AxqUGS
-	 x37eWYDlYP0ag==
-Date: Fri, 23 May 2025 16:15:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: D Scott Phillips <scott@os.amperecomputing.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	James Clark <james.clark@linaro.org>,
-	James Morse <james.morse@arm.com>, Joey Gouly <joey.gouly@arm.com>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	"Rob Herring  (Arm)" <robh@kernel.org>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Shiqi Liu <shiqiliu@hust.edu.cn>, Will Deacon <will@kernel.org>,
-	Yicong Yang <yangyicong@hisilicon.com>, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] arm64: errata: Work around AmpereOne's erratum
- AC04_CPU_23
-Message-ID: <aDCRCOSB287IafJL@finisterre.sirena.org.uk>
-References: <20250513184514.2678288-1-scott@os.amperecomputing.com>
- <aDCDGZ-G-nCP3hJI@finisterre.sirena.org.uk>
- <87wma7e5jd.wl-maz@kernel.org>
+	s=arc-20240116; t=1748013459; c=relaxed/simple;
+	bh=grBDhLBnqrLejwb9yEY0MLDRtwM/n1iyGHbRGNy+k58=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=B5TkhzUycraGGcuChhsSnAS/8ZzpztqeZXLecTCnMlV2Qi0WLwsAkbBbl2NtDFEvP5+wc30rY391sNawCrz9dpzrOEErhsTLB8mazi4XhNUynb1YAZIkUO23BAhRmyzZysJREzbF7lWuOtMP3TEwAlsHPckoKGN+d54w+2iWMWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bBwVXnXV; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=3aX8PUAXDaemiEQ3IrgJbnTZwuocxLWzcQByTZDngOU=;
+	b=bBwVXnXV47gzp2czYWTvmcMKEgZrPMUK9feAAVxOgG4AOljD7u1FtJ/gbID3wl
+	5TC1szaWCRf19jfCuTR/VW5SEF5Epmr+km/g05ps82PrudkZ4Yvhzmc8Mt1TrWCD
+	6Jebflm7/aV9n/B/b9GcMaoiXetu2Kn3b8KGIMA2T9/L4=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgCXbyELkTBoFV96Bg--.59745S2;
+	Fri, 23 May 2025 23:15:35 +0800 (CST)
+From: =?UTF-8?q?=E6=9D=8E=E5=93=B2?= <sensor1010@163.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	jonas@kwiboo.se,
+	rmk+kernel@armlinux.org.uk,
+	david.wu@rock-chips.com,
+	wens@csie.org,
+	u.kleine-koenig@baylibre.com,
+	an.petrous@oss.nxp.com
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?=E6=9D=8E=E5=93=B2?= <sensor1010@163.com>
+Subject: [PATCH] net: dwmac-rk: MAC clock should be truned off
+Date: Fri, 23 May 2025 08:15:21 -0700
+Message-Id: <20250523151521.3503-1-sensor1010@163.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+Yyr2O7xEu/r8n9d"
-Content-Disposition: inline
-In-Reply-To: <87wma7e5jd.wl-maz@kernel.org>
-X-Cookie: Well begun is half done.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgCXbyELkTBoFV96Bg--.59745S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKF1kXry3Kw4Dtr4DKr4Uurg_yoWkWFbE9w
+	1Ivrn3XF45XF40kF1DGw13Zr9agFs8ZFs5Ar42gFWSvFW7Zwn8Zr4kWrsrArn5Ww48AF9r
+	Gr1xAF1Iyw1xtjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRtCJPDUUUUU==
+X-CM-SenderInfo: 5vhq20jurqiii6rwjhhfrp/xtbBMR9Wq2gwKoMmeAABs9
 
+if PHY power-on fails, clockassociated the MAC should
+be disabled during the MAC initialization process
 
---+Yyr2O7xEu/r8n9d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: 李哲 <sensor1010@163.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Fri, May 23, 2025 at 04:00:06PM +0100, Marc Zyngier wrote:
-> On Fri, 23 May 2025 15:15:53 +0100,
-> Mark Brown <broonie@kernel.org> wrote:
-> > On Tue, May 13, 2025 at 11:45:14AM -0700, D Scott Phillips wrote:
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+index 700858ff6f7c..036e45be5828 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+@@ -1648,7 +1648,7 @@ static int gmac_clk_enable(struct rk_priv_data *bsp_priv, bool enable)
+ static int phy_power_on(struct rk_priv_data *bsp_priv, bool enable)
+ {
+ 	struct regulator *ldo = bsp_priv->regulator;
+-	int ret;
++	int ret = 0;
+ 	struct device *dev = &bsp_priv->pdev->dev;
+ 
+ 	if (enable) {
+@@ -1661,7 +1661,7 @@ static int phy_power_on(struct rk_priv_data *bsp_priv, bool enable)
+ 			dev_err(dev, "fail to disable phy-supply\n");
+ 	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static struct rk_priv_data *rk_gmac_setup(struct platform_device *pdev,
+-- 
+2.17.1
 
-> > > On AmpereOne AC04, updates to HCR_EL2 can rarely corrupt simultaneous
-> > > translations for data addresses initiated by load/store instructions.
-
-> > This patch, which is in -next as fed55f49fad181be9dfb93c0, breaks the
-> > build of at least the vDSO selftests:
-
-> > $ make -C tools/testing/selftests ARCH=arm64 LLVM=1 TARGETS=vDSO
-
-> >   CC       vdso_test_chacha
-> > In file included from vgetrandom-chacha.S:9:
-> > In file included from ./../../../../arch/arm64/kernel/vdso/vgetrandom-chacha.S:5:
-> > In file included from /home/broonie/git/bisect/tools/testing/selftests/../../../arch/arm64/include/asm/assembler.h:21:
-> > In file included from /home/broonie/git/bisect/tools/testing/selftests/../../../arch/arm64/include/asm/cpufeature.h:13:
-> > /home/broonie/git/bisect/tools/testing/selftests/../../../arch/arm64/include/asm/sysreg.h:1097:5: error: function-like macro 'IS_ENABLED' is not defined
-> >  1097 | #if IS_ENABLED(CONFIG_AMPERE_ERRATUM_AC04_CPU_23)
-> >       |     ^
-> > 1 error generated.
-
-> This:
-
-...
-
-> should solve it.
-
-Yes, that works.
-
-Tested-by: Mark Brown <broonie@kernel.org>
-
-> But it also outlines that the vdso is getting built using stuff that
-> is not meant for userspace code.
-
-Indeed, adding Jason for that.  It's the same for all architectures.
-
---+Yyr2O7xEu/r8n9d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgwkQUACgkQJNaLcl1U
-h9BDdAf5AeNkCRljY3IolOsbcV9AvHe7eansIWFCvJ6HxTOQqQmsS6T+op6eJZ4a
-0N8yNPVxuuydStcSR1kFeoTrr1eYs6hQYMeU4oEidizB9l2d9pxxD9dpZN4eW0jf
-JFwE9/4NsSn2IP1XC729xvE+FYZdkkD+u8R72XlUN1z6DNkqPv+Sm/UVgmTnpFKl
-PRJ6dD0yPP0uhpa8cfWkB9lkNtwzGFnqiznOSALxyZfEymhH8v3SVu3Vi+6mXApd
-V6LBBs9lr3K+V8rUmpM8KfcQj1UoQC2tMNhZq0LyHLkAJUlwkfQnU/HFaC5WJZOb
-mhSFdprkC8hgYBfU0eRXxq1KmCOiVw==
-=BxGU
------END PGP SIGNATURE-----
-
---+Yyr2O7xEu/r8n9d--
 
