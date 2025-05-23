@@ -1,135 +1,212 @@
-Return-Path: <linux-kernel+bounces-660770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C17AC21E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D36AC21F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612FF1B66172
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:20:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F373C9E7042
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA9D22D783;
-	Fri, 23 May 2025 11:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A605422F76E;
+	Fri, 23 May 2025 11:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3BPn+a5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="ZYav1w1b"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AA620328;
-	Fri, 23 May 2025 11:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA82183CC3;
+	Fri, 23 May 2025 11:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747999207; cv=none; b=Rx9QqoJRGIKUjYsgYFATiQb4Ktsl9x9sRZ6xKBYz/J9v2wrXRfWKDujGqSfNmG1kVaIjTptNiFod+h3Dr5F4naK+3d492iycB7YCCtr9wV+LJYmDV0ia37kqjKgnQ9KgUo36FNdQ8OB9R86V+XMFt/F2Vs7EZLMhXq+oVT3aitQ=
+	t=1747999634; cv=none; b=jJdANRWifpfyVSO7860XayLQp1/Ob+XcMt2wFhnxCQRF3ToVNWjB/cfttJqKKRNeUOWFb281eoQsBpsP/CJOc8yYQiRD/sow18zhOE4gXEqydE6f9lAkFfqso24OvDw5HHI9pM5VKWSgSRVp74898M0EcogBPQ8xLq2qdoZMDMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747999207; c=relaxed/simple;
-	bh=Ae1R/lF3ZBEtNleSnaRJpPaMPdeNBAnIoQqQ6yxAwmA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=g6zU7/8iFnSAzWBiUuczUF26z/eYUJy16oGK5+Hmo6namOpG/q83+DjE/RWujFAL3GNdWuEKS8jR2u84se4NGmNaDF1z6wVkhnNI49O6hUJqkK4EsE0WIs5tw3vmRSWtCdo9yWHfVyDjvt0Td7LFqqTNXgEZMY15yZVYsjqIkHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I3BPn+a5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4F5A6C4CEE9;
-	Fri, 23 May 2025 11:20:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747999206;
-	bh=Ae1R/lF3ZBEtNleSnaRJpPaMPdeNBAnIoQqQ6yxAwmA=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=I3BPn+a50DYUpyq7pgH5hJLMEMKmeLz3AJ8PH/Ogb3RObiChm0/Temirg38IJECzQ
-	 oVubW4RObmCUAubgCqntrYn6YwZppjWtCHkA+JxnvG7l3nyNCvTLGKQYezK/0m03sD
-	 m40341Kc6FycBJ+HD/dIRxJSaJI2oIbu0jdM9HIkHCdRHo6pSLpBVKnHmecRWszU0K
-	 +woxkvcvbP/BX/ud5EnfxqtCwOhjwgiEU4KPt2wP4idE1mz9UB1ytt2PDImFB+/Rwi
-	 Xr8RmDLhwF7vft8MeUN92LZf9d2PEtCGNrR9a46DPOAYQ4+4MRVnoNI2ExWEyLPHqA
-	 uwF+iD0TfbVIQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A18C54ED0;
-	Fri, 23 May 2025 11:20:06 +0000 (UTC)
-From: Alejandro Enrique via B4 Relay <devnull+alejandroe1.geotab.com@kernel.org>
-Date: Fri, 23 May 2025 13:19:52 +0200
-Subject: [PATCH v3] dt-bindings: gnss: add u-blox,neo-9m compatible
+	s=arc-20240116; t=1747999634; c=relaxed/simple;
+	bh=jfYtZ2CH8xYCrT2P5uGtit6vLo5mNXn1vw3XbgqPmpE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CnrpdUSQZBh0uDAxOryno2RN06ipr4KCp4uZ3mxhkAiTtfE6UQg8Jpz8GfmSwl4jk729OCe5/+eo06f3xaDH4HnQQJygT0V4VoJD6KcR8l+KoxO6ti5392gHE9pAet35onrVIWqUdNwPrCPs9FOV8K9MG5OHkNiW4eZdeeGbiNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=ZYav1w1b; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54N9rEks016918;
+	Fri, 23 May 2025 04:26:50 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=ihSw8cMuTTEpL372fhXdwPZ
+	zTu7nd63knMyoe7B5fgo=; b=ZYav1w1bjnXEg5VWBsiGL+3rLcCqKn6ui4qYoaY
+	aXSclbWSoJmMPk1S5Rwi7T4mun0UhiJB64VeMWReVxMx3EsrwRaDYNNPRYwccIro
+	s1A5sMKoZQUjEAo7+rqrd2VZDMbvj2vFVp2hHvBiGaEyafz4YAr55LxlustAOsEC
+	V14ZtASTdLGcu8k+9Uc7yTBSvbhqsaB4DdCeWjfjg6onfKLFLJetBrz9nArgZVSR
+	r1dQdE/UQLFT84D6dmKljWUecksKRcJh200MWVTNw/EKV6HLaXzQvoPSmHZaUgpU
+	m8SGc9rQyFY+WrqCo3D8gMiEulH13FIXT/fcj7EZc6deYAA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46tmgp8hdr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 May 2025 04:26:50 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 23 May 2025 04:26:49 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 23 May 2025 04:26:49 -0700
+Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with ESMTP id 4BCF43F7078;
+	Fri, 23 May 2025 04:26:44 -0700 (PDT)
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Hariprasad Kelam <hkelam@marvell.com>,
+        Sunil Goutham
+	<sgoutham@marvell.com>,
+        Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya
+	<gakula@marvell.com>,
+        Jerin Jacob <jerinj@marvell.com>,
+        Subbaraya Sundeep
+	<sbhatta@marvell.com>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Bharat Bhushan
+	<bbhushan2@marvell.com>
+Subject: [net-next PatchV2] octeontx2-pf: ethtool: Display "Autoneg" and "Port" fields
+Date: Fri, 23 May 2025 16:56:38 +0530
+Message-ID: <20250523112638.1574132-1-hkelam@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250523-ubx-m9-v3-1-6fa4ef5b7d4a@geotab.com>
-X-B4-Tracking: v=1; b=H4sIANdZMGgC/2WMyw6CMBQFf4V07TV9YcGV/2Fc9AldQEmLDYbw7
- xYWRuNyTs7MipKN3iZ0rVYUbfbJh7EAO1VI93LsLHhTGFFMa1wTDk+1wNCCwMZhZxrNG4XKeYr
- W+eUI3R+Fe5/mEF9HN5N9/UtkAhhIy1rBJHdMy1tnwyzVWYcB7Y1MvzxKPx4FAherDRdlFkr/e
- Nu2vQHtTfcU1QAAAA==
-X-Change-ID: 20250514-ubx-m9-70df0fd8c48b
-To: Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Alejandro Enrique <alejandroe1@geotab.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747999205; l=1718;
- i=alejandroe1@geotab.com; s=20250514; h=from:subject:message-id;
- bh=doxoiCk7P2mD0vfGqzFeF8yrTBUMxR+jt9Z2K94wDD4=;
- b=/FniEjMYT4HUGKi6YLK4fVVjq4Uh7w5MrpsQeLBA00m98WF+KxQzG6w2buE8MCN8U0WUrKVIH
- dujb/Ra05yeDURpFKUF/pGOgcB2VCc1u7Dd3F8zif8Utd383x7Y67eF
-X-Developer-Key: i=alejandroe1@geotab.com; a=ed25519;
- pk=xzHMPbqczL/tMsjXr26iLoHwIzLveHVnT+GIU4p1k38=
-X-Endpoint-Received: by B4 Relay for alejandroe1@geotab.com/20250514 with
- auth_id=404
-X-Original-From: Alejandro Enrique <alejandroe1@geotab.com>
-Reply-To: alejandroe1@geotab.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: _UlBT_vEH8X1VkZ3nNTG_yPyHhnz3LMX
+X-Proofpoint-ORIG-GUID: _UlBT_vEH8X1VkZ3nNTG_yPyHhnz3LMX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDEwMCBTYWx0ZWRfX1HNVcsRTTByp OZBc3/0dEZE53uMAWGBmtEQb1oykuGh9ID0XVMnMzn2KUpGoAGDm8IK+hYeqe6luY0p/i5IdN2i R9+pCfOf2tLcBjRD8gBTixlt4zLb/PJ6tk70oyzjjgFcMNlG6VY9W1cNKAbzRViFFsInu7Sp8wL
+ CP6vAiBNDDnHOG3Vmv1KbUs932p6JOesZOZhN+nqhmSo9UaQhvj5OGeQXL140g5Z9LJNLzDzd4M LiRqgwOCvfJGSHfZBND0F9Tx4mOfeXQ9XJFGbw/OfTwClgRiQN+UvHJgzW681JG1f+p7oKkLKeM VuPZnibSCxIqTkYc4fpPu4upbCMCwMGjc1s1oNw89TtEdjcCRecS17RaKwGBLC5SBnixw18DmOR
+ 76+2IQOOBa2fa/wisi9/hUVjwgMbHvaZ/huAgrb1MbcYZVHAqj1v3sMuW/oh24PgU6yuWOlE
+X-Authority-Analysis: v=2.4 cv=KYPSsRYD c=1 sm=1 tr=0 ts=68305b7a cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=0S1FJScdx-pYxljRKJoA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-23_03,2025-05-22_01,2025-03-28_01
 
-From: Alejandro Enrique <alejandroe1@geotab.com>
+The Octeontx2/CN10k netdev drivers access a shared firmware structure
+to obtain link configuration details, such as supported and advertised
+link modes.
 
-Add compatible for u-blox NEO-9M GPS module.
+This patch updates the shared firmware data to include additional
+fields like 'Autonegotiation' and 'Port type'.
 
-Signed-off-by: Alejandro Enrique <alejandroe1@geotab.com>
+ethtool eth1
+
+Settings for eth1:
+        Supported ports: [ ]
+        Supported link modes:   10baseT/Half 10baseT/Full
+                                100baseT/Half 100baseT/Full
+                                1000baseT/Half 1000baseT/Full
+                                10000baseT/Full
+                                10000baseKR/Full
+                                1000baseX/Full
+                                10000baseSR/Full
+                                10000baseLR/Full
+        Supported pause frame use: No
+        Supports auto-negotiation: Yes
+        Supported FEC modes: BaseR
+        Advertised link modes:  Not reported
+        Advertised pause frame use: No
+        Advertised auto-negotiation: Yes
+        Advertised FEC modes: BaseR
+        Speed: 10000Mb/s
+        Duplex: Full
+        Port: AUI
+        PHYAD: 0
+        Transceiver: internal
+        Auto-negotiation: off
+        Current message level: 0x00000000 (0)
+
+        Link detected: yes
+
+Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
 ---
-This series just add the compatible string for u-blox NEO-9M module,
-using neo-m8 as fallback. I have tested the driver with such a module
-and it is working fine.
----
-Changes in v3:
-- Remove unnecessary example, 'items', and blank line in the devicetree binding
-- Link to v2: https://lore.kernel.org/r/20250522-ubx-m9-v2-1-6ecd470527bc@geotab.com
+V2* Add validation for 'port' parameter
+    include full output of ethtool ethx
 
-Changes in v2:
-- Modify the binding to allow falling back to neo-m8
-- Remove compatible string from u-blox driver
-- Link to v1: https://lore.kernel.org/r/20250514-ubx-m9-v1-0-193973a4f3ca@geotab.com
----
- Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ .../net/ethernet/marvell/octeontx2/af/mbox.h  |  4 +++-
+ .../marvell/octeontx2/nic/otx2_ethtool.c      | 24 +++++++++++++++----
+ 2 files changed, 23 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml b/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
-index 7d4b6d49e5eea2201ac05ba6d54b1c1721172f26..c0c2bfaa606fb01f7efee1ce7e5d30b1640783f3 100644
---- a/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
-+++ b/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
-@@ -18,10 +18,14 @@ description: >
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
+index 005ca8a056c0..4a305c183987 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
++++ b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
+@@ -652,7 +652,9 @@ struct cgx_lmac_fwdata_s {
+ 	/* Only applicable if SFP/QSFP slot is present */
+ 	struct sfp_eeprom_s sfp_eeprom;
+ 	struct phy_s phy;
+-#define LMAC_FWDATA_RESERVED_MEM 1021
++	u64 advertised_an:1;
++	u64 port;
++#define LMAC_FWDATA_RESERVED_MEM 1019
+ 	u64 reserved[LMAC_FWDATA_RESERVED_MEM];
+ };
  
- properties:
-   compatible:
--    enum:
--      - u-blox,neo-6m
--      - u-blox,neo-8
--      - u-blox,neo-m8
-+    oneOf:
-+      - enum:
-+          - u-blox,neo-6m
-+          - u-blox,neo-8
-+          - u-blox,neo-m8
-+      - items:
-+          - const: u-blox,neo-m9
-+          - const: u-blox,neo-m8
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+index 45b8c9230184..5482a9a1908a 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+@@ -1174,11 +1174,13 @@ static void otx2_get_link_mode_info(u64 link_mode_bmap,
+ 	}
  
-   reg:
-     description: >
-
----
-base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
-change-id: 20250514-ubx-m9-70df0fd8c48b
-
-Best regards,
+ 	if (req_mode == OTX2_MODE_ADVERTISED)
+-		linkmode_copy(link_ksettings->link_modes.advertising,
+-			      otx2_link_modes);
++		linkmode_or(link_ksettings->link_modes.advertising,
++			    link_ksettings->link_modes.advertising,
++			    otx2_link_modes);
+ 	else
+-		linkmode_copy(link_ksettings->link_modes.supported,
+-			      otx2_link_modes);
++		linkmode_or(link_ksettings->link_modes.supported,
++			    link_ksettings->link_modes.supported,
++			    otx2_link_modes);
+ }
+ 
+ static int otx2_get_link_ksettings(struct net_device *netdev,
+@@ -1200,6 +1202,11 @@ static int otx2_get_link_ksettings(struct net_device *netdev,
+ 						     supported,
+ 						     Autoneg);
+ 
++	if (rsp->fwdata.advertised_an)
++		ethtool_link_ksettings_add_link_mode(cmd,
++						     advertising,
++						     Autoneg);
++
+ 	otx2_get_link_mode_info(rsp->fwdata.advertised_link_modes,
+ 				OTX2_MODE_ADVERTISED, cmd);
+ 	otx2_get_fec_info(rsp->fwdata.advertised_fec,
+@@ -1208,6 +1215,15 @@ static int otx2_get_link_ksettings(struct net_device *netdev,
+ 				OTX2_MODE_SUPPORTED, cmd);
+ 	otx2_get_fec_info(rsp->fwdata.supported_fec,
+ 			  OTX2_MODE_SUPPORTED, cmd);
++
++	switch (rsp->fwdata.port) {
++	case PORT_TP:
++	case PORT_AUI:
++		cmd->base.port = rsp->fwdata.port;
++		break;
++	default:
++		cmd->base.port = PORT_NONE;
++	}
+ 	return 0;
+ }
+ 
 -- 
-Alejandro Enrique <alejandroe1@geotab.com>
-
+2.34.1
 
 
