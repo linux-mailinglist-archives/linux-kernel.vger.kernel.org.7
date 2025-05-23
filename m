@@ -1,458 +1,201 @@
-Return-Path: <linux-kernel+bounces-660493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BFFAAC1EA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:30:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E59AC1EB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBE401BA23C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:30:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24CA94A7D5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2EC28A738;
-	Fri, 23 May 2025 08:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2516F2367AA;
+	Fri, 23 May 2025 08:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Aa4S412n"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KpHJpQN0"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABA6289349;
-	Fri, 23 May 2025 08:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C6822A4EB
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 08:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747988985; cv=none; b=dl1Vddxmr8dEgqj+ZWRfNpg4jaeLNiUEitOEGmhCIqhalHhsbPyLByEZiU2xDPWCZ1xtHUnyExZSrHrs89hmOfnNpJrCWoaEOtSR0mHKtwtSGGWFwzRSA8fvyZVFSRmEfYf3J3DHUqCm1GwipxdzclWGaPSGP/lqlDlLJQ6nTBo=
+	t=1747989008; cv=none; b=GwndfG+1qCSc6iaoOlmEaull03JNhEkdUJxPoGNAo76dLJCn/WRrcjMVy6q2GOnYb+xHgFBcXz627+m6RJoHYyU9CdYVn3dmtZPC1XndwE+QA+Zv4O/AAQrR5ZhnSyqFuuUG9gFZExxsP4sFkcsP1X1xbSXdTl9RCLBGdLYE0Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747988985; c=relaxed/simple;
-	bh=RYiWCNde4WdL1jZQ10n27Knj2Xzgj3hG4LPJMizSe0U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XbcErh+UoPat5OK5Gi1o9jsSNuEuTK5Q5SH6dUERf4uMB5/DMR5Wc7VZey8TUkp/+NfcpaHBLILKLbK4AzFZnOGeLSsNq/0A9r+xYlNxZdakHUnTukHpxL6LQ9N8Z3X2TYwuD9bheWd4vrRciQSBga0vvQSGa4snYWjrLOwmdbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Aa4S412n; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 47F2C1F9DF;
-	Fri, 23 May 2025 10:29:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1747988980;
-	bh=rMmsCMUAH+eej6NhODppzkzW6QcTqFDLUA/B/IzWvx0=; h=From:To:Subject;
-	b=Aa4S412nPHjsEsR92ES7teEMTNDZy38P3V4cV+iNNDK/GFG+sGPlxsq6D7gKMlPMX
-	 jgTVVwHDFSWSgls3TdhSbh4XvycvbpGJ13y5sLHVBnB4VrJAuLAQqrL/QKI0NIndSG
-	 vySC7TDLOJOv+prGNrOBozq1MydXCzwDjk3onbAW4eYoBqkpR7dZ8KeSShBvUFur0V
-	 LjYFM2QVlr5bkPG+z9Zj5XFTTuSvSl9IS2AXrJw0wUFyjSdDw+Ds/MlQ86+6gBJo5R
-	 P3yZ4l/e1OqERJdFd7g1Xebo8cUAmx34i8QprAN+14NwJSx8Zj2ipuDwFzZckAg8WS
-	 S1SXkUD0PrrlQ==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Dong Aisheng <aisheng.dong@nxp.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-	linux-i2c@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Carlos Song <carlos.song@nxp.com>
-Subject: [PATCH v4 2/2] i2c: lpi2c: implement master_xfer_atomic callback
-Date: Fri, 23 May 2025 10:29:31 +0200
-Message-Id: <20250523082931.23170-3-francesco@dolcini.it>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250523082931.23170-1-francesco@dolcini.it>
-References: <20250523082931.23170-1-francesco@dolcini.it>
+	s=arc-20240116; t=1747989008; c=relaxed/simple;
+	bh=Ba/qEJqFr6Ls+4+wQI/kPTBtztizrY6suF60TaJ7cfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WlsF5EctlIhxZvNNexbxfkC4IBU5drOVDF7ZdMACCkzcnjZpcsKXiDTzb5Bglkzlrw98rB90CUoc0IIKF3cp4W+PCUcs/cU7CY0biizCLBKcEkHA6xSajd6jVcYrXcoV2OKOi8nQUirOBSvwR2pXAkTOkraGJvp9YQkMjOlAmQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KpHJpQN0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54N3EMhA031739
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 08:30:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=VfiheIwlbsPSX3tKRqcUN7oc
+	TCW0r9qBhyKUU/kzcNM=; b=KpHJpQN0dwtJLO+HTWzFKrFnk7bx+iSwn8bK+dSQ
+	OcDSzPCmLUMrm/kv9g/5xyF0sMhlh7fYHwVBpNLpRtNlXPqjfnzO2V7n7/shn76n
+	H+1+qDbvv7oTE12vRufyynS784yTKkqgKG3HYryJHeGvRlw6VpH29+fp5d6v2mh+
+	O0EljvCWr36c4t6relmE6w4GeExam1CEKbOEzDi2Vv2gXldPFq+aLeAFJRke+mBQ
+	wi4GT93K8pVkXpt80tvRVnaalOgvdiYPtKD4WUzq3WLp8LDuhgYoZIqJPy7cXJB0
+	SOeAYJIab+0mlin0k1dpH1a8nO9fBiWQkDml+gGCajTHSw==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46s8c27yde-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 08:30:05 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6f8d3f48f35so92321536d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 01:30:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747989002; x=1748593802;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VfiheIwlbsPSX3tKRqcUN7ocTCW0r9qBhyKUU/kzcNM=;
+        b=F0dIZc6Up+eC/Z1nTU8kN/8m6bZA8f3A0b0AdjSuaLg6ATUHxHwxHUeD9k+FcI4EZO
+         Y8/1ucZNNJCd7ZTCa1I5Ft+TT+yW91mCKQufnIa4akCnJwS18uvWSgm5x/m7BS0oEO99
+         ua85APoRfDZn2mw4Fpc23ce9wgK1K07IxkqryhFTaQuXz7wE7R3VWqMjonBbM/MXJsi2
+         UFt5TBgzKWYkQATfmN5e/G9t5+pckX9tfgUhbK7vCth/DoJ9x+A6aNpnW5uDhehV11gR
+         JkeXUsjnbD6lpA8CoZWbuwV5xw/YtQRRF80xr9BGekotB8vfHXvX8FiHuYH5g2uHEa23
+         07cw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTXepq2qGDrRe8ozDOIT/H7bu7VztQVUSTRofGDQ05eAY7s5Ha8SOWHbMxhSeprtK7X8hUt/b9+waWO6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAncG4zsx/aqP9W6uzzWz1hOa/AOGz6lRAPGoiXVUbzN5yY1Y5
+	LUnpUtp9IImhHnIdtWAqrnDdYR9/+NJWRIMcFUCo0UhFRLBBPJD/IjZQmH8cIeMlo5YwkGRO/OZ
+	AoAQXeWXlsNNJngK35t5N4CPr6FRN8V9wu4nAcpBaPIpB6VWh2feKycbASXal6uN74Hg=
+X-Gm-Gg: ASbGncs2SFQ02JT2GKsJqkmKM/UIZI4FQ4KdjCS7dGaEkq+fRW5bN2Y3FAnrEFFx4qQ
+	dR+99U15cA01uxxtkOj+d8zsQvw442aBtISxdGJkUgfinqkRghCy/cMMdAcXZTNXOmcN7ZkSWsf
+	W4jHxZXR4nh+b8fwv/ueznL4Hif0tjU7xawSpfikZGbVFQyDUi5Ce65sNN+6KrctrC0Drgn2pmt
+	Kfngeqr/F+SP/UCXKGTLmupYHLvxPfoJnmBoz7mjmcDkltAwR7AEmFNWAxWJ8Dowe+gu9xh77Yk
+	CA4DZf0EGNm8qJzqWlyv5S1KdAeXecIchMlbaQzqF2Rw0S34/maQs8hgSPSvvwYVn7+RATrZjPc
+	=
+X-Received: by 2002:a05:6214:2aa1:b0:6e8:fbb7:675b with SMTP id 6a1803df08f44-6fa93aa463fmr35204466d6.32.1747989002042;
+        Fri, 23 May 2025 01:30:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEQTPt4MTIbkICZvOrh1skICymAaWmqgOHvMqVvofwa6vGpCOsSPPMr6URNTP7Fxd27LeFefg==
+X-Received: by 2002:a05:6214:2aa1:b0:6e8:fbb7:675b with SMTP id 6a1803df08f44-6fa93aa463fmr35204156d6.32.1747989001635;
+        Fri, 23 May 2025 01:30:01 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-551faf6be77sm1933997e87.84.2025.05.23.01.30.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 May 2025 01:30:00 -0700 (PDT)
+Date: Fri, 23 May 2025 11:29:59 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Clark <robdclark@chromium.org>, linux-clk@vger.kernel.org,
+        Srinivas Kandagatla <srini@kernel.org>
+Subject: Re: [PATCH v5 21/24] drm/msm/dpu: Implement 10-bit color alpha for
+ v12.0 DPU
+Message-ID: <dlkrweid62i6jz3iexahbludm32hppzen2odjx27sxfe6opt5c@zqnryzjpzqoe>
+References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
+ <20250430-b4-sm8750-display-v5-21-8cab30c3e4df@linaro.org>
+ <aDAbxAnCN1lGGcGH@linaro.org>
+ <aDAdax7xdeDsvQHB@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aDAdax7xdeDsvQHB@linaro.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDA3NyBTYWx0ZWRfX/I0PvCjJLNkC
+ 8kXjjF67ITgckQyLIKDbhTJcByLXNUeX85bXmScHU3UIL7WAFs1Yvv7qr09BV6oVLBjau0buGp9
+ dnHZk582NZRcXRReOYXe7vnUdqkITcaGjTzbi+RWJd783sAOXr/v/KuWEPhtU+SaNZ7dwtMc7J7
+ pfCVaNx7gk2TvRXm1QAw9sokIaEtrN0La/6XSuhY3ozW9eGyShhMFwmxeDtMQIU3/Y3oOlmuzGr
+ +YskLCUF+n7XlgXZANPrKwj60QoppRA6HqvB8s0g551CZFJF9R6tdYPA+YcVqbxRQCGGbYv459m
+ tY4CleIfPeiVTYEi2INVT+cxQKvSJpma4Kgk508o45T/FNq5qzG99fmWVvFaVZZo2z1IBB0Z7Zm
+ qOyxsu50KMsyCrswyH2ibBwNV1BCCN/3XUglSwSeV1lludQRkwCZOFpJ1FKdCsz/8Esg6dUI
+X-Authority-Analysis: v=2.4 cv=RIuzH5i+ c=1 sm=1 tr=0 ts=6830320d cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=pcGS-iR_AO2RkNitFtoA:9
+ a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: yesvx7VttVy6ycpTm38P7K7s5bjsi2GV
+X-Proofpoint-GUID: yesvx7VttVy6ycpTm38P7K7s5bjsi2GV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-23_02,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ mlxlogscore=999 spamscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501
+ adultscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505230077
 
-From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+On Fri, May 23, 2025 at 10:02:03AM +0300, Abel Vesa wrote:
+> On 25-05-23 09:55:00, Abel Vesa wrote:
+> > On 25-04-30 15:00:51, Krzysztof Kozlowski wrote:
+> > > v12.0 DPU on SM8750 comes with 10-bit color alpha.  Add register
+> > > differences and new implementations of setup_alpha_out(),
+> > > setup_border_color() and setup_blend_config().
+> > > 
+> > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > > 
+> > > ---
+> > > 
+> > > Changes in v4:
+> > > 1. Lowercase hex, use spaces for define indentation
+> > > 2. _dpu_crtc_setup_blend_cfg(): pass mdss_ver instead of ctl
+> > > 
+> > > Changes in v3:
+> > > 1. New patch, split from previous big DPU v12.0.
+> > > ---
+> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  | 19 ++++---
+> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c | 84 +++++++++++++++++++++++++++++--
+> > >  2 files changed, 94 insertions(+), 9 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > index a4b0fe0d9899b32141928f0b6a16503a49b3c27a..90f47fc15ee5708795701d78a1380f4ab01c1427 100644
+> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > @@ -320,14 +320,20 @@ static bool dpu_crtc_get_scanout_position(struct drm_crtc *crtc,
+> > >  }
+> > >  
+> > >  static void _dpu_crtc_setup_blend_cfg(struct dpu_crtc_mixer *mixer,
+> > > -		struct dpu_plane_state *pstate, const struct msm_format *format)
+> > > +				      struct dpu_plane_state *pstate,
+> > > +				      const struct msm_format *format,
+> > > +				      const struct dpu_mdss_version *mdss_ver)
+> > >  {
+> > >  	struct dpu_hw_mixer *lm = mixer->hw_lm;
+> > >  	uint32_t blend_op;
+> > > -	uint32_t fg_alpha, bg_alpha;
+> > > +	uint32_t fg_alpha, bg_alpha, max_alpha;
+> > >  
+> > >  	fg_alpha = pstate->base.alpha >> 8;
+> > 
+> > For the 10-bit alpha, you need to shift here by 5 instead of 8.
+> 
+> Typo. "6 instead of 8".
 
-Rework the read and write code paths in the driver to support operation
-in atomic contexts. To achieve this, the driver must not rely on IRQs
-or perform any scheduling, e.g., via a sleep or schedule routine.
+Granted there would be a next iteration of this patch, I'd suggest to
+modify _dpu_crtc_setup_blend_cfg() to always use 16-bit values and pass
+them down to LM's setup_blend_config() callback. Then LM can perform
+version-specific shifts, utilizing either 8 bits or 10 bits of alpha
+channel values.
 
-Implement atomic, sleep-free, and IRQ-less operation. This increases
-complexity but is necessary for atomic I2C transfers required by some
-hardware configurations, e.g., to trigger reboots on an external PMIC chip.
-
-Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-Reviewed-by: Carlos Song <carlos.song@nxp.com>
----
-v3 -> v4
-- Split the patch into two parts: one for the readl_poll_timeout() and one for the atomic implementation.
-- Change the readl_poll_timeout() delay to 0 us to do not change the behavior of the driver.
-- Use err variable consistently.
-
-v2 -> v3
-- Closes: https://lore.kernel.org/oe-kbuild-all/202505130735.zh3WuTNu-lkp@intel.com/. Using the return value of
-lpi2c_imx_read_msr_poll_timeout() to check for errors.
-
-v1 -> v2
-- Rename READL_POLL_TIMEOUT to lpi2c_imx_read_msr_poll_timeout
-- Remove addr and timeout_us parameters from lpi2c_imx_read_msr_poll_timeout since they are used always with the same value
-- add r-b tag from Carlos Song
----
- drivers/i2c/busses/i2c-imx-lpi2c.c | 178 ++++++++++++++++++++++-------
- 1 file changed, 136 insertions(+), 42 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-imx-lpi2c.c b/drivers/i2c/busses/i2c-imx-lpi2c.c
-index 91b0f4c2b924..afde8e06c23a 100644
---- a/drivers/i2c/busses/i2c-imx-lpi2c.c
-+++ b/drivers/i2c/busses/i2c-imx-lpi2c.c
-@@ -188,9 +188,11 @@ struct lpi2c_imx_struct {
- 	struct i2c_client	*target;
- };
- 
--#define lpi2c_imx_read_msr_poll_timeout(val, cond)                            \
-+#define lpi2c_imx_read_msr_poll_timeout(atomic, val, cond)                    \
-+	(atomic ? readl_poll_timeout_atomic(lpi2c_imx->base + LPI2C_MSR, val, \
-+					    cond, 0, 500000) :                \
- 		  readl_poll_timeout(lpi2c_imx->base + LPI2C_MSR, val, cond,  \
--				     0, 500000)
-+				     0, 500000))
- 
- static void lpi2c_imx_intctrl(struct lpi2c_imx_struct *lpi2c_imx,
- 			      unsigned int enable)
-@@ -198,12 +200,12 @@ static void lpi2c_imx_intctrl(struct lpi2c_imx_struct *lpi2c_imx,
- 	writel(enable, lpi2c_imx->base + LPI2C_MIER);
- }
- 
--static int lpi2c_imx_bus_busy(struct lpi2c_imx_struct *lpi2c_imx)
-+static int lpi2c_imx_bus_busy(struct lpi2c_imx_struct *lpi2c_imx, bool atomic)
- {
- 	int err;
- 	unsigned int temp;
- 
--	err = lpi2c_imx_read_msr_poll_timeout(temp,
-+	err = lpi2c_imx_read_msr_poll_timeout(atomic, temp,
- 					      temp & (MSR_ALF | MSR_BBF | MSR_MBF));
- 
- 	/* check for arbitration lost, clear if set */
-@@ -248,7 +250,7 @@ static void lpi2c_imx_set_mode(struct lpi2c_imx_struct *lpi2c_imx)
- }
- 
- static int lpi2c_imx_start(struct lpi2c_imx_struct *lpi2c_imx,
--			   struct i2c_msg *msgs)
-+			   struct i2c_msg *msgs, bool atomic)
- {
- 	unsigned int temp;
- 
-@@ -260,17 +262,17 @@ static int lpi2c_imx_start(struct lpi2c_imx_struct *lpi2c_imx,
- 	temp = i2c_8bit_addr_from_msg(msgs) | (GEN_START << 8);
- 	writel(temp, lpi2c_imx->base + LPI2C_MTDR);
- 
--	return lpi2c_imx_bus_busy(lpi2c_imx);
-+	return lpi2c_imx_bus_busy(lpi2c_imx, atomic);
- }
- 
--static void lpi2c_imx_stop(struct lpi2c_imx_struct *lpi2c_imx)
-+static void lpi2c_imx_stop(struct lpi2c_imx_struct *lpi2c_imx, bool atomic)
- {
- 	unsigned int temp;
- 	int err;
- 
- 	writel(GEN_STOP << 8, lpi2c_imx->base + LPI2C_MTDR);
- 
--	err = lpi2c_imx_read_msr_poll_timeout(temp, temp & MSR_SDF);
-+	err = lpi2c_imx_read_msr_poll_timeout(atomic, temp, temp & MSR_SDF);
- 
- 	if (err) {
- 		dev_dbg(&lpi2c_imx->adapter.dev, "stop timeout\n");
-@@ -390,12 +392,12 @@ static int lpi2c_imx_pio_msg_complete(struct lpi2c_imx_struct *lpi2c_imx)
- 	return time_left ? 0 : -ETIMEDOUT;
- }
- 
--static int lpi2c_imx_txfifo_empty(struct lpi2c_imx_struct *lpi2c_imx)
-+static int lpi2c_imx_txfifo_empty(struct lpi2c_imx_struct *lpi2c_imx, bool atomic)
- {
- 	unsigned int temp;
- 	int err;
- 
--	err = lpi2c_imx_read_msr_poll_timeout(temp,
-+	err = lpi2c_imx_read_msr_poll_timeout(atomic, temp,
- 					      (temp & MSR_NDF) || !lpi2c_imx_txfifo_cnt(lpi2c_imx));
- 
- 	if (temp & MSR_NDF) {
-@@ -432,7 +434,7 @@ static void lpi2c_imx_set_rx_watermark(struct lpi2c_imx_struct *lpi2c_imx)
- 	writel(temp << 16, lpi2c_imx->base + LPI2C_MFCR);
- }
- 
--static void lpi2c_imx_write_txfifo(struct lpi2c_imx_struct *lpi2c_imx)
-+static bool lpi2c_imx_write_txfifo(struct lpi2c_imx_struct *lpi2c_imx, bool atomic)
- {
- 	unsigned int data, txcnt;
- 
-@@ -447,13 +449,19 @@ static void lpi2c_imx_write_txfifo(struct lpi2c_imx_struct *lpi2c_imx)
- 		txcnt++;
- 	}
- 
--	if (lpi2c_imx->delivered < lpi2c_imx->msglen)
--		lpi2c_imx_intctrl(lpi2c_imx, MIER_TDIE | MIER_NDIE);
--	else
-+	if (lpi2c_imx->delivered < lpi2c_imx->msglen) {
-+		if (!atomic)
-+			lpi2c_imx_intctrl(lpi2c_imx, MIER_TDIE | MIER_NDIE);
-+		return false;
-+	}
-+
-+	if (!atomic)
- 		complete(&lpi2c_imx->complete);
-+
-+	return true;
- }
- 
--static void lpi2c_imx_read_rxfifo(struct lpi2c_imx_struct *lpi2c_imx)
-+static bool lpi2c_imx_read_rxfifo(struct lpi2c_imx_struct *lpi2c_imx, bool atomic)
- {
- 	unsigned int blocklen, remaining;
- 	unsigned int temp, data;
-@@ -478,8 +486,9 @@ static void lpi2c_imx_read_rxfifo(struct lpi2c_imx_struct *lpi2c_imx)
- 	remaining = lpi2c_imx->msglen - lpi2c_imx->delivered;
- 
- 	if (!remaining) {
--		complete(&lpi2c_imx->complete);
--		return;
-+		if (!atomic)
-+			complete(&lpi2c_imx->complete);
-+		return true;
- 	}
- 
- 	/* not finished, still waiting for rx data */
-@@ -497,7 +506,10 @@ static void lpi2c_imx_read_rxfifo(struct lpi2c_imx_struct *lpi2c_imx)
- 		writel(temp, lpi2c_imx->base + LPI2C_MTDR);
- 	}
- 
--	lpi2c_imx_intctrl(lpi2c_imx, MIER_RDIE);
-+	if (!atomic)
-+		lpi2c_imx_intctrl(lpi2c_imx, MIER_RDIE);
-+
-+	return false;
- }
- 
- static void lpi2c_imx_write(struct lpi2c_imx_struct *lpi2c_imx,
-@@ -505,11 +517,29 @@ static void lpi2c_imx_write(struct lpi2c_imx_struct *lpi2c_imx,
- {
- 	lpi2c_imx->tx_buf = msgs->buf;
- 	lpi2c_imx_set_tx_watermark(lpi2c_imx);
--	lpi2c_imx_write_txfifo(lpi2c_imx);
-+	lpi2c_imx_write_txfifo(lpi2c_imx, false);
- }
- 
--static void lpi2c_imx_read(struct lpi2c_imx_struct *lpi2c_imx,
--			   struct i2c_msg *msgs)
-+static int lpi2c_imx_write_atomic(struct lpi2c_imx_struct *lpi2c_imx,
-+				  struct i2c_msg *msgs)
-+{
-+	u32 temp;
-+	int err;
-+
-+	lpi2c_imx->tx_buf = msgs->buf;
-+
-+	err = lpi2c_imx_read_msr_poll_timeout(true, temp,
-+					      (temp & MSR_NDF) ||
-+					      lpi2c_imx_write_txfifo(lpi2c_imx, true));
-+
-+	if (temp & MSR_NDF)
-+		return -EIO;
-+
-+	return err;
-+}
-+
-+static void lpi2c_imx_read_init(struct lpi2c_imx_struct *lpi2c_imx,
-+				struct i2c_msg *msgs)
- {
- 	unsigned int temp;
- 
-@@ -520,8 +550,43 @@ static void lpi2c_imx_read(struct lpi2c_imx_struct *lpi2c_imx,
- 	temp = msgs->len > CHUNK_DATA ? CHUNK_DATA - 1 : msgs->len - 1;
- 	temp |= (RECV_DATA << 8);
- 	writel(temp, lpi2c_imx->base + LPI2C_MTDR);
-+}
- 
--	lpi2c_imx_intctrl(lpi2c_imx, MIER_RDIE | MIER_NDIE);
-+static bool lpi2c_imx_read_chunk_atomic(struct lpi2c_imx_struct *lpi2c_imx)
-+{
-+	u32 rxcnt;
-+
-+	rxcnt = (readl(lpi2c_imx->base + LPI2C_MFSR) >> 16) & 0xFF;
-+	if (!rxcnt)
-+		return false;
-+
-+	if (!lpi2c_imx_read_rxfifo(lpi2c_imx, true))
-+		return false;
-+
-+	return true;
-+}
-+
-+static int lpi2c_imx_read_atomic(struct lpi2c_imx_struct *lpi2c_imx,
-+				 struct i2c_msg *msgs)
-+{
-+	u32 temp;
-+	int tmo_us;
-+
-+	tmo_us = 1000000;
-+	do {
-+		if (lpi2c_imx_read_chunk_atomic(lpi2c_imx))
-+			return 0;
-+
-+		temp = readl(lpi2c_imx->base + LPI2C_MSR);
-+
-+		if (temp & MSR_NDF)
-+			return -EIO;
-+
-+		udelay(100);
-+		tmo_us -= 100;
-+	} while (tmo_us > 0);
-+
-+	return -ETIMEDOUT;
- }
- 
- static bool is_use_dma(struct lpi2c_imx_struct *lpi2c_imx, struct i2c_msg *msg)
-@@ -541,14 +606,27 @@ static int lpi2c_imx_pio_xfer(struct lpi2c_imx_struct *lpi2c_imx,
- {
- 	reinit_completion(&lpi2c_imx->complete);
- 
--	if (msg->flags & I2C_M_RD)
--		lpi2c_imx_read(lpi2c_imx, msg);
--	else
-+	if (msg->flags & I2C_M_RD) {
-+		lpi2c_imx_read_init(lpi2c_imx, msg);
-+		lpi2c_imx_intctrl(lpi2c_imx, MIER_RDIE | MIER_NDIE);
-+	} else {
- 		lpi2c_imx_write(lpi2c_imx, msg);
-+	}
- 
- 	return lpi2c_imx_pio_msg_complete(lpi2c_imx);
- }
- 
-+static int lpi2c_imx_pio_xfer_atomic(struct lpi2c_imx_struct *lpi2c_imx,
-+				     struct i2c_msg *msg)
-+{
-+	if (msg->flags & I2C_M_RD) {
-+		lpi2c_imx_read_init(lpi2c_imx, msg);
-+		return lpi2c_imx_read_atomic(lpi2c_imx, msg);
-+	}
-+
-+	return lpi2c_imx_write_atomic(lpi2c_imx, msg);
-+}
-+
- static int lpi2c_imx_dma_timeout_calculate(struct lpi2c_imx_struct *lpi2c_imx)
- {
- 	unsigned long time = 0;
-@@ -943,8 +1021,8 @@ static int lpi2c_imx_dma_xfer(struct lpi2c_imx_struct *lpi2c_imx,
- 	return ret;
- }
- 
--static int lpi2c_imx_xfer(struct i2c_adapter *adapter,
--			  struct i2c_msg *msgs, int num)
-+static int lpi2c_imx_xfer_common(struct i2c_adapter *adapter,
-+				 struct i2c_msg *msgs, int num, bool atomic)
- {
- 	struct lpi2c_imx_struct *lpi2c_imx = i2c_get_adapdata(adapter);
- 	unsigned int temp;
-@@ -955,7 +1033,7 @@ static int lpi2c_imx_xfer(struct i2c_adapter *adapter,
- 		return result;
- 
- 	for (i = 0; i < num; i++) {
--		result = lpi2c_imx_start(lpi2c_imx, &msgs[i]);
-+		result = lpi2c_imx_start(lpi2c_imx, &msgs[i], atomic);
- 		if (result)
- 			goto disable;
- 
-@@ -967,28 +1045,33 @@ static int lpi2c_imx_xfer(struct i2c_adapter *adapter,
- 		lpi2c_imx->tx_buf = NULL;
- 		lpi2c_imx->delivered = 0;
- 		lpi2c_imx->msglen = msgs[i].len;
--		init_completion(&lpi2c_imx->complete);
- 
--		if (is_use_dma(lpi2c_imx, &msgs[i])) {
--			result = lpi2c_imx_dma_xfer(lpi2c_imx, &msgs[i]);
--			if (result && lpi2c_imx->dma->using_pio_mode)
--				result = lpi2c_imx_pio_xfer(lpi2c_imx, &msgs[i]);
-+		if (atomic) {
-+			result = lpi2c_imx_pio_xfer_atomic(lpi2c_imx, &msgs[i]);
- 		} else {
--			result = lpi2c_imx_pio_xfer(lpi2c_imx, &msgs[i]);
-+			init_completion(&lpi2c_imx->complete);
-+
-+			if (is_use_dma(lpi2c_imx, &msgs[i])) {
-+				result = lpi2c_imx_dma_xfer(lpi2c_imx, &msgs[i]);
-+				if (result && lpi2c_imx->dma->using_pio_mode)
-+					result = lpi2c_imx_pio_xfer(lpi2c_imx, &msgs[i]);
-+			} else {
-+				result = lpi2c_imx_pio_xfer(lpi2c_imx, &msgs[i]);
-+			}
- 		}
- 
- 		if (result)
- 			goto stop;
- 
- 		if (!(msgs[i].flags & I2C_M_RD)) {
--			result = lpi2c_imx_txfifo_empty(lpi2c_imx);
-+			result = lpi2c_imx_txfifo_empty(lpi2c_imx, atomic);
- 			if (result)
- 				goto stop;
- 		}
- 	}
- 
- stop:
--	lpi2c_imx_stop(lpi2c_imx);
-+	lpi2c_imx_stop(lpi2c_imx, atomic);
- 
- 	temp = readl(lpi2c_imx->base + LPI2C_MSR);
- 	if ((temp & MSR_NDF) && !result)
-@@ -1004,6 +1087,16 @@ static int lpi2c_imx_xfer(struct i2c_adapter *adapter,
- 	return (result < 0) ? result : num;
- }
- 
-+static int lpi2c_imx_xfer(struct i2c_adapter *adapter, struct i2c_msg *msgs, int num)
-+{
-+	return lpi2c_imx_xfer_common(adapter, msgs, num, false);
-+}
-+
-+static int lpi2c_imx_xfer_atomic(struct i2c_adapter *adapter, struct i2c_msg *msgs, int num)
-+{
-+	return lpi2c_imx_xfer_common(adapter, msgs, num, true);
-+}
-+
- static irqreturn_t lpi2c_imx_target_isr(struct lpi2c_imx_struct *lpi2c_imx,
- 					u32 ssr, u32 sier_filter)
- {
-@@ -1066,9 +1159,9 @@ static irqreturn_t lpi2c_imx_master_isr(struct lpi2c_imx_struct *lpi2c_imx)
- 	if (temp & MSR_NDF)
- 		complete(&lpi2c_imx->complete);
- 	else if (temp & MSR_RDF)
--		lpi2c_imx_read_rxfifo(lpi2c_imx);
-+		lpi2c_imx_read_rxfifo(lpi2c_imx, false);
- 	else if (temp & MSR_TDF)
--		lpi2c_imx_write_txfifo(lpi2c_imx);
-+		lpi2c_imx_write_txfifo(lpi2c_imx, false);
- 
- 	return IRQ_HANDLED;
- }
-@@ -1264,10 +1357,11 @@ static u32 lpi2c_imx_func(struct i2c_adapter *adapter)
- }
- 
- static const struct i2c_algorithm lpi2c_imx_algo = {
--	.master_xfer	= lpi2c_imx_xfer,
--	.functionality	= lpi2c_imx_func,
--	.reg_target	= lpi2c_imx_register_target,
--	.unreg_target	= lpi2c_imx_unregister_target,
-+	.master_xfer		= lpi2c_imx_xfer,
-+	.master_xfer_atomic	= lpi2c_imx_xfer_atomic,
-+	.functionality		= lpi2c_imx_func,
-+	.reg_target		= lpi2c_imx_register_target,
-+	.unreg_target		= lpi2c_imx_unregister_target,
- };
- 
- static const struct of_device_id lpi2c_imx_of_match[] = {
 -- 
-2.39.5
-
+With best wishes
+Dmitry
 
