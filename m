@@ -1,168 +1,230 @@
-Return-Path: <linux-kernel+bounces-660308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49707AC1BD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 07:25:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E83AC1BD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 07:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5318A26084
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:25:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16B804E78DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1752253FB;
-	Fri, 23 May 2025 05:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010E5225A5B;
+	Fri, 23 May 2025 05:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gkPzzSJS"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Got1i35A"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFD42DCBE6;
-	Fri, 23 May 2025 05:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD63422578D;
+	Fri, 23 May 2025 05:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747977924; cv=none; b=rs3TWeUZOLt44Zgoxha0woc75QhlJsfYh4ppNC0RqXfAXLt5i5yrIfPdEe8kptkwyf7LKl12RzgE+YYBURQNKGSEGM65BGE+gwXAM8jWA0O/5pWbOnGMKzojPgRYYQGD2qnD3oginQTNmaLgbkhf/WCVcccuXziRukKEmh4dehY=
+	t=1747977951; cv=none; b=kg7btK8o3XSICJ71H+zoCN4EuXflY+mCEw8pYkvV+aXuDMlG1a5v1agpuop9uChJNkNqAEYjkUHb4jdo1s7+XLLa49xHfduX/XQI/txfXSQTfFDF+AOv4w9pwKT/NWox8J9sXHqaDsCpCQc6uMDm2Y/+8JTOijYiZHygJCxF65Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747977924; c=relaxed/simple;
-	bh=sHCHau5V2Ia+Ul8jz8STWNXfBt/x/iwthPVTBpu6WaA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fi1Gza9LJHT1PxtWaXmTShBekgB6hjMPNg36EdtTruY+srj4Bw6mSljxqFtunpKIrjoHJnuwUZBWXdeKAIeL8pTAbmwDKAx2iX2esCiYspHgk+OoZfv+eYDi821oApSbGBcVqN+JyX3FxxqlVHqdXJxDVkrV9LCKnchsvkZeSkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gkPzzSJS; arc=none smtp.client-ip=148.163.158.5
+	s=arc-20240116; t=1747977951; c=relaxed/simple;
+	bh=jj9BgReTvHeJe4y8jLSLUWxQCNxv1v3iTuGIjgBQl4I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rvfvaoERXadhyCrbmVBve7ZiflVrMBS4bUT+9QUc8HOtLlEohdxz4rXfeA8ZOxO1p1WTpva76vnPAbobNuRQhpvKIhnUD5R2OPepZX7+YQ8xczY2lplmcLEVKvxOkXnmLHl23wRHlaqQCIf9QEwnoLt89ZEIUrLSeFIlaWx3Cgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Got1i35A; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54MNWEn5006420;
-	Fri, 23 May 2025 05:24:43 GMT
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54MNW4vw024648;
+	Fri, 23 May 2025 05:25:33 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=T9QR0v
-	Rv/b0B11JDYax3wCR+tNiJcsp+EMocfpzOxi8=; b=gkPzzSJS3ymffrtpxcB5vm
-	v0s0Gt+0xedPFAF4Q0SBMgwUo01yMH5OqoDNtugNOwneyxcvMf5JVIm1y0T08Re7
-	EmJ6QdZ6GthLPsjQ11Y8uXW7sj+Eeyb8WqKlexTBXqcCpntaCyNC/X7hKpXH2JUj
-	tiWuD0uZqTjnvmBQRioWrY0breTha8OmZHdV8IDZEYMicTaNWm94EHTL/osOLYVd
-	iuLvSdTpZmyAtPpzaNMZw/bBFpt41IbV5Ua0ZuIpLPTk4wDsHISYTDhuqr1lanD2
-	vG9gQ6KwGs17vxJDgNiDQL5N9JmAxrZi3uqj2fVPEF8IGqrxh/bDnF+01ZlmwWWQ
+	:message-id:mime-version:references:subject:to; s=pp1; bh=YxjC6Y
+	/cUxQss4M80L0v2JPy8dv2dlD/GJSo5/DNYrs=; b=Got1i35AonF7azkpcUu5tW
+	p0oDjpNscsn9AUO+S4aMs0Nbqiu8a9WEi0XkjFRW3HXETwZOChNRwAUmEcW6ZZwV
+	vUEbMQDo1UrGYLPsuB30Pr4uo8tgxMTfrFRbh00hY8wPdd6L+n9Rgfmq1Ax3A8i1
+	zx6ukMWaOofLC6SxbCCt+M57H2arzkq5euJPJStoMmYl2Hw81Sj6eynnEH0ajTgA
+	gluRIGpiMs7VLKNJKZECgSLliUtjbotR7AZ7vagCs/X74ZuBwbVNzpapDY4ivxfw
+	FZLd9vPQ0MdoS5bxlPjpd4QruumMMvb8Y1bPQJco/ZKV9+T9a3ojovPHHwDDFVvA
 	==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46t9m7t7sq-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46sxhwdu72-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 05:24:43 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54N5Ogd1008988;
-	Fri, 23 May 2025 05:24:42 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46t9m7t7sh-1
+	Fri, 23 May 2025 05:25:33 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54N5NwiK031978;
+	Fri, 23 May 2025 05:25:32 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46sxhwdu6x-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 05:24:42 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54N1ugL2015431;
-	Fri, 23 May 2025 05:24:41 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 46rwnnn2at-1
+	Fri, 23 May 2025 05:25:32 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54N1OHSw032091;
+	Fri, 23 May 2025 05:25:31 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46rwnmn25m-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 05:24:41 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54N5OdfJ51446136
+	Fri, 23 May 2025 05:25:31 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54N5PVAA60948804
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 23 May 2025 05:24:40 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DFC2C20043;
-	Fri, 23 May 2025 05:24:39 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6FB4920040;
-	Fri, 23 May 2025 05:24:39 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.63.197.14])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 23 May 2025 05:24:39 +0000 (GMT)
-Received: from jarvis.ozlabs.ibm.com (haven.au.ibm.com [9.63.198.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ozlabs.au.ibm.com (Postfix) with ESMTPSA id A792F60213;
-	Fri, 23 May 2025 15:24:35 +1000 (AEST)
-Message-ID: <e50abba6c962772c73342bacf20fb87dc99dd542.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 08/14] powerpc: Handle KCOV __init vs inline
- mismatches
-From: Andrew Donnellan <ajd@linux.ibm.com>
-To: Kees Cook <kees@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman	
- <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy
-	 <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>,
-        "Ritesh
- Harjani (IBM)" <ritesh.list@gmail.com>,
-        "Aneesh Kumar K.V"
- <aneesh.kumar@linux.ibm.com>,
-        Andrew Morton	 <akpm@linux-foundation.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        "Gustavo A. R. Silva"
- <gustavoars@kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Marco Elver
- <elver@google.com>,
-        Andrey Konovalov <andreyknvl@gmail.com>,
-        Andrey
- Ryabinin <ryabinin.a.a@gmail.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Nathan Chancellor
- <nathan@kernel.org>,
-        Nicolas Schier	 <nicolas.schier@linux.dev>,
-        Nick
- Desaulniers <nick.desaulniers+lkml@gmail.com>,
-        Bill Wendling
- <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
-        llvm@lists.linux.dev
-Date: Fri, 23 May 2025 15:24:30 +1000
-In-Reply-To: <20250523043935.2009972-8-kees@kernel.org>
-References: <20250523043251.it.550-kees@kernel.org>
-	 <20250523043935.2009972-8-kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
+	Fri, 23 May 2025 05:25:31 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E042058055;
+	Fri, 23 May 2025 05:25:30 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7ED4E5804B;
+	Fri, 23 May 2025 05:25:26 +0000 (GMT)
+Received: from [9.109.245.113] (unknown [9.109.245.113])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 23 May 2025 05:25:26 +0000 (GMT)
+Message-ID: <ac3b8c16-1f2b-4f2f-8bcd-ef8da8544a20@linux.ibm.com>
+Date: Fri, 23 May 2025 10:55:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm: fix the inaccurate memory statistics issue for
+ users
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+        david@redhat.com, shakeelb@google.com
+Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+        rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <3dd21f662925c108cfe706c8954e8c201a327550.1747969935.git.baolin.wang@linux.alibaba.com>
+Content-Language: en-US
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <3dd21f662925c108cfe706c8954e8c201a327550.1747969935.git.baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=SMZCVPvH c=1 sm=1 tr=0 ts=6830069b cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=REYBSQJbgk_QW_Jsg8sA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: oQb5v6M7wutfrMtk1qvZQMEXsUNMAS6C
-X-Proofpoint-ORIG-GUID: 5IyYPtP_M7W6sx6jcc6-H4GkEZFAEAEb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDA0MyBTYWx0ZWRfX8CeyVmgZNEOz 8pmB+9RdT5ZsQ98qxplPqvRkrNpOOYwsSTFPDm5ofvI1Vh4bbudIby6HA8NmTGhtWKTGCbPb+Vc ncpDniBcH8eQ2V6TvH4/WOR7hWwc72H7W3tmeVLVHUbkift9S50W47R4EZG5vRt+eQh2UiWAsBK
- iE2vMgtZCKgIB8ryEScHd2O4ZVBu+fZQ71R6KP7ZepPiveo0szKoP5GtVDvnlETC92QyKZ6dJPA 9F354NXkUaazXC5GwoeLMpIeHZomJ+1xdeYZUMVAtJ78BfchmFk42UaDhV8BLvtV9oREWNDxTxG /JkwdDWhrq02gBuo/giLPxFbLNIIh1tgMIxMCWOWwczwEbDPV9zml+heRweY+Jd/oul5iu2Dl1O
- bQSsYl9qhOX4fnuFfAi63sra+qJkyo0qkV3/wv1tj0wVD9FBgFyh3pEhli53wYP0l6epaDcF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDA0MyBTYWx0ZWRfXxJRyzXsBHwPu ntI7I4Tfrkndp3EDwoJkzFtMFt1SrDrd4/OJZbkVsyFNhyXBqlWt5T60KgrRAvArIWyqbdojjLG xvVJUJdNJdVIVGHCaSNTyc3xl5x+5u23R45UgqRABKUzT59mII6631AnypDu8ziqwC5K08Awuvg
+ 6VpjHGcEG5Nmk1IRHV0xxuUMKApIVjqUQRxFaNUlnQuLz0ZmMU/X/hAwOKKSdKQWZ39Ygr8cKpH CSC1/iQEsdSZY89LbM1fYr2duU2XX4nj7/TRtaArr0AqZSd7zjIpZjtv+bEF1wQXTM88xCd9Y4t HedN3azxspFzNXi9Tj710bHdKQOOWBZvi1PrvwPMpfDp4w+BDdrFPtOMg7EbWSYZqXWKWRkrDcm
+ JJa8uz8xYd+Fp7cJDie6iAnYKNvPzhzQXWP2AJIBzYYxyRXBvlQPOJ+6cJnHrLC7pNaZMH5g
+X-Proofpoint-GUID: Fc8I8pRSBtQX3eEirUu-2IZEmgh7OJaG
+X-Authority-Analysis: v=2.4 cv=O685vA9W c=1 sm=1 tr=0 ts=683006cd cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=SRrdq9N9AAAA:8 a=VnNF1IyMAAAA:8 a=bJgjvqlET6HPnKk_xIcA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: LM8uU1SdoVM6B511od_tFrYjKP9VKcpO
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-23_02,2025-05-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=480 suspectscore=0 bulkscore=0 clxscore=1011 adultscore=0
- phishscore=0 mlxscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ spamscore=0 mlxscore=0 phishscore=0 bulkscore=0 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 clxscore=1011 malwarescore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
  definitions=main-2505230043
 
-On Thu, 2025-05-22 at 21:39 -0700, Kees Cook wrote:
-> When KCOV is enabled all functions get instrumented, unless
-> the __no_sanitize_coverage attribute is used. To prepare for
-> __no_sanitize_coverage being applied to __init functions, we have to
-> handle differences in how GCC's inline optimizations get resolved.
-> For
-> s390 this requires forcing a couple functions to be inline with
 
-I assume you mean powerpc here, though I'm sure my employer is happy
-that you're at least confusing us with IBM's other architecture :)
+On 5/23/25 8:46 AM, Baolin Wang wrote:
+> On some large machines with a high number of CPUs running a 64K kernel,
+> we found that the 'RES' field is always 0 displayed by the top command
+> for some processes, which will cause a lot of confusion for users.
+>
+>      PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+>   875525 root      20   0   12480      0      0 R   0.3   0.0   0:00.08 top
+>        1 root      20   0  172800      0      0 S   0.0   0.0   0:04.52 systemd
+>
+> The main reason is that the batch size of the percpu counter is quite large
+> on these machines, caching a significant percpu value, since converting mm's
+> rss stats into percpu_counter by commit f1a7941243c1 ("mm: convert mm's rss
+> stats into percpu_counter"). Intuitively, the batch number should be optimized,
+> but on some paths, performance may take precedence over statistical accuracy.
+> Therefore, introducing a new interface to add the percpu statistical count
+> and display it to users, which can remove the confusion. In addition, this
+> change is not expected to be on a performance-critical path, so the modification
+> should be acceptable.
+>
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> ---
+>   fs/proc/task_mmu.c | 14 +++++++-------
+>   include/linux/mm.h |  5 +++++
+>   2 files changed, 12 insertions(+), 7 deletions(-)
+>
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index b9e4fbbdf6e6..f629e6526935 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -36,9 +36,9 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
+>   	unsigned long text, lib, swap, anon, file, shmem;
+>   	unsigned long hiwater_vm, total_vm, hiwater_rss, total_rss;
+>   
+> -	anon = get_mm_counter(mm, MM_ANONPAGES);
+> -	file = get_mm_counter(mm, MM_FILEPAGES);
+> -	shmem = get_mm_counter(mm, MM_SHMEMPAGES);
+> +	anon = get_mm_counter_sum(mm, MM_ANONPAGES);
 
---=20
-Andrew Donnellan    OzLabs, ADL Canberra
-ajd@linux.ibm.com   IBM Australia Limited
+
+Hi Baolin Wang,
+
+We also observed the same issue where the RSS value in /proc/PID/status
+was 0 on machines with a high number of CPUs. With this patch, the issue
+got fixedl
+
+Rss value without this patch
+----------------------------
+  # cat /proc/87406/status
+.....
+VmRSS:           0 kB
+RssAnon:           0 kB
+RssFile:           0 k
+
+
+Rss values with this patch
+--------------------------
+  # cat /proc/3055/status
+VmRSS:        2176 kB
+RssAnon:         512 kB
+RssFile:        1664 kB
+RssShmem:           0 kB
+
+Tested-by Donet Tom <donettom@linux.ibm.com>
+
+
+> +	file = get_mm_counter_sum(mm, MM_FILEPAGES);
+> +	shmem = get_mm_counter_sum(mm, MM_SHMEMPAGES);
+>   
+>   	/*
+>   	 * Note: to minimize their overhead, mm maintains hiwater_vm and
+> @@ -59,7 +59,7 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
+>   	text = min(text, mm->exec_vm << PAGE_SHIFT);
+>   	lib = (mm->exec_vm << PAGE_SHIFT) - text;
+>   
+> -	swap = get_mm_counter(mm, MM_SWAPENTS);
+> +	swap = get_mm_counter_sum(mm, MM_SWAPENTS);
+>   	SEQ_PUT_DEC("VmPeak:\t", hiwater_vm);
+>   	SEQ_PUT_DEC(" kB\nVmSize:\t", total_vm);
+>   	SEQ_PUT_DEC(" kB\nVmLck:\t", mm->locked_vm);
+> @@ -92,12 +92,12 @@ unsigned long task_statm(struct mm_struct *mm,
+>   			 unsigned long *shared, unsigned long *text,
+>   			 unsigned long *data, unsigned long *resident)
+>   {
+> -	*shared = get_mm_counter(mm, MM_FILEPAGES) +
+> -			get_mm_counter(mm, MM_SHMEMPAGES);
+> +	*shared = get_mm_counter_sum(mm, MM_FILEPAGES) +
+> +			get_mm_counter_sum(mm, MM_SHMEMPAGES);
+>   	*text = (PAGE_ALIGN(mm->end_code) - (mm->start_code & PAGE_MASK))
+>   								>> PAGE_SHIFT;
+>   	*data = mm->data_vm + mm->stack_vm;
+> -	*resident = *shared + get_mm_counter(mm, MM_ANONPAGES);
+> +	*resident = *shared + get_mm_counter_sum(mm, MM_ANONPAGES);
+>   	return mm->total_vm;
+>   }
+>   
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 185424858f23..15ec5cfe9515 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2568,6 +2568,11 @@ static inline unsigned long get_mm_counter(struct mm_struct *mm, int member)
+>   	return percpu_counter_read_positive(&mm->rss_stat[member]);
+>   }
+>   
+> +static inline unsigned long get_mm_counter_sum(struct mm_struct *mm, int member)
+> +{
+> +	return percpu_counter_sum_positive(&mm->rss_stat[member]);
+> +}
+> +
+>   void mm_trace_rss_stat(struct mm_struct *mm, int member);
+>   
+>   static inline void add_mm_counter(struct mm_struct *mm, int member, long value)
 
