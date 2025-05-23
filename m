@@ -1,104 +1,87 @@
-Return-Path: <linux-kernel+bounces-660502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B823AC1EC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:35:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4F3AC1ECB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7A80504C61
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:35:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBD8A7B134F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507DD18FDBE;
-	Fri, 23 May 2025 08:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311A9205ABA;
+	Fri, 23 May 2025 08:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcRl5Kfk"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZYmH6Mhq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88592143748;
-	Fri, 23 May 2025 08:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8F6158535
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 08:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747989330; cv=none; b=ECG2GLzMGIYgI/0R4y4ASJo0c46ZY/d7NvsYRcQMVG8CjXlwG9vGqPWQKtQ7cPEVQe6q3zQ4nftoTyIa98jQuqOy5uiNlm6GtuiizoKmqpzDNaEOGOYdoiDp/t+yOJR1hld7UGsx65KOHPXEcTvM46DPhC+HZ+/MYJqTYNHfAB4=
+	t=1747989408; cv=none; b=ary4k2032j1W/AOo/Lg+9Xu9W9x4MjQdKnIEuYTDsMUXi0MpeuyugBXGfulFR9aGiTgjy7O/OZywxWuyqXgVOY3RYmfugfguLeG2Qj7zTgik3BmRHUjM9ITV3UQ8Kzr1QYQEnEmFM5EWKoAGGFDFmPFgGsfaH26xYPmJ2CUxVlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747989330; c=relaxed/simple;
-	bh=aaYZ1roJQALwLOCDStlA1iSIFgYsVkGtdj7Sg7WhRg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LNGbd0sJe6Jxm+7jeyQKc9YFcrztnYLp6BSPsAa3SQoAoVahZMdVJxPYlovXfs19iB8PrlkAsTT+LARL93sAV1k7Slr9s7J6d/3TnmL+SXup25Ssaz1SwB3ZJ8E6b99cKcfVi+WuuT7J8HTLmevBpEji4lbquH480xzPCBjIJsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcRl5Kfk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2820AC4CEE9;
-	Fri, 23 May 2025 08:35:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747989330;
-	bh=aaYZ1roJQALwLOCDStlA1iSIFgYsVkGtdj7Sg7WhRg0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XcRl5Kfk0LErS6d8DWAJDv0260N7QeO09U2nEFy+/POSGuCKNcjXuTRL0y6iQAms+
-	 gufkd6wsGs2pwGAfTTTeqykAQJSG3C9QMqDlczk12XUK8b+gnUv39dzAs+z+h0L9KU
-	 dFmNH9hN4SUxUnrSmfRCxsKQPdLr6cCcoy656aBC1W/wE/N9u+bAtp071aSh5VFXrz
-	 WJtXbFOeZWq0QZdlLbFa8iWq98vVMUNbRD5mf5u12jUsRXe1g45rdOeEwXKTllwLpA
-	 3PSQLEBw3ZwbknFRHyf2d/jwQlcLoLv/+KHFE3+7KsGGW2+zCXKKLsn6xXRMvWEl13
-	 YalaMnrvpCNlg==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Steve French <sfrench@samba.org>,
-	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-	netfs@lists.linux.dev,
-	v9fs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1747989408; c=relaxed/simple;
+	bh=V+cVhh0+RqApElsqrP57oXouUjLJ6b/UgVZaqBCH0Jw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rHyybDWByME0Up19pnwehP4xmqpr5xfBtJNtpSUBcs/eq9ibgbYlfFgG0/A1LXNQCe6Go7wTYPH3Trl1ygGqg1PhnEpkF5B+HVw8mf5kq1v71qEU40LuFp7tApU+RKArPbjIlyUzcytPrEVSVGo6KcEzmzvHRdo/aq3YZko6Fus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZYmH6Mhq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E7E2C4CEE9;
+	Fri, 23 May 2025 08:36:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747989407;
+	bh=V+cVhh0+RqApElsqrP57oXouUjLJ6b/UgVZaqBCH0Jw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZYmH6MhqzKFKCVONX+z7lJPBI+vhRS82dN6qe/cWt3G1Qaz8ao8XyCVD4lnhzJUvm
+	 qmSE0JzBqe7cFsVaaV8uMdd83mS4o9Ofg0AQxteMROYoMPLv/ARry5AovB95JzEWd1
+	 XZa+HPASts2I+fKsgNMiNHmD6mv4axwTjZ4+QfNM=
+Date: Fri, 23 May 2025 10:36:45 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix undifferentiation of DIO reads from unbuffered reads
-Date: Fri, 23 May 2025 10:35:21 +0200
-Message-ID: <20250523-audienz-brotkrumen-039bac60ea9c@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <3444961.1747987072@warthog.procyon.org.uk>
-References: <3444961.1747987072@warthog.procyon.org.uk>
+Subject: Re: [PATCH 1/1] container_of: Document container_of() is not to be
+ used in new code
+Message-ID: <2025052306-childlike-operating-d9c7@gregkh>
+References: <20250520103437.468691-1-sakari.ailus@linux.intel.com>
+ <aCyOzUIIvMk6Gp8o@smile.fi.intel.com>
+ <2025052000-widen-lip-350b@gregkh>
+ <aCz9jlMcXDooqx0s@kekkonen.localdomain>
+ <2025052138-carport-applaud-61b8@gregkh>
+ <2025052121-drastic-hacker-aab6@gregkh>
+ <20250522220142.14876993@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1377; i=brauner@kernel.org; h=from:subject:message-id; bh=aaYZ1roJQALwLOCDStlA1iSIFgYsVkGtdj7Sg7WhRg0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQYGHu/SDHY357Z8Vnt0kvnnd5Pl3f7Mby3s230lQmyW iYw5/2CjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIks38vwT0H9fHuqkaemTEaT jfn5xW8rPt7zu6F+QEBTKqFnj+vLKQz/C9Xiw1OmmKf0fDXx/Lpto3rrw5Pspt38p9YeZml/+/0 cNwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250522220142.14876993@pumpkin>
 
-On Fri, 23 May 2025 08:57:52 +0100, David Howells wrote:
-> On cifs, "DIO reads" (specified by O_DIRECT) need to be differentiated from
-> "unbuffered reads" (specified by cache=none in the mount parameters).  The
-> difference is flagged in the protocol and the server may behave
-> differently: Windows Server will, for example, mandate that DIO reads are
-> block aligned.
+On Thu, May 22, 2025 at 10:01:42PM +0100, David Laight wrote:
+> On Wed, 21 May 2025 15:31:36 +0200
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 > 
-> Fix this by adding a NETFS_UNBUFFERED_READ to differentiate this from
-> NETFS_DIO_READ, parallelling the write differentiation that already exists.
-> cifs will then do the right thing.
+> > On Wed, May 21, 2025 at 03:27:19PM +0200, Greg Kroah-Hartman wrote:
+> ...
+> > I tried it for the whole tree, and ugh, there are some real "errors" in
+> > there.  The nfs inode handling logic is crazy, passing in a const
+> > pointer and then setting fields in it.  So this will be some real work
+> > to unwind and fix in some places.
 > 
-> [...]
+> Perhaps change the really dodgy ones to container_of_deconst().
+> And fix the easy ones so they compile with the 'const' check.
 
-Applied to the vfs-6.16.netfs branch of the vfs/vfs.git tree.
-Patches in the vfs-6.16.netfs branch should appear in linux-next soon.
+Ick, no, let me fix these up properly.  I'm picking them off, and have
+found some real issues here.  It will give me something to build patches
+for over time while doing stable kernel test builds :)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+thanks,
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.16.netfs
-
-[1/1] netfs: Fix undifferentiation of DIO reads from unbuffered reads
-      https://git.kernel.org/vfs/vfs/c/db26d62d79e4
+greg k-h
 
