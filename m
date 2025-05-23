@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-660503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5540AC1ECA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:36:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D889CAC1EA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C9101BC584F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:36:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 494A21BA1BC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290261EE008;
-	Fri, 23 May 2025 08:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7B0289E1C;
+	Fri, 23 May 2025 08:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="a89jG/QS"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="FqEv8FK1"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75B623F27B;
-	Fri, 23 May 2025 08:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903742820B7;
+	Fri, 23 May 2025 08:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747989335; cv=none; b=r4pmshwfBpclYCFHOX9oIjiRn9d8b+sbysOddimupXv/dnCXfqubwycmlvVr5szCBjT6GLHfgqoYRvg+cSys6CIZy5UHPRwznqVVnqIyvN8Mqn1lMjLAIFKNR4jnnCtjf7PHYqx1Nc2fLNyobo6rXEqVHSWdyhzVacM0sLzm8TI=
+	t=1747988983; cv=none; b=lNVtQsBIENmXWX2P8d7YUkQooarsYtE15F+2gPqOQbs28sCwUkAvIzxz9wX9iVr873L/KBJAECUtm0jiUj0fWEjbqp+MeBzuglsUkvSRkIdk+WQPMv1LNjANyzrj3RaJ/nrj7e3aESoERTmUdaXz3X/7h8rX680JjHGApbqxHpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747989335; c=relaxed/simple;
-	bh=iEx80n8fgG/89TBgoMUIAJYHS9tPKdASg/vwQc+vbVg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ud0eJzOSRhM5jfjvCIDb28Xrfh5n1r5mSkFWtT2PlR6wZRr5PSbe6roRQMu9dwzHVF15P9eDvQBRnNPlkj+thv8ds+aZhAsC91KFrXA5idAMRMqQ7kjEweyF3uvDBviUm4PNI9599rN4HGm9URfIaY20/bPoLQzkkqYCdQvDxY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=a89jG/QS; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1747989335; x=1779525335;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=iEx80n8fgG/89TBgoMUIAJYHS9tPKdASg/vwQc+vbVg=;
-  b=a89jG/QSoR8iNavr92Q0uJKr2LxOlTKYsfjppzX3CM6WHYNURqGEydJZ
-   0cPhhsz3K7tiKtbf9ALezvkYZp33DPEfTCi7aLzbEjkyX+bled1PUZiDY
-   mgGAhuf465vUELrbUsnzpc0jwDXe9+Ewj90+yO8ka6JNZG3PTaMw7aqcG
-   gfpaZ5uWxq4FSaOwTPENLvXD/Hc7O1Kuo7itP4meu9EdVZp60zKLyjeRD
-   lNZq6oGVZyJX+XuPlo6ug+UWw7BUcADDRtnO2iH6kUHt/GFD89j1zLQMS
-   dBKGWvNb5HB/oBE0IRMTwNA+QgiohAlUPBhx1hYyeIzXAb1Vt24j8nSUm
-   Q==;
-X-CSE-ConnectionGUID: rV4OX+4HSQ+r696EVeXuxw==
-X-CSE-MsgGUID: jK41x6mXQJmu38my/w8XNA==
-X-IronPort-AV: E=Sophos;i="6.15,308,1739862000"; 
-   d="scan'208";a="41989874"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 May 2025 01:34:31 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Fri, 23 May 2025 01:34:28 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Fri, 23 May 2025 01:34:25 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <kory.maincent@bootlin.com>,
-	<wintera@linux.ibm.com>, <viro@zeniv.linux.org.uk>,
-	<quentin.schulz@bootlin.com>, <atenart@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net] net: phy: mscc: Stop clearing the the UDPv4 checksum for L2 frames
-Date: Fri, 23 May 2025 10:27:16 +0200
-Message-ID: <20250523082716.2935895-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1747988983; c=relaxed/simple;
+	bh=qUlUIZYdAX+W/1PkkjNty+aRerMPzcFJcmu8UhVVGO4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MMnA1k5kb9S89b4i0o6f/LKV96DyqUJOwWXUJZqdqXVLqbvwz482BcKxIbBwfrk3SKNH1vwY3hcZvLx7xX8MfX5G/riB2TQ5+5562e4c0sLexd8h4p9/3xgiFS+DEJZ/RLbbRLJuS5Ss1AP/DwVRCF8ovYGtff19Zd65zuN119w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=FqEv8FK1; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id CCC981F997;
+	Fri, 23 May 2025 10:29:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1747988979;
+	bh=kxQtaXcsjM2ovX5/37rHFvmUdzjRjLApt0L/oLOpB2U=; h=From:To:Subject;
+	b=FqEv8FK1TSN1d00jlAH6vrEHuFlvuJxvd1CbULeF+5cxvuSV1U3gYwYIO77wQLxzJ
+	 JTySDQll53QlEazU+gxs54PnFAMcC7gwzSUrOiUUBy0ekthUp8uMP7ELHgru+vEFyp
+	 TTSGRtZYmO4z8LoTEG+8OLqxSXMxHYtaQc+ZSgEu0qC+C8xie4p8YaPUdhNqZldPnS
+	 eK+gqKKxmeH4zw/JJ50QN0BnkjPQaa1fqrvp9XG4dM4VY8Z4TBy9qO4Kkw5cBgOZ0D
+	 Q/bY+tyuFHvQckfOMq0Lbva0UPykA5Xch57hITbnIVDn48ianX2O6qW5je2TZXPHl0
+	 5+2v0ZizUU05Q==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Dong Aisheng <aisheng.dong@nxp.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-i2c@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] i2c: lpi2c: implement master_xfer_atomic callback
+Date: Fri, 23 May 2025 10:29:29 +0200
+Message-Id: <20250523082931.23170-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,41 +64,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-We have noticed that when PHY timestamping is enabled, L2 frames seems
-to be modified by changing two 2 bytes with a value of 0. The place were
-these 2 bytes seems to be random(or I couldn't find a pattern).  In most
-of the cases the userspace can ignore these frames but if for example
-those 2 bytes are in the correction field there is nothing to do.  This
-seems to happen when configuring the HW for IPv4 even that the flow is
-not enabled.
-These 2 bytes correspond to the UDPv4 checksum and once we don't enable
-clearing the checksum when using L2 frames then the frame doesn't seem
-to be changed anymore.
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- drivers/net/phy/mscc/mscc_ptp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+This series adds atomic operations support to the imx-lpi2c driver and split
+the previous v3 patch into two separate patches.
 
-diff --git a/drivers/net/phy/mscc/mscc_ptp.c b/drivers/net/phy/mscc/mscc_ptp.c
-index 6f96f2679f0bf..6b800081eed52 100644
---- a/drivers/net/phy/mscc/mscc_ptp.c
-+++ b/drivers/net/phy/mscc/mscc_ptp.c
-@@ -946,7 +946,9 @@ static int vsc85xx_ip1_conf(struct phy_device *phydev, enum ts_blk blk,
- 	/* UDP checksum offset in IPv4 packet
- 	 * according to: https://tools.ietf.org/html/rfc768
- 	 */
--	val |= IP1_NXT_PROT_UDP_CHKSUM_OFF(26) | IP1_NXT_PROT_UDP_CHKSUM_CLEAR;
-+	val |= IP1_NXT_PROT_UDP_CHKSUM_OFF(26);
-+	if (enable)
-+		val |= IP1_NXT_PROT_UDP_CHKSUM_CLEAR;
- 	vsc85xx_ts_write_csr(phydev, blk, MSCC_ANA_IP1_NXT_PROT_UDP_CHKSUM,
- 			     val);
- 
+The first patch replaces the open-coded polling loops with readl_poll_timeout.
+This improves readability and consistency, and prepares the code for
+integration of the second patch, while maintaining the same functionality.
+
+The second patch implements the .master_xfer_atomic() callback, enabling
+support for atomic I2C transfers.
+
+Emanuele Ghidoli (2):
+  i2c: lpi2c: use readl_poll_timeout() for register polling
+  i2c: lpi2c: implement master_xfer_atomic callback
+
+ drivers/i2c/busses/i2c-imx-lpi2c.c | 262 +++++++++++++++++++----------
+ 1 file changed, 176 insertions(+), 86 deletions(-)
+
 -- 
-2.34.1
+2.39.5
 
 
