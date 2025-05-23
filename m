@@ -1,80 +1,114 @@
-Return-Path: <linux-kernel+bounces-660560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3512AC1F4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:07:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC8CDAC1F69
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E65916AE73
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:07:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5249A1C0337E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7C6224247;
-	Fri, 23 May 2025 09:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e34o0JUu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2053919C540;
-	Fri, 23 May 2025 09:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05425224B15;
+	Fri, 23 May 2025 09:10:29 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F5719C540;
+	Fri, 23 May 2025 09:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747991230; cv=none; b=b4iyUAOubmONlehHpd7xqnmha/yOCTVw2mhLaDKuRsTuiw89LnsArXl+JtZwpThF0Fl8rhjv8TdR7BPeSlO0o5PdjGucqEtNkW5d3f942iyXc9UV90JvVhiQ6/urQ/jfv0wk2O3SZJKLalDwZ8cI5iXjyrR5t7fBu/c4ZVJ/KDk=
+	t=1747991428; cv=none; b=R3MiblQaheiDE9F1qRP3qI76uho7vHyP9WeoEWbb6do7aW9HuJZt0xOy7DYbKj0jDAwI5LM60SUujzdJmgrBQ27/S76GUu8ZkkHDTwWlUJmNhYwhJW8cpSyC+6hC0ypqZKkdE14ouU7Ehn2vIZBBe5PWLVJgbK7H68XHpWpdQtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747991230; c=relaxed/simple;
-	bh=w43p4EyL6FCtdgKjiMG+C9dLXe1q27wYjQ2eiZtJ6iA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pv9QLVoq/EIYmpb1Wn2+RmDj6PR4llc6FatRzRJAI0BwSF5ef27IBCmWXSy40lvfQesoYhs6EnZufK9dU6yHcnJxp1DUYmUp/cX57+hOwuegOjZKwAPHiI0hWRkE3BbfmEB1tsW0Un4DRrKAKOjEZ5SBtJUhnYYoFE0NkCxEGG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e34o0JUu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04A69C4CEEB;
-	Fri, 23 May 2025 09:07:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747991229;
-	bh=w43p4EyL6FCtdgKjiMG+C9dLXe1q27wYjQ2eiZtJ6iA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e34o0JUu10QDuA0rVdjVZLPAacJRZlQ2ll9Sec9sJW23uGr3dhRR2bX7b4ZRcr8RN
-	 PuLYnYYcUWTIQYqby17/jcYiPpr4LrBRUw5MmEigGyiUEDJMaY4GkWzUytD8749yg3
-	 jov6+UTaRBxGiDJbMzj78IJ74ocWCRhWa5RkGDxqggqdYGkHtMROB5+s0+caOPqNEG
-	 fNAE3wCP4G22dNV0ZynfwvSubNezX6Yb3/gjMT8B2WO+QN0eYib9mPRrFaqgVjlKwW
-	 J6vqao9VP5k6AQ5OS8zJRE8eJDcvsmmr0z6OuzKSKjNyZdpPWhOWk18SguU4FM4IWl
-	 yE5A/yWEjJzdA==
-Date: Fri, 23 May 2025 11:07:06 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Georgi Djakov <djakov@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH 1/4] dt-bindings: mailbox: qcom,apcs: Add separate node
- for clock-controller
-Message-ID: <20250523-cunning-pearl-rottweiler-1a79d9@kuoka>
-References: <20250506-qcom-apcs-mailbox-cc-v1-0-b54dddb150a5@linaro.org>
- <20250506-qcom-apcs-mailbox-cc-v1-1-b54dddb150a5@linaro.org>
+	s=arc-20240116; t=1747991428; c=relaxed/simple;
+	bh=MDxnLt9ByCXdHX3IQAQYKZdyKJyha4673+V2+dkoijs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gb2Qp5eNbwx9+0VHP/5UayvKR3NU7nnkNsO5e26CCGax0JNek3XmASF5bOikYHqR9BCr0cFa7fXs9AfW2XVDR9wDB/K10O9DOnOuTOyl+vYdQ0ZgK/dE3E9kkvgSzxbeZqsVAm1tXb8XbfPPHJF2CSLL2CUUYOUQuHps6CG9RSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.181.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app1 (Coremail) with SMTP id TAJkCgD3DQ_7OjBoHdyJAA--.36090S2;
+	Fri, 23 May 2025 17:08:13 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: [PATCH v2 0/2] Add driver support for ESWIN eic700 SoC clock controller
+Date: Fri, 23 May 2025 17:07:47 +0800
+Message-Id: <20250523090747.1830-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250506-qcom-apcs-mailbox-cc-v1-1-b54dddb150a5@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgD3DQ_7OjBoHdyJAA--.36090S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww4fCr43tw1DXw4furyUWrg_yoW8Gw4DpF
+	4DGryFyr1jvrW7XayxJa4FgryfZ3ZrGFyjkFWIva4UZasIya48JF4fJa4DAF97Aw18Ar13
+	tF1qka1rCF4UAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmjgxUUUUU=
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-On Tue, May 06, 2025 at 03:10:08PM GMT, Stephan Gerhold wrote:
-> APCS "global" is sort of a "miscellaneous" hardware block that combines
-> multiple registers inside the application processor subsystem. Two distinct
-> use cases are currently stuffed together in a single device tree node:
-> 
->  - Mailbox: to communicate with other remoteprocs in the system.
->  - Clock: for controlling the CPU frequency.
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Updates:
 
-Best regards,
-Krzysztof
+  dt-bindings: clock: eswin: Documentation for eic7700 SoC
+  v1 -> v2: Update example, drop child node.
+            Clear warnings/errors for using "make dt_binding_check".
+            Change to the correct format.
+
+  clock: eswin: Add eic7700 clock driver
+  v1 -> v2: Drop some non-stanard code.
+            Use dev_err_probe() in probe functions.
+
+Xuyang Dong (2):
+  dt-bindings: clock: eswin: Documentation for eic7700 SoC
+  clock: eswin: Add eic7700 clock driver
+
+ .../bindings/clock/eswin,eic7700-clock.yaml   |   44 +
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/eswin/Kconfig                     |   10 +
+ drivers/clk/eswin/Makefile                    |    8 +
+ drivers/clk/eswin/clk-eic7700.c               | 3800 +++++++++++++++++
+ drivers/clk/eswin/clk-eic7700.h               |  194 +
+ drivers/clk/eswin/clk.c                       |  973 +++++
+ drivers/clk/eswin/clk.h                       |  213 +
+ .../dt-bindings/clock/eswin,eic7700-clock.h   |  588 +++
+ 10 files changed, 5832 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+ create mode 100644 drivers/clk/eswin/Kconfig
+ create mode 100644 drivers/clk/eswin/Makefile
+ create mode 100644 drivers/clk/eswin/clk-eic7700.c
+ create mode 100644 drivers/clk/eswin/clk-eic7700.h
+ create mode 100644 drivers/clk/eswin/clk.c
+ create mode 100644 drivers/clk/eswin/clk.h
+ create mode 100644 include/dt-bindings/clock/eswin,eic7700-clock.h
+
+--
+2.17.1
 
 
