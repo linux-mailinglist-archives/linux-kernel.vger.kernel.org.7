@@ -1,37 +1,38 @@
-Return-Path: <linux-kernel+bounces-661274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B85AC28E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 19:38:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27BD9AC28EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 19:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1535A1C014EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:38:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B10B7A47D61
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66B8298CD5;
-	Fri, 23 May 2025 17:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F5B29A32A;
+	Fri, 23 May 2025 17:37:34 +0000 (UTC)
 Received: from finn.localdomain (finn.gateworks.com [108.161.129.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC48298C10;
-	Fri, 23 May 2025 17:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED08298C11;
+	Fri, 23 May 2025 17:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.161.129.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748021853; cv=none; b=hEMXuQApiB8h5tuNi2XsWDecDUhD84CE35N5b+jL8cprkbS3RrjtspUrexyf82SSien9fPiMDgfJarG+sC9Rpkqxs3oXocafMX+y+0H9dBdI4N1RcjAmUeqc/vJgka5b21LuYwJAd0DGANUcD9mEKkvu2Wn5FqdbhTN36ICuRBU=
+	t=1748021854; cv=none; b=Bp2ck55arlhh9ePwvhZPJQtbIaVHCoBAOb2XBuchPCqbyWK9O2O00lE2hcvRpJcrSBZCeecYGGbHy7SLWl/qEiqrVpIGlcuQgr0mMutbJM1rhoX55X4vANht8ZyoZW+qUnP7a3IW5oWM4+NyMs9VVrng9aMhnNMM2qymYVj8v4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748021853; c=relaxed/simple;
-	bh=ynF9Pu1x44D20fshHFfV86WZwggjn0rW8NeTjDN6eiA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Dt6802d9J046niunHeNQpty20IVFK0Jk5rWDZ0k+aq0FXmJUWMwo9NL19P+3cexP4AkoEf9xVHvAzaDzTeq+PLeYrWDghlaVCp008sxEKv5Rmglg7IabyjOF7sEsPvaQ5lc/7DPU3c32Feq7pvaHONDCJY2O+AJJbLG6iz1fbFk=
+	s=arc-20240116; t=1748021854; c=relaxed/simple;
+	bh=qfnd4SWRxYCIwwUCJq3hOC2wCP4UOJlEuOmPKqPsai8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tx1ht2e8k6/QyxcFuxN3O6F+hzg5j+X5VFbMsQRVI9uJhDvyWWv30BTSe5EkgikKO2wK2k/vPVs4lZfdttpICCBMSKVfAKONYPXsh3RJnnvXSYFyfcAtL2qwJRexhh5NXNNzzh/puSK2e/IZuuJVI+4uxQncwvpd+fJSqzTpCY4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; arc=none smtp.client-ip=108.161.129.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
 Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
 	by finn.localdomain with esmtp (Exim 4.95)
 	(envelope-from <tharvey@gateworks.com>)
-	id 1uIWKl-0076rJ-QC;
-	Fri, 23 May 2025 17:37:27 +0000
+	id 1uIWKm-0076rJ-SO;
+	Fri, 23 May 2025 17:37:29 +0000
 From: Tim Harvey <tharvey@gateworks.com>
 To: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
@@ -46,10 +47,12 @@ Cc: imx@lists.linux.dev,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Fabio Estevam <festevam@gmail.com>,
 	Tim Harvey <tharvey@gateworks.com>
-Subject: [PATCH 1/4] arm64: dts: imx8mp-venice-gw71xx: fix TPM SPI frequency
-Date: Fri, 23 May 2025 10:37:20 -0700
-Message-Id: <20250523173723.4167474-1-tharvey@gateworks.com>
+Subject: [PATCH 2/4] arm64: dts: imx8mp-venice-gw72xx: fix TPM SPI frequency
+Date: Fri, 23 May 2025 10:37:21 -0700
+Message-Id: <20250523173723.4167474-2-tharvey@gateworks.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250523173723.4167474-1-tharvey@gateworks.com>
+References: <20250523173723.4167474-1-tharvey@gateworks.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,17 +69,17 @@ Adjust the spi-max-frequency based on these findings.
 
 [1] https://www.nxp.com/webapp/Download?colCode=IMX8MPIEC
 
-Fixes: 1a8f6ff6a291 ("arm64: dts: imx8mp-venice-gw71xx: add TPM device")
+Fixes: 5016f22028e4 ("arm64: dts: imx8mp-venice-gw72xx: add TPM device")
 Signed-off-by: Tim Harvey <tharvey@gateworks.com>
 ---
- arch/arm64/boot/dts/freescale/imx8mp-venice-gw71xx.dtsi | 2 +-
+ arch/arm64/boot/dts/freescale/imx8mp-venice-gw72xx.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw71xx.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw71xx.dtsi
-index 2f740d74707b..4bf818873fe3 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw71xx.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw71xx.dtsi
-@@ -70,7 +70,7 @@ &ecspi2 {
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw72xx.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw72xx.dtsi
+index 5ab3ffe9931d..cf747ec6fa16 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw72xx.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw72xx.dtsi
+@@ -110,7 +110,7 @@ &ecspi2 {
  	tpm@1 {
  		compatible = "atmel,attpm20p", "tcg,tpm_tis-spi";
  		reg = <0x1>;
