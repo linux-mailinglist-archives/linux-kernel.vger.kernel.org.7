@@ -1,155 +1,131 @@
-Return-Path: <linux-kernel+bounces-661273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C01DAC28E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 19:37:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D6CAC28B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 19:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4257A4304F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:37:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B9C07BBA11
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666B8298C2D;
-	Fri, 23 May 2025 17:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF12A29290A;
+	Fri, 23 May 2025 17:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="UyT8x5z9"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Wbth+dAX"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEE229826C;
-	Fri, 23 May 2025 17:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FD229375E
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 17:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748021851; cv=none; b=m9y4+QULbcNoQQDqygHLMm+YuRUIZs6QWw61g/0XDx5HHxTQn4DiONRZyvMrfL6F8ztamJ43neI9ViXSKqb6IZ06sIj7+VYLHv/QbnO506PT7nShdQsXZ7TXbr7j0fMzgSke/yJwyX53KFbFSaV+kfiXvNrlD/0GKja2H6iZi8Q=
+	t=1748021613; cv=none; b=hmJpwk4NahajfZzeWxUTzawYAukVoBo1Fn3cbYsrPokL5DsnU1T/3Hlp4XxXKPVE1/opBR/kU88GB11+ikXjfRokOIECgmquPh4dDeZbC2iIwq6QwYzgKYyt0303Gv/ToJgfiMi547edkntJ1JJzuWxby0OWIl0trKb8CBqTUcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748021851; c=relaxed/simple;
-	bh=p+IBqUvjAED01I5pg3BQzrhZMuhdd+dQRTmhsBmJTGA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fugfvcy9MbQf1dLdN2Ke2CY6ty+hbQVZBgz61O/jfPAmGd5h4siGtl71EbA2qDCesRvGwup+ObuhKHV4+PbQlRVf+Q8gfBo8fdbS2SMRttuOkJLDa6Kk7iM+iK/QjrJut8Ch6qIR+ytax/ABYO6BsfWlI/TPK+ekg9dRSM1ZhX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=UyT8x5z9; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1748021849; x=1779557849;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=p+IBqUvjAED01I5pg3BQzrhZMuhdd+dQRTmhsBmJTGA=;
-  b=UyT8x5z9UuQVWxsmzc4UKWdmwAKZZJnEmV9A7L0+0EfN4PqcWt8AM2Nu
-   xduZwu3mNJMa1N2/5VNOpnW4fIqytb+ZZ42yeb76AeFCQ/ldd8Lt1DClL
-   km9mjFI+vqY39kEcfJcpvgZ2sWg9Qj3h5qIpurl9I7SomCeWEgErTK4CX
-   CYOSU/MK8kn3zCCiCpaXDs6wIbZ7qopS13Rp2HJHqaOpw2A1Us2aAfR8Z
-   fuAPhut5G8BEP5EHWeQQ1Enqw/Xa23SooE8Jj16p7fPKkFvtTUKQEjGnz
-   pEL+iCToBl4L3vy7cPXTSGK8SsAWEAcWS2xk9ywszyrzfo6HNJ9iwVufE
-   Q==;
-X-CSE-ConnectionGUID: vtf0FASOTiybk7hIvf2RSg==
-X-CSE-MsgGUID: LjzpeQ8+T6K3l0Cs0PemIQ==
-X-IronPort-AV: E=Sophos;i="6.15,309,1739862000"; 
-   d="scan'208";a="209508488"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 May 2025 10:37:26 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Fri, 23 May 2025 10:36:52 -0700
-Received: from che-ld-unglab06.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Fri, 23 May 2025 10:36:49 -0700
-From: Rengarajan S <rengarajan.s@microchip.com>
-To: <bryan.whitehead@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <rengarajan.s@microchip.com>
-Subject: [PATCH v1 net-next] net: lan743x: Modify the EEPROM and OTP size for PCI1xxxx devices
-Date: Fri, 23 May 2025 23:03:26 +0530
-Message-ID: <20250523173326.18509-1-rengarajan.s@microchip.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1748021613; c=relaxed/simple;
+	bh=qt/HVkr9zL2lJNeN6p4tMwnsp0x3rx/30xKqdVxveFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y6SfN+E3V39Pf1WuaCNKfr711WIRI2AXkxrLljl1Pz0o8mZBA3NnMMKXWQbaaTtTJSN/gMPdte7M9n5+P8r9CUksi4mERdHmkPo31XQpGQsdT2cY9ssUcFrUfGqB/UANBfN0ljjB2BaXhG0aFCrxrLBgQWeJnsrmdhFtXlGhA+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Wbth+dAX; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6f8b10b807fso1235206d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 10:33:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1748021609; x=1748626409; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qt/HVkr9zL2lJNeN6p4tMwnsp0x3rx/30xKqdVxveFw=;
+        b=Wbth+dAXzBz7lwOEsCJZTtABNMJFUPNXtpVH5pdm0cKiz4a/FumZ/GwF8dp+73P2ep
+         dEWQGvXf06lLcEcjKDiWu9IQdXzxJmU8QXElXPvfTsfpYJNs9WGSdrPtVYIJ16a09bv2
+         McuNVBhP3VxVaV8M0BWgSJj0yPR0LS30RNn4aKcO8cEoQZiYf98CNJBMCknO+qJperM+
+         HNuw9WcAtuFpuz5smi4wF7BDWpyLR8ak2xlPit6jtXD84EJCHFEMBykw4QscnD/hIbN/
+         9ePn2rEGOK19OLAIEm6ArBJPFPCkAvdD7QoEz0k9GIGo49Cor8QWNRwHv2/eOzaVYIhi
+         /jig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748021609; x=1748626409;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qt/HVkr9zL2lJNeN6p4tMwnsp0x3rx/30xKqdVxveFw=;
+        b=jErN9f6fSc4npeWATzA2Dda9In5A7ONoyYBa+0G0GLiLTSTALO2Eim6MFwvDIk8VSJ
+         5S6tnLaieEjQUtsKQVywfdEMr1sGMS8KqXb+ZG/t+FiA/oZ2nkW5sZI0uNno6y6e++5Z
+         pgsSlkWJAgxto/80PBPe+gvdbhZDQZOR5ShS83GV5byeKTZsnEFvM6D/Rltm5IeY4txF
+         80eO762J0cmAYz+uV/4g7xSY7/BAWpZfX8lmtLuMG39IX5162asTxWsmZ3W1dqiPnj7z
+         eNRk390UAuy/njQdbhwrIpo+HGZdL9tdXp65eNOEYXjZkVqqbHmQGI+TWyjs/lM+0eia
+         cgWA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5ATx/EMe4x1ZtF41dxAeDGAKM2WUApC+U1wrAoGrn4GcSyTwyRoqJBuMrtTbPYcaIQi8qg8Kv71eMDeA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfulrZPj3CafxOkTEg1t8qoJAatjwl683K8ZCiT7863AJs1orz
+	DU70QQu/UuBPETGk/qFlPR9dnavdOQvNQFQh4Q1M0QHOt9UdZ2EVU2MuFyOZRb84iFw=
+X-Gm-Gg: ASbGncs0+M+NmB6h2G2sUSe0aenOcyb6KRCxlKsxGz2x1otY1hUEMdv3wfJsBCiRuOD
+	OqJzS/0YINPyt7EKYSzatsIowcS1/0Fy/6ooBgcbPSf3X54kDfPVrwtnnXjqANE7Cj2sW3G5V5a
+	IJNh11B+W5+VzuFPrWWOkJWa35Vu0xTPsRZiS+gd6hlg9/CDjgouzXB7R2abtKErM44lIcA7O1V
+	dX8VOx1g4iv9wYpPEgxmab/Lw9Bi/mQgjxg9OE9wVvsj6C3TatcMoblUOpiUHZPv3m8PLT4fz3o
+	FvH1lGG2FYlBD3H4zqVcgMKotAPe3xpKZzNeXFPoz4qaARuKhMQW4OghulmhztG2wvl7rnWux/z
+	xeoOyNT2D1JbChahsMlo=
+X-Google-Smtp-Source: AGHT+IGfoUQU6tMr9zPYUJ6jdUAQDnehNSnxPg9FvM8hXpb+wki2yPOFQiObmL3C04ljtIMxkfbFrg==
+X-Received: by 2002:ad4:5dc4:0:b0:6d8:a1fe:7293 with SMTP id 6a1803df08f44-6fa9d2ec0dcmr4244776d6.42.1748021609392;
+        Fri, 23 May 2025 10:33:29 -0700 (PDT)
+Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f8b08afb37sm117198226d6.49.2025.05.23.10.33.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 May 2025 10:33:28 -0700 (PDT)
+Message-ID: <b8b0f11c-844d-4925-a8fb-cb92cc93f8cf@baylibre.com>
+Date: Fri, 23 May 2025 13:33:26 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] pwm: axi-pwmgen: fix missing separate external
+ clock
+To: David Lechner <dlechner@baylibre.com>,
+ Michael Hennerich <michael.hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250522-pwm-axi-pwmgen-add-external-clock-v2-0-086ea9e6ecf0@baylibre.com>
+ <20250522-pwm-axi-pwmgen-add-external-clock-v2-3-086ea9e6ecf0@baylibre.com>
+Content-Language: en-US
+From: Trevor Gamblin <tgamblin@baylibre.com>
+In-Reply-To: <20250522-pwm-axi-pwmgen-add-external-clock-v2-3-086ea9e6ecf0@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Maximum OTP and EEPROM size for hearthstone PCI1xxxx devices are 8 Kb
-and 64 Kb respectively. Adjust max size definitions and return correct
-EEPROM length based on device. Also prevent out-of-bound read/write.
 
-Signed-off-by: Rengarajan S <rengarajan.s@microchip.com>
----
- .../net/ethernet/microchip/lan743x_ethtool.c   | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+On 2025-05-22 10:49, David Lechner wrote:
+> Add proper support for external clock to the AXI PWM generator driver.
+>
+> In most cases, the HDL for this IP block is compiled with the default
+> ASYNC_CLK_EN=1. With this option, there is a separate external clock
+> that drives the PWM output separate from the peripheral clock. So the
+> driver should be enabling the "axi" clock to power the peripheral and
+> the "ext" clock to drive the PWM output.
+>
+> When ASYNC_CLK_EN=0, the "axi" clock is also used to drive the PWM
+> output and there is no "ext" clock.
+>
+> Previously, if there was a separate external clock, users had to specify
+> only the external clock and (incorrectly) omit the AXI clock in order
+> to get the correct operating frequency for the PWM output.
+>
+> The devicetree bindings are updated to fix this shortcoming and this
+> patch changes the driver to match the new bindings. To preserve
+> compatibility with any existing dtbs that specify only one clock, we
+> don't require the clock name on the first clock.
+>
+> Fixes: 41814fe5c782 ("pwm: Add driver for AXI PWM generator")
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 
-diff --git a/drivers/net/ethernet/microchip/lan743x_ethtool.c b/drivers/net/ethernet/microchip/lan743x_ethtool.c
-index 1459acfb1e61..64a3b953cc17 100644
---- a/drivers/net/ethernet/microchip/lan743x_ethtool.c
-+++ b/drivers/net/ethernet/microchip/lan743x_ethtool.c
-@@ -18,6 +18,8 @@
- #define EEPROM_MAC_OFFSET		    (0x01)
- #define MAX_EEPROM_SIZE			    (512)
- #define MAX_OTP_SIZE			    (1024)
-+#define MAX_HS_OTP_SIZE			    (8 * 1024)
-+#define MAX_HS_EEPROM_SIZE		    (64 * 1024)
- #define OTP_INDICATOR_1			    (0xF3)
- #define OTP_INDICATOR_2			    (0xF7)
- 
-@@ -272,6 +274,9 @@ static int lan743x_hs_otp_read(struct lan743x_adapter *adapter, u32 offset,
- 	int ret;
- 	int i;
- 
-+	if (offset + length > MAX_HS_OTP_SIZE)
-+		return -EINVAL;
-+
- 	ret = lan743x_hs_syslock_acquire(adapter, LOCK_TIMEOUT_MAX_CNT);
- 	if (ret < 0)
- 		return ret;
-@@ -320,6 +325,9 @@ static int lan743x_hs_otp_write(struct lan743x_adapter *adapter, u32 offset,
- 	int ret;
- 	int i;
- 
-+	if (offset + length > MAX_HS_OTP_SIZE)
-+		return -EINVAL;
-+
- 	ret = lan743x_hs_syslock_acquire(adapter, LOCK_TIMEOUT_MAX_CNT);
- 	if (ret < 0)
- 		return ret;
-@@ -497,6 +505,9 @@ static int lan743x_hs_eeprom_read(struct lan743x_adapter *adapter,
- 	u32 val;
- 	int i;
- 
-+	if (offset + length > MAX_HS_EEPROM_SIZE)
-+		return -EINVAL;
-+
- 	retval = lan743x_hs_syslock_acquire(adapter, LOCK_TIMEOUT_MAX_CNT);
- 	if (retval < 0)
- 		return retval;
-@@ -539,6 +550,9 @@ static int lan743x_hs_eeprom_write(struct lan743x_adapter *adapter,
- 	u32 val;
- 	int i;
- 
-+	if (offset + length > MAX_HS_EEPROM_SIZE)
-+		return -EINVAL;
-+
- 	retval = lan743x_hs_syslock_acquire(adapter, LOCK_TIMEOUT_MAX_CNT);
- 	if (retval < 0)
- 		return retval;
-@@ -604,9 +618,9 @@ static int lan743x_ethtool_get_eeprom_len(struct net_device *netdev)
- 	struct lan743x_adapter *adapter = netdev_priv(netdev);
- 
- 	if (adapter->flags & LAN743X_ADAPTER_FLAG_OTP)
--		return MAX_OTP_SIZE;
-+		return adapter->is_pci11x1x ? MAX_HS_OTP_SIZE : MAX_OTP_SIZE;
- 
--	return MAX_EEPROM_SIZE;
-+	return adapter->is_pci11x1x ? MAX_HS_EEPROM_SIZE : MAX_EEPROM_SIZE;
- }
- 
- static int lan743x_ethtool_get_eeprom(struct net_device *netdev,
--- 
-2.25.1
+Thanks for fixing this!
+
+Reviewed-by: Trevor Gamblin <tgamblin@baylibre.com>
 
 
