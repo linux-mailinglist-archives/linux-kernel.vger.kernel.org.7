@@ -1,265 +1,246 @@
-Return-Path: <linux-kernel+bounces-660778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69911AC2202
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:33:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE143AC220A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FE2A7A9B4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:32:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6F143A1FD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE7F22F77A;
-	Fri, 23 May 2025 11:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEAA238157;
+	Fri, 23 May 2025 11:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZMI4g2V3"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Xrh4wYB9"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E2122A811;
-	Fri, 23 May 2025 11:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB192356A8
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 11:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748000012; cv=none; b=C0oxwr28/BD5QqwXB6YTQjJgNcKE49hfw3r4GhZ3iN1budvL+yHZJiS6tEZEikMeDcMn2Jl2CppACi4nLZNCGWBP958MbcH9w/vBA9D4WBJMzYlu7II/BpPGvSUJT2vQQ1eUIZagEardTU/OAvwPA7tM7e+grp/u2heUngPPjG0=
+	t=1748000175; cv=none; b=GskWvIVoeU13MC+zXejNQ7TLtWUxX4hz/9yFHLe8bUFZkkngA/YESlGQVYQx3jU08ZRLE5F0zh6GXuv3soYQ3oSps+nk2IXFkZszfnWN7mKNbFDbBDPzudhhajGyZFpS30xW9I7NMz3qLB7MYGXzNm8B5nsdX/DMVZ3EB3M7dpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748000012; c=relaxed/simple;
-	bh=+AdCLW58O2v6UqjFap1e1Sh72SHswmLyGTAeC0TkxVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GGMEps5ifonmZ9h7oszBcrwDTNOutPyX6XH14aND2XTnqwjbqhIcU5CUKPxmGCHNO+P6+5MhZbRwy05hsiLvNRpnXXp7VG1EjumTZf9aM86Kvq2qBReBmSq2bnlsylpzW3e3nBKh97NUIuAfj+QUWyIYyh6k1g8MkHLO8zI07Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZMI4g2V3; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 77B3A6B5;
-	Fri, 23 May 2025 13:33:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1747999985;
-	bh=+AdCLW58O2v6UqjFap1e1Sh72SHswmLyGTAeC0TkxVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZMI4g2V3vFwanYXprRF1UcZ/4UHtYQy4RnRRrTj9LcW/kQxms3izizpjLZYyC/1IT
-	 S9hW1pdyse1KOMX97NhB7ni1fIIuAlT0gI1xQGOeawgsWdFLDKbgHXxH1nqFYRlLmh
-	 DRctBdSue6NLMDPvbr7d+BmuQ2fM8iTtIOtzpjJA=
-Date: Fri, 23 May 2025 13:33:24 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rui Miguel Silva <rmfrfs@gmail.com>, 
-	Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Enable MIPI filtering by DT on i.MX8M*
-Message-ID: <jqjptsphbtdtziuucehxutseaz7j4kjiirz2hk77f3dznswvza@avbjjzu3jcam>
-References: <m3h61u9jy2.fsf@t19.piap.pl>
- <20250509103733.GE28896@pendragon.ideasonboard.com>
- <m3o6vn8np5.fsf@t19.piap.pl>
- <iegnn5xoosqpk52hvipcr73aliwhqtsq6r6ctvt5756bhy6yen@rqcdongb7fdf>
- <m31psg97dy.fsf@t19.piap.pl>
+	s=arc-20240116; t=1748000175; c=relaxed/simple;
+	bh=5osHyV21by3EPnFM/B87KOZI5Ors1zitCYB5PcM/luk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HBWkt/jMa+u0f4uxs/y4qzsnXqjgLxjuSb9eyDhwbXP0LjOV/5pAsFXTz+J1xD9K4OFbgBqfm0NbXsjXmiYjRt2d4mRSfLlWpU44Q0nrx1MG5TqTuIAurYS6wH5LiKByqo2MlsfQt4x14dM1Nd4kGJRdh8wTxy2jaQafoktUQws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Xrh4wYB9; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a361a54454so1141823f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 04:36:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1748000172; x=1748604972; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VPjovNDjW6+EQ4LMpESmH+B/L0gygzy/uxelrXjYBg8=;
+        b=Xrh4wYB9eJtr9DWwSS4xd5adpaYq9zmg89Jhn8G/8wD1IH468nKEPdS+etZcsfXube
+         CvoErKsdwtLpjrzTrhX0r72c5Qv1bzFEsQ0Fm4+1RvqGY/I/SEwR2fI+wv8bFMRLKH+6
+         9XaxCBAqy021IVcUcOfLF97C3N+bhWhHqmWJ+PB2Wq7qbIr5lSlbHopi4lSSDce4vwQS
+         yk2AD7eKljt3EjfUCUNgt8HyXlgQ/GNisg8jf/aPGTw45BZ8nfPmcBVqLU0eJ+wADcF4
+         QhsLH2EplMFIvPVvsos9PApgWFsZtfr1p1+n9UpDSMiQaPn9yWuezyHuH1ir+ip+xGJL
+         y4lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748000172; x=1748604972;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VPjovNDjW6+EQ4LMpESmH+B/L0gygzy/uxelrXjYBg8=;
+        b=SbfacoPWR01PSa7zwMEfP/mFN8uGqUJxhv2o7yIaFWSa8KohAEuqNjK0+Nl7fUbrgD
+         Gt9jKjpTgbwYMi5JT0njFTQfGxVCc76tATufMC/UkK+O1QE4RvLbY/D5h03GV4K3xSx+
+         bL9/Uilp+iU1ySHPSBsTwWQlm3XpuQaXdFfFXVw+vT8fVBJZpslwy4umZ3dLcVrK3d3A
+         mqdIyB7SNnrkJzIrsa5A/x0GBr+SLWuNI8BTog30Dw+3bQ20hblCaJBa1JNyIRNlWGyd
+         VFgS11xxg7VvHHgz58W/G7Fu2qIMQc4pz45znf3eCG6Nb5Uul2ijFqS7E6+U53Rc8lQW
+         UQkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWVfN14Mqx40ZEH4P8gkSeRun9zMJYStVq/G5GegDWIb4dTOlNaJMwMklswvQJJgSB5+8CNFL0anxIsfZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSIUeBEgbEeDXwFKmmcr4xs/iHsKdaR4cWzaence1K91B4fUqV
+	JNQK2pb8tS8e3QQ/ZC0RABGD27ZkvdRRf4v+aZ60USOOXgburG63R4+AelY3aqMeVVo=
+X-Gm-Gg: ASbGnctv80vsoubLIXFrc3vJjrGrEsZr42JMw35Xnbd9p6GsjqOoVzP+ts4+6VyBlBS
+	WLw5e0QMPrQklkGQ5lhqd5zRMV49b1DiBybSCwIbTgtaIbBnqkDl0ucjKjz/tZ89jNqnXyhH8/Q
+	/+HvmacAGbc3XgWxMGkwlx+zbSCOG2pLvBb+HjHiJTcCS/82GY6lCHDdsSKbSREnClUuRT4fDaG
+	PCmX+LOjG4KiH9qMrBVJoWFZhjd+oHUrTWXRKRyxacbusq6eBfnqwYKovRao7HpgE7ZgicC2AM7
+	NcvGuIbshUCkd43QZEJ3WD00msBu6rZcU9AKq2O7rPPqKvL1uSHzxEbZEo8=
+X-Google-Smtp-Source: AGHT+IF2ZQShD6Bzg9HopdSxCvsBVk+Vm5DBLVCqW0pMilB6flZ85+PDQSUHNACKnOikFlZ7WJIovg==
+X-Received: by 2002:a05:6000:188f:b0:3a3:71fb:7903 with SMTP id ffacd0b85a97d-3a371fb829emr6202649f8f.10.1748000171649;
+        Fri, 23 May 2025 04:36:11 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200:be84:d9ad:e5e6:f60b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f3814262sm136898265e9.25.2025.05.23.04.36.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 May 2025 04:36:11 -0700 (PDT)
+From: =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+To: kvm-riscv@lists.infradead.org
+Cc: kvm@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Anup Patel <anup@brainfault.org>,
+	Atish Patra <atishp@atishpatra.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Andrew Jones <ajones@ventanamicro.com>
+Subject: [PATCH v4] RISC-V: KVM: add KVM_CAP_RISCV_USERSPACE_SBI
+Date: Fri, 23 May 2025 13:33:49 +0200
+Message-ID: <20250523113347.2898042-3-rkrcmar@ventanamicro.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <m31psg97dy.fsf@t19.piap.pl>
 
-Hi Krzysztof
+The new capability allows userspace to implement SBI extensions that KVM
+does not handle.  This allows userspace to implement any SBI ecall as
+userspace already has the ability to disable acceleration of selected
+SBI extensions.
+The base extension is made controllable as well, but only with the new
+capability, because it was previously handled specially for some reason.
+*** The related compatibility TODO in the code needs addressing. ***
 
-On Thu, May 22, 2025 at 02:06:49PM +0200, Krzysztof Hałasa wrote:
-> Hi Jacopo,
->
-> Jacopo Mondi <jacopo.mondi@ideasonboard.com> writes:
->
-> > However the i.MX8MP does implement INTERLEAVE_MODE, and it's anyway
-> > marked as V3.6.3, so DT filtering is there disabled as well. I guess
-> > this is intentional, see below...
->
-> BTW the version register on iMX8MP is 3060301, which may possibly mean
-> something like 3.6.3.1. I wonder if 8MM has the same.
->
-> > some registers like 32E4_000C are not listed in the peripheral memory
-> > map, so you're probably reading an invalid memory area there
->
-> Sure - those are apparently wired to contain "DEADCAFE" (a hex value).
->
-> > If you're capturing RAW12 in 1920x1080 these two registers are
-> >
-> > 32E40040: (MIPI_CSI1_ISP_CONFIG_CH0) = 0xb0
-> > 32E40044: (MIPI_CSI1_ISP_RESOLUTION_CH0) = 0x4380780
-> > 32E40048: (MIPI_CSI1_ISP_SYNC_CH0) = 0
-> > 32E4004c: invalid
->
-> Sure.
->
-> >> 32E40050:      8FD 80008000        0 DEADCAFE <<< ISP_CONFIG1
-> >> 32E40060:      8FE 80008000        0 DEADCAFE <<< ISP_CONFIG2
-> >> 32E40070:      8FF 80008000        0 DEADCAFE ???
-> >
-> > All of these are invalid registers
->
-> Only those DEADCAFEs are strictly invalid, the rest is just
-> undocumented. With the notable exception of version register, they
-> aren't probably useful, though - due to the way the CSIC is connected to
-> the rest of the chip.
->
-> I only mentioned them because Laurent asked about capturing embedded
-> data - I guess the registers could be used for that on some other chip
-> (apparently not on i.MX8MP).
->
-> > We have been using 8mp extensively with sensors that produce embedded
-> > data and afaict ED are not in the final image.
->
-> Well, I admit I haven't looked it down to this finest detail. The
-> visible effect was the image was slightly corrupted without the DT
-> filtering, so I assumed ED was doing that.
->
-> I use two similar sensors: IMX290 (on CSI1) and IMX462 (CSI2). It
-> appears IMX290 doesn't cause the problem, while IMX462 does. This may
-> depend on the CSI used, though. Both sensors seem to produce the
-> following MIPI packets (counting from start of video frame, 1920x1080p25
-> raw 12 bit):
-> - Frame Start: DT=0
-> - a short Embedded data packet, DT=12h
-> - a NULL packet, line-sized, DT=0x10
-> - 10 User Defined 8-bit Data Type 8 packets, line-sized, DT=0x37, called
->   apparently "Vertical OB" by Sony datasheet
+This is a VM capability, because userspace will most likely want to have
+the same behavior for all VCPUs.  We can easily make it both a VCPU and
+a VM capability if there is demand in the future.
 
-These are optically black pixels and should probably be discarded by
-the gasket as well as embedded data ?
+Signed-off-by: Radim Krčmář <rkrcmar@ventanamicro.com>
+---
+v4:
+* forward base extension as well
+* change the id to 242, because 241 is already taken in linux-next
+* QEMU example: https://github.com/radimkrcmar/qemu/tree/mp_state_reset
+v3: new
+---
+ Documentation/virt/kvm/api.rst    | 11 +++++++++++
+ arch/riscv/include/asm/kvm_host.h |  3 +++
+ arch/riscv/include/uapi/asm/kvm.h |  1 +
+ arch/riscv/kvm/vcpu_sbi.c         | 17 ++++++++++++++---
+ arch/riscv/kvm/vm.c               |  5 +++++
+ include/uapi/linux/kvm.h          |  1 +
+ 6 files changed, 35 insertions(+), 3 deletions(-)
 
-> - 1080 real lines, DT=0x2C, 12-bit RGGB data
-> - short Frame End packet, DT=1
->
-> I hope I got this right, this is straight from oscilloscope (only
-> checked IDs on IMX462, will confirm IMX290 later but it looks the same).
-> In 1280x1080p25 mode there are 4 (not 10) "vertical OB" packets, and 720
-> RGGB lines instead of 1080.
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index e107694fb41f..c9d627d13a5e 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -8507,6 +8507,17 @@ given VM.
+ When this capability is enabled, KVM resets the VCPU when setting
+ MP_STATE_INIT_RECEIVED through IOCTL.  The original MP_STATE is preserved.
+ 
++7.44 KVM_CAP_RISCV_USERSPACE_SBI
++--------------------------------
++
++:Architectures: riscv
++:Type: VM
++:Parameters: None
++:Returns: 0 on success, -EINVAL if arg[0] is not zero
++
++When this capability is enabled, KVM forwards ecalls from disabled or unknown
++SBI extensions to userspace.
++
+ 8. Other capabilities.
+ ======================
+ 
+diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
+index 85cfebc32e4c..6f17cd923889 100644
+--- a/arch/riscv/include/asm/kvm_host.h
++++ b/arch/riscv/include/asm/kvm_host.h
+@@ -122,6 +122,9 @@ struct kvm_arch {
+ 
+ 	/* KVM_CAP_RISCV_MP_STATE_RESET */
+ 	bool mp_state_reset;
++
++	/* KVM_CAP_RISCV_USERSPACE_SBI */
++	bool userspace_sbi;
+ };
+ 
+ struct kvm_cpu_trap {
+diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/asm/kvm.h
+index 5f59fd226cc5..dd3a5dc53d34 100644
+--- a/arch/riscv/include/uapi/asm/kvm.h
++++ b/arch/riscv/include/uapi/asm/kvm.h
+@@ -204,6 +204,7 @@ enum KVM_RISCV_SBI_EXT_ID {
+ 	KVM_RISCV_SBI_EXT_DBCN,
+ 	KVM_RISCV_SBI_EXT_STA,
+ 	KVM_RISCV_SBI_EXT_SUSP,
++	KVM_RISCV_SBI_EXT_BASE,
+ 	KVM_RISCV_SBI_EXT_MAX,
+ };
+ 
+diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
+index 31fd3cc98d66..497d5b023153 100644
+--- a/arch/riscv/kvm/vcpu_sbi.c
++++ b/arch/riscv/kvm/vcpu_sbi.c
+@@ -39,7 +39,7 @@ static const struct kvm_riscv_sbi_extension_entry sbi_ext[] = {
+ 		.ext_ptr = &vcpu_sbi_ext_v01,
+ 	},
+ 	{
+-		.ext_idx = KVM_RISCV_SBI_EXT_MAX, /* Can't be disabled */
++		.ext_idx = KVM_RISCV_SBI_EXT_BASE,
+ 		.ext_ptr = &vcpu_sbi_ext_base,
+ 	},
+ 	{
+@@ -217,6 +217,11 @@ static int riscv_vcpu_set_sbi_ext_single(struct kvm_vcpu *vcpu,
+ 	if (!sext || scontext->ext_status[sext->ext_idx] == KVM_RISCV_SBI_EXT_STATUS_UNAVAILABLE)
+ 		return -ENOENT;
+ 
++	// TODO: probably remove, the extension originally couldn't be
++	// disabled, but it doesn't seem necessary
++	if (!vcpu->kvm->arch.userspace_sbi && sext->ext_id == KVM_RISCV_SBI_EXT_BASE)
++		return -ENOENT;
++
+ 	scontext->ext_status[sext->ext_idx] = (reg_val) ?
+ 			KVM_RISCV_SBI_EXT_STATUS_ENABLED :
+ 			KVM_RISCV_SBI_EXT_STATUS_DISABLED;
+@@ -471,8 +476,14 @@ int kvm_riscv_vcpu_sbi_ecall(struct kvm_vcpu *vcpu, struct kvm_run *run)
+ #endif
+ 		ret = sbi_ext->handler(vcpu, run, &sbi_ret);
+ 	} else {
+-		/* Return error for unsupported SBI calls */
+-		cp->a0 = SBI_ERR_NOT_SUPPORTED;
++		if (vcpu->kvm->arch.userspace_sbi) {
++			next_sepc = false;
++			ret = 0;
++			kvm_riscv_vcpu_sbi_forward(vcpu, run);
++		} else {
++			/* Return error for unsupported SBI calls */
++			cp->a0 = SBI_ERR_NOT_SUPPORTED;
++		}
+ 		goto ecall_done;
+ 	}
+ 
+diff --git a/arch/riscv/kvm/vm.c b/arch/riscv/kvm/vm.c
+index b27ec8f96697..0b6378b83955 100644
+--- a/arch/riscv/kvm/vm.c
++++ b/arch/riscv/kvm/vm.c
+@@ -217,6 +217,11 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap)
+ 			return -EINVAL;
+ 		kvm->arch.mp_state_reset = true;
+ 		return 0;
++	case KVM_CAP_RISCV_USERSPACE_SBI:
++		if (cap->flags)
++			return -EINVAL;
++		kvm->arch.userspace_sbi = true;
++		return 0;
+ 	default:
+ 		return -EINVAL;
+ 	}
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index 454b7d4a0448..bf23deb6679e 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -931,6 +931,7 @@ struct kvm_enable_cap {
+ #define KVM_CAP_X86_GUEST_MODE 238
+ #define KVM_CAP_ARM_WRITABLE_IMP_ID_REGS 239
+ #define KVM_CAP_RISCV_MP_STATE_RESET 240
++#define KVM_CAP_RISCV_USERSPACE_SBI 242
+ 
+ struct kvm_irq_routing_irqchip {
+ 	__u32 irqchip;
+-- 
+2.49.0
 
-Is this correct ? you ask for 1280x1080 and get back 720 lines ?
-
->
-> The ED packet is much shorted than an RGGB line data (2.32us vs 13.57 us
-> or 3.54us vs 13.88us - 1080p and 720p use different MIPI clock rates).
->
-> So yes, this whole ED packet definitely doesn't end up in the image.
-
-Great to know!
-
-> IMX462 produces just a tiny 2-pixel dot in the left top corner, possibly
-> shifting some data to the right (I remember it did that, but I can't
-> observe it now - could be a kernel (driver) version change?).
-
-What are those two pixels ? Does the datasheet describes them ?
-
->
-> > My understanding is that the gasket that connects the CSIS to the ISI
-> > and the ISP has a filtering register has well, and there is where ED
-> > gets discarded. Could you maybe check the value of register GASKET_0_CTRL
-> > to confirm this ?
->
-> (with the filtering)
->
-> MEDIA_BLOCK_CTRL:
->    32EC0000h   1FFFFFFh Media Mix Software Reset Register (IMX_MEDIA_BLK_CTRL_SFT_RSTN)
->    32EC0004h     70700h Media Mix Clock Enable Register (IMX_MEDIA_BLK_CTRL_CLK_EN)
->       Clock enabled: ISP_CLKs MIPI_CSI2_CLKs BUS_BLK_CLK
->    32EC0008h  40000000h MIPI PHY Control Register (MIPI_RESET_DIV)
->    32EC004Ch      FC00h LCDIF ARCACHE Control Register (LCDIF_ARCACHE_CTRL)
->    32EC0050h  1FF00000h ISI CACHE Control Register (ISI_CACHE_CTRL)
->    32EC0060h          0 Gasket 0 output disabled
->    32EC0090h          0 Gasket 1 output disabled
-
-indeed gaskets seems to be disabled when using the ISP
-
-
->    32EC0138h    2D8000h ISP Dewarp Control Register (ISP_DEWARP_CONTROL)
->       ISP ID mode 0, ISP1: DT 0h (unknown), ISP2: DT 2Ch (RAW12) left-just mode
-
-But this other register has (again) one other filtering option and
-reading the value here it is set to filter RAW12 (mipi_isp2_data_type)
-
-Weirdly enough, I don't see this register being programmed in the
-mainline gasket driver...
-
->
-> MIPI_CSI2:
->    32E50000h   3060301h CSIS version (MIPI_CSIS_VERSION)
->    32E50004h      4705h CSIS Common Control Register (MIPI_CSIS_CMN_CTRL)
-
-Do you mean 0x14705 ? I'm asking because Shadow Crtl is BIT(16). Surprisingly
-BIT(14) is marked as reserved in the datasheet version I have
-
-
->       Filtering by DT, Update shadow ctrl, 4 data lanes
->    32E50008h     F0000h CSIS Clock Control Register (MIPI_CSIS_CLK_CTRL)
->    32E50010h  FFFFFFFFh Interrupt mask register 0 (MIPI_CSIS_INTMSK)
->    32E50020h        F0h D-PHY status register (MIPI_CSIS_DPHYSTATUS)
->       Clock lane: Active, Data lanes: 0: Stop, 1: Stop, 2: Stop, 3: Stop
->    32E50024h   600001Fh D-PHY common control register (MIPI_CSIS_DPHYCTRL)
->    32E50030h       1F4h D-PHY Master and Slave Control register Low (DPHY_MASTER_SLAVE_CTRL_LOW)
->    32E50040h        B0h ISP Configuration Register (MIPI_CSIS_ISPCONFIG_CH0)
->       DT 2Ch (RAW12)
->    32E50044h   2D00500h ISP Resolution Register (MIPI_CSIS_ISPRESOL_CH0) => 1280 * 720
->    32E50080h        B0h Shadow Configuration Register (MIPI_CSIS_ISPCONFIG_CH0)
->       DT 2Ch (RAW12)
->    32E50084h   2D00500h Shadow Resolution Register (MIPI_CSIS_ISPRESOL_CH0) => 1280 * 720
->    32E50100h      25E2h Frame Counter (FRAME_COUNTER_CH0)
->
-> This produces (test_pattern=5 which starts with black, using ISP):
-> Y =  00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00...
-> UV = 80 80 80 80  80 80 80 80  80 80 80 80  80 80 80 80...
->
-> Now I do (perhaps I should revert the patch instead):
-> ./devmem write32 0x32E50004 0x14305
->
-> and this does:
-> Y =  E6 FF 36 1B  00 00 00 00  00 00 00 00  00 00 00 00...
-> UV = 85 6A 74 B4  7D 8C 80 80  80 80 80 80  80 80 80 80...
->
-> Maybe I could see where these values come from.
->
->
-> With test_pattern = 4
-> Y =  52 52 4E 4D  14 14 00 00  00 00 00 51  52 52 4E 4D...
-> UV = 82 83 82 83  81 81 80 80  80 80 81 80  82 83 82 83...
-> changes into (without filtering):
-> Y =  9B 99 58 53  14 14 00 00  00 00 00 51  52 52 4E 4D...
-> UV = 77 AE 78 9A  81 83 80 80  80 80 81 80  82 83 82 83...
->
-> The values are stable but it seems they are added/xored/etc. with the
-> original image data or something.
->
-> > In particular the "Gasket 0 data type" is programmed in
-> > drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c with the data
-> > type of the first stream reported by the sensor with get_frame_desc().
-> > In your case, assuming RAW12 you should have 101100b in that register.
->
-> Gaskets are disabled. I will try to do some tests tomorrow.
->
-
-I know that the internal working of the gasket and the cross-bar are
-not entirely clear and very bad documented. I wouldn't be against
-enabling filtering on the CSIS but
-1) if we ever want to capture embedded data the change should be
-reversed
-2) it would be nice to actually understand where ED are filtered if
-gaskets are disabled
-
-> > Now, I think the idea was to use the gasket for filtering ED (and
-> > other non-image data) to be able to route them to the ISI for capture,
-> > while images are sent to the ISP for processing. This is currently not
-> > implemented and there are some unclear parts in the documentation
-> > about this, but overall my expectation is that ED are filtered by the
-> > gasket so you shouldn't need to enable DT filtering on the CSIS.
-> --
-> Krzysztof "Chris" Hałasa
->
-> Sieć Badawcza Łukasiewicz
-> Przemysłowy Instytut Automatyki i Pomiarów PIAP
-> Al. Jerozolimskie 202, 02-486 Warszawa
 
