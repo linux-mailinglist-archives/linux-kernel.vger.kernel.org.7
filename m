@@ -1,172 +1,98 @@
-Return-Path: <linux-kernel+bounces-660515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89499AC1EE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:47:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE32AC1EE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BCA73B7A48
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:46:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A85B77B60E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A3E190696;
-	Fri, 23 May 2025 08:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E152080C8;
+	Fri, 23 May 2025 08:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u76QZsxA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Uk3keI+g";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u76QZsxA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Uk3keI+g"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FWz9trbd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BBA153BF0
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 08:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0222F153BF0
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 08:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747990025; cv=none; b=mDri7TcG4KnrIAoqSBsIRUejUQY0MoFQ56l9DdC4VWy681UtW1s/O9iaV+ZRuLSpUmY/E4Y5v+GuNpirPI7gdR488PrWEKQDQyekDY90CSeAiCGJu4k82c+eUC01TyQ0pINGEulcAzntAM3FeU+rRRP2ct4l/Zpv+Bvy40J2WH0=
+	t=1747990146; cv=none; b=QBIyFI2Q71zTQsgaROF1Xx1HhbjjKi7FVNnqn92Yqfd+FOWkKbw/Z8BDaENnXFjRi2DnTOMJGWoSQWhAB939hEhDe7reORzUnH3n5NCyQUMozumrkuyXFDSRpY+DLxwLHCccsQbvWD2PYLu+sKAkNOiGwqRTBZZKSC1nHH1eygs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747990025; c=relaxed/simple;
-	bh=2vECnlVMKvbz1Hpbw4+NHpo2EGbe+uyUyROWguNpYQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hlg+hjtkwGCDpXrUMaGJZBBbNX8EqImvmjk/U4yRJBuomBmc4AUBo873nwaAUhjO/YChsQdCtWtK46AWG/1Xso9krePp6OQRDkBqvPsVTuQF/Xn1wRhJ0A0af0WcbKdB6Rwk32kAc05zhRILG3YCjNL3gZv7+ZReMcqdFUayrWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u76QZsxA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Uk3keI+g; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u76QZsxA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Uk3keI+g; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 47A6B2119D;
-	Fri, 23 May 2025 08:46:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747990016; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LXyI3AqMFJC1J5JkLvRZl2d+NL/z02K5Xn/OXPOt4UI=;
-	b=u76QZsxA9gh3Tix/qZxJ/tjAc9JpgcS3CXwEn4PTNnDYDeuzXw7zt0lWe2HCIO6wsr6BgV
-	jzC8ocOJdsg+Nj0NjGm/rW3+i41yOUGqtevzUhMVrxyXXYvDLnWqGTKrvRQk8XTkH6xWaa
-	XLyrtJY1NHNVhafjoPcbbzHV/vzJTio=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747990016;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LXyI3AqMFJC1J5JkLvRZl2d+NL/z02K5Xn/OXPOt4UI=;
-	b=Uk3keI+g8KDbmmqm66Uu0NL+zWGuPqok1uPFSc5XmOJK8MLUCGICwfbFkarpYt9nW8tUTm
-	CUGXnKAvrlTNNlDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=u76QZsxA;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Uk3keI+g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1747990016; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LXyI3AqMFJC1J5JkLvRZl2d+NL/z02K5Xn/OXPOt4UI=;
-	b=u76QZsxA9gh3Tix/qZxJ/tjAc9JpgcS3CXwEn4PTNnDYDeuzXw7zt0lWe2HCIO6wsr6BgV
-	jzC8ocOJdsg+Nj0NjGm/rW3+i41yOUGqtevzUhMVrxyXXYvDLnWqGTKrvRQk8XTkH6xWaa
-	XLyrtJY1NHNVhafjoPcbbzHV/vzJTio=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1747990016;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LXyI3AqMFJC1J5JkLvRZl2d+NL/z02K5Xn/OXPOt4UI=;
-	b=Uk3keI+g8KDbmmqm66Uu0NL+zWGuPqok1uPFSc5XmOJK8MLUCGICwfbFkarpYt9nW8tUTm
-	CUGXnKAvrlTNNlDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 63225137B8;
-	Fri, 23 May 2025 08:46:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id e5NKFf81MGgINAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Fri, 23 May 2025 08:46:55 +0000
-Date: Fri, 23 May 2025 10:46:49 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Donet Tom <donettom@linux.ibm.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@kernel.org>, Zi Yan <ziy@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ritesh Harjani <ritesh.list@gmail.com>, linux-mm@kvack.org,
+	s=arc-20240116; t=1747990146; c=relaxed/simple;
+	bh=UJS0OYy0ef9mbviZ+sxQd1YSz71cZ9/kFDU1csLnVqw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z9MNaH6+3q2iEafSMhWV+7YkcLk67BZHZovy61m5MxpBfyNL4VqlkPtQKxYM838gCY8rjIpUN4QYySL2W42TLDT8RP6XbmbJPD3nhOoDXUb1y61vSQ+iizFrpa45TsXx652Kiel/RQe9h76Rx+3MjrZkw0rLOn36+9I/nALrCYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FWz9trbd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6059C4CEF1;
+	Fri, 23 May 2025 08:49:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747990145;
+	bh=UJS0OYy0ef9mbviZ+sxQd1YSz71cZ9/kFDU1csLnVqw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FWz9trbdLY+aUWbXnbtR2nDar9Ve6QYzpBLkOsAJ4wPx5+YrwmQbXIxruFdElikfd
+	 5PKBIrvhBJN/WeUzurJOB2pINI9R/sMK8/hUjHoeAkLg+alILUNoNNCTgpHiSipMjI
+	 5XWhsjzlw7EgxzOLASaS01j2p5Mt13JhgAqKItHcXHcazyv6sI9w5NYzW3CDThn4v8
+	 9zOAUbURK4d7+AEwBXLC82+SeSuQAvhNlU+rOLpIgzgGnT3qq7RD1z+Jsb/L9YjKHv
+	 eq5kth1xThAmELH4+ioMfs9ufDQYDusaE2Psi0XIzohqW+9GQnWC+5wVyJ4tXPuscZ
+	 asy0ZvV5cwE1Q==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1uIO5O-000000002sa-3Xze;
+	Fri, 23 May 2025 10:49:03 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	linux-phy@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Dave Jiang <dave.jiang@intel.com>
-Subject: Re: [PATCH v5 1/4] drivers/base/node: Optimize memory block
- registration to reduce boot time
-Message-ID: <aDA1-TupYDhUZ_c1@localhost.localdomain>
-References: <d2490e807b2c13950bc1d4199f22ec078cc4c56a.1747904868.git.donettom@linux.ibm.com>
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH 0/7] phy: phy-snps-eusb2: fixes and cleanups
+Date: Fri, 23 May 2025 10:48:32 +0200
+Message-ID: <20250523084839.11015-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d2490e807b2c13950bc1d4199f22ec078cc4c56a.1747904868.git.donettom@linux.ibm.com>
-X-Spam-Level: 
-X-Spamd-Bar: /
-X-Spam-Flag: NO
-X-Spam-Score: -0.01
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 47A6B2119D
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.01 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,linux-foundation.org,kernel.org,nvidia.com,linuxfoundation.org,gmail.com,kvack.org,vger.kernel.org,huawei.com,intel.com];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,localhost.localdomain:mid,suse.de:email,suse.de:dkim,nvidia.com:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
 
-On Thu, May 22, 2025 at 04:17:28AM -0500, Donet Tom wrote:
-> During node device initialization, `memory blocks` are registered under
-> each NUMA node. The `memory blocks` to be registered are identified using
-> the node’s start and end PFNs, which are obtained from the node's pg_data
-> 
-... 
-> Acked-by: Zi Yan <ziy@nvidia.com>
-> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+Here are a couple of fixes and some related cleanups to the recently
+reworked and renamed phy-snps-eusb2 driver.
 
-With the fixup from Mike:
+The clock and repeater imbalance fixes are not marked for stable as the
+first issue was introduced in the recent rework which is queued for
+6.16-rc1.
 
-Acked-by: Oscar Salvador <osalvador@suse.de>
+The repeater imbalance has been there for a few years and
+could be backported even if this is now complicated by the
+rework/rename. Since it only affects a resource leak in an error path I
+decided to not mark this one for stable for now.
 
- 
+Ideally, these could go in along with the reworked driver for rc1.
+
+Johan
+
+
+Johan Hovold (7):
+  phy: phy-snps-eusb2: fix clock imbalance on phy_exit()
+  phy: phy-snps-eusb2: fix repeater imbalance on phy_init() failure
+  phy: phy-snps-eusb2: rename phy_init() clock error label
+  phy: phy-snps-eusb2: clean up error messages
+  phy: phy-snps-eusb2: fix optional phy lookup parameter
+  phy: phy-snps-eusb2: drop unnecessary loop index declarations
+  phy: phy-snps-eusb2: clean up id table sentinel
+
+ drivers/phy/phy-snps-eusb2.c | 39 +++++++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
 
 -- 
-Oscar Salvador
-SUSE Labs
+2.49.0
+
 
