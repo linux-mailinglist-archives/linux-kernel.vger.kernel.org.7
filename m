@@ -1,146 +1,146 @@
-Return-Path: <linux-kernel+bounces-660830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C31AC22A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:31:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694FBAC22AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A54B169309
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:31:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C93216D6C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AEC9478;
-	Fri, 23 May 2025 12:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB5C15AF6;
+	Fri, 23 May 2025 12:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hyMnLgRs"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="dtTyykSV"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18ACD7E9;
-	Fri, 23 May 2025 12:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FADAE552;
+	Fri, 23 May 2025 12:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748003465; cv=none; b=hKchHm631ch+WUL3oXgjQTRZaoipxtM+eeMcSP1tCPDb7Ei9e3xg9dGNQ0NDmVoifcSlytt37d5YyO29alYXPCAZIA1y/iI18jdRbJMkr5jI9YC4kNk9e2I/CjjUP3kOhX6Ypsx9F4LZkA+lH89DIUaoxPR+zBhkWqUKsnK56xI=
+	t=1748003523; cv=none; b=GRJfuANkoH5tdyrqlNxq59cEwFlqwBf3Gns7SloyEHrpxwCjc/d6K3HPF3LTpscQS+H3feU0M5zij0C/7CAPJQwmLFLil+ASgbCep6PPaWSH0Hcreb2+kXjnnHfarXzCJITrw+9d3teUASRqFExO4nQB8JzIe9RVBeHnCoRBMgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748003465; c=relaxed/simple;
-	bh=zYFr+I1bNQIoAAYyuQ0AB1ehPMbnBPch3q9BFHXKHZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QvvJoiJ6vJvi85+n/wsivC8tAigCtXMxaihILCnegd76hx+Mxu0Mxr7C73e8EcZdatjzx7d60IA53sRT+SXKrtwbQSB4bZgg6JOMbYINW6bPfRXppyhNqS/aap7B2x/nHI0Zn3xjPlNmHE0d+5PswUVXVh2fZflNXletPRYWFrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hyMnLgRs; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-442ed8a275fso114417275e9.2;
-        Fri, 23 May 2025 05:31:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748003462; x=1748608262; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dy8YHa9sBE+qJ+igAsZENydvLd039JNemEnM7InNoVc=;
-        b=hyMnLgRsAWmNj0Xn8FDax038kfzZstDHB5qLJIq4avUFS2OIO7SNS7aX3tBXb0CKLV
-         s8kJeiW6X5DAYAGEyW7wStJHn7XyOd9JFQdlG0HX2AsAblmpOBGUfDFbiSYpXvrWRJy3
-         JpfsVLrNW7WQKQ2jxLHAN4OlOXhsARD0UhVdHEp899gskTHb5Kde8juy76AtOFKxQaA5
-         bsCx1SMCNroS/7s3owXyYdZst5zQwFGoRix0LLz02zWRCA8e1oEn6NIzPyIwhaZk8wP/
-         ZMZ8h4za/NfiyVuPkWZirLJ7Dz6x0wFj7YM4FPRevK2DTt5XPitI2iWUIrnVhoPkiC1/
-         hpOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748003462; x=1748608262;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dy8YHa9sBE+qJ+igAsZENydvLd039JNemEnM7InNoVc=;
-        b=MhriNamNpyVN7YGourrsmhYjxcwMCGORUg7Zs0iigxdOvI0sDT71vE53nA+bK1V/WU
-         U8wDnPZzYS8HoSGVrwKXKtihMjwoveG8TVKZr0BTGN+xcnZsdvo5wu1VphpZfUaQBECr
-         pTsgCH4NY0gXGwelwMydV7wICHDc1tQLaBCZ0uBd2dWf44tkSrCUqsgz0biUhL75CPTd
-         4UZ39KtKz10zblA2Ecr315pL2VL9gymn0/JmopyoUpceA46poMR0EEd/htPZsnOFOadi
-         pYzW1DStH+rJyqzQw4/K/W0PuXVSnsRnuUim/6DNx9mDasoOjhJ4zD/Zt6jRY/uA45QC
-         OMwg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8SXg9AlPcWHP0ydSUsDR1AXskw9I/xZaM9ZKZo5q5X2x5Y3f9iuqwjCKYIBm9vii1T74pqMsR0JPrGJxEKlZ3@vger.kernel.org, AJvYcCVvmmgrEDQd6ISVukZRMZiddN4RX8a/3Ta/B2DUcIt255tvfkz8HfobZthx+/b53r4vOjq+Th4m/QTi@vger.kernel.org, AJvYcCXDB27i6xREiBkvEEflFoG7u6q7cbQlV3u+n7Qj+9c9wMoRyYFqBwKZcHQtVD9k5h7zCggTHWMdGTGMzaxU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs+5MKMqDUzuE1c0jJdju61o5qLySSKhuJt57U1rzeZyhq8Vjc
-	F4oqv5stpPk5ilmEUXWG+lAnOq3F9KiQsmMVuO9NqOE/uRkO/1NC4s8ERKI3Sg==
-X-Gm-Gg: ASbGncu/PH6yiABucmQVayW0bGJpWxENDmqSb0l3G6CgtgPWVDlYX3nSfuEdJkcB1l8
-	x9jqkFMjeBz5eShMd7hAB2dIFnUa6b6FLiRZp7C8DODMkOwVWFuEbv3Vu/MRXmrD5Ix0tejPUtC
-	dMuNr2kmHpOunoOVIsvaYzMJGndk3N7oqeg12N6SkDbbo0pkNBQ7Gj7CjARkyevaAWw8m0Oh6sU
-	/lIGFimPPSLmNYvgo46iARddf1gdmsdnNyBxsVjgE0lrjP43U1ShlyYz6NIkAa6UlqR/eyQ0m6e
-	GhHY/8qa9TP2K5WYU2EYeO/quzjuWr0ZdoPBsUA+1IzYYsbUzO3TS1ukB/latUytuCq1QqW8SPw
-	jfmrCyIVDm9rtuQ==
-X-Google-Smtp-Source: AGHT+IGRY+SIJAO8OmgYserPwzfW9oLd1sgZc8DxydvmeRylB5vmFcgb6WgrcelOSrX4QdbKqmgZfA==
-X-Received: by 2002:a05:600c:4fd6:b0:43d:98e7:38dc with SMTP id 5b1f17b1804b1-44b6cc055e8mr21996825e9.5.1748003462110;
-        Fri, 23 May 2025 05:31:02 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f7bae3b9sm136490745e9.33.2025.05.23.05.31.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 May 2025 05:31:01 -0700 (PDT)
-Date: Fri, 23 May 2025 13:31:00 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Kees Cook <kees@kernel.org>, Ethan Carter Edwards
- <ethan@ethancedwards.com>, Andreas Dilger <adilger.kernel@dilger.ca>,
- linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] ext4: replace strcpy() with '.' assignment
-Message-ID: <20250523133100.1b023a6e@pumpkin>
-In-Reply-To: <20250519145930.GB38098@mit.edu>
-References: <20250518-ext4-strcpy-v2-1-80d316325046@ethancedwards.com>
-	<202505190651.943F729@keescook>
-	<20250519145930.GB38098@mit.edu>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1748003523; c=relaxed/simple;
+	bh=j0CL94Rb8NLPTthjduF/9Bmuzez0jW0NPtqEk9wPUBI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pswo0odFB2QdP2BogO4d0RRAitpMVEeEQ9mGGSG24iYGvndxNJbXgzo3smTP2v8TphyPF0Lj9QOwI7Ysz/OqA4CFwCERcGXUm3Li/9RurBQgW48Vp4DuqhZ4Vmtkk5/QIM1G+Kt5+Xd3Hk3axvHmdhz8MmBs5yqVzwL6YRHD6Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=dtTyykSV; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yO0EwDZrf4fd992J3B8iCK71Ip2ga1Ayg9UxqoNl3Zw=; b=dtTyykSVssYRpd4G7j3B1bGx7I
+	XaQ18MuK8E645S1dcEUB3aD0MCqSWaQrM8s5x4zd7EMH21QPKvZLczSBuupJvoATKwLzkNDz0oKzu
+	zRbXx08nyKMkS4pymGSq4SQkGRV4apCr3ONB78Zr+sphNCIq0b5ob9xUJVBTi4ubC2cBJjSY073Yg
+	TlVq/YRLU9Q8wN57CZXZ59s6qDswZVnBXNVx9kQo/74OSSCd0nasd+9qRZOek6hwqtuzv+2YP6iek
+	fyTrBrCqR79iZ46ueTEXEhkuBrtjifNRI9A58IN0M1VTKXjMtLMZi/CidjNG0DgWI0g/DPPgrACDo
+	Fy4F4v/A==;
+Received: from [223.233.76.245] (helo=[192.168.1.12])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uIRZ1-00CB4g-9x; Fri, 23 May 2025 14:31:51 +0200
+Message-ID: <a7c323fe-6d11-4a21-a203-bd60acbfd831@igalia.com>
+Date: Fri, 23 May 2025 18:01:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v4 3/3] exec: Add support for 64 byte 'tsk->comm_ext'
+Content-Language: en-US
+To: Kees Cook <kees@kernel.org>, Bhupesh <bhupesh@igalia.com>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+ laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+ alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+ mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+ david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+ brauner@kernel.org, jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+ linux-trace-kernel@vger.kernel.org
+References: <20250521062337.53262-1-bhupesh@igalia.com>
+ <20250521062337.53262-4-bhupesh@igalia.com>
+ <202505222041.B639D482FB@keescook>
+From: Bhupesh Sharma <bhsharma@igalia.com>
+In-Reply-To: <202505222041.B639D482FB@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 19 May 2025 10:59:30 -0400
-"Theodore Ts'o" <tytso@mit.edu> wrote:
+Hi Kees,
 
-> On Mon, May 19, 2025 at 06:52:13AM -0700, Kees Cook wrote:
-> > > --- a/fs/ext4/inline.c
-> > > +++ b/fs/ext4/inline.c
-> > > @@ -1314,7 +1314,7 @@ int ext4_inlinedir_to_tree(struct file *dir_file,
-> > >  		if (pos == 0) {
-> > >  			fake.inode = cpu_to_le32(inode->i_ino);
-> > >  			fake.name_len = 1;
-> > > -			strcpy(fake.name, ".");
-> > > +			fake.name[0] = ".";  
-> > 
-> > This means the trailing NUL byte isn't being copied any more? That seems
-> > like a big change, even if name_len is being used for length tracking.  
-> 
-> Yeah, and so that's something that needs to be tested (and not just
-> build tested to catch the obvious FTBFS bug).
+Thanks for the review.
 
-The compiler (or headers files) can also allow strcpy() of constant
-length strings into arrays (known size). Erroring requests that are too long.
-The strcpy() is then converted to a memcpy() which can then be optimised
-into writes of constants.
+On 5/23/25 9:18 AM, Kees Cook wrote:
+> On Wed, May 21, 2025 at 11:53:37AM +0530, Bhupesh wrote:
+>> Historically due to the 16-byte length of TASK_COMM_LEN, the
+>> users of 'tsk->comm' are restricted to use a fixed-size target
+>> buffer also of TASK_COMM_LEN for 'memcpy()' like use-cases.
+>>
+>> To fix the same, Linus suggested in [1] that we can add the
+>> following union inside 'task_struct':
+>>         union {
+>>                 char    comm[TASK_COMM_LEN];
+>>                 char    comm_ext[TASK_COMM_EXT_LEN];
+>>         };
+> I remain unconvinced that this is at all safe. With the existing
+> memcpy() and so many places using %s and task->comm, this feels very
+> very risky to me.
+>
+> Can we just make it separate, instead of a union? Then we don't have to
+> touch comm at all.
 
-So using strcpy() under those conditions 'isn't all bad' and can generate
-better (and less bug prone) code than trying to hand-optimise it.
+I understand your apprehensions, but I think we have covered _almost_ 
+all the existing use-cases as of now:
 
-So even through strcpy() is usually a bad idea, there is not need to
-remove the calls that the compiler can validate as safe.
+1. memcpy() users: Handled by [PATCH 2/3] of this series, where we 
+identify existing users using the following search
+     pattern:
+        $ git grep 'memcpy.*->comm\>'
 
-	David   
+2. %s usage: I checked this at multiple places and can confirm that %s 
+usage to print out 'tsk->comm' (as a string), get the longer
+     new "extended comm".
 
-> However, note how we
-> handle normal filenames, as opposed to "." and "..".  From
-> ext4_insert_dentry():
-> 
-> 	de->inode = cpu_to_le32(inode->i_ino);
-> 	ext4_set_de_type(inode->i_sb, de, inode->i_mode);
-> 	de->name_len = fname_len(fname);
-> 	memcpy(de->name, fname_name(fname), fname_len(fname));
-> 
-> Or were you commenting on the "no functional changes intended" line in
-> the commit description?  I agree that this is probably no longer
-> accurate.  :-)
-> 
-> 					- Ted
-> 
+3. users who do 'sizeof(->comm)' will continue to get the old value 
+because of the union.
+
+The problem with having two separate comms: tsk->comm and tsk->ext_comm, 
+instead of a union is two fold:
+(a). If we keep two separate statically allocated comms: tsk->comm and 
+tsk->ext_comm in struct task_struct, we need to basically keep 
+supporting backward compatibility / ABI via tsk->comm and ask new 
+user-land users to move to tsk->ext_comm.
+
+(b). If we keep one statically allocated comm: tsk->comm and one dynamically allocated tsk->ext_comm in struct task_struct, then we have the problem of allocating the tsk->ext_comm which _may_ be in the exec()  hot path.
+
+I think the discussion between Linus and Yafang (see [1]), was more towards avoiding the approach in 3(a).
+
+Also we discussed the 3(b) approach, during the review of v2 of this series, where there was a apprehensions around: adding another field to store the task name and allocating tsk->ext_comm dynamically in the exec() hot path (see [2]).
+
+[1]. https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/
+[2]. https://lore.kernel.org/lkml/CALOAHbB51b-reG6+ypr43sBJ-QpQhF39r5WPjuEp5rgabgRmoA@mail.gmail.com/
+
+Please let me know your views.
+
+Thanks,
+Bhupesh
+
+>> and then modify '__set_task_comm()' to pass 'tsk->comm_ext'
+>> to the existing users.
+> We can use set_task_comm() to set both still...
+>
 
 
