@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-660099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645BBAC191B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:03:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4F7AC194A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E6B3BF7A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:02:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2E11C05DBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8039421D5BC;
-	Fri, 23 May 2025 01:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4C828B41D;
+	Fri, 23 May 2025 01:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EuBPmj2f"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KnL0TPZA"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50CF21FF35;
-	Fri, 23 May 2025 01:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3E2289E2E
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 01:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747962025; cv=none; b=ramHjCl0DZ938SBtE/NHauKkNLR/EcpWwY7aSFoinnb9p1HsZxapm988C+avBQn6NXemwXgcdW/Xhben1cNTk4QmPJZjzzsLWBTwiMUNDFm9L14rVYJOEx8x35pdGJKhIO3nl4T6WXJc9P92KVrKhUu+XEa07u5Gv/OEZt4C9nI=
+	t=1747962069; cv=none; b=Lfxg5yvcBqfIMZQibMidGXcDe8E03PEpX8gjYFtCua1aXn4a5gRZK08+6SBiNv8yWTS0N86NVJJcPTOmNF8e7Me+FAsvy+YziJbZrg14p6C4jSJyVMO6PkX3Uex/PoyEV9wEu6Q6spTsDJHBDDfG/KZE4vKs2zyKkovtMZfxbIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747962025; c=relaxed/simple;
-	bh=mBllmWspxUb6WMZ6UgK2YeCavB2WwSWS5l+56LBR2Sg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dgbASe+6WQdWwbPa84SnMHriMvnd71Pbv4r0dQfTtYp+NS7slHvIwtWEH90/6gXBv44wiTT7kGXfaXM4iNAzN/eeGAVzQNQMV0xPsL/m+sSlNm2L44EbYEePJ5SiR0VlalrY04s13HhzLLQd48hkTbBuwfRj1thsmDZDWzP4tZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EuBPmj2f; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=JQsG2xym9H00ve0pF5UnE9P2+sIgGX1YRykP3ytbG4A=; b=EuBPmj2f/169O1QWRM8OH0oEg4
-	ErDjjMvJ0JkGLK6eWwWcNtvIPebe0phapWl7re5RBSxmdWOKf3TGAmlNmuQs9LUMADckZl+k652Bh
-	YPYj5y5LNPWRl+3NCPBg6o/2s9YcHFgEd9ZuvDYZzUxBT+eIE8xMdEq8ok2TNp1BtLl0P/cfwMLAE
-	bfcjummeMYWjGrmfWZoqBObaxXjj3bSJDC4hEPhsxqttWnYK97QmHCR0DLi2n+KpKFF+f9oceR3+e
-	1xi4vRgPxHPRfwo/e7/g8FxEQL/n57G15bVpMqv1jm7Yr9WYvJDmOrc6EMxb/oAmu640LaRb764LZ
-	TbwDeW+A==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1uIGlE-000000016zC-1qFs;
-	Fri, 23 May 2025 01:00:15 +0000
-Message-ID: <5e9ccdad-a9f4-4c8f-85b0-430edd910590@infradead.org>
+	s=arc-20240116; t=1747962069; c=relaxed/simple;
+	bh=7dnveniOu+/d08DxHilZb5jCCAKl0BL94CVVwVEl7eU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=RpH47N73I+HHidB8P0L+AsLKagqyhMewZL/M7PbFlu5GB/rHA0dJgIjHCx+/0cWkvstIPfcjdcEkTxSiWoz1+xU8gwewQM+TXOQF9DXnodNaAfB23Oeyw+JPI6wQWjWEn/2oLDPJhe1hwyRbgmquF5X1UsPH5/3/gWWkKzJgGIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KnL0TPZA; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-310c5c2c38cso1551068a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:01:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747962067; x=1748566867; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=V6x9LNMhumiNfsLAp1ILmLoBe8XRi6VNornrEAAWP04=;
+        b=KnL0TPZA+CahvQD/gJb50jqsiUFpCFIcid1ZqV8Q0xzi+b2IJsIZh+rDJYd2u7uxa8
+         +6dTiTXb7IHbUUykyq8AXkR2jKl1uOuFFsFWUfbC9NyEDmjR5tJ88vwwARn3Mnedz6cP
+         QXn1Igd188+N5yWsjf0S1c0iQLbTIB8miYMUIOrCPP53yxCS75oo6Jld8PX59cRwRICX
+         aMmCrng/6onslccskuUX+dp2o81HycUoN1E6MPObYFL05QYsyH/nY6BuyKr+nuvGt08S
+         mi5mj9rrdL3u8NXpUI9d9S0b0GUhvVR1BLei+4EV7fpTyIuplULdnEPv7K1tBzRIcvSN
+         mrVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747962067; x=1748566867;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V6x9LNMhumiNfsLAp1ILmLoBe8XRi6VNornrEAAWP04=;
+        b=lNHF4zI4UCSfYEiTaMTSrGrmWNvk88by6Y7S7hn3UjnwO875LUtTH2kq0nfcmFFrJ9
+         kuQYgf+eZhEFhrZ+QsXDM4dZbTg57lCc2GhD+Q8lmPhineHdNKGFf49aoEEO4CMHh1hG
+         P13ZI/yOMl/P/Sk2OZ88v5hcPAk0PXtAC6FiciseOrknQh0RJlDDj929jPmz7rIccu7W
+         oQYbhRwTZt7xCGAvRxJOXhKOfDLCZMzXIVTx5gFu5evzIaWOe0caCXPbtenVMAQ6eteP
+         13qA8TJ5MxsQaETc5Giphr0b2lwKeiI7W7XM3Jmpw3uxhVDyFk3auaZj92JH9rjtZuim
+         CMcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIn+OMa9QGntjgSTDZ3s2Jidd5iTcux6/kgkAE/KP6BweE9JSO5QmfjZK8jVTm35a4/o4dlBhkQJtolVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4Qcrc2WrhYmoqf5veS59QBqeQZKFZwnBEXLwA4i1qhr8xTYWn
+	6cIY2DFIXxX6PxI4EPZZ1OrtCSCTB0mGlKbM7flgNqxczVcD3/KVVQsx5YLDzvrybGzLTJoy77t
+	tTlO4OQ==
+X-Google-Smtp-Source: AGHT+IHFMNVKJa5e8umXYgZ4QtpyHnpqS+oxhyJku1m1yyj6LMAR+nnLi5IpcTUffXcAu8Fv+d+vw5Lcpqc=
+X-Received: from pjbrr6.prod.google.com ([2002:a17:90b:2b46:b0:30a:89a8:cef0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:c883:b0:2ee:e518:c1cb
+ with SMTP id 98e67ed59e1d1-30e830c797dmr41531451a91.7.1747962067465; Thu, 22
+ May 2025 18:01:07 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
 Date: Thu, 22 May 2025 17:59:39 -0700
+In-Reply-To: <20250523010004.3240643-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/9] coredump: add coredump socket
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- Jann Horn <jannh@google.com>, Daniel Borkmann <daniel@iogearbox.net>,
- Kuniyuki Iwashima <kuniyu@amazon.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org
-Cc: Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>,
- "David S. Miller" <davem@davemloft.net>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Daan De Meyer <daan.j.demeyer@gmail.com>,
- David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>,
- Jan Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>,
- Luca Boccassi <luca.boccassi@gmail.com>, Mike Yuan <me@yhndnzj.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-security-module@vger.kernel.org,
- Alexander Mikhalitsyn <alexander@mihalicyn.com>
-References: <20250516-work-coredump-socket-v8-0-664f3caf2516@kernel.org>
- <20250516-work-coredump-socket-v8-4-664f3caf2516@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250516-work-coredump-socket-v8-4-664f3caf2516@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250523010004.3240643-1-seanjc@google.com>
+X-Mailer: git-send-email 2.49.0.1151.ga128411c76-goog
+Message-ID: <20250523010004.3240643-35-seanjc@google.com>
+Subject: [PATCH v2 34/59] KVM: x86: Don't update IRTE entries when old and new
+ routes were !MSI
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>, 
+	Lu Baolu <baolu.lu@linux.intel.com>
+Cc: kvm@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Sairaj Kodilkar <sarunkod@amd.com>, Vasant Hegde <vasant.hegde@amd.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Joao Martins <joao.m.martins@oracle.com>, 
+	Francesco Lavra <francescolavra.fl@gmail.com>, David Matlack <dmatlack@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Skip the entirety of IRTE updates on a GSI routing change if neither the
+old nor the new routing is for an MSI, i.e. if the neither routing setup
+allows for posting to a vCPU.  If the IRTE isn't already host controlled,
+KVM has bigger problems.
 
-On 5/16/25 4:25 AM, Christian Brauner wrote:
-> Coredumping currently supports two modes:
-> 
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/irq.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> ---
->  fs/coredump.c       | 118 ++++++++++++++++++++++++++++++++++++++++++++++++++--
->  include/linux/net.h |   1 +
->  net/unix/af_unix.c  |  54 ++++++++++++++++++------
->  3 files changed, 156 insertions(+), 17 deletions(-)
-> 
-
-[snip]
-
-git a/include/linux/net.h b/include/linux/net.h> index 0ff950eecc6b..139c85d0f2ea 100644
-> --- a/include/linux/net.h
-> +++ b/include/linux/net.h
-> @@ -81,6 +81,7 @@ enum sock_type {
->  #ifndef SOCK_NONBLOCK
->  #define SOCK_NONBLOCK	O_NONBLOCK
->  #endif
-> +#define SOCK_COREDUMP	O_NOCTTY
->  
->  #endif /* ARCH_HAS_SOCKET_TYPES */
-
-MIPS sets ARCH_HAS_SOCKET_TYPES so the new define above is not used,
-causing:
-
-
-net/unix/af_unix.c:1152:21: error: 'SOCK_COREDUMP' undeclared (f
-irst use in this function); did you mean 'SOCK_RDM'?
-
-
+diff --git a/arch/x86/kvm/irq.c b/arch/x86/kvm/irq.c
+index 67fc8901d15f..19fa3452d201 100644
+--- a/arch/x86/kvm/irq.c
++++ b/arch/x86/kvm/irq.c
+@@ -618,6 +618,10 @@ void kvm_arch_update_irqfd_routing(struct kvm_kernel_irqfd *irqfd,
+ 				   struct kvm_kernel_irq_routing_entry *old,
+ 				   struct kvm_kernel_irq_routing_entry *new)
+ {
++	if (new->type != KVM_IRQ_ROUTING_MSI &&
++	    old->type != KVM_IRQ_ROUTING_MSI)
++		return;
++
+ 	if (old->type == KVM_IRQ_ROUTING_MSI &&
+ 	    new->type == KVM_IRQ_ROUTING_MSI &&
+ 	    !memcmp(&old->msi, &new->msi, sizeof(new->msi)))
 -- 
-~Randy
+2.49.0.1151.ga128411c76-goog
 
 
