@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-660211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94568AC1A22
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 04:36:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C53DAC1A28
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 04:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AEDC1C04FDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 02:36:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76B91507FC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 02:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556D5202F60;
-	Fri, 23 May 2025 02:36:00 +0000 (UTC)
-Received: from smtp134-83.sina.com.cn (smtp134-83.sina.com.cn [180.149.134.83])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAA91F9EC0;
+	Fri, 23 May 2025 02:36:58 +0000 (UTC)
+Received: from smtp134-102.sina.com.cn (smtp134-102.sina.com.cn [180.149.134.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6B72DCC09
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 02:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D396818E1A
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 02:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747967760; cv=none; b=Jb3E6AnUmI4H75Xhb+7hcVeSrHtP2G9LXCFYrAyna31/ftKalVuiD1BP7nYREP27hf3Io0kLF+1OCFcnVgExnt95i0jovnBN9A9lB7xWCGTds8VuPtnxhoUSJ7NBj236ql4ocfFOQobhT629nw9a3YcD9y8llL10lNCYJHwz+JI=
+	t=1747967817; cv=none; b=uLsUgv3/27Ap+AN+ctrHQnB0HHeLkMFdu0hvXCGlGrZYjS42r8DQK+erMaffidyxJ7yxzzz4DopyMvUTfGDwzGTDyQTcCFHOtKetTBEQIihAyf3cYSVwrti5Owfexpk9Bgm1OcZ+TvCclyBZ926L8wKyc/60Qp7m80hGbHZuyOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747967760; c=relaxed/simple;
-	bh=k2QUyEYtjSy2ELKzSy6CbabQnb4XeePXE+Ks4bcLdc8=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=UF8VOQYAAEPuw8ra3AbPoZbTZECIoZIa/zMLoDlmB7euXFwMB0RZMpcgLSwCb4JG7q+Y/oN4BHyE/BuQF60sZatDfMLmawWP7ONs08gosW8XDAhxP9t9j4MtfqR/n6vAeDdaVwUkfkVh7/006oqDIOqd5RR3/79dayGCpj2rMOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com; spf=pass smtp.mailfrom=everest-semi.com; arc=none smtp.client-ip=180.149.134.83
+	s=arc-20240116; t=1747967817; c=relaxed/simple;
+	bh=zun1QY8q1fAVtur2VQ7pww2aQwPnElLNn6ZMshj/Nnc=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Ofu8+zDmPFZ+rfUOz6g4mDdT2vTWYK+8duQL/ypaJnNBMKHVJqUc4A9ff0p3lFgWMSQKjd6zBbwpeg+86J7PK/TkV/13xYi9yIcJjB05lGTXQRGAG/3+Nr4vERlXmIBayKl6yQAT0RaWt2IWE8pq88+UcT9MrItiY0lJXe6+fDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com; spf=pass smtp.mailfrom=everest-semi.com; arc=none smtp.client-ip=180.149.134.102
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everest-semi.com
 Received: from unknown (HELO zy-virtual-machine.localdomain)([180.172.39.205])
-	by sina.net (10.185.250.29) with ESMTP
-	id 682FDEFE00001FF6; Fri, 23 May 2025 10:35:43 +0800 (CST)
+	by sina.net (10.185.250.32) with ESMTP
+	id 682FDF42000051ED; Fri, 23 May 2025 10:36:51 +0800 (CST)
 X-Sender: zhangyi@everest-semi.com
 X-Auth-ID: zhangyi@everest-semi.com
 Authentication-Results: sina.net;
 	 spf=none smtp.mailfrom=zhangyi@everest-semi.com;
 	 dkim=none header.i=none;
 	 dmarc=none action=none header.from=zhangyi@everest-semi.com
-X-SMAIL-MID: 65ADCFA62A4F409EA62C1CA62EF59D2A
-X-SMAIL-UIID: 65ADCFA62A4F409EA62C1CA62EF59D2A-20250523-103543
+X-SMAIL-MID: 2C340DD7119046EDBCC7EA177B04D1E5
+X-SMAIL-UIID: 2C340DD7119046EDBCC7EA177B04D1E5-20250523-103651
 From: Zhang Yi <zhangyi@everest-semi.com>
-To: broonie@kernel.org
+To: krzk@kernel.org
 Cc: robh@kernel.org,
 	tiwai@suse.com,
 	devicetree@vger.kernel.org,
@@ -50,10 +50,10 @@ Cc: robh@kernel.org,
 	perex@perex.cz,
 	krzk+dt@kernel.org,
 	amadeuszx.slawinski@linux.intel.com,
-	krzk@kernel.org
-Subject: RE: [PATCH v1 2/2] ASoC: codecs: add support for ES8375
-Date: Fri, 23 May 2025 10:35:41 +0800
-Message-Id: <20250523023541.22682-1-zhangyi@everest-semi.com>
+	broonie@kernel.org
+Subject: RE: [PATCH v1 0/2] ASoC: codecs: add support for ES8375
+Date: Fri, 23 May 2025 10:36:47 +0800
+Message-Id: <20250523023649.22785-1-zhangyi@everest-semi.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,45 +61,12 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-> > +static const struct snd_kcontrol_new es8375_snd_controls[] = {
-> > +	SOC_SINGLE_TLV("ADC OSR GAIN Volume", ES8375_ADC_OSR_GAIN,
-> > +			ADC_OSR_GAIN_SHIFT_0, ES8375_ADC_OSR_GAIN_MAX, 0,
-> > +			es8375_adc_osr_gain_tlv),
+> > The driver is for codec ES8375 of everest-semi.
+> > 
+> > v1 -> v0:
+> >           - Add the description of everest,mclk-src in the yaml file
 > 
-> Probably just ADC OSR Volume.
-> 
-> > +	SOC_SINGLE_TLV("DMIC Gain Volume", ES8375_ADC1,
-> > +		DMIC_GAIN_SHIFT_2, ES8375_DMIC_GAIN_MAX,
-> > +		0, es8375_adc_dmic_volume_tlv),
-> 
-> Same here.
-> 
-> > +	SOC_SINGLE("ADC Automute Enable", ES8375_ADC_AUTOMUTE,
-> > +			ADC_AUTOMUTE_SHIFT_7, 1, 0),
-> > +
-> > +	SOC_SINGLE("DAC DSM Mute", ES8375_DAC1, DAC_DSMMUTE_SHIFT_7, 1, 0),
-> > +	SOC_SINGLE("DAC DEM Mute", ES8375_DAC1, DAC_DEMMUTE_SHIFT_6, 1, 0),
-> 
-> > +	SOC_SINGLE("DAC Automute Enable", ES8375_DAC_AUTOMUTE1,
-> > +			DAC_AUTOMUTE_EN_SHIFT_7, 1, 0),
-> 
-> These are all on/off switches so should be Switch.
-> 
-> > +	SOC_SINGLE_TLV("DAC Automute Attenuation", ES8375_DAC_AUTOMUTE,
-> > +			DAC_AUTOMUTE_ATTN_SHIFT_0, ES8375_DAC_AUTOMUTE_ATTN_MAX,
-> > +			0, es8375_dac_automute_attn_tlv),
-> 
-> This is also a Volume ("DAC Automute Volume").
+> Version your patches correctly - that's v2. Or just start using b4.
 
-I'll modify these control-name.
-
-> > +	if (es8375->mclk_src == ES8375_BCLK_PIN) {
-> > +		if (es8375->mastermode) {
-> > +			dev_err(component->dev, "no mclk, cannot as master\n");
-> > +			return -EINVAL;
-> > +		}
-> 
-> Still got the outdated clocking terminology here.
-
-I'll delete it
+ok, I'll change it to v3 for the next version
 
