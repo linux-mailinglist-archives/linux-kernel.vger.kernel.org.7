@@ -1,230 +1,137 @@
-Return-Path: <linux-kernel+bounces-660556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17691AC1F46
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:06:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F23EDAC1F4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20FBDA20301
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:05:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A44E69E158E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16162224244;
-	Fri, 23 May 2025 09:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD449222596;
+	Fri, 23 May 2025 09:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g39Ufm5E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mkMqqaj8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52141158874;
-	Fri, 23 May 2025 09:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48872158874
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 09:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747991167; cv=none; b=ML0/31E7TI+TX4oJRnR0xwjSetRBsWaOwNRNnbWMsdAoDeIJ2pDgARhuKzlRxP9DRVKnW2KZx6DA9RFr0VjwsqcZlwyC2SYdnuLeTeSL8dRNeoOIxu1O55wDtM58qQXFbrj1ubNsqkzAgpBvirFCJ2doe3mZxr3NQKdn+5ZGxhA=
+	t=1747991216; cv=none; b=c3NR02Mj1b8TA1Hdr4SG8de2FYY+84KPmxUfPcW1XAAkPh8Ho3dSeOueF7SDacZhOE4jYTdy3g+/A52nvhk/+YaW7fTDC1316W5LAxsQlqb2UkvScrVNDubNsRupRbKP6/PvOQhC4HNmZD3nReKhyOFiX3JT05iOm4QHqk8ewDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747991167; c=relaxed/simple;
-	bh=Rpjv0JrO41nivhlbI4+2a2+XIeOB7AFxjvb4ZS8YZhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IVeJsUtxB/Av/UpBxhKv7FTr1Le+zb3xrR8+9rusp8JvP9e1cmGirrAV0nBgUfLixVATsxyg5rVF4rS9Qg5/1O1ECkEGkzRkYhqT3sTTmTytvhlDrOMQE6+bv+QE7vXiwZsEWldu/XqtbDab9V7HZidSiKIiTs4whBHNlFz+yRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g39Ufm5E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C43C4CEE9;
-	Fri, 23 May 2025 09:06:06 +0000 (UTC)
+	s=arc-20240116; t=1747991216; c=relaxed/simple;
+	bh=y58D5o2WeeI79/6c3GDc1hkPTe1ukMuyCQePGAsny4w=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G53foBbS+k79e9xyHLSw2gf0KgmzfYpk5qzi009QoMBfACWpAkAf3IWBBG7mWK05YhZ2VSbQcSpv6k4XDjIj2hNSs07UHqC+CU6temfA1gdX6QO58XWBkHwhitq44DJ2gs1qUQDS2StP1lPDWbRHzbRM58PD9aw2PxfXiL0nq5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mkMqqaj8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F33C4CEE9;
+	Fri, 23 May 2025 09:06:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747991166;
-	bh=Rpjv0JrO41nivhlbI4+2a2+XIeOB7AFxjvb4ZS8YZhI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g39Ufm5E8lorrUP13UNIN3Dvqo8VG9e7Vp4ShfSxgg7L/F0fKZoxFraX3VA7fwh8g
-	 6CGwi7+7CqCp8V5NBqQgXhi6mJJ6Z1PgM4OztWSZZMr7fwFGYlz3pC5ngys2C6xGUI
-	 oBVX0E/2dmBba/MyRK1cMpA8cKwFl/aXau9zlQaonTX8/GF4xu8+gRYkg6TjXii/yY
-	 GoB9HaLKDHtb3UeSegynYdJCLzQRliIXqKT11TLWsqNz008C7XsPLmFsW5kEGOaUZQ
-	 g/tcbNDSlr1/EvfwegLceoU1SavYq9JLquUp5U52vEAuqk0maQTpgmLzK2rpx9LAKt
-	 GaRyGJNJygA/Q==
-Date: Fri, 23 May 2025 11:06:04 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Saravana Kannan <saravanak@google.com>, Rob Herring <robh@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Georgi Djakov <djakov@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH 1/4] dt-bindings: mailbox: qcom,apcs: Add separate node
- for clock-controller
-Message-ID: <20250523-markhor-of-fortunate-experience-1f575e@kuoka>
-References: <20250506-qcom-apcs-mailbox-cc-v1-0-b54dddb150a5@linaro.org>
- <20250506-qcom-apcs-mailbox-cc-v1-1-b54dddb150a5@linaro.org>
- <7vszdea2djl43oojvw3vlrip23f7cfyxkyn6jw3wc2f7yowht5@bgsc2pqscujc>
- <aCNGSwL7043GoJBz@linaro.org>
- <20250514160841.GA2427890-robh@kernel.org>
- <aCUHTJGktLFhXq4Q@linaro.org>
- <20250521-psychedelic-cute-grouse-ee1291@kuoka>
- <aC-AqDa8cjq2AYeM@linaro.org>
+	s=k20201202; t=1747991215;
+	bh=y58D5o2WeeI79/6c3GDc1hkPTe1ukMuyCQePGAsny4w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mkMqqaj8qqVUg/i8Ibnp0GiFcnYVqp9L6/uu99NNxg9pT9bZdw0crjneUZM4rVCxn
+	 iYQ9lFVjf1l63O03aHGbXJJy/pYaL0Lhwlt4KgosM+fNc0kxfJVa707gxZfD17QmEg
+	 czWMNXCJOFzXdvNob0WtqwZ4Bbq/hJZPg2g4oy8htK4tCKLGCFANH1Ygf60mDuH2Mk
+	 2S1jG37p14cLGuytRfK07jmp1Z42e0xl0EPEaJf/OLPXWNc8srmwnWKHseSNfKGdfW
+	 Wby40wcqfbPSbvVt3IF1EZo2jKY2ovrKWyyvVBs/cs9knr3Xu8/OitWQs+quppRx29
+	 Ac9wgXC2k1fBg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uIOMf-00HWek-Hc;
+	Fri, 23 May 2025 10:06:53 +0100
+Date: Fri, 23 May 2025 10:06:53 +0100
+Message-ID: <86o6vjelw2.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] irqchip/msi-lib: Honor the MSI_FLAG_PCI_MSI_MASK_PARENT flag
+In-Reply-To: <875xhzhuup.ffs@tglx>
+References: <20250517103011.2573288-1-maz@kernel.org>
+	<875xhzhuup.ffs@tglx>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aC-AqDa8cjq2AYeM@linaro.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, May 22, 2025 at 09:53:12PM GMT, Stephan Gerhold wrote:
-> +Saravana
+On Sat, 17 May 2025 20:59:10 +0100,
+Thomas Gleixner <tglx@linutronix.de> wrote:
 > 
-> On Wed, May 21, 2025 at 11:20:40AM +0200, Krzysztof Kozlowski wrote:
-> > On Wed, May 14, 2025 at 10:12:44PM GMT, Stephan Gerhold wrote:
-> > > > > > > The mailbox itself does not need any clocks and should probe early to
-> > 
-> > ... so probe it early.
-> > 
-> > > > > > > unblock the rest of the boot process. The "clocks" are only needed for the
-> > > > > > > separate clock controller. In Linux, these are already two separate drivers
-> > > > > > > that can probe independently.
-> > 
-> > They can probe later, no problem and DT does not stop that. Linux, not
-> > DT, controls the ways of probing of devices and their children.
-> > 
-> > > > > > > 
-> > > > > > 
-> > > > > > Why does this circular dependency need to be broken in the DeviceTree
-> > > > > > representation?
-> > > > > > 
-> > > > > > As you describe, the mailbox probes and register the mailbox controller
-> > > > > > and it registers the clock controller. The mailbox device isn't affected
-> > > > > > by the clock controller failing to find rpmcc...
-> > > > > > 
-> > > > > 
-> > > > > That's right, but the problem is that the probe() function of the
-> > > > > mailbox driver won't be called at all. The device tree *looks* like the
-> > > > > mailbox depends on the clock, so fw_devlink tries to defer probing until
-> > > > > the clock is probed (which won't ever happen, because the mailbox is
-> > > > > needed to make the clock available).
-> > > > > 
-> > > > > I'm not sure why fw_devlink doesn't detect this cycle and tries to probe
-> > > > > them anyway, but fact is that we need to split this up in order to avoid
-> > > > > warnings and have the supplies/consumers set up properly. Those device
-> > > > > links are created based on the device tree and not the drivers.
-> > > > 
-> > > > Does "post-init-providers" providers solve your problem?
-> > > > 
-> > > 
-> > > I would expect that it does, but it feels like the wrong solution to the
-> > > problem to me. The clock is not really a post-init provider: It's not
-> > > consumed at all by the mailbox and needed immediately to initialize the
-> > > clock controller. The real problem in my opinion is that we're
-> > > describing two essentially distinct devices/drivers in a single device
-> > > node, and there is no way to distinguish that.
-> > > 
-> > > By splitting up the two distinct components into separate device tree
-> > > nodes, the relation between the providers/consumers is clearly
-> > > described.
-> > 
-> > You can split devices without splitting the nodes. I do not see reason
-> > why the DT is the problem here.
-> > 
+> On Sat, May 17 2025 at 11:30, Marc Zyngier wrote:
+> > +	/*
+> > +	 * If the parent domain insists on being in charge of masking, obey
+> > +	 * blindly. The default mask/unmask become the shutdown/enable
+> > +	 * callbacks, ensuring that we correctly start/stop the interrupt.
+> > + 	 * We make a point in not using the irq_disable() in order to
+> > +	 * preserve the "lazy disable" behaviour.
+> > +	 */
+> > +	if (info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT) {
+> > +		chip->irq_shutdown	= chip->irq_mask;
+> > +		chip->irq_enable	= chip->irq_unmask;
 > 
-> The Linux drivers for this particular mailbox/clock controller already
-> work exactly the way you propose. They are split into two devices that
-> can probe independently.
-> 
-> The problem is outside of the drivers, because fw_devlink in Linux
-> blocks probing until all resources specified in the device tree nodes
-> become available. fw_devlink has no knowledge that the mailbox described
-> by this peculiar device tree node does not actually need the clocks:
-> 
-> 	apcs1_mbox: mailbox@b011000 {
-> 		compatible = "qcom,msm8939-apcs-kpss-global", "syscon";
-> 		reg = <0x0b011000 0x1000>;
-> 		#mbox-cells = <1>;
-> 		clocks = <&a53pll_c1>, <&gcc GPLL0_VOTE>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
-> 		clock-names = "pll", "aux", "ref";
-> 		#clock-cells = <0>;
-> 	};
-> 
-> Without device-specific quirks in fw_devlink, the fact that these clocks
-> are only used by an unrelated clock controller only becomes clear if we
-> split the device tree node like I propose in this series:
-> 
-> 	apcs1_mbox: mailbox@b011000 {
-> 		compatible = "qcom,msm8939-apcs-kpss-global", "syscon";
-> 		reg = <0x0b011000 0x1000>;
-> 		#mbox-cells = <1>;
-> 
-> 		apcs1_clk: clock-controller {
-> 			clocks = <&a53pll_c1>, <&gcc GPLL0_VOTE>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
-> 			clock-names = "pll", "aux", "ref";
-> 			#clock-cells = <0>;
-> 		};
-> 	};
+> This is only correct, when the chip does not have dedicated
+> irq_shutdown/enable callbacks.
 
-Above code suggests that clocks are not needed for the mailbox at all.
-You need to be really sure of that. If that's the case, then this
-description looks like correct hardware description, more detailed then
-the first case, though.
+The chip structure provided by the PCI MSI code doesn't provide such
+callback, meaning that they are unused for the whole hierarchy.
+
+> And I really hate the asymmetry of this.
+
+So do I, but that's how the lazy disable thing currently works. Drop
+the bizarre asymmetry on irq_disable, and we can make this nicely
+symmetric as well.
 
 > 
-> It is easy to say that the problem is in Linux (and not the DT), but
-> unless you are suggesting to remove fw_devlink from Linux, or to add
-> more device-specific quirks to the generic fw_devlink code, I'm only
-> aware of the following two options to make this work (both already
-> discussed in this email thread):
+> > +		chip->irq_mask		= irq_chip_mask_parent;
+> > +		chip->irq_unmask	= irq_chip_unmask_parent;
+> > +	}
 > 
->  1. post-init-providers (as suggested by Rob):
-> 
-> 		post-init-providers = <&a53pll_c1>, <&gcc>, <&rpmcc>;
-> 
->     To repeat my previous email: IMHO this is a crude workaround for
->     this situation. The clock is not really a post-init provider: It's
->     not consumed at all by the mailbox and needed immediately to
->     initialize the clock controller.
+> I'm still trying to understand, what's the actual problem is you are
+> trying to solve.
 
-Clock is a provider - it has clock-cells - and it is post-init, because
-mailbox (parent) does not need it to initialize itself. Only part of its
-functionality - clocks - need it.
+I'm trying to remove some overhead from machines that don't need to
+suffer from this nonsense double masking. Specially in VMs when
+masking/unmasking requires *two* extremely costly exits (write +
+synchronising read-back). This change reduces the overhead
+significantly by only masking where it actually matters.
 
-> 
->     With this approach, there are no device links created for the
->     clocks, so we don't get the proper probe/suspend ordering that
->     fw_devlink normally provides.
+> MSIs are edge type interrupts, so the interrupt handling hotpath usually
+> does not mask at all. The only time masking happens is when it's lazy
+> disabled or during affinity changes, which is not the end of the world.
 
-This probably could be fixed in the Linux?
+And that's part of the problem. The lazy disable ends up being way
+more costly than it should when the interrupt fires during the
+"disabled but not quite" phase, and in turn makes the critical section
+delineated by disable_irq()/enable_irq() more expensive.
 
-> 
->  2. Split up device tree node (this patch series): With this approach,
->     the mailbox can probe early and the clock controller child device
->     gets the expected consumer/supplier device links to the clocks. IMHO
->     this is the cleanest solution to go for.
-> 
-> @Saravana: Is there any other option that I missed? Or perhaps you have
-> any other suggestions how we should handle this?
-> 
-> To summarize the series and previous emails, the dependency cycle that
-> was in msm8939.dtsi before commit d92e9ea2f0f9 ("arm64: dts: qcom:
-> msm8939: revert use of APCS mbox for RPM") is:
-> 
->   1. The clock controller inside &apcs1_mbox needs
->      clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>.
->   2. &rpmcc is a child of remoteproc &rpm
->   3. remoteproc &rpm needs mboxes = <&apcs1_mbox 8>;
-> 
-> This is not a real dependency cycle, the clocks in the mailbox@ node are
-> not needed for the mailbox. They are only used and needed for the clock
-> controller child device that makes use of the same device tree node.
-> 
-> At runtime this cycle currently results in none of the devices probing:
-> 
-> [   13.281637] platform remoteproc: deferred probe pending: qcom-rpm-proc: Failed to register smd-edge
-> [   13.296257] platform b011000.mailbox: deferred probe pending: platform: supplier b016000.clock not ready
-> [   13.308397] platform b016000.clock: deferred probe pending: platform: wait for supplier /remoteproc/smd-edge/rpm-requests/clock-controller
-> 
+So while, as you put it, it's "not the end of the world", this seems
+to me like a valuable optimisation.
 
-Except missing dev_links you mentioned, this feels for me like job for
-post-init-providers (option 1), but I am also fine with option 2,
-because it fees like more appropriate hardware description.
+Another possible improvement would be to teach the PCI code it can
+still rely on masking even when the endpoint is not capable of masking
+individual MSIs.
 
-Best regards,
-Krzysztof
+Thanks,
 
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
