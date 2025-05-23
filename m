@@ -1,102 +1,159 @@
-Return-Path: <linux-kernel+bounces-661168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 698CEAC2783
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:23:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 197C0AC2785
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F225F7BEF72
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:20:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D5984A2FA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CCB297A62;
-	Fri, 23 May 2025 16:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FDA296FCC;
+	Fri, 23 May 2025 16:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NvHaeTkV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EcYmAI+s"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824CC29713F;
-	Fri, 23 May 2025 16:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331A1294A06;
+	Fri, 23 May 2025 16:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748017302; cv=none; b=t0FIayG47PQy9PNF94iEuA+L4NxJJXkvduZTAYQqvBZ3i0eUyb60NPo/b2Ts4msRHh1hy2aqzAZBjlohrZRUl3cM2Heq4x+kwz464LjzAOQE2icHBIumLsUhBmAKP2ZXXCKWM9ZndHlUkeYos6rkCV7qKvgvlz4Kyqn2uhIOP+g=
+	t=1748017354; cv=none; b=kQGu2dF7zpSzAQ5UnRiYtwmk1PAAgWjn6co460sOH/NXJAQB9HHLtlbMZH8RspIq2BrAuAx15TeCJ3Xk5EBTpUl0aMdo+A7IqPayVel2xSvplQVwMpvOEpcK+dJVLYnrpY8q35KSST/8hI9wJRXDAIewEUYQ6fBJAlf6ng019bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748017302; c=relaxed/simple;
-	bh=nfVfDN3HgVuzw3t37wjLxC06xBmaqVN2owM9riXecqY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=n+kiPFBEPlPvHPM7X82Eg+H5vn2PecZmsVaFSkLrLOGfSeDcezx2P2VHfCE5hbjOu2YWP84NpaDycRUVhVXfXaS8lThWfkHW6Ftt4vowuNpfY3h+c5N0sEprcY475G86aktzeNOYAasF/icnSfBs7EBODDQDcIm80br4SOBtev8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NvHaeTkV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9308AC4CEEB;
-	Fri, 23 May 2025 16:21:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748017302;
-	bh=nfVfDN3HgVuzw3t37wjLxC06xBmaqVN2owM9riXecqY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=NvHaeTkVioxFNO138/QpRiHGbE8ZCtyeEz9/FW9aeuFZ2nB3F0LoadaGtq6FFAVNX
-	 cNRLvHAT3rIF0iMQXzeLHbMoflox99STpdFSclJoZe5T8R1FhB0T18lwk77NE/gQJB
-	 OPbAaeh+Xpx/Sj9OajaeO7SxlovUqMUVjQQuOUaX6DmQ7gxubsyMFeMz7iMSRvRpPa
-	 VKebsECWXjn482DwLm5RznFqvZPSlwz2y5kUWGgVgcRF2QqdJaFqcytMEJJkW75Yeo
-	 JQqYudCrAfc6wezP0OorCOnKqku4FZSJxXYs7QDkJvxr879S010Ma1TxFsdC/3cYdr
-	 rVsm4kc1rZcPg==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Robin Gong <yibin.gong@nxp.com>, 
- Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <20250523131214.955970-1-martijn.de.gouw@prodrive-technologies.com>
-References: <20250523131214.955970-1-martijn.de.gouw@prodrive-technologies.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: regulator: add pca9450: Add
- regulator-allowed-modes
-Message-Id: <174801730004.578098.7742808995079543725.b4-ty@kernel.org>
-Date: Fri, 23 May 2025 17:21:40 +0100
+	s=arc-20240116; t=1748017354; c=relaxed/simple;
+	bh=LAkicZJyK/FGZjxwtLmT18YGpM4Dm/qAEb9YYZlSY88=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hKoGudRD0tmofexxdLyWTLPFTS/PIOPguY4d9TrNgGYzbKbZAK7w54X0CZAYgU6rtze6LahJrtPGMSPSC9GKS5T4WOMqWsw2ODnuhS2fR8Rcr/wUNxt6fXYydpcMIbTztj+Zfz/lmGcIHJ6tZJQvJldzMLWXCP9pIC2pq9874/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EcYmAI+s; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1748017350;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=p8BaeXySDEnnoBAKxDxDRFr2nIyJdWCYaT15SV7DAQI=;
+	b=EcYmAI+sjd3M9P4tTqpTRafycWBQZR/9qBIAjVmmsoeTIA2aoyZgGTdS44r+Pukf31wjd5
+	VfR2+BkJPxWJMrj5aJRQM2FOyhW/v5LjiJ5tvBn1SNxDwG0qWJHOs8GG5JAPBFa+HoNPsG
+	ANhWGgqUpZLOM5Yir+Cv2zKH3BrF3yQ=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: bpf@vger.kernel.org
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jakub Sitnicki <jakub@cloudflare.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v1] bpf, sockmap: Fix psock incorrectly pointing to sk
+Date: Sat, 24 May 2025 00:22:19 +0800
+Message-ID: <20250523162220.52291-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 23 May 2025 15:12:11 +0200, Martijn de Gouw wrote:
-> Make the PWM mode on the buck controllers configurable from devicetree.
-> Some boards require forced PWM mode to keep the supply ripple within
-> acceptable limits under light load conditions.
-> 
-> 
+We observed an issue from the latest selftest: sockmap_redir where
+sk_psock(psock->sk) != psock in the backlog. The root cause is the special
+behavior in sockmap_redir - it frequently performs map_update() and
+map_delete() on the same socket. During map_update(), we create a new
+psock and during map_delete(), we eventually free the psock via rcu_work
+in sk_psock_drop(). However, pending workqueues might still exist and not
+be processed yet. If users immediately perform another map_update(), a new
+psock will be allocated for the same sk, resulting in two psocks pointing
+to the same sk.
 
-Applied to
+When the pending workqueue is later triggered, it uses the old psock to
+access sk for I/O operations, which is incorrect.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Timing Diagram:
 
-Thanks!
+cpu0                        cpu1
 
-[1/2] dt-bindings: regulator: add pca9450: Add regulator-allowed-modes
-      commit: 0a4056a444c8d55beea470948c73befd6673aa6c
-[2/2] regulator: pca9450: Add support for mode operations
-      commit: 2616e5f4fe04eb25eb5cbabc0a3a2a374e14008e
+map_update(sk):
+    sk->psock = psock1
+    psock1->sk = sk
+map_delete(sk):
+   rcu_work_free(psock1)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+map_update(sk):
+    sk->psock = psock2
+    psock2->sk = sk
+                            workqueue:
+                                wakeup with psock1, but the sk of psock1
+                                doesn't belong to psock1
+rcu_handler:
+    clean psock1
+    free(psock1)
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Previously, we used reference counting to address the concurrency issue
+between backlog and sock_map_close(). This logic remains necessary as it
+prevents the sk from being freed while processing the backlog. But this
+patch prevents pending backlogs from using a psock after it has been
+freed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Note: We cannot call cancel_delayed_work_sync() in map_delete() since this
+might be invoked in BPF context by BPF helper, and the function may sleep.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Fixes: 604326b41a6f ("bpf, sockmap: convert to generic sk_msg interface")
+Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
 
-Thanks,
-Mark
+---
+Thanks to Michal Luczaj for providing the sockmap_redir test case, which
+indeed covers almost all sockmap forwarding paths.
+---
+ include/linux/skmsg.h | 1 +
+ net/core/skmsg.c      | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/skmsg.h b/include/linux/skmsg.h
+index 0b9095a281b8..b17221eef2f4 100644
+--- a/include/linux/skmsg.h
++++ b/include/linux/skmsg.h
+@@ -67,6 +67,7 @@ struct sk_psock_progs {
+ enum sk_psock_state_bits {
+ 	SK_PSOCK_TX_ENABLED,
+ 	SK_PSOCK_RX_STRP_ENABLED,
++	SK_PSOCK_DROPPED,
+ };
+ 
+ struct sk_psock_link {
+diff --git a/net/core/skmsg.c b/net/core/skmsg.c
+index 34c51eb1a14f..bd58a693ce9a 100644
+--- a/net/core/skmsg.c
++++ b/net/core/skmsg.c
+@@ -656,6 +656,9 @@ static void sk_psock_backlog(struct work_struct *work)
+ 	bool ingress;
+ 	int ret;
+ 
++	if (sk_psock_test_state(psock, SK_PSOCK_DROPPED))
++		return;
++
+ 	/* Increment the psock refcnt to synchronize with close(fd) path in
+ 	 * sock_map_close(), ensuring we wait for backlog thread completion
+ 	 * before sk_socket freed. If refcnt increment fails, it indicates
+@@ -867,7 +870,7 @@ void sk_psock_drop(struct sock *sk, struct sk_psock *psock)
+ 	write_unlock_bh(&sk->sk_callback_lock);
+ 
+ 	sk_psock_stop(psock);
+-
++	sk_psock_set_state(psock, SK_PSOCK_DROPPED);
+ 	INIT_RCU_WORK(&psock->rwork, sk_psock_destroy);
+ 	queue_rcu_work(system_wq, &psock->rwork);
+ }
+-- 
+2.47.1
 
 
