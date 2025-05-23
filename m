@@ -1,347 +1,329 @@
-Return-Path: <linux-kernel+bounces-660543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24DBBAC1F1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:00:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E76D4AC1F24
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FFA31BC7254
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:01:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F8D11BC7792
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0AE224256;
-	Fri, 23 May 2025 09:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fPcckd+B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6301221FB2;
+	Fri, 23 May 2025 09:01:26 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E761537C6;
-	Fri, 23 May 2025 09:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747990832; cv=none; b=W4VBwvEnu86kkDpaHT8x/Z3iagTXMZRWPp8f0xScOLEhIpzQ5vA8XIFIDQrd5uPincCVl5JQPc3O4I32BV907tjLKERR1CYsA9tmFG66CAf0lDPoB5AXhVwjaF25JP42cRuT7xdzIRlNqK/sbjdpRpYmB9YwFNVRhM4QvRDtvH4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747990832; c=relaxed/simple;
-	bh=mTpxlzLfOxVD0utOYJ/lK616UQLpk4pGr8aEVscKunw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n79k9a95UR+LZa1YSF6mvJD1KTRStT993TK2OzSvfZBV1YDx/bRl2fqCCWHrfOVUIT4/gjI1tTDdu7FOgrIN8MhaEsrn76HW+nmXhXsaupqXzNsRr+Oqpc1FnlH8wiV98KIwWJjlYPxVxDERPQhCEG3TdLU1RgaegpnddjwI6I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fPcckd+B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A37C8C4CEEF;
-	Fri, 23 May 2025 09:00:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747990831;
-	bh=mTpxlzLfOxVD0utOYJ/lK616UQLpk4pGr8aEVscKunw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fPcckd+BLil1KAT5UIYjPx03Fh3ZTaEugtxxZElUKqLeUA9XnqsXOv4ajQshd0H1q
-	 2QELspOTRsUVpRVzevbwVfXxvM4HiXroUghaQnUUc8KE3ZDHwjs/1coEwu097gZLhy
-	 4aKBRwGfn3YcD3qOypMOXVAGws7OmtQKGJx24v2bPo679/vo0Hrikk0SqiquTQyaRH
-	 M5GH0ao2pnHZa4ANAt3PC8PKy4qSF7gPbYYdG3yxKni/F5NgTQxj2S5lcqO/b7cP0R
-	 NZe6DjeT7IdAgi4GGljMStrUqi+h/92RK3rEyYDY31aSKWPw8291UIh2ltO3pnVGCf
-	 5uC2mR9yOENyQ==
-Date: Fri, 23 May 2025 14:30:17 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-	op-tee@lists.trustedfirmware.org,
-	linux-arm-kernel@lists.infradead.org,
-	Olivier Masse <olivier.masse@nxp.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T . J . Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	azarrabi@qti.qualcomm.com, Simona Vetter <simona.vetter@ffwll.ch>,
-	Daniel Stone <daniel@fooishbar.org>,
-	Rouven Czerwinski <rouven.czerwinski@linaro.org>
-Subject: Re: [PATCH v9 1/9] optee: sync secure world ABI headers
-Message-ID: <aDA5IZ4lBIxNcJQX@sumit-X1>
-References: <20250520152436.474778-1-jens.wiklander@linaro.org>
- <20250520152436.474778-2-jens.wiklander@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0164A1A314F;
+	Fri, 23 May 2025 09:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747990886; cv=fail; b=GvcNwOfa9nxv1zFdkWWe/flVybAJ1pf+uowxySiZPrKvcjgGpMspI7j/6q+cqCXb/1zDXrXKEMxUZ3GJf1hV9OVRq740esRWFJ/uuN2jFXfQpdxSr5R6+/SMqUr4WB2L/nxZ5yCsywCp8i1FeyqYjjaoqZr6uAaMpP2eee+D2tY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747990886; c=relaxed/simple;
+	bh=PfmGA2VYh6+rdQMgCbp2iebGiPy2fWGeXcaRH8/23MU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=RIVbsnOcqo003k8ei6wmMLMjwK9vZN34btTG7BC/MwmbwUfYibQhzSINHWswNfX1shMYfimevlCOCBbsOH74z/ZNIhpv+D4+DpgboxVxwL0YoZPdv+OPwE+Kb3//Jau1sBsd6Mr5ekNRO5awXUG9JLngrpRSgNM2TMoepN5YPmI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54N503Qi011965;
+	Fri, 23 May 2025 09:01:08 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11on2085.outbound.protection.outlook.com [40.107.236.85])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 46rwfwun10-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 May 2025 09:01:07 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gyNYQK88kf7GsZ1Y5DumtAZuop09apRq/3TdvbLSKxTQypP3uck4dSPCq+G71TEeKMMFWIN9mlBJMWAtlsyjw98n/UrdvC3deM1Vo//NLZI8QiN2Ly0ji3wBeoiZIkvDX5OIAEuGTMYVf0ZiPMOYLwHQhipPHz8L5wlf9VE7OaBoJbPKoBBF9fiOhtE+PVRJAIoOZ/Q/wWIOGCsAqWoQHhKrE1X3tX/DnlxmnAS4G9PoozeyeaQ8QNX7297E2n0e5Kq5lC5Sp8UIN5RjuCdtrpwTKyJrFrqv4YqYRlkMcD42uqtS7Jo8uNxPRMEIpsLIY3UTv+mOqolgeX7RQfYseg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WLSHwlXP/xM15/zkQ9urOrIITGxt8yqagDe4FJYO5KM=;
+ b=eRxKxywCGO9skbXsw3/unHt29W+kQBqNthDKOfFu3+0RUH09L9O1haOJvtTmH4yGUveWJP/s8o42nevFOoCqZoqvfaMII+7UvsszAzIWkxjZ8zPB+IMJKMTOK84B8XUQm1RSA69XAJ8yL2SOGAzYrRRuMeSy6ZoASokeycM8cHLD3cbB2j52+vtY3ZijQ3OS8oQfYUAXMu8a51WtoAVSWbQWs+fH1DMBLXdlc1y7PCTGxz6bVQwWljEt/yRoKrHAorIpURC9k6tKJQEU9ygdD+k5WebyHFA05lweVOTKp1RSnZi36tkSyyFlAjlzTE3cvnOTxeeMV7KKwe/ZPPwnpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from CH0PR11MB8189.namprd11.prod.outlook.com (2603:10b6:610:18d::13)
+ by PH8PR11MB8106.namprd11.prod.outlook.com (2603:10b6:510:255::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.20; Fri, 23 May
+ 2025 09:01:04 +0000
+Received: from CH0PR11MB8189.namprd11.prod.outlook.com
+ ([fe80::4025:23a:33d9:30a4]) by CH0PR11MB8189.namprd11.prod.outlook.com
+ ([fe80::4025:23a:33d9:30a4%4]) with mapi id 15.20.8769.021; Fri, 23 May 2025
+ 09:01:04 +0000
+Message-ID: <ba4f9f5d-0688-4537-b721-7b2bda8ead8c@windriver.com>
+Date: Fri, 23 May 2025 17:00:40 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: nfs mount failed with ipv6 addr
+To: NeilBrown <neil@brown.name>
+Cc: chuck.lever@oracle.com, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <> <73509a8c-7141-49d7-b6d4-25a271fbad2c@windriver.com>
+ <174798616079.608730.9700383239346135852@noble.neil.brown.name>
+Content-Language: en-US
+From: "Yan, Haixiao (CN)" <haixiao.yan.cn@windriver.com>
+In-Reply-To: <174798616079.608730.9700383239346135852@noble.neil.brown.name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TY2PR02CA0001.apcprd02.prod.outlook.com
+ (2603:1096:404:56::13) To CH0PR11MB8189.namprd11.prod.outlook.com
+ (2603:10b6:610:18d::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250520152436.474778-2-jens.wiklander@linaro.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR11MB8189:EE_|PH8PR11MB8106:EE_
+X-MS-Office365-Filtering-Correlation-Id: ef1985c4-d18c-4945-7895-08dd99d858cc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QzBRV29ZK0dkOUlBNWNLN3hMTGMzUU9rdk82QkExNVBLSXRpZmZmamlqbEpR?=
+ =?utf-8?B?UGliWUpBbzBJUEd0Y0dDNFBHNEUwUHp2M3puRTRwaVRSSm5tTUJHb3p6QjUy?=
+ =?utf-8?B?N2FJZTBPaEllRkJVNlhqZ1pyeUtWOXdyVTdpaytSWno5aE9CM042UWNDZWFx?=
+ =?utf-8?B?b1A4eWZtR1MwdEJldkJVbDMvWWg4RHh4RjJqTHkya2oxZ0Q2V0dObEVsMjF2?=
+ =?utf-8?B?ekdrZW9RdExpbEo5TDlLZnExZ2gzeWdGQkMvTURxcXJwcnovbk4yTW5uZ3No?=
+ =?utf-8?B?MjhMdFA2V2tvL1BUYWxLWWh6dmhhSm1pMDZFWi85cUlyeGZzaHJQUHA5UVcr?=
+ =?utf-8?B?clJHaEh2bytiLzhqY01ZS1JuT1ZPbVBwZ1VyWERoQkY3aHV2ZUlMMWtzNSt6?=
+ =?utf-8?B?WUl6RlRZR0hEZDZiMnRUd0prTFhQZGJndjlJbzJXdnZ4d2ZiRmVLaE1ldTZx?=
+ =?utf-8?B?V2pHekNIUmRTNFBJV2E4Tm1IaUMzMTJ3RkV1U2NHdTROdTZHdjJsWHBwYmdI?=
+ =?utf-8?B?Mk1YNXJQV1A5R3Avc0FJeXB6RXYxRmpPVHZxNzFhdnVOcXNIUUt6Z0FDdnJN?=
+ =?utf-8?B?alU2M1RFTW5ieU9qY0VuZThoYjI5aTR0WWU3TWhDd0FJUUp5bS9HcDh1VGJK?=
+ =?utf-8?B?bVVWVStSd3Y4VUNOblhtakR1SW9ReVZXUlF3ekc3amd0dDBVR3Q0SkI1WlVB?=
+ =?utf-8?B?elYxem5UTEhDYmJYYXo5RlAzeG5kNXRZT2VyK1B5THEvdkVQcFFxWk12dnQ5?=
+ =?utf-8?B?Z2hZcU1YYTRyVGduYWd3R1c2ZW1FS0VPbDk2WENDRFVjR0RoZVZDZE5IdFUv?=
+ =?utf-8?B?UlVNbWdVcTRMRjFTR2tqblN0KzR0aFFhZG5iZmMrdjNqeXI1WHBuZ1dJeXVm?=
+ =?utf-8?B?SFRsc3dQeERxc0VLa0pTT2plaXkvd2NCOTVKR1krNlJsUXJ1UDd1QXV6clNM?=
+ =?utf-8?B?SmM3OS9aUC8rZ2Y4YnVBWStmVnp4ejdRWklILzJHQ3R0SjVGMTE1R0NPMDFC?=
+ =?utf-8?B?T3JhUWFmQ1ZTUEhKSGVSYVlxMklUU1NJbDRRMCtvZ1p5eVNEV2ROSFdWZGpu?=
+ =?utf-8?B?ZGRYM01wR1ZzMFVlb2VaaDVJc0JSVFh0c2huSWdpdU8weVRzUkJIZ21uYkRm?=
+ =?utf-8?B?bjArK201VGR4NHE0V1ROektLY1BVcXVpRHBXZk5sQVdXeHZ4ME4yUUZEYkNS?=
+ =?utf-8?B?YXRpMjJickNwNVhsNjBkK0hwbGtyc0RZYVBMZGZZTUdoNVp1dmRsZENTaEFB?=
+ =?utf-8?B?SFF2OXpaK05IL3Y3a1pRamQ4TWVzRy9uTEMwZnZ0eDJzbkdQbjRQcTU5RlN2?=
+ =?utf-8?B?a25HYkU5YjdzN0hGY0xOOTgxVFlibmdNL010OTJzNDlTVWE5K25GbVoycXhv?=
+ =?utf-8?B?dVVnamdZbkJCYXp2SklxRU9TUnlVNDNQb2hMZ3hTWnZzSkltQzRuOFY0K2xy?=
+ =?utf-8?B?dVc1ZU1PQ01lQnlPNG5DTHRncGlnRlFEOUlCeDNEckRtWWcxZG9zSXRyYmtG?=
+ =?utf-8?B?Z3k0bmk4cnA4bnQ5V00vL2VGblR4WEdML0l3UVRDbHU3ZVYwS0JyMUtsZGFR?=
+ =?utf-8?B?QzFHMUN0dnMxVEg2b3lmMmVWK1VBaWwxM0Q3S0dRSm5FME0yYUY2bWh1dXdR?=
+ =?utf-8?B?WERnQm9ITjljNGZuVUVKazJhcGZOQisvYzNXS0ZvU3VDRnJjOGpDVW80dzl6?=
+ =?utf-8?B?dUxOVFg2ZXJoZ3RoRkEvbjdlQ0pONmhEcm0xT3N5T0RPUUdsSTRZQzdSMUw2?=
+ =?utf-8?B?VkVBaXlZd3JsaWtDWHlEMHNqZThuVXVwY0xQRldLdDlrTWVML25QWEZWYUFI?=
+ =?utf-8?B?SXhhdGdmZUFseWJPTWs2UWord1RJUkZBZjFhdksraWc2NU8wZUZtOW9uakJX?=
+ =?utf-8?B?QWhDc3pnZEg2Q0FLVExnVkZNZUgvQlhTRGFqR1dVc1lMMTQ1Z3BuZlZmRUxF?=
+ =?utf-8?Q?l9IScX25vfU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR11MB8189.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QnhCVmpBUGthTnk5QnFZazk0Y3JUYVZGTFl6cGwvc0FaMVVpdHZaYmEzSmlQ?=
+ =?utf-8?B?S01pQVRKVmlNT1Bva3NETUl1VVRhRy9TTzg3UGNsMFpDNzJSSGZTb3ByT05G?=
+ =?utf-8?B?MzQ1L1BCVGVVOUcyamgyMUtRZEY1RERQRUhIY25vc2VmQTQyWWg0bVh2a2pI?=
+ =?utf-8?B?Mnp2a1Njc1k3UGVybStLZGpBTlArOTNKUjZDT01TS2xGOEhFQU8wOVg1akJM?=
+ =?utf-8?B?VUxIYTVGMDdjWTVtU0w5N082S1dHYnVLQzB1bitKMlNKN1lBWm9NMzM0R1Bu?=
+ =?utf-8?B?VWJwZG5KN0FTbDRCQVZZYXZ6OXBzWjlZVTZkTGJRSjBXdHh2UDlGbnNKT1Rm?=
+ =?utf-8?B?SFlWN1k0NDJRejZJdlNRZ1lTRjMvdUlTR1RKMlgrTnRlVCs0VWJKSXpmbnZi?=
+ =?utf-8?B?REVsNE1STUxEZmxwWmdjM0FFOWNkcS8zK00rbzFaQ0dQV1NqMDJveHhwMkcv?=
+ =?utf-8?B?TWk4ZGp2dnBxbUtTbUhleXRpbWowV0hMaTBIeHNKb1d3UWgwK3hxRjRuVVVT?=
+ =?utf-8?B?WW9NYys0VFZhang4cmVFOVp0eWhEZGE5dTdwUHc4d2tEKzIxT29Xa2ZhZzBu?=
+ =?utf-8?B?YVBQeElEa1FmMzRvUDJJM1o4ZjBoZXZ6R0s4NTNPdDIrMDJnbVlLMXk4ck5t?=
+ =?utf-8?B?QWxQTitBekIzMUJ4QmdzWHdmYnZTYTZVQ0Nsa25pNU5pRkl6M3gvK3l1cXZo?=
+ =?utf-8?B?bmFxd1ZCZlBhUTAwWXNMb01MeWJhWHhpV3I2Wm5EWjE5dmpPZTNUb1JhdU9l?=
+ =?utf-8?B?UGlidTZlRi8yZVYrN04rVksrMlFXK0tjSmUzZ2JvNVZ2Y0pzK3doWDZlaTZs?=
+ =?utf-8?B?SkxHdzZYb0t4N0VyT1R5RTBVK2FhTm1tdkg2bDBNazFvUWdSbFk4SmxPcjFt?=
+ =?utf-8?B?OTI2UlBlNzlENVlkbDFjMjc5S08rWWw1UTRMUXNXbS83UVVpTVN6cFFrR24r?=
+ =?utf-8?B?U1BJVTVmVWMxZ2lVSDloejc3S2h2bjhMZEFTTlA3K1I2YVpsL0Y0dWdhdEdP?=
+ =?utf-8?B?TkN2WCtZd2NXNWh3QXNJTEpFVkhjZ3o2U045WEFGTlRDV2tnZjRvMW9CRkR6?=
+ =?utf-8?B?OUlmT1VPK3lHZyswWk9XdSt1TDEwM3RYazlFQU9SMmNzR0h2Y3NEVm80enZZ?=
+ =?utf-8?B?Rnh3ZTJuc0tMSWNISjBuOHIvWkl3d0drSFdwSktkRHYwcFp4dWpVaGM4VkFB?=
+ =?utf-8?B?WWdTZlhLc1IzR3ovMkUzZEJxVS8veG5lVE9UT1dNUUltR043eWo4WUEwTDl1?=
+ =?utf-8?B?U0VGY1d6azlZZ1FlaDI5clh4UFUzOFRHUFFETS93dmFubW91b1JXR2prYVU5?=
+ =?utf-8?B?SEllcGt0UXhqVko0Nk1RR1NHTmlDY1hnZ1hyUGQ5ZTBLUDcwVy9Mb0Rrc01J?=
+ =?utf-8?B?aWtBZVVoN3dzWEZWMGtVbEd2dHdrRThXcHlQY2lUY2JjTmlBTnhmbDlHVmw4?=
+ =?utf-8?B?WC92Zi83UTZJbldGYmxadUg5bHhjSE1CZC8zV05NLzIvVms1bTFCcm5pVjQ4?=
+ =?utf-8?B?by9FUS9jbFBBNVg3bjVkMGZ1N3ZuaVQ3TnNsMUFmbFNoRXluOVlpNVN2bG9O?=
+ =?utf-8?B?bzhxclU5RUVNZ0hZVk1MZGppeDhtL2krakJTYkZBbHJ6eUZPRVRPaDU1d2p3?=
+ =?utf-8?B?RTNiaEUxeGJaOE8rWXFlbDdObGJnc21Ca3V2STJqaVBkeVdXRVk0N01jRlRh?=
+ =?utf-8?B?L2hxcHVBNmgyNS8wamJOZHdCU1lXeXhEcXhxQjJLc01rdTdYeDlrTVl1aUMr?=
+ =?utf-8?B?bTdaM3pENGlKc214b0pVNklxUE5UY3ZSVHhHQy9CK3NKdVUyeFYwYytBc3p5?=
+ =?utf-8?B?bkFoTVNuUEhraFpJbnFqUXNFcHZSQTBBNUV6RkNyUDR2bG1PVGY5SnpwSE1L?=
+ =?utf-8?B?anRzWWpvZ25ib25WODN4UVp4TmpFQkc2UVJIQlJMdzRxQ3AzKzlWZVJwb0FR?=
+ =?utf-8?B?TjAyc0tHUGxjZ0NJRUh5ay9CZTlHSU84UXZHWHFDTTB1VEhLWVRsZDlBZUNN?=
+ =?utf-8?B?OUlZcURiZldnWkI3blFmMHJadG5va1VHM3FabWZJMTNwZE16NCtoeTdyd1hL?=
+ =?utf-8?B?MlpLaVVYcldvb2NaQ1d5YzJnVDR5RXpwUDcvdUFDT0FaSG1IL3hvVW9PMWhy?=
+ =?utf-8?B?T3gwWHVTOTA2M1p4Um9xRUd5QTRmQlNVWlYvZ1RqNEpJODdWeXFjNkNDM1Vx?=
+ =?utf-8?B?M0E9PQ==?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef1985c4-d18c-4945-7895-08dd99d858cc
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR11MB8189.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2025 09:01:03.9249
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KQgAp8ZqUqKWTlPWMcr8KgwDsCRGP0G5sxGgNRHJDhyQ34MUZZSrmDziDHfD0zLXzTaEK6yPz2sL7Xt/5/xkAOuPCP2oWhFvI5fnG7LlneE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8106
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDA3OSBTYWx0ZWRfXw618FFA9uBW6 25WG6FCqrAmJikXz8pNy8v1iF6flAXj3e3DPLytELsEtPspAybrUFyFQzIeH9yopHOooLplTV/j Eyw5yrdTqGFeuGHoV9xMUXscnxUvZ9IhWQhqs0P8CgKgwjxDd8e32ro/DBbGC9gFEsvPjFrzg9k
+ soyqyYBzrYPXOxCZF37t64v5ju53dx5Y0Hs5UwPeXFshPGTIPRYtOFCCBLCtQuCRptKF4oL4KAp g3/b8idmwE+K7UsAPXZRx/CUMRyWT/gADPg8E7BWAzgdl1WMVLaPKo1N+Kbe88XCwQD9ATk0dRu 0rtwBGcZ+EH4r93LG/Ii2ZflNrFlFx5Gu0vVIej4xSvUWg3HBe/QPs0ObGywBRFCBNiFJxFMl9M
+ cDHDNHJk+oyOK9OgPI7iUF3gSOjdowHZ4YWXjHtPpMRHs10zpNxu+7xFxYH42GLYZd3O8FBu
+X-Proofpoint-ORIG-GUID: DZlaE-4j4bfYdnc9cGLlPXpJhP5Z4sCi
+X-Proofpoint-GUID: DZlaE-4j4bfYdnc9cGLlPXpJhP5Z4sCi
+X-Authority-Analysis: v=2.4 cv=b6Cy4sGx c=1 sm=1 tr=0 ts=68303953 cx=c_pps a=7NYwoM2WOJnlZ5JcLxGZDA==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=dt9VzEwgFbYA:10 a=yPCof4ZbAAAA:8 a=n58jSPn0ql7obAd6v0kA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-23_02,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 spamscore=0 mlxscore=0 mlxlogscore=999 impostorscore=0
+ suspectscore=0 malwarescore=0 clxscore=1015 phishscore=0
+ priorityscore=1501 bulkscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2505160000 definitions=main-2505230079
 
-On Tue, May 20, 2025 at 05:16:44PM +0200, Jens Wiklander wrote:
-> Update the header files describing the secure world ABI, both with and
-> without FF-A. The ABI is extended to deal with protected memory, but as
-> usual backward compatible.
-> 
-> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> ---
->  drivers/tee/optee/optee_ffa.h | 27 ++++++++---
->  drivers/tee/optee/optee_msg.h | 84 ++++++++++++++++++++++++++++++-----
->  drivers/tee/optee/optee_smc.h | 37 ++++++++++++++-
->  3 files changed, 130 insertions(+), 18 deletions(-)
+
+On 5/23/2025 3:42 PM, NeilBrown wrote:
+> CAUTION: This email comes from a non Wind River email account!
+> Do not click links or open attachments unless you recognize the sender and know the content is safe.
 >
+> On Fri, 23 May 2025, Yan, Haixiao (CN) wrote:
+>> On 5/23/2025 7:21 AM, NeilBrown wrote:
+>>> CAUTION: This email comes from a non Wind River email account!
+>>> Do not click links or open attachments unless you recognize the sender and know the content is safe.
+>>>
+>>> On Thu, 22 May 2025, Haixiao Yan wrote:
+>>>> On 2025/5/22 07:32, NeilBrown wrote:
+>>>>> CAUTION: This email comes from a non Wind River email account!
+>>>>> Do not click links or open attachments unless you recognize the sender and know the content is safe.
+>>>>>
+>>>>> On Thu, 22 May 2025, Yan, Haixiao (CN) wrote:
+>>>>>> On linux-5.10.y, my testcase run failed:
+>>>>>>
+>>>>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mount -t nfs [::1]:/mnt/nfs_root /mnt/v6 -o nfsvers=3
+>>>>>> mount.nfs: requested NFS version or transport protocol is not supported
+>>>>>>
+>>>>>> The first bad commit is:
+>>>>>>
+>>>>>> commit 7229200f68662660bb4d55f19247eaf3c79a4217
+>>>>>> Author: Chuck Lever <chuck.lever@oracle.com>
+>>>>>> Date:   Mon Jun 3 10:35:02 2024 -0400
+>>>>>>
+>>>>>>       nfsd: don't allow nfsd threads to be signalled.
+>>>>>>
+>>>>>>       [ Upstream commit 3903902401451b1cd9d797a8c79769eb26ac7fe5 ]
+>>>>>>
+>>>>>>
+>>>>>> Here is the test log:
+>>>>>>
+>>>>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# dd if=/dev/zero of=/tmp/nfs.img bs=1M count=100
+>>>>>> 100+0 records in
+>>>>>> 100+0 records out
+>>>>>> 104857600 bytes (105 MB, 100 MiB) copied, 0.0386658 s, 2.7 GB/s
+>>>>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mkfs /tmp/nfs.img
+>>>>>> mke2fs 1.46.1 (9-Feb-2021)
+>>>>>> Discarding device blocks:   1024/102400             done
+>>>>>> Creating filesystem with 102400 1k blocks and 25688 inodes
+>>>>>> Filesystem UUID: 77e3bc56-46bb-4e5c-9619-d9a0c0999958
+>>>>>> Superblock backups stored on blocks:
+>>>>>>          8193, 24577, 40961, 57345, 73729
+>>>>>>
+>>>>>> Allocating group tables:  0/13     done
+>>>>>> Writing inode tables:  0/13     done
+>>>>>> Writing superblocks and filesystem accounting information:  0/13     done
+>>>>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mount /tmp/nfs.img /mnt
+>>>>>>
+>>>>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mkdir /mnt/nfs_root
+>>>>>>
+>>>>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# touch /etc/exports
+>>>>>>
+>>>>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# echo '/mnt/nfs_root *(insecure,rw,async,no_root_squash)' >> /etc/exports
+>>>>>>
+>>>>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# /opt/wr-test/bin/svcwp.sh nfsserver restart
+>>>>>> stopping mountd: done
+>>>>>> stopping nfsd: ..........failed
+>>>>>>      using signal 9:
+>>>>>> ..........failed
+>>>>> What does your "nfsserver" script do to try to stop/restart the nfsd?
+>>>>> For a very long time the approved way to stop nfsd has been to run
+>>>>> "rpc.nfsd 0".  My guess is that whatever script you are using still
+>>>>> trying to send a signal to nfsd.  That no longer works.
+>>>>>
+>>>>> Unfortunately the various sysv-init scripts for starting/stopping nfsd
+>>>>> have never been part of nfs-utils so we were not able to update them.
+>>>>> nfs-utils *does* contain systemd unit files for sites which use systemd.
+>>>>>
+>>>>> If you have a non-systemd way of starting/stopping nfsd, we would be
+>>>>> happy to make the relevant scripts part of nfs-utils so that we can
+>>>>> ensure they stay up to date.
+>>>> Actually, we use  service nfsserver restart  =>
+>>>> /etc/init.d/nfsserver =>
+>>>>
+>>>> stop_nfsd(){
+>>>>        # WARNING: this kills any process with the executable
+>>>>        # name 'nfsd'.
+>>>>        echo -n 'stopping nfsd: '
+>>>>        start-stop-daemon --stop --quiet --signal 1 --name nfsd
+>>>>        if delay_nfsd || {
+>>>>            echo failed
+>>>>            echo ' using signal 9: '
+>>>>            start-stop-daemon --stop --quiet --signal 9 --name nfsd
+>>>>            delay_nfsd
+>>>>        }
+>>>>        then
+>>>>            echo done
+>>>>        else
+>>>>            echo failed
+>>>>        fi
+>>> The above should all be changed to
+>>>      echo -n 'stopping nfsd: '
+>>>      rpc.nfsd 0
+>>>      echo done
+>>>
+>>> or similar.  What distro are you using?
+>>>
+>>> I can't see how this would affect your problem with IPv6 but it would be
+>>> nice if you could confirm that IPv6 still doesn't work even after
+>>> changing the above.
+>>> What version of nfs-utils are you using?
+>>> Are you should that the kernel has IPv6 enabled?  Does "ping6 ::1" work?
+>>>
+>>> NeilBrown
+>>>
+>> It works as expected.
+>>
+>> My distro is Yocto and nfs-utils 2.5.3.
+> Thanks.  I've sent a patch to openembedded to change the nfsserver
+> script.
+>
+> Can you make the change to nfsserver and let me know if it fixes your
+> problem?
 
-Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+What's the version of your nfs-utils?
 
--Sumit
+The patch failed to apply.
 
-> diff --git a/drivers/tee/optee/optee_ffa.h b/drivers/tee/optee/optee_ffa.h
-> index 257735ae5b56..cc257e7956a3 100644
-> --- a/drivers/tee/optee/optee_ffa.h
-> +++ b/drivers/tee/optee/optee_ffa.h
-> @@ -81,7 +81,7 @@
->   *                   as the second MSG arg struct for
->   *                   OPTEE_FFA_YIELDING_CALL_WITH_ARG.
->   *        Bit[31:8]: Reserved (MBZ)
-> - * w5:	  Bitfield of secure world capabilities OPTEE_FFA_SEC_CAP_* below,
-> + * w5:	  Bitfield of OP-TEE capabilities OPTEE_FFA_SEC_CAP_*
->   * w6:	  The maximum secure world notification number
->   * w7:	  Not used (MBZ)
->   */
-> @@ -94,6 +94,8 @@
->  #define OPTEE_FFA_SEC_CAP_ASYNC_NOTIF	BIT(1)
->  /* OP-TEE supports probing for RPMB device if needed */
->  #define OPTEE_FFA_SEC_CAP_RPMB_PROBE	BIT(2)
-> +/* OP-TEE supports Protected Memory for secure data path */
-> +#define OPTEE_FFA_SEC_CAP_PROTMEM	BIT(3)
->  
->  #define OPTEE_FFA_EXCHANGE_CAPABILITIES OPTEE_FFA_BLOCKING_CALL(2)
->  
-> @@ -108,7 +110,7 @@
->   *
->   * Return register usage:
->   * w3:    Error code, 0 on success
-> - * w4-w7: Note used (MBZ)
-> + * w4-w7: Not used (MBZ)
->   */
->  #define OPTEE_FFA_UNREGISTER_SHM	OPTEE_FFA_BLOCKING_CALL(3)
->  
-> @@ -119,16 +121,31 @@
->   * Call register usage:
->   * w3:    Service ID, OPTEE_FFA_ENABLE_ASYNC_NOTIF
->   * w4:	  Notification value to request bottom half processing, should be
-> - *	  less than OPTEE_FFA_MAX_ASYNC_NOTIF_VALUE.
-> + *	  less than OPTEE_FFA_MAX_ASYNC_NOTIF_VALUE
->   * w5-w7: Not used (MBZ)
->   *
->   * Return register usage:
->   * w3:    Error code, 0 on success
-> - * w4-w7: Note used (MBZ)
-> + * w4-w7: Not used (MBZ)
->   */
->  #define OPTEE_FFA_ENABLE_ASYNC_NOTIF	OPTEE_FFA_BLOCKING_CALL(5)
->  
-> -#define OPTEE_FFA_MAX_ASYNC_NOTIF_VALUE 64
-> +#define OPTEE_FFA_MAX_ASYNC_NOTIF_VALUE	64
-> +
-> +/*
-> + * Release Protected memory
-> + *
-> + * Call register usage:
-> + * w3:    Service ID, OPTEE_FFA_RECLAIM_PROTMEM
-> + * w4:    Shared memory handle, lower bits
-> + * w5:    Shared memory handle, higher bits
-> + * w6-w7: Not used (MBZ)
-> + *
-> + * Return register usage:
-> + * w3:    Error code, 0 on success
-> + * w4-w7: Note used (MBZ)
-> + */
-> +#define OPTEE_FFA_RELEASE_PROTMEM	OPTEE_FFA_BLOCKING_CALL(8)
->  
->  /*
->   * Call with struct optee_msg_arg as argument in the supplied shared memory
-> diff --git a/drivers/tee/optee/optee_msg.h b/drivers/tee/optee/optee_msg.h
-> index e8840a82b983..22130e967dc5 100644
-> --- a/drivers/tee/optee/optee_msg.h
-> +++ b/drivers/tee/optee/optee_msg.h
-> @@ -133,13 +133,13 @@ struct optee_msg_param_rmem {
->  };
->  
->  /**
-> - * struct optee_msg_param_fmem - ffa memory reference parameter
-> + * struct optee_msg_param_fmem - FF-A memory reference parameter
->   * @offs_lower:	   Lower bits of offset into shared memory reference
->   * @offs_upper:	   Upper bits of offset into shared memory reference
->   * @internal_offs: Internal offset into the first page of shared memory
->   *		   reference
->   * @size:	   Size of the buffer
-> - * @global_id:	   Global identifier of Shared memory
-> + * @global_id:	   Global identifier of the shared memory
->   */
->  struct optee_msg_param_fmem {
->  	u32 offs_low;
-> @@ -165,7 +165,7 @@ struct optee_msg_param_value {
->   * @attr:	attributes
->   * @tmem:	parameter by temporary memory reference
->   * @rmem:	parameter by registered memory reference
-> - * @fmem:	parameter by ffa registered memory reference
-> + * @fmem:	parameter by FF-A registered memory reference
->   * @value:	parameter by opaque value
->   * @octets:	parameter by octet string
->   *
-> @@ -296,6 +296,18 @@ struct optee_msg_arg {
->   */
->  #define OPTEE_MSG_FUNCID_GET_OS_REVISION	0x0001
->  
-> +/*
-> + * Values used in OPTEE_MSG_CMD_LEND_PROTMEM below
-> + * OPTEE_MSG_PROTMEM_RESERVED		Reserved
-> + * OPTEE_MSG_PROTMEM_SECURE_VIDEO_PLAY	Secure Video Playback
-> + * OPTEE_MSG_PROTMEM_TRUSTED_UI		Trused UI
-> + * OPTEE_MSG_PROTMEM_SECURE_VIDEO_RECORD	Secure Video Recording
-> + */
-> +#define OPTEE_MSG_PROTMEM_RESERVED		0
-> +#define OPTEE_MSG_PROTMEM_SECURE_VIDEO_PLAY	1
-> +#define OPTEE_MSG_PROTMEM_TRUSTED_UI		2
-> +#define OPTEE_MSG_PROTMEM_SECURE_VIDEO_RECORD	3
-> +
->  /*
->   * Do a secure call with struct optee_msg_arg as argument
->   * The OPTEE_MSG_CMD_* below defines what goes in struct optee_msg_arg::cmd
-> @@ -337,15 +349,63 @@ struct optee_msg_arg {
->   * OPTEE_MSG_CMD_STOP_ASYNC_NOTIF informs secure world that from now is
->   * normal world unable to process asynchronous notifications. Typically
->   * used when the driver is shut down.
-> + *
-> + * OPTEE_MSG_CMD_LEND_PROTMEM lends protected memory. The passed normal
-> + * physical memory is protected from normal world access. The memory
-> + * should be unmapped prior to this call since it becomes inaccessible
-> + * during the request.
-> + * Parameters are passed as:
-> + * [in] param[0].attr			OPTEE_MSG_ATTR_TYPE_VALUE_INPUT
-> + * [in] param[0].u.value.a		OPTEE_MSG_PROTMEM_* defined above
-> + * [in] param[1].attr			OPTEE_MSG_ATTR_TYPE_TMEM_INPUT
-> + * [in] param[1].u.tmem.buf_ptr		physical address
-> + * [in] param[1].u.tmem.size		size
-> + * [in] param[1].u.tmem.shm_ref		holds protected memory reference
-> + *
-> + * OPTEE_MSG_CMD_RECLAIM_PROTMEM reclaims a previously lent protected
-> + * memory reference. The physical memory is accessible by the normal world
-> + * after this function has return and can be mapped again. The information
-> + * is passed as:
-> + * [in] param[0].attr			OPTEE_MSG_ATTR_TYPE_VALUE_INPUT
-> + * [in] param[0].u.value.a		holds protected memory cookie
-> + *
-> + * OPTEE_MSG_CMD_GET_PROTMEM_CONFIG get configuration for a specific
-> + * protected memory use case. Parameters are passed as:
-> + * [in] param[0].attr			OPTEE_MSG_ATTR_TYPE_VALUE_INOUT
-> + * [in] param[0].value.a		OPTEE_MSG_PROTMEM_*
-> + * [in] param[1].attr			OPTEE_MSG_ATTR_TYPE_{R,F}MEM_OUTPUT
-> + * [in] param[1].u.{r,f}mem		Buffer or NULL
-> + * [in] param[1].u.{r,f}mem.size	Provided size of buffer or 0 for query
-> + * output for the protected use case:
-> + * [out] param[0].value.a		Minimal size of protected memory
-> + * [out] param[0].value.b		Required alignment of size and start of
-> + *					protected memory
-> + * [out] param[0].value.c               PA width, max 64
-> + * [out] param[1].{r,f}mem.size		Size of output data
-> + * [out] param[1].{r,f}mem		If non-NULL, contains an array of
-> + *					uint16_t holding endpoints that
-> + *					must be included when lending
-> + *					memory for this use case
-> + *
-> + * OPTEE_MSG_CMD_ASSIGN_PROTMEM assigns use-case to protected memory
-> + * previously lent using the FFA_LEND framework ABI. Parameters are passed
-> + * as:
-> + * [in] param[0].attr			OPTEE_MSG_ATTR_TYPE_VALUE_INPUT
-> + * [in] param[0].u.value.a		holds protected memory cookie
-> + * [in] param[0].u.value.b		OPTEE_MSG_PROTMEM_* defined above
->   */
-> -#define OPTEE_MSG_CMD_OPEN_SESSION	0
-> -#define OPTEE_MSG_CMD_INVOKE_COMMAND	1
-> -#define OPTEE_MSG_CMD_CLOSE_SESSION	2
-> -#define OPTEE_MSG_CMD_CANCEL		3
-> -#define OPTEE_MSG_CMD_REGISTER_SHM	4
-> -#define OPTEE_MSG_CMD_UNREGISTER_SHM	5
-> -#define OPTEE_MSG_CMD_DO_BOTTOM_HALF	6
-> -#define OPTEE_MSG_CMD_STOP_ASYNC_NOTIF	7
-> -#define OPTEE_MSG_FUNCID_CALL_WITH_ARG	0x0004
-> +#define OPTEE_MSG_CMD_OPEN_SESSION		0
-> +#define OPTEE_MSG_CMD_INVOKE_COMMAND		1
-> +#define OPTEE_MSG_CMD_CLOSE_SESSION		2
-> +#define OPTEE_MSG_CMD_CANCEL			3
-> +#define OPTEE_MSG_CMD_REGISTER_SHM		4
-> +#define OPTEE_MSG_CMD_UNREGISTER_SHM		5
-> +#define OPTEE_MSG_CMD_DO_BOTTOM_HALF		6
-> +#define OPTEE_MSG_CMD_STOP_ASYNC_NOTIF		7
-> +#define OPTEE_MSG_CMD_LEND_PROTMEM		8
-> +#define OPTEE_MSG_CMD_RECLAIM_PROTMEM		9
-> +#define OPTEE_MSG_CMD_GET_PROTMEM_CONFIG	10
-> +#define OPTEE_MSG_CMD_ASSIGN_PROTMEM		11
-> +#define OPTEE_MSG_FUNCID_CALL_WITH_ARG		0x0004
->  
->  #endif /* _OPTEE_MSG_H */
-> diff --git a/drivers/tee/optee/optee_smc.h b/drivers/tee/optee/optee_smc.h
-> index 879426300821..accf76a99288 100644
-> --- a/drivers/tee/optee/optee_smc.h
-> +++ b/drivers/tee/optee/optee_smc.h
-> @@ -264,7 +264,6 @@ struct optee_smc_get_shm_config_result {
->  #define OPTEE_SMC_SEC_CAP_HAVE_RESERVED_SHM	BIT(0)
->  /* Secure world can communicate via previously unregistered shared memory */
->  #define OPTEE_SMC_SEC_CAP_UNREGISTERED_SHM	BIT(1)
-> -
->  /*
->   * Secure world supports commands "register/unregister shared memory",
->   * secure world accepts command buffers located in any parts of non-secure RAM
-> @@ -280,6 +279,10 @@ struct optee_smc_get_shm_config_result {
->  #define OPTEE_SMC_SEC_CAP_RPC_ARG		BIT(6)
->  /* Secure world supports probing for RPMB device if needed */
->  #define OPTEE_SMC_SEC_CAP_RPMB_PROBE		BIT(7)
-> +/* Secure world supports protected memory */
-> +#define OPTEE_SMC_SEC_CAP_PROTMEM		BIT(8)
-> +/* Secure world supports dynamic protected memory */
-> +#define OPTEE_SMC_SEC_CAP_DYNAMIC_PROTMEM	BIT(9)
->  
->  #define OPTEE_SMC_FUNCID_EXCHANGE_CAPABILITIES	9
->  #define OPTEE_SMC_EXCHANGE_CAPABILITIES \
-> @@ -451,6 +454,38 @@ struct optee_smc_disable_shm_cache_result {
->  
->  /* See OPTEE_SMC_CALL_WITH_REGD_ARG above */
->  #define OPTEE_SMC_FUNCID_CALL_WITH_REGD_ARG	19
-> +/*
-> + * Get protected memory config
-> + *
-> + * Returns the protected memory config.
-> + *
-> + * Call register usage:
-> + * a0   SMC Function ID, OPTEE_SMC_GET_PROTMEM_CONFIG
-> + * a2-6	Not used, must be zero
-> + * a7	Hypervisor Client ID register
-> + *
-> + * Have config return register usage:
-> + * a0	OPTEE_SMC_RETURN_OK
-> + * a1	Physical address of start of protected memory
-> + * a2	Size of protected memory
-> + * a3	PA width, max 64
-> + * a4-7	Preserved
-> + *
-> + * Not available register usage:
-> + * a0	OPTEE_SMC_RETURN_ENOTAVAIL
-> + * a1-3 Not used
-> + * a4-7	Preserved
-> + */
-> +#define OPTEE_SMC_FUNCID_GET_PROTMEM_CONFIG		20
-> +#define OPTEE_SMC_GET_PROTMEM_CONFIG \
-> +	OPTEE_SMC_FAST_CALL_VAL(OPTEE_SMC_FUNCID_GET_PROTMEM_CONFIG)
-> +
-> +struct optee_smc_get_protmem_config_result {
-> +	unsigned long status;
-> +	unsigned long start;
-> +	unsigned long size;
-> +	unsigned long pa_width;
-> +};
->  
->  /*
->   * Resume from RPC (for example after processing a foreign interrupt)
-> -- 
-> 2.43.0
-> 
+$ git am '[PATCH OE-core] nfs-utils don'\''t use signals to shut down 
+nfs server. - '\''NeilBrown '\'' (neil@brown.name) - 2025-05-23 
+1541.eml' Applying: nfs-utils: don't use signals to shut down nfs 
+server. error: patch failed: 
+meta/recipes-connectivity/nfs-utils/nfs-utils/nfsserver:89 error: 
+meta/recipes-connectivity/nfs-utils/nfs-utils/nfsserver: patch does not 
+apply Patch failed at 0001 nfs-utils: don't use signals to shut down nfs 
+server. hint: Use 'git am --show-current-patch=diff' to see the failed 
+patch When you have resolved this problem, run "git am --continue". If 
+you prefer to skip this patch, run "git am --skip" instead. To restore 
+the original branch and stop patching, run "git am --abort".
+
+Thanks,
+
+Haixiao
+
+>
+> Thanks,
+> NeilBrown
 
