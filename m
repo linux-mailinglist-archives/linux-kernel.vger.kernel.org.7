@@ -1,123 +1,199 @@
-Return-Path: <linux-kernel+bounces-661133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17997AC2716
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:02:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC68EAC2717
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE98B188C209
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:02:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53851A270DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA0D248F63;
-	Fri, 23 May 2025 16:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B30296D18;
+	Fri, 23 May 2025 16:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B1cJjoD2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Linc5D3l"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B23628382;
-	Fri, 23 May 2025 16:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764A6221DA0;
+	Fri, 23 May 2025 16:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748016129; cv=none; b=rAZF4yNXkqL+fLtKjsOob1PgR1eepRTxOEKzC7sDYuj7iEQ4Tf35v0cApma5UaHXtwY53Vw/dJXHkYLbgBdcIncqJsar/tcMua24SsolmOFOMsyaQE8ia7EYFvDML+hZLzcr2FA22d66VgHPIHAmeLs6R0ReIEwGmAtiyc65+rQ=
+	t=1748016138; cv=none; b=PCNMRzKk3i4+BlBDgaMzKJd2lt0KDkjujEKn9ZN6sELZQ6I9H/TGzf4yB8iimturbyMJBPH693r0VaNPfsJCRc+Wl6fRH/JdwzmvXOtt6zKs1I8C+NjUKP7q7KcNlUyaiJWtKlZFoXTASrukRtgjquCLZ8nh4ib/uEJpp7FbS7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748016129; c=relaxed/simple;
-	bh=qgYSTT9XcSyqI+DBeYRkhP8s0z5sSZV+A60zwa1m+G0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tm2YWOWXnVN0A4G1LSep4V1kp8H1j1OkGXcRE6mWfstTCBuP/+Cy6jJ6Twq9rmLLbVG590A+kuwJ8p8lJu/pBrgFAbl7mnSj/cxNvIYJqU7oAgOTQR3kNYSBWN6ymcUV0JEK9oyNifkPdQWGF1vGeSsBQEROUfqadxUPiborWAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B1cJjoD2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBDF2C4CEE9;
-	Fri, 23 May 2025 16:02:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748016128;
-	bh=qgYSTT9XcSyqI+DBeYRkhP8s0z5sSZV+A60zwa1m+G0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B1cJjoD22VVrq7n3ZjtSjCKVoJHel3VRZawP05ZnRpXIj+3lQiQJUxTt1+DGwjiXj
-	 qiD93PYBeFeRoR4Y3uogSidZFUVxB7MStQE+euuIHup4TCaudxawDUawpio9ybD3fV
-	 AhaIZCgcDC/8VysRupdDwrUkEyvyKG0zpXtpASfDrEGSCKnxvivqTg5i0KP3P9b+FB
-	 mmLwMGNrE7wvYDNWfWFIHneeun9Yry7a5r75iW1d1T3oepXmg2ZnV6I2Usv1sfwjVf
-	 xTzDLnpyvW96MaSXDzQ9odJXIZZEAHIUziVTI2IlbG+IwS5CJij5MfbH4ZTOpxNbdp
-	 qxaXWEl1wc40g==
-Date: Fri, 23 May 2025 19:02:03 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: linuxppc-dev@lists.ozlabs.org, Peter Huewe <peterhuewe@gmx.de>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	linux-integrity@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Sumit Garg <sumit.garg@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH v5 4/4] tpm/tpm_svsm: support TPM_CHIP_FLAG_SYNC
-Message-ID: <aDCb-wkHGoLQ-IGg@kernel.org>
-References: <20250514134630.137621-1-sgarzare@redhat.com>
- <20250514134630.137621-5-sgarzare@redhat.com>
- <aCVHQ-LRqHeEVEAW@kernel.org>
- <CAGxU2F5AsNY5mQPd=qajW1seFYHSYpB0Fa1iuR_f2QavtoB6sA@mail.gmail.com>
- <aCzf6aoJAC-IdS_n@kernel.org>
- <CAGxU2F6rfqGV_gJk-JxrCk3f9dWtYn_3o9RODh7cVG0X_oQWaA@mail.gmail.com>
- <aC2nBCxkvWWz5y5E@kernel.org>
- <aC4CVUXpThAyKQdf@kernel.org>
- <CAGxU2F5zQJR4GvZ9ovtQBqMFGs-wBMoCRks=JYQ1JF6qMKK-6g@mail.gmail.com>
+	s=arc-20240116; t=1748016138; c=relaxed/simple;
+	bh=ULx+MNjibrCmAVyg9aLR5Y84x3CqoG0b7VwA36zAdG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WXfzRReXvLe9xYs19ON35qQ4iXvaxKeZy2QSEG96lqtyKn7PW7uiL0lCqlw4OVTIXnVmfwUZcg7a1EaDquNiUIQX/X/AcjNiWcCYmMnTwG68eQicMeSdXsvPTrt4a1y7fWBhbm+BRNW9E8rZq2snFQcOuf3Np1to1TIpWZoGKBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Linc5D3l; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-310f082a5f8so108164a91.2;
+        Fri, 23 May 2025 09:02:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748016135; x=1748620935; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=EgG2pX3ezAqX6Y8tW/0RzIqPZ6C4NQ0/ki8v2ugMunA=;
+        b=Linc5D3lg04NLqKWiLCMVzX3i2aKyPAlBmEmi6Eajt7bGWjtcC/AQMxM12E2b1YSLp
+         QITj765jN2P9/lsX948F7SdKuwcgTnGNmQwYg59X52AECzs/SgIgU0ZMVh66PqsOj6BD
+         JzHJ8rahpPRIJNDWYE+miN5kabQRLGGTxWP9EhTsd3ydQLOl7OiLj5OTSf/C+KNsKywg
+         /VGij0RKkxxRfpxGe2rE4g/TA7HAM7XWo9dvihfWVWmR5w0t9nh9SvMjH4IWZ4/BZbXm
+         sSLibe6N6X/7nt2Okf8QaC13CbbSd8GzF/DNDoReBoRfgEZ6EoY9iKkgbncnDiYWuLoJ
+         c0UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748016135; x=1748620935;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EgG2pX3ezAqX6Y8tW/0RzIqPZ6C4NQ0/ki8v2ugMunA=;
+        b=mrkZ8aS1TluV60Y55uf90qGK25c56BbjtCFgfZDDnyoqmLLb3g+wjZS5fHwDg6thV8
+         blBHc2Emwjmgsw/FJQ2v1uHPs6/CtxgX5QBCprZKmglu+V3afllsiO1sGPoZM/DDyn0Y
+         LaqN2rdnr8/zpR80PzFRUOk0Y0beTZn7yUoT6jVI/XPnM+a8diZlkmj2WcBIRz3lcTdu
+         K3Bqku0Sa9/6jfeckjCtSm0APfZ1/Zpgommmrz0AfaC6TI5QUlPvTLnQgYw1vSoetZlX
+         NBxTRTFFrXnR5/24US9/TAblwPdVRHncl5mIaQz5b/6htnsaGEKfGbD24iUhrfnf2Jrh
+         pfLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkMpeiCOtW7pGi/DwvBSvlrqaOtha2bSqzcQxVusaRM8yNWm5yAnBtA6EYHMr88m/CZhVQ82rjV37ymdlH@vger.kernel.org, AJvYcCXIOarwbG3m7GJ5C3nHVz3ps2fP46kWv7KFemEjaXaNWqcBUWcnhdqG0kqmeyV2DbnI0J/b7KxonnGo@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLcsaVcEu2z1g8sphbwxdEhpdzhGOnkYXfQ9VXljJjoTQRZH8+
+	TzvBtnJvmSXX4vGmwmPM6liwao8nijm/Jq6GL8RKPSrI2cJvQcbh71fS
+X-Gm-Gg: ASbGnctWgYJY+eJQKoDIYqLrYXEfQzpOc22EpAaQXuotADze8luSwerfTOJsQt0vx7H
+	nfeP4Qn51HjnprA5ydOkuavI4jXwpnx+Y5StgxsfMCd7vNrCJedKRbIBpWvMDy/kK8rAZN1VpoE
+	52AFlc17ZLpCfhKNqkIb53nF7jZC14xfW2fzF0Jf5UtrfNVXnC/a9fVl/KNR/zCL51ZtR8oXm1O
+	79xLKBvUYBxK7eMx/rWXHC2RrnQW/V7Tw1gwkor+oJUO50qz7VQ14H5ltGaxRb2KekQFvS7cA+J
+	y3Te+jLy3DckgyImzfStmzbJRk+EI5uhj1LIKpanvxVSrgSlWwZzlTK4j8/KNguSVM17/+qjjOT
+	hXPTNULoJg/vmjmP0Xm+v2qiv
+X-Google-Smtp-Source: AGHT+IFo+VP3pNMQn0GZxFiYSiIjmsMlFpQYtLb4nAS6aNmwszH5V9z/6JT/Uubv2tthxBg4GNH7Zg==
+X-Received: by 2002:a17:90b:57e8:b0:30a:255c:9d10 with SMTP id 98e67ed59e1d1-30e830e87f6mr42819646a91.8.1748016134484;
+        Fri, 23 May 2025 09:02:14 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f365157d9sm7520384a91.47.2025.05.23.09.02.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 May 2025 09:02:13 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <e11aade8-f646-4d94-942c-6186f06fe783@roeck-us.net>
+Date: Fri, 23 May 2025 09:02:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGxU2F5zQJR4GvZ9ovtQBqMFGs-wBMoCRks=JYQ1JF6qMKK-6g@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] dt-bindings: trivial-devices: Add compatible string
+ adi,adt7411
+To: Conor Dooley <conor@kernel.org>, Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Noah Wang <noahwang.wang@outlook.com>,
+ Naresh Solanki <naresh.solanki@9elements.com>,
+ Michal Simek <michal.simek@amd.com>, Fabio Estevam <festevam@gmail.com>,
+ Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>,
+ Grant Peltier <grantpeltier93@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ imx@lists.linux.dev
+References: <20250523151338.541529-1-Frank.Li@nxp.com>
+ <20250523-fridge-scarecrow-982578c16bf0@spud>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
+ RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
+ nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
+ 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
+ gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
+ IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
+ kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
+ VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
+ jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
+ BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
+ ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAmgrMyQFCSbODQkACgkQyx8mb86fmYGcWRAA
+ oRwrk7V8fULqnGGpBIjp7pvR187Yzx+lhMGUHuM5H56TFEqeVwCMLWB2x1YRolYbY4MEFlQg
+ VUFcfeW0OknSr1s6wtrtQm0gdkolM8OcCL9ptTHOg1mmXa4YpW8QJiL0AVtbpE9BroeWGl9v
+ 2TGILPm9mVp+GmMQgkNeCS7Jonq5f5pDUGumAMguWzMFEg+Imt9wr2YA7aGen7KPSqJeQPpj
+ onPKhu7O/KJKkuC50ylxizHzmGx+IUSmOZxN950pZUFvVZH9CwhAAl+NYUtcF5ry/uSYG2U7
+ DCvpzqOryJRemKN63qt1bjF6cltsXwxjKOw6CvdjJYA3n6xCWLuJ6yk6CAy1Ukh545NhgBAs
+ rGGVkl6TUBi0ixL3EF3RWLa9IMDcHN32r7OBhw6vbul8HqyTFZWY2ksTvlTl+qG3zV6AJuzT
+ WdXmbcKN+TdhO5XlxVlbZoCm7ViBj1+PvIFQZCnLAhqSd/DJlhaq8fFXx1dCUPgQDcD+wo65
+ qulV/NijfU8bzFfEPgYP/3LP+BSAyFs33y/mdP8kbMxSCjnLEhimQMrSSo/To1Gxp5C97fw5
+ 3m1CaMILGKCmfI1B8iA8zd8ib7t1Rg0qCwcAnvsM36SkrID32GfFbv873bNskJCHAISK3Xkz
+ qo7IYZmjk/IJGbsiGzxUhvicwkgKE9r7a1rOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
+ 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
+ pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
+ J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
+ pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
+ 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
+ ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
+ I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
+ nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
+ HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
+ JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAmgrMyQFCSbODQkACgkQyx8mb86fmYHlgg/9
+ H5JeDmB4jsreE9Bn621wZk7NMzxy9STxiVKSh8Mq4pb+IDu1RU2iLyetCY1TiJlcxnE362kj
+ njrfAdqyPteHM+LU59NtEbGwrfcXdQoh4XdMuPA5ADetPLma3YiRa3VsVkLwpnR7ilgwQw6u
+ dycEaOxQ7LUXCs0JaGVVP25Z2hMkHBwx6BlW6EZLNgzGI2rswSZ7SKcsBd1IRHVf0miwIFYy
+ j/UEfAFNW+tbtKPNn3xZTLs3quQN7GdYLh+J0XxITpBZaFOpwEKV+VS36pSLnNl0T5wm0E/y
+ scPJ0OVY7ly5Vm1nnoH4licaU5Y1nSkFR/j2douI5P7Cj687WuNMC6CcFd6j72kRfxklOqXw
+ zvy+2NEcXyziiLXp84130yxAKXfluax9sZhhrhKT6VrD45S6N3HxJpXQ/RY/EX35neH2/F7B
+ RgSloce2+zWfpELyS1qRkCUTt1tlGV2p+y2BPfXzrHn2vxvbhEn1QpQ6t+85FKN8YEhJEygJ
+ F0WaMvQMNrk9UAUziVcUkLU52NS9SXqpVg8vgrO0JKx97IXFPcNh0DWsSj/0Y8HO/RDkGXYn
+ FDMj7fZSPKyPQPmEHg+W/KzxSSfdgWIHF2QaQ0b2q1wOSec4Rti52ohmNSY+KNIW/zODhugJ
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250523-fridge-scarecrow-982578c16bf0@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 22, 2025 at 10:26:34AM +0200, Stefano Garzarella wrote:
-> On Wed, 21 May 2025 at 18:42, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> >
-> > On Wed, May 21, 2025 at 01:12:20PM +0300, Jarkko Sakkinen wrote:
-> > > > I tried, but the last patch (this one) is based on the series merged
-> > > > on the tip tree, where I introduced tpm_svsm.
-> > > > I can see that series in linux-next merged with commit
-> > > > 16a56ee59ab8ee05e67de35bbb5782ef9cfb4f07,
-> > > > but I can't see it in your next tree [1].
-> > > >
-> > > > How do we proceed in such cases?
-> > > >
-> > > > Just to be sure, did I use the right tree?
-> > >
-> > > Thanks for the remark. Lemme check tonight. Hold on doing
-> > > anything ;-) We'll get there...
-> >
-> > I just rebased my branches on top of latest from Linus. That is what I
-> > need base PR also on, and:
-> >
-> > $ git show 16a56ee59ab8ee05e67de35bbb5782ef9cfb4f07
-> > fatal: bad object 16a56ee59ab8ee05e67de35bbb5782ef9cfb4f07
-> >
-> > I'd use git cherry-pick on a range to take them from linux-next to a
-> > mainline tip...
+On 5/23/25 08:30, Conor Dooley wrote:
+> On Fri, May 23, 2025 at 11:13:37AM -0400, Frank Li wrote:
+>> Add compatible string adi,adt7411, which is temperature sensor and
+>> 8-Channel ADC.
 > 
-> I see, let me know if I can help in some way.
+> Usually for iio devices supplies are meant to be documented, and this
+> device has one.
 > 
-> We can also wait the next cycle if it simplifies your work, definitely
-> no rush on my side.
 
-Let's do it. At least it will then get a full round of testing before
-ending up to a release.
+FWIW, the driver supporting this chip is some 15 years old. I don't think
+anyone was talking about supplies at that time.
 
-Thank you!
+Also, this is currently implemented as hwmon driver. Is there an effort
+to move the driver out of hwmon and into iio ? Fine with me if this is
+where things are going (one less driver to maintain), but I would caution
+that this will result in an ABI break for users of the hwmon driver.
 
-> 
-> Thanks,
-> Stefano
+Thanks,
+Guenter
 
-BR, Jarkko
+>>
+>> Fix below CHECK_DTB warning:
+>>
+>> arch/arm/boot/dts/nxp/vf/vf610-zii-scu4-aib.dtb: /soc/bus@40080000/i2c@400e6000/adc@4a:
+>>      failed to match any schema with compatible: ['adi,adt7411']
+>>
+>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+>> ---
+>>   Documentation/devicetree/bindings/trivial-devices.yaml | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+>> index 27930708ccd58..38bc1937ff3c9 100644
+>> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+>> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+>> @@ -41,6 +41,7 @@ properties:
+>>             - adi,ad5110
+>>               # Analog Devices ADP5589 Keypad Decoder and I/O Expansion
+>>             - adi,adp5589
+>> +          - adi,adt7411 # Temperature Sensor and 8-Channel ADC
+>>               # Analog Devices LT7182S Dual Channel 6A, 20V PolyPhase Step-Down Silent Switcher
+>>             - adi,lt7182s
+>>               # AMS iAQ-Core VOC Sensor
+>> -- 
+>> 2.34.1
+>>
+
 
