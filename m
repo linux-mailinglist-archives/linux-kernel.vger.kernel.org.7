@@ -1,106 +1,117 @@
-Return-Path: <linux-kernel+bounces-660174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F37AC19B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:32:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D837AC19BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D02C161EA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:32:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7961E4E7D3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F4E18AE2;
-	Fri, 23 May 2025 01:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DB420C031;
+	Fri, 23 May 2025 01:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bUnf6NJN"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pkM+5yDS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25252DCBF4
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 01:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777E32DCBF4;
+	Fri, 23 May 2025 01:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747963942; cv=none; b=tDeDLV78lQ/vQOQQilh1bkAD+8lOPsdYg7wYI1DXPu9EQ8k9uqlvxEdH5daR6+CxskKCODy3fKhVBS/kTm6BWERdielVyyRFgsKPOgmirrNtVMmtmF39HalmdOMnRGMr6wayndPG6ytdXCOvwlF/kDeIx1ru8Q7UIZw0DlXm3WA=
+	t=1747964383; cv=none; b=uhyuz54H1mfWpA1UK3Zc1XEmvnKszUM0h/gQbXRdRq/mUdlz7o2/1Ke9GwZhAPbFyXBTEEHgQz18VhHqyf2sNlPocgX/nZFFnzY+SBDwklvPE0CVVpa7F1n+ex/07aqWyrEfl6eikTMR3XnkIGwGbBb+WM3k7q3SzUvmLoxnZCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747963942; c=relaxed/simple;
-	bh=43GG+nK/VP9J/MxR3VCZtwb69ooU0HThuyCeYdCYyJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Dx4kiXvWD3ZQBbv7GbsEJAD4BK2MEu8owvP6um4C4Pbo56+rdlVqLWacJiazaZjzORFk2sTMVU3jAmqBtWjj6ge/06DPY61bWzf9GQiQUQDcQRzzzoSN1at1EapDCSH7yD3RKkot0zyrEcu4XhqxQHG9uQja4lZSv7QzUTZhJGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bUnf6NJN; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 22 May 2025 21:31:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1747963927;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=tmBs0a0pY9TPVe9tBCids2CPMpLMPxoSQO7RwsamZdU=;
-	b=bUnf6NJN+el8tZkTwfZD92KGAqUXxujzzxWeXCIOSUhR1fDlSXQCKDuD00s9l40t07RK1c
-	fwMoGY0sSYTG93DkLtgaEpszrpAen8N1Lf2C8smWabB52Vf4HgPvYOvwvM9ac6iKyQnLBy
-	Hk0TFPOLiKnSO4RsRaSW39dRIDLaZ8o=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.15
-Message-ID: <t4kz463dyrlych7ags2fczrgeyafkkjdppe2zmk7zxdmvdywmb@cs2b2txhexje>
+	s=arc-20240116; t=1747964383; c=relaxed/simple;
+	bh=BuAnjRUfiZkIyG1T0GsVaYITt5f2u03IOqolF0n/F0o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=i2Z0tqRs5lzxp+G23u2D+APNiLMZ3cAsVQPX1wiZ99mtP4RfYkz1sZ9hqbmMJtGM9rKem6UrVXzchnIOD2YcJRfWqyDfJM6G78CmhjQxZO22daOEZJlhTPakP2qb61zpHIrcIBNMB8pXCUcdBCEL91Mz7MCPu9DYmk23lFD3gvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pkM+5yDS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F22B2C4CEE4;
+	Fri, 23 May 2025 01:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747964383;
+	bh=BuAnjRUfiZkIyG1T0GsVaYITt5f2u03IOqolF0n/F0o=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=pkM+5yDSEmW55r8TgXILhwY5A8UfZ5KUMefRL+ZkcjMgDKbkf1jhqzm8R9gFSOOVD
+	 QLzOOP3wPFQtIg384nQ3909O7uH9mQ8Ckxj9yfvMZ4nwGpM1fN/m/YRhjd4Pkiairx
+	 KVg0QJ+R0eLEkYMRtwRlOx8dMXfPhC1aJ71BR5bDHEohGlDo/7Qjx5XVmKZPao9BLB
+	 MAH4I9c9VuyTIlu9GlpTx15eWxi7KbpSj+RaOLWfd4kkxTmyUmh4BDmXgIzPFpQr+K
+	 ncuk1fQSRIm/gdFEYw1Aq5XVQHVwiEI24K28KL4aRnftdVK5hZEe+u0Gjniw2VYwhD
+	 orRG1tOFTTC4w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D516CC54ED0;
+	Fri, 23 May 2025 01:39:42 +0000 (UTC)
+From: Fenglin Wu via B4 Relay <devnull+fenglin.wu.oss.qualcomm.com@kernel.org>
+Subject: [PATCH 0/5] power: supply: Add several features support in
+ qcom-battmgr driver
+Date: Fri, 23 May 2025 09:39:17 +0800
+Message-Id: <20250523-qcom_battmgr_update-v1-0-2bb6d4e0a56e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMXRL2gC/x3MTQqAIBBA4avErBPMmBZdJSJMJ5uF/ahFIN09a
+ fkt3ssQKTBF6KsMgW6OvG8FTV2BWfXmSLAtBiUVSlRSnGb306xT8i5M12F1ItFi11iDqjMSoZR
+ HoIWf/zqM7/sBQy+3umUAAAA=
+X-Change-ID: 20250520-qcom_battmgr_update-3561dc526c05
+To: Sebastian Reichel <sre@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>
+Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>, 
+ David Collins <david.collins@oss.qualcomm.com>, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ kernel@oss.qualcomm.com, Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1747964381; l=1544;
+ i=fenglin.wu@oss.qualcomm.com; s=20240327; h=from:subject:message-id;
+ bh=BuAnjRUfiZkIyG1T0GsVaYITt5f2u03IOqolF0n/F0o=;
+ b=c0WUixK9b9fxeYtk5G88417BMhrAC/WNVf04Y+Xs7UgkXbCBJZefFaiBnKKxhqb2ADCpBfIkQ
+ b8fjIrU7KaFD3ZGGC2oK+RB+4pY62m630Uw+prokvzuyEhtOSnBzv3h
+X-Developer-Key: i=fenglin.wu@oss.qualcomm.com; a=ed25519;
+ pk=BF8SA4IVDk8/EBCwlBehKtn2hp6kipuuAuDAHh9s+K4=
+X-Endpoint-Received: by B4 Relay for fenglin.wu@oss.qualcomm.com/20240327
+ with auth_id=406
+X-Original-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+Reply-To: fenglin.wu@oss.qualcomm.com
 
-The following changes since commit 9c09e59cc55cdf7feb29971fd792fc1947010b79:
+Add following features in qcom-battmgr drivers as the battery management
+firmware has provided such capabilities:
+ - Add resistance power supply property in core driver and qcom-battmgr
+   driver to get battery resistance
+ - Add state_of_health power supply property in core driver and
+   qcom-battmgr driver to get battery health percentage
+ - Add charge control start/end threshold control by using
+   charge_control_start_threshold and charge_control_end_threshold power
+   supply properties
 
-  bcachefs: fix wrong arg to fsck_err() (2025-05-14 18:59:15 -0400)
+The changes have been tested on QRD8650 device based on qcom/linux.git
+for-next commit f8d04825b12f42ec8198dee1ab4654792f9ac231.
 
-are available in the Git repository at:
+Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+---
+Fenglin Wu (5):
+      power: supply: core: add resistance power supply property
+      power: supply: core: Add state_of_health power supply property
+      power: supply: qcom_battmgr: Add resistance power supply property
+      power: supply: qcom-battmgr: Add state_of_health power supply property
+      power: supply: qcom-battmgr: Add charge control support
 
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-05-22
+ Documentation/ABI/testing/sysfs-class-power |  20 +++
+ drivers/power/supply/power_supply_sysfs.c   |   2 +
+ drivers/power/supply/qcom_battmgr.c         | 213 +++++++++++++++++++++++++++-
+ include/linux/power_supply.h                |   2 +
+ 4 files changed, 236 insertions(+), 1 deletion(-)
+---
+base-commit: b1d8766052eb0534b27edda8af1865d53621bd6a
+change-id: 20250520-qcom_battmgr_update-3561dc526c05
 
-for you to fetch changes up to 010c89468134d1991b87122379f86feae23d512f:
+Best regards,
+-- 
+Fenglin Wu <fenglin.wu@oss.qualcomm.com>
 
-  bcachefs: Check for casefolded dirents in non casefolded dirs (2025-05-21 20:13:14 -0400)
 
-----------------------------------------------------------------
-bcachefs fixes for 6.15
-
-Small stuff, main ones users will be interested in:
-
-- Couple more casefolding fixes; we can now detect and repair casefolded
-  dirents in non-casefolded dir and vice versa
-- Fix for massive write inflation with mmapped io, which hit certain
-  databases
-
-----------------------------------------------------------------
-Kent Overstreet (6):
-      bcachefs: Fix bch2_btree_path_traverse_cached() when paths realloced
-      bcachefs: fix extent_has_stripe_ptr()
-      bcachefs: mkwrite() now only dirties one page
-      bcachefs: Fix casefold opt via xattr interface
-      bcachefs: Fix bch2_dirent_create_snapshot() for casefolding
-      bcachefs: Check for casefolded dirents in non casefolded dirs
-
- fs/bcachefs/btree_iter.c       |  2 +-
- fs/bcachefs/btree_key_cache.c  | 25 +++++++++++++++++--------
- fs/bcachefs/btree_key_cache.h  |  3 +--
- fs/bcachefs/dirent.c           | 33 +++++++++++++++------------------
- fs/bcachefs/dirent.h           |  2 +-
- fs/bcachefs/ec.c               | 20 +++++++-------------
- fs/bcachefs/extents.h          |  7 -------
- fs/bcachefs/fs-io-pagecache.c  | 18 +++++++++++-------
- fs/bcachefs/fs.c               | 26 +-------------------------
- fs/bcachefs/fsck.c             | 37 +++++++++++++++++++++++++++++++++++++
- fs/bcachefs/inode.c            | 36 ++++++++++++++++++++++++++++++++++++
- fs/bcachefs/inode.h            |  4 +++-
- fs/bcachefs/namei.c            |  2 --
- fs/bcachefs/sb-errors_format.h |  8 +++++++-
- fs/bcachefs/xattr.c            |  6 ++++++
- 15 files changed, 143 insertions(+), 86 deletions(-)
 
