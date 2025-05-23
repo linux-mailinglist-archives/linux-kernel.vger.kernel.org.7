@@ -1,133 +1,136 @@
-Return-Path: <linux-kernel+bounces-660081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD09AC18EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 02:13:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D573AC18E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 02:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46863175EFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:13:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3DBB3B03BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6329A3C1F;
-	Fri, 23 May 2025 00:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5842C24DCEC;
+	Fri, 23 May 2025 00:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="RWPK24j4"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fAky0Yo2"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC2DBA42
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 00:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678C54C6C
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 00:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747959217; cv=none; b=h1pImFy5OnGxKTDox01//idR2sq8odbD5cRs9r6hGUs8F4AuxbijJQ4hVcD7mNa0PoxfuBiiXuMyRc4lkRbU0whlmW6cmI+wdgLX1Kq2tb2oWkhOE2CgRKW8JB0jFno2uJEQTTggaOc02m9bvcmkd6VdXheMduzSUaYSZIlMXN8=
+	t=1747959104; cv=none; b=BeOC6MWQLX9QOZreIez1+JQjN2FcCd/P2xPhoPjruRdDzxFL2rhKXfNt7W13qZMBkZtbdTjAG650Q6yIGduw1D6Q/0N8pECHdeHFnp23GTmI3Yh7Xo71Mtn4cB/URpODO8NMsngUIqDkS0nt8bnjIN1f6BAnBxSabsfzsz0jeA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747959217; c=relaxed/simple;
-	bh=muJaRWHLNAqEyREyDsVWtWk1D+Gg65Bd35PEgmxwyjU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mMf08VEefB1HYJPTkujTIrfZnfChJMGFY0xjVlijpIZg6uyZ0QEvdSzDgxcytFDjhC7KKzPieksTeNbGT5LdHN+qGkpPxjei/ziRGhMJDdSCQbg62sX9iak1oGm5yRliHLyTcqQtQMMx7L9JEMeu1nGI0QBn6EQv/PKhRbNkluk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=fail (0-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=RWPK24j4 reason="key not found in DNS"; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3dc6f653152so16274165ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 17:13:35 -0700 (PDT)
+	s=arc-20240116; t=1747959104; c=relaxed/simple;
+	bh=sQw+ZBS7btddT1jEyQ0Mw2gQseAOEUbp2G/+0j/KjW4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Ghu3C97B0wKV7/0SQkrnZqv5fINqmJ7XrULJs8TqGQYDTSxMI57NHIdIFnkQYO0uPFucCAklSSLVen7VNadkqY5gsZgkggEtZsGxJgtAGTRGqdql2pKWRvjlF0FR61+5CU2jjuKQXGVJClb/Ofkunog3BQ7sPe0eDOSL74dddj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fAky0Yo2; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3108d5156e8so3386230a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 17:11:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brighamcampbell.com; s=google; t=1747959215; x=1748564015; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NtaCyH1WfJUArzSfLQLt408RcB4GdI59nwfsGjUrhJE=;
-        b=RWPK24j4OBLf0Uh068ZuoYhpDfCmXc6JfmfLeklh7BOIRAgqGvXs/7FNpP3Y+GnnHo
-         fh0/FR7jS/CvOADrbMbavDq5nIH/zKBk0Pl+xx+MTuDgfY+D4sxCQUtc0uUMJVWr50px
-         zqETgtuz08gIurRsSgXX5w1JwHUnwZjdMs4ITkQMQA5PkewQkAOnwMoj7E8xzQY9RG7J
-         BMg4l5Vb7zD1R+u2fqZDjfL7nipJ/mgD7d6QAEn+xawB63+TrvyIcTUCjnZCqs8cmqoW
-         9j33RQvw+mpbYVfdJx4+WuivfgTp1rtOx2wmJ2ODIywE9fH61s29qQMp0HelLfCLgcNI
-         RxOw==
+        d=google.com; s=20230601; t=1747959101; x=1748563901; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KwOiWiUkW2WRC0f12oP0F8RtFJzWREDgIfvrDaq9yGs=;
+        b=fAky0Yo2kTjLoeYgQGklIm0Wf1hvDPZClWzH/9kw/qpgkwAjewvVRhg7FBp3g20QVC
+         GMpXOCmUecMHkofEtH+tVW7/s8fEZ1MK/82Srw3nGvdxClf580Ue3kJHpsVhaw5Vesiz
+         MsfDJaams/Rgx985H52RbMAaem6ENaTNPBgWuCdvfHQLowGzG1bJYJcj4WRmoJj/ubcO
+         NzCkxECUx+q4tfsyY7JK0VHHWhj2HLGBimvVngKh+SI0zZE25tLQ3Arr/8eekV64pNGS
+         gW8ChPVrpTEv++jxQskxuLwUZJHzcVRpp7RzGggz78tqadj2uUMQdFJ3bHfd/+MKycLf
+         D9Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747959215; x=1748564015;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NtaCyH1WfJUArzSfLQLt408RcB4GdI59nwfsGjUrhJE=;
-        b=leEjzlU3jfSetgkxz448RVZhcKP/wMa2jxs1mVlPr1avY3YpsiC6DiB7IZoxNFhxul
-         GO4hylv7ZIjyubNqnAbyF9FZpoI1F5VA+C4o1ymjC4fOS26jwPLeJYiJaCAyHJ5yXt2p
-         MxJNVbYKBJfQ9TFHwVCuj+Sc/kkqwWOQvKSuDAKsscQLbQxDry1QRDJz6YrwfEApzwWq
-         rf3M9RKZnQ4HMhXM/MOQL7btWq7ckbkdszFA9MU6xyedPh8hchtBd6LSLdAo0e41HYpU
-         L2z0ZqUwVx4cuzZpHqp1DFsDAvTEmZejojniknbg7ytEUKUYUA4dGwvNXDUnCboxMAmM
-         QYRg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0vy3q6uw67+BhJSaElKY8rf+a8/nklm+hjGb+oMMd8HW6Tfj/MuPo0wLLw9NhHm1J7Sfb70o4qNuTc+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzrbds/Jbs0x9/0TQJT/c2/DG+gSTCyF2zs7OdjG7KVXgmPMKHH
-	ibZt6tdQ5JP3m3qJlZDv8cXbbaLhSn37vkSc/jtkoQvNEu0a623kweF1i0qT91zNfHJ9T5vgP3t
-	s0YIafv9SBw==
-X-Gm-Gg: ASbGncvRMRtXrW1ANh6yW6tLQafmZbtIvY5NuFoJ9l4UW6SKcHB6FPr5foWBi2FE//B
-	UzsKiSeyFK+mth+8GUsHHpdO2IEBJFnxfgKUTYL5fCfSyUk9u1n0JY8ZnP0F6akRmEacBrdAm17
-	wHphXpgFwuJT3bNtlG6f1BXTnu1FhHJUTGDgvxtv4oyXVtPyX94cXXJZQrVm3BpsadGkVVinZ3v
-	ooRGKWreiDIVxyrvmmoPu6q3eoA96OjQMXUnJuz94utC9jmVy2yP5v+G5vti92XB7mKRuZ6yxTK
-	MokHTbjXuznn0tGJ2XxUJMjLVuy7K4cFIfNWSXOs2fWUYGXyYmlgnHdt6wgE9husygdmfmh3Zc8
-	IU94M/Ik=
-X-Google-Smtp-Source: AGHT+IFKmxDugOdIs6vFYcotQEFU7a9JdAs53jaauyO4yjTbDeTgs1+LUU9JZAtgqiOFD9DNicpN9Q==
-X-Received: by 2002:a05:6e02:3c04:b0:3d9:65b6:d4db with SMTP id e9e14a558f8ab-3dc93276652mr13178285ab.12.1747959214980;
-        Thu, 22 May 2025 17:13:34 -0700 (PDT)
-Received: from mystery-machine.brighamcampbell.com ([64.71.154.6])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fbd17aa848sm3183450173.67.2025.05.22.17.13.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 17:13:32 -0700 (PDT)
-From: Brigham Campbell <me@brighamcampbell.com>
-To: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Athira Rajeev <atrajeev@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org (open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)),
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Brigham Campbell <me@brighamcampbell.com>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v2] docs: powerpc: Add htm.rst to table of contents
-Date: Thu, 22 May 2025 18:11:14 -0600
-Message-ID: <20250523001112.102087-3-me@brighamcampbell.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1747959101; x=1748563901;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KwOiWiUkW2WRC0f12oP0F8RtFJzWREDgIfvrDaq9yGs=;
+        b=oN7Ld66J/qDFvAtamCLKIS27jeaY6/AAeWxnt2dQ7s4pkjABMkhNzbrJng6QH8WJHK
+         h31oTQYWp04OzI83lY9cMHzur1sQCwAd/DSS3w8YkMHirWdHBzgfsXHKSd3DhSMkd6Hp
+         C/1hizmy/UKSYxD8HG3vzcid3uTs83ZQ7zG32Tr1RH6uneiqgWu1yevE8WR2QjSFJ4BC
+         KLZV8F7Qj3ivw0HeU5tOM8h6BptEevv/Dhqt2ByokZWs7Nb2IzDvB8Jl5XebYxInhFMP
+         cOHnf0PNQnXIdflYP1+sOc8ShgiTaRz6zUhTD8WlNPyKUxWVSNeSIvp5H2KI0ehV+c5j
+         3Wlg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3hGoTC9qK7hm5BnGt9x/5DJmsqqu2yB8WwLSleKAxOM3rp42pwA32yaEoEMpik047zI/NazgkjR4JV2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzCghu136m1uA0xpfX+ZENaO4Fnucq4sohHE9MXE+UIsJRos7v
+	KNzULiIGX0Fip+SpK95x0Gz0/6SMqEB7KRMecdqgiH0imXnJxvV/cTCOF/qWN5jxIr8Lcl2Zpk2
+	Cwd6a2g==
+X-Google-Smtp-Source: AGHT+IHfJRG6bZqXDGiQR0PkW8vISNvqIJt+BBS5L57W17F1JJXNfuZ6GkBx45/WIbeFHaWld6GcnrXttZg=
+X-Received: from pjbqb9.prod.google.com ([2002:a17:90b:2809:b0:308:6685:55e6])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1c90:b0:2f2:a664:df1a
+ with SMTP id 98e67ed59e1d1-310e96b5fb7mr1787280a91.2.1747959101663; Thu, 22
+ May 2025 17:11:41 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu, 22 May 2025 17:11:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.1151.ga128411c76-goog
+Message-ID: <20250523001138.3182794-1-seanjc@google.com>
+Subject: [PATCH v4 0/4] KVM: x86: Dynamically allocate hashed page list
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Vipin Sharma <vipinsh@google.com>, James Houghton <jthoughton@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-These changes fix the following error, which was introduced by commit
-ab1456c5 when Documentation/arch/powerpc/htm.rst was added to the
-repository without any reference to the document.
+Allocate the hashed list of shadow pages dynamically (separate from
+struct kvm), and on-demand.  The hashed list is 32KiB, i.e. absolutely
+belongs in a separate allocation, and is worth skipping if KVM isn't
+shadowing guest PTEs for the VM.
 
-Documentation/arch/powerpc/htm.rst: WARNING: document isn't included in any toctree [toc.not_included]
+I double checked that padding kvm_arch with a 4KiB array trips the assert,
+but padding with 2KiB does not.  So knock on wood, I finally got the assert
+right.  Maybe.
 
-There are no changes in v2. I'm resending this patch because I addressed
-it to the wrong email for Shuah.
+v4:
+ - Use smp_store_release() and smp_load_acquire() instead of {READ,WRITE}_ONCE,
+   and update the comments accordingly. [Paolo, James]
+ - Move the kvm_tdx assert to tdx.c. [Paolo]
+ - Fix the assertion, again.  [Vipin, in spirit if not in reality]
+ - Add a patch to move TDX hardware setup to tdx.c.
 
-Fixes: ab1456c5aa7a63d5 ("powerpc/pseries/htmdump: Add documentation for H_HTM debugfs interface")
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
-Link: https://lore.kernel.org/all/20250517210757.1076554-3-me@brighamcampbell.com
----
- Documentation/arch/powerpc/index.rst | 1 +
- 1 file changed, 1 insertion(+)
+v3:
+ -  https://lore.kernel.org/all/20250516215422.2550669-1-seanjc@google.com
+ - Add comments explaining the {READ,WRITE}_ONCE logic, and why it's safe
+   to set the list outside of mmu_lock. [Vipin]
+ - Make the assertions actually work. [Vipin]
+ - Refine the assertions so they (hopefully) won't fail on kernels with
+   a bunch of debug crud added.
 
-diff --git a/Documentation/arch/powerpc/index.rst b/Documentation/arch/powerpc/index.rst
-index 0560cbae5fa1..53fc9f89f3e4 100644
---- a/Documentation/arch/powerpc/index.rst
-+++ b/Documentation/arch/powerpc/index.rst
-@@ -19,6 +19,7 @@ powerpc
-     elf_hwcaps
-     elfnote
-     firmware-assisted-dump
-+    htm
-     hvcs
-     imc
-     isa-versions
---
-2.49.0
+v2:
+ - https://lore.kernel.org/all/20250401155714.838398-1-seanjc@google.com
+ - Actually defer allocation when using TDP MMU. [Vipin]
+ - Free allocation on MMU teardown. [Vipin]
+
+v1: https://lore.kernel.org/all/20250315024010.2360884-1-seanjc@google.com
+
+Sean Christopherson (4):
+  KVM: TDX: Move TDX hardware setup from main.c to tdx.c
+  KVM: x86/mmu: Dynamically allocate shadow MMU's hashed page list
+  KVM: x86: Use kvzalloc() to allocate VM struct
+  KVM: x86/mmu: Defer allocation of shadow MMU's hashed page list
+
+ arch/x86/include/asm/kvm_host.h |  6 +--
+ arch/x86/kvm/mmu/mmu.c          | 75 ++++++++++++++++++++++++++++++---
+ arch/x86/kvm/svm/svm.c          |  2 +
+ arch/x86/kvm/vmx/main.c         | 36 +---------------
+ arch/x86/kvm/vmx/tdx.c          | 47 +++++++++++++++------
+ arch/x86/kvm/vmx/tdx.h          |  1 +
+ arch/x86/kvm/vmx/vmx.c          |  2 +
+ arch/x86/kvm/vmx/x86_ops.h      | 10 -----
+ arch/x86/kvm/x86.c              |  5 ++-
+ arch/x86/kvm/x86.h              | 22 ++++++++++
+ 10 files changed, 139 insertions(+), 67 deletions(-)
+
+
+base-commit: 3f7b307757ecffc1c18ede9ee3cf9ce8101f3cc9
+-- 
+2.49.0.1151.ga128411c76-goog
 
 
