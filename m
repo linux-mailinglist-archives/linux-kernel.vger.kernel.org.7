@@ -1,98 +1,89 @@
-Return-Path: <linux-kernel+bounces-661132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721D6AC2715
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:02:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 675CEAC2718
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AD533B2A6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:01:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D23DD1BC51AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D917248F63;
-	Fri, 23 May 2025 16:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30597296D2C;
+	Fri, 23 May 2025 16:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="sDqt8WYT"
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="OpQcs4dc"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A08828382;
-	Fri, 23 May 2025 16:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A84E221557;
+	Fri, 23 May 2025 16:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748016108; cv=none; b=gHim64QFX/2AVGNdtgGTGUYUeICC/n2RBhz3DC1bqLq5QT/bfoHmYJaF8i3MkvfSZoefIG0/biBTSAHYHpEIzY1O5yQDt2yNv+nkQiN9was51gM+YinVhFuecVwld0BqbILF8cXXmiAh6y//0YR6EXptyo1V3xk+nXWq3c+zOxo=
+	t=1748016138; cv=none; b=prSkG6sfVyopX9GnwsNQNzLma4RA3FFwsII0LZrTqmnMnWIWWm4RniIjH4xnNkJqir/UuiV93FcBtHlb5Yhd7ufFasWzBoJj+azqCIX/slBWr9iqE25DaJMnClX8oh/clgGWSmOe1bM0OG9HzrsXmSXt7rqlwIUagsS0jDumXRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748016108; c=relaxed/simple;
-	bh=X4/5x2g3r0H0D5vuqU8mLH/IrNTkGVhsWoxQBRNKzpg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nUBexj/4vhevZBGMGBbQ6zfUrgp9oC25rbDrBY5sOSsS7x2VY8KGHZrhYeP/UUXPSMYEAxAFOokH4T+IheCeUKsuoD3ilLT5xtPnHj1rBMb+ClHfN7u3yV9tDYNzXj46Lq4xC6agCFFQqU9r0m0qDGLyPZIWeZh90JyaUPYQM3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=sDqt8WYT; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazoncorp2; t=1748016107; x=1779552107;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Ux2fz6ALWguuUll23AorrgrszZl9ikA7djgXi7e3PXE=;
-  b=sDqt8WYTI2OiysEHkc2nBlZzixbEtKg2h266dTVaCZXymM5XxKQKc+dY
-   ZoNv3NyCtDgvc0BAzv3r8agTe78ySeVekFHSJnce+0uiTlkOCeBULosEi
-   Wt7HflKkXldBg4X8hck3ajjF//R+Erz7QL+m6PKM8gSSxgyJvgepSMHy8
-   rC1hvDCAeydtc6kfOu949IctEh3K/3agjIpAfPulI60UYgVyxhT/5aQW7
-   pahLjax4f0baywbydR8PU6ZMkrnfBkD67LnpGvdmoNyH/nP5ds6nALJr+
-   +QFu+JUV8M6efhJy0zVNRy/WxOuUrVLqG2xP7YWYuiXIZ8gBQA+kN3NF6
-   Q==;
-X-IronPort-AV: E=Sophos;i="6.15,309,1739836800"; 
-   d="scan'208";a="493505763"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 16:01:43 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [10.0.43.254:49295]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.2.235:2525] with esmtp (Farcaster)
- id 2f752404-5de8-41fe-8a16-eb65358a1460; Fri, 23 May 2025 16:01:40 +0000 (UTC)
-X-Farcaster-Flow-ID: 2f752404-5de8-41fe-8a16-eb65358a1460
-Received: from EX19D031EUB002.ant.amazon.com (10.252.61.105) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.223) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 23 May 2025 16:01:40 +0000
-Received: from dev-dsk-hmushi-1a-0c348132.eu-west-1.amazon.com
- (172.19.124.218) by EX19D031EUB002.ant.amazon.com (10.252.61.105) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14; Fri, 23 May 2025
- 16:01:37 +0000
-From: Mushahid Hussain <hmushi@amazon.co.uk>
-To: <tip-bot2@linutronix.de>
-CC: <efault@gmx.de>, <linux-kernel@vger.kernel.org>,
-	<linux-tip-commits@vger.kernel.org>, <peterz@infradead.org>,
-	<stable@vger.kernel.org>, <x86@kernel.org>, <hmushi@amazon.co.uk>,
-	<nh-open-source@amazon.com>, <sieberf@amazon.com>
-Subject: Re: [PATCH 6.12 000/122] 6.12.11-rc1 review
-Date: Fri, 23 May 2025 16:01:28 +0000
-Message-ID: <20250523160128.8846-1-hmushi@amazon.co.uk>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <173902629450.10177.17446372607519992642.tip-bot2@tip-bot2>
-References: <173902629450.10177.17446372607519992642.tip-bot2@tip-bot2>
+	s=arc-20240116; t=1748016138; c=relaxed/simple;
+	bh=HIQHs3IOA8FRkzf8F6Hs5hqxhQBGB/RqpvLvwq5IR+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Li+dHypuskECXJ5a58XJJeKq3YfArfDFkIosk6y6RDXWyzuMDWHjfAUgO4rRl1MA3M8Vn9yBFpCfLpP0rKLBIFFUCnfWT/gg0b+cBCDrgdujhOHDMvAVZ7iQZOLAWWkhwNbN0XcVE9/hD3ehw3W7x+f3Yy9rKUTE151Q6HCzJg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=OpQcs4dc; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0DPKAvfg5f4Y3SBIphoT53zbwhsUwwLhBf0NzO10Cgs=; b=OpQcs4dcB6OWU9mlLf31Gzrhvv
+	tb+hAOfomI21FW70GV6ifTR+Zu4IGNBr6FuaOsUdcAh2lpJb3aG44dd2qd/xAFxyqLE88j1yp6wAA
+	iYkunMJADxww4SJ57C3dd5q2s5gZEeki2AICqkKOMSGUz7VzXMwFrnzA9FxIE8UOGaDI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uIUqQ-00DcxW-JK; Fri, 23 May 2025 18:02:02 +0200
+Date: Fri, 23 May 2025 18:02:02 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sky Huang <SkyLake.Huang@mediatek.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net-next 1/2] net: phy: mtk-2p5ge: Add LED support for
+ MT7988
+Message-ID: <afb80927-d921-44d7-8a32-f109e5ec5143@lunn.ch>
+References: <20250523113601.3627781-1-SkyLake.Huang@mediatek.com>
+ <20250523113601.3627781-2-SkyLake.Huang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D041UWB004.ant.amazon.com (10.13.139.143) To
- EX19D031EUB002.ant.amazon.com (10.252.61.105)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250523113601.3627781-2-SkyLake.Huang@mediatek.com>
 
-> The following commit has been merged into the sched/urgent branch of tip:
+On Fri, May 23, 2025 at 07:36:00PM +0800, Sky Huang wrote:
+> From: Sky Huang <skylake.huang@mediatek.com>
 > 
-> Commit-ID:     55294004b122c997591d9de8446f5a4c60402805
-> Gitweb:        https://git.kernel.org/tip/55294004b122c997591d9de8446f5a4c60402805
-> Author:        Peter Zijlstra <peterz@infradead.org>
-> AuthorDate:    Tue, 28 Jan 2025 15:39:49 +01:00
-> Committer:     Peter Zijlstra <peterz@infradead.org>
-> CommitterDate: Sat, 08 Feb 2025 15:43:12 +01:00
+> Add LED support for MT7988's built-in 2.5Gphy. LED hardware has almost
+> the same design with MT7981's/MT7988's built-in GbE. So hook the same
+> helper function here.
+> 
+> Before mtk_phy_leds_state_init(), set correct default values of LED0
+> and LED1.
+> 
+> Signed-off-by: Sky Huang <skylake.huang@mediatek.com>
 
-Was this merged to sched/urgent or any other branches/RCs? Given gitweb link
-sends me to "Bad commit reference". I don't see this commit in sched/urgent:
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=sched%2Furgent
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
 
