@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-660135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16EBAC1963
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:13:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB74DAC195D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:12:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 562333B082C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:12:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E628188C031
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDA8201000;
-	Fri, 23 May 2025 01:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C96B2D320D;
+	Fri, 23 May 2025 01:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X6KY7wC7"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HdY8PFjM"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1552B2C3768
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 01:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CAE2D29C6
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 01:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747962084; cv=none; b=FbrFlEnkWnGij4T+VdclmRIKdzw/+q8kU6qV8EXlvyQT46j/rGl7cGdBHOwxsrn/Q/oPy6Z/m1kJKEYQ7IlNMxjwGcNmWP1Xbzm51aN9we7b0n7eATeV4FfG91flsjL+J4BE9dIg/K010b6zK1TzJOfkKqhHMyvOO9bHMFry45o=
+	t=1747962088; cv=none; b=HK7bC83LLJZwco/LkBY73zw1J7BTUZqPwkKRm7Qd+lpmauiltfocXZqXZjJ8hYzHVRV8Mei53UdaPdTgs4ECDY9WmAvr/ihGHiQFGN2nWCSiXE0oQxCEA0YND9G7XxNZzRonkpGX+mi1HV9eI8kvyIszeVKnR0s7OPclejddGCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747962084; c=relaxed/simple;
-	bh=Z00yQ0PQn26W+YkvG1/+a4jEvueuLPaetcdy4ijqCYQ=;
+	s=arc-20240116; t=1747962088; c=relaxed/simple;
+	bh=55qjTgWoCAqQ0qlezLcudUP6UhJvdAn22WKHfJ6neN0=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GrVACt/q8RfyJ/vDQGCB2ShrpkgXFS60VC3vNcQgHfjd9upBMo6mLOWPnNdfmO2whlvotcbtNygG+T9cOuflexX2/r/0mkKz8UfblboCOBWerciko5J1WoJjEOSQmej1t6cSH98xJjZ8Q61QCzQJEo1MTXxOpOdjCet7uwVvHc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X6KY7wC7; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=Xvur8C7c+zF7H4JzexPUFruc2tCVCUGYE6dM4yqB5Zx1D4Zvh4sgD4iffJFZKs8CoVF5OMhHiGT4r4kpfcMvrl1x0WLNrvIM9nEFCkVb7gpUXfLxI4K8UHgGI/H2WO09WZTV3r1PJw9WSY9zObltifLrvd+Dl+sOSk0ocv9tz5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HdY8PFjM; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30ebf91d150so7040141a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:01:22 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b269789425bso8821815a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:01:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747962082; x=1748566882; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747962086; x=1748566886; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=zrysmAdotRY3tUKAweOx9pfjToN/g2hJE4Ng9AMbRtg=;
-        b=X6KY7wC71sGhF8qc6wRH17VGL2H9By+lUhIcmm0m9l7lQGGNr4I0uNkITR9Qon+W4M
-         YbyoT44AWd3MSRgOV5BFyFVGgbiyXRAMuPPo2H46bCx48LcRABH6mY7L9YRMB/X0mmBM
-         JDjqh/KrS4zAtKFaqNVpaA26EGRrEVncoNjOUu2V+Oxt/rVT/+uJuYMgRjgz4VDcQMJ4
-         UPbC7yIdmqqWowzEtjLLF9OXuITYt0wXoNXxK5oqB4Ao2HorGNAIpU1BL5JDVh84f7Un
-         jdh6l8xUvDjeysYRJDKupzTMc/oKp5rhkJKCoNJ8Tu4tapmkyTBJutq/ioE7Pk1BTZLw
-         vHhA==
+        bh=gUhbzbIFz6N1ly0iEWpzNSdv8WcFPzr+G6Brn0aKnfs=;
+        b=HdY8PFjMZt6H2RfcNGXUgIZXb8lxivtddwihRNXrp2IAlftGaRznb2/T1bPZIHvihW
+         OX511FjByY13jc3gtUc4EMW1yqsFyIfr5WEiIn9mbAHPeg4y6Zyi516Sr0OJ9o6JFM7H
+         9Q6HoPc/Aj/lSepccBjzYwthSzS6OphwUcJcYq9ORb27O+JnKxsWv9ke6m9ypq7y+MYv
+         H1vwp4503XKM/o6S9KFOrZTLxxxgODphDdVgg1U6PX0iHRVUBLY2vcrfwZ5ndbKzNVi0
+         Ebsf0dyUzlCx/TwvNmFuzeeyNEIkuUg9p23TP3RjFawrvUdgp2gB/uyqfKfKSdOeRZSv
+         dnAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747962082; x=1748566882;
+        d=1e100.net; s=20230601; t=1747962086; x=1748566886;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zrysmAdotRY3tUKAweOx9pfjToN/g2hJE4Ng9AMbRtg=;
-        b=weV4gTPHYnkG5GA5y+9m9JkcUk27usCsnc3cskzbaE/e2U6+aCIFu+SLoFzgLGylwI
-         m5n3gEtVpXiM9AN4Px+9jDhIPAIOqMlPmyf+fNKO0nyYtRryqmq4ptdXCREFx1cifLhp
-         duI9xaAizSf6cKgXFKy4z3L+qQkLKRnFZLJf9mp1FIqUw6kEdEpEbpWZNZUUofCfcJi7
-         quGnpHkdfucEE+mA7luQ5kbxgShDH0eO+EjPY2kYu3duohj6rKCk+9tGaF+/8aPE3rfy
-         vnKTy9c6/ka9KU8UGexvF1OFkb5/iSB6yiMv1phhqqhhGWls+KZ8rD5nfGw5CoI07LvC
-         cc6w==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Bd+zDuz72FniYB31w313q6A/FD0rQ4Epv9TF0yq4qR96rP3cz71RQUs8qRcNacYJMH0DMYR2jiF+Icw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0/hHB4s79yCsow8NuqfEQcXawHuRxAjEd5noZTwuNxQGm+s4X
-	iUj+Jc+s/wxVSNz+117R5D1M/TTHCT4+ztnhC3DWDQW4zBVL4opa+QRrm1QaJITHTG0aaLrgrS0
-	BhOWcXw==
-X-Google-Smtp-Source: AGHT+IFYYw2vNKO7X1E4jTH8MJBys/Xi26XTWV4xJAxpgqO4gyT9OdqFXK5/A1nwW8HDjPEMRjulaYFMODU=
-X-Received: from pjbsn4.prod.google.com ([2002:a17:90b:2e84:b0:2fc:aac:e580])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:394d:b0:2ee:d024:e4fc
- with SMTP id 98e67ed59e1d1-30e7d5bb433mr48333499a91.33.1747962082505; Thu, 22
- May 2025 18:01:22 -0700 (PDT)
+        bh=gUhbzbIFz6N1ly0iEWpzNSdv8WcFPzr+G6Brn0aKnfs=;
+        b=nHmn6jBNKKVk7hCaUipfPj4AEKBIKLRa1IO32Ed+enShasLb0ZYkD8mtyVn9I/WdPP
+         e7yOC4DacBVVzvLUos/IHW/TOLhEGUsxy+MOgoiYmyTRNURQ7L/vwIVW5FvwsYVpkByH
+         MBygEdVKRlWGMWc43QxB+r0479bnTNPNzUSlR7ezLYo4K2ttqD2ohj/griNpOOxD3TOQ
+         SgV0THzde2RDM5vx+xG24CG/HoD8FQNUrcRxPeJanzy8bzl2j9Q4BpVHO9hm3KxcAiTM
+         zwvgW58vfW8PtCyXnASxO1+YVObqB+mygxygG9QgjHPysud9DxxwLBWEw23GjipAr7P1
+         vYmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaHeTcRIMb45zqtG0TH/WqBrTkK41QwX9Xn1snTzif1PhC0gwQnd6fJ27TBoAq8hXv9FhvvoOyIunUDUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUFCAxfCBbUjDLmU0aznaKrN6/qA82mGrStBVVqrofCdgX0Tde
+	am+Aa8FyDFwwTRS3ASwUDykBEh94iPG5T7/OCFmHFF8sNtC1ztMdgWxDcaEbzerm6pm0qKID5qq
+	VR5gDcQ==
+X-Google-Smtp-Source: AGHT+IFmNcRCVGsHwu2ASi0oy2rdhg/Fb0rUQuE9H39VclrV/Td0/+Bcwnto5U4Ohf9/HGIiubwzMKlglKw=
+X-Received: from pjbnb5.prod.google.com ([2002:a17:90b:35c5:b0:30a:8ffa:9154])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:17d0:b0:2ff:53ad:a0ec
+ with SMTP id 98e67ed59e1d1-30e7d57f38bmr34769259a91.21.1747962084260; Thu, 22
+ May 2025 18:01:24 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 22 May 2025 17:59:48 -0700
+Date: Thu, 22 May 2025 17:59:49 -0700
 In-Reply-To: <20250523010004.3240643-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250523010004.3240643-1-seanjc@google.com>
 X-Mailer: git-send-email 2.49.0.1151.ga128411c76-goog
-Message-ID: <20250523010004.3240643-44-seanjc@google.com>
-Subject: [PATCH v2 43/59] KVM: SVM: Don't check for assigned device(s) when
- activating AVIC
+Message-ID: <20250523010004.3240643-45-seanjc@google.com>
+Subject: [PATCH v2 44/59] KVM: SVM: WARN if (de)activating guest mode in IOMMU fails
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
 	Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>, 
@@ -88,31 +87,51 @@ Cc: kvm@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
 	Francesco Lavra <francescolavra.fl@gmail.com>, David Matlack <dmatlack@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Don't short-circuit IRTE updating when (de)activating AVIC based on the
-VM having assigned devices, as nothing prevents AVIC (de)activation from
-racing with device (de)assignment.  And from a performance perspective,
-bailing early when there is no assigned device doesn't add much, as
-ir_list_lock will never be contended if there's no assigned device.
+WARN if (de)activating "guest mode" for an IRTE entry fails as modifying
+an IRTE should only fail if KVM is buggy, e.g. has stale metadata.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/svm/avic.c | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/x86/kvm/svm/avic.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
-index dadd982b03c0..ab7fb8950cc0 100644
+index ab7fb8950cc0..6048cd90e731 100644
 --- a/arch/x86/kvm/svm/avic.c
 +++ b/arch/x86/kvm/svm/avic.c
-@@ -732,9 +732,6 @@ static int avic_set_pi_irte_mode(struct kvm_vcpu *vcpu, bool activate)
+@@ -724,10 +724,9 @@ void avic_apicv_post_state_restore(struct kvm_vcpu *vcpu)
+ 	avic_handle_ldr_update(vcpu);
+ }
+ 
+-static int avic_set_pi_irte_mode(struct kvm_vcpu *vcpu, bool activate)
++static void avic_set_pi_irte_mode(struct kvm_vcpu *vcpu, bool activate)
+ {
+ 	int apic_id = kvm_cpu_get_apicid(vcpu->cpu);
+-	int ret = 0;
+ 	unsigned long flags;
  	struct vcpu_svm *svm = to_svm(vcpu);
  	struct kvm_kernel_irqfd *irqfd;
+@@ -742,16 +741,15 @@ static int avic_set_pi_irte_mode(struct kvm_vcpu *vcpu, bool activate)
+ 		goto out;
  
--	if (!kvm_arch_has_assigned_device(vcpu->kvm))
--		return 0;
--
- 	/*
- 	 * Here, we go through the per-vcpu ir_list to update all existing
- 	 * interrupt remapping table entry targeting this vcpu.
+ 	list_for_each_entry(irqfd, &svm->ir_list, vcpu_list) {
++		void *data = irqfd->irq_bypass_data;
++
+ 		if (activate)
+-			ret = amd_iommu_activate_guest_mode(irqfd->irq_bypass_data, apic_id);
++			WARN_ON_ONCE(amd_iommu_activate_guest_mode(data, apic_id));
+ 		else
+-			ret = amd_iommu_deactivate_guest_mode(irqfd->irq_bypass_data);
+-		if (ret)
+-			break;
++			WARN_ON_ONCE(amd_iommu_deactivate_guest_mode(data));
+ 	}
+ out:
+ 	spin_unlock_irqrestore(&svm->ir_list_lock, flags);
+-	return ret;
+ }
+ 
+ static void svm_ir_list_del(struct kvm_kernel_irqfd *irqfd)
 -- 
 2.49.0.1151.ga128411c76-goog
 
