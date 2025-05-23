@@ -1,122 +1,155 @@
-Return-Path: <linux-kernel+bounces-660184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDBA8AC19CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:51:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BDBBAC19D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF3173BA6B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:51:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98CDD1766CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF0B1D8DFB;
-	Fri, 23 May 2025 01:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArdZegg3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D1F204096;
+	Fri, 23 May 2025 01:52:26 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51CE82DCBE1;
-	Fri, 23 May 2025 01:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9B0202C3E;
+	Fri, 23 May 2025 01:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747965111; cv=none; b=qPCcsrzcplVIQr/7JncE7zD0waqFRtcu1pqFol2YlxdMQGiEws3uIA41c7uD/hn+M/MtZxG2x8/3kv/1AEcSOO8NMgOZhex1jNgoXqR1Px+EitIjjpetIptkUDyvx7P6vPIYSm6Exsk/SugN82a2y2bQ0uvPORUk7vDE7tBfZnw=
+	t=1747965146; cv=none; b=l1GqPmAcqIHY6zEhHjx7m6nI3q3eQmAs7x7OjVUNVgbYobpXVc9N/L+wIrGwN7MSLDj8Gr/3JfjVxus/SlSmSMYWtHLX8LGRixLQB7PzrFAw9DeXiz76TwFXcZ5P4blj66G+jdsjbZ59xgD+dNYtH8Ax3VUumERQfNjPh1FsK7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747965111; c=relaxed/simple;
-	bh=8S+It+iOZUj7PzQhjL+wxzQATMEcIxRIc0xwYa5veuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UC5+RwQ8dWuO5/iiPoKwFqKrD7yfhuBLAbdFGemXbTccj3cv2Io2Ozlwv5MfOJCIgkJcGmgG++NaoX2HCHpZHJHzFBcTweGJYj9LlSJjV0y82aBED+8vyYhlq8gUNS3q9vSiFAhQF6vgwEqrAl2jfTy58pHuW8+3ivkwiW/0gdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ArdZegg3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 483B8C4CEE4;
-	Fri, 23 May 2025 01:51:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747965110;
-	bh=8S+It+iOZUj7PzQhjL+wxzQATMEcIxRIc0xwYa5veuM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ArdZegg34/+WQEnnQxMgxsln8hSUNpzbj5nyEB+iCKxWGdHCkMuSSHg04ml3igFqL
-	 ObKpUmJ5S52wOO7HseXTDWl9Y1ojP1c73ChJUdr6e3y7URM95DXMdTP72TGg43n9dr
-	 jiMNdUgiIJx6wwoImp2OZLdC3/OWX5FkBwq2D70uUmj794WWnlcxuPSl6I9OIMyUxx
-	 1GKy8cdL9ga0pvWtn71wlhZIXfhHvBxzr1uEv6sYHWMHJ6caZ0mvUkxc9tkwRKupia
-	 PqhLd5SIBktte6jmD1om5cXR/fPhCn9zEyynkpaxWx0YcP/LvKB54sxSwCW1ZESsVu
-	 k9nhRILl28faA==
-Date: Thu, 22 May 2025 22:51:47 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Leo Yan <leo.yan@arm.com>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf tests switch-tracking: Fix timestamp comparison
-Message-ID: <aC_Us1xcKCmYFy_5@x1>
-References: <20250331172759.115604-1-leo.yan@arm.com>
- <CAP-5=fVsgahBhOEOac52PmL0V+n1jqAxzf7n9PVWgWsxq9TvgQ@mail.gmail.com>
- <20250401091422.GA115840@e132581.arm.com>
- <CAP-5=fUGLy9xGmMO+6PXvfviB4U8Q8O7H3iTSSqEf72vin8gDA@mail.gmail.com>
- <20250402090516.GG115840@e132581.arm.com>
- <20250516153158.GH412060@e132581.arm.com>
- <aCvgbd5dZrF0YJg7@google.com>
- <aC_UKwuokMuf-kzD@x1>
+	s=arc-20240116; t=1747965146; c=relaxed/simple;
+	bh=uouMkHQJEv9eK/Egv5tzPhNwrlsLTqqkNAi24xHuPlc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iBtnC12rEILquEFov3HmCz47K7uS5/3dgaV/NMDcW1taBFyc0uZ0x5qdXmjRG3xk2uXdewq76k5yjLd+DrZighq1UYEQLNvwJzb9kLf+acDx/w/F+3hCW/O6I7ESkYjRJ9vqDU2+iaM4cMQPXh9+uJfO04DlInL4Bporvr3ndHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4b3SmL4bFmz13LFD;
+	Fri, 23 May 2025 09:50:42 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1B6721400E3;
+	Fri, 23 May 2025 09:52:20 +0800 (CST)
+Received: from kwepemq200002.china.huawei.com (7.202.195.90) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 23 May 2025 09:52:19 +0800
+Received: from [10.174.177.223] (10.174.177.223) by
+ kwepemq200002.china.huawei.com (7.202.195.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 23 May 2025 09:52:19 +0800
+Message-ID: <722186ce-174e-4201-acdf-ebf731fff7a3@huawei.com>
+Date: Fri, 23 May 2025 09:52:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aC_UKwuokMuf-kzD@x1>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG Report] KASAN: slab-use-after-free in
+ page_pool_recycle_in_ring
+To: Jakub Kicinski <kuba@kernel.org>
+CC: Mina Almasry <almasrymina@google.com>, <hawk@kernel.org>,
+	<ilias.apalodimas@linaro.org>, <davem@davemloft.net>, <edumazet@google.com>,
+	<pabeni@redhat.com>, <horms@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <zhangchangzhong@huawei.com>
+References: <20250513083123.3514193-1-dongchenchen2@huawei.com>
+ <CAHS8izOio0bnLp3+Vzt44NVgoJpmPTJTACGjWvOXvxVqFKPSwQ@mail.gmail.com>
+ <34f06847-f0d8-4ff3-b8a1-0b1484e27ba8@huawei.com>
+ <CAHS8izPh5Z-CAJpQzDjhLVN5ye=5i1zaDqb2xQOU3QP08f+Y0Q@mail.gmail.com>
+ <20250519154723.4b2243d2@kernel.org>
+ <CAHS8izMenFPVAv=OT-PiZ-hLw899JwVpB-8xu+XF+_Onh_4KEw@mail.gmail.com>
+ <20250520110625.60455f42@kernel.org>
+ <29d3e8fa-8cd0-4c93-a685-619758ab5af4@huawei.com>
+ <20250522084759.6cfe3f6d@kernel.org>
+From: "dongchenchen (A)" <dongchenchen2@huawei.com>
+In-Reply-To: <20250522084759.6cfe3f6d@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemq200002.china.huawei.com (7.202.195.90)
 
-On Thu, May 22, 2025 at 10:49:31PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Mon, May 19, 2025 at 06:52:45PM -0700, Namhyung Kim wrote:
-> > Hi Leo,
-> > 
-> > On Fri, May 16, 2025 at 04:31:58PM +0100, Leo Yan wrote:
-> > > Hi Ian, Namhyung,
-> > > 
-> > > [ - Mailing list ]
-> > > 
-> > > On Wed, Apr 02, 2025 at 10:05:16AM +0100, Leo Yan wrote:
-> > > > On Tue, Apr 01, 2025 at 12:54:12PM -0700, Ian Rogers wrote:
-> > > > > On Tue, Apr 1, 2025 at 2:14 AM Leo Yan <leo.yan@arm.com> wrote:
-> > > > > >
-> > > > > > On Mon, Mar 31, 2025 at 01:18:31PM -0700, Ian Rogers wrote:
-> > > > > >
-> > > > > > [...]
-> > > > > >
-> > > > > > > I'm reminded of a Java check I wrote for this:
-> > > > > >
-> > > > > > Nice short article.
-> > > > > >
-> > > > > > > In clang -Wshorten-64-to-32 looks to cover this. I'll see if we can
-> > > > > > > clean those warnings up a bit.
-> > > > > >
-> > > > > > I checked a bit and seems GCC has no this flag, but it makes sense for
-> > > > > > me to enable the flag for Clang.
-> > > > > >
-> > > > > > > Reviewed-by: Ian Rogers <irogers@google.com>
-> > > > > >
-> > > > > > Thanks a lot, Ian.
-> > > > > 
-> > > > > I made a small variation to the change in:
-> > > > > https://lore.kernel.org/lkml/20250401182347.3422199-10-irogers@google.com/
-> > > > > to avoid a subtract and just directly compare the values.
-> > > 
-> > > Do you mind to pick up my this patch? :) Our internal CI reports the
-> > > test case 109_Track_with_sched_switch failure daily, I am just wandering
-> > > if we could apply the fix quickly.
-> > 
-> > Arnaldo is taking care of patches for v6.15.
-> > 
-> > Arnaldo, can you please take this?
-> 
-> >From what I understood it people agreed to pick Ian's patch, ok.
 
-But that is part of a larger patch, so since Ian reviewed Leo's patch,
-I'll end up picking the more contained one, no bandwidth to check all
-the other parts now.
+> On Thu, 22 May 2025 23:17:32 +0800 dongchenchen (A) wrote:
+>> Hi, Jakub
+>> Maybe we can fix the problem as follow:
+> Yes! a couple of minor nit picks below..
+>
+>> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+>> index 7745ad924ae2..de3fa33d6775 100644
+>> --- a/net/core/page_pool.c
+>> +++ b/net/core/page_pool.c
+>> @@ -707,19 +707,18 @@ void page_pool_return_page(struct page_pool *pool, netmem_ref netmem)
+>>    
+>>    static bool page_pool_recycle_in_ring(struct page_pool *pool, netmem_ref netmem)
+>>    {
+>> +	bool in_softirq;
+>>    	int ret;
+>> -	/* BH protection not needed if current is softirq */
+>> -	if (in_softirq())
+>> -		ret = ptr_ring_produce(&pool->ring, (__force void *)netmem);
+>> -	else
+>> -		ret = ptr_ring_produce_bh(&pool->ring, (__force void *)netmem);
+>>    
+>> -	if (!ret) {
+>> +	/* BH protection not needed if current is softirq */
+>> +	in_softirq = page_pool_producer_lock(pool);
+>> +	ret = __ptr_ring_produce(&pool->ring, (__force void *)netmem);
+> Maybe we can flip the return value here we won't have to negate it below
+> and at return? Like this:
+>
+> 	ret = !__ptr_ring_produce(&pool->ring, (__force void *)netmem);
+>
+> and adjust subsequent code
 
-- Arnaldo
+Hi,Jakub
+Thanks for your suggestions!
+
+>> +	if (!ret)
+>>    		recycle_stat_inc(pool, ring);
+>> -		return true;
+>> -	}
+>>    
+>> -	return false;
+>> +	page_pool_producer_unlock(pool, in_softirq);
+>> +
+>> +	return ret ? false : true;
+>>    }
+>>    
+>>    /* Only allow direct recycling in special circumstances, into the
+>>
+>> @@ -1091,10 +1090,16 @@ static void page_pool_scrub(struct page_pool *pool)
+>>    
+>>    static int page_pool_release(struct page_pool *pool)
+>>    {
+>> +	bool in_softirq;
+>>    	int inflight;
+>>    
+>> +	/* Acquire producer lock to make sure we don't race with another thread
+>> +	 * returning a netmem to the ptr_ring.
+>> +	 */
+>> +	in_softirq = page_pool_producer_lock(pool);
+>>    	page_pool_scrub(pool);
+>>    	inflight = page_pool_inflight(pool, true);
+>> +	page_pool_producer_unlock(pool, in_softirq);
+> As I suggested earlier we don't have to lock the consumer, taking both
+> locks has lock ordering implications. My preference would be:
+>
+>    	page_pool_scrub(pool);
+>    	inflight = page_pool_inflight(pool, true);
+> +	/* Acquire producer lock to make sure producers have exited. */
+> +	in_softirq = page_pool_producer_lock(pool);
+> +	page_pool_producer_unlock(pool, in_softirq);
+
+Yes! there is no need to hold lock for page_pool_inflight(). The lock can
+be used as a barrier for the completion of the recycle process.
+I have tested this patch. The patch will be sent later.
+----- Best Regards,
+Dong Chenchen
+
 
