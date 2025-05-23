@@ -1,171 +1,113 @@
-Return-Path: <linux-kernel+bounces-660071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1D8AC18D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 02:04:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D264AC18DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 02:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1FD61C01A3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:04:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F4A84A4A1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120578BE8;
-	Fri, 23 May 2025 00:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B72211C;
+	Fri, 23 May 2025 00:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3k0TdWD"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x5tDtvMk"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA90819A;
-	Fri, 23 May 2025 00:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D624A19A
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 00:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747958664; cv=none; b=K3N9qJoapkqAlquYG+aXOe9ngfpcHVhHd1FEjopsMQgv8htb6csNujwVDuGEyCVMaifra1hmdtldxPKk9WNt8Hu4TMkwpyP1FVq7oa+wfVmSRExtkCz7KPNmgk8Y1HWQeGmkOyQvBVO0wvEDqX2rpM2mItgzDXb1srgfr8Y0y1g=
+	t=1747958880; cv=none; b=b/Rc3lx83kXQ5BAgQTsDsGNIhO8XtthaMDSIuUAED5jD+eimO2fmLw195L7xC2rfyMB+bvDUuO7gXKNQEF9VjaJv4r/ARRbKLEGR//z+4kdp4dYG4W1z6Z06o85fjJLBdgekBCrZjlg8TOjcJa1W3havqyOS80QFc+//UsaYvCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747958664; c=relaxed/simple;
-	bh=8RhF6JZexlYdbYojUlf+e9vDQ02xGsmYGEvzlJUi/uI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SrAK9Pt4+q6Y0USU9kZhIz32wfIrjxL/ebUMVCcFWAgx7Y+gSIoGUKQWJOJ8uWinAxPEB5ey4fx/QeI0xn+du/jhqh3ZerW8rAyxyYD5W+BxmsNo04hHKf5CcefB30/uBd05F0jxweH9lyFd5dkbZNJgx5l53J72rK18YWyzs9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y3k0TdWD; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-70ccf9a4ab3so54334867b3.1;
-        Thu, 22 May 2025 17:04:22 -0700 (PDT)
+	s=arc-20240116; t=1747958880; c=relaxed/simple;
+	bh=f8QVZMVblX+qS4oCwDMOZOZEon4xBt0rd3Buv0CJ31Y=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=V0WLqpUS8FCujDRqBk1Gkpr3USucGpo/jyU7dIHIQNy49MGiBHrh/z7MtdqlNdWON5E+fu9/0TQA4xVIE/rUqsZ0B8H9azRB0Q0hO5GQH15KD+3VuFfAxYiCvk9ft0gwyaerby/7hwkxRKBHIPJPRdb28wIXvqHxlegEcx5LrrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x5tDtvMk; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a365a68057so5380664f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 17:07:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747958662; x=1748563462; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3DbirWf9hqjVJS04ntzyt2efU5MTrY9tFTzatS41oes=;
-        b=Y3k0TdWDSa6FjkUJyYee1WI+kHgql1SIc0ttdiKn5NjnZ9x7J839Z38l9Dle4W1XGe
-         BoTOyjdzljlH4zSS0H1yitOeHWYgfKhT1F0xM7kD72m5NliF+yVNfOIaLW9StRXBx7mM
-         f+qpB9G8U6m9NewaYrn1uZk3Nsfr5D9ZPlPR9CHalKBoYQeFQYfQ2NZ61Nhf2pA0UAe1
-         udOjtjNrF2KBxzplltcJFUgBUGxFRTmcQ/NtECIwNG4MQqDorrpn7g3zejTkp1XcVc8n
-         5sm4MloxJFdv3cM/L8FnLqrxy4YvPeDpR77z+MnKTuhu6agLN3DgRNZAHd/g5NqCtHom
-         5D3Q==
+        d=google.com; s=20230601; t=1747958877; x=1748563677; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=V9xVtvlv14mN7U20hdMUeblYw5hN+2V2vd3EC7hDFuo=;
+        b=x5tDtvMk2zlj6QtJ8J6XSgdt2UMF/TAc7CZZpGf1r4TtlLNxHxAah92gktSzuMQ3aW
+         oldNGaYogwjcHIrIisbI08zU0t3Fc7nh7AdwrQu8srdyOb6ee8MCTl39mHf/AeKUhijH
+         983H/nd8qJiHhr4BeZp7PuOLXgk6ZRide/mglbfrvTpWF0x3nt7knhMJezGYIHBqV2nz
+         Ahl9vWwVQgyD2kUTUIE0OGcl2kbrO57xtgSqzy62oIMPuhmbbRBcXjqeIAAMRi8c9dp2
+         SwGh2zsS042mORyb63wl5FTBaj4arJFtGt4kghpa3MFixwrmQXl9Np+XUnWMR8iD8RXv
+         mQtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747958662; x=1748563462;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3DbirWf9hqjVJS04ntzyt2efU5MTrY9tFTzatS41oes=;
-        b=elYQVp7q1kAio/REFGwF2RGgvRP4xWwPtYtsF5xt6lb44qt/0BOuuM+sZJ5POneewW
-         NmEc5jPly5rRGP4GM+K1kw6v4zEDjeegmzeRad+FUl0NIJZZvn596mTlpnxp8u6eD9Bt
-         CmeicN/K6Ij1mhxNXL6R6fbrCxV/wp+PLUE8fxJb4aGaQQxuXTj3F4FK62RpVWaFj4kT
-         j3UT4Tn9lMiTsmWUjvW+moCjqqQ+JaqmwAH7hjSEkoqIuMqDMeuSWCYoYCcWRqJNEC8i
-         fVryZ1Qxo2WZVRKCEqOOKHbbdU5ZUlGl1Ggd130WZWuo0+tHlW9sRzccQi85VgI0wEWn
-         smlA==
-X-Forwarded-Encrypted: i=1; AJvYcCWeQe5s0CewUAcVN9xVdxkaJIzZr24HP91YkokkGVKZp3u6FH4azFIQiOm3GzsCxEV5obe0G2Dc96LphQ==@vger.kernel.org, AJvYcCXCROsgtx6eJVy6XLmaZpgNif4qnhgS4Cbs436ButBUXtihlhbEJxgOoJ3TfV8IHX/G+/DHDaSnDUSZRVmI@vger.kernel.org, AJvYcCXdR1N0kZgeirDimQ/QETkY6fMcOkeV96EWGKF+ycSxtVDu18/T7sCEba2VkfAuE8kvDqwZyHPE0WiG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAVWIASOnU9kqDEo6WtCFHICumYh/WRGZ0oXcIxA6lq0vXeWrK
-	Txg8ndKteKzUKQOmny3KhHjUzTOP4HvVwL+NB/PyxzgIqcPbHoVgKkuVlp34NxijO/mMfMbm1Z6
-	bK/OqhYQoorrOYSFvd7fHT+A1uiMUDbw=
-X-Gm-Gg: ASbGnctqYMNtHOBsNQI2JeqJht2mqfswIexmUKaduOErImNYhfK6HzRzPnHVxRPmlWA
-	DKNISJEdOgQL2ZJu9Oyqt7bN0YaqZnIXT0UQVXThUFdDJF5WfrFsHe3C30H069z8oZUQJPzIu7z
-	2rb5cBZNQKzZCpY5valic3Mpp7vowzxQmm5xbnwSXLw163lw==
-X-Google-Smtp-Source: AGHT+IHTXxoSqVb7sbfYhgZx6mT9anQoUuzw2F2mRsAkEI6I/89Y1Cs8fBtoTpZx5IVuzqRXUirhzSQOcfXbUd9vWtw=
-X-Received: by 2002:a05:690c:25c3:b0:70a:2675:70b3 with SMTP id
- 00721157ae682-70caafc9570mr379086027b3.17.1747958661782; Thu, 22 May 2025
- 17:04:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747958877; x=1748563677;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=V9xVtvlv14mN7U20hdMUeblYw5hN+2V2vd3EC7hDFuo=;
+        b=gbn1TprtaQ31XjURzDbIh1YXJPrKP5y8/enJKQGazOLelB9uQLb7u5J7/QlcDyMuNl
+         SZ+iNcX/GjW1GkSkj++dPi6IhMfOZublhW8JMZeuYGa4qKxq50odyWy//b8Cr7l9dukD
+         XK4afUc7B4CMt5bEuSA0OAKlEOyM71kT06sk3iBNXGYxw1RmmYr3eQQH8vYHUoG5AuvM
+         iSERym1jf9GX/47rL2vdJSkkmPR7r+GLIHrbDFwzkX2rq0r2NVFF2YghCXsOe7Uowo3z
+         25WKi/qdilawJ2iuMksplc7m4B+3k7jxsiUEV04Xs/4cSlGpvEoKtIIyVE01d2c7OMuY
+         dGGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWawVtDPAoV1mGwDvAepE/DD1hpmpCBLV033h3MCzxSLAJ8nryXFJk1EHUCGJCdsDe2VYfedN5lxTq9bcs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoAzo4rsWS1T3edotTZY5ICEkrH9OtvnxjQgpPkS2j1RpszRzR
+	e1zI5cftmEu1OMZRhNaFgksReV7MZNwq4zPRkB6ZeIP+bz/FkcloC0nq4JOgnpCoiZpM71cLSjO
+	LI7nUY/hWNLqCn5WzcW4Yg1cK+AxInWjFqr2cVRBVpGm8oNvHNAHoBkkO6Q==
+X-Gm-Gg: ASbGncvGanbJhb+AbNEOGL7bQdHxf1uFzglW3fcblWEa+I4IfbCGyL4YSjPQAoaRJvC
+	D72DiM52VwQVKsZfmZLVjxhZnFFWTmWdm7iHsEe8cSS6wjV0UF5wp4KL7oxaKCQej1dRbaEfxye
+	/E55KVlmJAHEC0Qu4Rnnaurg2yOYl5XIYQKtFho1PEdHbTARdse8g=
+X-Google-Smtp-Source: AGHT+IEoFwqicwEfiuIdcH0/esFh81hFsIk0emOkxWyID8RHGKL9vHSI/sLvVbFjqt0QC+1GWXyqJN4xN6rYGu1q5E0=
+X-Received: by 2002:a17:907:7b96:b0:ac7:3817:d8da with SMTP id
+ a640c23a62f3a-ad71c144d5emr65091466b.52.1747958867020; Thu, 22 May 2025
+ 17:07:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250522184516.13176-1-rosenp@gmail.com> <20250522184516.13176-5-rosenp@gmail.com>
- <871d18ab-a696-4141-bc3a-7b6e968fc649@kernel.org>
-In-Reply-To: <871d18ab-a696-4141-bc3a-7b6e968fc649@kernel.org>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Thu, 22 May 2025 17:04:10 -0700
-X-Gm-Features: AX0GCFtCVpL4KFllAHT33tYF2GaAmf7ddZXmxbZuuFhASNob8nA1pyCoyRnyntg
-Message-ID: <CAKxU2N8uZ+q1aE42+e65tVMr=ji0RTx5wZssFBnQN29OzsFXVA@mail.gmail.com>
-Subject: Re: [PATCHv2 4/5] dt-bindings: net: wireless: ath9k: add OF bindings
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-wireless@vger.kernel.org, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>, 
-	Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:MIPS" <linux-mips@vger.kernel.org>
+From: Bill Wendling <morbo@google.com>
+Date: Thu, 22 May 2025 17:07:30 -0700
+X-Gm-Features: AX0GCFvALJXtJpI87dxOAmPK8ADw0QZjX4yUGyKt-78leZLg7A7GWPbL1V1pFiw
+Message-ID: <CAGG=3QU5Yi2AfHS_poi8SgmatedRg-X8Ct74FOCJUc9iJNPnhg@mail.gmail.com>
+Subject: [PATCH] kconfig: check for a NULL pointer before access
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 22, 2025 at 12:54=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
->
-> On 22/05/2025 20:45, Rosen Penev wrote:
-> > Now that support was added to the driver, document it.
->
-> That's not appropriate commit msg. Binding must be before the user (see
-> submitting patches in DT directory). Describe the hardware, what are you
-> adding here.
->
-> Subject: OF bindings is redundant. It duplicates dt-bindings. Instead:
-> "Add Atheros AR9-foo-bar on AHB bus" or something similar
-At this point I wonder if my approach is wrong. The other ath drivers
-use a qcom, prefix and a -wifi suffix. Might make sense to do the same
-here to avoid typing qca twice.
+The call to 'prop_get_symbol' may return NULL in some cases. The if-then
+statement accesses the returned value without checking if it's
+non-NULL. After inlining, the compiler may treat the conditional as
+'undefined behavior', which the compiler may take the opportunity to do
+whatever it wants with the UB path. This patch simply adds a check to
+ensure that 'def_sym' is non-NULL to avoid this behavior.
 
->
-> Missing SoB.
->
-> Please run scripts/checkpatch.pl on the patches and fix reported
-> warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
-> patches and (probably) fix more warnings. Some warnings can be ignored,
-> especially from --strict run, but the code here looks like it needs a
-> fix. Feel free to get in touch if the warning is not clear.
->
->
->
-> > ---
-> >  .../bindings/net/wireless/qca,ath9k.yaml      | 23 ++++++++++++++++++-
-> >  1 file changed, 22 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/net/wireless/qca,ath9k.y=
-aml b/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
-> > index 0e5412cff2bc..81d00f257922 100644
-> > --- a/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
-> > +++ b/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
-> > @@ -12,7 +12,7 @@ maintainers:
-> >  description: |
-> >    This node provides properties for configuring the ath9k wireless dev=
-ice.
-> >    The node is expected to be specified as a child node of the PCI cont=
-roller
-> > -  to which the wireless chip is connected.
-> > +  or AHB bus to which the wireless chip is connected.
-> >
-> >  allOf:
-> >    - $ref: ieee80211.yaml#
-> > @@ -35,6 +35,12 @@ properties:
-> >        - pci168c,0034  # AR9462
-> >        - pci168c,0036  # AR9565
-> >        - pci168c,0037  # AR1111 and AR9485
-> > +      - qca,ar9130-wmac
-> > +      - qca,ar9330-wmac
-> > +      - qca,ar9340-wmac
-> > +      - qca,qca9530-wmac
-> > +      - qca,qca9550-wmac
-> > +      - qca,qca9560-wmac
-> >
-> >    reg:
-> >      maxItems: 1
-> > @@ -88,3 +94,18 @@ examples:
-> >          nvmem-cell-names =3D "mac-address", "calibration";
-> >        };
-> >      };
-> > +  - |
-> > +    apb {
-> > +      compatible =3D "simple-bus";
-> > +      ranges;
-> > +
->
-> Drop these two.
->
-> > +      #address-cells =3D <1>;
-> > +      #size-cells =3D <1>;
->
-> Best regards,
-> Krzysztof
+Signed-off-by: Bill Wendling <morbo@google.com>
+---
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ scripts/kconfig/symbol.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+index d57f8cbba291..9c5068225328 100644
+--- a/scripts/kconfig/symbol.c
++++ b/scripts/kconfig/symbol.c
+@@ -272,7 +272,7 @@ struct symbol *sym_choice_default(struct menu *choice)
+  if (prop->visible.tri == no)
+  continue;
+  def_sym = prop_get_symbol(prop);
+- if (def_sym->visible != no)
++ if (def_sym && def_sym->visible != no)
+  return def_sym;
+  }
+
+-- 
+2.49.0.1164.gab81da1b16-goog
 
