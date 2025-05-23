@@ -1,133 +1,178 @@
-Return-Path: <linux-kernel+bounces-660583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A92DAC1F97
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:16:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C775BAC1F9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E115417820E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:16:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E10416FA1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C592253EF;
-	Fri, 23 May 2025 09:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5E5136988;
+	Fri, 23 May 2025 09:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZw/TYC9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XAyvzm5l"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587C91DDC11;
-	Fri, 23 May 2025 09:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8126223338
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 09:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747991768; cv=none; b=SygJ+KV5CdrbXPoBpo4PDQe9j02aHkjDEBq2tXEANWseef2mjejMOdZyQDdgntXWUftQgDmxGIKzWh5tBONT0AQvzroUnYF9eqpoWZTk5qoo4MZFQjcxwMIPH9D/qIhMNTNG/V4yp96TUCYU51/rOazU+qZUshn6cL0zAbUUhKE=
+	t=1747991794; cv=none; b=u0A5FaqqLFM3rwMI1Zgh+xjZVQlXgPXuKLc+lzQbVnsFhrzOo3yYzvgsA+MUyMGGlhctXkINf0bcgqCe9v83XcP2Ig6mbYsWw3l36VGkUn+EDKuaTHOhUjm4Lpl0vButnoM38YCXbZHdP/wxIXK8Czfy8xoVQUGCam8LBz++9qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747991768; c=relaxed/simple;
-	bh=IHiAU5Ln1utqscnRK79D8JWp5lxQXyRywi9Pdg4QM3I=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JShMDjORPNn1qIxRKLZdbKUbB7yNpBWIXEzYdH2ybkz+nQESHzC/x5V/Ovuy12qVvPYP8y+Nm3x06EQZtkq574RVxyg2/44Pqy7ZPj5HIgyDtO/19Z59UgSQXUvhP32GGzsuimlsOE+UaWQ6eX6g84qY8ua+XCp0syBhdYN6nXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZw/TYC9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11472C4CEE9;
-	Fri, 23 May 2025 09:16:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747991767;
-	bh=IHiAU5Ln1utqscnRK79D8JWp5lxQXyRywi9Pdg4QM3I=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=YZw/TYC9blXtwvWMrreeeb1JwGrvoG90zIcbQ5D/BQlRQUS5er60cLLRETEJukxrW
-	 mFft0DT6HvtQamg8D4ebfkJ8ywvFUiFAYjrxI83n1VL/oOSnSRwn3E5xmSxLXPaaBr
-	 D5SlXqKdpUzEa5LOTklzTpJIG5VGUJdDC/oFApYMob1kg1dFyefp8OB0AVG8+DUpYr
-	 xacqBy9DB0D+0Z/TInZMJkGPavqisuZ1B5HmDEl6rNCq56NvZP8vqnnJvdoxaSnzXO
-	 pN/KgiA+oRECmgW9pBU7JM9jBz/9rPA4Ivqxz6PIbswXZPcJjoH1aQxdcj/i5+re+3
-	 shGVjkxjrRwbQ==
-Message-ID: <143565d4-8e28-4ff0-8bd9-17969e7b54a8@kernel.org>
-Date: Fri, 23 May 2025 11:16:03 +0200
+	s=arc-20240116; t=1747991794; c=relaxed/simple;
+	bh=vL9xiQyaqTcBSYY/w7En11UOo/roA4GtozLLtwoJd5g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ocp5ch4f30GLBUnvfYp53cA+W3Kt0ZKSXAt5AAaBYroLLZGK9nolNgQpMyqAswK04MWsaub1mN0wR2KES1s+RQ4EtS5A5az9ZoMP9Ru4e8//IfDxawMHLAQBTjsQ0vLZ+Hou1LQo0G9BBwGSnVGr3yBdqvgaxGk5GNQvUQtYjco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XAyvzm5l; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747991791;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4h+Yy62ZlA2qwCk7aDUUsgmb3Ggi1tOTOzIVVOOKlg0=;
+	b=XAyvzm5laLirS/Z7eO44n3PD10k/j24L65VhCKZ2bSSaTRheS7HT+/BWoLSa2cWnzco1fV
+	9NVYs28mvS6Q25YQSXqzV4/N6QCPPlKmiXXs/pn8MtkaBJ6zr6vELJqd2ztH6XPFviNknb
+	IBkCow3WQKytgwyv4Iwd9C68ONHG1+8=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-403-IYn3_tWUM3Wytp9m3w3z1w-1; Fri, 23 May 2025 05:16:29 -0400
+X-MC-Unique: IYn3_tWUM3Wytp9m3w3z1w-1
+X-Mimecast-MFC-AGG-ID: IYn3_tWUM3Wytp9m3w3z1w_1747991788
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-550ea994962so3694846e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 02:16:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747991788; x=1748596588;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4h+Yy62ZlA2qwCk7aDUUsgmb3Ggi1tOTOzIVVOOKlg0=;
+        b=ggCTzaffA5YHUc7/blZeodR23c2WqyBFSYBLMk2z0XPOmSwmgLnGsry/QRXV7XPKQ6
+         K4Jkke1kE4krPQqw/qyrsnxZPa8i/2yFWF/d4nOJK+Nif66/VjqvN9MLwsk2ffvx5B8R
+         sbISvVARcT3W2ToAD/K4SaOiWsLI2Mtc0jgFq3e6ypQP0LY0OZyGLW4qnJBqpNbfzC5/
+         ZW0dKpv1faawbsZ6Bs9jZpcHiyWsoAydf5T/Rwucw7rJJB6Hvp4Wc+8SOG2TaKjyqm9f
+         XKICkZKqhXnIEzw0Ta9fKfFdD0VFxVZQPCo00K0Njybj8eNtlZS+2ipGKz10nChn572B
+         4PlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVClXuMP7Z7iemoGxk/Jp4ST2sihNwGhIn6XJJSPn6GxfC+qm2eFBXoA33J+dykjvxrs/KZ12+NobebHOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY9eWt8hqmnE1kkG1YCvTlhN3cwoLjMgrOmmq2/0xXl5IONHFu
+	f9keoTDkzGPdprdeTEStJ1uJAsD4QgagdBMyYuY8SwzcZN/WHJxK8OjotzvD/+C8dO5O1972T+2
+	FZoeMEYxcQGhdWN2KkZFAh1JRvjL6VETOexLNODfI23SC4UAByMajkHELjPktjbW61w==
+X-Gm-Gg: ASbGncsTwQkyfijAdxdwjo8YF5NwKALStM5y+quzfARtbU4eGrqgv4MHX3mZwqgVeB5
+	dqstFGF+txphD60chRXItqt21yVPLykRGTLYP2AHf91Jdf/8orwEPE3gDqdGctYHPq5IAK5dzJY
+	z5tlqPrd/SMNCohNp7G5vxxr7L3XUHTMO4VuKYZq7DEIAyEcGpcPQ4a0K+tByspaAJ7zZVjB4Iy
+	P9yMscNUmBuXwLzPqui3bUribf1kwoX2MeI91beBo5D3YnMFuT8R1Jchq4V1q+xF16KIiI6IGEY
+	bETrDXRf
+X-Received: by 2002:a05:6512:3e02:b0:54f:c049:4a5b with SMTP id 2adb3069b0e04-550e7250abfmr9351890e87.47.1747991787857;
+        Fri, 23 May 2025 02:16:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHaQ8huunxoEwtFAoZuCgaFT5mLEdvGiJVduPobo6lkNXw2BcUK9t7VQv5UbiSdEGhNk4eBJA==
+X-Received: by 2002:a05:6512:3e02:b0:54f:c049:4a5b with SMTP id 2adb3069b0e04-550e7250abfmr9351877e87.47.1747991787407;
+        Fri, 23 May 2025 02:16:27 -0700 (PDT)
+Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550eb6c7155sm3573232e87.22.2025.05.23.02.16.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 May 2025 02:16:26 -0700 (PDT)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id B2C911AA3B94; Fri, 23 May 2025 11:16:25 +0200 (CEST)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Dong Chenchen <dongchenchen2@huawei.com>, hawk@kernel.org,
+ ilias.apalodimas@linaro.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ almasrymina@google.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ zhangchangzhong@huawei.com, Dong Chenchen <dongchenchen2@huawei.com>,
+ syzbot+204a4382fcb3311f3858@syzkaller.appspotmail.com
+Subject: Re: [PATCH net] page_pool: Fix use-after-free in
+ page_pool_recycle_in_ring
+In-Reply-To: <20250523064524.3035067-1-dongchenchen2@huawei.com>
+References: <20250523064524.3035067-1-dongchenchen2@huawei.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Fri, 23 May 2025 11:16:25 +0200
+Message-ID: <878qmnn0uu.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] clock: eswin: Add eic7700 clock driver
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- huangyifeng@eswincomputing.com
-References: <20250523090747.1830-1-dongxuyang@eswincomputing.com>
- <20250523090928.1940-1-dongxuyang@eswincomputing.com>
- <8752f974-473d-4bb6-9c00-e9a79f905bfe@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <8752f974-473d-4bb6-9c00-e9a79f905bfe@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 23/05/2025 11:13, Krzysztof Kozlowski wrote:
-> On 23/05/2025 11:09, dongxuyang@eswincomputing.com wrote:
->> From: Xuyang Dong <dongxuyang@eswincomputing.com>
->>
->> This driver depends on the CCF framework implementation.
->>   Based on this driver, other modules in the SoC can use the APIs
->>   provided by CCF to perform clock-related operations.
->>   The driver supports eic7700 series chips.
->>
->> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
->> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
->> Reviewed-by: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> NAK, stop adding fake tags. How did you even invent such email?
+Dong Chenchen <dongchenchen2@huawei.com> writes:
 
-To clarify: I NAKed your patch. NAK means Not accepted, Not acknowledge.
-It is the opposite of review, means your patch is wrong and I do not
-agree with it.
+> syzbot reported a uaf in page_pool_recycle_in_ring:
+>
+> BUG: KASAN: slab-use-after-free in lock_release+0x151/0xa30 kernel/lockin=
+g/lockdep.c:5862
+> Read of size 8 at addr ffff8880286045a0 by task syz.0.284/6943
+>
+> CPU: 0 UID: 0 PID: 6943 Comm: syz.0.284 Not tainted 6.13.0-rc3-syzkaller-=
+gdfa94ce54f41 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:378 [inline]
+>  print_report+0x169/0x550 mm/kasan/report.c:489
+>  kasan_report+0x143/0x180 mm/kasan/report.c:602
+>  lock_release+0x151/0xa30 kernel/locking/lockdep.c:5862
+>  __raw_spin_unlock_bh include/linux/spinlock_api_smp.h:165 [inline]
+>  _raw_spin_unlock_bh+0x1b/0x40 kernel/locking/spinlock.c:210
+>  spin_unlock_bh include/linux/spinlock.h:396 [inline]
+>  ptr_ring_produce_bh include/linux/ptr_ring.h:164 [inline]
+>  page_pool_recycle_in_ring net/core/page_pool.c:707 [inline]
+>  page_pool_put_unrefed_netmem+0x748/0xb00 net/core/page_pool.c:826
+>  page_pool_put_netmem include/net/page_pool/helpers.h:323 [inline]
+>  page_pool_put_full_netmem include/net/page_pool/helpers.h:353 [inline]
+>  napi_pp_put_page+0x149/0x2b0 net/core/skbuff.c:1036
+>  skb_pp_recycle net/core/skbuff.c:1047 [inline]
+>  skb_free_head net/core/skbuff.c:1094 [inline]
+>  skb_release_data+0x6c4/0x8a0 net/core/skbuff.c:1125
+>  skb_release_all net/core/skbuff.c:1190 [inline]
+>  __kfree_skb net/core/skbuff.c:1204 [inline]
+>  sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
+>  kfree_skb_reason include/linux/skbuff.h:1263 [inline]
+>  __skb_queue_purge_reason include/linux/skbuff.h:3343 [inline]
+>
+> root cause is:
+>
+> page_pool_recycle_in_ring
+>   ptr_ring_produce
+>     spin_lock(&r->producer_lock);
+>     WRITE_ONCE(r->queue[r->producer++], ptr)
+>       //recycle last page to pool
+> 				page_pool_release
+> 				  page_pool_scrub
+> 				    page_pool_empty_ring
+> 				      ptr_ring_consume
+> 				      page_pool_return_page  //release all page
+> 				  __page_pool_destroy
+> 				     free_percpu(pool->recycle_stats);
+> 				     free(pool) //free
+>
+>      spin_unlock(&r->producer_lock); //pool->ring uaf read
+>   recycle_stat_inc(pool, ring);
+>
+> page_pool can be free while page pool recycle the last page in ring.
+> Add producer-lock barrier to page_pool_release to prevent the page
+> pool from being free before all pages have been recycled.
+>
+> Suggested-by: Jakub Kacinski <kuba@kernel.org>
+> Link: https://lore.kernel.org/netdev/20250513083123.3514193-1-dongchenche=
+n2@huawei.com
+> Fixes: ff7d6b27f894 ("page_pool: refurbish version of page_pool code")
+> Reported-by: syzbot+204a4382fcb3311f3858@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D204a4382fcb3311f3858
+> Signed-off-by: Dong Chenchen <dongchenchen2@huawei.com>
 
-Translating this to review is inappropriate.
+Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
 
-Best regards,
-Krzysztof
 
