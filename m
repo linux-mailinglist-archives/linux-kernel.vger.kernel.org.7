@@ -1,119 +1,136 @@
-Return-Path: <linux-kernel+bounces-660386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23BEDAC1D33
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:41:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58096AC1D3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F28E3B4A12
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 06:40:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DA0F4E1FBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 06:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11A11A3BC0;
-	Fri, 23 May 2025 06:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23C72222C4;
+	Fri, 23 May 2025 06:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="cHvtKRQd";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="rkrx2fJy"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3Ubjd/M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366822DCBE6
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 06:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E932DCBE6;
+	Fri, 23 May 2025 06:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747982463; cv=none; b=fce+35gUuy6YP7JMPC34Tm356aqqtJ8n0KYuIuSFrunU0nkllToMTFB3aWvRCsVocBgj+9FJlzLTlnOOgNqrzju0T2ia1Vxpn588++Pa8eRMytmylOanP42UVRnWkH/LYz2G7im70L4+/Uk+PPKwUEOWRT8w5kbdQbi9xIILZh8=
+	t=1747982583; cv=none; b=oeSmR/V5velupbg9BCSbAKWXV9T2J6g0DKThL9+2Z3sCNpSPWYMOwX1XbJc8G01c7C6mNcv3vVdusK0+PkhSzkilKtS+bf3EFHFrRNzW5UoY8YJNNt+RZF136wI6TOju68ckWXOMFZbZ0ZH9eJ3uHClKMlKSQOiEydathpUiPj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747982463; c=relaxed/simple;
-	bh=+zdqApXgqYiXy7sxtgfCxKqzLaoWEekCTjp5bYrCWeI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ERsIUCdwkTV9bObTn4bW3Y+AIO3HpYRxodRtCW844LUq8Gy32tLiZuc9oI93A03hDIHGWSLm4M89SThjGtErb2p/bpeZj+m8UlMyK43XvEbguT20EezJI45I74gx+N/ZRFKesNlK3y0Rt15lYq/544IiLi3NcXUqTyNT/e2R9LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=cHvtKRQd; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=rkrx2fJy reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1747982460; x=1779518460;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=2ba/0s2zFjBwwDkrqACm+IAKb2aRWgGWa14NBTiYnyo=;
-  b=cHvtKRQd6arlyArz/INWqVBZ1TEntHiTtpRGBSt/kCOqXyD3M1RR30ZX
-   +WwUtpbnnzvuGvT4BGoRNm7llarrz1nZYVyvTiWfq5eOWkLXayzBeDMaH
-   q8X5Yii02eSOok0KVMGVEMnTBae1/4R6EZ+r2knJpC28qmGYSeFtMTSHM
-   OxiDX+sKXnKSu1wmbsUVcp/QdiMQ0frNJur2IX97yGGrBsR6ukIRepRVC
-   NxhUej9DJ9R/EUdmgdUXtP4nHjL8Xch2EdVQEd8N6Bwjj+52O7h7n1hPl
-   lk4wXgapTrcPbKQPYX8+auQXKQRl6exCtPhl28ie2wvV6NjHRJLxp7WwD
-   A==;
-X-CSE-ConnectionGUID: Bc6uYe24Q1axwAqz6lju6g==
-X-CSE-MsgGUID: zmRHm4bBRAqJfuYF9TVn8g==
-X-IronPort-AV: E=Sophos;i="6.15,308,1739833200"; 
-   d="scan'208";a="44249799"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 23 May 2025 08:40:51 +0200
-X-CheckPoint: {68301873-11-C7E25413-F4312D34}
-X-MAIL-CPID: 171ABC288E9D9E5597BFF0440F2CF286_4
-X-Control-Analysis: str=0001.0A006368.68301888.007D,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 92EEE160FB1;
-	Fri, 23 May 2025 08:40:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1747982447;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2ba/0s2zFjBwwDkrqACm+IAKb2aRWgGWa14NBTiYnyo=;
-	b=rkrx2fJytEk4czfUkL69PwevR4A+69LLk9RAnojbuVnur1H8md5HjciRHBAxlBC57y8/yb
-	SwSq9e5VSiO4R4pFE3uSpPzKKY/8hAVECSPylZe6vtuEkobFTuhPRf2F44cgiBMR8bbuF5
-	TybSU9hdrfqB88FyWMlCLu3JvSYWBaOXZvkHmWHW0t6FHP4X5oORRbiEMr1maz2cqxxShO
-	+vhGcbfFvLjnqSSE2Wq48c0HcY/Ve4hc5jwyxqbdVizv3DhfHNDaNAsKIQyaZe64JfbMSk
-	UV7yIFJ4D+LClXrZkzJ9d6a7jUtlhKy1X0duqw84UgvUTTx+xKTBONedBICCBw==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] drm/arm/malidp: Silence informational message
-Date: Fri, 23 May 2025 08:40:41 +0200
-Message-ID: <20250523064042.3275926-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1747982583; c=relaxed/simple;
+	bh=NzjiJxC8jVl17UOebTa1jr+peldNBbgfvVc5tPO1QtU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t+luJARO46ZLqLHEekrX/W7v6RtknehW7S/OXOLyj7ie0HPoCv8JxiaOi8oiGSP4bALFCVG+sIpTqu/A3s6NfN92zCCc5fpoFkiLNXGOgIVZjWl9USGR7fN3g4O06s2BT/qnW7U90O3XZeozfxK882CQJdO8UF1W9e7ugZfaUO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h3Ubjd/M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C775BC4CEE9;
+	Fri, 23 May 2025 06:42:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747982582;
+	bh=NzjiJxC8jVl17UOebTa1jr+peldNBbgfvVc5tPO1QtU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=h3Ubjd/MRn7yHtvjFmlSK+OcMe/SbkySxxcO0EfHrWkp5FK2usQtYPHGNIYEIf9Pq
+	 n9YO/krxi1L3b9CIWjpPmdyKgNXjlges1ykryzeadMUGbMOal19aEF0vTCuMxPVFOW
+	 XjnRr97k9sjQFpGAkGPB3bohUYqzM/kP2D4wa7gDip5bEedv99C7xRQog1jS8AIliy
+	 OIWFQvBCUmAfNYkiU7DjJLPKPZdyZSpp6WI+HJ11OriIwHztv/XzdWWZQb+EfRXI45
+	 /99jE2+tRUlPEw8nnoXJZL83apDBr5Z/2rQTVoFT/QHUya9Q64MEn1f/PELRZDmDoc
+	 R/5TS0hKIjhNQ==
+Message-ID: <574cd2c2-8201-4182-b372-da518a9b1972@kernel.org>
+Date: Fri, 23 May 2025 08:42:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv3 3/5] dt-bindings: net: wireless: ath9k: add WIFI
+ bindings
+To: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org
+Cc: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+ nbd@ndb.name, Johannes Berg <johannes@sipsolutions.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "open list:MIPS" <linux-mips@vger.kernel.org>
+References: <20250523063207.10040-1-rosenp@gmail.com>
+ <20250523063207.10040-4-rosenp@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250523063207.10040-4-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When checking for unsupported expect an error is printed every time.
-This spams the log for platforms where this is expected, e.g. ls1028a
-having a Vivante (etnaviv) GPU and Mali display processor.
+On 23/05/2025 08:32, Rosen Penev wrote:
+>    reg:
+>      maxItems: 1
+> @@ -88,3 +94,15 @@ examples:
+>          nvmem-cell-names = "mac-address", "calibration";
+>        };
+>      };
+> +  - |
+> +    ahb {
+> +      compatible = "simple-bus";
+> +      ranges;
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Every time glmark2-es2-wayland is started on a downstream kernel raises the error:
-> [drm:malidp_format_mod_supported [mali_dp]] *ERROR* Unknown modifier (not Arm)
+Not much improved... Code is now actually wrong. Remember to notice
+where the comments appear. We are using here mailing list style of
+communication.
 
- drivers/gpu/drm/arm/malidp_planes.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+In any case: 1 patchset per 24h.
 
-diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
-index 34547edf1ee3c..87f2e5ee87907 100644
---- a/drivers/gpu/drm/arm/malidp_planes.c
-+++ b/drivers/gpu/drm/arm/malidp_planes.c
-@@ -159,7 +159,7 @@ bool malidp_format_mod_supported(struct drm_device *drm,
- 	}
- 
- 	if (!fourcc_mod_is_vendor(modifier, ARM)) {
--		DRM_ERROR("Unknown modifier (not Arm)\n");
-+		DRM_DEBUG_KMS("Unknown modifier (not Arm)\n");
- 		return false;
- 	}
- 
--- 
-2.43.0
 
+
+Best regards,
+Krzysztof
 
