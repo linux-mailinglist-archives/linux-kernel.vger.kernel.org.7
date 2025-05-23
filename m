@@ -1,147 +1,225 @@
-Return-Path: <linux-kernel+bounces-661295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDBB2AC291C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 19:54:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67796AC2921
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 19:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74C8F7B05EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:52:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 612A37B113E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75E0298C11;
-	Fri, 23 May 2025 17:54:05 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC87129992E;
+	Fri, 23 May 2025 17:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yOUs8Z8s"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5156E81749;
-	Fri, 23 May 2025 17:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8646B298988
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 17:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748022845; cv=none; b=ETE50DYYfaiMKyDTTgoiatlDagoqHRQQSGs8zQ4rm9bGt5+0iIA3Q2sYEbc0sBHFySJ+hbrd7VsRHSmmPYV23UiPX0NYEqrsoDA3ZmAn4k9aTldj1I0s/4LDy3Fk6JY2BBnYC5+Ssa6qGNCGfVKJA3QMecbGkWS518J5lJAQ4n4=
+	t=1748022970; cv=none; b=G8dr7FRu6QLIe+blZlFB+LIlEsXamuHpqppyQebVvORofOEY0VLp54sByYKXcmfLUjT+/tz0Y3Kr5PG0e4QP1KXB/UjRP5ItaaKHmiNAgJg8rAT7H3E8euoafvgpa2bmwuSkbwI53mov+a0pgWlxf2tB36kWCErA5z0LCZROlKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748022845; c=relaxed/simple;
-	bh=db42/PxwgTCfK0dtD0B0pORObzB+Jtsp7PplyAvnh44=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RGyQ0DuvKfLUb4ccYloS4yLjj+5j5QMT0kax+rYeEuF9uvh0NEacLux5P9QS45kdu9CONgsr7Y+es9i3qxF/8osaO//jHi3/zyuDIk92cgH8X5itYrY3rXW6z/A5KArNcr6ewwSQtsVyJsD9SoJVrYdvtzw3AuT/yqdeGnBLDv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBFCEC4CEE9;
-	Fri, 23 May 2025 17:54:03 +0000 (UTC)
-Date: Fri, 23 May 2025 13:54:52 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Ye Bin <yebin@huaweicloud.com>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- mark.rutland@arm.com, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yebin10@huawei.com
-Subject: Re: [PATCH 1/2] ftrace: fix UAF when lookup kallsym after ftrace
- disabled
-Message-ID: <20250523135452.626d8dcd@gandalf.local.home>
-In-Reply-To: <20250523083945.3390587-2-yebin@huaweicloud.com>
-References: <20250523083945.3390587-1-yebin@huaweicloud.com>
-	<20250523083945.3390587-2-yebin@huaweicloud.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1748022970; c=relaxed/simple;
+	bh=WRdnaGverlu7vTJ/60vt4tPf27macSfbJ1NcFaxcNBY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rs67c7Kwf96W9YMrUVH5uKRQZMXO9O18wHk/8gga0IbqDZPCfGTsS0eYky580CDj+Whqs+kXtKMMU3OzmfOqStXJcFqKPZj1cUxg5u5xr6mCcBb1yYBRxLfgSYiqy+l8vfDU/pZw3sgdUzAmA1LtuOZAgs4YHjZgOiA/nAMDn28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yOUs8Z8s; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-231f6c0b692so20455ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 10:56:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748022967; x=1748627767; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qKcG0kIzVQf2DFouXJTY346ztiLo6ETHd82n5f0p1Bw=;
+        b=yOUs8Z8s6c/C4RQQNv1FU7Guh1Tu1dVHcoYHiuG11x0R9RnzkCP+r/ZNI5iHnw37LN
+         m+juLUTs2ui4CerCmTy3zw8bLSwGx25B2eiFBftZhkPyh9onz72r8sj75Vo5kdAoBZm2
+         BX98Jp7mA7kdd99V+ATBsssAaprGsFPpzqpeCnp3+G1OgTjM2IiwZJzvXNlpErLBTRRB
+         dPmO89NzU6yeIuTM9Nwo2ozlNf/S4TD1U2Rm+zwvpaguzcbO6TzYoPZQLex6OypDF9m4
+         7K/6pjFiiNi9787QNNorvKP3tXyr65d5nclf26p38Kr7mMHElWtumnxpu5iRgsMANTuW
+         zjcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748022967; x=1748627767;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qKcG0kIzVQf2DFouXJTY346ztiLo6ETHd82n5f0p1Bw=;
+        b=QWAeRuxzlv4StjGR0DSL92zjs6A5IZ2Xpn+TIZq7ufSU+orGJnK+iyzCbOCGDwzz7P
+         vceacs5kGQcNAO2VNNAJ7gI4BVVpIO1sWEPfmk6ttAUtBp9C9c394CSUeBgdY1ZkNZqO
+         0Ciq2Ga2llr3/x9Ec1DICnTpvKeyg3+bFBRqErnFlmB3jvVUtMZaFSk4nElCpDVZ73KE
+         +23pOS/imlMGd7rLwC4rPzuJ3UcmL2ukvKtgOa/FX+WSQhExNsQ5Yvv4XZphpkcYvkQ4
+         y8EotZgbsx1oB6ggaayHnj8wJyLVa9QnNw9yP6IK8pI6zD0YU3pD5MvSa9ILtbTLzQnb
+         OP4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXSzlYs9BzdCvrlncu7iVR+5XLy89lQOW0hp8e/ShfNBvAIaMxRoQ5xPPElXX8eFJpZqZUTRkZERPPR/9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz87iT5GqFKvXTYG12jNDfJuaKFKyPAYji4IxS3TpgqB/VrFzUD
+	3TDljhKNLjwgBoGClis6QpDJxV+iV8a//31TtzfCsbnL4hjrK33UPo9Enry3R43jBQhe0RklFcJ
+	+2n4REH84HV1G+FWt7tiOBKeKRUPn4bJeecu+rzql
+X-Gm-Gg: ASbGncu4bN7zTSq67N5tKzcQdJknCQwl8K8LCxYxQWNEypr1BELojKIIx8f+10IY9TT
+	I2WKoZu3zoumCGNDkAJ8/eNDPQpXea5clHilM9oCfnedcs8y6FP5IYy8kq+cNh2y3ztopxpqPOn
+	R3ta4DDYEz1XCPMMNdM137Iwt0SiyG62JUa07y9Oe/XHgHl0rLt/Ks03PV5/T1ukhWbq+fNDrKJ
+	g==
+X-Google-Smtp-Source: AGHT+IHG7QjmSnQi5VQF7H68jYu342TfgU01VfBj8sRrando2xNin21bTuvUh2YHtW/IvW4mbUWhDr+UVPFZB1gCm/k=
+X-Received: by 2002:a17:902:dad2:b0:215:f0c6:4dbf with SMTP id
+ d9443c01a7336-2341808c7d7mr64375ad.14.1748022966452; Fri, 23 May 2025
+ 10:56:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250523032609.16334-1-byungchul@sk.com> <20250523032609.16334-19-byungchul@sk.com>
+In-Reply-To: <20250523032609.16334-19-byungchul@sk.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 23 May 2025 10:55:54 -0700
+X-Gm-Features: AX0GCFsYNuzYJlporwz1mSapGXVg6LAugMmId4ntk8vawow7YJm9vkQ7qXBE0cE
+Message-ID: <CAHS8izM-ee5C8W2D2x9ChQz667PQEaYFOtgKZcFCMT4HRHL0fQ@mail.gmail.com>
+Subject: Re: [PATCH 18/18] mm, netmem: remove the page pool members in struct page
+To: Byungchul Park <byungchul@sk.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
+	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org, 
+	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
+	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
+	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
+	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 23 May 2025 16:39:44 +0800
-Ye Bin <yebin@huaweicloud.com> wrote:
-
-> Above issue may happens as follow:
-> (1) Add kprobe trace point;
-> (2) insmod test.ko;
-> (3) Trigger ftrace disabled;
-
-This is the bug. How was ftrace_disabled triggered? That should never
-happen. Was test.ko buggy?
-
-> (4) rmmod test.ko;
-> (5) cat /proc/kallsyms; --> Will trigger UAF as test.ko already removed;
-> ftrace_mod_get_kallsym()
-> ...
-> strscpy(module_name, mod_map->mod->name, MODULE_NAME_LEN);
-> ...
-> 
-> As ftrace_release_mod() judge 'ftrace_disabled' is true will return, and
-> 'mod_map' will remaining in ftrace_mod_maps. 'mod_map' has no chance to
-> release. Therefore, this also causes residual resources to accumulate.
-> To solve above issue, unconditionally clean up'mod_map'.
-> 
-> Fixes: aba4b5c22cba ("ftrace: Save module init functions kallsyms symbols for tracing")
-
-This is *not* a fix. ftrace_disabled gets set when a bug is triggered. If
-this prevents ftrace_disabled from getting set, then it would be a fix. But
-if something else happens when ftrace_disabled is set, it just fixes a
-symptom and not the bug itself.
-
-
-> Signed-off-by: Ye Bin <yebin10@huawei.com>
+On Thu, May 22, 2025 at 8:26=E2=80=AFPM Byungchul Park <byungchul@sk.com> w=
+rote:
+>
+> Now that all the users of the page pool members in struct page have been
+> gone, the members can be removed from struct page.
+>
+> However, since struct netmem_desc might still use the space in struct
+> page, the size of struct netmem_desc should be checked, until struct
+> netmem_desc has its own instance from slab, to avoid conficting with
+> other members within struct page.
+>
+> Remove the page pool members in struct page and add a static checker for
+> the size.
+>
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
 > ---
->  kernel/trace/ftrace.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index a3d4dfad0cbc..ff5d9d73a4a7 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -7438,9 +7438,6 @@ void ftrace_release_mod(struct module *mod)
->  
->  	mutex_lock(&ftrace_lock);
->  
-> -	if (ftrace_disabled)
-> -		goto out_unlock;
-> -
+>  include/linux/mm_types.h | 11 -----------
+>  include/net/netmem.h     | 28 +++++-----------------------
+>  2 files changed, 5 insertions(+), 34 deletions(-)
+>
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 873e820e1521..5a7864eb9d76 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -119,17 +119,6 @@ struct page {
+>                          */
+>                         unsigned long private;
+>                 };
+> -               struct {        /* page_pool used by netstack */
+> -                       unsigned long _pp_mapping_pad;
+> -                       /**
+> -                        * @pp_magic: magic value to avoid recycling non
+> -                        * page_pool allocated pages.
+> -                        */
+> -                       unsigned long pp_magic;
+> -                       struct page_pool *pp;
+> -                       unsigned long dma_addr;
+> -                       atomic_long_t pp_ref_count;
+> -               };
+>                 struct {        /* Tail pages of compound page */
+>                         unsigned long compound_head;    /* Bit zero is se=
+t */
+>                 };
+> diff --git a/include/net/netmem.h b/include/net/netmem.h
+> index c63a7e20f5f3..257c22398d7a 100644
+> --- a/include/net/netmem.h
+> +++ b/include/net/netmem.h
+> @@ -77,30 +77,12 @@ struct net_iov_area {
+>         unsigned long base_virtual;
+>  };
+>
+> -/* These fields in struct page are used by the page_pool and net stack:
+> - *
+> - *        struct {
+> - *                unsigned long _pp_mapping_pad;
+> - *                unsigned long pp_magic;
+> - *                struct page_pool *pp;
+> - *                unsigned long dma_addr;
+> - *                atomic_long_t pp_ref_count;
+> - *        };
+> - *
+> - * We mirror the page_pool fields here so the page_pool can access these=
+ fields
+> - * without worrying whether the underlying fields belong to a page or ne=
+t_iov.
+> - *
+> - * The non-net stack fields of struct page are private to the mm stack a=
+nd must
+> - * never be mirrored to net_iov.
+> +/* XXX: The page pool fields in struct page have been removed but they
+> + * might still use the space in struct page.  Thus, the size of struct
+> + * netmem_desc should be under control until struct netmem_desc has its
+> + * own instance from slab.
+>   */
+> -#define NET_IOV_ASSERT_OFFSET(pg, iov)             \
+> -       static_assert(offsetof(struct page, pg) =3D=3D \
+> -                     offsetof(struct net_iov, iov))
+> -NET_IOV_ASSERT_OFFSET(pp_magic, pp_magic);
+> -NET_IOV_ASSERT_OFFSET(pp, pp);
+> -NET_IOV_ASSERT_OFFSET(dma_addr, dma_addr);
+> -NET_IOV_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
+> -#undef NET_IOV_ASSERT_OFFSET
+> +static_assert(sizeof(struct netmem_desc) <=3D offsetof(struct page, _ref=
+count));
+>
 
-Here you delete the check, and the next patch you have:
+Removing these asserts is actually a bit dangerous. Functions like
+netmem_or_pp_magic() rely on the fact that the offsets are the same
+between struct page and struct net_iov to access these fields without
+worrying about the type of the netmem. What we do in these helpers is
+we we clear the least significant bit of the netmem, and then  access
+the field. This works only because we verified at build time that the
+offset is the same.
 
-+	if (ftrace_disabled || (mod && !mod->num_ftrace_callsites)) {
-+		mutex_unlock(&ftrace_lock);
-+		return;
-+	}
-+
+I think we have 3 options here:
 
-Why the two patches where the second patch just adds back the check and
-then adds some more stuff around it. This should be a single patch.
+1. Keep the asserts as-is, then in the follow up patch where we remove
+netmem_desc from struct page, we update the asserts to make sure
+struct page and struct net_iov can grab the netmem_desc in a uniform
+way.
 
-Also, why not just keep the goto unlock, that has:
+2. We remove the asserts, but all the helpers that rely on
+__netmem_clear_lsb need to be modified to do custom handling of
+net_iov vs page. Something like:
 
- out_unlock:
-	mutex_unlock(&ftrace_lock);
-
-	/* Need to synchronize with ftrace_location_range() */
-	if (tmp_page)
-		synchronize_rcu();
-	for (pg = tmp_page; pg; pg = tmp_page) {
-
-		/* Needs to be called outside of ftrace_lock */
-		clear_mod_from_hashes(pg);
-
-		if (pg->records) {
-			free_pages((unsigned long)pg->records, pg->order);
-			ftrace_number_of_pages -= 1 << pg->order;
-		}
-		tmp_page = pg->next;
-		kfree(pg);
-		ftrace_number_of_groups--;
-	}
+static inline void netmem_or_pp_magic(netmem_ref netmem, unsigned long pp_m=
+agic)
+{
+  if (netmem_is_net_iov(netmem)
+     netmem_to_net_iov(netmem)->pp_magic |=3D pp_magic;
+  else
+    netmem_to_page(netmem)->pp_magic |=3D pp_magic;
 }
 
-And tmp_page is set to NULL before that jump, so the if and for loop will
-both be nops.
+Option #2 requires extra checks, which may affect the performance
+reported by page_pool_bench_simple that I pointed you to before.
 
-Why all this extra churn?
+3. We could swap out all the individual asserts for one assert, if
+both page and net_iov have a netmem_desc subfield. This will also need
+to be reworked when netmem_desc is eventually moved out of struct page
+and is slab allocated:
 
--- Steve
+NET_IOV_ASSERT_OFFSET(netmem_desc, netmem_desc);
 
-
->  	list_for_each_entry_safe(mod_map, n, &ftrace_mod_maps, list) {
->  		if (mod_map->mod == mod) {
->  			list_del_rcu(&mod_map->list);
-
+--=20
+Thanks,
+Mina
 
