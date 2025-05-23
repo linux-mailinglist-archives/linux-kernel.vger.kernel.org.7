@@ -1,162 +1,126 @@
-Return-Path: <linux-kernel+bounces-660684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7A4AC20C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:18:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B51FAC209A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40C397A643E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:17:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E88D7BB749
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21238226D0A;
-	Fri, 23 May 2025 10:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kSh5IXs1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FE422A804;
+	Fri, 23 May 2025 10:01:53 +0000 (UTC)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB17C2F3E;
-	Fri, 23 May 2025 10:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C0AEC5;
+	Fri, 23 May 2025 10:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747995526; cv=none; b=dItq0YTv3W+xDLscEAm7ELvqaolMTvQpenhKRqsln0KgA3gVU926h4kSlWmaKSd01XN2xmHSHpIWd0sFjrHOUW5/dlNjGt/Qgg1p5GB//6I2mZtdSGe1jpaE37KIpj/2QiaDNHdDtQXV5BuGUFUVyMQ0NmNSOdDn+i5V1M1bNgQ=
+	t=1747994513; cv=none; b=bvQ+H2CE2m4T57RE/A6kVMzYdzjykH5tlC6NVEz6nIPz+Eer8Auf/qc9m9vz2YeYp9I3phW9i5zusLtitLut/5DJOpu/Jt/EGnUtmkuLkBDkh6UrPAPKAjkPctcLPdvyo9NASqnY52uQbUaVy6BGM4/AEIhBZA40aIfNS8EUvd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747995526; c=relaxed/simple;
-	bh=Fy38s9E9y03KrAq33nFmiJB8kK3AKrmMx6Y899eu74o=;
-	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=WAE3O37HIx/nGTdYur8GclJxHgMbzOD46EE3omJtJvKjPdHg4w+pghP5Yr54TdzM7scVuMpTNIgBVxQlRpWklWJMT1+AjwQogpzn0vWemi3sdwEqfsT6d8D7gzKPDEDsgGiLm2fr+vReeyXWpJIkorQv/a52lb8vFMCZWeSVEUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kSh5IXs1; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747995525; x=1779531525;
-  h=from:to:cc:date:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Fy38s9E9y03KrAq33nFmiJB8kK3AKrmMx6Y899eu74o=;
-  b=kSh5IXs1X2vLQ55wcq1GyCBrNM7eKRNlg+EGEHxYYdY0rrPtPRbXogqL
-   l9RlGNt9cjsnjt2ZV5TeUwX8P9uNtVx+tEiyc9u8cEoIt72G8EKiP52Ft
-   jT12zReNn3O1f4AYA7SHT1YUNXsC8irWg8M4cBnHZQTxZDlyVr8iUvpAq
-   TyD3T6U6jlbQlomqx5F5uGl8JVQh78ktAr+P2ayIph8KIt6fnqqWKJtHg
-   3cLHCdVbVTo5/yG6HeGukVb64Cbl9lcczjiGkpgeP1gJ4sn0tMQu8SoyL
-   ObVqcofsysuBzVZaIOO+snowduPvfyl/7MwQrZc/b4HpA219BQ8CXISZw
-   w==;
-X-CSE-ConnectionGUID: apEK6hoERN6mJkiQGpq66A==
-X-CSE-MsgGUID: /I3vfh8oTsWhS/52eRJuGw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="50194928"
-X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
-   d="scan'208";a="50194928"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 03:18:44 -0700
-X-CSE-ConnectionGUID: OW+tsV7sQ9OvqpS13EoxUw==
-X-CSE-MsgGUID: phajeoXXRBWZCif8JdWxqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
-   d="scan'208";a="141147204"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.150])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 03:18:42 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
-Date: Fri, 23 May 2025 12:10:19 +0300
-Subject: [GIT PULL] platform-drivers-x86 for v6.15-6
-Message-ID: <pdx86-pr-20250523121019-62803604@linux.intel.com>
+	s=arc-20240116; t=1747994513; c=relaxed/simple;
+	bh=q3T8UELofPcASBzsTVBayjFOP0EajpIvJbSoxArvKMA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iB1nf6D+CfxL0+orJ5dL5FuDCbq5JXwYLedMRRxjzAXEBVGafqBh38HLeUzwelE1F09dIquhCkEi4dDj4CAW7uMEk8EoQJaX6rpJslOR9lq2i9u3DBCN9EEP5nCT8OYNJqgLYhbzle41O6yPvvCgoF6tlZzb2swP7MR2SWKNAS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-52b2290e28eso2089335e0c.3;
+        Fri, 23 May 2025 03:01:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747994510; x=1748599310;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EiiolHRMG8Ta2huRzCSSCJZUlZQ8b1R0+NV9XSqyCzI=;
+        b=XLW0tnCNiXjmp0xEexfDrTOszoT6ReZ2PeWdLenPFqyp0Kr6FOstBD2KRfgLgq0bWI
+         oW3rcUo0z2u+IjlIbxUjwnsQ6khcVlMVNIZO8M0o6zBeYjg9HPJj52BS48rT58SFb08j
+         b7Rse6ej4s3Fxe7baYGYJi3D29Ddvs2bsbbWy4z8T/m6ajME86LVotCEZ7Okp5SCCcCR
+         8q90rICAIhj9LDNwTfwUIl1gyBJUc3gRvt+SqNEWR4f1xPmzUNrqPu81/O4A6GjpFbrA
+         lin9rzSAQCLB05XZ+PyYidKK7UsALfgd4dTBZqk7+vOR82X/uEGI9PC+uVsbAHI4TqHo
+         mMgg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5WoFmH2r+OcM3tOsicuijUGRs2zykqToEDFYKHYDaMfdKsVqrpjFZmoxanYUsEBQ7sT4MB0nmbpFl9i0GlRFe6tw=@vger.kernel.org, AJvYcCW4RBC6gGi+nG1PJ69Qpcv4XxG1sQiS+icbnFjlalWuYjT7ksLysv11GEQfyOIaoefI192rY854QpU=@vger.kernel.org, AJvYcCWtGkC61J/QZFvYaDI9lCIV62xOieSy8ce6Db32j+QfbCxh6x1dV/k9aQiys5SpdAdjApKmoJxYWGW83uLU@vger.kernel.org
+X-Gm-Message-State: AOJu0YyATawoF073heBD+ZzfUyN0rf3V6JHO1OFwE+oGdj1GyhxtrO2P
+	EWSCB3i8TBrD7IhpA7lrv0ubW9u+GwIYHDnaeC8oql8vg/JC+BhZo0rr/k4xSn2y
+X-Gm-Gg: ASbGnctnGGby5CmaQC6sEu32wqThgJ8ohQDF239mmv8JhcGq6sShlZcjFde/AzwqOAd
+	/dfgH9u84P1qGafRw1oZFkOp9GX8NhcLHCucizkgrW6l3VB051e98b+bkq49SKmbJzFgXg57SoX
+	2Xdn+c8rCfcL00mD3gNkpE+nAGsJXpBjfLLfDQ4p3s/fImYBNYFLF1P1SaP0LUsscluo2qCP059
+	ftS7oa4r4amcJUkpVM1RoGmak3bGNuBDldh1DVyPxNLwIt+t645dAdLVmyTp88sictwXCOW2XTB
+	Sh9FNCs3Q9zv/2HGkHzzeSylTVukYVYSuFySiie2Y1AKTqu7erQ3U//kJlFv9stfxdPk9I2zKu6
+	v5HHVdTyBx3QcSQ==
+X-Google-Smtp-Source: AGHT+IGKwPx3jRCYMTdti+/vE3+hV3DcoXvWmI9/xyPObqYhWkt8hmE6goWy160fCMaQpsoYFeQJlA==
+X-Received: by 2002:a05:6122:1d48:b0:529:1a6a:cd48 with SMTP id 71dfb90a1353d-52dba964347mr27064871e0c.6.1747994505754;
+        Fri, 23 May 2025 03:01:45 -0700 (PDT)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52dba967788sm13188453e0c.22.2025.05.23.03.01.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 May 2025 03:01:45 -0700 (PDT)
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4e290e4716fso2002655137.2;
+        Fri, 23 May 2025 03:01:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUCzEAlFiPWW6g0jmXLDoFaxTe5SXzW6wXApIOdEYBcr8l4fROhHi75O2r0wcUP9vrETt10gaQlj3sNlBlO/Lio+50=@vger.kernel.org, AJvYcCVRaju+frVUIOg7h6uHwQQKIG+cSZtBZ7kr2fD78BCQwzGi0qKkZvpk3sdfvNY94qNa9X4n8NMmggB7uxy3@vger.kernel.org, AJvYcCXwpcuTFjSP3p2ModevRxd/MHBSuZ/gtYhJKtRBpF7qqJynHqstrYszg7wkhgbMTP6uXxmVDPIZGn4=@vger.kernel.org
+X-Received: by 2002:a05:6102:570d:b0:4c1:9695:c7c with SMTP id
+ ada2fe7eead31-4dfa6c56bffmr27868276137.24.1747994505001; Fri, 23 May 2025
+ 03:01:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250515141828.43444-1-thierry.bultel.yh@bp.renesas.com> <20250515141828.43444-6-thierry.bultel.yh@bp.renesas.com>
+In-Reply-To: <20250515141828.43444-6-thierry.bultel.yh@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 May 2025 12:01:33 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUe3Bz__5S0c-bgdY0CsCzQ_ySeBydzv63fMC3egPnAGQ@mail.gmail.com>
+X-Gm-Features: AX0GCFumhp15wxRPV5n96yu1tU9Qxfi63KcgiTtuf-ryhestJHNqOhq_Qf6Ln3Q
+Message-ID: <CAMuHMdUe3Bz__5S0c-bgdY0CsCzQ_ySeBydzv63fMC3egPnAGQ@mail.gmail.com>
+Subject: Re: [PATCH v9 05/10] clk: renesas: Add support for R9A09G077 SoC
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org, 
+	paul.barker.ct@bp.renesas.com, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+On Thu, 15 May 2025 at 16:18, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> RZ/T2H has 2 register blocks at different addresses.
+>
+> The clock tree has configurable dividers and mux selectors.
+> Add these new clock types, new register layout type, and
+> registration code for mux and div in registration callback.
+>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> ---
+> Changes v8->v9:
+>  - Renamed r9a09g077-cpg-mssr.c to r9a09g077-cpg.c
+>  - Makefile: keep alphabetical order
+>  - Fixed DIVSCI0ASYNC
+>  - Removed unused CLK_MAIN
+>  - Simplified the clock tree, removing CLK_SEL_PLL0, CLK_SEL_PLL1 & CLK_SEL_PLL4
+>  - Renamed loco to .loco
+>  - Fixed the register bits in dtable_24_25_30_32, re-ordered the table
+>  - DEF_DIV & DEF_MUX: set flag to zero always (might change in a future commit)
+>  - Do not set CLK_DIVIDER_HIWORD_MASK
+>  - Uses '8' as value of removed R9A09G077_PCLK_SCI0 definition
+>  - Fixed addr calculation with RZT2H_REG_OFFSET in r9a09g077_cpg_clk_register
+>  - struct cpg_core_clk: moved union in specific section
+>  - Renamed cpg_read_rzt2h_mstp to cpg_rzt2h_mstp_read
+>  - Renamed cpg_write_rzt2h_mstp to cpg_rzt2h_mstp_write
 
-Here is a platform-drivers-x86 fixes PR for v6.15.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.17.
 
-The committing date is very recent due me fixing small errors in the
-changelog while preparing this PR but the same code has been sitting
-in the linux-next for a few days.
+Gr{oetje,eeting}s,
 
-Fixes and new HW support
+                        Geert
 
- - dell-wmi-sysman: Avoid buffer overflow in current_password_store()
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- - fujitsu-laptop: Support Lifebook S2110 hotkeys
-
- - intel/pmc: Fix Arrow Lake U/H NPU PCI ID
-
- - think-lmi: Fix attribute name usage for non-compliant items
-
- - thinkpad_acpi: Ignore battery threshold change event notification
-
-Regards, i.
-
-
-The following changes since commit bfcfe6d335a967f8ea0c1980960e6f0205b5de6e:
-
-  platform/x86: asus-wmi: Fix wlan_ctrl_by_user detection (2025-05-07 15:46:34 +0300)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.15-6
-
-for you to fetch changes up to f2eae58c4428bd792c8e91e3666ab0718d87b44a:
-
-  platform/x86/intel/pmc: Fix Arrow Lake U/H NPU PCI ID (2025-05-23 12:04:54 +0300)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v6.15-6
-
-Fixes and new HW support
-
- - dell-wmi-sysman: Avoid buffer overflow in current_password_store()
-
- - fujitsu-laptop: Support Lifebook S2110 hotkeys
-
- - intel/pmc: Fix Arrow Lake U/H NPU PCI ID
-
- - think-lmi: Fix attribute name usage for non-compliant items
-
- - thinkpad_acpi: Ignore battery threshold change event notification
-
-The following is an automated shortlog grouped by driver:
-
-dell-wmi-sysman:
- -  Avoid buffer overflow in current_password_store()
-
-fujitsu-laptop:
- -  Support Lifebook S2110 hotkeys
-
-intel/pmc:
- -  Fix Arrow Lake U/H NPU PCI ID
-
-think-lmi:
- -  Fix attribute name usage for non-compliant items
-
-thinkpad_acpi:
- -  Ignore battery threshold change event notification
-
-----------------------------------------------------------------
-Mark Pearson (2):
-      platform/x86: thinkpad_acpi: Ignore battery threshold change event notification
-      platform/x86: think-lmi: Fix attribute name usage for non-compliant items
-
-Todd Brandt (1):
-      platform/x86/intel/pmc: Fix Arrow Lake U/H NPU PCI ID
-
-Valtteri Koskivuori (1):
-      platform/x86: fujitsu-laptop: Support Lifebook S2110 hotkeys
-
-Vladimir Moskovkin (1):
-      platform/x86: dell-wmi-sysman: Avoid buffer overflow in current_password_store()
-
- .../x86/dell/dell-wmi-sysman/passobj-attributes.c  |  2 +-
- drivers/platform/x86/fujitsu-laptop.c              | 33 +++++++++++++++++++---
- drivers/platform/x86/intel/pmc/arl.c               |  3 +-
- drivers/platform/x86/think-lmi.c                   | 26 +++++++++--------
- drivers/platform/x86/think-lmi.h                   |  1 +
- drivers/platform/x86/thinkpad_acpi.c               |  5 ++++
- 6 files changed, 52 insertions(+), 18 deletions(-)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
