@@ -1,87 +1,159 @@
-Return-Path: <linux-kernel+bounces-660599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB234AC1FCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:35:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D23AC1FDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC09B4A1CD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:35:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFB4C4A3164
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE90224256;
-	Fri, 23 May 2025 09:35:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F39F226520;
+	Fri, 23 May 2025 09:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="R3CkCkzB"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D3A20FA84
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 09:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208A620FA84;
+	Fri, 23 May 2025 09:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747992904; cv=none; b=HIA5rqg9skTzePoImemxMLoJmyRA5Zxu7g+HvpWKVEqwDtNGAH6r3MpJs3E9WLjmdsCYCDedOJy1ynaPS35nQjZYFer+4nsp1eCSx47nGRKkTDppocikHB7cACKsZ4nU+UKpIecy2xuJwBixOUCNbUi7+VZkHas8BgY0ya5DiWg=
+	t=1747992989; cv=none; b=f4CCsju3GFgjBFSlZwlh0l5OSAw1GucPmyu6kA3H6vxs32stBE6nrZGiB7vZtddvUU7iuCdysmKhoYmeVJ+jGMgG+XXXsONy5NeSDM8f4xJooTIqlDA+Fdu/TXCA5XpgAJh9fXx1sTH/aXkMTtCpg9afUiPrX0V1ONT2Z3MVyXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747992904; c=relaxed/simple;
-	bh=toEQDKF6Zk2Hriw3WWCo5caOACjKgdQ63+/OBSGDp3o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=E7L+d5EUMIlkb9Sd3TVZkFw3VP/FagLfs0t4AYyaf+sGiEWD5vczD3QqhWibfj2botx14pkOI6K6LJWeTgGfSFrzj4PYZF8KstDvq8kXbmwL39jI5aBMYxdLSLtsb/Ahr0GmCAsvzm3eqi/3kin6RMiQJ7U8COxbCqhCQG+PJPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85b4dc23f03so1563378039f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 02:35:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747992902; x=1748597702;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jCvRhgnd8q/WLKrVir5kzV2dCL3FKtdRSy6loFoXGf8=;
-        b=In4YsOpC3EBNSeZj5wuGedYhz7hbz8FZWVuBy2Msw+Ib2gskF+/8F6RAbHjIquaWgn
-         6TpQfwy1b2dlp8kHIJQy6aTepCSbwURAAvYSTUTN6T8dpmCqd68mXbd7nz7AV3O0Q3x6
-         NRyd9SRY2z5OA0mPw27VB/spZxXAeVdCGiNteRoxuc9f5vMlewErPtBjxcRLNWQ4oNvc
-         7j1UUgUNEiOIgZwo2uwQLVIQ2IAbEMYCm7eOl/usKkwYsUSWAEfKD6Kj1CQQJNF3/E8N
-         GvYK/3NqVSuW7l5PH1GbVQyqtkmiWJBy2oEJAg+RlVNqsvs1pCD1ISsqeLd6e8A6+Tqw
-         W5gg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoIl16LtN9nuGgxCgMTerdC/ON8KR5+7nMe/j08COFUl1kNClrP/NKufyEehFwyWg4qnwhPdSYl1X30aY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY34E8Ho9t6XW5XsN6bF8P1hd+S8kqNVUYRSRYNizFjmzTTJTn
-	0cKFjllHXuIKRVLyZLO4xNvzLpqHTw/KcP8E/cPTQghToEsEESQ1VXSbO8n6wH32x4oT+z5KcB0
-	26F/hYMMqW3Vkf2Icoan4fKuFMCDzQ2/x/mZgvs7WUYAuiL3SYlYleATXsiA=
-X-Google-Smtp-Source: AGHT+IG+ADBeem8wzhM98Q9Q5w3SapX0t6qoz0wQ6B/qumZhst3QiMnUdE5HfmWR7E7BUUYfyE3m8Z5EqiF/iGmhujQCvXSd5hy8
+	s=arc-20240116; t=1747992989; c=relaxed/simple;
+	bh=cPC4fHGWPka8bstxiXogJPlkvyOjtaWI2Dl+2o9kDZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MRgpdkdD1venfbuW2XGsNcvDeNeLfpfKZlzYb4ZF0mVL9sTeIDzYAxy0C4wanSpscBbOvM17jJtt0leDgxbXXcYjQUxyRYTUa7e3d3hrFqg1yNJeI0EgIyy7U+MdC1oHiM6ZHOqhs8/FhLPwKk5CTBxtBxkszyjohP5H+B4cmhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=R3CkCkzB; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54MNWFqO004792;
+	Fri, 23 May 2025 09:35:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=vMybJrVOxCi72E1Pt60pMqYpdyjf6S
+	s0XPZB55xj29M=; b=R3CkCkzBXxxe/KYe1HZxSJvJw7yMOWqLIb1q9Fi1+dx9HB
+	lzrW5uC2D+o8DDUmBu0XM/PAJmqmuHehdBrEVMHqfoUhcHLi6ToYHjCmmhOlgfpT
+	TQwI7DqaMRONrgRWKiGKDFCg4cmfGAVkPkHI9lynHES6VI4ywZ1JOR5QZTqGu76w
+	l7XrHGeY+Mdy+bNlQw3PXcMHZHCcVz5cFIIGqdwXcz8+J5jIoQ3qIK8Fq943SHuV
+	uKIOU7g/2MkYBPKsPCpXWeosqUVJ5uPlb0FmkK8RcqZ/FUkJllqmSvNDLeiC6gz6
+	jIMSQ2cId1paOBWJTP7lt+mEa75GUm/RTw1LZivA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46t14jp33r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 May 2025 09:35:57 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54N9Ub2D019284;
+	Fri, 23 May 2025 09:35:56 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46t14jp33p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 May 2025 09:35:56 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54N65XYR020693;
+	Fri, 23 May 2025 09:35:55 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 46rwkq5x35-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 May 2025 09:35:55 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54N9ZqFH47186204
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 23 May 2025 09:35:52 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0B10D2004D;
+	Fri, 23 May 2025 09:35:52 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 47DD220043;
+	Fri, 23 May 2025 09:35:50 +0000 (GMT)
+Received: from osiris (unknown [9.111.71.83])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 23 May 2025 09:35:50 +0000 (GMT)
+Date: Fri, 23 May 2025 11:35:48 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Gaosheng Cui <cuigaosheng1@huawei.com>, linux-s390@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>,
+        Andrey Konovalov <andreyknvl@gmail.com>,
+        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nicolas Schier <nicolas.schier@linux.dev>,
+        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        sparclinux@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2 07/14] s390: Handle KCOV __init vs inline mismatches
+Message-ID: <20250523093548.9524A8b-hca@linux.ibm.com>
+References: <20250523043251.it.550-kees@kernel.org>
+ <20250523043935.2009972-7-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:4802:b0:867:9af:812e with SMTP id
- ca18e2360f4ac-86a23199d6emr3294416839f.5.1747992902092; Fri, 23 May 2025
- 02:35:02 -0700 (PDT)
-Date: Fri, 23 May 2025 02:35:02 -0700
-In-Reply-To: <e9b691c9-f3b9-4bcb-841f-771b24281ecf@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68304146.a70a0220.29d4a0.07ec.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] BUG: corrupted list in mgmt_pending_remove
-From: syzbot <syzbot+cc0cc52e7f43dc9e6df1@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250523043935.2009972-7-kees@kernel.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: KqDaZI-N24qPBCncGoId1M5821jvyXiL
+X-Authority-Analysis: v=2.4 cv=XOkwSRhE c=1 sm=1 tr=0 ts=6830417d cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=i0EeH86SAAAA:8 a=ZhbCrNo_nw5myWupG0oA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDA4NCBTYWx0ZWRfX0w0P9E3aDLPl xKkdIDIhLiwjTmqVc2SrRDCWVWFZrVDCFjUtGWXwGKiqzPx3aH1H3kR3L9ztCvCTG2dYW5CKwL9 sICNUHibIsoUXe9IU/++4/n8wIvLqcN/lTpzb6AwUj21nwbHo2PrdccpN7uJ5neULr3iZ+x0IDO
+ cp9vaJXECGONZX36cRDNAuI3GEBAklLQu6bmjDNQyoWpyWcL52i8nxzjSMmMG12/PXn7Ht4o/I9 rKz7HWr8sXVyui6OGhJ6oXDcKWfiiMUq3fRRvh9CBFKWIWsQnUS30/UPfY4kp/wqVcXw92l9rKW 3UN+JfNQzPqTmiL+lKipax/ZfWe+uKv2lFByzGPt8jex7JX31DFbbxTGQxDZdrqyBmdG3LASN+L
+ ff1/Bps89M6t1nUW1d6VQ0r0f4R0IG0qDcI6J5H3ztJ8TgF0KLAewZp36812jwJ9B/V82K6H
+X-Proofpoint-GUID: FAZQIEfWbNoED4pzflxHiaQq3RMT7Za1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-23_03,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
+ mlxlogscore=586 bulkscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505230084
 
-Hello,
+On Thu, May 22, 2025 at 09:39:17PM -0700, Kees Cook wrote:
+> When KCOV is enabled all functions get instrumented, unless
+> the __no_sanitize_coverage attribute is used. To prepare for
+> __no_sanitize_coverage being applied to __init functions, we have to
+> handle differences in how GCC's inline optimizations get resolved. For
+> s390 this exposed a place where the __init annotation was missing but
+> ended up being "accidentally correct". Fix this cases and force a couple
+> functions to be inline with __always_inline.
+> 
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+> Cc: Sven Schnelle <svens@linux.ibm.com>
+> Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+> Cc: Gaosheng Cui <cuigaosheng1@huawei.com>
+> Cc: <linux-s390@vger.kernel.org>
+> ---
+>  arch/s390/hypfs/hypfs.h      | 2 +-
+>  arch/s390/hypfs/hypfs_diag.h | 2 +-
+>  arch/s390/mm/init.c          | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+cc0cc52e7f43dc9e6df1@syzkaller.appspotmail.com
-Tested-by: syzbot+cc0cc52e7f43dc9e6df1@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         94305e83 Merge tag 'pmdomain-v6.15-rc3' of git://git.k..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=172f6ad4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ff3e28823376fa59
-dashboard link: https://syzkaller.appspot.com/bug?extid=cc0cc52e7f43dc9e6df1
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=157f25f4580000
-
-Note: testing is done by a robot and is best-effort only.
+Acked-by: Heiko Carstens <hca@linux.ibm.com>
 
