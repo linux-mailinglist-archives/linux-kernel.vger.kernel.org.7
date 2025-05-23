@@ -1,158 +1,198 @@
-Return-Path: <linux-kernel+bounces-661309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E77AC294A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 20:08:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEC34AC294D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 20:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87E043B4A8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:08:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 228811C027E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F0A298CC4;
-	Fri, 23 May 2025 18:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825DB298CC0;
+	Fri, 23 May 2025 18:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="FlYCaat8"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cg8cEuIV"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239AD2949F4
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 18:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A8025760
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 18:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748023704; cv=none; b=XxCvEaCv96VB8h0w+lVRZ+X6AUBWSVl9IbmaSJteFswKjKsgf4EUbIvAul1SV5Y9xvkfnoiuJBDG+vrErY5iiZKrRqwEDzO4S+scShPAB4+hlB3ym+oB/RBXoHc7HjPpiySh7v2TQhUDxEwQpxJVa2fxGqlVwIk1eroh0OK30ss=
+	t=1748023771; cv=none; b=llkM5+0029l9xCajgAPom5RQwEZXN1ZsOjQGRG2AEonTGqiJlpifRn2jItuya+JP4RMu5uz0GgvI27rI9JvcIXFfC8bJhmxzNs8selcgPbq0ouVUZazChBXo8pn1Mti0bZm2IH/zFXxXDzKWkmxEQDRazRIiZKqG7Xe8Q/+CwGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748023704; c=relaxed/simple;
-	bh=evhV5bvbvbINEG98PnCDvgsHUB6u2zpOouaj4WsoLw4=;
+	s=arc-20240116; t=1748023771; c=relaxed/simple;
+	bh=E45fh6sVYRwvVo/1a4CMh9FPnXlGhJZP+J6/OwpMgCw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h0sBoftff2Pstr/VLJnfVwE3AqVYKonvl60104RbljGvWzBXdZXmSUzU6rkwQW1nqOpwygR8NBSf7s4ZvYxz/5VD2PCWQrvGvAc3R+908cBll589Xmr/E4EDdIDLlXdNb6xmLZgcM+R7NzAESEx9bukZ/GCj5PlLozjMCMcLcLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=FlYCaat8; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-47664364628so2199841cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 11:08:22 -0700 (PDT)
+	 To:Cc:Content-Type; b=Vb6R7TgFjpedtmq8hQDnmCrft9Azjybv65UNmgiDhRHr1ssaiC5fWIaLws8iXHTKjP/n62jBlALvDdRBsRw9eNjvVX3Eniz3V1J8hUBEVsHg6Pj/m7Uk2Xy6HqaXajX8BO1XH7FGLRYbyApEzge3ruFpmQNnU2sfu0pWuEu3lWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cg8cEuIV; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b2c02e79d31so89494a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 11:09:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1748023702; x=1748628502; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1748023769; x=1748628569; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=evhV5bvbvbINEG98PnCDvgsHUB6u2zpOouaj4WsoLw4=;
-        b=FlYCaat8cxcOdG07Od3+IQMPEaeZ/cj7C7G+CCkgQ4bv/GI6umHl4xLSNTWDiIXFqU
-         JA4Vye30P609ZCXIIwiJYJ0xOYKOLZMfAMVt/SxXymnTcv6eWtJoG61i6fXcI/I9EW96
-         gikAJyZaStaB2z2ePRkQOBoOvBXM8Dg7/CoBuYlnMkjFSKX1y3zn5vlNtrxGA3bBlsdd
-         oK0dFBFTQqgHEDYBrs3ldZ4CEFPBJ+pgFG+OxkPbjH5JscjjxpSr5yX7IXT4fB+tw8y3
-         YN1dZQP3NeJuD7Ca56AoyzucMq5xkXdMr6ncL2r+dX7Lb+U/hfWnCWUkpMSpEdVi5UcH
-         X/lw==
+        bh=3PSAm/dz4qE3w58GPb642xKbKrw4osSp9d6WGa3IFOc=;
+        b=Cg8cEuIVjhSu/9XwYy8BgKVEeaeN1rSRGQokICoBfi8GNNf/VuMkwcjONA6TZc4FBk
+         drjN932SZVli2/YGeKoCMX9WP1ciSQuXl/boE/j474AzcFBeLbUfftzMBm95bPsopY66
+         cd68POMCqTtleGX2TaJEoOXVtHjcI3i23j8HM7Q8NC7EJAjFt+SM/UfvnORlbmosIZy5
+         c61bZp7tl4vIJCyW8vDhYuGYz50ZTZ7qoL3lcIhZziLV35sTLqxts5r4POYcZPOipmaz
+         5AHm/PoM166f+XIUxg2YZYFyhHE3pk9OSWYq66ZVhHTBod0VdMyOL1n7kwz1Bu+C8OYd
+         KYsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748023702; x=1748628502;
+        d=1e100.net; s=20230601; t=1748023769; x=1748628569;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=evhV5bvbvbINEG98PnCDvgsHUB6u2zpOouaj4WsoLw4=;
-        b=f8g6++WzADFEVdX9hrqKGNswdV0t5VUe6IkpigbTGzxn6KWTuN4qjmXEKgxnFbqodA
-         rcSzZUmOpFuAvuLsra6wmgQUBjotAibP5K1IpUOhG6njrYW3gMknBQKC4ALBqR9WWQ/5
-         P6ZZGbEHXvQDEo51+mpHrTSfOcS3WcEeTcIzvoDfqrB2r2Dfc37HkxUFQ5yd7mXBt5XF
-         TeAbXLG8eU/3hg74v5davshDqi9FrUAw+TR9ZbQ3YCzQe7NNq7mOhC5I5RWjgCQ1B11W
-         jGOUU3PoDcQoEBMRhrFWmZj3CdVfdfv/WF3J4jEXZk5ev0OsqnDBDUrzAIfhuskenHwm
-         AXKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXoq3AY+E+g6hHi6o0APkYe/FuLR7bSfzWY7KRn2+L6ZizuMK4/SyrHCZ3kz8dq3298Bl+2CSGFKVGDAKo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMMlXUfeOsgmqaGim//LuizqOzHIlMgNsXcNQWYQmZdKL9AzLO
-	FpCgUpYQ4DBAoQAi/0rzdOjScQnP3I0iRjtDBNQoy2sLAefV/W1LpiCSFLyqdPDNTERniUddoiJ
-	mpwWoZqiI7gSZTDERUvCgzsoi2KxT74z7nCL/4LuVYA==
-X-Gm-Gg: ASbGncuygeodil5kWpuiaiBoCb/wL/s6lLhddnpqiDQfbAUwl+CklGh3bXmrHnwBN0W
-	l52JaJ4bq4OCPBccLetdDcJihN9nKSili6QUh8ZrEan6KYkoYGkVAtMuseujznoRe/Yc1sW+LnE
-	lQ8fqhPxroHLFwBEtiJtdeIf1XWXaJeelSlzEhl9FS
-X-Google-Smtp-Source: AGHT+IH9AiO07plJSRhLB6tkJdXaDFzPn2pHd+a7L3X+gKjm+z/Fz4czzaEUCOxKugIFDOgFxL19MklfYzAdFZ2DkVY=
-X-Received: by 2002:a05:622a:5811:b0:494:9d34:fca5 with SMTP id
- d75a77b69052e-49f3394f70emr7714631cf.13.1748023701929; Fri, 23 May 2025
- 11:08:21 -0700 (PDT)
+        bh=3PSAm/dz4qE3w58GPb642xKbKrw4osSp9d6WGa3IFOc=;
+        b=RB8XfBfWmmpvVXyU/kwPR8gVvSfB33kQO+hSrjrJo0BSqMBssAi9yrwnEKzmI871ov
+         VE0WtNePa/JH6b9in8zwLbBDXgDbOJt0w/BOI7WrlQDJ5ws9XImABhKwLk9tVso5SWzh
+         Hx75rzxDNIVMFDw7DV4qZNxj23QzZmecAaCLBAhPADpkOJMa3V91aAR9nang7uNMNTA0
+         FVhKAZ/nNT43fEbVNnOL6FSe4Vcm6KQyMEGc8sE5yYTdtNTIyOWeh8WMerDasYTEs/fb
+         fHzYsVb/itjXk017RxqhO/t+jY56qt8nkKYeUIZ6dl4Oz6KlGJhD591s+Vako9F5RNGn
+         vavw==
+X-Forwarded-Encrypted: i=1; AJvYcCWK3oxDyo498yHaDjAtsSycUNO2NLyUBLDdiUexpFzAyyjHGgO5kzI+OzGUHVBl0Ch8pWioTIvHM5zbF84=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjqR2LU3vkRKxCb6zS9C91ibhuaLcNZ0rBtX89Y37BR9qjGC7J
+	BQ2f1oSyUhWe14K+sOylLUSGCvb8ezcVpbxL4yvlH2OfeWB1oJMFkKI9/mkyZ6zKBDUxYba2VaN
+	L9ry/Ovl2qINrlnlqPCFwec086ttBD44=
+X-Gm-Gg: ASbGncs3XccP1bp5amPCoaWxwrpo9vAIkBsaQxAjY178XJJw9jUUqWcgGx0iR+DGzi3
+	VbRNU0fqcvlDBw+gjCPxWUi7xs9bNKtwiKd1uBdyDSfivrMukY4HuAYAxNLGBtfLN57qmofWCgH
+	u5Le0CfUzgH0e2Ylje+B40QIxUnuuV5TAFsZYxPayT3o5Gr1LDsnVvr4QBhIsIwI42Hw==
+X-Google-Smtp-Source: AGHT+IEhdWBRRXcbHG9nhqMGxviXTWnxY5rMQJCfRX7t4KBkxl1C8mVIhgTCDvIHp+BcGZXaQC7Hhr9HVhliQGJKb4U=
+X-Received: by 2002:a17:90b:4c0e:b0:310:8d73:c54b with SMTP id
+ 98e67ed59e1d1-3110f0f1340mr78082a91.8.1748023769328; Fri, 23 May 2025
+ 11:09:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515182322.117840-1-pasha.tatashin@soleen.com> <aCwuZI7ek7XGaLN7@kernel.org>
-In-Reply-To: <aCwuZI7ek7XGaLN7@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 23 May 2025 14:07:45 -0400
-X-Gm-Features: AX0GCFt9InSi-jbnPqjcDUibRJENQKP67YavT0G51MPVz1pVL-VvRvyfzD-NRvg
-Message-ID: <CA+CK2bBhe4zcxxgqE2X1OeWrWHr1qP_BQGzE7dRhtr1Rs+0S+w@mail.gmail.com>
-Subject: Re: [RFC v2 00/16] Live Update Orchestrator
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, dmatlack@google.com, rientjes@google.com, 
-	corbet@lwn.net, rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, 
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com, 
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org, 
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev, 
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com, 
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org, 
-	dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org, 
-	rostedt@goodmis.org, anna.schumaker@oracle.com, song@kernel.org, 
-	zhangguopeng@kylinos.cn, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
-	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de
+References: <20250521080325.581366-1-noltari@gmail.com> <87wma74ceh.fsf@bootlin.com>
+In-Reply-To: <87wma74ceh.fsf@bootlin.com>
+From: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
+Date: Fri, 23 May 2025 20:08:56 +0200
+X-Gm-Features: AX0GCFsjrJL9r_aUrdKh5hSAxN7Sfdl5PHDMGUlP9_F21fDnjANEA-PzRnYV5Xc
+Message-ID: <CAKR-sGeUGpUFBf_Zvg=7ro0EpGKy0dQVF58mAQt27YX+79qv1A@mail.gmail.com>
+Subject: Re: [PATCH v5] mtd: rawnand: brcmnand: legacy exec_op implementation
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: linux-mtd@lists.infradead.org, dregan@broadcom.com, 
+	bcm-kernel-feedback-list@broadcom.com, florian.fainelli@broadcom.com, 
+	rafal@milecki.pl, computersforpeace@gmail.com, kamal.dasu@broadcom.com, 
+	dan.beygelman@broadcom.com, william.zhang@broadcom.com, 
+	frieder.schrempf@kontron.de, linux-kernel@vger.kernel.org, vigneshr@ti.com, 
+	richard@nod.at, bbrezillon@kernel.org, kdasu.kdev@gmail.com, 
+	jaimeliao.tw@gmail.com, kilobyte@angband.pl, jonas.gorski@gmail.com, 
+	dgcbueu@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 20, 2025 at 3:25=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
-te:
->
-> Hi Pasha,
->
-> On Thu, May 15, 2025 at 06:23:04PM +0000, Pasha Tatashin wrote:
-> > This v2 series introduces the LUO, a kernel subsystem designed to
-> > facilitate live kernel updates with minimal downtime,
-> > particularly in cloud delplyoments aiming to update without fully
-> > disrupting running virtual machines.
-> >
-> > This series builds upon KHO framework [1] by adding programmatic
-> > control over KHO's lifecycle and leveraging KHO for persisting LUO's
-> > own metadata across the kexec boundary. The git branch for this series
-> > can be found at:
-> > https://github.com/googleprodkernel/linux-liveupdate/tree/luo/rfc-v2
-> >
-> > What is Live Update?
-> > Live Update is a specialized reboot process where selected kernel
-> > resources (memory, file descriptors, and eventually devices) are kept
-> > operational or their state preserved across a kernel transition (e.g.,
-> > via kexec). For certain resources, DMA and interrupt activity might
-> > continue with minimal interruption during the kernel reboot.
-> >
-> > LUO v2 Overview:
-> > LUO v2 provides a framework for coordinating live updates. It features:
-> > State Machine: Manages the live update process through states:
-> > NORMAL, PREPARED, FROZEN, UPDATED.
-> >
-> > KHO Integration:
-> >
-> > LUO programmatically drives KHO's finalization and abort sequences.
-> > KHO's debugfs interface is now optional configured via
-> > CONFIG_KEXEC_HANDOVER_DEBUG.
-> >
-> > LUO preserves its own metadata via KHO's kho_add_subtree and
-> > kho_preserve_phys() mechanisms.
->
-> I've only had time to skip through the patches, one thing that came to mi=
-nd
-> was that since LUO is quite tightly coupled with KHO maybe we'll put them
-> together in, say, kernel/liveupdate?
+Hi Miqu=C3=A8l,
 
-Thank you Mike, yes, a good idea, I also thought that it would make
-sense for them to be in the same place, but initially I thought
-perhaps KHO should be moved to misc/liveupdate/, but since it is
-already landing in kernel/kexec_*, and it works with a bunch of core
-kernel subsystems it makes sense to move LUO and KHO together under
-kernel/liveupdate/
+El vie, 23 may 2025 a las 16:42, Miquel Raynal
+(<miquel.raynal@bootlin.com>) escribi=C3=B3:
+>
+> On 21/05/2025 at 10:03:25 +02, =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@=
+gmail.com> wrote:
+>
+> > Commit 3c8260ce7663 ("mtd: rawnand: brcmnand: exec_op implementation")
+> > removed legacy interface functions, breaking < v5.0 controllers support=
+.
+> > In order to fix older controllers we need to add an alternative exec_op
+> > implementation which doesn't rely on low level registers.
+> >
+> > Fixes: 3c8260ce7663 ("mtd: rawnand: brcmnand: exec_op implementation")
+> > Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+> > Reviewed-by: David Regan <dregan@broadcom.com>
+> > ---
+> >  drivers/mtd/nand/raw/brcmnand/brcmnand.c | 222 ++++++++++++++++++++++-
+> >  1 file changed, 215 insertions(+), 7 deletions(-)
+> >
+> >  v5: add changes requested by Miqu=C3=A8l Raynal:
+> >   - Mention and explain legacy in native_cmd_conv.
+> >   - EOPNOTSUPP instead of EINVAL for instr->type else.
+> >   - Implement missing check_only functionality.
+> >
+> >  v4: add changes requested by Jonas Gorski:
+> >   - Add missing breaks in brcmnand_exec_instructions_legacy.
+> >   - Restore missing ret assignment in brcmnand_exec_op.
+> >
+> >  v3: add changes requested by Florian and other improvements:
+> >   - Add associative array for native command conversion.
+> >   - Add function pointer to brcmnand_controller for exec_instr
+> >     functionality.
+> >   - Fix CMD_BLOCK_ERASE address.
+> >   - Drop NAND_CMD_READOOB support.
+> >
+> >  v2: multiple improvements:
+> >   - Use proper native commands for checks.
+> >   - Fix NAND_CMD_PARAM/NAND_CMD_RNDOUT addr calculation.
+> >   - Remove host->last_addr usage.
+> >   - Remove sector_size_1k since it only applies to v5.0+ controllers.
+> >   - Remove brcmnand_wp since it doesn't exist for < v5.0 controllers.
+> >   - Use j instead of i for flash_cache loop.
+> >
+>
+> ...
+>
+> > +static int brcmnand_check_instructions_legacy(struct nand_chip *chip,
+> > +                                           const struct nand_operation=
+ *op)
+> > +{
+> > +     const struct nand_op_instr *instr;
+> > +     unsigned int i;
+> > +     u8 cmd;
+> > +
+> > +     for (i =3D 0; i < op->ninstrs; i++) {
+> > +             instr =3D &op->instrs[i];
+> > +
+> > +             switch (instr->type) {
+> > +             case NAND_OP_CMD_INSTR:
+> > +                     cmd =3D native_cmd_conv[instr->ctx.cmd.opcode];
+> > +                     if (cmd =3D=3D CMD_NOT_SUPPORTED)
+> > +                             return -EOPNOTSUPP;
+> > +                     break;
+> > +             case NAND_OP_ADDR_INSTR:
+> > +             case NAND_OP_DATA_IN_INSTR:
+>
+> No NAND_OP_DATA_OUT_INSTR?
 
-Pasha
+AFAIK, the legacy functions were only using it for
+NAND_CMD_SET_FEATURES, which we don't support:
+https://github.com/torvalds/linux/blob/c86b63b82fde4f96ee94dde827a5f28ff5ad=
+eb57/drivers/mtd/nand/raw/brcmnand/brcmnand.c#L1922-L1938
+
+The other uses I could find are already covered by our
+chip->ecc.read/write functions.
+
+In any case I've tested the patch for reading, erasing and writing the
+NAND and so far I haven't found any unsupported error apart from
+NAND_CMD_GET_FEATURES with a Macronix NAND in the Sercom H500-s
+(BCM63268).
+I believe it's used for unlocking the NAND, which isn't needed in that devi=
+ce.
+
+>
+> > +             case NAND_OP_WAITRDY_INSTR:
+> > +                     break;
+> > +             default:
+> > +                     return -EOPNOTSUPP;
+> > +             }
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+>
+> Rest lgtm.
+>
+> Thanks,
+> Miqu=C3=A8l
+
+Best regards,
+=C3=81lvaro.
 
