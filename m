@@ -1,150 +1,105 @@
-Return-Path: <linux-kernel+bounces-660871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E1AAC2335
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:57:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1308AC22F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18778167CBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:57:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8084A3729
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A0083A14;
-	Fri, 23 May 2025 12:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E0F5579E;
+	Fri, 23 May 2025 12:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QBck4fu+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC0E3C1F;
-	Fri, 23 May 2025 12:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="E0BEV1Pi"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED161FDD;
+	Fri, 23 May 2025 12:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748005045; cv=none; b=GqG3wOCL3kz9otMbYCX3YvHl3JV8/cb0jhiaDRSaK6QCAPtysDC8X/3aRK9bjdYa+/fwSAByYzURsC4vBvPg6vDBU4LcVLcLoDEf7hOfgFMw0YUuOKAFexBtH2PNDe0eOYFoVDuyjJQOUdZta67ki1x9QcpjX6B/XRjxsCieyrs=
+	t=1748004506; cv=none; b=hIcM2YlzYg50E2qVitW0OGUwSL5MxsJB2iQGcmuU8rUW8Ue0xnhrs9UoCQjqGBXY1dXpuQtRf0kxbd+evFBCllBnDFdGWLpLIuHLrIQIDMEuari7PCRBr03E1PSAUfMTh7u5yQQyISP5QbjGkbV3Uwk0kKE0oSENoCgPGKW9LnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748005045; c=relaxed/simple;
-	bh=Zia19yocWqcFtH5Li0XaRFMz+hChbIYHpNXvVfKumfw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f8vrUvcHRawtevKZ0JOaqkDa3Qhn4UKlXt1MUhKwwpsuz9XXbtkexkEW6Me9nCxwmKz8caUeBVMfHzbaFYTuBwAy4QNPlAMqi/InoQwJwQsG8ickq1LSWLm1JSfVyIXkTxv153QOFXHYOxJ0tgRDEJrrEKAUCgD/v15RmwkeDaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QBck4fu+; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748005044; x=1779541044;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Zia19yocWqcFtH5Li0XaRFMz+hChbIYHpNXvVfKumfw=;
-  b=QBck4fu+f1Rz6TxxlTQI8y2PJ9ncp+IcmWz45CJ9Pll7WvmkksTj3G5M
-   jpN6Y5W6FZAzNsxQkKxMEeeMI11CpHFh7rr4DOT6aaF00Ixfeklslpziw
-   RjiWCIp06lG4YHNBG7rhl6/X465ousjYEceosamKe678/kgSRzZPF8xaf
-   jawlmBh42O4IXFeeMpMv2pLk8HAZtYDL9531nLE1LIVfw+hpnIVL+FDHu
-   WfQz5OV8jqLla5mGe8VdbLFTNbzHrbr3Uy9qPwW2BhZ98jSrmXgKWZGji
-   TQVnIzk83ko0hko8OOPQhjswSux2YBx24ymzWvXIFIgJ3/6dfjl5o6o3V
-   w==;
-X-CSE-ConnectionGUID: P+fZ9Qk1STqjrLW+9v9xrg==
-X-CSE-MsgGUID: 5g4mpcvTRDmTWwC6uTc1lA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="61464557"
-X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
-   d="scan'208";a="61464557"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 05:57:23 -0700
-X-CSE-ConnectionGUID: iAphiYksSm+C/n+FfxfzKg==
-X-CSE-MsgGUID: V0bcAz3KRKiJvhyx1nYg5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
-   d="scan'208";a="141196189"
-Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
-  by fmviesa007.fm.intel.com with ESMTP; 23 May 2025 05:57:17 -0700
-From: Chen Yu <yu.c.chen@intel.com>
-To: peterz@infradead.org,
-	akpm@linux-foundation.org
-Cc: mkoutny@suse.com,
-	mingo@redhat.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	corbet@lwn.net,
-	mgorman@suse.de,
-	mhocko@kernel.org,
-	muchun.song@linux.dev,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	tim.c.chen@intel.com,
-	aubrey.li@intel.com,
-	libo.chen@oracle.com,
-	kprateek.nayak@amd.com,
-	vineethr@linux.ibm.com,
-	venkat88@linux.ibm.com,
-	ayushjai@amd.com,
-	cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	yu.chen.surf@foxmail.com,
-	Chen Yu <yu.c.chen@intel.com>
-Subject: [PATCH v5 0/2] sched/numa: add statistics of numa balance task migration
-Date: Fri, 23 May 2025 20:48:02 +0800
-Message-Id: <cover.1748002400.git.yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1748004506; c=relaxed/simple;
+	bh=ep7ttSMYmIC7dSCZw6rB4THOYgYU0W+j3ONAkquPmvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LA/oOHh/Z9f6iiQJB7iI4LRn7gTtaPG6DtVEiQ9iYdTmfwwXGfAmvqoI8aXjpTOhZZWnrk8utRq9sBcmzh92qnTGDHa1Yd8m5z5IVgzJH1mlkcl2etIBer9g4q1GCxVTtsebKnngA8ycw8Xsr6k9ihUJknpK5Vi4dsR4JJbE4FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=E0BEV1Pi; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 2B704206834F; Fri, 23 May 2025 05:48:24 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2B704206834F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1748004504;
+	bh=TK3pq8zeypwsvsAQp4lD9eQ6MH7Hnc9VhxYCb1JrU/k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E0BEV1PiOKtEampixS2HTrQxuD6/TbQearDIPrcet4PyKtxbMC1/Q71ZYdfiTYVsH
+	 moQRlxSHrYNO1KOo90RlnK3/DUbIJDZSuqyoA8rV+E3rS0NoL7tqL/q/1azAgm5xA2
+	 jbfWowHxhBACmuy0yY8YgnAdfNdE4lhyN/FnXj8M=
+Date: Fri, 23 May 2025 05:48:24 -0700
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
+	ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+	john.fastabend@gmail.com, sdf@fomichev.me, kuniyu@amazon.com,
+	ahmed.zaki@intel.com, aleksander.lobakin@intel.com,
+	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	ssengar@microsoft.com, stable@vger.kernel.org
+Subject: Re: [PATCH net,v2] hv_netvsc: fix potential deadlock in
+ netvsc_vf_setxdp()
+Message-ID: <20250523124824.GA4946@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1747823103-3420-1-git-send-email-ssengar@linux.microsoft.com>
+ <20250522151346.57390f40@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250522151346.57390f40@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Introducing the task migration and swap statistics in the following places:
-/sys/fs/cgroup/{GROUP}/memory.stat
-/proc/{PID}/sched
-/proc/vmstat
+On Thu, May 22, 2025 at 03:13:46PM -0700, Jakub Kicinski wrote:
+> On Wed, 21 May 2025 03:25:03 -0700 Saurabh Sengar wrote:
+> > The MANA driver's probe registers netdevice via the following call chain:
+> > 
+> > mana_probe()
+> >   register_netdev()
+> >     register_netdevice()
+> > 
+> > register_netdevice() calls notifier callback for netvsc driver,
+> > holding the netdev mutex via netdev_lock_ops().
+> > 
+> > Further this netvsc notifier callback end up attempting to acquire the
+> > same lock again in dev_xdp_propagate() leading to deadlock.
+> > 
+> > netvsc_netdev_event()
+> >   netvsc_vf_setxdp()
+> >     dev_xdp_propagate()
+> > 
+> > This deadlock was not observed so far because net_shaper_ops was never set,
+> 
+> The lock is on the VF, I think you meant to say that no device you use
+> in Azure is ops locked?
 
-These statistics facilitate a rapid evaluation of the performance and resource
-utilization of the target workload.
+That's right.
 
-Patch 1 is a fix from Libo to avoid task swapping for kernel threads
-and user thread that does not have mm, because Numa balance only cares
-about the user pages via VMA.
+> 
+> There's also the call to netvsc_register_vf() on probe path, please
+> fix or explain why it doesn't need locking in the commit message.
 
-Patch 2 is the major change to expose the statistics of task migration and
-swapping in corresponding files.
+On rethinking I realize you were referring to the netvsc_probe() path not
+mana_probe(). Since this lock is effectively a no-op, it doesn't really
+matter whether it's there or not.
 
-The reason to fold patch 1 and patch 2 into 1 patch set is that patch 1 is
-necessary for patch 2 to avoid accessing a NULL mm_struct from a kernel
-thread, which causes NULL pointer exception.
+However, I think we can revisit this when we add ops for any of the VFs.
 
-Changes since v4:
-Skip the kernel thread in patch 1, by checking if the target thread
-has PF_KTHREAD(Peter). Besides, remove the check for PF_IDLE, because
-idle thread has PF_KTHREAD set already(Prateek).
-
-Previous version:
-v4:
-https://lore.kernel.org/all/cover.1746611892.git.yu.c.chen@intel.com/
-v3:
-https://lore.kernel.org/lkml/20250430103623.3349842-1-yu.c.chen@intel.com/
-v2:
-https://lore.kernel.org/lkml/20250408101444.192519-1-yu.c.chen@intel.com/
-v1:
-https://lore.kernel.org/lkml/20250402010611.3204674-1-yu.c.chen@intel.com/
-
-Chen Yu (1):
-  sched/numa: add statistics of numa balance task
-
-Libo Chen (1):
-  sched/numa: fix task swap by skipping kernel threads
-
- Documentation/admin-guide/cgroup-v2.rst | 6 ++++++
- include/linux/sched.h                   | 4 ++++
- include/linux/vm_event_item.h           | 2 ++
- kernel/sched/core.c                     | 9 +++++++--
- kernel/sched/debug.c                    | 4 ++++
- kernel/sched/fair.c                     | 3 ++-
- mm/memcontrol.c                         | 2 ++
- mm/vmstat.c                             | 2 ++
- 8 files changed, 29 insertions(+), 3 deletions(-)
-
--- 
-2.25.1
-
+- Saurabh
 
