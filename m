@@ -1,118 +1,133 @@
-Return-Path: <linux-kernel+bounces-661137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8B4AC2728
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:07:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539FDAC272C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF773B4DD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:06:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0432C1BC2FAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC5D294A06;
-	Fri, 23 May 2025 16:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1878221DA0;
+	Fri, 23 May 2025 16:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJ4BTRSD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UIwvPYqD"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F5A2DCC07;
-	Fri, 23 May 2025 16:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751782045B5
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 16:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748016421; cv=none; b=CdcxjopGP9gD3QhY8Kbz5M7fcUaBk7YEIPjVgvuwH+N/Bm0YbmqmJ9L9kYib2+HIdsp+g/l7nC7QdOWH80isbmItWzPSddTKM2iZUb51tYjLMHoIWe6faLGWjkTI6xWyqArUVx7VpjuROcu9e13DbFcJZ9eubm7XX7htbNMKI7M=
+	t=1748016459; cv=none; b=iAOCyj2KFn+bZVpfQVOSbKJmY9mo6JoOXWX7JsDuVVegesopTGmuVtdxcVpJ0E3YDsLRyHBA/M7iwCV3cwjOdthkoR/fFLh8QtMdClHdB/c2IsNSeeI/9TbFKJnqsp75g5iYndF8LA9ZLDd/efJBKerCX++ShJ6f2C1mmhqPYE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748016421; c=relaxed/simple;
-	bh=U5OXlf+RyqrwgHycF2mts31Fb7vitn7wTynxz3ykuCU=;
+	s=arc-20240116; t=1748016459; c=relaxed/simple;
+	bh=y9OYzuX98oTB1Cnsu0UWtD1TX6DeKBLx6XvM4dg3M5E=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Y1BWurFjD4qHmghYkQH8E63eZ6TE8xx2Xfrd+aXFOSf7IS9uiu57Zjc36F/vMrsil1oULaVkrAgLq+MqZdmQJ5M25NAPYYIyAMiA836AI1x917a2dxvF7UgUyQKzXM2B6FPnId9DoCMQhc6YpdqLykvfDpPVZspkbsgRXu/tf+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJ4BTRSD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDD81C4CEEB;
-	Fri, 23 May 2025 16:06:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748016420;
-	bh=U5OXlf+RyqrwgHycF2mts31Fb7vitn7wTynxz3ykuCU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=HJ4BTRSD/0E+TS5UteGvWOxf6R8OzJOt1+4nzoXPvNCXRD/8S/RNGcPwi58jotavi
-	 +4tTV8FqgSGUtL4GoCwxkaJlgejTdf4aMBX+IvZvWOvMGbFhSXdQDkVOjBmkXvR+S0
-	 A9qINpvL88R5Q+bWhPSmHHFrdVJ+9gSC/jPZH+EcX4uP/DMIfwsHCfFm9iq1abQET6
-	 gC/+8VnoGgTxoCZucgiciaTMBy20nqlu9TLHLQhvg72dAthv2ZWiMbew4qxHxAyn8+
-	 SzSxhptlarY55XjN3O70l0VVUIkvlIvZApk9gVoyDSbZldmkqtr6C0gwS5Jw4QzCt1
-	 chp6pa8W4pWGQ==
-Date: Fri, 23 May 2025 11:06:58 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: linux-pci@vger.kernel.org, Jon Pan-Doh <pandoh@google.com>,
-	Karolina Stolarek <karolina.stolarek@oracle.com>,
-	Weinan Liu <wnliu@google.com>,
-	Martin Petersen <martin.petersen@oracle.com>,
-	Ben Fuller <ben.fuller@oracle.com>,
-	Drew Walton <drewwalton@microsoft.com>,
-	Anil Agrawal <anilagrawal@meta.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Sargun Dhillon <sargun@meta.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Kai-Heng Feng <kaihengf@nvidia.com>,
-	Keith Busch <kbusch@kernel.org>, Robert Richter <rrichter@amd.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v8 18/20] PCI/AER: Ratelimit correctable and non-fatal
- error logging
-Message-ID: <20250523160658.GA1559366@bhelgaas>
+	 Content-Disposition; b=sx+WFb0lbruN4jlzfPr3ndldm4trCHROtwRBNqfp1aG73lXqUpRccDLaY+TgFnhYYrKeNzAGWa0Y6mKKCngAjrp5z6id/9gufge4kifJTL2ayA5vOUBC5wTF7krP6TDpl5rU6XFKOrbr0Lb3UlSrhbt2wPIOfpK7Pue8bNnKwoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UIwvPYqD; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf257158fso72452105e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 09:07:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748016456; x=1748621256; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ySA+I9x3ijxPrMXr+uDkaCBuOqoQX2Q5RgcLdxKb0qM=;
+        b=UIwvPYqDiFyE0KWOHtncKn5Vw0aWT9Ti8FGGSE2yvNynG/aUXuFkcOnI3ynFslgb+7
+         x7vruntiaqPwV0UG9TRiS1dTmxkPZ6OD6PMp9qelnciAi8+gaRrWJiaFcBN7BGSrpgDZ
+         Kdompbog9FvQl2i6JWTyI6YL6zv1rvHTRc/A1ZoF2Bw6J7KXTXbWAXTmtzFdpCeLNssx
+         qBXifebUeOGm08hLNxMr2v6KjfYihJRdt0QqeLR7RHLQhBi2YNV6OUGD9HuVJHKhGnT0
+         FdnExBQIzNMwkRMFr5gtJ6FyXn/KRCw0Ok2h3lzndR/0e+ZETnyljh72xYHKMmY03kjf
+         nXbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748016456; x=1748621256;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ySA+I9x3ijxPrMXr+uDkaCBuOqoQX2Q5RgcLdxKb0qM=;
+        b=QK3ObZAwL3JB2Q4KzIGs9C89cVh7LLtINXSJngCHbSElqZWfKVzpz9AqIvVsLmKVLs
+         47YZUtsL+e/A4suLsOWz8zcB2LvWCQ4D2uFTZChBBn5qivW3Q1ebsoGCoSBU6b1rTVlz
+         v1GNMUvHf3bVPMT3eAIz3KTAdz35jUxNIPVZ3FVdkZu3eFZ6/BCtKej65wIgPVFO1ADk
+         fqrqm52j11q3WUXwFpT59Bymz0mCbewXTAMS0Z0feXwj5CP4x3JU+ERZna2oSDpZg9nt
+         dA5BweEChq5Hrm1A6cY3O7zM0ePD5K9/t5bo10aPGAfz1pF5jT7XtpxVJeZsNohgkk/1
+         /LSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWaIiJ+k1gCPNjdbzEDDIO5PefTX3itfLql3DObWynglg9oQv//i8Xy0qnw1CHvFrE5GsL98AArzDrJQSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9iY1Ofd/Y8nR+2GYPmzmomKNHEiLVfHB+oLM1+Y1EdQRkrJFH
+	Ep8IMKuTTWiXWuoq/1gXU2ofzOqFUdh+1GxIV+KaZ/O/OA0oMY9rNH+8uyiSDxG6LVQ=
+X-Gm-Gg: ASbGncsE86sYFlnCKo6BF7P1dr6Fts+g02rq/ZNzYSYUScgFJU5S+zpyqBq73Rc3p+q
+	gGsPnRgVvS1n8Jp2yhCmDZeKaPtkF1s7Nw0u7TQtxXkEKjWtAvhG7rpTpR/pmU2iNYnvJ4bVA8j
+	wpvbm8la7qwXa53VYJKr0Jo+/vc/ECFp46DKWqMRdeHCjFLqmVZoi4X+5LFV1OJeFcPToqkhR7B
+	VBvYrJi+jYK93cy+L+16uyQcmaki0Q5hBndPKgadANSDTZl1pQeKwKOUK0wXDG8r2ULGjx1ODRl
+	JC7DGFtB016fWpbpwkZC6RMCLHtCtzZqTNWwsJD8j1Q/+xnd4qPJOYMM
+X-Google-Smtp-Source: AGHT+IGofrhPwUyQkmyigwaxUlF2xUHWhAZovkrgIBPkwqcSNQYKQBTR5Syeu5oZ8hxjg03O13Decw==
+X-Received: by 2002:a05:600c:528a:b0:43b:d0fe:b8ac with SMTP id 5b1f17b1804b1-442ff03c4edmr317016795e9.30.1748016455699;
+        Fri, 23 May 2025 09:07:35 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-447f3dd94d1sm143921865e9.34.2025.05.23.09.07.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 May 2025 09:07:35 -0700 (PDT)
+Date: Fri, 23 May 2025 19:07:32 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Arun R Murthy <arun.r.murthy@intel.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Suraj Kandpal <suraj.kandpal@intel.com>,
+	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+	Xaver Hugl <xaver.hugl@kde.org>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/plane: Fix error pointer vs NULL bug in
+ create_in_format_blob()
+Message-ID: <aDCdRKZHmCPwaJWp@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <eb9bca3e-cb0a-41e9-bf7f-0889eb3f3c47@linux.intel.com>
+X-Mailer: git-send-email haha only kidding
 
-On Thu, May 22, 2025 at 04:56:56PM -0700, Sathyanarayanan Kuppuswamy wrote:
-> On 5/22/25 4:21 PM, Bjorn Helgaas wrote:
-> > From: Jon Pan-Doh <pandoh@google.com>
-> > 
-> > Spammy devices can flood kernel logs with AER errors and slow/stall
-> > execution. Add per-device ratelimits for AER correctable and non-fatal
-> > uncorrectable errors that use the kernel defaults (10 per 5s).  Logging of
-> > fatal errors is not ratelimited.
+The callers expect to receive error pointers on error but
+create_in_format_blob() returns NULL.  Change it to return error
+pointers.
 
-> > +static int aer_ratelimit(struct pci_dev *dev, unsigned int severity)
-> > +{
-> > +	struct ratelimit_state *ratelimit;
-> > +
-> > +	if (severity == AER_FATAL)
-> > +		return 1;	/* AER_FATAL not ratelimited */
-> > +
-> > +	if (severity == AER_CORRECTABLE)
-> > +		ratelimit = &dev->aer_info->correctable_ratelimit;
-> > +	else
-> > +		ratelimit = &dev->aer_info->nonfatal_ratelimit;
-> > +
-> > +	return __ratelimit(ratelimit);
-> > +}
-> > +
-> 
-> Why not combine severity checks? May be something like below:
-> 
->     switch (severity) {
->     case AER_NONFATAL:
->         return __ratelimit(&dev->aer_info->nonfatal_ratelimit);
->     case AER_CORRECTABLE:
->         return __ratelimit(&dev->aer_info->correctable_ratelimit);
->     default:
->         return 1; /* Don't rate-limit fatal errors */
->     }
+Fixes: 0d6dcd741c26 ("drm/plane: modify create_in_formats to acommodate async")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/drm_plane.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Beautiful, adopted, thank you!
+diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
+index 04992dfd4c79..75a7e8aa6611 100644
+--- a/drivers/gpu/drm/drm_plane.c
++++ b/drivers/gpu/drm/drm_plane.c
+@@ -209,7 +209,7 @@ static struct drm_property_blob *create_in_format_blob(struct drm_device *dev,
+ 	formats_size = sizeof(__u32) * plane->format_count;
+ 	if (WARN_ON(!formats_size)) {
+ 		/* 0 formats are never expected */
+-		return 0;
++		return ERR_PTR(-EINVAL);
+ 	}
+ 
+ 	modifiers_size =
+@@ -225,7 +225,7 @@ static struct drm_property_blob *create_in_format_blob(struct drm_device *dev,
+ 
+ 	blob = drm_property_create_blob(dev, blob_size, NULL);
+ 	if (IS_ERR(blob))
+-		return NULL;
++		return blob;
+ 
+ 	blob_data = blob->data;
+ 	blob_data->version = FORMAT_BLOB_CURRENT;
+-- 
+2.47.2
+
 
