@@ -1,108 +1,207 @@
-Return-Path: <linux-kernel+bounces-660257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B34AC1ABF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:47:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 307FFAC1AC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A30FB1B65887
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:47:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D504D166B0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3645B1EFFAC;
-	Fri, 23 May 2025 03:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB49C223709;
+	Fri, 23 May 2025 03:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="j0CqrPB3"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7417742AB4;
-	Fri, 23 May 2025 03:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.6
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VrG+HFJM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BA01519A0;
+	Fri, 23 May 2025 03:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747972047; cv=none; b=tLDp/8Xuqkei3LL9bqm6aHAmEyju69iBujxSq4Hy7Sn9ZfBqjaf4tg5f/wAgOhALj2GTPil2Z/8T3VQF506S4VEJfol6xV3g9dF6+qfdTep44OaqXMYyDMhHTueMxU6wwwcLlSbYMCR1VuqanDdnsEH4YV1RrrEjsrvBouxp3QQ=
+	t=1747972149; cv=none; b=A0vX/MpFbE0KvFWZbyj6H6FxJIw12tapgU/HguL+uU/JOx62dui5N/kB7aDysQOjmbCoKf7qcRsxfw9LvAbTxywiC/zK/KiUzpuhFUXB2KuK5jEvqz9vNQF6YYsizA1CP9B923kQiiFvcuZ8BHnJzE8o1YhT+kBzjtp+sfpc8Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747972047; c=relaxed/simple;
-	bh=IkdmFrSh2VwCtODceQe1mvxAb3VAK663r9TayBQV6g0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nSebJrIt4LuAVCIR5UGpptEworGirFWXRqk3GWTlf5AdTWvdTf7mJZi73pV2+ZDfh1e/i8Q83zVe3XiCiC9E+X8SCbiU6MnV7hgiyNVuqiU/VVJztq0bNO5NSI75pqyaG1YsqwSPLbxNPINqMstY2iLfitlTbKbqvWIWSYNP3sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=j0CqrPB3; arc=none smtp.client-ip=117.135.210.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=BRlhWrT2SoYXDlWZPjcJEikz+rURnIHTSURTtEo/7GI=;
-	b=j0CqrPB3BVJ2NkTWzNNJzTs2suu7ZY2L22yVmswZVziThaQUpJh9t9b4pblpVs
-	IFWdrQZMU8ehbQTkmMo1ChtK6BuZdCzFHAaH3jZEaw+tacAVzITJ4PXLQxo8XlXs
-	/SWybH5CWos2S04jMlGdC2HIdu7xn8Nax3cAAbQiaKIrg=
-Received: from [172.19.20.199] (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3Xyar7y9oVPJEAg--.40133S2;
-	Fri, 23 May 2025 11:46:51 +0800 (CST)
-Message-ID: <4e408146-7c77-4f6d-90e8-bb311d7ab53d@126.com>
-Date: Fri, 23 May 2025 11:46:51 +0800
+	s=arc-20240116; t=1747972149; c=relaxed/simple;
+	bh=W0I1h/EFOaXWHoneVKr55BZEEapiZElQ6WMainFSWps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZvOpb1LPVQPP28KiDftXSj1FcMAHrw9rqu/IoOHA4V+GX3AIC4nr5oAJv3qGIigjwegLU0STmfY2LDBDCENWZEIlTNEAmj/4RkCk2RTNbIsgqOFzi7gmkdeLp0kCsw9kZfXKXJu7+iB1hdpK7T8FHQdwRJOuTh7GzfUBJj+kDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VrG+HFJM; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747972147; x=1779508147;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=W0I1h/EFOaXWHoneVKr55BZEEapiZElQ6WMainFSWps=;
+  b=VrG+HFJM91OCsbD6N9+HLYS3XnDpXuLdP6ll4N+DqJZEzElPR9XhT1EV
+   lmA+QNLHGN95GRAkmjFVvJkx0BBwwyt7oIY9E1/M1O5naca8DHLTJtTRR
+   cewSfhF8ElS1vVHAi4Q23pbJjo2gg53C439VYOBAydCqp/XLcPZDZQQ35
+   O8bI8mvtZNFrxYtH/zeiS/JERhN1Eci4W4lRiFSERjSmApyyAslUz3Jnw
+   f8Zq0nVcZ+77pR7/MJy8GXO1wPUYPtDk5BhbRZaii2S8kbfVI0Ho3Xmox
+   UeuqBQvumPVwQohKALtjase5wQoXU9V4puhwzqI6URcteAT5/O5NulpK+
+   g==;
+X-CSE-ConnectionGUID: LAsLKR51SjSmMAXOw9wqBA==
+X-CSE-MsgGUID: d+eFs/pyRQavSbLtqYvkWg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="49915778"
+X-IronPort-AV: E=Sophos;i="6.15,307,1739865600"; 
+   d="scan'208";a="49915778"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 20:49:06 -0700
+X-CSE-ConnectionGUID: dkunbL94RdmQJVUYFsoLtw==
+X-CSE-MsgGUID: 2AmUQwVESvaXiXzhANKj0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,307,1739865600"; 
+   d="scan'208";a="140747623"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 22 May 2025 20:49:02 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uIJP2-000PzW-0E;
+	Fri, 23 May 2025 03:49:00 +0000
+Date: Fri, 23 May 2025 11:48:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, kvm@vger.kernel.org,
+	linux-s390@vger.kernel.org, frankja@linux.ibm.com,
+	borntraeger@de.ibm.com, seiden@linux.ibm.com, nsg@linux.ibm.com,
+	nrb@linux.ibm.com, david@redhat.com, hca@linux.ibm.com,
+	agordeev@linux.ibm.com, svens@linux.ibm.com, gor@linux.ibm.com,
+	schlameuss@linux.ibm.com
+Subject: Re: [PATCH v3 3/4] KVM: s390: refactor and split some gmap helpers
+Message-ID: <202505231158.TssIVgKH-lkp@intel.com>
+References: <20250522132259.167708-4-imbrenda@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/hugetlb: fix kernel NULL pointer dereference when
- replacing free hugetlb folios
-To: Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 21cnbao@gmail.com,
- david@redhat.com, baolin.wang@linux.alibaba.com, liuzixing@hygon.cn
-References: <1747884137-26685-1-git-send-email-yangge1116@126.com>
- <644FF836-9DC7-42B4-BACE-C433E637B885@linux.dev>
- <aC63fmFKK84K7YiZ@localhost.localdomain>
- <ff6bd560-d249-418f-81f4-7cbe055a25ec@126.com>
- <aC8PRkyd3y74Ph5R@localhost.localdomain>
- <3B8641A1-5345-44A5-B610-9BCBC980493D@linux.dev>
- <aC974OtOuj9Tqzsa@localhost.localdomain>
- <DF103E57-601C-4CBB-99CA-088E1C29F517@linux.dev>
-From: Ge Yang <yangge1116@126.com>
-In-Reply-To: <DF103E57-601C-4CBB-99CA-088E1C29F517@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3Xyar7y9oVPJEAg--.40133S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWruF1xWrykuFyrZry7Kr18Grg_yoWkGwc_ZF
-	W0vas7Gw4UZFy0kF4DGrn0qF98Kw45ZF1YvFWrWrWUCFyftF95Xr98tr4fZwsrWa1jkF45
-	tw1Yva93Ar12kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8OJ55UUUUU==
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbidRxWG2gv70MMjAAAsP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250522132259.167708-4-imbrenda@linux.ibm.com>
+
+Hi Claudio,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on kvms390/next]
+[also build test ERROR on s390/features kvm/queue kvm/next mst-vhost/linux-next linus/master v6.15-rc7 next-20250522]
+[cannot apply to kvm/linux-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Claudio-Imbrenda/s390-remove-unneeded-includes/20250522-212623
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux.git next
+patch link:    https://lore.kernel.org/r/20250522132259.167708-4-imbrenda%40linux.ibm.com
+patch subject: [PATCH v3 3/4] KVM: s390: refactor and split some gmap helpers
+config: s390-randconfig-001-20250523 (https://download.01.org/0day-ci/archive/20250523/202505231158.TssIVgKH-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250523/202505231158.TssIVgKH-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505231158.TssIVgKH-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   arch/s390/mm/gmap_helpers.c: In function 'ptep_zap_swap_entry':
+>> arch/s390/mm/gmap_helpers.c:26:7: error: implicit declaration of function 'non_swap_entry'; did you mean 'init_wait_entry'? [-Werror=implicit-function-declaration]
+     if (!non_swap_entry(entry))
+          ^~~~~~~~~~~~~~
+          init_wait_entry
+>> arch/s390/mm/gmap_helpers.c:28:11: error: implicit declaration of function 'is_migration_entry'; did you mean 'list_first_entry'? [-Werror=implicit-function-declaration]
+     else if (is_migration_entry(entry))
+              ^~~~~~~~~~~~~~~~~~
+              list_first_entry
+>> arch/s390/mm/gmap_helpers.c:29:33: error: implicit declaration of function 'pfn_swap_entry_folio'; did you mean 'filemap_dirty_folio'? [-Werror=implicit-function-declaration]
+      dec_mm_counter(mm, mm_counter(pfn_swap_entry_folio(entry)));
+                                    ^~~~~~~~~~~~~~~~~~~~
+                                    filemap_dirty_folio
+   arch/s390/mm/gmap_helpers.c:29:33: warning: passing argument 1 of 'mm_counter' makes pointer from integer without a cast [-Wint-conversion]
+      dec_mm_counter(mm, mm_counter(pfn_swap_entry_folio(entry)));
+                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from arch/s390/mm/gmap_helpers.c:9:
+   include/linux/mm.h:2725:44: note: expected 'struct folio *' but argument is of type 'int'
+    static inline int mm_counter(struct folio *folio)
+                                 ~~~~~~~~~~~~~~^~~~~
+>> arch/s390/mm/gmap_helpers.c:30:2: error: implicit declaration of function 'free_swap_and_cache'; did you mean 'free_pgd_range'? [-Werror=implicit-function-declaration]
+     free_swap_and_cache(entry);
+     ^~~~~~~~~~~~~~~~~~~
+     free_pgd_range
+   arch/s390/mm/gmap_helpers.c: In function 'gmap_helper_zap_one_page':
+>> arch/s390/mm/gmap_helpers.c:60:27: error: implicit declaration of function 'pte_to_swp_entry'; did you mean 'ptep_zap_swap_entry'? [-Werror=implicit-function-declaration]
+      ptep_zap_swap_entry(mm, pte_to_swp_entry(*ptep));
+                              ^~~~~~~~~~~~~~~~
+                              ptep_zap_swap_entry
+>> arch/s390/mm/gmap_helpers.c:60:27: error: incompatible type for argument 2 of 'ptep_zap_swap_entry'
+      ptep_zap_swap_entry(mm, pte_to_swp_entry(*ptep));
+                              ^~~~~~~~~~~~~~~~~~~~~~~
+   arch/s390/mm/gmap_helpers.c:24:67: note: expected 'swp_entry_t' {aka 'struct <anonymous>'} but argument is of type 'int'
+    static void ptep_zap_swap_entry(struct mm_struct *mm, swp_entry_t entry)
+                                                          ~~~~~~~~~~~~^~~~~
+   cc1: some warnings being treated as errors
 
 
+vim +26 arch/s390/mm/gmap_helpers.c
 
-在 2025/5/23 11:27, Muchun Song 写道:
-> 
-> 
->> On May 23, 2025, at 03:32, Oscar Salvador <osalvador@suse.de> wrote:
->>
->> On Thu, May 22, 2025 at 08:39:39PM +0800, Muchun Song wrote:
->>> But I think we could use "folio_order() > MAX_PAGE_ORDER" to replace the check
->>> of hstate_is_gigantic(), right? Then ee could remove the first parameter of hstate
->>> from alloc_and_dissolve_hugetlb_folio() and obtain hstate in it.
->>
->> Yes, I think we can do that.
->> So something like the following (compily-tested only) maybe?
->>
->>  From d7199339e905f83b54d22849e8f21f631916ce94 Mon Sep 17 00:00:00 2001
->> From: Oscar Salvador <osalvador@suse.de>
->> Date: Thu, 22 May 2025 19:51:04 +0200
->> Subject: [PATCH] TMP
->>
->> ---
->>   mm/hugetlb.c | 38 +++++++++-----------------------------
->>   1 file changed, 9 insertions(+), 29 deletions(-)
-> 
-> Pretty simple. The code LGTM.
-> 
-> Thanks.
+    14	
+    15	/**
+    16	 * ptep_zap_swap_entry() - discard a swap entry.
+    17	 * @mm: the mm
+    18	 * @entry: the swap entry that needs to be zapped
+    19	 *
+    20	 * Discards the given swap entry. If the swap entry was an actual swap
+    21	 * entry (and not a migration entry, for example), the actual swapped
+    22	 * page is also discarded from swap.
+    23	 */
+    24	static void ptep_zap_swap_entry(struct mm_struct *mm, swp_entry_t entry)
+    25	{
+  > 26		if (!non_swap_entry(entry))
+    27			dec_mm_counter(mm, MM_SWAPENTS);
+  > 28		else if (is_migration_entry(entry))
+  > 29			dec_mm_counter(mm, mm_counter(pfn_swap_entry_folio(entry)));
+  > 30		free_swap_and_cache(entry);
+    31	}
+    32	
+    33	/**
+    34	 * gmap_helper_zap_one_page() - discard a page if it was swapped.
+    35	 * @mm: the mm
+    36	 * @vmaddr: the userspace virtual address that needs to be discarded
+    37	 *
+    38	 * If the given address maps to a swap entry, discard it.
+    39	 *
+    40	 * Context: needs to be called while holding the mmap lock.
+    41	 */
+    42	void gmap_helper_zap_one_page(struct mm_struct *mm, unsigned long vmaddr)
+    43	{
+    44		struct vm_area_struct *vma;
+    45		spinlock_t *ptl;
+    46		pte_t *ptep;
+    47	
+    48		mmap_assert_locked(mm);
+    49	
+    50		/* Find the vm address for the guest address */
+    51		vma = vma_lookup(mm, vmaddr);
+    52		if (!vma || is_vm_hugetlb_page(vma))
+    53			return;
+    54	
+    55		/* Get pointer to the page table entry */
+    56		ptep = get_locked_pte(mm, vmaddr, &ptl);
+    57		if (unlikely(!ptep))
+    58			return;
+    59		if (pte_swap(*ptep))
+  > 60			ptep_zap_swap_entry(mm, pte_to_swp_entry(*ptep));
+    61		pte_unmap_unlock(ptep, ptl);
+    62	}
+    63	EXPORT_SYMBOL_GPL(gmap_helper_zap_one_page);
+    64	
 
-Thanks.
-
-The implementation of alloc_and_dissolve_hugetlb_folio differs between 
-kernel 6.6 and kernel 6.15. To facilitate backporting, I'm planning to 
-submit another patch based on Oscar Salvador's suggestion.
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
