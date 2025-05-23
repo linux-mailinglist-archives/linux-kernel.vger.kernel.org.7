@@ -1,74 +1,69 @@
-Return-Path: <linux-kernel+bounces-661241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE4DAC2868
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 19:19:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF037AC2870
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 19:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D5093AA24A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:18:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E615174330
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8DB297B7D;
-	Fri, 23 May 2025 17:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DE4298264;
+	Fri, 23 May 2025 17:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TqNZjBTS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QVon2Plm"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6579223DED;
-	Fri, 23 May 2025 17:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27BE2980B6;
+	Fri, 23 May 2025 17:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748020753; cv=none; b=iQNlIEE7s7vm7ofuk49dQS39rdAdd6XzzDQHFcSzPGRDzsYbEZTMKFFUD0hz4VoU13wgArAA9QwERWYUvz4jzRJia6ZiPTpvRtVh7t2SvTp52gk5i5OQehwcHYLMxda4xWB/IeAdieLVyZnfQJxy3bi4XWc9CsvjY/I8yTL1+SA=
+	t=1748020836; cv=none; b=BZyKlA3BksHOlyMoQg4nZnVSf1h754v6qc68uVy4Vx7eesqNSdD1WEsLNHyBVg42kRlvbvGqZwFmyBIwTHCXBrmGbFhqTibHqYGewFMEZgYxp0+OO5we/EddUx3UUJmCXgwXGBQuOZE/wO5RxSj7eiPGGPUBZNhEOcxj5Ur790A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748020753; c=relaxed/simple;
-	bh=JFhrayBhJRC4b/wXiM0S9wcKDa4EYnZywdbZUgnJV1A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oqYWHJdAV9ncD4CzNQR269haTJt1nUSJsLg1frwuaUXqYmXkRrXf01JN0+tZ/6trgBa2XO4wCoTKaDf23V+r3oM+ftGzUtTjxzpCvnvJkGFwGx41cezWDO+aSKfrjS1IIYdmiY1N8wa0KFlV0hf43Pg8zBIPjp99Ym5tHNCTWyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TqNZjBTS; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748020752; x=1779556752;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=JFhrayBhJRC4b/wXiM0S9wcKDa4EYnZywdbZUgnJV1A=;
-  b=TqNZjBTSW0EzrHX0hLlOsf5ftWANa5OGPpGKq9Y9xoo5NRIcKfCETtkp
-   L4wYXsr3lo6veVCh1CNKvkPCGy9vak2Nh7cw9xg7Hv4a54wrPd6P5s5iN
-   POt7HmndT7Y1V/7C9vXNOLcPu+aH9d7RJbplYzgKnZtM2EPKLI+ITKOgY
-   nQtn1fLkdXXRE6FzYBkqYjWcH4RC2knvrP+lkI1P89u/9K7dFxKg4OujX
-   JOS5l7lnpk9pEsFQ7797G75RM/XY2cOwpJGzL9dL4/mwgLIFGJkN7m8z6
-   jcctFDopUu3ytdA+hAJmpHpCLJRYkDndWPcoKzo0Cd1gh18z9QYURj7dF
-   w==;
-X-CSE-ConnectionGUID: yb9RC2UuQc+S5RRot5beVg==
-X-CSE-MsgGUID: cIy8n+9CQPe4ZobDAuSB0g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="60740027"
-X-IronPort-AV: E=Sophos;i="6.15,309,1739865600"; 
-   d="scan'208";a="60740027"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 10:19:06 -0700
-X-CSE-ConnectionGUID: SzLbJRTkRoWK5B/6NfJo+g==
-X-CSE-MsgGUID: looBECrOQrasZJMLHF3bZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,309,1739865600"; 
-   d="scan'208";a="146383529"
-Received: from dev.sc.intel.com ([172.25.103.134])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 10:19:06 -0700
-From: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-To: tony.luck@intel.com,
-	rafael@kernel.org
-Cc: anil.s.keshavamurthy@intel.com,
-	yu.c.chen@intel.com,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] ACPI/MRRM: Fix default max memory region
-Date: Fri, 23 May 2025 13:20:01 -0400
-Message-ID: <20250523172001.1761634-1-anil.s.keshavamurthy@intel.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1748020836; c=relaxed/simple;
+	bh=5Cf734hkQ03C797pwsDu1Em6cex4eWIpbOSQ8YG1sr4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RvJJjHCIPnB1r/6JYDvJ9E4fm6j74x9pBDjahxda1vrszolz/nlSQQK1pNJCYrMM+yt7K4UBRHUcLP4c1JnAT8OWEKtNNceh35GqgZAuXjoKNKkI8nRN/FZCPqTP6mUPvNwF5Z2rFCB4Je9YrBD6DwyrvZ3x4IboIuaNo0IQEzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QVon2Plm; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1748020826;
+	bh=5Cf734hkQ03C797pwsDu1Em6cex4eWIpbOSQ8YG1sr4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=QVon2PlmpNl96OmP1GHRm4tri2xMB3SiHdLzfJxhXa3vFRRZGufF3dKtGV9SHr5qJ
+	 BibqfdSqYF9kFmBaofxfpeFpKrXDot6eDpsXupo+zXlEFlASHuShExBU9tuJSbNNtQ
+	 L8PP6Ph7vPPKXkkW6IC0KXGtmXEkXdwM3nkhEL7zu651dUjPR8kRIjD1mX0y0o88VN
+	 VPo/6hwiLKwmVI0Zik9FGZq3NSgR3L1Jnk5U3avdm3o6Cm7/uwz2PrmE9qRjF9dalo
+	 0nWFVLwBWkAl1BjoH3qHjUCnqPThIdKabN/S8GELUaInx+HxVb5+XUW+efeF0dO5L7
+	 EUF2gVQpzGsIQ==
+Received: from [IPv6:2606:6d00:17:b2fc::5ac] (unknown [IPv6:2606:6d00:17:b2fc::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C95FD17E1045;
+	Fri, 23 May 2025 19:20:24 +0200 (CEST)
+Message-ID: <3c51d1d6503354e75ea620e30758649547db5374.camel@collabora.com>
+Subject: Re: [PATCH v2 1/7] media: chips-media: wave5: Fix Null reference
+ while testing fluster
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: "Jackson.lee" <jackson.lee@chipsnmedia.com>, mchehab@kernel.org, 
+	hverkuil-cisco@xs4all.nl, sebastian.fricke@collabora.com, 
+	bob.beckett@collabora.com, dafna.hirschfeld@collabora.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lafley.kim@chipsnmedia.com, b-brnich@ti.com, hverkuil@xs4all.nl, 
+	nas.chung@chipsnmedia.com
+Date: Fri, 23 May 2025 13:20:22 -0400
+In-Reply-To: <20250522072606.51-2-jackson.lee@chipsnmedia.com>
+References: <20250522072606.51-1-jackson.lee@chipsnmedia.com>
+	 <20250522072606.51-2-jackson.lee@chipsnmedia.com>
+Organization: Collabora Canada
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,47 +72,280 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Per the spec, the default max memory region must be 1 covering
-all system memory.
+Hi,
 
-When platform does not provide ACPI MRRM table or
-when CONFIG_ACPI is opted out, the acpi_mrrm_max_mem_region() function
-defaults to  returning 1 region complying to RDT spec.
+Le jeudi 22 mai 2025 à 16:26 +0900, Jackson.lee a écrit :
+> From: Jackson Lee <jackson.lee@chipsnmedia.com>
+> 
+> When multi instances are created/destroyed, many interrupts happens
+> or structures for decoder are removed.
+> "struct vpu_instance" this structure is shared for all flow in decoder,
+> so if the structure is not protected by lock, Null reference exception
+> could happens sometimes.
+> IRQ Handler was spilt to two phases and Lock was added as well.
+> 
+> Fixes: 9707a6254a8a ("media: chips-media: wave5: Add the v4l2 layer")
+> Signed-off-by: Jackson Lee <jackson.lee@chipsnmedia.com>
+> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+> ---
+>  .../platform/chips-media/wave5/wave5-helper.c | 10 ++-
+>  .../chips-media/wave5/wave5-vpu-dec.c         |  5 ++
+>  .../chips-media/wave5/wave5-vpu-enc.c         |  5 ++
+>  .../platform/chips-media/wave5/wave5-vpu.c    | 69 ++++++++++++++++---
+>  .../platform/chips-media/wave5/wave5-vpuapi.h |  6 ++
+>  5 files changed, 86 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-helper.c b/drivers/media/platform/chips-media/wave5/wave5-
+> helper.c
+> index 2c9d8cbca6e4..5d9969bb7ada 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-helper.c
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-helper.c
+> @@ -49,7 +49,7 @@ void wave5_cleanup_instance(struct vpu_instance *inst)
+>  		v4l2_fh_del(&inst->v4l2_fh);
+>  		v4l2_fh_exit(&inst->v4l2_fh);
+>  	}
+> -	list_del_init(&inst->list);
+> +	kfifo_free(&inst->irq_status);
+>  	ida_free(&inst->dev->inst_ida, inst->id);
+>  	kfree(inst->codec_info);
+>  	kfree(inst);
+> @@ -61,8 +61,16 @@ int wave5_vpu_release_device(struct file *filp,
+>  {
+>  	struct vpu_instance *inst = wave5_to_vpu_inst(filp->private_data);
+>  	int ret = 0;
+> +	unsigned long flags;
+>  
+>  	v4l2_m2m_ctx_release(inst->v4l2_fh.m2m_ctx);
+> +	ret = mutex_lock_interruptible(&inst->dev->irq_lock);
+> +	if (ret)
+> +		return ret;
 
-Signed-off-by: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
----
- drivers/acpi/acpi_mrrm.c | 3 ++-
- include/linux/acpi.h     | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+This is quite some heavy locking, why do you need both the mutex and
+the spinlock ?
 
-diff --git a/drivers/acpi/acpi_mrrm.c b/drivers/acpi/acpi_mrrm.c
-index 2f22f013959a..26c1a4e6b6ec 100644
---- a/drivers/acpi/acpi_mrrm.c
-+++ b/drivers/acpi/acpi_mrrm.c
-@@ -14,7 +14,8 @@
- #include <linux/string.h>
- #include <linux/sysfs.h>
- 
--static int max_mem_region = -ENOENT;
-+/* Default assume one memory region covering all system memory, per the spec */
-+static int max_mem_region = 1;
- 
- /* Access for use by resctrl file system */
- int acpi_mrrm_max_mem_region(void)
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index e72100c0684f..f102c0fe3431 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -1101,7 +1101,7 @@ static inline acpi_handle acpi_get_processor_handle(int cpu)
- 
- static inline int acpi_mrrm_max_mem_region(void)
- {
--	return -ENOENT;
-+	return 1;
- }
- 
- #endif	/* !CONFIG_ACPI */
--- 
-2.47.1
+> +	spin_lock_irqsave(&inst->dev->irq_spinlock, flags);
+> +	list_del_init(&inst->list);
+> +	spin_unlock_irqrestore(&inst->dev->irq_spinlock, flags);
+> +	mutex_unlock(&inst->dev->irq_lock);
+>  	if (inst->state != VPU_INST_STATE_NONE) {
+>  		u32 fail_res;
+>  
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c b/drivers/media/platform/chips-
+> media/wave5/wave5-vpu-dec.c
+> index fd71f0c43ac3..32de43de1870 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+> @@ -1811,6 +1811,11 @@ static int wave5_vpu_open_dec(struct file *filp)
+>  	inst->xfer_func = V4L2_XFER_FUNC_DEFAULT;
+>  
+>  	init_completion(&inst->irq_done);
+> +	ret = kfifo_alloc(&inst->irq_status, 16 * sizeof(int), GFP_KERNEL);
+> +	if (ret) {
+> +		dev_err(inst->dev->dev, "failed to allocate fifo\n");
+> +		goto cleanup_inst;
+> +	}
+>  
+>  	inst->id = ida_alloc(&inst->dev->inst_ida, GFP_KERNEL);
+>  	if (inst->id < 0) {
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c b/drivers/media/platform/chips-
+> media/wave5/wave5-vpu-enc.c
+> index 1e5fc5f8b856..52a1a00fd9bb 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> @@ -1760,6 +1760,11 @@ static int wave5_vpu_open_enc(struct file *filp)
+>  	inst->frame_rate = 30;
+>  
+>  	init_completion(&inst->irq_done);
+> +	ret = kfifo_alloc(&inst->irq_status, 16 * sizeof(int), GFP_KERNEL);
+> +	if (ret) {
+> +		dev_err(inst->dev->dev, "failed to allocate fifo\n");
+> +		goto cleanup_inst;
+> +	}
+>  
+>  	inst->id = ida_alloc(&inst->dev->inst_ida, GFP_KERNEL);
+>  	if (inst->id < 0) {
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu.c b/drivers/media/platform/chips-media/wave5/wave5-
+> vpu.c
+> index e1715d3f43b0..a2c09523d76b 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu.c
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu.c
+> @@ -51,8 +51,11 @@ static void wave5_vpu_handle_irq(void *dev_id)
+>  	u32 seq_done;
+>  	u32 cmd_done;
+>  	u32 irq_reason;
+> -	struct vpu_instance *inst;
+> +	u32 irq_subreason;
+> +	struct vpu_instance *inst, *tmp;
+>  	struct vpu_device *dev = dev_id;
+> +	int val;
+> +	unsigned long flags;
+>  
+>  	irq_reason = wave5_vdi_read_register(dev, W5_VPU_VINT_REASON);
+>  	seq_done = wave5_vdi_read_register(dev, W5_RET_SEQ_DONE_INSTANCE_INFO);
+> @@ -60,7 +63,8 @@ static void wave5_vpu_handle_irq(void *dev_id)
+>  	wave5_vdi_write_register(dev, W5_VPU_VINT_REASON_CLR, irq_reason);
+>  	wave5_vdi_write_register(dev, W5_VPU_VINT_CLEAR, 0x1);
+>  
+> -	list_for_each_entry(inst, &dev->instances, list) {
+> +	spin_lock_irqsave(&dev->irq_spinlock, flags);
+> +	list_for_each_entry_safe(inst, tmp, &dev->instances, list) {
+>  
+>  		if (irq_reason & BIT(INT_WAVE5_INIT_SEQ) ||
+>  		    irq_reason & BIT(INT_WAVE5_ENC_SET_PARAM)) {
+> @@ -82,14 +86,22 @@ static void wave5_vpu_handle_irq(void *dev_id)
+>  		    irq_reason & BIT(INT_WAVE5_ENC_PIC)) {
+>  			if (cmd_done & BIT(inst->id)) {
+>  				cmd_done &= ~BIT(inst->id);
+> -				wave5_vdi_write_register(dev, W5_RET_QUEUE_CMD_DONE_INST,
+> -							 cmd_done);
+> -				inst->ops->finish_process(inst);
+> +				if (dev->irq >= 0) {
+> +					irq_subreason =
+> +						wave5_vdi_read_register(dev, W5_VPU_VINT_REASON);
+> +					if (!(irq_subreason & BIT(INT_WAVE5_DEC_PIC)))
+> +						wave5_vdi_write_register(dev,
+> +									 W5_RET_QUEUE_CMD_DONE_INST,
+> +									 cmd_done);
+> +				}
+> +				val = BIT(INT_WAVE5_DEC_PIC);
+> +				kfifo_in(&inst->irq_status, &val, sizeof(int));
+>  			}
+>  		}
+> -
+> -		wave5_vpu_clear_interrupt(inst, irq_reason);
+>  	}
+> +	spin_unlock_irqrestore(&dev->irq_spinlock, flags);
+> +
+> +	up(&dev->irq_sem);
+>  }
+>  
+>  static irqreturn_t wave5_vpu_irq_thread(int irq, void *dev_id)
+> @@ -121,6 +133,35 @@ static enum hrtimer_restart wave5_vpu_timer_callback(struct hrtimer *timer)
+>  	return HRTIMER_RESTART;
+>  }
+>  
+> +static int irq_thread(void *data)
+> +{
+> +	struct vpu_device *dev = (struct vpu_device *)data;
+> +	struct vpu_instance *inst, *tmp;
+> +	int irq_status, ret;
+> +
+> +	while (!kthread_should_stop()) {
+> +		if (down_interruptible(&dev->irq_sem))
+> +			continue;
+> +
+> +		if (kthread_should_stop())
+> +			break;
+> +
+> +		mutex_lock(&dev->irq_lock);
+> +		list_for_each_entry_safe(inst, tmp, &dev->instances, list) {
+> +			while (kfifo_len(&inst->irq_status)) {
+> +				ret = kfifo_out(&inst->irq_status, &irq_status, sizeof(int));
+> +				if (!ret)
+> +					break;
+> +
+> +				inst->ops->finish_process(inst);
+> +			}
+> +		}
+> +		mutex_unlock(&dev->irq_lock);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int wave5_vpu_load_firmware(struct device *dev, const char *fw_name,
+>  				   u32 *revision)
+>  {
+> @@ -224,6 +265,8 @@ static int wave5_vpu_probe(struct platform_device *pdev)
+>  
+>  	mutex_init(&dev->dev_lock);
+>  	mutex_init(&dev->hw_lock);
+> +	mutex_init(&dev->irq_lock);
+> +	spin_lock_init(&dev->irq_spinlock);
+>  	dev_set_drvdata(&pdev->dev, dev);
+>  	dev->dev = &pdev->dev;
+>  
+> @@ -266,6 +309,10 @@ static int wave5_vpu_probe(struct platform_device *pdev)
+>  	}
+>  	dev->product = wave5_vpu_get_product_id(dev);
+>  
+> +	sema_init(&dev->irq_sem, 1);
+> +	INIT_LIST_HEAD(&dev->instances);
+> +	dev->irq_thread = kthread_run(irq_thread, dev, "irq thread");
+> +
+>  	dev->irq = platform_get_irq(pdev, 0);
+>  	if (dev->irq < 0) {
+>  		dev_err(&pdev->dev, "failed to get irq resource, falling back to polling\n");
+> @@ -288,7 +335,6 @@ static int wave5_vpu_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> -	INIT_LIST_HEAD(&dev->instances);
+>  	ret = v4l2_device_register(&pdev->dev, &dev->v4l2_dev);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "v4l2_device_register, fail: %d\n", ret);
+> @@ -351,6 +397,12 @@ static void wave5_vpu_remove(struct platform_device *pdev)
+>  {
+>  	struct vpu_device *dev = dev_get_drvdata(&pdev->dev);
+>  
+> +	if (dev->irq_thread) {
+> +		kthread_stop(dev->irq_thread);
+> +		up(&dev->irq_sem);
+> +		dev->irq_thread = NULL;
+> +	}
+> +
+>  	if (dev->irq < 0) {
+>  		kthread_destroy_worker(dev->worker);
+>  		hrtimer_cancel(&dev->hrtimer);
+> @@ -361,6 +413,7 @@ static void wave5_vpu_remove(struct platform_device *pdev)
+>  
+>  	mutex_destroy(&dev->dev_lock);
+>  	mutex_destroy(&dev->hw_lock);
+> +	mutex_destroy(&dev->irq_lock);
+>  	reset_control_assert(dev->resets);
+>  	clk_bulk_disable_unprepare(dev->num_clks, dev->clks);
+>  	wave5_vpu_enc_unregister_device(dev);
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.h b/drivers/media/platform/chips-media/wave5/wave5-
+> vpuapi.h
+> index 45615c15beca..f3c1ad6fb3be 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.h
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpuapi.h
+> @@ -8,6 +8,7 @@
+>  #ifndef VPUAPI_H_INCLUDED
+>  #define VPUAPI_H_INCLUDED
+>  
+> +#include <linux/kfifo.h>
+>  #include <linux/idr.h>
+>  #include <linux/genalloc.h>
+>  #include <media/v4l2-device.h>
+> @@ -747,6 +748,7 @@ struct vpu_device {
+>  	struct video_device *video_dev_enc;
+>  	struct mutex dev_lock; /* lock for the src, dst v4l2 queues */
+>  	struct mutex hw_lock; /* lock hw configurations */
+> +	struct mutex irq_lock;
+>  	int irq;
+>  	enum product_id product;
+>  	struct vpu_attr attr;
+> @@ -764,7 +766,10 @@ struct vpu_device {
+>  	struct kthread_worker *worker;
+>  	int vpu_poll_interval;
+>  	int num_clks;
+> +	struct task_struct *irq_thread;
+> +	struct semaphore irq_sem;
 
+Can you comment on what they actually protect ?
+
+>  	struct reset_control *resets;
+> +	spinlock_t irq_spinlock; /* protect instances list */
+>  };
+>  
+>  struct vpu_instance;
+> @@ -788,6 +793,7 @@ struct vpu_instance {
+>  	enum v4l2_ycbcr_encoding ycbcr_enc;
+>  	enum v4l2_quantization quantization;
+>  
+> +	struct kfifo irq_status;
+>  	enum vpu_instance_state state;
+>  	enum vpu_instance_type type;
+>  	const struct vpu_instance_ops *ops;
 
