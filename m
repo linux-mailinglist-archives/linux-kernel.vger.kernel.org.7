@@ -1,57 +1,45 @@
-Return-Path: <linux-kernel+bounces-660305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DB93AC1BC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 07:21:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36678AC1BD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 07:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E79C4E382B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:21:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5E344E77FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0793F224882;
-	Fri, 23 May 2025 05:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA2D224B0B;
+	Fri, 23 May 2025 05:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="K2DAXGHX"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CZtZcw+a"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA0414B07A;
-	Fri, 23 May 2025 05:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747977655; cv=pass; b=pEs1idRnmz0bJHyxN0IH5ttHhQyHbuCeOEe32l+LW+Z36/r9RohQHHQuKEspvhTJmcHoM/uOio+F0ExRUYDT6mriWOrDjy16wFGHtvpxPmfOREJgzvU4zrir+0LvsrnpMI2hoNAQkTcQQgM4axVQDs7tJpFlXIs5UoP6ZNV8EwQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747977655; c=relaxed/simple;
-	bh=7PwNckJ+JlyCHDnfSYkDGO9G9tpotGLEb/U5EOQbxK4=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1735223709;
+	Fri, 23 May 2025 05:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747977945; cv=none; b=ia5veVzUuftih5ygVNNI75Blo8tYQWUn36USYxaorFfc5D5YlbpMokO6laE4XhMfwbr+iWCDpSAzuf9IlcwHWWPylFd+HHBIwSyzVGW6TecEAMcYPlPIOXxo+SKlIb2DUf/KeVm9cz3uj1RI+M1CtDeXUcRrqlvnOJKuWvkzZLI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747977945; c=relaxed/simple;
+	bh=zqFBXNgJR6QPqujYBcu7eKwHqsY+GG/0ieJMWXaanzY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i//ktXOgOhHHPxh4Z80aQKrlw3iNW3yrI7Jlr0vKLDI4Iprbkh5uTbBdG/Es2R0yjlX9GJvvY/zbqiAqrsLQrYKG3JQ9qSmAT572VANcKkehQ0x73Ks3rOPYrptAhnIIy+0uMxGyNBykZ0pcFN2DKrDqng0AXbnZt9Xc8qm70iM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=K2DAXGHX; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
-ARC-Seal: i=1; a=rsa-sha256; t=1747977610; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=fOE5uyU2V/jZxzefVCjXKHOUHJCfQgnt0W0OO1meL7UBd8Re66uahxFvUtMxmnABG04rUOrMqcUaVZSD+VrUcGzHX7U67ejhxbZZzVtAe+pNrqEK92nJFvohdoZedJSwseRecZrdE+DdU/AU9uHYhh7nJytjWFUwtVnrrb9Z00k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1747977610; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=UHj/1B2qrE4XAy5Qp0M4DBa9t1YMp5Gwm4zi+DP2Rfs=; 
-	b=LaeToclatgWRmuMFTk7N/W1Ge6PuoBaxI2R7IaU0IdGl0LKSP29FYK0xe6LOJMFhY8n7STOer6elRBZME82i4Ls4QrHv1BdCrFwY0z+8RhuZyga0Q9lQPG13a9LLKWDTz0rXC3GqDDh4xLZOBOKBZ4w2npelp6t6fcsBqQu9I8E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1747977610;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=UHj/1B2qrE4XAy5Qp0M4DBa9t1YMp5Gwm4zi+DP2Rfs=;
-	b=K2DAXGHX0Fn7/A/6EFwDCQCHQ1V/HMoiQm+xsvD2UOi1acN28Lk16y6ewNDF8aeT
-	9okkm5f6TdlU3s6qQRKV02lKeR4d/9HVR44dpBE2KwgbW0hf4o15PN7iVzbiZ/FTCON
-	+wBB0gigPyGSJBu1SzIC9Wg5TMLnRrqkIhZqKVW0=
-Received: by mx.zohomail.com with SMTPS id 1747977608258134.90960394346882;
-	Thu, 22 May 2025 22:20:08 -0700 (PDT)
-Message-ID: <4750f2c6-221f-4b2e-ab9c-31d707404a4e@pigmoral.tech>
-Date: Fri, 23 May 2025 13:20:00 +0800
+	 In-Reply-To:Content-Type; b=Q/fkIq41zx0r5sSu6fnSSA9YSWTakPIP/KOu2fjKaug5Nlql5b8YOVglpsiKbtoj0GX0FxFis9s4FrTWpMDOOU+4+DqmVrdyPRBrAPO8I8LBdQmLtVWvz9+rwoSNOaD/NzL3N+e3L8FfzT4pZstz5sDPj/Lr3jHjYG/H1NPNUXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CZtZcw+a; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1747977938; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=p9YLrwedFtwnpJG6tOJNl4XHicffoGD8uCwZAyB8uHI=;
+	b=CZtZcw+aEPe0HT/wUy3oVlOn/BgLogIzKK0fCEUuASBLkMkRKKfo46791/PMhn5h/yB41J9N22hiuoFHqV261lehUnabbQwV0/tV3I14WAaUq8iqQozgA2PaeC8EiEpq9KbT3pZImJtartFJfKY0jWVKTDWcmoWXC+bAPvZk1co=
+Received: from 30.246.160.208(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WbZ4I8V_1747977617 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 23 May 2025 13:20:18 +0800
+Message-ID: <b2153756-a57e-4054-bde2-deb8865c9e59@linux.alibaba.com>
+Date: Fri, 23 May 2025 13:20:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,183 +47,154 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] riscv: dts: sophgo: add reset generator for Sophgo
- CV1800 series SoC
-To: Inochi Amaoto <inochiama@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Inochi Amaoto <inochiama@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
- Jisheng Zhang <jszhang@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
- Longbin Li <looong.bin@gmail.com>
-References: <20250209122936.2338821-1-inochiama@gmail.com>
- <20250209122936.2338821-4-inochiama@gmail.com>
-From: Junhui Liu <junhui.liu@pigmoral.tech>
-In-Reply-To: <20250209122936.2338821-4-inochiama@gmail.com>
+Subject: Re: [PATCH v1 1/2] dmaengine: idxd: Fix race condition between WQ
+ enable and reset paths
+To: Dave Jiang <dave.jiang@intel.com>, vinicius.gomes@intel.com,
+ fenghuay@nvidia.com, vkoul@kernel.org
+Cc: dmaengine@vger.kernel.org, colin.i.king@gmail.com,
+ linux-kernel@vger.kernel.org
+References: <20250522063329.51156-1-xueshuai@linux.alibaba.com>
+ <20250522063329.51156-2-xueshuai@linux.alibaba.com>
+ <a03e4f97-2289-4af7-8bfc-ad2d38ec8677@intel.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <a03e4f97-2289-4af7-8bfc-ad2d38ec8677@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
-
-Hi Inochi,
-
-Thanks for your patch. While testing remoteproc with it, I noticed some
-issues that need correction:
-
-On 2025/2/9 20:29, Inochi Amaoto wrote:
-> Add reset generator node for all CV18XX series SoC.
->
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> ---
->   arch/riscv/boot/dts/sophgo/cv18xx-reset.h | 98 +++++++++++++++++++++++
->   arch/riscv/boot/dts/sophgo/cv18xx.dtsi    |  7 ++
->   2 files changed, 105 insertions(+)
->   create mode 100644 arch/riscv/boot/dts/sophgo/cv18xx-reset.h
->
-> diff --git a/arch/riscv/boot/dts/sophgo/cv18xx-reset.h b/arch/riscv/boot/dts/sophgo/cv18xx-reset.h
-> new file mode 100644
-> index 000000000000..3d9aa9ec7e90
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/sophgo/cv18xx-reset.h
-> @@ -0,0 +1,98 @@
-> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-> +/*
-> + * Copyright (C) 2025 Inochi Amaoto <inochiama@outlook.com>
-> + */
-> +
-> +#ifndef _SOPHGO_CV18XX_RESET
-> +#define _SOPHGO_CV18XX_RESET
-> +
-> +#define RST_DDR				2
-> +#define RST_H264C			3
-> +#define RST_JPEG			4
-> +#define RST_H265C			5
-> +#define RST_VIPSYS			6
-> +#define RST_TDMA			7
-> +#define RST_TPU				8
-> +#define RST_TPUSYS			9
-> +#define RST_USB				11
-> +#define RST_ETH0			12
-> +#define RST_ETH1			13
-> +#define RST_NAND			14
-> +#define RST_EMMC			15
-> +#define RST_SD0				16
-> +#define RST_SDMA			18
-> +#define RST_I2S0			19
-> +#define RST_I2S1			20
-> +#define RST_I2S2			21
-> +#define RST_I2S3			22
-> +#define RST_UART0			23
-> +#define RST_UART1			24
-> +#define RST_UART2			25
-> +#define RST_UART3			26
-> +#define RST_I2C0			27
-> +#define RST_I2C1			28
-> +#define RST_I2C2			29
-> +#define RST_I2C3			30
-> +#define RST_I2C4			31
-> +#define RST_PWM0			32
-> +#define RST_PWM1			33
-> +#define RST_PWM2			34
-> +#define RST_PWM3			35
-> +#define RST_SPI0			40
-> +#define RST_SPI1			41
-> +#define RST_SPI2			42
-> +#define RST_SPI3			43
-> +#define RST_GPIO0			44
-> +#define RST_GPIO1			45
-> +#define RST_GPIO2			46
-> +#define RST_EFUSE			47
-> +#define RST_WDT				48
-> +#define RST_AHB_ROM			49
-> +#define RST_SPIC			50
-> +#define RST_TEMPSEN			51
-> +#define RST_SARADC			52
-> +#define RST_COMBO_PHY0			58
-> +#define RST_SPI_NAND			61
-> +#define RST_SE				62
-> +#define RST_UART4			74
-> +#define RST_GPIO3			75
-> +#define RST_SYSTEM			76
-> +#define RST_TIMER			77
-> +#define RST_TIMER0			78
-> +#define RST_TIMER1			79
-> +#define RST_TIMER2			80
-> +#define RST_TIMER3			81
-> +#define RST_TIMER4			82
-> +#define RST_TIMER5			83
-> +#define RST_TIMER6			84
-> +#define RST_TIMER7			85
-> +#define RST_WGN0			86
-> +#define RST_WGN1			87
-> +#define RST_WGN2			88
-> +#define RST_KEYSCAN			89
-> +#define RST_AUDDAC			91
-> +#define RST_AUDDAC_APB			92
-> +#define RST_AUDADC			93
-> +#define RST_VCSYS			95
-> +#define RST_ETHPHY			96
-> +#define RST_ETHPHY_APB			97
-> +#define RST_AUDSRC			98
-> +#define RST_VIP_CAM0			99
-> +#define RST_WDT1			100
-> +#define RST_WDT2			101
-> +#define RST_AUTOCLEAR_CPUCORE0		128
+Content-Transfer-Encoding: 8bit
 
 
-I think here should start from 256.
 
-> +#define RST_AUTOCLEAR_CPUCORE1		129
-> +#define RST_AUTOCLEAR_CPUCORE2		130
-> +#define RST_AUTOCLEAR_CPUCORE3		131
-> +#define RST_AUTOCLEAR_CPUSYS0		132
-> +#define RST_AUTOCLEAR_CPUSYS1		133
-> +#define RST_AUTOCLEAR_CPUSYS2		134
-> +#define RST_CPUCORE0			160
+在 2025/5/22 22:55, Dave Jiang 写道:
+> 
+> 
+> On 5/21/25 11:33 PM, Shuai Xue wrote:
+>> A device reset command disables all WQs in hardware. If issued while a WQ
+>> is being enabled, it can cause a mismatch between the software and hardware
+>> states.
+>>
+>> When a hardware error occurs, the IDXD driver calls idxd_device_reset() to
+>> send a reset command and clear the state (wq->state) of all WQs. It then
+>> uses wq_enable_map (a bitmask tracking enabled WQs) to re-enable them and
+>> ensure consistency between the software and hardware states.
+>>
+>> However, a race condition exists between the WQ enable path and the
+>> reset/recovery path. For example:
+>>
+>> A: WQ enable path                   B: Reset and recovery path
+>> ------------------                 ------------------------
+>> a1. issue IDXD_CMD_ENABLE_WQ
+>>                                     b1. issue IDXD_CMD_RESET_DEVICE
+>>                                     b2. clear wq->state
+>>                                     b3. check wq_enable_map bit, not set
+>> a2. set wq->state = IDXD_WQ_ENABLED
+>> a3. set wq_enable_map
+>>
+>> In this case, b1 issues a reset command that disables all WQs in hardware.
+>> Since b3 checks wq_enable_map before a2, it doesn't re-enable the WQ,
+>> leading to an inconsistency between wq->state (software) and the actual
+>> hardware state (IDXD_WQ_DISABLED).
+> 
+> 
+> Would it lessen the complication to just have wq enable path grab the device lock before proceeding?
+> 
+> DJ
 
-And here should start from 288.
+Yep, how about add a spin lock to enable wq and reset device path.
 
-> +#define RST_CPUCORE1			161
-> +#define RST_CPUCORE2			162
-> +#define RST_CPUCORE3			163
-> +#define RST_CPUSYS0			164
-> +#define RST_CPUSYS1			165
-> +#define RST_CPUSYS2			166
-> +
-> +#endif /* _SOPHGO_CV18XX_RESET */
-> diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> index c18822ec849f..9aa28ade73a4 100644
-> --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-> @@ -7,6 +7,7 @@
->   #include <dt-bindings/clock/sophgo,cv1800.h>
->   #include <dt-bindings/gpio/gpio.h>
->   #include <dt-bindings/interrupt-controller/irq.h>
-> +#include "cv18xx-reset.h"
->   
->   / {
->   	#address-cells = <1>;
-> @@ -61,6 +62,12 @@ clk: clock-controller@3002000 {
->   			#clock-cells = <1>;
->   		};
->   
-> +		rst: reset-controller@3003000 {
-> +			compatible = "sophgo,cv1800b-reset";
-> +			reg = <0x3003000 0x1000>;
-> +			#reset-cells = <1>;
-> +		};
-> +
->   		gpio0: gpio@3020000 {
->   			compatible = "snps,dw-apb-gpio";
->   			reg = <0x3020000 0x1000>;
+diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
+index 38633ec5b60e..c0dc904b2a94 100644
+--- a/drivers/dma/idxd/device.c
++++ b/drivers/dma/idxd/device.c
+@@ -203,6 +203,29 @@ int idxd_wq_enable(struct idxd_wq *wq)
+  }
+  EXPORT_SYMBOL_GPL(idxd_wq_enable);
+  
++/*
++ * This function enables a WQ in hareware and updates the driver maintained
++ * wq->state to IDXD_WQ_ENABLED. It should be called with the dev_lock held
++ * to prevent race conditions with IDXD_CMD_RESET_DEVICE, which could
++ * otherwise disable the WQ without the driver's state being properly
++ * updated.
++ *
++ * For IDXD_CMD_DISABLE_DEVICE, this function is safe because it is only
++ * called after the WQ has been explicitly disabled, so no concurrency
++ * issues arise.
++ */
++int idxd_wq_enable_locked(struct idxd_wq *wq)
++{
++       struct idxd_device *idxd = wq->idxd;
++       int ret;
++
++       spin_lock(&idxd->dev_lock);
++       ret = idxd_wq_enable_locked(wq);
++       spin_unlock(&idxd->dev_lock);
++
++       return ret;
++}
++
+  int idxd_wq_disable(struct idxd_wq *wq, bool reset_config)
+  {
+         struct idxd_device *idxd = wq->idxd;
+@@ -330,7 +353,7 @@ int idxd_wq_set_pasid(struct idxd_wq *wq, int pasid)
+  
+         __idxd_wq_set_pasid_locked(wq, pasid);
+  
+-       rc = idxd_wq_enable(wq);
++       rc = idxd_wq_enable_locked(wq);
+         if (rc < 0)
+                 return rc;
+  
+@@ -380,7 +403,7 @@ int idxd_wq_disable_pasid(struct idxd_wq *wq)
+         iowrite32(wqcfg.bits[WQCFG_PASID_IDX], idxd->reg_base + offset);
+         spin_unlock(&idxd->dev_lock);
+  
+-       rc = idxd_wq_enable(wq);
++       rc = idxd_wq_enable_locked(wq);
+         if (rc < 0)
+                 return rc;
+  
+@@ -644,7 +667,11 @@ int idxd_device_disable(struct idxd_device *idxd)
+  
+  void idxd_device_reset(struct idxd_device *idxd)
+  {
++
++       spin_lock(&idxd->dev_lock);
+         idxd_cmd_exec(idxd, IDXD_CMD_RESET_DEVICE, 0, NULL);
++       spin_unlock(&idxd->dev_lock);
++
 
+(The dev_lock should also apply to idxd_wq_enable(), I did not paste here)
 
--- 
-Best regards,
-Junhui Liu
+Also, I found a new bug that idxd_device_config() is called without
+hold idxd->dev_lock.
+
+idxd_device_config() explictly asserts the hold of idxd->dev_lock.
+
++++ b/drivers/dma/idxd/irq.c
+@@ -33,12 +33,17 @@ static void idxd_device_reinit(struct work_struct *work)
+  {
+         struct idxd_device *idxd = container_of(work, struct idxd_device, work);
+         struct device *dev = &idxd->pdev->dev;
+-       int rc, i;
++       int rc = 0, i;
+  
+         idxd_device_reset(idxd);
+-       rc = idxd_device_config(idxd);
+-       if (rc < 0)
++       spin_lock(&idxd->dev_lock);
++       if (test_bit(IDXD_FLAG_CONFIGURABLE, &idxd->flags))
++               rc = idxd_device_config(idxd);
++       spin_unlock(&idxd->dev_lock);
++       if (rc < 0) {
++               dev_err(dev, "Reinit: %s config fails\n", dev_name(idxd_confdev(idxd)));
+                 goto out;
++       }
+  
+         rc = idxd_device_enable(idxd);
+         if (rc < 0)
+
+Please correct me if I missed anything.
+
+Thanks.
+Shuai
 
 
