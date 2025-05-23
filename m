@@ -1,155 +1,132 @@
-Return-Path: <linux-kernel+bounces-660894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E000AC2380
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:13:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 167D5AC225A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 007273B6B28
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:12:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2381C039BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CC11A01CC;
-	Fri, 23 May 2025 13:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433412367A6;
+	Fri, 23 May 2025 12:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MPxVG9Do"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBzOAPT4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2349914885B;
-	Fri, 23 May 2025 13:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A39C2F3E;
+	Fri, 23 May 2025 12:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748005960; cv=none; b=tlNLByJ7L34/8fWljh6dDetkFkoMGPYEiyAB242WaY9gVWb+NBAQe7IVDs0dpxCqXHwztpddvhqRKS1b07zSrBxB8EATEtSs4QQoHX2nTHioBGFw4zkBVp6a/dy2qrgbZoOlN6ChrDtfpAfZl7tfquWwSpbr+y1+oID0AwxirIA=
+	t=1748002192; cv=none; b=ktNQAtb/2bt3/ed72P1eBD1IBJPZ5BI1vOjkNcR/nYarXU8hawNgOkhYabuneu+UM63fyttWQrPLGc2zAfyqw9++ALC3t98MTep5taS/q8jC4OAcw02EUp4c/qbg/3krxJFZ2gPmxLmk0rt8JuxiEJBmcI6nUCszucVYH1PrLlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748005960; c=relaxed/simple;
-	bh=9SugXRrE9PpqZwWLIG/qzbGhzadN0J1Xh2e9tSKDdFQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jOZVbtVoC/0jWkieM5vPeDRUrnbP3CLzZqMAnfNTwyy0ec4sjKQ04RyELlLeDScIF5AJdF5sbyOy28rRM/AQHuWb0Ec7aU/ic2ECKyqLN3xn1y0VqU74d3ZIWcJsbPSM4J5P2LdpRKgkVe8V67i+J69BebGMbck/3zIM1LttqOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MPxVG9Do; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748005958; x=1779541958;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9SugXRrE9PpqZwWLIG/qzbGhzadN0J1Xh2e9tSKDdFQ=;
-  b=MPxVG9Dob5fYGZ0t77KCD8ESDvuZSr5wo0sBlfgWBr64GZ11OYWc/6/q
-   ngAzCK0gMIyq+WxuywE1lUftOxUyMIgJpmV1j9pjMhKMfndT0ZoAfnPQf
-   ciKJ9WcEupDda5awZoNUaRCVHayB7ImsVyNfMfmh4VdMsNeHiZ5OxUJdg
-   OUWgZ2sRwxGeH2zMvy2UXLN2IoWFQFkwkhE8k2Yjpc1O813sZ/nbE6MH6
-   YJBFchX2+KHcpupIANmg4JYbQgehpGSyFj3hB4erblDjgTT2//g9YYMTS
-   UVybV33I2jkxUWZ0aImCBfXqAnh5wNnNRqZlSSef4iIVkKRj5zZXbxPSp
-   Q==;
-X-CSE-ConnectionGUID: bSSJGygTTreFkJfZrwL4fw==
-X-CSE-MsgGUID: EuaUNaTWTMS48SiYhvJZaQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="49766784"
-X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
-   d="scan'208";a="49766784"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 06:12:37 -0700
-X-CSE-ConnectionGUID: FS7zd6hQRtaKz/WmDWSIhw==
-X-CSE-MsgGUID: Zxpj9SUSS+SuYp4TB3pPog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
-   d="scan'208";a="146126629"
-Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.109.147]) ([10.125.109.147])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 06:12:36 -0700
-Message-ID: <509a5751-f2a4-45af-8bfb-1058dae549fb@intel.com>
-Date: Fri, 16 May 2025 08:19:18 -0700
+	s=arc-20240116; t=1748002192; c=relaxed/simple;
+	bh=R143x4ihsArMXZoVOh0hFOHNpJbJ+i/GsS6QMaUJjWs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pp88nuVhRxlLPJAvMIT6Rd1C5pMEpou62ydIdCeu/VXqmc/ag/4oondQpd8QGCXHfeqd2TmIL7vDQXQWM3+LsVEtirE1FnE3xbdv5TDxiafhQqRlh2ZZRYqmL+xcTzeUeBep4+X8CVZjz1Bx3uAYiBxtY4BBia1FigU2apUPwcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBzOAPT4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6085C4CEE9;
+	Fri, 23 May 2025 12:09:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748002192;
+	bh=R143x4ihsArMXZoVOh0hFOHNpJbJ+i/GsS6QMaUJjWs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uBzOAPT4ZOmpLu/q3LRa9Qn/db2+5XFFP+NDzKVjuOGLBrFcle/YtO/EpfPPZ0i3w
+	 UqiOYb5pim8yZR5Q0fVQYB/Zpm73+D/ZXAwZwqxdE4Oyr9l3V4d1zZ5q32Zz/rCMjv
+	 8IlQpf5i7MDp07Jj+pwzRMTQbsS+pcnrpisHXKFqrnO9Y7fpqwea/RYhrsh9kQ82r6
+	 lxTTjx598Z8MWbokuNQ1vrRm3H3GuaRsr7j1Qlj4hnK6HSbAMWvCYBF5ybJmeOkRla
+	 E3EtAKxOBijeHpL8NvMyEPb/CCgz2ABX/uk+S5QC0qs0qy1Ja6Ragiy2NjzPUhsKqj
+	 Ac2C7qs67nGVQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Matthias Kaehlcke <mka@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jonathan Stroud <jonathan.stroud@amd.com>,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Jameson Thies <jthies@google.com>,
+	Lukasz Czechowski <lukasz.czechowski@thaumatec.com>,
+	=?UTF-8?q?J=2E=20Neusch=C3=A4fer?= <j.ne@posteo.net>,
+	Mike Looijmans <mike.looijmans@topic.nl>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: misc: onboard_usb_dev: fix build warning for CONFIG_USB_ONBOARD_DEV_USB5744=n
+Date: Fri, 23 May 2025 14:09:43 +0200
+Message-Id: <20250523120947.2170302-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/6] Introduce CET supervisor state support
-To: Ingo Molnar <mingo@kernel.org>, Chao Gao <chao.gao@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- tglx@linutronix.de, seanjc@google.com, pbonzini@redhat.com,
- peterz@infradead.org, rick.p.edgecombe@intel.com, weijiang.yang@intel.com,
- john.allen@amd.com, bp@alien8.de, chang.seok.bae@intel.com,
- xin3.li@intel.com, Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, Eric Biggers
- <ebiggers@google.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Kees Cook <kees@kernel.org>,
- Maxim Levitsky <mlevitsk@redhat.com>, Mitchell Levy
- <levymitchell0@gmail.com>, Nikolay Borisov <nik.borisov@suse.com>,
- Oleg Nesterov <oleg@redhat.com>, Samuel Holland <samuel.holland@sifive.com>,
- Sohil Mehta <sohil.mehta@intel.com>, Stanislav Spassov <stanspas@amazon.de>,
- Uros Bizjak <ubizjak@gmail.com>, Vignesh Balasubramanian <vigbalas@amd.com>,
- Zhao Liu <zhao1.liu@intel.com>
-References: <20250512085735.564475-1-chao.gao@intel.com>
- <aCYLMY00dKbiIfsB@gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <aCYLMY00dKbiIfsB@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/15/25 08:41, Ingo Molnar wrote:
-> * Chao Gao <chao.gao@intel.com> wrote:
->> I kindly request your consideration for merging this series. Most of 
->> patches have received Reviewed-by/Acked-by tags.
-> I don't see anything objectionable in this series.
-> 
-> The upcoming v6.16 merge window is already quite crowded in terms of 
-> FPU changes, so I think at this point we are looking at a v6.17 merge, 
-> done shortly after v6.16-rc1 if everything goes well. Dave, what do you 
-> think?
+From: Arnd Bergmann <arnd@arndb.de>
 
-It's getting into shape, but it has a slight shortage of reviews. For
-now, it's an all-Intel patch even though I _thought_ AMD had this
-feature too. It's also purely for KVM and has some suggested-by's from
-Sean, but no KVM acks on it.
+When the USB5744 option is disabled, the onboard_usb driver warns about
+unused functions:
 
-I have the feeling Sean would speak up if this was going in a bad
-direction for KVM, but I do love to see acks accompanying suggested-by's
-to indicate that the suggestion was interpreted properly.
+drivers/usb/misc/onboard_usb_dev.c:358:12: error: 'onboard_dev_5744_i2c_write_byte' defined but not used [-Werror=unused-function]
+  358 | static int onboard_dev_5744_i2c_write_byte(struct i2c_client *client, u16 addr, u8 data)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/usb/misc/onboard_usb_dev.c:313:12: error: 'onboard_dev_5744_i2c_read_byte' defined but not used [-Werror=unused-function]
+  313 | static int onboard_dev_5744_i2c_read_byte(struct i2c_client *client, u16 addr, u8 *data)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Extend the #ifdef block a little further to cover all of these functions.
+Ideally we'd use use if(IS_ENABLED()) instead, but that doesn't currently
+work because the i2c_transfer() and i2c_smbus_write_word_data() function
+declarations are hidden  when CONFIG_I2C is disabled.
+
+Fixes: 1143d41922c0 ("usb: misc: onboard_usb_dev: Fix usb5744 initialization sequence")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+It seems that there is another problem in that configuration, that results
+in onboard_dev_probe() always returning -EPROBE_DEFER since the client is
+never getting looked up. This should probably be addressed in another patch,
+after someone has decided what the intended behavior should be.
+---
+ drivers/usb/misc/onboard_usb_dev.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/misc/onboard_usb_dev.c b/drivers/usb/misc/onboard_usb_dev.c
+index 1048e3912068..5b481876af1b 100644
+--- a/drivers/usb/misc/onboard_usb_dev.c
++++ b/drivers/usb/misc/onboard_usb_dev.c
+@@ -310,6 +310,7 @@ static void onboard_dev_attach_usb_driver(struct work_struct *work)
+ 		pr_err("Failed to attach USB driver: %pe\n", ERR_PTR(err));
+ }
+ 
++#if IS_ENABLED(CONFIG_USB_ONBOARD_DEV_USB5744)
+ static int onboard_dev_5744_i2c_read_byte(struct i2c_client *client, u16 addr, u8 *data)
+ {
+ 	struct i2c_msg msg[2];
+@@ -388,7 +389,6 @@ static int onboard_dev_5744_i2c_write_byte(struct i2c_client *client, u16 addr,
+ 
+ static int onboard_dev_5744_i2c_init(struct i2c_client *client)
+ {
+-#if IS_ENABLED(CONFIG_USB_ONBOARD_DEV_USB5744)
+ 	struct device *dev = &client->dev;
+ 	int ret;
+ 	u8 reg;
+@@ -417,10 +417,13 @@ static int onboard_dev_5744_i2c_init(struct i2c_client *client)
+ 		return dev_err_probe(dev, ret, "USB Attach with SMBus command failed\n");
+ 
+ 	return ret;
++}
+ #else
++static int onboard_dev_5744_i2c_init(struct i2c_client *client)
++{
+ 	return -ENODEV;
+-#endif
+ }
++#endif
+ 
+ static int onboard_dev_probe(struct platform_device *pdev)
+ {
+-- 
+2.39.5
+
 
