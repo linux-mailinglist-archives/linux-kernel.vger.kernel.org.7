@@ -1,122 +1,107 @@
-Return-Path: <linux-kernel+bounces-660259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FAEDAC1AC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:49:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D140AC1AC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00CD51686A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:49:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5ADA1B68503
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A97221F0E;
-	Fri, 23 May 2025 03:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F95221F09;
+	Fri, 23 May 2025 03:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="s2wKQVN6"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="KsvorOcf"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3012DCBE7;
-	Fri, 23 May 2025 03:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E8519ADBF;
+	Fri, 23 May 2025 03:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747972147; cv=none; b=VnjRccYUVGl2rkZfGvTCkCZpVL6bzTCucTmWNy1KpRRFK+bBKLqUDu6xy3InPoXW8MQLTmp+wOrha/9T+X5iR/yF25pC9nifN9FbnpX9xFYFGQ/6smr6SXZ7Ys8jt/toF96xDmVgnRclUrxSDv3KUE/evW5OTODmKqr1lFyT3Dk=
+	t=1747972166; cv=none; b=q7tY1Jxh73GqjMuwRT430GCtbXAhgK5c6nTb3JcS5RbFpxQbbtVtZlIruBy1Z1wCt0L3usqqXDp3Tc/vJX/Wws/RramYu5ANR6c3V/5plRJzVHUnEBcFnAGXgnZVR1KOBQ7tEvi7HtAQX1X0YwfxFVC7eCE+2su5IH+cvPaQG5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747972147; c=relaxed/simple;
-	bh=oCkTUZ7+Y7bhVatNM2RfHr6M2r+SRjCNZylmZL6UJFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QepwIQtPdVXl0P3D+U4F3zpVibImk5FJ4tpWVHLoZfdM+LJD888w9JnD03Jg5t2M2L81bFzPrK9GB2+Vn9NFfrTrhTAKkp3WDIPxyBAy3l8ixORSwr+klyaCrWv82sB55SpiOLbmtUCZfj/7GpuF/i8AsM2khbxQ2ECReb5NA3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=s2wKQVN6; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=MgC3u1CSlJS3gOFGAUphVv99r7Zue3/JLw+CDbKhaIc=; b=s2wKQVN6C8xXm7ivqSOzSq6T2G
-	aZhWkJWaGNT67G0iEAFjesBPZTYSYA/tGNnVaXkYjvpXGaKHX0JAOQylpkgNHJpXFU1RqMHEcqP1r
-	sVY2OEnkxClzmELLTSITSlb/PZoMroJuH5glU4wVI15taa5XwclZsONAe2LscZ9mzQHu9gdSDXtbx
-	d+hHWyJgjezojmtTWt7dpJPWhx4Nsa+DicRRVrQFVtWo0SGwYmaNQCc4VPknztwe/9oZedHm1EdES
-	Xl9ggJ0K8OiMYk9EIkYFYxR0/N2NV/smtXIqic9yPSSMzD6PnBMtvsE17T31NAZipfS4y+/Ug2NDh
-	2UOwvqmw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uIJOj-008GAk-0P;
-	Fri, 23 May 2025 11:48:42 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 23 May 2025 11:48:41 +0800
-Date: Fri, 23 May 2025 11:48:41 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Aishwarya <aishwarya.tcv@arm.com>
-Cc: dominik.grzegorzek@oracle.com, chenridong@huawei.com,
-	daniel.m.jordan@oracle.com, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, steffen.klassert@secunet.com,
-	broonie@kernel.org
-Subject: Re: [PATCH] padata: do not leak refcount in reorder_work
-Message-ID: <aC_wGV_rc1JP06to@gondor.apana.org.au>
-References: <20250518174531.1287128-1-dominik.grzegorzek@oracle.com>
- <20250522131041.8917-1-aishwarya.tcv@arm.com>
+	s=arc-20240116; t=1747972166; c=relaxed/simple;
+	bh=DpSrGOdy7vLavJphaFDZF+lJ+ZUz8BU9EXeH3ZXqCNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IZniTkMhIvoXFkKyOrYS0oJS2wRR2eO90/gjlsg2ubUpIK6GXvJeQY+gVvzM7FrsfXkVoFaAEvHYgWf6Qu7Ir8HzzTZreBphF8YqTso+Hr9HdjvF60nxddqo6e4oc92jRV/MYVSmMRQ967yUYXPZVG76BempN/NtwJIe6O37qV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=KsvorOcf; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9485:40c5:16f6:92c4:44cf] ([IPv6:2601:646:8081:9485:40c5:16f6:92c4:44cf])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 54N3mnmB3287516
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 22 May 2025 20:48:50 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 54N3mnmB3287516
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1747972131;
+	bh=0+y2JN5llR4Gfib/fV4eg/92zfayiIPRRtSpX9qWiZM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KsvorOcfwMjV5DhjJYlk6PqGAVVBpdo0Ay1mKoNEc4uDj+UAZiqUPyoqsmCWbxXBt
+	 5AozE/rs2TmbAPrLdB12URBcs+Vcnv5nz3AmXmCznoSOCmSYQNwGRQdolL6KivCIEN
+	 TKMLmne7KOEZIffr+Q0zBIqTAVIiTOgxDdNR0X6Q5vONA9ugMDa+3ZiXmsaF3dg4GQ
+	 UhGlekNxErudGxzw7RhnGfX3WYh/DQogo2GKhQnIS9hJ21mDzZGjHVjV7EK9NfrI/Z
+	 qsGxMXEdA6qTSFht5d+dKN/MKJp+OIJTxX6KPMfh8Z+1IepQhAqHj25oMSi807WIlZ
+	 j/ZI9lBARF8JA==
+Message-ID: <ec1af0a2-d07a-4963-bae7-8a7f559798bd@zytor.com>
+Date: Thu, 22 May 2025 20:48:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522131041.8917-1-aishwarya.tcv@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] x86/fred/signal: Prevent single-step upon ERETU
+ completion
+To: Andrew Cooper <andrew.cooper3@citrix.com>,
+        Dave Hansen <dave.hansen@intel.com>, "Xin Li (Intel)" <xin@zytor.com>,
+        linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
+        stable@vger.kernel.org
+References: <20250522171754.3082061-1-xin@zytor.com>
+ <e4f1120b-0bff-4f01-8fe7-5e394a254020@intel.com>
+ <ad8d3a12-25f3-4d57-8f34-950b7967f92b@citrix.com>
+ <3D4D48D6-D6E7-4391-8DCF-6B9D307FE2E2@zytor.com>
+ <0a4db439-e402-4b6a-8aba-79a3c0398d9a@citrix.com>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <0a4db439-e402-4b6a-8aba-79a3c0398d9a@citrix.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 22, 2025 at 02:10:41PM +0100, Aishwarya wrote:
->
-> A bisect identified this patch as introducing the failure. Bisected
-> it on the tag "v6.15-rc7-7-g4a95bc121ccd" at repo:
-> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+On 5/22/25 17:10, Andrew Cooper wrote:
+>>>
+>>> ~Andrew
+>> SIGTRAP → sigreturn. Basically, we have to uplevel the suppression behavior to the kernel (where it belongs) instead of doing it at the ISA level. 
+> 
+> So the problem is specifically that we're in a SYSCALL context (from
+> FRED's point of view), and we rewrite state in the FRED FRAME to be
+> another context which happened to have eflags.TF set.
+> 
+> And the combination of these two triggers a new singlestep to be pending
+> immediately.
+> 
+> I have to admit that I didn't like the implication from the SYSCALL bit,
+> and argued to have it handled differently, but alas.  I think the real
+> bug here is trying to ERETU with a splice of two different contexts
+> worth of FRED state.
+> 
 
-What if you revert the patch in question as well as the one it
-was supposed to fix, i.e., commit dd7d37ccf6b1 ("padata: avoid
-UAF for reorder_work")? I've attached both reverts together as
-a patch.
+To some degree it is, yes. And it is sigreturn that does that splicing.
 
-I think the original fix was broken since the bug is actually
-in the Crypto API.
+But it is desirable to be able to single-step across sigreturn if one is
+debugging from inside the signal handler, hence we should not clearing
+TF if it is set on sigreturn entry.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
---
-diff --git a/kernel/padata.c b/kernel/padata.c
-index 7eee94166357..e0af15779d80 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -352,15 +352,8 @@ static void padata_reorder(struct parallel_data *pd)
- 	smp_mb();
- 
- 	reorder = per_cpu_ptr(pd->reorder_list, pd->cpu);
--	if (!list_empty(&reorder->list) && padata_find_next(pd, false)) {
--		/*
--		 * Other context(eg. the padata_serial_worker) can finish the request.
--		 * To avoid UAF issue, add pd ref here, and put pd ref after reorder_work finish.
--		 */
--		padata_get_pd(pd);
--		if (!queue_work(pinst->serial_wq, &pd->reorder_work))
--			padata_put_pd(pd);
--	}
-+	if (!list_empty(&reorder->list) && padata_find_next(pd, false))
-+		queue_work(pinst->serial_wq, &pd->reorder_work);
- }
- 
- static void invoke_padata_reorder(struct work_struct *work)
-@@ -371,8 +364,6 @@ static void invoke_padata_reorder(struct work_struct *work)
- 	pd = container_of(work, struct parallel_data, reorder_work);
- 	padata_reorder(pd);
- 	local_bh_enable();
--	/* Pairs with putting the reorder_work in the serial_wq */
--	padata_put_pd(pd);
- }
- 
- static void padata_serial_worker(struct work_struct *serial_work)
+This is in fact exactly analogous to ERETU ignoring the syscall bit if
+TF is set before ERETU is executed, just one abstraction level higher up
+in the stack.
+
+	-hpa
+
 
