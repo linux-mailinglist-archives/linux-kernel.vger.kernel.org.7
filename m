@@ -1,104 +1,163 @@
-Return-Path: <linux-kernel+bounces-661036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27C1AC25BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:58:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C3CAC25E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECFC1544C2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:56:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58FB79E2B64
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20B6296140;
-	Fri, 23 May 2025 14:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pnPc1M4f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EE72957C1;
+	Fri, 23 May 2025 15:05:16 +0000 (UTC)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C68145B27;
-	Fri, 23 May 2025 14:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F152145B27;
+	Fri, 23 May 2025 15:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748012210; cv=none; b=Uw9Olsv9RLG7S3lcLY65nAz3e8NTmmj54wg2S7Hz1/SUaAaGjO2KMYS4Uun1y13EPXJkYweKgr9h4G/TUKus0oYlOi1JG1T/bUohgy0qgnmAgsYo8Bqgo7OVCzEI78G1reFdhF5qs17lFsV/CbBTCdy82z83Gt44I/km4sK1yJM=
+	t=1748012715; cv=none; b=qMWKMOt8iGMvJizbrkiOLvvcmMulUGTEs+Wsj4DnvSl4RJpETqmNFmW1+GXCTn7qQ27fas4YOpqu8UaRzrSbFoUJ91EReJG19VbPUrZVJovPWtq1eIWiGzflO+ko8E92ON5LOBtxcb9xhufhbEo1Y05kQEaIWAbf+m1DibFX9kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748012210; c=relaxed/simple;
-	bh=cCb/DvoMu0CWp6siRJR1jsaJg2IToKhu0I//iY/ilOA=;
+	s=arc-20240116; t=1748012715; c=relaxed/simple;
+	bh=IvZjz67TtM02MU3/MnsuVyjFE8j+g6IyR+ugdwoN3KM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eZ8Hn8OA61y/dln+lMUfJ0++80u5mOcevxrutUx2Fw6TG0FE8gP8x/ViyewvkAC5jspZ5ej1ZCMqCvU5Jfop52G6YylChoe/7d3QfsN06pBu2g8wyw0jck12So9YodDWWScEiXynkDCAB9l3hSnxO1LPGqRj4Dk/49Z05guu3EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pnPc1M4f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99086C4CEE9;
-	Fri, 23 May 2025 14:56:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748012209;
-	bh=cCb/DvoMu0CWp6siRJR1jsaJg2IToKhu0I//iY/ilOA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pnPc1M4f7iZql5mFbdV6759mYAQIPvCLIt0+R1Ve+GgvjneXSkluCg/5I6gIIV/Y0
-	 H7HIGhdjsJ9nEni+4Oux2DA9q5JT2S41VchiFQiQ2YR2C/wtlyHvtaUvnHuyMJwuhW
-	 Gfb7USpWkYLiQAfojRCQbusk9SpYBbOjK9WWFFvPB3UK1XpJGGXDcXVfjJgfSMcVfe
-	 jBsVSdwlUH392r51aiyRh9m8tBrKLWSDRXb+GjxkD6q9ZNIYCAD1fYb7yF+N/3zECG
-	 M1gwgkVpMeVjvnWevsvxOVmvPaQLZ++7E5xlTddGIagP2N7g9iIITcZZvqKjGh+x1L
-	 WtOXhvYERP4Qg==
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-605ff8aa9d2so6159eaf.0;
-        Fri, 23 May 2025 07:56:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW/PfP9KNrYNyny8+QHZAoJkh2hdZYywyP/gpvFkfgHubwjYLZ0qIC9Ozp0u20KGi+y5Cf7Zw8UECMKTktp@vger.kernel.org, AJvYcCX+/ACzWA2qjkDMEAIr9mgxc1QjdyL1XM3x9xkUlAmxX9+timo3su0FMS45kdr9C4aMrGYb+r9+BVoJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPCOsPn7MQRtu3Ul1qUMZ6zQFryhK8UQQebSahkmCsphNtRof4
-	1+Wk4Z+wcU6lcv3f4s2yoEW46UwaY030cHUpwFHlBxfPwlb201reG7QZN6HFgf+Apy9lufERbU3
-	IfZHz2wcJOcLa5ib0bSKGn21DCIb93QU=
-X-Google-Smtp-Source: AGHT+IE2/o4D3OwyITiRDKyOH8lTlKZom5kbxW0as6DVJ82ORWnTo+EonsZuJW755ZVfXOW5bWm9xx7T1dw+g+Tbvng=
-X-Received: by 2002:a05:6820:998:b0:60a:6b3:3b4a with SMTP id
- 006d021491bc7-60a06b33c1fmr14725847eaf.3.1748012208993; Fri, 23 May 2025
- 07:56:48 -0700 (PDT)
+	 To:Cc:Content-Type; b=t1JuygueEfM7DOAIIBVuLF2bHNgiDPEe98kr9JgE9jY2uMjlhtw0VtKm0PPIXxUCE5asZG96YBb2vq+11qyjEsb4M4eHVYmr7Z2iGJiNHOGqWKk5qf/1hqHujmF6wgUupZfXl4EldFE6/jSTtoF9FZCcwt3ItSumKnDJGu7Xtbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-87bf1348838so1754403241.2;
+        Fri, 23 May 2025 08:05:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748012713; x=1748617513;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z7q5VOWPHTLyk2rAGQ6nFq+sdmA8F0+9sYOybYBqTFg=;
+        b=OUzAWH2uYwf+9ikl9k+q8DuPD8aXNCIqJTajWTYXjBRmduQf/j+XjAx9DzewKAHFMm
+         Kg1AoHCx4kng0kLRMn1mgU6vpIUI8csF7Pd5gZrusIJuByH/YQcgt76Igq1fPAwA1MY8
+         ipo/ErX5oXNnmTK27rDzmLO0b2aEg5N0k+IDVKyjelA8Vygyzlq/mWnmjDDe0AU6Vrh1
+         oROmcxyYTKEw2xfKtz159Mlmj8+LsFlAgA2wit2BT7FosZ8oyQKH6SjmOf+4IpGZThTg
+         4HjaMN3qspdL/S4DzftESX971uhI4fEXvl8RaYsQXZhNq3on50jTi7degFFYw0tIfo+3
+         QH+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUOV1j6dmx4txs5fXAOJVhC1+F9voa+YKW03VjNnFMt3PZ/Y5FjC1M+cVJ7VfodjRg5N4A5G44gxqUtTpHrWXnBrC4=@vger.kernel.org, AJvYcCV1UFkWpne6CyUkWeRL8P2iz6IDQZzB7ujqkMwnhlPtg0MK0FIm+txL0+osUT2GdHg+aHt3qbmXUs6FC5GX@vger.kernel.org, AJvYcCVSdFTRROZYdWOYgddoNOBOTWDzuqIHmaHtwveGzKxBbN4gB/RrK0F9pGDmCAThEmttY8yT+x17fStg@vger.kernel.org, AJvYcCW7sg1j46ZJR+CjTp96LklyCi/c0e4NmNJiyjC3n522aYT1I8QlM4XQI6yuhr3w/jLLBq/mBk2jSWGl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw39HvHd1Onjav0cJyKUK77H+D8n3j5Mm2lS1GXAPZfy+zbRJZQ
+	5gJLJz7cLup4vo6b/HaM5qlfGo38UWTWPPmqot/0YXpfbtfkUzYES8EHFnVeujWqViA=
+X-Gm-Gg: ASbGnctjp3OdOIxWe2eyx3Pu/9SNmoRd9L7G0F2Tm703dzbRjlFAsbJZvNAT4BHuDCZ
+	t8tYf+43vFt4BN+1V76kTbaIpUwmIEPm8RItKqfti+kfGPGI5R2uuNLM7ukN18KRerx63Dqd5PG
+	LVdCmpBWrkJyZf2CWZa78SEhoo1JJyv01CDpxpEOsPUuP6r5MIGAoiDJZppsx+lTTdlVv66H4iI
+	FXR1RBWC1Q8wDM8FZk+uKrz9kkzj+OrOM/PtC/z2pDaf34c+6f0dQYWuLjS5smPlp0ccckNyZgD
+	c5k1vyc7VyChMIl9ZhWObGoRXEhAG7AEgM1SSiKDmO3jfeF4hp6SmpQasJd+HgDcJ/1KazB2sOe
+	o6HGrlRCQ+t0P5g==
+X-Google-Smtp-Source: AGHT+IGpTcQltr5JdidOWCx+aFZVnqU8+pIwt1rOvJNJGlxSQy2LIw9bd8arC40WmuYJzNqVVlUPHQ==
+X-Received: by 2002:a05:6122:d19:b0:529:2644:8c with SMTP id 71dfb90a1353d-52dbcdfccb7mr23054062e0c.8.1748012712580;
+        Fri, 23 May 2025 08:05:12 -0700 (PDT)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52f19bb4c76sm2221857e0c.43.2025.05.23.08.05.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 May 2025 08:05:12 -0700 (PDT)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4e2900db5f1so3319137.3;
+        Fri, 23 May 2025 08:05:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW4PQzaHN6hS+JeLbPQ7cC6h/b2VgZ6s2TxOF6++4767zj1AfPPffxEo+G4qYXKa1k9N7s+X/XNqqjZgnb2q1qibpM=@vger.kernel.org, AJvYcCWNVPjWL0Tnh1DYz7MFNo6LquFfw/aIwSveJInfM2Eew11Zpkm/sfMrfvrD9U+rmKhRvE7rMJBNMZknAJGP@vger.kernel.org, AJvYcCWS7cOPAbD0ojC38XjeY73zIuov0vjnoXhexj0Qs962+tW3R2rWBxDzyxwjad92enSrqTV0cf6zH0gr@vger.kernel.org, AJvYcCXRSRedHFSG4yMGgZtYRIrV1oQJOjDMiImGNaefp3ri6wHB1/O88pUeE2THM+k/ZhqOJXWhbjhA6aQR@vger.kernel.org
+X-Received: by 2002:a05:6102:3f06:b0:4e2:bacd:9f02 with SMTP id
+ ada2fe7eead31-4e2bacda0c0mr10649290137.16.1748012320563; Fri, 23 May 2025
+ 07:58:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250518185111.3560-1-W_Armin@gmx.de> <20250518185111.3560-2-W_Armin@gmx.de>
-In-Reply-To: <20250518185111.3560-2-W_Armin@gmx.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 23 May 2025 16:56:38 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h91htjq4JzMkL3+K-oE1Zw+s5dvR5WPWnesSi7=97Eww@mail.gmail.com>
-X-Gm-Features: AX0GCFvNEAo6WSG95yeoXO7McaJJ88fA1QwU1RTnUTg2QPf0f8vHNBW7uH9hV94
-Message-ID: <CAJZ5v0h91htjq4JzMkL3+K-oE1Zw+s5dvR5WPWnesSi7=97Eww@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ACPI: bus: Bail out if acpi_kobj registration fails
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: rafael@kernel.org, lenb@kernel.org, j@jannau.net, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250512184302.241417-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250512184302.241417-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250512184302.241417-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 May 2025 16:58:28 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU__dxi4wvS3ikBQefM7uwWWK0bCcHv=TL-Td678pEi9Q@mail.gmail.com>
+X-Gm-Features: AX0GCFt82q4LbUN8wOO1SOIRH6DyQiAH55lXfwgWzPo4hKmY_3p-dAhsTJpdcck
+Message-ID: <CAMuHMdU__dxi4wvS3ikBQefM7uwWWK0bCcHv=TL-Td678pEi9Q@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] dt-bindings: display: bridge: renesas,dsi: Add
+ support for RZ/V2H(P) SoC
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 18, 2025 at 8:51=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrote:
->
-> The ACPI sysfs code will fail to initialize if acpi_kobj is NULL,
-> together with some ACPI drivers. Follow the other firmware subsystems
-> and bail out if the kobject cannot be registered.
->
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> ---
->  drivers/acpi/bus.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
-> index 058910af82bc..c2ab2783303f 100644
-> --- a/drivers/acpi/bus.c
-> +++ b/drivers/acpi/bus.c
-> @@ -1446,8 +1446,10 @@ static int __init acpi_init(void)
->         }
->
->         acpi_kobj =3D kobject_create_and_add("acpi", firmware_kobj);
-> -       if (!acpi_kobj)
-> -               pr_debug("%s: kset create error\n", __func__);
-> +       if (!acpi_kobj) {
-> +               pr_err("Failed to register kobject\n");
-> +               return -ENOMEM;
-> +       }
->
->         init_prmt();
->         acpi_init_pcc();
-> --
+Hi Prabhakar,
 
-Applied as 6.16 material, thanks!
+On Mon, 12 May 2025 at 20:43, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> The MIPI DSI interface on the RZ/V2H(P) SoC is nearly identical to that of
+> the RZ/G2L SoC. While the LINK registers are the same for both SoCs, the
+> D-PHY registers differ. Additionally, the number of resets for DSI on
+> RZ/V2H(P) is two compared to three on the RZ/G2L.
+>
+> To accommodate these differences, a SoC-specific
+> `renesas,r9a09g057-mipi-dsi` compatible string has been added for the
+> RZ/V2H(P) SoC.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Thanks for your patch!
+
+> --- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> @@ -14,16 +14,17 @@ description: |
+>    RZ/G2L alike family of SoC's. The encoder can operate in DSI mode, with
+>    up to four data lanes.
+>
+> -allOf:
+> -  - $ref: /schemas/display/dsi-controller.yaml#
+> -
+>  properties:
+>    compatible:
+> -    items:
+> +    oneOf:
+>        - enum:
+> -          - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
+> -          - renesas,r9a07g054-mipi-dsi # RZ/V2L
+> -      - const: renesas,rzg2l-mipi-dsi
+> +          - renesas,r9a09g057-mipi-dsi # RZ/V2H(P)
+
+Nit: I would add the new entry after all the old entries, to preserve
+sort order (by part number).
+
+> +
+> +      - items:
+> +          - enum:
+> +              - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
+> +              - renesas,r9a07g054-mipi-dsi # RZ/V2L
+> +          - const: renesas,rzg2l-mipi-dsi
+>
+>    reg:
+>      maxItems: 1
+
+The rest LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
