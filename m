@@ -1,39 +1,191 @@
-Return-Path: <linux-kernel+bounces-660432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B86D1AC1DD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:42:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2256FAC1DDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E964E7BA67D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 07:41:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64D291C02393
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 07:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47801221D9A;
-	Fri, 23 May 2025 07:42:47 +0000 (UTC)
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B1A20CCC9;
+	Fri, 23 May 2025 07:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nHm4GwQW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3B02036ED;
-	Fri, 23 May 2025 07:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747986166; cv=none; b=ADp6s1BnqVe3uN5FlvMmgAqDb3rgRDcbg2CE/JRY16B4ForqfNa1XyKngdTz4vkEpqhu2EOoUv3sqUVl7PLdjUhsTK+yLCL4Cxbqqh6/cXp40SNgUsBVu/RH9C1EjOKjaycG/NH3WYAl5w/egycxh/hu6K9zz/E4oSqQ/A0RYow=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747986166; c=relaxed/simple;
-	bh=SOhrDQ8XUaAcb81YDu7fSBLPcvirijmOaA1uBw7l+h8=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=m0DW7MsHN6KoljHUxy4EiwMS58UL59LldyLFBnAXnRD7OUQtJMFL6ThngcWycNLQsXkXJhwKicyLFSixvvUP5Gw6wvLGrolE2R0imWwSyXIEKXqQZxaBwjNVm0+O8wt2XKdq0pU2hmzIMLbNCQUWOxlBgjayycywy6r/ciuf94E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uIN3B-008sAy-0k;
-	Fri, 23 May 2025 07:42:41 +0000
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EEC2036ED;
+	Fri, 23 May 2025 07:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747986261; cv=fail; b=T8zZB6e7EEYlLKGFIK+Mshth0g1oPER580Uflndb+TzytbY3nj6LnVXHGiqdzE8BVmiGX48euAR6wmFtyJcs1fRJRn7K9YO1DxTiAMaTDACPKe8jlsS3BJPFeb4xL2DZT0+0TFI9F6kltXtScCVrp1ATp0Au02bTZ2mulKtaowY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747986261; c=relaxed/simple;
+	bh=GtVS6vqcW+xoNaHQIDQ9qI4CIv0D1yh+2vQoTzrvYSo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=J+q50Z5tCfV8SDflyf7aMWRtEd618UHKdqrS7APt4xQwmDyAwkSciifmuUy6SEGuVZbBM0x6YCmQyThfQ6NSzDwwNtgX7X8R7rYWxN85xjFo1J7QutJGrnjNNMSv+PA4rsNVNxXCFfilWYGeK4JQZ/fGeYp6pgKiwV2pBY4xano=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nHm4GwQW; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747986260; x=1779522260;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=GtVS6vqcW+xoNaHQIDQ9qI4CIv0D1yh+2vQoTzrvYSo=;
+  b=nHm4GwQWuOvAfVOWMXUEVmmeQ/8cos1mS/2WFcP6XalEo61pTWtFnw4U
+   eVSbG53FYHi7g7GLKwgEznwxuOhO+jsl21jYyFEg4OARlYZMxf5VSDd0q
+   TK3CxtQU6LyINSb6ukOK2822jBIyRU9ooLmpDDsY9QujqrFb53J3nyJGg
+   bn5CUJwoNQPtfDKcFdN17OjRefSL/ivhZKGSiVrK+jw7a4IkEJdwHWREV
+   NUSOxfhpJM0VH+VT4dzeVytQ24D2sXT5RzNJmuE1Ckx3ASIaf6BwgJJl1
+   k+0gL5MGmz+TzL9LAD/qbiK6lqTX1tMoudzLDHLK+CS0KaED46eRkljyT
+   g==;
+X-CSE-ConnectionGUID: 8RhDAHhoS26kGwAKQI6jww==
+X-CSE-MsgGUID: yQTFyyKaReG/sPEqHwBvmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="49738631"
+X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
+   d="scan'208";a="49738631"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 00:44:18 -0700
+X-CSE-ConnectionGUID: DYrTbnDyRV2XbYHBl9m+/g==
+X-CSE-MsgGUID: JXbqqhcOQCiCHEG7s4NzJQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
+   d="scan'208";a="141528066"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 00:44:17 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Fri, 23 May 2025 00:44:16 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Fri, 23 May 2025 00:44:16 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.56)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.55; Fri, 23 May 2025 00:44:16 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XeWRFAgDIU45RlI9fC/ntnDBpnAEMAemv8N5LsXqflYnCIH06Ee4EtIVAHMSgz58vlAsm4cp4zThebn2+Deje/teaTJC0MFy0CQTdjKYcDt1j5VdfgbgYQqmCW1p6Dm1rUCwsYh7uyZQltkKyhe1h12uBWDRugeGOw6mJ066fpw7qhr4y3D3d98kKAgjCwZnfLGfGcuZcYza4dB/fFx6Hu0AyovNROXjOkKOeTeZZuVr3h46NlNNRucXo7dy4GyctFQf7Py/ek1EW+yYNUQpCQcWsBtsX7Iqp1VW5bEco5q5ZdKVrKUrfKKz7LF37cdcz6BmjZrKoMTFbW0jm6UtQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=stfZIRxr/kc44EVoa+j76nHtS9Gyzulbx21m966XBZ0=;
+ b=Rtsh9y/3dwypViczTfifiKEBofgFZFm96miNxQ/wb86Iroum/MwZsbNU+7DgZCjzcLLrRUdah2+IvzAU/hJ7P/w3ihqkUdIgNSFv/jQU3duGtmSBRUYs61dTJLJzdmqWCrcRN8ErHHpg/dRTAfIGW7bB56lvzenkOghweaE+DVteYG67GwlhGiRq5hCYPufovDfO0SBmoAo7H2WoZg6XTgA8KWTNgwp9h88AN/pp2lE8u07pG4Sj2JwmlmSk8ectK01rsMplbiuluGm1QfPWsQuJ29k4ZJj8klDVBlQUTeApdlI+UsuU1b5zvhC8BNv0rI0Z8sqcYdLjucJK+xzKPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by CH3PR11MB7252.namprd11.prod.outlook.com (2603:10b6:610:144::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.21; Fri, 23 May
+ 2025 07:43:55 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%4]) with mapi id 15.20.8769.021; Fri, 23 May 2025
+ 07:43:54 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Nicolin Chen <nicolinc@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
+	"corbet@lwn.net" <corbet@lwn.net>, "will@kernel.org" <will@kernel.org>
+CC: "bagasdotme@gmail.com" <bagasdotme@gmail.com>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "joro@8bytes.org" <joro@8bytes.org>,
+	"thierry.reding@gmail.com" <thierry.reding@gmail.com>, "vdumpa@nvidia.com"
+	<vdumpa@nvidia.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+	"shuah@kernel.org" <shuah@kernel.org>, "jsnitsel@redhat.com"
+	<jsnitsel@redhat.com>, "nathan@kernel.org" <nathan@kernel.org>,
+	"peterz@infradead.org" <peterz@infradead.org>, "Liu, Yi L"
+	<yi.l.liu@intel.com>, "mshavit@google.com" <mshavit@google.com>,
+	"praan@google.com" <praan@google.com>, "zhangzekun11@huawei.com"
+	<zhangzekun11@huawei.com>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "patches@lists.linux.dev"
+	<patches@lists.linux.dev>, "mochs@nvidia.com" <mochs@nvidia.com>,
+	"alok.a.tiwari@oracle.com" <alok.a.tiwari@oracle.com>, "vasant.hegde@amd.com"
+	<vasant.hegde@amd.com>, "dwmw2@infradead.org" <dwmw2@infradead.org>,
+	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>
+Subject: RE: [PATCH v5 01/29] iommufd: Apply obvious cosmetic fixes
+Thread-Topic: [PATCH v5 01/29] iommufd: Apply obvious cosmetic fixes
+Thread-Index: AQHbx6QUcd/9Ev3eqUeRFS0ODPGL8rPf3X9w
+Date: Fri, 23 May 2025 07:43:54 +0000
+Message-ID: <BN9PR11MB52769D456ACC019937E447838C98A@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <cover.1747537752.git.nicolinc@nvidia.com>
+ <af4d5f74f9e4f1298624f230a7f6e430a9866acd.1747537752.git.nicolinc@nvidia.com>
+In-Reply-To: <af4d5f74f9e4f1298624f230a7f6e430a9866acd.1747537752.git.nicolinc@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|CH3PR11MB7252:EE_
+x-ms-office365-filtering-correlation-id: edde0b3d-817f-4456-f181-08dd99cd9174
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?PP1X6zVw/4MTBy34ocghvRqKRD9j/gMoo1gwbVENoaSCSTaQmn/pbaQ9nBL2?=
+ =?us-ascii?Q?DuEL6UXdYrY4LGwsMx0G8Jx2b8DIFhHdfCcYXIjrVnP/HuyqSzWPcLEa+Lsd?=
+ =?us-ascii?Q?ogEUjUDiTsnX0yhuPf+3FkiaOMXgn8R5PR8Xr2CMDHzfFAtJTof2PROT4BVM?=
+ =?us-ascii?Q?otkyXxg4SceEZ38e1WlB8rWDyR53NmmT4RnBYWhptPAQwazB1muh0f2Klp4+?=
+ =?us-ascii?Q?4Vj7puK3f4MeHjXXRtaytkN/abwcfcY24Yl7m3P6IUfNnLMNnY2h3g9p4TkQ?=
+ =?us-ascii?Q?/xm/pqmVedBzhWmrKBcoqqUm7SN9Q+YgnTRNmdeUn13G28xxtwLbN1ZConXS?=
+ =?us-ascii?Q?F/056oIBMkd7capGU1bguIwyp+xER3xQUqSqux0FkXClwdSy2XyLa0H1JFr1?=
+ =?us-ascii?Q?3bi9Gf0C9EXMKqpfInDlXDNrmUZ7cS+4PIpKEPF8OdsjdPtEgXmMxL33ngKX?=
+ =?us-ascii?Q?t/9vU3+cqQ1CviNTI383wAXErg6OpUMWKz5Sz+SCdNsdYqNnrhI/p4AJXV5I?=
+ =?us-ascii?Q?qfBL5Ck+M0TUFdZtUZC6n/8hpAI+DugSwMhdXNawoQOKA+cjAKgq9/75HyU/?=
+ =?us-ascii?Q?ET5FneTIghQfHEmvICHCS5RVHJ4aHm2+RXUI/HyRT7YwoohE6Uvj2sL1/BvP?=
+ =?us-ascii?Q?/aUdTedYscwhT3LeJElrmjeX/iVKYF8X7CiR1lAENkIC64+fkSJh2ImZYmP2?=
+ =?us-ascii?Q?/epoqsTA7keFwV6DT1fA8/wHQG3Gidzoeozg6ETEkYwQ+mmOMHa1FLWug45Y?=
+ =?us-ascii?Q?S4ywoJ+swFmJj3/Ou1n15lO8HZFtLERHUkGcOsF2KDloz0AhGH9slHnu2XNO?=
+ =?us-ascii?Q?l0n7Pm/qoTP8C9NKUA0QIIuzHLnbxUmBnG/trmYU3cOs/D5JnY+SRLRY4Ojh?=
+ =?us-ascii?Q?oAYQ7Si1YM+aTRIyTbFYeqCD6RZBxCC4o6toJYf7rR76ht8KmXPa391ftx8P?=
+ =?us-ascii?Q?4nKtvaP66SPgl4o05t8Fzc+qpYJ7dW0YDeoqNXaEhsl5g6Pi7Siii4GOtlPT?=
+ =?us-ascii?Q?QIMgCPdB2d7FTC8HgwT/jXKpPVoWZ7Haz3Fv5QdjNbsvOREIR7fbxVxnmND/?=
+ =?us-ascii?Q?GUYmDgGX+aW3CUPGx6NFwGswlFfPV+D/tRzOd1lf1GBJte/nwpSIJOFAjJOR?=
+ =?us-ascii?Q?++I1hlQLAwkXcQgVwiH3zV3Nzx4L672A1h4yjcLeTSvnFeZSrzV2/I/ZpSwN?=
+ =?us-ascii?Q?v929jB9rNMw+hrhO8gakAb0jU1/Rlch0/J96j1mMpkc+UtWVwcaJwtcs5x/l?=
+ =?us-ascii?Q?9uaf6C1NxTvXucKgeTXFxoN1BqFlGNxflFDUrtNxE6kE4cL0JFjFo8Pf+IP2?=
+ =?us-ascii?Q?TNNa9O7FHWz2B56QstLQMQO0YyoMNNwHik8ZgXb6Ns5nZRBSpXWzpwQkYehE?=
+ =?us-ascii?Q?qCGvFZjTNQ7NTMJacgY84d1exDXxtGfmpLqXdS2nwC46U+0/xfTRf3nr/kef?=
+ =?us-ascii?Q?PTID8jzf4raqx26aC1HR6fSfsqMoYkFzSDXyBMwp8s9q7XRUoydSxA=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ud2bnfwXujuwIyv61IKPWDsmiRS0QTg00ExBX0gIdQmlZVathVb5m/LaAmCk?=
+ =?us-ascii?Q?ifym92Rpi8mE4OI+TqjFhi0jOYkN9goIN6G1jRCU7uwpBTjKLFElmtvlan+O?=
+ =?us-ascii?Q?53ZKZUlX5RqtUoGYddoI+/lTIRGEFL+slmuvMlSGKQV258dFifmD05k1wjdX?=
+ =?us-ascii?Q?5Nc66XmM02WChAWNNxlAFOaGHotimXeiX+eFDwylF8CxB5IQ9H3oXBXs7NVH?=
+ =?us-ascii?Q?USBPbATRdk+5DGexvjTLIXyx6vjM/n3ZsUwlY5Kfz1CajRft9MnliDCpxHTJ?=
+ =?us-ascii?Q?iNwjckitvWsbsIEqm5OuUhwdrMZ/5O7CrtueWJ3evdq39SHiJzdF3hAEFqak?=
+ =?us-ascii?Q?AnH9nQnodFRBwYAA/jw4FaI6LlpZOMtWx3iT5azqSPOKJFE3SJ3/JHry+/m+?=
+ =?us-ascii?Q?6cFTLP1NwtrAvSyKZu8OpXRVMDgj6M3C5sEJdz0uaKE13DGNonWpuNpK+269?=
+ =?us-ascii?Q?N87gOmAJMZplQbGyW4hvw+mDEY4MFdO9wM2DwUZ/RVKonjjNNRwDC0gDbg3b?=
+ =?us-ascii?Q?7OqvVKP7KGMZ8yluYJqlyASw9m8KVlMOZ4FVXl+ucv4COwMQ2B0QNe08l9uu?=
+ =?us-ascii?Q?ShNC6Yfqq7mTjkzoQ6M1q6/K2JC9o8ZnhQNl9hMr/QqPzoSxCgiTG2ykOpWr?=
+ =?us-ascii?Q?U43gciXDoMdFQDoXiWAp0s/TTxf3kILg3OCnsI59KIkLkS30GsIn0ti/Rmnq?=
+ =?us-ascii?Q?jtwkba0h+jWPr6cN1hiEA8y56sU1fhRGjO7Zm03S1eCmtENhpg5WdFGt/7vX?=
+ =?us-ascii?Q?8FoxTYTbO94DN5bR6XEd/E0zxAPUAErKa43P7MKz3BQS3m8U2QHPyw/Q4IIL?=
+ =?us-ascii?Q?v4YrCLT3B3ItvHMR23N8U1AXEjsCOFy3i/TRfdlOsndl87xaLPOLB4s+kKYL?=
+ =?us-ascii?Q?PPA4n/2uTDFyXcWvc7NOLJe2G7IUS70ZRKiFZqE+xUxodKchVbvFZKvo58mG?=
+ =?us-ascii?Q?Y3RNKcslZVIaMfgpwacyWYoEpDQ7eUoFGJQ/7vVta4CuycT8V3XymT8KmKJx?=
+ =?us-ascii?Q?lPhFQDhngejUV1d5wizOtbPZk9jN+8S665uOr5XgpDrsVuhbAd9hg6I8Sj8a?=
+ =?us-ascii?Q?bfKDN9+icPET9oa2/WsyQC+uhNQUnZ6uVEL6qnXKMXDbBGUW8uMHcASFoC2T?=
+ =?us-ascii?Q?i9HqHKEJ1qD7Hi9/KokzPIpQQpVuzNhGBj55o0qz1SZmHMLYLVpTmCSmxGd1?=
+ =?us-ascii?Q?OQC7s3OlPHnYWxDAFbZfZFjCjI+rLFFm2+ptmNOIyQxfTc4GK/FY/4hDe4wS?=
+ =?us-ascii?Q?pNVuTpKpntuY+gkOs+CU8yy0ns2o60Mt9COJODnVoGJJOXvHVWrYRinlstuH?=
+ =?us-ascii?Q?yCUTdHANrqsCSiPkZszFpjUnyO2i3wBSXix5Zph1KMJMDlueXanN5qiX06kT?=
+ =?us-ascii?Q?P5eXZZIIQ/2Un3IhaiSlM7VxX9vaD1gG+l6pDFDugkkQz2QOYpZizXr6faOt?=
+ =?us-ascii?Q?oBnwb1WUgj+wIKixm+YoHzc7UfGDm9vvzPQfoVnszDaDhX8OUb4vPTPcvaUW?=
+ =?us-ascii?Q?C8wpJCYHwPCke+NuXtY0P2+czB9xOgytqQHQnNZeHVqFN6Itj8h2iXRhu5t3?=
+ =?us-ascii?Q?7DVS5kVAmN0l9Abo2ewGGn7OcGzNffurjnLjTPc0?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -41,141 +193,28 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Yan, Haixiao (CN)" <haixiao.yan.cn@windriver.com>
-Cc:
- chuck.lever@oracle.com, stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: nfs mount failed with ipv6 addr
-In-reply-to: <73509a8c-7141-49d7-b6d4-25a271fbad2c@windriver.com>
-References: <>, <73509a8c-7141-49d7-b6d4-25a271fbad2c@windriver.com>
-Date: Fri, 23 May 2025 17:42:40 +1000
-Message-id: <174798616079.608730.9700383239346135852@noble.neil.brown.name>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: edde0b3d-817f-4456-f181-08dd99cd9174
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 May 2025 07:43:54.3894
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: CbA8Qa60DRnNR+Ukfzol4wJnMJNUflkQlcxij4mtFT/6LM7MwAIU/DN2GYqrhUcDMzMxFSGss+8QDH0pIYzjhg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7252
+X-OriginatorOrg: intel.com
 
-On Fri, 23 May 2025, Yan, Haixiao (CN) wrote:
-> On 5/23/2025 7:21 AM, NeilBrown wrote:
-> > CAUTION: This email comes from a non Wind River email account!
-> > Do not click links or open attachments unless you recognize the sender an=
-d know the content is safe.
-> >
-> > On Thu, 22 May 2025, Haixiao Yan wrote:
-> >> On 2025/5/22 07:32, NeilBrown wrote:
-> >>> CAUTION: This email comes from a non Wind River email account!
-> >>> Do not click links or open attachments unless you recognize the sender =
-and know the content is safe.
-> >>>
-> >>> On Thu, 22 May 2025, Yan, Haixiao (CN) wrote:
-> >>>> On linux-5.10.y, my testcase run failed:
-> >>>>
-> >>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mount=
- -t nfs [::1]:/mnt/nfs_root /mnt/v6 -o nfsvers=3D3
-> >>>> mount.nfs: requested NFS version or transport protocol is not supported
-> >>>>
-> >>>> The first bad commit is:
-> >>>>
-> >>>> commit 7229200f68662660bb4d55f19247eaf3c79a4217
-> >>>> Author: Chuck Lever <chuck.lever@oracle.com>
-> >>>> Date:   Mon Jun 3 10:35:02 2024 -0400
-> >>>>
-> >>>>      nfsd: don't allow nfsd threads to be signalled.
-> >>>>
-> >>>>      [ Upstream commit 3903902401451b1cd9d797a8c79769eb26ac7fe5 ]
-> >>>>
-> >>>>
-> >>>> Here is the test log:
-> >>>>
-> >>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# dd if=
-=3D/dev/zero of=3D/tmp/nfs.img bs=3D1M count=3D100
-> >>>> 100+0 records in
-> >>>> 100+0 records out
-> >>>> 104857600 bytes (105 MB, 100 MiB) copied, 0.0386658 s, 2.7 GB/s
-> >>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mkfs =
-/tmp/nfs.img
-> >>>> mke2fs 1.46.1 (9-Feb-2021)
-> >>>> Discarding device blocks:   1024/102400=08=08=08=08=08=08=08=08=08=08=
-=08=08=08             =08=08=08=08=08=08=08=08=08=08=08=08=08done
-> >>>> Creating filesystem with 102400 1k blocks and 25688 inodes
-> >>>> Filesystem UUID: 77e3bc56-46bb-4e5c-9619-d9a0c0999958
-> >>>> Superblock backups stored on blocks:
-> >>>>         8193, 24577, 40961, 57345, 73729
-> >>>>
-> >>>> Allocating group tables:  0/13=08=08=08=08=08     =08=08=08=08=08done
-> >>>> Writing inode tables:  0/13=08=08=08=08=08     =08=08=08=08=08done
-> >>>> Writing superblocks and filesystem accounting information:  0/13=08=08=
-=08=08=08     =08=08=08=08=08done
-> >>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mount=
- /tmp/nfs.img /mnt
-> >>>>
-> >>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# mkdir=
- /mnt/nfs_root
-> >>>>
-> >>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# touch=
- /etc/exports
-> >>>>
-> >>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# echo =
-'/mnt/nfs_root *(insecure,rw,async,no_root_squash)' >> /etc/exports
-> >>>>
-> >>>> root@intel-x86-64:/opt/wr-test/testcases/userspace/nfs-utils_v6# /opt/=
-wr-test/bin/svcwp.sh nfsserver restart
-> >>>> stopping mountd: done
-> >>>> stopping nfsd: ..........failed
-> >>>>     using signal 9:
-> >>>> ..........failed
-> >>> What does your "nfsserver" script do to try to stop/restart the nfsd?
-> >>> For a very long time the approved way to stop nfsd has been to run
-> >>> "rpc.nfsd 0".  My guess is that whatever script you are using still
-> >>> trying to send a signal to nfsd.  That no longer works.
-> >>>
-> >>> Unfortunately the various sysv-init scripts for starting/stopping nfsd
-> >>> have never been part of nfs-utils so we were not able to update them.
-> >>> nfs-utils *does* contain systemd unit files for sites which use systemd.
-> >>>
-> >>> If you have a non-systemd way of starting/stopping nfsd, we would be
-> >>> happy to make the relevant scripts part of nfs-utils so that we can
-> >>> ensure they stay up to date.
-> >> Actually, we use  service nfsserver restart  =3D>
-> >> /etc/init.d/nfsserver =3D>
-> >>
-> >> stop_nfsd(){
-> >>       # WARNING: this kills any process with the executable
-> >>       # name 'nfsd'.
-> >>       echo -n 'stopping nfsd: '
-> >>       start-stop-daemon --stop --quiet --signal 1 --name nfsd
-> >>       if delay_nfsd || {
-> >>           echo failed
-> >>           echo ' using signal 9: '
-> >>           start-stop-daemon --stop --quiet --signal 9 --name nfsd
-> >>           delay_nfsd
-> >>       }
-> >>       then
-> >>           echo done
-> >>       else
-> >>           echo failed
-> >>       fi
-> > The above should all be changed to
-> >     echo -n 'stopping nfsd: '
-> >     rpc.nfsd 0
-> >     echo done
-> >
-> > or similar.  What distro are you using?
-> >
-> > I can't see how this would affect your problem with IPv6 but it would be
-> > nice if you could confirm that IPv6 still doesn't work even after
-> > changing the above.
-> > What version of nfs-utils are you using?
-> > Are you should that the kernel has IPv6 enabled?  Does "ping6 ::1" work?
-> >
-> > NeilBrown
-> >
-> It works as expected.
+> From: Nicolin Chen <nicolinc@nvidia.com>
+> Sent: Sunday, May 18, 2025 11:21 AM
 >=20
-> My distro is Yocto and nfs-utils 2.5.3.
+> Run clang-format but exclude those not so obvious ones, which leaves us:
+>  - Align indentations
+>  - Add missing spaces
+>  - Remove unnecessary spaces
+>  - Remove unnecessary line wrappings
+>=20
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 
-Thanks.  I've sent a patch to openembedded to change the nfsserver
-script.
-
-Can you make the change to nfsserver and let me know if it fixes your
-problem?
-
-Thanks,
-NeilBrown
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 
