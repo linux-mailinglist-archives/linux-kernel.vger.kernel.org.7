@@ -1,107 +1,116 @@
-Return-Path: <linux-kernel+bounces-661087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B1CAC2690
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:36:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D71AC2695
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A27D3ADBF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:36:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 246C95423BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47632949F5;
-	Fri, 23 May 2025 15:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943502951B5;
+	Fri, 23 May 2025 15:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjwldArL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a0rM6f3Q"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE6514286;
-	Fri, 23 May 2025 15:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9840714286;
+	Fri, 23 May 2025 15:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748014575; cv=none; b=INF4mOMiFuy6QGwTwvGceB0tnPfNbIzaUXL923HHXcqFcx6mrD/3+smZmmJZFauGHcobKIeorg9RCsw3ttu835wm5R1JxhYar+GqxjUWnEvZPFJqaNGDcPY3DA9v2L1ct40l0/bw/yPLvBQTNX66MSP09LLgpWT1ZAobeP6xG0w=
+	t=1748014730; cv=none; b=GMTJct5woD0Jx4VU8ElYEybl9LML8WnAmC9aNKJM7M4fKYMQi9dZBFYCdKAcniXd0K41LiqzdjeLa4WF+mIvjOiNGhe9iLviphkJzpTHDm9bqJ9MOzKTyxkOWIx1YswunR8SrU/k8/eGq49e/JyGO4wN+vBvqqh+1MG6Ji7JNw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748014575; c=relaxed/simple;
-	bh=zG0Aq0dm5zd6tPL905oAGCXNUFTWV4Fg6wvO8nA9YtM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JKxTxt+rYUE0k6tMtiVzjjZ6SwjK7q8rqTp+EIp/akW3ZiywDlLIKWICJuuB9+CoG1Evohw3GvECRrh3mS8Ks/TthSRM5JxA+IWr6f996nq97Wx4qh2Nk8gmjFSSQl8708R8fzllvZc+dRDRQYNPXVCFwL003Si/9RyIYmjtye4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjwldArL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B096CC4CEE9;
-	Fri, 23 May 2025 15:36:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748014574;
-	bh=zG0Aq0dm5zd6tPL905oAGCXNUFTWV4Fg6wvO8nA9YtM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CjwldArLZVywmL4BtfM9pLrYXkohqEPLLnBQyNP7xfBRFsSzTxTxvrtEaGOep4K7h
-	 vZ0k4IlP/x9We6ehTYweyWo2At6E9I1IMrjAwSlUHiEL7Ru/R5yQRAzYqUXxXKlgDN
-	 KT98/Ef487LHmYrzwFvHZ4Gtw/y7nigDdaeHZLrFdj3+91C8P1bkIVdrKrSHkysQVQ
-	 UXa1YcDU6f10xJNpSegcoSTbuxW4SdAPPk86AOv5uaFfqKgDiwPykkzdKkmEKboTQy
-	 l9EMFcVTWjMceFxINNpuVIa9nLdGHG6jg10RAtB+lnucCV5vPUsGDP2bug5aJ+QEVB
-	 pyj3DMaJpVIqA==
-Date: Fri, 23 May 2025 16:36:07 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Rajnesh Kanwal <rkanwal@rivosinc.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Atish Kumar Patra <atishp@rivosinc.com>,
-	Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Beeman Strong <beeman@rivosinc.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Palmer Dabbelt <palmer@sifive.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] dt-bindings: riscv: add Sxctr ISA extension
- description
-Message-ID: <20250523-ducky-unlisted-5764ad0f698a@spud>
-References: <20250523-b4-ctr_upstream_v3-v3-0-ad355304ba1c@rivosinc.com>
- <20250523-b4-ctr_upstream_v3-v3-7-ad355304ba1c@rivosinc.com>
+	s=arc-20240116; t=1748014730; c=relaxed/simple;
+	bh=esKPzyKTo7EyhBPeYFjR099taB5F7qTmeYFSJEtpeUM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DPoSpL+ES5SK4LhS6xPDgEJuk1xZtyMwkEuaCLI0vJtqazshj62kkEY2cTqMrtBqo9oRi9k2JJ7SOuzLkItQYelBpn+R8cCIcWmLXRe96LigJtxueZBCZHqpShAylBoHtlPYK8U0KymZDwpSBTF24hNU1VqX2jmZk3BWfDbC2Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a0rM6f3Q; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b1f7357b5b6so5841836a12.0;
+        Fri, 23 May 2025 08:38:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748014728; x=1748619528; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i9By7081c2CRgn2t4xnecIrtE4ESQao/xPs7l46E2ec=;
+        b=a0rM6f3QBM8UqSdNCTF3yv/XhWpcBk6CgvWPUXVMJ7gco2a5YmtgPQufd/bcQfJvOz
+         ws01Ama/t9wMXj/mfqZ6dC5jX5fofJcRapity7O1Pwj1nW9kZoO1cw3m1vqDLxcW7Mf5
+         lQ1T2PSjFDTZ3TP5LXMdPzkZn+TAxGHpi3SKC/43BNmqNogWnG5vLw3+A611cP6k/L5a
+         ccmmkvGN/gkkMbQPiF/8RzPDeTMHiotM4W37FK/trRMSjVWq/Rz5mcE/Hfopcf72jaou
+         vWbquyA4qJhIWSP5jZsySetJDAF8zq0xDw1vco5G41FKrdBjUJiwqZEKMFLV072D9ceI
+         uPdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748014728; x=1748619528;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i9By7081c2CRgn2t4xnecIrtE4ESQao/xPs7l46E2ec=;
+        b=qUxMOPmFMk0WARcgXpXS+lCjW0mwDZu78IcAMSAIN1Tn7NLCjwo/r7bdr1kFRvpmkt
+         TcT/KSutyHVxJkoCZYGPtb4hbZXdK0ZaAhmJqOp11ShcLSLkNIpxtszaSNFwiQNr3Rf0
+         UrmFa9FzwWBq7WiN//oGaFrBaQocovOAMsqb0BiB7ruNYrJYV9zlW3T9mu6f4AXQxfKO
+         EbdnH8rRtowgOaLxkxbEKAZDj54aiWfZEM4aWtwaEUB9Sst/xV83d/OUg9hUFkPm0m7z
+         3LmqqAY0xMsaIwZY5421HZuR1jvnf5hhjKnz1PvVbINMIf97c2uFAYDjgXxppBp9mFSH
+         LqUg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/T2/+pJHPQGQWaWY0+FfDA5L90/UtC4/AvQuTBkcIXLo+EglQzXKeOFoh4G7u6wy9koKxHg85nfQdks0=@vger.kernel.org, AJvYcCWjM2uJK2J0lMyWKeQdhumeWTpBfxG4qT4XYbOGlhIRAdUXts2qoye1I90cH6Ae9y6V5zXETBQtwPQr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS8a9jfshx4bUkq3yMCz7u6bOpGmnAWiDgCAajEwGqJdSFhVQG
+	rXpEdACKoCapurYxyYhrgimZQJoUdgBPJBht3lLGhrLIThfY3WUlQeY3
+X-Gm-Gg: ASbGncu4MPWjklGilwPl09yWFxb3TFAeTfMqrbv0iroD2mx6l7IVZ9yy5kMFUcGQJ+w
+	r0ORgm5TVmyypbxOSdep/M0MbfUmbvDJ85nzAOAPPqcv4dSDr4JljHsV6cvAqnJ9+mOv7YYtkI6
+	3Hia1nj+PJFJYWaRVywlxsKBCMjspFRFo3aYNAqDVumO6zImGTGtso7QvXQ4LN2YJT64SpbkX4/
+	fV7ejuJoOhq63BAvW17GDBh5DzctlBrKwj24PWm6bGJZzSho7IajYeRo8fLj2gOC2gUISyQeHkh
+	oLskRAnQiuiTfJPhz8hsorUDPltEJ1EfG8gYy0Fy2s0D6Eu/YKK4uKKVZegpGGtYCsyEACTE/mU
+	O2ATG120uZ2JURrY/aiDVnLcAO1s=
+X-Google-Smtp-Source: AGHT+IE+ZIequO6IEewOv6/npkzSIgcVfoP+JyEutRg58NuQQxakWelr4YYr4N2RGALZuFbYJsZAUA==
+X-Received: by 2002:a17:90b:3682:b0:310:eea1:1c1 with SMTP id 98e67ed59e1d1-310eea10349mr2961466a91.16.1748014727610;
+        Fri, 23 May 2025 08:38:47 -0700 (PDT)
+Received: from [192.168.11.2] (FL1-119-244-79-106.tky.mesh.ad.jp. [119.244.79.106])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e11e33c2esm12871188a91.1.2025.05.23.08.38.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 May 2025 08:38:47 -0700 (PDT)
+Message-ID: <63702a66-4cc6-4562-89f4-857fe3f044e8@gmail.com>
+Date: Sat, 24 May 2025 00:38:43 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="YsbMlZlsa7BrXpPT"
-Content-Disposition: inline
-In-Reply-To: <20250523-b4-ctr_upstream_v3-v3-7-ad355304ba1c@rivosinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/hmm: Allow hmm_dma_map_alloc() to tolerate NULL device
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-rdma@vger.kernel.org, linux-mm@kvack.org, leon@kernel.org,
+ jgg@ziepe.ca, akpm@linux-foundation.org, jglisse@redhat.com,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, zyjzyj2000@gmail.com
+References: <20250523143537.10362-1-dskmtsd@gmail.com>
+ <aDCKsK2-zRkqge64@infradead.org>
+Content-Language: en-US
+From: Daisuke Matsuda <dskmtsd@gmail.com>
+In-Reply-To: <aDCKsK2-zRkqge64@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 2025/05/23 23:48, Christoph Hellwig wrote:
+> On Fri, May 23, 2025 at 02:35:37PM +0000, Daisuke Matsuda wrote:
+>> Some drivers (such as rxe) may legitimately call hmm_dma_map_alloc() with a
+>> NULL device pointer,
+> 
+> No, they may not.  If something has no device with physical DMA
+> capabilities, it has not business calling into it.
+> 
 
---YsbMlZlsa7BrXpPT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Christoph,
 
-On Fri, May 23, 2025 at 12:25:13AM +0100, Rajnesh Kanwal wrote:
-> Add the S[m|s]ctr ISA extension description.
->=20
-> Signed-off-by: Rajnesh Kanwal <rkanwal@rivosinc.com>
+RXE is a software emulator of IBTA RoCEv2, designed to allow systems equipped with standard Ethernet adapters to interoperate with other RoCEv2-capable nodes.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Like other Infiniband subsystem drivers (under drivers/infiniband/{hw,sw}), RXE depends on the ib_core and ib_uverbs layers in drivers/infiniband/core. These common RDMA layers, in turn, rely on the HMM infrastructure for specific features such as On-Demand Paging.
 
---YsbMlZlsa7BrXpPT
-Content-Type: application/pgp-signature; name="signature.asc"
+As a result, even though RXE lacks physical DMA capabilities, it still needs to interact with hmm_dma_map_alloc() through the shared RDMA core paths. This patch ensures that such software-only use cases do not trigger unintended null pointer dereferences.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaDCV5wAKCRB4tDGHoIJi
-0pfsAQCC0vFE1gQIjvjVO3vjHghEg/7zH3pwUyTcP2hPYZcZSAEAjizdb5MtEvdc
-ne55YWgcjHCCab8vDuJrO0B3c+3OXwg=
-=xhJF
------END PGP SIGNATURE-----
-
---YsbMlZlsa7BrXpPT--
+Thanks,
+Daisuke
 
