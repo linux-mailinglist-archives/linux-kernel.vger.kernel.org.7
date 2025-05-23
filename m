@@ -1,126 +1,114 @@
-Return-Path: <linux-kernel+bounces-660844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C127AC22D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:41:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7DD8AC22BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A9CB1BA8646
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:41:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4BB2A24FF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89F486342;
-	Fri, 23 May 2025 12:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1EA3D984;
+	Fri, 23 May 2025 12:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="rOi4/I9r"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OWyQ0Onz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5F4288A5;
-	Fri, 23 May 2025 12:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3F435959;
+	Fri, 23 May 2025 12:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748004045; cv=none; b=gZ7ZJ/CxE8l4eHDLlJMoNdaZ8Otn8VqfH9L53p58V6mGdYSALA6qGB+VMQ1MYxdxd3AmIWVFO4d3IgTCwLiXbOf9X1zH3/cxpzLVXbilN5QzPW3F8PdDn5GSr6KtgMFEMAyOoWbrjsQHblA8GuInWEqqQ9DBuLaExkEqT56OS4E=
+	t=1748003967; cv=none; b=CQf7Mmc1BbfmEEq0HzLaRDMEraqbvTHOhzkw6Fq6lqtwElx/rTCu7jCpWoFKGXLOcIhuTm0vkOyap+jd8l4myur8tP6SGpUfbb3F4vMDUAZWNA185Uj3joAc8ud3EJ5NQZQaobtcbg1A/btL5VLdopbrQmE6s71DwHg5Y54tbEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748004045; c=relaxed/simple;
-	bh=sU2RhePat1aQjBO237+i5tjmIArbuVyp7bQ9whF+JYE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=tNpScv3U/upVMkb2kAUA/gaxTeW/RHOfJwqTVE11O+TUEw8s3aAiBKzQKy6bydkmAhmNEsOijH/WMiJ2duacZMKRii/PwMKS5rR3d9Hn2B+3PxDWsh7Zd4syVm4C7zELYHSFN+WfKjxIlOaasrnYb4PjkiKDPsp5zhnfMfXzo/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=rOi4/I9r; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54N825Qb007894;
-	Fri, 23 May 2025 14:40:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	R4Em2WOCtNmZnECHj9cB8orbqHwuCdEzrhZKZaFoeaU=; b=rOi4/I9r/s7PDCaJ
-	+KV9B4Q0luqEdl6HI4oieZo2yKF+HKisfZjIzIqGo8ytPmLsFD9JMfDAOgYQwHhj
-	dQ1TDgUiY7gTtreu/6vLffLx4MYKrUJMEiIEe1Yzm4/c2f3ikAq/fPIQF8hl4mAh
-	p2tHXgF4+OixH06A1UAN2WDeHOthaBpkhbkLxGtSzgJSSnw5YXFREBIGrCJbshz7
-	t36cgh7y5Bzy8cfilf+Qf+zpJh8+l1YzCjqpaQaA8vKAAWtm2wA7Pe0iB/nShKgo
-	HOeOmer0SLdaJNEj7Jk22vJOQGITnRdbfWdW35kC1LCQNh+HkkEO2wK+Mmd9aLjy
-	dfSryQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46rwffe5na-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 14:40:24 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 33D6440057;
-	Fri, 23 May 2025 14:39:15 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D7FB0A0D924;
-	Fri, 23 May 2025 14:38:30 +0200 (CEST)
-Received: from localhost (10.48.81.67) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 23 May
- 2025 14:38:30 +0200
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Fri, 23 May 2025 14:38:21 +0200
-Subject: [PATCH v3 9/9] ARM: dts: stm32: add Hardware debug port (HDP) on
- stm32mp157c-dk2 board
+	s=arc-20240116; t=1748003967; c=relaxed/simple;
+	bh=OUQkaRkvEiz/pdMgE3eL/orof3usA5g8/VZnQmg35FY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZGDIO8+YaZBbY6dNrPu+PSSPTBr0aGCSVV6fH4SINIcN75KkJV4JSQrrc2NUy3r3VCdmbneQifT3A4jmE8XKyQePsHFy8e2sVKwo/O2AdGl6B6P8CgLjC8fhhQmkRFYsghozFYjIOjQFLMVyLFrvUmfIroVA7lp7sToAePVlHtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OWyQ0Onz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CFB1C4CEE9;
+	Fri, 23 May 2025 12:39:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748003966;
+	bh=OUQkaRkvEiz/pdMgE3eL/orof3usA5g8/VZnQmg35FY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OWyQ0Onz/ByKuZhP+1YvsIl4pW7bDdjstkK4JhMNYESILdsTB2khdHoeE65ALx3J6
+	 v/AG+ngk8Dpo/kPgN7BNknnLtPXCgv5vHyLa8l8GSyGKDq4Dkphqe8tX1/jNnCHSWb
+	 i+0+STm93TeE/YlDJzJn38+y0YXIFcKjCYCBaRzLI1OgEdiL0ZOP0Zh0HKzEpxKjjd
+	 kIzLPW9HKRR+HMOOkAaa96Kb3NqWaqtzTnddu0UDm04r0826zJj07w48Dkv0nwKUdE
+	 lejA2GuSkggjBRMfQW49ENUB2aD7DKjp2j8dpWCkzBDEi9rozvGgAiCtXnSfSPN8vm
+	 8q3T4rwWP0YSw==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL for v6.16] vfs mount api
+Date: Fri, 23 May 2025 14:39:17 +0200
+Message-ID: <20250523-vfs-mount-api-7c425ef2eee6@brauner>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1373; i=brauner@kernel.org; h=from:subject:message-id; bh=OUQkaRkvEiz/pdMgE3eL/orof3usA5g8/VZnQmg35FY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQY5JR/v2civrDoe4HMmTWS9avNNvP47f15vjWj66Mdl 7NDy/JPHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABN5eYjhf8kk0x3CXqkqZ70n RItldUqv2O7dxmJvPd9xlrH7S62Jnxn+u70NcXqxVvYEc1DuttIPJ7rCz9S8vryFx/rPcVtfpW3 TWAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-Message-ID: <20250523-hdp-upstream-v3-9-bd6ca199466a@foss.st.com>
-References: <20250523-hdp-upstream-v3-0-bd6ca199466a@foss.st.com>
-In-Reply-To: <20250523-hdp-upstream-v3-0-bd6ca199466a@foss.st.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
-	<clement.legoffic@foss.st.com>
-X-Mailer: b4 0.15-dev-6f78e
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-23_03,2025-05-22_01,2025-03-28_01
 
-On the stm32mp157fc-dk2 board, we can observe the hdp GPOVAL function on
-SoC pin E13 accessible on the pin 5 on the Arduino connector CN13.
-Add the relevant configuration but keep it disabled as it's used for
-debug only.
+Hey Linus,
 
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
----
- arch/arm/boot/dts/st/stm32mp157c-dk2.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+/* Summary */
 
-diff --git a/arch/arm/boot/dts/st/stm32mp157c-dk2.dts b/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
-index 324f7bb988d1..8a8fdf338d1d 100644
---- a/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
-+++ b/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
-@@ -63,6 +63,12 @@ &dsi_out {
- 	remote-endpoint = <&panel_in>;
- };
- 
-+&hdp {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&hdp2_gpo &hdp2_pins_a>;
-+	pinctrl-1 = <&hdp2_sleep_pins_a>;
-+};
-+
- &i2c1 {
- 	touchscreen@38 {
- 		compatible = "focaltech,ft6236";
+This converts the bfs and omfs filesystems to the new mount api.
 
--- 
-2.43.0
+/* Testing */
 
+gcc (Debian 14.2.0-19) 14.2.0
+Debian clang version 19.1.7 (3)
+
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.16-rc1.mount.api
+
+for you to fetch changes up to 759cfedc5ee7e5a34fd53a4412a4645204bf7f8d:
+
+  omfs: convert to new mount API (2025-04-28 10:54:39 +0200)
+
+Please consider pulling these changes from the signed vfs-6.16-rc1.mount.api tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.16-rc1.mount.api
+
+----------------------------------------------------------------
+Pavel Reichl (2):
+      bfs: convert bfs to use the new mount api
+      omfs: convert to new mount API
+
+ fs/bfs/inode.c  |  30 +++++++---
+ fs/omfs/inode.c | 176 +++++++++++++++++++++++++++++++++-----------------------
+ 2 files changed, 125 insertions(+), 81 deletions(-)
 
