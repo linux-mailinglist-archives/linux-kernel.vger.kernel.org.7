@@ -1,109 +1,93 @@
-Return-Path: <linux-kernel+bounces-660896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 879A4AC2386
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:15:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7203EAC238C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FBD3A45BDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:14:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4B281C059BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9111246797;
-	Fri, 23 May 2025 13:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9928428F50C;
+	Fri, 23 May 2025 13:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="2mfVQbgz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fVMzQHBB"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSdkdaAd"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23BF2459F7;
-	Fri, 23 May 2025 13:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB4128F520;
+	Fri, 23 May 2025 13:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748006102; cv=none; b=bFZ2Z21MP8ezzoWI88rUiZtZbngD8JrleRVMZtmh89ez8nCPaI5jabGDwoczKB///o0ZOjfqkkrRI5Cs+vxPlt/W/mmm6hctl1kF3pG+M0sswncPiQgRQezKNaEWamjwpwXDkFv+7uwet2Cfa2RwhBnF2n0qUn/f4G0gw0XvpkM=
+	t=1748006179; cv=none; b=ewVdxBB0k9mRFnuQPxYy2BabmdgEaUr+ub3IGakJRKdLs4A7CZb7ORmD8J5r3963lYtDBnyH2/cEOGJpxybFZRqlM12c25oLYkpititgpUmCsp7KCoXS0m+xBR3Ds+2STUrLDscSwSGbNiJp6dxAnPImio2gxO7zIjMj5laOiQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748006102; c=relaxed/simple;
-	bh=/jKuq5df/CQWL24koYAFhFLHa0CXPBlz8k2PpJIMsW4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=chDRjthzeZjOrw5ul0ODQtQHz9ZtBwBBa/d+LMjOFFP3T5DJ1qUlZ62NLhlZrCyVrDF5f8l/Muzm+h+EQO03sKFY7x4PxGArXy/oRMQ+XNFfaObG7zIuMbUWHR4/Ld/ZOO8pQmpY5Uyv3SSwyg5919io9W4KDKckEgpZAtcA1HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=2mfVQbgz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fVMzQHBB; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id C85E51140104;
-	Fri, 23 May 2025 09:14:59 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Fri, 23 May 2025 09:14:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1748006099; x=
-	1748092499; bh=yDUEplCt2ONGGQNeEFc77MeQ1cFTK68xK0ji4kPfjig=; b=2
-	mfVQbgzXiBuiOdXhvKm2HCY1BZWNTFwfMlrHOziljv37enwslqdG45AhaY2exscd
-	AsRcFPf497zJfsHiBfY1h4gfdhqB8TWm9kXXj8CD6rrywzs5CzDDA2+tNcpWF7tj
-	qjy4+PEyavjxLO073Joix/7rnVhy+VYZzI4pB5SwSIJQOuOSD5MLkRNfFzWfIM9N
-	Qt9WszQFvHG/MudpBkPgSfyornnecBvm3/15RUHuexZFhOCaR2YzhzTP7415YfT/
-	lhAErUqLPbG8KrdJKnsy3Co3AIfn3Sd2Hnvvm1xOIIS8MHrJTnT7FTHBZjdohxGm
-	3i6N+9dxq4rxVnNTRWXQg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1748006099; x=1748092499; bh=y
-	DUEplCt2ONGGQNeEFc77MeQ1cFTK68xK0ji4kPfjig=; b=fVMzQHBBgGv3jLucI
-	cfx/6WkSooLd/pSIcU7FQIssgle0Jp0hV0GcMiMaEmWgjZX/8DHXUptPM2YQwifp
-	Zmtsy8YoEKqsK9p33eeZn3OCiMhe0op2x3qhl2+rQ8X3KVvD+nYZP1RftAj0mezc
-	5aJFUhpM2wY5t+LM6QhIpFL2PBR5VF49w3/6smhSdS7AAyAZUrBXwhI4oWGHai/k
-	RdpSvqEqV7oudHbfF4a+XCKnsSdenx4x/hTMai14MMbqHRUoZTOPKTiae0fw7QXw
-	cQcB18Pv7vE1xuz14DboQx4aCtBIYsqAd8UiJs1OSn0Ty4BHxGvhBRDEjR+TTdfQ
-	uAjRw==
-X-ME-Sender: <xms:03QwaJGhvehT3-Opk7DapRDsjGMRs4Tn3xuoK8ugT2EytTLzGnOjVg>
-    <xme:03QwaOUsiG_Na7IZOrmLYe1nDDbXuMcGgecKjiCPMppOx3D3t_scoNjhjZFzqsPFN
-    PG1OOYsxtsCPc8W_GA>
-X-ME-Received: <xmr:03QwaLIzzcVYY0JxDrA_ZJPjOOSslrrkDC9RYM8UAPgbLwVPp0KJihSAcEZFFZn_tJVzDsmvtON2iSZ_rINmYMuEx-wgJvl00-DDMdSwDRn1rzH6TFoMYfeDbiE->
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdekleehucdltddurdegfedvrddttd
-    dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
-    nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
-    enucenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefn
-    uhhkvgculfhonhgvshcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtth
-    gvrhhnpeevlefguefghffhgeetvdefleeigeeukeeihfegleeufeeuueejleeuudfhvdek
-    vdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgs
-    pghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugi
-    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhguvghg
-    ohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvg
-    hnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepphhlrghtfhhorhhmqdgu
-    rhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrg
-    hrihhordhlihhmohhntghivghllhhosegrmhgurdgtohhmpdhrtghpthhtoheprghnughr
-    ihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtth
-    hopehluhhkvgeslhhjohhnvghsrdguvghvpdhrtghpthhtoheplhhkphesihhnthgvlhdr
-    tghomh
-X-ME-Proxy: <xmx:03QwaPFazN13k-TGmU1M8AMSFtoUjEZXik0DcRbdoXJlzetILCEEVg>
-    <xmx:03QwaPUCJxoI8-l0x7bypx6m2vEaqoiffB4Klmsqnql_OBOV3ebBBA>
-    <xmx:03QwaKP8BuAi6N62DqN-Z_Xp2wIQkvRaAy6VI6w3QE1UUciV0_M8IA>
-    <xmx:03QwaO2U1VxF4eVdOaXFf6Bo80xgEKYbqbw3bChxSPf_oZOwIz1FAA>
-    <xmx:03QwaJb8FFdByzHrUQITiiDC8Kj4JQRXynP89KjTJQ2VqF638zMOLUNQ>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 23 May 2025 09:14:58 -0400 (EDT)
-From: Luke Jones <luke@ljones.dev>
-To: linux-kernel@vger.kernel.org
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	mario.limonciello@amd.com,
-	andriy.shevchenko@linux.intel.com,
-	Luke Jones <luke@ljones.dev>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH 1/1] platform/x86: asus-wmi: fix build without CONFIG_SUSPEND
-Date: Fri, 23 May 2025 15:14:51 +0200
-Message-ID: <20250523131451.1942578-2-luke@ljones.dev>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250523131451.1942578-1-luke@ljones.dev>
-References: <20250523131451.1942578-1-luke@ljones.dev>
+	s=arc-20240116; t=1748006179; c=relaxed/simple;
+	bh=nv3ji6GhM3232GWbKU0OV+YBbB2uBzaazpJM0DI4Vbk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=guV0xvC1KGxlpx27OCzyAJHO/Jmgb4WRM7QVY+4H46XAsjvnJKelEb2G3QWEI4pUz9tY2fIy0ISkXcdEdXSQAWwbuAU59znXjv78LXBuOlg8EIumyMdSSgQJ6N20jzvo3rUzySrSC9OxQ9Rt6Ha+Uz8E1lf8/D9zYJJZ9HDhKtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSdkdaAd; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43ea40a6e98so95889225e9.1;
+        Fri, 23 May 2025 06:16:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748006176; x=1748610976; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=utqnLfDssfwdK24IQm7Ksa5DHrbNYTlQ4HwsK42xQtY=;
+        b=XSdkdaAdXUMv+QQsDxO6zRNoA1iA6Wye/59zlLKVewjEvaz4P3IiOsBHTmWjqLu0H5
+         q75lbvDM5VNCpYagfSEVA7ezl1fSco+QAmF7IyPgLMaLLnDMgRRkIiIOIfw20BWyqi7z
+         4hVTDR3KaPQSnSy9ZJRhDEND/Ttls1bFw6//U/XYh8Jyq0IoZcysjA74VMHg8OANzsBE
+         4mxV35et4Z9tirpB+zEm+hAiJDtMzCtuSv7k8zx2YC1QS7ojnV/z2AKfnnVra5wVcFlp
+         i2IUim2rklTOZTyJCetu7km7kfxy48mkVJJhzeu/4dlO+6Xp3I81W0OTvREIz/ZqA1Vl
+         j/8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748006176; x=1748610976;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=utqnLfDssfwdK24IQm7Ksa5DHrbNYTlQ4HwsK42xQtY=;
+        b=k7Eng1xenBnerZD2JyU1o67CTjrPKTAhhNmt1oqVWkNYmZbD/xhKLG1JFoYm/JLvOY
+         pAvIOhhfXesjW2ndePRl8QgfjpYG2ZQCA6X12PC+ZPpVFdvD2R2bE6CHG/N8GVwqqldw
+         rAMvdHM5KtW6/+qUS1MGLJ2SAQ+p/nktJ959BaITqRpd/l0/0MXNMIPkWt164Lhkkz6n
+         Y5zFSgNNnBlwuHLcCAkZzqCYRj2hZoxqFt/zOmtsQ14ld2gRVy1alG66KFwYXlPKXNKi
+         /JTGfMURgjTUqk4IObITtae1EqMw5j49rY0RFuHpU11PtF5wTD3H0tkyc5H9ZzfZ5hGG
+         xHqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMojW7yZ9S+IOJ7vSnqJIz/v+JHaxAFRU6kmlKRTqzcqONznV7viJGpbAsMmwniYM+90+lADdn+JrktCntLw==@vger.kernel.org, AJvYcCXYwZrwfizVGsEzTWhGudlXKZKQxpC2yO3a2T+U8d7V16Vf4LebYqoC0DoKAXXv8IeVN0Jy6iU7SaNj@vger.kernel.org, AJvYcCXq+vRNhw/rcX4EqD1t34o00mvf8qByzRmJgdS7pX7ZbyFl2vmGr+LGWyfSkI7MsTf3Otsy+ko5SRduRxoK@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKzGmpHk+UhZWPl8kbKlA8OSrLatw9wSsOyn9d4/uj8QbueDZA
+	5jehLtymN2OErwUo2uYfTTpW5Z3PU7ODKeHQ1Pzcqpta7MQq0tEXk8k=
+X-Gm-Gg: ASbGncs/Em71Bfg8hyZ8w5DPuMJF+mPLhqx6rOGCGMl+PmQ7Gu4lIPY5MRAhRXOPMfH
+	u5ztXXmJx+VIFjKYsVHaL3hVANf8Lr4PQNLhmqtaf7N8mKtDnOmIRuZTzufb1G1Uv6mCfLlb9qF
+	UhZq0puA7Q1NPxOVSIrEOy3Sal/qJU+AMWenf5LrcejazNPFOR+aDSWoPW27RxoZT6mBrl4Ffcm
+	0fzO3xtztd7DgakJ30s1SjZS84A1b1IW14f3zkpY3FIqpR0MiywUN8p/eaPXQ2Wsz+AvLYCWpra
+	YKwxgzJVJlWL1m3kOS6uDEFve3aSgB23jpX4otQTGqePDYskMdDQR3WLl+MYZOhVc6I6PNmA/jx
+	zxqzwHbBE2rJyCuKv
+X-Google-Smtp-Source: AGHT+IG4Az0AhnIzEpthrhva2c1DnQOSAYmSSilx7Ymuwyx3a5QJ/0FhgSunYo0+APRzSkeyCqp34g==
+X-Received: by 2002:a05:600d:19:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-442fd6313f4mr214830665e9.18.1748006175519;
+        Fri, 23 May 2025 06:16:15 -0700 (PDT)
+Received: from alex-x1.. (mob-194-230-148-12.cgn.sunrise.net. [194.230.148.12])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442eb85a8f8sm189177055e9.0.2025.05.23.06.16.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 May 2025 06:16:15 -0700 (PDT)
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Nikita Travkin <nikita@trvn.ru>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	dmitry.baryshkov@oss.qualcomm.com,
+	maud_spierings@hotmail.com
+Subject: [PATCH v5 0/1] X1E Asus Zenbook A14 support
+Date: Fri, 23 May 2025 15:15:07 +0200
+Message-ID: <20250523131605.6624-1-alex.vinarskis@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,74 +96,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The patch "Refactor Ally suspend/resume" introduced an
-acpi_s2idle_dev_ops for use with ROG Ally which caused a build error
-if CONFIG_SUSPEND was not defined.
+As requested, 1/4 was merged to linux-next by USB maintainers.
+Resending 4/4 rebased on top of latest linux-next. 2/4, 3/4 already
+landed.
 
-Signed-off-by: Luke Jones <luke@ljones.dev>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202505090418.DaeaXe4i-lkp@intel.com/
-Fixes: feea7bd6b02d ("platform/x86: asus-wmi: Refactor Ally suspend/resume")
 ---
- drivers/platform/x86/asus-wmi.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 27f11643a00d..087318e0d595 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -5005,6 +5005,7 @@ static int asus_hotk_restore(struct device *device)
- 	return 0;
- }
- 
-+#if defined(CONFIG_SUSPEND)
- static void asus_ally_s2idle_restore(void)
- {
- 	if (use_ally_mcu_hack == ASUS_WMI_ALLY_MCU_HACK_ENABLED) {
-@@ -5013,6 +5014,7 @@ static void asus_ally_s2idle_restore(void)
- 		msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
- 	}
- }
-+#endif /* CONFIG_SUSPEND */
- 
- static int asus_hotk_prepare(struct device *device)
- {
-@@ -5025,9 +5027,11 @@ static int asus_hotk_prepare(struct device *device)
- }
- 
- /* Use only for Ally devices due to the wake_on_ac */
-+#if defined(CONFIG_SUSPEND)
- static struct acpi_s2idle_dev_ops asus_ally_s2idle_dev_ops = {
- 	.restore = asus_ally_s2idle_restore,
- };
-+#endif /* CONFIG_SUSPEND */
- 
- static const struct dev_pm_ops asus_pm_ops = {
- 	.thaw = asus_hotk_thaw,
-@@ -5060,9 +5064,11 @@ static int asus_wmi_probe(struct platform_device *pdev)
- 			return ret;
- 	}
- 
-+	#if defined(CONFIG_SUSPEND)
- 	ret = acpi_register_lps0_dev(&asus_ally_s2idle_dev_ops);
- 	if (ret)
- 		pr_warn("failed to register LPS0 sleep handler in asus-wmi\n");
-+	#endif /* CONFIG_SUSPEND */
- 
- 	return asus_wmi_add(pdev);
- }
-@@ -5096,7 +5102,10 @@ EXPORT_SYMBOL_GPL(asus_wmi_register_driver);
- 
- void asus_wmi_unregister_driver(struct asus_wmi_driver *driver)
- {
-+	#if defined(CONFIG_SUSPEND)
- 	acpi_unregister_lps0_dev(&asus_ally_s2idle_dev_ops);
-+	#endif /* CONFIG_SUSPEND */
-+
- 	platform_device_unregister(driver->platform_device);
- 	platform_driver_unregister(&driver->platform_driver);
- 	used = false;
+Introduce support for the mentioned laptop.
+
+Particular device exists in two model numbers:
+* UX3407QA: X1P-42-100 or X1-26-100 (as tested)
+* UX3407RA: X1E-78-100
+
+Mostly similar to other X1-based laptops. Notable differences are:
+* Wifi/Bluetooth combo being Qualcomm FastConnect 6900 on UX3407QA
+  and Qualcomm FastConnect 7800 on UX3407RA
+* USB Type-C retimers are Parade PS8833, appear to behave identical
+  to Parade PS8830
+* gpio90 is TZ protected
+
+When comparing device firmware between UX3407QA, UX3407RA, it seems
+that only ADSP firmware is different, CDSP and GPU firmware appears to
+be the same. (At least assuming the GPU firmware name in both cases is
+`qcdxkmsuc8380.mbn`). Since at least some blobs are different betweeen
+X1E and X1/X1P, define new firmware directory for `qcom/x1p42100`. This
+also makes it easier for distros to automatically extract firmware from
+Windows and place all blobs for the model under the same path. If/When
+firmware blobs make it to linux-firmware, same blobs can be easily
+symlinked between `qcom/x1e80100` and `qcom/x1p42100`.
+
+NVMe SSD depends on [1]. USB Type-A over USB MP controller  depends on
+[2], or equivalent proposed solution.
+
+Qualcomm FastConnect 6900 on UX3407QA did not work out of the box, and
+additionally required both newer firmware and patches to `board-2.bin`.
+I added a short how-to [3], as it is not exactly trivial.
+
+ACPI dumps can be found on aarch64-laptops' github [4]. HWids on
+dtbloader's github [5].
+
+[1] https://lore.kernel.org/linux-arm-msm/20250319094544.3980357-1-quic_wenbyao@quicinc.com/
+[2] https://lore.kernel.org/all/20250318-xps13-fingerprint-v1-1-fbb02d5a34a7@oss.qualcomm.com/
+[3] https://github.com/alexVinarskis/linux-x1e80100-zenbook-a14?tab=readme-ov-file#wcn688x-wifi
+[4] https://github.com/aarch64-laptops/build/pull/134/files
+[5] https://github.com/TravMurav/dtbloader/pull/4/files
+[6] https://lore.kernel.org/all/20250429-x1e80100-dts-drop-useless-dp-compatible-override-v1-0-058847814d70@linaro.org/
+
+Changes to v4:
+* _Only sending 4/4 as other patches are already applied_
+* Rebase 4/4 on `for-next` of qcom tree, adjust makefile to generate el2 dtbs
+* Picked Konrad's R-by for 4/4
+* Droped 'qcom,x1e80100-dp' as per [6]
+Link to v4: https://lore.kernel.org/all/20250426130203.37659-1-alex.vinarskis@gmail.com/
+
+Changes to v3:
+* Drop redundant comments
+* Drop incomplete wcn7850 as it is causing dt errors
+* Picked a-by
+Link to v3: https://lore.kernel.org/all/20250416232345.5240-1-alex.vinarskis@gmail.com/
+
+Changes to v2:
+* Fix/re-add PS8833 as fallback
+* Add EC's i2c address
+* Add pwrseq for wcn6855, placeholder for wcn7850 until its tested
+* Rename x1-zenbook.dtsi to x1-asus-zenbook.dtsi
+Link to v2: https://lore.kernel.org/all/20250402084646.10098-1-alex.vinarskis@gmail.com/
+
+Changes to v1:
+* Drop PS8833 variant, fallback to PS8830 as they behave the same
+* Drop wrong pcie6a_phy compatible revert
+* Drop redundant comments, fix order of properties in the device-tree
+* Fix device name bindings, express in model names instead of the soc
+* Fix GPU firmware name for UX3407QA
+* Fix model string, enclose variant in parenthesis
+* Added missing new lines before 'status = "okay";'
+* Updated cover letter to reflect some of the above changes
+* Left SPI10 disabled as it is unknown how/what for to use it as of now
+Link to v1: https://lore.kernel.org/all/20250331215720.19692-1-alex.vinarskis@gmail.com/
+
+Aleksandrs Vinarskis (1):
+  arm64: dts: qcom: Add support for X1-based Asus Zenbook A14
+
+ arch/arm64/boot/dts/qcom/Makefile             |    4 +
+ .../boot/dts/qcom/x1-asus-zenbook-a14.dtsi    | 1306 +++++++++++++++++
+ .../dts/qcom/x1e80100-asus-zenbook-a14.dts    |   33 +
+ .../dts/qcom/x1p42100-asus-zenbook-a14.dts    |  137 ++
+ 4 files changed, 1480 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/x1p42100-asus-zenbook-a14.dts
+
 -- 
-2.49.0
+2.45.2
 
 
