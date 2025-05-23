@@ -1,264 +1,190 @@
-Return-Path: <linux-kernel+bounces-660743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96F25AC2185
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:52:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC554AC2188
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D492505880
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:52:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5414416834D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3C722A7EF;
-	Fri, 23 May 2025 10:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7C322A4E8;
+	Fri, 23 May 2025 10:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="RMgPcdtV"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Umgan0wy"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19843184E
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 10:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4402F3E
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 10:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747997530; cv=none; b=jvQQne2LXKsDcSk42rN/E1UxGMt+K5vlL/IOS5MPwMtZQIxwwalD28pbr77uPv3uxuOG513lE36H57dUHyWZhzSIt3jGnUb+Pydk1ffKhILInXOe0Qb/jcPcR2DYlHSKIJQihIv5dDbfdN1IdhS2xYSK26pthJxWE4t4ml2YMFA=
+	t=1747997567; cv=none; b=u7D7uE37IcP2gHHiR75YCXMS4JFuyvB7isMDfVkdp3zzzacNhWDryFyrccNUgG7MUT5ZBdCJDLd/JMOlgJkcFLbkP9YrbdVhuxDB5GMiad7qGbRZUQ20D5CxQ6o2WoxS4MvgMDXbbRiNiVTATYuTV3dB6MLgKXqdRahe71zBRX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747997530; c=relaxed/simple;
-	bh=j1XZzWdwtTmEvvN2qv3t6z37DY91Kr1PWlQJJLrpV1k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=My01tA23b1ZbRfTdBCgcZQ2LQWcHe0kFFdZWg1rF6U6mmEpB01tvOx2TwhrRCmZTX+OJ9M5Cgg8M61Lv/ijAnW6HU/SMqfZCmhuV6eUXTooJc2QKy5k4dl97+hlh35YwkrMrWgyD16y0kY0oQAxDxO+IQsWlhd/0yVfiTJrad4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=RMgPcdtV; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5f3f04b5dbcso13664281a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 03:52:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1747997525; x=1748602325; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XwP8jYnybIYdZwiFlF4p0pHyTP1yOv6D4gpD/fnEuLY=;
-        b=RMgPcdtVQFRHdCZBiBKbtXQG0qgQDhPDt74zDK4mNDBZ7sYmm+FzV0Z1DZgY6j37xe
-         123Ske63/i4rSU2z5SlP0szNl0B+YECVWvMx1/tQKz0qJ3COzgGz4lA3osbiZkNX0C/l
-         tOkoV+0oDUOajEvaw6DeddEriNwIueCo8cCMkoijQpy5QkLJlAv56KkWHEhCOyqEz0yZ
-         4hfO3Vj4XD/m3HB3RNRyfdpHttBJ96fQhSiLlyZnXqVgMUvVU5ONK43IzesqtQ0kyye9
-         5INYQUVR0dXL0AoplQZJW9b1KVTPOX3NnfdLby7Ay1N+tdY94glxR/O2oM7MyZqD76Am
-         IHTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747997525; x=1748602325;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XwP8jYnybIYdZwiFlF4p0pHyTP1yOv6D4gpD/fnEuLY=;
-        b=LYX5OjFviQLgI3HYx61us7Q3dWauPyThvRMtg0xzGM9/o4NgVvKyigoMEcHlzGaWwy
-         3X5530KD4kFGwRDLkl4uD4kn5Qdx/KUR1FND6BdcRO5rNrzSsO/r5pwUPF391tH/oVU6
-         ttK+Og+Q/6zV0Lplyc58PEBXHCM8AWDF/xDxv6inNLYjSOmPQIoMxqoGMxXagKa8cEny
-         gUrxi4bleCm75xo7ZYHiq9dCqBwOcitHIMYo5tE64nNpNUm5HFLxU15Dq2fiGjp91tTF
-         Yi1P3Sdrzikr3Oa/QMimpKtLcm6MAd5+jLTbiFWz4x7D/44ow7ijU9ZSUNthYxFfThs8
-         s0oA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNUBVOQVwMEuFcCUeSDViNVx3Gs5iMP/pv5X2LaqLNcFoiPOQjOAEXw5fa9ydk2aUi0gvsdsy43luviDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOf/coJp/QrwV1anAT7Q3ePaNRuq0rrKl8c+eIKVD97TsGq+39
-	owP8Szzos72O6XiK/JKcM5N8t0H1Qxp6B5jhfndPvYAKPbBb9GGxYDzlrWL1+Fictdo=
-X-Gm-Gg: ASbGncuHBwADkgFvMGG/ltEkBOT62Q9JdAM52UsoHkuScqYTfYJG4K6vegwZV7gzEGZ
-	s0XiY5R/zCT2ArUbz3M1epnHQWPfBQbczycrwdTKL0nE8ROfD7cmSSgS6uH9TbLxIUD7hD3Rke7
-	xwH2c9X4B2MbHThOuHAlLw8M9iN6AXeGskwjqQFxyakIh581ttg8UFHYnWZFIfmgH8rPbwgrv0+
-	T6JX6aivPEfFanFUkk+RWqMkOzp240lm+ytJX5DNEFXZFdTVcpt/xy8wqBp+4lYFRvNKH0EIy65
-	Blk24VckTAUCXwVi3GSWjNwoLbHXtMX2zIow8RxzMQtREprSt5EW7jL096hgUPotuQDVUA==
-X-Google-Smtp-Source: AGHT+IEC4yMEc83C32Rd4QKL4hSK5Wu12v5T+oSzGSvYSxS2+OO278DiRhv1/vjRF4GiSVkrB+WCww==
-X-Received: by 2002:a05:6402:2709:b0:601:9dc3:2796 with SMTP id 4fb4d7f45d1cf-6019dc32a0bmr19644753a12.6.1747997525189;
-        Fri, 23 May 2025 03:52:05 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.58])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6005a6e019asm11583614a12.36.2025.05.23.03.52.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 May 2025 03:52:04 -0700 (PDT)
-Message-ID: <47853bb8-db03-42b1-bcc2-3338fc208abb@tuxon.dev>
-Date: Fri, 23 May 2025 13:52:03 +0300
+	s=arc-20240116; t=1747997567; c=relaxed/simple;
+	bh=f5BlxR9wBw2h2vR59F6mzFvs/sivfufffWwQlk2+iK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OmknAICLSR04chcVhgrTmV/9pEChpSQ8yAGOETJhyPfYOSUEBAPyI6ivQJKcxaKUWhxksreIw1SqZcj2K8S89OdF43Ves/AlYd5PDmeps8y6mYnVjypKNKWxiVFh6ZaloENJDsoIT1AZoShDmkB+b0TQIR+lOUwyE4S9yDp9uE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Umgan0wy; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DfmDuuNEnX6j6GnweS6tLf57qKsRUaBkTAkp14jbMlI=; b=Umgan0wyXJ0eCX7JOiY9CSNwLg
+	iJYcW7AewywSTzWJPf8mJ6veEZp/51BrVJWVoGTzv4yNcByqx+kzF1YkIew7JV2SHDYCnDzbV33Wi
+	Jyz2KBXxl2w00h0JkAWdT4GwokEf9Vvo1J/a3H6tEtHwcjL7k46ZzktjwUx3oLuIuEU7KOWo5mLLh
+	w9gfyFlRd0/tdTUtAsUoT73Nw40do4OBVP4E4JXu88AfnwhXsVCNIqo7i196MrQgrxCIilVmpch02
+	OfieppB8fnFCqj0tSQ4WU4t5mfe3+cROPPiYRp4ZJ3vxf0YDTmKYTwWNuUyfY13o44UKM3+rcMuYM
+	VyC5aCsw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uIQ0l-00000007TtK-2X5x;
+	Fri, 23 May 2025 10:52:23 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BFE9C300583; Fri, 23 May 2025 12:52:22 +0200 (CEST)
+Date: Fri, 23 May 2025 12:52:22 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Aaron Lu <ziqianlu@bytedance.com>
+Cc: Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Paul McKenney <paulmck@kernel.org>
+Subject: Re: [PATCH 2/7] sched/fair: prepare throttle path for task based
+ throttle
+Message-ID: <20250523105222.GJ24938@noisy.programming.kicks-ass.net>
+References: <20250520104110.3673059-1-ziqianlu@bytedance.com>
+ <20250520104110.3673059-3-ziqianlu@bytedance.com>
+ <20250522104843.GG39944@noisy.programming.kicks-ass.net>
+ <20250522114012.GA672414@bytedance>
+ <20250522115418.GI24938@noisy.programming.kicks-ass.net>
+ <20250522123750.GB672414@bytedance>
+ <20250523095350.GA1215853@bytedance>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] driver core: platform: Use devres group to free driver
- probe resources
-To: Ulf Hansson <ulf.hansson@linaro.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- dakr@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org,
- bhelgaas@google.com
-References: <CAPDyKFqMB7XutXba73YHx1X4rm6uc3Fz6yMZ8yM=wgduEmgUDg@mail.gmail.com>
- <a20fc6ee-c6c3-4013-b175-4918b9a44380@tuxon.dev>
- <CAPDyKFpbeLJUiB_xQbqDib+-8Q3AcJNVg+DuEcqmVGMbFdNxwA@mail.gmail.com>
- <fgl4w5uhxci7rrbdigtni72vveb2gqemh6iccz4qruqkek5rja@rzwkcjg6hkid>
- <3b1963ba-f93f-48f2-8fb0-a485dd80ffcb@tuxon.dev>
- <CAPDyKFqrAS4iV59S-zJ9H7_3VuGr9JdZABhfUGBwTzQNDCasaw@mail.gmail.com>
- <482b55c9-a210-4b2d-8405-e9f30d48a8fd@tuxon.dev>
- <CAPDyKFpLF2P438GGWSgbXzpT7JNdUjtZ2ZxYf1_4=fNUX3s-KQ@mail.gmail.com>
- <4fzotopz57igmiyssgkogfbup6uu7qgza3t53t5qsouegmj7ii@wfiz4g3eiffs>
- <CAPDyKFoxs6wDCLp5EGHVqkqSstBLNmngps2KfanRezV_EN8tuA@mail.gmail.com>
- <hd3hobuaunmn2uqzl72yv7nz2ms25fczc264wmt6o7twrxdhsy@mm22ujnawutc>
- <CAPDyKFpRUhTK=UfcEdRdT0f5EVoGN5okLosd9_tYjdGKr0qvkA@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <CAPDyKFpRUhTK=UfcEdRdT0f5EVoGN5okLosd9_tYjdGKr0qvkA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250523095350.GA1215853@bytedance>
 
-Hi, Ulf,
-
-On 23.05.2025 12:47, Ulf Hansson wrote:
-> On Fri, 23 May 2025 at 01:06, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
->>
->> On Fri, May 23, 2025 at 12:09:08AM +0200, Ulf Hansson wrote:
->>> On Thu, 22 May 2025 at 20:47, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
->>>>
->>>> On Thu, May 22, 2025 at 06:28:44PM +0200, Ulf Hansson wrote:
->>>>> On Thu, 22 May 2025 at 16:08, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
->>>>>>
->>>>>> Hi, Ulf,
->>>>>>
->>>>>> On 22.05.2025 14:53, Ulf Hansson wrote:
->>>>>>>
->>>>>>> That said, I think adding a devm_pm_domain_attach() interface would
->>>>>>> make perfect sense. Then we can try to replace
->>>>>>> dev_pm_domain_attach|detach() in bus level code, with just a call to
->>>>>>> devm_pm_domain_attach(). In this way, we should preserve the
->>>>>>> expectation for drivers around devres for PM domains. Even if it would
->>>>>>> change the behaviour for some drivers, it still sounds like the
->>>>>>> correct thing to do in my opinion.
->>>>>>
->>>>>> This looks good to me, as well. I did prototype it on my side and tested on
->>>>>> all my failure cases and it works.
->>>>>
->>>>> That's great! I am happy to help review, if/when you decide to post it.
->>>>
->>>> So you are saying you'd be OK with essentially the following (with
->>>> devm_pm_domain_attach() actually being elsewhere in a real patch and not
->>>> necessarily mimicked by devm_add_action_or_reset()):
->>>
->>> Correct!
->>>
->>>>
->>>> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
->>>> index cfccf3ff36e7..1e017bfa5caf 100644
->>>> --- a/drivers/base/platform.c
->>>> +++ b/drivers/base/platform.c
->>>> @@ -1376,6 +1376,27 @@ static int platform_uevent(const struct device *dev, struct kobj_uevent_env *env
->>>>         return 0;
->>>>  }
->>>>
->>>> +
->>>> +static void platform_pm_domain_detach(void *d)
->>>> +{
->>>> +       dev_pm_domain_detach(d, true);
->>>> +}
->>>
->>> Well, I would not limit this to the platform bus, even if that is the
->>> most widely used.
->>>
->>> Let's add the new generic interface along with
->>> dev_pm_domain_attach|detach* and friends instead.
->>>
->>> Then we can convert bus level code (and others), such as the platform
->>> bus to use it, in a step-by-step approach.
->>
->> Right, this was only a draft:
->>
->> "... with devm_pm_domain_attach() actually being elsewhere in a real
->> patch and not necessarily mimicked by devm_add_action_or_reset() ..."
->>
->>>
->>>> +
->>>> +static int devm_pm_domain_attach(struct device *dev)
->>>> +{
->>>> +       int error;
->>>> +
->>>> +       error = dev_pm_domain_attach(dev, true);
->>>> +       if (error)
->>>> +               return error;
->>>> +
->>>> +       error = devm_add_action_or_reset(dev, platform_pm_domain_detach, dev);
->>>> +       if (error)
->>>> +               return error;
->>>> +
->>>> +       return 0;
->>>> +}
->>>> +
->>>>  static int platform_probe(struct device *_dev)
->>>>  {
->>>>         struct platform_driver *drv = to_platform_driver(_dev->driver);
->>>> @@ -1396,15 +1417,12 @@ static int platform_probe(struct device *_dev)
->>>>         if (ret < 0)
->>>>                 return ret;
->>>>
->>>> -       ret = dev_pm_domain_attach(_dev, true);
->>>> +       ret = devm_pm_domain_attach(_dev);
->>>>         if (ret)
->>>>                 goto out;
->>>>
->>>> -       if (drv->probe) {
->>>> +       if (drv->probe)
->>>>                 ret = drv->probe(dev);
->>>> -               if (ret)
->>>> -                       dev_pm_domain_detach(_dev, true);
->>>> -       }
->>>>
->>>>  out:
->>>>         if (drv->prevent_deferred_probe && ret == -EPROBE_DEFER) {
->>>> @@ -1422,7 +1440,6 @@ static void platform_remove(struct device *_dev)
->>>>
->>>>         if (drv->remove)
->>>>                 drv->remove(dev);
->>>> -       dev_pm_domain_detach(_dev, true);
->>>>  }
->>>>
->>>>  static void platform_shutdown(struct device *_dev)
->>>>
->>>>
->>>> If so, then OK, it will work for me as well. This achieves the
->>>> same behavior as with using devres group. The only difference is that if
->>>> we ever need to extend the platform bus to acquire/release more
->>>> resources they will also have to use devm API and not the regular one.
->>>
->>> Sounds reasonable to me! Thanks for a nice discussion!
->>>
->>> When it comes to the devm_pm_runtime_enable() API, I think we
->>> seriously should consider removing it. Let me have a closer look at
->>> that.
->>
->> I think once we sort out the power domain detach being out of order with
->> regard to other devm-managed resources in bus code you need to analyze
->> this again and you will find out that much as with IRQs, devm API for
->> runtime PM is useful for majority of cases. Of course there will be
->> exceptions, but by and large it will cut down on boilerplate code.
+On Fri, May 23, 2025 at 05:53:50PM +0800, Aaron Lu wrote:
+> On Thu, May 22, 2025 at 08:40:02PM +0800, Aaron Lu wrote:
+> > On Thu, May 22, 2025 at 01:54:18PM +0200, Peter Zijlstra wrote:
+> > > On Thu, May 22, 2025 at 07:44:55PM +0800, Aaron Lu wrote:
+> > > > On Thu, May 22, 2025 at 12:48:43PM +0200, Peter Zijlstra wrote:
+> > > > > On Tue, May 20, 2025 at 06:41:05PM +0800, Aaron Lu wrote:
+> > > > > 
+> > > > > >  static void throttle_cfs_rq_work(struct callback_head *work)
+> > > > > >  {
+> > > > > > +	struct task_struct *p = container_of(work, struct task_struct, sched_throttle_work);
+> > > > > > +	struct sched_entity *se;
+> > > > > > +	struct cfs_rq *cfs_rq;
+> > > > > > +	struct rq *rq;
+> > > > > > +
+> > > > > > +	WARN_ON_ONCE(p != current);
+> > > > > > +	p->sched_throttle_work.next = &p->sched_throttle_work;
+> > > > > > +
+> > > > > > +	/*
+> > > > > > +	 * If task is exiting, then there won't be a return to userspace, so we
+> > > > > > +	 * don't have to bother with any of this.
+> > > > > > +	 */
+> > > > > > +	if ((p->flags & PF_EXITING))
+> > > > > > +		return;
+> > > > > > +
+> > > > > > +	scoped_guard(task_rq_lock, p) {
+> > > > > > +		se = &p->se;
+> > > > > > +		cfs_rq = cfs_rq_of(se);
+> > > > > > +
+> > > > > > +		/* Raced, forget */
+> > > > > > +		if (p->sched_class != &fair_sched_class)
+> > > > > > +			return;
+> > > > > > +
+> > > > > > +		/*
+> > > > > > +		 * If not in limbo, then either replenish has happened or this
+> > > > > > +		 * task got migrated out of the throttled cfs_rq, move along.
+> > > > > > +		 */
+> > > > > > +		if (!cfs_rq->throttle_count)
+> > > > > > +			return;
+> > > > > > +		rq = scope.rq;
+> > > > > > +		update_rq_clock(rq);
+> > > > > > +		WARN_ON_ONCE(!list_empty(&p->throttle_node));
+> > > > > > +		dequeue_task_fair(rq, p, DEQUEUE_SLEEP | DEQUEUE_SPECIAL);
+> > > > > > +		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
+> > > > > > +		resched_curr(rq);
+> > > > > > +	}
+> > > > > > +
+> > > > > > +	cond_resched_tasks_rcu_qs();
+> > > > > >  }
+> > > > > 
+> > > > > What's that cond_resched thing about? The general plan is to make
+> > > > > cond_resched go away.
+> > > > 
+> > > > Got it.
+> > > > 
+> > > > The purpose is to let throttled task schedule and also mark a task rcu
+> > > > quiescent state. Without this cond_resched_tasks_rcu_qs(), this task
+> > > > will be scheduled by cond_resched() in task_work_run() and since that is
+> > > > a preempt schedule, it didn't mark a task rcu quiescent state.
+> > > > 
+> > > > Any suggestion here? Perhaps a plain schedule()? Thanks.
+> > > 
+> > > I am confused, this is task_work_run(), that is ran from
+> > > exit_to_user_mode_loop(), which contains a schedule().
+> >
 > 
-> Well, the problem is that the interface is just too difficult to
-> understand how to use correctly.
+> I should probably have added that the schedule() call contained in
+> exit_to_user_mode_loop() is early in that loop, where the to-be-throttled
+> task doesn't have need_resched bit set yet.
+
+No, but if it does get set, it will get picked up at:
+
+	ti_work = read_thread_flags();
+
+and since TIF_NEED_RESCHED is part of EXIT_TO_USER_MODE_WORK, we'll get
+another cycle, and do the schedule() thing.
+
+> > There is a cond_resched() in task_work_run() loop:
+> > 
+> > 		do {
+> > 			next = work->next;
+> > 			work->func(work);
+> > 			work = next;
+> > 			cond_resched();
+> > 		} while (work);
+
+That cond_resched() is equally going away.
+
+> > And when this throttle work returns with need_resched bit set,
+> > cond_resched() will cause a schedule but that didn't mark a task
+> > quiescent state...
 > 
-> A quick look for deployments in drivers confirms my worries.
+> Another approach I can think of is to add a test of task_is_throttled()
+> in rcu_tasks_is_holdout(). I remembered when I tried this before, I can
+> hit the following path:
 
-Maybe we can add something like:
+So this really is about task_rcu needing something? Let me go look at
+task-rcu.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 96e64f3d7b47..568a8307863b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10100,6 +10100,7 @@ F:
-Documentation/devicetree/bindings/power/power?domain*
- T:     git git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git
- F:     drivers/pmdomain/
- F:     include/linux/pm_domain.h
-+K:      \bpm_runtime_\w+\b
+So AFAICT, exit_to_user_mode_loop() will do schedule(), which will call
+__schedule(SM_NONE), which then will have preempt = false and call:
+rcu_note_context_switch(false) which in turn will do:
+rcu_task_rq(current, false).
 
-in MAINTAINERS file so that any new patch using the RPM will also be sent
-to PM maintainers and checked accordingly?
-
-Thank you,
-Claudiu
-
+This should be sufficient, no?
 
