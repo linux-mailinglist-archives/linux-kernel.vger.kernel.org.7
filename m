@@ -1,143 +1,208 @@
-Return-Path: <linux-kernel+bounces-660180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C7A6AC19C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:40:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D244AC19B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36787A2544A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:39:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAAF6A2329D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B09F212B2B;
-	Fri, 23 May 2025 01:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBEA2DCC10;
+	Fri, 23 May 2025 01:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hhfovHnD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOyyMFGd"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86D01FE45D;
-	Fri, 23 May 2025 01:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B00218AE2
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 01:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747964383; cv=none; b=jdD/ZhuaRHdjrEiJtHsI7IBMh+nVL0ECGRQbljx0qRtmS8snPW7CfUYhR+iBYMBnGtCDhjj41AOeWCge9bvJ8pKAUrQAKRQ68h/NZTs3QXxwi+x5biimXAgw4/I5Gf5xheRo7PKD49Ph4PVgebYN+Oi9OpJUuJ9jp57O5qJT7BM=
+	t=1747964376; cv=none; b=NsYAmjpn6NcwSLyElLdZEQ1gbV7QYKwojS9CU6jXY1mZVTSmmz2sTNBvLqpRZNdxZ+4F9XW/8df3tAxSccQFS4mVj1LgIsoxYOc9VC8mKlEL1MR7dLt8zRIk0azVS0clvb0+dNSVRt6O/dQ8VHj/DRmfBq1uzv0Ioh9gISyXT4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747964383; c=relaxed/simple;
-	bh=ZYanbJIY21+xaDF3XZtHmByNdyhyiJZfN7s02IMGJ9w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IpxwHVGKjEUsR853X+efVOVPvb72kvefpTyxzbjnHimx5Df3uKJCrSb4M3fRzPWPEFtTR/vuvjtD+VZi23BJ41/07uA5ozIg5XdmZ1b1v7hRqtTejcV+4FsL9APhN7NesW28zm55l+BpSC+UUUIo+fQAZAGM3U6jiUi2ebIDnwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hhfovHnD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2C3A2C4CEF4;
-	Fri, 23 May 2025 01:39:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747964383;
-	bh=ZYanbJIY21+xaDF3XZtHmByNdyhyiJZfN7s02IMGJ9w=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=hhfovHnDIpmHEgG0lxNTemEoOZFx4ZHc4FRUZBBEQ2L3hgcsAjiY9cTIbCC+5m8dk
-	 jEI4Nose0j5Bhm34kGdJHlKCLBXZ+oCkrXGT8H5nNCPM4+5hCYnUqTKXe5HYaNojmR
-	 1C2ebROMwhIQYjI/J7SJL+RGQZlZnL3YpqvSBb+4XT7y5g6+qHhK5YQo5ZeOcRDd0l
-	 k/PwqbwOjB6RfVbSWae86MBYsgbdciT6GyM57TnJ9Or2/ZHMjuo0iQe1ace1JtBtjw
-	 nGNEPlfqijeD1XKQsaFGqO0IijRDzrLAWEifFxzgZRFv1wPNi5g7tBdpXNnoPw1k3P
-	 xBkTDxuxDl10Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D772C54F2E;
-	Fri, 23 May 2025 01:39:43 +0000 (UTC)
-From: Fenglin Wu via B4 Relay <devnull+fenglin.wu.oss.qualcomm.com@kernel.org>
-Date: Fri, 23 May 2025 09:39:21 +0800
-Subject: [PATCH 4/5] power: supply: qcom-battmgr: Add state_of_health power
- supply property
+	s=arc-20240116; t=1747964376; c=relaxed/simple;
+	bh=tKftijF168l+HTSinxzDVuhgh9/R7akDYh/qoqL2Y+U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kzkFbU/n3T94pXtkjeaYsCga81wVii4vbyBk8dlK48KRK7gcFer9CIOEoTqTwNiTuyA3XO1QMWFAeV5qdK9Bh0qPveiwIbIU+nh38AGG2qaWrTg86dbK3BGhxLgnmmA/vPlZOCgoDPnL6cvonyQQMpF/tNJCwRoB4cPPxhdaTfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SOyyMFGd; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a4c2e42ce0so19866f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:39:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747964373; x=1748569173; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+g5V9tAyig6HI/i/tRhLAzkeAnoyfZecTy+ex1U9OrM=;
+        b=SOyyMFGdbMdus/GFRSwcBIRRLvo3eSfVOzh6WFuTW0N3MHGWlUjmlJsAju6jnVH6qB
+         Zq6ebZX2uCOcsBIS4YLq9JGvOk4vIVRhya5YhnCGvVUeIYttgeyJ2TtG3G1xTMiCtTvw
+         8uMLBznByHAZYU3ri+DZK0aXfLLQL0tDfd8WF0Vc1PjBnQ2gJroqxS7Ij586F0lePj7e
+         ucVJx9BE2zv3RKIpNEmhl/O+5Y/TdjM/g5BWxL2fCJ6j281MKF9XYG3AHq43XB87g5wm
+         wmISgrmXEyWizhlrmBNT2Np6jFCsbd7DNp+87CP7GwSHEwI+OXIN+nhk7ZWxefRVirkz
+         IqbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747964373; x=1748569173;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+g5V9tAyig6HI/i/tRhLAzkeAnoyfZecTy+ex1U9OrM=;
+        b=qKglw0MkaaYJBwsMJn7PAwab843A3cKEZKPG1cWRY7hxcDJsw4NjBtag6k+RuNYiGk
+         IVBzmgGWqQdaUtKnGKUZiYG1B1/G9uRrZ6KuOTY73L5gfwQO+XOuO+WcyZso4PWKbnwL
+         27mqf+kUhBceXo2J1xuW3CHQG4FbSFT0r/Pcn7bXTH+6xPQf2739rwDBsmNOxIakArRu
+         uy6fFo+pLn9nGrzqr/77I/cJewvSuvN5Wci2EK5/hirsztjKdJKsoaG6pDLCB0YzdbKf
+         gdCZ5a+Em7BMT4eaMtvYBtwIFZ9sezoz/OgqPQK+goy/1JO7VRQ2u6EAiuQOwwzje3au
+         tncQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3NmnVK7GhlsVsEOSv3nxPxIjTqttf6ZRFJGj0ZNaYhobZwwvltkY+HXPQOweG0++vMcacs2QN+aLXrp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi7Lc7Kpbn23EJMLY5iXOiNqDk6ErUtl/EpEXLDFc9GNXQnHix
+	h/4ul1LRpQJE+QMWRoXSnxSVaBq/5aj1+zdKFvNJGK+WuQ6vCOfdE1LNrjPDm76kZNB8hY9YlKe
+	A/+VypoAk5k7rzF7KBqrkjwMwTQWWfaA=
+X-Gm-Gg: ASbGncvG4GiJWKtogyBcQ0FyDSawJ8gsVwAblKlyJiEsbsA6VspZl1LcTB0ELS4/vMv
+	NPy0z+pyvdvrJYD2YU27vvRZjxyOzCGbn1TOI+OxXk/HVdMaCAPl86zCMi70b4MKlhEWc55rqMv
+	DtJ2CzMS1GF6eyVLxGIVQBR7NjW6FAhxSnHA==
+X-Google-Smtp-Source: AGHT+IFn5VlX2x+YOnwSuaERMnEdXbA0mh6MF1d5tUr0x7cCS6P9dtLC+f2hMvCPr3qzJvc+zfD0iwuhkxAbgG0/mNo=
+X-Received: by 2002:a5d:64cb:0:b0:3a3:6ab0:8863 with SMTP id
+ ffacd0b85a97d-3a36ab089b0mr6439541f8f.16.1747964372704; Thu, 22 May 2025
+ 18:39:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250523-qcom_battmgr_update-v1-4-2bb6d4e0a56e@oss.qualcomm.com>
-References: <20250523-qcom_battmgr_update-v1-0-2bb6d4e0a56e@oss.qualcomm.com>
-In-Reply-To: <20250523-qcom_battmgr_update-v1-0-2bb6d4e0a56e@oss.qualcomm.com>
-To: Sebastian Reichel <sre@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>
-Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>, 
- David Collins <david.collins@oss.qualcomm.com>, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- kernel@oss.qualcomm.com, Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1747964381; l=2189;
- i=fenglin.wu@oss.qualcomm.com; s=20240327; h=from:subject:message-id;
- bh=d5CeTDpKrh+BwORmvK1yMLhieg5NQRwvc0hsoISBkdc=;
- b=HlAON3Of8JR6mADHXtdLkkMa3DaPiBzhMMm4SqwXepylSZSf4XCnntk9TTX19XThnZvPPONkf
- pVwdpBQGIXMC0Rlp4bvzGTCiObEeqCEx1PR47A6KmS/N6HP+qRc9PTf
-X-Developer-Key: i=fenglin.wu@oss.qualcomm.com; a=ed25519;
- pk=BF8SA4IVDk8/EBCwlBehKtn2hp6kipuuAuDAHh9s+K4=
-X-Endpoint-Received: by B4 Relay for fenglin.wu@oss.qualcomm.com/20240327
- with auth_id=406
-X-Original-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-Reply-To: fenglin.wu@oss.qualcomm.com
+References: <20250521115635.829744-1-chao@kernel.org>
+In-Reply-To: <20250521115635.829744-1-chao@kernel.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Fri, 23 May 2025 09:39:21 +0800
+X-Gm-Features: AX0GCFu_rZ5QZoXdxMeB6B3Dsd7sOUL2vHTMib5OtRC-a0lpjVZ5PG13BL8-YCo
+Message-ID: <CAHJ8P3J8cX5+pVkE4TT24zh+wvW06KrpKXT2-7cRx3i8XzBbNw@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to skip f2fs_balance_fs() if
+ checkpoint is disabled
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, syzbot+aa5bb5f6860e08a60450@syzkaller.appspotmail.com, 
+	Qi Han <hanqi@vivo.com>, linux-kernel@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-
-Add state_of_health power supply property to read battery health
-percentage from the battery management firmware.
-
-Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
----
- drivers/power/supply/qcom_battmgr.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/power/supply/qcom_battmgr.c b/drivers/power/supply/qcom_battmgr.c
-index bc521f60f67fa427cc03b51c44adaeb46ae746f5..d5d0200b92bdc3d9a22f44159ad45b152efe8be0 100644
---- a/drivers/power/supply/qcom_battmgr.c
-+++ b/drivers/power/supply/qcom_battmgr.c
-@@ -256,6 +256,7 @@ struct qcom_battmgr_status {
- 	unsigned int voltage_ocv;
- 	unsigned int temperature;
- 	unsigned int resistance;
-+	unsigned int soh_percent;
- 
- 	unsigned int discharge_time;
- 	unsigned int charge_time;
-@@ -421,6 +422,7 @@ static const u8 sm8350_bat_prop_map[] = {
- 	[POWER_SUPPLY_PROP_TIME_TO_FULL_AVG] = BATT_TTF_AVG,
- 	[POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG] = BATT_TTE_AVG,
- 	[POWER_SUPPLY_PROP_RESISTANCE] = BATT_RESISTANCE,
-+	[POWER_SUPPLY_PROP_STATE_OF_HEALTH] = BATT_SOH,
- 	[POWER_SUPPLY_PROP_POWER_NOW] = BATT_POWER_NOW,
- };
- 
-@@ -588,6 +590,9 @@ static int qcom_battmgr_bat_get_property(struct power_supply *psy,
- 	case POWER_SUPPLY_PROP_RESISTANCE:
- 		val->intval = battmgr->status.resistance;
- 		break;
-+	case POWER_SUPPLY_PROP_STATE_OF_HEALTH:
-+		val->intval = battmgr->status.soh_percent;
-+		break;
- 	case POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG:
- 		val->intval = battmgr->status.discharge_time;
- 		break;
-@@ -672,6 +677,7 @@ static const enum power_supply_property sm8350_bat_props[] = {
- 	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
- 	POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG,
- 	POWER_SUPPLY_PROP_RESISTANCE,
-+	POWER_SUPPLY_PROP_STATE_OF_HEALTH,
- 	POWER_SUPPLY_PROP_POWER_NOW,
- };
- 
-@@ -1141,6 +1147,9 @@ static void qcom_battmgr_sm8350_callback(struct qcom_battmgr *battmgr,
- 		case BATT_CAPACITY:
- 			battmgr->status.percent = le32_to_cpu(resp->intval.value) / 100;
- 			break;
-+		case BATT_SOH:
-+			battmgr->status.soh_percent = le32_to_cpu(resp->intval.value);
-+			break;
- 		case BATT_VOLT_OCV:
- 			battmgr->status.voltage_ocv = le32_to_cpu(resp->intval.value);
- 			break;
-
--- 
-2.34.1
-
-
+Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+=E4=BA=8E2025=E5=B9=B45=E6=9C=8821=E6=97=A5=E5=91=A8=E4=B8=89 20:02=E5=86=
+=99=E9=81=93=EF=BC=9A
+>
+> INFO: task syz-executor328:5856 blocked for more than 144 seconds.
+>       Not tainted 6.15.0-rc6-syzkaller-00208-g3c21441eeffc #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz-executor328 state:D stack:24392 pid:5856  tgid:5832  ppid:5826  =
+ task_flags:0x400040 flags:0x00004006
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5382 [inline]
+>  __schedule+0x168f/0x4c70 kernel/sched/core.c:6767
+>  __schedule_loop kernel/sched/core.c:6845 [inline]
+>  schedule+0x165/0x360 kernel/sched/core.c:6860
+>  io_schedule+0x81/0xe0 kernel/sched/core.c:7742
+>  f2fs_balance_fs+0x4b4/0x780 fs/f2fs/segment.c:444
+>  f2fs_map_blocks+0x3af1/0x43b0 fs/f2fs/data.c:1791
+>  f2fs_expand_inode_data+0x653/0xaf0 fs/f2fs/file.c:1872
+>  f2fs_fallocate+0x4f5/0x990 fs/f2fs/file.c:1975
+>  vfs_fallocate+0x6a0/0x830 fs/open.c:338
+>  ioctl_preallocate fs/ioctl.c:290 [inline]
+>  file_ioctl fs/ioctl.c:-1 [inline]
+>  do_vfs_ioctl+0x1b8f/0x1eb0 fs/ioctl.c:885
+>  __do_sys_ioctl fs/ioctl.c:904 [inline]
+>  __se_sys_ioctl+0x82/0x170 fs/ioctl.c:892
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> The root cause is after commit 84b5bb8bf0f6 ("f2fs: modify
+> f2fs_is_checkpoint_ready logic to allow more data to be written with the
+> CP disable"), we will get chance to allow f2fs_is_checkpoint_ready() to
+> return true once below conditions are all true:
+> 1. checkpoint is disabled
+> 2. there are not enough free segments
+> 3. there are enough free blocks
+>
+> Then it will cause f2fs_balance_fs() to trigger foreground GC.
+>
+> void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
+> ...
+>         if (!f2fs_is_checkpoint_ready(sbi))
+>                 return;
+>
+> And it mounts f2fs image w/ gc_merge,checkpoint=3Ddisable, so below deadl=
+oop
+> will happen:
+>
+> - f2fs_do_shutdown              - vfs_fallocate                         -=
+ gc_thread_func
+>                                  - file_start_write
+>                                   - __sb_start_write(SB_FREEZE_WRITE)
+>                                  - f2fs_fallocate
+>                                   - f2fs_expand_inode_data
+>                                    - f2fs_map_blocks
+>                                     - f2fs_balance_fs
+>                                      - prepare_to_wait
+>                                      - wake_up(gc_wait_queue_head)
+>                                      - io_schedule
+>  - bdev_freeze
+>   - freeze_super
+>    - sb->s_writers.frozen =3D SB_FREEZE_WRITE;
+>    - sb_wait_write(sb, SB_FREEZE_WRITE);
+>                                                                          =
+- if (sbi->sb->s_writers.frozen >=3D SB_FREEZE_WRITE) continue;
+>                                                                          =
+: cause deadloop
+>
+> This patch fix to add check condition in f2fs_balance_fs(), so that if
+> checkpoint is disabled, we will just skip trigger foreground GC to
+> avoid above deadloop issue.
+>
+> Reported-by: syzbot+aa5bb5f6860e08a60450@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/linux-f2fs-devel/682d743a.a00a0220.29bc26=
+.0289.GAE@google.com
+> Fixes: 84b5bb8bf0f6 ("f2fs: modify f2fs_is_checkpoint_ready logic to allo=
+w more data to be written with the CP disable")
+> Cc: Qi Han <hanqi@vivo.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+> v2:
+> - add missing Closes line
+> - fix to use git commit description style
+>
+>  fs/f2fs/segment.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 5ff0111ed974..19b716fda72a 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -433,6 +433,8 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool n=
+eed)
+>         if (need && excess_cached_nats(sbi))
+>                 f2fs_balance_fs_bg(sbi, false);
+>
+> +       if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+> +               return;
+>         if (!f2fs_is_checkpoint_ready(sbi))
+>                 return;
+Hi Chao,
+When I read this patch, I feel that it is somewhat redundant with the
+following checking about SBI_CP_DISABLED in f2fs_is_checkpoint_ready.
+Can we reorganize these checks for the f2fs_balance_fs case?
+This will make the code easier to read and understand.
+thanks!
+>
+> --
+> 2.49.0
+>
+>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
