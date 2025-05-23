@@ -1,176 +1,115 @@
-Return-Path: <linux-kernel+bounces-661247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71242AC287D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 19:22:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F51CAC2880
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 19:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43089188C6F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:22:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B439C9E40F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB572980BE;
-	Fri, 23 May 2025 17:21:52 +0000 (UTC)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D7F29898E;
+	Fri, 23 May 2025 17:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="DiomyJDO"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1721D297B69;
-	Fri, 23 May 2025 17:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4A52980CC;
+	Fri, 23 May 2025 17:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748020912; cv=none; b=SySp9Uon1E8GhUlVqyatIqSyHlV8ipQCKI2BSJDKvisLowcWmW5U25nxbBbMNZGFYpL7w/2mU1AQixqYT/lqJtSP5uz+Z/FDcRBfIoTaCjRHGNhXk7wWORhnkrppSaf0N4pYJfESZN1iCflOLat8hF4SFkssZk182ESMAyuYN5w=
+	t=1748020915; cv=none; b=UPVeRq8DMEjIYpC3T1kbZganfKrLgq3QobJNZC8UpYTQUyHF/o7sEvLfeOk3maEFghEFs3JQjFKIphjKfJxxEeozYH4ck6lZfetqskyGUp6nLVk+Xa6pGLtgaDhj2NUKpRECgre1w394VcwLDhnE6wdq9YIhSW4Urf4Pq3wXduM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748020912; c=relaxed/simple;
-	bh=9SLdynl6L7y6joeNZe/hgRVqbliepI84c5Fual0QYhM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XDwezrxxNNtCTEBvMyrl3Dsb64tuFfanqRsx2SCoaMONx3RZmIVFQR2hVPtFI0rZiskcRixKIUDxs6SuIjwfgnhrDszFg8+FGgJQr9bf+jsSYbuewpx/BQ7pYjqCQSvRTVu/imnYi2dfrx7yCNqYvq/EOJfmR3dBjTcniKtLhc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ad53a96baf9so6970366b.3;
-        Fri, 23 May 2025 10:21:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748020907; x=1748625707;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1as6ImIdlFWGVqlVEq7SS2UVNO7GhmhlxXbjC8OXbUU=;
-        b=OVI4TR30bNaAKlpaW580DlL85Ouo98G777cbZbHU8DAjO/+0Rpt1Jxo/fIbOO8eIbv
-         9wUkvFFZEDRXQdpQEov8S2JaSV02II/v34bRNGJ8huGKva9PFRXuMifIAht8W1KQG+aR
-         6vsjN0lWNda8uKgkuxwY/asBpR/SQcMPGoMn0oxRhVlxq7GZYTRRX2PFHAlr3eLZ5geK
-         MiQJZodC8QjfS+yeKOwcsCcelm8neWTQhoTy037IUy0pCYlS3/CdRmlcRqfKlcCsiyEO
-         lsnL5GRjROkTWOVhH/IwnB20oeGJ4+hf09wR4MbLEdbDzVuQ1pWhTX5c2R54Bco4RIG1
-         1L6A==
-X-Forwarded-Encrypted: i=1; AJvYcCU5Et6SY9LD0RGBCIWFPXYj2u2j5268zuzVVvvCyOQbQkzN5oPPI9mpKj15gOQmwbcWSa8Dn28TkPrmH6C0@vger.kernel.org, AJvYcCW1SqvxUSA7ML3e/6lqLbNScO4pjVdoYSzjsADClOhGdrtkmYCEQK/GA5HYhGzOcw7sp0dFKkhe@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrRH3RmlpfMhGMZIN+AIRHe1Zzs1ww25aMye+OtadM1xA9Phj8
-	3Dhc4ZlZnjB0Oa7yUubg06gJODUmROg++4UwSuaKxnHc/F6CkfWLafboBawI0g==
-X-Gm-Gg: ASbGncu/g5aIs3xVXrkPK6Z5iLcJtBIwg8dZXIVK5gOS9/IzqdfLsXt5i/+qnVUT1GA
-	emTdzzINwbUJa6wzCxdcuV0TQKWde1oU0lH6DIAu6kB3g3uEsKesW+S+IZb04Hx5s8pd6gDd3R3
-	P7NvXmnIWnlcwnZWtvcLNWa9l4Up9rP4BXJyZFMbFpzA6vB7s/x+m/CKzJA2hybXpbgTTf8In99
-	vXm5jPVN00VWYwekNImqcpSD2ftrhhGYHflYIJ3YU1cQbS1xg6+XpJ9Q51RokClljemNiJDzYAa
-	EtBMlcdAGPTZ5PaBkHUUnM9PJa7U4qya9Z3zTTiykMY=
-X-Google-Smtp-Source: AGHT+IEEWay1bo7xwQtAs3f6A3rSo4pJSW6u6S62+uEQlhJzjpxa/eN/MPuznam0Nb0N36VqDaOo9A==
-X-Received: by 2002:a17:907:7d89:b0:ad2:4785:c4ac with SMTP id a640c23a62f3a-ad52d575a9fmr3121280566b.40.1748020906956;
-        Fri, 23 May 2025 10:21:46 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:72::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6005ac333d1sm12197258a12.61.2025.05.23.10.21.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 May 2025 10:21:46 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Fri, 23 May 2025 10:21:06 -0700
-Subject: [PATCH] memcg: Always call cond_resched() after fn()
+	s=arc-20240116; t=1748020915; c=relaxed/simple;
+	bh=1x3hMFS/epUUaGJgYIygPHE5ejltDJuvREyyMVHwYd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bf3YphEce747cQKecaHC46bYeImjiH2XO7ThyIW4/a9JqOpJCwpQ0u+2Vmit4NYJtiTflc6IKeCxtQnQO7Cgd/kwcFNoXK1tO+jGoi/1sqazHHmnah+w63GRFrN+XrHJlZ9Cbi/wxJTrppo9aiHQ6l6EU+zTsX44KgsVrK4EQRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=DiomyJDO; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 54NHLFdn3567992
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 23 May 2025 10:21:15 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 54NHLFdn3567992
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025052101; t=1748020876;
+	bh=1x3hMFS/epUUaGJgYIygPHE5ejltDJuvREyyMVHwYd4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DiomyJDOcUSbaUi/NHrfvdWOGa7nlvUcx23a5HLKtBLDG/1unxKZUh2quu4BesJxN
+	 52XP+NnJTQ4c/h4y0mcIUZNR974fk8HozylA65n02PodBr369jX4j1XOcZ0h+H6zWH
+	 mOuNu/eCpA03jWJEJAKH8WifphGq7vNCU1dfqNLUBZiGjkIhLRA0J3+9SsgppK4hxt
+	 0CBuFdmC2dzk6BHZzdtf+xtSeg6LP60UV90s8+8RG72onzlC16lrqdNV1jkWSjDp7X
+	 0yqB+r681QHlowi65eQZVhY0lWf8C4GE0Z+6njFd7wp00Uh3+6tgMLYm7AFrBoshd0
+	 EJxcmoy8uCPGw==
+Message-ID: <18e8bd89-6c63-43f0-a962-341c581d7b91@zytor.com>
+Date: Fri, 23 May 2025 10:21:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] x86/fred/signal: Prevent single-step upon ERETU
+ completion
+To: "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
+        stable@vger.kernel.org
+References: <20250522171754.3082061-1-xin@zytor.com>
+ <e4f1120b-0bff-4f01-8fe7-5e394a254020@intel.com>
+ <ad8d3a12-25f3-4d57-8f34-950b7967f92b@citrix.com>
+ <97a86550-844d-41c8-bc5e-b3b7b20ef6c9@zytor.com>
+ <F535D469-6B77-47CC-8D04-FA6D8D7E937D@zytor.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <F535D469-6B77-47CC-8D04-FA6D8D7E937D@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250523-memcg_fix-v1-1-ad3eafb60477@debian.org>
-X-B4-Tracking: v=1; b=H4sIAIGuMGgC/x3MUQqAIBAFwKss7ztBNyTyKhERtdZ+WKEQgXT3o
- DnAVBTJKgWBKrLcWvQ8EMg1hGWfj02MrggEtuyt59YkScs2RX2Mdcy+i62zvaAhXFmiPv81jO/
- 7AXG+asRbAAAA
-X-Change-ID: 20250523-memcg_fix-012257f3109e
-To: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
- Roman Gushchin <roman.gushchin@linux.dev>, 
- Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Chen Ridong <chenridong@huawei.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Michal Hocko <mhocko@suse.com>, cgroups@vger.kernel.org, 
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
- Michael van der Westhuizen <rmikey@meta.com>, 
- Usama Arif <usamaarif642@gmail.com>, 
- Pavel Begunkov <asml.silence@gmail.com>, Rik van Riel <riel@surriel.com>, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2567; i=leitao@debian.org;
- h=from:subject:message-id; bh=9SLdynl6L7y6joeNZe/hgRVqbliepI84c5Fual0QYhM=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoMK6oTefW5BzotcyUzyayF5x6y5MfHcnenlf2J
- mFeWRdJMYaJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaDCuqAAKCRA1o5Of/Hh3
- bczDD/9jW9atkOFws/9Mw2wEqL09mHhEgwb3LKjbIkp3KBDora5mTdsh4EM6VDEQMdxq1kpjpNz
- GiJtQH7jl1kc71734kzXrt8qJN75Zqyv/pnPjRfRIgAqxKK7UPW/YzanfOzR88LHiUtAbQ8aLV9
- 4pbpcytSlqBucL9CaCEGLV1PlWFzdaaBwgzyp3t3LOA3bXJEWVxVtwMGAGB6MA4puNNl+PHzRgr
- 8ymf1ID08isRIHU+TNVMyaeqG5EKSgNlcSGjgGYHm4RMBaIQtLI5RZFcrfX4/zZ1WvJznGdwIqu
- gChRgIRKgXT0O/Jz4sKsezfnM9byOY8PuVIydhBnPMTi/B6WQR+HdioIXE92SkS/a/cn2nXpTdc
- tTaPXVLdK8HsEeGrjNlP+ub4dfa387IrUHscHBH9RCoZTa1Vvwmc5sIGSKV3kPD2QJAkEjiZXvS
- CFlJlm5VvP4XcdMvrrcNl9+8iW8/52UIMlvrfXMPherMbhp7cO5Fj7qyF0seL3GtJ0OKUTEl03B
- UfdP2gvmtKfltA6ED/SLIuUrvV0R4kyXmKtHkISbWp5Q72UD1PFy7AyVYovEjPNzCgcwNMWkEbY
- SFHYQAnmna2+xMQkC0N76hbzegoWLAWh2wIIxIwZyzfLgh84GkfNc7yf4RLWJIBwAwSAN7blASR
- tJd2X4lzFEXJ6+w==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-I am seeing soft lockup on certain machine types when a cgroup
-OOMs. This is happening because killing the process in certain machine
-might be very slow, which causes the soft lockup and RCU stalls. This
-happens usually when the cgroup has MANY processes and memory.oom.group
-is set.
+On 5/23/2025 12:42 AM, H. Peter Anvin wrote:
+> Btw, make the test work on 32 bits as well (just a matter of using a different ucontext.)
 
-Example I am seeing in real production:
-
-       [462012.244552] Memory cgroup out of memory: Killed process 3370438 (crosvm) ....
-       ....
-       [462037.318059] Memory cgroup out of memory: Killed process 4171372 (adb) ....
-       [462037.348314] watchdog: BUG: soft lockup - CPU#64 stuck for 26s! [stat_manager-ag:1618982]
-       ....
-
-Quick look at why this is so slow, it seems to be related to serial
-flush for certain machine types. For all the crashes I saw, the target
-CPU was at console_flush_all().
-
-In the case above, there are thousands of processes in the cgroup, and
-it is soft locking up before it reaches the 1024 limit in the code
-(which would call the cond_resched()). So, cond_resched() in 1024 blocks
-is not sufficient.
-
-Remove the counter-based conditional rescheduling logic and call
-cond_resched() unconditionally after each task iteration, after fn() is
-called. This avoids the lockup independently of how slow fn() is.
-
-Cc: Michael van der Westhuizen <rmikey@meta.com>
-Cc: Usama Arif <usamaarif642@gmail.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>
-Suggested-by: Rik van Riel <riel@surriel.com>
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Fixes: 46576834291869457 ("memcg: fix soft lockup in the OOM process")
----
- mm/memcontrol.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index c96c1f2b9cf57..2d4d65f25fecd 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1168,7 +1168,6 @@ void mem_cgroup_scan_tasks(struct mem_cgroup *memcg,
- {
- 	struct mem_cgroup *iter;
- 	int ret = 0;
--	int i = 0;
- 
- 	BUG_ON(mem_cgroup_is_root(memcg));
- 
-@@ -1178,10 +1177,9 @@ void mem_cgroup_scan_tasks(struct mem_cgroup *memcg,
- 
- 		css_task_iter_start(&iter->css, CSS_TASK_ITER_PROCS, &it);
- 		while (!ret && (task = css_task_iter_next(&it))) {
--			/* Avoid potential softlockup warning */
--			if ((++i & 1023) == 0)
--				cond_resched();
- 			ret = fn(task, arg);
-+			/* Avoid potential softlockup warning */
-+			cond_resched();
- 		}
- 		css_task_iter_end(&it);
- 		if (ret) {
-
----
-base-commit: ea15e046263b19e91ffd827645ae5dfa44ebd044
-change-id: 20250523-memcg_fix-012257f3109e
-
-Best regards,
--- 
-Breno Leitao <leitao@debian.org>
-
+Yeah, that is for sure.
 
