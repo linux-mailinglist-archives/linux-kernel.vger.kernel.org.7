@@ -1,79 +1,44 @@
-Return-Path: <linux-kernel+bounces-660255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD1CAC1AB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:43:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B34AC1ABF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F2A5A2337F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:43:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A30FB1B65887
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBC522171B;
-	Fri, 23 May 2025 03:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3645B1EFFAC;
+	Fri, 23 May 2025 03:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="U0m0ZwOA"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C23213235
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 03:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="j0CqrPB3"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7417742AB4;
+	Fri, 23 May 2025 03:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747971817; cv=none; b=nVCBb5v/Br1+SgOq2TYoBok8YhLlcWJ1uzKtnW/y9Vusm9PwSiAPa/j9T3Gz3p8bFqHk4LMNgYG5l0NAXRzH0FAoNyIrYBlrO1GSaFhkN1qJNYRnmVDlSQJnf2vxAKekrOON0wn1DTSVd/iqryMo0qX7yy/8SG8WqRROc8KQio0=
+	t=1747972047; cv=none; b=tLDp/8Xuqkei3LL9bqm6aHAmEyju69iBujxSq4Hy7Sn9ZfBqjaf4tg5f/wAgOhALj2GTPil2Z/8T3VQF506S4VEJfol6xV3g9dF6+qfdTep44OaqXMYyDMhHTueMxU6wwwcLlSbYMCR1VuqanDdnsEH4YV1RrrEjsrvBouxp3QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747971817; c=relaxed/simple;
-	bh=HrlWj+7xjE+GxEjW2W381e1FRH0QZe7LDhNlyqrk0CA=;
+	s=arc-20240116; t=1747972047; c=relaxed/simple;
+	bh=IkdmFrSh2VwCtODceQe1mvxAb3VAK663r9TayBQV6g0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GfMm2if+Ju+gVsdmk5RnokKG7tu8BVxJDeOXseGsJ0ONyO8bEV6Rl5t3fuEH2qINAbN4HKtmvwT+9ktldjLKgGwI71J/tolgYpaUuzwapK9DBsvGkMw58q82uBRjHbGlWmlN4zthKI2G39lGKHWQ7u1pa6as1PtmA1ixEcYzm8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=U0m0ZwOA; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2320d06b728so48512685ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 20:43:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1747971815; x=1748576615; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J05dvsnqUxHvTInzLD4bICl0NDkAyj3stBB+zRj5LSA=;
-        b=U0m0ZwOATm4UGzoruj1RqRQwGmevtSJFGpgYuLgVtWtM8ZHDbCHiBEH8riKZkgRcDV
-         0GB41KGoDA6aaftvOQErwWmSQps+aPeUfDOGEkOg02jRxI4zOkX5km0O3FCf1YVaMTTK
-         ZnVqz7cwJfJTp0X9L51SQFczkIGT6nXTRT2G+i0/JfpF2C9ZNmTGUvMszqju4ldKuM7/
-         R5uOCSjw1QbQMi6/RU/LOTSFrKRw7ptGp/04t9qc2fNx1AX3N2Sz1jcTO/o7ive0wPn6
-         +mFB2X4ePXj4Nl1H3NMaUYcvOTcU5ct5XA/ku53fKf38Fn5YjKFlqiiMn+BtLkT5NAQk
-         K2Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747971815; x=1748576615;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=J05dvsnqUxHvTInzLD4bICl0NDkAyj3stBB+zRj5LSA=;
-        b=pMOmPLkXr247WQqLaA+yvuyw1LIW0XqyT0STyaornDvdFVkgtkXBgfXDpB8kY4szbn
-         Uod7CwLY5fQpHEsqjr+vlvLj4PeMdNloZRwxtiCYN1KydJxcOK7VYAc+J4JkC0tMZLoJ
-         VFDtkDyqaivbT0St47QJ6Znj3LpYzhSLjlrXfXEn8H6cRAfn4p7zZ7XQQoJ3b5trj0t9
-         UdY5Rw1D4gXK/Pt/KF899FGp8E3fXJfeTt24yTX5axSHa/67+NbdaeziDthQ397HdtFU
-         MGlDbQ4W0+OAUNJYwmmO3xpi2RoAUgT+yig0yD6e1+G02t6KzCZVQCQup5TPIM9/zFy4
-         IN+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXnEfJsWPtmhJyYe2obGDvg3TFmmIeYpMCYHTY2qDJ9bc+ciV64lqLAKivw/yMmjm5zqj7W/CnwbW7OiPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbrIpGMNjsZ86HSxALSqlzZ1QYutg6I/XuNJpg6ijOJHJUOSda
-	icMh5LaS5ei7XbTAJK5xKj6eoxzmv/Ft/6C43b5r673MT1CEEY2vSreeOSwB3tRoENQ=
-X-Gm-Gg: ASbGncv2N6KIye4cvJqoUnCqH+XvyErPX51veZZeJ2bHLxSsuKqCL3x1lRQCqRsER8K
-	4eGJHIt8DQa2m7BOf1zkZU8oY3Jlcle087cxcJBUt/ScY2drc9CF1dxIWJB2rqQgzivr60HM08r
-	+D44W1k3d+nPDiZGtKWyrbyOPGrt5HVbyHrPoSyZNO+TeyC9q0lB0hRi7s9MvQRgOoIRXsiK5ux
-	g11YcxoMWPHQNYfXpN8/dPP7eUr6GsA8Nu8S/Q6C5zMSRpLlrs4M0LLeyZLJxnOGB07QgoIMql1
-	5nkmUftZULNK536hNt/g35IcqP5AvKZa3FLX8qnRSA17OZxXMW79mZdW+AHjTj3WT9Ce8Og8ILW
-	yyBCEzE1rIw==
-X-Google-Smtp-Source: AGHT+IFJUa2ZA4G+IYco+Be+FUJVLivd3f5/OkH9AHpXW8S/SRBQ8SwylmKbpKD7GepKWMTvQ7YN5g==
-X-Received: by 2002:a17:902:c951:b0:220:c911:3f60 with SMTP id d9443c01a7336-231d454eb37mr342440245ad.47.1747971815006;
-        Thu, 22 May 2025 20:43:35 -0700 (PDT)
-Received: from [10.68.122.90] ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4ac948asm115132435ad.22.2025.05.22.20.43.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 May 2025 20:43:34 -0700 (PDT)
-Message-ID: <0cdf967f-9606-4d12-9ea3-140f9bffe516@bytedance.com>
-Date: Fri, 23 May 2025 11:43:30 +0800
+	 In-Reply-To:Content-Type; b=nSebJrIt4LuAVCIR5UGpptEworGirFWXRqk3GWTlf5AdTWvdTf7mJZi73pV2+ZDfh1e/i8Q83zVe3XiCiC9E+X8SCbiU6MnV7hgiyNVuqiU/VVJztq0bNO5NSI75pqyaG1YsqwSPLbxNPINqMstY2iLfitlTbKbqvWIWSYNP3sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=j0CqrPB3; arc=none smtp.client-ip=117.135.210.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=BRlhWrT2SoYXDlWZPjcJEikz+rURnIHTSURTtEo/7GI=;
+	b=j0CqrPB3BVJ2NkTWzNNJzTs2suu7ZY2L22yVmswZVziThaQUpJh9t9b4pblpVs
+	IFWdrQZMU8ehbQTkmMo1ChtK6BuZdCzFHAaH3jZEaw+tacAVzITJ4PXLQxo8XlXs
+	/SWybH5CWos2S04jMlGdC2HIdu7xn8Nax3cAAbQiaKIrg=
+Received: from [172.19.20.199] (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3Xyar7y9oVPJEAg--.40133S2;
+	Fri, 23 May 2025 11:46:51 +0800 (CST)
+Message-ID: <4e408146-7c77-4f6d-90e8-bb311d7ab53d@126.com>
+Date: Fri, 23 May 2025 11:46:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,53 +46,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmu_notifiers: remove leftover stub macros
-To: Jann Horn <jannh@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>
-References: <20250523-mmu-notifier-cleanup-unused-v1-1-cc1f47ebec33@google.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <20250523-mmu-notifier-cleanup-unused-v1-1-cc1f47ebec33@google.com>
+Subject: Re: [PATCH] mm/hugetlb: fix kernel NULL pointer dereference when
+ replacing free hugetlb folios
+To: Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 21cnbao@gmail.com,
+ david@redhat.com, baolin.wang@linux.alibaba.com, liuzixing@hygon.cn
+References: <1747884137-26685-1-git-send-email-yangge1116@126.com>
+ <644FF836-9DC7-42B4-BACE-C433E637B885@linux.dev>
+ <aC63fmFKK84K7YiZ@localhost.localdomain>
+ <ff6bd560-d249-418f-81f4-7cbe055a25ec@126.com>
+ <aC8PRkyd3y74Ph5R@localhost.localdomain>
+ <3B8641A1-5345-44A5-B610-9BCBC980493D@linux.dev>
+ <aC974OtOuj9Tqzsa@localhost.localdomain>
+ <DF103E57-601C-4CBB-99CA-088E1C29F517@linux.dev>
+From: Ge Yang <yangge1116@126.com>
+In-Reply-To: <DF103E57-601C-4CBB-99CA-088E1C29F517@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3Xyar7y9oVPJEAg--.40133S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWruF1xWrykuFyrZry7Kr18Grg_yoWkGwc_ZF
+	W0vas7Gw4UZFy0kF4DGrn0qF98Kw45ZF1YvFWrWrWUCFyftF95Xr98tr4fZwsrWa1jkF45
+	tw1Yva93Ar12kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8OJ55UUUUU==
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbidRxWG2gv70MMjAAAsP
 
 
 
-On 5/23/25 6:30 AM, Jann Horn wrote:
-> Commit ec8832d007cb ("mmu_notifiers: don't invalidate secondary TLBs as
-> part of mmu_notifier_invalidate_range_end()") removed the main definitions
-> of {ptep,pmdp_huge,pudp_huge}_clear_flush_notify; just their
-> !CONFIG_MMU_NOTIFIER stubs are left behind, remove them.
+在 2025/5/23 11:27, Muchun Song 写道:
 > 
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
->   include/linux/mmu_notifier.h | 3 ---
->   1 file changed, 3 deletions(-)
 > 
-> diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-> index bc2402a45741..d1094c2d5fb6 100644
-> --- a/include/linux/mmu_notifier.h
-> +++ b/include/linux/mmu_notifier.h
-> @@ -654,9 +654,6 @@ static inline void mmu_notifier_subscriptions_destroy(struct mm_struct *mm)
->   #define pmdp_clear_flush_young_notify pmdp_clear_flush_young
->   #define ptep_clear_young_notify ptep_test_and_clear_young
->   #define pmdp_clear_young_notify pmdp_test_and_clear_young
-> -#define	ptep_clear_flush_notify ptep_clear_flush
-> -#define pmdp_huge_clear_flush_notify pmdp_huge_clear_flush
-> -#define pudp_huge_clear_flush_notify pudp_huge_clear_flush
-
-Reviewed-by: Qi Zheng <zhengqi.arch@bytedance.com>
-
-Thanks!
-
->   
->   static inline void mmu_notifier_synchronize(void)
->   {
+>> On May 23, 2025, at 03:32, Oscar Salvador <osalvador@suse.de> wrote:
+>>
+>> On Thu, May 22, 2025 at 08:39:39PM +0800, Muchun Song wrote:
+>>> But I think we could use "folio_order() > MAX_PAGE_ORDER" to replace the check
+>>> of hstate_is_gigantic(), right? Then ee could remove the first parameter of hstate
+>>> from alloc_and_dissolve_hugetlb_folio() and obtain hstate in it.
+>>
+>> Yes, I think we can do that.
+>> So something like the following (compily-tested only) maybe?
+>>
+>>  From d7199339e905f83b54d22849e8f21f631916ce94 Mon Sep 17 00:00:00 2001
+>> From: Oscar Salvador <osalvador@suse.de>
+>> Date: Thu, 22 May 2025 19:51:04 +0200
+>> Subject: [PATCH] TMP
+>>
+>> ---
+>>   mm/hugetlb.c | 38 +++++++++-----------------------------
+>>   1 file changed, 9 insertions(+), 29 deletions(-)
 > 
-> ---
-> base-commit: e85dea591fbf900330c796579314bfb7cc399d31
-> change-id: 20250523-mmu-notifier-cleanup-unused-238762302a66
+> Pretty simple. The code LGTM.
 > 
+> Thanks.
+
+Thanks.
+
+The implementation of alloc_and_dissolve_hugetlb_folio differs between 
+kernel 6.6 and kernel 6.15. To facilitate backporting, I'm planning to 
+submit another patch based on Oscar Salvador's suggestion.
 
 
