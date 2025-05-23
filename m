@@ -1,78 +1,89 @@
-Return-Path: <linux-kernel+bounces-661206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691E1AC27E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF3BAC27F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D72D91C05514
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:51:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FF401895108
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DB5296FDF;
-	Fri, 23 May 2025 16:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3F7297120;
+	Fri, 23 May 2025 16:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mkzqvywf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLLoq8gl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BECF2063F0;
-	Fri, 23 May 2025 16:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899C3296FCA;
+	Fri, 23 May 2025 16:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748019060; cv=none; b=EJoMqTL4cFaH25bwXAEvYYCGJrtTVkLsl5HjJz2HN7b/nxdoP5K7BMuiOVtHdNaIvg+At1O5u5csRdpAV5x6ULutbtRERQEuzwmzIgQkRNh1FwUeW0YHCO/oieRMEyqiSQMnX/VQE913GgGCjAY75D/enYKZps+Lqq/A0NDE/oY=
+	t=1748019107; cv=none; b=CUbOZ6TjBR+qGStd9KpDaZI1L0LUtFhOXGnY4Mbt7NsGtObmQl218qY4XPHbIGYwFgRtXcOdzIKEeY5zM9bCdXu5vffxf6TT656pPDsqEyWP1HUhbr111HLXGoefK9QGCEVWdKoYPh1F1MiDs2VNgTb8iUzBIWNopqwA+BZ8UCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748019060; c=relaxed/simple;
-	bh=6CiA/dI+9hc98ym5mhyRTZeJoWyaHXWJHbSan/vnN30=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=OeRHKcUMDQRtgaUvRxyGaSCSoBKPSeqH9ZPBBsWsFVJXkzPfVzXZcK+La326MWxqiQKVFpAL+7yOPLCtXlWMmpi0PjZ/mYJExsn+pUEAOhAzxg+zdGfpvmkzW4wLYteHyg/PHffExkfMCIDJhQn8m6wptYwhhlGpQMI08JqoAGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mkzqvywf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1B92C4CEE9;
-	Fri, 23 May 2025 16:50:59 +0000 (UTC)
+	s=arc-20240116; t=1748019107; c=relaxed/simple;
+	bh=Wh0XqPUu+Lz68HLgF4GQPjuZRkkZz7XwGHcAlknA1F0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mam6klp0rymLOAO5ur6JTZ4/JCKSSGs1+MoXqmO60yJYGtfcb6X/SrOeVlBauN78ULxpSPDkg6ugNDxAB89gpUAAlW98PQoN6MYwSyHhCyR4oaezobNmYBhDk7j3k3r9Rah3Ro38hpfZlpPdh7hUABiVEWaxNoILXTytyjVWVY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLLoq8gl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B2FCC4CEE9;
+	Fri, 23 May 2025 16:51:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748019060;
-	bh=6CiA/dI+9hc98ym5mhyRTZeJoWyaHXWJHbSan/vnN30=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=MkzqvywfDRXwafiZJNBVfHgYaRbeAXbMTVto1/v/KE05phXSjJVLW9eLG+IArRTs7
-	 XnVc+iE0N/+/oEPUu35ZSE6MwMsh+QNFFgzPiv/e4ttneK7dxJY5OMphhwiPAoqLz8
-	 X6SWxOHW2tTYyhIlkXL+ul3OPHYDbO+q0GqQckTub8j2t8kxl9W4hKeu0gA86JQCvY
-	 j0APpnYKA46WGQE7PD6DfIW4XIAQ3WBwAd7jKzD1VBhzK4XOeMvpWRC344hcrfAPbO
-	 4UgWH4PSTQuh54XHJHdf4PprGAle9w1fGIaTqkc5uyFN3hkZfxBEDvrLLAxVm29Jbu
-	 jHEKhRoIMpUFg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 711D1380DBEB;
-	Fri, 23 May 2025 16:51:36 +0000 (UTC)
-Subject: Re: [GIT PULL] ksmbd server fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5mud60X1UsmL0OiF6OQhA-wW8WzfP7SyOZBmDEG-hfD4QQ@mail.gmail.com>
-References: <CAH2r5mud60X1UsmL0OiF6OQhA-wW8WzfP7SyOZBmDEG-hfD4QQ@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-cifs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5mud60X1UsmL0OiF6OQhA-wW8WzfP7SyOZBmDEG-hfD4QQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/ksmbd.git tags/v6.15-rc8-ksmbd-server-fixes
-X-PR-Tracked-Commit-Id: 10379171f346e6f61d30d9949500a8de4336444a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e0f8e1a7c18bfbb203122e98dbd08e0e68dcbd76
-Message-Id: <174801909512.3663029.3450981754455219794.pr-tracker-bot@kernel.org>
-Date: Fri, 23 May 2025 16:51:35 +0000
-To: Steve French <smfrench@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Namjae Jeon <linkinjeon@kernel.org>, CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+	s=k20201202; t=1748019107;
+	bh=Wh0XqPUu+Lz68HLgF4GQPjuZRkkZz7XwGHcAlknA1F0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZLLoq8glu63ddQX8GfGQABKc1/sthdqvrLqG/2Wkri12PhSEzJnLwlGfz7fP4w31w
+	 cUS+VWCZsAtBU0AJ75DUXEUbtk6gOl9tWVZQQCLh0ovP5hYwL9yQ1KrZzJpnDrTPMo
+	 04L0fVKSRJCi1kSFCr/JRzxu3VJTaH8dAgjO1+ZrB6Uj1ufjA3VABC9oFxtXtLG0/N
+	 HG9GS07dMcXmIX9TBCrkldXiwzMGbXTZ3/SjDmX22KMDqrg5YK4P4ta2PflRafrJj0
+	 mnffnxTljFDxgLZ55H+w4b9sIPoC93PCNYnIQskRd16BaJ0I/Yx8I20j6Bb81kSFJV
+	 EK/rSBRZ6m2qg==
+Date: Fri, 23 May 2025 06:51:41 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Zhongkun He <hezhongkun.hzk@bytedance.com>
+Cc: Waiman Long <llong@redhat.com>, hannes@cmpxchg.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	muchun.song@linux.dev
+Subject: Re: [External] Re: [PATCH] cpuset: introduce non-blocking
+ cpuset.mems setting option
+Message-ID: <aDCnnd46qjAvoxZq@slm.duckdns.org>
+References: <20250520031552.1931598-1-hezhongkun.hzk@bytedance.com>
+ <8029d719-9dc2-4c7d-af71-4f6ae99fe256@redhat.com>
+ <CACSyD1Mmt54dVRiBibcGsum_rRV=_SwP=dxioAxq=EDmPRnY2Q@mail.gmail.com>
+ <aC4J9HDo2LKXYG6l@slm.duckdns.org>
+ <CACSyD1MvwPT7i5_PnEp32seeb7X_svdCeFtN6neJ0=QPY1hDsw@mail.gmail.com>
+ <aC90-jGtD_tJiP5K@slm.duckdns.org>
+ <CACSyD1P+wuSP2jhMsLHBAXDxGoBkWzK54S5BRzh63yby4g0OHw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACSyD1P+wuSP2jhMsLHBAXDxGoBkWzK54S5BRzh63yby4g0OHw@mail.gmail.com>
 
-The pull request you sent on Fri, 23 May 2025 10:23:53 -0500:
+Hello,
 
-> git://git.samba.org/ksmbd.git tags/v6.15-rc8-ksmbd-server-fixes
+On Fri, May 23, 2025 at 11:35:57PM +0800, Zhongkun He wrote:
+> > Is this something you want on the whole machine? If so, would global cgroup
+> > mount option work?
+> 
+> It doesn't apply to the whole machine. It is only relevant to the pod with
+> huge pages, where the service will be unavailable for over ten seconds if
+> modify the cpuset.mems. Therefore, it would be ideal if there were an
+> option to disable the migration for this special case.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e0f8e1a7c18bfbb203122e98dbd08e0e68dcbd76
+I suppose we can add back an interface similar to cgroup1 but can you detail
+the use case a bit? If you relocate threads without relocating memory, you'd
+be paying on-going cost for memory access. It'd be great if you can
+elaborate why such mode of operation is desirable.
 
-Thank you!
+Thanks.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+tejun
 
