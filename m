@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-661022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1780AC257D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:53:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9D0AC2580
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CABA7B7E6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:52:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD395545834
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A910297A61;
-	Fri, 23 May 2025 14:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFF4297B89;
+	Fri, 23 May 2025 14:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z7iS6qZs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8o4gAuV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31DE297A46;
-	Fri, 23 May 2025 14:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5628297B6D;
+	Fri, 23 May 2025 14:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748011932; cv=none; b=i82L/BChaNvG8Ne3uAlemcpz4fwHHcdW1eq/AfD+rj1RcTpgq79n5ix6IQCdIMxY29hJJEn9mKm+f94CINbK37n94/4qvjFrdYZrQ2FQczwqEIykBmW+x0w5Y4Gtl1P+Wcqr51xoY5mtMSTcVu3xALEeCUWOCpNY/rDxuQuyny4=
+	t=1748011937; cv=none; b=RvwyH02a3Vy/cuLuo3IORhkjGATN3rBd5w26RTUYjx41NK988l06Av+5GKP4RFnhfJuJSrJ1+7+pV1hRo9yApni+m500LHhUYGX1mpJHV47NbnfluY0sT+zSDVjAe3uiwYkUfzgPb9dMl6yhD3Ef4OF2CwgdWmCEicduJITwWRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748011932; c=relaxed/simple;
-	bh=9SnhNkgZxHMQ5g6HjXgwOZSujdCME27mBkxlwAlRLKM=;
+	s=arc-20240116; t=1748011937; c=relaxed/simple;
+	bh=ZBjrKXZ/qrgShZJwAWynpWpJDpFSRPRO6cQ3mqt1FoQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bnYV2v3pgxl+NNwIc+/9gXiOeLxTjf9JlcBsmI8k63uwcYuXWHtbr+osA0s91cBqUgg6Ey/apBeb1WKhCFzS/ZW8eqHn3ZsQri/p6/4GbRV6OVMDalA+GJK21+E7SkSySgrmxdclUD+Oi2q0YJtQL5ktmIWs2hdr6dmzSTdE3Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z7iS6qZs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0CAFC4CEE9;
-	Fri, 23 May 2025 14:52:09 +0000 (UTC)
+	 MIME-Version; b=TmQqA7dtMURJh9B3rlj9o6KmLzs6nOJ+v5WKS4XE4IKBX7eNxOKxotuncDsCQEJnMRMuASm1QBtc39flBLjyMZ793ArcFB1DLYQcmhHxpcl4jR224cT2m4iZN92N6h6xh7ynkurbAxS7qOGdNZB5gC5Oqd8y/V5Y3NNn0lgWJtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V8o4gAuV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66EF2C4CEE9;
+	Fri, 23 May 2025 14:52:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748011932;
-	bh=9SnhNkgZxHMQ5g6HjXgwOZSujdCME27mBkxlwAlRLKM=;
+	s=k20201202; t=1748011937;
+	bh=ZBjrKXZ/qrgShZJwAWynpWpJDpFSRPRO6cQ3mqt1FoQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Z7iS6qZsKbaP/yCqsF5Hblyh8ivwYsMIYlF/N+NKYiVEC7aINlTB4y97V1GGo26cc
-	 eakhpmnVQFg9T9yQnNweyJpl+gmC+PWWmGKW+snUtGCN8cawFigS5/av/Zp1gtqhsZ
-	 Y2VuXFk+PiRD4suR4WpNiTKrrocmlsv5B6X6Ywbqsk60Yf/FJ4m3Vc9PboHT7k9OW5
-	 qpX1823t9ucqWNMjmbAElCfA/ID5UuST6Bj+xQQYLg/bWQalwGs0vXIZvuO8ZgojCy
-	 3KNURX9+4bJYZbaEKJCnICHbAUkj66pau+QdmkrNOGdSgJm0NUbfGYD+iGLATbOaCb
-	 Rnn/DEWKBfXeA==
+	b=V8o4gAuVpib9YeaRBYvriQwFSsghqC29E0YkrYw/fdtbPyJf1s7sRGXZfeDaQ8CYu
+	 0Ri5zJbDNXXtkP1nLVMX7Xy+7X0/W+v9vk0GDNT4rDvWhzZj/vPaxLzLSziHVxe5/p
+	 9MYYUQU6GtemeC/3Qm7wK060MEaieN0QOxXwN5V+pixKWgQcCCdiLLXuuy7JuHogNA
+	 /rx29tZM2NE7XFxYTgkyMEBfb400dSYQ5885sHlBL30BSi1GLvFOo2nB+/e1+sW72v
+	 lO0txyc9wn36AV9ZiaMeD1UsV+ytRlO97lHCTke19AZpaK5RCNZ+9HAv5iLuoj0URo
+	 y2RzpPGdxzQeA==
 From: Benno Lossin <lossin@kernel.org>
 To: Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
@@ -50,13 +50,14 @@ To: Miguel Ojeda <ojeda@kernel.org>,
 	Andreas Hindborg <a.hindborg@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>
+	Danilo Krummrich <dakr@kernel.org>,
+	Fiona Behrens <me@kloenk.dev>
 Cc: Lyude Paul <lyude@redhat.com>,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 07/13] rust: add `pin-init` as a dependency to `bindings` and `uapi`
-Date: Fri, 23 May 2025 16:51:03 +0200
-Message-ID: <20250523145125.523275-8-lossin@kernel.org>
+Subject: [PATCH v2 08/13] rust: derive `Zeroable` for all structs & unions generated by bindgen where possible
+Date: Fri, 23 May 2025 16:51:04 +0200
+Message-ID: <20250523145125.523275-9-lossin@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250523145125.523275-1-lossin@kernel.org>
 References: <20250523145125.523275-1-lossin@kernel.org>
@@ -68,59 +69,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This allows `bindings` and `uapi` to implement `Zeroable` and use other
-items from pin-init.
+Using the `--with-derive-custom-{struct,union}` option of bindgen, add
+`#[derive(MaybeZeroable)]` to every struct & union. This makes those
+types implement `Zeroable` if all their fields implement it.
 
-Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-Link: https://rust-for-linux.zulipchat.com/#narrow/channel/291565-Help/topic/Zeroable.20trait.20for.20C.20structs/near/510264158
+Sadly bindgen doesn't add custom derives to the `__BindgenBitfieldUnit`
+struct. So manually implement `Zeroable` for that.
+
 Signed-off-by: Benno Lossin <lossin@kernel.org>
 ---
- rust/Makefile                     | 6 ++++--
- scripts/generate_rust_analyzer.py | 4 ++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ rust/bindgen_parameters | 4 ++++
+ rust/bindings/lib.rs    | 8 ++++++++
+ rust/uapi/lib.rs        | 2 ++
+ 3 files changed, 14 insertions(+)
 
-diff --git a/rust/Makefile b/rust/Makefile
-index 3aca903a7d08..1bee11ad5452 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -513,17 +513,19 @@ $(obj)/ffi.o: private skip_gendwarfksyms = 1
- $(obj)/ffi.o: $(src)/ffi.rs $(obj)/compiler_builtins.o FORCE
- 	+$(call if_changed_rule,rustc_library)
+diff --git a/rust/bindgen_parameters b/rust/bindgen_parameters
+index 0f96af8b9a7f..307545cf7363 100644
+--- a/rust/bindgen_parameters
++++ b/rust/bindgen_parameters
+@@ -34,3 +34,7 @@
+ # We use const helpers to aid bindgen, to avoid conflicts when constants are
+ # recognized, block generation of the non-helper constants.
+ --blocklist-item ARCH_SLAB_MINALIGN
++
++# Structs should implement Zeroable when all of their fields do.
++--with-derive-custom-struct .*=MaybeZeroable
++--with-derive-custom-union .*=MaybeZeroable
+diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
+index a08eb5518cac..9cadc10a8109 100644
+--- a/rust/bindings/lib.rs
++++ b/rust/bindings/lib.rs
+@@ -28,11 +28,19 @@
+ #[allow(clippy::undocumented_unsafe_blocks)]
+ #[cfg_attr(CONFIG_RUSTC_HAS_UNNECESSARY_TRANSMUTES, allow(unnecessary_transmutes))]
+ mod bindings_raw {
++    use pin_init::{MaybeZeroable, Zeroable};
++
+     // Manual definition for blocklisted types.
+     type __kernel_size_t = usize;
+     type __kernel_ssize_t = isize;
+     type __kernel_ptrdiff_t = isize;
  
--$(obj)/bindings.o: private rustc_target_flags = --extern ffi
-+$(obj)/bindings.o: private rustc_target_flags = --extern ffi --extern pin_init
- $(obj)/bindings.o: $(src)/bindings/lib.rs \
-     $(obj)/ffi.o \
-+    $(obj)/pin_init.o \
-     $(obj)/bindings/bindings_generated.rs \
-     $(obj)/bindings/bindings_helpers_generated.rs FORCE
- 	+$(call if_changed_rule,rustc_library)
++    // `bindgen` doesn't automatically do this, see
++    // <https://github.com/rust-lang/rust-bindgen/issues/3196>
++    //
++    // SAFETY: `__BindgenBitfieldUnit<Storage>` is a newtype around `Storage`.
++    unsafe impl<Storage> Zeroable for __BindgenBitfieldUnit<Storage> where Storage: Zeroable {}
++
+     // Use glob import here to expose all helpers.
+     // Symbols defined within the module will take precedence to the glob import.
+     pub use super::bindings_helper::*;
+diff --git a/rust/uapi/lib.rs b/rust/uapi/lib.rs
+index c98d7a8cde77..06b23f8c2663 100644
+--- a/rust/uapi/lib.rs
++++ b/rust/uapi/lib.rs
+@@ -31,4 +31,6 @@
+ type __kernel_ssize_t = isize;
+ type __kernel_ptrdiff_t = isize;
  
--$(obj)/uapi.o: private rustc_target_flags = --extern ffi
-+$(obj)/uapi.o: private rustc_target_flags = --extern ffi --extern pin_init
- $(obj)/uapi.o: private skip_gendwarfksyms = 1
- $(obj)/uapi.o: $(src)/uapi/lib.rs \
-     $(obj)/ffi.o \
-+    $(obj)/pin_init.o \
-     $(obj)/uapi/uapi_generated.rs FORCE
- 	+$(call if_changed_rule,rustc_library)
- 
-diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
-index fe663dd0c43b..ac1ee1a32495 100755
---- a/scripts/generate_rust_analyzer.py
-+++ b/scripts/generate_rust_analyzer.py
-@@ -137,8 +137,8 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
-             "exclude_dirs": [],
-         }
- 
--    append_crate_with_generated("bindings", ["core", "ffi"])
--    append_crate_with_generated("uapi", ["core", "ffi"])
-+    append_crate_with_generated("bindings", ["core", "ffi", "pin_init"])
-+    append_crate_with_generated("uapi", ["core", "ffi", "pin_init"])
-     append_crate_with_generated("kernel", ["core", "macros", "build_error", "pin_init", "ffi", "bindings", "uapi"])
- 
-     def is_root_crate(build_file, target):
++use pin_init::MaybeZeroable;
++
+ include!(concat!(env!("OBJTREE"), "/rust/uapi/uapi_generated.rs"));
 -- 
 2.49.0
 
