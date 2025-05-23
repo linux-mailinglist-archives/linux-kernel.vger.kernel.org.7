@@ -1,128 +1,167 @@
-Return-Path: <linux-kernel+bounces-661092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D503AC269C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:40:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50AE5AC26C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EF6E189A161
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:41:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC42A3B0082
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8A6293B67;
-	Fri, 23 May 2025 15:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B658295526;
+	Fri, 23 May 2025 15:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VKQ9l2FG"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XvkjHFJC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5A014286
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 15:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFF821B9F5;
+	Fri, 23 May 2025 15:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748014843; cv=none; b=Z8kyF/WWWsXzK6gxJe9tZwW3pPhKfrz1H1bRLCwLcDYfJlIxWU/QB+GyRdCyA6VdKvbIpajKJvcCMfk6a5qC/HvWowE/NmGTy6YQ9tCgOCn9W6CzSl0RTwunQhjUYbo9NtLqlh1m5FVUbg2uRF9AuPPKZG+qvoizT1Dvn1XeXCo=
+	t=1748015325; cv=none; b=LQgkX4AdDqhotOzMkz61OOmOkcyNqxOs8mOkHNYeqwEehGqS8FridTW9bi5/rpNNnQwfaj0HR8HtkLBo9o3E55k5HI+Vklx9VPYcrseE4Og++F96hFP+mMHJ+73YtFymeEZ3VgQbg0m/0JIuHC/aTUjGcO5ZsWVHWYOtOh+jVNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748014843; c=relaxed/simple;
-	bh=7SShHhseTkcVUvdD/HmaubB/A4thX3f19PnvsgBdE4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NgEcPJ4SzQMHQTpy7b971h6eBULBIxLWDoD1oyMkQGlYcvlk3YJIfs2/cEAMCo7cTGun0DBxdbB1/tBF1/LY6k7lDuVjfVBNcH2tN4l6MpFt6H5bW693tUQw77GC795tyvm6jqJMtT4M7UaSUq3hvO9FpN+iML/QZtquYcE6a6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VKQ9l2FG; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=x+nRmOtaD3karhz88LSUg85diZHlXcrIVoAQuQ0DbDw=; b=VKQ9l2FGMfscGm8MfxP0gq+S/i
-	p5HBZEBEWtOquLk6lrS4DjZQhh3hcS1s/T2Lh2ugsAmjPRBKzMnvjJI4tIoJJT7OwODZBOWCfyBkL
-	WrJ4yRH6XK9C3FoFviiMvpdZqzlUSOS7xid4SD+v4Cq3GhEcY06tC+QQTaE5vWWE5LQHpf73Xxh5O
-	/RNZhSUiHo/G8nNIfEX3uFR7U9CEC+4ZNOmGb4MRrolm8XAyEOVhcGcCQut9dhRPk0CvYWHpnbDEK
-	uLCRovmNzY5TbU+cI+TjOdYYeVmBZZr40FcxC/rCyXdnJW74//VY0lGbE8UX1/0/sDiLzQNBvn4+Z
-	jfd2aoCQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1uIUVc-00000001LZo-3Urd;
-	Fri, 23 May 2025 15:40:33 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E5FC9300472; Fri, 23 May 2025 17:40:31 +0200 (CEST)
-Date: Fri, 23 May 2025 17:40:31 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, Chris Mason <clm@meta.com>,
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-	vschneid@redhat.com, Juri Lelli <juri.lelli@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: scheduler performance regression since v6.11
-Message-ID: <20250523154031.GM39944@noisy.programming.kicks-ass.net>
-References: <20250509194955.GA25798@noisy.programming.kicks-ass.net>
- <20250512180846.GA25891@noisy.programming.kicks-ass.net>
- <2f394a01-1cd9-4719-9394-647d8731cf3f@meta.com>
- <d3c8527f-ffaf-4463-a305-17ca21a06ce8@meta.com>
- <20250516101822.GC16434@noisy.programming.kicks-ass.net>
- <2084b7d9-bb4f-4a5e-aaec-98e07b3edc2e@arm.com>
- <20250520193831.GB39944@noisy.programming.kicks-ass.net>
- <20250521145447.GA31726@noisy.programming.kicks-ass.net>
- <20250522084844.GC31726@noisy.programming.kicks-ass.net>
- <20250522150035.GB1065351@cmpxchg.org>
+	s=arc-20240116; t=1748015325; c=relaxed/simple;
+	bh=I/8nEbZdDKb5iEP+4krl9s5DuMYHU9jALA6PtV9CAmA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g30LtU+3pqsjuGoeORbpr+oSmjeEMdIJSIjKNFZOqQfwdmn/IFaeKuCvSGfUt4MiM19nS1JDWOIkZGDV8A2l16TTlf6I0C9huFpRmgST3R6KoLpJ6DxcTMIfhKqeRZEg5UltYq/jDP2CJX/MpmUpt67KO3ByV6+97DAUBhDboOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XvkjHFJC; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748015323; x=1779551323;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=I/8nEbZdDKb5iEP+4krl9s5DuMYHU9jALA6PtV9CAmA=;
+  b=XvkjHFJC0NcNdx2oyZLVBVpxfMa35XYaeuFaZ/oyS/WbMGzQxa+lvgkc
+   UG/hh3ICl/8qIrPtfYQ/hKUFqHoOhBWL0KyixSJ1/xs9FksQ/1XKjXd71
+   gt8oTcaReNonB55WeGPTN0/p70zcmRo/N97oRsorI3Q9YgZF58loTzCrz
+   12puYsNeV7CgAGe3buuBen4PbhIhQEYp0cpVnzVOvD0hen2NO1lJUsJQr
+   x7LD7FoaiQ+pBahABQt0tCFwJplfL7dIa/fsxwz5MzOUaKuUbVYDyVztP
+   KbWo6bzSxbXvVLAbzpwxOTNIcQd029e5hE83sYL9sWlgz7hvGGt9f681s
+   g==;
+X-CSE-ConnectionGUID: 63ehHIr6T9CpN4fSkT0X9Q==
+X-CSE-MsgGUID: mb8qG4bsRdqD4PCwr8ThhQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="49958818"
+X-IronPort-AV: E=Sophos;i="6.15,309,1739865600"; 
+   d="scan'208";a="49958818"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 08:48:42 -0700
+X-CSE-ConnectionGUID: xzXPFbmHTNCkrBbRevoqjA==
+X-CSE-MsgGUID: mZisGr7mQe6xVU9d+kMRVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,309,1739865600"; 
+   d="scan'208";a="141036206"
+Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
+  by orviesa009.jf.intel.com with ESMTP; 23 May 2025 08:48:38 -0700
+From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+To: donald.hunter@gmail.com,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	vadim.fedorenko@linux.dev,
+	jiri@resnulli.us,
+	anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com,
+	andrew+netdev@lunn.ch,
+	aleksandr.loktionov@intel.com,
+	milena.olech@intel.com,
+	corbet@lwn.net
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	linux-doc@vger.kernel.org,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Subject: [PATCH net-next v4 0/3]  dpll: add all inputs phase offset monitor
+Date: Fri, 23 May 2025 17:42:21 +0200
+Message-Id: <20250523154224.1510987-1-arkadiusz.kubalewski@intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522150035.GB1065351@cmpxchg.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 22, 2025 at 11:00:35AM -0400, Johannes Weiner wrote:
+Add dpll device level feature: phase offset monitor.
 
-> Ah right, since all the ancestor walks would ultimately end up at the
-> system's seq anyway. And always have, really.
-> 
-> It does stretch the critical section, of course.
+Phase offset measurement is typically performed against the current active
+source. However, some DPLL (Digital Phase-Locked Loop) devices may offer
+the capability to monitor phase offsets across all available inputs.
+The attribute and current feature state shall be included in the response
+message of the ``DPLL_CMD_DEVICE_GET`` command for supported DPLL devices.
+In such cases, users can also control the feature using the
+``DPLL_CMD_DEVICE_SET`` command by setting the ``enum dpll_feature_state``
+values for the attribute.
 
-Right, with a cost proportional to the depth of the cgroup tree. So deep
-trees will have it worse.
+Implement feature support in ice driver for dpll-enabled devices.
 
-> I ran perf bench
-> sched messaging to saturate all CPUs in state changes and then read a
-> pressure file 1000x. This is on a 32-way machine:
-> 
->      0.18%     +1.34%  [kernel.kallsyms]     [k] collect_percpu_times
-> 
-> and annotation shows it's indeed retrying on the seq-read a bit more.
-> 
-> But that seems well within tolerance, and obviously worth it assuming
-> it fixes the cpu_clock() regression on the sched side.
+Verify capability:
+$ ./tools/net/ynl/pyynl/cli.py \
+ --spec Documentation/netlink/specs/dpll.yaml \
+ --dump device-get
+[{'clock-id': 4658613174691613800,
+  'id': 0,
+  'lock-status': 'locked-ho-acq',
+  'mode': 'automatic',
+  'mode-supported': ['automatic'],
+  'module-name': 'ice',
+  'type': 'eec'},
+ {'clock-id': 4658613174691613800,
+  'id': 1,
+  'lock-status': 'locked-ho-acq',
+  'mode': 'automatic',
+  'mode-supported': ['automatic'],
+  'module-name': 'ice',
+  'phase-offset-monitor': 'disable',
+  'type': 'pps'}]
 
-Right, it appears it does :-)
+Enable the feature:
+$ ./tools/net/ynl/pyynl/cli.py \
+ --spec Documentation/netlink/specs/dpll.yaml \
+ --do device-set --json '{"id":1, "phase-offset-monitor":"enable"}'
 
-> At that point, though, it probably makes sense to move seq out of
-> psi_group_cpu altogether? More for clarity, really - it won't save
-> much right away given that deliberate 2-cacheline-layout.
-> 
-> /* Serializes task state changes against aggregation runs */
-> static DEFINE_PER_CPU(seqcount_t, psi_seq);
+Verify feature is enabled:
+$ ./tools/net/ynl/pyynl/cli.py \
+ --spec Documentation/netlink/specs/dpll.yaml \
+ --dump device-get
+[
+ [...]
+ {'capabilities': {'all-inputs-phase-offset-monitor'},
+  'clock-id': 4658613174691613800,
+  'id': 1,
+ [...]
+  'phase-offset-monitor': 'enable',
+ [...]]
 
-Sure, let me do that.
 
-> Otherwise, the patch looks great to me. Thanks for including a couple
-> of cleanups as well.
+Arkadiusz Kubalewski (3):
+  dpll: add phase-offset-monitor feature to netlink spec
+  dpll: add phase_offset_monitor_get/set callback ops
+  ice: add phase offset monitor for all PPS dpll inputs
 
-Yeah, mostly due to the back and forth -- my earlier ugly hack added
-more tree iterations and me being lazy I didn't want to type all that
-out :-)
+ Documentation/driver-api/dpll.rst             |  16 ++
+ Documentation/netlink/specs/dpll.yaml         |  24 +++
+ drivers/dpll/dpll_netlink.c                   |  69 ++++++-
+ drivers/dpll/dpll_nl.c                        |   5 +-
+ .../net/ethernet/intel/ice/ice_adminq_cmd.h   |  20 ++
+ drivers/net/ethernet/intel/ice/ice_common.c   |  26 +++
+ drivers/net/ethernet/intel/ice/ice_common.h   |   3 +
+ drivers/net/ethernet/intel/ice/ice_dpll.c     | 191 +++++++++++++++++-
+ drivers/net/ethernet/intel/ice/ice_dpll.h     |   6 +
+ drivers/net/ethernet/intel/ice/ice_main.c     |   4 +
+ include/linux/dpll.h                          |   8 +
+ include/uapi/linux/dpll.h                     |  12 ++
+ 12 files changed, 379 insertions(+), 5 deletions(-)
 
-Also, I've been migrating to using neovim with clangd language server,
-and that doesn't much like the weird scheduler build setup, so I added
-sufficient headers for the thing to 'compile' as a stand alone unit
-(which is what clangd does).
 
-I'll break out this patch and clean up all the sched bits to be clangd
-clean -- I've been sitting on that patch long enough.
+base-commit: ea15e046263b19e91ffd827645ae5dfa44ebd044
+-- 
+2.38.1
 
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-
-Thanks!
 
