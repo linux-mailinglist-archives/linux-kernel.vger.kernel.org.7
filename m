@@ -1,105 +1,133 @@
-Return-Path: <linux-kernel+bounces-660854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1308AC22F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:48:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41500AC22FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8084A3729
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:48:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55E76A251BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E0F5579E;
-	Fri, 23 May 2025 12:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E78F2D78A;
+	Fri, 23 May 2025 12:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="E0BEV1Pi"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED161FDD;
-	Fri, 23 May 2025 12:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lETD6H8E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB78136351;
+	Fri, 23 May 2025 12:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748004506; cv=none; b=hIcM2YlzYg50E2qVitW0OGUwSL5MxsJB2iQGcmuU8rUW8Ue0xnhrs9UoCQjqGBXY1dXpuQtRf0kxbd+evFBCllBnDFdGWLpLIuHLrIQIDMEuari7PCRBr03E1PSAUfMTh7u5yQQyISP5QbjGkbV3Uwk0kKE0oSENoCgPGKW9LnE=
+	t=1748004570; cv=none; b=TDA+aC76dNtkgl6nUv/cfwD3qu2w1t4KMeqrStaGPAnYxBT1bLUtIu5Z65O5tYwLthgXHu67f47TAkhfcRBo31Ed6tn6gniaX/nr7L2ivJpx0tY6uXO7QkF4dlklTDjbRuJwUY8k91RNIgchnSQyuaGIHASb4OlcpT2+R+ZHp2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748004506; c=relaxed/simple;
-	bh=ep7ttSMYmIC7dSCZw6rB4THOYgYU0W+j3ONAkquPmvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LA/oOHh/Z9f6iiQJB7iI4LRn7gTtaPG6DtVEiQ9iYdTmfwwXGfAmvqoI8aXjpTOhZZWnrk8utRq9sBcmzh92qnTGDHa1Yd8m5z5IVgzJH1mlkcl2etIBer9g4q1GCxVTtsebKnngA8ycw8Xsr6k9ihUJknpK5Vi4dsR4JJbE4FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=E0BEV1Pi; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id 2B704206834F; Fri, 23 May 2025 05:48:24 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2B704206834F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1748004504;
-	bh=TK3pq8zeypwsvsAQp4lD9eQ6MH7Hnc9VhxYCb1JrU/k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E0BEV1PiOKtEampixS2HTrQxuD6/TbQearDIPrcet4PyKtxbMC1/Q71ZYdfiTYVsH
-	 moQRlxSHrYNO1KOo90RlnK3/DUbIJDZSuqyoA8rV+E3rS0NoL7tqL/q/1azAgm5xA2
-	 jbfWowHxhBACmuy0yY8YgnAdfNdE4lhyN/FnXj8M=
-Date: Fri, 23 May 2025 05:48:24 -0700
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
-	ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
-	john.fastabend@gmail.com, sdf@fomichev.me, kuniyu@amazon.com,
-	ahmed.zaki@intel.com, aleksander.lobakin@intel.com,
-	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	ssengar@microsoft.com, stable@vger.kernel.org
-Subject: Re: [PATCH net,v2] hv_netvsc: fix potential deadlock in
- netvsc_vf_setxdp()
-Message-ID: <20250523124824.GA4946@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1747823103-3420-1-git-send-email-ssengar@linux.microsoft.com>
- <20250522151346.57390f40@kernel.org>
+	s=arc-20240116; t=1748004570; c=relaxed/simple;
+	bh=oYSERoZVkIwf/mlHFZCDcywmHo4m4e+XX1h2/mtLxMs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dQJSK1wyUAjdV7DFH/ReKIL0OuLsYgH86a6a2bZwt34Lz1spsKQoaBzevlZV7TlXg4BOR4ILs/M3l3JHJpmNTCWtcrxZWwMuktzLjb37St1VrYciE7sFAjpKFBsL/vUeP/N8hmheaB5TxqLjNiD/N72EpVV1U8jTuvpaH2i5YZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lETD6H8E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF9BC4CEE9;
+	Fri, 23 May 2025 12:49:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748004569;
+	bh=oYSERoZVkIwf/mlHFZCDcywmHo4m4e+XX1h2/mtLxMs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lETD6H8EO0bALoGfX7lnnsP424ZTYlVeYT1go2ockRaV61gMgtfjEuRus6sgtW6qa
+	 6JL3LWgeQYT+V0NFa0m1wogiJifWisI0jzNQ+IycUGvSAbxDFYwQQwQiChuyLVW53O
+	 NrPEqy0IzKAamSvHsPh4hwZooWDcUBGCXuVgFGD6iFKORjb23L2BHBmDTjhBmdo/pE
+	 gnvJA88kA71QNPzwsvWhiol+QLwByDqrhGqPQwjTtzSgCp7w5XcVcZU9UNwe9H8+mE
+	 /qxZeoeLe6nEEAiFdnogAm9LUfYY4AGUxNdhOLiucSvqPFTv9UpbkLNYZFu8WyIaaO
+	 OJS6EyYZL2XwQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL for v6.16] vfs iomap
+Date: Fri, 23 May 2025 14:49:22 +0200
+Message-ID: <20250523-vfs-iomap-e3468c51c620@brauner>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522151346.57390f40@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2394; i=brauner@kernel.org; h=from:subject:message-id; bh=oYSERoZVkIwf/mlHFZCDcywmHo4m4e+XX1h2/mtLxMs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQY5F3ZWn9vg/AXuw1tikmv9grdX/Qvo7Lqi6hp5sZFL my/cmcadZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExkhwPD/0TrZu0Hf7zvr+hp 0ex0S3qa+1Pbi/+Q69eJZtWPz625mMvIsHJuo5yD0KGYd8zVwgtCLlhubM0svRh5t/7E1wsHV+x dyg0A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 22, 2025 at 03:13:46PM -0700, Jakub Kicinski wrote:
-> On Wed, 21 May 2025 03:25:03 -0700 Saurabh Sengar wrote:
-> > The MANA driver's probe registers netdevice via the following call chain:
-> > 
-> > mana_probe()
-> >   register_netdev()
-> >     register_netdevice()
-> > 
-> > register_netdevice() calls notifier callback for netvsc driver,
-> > holding the netdev mutex via netdev_lock_ops().
-> > 
-> > Further this netvsc notifier callback end up attempting to acquire the
-> > same lock again in dev_xdp_propagate() leading to deadlock.
-> > 
-> > netvsc_netdev_event()
-> >   netvsc_vf_setxdp()
-> >     dev_xdp_propagate()
-> > 
-> > This deadlock was not observed so far because net_shaper_ops was never set,
-> 
-> The lock is on the VF, I think you meant to say that no device you use
-> in Azure is ops locked?
+Hey Linus,
 
-That's right.
+/* Summary */
 
-> 
-> There's also the call to netvsc_register_vf() on probe path, please
-> fix or explain why it doesn't need locking in the commit message.
+This contains iomap updates for this cycle:
 
-On rethinking I realize you were referring to the netvsc_probe() path not
-mana_probe(). Since this lock is effectively a no-op, it doesn't really
-matter whether it's there or not.
+- More fallout and preparatory work associated with the folio batch prototype
+  posted a while back. Mainly this just cleans up some of the helpers
+  and pushes some pos/len trimming further down in the write begin path.
 
-However, I think we can revisit this when we add ops for any of the VFs.
+- Add missing flag descriptions to the iomap documentation.
 
-- Saurabh
+/* Testing */
+
+gcc (Debian 14.2.0-19) 14.2.0
+Debian clang version 19.1.7 (3)
+
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.16-rc1.iomap
+
+for you to fetch changes up to 2cb0e96cb01b4d165d0cee4d26996bb2b02a5109:
+
+  Merge patch series "iomap: misc buffered write path cleanups and prep" (2025-05-09 12:35:35 +0200)
+
+Please consider pulling these changes from the signed vfs-6.16-rc1.iomap tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.16-rc1.iomap
+
+----------------------------------------------------------------
+Brian Foster (6):
+      iomap: resample iter->pos after iomap_write_begin() calls
+      iomap: drop unnecessary pos param from iomap_write_[begin|end]
+      iomap: drop pos param from __iomap_[get|put]_folio()
+      iomap: helper to trim pos/bytes to within folio
+      iomap: push non-large folio check into get folio path
+      iomap: rework iomap_write_begin() to return folio offset and length
+
+Christian Brauner (2):
+      Merge patch series "Documentation: iomap: Add missing flags description"
+      Merge patch series "iomap: misc buffered write path cleanups and prep"
+
+Ritesh Harjani (IBM) (2):
+      Documentation: iomap: Add missing flags description
+      iomap: trace: Add missing flags to [IOMAP_|IOMAP_F_]FLAGS_STRINGS
+
+ Documentation/filesystems/iomap/design.rst |  16 ++++-
+ fs/iomap/buffered-io.c                     | 100 +++++++++++++++++------------
+ fs/iomap/trace.h                           |  27 ++++++--
+ 3 files changed, 93 insertions(+), 50 deletions(-)
 
