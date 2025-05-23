@@ -1,96 +1,142 @@
-Return-Path: <linux-kernel+bounces-660829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39570AC229E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:27:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB66AC22A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 163D01BA52B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:27:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D87711689E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E1223A563;
-	Fri, 23 May 2025 12:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CEA17C98;
+	Fri, 23 May 2025 12:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linatsea.fr header.i=@linatsea.fr header.b="LJV2CvF7"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aC79Ajjy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92C4224243;
-	Fri, 23 May 2025 12:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A37EAE7;
+	Fri, 23 May 2025 12:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748003250; cv=none; b=lz4f/IRstxhBXNyFD2w1CFCkErNPignoYKl3iwQZ29blMgPjWL22xK3vfmhQ10j8ewR/VjxVlvjVWagTTEGXTK20IYlv8CWf2WriBOfHswes1bk/OfdeYond+i3iXXiFUJB1Hi0AnozjX+WWXJrEgm0wkwflu99v5oKwHAHN5PI=
+	t=1748003467; cv=none; b=X80evqOMpPpwvRL722JwXij1cSf+bEkkG8QDpXYONfzxXWJCHzn8wq0vrAekISH7TxPhkrhrJ9aXBrs7Izil15cIykk/EBZQkrlNeNypHhD3a6u1K8aaZbcWPP6NTI2W3czwMCGt9vzCvYbCC+SXA/gk33NA5D+O97jnlK0UbRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748003250; c=relaxed/simple;
-	bh=JdO/dPdW+F+54b8avPhxVN0wFwoWsH9tVBJgWhLKQvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nEQGlyGhQbs2mmLeS5ZQwy+gkl1zMLEsMGtlcRqBQ/SgN2gbEByZ1RuuUWUgPGn1R3WDfL5PNSkE/AiNX77SoNaiQiMmqy5Z4uvaLBJMwlEXtQ0CTszSJdjZOb/YO7lU47qJrFa023efFA1MO3xJcHyGMwWgQdr88jZWJ0nM3fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linatsea.fr; spf=pass smtp.mailfrom=linatsea.fr; dkim=pass (2048-bit key) header.d=linatsea.fr header.i=@linatsea.fr header.b=LJV2CvF7; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linatsea.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linatsea.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5C5361FCF1;
-	Fri, 23 May 2025 12:27:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linatsea.fr; s=gm1;
-	t=1748003240;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G5PS/ipCRnGeBihiPh8GRYydPrjqJQQ7OjygoBxNsSw=;
-	b=LJV2CvF75rS12XWN+8wzsIIJAWjGVMWA6zD2raMivmUHfj2lI0P2K3xFEbHp4eLQKyofsG
-	N6VSm9jaWDO4NbG5HI0JonY4CZ1FgALFwCC21YDsmslSG4E19errSRQ8jqdXeY0W/yBGJP
-	DAzK3rbmxHHU+dpPgM3oglaxkMji1lpHbWrXM0Xvh6rwkWavFQzIW+NoYl3BzO78+XTgF9
-	FP+Q5o7uT/6RrJs8TO9/9fYNiG22u7v4s2hFQhqKzSUaw4NCGS0DFJeEGE4IvuGjZrEqEU
-	FXltzGt91dvfRi+Ai5JpbocAFHVoKb/Jq6nhJJtBTSn4b+nUNFAtbJw957gzyw==
-Message-ID: <4b9e63e8-388e-4b24-98dd-05bd9e73731f@linatsea.fr>
-Date: Fri, 23 May 2025 14:27:18 +0200
+	s=arc-20240116; t=1748003467; c=relaxed/simple;
+	bh=4y2PveC/h75bcQttgkXFN96tLnxfj24S3ST890NjdU0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XcyEL5LhgCrZRPbS9SdVg3QcN4JMrHoTrEFf/TbqBA82F1eFSZlttiwFUCgXskbzpb4en0oMIaGScr9H7tiwRUA4rxOvkOustJNpB2ZJNHhZlU/8y4chzzkGBdwIh0UsPd7fbOhmvRmHf3qyoGjs25+5+ga05fFAgDIJSsahLik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aC79Ajjy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 80B9EC4CEF1;
+	Fri, 23 May 2025 12:31:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748003466;
+	bh=4y2PveC/h75bcQttgkXFN96tLnxfj24S3ST890NjdU0=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=aC79AjjyfyequVxdv4kjZysK1lGBBNfFn1a6wBX0mRXCwzgBMdkCPhmvru2wPmOZv
+	 HN/UDb2yQfhhOpIK4yg9uX3WVAoNk1Uhxeh3tAu4BKnKBGqfwhLoVPMlnow8JRNkKd
+	 9bKrvmWVq4m9tNiLovZp5FDhIwPJJn4CBlLrm5NHOhyEuQY856sQfhY9OJeeTQIs7j
+	 DeMv6IgabmCGP5CdGmilB9e+E4detaZuI4hb9PuYGB3nrbdBca8oaCEFxkx6FyEpRE
+	 MVo/0f2PpvCjSlfygrEh9NDBlvFaL3L5j+nJx+XfFM0SJdG+NTuAt96n0egAIsIzqN
+	 Jy//rREnPMPXA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4ABC3DA6D;
+	Fri, 23 May 2025 12:31:06 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Date: Fri, 23 May 2025 16:30:57 +0400
+Subject: [PATCH] arm64: dts: qcom: ipq5018: Add crypto nodes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 06/10] serial: sh-sci: Use private port ID
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-renesas-soc@vger.kernel.org, paul.barker.ct@bp.renesas.com,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20250515141828.43444-1-thierry.bultel.yh@bp.renesas.com>
- <20250515141828.43444-7-thierry.bultel.yh@bp.renesas.com>
- <aC2yYDpsv7ef9IVA@shikoro>
- <CAMuHMdVPn3adKZMiLqoEz9ANNyekmB9WRFyz++49+FeEOkrSSA@mail.gmail.com>
- <aDBoLr-uPxxHgzEU@ninjato>
-Content-Language: fr
-From: Thierry Bultel <thierry.bultel@linatsea.fr>
-In-Reply-To: <aDBoLr-uPxxHgzEU@ninjato>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdekkeehucdltddurdegfedvrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfhfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefvhhhivghrrhihuceuuhhlthgvlhcuoehthhhivghrrhihrdgsuhhlthgvlheslhhinhgrthhsvggrrdhfrheqnecuggftrfgrthhtvghrnhepffefueektdefueeihfdtkeehkeetgfejfffgtdehjeejtdefhfetkefhfeffleefnecukfhppeekledrvdegkedrjeeirdejtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeekledrvdegkedrjeeirdejtddphhgvlhhopegludelvddrudeikedrheejrdeljegnpdhmrghilhhfrhhomhepthhhihgvrhhrhidrsghulhhtvghlsehlihhnrghtshgvrgdrfhhrpdhnsggprhgtphhtthhopeeipdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrsggrrhhkvghrrdgtthessghpr
- dhrvghnvghsrghsrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvrhhirghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: thierry.bultel@linatsea.fr
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250523-ipq5018-crypto-v1-1-0818047d8a18@outlook.com>
+X-B4-Tracking: v=1; b=H4sIAIBqMGgC/x3MQQ5AMBBA0avIrDUZZaRxFbGgBrOpakWI9O4ay
+ 7f4/4XIQThCV7wQ+JIou8uoygLsNrqVlczZoFETkq6V+IOwMsqGx5+7Qt3SZAw1E1rIkQ+8yP0
+ P+yGlDy8IbJVgAAAA
+X-Change-ID: 20250523-ipq5018-crypto-0265b8854b0c
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748003464; l=1660;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=ineOdeuF7pypv/3WmasEmTw596e4Gn4lKAa9inTMryA=;
+ b=NkSy9lIFJDZAYFs5H2LeInXpsalg4huxzmDYBVApJ6Qg0iSTNfZ6sHmmT6l6ct7LwsuC5DDuP
+ 9FQRgSDZfSNDwC+QOnfs5uB2/sNWO/xlUd4JQudZZAqqh+IMmc/b5+R
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-Hi Wolfram,
-thanks for you review
+From: George Moussalem <george.moussalem@outlook.com>
 
-Le 23/05/2025 à 14:21, Wolfram Sang a écrit :
-> 
->> Actually I asked Thierry to use bit 7, so both type and regtype can
->> fit in the existing hole in struct sci_port.
-> 
-> Okay. I looked at older series to see if this was already an agreement
-> but I obviously did not find this part.
-> 
->> and 128 can be changed easily when the need ever arises?
-> 
-> Yes, this was my motivation as well. Easy to modify if somewhen a need
-> might arise.
+IPQ5018 uses Qualcom QCE crypto engine v5.1 which is already supported.
+So let's add the dts nodes for its DMA and QCE itself.
 
-but is this something wanted now in PATCH v10 or can this be in a later 
-patch ?
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+index 130360014c5e14c778e348d37e601f60325b0b14..09ed9c34c1c6129174143ae770f8542dbf61128b 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+@@ -182,6 +182,36 @@ pcie0_phy: phy@86000 {
+ 			status = "disabled";
+ 		};
+ 
++		cryptobam: dma-controller@704000 {
++			compatible = "qcom,bam-v1.7.0";
++			reg = <0x00704000 0x20000>;
++			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&gcc GCC_CRYPTO_AHB_CLK>;
++			clock-names = "bam_clk";
++
++			#dma-cells = <1>;
++			qcom,ee = <1>;
++			qcom,controlled-remotely;
++		};
++
++		crypto: crypto@73a000 {
++			compatible = "qcom,crypto-v5.1";
++			reg = <0x0073a000 0x6000>;
++
++			clocks = <&gcc GCC_CRYPTO_AHB_CLK>,
++				 <&gcc GCC_CRYPTO_AXI_CLK>,
++				 <&gcc GCC_CRYPTO_CLK>;
++			clock-names = "iface",
++				      "bus",
++				      "core";
++
++			dmas = <&cryptobam 2>,
++			       <&cryptobam 3>;
++			dma-names = "rx",
++				    "tx";
++		};
++
+ 		tlmm: pinctrl@1000000 {
+ 			compatible = "qcom,ipq5018-tlmm";
+ 			reg = <0x01000000 0x300000>;
+
+---
+base-commit: 176e917e010cb7dcc605f11d2bc33f304292482b
+change-id: 20250523-ipq5018-crypto-0265b8854b0c
+
+Best regards,
+-- 
+George Moussalem <george.moussalem@outlook.com>
+
 
 
