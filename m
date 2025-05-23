@@ -1,119 +1,188 @@
-Return-Path: <linux-kernel+bounces-661124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C93AC26F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:58:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 984AAAC26EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44F011C01C05
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:58:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3308D7A682A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0747F296D10;
-	Fri, 23 May 2025 15:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03C22957A2;
+	Fri, 23 May 2025 15:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LjGOGdE8"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eyc+NuVW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE1A295535;
-	Fri, 23 May 2025 15:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124751805A;
+	Fri, 23 May 2025 15:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748015901; cv=none; b=gDvMv1N0NEo2OYe5D0eWLyr+z/JebCGaE4Fgw/S4Ssdmn4E/7LpCV4iq9rM1tKVRNq0D7yyJIH1bebXOaEMMglSIF+2sZ/2tgF5pYw2nO7c5NDo25Xin90a//x8gN0i7fqTJHiKsZ9CBLw6hcsQ2PVM27lHf7e6sDBhASysYzw8=
+	t=1748015871; cv=none; b=t40W39cgeQnjfGlnQD5zQJle9r72PR6JSk8RcDiCzBUN4UX1PIM29P+cO2jhVbyVa4UW5/oxDgzMXg7z+uGKRiyufMkiWOBGH1fiNsCsWdY3TAoQP02il+K3xx4CJ13T4oFcWlrG44PdFl8PdyIOIUZiPfjnUkWlMRKi4ICjxtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748015901; c=relaxed/simple;
-	bh=kXGDpu/kesKaHpLeVf+9yglm6cBsmwkB2sjsu2LCJ4o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=f7Ako2dZTIp3MkLVSSNH9kdGsDiw3D/wLQHIjwglS/D7OvdtlXMbOFPJgUIZPRS4kavtYlsdAOTVNhH35yZIGMtbgf2m0XGmQ2XCxVDmi9iKS7nYJVkr1Xis6bK92c5l6CRqb9ts+sWvuDNGq/rux/9e6LOmnyszzM/gGFxhc7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LjGOGdE8; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 716CE438E8;
-	Fri, 23 May 2025 15:58:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1748015897;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hEWdkEDj7ABDMjZa7nAq+42gv2cQKUaG19fLjvAEKpw=;
-	b=LjGOGdE8B90gqaFYIQkpSCEPjm4PDhUj5Zot0V66BU9ZzGF1jT1DeyNkykRTrZwhi03Soc
-	16IVwU+6chlpmW8ulfkGTOGKVrtlVQ3M4+YPFTApHR4UZspWFCsvN+h01oi6dI1ugNkJpo
-	OxKBoQFzuF6fKGJSV3iwRud7vKrStAqbHH0s4pTUYkAsvzPIbLbTbP4YRDcpGgYE0Jh2pG
-	6pubUSYwhhJX2wgMqh/6Y2jwZ9ybPov0QUDHkXbAY45bVHfQRE8FESFQIx9+hKlcSN+6PF
-	zTiAs3+ZgBFKOUtvDvsqVexox7l9YgVIs2F+d5iVjxlLxBGZ26X8Wohm9Tw1zg==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Fri, 23 May 2025 17:57:43 +0200
-Subject: [PATCH 2/2] arm: omap2plus_defconfig: Enable TPS65219 regulator
+	s=arc-20240116; t=1748015871; c=relaxed/simple;
+	bh=+2vqHphUu4C6bprlfQR7KILEpwfjSblrde32WlRTix8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U24K6Fx09MHWTmbUawD4a5M+7r20mnTx4rSf/RDcF19BwSrZZwI7s6GzrC30G6SFOD4rqd1VdzhcEsN85y5QkMHE1fYZpe4+3kPso1fzBooe2JRwkyUHZGxyKipaJyb17bSFRYa2osQVtqwoj6JWbde1ivxQvpqAnau2MiJ871I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eyc+NuVW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCC95C4CEE9;
+	Fri, 23 May 2025 15:57:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748015870;
+	bh=+2vqHphUu4C6bprlfQR7KILEpwfjSblrde32WlRTix8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Eyc+NuVWDjJ1F8NCyi+NHQoo1uiTIYCRQVKnyCvIE7jn1s3vl1LgxjQucaWhk2Hku
+	 /mWG0hDdnY37mkmiw+99Guq9MI7CEPVW/SP+zEGC9/zTVXoFmAfWtHBVXyIt4AmtSz
+	 STM5phoCmHxAhWWlpMLqbhcLnz/S7bIbokuB551IbzfokPx/eRSweuO5i934BWIzEn
+	 JADWmBZXTQEcmV5K0faDtXNi3XWFl3/zQPhp6bWcp7bNz5tp10WBkAmjZExUZ8vJFG
+	 7TJlFSoL0De1Hqr7TUD6ROWQJuNrmYwrUGc7yHwLxa5YzuI+/yZMEbJq+PkW+N6I7o
+	 9tCz5poC9WxWA==
+Date: Fri, 23 May 2025 18:57:45 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Elena Reshetova <elena.reshetova@intel.com>
+Cc: dave.hansen@intel.com, seanjc@google.com, kai.huang@intel.com,
+	mingo@kernel.org, linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	asit.k.mallick@intel.com, vincent.r.scarlata@intel.com,
+	chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
+	dionnaglaze@google.com, bondarn@google.com, scott.raynor@intel.com
+Subject: Re: [PATCH v6 4/5] x86/sgx: Implement ENCLS[EUPDATESVN]
+Message-ID: <aDCa-U8buhyjIygO@kernel.org>
+References: <20250522092237.7895-1-elena.reshetova@intel.com>
+ <20250522092237.7895-5-elena.reshetova@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250523-bbg-v1-2-ef4a9e57eeee@bootlin.com>
-References: <20250523-bbg-v1-0-ef4a9e57eeee@bootlin.com>
-In-Reply-To: <20250523-bbg-v1-0-ef4a9e57eeee@bootlin.com>
-To: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
- Roger Quadros <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>
-Cc: Bajjuri Praneeth <praneeth@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-omap@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Kory Maincent <kory.maincent@bootlin.com>
-X-Mailer: b4 0.14.3-dev-d7477
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdelvdejucdltddurdegfedvrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeevgfdvgfektefgfefggeekudfggffhtdfffedtueetheejtddvledvvdelhedtveenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedukedprhgtphhtthhopehkhhhilhhmrghnsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehrohhgvghrqheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhop
- egtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopehprhgrnhgvvghthhesthhirdgtohhm
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250522092237.7895-5-elena.reshetova@intel.com>
 
-Enable the TPS65219 regulator in the defconfig, as the TPS65214
-variant is used by the newly introduced BeagleBoard Green Eco board.
+On Thu, May 22, 2025 at 12:21:37PM +0300, Elena Reshetova wrote:
+> All running enclaves and cryptographic assets (such as internal SGX
+> encryption keys) are assumed to be compromised whenever an SGX-related
+> microcode update occurs. To mitigate this assumed compromise the new
+> supervisor SGX instruction ENCLS[EUPDATESVN] can generate fresh
+> cryptographic assets.
+> 
+> Before executing EUPDATESVN, all SGX memory must be marked as unused.
+> This requirement ensures that no potentially compromised enclave
+> survives the update and allows the system to safely regenerate
+> cryptographic assets.
+> 
+> Add the method to perform ENCLS[EUPDATESVN].
+> 
+> Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/encls.h |  5 +++
+>  arch/x86/kernel/cpu/sgx/main.c  | 67 +++++++++++++++++++++++++++++++++
+>  2 files changed, 72 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+> index 99004b02e2ed..d9160c89a93d 100644
+> --- a/arch/x86/kernel/cpu/sgx/encls.h
+> +++ b/arch/x86/kernel/cpu/sgx/encls.h
+> @@ -233,4 +233,9 @@ static inline int __eaug(struct sgx_pageinfo *pginfo, void *addr)
+>  	return __encls_2(EAUG, pginfo, addr);
+>  }
+>  
+> +/* Attempt to update CPUSVN at runtime. */
+> +static inline int __eupdatesvn(void)
+> +{
+> +	return __encls_ret_1(EUPDATESVN, "");
+> +}
+>  #endif /* _X86_ENCLS_H */
+> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> index a018b01b8736..109d40c89fe8 100644
+> --- a/arch/x86/kernel/cpu/sgx/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/main.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/vmalloc.h>
+>  #include <asm/msr.h>
+>  #include <asm/sgx.h>
+> +#include <asm/archrandom.h>
+>  #include "driver.h"
+>  #include "encl.h"
+>  #include "encls.h"
+> @@ -920,6 +921,72 @@ EXPORT_SYMBOL_GPL(sgx_set_attribute);
+>  /* Counter to count the active SGX users */
+>  static atomic64_t sgx_usage_count;
+>  
+> +/**
+> + * sgx_updatesvn() - Attempt to call ENCLS[EUPDATESVN].
+> + * This instruction attempts to update CPUSVN to the
+> + * currently loaded microcode update SVN and generate new
+> + * cryptographic assets. Must be called when EPC is empty.
+> + * Most of the time, there will be no update and that's OK.
+> + * If the failure is due to SGX_INSUFFICIENT_ENTROPY, the
+> + * operation can be safely retried. In other failure cases,
+> + * the retry should not be attempted.
+> + *
+> + * Return:
+> + * 0: Success or not supported
+> + * -EAGAIN: Can be safely retried, failure is due to lack of
+> + *  entropy in RNG.
+> + * -EIO: Unexpected error, retries are not advisable.
+> + */
+> +static int sgx_update_svn(void)
+> +{
+> +	int ret;
+> +
+> +	/*
+> +	 * If EUPDATESVN is not available, it is ok to
+> +	 * silently skip it to comply with legacy behavior.
+> +	 */
+> +	if (!cpu_feature_enabled(X86_FEATURE_SGX_EUPDATESVN))
+> +		return 0;
+> +
+> +	for (int i = 0; i < RDRAND_RETRY_LOOPS; i++) {
+> +		ret = __eupdatesvn();
+> +
+> +		/* Stop on success or unexpected errors: */
+> +		if (ret != SGX_INSUFFICIENT_ENTROPY)
+> +			break;
+> +	}
+> +
+> +	/*
+> +	 * SVN was already up-to-date. This is the most
+> +	 * common case.
+> +	 */
+> +	if (ret == SGX_NO_UPDATE)
+> +		return 0;
+> +
+> +	/*
+> +	 * SVN update failed due to lack of entropy in DRNG.
+> +	 * Indicate to userspace that it should retry.
+> +	 */
+> +	if (ret == SGX_INSUFFICIENT_ENTROPY)
+> +		return -EAGAIN;
+> +
+> +	if (!ret) {
+> +		/*
+> +		 * SVN successfully updated.
+> +		 * Let users know when the update was successful.
+> +		 */
+> +		pr_info("SVN updated successfully\n");
+> +		return 0;
+> +	}
+> +
+> +	/*
+> +	 * EUPDATESVN was called when EPC is empty, all other error
+> +	 * codes are unexpected.
+> +	 */
+> +	ENCLS_WARN(ret, "EUPDATESVN");
+> +	return -EIO;
+> +}
 
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
- arch/arm/configs/omap2plus_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+Even if unlikely() was not used I still don't agree with the order i.e.,
+dealing with the success case in the middle. So I stand with my earlier
+suggestion, except unlikely() (since that was a problem for David, not
+going to fight over it).
 
-diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
-index 75b326bc7830..c2f9c4b05232 100644
---- a/arch/arm/configs/omap2plus_defconfig
-+++ b/arch/arm/configs/omap2plus_defconfig
-@@ -385,6 +385,7 @@ CONFIG_TOUCHSCREEN_TSC2007=m
- CONFIG_INPUT_MISC=y
- CONFIG_INPUT_CPCAP_PWRBUTTON=m
- CONFIG_INPUT_TPS65218_PWRBUTTON=m
-+CONFIG_INPUT_TPS65219_PWRBUTTON=m
- CONFIG_INPUT_TWL4030_PWRBUTTON=m
- CONFIG_INPUT_UINPUT=m
- CONFIG_INPUT_PALMAS_PWRBUTTON=m
-@@ -454,6 +455,7 @@ CONFIG_MFD_TPS65217=y
- CONFIG_MFD_TI_LP873X=y
- CONFIG_MFD_TI_LP87565=y
- CONFIG_MFD_TPS65218=y
-+CONFIG_MFD_TPS65219=y
- CONFIG_MFD_TPS65910=y
- CONFIG_TWL6040_CORE=y
- CONFIG_REGULATOR_CPCAP=y
-@@ -470,6 +472,7 @@ CONFIG_REGULATOR_TPS65023=y
- CONFIG_REGULATOR_TPS6507X=y
- CONFIG_REGULATOR_TPS65217=y
- CONFIG_REGULATOR_TPS65218=y
-+CONFIG_REGULATOR_TPS65219=y
- CONFIG_REGULATOR_TPS65910=y
- CONFIG_REGULATOR_TWL4030=y
- CONFIG_RC_CORE=m
-
--- 
-2.43.0
-
+BR, Jarkko
 
