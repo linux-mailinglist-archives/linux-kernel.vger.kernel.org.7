@@ -1,251 +1,200 @@
-Return-Path: <linux-kernel+bounces-661354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF29AC29EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 20:47:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD739AC29FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 20:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19912A2732B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:47:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43C7E54203E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6A729A33B;
-	Fri, 23 May 2025 18:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3877129ACDB;
+	Fri, 23 May 2025 18:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LbZFj7fc"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="K30SXaqb"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2063.outbound.protection.outlook.com [40.107.22.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A828F20FAB9;
-	Fri, 23 May 2025 18:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748026042; cv=none; b=nTrKrhZOfa0BilvpGVsV/xkM5vulncPSh12DTbNtVI7GLeaohg5TH3TL93wbIatpNpH+XGmkFrI0ABL37h47l0aLuS4ICEBiOCg23wWk93X96fbSatcQIblFx4O+J/G3qdCMC79GLOSVuT8MNKBIuzkGXjhafrIQ/j7odmDcgJY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748026042; c=relaxed/simple;
-	bh=t5BFb4WRIJnfVfZdiG0nlQqjCuE11J00mDw6LYyvTDI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bQvZnUnzoKh3hhaHWIyFRsyD+GgwxDTHAsw3zRfk7BClwweEwjgO5e/arotQKlZgb4pX6LMNVg7OtVKibOMVI01rf3YWCAK6CGS+sUsYJi0+Ek2tcAoomiWb8wLYDHuNB4oA0VHhACu4do0XxKrwIYW6rTor3GKU4Dz+6m8l884=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LbZFj7fc; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-af5085f7861so93334a12.3;
-        Fri, 23 May 2025 11:47:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748026038; x=1748630838; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wMINtzx5xOC79CwJSKh5YsZHyP2qAGiFcqWeREBv/nU=;
-        b=LbZFj7fc717/9Fy4Ho/bq8x+2WGb2xwBITjZ9SOUF5N2OcN4sotRjd19w6HXHVYb22
-         LcBRiGb7p41BFxcAvxtlj+rEv8JB82HtQynlSBNeFlQ8hjTwZRMu9NUWWi/9rupB59+g
-         5WrTqyjRN6lRgRkHBYB3iRKSKhuKfdkXRyQHRfAJ+XyBvB9A1h2q51ZgJ9uR+bZtIv9e
-         7ARgMb8Qy2FCNwzXPpELb9oD0u7MSiYk5vok924FLEZyUL8lNWdSJu60SCqyJ2KMGwn0
-         SvMiMXKVllr4FpwiOGdo7gEnoPKLsTuYkXFiUcd0Pa7HsMMPutRbE0XLXHnkFGnpk2P/
-         C4pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748026038; x=1748630838;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wMINtzx5xOC79CwJSKh5YsZHyP2qAGiFcqWeREBv/nU=;
-        b=YfrkDl3IjhO9FuSlIP5p5IS2J+0pvVPX3oaH/YlnLNOdVD8k1T5w9gNJMWEyl16fcy
-         mCL4/ZI8bi8SAZOMJGPj9nToH9AHtAxtvCiGO3AJ5rmE3QFiY/E3MlJcgcOe5p9gSrRH
-         jbf0GB7SFD+Oo4DdVvqOhxQ8slIE+uISNeuDHuwM4+1on+/AMppvNQm0xNZrqJWWsCUR
-         LDPSed6zYFvSPTXq1HpX65Y33G8tg/FsHzHwCJy5Cr5YDAGP31/zhIAovKDad4MaFr32
-         q5AQhxDvJgdA9kw+f2q/NVn9EA5aD2jV8Q2BXJCjQlKOTKX6AUCTwLzJDAPOTYpjKWAL
-         ezvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVonqpIod+EFCIOx5FJMEmuoZi/GyQE02+89Qbg0m+wg/p6rk0wGrKx4ALzrREONoSVkvQh9HRjsyXN@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNFRWAhGpmeVxUMIE1luqqEUlUoKfa0kVoA8oYs9h+tjuYuuoW
-	rfs6f02WMnNSeEA4IATBnKgZsbYze5aXwY7dkxSVL5VugCEiOTsUgMoQxPcRTKnF
-X-Gm-Gg: ASbGncvM0Q2QAj5Yn9Np4WwHVHs/1kxgIBE8CboS+8jDRuM8aaVmJ/b+QVL1nvNeYIB
-	e9ymTnH78viNlg+WMFoRk+qElWgGNo5ZuunJBpeotwQHG0U0/6YZ/0wfj1jFv2fAVhpa0c/YJyj
-	7ydUIy+TUGMeXLLgZ7sZDNeV4O1HwTbCTtM2+hGnj0BYF/848MNrIGLy2dmhpKmEh+uYCnXkHip
-	yXcPOS6dL104WoG3WYgwsEav0Saer4gZyMyt7+3ETFwIi5xyPxMhGdJ4pRj50Gq67/jswfP8fUh
-	dr4NwCeiAmfhf1baGfeglNf9CfjfjCsMTtV/ixtCvVBghcenM8ki0iVEq4E1YnDUUiIwR9EeVOV
-	2DGHIaA==
-X-Google-Smtp-Source: AGHT+IF7B7mJMAugvw4fwtXrMgg9UCZb9nMSCJHiZRZwJc9x14TpigEIGRvbLeLmAQri4x14gpQitQ==
-X-Received: by 2002:a17:903:19f0:b0:215:8d49:e2a7 with SMTP id d9443c01a7336-23414fc98a6mr5483995ad.50.1748026037794;
-        Fri, 23 May 2025 11:47:17 -0700 (PDT)
-Received: from trigkey.. (FL1-119-244-79-106.tky.mesh.ad.jp. [119.244.79.106])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2340ec5c5fcsm3417685ad.217.2025.05.23.11.47.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 May 2025 11:47:17 -0700 (PDT)
-From: Daisuke Matsuda <dskmtsd@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	leon@kernel.org,
-	jgg@ziepe.ca,
-	zyjzyj2000@gmail.com
-Cc: hch@infradead.org,
-	Daisuke Matsuda <dskmtsd@gmail.com>
-Subject: [PATCH for-next v1] RDMA/core: Avoid hmm_dma_map_alloc() for virtual DMA devices
-Date: Fri, 23 May 2025 18:47:01 +0000
-Message-ID: <20250523184701.11004-1-dskmtsd@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618A4227E82;
+	Fri, 23 May 2025 18:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748026399; cv=fail; b=Si87qu7I4gEBpKzkjMfQ1d0CJPzu0N1CkUSnrO5fB9xlq6VvwfrWgoBDh4Y1195WmJXTJu4hnjgfFQ9WGvyaguR/1J6i3pnIJb3R6i/9aOqmIWPD+TZFJDhgmdQBjU/lah7z2xlEzQWa/SeYTYNA1Eeo9LFxb8HGKh0jmXRQdDY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748026399; c=relaxed/simple;
+	bh=8o2/P3+EJkmkgE5pbY0Ww8bx+QGujR0iVNz4sX1xa20=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YSKg3ZOz+HHZt4iCBM7oOsIavusXZ5TPpTBu1MuYM4X7OewUmeeieDvLxTMtT28Pku7BOoYGmFf/Sckk/YrDYbckOxjXcpmga4Wd0WNFckB8Y4lYW/FQiSXxJnTr4s39wadl1SmJGYHbudLEpK2gf9g6VyD+EDFIfXTYqMozflI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=K30SXaqb; arc=fail smtp.client-ip=40.107.22.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B5VHfan4A/czimuhJqKQSLlWpnaR1NKFGALWb1NrKE4qxzPT8YltwgCfz19nQdHpPkTYGwiiXtaKbTd4uLsV675wLOhtXe9vk49Z2QdSqSpkSUuFy/5cwS2OWjQaBTFrY7DCfe8BuTD9eM86ISGEf+EYfBz9P9ql1vx4Xd5ajbr8f3I9Y8uOJl3Wc1hbz//AqlYjRarUbE3cUXsTzSWmAy9Q6B6exorRVBcNKcKkwazIv7MHLZPJU4G5LZhQi+UyUbViK7Hoy0v1B1pQ8C7jWZcoc7J9JLLZYlKvf5N1U1+Rpv9LWqmRMaqs7s3biqPvNHLik020/G9tQtAlVMEutA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=l5vCfoIraXSZbKgf5sxlAur5joa25OqF8eoVqlpSdUA=;
+ b=Pz5k4lRK01DKc56W0EwoDqM6fLqayS5bq9VfJ5gVyBS6A8P/BjwEG8rFIeaODCMa3rZzPgh6osLA3aSiaZ/jf0S8oCv3X9PkgC+KwjdTyzQd3IsBZvbhGIr2CEcVbTq5UNI9YsDvaAuw6TiKRo/EnD564lWz+NprIhXHC8zJkBSLqMXSgG9JaQRGcRJmWNBZVEre1zuTaFzMzd8vkwbHb+mEK61+EZoh+Ta8wESObHoSQkY+DNWYXcHhkd4rSydYwMfuWq7CCkAxSfLFRi+DKeErJGubMXnJ3Kkmsz0D6qqSIwFNI+fkZi0N+RNL6W4683/QYOw6Vl+cxvD1Wskt8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l5vCfoIraXSZbKgf5sxlAur5joa25OqF8eoVqlpSdUA=;
+ b=K30SXaqbFVIZd5FdIEC2QCeWKsHyiJzWnYoJuFVhR2/pRXWwADUCRTV5zLtr+lWJyGtI7mvQOwXsVbgrlGKVVKdEXRWXSl95vGuWo29RR3EUN/aM8DaOljvozvpyyq+k1+8uaFeUa3bPT0dUxnURbsvkZPTjNxbraUKaxfEZxi8YB1cxAP9FHdfZ7tJxFOEPq4U+HTeZc35s9tGA/p76hnOt2wwNiKpvOyu6hJ3gmsNqaNYsV4UmPc0KRYNojylRcbd8n34E5e4Hl4pzALXdQHv4BokHYleQnpDsZfs7UmDoTpmXypVuCKIlTRPFqUs7o/cs94ydqGxdt4vaHikENg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DB9PR04MB9775.eurprd04.prod.outlook.com (2603:10a6:10:4ce::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.20; Fri, 23 May
+ 2025 18:53:11 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8746.030; Fri, 23 May 2025
+ 18:53:11 +0000
+Date: Fri, 23 May 2025 14:53:02 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, tony@atomide.com
+Cc: bhelgaas@google.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
+	krzk+dt@kernel.org, kw@linux.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+	lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
+	robh@kernel.org, tony@atomide.com, vigneshr@ti.com
+Subject: Re: [PATCH v2 1/1] Revert "ARM: dts: Update pcie ranges for dra7"
+Message-ID: <aDDEDrHz4PNOY4Gk@lizhi-Precision-Tower-5810>
+References: <20250411153454.3258098-1-Frank.Li@nxp.com>
+ <aC97HguxSt56BkHa@lizhi-Precision-Tower-5810>
+ <5a8a4f18-d5cc-4fd1-aeda-2e739502e0eb@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5a8a4f18-d5cc-4fd1-aeda-2e739502e0eb@ti.com>
+X-ClientProxiedBy: BYAPR02CA0019.namprd02.prod.outlook.com
+ (2603:10b6:a02:ee::32) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB9775:EE_
+X-MS-Office365-Filtering-Correlation-Id: 149f92f3-c254-4dde-0c88-08dd9a2b10de
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IOCLmhJSA8v/x5L7WklErxlCM0AdFT7ObC+yb6k41TlwcPFzjlCjJZ3EVj/q?=
+ =?us-ascii?Q?nVnIdP50t2l6IH6pABJ2AGWLcffVVvELb2o/U37BnrSjvGQGdJk93phHQ7js?=
+ =?us-ascii?Q?BXWwbLFKYNkQke7h+NmdFbbF49R6SvEEwfZHSRcOS1XWNbI0EUsVt+brxlC2?=
+ =?us-ascii?Q?6FaZq+69GtE9U2TsG+i94zeXIDfu+qSU1EtFc2vRDNQwRe0JwDQBEEkbVmt4?=
+ =?us-ascii?Q?Th96hMB0vQr9vAUEGn2tgzgNIg+yYr2MuZoHQFsNWrR6sLoC3JjNoWEKQcxF?=
+ =?us-ascii?Q?YM2IqZdkFvMs+ovG300x5yav/0zbyz6fJLQSwPD2ciuc9QbSqBHD0SmNzKaG?=
+ =?us-ascii?Q?isiSKfP8YYq7VJtwdt/Ay0deFBi7qTeJVVloyp4g2ihi8FTWz347T3/vLLrz?=
+ =?us-ascii?Q?xn8hnJYj+5g1gfwZtJFv1jrjHcJ31fvEvfc1G+LVzt6x2ZzDTaGsQVF7IwZk?=
+ =?us-ascii?Q?t6Qht/300bv8ztoPbeAjRAIyPuUdpDFFV1K1aUYjmsuFupy8DiaPOG9S659R?=
+ =?us-ascii?Q?/dRKpon+sKc7z7YjUbm9o46rrGzX85TdLXo5ozKrSfNcIBmR5r6muppg8ZUq?=
+ =?us-ascii?Q?jS6wOeK+9W74uAPoWy9pH6fAuRP74Ld0X9F6MeYMZ3iw7G0AaRuxu565kZ9A?=
+ =?us-ascii?Q?2vWyk5cGZVmYv7bC/PdbnBw6hPiLKl6NVkSTnJ+aF75JUEyoZpuyjBGpRzOg?=
+ =?us-ascii?Q?6qUpEOltBxBi9SprRCfHolT6I7618lyvzLg+nwoOIdhu7p/KFdMcaBKiDLni?=
+ =?us-ascii?Q?wIl2M8C2hpUFqMR5MHx8cp4kQ2VSvVUHs2T07BhXsxyy8umGcnx3gr6ciGvc?=
+ =?us-ascii?Q?B1Uj4XbQb7DLm7Gm0dwupaiAcGbI1QtCv7EApjf16nnsuxh2MZHDrwz7DLcB?=
+ =?us-ascii?Q?nnwmDGAtG5HybGibFoZzD5cvmKDCjq0KdGwiIDgw19V/RuQLpMYuRg9kv2Xt?=
+ =?us-ascii?Q?0DLZE9H9eieLMKmMVif0izoA84ytEbEAzJACappKmVtzATK6shrnxSgISqRy?=
+ =?us-ascii?Q?RchfOShFTMykG3hY8A1rX08xZ/udUH3u7PUojOhfeQf/UGupYHA/jlcxM07s?=
+ =?us-ascii?Q?lUfLuHA1WunmtwdekA4la6PhlPpqxt2u/x5GktSH1/4Dznl0l+RPsMwYVxHB?=
+ =?us-ascii?Q?zJ60BJGAlYPFDaz4fw9h6rb0nDjjjNnnSWjSRT/kQEdyt3//4unjImNkPbTo?=
+ =?us-ascii?Q?kGGt37HvU74uTDKrDQrrfNnABNUo47PWYIdZRM8SLZUHw+XTgLR5DMxN2gnY?=
+ =?us-ascii?Q?2mQlhL7nHaJ3J8EqPY0Gp922jiL1Y6cYBb2CSmxw2pTo+grgyFhIz1r/RZp7?=
+ =?us-ascii?Q?3kBHH9+m2KPlaBF57vU42y3XBjV9VMInulc1NxUOyGi68uEFNQ0HQkXPaeoy?=
+ =?us-ascii?Q?o0HQzF6MZl3JigdXx7xDnOp1M2E4sbdY+4bS0GJZ/nxcMwCRyBvz/PXaDsDb?=
+ =?us-ascii?Q?eUnILMRljTxyBTrUzMygjvEVUyssZzXsLMtxeIrAtFVpkliN3srhyA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+Kajt4/cMSbvO/IORlh9TecioNr+n67moP5lo6QZOM2iahrKNJ3aNxaZHOBJ?=
+ =?us-ascii?Q?aQN/DswAv9hpJgzHC175y6+oMUabHiYBDwCG5LGN85iwvElSY887F3SBjaNl?=
+ =?us-ascii?Q?wAp0Ge1D/qD8A9QZqTCa3YIYGYc5Y+PzFqQlkDCGC24tFZjYZLsb/gEfhC7t?=
+ =?us-ascii?Q?fmY1nR3z1yseE9eYbYr/AcdJBc0o4ssirSVnfoZAGQ2kKX2ubjRg6C0yLeXR?=
+ =?us-ascii?Q?Er4PfkJFVQIFcfvg/vXMl0y7SAjOOXya9BrJJlKIwI+CYgvMIB2XD4fkI+GX?=
+ =?us-ascii?Q?MdLGPA8v+oCMYwlRk9AsYNCpfR65Mnh8x8rn9EbSX0V8ZGWgPdeRJQvzhazE?=
+ =?us-ascii?Q?X2vVt56lHpXGNZvUZdw/bkcFaRnyW56Bj5BomVZ5bvuFvp+M0q38E9/2h3sS?=
+ =?us-ascii?Q?T6mkpXRUYgpEux54cw014Tvpxf5MRXZ8W92HdCmDWARV7H/kaLzX21AhjRdF?=
+ =?us-ascii?Q?qk2CfAgbjCnFb5rLLyL3OaeX5uGO2nBXcfhuhyV+2u6UMaJAWuH2fN1xJrR6?=
+ =?us-ascii?Q?QYxSg0IcV3yLs/ckxB9A0UfQigqGlXueFIvonSCr3u0rgV1GGK5eacGh9r48?=
+ =?us-ascii?Q?Oq3lv3YUPENOVNl1bNI5g+AbcXlMQ1IGYWrDpDpaJvCf6SecocPOHCLctxQI?=
+ =?us-ascii?Q?vZP+cDNZTroJS03oQwGyWF+YsX53jC+cyLVSesulI/a01gRtsfpbxHD0eu5R?=
+ =?us-ascii?Q?b1HLfbZa5eFSK4F7dDL7aGNGUxulzN0ggZhgTw5OgymBahcpxi09n+VdR4DG?=
+ =?us-ascii?Q?KbD74UwMk5D7r+1EXZgxxJ8XfWpE69fyB+8uHak0XNuFrF+cW+aAevrL5SPA?=
+ =?us-ascii?Q?j5KDCb7A5K6I/3UMzIR5SK1sOxFCz6uXB8PEK94/fSll9D306oIpi5gu3ZbN?=
+ =?us-ascii?Q?t+s9XPjsCvopS0UqVQQiY884L8xKpphm1PtsoPzQdNJOXzmyE50eDnR+7/68?=
+ =?us-ascii?Q?Tsu6YuDEI6ofQJ6xOD47x6MLh87K49+RoXdU5pBQIEAyccR90K2epfuUkA7D?=
+ =?us-ascii?Q?R9BAEQq/mthn4ERwPDinfNtWD9EHnQNR9T51yr5+r+5CcmUAkc5F58KS27S1?=
+ =?us-ascii?Q?QyOkp4a/pJXw2HKr1B09caepiKZ8UgDtprxFudtZ1Aeg9/oHAZj3IH5/LenB?=
+ =?us-ascii?Q?bmZNCspIah8OXnjWFa7A4gxd11H0TEet4fDkBEF7fLwLy7qkaVjDwIse3Toq?=
+ =?us-ascii?Q?VxwHRaAS+luwJIpW/EelpMRNWFxpbNLG4bY6S08p/AIoGdtzyW3VTGGdf9Dl?=
+ =?us-ascii?Q?dm/xc8dsBF8GQmmXjFIurZJMEv/zI8nGRslmllaNmPzQmrkjILc45+fO5gK6?=
+ =?us-ascii?Q?o6emX2PDeoxUoqXgzM6dpqwGHFbyi954o6bTnrSo1u/MqLcPFHfti3mxUQre?=
+ =?us-ascii?Q?684iCh9gpKj4UNRjGC98tGz32w6PWqmsWo293gPE1/u1YtlvppQPC+Fnm842?=
+ =?us-ascii?Q?1rSHxMMUglpGvN9j7XHiYNVvFzqXVxsF4nP5xqNnIh9dYqRcJIk/II8vsO+2?=
+ =?us-ascii?Q?Me0x73gsCkgyRxOJZf8BW3GlUyju/Akz2J3B+Iw835O7tU7b7pNn2xMxhhrj?=
+ =?us-ascii?Q?2RX8PjTAbsCV48Ab4EtnWe4b9h2j5qsBmB9sx6so?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 149f92f3-c254-4dde-0c88-08dd9a2b10de
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2025 18:53:11.4832
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RO8oEfjJZjnTS1vdKQyd69Lokskl656LjJsS2NeRNBoznuK8BBUNF6cloCyJ7CthPZC2yLgbyEnnU+Fwt58wgw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9775
 
-Drivers such as rxe, which use virtual DMA, must not call into the DMA
-mapping core since they lack physical DMA capabilities. Otherwise, a NULL
-pointer dereference is observed as shown below. This patch ensures the RDMA
-core handles virtual and physical DMA paths appropriately.
+On Fri, May 23, 2025 at 11:02:38AM +0530, Siddharth Vadapalli wrote:
+> On Thu, May 22, 2025 at 03:29:34PM -0400, Frank Li wrote:
+>
+> Hello Frank,
+>
+> > On Fri, Apr 11, 2025 at 11:34:54AM -0400, Frank Li wrote:
+> > > This reverts commit c761028ef5e27f477fe14d2b134164c584fc21ee.
+> > >
+> > > The commit being reverted updated the "ranges" property for the sake of
+> > > readability. However, this change is no longer appropriate due to the
+> > > following reasons:
+> > >
+> > > - On many SoCs, the PCIe parent bus translates CPU addresses to different
+> > > values before passing them to the PCIe controller.
+> > > - The reverted commit introduced a fake address translation, which violates
+> > > the fundamental DTS principle: the device tree should reflect actual
+> > > hardware behavior.
+> > >
+> > > Reverting this change prepares for the cleanup of the driver's
+> > > cpu_addr_fixup() hook.
+> > >
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> >
+> > s-vadapalli:
+> >
+> > 	Any update about this patch? it prepare to remove cpu_addr_fixes()!
+>
+> This patch looks good to me, but I was hoping that Tony Lindgren, who is
+> the author of the commit being reverted, would provide feedback as well.
 
-This fixes the following kernel oops:
+Move tony to list.
 
- BUG: kernel NULL pointer dereference, address: 00000000000002fc
- #PF: supervisor read access in kernel mode
- #PF: error_code(0x0000) - not-present page
- PGD 1028eb067 P4D 1028eb067 PUD 105da0067 PMD 0
- Oops: Oops: 0000 [#1] SMP NOPTI
- CPU: 3 UID: 1000 PID: 1854 Comm: python3 Tainted: G        W           6.15.0-rc1+ #11 PREEMPT(voluntary)
- Tainted: [W]=WARN
- Hardware name: Trigkey Key N/Key N, BIOS KEYN101 09/02/2024
- RIP: 0010:hmm_dma_map_alloc+0x25/0x100
- Code: 90 90 90 90 90 0f 1f 44 00 00 55 48 89 e5 41 57 41 56 49 89 d6 49 c1 e6 0c 41 55 41 54 53 49 39 ce 0f 82 c6 00 00 00 49 89 fc <f6> 87 fc 02 00 00 20 0f 84 af 00 00 00 49 89 f5 48 89 d3 49 89 cf
- RSP: 0018:ffffd3d3420eb830 EFLAGS: 00010246
- RAX: 0000000000001000 RBX: ffff8b727c7f7400 RCX: 0000000000001000
- RDX: 0000000000000001 RSI: ffff8b727c7f74b0 RDI: 0000000000000000
- RBP: ffffd3d3420eb858 R08: 0000000000000000 R09: 0000000000000000
- R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
- R13: 00007262a622a000 R14: 0000000000001000 R15: ffff8b727c7f74b0
- FS:  00007262a62a1080(0000) GS:ffff8b762ac3e000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 00000000000002fc CR3: 000000010a1f0004 CR4: 0000000000f72ef0
- PKRU: 55555554
- Call Trace:
-  <TASK>
-  ib_init_umem_odp+0xb6/0x110 [ib_uverbs]
-  ib_umem_odp_get+0xf0/0x150 [ib_uverbs]
-  rxe_odp_mr_init_user+0x71/0x170 [rdma_rxe]
-  rxe_reg_user_mr+0x217/0x2e0 [rdma_rxe]
-  ib_uverbs_reg_mr+0x19e/0x2e0 [ib_uverbs]
-  ib_uverbs_handler_UVERBS_METHOD_INVOKE_WRITE+0xd9/0x150 [ib_uverbs]
-  ib_uverbs_cmd_verbs+0xd19/0xee0 [ib_uverbs]
-  ? mmap_region+0x63/0xd0
-  ? __pfx_ib_uverbs_handler_UVERBS_METHOD_INVOKE_WRITE+0x10/0x10 [ib_uverbs]
-  ib_uverbs_ioctl+0xba/0x130 [ib_uverbs]
-  __x64_sys_ioctl+0xa4/0xe0
-  x64_sys_call+0x1178/0x2660
-  do_syscall_64+0x7e/0x170
-  ? syscall_exit_to_user_mode+0x4e/0x250
-  ? do_syscall_64+0x8a/0x170
-  ? do_syscall_64+0x8a/0x170
-  ? syscall_exit_to_user_mode+0x4e/0x250
-  ? do_syscall_64+0x8a/0x170
-  ? syscall_exit_to_user_mode+0x4e/0x250
-  ? do_syscall_64+0x8a/0x170
-  ? do_user_addr_fault+0x1d2/0x8d0
-  ? irqentry_exit_to_user_mode+0x43/0x250
-  ? irqentry_exit+0x43/0x50
-  ? exc_page_fault+0x93/0x1d0
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
- RIP: 0033:0x7262a6124ded
- Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
- RSP: 002b:00007fffd08c3960 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
- RAX: ffffffffffffffda RBX: 00007fffd08c39f0 RCX: 00007262a6124ded
- RDX: 00007fffd08c3a10 RSI: 00000000c0181b01 RDI: 0000000000000007
- RBP: 00007fffd08c39b0 R08: 0000000014107820 R09: 00007fffd08c3b44
- R10: 000000000000000c R11: 0000000000000246 R12: 00007fffd08c3b44
- R13: 000000000000000c R14: 00007fffd08c3b58 R15: 0000000014107960
-  </TASK>
+Tony Lindgren:
+	Do you have any comments about this one?
 
-Fixes: 1efe8c0670d6 ("RDMA/core: Convert UMEM ODP DMA mapping to caching IOVA and page linkage")
-Closes: https://lore.kernel.org/all/3e8f343f-7d66-4f7a-9f08-3910623e322f@gmail.com/
-Signed-off-by: Daisuke Matsuda <dskmtsd@gmail.com>
----
- drivers/infiniband/core/device.c   | 24 ++++++++++++++++++++++++
- drivers/infiniband/core/umem_odp.c |  6 +++---
- include/rdma/ib_verbs.h            | 12 ++++++++++++
- 3 files changed, 39 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
-index b4e3e4beb7f4..8be4797c66ec 100644
---- a/drivers/infiniband/core/device.c
-+++ b/drivers/infiniband/core/device.c
-@@ -2864,6 +2864,30 @@ int ib_dma_virt_map_sg(struct ib_device *dev, struct scatterlist *sg, int nents)
- 	return nents;
- }
- EXPORT_SYMBOL(ib_dma_virt_map_sg);
-+int ib_dma_virt_map_alloc(struct device *dev, struct hmm_dma_map *map,
-+			  size_t nr_entries, size_t dma_entry_size)
-+{
-+	if (!(nr_entries * PAGE_SIZE / dma_entry_size))
-+		return -EINVAL;
-+
-+	map->dma_entry_size = dma_entry_size;
-+	map->pfn_list = kvcalloc(nr_entries, sizeof(*map->pfn_list),
-+				 GFP_KERNEL | __GFP_NOWARN);
-+	if (!map->pfn_list)
-+		return -ENOMEM;
-+
-+	map->dma_list = kvcalloc(nr_entries, sizeof(*map->dma_list),
-+				 GFP_KERNEL | __GFP_NOWARN);
-+	if (!map->dma_list)
-+		goto err_dma;
-+
-+	return 0;
-+
-+err_dma:
-+	kvfree(map->pfn_list);
-+	return -ENOMEM;
-+}
-+EXPORT_SYMBOL(ib_dma_virt_map_alloc);
- #endif /* CONFIG_INFINIBAND_VIRT_DMA */
- 
- static const struct rdma_nl_cbs ibnl_ls_cb_table[RDMA_NL_LS_NUM_OPS] = {
-diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
-index 51d518989914..aa03f3fc84d0 100644
---- a/drivers/infiniband/core/umem_odp.c
-+++ b/drivers/infiniband/core/umem_odp.c
-@@ -75,9 +75,9 @@ static int ib_init_umem_odp(struct ib_umem_odp *umem_odp,
- 	if (unlikely(end < page_size))
- 		return -EOVERFLOW;
- 
--	ret = hmm_dma_map_alloc(dev->dma_device, &umem_odp->map,
--				(end - start) >> PAGE_SHIFT,
--				1 << umem_odp->page_shift);
-+	ret = ib_dma_map_alloc(dev, &umem_odp->map,
-+			       (end - start) >> PAGE_SHIFT,
-+			       1 << umem_odp->page_shift);
- 	if (ret)
- 		return ret;
- 
-diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
-index b06a0ed81bdd..10813f348b99 100644
---- a/include/rdma/ib_verbs.h
-+++ b/include/rdma/ib_verbs.h
-@@ -36,6 +36,7 @@
- #include <linux/irqflags.h>
- #include <linux/preempt.h>
- #include <linux/dim.h>
-+#include <linux/hmm-dma.h>
- #include <uapi/rdma/ib_user_verbs.h>
- #include <rdma/rdma_counter.h>
- #include <rdma/restrack.h>
-@@ -4221,6 +4222,17 @@ static inline void ib_dma_unmap_sg_attrs(struct ib_device *dev,
- 				   dma_attrs);
- }
- 
-+int ib_dma_virt_map_alloc(struct device *dev, struct hmm_dma_map *map,
-+			  size_t nr_entries, size_t dma_entry_size);
-+static inline int ib_dma_map_alloc(struct ib_device *dev, struct hmm_dma_map *map,
-+				   size_t nr_entries, size_t dma_entry_size)
-+{
-+	if (ib_uses_virt_dma(dev))
-+		return ib_dma_virt_map_alloc(dev->dma_device, map, nr_entries,
-+					     dma_entry_size);
-+	return hmm_dma_map_alloc(dev->dma_device, map, nr_entries, dma_entry_size);
-+}
-+
- /**
-  * ib_dma_map_sgtable_attrs - Map a scatter/gather table to DMA addresses
-  * @dev: The device for which the DMA addresses are to be created
--- 
-2.43.0
-
+Frank
+>
+> Regards,
+> Siddharth.
 
