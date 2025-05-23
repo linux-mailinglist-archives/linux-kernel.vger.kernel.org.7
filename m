@@ -1,76 +1,102 @@
-Return-Path: <linux-kernel+bounces-660212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3C8AC1A26
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 04:37:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64786AC1A2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 04:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4845C507F77
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 02:37:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725B11C03D37
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 02:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D733E207DFD;
-	Fri, 23 May 2025 02:36:57 +0000 (UTC)
-Received: from mail78-66.sinamail.sina.com.cn (mail78-66.sinamail.sina.com.cn [219.142.78.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509E6211488;
+	Fri, 23 May 2025 02:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/wnbW4/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4D9202C3E
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 02:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A083021B9C2;
+	Fri, 23 May 2025 02:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747967817; cv=none; b=EzuKgGbCBU7X0zL/IgzRlUPUhkZzzU0Xyum17qqSlvjP1+DUTGWcnXsMC8Fj1zRDAzsn/+NTbpQXvWlNupUBTZKRVpgUnoNkoronxkUFFTPOhL+aa5DAL9t6LHwH7YlzB8ihzgi8s+jNgd/KgfxXKEPBs89+AIydIoW5k1SFXT4=
+	t=1747967986; cv=none; b=dpre4YAuE4KxcUzIjwKBqHnprTFjCT+C/O5wM0h/4YF2hY0ybvLNTwFda93wdDLOJLUC+i5/BQLQJrqRhOpaMC3diIon1BTloqr1/DRsoOJQdO4gdLSJDut5pp3BZ1row0Psmv+mcBCOyevM/XZne/NM7sbtbtnKf5fCoeJDT5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747967817; c=relaxed/simple;
-	bh=D8yq86l72M6nD5O9uLQN4hl4smk/KgoafGw+uS/SsMg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=qPYK8lNfSpVwNYebXgspFeYGUJEec/3++n53qWmOtWOqBc03J/Oj0Aac4wlbFKwkh/jdqaKUXt3gddskSS87tVcIMzt8zqAvasDRl33dfS6uAuIrbc9bkKk/IRsKy6d/t8SXdmIFQMzAH/wgYzyEia6TggtN8cGkNZnbp/3Jtp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com; spf=pass smtp.mailfrom=everest-semi.com; arc=none smtp.client-ip=219.142.78.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everest-semi.com
-Received: from unknown (HELO zy-virtual-machine.localdomain)([180.172.39.205])
-	by sina.net (10.185.250.32) with ESMTP
-	id 682FDF42000051ED; Fri, 23 May 2025 10:36:52 +0800 (CST)
-X-Sender: zhangyi@everest-semi.com
-X-Auth-ID: zhangyi@everest-semi.com
-Authentication-Results: sina.net;
-	 spf=none smtp.mailfrom=zhangyi@everest-semi.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=zhangyi@everest-semi.com
-X-SMAIL-MID: 3208C6CF4AD64FC68EA887B61F214A7B
-X-SMAIL-UIID: 3208C6CF4AD64FC68EA887B61F214A7B-20250523-103652
-From: Zhang Yi <zhangyi@everest-semi.com>
-To: krzk@kernel.org
-Cc: robh@kernel.org,
-	tiwai@suse.com,
-	devicetree@vger.kernel.org,
-	conor+dt@kernel.org,
-	lgirdwood@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	perex@perex.cz,
-	krzk+dt@kernel.org,
-	amadeuszx.slawinski@linux.intel.com,
-	broonie@kernel.org
-Subject: RE: [PATCH v1 2/2] ASoC: codecs: add support for ES8375
-Date: Fri, 23 May 2025 10:36:49 +0800
-Message-Id: <20250523023649.22785-3-zhangyi@everest-semi.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250523023649.22785-1-zhangyi@everest-semi.com>
-References: <20250523023649.22785-1-zhangyi@everest-semi.com>
+	s=arc-20240116; t=1747967986; c=relaxed/simple;
+	bh=H8/wjXRVTuirlqKTBTuysDlyjNJhoKFrI6uQDrksrSw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=GFYbjeOc5PP5levHgbLzjue2U8BBbrOBxTrqniWyi0WZZJceZ9JVmM4Sj4la+LlMEX7JlN0nBfW+g4NxSMrZLBYgRHhz4WrtsvV7amJxAD35rFVRJx4eVvL3qnnddzbHvvqtWgdM5gGgkwCn1oF3qHgk4BPcbHSp89LWqpZNlnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/wnbW4/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1BF2C4CEE4;
+	Fri, 23 May 2025 02:39:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747967986;
+	bh=H8/wjXRVTuirlqKTBTuysDlyjNJhoKFrI6uQDrksrSw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=R/wnbW4/q5rgwudMS2+ZRCEpCEMwCFMCy5GZpTDXDMS5NCjgjmusX00JHvNu4+HHf
+	 5DLO5RamEjxjXb285bOErRFDFuzYTfDM9B8E889B+0BtPTVMLmvQCq+m6lern6f5R4
+	 iLEYm9PHzG+dsWWp3xjQsPhoebwNRLthBkYCl5ilMjV/JumAXmMdPviXdgxBvxocaC
+	 DZ0CnCMbMfdizUMBVyJiWYsO84V/oTHFSET8+CpbtGNGEkJVByhz4oVw19rdxMlKPL
+	 BTvPY3PjDgaXkQpDFDKcOiFWfvu5UD5+++iBItkgX/Um3o8A84VS72JIo2bqqylcaW
+	 LlYNcCEVHYYhQ==
+Date: Fri, 23 May 2025 11:39:43 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jason Xing <kerneljasonxing@gmail.com>
+Cc: axboe@kernel.dk, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+ akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Jason Xing
+ <kernelxing@tencent.com>
+Subject: Re: [PATCH v3 0/4] relayfs: misc changes
+Message-Id: <20250523113943.8739b65347b3ccacdea7e4c2@kernel.org>
+In-Reply-To: <20250518025734.61479-1-kerneljasonxing@gmail.com>
+References: <20250518025734.61479-1-kerneljasonxing@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> > Signed-off-by: Zhang Yi <zhangyi@everest-semi.com>
-> > Reported-by: kernel test robot <lkp@intel.com>
-> 
-> This never happened - robot did not report this driver.
-> 
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202505221528.nvWwf9kj-lkp@intel.com/
-> 
-> Please read carefully above email. It explains what to do with the tags.
+On Sun, 18 May 2025 10:57:30 +0800
+Jason Xing <kerneljasonxing@gmail.com> wrote:
 
-Okay, thanks.
+> From: Jason Xing <kernelxing@tencent.com>
+> 
+> The series mostly focuses on the error counters which helps every user
+> debug their own kernel module.
+> 
+
+The series looks good to me.
+
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks,
+
+> ---
+> Note: this series is made on top of this cleanup[1] and unmerged commit[2]
+> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/log/?h=mm-nonmm-unstable
+> [2]: https://lore.kernel.org/all/20250507134225.63248-1-kerneljasonxing@gmail.com/
+> 
+> Jason Xing (4):
+>   relayfs: support a counter tracking if per-cpu buffers is full
+>   relayfs: introduce getting relayfs statistics function
+>   blktrace: use rbuf->stats.full as a drop indicator in relayfs
+>   relayfs: support a counter tracking if data is too big to write
+> 
+>  include/linux/relay.h   | 19 ++++++++++++++-
+>  kernel/relay.c          | 52 +++++++++++++++++++++++++++++++++++------
+>  kernel/trace/blktrace.c | 22 ++---------------
+>  3 files changed, 65 insertions(+), 28 deletions(-)
+> 
+> -- 
+> 2.43.5
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
