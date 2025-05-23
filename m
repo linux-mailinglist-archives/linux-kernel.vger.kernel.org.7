@@ -1,132 +1,147 @@
-Return-Path: <linux-kernel+bounces-660904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89FE0AC23A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:19:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1364CAC23B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EF5E7AB292
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:18:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45E153A341C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4260D291862;
-	Fri, 23 May 2025 13:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c460AcOz"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5708629209F;
+	Fri, 23 May 2025 13:21:33 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F5A291157
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 13:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F30913D539;
+	Fri, 23 May 2025 13:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748006371; cv=none; b=uho7iNuEuSNmkWuZpkEajmVrwJitNFkeXOjNlGJNthGzfc1RB4jKaWV4X10u7MaTiiBYUCYJ1kEnzCe54CPy/TRX1QkySrV95aEgHx4/Wq7Xk7F8AkwXtSlK8Yg3TvrXPaNv7n6YxjifQtY6ctWluFu7toGYoLwHPJTWcfZAd0k=
+	t=1748006493; cv=none; b=eiAZAdl+mnEBNizRYu4HOjlwGS9SmmvBOgdUrg5UUZzkuxzDIrLroFWaoUS4YnxhgmveZPUPFCnGNQsJWhs5e0uB82SJLsBg8HKYPwAcnKPaWIv1/mA3O1wVLx9uLQxsHWDbkfzd4hSRvEzvIuyAbJsvCIhsr9Q+nV7ZMMauwo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748006371; c=relaxed/simple;
-	bh=weVIVWSmAEm0vAps5JJpC+7tazPUvlBdD62+QheOM+8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ogX0Z+jCvH16Q3uEpsWGc6f1+J1v6r0Pjod8rNc6TyRmatXp5s/F+CFlrC9PDOAA/vJZeLLcbCKAraQpEXouLPw6XrcJloFfLpHS0WBWm+NBpHW8cPXggo4X1YfgQPhBqKcu4/qsa7lpnERmXkmL7GdOEV25Gug3LBsP+l7kMLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c460AcOz; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c560c55bc1so884288285a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 06:19:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748006369; x=1748611169; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wxyrfP33qC8ALCV6TibxZ8ffP3Xham0td5+3H8syoiE=;
-        b=c460AcOzuYYjeF+SezJ4YwxXN4T3pHzG3QjtXxx0mrZhn3vDtG6RETrb+0z2F2ijXm
-         fEaINOST5DaCgAy0H6cBasspgJx5dysEGjivFdLLciKatewrFde+MiBwXIFp7b1M5aOO
-         d4hPNg17kELhhoNAD9I9WCdOyIGYJcBpjI4GgCsr7vLu2GxnXwA6/kiRONd4CGgemk4i
-         OXmeb32JRLIVgB2GHytXIlhtLTeQcqoRgXtWhW4DC6I2kAmnE1246tjdzFK7eN5F+VsK
-         2as8pS/x+lkmIS2l+7MzjK7RWEljvm+kvB0hDfOg3lqA89rXO1q9tHaUBVLkQmjSpv2t
-         y84Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748006369; x=1748611169;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wxyrfP33qC8ALCV6TibxZ8ffP3Xham0td5+3H8syoiE=;
-        b=K5VGB9e51mgVmFN93xBMui3TqVR4N66ww+YuxawIDdcVCQwhtHN/OMxIBX/Rtip8st
-         r2F05Wet838Mc9b+wlbppm3Iz92PtKwjeTVVe1XBK6yE6VbTjZ2JfDYP8VAvujiZ93II
-         RKe7qg7Q4pR/ppSKDP6DvQ0vLIJRMGCUVPPcVC6HwM5+TjmPrNKIiouyyUATwzQtySjI
-         NUkY/mg0+aWYY9/hb/uHxb2dFx7FFxN0g6dPRIuq46P1fsYqvUeXMPlKBj96Pb6Cwb5R
-         8cgEZVFNwsBcjK0JQEl5QJX+ywPWbNiV2zGdk7rkU1YPNcjNiDhTbZPaq6s1I1U6vn/a
-         +Ung==
-X-Forwarded-Encrypted: i=1; AJvYcCViKA/72HIwSAgU01OGiIcqn+OkR8pLJyh92J7CC34jUpr5+OWLo5dPU5JmNzmXHyhVnQgse8dAr6shXJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpXaxm55WapC3ZY0oYX9+7YzUgeHhrbhyo562rngSzGGgs6z2y
-	wTy/FrDIC787tz+eXpzLFXwMhbzeuM7aFdjKGezNLe8Txx6jYYc8Qts4hsXBPzNr/h5tL718kxL
-	bUDYa610ZqAPZbK3oU1TeEQYHLbv3tvUcf3zoIxK8eg==
-X-Gm-Gg: ASbGncs4c3ubVx+zRrZ5cR7q5luIOv/Sa+wdbhDP32c0pkoBK5V+1wf1BAOIf4/8Omc
-	MMWypZPQZInm4YL/+87VlCXv4sZ8MbIGWcIj4/a8xuyYUbk5Sin8Q1oCxvRumca1V9WHXUKZ7rC
-	EjsTioVuBZe5pFzmHq45Ox3NbHUAkA39qe+NDOuMENwjDzDBp6gQHzTuwSLLEP6uBsyvm0A6Tw/
-	w==
-X-Google-Smtp-Source: AGHT+IHyjvNAAtHNM58ZIM56gNpC2I5XziXsRadQQZ+dhZZ3rU8qNnJxcPg4bPBm0zEL2RJNey22Zg6GikdUy4Olj2Y=
-X-Received: by 2002:a05:620a:400c:b0:7c0:c332:1cdb with SMTP id
- af79cd13be357-7cd4677d30dmr4029786585a.38.1748006368879; Fri, 23 May 2025
- 06:19:28 -0700 (PDT)
+	s=arc-20240116; t=1748006493; c=relaxed/simple;
+	bh=/uUt2+APUt4s0Nz60O85gXCqiHDW+NUda7bgTQ9s4zA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qk1hJeGyLXZpQq4+OtFTMfURy7XpqMD1QF7fL1mT7JV9bfipXNHzNSsgxYoKSlvwIU0wxW7wFnE0EYoYO1/je0mBqdcaT/kSl0PueJf34aqtvGSsIiRSC86lfPmFRW1+21x5a6PvbN3/4Od73AhC6SFkXXykVhCWDUVzjFwp0Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from [127.0.0.1] (unknown [116.232.18.143])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 2C661341214;
+	Fri, 23 May 2025 13:21:24 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+Date: Fri, 23 May 2025 21:21:04 +0800
+Subject: [PATCH] riscv: dts: spacemit: enable eMMC for K1 SoC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYv08Rbg4f8ZyoZC9qseKdRygy8y86qFvts5D=BoJg888g@mail.gmail.com>
- <6tgxbull5sqlxbpiw3jafxtio2a3kc53yh27td4g2otb6kae5t@lr6wjawp6vfa>
-In-Reply-To: <6tgxbull5sqlxbpiw3jafxtio2a3kc53yh27td4g2otb6kae5t@lr6wjawp6vfa>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 23 May 2025 18:49:17 +0530
-X-Gm-Features: AX0GCFv47L9zNz_HqH7izio-QcYYMfFmCuTMugR2i0Gz9XAi2gWfyAbx-zg4GTQ
-Message-ID: <CA+G9fYsjBXvm9NNKRbVo_7heX1537K8yOjH7OaSEQhGRmkLvgA@mail.gmail.com>
-Subject: Re: riscv gcc-13 allyesconfig error the frame size of 2064 bytes is
- larger than 2048 bytes [-Werror=frame-larger-than=]
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcache@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250523-22-k1-sdhci-v1-1-6e0adddf7494@gentoo.org>
+X-B4-Tracking: v=1; b=H4sIAD92MGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDUyMjXSDKNtQtTslIztS1NE02N7VMtDA3SzJVAuooKEpNy6wAmxYdW1s
+ LAKTyPGldAAAA
+X-Change-ID: 20250522-22-k1-sdhci-95c759a876b5
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Yixun Lan <dlan@gentoo.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2046; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=/uUt2+APUt4s0Nz60O85gXCqiHDW+NUda7bgTQ9s4zA=;
+ b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBoMHZRXIKtowFCnagfr9Rq++0L2B169bs0Js09E
+ u79NhUnKKWJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCaDB2UV8UgAAAAAAuAChp
+ c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
+ CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277agqEACEg1JERuzP6GAAfe
+ +/iOIQofq6ZZHkvXp8Ex5h4rWrCz5Qc+PeSiVr86NAaueGn/eCdbOu2HOxmR2EbfDCXeRBSRwv5
+ ygzktFwRVDpy5cHa3mtBKUWJLGQWrAYafFeS63cfDctwCf/NzRKxO6rr9zVZzMHZPcgD3zdbw4w
+ PTE91toi733KC5fClm7+KXm+uBX3+aP9sGD5T985J1RoOjseWmk6O4ubX35ID3YEMvZV67aBYjK
+ N2fPaAL6F8jweW4uZg+hBCnskT8oZLtjFZC3WKF7KM/6HBorSRvSWnAQ4YZvKtKZIlyW36aQjE0
+ wxCz6DZfoncaiki0kvqEhfrQ5pRh5Tk1blFWS1gChSKBXODBTUAmiyPPFinOhTPm/Cj3hO55XYe
+ VFEycSiwa/lUlSGiyP7CC9YYm/2F6kaGLvNnfm/I5TGZj+0wfpxTPCeio6lZQiEqwsIgOjmWQBK
+ 2tez2ZGxANDjNVbxJ+l1gSZuG2VQFM7IVuSzrgRoId70cc0GKIL56A0r9uV/T8Fv+gwAhN36Kfz
+ cECmBNH59D8iKh+7tMuXGsYTFy4sFokiSoB/qMhnxoNWFvQke+iZvd3DFy4zZ1SPXjOUir0bJHV
+ IC0l/FaS5t9bPPjkq5Q6ymq3puIBw3FUwsHzQoLsHvQcsqdB6uzJAwhiggi2XvW+raNw==
+X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
+ fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-On Thu, 22 May 2025 at 22:18, Kent Overstreet <kent.overstreet@linux.dev> wrote:
->
-> On Thu, May 22, 2025 at 06:59:53PM +0530, Naresh Kamboju wrote:
-> > Regressions on riscv allyesconfig build failed with gcc-13 on the Linux next
-> > tag next-20250516 and next-20250522.
-> >
-> > First seen on the next-20250516
-> >  Good: next-20250515
-> >  Bad:  next-20250516
-> >
-> > Regressions found on riscv:
-> >  - build/gcc-13-allyesconfig
-> >
-> > Regression Analysis:
-> >  - New regression? Yes
-> >  - Reproducible? Yes
-> >
-> > Build regression: riscv gcc-13 allyesconfig error the frame size of
-> > 2064 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
->
-> Is this a kmsan build? kmsan seems to inflate stack usage by quite a
-> lot.
+Enable eMMC support for SpacemiT K1 SoC, successfully tested on
+Bananapi-F3 board which shipped with a 16GB eMMC chip - KLMAG1JETD-B041.
 
-This is allyesconfig build which has KASAN builds.
+Signed-off-by: Yixun Lan <dlan@gentoo.org>
+---
+Adjust DTS to enable eMMC support for K1 SoC, tested on Bananapi-F3
+board.
 
-CONFIG_HAVE_ARCH_KASAN=y
-CONFIG_HAVE_ARCH_KASAN_VMALLOC=y
-CONFIG_CC_HAS_KASAN_GENERIC=y
-CONFIG_CC_HAS_WORKING_NOSANITIZE_ADDRESS=y
-CONFIG_KASAN=y
-CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX=y
-CONFIG_KASAN_GENERIC=y
-# CONFIG_KASAN_OUTLINE is not set
-CONFIG_KASAN_INLINE=y
-CONFIG_KASAN_STACK=y
-CONFIG_KASAN_VMALLOC=y
-CONFIG_KASAN_KUNIT_TEST=y
-CONFIG_KASAN_EXTRA_INFO=y
+This patch is currently based on SpacemiT SoC tree[1] for-next branch.
 
-- Naresh
+Link: https://github.com/spacemit-com/linux/ [1]
+---
+ arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 10 ++++++++++
+ arch/riscv/boot/dts/spacemit/k1.dtsi            |  9 +++++++++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+index 816ef1bc358ec490aff184d5915d680dbd9f00cb..fe22c747c5012fe56d42ac8a7efdbbdb694f31b6 100644
+--- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
++++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+@@ -30,6 +30,16 @@ led1 {
+ 	};
+ };
+ 
++&emmc {
++	bus-width = <8>;
++	mmc-hs400-1_8v;
++	mmc-hs400-enhanced-strobe;
++	non-removable;
++	no-sd;
++	no-sdio;
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_2_cfg>;
+diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
+index c0f8c5fca975d73b6ea6886da13fcf55289cb16c..14097f1f6f447bd33ff3aaa07382d27ca8e59a48 100644
+--- a/arch/riscv/boot/dts/spacemit/k1.dtsi
++++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+@@ -511,6 +511,15 @@ pll: clock-controller@d4090000 {
+ 			#clock-cells = <1>;
+ 		};
+ 
++		emmc: mmc@d4281000 {
++			compatible = "spacemit,k1-sdhci";
++			reg = <0x0 0xd4281000 0x0 0x200>;
++			clocks = <&syscon_apmu CLK_SDH_AXI>, <&syscon_apmu CLK_SDH2>;
++			clock-names = "core", "io";
++			interrupts = <101>;
++			status = "disabled";
++		};
++
+ 		syscon_apmu: system-controller@d4282800 {
+ 			compatible = "spacemit,k1-syscon-apmu";
+ 			reg = <0x0 0xd4282800 0x0 0x400>;
+
+---
+base-commit: 3aa64cd126b4fd298ba5d28227ea3f82cd6f541c
+change-id: 20250522-22-k1-sdhci-95c759a876b5
+
+Best regards,
+-- 
+Yixun Lan
+
 
