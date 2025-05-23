@@ -1,123 +1,130 @@
-Return-Path: <linux-kernel+bounces-660417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E875AC1DA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:25:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F062FAC1D7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6C264E13BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 07:25:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4063D7B1F2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 07:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EAE221260;
-	Fri, 23 May 2025 07:25:28 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051961B21B4;
+	Fri, 23 May 2025 07:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="P6SKMKi1"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63555220F4A;
-	Fri, 23 May 2025 07:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DC71A2564
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 07:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747985128; cv=none; b=noaAkSIAOl/olBHPgXBmmL66fm15ChP5BSDBid8bm3Fzsl7pYiHbdfqlXoJs19l9ezYXY/aSQ/EpBBH7sP7I6tc1UJZ2+2egjDrU6EFmCk9kF9ay4Bs/OBhHKTBdvi05sI0w9kmcDtb9dR9qduiKeR/bLeumf+OCXUFVSJVSozI=
+	t=1747984659; cv=none; b=i2vKNaypO+N2IRZSYUZxwL387XfIswyJMlxTxYCs0vg6Q46+VtCoBYc/n/FS0q8tVigyBFSp4JNAzcky33iVB2z6nfcgFi/CNm43pTcxYUbzUgqwGpd45ksxZ2x3eyxeQigrHLqH0BaES5q3G7uHXlUMOQADj4RPzUbDXt0Lims=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747985128; c=relaxed/simple;
-	bh=L5hwYD2GMGyVP6SnLZsdCyv/4gTl9d7s2F5LvXkL4x0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jaxG0FwuJIJhwdoaFR4ELOfALJqhGEZAZD21EJiB4Ujvham2G7i8OpQbryrDcun8BUVOmSY1BbFsJerM4Jxf3WF2RebwfJbfn+0zaJvz1yF1dQcww+16vvbBtUBEGU/zWqvOeajdHGt/0xCzYT8FZ9x4ThWHB0Ao+BaFW86Qa90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from [IPV6:2a02:8084:255b:aa00:6055:15d5:ba02:27bb] (unknown [IPv6:2a02:8084:255b:aa00:6055:15d5:ba02:27bb])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id C500940A0F;
-	Fri, 23 May 2025 07:15:23 +0000 (UTC)
-Authentication-Results: Plesk;
-        spf=pass (sender IP is 2a02:8084:255b:aa00:6055:15d5:ba02:27bb) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a02:8084:255b:aa00:6055:15d5:ba02:27bb]
-Received-SPF: pass (Plesk: connection is authenticated)
-Message-ID: <8ff76bf6-b5a5-4030-ad02-e0e56acdb730@arnaud-lcm.com>
-Date: Fri, 23 May 2025 08:15:25 +0100
+	s=arc-20240116; t=1747984659; c=relaxed/simple;
+	bh=14OpoNR5wXX/CXfjw1QWL9oJm6ZbCTjIwhXlXxgxunE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=Td4Do+XIKT3M3mpw0QvHcNl8Fgkb2jsHcKM1pETlbbHFrPbEgYad/t2DEbCYJUiu+L5KEJIpzaNlUKBH8G+OJZIgURcF99STiQGygrykNAuD5HTA3tX0+MyxCYXCxZzm8Nik/UZKQsR9QCFS9A8vfDBvWzb/dhNmPHTow14ilbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=P6SKMKi1; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a36561d25cso901824f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 00:17:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1747984656; x=1748589456; darn=vger.kernel.org;
+        h=in-reply-to:references:to:cc:subject:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Av0wHf24aS4juStS1TN8W3ncbclQw1XJp/gFY5E/1Cs=;
+        b=P6SKMKi14rsQzaxehL087WZRxfh3a4Bp5TBCM9Xmo73gWKS1J3icVwlTaj3VgOC2Ha
+         habqjD033O2/q857ROST5/DE2FvfIT0fLYujopHHEuVxyYcFc9ufUQCvimXyjo6z07pC
+         8LIjkSoeG60QszKZhjRuOI/kw+KlyrrcTRd4dDXJaZ9ExjyUqrCNz723YLVNLboiU6a2
+         +GF1l9bVtTnOU/n5trIsIbml239zObafvdF2cKe6WaMojN6+PodiC9+EXuuUrMMrSHdX
+         YtUqj9GEnMMuHK4MOSi9PcMJebL01M6vVAWm94euDiXk/lFanJO3j9wRrN3/NuHMC27R
+         BGTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747984656; x=1748589456;
+        h=in-reply-to:references:to:cc:subject:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Av0wHf24aS4juStS1TN8W3ncbclQw1XJp/gFY5E/1Cs=;
+        b=i3eNdVJRwVonPdmKZ02HfhTE9zYxqXLbohnct0VY8VS3fh0Hrmrg2FL/o/Gdduvim1
+         B/ZFA4LHrgurOGuaHpKd36SiBF+te0Cq5N68vOBJ/tuAiTdG/kOFIFoCue4MUYepN+JT
+         nRO5mdMbghontvGm5x0Ar1ruPsCfNET20PLCV0R5Kv9nf1UXn41DBRxSbWHzHL9xVtUu
+         up+LoHdrM4LFVBHRKtvt6OcuI2y2fzuBTDoy1acdRe81qw8vEOOn+ZInOp/Mf+IEU2jf
+         kI9AWDgBHUzixnTjVQuByax8xk6sI6us76rrBs8xkv2DsrrmKwld1ijBRT/PqNgWlEhd
+         WI4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWrUYlTzGWIk+PG1kRaplVOvyBLyaUdUppAWpdbBwhD6Em0TS0BW7owzRUkCrC6gVZcy0s1O7JROELrA7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZIBdkUAfnDxB85GHk5KzF4v3YQok6FViSq/8aOioYhVE23ukU
+	HuSraDk5lG24FwSk0c58oEnNXtIJmnBuz6v5TsBYmQnWyex3sPF7daguatYOKSzdzQQ=
+X-Gm-Gg: ASbGncsSwgoWIO5gW6aAVVIGvapstf96oPZa/62wQZF0Mf6s4dhnas7qvaijMi3S+B2
+	0oPFoN7/IHDWpQJazZAwOidgkQW5ohJz7oVExMa9OZwyNRz7CRI4MhlQb1wqEYlGZU30kOTvs2U
+	RjWc1dfyC8o/hC7jMeWJ2eDvYa1FwaYOHOtbvTFtnj+Dl0QCgZoZK4jAPiEWky0ODk1MXsuTGr7
+	GXd86BnUlVOiE+2sH7gRYieCNuFeH575yX8VJ+8zKKgLG4ZNtm1ftnXsc+XA3Zf9iKqvcK4ziMv
+	rGnyYkSgqk7tHQ3jk9O8iVZS73JLnKZayblpj9xKvDGrs4HjvXbi7PbzPl+9CwbgRqXSrlCDWFQ
+	uNAwrQb8Ek7c=
+X-Google-Smtp-Source: AGHT+IHny3D/gWDxUIqfuvTT+wNP4SQN43b5D98pz4Oyz+pD+zxR9Sz3GTWyxH2BvIqBfK8zfh4AVA==
+X-Received: by 2002:a05:600c:4f8e:b0:442:e608:12a6 with SMTP id 5b1f17b1804b1-44b8ab9bd9emr3386425e9.1.1747984655676;
+        Fri, 23 May 2025 00:17:35 -0700 (PDT)
+Received: from localhost (ip-89-103-73-235.bb.vodafone.cz. [89.103.73.235])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f73d4a3csm134133475e9.22.2025.05.23.00.17.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 May 2025 00:17:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] checkpatch.pl: warn about // comments on private
- Rust items
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
- Dwaipayan Ray <dwaipayanray1@gmail.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- llvm@lists.linux.dev, skhan@linuxfoundation.org
-References: <20250422125633.30413-1-contact@arnaud-lcm.com>
- <20250422125824.30525-1-contact@arnaud-lcm.com>
- <CANiq72n41Oj4K-yZCWbNXJQEEjTqjXHYgrkffAg_mUg8dKLWQg@mail.gmail.com>
- <06dde2dd-5d88-49d4-9e46-72a2e12ab1c2@arnaud-lcm.com>
- <CANiq72=UOOyf-esnRUCR0_gxFptdpNOymCz02vgesdNL7zTvHg@mail.gmail.com>
- <32293daf-a6ce-49cc-b41d-1001037444da@arnaud-lcm.com>
-Content-Language: en-US
-In-Reply-To: <32293daf-a6ce-49cc-b41d-1001037444da@arnaud-lcm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <174798452510.11144.1771928608104289286@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 23 May 2025 09:17:34 +0200
+Message-Id: <DA3CUGMQXZNW.2BF5WWE4ANFS0@ventanamicro.com>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+Subject: Re: [PATCH v3 0/2] RISC-V: KVM: VCPU reset fixes
+Cc: <kvm@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, "Anup Patel" <anup@brainfault.org>, "Atish
+ Patra" <atishp@atishpatra.org>, "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Alexandre Ghiti" <alex@ghiti.fr>, "Andrew Jones" <ajones@ventanamicro.com>
+To: "Atish Patra" <atish.patra@linux.dev>, <kvm-riscv@lists.infradead.org>
+References: <20250515143723.2450630-4-rkrcmar@ventanamicro.com>
+ <1a7a81fd-cf15-4b54-a805-32d66ced4517@linux.dev>
+In-Reply-To: <1a7a81fd-cf15-4b54-a805-32d66ced4517@linux.dev>
 
-Hi everyone !
-Is there any update so far ?
-
-Best regards,
-Arnaud
-
-On 23/04/2025 12:33, Arnaud Lecomte wrote:
-> On 22/04/2025 17:32, Miguel Ojeda wrote:
+2025-05-22T14:43:40-07:00, Atish Patra <atish.patra@linux.dev>:
+> On 5/15/25 7:37 AM, Radim Kr=C3=84m=C3=83=C2=A1=C3=85 wrote:
+>> Hello,
+>>=20
+>> the design still requires a discussion.
+>>=20
+>> [v3 1/2] removes most of the additional changes that the KVM capability
+>> was doing in v2.  [v3 2/2] is new and previews a general solution to the
+>> lack of userspace control over KVM SBI.
+>>=20
 >
->> On Tue, Apr 22, 2025 at 4:37 PM Arnaud Lecomte 
->> <contact@arnaud-lcm.com> wrote:
->>> As mentioned earlier, we can reduce the score of any heuristic which
->>> could lead to any important false positive.
->>> In my opinion, as long as the heuristic is relevant, we always have the
->>> possibility to diminish the score associated with the heuristic, hence
->>> preventing unnecessary false positives.
->> Definitely (my comment above for this one was just a note, i.e. there
->> may be nothing to change -- I just thought the commit message referred
->> to just checking "Return" and not "Returns", since it said
->> "imperative").
->>
->>> I think that you are definitely more experienced with what's done
->>> commonly in rust code. Let's maybe change this heuristic definition 
->>> with
->>> @ related to types or some other annotation. Do you have some example I
->>> could have a look to come in the next version with a relevant list of @
->>> we can encounter.
->> What does "references" mean in that heuristic? If you mean external
->> links to some URL, then we typically use Markdown for those. The
->> inline ones like `<https://...>`happen in both comments and docs. The
->> `[...]: https://...` ones are way less common in comments I think (I
->> can't find one).
-> We should then remove it. I'll wait for other reviewers for their 
-> feedback and then send a new version of the patch serie. Thanks :)
->> As for `@`, if you mean the actual character, I grepped for it in Rust
->> files with the /.*@ regex and found just ~13 matches, and all were the
->> emails and disambiguators I mentioned. So I don't think we really use
->> it for "references" (assuming I understand what that means).
->>
->> I guess you already looked in some `rust/kernel/` files -- some of
->> those are really the best examples of how docs and comments should
->> generally be written.
->> Thanks!
->>
->> Cheers,
->> Miguel
->>
+> I am still missing the motivation behind it. If the motivation is SBI=20
+> HSM suspend, the PATCH2 doesn't achieve that as it forwards every call=20
+> to the user space. Why do you want to control hsm start/stop from the=20
+> user space ?
+
+HSM needs fixing, because KVM doesn't know what the state after
+sbi_hart_start should be.
+For example, we had a discussion about scounteren and regardless of what
+default we choose in KVM, the userspace might want a different value.
+I don't think that HSM start/stop is a hot path, so trapping to
+userspace seems better than adding more kernel code.
+
+Forwarding all the unimplemented SBI ecalls shouldn't be a performance
+issue, because S-mode software would hopefully learn after the first
+error and stop trying again.
+
+Allowing userspace to fully implement the ecall instruction one of the
+motivations as well -- SBI is not a part of RISC-V ISA, so someone might
+be interested in accelerating a different M-mode software with KVM.
+
+I'll send v4 later today -- there is a missing part in [2/2], because
+userspace also needs to be able to emulate the base SBI extension.
 
