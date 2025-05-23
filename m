@@ -1,223 +1,195 @@
-Return-Path: <linux-kernel+bounces-660969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA63AC24B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:07:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE8AAC24B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9C7B1BA225F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:07:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 800CD9E4245
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852DB295501;
-	Fri, 23 May 2025 14:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA21295511;
+	Fri, 23 May 2025 14:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="J76994HH"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2072.outbound.protection.outlook.com [40.107.20.72])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="0+ycL8O5"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF12231850;
-	Fri, 23 May 2025 14:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748009254; cv=fail; b=ahORxn8EIviZsT7VriWRqj9LVGvqVB9LPhPnepf+vz+ET+8wT1F4r2gTAFerA+sBHbB9VZX0zEUtoCSgdtOARQi6SAOHREYKjFgOwf7KUlHZxim4AD6QkuCU4+wgSqR2LcErgIEC/XZ15woSFddF7+u3//+B6r/LACy3CisHk14=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748009254; c=relaxed/simple;
-	bh=OcPUvWfnTAygzKGGyLahSpSVqWgHuFhTpiocnKUWXsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=mRICaMQWUkFsiGjbvzVyY7zBYUyeavKjRozgB6yv70MsKsS5MKiwBwH6crRSGZXiQMUGYJN8zzWQdNBcHjsIcW0tGkk9fH+WyDzGlbTQ2FROebZaPfvc8pwUN4ECySXfhDBDybycSmGGYHI1woW4zr++Ysl/lk8WdnZEoW9Umuk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=J76994HH; arc=fail smtp.client-ip=40.107.20.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R/715FO+FBeQDaPFOCosUe7f3NzdX7h6wvlOIwFZ0k76fhw/gzPFjk/wmJFH33JvNKzPOq4Dryqz5QZxmKU3g3864Q3kd2qcD0yjDAqju6dOTpcWwcVI//qORs3NYcBTpdQayUIBMEsklnI0HxDBf8LH7cIuQ51zZr1K04Ox6V3pABITRETOuFC+Xb3u9xU1yCLLFY+QwWrGan+jcIEJ4/yBMfkiEbM4cyOKe46PGiDAa6XyF7EPAytI/1mhEv7BzE8vemvJlfSIFXjxC06YB+7SqnUFXb2ZEpe3uR5iQWV4myh3SyJoXL7IYoGPeFtflPS6Q2V0vR4eQxqIVWJ+RA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u7WghztzaYMcbxh+SzIWTACCEyqEyN3FQX5xLI5KunY=;
- b=dv5Uxb9s3guzqqcPSZ3n5ciwlUXwWK3e/4fFCt+bVatuAAFWClaMr3xfZ4PQZ02/xzv8fThvOy2VjNjz5Z2X50Cu2uDvjhtcYIF5WbJYpOVSTG6yHetd3MNA9D5kOkNjGQmkcxwuc6U21G1AVQ8Bvw84L/l7f2ZzcTsMVWeoOFHm69FqZh0SekaMgGUHEpESYNzskEFMlJ9fqBF3jeBX3suFS8pN+tyEa3wPUjaNvSKkhWlHGBXRvBoD1exYpbQyJrkEfrHRjQWe00CwErGJp51fdmkmhoc/IxWIfIk2PTlSJDa5JJoaZ92guEd5JyMo6xM1ng9dfRk9IM1IGUZUaQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u7WghztzaYMcbxh+SzIWTACCEyqEyN3FQX5xLI5KunY=;
- b=J76994HH1v0uZTKl8HyhoLs6p9alcRQKxFwQqECL/ZTHEtvJHpBqbtwLcN12T8Ke7BqPwSjALQgjn3fDwrXp2Wz5o6wU1BpgcZ1f+qFVYOdfsdYD08CVusAEYjf+CkQZ00a034xnpdxUth+7CnQvLI6BsNR9H9UfTXqTkhX4zAuqrP9M9lQxz5lPMm7NnvPOn0nJja33dg/P/eIbx+SBoS6tNZ5FSbdpf8WNfnedseDfLTbOP9diWHnXjq85gUxExi19Sz02DevOdy9KMBjDpp1MNbhxc3wj55MbLghG4BtuemivYDhAnvKMG0mYXEl3TuWwlSRdl4l3SJlI6zdO/g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAWPR04MB9886.eurprd04.prod.outlook.com (2603:10a6:102:37f::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Fri, 23 May
- 2025 14:07:29 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8746.030; Fri, 23 May 2025
- 14:07:29 +0000
-Date: Fri, 23 May 2025 10:07:20 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: John Ernberg <john.ernberg@actia.se>
-Cc: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Gaurav Jain <gaurav.jain@nxp.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Thomas Richard <thomas.richard@bootlin.com>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/4] dt-bindings: crypto: fsl,sec-v4.0: Allow supplying
- power-domains
-Message-ID: <aDCBGMmdGLcBoSjy@lizhi-Precision-Tower-5810>
-References: <20250523131814.1047662-1-john.ernberg@actia.se>
- <20250523131814.1047662-4-john.ernberg@actia.se>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250523131814.1047662-4-john.ernberg@actia.se>
-X-ClientProxiedBy: BYAPR04CA0022.namprd04.prod.outlook.com
- (2603:10b6:a03:40::35) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32624231850;
+	Fri, 23 May 2025 14:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748009410; cv=none; b=Ud6T1hBc4JLvVeZIZWMW1wo7531X49X3olF0IzIcDZz0E+R2AAu2C9l9zzr04IuxTwnSDdloTstHBWin29H4hicUz5BfVP1rKBYCvBbdIKNW/k/MIxcyzNfs1WIByHU313TspeDtLqzowK6E+qqTU+Xhzui1ihMllTYjbfFK4FI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748009410; c=relaxed/simple;
+	bh=MeiVl2gTxYr8oTKmRvrmJYk1wQP+ajVGU9qZFBGygSE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=tOcz1I4G0phnRFD31VUAp4zpHJU+79UrjYIeBoc2HozdXYslGUvTkqsxqNpCVCAnR7ArM7xfB2ZTAVkEkDyEeWRGE+6YpR6JIn7McREMZlbbH64yaamLoUArJlS28kHhelGCnF6tjdICl9N/jE26DlfNFWzs8F37f8h8KhAJYnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=0+ycL8O5; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54N9ruTV011507;
+	Fri, 23 May 2025 16:09:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=ZzEoNsmIlQ0YGTHR1JsAjo
+	rfZVm9CGqWBwlMW+xUb6w=; b=0+ycL8O5hIzl4gb17UMKi2TQuiWWp1F1Z17JjO
+	ORZKXnhuT/2j/Q3ifDPEgeW4jgmSAex5JjnBmg0eoxxdVkD73cJcZ0nG4c0edEuO
+	DAftPTpT8bBmZ8KCgLnpE8/q9Dr1m7J7Je3DlXMLoQzgqqggg108aUIx04de2mIx
+	9HtDfUj6D1LtdZzev2IMZ0MasL32qIVABOK64rjIShuqQJKxutl7fw/MbcIqRlsz
+	EXcZx/QQgrBu+Lu/6xX/L4JkCqv9Mg+NygYr+s10s4pmYxhDD9JDml8kqMb/02Or
+	QBLLTWIpfLMNzWXgql6YcmNsmXG5f12Tzr3cghRs7qdeExjg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46rwf4ekmq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 May 2025 16:09:56 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 196D440048;
+	Fri, 23 May 2025 16:09:02 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0ECBAA87B40;
+	Fri, 23 May 2025 16:08:33 +0200 (CEST)
+Received: from localhost (10.252.5.226) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 23 May
+ 2025 16:08:32 +0200
+From: Gatien Chevallier <gatien.chevallier@foss.st.com>
+Date: Fri, 23 May 2025 16:08:10 +0200
+Subject: [PATCH v3] dt-bindings: access-controllers: add controller
+ configuration property
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAWPR04MB9886:EE_
-X-MS-Office365-Filtering-Correlation-Id: 91a88bb6-1236-489e-245e-08dd9a032760
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|52116014|1800799024|366016|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?otKpwE44vCD6fswfKKabRFeaWpo6AbSdFaPjz4npLjddKPCqdBNzvNJHPC0j?=
- =?us-ascii?Q?kmePkoMIlFBa0I5/Ni7h5qmbX2Po9xI66pR2Cvaw3oXy2Cu9KsnF8Yui/bgV?=
- =?us-ascii?Q?j9EzDu0/KNfxuCQxtXiSbQvS0jybJJ7U/Mg79/XhNE628uSfHccpDh5b3jYk?=
- =?us-ascii?Q?fvuViXgwNad5e63kWGdsnAt+ZjDUi2FP6Sff7Ng1ryGWJXfZoHZ35reiFpvl?=
- =?us-ascii?Q?R/BojmHCsN26jMFGJ19rNcfSo+CI5Z/nQi2fq/0/F90JlyQsDOBTym6E8f7y?=
- =?us-ascii?Q?5o8kLjNZaKoiEkQ3Lmg2UGWChzCYY71TkjoFl1OIjzU3kQsqTsD5YQuS50Ui?=
- =?us-ascii?Q?9+3KQaVmXj+P5pL4skSQg1aPYQGxwDS1ulX0zlNtWqGHFi24aE/kr7LpIgpk?=
- =?us-ascii?Q?SFaU0CN01tdX4t3J1SSiQr7JCJUus4grgj31WfsE6M5kj+wQLm5Vx9vyVRhn?=
- =?us-ascii?Q?qqqe4UwTtTPG45fAgQ2CvgYiNKfTeiMgxxbKdvR63EW0VyAY80ZnPAODAf9E?=
- =?us-ascii?Q?yVWMl3tvICgpt1znqEblTuSeHUexLe+5r1o6B8oR9RbP8fYYOv4eObFj3aP6?=
- =?us-ascii?Q?HWQqI53S2bY2/dvOY5tsSaOP4LgyPTNGFQpAYWiBqhErQUK08kSuy6+8QV19?=
- =?us-ascii?Q?bsBHhEu5JK6dk5uungrL3Qnz9ukhOLBfMoBi1F2mJQQFgwXi+gvvWyQxMTng?=
- =?us-ascii?Q?1w2iFbHQ6ChT+dvfxMpNNcyJ02cj7RmPLySOxksEGziVh0jMo4p3NaU2gd8z?=
- =?us-ascii?Q?3H5qXNDcf+lyVjdWtCn3sEQgla5YlqXmdIggTmwp6PVuPua+Kk99l4PQMujy?=
- =?us-ascii?Q?zWQCNZs3AF5O3/aa2dwqITqrH5+3zxIGv4ItdmYpHlz0pPmDp+iyBvltM5vJ?=
- =?us-ascii?Q?IAEq//O3M2vWVUwAdVe89SGwpqzTptI7wUKYLL4A0GyMaCZ2/LSZDPXSDo/b?=
- =?us-ascii?Q?7h2QZO+xrlRpHbVIF2gP4hP48q+OrPBJIHy1v1abkwQDq3IOvMOktwKfWE9j?=
- =?us-ascii?Q?XKsq6XjI3WzWzAdW5bpzffhIlF0WSgl/1r/zRyaS1/2oTAxV+r+mY9LmR0zf?=
- =?us-ascii?Q?c4iX7qV8DvZfGyqMvj4/0RS1X9PC3+RLZEZU6jxhJgk8ETNV3CscbtowaMfT?=
- =?us-ascii?Q?83+nIx35Fp8FZcbxQd13yRw+EqEGlsXspoQ+Iw7yd8GUjsBzjm91r9kGekSE?=
- =?us-ascii?Q?VDAIBCm6S69BEuch9sSzBQHns6ECv0o0Nnc9dgqtFKf5AN2+p1kcZOeVzwzF?=
- =?us-ascii?Q?rSRsSs2HrdiqN9yimQt++p5m8GWlRlTNACjLapEgWi8hsh1RmgdBjmfP0qUn?=
- =?us-ascii?Q?LvvZS1dxS6wfFv3Ed9GyxTcjMguBMFP+kC2raCA5o8bgKdype1A7/ANITA9F?=
- =?us-ascii?Q?Z/qq2hADIW9sg85hxckPGytLf96WHjBXc0DI1CfmqUPuiGly3ttnzU9KiIzr?=
- =?us-ascii?Q?gAw/5RmbUrdu1/sE+ZYehGmw70h27kfk5dmqZZe1RyygWX6CqpHkVg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(1800799024)(366016)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SoDO8WtgZXAYTChyRQrZeK50OkC22iuJGHkFOmEHuNSdJzgblfkNgfEpsfkK?=
- =?us-ascii?Q?JAClLos/2Nf9DfoiWVcFGnk+JlmMDr/jJdzq3kXEk6EuSVlzOHiICGjLnaGd?=
- =?us-ascii?Q?Ft43KVkpQSuf7nvrY1ZX6ALFPJ6OtZANcQzEi8hAzKZWZwOQlA3KRAdePeX+?=
- =?us-ascii?Q?p7cuFtpwFeczNQQJmzjlb3dwCMm+a+dHBfVgdEjLdZxri//lwrEkrkJ4y5pu?=
- =?us-ascii?Q?N1vbqhjxiBPQ/RUCe5szhOL1LsasygZehrO6IEj+9ylL2/e/jnQalbLX5CAv?=
- =?us-ascii?Q?29d0mBstRyTvMma6/3UQE9cYQ7hC2Lx3i7obghcH92R5YAQsS8jGFxyOiws4?=
- =?us-ascii?Q?NmflRhHpUBN458155q2XLquYUIwzrP1L7PD3AYdJ4DX8jfl1+PSM2HmtJZ0p?=
- =?us-ascii?Q?RzT124Xtdt5Tzvt2edP9FTVA2XxH4XLtOlZ+vk4DEsKy8Wu0kZEiGXKS/pGG?=
- =?us-ascii?Q?CAz1T8Limm6yvxAqnb1zTokei0mSCuXxXz/miZIizo80hSY7jVdHDgJanJsb?=
- =?us-ascii?Q?dDnYEFhy92B17eiw6KiCdHMc+epUcgXgm3ZNS6k+EFHEQBNr+9BqvCJGTXLG?=
- =?us-ascii?Q?Y+H5AKTKkRyEP+V1BGrAAJ5QWjs91oh2BKM/dETQ/+OrdwYGPmyC45MZs9pY?=
- =?us-ascii?Q?BmlzK2E3nnI95GFE6IP95MIhTogm3mMKJK3YDbQ5hoXrgvVjJv2rcbQeWVF+?=
- =?us-ascii?Q?4Kd+0rBQ9Hho1v78K9rIp3VMpf+YNS22qymf106gAesCm7WJyjTaNntfufyM?=
- =?us-ascii?Q?vALiDodfV4gYkP4cf/Ig7wStVOf56GERYP2J5vTODRyZsTlSjp+0CJ4GTusl?=
- =?us-ascii?Q?UmkOvm0cYebe7bSis4b7vId2te7G1VYIEPvYfDh+JQjZZSOd/TYX2G4I3Q8p?=
- =?us-ascii?Q?vun5HQcxizZLgj9EjpfdvRg04+CQwebsaREvOG5iKopox4bTCWVRs0kJl/p4?=
- =?us-ascii?Q?qpptF4i8Sbau2bQE40Jl+kD8VCEA7ooaKbOpbhwdcOfkObWyl5i9b7R8m1nR?=
- =?us-ascii?Q?kNfbR6Sx+C8dU58mxDfbpGj+nYvNM2jg2Ff8PMW9huTUK6U1Mutith7vQ1wO?=
- =?us-ascii?Q?Q8x8vOLnevX3S7Otsfz7ryuE+2BZehlemPiaPAOnLxnU8qW8O6mYzjJ8dPdg?=
- =?us-ascii?Q?6Fmy8pYsHry8SccSInc510cErZlNRg0zX0sV3HYiJevbbGJCB+oBgczKzht3?=
- =?us-ascii?Q?yRSknmHBQ4GGkkZg5/j6OKGGfMlevj8Z1hAtvyPNqsDMDo8jDPub11EJKbZP?=
- =?us-ascii?Q?przYeymwiUxmsbSqpd0ixbgmhom5DEyxZn4G3HOLIP9l8eXQ6pY3i+LjnlTk?=
- =?us-ascii?Q?vOVoC9qjuCC1rO+IpqXRss4pjcHSgmIhnnjB0BAXvPfYw6wzfOWJp5hx/acJ?=
- =?us-ascii?Q?25tR/3H9ge9OY64vzb0JL7fjfqKgWJhscIVxddnZbQfc3KOg+Lix1QiJHWem?=
- =?us-ascii?Q?dWprbKKW/L/aZVsOpKIJpaRbFrih/QOg4V3SsYWmKbVoSbAnyGLwHmNIz74H?=
- =?us-ascii?Q?jLRgvqWQAIhFe0Ojl+ozBHsvkBmWCjPfqRR0IRzn0WXqO0L0yGNaMKjmTxU3?=
- =?us-ascii?Q?9RzxEem3Y86sCSP9/PE=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91a88bb6-1236-489e-245e-08dd9a032760
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2025 14:07:29.5797
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MtQfWBllyPwwFTRAY9V/S/wvLOLw8Zj3KB/sHUdUefq51Sxlay11gdS75Hr7Ne+KU8+b8extEcdW4ok3grAgOA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9886
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250523-access-controllers-conf-v3-1-4382e69819cf@foss.st.com>
+X-B4-Tracking: v=1; b=H4sIAEmBMGgC/x2MMQqAMAwAvyKZLdSWDPoVcdCaaqC0kogI4t8tb
+ nfD3QNKwqQwNA8IXaxcchXfNhD2OW9keK0Ozjq06LyZQyBVE0o+paRE8nM0MWKH2C09+gVqfQh
+ Fvv/zOL3vB+x4uTdpAAAA
+X-Change-ID: 20250523-access-controllers-conf-ff51551b953b
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Oleksii Moisieiev
+	<oleksii_moisieiev@epam.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <alvinga@andestech.com>,
+        Gatien Chevallier <gatien.chevallier@foss.st.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3717;
+ i=gatien.chevallier@foss.st.com; h=from:subject:message-id;
+ bh=MeiVl2gTxYr8oTKmRvrmJYk1wQP+ajVGU9qZFBGygSE=;
+ b=owEB7QES/pANAwAKAar3Rq6G8cMoAcsmYgBoMIFfcdATk3QfY60fASajKMloiuwUpJ38+m38O
+ /6OAfLVKSaJAbMEAAEKAB0WIQRuDsu+jpEBc9gaoV2q90auhvHDKAUCaDCBXwAKCRCq90auhvHD
+ KN7SC/9YeslukldLV7ytaCWRumMPcaRqZ80GxvlcYwqaJ5LbLuWfy5j8vs3hJQpgTECsc/295MN
+ BdOb73BdArmueJgLzjImdIJQVk+NaLSF64LfIPDlrUvs9YM4H2aRuyykNDsFf4bTx1OO83Kpngs
+ r58Wx5Eat0vDa+uv4771ARN8NeZHpqDPCqjvh1ilkI4jt6SnT4irOSrxwY5wgZ70PruXOwD+1wk
+ htGffTLuBxImrKtktktVl+PTv+s/4sVQ0ITQmd86EwYw8ze39YBoWF7yi6MxnB7BSsqqsS+2x+v
+ ybzzo6kaopfR1VueFCX05o65JXdJt28wkMUTMOUlEv5SYNbfMlrbIrKZvx4teOe4zNVOlj49uWI
+ HglxcFcB2OrEb6pl+gwaMm0I9AVcDsW9Gi3zq7h3GN14F6D/lTvGsK3EJNW5iNM9/kCanwLwqYN
+ 66NXEkBclJVvcxTz9rZKKCnkDT6J51hqCjw4zYSKKK1roTq+MBibqc9CA7iL9XcG1fFT0=
+X-Developer-Key: i=gatien.chevallier@foss.st.com; a=openpgp;
+ fpr=6E0ECBBE8E910173D81AA15DAAF746AE86F1C328
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-23_04,2025-05-22_01,2025-03-28_01
 
-On Fri, May 23, 2025 at 01:18:32PM +0000, John Ernberg wrote:
-> NXP SoCs like the iMX8QM, iMX8QXP or iMX8DXP use power domains for
-> resource management.
+Add a pattern property to allow a device to request an alternate
+access rights configuration to one or more access controllers.
+It allows run-time controller reconfiguration of access rights
+to an authorized entity as used in OP-TEE OS [1].
 
-Add power-domains for iMX8QM and iMX8QXP.
+Link: https://github.com/OP-TEE/optee_os/pull/6946 [1]
+Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+---
+v2->v3:
+	-Precise that it the pattern property targets an access
+	 rights configuration update
+---
+ .../access-controllers/access-controllers.yaml     | 31 ++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-Need keep the same restriction with other platform.
+diff --git a/Documentation/devicetree/bindings/access-controllers/access-controllers.yaml b/Documentation/devicetree/bindings/access-controllers/access-controllers.yaml
+index 99e2865f0e46a0600ebbba3bc5771dc63d578c8b..fe9d28d418cdef14a8ffa988ff6edc7a169b5361 100644
+--- a/Documentation/devicetree/bindings/access-controllers/access-controllers.yaml
++++ b/Documentation/devicetree/bindings/access-controllers/access-controllers.yaml
+@@ -45,6 +45,12 @@ properties:
+       Can be any value as specified by device tree binding documentation
+       of a particular provider. The node is an access controller.
+ 
++  "#access-conf-cells":
++    description:
++      Number of cells in an *(?<=)-access-conf$ specifier;
++      Can be any value as specified by device tree binding documentation
++      of a particular provider. The node is an access controller.
++
+   access-controller-names:
+     $ref: /schemas/types.yaml#/definitions/string-array
+     description:
+@@ -58,6 +64,16 @@ properties:
+       A list of access controller specifiers, as defined by the
+       bindings of the access-controllers provider.
+ 
++patternProperties:
++  ".*(?<=)-access-conf$":
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description:
++      An access controller configuration contains a list of inseparable entries.
++      A configuration may reference multiple access controllers. Therefore, each
++      entry content may vary accordingly to the access controller
++      "#access-conf-cells" value. A consumer will use this property to be able
++      to dynamically query for an access rights configuration update.
++
+ additionalProperties: true
+ 
+ examples:
+@@ -65,6 +81,7 @@ examples:
+     clock_controller: access-controllers@50000 {
+         reg = <0x50000 0x400>;
+         #access-controller-cells = <2>;
++        #access-conf-cells = <2>;
+     };
+ 
+     bus_controller: bus@60000 {
+@@ -73,6 +90,7 @@ examples:
+         #size-cells = <1>;
+         ranges;
+         #access-controller-cells = <3>;
++        #access-conf-cells = <2>;
+ 
+         uart4: serial@60100 {
+             reg = <0x60100 0x400>;
+@@ -81,4 +99,17 @@ examples:
+                                  <&bus_controller 1 3 5>;
+             access-controller-names = "clock", "bus";
+         };
++
++        uart5: serial@60200 {
++          reg = <0x60200 0x400>;
++          clocks = <&clk_serial2>;
++          access-controllers = <&bus_controller 0 0 0>, <&bus_controller 1 0 0>,
++                               <&clock_controller 2 3>;
++          default-access-conf = <&bus_controller 0 10>,
++                                <&bus_controller 1 10>,
++                                <&clock_controller 0 0>;
++          shared-access-conf = <&bus_controller 0 256>,
++                               <&bus_controller 1 256>,
++                               <&clock_controller 0 256>;
++        };
+     };
 
->
-> Signed-off-by: John Ernberg <john.ernberg@actia.se>
-> ---
->  Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml b/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
-> index 75afa441e019..47bbf87a5a5a 100644
-> --- a/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
-> +++ b/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
-> @@ -77,6 +77,9 @@ properties:
->    interrupts:
->      maxItems: 1
->
-> +  power-domains:
-> +    maxItems: 1
-> +
->    fsl,sec-era:
->      description: Defines the 'ERA' of the SEC device.
->      $ref: /schemas/types.yaml#/definitions/uint32
-> @@ -116,6 +119,9 @@ patternProperties:
->        interrupts:
->          maxItems: 1
->
-> +      power-domains:
-> +        maxItems: 1
-> +
->        fsl,liodn:
->          description:
->            Specifies the LIODN to be used in conjunction with the ppid-to-liodn
+---
+base-commit: a5806cd506af5a7c19bcd596e4708b5c464bfd21
+change-id: 20250523-access-controllers-conf-ff51551b953b
 
+Best regards,
+-- 
+Gatien Chevallier <gatien.chevallier@foss.st.com>
 
-Need add new compatible string for 8qm and 8qxp and fall back to exist one.
-
-Add allOf
-
-allOf:
-  - if not contain 8qm and 8qxp
-  - then
-      property:
-        power-domains: false
-
-> --
-> 2.49.0
 
