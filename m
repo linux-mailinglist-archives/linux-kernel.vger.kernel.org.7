@@ -1,111 +1,124 @@
-Return-Path: <linux-kernel+bounces-660219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9AA0AC1A3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 04:44:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF13AC1A4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 471077B8D99
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 02:43:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDC1A1C03D05
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA8A216E23;
-	Fri, 23 May 2025 02:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FAF21128D;
+	Fri, 23 May 2025 03:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hy2QnEN4"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mFM2M7HH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E31317ADF8;
-	Fri, 23 May 2025 02:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D34619F40B
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 03:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747968282; cv=none; b=ZHP/sBQANP+6bzx3yTOoMExc9/yNYPFBWbSfIftTngL1HD1SQSzZ7D+1T5cae0XOyBNpbSxeBrw8WETQM+gtqICq5CpnnUoZeiIM96RDsGNpMlzV1KpT/36WY+AA8iBZdhkMXt82CUSwucHK2vDwDSaaIiDgQFtB9KEHz7JoGrQ=
+	t=1747969332; cv=none; b=bQ78sBxEU9Y9wAGfS1hyaQGM2pH/Ym/+VprOb2LawecJ9UtdyWX8Oh8Tk6qzxWXPBNWI85N2sP62zOQZHctoC0takLWBDaLK5opm/9nXl6P6Z+ZqdAKlOT+Z17kPFhw6B24b6qj6klwzeA6kgVLUTlFaDce7e+ImLAjsD8ZYgTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747968282; c=relaxed/simple;
-	bh=8sKyiePf+n8HaGco1K2oVtcjm5V0xv75QSdZV8InM2I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M/nWiLysoBPUW2vd9d+vik1OgtyfzsNxvaTy0rOgZORhL+QZ2ZOEDhIM+JxE03yEhJPy8Lm5AMVf81mstgM+fsQ85IzsjN1RZ4K0ipCSefiyQKWfF5Qg0wdSu7n1bq/c2blRffy2E6OMJdM1twJNEudR6kLn8V+RS5YyAgrXPGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hy2QnEN4; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-85b3f92c8dfso305070439f.2;
-        Thu, 22 May 2025 19:44:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747968279; x=1748573079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8sKyiePf+n8HaGco1K2oVtcjm5V0xv75QSdZV8InM2I=;
-        b=Hy2QnEN4FfR9pMhKr3x/C0IHV5Qr0LYb9ROsnNsB2mo7VKL+EvlyjR2coqqgRPhKx7
-         +B7qeudk7oleueDBxNq+1DlChUyV3w0LgDLZUGmQbJDYrCoL7I6iioeerZ/Tqxwo+SRn
-         bKBAb3Xnx34TFIqjo5m4jzayM3vVX9b5YWzRYOI0ewEamK5S1gyl6tZkwVysB8sUdXCC
-         LhqCbD+9CMSAawjB8prvag1mfX4HqftsTx9sGInxevk3eUty28KVyGpbbbOG6vflQpc+
-         +zW/40SsIOl6UpEOBr8lTQ5RmreDcM7obDtqWJc7YJWz8tqdtOROrUVS59gDxixx84MD
-         g18A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747968279; x=1748573079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8sKyiePf+n8HaGco1K2oVtcjm5V0xv75QSdZV8InM2I=;
-        b=VBXUHZGsZo76u8arfqUXwY+BLlZp3llPeiFwuMPt5TE07NkVpUWmAFqgpExgzmsgx5
-         1U6Wrbm++OXdz20F27ay3KskFRTEC0nD1qUuaUzJ+xpSmdIfKk//ulE0ftYXrVJByCDK
-         g2BhJKYeFtHo72NQnUksSX9efv2S25gL0Uni8I12cFYAZsvS2QR1crHQ2FYsZXDxvg9x
-         rLZm+b7oRvcMPzizfyfSsRqJn7RL4YA1sQ1oEmqw1ZhALKoMsnpQttcRWKixi9LpNvop
-         4F8EgwWwX/zrkxtdqRSdDirHaWsYZT96Ea1d5WNHIihlLWUq3WWH+w1S6zbgFF/GG4cf
-         2IdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV74UNI5yc9ZIcvKLorCG3gR9IHSZl0qgHx7nBa6CaTy/qhNH1Q5vG7E2Y+m8eosPE2cYm777Lf8gpP1cQq@vger.kernel.org, AJvYcCVd4MCl1gSaTQrvc5LxmnrJqHrwmHl3ebJLCuDtijGyJxoUxPE/H5fQo4a91laF3QXayXK/2pMh9g59NA==@vger.kernel.org, AJvYcCXcpM5uQcGrGLYRJNQV702vlxrinhj7A6HevE8d+WgpGpqgKmylKdcsQet4MCMiYUaqiHxb05wtqOnow36BtxpFC3Ka@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbcpZjYyC4lag3M1iq6ogVAXq7Qu1JrlyGm4TYNFue4WlWVhc6
-	ovJ4uqALt2DsD+WlSp9zaPJwhQEY4WOGdL0vSc1C08gr/tfceR/B3b3thWjeFZaCIVD06u/IbxJ
-	y70pWodM7MraSlBEgVGK/eJydr+2QIDY=
-X-Gm-Gg: ASbGncv7kshwkEg5ubV3n50mB+wUYBdiOk0mo0H09zqM/sMohHhkcRNUdEXUSjzzwer
-	XbKblnU8CIIBiV8m+WiK9ygYfWZ6Q/t/d3v5pPd5n0OkyrkfQgIg7KW+jTflZKyQmIqNZaqSb/w
-	iiInd5J6sZv7iuV/8EJ3uJ+5TpP3ML4J4JagbVS5hncw==
-X-Google-Smtp-Source: AGHT+IG+9AnnXq2xOlQoj5N+v5B7HI7MLMaim/F3oBlVYJ5ytCMSfXvpDx/cyhYlfnN/6uiYkkK2s7cP4Q/5LNkwf8E=
-X-Received: by 2002:a05:6602:3816:b0:869:d7bf:6f31 with SMTP id
- ca18e2360f4ac-86caf08eba2mr236676439f.6.1747968279191; Thu, 22 May 2025
- 19:44:39 -0700 (PDT)
+	s=arc-20240116; t=1747969332; c=relaxed/simple;
+	bh=wplwYI7GgC9kB2y7v0LF84mYlsoFz02XT65yeJzSsCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G9fxtMgraN08oWsbxREpceyws6JXvmF3uxdCnCs0JshQXXLNeRswJHqPrXCru+UeRbDjFKRUv3oCzXfYEmxQTD2duVAuv2BLnGqJ/E5ZrfARtS8MVC7KkUlwYRGVivNUnwPkjy3MDHVUjRcLNXrOwv8j/6Y3u8gwVlzchitdYlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mFM2M7HH; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747969331; x=1779505331;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=wplwYI7GgC9kB2y7v0LF84mYlsoFz02XT65yeJzSsCI=;
+  b=mFM2M7HHvrhyBkJcughNOM02j67TGgjXIXwX5haRaKaeYsb7G9T+BNIM
+   RHy8mtAwqSQhYQSKi206C3AUmjIDzl8P99CCECvHHDiI4zgqhlgRYtaX0
+   2l2EKp3e8jTNV3oHCReM6tGDv87w3qhA5BTf5q8MvAo6G43eqvcGpp414
+   vj7xPRfrcRhwAE3+TBjNDFB8kcYPnKjLl7g6afBKMNr+/sg27zzyFBeeJ
+   Vw0Y9ZH0evjXW8/x32R13cgkIptu49GafhA0cX//gc1Ro8daZVASSoCma
+   7xvE9dfJt0E7YA0j2fcu+TsNUXKW4c4EaEPpzdf3Nmz7JgDhxaxg85r7W
+   w==;
+X-CSE-ConnectionGUID: 9dqWZ9rwRPOfSpOgfmtGXw==
+X-CSE-MsgGUID: OJdkBGNxQ8WJhiFVcG36MQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="53811562"
+X-IronPort-AV: E=Sophos;i="6.15,307,1739865600"; 
+   d="scan'208";a="53811562"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 19:45:43 -0700
+X-CSE-ConnectionGUID: lPJiDiioS8qyMY/cX+2KUw==
+X-CSE-MsgGUID: rh8X+AASQBiFD9N6/1cKWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,307,1739865600"; 
+   d="scan'208";a="171873796"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 19:45:39 -0700
+Date: Fri, 23 May 2025 05:45:36 +0300
+From: Raag Jadav <raag.jadav@intel.com>
+To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	siqueira@igalia.com, airlied@gmail.com, simona@ffwll.ch,
+	rodrigo.vivi@intel.com, jani.nikula@linux.intel.com,
+	Xaver Hugl <xaver.hugl@gmail.com>,
+	Krzysztof Karas <krzysztof.karas@intel.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com, amd-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
+Subject: Re: [PATCH v6 1/3] drm: Create a task info option for wedge events
+Message-ID: <aC_hUHyLhaY40aSl@black.fi.intel.com>
+References: <20250521153323.935974-1-andrealmeid@igalia.com>
+ <20250521153323.935974-2-andrealmeid@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250518025734.61479-1-kerneljasonxing@gmail.com> <20250523113943.8739b65347b3ccacdea7e4c2@kernel.org>
-In-Reply-To: <20250523113943.8739b65347b3ccacdea7e4c2@kernel.org>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Fri, 23 May 2025 10:44:03 +0800
-X-Gm-Features: AX0GCFunj5bEpRNc90c6FQXeqDa9UMSrd9cJ2wTLO5C6O97irmtez5AQtYShxmI
-Message-ID: <CAL+tcoDPgvGZNx4UsiJg5EyUvtKmCsZtLJoqvpwTMcs4PvqOaw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] relayfs: misc changes
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: axboe@kernel.dk, rostedt@goodmis.org, mathieu.desnoyers@efficios.com, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Jason Xing <kernelxing@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250521153323.935974-2-andrealmeid@igalia.com>
 
-On Fri, May 23, 2025 at 10:39=E2=80=AFAM Masami Hiramatsu <mhiramat@kernel.=
-org> wrote:
->
-> On Sun, 18 May 2025 10:57:30 +0800
-> Jason Xing <kerneljasonxing@gmail.com> wrote:
->
-> > From: Jason Xing <kernelxing@tencent.com>
-> >
-> > The series mostly focuses on the error counters which helps every user
-> > debug their own kernel module.
-> >
->
-> The series looks good to me.
->
-> Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Wed, May 21, 2025 at 12:33:21PM -0300, André Almeida wrote:
+> When a device get wedged, it might be caused by a guilty application.
+> For userspace, knowing which task was the cause can be useful for some
 
-Thanks for the review.
+s/cause/involved
 
-Thanks,
-Jason
+> situations, like for implementing a policy, logs or for giving a chance
+> for the compositor to let the user know what task caused the problem.
+
+Ditto
+
+> This is an optional argument, when the task info is not available, the
+> PID and TASK string won't appear in the event string.
+> 
+> Sometimes just the PID isn't enough giving that the task might be already
+> dead by the time userspace will try to check what was this PID's name,
+> so to make the life easier also notify what's the task's name in the user
+> event.
+
+...
+
+> -int drm_dev_wedged_event(struct drm_device *dev, unsigned long method)
+> +int drm_dev_wedged_event(struct drm_device *dev, unsigned long method,
+> +			 struct drm_wedge_task_info *info)
+>  {
+>  	const char *recovery = NULL;
+>  	unsigned int len, opt;
+> -	/* Event string length up to 28+ characters with available methods */
+> -	char event_string[32];
+> -	char *envp[] = { event_string, NULL };
+> +	char event_string[WEDGE_STR_LEN], pid_string[PID_LEN] = "", comm_string[TASK_COMM_LEN] = "";
+
+Most likely there's no need to initialize these.
+
+With above changes,
+
+Reviewed-by: Raag Jadav <raag.jadav@intel.com>
 
