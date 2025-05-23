@@ -1,266 +1,207 @@
-Return-Path: <linux-kernel+bounces-660577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F20AC1F8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:15:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375E1AC1F95
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DA274A20F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:14:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 930DC4E2079
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0CF2253B5;
-	Fri, 23 May 2025 09:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2598F224B10;
+	Fri, 23 May 2025 09:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OI70mICq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Nn/cMEiS"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2074.outbound.protection.outlook.com [40.107.237.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4822248BA;
-	Fri, 23 May 2025 09:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747991666; cv=none; b=NCIr4KrcZHRnfbA+QJ+eChahRWagguSspWsh90Xxzv9WKFF19rcYvXpCMq1SlGNGZ52k9OAvEdfBzVIkJWW6Ad+EMRQkP7CEenqgjkOrJ9a93qM8QEQeKDbkV4Dc/HUiuhcs1c0LeSxywM21a0T4AFEl11iajwmyzK92kICBFrA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747991666; c=relaxed/simple;
-	bh=evsuqV8CXPKxNU1DD0AP0z+LVxBbny1LMscprxOWYTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gs7LPJLziiNaeFPgGTSpcJzpp9h2p8Jl4tkAbcnf6dA60kseaOdWHxhbTnLum/ryxyv/IhoffGYixpAqZThAr3/sDD7PgMnhEWpg5+5PDIGAZA3ZyXbBNNfzx2kd3wjcssYXO0JboLtXHyoGw10jQz9Z85bxOZHUNKV5OLAtJk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OI70mICq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78382C4CEE9;
-	Fri, 23 May 2025 09:14:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747991665;
-	bh=evsuqV8CXPKxNU1DD0AP0z+LVxBbny1LMscprxOWYTU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OI70mICqbFMTT4W8yqxmh/9CF1c3DUrvdIy/yc/KoezWTACp03BRS18n5uV2SF5vm
-	 p18bIunzRFHkwEokDrGL01kIi0mndL6ysWHSRhmlwINiMWY5s7IpWhs5pAXiVGnyq8
-	 sFcQzMqz8vMcLUlQ/HxC84OWUjBvnoM3sJJP7b0M=
-Date: Fri, 23 May 2025 11:14:23 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Benno Lossin <lossin@kernel.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] rust: samples: Add debugfs sample
-Message-ID: <2025052330-reverence-slideshow-d498@gregkh>
-References: <CAGSQo0204_Dz65G33pAN3_iY=ejPXJRdAiB4ioM-nvMkAh0YXQ@mail.gmail.com>
- <D9WM0BP5446N.1NVNDCZ4Y2QN1@kernel.org>
- <2025051524-festival-afterglow-8483@gregkh>
- <aCzzBT96ktapP03e@google.com>
- <aC2HacSU7j5d9bzu@pollux>
- <aC5XDi7SaDJeUaAC@google.com>
- <aC7DVewqqWIKetmk@pollux>
- <aC8uNmrLUSS8sxHU@google.com>
- <2025052201-return-reprogram-add9@gregkh>
- <aC9krUYJmJqu0xVR@cassiopeiae>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4441223338
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 09:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747991738; cv=fail; b=h7kB79ZTaz426KCFcN5fjTysbKz7UxqkWc0vnyYJ9FW2CZCD8A4F4yDl1hkVXP7yDX2fosqvx2S5itehTP2ePO1dgRVCo0xG2flp4CAyEjfGcOlmaKdrNS3CUqiKDW4tv8sk6mLBY83ySummG4eI1xv0nR4/IBNdJq+RFnyGQD4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747991738; c=relaxed/simple;
+	bh=lMmRdKa3jzCn7x1+LOZoyWF5V4DyvrkXXGTnvpNahTA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VQOjkrV92x/u/8qlaYE1v4e0O8ClQwcI+seepV1JMo+5n6v18YclyfjE+RjJg6Ru0se3sa7MNSuARK2aD0v3YwUCtyJ2i2Xe1Nofmp8isFNoh8YNC9xrcjcICGVsuox3KiGBS5K1u4WmNGgLySxy76wXHCinWUhoC8X98d2F+Hs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Nn/cMEiS; arc=fail smtp.client-ip=40.107.237.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PXAfOquPdMAKJ8wCeJ6Oz0xRTbg2oSwhfMv6M3XyVcPjNlBu1k8OxOa9JlY27H3/QONCK1vwtJtox7Vo5Xvpb+xfoJS3sRk5ZY4sUAKtVfVftf+TBFv20dfOywR6DrAJu2hnDadNZPb6bY7OpcIqv10Ir3UchZiwAwC/cRHlBK+TVma+iQLZyfR3T6x9g9FkTVYTRByqkWPQk2BxMaNnMD/9uhOVOkFjlTy0PdqcMJU719CrVIenHGKDM2FAfq2ylCfBr5Z3zj2aZwL1vrWocKuHzihIHqjp8OS2o4GSgGO2ieiIGIaHkelOg+SmNt8707oggDV6IXP9immo7dFjcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P5GX/xuXunh5Q4HPToTUaeRSaL7/PVdP2ElwNAMU9/w=;
+ b=s+5L2AadXKT9DQ635e/k4HwG1+WUlx2tvEXsxNdn74GCnnTnUpCz9EiS396kUm6Xm3aPyitIcNrrQ6xrTIn9FIu8RGInlOW66AX4yoO5h+ecHVkZyVcBBTf+smMVG1st4oleDWHtT7OuFtyjRCYdHlPVMdTD0NBqut3JzBfcXn8ZZRc3IYTcRqaJ9rGvXlKx6wzMdK5evTImWwcMdo+0Spr9QUMaZofKfvClMnV/VGVjvDauyOoRrrgIoQJGBo1q+dsPEPPs486jKEle3f9EN2wkHJowRJjiDJpNQDi0xtD7BmUugMqqvWk3B6S3Fd3HtwOIdQMychSEHsVXpm2leA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P5GX/xuXunh5Q4HPToTUaeRSaL7/PVdP2ElwNAMU9/w=;
+ b=Nn/cMEiSWz8V3G4yBCsllr6jEu/9QJFLTQWmgG4ivSe84QMVphKaJNgFR00Nntn647PCpKixiC+VyQ/inkPxT/65NOTFfoYvNLbuzEYwYTN8aLpAhTSydgo4avdSbFjOCKAtnhsOxkbOCAWNeUIEL0dv0aAeV9E/8WLBTNVdETE=
+Received: from BN7PR06CA0046.namprd06.prod.outlook.com (2603:10b6:408:34::23)
+ by IA1PR12MB8495.namprd12.prod.outlook.com (2603:10b6:208:44d::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.21; Fri, 23 May
+ 2025 09:15:33 +0000
+Received: from BN1PEPF0000468B.namprd05.prod.outlook.com
+ (2603:10b6:408:34:cafe::f0) by BN7PR06CA0046.outlook.office365.com
+ (2603:10b6:408:34::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.30 via Frontend Transport; Fri,
+ 23 May 2025 09:15:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN1PEPF0000468B.mail.protection.outlook.com (10.167.243.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8769.18 via Frontend Transport; Fri, 23 May 2025 09:15:32 +0000
+Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 23 May
+ 2025 04:15:28 -0500
+From: Shivank Garg <shivankg@amd.com>
+To: <akpm@linux-foundation.org>, <david@redhat.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <ziy@nvidia.com>, <baolin.wang@linux.alibaba.com>,
+	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <npache@redhat.com>,
+	<ryan.roberts@arm.com>, <dev.jain@arm.com>, <fengwei.yin@intel.com>,
+	<shivankg@amd.com>, <bharata@amd.com>
+Subject: [PATCH V2 1/2] mm/khugepaged: clean up refcount check using folio_expected_ref_count()
+Date: Fri, 23 May 2025 09:14:33 +0000
+Message-ID: <20250523091432.17588-1-shivankg@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aC9krUYJmJqu0xVR@cassiopeiae>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF0000468B:EE_|IA1PR12MB8495:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1c3411fb-5dce-42d3-ce08-08dd99da5ed3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vVhVzXzIc1PhsjKKx/BmTyGUptVyT2sWD+KXNqm6PXiqZiDKYbzIQE/Mw2rA?=
+ =?us-ascii?Q?7UJ+oZ7ZE2TTcX9vz27Qwbro8lDaHX6Fj0PemKLq6xSgXmYmNA5EbfF6Kxy+?=
+ =?us-ascii?Q?Sahid1WUGU4WCo5eEENDX79kC7u2HirCJtrLAI0ucUAt9IjI+aepBJmBx93z?=
+ =?us-ascii?Q?0Io4vjvKz9e5ENQt+MqOEKKCcXonFnbjOs9NO3oOYUYOrlJebsXKqWRNXGIm?=
+ =?us-ascii?Q?4JwJAKZAeFxwMzUOxSHXRISRWCWBi3DTSQiWIqxoYnpyJ/tD9gJvOWFEd26s?=
+ =?us-ascii?Q?k9vK3yQlZDXK+tyI5TWE3fvqT4aqwgNMeJD2c7540wnI87z5/iZklYkk5Co9?=
+ =?us-ascii?Q?UyzxscxiqlLkbMC0ZUV2La0zxwtAFnmqvsQbUyssDNjARjDrH2z1RoF9STyq?=
+ =?us-ascii?Q?z/Y8AGyiBDbnSqgJ01/YqXPe/zCglNUKOnV/Deh6rYe3Tb0CVFsbuVg5vhr/?=
+ =?us-ascii?Q?Qy859txeYkJU/M6SJP1ojN6gOZubeJwgjfg+6IPPwG/PeanS20az83icCZ6Z?=
+ =?us-ascii?Q?68DFqlR0W5NVSytT4R/qL5V1BsOHH+BmCipGaV5/jJ/nBlTzDhlqd7S6aAfc?=
+ =?us-ascii?Q?Q2rlUmBgRPaZ1qrWNFA+QlqKm3r32/y6Qpj8ImmmlN51lEu/iS+P8r82BWV4?=
+ =?us-ascii?Q?avMWr88rnFjBeL9siDw0e9BeaKJCj04y3qF35SVaatbDAa2P4G/dENdGEDsx?=
+ =?us-ascii?Q?Oe4coU++jmPDddgiEo/hLcj5MGtDnStdnuwYvs4z0V07hEnDwjxsEHOB+JIc?=
+ =?us-ascii?Q?Hc5HlHOr4ZMfIYzq408/dOC3a/mO9VD2SCz1eE+KDLS7QPeymCmBAJRTg+i+?=
+ =?us-ascii?Q?Jz9h3Dm8JIGbz7hTXiC/N5ANZynei0xU5GiUy3seMO+/JQq7RguGRip2zHSN?=
+ =?us-ascii?Q?hPEm3E35fUp4AtDCCT8w2jn6v21Bf7itmXSGfOWI2TTTEapMe6Ao/+vrCu/k?=
+ =?us-ascii?Q?EjatAPkNN74OlbsEbIamGlR7gu2kPrLOKucrAqkxv8K0bQ8p4GA4ExVqGvmI?=
+ =?us-ascii?Q?YJ1a9nSKzA43tFDvIxZhOuNuEshKJY63ygSRu9gDsrB0BNGC0Cut9ep+PnTQ?=
+ =?us-ascii?Q?k+PIbfFJeR1KWXaTqSUVLNuna/BXOnSiVCnVLBbNwRb0VwFgGPq9d04t7WH/?=
+ =?us-ascii?Q?O0ii745cOsWlE/RyBEmMDzFGohK48U/Spv1S1VMurXazgzHhMsUuewXYvXwJ?=
+ =?us-ascii?Q?3MObOMdKGMVDlV4wDZ4TJHUkOnzd9MxkvLUv17b16wK0jhZ95OBqv93uCTXj?=
+ =?us-ascii?Q?Lesi1IhFgGXa4RhiNwEnvyBoPxMUJKITHRug8oxp91jq7gJMZq2mCAKvGLTR?=
+ =?us-ascii?Q?2YsoH1Gz1cIElosQZioFZnUzZO5xvFgr9iMHteCDfCtMlUQ7qPaJUZAt346v?=
+ =?us-ascii?Q?zKzeMWEOFmMXjcaSv2pNmpfBiAwnbo22sYqDGLnw2t0RYJxm+oG5XwiYcbsi?=
+ =?us-ascii?Q?gcwgFqJ0ymZntyqUu/bJpEx+9pEb+vuK4/2UWXrFPqhdV8BDnXaA462AQXMO?=
+ =?us-ascii?Q?8DjhvIRh76JTmFA1R3ajLHe8Sesadvyo6tSj?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2025 09:15:32.8900
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c3411fb-5dce-42d3-ce08-08dd99da5ed3
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF0000468B.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8495
 
-On Thu, May 22, 2025 at 07:53:49PM +0200, Danilo Krummrich wrote:
-> On Thu, May 22, 2025 at 04:15:46PM +0200, Greg Kroah-Hartman wrote:
-> > On Thu, May 22, 2025 at 02:01:26PM +0000, Alice Ryhl wrote:
-> > > On Thu, May 22, 2025 at 08:25:25AM +0200, Danilo Krummrich wrote:
-> > > > On Wed, May 21, 2025 at 10:43:26PM +0000, Alice Ryhl wrote:
-> > > > > > > * Possibly we have a way to drop a Rust object without removing it from
-> > > > > > >   the file system. In this case, it can never be accessed from Rust
-> > > > > > >   again, and the only way to remove it is to drop its parent directory.
-> > > > > > 
-> > > > > > I'm not sure about this one.
-> > > > > > 
-> > > > > > IIUC, this basically brings back the "keep() logic", which I still think is a
-> > > > > > footgun and should be avoided.
-> > > > > > 
-> > > > > > Also, we only needed this, since due to the borrowing design we couldn't store
-> > > > > > parent and child nodes in the same structure. With reference counting (or the
-> > > > > > logic above) this goes away.
-> > > > > > 
-> > > > > > I wrote the following in a previous conversation [1].
-> > > > > > 
-> > > > > > --
-> > > > > > 
-> > > > > > What I see more likely to happen is a situation where the "root" directory
-> > > > > > (almost) lives forever, and hence subsequent calls, such as
-> > > > > > 
-> > > > > > 	root.subdir("foo").keep()
-> > > > > > 
-> > > > > > effectively are leaks.
-> > > > > > 
-> > > > > > One specific example for that would be usb_debug_root, which is created in the
-> > > > > > module scope of usb-common and is used by USB host / gadget / phy drivers.
-> > > > > > 
-> > > > > > The same is true for other cases where the debugfs "root" is created in the
-> > > > > > module scope, but subsequent entries are created by driver instances. If a
-> > > > > > driver would use keep() in such a case, we'd effectively leak memory everytime a
-> > > > > > device is unplugged (or unbound in general).
-> > > > > 
-> > > > > Where is the leak? If the file is still visible in the file system, then
-> > > > > it's not a leak to still have the memory. If the file got removed by
-> > > > > removing its parent, then my intent is that this should free the memory
-> > > > > of the child object.
-> > > > 
-> > > > Well, take the case I described above, where the debugfs "root" is created in
-> > > > the module scope, but subsequent entries are created by driver instances. If a
-> > > > driver would use keep() in such a case, we'd effectively the file / directory
-> > > > (and subsequently also the corresponding memory) everytime a device is unplugged
-> > > > (or unbound in general)."
-> > > > 
-> > > > If the module is built-in the directory from the module scope is *never*
-> > > > removed, but the entries the driver e.g. creates in probe() for a particular
-> > > > device with keep() will pile up endlessly, especially for hot-pluggable devices.
-> > > > 
-> > > > (It's getting even worse when there's data bound to such a leaked file, that
-> > > > might even contain a vtable that is entered from any of the fops of the file.)
-> > > > 
-> > > > That'd be clearly a bug, but for the driver author calling keep() seems like a
-> > > > valid thing to do -- to me that's clearly a built-in footgun.
-> > > 
-> > > I mean, for cases such as this, I could imagine that you use `keep()` on
-> > > the files stored inside of the driver directory, but don't use it on the
-> > > directory. That way, you only have to keep a single reference to an
-> > > entire directory around, which may be more convenient.
-> > 
-> > No, sorry, but debugfs files are "create and forget" type of things.
-> > The caller has NO reference back to the file at all in the C version,
-> > let's not add that functionality back to the rust side after I spent a
-> > long time removing it from the C code :)
-> 
-> This response sounds like we may have a different understanding of what "keep"
-> means.
-> 
-> Earlier versions of this patch series introduced a keep() method for both
-> debugfs::File and debugfs::Dir, which would consume, and hence get rid of, the
-> instance of a debugfs::File or a debugfs::Dir object, while *keeping* the
-> corresponding directory / file in the filesystem.
-> 
-> This makes it easy for a driver to leak the directory / file in the filesystem,
-> as explained in [1], which you seemed to agree with in [2].
-> 
-> Was this a misunderstanding?
+Use folio_expected_ref_count() instead of open-coded logic in
+is_refcount_suitable(). This avoids code duplication and improves
+clarity.
 
-Kind of, see below:
+Drop is_refcount_suitable() as it is no longer needed.
 
-> > If you really want to delete a debugfs file that you have created in the
-> > past, then look it up and delete it with the call that is present for
-> > that.
-> 
-> This is promoting a C pattern (which for C code obviously makes a lot of sense),
-> i.e. we have a function that creates a thing and another function that removes
-> the thing given a handle of the created thing. Whether the handle is valid is
-> the responsibility of the caller.
-> 
-> In this case the handle would be the filename. For instance:
-> 
-> 	debugfs_create_file("foo", parent, ...);
-> 	debugfs_remove(debugfs_lookup("foo", parent));
-> 
-> This leaves room to the caller for making mistakes, e.g. if the caller makes a
-> typo in the filename. In this case we wouldn't even recognize it from the return
-> value, since there is none.
-> 
-> In Rust, we do things differently, i.e. we wrap things into an object that
-> cleans up itself, once it goes out of scope. For instance:
-> 
-> 	let file = debugfs::File::new("foo", parent);
-> 
-> Subsequently we store file in a structure that represents the time we want this
-> file to exist. Once it goes out of scope, it's removed automatically.
-> 
-> This is better, since we can't make any mistakes anymore, i.e. we can't mess up
-> the filename or pass the wrong parent to clean things up.
-> 
-> Depending on whether the above was a misunderstanding and depending on how you
-> think about it with this rationale, I have quite some more reasons why we don't
-> want to have files / directories around in the filesystem without a
-> corresponding object representation in Rust.
-> 
-> But before I write up a lot more text, I'd like to see if we're not already on
-> the same page. :-)
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Shivank Garg <shivankg@amd.com>
+---
+ mm/khugepaged.c | 19 +++----------------
+ 1 file changed, 3 insertions(+), 16 deletions(-)
 
-Ok, let's knock up the api here first before worrying about the
-implementation, as we seem to all be a bit confused as to what we want
-to do.
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index cc945c6ab3bd..19aa4142bb99 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -548,19 +548,6 @@ static void release_pte_pages(pte_t *pte, pte_t *_pte,
+ 	}
+ }
+ 
+-static bool is_refcount_suitable(struct folio *folio)
+-{
+-	int expected_refcount = folio_mapcount(folio);
+-
+-	if (!folio_test_anon(folio) || folio_test_swapcache(folio))
+-		expected_refcount += folio_nr_pages(folio);
+-
+-	if (folio_test_private(folio))
+-		expected_refcount++;
+-
+-	return folio_ref_count(folio) == expected_refcount;
+-}
+-
+ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+ 					unsigned long address,
+ 					pte_t *pte,
+@@ -652,7 +639,7 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+ 		 * but not from this process. The other process cannot write to
+ 		 * the page, only trigger CoW.
+ 		 */
+-		if (!is_refcount_suitable(folio)) {
++		if (folio_expected_ref_count(folio) != folio_ref_count(folio)) {
+ 			folio_unlock(folio);
+ 			result = SCAN_PAGE_COUNT;
+ 			goto out;
+@@ -1402,7 +1389,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+ 		 * has excessive GUP pins (i.e. 512).  Anyway the same check
+ 		 * will be done again later the risk seems low.
+ 		 */
+-		if (!is_refcount_suitable(folio)) {
++		if (folio_expected_ref_count(folio) != folio_ref_count(folio)) {
+ 			result = SCAN_PAGE_COUNT;
+ 			goto out_unmap;
+ 		}
+@@ -2320,7 +2307,7 @@ static int hpage_collapse_scan_file(struct mm_struct *mm, unsigned long addr,
+ 			break;
+ 		}
+ 
+-		if (!is_refcount_suitable(folio)) {
++		if (folio_expected_ref_count(folio) != folio_ref_count(folio)) {
+ 			result = SCAN_PAGE_COUNT;
+ 			break;
+ 		}
+-- 
+2.34.1
 
-Ideally, yes, I would like to NOT have any rust structure represent a
-debugfs file, as that is the way the C api has been evolving.  We are
-one step away from debugfs_create_file() being a void function that
-doesn't return anything, and I don't want to see us go "backwards" here.
-
-But the main reason I did that work was to keep people from trying to
-determine if a file creation worked or not and to do different logic
-based on that.  I think the Rust api CAN do both here, as you and Alice
-have explained, so we should be ok.
-
-So how about this for an example api, two structures, debugfs::Directory
-and debugfs::File, which have only two types of operations that can be
-done on them:
-
-To create a debugfs directory, we do:
-
-	let my_dir = debugfs::Directory::new("foo_dir", parent);
-
-There is no other Directory method, other than "drop", when the object
-goes out of scope, which will clean up the directory and ALL child
-objects at the same time (implementation details to be figured out
-later.)
-
-That will ALWAYS succeed no matter if the backend debugfs call failed or
-not, and you have no way of knowing if it really did create something or
-not.  That directory you can then use to pass into debugfs file or
-directory creation functions.
-
-Same for creating a debugfs file, you would do something like:
-
-	let my_file = debugfs::File::new("foo_file", my_dir);
-
-depending on the "file type" you want to create, there will be different
-new_* methods (new_u32, new_u64, etc.).
-
-which also ALWAYS succeeds.  And again, as you want to keep objects
-around, you have to have a reference on it at all times for it to exist
-in the filesystem.  If you drop it, then it too will be removed from
-debugfs.
-
-And again, that's the only operation you can do on this object, there
-are no other methods for it other than "new" and "drop".
-
-Now there are issues with implementation details here like:
-  - Do you want to keep the list of file and dir objects in the rust
-    structure to manually clean them up when we go to drop the
-    directory?
-  - Do we want to force all files to be dropped before the directory?
-    Or do we want to just let the C side clean it all up automagically
-    instead?
-and other things like that, but we can argue about that once we settle
-on the outward-facing api first.
-
-I can live with this type of api.  It's simple and seems hard to abuse
-or get wrong from a user point-of-view, and should be pretty
-straight-forward on the binding side as well.  It will take a bit more
-work on the user when creating debugfs files than the C api did, but
-that's something that you want to impose on this api, not me :)
-
-Sound reasonable?  Or am I missing something else here?
-
-thanks,
-
-greg k-h
 
