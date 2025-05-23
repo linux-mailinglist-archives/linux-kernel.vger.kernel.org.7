@@ -1,114 +1,149 @@
-Return-Path: <linux-kernel+bounces-660566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8CDAC1F69
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:10:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D422AC1F57
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5249A1C0337E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:10:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BCA61C01912
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05425224B15;
-	Fri, 23 May 2025 09:10:29 +0000 (UTC)
-Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F5719C540;
-	Fri, 23 May 2025 09:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F912248BA;
+	Fri, 23 May 2025 09:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7X28vYr"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F26D139CFA;
+	Fri, 23 May 2025 09:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747991428; cv=none; b=R3MiblQaheiDE9F1qRP3qI76uho7vHyP9WeoEWbb6do7aW9HuJZt0xOy7DYbKj0jDAwI5LM60SUujzdJmgrBQ27/S76GUu8ZkkHDTwWlUJmNhYwhJW8cpSyC+6hC0ypqZKkdE14ouU7Ehn2vIZBBe5PWLVJgbK7H68XHpWpdQtg=
+	t=1747991350; cv=none; b=YmVjBCcUv5sYUoShKLy7AFwQ3v9GXHgvTl+xWHlmpya6y+snkVgj4Ewym09mX3a5IzJvhddcTwt6dJC1P1SzXDbKKMOIAdfeY5PD9LIrhK7mS5J9fR8zvvDDWkD9+1bBh0qUopoA9sRJxMreDMvWDFvleyZlLsTZF/q+0i/kdZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747991428; c=relaxed/simple;
-	bh=MDxnLt9ByCXdHX3IQAQYKZdyKJyha4673+V2+dkoijs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gb2Qp5eNbwx9+0VHP/5UayvKR3NU7nnkNsO5e26CCGax0JNek3XmASF5bOikYHqR9BCr0cFa7fXs9AfW2XVDR9wDB/K10O9DOnOuTOyl+vYdQ0ZgK/dE3E9kkvgSzxbeZqsVAm1tXb8XbfPPHJF2CSLL2CUUYOUQuHps6CG9RSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.181.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
-	by app1 (Coremail) with SMTP id TAJkCgD3DQ_7OjBoHdyJAA--.36090S2;
-	Fri, 23 May 2025 17:08:13 +0800 (CST)
-From: dongxuyang@eswincomputing.com
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com,
-	Xuyang Dong <dongxuyang@eswincomputing.com>
-Subject: [PATCH v2 0/2] Add driver support for ESWIN eic700 SoC clock controller
-Date: Fri, 23 May 2025 17:07:47 +0800
-Message-Id: <20250523090747.1830-1-dongxuyang@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
+	s=arc-20240116; t=1747991350; c=relaxed/simple;
+	bh=IZ7gqBrZgtYFnrMGX/kr93mrH6BsXgJrXrzx0q1yJns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iIhpiPYJg1Uv7Nu9EiYNe66/BAcV7zJXUkEOqMr+VRSNk48SM1DTfGDJYoQZH2Z5sHYWrx836RPsOG+p1eV7yaRqDMo0VeDJEqGM5v2tdLr80nZPj9DXok17SZNiOioHK4NxoDe8T8HSkjY8g+6khVqtG3y/Rb5+bJQsW/USQww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7X28vYr; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-70e09e8adc9so14358567b3.2;
+        Fri, 23 May 2025 02:09:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747991348; x=1748596148; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IZ7gqBrZgtYFnrMGX/kr93mrH6BsXgJrXrzx0q1yJns=;
+        b=W7X28vYrPyYdWP4JtTq7e9TyfTkU0llyB+dZDHe6jCuwuOgYtSqTVz09xGHwuhXraO
+         YvHaGYWrv/EdMJ3vxsNp9V7S1PxJn+5QBs6gBioU8No6bsJRtXhFX7OLK9HVRest0X8k
+         XjmX8VXDNtzPL0kyLAyYxE0F+PeLLGP6y6saOQuWgPXtGw85Wye+r4hBbSffej8phxL3
+         nG/KrhFXglMbeqy4vGVzHBh0BUwF5kyY9xaoPf6fez+N4hTVhpaFZpPUv9N2MU0h6QoF
+         /I4bDFqyUE8eBB56MeBRfkCDBsjMA3yV6LsrLHkYAJAzN/BB8XOkQesQdxnYFOqqFDXM
+         BGeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747991348; x=1748596148;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IZ7gqBrZgtYFnrMGX/kr93mrH6BsXgJrXrzx0q1yJns=;
+        b=JUlwxwE7NDEbq3bTbK+//tffApDmhZkyx27I7+7hSGOk/mL9x4/XybKuWzHeOCIDFW
+         E4XwkfaK/ITxHiRX/eIQd7I/M2Zjpsmlj/TIk0p47wsi8D/Z0kgQq0mKzuJUet9Q/h3P
+         dR6lG6leShP2d1frSWSbjv5rHjUb3SwPy2OlLLVx6c9fO24MN09S5UFiPkLQPwTyjpzS
+         JbZFXbciHuw7sv7TpYb8gmS10lbctgSFpG+wJuPD1OEwoQhHdkbJqJHxzDDaGKUofgBn
+         WcVyoJwPZUyA45uvSkU0axaPdlfZ3Oqov0OJFydinmZXDyOmtB8ZTiYklUfUieW7GVPO
+         OMAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUien6BfxVeEqzW5ePsxxTcjCvmbsk12PjsM/4Kc8RozGb2eoWxVDoWX8lyN2xeaVGZJ3btD/5bG4LmGZc=@vger.kernel.org, AJvYcCUkDtlvXsd8bROf8netzJhfllvPzfq3+RsDsB4ObHxYi5RJX2E+M0GYbak9G4uwEnMPdB5bElC3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWVmv+XTkvZbh9RfJLuawZq/JnwD86/rOm2KEYp8Gk4/jpNesd
+	aHZDlQkz/1cT00pCSm+go3SjyAJ3KjeuMLo51JmSk5j5rKx2GgbZ71pmHD6Ysto2bMYARcR0FsY
+	1/YQO+r+hMZH8RTNCtEhjemTDclsRiIQ=
+X-Gm-Gg: ASbGnctSUvyO01Ag/G8RkidcV256x8HwsrxuiURikmZMLiYxBy38MiI8+mbjiNWO5c5
+	zkXV8rtxA7TV29QSppNMZkonH42J3hNXfxIn9m6HJe7lIz+KbKyRl84JJIr+msscgowRfu9F8OV
+	NUUB0amiozyH+KAX9Ux5gQhuClBhiP/qHeMKieemK65g==
+X-Google-Smtp-Source: AGHT+IGXaL7QqjDlaDb1GkhvoJFxiwsSoVycNITgF5U4Ia5QqlfCK94bczHMTbWAprkq1FvzTQY4gYXmRzGkMpjUfZA=
+X-Received: by 2002:a05:690c:88e:b0:6ef:652b:91cf with SMTP id
+ 00721157ae682-70ca7c15312mr389216277b3.27.1747991348039; Fri, 23 May 2025
+ 02:09:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgD3DQ_7OjBoHdyJAA--.36090S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ww4fCr43tw1DXw4furyUWrg_yoW8Gw4DpF
-	4DGryFyr1jvrW7XayxJa4FgryfZ3ZrGFyjkFWIva4UZasIya48JF4fJa4DAF97Aw18Ar13
-	tF1qka1rCF4UAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
-	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
-	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmjgxUUUUU=
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
+References: <20250519174550.1486064-1-jonas.gorski@gmail.com>
+ <20250519174550.1486064-3-jonas.gorski@gmail.com> <ed75677c-c3fb-41d1-a2cd-dd84d224ffe3@lunn.ch>
+ <CAOiHx=nwbs7030GKZHLc6Pc6LA6Hqq0NYfNSt=3zOgnj5zpAYQ@mail.gmail.com>
+ <2e5e16a1-e59e-470d-a1d9-618a1b9efdd4@lunn.ch> <CAOiHx=mQ8z1CO1V-8b=7pjK-Hm9_4-tcvucKXpM1i+eOOB4axg@mail.gmail.com>
+ <e0d25a68-057b-4839-a8cd-affe458bfea3@lunn.ch>
+In-Reply-To: <e0d25a68-057b-4839-a8cd-affe458bfea3@lunn.ch>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Fri, 23 May 2025 11:08:55 +0200
+X-Gm-Features: AX0GCFtnVRfex_9nhQ4cx9PCVZ832oz1Y9t0dDtKGYfJ3JHQmtusGVXqvc2KluY
+Message-ID: <CAOiHx==NzwF3mXfkf+mS0AZzb-FTR0SHwG9n0Hw9nRiR4k-z6w@mail.gmail.com>
+Subject: Re: [PATCH net 2/3] net: dsa: b53: fix configuring RGMII delay on bcm63xx
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Vladimir Oltean <olteanv@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Vivien Didelot <vivien.didelot@gmail.com>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, 
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Xuyang Dong <dongxuyang@eswincomputing.com>
+On Tue, May 20, 2025 at 2:15=E2=80=AFAM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> > Without this change no mode/port works, since there is always either a
+> > 0 ns delay or a 4 ns delay in the rx/tx paths (I assume, I have no
+> > equipment to measure).
+> >
+> > With this change all modes/ports work.
+>
+> Which is wrong.
+>
+> > With "rgmii-id" the mac doesn't
+> > configure any delays (and the phy does instead), with "rgmii" it's
+> > vice versa, so there is always the expected 2 ns delay. Same for rxid
+> > and txid.
+>
+> If you read the description of what these four modes mean, you should
+> understand why only one should work. And given the most likely PCB
+> design, the only mode that should work is rgmii-id. You would have to
+> change the PCB design, to make the other modes work.
 
-Updates:
+Since I also have BCM6368 with a BCM53115 connected to one of the
+RGMII ports lying around, I played around with it, and it was
+surprisingly hard to make it *not* work. Only if I enabled delay on
+*both* sides it stopped working, no delay or delay only on one side
+continued working (and I used iperf to try if larger amounts of
+traffic break it).
 
-  dt-bindings: clock: eswin: Documentation for eic7700 SoC
-  v1 -> v2: Update example, drop child node.
-            Clear warnings/errors for using "make dt_binding_check".
-            Change to the correct format.
+So in way, with BCM6368 enabling no (sampling) delays on its MAC side,
+all four modes work. I understand that they shouldn't, but the reality
+is that they do. Maybe the switches can auto-detect/adapt to (missing)
+delays for a certain amount.
 
-  clock: eswin: Add eic7700 clock driver
-  v1 -> v2: Drop some non-stanard code.
-            Use dev_err_probe() in probe functions.
+@Florian, do you know if this is expected? And yes, I even added the
+RGMII delay workaround (change link speed to force the pll to resync)
+to ensure that the delays are applied. Though I guess the way Linux
+works it isn't needed, and only when changing delays while the link is
+up.
 
-Xuyang Dong (2):
-  dt-bindings: clock: eswin: Documentation for eic7700 SoC
-  clock: eswin: Add eic7700 clock driver
+> > The Switch is always integrated into the host SoC, so there is no
+> > (r)gmii cpu port to configure. There's basically directly attached DMA
+> > to/from the buffers of the cpu port. Not sure if there are even
+> > buffers, or if it is a direct to DMA delivery.
+>
+> That makes it a lot simpler. It always plays the MAC side. So i
+> recommend you just hard code it no delay, and let the PHY add the
+> delays as needed.
 
- .../bindings/clock/eswin,eic7700-clock.yaml   |   44 +
- drivers/clk/Kconfig                           |    1 +
- drivers/clk/Makefile                          |    1 +
- drivers/clk/eswin/Kconfig                     |   10 +
- drivers/clk/eswin/Makefile                    |    8 +
- drivers/clk/eswin/clk-eic7700.c               | 3800 +++++++++++++++++
- drivers/clk/eswin/clk-eic7700.h               |  194 +
- drivers/clk/eswin/clk.c                       |  973 +++++
- drivers/clk/eswin/clk.h                       |  213 +
- .../dt-bindings/clock/eswin,eic7700-clock.h   |  588 +++
- 10 files changed, 5832 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
- create mode 100644 drivers/clk/eswin/Kconfig
- create mode 100644 drivers/clk/eswin/Makefile
- create mode 100644 drivers/clk/eswin/clk-eic7700.c
- create mode 100644 drivers/clk/eswin/clk-eic7700.h
- create mode 100644 drivers/clk/eswin/clk.c
- create mode 100644 drivers/clk/eswin/clk.h
- create mode 100644 include/dt-bindings/clock/eswin,eic7700-clock.h
+Sure thing. I saw that there are device tree properties that can be
+used to explicitly enable delays on the MAC side, so in case we ever
+need them we can implement them (e.g. a PHY that can't do delays).
 
---
-2.17.1
-
+Best regards,
+Jonas
 
