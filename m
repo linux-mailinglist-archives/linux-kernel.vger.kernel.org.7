@@ -1,243 +1,370 @@
-Return-Path: <linux-kernel+bounces-661014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24E0AC256E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:51:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBEA8AC2571
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC1761C054C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:51:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A33F69E069A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178BB296140;
-	Fri, 23 May 2025 14:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA6A296143;
+	Fri, 23 May 2025 14:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="coIpBfJv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rp01RBIR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5582D202F9A;
-	Fri, 23 May 2025 14:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA51202F9A;
+	Fri, 23 May 2025 14:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748011864; cv=none; b=KSln9flsJzMAJqaDgrIz0sggRiKhzQ0FAL6gyVGtMkptEyVCY3+pG3iVEK++1oArj7l0tZoFelRBRYhiKMs40TDMKdcW9sBJvDUzWmcGcMobW74KNBYsBiSYX51WokY0yVPg1G1+270c3ns0vW+SblULYt1QBzmkY2+2gg0RwP4=
+	t=1748011908; cv=none; b=N3CBt1y7EF9UKcPCH9fQMry2H9e0Hww6V4pbk/3lLII/OHksAx6aZS8SaJ8hIhqNsPpJxZfDV/hdIRtPXkFYR2dUw1YFA/r532eVsiVL91eBzVrLhPXNhrBbH/q/VX4fRuxGxPLzZiJIiJbhFO8rFIFt9SKltKPQlpWuXclNDiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748011864; c=relaxed/simple;
-	bh=iQNEWUeLCB352bTu3ok5V6qZW15EZquP6l1y9wrUrVo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dxzNs7UkcNsjpNmugY49UnYzs4GH6yVhtRU+JE9s7xEkxxSBBh35uCn6O4meejrXqFBvOzBiQOEasi3iNBgjjknhMCc3xX4NZS+npIUZ6zU8915twFS5KinTyj7PGAqnTEqkEa47cGAQSmiM/Qc8Z312E0Rh93wxBAlMwWtgrrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=coIpBfJv; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748011863; x=1779547863;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=iQNEWUeLCB352bTu3ok5V6qZW15EZquP6l1y9wrUrVo=;
-  b=coIpBfJvctMCMq5+iXjDJRytoCizoIrpgBbqnYRlUHJ4++nxUq+sBKrK
-   oh4nd5uPcN3IYI+LT1P6hZFNOHdJe5xb/ISb7l4ggIBcbcRi5SgSzlXG6
-   wmaVvIVB082zR9liwTA3d1G/q3J/GPVD1J0mmkoCeB+0+y0rTTrShEtdr
-   dpGIl1FSeT7Aivtkna6VYV0hTA4ANzyfQ8jdWFIvlODN4xxC59t4ePFzw
-   NdWiFXYZSkb4X5kbcwdHi7zxU/NmfNqJUfjFvqYnH/kknpsqVgrQz1cGr
-   f4nEeriiKQXhCqJ7VjnAjSOdgBqnogQOS0sVlGdSFediaB6Q253hm1YmD
-   w==;
-X-CSE-ConnectionGUID: 9kPrQ/4MRR6yvBdOqM9Dnw==
-X-CSE-MsgGUID: qc0sEfCvTa2iyS56BNtyLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="61475178"
-X-IronPort-AV: E=Sophos;i="6.15,309,1739865600"; 
-   d="scan'208";a="61475178"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 07:51:02 -0700
-X-CSE-ConnectionGUID: cot97aG8Sl6Sk3nzhwRTlw==
-X-CSE-MsgGUID: jH6Cx1IFTq2CHlSbh3IE8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,309,1739865600"; 
-   d="scan'208";a="164414225"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 07:51:01 -0700
-Received: from [10.246.136.52] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.52])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id CAA1D20B5736;
-	Fri, 23 May 2025 07:50:57 -0700 (PDT)
-Message-ID: <c56c9e23-cf6e-4040-aee8-da13d5157dcf@linux.intel.com>
-Date: Fri, 23 May 2025 10:50:56 -0400
+	s=arc-20240116; t=1748011908; c=relaxed/simple;
+	bh=3F/Ru6iZFtxoR2nxk9M2x+Wi4Ywb1kdABQiMVfx5a58=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EP90XKisax5LG4LM03htgyPDjakNE+Ov8zwQb4Is4V9sLiEjjoRxwjmQq6ss4REpxE4Iymw7PAU0jqBNlTc3Y1eOr7X2YjlW9R+DhnGaxeYbUfXla189LHxOCYm0BZNVUfw3YFGOjz8Gh7J5L4XQZ96cf2MpN6b5erT4AGKaGHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rp01RBIR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3301C4CEE9;
+	Fri, 23 May 2025 14:51:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748011907;
+	bh=3F/Ru6iZFtxoR2nxk9M2x+Wi4Ywb1kdABQiMVfx5a58=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rp01RBIR0DdmD30Z+I8XRY0vuMZmR1YJ67TJmigj2wvqgPhpyG1hC9hXi/VSwdCzS
+	 MQJ2McjbJ8ERBwZb46FA84NqIXJjyBVgNoxT/GextvqDowMeN09a1WbILlVePN+n11
+	 pK2gHhTAOOEItzFV3nPCEcgtQ6GNUo+adJfmeMsS10ZkQehv7UK0hVvELHyUvdQgh8
+	 eUMf1cYWLfG/ZSBLXlWQ2ej1/vuio7XVfEiswdHCF93wfRs0Oh48hF1jg8oFmHjMC1
+	 EwfQd8A6LTGe9RccpAcubLkJRRwbhMJLivWGyWaQ+aAYbv+962gtPrl+XsehgRaFMw
+	 khsfbR55ZKKqw==
+From: Benno Lossin <lossin@kernel.org>
+To: Benno Lossin <lossin@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Fiona Behrens <me@kloenk.dev>,
+	Christian Schrefl <chrisi.schrefl@gmail.com>,
+	Alban Kurti <kurti@invicto.ai>,
+	Michael Vetter <jubalh@iodoru.org>
+Cc: Lyude Paul <lyude@redhat.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 01/13] rust: pin-init: rename `zeroed` to `init_zeroed`
+Date: Fri, 23 May 2025 16:50:57 +0200
+Message-ID: <20250523145125.523275-2-lossin@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250523145125.523275-1-lossin@kernel.org>
+References: <20250523145125.523275-1-lossin@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] perf sort: Use perf_env to set arch sort keys and
- header
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- James Clark <james.clark@linaro.org>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Ravi Bangoria <ravi.bangoria@amd.com>, Leo Yan <leo.yan@arm.com>,
- Yujie Liu <yujie.liu@intel.com>, Graham Woodward <graham.woodward@arm.com>,
- Howard Chu <howardchu95@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
- Dmitry Vyukov <dvyukov@google.com>, Andi Kleen <ak@linux.intel.com>,
- Thomas Falcon <thomas.falcon@intel.com>, Matt Fleming
- <matt@readmodwrite.com>, Chun-Tse Shao <ctshao@google.com>,
- Ben Gainey <ben.gainey@arm.com>, Song Liu <song@kernel.org>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-References: <20250521135500.677508-1-irogers@google.com>
- <20250521135500.677508-4-irogers@google.com>
- <3e8b674e-38f7-4212-923d-f53626de69f2@linux.intel.com>
- <CAP-5=fX5q7rDgBdB+cMH6fTyHBBPyiac7tuv9WJOMcg9OFdq5g@mail.gmail.com>
- <9aa2c899-80e0-4626-acb7-5331fbf46a0d@linux.intel.com>
- <CAP-5=fW4brQZQ-tMDj+N9MnddRVZidi4L5uSw1mvv_9OD_vOSA@mail.gmail.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <CAP-5=fW4brQZQ-tMDj+N9MnddRVZidi4L5uSw1mvv_9OD_vOSA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+The name `zeroed` is a much better fit for a function that returns the
+type by-value.
 
+Link: https://github.com/Rust-for-Linux/pin-init/pull/56/commits/7dbe38682c9725405bab91dcabe9c4d8893d2f5e
+[ also rename uses in `rust/kernel/init.rs` - Benno]
+Signed-off-by: Benno Lossin <lossin@kernel.org>
+---
+ rust/kernel/init.rs                           |  8 +++---
+ rust/pin-init/README.md                       |  2 +-
+ rust/pin-init/examples/big_struct_in_place.rs |  4 +--
+ rust/pin-init/src/lib.rs                      | 28 +++++++++----------
+ rust/pin-init/src/macros.rs                   | 16 +++++------
+ 5 files changed, 29 insertions(+), 29 deletions(-)
 
-On 2025-05-21 3:19 p.m., Ian Rogers wrote:
-> On Wed, May 21, 2025 at 11:14 AM Liang, Kan <kan.liang@linux.intel.com> wrote:
->>
->>
->>
->> On 2025-05-21 12:16 p.m., Ian Rogers wrote:
->>>>> diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
->>>>> index 7b6cde87d2af..13ef0d188a96 100644
->>>>> --- a/tools/perf/builtin-top.c
->>>>> +++ b/tools/perf/builtin-top.c
->>>>> @@ -1747,7 +1747,14 @@ int cmd_top(int argc, const char **argv)
->>>>>
->>>>>       setup_browser(false);
->>>>>
->>>>> -     if (setup_sorting(top.evlist) < 0) {
->>>>> +     top.session = perf_session__new(/*data=*/NULL, /*tool=*/NULL);
->>>>> +     if (IS_ERR(top.session)) {
->>>>> +             status = PTR_ERR(top.session);
->>>>> +             top.session = NULL;
->>>>> +             goto out_delete_evlist;
->>>>> +     }
->>>>> +
->>>>> +     if (setup_sorting(top.evlist, &top.session->header.env) < 0) {
->>>> I doubt a valide env can be got in perf_session__new(), since there is
->>>> no perf.data in perf top.
->>>> Maybe just need to invoke the perf_env__raw_arch() instead to fill the
->>>> env->arch.
->>> I think the current code is making things harder than it should be, we
->>> should work away from perf_env__arch and strings, instead using EM_
->>> values which we can default to EM_HOST avoiding any runtime costs.
->>> Looking at perf_env__arch:
->>> ```
->>> const char *perf_env__arch(struct perf_env *env)
->>> {
->>>         char *arch_name;
->>>
->>>         if (!env || !env->arch) { /* Assume local operation */
->>>                 static struct utsname uts = { .machine[0] = '\0', };
->>>                 if (uts.machine[0] == '\0' && uname(&uts) < 0)
->>>                         return NULL;
->>>                 arch_name = uts.machine;
->>>         } else
->>>                 arch_name = env->arch;
->>>
->>>         return normalize_arch(arch_name);
->>> }
->>> ```
->>> in this case env->arch == NULL and so the uname machine will be used.
->>> For perf_env__raw_arch the behavior is similar but it populates the
->>> env:
->>> ```
->>> static int perf_env__read_arch(struct perf_env *env)
->>> {
->>>         struct utsname uts;
->>>
->>>         if (env->arch)
->>>                 return 0;
->>>
->>>         if (!uname(&uts))
->>>                 env->arch = strdup(uts.machine);
->>>
->>>         return env->arch ? 0 : -ENOMEM;
->>> }
->>>
->>> const char *perf_env__raw_arch(struct perf_env *env)
->>> {
->>>         return env && !perf_env__read_arch(env) ? env->arch : "unknown";
->>> }
->>> ```
->>> Aside from caching the arch, the main difference is that
->>> normalize_arch isn't called. Not having normalize_arch means the code
->>> in arch_support_sort_key and arch_perf_header_entry would need to
->>> handle strings "ppc" as well as "powerpc", "i386" as well as "x86",
->>> etc. As I'd prefer not handle all those cases I think the way the code
->>> is is best given how the env code is currently structured.
->>
->> Right. The perf_env__raw_arch() doesn't improve anything.
->> But I still don't like &top.session->header.env.
->> Because I don't think you can get any useful information from
->> top.session->header.env. It just brings confusions. (It seems an env is
->> retrieved, but it is actually not.)
-> 
-> Well there's a certain consistency in using the session env to set up
-> the sorting, etc. This pre-exists this change with nearly every
-> builtin-* file doing `symbol__init(&session->header.env);`. perf top
-> does `symbol__init(NULL);`:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/builtin-top.c?h=perf-tools-next#n1811
-> but the code now has lazy initialization patterns and handling NULL as
-> a special case of meaning host machine:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/symbol.c?h=perf-tools-next#n2350
-> 
->> In the perf top, &perf_env is used for the existing cases. If any env
->> fields are not available, perf_env__read_XXX() is invoked to get the
->> information.
->> I think we may follow the existing usage, e.g.,
->> setup_sorting(top.evlist, &perf_env).
-> 
-> So using the global perf_env rather than NULL feels preferable but I
-> think the global perf_env should be deleted. Whenever I see the global
-> perf_env in use I think the code has a bug as the perf_env should be
-> coming from the session or the machine. The global perf_env can have
-> no meaning for cases like `perf diff` where more than one
-> file/header/env is open at a time. The global perf_env variable's
-> existence encourages bad or broken code, so deleting it should avoid
-> errors in code. Another place these issues can occur is with TPEBS
-> where we're maintaining multiple sessions for sampling alongside
-> counting.
-> 
->> Alternatively, it looks like the perf top doesn't support --weight. The
->> env->arch should never be used. If so, a NULL can be used as well, E.g.,
->> setup_sorting(top.evlist, NULL).
-> 
-> So I don't like NULL because then we have lazy initialization of host
-> data and NULL meaning use host. I don't like the global perf_env
-> variable as it has a code smell about it. I think moving the session
-> initialization earlier in perf top so its env, although unpopulated,
-> can be used is consistent with `perf report` - this is consistent with
-> `perf top` being `perf record` glued together with `perf report`. So I
-> think the change here is the smallest and most sensible.
-> 
-> Longer term let's delete the global perf_env variable,  perf_env__arch
-> should be switched to a perf_env__e_machine as then we can avoid uname
-> calls just to determine the machine architecture, etc.
-> 
+diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
+index 8d228c237954..15a1c5e397d8 100644
+--- a/rust/kernel/init.rs
++++ b/rust/kernel/init.rs
+@@ -206,7 +206,7 @@ fn init<E>(init: impl Init<T, E>, flags: Flags) -> error::Result<Self>
+ ///
+ /// ```rust
+ /// use kernel::error::Error;
+-/// use pin_init::zeroed;
++/// use pin_init::init_zeroed;
+ /// struct BigBuf {
+ ///     big: KBox<[u8; 1024 * 1024 * 1024]>,
+ ///     small: [u8; 1024 * 1024],
+@@ -215,7 +215,7 @@ fn init<E>(init: impl Init<T, E>, flags: Flags) -> error::Result<Self>
+ /// impl BigBuf {
+ ///     fn new() -> impl Init<Self, Error> {
+ ///         try_init!(Self {
+-///             big: KBox::init(zeroed(), GFP_KERNEL)?,
++///             big: KBox::init(init_zeroed(), GFP_KERNEL)?,
+ ///             small: [0; 1024 * 1024],
+ ///         }? Error)
+ ///     }
+@@ -264,7 +264,7 @@ macro_rules! try_init {
+ /// ```rust
+ /// # #![feature(new_uninit)]
+ /// use kernel::error::Error;
+-/// use pin_init::zeroed;
++/// use pin_init::init_zeroed;
+ /// #[pin_data]
+ /// struct BigBuf {
+ ///     big: KBox<[u8; 1024 * 1024 * 1024]>,
+@@ -275,7 +275,7 @@ macro_rules! try_init {
+ /// impl BigBuf {
+ ///     fn new() -> impl PinInit<Self, Error> {
+ ///         try_pin_init!(Self {
+-///             big: KBox::init(zeroed(), GFP_KERNEL)?,
++///             big: KBox::init(init_zeroed(), GFP_KERNEL)?,
+ ///             small: [0; 1024 * 1024],
+ ///             ptr: core::ptr::null_mut(),
+ ///         }? Error)
+diff --git a/rust/pin-init/README.md b/rust/pin-init/README.md
+index 2d0cda961d45..a4c01a8d78b2 100644
+--- a/rust/pin-init/README.md
++++ b/rust/pin-init/README.md
+@@ -125,7 +125,7 @@ impl DriverData {
+     fn new() -> impl PinInit<Self, Error> {
+         try_pin_init!(Self {
+             status <- CMutex::new(0),
+-            buffer: Box::init(pin_init::zeroed())?,
++            buffer: Box::init(pin_init::init_zeroed())?,
+         }? Error)
+     }
+ }
+diff --git a/rust/pin-init/examples/big_struct_in_place.rs b/rust/pin-init/examples/big_struct_in_place.rs
+index b0ee793a0a0c..c05139927486 100644
+--- a/rust/pin-init/examples/big_struct_in_place.rs
++++ b/rust/pin-init/examples/big_struct_in_place.rs
+@@ -21,7 +21,7 @@ pub struct ManagedBuf {
+ 
+ impl ManagedBuf {
+     pub fn new() -> impl Init<Self> {
+-        init!(ManagedBuf { buf <- zeroed() })
++        init!(ManagedBuf { buf <- init_zeroed() })
+     }
+ }
+ 
+@@ -30,7 +30,7 @@ fn main() {
+     {
+         // we want to initialize the struct in-place, otherwise we would get a stackoverflow
+         let buf: Box<BigStruct> = Box::init(init!(BigStruct {
+-            buf <- zeroed(),
++            buf <- init_zeroed(),
+             a: 7,
+             b: 186,
+             c: 7789,
+diff --git a/rust/pin-init/src/lib.rs b/rust/pin-init/src/lib.rs
+index 9ab34036e6bc..3bb0700355df 100644
+--- a/rust/pin-init/src/lib.rs
++++ b/rust/pin-init/src/lib.rs
+@@ -148,7 +148,7 @@
+ //!     fn new() -> impl PinInit<Self, Error> {
+ //!         try_pin_init!(Self {
+ //!             status <- CMutex::new(0),
+-//!             buffer: Box::init(pin_init::zeroed())?,
++//!             buffer: Box::init(pin_init::init_zeroed())?,
+ //!         }? Error)
+ //!     }
+ //! }
+@@ -742,7 +742,7 @@ macro_rules! stack_try_pin_init {
+ /// - Fields that you want to initialize in-place have to use `<-` instead of `:`.
+ /// - In front of the initializer you can write `&this in` to have access to a [`NonNull<Self>`]
+ ///   pointer named `this` inside of the initializer.
+-/// - Using struct update syntax one can place `..Zeroable::zeroed()` at the very end of the
++/// - Using struct update syntax one can place `..Zeroable::init_zeroed()` at the very end of the
+ ///   struct, this initializes every field with 0 and then runs all initializers specified in the
+ ///   body. This can only be done if [`Zeroable`] is implemented for the struct.
+ ///
+@@ -769,7 +769,7 @@ macro_rules! stack_try_pin_init {
+ /// });
+ /// let init = pin_init!(Buf {
+ ///     buf: [1; 64],
+-///     ..Zeroable::zeroed()
++///     ..Zeroable::init_zeroed()
+ /// });
+ /// ```
+ ///
+@@ -805,7 +805,7 @@ macro_rules! pin_init {
+ /// ```rust
+ /// # #![feature(allocator_api)]
+ /// # #[path = "../examples/error.rs"] mod error; use error::Error;
+-/// use pin_init::{pin_data, try_pin_init, PinInit, InPlaceInit, zeroed};
++/// use pin_init::{pin_data, try_pin_init, PinInit, InPlaceInit, init_zeroed};
+ ///
+ /// #[pin_data]
+ /// struct BigBuf {
+@@ -817,7 +817,7 @@ macro_rules! pin_init {
+ /// impl BigBuf {
+ ///     fn new() -> impl PinInit<Self, Error> {
+ ///         try_pin_init!(Self {
+-///             big: Box::init(zeroed())?,
++///             big: Box::init(init_zeroed())?,
+ ///             small: [0; 1024 * 1024],
+ ///             ptr: core::ptr::null_mut(),
+ ///         }? Error)
+@@ -866,7 +866,7 @@ macro_rules! try_pin_init {
+ /// # #[path = "../examples/error.rs"] mod error; use error::Error;
+ /// # #[path = "../examples/mutex.rs"] mod mutex; use mutex::*;
+ /// # use pin_init::InPlaceInit;
+-/// use pin_init::{init, Init, zeroed};
++/// use pin_init::{init, Init, init_zeroed};
+ ///
+ /// struct BigBuf {
+ ///     small: [u8; 1024 * 1024],
+@@ -875,7 +875,7 @@ macro_rules! try_pin_init {
+ /// impl BigBuf {
+ ///     fn new() -> impl Init<Self> {
+ ///         init!(Self {
+-///             small <- zeroed(),
++///             small <- init_zeroed(),
+ ///         })
+ ///     }
+ /// }
+@@ -913,7 +913,7 @@ macro_rules! init {
+ /// # #![feature(allocator_api)]
+ /// # use core::alloc::AllocError;
+ /// # use pin_init::InPlaceInit;
+-/// use pin_init::{try_init, Init, zeroed};
++/// use pin_init::{try_init, Init, init_zeroed};
+ ///
+ /// struct BigBuf {
+ ///     big: Box<[u8; 1024 * 1024 * 1024]>,
+@@ -923,7 +923,7 @@ macro_rules! init {
+ /// impl BigBuf {
+ ///     fn new() -> impl Init<Self, AllocError> {
+ ///         try_init!(Self {
+-///             big: Box::init(zeroed())?,
++///             big: Box::init(init_zeroed())?,
+ ///             small: [0; 1024 * 1024],
+ ///         }? AllocError)
+ ///     }
+@@ -1170,7 +1170,7 @@ pub unsafe trait Init<T: ?Sized, E = Infallible>: PinInit<T, E> {
+     ///
+     /// ```rust
+     /// # #![expect(clippy::disallowed_names)]
+-    /// use pin_init::{init, zeroed, Init};
++    /// use pin_init::{init, init_zeroed, Init};
+     ///
+     /// struct Foo {
+     ///     buf: [u8; 1_000_000],
+@@ -1183,7 +1183,7 @@ pub unsafe trait Init<T: ?Sized, E = Infallible>: PinInit<T, E> {
+     /// }
+     ///
+     /// let foo = init!(Foo {
+-    ///     buf <- zeroed()
++    ///     buf <- init_zeroed()
+     /// }).chain(|foo| {
+     ///     foo.setup();
+     ///     Ok(())
+@@ -1469,7 +1469,7 @@ pub unsafe trait PinnedDrop: __internal::HasPinData {
+ /// this is not UB:
+ ///
+ /// ```rust,ignore
+-/// let val: Self = unsafe { core::mem::zeroed() };
++/// let val: Self = unsafe { core::mem::init_zeroed() };
+ /// ```
+ pub unsafe trait Zeroable {}
+ 
+@@ -1484,11 +1484,11 @@ pub unsafe trait ZeroableOption {}
+ // SAFETY: by the safety requirement of `ZeroableOption`, this is valid.
+ unsafe impl<T: ZeroableOption> Zeroable for Option<T> {}
+ 
+-/// Create a new zeroed T.
++/// Create an initializer for a zeroed `T`.
+ ///
+ /// The returned initializer will write `0x00` to every byte of the given `slot`.
+ #[inline]
+-pub fn zeroed<T: Zeroable>() -> impl Init<T> {
++pub fn init_zeroed<T: Zeroable>() -> impl Init<T> {
+     // SAFETY: Because `T: Zeroable`, all bytes zero is a valid bit pattern for `T`
+     // and because we write all zeroes, the memory is initialized.
+     unsafe {
+diff --git a/rust/pin-init/src/macros.rs b/rust/pin-init/src/macros.rs
+index 935d77745d1d..9ced630737b8 100644
+--- a/rust/pin-init/src/macros.rs
++++ b/rust/pin-init/src/macros.rs
+@@ -1030,7 +1030,7 @@ impl<$($impl_generics)*> $pin_data<$($ty_generics)*>
+ ///
+ /// This macro has multiple internal call configurations, these are always the very first ident:
+ /// - nothing: this is the base case and called by the `{try_}{pin_}init!` macros.
+-/// - `with_update_parsed`: when the `..Zeroable::zeroed()` syntax has been handled.
++/// - `with_update_parsed`: when the `..Zeroable::init_zeroed()` syntax has been handled.
+ /// - `init_slot`: recursively creates the code that initializes all fields in `slot`.
+ /// - `make_initializer`: recursively create the struct initializer that guarantees that every
+ ///   field has been initialized exactly once.
+@@ -1059,7 +1059,7 @@ macro_rules! __init_internal {
+             @data($data, $($use_data)?),
+             @has_data($has_data, $get_data),
+             @construct_closure($construct_closure),
+-            @zeroed(), // Nothing means default behavior.
++            @init_zeroed(), // Nothing means default behavior.
+         )
+     };
+     (
+@@ -1074,7 +1074,7 @@ macro_rules! __init_internal {
+         @has_data($has_data:ident, $get_data:ident),
+         // `pin_init_from_closure` or `init_from_closure`.
+         @construct_closure($construct_closure:ident),
+-        @munch_fields(..Zeroable::zeroed()),
++        @munch_fields(..Zeroable::init_zeroed()),
+     ) => {
+         $crate::__init_internal!(with_update_parsed:
+             @this($($this)?),
+@@ -1084,7 +1084,7 @@ macro_rules! __init_internal {
+             @data($data, $($use_data)?),
+             @has_data($has_data, $get_data),
+             @construct_closure($construct_closure),
+-            @zeroed(()), // `()` means zero all fields not mentioned.
++            @init_zeroed(()), // `()` means zero all fields not mentioned.
+         )
+     };
+     (
+@@ -1124,7 +1124,7 @@ macro_rules! __init_internal {
+         @has_data($has_data:ident, $get_data:ident),
+         // `pin_init_from_closure` or `init_from_closure`.
+         @construct_closure($construct_closure:ident),
+-        @zeroed($($init_zeroed:expr)?),
++        @init_zeroed($($init_zeroed:expr)?),
+     ) => {{
+         // We do not want to allow arbitrary returns, so we declare this type as the `Ok` return
+         // type and shadow it later when we insert the arbitrary user code. That way there will be
+@@ -1196,7 +1196,7 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
+         @data($data:ident),
+         @slot($slot:ident),
+         @guards($($guards:ident,)*),
+-        @munch_fields($(..Zeroable::zeroed())? $(,)?),
++        @munch_fields($(..Zeroable::init_zeroed())? $(,)?),
+     ) => {
+         // Endpoint of munching, no fields are left. If execution reaches this point, all fields
+         // have been initialized. Therefore we can now dismiss the guards by forgetting them.
+@@ -1300,11 +1300,11 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
+     (make_initializer:
+         @slot($slot:ident),
+         @type_name($t:path),
+-        @munch_fields(..Zeroable::zeroed() $(,)?),
++        @munch_fields(..Zeroable::init_zeroed() $(,)?),
+         @acc($($acc:tt)*),
+     ) => {
+         // Endpoint, nothing more to munch, create the initializer. Since the users specified
+-        // `..Zeroable::zeroed()`, the slot will already have been zeroed and all field that have
++        // `..Zeroable::init_zeroed()`, the slot will already have been zeroed and all field that have
+         // not been overwritten are thus zero and initialized. We still check that all fields are
+         // actually accessible by using the struct update syntax ourselves.
+         // We are inside of a closure that is never executed and thus we can abuse `slot` to
 
-I'm fine with the session's env, as long as there is a consistent env
-source in the perf top. Because in the recent perf top fixes, we
-randomly pick the env source. Thomas's patch used the global env, but
-this one chose the session's env. It brings confusions.
-https://lore.kernel.org/lkml/20250513231813.13846-2-thomas.falcon@intel.com/
-
-Could you please send a clean up patch to address the inconsistency?
-
-Thanks,
-Kan
+base-commit: ae8b3a83fb9de394f609035041cd7a668fda2ab3
+prerequisite-patch-id: https://lore.kernel.org/all/20250523125424.192843-2-lossin@kernel.org
+prerequisite-patch-id: https://lore.kernel.org/all/20250523125424.192843-3-lossin@kernel.org
+prerequisite-patch-id: https://lore.kernel.org/all/20250523125424.192843-4-lossin@kernel.org
+-- 
+2.49.0
 
 
