@@ -1,126 +1,228 @@
-Return-Path: <linux-kernel+bounces-661465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B91AC2B61
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 23:33:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D02DAC2B65
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 23:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC5861B67D42
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 21:33:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90FCEA4436B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 21:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2B620C48E;
-	Fri, 23 May 2025 21:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAB620485B;
+	Fri, 23 May 2025 21:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJxGER6B"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HlXvza7q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA35204F9C;
-	Fri, 23 May 2025 21:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115F61F585C;
+	Fri, 23 May 2025 21:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748035994; cv=none; b=UMfv9/+n0FIb1sE5088Z4yWMEJndGeDunhFa6vS74MiwNijf1XoMVQQvKCmFeaze7p+ejSjp1SZIBsqrCUsz7XH+MrIdBP4xo8BGGLysuCB9aqO4Z6Xhi5XVQQNY1CPHenkixEmDTX8aRVbZyta3Ly/wBq2GQn4910atpmjrUcI=
+	t=1748036019; cv=none; b=RyPHZi6tGCt00og1qKpLYjmrc4dFGapyr2OVCE+uA0fUl/ZXimVuoNuBiiZSdx5pedbc+Wc+ouTtfF2pP740iERGFBl/v+s0utlHmsTawGINR5EdN34D8tDQmDOgjy4b+zu3r0EpXvqwGfUGHu3Smh1jK+ZzWWQNwXN53RZRzFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748035994; c=relaxed/simple;
-	bh=t6LBh1erf6q85Lrcs1o3C3ibSfhlLfMbc8dn3fx1GKM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pW6cFL3l1a6HrWbuPIQX2wUx1Jr29Ix2++1nIBEG8LPdMrknezIRRkQvhI+g1isXIPKZCjJ+IlA8Nx3PChKdYnInF5chWMsWUo+sz6uprEx+HusqIkw/7rKBcxy6UOaUf6fFoN1dh/B+hn6bhj/igs8HsH4vO+YAWT1QYujbVvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJxGER6B; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so1961785e9.0;
-        Fri, 23 May 2025 14:33:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748035991; x=1748640791; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qpf4Pbv2LaunBeAGYa0hZONpjIJoOeyE288WoeCcc9A=;
-        b=KJxGER6BSPF+Lh+hteYdY28LmcMyzzhsey4sbLQCm3d4IGKzKHN9PwwIn0kj6PvYl7
-         c+H0B6h60XvEJmZo5XHfbJXQJ49/aE+AopE75vUMQrVjzn24pVPm1ZGRv29nOQpICYWP
-         fOeUDShogfNEA5MaNe6tetiaDd2Dbxc/bIH+iK6MDHsuW97/1jhGo7NBZ0t2EwloFsXQ
-         T/ogrqjDu0SdMfN3tj6lg5BxeNEartluM7Ph8LOSWRcZlB8FaLoJuosl7BxaY54X6CCl
-         eA1VGZ7yZNAJ7r9FT751onDYbRq3ViJ2b+Btp/4x+HXt98qgDKJOXJNrBzVXKZacPNKz
-         3p7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748035991; x=1748640791;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qpf4Pbv2LaunBeAGYa0hZONpjIJoOeyE288WoeCcc9A=;
-        b=nbsqql67yBoLsNlkIoBzKh5jyLlb/MVAdZmxC3kKatqzjF91YR2w5S1evdjgxSzRqn
-         qYrImk/svi2LFodDUunX83r6GUCt+gBZ3ECPNMcfUsw/C8Qb5A6Y8b2GRP2hSMFMUYCT
-         vfsgp0hDal8aVLpokZjdnlG19+BH6kU63I0ANfyzNZcdrzDAJU61F3KzsJ27Uddj+ScP
-         MyFpP1l7wwN9krJuAhNsLaKX8aRdTGH4GxNwvV+gdn4adqDoM8arBUgmKJTrlC/jO/Ll
-         ZOkyiO2TJjjAjntRiFa0BWxtgaEgQu6dRR2eiP010CImer0cP9Yx0gxsi0yXyoIEHETl
-         uv9w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/GrVfulGIvRZG7kEYsRDdb4VrK9CmbOrLtERbWIWe8qq0V5whOMPuOaqCfU1qMwhptgRVdIYmji1dvAQ=@vger.kernel.org, AJvYcCUREFV7q+pMEQ6h814f/+amG6WyEOJfC2rrZ1C9a4PiChnhwg4VHhg8SEYVbQbPjlvySv/0GvCMTgQHfkGvx3vt@vger.kernel.org
-X-Gm-Message-State: AOJu0YykzCyBRH8oengIXFlJaLl6vSMiEvB/X6oMQGzJVGl0xZE5gfrP
-	WmdZ/Klg8aVvrCPDIeIUnAfWsPOShzGr3ZK6FKxb9uzaGHzRMqwkiQpr
-X-Gm-Gg: ASbGncv1HGPy20TmaJB/IV96qIb0+mOH4Uo6B6e2MeQ9gOjcFJ0aiZ35T2pfdhEKidu
-	2YIkGVttAPKCSTppW/XL/z6+ejDnqXBYx/zLNGe128p2CUIvmmtIoXSugJiAz33XGRYLk/caOy2
-	g1RU0qOR4DFkVABif2qfa3ZfhHpX/Wq00IHq3sdVUfdKFvWsbPeB4u0fqx5pBXoYMuBpetDk9MH
-	ETPRJSyMXfNs1wkd3v6k62zE0X4GoWx1XwTw/M8imM/z3M1g0iUU3cTuarUM4WVfezG2H2hxuwz
-	vUNjLsmUmhpyoGBbtZ6nH3UrYahnAVACCX6Mb3htGzl1mPog7lBpjBTNBHcwZwVqqI3a
-X-Google-Smtp-Source: AGHT+IE3WHr7NkotDT0Tn5O4UHcUPRin9SJD8uSEXI0fanie/Wcubh2smOWrZEWwxNVVsR9JC6NhtQ==
-X-Received: by 2002:a05:6000:2285:b0:3a3:ec58:ebf2 with SMTP id ffacd0b85a97d-3a4cb408fb0mr677310f8f.7.1748035990451;
-        Fri, 23 May 2025 14:33:10 -0700 (PDT)
-Received: from [192.168.1.46] ([154.183.50.249])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4c8cdc618sm1247221f8f.0.2025.05.23.14.33.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 May 2025 14:33:10 -0700 (PDT)
-Message-ID: <73101285-2854-470e-a3bb-9a363a7c1991@gmail.com>
-Date: Sat, 24 May 2025 00:33:08 +0300
+	s=arc-20240116; t=1748036019; c=relaxed/simple;
+	bh=bgMBIwukVf/gTtf1D/w0CEf4p3yBeSktnbqXUSjKooE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tNSryJ1I/gihTbh3+5EpyEGU1fCyRakw4uqNHVQO4A2kFMaJAYtnWEBYDmCbE2FIDuadaZQyWwbQJVxprADy3VLZecfyll213PYbkHiAsmSCgR5BxtG4zCLwkM1Xkpq9FDrLWWE7+JHysIH9clWYFK90QI9SVDJg5y+zZeNI2CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HlXvza7q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CF73C4CEE9;
+	Fri, 23 May 2025 21:33:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748036018;
+	bh=bgMBIwukVf/gTtf1D/w0CEf4p3yBeSktnbqXUSjKooE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HlXvza7qhwgXtXoz5XysoR494WNv950NXbEBSaXt1Iy3ida3O68jQfUiNyut/sU2b
+	 C9hdjlwzXatiJHbLyxUkP5NlvLHHpjCJoLOXEv8jYypEOz4klg92fETElFIcsENn13
+	 L3HzYoq4UFHmzRtjbr8bhSqHJOOVuP5pumWd/gN9B+YSn8SxKp5qxGSQ72ii9H0aR8
+	 Juo3ZS5Ln32ZAjBIwIdkuoC8p8UJ9m+y7L/mA1bi5CK+6ScdNLbTllz/I65xzT7AI+
+	 m5XXvJ0Izq0g3L61Urm7lmdPpYhXnsGjB4/aafbLPH50+d38ZtL1L9gmAkwtfYa9l2
+	 eU/Ro5/OofhSw==
+Date: Fri, 23 May 2025 14:33:36 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: James Clark <james.clark@linaro.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 1/3] perf test: Support arch-specific shell tests
+Message-ID: <aDDpsC2sUQaC7LuZ@google.com>
+References: <20250522171044.1075583-1-namhyung@kernel.org>
+ <CAP-5=fXDaKueO9HE-Gr3Q7R6qm2EjwnL845nh7R2OU+DCfrhyA@mail.gmail.com>
+ <4763aca8-a140-4291-b12e-e03cc0d82bdd@linaro.org>
+ <CAP-5=fWUZ78s1DMzQV8SP0U8Hb=TnCwB1_t2_o+3UcoJeyi=0Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] selftests/mm: Skip tests dependent on a binary not built
-To: Shuah Khan <skhan@linuxfoundation.org>, linux-mm@kvack.org
-Cc: linux-kernel-mentees@lists.linux.dev, akpm@linux-foundation.org,
- shuah@kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250523184312.2647781-1-khaledelnaggarlinux@gmail.com>
- <41d3b11b-d269-4ee5-a118-6608c804e068@linuxfoundation.org>
-Content-Language: en-US
-From: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>
-In-Reply-To: <41d3b11b-d269-4ee5-a118-6608c804e068@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWUZ78s1DMzQV8SP0U8Hb=TnCwB1_t2_o+3UcoJeyi=0Q@mail.gmail.com>
 
-On 24/05/2025 12:09 am, Shuah Khan wrote:
-> On 5/23/25 12:43, Khaled Elnaggar wrote:
->> Hello.
->>
-> 
-> The above doesn't belong in change log. Refer to a few change logs
-> in the repo to learn  how to write them.
-> 
-> You can also check the kernel documentation - this change log
-> is way too long. It doesn't clearly state what is being fixed.
-> 
-> In this case, "write_to_hugetlbfs" is missing because the right
-> config isn't enabled. Test stalls waiting for write_to_hugetlbfs
-> to run.
-> 
-> You are fixing this by checking if write_to_hugetlbfs exixts
-> from /mm/run_vmtests.sh
-> 
-> Summarize this in short description so people can understand
-> the change.
-> 
-> thanks,
-> -- Shuah
+Hi Ian,
 
-Oh, I mistakenly thought since RFC does not get merged into source tree, 
-it could have a relaxed tone, hence the much text.
+On Fri, May 23, 2025 at 10:54:02AM -0700, Ian Rogers wrote:
+> On Fri, May 23, 2025 at 3:48 AM James Clark <james.clark@linaro.org> wrote:
+> >
+> > On 22/05/2025 9:09 pm, Ian Rogers wrote:
+> > > On Thu, May 22, 2025 at 10:10 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> > >>
+> > >> This is a preparation for shell tests belong to an arch.
+> > >
+> > > I keep repeating that I don't like arch and I think ideally we'd be
+> > > getting rid of the C arch tests. I just sent out a patch doing this
+> > > for 1 test:
+> > > https://lore.kernel.org/lkml/20250521165317.713463-2-irogers@google.com/
+> > > We should be able to make perf, tests, etc. dependent on a PMU rather
+> > > than an architecture. This means that running perf built for ARM will
+> > > be able to do things running on an instruction emulator on x86. It
+> >
+> > In this case for Arm SPE and Coresight you can only generate trace by
+> > running on a full model or a real CPU, so I'm not sure if we could ever
+> > get close to running on just an emulator.
+> 
+> Ok, that's the SPE and coresight PMUs, shouldn't the bulk of "perf
+> test" pass under an emulator and those tests skip when the PMUs aren't
+> there?
+> 
+> > > means the tool, the kernel APIs, etc. are generic and new
+> > > architectures like RISC-V can test things. It means cross-platform
+> > > (record on 1 machine type, report on another) can work without
+> > > tripping over load bearing architecture ifdefs. It means that we
+> >
+> > I have thought about adding some generic decoding side tests for SPE and
+> > Coresight, but couldn't really get past the fact that you need to put
+> > the trace dump _and_ the binaries traced into the git repo. Not only
+> > would this benefit testing on other arches like you say, but it would
+> > also lock down that decoding of a known file doesn't regress which we
+> > can't currently do by generating new trace every time the test runs.
+> >
+> > If we ever added this they would be separate tests though so they could
+> > go in the top level folder, where the ones in the arch folder would
+> > continue to do record and decode. Maybe naming the folders by PMU could
+> > work, but you could also have both PMU name and arch name folders like:
+> >
+> > Recording/requires hardware:
+> >
+> >    tools/perf/arch/arm64/tests/shell/cs_etm/
+> >
+> > Cross platform decode tests:
+> >
+> >    tools/perf/tests/shell/cs_etm/
+> >
+> > Which would mirror how the source files are currently laid out:
+> >
+> >   tools/perf/arch/arm/util/cs-etm.c
+> >   tools/perf/util/cs-etm.c
+> 
+> So this a digression, I don't necessarily disagree with it. Back to
+> adding arch-specific shell tests, we should be working hard to not
+> target work to a particular architecture. Making code, tests, etc.
+> specific to an architecture means someone, quite often myself, has to
+> come along later and undo the damage. Hybrid being a very large and
+> long case in point where >1 core PMU was hard coded to only work
+> within the tool for two specific PMUs. To be specific as to why
+> notions of architecture in the code base are actively harmful (off the
+> top of my head):
+> 
+> 1) architecture isn't a specific enough term as PMUs are always
+> evolving so we need to support figuring this out, not just hiding the
+> affected code by an ifdef or build option;
+> 
+> 2) lower and more problematic test coverage (will we shellcheck an ARM
+> test on x86? we're lowering the container coverage or requiring it to
+> be run on multiple architectures);
+> 
+> 3) the tests need to be able to handle being on the architecture with
+> or without the PMU (such as under a hypervisor);
+> 3.1) the without PMU case is a very frequent source of my patching
+> tests as most people test on a bare metal development machines and
+> forget continuous testing environments;
+> 3.2) this kind of support can enable continuous testing efforts that
+> are run under an emulator. If a cloud has no ARM offering they can at
+> least emulator test, and SuSE have at least offered this. Google may
+> or may not run testing through emulators and tests need to handle it,
+> we have and do carry patches for this;
+> 
+> 4) broken cross-platform support, such as with sample parsing where
+> decoding a sample is missing pieces when not done on x86 (come on,
+> this is terrible and we don't want more of it);
+> 
+> 5) the tests do and should make use of common library code for things
+> like checking the perf event permissions, this code lives in
+> tools/perf/tests/shell/lib but the arch dependencies go where? We
+> shouldn't reinvent the shell testing environment per architecture.
+> 
+> 
+> I get that vendors would quite like things not to work on other
+> architectures, or for event parsing [1], testing, etc. to be in some
+> way crippled and require architecture specific reinvention. Why should
+> their engineers invest in infrastructure and testing that could
+> benefit someone else? Heck sometimes it feels like vendors may be
+> doing everything in their power via broken PMU names, event names,
+> etc. to make common infrastructure break when not run in their arch
+> specific way [2]? I see things differently and indeed when things go
+> wrong vendors argue that the generic code/behaviors needs to be
+> changed (I'm thinking of Mark Rutland on Apple PMU support and the
+> generic behavior changes made at that time that are now not carried
+> through leading to event parsing and display inconsistencies as well
+> as RISC-V needing to adopt a different event lookup strategy).
+> 
+> I want the perf tool to have its behavior be generic. The kernel has
+> an arch directory for understandable reasons, for the perf tool the
+> key thing is the PMU and we've been building out the infrastructure
+> for this. Should the perf tool have every event, metric or syscall
+> number for every architecture? For cross-platform work it doesn't seem
+> like a completely terrible idea. I'm sensitive to binary size [3] so
+> I'm not pushing on it.
+> 
+> Anyway, this change is unnecessary as the current skipping behavior
+> works and is better for the reasons enumerated above. This change gets
+> a very large nack from me. I'm supportive of more IBS coverage in the
+> rest of the series, but this change isn't required for that.
 
-Appreciate your feedback, I will rewrite the patch considering the
-points mentioned. Thank you.
+Thanks for the review.  I understand your concern and it'd be nice to
+increase the cross-platform coverage.  I don't know if AMD IBS is
+available in an emulator but it should be fine to have this test in the
+generic place.
 
+Thanks,
+Namhyung
+
+> 
+> [1] https://lore.kernel.org/lkml/20250416045117.876775-1-irogers@google.com/
+> [2] https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/drivers/perf/arm_cspmu/arm_cspmu.c?h=perf-tools-next#n150
+> - please call it cpu_cycles to avoid ambiguity with the legacy event.
+> [3] https://lore.kernel.org/lkml/20250417230740.86048-1-irogers@google.com/
+> 
+> 
+> 
+> > Thanks
+> > James
+> >
+> > > benefit from more testing on generic pieces of code on all
+> > > architectures - like sample parsing. We can always strcmp the PMU name
+> > > or the architecture at runtime.
+> > >
+> > > Structure wise we could have:
+> > > tools/perf/pmu/ibs_op/tests/
+> > > tools/perf/pmu/ibs_op/tests/shell
+> > >
+> > > It feels noisy compared to just having the shell test in
+> > > tools/perf/tests/shell skip when the PMU isn't present. There are also
+> > > things like library dependencies that aren't clear when we have >1
+> > > directory. I'd prefer if new testing followed the existing model
+> > > rather than this.
+> > >
+> > > Thanks,
+> > > Ian
+> > >
 
