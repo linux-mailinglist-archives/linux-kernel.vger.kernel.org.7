@@ -1,135 +1,211 @@
-Return-Path: <linux-kernel+bounces-660860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45380AC2305
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:51:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1975AC231A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D5F3AA1E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:51:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9126164CD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92974B5AE;
-	Fri, 23 May 2025 12:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382E617AE1D;
+	Fri, 23 May 2025 12:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vTJ05k+j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ASu98xrj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FB12C859;
-	Fri, 23 May 2025 12:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1CA7DA93;
+	Fri, 23 May 2025 12:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748004700; cv=none; b=uFw7CLzk2Qolj+eaTMSEySL1/DWP0cDdI1+0V1w2mnPZmvZo4UyO7z1yz5gQXBDnfdk1Wplpahm+AAUnIhAuPY+O/FFcb/xEmmq7rux5cWp9iD1XSM65osZT/lApMCpcPfZC3fr/3vxJK/QPU9eVTxyXIK8sZKFmHNsL2TRxIYo=
+	t=1748004725; cv=none; b=hg2+/I18L4STlAA1xP7NT4tDtzhHn6dFRsCFolWUpYYCEb+0RwZ4C9phQaJ3B93zUBY9HF+e0so1eEMQYnTyfZmZLrcVxpijE6kDj4PyJKxYpf074hB4TqYzAeb/ym089e6jFJLGrNX9tqL76bwaWh4ppjsvDg3q2hdpW/HMF28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748004700; c=relaxed/simple;
-	bh=ERCJFPy9xb2x/AryG7RPgoZDCoQB8wDUtk86IGkNxsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ds9dzp6xo0/ZQCMkBayxAZ5DZBcmdC+AwoeCTDN06EYvzMcpWb0UK546fS+16Lwc0iCAb5ps76EyRGZgOLKN7LyrF0cAiG0rUxXmDV363z0a1pJgSoY254XfP6kL/yc/SjfQ/GdfslZgs+4uFQqzV+29I+83g2F33Rf4M6Fthc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vTJ05k+j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49898C4CEE9;
-	Fri, 23 May 2025 12:51:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1748004699;
-	bh=ERCJFPy9xb2x/AryG7RPgoZDCoQB8wDUtk86IGkNxsI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vTJ05k+jeYSFpa5lxlNyXiM5d8L6QkDiZwxQmIkcE8MjAScLtDGNs+ljl0UxkiZKp
-	 l5SRYtkbY74H69CZe7qSEiAPNRwq+whj4yBmDn6HPINVwGZkKU79RcgRiQOQ0KPJll
-	 tMvf4EfAvvJJQ9Y2G0C29TypwJ2vszEybuJSfMd4=
-Date: Fri, 23 May 2025 14:51:37 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: cve@kernel.org, linux-cve-announce@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: REJECTED: CVE-2025-0927: heap overflow in the hfs and hfsplus
- filesystems with manually crafted filesystem
-Message-ID: <2025052308-brittle-unbroken-888b@gregkh>
-References: <2025040820-REJECTED-6695@gregkh>
- <20250509072033.1335321-1-dvyukov@google.com>
- <2025050940-marrow-roundish-8b98@gregkh>
- <CACT4Y+aiQcbHfj2rB6pGKevUbUoYwrHMu+aC-xh0BCKE8D-8sQ@mail.gmail.com>
- <2025050924-marmalade-overfill-fc5a@gregkh>
- <CACT4Y+az8zu+n_z=amp1Z_ezni-UVTrd0GgUvSzjji2RsjexQQ@mail.gmail.com>
+	s=arc-20240116; t=1748004725; c=relaxed/simple;
+	bh=OOXCkFDGtaTZMu05Xdb53pmqZzDufP0TOmEg/vN9xJQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eYKwCamWP8Fkn8iCrYulOGiHqggf3c269rL5PJPGxgyyvDCueKL+QRshE0+lnfA/nCMSRzizFsX7DNR5UHrpSCb+wzzIl5y5TVi/fAHQ1esQOIW5mPIczJn5w86uGkxeQ1TOPeuKvevs+JoYT4TmDKlPA8Vd4RmpIMLmne7zzFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ASu98xrj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BC80DC4CEE9;
+	Fri, 23 May 2025 12:52:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748004724;
+	bh=OOXCkFDGtaTZMu05Xdb53pmqZzDufP0TOmEg/vN9xJQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ASu98xrjaylGoqBa7TZFByLhQ+wTu8lfN1nyxbqCoIOWDbKDIETMIJa87hIrpXFkw
+	 TsQSkmCkB36vlsPd4UMpnr23gLbx4tZb7/i/sdJk3BWjRK4c7C3zBrI0kBsLG7c1yX
+	 R/Qreq7iC2NCmP1R+5ZHMEl6Nse9L5SUMPuSHUyb7fbY6nCS5lHysP7n122VpHo/LW
+	 cpPS95RsQe2zTfcEGT4b0WS+JAMire2F1FQufJd/UJMafcjQ25ROdYtTJtYxdoF9Rf
+	 xxOWNbW/+20m6MxGctI7yb8AbpUaCEb4Tc2OdLBT49Q6BbG4JRhjHuqTDdYFV2iIW7
+	 jHvZ91s1rGFGg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA4C8C54F2E;
+	Fri, 23 May 2025 12:52:04 +0000 (UTC)
+From: Thomas Antoine via B4 Relay <devnull+t.antoine.uclouvain.be@kernel.org>
+Subject: [PATCH v4 0/5] Google Pixel 6 (oriole): max77759 fuel gauge
+ enablement and driver support
+Date: Fri, 23 May 2025 14:51:43 +0200
+Message-Id: <20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+az8zu+n_z=amp1Z_ezni-UVTrd0GgUvSzjji2RsjexQQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAF9vMGgC/4XNUQuCMBDA8a8ie26x2yZzPfU9ImTTmw5KY8thi
+ N+9KfQSRC8H/4P73UIiBo+RnIqFBEw++nHIIQ8FaXozdEh9m5twxiXkQa2kXQQG9d3MSqlS166
+ jknHkAoy0QpB8+gjo/Lyzl2vu3sfnGF77lwTb9g+YgDKqq5Y7o6xDwc5TcxunZPxwtEg2M/GPU
+ zL46fDsVEqX2li0yrkvZ13XN1U3WNUDAQAA
+X-Change-ID: 20241202-b4-gs101_max77759_fg-402e231a4b33
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, Thomas Antoine <t.antoine@uclouvain.be>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748004727; l=5403;
+ i=t.antoine@uclouvain.be; s=20241202; h=from:subject:message-id;
+ bh=OOXCkFDGtaTZMu05Xdb53pmqZzDufP0TOmEg/vN9xJQ=;
+ b=5+306hTTvLvJFLGwpeid9GYxhSnl/KXZpvR6dC73BxlLdsMuvFgkwlcUSuIq7IKUtwq342f7Z
+ Ef/6OZTgG0bC/U4XcKz0cumXJcZIq4SKnvfimbceB9PqIiJ2UhNiFaD
+X-Developer-Key: i=t.antoine@uclouvain.be; a=ed25519;
+ pk=sw7UYl31W1LTpgWRiX4xIF5x6ok7YWZ6XZnHqy/d3dY=
+X-Endpoint-Received: by B4 Relay for t.antoine@uclouvain.be/20241202 with
+ auth_id=289
+X-Original-From: Thomas Antoine <t.antoine@uclouvain.be>
+Reply-To: t.antoine@uclouvain.be
 
-On Wed, May 21, 2025 at 10:20:10AM +0200, Dmitry Vyukov wrote:
-> On Fri, 9 May 2025 at 09:55, Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Fri, May 09, 2025 at 09:47:20AM +0200, Dmitry Vyukov wrote:
-> > > On Fri, 9 May 2025 at 09:34, Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Fri, May 09, 2025 at 09:20:33AM +0200, Dmitry Vyukov wrote:
-> > > > > > CVE-2025-0927 has now been rejected and is no longer a valid CVE.
-> > > > >
-> > > > > > Filesystem bugs due to corrupt images are not considered a CVE for any
-> > > > > > filesystem that is only mountable by CAP_SYS_ADMIN in the initial user
-> > > > > > namespace. That includes delegated mounting.
-> > > > >
-> > > > > I wonder if this should be the case only if the image is flagged by fsck
-> > > > > as corrupted? Otherwise I am not sure what's "trusted". It's not about
-> > > > > somebody's "honest eyes", right. E.g. in the context of insider risks
-> > > > > the person providing an image may be considered "trusted", or in the
-> > > > > context of Zero Trust Architecture nothing at all is considered trusted,
-> > > > > or a trusted image may be tampered with while stored somewhere.
-> > > > >
-> > > > > Without any formal means to classify an image as corrupted or not,
-> > > > > this approach does not look very practical to me. While flagging by fsck
-> > > > > gives concrete workflow for any context that requires more security.
-> > > >
-> > > > And how do we know of fsck can flag anything,
-> > >
-> > > By running fsck on the image. Or what do you mean?
-> >
-> > That requires us to attempt to reproduce stuff when assigning CVEs?
-> >
-> > And what architecture/target?  How do we do this for all of them?
-> >
-> > Remember, we are averaging 13 CVE assignments a day, this has to be
-> > automated in order for us to be able to manage this with the volunteer
-> > staff we have.
-> >
-> > > > AND which version of fsck?
-> > >
-> > > This needs to be answered as part of establishing the vulnerability
-> > > triage process. I would go for a relatively fresh version. That will
-> > > remove bugs fixed a long time ago, and if users rely on it for
-> > > security purposes they have to update it.
-> >
-> > Remember older kernels are updated but userspace isn't on many
-> > platforms, so the combinations of userspace tools and the kernel
-> > versions is not anything we are going to even be aware of.
-> >
-> > > > We'll defer to the fs developers as to what they want here, but note, we
-> > > > do not determine "trusted" or not, that is a use case that is outside of
-> > > > our scope entirely.
-> > >
-> > > I think classification should be tied to users and use cases in the
-> > > first place. I, as a developer, wouldn't want any CVEs assigned to my
-> > > code, if I could just wish so :)
-> >
-> > This is open source, we can not, and do not, dictate use.  It is up to
-> > the users of our software to determine if their use case matches up with
-> > the reported vulnerability or not.  We can not do it the other way
-> > around, that is impossible from our side.
-> 
-> So based on this, and Ted's confirmation that using fsck to validate
-> images is valid [1], it looks like we should create CVEs for such
-> bugs, right?
+The Google Pixel 6 has a Maxim MAX77759 which provides a fuel gauge with
+an interface with a lot in common with the Maxim max1720x.
 
-If you know of any that we have missed, please let us know.
+Modify the Maxim MAX1720x driver to be compatible with the Maxim MAX77759
+and enable it for the gs101-oriole board.
 
-So yes, we can assign them if people ask for them.
+The voltage, current, capacity, temperature and charge have all been
+tested and show coherent results. The charge full design and capacity
+equal the ones seen on android, the ratio between average charge and
+average current does predict pretty accurately the time to empty under
+a constant workload and temperature is coherent with the dynamic state
+of the device.
 
-thanks,
+Health is not enabled as it always reports overheating. The time to empty
+is wrong by about a factor 2 and is thus also disabled.
 
-greg k-h
+Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
+---
+Changes in v4:
+- Make first patch standalone
+- Separate MAX77759 defines from MAX1720x defines (Dimitri Fedrau)
+- Inline device name property (Dimitri Fedrau)
+- Separate MAX77759 capacity lsb logic from the MAX1720x capacity
+  computation (Dimitri Fedrau)
+- Use device_property_read_u32 instead of of_property_read_u32
+  (Sebastian Reichel)
+- Removed leftover debugs
+- Move shunt-resistor-micro-ohms to out of allOf:if: (Krzysztof Kozlowski)
+- Fix reg-names constraints
+- Fix style errors
+- Link to v3: https://lore.kernel.org/r/20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be
+
+Changes in v3:
+- Update base tree to avoid conflicts
+- Fix capacity computation for max1720x
+- Add separate properties for the max7759 to disable non-functional ones
+- Take TASKPERIOD into account for voltage computation of max77759
+- Simplify vcell computation (Dimitri Fedrau)
+- Switch has_nvmem to bool and keep it only in chip_data (Dimitri Fedrau)
+- Drop the yes_range from the write table (Sebastian Reichel)
+- Add test_power_supply_properties.sh to cover letter (Sebastian Reichel)
+- Switch back some changes to binding and actually use allOf:if: to
+  restrict constraints (Krzysztof Kozlowski)
+- Fix style errors
+- Link to v2: https://lore.kernel.org/r/20250102-b4-gs101_max77759_fg-v2-0-87959abeb7ff@uclouvain.be
+
+Changes in v2:
+- Add fallback for voltage measurement (André Draszik)
+- Add regmap for the max77759 (André Draszik)
+- Add chip identification for the max77759 (André Draszik, Peter Griffin)
+- Move RSense value to a devicetree property shunt-resistor-micro-ohms
+  (Dimitri Fedrau, André Draszik)
+- Use allOf:if to narrow binding per variant (Krzysztof Kozlowski)
+- Remove binding example (Krzysztof Kozlowski)
+- Change defconfig order to follow savedefconfig (Krzysztof Kozlowski)
+- Fix style errors
+- Link to v1: https://lore.kernel.org/r/20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be
+
+tools/testing/selftests/power_supply/test_power_supply_properties.sh:
+  # Testing device max77759-fg
+  ok 1 max77759-fg.exists
+  ok 2 max77759-fg.uevent.NAME
+  ok 3 max77759-fg.sysfs.type
+  ok 4 max77759-fg.uevent.TYPE
+  ok 5 max77759-fg.sysfs.usb_type # SKIP
+  ok 6 max77759-fg.sysfs.online # SKIP
+  # Reported: '1' ()
+  ok 7 max77759-fg.sysfs.present
+  ok 8 max77759-fg.sysfs.status # SKIP
+  # Reported: '78' % ()
+  ok 9 max77759-fg.sysfs.capacity
+  ok 10 max77759-fg.sysfs.capacity_level # SKIP
+  # Reported: 'MAX77759' ()
+  ok 11 max77759-fg.sysfs.model_name
+  # Reported: 'Maxim Integrated' ()
+  ok 12 max77759-fg.sysfs.manufacturer
+  ok 13 max77759-fg.sysfs.serial_number # SKIP
+  ok 14 max77759-fg.sysfs.technology # SKIP
+  ok 15 max77759-fg.sysfs.cycle_count # SKIP
+  ok 16 max77759-fg.sysfs.scope # SKIP
+  ok 17 max77759-fg.sysfs.input_current_limit # SKIP
+  ok 18 max77759-fg.sysfs.input_voltage_limit # SKIP
+  # Reported: '4238593' uV (4.23859 V)
+  ok 19 max77759-fg.sysfs.voltage_now
+  ok 20 max77759-fg.sysfs.voltage_min # SKIP
+  ok 21 max77759-fg.sysfs.voltage_max # SKIP
+  ok 22 max77759-fg.sysfs.voltage_min_design # SKIP
+  ok 23 max77759-fg.sysfs.voltage_max_design # SKIP
+  # Reported: '-149689' uA ()
+  ok 24 max77759-fg.sysfs.current_now
+  ok 25 max77759-fg.sysfs.current_max # SKIP
+  ok 26 max77759-fg.sysfs.charge_now # SKIP
+  # Reported: '4716000' uAh (4.716 Ah)
+  ok 27 max77759-fg.sysfs.charge_full
+  # Reported: '4524000' uAh (4.524 Ah)
+  ok 28 max77759-fg.sysfs.charge_full_design
+  ok 29 max77759-fg.sysfs.power_now # SKIP
+  ok 30 max77759-fg.sysfs.energy_now # SKIP
+  ok 31 max77759-fg.sysfs.energy_full # SKIP
+  ok 32 max77759-fg.sysfs.energy_full_design # SKIP
+  ok 33 max77759-fg.sysfs.energy_full_design # SKIP
+
+---
+Thomas Antoine (5):
+      power: supply: max1720x correct capacity computation
+      power: supply: add support for max77759 fuel gauge
+      dt-bindings: power: supply: add max77759-fg flavor
+      arm64: defconfig: enable Maxim max1720x driver
+      arm64: dts: exynos: gs101-oriole: enable Maxim max77759 fuel gauge
+
+ .../bindings/power/supply/maxim,max17201.yaml      |  42 +++-
+ .../boot/dts/exynos/google/gs101-pixel-common.dtsi |  10 +
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/power/supply/max1720x_battery.c            | 276 ++++++++++++++++++---
+ 4 files changed, 294 insertions(+), 35 deletions(-)
+---
+base-commit: e48e99b6edf41c69c5528aa7ffb2daf3c59ee105
+change-id: 20241202-b4-gs101_max77759_fg-402e231a4b33
+
+Best regards,
+-- 
+Thomas Antoine <t.antoine@uclouvain.be>
+
+
 
