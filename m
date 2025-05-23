@@ -1,187 +1,105 @@
-Return-Path: <linux-kernel+bounces-660251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1154AC1AB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:34:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8F8AC1AAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05D717BD6AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:31:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 184ED5414DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1069D28033E;
-	Fri, 23 May 2025 03:26:34 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564A5270ECD;
-	Fri, 23 May 2025 03:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E98D2222C4;
+	Fri, 23 May 2025 03:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VmCNDU6R"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CE91D516F
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 03:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747970793; cv=none; b=iD+FLpQM571sUjsbuLt4dQ7xyibSLWDtQ7SzkWGUD1cHqXyaMwLJaz/DkAzPPkFobPcrKnSIMX9WRbma/JrUqA7o4fVsRq188JX9hrgWav+hcgiVpkY3MbUba9xkcN2ky5IuFQz9mQCZfV7MOG9Uxxm2iF2O8pH3fUkvSvJlCxk=
+	t=1747970891; cv=none; b=Er2/3O//1IfyMg77cXERWQj/xgwW/KyhJHkwjznbtZd6MEtQn3DBXmB46GSy2WaEowSShcT4yIyeHPjMS/C1d9YXnMTipU0EiNaVFrPLxqhzit1LYmKA6jlVb1/z7Ex8DzZfhlaz5AceyfmN6NylBP6LVX21DiMAHDrfoY4POik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747970793; c=relaxed/simple;
-	bh=C9NK/m9W07yH0SH2bdXndsqdPgn7AEXo1UEv0+SzIRk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=VvgG4pNM25llbw5yVSZhnOY6x1KE/+yoHANxUJQIpwXpFJAcNqWqtd7mUBrCMwa5Zcyeymfhg6g0pXL+PEa4nLLneTvybn8LPhdYH/KPYVvvUWysKgWarEjWwsSpjQmUpClL5OJ3RdD1yqlOGHVriU/CIVphL6rNidw52GxU5OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-23-682feadd3b6c
-From: Byungchul Park <byungchul@sk.com>
-To: willy@infradead.org,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel_team@skhynix.com,
-	kuba@kernel.org,
-	almasrymina@google.com,
-	ilias.apalodimas@linaro.org,
-	harry.yoo@oracle.com,
-	hawk@kernel.org,
-	akpm@linux-foundation.org,
-	davem@davemloft.net,
-	john.fastabend@gmail.com,
-	andrew+netdev@lunn.ch,
-	asml.silence@gmail.com,
-	toke@redhat.com,
-	tariqt@nvidia.com,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	saeedm@nvidia.com,
-	leon@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	horms@kernel.org,
-	linux-rdma@vger.kernel.org,
-	bpf@vger.kernel.org,
-	vishal.moola@gmail.com
-Subject: [PATCH 18/18] mm, netmem: remove the page pool members in struct page
-Date: Fri, 23 May 2025 12:26:09 +0900
-Message-Id: <20250523032609.16334-19-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250523032609.16334-1-byungchul@sk.com>
-References: <20250523032609.16334-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWRSUwTYRiG/TvTmaGhZqwII4poFTUQ2YLmI0HDwcN/MgY1cTlII6OtlMWW
-	PUGrEo0NICphsyQlRqylsVoRWkSUAgWiEWSzgiyp0oMiO0TBuBTl9uR9v++5vAwhaSH9GUVy
-	Gq9KlimllIgUffOu2jP8JUwePjS1FnRmEwU137PgwZhVCDpjHYL5H0M0zLW2U3CvapEAXVce
-	CQvmJQLGHS4aRqvdJDReryfAdbODgoK8ZQKuWA0C6K4rFELx0n0C6jVjNPQ26CgYMf0Wgtte
-	QEJnxUMSRgtjwaH3hcXXEwhazfUCWMyvpOBOj56CT3mjCHpaXCTcvVyIwNzkFMLydx0Vuw3X
-	PvwgwLaKYRrrLen4qSEYa509BLYYb1DYMnubxh8HGincUbZMYpt1ToALrk5SeGZ8kMRTTf0U
-	Ntf2k/iNvpXGc5Yth9mTopgEXqnI4FVhB+JF8icFTkFqi1+Wu3eTBpkkWuTFcGwUZ8jToVVe
-	yHcLPEyxuzin8wfhYR82gptztZNaJGIIdlLIjeuWV47Ws4e46SYTpUUMQ7JBXHVJuCcWs/u4
-	WeNL+p8zkKt5/GrF4/U3LxpZoDwsYfdyz/sGaY+TY2dorsw2/f9hI9dscJJFSKxHa4xIokjO
-	SJIplFGh8uxkRVbomZQkC/o7bXXuz1NWNNt9xI5YBkm9xVZRmFwilGWos5PsiGMIqY+4zR0q
-	l4gTZNk5vCrltCpdyavtaBNDSv3EkYuZCRL2nCyNT+T5VF612goYL38N0lwovdYZEq1t25h2
-	LeAXE1DRPDGwFGfIdMTF75gpdzsvK83RBsdAnz3361Hl1YmS4Usvdh576zCdjel1nX8X1et7
-	8ESIfWypPLNh9y2N99bIIHyxNOlRunRzgxonBt6vGf0cn98jLw5UXOlc98x//3zw9uNcii2n
-	yth1tHJD1XuHlFTLZRHBhEot+wN92pOl1gIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWRa0hTcRyG++9cN1qcTqsORgQr07ScWsYPCjWK/CNk9akIQpcd2vLKZuK6
-	YSqUw5mWWdqMydByCsspzpWsmNcuULiU5W1hOaLCLl5ILSyNvj0878v75WUJvo4MYrWZOaIu
-	U52upGWkLGlP4Y7RTypNZOM2MNubaGj8mQf337VTYLa1IZieG2ZgqquXBmvtLAHmV0UkzNjn
-	CZjoGWfAXx8goeOqk4Dx6300mIoWCChofyCBzppnFLxuK6WgYr6OAGf+Owa8j8w0jDUtUhDw
-	mEh4Vt1Agr80Hnos62D2xRcEXXanBGZLami42W+h4X2RH0F/5zgJd6+UIrC7fRQs/DTT8Urc
-	2vBWgl3Vowy2OM7hlgdh2OjrJ7DDVkxjx48bDB4Z7KBx350FErvapyTYVDhJ4+8TQyT+6h6g
-	sfXjNwm2tw6Q+KWlizmy+oRs72kxXZsr6lSxKTJNs8knye5cnxfwbshHTbwRSVmB2yXMlAQk
-	S0xzIYLPN0cssYKLEqbGe0kjkrEEN0kJE+aF5dIaLkn45m6ijYhlSS5YqK+MXNJybrfww/aE
-	+be5SWh8+HR5R/rXl43N0EvMczHC4zdDTBmSWdAKG1JoM3Mz1Nr0mAh9msaQqc2LSM3KcKC/
-	59Vf+lXejqa9CR7EsUi5Uh6aodLwlDpXb8jwIIEllAp5dyBCw8tPqw3nRV1Wsu5cuqj3oA0s
-	qVwvTzwmpvDcGXWOmCaK2aLufyphpUH5KPxQVrC+fOcYexL2Sb3QJjv4QRXOHNmzlRqJWVXm
-	n3e4EpJdk9zmlo2VxYmtistZWt5YeNscFBeqOOCMqzjbmFZ/in9e4L949Gl3cfQ1qyEvovDW
-	cPm8dvA3dTgndfuF2JfWugq8GF12vrlKuj/ctMVQ1R1w13523jvOz6wNUZJ6jToqjNDp1X8A
-	10tm/bgCAAA=
-X-CFilter-Loop: Reflected
+	s=arc-20240116; t=1747970891; c=relaxed/simple;
+	bh=ZEVExl0k86L2T6dMkxdx4E8Dk/CUvSoYrDOnCWhZoCg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Idi/IKY9vs0sW8QL54c0QzPqhaeYrSdq008LhBfDC2PwakH+h3T3zSsh2Hnkcc2YzgNfSx+9NtffMNyhXKWU5aeZ1T72f4zkK0o4icRNUvLqh3z67JlUUZ1So2n6ZfqV4+jSWzDf8TTs39BCicC9JQJ0wwoqT38LL1s8Wco9TiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VmCNDU6R; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747970885;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OkBBGRiZvHopGFHqemEWcoi8ZXJj13K2xBFdk1g5S+M=;
+	b=VmCNDU6ReO//kpfia09uvQ9HWShRmKAi1aepryhQ/5NqYAzKKISirb7T78Ee0+sC3DtLaD
+	Hh8ae1Y0ugChF7y46eXppHgzx5DLbsF/RfaISMHTkCesJatFoMTb1bQHX20RAvFBOLQtc8
+	mnBqQeCA4H7+twGAjYZrrbNfME9If1w=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [PATCH] mm/hugetlb: fix kernel NULL pointer dereference when
+ replacing free hugetlb folios
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <aC974OtOuj9Tqzsa@localhost.localdomain>
+Date: Fri, 23 May 2025 11:27:18 +0800
+Cc: Ge Yang <yangge1116@126.com>,
+ akpm@linux-foundation.org,
+ linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org,
+ 21cnbao@gmail.com,
+ david@redhat.com,
+ baolin.wang@linux.alibaba.com,
+ liuzixing@hygon.cn
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <DF103E57-601C-4CBB-99CA-088E1C29F517@linux.dev>
+References: <1747884137-26685-1-git-send-email-yangge1116@126.com>
+ <644FF836-9DC7-42B4-BACE-C433E637B885@linux.dev>
+ <aC63fmFKK84K7YiZ@localhost.localdomain>
+ <ff6bd560-d249-418f-81f4-7cbe055a25ec@126.com>
+ <aC8PRkyd3y74Ph5R@localhost.localdomain>
+ <3B8641A1-5345-44A5-B610-9BCBC980493D@linux.dev>
+ <aC974OtOuj9Tqzsa@localhost.localdomain>
+To: Oscar Salvador <osalvador@suse.de>
+X-Migadu-Flow: FLOW_OUT
 
-Now that all the users of the page pool members in struct page have been
-gone, the members can be removed from struct page.
 
-However, since struct netmem_desc might still use the space in struct
-page, the size of struct netmem_desc should be checked, until struct
-netmem_desc has its own instance from slab, to avoid conficting with
-other members within struct page.
 
-Remove the page pool members in struct page and add a static checker for
-the size.
+> On May 23, 2025, at 03:32, Oscar Salvador <osalvador@suse.de> wrote:
+>=20
+> On Thu, May 22, 2025 at 08:39:39PM +0800, Muchun Song wrote:
+>> But I think we could use "folio_order() > MAX_PAGE_ORDER" to replace =
+the check
+>> of hstate_is_gigantic(), right? Then ee could remove the first =
+parameter of hstate
+>> from alloc_and_dissolve_hugetlb_folio() and obtain hstate in it.
+>=20
+> Yes, I think we can do that.
+> So something like the following (compily-tested only) maybe?
+>=20
+> =46rom d7199339e905f83b54d22849e8f21f631916ce94 Mon Sep 17 00:00:00 =
+2001
+> From: Oscar Salvador <osalvador@suse.de>
+> Date: Thu, 22 May 2025 19:51:04 +0200
+> Subject: [PATCH] TMP
+>=20
+> ---
+>  mm/hugetlb.c | 38 +++++++++-----------------------------
+>  1 file changed, 9 insertions(+), 29 deletions(-)
 
-Signed-off-by: Byungchul Park <byungchul@sk.com>
----
- include/linux/mm_types.h | 11 -----------
- include/net/netmem.h     | 28 +++++-----------------------
- 2 files changed, 5 insertions(+), 34 deletions(-)
+Pretty simple. The code LGTM.
 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 873e820e1521..5a7864eb9d76 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -119,17 +119,6 @@ struct page {
- 			 */
- 			unsigned long private;
- 		};
--		struct {	/* page_pool used by netstack */
--			unsigned long _pp_mapping_pad;
--			/**
--			 * @pp_magic: magic value to avoid recycling non
--			 * page_pool allocated pages.
--			 */
--			unsigned long pp_magic;
--			struct page_pool *pp;
--			unsigned long dma_addr;
--			atomic_long_t pp_ref_count;
--		};
- 		struct {	/* Tail pages of compound page */
- 			unsigned long compound_head;	/* Bit zero is set */
- 		};
-diff --git a/include/net/netmem.h b/include/net/netmem.h
-index c63a7e20f5f3..257c22398d7a 100644
---- a/include/net/netmem.h
-+++ b/include/net/netmem.h
-@@ -77,30 +77,12 @@ struct net_iov_area {
- 	unsigned long base_virtual;
- };
- 
--/* These fields in struct page are used by the page_pool and net stack:
-- *
-- *        struct {
-- *                unsigned long _pp_mapping_pad;
-- *                unsigned long pp_magic;
-- *                struct page_pool *pp;
-- *                unsigned long dma_addr;
-- *                atomic_long_t pp_ref_count;
-- *        };
-- *
-- * We mirror the page_pool fields here so the page_pool can access these fields
-- * without worrying whether the underlying fields belong to a page or net_iov.
-- *
-- * The non-net stack fields of struct page are private to the mm stack and must
-- * never be mirrored to net_iov.
-+/* XXX: The page pool fields in struct page have been removed but they
-+ * might still use the space in struct page.  Thus, the size of struct
-+ * netmem_desc should be under control until struct netmem_desc has its
-+ * own instance from slab.
-  */
--#define NET_IOV_ASSERT_OFFSET(pg, iov)             \
--	static_assert(offsetof(struct page, pg) == \
--		      offsetof(struct net_iov, iov))
--NET_IOV_ASSERT_OFFSET(pp_magic, pp_magic);
--NET_IOV_ASSERT_OFFSET(pp, pp);
--NET_IOV_ASSERT_OFFSET(dma_addr, dma_addr);
--NET_IOV_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
--#undef NET_IOV_ASSERT_OFFSET
-+static_assert(sizeof(struct netmem_desc) <= offsetof(struct page, _refcount));
- 
- static inline struct net_iov_area *net_iov_owner(const struct net_iov *niov)
- {
--- 
-2.17.1
-
+Thanks.=
 
