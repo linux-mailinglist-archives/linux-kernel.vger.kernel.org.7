@@ -1,290 +1,167 @@
-Return-Path: <linux-kernel+bounces-660736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C25EDAC2171
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:48:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0C4AC217C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34FA2A274C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:47:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 256E33A15BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF54E227EAF;
-	Fri, 23 May 2025 10:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FA8228CB2;
+	Fri, 23 May 2025 10:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vSpaBLkk"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WL1ujVP7"
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60A1226D04
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 10:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D840C1C5D7B
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 10:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747997282; cv=none; b=YEDIikSpRX6PsP+2QGtn+0ZoMb/cTAnfbX8WUNt7Y0sQ1T5SS08iPx8ZMrN4D3/XD/Zj47x4v6yigDKfe8IsFgyhW8dATCY5tDJkuOKELDIY7NHlkGiVjz/JYfPqx9CheltspnXptFO+3lCMobkN20SJDh5CdDBVLYqf0s+7zws=
+	t=1747997311; cv=none; b=FX/7RZU1k9lkGSMYii5a6BCWDAdBjKQt7z1Q1Efz7zeN96gNHOH6Bmm35AokZ2hN+SA20HOOzYnk9GyyctgLzKeArfG/6G9g8U6fkI/oz77Oo9n21H+3c4WQvQuDCJnCnSI1yS4yzmUyT6S/2cQck1V1PthtUnQ31g6RwfNidqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747997282; c=relaxed/simple;
-	bh=h9gl8jiSjNNaS24VpYZLQX139ohlcrSda5kPPfCth4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=W/psOp5JrOHF9pugvBtefhrhjF81el+iVUt5psnYWLf5zfO6TUTpqxbWIg59PVjEWoktyyBozd5tXJNJ+cM617359YsNcphIF3l4EV5ixaCrTD6o+trOUMvnb9hZ/APXXYDsDVqYrMa+n+/a7Cri8oBbga/BdjCM8FKB4p9UYko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vSpaBLkk; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1747997311; c=relaxed/simple;
+	bh=XSkjldj97M+e+of8exBXRT5HBVLvhJohJVhRpJQP3e4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VU9ryw1Rtz81idRUW3/lu0fmmi6Ax1u+fcANCnwE9/HqOAWcmLsurQ65hXCyncnx67rdo8AD540EJ4JXZlGIdnnTUhT/UAFJFWZXVE7gy210Dt50iI3VB/2RckHzcvI7UFe/4O1dA1GGQjDBq3UIu8lnk6yJHLvVHHv1xANxsRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WL1ujVP7; arc=none smtp.client-ip=209.85.221.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so72686895e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 03:47:59 -0700 (PDT)
+Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-3a36efcadb8so4796514f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 03:48:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747997278; x=1748602078; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=linaro.org; s=google; t=1747997308; x=1748602108; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pvat0/1rMENqBKZhuyO4HhGyQmI630c9sCJbM3sx/VQ=;
-        b=vSpaBLkknxVYWqro/g8fE7oXfV7Vv0lQm3hftYfH0r7Tf5PWavbh0VfaXJrpz5vCAU
-         /Zox9UgrT5CK/2u7fvuzUTxbp2tQDZRYdmhHur9Yw/Tq9zZuGsBzneUaslkknstWyhOy
-         1tzm5wKnCkUZunyDXJJLIFHFkMO2gXcTSL7ZOVMm3OZoRoNopIv56UtVN+JZdddgKgXF
-         OxTik1p8YYlDvRNFUoth0NT4uq1v2DDw14wd6zZE+nTibyScTtydR5gablS/S8ANL8Hu
-         l6xykuvxTVygPrEHeR62QzrN5lQ+hqxwdm2C4LRHT/8zG9SaUVhGX6N2pV8XdnESt/FI
-         fGfA==
+        bh=voTvJwrPQGdruYP3pP85QbrJKMnqHgErZTAD/Bt3JTY=;
+        b=WL1ujVP7glMXqYU5DDByo8KfOXPc3ZQp10JJPv4askDNPAxOMQpKpL0lYKLiN/GygZ
+         F1FVoLPmHeAcdXfAdSJN4tHuXebWHuqxYmE++bF6boKI5HOHlQtqk2VBntFcwzMjk+YZ
+         P30ItrfxIMSlSeNoRKK0n1GNvZGQJ0XLSE0mhcSCapg/9/IedJbREgc+VqwVR+V6vDBe
+         o4HTBhK+JFWYZpy+M7cy6/SsXmUZoRVJ3C86NHd7dcHu3TXZAVFTpQ2egMwZGtmYsAKR
+         iLBQiJvleYkf8rx8JUldeyfPvSbeN6V1lBzc5yzVR4J7HkXmEvM392kN377JcGgCVVbR
+         poeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747997278; x=1748602078;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1747997308; x=1748602108;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pvat0/1rMENqBKZhuyO4HhGyQmI630c9sCJbM3sx/VQ=;
-        b=KoEy6YtFXnoFkG7RVxriXN7DpdfCoIcrmvOVgrBoFlHfOtRr0VE3FM4ppawVaKyMA/
-         lyqH8pU6xzW2QgjPZa+zDNeMAmQPV6c3pUjzUu/gwTVkiuY+TMAyFZzHDX39e0CYulBc
-         fgyFVEGFlKmf+mmBgroL9sjoPPDcLqMFh0SswtqprfltoDkM+gcgbl2sSxZV+fdjVdV9
-         X8kWfiAS56Q+dczX8EIdmIYehKqFyW6ivA5CsHnTXQRT0I4smFMnhyQitjiwsb8oz5Jc
-         Vf/wDCsvdglPYL7YmRUFyXHJ1gW4oKr7C1gO9/BFlnDR/AcgTxbfjOpvZwetW328YtSA
-         w+nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUr2/Qp/OpxlWRRukjUwjbCes+IfuW4k4NWD6OUw0945AgzecjC5/oHsL6w4/8iVyk1ZwLUlQWQJ4IEIsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI+592iIc5UKn4eF7EnOykfSQxVw/E3ArHgGiOQZrHyVRjVQPf
-	PaKMlEBxFLZ63XzJs+OHW9vpwGClsqhL8dAP7ekHWkOujv2Vxxs34RWGn8XkYTXESog=
-X-Gm-Gg: ASbGncukKwD0pwNufnlsf2wy+3Bvch+cug2pWIBC7Ri9aRexLnP/IWOt1cvDoCYmn2K
-	dRqVLN5sPCD/yM651YZYj7JZuP+IoBh8MvYjcK7jUdb/p1CtNfV/fQkwEyv+AunHRMQdza8fyWi
-	VRwxVwufaqcZt6c083w7kO8cFG/hHV0CUjuEOkpaW+AxNbeC1xLPKbtSUO7BgnmeCZLl9c/zojG
-	eOcWRpuVdivtpKNMVGCjsiGXUNMDzRZA8dTf8cKgWJfU1Yi4GNXlg1KaxBqRhJ3UZjdKjHuo0X7
-	ACBr/erLV6HZ/r2Nf9pydzBnAEOJjQqKDYn1agBhOnBHGSKUReX5ScAF
-X-Google-Smtp-Source: AGHT+IFt9e8O2T7pLeZoZEYVwBiQD0nzYrr6EHcZTpNuvFH8+n2yYk2wVuh+KM2hl9eYxKNkUFfMSw==
-X-Received: by 2002:a05:600c:8185:b0:43d:26e3:f2f6 with SMTP id 5b1f17b1804b1-442fefdab96mr249759215e9.5.1747997277841;
-        Fri, 23 May 2025 03:47:57 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a35ca4d2d1sm26891438f8f.19.2025.05.23.03.47.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 May 2025 03:47:57 -0700 (PDT)
-Date: Fri, 23 May 2025 13:47:54 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Yu Zhao <yuzhao@google.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: mm/vmscan.c:3504 walk_pte_range() error: uninitialized symbol
- 'dirty'.
-Message-ID: <202505152339.fBOfDPsi-lkp@intel.com>
+        bh=voTvJwrPQGdruYP3pP85QbrJKMnqHgErZTAD/Bt3JTY=;
+        b=Xkh2qkRMHzFsiHFQcRLlH+74TvslJGf78dsHCa+jZnNyxXnF+S3+hbts8V0Ub3zP72
+         3iNFszIVsAAFqjzdd97Y8JQ5JV+FV7u0OLH1GJ6imh4INKGo24+HiCuNHjsIYxp9V7Wr
+         Z1BJphgi5yeB3Ai19+BsBhxURGYJWjN4+RUc2u84SLhcGE93S/zWlSbOxwijyG9Oke9P
+         +g7+BDKZgU+fLxdghMWad0+6uzyf+2d22xDMfy4MmdA9lDT/bHdI/qGLceM9xAXwAgy5
+         YfPO79N+Cq8wvuHmmLNC58ttrVky1VuDxsO16FIE3svE9JhyVmvMuvyIvffqs/5HWzAx
+         rTyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUphqhbP24AeAZLRX7G3Qa+Pw74apA7Y1z6Y+3xQZMjRlhpmlYHUw3eCStvt5jyyJMKprBN2Xpr3jY4mA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwivSJKwhun2ix9ys+WPBtcs0QM/Zpm4thW1SLxZshwpEVludFP
+	tyr/mWTl+h1Wno4QR1qRPAApgjwMKgZUPZ1Ik+ueYJZRofdy13o9BjdVILGy4za48/I=
+X-Gm-Gg: ASbGncvpaxD+jlcXcfEUHByPwBKV7ai4gjIYOWJIoZRUJhYTapY3HCiJfqsKjRASB7+
+	VdrS6LSGb6D38no902dH916u5nICgGZX6KyoygPsKKA+I+Uwbdgg1k9etO7O3onoDy3S0SE7maK
+	nR+OJRgihi/IHLJthph1ZRmmy4hcomhnfiUKnHtA81+t7eJJABCzG7jwp1WfORcJqa8I8HQj2rt
+	xT8uFXxCnqmyjyQY2GHB3tF4wjYnf9yv5RN6SM3BclbV1GiOq7VlF2eOe1RmsC59/EszFz7m/hU
+	3HbJegN97lb+W2SHfktljbA5gLMcdct1ODRyjsh50Xbly9JTkHKV0v/U
+X-Google-Smtp-Source: AGHT+IHx452QUcQ50JNdz8iXNSQilMKwUd4fVnA5wB1quLhPZnMwRd8x17z5rpX7t8/Vn6MdMihR6Q==
+X-Received: by 2002:a05:6000:2085:b0:3a3:ec58:ea41 with SMTP id ffacd0b85a97d-3a3ec58eb7dmr11166636f8f.48.1747997308045;
+        Fri, 23 May 2025 03:48:28 -0700 (PDT)
+Received: from [192.168.1.3] ([37.18.136.128])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a3674fed67sm21892603f8f.89.2025.05.23.03.48.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 May 2025 03:48:27 -0700 (PDT)
+Message-ID: <4763aca8-a140-4291-b12e-e03cc0d82bdd@linaro.org>
+Date: Fri, 23 May 2025 11:48:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] perf test: Support arch-specific shell tests
+To: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+References: <20250522171044.1075583-1-namhyung@kernel.org>
+ <CAP-5=fXDaKueO9HE-Gr3Q7R6qm2EjwnL845nh7R2OU+DCfrhyA@mail.gmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <CAP-5=fXDaKueO9HE-Gr3Q7R6qm2EjwnL845nh7R2OU+DCfrhyA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   088d13246a4672bc03aec664675138e3f5bff68c
-commit: a52dcec56c5b96250f15efbd7de3d3ea6ce863d9 mm/mglru: fix PTE-mapped large folios
-config: sparc-randconfig-r073-20250515 (https://download.01.org/0day-ci/archive/20250515/202505152339.fBOfDPsi-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 8.5.0
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202505152339.fBOfDPsi-lkp@intel.com/
 
-smatch warnings:
-mm/vmscan.c:3504 walk_pte_range() error: uninitialized symbol 'dirty'.
-mm/vmscan.c:3595 walk_pmd_range_locked() error: uninitialized symbol 'dirty'.
-mm/vmscan.c:4215 lru_gen_look_around() error: uninitialized symbol 'dirty'.
+On 22/05/2025 9:09 pm, Ian Rogers wrote:
+> On Thu, May 22, 2025 at 10:10 AM Namhyung Kim <namhyung@kernel.org> wrote:
+>>
+>> This is a preparation for shell tests belong to an arch.
+> 
+> I keep repeating that I don't like arch and I think ideally we'd be
+> getting rid of the C arch tests. I just sent out a patch doing this
+> for 1 test:
+> https://lore.kernel.org/lkml/20250521165317.713463-2-irogers@google.com/
+> We should be able to make perf, tests, etc. dependent on a PMU rather
+> than an architecture. This means that running perf built for ARM will
+> be able to do things running on an instruction emulator on x86. It
 
-vim +/dirty +3504 mm/vmscan.c
+In this case for Arm SPE and Coresight you can only generate trace by 
+running on a full model or a real CPU, so I'm not sure if we could ever 
+get close to running on just an emulator.
 
-bd74fdaea14602 Yu Zhao        2022-09-18  3450  static bool walk_pte_range(pmd_t *pmd, unsigned long start, unsigned long end,
-bd74fdaea14602 Yu Zhao        2022-09-18  3451  			   struct mm_walk *args)
-bd74fdaea14602 Yu Zhao        2022-09-18  3452  {
-bd74fdaea14602 Yu Zhao        2022-09-18  3453  	int i;
-a52dcec56c5b96 Yu Zhao        2024-12-30  3454  	bool dirty;
-bd74fdaea14602 Yu Zhao        2022-09-18  3455  	pte_t *pte;
-bd74fdaea14602 Yu Zhao        2022-09-18  3456  	spinlock_t *ptl;
-bd74fdaea14602 Yu Zhao        2022-09-18  3457  	unsigned long addr;
-bd74fdaea14602 Yu Zhao        2022-09-18  3458  	int total = 0;
-bd74fdaea14602 Yu Zhao        2022-09-18  3459  	int young = 0;
-a52dcec56c5b96 Yu Zhao        2024-12-30  3460  	struct folio *last = NULL;
-bd74fdaea14602 Yu Zhao        2022-09-18  3461  	struct lru_gen_mm_walk *walk = args->private;
-bd74fdaea14602 Yu Zhao        2022-09-18  3462  	struct mem_cgroup *memcg = lruvec_memcg(walk->lruvec);
-bd74fdaea14602 Yu Zhao        2022-09-18  3463  	struct pglist_data *pgdat = lruvec_pgdat(walk->lruvec);
-cc25bbe10a86a7 Kinsey Ho      2024-02-14  3464  	DEFINE_MAX_SEQ(walk->lruvec);
-a52dcec56c5b96 Yu Zhao        2024-12-30  3465  	int gen = lru_gen_from_seq(max_seq);
-2441774f2d2890 Qi Zheng       2024-09-26  3466  	pmd_t pmdval;
-bd74fdaea14602 Yu Zhao        2022-09-18  3467  
-a52dcec56c5b96 Yu Zhao        2024-12-30  3468  	pte = pte_offset_map_rw_nolock(args->mm, pmd, start & PMD_MASK, &pmdval, &ptl);
-52fc048320adf1 Hugh Dickins   2023-06-08  3469  	if (!pte)
-52fc048320adf1 Hugh Dickins   2023-06-08  3470  		return false;
-a52dcec56c5b96 Yu Zhao        2024-12-30  3471  
-52fc048320adf1 Hugh Dickins   2023-06-08  3472  	if (!spin_trylock(ptl)) {
-52fc048320adf1 Hugh Dickins   2023-06-08  3473  		pte_unmap(pte);
-a52dcec56c5b96 Yu Zhao        2024-12-30  3474  		return true;
-52fc048320adf1 Hugh Dickins   2023-06-08  3475  	}
-bd74fdaea14602 Yu Zhao        2022-09-18  3476  
-2441774f2d2890 Qi Zheng       2024-09-26  3477  	if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(pmd)))) {
-2441774f2d2890 Qi Zheng       2024-09-26  3478  		pte_unmap_unlock(pte, ptl);
-2441774f2d2890 Qi Zheng       2024-09-26  3479  		return false;
-2441774f2d2890 Qi Zheng       2024-09-26  3480  	}
-2441774f2d2890 Qi Zheng       2024-09-26  3481  
-bd74fdaea14602 Yu Zhao        2022-09-18  3482  	arch_enter_lazy_mmu_mode();
-bd74fdaea14602 Yu Zhao        2022-09-18  3483  restart:
-bd74fdaea14602 Yu Zhao        2022-09-18  3484  	for (i = pte_index(start), addr = start; addr != end; i++, addr += PAGE_SIZE) {
-bd74fdaea14602 Yu Zhao        2022-09-18  3485  		unsigned long pfn;
-bd74fdaea14602 Yu Zhao        2022-09-18  3486  		struct folio *folio;
-c33c794828f212 Ryan Roberts   2023-06-12  3487  		pte_t ptent = ptep_get(pte + i);
-bd74fdaea14602 Yu Zhao        2022-09-18  3488  
-bd74fdaea14602 Yu Zhao        2022-09-18  3489  		total++;
-bd74fdaea14602 Yu Zhao        2022-09-18  3490  		walk->mm_stats[MM_LEAF_TOTAL]++;
-bd74fdaea14602 Yu Zhao        2022-09-18  3491  
-1d4832becdc2cd Yu Zhao        2024-10-19  3492  		pfn = get_pte_pfn(ptent, args->vma, addr, pgdat);
-bd74fdaea14602 Yu Zhao        2022-09-18  3493  		if (pfn == -1)
-bd74fdaea14602 Yu Zhao        2022-09-18  3494  			continue;
-bd74fdaea14602 Yu Zhao        2022-09-18  3495  
-798c0330c2ca07 Yu Zhao        2024-12-30  3496  		folio = get_pfn_folio(pfn, memcg, pgdat);
-bd74fdaea14602 Yu Zhao        2022-09-18  3497  		if (!folio)
-bd74fdaea14602 Yu Zhao        2022-09-18  3498  			continue;
-bd74fdaea14602 Yu Zhao        2022-09-18  3499  
-1d4832becdc2cd Yu Zhao        2024-10-19  3500  		if (!ptep_clear_young_notify(args->vma, addr, pte + i))
-1d4832becdc2cd Yu Zhao        2024-10-19  3501  			continue;
-bd74fdaea14602 Yu Zhao        2022-09-18  3502  
-a52dcec56c5b96 Yu Zhao        2024-12-30  3503  		if (last != folio) {
-a52dcec56c5b96 Yu Zhao        2024-12-30 @3504  			walk_update_folio(walk, last, gen, dirty);
-                                                                                                           ^^^^^
-Potentially uninitialized.
+> means the tool, the kernel APIs, etc. are generic and new
+> architectures like RISC-V can test things. It means cross-platform
+> (record on 1 machine type, report on another) can work without
+> tripping over load bearing architecture ifdefs. It means that we
 
-It's weird that I didn't report this in Jan because it seems like a
-reasonable warning.  Sorry for that.
+I have thought about adding some generic decoding side tests for SPE and 
+Coresight, but couldn't really get past the fact that you need to put 
+the trace dump _and_ the binaries traced into the git repo. Not only 
+would this benefit testing on other arches like you say, but it would 
+also lock down that decoding of a known file doesn't regress which we 
+can't currently do by generating new trace every time the test runs.
 
-bd74fdaea14602 Yu Zhao        2022-09-18  3505  
-a52dcec56c5b96 Yu Zhao        2024-12-30  3506  			last = folio;
-a52dcec56c5b96 Yu Zhao        2024-12-30  3507  			dirty = false;
-a52dcec56c5b96 Yu Zhao        2024-12-30  3508  		}
-bd74fdaea14602 Yu Zhao        2022-09-18  3509  
-a52dcec56c5b96 Yu Zhao        2024-12-30  3510  		if (pte_dirty(ptent))
-a52dcec56c5b96 Yu Zhao        2024-12-30  3511  			dirty = true;
-a52dcec56c5b96 Yu Zhao        2024-12-30  3512  
-a52dcec56c5b96 Yu Zhao        2024-12-30  3513  		young++;
-a52dcec56c5b96 Yu Zhao        2024-12-30  3514  		walk->mm_stats[MM_LEAF_YOUNG]++;
-bd74fdaea14602 Yu Zhao        2022-09-18  3515  	}
-bd74fdaea14602 Yu Zhao        2022-09-18  3516  
-a52dcec56c5b96 Yu Zhao        2024-12-30  3517  	walk_update_folio(walk, last, gen, dirty);
-a52dcec56c5b96 Yu Zhao        2024-12-30  3518  	last = NULL;
-a52dcec56c5b96 Yu Zhao        2024-12-30  3519  
-bd74fdaea14602 Yu Zhao        2022-09-18  3520  	if (i < PTRS_PER_PTE && get_next_vma(PMD_MASK, PAGE_SIZE, args, &start, &end))
-bd74fdaea14602 Yu Zhao        2022-09-18  3521  		goto restart;
-bd74fdaea14602 Yu Zhao        2022-09-18  3522  
-bd74fdaea14602 Yu Zhao        2022-09-18  3523  	arch_leave_lazy_mmu_mode();
-52fc048320adf1 Hugh Dickins   2023-06-08  3524  	pte_unmap_unlock(pte, ptl);
-bd74fdaea14602 Yu Zhao        2022-09-18  3525  
-bd74fdaea14602 Yu Zhao        2022-09-18  3526  	return suitable_to_scan(total, young);
-bd74fdaea14602 Yu Zhao        2022-09-18  3527  }
-bd74fdaea14602 Yu Zhao        2022-09-18  3528  
-b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3529  static void walk_pmd_range_locked(pud_t *pud, unsigned long addr, struct vm_area_struct *vma,
-b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3530  				  struct mm_walk *args, unsigned long *bitmap, unsigned long *first)
-bd74fdaea14602 Yu Zhao        2022-09-18  3531  {
-bd74fdaea14602 Yu Zhao        2022-09-18  3532  	int i;
-a52dcec56c5b96 Yu Zhao        2024-12-30  3533  	bool dirty;
-bd74fdaea14602 Yu Zhao        2022-09-18  3534  	pmd_t *pmd;
-bd74fdaea14602 Yu Zhao        2022-09-18  3535  	spinlock_t *ptl;
-a52dcec56c5b96 Yu Zhao        2024-12-30  3536  	struct folio *last = NULL;
-bd74fdaea14602 Yu Zhao        2022-09-18  3537  	struct lru_gen_mm_walk *walk = args->private;
-bd74fdaea14602 Yu Zhao        2022-09-18  3538  	struct mem_cgroup *memcg = lruvec_memcg(walk->lruvec);
-bd74fdaea14602 Yu Zhao        2022-09-18  3539  	struct pglist_data *pgdat = lruvec_pgdat(walk->lruvec);
-cc25bbe10a86a7 Kinsey Ho      2024-02-14  3540  	DEFINE_MAX_SEQ(walk->lruvec);
-a52dcec56c5b96 Yu Zhao        2024-12-30  3541  	int gen = lru_gen_from_seq(max_seq);
-bd74fdaea14602 Yu Zhao        2022-09-18  3542  
-bd74fdaea14602 Yu Zhao        2022-09-18  3543  	VM_WARN_ON_ONCE(pud_leaf(*pud));
-bd74fdaea14602 Yu Zhao        2022-09-18  3544  
-bd74fdaea14602 Yu Zhao        2022-09-18  3545  	/* try to batch at most 1+MIN_LRU_BATCH+1 entries */
-b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3546  	if (*first == -1) {
-b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3547  		*first = addr;
-b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3548  		bitmap_zero(bitmap, MIN_LRU_BATCH);
-bd74fdaea14602 Yu Zhao        2022-09-18  3549  		return;
-bd74fdaea14602 Yu Zhao        2022-09-18  3550  	}
-bd74fdaea14602 Yu Zhao        2022-09-18  3551  
-b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3552  	i = addr == -1 ? 0 : pmd_index(addr) - pmd_index(*first);
-bd74fdaea14602 Yu Zhao        2022-09-18  3553  	if (i && i <= MIN_LRU_BATCH) {
-bd74fdaea14602 Yu Zhao        2022-09-18  3554  		__set_bit(i - 1, bitmap);
-bd74fdaea14602 Yu Zhao        2022-09-18  3555  		return;
-bd74fdaea14602 Yu Zhao        2022-09-18  3556  	}
-bd74fdaea14602 Yu Zhao        2022-09-18  3557  
-b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3558  	pmd = pmd_offset(pud, *first);
-bd74fdaea14602 Yu Zhao        2022-09-18  3559  
-bd74fdaea14602 Yu Zhao        2022-09-18  3560  	ptl = pmd_lockptr(args->mm, pmd);
-bd74fdaea14602 Yu Zhao        2022-09-18  3561  	if (!spin_trylock(ptl))
-bd74fdaea14602 Yu Zhao        2022-09-18  3562  		goto done;
-bd74fdaea14602 Yu Zhao        2022-09-18  3563  
-bd74fdaea14602 Yu Zhao        2022-09-18  3564  	arch_enter_lazy_mmu_mode();
-bd74fdaea14602 Yu Zhao        2022-09-18  3565  
-bd74fdaea14602 Yu Zhao        2022-09-18  3566  	do {
-bd74fdaea14602 Yu Zhao        2022-09-18  3567  		unsigned long pfn;
-bd74fdaea14602 Yu Zhao        2022-09-18  3568  		struct folio *folio;
-b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3569  
-b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3570  		/* don't round down the first address */
-b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3571  		addr = i ? (*first & PMD_MASK) + i * PMD_SIZE : *first;
-bd74fdaea14602 Yu Zhao        2022-09-18  3572  
-1d4832becdc2cd Yu Zhao        2024-10-19  3573  		if (!pmd_present(pmd[i]))
-bd74fdaea14602 Yu Zhao        2022-09-18  3574  			goto next;
-bd74fdaea14602 Yu Zhao        2022-09-18  3575  
-bd74fdaea14602 Yu Zhao        2022-09-18  3576  		if (!pmd_trans_huge(pmd[i])) {
-1d4832becdc2cd Yu Zhao        2024-10-19  3577  			if (!walk->force_scan && should_clear_pmd_young() &&
-1d4832becdc2cd Yu Zhao        2024-10-19  3578  			    !mm_has_notifiers(args->mm))
-bd74fdaea14602 Yu Zhao        2022-09-18  3579  				pmdp_test_and_clear_young(vma, addr, pmd + i);
-bd74fdaea14602 Yu Zhao        2022-09-18  3580  			goto next;
-bd74fdaea14602 Yu Zhao        2022-09-18  3581  		}
-bd74fdaea14602 Yu Zhao        2022-09-18  3582  
-1d4832becdc2cd Yu Zhao        2024-10-19  3583  		pfn = get_pmd_pfn(pmd[i], vma, addr, pgdat);
-1d4832becdc2cd Yu Zhao        2024-10-19  3584  		if (pfn == -1)
-1d4832becdc2cd Yu Zhao        2024-10-19  3585  			goto next;
-1d4832becdc2cd Yu Zhao        2024-10-19  3586  
-798c0330c2ca07 Yu Zhao        2024-12-30  3587  		folio = get_pfn_folio(pfn, memcg, pgdat);
-bd74fdaea14602 Yu Zhao        2022-09-18  3588  		if (!folio)
-bd74fdaea14602 Yu Zhao        2022-09-18  3589  			goto next;
-bd74fdaea14602 Yu Zhao        2022-09-18  3590  
-1d4832becdc2cd Yu Zhao        2024-10-19  3591  		if (!pmdp_clear_young_notify(vma, addr, pmd + i))
-bd74fdaea14602 Yu Zhao        2022-09-18  3592  			goto next;
-bd74fdaea14602 Yu Zhao        2022-09-18  3593  
-a52dcec56c5b96 Yu Zhao        2024-12-30  3594  		if (last != folio) {
-a52dcec56c5b96 Yu Zhao        2024-12-30 @3595  			walk_update_folio(walk, last, gen, dirty);
+If we ever added this they would be separate tests though so they could 
+go in the top level folder, where the ones in the arch folder would 
+continue to do record and decode. Maybe naming the folders by PMU could 
+work, but you could also have both PMU name and arch name folders like:
 
-Same.
+Recording/requires hardware:
 
-bd74fdaea14602 Yu Zhao        2022-09-18  3596  
-a52dcec56c5b96 Yu Zhao        2024-12-30  3597  			last = folio;
-a52dcec56c5b96 Yu Zhao        2024-12-30  3598  			dirty = false;
-a52dcec56c5b96 Yu Zhao        2024-12-30  3599  		}
-bd74fdaea14602 Yu Zhao        2022-09-18  3600  
-a52dcec56c5b96 Yu Zhao        2024-12-30  3601  		if (pmd_dirty(pmd[i]))
-a52dcec56c5b96 Yu Zhao        2024-12-30  3602  			dirty = true;
-a52dcec56c5b96 Yu Zhao        2024-12-30  3603  
-a52dcec56c5b96 Yu Zhao        2024-12-30  3604  		walk->mm_stats[MM_LEAF_YOUNG]++;
-bd74fdaea14602 Yu Zhao        2022-09-18  3605  next:
-bd74fdaea14602 Yu Zhao        2022-09-18  3606  		i = i > MIN_LRU_BATCH ? 0 : find_next_bit(bitmap, MIN_LRU_BATCH, i) + 1;
-bd74fdaea14602 Yu Zhao        2022-09-18  3607  	} while (i <= MIN_LRU_BATCH);
-bd74fdaea14602 Yu Zhao        2022-09-18  3608  
-a52dcec56c5b96 Yu Zhao        2024-12-30  3609  	walk_update_folio(walk, last, gen, dirty);
-a52dcec56c5b96 Yu Zhao        2024-12-30  3610  
-bd74fdaea14602 Yu Zhao        2022-09-18  3611  	arch_leave_lazy_mmu_mode();
-bd74fdaea14602 Yu Zhao        2022-09-18  3612  	spin_unlock(ptl);
-bd74fdaea14602 Yu Zhao        2022-09-18  3613  done:
-b5ff4133617d0e T.J. Alumbaugh 2023-01-18  3614  	*first = -1;
-bd74fdaea14602 Yu Zhao        2022-09-18  3615  }
+   tools/perf/arch/arm64/tests/shell/cs_etm/
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cross platform decode tests:
 
+   tools/perf/tests/shell/cs_etm/
+
+Which would mirror how the source files are currently laid out:
+
+  tools/perf/arch/arm/util/cs-etm.c
+  tools/perf/util/cs-etm.c
+
+Thanks
+James
+
+> benefit from more testing on generic pieces of code on all
+> architectures - like sample parsing. We can always strcmp the PMU name
+> or the architecture at runtime.
+> 
+> Structure wise we could have:
+> tools/perf/pmu/ibs_op/tests/
+> tools/perf/pmu/ibs_op/tests/shell
+> 
+> It feels noisy compared to just having the shell test in
+> tools/perf/tests/shell skip when the PMU isn't present. There are also
+> things like library dependencies that aren't clear when we have >1
+> directory. I'd prefer if new testing followed the existing model
+> rather than this.
+> 
+> Thanks,
+> Ian
+> 
 
