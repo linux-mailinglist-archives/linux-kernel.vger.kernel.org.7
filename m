@@ -1,163 +1,136 @@
-Return-Path: <linux-kernel+bounces-660742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF6C9AC2181
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:50:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 981EBAC21EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7EE01B66D45
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:50:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CF3A1B66ECB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4E122A4E9;
-	Fri, 23 May 2025 10:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FLHW9TqF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B3F14A627;
-	Fri, 23 May 2025 10:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6955E22DF9D;
+	Fri, 23 May 2025 11:20:50 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5475422A4F0;
+	Fri, 23 May 2025 11:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747997426; cv=none; b=bhfLKrOzclQIlO7VCmDEnTKXqsFJhnpZghNbHcE0HByE8KtLpEMktG1y7XgrH+iVTwfVbsKyZ0GRcfD2k/2MnK+B1Zi+rhNCSeWOaOF85QdazoKYj1HG7UOQBy9e9fZP20EjXzlnFJXgfqFRkJ2O23BYpQRhhg4VqojddSsW3xU=
+	t=1747999250; cv=none; b=rpfyIWXfHVWiQrF8JxF5Sxk5PAwgacj6Ld7KeWlc2QhD6ceNQp7Qn1P6nPdwFov628V/m7m42l6kUqDr2h2aIEZ33dTuNDD0DwSAY9rhqySvd4C89AaO4k0sKyCZfaVpNX5hNBWedwYKIEbNfxn5KDYzFd2KVDbSHD5JZC8O8Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747997426; c=relaxed/simple;
-	bh=ItwvRkhTT2c2vOcsnAS+TQJbapv+gHHQ9cnv1sPZbsQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vFn5hbgr9bvxbH5NZReJ/yQS4DcW+9V5htSYGv+xS4qB3BBZXs0xU37S53hA+Ld2ueWbOuZqXWuSvrdfchERjC/zlhp0UqwYk4Bi99QqSemjSQEH9U4BOsDatyjmTnpSgNXfKUUp9zlO5LT71tMTSfH/AZkbvJudSJ+yr62NA9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FLHW9TqF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF6FC4CEEA;
-	Fri, 23 May 2025 10:50:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747997426;
-	bh=ItwvRkhTT2c2vOcsnAS+TQJbapv+gHHQ9cnv1sPZbsQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FLHW9TqFjJVITGyGJaV2Fl04y5ckg+KCuKKkQpFLZSZT4FVBOP4Y0b6EPZSB1105M
-	 9BRZ8fXqdHFxBsDn6eAaoF/vAGyUMosQjffWqmRp+qOoZjpgw/Wzb9clskNU7fF35q
-	 6C590MkglnURG+bgUtx/9pmPR7iRtqVbZ05em/xtVlqOglkhLARsz3eUEF0bCtbOi2
-	 1HNl+D5u1h8atcgyO7gXOVlShHIZI/Ix0dARFKP7eQfnZPQN2W+kn5luW2sZ7uJwAj
-	 R0nztJU1Ax0j1drIQPWKPcYQlQXPJ5hdZ3zN4De7rsCFG6ZrtpRjkUddI28qgFNov6
-	 xeXoWV7OrDUmw==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-604ad6c4d3dso3183654eaf.0;
-        Fri, 23 May 2025 03:50:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWeJ9ZH37m+A+sD4C70C5YUzDZzyckhQ3SnmFPW0/kENn9nU5ugXBF/Xh2AbU71SVIsYgze5TXoCL+lBEXA@vger.kernel.org, AJvYcCXTHkTGoe8VbK/QXjoxNKxrX7kpcK7asUMHcyBrmEIu6HVNazI3DUcpw7wsJGr0tEBDYNSjUXF+91Jy@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNGVYbgCE6I//3+DmI2Zp7XuOUNMSik8zLWrIhyFRVxO7F7nrG
-	5bjbfTShR2l/MtRVYiQ4GUAlxvCG7rBPJLSBB7GnHtGvNp6NUYzM0Eg8OqaWqqh/VLi25PojSnb
-	YoaHYlLVjvmVXl9ZcNL5cx2F9P3Ivt8s=
-X-Google-Smtp-Source: AGHT+IGRYoi8FvCDeVJW5bpz6ccEXrPNWeRojPzXCCPt1ZQOkm62FHpUPClgAcFymrz8Ta6H/88yteDUITwuy21OwY8=
-X-Received: by 2002:a4a:ec44:0:b0:608:3f1d:bbdb with SMTP id
- 006d021491bc7-60b95417fafmr1181273eaf.8.1747997425506; Fri, 23 May 2025
- 03:50:25 -0700 (PDT)
+	s=arc-20240116; t=1747999250; c=relaxed/simple;
+	bh=D5m9mjlqCvHyLg3xU/I4oNYkRM182PIux4X7sbU/rBI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Aafev/shQp0wH8ConsGAU7vD8objnhqOsNkY7miM4rHRS0hAAmMAFf1GYfotQKIefFoceK/EcbMQLop/PmC836pdIuIPpHd129VdCkxWJznU3VuoOMY3VRSjPDu04uQWQlmO4H3iBxJmmQfRGdWIrio7jtciFFaZy5NfzoJZLwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4b3hmd3T2Mz9vXt;
+	Fri, 23 May 2025 12:51:45 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id x6OGEq_bauYM; Fri, 23 May 2025 12:51:45 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4b3hmd2TkFz9vXs;
+	Fri, 23 May 2025 12:51:45 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4884C8B769;
+	Fri, 23 May 2025 12:51:45 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id p6vSVHiM0Uvz; Fri, 23 May 2025 12:51:45 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 08E138B763;
+	Fri, 23 May 2025 12:51:43 +0200 (CEST)
+Message-ID: <8ad901c3-3fcb-4643-ac5a-c1f30f93d07f@csgroup.eu>
+Date: Fri, 23 May 2025 12:51:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250522141410.31315-1-alexghiti@rivosinc.com>
- <91458376-dfc7-46fc-8523-aa176907d703@gmx.de> <83e02a52-86ad-45e5-ba87-6c17dc6f59b5@ghiti.fr>
-In-Reply-To: <83e02a52-86ad-45e5-ba87-6c17dc6f59b5@ghiti.fr>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 23 May 2025 12:50:13 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iPVx0KXB5qQ46iQ7CKG6KJC1CnXogQ=e8or24vZuytrw@mail.gmail.com>
-X-Gm-Features: AX0GCFs9rXtmQ9GPe95j5ovoZSpmZkfTNbNUc6PIZtkLQ9LMDWe_nnToU3ojthc
-Message-ID: <CAJZ5v0iPVx0KXB5qQ46iQ7CKG6KJC1CnXogQ=e8or24vZuytrw@mail.gmail.com>
-Subject: Re: [PATCH] drivers: acpi: Fix platform profile driver on !acpi platforms
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Armin Wolf <W_Armin@gmx.de>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, May 23, 2025 at 12:11=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wr=
-ote:
->
-> On 5/22/25 22:04, Armin Wolf wrote:
-> > Am 22.05.25 um 16:13 schrieb Alexandre Ghiti:
-> >
-> >> The platform profile driver is loaded even on platforms that do not ha=
-ve
-> >> acpi enabled. The initialization of the sysfs entries was recently mov=
-ed
-> >> from platform_profile_register() to the module init call, and those
-> >> entries need acpi_kobj to be initialized which is not the case when ac=
-pi
-> >> is disabled.
-> >>
-> >> This results in the following warning:
-> >>
-> >>   WARNING: CPU: 5 PID: 1 at fs/sysfs/group.c:131
-> >> internal_create_group+0xa22/0xdd8
-> >>   Modules linked in:
-> >>   CPU: 5 UID: 0 PID: 1 Comm: swapper/0 Tainted: G W
-> >> 6.15.0-rc7-dirty #6 PREEMPT
-> >>   Tainted: [W]=3DWARN
-> >>   Hardware name: riscv-virtio,qemu (DT)
-> >>   epc : internal_create_group+0xa22/0xdd8
-> >>    ra : internal_create_group+0xa22/0xdd8
-> >>
-> >>   Call Trace:
-> >>
-> >>   internal_create_group+0xa22/0xdd8
-> >>   sysfs_create_group+0x22/0x2e
-> >>   platform_profile_init+0x74/0xb2
-> >>   do_one_initcall+0x198/0xa9e
-> >>   kernel_init_freeable+0x6d8/0x780
-> >>   kernel_init+0x28/0x24c
-> >>   ret_from_fork+0xe/0x18
-> >>
-> >> Fix this by checking if acpi is enabled before trying to create sysfs
-> >> entries.
-> >
-> > I already submitted a patch for this problem (see
-> > https://lore.kernel.org/linux-acpi/a6d92cdd-4dc3-4080-9ed9-5b1f02f247e0=
-@gmx.de/T/)
-> > that only disables the legacy sysfs interface while keeping the
-> > class-based interface functional
-> > as it does not depend on ACPI at all.
->
->
-> Great, I understand if your patchset is not merged for rc1 but it would
-> be nice to have it merged in 6.16 though to fix riscv syzkaller
-> instance. Perhaps you could add the Fixes tag that Arnd mentioned too?
-
-I actually prefer your patch to the Armin's one because there are
-questions regarding the latter (see the most recent message from Arnd
-in this thread).
-
-Thanks!
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] ASoC: aoa: Use helper function
+ for_each_child_of_node_scoped()
+To: Ai Chao <aichao@kylinos.cn>, perex@perex.cz, tiwai@suse.com,
+ johannes@sipsolutions.net, kuninori.morimoto.gx@renesas.com,
+ lgirdwood@gmail.com, broonie@kernel.org, jbrunet@baylibre.com,
+ neil.armstrong@linaro.org, khilman@baylibre.com,
+ martin.blumenstingl@googlemail.com, shengjiu.wang@gmail.com,
+ Xiubo.Lee@gmail.com, festevam@gmail.com, nicoleotsuka@gmail.com,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, srinivas.kandagatla@linaro.org
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ imx@lists.linux.dev, kernel@pengutronix.de, linux-arm-msm@vger.kernel.org
+References: <20250522050300.519244-1-aichao@kylinos.cn>
+ <20250522050300.519244-3-aichao@kylinos.cn>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250522050300.519244-3-aichao@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-> >> Fixes: 77be5cacb2c2 ("ACPI: platform_profile: Create class for ACPI
-> >> platform profile")
-> >> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> >> ---
-> >>   drivers/acpi/platform_profile.c | 3 +++
-> >>   1 file changed, 3 insertions(+)
-> >>
-> >> diff --git a/drivers/acpi/platform_profile.c
-> >> b/drivers/acpi/platform_profile.c
-> >> index ffbfd32f4cf1..b43f4459a4f6 100644
-> >> --- a/drivers/acpi/platform_profile.c
-> >> +++ b/drivers/acpi/platform_profile.c
-> >> @@ -688,6 +688,9 @@ static int __init platform_profile_init(void)
-> >>   {
-> >>       int err;
-> >>   +    if (acpi_disabled)
-> >> +        return -EOPNOTSUPP;
-> >> +
-> >>       err =3D class_register(&platform_profile_class);
-> >>       if (err)
-> >>           return err;
-> >
-> > _______________________________________________
-> > linux-riscv mailing list
-> > linux-riscv@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+
+Le 22/05/2025 à 07:02, Ai Chao a écrit :
+> The for_each_child_of_node_scoped() helper provides a scope-based
+> clean-up functionality to put the device_node automatically, and
+> as such, there is no need to call of_node_put() directly.
+
+I don't understand this explanation.
+
+You say "no need to call of_node_put()" and the only thing you do in 
+addition to changing from for_each_child_of_node() to 
+for_each_child_of_node_scoped() is to _add_ a new call to of_node_put().
+
+I would expect to see a _removal_ of some of_node_put() when I read your 
+description.
+
+Christophe
+
+> 
+> Thus, use this helper to simplify the code.
+> 
+> Signed-off-by: Ai Chao <aichao@kylinos.cn>
+> ---
+>   sound/aoa/soundbus/i2sbus/core.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/aoa/soundbus/i2sbus/core.c b/sound/aoa/soundbus/i2sbus/core.c
+> index ce84288168e4..20a4c5891afc 100644
+> --- a/sound/aoa/soundbus/i2sbus/core.c
+> +++ b/sound/aoa/soundbus/i2sbus/core.c
+> @@ -207,6 +207,8 @@ static int i2sbus_add_dev(struct macio_dev *macio,
+>   			}
+>   		}
+>   	}
+> +	of_node_put(sound);
+> +
+>   	/* for the time being, until we can handle non-layout-id
+>   	 * things in some fabric, refuse to attach if there is no
+>   	 * layout-id property or we haven't been forced to attach.
+> @@ -335,7 +337,6 @@ static int i2sbus_add_dev(struct macio_dev *macio,
+>   
+>   static int i2sbus_probe(struct macio_dev* dev, const struct of_device_id *match)
+>   {
+> -	struct device_node *np;
+>   	int got = 0, err;
+>   	struct i2sbus_control *control = NULL;
+>   
+> @@ -347,7 +348,7 @@ static int i2sbus_probe(struct macio_dev* dev, const struct of_device_id *match)
+>   		return -ENODEV;
+>   	}
+>   
+> -	for_each_child_of_node(dev->ofdev.dev.of_node, np) {
+> +	for_each_child_of_node_scoped(dev->ofdev.dev.of_node, np) {
+>   		if (of_device_is_compatible(np, "i2sbus") ||
+>   		    of_device_is_compatible(np, "i2s-modem")) {
+>   			got += i2sbus_add_dev(dev, control, np);
+
 
