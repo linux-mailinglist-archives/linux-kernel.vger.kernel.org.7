@@ -1,207 +1,170 @@
-Return-Path: <linux-kernel+bounces-661320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C8AAC2961
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 20:16:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33C99AC2968
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 20:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 338D81C046C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:16:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4CBA188D96F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BF9296FCE;
-	Fri, 23 May 2025 18:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530592989BC;
+	Fri, 23 May 2025 18:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="f43sUQSL"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="T/pjEece"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7120829AAE7
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 18:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1126297B68
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 18:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748024135; cv=none; b=cEPTryeL/dOJ/2bNQbA6uzxgFWSm2ntjAmcgYMnXyBR4oMs3ZgZDQ0cbvGp8VNTaY6Ppzj4UFWcxPg4Bg/s3vk4cx74Qmwe1Xl6DBaFDjoQ5I5YVm8nWSFa5pw4nDLCSKEYLj5eWbt186BOakepWbEcajWXsPyZqhcA8SDk91cY=
+	t=1748024192; cv=none; b=p4qXe+NdUVLap7yVvNKa9JN90vQ7S+hqRV8Mg7EghqUKpD6A1yji+2HJB9RY4JqSDS4Cl0qGycHYQH6qsmzrXAsIojSaS0O7v2atBXDRA/hI+Pq8VZupCL+wqebVhfnZUlqrLJTpsVRCIk0X5Z5pJ1QesJPNCa3atR8DFEG0QA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748024135; c=relaxed/simple;
-	bh=5oX9Rmj3klh97hVy6nCpHS7vtK+pbqvHEGA1kWNSTeg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XRI3iMjmsdMRaHYZuTJE/fssfr9cPeRmJcaSWRfm/mv4Fdhm7F2+/Dc71FnAiXYIUV3VaKCml0qegGg4erQPmxvXHjD8tcvpzkXCVGiC0I6ny0nOYDbaWQXXxMQTs2AI5lKnaUV9DOKa2khjScfi8Uz0U+DmvkxTV766yILck54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=f43sUQSL; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54NGWMip020876;
-	Fri, 23 May 2025 18:15:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=DKP2mXJ0kjW2nE9c6
-	1Isby21HssLLGbAvp7HWzQSgLU=; b=f43sUQSL8/KHnPbKIa4e4xWuQkuf9fdjd
-	2lN+hUYdRNdmBZHAsXrh2R8g+d/w/nmb4l51mEdTdKbUPrJAMoKgQQ4TnvvIw+qc
-	QxpOZqPZNM+Xlrju9UrGisYEexeDuRz90ZvSS7JDMMJly/iQXqJ7KCYbXjvl+KeB
-	efdYhTBGfjTtCByQRbP+ZTcPORVERc2qh6jaeWXw1526/lgflulR055Pf5WhxUEP
-	d5pVbm/BCbbtDnk239szKTNz12DXv+5LRWAeTy5PkBGUViFdGGJxzH6OoRIcUrts
-	ALo90yB8LutzVvCZ/f8Kb39Kuu4mqfPoEpqDI6Sf+xGKkTorVXJTg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46t9m7wsw1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 18:15:23 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54NIFMsB011862;
-	Fri, 23 May 2025 18:15:22 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46t9m7wsvx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 18:15:22 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54NIBrHn032066;
-	Fri, 23 May 2025 18:15:21 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46rwmqfvhv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 18:15:21 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54NIFHrI48234990
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 23 May 2025 18:15:17 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AAED02004F;
-	Fri, 23 May 2025 18:15:17 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3B3DF20040;
-	Fri, 23 May 2025 18:15:14 +0000 (GMT)
-Received: from li-7bb28a4c-2dab-11b2-a85c-887b5c60d769.ibm.com.com (unknown [9.124.221.90])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 23 May 2025 18:15:14 +0000 (GMT)
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, tglx@linutronix.de, yury.norov@gmail.com,
-        maddy@linux.ibm.com
-Cc: sshegde@linux.ibm.com, vschneid@redhat.com, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, jstultz@google.com, kprateek.nayak@amd.com,
-        huschle@linux.ibm.com, srikar@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk
-Subject: [DEBUG PATCH 5/5] powerpc: Use manual hint for cpu parking
-Date: Fri, 23 May 2025 23:44:48 +0530
-Message-ID: <20250523181448.3777233-6-sshegde@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250523181448.3777233-1-sshegde@linux.ibm.com>
-References: <20250523181448.3777233-1-sshegde@linux.ibm.com>
+	s=arc-20240116; t=1748024192; c=relaxed/simple;
+	bh=AoLJkqZsq5uG5046rJ0/zN4bd7EWkUTOqm2DlhMuH94=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MIJcrLYBprFEEgtqxaV1WeVyIRa8IsAFm4NMHvBR0OB7BfzLqe68YzvwQXomw39S44M/XqzsRHwxucdghllJPhdLojJNSlNuTaBce7yT6C9bpLwP/u4VTnKv6HaIYaPuyrsa6wsqVA6/ss+7zCjurQ2pTfHIo5B2uD6mDgm3Wc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T/pjEece; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54NE2QNa002269
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 18:16:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+ywgBAXOkOYbHHKdEyT+EsdQ0pIR0wBE1gOJ71wdz5Y=; b=T/pjEecePLaEpPhp
+	KZb2TDjsBd9cD+AwOu7Y7XQfZkyER0KHL2p2xT1ZngK5dfA7P5WNWe2YnM1DMJPB
+	AsDH7rQWhcIOO0fGPL10BO1X02x1z+AeW8mOqPEe0mM0fa7MV+7CPGRSP3TZ20b1
+	DtPtduEcyyPJRO/bUZCeb76yII/gSB2S4z7+haGXmm3srbP9irifBtHMe9R45DYy
+	aNjyAboRJ3rSBR3+CtSoDbwwm8EnBsvOY6J5cDEveleWw4wBZi3t8+nkEuw7OqQV
+	FeRBcCmEe+d2UzHVXUux0JgMamnZqPFjLUqZ2ZnSrvThI34/FLU1VYIJzKQNcEjI
+	NumUOg==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf72ptv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 18:16:29 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6f8bf12828eso227566d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 11:16:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748024188; x=1748628988;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+ywgBAXOkOYbHHKdEyT+EsdQ0pIR0wBE1gOJ71wdz5Y=;
+        b=KI4Kp+ME+Yx6BSPHFuujhbguLsn+cm/LWZ0xP+GTNUIdsG3/1uOPf2y3RJ5VvVqgo0
+         WMgZAsdJVYcDmoKlI0gUAVE3H+7/2izZ6wLJ00PHxTF8ZhA45iDD9zSvI1gAKXwd1oCI
+         j8N8EObdBrfuhinlW3c1ji3zA2lp2dR0/033iZ2a9BQU+swm3CQjwpO0+kBdpu45PM75
+         8tje8V6aGCbpMq++1+ICBgph16UDWVaynzmuZIRI0T8vkJ+lnqko7cI1IXSVQ8TNqXEu
+         gTseQs44EWlTlaEwxeSwx4d5qEYiFEDSKLaadCABOWdoUKj7BP+Ud9BN9K+2x4fCbdFw
+         3PUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJKuakGb0ZBi/kpfVPcMQBm71Fniv4zyTuC+bFeJfXRsM8CDBxFpBmtVFww+igAhwXERuqZeFW5uHNDwU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtFQWG4nXsI9CRuGAlIFJ0f5nqaY3A9+j0T21+Zxgs36tg2vRZ
+	xxIxT4B881spDJaVHzZHV9uteU8cA9Cg1mOoK0a4jjFaslBXIpXzGvfGuuRoIGrjEPjIqqjG5HJ
+	8xdjrv8l9+lmCDJaHWsu0FBTpQOsI5LvRTjhfoVqddt49+Wg5i9T6fiOKOTsZfhmlbII=
+X-Gm-Gg: ASbGncsOgZ6R57MOu9sHppboPKrHzNw+laT5Fr2253avhURRyAnk17tUDr+BIDGBEx9
+	HvNEUn/mgOcW8ueIX+J7+SNsmbnSfHkUgySNC/eeHzKaC6cuoeFz9Kn7dX6tK8aGwQvSq3WDO9Z
+	d4kHxW1PpJOexWCIo6OJ5ouAgasIb5JCnrGcHEo/y7GhVA/51bN2gIZzfbLauxxD51Dxwe8ZCai
+	30tZzwJkaNjXqJwXJ9hMBvPl2QbIUZCXVeCzyqOi/ONoz+LTVzr5x5XUKxxGk2d4W77MtrhcaZs
+	3lJzpftk/VouY2fLk0BbFA6pcFIODI6d2RO7lKxL4393iMeSfl7zF1f7xd1pcYk02g==
+X-Received: by 2002:a05:6214:20c1:b0:6f8:c23c:526b with SMTP id 6a1803df08f44-6fa9ce42c34mr3062816d6.0.1748024188633;
+        Fri, 23 May 2025 11:16:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGsNA2DnPdEjRLVO+yqAXpSZSax7H9Q3S9aSImMU03Zgx6k5+e97rYhPOTC4edA5uBZBYNrAA==
+X-Received: by 2002:a05:6214:20c1:b0:6f8:c23c:526b with SMTP id 6a1803df08f44-6fa9ce42c34mr3062636d6.0.1748024188206;
+        Fri, 23 May 2025 11:16:28 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d4381d5sm1290113766b.99.2025.05.23.11.16.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 May 2025 11:16:27 -0700 (PDT)
+Message-ID: <d0b2f237-b4a6-4ce0-95ea-4bf5f3be10e0@oss.qualcomm.com>
+Date: Fri, 23 May 2025 20:16:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=SMZCVPvH c=1 sm=1 tr=0 ts=6830bb3b cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=L5heHK9TWKRAitwTlzAA:9
-X-Proofpoint-GUID: SGtagqzBv-s_MaMtM2G0TRB7ovplG56S
-X-Proofpoint-ORIG-GUID: o399fyKNSRD8S9xXrHdE4z__l5-TD0wl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDE2NCBTYWx0ZWRfXxSLjDx4XMxtq irqfXuxp7lRQqN3myuUB4074N79DF7QRZ4P4k6KJYNaiqD4sI+Syoy8MryZ3ZDCBfXLnx8LZLgP jqbe/L5TM4c4aVNQGOutR25P8NkTuDV2CwQFlfqrLVBeut0SC/pidllz8A2eSxQ+1VtHoqzIJ67
- BeJLyLpMveKqF8Y4pwo26TQqPJP82IcZghHf8/KL6YUb4fapThAqY8TjMJkPcDGOScwUKNRKqh7 u9hJMX+vV7J29gtoIQ77xxOLdkhU24yAmJzJlKVvEF54rDu3CcKDBcSy1pkixwdUO5u3VfirkNo hQPidoXh/le5XkWtxDyozSed5g/7PpV0iIn7dOQy5CaBUHp10NMpzI1tn1CsqXmMmCyXAgQCqhv
- PvvjjO+i1B1xytJVwqx5smg7yModBtVmDi9R8ItNiZ06z74B/ATwlhq4wvksinMTdBLKdjPT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] net: ipa: Grab IMEM slice base/size from DTS
+To: Simon Horman <horms@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+ <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Alex Elder <elder@kernel.org>,
+        Marijn Suijten
+ <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20250523-topic-ipa_imem-v1-0-b5d536291c7f@oss.qualcomm.com>
+ <20250523-topic-ipa_imem-v1-3-b5d536291c7f@oss.qualcomm.com>
+ <20250523131744.GU365796@horms.kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250523131744.GU365796@horms.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 0lte8MccErsO5YWSP9L2X9AQ7hiX6YsE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDE2NiBTYWx0ZWRfX5gT+9HRDVerf
+ kZggLSf0nWIcic2CNNj+dGTGIkdd4lz4olLKB7pZG3emdARwjRzbvWM5DZ6y5IM2oh4PSTMptDC
+ JG3XGdcb/iD/MiVS21ED2p9PQwwSOzbxFXLaW6ZaECVtjWN5choG2soCQZTiUEh8Uytcs7zPprm
+ odG493BHVO1ZwuTFLyhIGE/6GNidyTe0m2XqmWuI5Lq0OMlHyqXwocjl8GoSyLaxxaOr40ayiB+
+ /GLHcC3dAMCwG6zXDi0B7VHIUseIhnZndxYTEvd9KH2WWnVCSe6Lt/BMTnuBQgViprKuxkUU2Pj
+ KyqkaXK79roHIkG6nIHNtmglYvCwWw22vJ1qTyt2DjcbVhcrHnpz6jKOZy5BCpz6XwBwAX5VyKF
+ YAqBJCFdw6k360MOGKi2rPGA862+BuWRqdakM59XYl9MDyP2dW63p3+gFgZ8xFQaCOYrhbc/
+X-Authority-Analysis: v=2.4 cv=fZOty1QF c=1 sm=1 tr=0 ts=6830bb7d cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=SHaX676KDxSdYVKYG_wA:9
+ a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-ORIG-GUID: 0lte8MccErsO5YWSP9L2X9AQ7hiX6YsE
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-23_06,2025-05-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 suspectscore=0 bulkscore=0 clxscore=1011 adultscore=0
- phishscore=0 mlxscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505230164
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 mlxscore=0 adultscore=0 spamscore=0 bulkscore=0 suspectscore=0
+ malwarescore=0 priorityscore=1501 impostorscore=0 mlxlogscore=999
+ lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2505230166
 
-Use sysfs to provide hint. Depending on the system configuration one
-needs to decide the number. vp - virtual processor or vCPU. 
+On 5/23/25 3:17 PM, Simon Horman wrote:
+> On Fri, May 23, 2025 at 01:08:34AM +0200, Konrad Dybcio wrote:
+>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>
+>> This is a detail that differ per chip, and not per IPA version (and
+>> there are cases of the same IPA versions being implemented across very
+>> very very different SoCs).
+>>
+>> This region isn't actually used by the driver, but we most definitely
+>> want to iommu-map it, so that IPA can poke at the data within.
+>>
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> It looks like these patches are for net-next. For future reference,
+> it's best to note that in the subject.
+> 
+>   Subject: [PATCH net-next 3/3 v2] ...
+> 
+>> ---
 
-For example, when 40 > vp_manual_hint means scheduler is supposed to use
-only 0-39 vCPUs. By default, vp_manual_hint is set to all possible CPUs 
-and it has be at least 1. 
+ah, the networking guys and their customs ;)
 
-This is for illustration only. Not meant to be merged. One can modify as
-per their arch.  
+[...]
 
-Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
----
- arch/powerpc/kernel/smp.c | 45 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+>>  	ret = ipa_imem_init(ipa, mem_data->imem_addr, mem_data->imem_size);
+> 
+> I think you also need to update this line to use the local
+> variables imem_addr and imem_size.
 
-diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-index 5ac7084eebc0..37eb6aa71613 100644
---- a/arch/powerpc/kernel/smp.c
-+++ b/arch/powerpc/kernel/smp.c
-@@ -64,6 +64,7 @@
- #include <asm/systemcfg.h>
- 
- #include <trace/events/ipi.h>
-+#include <linux/debugfs.h>
- 
- #ifdef DEBUG
- #include <asm/udbg.h>
-@@ -82,6 +83,7 @@ bool has_big_cores __ro_after_init;
- bool coregroup_enabled __ro_after_init;
- bool thread_group_shares_l2 __ro_after_init;
- bool thread_group_shares_l3 __ro_after_init;
-+static int vp_manual_hint = NR_CPUS;
- 
- DEFINE_PER_CPU(cpumask_var_t, cpu_sibling_map);
- DEFINE_PER_CPU(cpumask_var_t, cpu_smallcore_map);
-@@ -1727,6 +1729,7 @@ static void __init build_sched_topology(void)
- 	BUG_ON(i >= ARRAY_SIZE(powerpc_topology) - 1);
- 
- 	set_sched_topology(powerpc_topology);
-+	vp_manual_hint = num_present_cpus();
- }
- 
- void __init smp_cpus_done(unsigned int max_cpus)
-@@ -1807,4 +1810,46 @@ void __noreturn arch_cpu_idle_dead(void)
- 	start_secondary_resume();
- }
- 
-+/*
-+ * sysfs hint to mark CPUs as parked. This will help in restricting
-+ * the workload to specified number of CPUs.
-+ * For example 40 > vp_manual_hint means, workload will run on
-+ * 0-39 CPUs.
-+ */
-+
-+static int pv_vp_manual_hint_set(void *data, u64 val)
-+{
-+	int cpu;
-+
-+	if (val == 0 || vp_manual_hint > num_present_cpus())
-+		vp_manual_hint = num_present_cpus();
-+
-+	if (val != vp_manual_hint)
-+		vp_manual_hint = val;
-+
-+	for_each_present_cpu(cpu) {
-+		if (cpu >= vp_manual_hint)
-+			set_cpu_parked(cpu, true);
-+		else
-+			set_cpu_parked(cpu, false);
-+	}
-+	return 0;
-+}
-+
-+static int pv_vp_manual_hint_get(void *data, u64 *val)
-+{
-+	*val = vp_manual_hint;
-+	return 0;
-+}
-+
-+DEFINE_SIMPLE_ATTRIBUTE(fops_pv_vp_manual_hint, pv_vp_manual_hint_get, pv_vp_manual_hint_set, "%llu\n");
-+
-+static __init int paravirt_debugfs_init(void)
-+{
-+	if (is_shared_processor())
-+		debugfs_create_file("vp_manual_hint", 0600, arch_debugfs_dir, NULL, &fops_pv_vp_manual_hint);
-+	return 0;
-+}
-+
-+device_initcall(paravirt_debugfs_init)
- #endif
--- 
-2.39.3
+I paid great attention to validate that the data I got was good and printed
+the value inside the first if branch.. but failed to change it here. Thanks
+for catching it!
 
+Konrad
 
