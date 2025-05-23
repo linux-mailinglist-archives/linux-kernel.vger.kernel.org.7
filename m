@@ -1,145 +1,125 @@
-Return-Path: <linux-kernel+bounces-661040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC47AAC25C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:00:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31AA3AC25FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 953A94E322E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:00:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 893453AF200
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18ED2957A1;
-	Fri, 23 May 2025 15:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D6629614C;
+	Fri, 23 May 2025 15:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rJTaBtcI";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1+IUjOwf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKiG+4IW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85681157A6C;
-	Fri, 23 May 2025 15:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B42C19CC22;
+	Fri, 23 May 2025 15:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748012433; cv=none; b=ggOKfDMFhwSO+l9jdC65EhuVyX8K3RsOIBaUH9JZdl+0AXNzl8J8mXRI9eQ+jR0Ou/3j+lcYD39wvGsK0jWCv3r8Boe57LEaIUmXBVRjCG7uGwZaISFHXdDj6Rib/qdAVAhvU5xeKRK2xIWD4w9Kal4rS4yCvGYgYrL4ZzUE+VM=
+	t=1748012807; cv=none; b=onEkHhWoUImnQrRhSNaDuhNPvnhROuYAVAgdnadLc7S4LZYLfonrZ7EhYFbMftZcuxG+txcBmA2yJNA2DvMM4pi6baINxjbWAVFTAYeM7yDXcZ9nr5sVj0O/s6ivqv5AcwsuRu7DPSDTnUsJIMc80l+cCFhb/lPtHjqSknKjLhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748012433; c=relaxed/simple;
-	bh=8LaSKHYLrGNtZRPW5U5KGJGcYBammh0wxgBbB9yaJEA=;
+	s=arc-20240116; t=1748012807; c=relaxed/simple;
+	bh=cTgg7neabucDYcjUEjOMZEoFwiorg7njPcXPV94ubGQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PeHLGUjT3ORvZT1I4JYn+zwMYJN7Zur0/YkAQH5ymoujwRwHu2RoSXXAXFehNtNs3cwaFdpBjrxiGMFL2Th4STPp2W4OzKLrydHJKSNrutsEdkVfO4MKoQ0J6cAkVnsvXn41MFbws2hMttTGXu9Utakz62TJpAlbVmO/kS0F8O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rJTaBtcI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1+IUjOwf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 23 May 2025 17:00:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1748012429;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1m7V+4ADDQzTpXOvpXf66IydzWsoghTpN0KKBhwdRXg=;
-	b=rJTaBtcI45CCUYyjzn1nUm/z6/+BT8JyGKXSdYngJSZu2gqpEkOCB2Oc4ZiyiWKpuEBkiz
-	DjZkRpppTibCLt3fOGWDZbKXH+Ve7h6kxFe5eO/miGysp/pX8PgIIvjhmh4peaLm2eKJbb
-	5cgJwuqHUQxet2bi2P8Vc++bQCEUb3wgcsU7GN/mc+UgRjqMTEN+eKFuq4i8Y93GDeV3Dm
-	WVQunUkEL0s6AlU35/JjNnNirojKhbfEquglr8sOfgygGbOqm6r/Um1N2Ph80s1uPG3EbN
-	Cy9PceKLvipsk7uA+U+rVvL8AlV6kiW37Y9P5DQjkzfzyRTp6ke9c3rth80j7A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1748012429;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1m7V+4ADDQzTpXOvpXf66IydzWsoghTpN0KKBhwdRXg=;
-	b=1+IUjOwfwt4CerviJW4ALkZLtLQii30D53dPTJF3aM9lO5bj1c+jg1Y6htk2br5uiaBEBP
-	5+5wq+bJdCXm9pBQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Alison Chaiken <alison@she-devel.com>
-Cc: corbet@lwn.net, gratian.crisan@ni.com, triegel@redhat.com,
-	rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-	linux-rt-users@vger.kernel.org, achaiken@aurora.tech
-Subject: Re: [PATCH] Documentation: locking: update libc support status of PI
- futexes
-Message-ID: <20250523150028.62N5N42-@linutronix.de>
-References: <20241228181546.1315328-1-alison@she-devel.com>
- <20250107153121.wAL-TfKG@linutronix.de>
- <619bfa123308eeb3a548fae36a3f9e4c@she-devel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N5XVFoFIfkgnJLc1fjLUiR8vDD4/0Oss3/XsF1HcpFz5Xnxo2c4Wd6hDTj+EcdI8df2xBSG2smRaMzWpS7qGB6eO68wvCss/BXKiwdtuX4vM+zKxb0WW52T6ny0JfN41coKJpCmYAsZiZGbS5qLzezJ0v6x39mw7J3DqMvHJUJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKiG+4IW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A75C0C4CEE9;
+	Fri, 23 May 2025 15:06:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748012807;
+	bh=cTgg7neabucDYcjUEjOMZEoFwiorg7njPcXPV94ubGQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FKiG+4IW2Z2yeLgvhvZV5x9fKc2R8Ht0x7XOxlrbB91XbqnxzdpJsXe86ZfoiOCAd
+	 +DczRHIvMD8x6PvcUQKt2s2+BSIiZFbom7+k5FUJih7N8fCbTi+b8cHD2bT/w1/B5i
+	 cXd4q9ox30WORf/qf19xY/7lTnUgHrsjzScg/PqrJzB5ubpjRoj/5xfwp0+l4wAVEv
+	 QXM6LiLDH6GwjLN3eFZFNoQDGWwee1AlxutzFnoIK4FQe61tbb8VtTzR+qsDXmjNIa
+	 GjgJReoHIKaGadLlTSh2paCbWUDD28y7ZD01D2gQEAKO4r3i9LDSfMjh3NzDvLCHXm
+	 JZGjkrYnWQ8/Q==
+Date: Fri, 23 May 2025 17:01:36 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Wen Yang <wen.yang@linux.dev>
+Subject: Re: [PATCH] kernel/sysctl-test: Unregister sysctl table after test
+ completion
+Message-ID: <yaadrvxr76up6j2cixi5hhrxrb4yd6rfus7n3pvh3fv42ahk32@vwiphrfdvj57>
+References: <20250522013211.3341273-1-linux@roeck-us.net>
+ <ce50a353-e501-4a22-9742-188edfa2a7b2@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="coch6zutooty5uxj"
+Content-Disposition: inline
+In-Reply-To: <ce50a353-e501-4a22-9742-188edfa2a7b2@roeck-us.net>
+
+
+--coch6zutooty5uxj
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <619bfa123308eeb3a548fae36a3f9e4c@she-devel.com>
 
-On 2025-01-11 10:55:55 [-0800], Alison Chaiken wrote:
-> > Are you sure? My memory is that glibc avoided using the internal mutex.
-> > The old problem should be gone and pthread_cond_signal() and
-> > pthread_cond_wait() should work.
+On Thu, May 22, 2025 at 11:53:15AM -0700, Guenter Roeck wrote:
+> On Wed, May 21, 2025 at 06:32:11PM -0700, Guenter Roeck wrote:
+> > One of the sysctl tests registers a valid sysctl table. This operation
+> > is expected to succeed. However, it does not unregister the table after
+> > executing the test. If the code is built as module and the module is
+> > unloaded after the test, the next operation trying to access the table
+> > (such as 'sysctl -a') will trigger a crash.
+> >=20
+> > Unregister the registered table after test completiion to solve the
+> > problem.
+> >=20
 >=20
-> Ignoring support for 64-bit time, the last substantive change to
-> pthread_cond_wait() and pthread_cond_signal() was Torvald Riegel's  commit
-> ed19993b5b0d05d62cc883571519a67dae481a14 "New condvar implementation that
-> provides stronger ordering guarantees," which fixed problems with waking =
-of
-> ineligible futex waiters and with ABA issues concerning the futex word.
-> What the patch does not do is made clear by the commit message:
+> Never mind, I just learned that a very similar patch has been submitted
+> last December or so but was rejected, and that the acceptable (?) fix see=
+ms
+> to be stalled.
 >=20
->      This condvar doesn't yet use a requeue optimization (ie, on a
-> broadcast,
->      waking just one thread and requeueing all others on the futex of the
->      mutex supplied by the program).
+> Sorry for the noise.
 >=20
-> What futex-requeue-pi.rst directs is
->=20
->      In order to support PI-aware pthread_condvar's, the kernel needs to
->      be able to requeue tasks to PI futexes.
->=20
-> Riegel and Darren Hart discussed Riegel's patch in at length at the 2016 =
-RT
-> Summit:
->=20
-> https://wiki.linuxfoundation.org/realtime/events/rt-summit2016/schedule
->=20
-> The related glibc bug report by Darren may be found at
->=20
->     https://sourceware.org/bugzilla/show_bug.cgi?id=3D11588
->=20
-> The last comment on the bug from 2017 is by Riegel:
->=20
->     So far, there is no known solution for how to achieve PI support given
-> the current constraints we have (eg, available futex operations, POSIX
-> requirements, ...).
->=20
-> I ran the bug reproducer posted by Darren in Qemu and found that it did n=
-ot
-> fail.   I'm not sure if the result is valid given the peculiarities of Qe=
-mu,
-> or whether I made some other mistake.
+> Guenter
 
-I've been looking at this again for other reasons and looked at the
-code again=E2=80=A6
+Hey Guenter
 
-Back then we use futex-requeue API and required both futex-object to
-have the PI bit set. This wasn't the case originally, hence the patch by
-Darren which did not make it into the official libc.
+It is part of what is getting sent for 6.16 [1]
+That test will move out of kunit into self-test.
 
-With the rework by Riegel, the mutex within pthread's condvar
-implementation is gone also the usage of the requeue API. The
-pthread_cond_wait()/ pthread_cond_signal() API is back to use futex'
-wait/ wake.
-The glibc comments write something about important ordering constrains.
-The futex wait enqueues the waiter according to its priority. So the
-task with highest priority gets always a front seat. The futex wake
-function wakes always the first waiter in the queue.
+Best
 
-With all this I would say that the glib'c condvar implementation does
-not have any issues since the rework.
-There were a few loops, with a 0 retry counter (basically dead) and they
-have been removed.
 
-Sebastian
+[1] https://sysctl-dev-rtd.readthedocs.io/en/latest/release.html#patch-0-4-=
+sysctl-move-the-u8-range-check-test-to-lib-test-sysctl-c
+
+--=20
+
+Joel Granados
+
+--coch6zutooty5uxj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmgwjccACgkQupfNUreW
+QU8YgAv+L+zQWehdMUQeh3Rr/pAATLh8YLAMC7q/tDLnjY5IyY6okQ7V7W5SBPlb
+aqtQ0OoL69Mbh2gtY0ykvFnK7G+vBOW4F3bI49jjNc9ewkaUEhk0imb69ktYounm
+eILkPj4mO6jJfPqrQMakMVqrKkc6fVRpKYwdEOGuLos/tnwc0BtwEM542JBodXtO
+I6fALUHUzq5R9mdkuAUSJ7yM7XPsIgIm8gpGRR3zH2kPFoPBhQdq2bdi/pu0Ci7s
+CjfZzUx8/EhkTaR9sZH/hUanaXAyKSQ0KxuYdJ34rgpvBWuwxGo3pdManxvpiLVS
+pASo7TCA9YQ/m61h4DVicmGAoC1LzKnCCgXefdI3Fa7SAyA3oY31vjTwWVi2wksQ
+QgoHFf6ruAmWvEOL0+WyLNGoKC0sJItN1CVGfZr2FvnIpwifqdH8Cu9nOE2HYATf
+qyansBdZ7Pkk/bE50A20asoXQpgP0EXKtOhuMNnuZvaFP36HluV/XANkPpk6taCU
+IuvZkyWq
+=sdLO
+-----END PGP SIGNATURE-----
+
+--coch6zutooty5uxj--
 
