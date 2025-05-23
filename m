@@ -1,135 +1,174 @@
-Return-Path: <linux-kernel+bounces-661419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11771AC2AC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 22:22:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11C8AC2ABE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 22:15:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF9F4E69CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 20:22:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 536D31BC4F91
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 20:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFE91F4190;
-	Fri, 23 May 2025 20:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248741E7C2D;
+	Fri, 23 May 2025 20:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armadeus.com header.i=@armadeus.com header.b="Ao/o+l/x"
-Received: from 3.mo576.mail-out.ovh.net (3.mo576.mail-out.ovh.net [188.165.52.203])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="XjUHdm32"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D8D22338
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 20:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.52.203
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB1F1F03D8;
+	Fri, 23 May 2025 20:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748031720; cv=none; b=DYueexsOLYpxh9IvRWr/wfqp+Z6q/N15DGtTRFocxLtkxoOiYRILKQhJGDmQumn+CQO3qeamiyOQrOpxslxXLzA6OYjxrxohBN/+XvKsCb3/oYPcZ9NgLlSz0FNcUQ4AqiTLOUrVL931W5R+S2eRnjnDhpf8R+OAm8QjpqhB71c=
+	t=1748031304; cv=none; b=KEr+eAWN2KdJpgu9X6Dn0eL+WUIQLj79/+eHjHOkQ26j8LarmEuYJNHZxoQhj2o+qSTgfCUKtJaEVx3lY7XU9qhI330TXYLPgYXNrzrD00vex7Ya8aFcnzYqGO+oB6V7aelsNmx8Ox6TLqTPgvC93UAKGR+Kh2rielEDw+GeQcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748031720; c=relaxed/simple;
-	bh=xuueZm23eh49YiSgqxfgFZPFyU4JQVsCTAJLi+OWt98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WJceSSv9VLHgci2JEcMNROZtTcp/pfrHe45UvO5BChAPPtkHfYYpneNbKRZRpmZoXFEhEcEhqv0Ndeg5XIa3l/HRO0y4xTGujaSxwi5IRr8NmnvthQiErVWez1UtREnDcQGxPa3KIbW82kouyYi6LBTI1IlrrOuXuaWNXaFSzME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=armadeus.com; spf=pass smtp.mailfrom=armadeus.com; dkim=pass (2048-bit key) header.d=armadeus.com header.i=@armadeus.com header.b=Ao/o+l/x; arc=none smtp.client-ip=188.165.52.203
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=armadeus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=armadeus.com
-Received: from director6.ghost.mail-out.ovh.net (unknown [10.108.17.147])
-	by mo576.mail-out.ovh.net (Postfix) with ESMTP id 4b3q2P11WNz32GR
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 15:34:05 +0000 (UTC)
-Received: from ghost-submission-5b5ff79f4f-fwdt7 (unknown [10.108.54.213])
-	by director6.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 8C56190E15;
-	Fri, 23 May 2025 15:34:02 +0000 (UTC)
-Received: from armadeus.com ([37.59.142.106])
-	by ghost-submission-5b5ff79f4f-fwdt7 with ESMTPSA
-	id 48OmEWqVMGjaMwEAmS5tiw
-	(envelope-from <sebastien.szymanski@armadeus.com>); Fri, 23 May 2025 15:34:02 +0000
-Authentication-Results:garm.ovh; auth=pass (GARM-106R00618957c2c-41e2-45dd-a874-a02a4f70d8a2,
-                    E55FAF7D42BA6FEE76EB3B6A0F061FDB1FCDFC7F) smtp.auth=sebastien.szymanski@armadeus.com
-X-OVh-ClientIp:86.243.209.203
-Message-ID: <65670a02-e217-4d0f-955d-d13ca0240819@armadeus.com>
-Date: Fri, 23 May 2025 17:34:01 +0200
+	s=arc-20240116; t=1748031304; c=relaxed/simple;
+	bh=ZzKsQe0lj6WOuUIPmss5hEmhtTxyrfgkMdWlZ1pZ5J8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=repmCJm/J2iJN6Xkd2AohUaGX8dFzfz6TkNf57x/EmL2p/zg2adr09evOi3g+j3XDxysGwHkfunVHrGijaIIyMuPjTZHQiH76Rnn0PRCJkHduDC0SSSavf8VkFEYX/dV5Bz3skocvFuHxqse5eKdys7YFx/0WC05uYIXSFdro3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=XjUHdm32; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=MgDBO0Rfj6StKE9ETlKlxeDYg7F6wFKoUAt1aJj9SlY=; b=XjUHdm32g+dcVpd6SoiNniNl4z
+	kqn1xD6s/XYQ0twDkuSY5DUdE24+/kPHm4uJVYjmAasJkaB/UC/7jOBYbAWuh8XTO8zlNMdaksrBd
+	vUpxdgL7qhe0sN0jIzSWvfNJhno6pG7YVs/ERs6Dv4seK6y195C/FORaIaIpt9BDN7RnpMnzPpn8n
+	oI6NyRNjnZFPa6BHwNLe4+uE78xNXLskEX1PoflkoKlidKnMXCSpLBOq9QkopZz7OAwXYvtgsbj3m
+	B5sYuz2/noU/7TIiPxtEUXC8kVLVRVc+t1jaT+BF0BX4aiS3Z+lrhBHd0JbdJaGipf9g2XVzMigAG
+	OPnCU+Rg==;
+Date: Fri, 23 May 2025 21:43:53 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, Kevin Hilman
+ <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, Russell King
+ <linux@armlinux.org.uk>, Bajjuri Praneeth <praneeth@ti.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] arm: dts: omap: Add support for BeagleBone Green
+ Eco board
+Message-ID: <20250523214353.6e46574a@akair>
+In-Reply-To: <20250523-bbg-v1-1-ef4a9e57eeee@bootlin.com>
+References: <20250523-bbg-v1-0-ef4a9e57eeee@bootlin.com>
+	<20250523-bbg-v1-1-ef4a9e57eeee@bootlin.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Enable MIPI filtering by DT on i.MX8M*
-To: =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Rui Miguel Silva <rmfrfs@gmail.com>, Martin Kepplinger <martink@posteo.de>,
- Purism Kernel Team <kernel@puri.sm>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <m3h61u9jy2.fsf@t19.piap.pl>
- <20250509103733.GE28896@pendragon.ideasonboard.com>
- <m3o6vn8np5.fsf@t19.piap.pl>
- <iegnn5xoosqpk52hvipcr73aliwhqtsq6r6ctvt5756bhy6yen@rqcdongb7fdf>
- <m31psg97dy.fsf@t19.piap.pl> <m3plfz7io0.fsf@t19.piap.pl>
-Content-Language: en-US
-From: =?UTF-8?Q?S=C3=A9bastien_Szymanski?= <sebastien.szymanski@armadeus.com>
-Autocrypt: addr=sebastien.szymanski@armadeus.com; keydata=
- xsBNBFNfZLEBCACv1lqSePHJNpRgcnER+3emy+Arjz84zFax3XkogjY/e3ZneihIgWrVKe5M
- ql16pX4KTkzNgMUKz4bG/XwT3kjcrXshxFLlg7KrHMl287C+W+QOUjnjVeRi/su+SPmjz8VD
- yr11h+ZkVLAWhS+uQJ93jy1NwG8M4t1kBLAVHHD5Vw4FJ+3ouaVYIp1X1Cr8bVKQw33Q1aTd
- ro0kMBb96B9vNu7ciJZ3gvlaBzUEKOgNnq9KaywuLnqrqr4HUIn5JuxZjCjJzt9kTAKcTfp2
- cJM8qpp+2FF5qtbkse9fZ6M64qozgOPr9Tk4Amf9fZEUQ6UNw14mmBZuXSzoHe75gI7TABEB
- AAHNN1PDqWJhc3RpZW4gU1pZTUFOU0tJIDxzZWJhc3RpZW4uc3p5bWFuc2tpQGFybWFkZXVz
- LmNvbT7CwJAEEwEIADoCGyMHCwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgBYhBJwGygpYm/1C
- /GCmwbCaKeiBMmTiBQJdhIHLAAoJELCaKeiBMmTixXIH/2W3kbzRG0UF81jtRRnp0H83rjDT
- v0H+8fgFMRL/7HCJ1QPArkfRJlM2wlJkN+ChP09CCarYfUEHfRCHlTb7At6Yyrz1jziD7ZwX
- 8IWHYRXnZkY5eZc5DsiUgq6JH49kt+GPzK8UVP9MTa6zkBpPCUf7LzZ4pD3FihdkT52BU3gI
- d9P49fSI0TYySlb/VKn815aOhvwEr7+Dh3mZUjSh7saofbRmVUOr7p+R3MvvGI19/IJZjeOE
- ZWliODDOt6HnBOtoGSXMcNIFF6snH52D5N5gY88njZjTwhgGGUBix1bsgf/EY0v4R5itZBXB
- B/Ze4Tm++YHaB75hZK6PQu/YRv7OwE0EU19ksQEIALo7jhXddrXBTRu5SAjelV53jyHBJTX/
- vN4nL/VbbW/saca+NJjDSxx5DBmotZbQdWIyZiSIjU/xnTREvtDrl6ZeSsKWd7ZqiuiY4fSR
- zwuQp9rd0yqRuxesrWeyJB1zCSdEvLyKASERt+nxkOA+IzJ4y1qLtvnWr+SL1AXgTMw+Tkyw
- KIDCRWHTIYas11ldGj82gOIpYeXnapeNLHfT4EQwg0NeWYHynJxAQWiX5aPlw0uSpAQSsBXQ
- FIe3fpoveMSnXK+PG2BBOzexYv7r4S70a6sF9sgTTPpfKqUaqqC+u1+bUX6alTAKhGKJywaF
- 6ViqLlgY8PfwohSyAlqlTRMAEQEAAcLAdgQYAQgAIAIbDBYhBJwGygpYm/1C/GCmwbCaKeiB
- MmTiBQJdhIHSAAoJELCaKeiBMmTitU8IAK7NQM3fEwaF5XaKtepYWsVka44CD8A9e4r7NVK9
- ugirKvXirIxBSDmN/Db862NmVpITsZ6ERNSNZLm/7k55N+TexKYiFZeU7G92TEfAM6qPElvx
- DLEcrkNMq9r08YZeUloacsq31AL5fK4LW+xdvXudkdiKRMJsdTpmff3x5kIziGOHjwFP9wve
- ZgEH52gpbRsP8Whx/Z2lNX/BBRmFM8OnEXFsjjqDzYThdxTq85wGPpkgvvUGyPNRD7TpbB1C
- pajOUUkPxgj5LKt77HD1afeZNudWhgcdkbtT5PMQTT0WY6wvMEj9S1+bGPeXRGWLYB7gHQ+L
- JNoSD7Kz6Y9qnKo=
-In-Reply-To: <m3plfz7io0.fsf@t19.piap.pl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 10767262288169724891
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdelvdefucdltddurdegfedvrddttddmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefurogsrghsthhivghnucfuiiihmhgrnhhskhhiuceoshgvsggrshhtihgvnhdrshiihihmrghnshhkihesrghrmhgruggvuhhsrdgtohhmqeenucggtffrrghtthgvrhhnpedtgeehtdduledtudevveekveevveefffdthedtieekgeeukeevtdffieegteekhfenucfkphepuddvjedrtddrtddruddpkeeirddvgeefrddvtdelrddvtdefpdefjedrheelrddugedvrddutdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehsvggsrghsthhivghnrdhsiiihmhgrnhhskhhisegrrhhmrgguvghushdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheejiegmpdhmohguvgepshhmthhpohhuth
-DKIM-Signature: a=rsa-sha256; bh=l5StDh65JnrKX3boH0CcwErYPyl25P8m60tElznRk+w=;
- c=relaxed/relaxed; d=armadeus.com; h=From; s=ovhmo103079-selector1;
- t=1748014445; v=1;
- b=Ao/o+l/xZNPvZ518fBJ3ik06H2HDn2vcsaVQP3ik/XBaVb+Lui0D/KE2wImz5uiJNwNrxw0M
- S1LgXSY9mR6CRVVcIjAFCEGjTMzGCcM2UYtZ24n5zxfOSb8SoijOv6oXeEe2Y+rPR1Lh7SDDJdw
- dQv2g4aaCzcYgaR0TYd71WMTiyS82u7088wPo5S2srNBjiGXRnpA6cZMjbRrYOWTipejim1yq6W
- yNF/BVQQ4RSnt7l88AK4X9k4Et8yExKTMYYxYDotP2JtEHILBRV0o8FUgQNCdh6YseCAIpUVlka
- sxhfqDHidl2AaGy3SbWD/j18CE7rBjjAj2HM1lu7ZazbA==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Am Fri, 23 May 2025 17:57:42 +0200
+schrieb Kory Maincent <kory.maincent@bootlin.com>:
 
-On 5/23/25 11:58 AM, Krzysztof Hałasa wrote:
-> Now, what do we do with it?
-> Is anybody able to verify the CSIC version register value on i.MX8MM?
-> Something like devmem read32 0x32E50000 (or 0x32E40000 for CSI1) WHILE
-> RUNNING CAPTURE on that very CSI would do the trick (using your
-> favorite instance of devmem/devmem2/etc). Alternatively one could add
-> a debug printk to the csic module.
+> SeeedStudio BeagleBone Green Eco (BBGE) is a clone of the BeagleBone Green
+> (BBG). It has minor differences from the BBG, such as a different PMIC,
+> a different Ethernet PHY, and a larger eMMC.
+> 
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> ---
+> 
+> The pmic binding is currently only in regulator tree. I don't know if it
+> should be merged in omap tree or in regulator tree due to that binding
+> dependency.
 
-On i.MX8MM mipi_csi is at 32e30000. NXP kernel (6.12.3) with ov5640 camera:
+Well, the pull request for omap stuff to soc is already sent, so this
+will go into 6.17 probably while the regulator stuff seems to be
+scheduled for 6.16. So this issue will solve itself.
 
-# devmem 0x32E30000 32
-0x03060301
+> ---
+>  arch/arm/boot/dts/ti/omap/Makefile                 |   1 +
+>  arch/arm/boot/dts/ti/omap/am335x-bonegreen-eco.dts | 170 +++++++++++++++++++++
+>  2 files changed, 171 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/ti/omap/Makefile b/arch/arm/boot/dts/ti/omap/Makefile
+> index 95c68135dd0c..1aef60eef671 100644
+> --- a/arch/arm/boot/dts/ti/omap/Makefile
+> +++ b/arch/arm/boot/dts/ti/omap/Makefile
+> @@ -93,6 +93,7 @@ dtb-$(CONFIG_SOC_AM33XX) += \
+>  	am335x-boneblue.dtb \
+>  	am335x-bonegreen.dtb \
+>  	am335x-bonegreen-wireless.dtb \
+> +	am335x-bonegreen-eco.dtb \
+>  	am335x-chiliboard.dtb \
+>  	am335x-cm-t335.dtb \
+>  	am335x-evm.dtb \
+> diff --git a/arch/arm/boot/dts/ti/omap/am335x-bonegreen-eco.dts b/arch/arm/boot/dts/ti/omap/am335x-bonegreen-eco.dts
+> new file mode 100644
+> index 000000000000..521f92347bbe
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/ti/omap/am335x-bonegreen-eco.dts
+> @@ -0,0 +1,170 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2025 Bootlin
+> + */
+> +/dts-v1/;
+> +
+> +#include "am33xx.dtsi"
+> +#include "am335x-bone-common.dtsi"
+> +#include "am335x-bonegreen-common.dtsi"
+> +#include <dt-bindings/net/ti-dp83867.h>
+> +
+> +/ {
+> +	model = "TI AM335x BeagleBone Green Eco";
+> +	compatible = "ti,am335x-bone-green-eco", "ti,am335x-bone-green",
+> +		     "ti,am335x-bone-black", "ti,am335x-bone", "ti,am33xx";
+> +
+these compatibles should be defined in
+Documentation/devicetree/bindings/arm/ti/omap.yaml
+
+But are that much really necessary? At least ti,am335x-bone-black looks
+strange in the list, it does not look as it is derived from it.
+
+> +	cpus {
+> +		cpu@0 {
+> +			cpu0-supply = <&buck1>;
+> +		};
+> +	};
+> +
+> +	sys_5v: sys-5v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "sys_5v";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		regulator-always-on;
+> +	};
+> +
+> +	v3v3: v3v3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "v3v3";
+> +		regulator-always-on;
+> +	};
+> +};
+> +
+> +&usb0 {
+> +	interrupts-extended = <&intc 18>;
+> +	interrupt-names = "mc";
+> +};
+> +
+> +&baseboard_eeprom {
+> +	vcc-supply = <&v3v3>;
+> +};
+> +
+> +&i2c0 {
+> +	/delete-node/ tps@24;
+> +
+> +	tps65214: tps@30 {
+
+generic node names please, so pmic@30.
+And maybe while you are at it, maybe you can clean up the tps@24 stuff.
 
 Regards,
-
--- 
-Sébastien Szymanski, Armadeus Systems
-Software engineer
+Andreas
 
