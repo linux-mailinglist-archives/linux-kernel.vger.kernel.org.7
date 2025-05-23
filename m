@@ -1,190 +1,196 @@
-Return-Path: <linux-kernel+bounces-660466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2ED0AC1E51
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:09:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBFFAC1E5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2A6F1B66424
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:09:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7772B502A17
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83672289E0C;
-	Fri, 23 May 2025 08:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37168288CB4;
+	Fri, 23 May 2025 08:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BcECy/0O"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EsYIrV6Z"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC69288CAF;
-	Fri, 23 May 2025 08:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B0428750F;
+	Fri, 23 May 2025 08:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747987758; cv=none; b=D7gOiVEu+NyWTk3LbXAQ9oAl5xPy9IrCPpg706lhyiWHan7GlZea8fzclzI2aovqSdydLpB2YpAQjxMHeSfhDmVzaj+K0NY0HLbjzRAgDQAYRJ1Y1Q6OZ3G0mQcQ+8p6GyDZcl76qbYNtzFlOgQzApsiQ3sYbc+oBQF4aanzjJw=
+	t=1747987831; cv=none; b=RIuVf8fIs1DGtHIdZDuCdtpSno94uw9CQGWXje7bagEiI3vhpQ5/ozF5WCfJAi0hcY3hzJxAn9qfJl/Ec8akz6FXVwQ2isQI4mtkbbZA2sK0oLc0/3ZBbapnygvzk1jEi+j1qEkGXmpeiaOAQUU+jWtMPkXLXSKqeevxvO2OxE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747987758; c=relaxed/simple;
-	bh=G3HZUfBG3cjLwFnPE+/4xdSSAsXnFyflo/c7NxHyx5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dWct0KPB5HyBY5Rl7f61V3zSe9G2wr0hcspJ/qV5lHdL5dtu+dWeUDqZIwgt1mLEX0Ht9e7UcPeZel8NXUwaiFvvxrRVAKbaci743TfYMC+YwBcSsLA2TXcU+44z1s/htiysyKRx2EyQJN1rzxSCLEbI9Z7fdyBhwfQ8DOUftWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BcECy/0O; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54N6Aqlf013895;
-	Fri, 23 May 2025 08:09:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KUeiwjwwRKCeSzEn89kVpyg8NofPZDIR7gL3zffWsso=; b=BcECy/0OUo93fw4F
-	gZhiI2GyStvzLgqVX6vJU+kVdqtdXt/O9Ne0e0WVl2BqI/IXJHGu1lZtNm/qFRu9
-	zTmeamQ14LNlDclW4zl74Q7v4JeSlyib+8CHcq3iacrG2bS6YqwY/RPCTb6vmSHS
-	pGA/92wLfRA/BndpU8wWdaHR8D/rAWfiAscigzUT7Zyiid4jvQH9IH/qZMiEVRj/
-	5vmFjdC8cGAE62DdYUSQ3jRx+xE+k9PfmVikNCjNH1OrvYwSy6k4AD5qrbrpCiQL
-	uGONtVcIPnz1P3aAeIiKqndj0NuD3IOHd3LsrElCrn2GbEsVPXJQc/Tnt81h35mO
-	8fjRaA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf9h4n8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 08:09:04 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54N8931s004706
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 08:09:03 GMT
-Received: from [10.239.133.114] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 23 May
- 2025 01:09:00 -0700
-Message-ID: <40599afc-4342-467c-87d8-3f53cbcfd242@quicinc.com>
-Date: Fri, 23 May 2025 16:08:58 +0800
+	s=arc-20240116; t=1747987831; c=relaxed/simple;
+	bh=35VcFiRUCOVd+LfCiJqN/5D7lUMMFSNB8+Td4FcHvrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O2mPl3drF95cUB2THadySwYR7rsntGjENq/fox86FSPv4FrWA2pzom1k0UjoF5McwSReMhHAChinLHIRJblyvBSJazrgsJ7E7POq7n54PxSVKnp7teHrulwvNa0x1pMLhDwpSB+8WkyBpHpR/dFIKzIMK1vyQxLguPIfx0l8P5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=EsYIrV6Z; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (179.218-130-109.adsl-dyn.isp.belgacom.be [109.130.218.179])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 272D8833;
+	Fri, 23 May 2025 10:10:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1747987805;
+	bh=35VcFiRUCOVd+LfCiJqN/5D7lUMMFSNB8+Td4FcHvrA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EsYIrV6ZSXiTYMDqPVZEq3+E2kuKU5YHGqTIMi/IllQKN0J9HgfAcViIiaIP4F4ZZ
+	 upi7lHiu+KfJWveHtIMPiTXNZGsx6KKsdNoM10KNMLoRzO/awqx3uieePT4Ks1nJml
+	 tM+iEWusLgLiwCEFfwXYg7ZlYp3HrzdLVeMc/ito=
+Date: Fri, 23 May 2025 10:10:20 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: git@apitzsch.eu
+Cc: Ricardo Ribalda <ribalda@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Ricardo Ribalda <ribalda@chromium.org>
+Subject: Re: [PATCH v3 2/5] media: i2c: imx214: Prepare for variable clock
+ frequency
+Message-ID: <20250523081020.GA12514@pendragon.ideasonboard.com>
+References: <20250521-imx214_ccs_pll-v3-0-bfb4a2b53d14@apitzsch.eu>
+ <20250521-imx214_ccs_pll-v3-2-bfb4a2b53d14@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] coresight: add coresight Trace Network On Chip
- driver
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>
-CC: <kernel@oss.qualcomm.com>, <linux-arm-msm@vger.kernel.org>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250522-trace-noc-v6-0-f5a9bcae90ee@quicinc.com>
- <20250522-trace-noc-v6-2-f5a9bcae90ee@quicinc.com>
- <3a19197d-b534-458c-b4d7-51fd9d2c954d@arm.com>
-Content-Language: en-US
-From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-In-Reply-To: <3a19197d-b534-458c-b4d7-51fd9d2c954d@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: kPgexwW-XHzVu8r4PKlL9oDSSyKwYz7X
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDA3NCBTYWx0ZWRfX+Mzwh0Kss6rN
- vTf6MSyeGKL6udwQwDHZ0OP9MsaLda+CdExaw3RvabpAx2+DSIhP85YNemtGv2+ZGXV5z0ZrNBi
- hkwNjw9I+dZ2GOAtY5wV40YY6Efo0HORhh06trM/7nE/uq0cPMZWfTG05QpJK8Y9wY+AvoWVDds
- UQiSIk1dxNlulVUgg4qMQDfaDdNG0KI8z6UsS/y3budj9gTGZMKFvHyMTn4AL3Cw/TOMMmGbGOB
- 3XpoLslcNvwY1jnIQoPacFnDtBFSxuxZmActJOeM2sqiLVX3UyJvuxxP4WAcuhXvKcv0FipYYxI
- SwEU9tRl6k72cX18LKhsNgckmQLncJp/Bt6YPuEbYKP2AMMlJhnfWwRwz4OISUfN65GhPkYPxGt
- P3Gc0EmZ40UydgCGS914mx+rbuBTM+c5S4u2roWNer1r8vOnbcT+Bkr2z+HgXv2SbJjzvCzJ
-X-Authority-Analysis: v=2.4 cv=GawXnRXL c=1 sm=1 tr=0 ts=68302d20 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
- a=tqpicOYo2bCRqsTAqWEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: kPgexwW-XHzVu8r4PKlL9oDSSyKwYz7X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-23_02,2025-05-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 mlxlogscore=999 lowpriorityscore=0 impostorscore=0
- priorityscore=1501 clxscore=1015 malwarescore=0 phishscore=0 bulkscore=0
- spamscore=0 suspectscore=0 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505160000 definitions=main-2505230074
+In-Reply-To: <20250521-imx214_ccs_pll-v3-2-bfb4a2b53d14@apitzsch.eu>
 
+Hi André,
 
+Thank you for the patch.
 
-On 5/22/2025 9:13 PM, Suzuki K Poulose wrote:
-> On 22/05/2025 09:07, Yuanfang Zhang wrote:
->> Add a driver to support Coresight device Trace Network On Chip (TNOC),
->> which is an integration hierarchy integrating functionalities of TPDA
->> and funnels. It aggregates the trace and transports to coresight trace
->> bus.
->>
->> Compared to current configuration, it has the following advantages:
->> 1. Reduce wires between subsystems.
->> 2. Continue cleaning the infrastructure.
->> 3. Reduce Data overhead by transporting raw data from source to target.
->>
->>    +------------------------+                +-------------------------+
->>    | Video Subsystem        |                |Video Subsystem          |
->>    |       +-------------+  |                |       +------------+    |
->>    |       | Video TPDM  |  |                |       | Video TPDM |    |
->>    |       +-------------+  |                |       +------------+    |
->>    |            |           |                |              |          |
->>    |            v           |                |              v          |
->>    |   +---------------+    |                |        +-----------+    |
->>    |   | Video funnel  |    |                |        |Video TNOC |    |
->>    |   +---------------+    |                |        +-----------+    |
->>    +------------|-----------+                +------------|------------+
->>                 |                                         |
->>                 v-----+                                   |
->> +--------------------|---------+                         |
->> |  Multimedia        v         |                         |
->> |  Subsystem   +--------+      |                         |
->> |              |  TPDA  |      |                         v
->> |              +----|---+      |              +---------------------+
->> |                   |          |              |   Aggregator  TNOC  |
->> |                   |          |              +----------|----------+
->> |                   +--        |                         |
->> |                     |        |                         |
->> |                     |        |                         |
->> |              +------v-----+  |                         |
->> |              |  Funnel    |  |                         |
->> |              +------------+  |                         |
->> +----------------|-------------+                         |
->>                   |                                       |
->>                   v                                       v
->>        +--------------------+                    +------------------+
->>        |   Coresight Sink   |                    |  Coresight Sink  |
->>        +--------------------+                    +------------------+
->>
->>         Current Configuration                            TNOC
->>
->> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+On Wed, May 21, 2025 at 09:34:25PM +0200, André Apitzsch via B4 Relay wrote:
+> From: André Apitzsch <git@apitzsch.eu>
 > 
+> Move clock frequency related parameters out of the constant register
+> sequences, such that the hard coded external clock frequency can be
+> replaced by a variable in the upcoming patches.
 > 
->> +
->> +static int trace_noc_init_default_data(struct trace_noc_drvdata *drvdata)
->> +{
->> +    int atid;
->> +
->> +    atid = coresight_trace_id_get_system_id();
->> +    if (atid < 0)
->> +        return atid;
->> +
->> +    drvdata->atid = atid;
+> Acked-by: Ricardo Ribalda <ribalda@chromium.org>
+> Signed-off-by: André Apitzsch <git@apitzsch.eu>
+> ---
+>  drivers/media/i2c/imx214.c | 54 ++++++++++++++++++++++++++--------------------
+>  1 file changed, 31 insertions(+), 23 deletions(-)
 > 
-> Do you need to expose this via sysfs ? Otherwise, how can you map
-> a trace to a TNOC at decoding ?
+> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+> index 0199195dcb7d12dc2ff253fe3eb77ddbcd0812a9..3aca6ebb02d649c1b7f0b6a6049c1e3aa3d08951 100644
+> --- a/drivers/media/i2c/imx214.c
+> +++ b/drivers/media/i2c/imx214.c
+> @@ -299,16 +299,6 @@ static const struct cci_reg_sequence mode_4096x2304[] = {
+>  	{ IMX214_REG_DIG_CROP_WIDTH, 4096 },
+>  	{ IMX214_REG_DIG_CROP_HEIGHT, 2304 },
+>  
+> -	{ IMX214_REG_VTPXCK_DIV, 5 },
+> -	{ IMX214_REG_VTSYCK_DIV, 2 },
+> -	{ IMX214_REG_PREPLLCK_VT_DIV, 3 },
+> -	{ IMX214_REG_PLL_VT_MPY, 150 },
+> -	{ IMX214_REG_OPPXCK_DIV, 10 },
+> -	{ IMX214_REG_OPSYCK_DIV, 1 },
+> -	{ IMX214_REG_PLL_MULT_DRIV, IMX214_PLL_SINGLE },
+> -
+> -	{ IMX214_REG_REQ_LINK_BIT_RATE, IMX214_LINK_BIT_RATE_MBPS(4800) },
+> -
+>  	{ CCI_REG8(0x3A03), 0x09 },
+>  	{ CCI_REG8(0x3A04), 0x50 },
+>  	{ CCI_REG8(0x3A05), 0x01 },
+> @@ -362,16 +352,6 @@ static const struct cci_reg_sequence mode_1920x1080[] = {
+>  	{ IMX214_REG_DIG_CROP_WIDTH, 1920 },
+>  	{ IMX214_REG_DIG_CROP_HEIGHT, 1080 },
+>  
+> -	{ IMX214_REG_VTPXCK_DIV, 5 },
+> -	{ IMX214_REG_VTSYCK_DIV, 2 },
+> -	{ IMX214_REG_PREPLLCK_VT_DIV, 3 },
+> -	{ IMX214_REG_PLL_VT_MPY, 150 },
+> -	{ IMX214_REG_OPPXCK_DIV, 10 },
+> -	{ IMX214_REG_OPSYCK_DIV, 1 },
+> -	{ IMX214_REG_PLL_MULT_DRIV, IMX214_PLL_SINGLE },
+> -
+> -	{ IMX214_REG_REQ_LINK_BIT_RATE, IMX214_LINK_BIT_RATE_MBPS(4800) },
+> -
+>  	{ CCI_REG8(0x3A03), 0x04 },
+>  	{ CCI_REG8(0x3A04), 0xF8 },
+>  	{ CCI_REG8(0x3A05), 0x02 },
+> @@ -405,9 +385,6 @@ static const struct cci_reg_sequence mode_table_common[] = {
+>  	/* ATR setting */
+>  	{ IMX214_REG_ATR_FAST_MOVE, 2 },
+>  
+> -	/* external clock setting */
+> -	{ IMX214_REG_EXCK_FREQ, IMX214_EXCK_FREQ(IMX214_DEFAULT_CLK_FREQ / 1000000) },
+> -
+>  	/* global setting */
+>  	/* basic config */
+>  	{ IMX214_REG_MASK_CORR_FRAMES, IMX214_CORR_FRAMES_MASK },
+> @@ -777,6 +754,24 @@ static int imx214_entity_init_state(struct v4l2_subdev *subdev,
+>  	return 0;
+>  }
+>  
+> +static int imx214_configure_pll(struct imx214 *imx214)
+> +{
+> +	int ret = 0;
+> +
+> +	cci_write(imx214->regmap, IMX214_REG_VTPXCK_DIV, 5, &ret);
+> +	cci_write(imx214->regmap, IMX214_REG_VTSYCK_DIV, 2, &ret);
+> +	cci_write(imx214->regmap, IMX214_REG_PREPLLCK_VT_DIV, 3, &ret);
+> +	cci_write(imx214->regmap, IMX214_REG_PLL_VT_MPY, 150, &ret);
+> +	cci_write(imx214->regmap, IMX214_REG_OPPXCK_DIV, 10, &ret);
+> +	cci_write(imx214->regmap, IMX214_REG_OPSYCK_DIV, 1, &ret);
+> +	cci_write(imx214->regmap, IMX214_REG_PLL_MULT_DRIV,
+> +		  IMX214_PLL_SINGLE, &ret);
+> +	cci_write(imx214->regmap, IMX214_REG_EXCK_FREQ,
+> +		  IMX214_EXCK_FREQ(IMX214_DEFAULT_CLK_FREQ / 1000000), &ret);
+> +
+> +	return ret;
+> +}
+> +
+>  static int imx214_update_digital_gain(struct imx214 *imx214, u32 val)
+>  {
+>  	int ret = 0;
+> @@ -1020,6 +1015,19 @@ static int imx214_start_streaming(struct imx214 *imx214)
+>  		return ret;
+>  	}
+>  
+> +	ret = imx214_configure_pll(imx214);
+> +	if (ret) {
+> +		dev_err(imx214->dev, "failed to configure PLL %d\n", ret);
 
-yes, need to expose the atid via sysfs, but it better to expose it on source driver which connect with
-this TNOC. so dont expose it on this driver.
+		dev_err(imx214->dev, "failed to configure PLL: %d\n", ret);
 
-> 
-> Suzuki
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
+> +		return ret;
+> +	}
+> +
+> +	ret = cci_write(imx214->regmap, IMX214_REG_REQ_LINK_BIT_RATE,
+> +			IMX214_LINK_BIT_RATE_MBPS(4800), NULL);
+> +	if (ret) {
+> +		dev_err(imx214->dev, "failed to configure link bit rate\n");
+> +		return ret;
+> +	}
+> +
+>  	ret = cci_write(imx214->regmap, IMX214_REG_CSI_LANE_MODE,
+>  			IMX214_CSI_4_LANE_MODE, NULL);
+>  	if (ret) {
+
+-- 
+Regards,
+
+Laurent Pinchart
 
