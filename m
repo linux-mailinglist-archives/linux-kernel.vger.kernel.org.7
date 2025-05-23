@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-661319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67973AC2960
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 20:15:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57802AC2964
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 20:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7252BA26DC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:15:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11D7F5432E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AE5299AB4;
-	Fri, 23 May 2025 18:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BC82989BC;
+	Fri, 23 May 2025 18:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DKg+WyIW"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hFNdGPTc"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4240E298CC0
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 18:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A91929B213
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 18:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748024131; cv=none; b=AZRkZ7oBkVq6Vc0OqgiF5vc+i6tmyFqvnZiXrSBdCB7b/PbHb9JFinfBaC+uxYuHZvZP2qAsWGXT55a08YkUX0lZVdCDRMU8mrzxPm8xSYJlC4NlzFqM4nXu2KeBXGZ4Xa9ajwkZaN6BPxmPkhuI2d6aA9ayeSkRJQGqW/MQVL4=
+	t=1748024137; cv=none; b=bb5FGKm7owlyGZ+Q9J9LiT1/G48eZLxQwkoKFi5L3bbf0w5W415xW+Bjw1OHFABnu36qvHYOXUzaBRm36vSYcahd9Pv8ZlYfq37n/OERs/TjtLF1LvIQWKjCQ42Oj4Zz9kyZ4EmZydYmePcxaimxTGkEdlmxsMWSvjJfdsEwgZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748024131; c=relaxed/simple;
-	bh=BGfqZTuP7Vt9lOg14mcWWOIpVPUWN4w5uRBVNbskkMw=;
+	s=arc-20240116; t=1748024137; c=relaxed/simple;
+	bh=nnyHGB6U1C7Kgu6nFbXrmHpQU0Zq4siWHKTYtL0SA4I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Oy0NQjLlqKXuJv0AMe5+kQg9HPbgfYh4cpOrpl1JDoKCs/FPu/mx/F3FTBid/NY4XN8xjCT+nlD71Pam3Ou0Jkd6fknSsEueYsfFxqQ/gBIM+bDTb7yv9OF0KBveRIc7E8TPBQdtNFmEaJfN1VKOwAO+BLMs/X52n+41/5coi/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DKg+WyIW; arc=none smtp.client-ip=148.163.158.5
+	 MIME-Version; b=l0nugCnTpSAzA0VHLYaUg54XudGXzsHjjfpeM1EFLkENr/qqmTi6yqrLEbygfMbtRCnzkpPyXz0f7VaIC2xTFUz42NTo7gn6m4c73+vBlBsHph+IXjlSPODuQmUjoL4i8qQVJCy6T+jVEUojcgnVcQkXMyaloqnHn3u2kZisrlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hFNdGPTc; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54NGWJJe016985;
-	Fri, 23 May 2025 18:15:11 GMT
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54NGWEaF008733;
+	Fri, 23 May 2025 18:15:16 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=ahgyIAPZYQH6AgIzs
-	h4KBNjDs9nMRhTXach6oWE73cA=; b=DKg+WyIWpAPHkI8drbDNdOzNutN9AtdmP
-	NpSS9YaJzqpXVEm0xaf7ZCQ/Kc+aIOdrEQ/aDvAPgiBy5pdB+eUGaue54c/vecbF
-	wc22tQlpW6VrGeSrA8NKF22hsxBg+KuvrZ4lbghN5054ZHUE4oVgHHfaKEfvsSdx
-	U4iyCdIBT2mhDTFmFGJ55Awc6Nzr/eGhGrdalzgIp1Nyf1CvXpNtJuFcttBXmbh7
-	cTzKq8XQOk8Y8Xp92k2Sgmbo8odUcL4RJV4uR02K4XeGqjTi1l6EwbPx5aOSwcw6
-	SCeSn6jBHqPFxsuPamg9zN/bNlIg++EoWMnS4/G2OhK5ASIPf8MRg==
+	:mime-version:references:subject:to; s=pp1; bh=Cwj2bbP73sprJZTIk
+	y8dfVd0Rf+prF9LI0VrT4FGTOE=; b=hFNdGPTcF4BBR9ImsYLStRXNghJSjgMkq
+	8OLzgYd/oNJSVC30qjH3/nOF0jGjfvF1R+7BrBMhrEWqadfEt+PSJtvQLA2Ly9v8
+	JwSS3uD1v6Hh0RsZB66HLh0kK24YFRjcSPAaOH/1X+1tmg5o9qXl/jILUD/Dxjcq
+	KY/twxhC6Ik8zLA01Y/dnx97ios6+w8hUYLlycKImsoL2BN6pTxGeyJjtY0i/vRi
+	wFgrZTpibVNOXS6xHEDHIMYQ4Yh+kZs5CUS2J9jWu1vzqK7jR17IhR1prYkPyqot
+	btloRoNkmMhyZDHDR/2p2TF7VxI9khX1ltS84pjymKHNgRFKMHfRg==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46t5537756-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46sxhwhesp-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 18:15:11 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54NIC03C000493;
-	Fri, 23 May 2025 18:15:10 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46t5537752-1
+	Fri, 23 May 2025 18:15:15 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54NIFFpU000308;
+	Fri, 23 May 2025 18:15:15 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46sxhwhesm-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 18:15:10 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54NID0EX010595;
-	Fri, 23 May 2025 18:15:10 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46rwnmqvec-1
+	Fri, 23 May 2025 18:15:15 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54NHa88R032024;
+	Fri, 23 May 2025 18:15:14 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46rwmqfvh8-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 18:15:09 +0000
+	Fri, 23 May 2025 18:15:13 +0000
 Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54NIF6Yu35783076
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54NIFAx928770756
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 23 May 2025 18:15:06 GMT
+	Fri, 23 May 2025 18:15:10 GMT
 Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 30F0A20043;
+	by IMSVA (Postfix) with ESMTP id 0EB922004D;
+	Fri, 23 May 2025 18:15:10 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 88A2120040;
 	Fri, 23 May 2025 18:15:06 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A985C20040;
-	Fri, 23 May 2025 18:15:02 +0000 (GMT)
 Received: from li-7bb28a4c-2dab-11b2-a85c-887b5c60d769.ibm.com.com (unknown [9.124.221.90])
 	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 23 May 2025 18:15:02 +0000 (GMT)
+	Fri, 23 May 2025 18:15:06 +0000 (GMT)
 From: Shrikanth Hegde <sshegde@linux.ibm.com>
 To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
         vincent.guittot@linaro.org, tglx@linutronix.de, yury.norov@gmail.com,
@@ -81,9 +81,9 @@ Cc: sshegde@linux.ibm.com, vschneid@redhat.com, dietmar.eggemann@arm.com,
         rostedt@goodmis.org, jstultz@google.com, kprateek.nayak@amd.com,
         huschle@linux.ibm.com, srikar@linux.ibm.com,
         linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk
-Subject: [RFC PATCH 2/5] sched/core: Don't use parked cpu for selection
-Date: Fri, 23 May 2025 23:44:45 +0530
-Message-ID: <20250523181448.3777233-3-sshegde@linux.ibm.com>
+Subject: [RFC PATCH 3/5] sched/fair: Don't use parked cpu for load balancing
+Date: Fri, 23 May 2025 23:44:46 +0530
+Message-ID: <20250523181448.3777233-4-sshegde@linux.ibm.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250523181448.3777233-1-sshegde@linux.ibm.com>
 References: <20250523181448.3777233-1-sshegde@linux.ibm.com>
@@ -95,51 +95,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: YLwwGwA9IWnT4Je-WvNgMHY5Ib8e_CzM
-X-Proofpoint-ORIG-GUID: yswSzh8SjNuDaW-I9Mryv0bRxQywTAq7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDE2NCBTYWx0ZWRfX441L4+sE5tc0 1HtZZyzepEPev5kvqV/lNXakghMKM32G1z0TixhfdPHb9lrNo3bBjBU1wfkrxcm1aAfrvBISZBy ufo11FbNqHeMBertPebn/UXv4Q2urprJXAWxESYL3IjoPksWCAOezI7B81RGt84S+sgKMd9cJqS
- edF1wjNxiBKvI88UCT/deWlLtmF/aSlQGJYE40JVQPrMfquDF+hPoY6A6AvdVCySHee5j3GBRSV bVD7xdnbz7q3yPinHVNk9dPjl6VDy4Vg1gwLjA3DWmXLRu+FV5XyU1DPQlDYGg7+/VT6GtJRgwC VayseCWnMQma9NI9qE+e/JclKajGLDGY7n+Ibqq6z/Rr/usAQnaKNyL+WH0X4lQSKoW5/uC+w3r
- qGwq59K/BY9JQBC5hVEemqNxN0MFAPk33k8WxPa6BPOndGWtPh0GqdW8ofKGX+g97i4Ksm2t
-X-Authority-Analysis: v=2.4 cv=BOmzrEQG c=1 sm=1 tr=0 ts=6830bb2f cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=SeSF_3wNJrZcFQq4b1oA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDE2MCBTYWx0ZWRfX4aSuiwL5n6c8 wBsEekn/gjJagKBEvEwkxfLqe0dx2Y9bzMbEOBmSjE6n58KtotB4gqjPZJuBAMWx2S4g9C7q7i4 995snCu9zaIzCcS62KHC8BeKNninEQfTpUN/EUqPWgltruzOrB8/PMTZTRPeLCAYzyBVSBy2Ljp
+ YaPGoVD0WHTW4sCV79dafGlKjrjW5CHFHCWx1dZjiPkUFp+4PudS1blAnSlvvnPF5B5vo4dkAnd W8lqKhAhWCTPUBQIhLGQxQ8fUzivdSXC70MUCl6NamfQUIOWh6XFR6tS3EZdwB7NqnT399UiXWl zk0riaBiI8/7sf81IUNRss6ffS2m6PYqTt0dQ/nf/ZEfQ6cVP72jSQHn8SQ3RpDjIm1JiS4gV7K
+ XwKtXag5NaR3Z/PDhSwH1/12t0+70PEu/0uVe3a6jFSvGEtQ6zRELKbdfbSzZ+8xmMce7xPC
+X-Proofpoint-GUID: eaGTPgHY3EZr-nUxp4AbzqN_hzfpbuK-
+X-Authority-Analysis: v=2.4 cv=O685vA9W c=1 sm=1 tr=0 ts=6830bb33 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=A_CrLDhOnlH3o789EtUA:9
+X-Proofpoint-ORIG-GUID: zIJN5OVqRKkafCGM_wMMIM7SQAR6Rykl
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-23_06,2025-05-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=622
- priorityscore=1501 malwarescore=0 phishscore=0 spamscore=0 suspectscore=0
- impostorscore=0 bulkscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505230164
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=579
+ spamscore=0 mlxscore=0 phishscore=0 bulkscore=0 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 clxscore=1011 malwarescore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505230160
 
-When the current running task is pushed using stop class mechanism, the
-new CPU that going to be chosen shouldn't be a parked CPU. 
+While doing load balance, don't consider the parked CPUs. As far as load
+balance is considered, a parked CPU is as good as offline CPU. 
 
 Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
 ---
- kernel/sched/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/sched/fair.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 62b3416f5e43..9ec12f9b3b08 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3526,7 +3526,7 @@ static int select_fallback_rq(int cpu, struct task_struct *p)
- 		nodemask = cpumask_of_node(nid);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 125912c0e9dd..f48f55ca1522 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -11761,6 +11761,7 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+ 	};
  
- 		/* Look for allowed, online CPU in same node. */
--		for_each_cpu(dest_cpu, nodemask) {
-+		for_each_cpu_andnot(dest_cpu, nodemask, cpu_parked_mask) {
- 			if (is_cpu_allowed(p, dest_cpu))
- 				return dest_cpu;
- 		}
-@@ -3534,7 +3534,7 @@ static int select_fallback_rq(int cpu, struct task_struct *p)
+ 	cpumask_and(cpus, sched_domain_span(sd), cpu_active_mask);
++	cpumask_andnot(cpus, cpus, cpu_parked_mask);
  
- 	for (;;) {
- 		/* Any allowed, online CPU? */
--		for_each_cpu(dest_cpu, p->cpus_ptr) {
-+		for_each_cpu_andnot(dest_cpu, p->cpus_ptr, cpu_parked_mask) {
- 			if (!is_cpu_allowed(p, dest_cpu))
- 				continue;
+ 	schedstat_inc(sd->lb_count[idle]);
  
 -- 
 2.39.3
