@@ -1,55 +1,85 @@
-Return-Path: <linux-kernel+bounces-660616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4ADAC200E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:46:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5BDAAC2017
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9DDE1BC82EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:46:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D2D87AE6B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C784D227E8A;
-	Fri, 23 May 2025 09:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E9422370F;
+	Fri, 23 May 2025 09:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJB8pCnG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RsPUVxUP"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B97120FA84;
-	Fri, 23 May 2025 09:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7A618C00B
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 09:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747993550; cv=none; b=SYKCREK2dRsHnM1RCoDeIxEd6XdCyjajRJOT5m9eeb2Wa7dW/ZXqX7h1u3kUXOdeYU+3k++gcKzH0cBc+aRUlaf03YZyJ3Fhv3rwZufkbQ+sqahZybMI3F1VykXWWA3QlRDTPmabLkC897LJdqPIfJtHqzlCFFq1fyiUj4zHQjc=
+	t=1747993570; cv=none; b=G5P3/vnOM2/U9z3ZHz3H2UNFEMvyJXbuicVF90ec0qiVilu1UaYiTrYG9icryhVXO1lesOkzjQDWs0mp+qqpJqallnXHURtqOugi0y4gNxt5EFVLyYofvpBkD9jt4Y8z6bqCwIhwp2Bp8bV43TQuQ6NvrlcyfiUJKi+NfOry6zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747993550; c=relaxed/simple;
-	bh=clQCZeMdeb3EtUQNI/pHEh3Vr4hcj2vGmANF5ZMWMPc=;
+	s=arc-20240116; t=1747993570; c=relaxed/simple;
+	bh=g0CqvvMKzLeMKYjz7hRE+LMOROw08soSCEk9jR0MjeI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jGRoRS7u88n0vx/m+Aws4FoWgZTwSuohHTUKespgtEQZZeN6ABOkvMSlhPPxaVin5E3SaJpPAbuxWiquu+kWxsfyQgNyjiHpR2huFYjXtjz5ffOvoh25sgL4OeuFHzw8taeUGVMWfCDHQHnktRmpQZDmJOg5MsDyz92grPTdVGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJB8pCnG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D3F6C4CEEB;
-	Fri, 23 May 2025 09:45:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747993549;
-	bh=clQCZeMdeb3EtUQNI/pHEh3Vr4hcj2vGmANF5ZMWMPc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=PJB8pCnGvGuF+84nbMIImYZcc534Haevyto86dlf/GU4I7spPriXxZL6078uhlGSX
-	 Ded+hlP3e3N9WnbN+vciQBEuMsIrgtzUexDJFk4oYYpW7yn2h43tkJ+vKGnS7ULb3P
-	 9AlWnwcekCcv6HZqHOlUz7gViz2QlqVGs43LKmQzOUqOgePXnreR74jEnFv7Vp9sv7
-	 SFp+KJys6kmUGEGR6PTCI7VZu9fPcb+mgnbTT48D/0h9hBBoZ2HyNyUjAEFENzHVXp
-	 zbusjVMc91kxe1i3ulg/4QAWbVr5KDg32lM0G56gZzX/BPv+NjJzIqEgJz07QWTZWB
-	 twp0I9VQZuLmg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uIOyJ-000000004Fn-3Jut;
-	Fri, 23 May 2025 11:45:47 +0200
-Date: Fri, 23 May 2025 11:45:47 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] USB serial updates for 6.16-rc1
-Message-ID: <aDBDywD0OoPnU84n@hovoldconsulting.com>
+	 Content-Disposition:In-Reply-To; b=lusX+toYNeOImjZb1iNimWKFNPj1is0ako7qXKM4v+qO5nYAFZXfv7EOoMwiaEue6D4BX2Ot+FlDccdDvMFdhF0c2f5MVVns1xdKWsmynXBpTWXmpap23O04qyrcp9Y1dFvWayBz7ZW9tKMpceV+xhCBvBvV+TR/Vcj1xN5Sh4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RsPUVxUP; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfe574976so65600705e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 02:46:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1747993566; x=1748598366; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=foNTOHpzt5e+CVfMRgO4/fjIO/6hBNq5r7JEJPhTgRc=;
+        b=RsPUVxUPMOJVXlJCNjJXgbN6GtVcxrEogzF+Fte6ugjwsujVAqvTFTvM+oTce/F1aB
+         9j9cIfEbgaM8jyZMJDqEmCfOUF/TuIoZ9nAMFwhxyG4+27+kgPsfLDyAgX9nw+b9lR36
+         hiSbLqRkInPYpHc1ceHRfugACkIpX1G8yq93mD2wGeSK1W7OMG07dJrtqivgxnJMXVg0
+         Kiiu3/hLwC+/inELHqvV7GQ//8NyasMB6wBCARu40nuvb6UV8NayVoMLskvBjvR6jsnT
+         Ui6+8DJFQv+FTZdY9hy/HtzPOiRBUNvLVUBoPpA8fHjlYfIk2Piu08dZrNaZdn3JxXgQ
+         ApNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747993566; x=1748598366;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=foNTOHpzt5e+CVfMRgO4/fjIO/6hBNq5r7JEJPhTgRc=;
+        b=jkyZLDWz2V0P2E1FqKXtAEMBOGCOJtYfpz1rnK8gFLqvyf6Q7gnVMeG6+2MzshA8Li
+         Xae9/6/ZlLPSbBncxCvPinGeBq/t0yzepJt1702j8+aLYJw0nirbDbTC+YGjLGyfJGqW
+         lZQdA78VSSjaChfBmusjygYIVERBl7yeo6EYiAMIi9MRYniCQkvGL1nMmjVNdyfUcWgz
+         bfKXG9+xXPC9uGjAZjhegpr28OU3sHN6y/su4HaINsU7IEy4jO5naCM6tTsU9UvAm5Q7
+         oXlRlatSMOqKojr2A5l+MBiM4sukKPQvS2dk/aFbmdH0y3V8g3+XVNOsCO97OPRqZcOj
+         ib5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVig4ttSJIuJZou0KABcNkzVDWEk/1Dy7zKMFsoFjb81Z0oGh9cL3VvB8CyiH60NwEXtDKEqvoO3P3YyGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLUqXnwwZYKt7kqSr5Hb5e7/4fAeYiXhkzEJvRAH+z1HGYXAxj
+	DFqZx5Q2gzzqNQMLC1pOD7iBF5MKcnpL9S4W5q+GFvVsBjviubNl1/HXRYH3PEhFEt0=
+X-Gm-Gg: ASbGncv0aYFRRW2zvnkIqWWAB5HqI5l8ok4FqqKEyNTRT/NDrtCJIU6xbL5B2wJGtcn
+	H6Y1QRlOB/N4hWP9mmCSSqGIdwrvnmnHYSRiU4qMQYuMn0vr7gLx1VqPLK5tc3+H3OYk6BkdXnW
+	jnpcoMsufpIdITlxvKE4iolczcbqpDsOwNr8J9Q8O+VU8Pyp+e4imf1vhf7vw7226ZbaDlnkcEo
+	gYq4PXsTZ78kHXtpFUDyVRBin894DVYHp4Up1CvGP7aYZ4n/0pNxuZ5ouSvEg4e0KRTrL1D84hK
+	048GOUVDNl0IvLy9tuQ6dg89Rt+541Z7QWPfprfFdTjmGxp+qs9W6Qk0
+X-Google-Smtp-Source: AGHT+IFeXuzRSP3te/4kJrabY82cymAda1Ah/IMjxYAHTLxROVr9nV9wVlqZWpQQfGQ7Ndx2j/Asnw==
+X-Received: by 2002:a05:600c:3114:b0:43c:fa24:8721 with SMTP id 5b1f17b1804b1-442fd6445bdmr296392075e9.17.1747993566028;
+        Fri, 23 May 2025 02:46:06 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-447f6f062fcsm131130745e9.15.2025.05.23.02.46.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 May 2025 02:46:05 -0700 (PDT)
+Date: Fri, 23 May 2025 12:46:01 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Wentao Liang <vulab@iscas.ac.cn>,
+	andi.shyti@kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] i2c: qup: Add error handling in qup_i2c_xfer_v2()
+Message-ID: <202505221445.quJVHqSz-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,42 +88,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250519141918.2522-1-vulab@iscas.ac.cn>
 
-The following changes since commit b4432656b36e5cc1d50a1f2dc15357543add530e:
+Hi Wentao,
 
-  Linux 6.15-rc4 (2025-04-27 15:19:23 -0700)
+kernel test robot noticed the following build warnings:
 
-are available in the Git repository at:
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git tags/usb-serial-6.16-rc1
+url:    https://github.com/intel-lab-lkp/linux/commits/Wentao-Liang/i2c-qup-Add-error-handling-in-qup_i2c_xfer_v2/20250519-222137
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20250519141918.2522-1-vulab%40iscas.ac.cn
+patch subject: [PATCH] i2c: qup: Add error handling in qup_i2c_xfer_v2()
+config: powerpc64-randconfig-r071-20250522 (https://download.01.org/0day-ci/archive/20250522/202505221445.quJVHqSz-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
 
-for you to fetch changes up to d3a889482bd5abf2bbdc1ec3d2d49575aa160c9c:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202505221445.quJVHqSz-lkp@intel.com/
 
-  USB: serial: pl2303: add new chip PL2303GC-Q20 and PL2303GT-2AB (2025-05-21 17:19:55 +0200)
+smatch warnings:
+drivers/i2c/busses/i2c-qup.c:1621 qup_i2c_xfer_v2() error: uninitialized symbol 'err'.
 
-----------------------------------------------------------------
-USB serial updates for 6.16-rc1
+vim +/err +1621 drivers/i2c/busses/i2c-qup.c
 
-Here are the USB serial updates for 6.16-rc1, including:
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1565  static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1566  			   struct i2c_msg msgs[],
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1567  			   int num)
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1568  {
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1569  	struct qup_i2c_dev *qup = i2c_get_adapdata(adap);
+61f647e9d36d67 Wentao Liang          2025-05-19  1570  	int ret, err, idx = 0;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1571  
+fbf9921f8b35d9 Sricharan Ramabadhran 2016-06-10  1572  	qup->bus_err = 0;
+fbf9921f8b35d9 Sricharan Ramabadhran 2016-06-10  1573  	qup->qup_err = 0;
+fbf9921f8b35d9 Sricharan Ramabadhran 2016-06-10  1574  
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1575  	ret = pm_runtime_get_sync(qup->dev);
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1576  	if (ret < 0)
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1577  		goto out;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1578  
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1579  	ret = qup_i2c_determine_mode_v2(qup, msgs, num);
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1580  	if (ret)
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1581  		goto out;
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1582  
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1583  	writel(1, qup->base + QUP_SW_RESET);
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1584  	ret = qup_i2c_poll_state(qup, QUP_RESET_STATE);
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1585  	if (ret)
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1586  		goto out;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1587  
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1588  	/* Configure QUP as I2C mini core */
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1589  	writel(I2C_MINI_CORE | I2C_N_VAL_V2, qup->base + QUP_CONFIG);
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1590  	writel(QUP_V2_TAGS_EN, qup->base + QUP_I2C_MASTER_GEN);
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1591  
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1592  	if (qup_i2c_poll_state_i2c_master(qup)) {
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1593  		ret = -EIO;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1594  		goto out;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1595  	}
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1596  
+eb422b539c1f39 Abhishek Sahu         2018-03-12  1597  	if (qup->use_dma) {
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1598  		reinit_completion(&qup->xfer);
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1599  		ret = qup_i2c_bam_xfer(adap, &msgs[0], num);
+eb422b539c1f39 Abhishek Sahu         2018-03-12  1600  		qup->use_dma = false;
+9cedf3b2f09946 Sricharan Ramabadhran 2016-02-22  1601  	} else {
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1602  		qup_i2c_conf_mode_v2(qup);
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1603  
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1604  		for (idx = 0; idx < num; idx++) {
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1605  			qup->msg = &msgs[idx];
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1606  			qup->is_last = idx == (num - 1);
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1607  
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1608  			ret = qup_i2c_xfer_v2_msg(qup, idx,
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1609  					!!(msgs[idx].flags & I2C_M_RD));
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1610  			if (ret)
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1611  				break;
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1612  		}
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1613  		qup->msg = NULL;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1614  	}
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1615  
+f74187932d30e4 Sricharan Ramabadhran 2016-01-19  1616  	if (!ret)
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1617  		ret = qup_i2c_bus_active(qup, ONE_BYTE);
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1618  
+7545c7dba169c4 Abhishek Sahu         2018-03-12  1619  	if (!ret)
+61f647e9d36d67 Wentao Liang          2025-05-19  1620  		err = qup_i2c_change_state(qup, QUP_RESET_STATE);
 
- - fix of an incorrect const cast
- - removal of a bogus read urb sanity check
- - support for a couple of new pl2303 device types
+if ret was already set then err isn't initialized.
 
-All have been in linux-next with no reported issues.
+61f647e9d36d67 Wentao Liang          2025-05-19 @1621  	if (err)
+                                                            ^^^
+Uninitialized.  In production obviously the only sane choice is
+CONFIG_INIT_STACK_ALL_ZERO but I really encourage developers to set
+CONFIG_INIT_STACK_ALL_PATTERN=y so that we catch these sorts of
+bugs in testing.
 
-----------------------------------------------------------------
-Charles Yeh (1):
-      USB: serial: pl2303: add new chip PL2303GC-Q20 and PL2303GT-2AB
+61f647e9d36d67 Wentao Liang          2025-05-19  1622  		return err;
+f74187932d30e4 Sricharan Ramabadhran 2016-01-19  1623  
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1624  	if (ret == 0)
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1625  		ret = num;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1626  out:
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1627  	pm_runtime_mark_last_busy(qup->dev);
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1628  	pm_runtime_put_autosuspend(qup->dev);
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1629  
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1630  	return ret;
+191424bb6166f6 Sricharan Ramabadhran 2016-01-19  1631  }
 
-Greg Kroah-Hartman (1):
-      USB: serial: bus: fix const issue in usb_serial_device_match()
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
-Johan Hovold (1):
-      USB: serial: ti_usb_3410_5052: drop bogus read urb check
-
- drivers/usb/serial/bus.c              | 2 +-
- drivers/usb/serial/pl2303.c           | 2 ++
- drivers/usb/serial/ti_usb_3410_5052.c | 5 -----
- 3 files changed, 3 insertions(+), 6 deletions(-)
 
