@@ -1,125 +1,101 @@
-Return-Path: <linux-kernel+bounces-660576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487CAAC1F89
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:14:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0537FAC1F93
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2FB4175CFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:14:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 542014E19F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E161E225791;
-	Fri, 23 May 2025 09:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CA8226556;
+	Fri, 23 May 2025 09:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OE/4aLJm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ai-sast.com header.i=@ai-sast.com header.b="23wcnIM2"
+Received: from outbound.pv.icloud.com (p-west1-cluster5-host7-snip4-10.eps.apple.com [57.103.66.241])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C0B7083A;
-	Fri, 23 May 2025 09:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B8118DB14
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 09:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.241
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747991636; cv=none; b=orGXkWFITbaJ+Td7+IqbJvMqCcNJG/EyPdCkkyM/EPX/LSgho79p5f501XnyOJNpbwgUoWL3YV0wGuEDQATDDRQlHbEvHzX1byNuByupgO8BvQkbQhJyuaE4/w+NULkMMibckauCHoO8iXJeg9CnyzyaNyED7AsKpzmAaNgq9kk=
+	t=1747991726; cv=none; b=e7wsmzK3hc5vWtbO0wLMUrUmM2czhA0EX63Rgc55eYnCgAlQ/R1StcQSnd2KyqaaAkFCFzZCxnpQ3kJX/JOEyxX+RWGzefvvaoqGiMJ0pEh6W2qKi2ZMiFFGSLhO3L84gZz50YlHjigt47eSDJGmQ7VuXlwr0qL/y3wUADuCQHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747991636; c=relaxed/simple;
-	bh=quRZiAtHBMyCVY3xX8NmyD/m/HFZt5z8CfWeUS1wbE0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k1ijh2si9EtYrGmG07BuhhNNxb8wd9n055husWyr4rZrlgPU1vp7xI65+tGRaj8//NOgz543uz/5mfp0ouDaFwkJfRkI8tiFV9e65hF5DM7J1wfTF8+L5tjmN/El+uZ2ayRU6fJum2ENqKdQUCFbUkvtDc8oivER9nllANrsJvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OE/4aLJm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFFF6C4CEEB;
-	Fri, 23 May 2025 09:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747991635;
-	bh=quRZiAtHBMyCVY3xX8NmyD/m/HFZt5z8CfWeUS1wbE0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OE/4aLJmDH1vo9ieZwCezrgUluY9XcSsfBPeriaNP4s0OhdyRR/lzOL1Ugz3vx3VM
-	 U8e353inNiCWiliDeMD/FspDDQQNDl1zDqfnWyjCfr4T0yPQG7uKY/XHIrNshoB2/K
-	 klqcmx9TaNAo+em4GoeXd/wXT/7CVb5mJjSTDR7xL+iwzWUJIARr59f7xE+KoH9718
-	 pnwukS7qpgS0wNMeNb8Rmn8ZnipIfVv0q+3C5k702asR9U/xN02kAYZYYK/bhSymdz
-	 xYG0YDwYVErERxZWqKLYOdRNe78uxZyTniqwGU1Im7G8S05/O3/TgZgvAUwgxW6pOo
-	 I+XlHxnueIBlQ==
-Message-ID: <8752f974-473d-4bb6-9c00-e9a79f905bfe@kernel.org>
-Date: Fri, 23 May 2025 11:13:50 +0200
+	s=arc-20240116; t=1747991726; c=relaxed/simple;
+	bh=RnYD+Ni15zMNK1TCEl1muSbfKEbGPsYAXEH5yp9H8kU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ItiSop3p8ngmHhYn19BuE3+GDMcKTsvVDz6Ylinj8+i/dalrPQDzu7IHlYT/Q7d1SOhUhnZM8SbAwyFd2ffeiQne369HFy6UmmRQmk9OCf96/shSe6QVwxW/qvpNCEPoRd9WD9Zbd2sIRbueoYxaN0dVDbA/tBHY/neDo1XHFPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ai-sast.com; spf=pass smtp.mailfrom=ai-sast.com; dkim=pass (2048-bit key) header.d=ai-sast.com header.i=@ai-sast.com header.b=23wcnIM2; arc=none smtp.client-ip=57.103.66.241
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ai-sast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ai-sast.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ai-sast.com; s=sig1;
+	bh=YyKS243VV7SsoTdftLin95+GlAHrUt5ZaL5mE+UwCYI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme;
+	b=23wcnIM2CdyIu0okcrwv2i7gqi/u9yY6NWAsNBMyVi53j5Z/EZwYVuN6S8MQ795gJ
+	 f48FPfqKNHvO+C8M2Mp08nUvQyqcjcVQFDo+697Hk4slfG5KQ9FPPQ73MM7aRjJ/v2
+	 a3HU7khqxTurXRIFqsG+ebZgSOppVsGG/ThzEUBDP0ybWBKwZndkAauf5ZoaOe7ZF7
+	 ma/Oycp4Eh1q7ipVKO4qaLkX3gMl8w9KN5VZzUX8DhfFzuChaN+ZOla7EvprcYLHZo
+	 lmZqPio8vk2HFbCAPpQW9O2iE7s6LAX1XF63MfkDx8Kinip8A17wp2I5buwiSvoolI
+	 Kcb+VKMLbnSCA==
+Received: from outbound.pv.icloud.com (localhost [127.0.0.1])
+	by outbound.pv.icloud.com (Postfix) with ESMTPS id 4694718028F3;
+	Fri, 23 May 2025 09:15:21 +0000 (UTC)
+Received: from localhost.localdomain (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 7432318029CA;
+	Fri, 23 May 2025 09:15:00 +0000 (UTC)
+From: Ye Chey <yechey@ai-sast.com>
+To: brauner@kernel.org,
+	djwong@kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ye Chey <yechey@ai-sast.com>
+Subject: [PATCH] iomap: fix potential NULL pointer dereference in iomap_alloc_ioend
+Date: Fri, 23 May 2025 17:14:17 +0800
+Message-ID: <20250523091417.2825-1-yechey@ai-sast.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] clock: eswin: Add eic7700 clock driver
-To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- huangyifeng@eswincomputing.com
-References: <20250523090747.1830-1-dongxuyang@eswincomputing.com>
- <20250523090928.1940-1-dongxuyang@eswincomputing.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250523090928.1940-1-dongxuyang@eswincomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: N5XNWfC75tO48dMvU92rl6sLZ-EDykol
+X-Proofpoint-GUID: N5XNWfC75tO48dMvU92rl6sLZ-EDykol
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-23_02,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0
+ phishscore=0 mlxscore=0 spamscore=0 malwarescore=0 bulkscore=0 clxscore=1030
+ mlxlogscore=857 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.22.0-2503310001 definitions=main-2505230081
 
-On 23/05/2025 11:09, dongxuyang@eswincomputing.com wrote:
-> From: Xuyang Dong <dongxuyang@eswincomputing.com>
-> 
-> This driver depends on the CCF framework implementation.
->   Based on this driver, other modules in the SoC can use the APIs
->   provided by CCF to perform clock-related operations.
->   The driver supports eic7700 series chips.
-> 
-> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
-> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk+dt@kernel.org>
-NAK, stop adding fake tags. How did you even invent such email?
+Under memory pressure, bio_alloc_bioset() may fail and return NULL. Add
+a check to prevent NULL pointer dereference in iomap_alloc_ioend().
+This could happen when the system is under memory pressure and the
+allocation of the bio structure fails.
 
-Best regards,
-Krzysztof
+Signed-off-by: Ye Chey <yechey@ai-sast.com>
+---
+ fs/iomap/buffered-io.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 5b08bd417..d243b191e 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1618,6 +1618,8 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
+ 	bio = bio_alloc_bioset(wpc->iomap.bdev, BIO_MAX_VECS,
+ 			       REQ_OP_WRITE | wbc_to_write_flags(wbc),
+ 			       GFP_NOFS, &iomap_ioend_bioset);
++	if (!bio)
++		return NULL;
+ 	bio->bi_iter.bi_sector = iomap_sector(&wpc->iomap, pos);
+ 	bio->bi_end_io = iomap_writepage_end_bio;
+ 	bio->bi_write_hint = inode->i_write_hint;
+-- 
+2.44.0
+
 
