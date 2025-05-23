@@ -1,127 +1,162 @@
-Return-Path: <linux-kernel+bounces-660858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB83AC2301
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:50:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FD4AC2338
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF583A40893
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:50:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE0B174A10
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD402AE8E;
-	Fri, 23 May 2025 12:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97136128395;
+	Fri, 23 May 2025 12:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="LPIRd/8Q";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cCsyRVd/"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LtWbk54x"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11F32576;
-	Fri, 23 May 2025 12:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FC210A1F;
+	Fri, 23 May 2025 12:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748004624; cv=none; b=bYz7Ck+qkO/jV5Il441CeWqmr9plagI+fFmOdQjXo/VfslPKvt7VNQAfy8bG7BxSVFANwodchsccLGO/mBqxS2Vdur4/cdSiu+doC+EWx5+NAtUJoDYVFFryNV1FUjFXyQhM58qwxIrLMOnsz1NqYL8u4hHpRBbKjmo2oC88vhE=
+	t=1748005060; cv=none; b=dRwcPVT8ZK6xEHh6+jn3o961aUILDgngmJj5LZriZDwSjwv1e0YN58LoEcBHnFZcFt9Nh95CJD7s1CdfpLA175hJe/JSE4zdUG2vDcGY+3+0s3zkGDz1pAioJ3Zej4nzCnt/pkBowYMTQ4VZsONiZG1lCel6VV8HKY/BPwvqlXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748004624; c=relaxed/simple;
-	bh=s68+E7ctAYoJcPBM1D4+htBme6u+WOWt5Olodz1asVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+gP72jSaciuL4QDkHkoFvgju9AIFLhvg8y8m9yCdZUyKvcA4KpsGcIt/M3QCnA8e6bH5KPE7QwckHmgGfB98TVo029v7ZqqE8hbAv3bhvs97ggV3N9xeohVbZe5jVdN3qEb2/4bRil/fGvHAjMy8BBWKzBCDqFyH/CXhHZqb8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=LPIRd/8Q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cCsyRVd/; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 87E371140178;
-	Fri, 23 May 2025 08:50:20 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Fri, 23 May 2025 08:50:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1748004620; x=1748091020; bh=PwwEtOtJCz
-	k3vlOMeCM+Nvpswbr381LHbWSMQWgkYPA=; b=LPIRd/8Q1IPcVO5ZeGx6qmsVCn
-	6d6deZwnvkoyzEnZW6/HaT0GGbwxcqc66jUSecG3T8AMh2fdsa8fkJrOD61J+AAW
-	P04UP1kQNyzK8GsURUvv/Nbab/UPDsHU9rSaFhZjOLl554nr6EzsG2F79PtA1Cgj
-	5GIQ5rVZimrDLuj+C+szmlkXguBTG1oFdW2FDX7QGaMlk9JAyqcTCScxkvJ63Nc9
-	W4PkUrw9qLa95YMum2DwHs7ilfK08wo0AZJHoMXwcRmdhgI5lUj0iSG5Y5okDsTO
-	fOWEYac5SQFY4hN7CdTKncuIBoSq+HFB4BiySNKUXvbGJZSpiCAoqrEjuylw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1748004620; x=1748091020; bh=PwwEtOtJCzk3vlOMeCM+Nvpswbr381LHbWS
-	MQWgkYPA=; b=cCsyRVd/nk9pwzNZfqqn0OD9Cj3eUUNwd9yqtKwgW1EsCuwrZLJ
-	2Tu6blSKJL/r4iWAuV+yHERB65YfA8wFpiuvdu8++QX0w4D4abNVTxrB9uMmLPOF
-	cnuJDETRpMhzvXsKe+gOAoLJVB4bhD56IfT7V0A9aWdjqHy3agQrHiE67xdhR6Z/
-	IDaAbP4SFRChaPSgC3HJe70Z3JzB2ZVs/9oqYxClSNN4soqn5xMNzawo3VJjqKm1
-	dHubj3AxWvaxO2/bhtpBBZmLd7G4YCgU4juKkujHAauuI72Ed4utuZsAsi2NdoHK
-	PNuUm/n++DdyPkTOYGQGIkm6drriycuEwaA==
-X-ME-Sender: <xms:C28waIVDDGXGg24pAg8nJezolkWrsSyJFI9o3_oqWOC7xo17QQxa3w>
-    <xme:C28waMlZdOckPzignd6CbbJrJSNQx7Rz0uCweWl26lTqtNUt1Afl9jsQXKzNdLdn_
-    jv5R5R55CphiA>
-X-ME-Received: <xmr:C28waMYo4R9i_AKV1jy5tlIi5jRcKuvKPu6EEDPNvh9OFM52ymGxdusEqi6Hc4sVC7m4p6FC9DDrkTHDwq2wqaFllRsTblk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdekkeelucdltddurdegfedvrddttd
-    dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
-    nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
-    enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhgg
-    tggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhroh
-    grhhdrtghomheqnecuggftrfgrthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledt
-    iefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphht
-    thhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrd
-    gruhhughdrohhrghdrrghupdhrtghpthhtohepjhhonhgrthhhrghnrdhsthhrohhuuges
-    rghmugdrtghomhdprhgtphhtthhopehrrgguhhgvhidrshhhhigrmhdrphgrnhguvgihse
-    grmhgurdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrh
-    hnvghlrdhorhhg
-X-ME-Proxy: <xmx:C28waHWs62z-EH0hpd7LOE6wuJ8wVUeZ9Df7Fusnuw-D-mBGKoRAWQ>
-    <xmx:C28waClQacsxU1uUlODW_VRX58-kkNYxL55PooJdhgSRI3lTMzozgw>
-    <xmx:C28waMeTji5nTaXeK45kdnJoU62YqGPa_uNHffHPpXCVWQum4L9eCw>
-    <xmx:C28waEFHiyus5Ib_0vQhzQXk4cblrKqcQUOPhm9jo-2NnswiPfjw_g>
-    <xmx:DG8waFYzuIR48AtLn_U-YiERSA-PjGMSILrbyFs7dtKrjxVoiqrO7VDw>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 23 May 2025 08:50:19 -0400 (EDT)
-Date: Fri, 23 May 2025 14:50:17 +0200
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jonathan Stroud <jonathan.stroud@amd.com>,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the usb tree
-Message-ID: <2025052309-moisten-antiquity-a888@gregkh>
-References: <20250523150934.09d99b2b@canb.auug.org.au>
+	s=arc-20240116; t=1748005060; c=relaxed/simple;
+	bh=uAzqmQ27CSJpty7RbW9XS5900LTZJ6jxrKZ6Q4FYnfw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=UcVrTKwKNJ/6uIzCyCEvwih0XEcd3uDdMnYYBRzgOkxXF//Jja+IlR6IFxi2oyC6FNFurGSc8gZU+eX2LGq8LGvZHDgoxfwDzUXm/tRLCORr1TDjIt78NHYk0Ijf89utkj2O0idWpJds+80WUz5O2snnNKRZG4rKiwlUy8kJbRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LtWbk54x; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748005058; x=1779541058;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=uAzqmQ27CSJpty7RbW9XS5900LTZJ6jxrKZ6Q4FYnfw=;
+  b=LtWbk54xwQ8c4EhRXMPno6zrl0M5yCns7o4KbbP7/e7gTtZjSUucCwFt
+   qJsKUYwPFrTpVSJ7/dJyyqP38PTwDlXzCEVW48tV1itg89OrKeqN1CFkp
+   HF5dJs7LSQ8nneyayWZZ2kdw8noIb/GL1sSeLld63yxjT/utJPCSh8WJA
+   ohw9Xbnm9z3haJUN182MI+7TzOuTDmwbq2wOiCkX0EKQp7hLWJCiGd5+k
+   aGFBhOsg5yGdJ/J15AF90oJq4E+Olh4yJNNzjnluWYo5Qzzzfpp8Og5AR
+   2j/5MAycwWpzQ3++EADR4j0vq2S0kf+ynzytJPpGtFsTiY78UIx9Jc6wR
+   g==;
+X-CSE-ConnectionGUID: sDU0/jOuTPu4f9X43pYYvg==
+X-CSE-MsgGUID: 4ixFsvwBRgeSWelzKYqHzw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="61464589"
+X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
+   d="scan'208";a="61464589"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 05:57:37 -0700
+X-CSE-ConnectionGUID: +g9hGL3ySHW33/mWARsHNg==
+X-CSE-MsgGUID: SXlsmNlyRpOEtkAbRj4YxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
+   d="scan'208";a="141196204"
+Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
+  by fmviesa007.fm.intel.com with ESMTP; 23 May 2025 05:57:32 -0700
+From: Chen Yu <yu.c.chen@intel.com>
+To: peterz@infradead.org,
+	akpm@linux-foundation.org
+Cc: mkoutny@suse.com,
+	mingo@redhat.com,
+	tj@kernel.org,
+	hannes@cmpxchg.org,
+	corbet@lwn.net,
+	mgorman@suse.de,
+	mhocko@kernel.org,
+	muchun.song@linux.dev,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	tim.c.chen@intel.com,
+	aubrey.li@intel.com,
+	libo.chen@oracle.com,
+	kprateek.nayak@amd.com,
+	vineethr@linux.ibm.com,
+	venkat88@linux.ibm.com,
+	ayushjai@amd.com,
+	cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	yu.chen.surf@foxmail.com,
+	Ayush Jain <Ayush.jain3@amd.com>,
+	Chen Yu <yu.c.chen@intel.com>
+Subject: [PATCH v5 1/2] sched/numa: fix task swap by skipping kernel threads
+Date: Fri, 23 May 2025 20:51:01 +0800
+Message-Id: <eaacc9c9bd37bac92d43a671867d85b2fdad3b06.1748002400.git.yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1748002400.git.yu.c.chen@intel.com>
+References: <cover.1748002400.git.yu.c.chen@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250523150934.09d99b2b@canb.auug.org.au>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 23, 2025 at 03:09:34PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the usb tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> drivers/usb/misc/onboard_usb_dev.c:358:12: warning: 'onboard_dev_5744_i2c_write_byte' defined but not used [-Wunused-function]
->   358 | static int onboard_dev_5744_i2c_write_byte(struct i2c_client *client, u16 addr, u8 data)
->       |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/usb/misc/onboard_usb_dev.c:313:12: warning: 'onboard_dev_5744_i2c_read_byte' defined but not used [-Wunused-function]
->   313 | static int onboard_dev_5744_i2c_read_byte(struct i2c_client *client, u16 addr, u8 *data)
->       |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Introduced by commit
-> 
->   1143d41922c0 ("usb: misc: onboard_usb_dev: Fix usb5744 initialization sequence")
+From: Libo Chen <libo.chen@oracle.com>
 
-Should now be fixed, thanks!
+Task swapping is triggered when there are no idle CPUs in
+task A's preferred node. In this case, the NUMA load balancer
+chooses a task B on A's preferred node and swaps B with A. This
+helps improve NUMA locality without introducing load imbalance
+between nodes. In the current implementation, B's NUMA node
+preference is not mandatory. That is to say, a kernel thread
+might be incorrectly chosen as B. However, kernel thread and
+user space thread that does not have mm are not supposed to be
+covered by NUMA balancing because NUMA balancing only considers
+user pages via VMAs.
 
-greg k-h
+According to Peter's suggestion for fixing this issue, we use
+PF_KTHREAD to skip the kernel thread. curr->mm is also checked
+because it is possible that user_mode_thread() might create a
+user thread without an mm. As per Prateek's analysis, after
+adding the PF_KTHREAD check, there is no need to further check
+the PF_IDLE flag:
+"
+- play_idle_precise() already ensures PF_KTHREAD is set before adding
+  PF_IDLE
+
+- cpu_startup_entry() is only called from the startup thread which
+  should be marked with PF_KTHREAD (based on my understanding looking at
+  commit cff9b2332ab7 ("kernel/sched: Modify initial boot task idle
+  setup"))
+"
+
+In summary, the check in task_numa_compare() now aligns with
+task_tick_numa().
+
+Suggested-by: Michal Koutny <mkoutny@suse.com>
+Tested-by: Ayush Jain <Ayush.jain3@amd.com>
+Signed-off-by: Libo Chen <libo.chen@oracle.com>
+Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+v4->v5:
+Add PF_KTHREAD check, and remove PF_IDLE check.
+---
+ kernel/sched/fair.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 0fb9bf995a47..03d9a49a68b9 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -2273,7 +2273,8 @@ static bool task_numa_compare(struct task_numa_env *env,
+ 
+ 	rcu_read_lock();
+ 	cur = rcu_dereference(dst_rq->curr);
+-	if (cur && ((cur->flags & PF_EXITING) || is_idle_task(cur)))
++	if (cur && ((cur->flags & (PF_EXITING | PF_KTHREAD)) ||
++		    !cur->mm))
+ 		cur = NULL;
+ 
+ 	/*
+-- 
+2.25.1
+
 
