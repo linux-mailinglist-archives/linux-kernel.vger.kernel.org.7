@@ -1,125 +1,105 @@
-Return-Path: <linux-kernel+bounces-661046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31AA3AC25FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:06:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85279AC25D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 17:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 893453AF200
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:06:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB86F17DB3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 15:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D6629614C;
-	Fri, 23 May 2025 15:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0F3296D24;
+	Fri, 23 May 2025 15:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKiG+4IW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JKnv+jZT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B42C19CC22;
-	Fri, 23 May 2025 15:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20A2296731;
+	Fri, 23 May 2025 15:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748012807; cv=none; b=onEkHhWoUImnQrRhSNaDuhNPvnhROuYAVAgdnadLc7S4LZYLfonrZ7EhYFbMftZcuxG+txcBmA2yJNA2DvMM4pi6baINxjbWAVFTAYeM7yDXcZ9nr5sVj0O/s6ivqv5AcwsuRu7DPSDTnUsJIMc80l+cCFhb/lPtHjqSknKjLhg=
+	t=1748012563; cv=none; b=DCteN7LvnWiAxmmsrad7Ss2j4ueTggFtpvBve3I7xX7kZOKf7CkBP7QQ+dJ3OOip/SNv+V8GZLV3E6OtuK47LJBb5t+JRMjU5nBbnZY1sfnvF8+JhAEIAqfbow72kQqIadKWljjXQqWQsA3x9GqRVOfqkR3aOjoc+Grf2iDme3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748012807; c=relaxed/simple;
-	bh=cTgg7neabucDYcjUEjOMZEoFwiorg7njPcXPV94ubGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5XVFoFIfkgnJLc1fjLUiR8vDD4/0Oss3/XsF1HcpFz5Xnxo2c4Wd6hDTj+EcdI8df2xBSG2smRaMzWpS7qGB6eO68wvCss/BXKiwdtuX4vM+zKxb0WW52T6ny0JfN41coKJpCmYAsZiZGbS5qLzezJ0v6x39mw7J3DqMvHJUJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKiG+4IW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A75C0C4CEE9;
-	Fri, 23 May 2025 15:06:46 +0000 (UTC)
+	s=arc-20240116; t=1748012563; c=relaxed/simple;
+	bh=yeEwoT8PzEjoyanP7MaGg6wH0I3SAEbIqeSO/slYwaY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JFAu3XCLSLNE7TFSW7jwEXr0FlrqUSExwryLZwAqcu5idjnUgl7kz9s+B6xkMctfWAFjPoaem4P4lAPdyktj//pMR9H/pRsfVNN6EAOj9lTnrTBuhumc70GpHavfrJKl2qwT6xS0EtqakPCG+D8LaIgzYv69mxmWZbXDFh/KYAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JKnv+jZT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E187C4CEF1;
+	Fri, 23 May 2025 15:02:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748012807;
-	bh=cTgg7neabucDYcjUEjOMZEoFwiorg7njPcXPV94ubGQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FKiG+4IW2Z2yeLgvhvZV5x9fKc2R8Ht0x7XOxlrbB91XbqnxzdpJsXe86ZfoiOCAd
-	 +DczRHIvMD8x6PvcUQKt2s2+BSIiZFbom7+k5FUJih7N8fCbTi+b8cHD2bT/w1/B5i
-	 cXd4q9ox30WORf/qf19xY/7lTnUgHrsjzScg/PqrJzB5ubpjRoj/5xfwp0+l4wAVEv
-	 QXM6LiLDH6GwjLN3eFZFNoQDGWwee1AlxutzFnoIK4FQe61tbb8VtTzR+qsDXmjNIa
-	 GjgJReoHIKaGadLlTSh2paCbWUDD28y7ZD01D2gQEAKO4r3i9LDSfMjh3NzDvLCHXm
-	 JZGjkrYnWQ8/Q==
-Date: Fri, 23 May 2025 17:01:36 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Wen Yang <wen.yang@linux.dev>
-Subject: Re: [PATCH] kernel/sysctl-test: Unregister sysctl table after test
- completion
-Message-ID: <yaadrvxr76up6j2cixi5hhrxrb4yd6rfus7n3pvh3fv42ahk32@vwiphrfdvj57>
-References: <20250522013211.3341273-1-linux@roeck-us.net>
- <ce50a353-e501-4a22-9742-188edfa2a7b2@roeck-us.net>
+	s=k20201202; t=1748012562;
+	bh=yeEwoT8PzEjoyanP7MaGg6wH0I3SAEbIqeSO/slYwaY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JKnv+jZT8uo3dhabyWrkSyfdLyXDRjwH7dxFnjtZt9tDxK25ZdSga/Hijv2WlMYD4
+	 zkWYpP+bJusHqgBJ3qBm0iUN+8u6g/fp01mppelKjMTA9RfhIQwJsBK+kzA9fZXiD+
+	 QPMyS5tl5SZrcKY7Btdbbk1AQwyEBhl79rhF6pTHDSC4wF2mdYIAMjcWO8DemnbF1i
+	 a8WJWU9XoFPwdmFnu9tG1NY53u1WYzDUwwEaAg2+PdFvNhufSq2TpBlrjRSZRMDGzT
+	 qyhUX6Xit5LFeT4RJhW23+5SjM7f1LPzogeiQVIg002wfnNkoMrylG87PNzcUVokb4
+	 stIZxgvuB9OAA==
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-606668f8d51so24318eaf.0;
+        Fri, 23 May 2025 08:02:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUC2aRsfpmMkd2t84wgJ5SE++M+HWvobnHWCloFV23KORtw8lEVoEnY8rEFIvu54hqNDNTUSQkr43A=@vger.kernel.org, AJvYcCVkmjO4Lmc0uQ0Tau9U+tVwykSa7ppxKREc8NBbCFY2EUqDu8UjUcMuRQjWqLc1dJHJK7gRrPF67dUC+qT4C54=@vger.kernel.org, AJvYcCXy1Vi97/5tkzbHuqvVGn53/BTxYaeu5wAasp3vXb7WppSh49+FoZlPbC/N+1Cmmdz7QGIs5kOwbwnu8YvH@vger.kernel.org
+X-Gm-Message-State: AOJu0YzotEhw+voetqzvKcHHAfd9Y3UIOfGLfvGg+3M1WCniBsw2zUVw
+	sofP7rSe9WwHU81aLXrMf3eOjVs1GZ9g+4DTc1uYK0YaK7MPa07rAkXQExeIqMJbbiiPNFydCWj
+	SHKD0STPfaDi+HYS8e0mZoJkAHI80NFw=
+X-Google-Smtp-Source: AGHT+IH9Y4wLz5/pJ6ZzxN0hDwbYbOJN5QHqil4L+lAF31fYQ2PwzTFhe6cQLrw8+MzkeTje+8/0rG2DUGdVZRYsTdc=
+X-Received: by 2002:a05:6820:206:b0:603:f809:ce19 with SMTP id
+ 006d021491bc7-60b93fc575amr2521581eaf.3.1748012561774; Fri, 23 May 2025
+ 08:02:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="coch6zutooty5uxj"
-Content-Disposition: inline
-In-Reply-To: <ce50a353-e501-4a22-9742-188edfa2a7b2@roeck-us.net>
-
-
---coch6zutooty5uxj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250522083157.1957240-1-colin.i.king@gmail.com>
+In-Reply-To: <20250522083157.1957240-1-colin.i.king@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 23 May 2025 17:02:30 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iE6LtKcDHiV88z3E11c_qhuWyoS4n0XjwGesdduDfDKg@mail.gmail.com>
+X-Gm-Features: AX0GCFvSZPSsva3B90BZAwDIdj_iwZcxnJNROkMIUQJGlpaB3GGbyzorS7URnMw
+Message-ID: <CAJZ5v0iE6LtKcDHiV88z3E11c_qhuWyoS4n0XjwGesdduDfDKg@mail.gmail.com>
+Subject: Re: [PATCH][next] thermal/drivers/airoha: Fix spelling mistake
+ "calibrarion" -> "calibration"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 22, 2025 at 11:53:15AM -0700, Guenter Roeck wrote:
-> On Wed, May 21, 2025 at 06:32:11PM -0700, Guenter Roeck wrote:
-> > One of the sysctl tests registers a valid sysctl table. This operation
-> > is expected to succeed. However, it does not unregister the table after
-> > executing the test. If the code is built as module and the module is
-> > unloaded after the test, the next operation trying to access the table
-> > (such as 'sysctl -a') will trigger a crash.
-> >=20
-> > Unregister the registered table after test completiion to solve the
-> > problem.
-> >=20
->=20
-> Never mind, I just learned that a very similar patch has been submitted
-> last December or so but was rejected, and that the acceptable (?) fix see=
-ms
-> to be stalled.
->=20
-> Sorry for the noise.
->=20
-> Guenter
+On Thu, May 22, 2025 at 10:32=E2=80=AFAM Colin Ian King <colin.i.king@gmail=
+.com> wrote:
+>
+> There is a spelling mistake in a dev_info message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/thermal/airoha_thermal.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/thermal/airoha_thermal.c b/drivers/thermal/airoha_th=
+ermal.c
+> index 9a7a702a17de..b9fd6bfc88e5 100644
+> --- a/drivers/thermal/airoha_thermal.c
+> +++ b/drivers/thermal/airoha_thermal.c
+> @@ -352,7 +352,7 @@ static void airoha_thermal_setup_adc_val(struct devic=
+e *dev,
+>                 priv->default_offset =3D airoha_get_thermal_ADC(priv);
+>                 priv->default_slope =3D EN7581_SLOPE_X100_DIO_DEFAULT;
+>                 priv->init_temp =3D EN7581_INIT_TEMP_NONK_X10;
+> -               dev_info(dev, "missing thermal calibrarion EFUSE, using n=
+on calibrated value\n");
+> +               dev_info(dev, "missing thermal calibration EFUSE, using n=
+on calibrated value\n");
+>         }
+>  }
+>
+> --
 
-Hey Guenter
-
-It is part of what is getting sent for 6.16 [1]
-That test will move out of kunit into self-test.
-
-Best
-
-
-[1] https://sysctl-dev-rtd.readthedocs.io/en/latest/release.html#patch-0-4-=
-sysctl-move-the-u8-range-check-test-to-lib-test-sysctl-c
-
---=20
-
-Joel Granados
-
---coch6zutooty5uxj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmgwjccACgkQupfNUreW
-QU8YgAv+L+zQWehdMUQeh3Rr/pAATLh8YLAMC7q/tDLnjY5IyY6okQ7V7W5SBPlb
-aqtQ0OoL69Mbh2gtY0ykvFnK7G+vBOW4F3bI49jjNc9ewkaUEhk0imb69ktYounm
-eILkPj4mO6jJfPqrQMakMVqrKkc6fVRpKYwdEOGuLos/tnwc0BtwEM542JBodXtO
-I6fALUHUzq5R9mdkuAUSJ7yM7XPsIgIm8gpGRR3zH2kPFoPBhQdq2bdi/pu0Ci7s
-CjfZzUx8/EhkTaR9sZH/hUanaXAyKSQ0KxuYdJ34rgpvBWuwxGo3pdManxvpiLVS
-pASo7TCA9YQ/m61h4DVicmGAoC1LzKnCCgXefdI3Fa7SAyA3oY31vjTwWVi2wksQ
-QgoHFf6ruAmWvEOL0+WyLNGoKC0sJItN1CVGfZr2FvnIpwifqdH8Cu9nOE2HYATf
-qyansBdZ7Pkk/bE50A20asoXQpgP0EXKtOhuMNnuZvaFP36HluV/XANkPpk6taCU
-IuvZkyWq
-=sdLO
------END PGP SIGNATURE-----
-
---coch6zutooty5uxj--
+Applied as 6.16 material, thanks!
 
