@@ -1,274 +1,126 @@
-Return-Path: <linux-kernel+bounces-660603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B15AC1FE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:40:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F1FAC1FC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 990D2174E8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:40:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 151069E0E89
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8438F225776;
-	Fri, 23 May 2025 09:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438FD224AE9;
+	Fri, 23 May 2025 09:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="nt97+XxB"
-Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="E42gUiMU"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54E213DDAE;
-	Fri, 23 May 2025 09:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D101E1F09B4;
+	Fri, 23 May 2025 09:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747993205; cv=none; b=WFmY7qZN3D8FWVieYRoQz5B8KwweUHkziuv+s4agEbi/kgW7eZMCfg4s4aCvG7Ftv+8OCk/iBhsXNkBLqvJSvvg75qgezcP2tEYmwHyPzUg13OQjhXo0pIGoMojEO6Z8vzYVM50+dAAgRnUQAVkIq/rNda8gCTN6eFQtkZ1jGA4=
+	t=1747992765; cv=none; b=fh9UdhajfkK+KuZ4+ompfoZbtuJPtzYGxVBEIOn7JsopmQ6bjWE+wSEfCYIH9zIPVUxsUksTiUTM6kSSE66kCAau5sQQcxKl7vHRNaagXzjsQyEtNxITjtbIf8fXB4RhucaIIHLgC76TZTEk1ZiRPd5gu1MuOYwlIwp7HG+1iBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747993205; c=relaxed/simple;
-	bh=ATCmv+viaSTlbE4KIivxj5Ss1BYqbwk6eKwZ+NfLHCc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GpQ8+Oee+lK++novcrzps1QyzAx8X3QdA1nOVpaX7m81TXU4a9I6LgCbsaTFmIdFo3XFQb6j6IP/Nk5CheOcLl3DMMUsq2OWYpf9XPrFdHzDQLduiwC0899WApKN8SLDZSG3ARx6xVsLZiMIGkAF9EhHnxonAlUTEeKHLd27Yvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=nt97+XxB; arc=none smtp.client-ip=81.19.3.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-	s=20160406-ysoft-com; t=1747992710;
-	bh=VRpPV5g4he+YcYXUfxjf8IDAnRq5aEEdOdqOxeA95yg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nt97+XxB8/y+OIvwqIGSaIPLKOId7kGUtAWy/H5NMvEzfsvyQfD1gQjbTt7lylK5h
-	 WR7RAlClYfqmxonD2+7JJQV7uBC3KijsjKRcBkRmZlA4YxqTdQqAxHCWrqQCWUfw2b
-	 FPjmHyhVGiWgrMSyEdMkdj2WsIo83UosbfqQbR9w=
-Received: from vokac-nb.ysoft.local (unknown [10.1.8.111])
-	by uho.ysoft.cz (Postfix) with ESMTP id E50A6A021E;
-	Fri, 23 May 2025 11:31:49 +0200 (CEST)
-From: =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>
-Cc: Christian Marangi <ansuelsmth@gmail.com>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-Subject: [RFC RESEND] leds: lp55xx: led-cur property is not properly applied to multi-led
-Date: Fri, 23 May 2025 11:31:42 +0200
-Message-ID: <20250523093142.1498846-1-michal.vokac@ysoft.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1747992765; c=relaxed/simple;
+	bh=iU/xJjq4FaJfWHD8Blp4CTuwvFTl784xpt03cEdDEDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qOcIMsFn8z+ggUS6+DUDo8kJhcfaU4adRq7x/TJn+WAX+mkA79TiRpRdJgWmn1RjwofhFcdNOnKdjeX69lLDl2uzWmlEJ23M3pQ9nkp5CFKsl3a2w13YE5g+Vmh9Ck5meFiFDoNsISOWv4kTUSOJd84eVBpn2SmL2Vee4KwvUhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=E42gUiMU; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54N9WQCg880752;
+	Fri, 23 May 2025 04:32:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1747992746;
+	bh=IwXNYwMt/ZQYpLBw6rioL9Zt/gPDdC2LapQUC2nE+SE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=E42gUiMU8z0rYBiIsNPYL56L35AsFCVw5FOjnOkT8UglQTpsEXPCFMHzz81p5Jogi
+	 B5jjAyuW6aHh87C5VTWh3mcFzR/IMbawSSYp0uKdkmBpF/8ck3y5gnlTWUI6uyzphz
+	 ZEmlNgVvir0rIMDMB1q6CvTz3ng0f4Dm3ZT+t3Q0=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54N9WPUs4178683
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 23 May 2025 04:32:25 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 23
+ May 2025 04:32:25 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 23 May 2025 04:32:25 -0500
+Received: from [172.24.18.216] (lt5cd2489kgj.dhcp.ti.com [172.24.18.216])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54N9WK4s105573;
+	Fri, 23 May 2025 04:32:21 -0500
+Message-ID: <479609b2-1953-4e8a-a7c8-87dcd2eff3d9@ti.com>
+Date: Fri, 23 May 2025 15:02:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] arm64: dts: ti: k3-j784s4-main: Add PBIST_14 node
+To: Neha Malcom Francis <n-francis@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
+References: <20250514072056.639346-1-n-francis@ti.com>
+ <20250514072056.639346-3-n-francis@ti.com>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20250514072056.639346-3-n-francis@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi,
+Hello Neha
 
-I am trying to wrap my head around the implementation of the multicolor
-LED support in the lp55xx family drivers.
+On 5/14/2025 12:50 PM, Neha Malcom Francis wrote:
+> Add DT node for PBIST_14 that is responsible for triggering the PBIST
+> self-tests for the MAIN_R5_2_x cores.
+>
+> Signed-off-by: Neha Malcom Francis <n-francis@ti.com>
+> ---
+> Changes since v2:
+> - remove ti,bist-under-test property and use ti,sci-dev-id
+>
+>   arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi | 11 +++++++++++
+>   1 file changed, 11 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> index 0160fe0da983..fd098aac3989 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> @@ -113,6 +113,17 @@ serdes2: serdes@5020000 {
+>   			status = "disabled";
+>   		};
+>   	};
+> +
+> +	bist_main14: bist@33c0000 {
+> +		compatible = "ti,j784s4-bist";
+> +		reg = <0x00 0x033c0000 0x00 0x400>,
+> +		      <0x00 0x0010c1a0 0x00 0x01c>;
+> +		reg-names = "cfg", "ctrl_mmr";
+> +		clocks = <&k3_clks 237 7>;
+> +		power-domains = <&k3_pds 237 TI_SCI_PD_EXCLUSIVE>;
+> +		bootph-pre-ram;
+> +		ti,sci-dev-id = <234>;
+> +	};
 
-The situation is quite straight forward when each LED is registered
-and controlled individually but it gets quite messy once you use
-the multi-color LED binding.
+Please extend this support to j742s2 SOC as well.
 
-I am working with the imx6dl-yapp43-pegasus.dts board (in-tree). There
-is one RGB LED driven by a LP5562 LED controller. Currently the RGB LED
-is modeled as three separate LEDs and each of the LEDs has
-individually tuned led-cur property. I would like to change the device
-tree and use the multi-led binding to be able to use triggers on a chosen
-RGB color.
+With above change
 
-When I was experimenting with that, I realized there is something wrong
-with the colors and identified that the led-cur property is not properly
-applied in case the multi-led binding is used. What ultimately happens is
-that the led_current of the first LED in the multi-led group is set to
-the value of led-cur property of the last LED in the group.
-All the other LEDs in the group are left with the default reset value
-of the controller (0xaf in my case).
+Reviewed-by: Udit Kumar <u-kumar1@ti.com>
 
-Example:
 
-led-controller@30 {
-	compatible = "ti,lp5562";
-	reg = <0x30>;
-	clock-mode = /bits/ 8 <1>;
-	#address-cells = <1>;
-	#size-cells = <0>;
-	status = "disabled";
-
-	multi-led@0 {
-		#address-cells = <1>;
-		#size-cells = <0>;
-		color = <LED_COLOR_ID_RGB>;
-		function = LED_FUNCTION_INDICATOR;
-
-		led@0 {
-			led-cur = /bits/ 8 <0x6e>;
-			max-cur = /bits/ 8 <0xc8>;
-			reg = <0>;
-			color = <LED_COLOR_ID_RED>;
-		};
-
-		led@1 {
-			led-cur = /bits/ 8 <0xbe>;
-			max-cur = /bits/ 8 <0xc8>;
-			reg = <1>;
-			color = <LED_COLOR_ID_GREEN>;
-		};
-
-		led@2 {
-			led-cur = /bits/ 8 <0xbe>;
-			max-cur = /bits/ 8 <0xc8>;
-			reg = <2>;
-			color = <LED_COLOR_ID_BLUE>;
-		};
-	};
-
-Result (values read out directly with i2cget)
-
-led@0 current = 0xbe, should be 0x6e
-led@1 current = 0xaf, should be 0xbe
-led@2 current = 0xaf, should be 0xbe
-
-I tried to describe the steps that led to my discovery in the comments to
-the file. Unfortunately I could not really figure out how this could be
-properly fixed.
-
-I would appreciate any comments to this problem and hopefully some ideas
-how it could be solved.
-
-Thank you,
-Michal
----
- drivers/leds/leds-lp55xx-common.c | 34 +++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-index e71456a56ab8..d2fd2d296049 100644
---- a/drivers/leds/leds-lp55xx-common.c
-+++ b/drivers/leds/leds-lp55xx-common.c
-@@ -1060,12 +1060,17 @@ static int lp55xx_register_leds(struct lp55xx_led *led, struct lp55xx_chip *chip
- 		return -EINVAL;
- 	}
- 
-+	// Step 8
-+	// num_channels = 1
- 	for (i = 0; i < num_channels; i++) {
- 
- 		/* do not initialize channels that are not connected */
- 		if (pdata->led_config[i].led_current == 0)
- 			continue;
- 
-+		// The pdata->led_config[0].led_current contains the led-cur
-+		// property value of the last LED from the multi-led node.
-+		// Here we store that value to the first LED in that node.
- 		led_current = pdata->led_config[i].led_current;
- 		each = led + i;
- 		ret = lp55xx_init_led(each, chip, i);
-@@ -1119,8 +1124,16 @@ static int lp55xx_parse_common_child(struct device_node *np,
- 				     struct lp55xx_led_config *cfg,
- 				     int led_number, int *chan_nr)
- {
-+	// Step 6
-+	// This is called 3-times (n-times in general, for each LED in the multi-led node)
-+	// led_number = 0
-+	// np = led@[0,1,2]
- 	int ret;
- 
-+	// Size of the cfg is "1 lp55xx_led_config"
-+	// led_number = 0 for each of the n-calls
-+	// So the name, led_current and max_current variables are being
-+	// overwritten until values from the last led@ subnode are stored.
- 	of_property_read_string(np, "chan-name",
- 				&cfg[led_number].name);
- 	of_property_read_u8(np, "led-cur",
-@@ -1139,6 +1152,11 @@ static int lp55xx_parse_multi_led_child(struct device_node *child,
- 					 struct lp55xx_led_config *cfg,
- 					 int child_number, int color_number)
- {
-+	// Step 5
-+	// This is called 3-times (n-times in general, for each LED in the multi-led node)
-+	// child_number = 0
-+	// color_number = [0,1,2]
-+	// child = led@[0,1,2]
- 	int chan_nr, color_id, ret;
- 
- 	ret = lp55xx_parse_common_child(child, cfg, child_number, &chan_nr);
-@@ -1159,6 +1177,10 @@ static int lp55xx_parse_multi_led(struct device_node *np,
- 				  struct lp55xx_led_config *cfg,
- 				  int child_number)
- {
-+	// Step 4
-+	// This is called just once
-+	// child_number = 0
-+	// np = multi-led node
- 	int num_colors = 0, ret;
- 
- 	for_each_available_child_of_node_scoped(np, child) {
-@@ -1169,6 +1191,7 @@ static int lp55xx_parse_multi_led(struct device_node *np,
- 		num_colors++;
- 	}
- 
-+	// num_colors = 3
- 	cfg[child_number].num_colors = num_colors;
- 
- 	return 0;
-@@ -1178,6 +1201,10 @@ static int lp55xx_parse_logical_led(struct device_node *np,
- 				   struct lp55xx_led_config *cfg,
- 				   int child_number)
- {
-+	// Step 3
-+	// This is called just once
-+	// child_number = 0
-+	// np = multi-led node
- 	int led_color, ret;
- 	int chan_nr = 0;
- 
-@@ -1189,6 +1216,7 @@ static int lp55xx_parse_logical_led(struct device_node *np,
- 		return ret;
- 
- 	if (led_color == LED_COLOR_ID_RGB)
-+		// We go this way
- 		return lp55xx_parse_multi_led(np, cfg, child_number);
- 
- 	ret =  lp55xx_parse_common_child(np, cfg, child_number, &chan_nr);
-@@ -1215,18 +1243,22 @@ static struct lp55xx_platform_data *lp55xx_of_populate_pdata(struct device *dev,
- 	if (!pdata)
- 		return ERR_PTR(-ENOMEM);
- 
-+	// Step 2
-+	// One RGB multiled, num_channels = 1
- 	num_channels = of_get_available_child_count(np);
- 	if (num_channels == 0) {
- 		dev_err(dev, "no LED channels\n");
- 		return ERR_PTR(-EINVAL);
- 	}
- 
-+	dev_err(dev, "LED channels: %d\n", num_channels);
- 	cfg = devm_kcalloc(dev, num_channels, sizeof(*cfg), GFP_KERNEL);
- 	if (!cfg)
- 		return ERR_PTR(-ENOMEM);
- 
- 	pdata->led_config = &cfg[0];
- 	pdata->num_channels = num_channels;
-+	// LP5562 max_channel = 4
- 	cfg->max_channel = chip->cfg->max_channel;
- 
- 	for_each_available_child_of_node(np, child) {
-@@ -1277,6 +1309,7 @@ int lp55xx_probe(struct i2c_client *client)
- 
- 	if (!pdata) {
- 		if (np) {
-+			// Step 1
- 			pdata = lp55xx_of_populate_pdata(&client->dev, np,
- 							 chip);
- 			if (IS_ERR(pdata))
-@@ -1316,6 +1349,7 @@ int lp55xx_probe(struct i2c_client *client)
- 
- 	dev_info(&client->dev, "%s Programmable led chip found\n", id->name);
- 
-+	// Step 7
- 	ret = lp55xx_register_leds(led, chip);
- 	if (ret)
- 		goto err_out;
--- 
-2.43.0
-
+>   };
+>   
+>   &scm_conf {
 
