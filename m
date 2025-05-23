@@ -1,58 +1,67 @@
-Return-Path: <linux-kernel+bounces-660806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6A1AC225F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:11:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A81AC2264
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 14:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24839A4103D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:10:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 065913A90B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E9F236451;
-	Fri, 23 May 2025 12:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3BC236451;
+	Fri, 23 May 2025 12:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9ECgh5d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OupbYX3k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79272F3E
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 12:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8470F23535B
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 12:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748002271; cv=none; b=ZcohjBn4TtqIyEWlKapcET1dwv8rjtr0G6Gx2Vkr3OAZI4kzhyDhRgMQ/qWEMrWdcWX/WywpdgYGMt+Gi8wIEDKyVvlzVtqCMnhrhc880dOG8RsB4i7pjaykquJpmsqvFIbQx1dEiGcnKl8eZtO6sO4WPfuC2yF9elM9dnaB4OI=
+	t=1748002296; cv=none; b=JO/GgV1SD+9TAsz2QXNCt3NT7TMLpBPiB6hfZsDIwzBXJVb/oFyLARmLpsLYNQpDsNWqU//WfKUl3HEBf+XMp6tbglYr1XeO0l2OYX+eOloEoy2nqjcRk92vYkmn9mEDgUyl0lluTZn6HAwXY+RgbOTCWx+xnuiyp55F0Ux1hbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748002271; c=relaxed/simple;
-	bh=MWq2jUupu1eW3wWnaqHmgYFNZpvntz2L5ox+Fkj5joU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k+hDz0rh9ciF1yScApxU3DNDyRQZQTXdaWj9/14j2KKJFLyYS/tAM2/1pLIqtzWDmNTpK02Ur3bgoszAhdlAm0XJucCO5Z4xeQ/Hhzd/GctPcErReepUYNXGqTdoew6EnK4Tpxiib6lYIv2C2Qxded43ayhvxF+5NCBlBM9Db4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9ECgh5d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE948C4CEF0;
-	Fri, 23 May 2025 12:11:10 +0000 (UTC)
+	s=arc-20240116; t=1748002296; c=relaxed/simple;
+	bh=upco2MjGTbWcx0KwuxZ81lYk46ygbIZH+HnuS8wNgxo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XYBUSBdrDsF7lsQ+O9C9aLLsc4p0PiN7QR9KIBxt1wxl1wPUUEbWd77MQwdW04xJmVlj0EsKwXJz0AlQdayUhUu+rRmwPrBFMD1IMIlJfYTOKqn3zqy1V3GC9J0WTysviqcHP3JY8xZC8/CG3GotIt31wAfoXMQbKL+dzoYL7Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OupbYX3k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B8A7C4CEE9;
+	Fri, 23 May 2025 12:11:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748002271;
-	bh=MWq2jUupu1eW3wWnaqHmgYFNZpvntz2L5ox+Fkj5joU=;
+	s=k20201202; t=1748002295;
+	bh=upco2MjGTbWcx0KwuxZ81lYk46ygbIZH+HnuS8wNgxo=;
 	h=From:To:Cc:Subject:Date:From;
-	b=R9ECgh5dyv7ajVnmxvERuJidcZW/O+Kw8IUPeN0qE1dYNM12aWpJGKvEprSBezJ4l
-	 408u53wM7gAiPeoO9x8/4vH6Hj+2LhCLL7e5To+wyAZQA/HlEIAWrOYaw9rRxWdqtY
-	 QmMJBs0v10+wOyfJshyFKiAyJg6H0m7dZmP42gkoAfGzC1RQ7v4tTQNqhJ+zna5Aqh
-	 7e55b5hiVG9ZWMwld+WqtSzHPaQeYtQxnUeF6j9SoM42cJWlI/hSzSRzqyyEemFPcd
-	 0M+t3ysOkg6dNo5ITok0j5Hlm5+2nSptjO0s+yuzR+hys44mhj0H6o++aLGhj7W/Ld
-	 QJPDDK5tOXC8A==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Simon Wunderlich <sw@simonwunderlich.de>,
-	Antonio Quartulli <antonio@openvpn.net>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Kees Cook <kees@kernel.org>,
+	b=OupbYX3kvgUN5ZcYD32xfiJB1IP34v8cFI6HZ63OTGL06nftDHqgdgeJwjgcKdB7Y
+	 uHORnoBVWYm8uKS+icARRKuOI3sqeIeedn9bjO4kEvWJGCSZKtMFwB6GOu44LfuGU0
+	 x5Oj2cVosNsIZHsU836ijZvg+edAy1rwX5wRWXrcrN4pSItHfwlzNeUNSvaWQV5Xye
+	 LLjDlDM9Is3M6T8k7HL2g+4jnDN+BHELnQ/W8dIbit/a8cjtYpCjDn25sJqivDP/OB
+	 rYq8gLI8f5weXKbkw3T3k6ljilE4nOUgyo1vYO+H2hpHR78SJbUblgsqQxZUeJU+n4
+	 4gTbcExFQGtCg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
 	Dmitry Baryshkov <lumag@kernel.org>,
-	Carlos Bilbao <carlos.bilbao@kernel.org>,
-	Jeff Hugo <jeff.hugo@oss.qualcomm.com>
-Subject: [PATCH] mailmap: Add employer email address.
-Date: Fri, 23 May 2025 15:11:04 +0300
-Message-Id: <20250523121105.15850-1-jarkko@kernel.org>
+	Danila Tikhonov <danila@jiaxyga.com>,
+	Jakob Hauser <jahau@rocketmail.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Hironori KIKUCHI <kikuchan98@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/panel: nt37801: select CONFIG_DRM_DISPLAY_DSC_HELPER
+Date: Fri, 23 May 2025 14:11:22 +0200
+Message-Id: <20250523121127.2269693-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,25 +71,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the current employer email address to mailmap.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+The newly added driver uses the DSC helper module, but does not
+select its Kconfig symbol, so configurations are possible that
+cause a link failure:
+
+ERROR: modpost: "drm_dsc_pps_payload_pack" [drivers/gpu/drm/panel/panel-novatek-nt37801.ko] undefined!
+
+Fixes: 4fca6849864d ("drm/panel: Add Novatek NT37801 panel driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- .mailmap | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/panel/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/.mailmap b/.mailmap
-index 9531546fcac9..a885e2eefc69 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -313,6 +313,7 @@ Jan Glauber <jan.glauber@gmail.com> <jglauber@cavium.com>
- Jan Kuliga <jtkuliga.kdev@gmail.com> <jankul@alatek.krakow.pl>
- Jarkko Sakkinen <jarkko@kernel.org> <jarkko.sakkinen@linux.intel.com>
- Jarkko Sakkinen <jarkko@kernel.org> <jarkko@profian.com>
-+Jarkko Sakkinen <jarkko@kernel.org> <jarkko.sakkinen@opinsys.com>
- Jason Gunthorpe <jgg@ziepe.ca> <jgg@mellanox.com>
- Jason Gunthorpe <jgg@ziepe.ca> <jgg@nvidia.com>
- Jason Gunthorpe <jgg@ziepe.ca> <jgunthorpe@obsidianresearch.com>
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 721581d425b4..cfebb08e8a62 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -522,6 +522,8 @@ config DRM_PANEL_NOVATEK_NT37801
+ 	depends on OF
+ 	depends on DRM_MIPI_DSI
+ 	depends on BACKLIGHT_CLASS_DEVICE
++	select DRM_DISPLAY_DSC_HELPER
++	select DRM_DISPLAY_HELPER
+ 	help
+ 	  Say Y here if you want to enable support for Novatek NT37801 (or
+ 	  NT37810) AMOLED DSI Video Mode LCD panel module with 1440x3200
 -- 
 2.39.5
 
