@@ -1,163 +1,189 @@
-Return-Path: <linux-kernel+bounces-660232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2CDAC1A62
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:25:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C9AAC1A72
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 05:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECB7CA42DAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:25:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB0667B1054
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C7222154F;
-	Fri, 23 May 2025 03:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RDLkN5U8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B44C1C6FF6
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 03:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782E9224AFA;
+	Fri, 23 May 2025 03:26:27 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53082DCBE7;
+	Fri, 23 May 2025 03:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747970750; cv=none; b=W+n5srVTcIdTLgufgbyiIf/ob1c5K/nk2JGY4ekSULiRPpIPcoxBiIA7Yc1Gvb8wqL8xvsniW465TdXe0mv0U0sAHCSlsHv3tF5SPmttRuGpd0HSiCAbArb8QdVqLN/tzUn2cEyH5BaNUBBiUKsvZbImV9QFgzOTnSgB/uhPwx8=
+	t=1747970786; cv=none; b=Uqx9VjEXCriEsmAe0SZfMU6eISGO2IO1ufCsPcajGNytWTALKSno8I/bkEjqs2bd+nHrsoMzhw642nUMOHSBFJLFHTw0vzTLUYWFect28IE1OIlZwYXqDXimWXeKTu8uXR7E7KnthH7ZpVkF8HLuADjr31vhfXg+IDRFj+huEBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747970750; c=relaxed/simple;
-	bh=zs8r39vbFN2or9MqJTpefToKt3xi9idBEwDckvz2KwE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IfUGitk5TLzLnHpOAH5+F1O5N7ATzNSZ1oioJ9Z6+NLN9NSbvhZV6v731RQHiromxhIBkYu26clu/1ItWbG2e6Tnri5Du3iWRhZ2COgbH70yNHqcQ+zYQ1kRocQYPEWCSBkLYKSwbPUTNuguzw34SLCH6lyxKQicQaq8CzObnB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RDLkN5U8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0021C4CEE9;
-	Fri, 23 May 2025 03:25:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747970749;
-	bh=zs8r39vbFN2or9MqJTpefToKt3xi9idBEwDckvz2KwE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RDLkN5U8S0h0uFcNamFboMXudFbJhQc8QAf3cr+uRhghhFNDHhun8aEUAm1nP4Qz2
-	 rFZSWF2yCW026/4xDW44AG2ngCgkP/dEPvr7Ro4zwH2M3PYk1FgSA/rvBu0AJBSXfS
-	 FxFI+l0dnWuS6VkcIRREzrs7uhqndFZrunEtPFhoQgMMYIMs+Vjmw0hRLl7jJOTvuo
-	 3S1TkRVeVBI3uAK4ppsodeKDJl67+lQMUl3jCY4uGtjA2b2ofyfkE9Gwvai8Fzox4k
-	 duY0BuLGywslGToY01i6pmyX4xt2Tq/Kvll+2l+zLfGBr2p7xjRosazBI8jdcIuk9a
-	 a92XCKLuQUV/Q==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	syzbot+aa5bb5f6860e08a60450@syzkaller.appspotmail.com,
-	Qi Han <hanqi@vivo.com>
-Subject: [PATCH v3] f2fs: fix to skip f2fs_balance_fs() if checkpoint is disabled
-Date: Fri, 23 May 2025 11:25:45 +0800
-Message-ID: <20250523032545.1392641-1-chao@kernel.org>
-X-Mailer: git-send-email 2.49.0.1151.ga128411c76-goog
+	s=arc-20240116; t=1747970786; c=relaxed/simple;
+	bh=8EVazZ2kGcJ7wRFdcW84b44D5G++w+ZiAUGmm2O42Rk=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=AfIxe+mEwPKPUQVuxqez7Lm1/8wbbFHFq9BFG9JupBG+O9qCiJI/VXotpgmYHRMzf2cSDeenE/EzqSO9XZY1zNgYh733sMzKAdfn7w8cJt1rgy9icL1eo9jkziTEev6vgrccgLr2AovwJIaYccMbeQYqou8hzCcXXSO7yv4iDEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-6c-682feadb6dc4
+From: Byungchul Park <byungchul@sk.com>
+To: willy@infradead.org,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel_team@skhynix.com,
+	kuba@kernel.org,
+	almasrymina@google.com,
+	ilias.apalodimas@linaro.org,
+	harry.yoo@oracle.com,
+	hawk@kernel.org,
+	akpm@linux-foundation.org,
+	davem@davemloft.net,
+	john.fastabend@gmail.com,
+	andrew+netdev@lunn.ch,
+	asml.silence@gmail.com,
+	toke@redhat.com,
+	tariqt@nvidia.com,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	saeedm@nvidia.com,
+	leon@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	horms@kernel.org,
+	linux-rdma@vger.kernel.org,
+	bpf@vger.kernel.org,
+	vishal.moola@gmail.com
+Subject: [PATCH 00/18] Split netmem from struct page
+Date: Fri, 23 May 2025 12:25:51 +0900
+Message-Id: <20250523032609.16334-1-byungchul@sk.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAAzXRXUhTcRgGcP87Z2dzOThMqZN9SAOphFyKxVtI2VWniz5Au0kwD+7gDm3T
+	pq5ZRmYj0dRCjVIXrTLzYzBd4qb5OecXFppizrTNFL0QM9QcTotyiXc/eJ7nvXmFmMSEBws5
+	dTqrUTNKKSHCRT8CXh+bXJApjk98OgUGs4mAunUdvJu28cFQ24Tgl3dSAKuOPgLevPJgYBjS
+	47Bm3sBgrndGAO6qeRxac60YzDzuJ6BQv4lBjq2aB8NNRXwo3XiLgTV7WgCjLQYCXKa/fJi3
+	F+IwUF6Dg7soBnqNu8EzuIjAYbbywFPwgoCSESMBs3o3gpHuGRwq7hchMLc7+bC5biBiDtGN
+	NRM8urn8m4A2WjLo99VhdL5zBKMttXkEbVkpFtBTX1oJuv/5Jk4321Z5dOGDJYJenvuK0z/b
+	xwja3DiG0x+NDgG9ajl4hbwmipazSk7LamRnEkUK72QXntoWolse4rLRMpWP/IUUGUXlNYzg
+	Oy4bHeT5TJCHKafTi/kcREZQqzN9Wx2RECOX+NScYfN/KXBrsObRI59xMpRyN+r5PovJE1T3
+	kpW3fTSEqqvvxHxjinQJqPz+DrQd7KW6qp34E7TLiPxqkYRTa1UMp4wKV2SqOV14UorKgrZ+
+	WHX3d7wNrQzH2hEpRNIAsU0kU0j4jDYtU2VHlBCTBol75sMVErGcybzNalKuazKUbJod7RPi
+	0j3iSM8tuYRMZtLZGyybymp2Up7QPzgblVZouwqrvekDCczJ8dieP+wzTjWWmSi/eTV53LUQ
+	FxnXUT57Pil6I++AIEr2WZdSbL/3ofIlV3+R8R7VPLU/tF4InS419S9kFZUVV3kcCY++G4cq
+	91MNXFbBkbN+yS2TOZ6SzqnTlyjp5XrXHZLytC0q4zckuQVtdSGB5/ySpHiagokIwzRpzD+o
+	Qvl5vwIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAAwGiAl39CAMSjwQaCGludGVybmFsIgYKBApOO4Mt2+ovaDDKpCc4nK+sBjir
+	+Hg4p+C4BTicqrYBOPT52wc488THBjijofYDOJzPhAQ49a/6AzjlxuIHON+m5gQ4vIe3Azji
+	j8gGOI2E+wM4grioAjjDnckFONC2jgU4lPqlAzi3gOAHONO6nAY43qz/BTjmwo0EOMmaqQQ4
+	345AOMagFjj2y+wBOMSvtwI49oydBjiT0qAGOOOE3wE40sPiBDibgY4BOK++2AU4+/icBkAi
+	SLSp2QJIuZrdB0igsnVIs6gqSIrY0gNIsqqJBkiy8pIHSNzWvAZIyJj7BEi5uPMCSI2D7gZI
+	8eXaBEjvvtUGSKPo8AJIr7TVBEjMoMQHUBFaCjxkZWxpdmVyLz5gCmj528EEcL0fePHPaYAB
+	8RiKAQkIGBA0GJnTywKKAQkIBhAnGNjY+QOKAQkIFBAxGPPixwSKAQoIAxDuBRjlnPsCigEJ
+	CBMQNBj19oQBigEJCAQQJRjftIQFigEJCA0QNRjD7rcCigEJCBgQHxirsMADkAEIoAEAqgEU
+	aW52bWFpbDUuc2toeW5peC5jb22yAQYKBKZ9/JG4AfTTR8IBEAgBIgwNKG0vaBIFYXZzeW3C
+	ARgIAyIUDcXmLmgSDWRheXplcm9fcnVsZXPCARsIBCIXDUpXZWASEGdhdGVrZWVwZXJfcnVs
+	ZXPCAQIICRqAAXhzCpXZsJUENZo2iUQIK9C3VerNw271f56ZwvBIm9xQ9/Wzojv55zYahsFI
+	hp8eaPKpqK1POu5au6TwcFJq5MDco5Lh5btTAVLeb1IemYh5+5RL8K+Szqm4vL0Zk+fkEmKK
+	qmdIjnEUtnYhI3fZVCd5ZioI04z96wptHoShF9FVIgRzaGExKgNyc2E0Nn/SogIAAA==
+X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Syzbot reports a f2fs bug as below:
+The MM subsystem is trying to reduce struct page to a single pointer.
+The first step towards that is splitting struct page by its individual
+users, as has already been done with folio and slab.  This patchset does
+that for netmem which is used for page pools.
 
-INFO: task syz-executor328:5856 blocked for more than 144 seconds.
-      Not tainted 6.15.0-rc6-syzkaller-00208-g3c21441eeffc #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor328 state:D stack:24392 pid:5856  tgid:5832  ppid:5826   task_flags:0x400040 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5382 [inline]
- __schedule+0x168f/0x4c70 kernel/sched/core.c:6767
- __schedule_loop kernel/sched/core.c:6845 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6860
- io_schedule+0x81/0xe0 kernel/sched/core.c:7742
- f2fs_balance_fs+0x4b4/0x780 fs/f2fs/segment.c:444
- f2fs_map_blocks+0x3af1/0x43b0 fs/f2fs/data.c:1791
- f2fs_expand_inode_data+0x653/0xaf0 fs/f2fs/file.c:1872
- f2fs_fallocate+0x4f5/0x990 fs/f2fs/file.c:1975
- vfs_fallocate+0x6a0/0x830 fs/open.c:338
- ioctl_preallocate fs/ioctl.c:290 [inline]
- file_ioctl fs/ioctl.c:-1 [inline]
- do_vfs_ioctl+0x1b8f/0x1eb0 fs/ioctl.c:885
- __do_sys_ioctl fs/ioctl.c:904 [inline]
- __se_sys_ioctl+0x82/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Matthew Wilcox tried and stopped the same work, you can see in:
 
-The root cause is after commit 84b5bb8bf0f6 ("f2fs: modify
-f2fs_is_checkpoint_ready logic to allow more data to be written with the
-CP disable"), we will get chance to allow f2fs_is_checkpoint_ready() to
-return true once below conditions are all true:
-1. checkpoint is disabled
-2. there are not enough free segments
-3. there are enough free blocks
+   https://lore.kernel.org/linux-mm/20230111042214.907030-1-willy@infradead.org/
 
-Then it will cause f2fs_balance_fs() to trigger foreground GC.
+Mina Almasry already has done a lot fo prerequisite works by luck, he
+said :).  I stacked my patches on the top of his work e.i. netmem.
 
-void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
-...
-	if (!f2fs_is_checkpoint_ready(sbi))
-		return;
+I focused on removing the page pool members in struct page this time,
+not moving the allocation code of page pool from net to mm.  It can be
+done later if needed.
 
-And the testcase mounts f2fs image w/ gc_merge,checkpoint=disable, so deadloop
-will happen through below race condition:
+My rfc version of this work is:
 
-- f2fs_do_shutdown		- vfs_fallocate				- gc_thread_func
-				 - file_start_write
-				  - __sb_start_write(SB_FREEZE_WRITE)
-				 - f2fs_fallocate
-				  - f2fs_expand_inode_data
-				   - f2fs_map_blocks
-				    - f2fs_balance_fs
-				     - prepare_to_wait
-				     - wake_up(gc_wait_queue_head)
-				     - io_schedule
- - bdev_freeze
-  - freeze_super
-   - sb->s_writers.frozen = SB_FREEZE_WRITE;
-   - sb_wait_write(sb, SB_FREEZE_WRITE);
-									 - if (sbi->sb->s_writers.frozen >= SB_FREEZE_WRITE) continue;
-									 : cause deadloop
+   https://lore.kernel.org/all/20250509115126.63190-1-byungchul@sk.com/
 
-This patch fix to add check condition in f2fs_balance_fs(), so that if
-checkpoint is disabled, we will just skip trigger foreground GC to
-avoid such deadloop issue.
+There are still a lot of works to do, to remove the dependency on struct
+page in the network subsystem.  I will continue to work on this after
+this base patchset is merged.
 
-Meanwhile let's remove f2fs_is_checkpoint_ready() check condition in
-f2fs_balance_fs(), since it's redundant, due to the main logic in the
-function is to check:
-a) whether checkpoint is disabled
-b) there is enough free segments
-
-f2fs_balance_fs() still has all logics after f2fs_is_checkpoint_ready()'s
-removal.
-
-Reported-by: syzbot+aa5bb5f6860e08a60450@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-f2fs-devel/682d743a.a00a0220.29bc26.0289.GAE@google.com
-Fixes: 84b5bb8bf0f6 ("f2fs: modify f2fs_is_checkpoint_ready logic to allow more data to be written with the CP disable")
-Cc: Qi Han <hanqi@vivo.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
 ---
-v3:
-- clean up the codes
- fs/f2fs/segment.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 5ff0111ed974..24b4bb2a4b9b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -433,7 +433,7 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
- 	if (need && excess_cached_nats(sbi))
- 		f2fs_balance_fs_bg(sbi, false);
- 
--	if (!f2fs_is_checkpoint_ready(sbi))
-+	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
- 		return;
- 
- 	/*
+Changes from rfc:
+	1. Rebase on net-next's main branch
+	   https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/
+	2. Fix a build error reported by kernel test robot
+	   https://lore.kernel.org/all/202505100932.uzAMBW1y-lkp@intel.com/
+	3. Add given 'Reviewed-by's, thanks to Mina and Ilias
+	4. Do static_assert() on the size of struct netmem_desc instead
+	   of placing place-holder in struct page, feedbacked by Matthew
+	5. Do struct_group_tagged(netmem_desc) on struct net_iov instead
+	   of wholly renaming it to strcut netmem_desc, feedbacked by
+	   Mina and Pavel
+
+Byungchul Park (18):
+  netmem: introduce struct netmem_desc struct_group_tagged()'ed on
+    struct net_iov
+  netmem: introduce netmem alloc APIs to wrap page alloc APIs
+  page_pool: use netmem alloc/put APIs in __page_pool_alloc_page_order()
+  page_pool: rename __page_pool_alloc_page_order() to
+    __page_pool_alloc_large_netmem()
+  page_pool: use netmem alloc/put APIs in __page_pool_alloc_pages_slow()
+  page_pool: rename page_pool_return_page() to page_pool_return_netmem()
+  page_pool: use netmem put API in page_pool_return_netmem()
+  page_pool: rename __page_pool_release_page_dma() to
+    __page_pool_release_netmem_dma()
+  page_pool: rename __page_pool_put_page() to __page_pool_put_netmem()
+  page_pool: rename __page_pool_alloc_pages_slow() to
+    __page_pool_alloc_netmems_slow()
+  mlx4: use netmem descriptor and APIs for page pool
+  page_pool: use netmem APIs to access page->pp_magic in
+    page_pool_page_is_pp()
+  mlx5: use netmem descriptor and APIs for page pool
+  netmem: use _Generic to cover const casting for page_to_netmem()
+  netmem: remove __netmem_get_pp()
+  page_pool: make page_pool_get_dma_addr() just wrap
+    page_pool_get_dma_addr_netmem()
+  netdevsim: use netmem descriptor and APIs for page pool
+  mm, netmem: remove the page pool members in struct page
+
+ drivers/net/ethernet/mellanox/mlx4/en_rx.c    |  46 ++++----
+ drivers/net/ethernet/mellanox/mlx4/en_tx.c    |   8 +-
+ drivers/net/ethernet/mellanox/mlx4/mlx4_en.h  |   4 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en.h  |   4 +-
+ .../net/ethernet/mellanox/mlx5/core/en/xdp.c  |  18 ++--
+ .../net/ethernet/mellanox/mlx5/core/en/xdp.h  |   2 +-
+ .../net/ethernet/mellanox/mlx5/core/en_main.c |  15 ++-
+ .../net/ethernet/mellanox/mlx5/core/en_rx.c   |  66 ++++++------
+ drivers/net/netdevsim/netdev.c                |  18 ++--
+ drivers/net/netdevsim/netdevsim.h             |   2 +-
+ include/linux/mm.h                            |   5 +-
+ include/linux/mm_types.h                      |  11 --
+ include/linux/skbuff.h                        |  14 +++
+ include/net/netmem.h                          | 101 ++++++++++--------
+ include/net/page_pool/helpers.h               |  11 +-
+ net/core/page_pool.c                          |  97 +++++++++--------
+ 16 files changed, 221 insertions(+), 201 deletions(-)
+
+
+base-commit: f44092606a3f153bb7e6b277006b1f4a5b914cfc
 -- 
-2.49.0
+2.17.1
 
 
