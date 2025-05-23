@@ -1,123 +1,162 @@
-Return-Path: <linux-kernel+bounces-660537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B76DBAC1F07
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:58:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A36B2AC1F3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE21D9E298E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 08:57:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A00D4506814
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 09:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C55212F94;
-	Fri, 23 May 2025 08:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sQENiLuc"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E5722541C;
+	Fri, 23 May 2025 09:03:17 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E92224256
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 08:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12CE222582;
+	Fri, 23 May 2025 09:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747990674; cv=none; b=KfBHyGq09rhq6sjEBpTMdDnMLj0loyCMdCwgKBLgwsjvT8vQwfKwHRB1p/iAH0YLOYmqMUYTVEBPNPtRJbBa1ibFvO1ekhc1mNw+f5XSaJ8+0HEc3VPvpjDFZxBBXgBJPbnYgLLDrCjBnYZAvqLx9fed1k4ihSA/AgYWFd2gZHI=
+	t=1747990997; cv=none; b=aUgHAmfG5pygdQN2yEuO9/KQJzEDe+KRZtOmN3teqepaeULaUvirImBNLOs1TjsLNfBuWTL+DqsE1gRwWQIPpnJffN9Xl0O0FKviRfy0dRn7gSmv7Oaz85Qsn8ZBvcMt3gdj1vzWPJVmxYPr32gjSEHY92NbvNgVi+vsYpOLdFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747990674; c=relaxed/simple;
-	bh=Uxjfr+Ub4f1VRaMSrEvTbK3K+sT8HFGlfYeD9IWevQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lFetPooyu2oQYd1P6AxprWf9kZwN7VNIQwjnB56OPqn2iToa0L02VqwLrC2ICD2jurQuf8oruHh4ZJzml4HQUQ44cu+VIRxstMz4jTLJ1OxqQNO2pYV1cEzN5S6zJ8iapp+xhmdU3uDfcGMa8OjNItXtcEJP1A0Whi3taXlV2+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sQENiLuc; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-442ed8a275fso112163525e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 01:57:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747990670; x=1748595470; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RfFKMGjhmwchkhht92h9c+OKeZQO+vdRnItyg0hwoco=;
-        b=sQENiLucUDZhCBiGFvqhyzVAmLgqIzfulv7C9A6hA8XV4Jta+iBMd7PqdJ42jtaxO+
-         pEZYUWjFLqdcX5/vtRwGznALPoK4U7J/WPCfdgLGICG9rlRpLe5sAObVx41zp7lFlsNt
-         GVEkwXQKPFl2h+JMRtBh+yBLO0Q4Hp7u3MiwvLFCVi7V8AFGCV0AsPnaS84kReF3n9Xg
-         tFE0BKBM4oXEnZ2X2CPurAmNlVmly13eAyQom1yw+kl9Lvb1jZ/ouQn/iBOjIWQ+OC+p
-         wf994kqF3KkveptiCOtQS1MK33egmeRrHSM99iRKv1kM95wukqApOdctZbxJ19tzXEwH
-         gAWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747990670; x=1748595470;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RfFKMGjhmwchkhht92h9c+OKeZQO+vdRnItyg0hwoco=;
-        b=L4HSS28GjwKgD4xKJYeCjzBbed+8fv//YjRpvW18RG8mopGRO1sT/EGOjCR2agS2T9
-         NkEExRgbK/0cdyLhV4eZJ0UX34PGebVlQ8L0Z0ZZNbs8qIs1w8EptysudJ+w8Q4V9z8o
-         8AvC3ubX0w7FESnEPJEvsRRRCDpHJ9pRTUzCEVQWkwvChT0L0pT2CGCepjqzaLxlcKSR
-         Z1/B/tVHqCwSGI+zuAAgSdUbDnSIvkfpDYbsjx1ifMQun4aBC90SxO9WrQpfiwqJfpV0
-         NSxMoK7VcmteZVkgt4rjQ6A9+mUe7JaZBbuxNRGBbXWLqHMWD645o0efsMCcFIRwlLCI
-         DxuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGUZuqHNmUl/rjUGbhz4OMSX5fPUiZnTUPQboB3M3/0FC9Jah7cWGGny7AQRqZ+TuPWWKLLgI/U8zmUWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWA0VI7jGUtReVOBP8mvhOvHvHW1R+PbEX1Hs9SSR2LwjU30Tq
-	4pR53lDMdW/D7QbNgoFOnHg58Gds881Bmrw4ZDdTF106yzsmaGvEJmd4zQ3VH/yNzHA=
-X-Gm-Gg: ASbGncuuGd0Yt7fqD64FziqIoFN/ZC8JTICWgaU03MBa+QOu1OvMfboCAPEK4xuRCCw
-	eofJ5crwtsDqUA2BVZuxUtA4QYdMGgHAul7gpTFjnMvHSnamGdatW8UrVGnEONB4rwZ81R2LrUn
-	qZ9r1W27k/mbqVWxvu6asyM8painAQAs/U6pDR577SIXsrPyGq8wGwHBjPkTBQT7V3UeNT3J2jy
-	Cpe8HHCxP/YCE8/UywNCaqnZT/HSaJRzMjOofWuBrztp37ycNs73FuLkiyV51p9/+aJy8zL2bas
-	TfQT0Kn8W2Np26dPS4w4cDAE1kr3oPD7qWxUb53fgNL9eBQw
-X-Google-Smtp-Source: AGHT+IHHxrO7RmsC0W9xvWaQ+dC6qT3jdE7nDzcMo1MJLtWEWcqBIqZe1g/PlkKdlnZgRPJUP+bVdA==
-X-Received: by 2002:a05:6000:1ac6:b0:3a3:685b:118 with SMTP id ffacd0b85a97d-3a4c20f8e89mr1885140f8f.24.1747990670494;
-        Fri, 23 May 2025 01:57:50 -0700 (PDT)
-Received: from linaro.org ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f23c07bfsm134127175e9.23.2025.05.23.01.57.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 May 2025 01:57:49 -0700 (PDT)
-Date: Fri, 23 May 2025 11:57:48 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] phy: phy-snps-eusb2: fixes and cleanups
-Message-ID: <aDA4jM0bb9kR7TiO@linaro.org>
-References: <20250523084839.11015-1-johan+linaro@kernel.org>
+	s=arc-20240116; t=1747990997; c=relaxed/simple;
+	bh=0Ei6K/vWbQWuglVPaCmuTBsOppFwqr1RCJb3YqV8Q7s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=uUmBGOSDctThfxxM0mKdOTnX1XvoZC+MRfXCClVRlVMpojoj1t5qHp6tzHNTJDp0cRRlOkmQsQk7yrtLgECAGonduid50a3zuFpV1WscrVVw3aLx1zGkQfSZU36BPXDXnef6MiQOKLMFIoe4ApNW4niRJLcAdDZT0xootfrBp28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4b3fLs5cPwz4f3jdk;
+	Fri, 23 May 2025 17:02:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id DFB401A07BB;
+	Fri, 23 May 2025 17:03:10 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCH61_MOTBocBILNQ--.27999S4;
+	Fri, 23 May 2025 17:03:10 +0800 (CST)
+From: libaokun@huaweicloud.com
+To: linux-ext4@vger.kernel.org
+Cc: tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	libaokun1@huawei.com,
+	libaokun@huaweicloud.com
+Subject: [PATCH 0/4] ext4: better scalability for ext4 block allocation
+Date: Fri, 23 May 2025 16:58:17 +0800
+Message-Id: <20250523085821.1329392-1-libaokun@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250523084839.11015-1-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCH61_MOTBocBILNQ--.27999S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxJw4ktr17CFy3WFy8Cw4fAFb_yoW5KF48p3
+	sxtrnxJr1UJr48Xw43tw1UWr1rGw48Gr4UGr12gF18Xr1UAr4UKr40qry0yryUArWxXr15
+	Xw17XryUGr1DCFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAKj4xx
+	MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+	67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+	x0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
+	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73Uj
+	IFyTuYvjfUO73vUUUUU
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAMBWfzh3x0ewABsp
 
-On 25-05-23 10:48:32, Johan Hovold wrote:
-> Here are a couple of fixes and some related cleanups to the recently
-> reworked and renamed phy-snps-eusb2 driver.
-> 
-> The clock and repeater imbalance fixes are not marked for stable as the
-> first issue was introduced in the recent rework which is queued for
-> 6.16-rc1.
-> 
-> The repeater imbalance has been there for a few years and
-> could be backported even if this is now complicated by the
-> rework/rename. Since it only affects a resource leak in an error path I
-> decided to not mark this one for stable for now.
-> 
-> Ideally, these could go in along with the reworked driver for rc1.
-> 
-> Johan
-> 
-> 
-> Johan Hovold (7):
->   phy: phy-snps-eusb2: fix clock imbalance on phy_exit()
->   phy: phy-snps-eusb2: fix repeater imbalance on phy_init() failure
->   phy: phy-snps-eusb2: rename phy_init() clock error label
->   phy: phy-snps-eusb2: clean up error messages
->   phy: phy-snps-eusb2: fix optional phy lookup parameter
->   phy: phy-snps-eusb2: drop unnecessary loop index declarations
->   phy: phy-snps-eusb2: clean up id table sentinel
+From: Baokun Li <libaokun1@huawei.com>
 
-Really straightforward. So for the entire series:
+Since servers have more and more CPUs, and we're running more containers
+on them, we've been using will-it-scale to test how well ext4 scales. The
+fallocate2 test (append 8KB to 1MB, truncate to 0, repeat) run concurrently
+on 64 containers revealed significant contention in block allocation/free,
+leading to much lower aggregate fallocate OPS compared to a single
+container (see below).
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+   1   |    2   |    4   |    8   |   16   |   32   |   64
+-------|--------|--------|--------|--------|--------|-------
+295287 | 70665  | 33865  | 19387  | 10104  |  5588  |  3588
+
+The main bottleneck was the ext4_lock_group(), which both block allocation
+and free fought over. While the block group for block free is fixed and
+unoptimizable, the block group for allocation is selectable. Consequently,
+the ext4_try_lock_group() helper function was added to avoid contention on
+busy groups, and you can see more in Patch 1.
+
+After we fixed the ext4_lock_group bottleneck, another one showed up:
+s_md_lock. This lock protects different data when allocating and freeing
+blocks. We got rid of the s_md_lock call in block allocation by making
+stream allocation work per inode instead of globally. You can find more
+details in Patch 2.
+
+Patches 3 and 4 are just some minor cleanups.
+
+Performance test data follows:
+
+CPU: HUAWEI Kunpeng 920
+Memory: 480GB
+Disk: 480GB SSD SATA 3.2
+Test: Running will-it-scale/fallocate2 on 64 CPU-bound containers.
+Observation: Average fallocate operations per container per second.
+
+|--------|--------|--------|--------|--------|--------|--------|--------|
+|    -   |    1   |    2   |    4   |    8   |   16   |   32   |   64   |
+|--------|--------|--------|--------|--------|--------|--------|--------|
+|  base  | 295287 | 70665  | 33865  | 19387  | 10104  |  5588  |  3588  |
+|--------|--------|--------|--------|--------|--------|--------|--------|
+| linear | 286328 | 123102 | 119542 | 90653  | 60344  | 35302  | 23280  |
+|        | -3.0%  | 74.20% | 252.9% | 367.5% | 497.2% | 531.6% | 548.7% |
+|--------|--------|--------|--------|--------|--------|--------|--------|
+|mb_optim| 292498 | 133305 | 103069 | 61727  | 29702  | 16845  | 10430  |
+|ize_scan| -0.9%  | 88.64% | 204.3% | 218.3% | 193.9% | 201.4% | 190.6% |
+|--------|--------|--------|--------|--------|--------|--------|--------|
+
+Running "kvm-xfstests -c ext4/all -g auto" showed that 1k/generic/347 often
+fails. The test seems to think that a dm-thin device with a virtual size of
+5000M but a real size of 500M, after being formatted as ext4, would have
+500M free.
+
+But it doesn't – we run out of space after making about 430 1M
+files. Since the block size is 1k, making so many files turns on dir_index,
+and dm-thin waits a minute, sees no free space, and then throws IO error.
+This can cause a directory index block to fail to write and abort journal.
+
+What's worse is that _dmthin_check_fs doesn't replay the journal, so fsck
+finds inconsistencies and the test failed. I think the problem is with the
+test itself, and I'll send a patch to fix it soon.
+
+Comments and questions are, as always, welcome.
+
+Thanks,
+Baokun
+
+
+Baokun Li (4):
+  ext4: add ext4_try_lock_group() to skip busy groups
+  ext4: move mb_last_[group|start] to ext4_inode_info
+  ext4: get rid of some obsolete EXT4_MB_HINT flags
+  ext4: fix typo in CR_GOAL_LEN_SLOW comment
+
+ fs/ext4/ext4.h              | 38 ++++++++++++++++++-------------------
+ fs/ext4/mballoc.c           | 34 +++++++++++++++++++--------------
+ fs/ext4/super.c             |  2 ++
+ include/trace/events/ext4.h |  3 ---
+ 4 files changed, 41 insertions(+), 36 deletions(-)
+
+-- 
+2.46.1
+
 
