@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-660731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBFFAC2164
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:46:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B554AC216A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BACA1BA88F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:46:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77D81B67277
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A35422C35C;
-	Fri, 23 May 2025 10:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8221229B2E;
+	Fri, 23 May 2025 10:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="OHvrrZJZ"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="CD49Pr7Z"
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535E922AE48;
-	Fri, 23 May 2025 10:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDBF226D0A;
+	Fri, 23 May 2025 10:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747997179; cv=none; b=ipP8ZMM4+AzdIgbGP9gCtouhOR7hXluQ2SGrT6oz6a46bcgzPmFiSM8pOVArfKbh4XFx7tUwIiErUlEeSKXH2IurW4IGcLChanZmtR1MXjG1z/MQlTFsofg6taBcsgvw1MKMnOJTEpiNOKXbBjYX6T//SjF7KtyfzK+PTlONODo=
+	t=1747997226; cv=none; b=i/oCeR0QxaGi93ZOEFjX+QzJaYK0dneyTcBul+Q3UdU0lPPVQVxP7TStQoroeEKBR2y6IB6h/BJ1tTXuo15JlwF4KTXm0Ib/qlLLD1hCGdIH6kONTgXMg1MSI8SNv4E+j72JdqdTt2OMH3IWDf/TqZMOSaUangbhOmz67i0Rb/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747997179; c=relaxed/simple;
-	bh=aW5yvpNvSkcVrVrORKxyIa2LVFmcbX7kq7M2CNVH9bc=;
+	s=arc-20240116; t=1747997226; c=relaxed/simple;
+	bh=UelRARJ4L5EQo961j7oIIU5hjPjnKWR1JwdiW487Osg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mqwbdjJK5HQ9cp0cmkv9J49JFNSw8324kpTUDgH5nojZ4FzSUnbflbqF/M4vsaUxfEwbBqsh10a677pIv4VrVAxiEL1QEdaN7wRlwMKK+JwV3lWLtoh11zPgb8dtq/AnhxXD/wU8X7u4iG4cxC+vb6HQ45NZXyRtouIHnh546IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=OHvrrZJZ; arc=none smtp.client-ip=178.21.23.139
+	 MIME-Version; b=ZZpz0/Ic18AuYNEmIoIyhkUSbLdB9Dyy7F0ColVRPWuV8W3HUmwvt0jOd/YAvrFqJD3tZMeySFBlQko2rFRiPLlvLxh3iMhHEfS7Gr063tKfvDbWnceVLB3m3sErkUZd0lnpPQA//9l6IaKfmh1GRu8BeMlmOLnQW9cBrLG+yQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=CD49Pr7Z; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id D200125D81;
-	Fri, 23 May 2025 12:46:16 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 203A0259BB;
+	Fri, 23 May 2025 12:47:03 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id K0yhOC7coVRf; Fri, 23 May 2025 12:46:16 +0200 (CEST)
+ id cdtLwuN3TYsn; Fri, 23 May 2025 12:47:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1747997176; bh=aW5yvpNvSkcVrVrORKxyIa2LVFmcbX7kq7M2CNVH9bc=;
+	t=1747997221; bh=UelRARJ4L5EQo961j7oIIU5hjPjnKWR1JwdiW487Osg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=OHvrrZJZFfaJxciP+3f+6DpoXtwHXZUrkGSimt0Q9pnymkyTgGBxPoSbi5JHTXSnk
-	 0r6Gp/6Qm3TN2X6k0gSd/OzuLRyBiYiKaqGi53LusfGn2njXKkYmGe3hnn5y2jIaOT
-	 d88GKrFopH6s0Ko1M7Aq8BzsGyiG19UMCsP0s30n42uMC9fgLCGdXqg5YEsDt6w/Zg
-	 oTjTghaaYZLduk4ACbmfFiSOqFRaAAPAf6mOodtzuqYJc1kpYIdHgUReNlJ8jcY+bk
-	 LuBBIwF5wcTPQPnFna60wfXjiKzo4JheBvE94ulZPeYLAfDkxGaIMAb7y76NHtjOuf
-	 W22YnVCF16Y2w==
+	b=CD49Pr7ZCxTXKrNW7TEz5QaD9tAw6E5drLC8r9TK6pLYqcpvOLiw22agLHj5onGXW
+	 iExqOboTeOu2n9w7e9Kzu/amuunt4HmGP4+JOtFslE98fxYZlgVFJ0eGzUusOivxko
+	 1qAJBO1zpa/ZdIIXuUza6wkerri2akjtc2I1BtLeqEBUQPekM9feQV9X3dcRnDlWQz
+	 zs9xjDPbZ7c1W7CgyGyLLkrw2oKLwixSu+cPqt1WVloUKDlFuwOjz0ONdWmpfsuM16
+	 9tcg9RTG/5dztVjJuhXkqOh3XGY6WU8cJbh4P/7FP5VXS0rfXTRwhMcUo6h+hLk4kp
+	 QW0UJzCVJb2Sw==
 From: Yao Zi <ziyao@disroot.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -62,9 +62,9 @@ Cc: linux-clk@vger.kernel.org,
 	Mingcong Bai <jeffbai@aosc.io>,
 	Kexy Biscuit <kexybiscuit@aosc.io>,
 	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH 2/8] clk: loongson2: Allow specifying clock flags for gate clock
-Date: Fri, 23 May 2025 10:45:46 +0000
-Message-ID: <20250523104552.32742-3-ziyao@disroot.org>
+Subject: [PATCH 3/8] clk: loongson2: Support scale clocks with an alternative mode
+Date: Fri, 23 May 2025 10:45:47 +0000
+Message-ID: <20250523104552.32742-4-ziyao@disroot.org>
 In-Reply-To: <20250523104552.32742-1-ziyao@disroot.org>
 References: <20250523104552.32742-1-ziyao@disroot.org>
 Precedence: bulk
@@ -75,59 +75,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some gate clocks need to be supplied with flags, e.g., it may be
-required to specify CLK_IS_CRTICAL for CPU clocks.
+Loongson 2K0300 and 2K1500 ship scale clocks with an alternative mode.
+There's one mode bit in clock configuration register indicating the
+operation mode.
 
-Add a field to loongson2_clk_board_info for representing clock flags,
-and specify it when registering gate clocks. A new helper macro,
-CLK_GATE_FLAGS, is added to simplify definitions.
+When mode bit is unset, the scale clock acts the same as previous
+generation of scale clocks. When it's set, a different equation for
+calculating result frequency, Fout = Fin / (scale + 1), is used.
+
+This patch adds frequency calculation support for the scale clock
+variant. A helper macro, CLK_SCALE_MODE, is added to simplify
+definitions.
 
 Signed-off-by: Yao Zi <ziyao@disroot.org>
 ---
- drivers/clk/clk-loongson2.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ drivers/clk/clk-loongson2.c | 26 +++++++++++++++++++++++---
+ 1 file changed, 23 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-index 27e632edd484..cc3fb13e770f 100644
+index cc3fb13e770f..bba97270376c 100644
 --- a/drivers/clk/clk-loongson2.c
 +++ b/drivers/clk/clk-loongson2.c
-@@ -50,6 +50,7 @@ struct loongson2_clk_board_info {
- 	const char *name;
- 	const char *parent_name;
- 	unsigned long fixed_rate;
-+	unsigned long flags;
- 	u8 reg_offset;
- 	u8 div_shift;
+@@ -42,6 +42,7 @@ struct loongson2_clk_data {
  	u8 div_width;
-@@ -105,6 +106,18 @@ struct loongson2_clk_board_info {
- 		.bit_idx	= _bidx,			\
+ 	u8 mult_shift;
+ 	u8 mult_width;
++	u8 bit_idx;
+ };
+ 
+ struct loongson2_clk_board_info {
+@@ -96,6 +97,19 @@ struct loongson2_clk_board_info {
+ 		.div_width	= _dwidth,			\
  	}
  
-+#define CLK_GATE_FLAGS(_id, _name, _pname, _offset, _bidx,	\
-+		       _flags)					\
++#define CLK_SCALE_MODE(_id, _name, _pname, _offset,		\
++		  _dshift, _dwidth, _midx)			\
 +	{							\
 +		.id		= _id,				\
-+		.type		= CLK_TYPE_GATE,		\
++		.type		= CLK_TYPE_SCALE,		\
 +		.name		= _name,			\
 +		.parent_name	= _pname,			\
 +		.reg_offset	= _offset,			\
-+		.bit_idx	= _bidx,			\
-+		.flags		= _flags			\
++		.div_shift	= _dshift,			\
++		.div_width	= _dwidth,			\
++		.bit_idx	= _midx + 1,			\
 +	}
 +
- #define CLK_FIXED(_id, _name, _pname, _rate)			\
+ #define CLK_GATE(_id, _name, _pname, _offset, _bidx)		\
  	{							\
  		.id		= _id,				\
-@@ -332,7 +345,8 @@ static int loongson2_clk_probe(struct platform_device *pdev)
- 							  &clp->clk_lock);
- 			break;
- 		case CLK_TYPE_GATE:
--			hw = devm_clk_hw_register_gate(dev, p->name, p->parent_name, 0,
-+			hw = devm_clk_hw_register_gate(dev, p->name, p->parent_name,
-+						       p->flags,
- 						       clp->base + p->reg_offset,
- 						       p->bit_idx, 0,
- 						       &clp->clk_lock);
+@@ -243,13 +257,18 @@ static const struct clk_ops loongson2_pll_recalc_ops = {
+ static unsigned long loongson2_freqscale_recalc_rate(struct clk_hw *hw,
+ 						     unsigned long parent_rate)
+ {
+-	u64 val, mult;
++	u64 val, scale;
++	u32 mode = 0;
+ 	struct loongson2_clk_data *clk = to_loongson2_clk(hw);
+ 
+ 	val  = readq(clk->reg);
+-	mult = loongson2_rate_part(val, clk->div_shift, clk->div_width) + 1;
++	scale = loongson2_rate_part(val, clk->div_shift, clk->div_width) + 1;
++
++	if (clk->bit_idx)
++		mode = val & BIT(clk->bit_idx - 1);
+ 
+-	return div_u64((u64)parent_rate * mult, 8);
++	return mode == 0 ? div_u64((u64)parent_rate * scale, 8) :
++			   div_u64((u64)parent_rate, scale);
+ }
+ 
+ static const struct clk_ops loongson2_freqscale_recalc_ops = {
+@@ -284,6 +303,7 @@ static struct clk_hw *loongson2_clk_register(struct loongson2_clk_provider *clp,
+ 	clk->div_width	= cld->div_width;
+ 	clk->mult_shift	= cld->mult_shift;
+ 	clk->mult_width	= cld->mult_width;
++	clk->bit_idx	= cld->bit_idx;
+ 	clk->hw.init	= &init;
+ 
+ 	hw = &clk->hw;
 -- 
 2.49.0
 
