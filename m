@@ -1,173 +1,133 @@
-Return-Path: <linux-kernel+bounces-660075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28CAAC18E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 02:10:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD09AC18EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 02:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAA53A40425
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:10:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46863175EFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359123C1F;
-	Fri, 23 May 2025 00:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6329A3C1F;
+	Fri, 23 May 2025 00:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="mM6/3SzV"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="RWPK24j4"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72EE137E
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 00:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC2DBA42
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 00:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747959023; cv=none; b=F2lB+E+Z8TCPZ2NHScJ8DPAElNITSSA2OrJV2xsO6TO3TfDHKxmH7XDpf0IjcY23Si3Uauw1QlImKTK9NK7CK9A+W0tB3VXg/Xe3lUt0r4OQouCIUkv8Wcwk0dmYzWoha7DlNNI6GxABvmHuxJDxuvEMez/NcsGcG3zcTr0FcEM=
+	t=1747959217; cv=none; b=h1pImFy5OnGxKTDox01//idR2sq8odbD5cRs9r6hGUs8F4AuxbijJQ4hVcD7mNa0PoxfuBiiXuMyRc4lkRbU0whlmW6cmI+wdgLX1Kq2tb2oWkhOE2CgRKW8JB0jFno2uJEQTTggaOc02m9bvcmkd6VdXheMduzSUaYSZIlMXN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747959023; c=relaxed/simple;
-	bh=3vuN2GSvRHCHGPErwDlmWRc3CwFdgj82DkJjAH4waMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NISue40d7qbWdwjymispBP2qc3gTQxDakXXU4nCBq+VrPOHNjH36u6foOKbb2Jwr5JBigth2OJ3db49xlfBPqpK7qRP9nZ6SbMh+nKB2edl9Deo7/LQMgSLPhUaEPbLAZedvwf3+JMSubBB4nr9xFw7SCYQ0W+lsUnr3YffsMrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=mM6/3SzV; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9ebdfso16049009a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 17:10:19 -0700 (PDT)
+	s=arc-20240116; t=1747959217; c=relaxed/simple;
+	bh=muJaRWHLNAqEyREyDsVWtWk1D+Gg65Bd35PEgmxwyjU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mMf08VEefB1HYJPTkujTIrfZnfChJMGFY0xjVlijpIZg6uyZ0QEvdSzDgxcytFDjhC7KKzPieksTeNbGT5LdHN+qGkpPxjei/ziRGhMJDdSCQbg62sX9iak1oGm5yRliHLyTcqQtQMMx7L9JEMeu1nGI0QBn6EQv/PKhRbNkluk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=fail (0-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=RWPK24j4 reason="key not found in DNS"; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3dc6f653152so16274165ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 17:13:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1747959018; x=1748563818; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gzjr+72w/msNfKlQ7uGd0rUlDyTdI08kbdU5rOmh8v0=;
-        b=mM6/3SzVjj0yIVLRH7xQl819S9QOBKgsCY/QtWfgxHi3Gbv3Jckq7vMTrHF0QM/HT9
-         q6v5F4dMdDN9kIO5DMrEcHCq84UnQhvfezGDUeV//MVZgU8tNR9p7lft7z3X7sPGFt1b
-         pxhbdOci/M8mtSeZuC3TAyyHujpKVRLbrxilY=
+        d=brighamcampbell.com; s=google; t=1747959215; x=1748564015; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NtaCyH1WfJUArzSfLQLt408RcB4GdI59nwfsGjUrhJE=;
+        b=RWPK24j4OBLf0Uh068ZuoYhpDfCmXc6JfmfLeklh7BOIRAgqGvXs/7FNpP3Y+GnnHo
+         fh0/FR7jS/CvOADrbMbavDq5nIH/zKBk0Pl+xx+MTuDgfY+D4sxCQUtc0uUMJVWr50px
+         zqETgtuz08gIurRsSgXX5w1JwHUnwZjdMs4ITkQMQA5PkewQkAOnwMoj7E8xzQY9RG7J
+         BMg4l5Vb7zD1R+u2fqZDjfL7nipJ/mgD7d6QAEn+xawB63+TrvyIcTUCjnZCqs8cmqoW
+         9j33RQvw+mpbYVfdJx4+WuivfgTp1rtOx2wmJ2ODIywE9fH61s29qQMp0HelLfCLgcNI
+         RxOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747959018; x=1748563818;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gzjr+72w/msNfKlQ7uGd0rUlDyTdI08kbdU5rOmh8v0=;
-        b=Emb7Wrg3zzEEDu1OL383kKCSix73Rz+wwI1st9ncInrONvQpdfkZmatPv84j1b2HyA
-         67HELhoepvIhy0KOAizFdY/T+jx9xVSuPFanJ9pZOOdUi3chwX555yDTuRosO2vLQ3F8
-         3Om9TS/IVJHnMllvlx9EB2qDpFPBjrK/6rbg2aQ/aozvAnBxL77bKyUcZ78KD3krrRtr
-         Lqyb8SH4/Lf70cwD1xtmtqLBVJpK6HDgF2GGRoHlptY1Ps3gOkDBpNTk9FWa9fxNsiqd
-         C6cex97ytCoeMPNM7JicPxKyqvz/9ekmrVb0erWyaCrqQltBBponjQAr+mXW6IIN1WHt
-         qrQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIqI2to8akLq5/coP/6S4xfI8fykg3VZBL5pds7i00bzAHig35gi9WLOS4t4yZ1YhYjFc4oGRuAi0cxHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9aXFkBj0DNsNnxlqFQUTXf9KqlzKrhU9MAL4m/Upu5EywO2Wn
-	WaGRdYthNdRshF/2dmJWSO4CNzcDoKpXVxbX1XU7ME3PSqHqqPh5oavgB4++xx5kr1w=
-X-Gm-Gg: ASbGnctOYqBNCXQoX5Kfsdcxdue2RlhyI3ZAWcTdppCe3RNoeKqFc97Nh8xvxE0gKBQ
-	oiN7iZeBrbjb9ESJgQr3HUrDcrtGlMVm5pf+PWEY8RMSLV3ldkIvxbpQGIxn2Mo6e7+wCAynLaw
-	UsFbAJZ4YKiqCsCVoU8DDLz+4q+cWf4zEOYMY9/9bAss4BzHi1HWG6mRNDoPO0eceCOcsla9EDZ
-	eFxTY23E2g6pGABHXm6MppZcyU5HrIlNQYCsd9IkrfvHzQGui2SuHJv4CSYJXWCnHTfkaAHKAoQ
-	0IK9Y55pKXhCbqpaaHj2GfaMztgo9mAV95AsYFyKz15YCXe7Wbj2Hlb2RAjVXT5miaWpsqQgQ8u
-	SyMkAUBrQGTjgpZle
-X-Google-Smtp-Source: AGHT+IGdcBUVPJgJ2m5zjPOfsemTEeRdWTqzFTqb0lmZ14AB90ba39k30gSY99bJjgeh7Eazzt6puA==
-X-Received: by 2002:a05:6402:51c9:b0:600:1167:7333 with SMTP id 4fb4d7f45d1cf-60114099a62mr22589294a12.10.1747959017984;
-        Thu, 22 May 2025 17:10:17 -0700 (PDT)
-Received: from [192.168.1.183] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6004d4f310asm11184747a12.16.2025.05.22.17.10.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 May 2025 17:10:16 -0700 (PDT)
-Message-ID: <0a4db439-e402-4b6a-8aba-79a3c0398d9a@citrix.com>
-Date: Fri, 23 May 2025 01:10:15 +0100
+        d=1e100.net; s=20230601; t=1747959215; x=1748564015;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NtaCyH1WfJUArzSfLQLt408RcB4GdI59nwfsGjUrhJE=;
+        b=leEjzlU3jfSetgkxz448RVZhcKP/wMa2jxs1mVlPr1avY3YpsiC6DiB7IZoxNFhxul
+         GO4hylv7ZIjyubNqnAbyF9FZpoI1F5VA+C4o1ymjC4fOS26jwPLeJYiJaCAyHJ5yXt2p
+         MxJNVbYKBJfQ9TFHwVCuj+Sc/kkqwWOQvKSuDAKsscQLbQxDry1QRDJz6YrwfEApzwWq
+         rf3M9RKZnQ4HMhXM/MOQL7btWq7ckbkdszFA9MU6xyedPh8hchtBd6LSLdAo0e41HYpU
+         L2z0ZqUwVx4cuzZpHqp1DFsDAvTEmZejojniknbg7ytEUKUYUA4dGwvNXDUnCboxMAmM
+         QYRg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0vy3q6uw67+BhJSaElKY8rf+a8/nklm+hjGb+oMMd8HW6Tfj/MuPo0wLLw9NhHm1J7Sfb70o4qNuTc+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrbds/Jbs0x9/0TQJT/c2/DG+gSTCyF2zs7OdjG7KVXgmPMKHH
+	ibZt6tdQ5JP3m3qJlZDv8cXbbaLhSn37vkSc/jtkoQvNEu0a623kweF1i0qT91zNfHJ9T5vgP3t
+	s0YIafv9SBw==
+X-Gm-Gg: ASbGncvRMRtXrW1ANh6yW6tLQafmZbtIvY5NuFoJ9l4UW6SKcHB6FPr5foWBi2FE//B
+	UzsKiSeyFK+mth+8GUsHHpdO2IEBJFnxfgKUTYL5fCfSyUk9u1n0JY8ZnP0F6akRmEacBrdAm17
+	wHphXpgFwuJT3bNtlG6f1BXTnu1FhHJUTGDgvxtv4oyXVtPyX94cXXJZQrVm3BpsadGkVVinZ3v
+	ooRGKWreiDIVxyrvmmoPu6q3eoA96OjQMXUnJuz94utC9jmVy2yP5v+G5vti92XB7mKRuZ6yxTK
+	MokHTbjXuznn0tGJ2XxUJMjLVuy7K4cFIfNWSXOs2fWUYGXyYmlgnHdt6wgE9husygdmfmh3Zc8
+	IU94M/Ik=
+X-Google-Smtp-Source: AGHT+IFKmxDugOdIs6vFYcotQEFU7a9JdAs53jaauyO4yjTbDeTgs1+LUU9JZAtgqiOFD9DNicpN9Q==
+X-Received: by 2002:a05:6e02:3c04:b0:3d9:65b6:d4db with SMTP id e9e14a558f8ab-3dc93276652mr13178285ab.12.1747959214980;
+        Thu, 22 May 2025 17:13:34 -0700 (PDT)
+Received: from mystery-machine.brighamcampbell.com ([64.71.154.6])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fbd17aa848sm3183450173.67.2025.05.22.17.13.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 17:13:32 -0700 (PDT)
+From: Brigham Campbell <me@brighamcampbell.com>
+To: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Athira Rajeev <atrajeev@linux.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org (open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)),
+	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Brigham Campbell <me@brighamcampbell.com>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH v2] docs: powerpc: Add htm.rst to table of contents
+Date: Thu, 22 May 2025 18:11:14 -0600
+Message-ID: <20250523001112.102087-3-me@brighamcampbell.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] x86/fred/signal: Prevent single-step upon ERETU
- completion
-To: "H. Peter Anvin" <hpa@zytor.com>, Dave Hansen <dave.hansen@intel.com>,
- "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
- stable@vger.kernel.org
-References: <20250522171754.3082061-1-xin@zytor.com>
- <e4f1120b-0bff-4f01-8fe7-5e394a254020@intel.com>
- <ad8d3a12-25f3-4d57-8f34-950b7967f92b@citrix.com>
- <3D4D48D6-D6E7-4391-8DCF-6B9D307FE2E2@zytor.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <3D4D48D6-D6E7-4391-8DCF-6B9D307FE2E2@zytor.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 22/05/2025 10:28 pm, H. Peter Anvin wrote:
-> On May 22, 2025 10:53:16 AM PDT, Andrew Cooper <andrew.cooper3@citrix.com> wrote:
->> On 22/05/2025 6:22 pm, Dave Hansen wrote:
->>> On 5/22/25 10:17, Xin Li (Intel) wrote:
->>>> Clear the software event flag in the augmented SS to prevent infinite
->>>> SIGTRAP handler loop if TF is used without an external debugger.
->>> Do you have a test case for this? It seems like the kind of thing we'd
->>> want in selftests/.
->> Hmm.
->>
->> This was a behaviour intentionally changed in FRED so traps wouldn't get
->> lost if an exception where to occur.
->>
->> What precise case is triggering this?
->>
->> ~Andrew
-> SIGTRAP → sigreturn. Basically, we have to uplevel the suppression behavior to the kernel (where it belongs) instead of doing it at the ISA level. 
+These changes fix the following error, which was introduced by commit
+ab1456c5 when Documentation/arch/powerpc/htm.rst was added to the
+repository without any reference to the document.
 
-So the problem is specifically that we're in a SYSCALL context (from
-FRED's point of view), and we rewrite state in the FRED FRAME to be
-another context which happened to have eflags.TF set.
+Documentation/arch/powerpc/htm.rst: WARNING: document isn't included in any toctree [toc.not_included]
 
-And the combination of these two triggers a new singlestep to be pending
-immediately.
+There are no changes in v2. I'm resending this patch because I addressed
+it to the wrong email for Shuah.
 
-I have to admit that I didn't like the implication from the SYSCALL bit,
-and argued to have it handled differently, but alas.  I think the real
-bug here is trying to ERETU with a splice of two different contexts
-worth of FRED state.
+Fixes: ab1456c5aa7a63d5 ("powerpc/pseries/htmdump: Add documentation for H_HTM debugfs interface")
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
+Link: https://lore.kernel.org/all/20250517210757.1076554-3-me@brighamcampbell.com
+---
+ Documentation/arch/powerpc/index.rst | 1 +
+ 1 file changed, 1 insertion(+)
 
-~Andrew
+diff --git a/Documentation/arch/powerpc/index.rst b/Documentation/arch/powerpc/index.rst
+index 0560cbae5fa1..53fc9f89f3e4 100644
+--- a/Documentation/arch/powerpc/index.rst
++++ b/Documentation/arch/powerpc/index.rst
+@@ -19,6 +19,7 @@ powerpc
+     elf_hwcaps
+     elfnote
+     firmware-assisted-dump
++    htm
+     hvcs
+     imc
+     isa-versions
+--
+2.49.0
+
 
