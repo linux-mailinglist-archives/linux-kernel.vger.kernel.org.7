@@ -1,246 +1,130 @@
-Return-Path: <linux-kernel+bounces-660781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE143AC220A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:36:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E60AC2204
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 13:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6F143A1FD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:36:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 331097B4926
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 11:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEAA238157;
-	Fri, 23 May 2025 11:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3653C22F173;
+	Fri, 23 May 2025 11:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Xrh4wYB9"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iv8YGNCR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB192356A8
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 11:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FFE191F6D
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 11:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748000175; cv=none; b=GskWvIVoeU13MC+zXejNQ7TLtWUxX4hz/9yFHLe8bUFZkkngA/YESlGQVYQx3jU08ZRLE5F0zh6GXuv3soYQ3oSps+nk2IXFkZszfnWN7mKNbFDbBDPzudhhajGyZFpS30xW9I7NMz3qLB7MYGXzNm8B5nsdX/DMVZ3EB3M7dpU=
+	t=1748000055; cv=none; b=e/zfzuc03JLdoj5+0Hp26+j2HayN/1WpvsWzGF1xzDFFYjxB1v9swZu+7fZg9PjN9tFSBtEDBLvBqqj8G56tVwpMYDUCIaKFQfOM7u8mgwH09BrRQ43YbWeA1N/GY0KjBtkR0kTDIqitEZtjowmRy9icnpVy+pYHRJW6VMINbJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748000175; c=relaxed/simple;
-	bh=5osHyV21by3EPnFM/B87KOZI5Ors1zitCYB5PcM/luk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HBWkt/jMa+u0f4uxs/y4qzsnXqjgLxjuSb9eyDhwbXP0LjOV/5pAsFXTz+J1xD9K4OFbgBqfm0NbXsjXmiYjRt2d4mRSfLlWpU44Q0nrx1MG5TqTuIAurYS6wH5LiKByqo2MlsfQt4x14dM1Nd4kGJRdh8wTxy2jaQafoktUQws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Xrh4wYB9; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a361a54454so1141823f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 04:36:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1748000172; x=1748604972; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VPjovNDjW6+EQ4LMpESmH+B/L0gygzy/uxelrXjYBg8=;
-        b=Xrh4wYB9eJtr9DWwSS4xd5adpaYq9zmg89Jhn8G/8wD1IH468nKEPdS+etZcsfXube
-         CvoErKsdwtLpjrzTrhX0r72c5Qv1bzFEsQ0Fm4+1RvqGY/I/SEwR2fI+wv8bFMRLKH+6
-         9XaxCBAqy021IVcUcOfLF97C3N+bhWhHqmWJ+PB2Wq7qbIr5lSlbHopi4lSSDce4vwQS
-         yk2AD7eKljt3EjfUCUNgt8HyXlgQ/GNisg8jf/aPGTw45BZ8nfPmcBVqLU0eJ+wADcF4
-         QhsLH2EplMFIvPVvsos9PApgWFsZtfr1p1+n9UpDSMiQaPn9yWuezyHuH1ir+ip+xGJL
-         y4lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748000172; x=1748604972;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VPjovNDjW6+EQ4LMpESmH+B/L0gygzy/uxelrXjYBg8=;
-        b=SbfacoPWR01PSa7zwMEfP/mFN8uGqUJxhv2o7yIaFWSa8KohAEuqNjK0+Nl7fUbrgD
-         Gt9jKjpTgbwYMi5JT0njFTQfGxVCc76tATufMC/UkK+O1QE4RvLbY/D5h03GV4K3xSx+
-         bL9/Uilp+iU1ySHPSBsTwWQlm3XpuQaXdFfFXVw+vT8fVBJZpslwy4umZ3dLcVrK3d3A
-         mqdIyB7SNnrkJzIrsa5A/x0GBr+SLWuNI8BTog30Dw+3bQ20hblCaJBa1JNyIRNlWGyd
-         VFgS11xxg7VvHHgz58W/G7Fu2qIMQc4pz45znf3eCG6Nb5Uul2ijFqS7E6+U53Rc8lQW
-         UQkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVfN14Mqx40ZEH4P8gkSeRun9zMJYStVq/G5GegDWIb4dTOlNaJMwMklswvQJJgSB5+8CNFL0anxIsfZ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSIUeBEgbEeDXwFKmmcr4xs/iHsKdaR4cWzaence1K91B4fUqV
-	JNQK2pb8tS8e3QQ/ZC0RABGD27ZkvdRRf4v+aZ60USOOXgburG63R4+AelY3aqMeVVo=
-X-Gm-Gg: ASbGnctv80vsoubLIXFrc3vJjrGrEsZr42JMw35Xnbd9p6GsjqOoVzP+ts4+6VyBlBS
-	WLw5e0QMPrQklkGQ5lhqd5zRMV49b1DiBybSCwIbTgtaIbBnqkDl0ucjKjz/tZ89jNqnXyhH8/Q
-	/+HvmacAGbc3XgWxMGkwlx+zbSCOG2pLvBb+HjHiJTcCS/82GY6lCHDdsSKbSREnClUuRT4fDaG
-	PCmX+LOjG4KiH9qMrBVJoWFZhjd+oHUrTWXRKRyxacbusq6eBfnqwYKovRao7HpgE7ZgicC2AM7
-	NcvGuIbshUCkd43QZEJ3WD00msBu6rZcU9AKq2O7rPPqKvL1uSHzxEbZEo8=
-X-Google-Smtp-Source: AGHT+IF2ZQShD6Bzg9HopdSxCvsBVk+Vm5DBLVCqW0pMilB6flZ85+PDQSUHNACKnOikFlZ7WJIovg==
-X-Received: by 2002:a05:6000:188f:b0:3a3:71fb:7903 with SMTP id ffacd0b85a97d-3a371fb829emr6202649f8f.10.1748000171649;
-        Fri, 23 May 2025 04:36:11 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200:be84:d9ad:e5e6:f60b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f3814262sm136898265e9.25.2025.05.23.04.36.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 May 2025 04:36:11 -0700 (PDT)
-From: =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-To: kvm-riscv@lists.infradead.org
-Cc: kvm@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Anup Patel <anup@brainfault.org>,
-	Atish Patra <atishp@atishpatra.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Andrew Jones <ajones@ventanamicro.com>
-Subject: [PATCH v4] RISC-V: KVM: add KVM_CAP_RISCV_USERSPACE_SBI
-Date: Fri, 23 May 2025 13:33:49 +0200
-Message-ID: <20250523113347.2898042-3-rkrcmar@ventanamicro.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1748000055; c=relaxed/simple;
+	bh=MYfWXPtNFQT1KOOqC822XoD8Ig+VivQ64udlyOM9YfI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cpk+r0K7P6Z9MVXWKvfzS6iwlilMGOKRxUbyGOxjCgujqpZdywHHl3qRsxfvOxRWYr8+ae7seNSRkEgaaMmT5XZNW4ouv+v8V4OdStDnvRG+SKSM5xndAyGq8S2WVEB/xa8DX+WY+3+HsCCmlG4kwfAJTGXbUbe9P4ElN1CSmuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iv8YGNCR; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748000052; x=1779536052;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=MYfWXPtNFQT1KOOqC822XoD8Ig+VivQ64udlyOM9YfI=;
+  b=iv8YGNCRrjwKxQ1G8xlqQbCyrQM/Ulea+/h+R2Y4dgAmFpcOt5llWLrq
+   OtLQirTtgX/SibS7DbEG9X3fUl41wl+55OAPOIIUKOhV7p+xvvI/d7g7l
+   COS7k2+R2zMlE/+4/6SjqhVr8qzJP7az5zURLiwCRPbZ/NQj7SWLrXoAw
+   vWB/ip+1/siKYyA8/8WkqQEk/AJi4ErX5BuVmN2KO5YZjKqVPUsdoYbTJ
+   b6M3T99tV7VzA1xzNVdolkttpnMNJOPY8l+D/uBBF3tzCLJiT6tFWOPrv
+   JH/uWtre2ctgZf6uSmvSpLZKGnWDPQZAfFMeXWZDlEb11Sx9BUxT2JR7T
+   g==;
+X-CSE-ConnectionGUID: WHTAhFKASEOMmiNwC6/oGQ==
+X-CSE-MsgGUID: Q3+9p2cKTeiAZ369H7uZUA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="50169903"
+X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
+   d="scan'208";a="50169903"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 04:34:08 -0700
+X-CSE-ConnectionGUID: ievo+qiXQgGpHVyjzx9xew==
+X-CSE-MsgGUID: lI09kxVaQOGWLQCmjpcNJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; 
+   d="scan'208";a="141606037"
+Received: from dprybysh-mobl.ger.corp.intel.com (HELO localhost) ([10.245.244.101])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 04:34:07 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Anusha Srivatsa <asrivats@redhat.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v4 2/4] drm/panel: Add refcount support
+In-Reply-To: <87sekztwyc.fsf@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <87y0vkw8ll.fsf@intel.com>
+ <20250429-benign-sidewinder-of-defense-6dd4d8@houat>
+ <87o6wfwcef.fsf@intel.com> <20250505-slim-bizarre-marten-a674ac@houat>
+ <CAN9Xe3RLazpAXdxxJmyF2QAShDtMSgdoxMdo6ecdYd7aZiP9kA@mail.gmail.com>
+ <874ixvtbxy.fsf@intel.com>
+ <20250509-rapid-flounder-of-devotion-6b26bb@houat>
+ <87r00yj6kv.fsf@intel.com>
+ <molexnyjkiryvhetfdc66gmzecrf6f7kxl656qn46djdkixrkb@fdgnp5hispbf>
+ <875xi3im1r.fsf@intel.com> <20250519-singing-silent-stingray-fe5c9b@houat>
+ <87sekztwyc.fsf@intel.com>
+Date: Fri, 23 May 2025 14:34:05 +0300
+Message-ID: <8210f7fc0dbcfc5b1eea47ccb762c7e53b45236a@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The new capability allows userspace to implement SBI extensions that KVM
-does not handle.  This allows userspace to implement any SBI ecall as
-userspace already has the ability to disable acceleration of selected
-SBI extensions.
-The base extension is made controllable as well, but only with the new
-capability, because it was previously handled specially for some reason.
-*** The related compatibility TODO in the code needs addressing. ***
+On Tue, 20 May 2025, Jani Nikula <jani.nikula@linux.intel.com> wrote:
+> Maxime -
+>
+> I'm cutting a lot of context here. Not because I don't think it deserves
+> an answer, but because I seem to be failing at communication.
+>
+> On Mon, 19 May 2025, Maxime Ripard <mripard@kernel.org> wrote:
+>> You still haven't explained why it would take anything more than
+>> registering a dumb device at probe time though.
+>
+> With that, do you mean a dumb struct device, or any struct device with a
+> suitable lifetime, that we'd pass to devm_drm_panel_alloc()?
 
-This is a VM capability, because userspace will most likely want to have
-the same behavior for all VCPUs.  We can easily make it both a VCPU and
-a VM capability if there is demand in the future.
+I'm no expert in ACPI, but I think it needs to be a struct device
+embedded inside struct acpi_device to implement the
+drm_panel_add_follower() lookup for ACPI.
 
-Signed-off-by: Radim Krčmář <rkrcmar@ventanamicro.com>
----
-v4:
-* forward base extension as well
-* change the id to 242, because 241 is already taken in linux-next
-* QEMU example: https://github.com/radimkrcmar/qemu/tree/mp_state_reset
-v3: new
----
- Documentation/virt/kvm/api.rst    | 11 +++++++++++
- arch/riscv/include/asm/kvm_host.h |  3 +++
- arch/riscv/include/uapi/asm/kvm.h |  1 +
- arch/riscv/kvm/vcpu_sbi.c         | 17 ++++++++++++++---
- arch/riscv/kvm/vm.c               |  5 +++++
- include/uapi/linux/kvm.h          |  1 +
- 6 files changed, 35 insertions(+), 3 deletions(-)
+It would be natural to embed struct drm_panel inside struct intel_panel,
+except we need struct intel_panel way before we have figured out the
+acpi device. We need struct intel_panel at connector register time, acpi
+devices currently get figured out after all connectors have been
+registered. I'm trying to see if we can change that, but it doesn't look
+easy. Separate allocation and initialization would cover that.
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index e107694fb41f..c9d627d13a5e 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -8507,6 +8507,17 @@ given VM.
- When this capability is enabled, KVM resets the VCPU when setting
- MP_STATE_INIT_RECEIVED through IOCTL.  The original MP_STATE is preserved.
- 
-+7.44 KVM_CAP_RISCV_USERSPACE_SBI
-+--------------------------------
-+
-+:Architectures: riscv
-+:Type: VM
-+:Parameters: None
-+:Returns: 0 on success, -EINVAL if arg[0] is not zero
-+
-+When this capability is enabled, KVM forwards ecalls from disabled or unknown
-+SBI extensions to userspace.
-+
- 8. Other capabilities.
- ======================
- 
-diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
-index 85cfebc32e4c..6f17cd923889 100644
---- a/arch/riscv/include/asm/kvm_host.h
-+++ b/arch/riscv/include/asm/kvm_host.h
-@@ -122,6 +122,9 @@ struct kvm_arch {
- 
- 	/* KVM_CAP_RISCV_MP_STATE_RESET */
- 	bool mp_state_reset;
-+
-+	/* KVM_CAP_RISCV_USERSPACE_SBI */
-+	bool userspace_sbi;
- };
- 
- struct kvm_cpu_trap {
-diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/asm/kvm.h
-index 5f59fd226cc5..dd3a5dc53d34 100644
---- a/arch/riscv/include/uapi/asm/kvm.h
-+++ b/arch/riscv/include/uapi/asm/kvm.h
-@@ -204,6 +204,7 @@ enum KVM_RISCV_SBI_EXT_ID {
- 	KVM_RISCV_SBI_EXT_DBCN,
- 	KVM_RISCV_SBI_EXT_STA,
- 	KVM_RISCV_SBI_EXT_SUSP,
-+	KVM_RISCV_SBI_EXT_BASE,
- 	KVM_RISCV_SBI_EXT_MAX,
- };
- 
-diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
-index 31fd3cc98d66..497d5b023153 100644
---- a/arch/riscv/kvm/vcpu_sbi.c
-+++ b/arch/riscv/kvm/vcpu_sbi.c
-@@ -39,7 +39,7 @@ static const struct kvm_riscv_sbi_extension_entry sbi_ext[] = {
- 		.ext_ptr = &vcpu_sbi_ext_v01,
- 	},
- 	{
--		.ext_idx = KVM_RISCV_SBI_EXT_MAX, /* Can't be disabled */
-+		.ext_idx = KVM_RISCV_SBI_EXT_BASE,
- 		.ext_ptr = &vcpu_sbi_ext_base,
- 	},
- 	{
-@@ -217,6 +217,11 @@ static int riscv_vcpu_set_sbi_ext_single(struct kvm_vcpu *vcpu,
- 	if (!sext || scontext->ext_status[sext->ext_idx] == KVM_RISCV_SBI_EXT_STATUS_UNAVAILABLE)
- 		return -ENOENT;
- 
-+	// TODO: probably remove, the extension originally couldn't be
-+	// disabled, but it doesn't seem necessary
-+	if (!vcpu->kvm->arch.userspace_sbi && sext->ext_id == KVM_RISCV_SBI_EXT_BASE)
-+		return -ENOENT;
-+
- 	scontext->ext_status[sext->ext_idx] = (reg_val) ?
- 			KVM_RISCV_SBI_EXT_STATUS_ENABLED :
- 			KVM_RISCV_SBI_EXT_STATUS_DISABLED;
-@@ -471,8 +476,14 @@ int kvm_riscv_vcpu_sbi_ecall(struct kvm_vcpu *vcpu, struct kvm_run *run)
- #endif
- 		ret = sbi_ext->handler(vcpu, run, &sbi_ret);
- 	} else {
--		/* Return error for unsupported SBI calls */
--		cp->a0 = SBI_ERR_NOT_SUPPORTED;
-+		if (vcpu->kvm->arch.userspace_sbi) {
-+			next_sepc = false;
-+			ret = 0;
-+			kvm_riscv_vcpu_sbi_forward(vcpu, run);
-+		} else {
-+			/* Return error for unsupported SBI calls */
-+			cp->a0 = SBI_ERR_NOT_SUPPORTED;
-+		}
- 		goto ecall_done;
- 	}
- 
-diff --git a/arch/riscv/kvm/vm.c b/arch/riscv/kvm/vm.c
-index b27ec8f96697..0b6378b83955 100644
---- a/arch/riscv/kvm/vm.c
-+++ b/arch/riscv/kvm/vm.c
-@@ -217,6 +217,11 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap)
- 			return -EINVAL;
- 		kvm->arch.mp_state_reset = true;
- 		return 0;
-+	case KVM_CAP_RISCV_USERSPACE_SBI:
-+		if (cap->flags)
-+			return -EINVAL;
-+		kvm->arch.userspace_sbi = true;
-+		return 0;
- 	default:
- 		return -EINVAL;
- 	}
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 454b7d4a0448..bf23deb6679e 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -931,6 +931,7 @@ struct kvm_enable_cap {
- #define KVM_CAP_X86_GUEST_MODE 238
- #define KVM_CAP_ARM_WRITABLE_IMP_ID_REGS 239
- #define KVM_CAP_RISCV_MP_STATE_RESET 240
-+#define KVM_CAP_RISCV_USERSPACE_SBI 242
- 
- struct kvm_irq_routing_irqchip {
- 	__u32 irqchip;
+> Is using devm_drm_panel_alloc() like that instead of our own allocation
+> with drm_panel_init() the main point of contention for you? If yes, we
+> can do that.
+
+As devm_drm_panel_alloc() forces embedding, and we can't easily embed
+drm_panel inside intel_panel, even that would need a dummy wrapper
+struct.
+
+
+BR,
+Jani.
+
+
 -- 
-2.49.0
-
+Jani Nikula, Intel
 
