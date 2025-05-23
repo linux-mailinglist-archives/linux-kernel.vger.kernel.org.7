@@ -1,419 +1,218 @@
-Return-Path: <linux-kernel+bounces-660694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C245AC20E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:23:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E823AC20FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 12:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E4BC17A62D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:22:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD8CE188A132
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 10:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1326B227E82;
-	Fri, 23 May 2025 10:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3F923D28A;
+	Fri, 23 May 2025 10:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PFqLz5KY"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xOhbt5Z9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D579622A4F8
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 10:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34BD22A4D5;
+	Fri, 23 May 2025 10:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747995707; cv=none; b=n+PrXjiE8KA2KQvoh53zQWZ2uXoJxxMqDGsdThLE/r2pQkCs6uiKtzou+dWrGXNp7/p494W/2M7zrO5capxjV+z6a3XfopNXHnTQhxO7JtRZgKjcyL0C5g/3as9OVUekDV3rlYwsTm+TrPDbvfB7ZP1N9YkrXd1eluD3rjtPcI4=
+	t=1747995753; cv=none; b=fOhBzQk6aqRCdBasxjOPD2n1TeHuqYUCBCdC3iTjLMoabn997mE++LMxIwvFXuTk1iRpNnUbWEI+58kS4XWGznxptzDZrVaESABPNjx2exNL96wI0ujt6XOOYmf8+o+piHNFNb7YC12XRoIRgBYT/rSO4L8moeMohERtKjApDII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747995707; c=relaxed/simple;
-	bh=tWw8nSqfzpXdcPQRvieHq9A/TnZ5bCU3FEahy5Grv2g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l2EW7+MNae/BvV14/YYHBOwmJMNYUwlRhd7miEiBvUd76m/zKUUoLLz1/Zdb9RFPWBgciPufXKgRSbDejmB/ur1CohX1vk1PrnawTac+XSRcTzRAcDh85d8F3kLS7lRCdJ7RRCyDDOuy4wKaY6YVREC39iIPrx0YcOnqpC4hSGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PFqLz5KY; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e7d7cb7943eso685702276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 03:21:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747995704; x=1748600504; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7emrg8zNxQVeudQUvRDXFsxfsO9owlAv3fztOkgYQCk=;
-        b=PFqLz5KYsk5qY3wDXmDqIas+3qOrI2fhtKOWXtkYY9dUzCX768UFeBmb/8FnrAQiim
-         Yo4aH6DtW43/bcvsrsfEQE4uQsfggXJ6Woio40g8BkpBwbdB1arBfM8xONHlupULcSz1
-         j4Lz4ybClH4CdiNA4M71uM/ihj2pM4rzRrkkCB7Qj+6J9qSSnq2YafrcrK2jX1bDNK/u
-         8Wsq0ZF/W+zP6xADKi13+306O6LOn4lDKC1WNjez/F14WxHEnLQkgJ1MpnZqZlBVlHS1
-         YgBdHFxLP2Go1jXA+RNM9lMhKCaRcNcJdt78jJDLmHA4bUfHaHebkN+j1G3/ltZwHEul
-         cagw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747995704; x=1748600504;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7emrg8zNxQVeudQUvRDXFsxfsO9owlAv3fztOkgYQCk=;
-        b=J6m2B3RxZgS+oICrRsFwNSXzyxDZbBxJQLyzjtHek4O5b2e1lkzpbzfsbGYCVrzE40
-         AH87OGHInypoz/Zy+tqOFUn/FWBPjhLv+VUC0arL9f3/ESftwhL/XKrSk8jggbLKw/pj
-         5F6H1BarZ5fV30imMKzEWnY6arleIWh2HGcPfJ9gJfmHXLNuy9QJPHx+kWwa95H3qvB7
-         9XsgMCqm/erROJjWLr4TdlRR3Fgt/b0FKIsD2nF/Yrh7HTBYBeav5784yCoLDwHnRtrm
-         MlbHinBY5CrJrTCrzVT8ooycxRZJwVJ3IhtTwL3s1VxgjS//silaQLz10ddQmFgCiOpK
-         SYEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtTqKRqQ0eIkeHLTH0gr0kexh+7Fvf7/GcJ1ySMvXzjMYPbQsVlTRYxMQ5y6E4urxsTnuuy6DGQpApY4E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtpI7xO0vwuhTyWB6G3+U5m1DLrKEUiNOrBwBR7V2hiLQZhCMR
-	hvDRHN2q+T98g4mKRtm4qR7mSbYrVgBhW2XVu7RqgS9jkjNaMONtcr7EFc1yTm5SucnuBynVSKG
-	ZqeCmhsVHVGqx3JWJ2lpaFuQHaUGOgz+VPd7aqxRo9Q==
-X-Gm-Gg: ASbGncvMwAsXdSl8y4+qIvtcZvZ7Avwn8NkK6Nky8TELi7xZeg+qaDlc+zwLgJ97Tpo
-	feODlumJSj39fhNGCt3djR/wBZ0LkOTQaLRLl0oAosrWXTk0JJk5GXEMR8ENnrBMNmrfIweCPzg
-	MIo/ViMVV448CeTnx+yr98BQcYo+IAbRHBDsnWeEaIIuyPtJVVeYWILSmYh8AY/7P8eME=
-X-Google-Smtp-Source: AGHT+IGo3wsqsCeLRtybGJ1nIQF2WJZ39Z7MG7rmt5iXx9tykxIP9+bekBEtxBS/9aOGAVEzQqUddwmdQwR4Nr/NBLc=
-X-Received: by 2002:a05:6902:102e:b0:e7b:9efc:1155 with SMTP id
- 3f1490d57ef6-e7d7cdf8c27mr3377942276.14.1747995703623; Fri, 23 May 2025
- 03:21:43 -0700 (PDT)
+	s=arc-20240116; t=1747995753; c=relaxed/simple;
+	bh=+JYOMkeWnVnRrJhVoVfAH1CACiCVT0JUkk6MrQcQbRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RWLDcwVmfCbAqweqokyXR1cZ0mCW3RHOaBPJBkEcuCVEoKePesLbcS/0O7anLRM0wJTOFcVEqtiQJKxZw5XQePVgYOiuCK9Foa9NgmQmOiooHgyySoI5CYS9mhvZYubxcT1+KqLIrK0x3z55O0x3pIqJXDNQR6Jl2ksrO9Qp3Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xOhbt5Z9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0902C4CEEA;
+	Fri, 23 May 2025 10:22:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1747995752;
+	bh=+JYOMkeWnVnRrJhVoVfAH1CACiCVT0JUkk6MrQcQbRc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xOhbt5Z90KQpYKm90yX0JgBbHHRe2L2z3AM8N4sWGnefKWsqSQ98HaelYIu/EDlCn
+	 Bmi/piC2SkLnm/ETAxlBpGzhVOHfacXAwo2fIGt0zGV9AmcIA3cg/SvcJU0tvBgWQj
+	 diLZ/o0AMm9gxpny5BGhG+HoCBdPx2et43lOXxUk=
+Date: Fri, 23 May 2025 12:22:29 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Benno Lossin <lossin@kernel.org>,
+	Matthew Maurer <mmaurer@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v5 4/4] rust: samples: Add debugfs sample
+Message-ID: <2025052323-glacier-shaded-e6a0@gregkh>
+References: <2025051524-festival-afterglow-8483@gregkh>
+ <aCzzBT96ktapP03e@google.com>
+ <aC2HacSU7j5d9bzu@pollux>
+ <aC5XDi7SaDJeUaAC@google.com>
+ <aC7DVewqqWIKetmk@pollux>
+ <aC8uNmrLUSS8sxHU@google.com>
+ <2025052201-return-reprogram-add9@gregkh>
+ <aC9krUYJmJqu0xVR@cassiopeiae>
+ <2025052330-reverence-slideshow-d498@gregkh>
+ <aDBC__rflS8625Vb@cassiopeiae>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506-quad-pipe-upstream-v9-0-f7b273a8cc80@linaro.org>
- <20250506-quad-pipe-upstream-v9-13-f7b273a8cc80@linaro.org> <974194c2-08fd-4866-9a4b-5cb58eca9a20@quicinc.com>
-In-Reply-To: <974194c2-08fd-4866-9a4b-5cb58eca9a20@quicinc.com>
-From: Jun Nie <jun.nie@linaro.org>
-Date: Fri, 23 May 2025 18:21:32 +0800
-X-Gm-Features: AX0GCFvIK6zc5HlKRjTf8juldvSBsCJYJCZixYXxNHP9XcY_mSYF_oh6i6_0juA
-Message-ID: <CABymUCNuL2Bn1KC4k0YS2xciL-53VrSs8-QtxoMMdKOMU8aW1g@mail.gmail.com>
-Subject: Re: [PATCH v9 13/14] drm/msm/dpu: support plane splitting in
- quad-pipe case
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aDBC__rflS8625Vb@cassiopeiae>
 
-Jessica Zhang <quic_jesszhan@quicinc.com> =E4=BA=8E2025=E5=B9=B45=E6=9C=889=
-=E6=97=A5=E5=91=A8=E4=BA=94 05:24=E5=86=99=E9=81=93=EF=BC=9A
->
->
->
-> On 5/6/2025 8:47 AM, Jun Nie wrote:
-> > The content of every half of screen is sent out via one interface in
-> > dual-DSI case. The content for every interface is blended by a LM
-> > pair in quad-pipe case, thus a LM pair should not blend any content
-> > that cross the half of screen in this case. Clip plane into pipes per
-> > left and right half screen ROI if topology is quad pipe case.
-> >
-> > The clipped rectangle on every half of screen is futher handled by two
-> > pipes if its width exceeds a limit for a single pipe.
-> >
-> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  |  11 +++
-> >   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h  |   2 +
-> >   drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 134 +++++++++++++++++++++=
----------
-> >   3 files changed, 107 insertions(+), 40 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm=
-/msm/disp/dpu1/dpu_crtc.c
-> > index f35cb1f7a7d2c2c63b4228bc47b85bb57cddbe6b..a56d68de219910a82783029=
-3e8ff24f4cdee74e4 100644
-> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > @@ -1560,6 +1560,17 @@ int dpu_crtc_vblank(struct drm_crtc *crtc, bool =
-en)
-> >       return 0;
-> >   }
-> >
-> > +/**
-> > + * dpu_crtc_get_num_lm - Get mixer number in this CRTC pipeline
-> > + * @state: Pointer to drm crtc state object
-> > + */
-> > +unsigned int dpu_crtc_get_num_lm(const struct drm_crtc_state *state)
-> > +{
-> > +     struct dpu_crtc_state *cstate =3D to_dpu_crtc_state(state);
-> > +
-> > +     return cstate->num_mixers;
-> > +}
-> > +
-> >   #ifdef CONFIG_DEBUG_FS
-> >   static int _dpu_debugfs_status_show(struct seq_file *s, void *data)
-> >   {
-> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h b/drivers/gpu/drm=
-/msm/disp/dpu1/dpu_crtc.h
-> > index 94392b9b924546f96e738ae20920cf9afd568e6b..6eaba5696e8e6bd1246a989=
-5c4c8714ca6589b10 100644
-> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-> > @@ -267,4 +267,6 @@ static inline enum dpu_crtc_client_type dpu_crtc_ge=
-t_client_type(
-> >
-> >   void dpu_crtc_frame_event_cb(struct drm_crtc *crtc, u32 event);
-> >
-> > +unsigned int dpu_crtc_get_num_lm(const struct drm_crtc_state *state);
-> > +
-> >   #endif /* _DPU_CRTC_H_ */
-> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/dr=
-m/msm/disp/dpu1/dpu_plane.c
-> > index de3f52d743e1d1f11ae8721a316b9872d4139069..cf2b4d5cb0ccc144c2cf8fd=
-227c862b0b6e7725f 100644
-> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> > @@ -831,8 +831,12 @@ static int dpu_plane_atomic_check_nosspp(struct dr=
-m_plane *plane,
-> >       struct dpu_plane_state *pstate =3D to_dpu_plane_state(new_plane_s=
-tate);
-> >       struct dpu_sw_pipe_cfg *pipe_cfg;
-> >       struct dpu_sw_pipe_cfg *r_pipe_cfg;
-> > +     struct dpu_sw_pipe_cfg init_pipe_cfg;
-> >       struct drm_rect fb_rect =3D { 0 };
-> > +     const struct drm_display_mode *mode =3D &crtc_state->adjusted_mod=
-e;
-> >       uint32_t max_linewidth;
-> > +     u32 num_lm;
-> > +     int stage_id, num_stages;
-> >
-> >       min_scale =3D FRAC_16_16(1, MAX_UPSCALE_RATIO);
-> >       max_scale =3D MAX_DOWNSCALE_RATIO << 16;
-> > @@ -855,13 +859,10 @@ static int dpu_plane_atomic_check_nosspp(struct d=
-rm_plane *plane,
-> >               return -EINVAL;
-> >       }
-> >
-> > -     /* move the assignment here, to ease handling to another pairs la=
-ter */
-> > -     pipe_cfg =3D &pstate->pipe_cfg[0];
-> > -     r_pipe_cfg =3D &pstate->pipe_cfg[1];
-> > -     /* state->src is 16.16, src_rect is not */
-> > -     drm_rect_fp_to_int(&pipe_cfg->src_rect, &new_plane_state->src);
-> > +     num_lm =3D dpu_crtc_get_num_lm(crtc_state);
-> >
-> > -     pipe_cfg->dst_rect =3D new_plane_state->dst;
-> > +     /* state->src is 16.16, src_rect is not */
-> > +     drm_rect_fp_to_int(&init_pipe_cfg.src_rect, &new_plane_state->src=
-);
-> >
-> >       fb_rect.x2 =3D new_plane_state->fb->width;
-> >       fb_rect.y2 =3D new_plane_state->fb->height;
-> > @@ -886,35 +887,91 @@ static int dpu_plane_atomic_check_nosspp(struct d=
-rm_plane *plane,
-> >
-> >       max_linewidth =3D pdpu->catalog->caps->max_linewidth;
-> >
-> > -     drm_rect_rotate(&pipe_cfg->src_rect,
-> > +     drm_rect_rotate(&init_pipe_cfg.src_rect,
-> >                       new_plane_state->fb->width, new_plane_state->fb->=
-height,
-> >                       new_plane_state->rotation);
-> >
-> > -     if ((drm_rect_width(&pipe_cfg->src_rect) > max_linewidth) ||
-> > -          _dpu_plane_calc_clk(&crtc_state->adjusted_mode, pipe_cfg) > =
-max_mdp_clk_rate) {
-> > -             if (drm_rect_width(&pipe_cfg->src_rect) > 2 * max_linewid=
-th) {
-> > -                     DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT=
- " line:%u\n",
-> > -                                     DRM_RECT_ARG(&pipe_cfg->src_rect)=
-, max_linewidth);
-> > -                     return -E2BIG;
-> > +     /*
-> > +      * We have 1 mixer pair cfg for 1:1:1 and 2:2:1 topology, 2 mixer=
- pair
-> > +      * configs for left and right half screen in case of 4:4:2 topolo=
-gy.
-> > +      * But we may have 2 rect to split wide plane that exceeds limit =
-with 1
-> > +      * config for 2:2:1. So need to handle both wide plane splitting,=
- and
-> > +      * two halves of screen splitting for quad-pipe case. Check dest
-> > +      * rectangle left/right clipping first, then check wide rectangle
-> > +      * splitting in every half next.
-> > +      */
-> > +     num_stages =3D (num_lm + 1) / 2;
-> > +     /* iterate mixer configs for this plane, to separate left/right w=
-ith the id */
-> > +     for (stage_id =3D 0; stage_id < num_stages; stage_id++) {
-> > +             struct drm_rect mixer_rect =3D {stage_id * mode->hdisplay=
- / num_stages, 0,
-> > +                                     (stage_id + 1) * mode->hdisplay /=
- num_stages,
-> > +                                     mode->vdisplay};
->
-> Hi Jun,
->
-> Nit: can you specify the fields when initializing the drm_rect struct her=
-e?
->
-> e.g.:
->
-> mixer_rect =3D {
->         .x1 =3D ...,
->         .y1 =3D ...
->         ...
-> }
->
-Will do.
+On Fri, May 23, 2025 at 11:42:23AM +0200, Danilo Krummrich wrote:
+> On Fri, May 23, 2025 at 11:14:23AM +0200, Greg Kroah-Hartman wrote:
+> > On Thu, May 22, 2025 at 07:53:49PM +0200, Danilo Krummrich wrote:
+> > > On Thu, May 22, 2025 at 04:15:46PM +0200, Greg Kroah-Hartman wrote:
+> > > > If you really want to delete a debugfs file that you have created in the
+> > > > past, then look it up and delete it with the call that is present for
+> > > > that.
+> > > 
+> > > This is promoting a C pattern (which for C code obviously makes a lot of sense),
+> > > i.e. we have a function that creates a thing and another function that removes
+> > > the thing given a handle of the created thing. Whether the handle is valid is
+> > > the responsibility of the caller.
+> > > 
+> > > In this case the handle would be the filename. For instance:
+> > > 
+> > > 	debugfs_create_file("foo", parent, ...);
+> > > 	debugfs_remove(debugfs_lookup("foo", parent));
+> > > 
+> > > This leaves room to the caller for making mistakes, e.g. if the caller makes a
+> > > typo in the filename. In this case we wouldn't even recognize it from the return
+> > > value, since there is none.
+> > > 
+> > > In Rust, we do things differently, i.e. we wrap things into an object that
+> > > cleans up itself, once it goes out of scope. For instance:
+> > > 
+> > > 	let file = debugfs::File::new("foo", parent);
+> > > 
+> > > Subsequently we store file in a structure that represents the time we want this
+> > > file to exist. Once it goes out of scope, it's removed automatically.
+> > > 
+> > > This is better, since we can't make any mistakes anymore, i.e. we can't mess up
+> > > the filename or pass the wrong parent to clean things up.
+> > > 
+> > > Depending on whether the above was a misunderstanding and depending on how you
+> > > think about it with this rationale, I have quite some more reasons why we don't
+> > > want to have files / directories around in the filesystem without a
+> > > corresponding object representation in Rust.
+> > > 
+> > > But before I write up a lot more text, I'd like to see if we're not already on
+> > > the same page. :-)
+> > 
+> > Ok, let's knock up the api here first before worrying about the
+> > implementation, as we seem to all be a bit confused as to what we want
+> > to do.
+> > 
+> > Ideally, yes, I would like to NOT have any rust structure represent a
+> > debugfs file, as that is the way the C api has been evolving.  We are
+> > one step away from debugfs_create_file() being a void function that
+> > doesn't return anything, and I don't want to see us go "backwards" here.
+> > 
+> > But the main reason I did that work was to keep people from trying to
+> > determine if a file creation worked or not and to do different logic
+> > based on that.  I think the Rust api CAN do both here, as you and Alice
+> > have explained, so we should be ok.
+> > 
+> > So how about this for an example api, two structures, debugfs::Directory
+> > and debugfs::File, which have only two types of operations that can be
+> > done on them:
+> > 
+> > To create a debugfs directory, we do:
+> > 
+> > 	let my_dir = debugfs::Directory::new("foo_dir", parent);
+> > 
+> > There is no other Directory method, other than "drop", when the object
+> > goes out of scope, which will clean up the directory and ALL child
+> > objects at the same time (implementation details to be figured out
+> > later.)
+> > 
+> > That will ALWAYS succeed no matter if the backend debugfs call failed or
+> > not, and you have no way of knowing if it really did create something or
+> > not.  That directory you can then use to pass into debugfs file or
+> > directory creation functions.
+> > 
+> > Same for creating a debugfs file, you would do something like:
+> > 
+> > 	let my_file = debugfs::File::new("foo_file", my_dir);
+> > 
+> > depending on the "file type" you want to create, there will be different
+> > new_* methods (new_u32, new_u64, etc.).
+> > 
+> > which also ALWAYS succeeds.  And again, as you want to keep objects
+> > around, you have to have a reference on it at all times for it to exist
+> > in the filesystem.  If you drop it, then it too will be removed from
+> > debugfs.
+> 
+> Great! That's exactly what I think the API should look like as well. :-)
+> 
+> > And again, that's the only operation you can do on this object, there
+> > are no other methods for it other than "new" and "drop".
+> 
+> We probably still want
+> 
+> 	let foo_dir = my_dir.subdir("foo_dir")
+> 	foo_dir.file("foo_file")
+> 
+> for convinience, rather than having to call
+> 
+> 	let bar_dir = Dir::new("foo_dir", my_dir)
+> 	File::new("bar_file", bar_dir)
+> 
+> all the time. But otherwise, sounds reasonable to me.
 
-> > +             int cfg_idx =3D stage_id * PIPES_PER_STAGE;
-> > +
-> > +             pipe_cfg =3D &pstate->pipe_cfg[cfg_idx];
-> > +             r_pipe_cfg =3D &pstate->pipe_cfg[cfg_idx + 1];
-> > +
-> > +             drm_rect_fp_to_int(&pipe_cfg->src_rect, &new_plane_state-=
->src);
-> > +             pipe_cfg->dst_rect =3D new_plane_state->dst;
-> > +
-> > +             DPU_DEBUG_PLANE(pdpu, "checking src " DRM_RECT_FMT
-> > +                             " vs clip window " DRM_RECT_FMT "\n",
-> > +                             DRM_RECT_ARG(&pipe_cfg->src_rect),
-> > +                             DRM_RECT_ARG(&mixer_rect));
-> > +
-> > +             /*
-> > +              * If this plane does not fall into mixer rect, check nex=
-t
-> > +              * mixer rect.
-> > +              */
-> > +             if (!drm_rect_clip_scaled(&pipe_cfg->src_rect,
-> > +                                       &pipe_cfg->dst_rect,
-> > +                                       &mixer_rect)) {
-> > +                     memset(pipe_cfg, 0, 2 * sizeof(struct dpu_sw_pipe=
-_cfg));
-> > +
-> > +                     continue;
-> >               }
-> >
-> > -             *r_pipe_cfg =3D *pipe_cfg;
-> > -             pipe_cfg->src_rect.x2 =3D (pipe_cfg->src_rect.x1 + pipe_c=
-fg->src_rect.x2) >> 1;
-> > -             pipe_cfg->dst_rect.x2 =3D (pipe_cfg->dst_rect.x1 + pipe_c=
-fg->dst_rect.x2) >> 1;
-> > -             r_pipe_cfg->src_rect.x1 =3D pipe_cfg->src_rect.x2;
-> > -             r_pipe_cfg->dst_rect.x1 =3D pipe_cfg->dst_rect.x2;
-> > -     } else {
-> > -             memset(r_pipe_cfg, 0, sizeof(*r_pipe_cfg));
-> > -     }
-> > +             pipe_cfg->dst_rect.x1 -=3D mixer_rect.x1;
-> > +             pipe_cfg->dst_rect.x2 -=3D mixer_rect.x1;
-> > +
-> > +             DPU_DEBUG_PLANE(pdpu, "Got clip src:" DRM_RECT_FMT " dst:=
- " DRM_RECT_FMT "\n",
-> > +                             DRM_RECT_ARG(&pipe_cfg->src_rect), DRM_RE=
-CT_ARG(&pipe_cfg->dst_rect));
-> >
-> > -     drm_rect_rotate_inv(&pipe_cfg->src_rect,
-> > -                         new_plane_state->fb->width, new_plane_state->=
-fb->height,
-> > -                         new_plane_state->rotation);
-> > -     if (drm_rect_width(&r_pipe_cfg->src_rect) !=3D 0)
-> > -             drm_rect_rotate_inv(&r_pipe_cfg->src_rect,
-> > -                                 new_plane_state->fb->width, new_plane=
-_state->fb->height,
-> > +             /* Split wide rect into 2 rect */
-> > +             if ((drm_rect_width(&pipe_cfg->src_rect) > max_linewidth)=
- ||
-> > +                  _dpu_plane_calc_clk(mode, pipe_cfg) > max_mdp_clk_ra=
-te) {
-> > +
-> > +                     if (drm_rect_width(&pipe_cfg->src_rect) > 2 * max=
-_linewidth) {
-> > +                             DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_=
-RECT_FMT " line:%u\n",
-> > +                                             DRM_RECT_ARG(&pipe_cfg->s=
-rc_rect), max_linewidth);
-> > +                             return -E2BIG;
-> > +                     }
-> > +
-> > +                     memcpy(r_pipe_cfg, pipe_cfg, sizeof(struct dpu_sw=
-_pipe_cfg));
-> > +                     pipe_cfg->src_rect.x2 =3D (pipe_cfg->src_rect.x1 =
-+ pipe_cfg->src_rect.x2) >> 1;
-> > +                     pipe_cfg->dst_rect.x2 =3D (pipe_cfg->dst_rect.x1 =
-+ pipe_cfg->dst_rect.x2) >> 1;
-> > +                     r_pipe_cfg->src_rect.x1 =3D pipe_cfg->src_rect.x2=
-;
-> > +                     r_pipe_cfg->dst_rect.x1 =3D pipe_cfg->dst_rect.x2=
-;
-> > +                     DPU_DEBUG_PLANE(pdpu, "Split wide plane into:"
-> > +                                     DRM_RECT_FMT " and " DRM_RECT_FMT=
- "\n",
-> > +                                     DRM_RECT_ARG(&pipe_cfg->src_rect)=
-,
-> > +                                     DRM_RECT_ARG(&r_pipe_cfg->src_rec=
-t));
-> > +             } else {
-> > +                     memset(r_pipe_cfg, 0, sizeof(struct dpu_sw_pipe_c=
-fg));
-> > +             }
-> > +
-> > +             drm_rect_rotate_inv(&pipe_cfg->src_rect,
-> > +                                 new_plane_state->fb->width,
-> > +                                 new_plane_state->fb->height,
-> >                                   new_plane_state->rotation);
-> >
-> > +             if (drm_rect_width(&r_pipe_cfg->src_rect) !=3D 0)
-> > +                     drm_rect_rotate_inv(&r_pipe_cfg->src_rect,
-> > +                                         new_plane_state->fb->width,
-> > +                                         new_plane_state->fb->height,
-> > +                                         new_plane_state->rotation);
-> > +     }
-> > +
-> >       pstate->needs_qos_remap =3D drm_atomic_crtc_needs_modeset(crtc_st=
-ate);
-> >
-> >       return 0;
-> > @@ -954,20 +1011,17 @@ static int dpu_plane_atomic_check_sspp(struct dr=
-m_plane *plane,
-> >               drm_atomic_get_new_plane_state(state, plane);
-> >       struct dpu_plane *pdpu =3D to_dpu_plane(plane);
-> >       struct dpu_plane_state *pstate =3D to_dpu_plane_state(new_plane_s=
-tate);
-> > -     struct dpu_sw_pipe *pipe =3D &pstate->pipe[0];
-> > -     struct dpu_sw_pipe *r_pipe =3D &pstate->pipe[1];
-> > -     struct dpu_sw_pipe_cfg *pipe_cfg =3D &pstate->pipe_cfg[0];
-> > -     struct dpu_sw_pipe_cfg *r_pipe_cfg =3D &pstate->pipe_cfg[1];
-> > -     int ret =3D 0;
-> > -
-> > -     ret =3D dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg,
-> > -                                       &crtc_state->adjusted_mode,
-> > -                                       new_plane_state);
-> > -     if (ret)
-> > -             return ret;
-> > +     struct dpu_sw_pipe *pipe;
-> > +     struct dpu_sw_pipe_cfg *pipe_cfg;
-> > +     int ret =3D 0, i;
-> >
-> > -     if (drm_rect_width(&r_pipe_cfg->src_rect) !=3D 0) {
->
-> Any reason why this check was dropped?
->
-> Thanks,
->
-> Jessica Zhang
+That would be very convenient, but given that we have 20+ different
+types of debugfs files that we can create, that might get complex to
+define that way.  But that's just an implementation detail to work
+out...
 
-Because we have a pipe array now and will loop on it, not just the 2nd pipe=
-.
-It is converted to below 2 lines, as sspp is assigned only for valid pipe.
-+               if (!pipe->sspp)
-+                       continue;
+> > Now there are issues with implementation details here like:
+> >   - Do you want to keep the list of file and dir objects in the rust
+> >     structure to manually clean them up when we go to drop the
+> >     directory?
+> >   - Do we want to force all files to be dropped before the directory?
+> >     Or do we want to just let the C side clean it all up automagically
+> >     instead?
+> > and other things like that, but we can argue about that once we settle
+> > on the outward-facing api first.
+> 
+> The only thing I don't want to is to allow to leak files or directories, i.e.
+> 
+> 	File::new("bar_file", bar_dir).leak()
+> 
+> which keeps the file in the filesystem, but takes away the handle from the Rust
+> side, such that it won't be removed from the filesystem anymore when the handle
+> goes out of scope, which can cause nasty bugs. But I think there isn't any
+> benefit to allow this anyways and it isn't needed with reference counting.
 
->
-> > -             ret =3D dpu_plane_atomic_check_pipe(pdpu, r_pipe, r_pipe_=
-cfg,
-> > +     for (i =3D 0; i < PIPES_PER_PLANE; i++) {
-> > +             pipe =3D &pstate->pipe[i];
-> > +             pipe_cfg =3D &pstate->pipe_cfg[i];
-> > +             if (!pipe->sspp)
-> > +                     continue;
-> > +             DPU_DEBUG_PLANE(pdpu, "pipe %d is in use, validate it\n",=
- i);
-> > +             ret =3D dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg,
-> >                                                 &crtc_state->adjusted_m=
-ode,
-> >                                                 new_plane_state);
-> >               if (ret)
-> >
->
+I agree, I can live with that too.
+
+> I'm open on things like having "ghost" objects as proposed by Alice or force all
+> files to be dropped before the directory, etc. though.
+
+"ghost" objects will get messy I think, and yes, cleaning up will be a
+bit tricky here, which is why at the C level I am taking away the idea
+of a file that can be controlled as an individual object entirely.  If
+you want the Rust code to have objects for the files, that's something
+that the bindings are going to have to handle well.  Somehow :)
+
+thanks,
+
+greg k-h
 
