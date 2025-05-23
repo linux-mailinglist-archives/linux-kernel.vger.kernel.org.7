@@ -1,142 +1,200 @@
-Return-Path: <linux-kernel+bounces-661152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08BE3AC275B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:16:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFC02AC2760
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 18:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8237D3A60F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:16:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA81F7BB055
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 16:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9997297A65;
-	Fri, 23 May 2025 16:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3EA296D3E;
+	Fri, 23 May 2025 16:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cu7XiHdo"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="mT+JiD7q"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2043.outbound.protection.outlook.com [40.107.105.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94549297104;
-	Fri, 23 May 2025 16:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748016949; cv=none; b=nahlCNz/lLafHCI6rsWGKZOc2c92wNonkaOmmXxpG5JSVc+VFN5yIutuvM/Pkc3mKpM1H2hf+4tlGsLuHDocbY8esFyzSR1lQhDnj10r9QTYcVeqqfxX4IZtWBypmhXnxa51BnLC0MfaMlpGQ5GcSudYxX+k6J/5HoKQo4+qERs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748016949; c=relaxed/simple;
-	bh=UqNvfT8UNcQF1ajewAq/dch5PAUIobvrkdEpLmAZ7wA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=c5zpNeFPHfSY/BQUKuwqHR2jDBt3X5kYvZo+Chiqd33Jaad9gne3BMI/xtu5Whgh7uHfN+yxKut1EsZoB6jB62C88+2wnDl/i9nGDOmH3XWVn58F54oaOKV42qkkss8ux3R4at1VS4H4wwgDZB3XWqRqo6Yp14GzPp3gy9a5OyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cu7XiHdo; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-30ea7770bd2so155607a91.0;
-        Fri, 23 May 2025 09:15:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748016947; x=1748621747; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GNk2zZpC65xRherJZoi8fazJtKf8aShkVrAnPTjrn2Y=;
-        b=Cu7XiHdoJy9Zr3DyJmFBzr7/ZWGBucsF/KnfVoOUReqlubC7o6HzBUSLeGWF3K2ZVm
-         f2i9u6jkOVgnU8bntVWMX30O3mLH28sl2EhR3n7RoqP+qmf1c1ILoFK329/dH5rqHojl
-         jEK4i2GHgvfBA29kD+/km+FfJUAtDfN1iI9Uyp4l1gmjjV92bSoG4WSD/rjxaOHOu9Vv
-         UTSU6mwp/uE2cvkMWcr3d31jCZOM78kOpKL1Bup/uivjpS53OQjJ5Z49ebbm8Y0bRVqA
-         VtxXhUJ9W6ScKXc9uRnRsj2e3dUh5LlTxIODDj3Je62fYFE6A1i+Kv0DF3h+r5d2jNYf
-         s6KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748016947; x=1748621747;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GNk2zZpC65xRherJZoi8fazJtKf8aShkVrAnPTjrn2Y=;
-        b=ZQZhapoMprdv7kyStv4C8JcjW1o1/nXwZSOc7z0m4bfeZglWoI+VpAl94r3L6XHq5Y
-         fziFVYy/tTOT4/rB826CDiusvENIIpyv590dx9+FeCd/SapNpFvDisdLa1Rii8t+qY2Y
-         Bm/4ttIMb4NIdKvG06SZSLtemTukPZ/Dfzeo3e2FatWKDypNA3ggboS0sDahQBY0lPn3
-         yTX/7BBxPf7+/1sR4WMfxU3baDLP6o/AjsFC9Ayg3t8NT/Eup+GriubPmQp8Qmy4oKVO
-         tZZTfQqFd9KZMM+7KQKAxfwwx3rgKcBB6k7t0YSWUsOz/j/rRcT5W0/C0a1IkUJqIN/N
-         wp1w==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Zeo6gTj2VdQza/PGr0kbtiXTz0SWUbLymWuz4ZCG9SpndoLpsAM8hT7e4ByjU1i/miRULI8wIUEVGuOB@vger.kernel.org, AJvYcCUfTMS6keZu6X0izDgNi2Dk+FhihLpgBeZTIIX8aKinwbNuErmsvt7tUcxZNrPaOAXJKCwXZl9YdRXRtQDg@vger.kernel.org, AJvYcCWTVlZnEwuU/S+KhRV1NHrUKzfco2gJuP7UOa3kYW1ChDW4uLzySuUbVg4GFK59e2cX8Tbli3HmlODnew==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP9db3TlLAFVQQ1CY5N/S1V7XD7O2VOyrVi/x4rbVXfTbZ9jA4
-	g74y5/U/8d6QraiUOm+MwPfsCC5AahHpY6gNNiSRrYdmwu0NwfurS3r5
-X-Gm-Gg: ASbGnctab+ht3+C0P9Wd2uKC0kMh8FEjjULW3mtvsL9Dfv9PtjRTYCfk/47HDWCR/o9
-	kph3Kwv9IHzg7fet5B8OID9q3H69z+Lzpbzr/QEak/QnbQSRgF8pO8ZyRdXgpoi5oto+ToX7Vrf
-	SIh1oFPdYq4T+h24+G717aKkVqCT90nhjysb++5UqimZO14Uim8VpfNIWq5wx/yOufNEnCZVS6C
-	Ywlb7Kd16q8sHOaY5PWFbBFwlhSTZYJf3qvhuCwR0TPA94iIHKUz8ziRMCHrW+cRmWXNEilcwq4
-	7W8VRSAVoomGq2GgNeg9wfao+KIfecoKprSbAkNCbGLitvK0RfBHDdO2wuw+UQKHxZPZ1KgZH8U
-	m39V6TkQzWXSl/Ge9wBcQp1RYoPBt0g==
-X-Google-Smtp-Source: AGHT+IFx/FJsdG8AnNi6eg+BilBglUFlrj6JEqa2pyvzhIeq+c199ROzKQxdHjIHsfWSCrtByMxf5Q==
-X-Received: by 2002:a17:90b:394d:b0:2ee:d024:e4fc with SMTP id 98e67ed59e1d1-30e7d5bb433mr53256647a91.33.1748016946693;
-        Fri, 23 May 2025 09:15:46 -0700 (PDT)
-Received: from localhost.localdomain (c-67-160-120-253.hsd1.wa.comcast.net. [67.160.120.253])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f365d46ffsm7526565a91.25.2025.05.23.09.15.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 May 2025 09:15:46 -0700 (PDT)
-From: mhkelley58@gmail.com
-X-Google-Original-From: mhklinux@outlook.com
-To: simona@ffwll.ch,
-	deller@gmx.de,
-	haiyangz@microsoft.com,
-	kys@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	akpm@linux-foundation.org
-Cc: weh@microsoft.com,
-	tzimmermann@suse.de,
-	hch@lst.de,
-	dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH v3 4/4] fbdev: hyperv_fb: Fix mmap of framebuffers allocated using alloc_pages()
-Date: Fri, 23 May 2025 09:15:22 -0700
-Message-Id: <20250523161522.409504-5-mhklinux@outlook.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250523161522.409504-1-mhklinux@outlook.com>
-References: <20250523161522.409504-1-mhklinux@outlook.com>
-Reply-To: mhklinux@outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A524F225D7;
+	Fri, 23 May 2025 16:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748017068; cv=fail; b=DdgtzTYJ41Izz7cCHO0jr6PhNw3wtyxPwYvriMbP2tNc0NgKxP5eOP3dUAqP/N67eUNyWZ5e9foHJEZTCIV+YoipYwRLT8Vv1rk0xbUv/i1xmjueD4cSkyZH4XfD/gwtHG42qBoDxrCulXz/DFSOcVCuPfqRYRdieqN309bvGRE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748017068; c=relaxed/simple;
+	bh=VQZ9jWucriQ2uMcnKxREWx2zLdJfpv2TZ6P5Lo3Kaas=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=FApMHzuf1tFsazuETSdKzgblQrf0e5k3MU2yM9UBr0TEpsgvaRtg1goTR4cmAkIhQxQHeYxqgh3FGJwlOlz52bNzFx6NOBrjpqU5oejISuPdIatdGTu3wB63n9Qy58+l2oF1uM5qOwlNOuV6ANqKuP8XUaE/fpkwvJBy39ipSIU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=mT+JiD7q; arc=fail smtp.client-ip=40.107.105.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Kii1riFSenXytW02jtDWpS+EVvq1NOGU5f5KSdqW5ZFyXHeIsYV4Q5wM1Yj6WJmZnmAkaWpawTbjT2eco+IqpFvQ443OKvomQhoGBgA84DbFNsjoPcBdOPjgpeqAX7sw+1XQNOFmFzAXafyAtXkCJsNVkWgc+aF5fV7udiNipH6Ey2bMMfwwnjh/V6JQ/D82oE6vXq34egsVMpVTK4qAtFBclEE/dkFL5J5L7pZzwKE89mcQzuCdirNyQOHTj/jUdL/djbeiC6y+cOfcyTWsBzX9UDuLcthUcYFaJD60Hea0DkAYBJqkNuJ4qiE8SJalJFCbMJQG2nvbBWU/wMbs4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GVGNWER3va0+Pg6MSgwGGkU5raRDN4QcBGeHYM/4PRA=;
+ b=PQxjCve4wrLYjYCSk8eZlVWnezjaxYz4PTUX1ns0N0LN3ZRDEEXvutWd16/8R+fwmNinO8HpJUQ3jqzCD68uU3GyL7lAhGpkTJvY7/wl4gjMtqXn4fTiAfYvQw4MssWRCAtX/C8yUbAd88s6UHDFkzifuq4Wqq+/cTbV2MMvSjXwNAsfCVjgbXdR7q5S43B49rWfJXCz9BU7v4zfdNa7+lFKJ1MupFx1Zqlz3nMWKR/nDc8didfhJCVLQL9RnHdvEqo6ja5uZoMiHsttnMYvBz73eArTO+demn8RCP9MvSAdcN6LAxzXpbpMl2q8mtOWMWTks9453QxAtbmiqofQzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GVGNWER3va0+Pg6MSgwGGkU5raRDN4QcBGeHYM/4PRA=;
+ b=mT+JiD7qJAr9Rj3GvjNO1kKC/5L5+t+vE6R2rt6DUsfIGccsgK14r402b1EFAqcCLU35oD5MamA/uZ0D2n5Xe1SMF6ak9rFJeHo0PRHQ9XHyiMP+9AyYR8NB2wTY09kmdoeQZi/XPizWg9nIfPl/eRyk+StXMSE8lkx1pbl9z183XJ5wygSCdvWXxsfAO69u3F4PlKl7arkYw9m0cpSPfGHLF8gTo48wK5JpKKflw9ql2SNx71krscZS90ApmupFLHy2tlDx/3c5e4M9khes2FMIyOm192UmUKr4wYs3OtpG/pgGSF56zI+7yTzZU+KFo7H5sS3pWB8N0qT0ORLviA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM7PR04MB6966.eurprd04.prod.outlook.com (2603:10a6:20b:109::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.21; Fri, 23 May
+ 2025 16:17:42 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8746.030; Fri, 23 May 2025
+ 16:17:42 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Stefan Agner <stefan@agner.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE VYBRID ARM ARCHITECTURE),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/6] ARM: dts: vf: remove reg property for arm pmu
+Date: Fri, 23 May 2025 12:17:20 -0400
+Message-Id: <20250523161726.548682-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY1P220CA0003.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:59d::10) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM7PR04MB6966:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a599ee1-0a5c-49a0-9084-08dd9a15582c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|52116014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MyELLx5YbXIiQTMB7CxbWhGNs7jDBkApnuiTGi8ZAoNgxdjcxoq93qv4jgwv?=
+ =?us-ascii?Q?t9uqYUXcWixjPHrHzMm+66w1jIs9FtBzZIEiRZc+6a+sfWcq5ZPaB1tnKQVC?=
+ =?us-ascii?Q?LSCXsQFWQnkQlpmNHfNZB4SL/K2icmLudabskxKWA15sDAhZOeO53ndryldq?=
+ =?us-ascii?Q?CGWsBYQq9ETTcqmbu90qtKGT8PD5QZK3C6Du018hh+/LN5fgW/TVNnaOZMnB?=
+ =?us-ascii?Q?qax9VvchzEvl9NGUjUDdi9HhHRO7AUYDM9GqAk4Zen1/47CbsROh8d4O3sAw?=
+ =?us-ascii?Q?6f+/lLsoTSEtYaODaaPcWjMVZy4D1iRyOYhG8xY5QAVqwPnB97borWRfmCJb?=
+ =?us-ascii?Q?xazopC7mBMaTSPkClwJAGuC5QRzHsX8mzke2WHw9xwAkeuGPj/Sh55H5bj5T?=
+ =?us-ascii?Q?BH1cWqBLgrXkU+R2bDmE1UtbEnOeDQnd1d74cW3JmBg9hTyXFea6KI9skP4v?=
+ =?us-ascii?Q?7qP8SvCT2vtenPlfnW8NQZv4MBTnOqi3MZYUc26lodCsedJJJNneFRYLL3Y8?=
+ =?us-ascii?Q?qGj1Y2zYKndMQesTKT/ptXNtPnvQ86ApsbgY9tVeGtWMbSvISSzEukWypxcU?=
+ =?us-ascii?Q?XXol5pShcWIaoYh+nxnW8liogW+k9U9bzsYFAt6n8+qMebYcqEIkTuPgBfWc?=
+ =?us-ascii?Q?vfVO4DR13j05gfEZ+vx9TmLo3CcPL5CJvZ8KPLx6WlS8qOCUpzSBAdlaLumC?=
+ =?us-ascii?Q?BBkzaltNIn7BWOaJ4NuW3119ynA4cQd9tCDZsyWWns6dEKjJTMZFiqy4AGey?=
+ =?us-ascii?Q?lyxBFiWz7K5NkOVm9b13h5og2nJ8Fo8+Yc+Ao7pjNjYYLy0U2F2XctA+Z7AC?=
+ =?us-ascii?Q?buagDZsBTJXFeuRU6xWwe6WJ3owAHFZZNWCYHNQMfRozHaXc6BZP6KrVN3zc?=
+ =?us-ascii?Q?Ahr2XsZsKKseMgZ6WQO+apQKs0cPLKVa5GQ9yEbCSlQUku8bpSYym0UJUKcU?=
+ =?us-ascii?Q?JNTP1UeB3tlfMd5j6c1MfCQo3XITDNMwMMLZ3JOjvxCz4vSPq8MSgM+qjKym?=
+ =?us-ascii?Q?l3nZjf6sNGIBX/ZTroVakl6mgl1DLHmIravHycZ2Mq1w2aUg1Js7rxMb//vF?=
+ =?us-ascii?Q?LMP5NRSplc4H2hEji2Ng1VvL2QeSkzP4hgqPEtIYEX43n0kZUdVvaYNX59wf?=
+ =?us-ascii?Q?NZdPRWGMbEihCbzdzbmS4Z7837IW1KKa2Ty1KNvXIzwWZxJIWqZN5+poqT3X?=
+ =?us-ascii?Q?pszqdaTMj9fOoQeNJcit9cj4tg0wfw1F1e1Drnz+9b5yd2B7p77WmfRGGye/?=
+ =?us-ascii?Q?CWMizhMyB7uPdPVlwhDV4dZtT+zQIMVVzZNFW7wPR7cNs/oqGA/9gJkOBsrg?=
+ =?us-ascii?Q?vw/McmnHGEz0nB8fhEDxiPFitoAhI2MXX3H4FIpSzyA7MrKNTIDLV//R6Al3?=
+ =?us-ascii?Q?AwPM7vmqx17ucWz9YJP7CRRXKDscetoCb6qETDrCHnXoIZOP0dta4ZHrcJEv?=
+ =?us-ascii?Q?7AMHmVSmCMgCuzckFspi5LdkE4WHvF/lLC5QPpy5PKu9/b9EFPKeosKWvmhl?=
+ =?us-ascii?Q?hGey/F9NcRojcLE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(52116014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?gJUnoOrazNrS4OkjtJKWLZc5CVBBOxizn/nv+LMsVaSDrMem4qM+ouuZzJiT?=
+ =?us-ascii?Q?sEu9Ai4uw2e3X8FOTcGRvX3jYFAZe0jRdFgLkj644etVDv+xkwqUvHOnK8Sl?=
+ =?us-ascii?Q?B0IZGVgX7Etletqs15X3aDlGZ6GpM5zDlM0T2HlS5K/Mzs1EejUyqBCQFfGH?=
+ =?us-ascii?Q?EXIslcLLg1lSUq1nQqJS+XDg5IvN4WGtpfr4UMLyfuPaASayZohOfw8fySsJ?=
+ =?us-ascii?Q?c5dibHpqyyUI555t7lHmcAJkyX7Ahws9r+4QheMtEIQJzn+CEp0r4F9Plz/q?=
+ =?us-ascii?Q?YVg/KlvuSZ/uNAGWyHl7LFCfLVWsn+kNPRnXNOXKE575EYzG9iQK69z/IULj?=
+ =?us-ascii?Q?g79wic6AHbLlPID1U04CPzCEEM6uYyAR7PzO7amuXuiJBu4wzWs9mfte9RT4?=
+ =?us-ascii?Q?h0ZZi0n6zCN8DK3vr+rm4m59oTd7uA0pxoHZ70yISYcpla4wtPWqEU9++vpj?=
+ =?us-ascii?Q?LfhOwXTGIMDhzVEU8bNecvPolq9S2OjFJlu7j6sYs9OG1esNX+6ILl/pUcY5?=
+ =?us-ascii?Q?sWN+33ruivIQdGvt8A1v98Ior/TekJbEGryK5/IbDPcY26R9FFn6HOB/1Fbr?=
+ =?us-ascii?Q?V8s2g642AStBG1IqBHXQjWeSnjylOAxLwztIDdWheeNttP+5jtR9DXj+0XBq?=
+ =?us-ascii?Q?z+8SaLyPWPDZ6rNWBp8b6yvvyfJutvFZ1gllzpEGpnKR3UFslmUkCopHP6W+?=
+ =?us-ascii?Q?1mUEvXBhUHc83bh+hvtnAF3Bbq0hHP4ZPYAkgOPL5ZfWrO0GvADSKKmI0soK?=
+ =?us-ascii?Q?UHbILKH5G6TNtVAL2hkX3fGvNRSZRnvJn/Wv9bvfV/VVz346pmYqBcfwJ1X7?=
+ =?us-ascii?Q?FVX5NONPyG3iREV6jEMd9Jor1mYN1r2jWPOhj6zSPhKQaDyE93sjHHIA+6D/?=
+ =?us-ascii?Q?XiNgV5YBpa0no+cGbLkBzNEOffhTfgjhm/6DmTO6w2RtJI/zQb1jQHeQskJT?=
+ =?us-ascii?Q?EPkUgk7IM7BppHRm2Q4L+ySF6uYedMVd+v/DN+gkkiMao9suqgLllIoyGt1K?=
+ =?us-ascii?Q?Uy2pM750CF1huSOg8qoLF9Rk4jjn/tOHagjzyA6VuQPgfDf9dOyS7sOP3k6i?=
+ =?us-ascii?Q?8M+Xt1wGzDd8xnX39Whdi8sKizmgsl/up7YfZ0lYLh2FzPU56vOBUVM6iWsl?=
+ =?us-ascii?Q?BaaFBhsNa6PR0gzyvMer25FseleNV9e3tjib6wuQ+OsO4ktj53+hjt1KybGk?=
+ =?us-ascii?Q?07vuo8vvMwbSQoag+Qdb9Ua/0tFFsMf7+y5Pnnn1Nwhp8WqFfyPOv7V9zc3H?=
+ =?us-ascii?Q?k5z+g1P/xxHYDe9y3NQkxOOra7rz1qODjkh1hqYxXVKZvjGvCZo+SU79Uvxp?=
+ =?us-ascii?Q?AFWiOQxhnbpLuVxAytrObEHpmhWftJk+TwXV1B4AfMEazGkr/fGNCj1gA5pS?=
+ =?us-ascii?Q?46ws/5n22pf8nC7b2lAzq0W/bWE7c7cZ7BnsXLvpvnuGYmWIB1Bdd7ePOUq+?=
+ =?us-ascii?Q?CgvdbxfiqMhoPnM877Y0Z18Ex/9XZFwcu4cX+YXpVwKTi0sqUVm62pijXA+a?=
+ =?us-ascii?Q?UGyryHPGkgwW6nijJ9NtICkMhqczn0rnIlmS8MWjvDe2JaBi5GumW1TAhAff?=
+ =?us-ascii?Q?OBQBIMf5tIjquTOIkIbTIK/Ythhg/1Ey47HjgjBQ?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a599ee1-0a5c-49a0-9084-08dd9a15582c
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2025 16:17:42.6497
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hAmZaprghggj6mo4bowuJGqm5ocA67++BtrFc8Yuur0EgvWInstMo+xZ2fUo2BgKQg7yjVfyaV9vCrBD2s+BRQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6966
 
-From: Michael Kelley <mhklinux@outlook.com>
+Remove reg property for arm pmu to align binding doc and move it under root
+node to fix below CHECK_DTB warning:
 
-Framebuffer memory allocated using alloc_pages() was added to hyperv_fb in
-commit 3a6fb6c4255c ("video: hyperv: hyperv_fb: Use physical memory for fb
-on HyperV Gen 1 VMs.") in kernel version 5.6. But mmap'ing such
-framebuffers into user space has never worked due to limitations in the
-kind of memory that fbdev deferred I/O works with. As a result of the
-limitation, hyperv_fb's usage results in memory free lists becoming corrupt
-and Linux eventually panics.
+arch/arm/boot/dts/nxp/vf/vf610-zii-ssmb-dtu.dtb: pmu@40089000 (arm,cortex-a5-pmu): 'reg' does not match any of the regexes: 'pinctrl-[0-9]+'
 
-With support for framebuffers allocated using alloc_pages() recently added
-to fbdev deferred I/O, fix the problem by setting the flag telling fbdev
-deferred I/O to use the new support.
-
-Fixes: 3a6fb6c4255c ("video: hyperv: hyperv_fb: Use physical memory for fb on HyperV Gen 1 VMs.")
-Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- drivers/video/fbdev/hyperv_fb.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/nxp/vf/vf500.dtsi | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/video/fbdev/hyperv_fb.c b/drivers/video/fbdev/hyperv_fb.c
-index 75338ffc703f..1698221f857e 100644
---- a/drivers/video/fbdev/hyperv_fb.c
-+++ b/drivers/video/fbdev/hyperv_fb.c
-@@ -1020,6 +1020,7 @@ static int hvfb_getmem(struct hv_device *hdev, struct fb_info *info)
- 			info->fix.smem_len = screen_fb_size;
- 			info->screen_base = par->mmio_vp;
- 			info->screen_size = screen_fb_size;
-+			info->flags |= FBINFO_KMEMFB;
+diff --git a/arch/arm/boot/dts/nxp/vf/vf500.dtsi b/arch/arm/boot/dts/nxp/vf/vf500.dtsi
+index 0c0dd442300a3..71ccdaa6f269a 100644
+--- a/arch/arm/boot/dts/nxp/vf/vf500.dtsi
++++ b/arch/arm/boot/dts/nxp/vf/vf500.dtsi
+@@ -43,15 +43,13 @@ global_timer: timer@40002200 {
+ 			};
+ 		};
  
- 			par->need_docopy = false;
- 			goto getmem_done;
+-		bus@40080000 {
+-			pmu@40089000 {
+-				compatible = "arm,cortex-a5-pmu";
+-				interrupts = <7 IRQ_TYPE_LEVEL_HIGH>;
+-				interrupt-affinity = <&a5_cpu>;
+-				reg = <0x40089000 0x1000>;
+-			};
+-		};
++	};
+ 
++	pmu {
++		compatible = "arm,cortex-a5-pmu";
++		interrupts = <7 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&a5_cpu>;
++		interrupt-parent = <&mscm_ir>;
+ 	};
+ };
+ 
 -- 
-2.25.1
+2.34.1
 
 
