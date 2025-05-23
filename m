@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-660160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E393AC19A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:23:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D29E7AC199D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 03:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11CBE7BD1F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:18:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59B531C06E11
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 01:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4352521FF4F;
-	Fri, 23 May 2025 01:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EF6221F12;
+	Fri, 23 May 2025 01:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kNNo8hx0"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QEWAt09y"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D531CB518
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 01:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC10621E0B7
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 01:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747963088; cv=none; b=WCKMXT51X4Gpk02YojYzkqg9u8L+wYExzCoMNb8V/pDC/YmRRD/IOqMA91IUZoKhvvBg/OJHSSSMhjnf3T1uesH/+tVqzW5w+TYyhZePcHUai9XVuUl0rQeyJ+Zy5OYmLGfyrBR3zeoCe5Ke0URpqk5SrrNxdcJWxMQzrfrnD4M=
+	t=1747963090; cv=none; b=Ev5URa144H6MRij8t7d0o7Mvl//rSIgxqglR7jP13Lp/2lWtEdu07WzBPHlxcCrv5RFhbsI7MEsY2cOiTn200nd00iaEE3VB0RI5M6HIplIK1diy9xmyRXNAvmsEof7jDfmnjzYvf3MlhR8H3jBZw8PwZoMFBF8lUzM/n2GyV0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747963088; c=relaxed/simple;
-	bh=v0i9XFKRas/49gZ2a2wU7oWN5OJL8p0CsC9g9Dbr8MY=;
+	s=arc-20240116; t=1747963090; c=relaxed/simple;
+	bh=dX8nq0dpc2EQQRTZJEyJJGSZKFyoPAvHvk+9J9cF//A=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Wb4yjQa8eh3e/W/f5HtfMLk5okAlREXbFvqj7LDYpN2Q+CXTqiyxgNZEwxNRIwemUkNC3ril2dTlljiG2PLx91ecmxLJILC48bh/hXd6Q5VCxg5Blz9gbtNAQ7tEtrlSrCu7OFvbsYi15Illrvo7o5zX89Usvur0JbXr5P7yRyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kNNo8hx0; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=r7/4n0FRXFt/n5RtK6grXBF45lcCxFgHgwZ41l4RYIMT0Xj4tNXsbJFTHo5zSkGvllr1egG3KRyHsXXj5vD/3+tSmaaxfz+Eplj1X2lABH9B2cMO/fkJmXEx03Y1a5yp80qdnoZ2K8TRRRu7pI9ECsuNQdCWg8V3dzgSRmxyggQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QEWAt09y; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30e6980471cso6974866a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:18:06 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-310e7c24158so490657a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 May 2025 18:18:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747963086; x=1748567886; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747963088; x=1748567888; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=fTBTDLrGR2u813pcv7sYfr/Q+KML7c2us8ddsfnVayQ=;
-        b=kNNo8hx08LuT5ABTk+A1MIBYsuxbhVzLIWEjJbpuOJcTPGuHKssqAnLgNZsgJO7B2o
-         JodRw9zLo5TUgziJDbInjETACgiLXRhZmGj2dS/NeDNhpDnHxfi8QlJlSHM1wveRyL3m
-         vbn91VY26VmLFBZ+zrbkKiBOgwyhxXLOgvP4y+d2hMv6PUFan1zHtSoCw4Ige7wdr3WY
-         8wiPZovFQPD9yzTVph4XK/DNewt2Y2q2UZcF9wX27MS3G6c+8FB3fiLKIpLZ9JmEg5hI
-         xH3PJIVqPreY6UbJ57dafiQ+EK33CLN47eDIS2AsYZvrlEDl4FkDd3K2SXAti0wmqFch
-         abEg==
+        bh=fufLLC396JAskRTF6ENXv8IgKQdaTngu642No/aWLio=;
+        b=QEWAt09y2pL8xG9VRU4461w6qLuofwC+yLiRdknAL0xtWwFAqHZ8VjRVDIohbbYNEc
+         B6Jj5GjKuWuwI1aPUhbe4+C5w03MKf27Ofzqc68/1TcK3+lXV/hVvo3XnJJ8OsLTl9FX
+         240RvsUP5t2IX9sOCLrYyua54J7NsWt+T82AYpbRC7eh2UYkdtGS+K+esKqZgpURd/WJ
+         5f8d/3J1fjAO0fZb1ZHwM8l7Oe13taCnWrERktiuJhXRcSN3QrlCOfTGoUc1hOJ78LWG
+         wQZu0l1d6vuyqHJHAvTasiwsaQQBRk/7De3OiUMMx3ZV26nr6hbq4EERN7gWp3Ny+k2l
+         QxgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747963086; x=1748567886;
+        d=1e100.net; s=20230601; t=1747963088; x=1748567888;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fTBTDLrGR2u813pcv7sYfr/Q+KML7c2us8ddsfnVayQ=;
-        b=my0hovPYsDBpaSyNAb3PvwGpa267wKZ9kyHEMOCw6im+uvv4viK1Hd4Wgd3gFAk6g1
-         skbzVfJVhDOjmKtqsCcAepfRyyLVRqbBOrHqzb1VUmds4oP8C7hLwHksyo6NTFo+aSCA
-         9SvLsgrDfhbaZXpGOqpoMh4sdB+N1CQshYVLcGrLF3E9HhOE0nUW15sdSv+REFTXR+yM
-         l43VZkhkpOWjuB+cfuIhkqUH+1l3aSncesTOvZrO/doyw6bIrOfCHuPIUugMIIsOE73r
-         hQmG/+EtPAjPXJhBuvSfND0/lCFciJj2V+f/amAZmj4NXf+RFseSZOeLsOTJdoo66sa8
-         JlBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQGYrKLiDCLWeRs6SZAmiBI7Z844aAufzISNuqQoeBJJ9OotmIY/lkWt3O/VUab7UTyaS4Yosl8oHvl5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCfWtu5bJ6NwFoznH0DVPQK/Ovxi6pSJX8XJHg2+KLznMQdSCw
-	yUzxMga8j37ZcDet7xSlmcIskRsPajswuJtyPcr1gyxH5UxDrS/QezWIise+tqR24I2kb9Ccxmh
-	pupI6NA==
-X-Google-Smtp-Source: AGHT+IGpv4P+ODkqYm9t4Pze/9SaR4vsp6B14xH4cnqHe5pE3SxHs7E/dTqTwNcOj1dkoAiUjvMAkLqVaXw=
-X-Received: from pjbpq9.prod.google.com ([2002:a17:90b:3d89:b0:2ee:3128:390f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:c2cd:b0:2fe:861b:1ae3
- with SMTP id 98e67ed59e1d1-30e7d5212aemr41307871a91.8.1747963086468; Thu, 22
- May 2025 18:18:06 -0700 (PDT)
+        bh=fufLLC396JAskRTF6ENXv8IgKQdaTngu642No/aWLio=;
+        b=vKKVeogRcxRuwuBywlQn9B/cW6NDZqbKEC1ZLf7xXx+p3xn2OD42a7ZHVp4DTHN0CW
+         22qWzxyPiJ5JdGvB6/pf5fr9WN3d+wMM75COLoIlGWafGqhB6OTIVJSpSlW472HDDL9G
+         wwdAkcTScabk/YaUUJ6BWYh7b4ZQW0GdXgDgWGJ/sV1txoPg3A0gWKT4RTcSZjXyk+fY
+         pkyO54S7QfGSDDI4YViGThi1aW8uCNPklty2zb61r1u5f0dIJfpWxk1Z7eBOVr1vb8P0
+         28k1wpjOVYVcqbr+x9BiiP2cTj4A25U7kjVdRaxzddwlODJpFY/M4W2OoZ1VkGlSW/XE
+         VghQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWk/ZMevTgNci+t3OKpNAWYFSyYQsBsxsRh3PfpY/HNqQuPylxhSjxcmL3d6vjxX84n+zYk+nuSUoiaM+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM3YSZh/rhd/IqlJF0fTdJYHPrQopbrSnQUTlog3yhld9p6Ux4
+	MiENrEONXZ5duHg6ekKLDp/8DdZKA2wz8s0X5JqEZ4CixzneZISiEiMHcvYBDN2IlY2xvtUPWo6
+	PZYN8nQ==
+X-Google-Smtp-Source: AGHT+IFCOYwtizzYjOTae6Mj32F46dgD0uJVDssen2HZ7KTZkiFj54SwRB8bSELTYoqvR+qs9H39zDVz/wg=
+X-Received: from pjbsl8.prod.google.com ([2002:a17:90b:2e08:b0:301:1bf5:2f07])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:fc4f:b0:2ff:4f04:4266
+ with SMTP id 98e67ed59e1d1-30e83216290mr31617531a91.23.1747963088080; Thu, 22
+ May 2025 18:18:08 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 22 May 2025 18:17:55 -0700
+Date: Thu, 22 May 2025 18:17:56 -0700
 In-Reply-To: <20250523011756.3243624-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250523011756.3243624-1-seanjc@google.com>
 X-Mailer: git-send-email 2.49.0.1151.ga128411c76-goog
-Message-ID: <20250523011756.3243624-5-seanjc@google.com>
-Subject: [PATCH 4/5] Revert "kvm: detect assigned device via irqbypass manager"
+Message-ID: <20250523011756.3243624-6-seanjc@google.com>
+Subject: [PATCH 5/5] VFIO: KVM: x86: Drop kvm_arch_{start,end}_assignment()
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -84,52 +84,126 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Jim Mattson <jmattson@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Now that KVM explicitly tracks the number of possible bypass IRQs, and
-doesn't conflate IRQ bypass with host MMIO access, stop bumping the
-assigned device count when adding an IRQ bypass producer.
+Drop kvm_arch_{start,end}_assignment() and all associated code now that
+KVM x86 no longer consumes assigned_device_count.  Tracking whether or not
+a VFIO-assigned device is formally associated with a VM is fundamentally
+flawed, as such an association is optional for general usage, i.e. is prone
+to false negatives.  E.g. prior to commit 2edd9cb79fb3 ("kvm: detect
+assigned device via irqbypass manager"), device passthrough via VFIO would
+fail to enable IRQ bypass if userspace omitted the formal VFIO<=>KVM
+binding.
 
-This reverts commit 2edd9cb79fb31b0907c6e0cdce2824780cf9b153.
+And device drivers that *need* the VFIO<=>KVM connection, e.g. KVM-GT,
+shouldn't be relying on generic x86 tracking infrastructure.
 
+Cc: Jim Mattson <jmattson@google.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/irq.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ arch/x86/include/asm/kvm_host.h |  2 --
+ arch/x86/kvm/x86.c              | 18 ------------------
+ include/linux/kvm_host.h        | 18 ------------------
+ virt/kvm/vfio.c                 |  3 ---
+ 4 files changed, 41 deletions(-)
 
-diff --git a/arch/x86/kvm/irq.c b/arch/x86/kvm/irq.c
-index 7586cf6f1215..b9bdec66a611 100644
---- a/arch/x86/kvm/irq.c
-+++ b/arch/x86/kvm/irq.c
-@@ -565,8 +565,6 @@ int kvm_arch_irq_bypass_add_producer(struct irq_bypass_consumer *cons,
- 	struct kvm *kvm = irqfd->kvm;
- 	int ret = 0;
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 043be00ec5b8..3cb57f6ef730 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1380,8 +1380,6 @@ struct kvm_arch {
  
--	kvm_arch_start_assignment(irqfd->kvm);
--
- 	spin_lock_irq(&kvm->irqfds.lock);
- 	irqfd->producer = prod;
+ #define __KVM_HAVE_ARCH_NONCOHERENT_DMA
+ 	atomic_t noncoherent_dma_count;
+-#define __KVM_HAVE_ARCH_ASSIGNED_DEVICE
+-	atomic_t assigned_device_count;
+ 	unsigned long nr_possible_bypass_irqs;
  
-@@ -575,10 +573,8 @@ int kvm_arch_irq_bypass_add_producer(struct irq_bypass_consumer *cons,
- 
- 	if (irqfd->irq_entry.type == KVM_IRQ_ROUTING_MSI) {
- 		ret = kvm_pi_update_irte(irqfd, &irqfd->irq_entry);
--		if (ret) {
-+		if (ret)
- 			kvm->arch.nr_possible_bypass_irqs--;
--			kvm_arch_end_assignment(irqfd->kvm);
--		}
- 	}
- 	spin_unlock_irq(&kvm->irqfds.lock);
- 
-@@ -614,9 +610,6 @@ void kvm_arch_irq_bypass_del_producer(struct irq_bypass_consumer *cons,
- 	kvm->arch.nr_possible_bypass_irqs--;
- 
- 	spin_unlock_irq(&kvm->irqfds.lock);
--
--
--	kvm_arch_end_assignment(irqfd->kvm);
+ #ifdef CONFIG_KVM_IOAPIC
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 3969e439a6bb..2a1563f2ee97 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -13561,24 +13561,6 @@ bool kvm_arch_can_dequeue_async_page_present(struct kvm_vcpu *vcpu)
+ 		return kvm_lapic_enabled(vcpu) && apf_pageready_slot_free(vcpu);
  }
  
- void kvm_arch_update_irqfd_routing(struct kvm_kernel_irqfd *irqfd,
+-void kvm_arch_start_assignment(struct kvm *kvm)
+-{
+-	atomic_inc(&kvm->arch.assigned_device_count);
+-}
+-EXPORT_SYMBOL_GPL(kvm_arch_start_assignment);
+-
+-void kvm_arch_end_assignment(struct kvm *kvm)
+-{
+-	atomic_dec(&kvm->arch.assigned_device_count);
+-}
+-EXPORT_SYMBOL_GPL(kvm_arch_end_assignment);
+-
+-bool noinstr kvm_arch_has_assigned_device(struct kvm *kvm)
+-{
+-	return raw_atomic_read(&kvm->arch.assigned_device_count);
+-}
+-EXPORT_SYMBOL_GPL(kvm_arch_has_assigned_device);
+-
+ static void kvm_noncoherent_dma_assignment_start_or_stop(struct kvm *kvm)
+ {
+ 	/*
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 706f2402ae8e..31f183c32f9a 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -1686,24 +1686,6 @@ static inline bool kvm_arch_has_noncoherent_dma(struct kvm *kvm)
+ 	return false;
+ }
+ #endif
+-#ifdef __KVM_HAVE_ARCH_ASSIGNED_DEVICE
+-void kvm_arch_start_assignment(struct kvm *kvm);
+-void kvm_arch_end_assignment(struct kvm *kvm);
+-bool kvm_arch_has_assigned_device(struct kvm *kvm);
+-#else
+-static inline void kvm_arch_start_assignment(struct kvm *kvm)
+-{
+-}
+-
+-static inline void kvm_arch_end_assignment(struct kvm *kvm)
+-{
+-}
+-
+-static __always_inline bool kvm_arch_has_assigned_device(struct kvm *kvm)
+-{
+-	return false;
+-}
+-#endif
+ 
+ static inline struct rcuwait *kvm_arch_vcpu_get_wait(struct kvm_vcpu *vcpu)
+ {
+diff --git a/virt/kvm/vfio.c b/virt/kvm/vfio.c
+index 196a102e34fb..be50514bbd11 100644
+--- a/virt/kvm/vfio.c
++++ b/virt/kvm/vfio.c
+@@ -175,7 +175,6 @@ static int kvm_vfio_file_add(struct kvm_device *dev, unsigned int fd)
+ 	kvf->file = get_file(filp);
+ 	list_add_tail(&kvf->node, &kv->file_list);
+ 
+-	kvm_arch_start_assignment(dev->kvm);
+ 	kvm_vfio_file_set_kvm(kvf->file, dev->kvm);
+ 	kvm_vfio_update_coherency(dev);
+ 
+@@ -205,7 +204,6 @@ static int kvm_vfio_file_del(struct kvm_device *dev, unsigned int fd)
+ 			continue;
+ 
+ 		list_del(&kvf->node);
+-		kvm_arch_end_assignment(dev->kvm);
+ #ifdef CONFIG_SPAPR_TCE_IOMMU
+ 		kvm_spapr_tce_release_vfio_group(dev->kvm, kvf);
+ #endif
+@@ -336,7 +334,6 @@ static void kvm_vfio_release(struct kvm_device *dev)
+ 		fput(kvf->file);
+ 		list_del(&kvf->node);
+ 		kfree(kvf);
+-		kvm_arch_end_assignment(dev->kvm);
+ 	}
+ 
+ 	kvm_vfio_update_coherency(dev);
 -- 
 2.49.0.1151.ga128411c76-goog
 
