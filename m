@@ -1,116 +1,121 @@
-Return-Path: <linux-kernel+bounces-660085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-660197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC896AC18F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 02:23:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 559B4AC19F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 04:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB395A26EAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 00:23:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C18C3B3C88
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 May 2025 02:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E010D1F03D9;
-	Fri, 23 May 2025 00:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB55020103A;
+	Fri, 23 May 2025 02:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KbwIBKAY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dDtKIzvi"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8581EB189
-	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 00:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B31186E20
+	for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 02:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747959815; cv=none; b=N28zYYpfCCfqFXwQ/J4ylwxVeg7BpzcZdLZfAnw0Z0Ib+M23i7YpPJ7lMLEoOsoGd4j5bfHgQYbo3GPerqEglNRU+fRKTwTbr0s25Jhe7iTTBsysknNWq2kcjCxfzG6GVUu3XyaRlkGSzKqj1oAvF5vXIhL1L3tks39sKJzshYQ=
+	t=1747966218; cv=none; b=IFiYS/z6DTZyKC4NgitLUvNsHP+Io4OmZXnLYA8OND0EUxw0CKXvFKcThNJIYjL4lYRHXcKqnkg/oLSq1I60T/QkwAVRMlcTO/sN5zaDoR6K/7jG/PxvbRTscmrqWO9lwGB25PgSSiVk0FqkvGJbkBKmVaYmj688AxhGnG5rT+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747959815; c=relaxed/simple;
-	bh=ni6/WBCjdM2RubNKz7PsaUr5XBFthV8eQFmuWwqwsnA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CRSuPpg8RPPL8vBkzn4e7g/6stVm00FSe0UEfsbAC+LCN62b0GsrZY0whYOddHIv9PvIAB8TGis2Q8ev7X7DlAgs8gW4sdO3uVZxA2mpgrx6RinGlxbqoV1xfYwrE+5tmsB6m4N+KFgYcLQMkVt6zxodzz7/fXbzueepjXqko4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KbwIBKAY; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747959814; x=1779495814;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ni6/WBCjdM2RubNKz7PsaUr5XBFthV8eQFmuWwqwsnA=;
-  b=KbwIBKAYJQE0T4zTCIwAp6oQMvQm6siTtPHLY42rs1papxPDuHZ+XehI
-   SvC+kjOkZGNSouzSoHBH5byWuWp7AvwLYcQ8PmY3zrp3sI2Je3jjv833I
-   0RdKBKk4DLLVVuxfZqDoEGNBTmjJgZbQkqd8FvDWqpA8GHfg4lY1C4HzQ
-   k041N+RJ7rfJ+bozqpA/QRVmpMb5EjnQL57NHSECYtTFFesSixzoG6+xD
-   veA9t0j+PzWxQOq/tfCCEeGBPa1RdFfYktCkuI0wBPAmJUNqSTgx0zHHW
-   aXL80wx8P4YZc/11x7Id7361hxte2HHXH38KbkGTVJD176+K4GD/WbBEU
-   Q==;
-X-CSE-ConnectionGUID: L5ueje4wTFerFX1gl7lxvA==
-X-CSE-MsgGUID: ApWCaHHWRzyHwENOxyRQWA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="67570561"
-X-IronPort-AV: E=Sophos;i="6.15,307,1739865600"; 
-   d="scan'208";a="67570561"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2025 17:23:33 -0700
-X-CSE-ConnectionGUID: i5JzeATaSPiTz7BG0vKbSQ==
-X-CSE-MsgGUID: soLVEmIvSPu5NF+ajCyZ/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,307,1739865600"; 
-   d="scan'208";a="140665149"
-Received: from ww-dev.sh.intel.com ([10.239.48.95])
-  by orviesa009.jf.intel.com with ESMTP; 22 May 2025 17:23:31 -0700
-From: Wei Wang <wei.w.wang@intel.com>
-To: baolu.lu@linux.intel.com,
-	kevin.tian@intel.com,
-	yi.l.liu@intel.com,
-	dwmw2@infradead.org,
-	jroedel@suse.de,
-	linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Cc: Wei Wang <wei.w.wang@intel.com>
-Subject: [PATCH v1] iommu/vt-d: Remove the redundant logic in first_level_by_default()
-Date: Fri, 23 May 2025 16:10:56 +0800
-Message-ID: <20250523081056.223082-1-wei.w.wang@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1747966218; c=relaxed/simple;
+	bh=TNqXOnWcNIfiMgfEiDsYoNFb3ECDDi/KmP9vNAXFGy0=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=vEYSbcQ0WroRqECPjZrOoDmwgtCQPHTy7ZFQ2EswVMUdkxcBz5fyJpFQY7k5s3kOeenM+bfZ5EC8JewpdVs95kTsyd9HGSuYpMnsAvo6soy36VtGk6NPrkjkoDIqHntZqXANg/VfWW6lVvJQNMi9Xlsh9JHwsw8rzMo0NozpDcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dDtKIzvi; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747966202;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yEWWkt48ZgSDB2keCSx6Ca4Ps/tea7MKBqhomnRjgFE=;
+	b=dDtKIzviT8cK0DuET6TktszFCSVjG5GV2tRBaH7RWThifU5uCYrEFogvETCKsjd4ToKS9P
+	jjFqxyl1cMKnZ1aqluCLQKm9ERyx4SqHD3VTrpNsbK0KPJQ8kyGjNyA+GpOMxXkoydBmLu
+	ND8p0w57UvNLvGCc594fNF46vdSURDQ=
+Date: Fri, 23 May 2025 02:10:00 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Yajun Deng" <yajun.deng@linux.dev>
+Message-ID: <5d16e7c3201df22074019574d947dab1b5934b87@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH net-next] net: phy: Synchronize c45_ids to phy_id
+To: "Andrew Lunn" <andrew@lunn.ch>
+Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <831a5923-5946-457e-8ff6-e92c8a0818fd@lunn.ch>
+References: <20250522131918.31454-1-yajun.deng@linux.dev>
+ <831a5923-5946-457e-8ff6-e92c8a0818fd@lunn.ch>
+X-Migadu-Flow: FLOW_OUT
 
-This original implementation included redundant logic to determine whether
-first-stage translation should be used by default. Simplify it and
-preserve the original behavior:
-- Returns false in legacy mode (no scalable mode support).
-- Defaults to first-level translation when both FLTS and SLTS are
-  supported.
+May 22, 2025 at 9:39 PM, "Andrew Lunn" <andrew@lunn.ch> wrote:
 
-Signed-off-by: Wei Wang <wei.w.wang@intel.com>
----
- drivers/iommu/intel/iommu.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index cb0b993bebb4..228da47ab7cd 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -1366,15 +1366,7 @@ static void free_dmar_iommu(struct intel_iommu *iommu)
-  */
- static bool first_level_by_default(struct intel_iommu *iommu)
- {
--	/* Only SL is available in legacy mode */
--	if (!sm_supported(iommu))
--		return false;
--
--	/* Only level (either FL or SL) is available, just use it */
--	if (ecap_flts(iommu->ecap) ^ ecap_slts(iommu->ecap))
--		return ecap_flts(iommu->ecap);
--
--	return true;
-+	return sm_supported(iommu) && ecap_flts(iommu->ecap);
- }
- 
- int domain_attach_iommu(struct dmar_domain *domain, struct intel_iommu *iommu)
--- 
-2.43.0
 
+>=20
+>=20On Thu, May 22, 2025 at 09:19:18PM +0800, Yajun Deng wrote:
+>=20
+>=20>=20
+>=20> The phy_id_show() function emit the phy_id for the phy device. If t=
+he phy
+> >=20
+>=20>  device is a c45 device, the phy_id is empty. In other words, phy_i=
+d_show()
+> >=20
+>=20>  only works with the c22 device.
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  Synchronize c45_ids to phy_id, phy_id_show() will work with both t=
+he c22
+> >=20
+>=20>  and c45 devices.
+> >=20
+>=20
+> First off, they are different things. A device can have both a C22 and
+>=20
+>=20a collection of C45 IDs. So they should not be mixed up in one sysfs
+>=20
+>=20attribute.
+
+In get_phy_device(), only one of get_phy_c45_ids() or get_phy_c22_id()
+is called. Even if a device has both a c22 and c45 IDs, only one of the
+phy_id and the c45_ids has values.
+
+>=20
+>=20The second point has already been made by Russell, there are lots of
+>=20
+>=20different C45 IDs, and phylib will try to find a driver based on any
+>=20
+>=20of them.
+
+I noticed that. I tested the BCM89890, 88X3310 and 88Q2110 PHY devices,
+and the ID is always the same in different MMDs.
+
+>=20
+>=20If you want to export the C45 IDs, please think about adding new sysf=
+s
+>=20
+>=20attributes.
+>=20
+
+Okay.
+
+>=20 Andrew
+>
 
