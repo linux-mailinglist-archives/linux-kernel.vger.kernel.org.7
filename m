@@ -1,108 +1,78 @@
-Return-Path: <linux-kernel+bounces-661788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB1EBAC3073
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 18:20:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55896AC3069
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 18:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACFD117F797
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 16:20:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89AFA3A78D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 16:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9ED1EEA54;
-	Sat, 24 May 2025 16:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FB71EF0BE;
+	Sat, 24 May 2025 16:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="p7MTcRsh"
-Received: from smtp.smtpout.orange.fr (smtp-72.smtpout.orange.fr [80.12.242.72])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rTaUTkXD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A7B8C11
-	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 16:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A3D28EB;
+	Sat, 24 May 2025 16:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748103622; cv=none; b=WGn5pM43ZrVfbfJLrDFXuEp9TyjYq0ATLY7j2hly3kLZo1nS17/cENg+6G3q432lAtxMDxVRSkaL8TjEvAzQfjGhcEKGRd7xa7gEi3IEZwYhPfLSDNZBuVv8IU1p39paWkQUQDD2Thjo0HYoGEN00di3XDBjR3Sv/pN/osudlFc=
+	t=1748103008; cv=none; b=RNW01q9KHXDH2OcOkp/nPUA4yHJ99yHIuOVR9k3jK6XA9dh6FhiNx7vOHvWXE8zKc7Bmb9/FYCg4/x61ve7DNmlMajdMalEB83zFXORMIUzdEuvN5WqxG/CngJsBZ7YZnzf+DOmEQYDjkP706KWMOJK6rXh9aneD8KAtv9WzvMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748103622; c=relaxed/simple;
-	bh=65/KaLpzRs8gFo79tDMN4s4RnT6oxjpzQ5k2c/LetYM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E6SyQYYxFwSVrPBbNAJ89WnGnix7xIX/LjAHBG7Up/0Jal2gryUcpnv95NbUU8dB2Dq0vm4mWdM07ix1ZHpCuqe3qqPEe85hbw0WtXVa2RtP4THMPHD5yfWJQSfvVJ+IntfQLzl2Kjmrp7ff5YDo4fZakBPuvPVyJ1lcF6XK3Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=p7MTcRsh; arc=none smtp.client-ip=80.12.242.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id IrSUuI1zk7nctIrScuJnhc; Sat, 24 May 2025 18:10:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1748103059;
-	bh=vp6GqdAP6pKVMGw4uZqtEavNsIsEsQuRgZ4ZJY92yNY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=p7MTcRshYZXU2FUZ8LbcvZzzx9ukOmAlM40uGp+htz7x8wmgzaYmxk9SJnNPUalxW
-	 x9Ut1N0XSwMvEcrcNLSPDid4mbP/0y/vuh0XKozpze2o75t9SelV7P0j0bwf+bgKIE
-	 DZVx8i8Zr8hS0ga7yrmRgFMrkRTvKciJeQJAgXGRUuJDrSEpT4jdb3F1oiea4R2A/n
-	 iCM8lBykzNT+Q9E79S8hCbEQJvZP31itIR2MNj1D56kEb95HM/STy7dUTkkp5ODbH9
-	 9BscOZAme61iYCGbutZmUUThbEHkYcRZEqZlHNAM6DjOvkIhyiCYFIwuwKAmEHitNl
-	 M5HBMdEBTqa0Q==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 24 May 2025 18:10:59 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] regulator: tps6594-regulator: Remove a useless static qualifier
-Date: Sat, 24 May 2025 18:10:39 +0200
-Message-ID: <ebc53d4049ec19796ef07e1bb734de19a2814727.1748103005.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <1446fb1938f3f38115be3e53f5dda3c8bb0ba5a1.1748103005.git.christophe.jaillet@wanadoo.fr>
-References: <1446fb1938f3f38115be3e53f5dda3c8bb0ba5a1.1748103005.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1748103008; c=relaxed/simple;
+	bh=aVUPBVUQRVD0U3c0NA5Z1EyP09SCql3R2P6+bX5w9Tw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=XrrmS8//6D1wusd2sT3KgUzXIhg8Bp6qNAWbUbATHFN5bc5H2olk7MiA/4ravOah6bQRBOwCvjccuxPxP/l/S7REtozj6jfiM8ffTQAGkAsPxr4wHnkqF2QWIJFEhuSym3iUxLRpKPI4PedCA1qcKk/MZ00K0udUu0E4N7/Z1RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rTaUTkXD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F758C4CEE4;
+	Sat, 24 May 2025 16:10:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748103008;
+	bh=aVUPBVUQRVD0U3c0NA5Z1EyP09SCql3R2P6+bX5w9Tw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=rTaUTkXDYaNTpeAyukPszDLADwUpaxKWXRwUo0BSWwxa98YnSX+mv5kZGtM2aehYh
+	 YhCp1SL2gJEvAg4WuITHzvnyJkSJvQCSjDkKm+lPI89/uSFk7pI9CnQJOl8AW7qScK
+	 ZPfNUiI5K4ksksJW2nEtJfCTFGd/Tm91nGaAvdE8hczldzSqRBrCRm6h6e1rvCXdAL
+	 i7N+nA57M7B8KB2K66tm/TfVD2AvniYsuJ4xkL0VQL+OsrhRc3+bWWwVPDQh3M96q4
+	 5w+2UGkoq+4Z3RC0hvD18pIJYCJrhm7a9H4Ne3qU5a+435f3SQaVy92WqddAnmdGKv
+	 Jq82MoQ5W3Qig==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 713A539D60BB;
+	Sat, 24 May 2025 16:10:44 +0000 (UTC)
+Subject: Re: [git pull] IOMMU Fixes for Linux v6.15-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <aDHmdAoAE_gP6Xup@8bytes.org>
+References: <aDHmdAoAE_gP6Xup@8bytes.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <aDHmdAoAE_gP6Xup@8bytes.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-fixes-v6.15-rc7
+X-PR-Tracked-Commit-Id: b3f6fcd8404f9f92262303369bb877ec5d188a81
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b1427432d3b656fac71b3f42824ff4aea3c9f93b
+Message-Id: <174810304297.3935495.4785262100607086038.pr-tracker-bot@kernel.org>
+Date: Sat, 24 May 2025 16:10:42 +0000
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-There is no point in having 'npname' a static variable. So remove the
-static qualifier. This is cleaner and saves a few bytes.
+The pull request you sent on Sat, 24 May 2025 17:32:04 +0200:
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  27949	  12176	     64	  40189	   9cfd	drivers/regulator/tps6594-regulator.o
+> git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-fixes-v6.15-rc7
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  27947	  12112	      0	  40059	   9c7b	drivers/regulator/tps6594-regulator.o
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b1427432d3b656fac71b3f42824ff4aea3c9f93b
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
----
- drivers/regulator/tps6594-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you!
 
-diff --git a/drivers/regulator/tps6594-regulator.c b/drivers/regulator/tps6594-regulator.c
-index 0193efb5dffa..51264c869aa0 100644
---- a/drivers/regulator/tps6594-regulator.c
-+++ b/drivers/regulator/tps6594-regulator.c
-@@ -563,7 +563,7 @@ static int tps6594_regulator_probe(struct platform_device *pdev)
- 	bool buck_configured[BUCK_NB] = { false };
- 	bool buck_multi[MULTI_PHASE_NB] = { false };
- 
--	static const char *npname;
-+	const char *npname;
- 	int error, i, irq, multi;
- 	int irq_idx = 0;
- 	int buck_idx = 0;
 -- 
-2.49.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
