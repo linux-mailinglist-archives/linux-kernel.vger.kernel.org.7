@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-661581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F88CAC2D67
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 07:21:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1BC3AC2D6F
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 07:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BF6A4E070C
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 05:21:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED1B4E118C
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 05:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47361C84A0;
-	Sat, 24 May 2025 05:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32EA1DDC22;
+	Sat, 24 May 2025 05:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NnynTvV/"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KzTJ7w7J"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8566B1A3056
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A731A5BAD
 	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 05:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748064102; cv=none; b=EydFzX/6dzGKQ3UUzd/yr+d8PIAC281ZO7jfF9r8eQL/i26L7/ARKotZqnXvU4bZzoVu+Fcdb6AjEfPisegiwLuHSyI9znXC5vltYDuErHRJgdvdOzGRmI7Y9enHw4TsKrs/3/Z2XEf/AUeZqV5TidGLCM7cacjjS6PBTuchKc0=
+	t=1748064104; cv=none; b=jyKR0owI9pUOvtuM5OK6oRCN5J+tse+MfZmIV1EDH0etJUTLFig0edb5LgIQr6SgSuPLKOlv9Z42WmFT/oybWTAhzGHXzgfUPGKTVZu6HI7+/F9/AZms9Q8nN6DbAT1F7E4xWAoklLdKPvLB4mgcN2WJj+9/QPfeJgTEf+XdwE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748064102; c=relaxed/simple;
-	bh=TpC6PkRugx4epgip2T3sTO52PlSZ3ufOTy2Swc8UlBY=;
+	s=arc-20240116; t=1748064104; c=relaxed/simple;
+	bh=CxJGVYe9gQWEypwBZmgwMYlPMVvbtIIqNvj32ACzzR0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eGBuZ+Ys8O5qVD8uHKcE4EBO3U4ikZDtZFyAL5hOaxZjWnEPTJ2rrKWqSphmnVa3/ohjQBgp3k/O5/GaB2c+NSdOGMVECJ0HiDFOHal8JvNG8oKJVFco1B7xisMT7LVXqeReWzrtx2AB2eijHs3zAUPz+sxpoCCJh8rneQrzzBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NnynTvV/; arc=none smtp.client-ip=209.85.218.47
+	 In-Reply-To:To:Cc; b=N0Tf5BVpSZMSEDVOSo/m2SIf25nodG4jyUnbbapjcXNCMZAMHULLnxyT4T6zp8nFCAMg1m5r/cmjos4MnMgh6jePem+RVDOOxP3zhVZEo7YECS4FvVnwcSt2eeiKpcaqQ72Z8w3HOndUs1NuyGUftc/EPxkDjkK37YstZUr/fJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KzTJ7w7J; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso76139666b.3
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ad1a87d93f7so77154766b.0
         for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 22:21:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1748064099; x=1748668899; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PQMgvnHl/e3juDL0qxGSaY3LA5gtsGQ7YiUwPKjqwnE=;
-        b=NnynTvV/woIm2fjCJupZGsLCcjr533lZ4S3Qpeg7xhom3Gqs0j3YIKIbvMVXxcsntk
-         Rxs37eIoZtCxuqS4Qi3BEfCbcZOpoWldwd8QZegjL0KOOXzjXJ4/EiBeqT4qKEMuaWt+
-         817RW/048KTkjy+jlDJcoR4asFMBj0l+oKLugbPWqkyrBsMOszrlKsFiGOgdXsC9a+Kh
-         g2FwEanIXwI5J5kjpH1gpAQtiY07XXbaSnmPBxPsMpiXVcS4SfEmcLQIhJqvDyT2JPCT
-         +vBjdjP46dUyE/LvknZuy0U1FiF4jxTGcfLcegpVXnHFnpFxTHWgweBkRo4tZqMah1GW
-         t5eQ==
+        bh=p9Vj2sz8u3fgQAY0zH4yjJJsJuXYHYmr/5RzLXpeQpg=;
+        b=KzTJ7w7JRU3uBYTnn09a70sQrd+t2FrMKTBGh1Pk9fvJO4MP/n6rM0Ew0dfZLojAFG
+         SbLax91wVaPUvRpU50mJEU0MUpKGXwRLyhUlfxO/hFXz+NmEb4jurvsQCx3nAuYMrMaB
+         kFWJPl5ohPi3xG9wgKkOC0ia6cnll7XScCDw68S5bwMZ2RFogAOgaVu39mK3cuuKXokN
+         Z2lIvUfL8XYH0/j+e3rXrKFSysz8Q5NrbUB/muR303vteLrvMzcfUe//8bf1MZcUP+fL
+         ATN/MObBzyv8i0YuR77i1u39YZ4o86M8bV4ScJEQBqtva9kWCoCnRyJt/3jwpzyYZii1
+         mVyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1748064099; x=1748668899;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PQMgvnHl/e3juDL0qxGSaY3LA5gtsGQ7YiUwPKjqwnE=;
-        b=NR34g/oWprxx3PojZlOTGjuKL8EE5SeGMFi2bBDRzfPqT0LBtaL5SVc3qP+rWTdq9/
-         a/aKCb/t1I57U4ebm2u5oKrJiHF9h2dj3bBJRb+FFcArd+82D+psX0dxF4XNbC4TmFL6
-         OU8mNg3ZwBb8dMjqc+7cJelSsp8ihgsDPsPX9IJuncAx577eBDDFtJIq9KvSpkwX+yv7
-         d7UqUn3inUZ7rZhiyuxSHkxBhEw4DjjMK4dwdodkoWlPk5ljTyfRr9V3rVoDgFuvfRSq
-         kxXIDfwjvtQ8FHysf1rqpsvqpeodeI+oiWkZGKHDjO48SysfA4pR8YrnOmVBz92DBDrI
-         KtDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpGiEGpizaRzKrmQaTpiCgCsjTq/6L9vuDrOSLlmuUZ4NBl9RlnXEJpsSELXWcZ6BfbbBdDvv5wguBBBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybwFrfwnug4YNpdQOqrWsHrBH/wsNfbbTWCS9vQf/gO6MResPw
-	CLX5fQ4htqUZrNZcHwwysKh4Dd/HLysTtLLGOmJnZ/NvhFRm83omt7DgoDtgZltw8kg=
-X-Gm-Gg: ASbGncsItzZdaqT0goKK7jcd3B8BAHknwUiWMF9+o45iXARc5U1WQF42ADr3NFIS8Im
-	rZMKnmYYaxvYYlGcZVY9ytbPUdvqwaXJ0Zz5Yzd+4lMW8/4prxcIvoUXLpPtwJrQFNBaIh0kXHC
-	pU6oubmVMLblzTTLy3ux0mwmX5oTzPKwtaDY3QQzHZYd4GV/KR7soLic/3lCvtrK8AneMnNu9wB
-	DLpxS5/oXRSEtbMmQ/rlh6RVMN0HuF1kWWN8p7Vl5ktufTe+JSlQ1jArUgCHjcFeQxpEN5aQNg8
-	MU0RR1kuyqRu79dtXEk750VWz3r5wR+0zfemo8z5+Q6zAM/q6isP6PJzvi/qDoWYwc9CcyvocuE
-	m35Ku8SH213XWSew5enSFQdeKA/MKAzk3IllxySlbU4mGVQ==
-X-Google-Smtp-Source: AGHT+IHXaAPaMnNiBFZlXKcRr+qFufWpMyOC01eMRk+Jpj8a7drQ0LfzI9zmQlfsyWsV8hXXiHulVQ==
-X-Received: by 2002:a17:906:6a29:b0:ad5:3055:784d with SMTP id a640c23a62f3a-ad85b1300dbmr126184266b.34.1748064098471;
-        Fri, 23 May 2025 22:21:38 -0700 (PDT)
+        bh=p9Vj2sz8u3fgQAY0zH4yjJJsJuXYHYmr/5RzLXpeQpg=;
+        b=wWdzwVHaeZAa1LJvdlJlVFfoYPnonMtfzQlJ1PIZq5I1JAGTuR+FnMdobHdJ1B7VHW
+         bsC3YCt+2qmPdJlCewPq9DvSH2b6oX5QyOQ/5kv0MrhkJyKWB/CqEKuYXqBCK/ue1ssS
+         h20LFTkGt4iVBGLRRSILYQGABgl7NcR2bqZatxxeBw3KwOe+au8T0ix4KSEU++Gwm1uf
+         lsRJ5KLn97q0pqfQbRW58latNZW5q2tCG7rZERHIX4Ixturlatu/76OY8GuznF5JBg4n
+         C+UZcmdQTj/hih7tyz7fCtoyEAsdy4oLBeyemp0qr3l4QPbM3tuvCuJ5d+3R+9NW46h9
+         LUag==
+X-Forwarded-Encrypted: i=1; AJvYcCV3/UaE9kDuDSsCKvBA2ruMqzBRUPeL4Oo559npcyGOOsMCIVmw8qaDc52To+7KI89qOiqjCzOUKj7fbVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR8tvEf5E0Y3HkTecMrDqwo+hoZx9BqvSOh86bLGwhTaz0AKs0
+	zFN4A+Pv2SH83F3ByTalBWbfU4ITGxNUooyx1rcOEjuIY/J3dg7VPptMgVlKAzXguQ0=
+X-Gm-Gg: ASbGncus3f8y4elfzqsig2mehS9h9Xumh3FYuHjYZIwhNYcM7mzj0qE6lOjUZNmjFHL
+	Q0DlOIdFFBYQNtbzaAzhkGUoErxoa9BV3gUWwaNowGvTF/AxjRnnbajaW1xSwO6KFEa7KfnAMIa
+	gj1E6PAzKy6wxGXhPbF5rfE13S+IYKS6SPmNaeNHnIijGRckPGAuM7npX9z5k6sF/3eD3Ta4ptF
+	08aGZNal0Cmj13UWGF3GTe7I7nL2hRdiF4pv2q/dlsAjgdyGW298ZeyjnYNo1mY5b7Qb2/spFht
+	G4fyoN96O18qZKREju8BcK01WDcYI8tEtDeYuYWRL4M/0zU4ML7iJY+sd78UL8nSUqFlBrB5V7r
+	itPUQWcn7J9WeLARZ2wmokmFtdTgvorPmjLY=
+X-Google-Smtp-Source: AGHT+IF8pgsRiLru+xzCs3/kYK9IFFjLgdgCKETe4qhqLvBb/0iNzUicN2Yb4j1NXVYdjuG8Y5CZ0A==
+X-Received: by 2002:a17:907:d06:b0:ad2:2ef3:d487 with SMTP id a640c23a62f3a-ad85b329c74mr142108566b.58.1748064099139;
+        Fri, 23 May 2025 22:21:39 -0700 (PDT)
 Received: from puffmais.c.googlers.com (68.57.204.35.bc.googleusercontent.com. [35.204.57.68])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad5572f6402sm1106778066b.178.2025.05.23.22.21.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 23 May 2025 22:21:38 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Sat, 24 May 2025 06:21:28 +0100
-Subject: [PATCH v2 1/4] arm64: defconfig: enable Maxim max77759 driver
+Date: Sat, 24 May 2025 06:21:29 +0100
+Subject: [PATCH v2 2/4] arm64: dts: exynos: gs101-pixel-common: add Maxim
+ MAX77759 PMIC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250524-b4-max77759-mfd-dts-v2-1-b479542eb97d@linaro.org>
+Message-Id: <20250524-b4-max77759-mfd-dts-v2-2-b479542eb97d@linaro.org>
 References: <20250524-b4-max77759-mfd-dts-v2-0-b479542eb97d@linaro.org>
 In-Reply-To: <20250524-b4-max77759-mfd-dts-v2-0-b479542eb97d@linaro.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -97,29 +98,116 @@ Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-Enable the Maxim max77759 as this is used by the gs101-oriole and
-gs101-raven (Google Pixel 6 and Pixel 6 Pro) boards,
+On Pixel 6 (and Pro), a MAX77759 companion PMIC for USB Type-C
+applications is used, which contains four functional blocks (at
+distinct I2C addresses):
+  * top (including GPIO & NVMEM)
+  * charger
+  * fuel gauge
+  * TCPCi
 
-The child devices' defaults are based on this MFD driver's state, so
-this commit enables those implicitly as well.
+This change adds the PMIC and the subnodes for the GPIO expander and
+NVMEM, and defines the NVMEM layout.
 
+The NVMEM layout is declared such that it matches downstream's
+open-coded configuration [1].
+
+Note:
+The pinctrl nodes are kept sorted by the 'samsung,pins' property rather
+than node name, as I think that makes it easier to look at and to add
+new nodes unambiguously in the future. Its label is prefixed with 'if'
+(for interface), because there are three PMICs in total in use on
+Pixel 6 (Pro).
+
+Link: https://android.googlesource.com/kernel/google-modules/bms/+/96e729a83817/max77759_maxq.c#67 [1]
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 1f3fd474911b7ab1aa75dc72d42614f12b2dfc54..07e5e76edcbd3fcc4358d08663f51cca00acd49c 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -769,6 +769,7 @@ CONFIG_MFD_EXYNOS_LPASS=m
- CONFIG_MFD_HI6421_PMIC=y
- CONFIG_MFD_HI655X_PMIC=y
- CONFIG_MFD_MAX77620=y
-+CONFIG_MFD_MAX77759=m
- CONFIG_MFD_MT6360=y
- CONFIG_MFD_MT6397=y
- CONFIG_MFD_SPMI_PMIC=y
+---
+v2:
+- update commit message slightly
+---
+ .../boot/dts/exynos/google/gs101-pixel-common.dtsi | 61 ++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+index d6ddcc13f7b20c6dfbe92e86abafe965870d0c78..de5c8d236b705505c0745827c5c6b67d94ba6227 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+@@ -188,6 +188,60 @@ usbc0_role_sw: endpoint {
+ 			};
+ 		};
+ 	};
++
++	pmic@66 {
++		compatible = "maxim,max77759";
++		reg = <0x66>;
++
++		pinctrl-0 = <&if_pmic_int>;
++		pinctrl-names = "default";
++		interrupts-extended = <&gpa8 3 IRQ_TYPE_LEVEL_LOW>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++
++		gpio {
++			compatible = "maxim,max77759-gpio";
++
++			gpio-controller;
++			#gpio-cells = <2>;
++			/*
++			 * "Human-readable name [SIGNAL_LABEL]" where the
++			 * latter comes from the schematic
++			 */
++			gpio-line-names = "OTG boost [OTG_BOOST_EN]",
++					  "max20339 IRQ [MW_OVP_INT_L]";
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		nvmem-0 {
++			compatible = "maxim,max77759-nvmem";
++
++			nvmem-layout {
++				compatible = "fixed-layout";
++				#address-cells = <1>;
++				#size-cells = <1>;
++
++				reboot-mode@0 {
++					reg = <0x0 0x4>;
++				};
++
++				boot-reason@4 {
++					reg = <0x4 0x4>;
++				};
++
++				shutdown-user-flag@8 {
++					reg = <0x8 0x1>;
++				};
++
++				rsoc@a {
++					reg = <0xa 0x2>;
++				};
++			};
++		};
++	};
+ };
+ 
+ &pinctrl_far_alive {
+@@ -211,6 +265,13 @@ typec_int: typec-int-pins {
+ 		samsung,pin-pud = <GS101_PIN_PULL_UP>;
+ 		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
+ 	};
++
++	if_pmic_int: if-pmic-int-pins {
++		samsung,pins = "gpa8-3";
++		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
++		samsung,pin-pud = <GS101_PIN_PULL_UP>;
++		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
++	};
+ };
+ 
+ &pinctrl_gpio_alive {
 
 -- 
 2.49.0.1151.ga128411c76-goog
