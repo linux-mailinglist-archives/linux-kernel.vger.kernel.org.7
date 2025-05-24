@@ -1,208 +1,137 @@
-Return-Path: <linux-kernel+bounces-661774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E59AC3049
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 17:52:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73718AC305F
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 17:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 312EB18885DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 15:52:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648353AA681
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 15:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDEF38382;
-	Sat, 24 May 2025 15:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC0E1EC018;
+	Sat, 24 May 2025 15:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fxoH+Qpq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="nZNQhSnD"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8825B25776;
-	Sat, 24 May 2025 15:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043E613AA53
+	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 15:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748101907; cv=none; b=GZo7HkZ2GONnrW+A0JofbGVvTA7jeGKL2gepYjta7TQamXVGylt1mS12CQ0AvHKFq8gNgAzjUuI4ikYFG5RnDB6THzNLUK7KiMFTBQgiLak3HIgOUo6v6l3hJL92cyuMWajq4tPD4dVHEbHokCqE/qRYQNKmKPRnzFPA6YG51dA=
+	t=1748102346; cv=none; b=NtMxq2FZAoWAkfWWPmE7iCT7ia8tNXblnVI44+tc9Pdd+eN1biaotQ8Gl8D844JtJwfOO0z3XJJEk3Bo0xiZp93WFRnhMgC2EslIA1LANlU4fdf3LdP+F9wqFE774xuYfhvMeFsyYW9OD6IJW+rcenVsOrZpIUOU6PXEFPDAW0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748101907; c=relaxed/simple;
-	bh=+ucDhazGPC9Jvva6Fi6SHN5ahyqoS/gM+jfdi9hKwl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q58/xiTIeegUGln7EFTw/RbJg/mRCgdNdi8gFxjhT9EG1KEPeUTmVY22dU7kSTX4QjwqzrBzM8yrkzUEUWvHMopctjqDPwAuhFJZqdE+81D5EaZgeMLXRzAwZ9r6tQ2R+LOZ+b+A69xVGYpCHf9TFcRdsd1Rn1EIzOxpPEtN+cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fxoH+Qpq; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748101906; x=1779637906;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+ucDhazGPC9Jvva6Fi6SHN5ahyqoS/gM+jfdi9hKwl0=;
-  b=fxoH+QpqBNI9TinK/Yw4e94Y9MEOzb1nE4dBTb8TdMLYzTdphV2E1KEr
-   Djp9cXXXhKrjGDa82n3yB6TBFR6GkyY09uCE4XWoYTmrJWIcVx6cjawzV
-   LdbTno908lCiv3pd2Z5iTIxLo1dsLC8KhS+ZTaCK9MZqui3LQyZy6VjSU
-   MxQdO9FZTbG7Y6EgBONPTi3CCjKnTPPGd2hx4XMMmCUwpGzMYLti4L84Q
-   XwzuJu8133+3TtYpiTNftQe9ATFcDNST8xGzBkeJdJf8GTSjqix47t4Ej
-   Mu+q0Z/kd9tRrhd/6ab1tyOPMpSV0jaI0r9FbHnafNDMt3ICQgpZSMflD
-   Q==;
-X-CSE-ConnectionGUID: Dpgrq0jBTECZAS3RGH8duA==
-X-CSE-MsgGUID: I3MjJ/NERdCD3Iezv6ih8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11443"; a="52758862"
-X-IronPort-AV: E=Sophos;i="6.15,311,1739865600"; 
-   d="scan'208";a="52758862"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2025 08:51:45 -0700
-X-CSE-ConnectionGUID: /nFUagFnQQCHiiDQc4YJ9A==
-X-CSE-MsgGUID: hhjk9CTzSkaju1yIfPj27w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,311,1739865600"; 
-   d="scan'208";a="141658419"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2025 08:51:44 -0700
-Date: Sat, 24 May 2025 08:56:50 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>, devicetree@vger.kernel.org,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Chris Oo <cho@microsoft.com>, linux-hyperv@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>
-Subject: Re: [PATCH v3 06/13] dt-bindings: reserved-memory: Wakeup Mailbox
- for Intel processors
-Message-ID: <20250524155650.GA16942@ranerica-svr.sc.intel.com>
-References: <20250504-original-leopard-of-vigor-5702ef@kuoka>
- <20250506051610.GC25533@ranerica-svr.sc.intel.com>
- <20250506-pompous-meaty-crane-97efce@kuoka>
- <20250507032339.GA27243@ranerica-svr.sc.intel.com>
- <20250512153224.GA3377771-robh@kernel.org>
- <20250513221456.GA2794@ranerica-svr.sc.intel.com>
- <20250514154248.GA2375202-robh@kernel.org>
- <20250515035338.GA4955@ranerica-svr.sc.intel.com>
- <20250519152937.GA2227051-robh@kernel.org>
- <20250519175606.GA9693@ranerica-svr.sc.intel.com>
+	s=arc-20240116; t=1748102346; c=relaxed/simple;
+	bh=h1Or4FuMdPhjJt5IdwmBVjxYZwDeDm1BFV7SyAA9a3U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pKJJPBHEhJ3VIBGGJgCI6Dsrpi6qJWolFr686WeX4XLoaG3SzdEbCVZMjUEokSGOhBrZnIbCDsj6/gqt5tzNU6AmSWM8PYQ+TVwNvmydX+rvSv37Ckt1al2eq/hWVVnmidfvtcdoULpe20x8da9s7uwGKVJQCEtVNxr/1kJHATo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=nZNQhSnD; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3dc83a8a4afso5988925ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 08:59:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1748102344; x=1748707144; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F2yr9tnKn9TqlbBE9wxEbTUU2i1OSmwquvIPpcnGXAE=;
+        b=nZNQhSnDUzArTqABSSNsXcqCSLaDIohrac9y3ZYLz7lnzul7ksSh0z8xUs2aaFQLF7
+         D+FL/EdeFNd3Md1qEyoT5rq+ZqNCIkYtn14olPQ3M1OZTxtLpg5K+poiVJBdn9+FydCv
+         +I3HqxdkpVmWwrCDnbpa/RB+oAjoKM4lD0nKEjI+i0uY0LptKhsdGop3FBgp7JvdAZ+i
+         DthHyKbwPpt8dKxGph4HVHy+9QxRlDP8nHr6PGSSDkF4iMtjblBIWIp+7EV2okR4H8kN
+         sllepQQjoWt9cAuVy9GfCkHPZZyJbAnXp0+hiqw36WV0sYOqau3eKGHu7R2Z2Wx9NC2n
+         sfJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748102344; x=1748707144;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F2yr9tnKn9TqlbBE9wxEbTUU2i1OSmwquvIPpcnGXAE=;
+        b=YykxpueXcZThv2l1RQxG9S5ljrC/MPMWcdq1/2XMSYjId22EILBkNgeBMa56Hwthvp
+         AKpVelVWwO6jxWF6F3imWS6VmCuScad2pvy2K3i0YBvEUdjjJ/pZjTjxnrOeNhyHB7Mc
+         g1ajcKBqJU0kfgdY1XjQktPYBN954WKdHkx4QTuV5Xx3zunIwS3jL4ARnuDt0S/FPWxL
+         /w/XzNvt/oLhTrQZS5UILWGNPvcLSHym0ts8RP5E7YNd2mgG8t3uLpJmfzltuvgEtsuk
+         aeiDfmpQYOTUL+meOEh96gzX6OEu1BC9AHD30/Txr67aBILTm/l0dPaJvANc6uMyYXM2
+         m/zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHYc0zpR/bT2NuRdcUvy3XLcsCiiy4wWJfrH6bFWFzz4fxPSDnVhhovAVKq3x0g12vdvKrm3FV7YllUSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5XYI/hTF5gWiNXEjmO3AU6wTtAQN9ZHY5FrjFzb3ERRB8r/9g
+	K2/Wdgm8tZ5qCsI7ltm9DzATZlo9JM2e0AJ0hGZeamCyq9zA3jjC1N77oPvWFPychS2JUkUdAzu
+	sFhBX8xoq0xZ1Ga/aLDFRSSwx5TOMd8rtc+OVpzNu7g==
+X-Gm-Gg: ASbGncuhvArFQYWe/DmNmEBA50XXelzLr1Uk/9u9aL8wG4saqnE3b/6HS8XqJdq3bOv
+	fz4cD7CoTcL7V3BZ5pg3rV5j1H8Zd1I0sGAU906dy3QP6weB5+Mhf7fCpIGlxgKhy9QSdgeun7V
+	o/iDJHuLBn/fVgkzJnvMv+Vnf0DJPEEHnK
+X-Google-Smtp-Source: AGHT+IEV4eb+rq7jqSPU1O3ArOm2/AotMQitLIc1b82BqLuQmpgD0sL2W5ul1eYPBn+JqoU3IEelxgq8AvLf22NB40g=
+X-Received: by 2002:a05:6e02:3993:b0:3dc:8e8b:42af with SMTP id
+ e9e14a558f8ab-3dc9ae6add9mr28247415ab.7.1748102343954; Sat, 24 May 2025
+ 08:59:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250519175606.GA9693@ranerica-svr.sc.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20250523104725.2894546-4-rkrcmar@ventanamicro.com>
+In-Reply-To: <20250523104725.2894546-4-rkrcmar@ventanamicro.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Sat, 24 May 2025 21:28:51 +0530
+X-Gm-Features: AX0GCFtOMEl61Vu092B4vlrmT3A99i4MJFIakv747HMx06wfCiv1EtyVxeD1GV0
+Message-ID: <CAAhSdy0M8ozHyR1mfW1u4-w=4xZm404jR4iqLRL0FtDh7RRvAg@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V: KVM: lock the correct mp_state during reset
+To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
+Cc: kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 19, 2025 at 10:56:06AM -0700, Ricardo Neri wrote:
-> On Mon, May 19, 2025 at 10:29:37AM -0500, Rob Herring wrote:
-> > On Wed, May 14, 2025 at 08:53:38PM -0700, Ricardo Neri wrote:
-> > > On Wed, May 14, 2025 at 10:42:48AM -0500, Rob Herring wrote:
-> > > > On Tue, May 13, 2025 at 03:14:56PM -0700, Ricardo Neri wrote:
-> > > > > On Mon, May 12, 2025 at 10:32:24AM -0500, Rob Herring wrote:
-> > > > > > On Tue, May 06, 2025 at 08:23:39PM -0700, Ricardo Neri wrote:
-> > > > > > > On Tue, May 06, 2025 at 09:10:22AM +0200, Krzysztof Kozlowski wrote:
-> > > > > > > > On Mon, May 05, 2025 at 10:16:10PM GMT, Ricardo Neri wrote:
-> > > > > > > > > > If this is a device, then compatibles specific to devices. You do not
-> > > > > > > > > > get different rules than all other bindings... or this does not have to
-> > > > > > > > > > be binding at all. Why standard reserved-memory does not work for here?
-> > > > > > > > > > 
-> > > > > > > > > > Why do you need compatible in the first place?
-> > > > > > > > > 
-> > > > > > > > > Are you suggesting something like this?
-> > > > > > > > > 
-> > > > > > > > > reserved-memory {
-> > > > > > > > > 	# address-cells = <2>;
-> > > > > > > > > 	# size-cells = <1>;
-> > > > > > > > > 
-> > > > > > > > > 	wakeup_mailbox: wakeupmb@fff000 {
-> > > > > > > > > 		reg = < 0x0 0xfff000 0x1000>
-> > > > > > > > > 	}
-> > > > > > > > > 
-> > > > > > > > > and then reference to the reserved memory using the wakeup_mailbox
-> > > > > > > > > phandle?
-> > > > > > > > 
-> > > > > > > > Yes just like every other, typical reserved memory block.
-> > > > > > > 
-> > > > > > > Thanks! I will take this approach and drop this patch.
-> > > > > > 
-> > > > > > If there is nothing else to this other than the reserved region, then 
-> > > > > > don't do this. Keep it like you had. There's no need for 2 nodes.
-> > > > > 
-> > > > > Thank you for your feedback!
-> > > > > 
-> > > > > I was planning to use one reserved-memory node and inside of it a child
-> > > > > node to with a `reg` property to specify the location and size of the
-> > > > > mailbox. I would reference to that subnode from the kernel code.
-> > > > > 
-> > > > > IIUC, the reserved-memory node is only the container and the actual memory
-> > > > > regions are expressed as child nodes.
-> > > > > 
-> > > > > I had it like that before, but with a `compatible` property that I did not
-> > > > > need.
-> > > > > 
-> > > > > Am I missing anything?
-> > > > 
-> > > > Without a compatible, how do you identify which reserved region is the 
-> > > > wakeup mailbox?
-> > > 
-> > > I thought using a phandle to the wakeup_mailbox. Then I realized that the
-> > > device nodes using the mailbox would be CPUs. They would need a `memory-
-> > > region` property. This does not look right to me.
-> > 
-> > That doesn't really make sense unless it's a memory region per CPU.
-> 
-> Agreed.
-> 
-> > 
-> > 
-> > > > Before you say node name, those are supposed to be 
-> > > > generic though we failed to enforce anything for /reserved-memory child 
-> > > > nodes.
-> > > 
-> > > I see. Thanks for preventing me from doing this.
-> > > 
-> > > Then the `compatible` property seems the way to go after all.
-> > > 
-> > > This what motivated this patch in the first place. On further analysis,
-> > > IIUC, defining bindings and schema is not needed, IMO, since the mailbox
-> > > is already defined in the ACPI spec. No need to redefine.
-> > 
-> > You lost me...
-> > 
-> > You don't need to redefine the layout of the memory region as that's 
-> > defined already somewhere,
-> 
-> Great!
-> 
-> > but you do need to define where it is for DT. 
-> > And for that, you need a compatible. Do you know where it is in this 
-> > case?
-> 
-> The compatible is not defined anywhere yet. Is a DT schema needed to
-> document it? If yes, I am usure what to put in the description. We tried
-> to not redefine the mailbox and refer to the ACPI spec. That was a NAK
-> from Krzysztof [1].
-> 
-> [1]. https://lore.kernel.org/r/624e1985-7dd2-4abe-a918-78cb43556967@kernel.org
+On Fri, May 23, 2025 at 4:22=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcma=
+r@ventanamicro.com> wrote:
+>
+> We're writing to *tmp, but locking *vcpu.
+>
+> Fixes: 2121cadec45a ("RISCV: KVM: Introduce mp_state_lock to avoid lock i=
+nversion")
+> Signed-off-by: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@ventanamicro.com>
 
-In summary, documenting the `compatible` property for the mailbox is
-necessary. There is no need to redefine the malbox on a schema but
-referring to the ACPI spec is not acceptable.
+LGTM.
 
-What about referring in the schema to the Intel TDX Virtual Firmware Design
-Guide[2]? It describes how firmware should implement the mailbox the section
-4.3.5.
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-A mailbox with compatible = "intel,wakeup-mailbox" is implemented after the
-guide that Intel published.
+Improved commit description at the time of queuing.
 
-Rob, Krzysztof, would that be acceptable?
+Queued this patch for Linux-6.16
 
-Thanks and BR,
-Ricardo
+Thanks,
+Anup
 
-[2]. https://www.intel.com/content/www/us/en/content-details/733585/intel-tdx-virtual-firmware-design-guide.html
+> ---
+>  arch/riscv/kvm/vcpu_sbi.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
+> index 31fd3cc98d66..6e09b518a5d1 100644
+> --- a/arch/riscv/kvm/vcpu_sbi.c
+> +++ b/arch/riscv/kvm/vcpu_sbi.c
+> @@ -143,9 +143,9 @@ void kvm_riscv_vcpu_sbi_system_reset(struct kvm_vcpu =
+*vcpu,
+>         struct kvm_vcpu *tmp;
+>
+>         kvm_for_each_vcpu(i, tmp, vcpu->kvm) {
+> -               spin_lock(&vcpu->arch.mp_state_lock);
+> +               spin_lock(&tmp->arch.mp_state_lock);
+>                 WRITE_ONCE(tmp->arch.mp_state.mp_state, KVM_MP_STATE_STOP=
+PED);
+> -               spin_unlock(&vcpu->arch.mp_state_lock);
+> +               spin_unlock(&tmp->arch.mp_state_lock);
+>         }
+>         kvm_make_all_cpus_request(vcpu->kvm, KVM_REQ_SLEEP);
+>
+> --
+> 2.49.0
+>
 
