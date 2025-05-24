@@ -1,131 +1,87 @@
-Return-Path: <linux-kernel+bounces-661849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33139AC31C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 00:10:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D751BAC31C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 00:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A91E3BD65E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 22:09:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BA721797F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 22:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77404244692;
-	Sat, 24 May 2025 22:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E6627C879;
+	Sat, 24 May 2025 22:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2Ytpppo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FuJ9HtX+"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F7313A265;
-	Sat, 24 May 2025 22:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A56054758;
+	Sat, 24 May 2025 22:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748124608; cv=none; b=CsHUq1l/qlT8NX176PdwrFVBezkrCKPpQ2MPRMBC6S5C+SYRXTwCQmU5x8ohGIGs/4lQD2RiIF4TiZPoE5sMtdieUNLrLaxXD0GA2Kc8zviaKa2nsydvUBW6zAuhDTwqQIqQ9txL5c6Y/raxXyszTiu5STtNGVZKz++vKhnm1UQ=
+	t=1748125087; cv=none; b=HOIaE+QocZ3pFsRwa3JP5b+46WZH0h52MiiCRUMBFB06d6/Ll+c0mybrHQ2DvsvdlirHRXfwkf7TvX3EicVh5cs3lq/1e/wwojNmCkvoAktGzckDveW2Ph7BylQ/xvoTABYTFyctPeauU16wt0EDkbJ6Ei6RoPqB178bDiGJx44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748124608; c=relaxed/simple;
-	bh=FDOS0BPEeDg9pJVv6rPfpxvctSUkp6RvqNXGS6GpvAY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=tA1MOeb05W05Uy8DVOqMeFxlK3pE6GvKHRXBFVks6zdMZ5cUEJ1qQyrPVNfeOh58p1B8XF92fMhEx0Du4j87mpsZ/oxZ9H0YJ2CkFrQoi02e7Ve/vHagTXZv459hYjo9kz0DYvwvNeJUqciSrdogmU3wxx/+INtsTbQHxgi6UjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2Ytpppo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CF00C4CEE4;
-	Sat, 24 May 2025 22:10:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748124608;
-	bh=FDOS0BPEeDg9pJVv6rPfpxvctSUkp6RvqNXGS6GpvAY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=b2YtpppoZ0zD/ZoWWb3Hw/S3/ATZTIdbjZvcPeuqps8ZW2iHfpcMdNkoSZFh1Hct7
-	 O5yGigKWaaceo/1apHJFNB5sGI7aswFnDpnXawY6mmThuXLyMsZYApbTGrNi3McYGl
-	 0uR/nfY4FGhB0Zvk+6WdL8u2MqKK/G+hXwiV5lWMmtkd+o/q/N1gso6BsqnDAU2vlx
-	 HuOIae7ssHKMLkZ3oxtCiGhVaf+gNRIn8I/HHFq/HEQ2IDk/f7fd9dX53jl8W5v6E0
-	 CplVph6zYCuN5Wrt0Yvl3AO02VCetbj1SO6dA206Ogth0iwGZAgyOLdQwvj1C6UFUL
-	 UgocZ/ZNZZGew==
-Date: Sun, 25 May 2025 00:10:07 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Damien Le Moal <dlemoal@kernel.org>, Alexander Roman <monderasdor@gmail.com>,
- linux-ide@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3] ahci: enhance error handling in ahci_init_one
-User-Agent: Thunderbird for Android
-In-Reply-To: <7533f274-dcc9-42a5-9e5a-74019255fd3c@kernel.org>
-References: <f2db43ab-97d0-4731-9b51-18876f342b42@kernel.org> <20250522102653.1169-1-monderasdor@gmail.com> <7533f274-dcc9-42a5-9e5a-74019255fd3c@kernel.org>
-Message-ID: <C819CAA3-3F8B-44A3-BD65-82B06378839E@kernel.org>
+	s=arc-20240116; t=1748125087; c=relaxed/simple;
+	bh=Vx9JHKrkStBdftpui/5oFfMrgwuBHQrVeiabhSQv0bw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z8u+zIkB87RyPybldxdQ8aEzTEyGi/W8UYyKQRUoRjBVMAtjG7X1g9s/+WNJqLrA1nHyjlArJ9NOJNM5o9xTWx6Sww8kIF/STSSfEyEgbdmslpADUiiFX3FiRR3cUUBdocIFIXqULW1RA0i7C6Cux9mgBMjfr6vydqwmKIhwcqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FuJ9HtX+; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9CB1A42EA6;
+	Sat, 24 May 2025 22:17:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1748125076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FU2dJd6CmPJ04SQRXYMaHcTtEw1U2HT6aBJQicZc5r0=;
+	b=FuJ9HtX+CGuh3jP+iX0+DhoEI6xtambRF+ZRZL722NqKsf1LGY4T+C+UUFEOlrOXkkR2+p
+	/UhoFAX/nJMA73dhkzwFwlNYan+daqah2XM3g/IvJ68T/StO/1Yx0vn7wwC+LyUWYKeufx
+	fsD9IyRzwjcNvlZ9zaPTmfcd7u+tmVt+xMzv3bwKtuNey4tcw2UZCMUdTr8kBq1flQr27c
+	8k7dAQUoCSU1vOzih4ElpdVjydaN7kqcdSIrrThSn7BfepbvpH248wW1DN546Kq8wDuCZa
+	5GBc+Tgi56FArPQ3CnZ3qJgWw5hpEes+Ww7DPVlzemmpr4xoBjo3lKgrdTIzLg==
+Date: Sun, 25 May 2025 00:17:55 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: sophgo@lists.linux.dev, linux-rtc@vger.kernel.org,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: Jingbao Qiu <qiujingbao.dlmu@gmail.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v15] rtc: sophgo: add rtc support for Sophgo CV1800 SoC
+Message-ID: <174812505586.1272691.391915803033342266.b4-ty@bootlin.com>
+References: <20250507195626.502240-1-alexander.sverdlin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507195626.502240-1-alexander.sverdlin@gmail.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdduvdekkeculddtuddrgeefvddrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeijeefhfffkeejueehveeuveejvdelveejteduffehuedtffdufeejudffuedvtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemvgdtrgemvdgumeeifeejtdemjeekvgdtmegttdgvkeemvdektdeimeekrggtieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdgumeeifeejtdemjeekvgdtmegttdgvkeemvdektdeimeekrggtiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepjedprhgtphhtthhopehsohhphhhgoheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhrthgtsehvghgvr
+ hdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrghnuggvrhdrshhvvghrughlihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepqhhiuhhjihhnghgsrghordgulhhmuhesghhmrghilhdrtghomhdprhgtphhtthhopehunhhitghorhhnpgifrghnghesohhuthhlohhokhdrtghomhdprhgtphhtthhopehinhhotghhihgrmhgrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 24 May 2025 14:36:24 CEST, Damien Le Moal <dlemoal@kernel=2Eorg> wrote:
->On 5/22/25 12:26, Alexander Roman wrote:
->> Add comprehensive error handling to ahci_init_one() to:
->> 1=2E Prevent resource leaks during initialization failures
->> 2=2E Ensure proper cleanup of allocated resources
->> 3=2E Provide detailed error reporting for debugging
->> 4=2E Maintain consistent error handling patterns
->>=20
->> Key changes:
->> - Initialize all pointers to NULL
->> - Add centralized error handling via goto labels
->> - Improve error messages with specific error codes
->> - Remove duplicate Intel PCS quirk call
->> - Adjust log levels (dev_err for fatal, dev_dbg for quirks)
->>=20
->> Signed-off-by: Alexander Roman <monderasdor@gmail=2Ecom>
->
->I received 2 x v3 patches with different commit messages and titles, but =
-these 2
->patches touch the same code=2E=2E Very confusing=2E=2E=2E
->Which one is the "correct" patch you want us to consider ?
->
->And please send patches to *all* maintainers of the subsystem=2E
->You can check that with "scripts/get_maintainer=2Epl driver/ata"
->(you are missing Niklas)=2E
->
->Note: it is too late to apply this patch anyway=2E If accepted, it will g=
-o in
->during 6=2E16-rc1=2E So no rush to clean this up=2E Take your time and ma=
-ke a proper
->patch please=2E
->
->
->> ---
->>  drivers/ata/ahci=2Ec | 98 ++++++++++++++++++++++++++------------------=
---
->>  1 file changed, 55 insertions(+), 43 deletions(-)
->>=20
->> diff --git a/drivers/ata/ahci=2Ec b/drivers/ata/ahci=2Ec
->> index abc1234=2E=2Edef5678 100644
->> --- a/drivers/ata/ahci=2Ec
->> +++ b/drivers/ata/ahci=2Ec
->> @@ -1611,7 +1611,7 @@ static int ahci_init_one(struct pci_dev *pdev, co=
-nst struct pci_device_id *ent)
->>  	struct ahci_host_priv *hpriv =3D NULL;
->>  	struct ata_host *host =3D NULL;
->>  	void __iomem *mmio =3D NULL;
->> -	int n_ports, i, rc;
->> +	int n_ports, i, rc =3D -ENOMEM;
->>  	u32 tmp, cap, port_map;
->>  	u32 saved_cap;
->>  	struct device *dev =3D &pdev->dev;
->> @@ -1619,60 +1619,72 @@ static int ahci_init_one(struct pci_dev *pdev, =
-const struct pci_device_id *ent)
->>  	VPRINTK("ahci_init_one enter\n");
+On Wed, 07 May 2025 21:56:20 +0200, Alexander Sverdlin wrote:
+> Implement the RTC driver for CV1800, which able to provide time alarm.
+> 
+> 
 
-There is no VPRINTK() here since a long time ago=2E
+Applied, thanks!
 
-So this must be based on some ancient kernel version=2E
+[1/1] rtc: sophgo: add rtc support for Sophgo CV1800 SoC
+      https://git.kernel.org/abelloni/c/d9f82683b123
 
-Please base your patches on:
-https://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/libata/linux=2Egit/log=
-/?h=3Dfor-next
+Best regards,
 
-
-Kind regards,
-Niklas
-Hello Alexander,
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
