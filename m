@@ -1,146 +1,221 @@
-Return-Path: <linux-kernel+bounces-661848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E42EAC31BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 00:08:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4839DAC31C3
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 00:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8BC8189B4A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 22:08:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29C33189B7EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 22:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6350E1DDA0C;
-	Sat, 24 May 2025 22:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3A127CB1B;
+	Sat, 24 May 2025 22:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WgOCmoQR"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=she-devel.com header.i=@she-devel.com header.b="B3N/oa2u"
+Received: from mx.kolabnow.com (mx.kolabnow.com [212.103.80.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5779914AD0D
-	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 22:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D3D17C91;
+	Sat, 24 May 2025 22:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.103.80.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748124506; cv=none; b=BrDpnpfRB+Y6uwf68UJ9ccSOk1Ap19SqSEVMsIpVY6lovMaccjSU+YZXZye3/g43KM/wFnK8SS5fS7xly707nXjssItpiXINi/Yl5tmvTY7q2SZAC3sHVLn5ghkKLH81T0uqNeRuidyT4Y+C5aitNcyNSoXu35iwMtGMHA417Yk=
+	t=1748124911; cv=none; b=miuh0kb6skjFvAkAp/5DpMIAx3IVn4ypeHF/dIKf6Q9nfyk36W7EIRBm+nHKDOo670NLY5lQtER00SZbkX0TI2Y1JUkgkQCbNpMBfejHWuqjOr5wpVU4FrncHxRURl/3JqwUvCCeR91v+YNcazYjcsdaj72jcI6IfCSlMcVMhYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748124506; c=relaxed/simple;
-	bh=tZs7NRKsUJ2NMCg2LzJ97LxL4RE+ttC9dN2NrHYBeGo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IXqrgza3UAMrJC+hioqWaR29V1CqKlSflIqcbUy4YzROUgqM2kUUjaKwlBqLC3LcW1EGvhtE/NVgZqCmUAiK8F/LFL+WTH6nQCIaJ1UU7N7DKUL4fiFFr1oyZkwK8i8kMoStHAtMNDbQKktdo3KGwmSldAQlMwxRGKDDxDWzF54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WgOCmoQR; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-311158ce5afso1276413a91.2
-        for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 15:08:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748124504; x=1748729304; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iskZ0wbtxEgIO67o7SDMCe9ZJO7/1YZczvX+o4kIFTo=;
-        b=WgOCmoQRqIQWB9LNRWUhGOUThZ0I76zqFCO4uwxmMP5ylG3RYVONNVnZ/anvrLSiAP
-         121JnwbowfBERy5phioyJmhWAt5GCNPQ4Ra8cZ9vd9Y6Xx+bKkVbFcBWxmoFIfA95PTw
-         0f54woSIV+GXxx3hrHkQE9SkdQ7CozJV10ubPV86DRptF46bA0xf0pqlYiJJ0aPpXs/b
-         zGPrO/WqoiR3CzmkYf+E+uIWypcdzFZR9T4WAa/zZs+2WWak9RV6pRMNwp0ltou/Yc8b
-         in0hnuyJvZdZISRFVKEzI/1HSnF/gK3ZOHoqMnGLkgtR+mQT47g8d2K0vmiibrFwD2yO
-         lkWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748124504; x=1748729304;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iskZ0wbtxEgIO67o7SDMCe9ZJO7/1YZczvX+o4kIFTo=;
-        b=K61rpVvN6GF2M/DfprcZRhkFI/q3wBNHK5rZa7XvookWt4J2jtWaiR8FdXtDDqZi+x
-         URiKTDmJtQKGTaZbShFnSkyXrbP8f4nJddlh4t4kNWoH/P4u0Us1X2/4Rrrql4Df5dah
-         UgrEiNo0xrfK9bZKw9WWFP8zJ1LJcjj8wHwSivrkKHJQVvd7uaIC2vf1Tv/E6wKmQU8S
-         Fb/QjbGyldWJ4jnV4rInNwZLbYPAqN+u38ATD2hyyVVo1v3HJrIayp4jq4NHeGbNIS5L
-         QI55E8WeFml0GByFe9bNuty3VAp4oXFq/x0W1lgoLwPc8/HxPiOSNyrIFymIhlPGiAPM
-         MCYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbsZ/d1D6V8fSB6YOlzdx1mr9GI+49RHE5uDpctyQBn2NEcgTpPzOZONtBkbL6ktq0hZtvrIvF9TMBfAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ0ud9XEf3s1MOhAY9uDzVwbBB2MZdCTB/pqboKMeNxU/MEqww
-	vYhhxhzOB6y3Shb1ambtPVQaKdP77hxZsBcLuaR5zXnBPyWhEqRf2AkXua9SVZq120aR2FU6qUS
-	nSyK6PlMJ0M0rnw==
-X-Google-Smtp-Source: AGHT+IFSOu2l1RSQyb5J33cvCnuI8bwGn0Pmrl610mWwBVpPxY+L0tTl9KYax7U1Qo44s1kzSSsp1UIViDf/DA==
-X-Received: from pjbqo12.prod.google.com ([2002:a17:90b:3dcc:b0:2ea:3a1b:f493])
- (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:1d88:b0:310:f340:79d8 with SMTP id 98e67ed59e1d1-311104b6599mr4040692a91.22.1748124504610;
- Sat, 24 May 2025 15:08:24 -0700 (PDT)
-Date: Sat, 24 May 2025 22:07:58 +0000
+	s=arc-20240116; t=1748124911; c=relaxed/simple;
+	bh=Jn4DQanbzMmrQWqPxAVQLPOdWEKZC7J/ZPdBUEV7gek=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=IAmV4pOf8a8IIsaRO3qGauL/3fnuqfNBqUOqTAJQiCUetAt+BWyTVMPsJD0Qs1X5ISDMf1TbkaHc10v72GyQxCeA2Ss7S4BshaYKvNYvY+WHbMI12hO5BQcxmFBTxZx+G9mkL65IxP3YdNfMo3ypTiLedXZ7TmjPM+eQd0fbJPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=she-devel.com; spf=pass smtp.mailfrom=she-devel.com; dkim=fail (0-bit key) header.d=she-devel.com header.i=@she-devel.com header.b=B3N/oa2u reason="key not found in DNS"; arc=none smtp.client-ip=212.103.80.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=she-devel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=she-devel.com
+Received: from localhost (unknown [127.0.0.1])
+	by mx.kolabnow.com (Postfix) with ESMTP id CAE633004C49;
+	Sun, 25 May 2025 00:09:20 +0200 (CEST)
+Authentication-Results: ext-mx-out013.mykolab.com (amavis); dkim=pass
+ reason="pass (just generated, assumed good)" header.d=she-devel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=she-devel.com;
+	 h=content-transfer-encoding:content-type:content-type
+	:message-id:references:in-reply-to:subject:subject:from:from
+	:date:date:mime-version:received:received:received; s=dkim2; t=
+	1748124560; x=1749938961; bh=sTkvBYjgQr7BjrFV26gBjeMe496NHv2RsAG
+	UaqbUrQo=; b=B3N/oa2ujNtJEQ00Kct0cnXsFz42+hkpgRfhvksONJSmzaHmOR5
+	W9DpW8mKhxdK0k3pRm2r7eQCqPp/n+bjbVOy2ImxKgVlQTBJQfvgZmP6Faw5wlim
+	AOqDOrLGC14KaGQZUS/yTHU0n9rhxANGrh5L9doQPgKX9gb5V0NhyHWSVsnzpNEh
+	l/cDU14Zuw9Co61Oj/dDsLJvqgb8wr/twFtJVEgN03qTi9Il8c7v7ckCjWTCoNFR
+	1dITh98nhezAy4xrMyPcPMyvph0f/o/y7GFLpLx/ScNP6SPOQ6jLjbasWEcMzfVu
+	dKOpTdzfjSN69GdEJSteA1G+1BxXckG4mPw==
+X-Virus-Scanned: amavis at mykolab.com
+X-Spam-Flag: NO
+X-Spam-Score: 0
+X-Spam-Level:
+Received: from mx.kolabnow.com ([127.0.0.1])
+ by localhost (ext-mx-out013.mykolab.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id QeCNPnKlRXfm; Sun, 25 May 2025 00:09:20 +0200 (CEST)
+Received: from int-mx011.mykolab.com (unknown [10.9.13.11])
+	by mx.kolabnow.com (Postfix) with ESMTPS id CBC9B3004C46;
+	Sun, 25 May 2025 00:09:17 +0200 (CEST)
+Received: from int-subm015.mykolab.com (unknown [10.9.37.15])
+	by int-mx011.mykolab.com (Postfix) with ESMTPS id 6187F3244D87;
+	Sun, 25 May 2025 00:09:17 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.1151.ga128411c76-goog
-Message-ID: <20250524220758.915028-1-cmllamas@google.com>
-Subject: [PATCH] binder: fix yet another UAF in binder_devices
-From: Carlos Llamas <cmllamas@google.com>
-To: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Li Li <dualli@google.com>
-Cc: kernel-team@android.com, stable@vger.kernel.org, 
-	syzbot+4af454407ec393de51d6@syzkaller.appspotmail.com, 
-	"open list:ANDROID DRIVERS" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Date: Sat, 24 May 2025 15:09:16 -0700
+From: Alison Chaiken <alison@she-devel.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: corbet@lwn.net, gratian.crisan@ni.com, triegel@redhat.com,
+ rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+ linux-rt-users@vger.kernel.org, achaiken@aurora.tech
+Subject: Re: [PATCH] Documentation: locking: update libc support status of PI
+ futexes
+In-Reply-To: <20250523150028.62N5N42-@linutronix.de>
+References: <20241228181546.1315328-1-alison@she-devel.com>
+ <20250107153121.wAL-TfKG@linutronix.de>
+ <619bfa123308eeb3a548fae36a3f9e4c@she-devel.com>
+ <20250523150028.62N5N42-@linutronix.de>
+Message-ID: <a8e9dff20e63f135b512ea3235669120@she-devel.com>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-Commit e77aff5528a18 ("binderfs: fix use-after-free in binder_devices")
-addressed a use-after-free where devices could be released without first
-being removed from the binder_devices list. However, there is a similar
-path in binder_free_proc() that was missed:
+On 2025-05-23 08:00, Sebastian Andrzej Siewior wrote:
+> On 2025-01-11 10:55:55 [-0800], Alison Chaiken wrote:
+>> > Are you sure? My memory is that glibc avoided using the internal mutex.
+>> > The old problem should be gone and pthread_cond_signal() and
+>> > pthread_cond_wait() should work.
+>> 
+>> Ignoring support for 64-bit time, the last substantive change to
+>> pthread_cond_wait() and pthread_cond_signal() was Torvald Riegel's  
+>> commit
+>> ed19993b5b0d05d62cc883571519a67dae481a14 "New condvar implementation 
+>> that
+>> provides stronger ordering guarantees," which fixed problems with 
+>> waking of
+>> ineligible futex waiters and with ABA issues concerning the futex 
+>> word.
+>> What the patch does not do is made clear by the commit message:
+>> 
+>>      This condvar doesn't yet use a requeue optimization (ie, on a
+>> broadcast,
+>>      waking just one thread and requeueing all others on the futex of 
+>> the
+>>      mutex supplied by the program).
+>> 
+>> What futex-requeue-pi.rst directs is
+>> 
+>>      In order to support PI-aware pthread_condvar's, the kernel needs 
+>> to
+>>      be able to requeue tasks to PI futexes.
+>> 
+>> Riegel and Darren Hart discussed Riegel's patch in at length at the 
+>> 2016 RT
+>> Summit:
+>> 
+>> https://wiki.linuxfoundation.org/realtime/events/rt-summit2016/schedule
+>> 
+>> The related glibc bug report by Darren may be found at
+>> 
+>>     https://sourceware.org/bugzilla/show_bug.cgi?id=11588
+>> 
+>> The last comment on the bug from 2017 is by Riegel:
+>> 
+>>     So far, there is no known solution for how to achieve PI support 
+>> given
+>> the current constraints we have (eg, available futex operations, POSIX
+>> requirements, ...).
+>> 
+>> I ran the bug reproducer posted by Darren in Qemu and found that it 
+>> did not
+>> fail.   I'm not sure if the result is valid given the peculiarities of 
+>> Qemu,
+>> or whether I made some other mistake.
+> 
+> I've been looking at this again for other reasons and looked at the
+> code again…
+> 
+> Back then we use futex-requeue API and required both futex-object to
+> have the PI bit set. This wasn't the case originally, hence the patch 
+> by
+> Darren which did not make it into the official libc.
+> 
+> With the rework by Riegel, the mutex within pthread's condvar
+> implementation is gone also the usage of the requeue API. The
+> pthread_cond_wait()/ pthread_cond_signal() API is back to use futex'
+> wait/ wake.
+> The glibc comments write something about important ordering constrains.
+> The futex wait enqueues the waiter according to its priority. So the
+> task with highest priority gets always a front seat. The futex wake
+> function wakes always the first waiter in the queue.
+> 
+> With all this I would say that the glib'c condvar implementation does
+> not have any issues since the rework.
+> There were a few loops, with a 0 retry counter (basically dead) and 
+> they
+> have been removed.
+> 
+> Sebastian
 
-  ==================================================================
-  BUG: KASAN: slab-use-after-free in binder_remove_device+0xd4/0x100
-  Write of size 8 at addr ffff0000c773b900 by task umount/467
-  CPU: 12 UID: 0 PID: 467 Comm: umount Not tainted 6.15.0-rc7-00138-g57483a362741 #9 PREEMPT
-  Hardware name: linux,dummy-virt (DT)
-  Call trace:
-   binder_remove_device+0xd4/0x100
-   binderfs_evict_inode+0x230/0x2f0
-   evict+0x25c/0x5dc
-   iput+0x304/0x480
-   dentry_unlink_inode+0x208/0x46c
-   __dentry_kill+0x154/0x530
-   [...]
+Thanks, Sebastian, for looking into this question.
 
-  Allocated by task 463:
-   __kmalloc_cache_noprof+0x13c/0x324
-   binderfs_binder_device_create.isra.0+0x138/0xa60
-   binder_ctl_ioctl+0x1ac/0x230
-  [...]
+Torvald Riegel's last patch to pthread_cond_wait.c:
 
-  Freed by task 215:
-   kfree+0x184/0x31c
-   binder_proc_dec_tmpref+0x33c/0x4ac
-   binder_deferred_func+0xc10/0x1108
-   process_one_work+0x520/0xba4
-  [...]
-  ==================================================================
+$ git log -n 1 --author=riegel -- pthread_cond_wait.c
+commit ed19993b5b0d05d62cc883571519a67dae481a14
+Author: Torvald Riegel <triegel@redhat.com>
+Date:   Wed May 25 23:43:36 2016 +0200
+     New condvar implementation that provides stronger ordering 
+guarantees.
 
-Call binder_remove_device() within binder_free_proc() to ensure the
-device is removed from the binder_devices list before being kfreed.
+Speaking of ordering, the 2016 Linux Realtime Summit happened after, on 
+11 October.   Torvald and Darren co-presented a talk about condition 
+variables:
 
-Cc: stable@vger.kernel.org
-Fixes: 12d909cac1e1 ("binderfs: add new binder devices to binder_devices")
-Reported-by: syzbot+4af454407ec393de51d6@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=4af454407ec393de51d6
-Tested-by: syzbot+4af454407ec393de51d6@syzkaller.appspotmail.com
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
+https://wiki.linuxfoundation.org/realtime/events/rt-summit2016/pthread-condvars
+
+Torvald in his half of the talk discusses the POSIX requirement which 
+necessitated a change to condvars and his redesign.  In the video at 
+30:50,
+
 ---
- drivers/android/binder.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 682bbe4ad550..c463ca4a8fff 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -5241,6 +5241,7 @@ static void binder_free_proc(struct binder_proc *proc)
- 			__func__, proc->outstanding_txns);
- 	device = container_of(proc->context, struct binder_device, context);
- 	if (refcount_dec_and_test(&device->ref)) {
-+		binder_remove_device(device);
- 		kfree(proc->context->name);
- 		kfree(device);
- 	}
--- 
-2.49.0.1151.ga128411c76-goog
+Zijlstra:  Even for FIFO, in the previous slides, S2 will only wake W2, 
+because W3 was not yet
+eligible, but W3 might be the highest-priority waiter.  Strictly 
+speaking, W3 was eligible at S2.
+[p. 9, W3 was in G2, not G1, but "happened before" S2].    At S2, the 
+only possible wakeup was W2,
+even thought W3 might be the highest-priority waiter.
 
+Hart: Correct.  Not in this scheme.
+
+Zijstra: Sequence-wise, it's correct,
+
+Hart: it's mathematically correct.
+
+Zijlstra: But it's not the one we want to wake according to PI rules.
+
+Hart: Yep.
+
+Zijlstra: This scheme does not permit us doing so.
+
+Hart: Noted.
+
+---
+
+Darren and Torvald agree that glibc cannot make pthread condvars 
+PI-aware without breaking ABI.   Am I missing something?
+
+Thanks,
+Alison
+
+---
+Alison Chaiken                   alison@she-devel.com
+https://she-devel.com
+"What respite from her thrilling toil did Beauty ever take — But Work 
+might be Electric Rest To those that Magic make" -- Emily Dickinson
 
