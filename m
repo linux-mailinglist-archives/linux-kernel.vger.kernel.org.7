@@ -1,118 +1,135 @@
-Return-Path: <linux-kernel+bounces-661626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39BC9AC2E18
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 09:28:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0D4AC2E2A
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 09:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B95EFA206ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 07:28:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FB781BC40C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 07:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019661DF263;
-	Sat, 24 May 2025 07:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AF31DFD86;
+	Sat, 24 May 2025 07:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bdtUCsrr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="M2xlF3Eb"
+Received: from smtp.smtpout.orange.fr (smtp-78.smtpout.orange.fr [80.12.242.78])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD29B14AD2D;
-	Sat, 24 May 2025 07:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F8E1B6D01;
+	Sat, 24 May 2025 07:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748071716; cv=none; b=lEnwg0Si4vC6tfyY+JMAiiaCDb3bgbuiTVUFMD6skIbdZ4sRHpFylyf11XoXdoKcafwMoxBqqk2mTMfUDPmfrh0jx/lyEiGjCyzGxT++u6dCnLh4nVFJ53tbGtDLl8d6jp2MsyKmH6Lbn6AhraR/ompnX7DLTwN20WlVqGW3S8s=
+	t=1748072337; cv=none; b=SEYd+lj9FM02uDtL+yUfQKGZ6fn0jSC27S9RJj0GuAXx4XTQqlFlGpPunT2OFVzxdwt8r+NzyhMwl6tuazFPBdkctRlSjWZSjwi8O/pOSooEGEk7sp5Bp0gQGXpvqhkqe2JG6MBq+F4Ru+jgD30tvMMLmv9I/CJaVI1YVVhCzAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748071716; c=relaxed/simple;
-	bh=08Ha9ZQm/alwbTSKW0NzYSY0G7SJtdgIjtObu/iwA7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NYzsT/oLswEJQaXVC6NB2SGmgZsvRBEkCzExXdeXc4avypJCbDV7xONhDv1YQlMZ78rXPmdkhpcYuUOeskk0t3UR5v5kKdGEsFizpJHGex9MfF0ZxHiP4xt5TPm/TyEmYXT4Av+6MxgimTuW3RzamK5F4F2R1dsQFjyQduQmiv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bdtUCsrr; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748071715; x=1779607715;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=08Ha9ZQm/alwbTSKW0NzYSY0G7SJtdgIjtObu/iwA7I=;
-  b=bdtUCsrrFeMd7/8lD/z5AckFs2OGQZotraxrQM3ft8MDFRjSi9Bt/ymx
-   Z1ig1mC385+Q4AdIYP+I7v865zI2m3sPCv/teFH3UpSVW8FoQL9+fiRN0
-   r645hgQ+Pl7F1LifLXDBaDOYRpNyUbRQhLSbqjRBsavNQRqZzE+jpuoyc
-   thsPP3Q1XZQq7PmG8OC9kh0e/ZFzROaVQpTlJCjw69y4UKXzgHVAeyD2l
-   VzXI8e+UgCeXkiwSf3GJQX8izBQsPq1bD+EEZRJet6uW023XVClNlCGED
-   oYog3eKePN4a6+YK3YZH1T961/uMvWrQ4HWsmTbBYYScVmoOPF4UuAxfP
-   w==;
-X-CSE-ConnectionGUID: FVaYBiajQEy3HtuaCrUrWg==
-X-CSE-MsgGUID: qdV1amjKT1S2VogjOGHCaw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="50271793"
-X-IronPort-AV: E=Sophos;i="6.15,311,1739865600"; 
-   d="scan'208";a="50271793"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2025 00:28:34 -0700
-X-CSE-ConnectionGUID: E2J9CX0ERb6Kjnh+WjoNBg==
-X-CSE-MsgGUID: Oi0FgC3LQQ++LyK+M10u1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,311,1739865600"; 
-   d="scan'208";a="141381350"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 24 May 2025 00:28:30 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uIjIx-000R1I-2w;
-	Sat, 24 May 2025 07:28:27 +0000
-Date: Sat, 24 May 2025 15:28:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: mhkelley58@gmail.com, simona@ffwll.ch, deller@gmx.de,
-	haiyangz@microsoft.com, kys@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, akpm@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, weh@microsoft.com, tzimmermann@suse.de,
-	hch@lst.de, dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hyperv@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3 3/4] fbdev/deferred-io: Support contiguous kernel
- memory framebuffers
-Message-ID: <202505241553.VSXoFOvX-lkp@intel.com>
-References: <20250523161522.409504-4-mhklinux@outlook.com>
+	s=arc-20240116; t=1748072337; c=relaxed/simple;
+	bh=dwddXXfTZ6aOFpQVEBms0LZLfj8vls/D4GgVFgaJB18=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I9vb3uW7HR12kgzJvFeoNpA6tUv8RfTm919Yn1ahhkDYnvsXFVfOuF3jB+JFpFd5WRIHrlW8az6s/7NKvBm/EqjEBWJU1f+1f0i1dJbI8rwZaVs5eGsCVIIbWoLE0BbMSEnK1EC2JX6L0Yr3O6kv+O1GFQHdCpve7mVNVU6t2Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=M2xlF3Eb; arc=none smtp.client-ip=80.12.242.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id IjJtuiv3wVLIhIjJtu03o1; Sat, 24 May 2025 09:29:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1748071767;
+	bh=Zu3Rr90y+tiM/8UlA4hAOXkaFy8wswdz0HsN6oicuAI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=M2xlF3EbgDjP+m9zcGtmTntP7L6mbLUqQBpHne6e435s2uUnBR3w6T2k2JWT344oO
+	 3UTgq9e0u/oJUn8f66BhmWNQNlgxRR3dWpd60Wc4CdnMPn0QaWLJqUpfVXZxGY7xMR
+	 1WJLsXo/t/EqcQCRgibLgjg2uBiBZT0QTPtGC9CTZdkyaCY7dmvSCEzH+2/Ih1lgLk
+	 OvMv4awXIjtr2HV3iVfPQzCNoDSG/U6AZYIgxHx6Vhf1LNMw3ErvJO4eVDCL2AJjfS
+	 N6A6K73uC2JJBQrC8B4QHNiE0Ihb+qWtyONpWDMmAz8aGkvy9UhY4JXTrXT1TncirF
+	 PPvdEzTZAekVw==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 24 May 2025 09:29:27 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Simon Horman <horms@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v4 net] net: airoha: Fix an error handling path in airoha_alloc_gdm_port()
+Date: Sat, 24 May 2025 09:29:11 +0200
+Message-ID: <1b94b91345017429ed653e2f05d25620dc2823f9.1746715755.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250523161522.409504-4-mhklinux@outlook.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+If register_netdev() fails, the error handling path of the probe will not
+free the memory allocated by the previous airoha_metadata_dst_alloc() call
+because port->dev->reg_state will not be NETREG_REGISTERED.
 
-kernel test robot noticed the following build errors:
+So, an explicit airoha_metadata_dst_free() call is needed in this case to
+avoid a memory leak.
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.15-rc7 next-20250523]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Fixes: af3cf757d5c9 ("net: airoha: Move DSA tag in DMA descriptor")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
+Reviewed-by: Simon Horman <horms@kernel.org>
+---
+Changes in v4:
+  - Add A-b and R-b tags
+  - Rebase against latest -next (because v3 now gets "Hunk #1 succeeded
+    at 2869 (offset -4 lines)")
 
-url:    https://github.com/intel-lab-lkp/linux/commits/mhkelley58-gmail-com/mm-Export-vmf_insert_mixed_mkwrite/20250524-001707
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20250523161522.409504-4-mhklinux%40outlook.com
-patch subject: [PATCH v3 3/4] fbdev/deferred-io: Support contiguous kernel memory framebuffers
-config: arm-randconfig-001-20250524 (https://download.01.org/0day-ci/archive/20250524/202505241553.VSXoFOvX-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 7.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250524/202505241553.VSXoFOvX-lkp@intel.com/reproduce)
+Changes in v3:
+  - None
+v3: https://lore.kernel.org/all/5c94b9b345017f29ed653e2f05d25620d128c3f0.1746715755.git.christophe.jaillet@wanadoo.fr/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505241553.VSXoFOvX-lkp@intel.com/
+Changes in v2:
+  - New patch
+v2: https://lore.kernel.org/all/5c94b9b3850f7f29ed653e2205325620df28c3ff.1746715755.git.christophe.jaillet@wanadoo.fr/
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+Compile tested only.
 
->> ERROR: modpost: "vmf_insert_pfn" [drivers/video/fbdev/core/fb.ko] undefined!
->> ERROR: modpost: "vmf_insert_mixed_mkwrite" [drivers/video/fbdev/core/fb.ko] undefined!
+In the previous iteration, this patch was part of a serie. But it
+should be related to 'net', while the rest of the serie was for
+'net-next'. So it is resent as a stand-alone patch, as a v4.
 
+---
+ drivers/net/ethernet/airoha/airoha_eth.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
+index 16c7896f931f..af8c4015938c 100644
+--- a/drivers/net/ethernet/airoha/airoha_eth.c
++++ b/drivers/net/ethernet/airoha/airoha_eth.c
+@@ -2869,7 +2869,15 @@ static int airoha_alloc_gdm_port(struct airoha_eth *eth,
+ 	if (err)
+ 		return err;
+ 
+-	return register_netdev(dev);
++	err = register_netdev(dev);
++	if (err)
++		goto free_metadata_dst;
++
++	return 0;
++
++free_metadata_dst:
++	airoha_metadata_dst_free(port);
++	return err;
+ }
+ 
+ static int airoha_probe(struct platform_device *pdev)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.49.0
+
 
