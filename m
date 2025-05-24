@@ -1,186 +1,269 @@
-Return-Path: <linux-kernel+bounces-661835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CA0DAC317F
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 23:16:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C026CAC3186
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 23:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F66017D2C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 21:16:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25421897CE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 21:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B27928314C;
-	Sat, 24 May 2025 21:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A59827CCDB;
+	Sat, 24 May 2025 21:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GkDsiOnk"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ua3O7UBL"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2CA27F728
-	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 21:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3716A8F6B;
+	Sat, 24 May 2025 21:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748121336; cv=none; b=Q4z2YqSn9Mo/GahinqcCUQHpyd42AosOaDx/PLVqzrL3/P66zyhi7yS+lHfMfZrKGwcrMNGDbOMzx5uuiYB1HzfZRi6comkIf8WTE/khrAXbDAxcFJqjcrwOWBsb1V6oCEeOIti/U425P1WXfw12a9PTwNdNscTM/OsoEKi0RKU=
+	t=1748122057; cv=none; b=sb0rq4x5eWXIA1CPI3sJIgJYpwVj43MVluplIQSInNY5J1iUp/TAOWA4HB7esukU0csqmyjrPyTaCYb/Ty1b2M9HOIp+MIz0zRUB1vqciJ40rRgFOF1bK44OE1iTbjmluiuXROfYoe83uq0WzbMh0CGdBuWvcMhYq7wNfqnHX/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748121336; c=relaxed/simple;
-	bh=pQpdhYmfxqh3Yfxmei5sPv11PaCzGkgZVRufLVaDNj8=;
-	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=SUR82ndFH//17vrwOBsmqqcHuuhDzsNOhLo2iZ2b7Dj782p4hyYf17lZcEJlW0pb0yigus8E5Tg34cUnpoCPOKvEUBWSQVfPBWEEhKgB78p0qUIwMPKHneOlOVlGci2NIrBm5zOEZzhzvO3ouneszbGXQCblfNAlug0MoViN70U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GkDsiOnk; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250524211527euoutp02861759143c224944c0d2b15af4f095fb~CkxXs_9B_3036130361euoutp02Q
-	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 21:15:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250524211527euoutp02861759143c224944c0d2b15af4f095fb~CkxXs_9B_3036130361euoutp02Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1748121327;
-	bh=Thc/4MnT4r5I8ag38cbivyQhpbuX345C1nEB0lzCSSU=;
-	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=GkDsiOnkqC+nijHgrhf8+HIxiu3fld84CstiSZaTHcijADsH2dACLGJmmQ6E/6ZFX
-	 PsMMoBemlinUpSQqHyUDbc+vwjvpB/xkm1iWemsSP9yA19NkLpWrFKSjeGYHlXxJTF
-	 AXHPxhN/Zo88WuJ99BM/R7fV5qBns7FYOTvjiHSY=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250524211526eucas1p22d608c2baca2908ea62d9e47263b3aec~CkxWc5Euv2217222172eucas1p2j;
-	Sat, 24 May 2025 21:15:26 +0000 (GMT)
-Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
-	[106.210.136.40]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250524211525eusmtip2bbbad26fe39b7770cb2a2b89091f4cca~CkxVeYWJR0676606766eusmtip2r;
-	Sat, 24 May 2025 21:15:25 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Sat, 24 May 2025 23:15:00 +0200
-Subject: [PATCH RFC 6/6] riscv: dts: thead: Add PWM fan and thermal control
+	s=arc-20240116; t=1748122057; c=relaxed/simple;
+	bh=diRzJ6g6imSGZtFsx5Vm5N7uGAlGC8tn2nAtwwyRR6M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qnqV2P9sO4d9IA9AMU1g1+zQItjusoYrOlWjP9nQipneXds0AzbzELsXYpT6Pkc9NandNnyWzPcNCo/IPHD1DOPLlHidKMgB7JufOn2SSTrf/iXsAAcpm0b3FtM1c2TN7VfelBuATeUb64/8WutVfEqhqpgH4UAJ5677l2cEF3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ua3O7UBL; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-4033c70577fso607369b6e.0;
+        Sat, 24 May 2025 14:27:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748122055; x=1748726855; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Noh8Y++Az3xPmWSkejOe9xkA0YPFPMNwQjZr0ewVOqE=;
+        b=Ua3O7UBL7gKpzx7yNqDh9+honGdrz7OYw3nyYYsq02iCUvdyb+zm/5oaS1BN0PDEb4
+         V6DnOOZ1lcQYBsv2CyulT7jEzjq8cwDyZDab8SjEMU1idxIVrF+RsF8FMaV35ZbgNfGs
+         h3pLcIvLlwOKNbXyxmq54vUuIX8wp+/A0GAQc4hcnO0xS2L/p2yaq9Fto94OwRIedP2t
+         fllsdrROeRotQRxtxPnOugib7lgXtE1fZEMqPdXBG7feH/Hbb7ssOfVCrp98G1wmmhX1
+         tPR9v2GGwtb/CAov61TFVu9Xk3bMeUCn/RRQi0RPwd6Su2tZm5f5WoVAOUSxdsPhPFLK
+         R9Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748122055; x=1748726855;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Noh8Y++Az3xPmWSkejOe9xkA0YPFPMNwQjZr0ewVOqE=;
+        b=jYhaG5Jkh9OIfvIfHE6kIGBYts3wrQ8RICXe7PLfGnXJr+Pmsu5ZqlRhAagy0Eqpoj
+         dWtqFQ1ROAb+cdgMuftIa+TKu66EH/CP8Q2r8Rs8xp84D4jArHHaQi7PpxlA8HlRtOi4
+         1XJJsn+tRHd6gAQGhUM3X9xP+RUkCYZ+FSsHPVdcgnM/DVlaYu1mjpkhZb9GqzBeqSQP
+         wc233kF9FMqKvabWME+QHU8BuBJVpEK0sDbzb5orNvxxOjRzHYfUUm2JbG/6WboBi1Vj
+         bKoQIPqoeKm3fF3ePkRt9hti/R7ZyX5NEnOZDKGo3wRfM0r+hM2rDYtBbW4xmXEaREcn
+         0PLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJsi9PDek1mZFTUJElcyAnuaXqx18K4Ze+hzNiL1vnAlIYR3wPaZC9VKSv2Oe1P6VsS7dyVjt6i+zn@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTAZz99XikYI8t91rA3wIcS6T2mNR5EWg9FHMeE7qzZ1De11d1
+	YeCjuzB9dKqJdGeiLNmbkj07CvbaUT5dGSYB9Bxgax6CvADVtMj9Kmo6EQ5jzFupCsJ+wAWPsID
+	pEHqMn8qRlfdbybjXddqjMBpPZrtdrWI=
+X-Gm-Gg: ASbGncs6Wvo5oJZY4uJE69b2AEGjJ/huoHtSdeilMAX61vvZSbrtXCZNhYTYAbBKd4E
+	zSetDkUbuXT83NsLTkWwOfhEJyUV7V1auCKhcqVTVA0Uk7025Y1j51aSg4g72l4NFYaKTEMFRaI
+	cUB5OU2Qh7wA6/9XzJvohf2a79EgfmF9sxWO3CvrpP994=
+X-Google-Smtp-Source: AGHT+IGU530JBUosRBQTFkjA+6YA/kj6DGBKAugfIRPhB3YVDKf5FDVNYMRLQLnnJCdv+Q6wREgwzZzLMKCoi3MWJQE=
+X-Received: by 2002:a05:6808:399b:b0:404:12e9:d3ee with SMTP id
+ 5614622812f47-40646830aedmr2053829b6e.15.1748122055104; Sat, 24 May 2025
+ 14:27:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250524-rust-next-pwm-working-fan-for-sending-v1-6-bdd2d5094ff7@samsung.com>
-In-Reply-To: <20250524-rust-next-pwm-working-fan-for-sending-v1-0-bdd2d5094ff7@samsung.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,  Miguel Ojeda
-	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,  Boqun Feng
-	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,  Benno Lossin
-	<benno.lossin@proton.me>,  Andreas Hindborg <a.hindborg@kernel.org>, Alice
-	Ryhl <aliceryhl@google.com>,  Trevor Gross <tmgross@umich.edu>, Danilo
-	Krummrich <dakr@kernel.org>,  Michal Wilczynski <m.wilczynski@samsung.com>,
-	Drew Fustini <drew@pdp7.com>,  Guo Ren <guoren@kernel.org>, Fu Wei
-	<wefu@redhat.com>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Paul Walmsley
-	<paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>,  Marek Szyprowski
-	<m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org
-X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20250524211526eucas1p22d608c2baca2908ea62d9e47263b3aec
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250524211526eucas1p22d608c2baca2908ea62d9e47263b3aec
-X-EPHeader: CA
-X-CMS-RootMailID: 20250524211526eucas1p22d608c2baca2908ea62d9e47263b3aec
-References: <20250524-rust-next-pwm-working-fan-for-sending-v1-0-bdd2d5094ff7@samsung.com>
-	<CGME20250524211526eucas1p22d608c2baca2908ea62d9e47263b3aec@eucas1p2.samsung.com>
+References: <20250524144328.4361-1-dskmtsd@gmail.com>
+In-Reply-To: <20250524144328.4361-1-dskmtsd@gmail.com>
+From: Greg Sword <gregsword0@gmail.com>
+Date: Sun, 25 May 2025 05:27:23 +0800
+X-Gm-Features: AX0GCFvnItnSdA63h8rBIshDHygqPVtOF1Zod5pVSJYalAbDb8lWcFZnuIa3C6Y
+Message-ID: <CAEz=LcsmU0A1oa40fVnh_rEDE+wxwfSo0HpKFa_1BzZGzGG71g@mail.gmail.com>
+Subject: Re: [PATCH for-next v3] RDMA/core: Avoid hmm_dma_map_alloc() for
+ virtual DMA devices
+To: Daisuke Matsuda <dskmtsd@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, leon@kernel.org, 
+	jgg@ziepe.ca, zyjzyj2000@gmail.com, hch@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add Device Tree nodes to enable a PWM controlled fan and it's associated
-thermal management for the Lichee Pi 4A board.
+On Sat, May 24, 2025 at 10:43=E2=80=AFPM Daisuke Matsuda <dskmtsd@gmail.com=
+> wrote:
+>
+> Drivers such as rxe, which use virtual DMA, must not call into the DMA
+> mapping core since they lack physical DMA capabilities. Otherwise, a NULL
+> pointer dereference is observed as shown below. This patch ensures the RD=
+MA
+> core handles virtual and physical DMA paths appropriately.
+>
+> This fixes the following kernel oops:
+>
+>  BUG: kernel NULL pointer dereference, address: 00000000000002fc
+>  #PF: supervisor read access in kernel mode
+>  #PF: error_code(0x0000) - not-present page
+>  PGD 1028eb067 P4D 1028eb067 PUD 105da0067 PMD 0
+>  Oops: Oops: 0000 [#1] SMP NOPTI
+>  CPU: 3 UID: 1000 PID: 1854 Comm: python3 Tainted: G        W           6=
+.15.0-rc1+ #11 PREEMPT(voluntary)
+>  Tainted: [W]=3DWARN
+>  Hardware name: Trigkey Key N/Key N, BIOS KEYN101 09/02/2024
+>  RIP: 0010:hmm_dma_map_alloc+0x25/0x100
+>  Code: 90 90 90 90 90 0f 1f 44 00 00 55 48 89 e5 41 57 41 56 49 89 d6 49 =
+c1 e6 0c 41 55 41 54 53 49 39 ce 0f 82 c6 00 00 00 49 89 fc <f6> 87 fc 02 0=
+0 00 20 0f 84 af 00 00 00 49 89 f5 48 89 d3 49 89 cf
+>  RSP: 0018:ffffd3d3420eb830 EFLAGS: 00010246
+>  RAX: 0000000000001000 RBX: ffff8b727c7f7400 RCX: 0000000000001000
+>  RDX: 0000000000000001 RSI: ffff8b727c7f74b0 RDI: 0000000000000000
+>  RBP: ffffd3d3420eb858 R08: 0000000000000000 R09: 0000000000000000
+>  R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+>  R13: 00007262a622a000 R14: 0000000000001000 R15: ffff8b727c7f74b0
+>  FS:  00007262a62a1080(0000) GS:ffff8b762ac3e000(0000) knlGS:000000000000=
+0000
+>  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>  CR2: 00000000000002fc CR3: 000000010a1f0004 CR4: 0000000000f72ef0
+>  PKRU: 55555554
+>  Call Trace:
+>   <TASK>
+>   ib_init_umem_odp+0xb6/0x110 [ib_uverbs]
+>   ib_umem_odp_get+0xf0/0x150 [ib_uverbs]
+>   rxe_odp_mr_init_user+0x71/0x170 [rdma_rxe]
+>   rxe_reg_user_mr+0x217/0x2e0 [rdma_rxe]
+>   ib_uverbs_reg_mr+0x19e/0x2e0 [ib_uverbs]
+>   ib_uverbs_handler_UVERBS_METHOD_INVOKE_WRITE+0xd9/0x150 [ib_uverbs]
+>   ib_uverbs_cmd_verbs+0xd19/0xee0 [ib_uverbs]
+>   ? mmap_region+0x63/0xd0
+>   ? __pfx_ib_uverbs_handler_UVERBS_METHOD_INVOKE_WRITE+0x10/0x10 [ib_uver=
+bs]
+>   ib_uverbs_ioctl+0xba/0x130 [ib_uverbs]
+>   __x64_sys_ioctl+0xa4/0xe0
+>   x64_sys_call+0x1178/0x2660
+>   do_syscall_64+0x7e/0x170
+>   ? syscall_exit_to_user_mode+0x4e/0x250
+>   ? do_syscall_64+0x8a/0x170
+>   ? do_syscall_64+0x8a/0x170
+>   ? syscall_exit_to_user_mode+0x4e/0x250
+>   ? do_syscall_64+0x8a/0x170
+>   ? syscall_exit_to_user_mode+0x4e/0x250
+>   ? do_syscall_64+0x8a/0x170
+>   ? do_user_addr_fault+0x1d2/0x8d0
+>   ? irqentry_exit_to_user_mode+0x43/0x250
+>   ? irqentry_exit+0x43/0x50
+>   ? exc_page_fault+0x93/0x1d0
+>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>  RIP: 0033:0x7262a6124ded
+>  Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 =
+00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <89> c2 3d 00 f=
+0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
+>  RSP: 002b:00007fffd08c3960 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+>  RAX: ffffffffffffffda RBX: 00007fffd08c39f0 RCX: 00007262a6124ded
+>  RDX: 00007fffd08c3a10 RSI: 00000000c0181b01 RDI: 0000000000000007
+>  RBP: 00007fffd08c39b0 R08: 0000000014107820 R09: 00007fffd08c3b44
+>  R10: 000000000000000c R11: 0000000000000246 R12: 00007fffd08c3b44
+>  R13: 000000000000000c R14: 00007fffd08c3b58 R15: 0000000014107960
+>   </TASK>
+>
+> Fixes: 1efe8c0670d6 ("RDMA/core: Convert UMEM ODP DMA mapping to caching =
+IOVA and page linkage")
+> Closes: https://lore.kernel.org/all/3e8f343f-7d66-4f7a-9f08-3910623e322f@=
+gmail.com/
+> Signed-off-by: Daisuke Matsuda <dskmtsd@gmail.com>
+> ---
+>  drivers/infiniband/core/device.c   | 17 +++++++++++++++++
+>  drivers/infiniband/core/umem_odp.c | 11 ++++++++---
+>  include/rdma/ib_verbs.h            |  4 ++++
+>  3 files changed, 29 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/d=
+evice.c
+> index b4e3e4beb7f4..abb8fed292c0 100644
+> --- a/drivers/infiniband/core/device.c
+> +++ b/drivers/infiniband/core/device.c
+> @@ -2864,6 +2864,23 @@ int ib_dma_virt_map_sg(struct ib_device *dev, stru=
+ct scatterlist *sg, int nents)
+>         return nents;
+>  }
+>  EXPORT_SYMBOL(ib_dma_virt_map_sg);
+> +int ib_dma_virt_map_alloc(struct hmm_dma_map *map, size_t nr_entries,
+> +                         size_t dma_entry_size)
+> +{
+> +       if (!(nr_entries * PAGE_SIZE / dma_entry_size))
+> +               return -EINVAL;
+> +
+> +       map->dma_entry_size =3D dma_entry_size;
+> +       map->pfn_list =3D kvcalloc(nr_entries, sizeof(*map->pfn_list),
+> +                                GFP_KERNEL | __GFP_NOWARN);
+> +       if (!map->pfn_list)
+> +               return -ENOMEM;
+> +
+> +       map->dma_list =3D NULL;
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(ib_dma_virt_map_alloc);
+>  #endif /* CONFIG_INFINIBAND_VIRT_DMA */
+>
 
-This enables temperature-controlled active cooling for the Lichee Pi 4A
-board based on SoC temperature.
+Your ODP patches have caused significant issues, including system
+instability. The latest version of your patches has led to critical
+failures in our environment. Due to these ongoing problems, we have
+decided that our system will no longer incorporate your patches going
+forward.
 
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts | 67 +++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+--G--
 
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-index 4020c727f09e8e2286fdc7fecd79dbd8eba69556..c58c2085ca92a3234f1350500cedae4157f0c35f 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-@@ -28,9 +28,76 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <1000>;
-+			thermal-sensors = <&pvt 0>;
-+
-+			trips {
-+				fan_config0: fan-trip0 {
-+					temperature = <39000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+
-+				fan_config1: fan-trip1 {
-+					temperature = <50000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+
-+				fan_config2: fan-trip2 {
-+					temperature = <60000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map-active-0 {
-+					cooling-device = <&fan 1 1>;
-+					trip = <&fan_config0>;
-+				};
-+
-+				map-active-1 {
-+					cooling-device = <&fan 2 2>;
-+					trip = <&fan_config1>;
-+				};
-+
-+				map-active-2 {
-+					cooling-device = <&fan 3 3>;
-+					trip = <&fan_config2>;
-+				};
-+			};
-+		};
-+	};
-+
-+	fan: pwm-fan {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&fan_pins>;
-+		compatible = "pwm-fan";
-+		#cooling-cells = <2>;
-+		pwms = <&pwm 1 10000000 0>;
-+		cooling-levels = <0 66 196 255>;
-+	};
-+
- };
- 
- &padctrl0_apsys {
-+	fan_pins: fan-0 {
-+		pwm1-pins {
-+			pins = "GPIO3_3"; /* PWM1 */
-+			function = "pwm";
-+			bias-disable;
-+			drive-strength = <25>;
-+			input-disable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+	};
-+
- 	uart0_pins: uart0-0 {
- 		tx-pins {
- 			pins = "UART0_TXD";
-
--- 
-2.34.1
-
+>  static const struct rdma_nl_cbs ibnl_ls_cb_table[RDMA_NL_LS_NUM_OPS] =3D=
+ {
+> diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core=
+/umem_odp.c
+> index 51d518989914..a5b17be0894a 100644
+> --- a/drivers/infiniband/core/umem_odp.c
+> +++ b/drivers/infiniband/core/umem_odp.c
+> @@ -75,9 +75,14 @@ static int ib_init_umem_odp(struct ib_umem_odp *umem_o=
+dp,
+>         if (unlikely(end < page_size))
+>                 return -EOVERFLOW;
+>
+> -       ret =3D hmm_dma_map_alloc(dev->dma_device, &umem_odp->map,
+> -                               (end - start) >> PAGE_SHIFT,
+> -                               1 << umem_odp->page_shift);
+> +       if (ib_uses_virt_dma(dev))
+> +               ret =3D ib_dma_virt_map_alloc(&umem_odp->map,
+> +                                           (end - start) >> PAGE_SHIFT,
+> +                                           1 << umem_odp->page_shift);
+> +       else
+> +               ret =3D hmm_dma_map_alloc(dev->dma_device, &umem_odp->map=
+,
+> +                                       (end - start) >> PAGE_SHIFT,
+> +                                       1 << umem_odp->page_shift);
+>         if (ret)
+>                 return ret;
+>
+> diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+> index b06a0ed81bdd..9ea41f288736 100644
+> --- a/include/rdma/ib_verbs.h
+> +++ b/include/rdma/ib_verbs.h
+> @@ -36,6 +36,7 @@
+>  #include <linux/irqflags.h>
+>  #include <linux/preempt.h>
+>  #include <linux/dim.h>
+> +#include <linux/hmm-dma.h>
+>  #include <uapi/rdma/ib_user_verbs.h>
+>  #include <rdma/rdma_counter.h>
+>  #include <rdma/restrack.h>
+> @@ -4221,6 +4222,9 @@ static inline void ib_dma_unmap_sg_attrs(struct ib_=
+device *dev,
+>                                    dma_attrs);
+>  }
+>
+> +int ib_dma_virt_map_alloc(struct hmm_dma_map *map, size_t nr_entries,
+> +                         size_t dma_entry_size);
+> +
+>  /**
+>   * ib_dma_map_sgtable_attrs - Map a scatter/gather table to DMA addresse=
+s
+>   * @dev: The device for which the DMA addresses are to be created
+> --
+> 2.43.0
+>
+>
 
