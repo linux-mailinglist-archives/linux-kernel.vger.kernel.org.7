@@ -1,124 +1,261 @@
-Return-Path: <linux-kernel+bounces-661693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7EB4AC2EF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 12:51:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 809E9AC2F5A
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 13:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA56F9E232E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 10:51:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F02A14A223D
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 11:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456D11E00B4;
-	Sat, 24 May 2025 10:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FDA1E3775;
+	Sat, 24 May 2025 11:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="vG44CBST"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gdr46dTK"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC29519DF8D;
-	Sat, 24 May 2025 10:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3374572623;
+	Sat, 24 May 2025 11:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748083871; cv=none; b=NAM37DfQg4cUmvXjeOHo44QE6FyTs2QzFLFE4tAFvkQWuFy2Jm8wzRSia0IuQ+S+Tairny1H4aiTuoPTVCD0upBrwjahkg8J2/X4LpZTBmL8H6CuoOLrMVsJGACsXel2GbjgtBz1L8M3Ncxslo0IkrZ7dbbpEzz/hdRoX4gfO14=
+	t=1748085559; cv=none; b=do5q64Xhz7FQBfqwfbZAsxL9dcvxkEi6MHiEjFYdqaw0ME3JZREVKbfdZepKDca8pFKCZyij+Ujt8MfeQzhy4esDp6Xq5lZGobvjPgyZWEa/h9eIzBl2jdMpTGD7j/MH46pZ/X6lIuL+JXe+WsB25IPaQCiNAebdN36L+7xi22A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748083871; c=relaxed/simple;
-	bh=V+8gcksgA34Mb1jQ/H076ofeWB/Ytb2Wb9fhfJ3Dbls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X2TrzXCfowfy6HGbUfsbEQkdAQovcN8RZB3Hzic29FVTNCuv5o+A8WqryOTo0b0qcQ+9t2ZmNgJpHTD2BIsDsOQ82wHfu0eFiQMpbdbpn4mN/tliIPeM86I6BRYZjyLbu9ZfDZjBgnfHllkpzl0/vsxkY2H7/BnWnf7X5LDk+2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=vG44CBST; arc=none smtp.client-ip=212.227.17.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+	s=arc-20240116; t=1748085559; c=relaxed/simple;
+	bh=ZeM+da8JfZ8lnROmjH/nTyqDodwA3mKLYrHfnIhGZ/A=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=Q4YcaqGR9AsAwxBwdBVoukCH5mRYPUwenYLG8c0JxOHsrJlZ0xNxaJAaMvTyB6GUW6U6Te7DZ+Hghi0pGC29GOB4Nd2DsQg+9GcRayO/6G/awFgaBzOHE2DIUZCKWQQnHwpM5KIC6UpHf9MfCd5e/Yzlu8VjDxr63m/c8xfH0xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gdr46dTK; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7398d65476eso522929b3a.1;
+        Sat, 24 May 2025 04:19:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1748083848; x=1748688648;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=V+8gcksgA34Mb1jQ/H076ofeWB/Ytb2Wb9fhfJ3Dbls=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=vG44CBSTSn21UNvz6yvAkFjtROBT8/wA1PBSCmWhcVWanJ7ifZgdc4SqO+LJjvQ2
-	 ubyQPrtKb4N8kADNi6Gd0HL7iXkh8TNafQ2aVQb1GFdt2x1BVfgPCeDDbETymSpJ5
-	 xvQR9Xh7NXSVGqRcrB8AvRbrTTfb3fVBjFYfYOEdabTdE7hxMOtxilprPVEcn0p30
-	 mB5Q5icuj6BGGKOBcpl76gChXjmlVANI7crKOU0B154CSZOVmGKgHuGpC4edEeXMY
-	 Vcjcy4D3a27NE8FUmNYBkWvJxljLoh5WCUi4Vj0gE2B5SkhJMpAoAXOAg+I7MLmet
-	 5iB3C8vDj6CLxSE6mw==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.39] ([62.226.41.128]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MaIKJ-1uO3Zh1kRx-00MAMB; Sat, 24 May 2025 12:36:20 +0200
-Message-ID: <342fadba-978a-4aa6-a393-22221715a5cf@oldschoolsolutions.biz>
-Date: Sat, 24 May 2025 12:36:16 +0200
+        d=gmail.com; s=20230601; t=1748085556; x=1748690356; darn=vger.kernel.org;
+        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rScpXVbASUqjAgnv8asCUXuGu69m7xK2h2FjiRqoUxs=;
+        b=gdr46dTKVWlw860DLDTO1i756MGbSuyzxbNPkHA/2h8xnd7JKuXaWItWmYeZWbV5US
+         s9unF/sjNDzC04R5svLT9o/wHXZp8rmmW0VzrBQooXqMd6WeoRwBFaFWBP8aqiuAV4aO
+         RXc1zCrMwF/rBheb2Iwsj0gObtgcusLi5yPsT6fwPnIKGIiuOnYD2GVx/SI/nDvefLz/
+         P4cppyTF7nuIDaRMzWREufuWdQrwirh++hYEDkwpaYJ90u9m8ZKRxaqRYQ8c1usjhveU
+         PKLROFJUpb5a18SKD7LfFqf7Uyiu+oytmZeH65bvZe371TTahuxKZmfTFME4niVnqy5e
+         PO1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748085556; x=1748690356;
+        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rScpXVbASUqjAgnv8asCUXuGu69m7xK2h2FjiRqoUxs=;
+        b=gg6RCfEZhv66eSk76Tn9KNvwPeAKpjE0pGXfw2jEqMhhOZthSDQ20bSQ1OQGmOr9Lx
+         PevUXG6dvuZTBopJ7hQH7zl6eT28nvJgjddxqtjKyHLle3aQrrodD8R43OFOgQS33npB
+         MHY2Q9ZaYRW/04C6zvX/SJ+scJKsuDR/XDVHmlL/ajgcYcTyv33/k9SPCAAXQPn1Cly1
+         FoDnjc9Gkg1MaRSWERn/I9Wwhb7aimWdqg6gVq55EwhheHBaMRzop1nU+7XtESx93Bic
+         KI4uSSmi+b5AQX7pE9MT0HUtFAiP7nVCRTKymTAGVt+72bZI2RF9FbGC1P5XyQXvi5UX
+         W6jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4S251QJksDeezNZ4QS0fQyMErKyH6Ou4WdVGl+ykREKHF21DHoXnhVqaDADgnQOXw26Ny1TJ6Y5k=@vger.kernel.org, AJvYcCURLShftmeP/rqSH1AC7Ry5qqVPN3xeogahYBkA/fhnA2SJDodYMnZmC6rTi/y2TLs6B8WtQwdUr89ZPdJkV6nF@vger.kernel.org, AJvYcCVRoP49L7pRR+RSHeMRwTF9rc2yE2CAt2+maTVDFHiWLL0E/nHUsL4dRF36qFyxcU9cSsKG8ojjiPt76A==@vger.kernel.org, AJvYcCVuX4/GG1Cb1E7aB5/SeDacK4KG2MPO0THJ1o0GrpyLllIwLsBL1j4TwW/TIRfccNahH0vdcr1Bda7vz1KVLJepLV0wN1lt@vger.kernel.org, AJvYcCW3JbQ0ua019PFi62EcZrSAaEUZ4KMieoAd41jTWaHtIvui9/CcfWr+p0b89+kh0dNJjYsNzHVR98XI9oi3@vger.kernel.org, AJvYcCWL5jk+RE0J+vv+44ofFXnTuedMrZdOchLguChFYxFAeSfMOFBuWN7jnxP44xQVqST25sKkuCmzScaRpcS/@vger.kernel.org, AJvYcCWW8MGXdw6Vym3TxzJFmNZN4DFssUYpXo4sGvgN3it2QbZ+1TjemgwVIFxN03bPA141z+6lPBDzm5l8EvSKCZ94@vger.kernel.org, AJvYcCXC0zF6ImNVIY9amNrNogiu5HlHiYIf/BHSReyst52nhoxjwvVzmOh12jwPTpE+qrfxzEq77nFEs8139Q==@vger.kernel.org, AJvYcCXdJSmb5F1X2ycyYLW1CkgIIOkD11wm7boNXqt4bAjtAhY2ItoifkWF0m1B7/MryFoKa2l0K30aGL99@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvGHP6xoVsY17CuTjP4lJNnzByERifjxZd8q+zDYbzmJ7setRT
+	jhFzOBMUqPg5wXJTlJ5arTmmK/uozAv/pE8h5b7sMYIcbuUzzoeg4m3z
+X-Gm-Gg: ASbGncv1TI5PFUHOw1ShfVWGEeQinHXEWEFG0JM2D+rfMxC79y8g3wr/6nBDzFGxXKt
+	7aCy0aSTRcW5T4Wyy+JzjOR82zlQlQrqMcEUnlzcsC/7BKn9SwGLxtjiExS4J83AVWq2RoaqZqT
+	Mm7kbmcC/geBowUYb3ZYMLWUQMQfr55E5tllaCOaCcaDYjRG39F8/ay5wsvj2iGWRuriXH6p1zY
+	+eef52OStW2/0QIyb2UTmotELeV2liVOmGc3vdCnKeAAaSo5W4nkFWbIq5Y5rqvuc92TR/nHQZz
+	nurnAubngyoL0uC5KfvOqzBrJUvLm2/XcZX8zGVndjqWc2lnA1mjqlo=
+X-Google-Smtp-Source: AGHT+IHzgyF4RMk4/VcB/ult2huesDrd3BktU05/6T5tjhGyNb1hL3EGlpy4BVyGxnMoNfwEQoYJDQ==
+X-Received: by 2002:a05:6a00:1903:b0:73e:2367:c914 with SMTP id d2e1a72fcca58-745fe068d61mr3795551b3a.7.1748085556260;
+        Sat, 24 May 2025 04:19:16 -0700 (PDT)
+Received: from dw-tp ([49.205.218.89])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a96dfacesm14024380b3a.5.2025.05.24.04.19.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 May 2025 04:19:15 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Kees Cook <kees@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Kees Cook <kees@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	linuxppc-dev@lists.ozlabs.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org, 
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v2 08/14] powerpc: Handle KCOV __init vs inline mismatches
+In-Reply-To: <20250523043935.2009972-8-kees@kernel.org>
+Date: Sat, 24 May 2025 16:13:02 +0530
+Message-ID: <87jz662ssp.fsf@gmail.com>
+References: <20250523043251.it.550-kees@kernel.org> <20250523043935.2009972-8-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/6] arm64: dts: qcom: x1p42100: Add Lenovo ThinkBook
- 16 G7 QOY
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Kaehlcke <mka@chromium.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Douglas Anderson <dianders@chromium.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>,
- Aleksandrs Vinarskis <alex.vinarskis@gmail.com>, linux-usb@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-References: <20250524-tb16-dt-v3-0-17e26d935e73@oldschoolsolutions.biz>
- <20250524-tb16-dt-v3-5-17e26d935e73@oldschoolsolutions.biz>
- <6iuro54yed6tqfej6l2l2ky7dletbs73nwjnfufbuulkw3kl46@okoj2v3wvck3>
-Content-Language: en-US
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-In-Reply-To: <6iuro54yed6tqfej6l2l2ky7dletbs73nwjnfufbuulkw3kl46@okoj2v3wvck3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:CEXvmp4XCv+8zPPu+FcRtrcVcIxIkzBQVcfODOJhdqb7Xq5nhl2
- iYumIEoYBXlBZZ3Asv1pLlVyv8B6IyUTNMfwrGnSNjuzKsFFeMAzXxKDKxUA+63MbZhzxVU
- AcE60yDuRzxqTw7NwXQhR/u7VUz7PwFW+rxOAX5wKLQh4GXX8Z2GbRSadCWUC0rLSE//4QY
- HaYDaaBgb/Xlj8nhFretA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:h4CAzilZimU=;zbk78YgQufcWfxxf4+ETUMk+xN+
- LI8EYn2AN1rhQOx+IXFj2cK4480tQGQgRl2PBihS+m3mEcqFOnUIrI8NlSAht/Kk5+Blgwo2O
- R2rEp2b2D80XoKrMHLzKAmOhyO7BG/MIq9Ye3ReeVnj7WVegyV6tZzofa5+MBpsvmI20F6okW
- tQCUfHdelfwQr3m0164NCcbSmHGXaPLRxBFGDnsR0l/6VfV1PJc325zE+bUlqJLdB+zx2fgG9
- RChDM2qG7cfHlm7y9Z98/FoQRJhKPw6nR+6jPstHXi5JG+LBVeTBWP67UjHIwfpgSHNJBdt13
- vKc1OKIxnSLjM8B9jk+afac1H6HCDDazinGUfZZ2iUuzOPtWev9ccVViIgZ7hBVMWWl6ag+AO
- qPmGgxgn8uHZECZfqHnSPuBoY4oVopYszb5BuDoP1G1Gx8JI8WT7nKJZl/6IseCeUapFEW8VY
- +8F1iJhihO+yf+3J+SQw35FILQkYN3xdWmrR1/P/NAv9VWquMGOWUWTX/0QutZmX/CbTcFKsy
- KVePBkK7vKuDci1pyPNGUdj9o8cxLQL5x1AGscSXBQnmMKDH7Y29WOdDwA87/DeWrvLx9LhgN
- fJ5aZngsrVxFvVlfRKYuLhF847fIBs+IBjzj3PB/kE2ZFUgnGV7UwMglW3XNAwDozckMJygCt
- i4U1Pw59X2LBV1j6jAjfc3AR+y+RqlpSv6owzIvJWOlQrLxmSopomgqlaSLxFiJBqo4a5IBOf
- 59xPFfMo0VPp+DAvQ75ikZ4GF3EWAkc3dm2cc4VKlAjgVHUwPNBxFXmuy0m7VmNP5LVQdlcgm
- 1b8M//w1C3Cx+Mo9UCF2uUBi/Ml+UiCWIvA+NKqBOffS+LEJmmEK1iUwjqxFVCC4h3DYMbtyC
- TC88jmJvk1IXrujGzNzHzaDtWh7ybsvPC76dimJ3mWxvse3gH+ogxJ7/uUZFIpEqzv7DoGhVj
- kSPKBmuctOk9k11Ir3xhJOpD1Kz4ST6rxPQuuxvvmMoLS+C9oTe8mqn9LcFNL15s9ijCfD1U1
- INdWTXRosAkDr7FADQSuzxaKlMIYyIbBliPJnKW+OptGu9AxeprSLDBHwCWr09q0Lx76BfF2v
- TKPo82ebye6BfjooinhX23/++4iRlcHd/P2Oa4KGSAuh36GYNseFg430higOP+NKhPYcD8B43
- EkZMQyYuO7WH3pOgMKKjSr6Fn9myuh8QcNb4C1rIw0bOaJIf105nu2ticMA/TBsLsrQ3Y39r/
- N+TOlgcriL6SWlQfhrAAemVchgd3U3KvyYeQbaR7O3Vzt5Yksv/N8ldNGH/0z5zy48fALPqMA
- 8Y/qlIkxaDNKWYqMs9aFYcyyqbriyhrCjVSmvo5oCgtCBb1IjwogOaQKiEYR8hGWnGOzNUUEG
- JnMyNI7Jbq8EF1kDKirevA82G77F+nVD+M29JLTKAc5P1Le1LQmFuOZd2N
+Content-Type: text/plain
 
-Am 24.05.25 um 12:11 schrieb Dmitry Baryshkov:
-> This will break without the next patch. They need to be squashet into a
-> single patch.
+Kees Cook <kees@kernel.org> writes:
+
+> When KCOV is enabled all functions get instrumented, unless
+> the __no_sanitize_coverage attribute is used. To prepare for
+> __no_sanitize_coverage being applied to __init functions, we have to
+> handle differences in how GCC's inline optimizations get resolved. For
+> s390 this requires forcing a couple functions to be inline with
+> __always_inline.
 >
-Changing the order wouldn't suffice? No problem, will squash
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: Naveen N Rao <naveen@kernel.org>
+> Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: <linuxppc-dev@lists.ozlabs.org>
+> ---
+>  arch/powerpc/mm/book3s64/hash_utils.c    | 2 +-
+>  arch/powerpc/mm/book3s64/radix_pgtable.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/powerpc/mm/book3s64/hash_utils.c b/arch/powerpc/mm/book3s64/hash_utils.c
+> index 5158aefe4873..93f1e1eb5ea6 100644
+> --- a/arch/powerpc/mm/book3s64/hash_utils.c
+> +++ b/arch/powerpc/mm/book3s64/hash_utils.c
+> @@ -409,7 +409,7 @@ static DEFINE_RAW_SPINLOCK(linear_map_kf_hash_lock);
+>  
+>  static phys_addr_t kfence_pool;
+>  
+> -static inline void hash_kfence_alloc_pool(void)
+> +static __always_inline void hash_kfence_alloc_pool(void)
+>  {
+>  	if (!kfence_early_init_enabled())
+>  		goto err;
+> diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/book3s64/radix_pgtable.c
+> index 9f764bc42b8c..3238e9ed46b5 100644
+> --- a/arch/powerpc/mm/book3s64/radix_pgtable.c
+> +++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
+> @@ -363,7 +363,7 @@ static int __meminit create_physical_mapping(unsigned long start,
+>  }
+>  
+>  #ifdef CONFIG_KFENCE
+> -static inline phys_addr_t alloc_kfence_pool(void)
+> +static __always_inline phys_addr_t alloc_kfence_pool(void)
+>  {
+>  	phys_addr_t kfence_pool;
+>  
 
-with best regards
+I remember seeing a warning msg around .init.text section. Let me dig
+that...
 
-Jens
+... Here it is: https://lore.kernel.org/oe-kbuild-all/202504190552.mnFGs5sj-lkp@intel.com/
+
+I am not sure why it only complains for hash_debug_pagealloc_alloc_slots().
+I believe there should me more functions to mark with __init here.
+Anyways, here is the patch of what I had in mind.. I am not a compiler expert,
+so please let me know your thoughts on this.
+
+-ritesh
+
+
+From 59d64dc0014ccb4ae13ed08ab596738628ee23b1 Mon Sep 17 00:00:00 2001
+Message-Id: <59d64dc0014ccb4ae13ed08ab596738628ee23b1.1748084756.git.ritesh.list@gmail.com>
+From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Date: Sat, 24 May 2025 16:14:08 +0530
+Subject: [RFC] powerpc/mm/book3s64: Move few kfence & debug_pagealloc
+ related calls to __init section
+
+Move few kfence and debug_pagealloc related functions in hash_utils.c
+and radix_pgtable.c to __init sections since these are only invoked once
+by an __init function during system initialization.
+
+i.e.
+- hash_debug_pagealloc_alloc_slots()
+- hash_kfence_alloc_pool()
+- hash_kfence_map_pool()
+  The above 3 functions only gets called by __init htab_initialize().
+
+- alloc_kfence_pool()
+- map_kfence_pool()
+  The above 2 functions only gets called by __init radix_init_pgtable()
+
+This should also help fix warning msgs like:
+
+>> WARNING: modpost: vmlinux: section mismatch in reference:
+hash_debug_pagealloc_alloc_slots+0xb0 (section: .text) ->
+memblock_alloc_try_nid (section: .init.text)
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202504190552.mnFGs5sj-lkp@intel.com/
+Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+---
+ arch/powerpc/mm/book3s64/hash_utils.c    | 6 +++---
+ arch/powerpc/mm/book3s64/radix_pgtable.c | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/powerpc/mm/book3s64/hash_utils.c b/arch/powerpc/mm/book3s64/hash_utils.c
+index 5158aefe4873..4693c464fc5a 100644
+--- a/arch/powerpc/mm/book3s64/hash_utils.c
++++ b/arch/powerpc/mm/book3s64/hash_utils.c
+@@ -343,7 +343,7 @@ static inline bool hash_supports_debug_pagealloc(void)
+ static u8 *linear_map_hash_slots;
+ static unsigned long linear_map_hash_count;
+ static DEFINE_RAW_SPINLOCK(linear_map_hash_lock);
+-static void hash_debug_pagealloc_alloc_slots(void)
++static __init void hash_debug_pagealloc_alloc_slots(void)
+ {
+ 	if (!hash_supports_debug_pagealloc())
+ 		return;
+@@ -409,7 +409,7 @@ static DEFINE_RAW_SPINLOCK(linear_map_kf_hash_lock);
+ 
+ static phys_addr_t kfence_pool;
+ 
+-static inline void hash_kfence_alloc_pool(void)
++static __init void hash_kfence_alloc_pool(void)
+ {
+ 	if (!kfence_early_init_enabled())
+ 		goto err;
+@@ -445,7 +445,7 @@ static inline void hash_kfence_alloc_pool(void)
+ 	disable_kfence();
+ }
+ 
+-static inline void hash_kfence_map_pool(void)
++static __init void hash_kfence_map_pool(void)
+ {
+ 	unsigned long kfence_pool_start, kfence_pool_end;
+ 	unsigned long prot = pgprot_val(PAGE_KERNEL);
+diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/book3s64/radix_pgtable.c
+index 311e2112d782..ed226ee1569a 100644
+--- a/arch/powerpc/mm/book3s64/radix_pgtable.c
++++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
+@@ -363,7 +363,7 @@ static int __meminit create_physical_mapping(unsigned long start,
+ }
+ 
+ #ifdef CONFIG_KFENCE
+-static inline phys_addr_t alloc_kfence_pool(void)
++static __init phys_addr_t alloc_kfence_pool(void)
+ {
+ 	phys_addr_t kfence_pool;
+ 
+@@ -393,7 +393,7 @@ static inline phys_addr_t alloc_kfence_pool(void)
+ 	return 0;
+ }
+ 
+-static inline void map_kfence_pool(phys_addr_t kfence_pool)
++static __init void map_kfence_pool(phys_addr_t kfence_pool)
+ {
+ 	if (!kfence_pool)
+ 		return;
+-- 
+2.39.5
 
 
