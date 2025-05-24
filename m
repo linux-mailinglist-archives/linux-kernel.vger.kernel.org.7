@@ -1,109 +1,174 @@
-Return-Path: <linux-kernel+bounces-661535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D11AC2CA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 02:25:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA829AC2CAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 02:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 068B81BA4AEB
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 00:26:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842B6A26977
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 00:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A211D47AD;
-	Sat, 24 May 2025 00:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581431D6DB6;
+	Sat, 24 May 2025 00:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="O1svsWh9"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmLVf26H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4184315A;
-	Sat, 24 May 2025 00:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2793C00;
+	Sat, 24 May 2025 00:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748046339; cv=none; b=fHDnHDT8uuu3zIzt047iKvHJBXfSy9jo6g4wJxjQVM+dMzWCfWB/96okHVPJkmKMc5ZQpfIl73MZ+kC37XkxThdRWvGnkM2LKPEihrvlbVjijgxmx1Gm96JUtAjw6pozl44jp17B0oDUo6Od7Dn7AKMMhuyG66JwOyFI9YWir5U=
+	t=1748046476; cv=none; b=rUIgVa2uuN3+UHVEy3ANnn3JVA+Xl+eCVqY7vXaK6iBR9UZwpv5Mhd2d4TNMaOq1XbOUK+85YS8L3IPtTUCeodu8M0d4/Ie87A/jieQqXr4sA1xA0riweO6K8GDmkdlzaTzj/ezPTUtyJsnTJ64xUb+URKatX5XtKBB+sBMnjHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748046339; c=relaxed/simple;
-	bh=qp5bWAI/ApTcI5VWNtOuXcgZRbbelkVMrMhCpyLDIyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qFz29axXNAPrO+4St8k70B3BjGYyvJwCKJ3owEqXHwJ0g6aOk1sULoibl8+ILPymNfZ/OA7PswIdn1W0XkFZRZVslN5qil+A4zpqLOvDlGbJ1ZYvfzeM5dSat2gVGLBsb6c7aHF6R/1yBUxdbxiMfbM56ZjPBueKP1uQS8eTBTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=O1svsWh9; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=mPhumSAIpNGqxgXHi49XsBBAwTCl//Mu1cy+jljbUnI=; b=O1svsWh9jUs2osvstWTVqF1NFW
-	hAPsSO/m7squVj3sBleHgoU06DFp5jRHXs5Sk8d4+t9BFHYR0efp2UMkOr/+rE13fUwL1Axffc+Mp
-	AH2qtXbf3AsVcX+Zs7Lr9agoKiJeSSd7ps96c+brZTi9hRuD8UPg13FqMIShtKcVu8NyIGPaEqbrz
-	lfp9EdAbbqlWJ8mhy1Yv+S2W3dnl2kWnibGyEjgH7E7JaYIQ7Ne3gL4aHdn2ACz4Jt9Xwgbr3hoSI
-	E+2jGxqqNjtYfFHYtZMuM07x0WQj/CAjBnqKxV0aTkWtuZIUAFeNrNLgR0ol/nAMTzIqzz2K8UP98
-	McGCeyYQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uIchN-008SgX-0B;
-	Sat, 24 May 2025 08:25:14 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 24 May 2025 08:25:13 +0800
-Date: Sat, 24 May 2025 08:25:13 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Zilin Guan <zilin@seu.edu.cn>
-Cc: qianweili@huawei.com, wangzhou1@hisilicon.com, davem@davemloft.net,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jianhao.xu@seu.edu.cn
-Subject: Re: [PATCH] crypto: hisilicon: use kfree_sensitive() for pool cleanup
-Message-ID: <aDER6cD9S5HcbV2W@gondor.apana.org.au>
-References: <20250523133057.4025075-1-zilin@seu.edu.cn>
+	s=arc-20240116; t=1748046476; c=relaxed/simple;
+	bh=xZ/ZxzGPjEtN2ZjLqUb6bOGqc1DvuT7nPvawxdSXWSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BZnBZDOqJK8/1J0O5XeeOiZWHLe6qjCpBnrlY+gK14i3vSLunfN4kypwDtU11Sy/UJ6u0kJ1kse0wucxiY8W2Y+mr617wXtA85iisrnsC3iFW2qhNYyVozGSllCtI4JKZgYCzkbSs+AUPDAkNAq08aESOyKYUDE4cwi9OZJSYXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TmLVf26H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C18CFC4CEE9;
+	Sat, 24 May 2025 00:27:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748046476;
+	bh=xZ/ZxzGPjEtN2ZjLqUb6bOGqc1DvuT7nPvawxdSXWSI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TmLVf26HhZ7doSFz7hdO/hyoM9Dy87qb+SR3/5ukWZ2epsLbd3DUwEQxHvLfW3iU6
+	 0/mL9XfeecgH6fV/BgraSxP7ThFzfNO9t7VFOqplNpusx6Tx8vzeg70gjlehUxJa44
+	 I8h8SGr7zMagGwD/0fWa3+ZcJqcsMBlyLBR8cDKOZ78gFaIel7ssc7s0CwZfnL7tTr
+	 IuCgfUj5weayUv0svNqTG2DuUFuRyWM+FW1mbhjQ0Adc4bD29vO4DI5SH7r0y2Zjyw
+	 ZTa2TZc9GBsLpBFjBNuNMUd9fpRfkn8NV8u+xmR+jGbcY+tQxg1FbrF++XtDeLncgj
+	 cNFc+UYQeI0vg==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Ravi Bangoria <ravi.bangoria@amd.com>
+Subject: [PATCH v2] perf test: Add AMD IBS sw filter test
+Date: Fri, 23 May 2025 17:27:54 -0700
+Message-ID: <20250524002754.1266681-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.49.0.1151.ga128411c76-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250523133057.4025075-1-zilin@seu.edu.cn>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 23, 2025 at 01:30:57PM +0000, Zilin Guan wrote:
-> The error path of hisi_acc_create_sgl_pool() already calls
-> kfree_sensitive() to wipe sensitive data before freeing the pool.
-> However, hisi_acc_free_sgl_pool() currently uses plain kfree(), which
-> may leave secrets behind in memory and undo the protection applied
-> during creation.
-> 
-> This patch replaces kfree() with kfree_sensitive() in
-> hisi_acc_free_sgl_pool(), ensuring that all SGL pool deallocations
-> securely clear their contents.
-> 
-> Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
-> ---
->  drivers/crypto/hisilicon/sgl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/crypto/hisilicon/sgl.c b/drivers/crypto/hisilicon/sgl.c
-> index c974f95cd126..6a88a2056708 100644
-> --- a/drivers/crypto/hisilicon/sgl.c
-> +++ b/drivers/crypto/hisilicon/sgl.c
-> @@ -151,7 +151,7 @@ void hisi_acc_free_sgl_pool(struct device *dev, struct hisi_acc_sgl_pool *pool)
->  		dma_free_coherent(dev, block[i].size, block[i].sgl,
->  				  block[i].sgl_dma);
->  
-> -	kfree(pool);
-> +	kfree_sensitive(pool);
->  }
->  EXPORT_SYMBOL_GPL(hisi_acc_free_sgl_pool);
+The kernel v6.14 added 'swfilt' to support privilege filtering in
+software so that IBS can be used by regular users.  Add a test case in
+x86 to verify the behavior.
 
-What's in the pool? If it's just pointers then that is not sensitive
-information.
+  $ sudo perf test -vv 'IBS software filter'
+  113: AMD IBS software filtering:
+  --- start ---
+  test child forked, pid 178826
+  check availability of IBS swfilt
+  run perf record with modifier and swfilt
+  [ perf record: Woken up 3 times to write data ]
+  [ perf record: Captured and wrote 0.000 MB /dev/null ]
+  [ perf record: Woken up 3 times to write data ]
+  [ perf record: Captured and wrote 0.000 MB /dev/null ]
+  [ perf record: Woken up 3 times to write data ]
+  [ perf record: Captured and wrote 0.000 MB /dev/null ]
+  [ perf record: Woken up 0 times to write data ]
+  [ perf record: Captured and wrote 0.000 MB /dev/null ]
+  check number of samples with swfilt
+  [ perf record: Woken up 3 times to write data ]
+  [ perf record: Captured and wrote 0.037 MB - ]
+  [ perf record: Woken up 3 times to write data ]
+  [ perf record: Captured and wrote 0.041 MB - ]
+  ---- end(0) ----
+  113: AMD IBS software filtering                                      : Ok
 
-You should only use kfree_sensitive if plaintext or private keys are
-present.
+Cc: Ravi Bangoria <ravi.bangoria@amd.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/tests/shell/amd-ibs-swfilt.sh | 67 ++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+ create mode 100755 tools/perf/tests/shell/amd-ibs-swfilt.sh
 
-Cheers,
+diff --git a/tools/perf/tests/shell/amd-ibs-swfilt.sh b/tools/perf/tests/shell/amd-ibs-swfilt.sh
+new file mode 100755
+index 0000000000000000..83937aa687ccd859
+--- /dev/null
++++ b/tools/perf/tests/shell/amd-ibs-swfilt.sh
+@@ -0,0 +1,67 @@
++#!/bin/sh
++# AMD IBS software filtering
++
++echo "check availability of IBS swfilt"
++
++# check if IBS PMU is available
++if [ ! -d /sys/bus/event_source/devices/ibs_op ]; then
++    echo "[SKIP] IBS PMU does not exist"
++    exit 2
++fi
++
++# check if IBS PMU has swfilt format
++if [ ! -f /sys/bus/event_source/devices/ibs_op/format/swfilt ]; then
++    echo "[SKIP] IBS PMU does not have swfilt"
++    exit 2
++fi
++
++echo "run perf record with modifier and swfilt"
++
++# setting any modifiers should fail
++perf record -B -e ibs_op//u -o /dev/null true 2> /dev/null
++if [ $? -eq 0 ]; then
++    echo "[FAIL] IBS PMU should not accept exclude_kernel"
++    exit 1
++fi
++
++# setting it with swfilt should be fine
++perf record -B -e ibs_op/swfilt/u -o /dev/null true
++if [ $? -ne 0 ]; then
++    echo "[FAIL] IBS op PMU cannot handle swfilt for exclude_kernel"
++    exit 1
++fi
++
++# setting it with swfilt=1 should be fine
++perf record -B -e ibs_op/swfilt=1/k -o /dev/null true
++if [ $? -ne 0 ]; then
++    echo "[FAIL] IBS op PMU cannot handle swfilt for exclude_user"
++    exit 1
++fi
++
++# check ibs_fetch PMU as well
++perf record -B -e ibs_fetch/swfilt/u -o /dev/null true
++if [ $? -ne 0 ]; then
++    echo "[FAIL] IBS fetch PMU cannot handle swfilt for exclude_kernel"
++    exit 1
++fi
++
++# check system wide recording
++perf record -aB --synth=no -e ibs_op/swfilt/k -o /dev/null true
++if [ $? -ne 0 ]; then
++    echo "[FAIL] IBS op PMU cannot handle swfilt in system-wide mode"
++    exit 1
++fi
++
++echo "check number of samples with swfilt"
++
++kernel_sample=$(perf record -e ibs_op/swfilt/u -o- true | perf script -i- -F misc | grep -c ^K)
++if [ ${kernel_sample} -ne 0 ]; then
++    echo "[FAIL] unexpected kernel samples: " ${kernel_sample}
++    exit 1
++fi
++
++user_sample=$(perf record -e ibs_fetch/swfilt/k -o- true | perf script -i- -F misc | grep -c ^U)
++if [ ${user_sample} -ne 0 ]; then
++    echo "[FAIL] unexpected user samples: " ${user_sample}
++    exit 1
++fi
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.49.0.1151.ga128411c76-goog
+
 
