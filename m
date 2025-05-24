@@ -1,149 +1,147 @@
-Return-Path: <linux-kernel+bounces-661536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A279DAC2CA6
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 02:26:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF956AC2CC3
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 02:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D1BA4E7329
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 00:26:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5A047B253A
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 00:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC3A1D95B4;
-	Sat, 24 May 2025 00:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08161DB365;
+	Sat, 24 May 2025 00:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K2FTt7XS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y8zr+2VT"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA4443ABC;
-	Sat, 24 May 2025 00:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59CE2AD25
+	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 00:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748046378; cv=none; b=rJCerW43oxhttl+Gn+q3Q6Ib400q7OyD+CyK/iXwF9q/QEXjge6M+UxjjIuJUvw6PkqhxjnLaTwa5YqkJ0gI88rG/N3Kg6GXIE3PemHnOoLJ6Nyv2iPOW+u9iaatlPEVBLC3/du4ihcemOhO+H83QCyAvhcBvNpaewpl6gxygdU=
+	t=1748046943; cv=none; b=Hgt1wbF4bslH4cDYv9mw8U5BN9bk5yPFL7SURoPh6MI+el815vPxLGm9NmzLUYxU3yd6F6PjYMfffAQmDENpZLtIf4cfC8XjcbeSaYnWSM3pI32gDV3zO9Ykn642pY3DQjlSk/4ecjK46truIrglGxgvcEQ72Ky7ELf7FOC7+GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748046378; c=relaxed/simple;
-	bh=c4xRZ4ajkNNxv72dim1ZxZUGfsQ36EBupCSDdWIY/PA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LTDDpDEIgOzowJIL9405e0BpfbXzAiHwXYizwr/JBoemUa626tU0epFXU9zPsJq7pcbpbPPvQBsRitY3kw1/9VL4i5J1Dt8ZzeNm4smTpaGTGQS4J+qXevReqyWYf3VkquYQ56CHQtZCuSmACwmNTe34AFAp0wVcxTMh0YcvMRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K2FTt7XS; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748046377; x=1779582377;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=c4xRZ4ajkNNxv72dim1ZxZUGfsQ36EBupCSDdWIY/PA=;
-  b=K2FTt7XSgcEyD5LoXrF5mMQdFRsahGJUUm5SlBMmhNUrxPIpX+o2N6xA
-   dUehrIOpAe4rglrO3CCQuatpeKAqSwSD1HjoUSSrLEZX7r6eVaMHqxHaz
-   +TrIMizLP9HjEgtffhvhWYC3G4e3vRExNtCNpsDDNxWTN6Ocq2XBq+lsN
-   1rmHB4v/kwvdF+hLPVOQWE+UmvQdedIKN0dHuzdKkLTiuCq/a9/tbiYNM
-   eeoIG2OIbWfIRbnxgupi58VoDfHrjAv6Z/811DdQxe7UtkR27tDIFYvKh
-   H5M9OiVkOsx8FjfWg1GQ8G3jzBqYlXtoAG5rcSFcB3THkW0ORrCM4QkMg
-   A==;
-X-CSE-ConnectionGUID: FZgUxdPUT0eEPPTwy4cncw==
-X-CSE-MsgGUID: cuvJ1L4uS4qeAVJXzgqTHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="50000204"
-X-IronPort-AV: E=Sophos;i="6.15,310,1739865600"; 
-   d="scan'208";a="50000204"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 17:26:16 -0700
-X-CSE-ConnectionGUID: lKjs1kwWQbCb34sNPEDhcg==
-X-CSE-MsgGUID: 54MpCOBDRCW4FlK24TMHFQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,310,1739865600"; 
-   d="scan'208";a="146343293"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2025 17:26:16 -0700
-Date: Fri, 23 May 2025 17:31:20 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "x86@kernel.org" <x86@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Chris Oo <cho@microsoft.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>
-Subject: Re: [PATCH v3 13/13] x86/hyperv/vtl: Use the wakeup mailbox to boot
- secondary CPUs
-Message-ID: <20250524003120.GA15882@ranerica-svr.sc.intel.com>
-References: <20250503191515.24041-1-ricardo.neri-calderon@linux.intel.com>
- <20250503191515.24041-14-ricardo.neri-calderon@linux.intel.com>
- <SN6PR02MB4157F93812247213DFA922ECD49FA@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1748046943; c=relaxed/simple;
+	bh=zYGyIK9NVY/25bRw2E3+fN76lGbRzZz30IN/ZoYMvIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hUxKVbpNjReyz7ModBVqosXl3//yRkyZaac1b9zyE+TybhAnNR/QYVMd9r+EilW3rQADBNoRPrlsZfrEs6g10zZOMydiyV+72CS3wnJ6UE5oXIJIPGRMFz2sumPKihbAVFko3OSn70kMO1UO8pLspvaF92eDdnlmrYMLLQThVKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y8zr+2VT; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ad1d1f57a01so65988366b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 May 2025 17:35:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748046940; x=1748651740; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0myy5A0H8CZ/tHTIcBrkkpPXZ1U3g2SY6VD7SEMtej0=;
+        b=y8zr+2VTlK356YLRKIx/I4w4EB7+dxnZ+tpQSgZlJNJ3w5DyfNzWMFaGc7x+FoZgvA
+         y1WxQNfkHpgilOjV5p0O1nyfPSFo1WmVKUxTkpiVsAAL0uBzA7E3d3/9Olx9mPwr+lbP
+         Tz0QzrpQ2I1vvFZo3zCi8FGEG7BtWJ+DCmIn5F7OBIetgxu9OMDdk/MQXL4Ggh1YcsmY
+         c/WMrxA6F1QVSzSHSz3G5URRTFWp64rg4Jp7HV6nk7r0BgRuqPoyGQb1EiGFe6qf28jN
+         oLyfAKz1GSaiDIF6f9kxUQyT3dSll7k9IRbn6VMuPmlJa79zmIj/FoZA6vBBrPq+0Uvc
+         YfMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748046940; x=1748651740;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0myy5A0H8CZ/tHTIcBrkkpPXZ1U3g2SY6VD7SEMtej0=;
+        b=JF/EICJAOevq7Od9Z+55p9hG/irv90q0dL7nKWITmHA9IFNjWF2jHDav7+vE8EbBxx
+         5YLWpw4ReUK7lpWu3uDUNvUBwHorr6vLL7sGb59wte2GBSfDJq9pBpm/ZAnHeJf32/Cp
+         Wtf7Ud4raQ7JW7Cq35VU2FymXx2Xoj/86Bof0IAW7YHZvwlp+XfwZnyZgJKcdaPqkkyM
+         NpqZYvdQJiuCgx/xgz4OM9LTUlmao9uwWNFKajSgGRGaibZznzi+gaORVaphF6t77BDv
+         xhop9TZq8/FF0HKym6IyAmPYQm/2rly2NN0iITP0GeKc0L0ZbbCW5rQkmY6C5H1NNoxQ
+         E6wA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcJRVc4n3t1pSVaEkL0UdAb6KBHsGfa2UYgPBw9QySLUt5jcApCbqImB2YWw/79WYztqFMPnlS8wWIg5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlnmB5yBzKp5JRZ0rn4tL01Wfu6iYyhGbdCzmKOh4vqzbm+zHA
+	hC3GhKjesgbgEbN2Bu4tD4y+2cjUEPgEsbA/ycXoeXtZCJpMW288rCFCjWQRmxSFCBJS4TK+vye
+	Dnoivpn5NdHH70NqshGwgOqeK7V6/k6FmtWIe/cc=
+X-Gm-Gg: ASbGncuwZ56dY7/ixMQzPjedjF+IppaFisyG0IYEWhh82J/oOxqvcGMfbKfQoPXZci3
+	PmGTbytlKffkCbtklm1ySRKxpVMtR3C/pI9gKcd48xkGJ+E9xBY0qI1v/Zu4+TKs8rxq5Bjf1yB
+	iCFjjrJpGVuhkD8afzJE8kXPAEDeP2eSZP/vjA+AG//mLyA9wXbDg=
+X-Google-Smtp-Source: AGHT+IH19xqd0tlHmy23sQkbaDTtvVOEjv+V8a3crAU7xcBuKeF+Hm0/MGHLQd7t1JJNK4xgTN2tD4Kxp7eJLOcQxfY=
+X-Received: by 2002:a17:907:96a8:b0:ad2:3f1f:7970 with SMTP id
+ a640c23a62f3a-ad85b0b290dmr101017666b.2.1748046939805; Fri, 23 May 2025
+ 17:35:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157F93812247213DFA922ECD49FA@SN6PR02MB4157.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <CAGG=3QU5Yi2AfHS_poi8SgmatedRg-X8Ct74FOCJUc9iJNPnhg@mail.gmail.com>
+ <2f6201d1-4e18-43ab-aadd-27643d57dab6@infradead.org> <CAGG=3QXQkJ6n0J1gZcgxfEb68NWN2y200ZCuxxDtqPRgWPci=A@mail.gmail.com>
+ <998f5987-12ea-4bdc-b86a-35b904a34acf@infradead.org>
+In-Reply-To: <998f5987-12ea-4bdc-b86a-35b904a34acf@infradead.org>
+From: Bill Wendling <morbo@google.com>
+Date: Fri, 23 May 2025 17:35:23 -0700
+X-Gm-Features: AX0GCFuR50JfWgLwPLNRmXhPGcsCUrEnP4cdjht7KlfTFEqM79_KuWvZq2WljCs
+Message-ID: <CAGG=3QVa6BgdtRknf3zY3tkguC1=FcMvNvz3fM8Ngywp0g_aRg@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: check for a NULL pointer before access
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 20, 2025 at 01:35:02AM +0000, Michael Kelley wrote:
-> From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com> Sent: Saturday, May 3, 2025 12:15 PM
-> > 
-> > The hypervisor is an untrusted entity for TDX guests. It cannot be used
-> > to boot secondary CPUs. The function hv_vtl_wakeup_secondary_cpu() cannot
-> > be used.
-> > 
-> > Instead, the virtual firmware boots the secondary CPUs and places them in
-> > a state to transfer control to the kernel using the wakeup mailbox.
-> > 
-> > The kernel updates the APIC callback wakeup_secondary_cpu_64() to use
-> > the mailbox if detected early during boot (enumerated via either an ACPI
-> > table or a DeviceTree node).
-> > 
-> > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-> > ---
-> > Changes since v2:
-> >  - Unconditionally use the wakeup mailbox in a TDX confidential VM.
-> >    (Michael).
-> >  - Edited the commit message for clarity.
-> > 
-> > Changes since v1:
-> >  - None
-> > ---
-> >  arch/x86/hyperv/hv_vtl.c | 10 +++++++++-
-> >  1 file changed, 9 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
-> > index cd48bedd21f0..30a5a0c156c1 100644
-> > --- a/arch/x86/hyperv/hv_vtl.c
-> > +++ b/arch/x86/hyperv/hv_vtl.c
-> > @@ -299,7 +299,15 @@ int __init hv_vtl_early_init(void)
-> >  		panic("XSAVE has to be disabled as it is not supported by this module.\n"
-> >  			  "Please add 'noxsave' to the kernel command line.\n");
-> > 
-> > -	apic_update_callback(wakeup_secondary_cpu_64, hv_vtl_wakeup_secondary_cpu);
-> > +	/*
-> > +	 * TDX confidential VMs do not trust the hypervisor and cannot use it to
-> > +	 * boot secondary CPUs. Instead, they will be booted using the wakeup
-> > +	 * mailbox if detected during boot. See setup_arch().
-> > +	 *
-> > +	 * There is no paravisor present if we are here.
-> > +	 */
-> > +	if (!hv_isolation_type_tdx())
-> > +		apic_update_callback(wakeup_secondary_cpu_64, hv_vtl_wakeup_secondary_cpu);
-> > 
-> >  	return 0;
-> >  }
-> > --
-> > 2.43.0
-> 
-> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+On Fri, May 23, 2025 at 4:48=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org=
+> wrote:
+> On 5/23/25 3:56 PM, Bill Wendling wrote:
+> > On Thu, May 22, 2025 at 5:16=E2=80=AFPM Randy Dunlap <rdunlap@infradead=
+.org> wrote:
+> >>
+> >> Hi,
+> >>
+> >> On 5/22/25 5:07 PM, Bill Wendling wrote:
+> >>> The call to 'prop_get_symbol' may return NULL in some cases. The if-t=
+hen
+> >>> statement accesses the returned value without checking if it's
+> >>> non-NULL. After inlining, the compiler may treat the conditional as
+> >>> 'undefined behavior', which the compiler may take the opportunity to =
+do
+> >>> whatever it wants with the UB path. This patch simply adds a check to
+> >>> ensure that 'def_sym' is non-NULL to avoid this behavior.
+> >>>
+> >>> Signed-off-by: Bill Wendling <morbo@google.com>
+> >>> ---
+> >>> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> >>> Cc: linux-kbuild@vger.kernel.org
+> >>> Cc: linux-kernel@vger.kernel.org
+> >>> ---
+> >>>  scripts/kconfig/symbol.c | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+> >>> index d57f8cbba291..9c5068225328 100644
+> >>> --- a/scripts/kconfig/symbol.c
+> >>> +++ b/scripts/kconfig/symbol.c
+> >>> @@ -272,7 +272,7 @@ struct symbol *sym_choice_default(struct menu *ch=
+oice)
+> >>>   if (prop->visible.tri =3D=3D no)
+> >>>   continue;
+> >>>   def_sym =3D prop_get_symbol(prop);
+> >>> - if (def_sym->visible !=3D no)
+> >>> + if (def_sym && def_sym->visible !=3D no)
+> >>>   return def_sym;
+> >>>   }
+> >>>
+> >>
+> >> The patch is missing the source file's indentation.
+> >> (spaces/tabs are lost)
+> >>
+> > Crud! My mailer borked. I sent v2 and it looks to have kept the whitesp=
+aces.
+>
+> I don't think v2 worked either.
+> See  https://lore.kernel.org/linux-kbuild/CAGG=3D3QXQkJ6n0J1gZcgxfEb68NWN=
+2y200ZCuxxDtqPRgWPci=3DA@mail.gmail.com/T/#mf64c7afd19235d3dee4e572f96ff769=
+36f921c6e
+>
+Goddamnit! I'll try again...
 
-Thank you very much for your review!
+-bw
 
