@@ -1,126 +1,79 @@
-Return-Path: <linux-kernel+bounces-661787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E2EBAC306E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 18:18:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8880AAC3075
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 18:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B2AF7B234D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 16:16:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 605809E395F
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 16:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E3D1EF0BE;
-	Sat, 24 May 2025 16:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="btM1Y3da"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661DB1E3762;
+	Sat, 24 May 2025 16:30:47 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C583E1DF27E;
-	Sat, 24 May 2025 16:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7748D155316
+	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 16:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748103475; cv=none; b=huURqQXm837tW3oJW9uQol/iQJ+XVJzbVShjQH9CgyKn9Te1zKkur5gOzdN080wgZGMwTG8qoC/VL7YJB4z+BUhPF+Wpy+5WezyCUQQr0zts1UH96HPHUbZsCB8UVqnxeTyoeM/SZbhVpZuzL5ER/mncj6GEON+X/ldnmbVSQ4g=
+	t=1748104247; cv=none; b=hLIpZ2+cGvdooAJyL94kwoJb/cZuo6xlA+VVc2zFQFgCC9SPGRoAvNIKU29FhSj9ZBVZ4BB8SvZxm0lity5C4SamHByErx6x4CdKOZSKhbevnSDm4tl920KrjZ1VouuTLOKcH+6HXWoGsaRBC8l94vf6TPR8gHViNQMH2C6Katk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748103475; c=relaxed/simple;
-	bh=2PqjOsTXHea2A1nlsV5lb1aiLBMHAEESuBIul4P5vps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o71hp0ZHPOa8fp/kYh5tfwK0CaJIcrvPqOmxMt5yN5s7nR0xrtKM9OIclmYTnifzhBhF/a/i4YPrQZEuzkp7hhRmm2tVoGyhRyB26mRyzkOZuwA5bH/4zSx0C1ZOnqdt6WTLHscoALUBYKeTjZCra3ddoghOtrdOhDKHJjocq2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=btM1Y3da; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5E94C4CEE4;
-	Sat, 24 May 2025 16:17:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1748103474;
-	bh=2PqjOsTXHea2A1nlsV5lb1aiLBMHAEESuBIul4P5vps=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=btM1Y3daMuWWZlxrePRGj1CxuuJv6HqWCWNijtb6BxknSYdVrzLiQ4OTzeMvlFGCR
-	 tzX0BOpmtPDjMpn8/Y+aQNe2AXCQ/Mv4ZwGowFqNmRooKpNv2pWE4j9KN7zSysXLwg
-	 d0hqtnbTuOmvcT+iRxwAx55T9RUPQKBtQDAVmYwI=
-Date: Sat, 24 May 2025 18:17:51 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Heikki Huttu <heissendo88@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] staging: vme_user: add missing includes
-Message-ID: <2025052448-overuse-demise-d090@gregkh>
-References: <aCZDHXJTyfJRseho@Lappari.v6.elisa-laajakaista.fi>
- <2025052136-backstab-dork-de2d@gregkh>
- <aDHvSicbJpYBY-dn@Lappari.v6.elisa-laajakaista.fi>
+	s=arc-20240116; t=1748104247; c=relaxed/simple;
+	bh=VlIuOj3yqA6xT9W8AMioaysDDLFidXIppXejjBGKu8I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=X8ZBrkPGAt9MyQlDG8hI2Hh5E3l6QSNihJmu7hHRfBgAgSayu83QLuCkxaiZVl/ZyO1vBdjdyQ0B4aEEhOfscPe8gOm4drF7/EBS4qDDcbVThk9yHk5bCc9sx+1d2Lyw+FN92bCtTD7wEiQOwAeihUihQemF0pLiaczOAzzCF/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-86a3d964d9fso167517939f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 09:30:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748104244; x=1748709044;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5EQMi9jbbkjjEIguqGROeTphB9f6GW9pujjtd3WC5z0=;
+        b=XPUzkToxk477tY2E8gHYQ3dGl9Zb716HH4IisyBY4vYSJkKMLfAaCxhj4iG4nmbanx
+         XPh8nRPehLwI0oI1qf2R57zf9565/c3v1aB45Z9vxxo3Ke7fvMd7ZI8MmwRqOtdlwR2f
+         IU7WvEpttMJygV+t1Cl5DJIuSVxbKdrL/KvqRC3pzIr4PjrrGjq/eacfXCYGdVGFjyDJ
+         4b7OuVPipQv/jfnLBOdwgAv36gNXe3HbeEGpDVHVIRnc8TR6wnthRnJR38SkjJ1fNn2x
+         vT0kb7wbHVJxr5Qrq8ugrJq05ZIV3AAWqzK6C9rm3OFoYMwRLUOHT/zFbQJu04XSLOw3
+         JcbQ==
+X-Gm-Message-State: AOJu0Yx8Als8G2zPXtEf7n/mB4gnlMEUhBDXN6L65LbVWHbsElvtOCPf
+	/P3G/Elb4ZKI7l56n4Cp+ypWYd+5UZvB4Gbx4xUFXHZnCnaANiq1iP9dWQ2ltSUcEEvc9KJ394k
+	nI67GFCU8LLP7tBk7xk1UQ/7xRiqQhIvcZUUPHtp5lvCA7vBTezT5pRheaVY=
+X-Google-Smtp-Source: AGHT+IFtkOFDKM5WKHeA/SIEbVazVKlekmO1CJpEoOvZ8hokZEpdWqz6Y5IzbWi/Irqx066MisqXdQS1hTd/AZWM1Vy7GVqi2PBC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aDHvSicbJpYBY-dn@Lappari.v6.elisa-laajakaista.fi>
+X-Received: by 2002:a05:6602:7518:b0:867:16f4:5254 with SMTP id
+ ca18e2360f4ac-86cbb6c2317mr420317039f.6.1748104244554; Sat, 24 May 2025
+ 09:30:44 -0700 (PDT)
+Date: Sat, 24 May 2025 09:30:44 -0700
+In-Reply-To: <6831265e.a70a0220.29d4a0.07f0.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6831f434.a70a0220.253bc2.0074.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [block?] [bcachefs?] kernel BUG in blk_mq_end_request
+From: syzbot <syzbot+a8f903ba15921696861d@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, May 24, 2025 at 07:09:46PM +0300, Heikki Huttu wrote:
-> Wed, May 21, 2025 at 01:43:24PM +0200, Greg KH kirjoitti:
-> > On Thu, May 15, 2025 at 10:40:13PM +0300, Heikki Huttu wrote:
-> > > Header files use u32, size_t, dma_addr_t, struct device, struct list_head.
-> > > Add direct includes to make the headers self-contained.
-> > > 
-> > > Signed-off-by: Heikki Huttu <heissendo88@gmail.com>
-> > > ---
-> > >  drivers/staging/vme_user/vme.h      | 5 +++++
-> > >  drivers/staging/vme_user/vme_user.h | 2 ++
-> > >  2 files changed, 7 insertions(+)
-> > > 
-> > > diff --git a/drivers/staging/vme_user/vme.h b/drivers/staging/vme_user/vme.h
-> > > index 7753e736f9fd..55499b240dc3 100644
-> > > --- a/drivers/staging/vme_user/vme.h
-> > > +++ b/drivers/staging/vme_user/vme.h
-> > > @@ -3,6 +3,11 @@
-> > >  #define _VME_H_
-> > >  
-> > >  #include <linux/bitops.h>
-> > > +#include <linux/types.h>
-> > > +#include <linux/device.h>
-> > > +#include <linux/list.h>
-> > > +#include <linux/mm.h>
-> > > +#include <linux/dma-mapping.h>
-> > 
-> > If you are going to add these, please do so in a sorted way.
-> > 
-> > But really, why is this needed at all?
-> > 
-> > >  
-> > >  /* Resource Type */
-> > >  enum vme_resource_type {
-> > > diff --git a/drivers/staging/vme_user/vme_user.h b/drivers/staging/vme_user/vme_user.h
-> > > index 19ecb05781cc..297b25fab164 100644
-> > > --- a/drivers/staging/vme_user/vme_user.h
-> > > +++ b/drivers/staging/vme_user/vme_user.h
-> > > @@ -2,6 +2,8 @@
-> > >  #ifndef _VME_USER_H_
-> > >  #define _VME_USER_H_
-> > >  
-> > > +#include <linux/types.h>
-> > 
-> > Same here, are you sure this is needed?
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> Hi Greg,
-> 
-> Thank you for the feedback.
-> 
-> I was under the impression that it's generally preferred to use direct includes to make headers self-contained and avoid relying on transitive includes.  
-> If I was mistaken, apologies — feel free to disregard this.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Generally, yes, it is a good idea, but if nothing is broken, adding
-additional .h files to other .h files is not a required change at all.
+***
 
-Are you doing this for all of the staging driver files?  Is this a goal
-to try to fix up more than just this one file?
+Subject: Re: [syzbot] [block?] [bcachefs?] kernel BUG in blk_mq_end_request
+Author: axboe@kernel.dk
 
-thanks,
+#syz set subsystems: bcachefs
 
-greg k-h
+-- 
+Jens Axboe
 
