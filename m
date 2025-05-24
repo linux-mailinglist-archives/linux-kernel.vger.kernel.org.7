@@ -1,167 +1,127 @@
-Return-Path: <linux-kernel+bounces-661690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A597AC2EE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 12:29:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D976AC2EF0
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 12:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6FF9A229F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 10:29:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4413D3A7976
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 10:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB7A1DE8AF;
-	Sat, 24 May 2025 10:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6E81DE8B3;
+	Sat, 24 May 2025 10:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RCXmTDft"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="SrtgbnFI"
+Received: from mail-244102.protonmail.ch (mail-244102.protonmail.ch [109.224.244.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7171A7AF7
-	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 10:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA93F19E806
+	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 10:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748082572; cv=none; b=BH2mQmJ1vDNkXO0Eighxh119ipufdGofaWNgpVFQmJX4KGIkzz0gEV71hcMthTxoIbdlSyvDx6NjYrcvWLJDxuPs3lxxMUYjisf0btOLLwNGCdEuqO/eoMZ0oygJ/poa/jYhytexVawBFShMgVi4JzOz858+HJtOePFfDruCqWc=
+	t=1748083285; cv=none; b=o/dYs6I8A9P0K2vs9vyRZa2l4+6ErJkkHYtxasX3NexZrF65bb6P9B0dkXl/T8A+1kDNS7MRHVuzGG0OCk05tS+ZDQw1COqTE/JQIUZsm1U2VNg8kGb2ADHIaqLXDUdAppQI2QqvUZlLpImekXUGP0nJ6RkpyQdb6doT3PgYTPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748082572; c=relaxed/simple;
-	bh=s6UiEN1Jm7OVCrzrD4ZPy3L4yqbPYUdJaL8UHsYSCNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OoL/8GNFjoChbkV6EeeqeiX64nySUT6ZvwQuCGY95vApS1Ftri/j/n0m+XOe7fJ7Z0df2uf0mlRvEJulPc/FlgwWAmzj+8Y0IGfLSWQnt82a+RXpJLYo9z25+BxRNKuhTsNyumylW6XD2y53LQRRTIO2YkHtEPYmHHcQhJ0hEEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RCXmTDft; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748082571; x=1779618571;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=s6UiEN1Jm7OVCrzrD4ZPy3L4yqbPYUdJaL8UHsYSCNY=;
-  b=RCXmTDftQCBmYUmiVN7O7vpaaXcoAtV29VxgDD2yOOOtsA3gqa5k7DDA
-   jMjQWnW+Tj5jYj/Hwe0K0Yzm2WLNpYuq6b5kXfD0OsXM1bfYH4MB76rSh
-   dGlAiWmCCETwTV72JayxXE5/vp9O1BOZZnivBun1wmdOBQ0g1PhvitMnc
-   JjesNxUUJVE/bscWmLQAaDXNmu3aUhhplikuRDVXSi/HvS+GY+kdNNYnL
-   Vy3fWRLWdXfElqFjglSMagKNOV3/Pgf3I9R8QGxs4lYnDUv6A/Gt4VgkA
-   P3b4YMug+f114n+N3MkRRuzyhnBi4l0iyts5iDx3uM2zNNc+v+1k6r9gG
-   g==;
-X-CSE-ConnectionGUID: +I/SBokaSCObzM07B3uaFw==
-X-CSE-MsgGUID: px75wd/oRIaO7CxxJxdXEg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="75522094"
-X-IronPort-AV: E=Sophos;i="6.15,311,1739865600"; 
-   d="scan'208";a="75522094"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2025 03:29:30 -0700
-X-CSE-ConnectionGUID: HrBfmwpQQvqMks20J/JY6g==
-X-CSE-MsgGUID: a+CwcV1LRRSjgimO27u1cw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,311,1739865600"; 
-   d="scan'208";a="146700425"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2025 03:29:25 -0700
-Date: Sat, 24 May 2025 13:29:22 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: Alexander Usyskin <alexander.usyskin@intel.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Karthik Poosa <karthik.poosa@intel.com>,
-	Reuven Abliyev <reuven.abliyev@intel.com>,
-	Oren Weil <oren.jer.weil@intel.com>, linux-mtd@lists.infradead.org,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 08/10] drm/xe/nvm: add on-die non-volatile memory
- device
-Message-ID: <aDGfgubuFfa3e0K_@black.fi.intel.com>
-References: <20250515133345.2805031-1-alexander.usyskin@intel.com>
- <20250515133345.2805031-9-alexander.usyskin@intel.com>
+	s=arc-20240116; t=1748083285; c=relaxed/simple;
+	bh=lsFtioseImBgHOQCJ/8wNlWF3Zh2XAqHF4Wf1kYgKMs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DLkM7tNSBZZz/FzGzm1iHruyuYe7CKeLkAS09EIGagBwq1lC1Nj0zbsH7CQJOtFjCyY+OPJCa55LIllqObkNVagMwO2UAfKihpA+EPOKPNWXgga/75U8fiwTQ4YANqztJUJfhsYWD5Kp+g3G88ecVxj/cPXUOiNt2J9Kzrg6egk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=SrtgbnFI; arc=none smtp.client-ip=109.224.244.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1748082862; x=1748342062;
+	bh=3utV04QVDNdgmlcQ0/F+/DRX6Wib0HgLdg3n7ShD7iY=;
+	h=From:Date:Subject:Message-Id:To:Cc:From:To:Cc:Date:Subject:
+	 Reply-To:Feedback-ID:Message-ID:BIMI-Selector:List-Unsubscribe:
+	 List-Unsubscribe-Post;
+	b=SrtgbnFIqZ0jF+TED7bsuMBaYN4YKev1Eg1GL+UnoKZ0RrRbKneAEpfrwiZN1pLIY
+	 b5sM+7UCD7OH1tqc2ybOHoPMgQjOslr3K/Tx9kpf+w1LuvD/Bj5Yovxgod9ZcJMRrr
+	 h4zdVoCNuBjZuPnkd+VillxeRf3d42wmEjFjPskFGc3mz1I9WdWFl+TBGNri5e7rI9
+	 l4ucd6BpnzgzB0QkmjdehzNfA9v0SITK5ovnnQmxihc2Bu0uE0yGEPMX5+qM/CiCxi
+	 6GdnVz34KDN0hbwEEybRJGRyl6+p5gd3LjfPb9bAXFWLHDpHApS0piiVt4jw0325mE
+	 x4xMnO+YOPd4g==
+X-Pm-Submission-Id: 4b4JL43xZ3zDNK
+From: Sean Nyekjaer <sean@geanix.com>
+Date: Sat, 24 May 2025 12:34:09 +0200
+Subject: [PATCH] iio: accel: fxls8962af: Fix use after free in
+ fxls8962af_fifo_flush
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250515133345.2805031-9-alexander.usyskin@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250524-fxlsrace-v1-1-dec506dc87ae@geanix.com>
+X-B4-Tracking: v=1; b=H4sIAKCgMWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDUyMT3bSKnOKixORU3TSTFCODVCPLtCQjSyWg8oKi1LTMCrBR0bG1tQA
+ mwpIQWgAAAA==
+X-Change-ID: 20250524-fxlsrace-f4d20e29fb29
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>
+X-Mailer: b4 0.14.2
 
-On Thu, May 15, 2025 at 04:33:43PM +0300, Alexander Usyskin wrote:
-> Enable access to internal non-volatile memory on DGFX
-> with GSC/CSC devices via a child device.
-> The nvm child device is exposed via auxiliary bus.
+fxls8962af_fifo_flush() uses indio_dev->active_scan_mask (with
+iio_for_each_active_channel()) without making sure the indio_dev
+stays in buffer mode.
+There is a race if indio_dev exits buffer mode in the middle of the
+interrupt that flushes the fifo. Fix this by calling
+iio_device_claim_buffer_mode() to ensure indio_dev can't exit buffer
+mode during the flush.
 
-...
+Unable to handle kernel NULL pointer dereference at virtual address 00000000 when read
+[...]
+_find_first_bit_le from fxls8962af_fifo_flush+0x17c/0x290
+fxls8962af_fifo_flush from fxls8962af_interrupt+0x80/0x178
+fxls8962af_interrupt from irq_thread_fn+0x1c/0x7c
+irq_thread_fn from irq_thread+0x110/0x1f4
+irq_thread from kthread+0xe0/0xfc
+kthread from ret_from_fork+0x14/0x2c
 
-> +void xe_nvm_init(struct xe_device *xe)
-> +{
+Fixes: 79e3a5bdd9ef ("iio: accel: fxls8962af: add hw buffered sampling")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+---
+ drivers/iio/accel/fxls8962af-core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Same as patch 6, please handle errors.
+diff --git a/drivers/iio/accel/fxls8962af-core.c b/drivers/iio/accel/fxls8962af-core.c
+index 6d23da3e7aa22c61f2d9348bb91d70cc5719a732..7db83ebeea823173d79bf8ff484add16f575edfc 100644
+--- a/drivers/iio/accel/fxls8962af-core.c
++++ b/drivers/iio/accel/fxls8962af-core.c
+@@ -973,6 +973,9 @@ static int fxls8962af_fifo_flush(struct iio_dev *indio_dev)
+ 	if (ret)
+ 		return ret;
+ 
++	if (iio_device_claim_buffer_mode(indio_dev) < 0)
++		return 0;
++
+ 	/* Demux hw FIFO into kfifo. */
+ 	for (i = 0; i < count; i++) {
+ 		int j, bit;
+@@ -989,6 +992,8 @@ static int fxls8962af_fifo_flush(struct iio_dev *indio_dev)
+ 		tstamp += sample_period;
+ 	}
+ 
++	iio_device_release_buffer_mode(indio_dev);
++
+ 	return count;
+ }
+ 
 
-> +	struct pci_dev *pdev = to_pci_dev(xe->drm.dev);
-> +	struct intel_dg_nvm_dev *nvm;
-> +	struct auxiliary_device *aux_dev;
-> +	int ret;
-> +
-> +	if (!xe->info.has_gsc_nvm)
-> +		return;
-> +
-> +	/* No access to internal NVM from VFs */
-> +	if (IS_SRIOV_VF(xe))
-> +		return;
-> +
-> +	/* Nvm pointer should be NULL here */
-> +	if (WARN_ON(xe->nvm))
-> +		return;
-> +
-> +	xe->nvm = kzalloc(sizeof(*nvm), GFP_KERNEL);
-> +	if (!xe->nvm)
-> +		return;
-> +
-> +	nvm = xe->nvm;
-> +
-> +	nvm->writeable_override = false;
-> +	nvm->bar.parent = &pdev->resource[0];
-> +	nvm->bar.start = GEN12_GUNIT_NVM_BASE + pdev->resource[0].start;
-> +	nvm->bar.end = nvm->bar.start + GEN12_GUNIT_NVM_SIZE - 1;
+---
+base-commit: 5c3fcb36c92443a9a037683626a2e43d8825f783
+change-id: 20250524-fxlsrace-f4d20e29fb29
 
-Just out of curiosity, why off by one? Aren't ioremaps all PAGE_SIZEd?
+Best regards,
+-- 
+Sean Nyekjaer <sean@geanix.com>
 
-> +	nvm->bar.flags = IORESOURCE_MEM;
-> +	nvm->bar.desc = IORES_DESC_NONE;
-> +	nvm->regions = regions;
-> +
-> +	aux_dev = &nvm->aux_dev;
-> +
-> +	aux_dev->name = "nvm";
-> +	aux_dev->id = (pci_domain_nr(pdev->bus) << 16) |
-> +		       PCI_DEVID(pdev->bus->number, pdev->devfn);
-
-Ditto as patch 6.
-
-> +	aux_dev->dev.parent = &pdev->dev;
-> +	aux_dev->dev.release = xe_nvm_release_dev;
-> +
-> +	ret = auxiliary_device_init(aux_dev);
-> +	if (ret) {
-> +		drm_err(&xe->drm, "xe-nvm aux init failed %d\n", ret);
-> +		return;
-> +	}
-> +
-> +	ret = auxiliary_device_add(aux_dev);
-> +	if (ret) {
-> +		drm_err(&xe->drm, "xe-nvm aux add failed %d\n", ret);
-> +		auxiliary_device_uninit(aux_dev);
-> +		return;
-> +	}
-> +}
-
-Raag
 
