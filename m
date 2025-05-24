@@ -1,136 +1,122 @@
-Return-Path: <linux-kernel+bounces-661767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7C0AC300D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 17:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE3E3AC3010
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 17:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDF4E189E834
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 15:02:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54E44189F49D
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 15:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1280E17AE1D;
-	Sat, 24 May 2025 15:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37E21DACB1;
+	Sat, 24 May 2025 15:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mixaill.net header.i=@mixaill.net header.b="ckd/biK6"
-Received: from mail.mixaill.net (mail.mixaill.net [144.76.234.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="j4PHeoMW"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B554A143748
-	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 15:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.234.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3CA28EB
+	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 15:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748098929; cv=none; b=UhoU3DIu3LE/nyxAMYNFwkGapapaw06GFSnFtKyoWWmlzGqId9lGHRsmvFi8Atwr2AAAUllVwzdHzj9pr1b6A58kIyK7iYhIgbDYWdPvPE/JPqh6W4fkX+BqlU2h2hSS51AGspQ78d7E/SMUiS0MMr/quG2+rlQ8f98+0siK7Yk=
+	t=1748099031; cv=none; b=KKkZiexeCwaEGUaNQYGNbWBlvIthvlBaRAYR6MQpcS7Ef5nTrU+GZIFg/gboNeT4n/AKv+yzfqg4wCMGUsc4rDmGcaiyevcFZzBlBVxUjcC8TXrh/Mmt+53uCWJ+bmSVO0pZSOW0jUSAURF0yDDjTHMi9a2+KlUGP2MEzoLSOiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748098929; c=relaxed/simple;
-	bh=NNv+EXFIzxTrtcLp3+aZuZ0bMbaekAyoddMeWPXN8U4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bOovhzrKMO3y3owWNJUaRF4gSxCFGf3PpaqH3ga608Cgqq2GisROdx4T9gvrAjeycFd6MqrMXaPiCOs0AhgoXnnl8q5LG5Ytz5bjGnO7TsxnFbaGlMyZjGRwt0M6OAJQNIQSBzqVK0QbR9WOSHg+AdEcihiDB8Xm5fVy8hQDLMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mixaill.net; spf=pass smtp.mailfrom=mixaill.net; dkim=pass (2048-bit key) header.d=mixaill.net header.i=@mixaill.net header.b=ckd/biK6; arc=none smtp.client-ip=144.76.234.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mixaill.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mixaill.net
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0D41C3C0E6;
-	Sat, 24 May 2025 14:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mixaill.net; s=dkim;
-	t=1748098449; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=7NH8ryW0ZzZ3WLvIkVaP8T3bWJ7q/jL0EKkZ2GHY3Y8=;
-	b=ckd/biK6fQxf6+Bw6OzMDLj6EinNccKv/bLLm3rAXaRk02UjdwLu7cduyXkoKOGE9xAb9s
-	Hov1cR6ijDRY6lav0bNQpWIdRYDfBKjEWIsWj73t8mUe4wxS91GlE4bsqYBnpU41bDDYO4
-	F1vN/6fWtUqRmaqwzrrJHQHRQLantDCNFGUlb10WYgpC2b16u2nJ5ASPZHfxCGR9DIy7gK
-	O4ijAkdRIioDkUMN5teXaSkKdxl0ev/vhtXnsa7w8VDXuo4VWVRgvSTFuPHaOagCx6KiUn
-	XIz6h9vPXZg6zAEkhSPjVPZ6F1tJaYrjLrq+W3uUF+fJe9Hh7gSAy41qj5qzbw==
-From: Mikhail Paulyshka <me@mixaill.net>
-To: Borislav Petkov <bp@alien8.de>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mikhail Paulyshka <me@mixaill.net>
-Subject: [PATCH v2 1/1] x86/rdrand: disable RDSEED on AMD Cyan Skillfish
-Date: Sat, 24 May 2025 17:53:19 +0300
-Message-ID: <20250524145319.209075-1-me@mixaill.net>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1748099031; c=relaxed/simple;
+	bh=UVaw9tMZxV6aSXUUSxDjO6KMVYd3BavKv34NhO8h31E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pl5wrvneLsAMxK+GCYXpuX0/z57v7+SvcJCrjHNgReNnKXtbA/CkTircUd4uUNPAyYHuuEuAES033OITz2RWw9/ZVFNRbZIHIOwWf9vLgHWhUshgP6I1uVqdFVPpO9r5hbJyf0YP85hY8oWbcwPYyFWsstg0/IvV2SJiULInbCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=j4PHeoMW; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-476ac73c76fso10237011cf.0
+        for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 08:03:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar.org; s=google; t=1748099028; x=1748703828; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UVaw9tMZxV6aSXUUSxDjO6KMVYd3BavKv34NhO8h31E=;
+        b=j4PHeoMWRMwwSzfuJ5gHS5u7m6fZmtCFuDidh+aJ/JVDEdARHRbhLQVDWE7stc7jef
+         rGd5iP3YuMDCLdIrXMnhb+g48c30TFPkSfiPt8v/bbTpjd+8+uLYhss3nSgiSxPNpJfy
+         vKE2gw+/scsfTjY7RewpGt/PqDwjzV+8vCA9OWutvyfsct0YA69Vs7q3HtOKtyFERjdL
+         NlICUjqD8lumyXaURJosYQJ7b0e0/gA9aI0Qr/Aj0n/L2/K9KYOgdtZ6WlzFqRMQObcA
+         TyhMop7JDjzr3Ogf4ZKmZkoCs0DJQpHbhuyHnlaiXgEs/RiNzQ6On1bTPx3TkDXSrc4v
+         F++A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748099028; x=1748703828;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UVaw9tMZxV6aSXUUSxDjO6KMVYd3BavKv34NhO8h31E=;
+        b=P1rYamu0CIzen6mSn5dfw0+E268wP9YnIIGDxHZdLeMu9njEgFBBOs0bxjCnmLZF3k
+         m9PBNsSgdrABDSYPbhy0CGM2mkYU45qzvk/W5FkO40kFh3o9cDSGLWdPMPtx/aKY+s5I
+         WiAt9zOY8mGjcbcxv2w7hJEnDTi4bBG9fUUAEp2PaY8oQlkSy4NSy/CJ2ZzfguOidlgf
+         Njfn1wxuEiS+qmt7nvXOWu//AyjhyYizoO/2QxHTauRo7bh6HcvQsubM3v/pCZ3eOYkj
+         q4ei85kq7QATrVpeyVePE+37qNfBZ/0TfSR7fvpqWClMG5t3e8IbeMaz2e50NmUZfoR0
+         XG8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVcj8OigMV/8jpfrPDZ/VgOqfw8X4LdY8XoDQSSY5J1RoC60+1tOrHRqYc46pISv/ZXSzZP5/rM4tBAn30=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0c65Z79Qj5Efhwc+Ri0jngsRTTrhg5K7dfsXCXJidcIAzHRra
+	uZ9g69o5N+IlRHlEzuOZN2HBtQEbqIPZdXgMU8n4F56ziJLhb/vuOTgk1ceODrgZ2GKpVHYINwH
+	wL+4aHZ7Ir/Xo+Hz8qEk3scrTp65SSBso15nDcwNy/A==
+X-Gm-Gg: ASbGnctfdTy9fcCh9VPkuG7kw+DS4XH0RWxDaJuhO7rOeATvyj9lQ1Qmyfz9SHM0NNS
+	Xeqka8vmgKCCcg3vYenmixYqXra7IG2j+qy/0fhKv1ApZ2LqU31r00hHhZSWGj57QounbCfCkj5
+	v1l0unpcjxuKoRwUPSI275rOh2sjB/4dQ=
+X-Google-Smtp-Source: AGHT+IF3JrFc7SwJPPR/ex0cRrWFS44gKdyVerJqRqEogYjxU96eHZMhASxXrUy2AHUF4yrt3iR1aBtSTppfCawdUuQ=
+X-Received: by 2002:ac8:5c8d:0:b0:476:a03b:96ec with SMTP id
+ d75a77b69052e-49f4781f61fmr50461271cf.32.1748099028128; Sat, 24 May 2025
+ 08:03:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20250523150815.3066081-1-ashley.smith@collabora.com>
+In-Reply-To: <20250523150815.3066081-1-ashley.smith@collabora.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Sat, 24 May 2025 16:03:37 +0100
+X-Gm-Features: AX0GCFtvxeP45UVauxma2CtR9gOBHxAzOl0x4iOpXOifVzICZvXpap9pkjQSMr8
+Message-ID: <CAPj87rOw2UrabPVHBw0ymJEV3LZ29vzL5KK9T2K0znoEyDYeaw@mail.gmail.com>
+Subject: Re: [PATCH v4] drm/panthor: Make the timeout per-queue instead of per-job
+To: Ashley Smith <ashley.smith@collabora.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Heiko Stuebner <heiko@sntech.de>, 
+	kernel@collabora.com, Daniel Stone <daniels@collabora.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-AMD Cyan Skillfish (Family 17h, Model 47h, Stepping 0h) has an
-error that causes RDSEED to always return 0xffffffff, while RDRAND
-works correctly.
+Hi Ashley,
 
-This patch masks the RDSEED cap for this CPU so that both
-/proc/cpuinfo and direct CPUID read report RDSEED as unavailable.
+On Fri, 23 May 2025 at 16:10, Ashley Smith <ashley.smith@collabora.com> wrote:
+> The timeout logic provided by drm_sched leads to races when we try
+> to suspend it while the drm_sched workqueue queues more jobs. Let's
+> overhaul the timeout handling in panthor to have our own delayed work
+> that's resumed/suspended when a group is resumed/suspended. When an
+> actual timeout occurs, we call drm_sched_fault() to report it
+> through drm_sched, still. But otherwise, the drm_sched timeout is
+> disabled (set to MAX_SCHEDULE_TIMEOUT), which leaves us in control of
+> how we protect modifications on the timer.
+>
+> One issue seems to be when we call drm_sched_suspend_timeout() from
+> both queue_run_job() and tick_work() which could lead to races due to
+> drm_sched_suspend_timeout() not having a lock. Another issue seems to
+> be in queue_run_job() if the group is not scheduled, we suspend the
+> timeout again which undoes what drm_sched_job_begin() did when calling
+> drm_sched_start_timeout(). So the timeout does not reset when a job
+> is finished.
+>
+> Co-developed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Tested-by: Daniel Stone <daniels@collabora.com>
+> Fixes: de8548813824 ("drm/panthor: Add the scheduler logical block")
 
+Unfortunately I have to revoke my T-b as we're seeing a pile of
+failures in a CI stress test with this, e.g.
+https://gitlab.freedesktop.org/daniels/mesa/-/jobs/77004047
 
-v2:
-  * Limit changes to AMD Cyan Skillfish
-  * Replace the runtime RDSEED sanity check with a simple
-    family/model/stepping match
-
-Signed-off-by: Mikhail Paulyshka <me@mixaill.net>
----
- arch/x86/include/asm/msr-index.h       | 1 +
- arch/x86/kernel/cpu/rdrand.c           | 9 +++++++++
- tools/arch/x86/include/asm/msr-index.h | 1 +
- 3 files changed, 11 insertions(+)
-
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index e7d2f460fcc6..2333f4e7bc2f 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -624,6 +624,7 @@
- #define MSR_AMD64_OSVW_STATUS		0xc0010141
- #define MSR_AMD_PPIN_CTL		0xc00102f0
- #define MSR_AMD_PPIN			0xc00102f1
-+#define MSR_AMD64_CPUID_FN_7		0xc0011002
- #define MSR_AMD64_CPUID_FN_1		0xc0011004
- #define MSR_AMD64_LS_CFG		0xc0011020
- #define MSR_AMD64_DC_CFG		0xc0011022
-diff --git a/arch/x86/kernel/cpu/rdrand.c b/arch/x86/kernel/cpu/rdrand.c
-index eeac00d20926..c474d0a5c317 100644
---- a/arch/x86/kernel/cpu/rdrand.c
-+++ b/arch/x86/kernel/cpu/rdrand.c
-@@ -11,6 +11,7 @@
- #include <asm/processor.h>
- #include <asm/archrandom.h>
- #include <asm/sections.h>
-+#include <asm/msr.h>
- 
- /*
-  * RDRAND has Built-In-Self-Test (BIST) that runs on every invocation.
-@@ -47,4 +48,12 @@ void x86_init_rdrand(struct cpuinfo_x86 *c)
- 		clear_cpu_cap(c, X86_FEATURE_RDSEED);
- 		pr_emerg("RDRAND is not reliable on this platform; disabling.\n");
- 	}
-+
-+	/* disable RDSEED on AMD Cyan Skillfish because of hw bug */
-+	if (c->x86_vendor == X86_VENDOR_AMD && c->x86 == 0x17 &&
-+	    c->x86_model == 0x47 && c->x86_stepping == 0x0) {
-+		clear_cpu_cap(c, X86_FEATURE_RDSEED);
-+		msr_clear_bit(MSR_AMD64_CPUID_FN_7, 18);
-+		pr_emerg("RDSEED is not reliable on this platform; disabling.\n");
-+	}
- }
-diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
-index e6134ef2263d..8b48a54b627a 100644
---- a/tools/arch/x86/include/asm/msr-index.h
-+++ b/tools/arch/x86/include/asm/msr-index.h
-@@ -616,6 +616,7 @@
- #define MSR_AMD64_OSVW_STATUS		0xc0010141
- #define MSR_AMD_PPIN_CTL		0xc00102f0
- #define MSR_AMD_PPIN			0xc00102f1
-+#define MSR_AMD64_CPUID_FN_7		0xc0011002
- #define MSR_AMD64_CPUID_FN_1		0xc0011004
- #define MSR_AMD64_LS_CFG		0xc0011020
- #define MSR_AMD64_DC_CFG		0xc0011022
--- 
-2.49.0
-
+Cheers,
+Daniel
 
