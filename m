@@ -1,101 +1,100 @@
-Return-Path: <linux-kernel+bounces-661671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB72DAC2EB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 12:04:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E21AC2EB7
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 12:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0CBC4A68DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 10:04:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1376D4A6844
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 10:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FA2195811;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17A11A23A0;
 	Sat, 24 May 2025 10:04:36 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD0D15E5DC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119D054670
 	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 10:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748081076; cv=none; b=fq1umIifBqzM9bWqiXzsUqZogYlSdARYeiskK/JoZVt2Llt6UNxhjewLBUtci/a2TR/3ZjbSvp5ciD6QscwDXaKHQews5JBe+4Gss8Jz3emf3xNU03oFvB8WYTPW5W2NOXhKAkJlZzw4NaMmMPfDcDGpN68vam+baNgBVeKTM4Q=
+	t=1748081076; cv=none; b=tzBuZZMNSKjSiEMX6uZ3vdoYO0h4FCAS4f5HU+uO11LcwFnFKimiDnsq+HM2n46npMOGabVmM42RdAkOXs35vgpZTQTHZHRq+TgsJZsJA1dZS89nxYH+FeRPIe+pZxtND3HIAj/miE/ipx8l9yCyLo8OTJKNSdhQozqx8onDEPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1748081076; c=relaxed/simple;
-	bh=YE0dJS9svB9M9fzhw751Oe1ex9zoXYrkjUG0HzTjxy4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BBWKEyzk1zPg3T+gqYvNpeM0TnoXIiP7F+H//YWe7rja9xRKlZsHh2HTi95RpsZ9tEbCDx+wD8P91SqKWySg4FyHrdBHe5P0u6Lja5cTqtjvoAt1i6aMvhuMtoZHHrgln3ktssnjM3mr37YeO/ji4oEwPG3UD/L09eFizczqdXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+	bh=e5FAItjOUVgu208JXZ6Q6IRZJFER/+U3nwpQKrSjQls=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=T5D22EdKgUxt3dLggTiQ73N484e6zyHyF98pa9MfCbNQL4WUNfDmHR2qaRvN8upoRKfPsiYI5HLQ3XqtXhn5ee/EnscqdDrmMUbHsS6OPpPCHcrwiF3xkDCF/ozImbNJyk3HxeFCrehOMzGqdFe8TisQ7v+nKnPt2VgVhX37PyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-85b4ee2e69bso81903139f.2
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85b3b781313so121568739f.1
         for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 03:04:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1748081074; x=1748685874;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HAc0mmE9bReS8z2dxQkGtRCS8/DZ/DDGPklgKqkl3Sg=;
-        b=KwFXOlx+L4uoxy2pb8cUa8KlyZkrvxEFN6SR1bphbOsPOas73ykPmkaOyKMszAg88K
-         KDutNl9FJIAwZU6BhPxBNPFOPd3JGwhcHrRnla1cD84fMJ2+Bz0v+3lgZyFHAEo/ChNx
-         Z6wZe/ECyqxrpNvnX/JkdL5TLuvbV5us/TZ6JzVw1MSXYjbRfvnX7joE0C5IOxkODflL
-         AhwSTic8AWuxBrQKJf3YdOc77DjKvDhQY06jj+beJdJ5onzJeMGqqSyziFY/laU0d9rx
-         0vcqzY4cAld30cA3k0kQz2otGx5Uv/FpjtolklPmL3Mj6J4ER4q3fDDiVVb6yhRg6ATi
-         hJ5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUDiZTw/Z19cGPgnJOvGXCsREw+FGULVvnKqqg9+/4+Zu9+Y3bMiJ3JXsTX7HSQ2rierMWrizjxgKI8RuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0parhfmhuhuCH1LAVVCFTxyvFDf7mmO1wWKB+f8j/iCuqEbb4
-	3yNFeCxF6RBOjHnzKSxB+9YezTs5hwBoT1xLU1uaxJJGVWY/vjK/9OHgl14o1bDO3s00HrDfsnf
-	fx31LW4CMHNmxGOOTo6GhkWaqOqvH0OwQBItmrZiSxw8Gv3dUF3jnp4Y4sUc=
-X-Google-Smtp-Source: AGHT+IGFrmrwXFnoxyWjlbSkg7VFBCvaU/Z80b5YHRvWkDjIevG6U1SAS7dH3++yT66xlRm1xhiAqAKwjEHtIosMpkWWA+h2OoSg
+        bh=m/oazIG9eIkKX1kLYtUBakGdZ2zpECZekm+C1pvoXJs=;
+        b=ie3IIvUYls3yOa+VVcwbKxnW4WMMg3uiecBPNgsTEJouK9LRF5VyFM6wkX/lR8DECD
+         YiF3BCAjpfZPYjDA7eRaYHpPZmXMHJQcHj9R9OfVNoCHRO7uyVXV1Xmz8dWM1ndS6aFf
+         SdWEmQUntBDe2jBHNM8vgI+NK8LcsbTk1X0Yh1204VmCeaSZk+fnHINEXydKuYzwN3TX
+         IH4XyGNQoSiB/iBV2e2ntW6nacwITDfhco8o+q8zJkVKjVmEEsFC+/PdVvmuWm2ge1s1
+         Q1bdrxtAE367XKYxsUAZO0dG2LS30PQA5zhRv5aLx/FWCOCqK49W1DTj8qVGlLTCkG2v
+         wiJw==
+X-Gm-Message-State: AOJu0YzX3Eh8ix94PcUD2YPJve5Tv6bqaZ/oyuBD10Q+mI2Ox/NOt+hB
+	BZzgZTtstB7MsdBZAmppE5pJ6oDrUKnxcFkBpbI8ZbvtShkkCNiOH08k7q8uVbhqG6cANj21iPu
+	JSZSZxj96QFuuuEapE8oW8nA1DAZEsaqWSWtl9fNumf1dZrkc3MKQo79cM2A=
+X-Google-Smtp-Source: AGHT+IHOMdPgdyMGDK6iaWwUFwI9jfCGRXgY/C/cohoWm3k23D8JclT3N2bpn6wT+HcDRh7YFR1xqy4KhpuGz/LeBypl8a9wzlnr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:721b:b0:864:740a:e81f with SMTP id
- ca18e2360f4ac-86cbb89ca1amr266965539f.11.1748081073775; Sat, 24 May 2025
- 03:04:33 -0700 (PDT)
-Date: Sat, 24 May 2025 03:04:33 -0700
+X-Received: by 2002:a05:6602:389a:b0:85d:b7a3:b84d with SMTP id
+ ca18e2360f4ac-86cbb8bee3emr210592539f.13.1748081074230; Sat, 24 May 2025
+ 03:04:34 -0700 (PDT)
+Date: Sat, 24 May 2025 03:04:34 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <683199b1.a70a0220.29d4a0.07f3.GAE@google.com>
-Subject: [syzbot] Monthly bcachefs report (May 2025)
-From: syzbot <syzbot+list157635e1f38de63ed752@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <683199b2.a70a0220.29d4a0.07f5.GAE@google.com>
+Subject: [syzbot] Monthly wireless report (May 2025)
+From: syzbot <syzbot+list1fcea8bbcf300c57bf70@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello bcachefs maintainers/developers,
+Hello wireless maintainers/developers,
 
-This is a 31-day syzbot report for the bcachefs subsystem.
+This is a 31-day syzbot report for the wireless subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/bcachefs
+https://syzkaller.appspot.com/upstream/s/wireless
 
-During the period, 7 new issues were detected and 1 were fixed.
-In total, 116 issues are still open and 179 have already been fixed.
+During the period, 4 new issues were detected and 1 were fixed.
+In total, 55 issues are still open and 158 have already been fixed.
 
 Some of the still happening issues:
 
 Ref  Crashes Repro Title
-<1>  30696   Yes   INFO: task hung in bch2_copygc_stop
-                   https://syzkaller.appspot.com/bug?extid=c6fd966ebbdea1e8ff08
-<2>  7781    Yes   INFO: task hung in __closure_sync
-                   https://syzkaller.appspot.com/bug?extid=7bf808f7fe4a6549f36e
-<3>  3839    Yes   WARNING in bch2_trans_srcu_unlock
-                   https://syzkaller.appspot.com/bug?extid=1e515cab343dbe5aa38a
-<4>  1342    Yes   INFO: task hung in __bch2_fs_stop
-                   https://syzkaller.appspot.com/bug?extid=6d3e28b33490b3085412
-<5>  1397    Yes   kernel BUG in bch2_btree_path_peek_slot
-                   https://syzkaller.appspot.com/bug?extid=3ebaf90b49bd97e920ee
-<6>  1218    Yes   INFO: task hung in bch2_journal_reclaim_thread (2)
-                   https://syzkaller.appspot.com/bug?extid=820dc3b465c69f766a57
-<7>  745     Yes   kernel BUG in bch2_quota_check_limit
-                   https://syzkaller.appspot.com/bug?extid=8364d1e040a88ed5657d
-<8>  646     Yes   INFO: task hung in btree_write_buffer_flush_seq
-                   https://syzkaller.appspot.com/bug?extid=cf3d1015b55ff73dcdc8
-<9>  422     Yes   WARNING in bch2_trans_put
-                   https://syzkaller.appspot.com/bug?extid=291aef749c5cbb9ca2fd
-<10> 326     Yes   WARNING in __bch2_truncate_folio
-                   https://syzkaller.appspot.com/bug?extid=3d11e35eeafe176a6c5b
+<1>  127535  Yes   WARNING in __ieee80211_beacon_get
+                   https://syzkaller.appspot.com/bug?extid=18c783c5cf6a781e3e2c
+<2>  10768   Yes   WARNING in rate_control_rate_init (3)
+                   https://syzkaller.appspot.com/bug?extid=9bdc0c5998ab45b05030
+<3>  8142    Yes   WARNING in __rate_control_send_low (3)
+                   https://syzkaller.appspot.com/bug?extid=34463a129786910405dd
+<4>  6632    Yes   WARNING in __cfg80211_ibss_joined (2)
+                   https://syzkaller.appspot.com/bug?extid=7f064ba1704c2466e36d
+<5>  1208    Yes   WARNING in ieee80211_start_next_roc
+                   https://syzkaller.appspot.com/bug?extid=c3a167b5615df4ccd7fb
+<6>  1129    Yes   INFO: task hung in rfkill_global_led_trigger_worker (3)
+                   https://syzkaller.appspot.com/bug?extid=50499e163bfa302dfe7b
+<7>  567     Yes   INFO: task hung in crda_timeout_work (8)
+                   https://syzkaller.appspot.com/bug?extid=d41f74db64598e0b5016
+<8>  511     Yes   INFO: task hung in reg_check_chans_work (7)
+                   https://syzkaller.appspot.com/bug?extid=a2de4763f84f61499210
+<9>  500     Yes   INFO: task hung in reg_process_self_managed_hints
+                   https://syzkaller.appspot.com/bug?extid=1f16507d9ec05f64210a
+<10> 427     No    WARNING in ieee80211_request_ibss_scan
+                   https://syzkaller.appspot.com/bug?extid=1634c5399e29d8b66789
 
 ---
 This report is generated by a bot. It may contain errors.
