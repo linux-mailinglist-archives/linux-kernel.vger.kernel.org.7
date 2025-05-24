@@ -1,112 +1,135 @@
-Return-Path: <linux-kernel+bounces-661672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E818AAC2EB5
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 12:04:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 932F7AC2EB9
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 12:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F6E3B0616
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 10:04:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B16581BC03E4
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 10:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD57619F11B;
-	Sat, 24 May 2025 10:04:36 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AEB19D8B2;
+	Sat, 24 May 2025 10:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="KXboK10M";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="em3n7pT1"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26851991CB
-	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 10:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DEE158DD4;
+	Sat, 24 May 2025 10:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748081076; cv=none; b=GNbcPZsRfvqIv6xCvmMzMpWu5gVO2qRjGWkst5A84bHT1zOWKuq+1HZ0m9mDXo3ocU6ednyOGGUUs5T3XNaUqjUT0+QQLSZQX9BYe3oyeByHMwwZhK2wqzedCc0WlGyX0vVHNLzZNoeej3OtcfZwvAF6n19Ny/YW6TeBo/iVsFk=
+	t=1748081098; cv=none; b=qBzoN1gSBeU/JWCv7WK5FRSRj6q5kH3pE836nvvtS1omqkTvJb9fuVC1lM/0d7zSUHxTXsrnETje2wSrrH3lG15uYEQEJ+GfHZxIzcLC4iX9k1TYtDoyO6JS7TzVr7haMzdrkMbP6bi4godQfjBrNxBH+K10tckKz5H2CnZiwok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748081076; c=relaxed/simple;
-	bh=b1Uq1m/6fvr+jmGl93XzGvlmwruTnkA8n8VcvNy+mDo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LVwk4dvEe6Ni0qToAlyi321G+ljo6YA1JOGVK+Z9lGLGJRqCj24ogI54oTasBK/xEw+k47EF8on27iW6AffLozH5GAu3egFuOZndY4h9YnBCAzwclMffxcJn9u5y7FE41vYTyIuzNGbQProVZkyK474Uoyx4jhrnTuin5D4dbnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-861d6e340e2so59439539f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 03:04:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748081074; x=1748685874;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gaS3ynhDOu3Jf/8g2JUKVyz6qWFIrfoIhxFFX/+x46c=;
-        b=uQfno6jjyegs/Z3FnnAZVe1a3+8Huk6ZM9wldwfHHozs8WcLR7iJlRnuu3YKSJDtCO
-         RFY0MU9Zhzj6RW6Q5uk/t1wVoDUV9IQYmS/Mwq95imhtngqH+WIecHbHbfjP4blGXzeB
-         VDcy2/UQkn2bZoGRllLJnp8m6Q1yKntNnEFchVdoX5Ncw/vfRK0ZAInsXZ0G54YXxwpH
-         g1i5SJ1zhTcP3CrpeEzCklenq9qdKJvVZf6fv8PIhc6TqG1DNeDfMdxqP2d7UMhAlSN9
-         EXmd9IcDMQbIcFPGcMDv3lScyYzG23Mjpcc+TFuULOJGG8wF78HhFG4IDdJcyXzmWzNz
-         5yAw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/+kM+qxEoJ7EoJ9KS3x66uR5NYCoOJ+/8AcgTtkmkwJgpnieFaDRf4KePOaIIlOrAlQHXQpl5O7kRoRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQMIt2pir7q8nQPmnCuG1Hhw41z7m1TjAoJ58nIjSRAozYlD1B
-	VTpZJbLEsQxr/vASBpLTWrh3ohamjN7E+W3/nyz0+HwWvVFyjhBxNTFBlUzb8lKEfS6T9kY54jb
-	jOr7ENz40poo4W0PLtM7AxzOYcRLuD4dd5rjOp7pjFuOFvkxdRWMf9F6y0E4=
-X-Google-Smtp-Source: AGHT+IH7RuOUEBJR2A0sEwtFKn5Dzt1rLOhsdXhUdRO2GGdIpwBX65i8bNWFlLio15FPIdFeIQmBA+8r7pDP0i906VblBPbTZhkk
+	s=arc-20240116; t=1748081098; c=relaxed/simple;
+	bh=fxMnjZiNwhDbwnOGD8pLjX1z1xVnNDl1UnyCm9rdHOY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SXvDGaqrWb7lzmgXvgxUZ93HS0CNyZfe3RXIyb4Sw/a801QYAcuNbgPyYm+11P24xfkBRXSQQi87k1mpuHN6m2lbBqpU/A7cz+feHkxViBrIPdrGHj8oBFlNQZD3M2EraBrREEQ8uHLetl//247a4IxjCxTVqvUJrRVRwDnSrME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=KXboK10M; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=em3n7pT1; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 647101140117;
+	Sat, 24 May 2025 06:04:54 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Sat, 24 May 2025 06:04:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1748081094; x=1748167494; bh=OUnV5SMtE8saeflhpyRbB
+	3o2H/2nDtLfE+Juhhf1BM8=; b=KXboK10MeZtrNEwt197MsNZeVM1YY1zn8jOuN
+	C51z521N6Qg8M9YKJf2TE6efzdugzghI0P8U2rpKPfoN4zmT1PNyYi4saPLp+MM9
+	rTxpzQu3B+pT5f0Pnzca3zL/50Dbj5mmLYDm5pU59J9y7EQxFS4+C66pkC1k+5Ym
+	rw2jU3h7cgrowOOw3Zk9Dmlu+cUzoSP6AOeczwcgNtPqjDid7rfZToZUZOpBvY+7
+	5k5xEi5Hstj3U0WMAHVzuDf4LCs0UZdFaQf4AnJrPsjwqPB09JLYXW/1lB7vX0BX
+	nMeICi098woQAa1POOxEpf3Wrv79ejEsoatAQVhk2h0Ilr3/Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1748081094; x=1748167494; bh=OUnV5SMtE8saeflhpyRbB3o2H/2nDtLfE+J
+	uhhf1BM8=; b=em3n7pT1fqi1qpN9OUW8J2jLOenXzMsPYd6CSPCr4q4ke+YO3qw
+	l5qN2IGeklzlJci12ckFwYNLFG0jXCP2C/sOUJm0XOb/mKc3qgmRfqzu4XeImeqC
+	z66zu3HsUQ9rRblb5POpuDGsoIceZQuQ4mQ0LIWo+1yPogWhZSz23RhWzpw+jX1L
+	BmyxU8exgZPuECZYn+S+aTntgGginbulwm2Jxf5jMDgrz3dRjF6PBA379MM7IJXR
+	k8MwZEIcV8lcQrB5iUDVnkthuMFm6CfV5SOea4e00fFOwW6VvMigX8sBCuSkC95Z
+	9LWZQJ3/lCHx7O8Gn7E2jgQ+z3KuAJVwqIw==
+X-ME-Sender: <xms:xZkxaBWBcK5ilqi3P7PsRqmklniewulNwAkFJOY_mGlvg5bIifRDDQ>
+    <xme:xZkxaBnwMdd_chJG9-uhPkAGyJFdiFB4pj2Gt3Sq2KwDpsQtD7CkSbj0E1x-FuX7c
+    SLDY6cEeAPmad9Py7U>
+X-ME-Received: <xmr:xZkxaNYIZnqM_o7rHD-0jqEH8JtnC3YAw49EmJb3urg_2GHZmpYigYbC1KqCR1Hvqa3jEIoKDbM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdduudeggeculddtuddrgeefvddrtd
+    dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
+    fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
+    dtnecunecujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepnfhu
+    khgvucflohhnvghsuceolhhukhgvsehljhhonhgvshdruggvvheqnecuggftrfgrthhtvg
+    hrnhepiefhfeeuueeigffgtdefgeetgedufeefkeektdevudefhedtgfehkeejveejtdff
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghdptddurdhorhhgpdhgihhthhhusgdrtg
+    homhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehl
+    uhhkvgeslhhjohhnvghsrdguvghvpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmth
+    hpohhuthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrghtrdgtohhmpdhrtg
+    hpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdp
+    rhgtphhtthhopehplhgrthhfohhrmhdqughrihhvvghrqdigkeeisehvghgvrhdrkhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghm
+    ugdrtghomhdprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuh
+    igrdhinhhtvghlrdgtohhmpdhrtghpthhtoheplhhukhgvsehljhhonhgvshdruggvvh
+X-ME-Proxy: <xmx:xZkxaEVzjccCD7FcMsJ2SiVqnjGaz7Xl_pJ9zCMyqqVgdRjKQXFCMQ>
+    <xmx:xZkxaLnWqWIWhw0TntvfaEeVPhK2edMC83e94pOMX7PzZKuS-gFP1w>
+    <xmx:xZkxaBc_rXqjVyXAatGswQQK3rq6OE0tfog3A9mGlPt3mDemJAxtpA>
+    <xmx:xZkxaFEYRHBtD9MaY0CL28YHuY1AbgBzfPEJhsUTi1vAshuS9IH6Ag>
+    <xmx:xpkxaPFzGgcjFL5TwHEBauGv6PwDLsPM1on7BkNvFgf8iK_IE3o8mLfU>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 24 May 2025 06:04:52 -0400 (EDT)
+From: Luke Jones <luke@ljones.dev>
+To: linux-kernel@vger.kernel.org
+Cc: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	mario.limonciello@amd.com,
+	andriy.shevchenko@linux.intel.com,
+	Luke Jones <luke@ljones.dev>
+Subject: [PATCH v2 0/1] platform/x86: asus-wmi: fix build without CONFIG_SUSPEND
+Date: Sat, 24 May 2025 12:04:43 +0200
+Message-ID: <20250524100444.34370-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3a09:b0:85a:eecd:37b with SMTP id
- ca18e2360f4ac-86cbb88d2a5mr227413239f.11.1748081074020; Sat, 24 May 2025
- 03:04:34 -0700 (PDT)
-Date: Sat, 24 May 2025 03:04:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <683199b2.a70a0220.29d4a0.07f4.GAE@google.com>
-Subject: [syzbot] Monthly ntfs3 report (May 2025)
-From: syzbot <syzbot+list55b581808b23b36a03dc@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello ntfs3 maintainers/developers,
+Fixes "platform/x86: asus-wmi: Refactor Ally suspend/resume".
 
-This is a 31-day syzbot report for the ntfs3 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ntfs3
+Verified using the following details provided by test robot:
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 41 issues are still open and 64 have already been fixed.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git review-ilpo-next
+head:   83579675331059689e2869bf752ca9e17fadbd82
+commit: feea7bd6b02d43a794e3f065650d89cf8d8e8e59 [74/89] platform/x86: asus-wmi: Refactor Ally suspend/resume
+config: x86_64-buildonly-randconfig-004-20250509 (https://download.01.org/0day-ci/archive/20250509/202505090418.DaeaXe4i-lkp@intel.com/config)
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250509/202505090418.DaeaXe4i-lkp@intel.com/reproduce)
 
-Some of the still happening issues:
+I've not done anything fancy here and left asus_hotk_prepare() as is, as it is *incredibly* unlikely anyone would ever run a ROG Ally without suspend enabled.
 
-Ref  Crashes Repro Title
-<1>  19612   Yes   kernel BUG in dnotify_free_mark
-                   https://syzkaller.appspot.com/bug?extid=06cc05ddc896f12b7ec5
-<2>  13795   Yes   KMSAN: uninit-value in longest_match_std (2)
-                   https://syzkaller.appspot.com/bug?extid=08d8956768c96a2c52cf
-<3>  5580    Yes   possible deadlock in run_unpack_ex
-                   https://syzkaller.appspot.com/bug?extid=731b27ee9413ba859499
-<4>  4703    Yes   KASAN: out-of-bounds Write in end_buffer_read_sync
-                   https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
-<5>  4153    Yes   possible deadlock in ntfs_fiemap
-                   https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
-<6>  2971    Yes   possible deadlock in ntfs_file_mmap
-                   https://syzkaller.appspot.com/bug?extid=c1751b6739d83d70bb75
-<7>  2537    Yes   possible deadlock in mark_as_free_ex (2)
-                   https://syzkaller.appspot.com/bug?extid=8df514c431bd240c5644
-<8>  2155    Yes   possible deadlock in ntfs_look_for_free_space
-                   https://syzkaller.appspot.com/bug?extid=d27edf9f96ae85939222
-<9>  2151    Yes   possible deadlock in attr_data_get_block (2)
-                   https://syzkaller.appspot.com/bug?extid=262a71e9d2faf8747085
-<10> 438     Yes   possible deadlock in ntfs_fallocate
-                   https://syzkaller.appspot.com/bug?extid=adacb2b0c896bc427962
+Changelog:
+- V1:
+  - Move functions and struct together to be under one ifdef block
+  - Use wrapper functions for s2idle registration
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Luke Jones (1):
+  platform/x86: asus-wmi: fix build without CONFIG_SUSPEND
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+ drivers/platform/x86/asus-wmi.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+-- 
+2.49.0
 
-You may send multiple commands in a single email message.
 
