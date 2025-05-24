@@ -1,75 +1,58 @@
-Return-Path: <linux-kernel+bounces-661588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D18AC2D9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 07:56:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E746AC2DB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 08:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C97304E1A0E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 05:56:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC2857A476D
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 06:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BEC1ABEA5;
-	Sat, 24 May 2025 05:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b="GNxyWPDD"
-Received: from mail.nppct.ru (mail.nppct.ru [195.133.245.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84A81DE4C5;
+	Sat, 24 May 2025 06:18:18 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D00225D7
-	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 05:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.245.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BF519CC28;
+	Sat, 24 May 2025 06:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748066193; cv=none; b=nTYYw0xA37/vtAFK6WAhnwiWPHnHI/0egiaeDmCZ8Orqd1ZCtg0hN9wFx91PnPs/QLzih4xPluvsjo90anNFTRr8hvlZqP0Exu4DR2TEGwJGbiaLCpQR1TvJYFyNqFUAnpb1EoCXuCGkPUHLKGhcSXSlqiDhLPXeWoAfjzFP4z0=
+	t=1748067498; cv=none; b=kKSA+TXoRQli4jQlZ+PVTqE4yxLr3r6a7W4ez/rf+0W1POR8fW8Oso1YquJYtbmC+U8ppDHGQOqaF3R2nOvfFYCSrY9IzjTRFuWOTgfzQklfMcAu4dMS9nJl9KFY5ZjqOyij6+6TYKxe61NOQBdGr+MUTSTXFpxdTWg7G3+A5eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748066193; c=relaxed/simple;
-	bh=TIAcbocg9y14Fob0XJ0paDnaJ106oWT1NBjEKKkFB2Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NiUBerIupk7N0Op7ZHzY09yMJx976QMPEFRkhzOmHO/h36b4cNZngVUxvMrpRMCQDyysx4rIaAC5L54T5uJdnk53DtC7o0YixgJFNQB6BSsPWhgGjRUNZmp2kTlI2YLC2220fvOu9Va/UZ3dpSCvmmXJFu5Mk063oi6qy601R1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru; spf=pass smtp.mailfrom=nppct.ru; dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b=GNxyWPDD; arc=none smtp.client-ip=195.133.245.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nppct.ru
-Received: from mail.nppct.ru (localhost [127.0.0.1])
-	by mail.nppct.ru (Postfix) with ESMTP id 371471C118E
-	for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 08:56:17 +0300 (MSK)
-Authentication-Results: mail.nppct.ru (amavisd-new); dkim=pass (1024-bit key)
-	reason="pass (just generated, assumed good)" header.d=nppct.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nppct.ru; h=
-	content-transfer-encoding:mime-version:x-mailer:message-id:date
-	:date:subject:subject:to:from:from; s=dkim; t=1748066170; x=
-	1748930171; bh=TIAcbocg9y14Fob0XJ0paDnaJ106oWT1NBjEKKkFB2Q=; b=G
-	NxyWPDDEJ9glBzHe/UlkvPvHWN35lVNi+zkiykniX9h3ooE2r0fNLjjK28FU3OGf
-	udzpqOWT+AJkeBFxL1LZb73JSvnALcJCLuJMuJFNfFbf+/limspo3luQ9gA+dbU/
-	8E6wxr8MAXXUT3KQdu3DO0ORGWHPEXXBh9pgdFXfvY=
-X-Virus-Scanned: Debian amavisd-new at mail.nppct.ru
-Received: from mail.nppct.ru ([127.0.0.1])
-	by mail.nppct.ru (mail.nppct.ru [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id eymnnHZZlXSa for <linux-kernel@vger.kernel.org>;
-	Sat, 24 May 2025 08:56:10 +0300 (MSK)
-Received: from localhost.localdomain (unknown [87.249.24.51])
-	by mail.nppct.ru (Postfix) with ESMTPSA id 0F5151C114E;
-	Sat, 24 May 2025 08:55:56 +0300 (MSK)
-From: Alexey Nepomnyashih <sdl@nppct.ru>
-To: Alex Deucher <alexander.deucher@amd.com>
-Cc: Alexey Nepomnyashih <sdl@nppct.ru>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sunil Khatri <sunil.khatri@amd.com>,
-	Vitaly Prosyak <vitaly.prosyak@amd.com>,
-	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
-	Jiadong Zhu <Jiadong.Zhu@amd.com>,
-	Yang Wang <kevinyang.wang@amd.com>,
-	Prike Liang <Prike.Liang@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1748067498; c=relaxed/simple;
+	bh=Y0SFO+Ih8sAgmgLXIIkCaXyXJMFLWW6tGyo1EI2sVfM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MjJrfsnBjBviy9HC+N3c/kranyMc+1rZTnqVpi7b/EdIjkSL3DdgQP9n7cBwSd0TQcvXgCxf4Fmo7QkPSxqvnJRQyHw4AcSw88sLnVVHFWpJiD7hexGTVY0RQBvJf74EXRcNVvAhCtCltm7u2CJyHGJGmDMQ/d673RLUGUB0wc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4b4BfX70X6zKHMYZ;
+	Sat, 24 May 2025 14:18:12 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 754001A07BB;
+	Sat, 24 May 2025 14:18:11 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCnCl+dZDFo3etkNQ--.42979S4;
+	Sat, 24 May 2025 14:18:07 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: hch@lst.de,
+	xni@redhat.com,
+	colyli@kernel.org,
+	song@kernel.org,
+	yukuai3@huawei.com
+Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: fix NULL dereference in gfx_v9_0_kcq() and kiq_init_queue()
-Date: Sat, 24 May 2025 05:55:43 +0000
-Message-ID: <20250524055546.1001268-1-sdl@nppct.ru>
-X-Mailer: git-send-email 2.43.0
+	linux-raid@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH 00/23] md/llbitmap: md/md-llbitmap: introduce a new lockless bitmap
+Date: Sat, 24 May 2025 14:12:57 +0800
+Message-Id: <20250524061320.370630-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,63 +60,247 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnCl+dZDFo3etkNQ--.42979S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxKw17uFWUtw1xZw1fZF18Zrb_yoW3ur4Dp3
+	9Ivrn3Jrs8Jr40gw17A34IqFySqw4kJrnrtr1rA3yF9rn8Cr9Ivr48Way0q39rGry7JF1q
+	qF45tr9xGF1qgFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-A potential NULL pointer dereference may occur when accessing 
-tmp_mqd->cp_hqd_pq_control without verifying that tmp_mqd is non-NULL.
-This may happen if mqd_backup[mqd_idx] is unexpectedly NULL.
+From: Yu Kuai <yukuai3@huawei.com>
 
-Although a NULL check for mqd_backup[mqd_idx] existed previously, it was
-moved to a position after the dereference in a recent commit, which
-renders it ineffective.
+This is the formal version after previous RFC version:
 
-Add an explicit NULL check for tmp_mqd before dereferencing its members.
+https://lore.kernel.org/all/20250512011927.2809400-1-yukuai1@huaweicloud.com/
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+#### Background
 
-Cc: stable@vger.kernel.org # v5.13+
-Fixes: a330b52a9e59 ("drm/amdgpu: Init the cp MQD if it's not be initialized before")
-Signed-off-by: Alexey Nepomnyashih <sdl@nppct.ru>
----
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Redundant data is used to enhance data fault tolerance, and the storage
+method for redundant data vary depending on the RAID levels. And it's
+important to maintain the consistency of redundant data.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-index d7db4cb907ae..134cab16a00d 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-@@ -3817,10 +3817,9 @@ static int gfx_v9_0_kiq_init_queue(struct amdgpu_ring *ring)
- 	 * check mqd->cp_hqd_pq_control since this value should not be 0
- 	 */
- 	tmp_mqd = (struct v9_mqd *)adev->gfx.kiq[0].mqd_backup;
--	if (amdgpu_in_reset(adev) && tmp_mqd->cp_hqd_pq_control){
-+	if (amdgpu_in_reset(adev) && tmp_mqd && tmp_mqd->cp_hqd_pq_control) {
- 		/* for GPU_RESET case , reset MQD to a clean status */
--		if (adev->gfx.kiq[0].mqd_backup)
--			memcpy(mqd, adev->gfx.kiq[0].mqd_backup, sizeof(struct v9_mqd_allocation));
-+		memcpy(mqd, adev->gfx.kiq[0].mqd_backup, sizeof(struct v9_mqd_allocation));
- 
- 		/* reset ring buffer */
- 		ring->wptr = 0;
-@@ -3863,7 +3862,7 @@ static int gfx_v9_0_kcq_init_queue(struct amdgpu_ring *ring, bool restore)
- 	 */
- 	tmp_mqd = (struct v9_mqd *)adev->gfx.mec.mqd_backup[mqd_idx];
- 
--	if (!restore && (!tmp_mqd->cp_hqd_pq_control ||
-+	if (!restore && tmp_mqd && (!tmp_mqd->cp_hqd_pq_control ||
- 	    (!amdgpu_in_reset(adev) && !adev->in_suspend))) {
- 		memset((void *)mqd, 0, sizeof(struct v9_mqd_allocation));
- 		((struct v9_mqd_allocation *)mqd)->dynamic_cu_mask = 0xFFFFFFFF;
-@@ -3874,8 +3873,7 @@ static int gfx_v9_0_kcq_init_queue(struct amdgpu_ring *ring, bool restore)
- 		soc15_grbm_select(adev, 0, 0, 0, 0, 0);
- 		mutex_unlock(&adev->srbm_mutex);
- 
--		if (adev->gfx.mec.mqd_backup[mqd_idx])
--			memcpy(adev->gfx.mec.mqd_backup[mqd_idx], mqd, sizeof(struct v9_mqd_allocation));
-+		memcpy(adev->gfx.mec.mqd_backup[mqd_idx], mqd, sizeof(struct v9_mqd_allocation));
- 	} else {
- 		/* restore MQD to a clean status */
- 		if (adev->gfx.mec.mqd_backup[mqd_idx])
+Bitmap is used to record which data blocks have been synchronized and which
+ones need to be resynchronized or recovered. Each bit in the bitmap
+represents a segment of data in the array. When a bit is set, it indicates
+that the multiple redundant copies of that data segment may not be
+consistent. Data synchronization can be performed based on the bitmap after
+power failure or readding a disk. If there is no bitmap, a full disk
+synchronization is required.
+
+#### Key Features
+
+ - IO fastpath is lockless, if user issues lots of write IO to the same
+ bitmap bit in a short time, only the first write have additional overhead
+ to update bitmap bit, no additional overhead for the following writes;
+ - support only resync or recover written data, means in the case creating
+ new array or replacing with a new disk, there is no need to do a full disk
+ resync/recovery;
+
+#### Key Concept
+
+##### State Machine
+
+Each bit is one byte, contain 6 difference state, see llbitmap_state. And
+there are total 8 differenct actions, see llbitmap_action, can change state:
+
+llbitmap state machine: transitions between states
+
+|           | Startwrite | Startsync | Endsync | Abortsync|
+| --------- | ---------- | --------- | ------- | -------  |
+| Unwritten | Dirty      | x         | x       | x        |
+| Clean     | Dirty      | x         | x       | x        |
+| Dirty     | x          | x         | x       | x        |
+| NeedSync  | x          | Syncing   | x       | x        |
+| Syncing   | x          | Syncing   | Dirty   | NeedSync |
+
+|           | Reload   | Daemon | Discard   | Stale     |
+| --------- | -------- | ------ | --------- | --------- |
+| Unwritten | x        | x      | x         | x         |
+| Clean     | x        | x      | Unwritten | NeedSync  |
+| Dirty     | NeedSync | Clean  | Unwritten | NeedSync  |
+| NeedSync  | x        | x      | Unwritten | x         |
+| Syncing   | NeedSync | x      | Unwritten | NeedSync  |
+
+Typical scenarios:
+
+1) Create new array
+All bits will be set to Unwritten by default, if --assume-clean is set,
+all bits will be set to Clean instead.
+
+2) write data, raid1/raid10 have full copy of data, while raid456 doesn't and
+rely on xor data
+
+2.1) write new data to raid1/raid10:
+Unwritten --StartWrite--> Dirty
+
+2.2) write new data to raid456:
+Unwritten --StartWrite--> NeedSync
+
+Because the initial recover for raid456 is skipped, the xor data is not build
+yet, the bit must set to NeedSync first and after lazy initial recover is
+finished, the bit will finially set to Dirty(see 5.1 and 5.4);
+
+2.3) cover write
+Clean --StartWrite--> Dirty
+
+3) daemon, if the array is not degraded:
+Dirty --Daemon--> Clean
+
+For degraded array, the Dirty bit will never be cleared, prevent full disk
+recovery while readding a removed disk.
+
+4) discard
+{Clean, Dirty, NeedSync, Syncing} --Discard--> Unwritten
+
+5) resync and recover
+
+5.1) common process
+NeedSync --Startsync--> Syncing --Endsync--> Dirty --Daemon--> Clean
+
+5.2) resync after power failure
+Dirty --Reload--> NeedSync
+
+5.3) recover while replacing with a new disk
+By default, the old bitmap framework will recover all data, and llbitmap
+implement this by a new helper, see llbitmap_skip_sync_blocks:
+
+skip recover for bits other than dirty or clean;
+
+5.4) lazy initial recover for raid5:
+By default, the old bitmap framework will only allow new recover when there
+are spares(new disk), a new recovery flag MD_RECOVERY_LAZY_RECOVER is add
+to perform raid456 lazy recover for set bits(from 2.2).
+
+##### Bitmap IO
+
+##### Chunksize
+
+The default bitmap size is 128k, incluing 1k bitmap super block, and
+the default size of segment of data in the array each bit(chunksize) is 64k,
+and chunksize will adjust to twice the old size each time if the total number
+bits is not less than 127k.(see llbitmap_init)
+
+##### READ
+
+While creating bitmap, all pages will be allocated and read for llbitmap,
+there won't be read afterwards
+
+##### WRITE
+
+WRITE IO is divided into logical_block_size of the array, the dirty state
+of each block is tracked independently, for example:
+
+each page is 4k, contain 8 blocks; each block is 512 bytes contain 512 bit;
+
+| page0 | page1 | ... | page 31 |
+|       |
+|        \-----------------------\
+|                                |
+| block0 | block1 | ... | block 8|
+|        |
+|         \-----------------\
+|                            |
+| bit0 | bit1 | ... | bit511 |
+
+From IO path, if one bit is changed to Dirty or NeedSync, the corresponding
+subpage will be marked dirty, such block must write first before the IO is
+issued. This behaviour will affect IO performance, to reduce the impact, if
+multiple bits are changed in the same block in a short time, all bits in this
+block will be changed to Dirty/NeedSync, so that there won't be any overhead
+until daemon clears dirty bits.
+
+##### Dirty Bits syncronization
+
+IO fast path will set bits to dirty, and those dirty bits will be cleared
+by daemon after IO is done. llbitmap_page_ctl is used to synchronize between
+IO path and daemon;
+
+IO path:
+ 1) try to grab a reference, if succeed, set expire time after 5s and return;
+ 2) if failed to grab a reference, wait for daemon to finish clearing dirty
+ bits;
+
+Daemon(Daemon will be waken up every daemon_sleep seconds):
+For each page:
+ 1) check if page expired, if not skip this page; for expired page:
+ 2) suspend the page and wait for inflight write IO to be done;
+ 3) change dirty page to clean;
+ 4) resume the page;
+
+Performance Test:
+Simple fio randwrite test to build array with 20GB ramdisk in my VM:
+
+|                      | none      | bitmap    | llbitmap  |
+| -------------------- | --------- | --------- | --------- |
+| raid1                | 13.7MiB/s | 9696KiB/s | 19.5MiB/s |
+| raid1(assume clean)  | 19.5MiB/s | 11.9MiB/s | 19.5MiB/s |
+| raid10               | 21.9MiB/s | 11.6MiB/s | 27.8MiB/s |
+| raid10(assume clean) | 27.8MiB/s | 15.4MiB/s | 27.8MiB/s |
+| raid5                | 14.0MiB/s | 11.6MiB/s | 12.9MiB/s |
+| raid5(assume clean)  | 17.8MiB/s | 13.4MiB/s | 13.9MiB/s |
+
+For raid1/raid10 llbitmap can be better than none bitmap with background
+initial resync, and it's the same as none bitmap without it.
+
+Noted that llbitmap performance improvement for raid5 is not obvious,
+this is due to raid5 has many other performance bottleneck, perf
+results still shows that bitmap overhead will be much less.
+
+following branch for review or test:
+https://git.kernel.org/pub/scm/linux/kernel/git/yukuai/linux.git/log/?h=yukuai/md-llbitmap
+
+Yu Kuai (23):
+  md: add a new parameter 'offset' to md_super_write()
+  md: factor out a helper raid_is_456()
+  md/md-bitmap: cleanup bitmap_ops->startwrite()
+  md/md-bitmap: support discard for bitmap ops
+  md/md-bitmap: remove parameter slot from bitmap_create()
+  md/md-bitmap: add a new sysfs api bitmap_type
+  md/md-bitmap: delay registration of bitmap_ops until creating bitmap
+  md/md-bitmap: add a new method skip_sync_blocks() in bitmap_operations
+  md/md-bitmap: add a new method blocks_synced() in bitmap_operations
+  md: add a new recovery_flag MD_RECOVERY_LAZY_RECOVER
+  md/md-bitmap: make method bitmap_ops->daemon_work optional
+  md/md-bitmap: add macros for lockless bitmap
+  md/md-bitmap: fix dm-raid max_write_behind setting
+  md/dm-raid: remove max_write_behind setting limit
+  md/md-llbitmap: implement llbitmap IO
+  md/md-llbitmap: implement bit state machine
+  md/md-llbitmap: implement APIs for page level dirty bits
+    synchronization
+  md/md-llbitmap: implement APIs to mange bitmap lifetime
+  md/md-llbitmap: implement APIs to dirty bits and clear bits
+  md/md-llbitmap: implement APIs for sync_thread
+  md/md-llbitmap: implement all bitmap operations
+  md/md-llbitmap: implement sysfs APIs
+  md/md-llbitmap: add Kconfig
+
+ Documentation/admin-guide/md.rst |   80 +-
+ drivers/md/Kconfig               |   11 +
+ drivers/md/Makefile              |    2 +-
+ drivers/md/dm-raid.c             |    6 +-
+ drivers/md/md-bitmap.c           |   50 +-
+ drivers/md/md-bitmap.h           |   55 +-
+ drivers/md/md-llbitmap.c         | 1556 ++++++++++++++++++++++++++++++
+ drivers/md/md.c                  |  247 +++--
+ drivers/md/md.h                  |   20 +-
+ drivers/md/raid5.c               |    6 +
+ 10 files changed, 1901 insertions(+), 132 deletions(-)
+ create mode 100644 drivers/md/md-llbitmap.c
+
 -- 
-2.43.0
+2.39.2
 
 
