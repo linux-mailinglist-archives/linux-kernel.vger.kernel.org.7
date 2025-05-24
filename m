@@ -1,341 +1,249 @@
-Return-Path: <linux-kernel+bounces-661694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C6B4AC2EF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 12:51:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134C3AC2F02
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 12:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7276C1BA4557
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 10:51:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B865F4A01CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 May 2025 10:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7DA1E0DEA;
-	Sat, 24 May 2025 10:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F2B1DF971;
+	Sat, 24 May 2025 10:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="dkV7GpPc"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VBhwUHyl"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B74194A44;
-	Sat, 24 May 2025 10:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400A6158538;
+	Sat, 24 May 2025 10:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748083871; cv=none; b=bnTA0I1JBmrdylvUvyXEznK4APaQ41zvveu1KIPnm4kcoQrw4GTcezpjF2VSGnTAEPKo8vw9hwhFPHd/qyOGcuFtczB5UPIev590vNoa+eQfNgh1O33r/IDg0A9+rAzrN2yirss5OMjAl9Z0gctTLWsg3gRh4sX0v2FmcF/dDXc=
+	t=1748084219; cv=none; b=XgWYzjDNlUcU/MhVKDZkjUAX3j18m4Zt9Awq0RLAICiFgXrxAgTQZePKE0yr4duTBv79TN9ojJqWA4lQtXukVBeo+B28eDl5ad0anLfiHVZZIPKmyc+NAUPlTD2GN/NKjaKTw18Fnp9gW5L98/o49kyKCdbp2wmbsHe3cFiYUgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748083871; c=relaxed/simple;
-	bh=JFu+VS20vdBLFIFDEhWFhFFvqU64yvYzJ6PwaZnXicM=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tWqK2nkIIF0SmcdLOmZ9mq2UW4dZTziNZ210186TaRVQQ/MFeYmRjANC4L+FQg19a94VclaP39HffXylA9scZVt7ZNw65qVLyPAjFyhxo9qWwk36Y7tMIsYCwd9FqLShA7I64El1UzsfGAq90Zz9gEcLOvgRJiQ2LyNaozkXYmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=dkV7GpPc; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:
-	Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=lAAhk3vaszMpnBqCvw+YiMCd4Qo0RXVUB1sigsGC61U=; b=dkV7GpPcIe15ZJMkZ5AokG5mwl
-	hzoihBhR8BdFYGMdKFTeAQrSXvrPoqP3jyAeTc5jGellq5wHPiWJ3GBSOIEIRBIksetaVyGWy8jhB
-	bqRfNAcAXikWtOwuUvIo1L5WtC5wilUqPFJOdgcx5Of0Ta96fGWcWckv8mdnpHIuVHAhV9kYc/JZw
-	xRP0UcQCwMA/3WmPwX0/DrF2XLh7AquJsS4IF+hrI0+xxpzhGrmfmN5jXorbDWE/y4+ovKt4Roapi
-	pVO0CmkRlxUElvBZb2Dgh+TsBZjHa85TgbizqwDahbUOjo9Ol95i/KE1pahuY2u19JPP5SxDzTvfC
-	CQvTsfAQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uImSy-008WmO-2a;
-	Sat, 24 May 2025 18:51:01 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 24 May 2025 18:51:00 +0800
-Date: Sat, 24 May 2025 18:51:00 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Daniel Jordan <daniel.m.jordan@oracle.com>,
-	Dominik Grzegorzek <dominik.grzegorzek@oracle.com>,
-	Chen Ridong <chenridong@huawei.com>,
-	WangJinchao <wangjinchao@xfusion.com>
-Subject: [PATCH] padata: Fix pd UAF once and for all
-Message-ID: <aDGklJE5JKOpM7A_@gondor.apana.org.au>
+	s=arc-20240116; t=1748084219; c=relaxed/simple;
+	bh=xW4UpfuBziL/gZhDKVXbz2XDPF+4bwCyE2Xuj/OyAXE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YvOZzqXoP7UmLrciZnb1Gidi4s/6FdbwkAHlU8ueMRodmvZAU9uZvZ03TIIoBULfIw+JtHb/j86qHHBhURB0bgybXVNlA9b7IO1v90cZw1c23uosgNymysqxxiLEA6UoQyoISaxqCUcRydKsDOyUmk0TOVy56vmDGJtMR/qIxAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VBhwUHyl; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5A57E41C93;
+	Sat, 24 May 2025 10:56:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1748084213;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jKkfc/tlXpyo1Z+UHaxARdsVJgXhfMR49NFOHbGlX/Y=;
+	b=VBhwUHyli6OlmmcOVTw/stQEejTXeQ7PlB5glYgut/OAg5ezi9Ts4WVEtwq7Gshv8kM5oS
+	EWPMINm+xVSExF22NRranNYg88ReC6T4vjYSK9Y0aYTIFQInc8m6TeYuksK2rKCtyCzm6T
+	LxmS+zcEt6P4Y6MuofwfEphubvKwYSef5+0WqKaxiGRo9qkAZ1Fqe1kyaJ9xOkWi1CGck5
+	qOTsSNbmFl1eP5CbNUJe1zMOW/FahCWS0ie0Ki4bzluEsN+MiUNXnRwJqVUAf3TOsDXj7c
+	AAPymFtpF/6j3rcYCecEFPiBBFah9USeVuUYw8BrlYF4ACY61Q4y0SQ7EBFahg==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Subject: [PATCH net-next v12 00/13] Add support for PSE budget evaluation
+ strategy
+Date: Sat, 24 May 2025 12:56:02 +0200
+Message-Id: <20250524-feature_poe_port_prio-v12-0-d65fd61df7a7@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMKlMWgC/3XSzWrDMAwA4FcpPi/Dkv932nuMURxbXg1bUpIsd
+ JS++5zASFnqgw+28GdJ1pWNNGQa2cvhygaa85j7rmwAnw4snHz3QU2O5YAhR8kdiCaRn74HOp7
+ 7ZQ3T8TzkvvEKPEUjBFJg5e55oJQvK/zGOpqaji4Tey+RUx6nfvhZX5xhjS82cI4Ve4aGN8Yar
+ mQykqJ6bft++szdc+i/VnPGO0fwmoPFcUo5jUgkjd87YnMAoeaI4liBziWvnTZh78g/R/GSUM2
+ RxYnBgReBB7Bm76jNQbA1RxVHRC+tJpWilnvHbI7kVccs/UkqBUeluhD3jr1zQNccWxwpdRAuB
+ mGE3TvuzsHqv7vFAZMC50YZfJAP8A1SvJoQ8CIppY0rTXIquQcS3ElYHSFYZrFtfZLSELT4r7b
+ b7fYLaAlCXFMDAAA=
+To: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ Simon Horman <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, 
+ Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.15-dev-8cb71
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdduudehgeculddtuddrgeefvddrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtkeertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudfhveduteffgfekvdfhveehgeehtdelgefhffduiefffedvheefgeeiiedvkeetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgduleemkeehkeejmeejuddttdemvgeigegsmegtkegrsgemvggvkeemjegvieeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkeehkeejmeejuddttdemvgeigegsmegtkegrsgemvggvkeemjegvieekpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvkedprhgtphhtthhopehkhihlvgdrshifvghnshhonhesvghsthdrthgvtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdpr
+ hgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-There is a race condition/UAF in padata_reorder that goes back
-to the initial commit.  A reference count is taken at the start
-of the process in padata_do_parallel, and released at the end in
-padata_serial_worker.
+From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 
-This reference count is (and only is) required for padata_replace
-to function correctly.  If padata_replace is never called then
-there is no issue.
+This series brings support for budget evaluation strategy in the PSE
+subsystem. PSE controllers can set priorities to decide which ports should
+be turned off in case of special events like over-current.
 
-In the function padata_reorder which serves as the core of padata,
-as soon as padata is added to queue->serial.list, and the associated
-spin lock released, that padata may be processed and the reference
-count on pd would go away.
+This patch series adds support for two budget evaluation strategy.
+1. Static Method:
 
-Fix this by getting the next padata before the squeue->serial lock
-is released.
+   This method involves distributing power based on PD classification.
+   It’s straightforward and stable, the PSE core keeping track of the
+   budget and subtracting the power requested by each PD’s class.
 
-In order to make this possible, simplify padata_reorder by only
-calling it once the next padata arrives.
+   Advantages: Every PD gets its promised power at any time, which
+   guarantees reliability.
 
-Fixes: 16295bec6398 ("padata: Generic parallelization/serialization interface")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+   Disadvantages: PD classification steps are large, meaning devices
+   request much more power than they actually need. As a result, the power
+   supply may only operate at, say, 50% capacity, which is inefficient and
+   wastes money.
+
+2. Dynamic Method:
+
+   To address the inefficiencies of the static method, vendors like
+   Microchip have introduced dynamic power budgeting, as seen in the
+   PD692x0 firmware. This method monitors the current consumption per port
+   and subtracts it from the available power budget. When the budget is
+   exceeded, lower-priority ports are shut down.
+
+   Advantages: This method optimizes resource utilization, saving costs.
+
+   Disadvantages: Low-priority devices may experience instability.
+
+The UAPI allows adding support for software port priority mode managed from
+userspace later if needed.
+
+Patches 1-2: Add support for interrupt event report in PSE core, ethtool
+	     and ethtool specs.
+Patch 3: Adds support for interrupt and event report in TPS23881 driver.
+Patches 4,5: Add support for PSE power domain in PSE core and ethtool.
+Patches 6-8: Add support for budget evaluation strategy in PSE core,
+	     ethtool and ethtool specs.
+Patches 9-11: Add support for port priority and power supplies in PD692x0
+	      drivers.
+Patches 12,13: Add support for port priority in TPS23881 drivers.
+
+Signed-off-by: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 ---
- include/linux/padata.h |   3 -
- kernel/padata.c        | 135 ++++++++++++-----------------------------
- 2 files changed, 39 insertions(+), 99 deletions(-)
+Changes in v12:
+- Rebase on net-next.
+- Link to v11: https://lore.kernel.org/r/20250520-feature_poe_port_prio-v11-0-bbaf447e1b28@bootlin.com
 
-diff --git a/include/linux/padata.h b/include/linux/padata.h
-index 0146daf34430..b486c7359de2 100644
---- a/include/linux/padata.h
-+++ b/include/linux/padata.h
-@@ -91,7 +91,6 @@ struct padata_cpumask {
-  * @cpu: Next CPU to be processed.
-  * @cpumask: The cpumasks in use for parallel and serial workers.
-  * @reorder_work: work struct for reordering.
-- * @lock: Reorder lock.
-  */
- struct parallel_data {
- 	struct padata_shell		*ps;
-@@ -102,8 +101,6 @@ struct parallel_data {
- 	unsigned int			processed;
- 	int				cpu;
- 	struct padata_cpumask		cpumask;
--	struct work_struct		reorder_work;
--	spinlock_t                      ____cacheline_aligned lock;
- };
- 
- /**
-diff --git a/kernel/padata.c b/kernel/padata.c
-index 7eee94166357..45aeed9a0e55 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -261,20 +261,17 @@ EXPORT_SYMBOL(padata_do_parallel);
-  *   be parallel processed by another cpu and is not yet present in
-  *   the cpu's reorder queue.
-  */
--static struct padata_priv *padata_find_next(struct parallel_data *pd,
--					    bool remove_object)
-+static struct padata_priv *padata_find_next(struct parallel_data *pd, int cpu,
-+					    unsigned int processed)
- {
- 	struct padata_priv *padata;
- 	struct padata_list *reorder;
--	int cpu = pd->cpu;
- 
- 	reorder = per_cpu_ptr(pd->reorder_list, cpu);
- 
- 	spin_lock(&reorder->lock);
--	if (list_empty(&reorder->list)) {
--		spin_unlock(&reorder->lock);
--		return NULL;
--	}
-+	if (list_empty(&reorder->list))
-+		goto notfound;
- 
- 	padata = list_entry(reorder->list.next, struct padata_priv, list);
- 
-@@ -282,97 +279,52 @@ static struct padata_priv *padata_find_next(struct parallel_data *pd,
- 	 * Checks the rare case where two or more parallel jobs have hashed to
- 	 * the same CPU and one of the later ones finishes first.
- 	 */
--	if (padata->seq_nr != pd->processed) {
--		spin_unlock(&reorder->lock);
--		return NULL;
--	}
--
--	if (remove_object) {
--		list_del_init(&padata->list);
--		++pd->processed;
--		pd->cpu = cpumask_next_wrap(cpu, pd->cpumask.pcpu);
--	}
-+	if (padata->seq_nr != processed)
-+		goto notfound;
- 
-+	list_del_init(&padata->list);
- 	spin_unlock(&reorder->lock);
- 	return padata;
-+
-+notfound:
-+	pd->processed = processed;
-+	pd->cpu = cpu;
-+	spin_unlock(&reorder->lock);
-+	return NULL;
- }
- 
--static void padata_reorder(struct parallel_data *pd)
-+static void padata_reorder(struct padata_priv *padata)
- {
-+	struct parallel_data *pd = padata->pd;
- 	struct padata_instance *pinst = pd->ps->pinst;
--	int cb_cpu;
--	struct padata_priv *padata;
--	struct padata_serial_queue *squeue;
--	struct padata_list *reorder;
-+	unsigned int processed;
-+	int cpu;
- 
--	/*
--	 * We need to ensure that only one cpu can work on dequeueing of
--	 * the reorder queue the time. Calculating in which percpu reorder
--	 * queue the next object will arrive takes some time. A spinlock
--	 * would be highly contended. Also it is not clear in which order
--	 * the objects arrive to the reorder queues. So a cpu could wait to
--	 * get the lock just to notice that there is nothing to do at the
--	 * moment. Therefore we use a trylock and let the holder of the lock
--	 * care for all the objects enqueued during the holdtime of the lock.
--	 */
--	if (!spin_trylock_bh(&pd->lock))
--		return;
-+	processed = pd->processed;
-+	cpu = pd->cpu;
- 
--	while (1) {
--		padata = padata_find_next(pd, true);
-+	do {
-+		struct padata_serial_queue *squeue;
-+		int cb_cpu;
- 
--		/*
--		 * If the next object that needs serialization is parallel
--		 * processed by another cpu and is still on it's way to the
--		 * cpu's reorder queue, nothing to do for now.
--		 */
--		if (!padata)
--			break;
-+		cpu = cpumask_next_wrap(cpu, pd->cpumask.pcpu);
-+		processed++;
- 
- 		cb_cpu = padata->cb_cpu;
- 		squeue = per_cpu_ptr(pd->squeue, cb_cpu);
- 
- 		spin_lock(&squeue->serial.lock);
- 		list_add_tail(&padata->list, &squeue->serial.list);
--		spin_unlock(&squeue->serial.lock);
--
- 		queue_work_on(cb_cpu, pinst->serial_wq, &squeue->work);
--	}
- 
--	spin_unlock_bh(&pd->lock);
--
--	/*
--	 * The next object that needs serialization might have arrived to
--	 * the reorder queues in the meantime.
--	 *
--	 * Ensure reorder queue is read after pd->lock is dropped so we see
--	 * new objects from another task in padata_do_serial.  Pairs with
--	 * smp_mb in padata_do_serial.
--	 */
--	smp_mb();
--
--	reorder = per_cpu_ptr(pd->reorder_list, pd->cpu);
--	if (!list_empty(&reorder->list) && padata_find_next(pd, false)) {
- 		/*
--		 * Other context(eg. the padata_serial_worker) can finish the request.
--		 * To avoid UAF issue, add pd ref here, and put pd ref after reorder_work finish.
-+		 * If the next object that needs serialization is parallel
-+		 * processed by another cpu and is still on it's way to the
-+		 * cpu's reorder queue, end the loop.
- 		 */
--		padata_get_pd(pd);
--		if (!queue_work(pinst->serial_wq, &pd->reorder_work))
--			padata_put_pd(pd);
--	}
--}
--
--static void invoke_padata_reorder(struct work_struct *work)
--{
--	struct parallel_data *pd;
--
--	local_bh_disable();
--	pd = container_of(work, struct parallel_data, reorder_work);
--	padata_reorder(pd);
--	local_bh_enable();
--	/* Pairs with putting the reorder_work in the serial_wq */
--	padata_put_pd(pd);
-+		padata = padata_find_next(pd, cpu, processed);
-+		spin_unlock(&squeue->serial.lock);
-+	} while (padata);
- }
- 
- static void padata_serial_worker(struct work_struct *serial_work)
-@@ -423,6 +375,7 @@ void padata_do_serial(struct padata_priv *padata)
- 	struct padata_list *reorder = per_cpu_ptr(pd->reorder_list, hashed_cpu);
- 	struct padata_priv *cur;
- 	struct list_head *pos;
-+	bool gotit = true;
- 
- 	spin_lock(&reorder->lock);
- 	/* Sort in ascending order of sequence number. */
-@@ -432,17 +385,14 @@ void padata_do_serial(struct padata_priv *padata)
- 		if ((signed int)(cur->seq_nr - padata->seq_nr) < 0)
- 			break;
- 	}
--	list_add(&padata->list, pos);
-+	if (padata->seq_nr != pd->processed) {
-+		gotit = false;
-+		list_add(&padata->list, pos);
-+	}
- 	spin_unlock(&reorder->lock);
- 
--	/*
--	 * Ensure the addition to the reorder list is ordered correctly
--	 * with the trylock of pd->lock in padata_reorder.  Pairs with smp_mb
--	 * in padata_reorder.
--	 */
--	smp_mb();
--
--	padata_reorder(pd);
-+	if (gotit)
-+		padata_reorder(padata);
- }
- EXPORT_SYMBOL(padata_do_serial);
- 
-@@ -632,9 +582,7 @@ static struct parallel_data *padata_alloc_pd(struct padata_shell *ps)
- 	padata_init_squeues(pd);
- 	pd->seq_nr = -1;
- 	refcount_set(&pd->refcnt, 1);
--	spin_lock_init(&pd->lock);
- 	pd->cpu = cpumask_first(pd->cpumask.pcpu);
--	INIT_WORK(&pd->reorder_work, invoke_padata_reorder);
- 
- 	return pd;
- 
-@@ -1144,16 +1092,11 @@ void padata_free_shell(struct padata_shell *ps)
- 	if (!ps)
- 		return;
- 
--	/*
--	 * Wait for all _do_serial calls to finish to avoid touching
--	 * freed pd's and ps's.
--	 */
--	synchronize_rcu();
--
- 	mutex_lock(&ps->pinst->lock);
- 	list_del(&ps->list);
- 	pd = rcu_dereference_protected(ps->pd, 1);
--	padata_put_pd(pd);
-+	if (!WARN_ON(refcount_read(&pd->refcnt) != 1))
-+		padata_free_pd(pd);
- 	mutex_unlock(&ps->pinst->lock);
- 
- 	kfree(ps);
+Changes in v11:
+- Move the PSE events enum description fully in the ethtool spec.
+- Remove the first patch which was useless as not used.
+- Split the second patch to separate the attached_phydev introduction to
+  the PSE interrupt support.
+- Link to v10: https://lore.kernel.org/r/20250506-feature_poe_port_prio-v10-0-55679a4895f9@bootlin.com
 
-base-commit: b2df03ed4052e97126267e8c13ad4204ea6ba9b6
+Changes in v10:
+- Change patch 2 and 7 due to possible used after free scenario or
+  deadlock scenario. Move the PSE notification send management to a
+  workqueue to protect it from the deadlock scenario.
+- Link to v9: https://lore.kernel.org/r/20250422-feature_poe_port_prio-v9-0-417fc007572d@bootlin.com
+
+Changes in v9:
+- Add a missing check after skb creation.
+- Link to v8: https://lore.kernel.org/r/20250416-feature_poe_port_prio-v8-0-446c39dc3738@bootlin.com
+
+Changes in v8:
+- Rename a few functions for better clarity.
+- Add missing kref_init in PSE power domain support and a wrong error
+  check condition.
+- Link to v7: https://lore.kernel.org/r/20250408-feature_poe_port_prio-v7-0-9f5fc9e329cd@bootlin.com
+
+Changes in v7:
+- Add reference count and mutex lock for PSE power domain.
+- Add support to retry enabling port that failed to be powered in case of
+  port disconnection or priority change.
+- Use flags definition for pse events in ethtool specs.
+- Small changes in the TPS23881 driver.
+- Link to v6: https://lore.kernel.org/r/20250304-feature_poe_port_prio-v6-0-3dc0c5ebaf32@bootlin.com
+
+Changes in v6:
+- Few typos.
+- Use uint instead of bitset for PSE_EVENT.
+- Remove report of budget evaluation strategy in the uAPI.
+- Link to v5: https://lore.kernel.org/r/20250218-feature_poe_port_prio-v5-0-3da486e5fd64@bootlin.com
+
+Changes in v5:
+- Remove the first part of the patch series which tackled PSE
+  improvement and already gets merged:
+  https://lore.kernel.org/netdev/20250110-b4-feature_poe_arrange-v3-0-142279aedb94@bootlin.com/
+- Remove the PSE index support which is useless for now. The PSE power
+  domain ID is sufficient.
+- Add support for PD692x0 power supplies other than Vmain which was already
+  in the patch series.
+- Few other small fixes.
+- Link to v4: https://lore.kernel.org/r/20250103-feature_poe_port_prio-v4-0-dc91a3c0c187@bootlin.com
+
+Changes in v4:
+- Remove disconnection policy.
+- Rename port priority mode to budget evaluation strategy.
+- Add cosmetic changes in PSE core.
+- Add support for port priority in PD692x0 driver.
+- Link to v3: https://lore.kernel.org/r/20241121-feature_poe_port_prio-v3-0-83299fa6967c@bootlin.com
+
+Changes in v3:
+- Move power budget to regulator core.
+- Add disconnection policies with PIs using the same priority.
+- Several fixes on the TPS23881 drivers.
+- Several new cosmetic patches.
+- Link to v2: https://lore.kernel.org/r/20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com
+
+Changes in v2:
+- Rethink the port priority management.
+- Add PSE id.
+- Add support for PSE power domains.
+- Add get power budget regulator constraint.
+- Link to v1: https://lore.kernel.org/r/20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com
+
+---
+Kory Maincent (13):
+      net: pse-pd: Introduce attached_phydev to pse control
+      net: pse-pd: Add support for reporting events
+      net: pse-pd: tps23881: Add support for PSE events and interrupts
+      net: pse-pd: Add support for PSE power domains
+      net: ethtool: Add support for new power domains index description
+      net: pse-pd: Add helper to report hardware enable status of the PI
+      net: pse-pd: Add support for budget evaluation strategies
+      net: ethtool: Add PSE port priority support feature
+      net: pse-pd: pd692x0: Add support for PSE PI priority feature
+      net: pse-pd: pd692x0: Add support for controller and manager power supplies
+      dt-bindings: net: pse-pd: microchip,pd692x0: Add manager regulator supply
+      net: pse-pd: tps23881: Add support for static port priority feature
+      dt-bindings: net: pse-pd: ti,tps23881: Add interrupt description
+
+ .../bindings/net/pse-pd/microchip,pd692x0.yaml     |   22 +-
+ .../bindings/net/pse-pd/ti,tps23881.yaml           |    8 +
+ Documentation/netlink/specs/ethtool.yaml           |   76 ++
+ Documentation/networking/ethtool-netlink.rst       |   49 +
+ drivers/net/mdio/fwnode_mdio.c                     |   26 +-
+ drivers/net/pse-pd/pd692x0.c                       |  225 +++++
+ drivers/net/pse-pd/pse_core.c                      | 1068 +++++++++++++++++++-
+ drivers/net/pse-pd/tps23881.c                      |  403 +++++++-
+ include/linux/ethtool_netlink.h                    |    9 +
+ include/linux/pse-pd/pse.h                         |  108 +-
+ include/uapi/linux/ethtool_netlink_generated.h     |   40 +
+ net/ethtool/pse-pd.c                               |   63 ++
+ 12 files changed, 2043 insertions(+), 54 deletions(-)
+---
+base-commit: 573d51a171a9237a8ecd9921d9c69af74cc51ce8
+change-id: 20240913-feature_poe_port_prio-a51aed7332ec
+
+Best regards,
 -- 
-2.39.5
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
