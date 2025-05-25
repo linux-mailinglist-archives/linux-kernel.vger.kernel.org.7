@@ -1,111 +1,291 @@
-Return-Path: <linux-kernel+bounces-662084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEDD0AC3554
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 17:12:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F6EAC3536
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 16:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CE873AF849
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 15:11:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 469D87AC1FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 14:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12C21F4CAC;
-	Sun, 25 May 2025 15:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC811F4285;
+	Sun, 25 May 2025 14:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="TjvKoOi6"
-Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCgVI7Sm"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECAB1EA7EB
-	for <linux-kernel@vger.kernel.org>; Sun, 25 May 2025 15:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15E41F4E4F;
+	Sun, 25 May 2025 14:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748185930; cv=none; b=HdOTrItAY5tcXKqkQ/H+kZ7zEm5X995dMlhvQJF4L5n1BUuOlquHrwfoB/fgODH2SOQDF21Np9w+fvSiqnVaoOoPW9wsOV1SPthoBl8BhaSrH9V1ocKDofcRGzOHja1KU3KH+eC7iFnsMETJbgU+DZDmkXHBCDb8YyMBQMIdgjU=
+	t=1748184422; cv=none; b=g4Oz/Hxvu7bd3N+AgnQ5G9WtW3rlKEKyCgSh3FgpFTNVNbKBJ7BVek3yhDgkVjck0HuzmwEFcZoLfStxuMXY/ExUdchLB1HYSD3S7/fWhOUcKSQE8qYa1w1oSOzPB6xYxCutxoAAD4FBS+VQF/bt7mAcMqKXkpggZManO44sm9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748185930; c=relaxed/simple;
-	bh=Y8x/ns0vNBbtproy+Ajbgg8YW5b/gh7DUjgEMGDQLEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ErTlozdCTvYW9xb4uesYVji+b0zoQRk8yTz8CbsxTmGdEaPMfD/YJiRvdfia8QoHq6nv5TYlWHl7GibPmpFKV4EanFViE9qUsfeD6hQHPoVLq1Y2oa7O1tUC8NLYpI5SZXq5yW/hy27j502o9t3e0mInNCZX8h1lEhj7wQLo4P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=TjvKoOi6; arc=none smtp.client-ip=212.77.101.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 17448 invoked from network); 25 May 2025 16:45:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1748184324; bh=NNKevgor4yLaPnCDsqGOmTvb1Z4nfy6aCjVBQGo+NaI=;
-          h=From:To:Cc:Subject;
-          b=TjvKoOi6zbteFWKEljmja07sgbjJ+EwnuMb4wzy9MdYhl+98f8vzqZxDjfOHz96aD
-           6axIfIkI4EgiX3pJtz/YGXVKm+cnpvjm2peMFxz/tPPWUyiv10CrYhVNXPB7urCX4X
-           Zs8sQR3ik2CQ5ZDloi0woxbiWSketqneGR8/jtjjLf5P0Mk1JwOdBWB8KMwLvGuocn
-           hrTWYFfLvhJQdIqsKUWHAL4doWjkaBcDPh/hOszAm2sZWR6PjBiDmHrDWu50TW8gov
-           8TWn967pasw15o5+gPSnKwpaRPYqlU7x7dl84SEw6Nd/zt6tG07x3QRVbyOd/UfTcl
-           cj2/PsVHYmcxw==
-Received: from 89-64-9-114.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.9.114])
-          (envelope-sender <stf_xl@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <pchelkin@ispras.ru>; 25 May 2025 16:45:24 +0200
-Date: Sun, 25 May 2025 16:45:24 +0200
-From: Stanislaw Gruszka <stf_xl@wp.pl>
-To: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Johannes Berg <johannes@sipsolutions.net>
-Cc: Alexei Safin <a.safin@rosa.ru>, lvc-project@linuxtesting.org,
-	netdev@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"David S . Miller" <davem@davemloft.net>
-Subject: [PATCH v2] wifi: iwlegacy: Check rate_idx range after addition
-Message-ID: <20250525144524.GA172583@wp.pl>
-References: <20250424185244.3562-1-a.safin@rosa.ru>
- <20250427063900.GA48509@wp.pl>
- <d57qkj2tj4bgfobgzbhcb4bceh327o35mgamy2yyfuvolg4ymo@7p7hbpyg5bxi>
- <20250517074040.GA96365@wp.pl>
- <hrpy3omokg5zvrqnchx4jvp26bvfgdrashkmrjonsyz5b64aaz@6d5kn7z7x73q>
+	s=arc-20240116; t=1748184422; c=relaxed/simple;
+	bh=4b2sAqOMMJ8dcklJdkoRt1GLlnkVi9x9wGx3OaUDMaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R9+Fl1uHjijweL4wZjYNlv5Xy+U2eb3Fdw2vHgqWBwt7vrZcnJxMD+kJ2wYkn2ssU92AHNMT8P4jJpEU4izR3MH2Gvj8Bh5UfpvETFLugxkYzWkhR3mudfHX03FVBz4Vdd64vOJkzsQiLabNo4AvPr4bEYYCwahtAzzXPcMyxSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCgVI7Sm; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22e331215dbso16281425ad.1;
+        Sun, 25 May 2025 07:47:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748184420; x=1748789220; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mUBZLDan2eHNaNoZcWdVDsVnGQBcMSxMokkMwlfK4G4=;
+        b=WCgVI7SmDpu3SONFnb+xgPegErY3KkZ59olUJ5Ey2c38ihL80WWOIH/4CuDnihJQ4M
+         hkMipEFGO77aU36IrSzqkYQxXRqJnrKQBrWBcO4oLolQ/zL2C3X9K1FEUzPglM+4l7as
+         EboIolgDxbYccM9j3O56PsMGKWuuVxiSOVksF+b0ZqUilLhPF6UVz7c2tBXwz6eLsntB
+         KbnjPZjHJN/6HeHAryz50PzfZ3K4taO4fyyOee03vRashiZiWx/wM9iigc4EyehHcVtb
+         G9MnPbOwt2D6OnFroW6qAi/6Vo+pYWEqU63FyEVMvtl+YG+YfQSJefLQxqZO2ebqD6b9
+         UryA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748184420; x=1748789220;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mUBZLDan2eHNaNoZcWdVDsVnGQBcMSxMokkMwlfK4G4=;
+        b=ZgByOjbqFRkI5qPCjOWJBejs+PzUy5eZBgPc0NBI/dJxUUQUcz4Y63mbsBZemzoHvQ
+         2AQrbqlchAkRngaigH4YF3BiEYHwAZxResXowK4ev5x8KSGCzIFgID3kaStIay8PxiIu
+         qjdSXo6Mthr+Ggg9ZnodqxI9rutY9H6286+J8fPIPVdKoXtCpIrk6U8P+x+2SFxAgpuh
+         bDWa+h4JwFWe+2XbI23bnlpA7ApBqyMftqce27BYPJYytTpm+nGDGswbJUNySzV+b4gY
+         /7ymtZvavsMLIbzrGboHkvNR7m2lNCLZR3AK1F2eGbR0fk2VqL04ji3ChP+Bks6xrcbi
+         JkWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkZVoKr9FHu+R6YDLpEabPcr+6keseCKfwHBgjAvP2ZBfZg2j2b1q3xbmgmcvx+bzMuk8OCDWkFySRplU=@vger.kernel.org, AJvYcCVqb0RXeZ0CbpAXY7hBAydH5I+GFXb6ny88nbsjQw7rtnPviqJSBqw5SSsrh/KdZ6Cn0RJdBMNGUI1Sftg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw2tJHwCpp3x2RAiwZwn6YMRNdmLa5tIBIWlvo9M4gRWaAlko9
+	hFGiLH1otAen7DbY0Bn/SidiKLSgDQBmPcPa/tV68+IDv8mF8CvRrzrS
+X-Gm-Gg: ASbGncuYeIuwh0szKOlwGaktHl8aOZ4W+h8hxHJbme+soB4YqN3zL8mZHMqxt3GFd+C
+	ZXRiABgYZgGqcaZGeTvjnhXQEU7x722xXOr2ypx6WEvvLRVuknDr304UBFX1MUkxHD5N4b0OXrW
+	Xqk/oqWSXOHeAwSu/zvzk1XVhzsfAm2ar04RmZfhvNQlHatay1/4DHTvYcEn2Fkq8O7pq37NOGI
+	yNCr6y8tqRwWhbXQoYWa3Gg2OBLFiIXh9aKvBVqxoG713ZRaw3iw33K3Z5D1PShYKkWrje9ilSI
+	0mTN3CI8lDmXgFiVVexz05/QNqssYFXFf42r1vII7eDgPEvkqeAMXVXX
+X-Google-Smtp-Source: AGHT+IHZ4ZVvOSCTSKofCdJ6GvvfD60Ebge+g2JstzGYgmfkSNm08awAgjeBbuyIeU+QYdMtvOSe3A==
+X-Received: by 2002:a17:903:2b03:b0:234:557d:a4cb with SMTP id d9443c01a7336-234557da6f4mr15822185ad.20.1748184419704;
+        Sun, 25 May 2025 07:46:59 -0700 (PDT)
+Received: from eleanor-wkdl.. ([140.116.96.205])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2341b732b58sm25121925ad.180.2025.05.25.07.46.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 May 2025 07:46:59 -0700 (PDT)
+From: Yu-Chun Lin <eleanor15x@gmail.com>
+To: thierry.reding@gmail.com,
+	mperttunen@nvidia.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jonathanh@nvidia.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr
+Cc: dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	jserv@ccns.ncku.edu.tw,
+	visitorckw@gmail.com,
+	Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: [PATCH] drm: tegra: Fix undefined behavior in left shift operation
+Date: Sun, 25 May 2025 22:46:50 +0800
+Message-ID: <20250525144650.2365704-1-eleanor15x@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <hrpy3omokg5zvrqnchx4jvp26bvfgdrashkmrjonsyz5b64aaz@6d5kn7z7x73q>
-X-WP-MailID: f8fbcc1f44e5be2d49dd08e85c2d5fe5
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [0aMh]                               
+Content-Transfer-Encoding: 8bit
 
-Limit rate_idx to IL_LAST_OFDM_RATE for 5GHz band for thinkable case
-the index is incorrect.
+According to the C11 standard (ISO/IEC 9899:2011, 6.5.7):
+"If E1 has a signed type and E1 x 2^E2 is not representable in the result
+type, the behavior is undefined."
 
-Reported-by: Fedor Pchelkin <pchelkin@ispras.ru>
-Reported-by: Alexei Safin <a.safin@rosa.ru>
-Signed-off-by: Stanislaw Gruszka <stf_xl@wp.pl>
+Shifting 1 << 31 causes signed integer overflow, which leads to undefined
+behavior.
+
+Fix this by explicitly using 'BIT(31)' to ensure the shift operates on an
+unsigned type, avoiding undefined behavior.
+
+Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
 ---
-v1 -> v2: 
- - just add check one possible case the index could be incorrect,
-   instead of doing broader changes.
+Compile test only
 
- drivers/net/wireless/intel/iwlegacy/4965-mac.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/dc.c    |  2 +-
+ drivers/gpu/drm/tegra/hdmi.c  |  8 ++++----
+ drivers/gpu/drm/tegra/hdmi.h  |  8 ++++----
+ drivers/gpu/drm/tegra/riscv.c |  2 +-
+ drivers/gpu/drm/tegra/sor.h   | 14 +++++++-------
+ 5 files changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-index dc8c408902e6..4d2148147b94 100644
---- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-+++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-@@ -1575,8 +1575,11 @@ il4965_tx_cmd_build_rate(struct il_priv *il,
- 	    || rate_idx > RATE_COUNT_LEGACY)
- 		rate_idx = rate_lowest_index(&il->bands[info->band], sta);
- 	/* For 5 GHZ band, remap mac80211 rate indices into driver indices */
--	if (info->band == NL80211_BAND_5GHZ)
-+	if (info->band == NL80211_BAND_5GHZ) {
- 		rate_idx += IL_FIRST_OFDM_RATE;
-+		if (rate_idx > IL_LAST_OFDM_RATE)
-+			rate_idx = IL_LAST_OFDM_RATE;
-+	}
- 	/* Get PLCP rate for tx_cmd->rate_n_flags */
- 	rate_plcp = il_rates[rate_idx].plcp;
- 	/* Zero out flags for this packet */
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 430b2eededb2..3047a380bb83 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -2171,7 +2171,7 @@ static void tegra_crtc_atomic_enable(struct drm_crtc *crtc,
+ 		u32 syncpt = host1x_syncpt_id(dc->syncpt), enable;
+ 
+ 		if (dc->soc->has_nvdisplay)
+-			enable = 1 << 31;
++			enable = BIT(31);
+ 		else
+ 			enable = 1 << 8;
+ 
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index e705f8590c13..524b46a297be 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -1719,7 +1719,7 @@ static const struct tegra_hdmi_config tegra20_hdmi_config = {
+ 	.tmds = tegra20_tmds_config,
+ 	.num_tmds = ARRAY_SIZE(tegra20_tmds_config),
+ 	.fuse_override_offset = HDMI_NV_PDISP_SOR_LANE_DRIVE_CURRENT,
+-	.fuse_override_value = 1 << 31,
++	.fuse_override_value = BIT(31),
+ 	.has_sor_io_peak_current = false,
+ 	.has_hda = false,
+ 	.has_hbr = false,
+@@ -1729,7 +1729,7 @@ static const struct tegra_hdmi_config tegra30_hdmi_config = {
+ 	.tmds = tegra30_tmds_config,
+ 	.num_tmds = ARRAY_SIZE(tegra30_tmds_config),
+ 	.fuse_override_offset = HDMI_NV_PDISP_SOR_LANE_DRIVE_CURRENT,
+-	.fuse_override_value = 1 << 31,
++	.fuse_override_value = BIT(31),
+ 	.has_sor_io_peak_current = false,
+ 	.has_hda = true,
+ 	.has_hbr = false,
+@@ -1739,7 +1739,7 @@ static const struct tegra_hdmi_config tegra114_hdmi_config = {
+ 	.tmds = tegra114_tmds_config,
+ 	.num_tmds = ARRAY_SIZE(tegra114_tmds_config),
+ 	.fuse_override_offset = HDMI_NV_PDISP_SOR_PAD_CTLS0,
+-	.fuse_override_value = 1 << 31,
++	.fuse_override_value = BIT(31),
+ 	.has_sor_io_peak_current = true,
+ 	.has_hda = true,
+ 	.has_hbr = true,
+@@ -1749,7 +1749,7 @@ static const struct tegra_hdmi_config tegra124_hdmi_config = {
+ 	.tmds = tegra124_tmds_config,
+ 	.num_tmds = ARRAY_SIZE(tegra124_tmds_config),
+ 	.fuse_override_offset = HDMI_NV_PDISP_SOR_PAD_CTLS0,
+-	.fuse_override_value = 1 << 31,
++	.fuse_override_value = BIT(31),
+ 	.has_sor_io_peak_current = true,
+ 	.has_hda = true,
+ 	.has_hbr = true,
+diff --git a/drivers/gpu/drm/tegra/hdmi.h b/drivers/gpu/drm/tegra/hdmi.h
+index 8deb04223c18..57727703779b 100644
+--- a/drivers/gpu/drm/tegra/hdmi.h
++++ b/drivers/gpu/drm/tegra/hdmi.h
+@@ -119,7 +119,7 @@
+ 
+ #define ACR_SUBPACK_CTS(x) (((x) & 0xffffff) << 8)
+ #define ACR_SUBPACK_N(x)   (((x) & 0xffffff) << 0)
+-#define ACR_ENABLE         (1 << 31)
++#define ACR_ENABLE         BIT(31)
+ 
+ #define HDMI_NV_PDISP_HDMI_CTRL					0x44
+ #define HDMI_CTRL_REKEY(x)         (((x) & 0x7f) <<  0)
+@@ -130,7 +130,7 @@
+ #define HDMI_NV_PDISP_HDMI_VSYNC_WINDOW				0x46
+ #define VSYNC_WINDOW_END(x)   (((x) & 0x3ff) <<  0)
+ #define VSYNC_WINDOW_START(x) (((x) & 0x3ff) << 16)
+-#define VSYNC_WINDOW_ENABLE   (1 << 31)
++#define VSYNC_WINDOW_ENABLE   BIT(31)
+ 
+ #define HDMI_NV_PDISP_HDMI_GCP_CTRL				0x47
+ #define HDMI_NV_PDISP_HDMI_GCP_STATUS				0x48
+@@ -158,8 +158,8 @@
+ #define SOR_PWR_SAFE_STATE_PD       (0 << 16)
+ #define SOR_PWR_SAFE_STATE_PU       (1 << 16)
+ #define SOR_PWR_SETTING_NEW_DONE    (0 << 31)
+-#define SOR_PWR_SETTING_NEW_PENDING (1 << 31)
+-#define SOR_PWR_SETTING_NEW_TRIGGER (1 << 31)
++#define SOR_PWR_SETTING_NEW_PENDING BIT(31)
++#define SOR_PWR_SETTING_NEW_TRIGGER BIT(31)
+ 
+ #define HDMI_NV_PDISP_SOR_TEST					0x56
+ #define HDMI_NV_PDISP_SOR_PLL0					0x57
+diff --git a/drivers/gpu/drm/tegra/riscv.c b/drivers/gpu/drm/tegra/riscv.c
+index 6580416408f8..a5941239b194 100644
+--- a/drivers/gpu/drm/tegra/riscv.c
++++ b/drivers/gpu/drm/tegra/riscv.c
+@@ -19,7 +19,7 @@
+ #define RISCV_BCR_CTRL_CORE_SELECT_RISCV		(1 << 4)
+ #define RISCV_BCR_DMACFG				0x466c
+ #define RISCV_BCR_DMACFG_TARGET_LOCAL_FB		(0 << 0)
+-#define RISCV_BCR_DMACFG_LOCK_LOCKED			(1 << 31)
++#define RISCV_BCR_DMACFG_LOCK_LOCKED			BIT(31)
+ #define RISCV_BCR_DMAADDR_PKCPARAM_LO			0x4670
+ #define RISCV_BCR_DMAADDR_PKCPARAM_HI			0x4674
+ #define RISCV_BCR_DMAADDR_FMCCODE_LO			0x4678
+diff --git a/drivers/gpu/drm/tegra/sor.h b/drivers/gpu/drm/tegra/sor.h
+index 00e09d5dca30..4f404f22dd04 100644
+--- a/drivers/gpu/drm/tegra/sor.h
++++ b/drivers/gpu/drm/tegra/sor.h
+@@ -74,7 +74,7 @@
+ #define SOR_CAP 0x14
+ 
+ #define SOR_PWR 0x15
+-#define  SOR_PWR_TRIGGER			(1 << 31)
++#define  SOR_PWR_TRIGGER			BIT(31)
+ #define  SOR_PWR_MODE_SAFE			(1 << 28)
+ #define  SOR_PWR_NORMAL_STATE_PU		(1 << 0)
+ 
+@@ -154,7 +154,7 @@
+ #define  SOR_SEQ_CTL_PU_PC(x)		(((x) & 0xf) <<  0)
+ 
+ #define SOR_LANE_SEQ_CTL 0x21
+-#define  SOR_LANE_SEQ_CTL_TRIGGER		(1 << 31)
++#define  SOR_LANE_SEQ_CTL_TRIGGER		BIT(31)
+ #define  SOR_LANE_SEQ_CTL_STATE_BUSY		(1 << 28)
+ #define  SOR_LANE_SEQ_CTL_SEQUENCE_UP		(0 << 20)
+ #define  SOR_LANE_SEQ_CTL_SEQUENCE_DOWN		(1 << 20)
+@@ -163,7 +163,7 @@
+ #define  SOR_LANE_SEQ_CTL_DELAY(x)		(((x) & 0xf) << 12)
+ 
+ #define SOR_SEQ_INST(x) (0x22 + (x))
+-#define  SOR_SEQ_INST_PLL_PULLDOWN (1 << 31)
++#define  SOR_SEQ_INST_PLL_PULLDOWN BIT(31)
+ #define  SOR_SEQ_INST_POWERDOWN_MACRO (1 << 30)
+ #define  SOR_SEQ_INST_ASSERT_PLL_RESET (1 << 29)
+ #define  SOR_SEQ_INST_BLANK_V (1 << 28)
+@@ -192,7 +192,7 @@
+ #define  SOR_PWM_DIV_MASK			0xffffff
+ 
+ #define SOR_PWM_CTL 0x33
+-#define  SOR_PWM_CTL_TRIGGER			(1 << 31)
++#define  SOR_PWM_CTL_TRIGGER			BIT(31)
+ #define  SOR_PWM_CTL_CLK_SEL			(1 << 30)
+ #define  SOR_PWM_CTL_DUTY_CYCLE_MASK		0xffffff
+ 
+@@ -261,7 +261,7 @@
+ #define  SOR_LANE_POSTCURSOR_LANE0(x) (((x) & 0xff) << 0)
+ 
+ #define SOR_DP_CONFIG0 0x58
+-#define SOR_DP_CONFIG_DISPARITY_NEGATIVE	(1 << 31)
++#define SOR_DP_CONFIG_DISPARITY_NEGATIVE	BIT(31)
+ #define SOR_DP_CONFIG_ACTIVE_SYM_ENABLE		(1 << 26)
+ #define SOR_DP_CONFIG_ACTIVE_SYM_POLARITY	(1 << 24)
+ #define SOR_DP_CONFIG_ACTIVE_SYM_FRAC_MASK	(0xf << 16)
+@@ -370,7 +370,7 @@
+ #define  SOR_HDMI_ACR_SUBPACK_LOW_SB1(x) (((x) & 0xff) << 24)
+ 
+ #define SOR_HDMI_ACR_0320_SUBPACK_HIGH 0xb3
+-#define  SOR_HDMI_ACR_SUBPACK_HIGH_ENABLE (1 << 31)
++#define  SOR_HDMI_ACR_SUBPACK_HIGH_ENABLE BIT(31)
+ 
+ #define SOR_HDMI_ACR_0441_SUBPACK_LOW 0xb4
+ #define SOR_HDMI_ACR_0441_SUBPACK_HIGH 0xb5
+@@ -382,7 +382,7 @@
+ #define  SOR_HDMI_CTRL_REKEY(x) (((x) & 0x7f) << 0)
+ 
+ #define SOR_HDMI_SPARE 0xcb
+-#define  SOR_HDMI_SPARE_ACR_PRIORITY_HIGH (1 << 31)
++#define  SOR_HDMI_SPARE_ACR_PRIORITY_HIGH BIT(31)
+ #define  SOR_HDMI_SPARE_CTS_RESET(x) (((x) & 0x7) << 16)
+ #define  SOR_HDMI_SPARE_HW_CTS_ENABLE (1 << 0)
+ 
 -- 
-2.25.4
+2.43.0
 
 
