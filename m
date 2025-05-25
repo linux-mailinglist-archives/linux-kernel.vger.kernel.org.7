@@ -1,139 +1,133 @@
-Return-Path: <linux-kernel+bounces-661962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B11AAC3360
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 11:23:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2CFAC3358
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 11:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30FE67A99BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 09:22:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D37743B8608
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 09:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6031E5B7E;
-	Sun, 25 May 2025 09:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C9F1E491B;
+	Sun, 25 May 2025 09:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UV0MBtNN"
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0e70Sgl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8462DCC03;
-	Sun, 25 May 2025 09:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356192770B;
+	Sun, 25 May 2025 09:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748164989; cv=none; b=Uqr7cn0VjDgb2IironCpgjaLvqo1QTtr+UyMBclhHDfrtBsFWCxssGNR11zywDOGDExmSMylIQAuL/OxoLFFtutCl5S4qpNbH2PXyJK89/UbpYdajxC9L+g48zPUfhJitSXVJ1XsBZzOmxEgkuhIPIciFpkCrS5SbcMlCRb6Ivg=
+	t=1748164805; cv=none; b=j9tn7YOrUpITigZssMjXiVqxHnBrjZEstY94QoOTuutHmXTLoL+iywmTPqSULnyceR2jleM9D1ZsmAqlq8kflyDkTWi90YEucIckssPoQhdFNb9/CxMG+6u7WgQsA6hUVFvHUtH7X8PJ/iHZICzZUkXJVii5MfCJnilaEEDcIyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748164989; c=relaxed/simple;
-	bh=uvHTxQ84Ysob1tsgW2B03xQqPXtMT7RwsE2x2QwnLoU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A9iNmkHs9SjB5ATmrmdluSmLcPcjKVsDhYfoH7H6VruMk+EheZufZDRwPWmRaMwVOy6jfnnVTZJV7V9KPHyt9oyf33+uxkt+nCG7eBlUWyk6vTYHibYdmMaVTgEDrNEc/BIKnu1+WOfYmQmQUJdlWpICJDbbwabeDMiJ/iIKJ0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UV0MBtNN; arc=none smtp.client-ip=80.12.242.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id J7QBu3SUfgtceJ7QBuSZBl; Sun, 25 May 2025 11:13:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1748164415;
-	bh=CUMAhSXxdBVNza4s5knUWYkuEAmOJkwcH4eDMlwo1C8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=UV0MBtNNbiyONMxMtKBia+gag2nRRiRAz6Jh/6+Ec6vto5IeYF8g/ZzNlgUcMgIXL
-	 8GwqCHoHjNQ5OFjYMfVqHL3qFCiB3EOLXK8ZykEelaRTyPGDY34VBcyRYI+YPV0okv
-	 3ccDcu17S39Bw27HWfdQbfLma06K8HyEv62k422+r4XxhIi81yyOtKY0JFXcJag8yy
-	 I9BfdmuRTBeFhCtgTuc187I15LRbFqM9aQFEEbRBCb9Sez7flF6Panw+0zVO59hC3w
-	 sHQq8ra2OBpLtieWAsZd3VOtPStmRd/HLw9nyIie5mACQF7ufbFtK8Uh/9ZW6Xrf/p
-	 InNq7mZQ58DwQ==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 25 May 2025 11:13:35 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Ido Schimmel <idosch@nvidia.com>,
-	Petr Machata <petrm@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next] mlxsw: core_thermal: Constify struct thermal_zone_device_ops
-Date: Sun, 25 May 2025 11:13:17 +0200
-Message-ID: <4516676973f5adc1cdb76db1691c0f98b6fa6614.1748164348.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1748164805; c=relaxed/simple;
+	bh=M6wNUdl+f/LJKZELy9CIlDDMGL8GGdionU7cG+oIVJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pds/fjAHHN21uwIBm5Dtoe0DOoOnhgRC3Uy/nt2h9V5WvlEOXH1KQNuTgTuIm/iqT+YeUpQft/jvx+RamAE24t1SHbTXAkDdYgp0JD/b6SkciBw0fs7LV3W2RjfMCItUpP9wpAoJf7yvbE7+UIbnblEhz01OaSlYsXeyoEngHpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0e70Sgl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEB1AC4CEEA;
+	Sun, 25 May 2025 09:19:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748164804;
+	bh=M6wNUdl+f/LJKZELy9CIlDDMGL8GGdionU7cG+oIVJQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Z0e70SglbUOUYIUwGE9EvW/JcY14JljkXPcrXvRwOWMfKnOoZdPxFBk8x8EpFANPI
+	 vG1u78itnbNpPvqJV9za7eDRQY7XiGc2O7R63dkSTog6u6Uhs9V0ueAnnn3xAPPb5N
+	 NwgpL7Hr54FI18ZatUXKTjIXNlibhMXTDRag936yRj1pELwLfCoJnG4HDYHId6DCex
+	 74tRpY6EUPIkdT8JgYWiDgVG4pfAUzLo+J6CpUlIxjEgTttC2+uVcp+CRt0A56C/PS
+	 4Dw7oQHewMIHBpcl9NpvXPNpOrRqIeUMG/Kt/haznyrvxckVqMqHM4XmaH8IuvBeSY
+	 SF/KBNh4I7ppw==
+Date: Sun, 25 May 2025 10:19:53 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Markus Burri <markus.burri@mt.com>
+Cc: linux-kernel@vger.kernel.org, Mahesh J Salgaonkar
+ <mahesh@linux.ibm.com>, "Oliver O'Halloran" <oohall@gmail.com>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Jacek
+ Lawrynowicz <jacek.lawrynowicz@linux.intel.com>, Maciej Falkowski
+ <maciej.falkowski@linux.intel.com>, Oded Gabbay <ogabbay@kernel.org>, Linus
+ Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Nuno Sa <nuno.sa@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, linuxppc-dev@lists.ozlabs.org,
+ dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org,
+ linux-iio@vger.kernel.org, Markus Burri <markus.burri@bbv.ch>
+Subject: Re: [PATCH v4 1/6] iio: backend: fix out-of-bound write
+Message-ID: <20250525101953.7930a410@jic23-huawei>
+In-Reply-To: <20250511152707.294bc7b9@jic23-huawei>
+References: <20250508130612.82270-1-markus.burri@mt.com>
+	<20250508130612.82270-2-markus.burri@mt.com>
+	<20250511152707.294bc7b9@jic23-huawei>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-'struct thermal_zone_device_ops' are not modified in this driver.
+On Sun, 11 May 2025 15:27:07 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-Constifying these structures moves some data to a read-only section, so
-increases overall security, especially when the structure holds some
-function pointers.
+> On Thu,  8 May 2025 15:06:07 +0200
+> Markus Burri <markus.burri@mt.com> wrote:
+> 
+> > The buffer is set to 80 character. If a caller write more characters,
+> > count is truncated to the max available space in "simple_write_to_buffer".
+> > But afterwards a string terminator is written to the buffer at offset count
+> > without boundary check. The zero termination is written OUT-OF-BOUND.
+> > 
+> > Add a check that the given buffer is smaller then the buffer to prevent.
+> > 
+> > Fixes: 035b4989211d ("iio: backend: make sure to NULL terminate stack buffer")
+> > Signed-off-by: Markus Burri <markus.burri@mt.com>  
+> I'm looking for a tag from Nuno on this one before applying.
 
-While at it, also constify a struct thermal_zone_params.
+Please make sure to pick up tags on earlier versions. Nuno had sent a RB for
+this one which I've now added.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  24899	   8036	      0	  32935	   80a7	drivers/net/ethernet/mellanox/mlxsw/core_thermal.o
+People don't tend to look again at patches that they've already tagged so Nuno
+probably didn't see my ask for a tag above.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  25379	   7556	      0	  32935	   80a7	drivers/net/ethernet/mellanox/mlxsw/core_thermal.o
+Anyhow, now applied but will have to wait for a rebase of my fixes-togreg tree
+on rc1 once available.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only,
----
- drivers/net/ethernet/mellanox/mlxsw/core_thermal.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Thanks,
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c b/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
-index e746cd9c68ed..eac9a14a6058 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
-@@ -205,11 +205,11 @@ static int mlxsw_thermal_get_temp(struct thermal_zone_device *tzdev,
- 	return 0;
- }
- 
--static struct thermal_zone_params mlxsw_thermal_params = {
-+static const struct thermal_zone_params mlxsw_thermal_params = {
- 	.no_hwmon = true,
- };
- 
--static struct thermal_zone_device_ops mlxsw_thermal_ops = {
-+static const struct thermal_zone_device_ops mlxsw_thermal_ops = {
- 	.should_bind = mlxsw_thermal_should_bind,
- 	.get_temp = mlxsw_thermal_get_temp,
- };
-@@ -252,7 +252,7 @@ static int mlxsw_thermal_module_temp_get(struct thermal_zone_device *tzdev,
- 	return 0;
- }
- 
--static struct thermal_zone_device_ops mlxsw_thermal_module_ops = {
-+static const struct thermal_zone_device_ops mlxsw_thermal_module_ops = {
- 	.should_bind	= mlxsw_thermal_module_should_bind,
- 	.get_temp	= mlxsw_thermal_module_temp_get,
- };
-@@ -280,7 +280,7 @@ static int mlxsw_thermal_gearbox_temp_get(struct thermal_zone_device *tzdev,
- 	return 0;
- }
- 
--static struct thermal_zone_device_ops mlxsw_thermal_gearbox_ops = {
-+static const struct thermal_zone_device_ops mlxsw_thermal_gearbox_ops = {
- 	.should_bind	= mlxsw_thermal_module_should_bind,
- 	.get_temp	= mlxsw_thermal_gearbox_temp_get,
- };
--- 
-2.49.0
+Jonathan
+
+> 
+> J
+> > ---
+> >  drivers/iio/industrialio-backend.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
+> > index a43c8d1bb3d0..31fe793e345e 100644
+> > --- a/drivers/iio/industrialio-backend.c
+> > +++ b/drivers/iio/industrialio-backend.c
+> > @@ -155,11 +155,14 @@ static ssize_t iio_backend_debugfs_write_reg(struct file *file,
+> >  	ssize_t rc;
+> >  	int ret;
+> >  
+> > +	if (count >= sizeof(buf))
+> > +		return -ENOSPC;
+> > +
+> >  	rc = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf, count);
+> >  	if (rc < 0)
+> >  		return rc;
+> >  
+> > -	buf[count] = '\0';
+> > +	buf[rc] = '\0';
+> >  
+> >  	ret = sscanf(buf, "%i %i", &back->cached_reg_addr, &val);
+> >    
+> 
+> 
 
 
