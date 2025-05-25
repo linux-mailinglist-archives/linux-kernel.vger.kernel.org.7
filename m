@@ -1,107 +1,111 @@
-Return-Path: <linux-kernel+bounces-662074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04DD7AC3532
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 16:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEDD0AC3554
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 17:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219113B3F2B
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 14:32:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CE873AF849
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 15:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6691F4CA9;
-	Sun, 25 May 2025 14:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12C21F4CAC;
+	Sun, 25 May 2025 15:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uT0d++RX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="TjvKoOi6"
+Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080A94C62;
-	Sun, 25 May 2025 14:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECAB1EA7EB
+	for <linux-kernel@vger.kernel.org>; Sun, 25 May 2025 15:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748183533; cv=none; b=HAjGMpZgeVSpVvBJYobhnWFcJK+G7m/IBPIpwn/SPUqfSqLGsT4jeDmlCiWUBaP4hwBSXbjGNj5o3o/XSDyTke6lXOI75EE4rNvSXQbHisUOO3Dwsp8VV+SIyTdkFQcI6haHIY/u8fHgO6DxbeZfsrBLLGs00AkIV68Q1JxxYlw=
+	t=1748185930; cv=none; b=HdOTrItAY5tcXKqkQ/H+kZ7zEm5X995dMlhvQJF4L5n1BUuOlquHrwfoB/fgODH2SOQDF21Np9w+fvSiqnVaoOoPW9wsOV1SPthoBl8BhaSrH9V1ocKDofcRGzOHja1KU3KH+eC7iFnsMETJbgU+DZDmkXHBCDb8YyMBQMIdgjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748183533; c=relaxed/simple;
-	bh=gD3iutxq4pqSFaNAhKZd5QxYH52E0Fd1DVRC+e7CGL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Kfx88Gun0Bk8crqArDEMIvBewV6ND4GCHpF4nu8PNMIKsvs7EjYULz/KN2rWi1gL5Av0vVme1WX/uncKLhn5QFiMwc3asn6jwJiLaMofHMZP6FXrWxgB2B5Lb9TDgdpIjjaNMtP+y6A4bqknY10FwxiYLYBjHy5XD5wN0I4MNEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uT0d++RX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F1A4C4CEEA;
-	Sun, 25 May 2025 14:32:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748183532;
-	bh=gD3iutxq4pqSFaNAhKZd5QxYH52E0Fd1DVRC+e7CGL4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uT0d++RXL/JC2mIYgpix9YvqGiMzGu7LP9aCd2alUnLRCfE85To5H4yLZfezW+BGc
-	 8P7I3HZzvJkYvgfeCaPJQ2HZOv8unzP+8g2mCLEPIN+Vrh8bhYEMQM70OsIpA/LSu9
-	 EJGw4NeHe1nsa5kFpo0PCw1ESkMEjoHjJyZsJp+LfihOhpebU9f56GqMQGeCzqovwH
-	 GskUhG7q89Yii89xmhbQxDbZxMwRrhiMcuUleKo2RSjsJdTMnAT4E+WDOlDpZhQKgv
-	 Y0iSR9tFuU4YHof2FtaExlypoqntYdvLvx6wHudhQqFCA2FjJ1LHrj4iOw07yZO4Ky
-	 +uIkGvRtdxglw==
-Date: Sun, 25 May 2025 15:32:01 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Heiko Stuebner <heiko@sntech.de>, Ulf Hansson <ulf.hansson@linaro.org>,
- David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Yao Zi <ziyao@disroot.org>, Chukun Pan
- <amadeus@jmu.edu.cn>, linux-rockchip@lists.infradead.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/9] dt-bindings: iio: adc: rockchip-saradc: Allow use
- of a power-domain
-Message-ID: <20250525153201.51d733e3@jic23-huawei>
-In-Reply-To: <20250518220707.669515-9-jonas@kwiboo.se>
-References: <20250518220707.669515-1-jonas@kwiboo.se>
-	<20250518220707.669515-9-jonas@kwiboo.se>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1748185930; c=relaxed/simple;
+	bh=Y8x/ns0vNBbtproy+Ajbgg8YW5b/gh7DUjgEMGDQLEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ErTlozdCTvYW9xb4uesYVji+b0zoQRk8yTz8CbsxTmGdEaPMfD/YJiRvdfia8QoHq6nv5TYlWHl7GibPmpFKV4EanFViE9qUsfeD6hQHPoVLq1Y2oa7O1tUC8NLYpI5SZXq5yW/hy27j502o9t3e0mInNCZX8h1lEhj7wQLo4P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=TjvKoOi6; arc=none smtp.client-ip=212.77.101.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 17448 invoked from network); 25 May 2025 16:45:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1748184324; bh=NNKevgor4yLaPnCDsqGOmTvb1Z4nfy6aCjVBQGo+NaI=;
+          h=From:To:Cc:Subject;
+          b=TjvKoOi6zbteFWKEljmja07sgbjJ+EwnuMb4wzy9MdYhl+98f8vzqZxDjfOHz96aD
+           6axIfIkI4EgiX3pJtz/YGXVKm+cnpvjm2peMFxz/tPPWUyiv10CrYhVNXPB7urCX4X
+           Zs8sQR3ik2CQ5ZDloi0woxbiWSketqneGR8/jtjjLf5P0Mk1JwOdBWB8KMwLvGuocn
+           hrTWYFfLvhJQdIqsKUWHAL4doWjkaBcDPh/hOszAm2sZWR6PjBiDmHrDWu50TW8gov
+           8TWn967pasw15o5+gPSnKwpaRPYqlU7x7dl84SEw6Nd/zt6tG07x3QRVbyOd/UfTcl
+           cj2/PsVHYmcxw==
+Received: from 89-64-9-114.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.9.114])
+          (envelope-sender <stf_xl@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <pchelkin@ispras.ru>; 25 May 2025 16:45:24 +0200
+Date: Sun, 25 May 2025 16:45:24 +0200
+From: Stanislaw Gruszka <stf_xl@wp.pl>
+To: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Johannes Berg <johannes@sipsolutions.net>
+Cc: Alexei Safin <a.safin@rosa.ru>, lvc-project@linuxtesting.org,
+	netdev@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"David S . Miller" <davem@davemloft.net>
+Subject: [PATCH v2] wifi: iwlegacy: Check rate_idx range after addition
+Message-ID: <20250525144524.GA172583@wp.pl>
+References: <20250424185244.3562-1-a.safin@rosa.ru>
+ <20250427063900.GA48509@wp.pl>
+ <d57qkj2tj4bgfobgzbhcb4bceh327o35mgamy2yyfuvolg4ymo@7p7hbpyg5bxi>
+ <20250517074040.GA96365@wp.pl>
+ <hrpy3omokg5zvrqnchx4jvp26bvfgdrashkmrjonsyz5b64aaz@6d5kn7z7x73q>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <hrpy3omokg5zvrqnchx4jvp26bvfgdrashkmrjonsyz5b64aaz@6d5kn7z7x73q>
+X-WP-MailID: f8fbcc1f44e5be2d49dd08e85c2d5fe5
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000000 [0aMh]                               
 
-On Sun, 18 May 2025 22:06:55 +0000
-Jonas Karlman <jonas@kwiboo.se> wrote:
+Limit rate_idx to IL_LAST_OFDM_RATE for 5GHz band for thinkable case
+the index is incorrect.
 
-> The SARADC controller in most Rockchip SoCs are part or power domains
+Reported-by: Fedor Pchelkin <pchelkin@ispras.ru>
+Reported-by: Alexei Safin <a.safin@rosa.ru>
+Signed-off-by: Stanislaw Gruszka <stf_xl@wp.pl>
+---
+v1 -> v2: 
+ - just add check one possible case the index could be incorrect,
+   instead of doing broader changes.
 
-part of power
+ drivers/net/wireless/intel/iwlegacy/4965-mac.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-I can fix that whilst applying if nothing else comes up.
-
-
-> that are always powered on, i.e. PD_BUS or PD_PERI.
-> 
-> On RK3528 the SARADC controller is part of the PD_VPU power domain.
-> 
-> Add support to describe power-domains for the SARADC controllers.
-> 
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> ---
->  Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
-> index 41e0c56ef8e3..f776041fd08f 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
-> @@ -47,6 +47,9 @@ properties:
->        - const: saradc
->        - const: apb_pclk
->  
-> +  power-domains:
-> +    maxItems: 1
-> +
->    resets:
->      maxItems: 1
->  
+diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+index dc8c408902e6..4d2148147b94 100644
+--- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
++++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+@@ -1575,8 +1575,11 @@ il4965_tx_cmd_build_rate(struct il_priv *il,
+ 	    || rate_idx > RATE_COUNT_LEGACY)
+ 		rate_idx = rate_lowest_index(&il->bands[info->band], sta);
+ 	/* For 5 GHZ band, remap mac80211 rate indices into driver indices */
+-	if (info->band == NL80211_BAND_5GHZ)
++	if (info->band == NL80211_BAND_5GHZ) {
+ 		rate_idx += IL_FIRST_OFDM_RATE;
++		if (rate_idx > IL_LAST_OFDM_RATE)
++			rate_idx = IL_LAST_OFDM_RATE;
++	}
+ 	/* Get PLCP rate for tx_cmd->rate_n_flags */
+ 	rate_plcp = il_rates[rate_idx].plcp;
+ 	/* Zero out flags for this packet */
+-- 
+2.25.4
 
 
