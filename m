@@ -1,237 +1,173 @@
-Return-Path: <linux-kernel+bounces-661890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3C7AC3273
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 07:23:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A38AC3285
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 07:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0550F1898E96
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 05:23:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95A39163FC5
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 05:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35A614A60F;
-	Sun, 25 May 2025 05:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9414C17C220;
+	Sun, 25 May 2025 05:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BZm6saAM"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="km1phmYV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1234208CA
-	for <linux-kernel@vger.kernel.org>; Sun, 25 May 2025 05:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0341519B4
+	for <linux-kernel@vger.kernel.org>; Sun, 25 May 2025 05:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748150578; cv=none; b=kKQr4DkL8k2l2/aCem6dFaHxqH6N8AWPf4p2XO7yGKJGsi0nFzHKWXqtTZmLiQCCF6NCgUnAGUrnbHiECwNbIqJ3qlG+xD4aY2LcDABeiPBMhQpjUBaoo7m49DU3ivMSQsiEJG5yJFddH+C8Mr4vkO9SEt2LR8r0zh+oqCUvOc8=
+	t=1748152648; cv=none; b=Q3mXH9qL4oG7WwtC2HYZffW8jT1HYsniGwKtaRJ2xJmu+cnlw3/L9/7h4iFZlnhfusczNGfn4S7L5C02ud8Xw0ZqNA7FcqyMdDXstSNd1uyd+srH1YjG4z1eWxynR/P6WTo8YK2irivIYiGsoqETeG8kkpMxKYj063FqFuyjQjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748150578; c=relaxed/simple;
-	bh=Y0cKLo2CRuRqesXQHK7UPNsQP2uYigpqB/5Xc7bhblk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VfaM8sfHerSQrzUhdLsZn8Nu0/p7Cg6V/HbRO3+440zAW5Ds8T6atGAN4saSK1AfVsxI+IYRolXrQOx8oHoX0uqFpRWzXK3syNSkLWwRICHi6qSFyl5Ib/WHBGi8pMjGxEvGeO7YTEUygSo32ng9P5D5I9vGYMtsnDZfRqsYccQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BZm6saAM; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c8d6bfb6-570c-48b2-be62-188e11353c5a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1748150563;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ePdy++AUzSGQt0jdpQhw2NDW+rHZoCino5XFKMdBg8U=;
-	b=BZm6saAM54E6afEmIAR3+9ovXEHEjRhUAYo3Ru3Np1H78iHhMCVFbMFzLs0trouNyHDt3Z
-	+H5/v46+b94QXVBMuSqKoNIv0xJt3cmxxNGYenUQv7rBVDp7VcANbVdavGcoQbnuHGTvg/
-	r0BtzsW2Jw+Na1FWLOsdd9rDGBkl/tY=
-Date: Sun, 25 May 2025 07:22:40 +0200
+	s=arc-20240116; t=1748152648; c=relaxed/simple;
+	bh=M4yYzWy8gleVqtRXThXiboA/Q16IGeGQsaMz5AQCano=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TfqsEuemEH9f0Vj0bMSAj6ss6jI/9ubiMghExpkTuz2vgmH/YU/t3hqC2Hk0jahMIv8HtIKd1tc3X/mTFt3qNFaAKLF9EZ6WiJKEJUPKDyTEWuniPe4oUW6IKu7HDsBdfEgD6lr3xHn/abJZckMY8eRMK+UPUDzFYgiVwM6RuZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=km1phmYV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54OLtZSx015505
+	for <linux-kernel@vger.kernel.org>; Sun, 25 May 2025 05:57:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=llgi6kgFU2C/nK6AV/CCxl
+	Fj3993bGoSBbWghxO+Y5k=; b=km1phmYVT70YeEwezZ8ZBkM/2ZJq6lwBA4Df8j
+	fEAl0IQ911eCas95zuzq9ThAILcftaFQpGxmSkalB4ueFXe1z/k+tvCS+6MeJa47
+	GdyMvlLA/OWZCcd1EU1Ovks73IU6ieQuIV8B2HLKDp4gHL30+wzuPNNCy9xsEEv6
+	N+MDi89YFegm2P0b5QYJA8VcOQhVuXLQnZhSDNzIUxFCxdE7OsyvY5sOwhV+FVS2
+	IM39qQG4nMLX9ZhQtztpe+k/RYSFr39SCLoptJ2W4VUPYlkyKzGIV7pTs+bhLkUQ
+	vCPnbtNcF7fKtWPvKgDhB0MIsG/iFcKvNnjX05wfUfSChhVA==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u5ejsjpa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 25 May 2025 05:57:25 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7377139d8b1so885202b3a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 24 May 2025 22:57:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748152645; x=1748757445;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=llgi6kgFU2C/nK6AV/CCxlFj3993bGoSBbWghxO+Y5k=;
+        b=poIABjKi/l6pmmiARqImO1/ZrItIaWDtxjfT1T09scTC2pUGWuePxdb97kk10npb2u
+         lQGAiPtSEW01WC4YDEpxowAy00fxV8Vrqj15RHgu33JhAAu8sQH2Do2t+RMY14erAcjj
+         ULsDPyk899S9XQ39HT6A4XF5AgWO+jQI6GHnI0vAei/QItO8r2L/AgAhbQA3rXiPl0Z8
+         vNTSQdXVIz8pgtaUlXoIHWbKGIZlvuL3kCB0Zt5KOYhvujAW75DV7RwkaqoTlvd0qEAo
+         5lca6TeKYTR875qogKT2B0hKBnKRA1NZRCYIKJ0UuAmwK1izHuWei5rqKwQt1CaLIxqi
+         hHFA==
+X-Gm-Message-State: AOJu0YwxB7kiT0iD7v/QLsqm7QhPv7CT6DP3cXE0Rjo3E6SGSwSxzMfv
+	2GS9atjuADXYEGuDfEgVt9/bk3Ft5+LLpza9Zq5oZJgEs2OlxkWlAehRku1v+upTZ3Ozx4rlwIh
+	xkLxizlHL52LRzvJ96724H65P2wqHDWasS2I+BkZbYT+cpc4CDQBJH/Ae2Er4nbrdazQ=
+X-Gm-Gg: ASbGncvi9ZcbBNBm4zgxFv0Hxwzmm1drpD8ULGl0srmoMCq5qfeQvXX5cQOMx9ovFwC
+	c2ONRj25cXCqrXtctNpjBF9mY7ljhKkqBa4emk9r/KbTMcf4n1z3omNtIZQoz52rGR9K2FJz69T
+	jV7Bln/aA8WVMjSbtlB0lnwF2iXF27fJcqUPf1vs5Sr3QTgpQ4jpzPPonOH5H8LwW0RuHSPBNsU
+	CE4quYcCYDf8jUAiedmTvMDn5vCyaOtEySqyGxgtRHdNMN5EjzyePspUXx7sGM5f31E4amJbMSh
+	wIZKgou1mtztZXWEdp0FLT+KlpO+fm+qTrag
+X-Received: by 2002:a05:6a00:ad1:b0:742:aecc:c46d with SMTP id d2e1a72fcca58-745fdf78750mr7117960b3a.5.1748152644665;
+        Sat, 24 May 2025 22:57:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFLpSjErEYIbtiJZOXi1g6uxrsq6h4bNZeZUpAlLUHKaxEaEEcB8ZeiBab9LJX1FXEhTl3WkA==
+X-Received: by 2002:a05:6a00:ad1:b0:742:aecc:c46d with SMTP id d2e1a72fcca58-745fdf78750mr7117934b3a.5.1748152644258;
+        Sat, 24 May 2025 22:57:24 -0700 (PDT)
+Received: from hu-msarkar-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a9829a4dsm15594030b3a.107.2025.05.24.22.57.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 May 2025 22:57:23 -0700 (PDT)
+From: Mrinmay Sarkar <mrinmay.sarkar@oss.qualcomm.com>
+X-Google-Original-From: Mrinmay Sarkar <quic_msarkar@quicinc.com>
+Subject: [PATCH v3 0/2] Update PCIe PHY settings for QCS8300 and SA8775P
+Date: Sun, 25 May 2025 11:27:16 +0530
+Message-Id: <20250525-update_phy-v3-0-5b315cd39993@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH for-next v3] RDMA/core: Avoid hmm_dma_map_alloc() for
- virtual DMA devices
-To: Daisuke Matsuda <dskmtsd@gmail.com>, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, leon@kernel.org, jgg@ziepe.ca,
- zyjzyj2000@gmail.com
-Cc: hch@infradead.org
-References: <20250524144328.4361-1-dskmtsd@gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20250524144328.4361-1-dskmtsd@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADyxMmgC/03MSwrDIBSF4a2EO65Fr4Y+Rt1HCSWoqXdQTTSRh
+ uDeawOFDv8D59sg2Ug2wbXZINpMiYKvIQ8NaNf7p2VkagNybHkrJFtG08/2MbqVoTZnroxBxQX
+ UwxjtQO8du3e1HaU5xHW3M37XH6P+mYyMM6MGKS6IQp3UbVpIk9dHHV7QlVI+D3G0h6YAAAA=
+X-Change-ID: 20250513-update_phy-2cd804dd2401
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        krishna.chundru@oss.qualcomm.com, quic_vbadigan@quicinc.com,
+        quic_nayiluri@quicinc.com, quic_ramkri@quicinc.com,
+        quic_nitegupt@quicinc.com, Mrinmay Sarkar <quic_msarkar@quicinc.com>,
+        Mrinmay Sarkar <mrinmay.sarkar@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748152639; l=1250;
+ i=quic_msarkar@quicinc.com; s=20250423; h=from:subject:message-id;
+ bh=M4yYzWy8gleVqtRXThXiboA/Q16IGeGQsaMz5AQCano=;
+ b=EDONMZuY/6Dx2rOmU6s3wk8xSJLxpZ87KUnGMeNXgdFtMy8OvoVeIrdnCV/Ge1reaL6sgbNmv
+ 4bqv3uQfE9ODnrKdrQpkJvcutEAvb+GimzUyKSU2hsmLfP+adlcJP6e
+X-Developer-Key: i=quic_msarkar@quicinc.com; a=ed25519;
+ pk=5D8s0BEkJAotPyAnJ6/qmJBFhCjti/zUi2OMYoferv4=
+X-Authority-Analysis: v=2.4 cv=GIgIEvNK c=1 sm=1 tr=0 ts=6832b145 cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=vWfPPh_LAE0cc4QMUwIA:9 a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: SFFakk5TLCJo0Wj9TmXYlJgfiVPm7obx
+X-Proofpoint-GUID: SFFakk5TLCJo0Wj9TmXYlJgfiVPm7obx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI1MDA1MyBTYWx0ZWRfX4Kl2x0oIz9aw
+ ElIstkiQoj5+OcWSz4Stof6T/8xiU7CoeiU3CMfAQyGrTriwhxJLYETvRrDgaIHheMASKrBBcKE
+ meC9ETGVpdzSe2MBhhG0rXQgeygfVOwutos0BtdnLtbbpheXdtme7VTGmTbDX9X5RBK12dmdpvV
+ yVqcR34ybSaBieYEY8RgTO15jjhN4q+3gjpe9AaOMtfE2TPUvt23RYE/PmkNBggr0+hx0rNpJpK
+ P0GMkYWFEhdbfUZWljucFivk9qLb22nxN4o4Gi2VoscZLazun1KTLOFOzhP3UiONJwHMy1WMXkK
+ Do7CRA4dowjRFK76L/QaKHMI30DEj5N5TqUBjh5lwcSWHYQsQTL1IZbhdPrabhNZ9P44Z4G1mkQ
+ IE1XcqasyjrxthGOxFdW4afafdgR8PA3/btmRxmbINsG7dyreL/Eg0eJKk/UYbw7SWG6iJJs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-25_02,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 bulkscore=0 clxscore=1015 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 mlxscore=0 phishscore=0 spamscore=0
+ suspectscore=0 mlxlogscore=572 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505250053
 
-在 2025/5/24 16:43, Daisuke Matsuda 写道:
-> Drivers such as rxe, which use virtual DMA, must not call into the DMA
-> mapping core since they lack physical DMA capabilities. Otherwise, a NULL
-> pointer dereference is observed as shown below. This patch ensures the RDMA
-> core handles virtual and physical DMA paths appropriately.
-> 
-> This fixes the following kernel oops:
-> 
->   BUG: kernel NULL pointer dereference, address: 00000000000002fc
->   #PF: supervisor read access in kernel mode
->   #PF: error_code(0x0000) - not-present page
->   PGD 1028eb067 P4D 1028eb067 PUD 105da0067 PMD 0
->   Oops: Oops: 0000 [#1] SMP NOPTI
->   CPU: 3 UID: 1000 PID: 1854 Comm: python3 Tainted: G        W           6.15.0-rc1+ #11 PREEMPT(voluntary)
->   Tainted: [W]=WARN
->   Hardware name: Trigkey Key N/Key N, BIOS KEYN101 09/02/2024
->   RIP: 0010:hmm_dma_map_alloc+0x25/0x100
->   Code: 90 90 90 90 90 0f 1f 44 00 00 55 48 89 e5 41 57 41 56 49 89 d6 49 c1 e6 0c 41 55 41 54 53 49 39 ce 0f 82 c6 00 00 00 49 89 fc <f6> 87 fc 02 00 00 20 0f 84 af 00 00 00 49 89 f5 48 89 d3 49 89 cf
->   RSP: 0018:ffffd3d3420eb830 EFLAGS: 00010246
->   RAX: 0000000000001000 RBX: ffff8b727c7f7400 RCX: 0000000000001000
->   RDX: 0000000000000001 RSI: ffff8b727c7f74b0 RDI: 0000000000000000
->   RBP: ffffd3d3420eb858 R08: 0000000000000000 R09: 0000000000000000
->   R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
->   R13: 00007262a622a000 R14: 0000000000001000 R15: ffff8b727c7f74b0
->   FS:  00007262a62a1080(0000) GS:ffff8b762ac3e000(0000) knlGS:0000000000000000
->   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   CR2: 00000000000002fc CR3: 000000010a1f0004 CR4: 0000000000f72ef0
->   PKRU: 55555554
->   Call Trace:
->    <TASK>
->    ib_init_umem_odp+0xb6/0x110 [ib_uverbs]
->    ib_umem_odp_get+0xf0/0x150 [ib_uverbs]
->    rxe_odp_mr_init_user+0x71/0x170 [rdma_rxe]
->    rxe_reg_user_mr+0x217/0x2e0 [rdma_rxe]
->    ib_uverbs_reg_mr+0x19e/0x2e0 [ib_uverbs]
->    ib_uverbs_handler_UVERBS_METHOD_INVOKE_WRITE+0xd9/0x150 [ib_uverbs]
->    ib_uverbs_cmd_verbs+0xd19/0xee0 [ib_uverbs]
->    ? mmap_region+0x63/0xd0
->    ? __pfx_ib_uverbs_handler_UVERBS_METHOD_INVOKE_WRITE+0x10/0x10 [ib_uverbs]
->    ib_uverbs_ioctl+0xba/0x130 [ib_uverbs]
->    __x64_sys_ioctl+0xa4/0xe0
->    x64_sys_call+0x1178/0x2660
->    do_syscall_64+0x7e/0x170
->    ? syscall_exit_to_user_mode+0x4e/0x250
->    ? do_syscall_64+0x8a/0x170
->    ? do_syscall_64+0x8a/0x170
->    ? syscall_exit_to_user_mode+0x4e/0x250
->    ? do_syscall_64+0x8a/0x170
->    ? syscall_exit_to_user_mode+0x4e/0x250
->    ? do_syscall_64+0x8a/0x170
->    ? do_user_addr_fault+0x1d2/0x8d0
->    ? irqentry_exit_to_user_mode+0x43/0x250
->    ? irqentry_exit+0x43/0x50
->    ? exc_page_fault+0x93/0x1d0
->    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->   RIP: 0033:0x7262a6124ded
->   Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
->   RSP: 002b:00007fffd08c3960 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
->   RAX: ffffffffffffffda RBX: 00007fffd08c39f0 RCX: 00007262a6124ded
->   RDX: 00007fffd08c3a10 RSI: 00000000c0181b01 RDI: 0000000000000007
->   RBP: 00007fffd08c39b0 R08: 0000000014107820 R09: 00007fffd08c3b44
->   R10: 000000000000000c R11: 0000000000000246 R12: 00007fffd08c3b44
->   R13: 000000000000000c R14: 00007fffd08c3b58 R15: 0000000014107960
->    </TASK>
-> 
-> Fixes: 1efe8c0670d6 ("RDMA/core: Convert UMEM ODP DMA mapping to caching IOVA and page linkage")
-> Closes: https://lore.kernel.org/all/3e8f343f-7d66-4f7a-9f08-3910623e322f@gmail.com/
-> Signed-off-by: Daisuke Matsuda <dskmtsd@gmail.com>
+This Series is to update PCIe PHY settings as per latest
+hardware programming guide and remove max link speed dt 
+property for SA8775P PCIe EP.
 
-I tried to apply this commit to the following rdma branch.
-But I failed. The error is as below:
+Signed-off-by: Mrinmay Sarkar <quic_msarkar@quicinc.com>
+---
+V2 -> V3:
+- update subject in patch 1 as per review comment
+Link to v2: https://lore.kernel.org/r/20250514-update_phy-v2-0-d4f319221474@quicinc.com
 
-"
-Applying: RDMA/core: Avoid hmm_dma_map_alloc() for virtual DMA devices
-error: patch failed: drivers/infiniband/core/umem_odp.c:75
-error: drivers/infiniband/core/umem_odp.c: patch does not apply
-Patch failed at 0001 RDMA/core: Avoid hmm_dma_map_alloc() for virtual 
-DMA devices
-hint: Use 'git am --show-current-patch=diff' to see the failed patch
-When you have resolved this problem, run "git am --continue".
-If you prefer to skip this patch, run "git am --skip" instead.
-To restore the original branch and stop patching, run "git am --abort".
+v1 -> v2:
+- Update commit message as per the review comments.
+- Remove max-link-speed DT property.
 
-"
+---
+Mrinmay Sarkar (2):
+      phy: qcom: qmp-pcie: Update PHY settings for QCS8300 & SA8775P
+      arm64: dts: qcom: sa8775p: Remove max link speed property for PCIe EP
 
-The remote branch is remotes/rdma/rdma-next
-The head commit is 3b6a1e410c7f RDMA/mlx5: Fix CC counters query for MPV
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi              |  2 -
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c           | 89 ++++++++++++----------
+ drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5_20.h |  2 +
+ drivers/phy/qualcomm/phy-qcom-qmp-pcs-v5_20.h      |  4 +
+ .../phy/qualcomm/phy-qcom-qmp-qserdes-ln-shrd-v5.h | 11 +++
+ drivers/phy/qualcomm/phy-qcom-qmp.h                |  1 +
+ 6 files changed, 66 insertions(+), 43 deletions(-)
+---
+base-commit: edef457004774e598fc4c1b7d1d4f0bcd9d0bb30
+change-id: 20250513-update_phy-2cd804dd2401
 
-I am not sure if I use the correct repository and branch or not.
-
-Best Regards,
-Zhu Yanjun
-
-> ---
->   drivers/infiniband/core/device.c   | 17 +++++++++++++++++
->   drivers/infiniband/core/umem_odp.c | 11 ++++++++---
->   include/rdma/ib_verbs.h            |  4 ++++
->   3 files changed, 29 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
-> index b4e3e4beb7f4..abb8fed292c0 100644
-> --- a/drivers/infiniband/core/device.c
-> +++ b/drivers/infiniband/core/device.c
-> @@ -2864,6 +2864,23 @@ int ib_dma_virt_map_sg(struct ib_device *dev, struct scatterlist *sg, int nents)
->   	return nents;
->   }
->   EXPORT_SYMBOL(ib_dma_virt_map_sg);
-> +int ib_dma_virt_map_alloc(struct hmm_dma_map *map, size_t nr_entries,
-> +			  size_t dma_entry_size)
-> +{
-> +	if (!(nr_entries * PAGE_SIZE / dma_entry_size))
-> +		return -EINVAL;
-> +
-> +	map->dma_entry_size = dma_entry_size;
-> +	map->pfn_list = kvcalloc(nr_entries, sizeof(*map->pfn_list),
-> +				 GFP_KERNEL | __GFP_NOWARN);
-> +	if (!map->pfn_list)
-> +		return -ENOMEM;
-> +
-> +	map->dma_list = NULL;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(ib_dma_virt_map_alloc);
->   #endif /* CONFIG_INFINIBAND_VIRT_DMA */
->   
->   static const struct rdma_nl_cbs ibnl_ls_cb_table[RDMA_NL_LS_NUM_OPS] = {
-> diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
-> index 51d518989914..a5b17be0894a 100644
-> --- a/drivers/infiniband/core/umem_odp.c
-> +++ b/drivers/infiniband/core/umem_odp.c
-> @@ -75,9 +75,14 @@ static int ib_init_umem_odp(struct ib_umem_odp *umem_odp,
->   	if (unlikely(end < page_size))
->   		return -EOVERFLOW;
->   
-> -	ret = hmm_dma_map_alloc(dev->dma_device, &umem_odp->map,
-> -				(end - start) >> PAGE_SHIFT,
-> -				1 << umem_odp->page_shift);
-> +	if (ib_uses_virt_dma(dev))
-> +		ret = ib_dma_virt_map_alloc(&umem_odp->map,
-> +					    (end - start) >> PAGE_SHIFT,
-> +					    1 << umem_odp->page_shift);
-> +	else
-> +		ret = hmm_dma_map_alloc(dev->dma_device, &umem_odp->map,
-> +					(end - start) >> PAGE_SHIFT,
-> +					1 << umem_odp->page_shift);
->   	if (ret)
->   		return ret;
->   
-> diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
-> index b06a0ed81bdd..9ea41f288736 100644
-> --- a/include/rdma/ib_verbs.h
-> +++ b/include/rdma/ib_verbs.h
-> @@ -36,6 +36,7 @@
->   #include <linux/irqflags.h>
->   #include <linux/preempt.h>
->   #include <linux/dim.h>
-> +#include <linux/hmm-dma.h>
->   #include <uapi/rdma/ib_user_verbs.h>
->   #include <rdma/rdma_counter.h>
->   #include <rdma/restrack.h>
-> @@ -4221,6 +4222,9 @@ static inline void ib_dma_unmap_sg_attrs(struct ib_device *dev,
->   				   dma_attrs);
->   }
->   
-> +int ib_dma_virt_map_alloc(struct hmm_dma_map *map, size_t nr_entries,
-> +			  size_t dma_entry_size);
-> +
->   /**
->    * ib_dma_map_sgtable_attrs - Map a scatter/gather table to DMA addresses
->    * @dev: The device for which the DMA addresses are to be created
+Best regards,
+-- 
+Mrinmay Sarkar <quic_msarkar@quicinc.com>
 
 
