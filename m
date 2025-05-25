@@ -1,195 +1,266 @@
-Return-Path: <linux-kernel+bounces-661967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB6EEAC3370
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 11:35:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C97AC337E
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 11:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88F1D1764E7
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 09:35:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BEE9188C306
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 09:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48D81DF26B;
-	Sun, 25 May 2025 09:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938D01EA7CE;
+	Sun, 25 May 2025 09:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AVzAJGwy"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QNCcU0zI"
+Received: from smtp.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D974D42AA5;
-	Sun, 25 May 2025 09:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D597E3BB48;
+	Sun, 25 May 2025 09:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748165702; cv=none; b=h/R+8W3jzZcug2BtiqielqiAxX2bjfVozLiCkZdxvpN/4baKtplv4v5gHYR2J3YkrsAzUiwLIbHbxZohCznzXe7BGud0TWsuJpLO1pmZsmVESTn1kTsp0pQ5dm1Y9LqwHaGnQHMKE7oM2rd7iSp9e7jBWroQ5UZuWDtTsQkj+jA=
+	t=1748166098; cv=none; b=b4FMgvo/gfQmzv05K8W5pyDq2TqMzAt+A1+KxFYhp4QvJIKyuZJT+r7uLULCsxEocVlxd+im8hic/J17BaMVJcIYJoCaU8J+GktMq/2dyOmh1eQNDL7Rlf3OmDILDptab6I+tMBqkNUuFMbLoQGyYiaevljPW4dXptOANyE4JBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748165702; c=relaxed/simple;
-	bh=8KZ3EzKndP+p07qjA94uXuZpqmA2RfO0k0CNOpEd5tc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j53M/f1yTjNygSpR7SAHwz0ttjosn4+4O3MOi8bLD2p8XO31Drpf03xr6yvWldixJDiWEfXYRQKwqHQHFbAao5JBf3UdM/oEbQZEJ1urwrnIlDIONla1uaBIJ3Ill4It6tURdtBhl43DPlP162kLaAfaYEQVnVkfKrdxr3+qbK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AVzAJGwy; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-72d3b48d2ffso978767b3a.2;
-        Sun, 25 May 2025 02:35:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748165700; x=1748770500; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4baxS9nkwzK5vGKFdmUDvTqYJ7GDzaNoPiha3aT5tqA=;
-        b=AVzAJGwy908PFfTNV6YsuSNuMEKAYAfxceAD0jalaxuKL7VmwLgQ8qjDr4CKlQL44N
-         YQOVVMe/044QKSKMtHmuJCjXrNxCB2p+ecZIleWviVGFgroAYyX1H1aARD5eUcuzJeE7
-         hwo528qyQVy0qCyHBI0Qe7RK8+53k5TAFGk4Pm29SwZHCL/w/xIHyK1hHoywuNCUE53S
-         bpKmjHzTOWZdtJ/+YfFk7r81J7pKhkyhSAuLiPNtYMHZoJK+/z0s7gK9SkXcFUcLFIGz
-         VFE4mfwhILhTq1qJkKAy0cJ8VBEgMRmsMIDXfUK0r//+dfEwJrivBtbkbTT3c05L0eo4
-         WP2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748165700; x=1748770500;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4baxS9nkwzK5vGKFdmUDvTqYJ7GDzaNoPiha3aT5tqA=;
-        b=ZLk/hBrsOWXt1Mqdl6LAcKzPWvbUn1w6pWIjMNVEXJMCCz7+X+ZZ/vBkP6t9JVyx3l
-         fbW9yeetp9LYhXrtZFuy2zE+bKetyd7anL/a5T5KMJ029CYFUVg8GNkT98XFXMg+HhUx
-         CdQLnCg9MZvNcuw3KLGFTgnDBcKz9sGhJSnAPYHf2bxKPSeV9kmDn6H9W6uPbP5GH+Lj
-         23T6JCdwOfO2dZod7cL0niekqKso2Xl0efy7dUcHQsS+SvIdWpjMjcMh3gqWK0tOUhxq
-         pTmlhytY9wqmJn4UdwzfJUEHynnRIX30JpBIFsoB6dCRUzTSwa1Kh2+zOP+rJhH9fl8h
-         Y4TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVqujOlkooSClFDIfRwO/TLX8xjuEOT7TOUKE9V+ubzkQepiO6LGmvItDzGPgDhwsVOAnoTg0t+nZQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKhUNlWU1BnE7soFI1U1mfTXzddmOYGtyvnKsTNoJxiavrel6g
-	14rC5Tlxtbat6j1yUvc1bytWE/1W1JaDJ9ScEEEAmHcrofgG409k4L7qVnoLh32p
-X-Gm-Gg: ASbGncspkCKA3fXmMX8kX3HAnaAUMBXmFpvaewjVgr+N9i9RPkiVkFhjAcOFDW8/yes
-	2IdSNQiU5YldrNvhxG6/G7DfOqVsIweXxpvhmgonhNT2BdqxdvzCPYtumdvZt0R4VGDbmNlFCup
-	i3KavHsRIZbpr8VZrH86rBlCW6Ms9adFzWBymXCxRQ4nUGTr9vQPuVHYcqYxzgbT02Zg99b4UNW
-	BqNWYUJdJoUm7npw1X9jffbX0ND1PsKmGmbj/dyXHeOpvtgUa3oZtJl2WEfD84td6XILZqrWeBv
-	AkVe88j1dWKprhdYsreTa8HrDaQ+bDiRdHMdwMiz+2Zi1g4DCI8AwuSEx0ahi+DOkRoB5dB7Uak
-	4JU/asoRAS02JGweJzjvaBNN8LQI=
-X-Google-Smtp-Source: AGHT+IHdVnZChkIciAxlH6V/m7Kx+EUXLo9Fl2H6HAMwo8seD4/RjA0wdWikDkA0hl2g6QrlhCbOmA==
-X-Received: by 2002:a05:6a00:3a04:b0:739:4a93:a5db with SMTP id d2e1a72fcca58-745fe03ceeemr7206455b3a.22.1748165700021;
-        Sun, 25 May 2025 02:35:00 -0700 (PDT)
-Received: from [192.168.11.2] (FL1-119-244-79-106.tky.mesh.ad.jp. [119.244.79.106])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eb084980sm15329198a12.58.2025.05.25.02.34.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 May 2025 02:34:59 -0700 (PDT)
-Message-ID: <77ba8709-9b59-4c83-8898-6f0c699992c3@gmail.com>
-Date: Sun, 25 May 2025 18:34:56 +0900
+	s=arc-20240116; t=1748166098; c=relaxed/simple;
+	bh=Z0ULkCdlKxE7u445m/coZLXARw+PeS84yO1rRgMgIX4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oWbnr7jrcql2cqOJpxfoAcQEQerFZTOz7cfmmGU6zwxSTo/TdsQTm2pCGalnZWJIgp3r5RYeA/gt8bDMqnjyv8J/jj65juDnn0cJ7k3FIogTDvtlstvwLSuBxkuuZ3/w4kbLgV31IdrNItKksi32flMs7pqMrabqgvMXAHLyFwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QNCcU0zI; arc=none smtp.client-ip=80.12.242.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id J7qAu8zzkyzREJ7qAui2s9; Sun, 25 May 2025 11:40:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1748166026;
+	bh=3Ge08bMJ+KqUgvFk44XiE+E22u5Ef56JB5n9nEZeKTY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=QNCcU0zI7f0vU6+wFHRG7lIrtw5urmVfKvivO5D8Y5S7LYVl6lFQ7dX5eJAyILRVr
+	 09pCf489Da9Ut9/+NZ6LDOt2eB2ZnrW4x1YhszeTfyuWsebOUWH/a5dOQZeJ0NDip5
+	 0FIiZ1sQM7zOTT9xE3VJQi9L5PIhpZuIB8izeoysO0z1sdTBr3cHSBQqUV0XlJ6kh1
+	 3ARq+4Hc1PXWf5zmkBAhsIV15AfbkUyvgpTWDiupR9oha+MINJQbOOIs8DxyEHm3Q6
+	 qiltI98qYc1vAsECAfjM92knuoBFe2a+jcIsQfWGJQp69eZ7UpedfhvCHl2+XtdpmY
+	 jJQoLtuMX9W6g==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 25 May 2025 11:40:26 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pm@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] thermal: Constify struct thermal_zone_device_ops
+Date: Sun, 25 May 2025 11:40:04 +0200
+Message-ID: <5bba3bf0139e2418b306a0f9a2f1f81ef49e88a6.1748165978.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-next v3] RDMA/core: Avoid hmm_dma_map_alloc() for
- virtual DMA devices
-To: Leon Romanovsky <leon@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, jgg@ziepe.ca,
- zyjzyj2000@gmail.com, hch@infradead.org
-References: <20250524144328.4361-1-dskmtsd@gmail.com>
- <20250525070806.GW7435@unreal>
-Content-Language: en-US
-From: Daisuke Matsuda <dskmtsd@gmail.com>
-In-Reply-To: <20250525070806.GW7435@unreal>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Leon,
+'struct thermal_zone_device_ops' are not modified in these drivers.
 
-Thank you for amending the patch.
-I've run the test and confirmed that the bug has been resolved.
+Constifying these structures moves some data to a read-only section, so
+increases overall security, especially when the structure holds some
+function pointers.
 
-We still have two build errors. Please see my reply below.
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  28116	   5168	    128	  33412	   8284	drivers/thermal/armada_thermal.o
 
-On 2025/05/25 16:08, Leon Romanovsky wrote:
-> On Sat, May 24, 2025 at 02:43:28PM +0000, Daisuke Matsuda wrote:
-<...>
->>   drivers/infiniband/core/device.c   | 17 +++++++++++++++++
->>   drivers/infiniband/core/umem_odp.c | 11 ++++++++---
->>   include/rdma/ib_verbs.h            |  4 ++++
->>   3 files changed, 29 insertions(+), 3 deletions(-)
-> 
-> Please include changelogs when you submit vX patches next time.
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  28244	   5040	    128	  33412	   8284	drivers/thermal/armada_thermal.o
 
-Oh, sorry. I will be careful from next time.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/thermal/armada_thermal.c                        | 2 +-
+ drivers/thermal/da9062-thermal.c                        | 2 +-
+ drivers/thermal/dove_thermal.c                          | 2 +-
+ drivers/thermal/imx_thermal.c                           | 2 +-
+ drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 2 +-
+ drivers/thermal/kirkwood_thermal.c                      | 2 +-
+ drivers/thermal/mediatek/lvts_thermal.c                 | 2 +-
+ drivers/thermal/renesas/rcar_thermal.c                  | 2 +-
+ drivers/thermal/spear_thermal.c                         | 2 +-
+ drivers/thermal/st/st_thermal.c                         | 2 +-
+ drivers/thermal/testing/zone.c                          | 2 +-
+ 11 files changed, 11 insertions(+), 11 deletions(-)
 
-> 
-> I ended with the following patch:
-> 
-> diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
-> index 51d518989914e..cf16549919e02 100644
-> --- a/drivers/infiniband/core/umem_odp.c
-> +++ b/drivers/infiniband/core/umem_odp.c
-> @@ -60,9 +60,11 @@ static int ib_init_umem_odp(struct ib_umem_odp *umem_odp,
->   {
->   	struct ib_device *dev = umem_odp->umem.ibdev;
->   	size_t page_size = 1UL << umem_odp->page_shift;
-> +	struct hmm_dma_map *map;
->   	unsigned long start;
->   	unsigned long end;
-> -	int ret;
-> +	size_t nr_entries;
-> +	int ret = 0;
->   
->   	umem_odp->umem.is_odp = 1;
->   	mutex_init(&umem_odp->umem_mutex);
-> @@ -75,9 +77,20 @@ static int ib_init_umem_odp(struct ib_umem_odp *umem_odp,
->   	if (unlikely(end < page_size))
->   		return -EOVERFLOW;
->   
-> -	ret = hmm_dma_map_alloc(dev->dma_device, &umem_odp->map,
-> -				(end - start) >> PAGE_SHIFT,
-> -				1 << umem_odp->page_shift);
-> +	nr_entries = (end - start) >> PAGE_SHIFT;
-> +	if (!(nr_entries * PAGE_SIZE / page_size))
-> +		return -EINVAL;
-> +
-> +	nap = &umem_odp->map;
-
-BUILD ERROR: 'nap' should be 'map'
-
-> +	if (ib_uses_virt_dma(dev)) {
-> +		map->pfn_list = kvcalloc(nr_entries, sizeof(*map->pfn_list),
-> +					 GFP_KERNEL | __GFP_NOWARN);
-> +		if (!map->pfn_list)
-> +			ret = -ENOMEM;
-> +	} else
-> +		ret = hmm_dma_map_alloc(dev->dma_device, &umem_odp->map,
-
-OPTIONAL: Perhaps we can just pass 'map' for the 2nd arg?
-
-> +					(end - start) >> PAGE_SHIFT,
-> +					1 << umem_odp->page_shift);
->   	if (ret)
->   		return ret;
->   
-> @@ -90,7 +103,10 @@ static int ib_init_umem_odp(struct ib_umem_odp *umem_odp,
->   	return 0;
->   
->   out_free_map:
-> -	hmm_dma_map_free(dev->dma_device, &umem_odp->map);
-> +	if (ib_uses_virt_dma(dev))
-> +		kfree(map->pfn_list);
-> +	else
-> +		hmm_dma_map_free(dev->dma_device, &umem_odp->map);
-
-OPTIONAL: Here too.
-
->   	return ret;
->   }
->   
-> @@ -259,7 +275,10 @@ static void ib_umem_odp_free(struct ib_umem_odp *umem_odp)
->   				    ib_umem_end(umem_odp));
->   	mutex_unlock(&umem_odp->umem_mutex);
->   	mmu_interval_notifier_remove(&umem_odp->notifier);
-> -	hmm_dma_map_free(dev->dma_device, &umem_odp->map);
-> +	if (ib_uses_virt_dma(dev))
-> +		kfree(umem_odp->map->pfn_list);
-
-BUILD ERROR:     'umem_odp->map.pfn_list' is correct.
-
-Thanks again,
-Daisuke
-
+diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
+index 9bff21068721..c2fbdb534f61 100644
+--- a/drivers/thermal/armada_thermal.c
++++ b/drivers/thermal/armada_thermal.c
+@@ -408,7 +408,7 @@ static int armada_get_temp_legacy(struct thermal_zone_device *thermal,
+ 	return ret;
+ }
+ 
+-static struct thermal_zone_device_ops legacy_ops = {
++static const struct thermal_zone_device_ops legacy_ops = {
+ 	.get_temp = armada_get_temp_legacy,
+ };
+ 
+diff --git a/drivers/thermal/da9062-thermal.c b/drivers/thermal/da9062-thermal.c
+index 2077e85ef5ca..a8d4b766ba21 100644
+--- a/drivers/thermal/da9062-thermal.c
++++ b/drivers/thermal/da9062-thermal.c
+@@ -137,7 +137,7 @@ static int da9062_thermal_get_temp(struct thermal_zone_device *z,
+ 	return 0;
+ }
+ 
+-static struct thermal_zone_device_ops da9062_thermal_ops = {
++static const struct thermal_zone_device_ops da9062_thermal_ops = {
+ 	.get_temp	= da9062_thermal_get_temp,
+ };
+ 
+diff --git a/drivers/thermal/dove_thermal.c b/drivers/thermal/dove_thermal.c
+index f9157a47156b..723bc72f0626 100644
+--- a/drivers/thermal/dove_thermal.c
++++ b/drivers/thermal/dove_thermal.c
+@@ -106,7 +106,7 @@ static int dove_get_temp(struct thermal_zone_device *thermal,
+ 	return 0;
+ }
+ 
+-static struct thermal_zone_device_ops ops = {
++static const struct thermal_zone_device_ops ops = {
+ 	.get_temp = dove_get_temp,
+ };
+ 
+diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
+index bab52e6b3b15..38c993d1bcb3 100644
+--- a/drivers/thermal/imx_thermal.c
++++ b/drivers/thermal/imx_thermal.c
+@@ -361,7 +361,7 @@ static bool imx_should_bind(struct thermal_zone_device *tz,
+ 	return trip->type == THERMAL_TRIP_PASSIVE;
+ }
+ 
+-static struct thermal_zone_device_ops imx_tz_ops = {
++static const struct thermal_zone_device_ops imx_tz_ops = {
+ 	.should_bind = imx_should_bind,
+ 	.get_temp = imx_get_temp,
+ 	.change_mode = imx_change_mode,
+diff --git a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+index 0e07693ecf59..5736638c586b 100644
+--- a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
++++ b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+@@ -515,7 +515,7 @@ static int int3400_thermal_change_mode(struct thermal_zone_device *thermal,
+ 	return result;
+ }
+ 
+-static struct thermal_zone_device_ops int3400_thermal_ops = {
++static const struct thermal_zone_device_ops int3400_thermal_ops = {
+ 	.get_temp = int3400_thermal_get_temp,
+ 	.change_mode = int3400_thermal_change_mode,
+ };
+diff --git a/drivers/thermal/kirkwood_thermal.c b/drivers/thermal/kirkwood_thermal.c
+index 7c2265231668..4619e090f756 100644
+--- a/drivers/thermal/kirkwood_thermal.c
++++ b/drivers/thermal/kirkwood_thermal.c
+@@ -48,7 +48,7 @@ static int kirkwood_get_temp(struct thermal_zone_device *thermal,
+ 	return 0;
+ }
+ 
+-static struct thermal_zone_device_ops ops = {
++static const struct thermal_zone_device_ops ops = {
+ 	.get_temp = kirkwood_get_temp,
+ };
+ 
+diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
+index 985925147ac0..acce8fde2cba 100644
+--- a/drivers/thermal/mediatek/lvts_thermal.c
++++ b/drivers/thermal/mediatek/lvts_thermal.c
+@@ -571,7 +571,7 @@ static irqreturn_t lvts_irq_handler(int irq, void *data)
+ 	return iret;
+ }
+ 
+-static struct thermal_zone_device_ops lvts_ops = {
++static const struct thermal_zone_device_ops lvts_ops = {
+ 	.get_temp = lvts_get_temp,
+ 	.set_trips = lvts_set_trips,
+ };
+diff --git a/drivers/thermal/renesas/rcar_thermal.c b/drivers/thermal/renesas/rcar_thermal.c
+index 00a66ee0a5b0..fdd7afdc4ff6 100644
+--- a/drivers/thermal/renesas/rcar_thermal.c
++++ b/drivers/thermal/renesas/rcar_thermal.c
+@@ -277,7 +277,7 @@ static int rcar_thermal_get_temp(struct thermal_zone_device *zone, int *temp)
+ 	return rcar_thermal_get_current_temp(priv, temp);
+ }
+ 
+-static struct thermal_zone_device_ops rcar_thermal_zone_ops = {
++static const struct thermal_zone_device_ops rcar_thermal_zone_ops = {
+ 	.get_temp	= rcar_thermal_get_temp,
+ };
+ 
+diff --git a/drivers/thermal/spear_thermal.c b/drivers/thermal/spear_thermal.c
+index bb96be947521..603dadcd3df5 100644
+--- a/drivers/thermal/spear_thermal.c
++++ b/drivers/thermal/spear_thermal.c
+@@ -41,7 +41,7 @@ static inline int thermal_get_temp(struct thermal_zone_device *thermal,
+ 	return 0;
+ }
+ 
+-static struct thermal_zone_device_ops ops = {
++static const struct thermal_zone_device_ops ops = {
+ 	.get_temp = thermal_get_temp,
+ };
+ 
+diff --git a/drivers/thermal/st/st_thermal.c b/drivers/thermal/st/st_thermal.c
+index a14a37d54698..1470ca519def 100644
+--- a/drivers/thermal/st/st_thermal.c
++++ b/drivers/thermal/st/st_thermal.c
+@@ -132,7 +132,7 @@ static int st_thermal_get_temp(struct thermal_zone_device *th, int *temperature)
+ 	return 0;
+ }
+ 
+-static struct thermal_zone_device_ops st_tz_ops = {
++static const struct thermal_zone_device_ops st_tz_ops = {
+ 	.get_temp	= st_thermal_get_temp,
+ };
+ 
+diff --git a/drivers/thermal/testing/zone.c b/drivers/thermal/testing/zone.c
+index 1f4e450100e2..4257d813d572 100644
+--- a/drivers/thermal/testing/zone.c
++++ b/drivers/thermal/testing/zone.c
+@@ -381,7 +381,7 @@ static int tt_zone_get_temp(struct thermal_zone_device *tz, int *temp)
+ 	return 0;
+ }
+ 
+-static struct thermal_zone_device_ops tt_zone_ops = {
++static const struct thermal_zone_device_ops tt_zone_ops = {
+ 	.get_temp = tt_zone_get_temp,
+ };
+ 
+-- 
+2.49.0
 
 
