@@ -1,113 +1,121 @@
-Return-Path: <linux-kernel+bounces-661961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-661963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89F4FAC335D
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 11:21:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA02AC3362
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 11:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54F0417522B
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 09:21:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EF09175BD2
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 May 2025 09:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF3F1E5B71;
-	Sun, 25 May 2025 09:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E0C1E5B95;
+	Sun, 25 May 2025 09:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CsMrV82e"
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MssJ1DTl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E94819E7D0;
-	Sun, 25 May 2025 09:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC151E493C;
+	Sun, 25 May 2025 09:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748164904; cv=none; b=phgyNKSbZbkpDeUlLh4dpdkxlahEBLa2CMOckuIr5AtQCwhevW8PbgwDMOiSQgm2ZVDujkC/rRKHJb+CPmacUx6tjf89jnKjPomeoIfmoAFmHCyb/ey95MBAHv/X5Mi1X8YGiDKObi5ZtIjxF6Wl3L0QaPutM7IhnAzgWbRfbQg=
+	t=1748165023; cv=none; b=t+/fMcpvBOQTxCV4UoWrpmR2h8lsi4noeZx7G8zq72Dy6AbYk8/ajhwT9dx04z50LqOzwVVBkChUnOyx0Wcjo32dYAlQFrixfVPmf9nAyQeUD9CXIyIhQwW+YbPTkHKIjMBRHZXnHTH8ZlajwkU9Fn9S9u4+n4WHakD6s5nU2OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748164904; c=relaxed/simple;
-	bh=B5TYa235QjGjGA0jvQWxFhge6fgSHXnJT4Mm9/At1wM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NMjmzCBxSpY0Kcq9MdjAUk/EZBfkjXGJWmcLznQq67AfSnp/+JI3Pfb2PURdQKz8NsqwmLcwwvmcFvXgcR9AayZrkD1B7+Ee1OJIH8tLlly+9/DlBW3j5omCH1wYQoO8I1lHD7xbqbVe3cNycQmh51WC/mo2RVgSy0UCud/8tPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=CsMrV82e; arc=none smtp.client-ip=80.12.242.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id J7XzuBofDAivmJ7Xzu2vOD; Sun, 25 May 2025 11:21:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1748164897;
-	bh=nCEcBW70wZPmmN7YfoE/rJZEP5QvDv9rswbda3k7KEc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=CsMrV82ebeye7DC5o4tWvdcLaYGaBzCNx/7SlhLa/cg6iUCwS1X2rGmxeMQIyoBxA
-	 t0lnHFUdTJeAnOe1Cenb0xVVTVZE38CohStP94W3mofmzKjqyfcK0h9PhlYc4E1T7g
-	 OJ2uv/WPjhYCd4yAPTxJei2hyDxNK3zkvNBbxGGeKO01aaign0mIAsl/vSXSM8NYdA
-	 +ythZWnSkC//6lHCAbKCrRE3+9LEJmMCUh7xhCdtxePLM4tAcv9R9MVM2YJKnHYJ/7
-	 p2ll7M0jkwQm/EShb+FM2CZHdTFuFdIdNI9TOWJUBENDNwDXW5XFDmzhTz+xrm04NM
-	 EVquUNMPsBEeg==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 25 May 2025 11:21:37 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Potnuri Bharat Teja <bharat@chelsio.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next] cxgb4: Constify struct thermal_zone_device_ops
-Date: Sun, 25 May 2025 11:21:24 +0200
-Message-ID: <e6416e0d15ea27a55fe1fb4e349928ac7bae1b95.1748164843.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1748165023; c=relaxed/simple;
+	bh=8xJ/4cJzkengF8ieK0oPHmswKBr0WzC4IkIOgHiz8OY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nnFJa5PLJOJy0uegTPa398ySi9tWC73Nvzh79thqfwokZQSH5kGunpwFUOS6ETg1ft5kS4nNrvm/tgp7GPfzJTq+5JMCNteQ91A2zwqAFbtzhAzz5oVHqhqKCnPOsQcmm69+xTDGlhnw0zb+1nKPcC0uLR8i/mApBXagcG3Brow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MssJ1DTl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AD81C4CEED;
+	Sun, 25 May 2025 09:23:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748165022;
+	bh=8xJ/4cJzkengF8ieK0oPHmswKBr0WzC4IkIOgHiz8OY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MssJ1DTlorerzrvBZ0h4vsvrIEFfdcrfkqEUa2npxXjrdxEMK7wbDqdR5lHNfNcLD
+	 tu0B7WAPk+NpFWNPAreGfoyUJ8JJ9O2pvIkTJ9CfYSmibOjh/DGPYhGP067DDmnnzy
+	 yppRkwTZAED4PSUxIkMUbyeTWL1keMWrSPcSTanp/PrmuNHhK5p8QRusrfjBJhzvJv
+	 1793QewmP6CGsO0FjgNnWhIBD3WYK9SFox4uzhaV2eb3yfZBFY6cB7ooxROezwGjDb
+	 dnyXiZeM1qQKpNat8UKWUaOOV5FP+Yzo5E6Ff6BCxQW7BWAB0zyUANLZOWOTJikBuI
+	 jdvyzQ2bRHfiQ==
+Date: Sun, 25 May 2025 10:23:31 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Markus Burri <markus.burri@mt.com>
+Cc: linux-kernel@vger.kernel.org, Mahesh J Salgaonkar
+ <mahesh@linux.ibm.com>, "Oliver O'Halloran" <oohall@gmail.com>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Jacek
+ Lawrynowicz <jacek.lawrynowicz@linux.intel.com>, Maciej Falkowski
+ <maciej.falkowski@linux.intel.com>, Oded Gabbay <ogabbay@kernel.org>, Linus
+ Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Nuno Sa <nuno.sa@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, linuxppc-dev@lists.ozlabs.org,
+ dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org,
+ linux-iio@vger.kernel.org, Markus Burri <markus.burri@bbv.ch>
+Subject: Re: [PATCH v4 3/6] iio: fix potential out-of-bound write
+Message-ID: <20250525102331.46a4d778@jic23-huawei>
+In-Reply-To: <20250508130612.82270-4-markus.burri@mt.com>
+References: <20250508130612.82270-1-markus.burri@mt.com>
+	<20250508130612.82270-4-markus.burri@mt.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-'struct thermal_zone_device_ops' are not modified in this driver.
+On Thu,  8 May 2025 15:06:09 +0200
+Markus Burri <markus.burri@mt.com> wrote:
 
-Constifying these structures moves some data to a read-only section, so
-increases overall security, especially when the structure holds some
-function pointers.
+> The buffer is set to 20 characters. If a caller write more characters,
+> count is truncated to the max available space in "simple_write_to_buffer".
+> To protect from OoB access, check that the input size fit into buffer and
+> add a zero terminator after copy to the end of the copied data.
+> 
+> Signed-off-by: Markus Burri <markus.burri@mt.com>
+> ---
+Applied to the fixes-togreg branch of iio.git.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   2912	   1064	      0	   3976	    f88	drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.o
+I'd still like some more eyes on this if anyone has time though as
+experience teaches me that subtle tweaks to string manipulation end
+conditions are easy places to make mistakes!
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   3040	    936	      0	   3976	    f88	drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.o
+I'll not be pushing out as non rebasing until I rebase on rc1 anyway
+so we have time.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.c
-index b08356060fb4..7bab8da8f6e6 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.c
-@@ -29,7 +29,7 @@ static int cxgb4_thermal_get_temp(struct thermal_zone_device *tzdev,
- 	return 0;
- }
- 
--static struct thermal_zone_device_ops cxgb4_thermal_ops = {
-+static const struct thermal_zone_device_ops cxgb4_thermal_ops = {
- 	.get_temp = cxgb4_thermal_get_temp,
- };
- 
--- 
-2.49.0
+Jonathan
+
+>  drivers/iio/industrialio-core.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+> index b9f4113ae5fc..ebf17ea5a5f9 100644
+> --- a/drivers/iio/industrialio-core.c
+> +++ b/drivers/iio/industrialio-core.c
+> @@ -410,12 +410,15 @@ static ssize_t iio_debugfs_write_reg(struct file *file,
+>  	char buf[80];
+>  	int ret;
+>  
+> +	if (count >= sizeof(buf))
+> +		return -EINVAL;
+> +
+>  	ret = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf,
+>  				     count);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	buf[count] = '\0';
+> +	buf[ret] = '\0';
+>  
+>  	ret = sscanf(buf, "%i %i", &reg, &val);
+>  
 
 
