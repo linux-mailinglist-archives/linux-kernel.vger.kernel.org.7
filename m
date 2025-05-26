@@ -1,231 +1,128 @@
-Return-Path: <linux-kernel+bounces-662529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8CEAC3C00
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:50:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5FFDAC3C06
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AAAA7A8DF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:49:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 184517AACD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558881EE03D;
-	Mon, 26 May 2025 08:50:32 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44C01DDC28;
+	Mon, 26 May 2025 08:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b="Ky+HBJTP"
+Received: from www571.your-server.de (www571.your-server.de [78.46.3.230])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0383B1E47A8
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 08:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3F91EEA47;
+	Mon, 26 May 2025 08:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.3.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748249431; cv=none; b=mYl0CgqejagAEs435dapvB8MbhUKZiF4l3MvUI2iSE+itIXElUxWpr9tImDoWOxaTrIowWnZD5yFMqk+Dq/9gAfoxVQCn7w9wwSxSNNV2HGxXNn9RAfZs+u2jYhQjRJHC0gJFHV0IPN97EVNGlMaFliQVwu1fESO3mWyaUqb3ZY=
+	t=1748249488; cv=none; b=uMk3lXC7Dv22KXs5xklvIgJHC9WX4qGx5ENgHRqQbYR7U+UqRFbkZ/Kd4YXYkwZ4zM7rwv6HtPAD5aOOygB6YWOAqq015ZvJvF39QQJ1N8iRDgDZy9zTNufOt6J+QlxYbGco1aOyWSUKz1aE1ZetIvrVY4NkDw9/ycVzKqSyilo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748249431; c=relaxed/simple;
-	bh=ES/5VMJTP0/Z8pCLa0ZMn49fZz2+QHoH8ccAMIZSAvM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HwBWz/vWSM8/rsbGE9wodgRNY0BsyT45CtH4CYFRBb7ivjvIn3CVrlQfBK1YEWiBSE+P+RP6fFvIJ35X+FF5iLQGQUX8LLvKl7OQwBlfvJCY3OvyDx3sf1nEiLL5MXGPVcRwy+FdTvq/cucig6pHatbjdDsqfcEIJgHu5o/46VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-86cab385db7so662509439f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 01:50:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748249429; x=1748854229;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w9c7v6E+/GQRM3UlZ2T/jgFX7EYWeznAGMdtx6v4y64=;
-        b=G6mScXNr6D73dCuEtQ0QVaBRx+cCoAofuEuEIF36oh61lAplhCW7ORb4V9SH/9FXBC
-         rPI8od/6RvpqJEJ74Ubqeed8bAsN+h+UUlevHkUXNhs3LtBtOwty5I/Z1twutAAIfKso
-         9B5Vq4MDCfIPYC5ND6AU3JXUf3G+gF9il8Xua3O/0h08bj98LubVHwCAjbqgvDX0ebrm
-         pNckrYxN3xHFXVefpO8JD49bk94dUcrudp+f2KuFMm0hfFCpNdOFCiU/IJR62VFjuYpA
-         NMy8kvxmbDuCrLtlX9S2wreCPb3ZYyYuflVzSbA5ngj8MOPIYL6P2KtAtY6GTj9MwXQ4
-         WCBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVtUsFxLtBrZ8L0yYAYXIG7QUoO5ddkXUVjvb3usr3dzb5tcx7guJDgMl1ilod8NM07eKREThjBLveX9/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUln5DlqHyhThPl9x7uR+zGRA7VoZdEitZCSvsazt7km2mPI70
-	DSwKpZa8Exz+J++11ZFfqgoQfuacFTLtkRsAW+c3w/UHG43TJkxtq/CwrwPdgDX59RhuZZ4HJNh
-	kOPb+IbepgikAmeyi1b9efJsh1CK7nT7VWiQlaW4kFl1EwSAf1VDh9S7xafw=
-X-Google-Smtp-Source: AGHT+IGvIUT1xTNpT2S4TzLOsjICT6VfN3kGiDfl4z4bFL9GGjdt2D0AnhMoDSq8jPM5Zp0BG/b77PAQqHdAho7pF93TUN66OS1n
+	s=arc-20240116; t=1748249488; c=relaxed/simple;
+	bh=IDkEifP/ECIx4HCcJ3KVZJy4RtQfztssOHDisYPPwTM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bOQBRJOvqI5n6UuVe+kUaBMr5ussnD+DqM8WW0mEOPA/47q8maqXlDoyUg0TRRECJ0ZAJW4JUVgfS0DVh5u51fYXdwNBHQvi3EpDM9vnAHndRAcOFJhdZdt/tQEQMcgE57A1nHwedJ3dhSIceR57xWbE6T+RVnIT3TOvQ9tWUEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de; spf=pass smtp.mailfrom=it-klinger.de; dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b=Ky+HBJTP; arc=none smtp.client-ip=78.46.3.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=it-klinger.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=it-klinger.de; s=default2502; h=Content-Transfer-Encoding:MIME-Version:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=hRzdxS19X09vLm7U2fkj9IPgR3UF3IGS8v5nrEYKLXc=; b=Ky+HBJTPeDaMvtnKxLA1uMJ6bI
+	WzFsSg3lq64kyAWOk2pNWlO087hrAeTNxfXaewMtK5+LB0K/p1j/bN182qWIYOIF4aBMhllImD3KN
+	p0FFcQ5YhQPb+WVhDRiTk7V9ukQwGsLJrc/swLPxFuoNzMPHEn8FdgGwunSjSs1XHe5D9p7A6n9kq
+	ZzLwUDpholBCxQuj3LMgrV9SxJtl3s9xRPoArN7tQRCJFsab+EyEoY0eJDBHzxrCBi1TSmcTPHNe8
+	RcXmFeuSY+S46VYciilss8JtcCsZO7djLgLcj94gWLcjSKcd/OwMTYqFLSy51x4WLEO+F5UatSfpH
+	m8H89YuQ==;
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+	by www571.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <ak@it-klinger.de>)
+	id 1uJTYA-000Cpi-0R;
+	Mon, 26 May 2025 10:51:14 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ak@it-klinger.de>)
+	id 1uJTY9-000C3y-2C;
+	Mon, 26 May 2025 10:51:13 +0200
+From: Andreas Klinger <ak@it-klinger.de>
+To: jic23@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: lars@metafoo.de,
+	javier.carrasco.cruz@gmail.com,
+	mazziesaccount@gmail.com,
+	andriy.shevchenko@linux.intel.com,
+	arthur.becker@sentec.com,
+	perdaniel.olsson@axis.com,
+	mgonellabolduc@dimonoff.com,
+	muditsharma.info@gmail.com,
+	clamor95@gmail.com,
+	emil.gedenryd@axis.com,
+	ak@it-klinger.de,
+	devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/3] iio:light: add driver for veml6046x00 RGBIR color sensor
+Date: Mon, 26 May 2025 10:50:38 +0200
+Message-Id: <20250526085041.9197-1-ak@it-klinger.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3817:b0:85d:f316:fabc with SMTP id
- ca18e2360f4ac-86cbb8a2d4amr767738939f.8.1748249429183; Mon, 26 May 2025
- 01:50:29 -0700 (PDT)
-Date: Mon, 26 May 2025 01:50:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68342b55.a70a0220.253bc2.0091.GAE@google.com>
-Subject: [syzbot] [tipc?] WARNING: refcount bug in tipc_crypto_xmit
-From: syzbot <syzbot+f0c4a4aba757549ae26c@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jmaloy@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	tipc-discussion@lists.sourceforge.net, wangliang74@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: ak@it-klinger.de
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27648/Sun May 25 10:31:16 2025)
 
-Hello,
+This patchset adds an IIO driver for Vishay veml6046x00 RGBIR color sensor
 
-syzbot found the following issue on:
+Changes in v5:
+- Thanks to the feedback of Andy and further explanations of Jonathan many
+  improvements could be implemented.
+- add documentation in kernel-doc format
+- iio_push_to_buffers_with_ts() is not used as also testing against
+  linux-stable where it is not available so far.
 
-HEAD commit:    b1427432d3b6 Merge tag 'iommu-fixes-v6.15-rc7' of git://gi..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=17ba35f4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9fd1c9848687d742
-dashboard link: https://syzkaller.appspot.com/bug?extid=f0c4a4aba757549ae26c
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161ee170580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164328e8580000
+Changes in v4:
+- implement feedback from Andy and Jonathan
+- implement feedback from vendor (reading interrupt register as bulk read)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/48a582dac9f0/disk-b1427432.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/94ad5463a7f5/vmlinux-b1427432.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4d0af31b0b08/bzImage-b1427432.xz
+Changes in v3:
+- implement a lot of feedback from Jonathan
+- change scale value to real factor of lux per raw count instead of hardware
+  gain
+- optimize code by using more lookup tables
+- remove unimplemented threshold functionality
 
-The issue was bisected to:
+Changes in v2:
+- fix missing include for example in vishay,veml6046x00.yaml
 
-commit e279024617134c94fd3e37470156534d5f2b3472
-Author: Wang Liang <wangliang74@huawei.com>
-Date:   Tue May 20 10:14:04 2025 +0000
+Andreas Klinger (3):
+  dt-bindings: iio: light: veml6046x00: add color sensor
+  iio: light: add support for veml6046x00 RGBIR color sensor
+  MAINTAINER: add maintainer for veml6046x00
 
-    net/tipc: fix slab-use-after-free Read in tipc_aead_encrypt_done
+ .../iio/light/vishay,veml6046x00.yaml         |   51 +
+ MAINTAINERS                                   |    6 +
+ drivers/iio/light/Kconfig                     |   13 +
+ drivers/iio/light/Makefile                    |    1 +
+ drivers/iio/light/veml6046x00.c               | 1007 +++++++++++++++++
+ 5 files changed, 1078 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.yaml
+ create mode 100644 drivers/iio/light/veml6046x00.c
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10018df4580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=12018df4580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14018df4580000
+-- 
+2.39.5
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f0c4a4aba757549ae26c@syzkaller.appspotmail.com
-Fixes: e27902461713 ("net/tipc: fix slab-use-after-free Read in tipc_aead_encrypt_done")
-
-------------[ cut here ]------------
-refcount_t: addition on 0; use-after-free.
-WARNING: CPU: 1 PID: 36 at lib/refcount.c:25 refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:25
-Modules linked in:
-CPU: 1 UID: 0 PID: 36 Comm: kworker/u8:2 Not tainted 6.15.0-rc7-syzkaller-00144-gb1427432d3b6 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: netns cleanup_net
-RIP: 0010:refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:25
-Code: 00 00 e8 79 f6 06 fd 5b 41 5e e9 81 6c a0 06 cc e8 6b f6 06 fd c6 05 06 3c b0 0a 01 90 48 c7 c7 80 aa c1 8b e8 e7 52 cb fc 90 <0f> 0b 90 90 eb d7 e8 4b f6 06 fd c6 05 e7 3b b0 0a 01 90 48 c7 c7
-RSP: 0018:ffffc90000a08668 EFLAGS: 00010246
-RAX: bb5b0788a28fc300 RBX: 0000000000000002 RCX: ffff888142681e00
-RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000002
-RBP: ffffc90000a087e8 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1bba984 R12: ffff88807df80000
-R13: dffffc0000000000 R14: ffff88807df8016c R15: ffff888033397800
-FS:  0000000000000000(0000) GS:ffff8881261c2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555569a1e878 CR3: 000000007b8fc000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- __refcount_add include/linux/refcount.h:-1 [inline]
- __refcount_inc include/linux/refcount.h:366 [inline]
- refcount_inc include/linux/refcount.h:383 [inline]
- get_net include/net/net_namespace.h:268 [inline]
- tipc_aead_encrypt net/tipc/crypto.c:821 [inline]
- tipc_crypto_xmit+0x1820/0x22c0 net/tipc/crypto.c:1761
- tipc_crypto_clone_msg+0x90/0x170 net/tipc/crypto.c:1656
- tipc_crypto_xmit+0x1998/0x22c0 net/tipc/crypto.c:1717
- tipc_bearer_xmit_skb+0x245/0x400 net/tipc/bearer.c:572
- tipc_disc_timeout+0x580/0x6d0 net/tipc/discover.c:338
- call_timer_fn+0x17b/0x5f0 kernel/time/timer.c:1789
- expire_timers kernel/time/timer.c:1840 [inline]
- __run_timers kernel/time/timer.c:2414 [inline]
- __run_timer_base+0x61a/0x860 kernel/time/timer.c:2426
- run_timer_base kernel/time/timer.c:2435 [inline]
- run_timer_softirq+0xb7/0x180 kernel/time/timer.c:2445
- handle_softirqs+0x286/0x870 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:lock_acquire+0x175/0x360 kernel/locking/lockdep.c:5870
-Code: 00 00 00 00 9c 8f 44 24 30 f7 44 24 30 00 02 00 00 0f 85 cd 00 00 00 f7 44 24 08 00 02 00 00 74 01 fb 65 48 8b 05 8b 9f d7 10 <48> 3b 44 24 58 0f 85 f2 00 00 00 48 83 c4 60 5b 41 5c 41 5d 41 5e
-RSP: 0018:ffffc90000ad7378 EFLAGS: 00000206
-RAX: bb5b0788a28fc300 RBX: 0000000000000000 RCX: bb5b0788a28fc300
-RDX: 0000000000000000 RSI: ffffffff8d939072 RDI: ffffffff8bc1f600
-RBP: ffffffff8171ca05 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: ffffffff8171ca05 R12: 0000000000000002
-R13: ffffffff8df3dee0 R14: 0000000000000000 R15: 0000000000000246
- rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- rcu_read_lock include/linux/rcupdate.h:841 [inline]
- class_rcu_constructor include/linux/rcupdate.h:1155 [inline]
- unwind_next_frame+0xc2/0x2390 arch/x86/kernel/unwind_orc.c:479
- arch_stack_walk+0x11c/0x150 arch/x86/kernel/stacktrace.c:25
- stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
- kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
- kasan_record_aux_stack+0xbc/0xd0 mm/kasan/generic.c:548
- __call_rcu_common kernel/rcu/tree.c:3082 [inline]
- call_rcu+0x142/0x990 kernel/rcu/tree.c:3202
- inet_release+0x187/0x210 net/ipv4/af_inet.c:435
- __sock_release net/socket.c:647 [inline]
- sock_release+0x85/0x150 net/socket.c:675
- wg_netns_pre_exit+0xd6/0x1d0 drivers/net/wireguard/device.c:423
- ops_pre_exit_list net/core/net_namespace.c:162 [inline]
- cleanup_net+0x594/0xbd0 net/core/net_namespace.c:634
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xadb/0x17a0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	00 00                	add    %al,(%rax)
-   2:	00 00                	add    %al,(%rax)
-   4:	9c                   	pushf
-   5:	8f 44 24 30          	pop    0x30(%rsp)
-   9:	f7 44 24 30 00 02 00 	testl  $0x200,0x30(%rsp)
-  10:	00
-  11:	0f 85 cd 00 00 00    	jne    0xe4
-  17:	f7 44 24 08 00 02 00 	testl  $0x200,0x8(%rsp)
-  1e:	00
-  1f:	74 01                	je     0x22
-  21:	fb                   	sti
-  22:	65 48 8b 05 8b 9f d7 	mov    %gs:0x10d79f8b(%rip),%rax        # 0x10d79fb5
-  29:	10
-* 2a:	48 3b 44 24 58       	cmp    0x58(%rsp),%rax <-- trapping instruction
-  2f:	0f 85 f2 00 00 00    	jne    0x127
-  35:	48 83 c4 60          	add    $0x60,%rsp
-  39:	5b                   	pop    %rbx
-  3a:	41 5c                	pop    %r12
-  3c:	41 5d                	pop    %r13
-  3e:	41 5e                	pop    %r14
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
