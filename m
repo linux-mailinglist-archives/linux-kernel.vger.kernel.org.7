@@ -1,230 +1,161 @@
-Return-Path: <linux-kernel+bounces-662506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93537AC3BB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:27:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7287AC3BB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 492DE18915C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:28:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D809B1895178
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6145E1DED4C;
-	Mon, 26 May 2025 08:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IDkwSIT6"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B1F1EB5DB;
+	Mon, 26 May 2025 08:28:05 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B360D1DE3CB
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 08:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20DF1E9B0B;
+	Mon, 26 May 2025 08:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748248058; cv=none; b=W3Pfl0SsD8hJSZRFvLhz1doTUK3tGLVKT7cYyj44VHboK5lBjDKnWC5WlfQj7X4X+fslMst9t7FdzzHVRpczg+rQOu9EyupmZhFNUwPoElCpdX8O2rPfvxrPTt7HqUQCB/PW9H3AUN81VFokd4/8RDDZbyZCGUy1C2ZzIm92+Ig=
+	t=1748248085; cv=none; b=qB5TbNyLdoLhQIcmAIP23UmqYFZXHsQBUdY00oJA9h6qAsPXOe5IGjKW38yAmd1ZGAyVeDa1xM04GQ0rMYE3haPo2LgJxvz+uw0CVPNYuMMdUCVA8PmvhsHi3y+wyCCaaxkmbah4OnIGSuD/7jk9caRg2e4oGg5O0YQnkunQ84M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748248058; c=relaxed/simple;
-	bh=RQFxDDJX4sTV7Tlbw+d572ayFyLoBX+0/QWAEvVzFYQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=aA916yXvQ1zIDgQrYtVVtMRs8L2zkKrapNf7EgYq810VffOcRNDRp/0Ykp5KMzV4WotEyu2ylT36DAt6ZTQL9Pd0Bnh057qaBDxv/XSbdWPOlHXBj+rz4O461/vJFkVjRftWkH3vrPMCfIdY4jTRiV3khUrViG8nIZyKdj7EM8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IDkwSIT6; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-442fda876a6so19156665e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 01:27:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748248055; x=1748852855; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=//l+SpZWLdaex2pzGku8nTnokra2GDwP8t/4Vkwd2wU=;
-        b=IDkwSIT6nLnZsCbmXPHm49A5Q9+1d5xw7MWq+QUIpyvRHNe8zFSCI3qeZnj9DOUpRF
-         olEr77sIHGvXq6S6ZvDYj8smH+DQA+neEN+8rR5cSp/kHov5j/akcE01V7FUYa1lJxso
-         qYS0mqU/pl+P8eOjSvA4jVsj3QZ7/SesBnalZGb+RvBQyUS2oy3ShltFC50BzUZQnwGT
-         8kgycay8QxbBzS1Z6MI4cZZqw6ZXIvIhMoWAThIv0PV9bp6TMUP59+kJmgq8Rw3R8eK9
-         /3zyH1ghLaXxqZNPCfE/rR6j+uYV8+WonRC9Wz78Xfet2rxK8T2aqxgR7+BgR2PowB9y
-         8CzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748248055; x=1748852855;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=//l+SpZWLdaex2pzGku8nTnokra2GDwP8t/4Vkwd2wU=;
-        b=lD2aL/1po5vccAbgcJKre7nG3+npm5qrJiclo0XS82NIY/Uqid682Nsw3IlIFM8PC4
-         f47493/CJvJKHf79cSEQbbYlXRgwRn8HTW35T6C3VKged6nyqC4sFeXcwidht4y3JzvS
-         cSq5rBxe0Z8EcWsv9bTVyCwwq4P3/gr/3TXnF56joT3RlL3QWbcOUT03xCyTQ6/NeiCJ
-         IamXoIbuSQJp/hZh8jDYVAPJniydo0n2UNYwpxVbpx+BODGM4uhaZiPR3nSdnDZyzj90
-         M2agukgpKqYyHtIMOLnPH8maqolQ2B+50TjuvMpSzvBPkIz/hgVP5Y2R2R/gSETR8FW2
-         +KHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwh3GaFYsCf1o9TC+Lx3sBHgeA8vWVi0G+/mZhVVWKEmbeT0s/cupTHi8RhV1l0LtXmp5EeT2wAc5jX6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFBwPq4Y2m8Ac6aDY1iKp45l5TFOOo/yRdm7Ce3n4ijKJ3w8jx
-	RN9QvEP1rozoIeqNkUUfed1M27r+ClKA8Kha8g9jlLWsWGrrFP+Iy9L2ZkqwLsb/E0w=
-X-Gm-Gg: ASbGncsErpZyKMfewC/CcvdM14NWkLjyjGql0cfimc5ULYlqgCw5K0xbR3fmEj6UHWh
-	jN/ILDBBm3RWC+zIHR4QMxKrVrMJzbkbMpzrgXZj0fHjuv5tKlyqckf3R30hFXvcKmkchoEM40Z
-	zmuf2eavX68eycNSIAuWHyuElplT0nHVzRXBaTo2nZxtxOhZt818mLWHLf2wfE9Uiner3eKGaFl
-	fOWe6/m4T2Tf/NmaXJ0BgEX0DiLwOPEUj9hDB/EX2WoZ5wA/OpenpilOgl4TklaMfGE68wDXBXY
-	UlkV1hkjLd/yoB36LtYJDqdb+T8/hp32AFFocLuPKdP4seasrc+d8HX+CkI1X8/vKHuFI9tHKdg
-	V8S03pXYU2Ka4zqOFmKnkqfyG1euy
-X-Google-Smtp-Source: AGHT+IFzu9DWaslxdEFSgpjGR3l4yPYyJktjmTZ/FF1vEJqTSXIz10xyxcwYQuLFRxS0fhlqWlfWhA==
-X-Received: by 2002:a05:600d:108:10b0:442:d9f2:c753 with SMTP id 5b1f17b1804b1-44d5bb93604mr27003115e9.26.1748248054978;
-        Mon, 26 May 2025 01:27:34 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:485c:38a6:3d01:f4a4? ([2a01:e0a:3d9:2080:485c:38a6:3d01:f4a4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f3dd99edsm226889525e9.36.2025.05.26.01.27.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 May 2025 01:27:34 -0700 (PDT)
-Message-ID: <70b6d885-ca52-4731-9a78-80dd25248e2f@linaro.org>
-Date: Mon, 26 May 2025 10:27:33 +0200
+	s=arc-20240116; t=1748248085; c=relaxed/simple;
+	bh=MLH7gSBcJPJZeIiOZ7z+35hYV1Sh5TAL4nPmBWlEf5I=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=nPsHemywv216apo0+XNf3CC/f7hTUgB5e0ZRy3XPJMXo5HPKKKXhbMEF+o6y25UGHjtlVWNm88Z1+9FLaHAqxq5DfvHRqCv/L2GQTVOQlFxCQ1yaNzmpUgW4AjGcNbC5jOtWN18TsG8c2pJpBcZBdbaWYAvMCUOWFkL9+T6e/oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4b5TRB5Hx7z8RTZN;
+	Mon, 26 May 2025 16:27:50 +0800 (CST)
+Received: from njy2app08.zte.com.cn ([10.40.13.206])
+	by mse-fl2.zte.com.cn with SMTP id 54Q8RiBX001679;
+	Mon, 26 May 2025 16:27:44 +0800 (+08)
+	(envelope-from jiang.kun2@zte.com.cn)
+Received: from mapi (njy2app01[null])
+	by mapi (Zmail) with MAPI id mid204;
+	Mon, 26 May 2025 16:27:46 +0800 (CST)
+Date: Mon, 26 May 2025 16:27:46 +0800 (CST)
+X-Zmail-TransId: 2af968342602255-1d940
+X-Mailer: Zmail v1.0
+Message-ID: <20250526162746319JPXpL0xRJ-n7onnZApOiV@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH 5/5] power: supply: qcom-battmgr: Add charge control
- support
-To: Fenglin Wu <fenglin.wu@oss.qualcomm.com>, =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?=
- <me@kuruczgy.com>, Sebastian Reichel <sre@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
- David Collins <david.collins@oss.qualcomm.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- kernel@oss.qualcomm.com
-References: <20250523-qcom_battmgr_update-v1-0-2bb6d4e0a56e@oss.qualcomm.com>
- <20250523-qcom_battmgr_update-v1-5-2bb6d4e0a56e@oss.qualcomm.com>
- <db0e40b6-22f3-46aa-b35d-7a8729370ddf@kuruczgy.com>
- <1b1c4617-0e5b-40c8-9a66-d243b48c0977@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <1b1c4617-0e5b-40c8-9a66-d243b48c0977@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <jiang.kun2@zte.com.cn>
+To: <davem@davemloft.net>, <kuba@kernel.org>
+Cc: <dsahern@kernel.org>, <edumazet@google.com>, <pabeni@redhat.com>,
+        <horms@kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <xu.xin16@zte.com.cn>,
+        <yang.yang29@zte.com.cn>, <wang.yaxin@zte.com.cn>,
+        <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
+        <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>,
+        <ye.xingchen@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIG5ldC1uZXh0XSBuZXQ6IGFycDogdXNlIGtmcmVlX3NrYl9yZWFzb24oKSBpbiBhcnBfcmN2KCk=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 54Q8RiBX001679
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68342606.001/4b5TRB5Hx7z8RTZN
 
-On 26/05/2025 08:19, Fenglin Wu wrote:
-> 
-> On 5/24/2025 5:29 AM, György Kurucz wrote:
->> Hi!
->>
->>> +static int qcom_battmgr_set_charge_control(struct qcom_battmgr *battmgr,
->>> +                       u32 target_soc, u32 delta_soc)
->>> +{
->>> +    struct qcom_battmgr_charge_ctrl_request request = {
->>> +        .hdr.owner = cpu_to_le32(PMIC_GLINK_OWNER_BATTMGR),
->>> +        .hdr.type = cpu_to_le32(PMIC_GLINK_REQ_RESP),
->>> +        .hdr.opcode = cpu_to_le32(BATTMGR_CHG_CTRL_LIMIT_EN),
->>> +        .enable = cpu_to_le32(1),
->>> +        .target_soc = cpu_to_le32(target_soc),
->>> +        .delta_soc = cpu_to_le32(delta_soc),
->>> +    };
->>> +
->>> +    return qcom_battmgr_request(battmgr, &request, sizeof(request));
->>> +}
->>> +
->>> +static int qcom_battmgr_set_charge_start_threshold(struct qcom_battmgr *battmgr, int soc)
->>> +{
->>> +    u32 target_soc, delta_soc;
->>> +    int ret;
->>> +
->>> +    if (soc < CHARGE_CTRL_START_THR_MIN ||
->>> +            soc > CHARGE_CTRL_START_THR_MAX) {
->>> +        dev_err(battmgr->dev, "charge control start threshold exceed range: [%u - %u]\n",
->>> +                CHARGE_CTRL_START_THR_MIN, CHARGE_CTRL_START_THR_MAX);
->>> +        return -EINVAL;
->>> +    }
->>> +
->>> +    /*
->>> +     * If the new start threshold is larger than the old end threshold,
->>> +     * move the end threshold one step (DELTA_SOC) after the new start
->>> +     * threshold.
->>> +     */
->>> +    if (soc > battmgr->info.charge_ctrl_end) {
->>> +        target_soc = soc + CHARGE_CTRL_DELTA_SOC;
->>> +        target_soc = min_t(u32, target_soc, CHARGE_CTRL_END_THR_MAX);
->>> +        delta_soc = target_soc - soc;
->>> +        delta_soc = min_t(u32, delta_soc, CHARGE_CTRL_DELTA_SOC);
->>> +    } else {
->>> +        target_soc =  battmgr->info.charge_ctrl_end;
->>> +        delta_soc = battmgr->info.charge_ctrl_end - soc;
->>> +    }
->>> +
->>> +    mutex_lock(&battmgr->lock);
->>> +    ret = qcom_battmgr_set_charge_control(battmgr, target_soc, delta_soc);
->>> +    mutex_unlock(&battmgr->lock);
->>> +    if (!ret) {
->>> +        battmgr->info.charge_ctrl_start = soc;
->>> +        battmgr->info.charge_ctrl_end = target_soc;
->>> +    }
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static int qcom_battmgr_set_charge_end_threshold(struct qcom_battmgr *battmgr, int soc)
->>> +{
->>> +    u32 delta_soc = CHARGE_CTRL_DELTA_SOC;
->>> +    int ret;
->>> +
->>> +    if (soc < CHARGE_CTRL_END_THR_MIN ||
->>> +            soc > CHARGE_CTRL_END_THR_MAX) {
->>> +        dev_err(battmgr->dev, "charge control end threshold exceed range: [%u - %u]\n",
->>> +                CHARGE_CTRL_END_THR_MIN, CHARGE_CTRL_END_THR_MAX);
->>> +        return -EINVAL;
->>> +    }
->>> +
->>> +    if (battmgr->info.charge_ctrl_start && soc > battmgr->info.charge_ctrl_start)
->>> +        delta_soc = soc - battmgr->info.charge_ctrl_start;
->>> +
->>> +    mutex_lock(&battmgr->lock);
->>> +    ret = qcom_battmgr_set_charge_control(battmgr, soc, delta_soc);
->>> +    mutex_unlock(&battmgr->lock);
->>> +    if (!ret) {
->>> +        battmgr->info.charge_ctrl_start = soc - delta_soc;
->>> +        battmgr->info.charge_ctrl_end = soc;
->>> +    }
->>> +
->>> +    return 0;
->>> +}
->>
->> These function names sound quite generic, but AFAIU this patch is only adding charge control support for the SM8550. Is sc8280xp and x1e80100 also expected to be supported using the same qcom_battmgr_charge_ctrl_request format?
-> 
-> No, sc8280xp and x1e80100 don't support it. So I didn't add the support for them.
+From: Qiu Yutan <qiu.yutan@zte.com.cn>
 
-And what about SM8650 and SM8750 ?
+Replace kfree_skb() with kfree_skb_reason() in arp_rcv(). Following
+new skb drop reasons are introduced for arp:
 
-Neil
+/* ARP header hardware address length mismatch */
+SKB_DROP_REASON_ARP_HLEN_MISMATCH
+/* ARP header protocol addresslength is invalid */
+SKB_DROP_REASON_ARP_PLEN_INVALID
 
-> 
-> These are generic functions are similar to "qcom_battmgr_update_charge_time" and "qcom_battmgr_update_info" which are only used for sc8280xp platform. Even right now charge control is only supported in mobile platforms starting from SM8550, however, it could be potentially supported in battery management firmware of any future platforms and the same functions could be reused.
-> 
->> Thanks,
->> György
-> 
+Signed-off-by: Qiu Yutan <qiu.yutan@zte.com.cn>
+Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
+---
+ include/net/dropreason-core.h | 12 ++++++++++++
+ net/ipv4/arp.c                | 15 ++++++++++++---
+ 2 files changed, 24 insertions(+), 3 deletions(-)
 
+diff --git a/include/net/dropreason-core.h b/include/net/dropreason-core.h
+index bea77934a235..dc846b705c24 100644
+--- a/include/net/dropreason-core.h
++++ b/include/net/dropreason-core.h
+@@ -118,6 +118,8 @@
+ 	FN(TUNNEL_TXINFO)		\
+ 	FN(LOCAL_MAC)			\
+ 	FN(ARP_PVLAN_DISABLE)		\
++	FN(ARP_HLEN_MISMATCH)		\
++	FN(ARP_PLEN_INVALID)		\
+ 	FN(MAC_IEEE_MAC_CONTROL)	\
+ 	FN(BRIDGE_INGRESS_STP_STATE)	\
+ 	FNe(MAX)
+@@ -560,6 +562,16 @@ enum skb_drop_reason {
+ 	 * enabled.
+ 	 */
+ 	SKB_DROP_REASON_ARP_PVLAN_DISABLE,
++	/**
++	 * @SKB_DROP_REASON_ARP_HLEN_MISMATCH: ARP header hardware address
++	 * length mismatch.
++	 */
++	SKB_DROP_REASON_ARP_HLEN_MISMATCH,
++	/**
++	 * @SKB_DROP_REASON_ARP_PLEN_INVALID: ARP header protocol address
++	 * length is invalid.
++	 */
++	SKB_DROP_REASON_ARP_PLEN_INVALID,
+ 	/**
+ 	 * @SKB_DROP_REASON_MAC_IEEE_MAC_CONTROL: the destination MAC address
+ 	 * is an IEEE MAC Control address.
+diff --git a/net/ipv4/arp.c b/net/ipv4/arp.c
+index a648fff71ea7..ca19f2645ccb 100644
+--- a/net/ipv4/arp.c
++++ b/net/ipv4/arp.c
+@@ -967,6 +967,7 @@ static int arp_rcv(struct sk_buff *skb, struct net_device *dev,
+ 		   struct packet_type *pt, struct net_device *orig_dev)
+ {
+ 	const struct arphdr *arp;
++	enum skb_drop_reason drop_reason;
+
+ 	/* do not tweak dropwatch on an ARP we will ignore */
+ 	if (dev->flags & IFF_NOARP ||
+@@ -979,12 +980,20 @@ static int arp_rcv(struct sk_buff *skb, struct net_device *dev,
+ 		goto out_of_mem;
+
+ 	/* ARP header, plus 2 device addresses, plus 2 IP addresses.  */
+-	if (!pskb_may_pull(skb, arp_hdr_len(dev)))
++	drop_reason = pskb_may_pull_reason(skb, arp_hdr_len(dev));
++	if (drop_reason != SKB_NOT_DROPPED_YET)
+ 		goto freeskb;
+
+ 	arp = arp_hdr(skb);
+-	if (arp->ar_hln != dev->addr_len || arp->ar_pln != 4)
++	if (arp->ar_hln != dev->addr_len) {
++		drop_reason = SKB_DROP_REASON_ARP_HLEN_MISMATCH;
+ 		goto freeskb;
++	}
++
++	if (arp->ar_pln != 4) {
++		drop_reason = SKB_DROP_REASON_ARP_PLEN_INVALID;
++		goto freeskb;
++	}
+
+ 	memset(NEIGH_CB(skb), 0, sizeof(struct neighbour_cb));
+
+@@ -996,7 +1005,7 @@ static int arp_rcv(struct sk_buff *skb, struct net_device *dev,
+ 	consume_skb(skb);
+ 	return NET_RX_SUCCESS;
+ freeskb:
+-	kfree_skb(skb);
++	kfree_skb_reason(skb, drop_reason);
+ out_of_mem:
+ 	return NET_RX_DROP;
+ }
+-- 
+2.25.1
 
