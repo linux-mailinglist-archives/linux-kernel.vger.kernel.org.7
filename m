@@ -1,49 +1,47 @@
-Return-Path: <linux-kernel+bounces-662683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F7EAC3E37
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6F8AC3E33
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3BC67A1A20
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:58:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F06E7A8A6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB741F6694;
-	Mon, 26 May 2025 10:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57851F75A6;
+	Mon, 26 May 2025 10:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b="Y7IMOB3Y"
-Received: from smtpcmd0871.aruba.it (smtpcmd0871.aruba.it [62.149.156.71])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AfmlubT0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695B51A9B3D
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 10:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.156.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F396E158DD4;
+	Mon, 26 May 2025 10:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748257176; cv=none; b=DL9BajRpqkjTXiaK6mvd2deWnAj3PTujJr4+ovAkdz6s/dMmO0iwovcZ1q4xE3/JFW9S2VOpoAwWnGDrdmMqxa46w88ddQsWu+aA3wRiAPDlJKznPsQ2wG3ulbmuh9OaHB0OeErTalL0Sf9HZWSXEHe6waRY3wa0TUK01RjiLms=
+	t=1748257033; cv=none; b=qYjlSMbB8vJEgDryCIf0XjnjrutNdF838BIngE1Re58EExDMhriRXkYo3z1fUL9kW0U1bby7qAz/nvHrJQtXAgP/A4VqFSLVu3XZCL/zGz9UJdQlhqpYg+4Ab2hvhBjEh4ims7oSlLjBbcg64H2iEqxQ9D0MxWBNQVYouWWKqX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748257176; c=relaxed/simple;
-	bh=ur0artwUtDxd3VWQjPf9ERg/1gnT6oE0S1nU8jpMtW8=;
+	s=arc-20240116; t=1748257033; c=relaxed/simple;
+	bh=p4Zc5E4s4jSmRYkWVsP8yD+Jv6GaTktdOKbO1XklD3k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HpJJ+lOinPYsIHltyePk5lJ+SmvlRaYYcfkwD307JXoX+RQZ+sqW55Kpc8w/DA8WAO54dTVRfzE8qrqBsDxaXP69dODckcqEVu88D5EJk/XQIUF3+0ROSLEdM4pytwU+BaQFKlQkK0zLS9yM0sWmlCp9TLJvWFSIzXkHW7ggXqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=Y7IMOB3Y; arc=none smtp.client-ip=62.149.156.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Received: from [192.168.1.58] ([79.0.204.227])
-	by Aruba SMTP with ESMTPSA
-	id JVVEu52H8yJfSJVVEuthOp; Mon, 26 May 2025 12:56:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1748256981; bh=ur0artwUtDxd3VWQjPf9ERg/1gnT6oE0S1nU8jpMtW8=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=Y7IMOB3YeTG94MLghIAKgJR3U1C1bg59bKWbDrcFKYo/h4pFvERSu6JQdtZaG7X34
-	 IkJyKJ2T/sGD+6XHPErMqPBoHs6xl0uB2EHJFYViKmF2dxbyk12uQ6wnvjEJnFeFAm
-	 fVq8zDXx+0bVaMT7mqjfOpvW1wnaYpTRasZg6ijviZsIDdgfBnLkKi+nlb9e74PAXW
-	 20lNWU1DTfXR5GpmcsKlXLZfmEtnMqqoxLCY8sD8bBW0sMMxZPKl3r9DhPxREX35zh
-	 6Lux1NUqvqSu4D9I9r8EVj45ZyrQe1AXygB4cztwPgY73CM5eY+oHtuKTmEvZFbna4
-	 KTGIhXWhgPOlA==
-Message-ID: <a33548d2-040d-4a51-8fc3-ce3042ce4a24@enneenne.com>
-Date: Mon, 26 May 2025 12:56:20 +0200
+	 In-Reply-To:Content-Type; b=JUNI+aDGe1U7qtxxMB2usKJA2AS74heOVHMQUihzcQCI2HsxaOidPBkzw08RUO5Ra+WpA2WVGM6iF/8n/iuj2bLDLwe/Y4IfISUYm3TkWzSYmVCRLO9AjTIYpMMABTWLwRLtqaYMHlsvLjoAsEURehh+PLNWeD8YFqjXyjDUVZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AfmlubT0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 968C0C4CEE7;
+	Mon, 26 May 2025 10:57:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748257032;
+	bh=p4Zc5E4s4jSmRYkWVsP8yD+Jv6GaTktdOKbO1XklD3k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AfmlubT0FcgBwEDpWIZa0gV86Bsp5UAMvsdz4fElEGvUo7acim4Nw4jAhbb93OxlK
+	 YUINhIZApzaGrj5Kzu94cq7ie9yoqESV2judj+4ChRTy5FIK+hCC6/R+s33dGnNfU+
+	 RfnCJ2InvQRXC8ZG7JYChzv7c9fKURuOvKb0l4Gm33jB4boT6d1Jp2wxAqSAWdGOiz
+	 IymfZ7mBROHzOBBiOK/cLA1m7TTk7IilcF2t+WsmZsa2cNGghr4QEzhyp3b2P6B5hD
+	 2G1eTzK4tbgJsZh/qKqmeYsgg7sgHpBdNMd4aQLHjyKxRexowi+GYaS9XvM3BXiSv+
+	 fR++otAsNW4UA==
+Message-ID: <b5bb919e-6273-48ed-b5d8-29177dbbfb76@kernel.org>
+Date: Mon, 26 May 2025 12:57:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,65 +49,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [V1 2/2] drivers soc: add support for ST stm32mp13xx family
+Subject: Re: [PATCH 2/5] dt-bindings: media: allegro-dvt: add decoder
+ dt-bindings for Gen3 IP
+To: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Tretter <m.tretter@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Michal Simek <michal.simek@amd.com>, Heiko Stuebner <heiko@sntech.de>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Junhao Xie
+ <bigfoot@classfun.cn>, Rafa?? Mi??ecki <rafal@milecki.pl>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Gaosheng Cui <cuigaosheng1@huawei.com>,
+ Uwe Kleine-K??nig <u.kleine-koenig@baylibre.com>,
+ Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Ricardo Ribalda <ribalda@chromium.org>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20250523134207.68481-1-yassine.ouaissa@allegrodvt.com>
+ <20250523134207.68481-3-yassine.ouaissa@allegrodvt.com>
+ <3e6be40a-2644-416a-bd32-f6256f1501ff@kernel.org>
+ <7863d15a-fa20-4db5-89b5-77a026d3f937@kernel.org>
+ <a72z6exgol5cbur2cy7wjwyroi4zddtki5ab3zdkfuwpskpavr@r26wahldhd3r>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Eric Fourmont <eric.fourmont-ext@st.com>,
- Yann GAUTIER <yann.gautier@foss.st.com>, linux-kernel@vger.kernel.org
-References: <20250519130859.3389704-1-giometti@enneenne.com>
- <20250519130859.3389704-3-giometti@enneenne.com>
- <0fb1becc-94b9-4632-a3d1-501de2607a7a@foss.st.com>
-From: Rodolfo Giometti <giometti@enneenne.com>
-In-Reply-To: <0fb1becc-94b9-4632-a3d1-501de2607a7a@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfFo1csT4xbgLxuMpGJtJRx+EAf7Y/rHkFZz+TeSUKe+m0DddpvYH74ILxdW+OnmkM57os2Ev2HmySf4TAqHLGXy8QgJJ7cIYLXa9x/k2JxhSUtGUYy7w
- kHpAEW5IdZXxphbZs90oXDCzm0QUy3Syew1Ae+WlyNzLL2CfkpY9m0GNDUf9mkRyeLJblWx7ZiIvubm8Cdt+hb8GeQGTgwL/FiVgot36JrYyWqhE1ADGhnev
- x+G+LFQA4FefRN1TgsroQp/SxaIdfXvb5akAli2y3xZf9CL8CiZ1USnIXtCnXUCrY/uiOWI9HMbp8JcMfxHO9B8y8kXj8sBoDgfPop2kcm6GaeFkXxrPcNW8
- yfR5y4eD
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <a72z6exgol5cbur2cy7wjwyroi4zddtki5ab3zdkfuwpskpavr@r26wahldhd3r>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 20/05/25 10:55, Alexandre TORGUE wrote:
-> hi
+On 26/05/2025 09:25, Yassine Ouaissa wrote:
+> On 23.05.2025 19:13, Krzysztof Kozlowski wrote:
+>> On 23/05/2025 19:11, Krzysztof Kozlowski wrote:
+>>> On 23/05/2025 15:41, Yassine Ouaissa wrote:
+>>>> Add compatible for video decoder on allegrodvt Gen 3 IP.
+>>>>
+>>>> Signed-off-by: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
+>>> Please do not send the same patches over and over again. You got review
+>>> which you need to address.
+>>>
+>>> Once address you send NEXT version with proper CHANGELOG for each patch
+>>> or top of cover letter. See submitting patches... or just use b4. This
+>>> should be actually requirement for this work.
+>>>
+>>> Anyway, I see all of previous review ignored so let's be explicit:
+>>>
+>>> NAK
+>>>
+> Hi Krzysztof,
 > 
-> On 5/19/25 15:08, Rodolfo Giometti wrote:
->> This patch adds SoC support for the ST stm32mp13xx family. It also
->> adds the special attribute "secure" which returns the CPU's secure
->> mode status.
->>
->> Signed-off-by: Rodolfo Giometti <giometti@enneenne.com>
->> ---
->>   drivers/soc/st/Makefile        |   1 +
->>   drivers/soc/st/soc-stm32mp13.c | 253 +++++++++++++++++++++++++++++++++
->>   2 files changed, 254 insertions(+)
->>   create mode 100644 drivers/soc/st/soc-stm32mp13.c
->>
->> diff --git a/drivers/soc/st/Makefile b/drivers/soc/st/Makefile
->> index 6c71607f6c89..c84bf510928d 100644
->> --- a/drivers/soc/st/Makefile
->> +++ b/drivers/soc/st/Makefile
->> @@ -1,3 +1,4 @@
->>   obj-$(CONFIG_STM32_PM_DOMAINS) += stm32_pm_domain.o
->>   obj-$(CONFIG_STM32_RISAB) += stm32_risab.o
->>   obj-$(CONFIG_STM32_RISAF) += stm32_risaf.o
->> +obj-$(CONFIG_MACH_STM32MP13) += soc-stm32mp13.o
+> Make sure that i'm not ignoring anyone reviews, i sent a new set of
+> patches to start cleanly, and i have sent you an email about this.
+
+It is still v1 - the same? - while you already sent three patchsets before.
+
 > 
-> Your patch does not applied because the file does not exist. You can't take a 
-> patch on our github, push it as it is without rebase it on mainline kernel.
-OK, my patch set doesn't apply to the vanilla kernel, and I'm going to remove 
-linux-kernel@vger.kernel.org from the recipients list.
+> Also, for this patch (dt-bindings), i respected your previous reviews.
+I did not check every previous comment, since this is v1, but at least
+subject did not improve which with lack of changelog and versioning
+suggests nothing else changed either.
 
-Stated this, where should I send my patches? Would the 
-linux-stm32@st-md-mailman.stormreply.com list be a suitable candidate? :)
+OK, if you implemented the reviews, please point me to the changelog
+listing all the changes you done from each previous version?
 
-Ciao,
-
-Rodolfo
-
--- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming
-
+Best regards,
+Krzysztof
 
