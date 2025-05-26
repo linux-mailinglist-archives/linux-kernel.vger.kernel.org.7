@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-663099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 374FCAC43B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 20:30:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 962C7AC43C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 20:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B277B18990DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 18:30:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B03917A111
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 18:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B6217A2EC;
-	Mon, 26 May 2025 18:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3691B4236;
+	Mon, 26 May 2025 18:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OjJN15vm"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2056.outbound.protection.outlook.com [40.107.102.56])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QSgkm8ir"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2088.outbound.protection.outlook.com [40.107.244.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492541C84D7
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 18:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D692223741
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 18:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.88
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748284208; cv=fail; b=V9bdXqHPWFKVvhPUH6eql721uMIgmL2AZS53jgJUUHEVj/DAffph2tFhzceiXfJQDCKyrRwPGO2cIZrU5+0JCEQZfmP/7AUR9ypclscu2gYtSAvUpURg5YkLVEC+5mafV1B3upHzz6KE3OxNPTBq/rOrazNU8ABrcvl8UvJ8Ulc=
+	t=1748284248; cv=fail; b=m3CKZTHtkEfyqkzNCLL/aPlVfVZYqWMwgEt0AxefNYqI7jL76eOVcUnSoCUg9McJ1UeY86r2Y3pUxDyehv6pP3CDA7p++F/lLNZRi7SbPSjcjVZDJeO+4dcgMNvgaWBoFz9QWqdQZ71LaheORhf9uFhzyFvwKyp+C2RSTIngmaM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748284208; c=relaxed/simple;
-	bh=l+K7RWusXzvGPxbOgQcy+uPjW1otPQ2V5uuEH1AkTyQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mRq9ws8K3taMoewQXG2vhNnMtam6D1oH7AwvrrE2l3yRBpBnnGO7EK7hqAtODnM7jRWd0MahpH4ELHGgv3DKC8KnBjJXinzpH+hOWdxk8HlhCbITNHRNpV5/MELB1FPyDpKFufJotFe9DfebPvrMP0+feAwphYqmZOASHyW02Hc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OjJN15vm; arc=fail smtp.client-ip=40.107.102.56
+	s=arc-20240116; t=1748284248; c=relaxed/simple;
+	bh=0c82P0yhWkuJy3XckiW4UEryIywDqyelDk5163ec+dk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uWVS9SR0K5YZz1vS3yGc8vexb3rEAeiKvwy8+uME7AOZ09eq4sQXHsmB/qIDIpY4fTLr7UJQuc7oi07ereN9uuPUMbvGn0QFx6UUWJOKElVvkJh2rP69Cennl5stY4mPGcxIQ4NnZoqyA2AQCZqc0lFMEcZdzsVdrdT05PZdxsI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QSgkm8ir; arc=fail smtp.client-ip=40.107.244.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l+3g//8+jmMw/LzSiskqISs7g8uH1nBZ2X/BL2WGqAco97xcb2VoozL4M5s7xFgRBIhs0DFYdVfsfyRvVLBvaKhkOM0rJUrSFhLMolXW/sXzqZ8Jo8dmRiKB5a32JLwHjxTvG0lG/PNgrkRCjGCb7yP/ApK27/TQxo2vGNbsEBZ7rEQlToDlyWZxdVOy3c7f1urOVKSgjyqaDEmmupDmwyRTSeELqbCXm34TuB+cNilNKmjf0JUt5XwmHdttX2SGNogLfxhdaXbiQw4rBDpzqyxk5ou2CIDPvrcweV2gOp8wgPZyMN23FqdtkepQENmrBQY9LMJnQVqOWYRsXVNVNA==
+ b=Fh6YyhJ+O+cbVEKHOtKJ6a11gBWyxxjAFmBW1MeI+CbzjK0M2RSDymWR0GLdH98cXxgLLehwlYLyUHJCPygcz7cM5EWej36sz0rl16Itm+XNsb4Iir9kiDzLC/F6ToLfjYT0pjM6Rk1q3URGf1GES/gHQU/TF3APe6TZT4ob/efUpeInddS0Rd4Jx+wub4VDzKpFGz0xq1FFGC3pATDm/Y4CcwhbfgRy3Aznvweu9JPoj22URYzNJGP5273DgG7iSTtMtn3wWNJ5r9BSXwJ46KfuKs0Obb0Hjoyc6hrAkkM3uloZVtuWEm//IzdpH9TKQAXvcbVTFOVCtNLoxczZQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qKfzagy9Qb9nAWw5WDzckkFJ6iOqDu7Ot/K5put5WVs=;
- b=guFfyDDV1RG2Trqo82hFdznQyZ8yN8vk2lrgmAuSYLDNTYsHoW0aU/ivQ4MDITIFMpVpxr6E9tgNUYR3HlV6dPc31lznQmpSuqCRsNkgbat/UxT3NMLzwssmlIU77OplQJy7MDbbFIzSq8BVppOGcQ1lKobYNNAC7KSV9oowUhIxR5f2k7klyK0ruPg3rQgWlkYEdW8ZBb9XdiO5CXy1ykZpadwCi13+AMGaD2ZsqlKn6wc8qRl8Y4TkHb6tR0W8SmZozm2k+lTdTHcHJM9mkCpA3PaizXYnNgY62AJNl3p1bDRLVBGeyhemGKRUtolfXbVS7Bna9Xo8S0fzTgjC+g==
+ bh=jd8Dk6kIWne+45h5hYO25r9PnBGxRA2RwbHmpGKpzIU=;
+ b=QB8UMkJDSEm2xbBdvPzsa/ZbcT8D2/8hzY4J2jsPQnYU3aCC55jK0zlpXxTDp9pYJb6oYQLv+nZkzMDh9W+65rO1dURdiOajcTNiqTQMzvd09etbFftMOpSsBCa9ivtBKZPApc7e1X0OkABYn545M0d6xcJ44BzDEw4M6J1gLo7aM/9WkkSvVP2duE7+fLdt2gaSXPTVm/hT+zWcQEChufJUj3iAsTc3g2uujG8iXzpecwJBJXeUw7ocQ6W1B05+8DFLjMMChO0omShNk0edOe7vGKc+z8gVI/HI/qlgdGwoe5igj12qXsE/4Mz9f7gSqtvaB7xDSpWZV/5WpsroZA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qKfzagy9Qb9nAWw5WDzckkFJ6iOqDu7Ot/K5put5WVs=;
- b=OjJN15vmZcKATsO6n+AAwX5jD7DyrMbhX341owLYq03g8hrGFgN0dE69YjMqvg4esBuxBqr7yZpzT6psZQK9d+/Toh0uvZ1OnD+xX0pgdEGJcsrf0Q4NDHt9Kqlkmlb6r0jIVRPOKlkruN1sX4QT6d4IXADtzammFJDe/LNshXI=
-Received: from CH2PR11CA0008.namprd11.prod.outlook.com (2603:10b6:610:54::18)
- by DS7PR12MB8346.namprd12.prod.outlook.com (2603:10b6:8:e5::13) with
+ bh=jd8Dk6kIWne+45h5hYO25r9PnBGxRA2RwbHmpGKpzIU=;
+ b=QSgkm8ircbAfovakw6PN7xjjqQF5k/5MQXYaVIaN2wCoRX4F3dpSkTr0lAtmOgHoKbLNb4mbfIqmpBCjDLcNobbgIW7Rf9d9Qf6sOKVjHmcsVncVvAieJ3v0Fr9J88QkvWY/QWhOdRCPM80GOaYCh3kmcmw+gvuk8eni2wTaQ8Y=
+Received: from CH0PR04CA0027.namprd04.prod.outlook.com (2603:10b6:610:76::32)
+ by SA3PR12MB7902.namprd12.prod.outlook.com (2603:10b6:806:305::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.21; Mon, 26 May
- 2025 18:30:02 +0000
-Received: from CH1PEPF0000AD7D.namprd04.prod.outlook.com
- (2603:10b6:610:54:cafe::2c) by CH2PR11CA0008.outlook.office365.com
- (2603:10b6:610:54::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.19 via Frontend Transport; Mon,
- 26 May 2025 18:30:02 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.24; Mon, 26 May
+ 2025 18:30:44 +0000
+Received: from CH1PEPF0000AD7F.namprd04.prod.outlook.com
+ (2603:10b6:610:76:cafe::97) by CH0PR04CA0027.outlook.office365.com
+ (2603:10b6:610:76::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.31 via Frontend Transport; Mon,
+ 26 May 2025 18:30:43 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -61,25 +62,26 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH1PEPF0000AD7D.mail.protection.outlook.com (10.167.244.86) with Microsoft
+ CH1PEPF0000AD7F.mail.protection.outlook.com (10.167.244.88) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8769.18 via Frontend Transport; Mon, 26 May 2025 18:30:01 +0000
+ 15.20.8769.18 via Frontend Transport; Mon, 26 May 2025 18:30:43 +0000
 Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 26 May
- 2025 13:29:57 -0500
+ 2025 13:30:39 -0500
 From: Shivank Garg <shivankg@amd.com>
 To: <akpm@linux-foundation.org>, <david@redhat.com>, <linux-mm@kvack.org>,
 	<linux-kernel@vger.kernel.org>
 CC: <ziy@nvidia.com>, <baolin.wang@linux.alibaba.com>,
 	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <npache@redhat.com>,
 	<ryan.roberts@arm.com>, <dev.jain@arm.com>, <fengwei.yin@intel.com>,
-	<shivankg@amd.com>, <bharata@amd.com>,
-	<syzbot+2b99589e33edbe9475ca@syzkaller.appspotmail.com>
-Subject: [PATCH V3 1/2] mm/khugepaged: fix race with folio split/free using temporary reference
-Date: Mon, 26 May 2025 18:28:18 +0000
-Message-ID: <20250526182818.37978-1-shivankg@amd.com>
+	<shivankg@amd.com>, <bharata@amd.com>
+Subject: [PATCH V3 2/2] mm/khugepaged: clean up refcount check using folio_expected_ref_count()
+Date: Mon, 26 May 2025 18:28:20 +0000
+Message-ID: <20250526182818.37978-2-shivankg@amd.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250526182818.37978-1-shivankg@amd.com>
+References: <20250526182818.37978-1-shivankg@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,138 +94,108 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7D:EE_|DS7PR12MB8346:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a337434-dbca-4611-4f20-08dd9c8353e8
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7F:EE_|SA3PR12MB7902:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c5f884f-2912-4688-4359-08dd9c836ce6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|7416014|36860700013|376014|13003099007;
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hHmMcYFO8Wk7+CJHYb1IZ3a9e5we7WBaHh3DoNiFErcbyMRPuRHxEiQKvvOb?=
- =?us-ascii?Q?kLJqlVfmG3d+Q858O602DaNvVfQltzxhuTK6FI9utjSoty5+6sEZ0X5nsmfi?=
- =?us-ascii?Q?Pd48u5Uwl1I5tqAEm1iVPfkr15o0OltJIpy2FL4/xSZkdBcKQnj9iK9EJuoO?=
- =?us-ascii?Q?BxyGWZUHoe3LHPXeWsjUB6j7flZB3TIU9W42F1NPTbqwK9zgUGBAAryCA8/V?=
- =?us-ascii?Q?MYq5TR9r0yXVnOWMCfFf4aa7CXS3Jwx8IqOOaH5QhGNJ0ny6CP2rnBzdzSJU?=
- =?us-ascii?Q?rkh1DZ2UJZjYMOBslbLi6rfnp0dCqgidYjX5Fr7R8Tf1GENUFbB/Qi2Xeecp?=
- =?us-ascii?Q?9bqdyw+3sveykSOvNamwRqsWdCBkytGOo202s0s0CcW3PLq7AVWQ/luNbJ4Y?=
- =?us-ascii?Q?eqj7iunPBc1atm7sYLlL6cpMPtXpIqoyMxQZ0cjeq38Pd3ge7/XP6BsefV3e?=
- =?us-ascii?Q?8bPpLI/+qkiC1UrCYa8TiV7QpfAPyRM38Ds4Ui7wcpYR3FcFtE11Zq+yD8ZE?=
- =?us-ascii?Q?IQrrt0Xq/CoQ2FBGdUtdZw0T5wfuHUfMx6hj2JQh0VqwEXHvIx1tXLr7n3PC?=
- =?us-ascii?Q?qXSjN0+mOp2TmRuDkoKBFoi8U9/hz+W8HgG6Tnuv0nudisyXOgBgoNuFUlTY?=
- =?us-ascii?Q?1P6a/UdgFdIwkimXaXVHmNp1pzrJMpOR+iKM8BJHqx4ykt16GFvzYwW4EtkG?=
- =?us-ascii?Q?7p0w7RbRbuxi9VN512sZwG2ElZ9HYHAPFDfwY7VJDaUwWDajzZdx7iFdyG77?=
- =?us-ascii?Q?dIHMqWOBk/5pVrC0YkSzCO7nyauYc+oyLS4VZ5HjQiDb194wJA4uQuJXdqI9?=
- =?us-ascii?Q?1n0XeAhBF6K7YBshpS4Rz3ZZM4eQn0W+2c7EP/llz7pa5V7D/xi7sl0X+LXs?=
- =?us-ascii?Q?bdvtH+nb4jvT1fpjyquF/OhFBqdmfH7/Zt8yL4n81ketRa4d26hruII/1rM+?=
- =?us-ascii?Q?P5+F5jDmjWKyJO1IDBb/p8BnImaheTZW0TL6O+OeLOVqTLn82SDFvjimhVAL?=
- =?us-ascii?Q?v+PiN8A6gYk6P6CX59OD6o+kZTJoTgA2eu8wwKWS7Q5bOEJ06YnHbRLlfVrV?=
- =?us-ascii?Q?Myv88NDkmH4j3sk0uQS0zV+tdCn52makjqEbsMirYxWK602IizWeRETATWVo?=
- =?us-ascii?Q?RE5S1htR7JWCoy6/oqJHmeA71Rt9oEKD8qP/eiR4ZtbcsqEtccgqSishBlqU?=
- =?us-ascii?Q?q+hguUVz03VwmybWAWep0K+h/yoIX4oZ91F+ZkfbVd+1kSXXZ5JXLERm47hP?=
- =?us-ascii?Q?/GrqfdV9gTLJ4Z2HLaSIikHUHB2vOVxKZ0ffaOU6dPY7tcWcepeJKqQv6zXT?=
- =?us-ascii?Q?C88a/B6C7laxgI9Vkm2SgWkXY5/5R03pjxVLYBW4qgieCNSFCZA0Ri7VhvIT?=
- =?us-ascii?Q?Unk1cUUHK5MsZKQclxJk24Qw/ujyHvoh3KtlfnViSrCY6E58Te1bLc7EW6Wy?=
- =?us-ascii?Q?XFFzHCfuWL5vopG/5GhoE3TJU62RLq4kB194fERS6VRqOz+UJW4TdQ=3D=3D?=
+	=?us-ascii?Q?1rtB7OAa/8YbhpnovrM0hG6dfW2Gn581NJvZ1UQoPyWjjLYmxWL1RkNiMtXp?=
+ =?us-ascii?Q?ngfMtIlNwR/RxsgSnkOYsZqNs48hdHf/Vd2NJOhPJje5eGjJzLrSJyl9zy5I?=
+ =?us-ascii?Q?Sz5CqqyAF62I6cRSST7xNHm435sTVCQONlmzSCjnDxnW7nekq+Ji7G0Rge2Y?=
+ =?us-ascii?Q?bLcI67d6KZ5pyoJSysc8P8yi5HueK17YQIpFUn/1LVwi6EW90Ev44kft7ZL/?=
+ =?us-ascii?Q?Sm1jtc0+V7BXZ8aO0XcR/oGf5H/7zrqfIJ1jwHUqOz/qXRLyiOqX2RtedX4E?=
+ =?us-ascii?Q?uCYRGRC1JxXqQuVz5UeAssWn6lVnm6yCypWnYmi37fUsJkvLS3r5BW+tzFjO?=
+ =?us-ascii?Q?RakPB+WYjpjl/ctIsLPZXvz05jjDSTZ9DdrLectLuFRlAjXwbU3x+/dkydZt?=
+ =?us-ascii?Q?/Kas8eZ+4C8EzvziRpKn7jllklxt4Gn2lKROy+FpyxRp48AYzN+7iTvyqt/o?=
+ =?us-ascii?Q?ihz78j4k3ogzIcecFi/BjJFu3i/PH9SstbhHP+bgX2cgXPwiw/TDrfbzx6CH?=
+ =?us-ascii?Q?vNR945wMMNdpWgLoFS2tVtdEWwzDqswFsJvnydE6ttJgThqlLrhZ/fZI45Sq?=
+ =?us-ascii?Q?6mZrqnixPaH1fKa7vUw/xfmvQnS7CBAfkbUpf0uVagpMA2ERpq9i/r17eBs0?=
+ =?us-ascii?Q?/ldPfC6/FlLtwi6SDJ/fKlKrOEvE3Q5HJQDUT3EgtYm5K5d7cP2CPegujYq4?=
+ =?us-ascii?Q?N10Tol7Ocb5/jO2VUjSjOkmT70S7UVYNXRT30NzMYvqZGwln+QiHI3Ujrukr?=
+ =?us-ascii?Q?j/2LQXu0HYDjGIVKcEF/NwYB6WUVKtnaPqMSDEaHNNgcxxBRm1U8zH091D7U?=
+ =?us-ascii?Q?Q7aKXzuEOfmCwqnFQertQI/LstevvC4RCJMA5MLqHFkltBbrSUtJQAx48oVr?=
+ =?us-ascii?Q?jz0h0heiq0xq0DJxVgY+DwsRC97eHRrD1DjdGW3IpowP9USoxGoMvAvk/n3d?=
+ =?us-ascii?Q?BrfiIUXbYTB45yId0pRe6bFTefMvxBXoNK8/AFPqTWHnQUrpPiRrljXyFH2s?=
+ =?us-ascii?Q?Pyhji4GdRMZ9itxy6+tWsWlN5PcxWOb+zyzzV1CicKvNkZGtsV39KY2JraRE?=
+ =?us-ascii?Q?+WFL46fzTuTm0M2gvFO5+k1XQREJrY3fr0OKTPGszWqZ/GCWtuxr3vh28Ki/?=
+ =?us-ascii?Q?rDcLxXOSTs8A21V5hPpHhwsoGACPRvAW5CwZbIwYTagA0qa8I9NED2+5UJ2g?=
+ =?us-ascii?Q?YNtWCswzIssao2xttgFj8yt65Nmj7N+6bG7eSi6+6DJfsn58pPawy6LUBtJM?=
+ =?us-ascii?Q?utyvE8zO4jycsoHPTesdCaEeGKTgpRcCq/qduDEBUqjKvbVYXeHqZuZ/y+CL?=
+ =?us-ascii?Q?FmpvzhS3Mni/iJwkNsuOXXyqgDeaErVIuvWJ7LwLgcv/cPNatfnMhVFF8qbK?=
+ =?us-ascii?Q?klj0RVo2jDkPRJ3Npt8zueRqiOrW24vvcgVxFf30SXI0hw9utkRRPvTLhfT2?=
+ =?us-ascii?Q?F3cL/FTxicUsTIaWnCRmbo2LWapXkIKBjkNiD7xvRY94Vzek8hem4l2IKAIY?=
+ =?us-ascii?Q?YfHUE/qOQThCPqPywIhW5l/3MqJXe7bM/508?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(36860700013)(376014)(13003099007);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2025 18:30:01.8289
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2025 18:30:43.7617
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a337434-dbca-4611-4f20-08dd9c8353e8
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c5f884f-2912-4688-4359-08dd9c836ce6
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD7D.namprd04.prod.outlook.com
+	CH1PEPF0000AD7F.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8346
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7902
 
-hpage_collapse_scan_file() calls is_refcount_suitable(), which in turn
-calls folio_mapcount(). folio_mapcount() checks folio_test_large() before
-proceeding to folio_large_mapcount(), but there is a race window where the
-folio may get split/freed between these checks, triggering:
+Use folio_expected_ref_count() instead of open-coded logic in
+is_refcount_suitable(). This avoids code duplication and improves
+clarity.
 
-  VM_WARN_ON_FOLIO(!folio_test_large(folio), folio)
+Drop is_refcount_suitable() as it is no longer needed.
 
-Take a temporary reference to the folio in hpage_collapse_scan_file().
-This stabilizes the folio during refcount check and prevents incorrect
-large folio detection due to concurrent split/free. Use helper
-folio_expected_ref_count() + 1 to compare with folio_ref_count()
-instead of using is_refcount_suitable().
-
-Fixes: 05c5323b2a34 ("mm: track mapcount of large folios in single value")
-Reported-by: syzbot+2b99589e33edbe9475ca@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/6828470d.a70a0220.38f255.000c.GAE@google.com
 Suggested-by: David Hildenbrand <david@redhat.com>
 Acked-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Shivank Garg <shivankg@amd.com>
 ---
-Changes since V2:
-- https://lore.kernel.org/linux-mm/20250523091432.17588-1-shivankg@amd.com
-- Reorder the patches to bring the fix in first patch and clean-up in second.
----
- mm/khugepaged.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ mm/khugepaged.c | 17 ++---------------
+ 1 file changed, 2 insertions(+), 15 deletions(-)
 
 diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index cc945c6ab3bd..fe1fe7eace54 100644
+index fe1fe7eace54..685eb949f4ce 100644
 --- a/mm/khugepaged.c
 +++ b/mm/khugepaged.c
-@@ -2295,6 +2295,17 @@ static int hpage_collapse_scan_file(struct mm_struct *mm, unsigned long addr,
- 			continue;
- 		}
+@@ -548,19 +548,6 @@ static void release_pte_pages(pte_t *pte, pte_t *_pte,
+ 	}
+ }
  
-+		if (!folio_try_get(folio)) {
-+			xas_reset(&xas);
-+			continue;
-+		}
-+
-+		if (unlikely(folio != xas_reload(&xas))) {
-+			folio_put(folio);
-+			xas_reset(&xas);
-+			continue;
-+		}
-+
- 		if (folio_order(folio) == HPAGE_PMD_ORDER &&
- 		    folio->index == start) {
- 			/* Maybe PMD-mapped */
-@@ -2305,23 +2316,27 @@ static int hpage_collapse_scan_file(struct mm_struct *mm, unsigned long addr,
- 			 * it's safe to skip LRU and refcount checks before
- 			 * returning.
- 			 */
-+			folio_put(folio);
- 			break;
- 		}
- 
- 		node = folio_nid(folio);
- 		if (hpage_collapse_scan_abort(node, cc)) {
- 			result = SCAN_SCAN_ABORT;
-+			folio_put(folio);
- 			break;
- 		}
- 		cc->node_load[node]++;
- 
- 		if (!folio_test_lru(folio)) {
- 			result = SCAN_PAGE_LRU;
-+			folio_put(folio);
- 			break;
- 		}
- 
--		if (!is_refcount_suitable(folio)) {
-+		if (folio_expected_ref_count(folio) + 1 != folio_ref_count(folio)) {
- 			result = SCAN_PAGE_COUNT;
-+			folio_put(folio);
- 			break;
- 		}
- 
-@@ -2333,6 +2348,7 @@ static int hpage_collapse_scan_file(struct mm_struct *mm, unsigned long addr,
+-static bool is_refcount_suitable(struct folio *folio)
+-{
+-	int expected_refcount = folio_mapcount(folio);
+-
+-	if (!folio_test_anon(folio) || folio_test_swapcache(folio))
+-		expected_refcount += folio_nr_pages(folio);
+-
+-	if (folio_test_private(folio))
+-		expected_refcount++;
+-
+-	return folio_ref_count(folio) == expected_refcount;
+-}
+-
+ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+ 					unsigned long address,
+ 					pte_t *pte,
+@@ -652,7 +639,7 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+ 		 * but not from this process. The other process cannot write to
+ 		 * the page, only trigger CoW.
  		 */
- 
- 		present += folio_nr_pages(folio);
-+		folio_put(folio);
- 
- 		if (need_resched()) {
- 			xas_pause(&xas);
+-		if (!is_refcount_suitable(folio)) {
++		if (folio_expected_ref_count(folio) != folio_ref_count(folio)) {
+ 			folio_unlock(folio);
+ 			result = SCAN_PAGE_COUNT;
+ 			goto out;
+@@ -1402,7 +1389,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+ 		 * has excessive GUP pins (i.e. 512).  Anyway the same check
+ 		 * will be done again later the risk seems low.
+ 		 */
+-		if (!is_refcount_suitable(folio)) {
++		if (folio_expected_ref_count(folio) != folio_ref_count(folio)) {
+ 			result = SCAN_PAGE_COUNT;
+ 			goto out_unmap;
+ 		}
 -- 
 2.34.1
 
