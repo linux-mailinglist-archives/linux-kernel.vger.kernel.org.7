@@ -1,170 +1,123 @@
-Return-Path: <linux-kernel+bounces-662783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6699AC3F89
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:52:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E9EEAC3F90
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D9DE7A7D86
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:50:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA1CA3BA0A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5E8202C4E;
-	Mon, 26 May 2025 12:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA341FC7F1;
+	Mon, 26 May 2025 12:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="B93Bjv84"
-Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jLsFpv9W"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC1329CEB
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 12:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33184205AA1;
+	Mon, 26 May 2025 12:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748263910; cv=none; b=BjwoxQAGwSyXv0UWRbf5NZT7fN4FDO3xCGjUFPJzsjrsmzULSa7mNEhCsqzmR1M1aPJCqwCxcNy8/ZOgAQ/Sf7mSP6FL6LN4bV96m6tZvemaIHyPDPKrFTgXZRqmyngorPrp0lmCa89/aHgyFAa14oSoepGYi/YVEYxE8DE9jic=
+	t=1748263916; cv=none; b=hS8LQ02q+WvY3cpw+inV9BeWH4e5TOHDWhQIq3DThAC2oVrpsH8NMg6PtgR6esUCdIM4/ghsiTe8sXeDIp/qFRiiBLvtt09ayqsdDqK4bRMHn8FQWrvTPcdMbvC3J5sNYjUsfGdMG4couv/qOfVxxDeaXkxe6kv3soyH0tVECfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748263910; c=relaxed/simple;
-	bh=Srrw0lhNTQ8jQKndSUyuxD3sWb/xKNMVmvUkf5KQQFY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=duVbC3HwiNrmdWu9chutYuD+5yrX62Upmcu2lfcBTullkFZyZAtw8YA8NvNSOCyEycACHUx40q/2RjXoImfMhmTpmEm+iRUF1ZwbUNF4M2V5j6jcpvbLDVCvt/yNZ7702V5zoZEbbyeXe4od+OpigcUj8UXDyRu+ysV/guQgvuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=B93Bjv84; arc=none smtp.client-ip=185.226.149.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
-	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1uJXIm-00HJq4-UF
-	for linux-kernel@vger.kernel.org; Mon, 26 May 2025 14:51:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector2; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
-	bh=7GFPaRp+dFRjVa/eZf0+QeVTps4jC/9ydmcDiGh1F44=; b=B93Bjv84FwS2StimGuXuPbbDfC
-	3bgEO7aP7jqDb4+cKLbro7IswMov5QfFkD0r8x/C9NwD0PENE8NOVX2eCWTSb5Ptbi9a60WMR3STI
-	eetsXy81sjlgVRehCp/eGFI+r3X7xx7UElcX14cG1+/1gm8oRWrNCFdtIhLlEZ1gyHJT1svCug6D7
-	hyJ2Vwv7md4i2YqQpD1zh7SlAVz8bJzzdF+L4tq6qmRNW3cHPQvxorLPQ7W8NBmeyLik26GA3YVpW
-	YCfsct5I+8W00YNLprUPRJ/ds6TI7moFWAJ/BJfEWBWJjuAMnuyZG4N4NgNcF79L/ICgjx2/LpfBZ
-	x6DedtAg==;
-Received: from [10.9.9.72] (helo=submission01.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1uJXIk-00027V-RN; Mon, 26 May 2025 14:51:36 +0200
-Received: by submission01.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1uJXIV-00GxJM-Cj; Mon, 26 May 2025 14:51:19 +0200
-Message-ID: <1f5cc46a-de4c-4361-a706-fc7fe06a7068@rbox.co>
-Date: Mon, 26 May 2025 14:51:18 +0200
+	s=arc-20240116; t=1748263916; c=relaxed/simple;
+	bh=OH5QZrG1//Rt5FE9pTjHrkbMC3obpY+CaHTjj3/IIIY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WAMhHvhIImZKh2evV/LITeifvi5gKI4gVOFfzkLvUepVUomUc0y4VjUp1LVgN/zAZzVzQbOvLNVdsGE8Y0U25o3olDU4cHUk+1+HdKdqM/nRdkGTfgfO52MLnE9E/AKYceuwJ6ewokA2/7mrABE2MrO9h1XmsfiUkvsZew80Zv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jLsFpv9W; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1748263912;
+	bh=OH5QZrG1//Rt5FE9pTjHrkbMC3obpY+CaHTjj3/IIIY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=jLsFpv9WhqWAUal5OJ98YY8lQBKD2Y13sQQvPuV2pNK2AHs4IolFbETu2qczbgboT
+	 9rh+8VrsHu16WHcC5q51HuV319PVMg75edtyNugaBu9yrW3kqOyYx02JLrz91+CG8J
+	 kQpvq2VRlH6sbmA4fTc0bTlIE3zf5UU+BAsdx9L0dxAhCerAxVR1nqQOFDx4ExnqkK
+	 DqlrG6ewhG17H9m2ZekPI2fgWDUTeRpP6+l1N8wiNhxxqzZogTQ8l1xV8XFvP8w8im
+	 Jlvw/bvRR8NsOwlRlz4g+Hw0Ya7GaL6SW57EwUOhnbiU0mx40yFYvQ/l992qvcyhLL
+	 DjspK3jTOwuZA==
+Received: from localhost (unknown [82.76.59.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id E0C9617E0FD3;
+	Mon, 26 May 2025 14:51:51 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH 00/11] HID: playstation: Add support for audio jack
+ handling on DualSense
+Date: Mon, 26 May 2025 15:51:23 +0300
+Message-Id: <20250526-dualsense-hid-jack-v1-0-a65fee4a60cc@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] vsock/test: Cover more CIDs in transport_uaf
- test
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250523-vsock-test-inc-cov-v1-1-fa3507941bbd@rbox.co>
- <limbmrszio42lvkmalapooflj5miedlszkmnnm4ckmy2upfghw@24vxuhgdji2z>
-Content-Language: pl-PL, en-GB
-From: Michal Luczaj <mhal@rbox.co>
-In-Reply-To: <limbmrszio42lvkmalapooflj5miedlszkmnnm4ckmy2upfghw@24vxuhgdji2z>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMxjNGgC/x3MwQpAQBCA4VfRnE2xWsqryGHtDAYt7URK3t3m+
+ B3+/wHlKKzQZg9EvkRlDwllnoGfXZgYhZLBFMYW1hik023KQRlnIVycX5EqP9R2aCy5ElJ4RB7
+ l/qdd/74f6CbKDGQAAAA=
+X-Change-ID: 20250522-dualsense-hid-jack-d3cb65b75da1
+To: Roderick Colenbrander <roderick.colenbrander@sony.com>, 
+ Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+ Henrik Rydberg <rydberg@bitmath.org>
+Cc: kernel@collabora.com, linux-input@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-On 5/26/25 10:25, Stefano Garzarella wrote:
-> On Fri, May 23, 2025 at 12:31:16AM +0200, Michal Luczaj wrote:
->> Increase the coverage of test for UAF due to socket unbinding, and losing
->> transport in general. It's a follow up to commit 301a62dfb0d0 ("vsock/test:
->> Add test for UAF due to socket unbinding") and discussion in [1].
->>
->> The idea remains the same: take an unconnected stream socket with a
->> transport assigned and then attempt to switch the transport by trying (and
->> failing) to connect to some other CID. Now do this iterating over all the
->> well known CIDs (plus one).
->>
->> Note that having only a virtio transport loaded (without vhost_vsock) is
->> unsupported; test will always pass. Depending on transports available, a
-> 
-> Do you think it might make sense to print a warning if we are in this 
-> case, perhaps by parsing /proc/modules and looking at vsock 
-> dependencies?
+The Sony DualSense wireless controller (PS5) provides an internal mono
+speaker, in addition to the 3.5mm jack socket for headphone output and
+headset microphone input.  However, the default audio output path is set
+to headphones, regardless of whether they are actually inserted or not.
 
-That'd nice, but would parsing /proc/modules work if a transport is
-compiled-in (not a module)?
+This patch series aims to improve the audio support by implementing the
+following changes:
 
->> +static bool test_stream_transport_uaf(int cid)
->> {
->> +	struct sockaddr_vm addr = {
->> +		.svm_family = AF_VSOCK,
->> +		.svm_cid = cid,
->> +		.svm_port = VMADDR_PORT_ANY
->> +	};
->> 	int sockets[MAX_PORT_RETRIES];
->> -	struct sockaddr_vm addr;
->> -	int fd, i, alen;
->> +	socklen_t alen;
->> +	int fd, i, c;
->>
->> -	fd = vsock_bind(VMADDR_CID_ANY, VMADDR_PORT_ANY, SOCK_STREAM);
->> +	fd = socket(AF_VSOCK, SOCK_STREAM, 0);
->> +	if (fd < 0) {
->> +		perror("socket");
->> +		exit(EXIT_FAILURE);
->> +	}
->> +
->> +	if (bind(fd, (struct sockaddr *)&addr, sizeof(addr))) {
->> +		if (errno != EADDRNOTAVAIL) {
->> +			perror("Unexpected bind() errno");
->> +			exit(EXIT_FAILURE);
->> +		}
->> +
->> +		close(fd);
->> +		return false;
-> 
-> Perhaps we should mention in the commit or in a comment above this 
-> function, what we return and why we can expect EADDRNOTAVAIL.
+* Detect when the plugged state of the audio jack changes and toggle
+  audio output between headphones and internal speaker, as required.
+  The latter is achieved by essentially routing the right channel of the
+  audio source to the mono speaker.
 
-Something like
+* Adjust the speaker volume since its default level is too low and,
+  therefore, cannot generate any audible sound.
 
-/* Probe for a transport by attempting a local CID bind. Unavailable
- * transport (or more specifically: an unsupported transport/CID
- * combination) results in EADDRNOTAVAIL, other errnos are fatal.
- */
+* Register a dedicated input device for the audio jack and use it to
+  report all headphone and headset mic insert events.
 
-?
+It's worth noting the latter is necessary since the controller complies
+with v1.0 of the USB Audio Class spec (UAC1) and, therefore, cannot
+advertise any jack detection capability.  However, this feature can be
+implemented in the generic USB audio driver via quirks, i.e. by
+configuring an input handler to receive hotplug events from the HID
+driver.
 
-And I've just realized feeding VMADDR_CID_HYPERVISOR to bind() doesn't make
-sense at all. Will fix.
+Unrelated to the above, also provide a few driver cleanup patches, e.g.
+make use of bitfields macros, simplify locking, fix coding style.
 
-> What about adding a vsock_bind_try() in util.c that can fail returning
-> errno, so we can share most of the code with vsock_bind()?
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Cristian Ciocaltea (11):
+      HID: playstation: Make use of bitfield macros
+      HID: playstation: Add spaces around arithmetic operators
+      HID: playstation: Simplify locking with guard() and scoped_guard()
+      HID: playstation: Replace uint{32,16,8}_t with u{32,16,8}
+      HID: playstation: Correct spelling in comment sections
+      HID: playstation: Fix all alignment and line length issues
+      HID: playstation: Document spinlock_t usage
+      HID: playstation: Prefer kzalloc(sizeof(*buf)...)
+      HID: playstation: Rename DualSense input report status field
+      HID: playstation: Support DualSense audio jack hotplug detection
+      HID: playstation: Support DualSense audio jack event reporting
 
-Ah, yes, good idea.
-
->> +static void test_stream_transport_uaf_client(const struct test_opts *opts)
->> +{
->> +	bool tested = false;
->> +	int cid;
->> +
->> +	for (cid = VMADDR_CID_HYPERVISOR; cid <= VMADDR_CID_HOST + 1; ++cid)
-> 
->> +		tested |= test_stream_transport_uaf(cid);
->> +
->> +	if (!tested)
->> +		fprintf(stderr, "No transport tested\n");
->> +
->> 	control_writeln("DONE");
-> 
-> While we're at it, I think we can remove this message, looking at 
-> run_tests() in util.c, we already have a barrier.
-
-Ok, sure. Note that console output gets slightly de-synchronised: server
-will immediately print next test's prompt and wait there.
-
-Thanks,
-Michal
+ drivers/hid/hid-playstation.c | 885 ++++++++++++++++++++++++------------------
+ 1 file changed, 500 insertions(+), 385 deletions(-)
+---
+base-commit: 7bac2c97af4078d7a627500c9bcdd5b033f97718
+change-id: 20250522-dualsense-hid-jack-d3cb65b75da1
 
 
