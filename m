@@ -1,188 +1,173 @@
-Return-Path: <linux-kernel+bounces-662353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3004AC3957
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:39:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70207AC395F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:41:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B53A3A509D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 05:39:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185B61893E07
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 05:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C144D1C84AD;
-	Mon, 26 May 2025 05:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3BC1C84BF;
+	Mon, 26 May 2025 05:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PktyAzPG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L5mklkIN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFmVplLZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004AA136349;
-	Mon, 26 May 2025 05:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59090282F5;
+	Mon, 26 May 2025 05:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748237951; cv=none; b=qvl9UpWIUSEDcSKcq71ckYPfmst8apk/+fawIDrvMA6+5cXmlgTd0hBv9V7Yr8PygTy3qQCY3X09CofvX2yoZ6Hj1Dp+3Ia6aq3JnNoPJ9cB/87nWg6hfMyfCSqxqH3TlUTsuaLw6j/6BQEoBTTXhlKscOgBugcWau12wje/3+U=
+	t=1748238060; cv=none; b=aBF9xM1jAP0iNHezkf22DKrOAziKjBa+k+XT6rIkXdW+Dr+gDaXXETPKq3bkpDEhMSyXolBzztKxWJ4sYsD8i5P+nndBf2OBnMn3E0WRFm2SBykNq2pxr88bP1d/PuveaWb3nKp3pKzSux8ciJD/g0IGGBFTI+jPWOX38taJT+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748237951; c=relaxed/simple;
-	bh=bvi9/AnhH38DquhZv0IqLUVYPmYVpjwwJgZnzK0ONZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rfw0Xwb/YrZGqb1NDG//cUEw0k/Z/jcI7LzRgaiWeZUq6lRIwkMNrp3HWbKWSmrKF/iA+kgQ5V8Vumo8FQnOZj0aws/B2EgteZ0m5nESQDyGyC3OVCOWVcluzwt54Z2ylAWJpqKmh6Gzq3FRXkU+zKurP/+MZ8IJOD9gXTrinlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PktyAzPG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L5mklkIN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 26 May 2025 07:39:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1748237945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XFwlwfcUWsrciv3uqI5GflyLPzZ54rN6yZqsSqBaoTY=;
-	b=PktyAzPGgeoAdDzdgI+++hZu7fMbjfr6H+099v4my+y4508n4MJtiQACCvEsFZ3xAct+gU
-	boRl35+QrYJPScjva4DLTwapEu9rpM9aBpbLIplcNApH5gkBmhOz1B2Uokyfv69V6uUsBx
-	TEQotNpT9xs+PXbjnouMYjcjNHqty81ZRuhCNWfrezU2GdSPqfZUbPpujlj+gBL8qcOZn1
-	PES5mgYalFB+A3xxG/pQNBJVn4VKiDlZ5yU425BnpA9itXXPxGOfubOiR9RKUGSNab3xsE
-	ts9jPCucocoCFAVeR9ccxiZje1e3VguAAbTdaz7RnnAj+xhRXAN/mL0du1KE4g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1748237945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XFwlwfcUWsrciv3uqI5GflyLPzZ54rN6yZqsSqBaoTY=;
-	b=L5mklkINJ3LFQ0YLlGpTfMRx3J90rM/lyphpIJf4TmO140xAbC8rlZUug/3iyyK6EV/Oa2
-	JWUZ6azxdyj8UqAw==
-From: Nam Cao <namcao@linutronix.de>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	John Ogness <john.ogness@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Jens Axboe <axboe@kernel.dk>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH v2] eventpoll: Fix priority inversion problem
-Message-ID: <20250526053900.asTaMltl@linutronix.de>
-References: <20250523061104.3490066-1-namcao@linutronix.de>
- <20250523122611.Q64SSO7S@linutronix.de>
+	s=arc-20240116; t=1748238060; c=relaxed/simple;
+	bh=XRqjBzDwgvw1xP62Qq+XZ1FkytUcGBM5prprQQPTZFY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=q9P78Ltl1IpdK0fkpX6kpHVIuiPKNvjItf/33+m9vbZbuUM9leAFDKs6Lo47URbHv5fTS+RjMSIwCq+selywU7RB3cVwz8aai851gozFPGQfL/G9TisPLUbGRB2t1tz/YYMMamEkYQW4DdT+OB9VWCCvCOiXvlfR43lpQrHDKic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cFmVplLZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9EA6C4CEE7;
+	Mon, 26 May 2025 05:40:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748238059;
+	bh=XRqjBzDwgvw1xP62Qq+XZ1FkytUcGBM5prprQQPTZFY=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=cFmVplLZxAboZR4UYVMChIsRFViFCY3046HF2Xrmu+HfB+6+OOBh60eQ8hFWiit4s
+	 +ABXAYoP8DLLPCAk4jI4qC8offdiCsflbCh821YeAtQypEyzv8hsuOqwu0GR1mBykj
+	 R9Gkv3TigUwjqSECQ7VQppDvF39zbWD2SO9jurYSuUl6D196/1igG3cB0lg3gA2FhY
+	 WLlo8FI6pNI9anlqwpLUrwkbovMCvBT/gvIhZ+SmgOoCxaE5XO9rji7ekASMFffiWP
+	 bl6hJcbhcioZIv00vrayHVkmKnwjqHECZLBc76fdUfL5VUsnJYAGarQxAR2Z2npETT
+	 W7RMqHAMNNZHw==
+Message-ID: <44b5d5f1-f45e-4d81-809f-707bd756257d@kernel.org>
+Date: Mon, 26 May 2025 07:40:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250523122611.Q64SSO7S@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: i2c: nvidia,tegra20-i2c: Specify the
+ required properties
+To: Akhil R <akhilrajeev@nvidia.com>, andi.shyti@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, thierry.reding@gmail.com,
+ jonathanh@nvidia.com, ldewangan@nvidia.com, digetx@gmail.com,
+ p.zabel@pengutronix.de, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250526052553.42766-1-akhilrajeev@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250526052553.42766-1-akhilrajeev@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 23, 2025 at 02:26:11PM +0200, Sebastian Andrzej Siewior wrote:
-> On 2025-05-23 08:11:04 [+0200], Nam Cao wrote:
-> On the AMD I tried
-> Unpatched:
-> | $ perf bench epoll all 2>&1 | grep -v "^\["
-> | # Running epoll/wait benchmark...
-> | Run summary [PID 3019]: 255 threads monitoring on 64 file-descriptors for 8 secs.
-> |
-> |
-> | Averaged 785 operations/sec (+- 0.05%), total secs = 8
-> |
-> | # Running epoll/ctl benchmark...
-> | Run summary [PID 3019]: 256 threads doing epoll_ctl ops 64 file-descriptors for 8 secs.
-> |
-> |
-> | Averaged 2652 ADD operations (+- 1.19%)
-> | Averaged 2652 MOD operations (+- 1.19%)
-> | Averaged 2652 DEL operations (+- 1.19%)
-> 
-> Patched:
-> | $ perf bench epoll all 2>&1 | grep -v "^\["
-> | # Running epoll/wait benchmark...
-> | Run summary [PID 3001]: 255 threads monitoring on 64 file-descriptors for 8 secs.
-> | 
-> | 
-> | Averaged 1386 operations/sec (+- 3.94%), total secs = 8
-> | 
-> | # Running epoll/ctl benchmark...
-> | Run summary [PID 3001]: 256 threads doing epoll_ctl ops 64 file-descriptors for 8 secs.
-> | 
-> | 
-> | Averaged 1495 ADD operations (+- 1.11%)
-> | Averaged 1495 MOD operations (+- 1.11%)
-> | Averaged 1495 DEL operations (+- 1.11%)
-> 
-> The epoll_waits improves again, epoll_ctls does not. I'm not sure how to
-> read the latter. My guess would be that ADD/ MOD are fine but DEL is a
-> bit bad because it has to del, iterate, …, add back.
+On 26/05/2025 07:25, Akhil R wrote:
+> Specify the properties which are essential for the Tegra I2C driver to
+> function correctly. Though all the existing DT nodes have these
+> properties already, it was not mandated by the DT bindings.
 
-Yeah EPOLL_CTL_DEL is clearly worse. But epoll_ctl() is not
-performance-critical, so I wouldn't worry about it.
+I was rather expecting to see explanation why these were missing.
 
-> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> > index d4dbffdedd08e..483a5b217fad4 100644
-> > --- a/fs/eventpoll.c
-> > +++ b/fs/eventpoll.c
-> > @@ -136,14 +136,29 @@ struct epitem {
-> >  		struct rcu_head rcu;
-> >  	};
-> >  
-> > -	/* List header used to link this structure to the eventpoll ready list */
-> > -	struct list_head rdllink;
-> > +	/*
-> > +	 * Whether epitem.rdllink is currently used in a list. When used, it cannot be detached or
-> 
-> Notation wise I would either use plain "rdllink" or the C++ notation
-> "epitem::rdllink".
-> 
-> > +	 * inserted elsewhere.
-> 
-> When set, it is attached to eventpoll::rdllist and can not be attached
-> again.
-> This nothing to do with detaching.
-> 
-> > +	 * It may be in use for two reasons:
-> > +	 *
-> > +	 * 1. This item is on the eventpoll ready list.
-> > +	 * 2. This item is being consumed by a waiter and stashed on a temporary list. If inserting
-> > +	 *    is blocked due to this reason, the waiter will add this item to the list once
-> > +	 *    consuming is done.
-> > +	 */
-> > +	bool link_used;
-> >  
-> >  	/*
-> > -	 * Works together "struct eventpoll"->ovflist in keeping the
-> > -	 * single linked chain of items.
-> > +	 * Indicate whether this item is ready for consumption. All items on the ready list has this
->                                                                                            have
-> > +	 * flag set. Item that should be on the ready list, but cannot be added because of
-> > +	 * link_used (in other words, a waiter is consuming the ready list), also has this flag
-> > +	 * set. When a waiter is done consuming, the waiter will add ready items to the ready list.
-> 
-> This sounds confusing. What about:
-> 
-> | Ready items should be on eventpoll::rdllist. This might be not the case
-> | if a waiter is consuming the list and removed temporary all items while
-> | doing so. Once done, the item will be added back to eventpoll::rdllist.
-> 
-> The reason is either an item is removed from the list and you have to
-> remove them all, look for the right one, remove it from the list, splice
-> what is left to the original list.
-> I did not find another reason for that.
+Fixes: f10a9b722f80 ("dt-bindings: i2c: tegra: Convert to json-schema")
 
-Thanks for the comments. However, while looking at them again, I think I
-complicate things with these flags.
 
-Instead of "link_used", I could take advantage of llist_node::next. Instead
-of "ready", I could do another ep_item_poll().
+> 
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> ---
+> v2->v3:
+>   * Updated commit description on the details and fixed indentation
+>     issue.
+> v1->v2:
+>   * Added all required properties
+> 
+>  .../bindings/i2c/nvidia,tegra20-i2c.yaml      | 23 ++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
+> index b57ae6963e62..c1d38e6ff7d7 100644
+> --- a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
+> @@ -97,7 +97,9 @@ properties:
+>  
+>    resets:
+>      items:
+> -      - description: module reset
+> +      - description: |
 
-Therefore I am removing them for v3, then there won't be any more confusion
-with these flags.
+Do not need '|' unless you need to preserve formatting.
 
-Thanks for the review, I will resolve your other comments in v3.
-Nam
+
+> +          Module reset. This property is optional for controllers in Tegra194 and later
+
+Your binding says Tegra210 requires it, but 210 feels like something
+later than 194. Maybe that's obvious for people knowing that device?
+
+Anyway, please wrap at 80 (see kernel coding style).
+
+> +          chips where an internal software reset is available as an alternative.
+>  
+>    reset-names:
+>      items:
+> @@ -116,6 +118,13 @@ properties:
+>        - const: rx
+>        - const: tx
+>  
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+
+dmas, dma-names, power-domains, see TXT binding... or extend commit
+description why this should be different comparing to original binding.
+
+Best regards,
+Krzysztof
 
