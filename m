@@ -1,283 +1,148 @@
-Return-Path: <linux-kernel+bounces-663424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 220B3AC4817
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:07:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE0D3AC48ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B945C18949C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 06:07:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB59C3BD06A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 07:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B1A1F3FED;
-	Tue, 27 May 2025 06:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064B2215F7C;
+	Tue, 27 May 2025 06:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="px+5ixoM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sj7dHuPA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6ACC8F5E;
-	Tue, 27 May 2025 06:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4BC202969;
+	Tue, 27 May 2025 06:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748326006; cv=none; b=gNzGkPQhZtJhRKQvr7715qpr25smlD4TEoXII31rAArC4Xe/XI5pdVFmk2ERay821VZllXMrsamTGiKK3TmkOwZu3zCWr3nrIBA0inxOGagnIYh5pEmZ2aOxYpEpl6UOyYZMbndkCNDE4423Xn6fDOlbF9rwBQkr1SNuolS+DB0=
+	t=1748329066; cv=none; b=usd20Tl4LM3wVOYYNk1W/uPYvPERHJbQb4z3tvsKJkA2dtWihzKtgbjfGyGy//ZQluk2GGFsmfJBGJpS/YbbyekRKWSadssBW30a5nNyTIPPyr1Z9AN0N3DKuJCfdajxuQxpU6HWnAewCST1RWpeQuAjSgoYLyyQpbGDJxTa89U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748326006; c=relaxed/simple;
-	bh=949plwvuDh0LXblafoGZmQ/UjZsqaCPbRV9YptNbJZg=;
-	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:References:
-	 In-Reply-To; b=TF6s6L2cEPHX8RpI94B22rBR7DuA3ZTPtl6dhlg5ZUV1ceXVCz8aoEq9TP3rR1wVnQmlJP3lKsyEazww8389FtNZ+hHgmR8p0pSHuG4AH1FbRI+nCkF8fR6qX1F7A13vgtE0Zcub1Ii9qq32PrC3BLlmVVZzgeSf71mIdOpFS+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=px+5ixoM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1586C4CEEA;
-	Tue, 27 May 2025 06:06:45 +0000 (UTC)
+	s=arc-20240116; t=1748329066; c=relaxed/simple;
+	bh=rwfo8SIdPFnNrt8tKiPaablBSYJZdJTbHs2zOmEbAUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YV92DCffsGmUTo7z2eGOrB3az0wIV6th0/wd3kpfhuqlfYzndTy88JWm4t+yAttrtIpwQvK7UniaXSim+8hlzPZcIBWLdhaRlzq/PN71mwcqzzM22e2lylwOCISKCG5s7cx60bNWS6X5cE/02kttwV47Poqbg7rRjRuthbP7FWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sj7dHuPA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26561C4CEF2;
+	Tue, 27 May 2025 06:57:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748326006;
-	bh=949plwvuDh0LXblafoGZmQ/UjZsqaCPbRV9YptNbJZg=;
-	h=Date:To:Subject:Cc:From:References:In-Reply-To:From;
-	b=px+5ixoMOObPn1gjgY3F0Z9bRaiWd0CFRyD7XnyEGWCWSYXLTTL82yN0v9TlHGERB
-	 eXFfhu9FGpCAEN6Bz4edWRLy8Ozlf7EN+ipMkC8OatIve5c2h08LG3YMMfbGqaKVcP
-	 hC6Atl5DqAExiq3BW7u5C7RM26y9568VZXWPSSGxisF3PfXBGjvA+c+IMArifeX2OP
-	 Qt8hslVgHAbWNAb+A+G1BFmpV80FMM1Kn4y8w9v5YCBffPHAIeA8x62H8sSzXF8u/2
-	 KYb5mM608kaz7EmMJGRWs8BgcmWXU2RIakvi1AwgR0e4Qdw3/0ZB11ro4lY/qkwqQz
-	 Dd6J9zzh07Vqw==
-Content-Type: multipart/signed;
- boundary=b260a079bbf6f987508aa5a40dcc49a946433bd21971dc74e0800c22cc6c;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Tue, 27 May 2025 08:06:42 +0200
-Message-Id: <DA6PUDJXVXL3.1EILFHW8G19E9@kernel.org>
-To: "Aradhya Bhatia" <aradhya.bhatia@linux.dev>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Tomi Valkeinen"
- <tomi.valkeinen@ideasonboard.com>, "Jyri Sarha" <jyri.sarha@iki.fi>
-Subject: Re: [PATCH v8 2/4] dt-bindings: display: ti: Add schema for AM625
- OLDI Transmitter
-Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Thomas
- Zimmermann" <tzimmermann@suse.de>, "Maxime Ripard" <mripard@kernel.org>,
- "David Airlie" <airlied@gmail.com>, "Laurent Pinchart"
- <laurent.pinchart@ideasonboard.com>, "Simona Vetter" <simona@ffwll.ch>,
- "Nishanth Menon" <nm@ti.com>, "Vignesh Raghavendra" <vigneshr@ti.com>,
- "Devarsh Thakkar" <devarsht@ti.com>, "Praneeth Bajjuri" <praneeth@ti.com>,
- "Udit Kumar" <u-kumar1@ti.com>, "Jayesh Choudhary" <j-choudhary@ti.com>,
- "Francesco Dolcini" <francesco@dolcini.it>, "Alexander Sverdlin"
- <alexander.sverdlin@siemens.com>, "DRI Development List"
- <dri-devel@lists.freedesktop.org>, "Devicetree List"
- <devicetree@vger.kernel.org>, "Linux Kernel List"
- <linux-kernel@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-X-Mailer: aerc 0.16.0
-References: <20250525151721.567042-1-aradhya.bhatia@linux.dev>
- <20250525151721.567042-3-aradhya.bhatia@linux.dev>
-In-Reply-To: <20250525151721.567042-3-aradhya.bhatia@linux.dev>
+	s=k20201202; t=1748329065;
+	bh=rwfo8SIdPFnNrt8tKiPaablBSYJZdJTbHs2zOmEbAUo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Sj7dHuPAN0ED0yLw1mDbkcnNFGQP70BcRvbu9SuoRMRHtuqOxki2+ECpow6I5QEkx
+	 jBFJ0zkU9AGJm4Oy7mSh3XACDhyh1wxTo90z1eB0a+TYxYQN8m4FWNJvPjL9mazgzy
+	 pKQqEQypffqfjW1md85W2ShFmna99CojMbfE0tEFlIihZFCkvIBAxU5W2Br7J9W+3T
+	 bRsKUw4rii6njouQWaucCGhSALi0A5tOhpW6hSK/AL+Jyxtjew67uWcUM7BJTZDIh1
+	 EoWHj7FHAYxDeKzYDYEf/VGakAAppz1XiHJVMIRJOXd88bq4zIiddekhtgirVRiyFp
+	 o8nIyZnnen6JQ==
+Date: Mon, 26 May 2025 08:35:51 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] sysctl changes for v6.16-rc1
+Message-ID: <itvalur2ynrnjc3grs5nk36fbfm52atybcad2nmxidaavkeqap@nlxzuqvygpta>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nxgspzmyeafrwyvk"
+Content-Disposition: inline
 
---b260a079bbf6f987508aa5a40dcc49a946433bd21971dc74e0800c22cc6c
-Mime-Version: 1.0
+
+--nxgspzmyeafrwyvk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi Aradhya,
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
 
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
-> @@ -0,0 +1,80 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/ti/ti,am625-oldi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments AM625 OLDI Transmitter
-> +
-> +maintainers:
-> +  - Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> +  - Aradhya Bhatia <aradhya.bhatia@linux.dev>
-> +
-> +description:
-> +  The AM625 TI Keystone OpenLDI transmitter (OLDI TX) supports serialize=
-d RGB
-> +  pixel data transmission between host and flat panel display over LVDS =
-(Low
-> +  Voltage Differential Sampling) interface. The OLDI TX consists of 7-to=
--1 data
-> +  serializers, and 4-data and 1-clock LVDS outputs. It supports the LVDS=
- output
-> +  formats "jeida-18", "jeida-24" and "vesa-18", and can accept 24-bit RG=
-B or
-> +  padded and un-padded 18-bit RGB bus formats as input.
-> +
-> +properties:
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description: serial clock input for the OLDI transmitters
-> +
-> +  clock-names:
-> +    const: serial
-> +
-> +  ti,companion-oldi:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      phandle to companion OLDI transmitter. This property is mandatory =
-for the
-> +      primarty OLDI TX if the OLDI TXes are expected to work either in d=
-ual-lvds
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
 
-primary
+are available in the Git repository at:
 
-> +      mode or in clone mode. This property should point to the secondary=
- OLDI
-> +      TX.
+  git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/ tags/sys=
+ctl-6.16-rc1
 
-You should mention that the second OLDI should also point back to
-the primary OLDI using this property.
+for you to fetch changes up to 23b8bacf154759ed922d25527dda434fbf57436a:
 
-> +  ti,secondary-oldi:
-> +    type: boolean
-> +    description:
-> +      Boolean property to mark the OLDI transmitter as the secondary one=
-, when the
-> +      OLDI hardware is expected to run as a companion HW, in cases of du=
-al-lvds
-> +      mode or clone mode. The primary OLDI hardware is responsible for a=
-ll the
-> +      hardware configuration.
-> +
+  sysctl: Close test ctl_headers with a for loop (2025-04-14 14:13:41 +0200)
 
+----------------------------------------------------------------
+Summary
 
-> --- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> +++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+* Move kern_table members out of kernel/sysctl.c
 
-..
+  Moved a subset (tracing, panic, signal, stack_tracer and sparc) out of the
+  kern_table array. The goal is for kern_table to only have sysctl elements=
+=2E All
+  this increases modularity by placing the ctl_tables closer to where they =
+are
+  used while reducing the chances of merge conflicts in kernel/sysctl.c.
 
-> @@ -190,3 +244,105 @@ examples:
->              };
->          };
->      };
-> +
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
-> +
-> +    bus {
-> +        #address-cells =3D <2>;
-> +        #size-cells =3D <2>;
-> +        dss1: dss@30200000 {
-> +            compatible =3D "ti,am625-dss";
-> +            reg =3D <0x00 0x30200000 0x00 0x1000>, /* common */
-> +                  <0x00 0x30202000 0x00 0x1000>, /* vidl1 */
-> +                  <0x00 0x30206000 0x00 0x1000>, /* vid */
-> +                  <0x00 0x30207000 0x00 0x1000>, /* ovr1 */
-> +                  <0x00 0x30208000 0x00 0x1000>, /* ovr2 */
-> +                  <0x00 0x3020a000 0x00 0x1000>, /* vp1 */
-> +                  <0x00 0x3020b000 0x00 0x1000>, /* vp2 */
-> +                  <0x00 0x30201000 0x00 0x1000>; /* common1 */
-> +            reg-names =3D "common", "vidl1", "vid",
-> +                        "ovr1", "ovr2", "vp1", "vp2", "common1";
-> +            power-domains =3D <&k3_pds 186 TI_SCI_PD_EXCLUSIVE>;
-> +            clocks =3D        <&k3_clks 186 6>,
-> +                            <&vp1_clock>,
-> +                            <&k3_clks 186 2>;
-> +            clock-names =3D "fck", "vp1", "vp2";
-> +            interrupts =3D <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-> +            oldi-transmitters {
-> +                #address-cells =3D <1>;
-> +                #size-cells =3D <0>;
-> +                oldi0: oldi@0 {
-> +                    reg =3D <0>;
-> +                    clocks =3D <&k3_clks 186 0>;
-> +                    clock-names =3D "serial";
-> +                    ti,companion-oldi =3D <&oldi1>;
-> +                    ti,oldi-io-ctrl =3D <&dss_oldi_io_ctrl>;
-> +                    ports {
-> +                        #address-cells =3D <1>;
-> +                        #size-cells =3D <0>;
-> +                        port@0 {
-> +                            reg =3D <0>;
-> +                            oldi0_in: endpoint {
-> +                                remote-endpoint =3D <&dpi0_out0>;
-> +                            };
-> +                        };
-> +                        port@1 {
-> +                            reg =3D <1>;
-> +                            oldi0_out: endpoint {
-> +                                remote-endpoint =3D <&panel_in0>;
-> +                            };
-> +                        };
-> +                    };
-> +                };
-> +                oldi1: oldi@1 {
-> +                    reg =3D <1>;
-> +                    clocks =3D <&k3_clks 186 0>;
-> +                    clock-names =3D "serial";
+* Fixed sysctl unit test panic by relocating it to selftests
 
-.. and update this example :)
+* Testing
 
--michael
+  These have been in linux-next from rc2, so they have had more than a month
+  worth of testing.
 
-> +                    ti,secondary-oldi;
-> +                    ti,oldi-io-ctrl =3D <&dss_oldi_io_ctrl>;
-> +                    ports {
-> +                        #address-cells =3D <1>;
-> +                        #size-cells =3D <0>;
-> +                        port@0 {
-> +                            reg =3D <0>;
-> +                            oldi1_in: endpoint {
-> +                                remote-endpoint =3D <&dpi0_out1>;
-> +                            };
-> +                        };
-> +                        port@1 {
-> +                            reg =3D <1>;
-> +                            oldi1_out: endpoint {
-> +                                remote-endpoint =3D <&panel_in1>;
-> +                            };
-> +                        };
-> +                    };
-> +                };
-> +            };
-> +            ports {
-> +                #address-cells =3D <1>;
-> +                #size-cells =3D <0>;
-> +                port@0 {
-> +                    #address-cells =3D <1>;
-> +                    #size-cells =3D <0>;
-> +                    reg =3D <0>;
-> +                    dpi0_out0: endpoint@0 {
-> +                        reg =3D <0>;
-> +                        remote-endpoint =3D <&oldi0_in>;
-> +                    };
-> +                    dpi0_out1: endpoint@1 {
-> +                        reg =3D <1>;
-> +                        remote-endpoint =3D <&oldi1_in>;
-> +                    };
-> +                };
-> +                port@1 {
-> +                    reg =3D <1>;
-> +                    dpi1_out: endpoint {
-> +                        remote-endpoint =3D <&hdmi_bridge>;
-> +                    };
-> +                };
-> +            };
-> +        };
-> +    };
+----------------------------------------------------------------
+Joel Granados (9):
+      panic: Move panic ctl tables into panic.c
+      signal: Move signal ctl tables into signal.c
+      tracing: Move trace sysctls into trace.c
+      stack_tracer: move sysctl registration to kernel/trace/trace_stack.c
+      sparc: mv sparc sysctls into their own file under arch/sparc/kernel
+      sysctl: move u8 register test to lib/test_sysctl.c
+      sysctl: Add 0012 to test the u8 range check
+      sysctl: call sysctl tests with a for loop
+      sysctl: Close test ctl_headers with a for loop
 
---b260a079bbf6f987508aa5a40dcc49a946433bd21971dc74e0800c22cc6c
+ arch/sparc/kernel/Makefile               |   1 +
+ arch/sparc/kernel/setup.c                |  46 +++++++++++
+ include/linux/ftrace.h                   |   9 ---
+ kernel/panic.c                           |  30 +++++++
+ kernel/signal.c                          |  11 +++
+ kernel/sysctl-test.c                     |  49 ------------
+ kernel/sysctl.c                          | 108 -------------------------
+ kernel/trace/trace.c                     |  36 ++++++++-
+ kernel/trace/trace_stack.c               |  22 ++++-
+ lib/test_sysctl.c                        | 133 +++++++++++++++++++++------=
+----
+ tools/testing/selftests/sysctl/sysctl.sh |  30 +++++++
+ 11 files changed, 266 insertions(+), 209 deletions(-)
+ create mode 100644 arch/sparc/kernel/setup.c
+
+--=20
+
+Joel Granados
+
+--nxgspzmyeafrwyvk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaDVWchIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/iJGwGAxRGPDN8iRUtg8G3CHTd8XVfK1W17iIKB
-ah6wsakO6qA0866Uwb4kEHxqo8sk+wp+AYDf01M6KL6+J03glezubYBIUzMEdKYH
-ZKO8I7IXqBaIiJRTBxP7b/R5OeOR+RKyn1E=
-=hOQz
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmg0C7gACgkQupfNUreW
+QU/OOAv/XMiF/DqGJP9K1HXyqWAJgPIG0Kapfsw6EgNXfMTMjLVRgbsKpfcV2qAA
+JhePKLluuYoFbcKKVaGT+bHkLdMtYD4Yw46KYCg3/dsCFdZv3Y8khP2a+lNedleF
+Xskmwey2E3fmi+zKgXgvQSgAKizXx65/QCP6+PSf2hlLXLWxI991kiQ+xmJ9+79x
+/BJJ6osWpoNJFzxx5TCJmqNG2/yG79C1GTn9+pSlfBPiiOjMUVuQReecTuCEp3qd
+pfZzA9HJ1JN1DLf4u53AnywyUXbOsUYJctseIkegGoRlZ9Q64ckAsiAytjbHOroW
+ObkHJJxc4TzOTRdlVB6vbEB0b3yvIlzjJBh6ZaPuaotI4ST773lHebICXxIE64yN
+oV6qW8991ncE15MzBvJh37RS0JDCNEThT66Kqrjot09TOWca4CdrKGoucqWaz8RR
+1/jlAq2NQG4i6RtFlWIOgXC1KrrgeVxF7oOD6tWDCmMgxrI3g9+GKJDaULGlxwME
+D0JdXDZB
+=G2NI
 -----END PGP SIGNATURE-----
 
---b260a079bbf6f987508aa5a40dcc49a946433bd21971dc74e0800c22cc6c--
+--nxgspzmyeafrwyvk--
 
