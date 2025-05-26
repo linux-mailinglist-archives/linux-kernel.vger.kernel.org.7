@@ -1,233 +1,186 @@
-Return-Path: <linux-kernel+bounces-662811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D590AC3FF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:59:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114F2AC3FC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96C923A3142
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:58:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7D61895715
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A895202F67;
-	Mon, 26 May 2025 12:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB38202C4E;
+	Mon, 26 May 2025 12:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WQYo+poF"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2084.outbound.protection.outlook.com [40.107.244.84])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMVJZhag"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E5B202C58
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 12:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748264195; cv=fail; b=Q22z7rMVVnpzOEJOfR2divU3O3dmEdlH3xnCB9AM7ekcaCtgdorbCq88lh3P4t26bSQsoRfvN9wZB++gNTnqhqUUPaXKCA5khZOxDiNLnm4pdMz3SuP+Uc9MryWg5+mDnbrZ1KHZHkNorzQyN3P706w2hWnmMhv2XFFyAmSMw8c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748264195; c=relaxed/simple;
-	bh=S4exrgp6nCCnjpU75pvGfnP76/5r83VUA6Fzx6/riZQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=js7O6iKGUZxX97AUPzxayxDfOPiBeOVBSoepTKJv3zGtGBozHbKoDtULXZOSu4V/9JWlnF8O15LAbYA07AZryga0zurGej2EXcB/wkfFySkGPJSsZNh+aS8mY7+n/ShgiNWc/8dl+efTQActHHTdocc2AbwY92ewHJPrYBHfK0E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WQYo+poF; arc=fail smtp.client-ip=40.107.244.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hijGf5IPpbuMfoNaPJyDUVmU1WDFQLL4/8RMV7nICxgfaWpF3WHeOAVRZEvLFiD2gySOd597EU2gbDAlH97bbjpF0m4ig+XH9CSLrGp63BQPBc38QVbxP+BTdvaDtXE+qKmzMd8S1tX/GG8nrmV82v7YQlNJEwysK2IO//RT3Kti0FA6WqYnJQdwhEylpqp98//Ao/rSKQK3/Ew7lkAix04avsnmFAK5CeXGlHZaJGaKUdGnj4cXOBtY0R2OoLziROzZ/18jSBospt9AEoB/jSW+0suMBAFL1vvov70dYUxFKGGF3dO12cWhaE4BIvOcShw7+WHcgFsUX1T+SW8v4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9+D/MixmJoxbu9aKCUjkmWdqscb9PVWuTnt6HvTbnqQ=;
- b=PdzjTYBkBmuHuifiR1cRpsCYkGfV87wpgBqqtWuoNb6MoHsvcwOkuhSnDQm5+Y9HHhSx+hDIT96hfe3qbXw9CEOx7UcpClOGKGHf+OZycwFnpmBBXeGx55fXYXagoSk7texvgz4ZsKzfyIPEWyo1wobz1DCn9dBP3SHj5ORLg0jV5zn67RCiQV6v4Jnt0TrXh4Ksca2GkOlwjY/FvedcZZHWocRAqkbPDEE9mT0gU1ad7F8R7IiIqeQ+g5E1gCOb9XxID8CHEdYfVrmGMy53YxPkiXqz2nsFhrcEDQe9Gz35KQsK09dx547IQzcJ2kacMlpxDVNxIpCITu1zeZyZ2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9+D/MixmJoxbu9aKCUjkmWdqscb9PVWuTnt6HvTbnqQ=;
- b=WQYo+poFqMbdzaTHc7S+jsk7sXsGFqV9V0akdatmeC0yx7BtRTUhVQL0sIg1TVuSH2LqGtjCuXOWcWyjBRHWrqtAI5qvj5Jd9Sqij++d8redCzItRHaeu994gHqxV2+u2t3HFQEFRrNWD4oB33+6ll+lRDaEey7bCnaAXZIwUuk=
-Received: from BY1P220CA0021.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:5c3::16)
- by DM4PR12MB6496.namprd12.prod.outlook.com (2603:10b6:8:bd::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Mon, 26 May
- 2025 12:56:26 +0000
-Received: from SJ1PEPF00001CE8.namprd03.prod.outlook.com
- (2603:10b6:a03:5c3:cafe::8f) by BY1P220CA0021.outlook.office365.com
- (2603:10b6:a03:5c3::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.27 via Frontend Transport; Mon,
- 26 May 2025 12:56:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00001CE8.mail.protection.outlook.com (10.167.242.24) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8769.18 via Frontend Transport; Mon, 26 May 2025 12:56:26 +0000
-Received: from FRAPPELLOUX01.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 26 May
- 2025 07:56:24 -0500
-From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-CC: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, "Arvind
- Yadav" <arvind.yadav@amd.com>, <amd-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v11 10/10] drm/amdgpu: update trace format to match gpu_scheduler_trace
-Date: Mon, 26 May 2025 14:54:52 +0200
-Message-ID: <20250526125505.2360-11-pierre-eric.pelloux-prayer@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250526125505.2360-1-pierre-eric.pelloux-prayer@amd.com>
-References: <20250526125505.2360-1-pierre-eric.pelloux-prayer@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8971F8AD3;
+	Mon, 26 May 2025 12:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748264138; cv=none; b=cyA1iZjj54Oys61qUmTtMOXgdQ+lpMQpZsCDDeGa/xdNRSRYnKLAU0JP7Rzx+0IAvbCdjOChcuPeZ3tJb5C8VPnfV5FjvEoFMUTOTi0Pd5RluZAF7OebERrBH9S6YdRiflAXbdkU26mSzvRT/Xte2KuHx9TnYmUcfKtkcvgn8Xk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748264138; c=relaxed/simple;
+	bh=bExfwfw/4XWLYxbzMhE/s2vE70ANp/mcnfz5QFrmCek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IlFjJYWeyGxtDW+pJlyNgc7c30eaurgr9kT8kBTrUrvAaE6z7Z0g5NQffnZciaVV18KPp6NOM6FGJIw3viKLLJKlB3XFQUtYP9go9OwXZEzdFbNn+Eu6y5IjhFjC14U9GdxywC1er42+dbRGmjB6az9OxtpDs83cIw4pT+xCLAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMVJZhag; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09AF7C4CEE7;
+	Mon, 26 May 2025 12:55:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748264138;
+	bh=bExfwfw/4XWLYxbzMhE/s2vE70ANp/mcnfz5QFrmCek=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KMVJZhagqDWLuK7twueF+MZeVg44ZGNrF5jWEgnH7K4epGjF5S0eXGhaeddjJw1ua
+	 beXzya9wCrBY0gI2JUaN3aVHGInII8Q6rg6XTC38o2Uad3UZ5QUNiPIRjX60eief3C
+	 ZmWSiRTNbgLTy91FIAYFeZ8MKW/34tAHzORqMtwoDCTgR5oDaHd52Qq2To0lBJldzU
+	 G54NbcBBEJxCrmmQqDF9QrIsZAMXkLjUtkhKaEM5LcUGc+Kx9xXvdrBBqSwXJlX6Rd
+	 AjDXhpww1+6Yc0EB1e/EQVwqUqV6DolffmhqzI7RgqV5SyEZiN6SdaoSpf8mBKODjF
+	 bnVCcs2Y2+whg==
+Message-ID: <9e00f85e-c000-40c8-b1b3-4ac085e5b9d1@kernel.org>
+Date: Mon, 26 May 2025 14:55:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE8:EE_|DM4PR12MB6496:EE_
-X-MS-Office365-Filtering-Correlation-Id: 41f782d9-4a65-4a57-7b3f-08dd9c54b9ce
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OXBKWlMvbTlNalhNR3hnczdtbDZuN3BPYzI0YTFPL3cyUjlZekNmVzU4MU1Y?=
- =?utf-8?B?Vk5GbytPVDdCQ3VnUmRhVllzaFNPV0pBQU5GZVcvUFI0SXBjT0Zqa3M1azY2?=
- =?utf-8?B?aXA3bEFzdkJtL0t0Y0g5THJTSC9aeUpudVpWTm5GU3VYQWdpeTliVzdOdWMy?=
- =?utf-8?B?Qi9rN2MrS3lESVRpbStqRUJlQWpSRkFRVE1UVFZ2cFVHM3p2aGxydFJKc25Z?=
- =?utf-8?B?MGpFdi9jTll3ZmxHT2dqcmdUSTdnMGE5RTY5aWVmdTEyZzVLL3h4ZmtmcHJo?=
- =?utf-8?B?L3RpZllaQmVkSGpPOWh5S0VuZlkzRFlNSXIxRmRhR0hJQWNCU2hLUkFnSi9C?=
- =?utf-8?B?YTMvVldkbEExVkpCR1JDVkg5VGtoa053a29zNGJIMTY2c3VIc2IrMDFweExN?=
- =?utf-8?B?TTBRb2d0QjFUb0JPNlNnMUhHWm5rbDR4UVA0VmVmV1JLSHNmbWFoOWZnQkRF?=
- =?utf-8?B?VDhzVWZjM01XYUViMnl4SkdmcXdWVll4S1JrQmZ0T0t3djZidzBZMU1ORzln?=
- =?utf-8?B?Ky9UMU9qRkF0WVA5c1lrb2hmR1Y0TkxBVzdMaXllU2FKMGlRRFpJUmNVWXRN?=
- =?utf-8?B?dW1TSkdsd2I5WXk2ZUtGMWxyNmd3QzcvMXhiaTdXaXFOOWg4VXowMUV5bHlC?=
- =?utf-8?B?TEduMm1hQ3B2RVlML3lEQ1daSVlJUzJHMVFKbHBVWk5MMkJZMTJlbEJQWG5C?=
- =?utf-8?B?bzJJSFBJMjBBOG1NWlovdzZmR1BSc2JWK2cwdHZHbC9VV3FmTU9Wb25NSjZq?=
- =?utf-8?B?Q3lPVHVwYzBsR0FGREs4S0RvR1NsT252MUxsQVU0TDUvdTB2N2pQL1JaS0J3?=
- =?utf-8?B?RVM0MWNUVEhVNDBmamQ1QlRBREJCM2RMTTM4RFhhUWlOT1VRL0tyODNhSEdq?=
- =?utf-8?B?TXZPY0lzb0I1L3M4MmhwRzdBUnphZGFKdXlHeHllSE5PZlJlbWdBQTZOaWV3?=
- =?utf-8?B?MFNWdWhYbkJCQ3NndklyOUgvOGpQQkRqcCtyekp2QVdpTFdwQjJNRUNyUGp2?=
- =?utf-8?B?TDRJSUJDN3VVRm5VQ2ZQb0FQTlFpVlYwMmo5Z25jU2liOFFMQ05qVDh6UW9w?=
- =?utf-8?B?SUtBMVpDeVk2VGNRNXRTUGpocTVJZFo2a0VERFhlT2Y0NlYvYmhzT2x0d2JI?=
- =?utf-8?B?QVJmK05sN283MFJEZ2t1U2RldWlUN2pBamtjTXRnVFZvZjdZZFBnN0pCNEUy?=
- =?utf-8?B?OGJkc1N1YmpmazNKc3BTUlR2RlJBSVgxb3JaL3hjTWFjZVo4SjZkOURZejRu?=
- =?utf-8?B?eU5jdk1EL1FucVdHZDF5SU5ZV1NyZDhpU2I2a24rVkJlMUtKb2toNm5HckxB?=
- =?utf-8?B?T1BOdWU5ekFqeFhEdloranRIUTNOTXMrV3BKcXk2V3ZTejl2S3BBNEpyTVV2?=
- =?utf-8?B?RmUvOVJkbmovdUxLTVVqSUgxNC9mQ09RV1lRbTZVVWc2MDF6OEYxUnl5aHlO?=
- =?utf-8?B?WUhESEg0b3Nidnc4eHRSVjJPMnBWd3RBbDI2V05HS3ZyNGhpalVmeWNBS0pV?=
- =?utf-8?B?TGlsV2k3L0lSRmhuTWZIcUZ1Uk1OQ1FlcXVBcWZzOFdGdkdOZmhJSVh5NUtT?=
- =?utf-8?B?RExySVJVMnEvbGRITEIrLzFLazltWVYyUGhXMDRnSlV0bEVSbHQ0VXRjRnNq?=
- =?utf-8?B?ZlNzN2ZUSXVWdmQybjZDbjVvb3gxRHhnbzZOWDV4cHU4Z1F1UlU4YnNBSFIy?=
- =?utf-8?B?OXVDanRrWUVxL2VTdWtyb3VXV0tuQWlTSU1LSEs4OG9haTEyRC9jeDlLK1JV?=
- =?utf-8?B?QzRtZlVYWjhkaUJIR2tIVmZsUXFxUnUrOS9TTTlJeFhPYytyMTA3cHByUEwr?=
- =?utf-8?B?Q3hGcnkreVpPZ0dnU2RnSHorS0RGQzhHYkw0Kzltc003QUozT21IRVR5cWVB?=
- =?utf-8?B?bWVzZ0ZXWDFzU04zOFlSQ0ZMVFArK050Q2RjS3I5aDhVemxsUEpJeHBhd3h2?=
- =?utf-8?B?NHNwL0JNRXoxNnV0d1E2ZjBzempEV3VNcDBWMWNoTCs0azdqdzZxWmcwcDZa?=
- =?utf-8?B?aHhhUEl6cmd5VVBTUUlxWXkzVU50c2h4Uk5qcWd2disvTVp5TWVzR3hwaWtL?=
- =?utf-8?Q?EG2sgd?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2025 12:56:26.3715
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 41f782d9-4a65-4a57-7b3f-08dd9c54b9ce
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CE8.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6496
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: net: qca,ar803x: Add IPQ5018 Internal GE
+ PHY support
+To: George Moussalem <george.moussalem@outlook.com>,
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20250525-ipq5018-ge-phy-v1-0-ddab8854e253@outlook.com>
+ <20250525-ipq5018-ge-phy-v1-1-ddab8854e253@outlook.com>
+ <aa3b2d08-f2aa-4349-9d22-905bbe12f673@kernel.org>
+ <DS7PR19MB888328937A1954DF856C150B9D65A@DS7PR19MB8883.namprd19.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <DS7PR19MB888328937A1954DF856C150B9D65A@DS7PR19MB8883.namprd19.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Log fences using the same format for coherency.
+On 26/05/2025 08:43, George Moussalem wrote:
+>>> +  qca,dac:
+>>> +    description:
+>>> +      Values for MDAC and EDAC to adjust amplitude, bias current settings,
+>>> +      and error detection and correction algorithm. Only set in a PHY to PHY
+>>> +      link architecture to accommodate for short cable length.
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>>> +    items:
+>>> +      - items:
+>>> +          - description: value for MDAC. Expected 0x10, if set
+>>> +          - description: value for EDAC. Expected 0x10, if set
+>>
+>> If this is fixed to 0x10, then this is fully deducible from compatible.
+>> Drop entire property.
+> 
+> as mentioned to Andrew, I can move the required values to the driver 
+> itself, but a property would still be required to indicate that this PHY 
+> is connected to an external PHY (ex. qca8337 switch). In that case, the 
+> values need to be set. Otherwise, not..
+> 
+> Would qcom,phy-to-phy-dac (boolean) do?
 
-Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Arvind Yadav <arvind.yadav@amd.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+Seems fine to me.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-index 4fd810cb5387..d13e64a69e25 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-@@ -168,8 +168,8 @@ TRACE_EVENT(amdgpu_cs_ioctl,
- 	    TP_ARGS(job),
- 	    TP_STRUCT__entry(
- 			     __string(timeline, AMDGPU_JOB_GET_TIMELINE_NAME(job))
--			     __field(unsigned int, context)
--			     __field(unsigned int, seqno)
-+			     __field(u64, context)
-+			     __field(u64, seqno)
- 			     __field(struct dma_fence *, fence)
- 			     __string(ring, to_amdgpu_ring(job->base.sched)->name)
- 			     __field(u32, num_ibs)
-@@ -182,7 +182,7 @@ TRACE_EVENT(amdgpu_cs_ioctl,
- 			   __assign_str(ring);
- 			   __entry->num_ibs = job->num_ibs;
- 			   ),
--	    TP_printk("timeline=%s, context=%u, seqno=%u, ring_name=%s, num_ibs=%u",
-+	    TP_printk("timeline=%s, fence=%llu:%llu, ring_name=%s, num_ibs=%u",
- 		      __get_str(timeline), __entry->context,
- 		      __entry->seqno, __get_str(ring), __entry->num_ibs)
- );
-@@ -192,8 +192,8 @@ TRACE_EVENT(amdgpu_sched_run_job,
- 	    TP_ARGS(job),
- 	    TP_STRUCT__entry(
- 			     __string(timeline, AMDGPU_JOB_GET_TIMELINE_NAME(job))
--			     __field(unsigned int, context)
--			     __field(unsigned int, seqno)
-+			     __field(u64, context)
-+			     __field(u64, seqno)
- 			     __string(ring, to_amdgpu_ring(job->base.sched)->name)
- 			     __field(u32, num_ibs)
- 			     ),
-@@ -205,7 +205,7 @@ TRACE_EVENT(amdgpu_sched_run_job,
- 			   __assign_str(ring);
- 			   __entry->num_ibs = job->num_ibs;
- 			   ),
--	    TP_printk("timeline=%s, context=%u, seqno=%u, ring_name=%s, num_ibs=%u",
-+	    TP_printk("timeline=%s, fence=%llu:%llu, ring_name=%s, num_ibs=%u",
- 		      __get_str(timeline), __entry->context,
- 		      __entry->seqno, __get_str(ring), __entry->num_ibs)
- );
-@@ -548,8 +548,8 @@ TRACE_EVENT(amdgpu_ib_pipe_sync,
- 	    TP_STRUCT__entry(
- 			     __string(ring, sched_job->base.sched->name)
- 			     __field(struct dma_fence *, fence)
--			     __field(uint64_t, ctx)
--			     __field(unsigned, seqno)
-+			     __field(u64, ctx)
-+			     __field(u64, seqno)
- 			     ),
- 
- 	    TP_fast_assign(
-@@ -558,10 +558,8 @@ TRACE_EVENT(amdgpu_ib_pipe_sync,
- 			   __entry->ctx = fence->context;
- 			   __entry->seqno = fence->seqno;
- 			   ),
--	    TP_printk("job ring=%s need pipe sync to fence=%p, context=%llu, seq=%u",
--		      __get_str(ring),
--		      __entry->fence, __entry->ctx,
--		      __entry->seqno)
-+	    TP_printk("job ring=%s need pipe sync to fence=%llu:%llu",
-+		      __get_str(ring), __entry->ctx, __entry->seqno)
- );
- 
- TRACE_EVENT(amdgpu_reset_reg_dumps,
--- 
-2.43.0
+> 
+>>
+>>> +      - maxItems: 1
+>>> +
+>>> +  qca,eth-ldo-enable:
+>>
+>> qcom,tcsr-syscon to match property already used.
+> 
+> to make sure I understand correctly, rename it to qcom,tcsr-syscon?
 
+Yes
+
+> 
+>>
+>>> +    description:
+>>> +      Register in TCSR to enable the LDO controller to supply
+>>> +      low voltages to the common ethernet block (CMN BLK).
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>>> +    items:
+>>> +      - items:
+>>> +          - description: phandle of TCSR syscon
+>>> +          - description: offset of TCSR register to enable the LDO controller
+>>> +      - maxItems: 1
+>> You listed two items, but second is just one item? Drop.
+> 
+> What is expected is one item that has two values, in this case: <&tcsr 
+> 0x019475c4>
+
+I know.
+
+> 
+> I could move the offset to the driver itself as it's a fixed offset, so 
+> ultimately the property would become:
+> 
+> qcom,tcsr-syscon = <&tscr>;
+> 
+> agreed?
+No. Just fix the syntax.
+
+Best regards,
+Krzysztof
 
