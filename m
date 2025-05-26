@@ -1,83 +1,146 @@
-Return-Path: <linux-kernel+bounces-662405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7003AC3A3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:55:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93614AC3A47
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90E9C188C344
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 06:55:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FD163AF3B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 06:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056631D90DF;
-	Mon, 26 May 2025 06:54:51 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5145A1DDC08;
+	Mon, 26 May 2025 06:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="goLW3uCB"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1768B148832;
-	Mon, 26 May 2025 06:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E383FD1;
+	Mon, 26 May 2025 06:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748242490; cv=none; b=eOYIeBv4AQbAWsqsARR7/yTF9CA9ZXzDOOIUowX1SPUyOh40FthCLX6ypHRX2+87atr3ZOwENoI3AukZPL7hx3ExUPvGKbhPd8gs/JSfzUuOUbE7BNZ05M8XhQLi8Vgfonm1rLcI3oDIXieena8mE9EKEdgyisnGAMuPdrUHKUc=
+	t=1748242627; cv=none; b=o9hQksmp59yYkBNZrzkOS3HBSd9tvZY39PRTuj5wmICERMoOZ4rIn4MhUhKKIJ3hu0u5O3rbH6d8uUnStGT3xCSe9c/MKpgOXUGPQYykDr96hASn/nndmKvkmrOMgkdj7MBkbLdkJ2xsD+K8Nyhj7d6cg1npFLfO8v/ccKfCM1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748242490; c=relaxed/simple;
-	bh=osuS7BKWqOzSF3PaONFsCZYNsU9T5QvIVA2MXQscbUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q8ly8p96v3mQQcr5k0iMOEcT/rMIZYp4w1aZ0emWfeSIKfmsjDrvUHPeD/0nRwU+wknx9PhOFCiHQC8hI9chJkcBKbLyL5PNIA/gAeyu75U+SxZqoqt0MM54dtw0WxMwSjchNaXMZi4U9c50uUrHLBA0rhOfL2XS8Kh3YjTkz/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id E66FB2C01633;
-	Mon, 26 May 2025 08:54:37 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 9CA99250B2A; Mon, 26 May 2025 08:54:37 +0200 (CEST)
-Date: Mon, 26 May 2025 08:54:37 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cassel@kernel.org,
-	wilfred.mallawa@wdc.com
-Subject: Re: [PATCH 1/2] PCI: Save and restore root port config space in
- pcibios_reset_secondary_bus()
-Message-ID: <aDQQLU1wrgstypEi@wunner.de>
-References: <20250524185304.26698-1-manivannan.sadhasivam@linaro.org>
- <20250524185304.26698-2-manivannan.sadhasivam@linaro.org>
- <aDLFG06J-kXnvckG@wunner.de>
- <qujhzxzysxm6keqcnjx5jvt5ggsoiiogy2kpv4cu5qo4dcfrvm@yonxobo7jrk7>
+	s=arc-20240116; t=1748242627; c=relaxed/simple;
+	bh=oZQN+ug918+BLKQ/ARQBkx0CRSMO2V0v/6JWUiYv6pA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DYCUeF8HE24ZmTeXGNv8H27247MTO9GxsL9GybYVS8Yxk1zudiOV+b5/JoVMsJUL5gh+L2ne671PgFGm+2X/zQlG4XHli1t70FwnFB/vFaIRdeaJ0PgutfeyaZt5h3jLr8AoUn5SI2ImhKCyZZnMClPb62Ce5hcFREv39f6sKck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=goLW3uCB; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1748242625; x=1779778625;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oZQN+ug918+BLKQ/ARQBkx0CRSMO2V0v/6JWUiYv6pA=;
+  b=goLW3uCBiDLvaieT8tyCtiggBP0E8CnXS+nIy761A5bXitV7yTVsyFe5
+   kEYoj/0dYPQKNBhjJRuw7CCOHPjWnZDOiR+Dgqy2hz5MurLMDzP5sXb8z
+   CGtLCScp+vpGQJ3FO+ri2xNtd7nZre6tkVuAgDWknKaVxdPbmiALMBATw
+   KoRP86Cw6fxrAtNwM4rzFHu72ipZ71v87rEYaQv2mduMq6oFZDDXJiYZs
+   RidlMb4Y3Bs/gSUxGKfXydcBdLiT16oJNSGI4NLyEXsNLYu//NUZlCawk
+   nuaveUv5r3VxOzJ/ZuBt0HtKdoVfUn3uA8N6EvqO9tXAJTQyWGPi1zaSU
+   A==;
+X-CSE-ConnectionGUID: 2ChXxIHBTJS4QRZjcLK3sQ==
+X-CSE-MsgGUID: H9vU0z7vRy2ybCEZXv41MQ==
+X-IronPort-AV: E=Sophos;i="6.15,315,1739862000"; 
+   d="scan'208";a="46897844"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 May 2025 23:56:58 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Sun, 25 May 2025 23:56:28 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Sun, 25 May 2025 23:56:28 -0700
+Date: Mon, 26 May 2025 08:54:45 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: <hkallweit1@gmail.com>, <linux@armlinux.org.uk>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<richardcochran@gmail.com>, <kory.maincent@bootlin.com>,
+	<wintera@linux.ibm.com>, <viro@zeniv.linux.org.uk>,
+	<quentin.schulz@bootlin.com>, <atenart@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net] net: phy: mscc: Stop clearing the the UDPv4 checksum
+ for L2 frames
+Message-ID: <20250526065445.o7pchn5tilq7izmx@DEN-DL-M31836.microchip.com>
+References: <20250523082716.2935895-1-horatiu.vultur@microchip.com>
+ <13c4a8b2-89a8-428c-baad-a366ff6ab8b0@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <qujhzxzysxm6keqcnjx5jvt5ggsoiiogy2kpv4cu5qo4dcfrvm@yonxobo7jrk7>
+In-Reply-To: <13c4a8b2-89a8-428c-baad-a366ff6ab8b0@lunn.ch>
 
-On Sun, May 25, 2025 at 01:28:18PM +0530, Manivannan Sadhasivam wrote:
-> On Sun, May 25, 2025 at 09:22:03AM +0200, Lukas Wunner wrote:
-> > "The device state" is ambiguous as the Root Port is a device itself
-> > and even referred to by the "dev" variable.  I think what you mean
-> > is "The Endpoint state".
-> > 
+The 05/23/2025 14:59, Andrew Lunn wrote:
+
+Hi Andrew,
+
 > 
-> Yes! Will fix them while applying, thanks!
+> On Fri, May 23, 2025 at 10:27:16AM +0200, Horatiu Vultur wrote:
+> > We have noticed that when PHY timestamping is enabled, L2 frames seems
+> > to be modified by changing two 2 bytes with a value of 0. The place were
+> > these 2 bytes seems to be random(or I couldn't find a pattern).  In most
+> > of the cases the userspace can ignore these frames but if for example
+> > those 2 bytes are in the correction field there is nothing to do.  This
+> > seems to happen when configuring the HW for IPv4 even that the flow is
+> > not enabled.
+> > These 2 bytes correspond to the UDPv4 checksum and once we don't enable
+> > clearing the checksum when using L2 frames then the frame doesn't seem
+> > to be changed anymore.
+> >
+> > Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
+> > Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> > ---
+> >  drivers/net/phy/mscc/mscc_ptp.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/net/phy/mscc/mscc_ptp.c b/drivers/net/phy/mscc/mscc_ptp.c
+> > index 6f96f2679f0bf..6b800081eed52 100644
+> > --- a/drivers/net/phy/mscc/mscc_ptp.c
+> > +++ b/drivers/net/phy/mscc/mscc_ptp.c
+> > @@ -946,7 +946,9 @@ static int vsc85xx_ip1_conf(struct phy_device *phydev, enum ts_blk blk,
+> >       /* UDP checksum offset in IPv4 packet
+> >        * according to: https://tools.ietf.org/html/rfc768
+> >        */
+> > -     val |= IP1_NXT_PROT_UDP_CHKSUM_OFF(26) | IP1_NXT_PROT_UDP_CHKSUM_CLEAR;
+> > +     val |= IP1_NXT_PROT_UDP_CHKSUM_OFF(26);
+> > +     if (enable)
+> > +             val |= IP1_NXT_PROT_UDP_CHKSUM_CLEAR;
+> 
+> Is this towards the media, or received from the media?
 
-ICYMI, current controller/dw-rockchip branch still uses
-"The device state", not "The Endpoint state" in commit
-56eecfc8f46f ("PCI/ERR: Add support for resetting the
-Root Ports in a platform specific way").
+It is when the vsc85xx PHY receives frames from the link partner.
 
-Otherwise LGTM.
+>Have you tried sending packets with deliberately broken UDPv4 checksum?
+>Does the PHYs PTP engine correctly ignore such packets?
 
-Thanks,
+No, I have not done that. What I don't understand is why should I send
+UDPv4 frames when we enable to timestamp only L2 frames.
 
-Lukas
+> 
+> I suppose the opposite could also be true. Do you see it ignoring
+> frames which are actually O.K? It could be looking in the wrong place
+> for the checksum, so the checksum fails.
+
+I have not seen any frames being ignored by HW. The HW is configured to
+set the nanosecond part of the RX timestamp into the frame. And it is
+always doing that, the problem is that sometimes on top of this change
+it also replaces 2 bytes in the frame with 0. And it is the userspace
+(ptp4l) who ignores those frames because the are corrupted.
+
+> 
+>         Andrew
+
+-- 
+/Horatiu
 
