@@ -1,149 +1,108 @@
-Return-Path: <linux-kernel+bounces-663051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC14AC4304
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 18:28:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C406AAC430A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 18:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A19007A2383
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 16:27:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74BEF189B83C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 16:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3B923E338;
-	Mon, 26 May 2025 16:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8278921422B;
+	Mon, 26 May 2025 16:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailoo.org header.i=@mailoo.org header.b="Z19Do2EK"
-Received: from mailo.com (msg-3.mailo.com [213.182.54.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MNpbybb4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7D7202C26;
-	Mon, 26 May 2025 16:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.182.54.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D1723D2A0
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 16:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748276926; cv=none; b=mNS4WgMLqAw1g8iVE6KcRbh1yEgA9P+9yOtXbvad2FXBdWnulXyWv6+L27RICZJDtN/Ss/+4YzROhI3eWFAAFFx2HHulADtbyar//UnAHOmZzWGlLeB0gtDIkxPaprtwFXNMAF7k50Alk1yDkKqICe7iJW7X5QJ5b3/9eOur18A=
+	t=1748277038; cv=none; b=F6TEQpOU3jr3WDdIbq8QxUhxsdilvg7+AQA++eAhbO48nCgMHXuRAN2KD+mJ78WVlGxcjxSBXFs6Vzk76hwd2gxpLXeK49UaplO9tDvdEbbIXk2ml/blQrD/ROaMwtq2gZb5tyzbkONBl6yJg6hX76JGKAQQezpUqCVhKZZNLhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748276926; c=relaxed/simple;
-	bh=WesYvToAs6WtM8/JvS/w8lPmZbCAauuQs9r0LMUFeFE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hhkbETGAzVDb6nb7b3An9f7PIZBuW5Mt31uEwM6I3CSblFzFor4ykdkPgpVdyYxssWfuxRc/in774rw7Xe8wf9kQ12bBQu0G/ONyQtwcJv3SqAAZmGR+TxPwqsWabF60H9Dcj59jp2oLvcs6F9jfFi8rTUsAUg2+T6y0+hjFax8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mailoo.org; spf=pass smtp.mailfrom=mailoo.org; dkim=pass (1024-bit key) header.d=mailoo.org header.i=@mailoo.org header.b=Z19Do2EK; arc=none smtp.client-ip=213.182.54.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mailoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailoo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mailoo.org; s=mailo;
-	t=1748276913; bh=WesYvToAs6WtM8/JvS/w8lPmZbCAauuQs9r0LMUFeFE=;
-	h=X-EA-Auth:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=Z19Do2EKRVwFrJHxN1AoJcz9J3VcCpGqfS0gsNY0Nn9dsvxE8wC1GwQFRJQI5tvk0
-	 kQNNoZ13VhGNjRcgRrmwkXClnvzCaKD1GRO5Mb5Yo54me8ne+ZqYX43/VwQBY+1XtG
-	 H+r53OMlqUbJzdLHXCzLzDPgPJsAxxZIzf044/98=
-Received: by b221-5.in.mailobj.net [192.168.90.25] with ESMTP
-	via ip-22.mailoo.org [213.182.54.22]
-	Mon, 26 May 2025 18:28:31 +0200 (CEST)
-X-EA-Auth: thZI+eq+wJnB9pJ071hare+VCuHcapIAEi1zIKZM2k/VH4RxG/+cQFwy5X4Kg1nKahXEAeXZY5flnhMcupOr8OYi0eaUG8aXoIBwG0RcQos=
-Message-ID: <a1645a74b59c29a567477e4b3a42391f40ba0591.camel@mailoo.org>
-Subject: Re: [PATCH v2 2/4] media: qcom: camss: Add support for MSM8939
-From: Vincent Knecht <vincent.knecht@mailoo.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Robert Foss	
- <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, Mauro Carvalho
- Chehab	 <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bjorn
- Andersson	 <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- =?ISO-8859-1?Q?Andr=E9?= Apitzsch
-	 <git@apitzsch.eu>, phone-devel@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht
-Date: Mon, 26 May 2025 18:28:30 +0200
-In-Reply-To: <cc43d9b7-13ba-44ea-9b37-fc54c0d1f2e0@linaro.org>
-References: <20250525-camss-8x39-vbif-v2-0-6d3d5c5af456@mailoo.org>
-	 <20250525-camss-8x39-vbif-v2-2-6d3d5c5af456@mailoo.org>
-	 <cc43d9b7-13ba-44ea-9b37-fc54c0d1f2e0@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (3.56.1-1.fc42app2) 
+	s=arc-20240116; t=1748277038; c=relaxed/simple;
+	bh=NBvrMK19KSp/CiSx2kvd5/A5fAYRmLTfpOnBN4783vc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ctjvFld7vjgN/l9yJ54TaYVz6E2pV770pWzrRw/2+3RI8t0Xi+G7wsoLnjqg1/IZuJ+52hW3PUojl3GQGYj+fBN2lOcKr4H9t/D+CzHSa5SDUtgBt8hlRT8y2xmOeb7uFRsY5SlBTCulqzrvo/QuebHZ8GtVzXcJLy22yIvKyNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MNpbybb4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748277036;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NBvrMK19KSp/CiSx2kvd5/A5fAYRmLTfpOnBN4783vc=;
+	b=MNpbybb4jHRsvWj3kocxyCzgFKe0Scb2T9zrDIVYX22s+3gG+b18Ly+hD2Fx/rrfDcwW3e
+	r0NOfERiExOTjSA+U2UooqmqOMEJCkvBko2pygrJj4giuBYpVAAQAma1Em7yUlbFSQoVTG
+	oxkBdkM+E4hYTx3vq7d2XCxiOW4rcPk=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-388-nUvMjtZ7PB6awxYb-O0jmQ-1; Mon,
+ 26 May 2025 12:30:31 -0400
+X-MC-Unique: nUvMjtZ7PB6awxYb-O0jmQ-1
+X-Mimecast-MFC-AGG-ID: nUvMjtZ7PB6awxYb-O0jmQ_1748277029
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EE5C51800570;
+	Mon, 26 May 2025 16:30:28 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.4])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 41B4B19560A3;
+	Mon, 26 May 2025 16:30:22 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 26 May 2025 18:29:48 +0200 (CEST)
+Date: Mon, 26 May 2025 18:29:41 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Pu Lehui <pulehui@huaweicloud.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, mhiramat@kernel.org,
+	peterz@infradead.org, akpm@linux-foundation.org,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, jannh@google.com,
+	pfalcato@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	pulehui@huawei.com, Andrii Nakryiko <andrii@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>
+Subject: Re: [RFC PATCH] mm/mmap: Fix uprobe anon page be overwritten when
+ expanding vma during mremap
+Message-ID: <20250526162940.GB4156@redhat.com>
+References: <20250521092503.3116340-1-pulehui@huaweicloud.com>
+ <20250524164516.GA11642@redhat.com>
+ <e8a679eb-e40c-481d-b65a-d16f9e66c19a@redhat.com>
+ <20250525095926.GA5391@redhat.com>
+ <e6b657c6-98b9-4690-9a26-27db0fa7c794@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e6b657c6-98b9-4690-9a26-27db0fa7c794@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Le lundi 26 mai 2025 =C3=A0 09:20 +0100, Bryan O'Donoghue a =C3=A9crit=C2=
-=A0:
-> On 25/05/2025 20:25, Vincent Knecht via B4 Relay wrote:
-> > From: Vincent Knecht <vincent.knecht@mailoo.org>
-> >=20
-> > The camera subsystem for the MSM8939 is the same as MSM8916 except with
-> > 3 CSID instead of 2, and some higher clock rates.
-> >=20
-> > As a quirk, this SoC needs writing values to 2 VFE VBIF registers
-> > (see downstream msm8939-camera.dtsi vbif-{regs,settings} properties).
-> > This fixes black stripes across sensor and garbage in CSID TPG outputs.
-> >=20
-> > Add support for the MSM8939 camera subsystem.
-> >=20
-> > Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
-> > ---
-> > =C2=A0 drivers/media/platform/qcom/camss/camss-csiphy.c=C2=A0=C2=A0 |=
-=C2=A0=C2=A0 1 +
-> > =C2=A0 drivers/media/platform/qcom/camss/camss-ispif.c=C2=A0=C2=A0=C2=
-=A0 |=C2=A0=C2=A0 8 +-
-> > =C2=A0 drivers/media/platform/qcom/camss/camss-vfe-vbif.c |=C2=A0=C2=A0=
- 7 +
-> > =C2=A0 drivers/media/platform/qcom/camss/camss-vfe.c=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> > =C2=A0 drivers/media/platform/qcom/camss/camss.c=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 157 +++++++++++++++++++++
-> > =C2=A0 drivers/media/platform/qcom/camss/camss.h=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> > =C2=A0 6 files changed, 173 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers=
-/media/platform/qcom/camss/camss-csiphy.c
-> > index c622efcc92ff3781d7fc3ace0253c2d64c91e847..6311fc2975aa1345e430a47=
-7c8a6476f1d7e5663 100644
-> > --- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-> > +++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-> > @@ -605,6 +605,7 @@ int msm_csiphy_subdev_init(struct camss *camss,
-> > =C2=A0=C2=A0		return PTR_ERR(csiphy->base);
-> > =C2=A0=20
-> > =C2=A0=C2=A0	if (camss->res->version =3D=3D CAMSS_8x16 ||
-> > +	=C2=A0=C2=A0=C2=A0 camss->res->version =3D=3D CAMSS_8x39 ||
-> > =C2=A0=C2=A0	=C2=A0=C2=A0=C2=A0 camss->res->version =3D=3D CAMSS_8x53 |=
-|
-> > =C2=A0=C2=A0	=C2=A0=C2=A0=C2=A0 camss->res->version =3D=3D CAMSS_8x96) =
-{
-> > =C2=A0=C2=A0		csiphy->base_clk_mux =3D
-> > diff --git a/drivers/media/platform/qcom/camss/camss-ispif.c b/drivers/=
-media/platform/qcom/camss/camss-ispif.c
-> > index 2dc585c6123dd248a5bacd9c7a88cb5375644311..aaf3caa42d33dcb641651e7=
-f5bc0c2a564d85bfa 100644
-> > --- a/drivers/media/platform/qcom/camss/camss-ispif.c
-> > +++ b/drivers/media/platform/qcom/camss/camss-ispif.c
-> > @@ -1112,6 +1112,8 @@ int msm_ispif_subdev_init(struct camss *camss,
-> > =C2=A0=C2=A0	/* Number of ISPIF lines - same as number of CSID hardware=
- modules */
-> > =C2=A0=C2=A0	if (camss->res->version =3D=3D CAMSS_8x16)
-> > =C2=A0=C2=A0		ispif->line_num =3D 2;
-> > +	else if (camss->res->version =3D=3D CAMSS_8x39)
-> > +		ispif->line_num =3D 3;
->=20
-> > +		.interrupt =3D { "vfe0" },
-> > +		.vfe =3D {
-> > +			.line_num =3D 3,
->=20
-> Hmm should we really be setting line_num inline in the code ?
->=20
-> I don't believe we should.
->=20
-> These parameters should be passed from the resources structures.
->=20
-> ---
-> bod
+On 05/25, David Hildenbrand wrote:
+>
+> On 25.05.25 11:59, Oleg Nesterov wrote:
+> >
+> >OK. But do you see any reason why uprobe_mmap() should be ever called during
+> >mremap() ?
+>
+> Only when growing a VMA: we might now cover a part with a uprobe, which we
+> have take care of.
 
-I've just followed suit, no strong opinion about it.
-Can we agree this could be changed in another series ?
+Ah, indeed, thank you...
 
+But. What if mremap() expands and moves a VMA? it seems to me that in
+this case uprobe_mmap() won't be called? I'll try to make the test-case
+to check...
+
+Oleg.
 
 
