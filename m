@@ -1,57 +1,68 @@
-Return-Path: <linux-kernel+bounces-663016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C37BAC4290
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 17:48:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E0CAC4298
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 17:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B3E3B12D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 15:48:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82ABA1898B1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 15:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E2321127D;
-	Mon, 26 May 2025 15:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A956B213E74;
+	Mon, 26 May 2025 15:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="WfZ1TXlu"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="7KAOfWuS"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971EB17AE11
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 15:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748274527; cv=pass; b=qe7iW/S+VF7i5h4tLfb8cFmNfWQqaAxTDDyX9hP6wEndiyl9lnfGT+fS+z39aMwrgvIPIS1rgQG6EfVuZqRmSc6nsBi7hdQ/mrwDRkinIk7eyAB1UJBhEwvmwXnFfI6uT0f4gcvJHunzOXGs/hxBTlR5cGxzO5jwzP9yPy87BVs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748274527; c=relaxed/simple;
-	bh=82GBUa9Nldr58fzW7VM8zNc+/lL2Ued6wFmqFQSfTEE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gc/dxpyvN6dQK+AHGKrOxS2Y9oLMqmzUlxMFIGNdsKlxYH/jcA0jkfs2QWPDIfPWA+fgsytkmFS/PILUWIgRyofm6IjBHXOlO3HW1ZCiWJwJAr+SWa4CbgRXXiBWjk6zv6cP5Nh2ayvY4FKQEDCfeF7L1ryQLmlyYBIxIWV1vL0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=WfZ1TXlu; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1748274499; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=naFkj9zmjJ2xcCm8fV/FlsMk8/dkeMOcl1YwlHmZX7ds/XoeeYF1klyHunWpoq0qG/M+W2tatyAX1Ym4HlpAk0pcX6ydAiQoGV5cziCIKpF8gvpSEECvP0v5OtJi2CwOQMTQR57gedDcVsD0xmPLX4hj6wvfYOSn82k50OoKCbk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1748274499; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=7u8vO7Ws768JnzmKvh2GmG4PF4lJ+CEAJNx0uPhyhQE=; 
-	b=PUCvEeiZ+HlRLeM5uZhsKIKqMkZ6GGJs6i5MmTEKThCw+crouqHwC1MTIpAYfYmAHmCyHs6aEEi4WMyF9qcmekXci8tMOHOJxWgsUFTBVovV+AbQEor2AyQMm2fAFuNhViKUyZlcOO0fzlK+tuiLJWEc0A9yX0eRQKSVgDvXHV4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1748274499;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=7u8vO7Ws768JnzmKvh2GmG4PF4lJ+CEAJNx0uPhyhQE=;
-	b=WfZ1TXlusW0K9YtTSApB3YEK7QfvL25+JrmhothPBfSMvMZG06jBawJPNenNuQbA
-	FBa6IxiJkTYRgxuBtQndDvVU8npG7NhqrQlfJ/7lUN7ml6WdX6PSnSDnarekr1OjSVb
-	rvaaUNot1I4/xqu0jB/ZPyKmB9mSDKxK+LKUt/Iw=
-Received: by mx.zohomail.com with SMTPS id 1748274498096817.1869686603382;
-	Mon, 26 May 2025 08:48:18 -0700 (PDT)
-Message-ID: <28c64a39-1deb-4e0e-a395-2b243019ae70@collabora.com>
-Date: Mon, 26 May 2025 18:48:13 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE93F1EEA47;
+	Mon, 26 May 2025 15:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748274733; cv=none; b=n1OmWhPHwokQKQIRXbuB4orODHFXPzqjx4b6XhsvNtt1N9xHHjaO0E9ebcas5mqN18C4zOPjowlxOvcRnjK4zrZJYZ+u8un5Pg5NERVi7bKk/rgN4G7eCnXW4StdHPI/O9lqiSfG6diM6h2mislJv+DhWAjoYsPmjwQ/dQIcuZY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748274733; c=relaxed/simple;
+	bh=za6bVeF1c6KeXsHnOuzuJWYKeSGH1gVcfLmfUUP+kaw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tF49SjQetrinvezoPxe8yi71tg1oXPL7ANkbDftU8fjPGTxy8Xgw8d3KHrfEbcSBSTjtzzNhPe4Ysh1plnzghqZ0y1W7ZXcgXmj+zk6Vf2hBaGhfXVIKMQWwn90Zu2ZE/TYUM3aiG31OHrmi/kFhWUcirF5QkO9bJ95pVF+kP7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=7KAOfWuS; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QB4fPp012749;
+	Mon, 26 May 2025 17:51:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	rW5ZHuaPdfqfwDvrnkrsezcElkYLPA1vqOkoWGgulJw=; b=7KAOfWuSkxrfv3ap
+	O/Sd902RG47wwlINI4gwwK7ogvvAsXgo4HKT2hcSwYMLVZjKAzZBh4Jqlzi3/DC5
+	UB6qLfo2/9JVQ+w+LizQVutPccWnKsLldljzQ69yzezypqQbxJyyr8hVJzYHeatI
+	oQsACu+tzGfsUuiODQFi8BxsiPO4RYcdPpA1/vVxdUGm0ctQj9dTvy0LQmJEi8C5
+	1/Fh3z+pnmZpvX0jnyBWOQQpF2tGmN+Wr4rIn0Hz2Vlx6tQG4JnxtZVUoxjI70Tl
+	PHa0sdv/yDXDIkr54h9okZ7Vov/saSr6jtTloRwKPzoo1SmxwjC7DfxqsfyozAlU
+	tNr7oQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46uqp4dnhb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 May 2025 17:51:45 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E564F40056;
+	Mon, 26 May 2025 17:50:19 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9BE99ACB869;
+	Mon, 26 May 2025 17:48:33 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 26 May
+ 2025 17:48:33 +0200
+Received: from [10.48.86.222] (10.48.86.222) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 26 May
+ 2025 17:48:32 +0200
+Message-ID: <ab75c390-b172-4dbb-b46b-8cbf64d4600a@foss.st.com>
+Date: Mon, 26 May 2025 17:48:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,62 +70,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/virtio: implement virtio_gpu_shutdown
-To: Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Eric Auger
- <eric.auger@redhat.com>, David Airlie <airlied@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Simona Vetter <simona@ffwll.ch>,
- "open list:VIRTIO GPU DRIVER" <virtualization@lists.linux.dev>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250507082821.2710706-1-kraxel@redhat.com>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Subject: Re: [PATCH v2] iio: adc: stm32-adc: Fix race in installing chained
+ IRQ handler
+To: Jonathan Cameron <jic23@kernel.org>,
+        =?UTF-8?Q?Nuno_S=C3=A1?=
+	<noname.nuno@gmail.com>
+CC: Chen Ni <nichen@iscas.ac.cn>, <dlechner@baylibre.com>,
+        <nuno.sa@analog.com>, <andy@kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@foss.st.com>, <u.kleine-koenig@baylibre.com>,
+        <tglx@linutronix.de>, <robh@kernel.org>, <jirislaby@kernel.org>,
+        <linux-iio@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Olivier Moysan <olivier.moysan@foss.st.com>
+References: <20250515083101.3811350-1-nichen@iscas.ac.cn>
+ <229cf78caaa7e9f2bb4cfa62c019acd51a1cd684.camel@gmail.com>
+ <20250525120703.5dd89fc2@jic23-huawei>
 Content-Language: en-US
-In-Reply-To: <20250507082821.2710706-1-kraxel@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+In-Reply-To: <20250525120703.5dd89fc2@jic23-huawei>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-26_08,2025-05-26_02,2025-03-28_01
 
-On 5/7/25 11:28, Gerd Hoffmann wrote:
-> Calling drm_dev_unplug() is the drm way to say the device
-> is gone and can not be accessed any more.
+
+On 5/25/25 13:07, Jonathan Cameron wrote:
+> On Thu, 15 May 2025 11:26:56 +0100
+> Nuno Sá <noname.nuno@gmail.com> wrote:
 > 
-> Cc: Michael S. Tsirkin <mst@redhat.com>
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> Reviewed-by: Eric Auger <eric.auger@redhat.com>
-> Tested-by: Eric Auger <eric.auger@redhat.com>
-> ---
->  drivers/gpu/drm/virtio/virtgpu_drv.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>> On Thu, 2025-05-15 at 16:31 +0800, Chen Ni wrote:
+>>> Fix a race where a pending interrupt could be received and the handler
+>>> called before the handler's data has been setup, by converting to
+>>> irq_set_chained_handler_and_data().
+>>>
+>>> Fixes: d58c67d1d851 ("iio: adc: stm32-adc: add support for STM32MP1")
+>>> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+>>> ---  
+>>
+>> Reviewed-by: Nuno Sá <nuno.sa@analog.com>
+> Looks good to me and I've queued it up for after rc1.  If any
+> ST folk have time to take a look that would be great.
+
+Hi Jonathan,
+
+One minor comment at my end, not sure if that changes a lot...
+This could be a fix for the older commit:
+1add69880240 ("iio: adc: Add support for STM32 ADC core")
+
+Apart from that, you can add my:
+Tested-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Reviewed-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+
+BR,
+Fabrice
+
 > 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> index e32e680c7197..71c6ccad4b99 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> @@ -130,10 +130,10 @@ static void virtio_gpu_remove(struct virtio_device *vdev)
->  
->  static void virtio_gpu_shutdown(struct virtio_device *vdev)
->  {
-> -	/*
-> -	 * drm does its own synchronization on shutdown.
-> -	 * Do nothing here, opt out of device reset.
-> -	 */
-> +	struct drm_device *dev = vdev->priv;
-> +
-> +	/* stop talking to the device */
-> +	drm_dev_unplug(dev);
->  }
->  
->  static void virtio_gpu_config_changed(struct virtio_device *vdev)
-
-Could you please describe whether this patch is fixing a specific
-problem or it's a generic improvement for avoiding potential problems on
-shutdown.
-
--- 
-Best regards,
-Dmitry
-
+> Jonathan
+> 
+>>
+>>> Changelog:
+>>>
+>>> v1 -> v2:
+>>>
+>>> 1. Add Fixes tag.
+>>> ---
+>>>  drivers/iio/adc/stm32-adc-core.c | 7 +++----
+>>>  1 file changed, 3 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/iio/adc/stm32-adc-core.c b/drivers/iio/adc/stm32-adc-
+>>> core.c
+>>> index bd3458965bff..21c04a98b3b6 100644
+>>> --- a/drivers/iio/adc/stm32-adc-core.c
+>>> +++ b/drivers/iio/adc/stm32-adc-core.c
+>>> @@ -430,10 +430,9 @@ static int stm32_adc_irq_probe(struct platform_device
+>>> *pdev,
+>>>  		return -ENOMEM;
+>>>  	}
+>>>  
+>>> -	for (i = 0; i < priv->cfg->num_irqs; i++) {
+>>> -		irq_set_chained_handler(priv->irq[i], stm32_adc_irq_handler);
+>>> -		irq_set_handler_data(priv->irq[i], priv);
+>>> -	}
+>>> +	for (i = 0; i < priv->cfg->num_irqs; i++)
+>>> +		irq_set_chained_handler_and_data(priv->irq[i],
+>>> +						 stm32_adc_irq_handler,
+>>> priv);
+>>>  
+>>>  	return 0;
+>>>  }  
+> 
 
