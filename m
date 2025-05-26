@@ -1,140 +1,145 @@
-Return-Path: <linux-kernel+bounces-662348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59542AC3949
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:35:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D94AC394F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40F547A6AFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 05:34:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BD981893C9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 05:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FA31C54A2;
-	Mon, 26 May 2025 05:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476781C6FFE;
+	Mon, 26 May 2025 05:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dOlSzZq3"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ir8d8f7c"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7BE156F5E
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 05:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2211D19D880;
+	Mon, 26 May 2025 05:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748237714; cv=none; b=QUNWjrKA6eZ7b/wkqASFi64+GiGhqujF09JdunstiIE1nr3dH1sScM0V+ds1pm98pyuX2OX3CCHJaIPNF0Sx3pxgvPQ84VCoQ/Rj5lsHRoLQKdVJaE9sJVyhc4ZmQo9nNMbQyMRMPFABvs6edeuQBDP3oyCAiuWG0fsEU3Z1NXY=
+	t=1748237751; cv=none; b=cYUpNy/wo+UwoiibqqimISieT4Rxc1wJ8VSsrhuRC+nFTnCK42Yz+HYRKfhWt0pNBZIITkhlgHZM8N4Y6J2vUj8LwPFomjInO25YSdc+Pkgc+zjMk5tyoVSp3ZtRo4ChP8BV74hVKSrs/BAZwhPbkx6q4e7Z1Gd/Cy1r96kgq8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748237714; c=relaxed/simple;
-	bh=H0+WhDUcNKkbGapBRoI0Xxxi+jWr2MzxiA0ug1aiUiM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ASVFIpPo3fmhfbrCAcGK50k0B/cwFqrV8vNNVEuhV/dYCrBlZcFblkNcikZm25O+N2Lx3u+ha5e7rxQUgG/a3Pw3T/3QFKSgAbJHZKmo9Lwg7ZVdqEI4NerobPLG5UlnTxyh5Ef8iYPhBxpuT9TV2phv6NLVf5T68yQAWfxLMTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dOlSzZq3; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-23229fdaff4so19941385ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 25 May 2025 22:35:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748237712; x=1748842512; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VH2/AcvAgBKUfR7WHrs8FnBZffSGIY59wg2ntym2dZI=;
-        b=dOlSzZq3hwMwfxcS4vK7JCsoIEFtMaC5xlwjmCzP705P/Ps27K4TUvSjAQAZbFpFQd
-         1kaSo/4yDCwp58JTe4SsPeJaKPYabWj1LPU/cv9Aal3u7zKWIEb2NfRrNEHzRPD46nrr
-         4CJq4RDQUKgXgbb6uv0o59dSa8wMKQKJAd72E1Lpjk9yioAiteOkosKYeDa7ujuRmUYs
-         mfeV9EAF1m3HCBixbI3ELpyxfzSKS9KXEOx9qEn1DU4pKdxaO7yybZihAy/TjOrEP2r8
-         TgoVtCgM4hcDNTG1gGOWDmdaJEfZVJsOXUmxyF+Bdp/6RXQ5fDb8kuYXiqhfZjkqDlTP
-         bjnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748237712; x=1748842512;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VH2/AcvAgBKUfR7WHrs8FnBZffSGIY59wg2ntym2dZI=;
-        b=atKtPz4piCcHD/P41I85X0hlJ+haDAd1bl/YThdMFgjZUhTjtjZz3yrIBaEQlB57jg
-         q1bdXaanovzSykZwf3u5GlmYWWdwFsESMyhFn1dPHduUXhoiovrWF1Wk98jmaiYDP/fr
-         XD0sWqO/OB119Ts8Dq0/NSHtf1RtZRXEHWFgD7oSeaMplI3AOqV3rGQNbVpY2/DzmrpK
-         US/2aObVuXAqwM5oUtkeYoxqjBX2Ob1RqIu0hZ2HVX12rmdluCBc0NGNjNwFCWGJTrDn
-         GcYCTHOQS1HGBafr1qKETCU4/uZjiqyPa+AobWgr7r1JOna0Wv6bJyXiiCXtXCWDEt5i
-         s+LA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDKLRcYyaaPmrCIAlMwJ5GNJhxC5BqFZ9aJBrPii125KYvuyj6+6ZuFM0jG6i9EFe4U1kuzd/++p2Y/G4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzF4RBSw9rrrwulZ+wsvXSE24SHD1W0QVzwpiLpvQdgIKUgy+Z
-	Y1kpxpB3fWASOVI3M06NEntkXKBZo7wk+g6wuSVasEtdQcQB3fAWnpTPDhW/0+huxjg=
-X-Gm-Gg: ASbGncuU1A1BPvvFQWGxoHLq1Xx+YyYF/S5/fknmNPgB1AIyZG35XaYmrY9Lc68/DAY
-	eQnAfmAWWV18kIXx9hnOufsXrosCUGXs/kf7IGZeI/QeggDSR+tsokpsZUKLOcn9tdHnHveHVTK
-	U7gQgVrMwotzVCAsRurYhMQktBfZkc3zAEIe6K0aPkZ197ptHyvimWeVDEJCrbZ8zsB5K25u3wo
-	pWqwI19d7IMqDCcFnX3iJ/tpYqQGOqAv9RR7DOE7r14jIdsvj43IgvLZlO+ISbzO13MxgF2tl5y
-	hJBXEkNOs6pCcKbVo1SwL40Xi9m6JXFatPk7WT3LAMmNCOwzz9/QMx3Ujlx6p88=
-X-Google-Smtp-Source: AGHT+IHinl9wFGIz/jsNy+zLrUyY4TiHvUrwrDfwtmojE3cGhsYguIkcm+poR2ISccO1zd74L+WiNw==
-X-Received: by 2002:a17:903:2b0e:b0:231:f9e3:188c with SMTP id d9443c01a7336-23414fe83cemr113628515ad.52.1748237712047;
-        Sun, 25 May 2025 22:35:12 -0700 (PDT)
-Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-310f8faa31bsm4620782a91.19.2025.05.25.22.35.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 May 2025 22:35:11 -0700 (PDT)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	kernel test robot <lkp@intel.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] rust: opp: Make the doctest example depend on CONFIG_OF
-Date: Mon, 26 May 2025 11:05:03 +0530
-Message-Id: <a80bfedcb4d94531dc27d3b48062db5042078e88.1748237646.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+	s=arc-20240116; t=1748237751; c=relaxed/simple;
+	bh=BuRWnb3cuhbj4vQVIyISoqjQkh79be9NQ73UrJ/GVfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DZ2XhJqnRHJq6wMCSz0rTuUwZQ3CojTZQ5puvtXow3qKOHScy9hQYN1DZpDWESNdY1Tey0ZSFQrEmjlhqTmORwHFuwDFD7XWHNMww0jHi9hTzYGB29qLL8BBlHHfRhxw3SEq3RdxUAy1j5eqpJi9lwfUOodyFcMb5Bn1+3YlUq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ir8d8f7c; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54PNFIiK004485;
+	Mon, 26 May 2025 05:35:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	uzLUVXXayimdmrDZtlg5c2L5SZ46QViuJixjKXrRq1M=; b=ir8d8f7cftwLovYX
+	+MikWJcfg820+33u4Vd5LVq6desP0ikI6B/1p1V7GjNxjaUUA6HdNv96selJx8n7
+	qzlHFzOVxBURlW8h5nVWXW4tYpn2rbsttBYIar9JaDaukWt9zFqVhotA6pyg1Lx1
+	Hw5Ajxf5kdn6c2BXiKvDaeaJSEQuf2x+bDDIOt1DnLKNrkAoN45ISXhtlFHdWbr3
+	AezROUzbdXOWXCpSVW9mNt1kBZT/+pjZJs7NIcPeuc7VTIeKleeNkDNkySwPpp5N
+	HNRu1s62WcCyMNGw4d574oy3PGzDt2r5F00jgL+U2iTpnUkLh/9fOAC7XROReXU4
+	BKKOcw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u6g8u1uh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 May 2025 05:35:46 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54Q5Zjmt006177
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 May 2025 05:35:45 GMT
+Received: from [10.151.36.184] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 25 May
+ 2025 22:35:42 -0700
+Message-ID: <d859183f-d9dc-1db4-e6a6-7db1cbdbaab7@quicinc.com>
+Date: Mon, 26 May 2025 11:05:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] spi: spi-qpic-snand: use NANDC_STEP_SIZE consistently
+Content-Language: en-US
+To: Gabor Juhos <j4g8y7@gmail.com>, Mark Brown <broonie@kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Sricharan Ramabadhran
+	<quic_srichara@quicinc.com>,
+        <linux-spi@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250525-qpic-snand-nandc_step_size-v1-1-6039e9bfe1c6@gmail.com>
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <20250525-qpic-snand-nandc_step_size-v1-1-6039e9bfe1c6@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=d4b1yQjE c=1 sm=1 tr=0 ts=6833fdb2 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=pGLkceISAAAA:8
+ a=COk6AnOGAAAA:8 a=YikZN-sOpGJawurdiwoA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: DyuXlRWRfyNK0KXyMH50zPgZ7eF8zNCw
+X-Proofpoint-GUID: DyuXlRWRfyNK0KXyMH50zPgZ7eF8zNCw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDA0NCBTYWx0ZWRfX2vZOAhu5aaDm
+ 9tk3CqQTSEPNXyOSfdfrp5VewhrnPg1riU231jy3k/tdSMBRrKvE0YdYJStl0dSL/UckTjFzN9T
+ e/WHi4bVspEbOS/w2q1OGsDt/5qP+xivE/ebP+hHHUZeoQ2mHH9FvyzJxXXrPUBfpryMg9ZIiAn
+ 7PhdjOCQv53OmWgyDaNx9jDHOxzEPn/647Se4rUKSVOAAeSFuKhUpMNS3v4L57QuzJm3vXQyKSZ
+ hYWxX7KyPZUq3oiGNWPq8tPvVqeWlcuGsNh4yRn/HxXtmnjghBDfo+ilikMEKyNRiN90DX51ntH
+ pf9A1u7Ke9mXHSXzRruNyDzVNeW1oAKmHf4BXMNoemDtuuiUTg4LdiGQT/AUKeMM47IrHoUPQ+m
+ PXaH1rA+DR1/a6Kh50wsipWolmMULSE321hwNtLLvBfTFDibnv2HY2KG4bztA07v94ZdGKLi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-26_03,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 suspectscore=0 malwarescore=0 phishscore=0 mlxlogscore=905
+ lowpriorityscore=0 priorityscore=1501 bulkscore=0 spamscore=0 clxscore=1015
+ impostorscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505260044
 
-The doctest example uses a function only available for CONFIG_OF and so
-the build with doc tests fails when it isn't enabled.
+Hi,
 
-  error[E0599]: no function or associated item named `from_of_cpumask`
-  found for struct `rust_doctest_kernel_alloc_kbox_rs_4::kernel::opp::Table`
-  in the current scope
+On 5/25/2025 7:45 PM, Gabor Juhos wrote:
+> Change the qcom_spi_read_page_ecc() function to use NANDC_STEP_SIZE
+> instead of a magic number while calculating the data size to keep it
+> consistent with other functions like qcom_spi_program_{raw,ecc,oob}
+> and qcom_spi_read_cw_{raw,page_oob}.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+> ---
+>   drivers/spi/spi-qpic-snand.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
+> index fd129650434f0129e24d3bdac7e7c4d5542627e6..037178d6576e82c3f19c3cc2c6c78f056dc488af 100644
+> --- a/drivers/spi/spi-qpic-snand.c
+> +++ b/drivers/spi/spi-qpic-snand.c
+> @@ -821,7 +821,7 @@ static int qcom_spi_read_page_ecc(struct qcom_nand_controller *snandc,
+>   		int data_size, oob_size;
+>   
+>   		if (i == (num_cw - 1)) {
+> -			data_size = 512 - ((num_cw - 1) << 2);
+> +			data_size = NANDC_STEP_SIZE - ((num_cw - 1) << 2);
+>   			oob_size = (num_cw << 2) + ecc_cfg->ecc_bytes_hw +
+>   				    ecc_cfg->spare_bytes;
+>   		} else {
+> 
+> ---
+> base-commit: b00d6864a4c948529dc6ddd2df76bf175bf27c63
+> change-id: 20250525-qpic-snand-nandc_step_size-5606f4aaeda0
+> 
+> Best regards,
 
-Fix this by making the doctest depend on CONFIG_OF.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202505260856.ZQWHW2xT-lkp@intel.com/
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-Rafael,
-
-Please apply this directly, if no one objects to it. Thanks.
-
- rust/kernel/opp.rs | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/rust/kernel/opp.rs b/rust/kernel/opp.rs
-index 212555dacd45..c2bdc11f3999 100644
---- a/rust/kernel/opp.rs
-+++ b/rust/kernel/opp.rs
-@@ -582,6 +582,7 @@ extern "C" fn config_regulators(
- /// use kernel::opp::Table;
- /// use kernel::types::ARef;
- ///
-+/// #[cfg(CONFIG_OF)]
- /// fn get_table(dev: &ARef<Device>, mask: &mut Cpumask, freq: Hertz) -> Result<Table> {
- ///     let mut opp_table = Table::from_of_cpumask(dev, mask)?;
- ///
--- 
-2.31.1.272.g89b43f80a514
-
+Reviewed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
 
