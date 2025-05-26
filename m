@@ -1,288 +1,133 @@
-Return-Path: <linux-kernel+bounces-662375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D9ADAC39D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:25:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE3DAC3A4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CB0A17286F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 06:25:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1174C7A68F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A41B1DE3C8;
-	Mon, 26 May 2025 06:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64841DE2BA;
+	Mon, 26 May 2025 07:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFfYoRl4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Uwr3msEK"
+Received: from mail-m19731102.qiye.163.com (mail-m19731102.qiye.163.com [220.197.31.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF871D90DF;
-	Mon, 26 May 2025 06:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54C54C9F;
+	Mon, 26 May 2025 07:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748240735; cv=none; b=Rf/iuCJjtEkJrPhu+MYpgzl8/XOGubyK7gojq2uzFADlOHvFNwy8ynU+Qi9StGRU30ZyWjcREptRsQAeqPQkMk4RTyqm4r880Q97+8SLJ5kS/jLy1SwTSh1womJuqai3hrJcFPl9nbvs0UWmOL20wK3y3LGrFOQ7v+6Wkwlabqk=
+	t=1748242897; cv=none; b=DwMVJyIsTNqJhcrZElnU2Jp8RJ5IsfLTjrofKVhK+Cjs8UbRDLPYL7wTI2coB7pPVULdcdLiSW43BuJuTo+ok+YTPNuRh5v48C4eswyBd65iEJR6I+5sWQO94Gk23C3eKzCKvPCOWtKgtZGj/27WWc3KTlDeg2NdgemCVm47AY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748240735; c=relaxed/simple;
-	bh=rjWx7BLwzDHzTGPoZi5Ci7UHT5rzHaTz6fkskIYI2ps=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Pbe3D8++sLIyXDeElu9s9+Q8x04dZ20bbqqilekj/aN/k04YiLv59OBPIBlTH7Tr2eAT7v5tUUKIammtYOd8JBW7Ccg3duiMj1QgjvywimYc1SKG9CsNtBPXRoSO1A34bR4C5Ndq733f90ja36c/vPPxe3WHBCwYVg6RFFWe/ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cFfYoRl4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4F17CC4CEF4;
-	Mon, 26 May 2025 06:25:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748240735;
-	bh=rjWx7BLwzDHzTGPoZi5Ci7UHT5rzHaTz6fkskIYI2ps=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=cFfYoRl4KJa3TqG5YZA6f53DFWd+B0/OhAK0hS8oS4bn6OXiGOXaHugbLHqhCIANs
-	 wB36z7OMqk68NPGjtLj/MUonkhnrBY2Ih2vBVn33zsjRE1iHvmWiWrwQRCTFrX1C/g
-	 MxOuht3kpoIQbt+0DFY+OVUPLR9fVElcFoTkEIR1XYXPXjBBN1bRVggEVxf2O/G3zl
-	 CXwAyPGkhUlSCt/Y57gvnI65SmO4qoLxQtI2CQuPcquJnyRmD+4f+iBQxlMnlvNtuj
-	 dp9GFom/LWZAXC9gmvna9/nfNKUuoL8SENbKp45pOOQT070QncQqIrojB14JGKgT+/
-	 0ltoG+GOBDn0w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F63C5B549;
-	Mon, 26 May 2025 06:25:35 +0000 (UTC)
-From: Mahesh Rao via B4 Relay <devnull+mahesh.rao.altera.com@kernel.org>
-Date: Mon, 26 May 2025 14:25:07 +0800
-Subject: [PATCH v3 4/4] firmware: stratix10-svc: Add support for HWMON
- temperature and voltage read command.
+	s=arc-20240116; t=1748242897; c=relaxed/simple;
+	bh=vUTy9fgiQM1M9OXGFsdExlNkdH738vTuRpj/XUexG2A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bZ2Ew9SxUDiEju3wh03RssJWvsmIZ6MPHTyaxVD9mCTzld/cpYatVOfnyvVEtXogc+MTP0IcGtKij+UfnQyzHGVkOzfSvR4+CdGtbJ/qnow6ooZJ2ni7e4+RgKklw9G56yCHvBpMMfmeo8cnI3K4vuCAGO25cEdtM+K+95pfPho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Uwr3msEK; arc=none smtp.client-ip=220.197.31.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1660c015a;
+	Mon, 26 May 2025 14:26:00 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: zhangqing@rock-chips.com,
+	mkl@pengutronix.de,
+	kernel@pengutronix.de,
+	mailhol.vincent@wanadoo.fr,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	cl@rock-chips.com,
+	kever.yang@rock-chips.com
+Cc: linux-can@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v6 0/4] rockchip: add can for RK3576 Soc
+Date: Mon, 26 May 2025 14:25:55 +0800
+Message-Id: <20250526062559.2061311-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250526-sip_svc_upstream-v3-4-6a08a4502de3@altera.com>
-References: <20250526-sip_svc_upstream-v3-0-6a08a4502de3@altera.com>
-In-Reply-To: <20250526-sip_svc_upstream-v3-0-6a08a4502de3@altera.com>
-To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Mahesh Rao <mahesh.rao@altera.com>
-Cc: Matthew Gerlach <matthew.gerlach@altera.com>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748240732; l=7578;
- i=mahesh.rao@altera.com; s=20250107; h=from:subject:message-id;
- bh=NbXdlT0TAtpSwJtw5xUJGWasfCwGb8vaYwcM1wH9ZBY=;
- b=r2aIs1YIHqZw3KGvkhlOYdmKSsDuu35vUjBmHhU8K9jB5HEtEpStiQAOBfo5dmbqDLETuQ9qt
- nIXJMRJbN2xD3kz8bHF3cSDB1a57IkdAT0p88fZZPqSuQ3rdb8AyJ4B
-X-Developer-Key: i=mahesh.rao@altera.com; a=ed25519;
- pk=tQiFUzoKxHrQLDtWeEeaeTeJTl/UfclUHWZy1fjSiyg=
-X-Endpoint-Received: by B4 Relay for mahesh.rao@altera.com/20250107 with
- auth_id=337
-X-Original-From: Mahesh Rao <mahesh.rao@altera.com>
-Reply-To: mahesh.rao@altera.com
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhlLSlYZHk1NTEtIGkhOHk9WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a970b44ff8b03a3kunm902b49ed4a332d
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PFE6Hgw6MDE0Og40ViENKiMR
+	HigwFCtVSlVKTE9DSU9LTE1JSU5KVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUlDSU43Bg++
+DKIM-Signature:a=rsa-sha256;
+	b=Uwr3msEKJ8hrOXUNf0OS1lAQsZf/fqwM9a+9WoTz6+M6zGwCZalkAUXq1Xl2Uw+qvsxpHtSyiAJYL1svVhTiFf4k8u2aIruSbsZs+/KmS9U5GWP13z/3zzIL3oXar2sr3rw5eITYQ3C2h0m9R2IALsXO3ezqYTe+P3ZSaUfF8wE=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=PLZ0qwoosUUE5XwgBZkpDsN7ujf59+z2ZeMIful5s1Q=;
+	h=date:mime-version:subject:message-id:from;
 
-From: Mahesh Rao <mahesh.rao@altera.com>
+rk3576 can is a new controller,new register layout and Bit position
+definition:
+Support CAN and CANFD protocol.
+Support Dma.
 
-Add support for HWMON commands in stratix10
-Asynchronous communication
+There are major differences from the previous rk3568.
+All errata on the rk3568 have been fixed and redesigned.
 
-Signed-off-by: Mahesh Rao <mahesh.rao@altera.com>
-Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
----
- drivers/firmware/stratix10-svc.c                   | 60 +++++++++++++++++++++-
- include/linux/firmware/intel/stratix10-smc.h       | 38 ++++++++++++++
- .../linux/firmware/intel/stratix10-svc-client.h    | 11 ++++
- 3 files changed, 108 insertions(+), 1 deletion(-)
+Change in V6:
+[PATCH v6 1/4]: Fix dma is support only for rk3576.
+[PATCH v6 2/4]: Fix the compilation warning.
+[PATCH v6 3/4]: Fix the compilation warning.
+[PATCH v6 4/4]: Fix the compilation warning.
 
-diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-index 9c2aa7f61709683baa960f209659a931f06d3abf..e4954ad1cbbb58edf07e70a4f8ac7855086c0090 100644
---- a/drivers/firmware/stratix10-svc.c
-+++ b/drivers/firmware/stratix10-svc.c
-@@ -37,7 +37,7 @@
-  * timeout is set to 30 seconds (30 * 1000) at Intel Stratix10 SoC.
-  */
- #define SVC_NUM_DATA_IN_FIFO			32
--#define SVC_NUM_CHANNEL				3
-+#define SVC_NUM_CHANNEL				4
- #define FPGA_CONFIG_DATA_CLAIM_TIMEOUT_MS	200
- #define FPGA_CONFIG_STATUS_TIMEOUT_SEC		30
- #define BYTE_TO_WORD_SIZE              4
-@@ -1406,6 +1406,14 @@ int stratix10_svc_async_send(struct stratix10_svc_chan *chan, void *msg, void **
- 		STRATIX10_SIP_SMC_SET_TRANSACTIONID_X1(handle->transaction_id);
- 
- 	switch (p_msg->command) {
-+	case COMMAND_HWMON_READTEMP:
-+		args.a0 = INTEL_SIP_SMC_ASYNC_HWMON_READTEMP;
-+		args.a2 = p_msg->arg[0];
-+		break;
-+	case COMMAND_HWMON_READVOLT:
-+		args.a0 = INTEL_SIP_SMC_ASYNC_HWMON_READVOLT;
-+		args.a2 = p_msg->arg[0];
-+		break;
- 	default:
- 		dev_err(ctrl->dev, "Invalid command ,%d\n", p_msg->command);
- 		ret = -EINVAL;
-@@ -1460,6 +1468,46 @@ int stratix10_svc_async_send(struct stratix10_svc_chan *chan, void *msg, void **
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(stratix10_svc_async_send);
-+
-+/**
-+ * stratix10_svc_async_prepare_response - Prepare the response data for
-+ * an asynchronous transaction.
-+ * @chan: Pointer to the service channel structure.
-+ * @handle: Pointer to the asynchronous handler structure.
-+ * @data: Pointer to the callback data structure.
-+ *
-+ * This function prepares the response data for an asynchronous transaction. It
-+ * extracts the response data from the SMC response structure and stores it in
-+ * the callback data structure. The function also logs the completion of the
-+ * asynchronous transaction.
-+ *
-+ * Return: 0 on success, -ENOENT if the command is invalid
-+ */
-+static int stratix10_svc_async_prepare_response(struct stratix10_svc_chan *chan,
-+						struct stratix10_svc_async_handler *handle,
-+						struct stratix10_svc_cb_data *data)
-+{
-+	struct stratix10_svc_client_msg *p_msg =
-+		(struct stratix10_svc_client_msg *)handle->msg;
-+	struct stratix10_svc_controller *ctrl = chan->ctrl;
-+
-+	data->status = STRATIX10_GET_SDM_STATUS_CODE(handle->res.a1);
-+
-+	switch (p_msg->command) {
-+	case COMMAND_HWMON_READTEMP:
-+	case COMMAND_HWMON_READVOLT:
-+		data->kaddr1 = (void *)&handle->res.a2;
-+		break;
-+
-+	default:
-+		dev_alert(ctrl->dev, "Invalid command\n ,%d", p_msg->command);
-+		return -ENOENT;
-+	}
-+	dev_dbg(ctrl->dev, "Async message completed transaction_id 0x%02x\n",
-+		handle->transaction_id);
-+	return 0;
-+}
-+
- /**
-  * stratix10_svc_async_poll - Polls the status of an asynchronous transaction.
-  * @chan: Pointer to the service channel structure.
-@@ -1510,6 +1558,11 @@ int stratix10_svc_async_poll(struct stratix10_svc_chan *chan, void *tx_handle,
- 
- 	data->status = 0;
- 	if (handle->res.a0 == INTEL_SIP_SMC_STATUS_OK) {
-+		ret = stratix10_svc_async_prepare_response(chan, handle, data);
-+		if (ret) {
-+			dev_err(ctrl->dev, "Error in preparation of response,%d\n", ret);
-+			WARN_ON_ONCE(1);
-+		}
- 		return 0;
- 	} else if (handle->res.a0 == INTEL_SIP_SMC_STATUS_BUSY) {
- 		dev_dbg(ctrl->dev, "async message is still in progress\n");
-@@ -1986,6 +2039,11 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
- 	chans[2].name = SVC_CLIENT_FCS;
- 	spin_lock_init(&chans[2].lock);
- 
-+	chans[3].scl = NULL;
-+	chans[3].ctrl = controller;
-+	chans[3].name = SVC_CLIENT_HWMON;
-+	spin_lock_init(&chans[3].lock);
-+
- 	list_add_tail(&controller->node, &svc_ctrl);
- 	platform_set_drvdata(pdev, controller);
- 
-diff --git a/include/linux/firmware/intel/stratix10-smc.h b/include/linux/firmware/intel/stratix10-smc.h
-index c98ed992d23bed5aa344868ca0c77a2d19d94c06..cc14201ba4810517c4de6636aa60e3e3fa43ad7d 100644
---- a/include/linux/firmware/intel/stratix10-smc.h
-+++ b/include/linux/firmware/intel/stratix10-smc.h
-@@ -625,6 +625,44 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
- #define INTEL_SIP_SMC_FCS_GET_PROVISION_DATA \
- 	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FCS_GET_PROVISION_DATA)
- 
-+/**
-+ * Request INTEL_SIP_SMC_ASYNC_HWMON_READTEMP
-+ * Async call to request temperature
-+ *
-+ * Call register usage:
-+ * a0 INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READTEMP
-+ * a1 transaction job id
-+ * a2 Temperature Channel
-+ * a3-a17 not used
-+ *
-+ * Return status
-+ * a0 INTEL_SIP_SMC_STATUS_OK ,INTEL_SIP_SMC_STATUS_REJECTED
-+ * or INTEL_SIP_SMC_STATUS_BUSY
-+ * a1-a17 not used
-+ */
-+#define INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READTEMP (0xE8)
-+#define INTEL_SIP_SMC_ASYNC_HWMON_READTEMP \
-+	INTEL_SIP_SMC_ASYNC_VAL(INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READTEMP)
-+
-+/**
-+ * Request INTEL_SIP_SMC_ASYNC_HWMON_READVOLT
-+ * Async call to request voltage
-+ *
-+ * Call register usage:
-+ * a0 INTEL_SIP_SMC_ASYNC_HWMON_READVOLT
-+ * a1 transaction job id
-+ * a2 Voltage Channel
-+ * a3-a17 not used
-+ *
-+ * Return status
-+ * a0 INTEL_SIP_SMC_STATUS_OK ,INTEL_SIP_SMC_STATUS_REJECTED
-+ * or INTEL_SIP_SMC_STATUS_BUSY
-+ * a1-17 not used
-+ */
-+#define INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READVOLT (0xE9)
-+#define INTEL_SIP_SMC_ASYNC_HWMON_READVOLT \
-+	INTEL_SIP_SMC_ASYNC_VAL(INTEL_SIP_SMC_ASYNC_FUNCID_HWMON_READVOLT)
-+
- /**
-  * Request INTEL_SIP_SMC_ASYNC_POLL
-  * Async call used by service driver at EL1 to query mailbox response from SDM.
-diff --git a/include/linux/firmware/intel/stratix10-svc-client.h b/include/linux/firmware/intel/stratix10-svc-client.h
-index bda837815bae35fbf4df6280dba5bc02d747426e..032e780c7b545e2e238f9dea712779d979e491d6 100644
---- a/include/linux/firmware/intel/stratix10-svc-client.h
-+++ b/include/linux/firmware/intel/stratix10-svc-client.h
-@@ -16,6 +16,7 @@
- #define SVC_CLIENT_FPGA			"fpga"
- #define SVC_CLIENT_RSU			"rsu"
- #define SVC_CLIENT_FCS			"fcs"
-+#define SVC_CLIENT_HWMON		"hwmon"
- 
- /*
-  * Status of the sent command, in bit number
-@@ -71,6 +72,7 @@
- #define SVC_RSU_REQUEST_TIMEOUT_MS              300
- #define SVC_FCS_REQUEST_TIMEOUT_MS		2000
- #define SVC_COMPLETED_TIMEOUT_MS		30000
-+#define SVC_HWMON_REQUEST_TIMEOUT_MS		2000
- 
- struct stratix10_svc_chan;
- 
-@@ -142,6 +144,12 @@ struct stratix10_svc_chan;
-  *
-  * @COMMAND_FCS_RANDOM_NUMBER_GEN: generate a random number, return status
-  * is SVC_STATUS_OK, SVC_STATUS_ERROR
-+ *
-+ * @COMMAND_HWMON_READTEMP: read temperature from the hardware sensor connected
-+ * to the FPGA, return status is SVC_STATUS_OK, SVC_STATUS_ERROR
-+ *
-+ * @COMMAND_HWMON_READVOLT: read voltage from the hardware sensor connected
-+ * to the FPGA, return status is SVC_STATUS_OK, SVC_STATUS_ERROR
-  */
- enum stratix10_svc_command_code {
- 	/* for FPGA */
-@@ -172,6 +180,9 @@ enum stratix10_svc_command_code {
- 	COMMAND_MBOX_SEND_CMD = 100,
- 	/* Non-mailbox SMC Call */
- 	COMMAND_SMC_SVC_VERSION = 200,
-+	/* for HWMON */
-+	COMMAND_HWMON_READTEMP,
-+	COMMAND_HWMON_READVOLT
- };
- 
- /**
+Change in V5:
+[PATCH v5 1/4]: Add rk3576 canfd to rockchip,rk3568v2-canfd.yaml, remove
+                rockchip,rk3576-canfd.yaml
+[PATCH v5 2/4]: Encapsulate some hardware operation functions into
+                rkcanfd_devtype_data to provide differentiated
+                implementations for different models
+                (such as RK3568v2/v3)..
+[PATCH v5 3/4]: Add rk3576 canfd,fix the register naming rule,
+                Delete the variables used by rockchip itself.
+[PATCH v5 4/4]: Fix .h sorting.
+
+
+Change in V4:
+[PATCH v4 1/3]: Correct the format and add explanations.
+[PATCH v4 2/3]: No change.
+[PATCH v4 3/3]: No change.
+
+Change in V3:
+[PATCH v3 1/3]: Add documentation for the rk3576 CAN-FD.
+[PATCH v3 2/3]: Adjust the differentiated code section and
+                add dma function.
+[PATCH v3 3/3]: Remove dma, no use dma by default.
+
+Change in V2:
+[PATCH v2 1/2]: remove rk3576_canfd.c, use the rockchip_canfd driver
+[PATCH v2 2/2]: code style.
+
+Elaine Zhang (4):
+  dt-bindings: can: rockchip_canfd: add rk3576 CAN-FD controller
+  net: can: rockchip: Refactor the rkcanfd_devtype_data structure
+  net: can: rockchip: add can for RK3576 Soc
+  net: can: rockchip: support dma for rk3576 rx
+
+ .../net/can/rockchip,rk3568v2-canfd.yaml      |  41 ++
+ .../net/can/rockchip/rockchip_canfd-core.c    | 596 ++++++++++++++++--
+ drivers/net/can/rockchip/rockchip_canfd-rx.c  | 198 ++++++
+ drivers/net/can/rockchip/rockchip_canfd-tx.c  |  27 +
+ drivers/net/can/rockchip/rockchip_canfd.h     | 289 +++++++++
+ 5 files changed, 1108 insertions(+), 43 deletions(-)
 
 -- 
-2.35.3
-
+2.34.1
 
 
