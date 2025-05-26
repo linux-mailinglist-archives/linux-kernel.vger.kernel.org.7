@@ -1,210 +1,152 @@
-Return-Path: <linux-kernel+bounces-662940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F04AC4191
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 16:40:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1434FAC419A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 16:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E31B189A46E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:40:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 316373B423B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85BF22101BD;
-	Mon, 26 May 2025 14:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aheNg0PD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C70213253;
+	Mon, 26 May 2025 14:40:35 +0000 (UTC)
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FECC20DD40
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 14:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A6320E6F3;
+	Mon, 26 May 2025 14:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748270406; cv=none; b=jje8jXwNRRTXTH30fGpntUv4YI7B2W5bJy1+ypQAjAw9+WUGiF5UIBtGJhvaOzp9ie1Hslek5rVDkBdPfXgbT777rmz6W1TDSFNerC0/QLnsy8SHIkZEJ0l0aqGRi/WnbPA9WyVuo49AS9k2JrVNKN4sH/n3SOjnDL7pHakIotA=
+	t=1748270435; cv=none; b=WrSsAyb9jOvZbvcTa4E3jkmvDa2/kAWjnlY2CrsECuWGd++uxrMsC4OZAZbL8QyjhXLd8KGeSRrJJ0y0XTTrbEmtqK3QNtiweLgZrZWHAuGoWPkKtuDt3RNurxmOwHYr29fP/LrBancVgTYs0rQHvXQN48gMmDKRMpyDyWn6GAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748270406; c=relaxed/simple;
-	bh=/e+vyLtK0CFZ4t4mAapQB9b2M2hDkw8sV9L58+jnCMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QatrFEC4fmBY77RCPPrv7UayMgqWurdtLjd84/iPTvj2GERjxg7TOnNawI1ySLlKShmlgqDNfbhwiWcyb4ZEpvduPjuaVXliiw0bIEen2YrknAOk9i5iNpM3v++OFdVl9rC6PxcYV556iPtRLdBb3/s+PFW8FkE13Inls8SAUmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aheNg0PD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748270404;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RF6pS1ObcOVvDlmvm5nj8NiMFIwIn9dVx82Hog1fdnE=;
-	b=aheNg0PDayRvTiYWH9J5Rzn8LqIl1mXaB87ao6Bknxra7nDMmg0cg+9Q1Gn7tBvTgtR9jC
-	cJuOLPWYNOKI1WjmbLwo9O0y9zzbMjobymRjlnSWcIWOqYiQJL+feNth+VE+BEUbdgBl0o
-	mzhwq88/7wqMoG+f7vz09suj6KEf9Ho=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-651-psltW5aSOrKXQyl1PyGUVQ-1; Mon, 26 May 2025 10:40:02 -0400
-X-MC-Unique: psltW5aSOrKXQyl1PyGUVQ-1
-X-Mimecast-MFC-AGG-ID: psltW5aSOrKXQyl1PyGUVQ_1748270401
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43eed325461so15730455e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 07:40:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748270401; x=1748875201;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RF6pS1ObcOVvDlmvm5nj8NiMFIwIn9dVx82Hog1fdnE=;
-        b=dvfqzSPOws2oLZ6DrHn62bily17Mhrq+BzaljzDU8dLV8UUHZsRGwhvtxUeCakJ/61
-         gasTpFYAL6gfYNuth27jMDfz2xUSffeRN27cbEtUDp6+6l1g0DbOoCv9JhXNmXUR1JDH
-         SUcNcEw/+W0yQUfzpM9HKHcdowpTXh2ATDgNYZU/nKaS8HVy0srPAhPLxZqsvxoMn9pu
-         Hbu7BUgz/80o2hvHJWRiqGfdDEVy7AveqTTOA4Zna0TaVx/YnkrTGp6TpHliG69qb6rY
-         3hUCq5H310btB3nuzJfuBYMkj8FQ+SwVc9CdsGtaDINegqOTpNZLv1Mx6aFKl+fPFG6f
-         KbCA==
-X-Forwarded-Encrypted: i=1; AJvYcCViVEPcT0WhBvr1SUs9b9FcUPnJvwY8uwr7OWrLGeceO+vzM2sqRJZeQf389eFfm983KDC7nJLhqtwazzs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWjVtY6C3zHF6TZCkfSUZFKY3b3NLdOfbbCIS8U7+ABhqcOSdP
-	k163UJRLY0z4ZrWeqm9bK0h6emcRzSiZIqYFgPtOkxTeBHqVnYYfe1Y53yLpcFPWo8R8SnrR2I3
-	vxY6h2wpAs7hTqmZ9hjD4/EfDzjkhWyzUlPdehCZ91SDf8Mzv0RsXCOBMu7WJruL3pA==
-X-Gm-Gg: ASbGncuHYVrdQcZ61W6NpbcOMIs2R+s1JI4/e5mMga/wINT8WQkSvxViTCfeaD2PNuu
-	O/DCa6cfeRLYSlh/qg7peTkNVpTDSUxHOKUnWeCjvw9V5g5+O1zZ+4eXbP13/EFeTpFV0venNxd
-	Bo9I8ZKg/JB28QkMThztI46TklmFKKfBV6OHp8nhfhXp7InziO8vkTQoioO1cJOhsPGSyXSLtY8
-	IQglF9QUKElp7xpVRUNVIw0wZfUO4qU5pcTbsI11kUShkVFJIvh9i+rMNx1QZbcWaf4R08lhAiS
-	3mp0Ejx4EVCwHm5AOCt1B6o7nOM/FCktpX6LPlfYy2Xl1nVZ+81/RMNzsvNc
-X-Received: by 2002:a05:600c:511b:b0:442:dc6f:2f11 with SMTP id 5b1f17b1804b1-44c9493e671mr77932095e9.25.1748270401477;
-        Mon, 26 May 2025 07:40:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEWo+GvCwfq/rkNxHnvWQwirh+1VtVO+LjjW3fAOxqDotyizM//UqyOYsGby8MQArjXhlSeww==
-X-Received: by 2002:a05:600c:511b:b0:442:dc6f:2f11 with SMTP id 5b1f17b1804b1-44c9493e671mr77931885e9.25.1748270400947;
-        Mon, 26 May 2025 07:40:00 -0700 (PDT)
-Received: from sgarzare-redhat (host-82-53-134-35.retail.telecomitalia.it. [82.53.134.35])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f78aef8asm247808255e9.29.2025.05.26.07.39.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 May 2025 07:40:00 -0700 (PDT)
-Date: Mon, 26 May 2025 16:39:55 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] vsock/test: Cover more CIDs in transport_uaf
- test
-Message-ID: <gfmoupl72tjyymhwxcstwpgaabbfaz6f4v6vj4lwwzwssg577c@urkmgn7rapnj>
-References: <20250523-vsock-test-inc-cov-v1-1-fa3507941bbd@rbox.co>
- <limbmrszio42lvkmalapooflj5miedlszkmnnm4ckmy2upfghw@24vxuhgdji2z>
- <1f5cc46a-de4c-4361-a706-fc7fe06a7068@rbox.co>
+	s=arc-20240116; t=1748270435; c=relaxed/simple;
+	bh=UwYs87yRsBWeAWhjsFHInESFLeGByLOKRNJA8pL/8tA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oept1SwIfBJHSNWUZ/nb0IMmBPqc8iNZ6awKuaO/mhXDF9pQvUpRh838WxxcJxX9j+0hlbmOIwG0LmIHsigFzdZoOzLmaMITMy/HkKWngxjgTnc+0DYk+Ff3+GUkured9nr0h2F9TyqZaQ1W7f13ldJfO58PoDH6TB1glq87JIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
+Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-3-entmail-virt135.gy.ntes [27.18.99.37])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 16709a31a;
+	Mon, 26 May 2025 22:40:23 +0800 (GMT+08:00)
+From: Ze Huang <huangze@whut.edu.cn>
+Subject: [PATCH v4 0/4] Add SpacemiT K1 USB3.0 host controller support
+Date: Mon, 26 May 2025 22:40:16 +0800
+Message-Id: <20250526-b4-k1-dwc3-v3-v4-0-63e4e525e5cb@whut.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1f5cc46a-de4c-4361-a706-fc7fe06a7068@rbox.co>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAFB9NGgC/12OQW6DMBBFr4JmXUfGGI/JKveoshjbQ7GqQGIDa
+ RVx9zokq0qzeSP9p/eAzClyhmP1gMRrzHEaC+iPCvxA4xeLGAqDkqqVbY3CafFdi3D3jVgb0Sp
+ pSUqFyhKUzTVxH3923+f5xYlvS9HOryc4yiz8dLnE+ViRM8F3ZDyq2ivmYA36ukWtEY0mNrbvO
+ 4cMT9cQ8zyl3z11bXbZu8r+qyonBRrZeeuIFJnTfVjmA4fl4Ec4b9v2B7jy5tz4AAAA
+X-Change-ID: 20250517-b4-k1-dwc3-v3-5208a002728a
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Ze Huang <huangze@whut.edu.cn>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748270423; l=3206;
+ i=huangze@whut.edu.cn; s=20250325; h=from:subject:message-id;
+ bh=UwYs87yRsBWeAWhjsFHInESFLeGByLOKRNJA8pL/8tA=;
+ b=VKhvsm5zyaoz+pOknrfYlyH+CSJHZUmJn4KRjwnhQm3gtswdUiMWtwRYa/PZcZFjqn0ibmCn1
+ FMAG47sUzAHBen03n+EY+t1jemAzpmRu1L+H+tXCEDv1enfjEuAIhCZ
+X-Developer-Key: i=huangze@whut.edu.cn; a=ed25519;
+ pk=C3zfn/kH6oMJickaXBa8dxTZO68EBiD93F+tAenboRA=
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZHkwfVh5OTkhOGENLTxkeGVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJTFVKQ1VCQlVITFlXWRYaDxIVHRRZQVlPS0hVSktJQk1KSlVKS0tVS1kG
+X-HM-Tid: 0a970d099e7703a1kunm5f56ec4c12d97
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PyI6KQw4GjE*TQwsGisLFQMv
+	AjEKFBVVSlVKTE9DSUxLT0hLSkNMVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlJ
+	TFVKQ1VCQlVITFlXWQgBWUFPQkhNNwY+
 
-On Mon, May 26, 2025 at 02:51:18PM +0200, Michal Luczaj wrote:
->On 5/26/25 10:25, Stefano Garzarella wrote:
->> On Fri, May 23, 2025 at 12:31:16AM +0200, Michal Luczaj wrote:
->>> Increase the coverage of test for UAF due to socket unbinding, and losing
->>> transport in general. It's a follow up to commit 301a62dfb0d0 ("vsock/test:
->>> Add test for UAF due to socket unbinding") and discussion in [1].
->>>
->>> The idea remains the same: take an unconnected stream socket with a
->>> transport assigned and then attempt to switch the transport by trying (and
->>> failing) to connect to some other CID. Now do this iterating over all the
->>> well known CIDs (plus one).
->>>
->>> Note that having only a virtio transport loaded (without vhost_vsock) is
->>> unsupported; test will always pass. Depending on transports available, a
->>
->> Do you think it might make sense to print a warning if we are in this
->> case, perhaps by parsing /proc/modules and looking at vsock
->> dependencies?
->
->That'd nice, but would parsing /proc/modules work if a transport is
->compiled-in (not a module)?
+The USB 3.0 controller found in the SpacemiT K1 SoC[1] supports both USB3.0
+Host and USB2.0 Dual-Role Device (DRD). The PHY interfaces required for the
+K1 USB subsystem — PIPE3 (for USB 3.0) and UTMI+ (for USB 2.0) — have
+already been supported in a separate patchset [2].
 
-Good point, I think not, maybe we can see something under /sys/module,
-though, I would say let's do best effort without going crazy ;-)
+This controller is compatible with DesignWare Core USB 3 (DWC3) driver.
+However, constraints in the snps,dwc3 binding limit the ability to extend
+properties to describe hardware variations. The existing generic DWC3 driver,
+dwc3-of-simple, still functions as a glue layer.
 
->
->>> +static bool test_stream_transport_uaf(int cid)
->>> {
->>> +	struct sockaddr_vm addr = {
->>> +		.svm_family = AF_VSOCK,
->>> +		.svm_cid = cid,
->>> +		.svm_port = VMADDR_PORT_ANY
->>> +	};
->>> 	int sockets[MAX_PORT_RETRIES];
->>> -	struct sockaddr_vm addr;
->>> -	int fd, i, alen;
->>> +	socklen_t alen;
->>> +	int fd, i, c;
->>>
->>> -	fd = vsock_bind(VMADDR_CID_ANY, VMADDR_PORT_ANY, SOCK_STREAM);
->>> +	fd = socket(AF_VSOCK, SOCK_STREAM, 0);
->>> +	if (fd < 0) {
->>> +		perror("socket");
->>> +		exit(EXIT_FAILURE);
->>> +	}
->>> +
->>> +	if (bind(fd, (struct sockaddr *)&addr, sizeof(addr))) {
->>> +		if (errno != EADDRNOTAVAIL) {
->>> +			perror("Unexpected bind() errno");
->>> +			exit(EXIT_FAILURE);
->>> +		}
->>> +
->>> +		close(fd);
->>> +		return false;
->>
->> Perhaps we should mention in the commit or in a comment above this
->> function, what we return and why we can expect EADDRNOTAVAIL.
->
->Something like
->
->/* Probe for a transport by attempting a local CID bind. Unavailable
-> * transport (or more specifically: an unsupported transport/CID
-> * combination) results in EADDRNOTAVAIL, other errnos are fatal.
-> */
->
->?
+To address this and promote trasition to flattened dwc node, this patch
+introduces dwc3-common, building upon prior work that exposed the DWC3 core
+driver [3].
 
-LGTM!
+This patchset is based on usb-next (6.15-rc6) and has been tested on BananaPi and Jupiter development boards.
 
->
->And I've just realized feeding VMADDR_CID_HYPERVISOR to bind() doesn't make
->sense at all. Will fix.
+Link: https://developer.spacemit.com/documentation?token=AjHDwrW78igAAEkiHracBI9HnTb [1]
+Link: https://lore.kernel.org/linux-riscv/20250418-b4-k1-usb3-phy-v2-v2-0-b69e02da84eb@whut.edu.cn [2]
+Link: https://lore.kernel.org/all/20250414-dwc3-refactor-v7-3-f015b358722d@oss.qualcomm.com [3]
 
-Yeah, we don't support it for now and maybe it makes sense only in the 
-VMM code (e.g. QEMU), but it's a test, so if you want to leave to stress 
-it more, I don't think it's a big issue.
+Signed-off-by: Ze Huang <huangze@whut.edu.cn>
+---
+Changes in v4:
+- dt-bindings spacemit,k1-dwc:
+  - reorder properties
+  - add properties of phys & phy-names
+  - add usb hub nodes in example dt
+- add support for spacemit,k1-mbus
+- dwc3 generic plat driver:
+  - rename dwc3-common.c to dwc3-generic-plat.c
+  - use SYSTEM_SLEEP_PM_OPS macros and drop PM guards
+- dts:
+  - reorder dts properties of usb dwc3 node
+  - move "dr_mode" of dwc3 from dtsi to dts
+- Link to v3: https://lore.kernel.org/r/20250518-b4-k1-dwc3-v3-v3-0-7609c8baa2a6@whut.edu.cn
 
->
->> What about adding a vsock_bind_try() in util.c that can fail returning
->> errno, so we can share most of the code with vsock_bind()?
->
->Ah, yes, good idea.
->
->>> +static void test_stream_transport_uaf_client(const struct test_opts *opts)
->>> +{
->>> +	bool tested = false;
->>> +	int cid;
->>> +
->>> +	for (cid = VMADDR_CID_HYPERVISOR; cid <= VMADDR_CID_HOST + 1; ++cid)
->>
->>> +		tested |= test_stream_transport_uaf(cid);
->>> +
->>> +	if (!tested)
->>> +		fprintf(stderr, "No transport tested\n");
->>> +
->>> 	control_writeln("DONE");
->>
->> While we're at it, I think we can remove this message, looking at
->> run_tests() in util.c, we already have a barrier.
->
->Ok, sure. Note that console output gets slightly de-synchronised: server
->will immediately print next test's prompt and wait there.
+Changes in v3:
+- introduce dwc3-common for generic dwc3 hardware
+- fix warnings in usb host dt-bindings
+- fix errors in dts
+- Link to v2: https://lore.kernel.org/r/20250428-b4-k1-dwc3-v2-v1-0-7cb061abd619@whut.edu.cn
 
-I see, however I don't have a strong opinion, you can leave it that way 
-if you prefer.
+Changes in v2:
+- dt-bindings:
+  - add missing 'maxItems'
+  - remove 'status' property in exmaple
+  - fold dwc3 node into parent
+- drop dwc3 glue driver and use snps,dwc3 driver directly
+- rename dts nodes and reorder properties to fit coding style
+- Link to v1: https://lore.kernel.org/all/20250407-b4-k1-usb3-v3-2-v1-0-bf0bcc41c9ba@whut.edu.cn
 
-Thanks,
-Stefano
+---
+Ze Huang (4):
+      dt-bindings: usb: dwc3: add support for SpacemiT K1
+      dt-bindings: soc: spacemit: Add K1 MBUS controller
+      usb: dwc3: add generic driver to support flattened DT
+      riscv: dts: spacemit: add usb3.0 support for K1
+
+ .../bindings/soc/spacemit/spacemit,k1-mbus.yaml    |  55 ++++++
+ .../devicetree/bindings/usb/spacemit,k1-dwc3.yaml  | 116 +++++++++++++
+ arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts    |  51 ++++++
+ arch/riscv/boot/dts/spacemit/k1.dtsi               |  67 ++++++++
+ drivers/usb/dwc3/Kconfig                           |   9 +
+ drivers/usb/dwc3/Makefile                          |   1 +
+ drivers/usb/dwc3/dwc3-generic-plat.c               | 189 +++++++++++++++++++++
+ 7 files changed, 488 insertions(+)
+---
+base-commit: ab6dc9a6c721c2eed867c157447764ae68ff9b7e
+change-id: 20250517-b4-k1-dwc3-v3-5208a002728a
+
+Best regards,
+-- 
+Ze Huang <huangze@whut.edu.cn>
 
 
