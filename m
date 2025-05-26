@@ -1,94 +1,224 @@
-Return-Path: <linux-kernel+bounces-662760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD348AC3F3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:21:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0381AC3F59
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CF883B7FCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:20:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63BAF7A2462
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9861F1FFC4F;
-	Mon, 26 May 2025 12:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bBGKqiE4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C88202979;
+	Mon, 26 May 2025 12:28:02 +0000 (UTC)
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D5636124;
-	Mon, 26 May 2025 12:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F6A2E406
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 12:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748262074; cv=none; b=p0Wn05cwliu1TxPyKLPwx+sF9IOJAXacUZVHPf4B+wF9oViuo5dDvwGwDuEyF/Z2s09HECtTPRcsXrzRsfG4CQTOdV+f8dis5kSSEJ4brvZggB6BOzTeHbYdaIVjwpq+eb0y0BP65UAFjabzvrvHMdYgA+feD3cO3hEzBvKt+DU=
+	t=1748262481; cv=none; b=qnZBbVrH1hgjMD/G+yMF2JCfHYDzNXse6QvGDc1HRj/ogX2zqu/z95VNfnIojIhd3PYO9k+NKU7eXKeRAOQY2VxnDZadZVvoZ7Hh/kLuzeSeKldUh85GJo5rEiSZELwaTyYAKVIJWm0Z6GxnEjYyoXbxfHQOvQnoaSEyiPOLNWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748262074; c=relaxed/simple;
-	bh=mytcLpZz6AofQLf9F+CrXUdF0yok+LQaFAFoxJ83VAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BSquj5zcwLXvsNYVLSWh3BmmC4z6BNONtqGfnqF9pBaDDPxvYz4SNBQfA/7nSi5UWnN2bEY3UbjUwylT2WGbcoHKrIaFD8HrULkjHGmHVYrTPIgk0W2fcaJvFxBNkf3hPaX5qFRS9dOirYqmwAWyfceytxQd65I4aHyAaHf0Q58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bBGKqiE4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 744D5C4CEE7;
-	Mon, 26 May 2025 12:21:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1748262073;
-	bh=mytcLpZz6AofQLf9F+CrXUdF0yok+LQaFAFoxJ83VAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bBGKqiE4Z6x/dw/rINwGVrjGP60jB88fED9lJw+pVz4NUflviZLkpbJ5gqc9JMJXR
-	 +D9XZmz6LJHNqT2xKF8xwl2tSpHtkFpwgtHqZjdR2UGOMl4pHOZWJIXVTFlGZprx2/
-	 KHGHkCr9qKxOXXB+5z8PRlcckIOORMntq6uviHCc=
-Date: Mon, 26 May 2025 14:21:10 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: clingfei <clf700383@gmail.com>
-Cc: elder@kernel.org, johan@kernel.org, vireshk@kernel.org,
-	greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] greybus: Avoid fake flexible array for response data
-Message-ID: <2025052633-drizzly-disprove-42d0@gregkh>
-References: <20250526110654.3916536-1-clf700383@gmail.com>
+	s=arc-20240116; t=1748262481; c=relaxed/simple;
+	bh=0rmVmbMcJp5k3+ikOwmDGPnUvhGzziGf8qXeDsUY2u8=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=sKgvXYNz5kJEhGooMA5f4ut+stndGzrYXE4RyF8M5HcVqifJza6M4dsK3oKdxUS+xS4FnyyTm1VI7drkborwpp+D9QuNwuHxylf4pWrznGBzcXsMuyl6cgKX6VbJbSAo8G6ODMTA/DZb0m+AjOeOwv6SmIHjqxzkVw8F9VePino=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 10BBE240027
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 14:27:56 +0200 (CEST)
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4b5Zm94DKpz6tvc;
+	Mon, 26 May 2025 14:27:53 +0200 (CEST)
+References: <68342b55.a70a0220.253bc2.0091.GAE@google.com>
+From: Charalampos Mitrodimas <charmitro@posteo.net>
+To: syzbot <syzbot+f0c4a4aba757549ae26c@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org,
+ jmaloy@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com,
+ syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net,
+ wangliang74@huawei.com
+Subject: Re: [syzbot] [tipc?] WARNING: refcount bug in tipc_crypto_xmit
+Date: Mon, 26 May 2025 12:21:22 +0000
+In-reply-to: <68342b55.a70a0220.253bc2.0091.GAE@google.com>
+Message-ID: <87msazftff.fsf@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250526110654.3916536-1-clf700383@gmail.com>
+Content-Type: text/plain
 
-On Mon, May 26, 2025 at 07:06:54PM +0800, clingfei wrote:
-> diff --git a/include/linux/greybus/greybus_protocols.h b/include/linux/greybus/greybus_protocols.h
-> index 820134b0105c..14395f9300d6 100644
-> --- a/include/linux/greybus/greybus_protocols.h
-> +++ b/include/linux/greybus/greybus_protocols.h
-> @@ -110,11 +110,6 @@ struct gb_control_get_manifest_size_response {
->  	__le16			size;
->  } __packed;
->  
-> -/* Control protocol manifest get request has no payload */
-> -struct gb_control_get_manifest_response {
-> -	__u8			data[0];
-> -} __packed;
-> -
->  /* Control protocol [dis]connected request */
->  struct gb_control_connected_request {
->  	__le16			cport_id;
-> @@ -678,10 +673,6 @@ struct gb_i2c_transfer_request {
->  	__le16				op_count;
->  	struct gb_i2c_transfer_op	ops[];		/* op_count of these */
->  } __packed;
-> -struct gb_i2c_transfer_response {
-> -	__u8				data[0];	/* inbound data */
-> -} __packed;
-> -
->  
->  /* GPIO */
->  
 
-Why are you deleting these structures that userspace uses?  Are you sure
-you can do this?  How was this tested?
+syzbot <syzbot+f0c4a4aba757549ae26c@syzkaller.appspotmail.com> writes:
 
-thanks,
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    b1427432d3b6 Merge tag 'iommu-fixes-v6.15-rc7' of git://gi..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=17ba35f4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9fd1c9848687d742
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f0c4a4aba757549ae26c
+> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161ee170580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164328e8580000
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/48a582dac9f0/disk-b1427432.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/94ad5463a7f5/vmlinux-b1427432.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/4d0af31b0b08/bzImage-b1427432.xz
+>
+> The issue was bisected to:
+>
+> commit e279024617134c94fd3e37470156534d5f2b3472
+> Author: Wang Liang <wangliang74@huawei.com>
+> Date:   Tue May 20 10:14:04 2025 +0000
+>
+>     net/tipc: fix slab-use-after-free Read in tipc_aead_encrypt_done
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10018df4580000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=12018df4580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14018df4580000
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+f0c4a4aba757549ae26c@syzkaller.appspotmail.com
+> Fixes: e27902461713 ("net/tipc: fix slab-use-after-free Read in tipc_aead_encrypt_done")
+>
+> ------------[ cut here ]------------
+> refcount_t: addition on 0; use-after-free.
+> WARNING: CPU: 1 PID: 36 at lib/refcount.c:25 refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:25
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 36 Comm: kworker/u8:2 Not tainted 6.15.0-rc7-syzkaller-00144-gb1427432d3b6 #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+> Workqueue: netns cleanup_net
+> RIP: 0010:refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:25
+> Code: 00 00 e8 79 f6 06 fd 5b 41 5e e9 81 6c a0 06 cc e8 6b f6 06 fd c6 05 06 3c b0 0a 01 90 48 c7 c7 80 aa c1 8b e8 e7 52 cb fc 90 <0f> 0b 90 90 eb d7 e8 4b f6 06 fd c6 05 e7 3b b0 0a 01 90 48 c7 c7
+> RSP: 0018:ffffc90000a08668 EFLAGS: 00010246
+> RAX: bb5b0788a28fc300 RBX: 0000000000000002 RCX: ffff888142681e00
+> RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000002
+> RBP: ffffc90000a087e8 R08: 0000000000000003 R09: 0000000000000004
+> R10: dffffc0000000000 R11: fffffbfff1bba984 R12: ffff88807df80000
+> R13: dffffc0000000000 R14: ffff88807df8016c R15: ffff888033397800
+> FS:  0000000000000000(0000) GS:ffff8881261c2000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000555569a1e878 CR3: 000000007b8fc000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <IRQ>
+>  __refcount_add include/linux/refcount.h:-1 [inline]
+>  __refcount_inc include/linux/refcount.h:366 [inline]
+>  refcount_inc include/linux/refcount.h:383 [inline]
+>  get_net include/net/net_namespace.h:268 [inline]
+>  tipc_aead_encrypt net/tipc/crypto.c:821 [inline]
+>  tipc_crypto_xmit+0x1820/0x22c0 net/tipc/crypto.c:1761
+>  tipc_crypto_clone_msg+0x90/0x170 net/tipc/crypto.c:1656
+>  tipc_crypto_xmit+0x1998/0x22c0 net/tipc/crypto.c:1717
+>  tipc_bearer_xmit_skb+0x245/0x400 net/tipc/bearer.c:572
+>  tipc_disc_timeout+0x580/0x6d0 net/tipc/discover.c:338
+>  call_timer_fn+0x17b/0x5f0 kernel/time/timer.c:1789
+>  expire_timers kernel/time/timer.c:1840 [inline]
+>  __run_timers kernel/time/timer.c:2414 [inline]
+>  __run_timer_base+0x61a/0x860 kernel/time/timer.c:2426
+>  run_timer_base kernel/time/timer.c:2435 [inline]
+>  run_timer_softirq+0xb7/0x180 kernel/time/timer.c:2445
+>  handle_softirqs+0x286/0x870 kernel/softirq.c:579
+>  __do_softirq kernel/softirq.c:613 [inline]
+>  invoke_softirq kernel/softirq.c:453 [inline]
+>  __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
+>  irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
+>  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+>  sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
+>  </IRQ>
+>  <TASK>
+>  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+> RIP: 0010:lock_acquire+0x175/0x360 kernel/locking/lockdep.c:5870
+> Code: 00 00 00 00 9c 8f 44 24 30 f7 44 24 30 00 02 00 00 0f 85 cd 00 00 00 f7 44 24 08 00 02 00 00 74 01 fb 65 48 8b 05 8b 9f d7 10 <48> 3b 44 24 58 0f 85 f2 00 00 00 48 83 c4 60 5b 41 5c 41 5d 41 5e
+> RSP: 0018:ffffc90000ad7378 EFLAGS: 00000206
+> RAX: bb5b0788a28fc300 RBX: 0000000000000000 RCX: bb5b0788a28fc300
+> RDX: 0000000000000000 RSI: ffffffff8d939072 RDI: ffffffff8bc1f600
+> RBP: ffffffff8171ca05 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: ffffffff8171ca05 R12: 0000000000000002
+> R13: ffffffff8df3dee0 R14: 0000000000000000 R15: 0000000000000246
+>  rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+>  rcu_read_lock include/linux/rcupdate.h:841 [inline]
+>  class_rcu_constructor include/linux/rcupdate.h:1155 [inline]
+>  unwind_next_frame+0xc2/0x2390 arch/x86/kernel/unwind_orc.c:479
+>  arch_stack_walk+0x11c/0x150 arch/x86/kernel/stacktrace.c:25
+>  stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
+>  kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
+>  kasan_record_aux_stack+0xbc/0xd0 mm/kasan/generic.c:548
+>  __call_rcu_common kernel/rcu/tree.c:3082 [inline]
+>  call_rcu+0x142/0x990 kernel/rcu/tree.c:3202
+>  inet_release+0x187/0x210 net/ipv4/af_inet.c:435
+>  __sock_release net/socket.c:647 [inline]
+>  sock_release+0x85/0x150 net/socket.c:675
+>  wg_netns_pre_exit+0xd6/0x1d0 drivers/net/wireguard/device.c:423
+>  ops_pre_exit_list net/core/net_namespace.c:162 [inline]
+>  cleanup_net+0x594/0xbd0 net/core/net_namespace.c:634
+>  process_one_work kernel/workqueue.c:3238 [inline]
+>  process_scheduled_works+0xadb/0x17a0 kernel/workqueue.c:3319
+>  worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+>  kthread+0x70e/0x8a0 kernel/kthread.c:464
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>  </TASK>
+> ----------------
+> Code disassembly (best guess):
+>    0:	00 00                	add    %al,(%rax)
+>    2:	00 00                	add    %al,(%rax)
+>    4:	9c                   	pushf
+>    5:	8f 44 24 30          	pop    0x30(%rsp)
+>    9:	f7 44 24 30 00 02 00 	testl  $0x200,0x30(%rsp)
+>   10:	00
+>   11:	0f 85 cd 00 00 00    	jne    0xe4
+>   17:	f7 44 24 08 00 02 00 	testl  $0x200,0x8(%rsp)
+>   1e:	00
+>   1f:	74 01                	je     0x22
+>   21:	fb                   	sti
+>   22:	65 48 8b 05 8b 9f d7 	mov    %gs:0x10d79f8b(%rip),%rax        # 0x10d79fb5
+>   29:	10
+> * 2a:	48 3b 44 24 58       	cmp    0x58(%rsp),%rax <-- trapping instruction
+>   2f:	0f 85 f2 00 00 00    	jne    0x127
+>   35:	48 83 c4 60          	add    $0x60,%rsp
+>   39:	5b                   	pop    %rbx
+>   3a:	41 5c                	pop    %r12
+>   3c:	41 5d                	pop    %r13
+>   3e:	41 5e                	pop    %r14
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-greg k-h
+#syz test: https://github.com/charmitro/linux.git d72ee421a78726747979874e8dba97c1641df213
 
