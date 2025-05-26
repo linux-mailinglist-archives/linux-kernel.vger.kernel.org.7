@@ -1,123 +1,166 @@
-Return-Path: <linux-kernel+bounces-662801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54BE9AC3FD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:56:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 318D0AC3F77
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54A9F1705D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:56:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1B681898836
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114A620B215;
-	Mon, 26 May 2025 12:55:48 +0000 (UTC)
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033661FECAF;
+	Mon, 26 May 2025 12:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JHPRiYGU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D7420A5DD
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 12:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C0C3209;
+	Mon, 26 May 2025 12:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748264147; cv=none; b=OvwSTaPICtqEbVBk/Tl00puEPY0iY/DZalYYWCpFXYSkjwXJ76P5mc5i7UWs0r8lEEApWGcPxSjRsi7GQYmfJsYvSYGJV1//iFf2IOZ3+bImOQObxfXNkqNB2fmfS+7MoF3yUCn8wnMYIAw4HYlvPqVEVprD5eqDdiCih66vbDQ=
+	t=1748263597; cv=none; b=AGeOubryY7LICpeAwOM7DGvqpInReDwW4Nfxwaz5VSkCevJB+w9jG34UAAbRIO4kETua7BXLwhQ854eQrmKve600qE3E8w/aBuhfqraW0enKMOG5WwWfAStezzVjk+M9TnAIgfJSeqq6Cy0uukc2dhn8RllxwsaX1VV28Bm5YKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748264147; c=relaxed/simple;
-	bh=KkQwgXHw8yl2iRNVVytw7enFpOc2PlsBaF7EKHxMBZw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GtdsTVUG0qie29xl1q4kTWhgJqdC7OUeoeYoFZRYu7YTtrDFIf6T3ol3OVFzZsgku7F2gYgBCqyeUOTs1qfMJOUfuNfcqwy1O6vtGhK0rbVO4Mg/PMIQPUB9RTwLrIszQSeLZMFW3cc7570yPE73mlmgmeHBOmnvuSgjPA+98KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4b5b9r3YZYz4x1b5
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 14:46:40 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:9962:836e:244b:c4d7])
-	by xavier.telenet-ops.be with cmsmtp
-	id tomY2E00e0Y7Yez01omYtE; Mon, 26 May 2025 14:46:33 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1uJXDc-00000003Rpo-2huh;
-	Mon, 26 May 2025 14:46:32 +0200
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1uJXDs-0000000Beit-2cTP;
-	Mon, 26 May 2025 14:46:32 +0200
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Greg Ungerer <gerg@linux-m68k.org>,
-	linux-m68k@lists.linux-m68k.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [GIT PULL] m68k updates for v6.16
-Date: Mon, 26 May 2025 14:46:24 +0200
-Message-ID: <20250526124624.2778122-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1748263597; c=relaxed/simple;
+	bh=+4ZFaYs/WAwhqPCNO40xpaYk60ZVDPPkaB664JvJmOY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lzd+C210fUa+0cRE6O7B+WVGwnQGV2vP5KecInrdf5sCOtxEEbzwdY5fNrh/G3FholWOcR5m1Hi8snebloFn+vRb5gsjXmr2MiXK1wKk5ML7ag9UgCyh2NsdBHA+Z7SpipTsFUuJfEoo+GCEIZ4EyczlazzWakIj3gFKchl57ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JHPRiYGU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04A75C4CEE7;
+	Mon, 26 May 2025 12:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748263596;
+	bh=+4ZFaYs/WAwhqPCNO40xpaYk60ZVDPPkaB664JvJmOY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JHPRiYGU4WgsJArN57FaaVjr7LIdKoIUUskK0hxPB6cwD5/e+/iB9fS2npzoINZ93
+	 tSobIl0dpbqJvYOnRccgCpHC9c1UXcsrUY89LCv8fptA4BiBYVmCK8aD2xEyWSJvL1
+	 x9F6kOaQ5QD+OG2/qkmglXabIhbbNchw9UI8IhwR8su0f8Kr5CHKCYL48vSYPTMt/d
+	 MGI6edb2EJT4tC2rPTuIlNyT6Gng7uvhPI4jhGsCRiZbDo9CTimzSwnzzCEqhTm8v8
+	 zKkuqVvzNNqZtPL56dW7PLZan6NLsoHsiMnFz+K+ecSCE3nMnllevuOZ5EhYeryIZd
+	 K2tSaZg1/8UMw==
+Message-ID: <04e1f361-b3cf-4fdb-a008-42eb489f6c4d@kernel.org>
+Date: Mon, 26 May 2025 14:46:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] dt-bindings: media: allegro-dvt: add decoder
+ dt-bindings for Gen3 IP
+To: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Tretter <m.tretter@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Michal Simek <michal.simek@amd.com>, Heiko Stuebner <heiko@sntech.de>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Junhao Xie
+ <bigfoot@classfun.cn>, Rafa?? Mi??ecki <rafal@milecki.pl>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Gaosheng Cui <cuigaosheng1@huawei.com>,
+ Uwe Kleine-K??nig <u.kleine-koenig@baylibre.com>,
+ Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Ricardo Ribalda <ribalda@chromium.org>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20250523134207.68481-1-yassine.ouaissa@allegrodvt.com>
+ <20250523134207.68481-3-yassine.ouaissa@allegrodvt.com>
+ <3e6be40a-2644-416a-bd32-f6256f1501ff@kernel.org>
+ <7863d15a-fa20-4db5-89b5-77a026d3f937@kernel.org>
+ <a72z6exgol5cbur2cy7wjwyroi4zddtki5ab3zdkfuwpskpavr@r26wahldhd3r>
+ <b5bb919e-6273-48ed-b5d8-29177dbbfb76@kernel.org>
+ <flwocneutp64bxxwfkfqvm6dq7klc2nu33ybr3ap6qeovopfq7@7qognvdf4zew>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <flwocneutp64bxxwfkfqvm6dq7klc2nu33ybr3ap6qeovopfq7@7qognvdf4zew>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-	Hi Linus,
+On 26/05/2025 14:27, Yassine Ouaissa wrote:
+> On 26.05.2025 12:57, Krzysztof Kozlowski wrote:
+>> On 26/05/2025 09:25, Yassine Ouaissa wrote:
+>>> On 23.05.2025 19:13, Krzysztof Kozlowski wrote:
+>>>> On 23/05/2025 19:11, Krzysztof Kozlowski wrote:
+>>>>> On 23/05/2025 15:41, Yassine Ouaissa wrote:
+>>>>>> Add compatible for video decoder on allegrodvt Gen 3 IP.
+>>>>>>
+>>>>>> Signed-off-by: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
+>>>>> Please do not send the same patches over and over again. You got review
+>>>>> which you need to address.
+>>>>>
+>>>>> Once address you send NEXT version with proper CHANGELOG for each patch
+>>>>> or top of cover letter. See submitting patches... or just use b4. This
+>>>>> should be actually requirement for this work.
+>>>>>
+>>>>> Anyway, I see all of previous review ignored so let's be explicit:
+>>>>>
+>>>>> NAK
+>>>>>
+>>> Hi Krzysztof,
+>>>
+>>> Make sure that i'm not ignoring anyone reviews, i sent a new set of
+>>> patches to start cleanly, and i have sent you an email about this.
+>>
+>> It is still v1 - the same? - while you already sent three patchsets before.
+> 
+> As i mentioned, this patch is sent to start cleanly, so it still v1.
+> And the previous patchsets should be ignored.
+This is not how the process works and it is not making reviewers life
+easier. It makes it impossible for us to compare (try yourself with `b4
+diff`) and forces to re-review everything every time.
 
-The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
-
-  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/m68k-for-v6.16-tag1
-
-for you to fetch changes up to f440518f379d22c95329e9e0e0fb6caaafa0f8b0:
-
-  m68k: defconfig: Update defconfigs for v6.15-rc1 (2025-05-19 13:37:36 +0200)
-
-----------------------------------------------------------------
-m68k updates for v6.16
-
-  - One more strscpy() conversion,
-  - Fix detection of real Mac II,
-  - Defconfig updates.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Finn Thain (1):
-      m68k: mac: Fix macintosh_config for Mac II
-
-Geert Uytterhoeven (1):
-      m68k: defconfig: Update defconfigs for v6.15-rc1
-
-Thorsten Blum (1):
-      m68k: Replace strcpy() with strscpy() in hardware_proc_show()
-
- arch/m68k/configs/amiga_defconfig    | 4 ----
- arch/m68k/configs/apollo_defconfig   | 4 ----
- arch/m68k/configs/atari_defconfig    | 4 ----
- arch/m68k/configs/bvme6000_defconfig | 4 ----
- arch/m68k/configs/hp300_defconfig    | 4 ----
- arch/m68k/configs/mac_defconfig      | 4 ----
- arch/m68k/configs/multi_defconfig    | 4 ----
- arch/m68k/configs/mvme147_defconfig  | 4 ----
- arch/m68k/configs/mvme16x_defconfig  | 4 ----
- arch/m68k/configs/q40_defconfig      | 4 ----
- arch/m68k/configs/sun3_defconfig     | 4 ----
- arch/m68k/configs/sun3x_defconfig    | 4 ----
- arch/m68k/kernel/setup_mm.c          | 2 +-
- arch/m68k/mac/config.c               | 2 +-
- 14 files changed, 2 insertions(+), 50 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Best regards,
+Krzysztof
 
