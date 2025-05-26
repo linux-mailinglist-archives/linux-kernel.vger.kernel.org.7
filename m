@@ -1,153 +1,161 @@
-Return-Path: <linux-kernel+bounces-662310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C37AAC3888
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 06:27:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3055AAC387A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 06:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3438A1891EA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 04:27:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C78A33AC278
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 04:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B217819DF99;
-	Mon, 26 May 2025 04:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A501A3145;
+	Mon, 26 May 2025 04:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="QGPnJFsq"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pDrTDkEL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719531A8F84;
-	Mon, 26 May 2025 04:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEFF23DE;
+	Mon, 26 May 2025 04:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748233607; cv=none; b=cIWmesvmbdPh7EfRdq+Dz7nWs1gbtOSztZHQgvbOiBaj5gEZ6yYz8d+WUljh9LY1BVTn52ivkN+CBxKeW6CRpQ/DtcH5SvYnyjpZa/Ldz9hW6nZu38TYD4w2DBtwI8TyZJ4rUwLuMNjXWSVdGBgjmQ1VBwSLB5JXVUqQDu6F1VA=
+	t=1748233057; cv=none; b=JDHEjzexFVzYNfallE6w1CdGnQTYUgiO1G9cw2FRnae4KetBWilAK0kepkdfPIvUl//WSCrDkIBXs5QObeAJQXnvFrBE3LqYVkEP0/KHu7BtlUYFKkvEZFGdeBFQrCh3Br9Y+F/aSY09qMifqzTFTDbtZOrRoEegIuVwbJbMq9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748233607; c=relaxed/simple;
-	bh=6PrPi9eX42dSkCoFKZGOsYQ5511s37Wj9FNKGaHX6vU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OJyEFIn5/KOMU/ocL57xIP4+N/n2sMwUzVdKdbCMfDdgf5C0dFjA54Qox2W9xvWXCOZqkh6lpKMkFw6BeGfpbsJWselB9YdP56EsFPGrL95P6RRr6zlOaXt9Tyjoms+dyhybNg7AoqePc/XnkKj4o9V1Vu4w6Ax7WAT2KvHc+Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=QGPnJFsq; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id D17C725D11;
-	Mon, 26 May 2025 06:17:26 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id UhSyIzB5lUhx; Mon, 26 May 2025 06:17:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1748233046; bh=6PrPi9eX42dSkCoFKZGOsYQ5511s37Wj9FNKGaHX6vU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=QGPnJFsq5HFRsSxNe8GJ0s/gbSy4rFAwF81ecgDgIMkKkDHVH76UVsRbrt/Hfa3DB
-	 a3TWtyqBbPmUAtn1Vw4pFXGfDaLsgycSSwcsoZdbXweeK/6d7obxqDm3wDTZWELZSg
-	 NiPLVTtkM7giWjnPCiaUlqctWvYEC7BIHQZgtKGwmUBFtDbz86WdE6FOf7SVOrydt5
-	 DYdHodk94NqNvLF3c/D9Iw/oliu3HZnOB7TCOlpIj9g+NhAbuyKwIeYeoHliXzdA3h
-	 YXXsn0JNzudCTOp5qSvOFdHawgqvO6QjrWwW6vYj74ZfX3VhMJpsCW+VMjvYIbO3tO
-	 0JTW8EruNIzpg==
-Date: Mon, 26 May 2025 04:17:13 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Binbin Zhou <zhoubb.aaron@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, Yinbo Zhu <zhuyinbo@loongson.cn>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
-Subject: Re: [PATCH 1/8] dt-bindings: clock: Document Loongson 2K0300 clock
- controller
-Message-ID: <aDPrSYeKp-YMNdhu@pie.lan>
-References: <20250523104552.32742-1-ziyao@disroot.org>
- <20250523104552.32742-2-ziyao@disroot.org>
- <CAMpQs4JRy+Q2D5B9cOLyuD=8EcWNqqyhJcm+X5wiqTgjy5cikA@mail.gmail.com>
- <aDB4DTd1Y29lJlyM@pie.lan>
- <dfe02190-8e7a-48e7-8d2d-8d3af2392eb5@kernel.org>
+	s=arc-20240116; t=1748233057; c=relaxed/simple;
+	bh=aqUOswUxr57O4DWG+gsk6e2Kr5wYGDmSgJBU8K+2NYk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bVXUgTezOovIVhtWEfTXVrIEI6cEvG+Tm2W05e0efGHky8KHlC5XMBXUYAI2Wz2BfJthIcnDc3uazWvt2obbI+NP5F7rvaV7BI5kvQTk7y/PPG3E6CU/5FsGhMOkGrGRGBKldbmM0/Zioeo/j+6G99xPBu5U5ofv6lS/eqG27tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pDrTDkEL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39CA1C4CEE7;
+	Mon, 26 May 2025 04:17:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748233057;
+	bh=aqUOswUxr57O4DWG+gsk6e2Kr5wYGDmSgJBU8K+2NYk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pDrTDkEL9dQmxIZV5A/mQy9mfxvVwvkslRYZavFPCRAXuDC/ZGS9cEPcvO+7+YTIu
+	 SiRt+K7ZRyfjiZhIyIheiRfOkNgt9FuP19jyXJ5slG5oayVwNxovsKeGMP/rj9riW1
+	 ZcXf1hNxQWt5ymCABIa1NP1TbrNS9P+f9mTfckWEWrKoYhvi8Ox2EBNChGpaDJkeOx
+	 x16UrRa4kG1hpahTiHKH27O1LhYfiFOjOT5ubMBJjcdfc4i4lx087g0OqL7Yt+YjQT
+	 t8UqjHALdxeOV271pGHo7VIV/GIiBy/XP3cJ/T7OGaGbQ8WpI/CmBQaB8duKVaVh2+
+	 nP/MHu9FhaBuQ==
+Message-ID: <aa3b2d08-f2aa-4349-9d22-905bbe12f673@kernel.org>
+Date: Mon, 26 May 2025 06:17:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dfe02190-8e7a-48e7-8d2d-8d3af2392eb5@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: net: qca,ar803x: Add IPQ5018 Internal GE
+ PHY support
+To: george.moussalem@outlook.com, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20250525-ipq5018-ge-phy-v1-0-ddab8854e253@outlook.com>
+ <20250525-ipq5018-ge-phy-v1-1-ddab8854e253@outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250525-ipq5018-ge-phy-v1-1-ddab8854e253@outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 26, 2025 at 06:11:22AM +0200, Krzysztof Kozlowski wrote:
-> On 23/05/2025 15:28, Yao Zi wrote:
-> > On Fri, May 23, 2025 at 08:30:57PM +0800, Binbin Zhou wrote:
-> >> On Fri, May 23, 2025 at 6:46 PM Yao Zi <ziyao@disroot.org> wrote:
-> >>>
-> >>> Document the clock controller shipped in Loongson 2K0300 SoC, which
-> >>> generates various clock signals for SoC peripherals.
-> >>>
-> >>> Signed-off-by: Yao Zi <ziyao@disroot.org>
-> >>> ---
-> >>>  .../bindings/clock/loongson,ls2k0300-clk.yaml | 52 ++++++++++++++++++
-> >>>  .../dt-bindings/clock/loongson,ls2k0300-clk.h | 54 +++++++++++++++++++
-> >>>  2 files changed, 106 insertions(+)
-> >>>  create mode 100644 Documentation/devicetree/bindings/clock/loongson,ls2k0300-clk.yaml
-> >>
-> >> I don't think a new binding file for 2K0300 is needed. Adding
-> >> compatible entries to loongson,ls2k-clk.yaml would be more appropriate
-> >> as they are almost all similar.
-> > 
-> > Originally I've tried to integrate the 2K0300 stuff with
-> > loongson,ls2k-clk.yaml, but found it's hard to describe some properties.
-> > 
-> > For example, currently in loongson,ls2k-clk.yaml, the clocks property is
-> > described as
-> > 
-> >   clocks:
-> >     items:
-> >       - description: 100m ref
-> > 
-> > what should the description look like with 2K0300 introduced, whose
-> > reference clock runs at 120MHz instead of 100MHz? It'll be hard to
-> > describe things correctly without losing existing information. "120MHz
-> > reference clock for Loongson 2K0300, or 100MHz reference clock for other
-> > SoCs" sounds even a worse idea.
-> 
-> Drop the frequency anyway, it is kind of pointless here.
-> 
-> > 
-> > Another example is about the description of clock IDs. loongson,ls2k-clk.yaml
-> > describes available clock IDs as
-> > 
-> >   '#clock-cells':
-> >     const: 1
-> >     description:
-> >       The clock consumer should specify the desired clock by having the clock
-> >       ID in its "clocks" phandle cell. See include/dt-bindings/clock/loongson,ls2k-clk.h
-> >       for the full list of Loongson-2 SoC clock IDs.
-> > 
-> > what should the description look like if we add 2K0300 support? With a
-> > different header being introduced, the description will be messy.
-> 
-> No, just list the headers.
-> 
-> > 
-> > I think keeping SoCs peripherals that are different in hardware design
-> > in the same binding is really a bad idea. Yes, these clock controllers
-> > are similar enough to reuse the clock hardware driver, but they have
-> > different clock tree structures and register definitions, making them
-> > essentially different things. Trying to keep everything in the same
-> > place only makes the binding messy.
-> 
-> How is binding messy if you only add one compatible?
-> 
-> 
-> Best regards,
-> Krzysztof
+On 25/05/2025 19:56, George Moussalem via B4 Relay wrote:
+> diff --git a/Documentation/devicetree/bindings/net/qca,ar803x.yaml b/Documentation/devicetree/bindings/net/qca,ar803x.yaml
+> index 3acd09f0da863137f8a05e435a1fd28a536c2acd..a9e94666ff0af107db4f358b144bf8644c6597e8 100644
+> --- a/Documentation/devicetree/bindings/net/qca,ar803x.yaml
+> +++ b/Documentation/devicetree/bindings/net/qca,ar803x.yaml
+> @@ -60,6 +60,29 @@ properties:
+>      minimum: 1
+>      maximum: 255
+>  
+> +  qca,dac:
+> +    description:
+> +      Values for MDAC and EDAC to adjust amplitude, bias current settings,
+> +      and error detection and correction algorithm. Only set in a PHY to PHY
+> +      link architecture to accommodate for short cable length.
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    items:
+> +      - items:
+> +          - description: value for MDAC. Expected 0x10, if set
+> +          - description: value for EDAC. Expected 0x10, if set
 
-Okay, thanks for the suggestions. Will merge 2K0300-related stuff into
-loongson,ls2k-clk.yaml in the next version.
+If this is fixed to 0x10, then this is fully deducible from compatible.
+Drop entire property.
 
-Thanks,
-Yao Zi
+> +      - maxItems: 1
+> +
+> +  qca,eth-ldo-enable:
+
+qcom,tcsr-syscon to match property already used.
+
+> +    description:
+> +      Register in TCSR to enable the LDO controller to supply
+> +      low voltages to the common ethernet block (CMN BLK).
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    items:
+> +      - items:
+> +          - description: phandle of TCSR syscon
+> +          - description: offset of TCSR register to enable the LDO controller
+> +      - maxItems: 1
+You listed two items, but second is just one item? Drop.
+
+Best regards,
+Krzysztof
 
