@@ -1,144 +1,197 @@
-Return-Path: <linux-kernel+bounces-662656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170C7AC3DE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:30:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7BFAC3DD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA0D1896A6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:30:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B69A174B39
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104771F5413;
-	Mon, 26 May 2025 10:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F30D1F4CB1;
+	Mon, 26 May 2025 10:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="KCBqZl1Z"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l2n7yzCQ"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456FD1F4E4F;
-	Mon, 26 May 2025 10:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40614C2C9;
+	Mon, 26 May 2025 10:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748255414; cv=none; b=dhKTjQ1CSDgnWttU+Zs6zTEgemOrnMJqFBNR87llROLgeSBfrw7g5HCZE+7fAICAbvWBJoksvnKy0wpZRItVWzVdUdy0a9wpTc7bi3afyIbr2d5VmPPrzpBAElz2mrifPBaOvHOU37rO0t0Vu0SzU5FJMcR3rQ1Zf5MhT0TAM2E=
+	t=1748255223; cv=none; b=m8EsNEG2ttzNb9uJ8J6e5rb47KSwRcCAMz/PVt59XJb7dnApubjQxz2199QSSfbk3pc/Fh2ocj8po24z1jtvH1aF2cnxpVQwCug2b056f4qj7/AEet0fRkSzMTkmCZITibxcvgYRSFU1OU2g5kQyDsH+lm2X7yOVl5s6fGve534=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748255414; c=relaxed/simple;
-	bh=evADbRF2EWOAqmWvpPFwz11yO+Rquk4eQojofDihrGA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n+62NxEQ2yt51fu00pAY65hPBMWy2OJaRiCIizZcnHm2Z7V9KY01lPl63AI1yZooXm/nZOk7sZ+QTNpMO0zyGt5vGgQe6JkJ0YOiZVK8StKLba6Pim5Eg29Andf/GbHuBNt5sOJ9VLlaryzxlJVDqel1A7O47OjmjSSvFdO5I1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=KCBqZl1Z; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 63c214643a1c11f082f7f7ac98dee637-20250526
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=91e5x2EcR5Mt3gBhF7/AndsuLuz3EaR21v2cOsb+1pk=;
-	b=KCBqZl1ZO+kSuZNNZzRv/SND//y8NtY1mE0rWoe152sRgjMbrHjC9BH79g9U9cG2KqxfP5L/sg/f901LK3VwoOkn+8Xgynfd7VqDgAeyyeZQebnJ4dvuSzFEB7UzFcU8YcL7SccKqWC7DBn+Hp2Mo+s++Nz2uMwEy32WnAwh0/8=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:1806e5e4-1638-4f9f-8053-b2b5467b2ce0,IP:0,UR
-	L:0,TC:0,Content:-25,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:-55
-X-CID-META: VersionHash:0ef645f,CLOUDID:c9c0bc47-ee4f-4716-aedb-66601021a588,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:2,
-	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
-	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 63c214643a1c11f082f7f7ac98dee637-20250526
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
-	(envelope-from <mason-cw.chang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1619150673; Mon, 26 May 2025 18:30:05 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Mon, 26 May 2025 18:30:02 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Mon, 26 May 2025 18:30:03 +0800
-From: Mason Chang <mason-cw.chang@mediatek.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
-	<lukasz.luba@arm.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?=
-	<nfraprado@collabora.com>, Julien Panis <jpanis@baylibre.com>, Nicolas Pitre
-	<npitre@baylibre.com>, Colin Ian King <colin.i.king@gmail.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, "Chen-Yu
- Tsai" <wenst@chromium.org>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Frank Wunderlich
-	<frank-w@public-files.de>, Daniel Golle <daniel@makrotopia.org>, Steven Liu
-	<steven.liu@mediatek.com>, Sam Shih <sam.shih@mediatek.com>
-CC: Mason Chang <mason-cw.chang@mediatek.com>
-Subject: [PATCH 3/3] thermal/drivers/mediatek/lvts_thermal: add mt7988 lvts commands
-Date: Mon, 26 May 2025 18:26:59 +0800
-Message-ID: <20250526102659.30225-4-mason-cw.chang@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250526102659.30225-1-mason-cw.chang@mediatek.com>
-References: <20250526102659.30225-1-mason-cw.chang@mediatek.com>
+	s=arc-20240116; t=1748255223; c=relaxed/simple;
+	bh=dPuYs8ZY39+Pul95GDrqOBDvqKhfpBvFI4NCSRl5KXA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mnt+Q0FQWLaGh9+SqRJCpZEcN2hpEYChWdIF50SZuvrL3YXRkgGU7QqjygL3+tUNdmvWFYBgNtClx8IZI0DeWGh1YGz0CiP83RJYokzU05LtCHNr7WGV5bqWtKCqGJ8321Bv6Q0QVogq8uAZzkKvi8DLAFCHd56sn0p+hAxFSks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l2n7yzCQ; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6020ff8d51dso3159406a12.2;
+        Mon, 26 May 2025 03:27:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748255219; x=1748860019; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tHE0ZJ0TqdsK0fp/lr3eubGhx74JGPnQNFF7VOPckjI=;
+        b=l2n7yzCQzJwE1ja7lD1Dq1izITcDoQC4CSeq6/EHPzwmkN0V/BLRn3QkthjiMPMxrw
+         9y/KUqrwt6vjjeUFE5kjg1UhVNNhrGjuFgsoU3mIGqGfPXyRuPKDd95fKi2wHN+BfbeU
+         LNYLRccry2JsQ/eitpfdJUoX554rcIXWlyib+HGPMR0+BDTjH25IMt9LxvoG4KFurEy2
+         Zcc1nnF1eQUrS/i874d7oEuRL4urn8+QUEdFBiZ+CV3r0BZ0o3ri4Ca0kF3KsPffux2W
+         tI67nmvxJxx3NSGtzhIpzSqiIffigAc2t597/7sfgmUDViqnbYT3Vj8L7dMbYQkRjnWb
+         xbzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748255219; x=1748860019;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tHE0ZJ0TqdsK0fp/lr3eubGhx74JGPnQNFF7VOPckjI=;
+        b=WOfjDe8HxsiIXTJBPRcKxTzqYBAIErnZM/qVAUkjfFSV6rsJgXQUX6Pq/DfqYHARPg
+         whn1zH19rfnL1rQuSv6x0aOOrb0cwk0nfReQVBK3J9kw/r7B+CeplglIzLIWIAScLSGF
+         LeIgnxJfJsGVXAUt3fxRU/4PM3DEJ0fiSy/5FOiCE4xu51FUTiIitC4HDOQaH1/Rc5mV
+         x6tFWW9uBWd5IslDXzrgdkhJSSWFK4KiYjv+cSwKKivevsnh7cAciDs5j0g4KQ2YevJf
+         kwuj+AXu+k98uZXJ5A4nAiOaELe7m8qADI2xe4qYTUUy1CCTY2eJRUo/BTpbsCI02KpS
+         ErSw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3rLJl1+0BhTsO40OSzFc/LoiwOAbJB+4lkc85b+CyCy3qyZHtt2G9tWNjVSeVtbSk27jAYZahX9JR@vger.kernel.org, AJvYcCWPBzsBclEHClw+lj/q4wQe8n2gbnoP78NDlD5HT+JbX9xLhs6F4L6eDRpfLHpzEcC/3AK9dJNu5Sw4nQ==@vger.kernel.org, AJvYcCWRvV9xQ9tCHmClbW28z7tBWVWnVoBBPZYdPaPsHrvLAyPYd/IysXVOno8+xiZGV85/y2FspdjGnYfeftoD@vger.kernel.org, AJvYcCWc/8V5zhK92MoSniIPBF6LjVyop9UDNpOz9dbUAj6Q9Nm/hKjpf78CFxMas9E+fMxh2jzrS/HqUKrS@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzakUSqOa/i998+z4KTWgkvRgwJO6FxX9ruCJR0aZlL9dHtnah
+	LyUWONNWG61nqHT8DLNrSv4hdk6/3ns9Rz+gfiNi2OhocBOnxpLwX3dW
+X-Gm-Gg: ASbGncsAPJ+Odr73FY4CIyNPKTSSfVW1wvnDFmX2e6R9oFPiJk9E+4ha+wrptR5DqGL
+	At8JFjUelr3VviQlKksYrtLzDuq1Phh8XrjWIhFHLz55NdN8iMZn0zHaJxSERGuY2y1HCoCYHss
+	Gyn4DESrpvBeoq8YbeOr9x7I2EKdwF0I3qdmSyoFRfT6m22Rz9aNgpIvfk06C0s27sKTFX0NJqv
+	m4vmJe8baEN+vmvfyaRfO8X8DTHIdto2+br8VbS51TbfLGdLD55PsJJ3nb0YyxE/yS6ZwO0xokI
+	MyF14ZnkfHzoVCwbzAF8rwrk7erlvEi/thNi1ghcYzbTfOZuuzxghejG
+X-Google-Smtp-Source: AGHT+IH7cr16I1HNzlBRugMrtVWhxbTsl2cH5hAPpyL+USeIX4OTS7khiNdg6zTIN2LNgUpEbMagFA==
+X-Received: by 2002:a17:907:da7:b0:acb:88ac:e30f with SMTP id a640c23a62f3a-ad85b18309bmr789057066b.20.1748255219310;
+        Mon, 26 May 2025 03:26:59 -0700 (PDT)
+Received: from [100.73.1.233] ([185.128.9.226])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d27192dsm1655720766b.71.2025.05.26.03.26.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 May 2025 03:26:58 -0700 (PDT)
+Message-ID: <b198ab8bcae5e9a31164bb565a089d14ff297b81.camel@gmail.com>
+Subject: Re: [PATCH v3 04/10] iio: adc: ad4170: Add support for calibration
+ bias
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+ 	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com, 
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ robh@kernel.org, 	krzk+dt@kernel.org, conor+dt@kernel.org,
+ linus.walleij@linaro.org, brgl@bgdev.pl, 	marcelo.schmitt1@gmail.com
+Date: Mon, 26 May 2025 11:27:02 +0100
+In-Reply-To: <6213d7b7fb913520f1f143e7ccf8fe16b8579d0c.1747083143.git.marcelo.schmitt@analog.com>
+References: <cover.1747083143.git.marcelo.schmitt@analog.com>
+	 <6213d7b7fb913520f1f143e7ccf8fe16b8579d0c.1747083143.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
 
-These commands are necessary to avoid severely abnormal and inaccurate
-temperature readings that are caused by using the default commands.
+On Tue, 2025-05-13 at 09:34 -0300, Marcelo Schmitt wrote:
+> Add support for ADC calibration bias/offset configuration.
+>=20
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
+> Change log v2 -> v3
+> - New patch spun out of the base driver patch.
+>=20
+> =C2=A0drivers/iio/adc/ad4170.c | 26 ++++++++++++++++++++++++++
+> =C2=A01 file changed, 26 insertions(+)
+>=20
+> diff --git a/drivers/iio/adc/ad4170.c b/drivers/iio/adc/ad4170.c
+> index 1df214f7fdec..b02fdd25b4c8 100644
+> --- a/drivers/iio/adc/ad4170.c
+> +++ b/drivers/iio/adc/ad4170.c
+> @@ -643,6 +643,7 @@ static const struct iio_chan_spec ad4170_channel_temp=
+late
+> =3D {
+> =C2=A0	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(IIO_CHAN_INFO_SCALE) |
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(IIO_CHAN_INFO_OFFSET) |
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(IIO_CHAN_INFO_CALIBBIAS) |
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(IIO_CHAN_INFO_CALIBSCALE),
+> =C2=A0	.info_mask_separate_available =3D BIT(IIO_CHAN_INFO_SCALE),
+> =C2=A0	.scan_type =3D {
+> @@ -954,6 +955,9 @@ static int ad4170_read_raw(struct iio_dev *indio_dev,
+> =C2=A0		pga =3D FIELD_GET(AD4170_AFE_PGA_GAIN_MSK, setup->afe);
+> =C2=A0		*val =3D chan_info->offset_tbl[pga];
+> =C2=A0		return IIO_VAL_INT;
+> +	case IIO_CHAN_INFO_CALIBBIAS:
+> +		*val =3D setup->offset;
 
-Signed-off-by: Mason Chang <mason-cw.chang@mediatek.com>
----
- drivers/thermal/mediatek/lvts_thermal.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+same nit...
 
-diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-index 5b7bf29a7..4d49482f0 100644
---- a/drivers/thermal/mediatek/lvts_thermal.c
-+++ b/drivers/thermal/mediatek/lvts_thermal.c
-@@ -1443,6 +1443,8 @@ static int lvts_resume(struct device *dev)
- }
- 
- static const u32 default_conn_cmds[] = { 0xC103FFFF, 0xC502FF55 };
-+static const u32 mt7988_conn_cmds[] = { 0xC103FFFF, 0xC502FC55 };
-+
- /*
-  * Write device mask: 0xC1030000
-  */
-@@ -1453,6 +1455,12 @@ static const u32 default_init_cmds[] = {
- 	0xC10300FC, 0xC103009D, 0xC10300F1, 0xC10300E1
- };
- 
-+static const u32 mt7988_init_cmds[] = {
-+	0xC1030300, 0xC1030420, 0xC1030500, 0xC10307A6, 0xC1030CFC,
-+	0xC1030A8C, 0xC103098D, 0xC10308F1, 0xC1030B04, 0xC1030E01,
-+	0xC10306B8
-+};
-+
- /*
-  * The MT8186 calibration data is stored as packed 3-byte little-endian
-  * values using a weird layout that makes sense only when viewed as a 32-bit
-@@ -1747,11 +1755,11 @@ static const struct lvts_ctrl_data mt8195_lvts_ap_data_ctrl[] = {
- 
- static const struct lvts_data mt7988_lvts_ap_data = {
- 	.lvts_ctrl	= mt7988_lvts_ap_data_ctrl,
--	.conn_cmd	= default_conn_cmds,
--	.init_cmd	= default_init_cmds,
-+	.conn_cmd	= mt7988_conn_cmds,
-+	.init_cmd	= mt7988_init_cmds,
- 	.num_lvts_ctrl	= ARRAY_SIZE(mt7988_lvts_ap_data_ctrl),
--	.num_conn_cmd	= ARRAY_SIZE(default_conn_cmds),
--	.num_init_cmd	= ARRAY_SIZE(default_init_cmds),
-+	.num_conn_cmd	= ARRAY_SIZE(mt7988_conn_cmds),
-+	.num_init_cmd	= ARRAY_SIZE(mt7988_init_cmds),
- 	.temp_factor	= LVTS_COEFF_A_MT7988,
- 	.temp_offset	= LVTS_COEFF_B_MT7988,
- 	.gt_calib_bit_offset = 24,
--- 
-2.45.2
+> +		return IIO_VAL_INT;
+> =C2=A0	case IIO_CHAN_INFO_CALIBSCALE:
+> =C2=A0		*val =3D setup->gain;
+> =C2=A0		return IIO_VAL_INT;
+> @@ -1083,6 +1087,25 @@ static int ad4170_set_pga(struct ad4170_state *st,
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> +static int ad4170_set_calib_offset(struct ad4170_state *st,
+> +				=C2=A0=C2=A0 struct iio_chan_spec const *chan, int val)
+> +{
+> +	struct ad4170_chan_info *chan_info =3D &st->chan_infos[chan->address];
+> +	struct ad4170_setup *setup =3D &chan_info->setup;
+> +	u32 old_offset;
+> +	int ret;
+> +
+> +	guard(mutex)(&st->lock);
+> +	old_offset =3D setup->offset;
+> +	setup->offset =3D val;
 
+Why doing the above dance?
+
+> +
+> +	ret =3D ad4170_write_channel_setup(st, chan->address, false);
+> +	if (ret)
+> +		setup->offset =3D old_offset;
+> +
+
+We could update the value in here.
+
+> +	return ret;
+
+I guess ret > 0 is not a thing? I find it more readable:
+
+return 0;
+
+It makes it clear we got success :)
+
+- Nuno S=C3=A1
+
+> +}
+> +
+> =C2=A0static int ad4170_set_calib_gain(struct ad4170_state *st,
+> =C2=A0				 struct iio_chan_spec const *chan, int val)
+> =C2=A0{
+> @@ -1111,6 +1134,8 @@ static int __ad4170_write_raw(struct iio_dev *indio=
+_dev,
+> =C2=A0	switch (info) {
+> =C2=A0	case IIO_CHAN_INFO_SCALE:
+> =C2=A0		return ad4170_set_pga(st, chan, val, val2);
+> +	case IIO_CHAN_INFO_CALIBBIAS:
+> +		return ad4170_set_calib_offset(st, chan, val);
+> =C2=A0	case IIO_CHAN_INFO_CALIBSCALE:
+> =C2=A0		return ad4170_set_calib_gain(st, chan, val);
+> =C2=A0	default:
+> @@ -1139,6 +1164,7 @@ static int ad4170_write_raw_get_fmt(struct iio_dev
+> *indio_dev,
+> =C2=A0	switch (info) {
+> =C2=A0	case IIO_CHAN_INFO_SCALE:
+> =C2=A0		return IIO_VAL_INT_PLUS_NANO;
+> +	case IIO_CHAN_INFO_CALIBBIAS:
+> =C2=A0	case IIO_CHAN_INFO_CALIBSCALE:
+> =C2=A0		return IIO_VAL_INT;
+> =C2=A0	default:
 
