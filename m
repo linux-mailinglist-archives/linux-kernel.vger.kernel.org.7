@@ -1,216 +1,151 @@
-Return-Path: <linux-kernel+bounces-662960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7AAAAC41D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 16:51:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09774AC41CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 16:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC9D3BB31A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:51:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD842189B246
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6986121018A;
-	Mon, 26 May 2025 14:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5B8212B0C;
+	Mon, 26 May 2025 14:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="X20GFcMW"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lDnKj95H";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zm8REmFi"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18797202C26
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 14:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4674E202F83;
+	Mon, 26 May 2025 14:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748271077; cv=none; b=Pe9yOc3Yn1o4Y9DIMHiZBpTMQDUk1teIDsqzeuexQCZH+xHDZF2ggjhdRJ0WTBWg6vuv6+4p34NYKwnJUQTHZEFffGtjYJcYYSYkRKvjIxyWe6zT+kSyPdY6couTfQDUlYIxjWhN7DFcGhtKafBhgkYZ1SFXgU+MuRHvipT10e4=
+	t=1748271024; cv=none; b=NsobHpoFdE4P6bOYYoAs+wm8MZ75NM4hf1ZTy3VF/SJddYJgJMHoPYMdL1C8o+4g7A8ntOQd1XvwyyxrPFu+CLmWzCSZMJPqAebVTU+VIUfu+mFMEZCFl3hWEnTlxj+tzv/VlgeMFsKQD51obIB8M7iOKXO/J0G6IRQtXCd9A4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748271077; c=relaxed/simple;
-	bh=Iq2cMeORITc8EnmBZaSE7cge3j/B4D8DpDjOfzzRHXE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fQmB4nXTOgqPYBn0+HPELmxJ8wncxWOAIuJAptZmZSQ7amRHoDZQVreTGs2H9JD3J7z2ySc8NysytTfFwGUSwVqu7C/zdfShll6HxG1a4JkShzronKp8nFXwoOeP4CMVuEDcNVRsMdCSj4Zdmt4sVlqwRRrkkdH/jKihYvI5uqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=X20GFcMW; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QCYdqF000346;
-	Mon, 26 May 2025 14:50:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=z1zMbJWS4TH8bmZrI
-	MKw//pZQFS0ilbqi+ycdqO3B7M=; b=X20GFcMWUfO5WVDMLqxtQ8/nKt0/f6HZV
-	5bGWpDEsuLeZV8keKeE/FgjGGJOJ3P/HZLqB/gQmg9bHBUQEuSfqBo1UMJ4hLgPL
-	d9ULqO35QZ5f0qUU7a6wBbAiCqyY58YLbNvSOSDlxXSc1Vao8McVuzt0LcvQFYxT
-	r0CBkpK7mRxotNU+xJky7rVoEVk1yhAHTAjTAftcBtzZ5vC1FcPQXCztAp/FZAeO
-	DYLgBGJsK7lrb5lI+0K9ORP7qQYcrJWclQW9MkT3j+fea22okW+xJlj0EvP93PLe
-	uJGQ6udcPcmPNMtOSYKeCnamxfGMQksQmPqPG9GKA15gyNUCbQSUQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46u4hn9tkj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 May 2025 14:50:53 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54QEcxhw026243;
-	Mon, 26 May 2025 14:50:53 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46u4hn9tkh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 May 2025 14:50:53 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54QCLp05010712;
-	Mon, 26 May 2025 14:50:52 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46uru0epfb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 May 2025 14:50:52 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54QEom8u52167014
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 26 May 2025 14:50:48 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6455D20040;
-	Mon, 26 May 2025 14:50:48 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BC5852004B;
-	Mon, 26 May 2025 14:50:45 +0000 (GMT)
-Received: from ltczz402-lp1.aus.stglabs.ibm.com (unknown [9.40.194.31])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 26 May 2025 14:50:45 +0000 (GMT)
-From: Donet Tom <donettom@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>, Oscar Salvador <osalvador@suse.de>,
-        Zi Yan <ziy@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
-        Danilo Krummrich <dakr@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Yury Norov <yury.norov@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Nilay Shroff <nilay@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        Donet Tom <donettom@linux.ibm.com>
-Subject: [PATCH v6 5/5] drivers/base/node: Rename __register_one_node() to register_one_node()
-Date: Mon, 26 May 2025 09:50:13 -0500
-Message-ID: <6a2bd4deee8a9274e0d3dafe965c0119b2191b7d.1748270306.git.donettom@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <bc754a238aa91fa36be463985ccde66aac7055e7.1748270306.git.donettom@linux.ibm.com>
-References: <bc754a238aa91fa36be463985ccde66aac7055e7.1748270306.git.donettom@linux.ibm.com>
+	s=arc-20240116; t=1748271024; c=relaxed/simple;
+	bh=6aKzDgGB/ZUmFcoUldyOCp1+E10okRiX8GJYWNpjka0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PWmCzNoqBwN02WSz6hgmJHG0s/9dA4EU499/UJj2MxoWghB4HhxsSPED3e8swXS/dZVYObRnL277Kia7M32KzwHcu1hpFbd/8u+jDNEam164alH3fLew8jgXZqNfReXy/6Xt866mQJ9JJNUgkf3vgb/lvKg8AUdBxLRWu39EEyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lDnKj95H; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zm8REmFi; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 26 May 2025 16:50:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1748271020;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LNlsAOL7ZgwI2HEsBSEBPxt6J5Za4EdYqqyFjUCPx+s=;
+	b=lDnKj95HzNnLs+kNUe+FsdhY6xmb8zMvOyt3YglhAP4AMP1McZ0Q0WRq30XvZ1dD8AHl96
+	EKaEYdE7+Ref10HJ7RgivJBYUoIUsl2/HFxLcm/jABo+S75ibkApABSHxCIJbFfnVBjWDY
+	+w1UuaI2jAV8MB58wsgr0q+Mz7ZsylyNpQx2A9VtnD3ifETfyqdJ2GaMyyH+bddcsTmG/R
+	tudzmruX3Dvk2rH3i+WuyqbrckCRdcT6XcuilC50BwB3QudmW8NcyzbMoEPnrTKXwyajek
+	8yUA+jn8dg70ny23F9a/XWbZYGT0vfmdXtz6XoTRslHHkwyOniU90HnYGL5o8g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1748271020;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LNlsAOL7ZgwI2HEsBSEBPxt6J5Za4EdYqqyFjUCPx+s=;
+	b=zm8REmFiKPwOTZ24+PZoOb7jWmzgaIsmL406pqgMB9q9a/Alo73hYSk10LJpi6Wb0fJKVA
+	9XxmVxesYvMMHIAQ==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Nicolas Schier <nicolas.schier@linux.dev>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Willy Tarreau <w@1wt.eu>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 09/11] kunit: uapi: Add example for UAPI tests
+Message-ID: <20250526164038-12259c68-586f-4a24-a814-8ffed5778742@linutronix.de>
+References: <20250407-kunit-kselftests-v2-0-454114e287fd@linutronix.de>
+ <20250407-kunit-kselftests-v2-9-454114e287fd@linutronix.de>
+ <20250526-marvellous-abstract-koala-317cb4@l-nschier-aarch64>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=HvB2G1TS c=1 sm=1 tr=0 ts=68347fcd cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=TOWdrs_80VijkQ5-_Q4A:9
-X-Proofpoint-GUID: L9YG9Z0U6pdcl2KylbHoKxa4EPuOaSgG
-X-Proofpoint-ORIG-GUID: hwYt7O5gek2eQZPs6b3DFrFhwS7BUQ0o
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDEyNCBTYWx0ZWRfXxidBpmOfzPKB JOgse1ajFprNFvlOqFy8a4TtOPrIrzHJtwAhJaHzjbinRjcGhMkNzR4Lyka/OYbKY081hSuBUjR Qx08s3UAZ/KqWhMztya+/7By3e87Atb8Xlz3pTChB74Z+2XP4ixQotRmxOJnXzasbodG2XK6dRL
- XAGkXQVzNoyCLCBthNKINwQe7MfDGGspj/Jwn8QalMFE6CsdTjF9YqGgH44WhYaCZlndkTw+vra XjGgoHk9T5s7rZaMZla0FRmIFdLLFCh6tFCO9zOurmdL1d1s5uTIuwnTItDm9brp/QJ7N5e0jl6 u7m9/HEVsyY/PAxkUT+jnlKoQEKr7zbjq/rBaROGjX8FO36qM+v9HSe7LOsM+GhEr/udRdM+44k
- Hr22xoZtDBL+KZ4demehdOViu+WrBDXMLAo1OFkBf05SmO8iWJpowwyY3eQr52KE2r+ZZ1Fl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-26_07,2025-05-26_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 bulkscore=0 lowpriorityscore=0 phishscore=0
- clxscore=1015 malwarescore=0 mlxlogscore=964 impostorscore=0 spamscore=0
- mlxscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505260124
+In-Reply-To: <20250526-marvellous-abstract-koala-317cb4@l-nschier-aarch64>
 
-The register_one_node() function was a simple wrapper around
-__register_one_node(). To simplify the code, register_one_node()
-has been removed, and __register_one_node() has been renamed to
-register_one_node().
+On Mon, May 26, 2025 at 04:22:02PM +0200, Nicolas Schier wrote:
+> On Mon, Apr 07, 2025 at 09:42:46AM +0200, Thomas Weiﬂschuh wrote:
+> > Extend the example to show how to run a userspace executable.
+> > 
+> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> > ---
+> >  lib/kunit/.kunitconfig         |  2 ++
+> >  lib/kunit/Makefile             |  9 ++++++++-
+> >  lib/kunit/kunit-example-test.c | 15 +++++++++++++++
+> >  lib/kunit/kunit-example-uapi.c | 22 ++++++++++++++++++++++
+> >  4 files changed, 47 insertions(+), 1 deletion(-)
+> 
+> 
+> Adding this diff allows 'make clean' to clean up the UAPI test binary:
+> 
+> 
+> diff --git a/lib/Makefile b/lib/Makefile
+> --- a/lib/Makefile
+> +++ b/lib/Makefile
+> @@ -112,8 +112,6 @@ CFLAGS_REMOVE_test_fpu_impl.o += $(CC_FLAGS_NO_FPU)
+>  # Some KUnit files (hooks.o) need to be built-in even when KUnit is a module,
+>  # so we can't just use obj-$(CONFIG_KUNIT).
+> -ifdef CONFIG_KUNIT
+> -obj-y += kunit/
+> -endif
+> +obj-$(if $(CONFIG_KUNIT),y) += kunit/
 
-Signed-off-by: Donet Tom <donettom@linux.ibm.com>
----
- arch/powerpc/platforms/pseries/pci_dlpar.c |  2 +-
- drivers/base/node.c                        |  4 ++--
- include/linux/node.h                       | 13 +------------
- mm/memory_hotplug.c                        |  2 +-
- 4 files changed, 5 insertions(+), 16 deletions(-)
+Wouldn't the following be sufficient?
 
-diff --git a/arch/powerpc/platforms/pseries/pci_dlpar.c b/arch/powerpc/platforms/pseries/pci_dlpar.c
-index 52e2623a741d..aeb8633a3d00 100644
---- a/arch/powerpc/platforms/pseries/pci_dlpar.c
-+++ b/arch/powerpc/platforms/pseries/pci_dlpar.c
-@@ -29,7 +29,7 @@ struct pci_controller *init_phb_dynamic(struct device_node *dn)
- 	nid = of_node_to_nid(dn);
- 	if (likely((nid) >= 0)) {
- 		if (!node_online(nid)) {
--			if (__register_one_node(nid)) {
-+			if (register_one_node(nid)) {
- 				pr_err("PCI: Failed to register node %d\n", nid);
- 			} else {
- 				update_numa_distance(dn);
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index 9d0977fa50e3..94b8ac116aa4 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -852,7 +852,7 @@ void register_memory_blocks_under_node_hotplug(int nid, unsigned long start_pfn,
- }
- #endif /* CONFIG_MEMORY_HOTPLUG */
- 
--int __register_one_node(int nid)
-+int register_one_node(int nid)
- {
- 	int error;
- 	int cpu;
-@@ -959,7 +959,7 @@ void __init node_dev_init(void)
- 	 * to already created cpu devices.
- 	 */
- 	for_each_online_node(i) {
--		ret =  __register_one_node(i);
-+		ret =  register_one_node(i);
- 		if (ret)
- 			panic("%s() failed to add node: %d\n", __func__, ret);
- 	}
-diff --git a/include/linux/node.h b/include/linux/node.h
-index 75b036a100d2..88bceebcbfa5 100644
---- a/include/linux/node.h
-+++ b/include/linux/node.h
-@@ -128,14 +128,7 @@ extern void unregister_node(struct node *node);
- #ifdef CONFIG_NUMA
- extern void node_dev_init(void);
- /* Core of the node registration - only memory hotplug should use this */
--extern int __register_one_node(int nid);
--
--/* Registers an online node */
--static inline int register_one_node(int nid)
--{
--	return __register_one_node(nid);
--}
--
-+extern int register_one_node(int nid);
- extern void unregister_one_node(int nid);
- extern int register_cpu_under_node(unsigned int cpu, unsigned int nid);
- extern int unregister_cpu_under_node(unsigned int cpu, unsigned int nid);
-@@ -148,10 +141,6 @@ extern int register_memory_node_under_compute_node(unsigned int mem_nid,
- static inline void node_dev_init(void)
- {
- }
--static inline int __register_one_node(int nid)
--{
--	return 0;
--}
- static inline int register_one_node(int nid)
- {
- 	return 0;
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index f734cc924b51..4dadd156f836 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1571,7 +1571,7 @@ int add_memory_resource(int nid, struct resource *res, mhp_t mhp_flags)
- 		 * We online node here. We can't roll back from here.
- 		 */
- 		node_set_online(nid);
--		ret = __register_one_node(nid);
-+		ret = register_one_node(nid);
- 		BUG_ON(ret);
- 	}
- 
--- 
-2.43.5
+obj-y += kunit/
 
+The the kunit Makefile doesn't do anything if CONFIG_KUNIT=y and AFAIK for
+directories obj-m and obj-y should do the same.
+
+>  
+>  ifeq ($(CONFIG_DEBUG_KOBJECT),y)
+>  CFLAGS_kobject.o += -DDEBUG
+> 
+> 
+> 
+> plus the 'clean-files' addition below.
+
+<snip>
+
+> > diff --git a/lib/kunit/Makefile b/lib/kunit/Makefile
+> > index 989933dab9ad2267f376db470b876ce2a88711b4..1b6be12676f89cafa34f0093d8136b36f4cf5532 100644
+> > --- a/lib/kunit/Makefile
+> > +++ b/lib/kunit/Makefile
+> > @@ -30,4 +30,11 @@ obj-$(CONFIG_KUNIT_TEST) +=		string-stream-test.o
+> >  obj-$(CONFIG_KUNIT_TEST) +=		assert_test.o
+> >  endif
+> >  
+> > -obj-$(CONFIG_KUNIT_EXAMPLE_TEST) +=	kunit-example-test.o
+> > +userprogs +=				kunit-example-uapi
+> 
+> clean-files +=				kunit-example-uapi
+
+This shouldn't be necessary as $(userprogs) is automatically added to
+__clean-files in scripts/Makefile.clean.
+
+> > +kunit-example-uapi-userccflags :=	-static
+> > +kunit-example-uapi-nolibc :=		$(CONFIG_ARCH_HAS_NOLIBC)
+> > +blobs +=				kunit-example-uapi.blob.o
+> > +
+> > +obj-$(CONFIG_KUNIT_EXAMPLE_TEST) +=	kunit-example-mod.o
+> > +kunit-example-mod-y +=			kunit-example-test.o
+> > +kunit-example-mod-$(CONFIG_KUNIT_UAPI) += kunit-example-uapi.blob.o
+> 
+> -- 
+> Nicolas Schier
 
