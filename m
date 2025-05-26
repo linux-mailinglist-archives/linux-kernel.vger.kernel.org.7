@@ -1,197 +1,235 @@
-Return-Path: <linux-kernel+bounces-662249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76311AC37B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 03:33:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CE3BAC37BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 03:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3044C1681E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 01:33:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CED61893376
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 01:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5137386250;
-	Mon, 26 May 2025 01:33:46 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5978E84D13;
+	Mon, 26 May 2025 01:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bYwp58P3"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2078.outbound.protection.outlook.com [40.107.93.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA86249EB;
-	Mon, 26 May 2025 01:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748223225; cv=none; b=ALBxxEK6VxZwdsdA0h8rmbebWOrOdHWivnCYd9OtbS/eSi7HjyjHChPZwvjqVNq26Sq15GlKTZhmfpDIHz6QxgkrE47/TMyEbxplGgFjNZEifGLfiTJ2kGb40Tz9I+342qs7KR6CU9CwJ9ur6m4tkuAKl71Ejh0eHLjiK7L9HR0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748223225; c=relaxed/simple;
-	bh=mLOejERJ3exTBvss/m5cpLwsxlTyx6iIqA2MxkKkNEM=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Y+2hYm49QlxXZxMC7pMEgftcfcPQUoknA3h48XmvS/fAumT8/w3matiM9bozVWGzpRvWEeGPie1gyZOQSpMpd+3V4uAJylyHV0uZ8rNU3ra9/as31l0qrnPqvZcDLnNrwczXMduZ1SuuyaFb8P4KQDXaEPQIOYiMNIVQTwcjxCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4b5JDt6Ky1z4f3jq5;
-	Mon, 26 May 2025 09:33:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id E67AA1A196B;
-	Mon, 26 May 2025 09:33:38 +0800 (CST)
-Received: from [10.174.178.185] (unknown [10.174.178.185])
-	by APP4 (Coremail) with SMTP id gCh0CgBXu1_xxDNofXQbNg--.18534S3;
-	Mon, 26 May 2025 09:33:38 +0800 (CST)
-Subject: Re: [PATCH 1/2] ftrace: fix UAF when lookup kallsym after ftrace
- disabled
-To: Steven Rostedt <rostedt@goodmis.org>
-References: <20250523083945.3390587-1-yebin@huaweicloud.com>
- <20250523083945.3390587-2-yebin@huaweicloud.com>
- <20250523135452.626d8dcd@gandalf.local.home>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- mark.rutland@arm.com, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yebin10@huawei.com
-From: yebin <yebin@huaweicloud.com>
-Message-ID: <6833C4F1.3030300@huaweicloud.com>
-Date: Mon, 26 May 2025 09:33:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.1.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA1C249EB
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 01:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748223245; cv=fail; b=ud8hwWyR+0sQmQbFiEQyedZHH5xL07GLHiHsiycQVz+//0HvQOmdGSCT3USqY+SyTGbOy38TbH3N30LjnScBfhOF3Hu0evcqZvVVnx4QbmKeJcIxWpELWCdVRLAs1+R7W8I31wDQTi3KQSkmsM+4UnEHOtWz5QcFvSzA/EmVUzw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748223245; c=relaxed/simple;
+	bh=KOIi2DEhVRHjMspRthxrMHCDBU7uA8sYktjfWfDXt7k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PyD7GkGsqdiNbJFizn9fV3dWT81OMnfxwOrpfcIwazx1D5FKQxrUGtG+osHosEhG/gxsqjNNuT9DbP+kBzfaFQg+Fr+561bl0otqR+2yghcDWHSCSVJCmIuG+2FHyMmfAR8yH/SUBEYT4H0L3Uw2f/NrbYs624mz9r73wc3kDaM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bYwp58P3; arc=fail smtp.client-ip=40.107.93.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gYUWg+tHh+FDAZ0aCKNElaPxaozk8Z2+x9mZJevrD32yYUAb3XR2og5V9L8WtrTmkuHROEhAd9XSvvOxKx2DVv415DcklCiySyd0ZnzsBGSlT9o97fj2gy9/TyX4LDxyhQ0GS7VBC58LXEhYUEkUiX9tdUEftbyLxz76d1O3R6JUDLU/Zhzg8Hy+6SolFrh0+uIfOhOnEhhMstbWDbrmx1VqE9ZZDQDHy2uOqUN7FqSjgYAEH0x6rbLla3azNbo4RWaDN2busn9v6ov5hyHBAb+9zzHqaGKfUyR0V8suqUK1eOCOgBMbM9CX2ji5twIeaQpAPt6B0wUTSpe6+b9tRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WGXjnj0lpxRu3x1EN3gVapykuV/QgW47NraBJhCjIhk=;
+ b=Qc0GfJytNL84t/OuhhxiHBgbKyQeYT7XK+ON4gxePqHcrYwsDCnTr+yCHkFY4nrERu3yjzjQcNx98L+aZmmA+oKpAdHL2qe2tcwCxNjGw8Fv4uMkTBch+FhL1wUVxMRO+4YnWaQpthGNdMA2DJz5PKd0ZrUaCx6gXwre53UuwTNv50KFTuyxklaRxaiDUyW7CzflT6c4VgcWxCHsTW9XupjCduDjoyRO+kpyu/BReyjk9Zo+oje4JKM75lVU3tl0jopOkISngPTggOdhVqvmvLbuwqKLmLjk2WW+ntBJhjxsrswfxtQlhskFV26HRDADKVFjiviPf05xcGVOjOGz1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WGXjnj0lpxRu3x1EN3gVapykuV/QgW47NraBJhCjIhk=;
+ b=bYwp58P363LvJWMRUa8UxcAdCXnVXQG8XDXGcBYd/q0Nqe7O8RKk/17TXsENARorFregdFlm1fOnm+5H1NoWQX7r5aoN2SqpN11G46dSTJAU6ckO72gQIBuVKgz4RZ9uj67QpTjbpRpZ9jjCsfvgHpPa/ILiQJuw9cpHX92mMiRySLh1vcwO3e3aYoGZH+NBevpqnXu7njApwrMfcnJY693UGnvpq5LfOcFMv6K893c7czQ2gv+XQIfsRo4M3AX2B0HK1fmM1yTvbPHnRA5ikC3Fs1keeyKsYFsFHdzv9trwTQZzpm6j8qL2QexVDUqpMOQQMW5UpfVuOprnmLlQEQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ DS0PR12MB8442.namprd12.prod.outlook.com (2603:10b6:8:125::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8746.30; Mon, 26 May 2025 01:34:01 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%4]) with mapi id 15.20.8769.022; Mon, 26 May 2025
+ 01:34:01 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: David Hildenbrand <david@redhat.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, <linux-mm@kvack.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Mel Gorman <mgorman@techsingularity.net>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Brendan Jackman <jackmanb@google.com>, Richard Chang <richardycc@google.com>,
+ <linux-kernel@vger.kernel.org>, Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH v5 6/6] mm/page_isolation: remove migratetype parameter
+ from more functions.
+Date: Sun, 25 May 2025 21:33:59 -0400
+X-Mailer: MailMate (2.0r6255)
+Message-ID: <B94EE1C1-ED99-4A11-AC6D-9342C89AB450@nvidia.com>
+In-Reply-To: <20250523191258.339826-7-ziy@nvidia.com>
+References: <20250523191258.339826-1-ziy@nvidia.com>
+ <20250523191258.339826-7-ziy@nvidia.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: MN0PR03CA0025.namprd03.prod.outlook.com
+ (2603:10b6:208:52f::9) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250523135452.626d8dcd@gandalf.local.home>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBXu1_xxDNofXQbNg--.18534S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWFW3Xw43Ar43AF4DuFWxJFb_yoWrGw45pF
-	WftFWqya18ZF4qk3Zruw48ury7J3yUJrW8GFs5GrWSyws8Ary0grs2va1DZFy8Jw13GrWS
-	vF4jvrnxWrWDZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2N
-	tUUUUU=
-X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS0PR12MB8442:EE_
+X-MS-Office365-Filtering-Correlation-Id: 00febeb6-162e-40a3-13e0-08dd9bf56472
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DiPWTob2D/73aw1VpgghuASHyMI1o9OIzlMSHPneV/gSpc9m/1o6rtkNmEDM?=
+ =?us-ascii?Q?nYV9hsjpZC3UdUU4CjmgyH0u7MAI4+Cda3T+yY1ojNzwO6Ci3tWwzDvssXrM?=
+ =?us-ascii?Q?REP0sHPnab2bMByBBpSjIUoVVXDqEKCVffykq6PMagoIiMbFVZHnwKNYfJqH?=
+ =?us-ascii?Q?bwZOULpRIhBnHQC/j65z4VHWvAbp2iOcQQ4K99DKGLbRsVL1dBNopKU43sbU?=
+ =?us-ascii?Q?0IifvCYTPZ1Gd0nypGpd+IRuPwIl40YERrYeoGN6KW+DnbMgC7S8sNkTRjvU?=
+ =?us-ascii?Q?0D1afwkDLmpc6SFg4A+6iIBbIV+9I82jPryiUcfQyXiBxmG25ht36yfsKdkM?=
+ =?us-ascii?Q?XOsfajPUcAhIZnRs57jU66nhcSuq7nnGre9EOb96U6c1Dskvs/26Tn0nI4UQ?=
+ =?us-ascii?Q?UOsN6HITy79VCTKWxUjZwP/3A77UojA9g4UWOxNvuUFglsG60qu82Yge5MVG?=
+ =?us-ascii?Q?PQJzU5UZK9jj+2lBRuFhOpNZYTQEsbthzCKmhrlADd00P5GynZ1xaxjhkjk+?=
+ =?us-ascii?Q?cNVQBa9I/gFbWm1GQajFCDAocubzslw7QMTbIKh1ybQVDjfip6/luw86MrN7?=
+ =?us-ascii?Q?MNhcKyxgvTuX/R308NaXslGKp3DVDybD90VMnsBa6XAmLE7fWjI+c0Hbjlxq?=
+ =?us-ascii?Q?eeI6yB8fstzU8WvAczx11wLfXbdTaZ42VakrGjjSr6A7N9pguygOatOsO/BO?=
+ =?us-ascii?Q?ivFE+EZKL4iufY+eMEQ0r42jzcXcTS2+OI6sZpTbJmT1uHaOMGCRedfAJ8Yd?=
+ =?us-ascii?Q?QaD/Sr+9VUNYtZqOHWzGoSTEBQ8dwemGRDk7W4HH1UAKB25sDHc5LaERwzNc?=
+ =?us-ascii?Q?SHtByRAnoi2f6g5QnArhf86K3H8SkZhfxKLBTNkMC0OI6nZ2X3yvCQ+fDt4n?=
+ =?us-ascii?Q?fdBdwRshSsO4P3/Tch+Ygi0lFsV4vzwgbE/aomTsqIBWHw0sR3df6QD4ZdsY?=
+ =?us-ascii?Q?GeOaMgYfwBZsjBoBR8l/RYQc10YjzcgFItFw4VAQM/p2mIRgHNmYhEh2MQrU?=
+ =?us-ascii?Q?VHqB7v1GGcfNzaMr6oXRNBu1NwnbGb8Yonj18nGf4sEnhbjK3lqVnqDOOwl5?=
+ =?us-ascii?Q?JKAarxhF/6YXZgPGJq1HG61FR3CERtHLOIKqRsz9Eegugs3AgJvNGfBAbQMW?=
+ =?us-ascii?Q?3d0M0KqjM4J0yG9iXHftZLFkLU+ciWsQHVla4GJhkLT4PKREFFmQsHwz3zru?=
+ =?us-ascii?Q?lYrM6EfDun6GwfeeYrhEODdAu0LGf1bLze3B3Dmraz5EdfTSoDCgPwJmrlQI?=
+ =?us-ascii?Q?9qqmiP/TpiTdMToJPGyL1yr+VOsyiEB2sVXZKNR1qePuMXVEtpKEC2ox5PUU?=
+ =?us-ascii?Q?AA00ZlySWRyiryq5BOcm1VAgF3eK5MH+mFOl2Hz6pjt8voGvyzq3jNF1VJ7N?=
+ =?us-ascii?Q?H+sRKbv4y8/mSKwUo2YQopMe00wWqrdEFYBTpFGklz77Csz2amhgfZDRimsQ?=
+ =?us-ascii?Q?wijKj61Y524=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?NRhWelvhs7wXExQ78WIwMPH2N8UVETOmPa56VxEeV+/OgZoYREDkplDEYHVZ?=
+ =?us-ascii?Q?D83+bsNxUtHxvE6QgOMSHxhgWrR16G3qew0Cc63Zk91XHoSEzAs6gaQ8V4Dz?=
+ =?us-ascii?Q?+QLWp9Gcix2RMVhRn6H3WLo07Uxj+6fM1qEgpKR4CFeN/mkycJUJmV2TIk+3?=
+ =?us-ascii?Q?voQiApeDdaEAh2yFdOQ4bZD/8u8wip0UqsmmU6990uF2U2pnVn6sx6FYeygO?=
+ =?us-ascii?Q?M5+uNb4FM4QmdWHvIcS3rmJZo7gUbziCFX7Aj8ucEC8shkO1wMWqKJxj06Dx?=
+ =?us-ascii?Q?j/htseofvymPGro2Mh14/R+DaC5G5c/dmuI9x32k0c0Rw32SBNoCDsDEXxTZ?=
+ =?us-ascii?Q?pWD4sjQwWH8OVBPmmxAGSwLY3PgJNUpu6LfHGt6KxNCFSTPYz2F1jgODi+v9?=
+ =?us-ascii?Q?G1dQNMZWs/PABhSqDx/Vn191SQk3pCg6G2/uhj5/HjByV0qCUENh8ql/kXKG?=
+ =?us-ascii?Q?Effwkp+1ygRk+2MvHVVGiNQqSWPe+f+HZM/vrI9zaM4HCYNC+N+rxBnLli/j?=
+ =?us-ascii?Q?vRQgino7d3TvLAzQ8bIAa8AZAwnCzT68evwoXh+dxQs2XfsYzen//LGMw3OJ?=
+ =?us-ascii?Q?ezIwquXcUCtV7nlXnDSmdHqxcUo+GrA44IVdgFHM7o/pG0n1aGTj+gOpU5wQ?=
+ =?us-ascii?Q?iyAd3Us49Z0lIj42yk4lCwnuLkVJ/ZG3TKPHQxpukDbfaeXnfL8kIg28SLCK?=
+ =?us-ascii?Q?lVXrOP+xYdj3XAkuRuokhwSuITONbGuIh+7qyAQ7nQy37sIRgvWTM3OytVIZ?=
+ =?us-ascii?Q?UEZSzDB5ddtKNh+yuBC3kxQ50XZG3CrfRTWEB8tppcQUIqZVhACodtwYTEHC?=
+ =?us-ascii?Q?YJTOd4VaJJ7dgeNwJPOnS7ToCae2k5l4EhAT/Jj0WuF4mraRIqk3pLypuTwG?=
+ =?us-ascii?Q?XHSJdotv8SmuHAErGztRkyv/2GqjEdrbUDbVUplLFa4st/78ggQxXtJBZP5G?=
+ =?us-ascii?Q?DExPNyYGUkDxAKQIvgjb5vjJlGBjCP0z/5Z8ftQ8bLc9clLMHq7pAH1b0sEm?=
+ =?us-ascii?Q?yoIaLCf7C1bJCswNojD8EMdsU4xxMbSyNYZGwvhN2xi+5M2OGNpenIM67oiz?=
+ =?us-ascii?Q?xsLOA3DDcaaPhDb9y4axBXdcqGvT3uYQRbdYLCtNS8uftuTKZYYiWPMZOq2E?=
+ =?us-ascii?Q?RLcImsVKkpKWX4kq3Vavkx+/4FlSEtKkXYLmyYr9M5RxwqfMtOXuLPJXC8nb?=
+ =?us-ascii?Q?EosZm/gQQIq7O7Xbz8D6hsdOLadyof3htWG2AUbn79gs3kPScl7Wn3evvklH?=
+ =?us-ascii?Q?F8Y8RqGinlq7OC1HtMpieSMAY62krKP+RYoxhFwMa3uA3JNQAsupeQ2l/1Vj?=
+ =?us-ascii?Q?NJ02x6vDJfHie4nmfY6kKYiCVdv4fImvYwH5Ofr+7tVi/ILa1hfeyiooLYPx?=
+ =?us-ascii?Q?7y3t6JndJS2ZApWMhE3T1FTCkj1UWjb+ru92TOLUSpxW6XVDGRyop7mpApCL?=
+ =?us-ascii?Q?uqagneLPFcRhsPvfU8kWTJPu3eXAhsbcQuX1lnprfVrCw43GQYbqtHnup1aO?=
+ =?us-ascii?Q?sKxQf4Un8jrrxnJAACzqbO+gnsYFddCpSd5nIrZeVE6FxDRoeaHtxeLXNYqm?=
+ =?us-ascii?Q?4b3F94igaTXVXHH1Og8hnOcyqR5vep3y4uSKYTKz?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00febeb6-162e-40a3-13e0-08dd9bf56472
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2025 01:34:01.2284
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NOygUIhEEXth20T0nVhSfbx/RhdOzB/BTDDrxFO9dZFUL5mxN+SkStPAgjdjjcXQ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8442
+
+On 23 May 2025, at 15:12, Zi Yan wrote:
+
+> migratetype is no longer overwritten during pageblock isolation,
+> start_isolate_page_range(), has_unmovable_pages(), and
+> set_migratetype_isolate() no longer need which migratetype to restore
+> during isolation failure.
+>
+> For has_unmoable_pages(), it needs to know if the isolation is for CMA
+> allocation, so adding CMA_ALLOCATION to provide the information. At the=
+
+> same time change isolation flags to enum pb_isolate_mode (MEMORY_OFFLIN=
+E,
+> CMA_ALLOCATION, and ISOLATE_MODE_OTHERS). Remove REPORT_FAILURE and che=
+ck
+> MEMORY_OFFLINE instead, since only MEMORY_OFFLINE reports isolation
+> failures.
+>
+> alloc_contig_range() no longer needs migratetype. Replace it with
+> a newly defined acr_flags_t to tell if an allocation is for CMA. So doe=
+s
+> __alloc_contig_migrate_range().
+>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>  drivers/virtio/virtio_mem.c    |  3 +-
+>  include/linux/gfp.h            |  6 ++-
+>  include/linux/page-isolation.h | 19 ++++++++--
+>  include/trace/events/kmem.h    | 14 ++++---
+>  mm/cma.c                       |  2 +-
+>  mm/memory_hotplug.c            |  4 +-
+>  mm/page_alloc.c                | 25 ++++++-------
+>  mm/page_isolation.c            | 67 +++++++++++++++-------------------=
+
+>  8 files changed, 72 insertions(+), 68 deletions(-)
+
+This fixes mode's wrong type.
+
+=46rom 0c9792cd7ad1d1cd16b276b70d972e5b871ff653 Mon Sep 17 00:00:00 2001
+From: Zi Yan <ziy@nvidia.com>
+Date: Sun, 25 May 2025 21:29:06 -0400
+Subject: [PATCH] fix mode's type.
+
+Signed-off-by: Zi Yan <ziy@nvidia.com>
+---
+ mm/page_alloc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 48f458f7143a..3096304d1b58 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6901,8 +6901,8 @@ int alloc_contig_range_noprof(unsigned long start, =
+unsigned long end,
+ 	};
+ 	INIT_LIST_HEAD(&cc.migratepages);
+ 	bool is_range_aligned;
+-	isolate_mode_t mode =3D (alloc_flags & ACR_CMA) ? CMA_ALLOCATION :
+-							ISOLATE_MODE_OTHERS;
++	enum pb_isolate_mode mode =3D
++		(alloc_flags & ACR_CMA) ? CMA_ALLOCATION : ISOLATE_MODE_OTHERS;
+
+ 	gfp_mask =3D current_gfp_context(gfp_mask);
+ 	if (__alloc_contig_verify_gfp_mask(gfp_mask, (gfp_t *)&cc.gfp_mask))
+-- =
+
+2.47.2
 
 
 
-On 2025/5/24 1:54, Steven Rostedt wrote:
-> On Fri, 23 May 2025 16:39:44 +0800
-> Ye Bin <yebin@huaweicloud.com> wrote:
->
->> Above issue may happens as follow:
->> (1) Add kprobe trace point;
->> (2) insmod test.ko;
->> (3) Trigger ftrace disabled;
->
-> This is the bug. How was ftrace_disabled triggered? That should never
-> happen. Was test.ko buggy?
->
-Yes. The following warning is reported during concurrent registration 
-between register_kprobe() and live patch, causing ftrace_disabled.
-
-WARNING: CPU: 56 PID: 2769 at kernel/trace/ftrace.c:2612 
-ftrace_modify_all_code+0x116/0x140
->> (4) rmmod test.ko;
->> (5) cat /proc/kallsyms; --> Will trigger UAF as test.ko already removed;
->> ftrace_mod_get_kallsym()
->> ...
->> strscpy(module_name, mod_map->mod->name, MODULE_NAME_LEN);
->> ...
->>
->> As ftrace_release_mod() judge 'ftrace_disabled' is true will return, and
->> 'mod_map' will remaining in ftrace_mod_maps. 'mod_map' has no chance to
->> release. Therefore, this also causes residual resources to accumulate.
->> To solve above issue, unconditionally clean up'mod_map'.
->>
->> Fixes: aba4b5c22cba ("ftrace: Save module init functions kallsyms symbols for tracing")
->
-> This is *not* a fix. ftrace_disabled gets set when a bug is triggered. If
-> this prevents ftrace_disabled from getting set, then it would be a fix. But
-> if something else happens when ftrace_disabled is set, it just fixes a
-> symptom and not the bug itself.
->
-There are multiple causes for triggering ftrace_disabled. I agree that 
-aba4b5c22cba is not faulty. However, the incorporation of this patch 
-will cause problems due to triggering ftrace_disabled. The generation of 
-ftrace_disabled is beyond our control. This is related to the user. What 
-we can do is even if there are no additional derivative problems.
->
->> Signed-off-by: Ye Bin <yebin10@huawei.com>
->> ---
->>   kernel/trace/ftrace.c | 3 ---
->>   1 file changed, 3 deletions(-)
->>
->> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
->> index a3d4dfad0cbc..ff5d9d73a4a7 100644
->> --- a/kernel/trace/ftrace.c
->> +++ b/kernel/trace/ftrace.c
->> @@ -7438,9 +7438,6 @@ void ftrace_release_mod(struct module *mod)
->>
->>   	mutex_lock(&ftrace_lock);
->>
->> -	if (ftrace_disabled)
->> -		goto out_unlock;
->> -
->
-> Here you delete the check, and the next patch you have:
->
-> +	if (ftrace_disabled || (mod && !mod->num_ftrace_callsites)) {
-> +		mutex_unlock(&ftrace_lock);
-> +		return;
-> +	}
-> +
->
-The second patch I added judgment when initializing 'mod_map' in 
-ftrace_free_mem(). The first patch removes the judgment when 
-ftrace_release_mod() releases'mod_map'. The logic modified by the two 
-patches is isolated.
-> Why the two patches where the second patch just adds back the check and
-> then adds some more stuff around it. This should be a single patch.
->
-> Also, why not just keep the goto unlock, that has:
->
-The ftrace_free_mem() function itself looks a little strange. It is easy 
-to misunderstand that it is a release function, but it is actually an 
-initialization function. My two patches did not modify the same function.
->   out_unlock:
-> 	mutex_unlock(&ftrace_lock);
->
-> 	/* Need to synchronize with ftrace_location_range() */
-> 	if (tmp_page)
-> 		synchronize_rcu();
-> 	for (pg = tmp_page; pg; pg = tmp_page) {
->
-> 		/* Needs to be called outside of ftrace_lock */
-> 		clear_mod_from_hashes(pg);
->
-> 		if (pg->records) {
-> 			free_pages((unsigned long)pg->records, pg->order);
-> 			ftrace_number_of_pages -= 1 << pg->order;
-> 		}
-> 		tmp_page = pg->next;
-> 		kfree(pg);
-> 		ftrace_number_of_groups--;
-> 	}
-> }
->
-> And tmp_page is set to NULL before that jump, so the if and for loop will
-> both be nops.
->
-> Why all this extra churn?
->
-> -- Steve
->
->
->>   	list_for_each_entry_safe(mod_map, n, &ftrace_mod_maps, list) {
->>   		if (mod_map->mod == mod) {
->>   			list_del_rcu(&mod_map->list);
->
-
+--
+Best Regards,
+Yan, Zi
 
