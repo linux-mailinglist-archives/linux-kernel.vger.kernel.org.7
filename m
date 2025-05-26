@@ -1,130 +1,117 @@
-Return-Path: <linux-kernel+bounces-663022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB59AC429F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 17:55:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E46AEAC42A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 17:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C8BE1761CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 15:55:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3B8F177A23
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 15:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9F22139C9;
-	Mon, 26 May 2025 15:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74706215061;
+	Mon, 26 May 2025 15:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PO17gT8L"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O/mdelKY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0cWyXiF8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D08D1C3C18
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 15:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D4E2147F6;
+	Mon, 26 May 2025 15:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748274911; cv=none; b=PQ0PKOaI8kvp3JKrhLagbeV2hMXT4zMySvph3a6xM5ZnyhDQM9gO8ROKLFFrBqfRG3hDLE0xi9EFn/YG6BCMxU4UqvaQMecx13chWSz0hMdHx+n6/PS4WXJ8eI61Qnv8xwb9j+ks67FI8g1VkKidlApyvmLybPnP5X7OFzBx48A=
+	t=1748274934; cv=none; b=MyiDB9X51ZcMzpdF2xoroxberACPwvNSnDcB8arSZrLwz9DPFplYtOS8TWiQkERpeqWfQ/TrTVXeMdGxmoBOFGivNiE5+9Y6M6qxmcWTjlb30bNMl2AtBHDtKXTj0smt45diJLyWEkSa4vngzSnxoTmD/hv4Yp/f1Y2Ic3uLtgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748274911; c=relaxed/simple;
-	bh=XcDclK2OqszwLnPAqUXdQyfcnL/MB8SOCrZHRlJOtt8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TTjBbnuTq/AVK1kxDOuJJ4dBlY+uYqbCpQ3NGATG0ysEJQqLMH1QiQFcqZHDgVp32GavGzICpW92vQSxqXazfihr0KkYrgx0K3yAFPYsN8w3NvuprnCkGPMbQxjAdKlbuJu7UsfpTUVmkBr4s3aXEN3AWm8DNzQfrKP2dfEUrBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PO17gT8L; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748274908;
+	s=arc-20240116; t=1748274934; c=relaxed/simple;
+	bh=pRkavSSrKLELLYEyxG8VOAx6a1OSCKlwEsUsa/rhHXw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lKiasH1rstXPYdEqHKKYlKWxvD6QN2oyKpEv6o/98AsWYIHWvOPt/iei7iGw/DTManIg/8eykbbSh5eYIfzDrULLSKdIp5SwybWLzVskWwzc+9Ysdw00T3FBnF7cYilqoVjGVYLz3xZizUZrunamRGdLIrqZekPazMHuhyz/N7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O/mdelKY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0cWyXiF8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1748274931;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fARRLv2EAES/QT6e4xl4U/3Dyubza5vfMD7Ni6b9N0M=;
-	b=PO17gT8LfJOAyEZNrPb6zaXxcO9yg5XGvcIZJHsrwYqy9EfefGDyJFdb9/gGVzh8YfmqCZ
-	UyWmcoMgIJ6It5Fv+E61+/xgnBiB4aCHPYTXKF+/U8/pt/v7pjVNkPkS7oGykIG+bq31b4
-	+zJJAcwITkwSEAMQSye9iJA6d9A3ZmI=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-347-_F4wI8KaP1maqfRhCMxk4g-1; Mon, 26 May 2025 11:55:07 -0400
-X-MC-Unique: _F4wI8KaP1maqfRhCMxk4g-1
-X-Mimecast-MFC-AGG-ID: _F4wI8KaP1maqfRhCMxk4g_1748274906
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4bafbb1abso1542230f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 08:55:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748274906; x=1748879706;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fARRLv2EAES/QT6e4xl4U/3Dyubza5vfMD7Ni6b9N0M=;
-        b=IrllPe64UoQaHq4M2wZ5CSqfqr4GHE0JZCc3tuq4kmotLj1sNUHNtxytb9chgN+fYn
-         qqV2XmK/oE+4spkzS+MuCq1p2x11FS+UtdRrwIP39apENnWenj4oukRUTmPSYvDIuWhn
-         6Fjc0qnxLVz2lUk+JeW6BEFRpgepDKkDzL2ZXkUjwBRPH/q3isWFMFQRRy5dZdf+IDpw
-         ZwX//x61eEyzCaJasC2cXuptBEvJbZ5UbR4EBo3fk8jrPYhUSdVvxff/O6HDdAsBO8kx
-         YUrBQ24bOWBx3PcNdTGLEIyX0za8b4WI7a6s7ccZOY8c7HiOVnPnDZUuUDLeT1o4Yw9c
-         OxrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMiLhYXwhv3fBoKuE5ZomiPmKD2HxIqpppwK8E+tvYpRV/6SjJBKjWoor88DEnR8xJRC1XpzRbYVR9SJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz44C2A+oG2uUX0HRLJFDtwRhg/ZdmNNP+xa8UDG1EtoLfBsXqQ
-	MvJGx7koUB3Y5w/RgrKdBLBQg+ib3azRkon5U7bFYF+IyeB5+NM9+jsCyoEGacTRyYAm2zNulhe
-	Ewu1eDrCWQ4FUFTDcjustq5CiYO2YRE/PexSrbHQC7TMcZesU5waUGyN0Qzoh4JbETw==
-X-Gm-Gg: ASbGncteeuO7isqQSNnWjtnPQL8JJyTporUCiI9O72iosLTG3FWhCgxul3zqtGjZQsa
-	tMjVZwE8550O27twHATqbRO2BzdgWdLuJSmKcB84Pwigladec3xYAbnf0DUFQWt3/PnSkUPcigm
-	kPCAqZPf5L92ASKrAQIKNwucN7V0Vk1U7o1SXKB9sMk+7R5WvoVNJPHUbI2hYqymQlSb9gVq2Ni
-	juT1x0Yjdk0A224W8L90li8cAwv4yTxeRs3sFH7kGk4XzW/X07Ovkg0pokKfkeK/u5XQmdVlDDH
-	zn9mL8GJ5FcMog+mVds=
-X-Received: by 2002:a05:6000:1ac6:b0:3a3:6941:6013 with SMTP id ffacd0b85a97d-3a4cb489c46mr7644599f8f.40.1748274906110;
-        Mon, 26 May 2025 08:55:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEniW4Fa0wQ5QCsDtszPeRRxDRH9P02gatIOFzZCMuokpVnrSJPxMGRC37ySpxpVr8XiaeDXg==
-X-Received: by 2002:a05:6000:1ac6:b0:3a3:6941:6013 with SMTP id ffacd0b85a97d-3a4cb489c46mr7644577f8f.40.1748274905760;
-        Mon, 26 May 2025 08:55:05 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2728:e810::f39? ([2a0d:3344:2728:e810::f39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4babec83csm14730739f8f.80.2025.05.26.08.55.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 May 2025 08:55:05 -0700 (PDT)
-Message-ID: <edb8881d-0cac-4f7e-b358-299bb30b5f27@redhat.com>
-Date: Mon, 26 May 2025 17:55:03 +0200
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UJlE224RmBYGNDbS+Mw+IYOqU6oo4BkO2oGnbjLwdYM=;
+	b=O/mdelKYDkGlnypUkTTSDHGnbK0Py4y55Wqu6Ug1AkXXuARsVU2RNGQg1Bw9xMk3mXwQmg
+	iGjGFywpxRZjkKujG3E0IeesXOIxC+g+V0q7HceO84QOJX+Aj9Ecv8tYVyAlbP239DDZo4
+	9AN+dKdUhL7gGE80pFzm4wHCziCd1tVbi/aJPM8f2ujyAYYzCumnjXK+NNq1hsC4cK/rGP
+	Esuv2WImjcFTgCUKg65uDxyTveJU0BFgvDv1uYu8rU8+HL8+2/7M9op4dHTATPSEGcy0rc
+	+SVfhPwhmjWgDT8Alq15uUHu+fVtuNd04alTOw5Y1150c7+2vi/wqkrNrJihrg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1748274931;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UJlE224RmBYGNDbS+Mw+IYOqU6oo4BkO2oGnbjLwdYM=;
+	b=0cWyXiF8ZdUYWma/Dl1MrsuO4uYAiJjtpHI4qfAG95e/JdN+d2GfeAjTUrnubq7IMzn0xY
+	kkAB6Yjsl2Rga5Ag==
+To: linux-kernel@vger.kernel.org,
+	linux-man@vger.kernel.org
+Cc: Alejandro Colomar <alx@kernel.org>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [[PATCH v3] 0/4] Add documentation for PR_FUTEX_HASH
+Date: Mon, 26 May 2025 17:55:19 +0200
+Message-ID: <20250526155523.1382465-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: phy: mtk-2p5ge: Add LED support for MT7988
-To: Sky Huang <SkyLake.Huang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Daniel Golle <daniel@makrotopia.org>, Qingfang Deng <dqfext@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20250526091019.16096-1-SkyLake.Huang@mediatek.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250526091019.16096-1-SkyLake.Huang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 5/26/25 11:10 AM, Sky Huang wrote:
-> From: Sky Huang <skylake.huang@mediatek.com>
-> 
-> Add LED support for MT7988's built-in 2.5Gphy. LED hardware has almost
-> the same design with MT7981's/MT7988's built-in GbE. So hook the same
-> helper function here.
-> 
-> Before mtk_phy_leds_state_init(), set correct default values of LED0
-> and LED1.
-> 
-> Signed-off-by: Sky Huang <skylake.huang@mediatek.com>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Add some documentation of the prctl(PR_FUTEX_HASH, =E2=80=A6) interface.
 
-## Form letter - net-next-closed
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+v2=E2=80=A6v3: https://lore.kernel.org/all/20250520104247.S-gVcgxM@linutron=
+ix.de/
+  - Split the individual PR_FUTEX_HASH ops into their own man page.
+  - Reword a sentence referring to uaddr in order to link to futex(2).
+  - Address remaining review feedback such the semantic new line.
 
-The merge window for v6.16 has begun and therefore net-next is closed
-for new drivers, features, code refactoring and optimizations. We are
-currently accepting bug fixes only.
+v1=E2=80=A6v2: https://lore.kernel.org/all/20250516161422.BqmdlxlF@linutron=
+ix.de/
+  - Partly reword
+  - Use "semantic newlines"
 
-Please repost when net-next reopens after June 8th.
+Sebastian Andrzej Siewior (4):
+  man/man2/prctl.2, man/man2const/PR_FUTEX_HASH.2const: Document
+    PR_FUTEX_HASH
+  man/man2/prctl.2, PR_FUTEX_HASH_SET_SLOTS.2const: Document
+    PR_FUTEX_HASH_SET_SLOTS
+  man/man2/prctl.2, PR_FUTEX_HASH_GET_SLOTS.2const: Document
+    PR_FUTEX_HASH_GET_SLOTS
+  man/man2/prctl.2, PR_FUTEX_HASH_GET_IMMUTABLE.2const: Document
+    PR_FUTEX_HASH_GET_IMMUTABLE
 
-RFC patches sent for review only are obviously welcome at any time.
+ man/man2/prctl.2                              |  3 +
+ man/man2const/PR_FUTEX_HASH.2const            | 92 +++++++++++++++++++
+ .../PR_FUTEX_HASH_GET_IMMUTABLE.2const        | 37 ++++++++
+ man/man2const/PR_FUTEX_HASH_GET_SLOTS.2const  | 37 ++++++++
+ man/man2const/PR_FUTEX_HASH_SET_SLOTS.2const  | 83 +++++++++++++++++
+ 5 files changed, 252 insertions(+)
+ create mode 100644 man/man2const/PR_FUTEX_HASH.2const
+ create mode 100644 man/man2const/PR_FUTEX_HASH_GET_IMMUTABLE.2const
+ create mode 100644 man/man2const/PR_FUTEX_HASH_GET_SLOTS.2const
+ create mode 100644 man/man2const/PR_FUTEX_HASH_SET_SLOTS.2const
+
+--=20
+2.49.0
 
 
