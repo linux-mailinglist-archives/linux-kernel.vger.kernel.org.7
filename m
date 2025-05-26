@@ -1,108 +1,168 @@
-Return-Path: <linux-kernel+bounces-662298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C1FAC3846
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 05:44:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D228AC3842
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 05:44:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21EEB3B35D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 03:44:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51E8F3B34BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 03:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CE71991D2;
-	Mon, 26 May 2025 03:44:47 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E738198E6F;
+	Mon, 26 May 2025 03:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQ7YDSn5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0E71991B6;
-	Mon, 26 May 2025 03:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67339FC0E;
+	Mon, 26 May 2025 03:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748231086; cv=none; b=q8SMMI29GRKf12cMKkPzDk9EpXtTU8AoaHEQfJg2b5wnxtwopKDFKzRDMIjP9Wiiu3Vbw4wiAX+qJcoVaigbMGVk76EiQfJq5hiAZaLJgeGJ8l4QOEeJH2OjaAl9Cpq/3ATAPbQCa4oq+gl0I2/AoVftYEHCQg5AmFdxUsqyCeg=
+	t=1748231046; cv=none; b=h+kcZINMPvnJBpJXtYZOpeS6HNusq8Nq6POhU8ecNd6UIh9+3idtU8bFjqxvibYnX9FKvvVqJr91vXfMWuFX7ucAgLqqDVOXBnqZztqTlkPUElcZ4DrxbFaDRSkSAt99Ngoqr8qe+giI5xy1WXEaKulKz9Cr+bRRZTNF3BrQ4Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748231086; c=relaxed/simple;
-	bh=hDOkeb1ifPk+Hydf4a/gPJBIfrZrr+ugw6O3xDS0YKM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fTN8+XvS2igGRiMgEyDLZjLAL1Qll2L5SqDW4vtDOjoJ4hUJOwZU0WXZiwvYcKEUeXGnOvVMPD8EezNKsAlKJ1MwHiTABt74rJyFjMtGAAJCovcTaEtXs9ug+XsRo+gKw2f9IGStn4n9Uv5p9oUhQU3zNgQrmEWiwlAT9EovNQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowAC3QRCS4zNoQrYKAA--.5221S2;
-	Mon, 26 May 2025 11:44:20 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com,
-	wens@csie.org,
-	jernej.skrabec@gmail.com,
-	samuel@sholland.org
-Cc: ruanjinjie@huawei.com,
-	u.kleine-koenig@baylibre.com,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] mtd: nand: sunxi: Add randomizer configuration in sunxi_nfc_hw_ecc_write_chunk
-Date: Mon, 26 May 2025 11:43:44 +0800
-Message-ID: <20250526034344.517-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1748231046; c=relaxed/simple;
+	bh=2pPImFlewxGzk5QWdrC4f2XBLGZkKF1SdzJVsmk2aXI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=cFAhIuPjEF5+W081ISqNGOMhS453kNNjrg4eVCCLt9qCMBSnojFDgQn6VZ7w/duyn2vxJYxcTsaFo8qZpZicYrJGPuCokzFo8zB8YU5l3gHCCbpfjchmeV4YrrKi0ujUeLUZYdhW5RPqMVv6Hu7S8AtS1wRTA1EbTSbx4a6YI0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQ7YDSn5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14B60C4CEE7;
+	Mon, 26 May 2025 03:44:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748231045;
+	bh=2pPImFlewxGzk5QWdrC4f2XBLGZkKF1SdzJVsmk2aXI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AQ7YDSn5QSyW4Gk6hpbtTYaxDx9OrMWEAbvxX0A/ygNkwGYQqELsijB4+teUqddWF
+	 uPuzdQZxcSf3L8ns251secLN3+RDtFaaiuYRw2N579RJhR9KDYwUhbntvvYH6eh9Kg
+	 IyosiH5CJxrSJR/QrJS89DQpWCvZgOGqMQXMT33IdHNnYtGshptiw3Eh7gAhajKrxB
+	 fB3ijSEAYvhpOv6Yh8x0LK0JzCIgfrxSagHzWlLrFkGN665hYSysWyO1LsZxFwhgES
+	 ES47kYbwFjeFR+5RrYbLA2akTCNJAmK3B1zNd3EhmbO1H5cDiYaTgFrbERPh380Xt/
+	 hjqcRT4lDogcA==
+Date: Mon, 26 May 2025 12:44:03 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] tracing: ring_buffer: Rewind persistent ring
+ buffer when reboot
+Message-Id: <20250526124403.3bf41a0634733b640620ad8a@kernel.org>
+In-Reply-To: <20250523192053.47054e6e@gandalf.local.home>
+References: <174792927500.496143.10668210464102033012.stgit@mhiramat.tok.corp.google.com>
+	<174792928413.496143.17979267710069360561.stgit@mhiramat.tok.corp.google.com>
+	<20250523165425.0275c9a1@gandalf.local.home>
+	<20250523192053.47054e6e@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAC3QRCS4zNoQrYKAA--.5221S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gw1UWF1UXw4rZr1UXryftFb_yoWkKwb_W3
-	yIvrykKr1DCrZ5JF1xuF4xCryxtw4UWa1vqFnIqrZxAan3XryxJ3sxZF1vyF18WF1jkFyF
-	y3sYv3W2y347XjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
-	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
-	C2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgsOA2gzt8ibngABsg
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The function sunxi_nfc_hw_ecc_write_chunk() calls the
-sunxi_nfc_hw_ecc_write_chunk(), but does not call the configuration
-function sunxi_nfc_randomizer_config(). Consequently, the randomization
-might not conduct correctly, which will affect the lifespan of NAND flash.
-A proper implementation can be found in sunxi_nfc_hw_ecc_write_page_dma().
+On Fri, 23 May 2025 19:20:53 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Add the sunxi_nfc_randomizer_config() to config randomizer.
+> On Fri, 23 May 2025 16:54:25 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > >   spin:
+> > > @@ -6642,7 +6739,6 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
+> > >  		cpu_buffer->read_bytes += rb_page_size(reader);
+> > >  
+> > >  		/* swap the pages */
+> > > -		rb_init_page(bpage);  
+> > 
+> > This isn't needed, because the persistent ring buffer is never swapped. And
+> > this is what caused my test to fail. For some reason (and I'm still trying
+> > to figure out exactly why), it causes my stress test that runs:
+> > 
+> >   perf record -o perf-test.dat -a -- trace-cmd record -e all -p function /work/c/hackbench 10 || exit -1
+> > 
+> > To never end after tracing is stopped, and it fills up all the disk space.
 
-Fixes: 4be4e03efc7f ("mtd: nand: sunxi: add randomizer support")
-Cc: stable@vger.kernel.org # v4.6
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/mtd/nand/raw/sunxi_nand.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for sharing the test code. So it means perf reads the ring buffer
+endlessly?
 
-diff --git a/drivers/mtd/nand/raw/sunxi_nand.c b/drivers/mtd/nand/raw/sunxi_nand.c
-index 9179719f639e..162cd5f4f234 100644
---- a/drivers/mtd/nand/raw/sunxi_nand.c
-+++ b/drivers/mtd/nand/raw/sunxi_nand.c
-@@ -1050,6 +1050,7 @@ static int sunxi_nfc_hw_ecc_write_chunk(struct nand_chip *nand,
- 	if (ret)
- 		return ret;
- 
-+	sunxi_nfc_randomizer_config(nand, page, false);
- 	sunxi_nfc_randomizer_enable(nand);
- 	sunxi_nfc_hw_ecc_set_prot_oob_bytes(nand, oob, 0, bbm, page);
- 
+[reader commit=X1, ts=1]
+
+[head commit=X2, ts=2]...[tail commit=Xn, ts=n]
+  |                           |
+  |---------------------------|
+
+I thought that the read will end when it hits tail or ts < ts_current.
+
+
+> > 
+> > But again, this part isn't needed because the persistent ring buffer
+> > doesn't do the swapping. This replaces what the user passed in with the
+> > current page.
+> > 
+> > >  		bpage = reader->page;
+> > >  		reader->page = data_page->data;
+> > >  		local_set(&reader->write, 0);  
+> 
+> So I analyzed why this fails and we need to reset the commit here.
+> 
+> Adding a bunch of trace_printk() (and using the new trace_printk_dest
+> option where I can have trace_printk go into an instance) I was able to see
+> why this was an issue.
+> 
+> This part of the code swaps the reader page with what was passed in by the
+> caller. The page doesn't go back into the write part of the ring buffer.
+> The "commit" field is used to know if there's more data or not.
+> 
+> By not resetting the "commit" field, we have:
+> 
+> 	reader = rb_get_reader_page(cpu_buffer)
+> 		if (cpu_buffer->reader_page->read < rb_page_size(reader))
+> 			return reader;
+> 	// swap passed in page with reader
+> 
+> Without resetting "commit", the caller consumes the page and then uses that
+> same page to pass back to this function. Since the "commit" field is never
+> zero'd, it the above if statement always returns true! And this function
+> just keeps swapping the reader each time and goes into an infinite loop
+> (this loop requires user space to do a read or splice on this page so it's
+> not a kernel infinite loop).
+
+
+Ah, in rb_get_reader_page(cpu_buffer),
+
+	/* If there's more to read, return this page */
+	if (cpu_buffer->reader_page->read < rb_page_size(reader))
+		goto out;
+
+	/* Never should we have an index greater than the size */
+	if (RB_WARN_ON(cpu_buffer,
+		       cpu_buffer->reader_page->read > rb_page_size(reader)))
+		goto out;
+
+	/* check if we caught up to the tail */
+	reader = NULL;
+	if (cpu_buffer->commit_page == cpu_buffer->reader_page)
+		goto out;
+
+It checks remaining (unread) data first, and move to the next.
+
+> 
+> Now the question is, can this affect the persistent ring buffer too? I'll
+> memory map the buffer and see if it causes the same issue.
+
+Yeah, it can happen, but I didn't hit that.
+Let me test it too.
+
+Hmm, BTW, is there any possible solution? records the consumed
+bytes in meta data?
+
+
+> 
+> -- Steve
+
+
 -- 
-2.42.0.windows.2
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
